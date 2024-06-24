@@ -1,100 +1,142 @@
-Return-Path: <linux-kernel+bounces-228032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5423A9159D4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:24:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D7B9159D7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:26:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 085921F21ACC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:24:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0AD1F222A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:26:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270061A0708;
-	Mon, 24 Jun 2024 22:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F0E1A2547;
+	Mon, 24 Jun 2024 22:26:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxnb7Mjw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RmN/u75H"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B81217BCC
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF35E17BCC;
+	Mon, 24 Jun 2024 22:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719267879; cv=none; b=fwt3A/oqpC87RzPk2TvsueQdBWrlg4SYzi/O5QPiBkYkZEENP6VwbwTv79wlCrRE6JojOZQhALFH/a5AjGJMKM8j5GF8vGvijUCF3sjZ/5T29WCX9sNr0wbx5JofHF80ES+DIpcMe01n29H/bzK7tBJnhR519Y9TJJYm32HzqcQ=
+	t=1719267983; cv=none; b=GVheupaHmJ0NYJt3ftQ0uuVkduApM4hshuwYEEx0vg8OSlqcCj9LZ6AcZpFB/5Cl1xkxIIVJD+pP2TPeAV9vAki7EzDw78e8ElDb/I+OxY22QNy6wN+moqO1zlKnSL9a1sKOWMAVkmNH1jJu0gNPbBfTJBZh4LGcwnPlp5ZCd58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719267879; c=relaxed/simple;
-	bh=NWPkEmxq5Vl0pkyAV8qENe3N073yNs1JpjThfWElkhU=;
+	s=arc-20240116; t=1719267983; c=relaxed/simple;
+	bh=A1zw7pChb50vCYHTi+cKNPAO0Oryfwi6Z4lff+lI6Js=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGKITErahUHm5r2FDmVP7aB0kmzULrHzQ1Ez83ypK8+voRsotRuPLTNpygUxkAw8rEeACDZBdultLvJHv/CymDDYje+RoD1v3v8jseKqqXXdnz+S0o7GT2rE0jXUqgwAtQffVwgQWkQiK2qIs96W0QYUWgOykXN8zVbOF7NlXI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxnb7Mjw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6D04C2BBFC;
-	Mon, 24 Jun 2024 22:24:38 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SKAGX2JCTjOIoQXSUTtYynY3NkgNtQ/DFoafOModyF6Fqlc+qkWwOEdWvUAtVBqv+uDcF/A4+2rcERIEU1FER/Sqkv0xoOqUTrEQ+9GPzC1aG0gZa5JnAMxMZp66FIQ4N4whPQ/xhtDu+OftdxbuzeYzD/hfgUDZ9RXlh31q5yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RmN/u75H; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFAECC2BBFC;
+	Mon, 24 Jun 2024 22:26:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719267879;
-	bh=NWPkEmxq5Vl0pkyAV8qENe3N073yNs1JpjThfWElkhU=;
+	s=k20201202; t=1719267982;
+	bh=A1zw7pChb50vCYHTi+cKNPAO0Oryfwi6Z4lff+lI6Js=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rxnb7MjwdXqFeLIO4XzjVRguoy6zmAQvtlIunXbOjBXlD0eC7BMH7A8sBgjHmDMGN
-	 sE2hhNo4OopuJ4M5tjdtaro6MrrOyiwfpmCYSMcHt+laUu8RGdzR5silu6aHP527Y3
-	 CiNntC7NLd5nw+O4rUsdbvTXgLWE74LfUUqIRa18kAUIhxV6ku42Xg9kLcGhVfuBjI
-	 taG1+YjElWtLTTcC1+QhbPeTT/klcK7zVxHyM57rSZlqtZQOm4R//pukg9Ikt3KyH1
-	 LJ9zQTkCgjt8IrvES44kGywox0QcXRPa4jMENeG49a2z/D6+UQ3qRjev1nV4ZCmFXj
-	 4OxPZ7exxJrmw==
-Date: Tue, 25 Jun 2024 00:24:36 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/5] timer_migration: Fix possible race in
- tmigr_active_up() in setup path
-Message-ID: <ZnnyJPPTm8NHqPbf@pavilion.home>
-References: <20240624-tmigr-fixes-v2-0-3eb4c0604790@linutronix.de>
- <20240624-tmigr-fixes-v2-4-3eb4c0604790@linutronix.de>
- <Znnst52fdxIeBats@pavilion.home>
+	b=RmN/u75HA1sFMpeGPdJhkl4iIpVo2QC3mcj4pV3sSro9zUXSg77efg3iJbqMAgsva
+	 e2eLM/YOePlu2m1GZRn17m/S1YU3iOvZAYvmUcCV8oZwNzTgE194CKbUQKvz6/2ANQ
+	 F8IUUTej+bXUYcut+Ihvlv2di7ARhVVTb06R/XFMS+S+6WuKAuqmqpcBG6yeQTdIlb
+	 M/rXFi6XnrPpCOabmhSZBP8sx5LHAf5mYRT9YivXxIcvXZ5Niz1JGKDmyncJerdOUk
+	 G+MECTVMOxUllUNDbx260XaCoth/cIZmho3/G3JBlmxTNJ54cG+acw5a+nB/73TKk6
+	 L3pS82Zv27FWQ==
+Date: Mon, 24 Jun 2024 15:26:19 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Guo Ren <guoren@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Wedson Almeida Filho <wedsonaf@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>,
+	Alice Ryhl <aliceryhl@google.com>, Nick Terrell <terrelln@fb.com>,
+	Ravi Bangoria <ravi.bangoria@amd.com>,
+	Kees Cook <keescook@chromium.org>, Andrei Vagin <avagin@google.com>,
+	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
+	Oliver Upton <oliver.upton@linux.dev>, Ze Gao <zegao2021@gmail.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
+	linux-riscv@lists.infradead.org, coresight@lists.linaro.org,
+	rust-for-linux@vger.kernel.org, bpf@vger.kernel.org
+Subject: Re: [PATCH v3 7/8] perf python: Switch module to linking libraries
+ from building source
+Message-ID: <Znnyi2IPC79jMd9y@google.com>
+References: <20240613233122.3564730-1-irogers@google.com>
+ <20240613233122.3564730-8-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Znnst52fdxIeBats@pavilion.home>
+In-Reply-To: <20240613233122.3564730-8-irogers@google.com>
 
-Le Tue, Jun 25, 2024 at 12:01:27AM +0200, Frederic Weisbecker a écrit :
-> > +static void tmigr_setup_active_up(struct tmigr_group *group, struct tmigr_group *child)
-> > +{
-> > +	union tmigr_state curstate, childstate;
-> > +	bool walk_done;
-> > +
-> > +	/*
-> > +	 * Memory barrier is paired with the cmpxchg in tmigr_inactive_up() to
-> > +	 * make sure updates of child and group states are ordered. The ordering
-> > +	 * is mandatory, as the update of the group state is only valid for when
-> > +	 * child state is active.
-> > +	 */
-> > +	curstate.state = atomic_read_acquire(&group->migr_state);
-> > +
-> > +	for (;;) {
+On Thu, Jun 13, 2024 at 04:31:21PM -0700, Ian Rogers wrote:
+> setup.py was building most perf sources causing setup.py to mimic the
+> Makefile logic as well as flex/bison code to be stubbed out, due to
+> complexity building. By using libraries fewer functions are stubbed
+> out, the build is faster and the Makefile logic is reused which should
+> simplify updating. The libraries are passed through LDFLAGS to avoid
+> complexity in python.
 > 
-> /*
->  * If the child hasn't yet propagated anything to the top level, the above
->  * acquire has no effect. However thanks to child locking (see comment in
->  * tmigr_connect_child_parent()), either the latest child->migr_state is
->  * observed or the remote CPU now observes the new parent and is about to
->  * propagate to the new parent. In the latter case it will either beat the
->  * current trial update or overwrite it.
->  */
+> Force the -fPIC flag for libbpf.a to ensure it is suitable for linking
+> into the perf python module.
 > 
-> And another comment later:
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> Reviewed-by: James Clark <james.clark@arm.com>
+> ---
+>  tools/perf/Makefile.config |   5 +
+>  tools/perf/Makefile.perf   |   6 +-
+>  tools/perf/util/python.c   | 271 ++++++++++++++-----------------------
+>  tools/perf/util/setup.py   |  33 +----
+>  4 files changed, 110 insertions(+), 205 deletions(-)
 > 
-> > +		childstate.state = atomic_read(&child->migr_state);
-> > +		if (!childstate.active)
-> > +			return;
+> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> index 7f1e016a9253..639be696f597 100644
+> --- a/tools/perf/Makefile.config
+> +++ b/tools/perf/Makefile.config
+> @@ -910,6 +910,11 @@ else
+>           endif
+>           CFLAGS += -DHAVE_LIBPYTHON_SUPPORT
+>           $(call detected,CONFIG_LIBPYTHON)
+> +	 ifeq ($(filter -fPIC,$(CFLAGS)),)
 
-Hmm, on the other hand the remote group doesn't use locking if some tmc activates
-after that and so there is no guarantee it will see the new parent. Does it
-matter?
+Nitpick: mixed TAB and SPACEs.
 
-Thanks.
+
+> +           # Building a shared library requires position independent code.
+> +           CFLAGS += -fPIC
+> +           CXXFLAGS += -fPIC
+> +         endif
+
+
+I'm curious if it's ok for static libraries too..
+
+Thanks,
+Namhyung
+
+
+>        endif
+>      endif
+>    endif
 
