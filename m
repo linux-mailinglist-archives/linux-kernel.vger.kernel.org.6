@@ -1,156 +1,100 @@
-Return-Path: <linux-kernel+bounces-227139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703A19148F7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:40:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 880979148FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CED8283D32
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:40:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 426BA2845C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6BF413A878;
-	Mon, 24 Jun 2024 11:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF3A13B58A;
+	Mon, 24 Jun 2024 11:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A+WCQ/Oo"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b="NDUT33qo"
+Received: from mickerik.phytec.de (mickerik.phytec.de [91.26.50.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3788513A252;
-	Mon, 24 Jun 2024 11:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F095125D6
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.26.50.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719229208; cv=none; b=KvL3u6V05Sc1YHDh/6GAcpInIbQ11SDjcHFmuejMtNS1gqBd1N1lNygI+wm26+/GWqhFGEfOI5byj2zFNZxW9XUyJSSFUZpqWb+w15VR4tgtD/KucDPTzU5vnUo0Ve13w0jlqSnk1wYZbcFyeRuqNNqSEB6c2wkn3T8EI/E3JXc=
+	t=1719229319; cv=none; b=TIWHRfoMRyXDasKPpSulUgt7Fdjay9k7P/lz+2Eckt5J6wiL2VRMk5QES4Kr+Ovuct9BuadIQdtFVtK1fPX33880Lbu4ln5RmSF8qjeeOjHlsttLB7KaQskxy9ycp0n6d0M2YqcqRtrP9bY5LJjPig/VHxqJnyXG4QSJBlGiHDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719229208; c=relaxed/simple;
-	bh=mLExQpEyH9EpHpOLkBEcwJgkvJOZidD8fSxj0EaqoFY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=HCfkQg82t7d8QfJQ8XGnblyPV2Fv+JXuA/bRbleturET1/N1Apa9CQt983FSvR77q4l4ZyjlXVqL1XY9TkILDD529uLZ4gI0ZEQPN6pajns4N5VTwKUuJDp/CEyf5c8REUfZ2IyU+4pxIR3vHPmTqRJ2lL6l76rjK9rki0qXM5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A+WCQ/Oo; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a725282b926so116318666b.0;
-        Mon, 24 Jun 2024 04:40:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719229204; x=1719834004; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x2nxtEYTMtc39GIl327PDzD9Ljyt5YP8MxnbXGhepIY=;
-        b=A+WCQ/OoGOumlQzD9l9iKjcvMdKCQbW1wJBrsqsD+JQgg5ohVI4tdNk/Y4UMIA8Zk8
-         LJGj7JoWIuRLtPX3fnT7Ipv8zL5BXGtsSZIa1gvzy+E5Ydx/iAo1Gr68dnS4/WlToNut
-         o1wETDFhdS6fflpmikfWJR8VXohUyIW+LdAp40sV2jtIHPXeb10O/a1Y8DXx/ShIVplK
-         jK4Egbb9madUZW61NLyCzk5t4AiQtH1LKR/4a0xpxfRGOfm9dr36FOsOo3wIfVPPeo66
-         V2Hbw/DXb0a6V8IewxwDYN+HkF2xD+AlAsofwjZvliOI62NrdI2jWQC5c9M79QmJ5kSQ
-         5aJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719229204; x=1719834004;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=x2nxtEYTMtc39GIl327PDzD9Ljyt5YP8MxnbXGhepIY=;
-        b=s6dNg/nIxsXOZvgQ7YQ/EVXIVY8wC1wqnnIFKH/BSkilTK+A6HhsU4GdRvwIXUGM7W
-         HRYFzCN9WL0uBMUz+FdDfF4XQJ0YMuK/uNLcwg0nsrrme3QoG4M3NFt7//x7dTWBk2BW
-         KtM3guoaumkmCShUPPeFI44xGBGmRmPlklDIN46qOvUKbKpUgXH0GPhtU0KlFrDaHoWt
-         mxm2gb3d5U8mCeO6wT+O3+s8fpUhtiKzALMqLTmxt2qxEgXN7W4UQQ9s9i9vnHFhKIF0
-         uRYy+S/z+zBKulfgLdEC4cYj0CNuu4TAf9yB8/cApjExixba0Eg4ZXTQRJhwS1k8Y94O
-         WMqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXh88REoXBAm5lui8AXGD0hOe9hzreyxD0fqWM05LK7kiu9UFeaCgydrJUnvAv+BKq+YRjhs32Z3jxOEAqzYIUium/ukHeIL/fE0Y+/IFds1dEPgH65IRrR/UblTTw/FbOFhVrEsUm0
-X-Gm-Message-State: AOJu0YyooXwWmOE0wqY5HoRh7s1h93dAUnaK/KCdlJ6IeKniUTNHJPV6
-	E7cXe/l3sqwba9CiZLsbLE+3TQt3k9Ml+eM0kYkHQWyeNxfded4x
-X-Google-Smtp-Source: AGHT+IE7ua8tr4fotElRzbb9ZE9N9J2SRRVzmmEB5E2CwHxAW1trh0N00sZtAm2FzIZ7aoBdEw0yzw==
-X-Received: by 2002:a17:906:a2da:b0:a6f:61c7:dea7 with SMTP id a640c23a62f3a-a7245ccdab7mr267050166b.18.1719229204264;
-        Mon, 24 Jun 2024 04:40:04 -0700 (PDT)
-Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? (2a02-a449-4071-1-32d0-42ff-fe10-6983.fixed6.kpn.net. [2a02:a449:4071:1:32d0:42ff:fe10:6983])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7260566aaasm28542866b.18.2024.06.24.04.40.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 04:40:03 -0700 (PDT)
-Message-ID: <1cd309fa-a4d3-4283-aa47-1330a40448a7@gmail.com>
-Date: Mon, 24 Jun 2024 13:40:03 +0200
+	s=arc-20240116; t=1719229319; c=relaxed/simple;
+	bh=AijBxoAfmMIAkX73H7vl3+78cSiJ+jq7pp7HVYLFovg=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Vmx0HqSHL0WXmgp9Ia0JXMyGIPiOtEH9GhX3qW59ykrD8xVq03dvlZ9QjRUFoVjD5HG04FjMvARcDWxlM4MjyqqoEU7ntZCGcoc9XuZzQvva49O5JJngmZswDQdz5/aqceYD5t9W8viJmavAlgeM0Md0TfAPQkPKeLNzdIvL2BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (1024-bit key) header.d=phytec.de header.i=@phytec.de header.b=NDUT33qo; arc=none smtp.client-ip=91.26.50.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+DKIM-Signature: v=1; a=rsa-sha256; d=phytec.de; s=a4; c=relaxed/simple;
+	q=dns/txt; i=@phytec.de; t=1719229301; x=1721821301;
+	h=From:Sender:Reply-To:Subject:Date:Message-ID:To:CC:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=AijBxoAfmMIAkX73H7vl3+78cSiJ+jq7pp7HVYLFovg=;
+	b=NDUT33qo3EilyGayT3njKZnpW84oPETD3HZrFJoQLo41ts19bUoLinpqr12Qhrxt
+	Z7b8gHQV2JzI/X5NqMOJBIjzdz97iygTrkcsrafJDCKMtvdbqm+kWGVQltaILuWs
+	wymXOSCioZaw489NNs+A5h/X8iqpK2nbGBN6Q2ZfG2A=;
+X-AuditID: ac14000a-03251700000021bc-c4-66795b750406
+Received: from florix.phytec.de (Unknown_Domain [172.25.0.13])
+	(using TLS with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(Client did not present a certificate)
+	by mickerik.phytec.de (PHYTEC Mail Gateway) with SMTP id 93.C2.08636.57B59766; Mon, 24 Jun 2024 13:41:41 +0200 (CEST)
+Received: from Berlix.phytec.de (172.25.0.12) by Florix.phytec.de
+ (172.25.0.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.6; Mon, 24 Jun
+ 2024 13:41:41 +0200
+Received: from Berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4]) by
+ berlix.phytec.de ([fe80::197e:d26b:2ca:c7b4%4]) with mapi id 15.01.2507.006;
+ Mon, 24 Jun 2024 13:41:41 +0200
+From: Leonard Anderweit <L.Anderweit@phytec.de>
+To: "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+	"arnd@arndb.de" <arnd@arndb.de>
+CC: "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"upstream@phytec.de" <upstream@phytec.de>
+Subject: Question about [PATCH] [RFC] rtc: y2038: remove broken RTC_HCTOSYS
+ workaround
+Thread-Topic: Question about [PATCH] [RFC] rtc: y2038: remove broken
+ RTC_HCTOSYS workaround
+Thread-Index: AQHaxit7Na9swo4O+UmGER8BNQyYMw==
+Date: Mon, 24 Jun 2024 11:41:41 +0000
+Message-ID: <cf6ac9542f58a33b146ad7b0f5577e1dff3becab.camel@phytec.de>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0FEC28AE4A6F8B48B788FEA61D7C15EE@phytec.de>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Johan Jonker <jbx6244@gmail.com>
-Subject: [PATCH v1] clk: rockchip: rk3188: Drop CLK_NR_CLKS usage
-To: heiko@sntech.de
-Cc: mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmkeLIzCtJLcpLzFFi42JZI8nAq1saXZlmcGu9rkX7u2XsFn8nHWO3
+	uLxrDpvFsdVX2BxYPH7/msToMW9NtcfnTXIBzFFcNimpOZllqUX6dglcGTNefWUruMNScXLb
+	YpYGxjMsXYycHBICJhKv7p1k7mLk4hASWMIkceLxRyYI5z6jxIHrf6CcDYwSS38tYwJpYRPQ
+	l1i54ikziC0ikCbxvHMmI0gRs8BKRomPU5axdzFycAgLREh0v7OCqImVOHflNRtIWERAT2Ld
+	QwOQMIuAqkTXmbfsIDavgJvEo/btbCA2o4CsxIYN58HGMwuIS2x69p0V4lIBiSV7IOISAqIS
+	Lx//g4rLS5y4NY0JZDyzgKbE+l36EK0WEtN3v2KDsBUlpnQ/hFolKHFy5hOWCYyis5BsmIXQ
+	PQtJ9ywk3bOQdC9gZF3FKJSbmZydWpSZrVeQUVmSmqyXkrqJERRRIgxcOxj75ngcYmTiYDzE
+	KMHBrCTCO72+LE2INyWxsiq1KD++qDQntfgQozQHi5I47+qO4FQhgfTEktTs1NSC1CKYLBMH
+	p1QDo366lernqzz7nb7a5We3yRZt6JupGxDstzFq9XyrcE5lp81d3At/M827sO2VjknvjiXe
+	amJxaowrJDcxldk/YWdkUX9Q/0qr7KJpSvCz5kObntxauPuU1s5vXMEzI7lnTlzl/W+NznHl
+	WQUcc7zEmLfUMZZG7+/qZrN4vmmH54znkiZMzld/KrEUZyQaajEXFScCAPQzlQmWAgAA
 
-In order to get rid of CLK_NR_CLKS and be able to drop it from the
-bindings, use rockchip_clk_find_max_clk_id helper to find the highest
-clock id.
-
-Signed-off-by: Johan Jonker <jbx6244@gmail.com>
----
- drivers/clk/rockchip/clk-rk3188.c | 18 ++++++++++++++----
- 1 file changed, 14 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/clk/rockchip/clk-rk3188.c b/drivers/clk/rockchip/clk-rk3188.c
-index 9c8af4d1dae0..30e670c8afba 100644
---- a/drivers/clk/rockchip/clk-rk3188.c
-+++ b/drivers/clk/rockchip/clk-rk3188.c
-@@ -757,9 +757,11 @@ static const char *const rk3188_critical_clocks[] __initconst = {
- 	"sclk_mac_lbtest",
- };
-
--static struct rockchip_clk_provider *__init rk3188_common_clk_init(struct device_node *np)
-+static struct rockchip_clk_provider *__init rk3188_common_clk_init(struct device_node *np,
-+								   unsigned long soc_nr_clks)
- {
- 	struct rockchip_clk_provider *ctx;
-+	unsigned long common_nr_clks;
- 	void __iomem *reg_base;
-
- 	reg_base = of_iomap(np, 0);
-@@ -768,7 +770,9 @@ static struct rockchip_clk_provider *__init rk3188_common_clk_init(struct device
- 		return ERR_PTR(-ENOMEM);
- 	}
-
--	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-+	common_nr_clks = rockchip_clk_find_max_clk_id(common_clk_branches,
-+						      ARRAY_SIZE(common_clk_branches)) + 1;
-+	ctx = rockchip_clk_init(np, reg_base, max(common_nr_clks, soc_nr_clks));
- 	if (IS_ERR(ctx)) {
- 		pr_err("%s: rockchip clk init failed\n", __func__);
- 		iounmap(reg_base);
-@@ -789,8 +793,11 @@ static struct rockchip_clk_provider *__init rk3188_common_clk_init(struct device
- static void __init rk3066a_clk_init(struct device_node *np)
- {
- 	struct rockchip_clk_provider *ctx;
-+	unsigned long soc_nr_clks;
-
--	ctx = rk3188_common_clk_init(np);
-+	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3066a_clk_branches,
-+						   ARRAY_SIZE(rk3066a_clk_branches)) + 1;
-+	ctx = rk3188_common_clk_init(np, soc_nr_clks);
- 	if (IS_ERR(ctx))
- 		return;
-
-@@ -812,11 +819,14 @@ CLK_OF_DECLARE(rk3066a_cru, "rockchip,rk3066a-cru", rk3066a_clk_init);
- static void __init rk3188a_clk_init(struct device_node *np)
- {
- 	struct rockchip_clk_provider *ctx;
-+	unsigned long soc_nr_clks;
- 	struct clk *clk1, *clk2;
- 	unsigned long rate;
- 	int ret;
-
--	ctx = rk3188_common_clk_init(np);
-+	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3188_clk_branches,
-+						   ARRAY_SIZE(rk3188_clk_branches)) + 1;
-+	ctx = rk3188_common_clk_init(np, soc_nr_clks);
- 	if (IS_ERR(ctx))
- 		return;
-
---
-2.39.2
-
+SGksDQoNCkkgZm91bmQgdGhpcyBwYXRjaCBbMV0gd2hpY2ggaXMgbmVjZXNzYXJ5IGZvciBhIHBy
+b2plY3QgSSdtIGN1cnJlbnRseQ0Kd29ya2luZyBvbi4gSSdtIHVzaW5nIHBoeWJvYXJkLXdlZ2Eg
+WzJdIHdpdGggYW4gYW0zMzUgQVJNIFNvQyB3aGljaCBJDQp3YW50IHRvIG1ha2UgeTIwMzggcHJv
+b2YuDQpJcyB0aGVyZSBhbnkgcmVhc29uIGl0IHdhcyBuZXZlciBhY2NlcHRlZD8NCg0KWzFdaHR0
+cHM6Ly9sb3JlLmtlcm5lbC5vcmcvYWxsLzIwMjIwOTA4MTE1MzM3LjE2MDQyNzctMS1hcm5kQGtl
+cm5lbC5vcmcvDQoNCg0KWzJdaHR0cHM6Ly9naXQua2VybmVsLm9yZy9wdWIvc2NtL2xpbnV4L2tl
+cm5lbC9naXQvc3RhYmxlL2xpbnV4LmdpdC90cmVlL2FyY2gvYXJtL2Jvb3QvZHRzL3RpL29tYXAv
+YW0zMzV4LXdlZ2EtcmRrLmR0cw0KDQpSZWdhcmRzDQpMZW9uYXJkDQo=
 
