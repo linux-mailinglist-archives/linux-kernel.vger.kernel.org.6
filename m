@@ -1,196 +1,218 @@
-Return-Path: <linux-kernel+bounces-226614-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C60C9140FB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:14:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB44914103
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89298B228DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:13:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE4BD1C21F99
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81ED7376;
-	Mon, 24 Jun 2024 04:13:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC8410957;
+	Mon, 24 Jun 2024 04:18:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I8isRJ8W"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uK/ch/sc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5EB4A31
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 04:13:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F97DE567;
+	Mon, 24 Jun 2024 04:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719202427; cv=none; b=l6BhPtlNHxPVmZyE9JHkgkB448FsTYxmykUUuhTngl1PVcVHTuiZWCpCSa5QiGQ8SkZebQowLQm3W3rBK028iPZj4WQ5Q2oqnECwrXFqDsDOzEfOWgADEXkISvcQTZVL/X6osU0K8g05dGWW5P3A2rSSVAM3AiB0ecx8lc5TWkQ=
+	t=1719202723; cv=none; b=rMGNNIVrCeNMNtVyj9XWscBASq3UJwxlxRnuZKtZVzlZAffPrjfu9xfzFtW3tAf5HUkrTpa462gvtIzBe1oA3Tw6/HpR5RzGruUYNGHuOHS6yVQE0WJ4BPwsWULIQk1eY77J3OWQRyM6qmUCtS76QYP6bc0VGaWjc3mcZVCbYIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719202427; c=relaxed/simple;
-	bh=g40p/038wh7aZoKP0QQSTY6JQqMKagXDwC16tPe4zhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pgZ1lUHRi965WRaVj3Gy0mwIyHDX7sA4SYgozhaxeqcrATCf1A0pScNDEur6sQiyCHWMdYI66qof6dN3caov/emdq9ayXsEHawtsgPK93qlBqAU0Wic2d7Gjmq/LYKqolrFdbBYDsuiU8xENfbzVsObGBqKJsxXFQfTN/vnw310=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I8isRJ8W; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1fa07e4f44eso13175935ad.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 21:13:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719202425; x=1719807225; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8cBzkTKbl++ipTccj+tqWjGiU8poirFQQErpQeRckjI=;
-        b=I8isRJ8WsI8CdsASd+vWuGIv/oixor/Z/MwVtLx8yClY+RYsZPdtyuEHU2mKIDm9p7
-         ly5m0XeNrc4m2J2c9DoDkGMyuDItKW8mo02K909+H0Zws7uLG4SjMU9xsql4ncfSEnqA
-         3ueL2YiJuzuJdPZaTnla1f98NeXbA7KUf/yedYkpnLikIQdrsKo/CboLpq0UhSSDNCRs
-         b7TlTaLdSUnejsAZQpD7TIeB9fid/ZfFasRTtIcPbdU/Ru5gz41gYZUzI2yFqs4olXaD
-         3yeabTv0fIb/qDDKu3Gbzgtbj671i1q32xLuLx4MBAC4xtVB3gGSnVqEa2mROCSBwF8T
-         L6iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719202425; x=1719807225;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8cBzkTKbl++ipTccj+tqWjGiU8poirFQQErpQeRckjI=;
-        b=bVVC/E3mdpPL/HW5V4+PDdTRD7VGOKTJkht2Rj9o05M1vdZHc3lzGNvEMbsgEf3bqY
-         7SCjWv8uCWZCRQhfu78tW/PKzJoV3to5zBf2ZmjQzrm1n9JeoyWwveSWcKbZtqkn1/m1
-         /p4sBOKPvcl5msP8qh70PpossJA+Mwe7PFIzLf6ijLiPf23T+CZfrHxzUyV7mRE4SNqu
-         D41FOLCpC2X6rDJV8vHt3vEncaSo3KCE8ItiLn9m988Hyyj3dihSrpbchc2nfoykss2g
-         XzMfpS92/OUj6MQsfnIbtcpGrWAF5P/7ZGFNgzzrfRc384e+Q+L5QIT4PjLacvKGDyO1
-         W9/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVWpFuJAkOpX2cGubKsMfnNl5U1MLeThOO5oz6vYFIZ3gqH8RiheesVQbzAp2LwzTA7Nw/Y6GvPmL1xO4gLG2YvOI2S6MPDx3RXDqS0
-X-Gm-Message-State: AOJu0YzLZb53CPdruvQpuSwTG8sGS50/WSQmCdBlDq204wP6gFRdH2ag
-	b9amQt9Jxp8u7ggoaCe17AK9p0r3R+lEeXE9m9S8nL2drQoWEmC6dDnybebeag==
-X-Google-Smtp-Source: AGHT+IEFH6u4Phxu4XFbcP6oZlGouPp6ySyJ7RzMJnUbJnrqSy6lUpugRFFKO7YbCnXWz8uf73KoHg==
-X-Received: by 2002:a17:902:cece:b0:1f4:9b2a:b337 with SMTP id d9443c01a7336-1fa238e4490mr46624255ad.3.1719202425410;
-        Sun, 23 Jun 2024 21:13:45 -0700 (PDT)
-Received: from thinkpad ([220.158.156.124])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3d8b7esm52445395ad.207.2024.06.23.21.13.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 21:13:45 -0700 (PDT)
-Date: Mon, 24 Jun 2024 09:43:39 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	quic_kathirav@quicinc.com, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 3/8] dt-bindings: PCI: qcom: Add IPQ9574 PCIe
- controller
-Message-ID: <20240624041339.GC10250@thinkpad>
-References: <20240501040800.1542805-1-mr.nuke.me@gmail.com>
- <20240501040800.1542805-13-mr.nuke.me@gmail.com>
+	s=arc-20240116; t=1719202723; c=relaxed/simple;
+	bh=5rXzE8ih5BA7NWoCgOpp0uj7Iq8n+pzj/uDSZFRNswo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J+yl3HKrDag5hMSHbRE+6gmwvwvGl4ln6KEn5oTeqmoR3F9jDljUOS4C5tzb6MK2BnCdqTNZzEPRv8dUS/Xp2mpYB7zblt8MbjD+4i92f4BRx3+idtip7UyR6mmO6ditXIpc0pp6wNNTXu7neqX4GCbtwHkD6qB7C0k1psSjie4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uK/ch/sc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F388C4AF0D;
+	Mon, 24 Jun 2024 04:18:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719202723;
+	bh=5rXzE8ih5BA7NWoCgOpp0uj7Iq8n+pzj/uDSZFRNswo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uK/ch/scz9GSiBmU53r1ZNSJpgNXv2pwqj4LX5OlLQOinbtOD2q4sWq7DsHv0UoPb
+	 G3pkMs/r6edipR+duY+lOfUqhJJ/sqto57IXuLi9ELlFX1FUdLOzHnAC4xWAIkoa4H
+	 NgBp/3+s4V2/HY05ZTsVUTiuoh7D/3PpnOJaomP7mSP2XTPCoivJHU+eXloI/zlgN/
+	 LG7zIJ4VitbYGcaxvPu+Iobog4iSCCj/VXdPrJzaLhtBSLQfBFOvZNrShMvQRJZvPg
+	 0rtuZ/l0d5k/JgubWkj7cwDzuqo7qbESnr6dmIhuMSTdwOuNXQmTLzP2rYEs8HnDqd
+	 qjSKA2rxVnJVA==
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a724cd0e9c2so73403566b.3;
+        Sun, 23 Jun 2024 21:18:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXxTz4HhICs0cY5AeR2odj2mZc71mytvZYRbEbJJiaVhjBsWODmF33CZEbvP7IzJOhF2GwMHQvEUpapGJxsN5zl5BClM7s4wqlUY+dVtjL4OxGpV3mRO4huJIYkqMh7+k2A
+X-Gm-Message-State: AOJu0YzxIllLONBakW4jbUbi7M1psedNso4qFnwYq9F4V5m2jfMG7ggd
+	IWBC3mXWQqCmz9mK2j71wm6gUUTR4GdGVUoZ7hfEqOk35il7wUi8gcLBOOk4D2diNycbdzv3nMI
+	l10aVHwtUmcWn0qRGYdSIGAahsZU=
+X-Google-Smtp-Source: AGHT+IHOYd9vVz4URvPOIF6LmQYV/+/OcNmrlh+9T34LxUCw4pN755B5CO++mGlud2aikWtJEn01ZJqR4IH+EJUGKwQ=
+X-Received: by 2002:a17:907:c815:b0:a72:5226:3307 with SMTP id
+ a640c23a62f3a-a7252263ff9mr121771866b.57.1719202721607; Sun, 23 Jun 2024
+ 21:18:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240501040800.1542805-13-mr.nuke.me@gmail.com>
+References: <20240619080940.2690756-1-maobibo@loongson.cn> <20240619080940.2690756-5-maobibo@loongson.cn>
+ <CAAhV-H74raJ9eEWEHr=aN6LhVvNUyP6TLEDH006M6AnoE8tkPg@mail.gmail.com>
+ <58d34b7d-eaad-8aa8-46c3-9212664431be@loongson.cn> <CAAhV-H6CzPAxwymk16NfjPGO=oi+iBZJYsdSMiyp2N2cDsw54g@mail.gmail.com>
+ <379d63cc-375f-3e97-006c-edf7edb4b202@loongson.cn>
+In-Reply-To: <379d63cc-375f-3e97-006c-edf7edb4b202@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Mon, 24 Jun 2024 12:18:29 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H6vXMr5bviGoE1pojVswOkUWBkv9hOS4Jd-6Exb+G+1+g@mail.gmail.com>
+Message-ID: <CAAhV-H6vXMr5bviGoE1pojVswOkUWBkv9hOS4Jd-6Exb+G+1+g@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] LoongArch: KVM: Add memory barrier before update
+ pmd entry
+To: maobibo <maobibo@loongson.cn>, Rui Wang <wangrui@loongson.cn>
+Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, 
+	Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Apr 30, 2024 at 11:07:54PM -0500, Alexandru Gagniuc wrote:
-> IPQ9574 has PCIe controllers which are almost identical to IPQ6018.
-> The difference is that the "iface" clock is replaced by the "snoc",
-> and "anoc". The "sleep" reset is replaced by an "aux" reset.
-> Document these differences along with the compatible string.
-> 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../devicetree/bindings/pci/qcom,pcie.yaml    | 37 +++++++++++++++++++
->  1 file changed, 37 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> index cf9a6910b542..ac6d2b1b8702 100644
-> --- a/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> +++ b/Documentation/devicetree/bindings/pci/qcom,pcie.yaml
-> @@ -26,6 +26,7 @@ properties:
->            - qcom,pcie-ipq8064-v2
->            - qcom,pcie-ipq8074
->            - qcom,pcie-ipq8074-gen3
-> +          - qcom,pcie-ipq9574
->            - qcom,pcie-msm8996
->            - qcom,pcie-qcs404
->            - qcom,pcie-sdm845
-> @@ -161,6 +162,7 @@ allOf:
->              enum:
->                - qcom,pcie-ipq6018
->                - qcom,pcie-ipq8074-gen3
-> +              - qcom,pcie-ipq9574
->      then:
->        properties:
->          reg:
-> @@ -397,6 +399,39 @@ allOf:
->              - const: axi_m_sticky # AXI Master Sticky reset
->              - const: axi_s_sticky # AXI Slave Sticky reset
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - qcom,pcie-ipq9574
-> +    then:
-> +      properties:
-> +        clocks:
-> +          minItems: 4
-> +          maxItems: 4
+On Mon, Jun 24, 2024 at 10:21=E2=80=AFAM maobibo <maobibo@loongson.cn> wrot=
+e:
+>
+>
+>
+> On 2024/6/24 =E4=B8=8A=E5=8D=889:56, Huacai Chen wrote:
+> > On Mon, Jun 24, 2024 at 9:37=E2=80=AFAM maobibo <maobibo@loongson.cn> w=
+rote:
+> >>
+> >>
+> >>
+> >> On 2024/6/23 =E4=B8=8B=E5=8D=886:18, Huacai Chen wrote:
+> >>> Hi, Bibo,
+> >>>
+> >>> On Wed, Jun 19, 2024 at 4:09=E2=80=AFPM Bibo Mao <maobibo@loongson.cn=
+> wrote:
+> >>>>
+> >>>> When updating pmd entry such as allocating new pmd page or splitting
+> >>>> huge page into normal page, it is necessary to firstly update all pt=
+e
+> >>>> entries, and then update pmd entry.
+> >>>>
+> >>>> It is weak order with LoongArch system, there will be problem if oth=
+er
+> >>>> vcpus sees pmd update firstly however pte is not updated. Here smp_w=
+mb()
+> >>>> is added to assure this.
+> >>> Memory barriers should be in pairs in most cases. That means you may
+> >>> lose smp_rmb() in another place.
+> >> The idea adding smp_wmb() comes from function __split_huge_pmd_locked(=
+)
+> >> in file mm/huge_memory.c, and the explanation is reasonable.
+> >>
+> >>                   ...
+> >>                   set_ptes(mm, haddr, pte, entry, HPAGE_PMD_NR);
+> >>           }
+> >>           ...
+> >>           smp_wmb(); /* make pte visible before pmd */
+> >>           pmd_populate(mm, pmd, pgtable);
+> >>
+> >> It is strange that why smp_rmb() should be in pairs with smp_wmb(),
+> >> I never hear this rule -:(
+> > https://docs.kernel.org/core-api/wrappers/memory-barriers.html
+> >
+> > SMP BARRIER PAIRING
+> > -------------------
+> >
+> > When dealing with CPU-CPU interactions, certain types of memory barrier=
+ should
+> > always be paired.  A lack of appropriate pairing is almost certainly an=
+ error.
+>     CPU 1                 CPU 2
+>          =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D       =3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>          WRITE_ONCE(a, 1);
+>          <write barrier>
+>          WRITE_ONCE(b, 2);     x =3D READ_ONCE(b);
+>                                <read barrier>
+>                                y =3D READ_ONCE(a);
+>
+> With split_huge scenery to update pte/pmd entry, there is no strong
+> relationship between address ptex and pmd.
+> CPU1
+>       WRITE_ONCE(pte0, 1);
+>       WRITE_ONCE(pte511, 1);
+>       <write barrier>
+>       WRITE_ONCE(pmd, 2);
+>
+> However with page table walk scenery, address ptep depends on the
+> contents of pmd, so it is not necessary to add smp_rmb().
+>          ptep =3D pte_offset_map_lock(mm, pmd, address, &ptl);
+>          if (!ptep)
+>                  return no_page_table(vma, flags, address);
+>          pte =3D ptep_get(ptep);
+>          if (!pte_present(pte))
+>
+> It is just my option, or do you think where smp_rmb() barrier should be
+> added in page table reader path?
+There are some possibilities:
+1. Read barrier is missing in some places;
+2. Write barrier is also unnecessary here;
+3. Read barrier is really unnecessary, but there is a better API to
+replace the write barrier;
+4. Read barrier is really unnecessary, and write barrier is really the
+best API here.
 
-There are 6 clocks defined for this platform but binding just requires 4?
+Maybe Rui Wang knows better here.
 
-- Mani
+Huacai
 
-> +        clock-names:
-> +          items:
-> +            - const: axi_m # AXI Master clock
-> +            - const: axi_s # AXI Slave clock
-> +            - const: axi_bridge # AXI bridge clock
-> +            - const: anoc
-> +            - const: snoc
-> +            - const: rchng
-> +        resets:
-> +          minItems: 8
-> +          maxItems: 8
-> +        reset-names:
-> +          items:
-> +            - const: pipe # PIPE reset
-> +            - const: aux # AUX reset
-> +            - const: sticky # Core Sticky reset
-> +            - const: axi_m # AXI Master reset
-> +            - const: axi_s # AXI Slave reset
-> +            - const: axi_s_sticky # AXI Slave Sticky reset
-> +            - const: axi_m_sticky # AXI Master Sticky reset
-> +            - const: ahb # AHB Reset
-> +
->    - if:
->        properties:
->          compatible:
-> @@ -507,6 +542,7 @@ allOf:
->                  - qcom,pcie-ipq8064v2
->                  - qcom,pcie-ipq8074
->                  - qcom,pcie-ipq8074-gen3
-> +                - qcom,pcie-ipq9574
->                  - qcom,pcie-qcs404
->      then:
->        required:
-> @@ -566,6 +602,7 @@ allOf:
->                - qcom,pcie-ipq8064-v2
->                - qcom,pcie-ipq8074
->                - qcom,pcie-ipq8074-gen3
-> +              - qcom,pcie-ipq9574
->                - qcom,pcie-qcs404
->      then:
->        properties:
-> -- 
-> 2.40.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+>
+> Regards
+> Bibo Mao
+> >
+> >
+> > Huacai
+> >
+> >>
+> >> Regards
+> >> Bibo Mao
+> >>>
+> >>> Huacai
+> >>>
+> >>>>
+> >>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> >>>> ---
+> >>>>    arch/loongarch/kvm/mmu.c | 2 ++
+> >>>>    1 file changed, 2 insertions(+)
+> >>>>
+> >>>> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
+> >>>> index 1690828bd44b..7f04edfbe428 100644
+> >>>> --- a/arch/loongarch/kvm/mmu.c
+> >>>> +++ b/arch/loongarch/kvm/mmu.c
+> >>>> @@ -163,6 +163,7 @@ static kvm_pte_t *kvm_populate_gpa(struct kvm *k=
+vm,
+> >>>>
+> >>>>                           child =3D kvm_mmu_memory_cache_alloc(cache=
+);
+> >>>>                           _kvm_pte_init(child, ctx.invalid_ptes[ctx.=
+level - 1]);
+> >>>> +                       smp_wmb(); /* make pte visible before pmd */
+> >>>>                           kvm_set_pte(entry, __pa(child));
+> >>>>                   } else if (kvm_pte_huge(*entry)) {
+> >>>>                           return entry;
+> >>>> @@ -746,6 +747,7 @@ static kvm_pte_t *kvm_split_huge(struct kvm_vcpu=
+ *vcpu, kvm_pte_t *ptep, gfn_t g
+> >>>>                   val +=3D PAGE_SIZE;
+> >>>>           }
+> >>>>
+> >>>> +       smp_wmb();
+> >>>>           /* The later kvm_flush_tlb_gpa() will flush hugepage tlb *=
+/
+> >>>>           kvm_set_pte(ptep, __pa(child));
+> >>>>
+> >>>> --
+> >>>> 2.39.3
+> >>>>
+> >>
+> >>
+>
+>
 
