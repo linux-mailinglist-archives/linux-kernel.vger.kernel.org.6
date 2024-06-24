@@ -1,168 +1,155 @@
-Return-Path: <linux-kernel+bounces-227512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09A4A91526D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:31:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 526F9915271
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:32:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD441F241D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:31:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B90A1C213AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:32:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B882E19D09E;
-	Mon, 24 Jun 2024 15:31:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67D819D061;
+	Mon, 24 Jun 2024 15:32:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Np5jKcQT"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VNJO/mQk"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2844F19B3CE;
-	Mon, 24 Jun 2024 15:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4641D13DDB8
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:32:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719243069; cv=none; b=t43wwyp1zreNeErg9nNBiDOY5O9GE3tQL1cdzjIdrHcYVfP9LeUANCELoHUwkeDO015CszSjS3LKq8Ia9AFk1k+1UwSt0es1kFzqH903pq4IzIBAGW8LpXnLO9ltCQi5ffEw86IOQCDAahnGPXnMzTMagFf6Kto/0pwUjecDpv8=
+	t=1719243143; cv=none; b=rFtltTv3aY8M6/JRN+w0q/1heySfyFHnkivb/By2+I84PDreD5Nn2nbxa8w1tf6Ol2oFm0mDKBBiXDKvkJ6scEcZJuT8O80AKN2b4jBEJ1YMxadq13gL9cwpQZZM01wDDG8pRxx/2HfNn5PX49PRQxf0uymNcvSTFqTuLtB9yME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719243069; c=relaxed/simple;
-	bh=Gj1ET0gnfPT9VVrwaIAa4qFWM+9FJ5WfJJ8Gaj9uoFQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rG7jQXWnrqFPCSmaB3rPhKsk8S/ihYoCyP2VP2vHea52oVquvJtS56UObe6dW7EgAKG2R6XYcOocsqp/vMtdTCcQ/TI8jDOha3F1CLZ+wfYDuLgo/r3n/7Pa8PDUT4Zh5HBAcJHndMWwtIK+pvti5NNPUpgzqxo2yiCPzM4KDCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Np5jKcQT; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ec1620a956so53917731fa.1;
-        Mon, 24 Jun 2024 08:31:07 -0700 (PDT)
+	s=arc-20240116; t=1719243143; c=relaxed/simple;
+	bh=WawAVsLJ2wrVp06E1yLAnPzm2a05JueYQ9ExxNigc3k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ZWueveHI4nbVgyKlYlyhGx5L718hx2w9+Oj6cS2zxGAVPe47+3m3go3TRxlnNoh5Yg4a6QCpDyE7DUs8aJMJzk3ZTAZvpGtZueZZfMUQQ2qx6boZERG1UYLX98u6Hq1OZ9ZkIB8CVE0hVQnx84cu9q1SAnlWkpB0NvjhKUNBK+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VNJO/mQk; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c7d2380cb8so3818680a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:32:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719243066; x=1719847866; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gj1ET0gnfPT9VVrwaIAa4qFWM+9FJ5WfJJ8Gaj9uoFQ=;
-        b=Np5jKcQT3VicLmEeHbQATDn8nHhS56TAafc7WIztXw9MUD50bLFAIPlHKGwgncYl9M
-         OLudoD2yFOv255gfGjZUr6VSeR9EuPFONBBDJ6/gIfFGNheCYOn/RKGb3HJ4n4ryA7HV
-         pa8yzbokjvh23G7IouuQueF59W5CEBRJgcxqYDPnq/t+RNImeCHVAikOpNQuxP904cC0
-         LY1JYgeKOWjBV/8loNsQWoo1n+d1LFiM6kJsplnxkm6C6xvcMLVJpBu0SbNTtumXonBf
-         IYJkHZYeT65llHmlRU68xzwgtrQ4RzJR4fePabJQVzvndesL84GpU+nSoaK4RBUfOUID
-         SGIg==
+        d=google.com; s=20230601; t=1719243140; x=1719847940; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WawAVsLJ2wrVp06E1yLAnPzm2a05JueYQ9ExxNigc3k=;
+        b=VNJO/mQk+GxT8wD6aDQAXS8zflMK9Ro6iIcPDqtNmNju/Uve6L8KxkevvPePWzhIKh
+         Tw6zdF5TkfVl61LpzJNykotarPm3UBBUnbhjVrg7G9mLOvQLmerbGW5lBtqUTiQ5EAyI
+         Cx4geUZXKTYDAQUWcRdMZxaimKeNiGM2Pnoo+TwnDzDIyzuRp0aWLQfnyHli7sA+9kIT
+         GKlJGys/i1FtUoo5zSkW63wND6PNQiq1V7EJWxrPLkvfeDGvnxVfaCTdNoqFEBKAt95w
+         GubCAPj58lvBOJPkRb2SFuxzqnhfIqd3CJ/bKd5vk6vnPTFTTOvGFRK2CkJHetjdAUY7
+         ox3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719243066; x=1719847866;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gj1ET0gnfPT9VVrwaIAa4qFWM+9FJ5WfJJ8Gaj9uoFQ=;
-        b=hbogdj5gNsxc5n3wUTcpZa8ot7P/33ezWI1WwU5eIeFY/Lr4CXTg5Ck8U8HfiDe5hS
-         Hsv/6vArqfSldsSUP6/4Cs9+h9Ej2qYGjSKBYiAiELFpaTMdfO+HIhLmiiQD1zlPujl5
-         LwXNVZ0DnvOq6mtmEm9qZ1LGMBdyUoU/EWM88quweG8uPXTFYQXBCtGro2+ytzhepYnP
-         FbmYy9imd3GjDpNqEgJiounU0TE479j9gFcS/Gc9TdiZ875qCotOpRLLF4jcT5ZcEAI6
-         Sm7d39ZYn9eV+h/G38r3dobBi9hrfCVPjRqujVf4EfdneXSPy3qVPqGQMisQwZ+rDklW
-         UULA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1mWyLVmIzOFZeBKSaL48HuBmIjS1fJbQ16e56dFQ9A6B2l24xq9YVp3iDOlm+sD3dwxxq/UubjdhK9RrbcgxSe8A1xdMJ8BTQ46PCrwLi3oo2wZIOAkkNXNWRwx2b7+jx5yJ2u45l8BHi1Oqalx5/VyWbuFC9PwlJh3OTqD9QIfzYZrWPXQpHT8z/43MtpcIK9iSG8R/y69+hbJZCe9HanMFBlnuOhVN3uxjmkrO+EyTGBxUu+zzaH7PkGLuPG6aACF10cStb5/ECOg0WB/qqBlfiPaC+Lz7t1FUQ/KQQXNfOnvx1dhrfCHxH8Hcn4/yGRsqoJUuB79Uct0Fva+Fn11rEKfYTHtYV7EnXO48Kgfm07KYX
-X-Gm-Message-State: AOJu0YziUeJ4sGwa0ZUUiyZIjMoiBxULtra7D9VGImc5Q9+1S3YS1VNJ
-	j+/HTusVLx8CWfAyOolPXVmbeZdd1ZuvNYm8pFRf3i/eys/M/V4a5r/XzysX9PlW3jhpWEjZUX3
-	LfiBIkml/PDqSVv7YgPgI3GA79TQ=
-X-Google-Smtp-Source: AGHT+IGOXIoT1yyvzTU3Ej6Jnd5fItzJypxgtcq3Cn2K/G/HW2nUFkGYBhoo/Zo5wXa3klvOARHm0We8kMgwI5CBPKQ=
-X-Received: by 2002:a2e:720b:0:b0:2ec:4096:4bc6 with SMTP id
- 38308e7fff4ca-2ec5b318000mr28549631fa.7.1719243066027; Mon, 24 Jun 2024
- 08:31:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719243140; x=1719847940;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=WawAVsLJ2wrVp06E1yLAnPzm2a05JueYQ9ExxNigc3k=;
+        b=nfaZP7DMT8lVPYRmWP4bMTJmEFhg0yvZior1788wOz5OdrzwuLM3UaI3JDwWdLAYMZ
+         rR69lAII4xSYijed8UB7MaEpysE3Njpwz9NVH/67s6tLti9QArwbNG90wfKXvfIK02qP
+         yDMhVHj5UoKpvAeNmzHAVzEH5yMCZXMKN0L8HBHwTUY5D8qi5GkP66MTG86x8wf/s97U
+         qxyJE+SzEi1YuGl5Kz8MLw6e0+KDx4ZayWNPwG8t2j5n7NTfv5GRCnCYBVNk7KxoNTOQ
+         ThCjtwmbjyoPYB3Cie4Zsc4ozfZ0KjJacBGvI2myKSAlXUW5wVCWygAMJycjFwwJKy4e
+         91zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcZ0fVtVzQs5+eD5ECtNqskOI5nf9q6vVgQ8RZXMofq+7Gn2bfUph73mAF9GDybV8SCx0dgEO/Go3yVjUSQvRPlgCK2DXN9m8KW3Nx
+X-Gm-Message-State: AOJu0Yya6HxWYHSz+GgqKYhgabZRvO1IEw9g1+GDoUcrwbIuDSgyi+Vq
+	W23A1Bz1x6/CiT7r2dvBwi2XB/tdaM5qnLHH3/WooXYXvsPYybPvAYwg/x4gsJAIasbHYsEFb1w
+	hMg==
+X-Google-Smtp-Source: AGHT+IEtazAEW7Z9YwGGcKXL++Dckd0kAEwC6pBQKn1v/nxqOqzOdwWoLb56caKLmrQdFmUesETPkh89cIs=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:90a:2ecc:b0:2c6:d13f:3f9e with SMTP id
+ 98e67ed59e1d1-2c8489b9ed7mr123696a91.1.1719243139430; Mon, 24 Jun 2024
+ 08:32:19 -0700 (PDT)
+Date: Mon, 24 Jun 2024 08:32:18 -0700
+In-Reply-To: <504fa0a7264d4762afda2f13c3525ce5@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240605123850.24857-1-brgl@bgdev.pl> <171889385036.4585.6482250630135606154.git-patchwork-notify@kernel.org>
- <0b144517-4cc5-4c23-be57-d6f5323690ec@163.com> <CAMRc=Mf2C4ywa+wQ6pcq5RtehQD00dDhzvS6sDcD8tAn=UypUA@mail.gmail.com>
- <33c7587b-83a4-4be7-b00a-d30874df8c22@163.com>
-In-Reply-To: <33c7587b-83a4-4be7-b00a-d30874df8c22@163.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Mon, 24 Jun 2024 11:30:53 -0400
-Message-ID: <CABBYNZ+X+_RfZ-fVGrBHhAdbneU+613nx1NTw7+e8ep4JtF6nQ@mail.gmail.com>
-Subject: Re: [PATCH v9 0/2] pwrseq: introduce the subsystem and first driver
-To: Lk Sii <lk_sii@163.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, patchwork-bot+bluetooth@kernel.org, marcel@holtmann.org, 
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
-	kvalo@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org, 
-	lgirdwood@gmail.com, broonie@kernel.org, catalin.marinas@arm.com, 
-	will@kernel.org, bhelgaas@google.com, saravanak@google.com, 
-	geert+renesas@glider.be, arnd@arndb.de, neil.armstrong@linaro.org, 
-	m.szyprowski@samsung.com, elder@linaro.org, srinivas.kandagatla@linaro.org, 
-	gregkh@linuxfoundation.org, abel.vesa@linaro.org, mani@kernel.org, 
-	lukas@wunner.de, dmitry.baryshkov@linaro.org, amit.pundir@linaro.org, 
-	wuxilin123@gmail.com, linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-wireless@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org, 
-	linux-pm@vger.kernel.org, bartosz.golaszewski@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+References: <20230916003118.2540661-1-seanjc@google.com> <504fa0a7264d4762afda2f13c3525ce5@huawei.com>
+Message-ID: <ZnmRgqD6FmXNNzzI@google.com>
+Subject: Re: [PATCH 00/26] KVM: vfio: Hide KVM internals from others
+From: Sean Christopherson <seanjc@google.com>
+To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Huacai Chen <chenhuacai@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Anup Patel <anup@brainfault.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Janosch Frank <frankja@linux.ibm.com>, Claudio Imbrenda <imbrenda@linux.ibm.com>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "x86@kernel.org" <x86@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Tony Krowiak <akrowiak@linux.ibm.com>, 
+	Halil Pasic <pasic@linux.ibm.com>, Jason Herne <jjherne@linux.ibm.com>, 
+	Harald Freudenberger <freude@linux.ibm.com>, Alex Williamson <alex.williamson@redhat.com>, 
+	Andy Lutomirski <luto@kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>, 
+	"linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>, 
+	"kvm-riscv@lists.infradead.org" <kvm-riscv@lists.infradead.org>, 
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
+	"linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>, Anish Ghulati <aghulati@google.com>, 
+	Venkatesh Srinivas <venkateshs@chromium.org>, Andrew Thornton <andrewth@google.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
-
-On Fri, Jun 21, 2024 at 5:05=E2=80=AFAM Lk Sii <lk_sii@163.com> wrote:
+On Thu, Jun 20, 2024, Shameerali Kolothum Thodi wrote:
+> > This is a borderline RFC series to hide KVM's internals from the rest o=
+f
+> > the kernel, where "internals" means data structures, enums, #defines,
+> > APIs, etc. that are intended to be KVM-only, but are exposed everywhere
+> > due to kvm_host.h (and other headers) living in the global include path=
+s.
 >
-> On 2024/6/21 14:36, Bartosz Golaszewski wrote:
-> > On Fri, Jun 21, 2024 at 3:14=E2=80=AFAM Lk Sii <lk_sii@163.com> wrote:
-> >>
-> >>
-> >>
-> >> On 2024/6/20 22:30, patchwork-bot+bluetooth@kernel.org wrote:
-> >>> Hello:
-> >>>
-> >>> This series was applied to bluetooth/bluetooth-next.git (master)
-> >>> by Bartosz Golaszewski <bartosz.golaszewski@linaro.org>:
-> >>>
-> >> Hi luiz,
-> >>
-> >> i am curious why Bartosz is able to merge his changes into bluetooth
-> >> development tree bluetooth-next directly.
-> >>
-> >
-> > This conversation is getting progressively worse...
-> >
-> >> 1)
-> >> his changes should belong to *POWER* scope instead of *Bluetooth*
-> >> obviously, however, there are *NOT* any SOB tag from either power and
-> >> bluetooth maintainer. these changes currently only have below Acked-by
-> >> and Signed-off-by tags:
-> >>
-> >> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> >> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >>
-> >
-> > It's a new subsystem that has been discussed and reviewed for months
-> > and thoroughly tested. Please refer to the cover letter under v8
-> > linked in this thread. It's not related to power-management or
-> > power-supply, it's its own thing but IMO the best place to put it is
-> > under drivers/power/. And I will maintain it.
-> >
-> >> 2)
-> >> his changes have not merged into linus mainline tree yet.
-> >>
-> >
-> > This is why they are in next! They are scheduled to go in during the
-> > upcoming merge window. But since changes belong in multiple trees, we
-> > need a cross-tree merge.
-> >
-> >> 3)
-> >> perhaps, it is safer to pull his changes from linus mainline tree when
-> >> merged than to merge into bluetooth-next firstly.
-> >>
-> >
-> > It's not safer at all, why would spending less time in next be safer?
-> >
-> it seems this patch serial(new subsystem) does not depend on bluetooth
-> and also does not belong to bluetooth subsystem, but have been contained
-> by tip of bluetooth tree.
->
-> why not follow below merging produce?
-> 1) you send this patch serials to Linus to merge within linus mainline tr=
-ee
-> 2) luiz then pull your changes from linus mainline tree.
+> Hi Sean,
+>=20
+> Just thought of checking with you on this series. Do you have plans to re=
+vive this
+> series?
 
-This was discussed already, but in case you didn't follow if we need
-to incorporate changes earlier we can't really wait the merge window
-for the changes to be merged first into the Linus tree. Anyway Bartosz
-is the maintainer of Power Sequence subsystem, and several others
-drivers, so I think it is safe to trust his judgment here.
+Yep!
+
+> The reason I am asking is, on ARM64/KVM side we do have a requirement
+> to share the KVM VMID with SMMUV3. Please see the RFC I sent out earlier =
+this
+> year[1]. The series basically provides a way for KVM to pin a VMID and al=
+so
+> associates an iommufd ctx with a struct kvm * to retrieve that VMID.=20
+>=20
+> As mentioned above, some of the patches in this series(especially 1-4 & 6=
+) that
+> does the VFIO cleanups and dropping CONFIG_KVM_VFIO looks very straightfo=
+rward
+> and useful. I am thinking of including those when I re-spin my RFC series=
+, if
+> that=E2=80=99s ok.
+
+Please don't include them, as the patch they build towards (patch 5) is bug=
+gy[*],
+and I am fairly certain that at least some of the patches will change signi=
+ficantly.
+
+I expect to re-start working on the series in ~2 weeks, and am planning on =
+actively
+pushing the series (i.e. not ignoring it for months on end).
+
+[*] https://lore.kernel.org/all/ZWp_q1w01NCZi8KX@google.com
+
+> Please let me know your thoughts.
+>
+> [1]. https://lore.kernel.org/linux-iommu/20240209115824.GA2922446@myrica=
+=20
 
