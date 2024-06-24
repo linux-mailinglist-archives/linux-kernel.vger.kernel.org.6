@@ -1,132 +1,159 @@
-Return-Path: <linux-kernel+bounces-227735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE60915602
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:57:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6421915609
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:57:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69FEE28B4F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:57:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5027A1F223A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15BF11A00F0;
-	Mon, 24 Jun 2024 17:55:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E6B1A073E;
+	Mon, 24 Jun 2024 17:55:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+/IXTZX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C35ont+Z"
+Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5435B19FA6F;
-	Mon, 24 Jun 2024 17:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA9619FA8C;
+	Mon, 24 Jun 2024 17:55:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719251720; cv=none; b=EUVFRhEWKjgvA/zQ9c+AvwQlfx5FcgORP/QWJ52D9OUTKrEZxjEJCQSIrbZiuvO2xb3oAdmTslN6kns4zRcNVNX+Wa2Wv+/+MiRDuafqyItEd224jSIFm0bqYCaInu9guJtrWOGwzlZ2ab2ic4WFuX4p2/2hMul5Nfr70Kw126U=
+	t=1719251756; cv=none; b=JrAMXLXKCPYbzOf2Tp7mTRqur49D2XGb35v8iMQg1NzdlRUsgEiB/oqwp/jeTVppB4fRSATXBw7hIYC657ZqBCCe16RUPZB/rPwdh6rOduEhuvCr8wxD9ackyTss+4CqGS8+y/ZepDqwcy+HHyXUuaVU10u5/X+YEClRdqGfMUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719251720; c=relaxed/simple;
-	bh=Dsng+wl/JnpD45QyCVpIBvIgJ9Y7NDKt9V/oHYab9Co=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=RQ2Up9TieW5FaW8xXZ//ew2uAZoEzFx3JhGwOew5nflwXtFl7g4RulHyRBddHaMM1MMZ7Lrm3zhnlzblUyk/ugXp1vz1waRf7tEX8YkhrGVj44tuUJogc2ghtYLAoMFauT8Mkx4bjzHpHwnaRXyx3KBmy7doYNhuMuCjmFtvjNg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+/IXTZX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA936C2BBFC;
-	Mon, 24 Jun 2024 17:55:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719251719;
-	bh=Dsng+wl/JnpD45QyCVpIBvIgJ9Y7NDKt9V/oHYab9Co=;
-	h=Date:From:To:Cc:Subject:From;
-	b=c+/IXTZXQnIXX5XeyEK/y+kcEZ4jBpzwIcIVmDs2lam62zVSGEXa4f7dlZ7OEW/Tv
-	 cjGo/3Ytyl/Jexu425iXJ+I5OmYjiWOgUNyqzSexC9Aqg9cd/mqx2BDNMJqjOLlrqB
-	 Y0eY8cRiTpL2J1kfVvYN802pnNX/UrQcyQepKUN0CSOSySSeXnFYsh7VD4Y4WddnIz
-	 gLKYF403tuiRVpixsPjeg2tWzp6VYyNXEmesag6Oo0yNydSr9rQ5E+1dWtOl1wHRZr
-	 FM72R3ubEpG32NP/b4geV7OzcQPqNHvKKSVQtOj1K28C/AC3Z1M63Wc9sOhy5hkkEj
-	 NBO3oKjJomVcw==
-Date: Mon, 24 Jun 2024 18:55:15 +0100
-From: Mark Brown <broonie@kernel.org>
-To: William Breathitt Gray <wbg@kernel.org>
-Cc: David Lechner <dlechner@baylibre.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the counter-next tree with the
- counter-current tree
-Message-ID: <ZnmzA0nM0Sn2Awkn@sirena.org.uk>
+	s=arc-20240116; t=1719251756; c=relaxed/simple;
+	bh=RWADVfhWFlhGHNw50SjTloO0CnEZU0GqVDdf9sCPQNc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rfy6bG+tw2DADkq5xgtly0QxKCEIgxfZo3MoIk9pGwgBF3plVElFR5Mvu6RkdxN7ZaSBk4hm2mO76rqPigFYDiCl3Qd/jQjma4wtH82jR5oUnxvP/wGQPYTH2CDssf39HSs/6VbbF8zkRWfGQPBmJ2gjpDz6bIssMGpvNOwaYKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C35ont+Z; arc=none smtp.client-ip=209.85.222.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-80b58104615so1111422241.1;
+        Mon, 24 Jun 2024 10:55:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719251754; x=1719856554; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZpLcz/0IN/d1gmOSMD86qgPO3fLQN3Whaw5qjKXYF8E=;
+        b=C35ont+ZVOnFNZ7qV4e8MwqLAXmadSllJ8yA2gnmtFa3NGUvFYwQ4rP4ij7sKy+aio
+         UXjdinMR5jBvCKfC6XWBaJFafzNI20Ns5GVPk8XFsFaaq0HhyhGW3DC6JmkOCECAwKt/
+         abTX1oQ36SychUTqgL3Ozjjl9w+H011kTNRhmTircdYdXuwHaV8eNYrdR6SY4eySJUu4
+         q+oTzlOIG2+Z18K2C4AODygWkzHu55IwyjnYB8vCWfTEZSRibce9VCFPXYXqwDpip4wz
+         ecBV0LNa68KXljOzKbbTSbZ5HQoR162SHjJtNMuTfX23GxLkEqu1dyRIeELPa1475U+X
+         pYEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719251754; x=1719856554;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZpLcz/0IN/d1gmOSMD86qgPO3fLQN3Whaw5qjKXYF8E=;
+        b=lSmDbEHmcFDyg5Yk7mqdxmYuMkbJFAXp15mEZon4I0NdwRvEJaXswmPSKKzYx1qqqM
+         y+ssnHVj5+g0olUbSNpPvRuMqC8muoPSE686MYvvkhtMV6AZCbVFvs/dFAk8ZM1DZilp
+         tq5pnIoUhz+s9kAByFaMp+ZUyXQd+3P11sYSIy9pvCYxWrW6J0Z26Z1p8lrjR1K30wXN
+         VZuNoQfRptJfhQQzg246JGjp3WvAo5l3XQ6RuyHSt2Y+77SM2ei86yt5xey4NFiy9lf0
+         /2jbEEbR7rQ1xyNWdruupWybTONWiEbmnGX/aNfAK+Y63V+l3/RSxJwDILrzYf7sFfpK
+         p9UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtAJ3N+kWXz2ggUHLX/BQ5/LrEVMAWKWzjDIQHOtHfZvusuk5pfszf6rrmU782c4LJJiGREkEUl/jL6XjlPnEa3e5kddhmb6L9ayBa9DwZRRgM40WKUXOrtDk5D63uvWNJkTosXs8lHxtcJJDUjq7dqfyIMmjknKzcwHNp/XQkQJD7ZfTJSPZkEm3iqn3RlRHeIMDzx01HpfSVBQ1DJEwWuNSAVnLyFw49P6IaGv3BrY537GNTXk89UNvq3vo=
+X-Gm-Message-State: AOJu0YzjrabFpD8C7hUO5phtbilItylNIO4e1KpMijNNOhdg7wZzBugd
+	zJyEN4NdLtN8S8UxFf0XPqKgjNAH2P4qqITGzdtwk8ToSpDykViz
+X-Google-Smtp-Source: AGHT+IGktNPNlajbgEwLGV8CCMDaPBCtad3PYAuUdbhVE87qwtNwyWAb1yU6hGLFoKjYjjutynzHWw==
+X-Received: by 2002:a05:6102:418b:b0:48f:4507:84d1 with SMTP id ada2fe7eead31-48f52a44350mr5880279137.9.1719251753927;
+        Mon, 24 Jun 2024 10:55:53 -0700 (PDT)
+Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ef312a7sm35918576d6.87.2024.06.24.10.55.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 10:55:53 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 768861200043;
+	Mon, 24 Jun 2024 13:55:52 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 24 Jun 2024 13:55:52 -0400
+X-ME-Sender: <xms:KLN5ZsP3KRGNsSDceaZDk3UFA4jOft_u2wg48tjEx_0DtTcUScs05w>
+    <xme:KLN5Zi_MMc35phgytbkWMEk5Zxhtt2pjhltFMpBrS2bsEVtYRdSZcdM5elv6WLQMw
+    LUImd6tBKyyi0HFgA>
+X-ME-Received: <xmr:KLN5ZjSCWhCZf3yOFgyCusgS1OlftBCa3Jg3hAASyW1NXWisiBF-QNLfTrFBEw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeguddguddvtdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecunecujfgurhepfffhvfevuffkfhggtggujgesth
+    dtredttddtvdenucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhg
+    sehgmhgrihhlrdgtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehue
+    evledvhfelleeivedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedt
+    necurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvg
+    hrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhf
+    vghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:KLN5ZkuUV6zPFB2cLz-kR2Z8aTMedu9T3FISXobjX-Map2WHhDWgzg>
+    <xmx:KLN5ZkdK7QufnuuKdQuQ2UvTx-AaQGBAjN0vIl2ugET8IEo9alGunw>
+    <xmx:KLN5Zo0GH9HvYaP6Md0iuwu_jtHHS6Fr2_Y-mM1yvTKbqou1MwZMFw>
+    <xmx:KLN5Zo8JsqzF27tKSzW3moUJzqEXB7DDMc8SoT4UgI3LjPOWRIUMDw>
+    <xmx:KLN5Zr9Y6VY64Z_9SLci431ZmBaOspT6gBem6CRLppE_w5U5vVn3UozH>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Jun 2024 13:55:51 -0400 (EDT)
+Date: Mon, 24 Jun 2024 10:55:18 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: mhklinux@outlook.com
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, tglx@linutronix.de, mingo@redhat.com,
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org,
+	hpa@zytor.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, James.Bottomley@hansenpartnership.com,
+	martin.petersen@oracle.com, arnd@arndb.de,
+	linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-scsi@vger.kernel.org,
+	linux-arch@vger.kernel.org, maz@kernel.org, den@valinux.co.jp,
+	jgowans@amazon.com, dawei.li@shingroup.cn
+Subject: Re: [RFC 11/12] Drivers: hv: vmbus: Wait for MODIFYCHANNEL to finish
+ when offlining CPUs
+Message-ID: <ZnmzBi2y1eq269QA@boqun-archlinux>
+References: <20240604050940.859909-1-mhklinux@outlook.com>
+ <20240604050940.859909-12-mhklinux@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="40OqtuILxyApl9cd"
-Content-Disposition: inline
-
-
---40OqtuILxyApl9cd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240604050940.859909-12-mhklinux@outlook.com>
 
-Hi all,
+Hi Michael,
 
-Today's linux-next merge of the counter-next tree got a conflict in:
+On Mon, Jun 03, 2024 at 10:09:39PM -0700, mhkelley58@gmail.com wrote:
+[...]
+> diff --git a/drivers/hv/hyperv_vmbus.h b/drivers/hv/hyperv_vmbus.h
+> index bf35bb40c55e..571b2955b38e 100644
+> --- a/drivers/hv/hyperv_vmbus.h
+> +++ b/drivers/hv/hyperv_vmbus.h
+> @@ -264,6 +264,14 @@ struct vmbus_connection {
+>  	struct irq_domain *vmbus_irq_domain;
+>  	struct irq_chip	vmbus_irq_chip;
+>  
+> +	/*
+> +	 * VM-wide counts of MODIFYCHANNEL messages sent and completed.
+> +	 * Used when taking a CPU offline to make sure the relevant
+> +	 * MODIFYCHANNEL messages have been completed.
+> +	 */
+> +	u64 modchan_sent;
+> +	u64 modchan_completed;
+> +
 
-  drivers/counter/ti-eqep.c
+Looks to me, we can just use atomic64_t here: modifying channels is far
+from hotpath, so the cost of atomic increment is not a big issue, and we
+avoid possible data races now and in the future.
 
-between commit:
+Thoughts?
 
-  0cf81c73e4c6a ("counter: ti-eqep: enable clock at probe")
+Regards,
+Boqun
 
-=66rom the counter-current tree and commit:
-
-  1c30c6d024726 ("counter: ti-eqep: implement over/underflow events")
-
-=66rom the counter-next tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
-diff --cc drivers/counter/ti-eqep.c
-index 825ae22c3ebc7,9742ba9fc3072..0000000000000
---- a/drivers/counter/ti-eqep.c
-+++ b/drivers/counter/ti-eqep.c
-@@@ -6,8 -6,8 +6,9 @@@
-   */
- =20
-  #include <linux/bitops.h>
- +#include <linux/clk.h>
-  #include <linux/counter.h>
-+ #include <linux/interrupt.h>
-  #include <linux/kernel.h>
-  #include <linux/mod_devicetable.h>
-  #include <linux/module.h>
-@@@ -377,8 -465,7 +466,8 @@@ static int ti_eqep_probe(struct platfor
-  	struct counter_device *counter;
-  	struct ti_eqep_cnt *priv;
-  	void __iomem *base;
- +	struct clk *clk;
-- 	int err;
-+ 	int err, irq;
- =20
-  	counter =3D devm_counter_alloc(dev, sizeof(*priv));
-  	if (!counter)
-
---40OqtuILxyApl9cd
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ5swIACgkQJNaLcl1U
-h9AFVQgAgDJvCuLymRf+pSDaEA3ZixKP1r/fCMazx0wEx0iwce9qiKiW2yvGYRpq
-HiR3ZJCfbxzcyo6hF4iZoIyHW8Mz4wKUGrMTDSuceaMO1oWn50DSjj2kk3NeA7zY
-FTaI0UqJHVOiAkpiprgw9PgbYYaAzKFbFB6yRVdPTgacVnZMZET1jmOvJ46kicP6
-vOu0JhmkKrhtxGYwiVs8auZLcDIJkrUO77Fj4JBm4VOA5k1S9wSOeX1h8av6xKFz
-eF7jYbs9zwe66mnhIgOaBHQV+7hXhzbxUqRebm/eZ4pm3jcKr9jAWQrfY0SqP1EJ
-ExTWa6APtc9StQiXYoSlh478IT92zQ==
-=Y+J7
------END PGP SIGNATURE-----
-
---40OqtuILxyApl9cd--
+>  	/*
+>  	 * An offer message is handled first on the work_queue, and then
+>  	 * is further handled on handle_primary_chan_wq or
+> -- 
+> 2.25.1
+> 
 
