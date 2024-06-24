@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-227893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 179F49157C5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:18:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A15369157CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF1101F20F67
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:18:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 391C0B22E56
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1681A072B;
-	Mon, 24 Jun 2024 20:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF1E4502F;
+	Mon, 24 Jun 2024 20:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="ifJ4WqkA"
-Received: from smtp.smtpout.orange.fr (smtp-15.smtpout.orange.fr [80.12.242.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rsfj1GpF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBF51CFBC;
-	Mon, 24 Jun 2024 20:18:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DF4262A3;
+	Mon, 24 Jun 2024 20:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719260314; cv=none; b=J5M8RiiJG+mJYD6CpNug0ie2CD1ycj66jhJVyPAT+86aZ+D4PPkh6ZBisVaktmq0QIeMbyQF4PhKIrUXSsO/eU9MAl9yZY0M75Zt8tDTtgklit/VKlMQ/DOjiplS+Mz8Dps6bWppAGy6iOIHUgA1FyU1FlkuWYvqF/ltedbgYW8=
+	t=1719260366; cv=none; b=PSP6RLjI3lNRm8nBNx81UZYUc9c8SQSJI778Tl9FjYz/p+W2qgqtalrBpvazb8AYjoDViXqdRwi/M49DHsqFww/Z7AasMswddJ/bSNIObdypIU3Lall2TsY+VzhIu68zleDUpGJmZLpUNvv3cLXVAv5WrbO5UrJDIDjwEWterUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719260314; c=relaxed/simple;
-	bh=jAF20gD7kIYUViHBMXcExfj8B25lKFFEaqEeRRIJKmc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t8mv3sC5JNE4L3Ypt9uTYOV0wM9eMdE3vHmGQwxvJDp34dhEShO6067IqnmB0nNyKBOeDHZdBaYCe3cJIBg2zXFhE/Svx9sMNvACMZOj7WuH6Z/VAZRz7GHHdUU1L4DWVGpoOpon1Yd799LR2nYOXjVcYgNdheQilFqdv+UIQgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=ifJ4WqkA; arc=none smtp.client-ip=80.12.242.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from fedora.home ([86.243.222.230])
-	by smtp.orange.fr with ESMTPA
-	id Lq8tsVsCWs2bgLq8tsSHG0; Mon, 24 Jun 2024 22:18:24 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1719260304;
-	bh=elAOlOG1WOr8pdRvT+PF6Vndcsz+yUNDpa4N3XRDGSw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=ifJ4WqkAbLBGSWvEokziSvQHFJTuyUYl/RfhR/1tlyof7+bpgmvEoRQALwZQNtaEn
-	 ga/u/N2xFXPHx0IYqqC6E3XAA72bCLVsxYk9+kDwCOiJUDYjIoqweDdNS+fGhBL9wS
-	 0HsLTaOrs9xRyy3gLNIF52BViT1qdbJoy7I3/y4ZbAHQhPPJsAnLSJLq4/g/zgmsla
-	 Rx2jwVrPHyW2yy7201CyyB98m0BqJPPq6KlUw4V1BkLXsX34uOdAqAsTh3In7HNmGr
-	 IPHApck+2r0VajUHdKn+UdYXhIT0Aoi8B5yYS3sLmTBSil34Mx472NKw3t00kEEzR0
-	 gSBk/gLU7Qazw==
-X-ME-Helo: fedora.home
-X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
-X-ME-Date: Mon, 24 Jun 2024 22:18:24 +0200
-X-ME-IP: 86.243.222.230
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-To: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Karthikeyan Mitran <m.karthikeyan@mobiveil.co.in>
-Cc: linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] PCI: ls-gen4: Constify struct mobiveil_rp_ops
-Date: Mon, 24 Jun 2024 22:18:20 +0200
-Message-ID: <189fd881cc8fd80220e74e91820e12cf3a5be114.1719260294.git.christophe.jaillet@wanadoo.fr>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719260366; c=relaxed/simple;
+	bh=ZWI+WtIGvYR17UMqNz82vONbomXghatUFx41IPHG+Do=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C8OrEVA+P1dzeVcDIRynBSoFLZ5lm0c6VdEyhNeXR8+g+gquXKAHAogVYs3u0Xyarb7sPFCj3LdNtzfXKA6TSJTn9UNvhwttGjxkrWlxycGy+PdW9lkV9OGg2jDWLPmtTRjhaWpvFJLAhLGroeQR7axmZYEfWFewTXioCq7PEeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rsfj1GpF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D5BC2BBFC;
+	Mon, 24 Jun 2024 20:19:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719260365;
+	bh=ZWI+WtIGvYR17UMqNz82vONbomXghatUFx41IPHG+Do=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rsfj1GpF+DATbbyRJCT6poW+insoX30ZAW2hE8B0AcLmrqgtYhWql/E2S3P12ZVPW
+	 BD3y5cMyDr/INGeRkVRyOKe4+gM1Xt7xIWsVW1uRF2frmmU0xOrNZRn9QYWG+L6lKn
+	 7FMmBNu9p6VbC314s7ck3H6MSMNCAqT5krvuvpBIWJKwJaXGMEieKHPs9SRezzkMyt
+	 axgZMNt9X4U+PAgRPG+loxyu0ohtIu0gKUHh3JwkkFrjQNAGt/njBq6Nbq7oEokcSZ
+	 zPYJfpwtxH8u2o2IcM73gBuvpWKQNDLbZNcRge3ujbZsWqk/wPbZqNyRRJjFQj+kVy
+	 JYIw3pcH5uiYg==
+Date: Mon, 24 Jun 2024 21:19:20 +0100
+From: Mark Brown <broonie@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] spi: add
+ EXPORT_SYMBOL_GPL(devm_spi_optimize_message)
+Message-ID: <b14f6796-8269-46e4-9ca6-af248af04ae5@sirena.org.uk>
+References: <20240624-devm_spi_optimize_message-v2-0-58155c0180c2@baylibre.com>
+ <20240624-devm_spi_optimize_message-v2-1-58155c0180c2@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="klKchanc5XDrotyy"
+Content-Disposition: inline
+In-Reply-To: <20240624-devm_spi_optimize_message-v2-1-58155c0180c2@baylibre.com>
+X-Cookie: Allow 6 to 8 weeks for delivery.
 
-'struct mobiveil_rp_ops' is not modified in this driver.
 
-Constifying this structure moves some data to a read-only section, so
-increase overall security.
+--klKchanc5XDrotyy
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On a x86_64, with allmodconfig, as an example:
-Before:
-======
-   text	   data	    bss	    dec	    hex	filename
-   4446	    336	     32	   4814	   12ce	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.o
+On Mon, Jun 24, 2024 at 03:10:30PM -0500, David Lechner wrote:
 
-After:
-=====
-   text	   data	    bss	    dec	    hex	filename
-   4454	    328	     32	   4814	   12ce	drivers/pci/controller/mobiveil/pcie-layerscape-gen4.o
+> Fixes: 17436001a6bc ("spi: add devm_spi_optimize_message() helper")
 
-Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
----
-Compile tested-only
----
- drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c | 2 +-
- drivers/pci/controller/mobiveil/pcie-mobiveil.h        | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+That's the merge commit for the branch, not the affected commit.
 
-diff --git a/drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c b/drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
-index d7b7350f02dd..5af22bee913b 100644
---- a/drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
-+++ b/drivers/pci/controller/mobiveil/pcie-layerscape-gen4.c
-@@ -190,7 +190,7 @@ static void ls_g4_pcie_reset(struct work_struct *work)
- 	ls_g4_pcie_enable_interrupt(pcie);
- }
- 
--static struct mobiveil_rp_ops ls_g4_pcie_rp_ops = {
-+static const struct mobiveil_rp_ops ls_g4_pcie_rp_ops = {
- 	.interrupt_init = ls_g4_pcie_interrupt_init,
- };
- 
-diff --git a/drivers/pci/controller/mobiveil/pcie-mobiveil.h b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-index 6082b8afbc31..e63abb887ee3 100644
---- a/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-+++ b/drivers/pci/controller/mobiveil/pcie-mobiveil.h
-@@ -151,7 +151,7 @@ struct mobiveil_rp_ops {
- struct mobiveil_root_port {
- 	void __iomem *config_axi_slave_base;	/* endpoint config base */
- 	struct resource *ob_io_res;
--	struct mobiveil_rp_ops *ops;
-+	const struct mobiveil_rp_ops *ops;
- 	int irq;
- 	raw_spinlock_t intx_mask_lock;
- 	struct irq_domain *intx_domain;
--- 
-2.45.2
+--klKchanc5XDrotyy
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ51McACgkQJNaLcl1U
+h9BZ9wf+IIY2+Y7WZRhxJpLD8QVSVUWu5cYLBLaYaeTTxTIXwMW8ypwpi1B64DdC
+A54h+ludYMBKi6TajsFxkHhwEpxhijMIA1Pvq5UL1umhsCtjd6wQ6k+sfaHdStQ3
+A7kmwTpp9BmFEis0zer9oA7uaBQZUyGuY8p9J/zt/tyr4g1HW6pqZbm4YXzg4G2Y
+Nf5v7M2FPWnqT7BQmhmpHRVAHH9/LJzr/odZhwiGPUTzVFieQuUW4tFO9UR35ie1
+hMtclZteO0DmdWG8/GEHMMnDr30tCcA2K7HwCGC0mftxzbFu/kc6xk/yrEjW1GcG
+QcdQ3/5Fto6hyPa3yjIrmSEylF/V4A==
+=xY5J
+-----END PGP SIGNATURE-----
+
+--klKchanc5XDrotyy--
 
