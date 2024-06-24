@@ -1,169 +1,99 @@
-Return-Path: <linux-kernel+bounces-227917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2A81915811
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:34:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E94E915814
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B830289403
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:34:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46B04289446
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F1C19DF70;
-	Mon, 24 Jun 2024 20:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 811E21A070D;
+	Mon, 24 Jun 2024 20:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SMkGm2iH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioCSjRgP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD651A254A;
-	Mon, 24 Jun 2024 20:32:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40981A0701;
+	Mon, 24 Jun 2024 20:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719261151; cv=none; b=QrYlUdukG43jbMYg8tESBJwYaGMw6/Put9cwZUk10lRRH8q2OcrEtIf7ltuOmMUapnwVFG6KT17RqE8sS/oihpJiEn0Lqf9zEoZFiplfWl50CW5V/faUXN3vl6g+De3bQwCLE6H9cZXbUwmVivVizDcFkHAQ0t3fESh1je0zR8g=
+	t=1719261280; cv=none; b=cBdDTDgGfTaID1sUGKI6xextl1prL+zvjsaDOkb2VmAaLUfcwlqAlaZx9bC1sbhgzESSufafK3YOyXFNhEON3hqv92D+stbzOgWZMlMWt7S6VJxmpFq2of41uXtJcGZK5lm/bSEfDqKbFcLiYpamedM+OWgnmZxatk9NHZbQSew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719261151; c=relaxed/simple;
-	bh=32lJSqfS/jJayhpYdDx+rQslJTty49izFRL0Zvx4x5g=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ny1YonrxOb5ysnZrRrx4AFHlGPvHBA13F+tBOigd5m4zuwL/W0Wf7g3GPYBKOA0NolPGdtjCwvxG4uV909pggGplOJfTD8UzLQJhm7mTvlstzqa6H6X54MJCaASZI+7R5jc/liks8kiGTLXVYtENIHEq9Tfv/ayJlt+JPFZ9TIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SMkGm2iH; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719261149; x=1750797149;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=32lJSqfS/jJayhpYdDx+rQslJTty49izFRL0Zvx4x5g=;
-  b=SMkGm2iHpJH8YdG9hBq5xr+XjTrD4aTCbAlvNSl8zUqtak0JMbBjjuaW
-   sKJ+U3DnHct4KHevlABxHjKZHbkKCO/vuYgjxqSDgsMOd87AKOO2i1YOq
-   9vzef3Sy3YYNlsS3rbVLl5iVSIPLnZhpUZKozB0QnvOvRwVeKvjCddLen
-   8S/NOvGlf3Eh24sTcndoZVfVATeOH6LQX8L9IQv9M8ZMvQ5QPYQlClLI8
-   A70w5CXkdXsdWI9SM1C/QHJFq0m50XsjzKCGekcTWcyQJTR2lX4FIsrpG
-   ZBkJQuDUI7T3SC7FeZpyxbMJ6iX49o0+xU5smAW7vIRdcDvmws+9HC9rz
-   g==;
-X-CSE-ConnectionGUID: CziPfuoaSh6OYFShNhQUqQ==
-X-CSE-MsgGUID: mCC5xJ7+SSS4BGlHNy+K8w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="33792354"
-X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
-   d="scan'208";a="33792354"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 13:32:26 -0700
-X-CSE-ConnectionGUID: NTEnfBV/S8upzsa4KhDxiQ==
-X-CSE-MsgGUID: ZpDRi15qTJ6X0VA0A+52TA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
-   d="scan'208";a="47949149"
-Received: from ticela-or-265.amr.corp.intel.com (HELO xpardee-test1.amr.corp.intel.com) ([10.209.54.237])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 13:32:25 -0700
-From: Xi Pardee <xi.pardee@linux.intel.com>
-To: xi.pardee@linux.intel.com,
-	irenic.rajneesh@gmail.com,
-	david.e.box@linux.intel.com,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 9/9] platform/x86:intel/pmc: Add support to undo ltr_ignore
-Date: Mon, 24 Jun 2024 13:32:18 -0700
-Message-Id: <20240624203218.2428475-10-xi.pardee@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240624203218.2428475-1-xi.pardee@linux.intel.com>
-References: <20240624203218.2428475-1-xi.pardee@linux.intel.com>
+	s=arc-20240116; t=1719261280; c=relaxed/simple;
+	bh=fnYnt1cm4H5OJFjouGeyQRwAXFsct3WiYlfwxAclM7M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=C5I3CnTHxYwIvp5sVM/OdrC8c7kItt/OWnKoR7NCMBdYXYEgLUNcTQTnADc+3VO1wTkmg6sFJGTS5hjxyY7hpab26x7IuZF3SEK6zK8xUIasU/f+/GZyk95F0NJ2TwWNcOcMl3ljTtlsLKRxGeHZ6RyjerrhHXV62FK9xNy4pqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioCSjRgP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0985FC2BBFC;
+	Mon, 24 Jun 2024 20:34:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719261280;
+	bh=fnYnt1cm4H5OJFjouGeyQRwAXFsct3WiYlfwxAclM7M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ioCSjRgPVmkWKAYfMEnQcKe2/Nw1+gJNjjLMabDjfApiT5h25BtImV/0c+b2S74sk
+	 oGZKI2CPMFm9e7d+xNuB1iQlMlvxZg5gbQWchcAwiZBwh9ix7+Yz0PC2SCCbF7T/CR
+	 DSTk8ZYyI3v6h27WbV3p6FkqkoJz59JF72kem1iGXRY6e9CnUAQfSPK1qedsunc/j0
+	 pZUjufoWbx/gWXDcl8nqogJAgkW/ibbVxYU5mmNJBvz79ZrPmw+EX/i9sKH6tr9UUc
+	 ARldhrSFACNmx0YyJ8Ka+UlDGMwu9AUJCJh8wjjafgADmQaqViA6Sdp74krJhShOHy
+	 6sqlgIdo+tGMA==
+Date: Mon, 24 Jun 2024 14:34:38 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Orson Zhai <orsonzhai@gmail.com>, linux-arm-kernel@lists.infradead.org,
+	Lee Jones <lee@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shan-Chun Hung <schung@nuvoton.com>,
+	Lars Povlsen <lars.povlsen@microchip.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Khuong Dinh <khuong@os.amperecomputing.com>,
+	Steen Hegelund <Steen.Hegelund@microchip.com>,
+	linux-kernel@vger.kernel.org, UNGLinuxDriver@microchip.com,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Daniel Machon <daniel.machon@microchip.com>,
+	devicetree@vger.kernel.org, linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH v2 3/7] dt-bindings: soc: intel: lgm-syscon: Move to
+ dedicated schema
+Message-ID: <171926127659.368668.12236897236768555715.robh@kernel.org>
+References: <20240616-dt-bindings-mfd-syscon-split-v2-0-571b5850174a@linaro.org>
+ <20240616-dt-bindings-mfd-syscon-split-v2-3-571b5850174a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240616-dt-bindings-mfd-syscon-split-v2-3-571b5850174a@linaro.org>
 
-Add ltr_restore support to undo the ltr_ignore action. It sets the
-ltr_ignore bit of the corresponding IP to 0. Ltr_restore reuses some
-functionality of pmc_core_ltr_ignore_write() so moved the common
-functionality into a helper function.
 
-Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
----
- drivers/platform/x86/intel/pmc/core.c | 38 ++++++++++++++++++++++-----
- 1 file changed, 32 insertions(+), 6 deletions(-)
+On Sun, 16 Jun 2024 15:19:23 +0200, Krzysztof Kozlowski wrote:
+> intel,lgm-syscon is not a simple syscon device - it has children - thus
+> it should be fully documented in its own binding.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Context might depend on patch in Lee's MFD tree:
+> https://lore.kernel.org/all/171828959006.2643902.8308227314531523435.b4-ty@kernel.org/
+> and also further patches here depend on this one.
+> ---
+>  Documentation/devicetree/bindings/mfd/syscon.yaml  |  1 -
+>  .../bindings/soc/intel/intel,lgm-syscon.yaml       | 56 ++++++++++++++++++++++
+>  2 files changed, 56 insertions(+), 1 deletion(-)
+> 
 
-diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-index cfdacb04ff8d..9dbd3a43ddad 100644
---- a/drivers/platform/x86/intel/pmc/core.c
-+++ b/drivers/platform/x86/intel/pmc/core.c
-@@ -507,12 +507,10 @@ int pmc_core_send_ltr_ignore(struct pmc_dev *pmcdev, u32 value, int ignore)
- 	return 0;
- }
- 
--static ssize_t pmc_core_ltr_ignore_write(struct file *file,
--					 const char __user *userbuf,
--					 size_t count, loff_t *ppos)
-+static ssize_t pmc_core_ltr_write(struct pmc_dev *pmcdev,
-+				  const char __user *userbuf,
-+				  size_t count, int ignore)
- {
--	struct seq_file *s = file->private_data;
--	struct pmc_dev *pmcdev = s->private;
- 	u32 value;
- 	int err;
- 
-@@ -520,17 +518,43 @@ static ssize_t pmc_core_ltr_ignore_write(struct file *file,
- 	if (err)
- 		return err;
- 
--	err = pmc_core_send_ltr_ignore(pmcdev, value, 1);
-+	err = pmc_core_send_ltr_ignore(pmcdev, value, ignore);
- 
- 	return err ?: count;
- }
- 
-+static ssize_t pmc_core_ltr_ignore_write(struct file *file,
-+					 const char __user *userbuf,
-+					 size_t count, loff_t *ppos)
-+{
-+	struct seq_file *s = file->private_data;
-+	struct pmc_dev *pmcdev = s->private;
-+
-+	return pmc_core_ltr_write(pmcdev, userbuf, count, 1);
-+}
-+
- static int pmc_core_ltr_ignore_show(struct seq_file *s, void *unused)
- {
- 	return 0;
- }
- DEFINE_SHOW_STORE_ATTRIBUTE(pmc_core_ltr_ignore);
- 
-+static ssize_t pmc_core_ltr_restore_write(struct file *file,
-+					  const char __user *userbuf,
-+					  size_t count, loff_t *ppos)
-+{
-+	struct seq_file *s = file->private_data;
-+	struct pmc_dev *pmcdev = s->private;
-+
-+	return pmc_core_ltr_write(pmcdev, userbuf, count, 0);
-+}
-+
-+static int pmc_core_ltr_restore_show(struct seq_file *s, void *unused)
-+{
-+	return 0;
-+}
-+DEFINE_SHOW_STORE_ATTRIBUTE(pmc_core_ltr_restore);
-+
- static void pmc_core_slps0_dbg_latch(struct pmc_dev *pmcdev, bool reset)
- {
- 	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
-@@ -1208,6 +1232,8 @@ static void pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
- 	debugfs_create_file("ltr_ignore", 0644, dir, pmcdev,
- 			    &pmc_core_ltr_ignore_fops);
- 
-+	debugfs_create_file("ltr_restore", 0200, dir, pmcdev, &pmc_core_ltr_restore_fops);
-+
- 	debugfs_create_file("ltr_show", 0444, dir, pmcdev, &pmc_core_ltr_fops);
- 
- 	if (primary_pmc->map->s0ix_blocker_maps)
--- 
-2.34.1
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
