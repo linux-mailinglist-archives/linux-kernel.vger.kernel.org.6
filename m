@@ -1,84 +1,67 @@
-Return-Path: <linux-kernel+bounces-226927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EBD19145DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:06:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D8A9145E7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:11:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 73D34B244FE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:06:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C780286BD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36D712FF8C;
-	Mon, 24 Jun 2024 09:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 104141304B7;
+	Mon, 24 Jun 2024 09:10:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iEdHZbZS"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLuZubXg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 358F069953
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A55DC7FD;
+	Mon, 24 Jun 2024 09:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719219968; cv=none; b=qcxVrrg5PKcqu9QHhRJbqRTntDW22e1GnyHwuqjbPYbTxPmeUnTNHtrC/utzDPiDfI+Hwt4HSu4vkd/Oi153jzQNNTId7F9b+PFyS5sbH7PCTMILb+YrMuccoS8H6RrZcbOzJ/xC54IHRQRhzAfQgT2wYWYjSvIDvLqvA4mWq98=
+	t=1719220245; cv=none; b=NbNKUWBhEGqJ2f9HZ82QKmDGlwN7iT/GiXa+fIbtp1jlPoO4S5RFXkrPjG3T/o9m7XrVlz/0ba5CoHJIBzGERgGMxRFDQLSw+jDq0Qfw1o756fsqx4Pq1g8TG4fVeN56CRrzfxnur5DtAmsbKj4gS7GtUa7OGoU6gygEiORMbuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719219968; c=relaxed/simple;
-	bh=ZN5+orVrGT6zdLrz7ZrhzJFWY4wX858lkwUU4kdguWA=;
+	s=arc-20240116; t=1719220245; c=relaxed/simple;
+	bh=y4xUO3jxNw/ZmGe51kYBe2wyZyl1YnzEwo1P/bPyOMo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=krnJTggqgOPFUl3T1EUceL4ug7o37x8GqP+KFJB3DK6dpaRewGOaxRp+OW7cHSX5FqtA+GXHFHEawwG1yvktS9JJSA9qOB1Cu3x4poOWc7gVNCoJ+dyl4KzozzRdqGf5LH1+9TuULIvR4+7QSgdnUWVebJOen1fyGNdlAWS0J5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iEdHZbZS; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52cdf9f934fso1566197e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:06:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719219964; x=1719824764; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kew+Lkgg2/C1wK/ceEvlEA0LvihR0nCkMCFEGGDYFH0=;
-        b=iEdHZbZSA3WiwTas4mK9BNdL9m0hXbMfYbternoysTlTMvBi5zi9odUOaVi0hI5Pet
-         /5Uo2CcRORPeP3F2zjKvALd8mPbfQvZdIbjUwn0BAwpezaYgyy+UgNoF0Lo6jCsSA450
-         H866KlIqCCkN3py2ngJqfGvgLOfU2l1IoZnqelTXFmI8J8VHkcgSYZcT+h6MAUq2V/tD
-         gT94+Ts6sioFw7RLtw4NnZ/2qy3OYmE/2Snfy2ZZx1h0H48XkiNEo9kjlPr5CsPiCKxC
-         gbKx+AJJJaRN8beeHMZsNVmdMw0VrsveAuNbLYx6suTdSX/38R7ktuEySNqKW8huXBCK
-         xfRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719219964; x=1719824764;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Kew+Lkgg2/C1wK/ceEvlEA0LvihR0nCkMCFEGGDYFH0=;
-        b=EXXzR7+Q4+RMNRno175lFrGulxnLW5xw47dfl5lHvDENIRSLmujJVH8tkGj5tdxLFX
-         LT0Th2YK15Jw4mH1QGPJMwpOBr3KhzdjPbyXktZ1f9OekBSYDx/2IRlr/euv09M9qH15
-         7P+Vwjrx+d0MQU0iSMYvu+mCTm4lqC/AIs63TK8RBrrVcoCk4VM5uBmslbyPvDhBUrMO
-         m6qG5++KoL22Tht4OE6nKh+Kw/zunTPmqfBxPyNlTvv7NkGNhwG4ZR24/9y/HyNA60WQ
-         s3G9bPMXOsm28/2RB/Qbjkl+4H25wjHsgNJp/8jwWHoVgFnMNqyl+0iGCFbKmKKqkCDs
-         Y47Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVNUr7jbKSuvXazlbZvI9j3PvygOyQjfD5eTod3fGxY86A40sGN5qXO8jmlrAdPMTlEddv/LmIrm/9HJRGo8gKzLsofkJ7y9xCprlQ0
-X-Gm-Message-State: AOJu0Yx27bz4bHWsDB9gXWqQF5Ks8VQ8bJ+Ty8pO68YN/k/T5OzvjKjG
-	IiYLNBynGlCXQX4ZuimfVr9qxEuVqCPCP2neebENCDAE7P9Dq7CG7xZnXsmQbQM=
-X-Google-Smtp-Source: AGHT+IFLK18mj5o7O9bzNwh+9imco/emBa0iy/WB+YbshssFsZ8QxRrWGYZrnIism3ewt/VuyDJvAA==
-X-Received: by 2002:a05:6512:b8b:b0:52c:e312:2082 with SMTP id 2adb3069b0e04-52ce3122186mr2621375e87.54.1719219964284;
-        Mon, 24 Jun 2024 02:06:04 -0700 (PDT)
-Received: from linaro.org ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f6af9sm9494370f8f.73.2024.06.24.02.06.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 02:06:03 -0700 (PDT)
-Date: Mon, 24 Jun 2024 12:06:02 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: p.zabel@pengutronix.de, abelvesa@kernel.org, peng.fan@nxp.com,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com
-Subject: Re: [PATCH v9] reset: imx8mp-audiomix: Add AudioMix Block Control
- reset driver
-Message-ID: <Znk2+uYj4JpbP+z+@linaro.org>
-References: <1719200345-32006-1-git-send-email-shengjiu.wang@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PfBMw1uf7xNVJPLzZ+Hcebkvf2qNYKhF7YXCbmF1E99M5kahQ7odKBo28F/2urqQHMSr4QvWhneGD71U/ni38meGlemIlMz/hekBHI3eqgBM96brBQVijRmCsRLQgmxlhMcJF1g4VlAiBtK9NZze+0/rQoRsM2C3FULB7J3EyP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLuZubXg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB462C32782;
+	Mon, 24 Jun 2024 09:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719220245;
+	bh=y4xUO3jxNw/ZmGe51kYBe2wyZyl1YnzEwo1P/bPyOMo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XLuZubXgXhgoaBVMtSYDYH3r2PwiWkCpjlI5gAyD32fAIItFf5RZe8bCQO3U0t/do
+	 Ix8Afla9Z2OFAdoA4OpuHP2y2DzX4U7floyBjDGLOpAqoF1KBx2YB7VIkrqy1G9yDy
+	 HeYeAwlG1igADzYB1Ud5XT5B1pEJxTuOfASrMsO0tGcQPZNRWImdq8Wea34nSXSTSh
+	 t22sMbaq6tpqkHFbKsCRzJjAKU06/Ks8qhXQljeZ0PySy3YhJ4BV1QKF5hWptjh7aT
+	 v8dD8MLI166mdWzDuctPalRCNiKC56VRlDkgqFyW33IrMvKMY3VK/Pb1AMISAI05fU
+	 +fX5C/Zs1Ak4w==
+Date: Mon, 24 Jun 2024 12:10:41 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Omer Shpigelman <oshpigelman@habana.ai>
+Cc: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"ogabbay@kernel.org" <ogabbay@kernel.org>,
+	Zvika Yehudai <zyehudai@habana.ai>
+Subject: Re: [PATCH 11/15] RDMA/hbl: add habanalabs RDMA driver
+Message-ID: <20240624091041.GB29266@unreal>
+References: <20240613082208.1439968-1-oshpigelman@habana.ai>
+ <20240613082208.1439968-12-oshpigelman@habana.ai>
+ <20240613191828.GJ4966@unreal>
+ <fbb34afa-8a38-4124-9384-9b858ce2c4e5@habana.ai>
+ <20240617190429.GB4025@unreal>
+ <461bf44e-fd2f-4c8b-bc41-48d48e5a7fcb@habana.ai>
+ <20240618125842.GG4025@unreal>
+ <b4bda963-7026-4037-83e6-de74728569bd@habana.ai>
+ <20240619105219.GO4025@unreal>
+ <29704025-fba4-434a-9a43-ed2184a322f9@habana.ai>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,200 +70,375 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1719200345-32006-1-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <29704025-fba4-434a-9a43-ed2184a322f9@habana.ai>
 
-On 24-06-24 11:39:05, Shengjiu Wang wrote:
-> Add support for the resets on i.MX8MP Audio Block Control module,
-> which includes the EARC PHY software reset and EARC controller
-> software reset. The reset controller is created using the auxiliary
-> device framework and set up in the clock driver.
+On Mon, Jun 24, 2024 at 08:47:41AM +0000, Omer Shpigelman wrote:
+> On 6/19/24 13:52, Leon Romanovsky wrote:
+> > On Wed, Jun 19, 2024 at 09:27:54AM +0000, Omer Shpigelman wrote:
+> >> On 6/18/24 15:58, Leon Romanovsky wrote:
+> >>> On Tue, Jun 18, 2024 at 11:08:34AM +0000, Omer Shpigelman wrote:
+> >>>> On 6/17/24 22:04, Leon Romanovsky wrote:
+> >>>>> [Some people who received this message don't often get email from leon@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> >>>>>
+> >>>>> On Mon, Jun 17, 2024 at 05:43:49PM +0000, Omer Shpigelman wrote:
+> >>>>>> On 6/13/24 22:18, Leon Romanovsky wrote:
+> >>>>>>> [Some people who received this message don't often get email from leon@kernel.org. Learn why this is important at https://aka.ms/LearnAboutSenderIdentification ]
+> >>>>>>>
+> >>>>>>> On Thu, Jun 13, 2024 at 11:22:04AM +0300, Omer Shpigelman wrote:
+> >>>>>>>> Add an RDMA driver of Gaudi ASICs family for AI scaling.
+> >>>>>>>> The driver itself is agnostic to the ASIC in action, it operates according
+> >>>>>>>> to the capabilities that were passed on device initialization.
+> >>>>>>>> The device is initialized by the hbl_cn driver via auxiliary bus.
+> >>>>>>>> The driver also supports QP resource tracking and port/device HW counters.
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Omer Shpigelman <oshpigelman@habana.ai>
+> >>>>>>>> Co-developed-by: Abhilash K V <kvabhilash@habana.ai>
+> >>>>>>>> Signed-off-by: Abhilash K V <kvabhilash@habana.ai>
+> >>>>>>>> Co-developed-by: Andrey Agranovich <aagranovich@habana.ai>
+> >>>>>>>> Signed-off-by: Andrey Agranovich <aagranovich@habana.ai>
+> >>>>>>>> Co-developed-by: Bharat Jauhari <bjauhari@habana.ai>
+> >>>>>>>> Signed-off-by: Bharat Jauhari <bjauhari@habana.ai>
+> >>>>>>>> Co-developed-by: David Meriin <dmeriin@habana.ai>
+> >>>>>>>> Signed-off-by: David Meriin <dmeriin@habana.ai>
+> >>>>>>>> Co-developed-by: Sagiv Ozeri <sozeri@habana.ai>
+> >>>>>>>> Signed-off-by: Sagiv Ozeri <sozeri@habana.ai>
+> >>>>>>>> Co-developed-by: Zvika Yehudai <zyehudai@habana.ai>
+> >>>>>>>> Signed-off-by: Zvika Yehudai <zyehudai@habana.ai>
+> >>>>>>>
+> >>>>>>> I afraid that you misinterpreted the "Co-developed-by" tag. All these
+> >>>>>>> people are probably touch the code and not actually sit together at
+> >>>>>>> the same room and write the code together. So, please remove the
+> >>>>>>> extensive "Co-developed-by" tags.
+> >>>>>>>
+> >>>>>>> It is not full review yet, but simple pass-by-comments.
+> >>>>>>>
+> >>>>>>
+> >>>>>> Actually except of two, all of the mentioned persons sat in the same room
+> >>>>>> and developed the code together.
+> >>>>>> The remaining two are located on a different site (but also together).
+> >>>>>> Isn't that what "Co-developed-by" tag for?
+> >>>>>> I wanted to give them credit for writing the code but I can remove if it's
+> >>>>>> not common.
+> >>>>>
+> >>>>> Signed-off-by will be enough to give them credit.
+> >>>>>
+> >>>>
+> >>>> Ok, good enough.
+> >>>>
+> >>>>>>
+> >>>>>>>> ---
+> >>>>>>>>  MAINTAINERS                              |   10 +
+> >>>>>>>>  drivers/infiniband/Kconfig               |    1 +
+> >>>>>>>>  drivers/infiniband/hw/Makefile           |    1 +
+> >>>>>>>>  drivers/infiniband/hw/hbl/Kconfig        |   17 +
+> >>>>>>>>  drivers/infiniband/hw/hbl/Makefile       |    8 +
+> >>>>>>>>  drivers/infiniband/hw/hbl/hbl.h          |  326 +++
+> >>>>>>>>  drivers/infiniband/hw/hbl/hbl_main.c     |  478 ++++
+> >>>>>>>>  drivers/infiniband/hw/hbl/hbl_verbs.c    | 2686 ++++++++++++++++++++++
+> >>>>>>>>  include/uapi/rdma/hbl-abi.h              |  204 ++
+> >>>>>>>>  include/uapi/rdma/hbl_user_ioctl_cmds.h  |   66 +
+> >>>>>>>>  include/uapi/rdma/hbl_user_ioctl_verbs.h |  106 +
+> >>>>>>>>  include/uapi/rdma/ib_user_ioctl_verbs.h  |    1 +
+> >>>>>>>>  12 files changed, 3904 insertions(+)
+> >>>>>>>>  create mode 100644 drivers/infiniband/hw/hbl/Kconfig
+> >>>>>>>>  create mode 100644 drivers/infiniband/hw/hbl/Makefile
+> >>>>>>>>  create mode 100644 drivers/infiniband/hw/hbl/hbl.h
+> >>>>>>>>  create mode 100644 drivers/infiniband/hw/hbl/hbl_main.c
+> >>>>>>>>  create mode 100644 drivers/infiniband/hw/hbl/hbl_verbs.c
+> >>>>>>>>  create mode 100644 include/uapi/rdma/hbl-abi.h
+> >>>>>>>>  create mode 100644 include/uapi/rdma/hbl_user_ioctl_cmds.h
+> >>>>>>>>  create mode 100644 include/uapi/rdma/hbl_user_ioctl_verbs.h
+> >>>>>>>
+> >>>>>>> <...>
+> >>>>>>>
+> >>>>>>>> +#define hbl_ibdev_emerg(ibdev, format, ...)  ibdev_emerg(ibdev, format, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_alert(ibdev, format, ...)  ibdev_alert(ibdev, format, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_crit(ibdev, format, ...)   ibdev_crit(ibdev, format, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_err(ibdev, format, ...)    ibdev_err(ibdev, format, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_warn(ibdev, format, ...)   ibdev_warn(ibdev, format, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_notice(ibdev, format, ...) ibdev_notice(ibdev, format, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_info(ibdev, format, ...)   ibdev_info(ibdev, format, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_dbg(ibdev, format, ...)    ibdev_dbg(ibdev, format, ##__VA_ARGS__)
+> >>>>>>>> +
+> >>>>>>>> +#define hbl_ibdev_emerg_ratelimited(ibdev, fmt, ...)         \
+> >>>>>>>> +     ibdev_emerg_ratelimited(ibdev, fmt, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_alert_ratelimited(ibdev, fmt, ...)         \
+> >>>>>>>> +     ibdev_alert_ratelimited(ibdev, fmt, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_crit_ratelimited(ibdev, fmt, ...)          \
+> >>>>>>>> +     ibdev_crit_ratelimited(ibdev, fmt, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_err_ratelimited(ibdev, fmt, ...)           \
+> >>>>>>>> +     ibdev_err_ratelimited(ibdev, fmt, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_warn_ratelimited(ibdev, fmt, ...)          \
+> >>>>>>>> +     ibdev_warn_ratelimited(ibdev, fmt, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_notice_ratelimited(ibdev, fmt, ...)                \
+> >>>>>>>> +     ibdev_notice_ratelimited(ibdev, fmt, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_info_ratelimited(ibdev, fmt, ...)          \
+> >>>>>>>> +     ibdev_info_ratelimited(ibdev, fmt, ##__VA_ARGS__)
+> >>>>>>>> +#define hbl_ibdev_dbg_ratelimited(ibdev, fmt, ...)           \
+> >>>>>>>> +     ibdev_dbg_ratelimited(ibdev, fmt, ##__VA_ARGS__)
+> >>>>>>>> +
+> >>>>>>>
+> >>>>>>> Please don't redefine the existing macros. Just use the existing ones.
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> <...>
+> >>>>>>>
+> >>>>>>
+> >>>>>> That's a leftover from some debug code. I'll remove.
+> >>>>>>
+> >>>>>>>> +     if (hbl_ib_match_netdev(ibdev, netdev))
+> >>>>>>>> +             ib_port = hbl_to_ib_port_num(hdev, netdev->dev_port);
+> >>>>>>>> +     else
+> >>>>>>>> +             return NOTIFY_DONE;
+> >>>>>>>
+> >>>>>>> It is not kernel coding style. Please write:
+> >>>>>>> if (!hbl_ib_match_netdev(ibdev, netdev))
+> >>>>>>>     return NOTIFY_DONE;
+> >>>>>>>
+> >>>>>>> ib_port = hbl_to_ib_port_num(hdev, netdev->dev_port);
+> >>>>>>>
+> >>>>>>
+> >>>>>> I'll fix the code, thanks.
+> >>>>>>
+> >>>>>>>> +
+> >>>>>>>
+> >>>>>>> <...>
+> >>>>>>>
+> >>>>>>>> +static int hbl_ib_probe(struct auxiliary_device *adev, const struct auxiliary_device_id *id)
+> >>>>>>>> +{
+> >>>>>>>> +     struct hbl_aux_dev *aux_dev = container_of(adev, struct hbl_aux_dev, adev);
+> >>>>>>>> +     struct hbl_ib_aux_ops *aux_ops = aux_dev->aux_ops;
+> >>>>>>>> +     struct hbl_ib_device *hdev;
+> >>>>>>>> +     ktime_t timeout;
+> >>>>>>>> +     int rc;
+> >>>>>>>> +
+> >>>>>>>> +     rc = hdev_init(aux_dev);
+> >>>>>>>> +     if (rc) {
+> >>>>>>>> +             dev_err(&aux_dev->adev.dev, "Failed to init hdev\n");
+> >>>>>>>> +             return -EIO;
+> >>>>>>>> +     }
+> >>>>>>>> +
+> >>>>>>>> +     hdev = aux_dev->priv;
+> >>>>>>>> +
+> >>>>>>>> +     /* don't allow module unloading while it is attached */
+> >>>>>>>> +     if (!try_module_get(THIS_MODULE)) {
+> >>>>>>>
+> >>>>>>> This part makes wonder, what are you trying to do here? What doesn't work for you
+> >>>>>>> in standard driver core and module load mechanism?
+> >>>>>>>
+> >>>>>>
+> >>>>>> Before auxiliary bus was introduced, we used EXPORT_SYMBOLs for inter
+> >>>>>> driver communication. That incremented the refcount of the used module so
+> >>>>>> it couldn't be removed while it is in use.
+> >>>>>> Auxiliary bus usage doesn't increment the used module refcount and hence
+> >>>>>> the used module can be removed while it is in use and that's something
+> >>>>>> we don't want to allow.
+> >>>>>> We could solve it by some global locking or in_use atomic but the most
+> >>>>>> simple and clean way is just to increment the used module refcount on
+> >>>>>> auxiliary device probe and decrement it on auxiliary device removal.
+> >>>>>
+> >>>>> No, you was supposed to continue to use EXPORT_SYMBOLs and don't
+> >>>>> invent auxiliary ops structure (this is why you lost module
+> >>>>> reference counting).
+> >>>>>
+> >>>>
+> >>>> Sorry, but according to the auxiliary bus doc, a domain-specific ops
+> >>>> structure can be used.
+> >>>> We followed the usage example described at drivers/base/auxiliary.c.
+> >>>> What am I missing? 
+> >>>
+> >>> Being the one who implemented auxiliary bus in the kernel and converted
+> >>> number of drivers to use it, I strongly recommend do NOT follow the example
+> >>> provided there.
+> >>>
+> >>> So you are missing "best practice", and "best practice" is to use
+> >>> EXPORT_SYMBOLs and rely on module reference counting.
+> >>>
+> >>
+> >> It is not just the usage example but also the general feature doc before
+> >> it:
+> >> "The generic behavior can be extended and specialized as needed by
+> >> encapsulating an auxiliary_device within other domain-specific structures
+> >> and the use of .ops callbacks."
+> >> It is also mentioned there that the ops structure are used for specific
+> >> auxiliary device operations while EXPORT_SYMBOLs should be used for common
+> >> infrastrucure the parent driver exposes:
+> >> "Note that ops are intended as a way to augment instance behavior within a
+> >> class of auxiliary devices, it is not the mechanism for exporting common
+> >> infrastructure from the parent."
+> >> All of our ops callbacks are meant to provide functionality related to the
+> >> auxiliary device, they are not just general/common infrastructure.
+> > 
+> > Of course they are common, otherwise why did you put them in common code?
+> > For example, you have callbacks to lock and unlock internal HW access,
+> > how is it not common?
+> >
 > 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
-
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
-
-> ---
-> changes in v9:
-> - only send this commits because others have been applied
-> - remove depends on in config
-> - add spin lock
-> - call iounmmap()
-> 
-> changes in v8:
-> https://lore.kernel.org/linux-arm-kernel/27ea1bf7de6f349426fcd7ddb056a1adfae47c73.camel@pengutronix.de/T/
-> 
->  drivers/reset/Kconfig                 |   7 ++
->  drivers/reset/Makefile                |   1 +
->  drivers/reset/reset-imx8mp-audiomix.c | 128 ++++++++++++++++++++++++++
->  3 files changed, 136 insertions(+)
->  create mode 100644 drivers/reset/reset-imx8mp-audiomix.c
-> 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 7112f5932609..509f70e5c4c0 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -91,6 +91,13 @@ config RESET_IMX7
->  	help
->  	  This enables the reset controller driver for i.MX7 SoCs.
+> As I saw it, the "common" functions are general capabilities the parent
+> driver exposes, not necessaritly related to the auxiliary device.
+> But let me revisit this and try to restructure the code so the parent
+> driver will use EXPORT_SYMBOLs.
 >  
-> +config RESET_IMX8MP_AUDIOMIX
-> +	tristate "i.MX8MP AudioMix Reset Driver"
-> +	select AUXILIARY_BUS
-> +	default CLK_IMX8MP
-> +	help
-> +	  This enables the reset controller driver for i.MX8MP AudioMix
-> +
->  config RESET_INTEL_GW
->  	bool "Intel Reset Controller Driver"
->  	depends on X86 || COMPILE_TEST
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index fd8b49fa46fc..a6796e83900b 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
->  obj-$(CONFIG_RESET_GPIO) += reset-gpio.o
->  obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
->  obj-$(CONFIG_RESET_IMX7) += reset-imx7.o
-> +obj-$(CONFIG_RESET_IMX8MP_AUDIOMIX) += reset-imx8mp-audiomix.o
->  obj-$(CONFIG_RESET_INTEL_GW) += reset-intel-gw.o
->  obj-$(CONFIG_RESET_K210) += reset-k210.o
->  obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
-> diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/reset-imx8mp-audiomix.c
-> new file mode 100644
-> index 000000000000..6e3f3069f727
-> --- /dev/null
-> +++ b/drivers/reset/reset-imx8mp-audiomix.c
-> @@ -0,0 +1,128 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright 2024 NXP
-> + */
-> +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/device.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/reset-controller.h>
-> +
-> +#define EARC			0x200
-> +#define EARC_RESET_MASK		0x3
-> +
-> +struct imx8mp_audiomix_reset {
-> +	struct reset_controller_dev rcdev;
-> +	spinlock_t lock; /* protect register read-modify-write cycle */
-> +	void __iomem *base;
-> +};
-> +
-> +static struct imx8mp_audiomix_reset *to_imx8mp_audiomix_reset(struct reset_controller_dev *rcdev)
-> +{
-> +	return container_of(rcdev, struct imx8mp_audiomix_reset, rcdev);
-> +}
-> +
-> +static int imx8mp_audiomix_reset_assert(struct reset_controller_dev *rcdev,
-> +					unsigned long id)
-> +{
-> +	struct imx8mp_audiomix_reset *priv = to_imx8mp_audiomix_reset(rcdev);
-> +	void __iomem *reg_addr = priv->base;
-> +	unsigned int mask, reg;
-> +	unsigned long flags;
-> +
-> +	mask = BIT(id);
-> +	spin_lock_irqsave(&priv->lock, flags);
-> +	reg = readl(reg_addr + EARC);
-> +	writel(reg & ~mask, reg_addr + EARC);
-> +	spin_unlock_irqrestore(&priv->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx8mp_audiomix_reset_deassert(struct reset_controller_dev *rcdev,
-> +					  unsigned long id)
-> +{
-> +	struct imx8mp_audiomix_reset *priv = to_imx8mp_audiomix_reset(rcdev);
-> +	void __iomem *reg_addr = priv->base;
-> +	unsigned int mask, reg;
-> +	unsigned long flags;
-> +
-> +	mask = BIT(id);
-> +	spin_lock_irqsave(&priv->lock, flags);
-> +	reg = readl(reg_addr + EARC);
-> +	writel(reg | mask, reg_addr + EARC);
-> +	spin_unlock_irqrestore(&priv->lock, flags);
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct reset_control_ops imx8mp_audiomix_reset_ops = {
-> +	.assert   = imx8mp_audiomix_reset_assert,
-> +	.deassert = imx8mp_audiomix_reset_deassert,
-> +};
-> +
-> +static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
-> +				       const struct auxiliary_device_id *id)
-> +{
-> +	struct imx8mp_audiomix_reset *priv;
-> +	struct device *dev = &adev->dev;
-> +	int ret;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	spin_lock_init(&priv->lock);
-> +
-> +	priv->rcdev.owner     = THIS_MODULE;
-> +	priv->rcdev.nr_resets = fls(EARC_RESET_MASK);
-> +	priv->rcdev.ops       = &imx8mp_audiomix_reset_ops;
-> +	priv->rcdev.of_node   = dev->parent->of_node;
-> +	priv->rcdev.dev	      = dev;
-> +	priv->rcdev.of_reset_n_cells = 1;
-> +	priv->base            = of_iomap(dev->parent->of_node, 0);
-> +	if (!priv->base)
-> +		return -ENOMEM;
-> +
-> +	dev_set_drvdata(dev, priv);
-> +
-> +	ret = devm_reset_controller_register(dev, &priv->rcdev);
-> +	if (ret)
-> +		goto out_unmap;
-> +
-> +	return 0;
-> +
-> +out_unmap:
-> +	iounmap(priv->base);
-> +	return ret;
-> +}
-> +
-> +static void imx8mp_audiomix_reset_remove(struct auxiliary_device *adev)
-> +{
-> +	struct imx8mp_audiomix_reset *priv = dev_get_drvdata(&adev->dev);
-> +
-> +	iounmap(priv->base);
-> +}
-> +
-> +static const struct auxiliary_device_id imx8mp_audiomix_reset_ids[] = {
-> +	{
-> +		.name = "clk_imx8mp_audiomix.reset",
-> +	},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(auxiliary, imx8mp_audiomix_reset_ids);
-> +
-> +static struct auxiliary_driver imx8mp_audiomix_reset_driver = {
-> +	.probe		= imx8mp_audiomix_reset_probe,
-> +	.remove		= imx8mp_audiomix_reset_remove,
-> +	.id_table	= imx8mp_audiomix_reset_ids,
-> +};
-> +
-> +module_auxiliary_driver(imx8mp_audiomix_reset_driver);
-> +
-> +MODULE_AUTHOR("Shengjiu Wang <shengjiu.wang@nxp.com>");
-> +MODULE_DESCRIPTION("Freescale i.MX8MP Audio Block Controller reset driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.34.1
+> >>
+> >> Why do we have this doc if we should ignore it? why wasn't the doc
+> >> modified according to the "best practice" you described? the doc is
+> >> misleading.
+> > 
+> > Because this is how upstream kernel development works. We are trying to
+> > come to the agreement and get the best solution for the problem. Sometimes,
+> > the outcome of the discussion is not "the best solution", but "good
+> > enough". This doc can be served as an example. Everyone involved in the
+> > development of auxbus and later usage of it, were focused on implementation,
+> > documentation was good enough as it didn't limit anyone who actually
+> > used it.
+> > 
 > 
+> I get your point but still I think that the doc is misleading if it shows
+> a usage exmaple but practically no one should follow it.
+> Better to remove this usage exmaple completely IMHO.
+
+We (developers) didn't want that example in first place. I'm not going
+to argue again in order to attempt to remove it.
+
+> 
+> >>
+> >> Adding gregkh here as he requested the auxiliary bus feature IIRC.
+> >> Greg - isn't the doc legit? should EXPORT_SYMBOLs necessarily be used
+> >> together with auxiliary bus rather than ops structure?
+> > 
+> > This is not what you are doing here. You completely ditched EXPORT_SYMBOLs
+> > and reinvented module reference counting which overcomplicated the code
+> > just to avoid using standard kernel mechanism.
+> > 
+> >> As we saw it, auxiliary bus gives us the flexibility to choose which
+> >> modules will be loaded while EXPORT_SYMBOLs enforces the dependencies
+> >> which might not be needed in some cases.
+> >>  
+> >>>> Moreover, we'd like to support the mode where the IB or the ETH driver is
+> >>>> not loaded at all. But this cannot be achieved if we use EXPORT_SYMBOLs
+> >>>> exclusively for inter driver communication.
+> >>>
+> >>> It is not true and not how the kernel works. You can perfectly load core
+> >>> driver without IB and ETH, at some extent this is how mlx5 driver works.
+> >>>
+> >>
+> >> mlx5 IB driver doesn't export any symbol that is used by the core driver,
+> >> that's why the core driver can be loaded without the IB driver (althought
+> >> you'll get circular dependency if you would export).
+> > 
+> > Yes, IB and ETH drivers are "users" of core driver. As RDMA maintainer,
+> > I'm reluctant to accept code that exports symbols from IB drivers to
+> > other subsystems. We have drivers/infiniband/core/ for that.
+> > 
+> 
+> So we'll need to restructure the code to follow this limitation. We'll
+> take care of it for the next patch set version.
+> BTW if you won't allow such driver specific EXPORT_SYMBOLs, I think it is
+> good to have it documented similarly to other "don't do" guideliens in the
+> infiniband doc.
+> That's because in the net/ethernet subsystem for exmaple it is very common
+> to add such driver specific EXPORT_SYMBOLs.
+
+Yes, this is technical limitation, it is because PCI core (driver common code)
+is located in drivers/net and not because of policy to accept EXPORT_SYMBOLs
+in netdev.
+
+If you put your driver common code in other place, you won't need any EXPORT_SYMBOLs
+in drivers/net.
+
+> 
+> >> If relying on exported symbols only, then our IB and ETH drivers will need
+> >> to export symbols too because the core driver accesses them post probing.
+> > 
+> > So you should fix your core driver. This is exactly what auxbus model
+> > proposes.
+> > 
+> >> Hence we won't be able to load the core driver without both of them (or
+> >> loading anything due to circular dependency).
+> >> Unless we'll use dynamic symbol lookup and I don't think that's your
+> >> intention.
+> > 
+> > No it is not.
+> > 
+> >>
+> >>>>
+> >>>>>>
+> >>>>>>>> +             dev_err(hdev->dev, "Failed to increment %s module refcount\n",
+> >>>>>>>> +                     module_name(THIS_MODULE));
+> >>>>>>>> +             rc = -EIO;
+> >>>>>>>> +             goto module_get_err;
+> >>>>>>>> +     }
+> >>>>>>>> +
+> >>>>>>>> +     timeout = ktime_add_ms(ktime_get(), hdev->pending_reset_long_timeout * MSEC_PER_SEC);
+> >>>>>>>> +     while (1) {
+> >>>>>>>> +             aux_ops->hw_access_lock(aux_dev);
+> >>>>>>>> +
+> >>>>>>>> +             /* if the device is operational, proceed to actual init while holding the lock in
+> >>>>>>>> +              * order to prevent concurrent hard reset
+> >>>>>>>> +              */
+> >>>>>>>> +             if (aux_ops->device_operational(aux_dev))
+> >>>>>>>> +                     break;
+> >>>>>>>> +
+> >>>>>>>> +             aux_ops->hw_access_unlock(aux_dev);
+> >>>>>>>> +
+> >>>>>>>> +             if (ktime_compare(ktime_get(), timeout) > 0) {
+> >>>>>>>> +                     dev_err(hdev->dev, "Timeout while waiting for hard reset to finish\n");
+> >>>>>>>> +                     rc = -EBUSY;
+> >>>>>>>> +                     goto timeout_err;
+> >>>>>>>> +             }
+> >>>>>>>> +
+> >>>>>>>> +             dev_notice_once(hdev->dev, "Waiting for hard reset to finish before probing IB\n");
+> >>>>>>>> +
+> >>>>>>>> +             msleep_interruptible(MSEC_PER_SEC);
+> >>>>>>>> +     }
+> >>>>>>>
+> >>>>>>> The code above is unexpected.
+> >>>>>>>
+> >>>>>>
+> >>>>>> We have no control on when the user insmod the IB driver.
+> >>>>>
+> >>>>> It is not true, this is controlled through module dependencies
+> >>>>> mechanism.
+> >>>>>
+> >>>>
+> >>>> Yeah, if we would use EXPORT_SYMBOLs for inter driver communication but
+> >>>> we don't.
+> >>>
+> >>> So please use it and don't add complexity where it is not needed.
+> >>>
+> >>>>
+> >>>>>> As a result it is possible that the IB auxiliary device will be probed
+> >>>>>> while the compute device is under reset (due to some HW error).
+> >>>>>
+> >>>>> No, it is not possible. If you structure your driver right.
+> >>>>>
+> >>>>
+> >>>> Again, it is not possible if we would use EXPORT_SYMBOLs.
+> >>>> Please let me know if we misunderstood something because AFAIU we followed
+> >>>> the auxiliary bus doc usage example.
+> >>>
+> >>> It is better to follow actual drivers that use auxiliary bus and see how
+> >>> they implemented it and not rely on examples in the documentation.
+> >>>
+> >>
+> >> But isn't that what the doc for? to explain the guidelines? and it's not
+> >> that there is a big red note there of "this example should not be taken as
+> >> is, please look at your subsystem guidelines".
+> > 
+> > At the beginning that doc was located in Documentation/ folder and no one
+> > really cared about it. After moving from Documentation/ to drivers/base/auxiliary.c,
+> > it became more visible, but still no one relied on it. You are first one
+> > who read.
+> > 
+> > There is no subsystem rules here. Everyone relied on EXPORT_SYMBOLs and didn't
+> > use ops structure. Kernel is evolving project, there is no need to find a rule
+> > for everything.
+> > 
+> > Thanks
+> > 
+> >>
+> >>> Thanks
+> >>>
+> >>>>
+> >>>>> Thanks
 
