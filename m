@@ -1,115 +1,108 @@
-Return-Path: <linux-kernel+bounces-226877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1485B914528
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:43:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B501F91451F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:42:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD0A91F210D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:43:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF3328111A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:42:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052BD12F5BB;
-	Mon, 24 Jun 2024 08:43:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB2461FE7;
+	Mon, 24 Jun 2024 08:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Qlt54Ecx"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BhRtFaeg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCC484D03;
-	Mon, 24 Jun 2024 08:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B2DB652;
+	Mon, 24 Jun 2024 08:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719218582; cv=none; b=hu3moUhG+uhfCC4A38r1piStqkf3YPA6tfKsko5p8EAOEPhmkdjhaYMQDjfG0fxYIkgEH06sB7hJk6icILOR2nWpeyAOIIHyO8KGcysXwGQFocnScY6/P/xLChm1HuqAFFN0spxX3Pu4hSPr5yA0cIbROvj74t4Q4u+IsTXYZlo=
+	t=1719218537; cv=none; b=nm6JTqB+TQPUOXjMwFSIbx5uB8xpbYPjUtySmzrJjTsneqQQ/PpLQxCix3Vs0Rl4ZYXxfTcBgH9aRXCA6cIOT5N/A1h5D/b7L2Yk+tCOIhuYCkfnTAGZFakMvW+8Pv4JvatDo3hy1TEJvp0VHFHamdqSiPXxDDvIfcWGzMk+W2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719218582; c=relaxed/simple;
-	bh=1Ql/rPJr9B//lnVoSBXI6kmGKjaCsxZKPQJn0Q/2P7E=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VhFGhMOT7JC7tBObRs9bdk+YGbZ2EKPIWLfICCwJ7Jejq2cGk11J0jl2xbXw14YvGpmiC2uwntR+CIZaVcw3F7GDTf1IgjuZe7N+sIoYnSljdpPfuk4R77YyShgvwaEQWc9J3Seai6Gq+yrz+WAIcSU//9Ij6lMpibXWYUbVZ3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Qlt54Ecx; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O82p4Y006217;
-	Mon, 24 Jun 2024 10:42:37 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=AeCFDncPm+RmmKekJr5ls2
-	XtImCTJaOsCJTIji/uvL0=; b=Qlt54Ecxz/AioprZnMS6IBTR4WI7IwO74hsiZw
-	ooMmltq5IR7S8dCj7knsL0Fmdwyqnc39lfqgij+C2Bdb0CvY3It7PYf48rDNW+0D
-	3wpWjhSn6I0TILWpq3drbChLOTpgcte9/0HD1jcTA/6hzHYJZAP886j+oxpFJKrO
-	floMB63eWxqXMRPULya+Wat58WixUln7pF+6KAF3MPJ9hmaw6EZZE+FGtNdg3PwW
-	E+wgOW73TXyoDmhDwJs0Cjp5CEreUxAkSzKBH6ma7szU7b6vKkCtWi7VbbnOnVhl
-	OJQTLHRA2DD6b9Iq9W+VdPIuftrChjd1hQ5iQCWEyUErs00A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yx860by2y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 10:42:37 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D804A4002D;
-	Mon, 24 Jun 2024 10:42:31 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C6134209EC7;
-	Mon, 24 Jun 2024 10:41:53 +0200 (CEST)
-Received: from localhost (10.129.178.213) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Mon, 24 Jun
- 2024 10:41:53 +0200
-From: Alain Volmat <alain.volmat@foss.st.com>
-To: Hugues Fruchet <hugues.fruchet@foss.st.com>,
-        Alain Volmat
-	<alain.volmat@foss.st.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue
-	<alexandre.torgue@foss.st.com>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-CC: <stable@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] media: stm32: dcmipp: correct error handling in dcmipp_create_subdevs
-Date: Mon, 24 Jun 2024 10:41:22 +0200
-Message-ID: <20240624084123.3009122-1-alain.volmat@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719218537; c=relaxed/simple;
+	bh=MHK2ICleu1n31j1RXk0H5PLm4xU8IgWHnDSyT09cnQ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lqlqnRMwqgv6/y20FC8cKH9M5SCUY67R9J8gY4uFKqOQDi4xrhxxvfvxAl0Ih0zWT/HusPKmePCgtcMRwBNYUPvGtGnwP9/JuATd97ShCjPu77bgavCI08TWiPJ8P5cXBC+E+kBXMCPVw2HMpxcnGMazbka0BKf8AEMdqgwxmFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BhRtFaeg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C229BC2BBFC;
+	Mon, 24 Jun 2024 08:42:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1719218537;
+	bh=MHK2ICleu1n31j1RXk0H5PLm4xU8IgWHnDSyT09cnQ4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BhRtFaegQ1hVL2NoUE9TjYHYEtX0xhAAWd1DVqvOBnFRT/zxqSE6GcIj9D05OThmz
+	 wagmtUJkYH4IqTN/HglxC3QFwYk3/CU5FaNF0fJ3yFe2BfSVKYeV1D7Sf2pKdql49t
+	 otQ9QXIM7OS4b7QXdUSVlb8fTBKh2HzVq5lZol8w=
+Date: Mon, 24 Jun 2024 10:42:14 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: lcx <lichunxiaona@mail.ustc.edu.cn>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: WARNING in usbtmc_probe/usb_submit_urb
+Message-ID: <2024062448-humble-pampers-6453@gregkh>
+References: <b7711597-2aab-4097-8772-bbf3c8a50215@mail.ustc.edu.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_07,2024-06-21_01,2024-05-17_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b7711597-2aab-4097-8772-bbf3c8a50215@mail.ustc.edu.cn>
 
-Correct error handling within the dcmipp_create_subdevs by properly
-decrementing the i counter when releasing the subdeves.
+On Mon, Jun 24, 2024 at 04:30:26PM +0800, lcx wrote:
+> Dear Linux maintainers and reviewers:
+> 
+> We would like to report a linux kernel bug, found by a modified version of syzkaller.
+> 
+> Kernel Version: a3e18a540541325a8c8848171f71e0d45ad30b2c(6.10-rc3)
+> 
+> Kernel Config: see attach, config
+> 
+> reproducing program: see attach, repro.c
+> 
+> Feel free to email us if any other information is needed. Hope the provided materials will help finding and fixing the bug.
+> 
+> -------------------------
+> 
+> The full log crash log are as follows:
+> 
+> 
+> Syzkaller hit 'WARNING in usbtmc_probe/usb_submit_urb' bug.
+> 
+> usb 1-1: config 0 descriptor??
+> usb 1-1: usb_control_msg returned -71
+> usbtmc 1-1:0.0: can't read capabilities
+> ------------[ cut here ]------------
+> usb 1-1: BOGUS urb xfer, pipe 1 != type 3
+> WARNING: CPU: 0 PID: 771 at drivers/usb/core/urb.c:503 usb_submit_urb+0xbf9/0x1490 drivers/usb/core/urb.c:503
+> Modules linked in:
+> CPU: 0 PID: 771 Comm: kworker/0:2 Not tainted 6.10.0-rc3-00021-g2ef5971ff345-dirty #4
+> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.1-0-ga5cab58e9a3f-prebuilt.qemu.org 04/01/2014
+> Workqueue: usb_hub_wq hub_event
+> RIP: 0010:usb_submit_urb+0xbf9/0x1490 drivers/usb/core/urb.c:503
+> Code: 84 36 02 00 00 e8 97 16 2c fb 4c 89 f7 e8 df 3c f4 fe 45 89 e8 89 e9 4c 89 fa 48 89 c6 48 c7 c7 00 47 3e 8b e8 68 89 f1 fa 90 <0f> 0b 90 90 e9 61 fa ff ff e8 69 16 2c fb 49 81 c5 c8 05 00 00 e9
+> RSP: 0018:ffffc90003b87010 EFLAGS: 00010286
+> RAX: 0000000000000000 RBX: ffff888017a59800 RCX: 0000000000000000
+> RDX: ffff8880183c8000 RSI: ffffffff814af1dc RDI: 0000000000000001
+> RBP: 0000000000000001 R08: 0000000000000001 R09: ffffed1005905171
+> R10: ffff88802c828b8b R11: 0000000000000001 R12: ffff888017a5985c
+> R13: 0000000000000003 R14: ffff88801539a0a8 R15: ffff88801f75e220
+> FS:  0000000000000000(0000) GS:ffff88802c800000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 00007f00c72d30a0 CR3: 000000000cd74000 CR4: 00000000000006f0
+> Call Trace:
+>  <TASK>
+>  usbtmc_probe+0xd21/0x1a90 drivers/usb/class/usbtmc.c:2454
 
-Fixes: 28e0f3772296 ("media: stm32-dcmipp: STM32 DCMIPP camera interface driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Alain Volmat <alain.volmat@foss.st.com>
----
- drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ah, the usbtmc driver.  Probably just needs to check for proper
+endpoints in the device descriptor.  Can you make up a patch for this?
 
-diff --git a/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c b/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
-index 4acc3b90d03a..4924ee36cfda 100644
---- a/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
-+++ b/drivers/media/platform/st/stm32/stm32-dcmipp/dcmipp-core.c
-@@ -202,7 +202,7 @@ static int dcmipp_create_subdevs(struct dcmipp_device *dcmipp)
- 	return 0;
- 
- err_init_entity:
--	while (i > 0)
-+	while (i-- > 0)
- 		dcmipp->pipe_cfg->ents[i - 1].release(dcmipp->entity[i - 1]);
- 	return ret;
- }
--- 
-2.25.1
+thanks,
 
+greg k-h
 
