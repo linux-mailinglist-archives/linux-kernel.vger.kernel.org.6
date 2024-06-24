@@ -1,133 +1,188 @@
-Return-Path: <linux-kernel+bounces-227832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B75B1915705
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:14:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F8E91570B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:18:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 364AC1F24792
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:14:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 978F5284D9A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BFD21A00DE;
-	Mon, 24 Jun 2024 19:14:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2AD19FA92;
+	Mon, 24 Jun 2024 19:18:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bERgEVUo"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="Dz9tb5fr"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 920B8107A0;
-	Mon, 24 Jun 2024 19:14:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6A1619CCEF
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 19:18:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719256488; cv=none; b=OmnIlWelIkdHUlcqn7F27giRTlFLHz36wT7ySSS6qv+q32sI7BeeQ3nyGxlTnXDCFB/YQwwDQOGbKYKLxsBMTXftxA8lskuwE8arQjUWb+F7gkGmdy4Qz167pUxvc/2VNh3p5tX7t+SnbIBvUWeVfemQNgDDH6i2NQHkKIKR05c=
+	t=1719256708; cv=none; b=B/sBZe/xwUoycpuiHKaTY/R36tt0vbzf9MM28RsCWrvWcmyQQS2AFWJfOhel9bZ9kcncZ6ZLhRwMhvo0w4+gR8EAwBxPyULWeEBsMSpXa0FzgwaBqR+rJlyKzNsIaOXs8N+3Rs+btOnSjkLB9DPaJq2lvM7piLxprNWoftTe/8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719256488; c=relaxed/simple;
-	bh=FAe5RBSeVUQvSoNMovSUxUr4BZQMUMsViBXF99Eg278=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Dpz4vzdo6cqwdjuVBkVurFzA0TjN3wDy2utP08K59gHBqng5Tbn3FLjBKD0UyWTwhqhbp/+T7n7ASPfCKTGBHJgPS0kkE5QkKROPhbwZaVK0lIZTS6071GUPANFxQm8PXt2HR/j/Q8ive9VVNgDViQXI/3MKfytNtl6JzAeXcUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bERgEVUo; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1f6fabe9da3so38418625ad.0;
-        Mon, 24 Jun 2024 12:14:46 -0700 (PDT)
+	s=arc-20240116; t=1719256708; c=relaxed/simple;
+	bh=1+8P9e4bjZNNeYr8EhkJJ8GlBLAx7rydpxmTmFAOTFg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k+1GzaQyXtpTBp0olJrN+CSmN95/lbTcP6zoYdGxqJtRIDZ65689Tfmgje1bAnAIghjcHL471k3OpAXXZy1x4Mwkk7jATOTPvn17MQXFxl64uiFxvht0CdEyZ3e3gun9gxxAmpQiv0yn+CxqwKrL57fP/RRStcHcll6KngtYMoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=Dz9tb5fr; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso5956320a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:18:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719256486; x=1719861286; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=XBj9aeVGLx9lk0+gvee4j7l4tMQJNLmoyqkeXTYVawA=;
-        b=bERgEVUolvbKGQykK24TdlC5ejZlX4XvExPyJXztixLrDmKWad3kuHaNs+dueT1Fw/
-         FDRUkDVWIWMGuJHgq2DdL2oKz6BoDfVm1iFFtqkOI1u7Ghu85zhKi35dy7zC7E0v6lET
-         jI8mqgyhs7mn1B9Z/glSePTMPGjL6Hp6neV5Xk/FFB/XaUnfwXCXFHVoUx8Vug//km2Q
-         v/z0WSdBR39VJm7SNZA1uYadeeNZlD30gTz7mCMeJDgBTbpV56Nxp7ciBqwl94Jc736R
-         AmfKOJXnKDKSrPj8e4F0inkz8hWx46sHz/tbFW+LhgOnTcvK4ZTXqwO0ePL0/rOqX+te
-         NL5A==
+        d=kali.org; s=google; t=1719256704; x=1719861504; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w/utmK01Q/aAz/jmaJoKVno7ODPMTb9bqaLsPY3576Y=;
+        b=Dz9tb5frwaL9QXBBkZt75It488ohDV/0Y1daKnhL5RsQrwmSwXtc3sECP8Yod8Q11F
+         Lwl8/C2iLhQJx+Bjbsxp+xVsAbk1jjpkpaDLlqe7V0thV8O9bn6Dgm08Pcz76hKTiPkH
+         pLtrS9Q+ylubMwkzx4CKJpPrEEtxoUCv9ztumZ0k2xlKBQ64W071WoN6YW56QbJ+uO6M
+         +ag7eHjCT4l6zrj3PzNxpdES5oiPtlk06GC4gR2Q34cUkiP73wAoJ0QigPM7bO5cgSam
+         pG4fNNwQrdQeyXndnSrhRq5DAQzZ2c+Bgj46FaM2ub4GILYH+kQS/8w5ZCszEJ0H0usn
+         VBZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719256486; x=1719861286;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XBj9aeVGLx9lk0+gvee4j7l4tMQJNLmoyqkeXTYVawA=;
-        b=rKMxewrooRKX+VYDcS+BWimAN4cSXEIqrxwbJJUOR9UkYVR5VnOWkY+w2fR0ydo+OJ
-         syvueSJG8hFRtVCtVAyy8XqL0dl3WuNGz+B3vIb/EAdseMIlYghTjU2iyqe+gijJVeV4
-         pA60KLvReOPgtQMHwmsNaPZB4Uk7eAmRPrDdn0yM6uLkJ5pFsW9yQQUAwGgU7Dz4+F75
-         +hpmSZbJnjy+ArC8Nwf7fuyO8ymwvOPF1jFMdQt3QGlxmCUlR8j8AJBDKh5Imr4MaUOi
-         IXBpz2ayIUKbWjG2/Z+aIGsfifbvvY/hVLSqpBg09VUmmL9J92fhPiHJznvBALbTVtUX
-         B9Jw==
-X-Forwarded-Encrypted: i=1; AJvYcCXst3EJfJmJQRoTOOH/AT+QYdxJ4MMg0BO9d3MJhZ0e8knlekNr4AIUgkE51UMoTel1zH0l5IW8zbuH/58A6UYk67M1rIpkdIHz6b6xxu494iAGVe/fABPk9WRYMbHzTtM8emCsXnHeO2ZJhmQ=
-X-Gm-Message-State: AOJu0Yx7ZGZ56oLW8kOQ+3+BFpCjuuSn++0m0YWyYBCewADs+sxHFs8D
-	ZA0yVqjG6/NYc2tJmZsmuqILy8YeZR7ePgclh7gGQ/zyiq5t3/13jWNt44IeTduJHg==
-X-Google-Smtp-Source: AGHT+IGvFYoTy5I2/iq38TvjfgSmdy8RInr0OTUkDq3okmECv1F1bB0r1tfPfiQwsS8e0FhFDVsXcw==
-X-Received: by 2002:a17:902:c943:b0:1f9:f6e6:5ace with SMTP id d9443c01a7336-1fa23f159cemr63529085ad.48.1719256485531;
-        Mon, 24 Jun 2024 12:14:45 -0700 (PDT)
-Received: from localhost.localdomain ([187.120.159.154])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fa36cc1d10sm27117305ad.305.2024.06.24.12.14.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 12:14:45 -0700 (PDT)
-From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-To: miriam.rachel.korenblit@intel.com,
-	kvalo@kernel.org,
-	rafael.j.wysocki@intel.com,
-	daniel.lezcano@linaro.org,
-	johannes.berg@intel.com,
-	gregory.greenman@intel.com,
-	dmantipov@yandex.ru
-Cc: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>,
-	linux-wireless@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RESEND PATCH v4] iwlwifi: mvm: adding check if the thermal firmware is running
-Date: Mon, 24 Jun 2024 16:14:26 -0300
-Message-ID: <20240624191428.39681-1-trintaeoitogc@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1719256704; x=1719861504;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w/utmK01Q/aAz/jmaJoKVno7ODPMTb9bqaLsPY3576Y=;
+        b=RHG0c1J23SSKcCwstb7A9St3ogA2X+b0TppCOOlPWA+2vvEo7/KzZbA82P9dC31bwX
+         bTbcZl3DIem/WffGnFk/JznPZt+EB7N4mfzt0eGXBg1PD1P2uRXdT5T+0OxXqgrRf1nk
+         YcE0KuprlRDuByd0Oz7y9tj8li0FoQvIKvMn0T/8Vk+NdhN+KAZadFpp0eGRE/+rWgSh
+         0mdZhrwV2PX92xYpflgp/Y/MQOk2EiUGfyiE3mYuf3LBATq5BsCZWMh14qgox4YOTc2F
+         Pz8bRPmxNHO2nqHocSCuj9v/Y27zOsUPWbJhMXNaZlUWZpGC5q9oOULJ6P0Z0aY1Qkkw
+         UNOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXtwy1xfD9V7hSOF+Gx0ZTkJn9n7ERzDVF31A8zgD0palynUBz16hgYgwtZMnWcW3ye0eVjp2g+NNsi+iz0J48PvJXNDIFnjAiNc5hQ
+X-Gm-Message-State: AOJu0Yx9X0Zb6ZjKdOSDHjJluVJcIQAmZO0zygdAfK6o0vHQ7nAXBlHM
+	p1NarQtrK6rGlrZ+9i7+Uv/Iep/ex37h0aXI8tDHRlaY75BDPi/jg6C1SZwb6b8Su/acEuUOxZN
+	YgGnQDLNkvI0YqN4F9tYCthvqO4G9Ra46kIF+ZA==
+X-Google-Smtp-Source: AGHT+IHotRG6K2HXCdC5lYRNF4KD1Z2OXWs9Jet+gNkN4MBEBoLu0f2q74erRpdjiiCthuRWlb1Tc3ezwYipTA/uF1s=
+X-Received: by 2002:aa7:cb50:0:b0:57d:4b56:da11 with SMTP id
+ 4fb4d7f45d1cf-57d4b56da8emr5008376a12.11.1719256703918; Mon, 24 Jun 2024
+ 12:18:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <12464461.O9o76ZdvQC@rjwysocki.net>
+In-Reply-To: <12464461.O9o76ZdvQC@rjwysocki.net>
+From: Steev Klimaszewski <steev@kali.org>
+Date: Mon, 24 Jun 2024 14:18:12 -0500
+Message-ID: <CAKXuJqjAQERxkfTESUKSvPo3N5qOf+un6LbKys9YrBT_ocJG8A@mail.gmail.com>
+Subject: Re: [PATCH v1] thermal: gov_step_wise: Go straight to instance->lower
+ when mitigation is over
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>, Johan Hovold <johan+linaro@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-In the dmesg is showing the message "failed to read out thermal zone"
-as if the temperature read is failed by don't find the thermal zone.
+Hi Rafael,
 
-After researching and debugging, I see that this specific error is
-occurrenced because the thermal try read the temperature when is started,
-but the firmware is not running yet.
+On Sat, Jun 22, 2024 at 7:28=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.ne=
+t> wrote:
+>
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+>
+> Commit b6846826982b ("thermal: gov_step_wise: Restore passive polling
+> management") attempted to fix a Step-Wise thermal governor issue
+> introduced by commit 042a3d80f118 ("thermal: core: Move passive polling
+> management to the core"), which caused the governor to leave cooling
+> devices in high states, by partially revering that commit.
+>
+> However, this turns out to be insufficient on some systems due to
+> interactions between the governor code restored by commit b6846826982b
+> and the passive polling management in the thermal core.
+>
+> For this reason, revert commit b6846826982b and make the governor set
+> the target cooling device state to the "lower" one as soon as the zone
+> temperature falls below the threshold of the trip point corresponding
+> to the given thermal instance, which means that thermal mitigation is
+> not necessary any more.
+>
+> Before this change the "lower" cooling device state would be reached in
+> steps through the passive polling mechanism which was questionable for
+> three reasons: (1) cooling device were kept in high states when that was
+> not necessary (and it could adversely impact performance), (2) it only
+> worked for thermal zones with nonzero passive_delay_jiffies value, and
+> (3) passive polling belongs to the core and should not be hijacked by
+> governors for their internal purposes.
+>
+> Fixes: b6846826982b ("thermal: gov_step_wise: Restore passive polling man=
+agement")
+> Closes: https://lore.kernel.org/linux-pm/6759ce9f-281d-4fcd-bb4c-b784a1cc=
+5f6e@oldschoolsolutions.biz
+> Reported-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Tested-by: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/thermal/gov_step_wise.c |   23 +++++------------------
+>  1 file changed, 5 insertions(+), 18 deletions(-)
+>
+> Index: linux-pm/drivers/thermal/gov_step_wise.c
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> --- linux-pm.orig/drivers/thermal/gov_step_wise.c
+> +++ linux-pm/drivers/thermal/gov_step_wise.c
+> @@ -55,7 +55,11 @@ static unsigned long get_target_state(st
+>                 if (cur_state <=3D instance->lower)
+>                         return THERMAL_NO_TARGET;
+>
+> -               return clamp(cur_state - 1, instance->lower, instance->up=
+per);
+> +               /*
+> +                * If 'throttle' is false, no mitigation is necessary, so
+> +                * request the lower state for this instance.
+> +                */
+> +               return instance->lower;
+>         }
+>
+>         return instance->target;
+> @@ -93,23 +97,6 @@ static void thermal_zone_trip_update(str
+>                 if (instance->initialized && old_target =3D=3D instance->=
+target)
+>                         continue;
+>
+> -               if (trip->type =3D=3D THERMAL_TRIP_PASSIVE) {
+> -                       /*
+> -                        * If the target state for this thermal instance
+> -                        * changes from THERMAL_NO_TARGET to something el=
+se,
+> -                        * ensure that the zone temperature will be updat=
+ed
+> -                        * (assuming enabled passive cooling) until it be=
+comes
+> -                        * THERMAL_NO_TARGET again, or the cooling device=
+ may
+> -                        * not be reset to its initial state.
+> -                        */
+> -                       if (old_target =3D=3D THERMAL_NO_TARGET &&
+> -                           instance->target !=3D THERMAL_NO_TARGET)
+> -                               tz->passive++;
+> -                       else if (old_target !=3D THERMAL_NO_TARGET &&
+> -                                instance->target =3D=3D THERMAL_NO_TARGE=
+T)
+> -                               tz->passive--;
+> -               }
+> -
+>                 instance->initialized =3D true;
+>
+>                 mutex_lock(&instance->cdev->lock);
+>
+>
+>
+I've tested this here against 6.10.0-rc5 and it looks like it does
+what it says on the tin now.  Locks to low speeds at thermal and
+(rather quickly) unlocks once it's no longer in the "danger zone"
 
-For more legibiliti i change the tt.c for return EAGAIN when this was occurrence.
-After this change, in my computer I compile and install kernel in /boot
-and in my dmesg the message "failed to read out thermal zone" is not show
-any more.
-
-I would like to thanks for Rafael Wysocki <refael.j.wysocki@intel.com> ,
-Kalle Valo <kvalo@kernel.org> and Johannes Berg <johannes@sipsolutions.net>
-for your suggestions in my previous patch.
-
-Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
----
- drivers/net/wireless/intel/iwlwifi/mvm/tt.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-index 8083c4b2ab6b..d1dd334b5049 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/tt.c
-@@ -620,8 +620,12 @@ static int iwl_mvm_tzone_get_temp(struct thermal_zone_device *device,
- 
- 	mutex_lock(&mvm->mutex);
- 
--	if (!iwl_mvm_firmware_running(mvm) ||
--	    mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
-+	if (!iwl_mvm_firmware_running(mvm)) {
-+		ret = -EAGAIN;
-+		goto out;
-+	}
-+
-+	if (mvm->fwrt.cur_fw_img != IWL_UCODE_REGULAR) {
- 		ret = -ENODATA;
- 		goto out;
- 	}
--- 
-2.45.2
-
+Tested-by: Steev Klimaszewski <steev@kali.org>
 
