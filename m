@@ -1,213 +1,165 @@
-Return-Path: <linux-kernel+bounces-227327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858B1914F7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:02:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36A0914F82
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:04:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A71141C2105E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:02:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410841F215FA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA5114264C;
-	Mon, 24 Jun 2024 14:02:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1A1142627;
+	Mon, 24 Jun 2024 14:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ES4maETQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TCFq4pyT"
+Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4B81422C3;
-	Mon, 24 Jun 2024 14:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F10820330
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719237767; cv=none; b=HeCqvka8TjJw/AXPx9KMxXnKMdVFOeA8P7bz5nwjZJBo6/xoe0A0TSNZmh2kItOW7khf2GYAlhNCQiivUGnUZUABMPuAsEGM5ck8gJREk7N63oj5rxp3F+RYsGOBgRKimvOTG0MWZffKuiZS1x7mn09I/f/tUxyZPe8K3FNXhDM=
+	t=1719237882; cv=none; b=GbEM+bEjgRPC5JOngVdBGfwLC7B7qjtusIaf5pQCl/fZ2Sj6+cWN3IDS21FdMeVT9j0PYx3MHVDDxRlLDaxGLBHfOgc4LllndTciNkgIf0fqsUT9cPfwCciGGudwiHDaWxzC91Id4LJ78V3bXs5yYer+IgK1NCaYsUSltwVqLo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719237767; c=relaxed/simple;
-	bh=U5OrXuHKL3Op9dlOgeULGy1aVemr//kxPqPW521saJ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Bt0orAE4XSABYSW0EPwD8QtAP3TInrHjIrZwgzKo32KGEcSmEbjPBuIKkIuDUSezXu0knA+yKoSO+p5gyBuYwGT7Yq3DbjW6K03rAA3Vfk+MEZSxB79qNfN9a1VEUz7go9TSoq+ag5trpLV18UvZio8tNqoiKekOgwKz6NwZN74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ES4maETQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04578C32782;
-	Mon, 24 Jun 2024 14:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719237766;
-	bh=U5OrXuHKL3Op9dlOgeULGy1aVemr//kxPqPW521saJ0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ES4maETQv3RXMfGSR+NAmPAsKP+SKilMvC5LeHVM7vnBtKXvVjK8bg2EaSY/5GyV9
-	 16R0HKgRRt0G1wWOfv74PHG0XRFXw0cIve8aCA5xP4ea2DJun2pgYSO4ExQjp6C0lT
-	 q++FZJ2T+Zvt7sirYuCXhqN0UNk4+vj8/yNlCydW877P8nwy8CCm99xGj4tXshReVK
-	 nprUZddmjJvYXCmwMTb0Q1eptP3OP6bbf18LvCrwDT/50GMhcahFscR+J/wnmbwNb5
-	 vIuDvBBDUqyHmw0kgTMgLlcyMpbtypSHuayeaZRjjxNq+krWLREl/Ds867IkFJifTt
-	 pPj5I5UllZayw==
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a724598cfe3so197504266b.1;
-        Mon, 24 Jun 2024 07:02:45 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWxQzYISSUJslcMzDnAOBeYufxC3Z+NU78UNWO0j4QgiVCVI9dgqgxsw//G+2rvfbDaVzgWfCAFNOa+DXoJCQV9gDkZZI4HR66SUpRUvNHWJV+sNGN5k7xO9ssuiWdQfmO8
-X-Gm-Message-State: AOJu0YzYotEpPkOSgCv/7XS/5vU4aWxGBSXRCQ6uNrMGuvb6hjtC/N4Z
-	vIh8wQzbU7AN7knYmSgb68AIG/eGjxIPX5bw1bfI/uwbNew3+jfy/Iu+mxr+VUuX4/5QotCeWOY
-	whyVHmVvY7iPRNQFZniHmav+fy0I=
-X-Google-Smtp-Source: AGHT+IGOEridawHGSJTjSWtqPLGetC6GUIgnA8PS6QhQ97MbknLy9omzesEDMTuNAwt0plESwGjJ0mtJbXbi1+G76tM=
-X-Received: by 2002:a17:906:2a89:b0:a6f:5f:8b7 with SMTP id
- a640c23a62f3a-a7245ba39bbmr355509366b.21.1719237764579; Mon, 24 Jun 2024
- 07:02:44 -0700 (PDT)
+	s=arc-20240116; t=1719237882; c=relaxed/simple;
+	bh=/pz/OWJU4u8rErQuJM3R9XHlFgQ9DIUiyVSMMMb0jDI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fMENLhucx3FJmZxRmUjaU8bik1ewVpa4mSeQtAPT3sua/6/dqv7shQYZIoisMz0SCPxJzY70jjPY//fgqtWqiCJF9ZNHUMg0k6WAmYd5sBPn6cLvnnKJpu6yCRTz7CTp1mE4oXYcGIkYOfzckqVjxMD/Is94FpXUGccX/OYRD7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TCFq4pyT; arc=none smtp.client-ip=209.85.222.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-797dcb558ebso272288785a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:04:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719237880; x=1719842680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=XxqQRI9qdKpXc+d6jBFsRb7em5oO7Aq+aq8gpL0ZAn4=;
+        b=TCFq4pyTe9KXtNkDae5LHgL/sRLG6bLOVbcVz4jmfPC1qWOk2aR0Hf0yqhN/TzEDKb
+         oNBh+EhspcTExSXBK6Bmn1BR0LtYYGwiSTWX7RJpcMyRubJFrx/7b6+d6MFbBwJnUCpV
+         yjBGAJlvs0+xUOSkFZhcug5TS8w49Xhm+vOuFF7HJUWZw2h0giiwXxavpFBOO7FGWOAx
+         8dYd/4HCJZ1fmVDz6+kRFxY6RTF7SVsHKHcDd6aDz4OFSl3ROeQf4n1Lqc9UD5BYNQgQ
+         7ZqU9Sf/Xk6X0t5Rno1AEuPLfJbNlbhkyM5zGI7yTsaqzw1HhR7BAeH3uuOj2r2dkcGK
+         DFyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719237880; x=1719842680;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XxqQRI9qdKpXc+d6jBFsRb7em5oO7Aq+aq8gpL0ZAn4=;
+        b=w7kV0+Z6gpnMsTiR7kE7WsceBs1FcfMGCgjlax9+CNpSkJiG5x10eJr8yt0uaAJecZ
+         j1XntRCbMqehLBkWeX3986PSYC4YNvEo3Uk/vVdT0XByGttpC0TR4RKcBBUam6eGmbkP
+         UpeUPRU5lnbT9OfbldpZEoA/sb3pHIoLSfY9c1p7wrFfWGNot9VhQEtdIabDxvXqM4kJ
+         wFW/VLfUbcYvg88Gyo7iaB2Pvwzzceu5KkzIuhDCwz9adDUiNXaXERZ85IrTO6dtNcKP
+         NV6OWPao2bWPvOdLYkRvfwhK7T0A61mtIEHV0YddcXGxQZ4PK/7KkxuZ1vmu00vE8wqw
+         wHXg==
+X-Forwarded-Encrypted: i=1; AJvYcCX2byXbsRmmXTkHi/9TneUbaUz0iMCzFzzY2uZ8/i6Gzcnj2cKT1dZSLhuRr5l+aduOxtTD7orm9OBPmipkfHNT4U0UfRDgGVcfKQw0
+X-Gm-Message-State: AOJu0YwmIqCNTLkwf+v19VApbmyAWoprBhDeCu2jw9YK1ezx0XHgZ7Kz
+	uyJhqXPnIDf2dzk9OJJlNkruVnWTno71DqxyMdBV9kxL+aC3GXOn
+X-Google-Smtp-Source: AGHT+IHiCP8v1Xw5+G3dthvuaYvZetHViclKdcF5bjTK3YToKN1dTLh1YEFrqDDDX2V7w6NDiU0MsQ==
+X-Received: by 2002:a05:620a:3907:b0:795:5d83:9f96 with SMTP id af79cd13be357-79be703800emr589502385a.57.1719237880328;
+        Mon, 24 Jun 2024 07:04:40 -0700 (PDT)
+Received: from localhost (fwdproxy-ash-006.fbsv.net. [2a03:2880:20ff:6::face:b00c])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bd0beb543sm295596485a.74.2024.06.24.07.04.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 07:04:39 -0700 (PDT)
+From: Usama Arif <usamaarif642@gmail.com>
+To: akpm@linux-foundation.org
+Cc: hannes@cmpxchg.org,
+	shakeel.butt@linux.dev,
+	david@redhat.com,
+	ying.huang@intel.com,
+	hughd@google.com,
+	willy@infradead.org,
+	yosryahmed@google.com,
+	nphamcs@gmail.com,
+	chengming.zhou@linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com,
+	Usama Arif <usamaarif642@gmail.com>
+Subject: [PATCH v6 0/2] mm: store zero pages to be swapped out in a bitmap
+Date: Mon, 24 Jun 2024 15:01:27 +0100
+Message-ID: <20240624140427.1334871-1-usamaarif642@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527074644.836699-1-maobibo@loongson.cn> <20240527074644.836699-5-maobibo@loongson.cn>
- <CAAhV-H7wdMH=fdGhtxcJ9zY+H-PKT2q0rgrsEPm+LhBgCqNsjQ@mail.gmail.com> <1e56fc1a-351e-9d66-3954-9fe1642139a3@loongson.cn>
-In-Reply-To: <1e56fc1a-351e-9d66-3954-9fe1642139a3@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 24 Jun 2024 22:02:38 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4xVy7wnj3N=RxA8e_Ah-mVc2SQH3Axz+F_DNo9sM8KHA@mail.gmail.com>
-Message-ID: <CAAhV-H4xVy7wnj3N=RxA8e_Ah-mVc2SQH3Axz+F_DNo9sM8KHA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] LoongArch: KVM: Add VM LBT feature detection support
-To: maobibo <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, kvm@vger.kernel.org, 
-	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 24, 2024 at 10:00=E2=80=AFAM maobibo <maobibo@loongson.cn> wrot=
-e:
->
->
->
-> On 2024/6/23 =E4=B8=8B=E5=8D=886:14, Huacai Chen wrote:
-> > Hi, Bibo,
-> >
-> > On Mon, May 27, 2024 at 3:46=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> =
-wrote:
-> >>
-> >> Before virt machine or vcpu is created, vmm need check supported
-> >> features from KVM. Here ioctl command KVM_HAS_DEVICE_ATTR is added
-> >> for VM, and macro KVM_LOONGARCH_VM_FEAT_CTRL is added to check
-> >> supported feature.
-> >>
-> >> Three sub-features relative with LBT are added, in later any new
-> >> feature can be added if it is used for vmm. The sub-features is
-> >>   KVM_LOONGARCH_VM_FEAT_X86BT
-> >>   KVM_LOONGARCH_VM_FEAT_ARMBT
-> >>   KVM_LOONGARCH_VM_FEAT_MIPSBT
-> >>
-> >> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> >> ---
-> >>   arch/loongarch/include/uapi/asm/kvm.h |  6 ++++
-> >>   arch/loongarch/kvm/vm.c               | 44 +++++++++++++++++++++++++=
-+-
-> >>   2 files changed, 49 insertions(+), 1 deletion(-)
-> >>
-> >> diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/in=
-clude/uapi/asm/kvm.h
-> >> index 656aa6a723a6..ed12e509815c 100644
-> >> --- a/arch/loongarch/include/uapi/asm/kvm.h
-> >> +++ b/arch/loongarch/include/uapi/asm/kvm.h
-> >> @@ -91,6 +91,12 @@ struct kvm_fpu {
-> >>   #define KVM_IOC_CSRID(REG)             LOONGARCH_REG_64(KVM_REG_LOON=
-GARCH_CSR, REG)
-> >>   #define KVM_IOC_CPUCFG(REG)            LOONGARCH_REG_64(KVM_REG_LOON=
-GARCH_CPUCFG, REG)
-> >>
-> >> +/* Device Control API on vm fd */
-> >> +#define KVM_LOONGARCH_VM_FEAT_CTRL     0
-> >> +#define  KVM_LOONGARCH_VM_FEAT_X86BT   0
-> >> +#define  KVM_LOONGARCH_VM_FEAT_ARMBT   1
-> >> +#define  KVM_LOONGARCH_VM_FEAT_MIPSBT  2
-> > I think LBT should be vcpu features rather than vm features, which is
-> > the same like CPUCFG and FP/SIMD.
-> yes, LBT is part of vcpu feature. Only when VMM check validity about
-> LBT, it is too late if it is vcpu feature. It is only checkable after
-> vcpu is created also, that is too late for qemu VMM.
-But why do we need so early to detect LBT? Why can the CPUCFG attr be
-implemented in vcpu.c?
+As shown in the patchseries that introduced the zswap same-filled
+optimization [1], 10-20% of the pages stored in zswap are same-filled.
+This is also observed across Meta's server fleet.
+By using VM counters in swap_writepage (not included in this
+patchseries) it was found that less than 1% of the same-filled
+pages to be swapped out are non-zero pages.
 
-Huacai
+For conventional swap setup (without zswap), rather than reading/writing
+these pages to flash resulting in increased I/O and flash wear, a bitmap
+can be used to mark these pages as zero at write time, and the pages can
+be filled at read time if the bit corresponding to the page is set.
 
->
-> However if it is VM feature, this feature can be checked even if VM or
-> VCPU is not created.
->
-> So here is LBt is treated as VM capability also, You can check function
-> kvm_vm_ioctl_check_extension() on other architectures,
-> KVM_CAP_GUEST_DEBUG_HW_BPS/KVM_CAP_ARM_PMU_V3 are also VM features.
->
-> >
-> > Moreover, this patch can be merged to the 2nd one.
-> Sure, I will merge it with 2nd patch.
->
-> Regards
-> Bibo Mao
->
-> >
-> > Huacai
-> >
-> >> +
-> >>   /* Device Control API on vcpu fd */
-> >>   #define KVM_LOONGARCH_VCPU_CPUCFG      0
-> >>   #define KVM_LOONGARCH_VCPU_PVTIME_CTRL 1
-> >> diff --git a/arch/loongarch/kvm/vm.c b/arch/loongarch/kvm/vm.c
-> >> index 6b2e4f66ad26..09e05108c68b 100644
-> >> --- a/arch/loongarch/kvm/vm.c
-> >> +++ b/arch/loongarch/kvm/vm.c
-> >> @@ -99,7 +99,49 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, l=
-ong ext)
-> >>          return r;
-> >>   }
-> >>
-> >> +static int kvm_vm_feature_has_attr(struct kvm *kvm, struct kvm_device=
-_attr *attr)
-> >> +{
-> >> +       switch (attr->attr) {
-> >> +       case KVM_LOONGARCH_VM_FEAT_X86BT:
-> >> +               if (cpu_has_lbt_x86)
-> >> +                       return 0;
-> >> +               return -ENXIO;
-> >> +       case KVM_LOONGARCH_VM_FEAT_ARMBT:
-> >> +               if (cpu_has_lbt_arm)
-> >> +                       return 0;
-> >> +               return -ENXIO;
-> >> +       case KVM_LOONGARCH_VM_FEAT_MIPSBT:
-> >> +               if (cpu_has_lbt_mips)
-> >> +                       return 0;
-> >> +               return -ENXIO;
-> >> +       default:
-> >> +               return -ENXIO;
-> >> +       }
-> >> +}
-> >> +
-> >> +static int kvm_vm_has_attr(struct kvm *kvm, struct kvm_device_attr *a=
-ttr)
-> >> +{
-> >> +       switch (attr->group) {
-> >> +       case KVM_LOONGARCH_VM_FEAT_CTRL:
-> >> +               return kvm_vm_feature_has_attr(kvm, attr);
-> >> +       default:
-> >> +               return -ENXIO;
-> >> +       }
-> >> +}
-> >> +
-> >>   int kvm_arch_vm_ioctl(struct file *filp, unsigned int ioctl, unsigne=
-d long arg)
-> >>   {
-> >> -       return -ENOIOCTLCMD;
-> >> +       struct kvm *kvm =3D filp->private_data;
-> >> +       void __user *argp =3D (void __user *)arg;
-> >> +       struct kvm_device_attr attr;
-> >> +
-> >> +       switch (ioctl) {
-> >> +       case KVM_HAS_DEVICE_ATTR:
-> >> +               if (copy_from_user(&attr, argp, sizeof(attr)))
-> >> +                       return -EFAULT;
-> >> +
-> >> +               return kvm_vm_has_attr(kvm, &attr);
-> >> +       default:
-> >> +               return -EINVAL;
-> >> +       }
-> >>   }
-> >> --
-> >> 2.39.3
-> >>
->
+When using zswap with swap, this also means that a zswap_entry does not
+need to be allocated for zero filled pages resulting in memory savings
+which would offset the memory used for the bitmap.
+
+A similar attempt was made earlier in [2] where zswap would only track
+zero-filled pages instead of same-filled.
+This patchseries adds zero-filled pages optimization to swap
+(hence it can be used even if zswap is disabled) and removes the
+same-filled code from zswap (as only 1% of the same-filled pages are
+non-zero), simplifying code.
+
+This patchseries is based on mm-unstable.
+
+[1] https://lore.kernel.org/all/20171018104832epcms5p1b2232e2236258de3d03d1344dde9fce0@epcms5p1/
+[2] https://lore.kernel.org/lkml/20240325235018.2028408-1-yosryahmed@google.com/
+
+---
+v5 -> v6 (kernel test robot <oliver.sang@intel.com>):
+- change bitmap_zalloc/free to kvzalloc/free as a very large swap
+  file will result in the allocation order to exceed MAX_PAGE_ORDER
+  retulting in bitmap_zalloc to fail.
+
+v4 -> v5 (Yosry):
+- Correct comment about using clear_bit instead of bitmp_clear.
+- Remove clearing the zeromap from swap_cluster_schedule_discard
+  and swap_do_scheduled_discard.
+
+v3 -> v4:
+- remove folio_start/end_writeback when folio is zero filled at
+  swap_writepage (Matthew)
+- check if a large folio is partially in zeromap and return without
+  folio_mark_uptodate so that an IO error is emitted, rather than
+  checking zswap/disk (Yosry)
+- clear zeromap in swap_free_cluster (Nhat)
+
+v2 -> v3:
+- Going back to the v1 version of the implementation (David and Shakeel)
+- convert unatomic bitmap_set/clear to atomic set/clear_bit (Johannes)
+- use clear_highpage instead of folio_page_zero_fill (Yosry)
+
+v1 -> v2:
+- instead of using a bitmap in swap, clear pte for zero pages and let
+  do_pte_missing handle this page at page fault. (Yosry and Matthew)
+- Check end of page first when checking if folio is zero filled as
+  it could lead to better performance. (Yosry)
+
+Usama Arif (2):
+  mm: store zero pages to be swapped out in a bitmap
+  mm: remove code to handle same filled pages
+
+ include/linux/swap.h |   1 +
+ mm/page_io.c         | 113 ++++++++++++++++++++++++++++++++++++++++++-
+ mm/swapfile.c        |  15 ++++++
+ mm/zswap.c           |  86 +++-----------------------------
+ 4 files changed, 136 insertions(+), 79 deletions(-)
+
+-- 
+2.43.0
+
 
