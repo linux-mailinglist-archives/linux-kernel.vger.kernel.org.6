@@ -1,113 +1,121 @@
-Return-Path: <linux-kernel+bounces-227664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E6D915534
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 858FE915535
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33383287C68
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:17:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3176928170B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D2713D633;
-	Mon, 24 Jun 2024 17:17:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410C619AD93;
+	Mon, 24 Jun 2024 17:22:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="QMoJrn1L"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="igs+6Ip0"
+Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D43F1DA32
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:17:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446DFBA41
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:22:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719249423; cv=none; b=p/VSJpCEP0xh8/L5kRAs8BvJiP0u2hZF0W2Ejbwz/LPZpl6orBrn333JD2pS+fmdG84U1QYK8sX9V35dMJMH+IY42KCqeI8kotBF+vEGGJGu55ZHL11M7E5p/t04Q48FsdVr9QODtnH/FzompN/Ygyc1N+gxSmrXF3ukxEP5K1c=
+	t=1719249738; cv=none; b=EG30NzGZqhm9kXcgC6k/AYzza+UtvY1A9t23iTbPk4o+jzgUUfKIccU69TODcMEneZsalJHDkHZHAjxpR7og0bXIOD95MkBSRZwNirkenTTX476krixgjmwW/UXuPXQZaRaxPWxggoT34JImjh3loV/UTdYgwfNL0VweC2NpQWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719249423; c=relaxed/simple;
-	bh=GMEQP3jd8WRb2V1nPNUL0HSascCCaN0HsToYXwfFS2k=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=EDc0Wc5W3sfkSTdWWaDA+In+AfdsTWPrOAxHP23uoHQgEJNhYzM0ppkE7McqH6GUp+rvGJESvkaHE20b5lxZv7P8934tJbRreZUU8JaSoCvsXnZRDgLS5KdQjIavbBjBv+/nPmRxwfhIpwLhxZFyRnd/v9mUF7v+L53Y9MVEOG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=QMoJrn1L; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719249403; x=1719854203; i=markus.elfring@web.de;
-	bh=GMEQP3jd8WRb2V1nPNUL0HSascCCaN0HsToYXwfFS2k=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=QMoJrn1LD5lVdyjr6qrnNyWBC9Ki0fPFxYP+xV8jVYyKjVESnnioV/BDJTTirsS9
-	 GDQIARYffI53kzX88EjdN9KTz0Fuv/tQNQ78sFHto5jSXXBZPMi7SHQyXpU57VrDw
-	 wXqeLG7oqcyHV/bE3WQa3+i5mJ6RyiD7sAgfAfCqFs12C8Fz4d+N3zRAa0wWW2s48
-	 PHNjCcLZmFNW9e76FRN9lZGMjECc6EcXDGGWURCDWLxomWYSvXTkYWg9WWdgejGKb
-	 EfAlspgPvguakHZzls5iavUCbavzqtCJsVP7Q3o3/KtT/tKm2iUSPPuqLZhCCd2kc
-	 aGY1Xc1tZIgJYkSLBg==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MdwNg-1swVhd2Q90-00mAhP; Mon, 24
- Jun 2024 19:16:43 +0200
-Message-ID: <8d9791ba-14cf-481f-8964-341880865a0a@web.de>
-Date: Mon, 24 Jun 2024 19:16:35 +0200
+	s=arc-20240116; t=1719249738; c=relaxed/simple;
+	bh=lZGZji4oPKa3khyohelBnUHaZQCOz3Chvj5/5UdmSOY=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=JWp4vgVuZ9Un1GQqziaxbeLufL+gAKpkRIsNLo4p5SO1xTupFQjmlJ+QF9+EhATxVIeqSuhfUUthSXvbABvOh+Zv9J5JP3WYoF79VvlqbxtvbwAAv6pgYZ44kP1MiENdv8K1V0/ehCSj3f/79oBRfAw5RPNCwOL0W73arHg76sg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yutingtseng.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=igs+6Ip0; arc=none smtp.client-ip=209.85.215.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yutingtseng.bounces.google.com
+Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-71cdcb122e8so2628077a12.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:22:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719249736; x=1719854536; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K8bWbmrEanG0cq7LQzNQldcyBiZSyrvwSSnA5ftQoIM=;
+        b=igs+6Ip0neMadtXOOpp5IJhj9p2avSvv4O26BCm9jJjyGZV1CYOVOGjEOQm/DO9lVw
+         jSF9ZFZQyJVpxUJu+dZ/6Ljcjs/nQXQbFb7RK+JScoXU9t7cKaRHQdko2amP6qWfe5AP
+         8bvQ+63xuagsI6QVIBHilIRqjo2U01xSoHVLT4IlusnpY082yPXqfQK+CeKgsEbczaPd
+         7PlqCzh23SjVdoF7Pmgh66yiI8zZetzK0Fuay5Umq8tFhP36yRrdMEyf/UelaxkFVWbg
+         EhpbPRRgUvgOkUjWwVfO3h9ZgkI66Z+f3yDtb2Boc2ig/ryI3xu1pdcF4h5VsgECbaxW
+         HuHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719249736; x=1719854536;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K8bWbmrEanG0cq7LQzNQldcyBiZSyrvwSSnA5ftQoIM=;
+        b=q1wnj8Om5AiyfZ2SRcPtl1JpWWWhiAzEfDYlLLX0SX5vn7k3AhwtX9zoEjrL/c1Hzg
+         9Wxeyf0SehvC4Xq8DpbLRN7RFM3zM0tg5YvdJ1TrVk1F5UYZCwzXYo7f9H7sbmyrObEg
+         krigjPcc6B4ZpZJTdVW6aB+U3/bBID8aflzkJdkcZTR1w0anE0HlHT3oXWhgNofq9BsE
+         SNwERt9si/8DNKBD0aRStTN4Faj7lQ9xirkjK3Tfwlg8vC0S+C45Yl3Nu9NkNJJIrYxm
+         mMBOzbuQ8P0A3by7NyDSgq2/bXlJCtZjsojxEJcOtKIZJS/8sJSamuAM6ldioTrIp+GZ
+         wirQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUluDgfrHzyMeIw8/krm1TitmM2QDGg7TdjZPCXpwffMHIhBQ8L2hiFQlMA5PoI80aL5nAjRf/sktJ5Lk3HiXO9FZjYBjYTRuIYfQ8w
+X-Gm-Message-State: AOJu0Yxmp5YrLTZEZAImhW17+3JNd9kM6kYyl6Mi28J9pM6bJ6YcOhM4
+	eQ3o0GZPvXT0xy91wJPrjVFnJA2H1UVkZvnw3zCtvobACF1vVYICwlyZpov/nD3fu9c0oZ87StB
+	CormNGziaL0Cye20YUXoPqA==
+X-Google-Smtp-Source: AGHT+IH5BbPfxjchf+mTaxNw4PUPX/0W5Goo/LHtB1JZ/H8+Eem2HMIC09t2UMvj5JOyhX0x0DgwkxPw7gjTQapnCA==
+X-Received: from yuting.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:317f])
+ (user=yutingtseng job=sendgmr) by 2002:a05:6a02:fc7:b0:65c:f515:1590 with
+ SMTP id 41be03b00d2f7-71b5f36982fmr18438a12.11.1719249736198; Mon, 24 Jun
+ 2024 10:22:16 -0700 (PDT)
+Date: Mon, 24 Jun 2024 10:20:32 -0700
+In-Reply-To: <CAN5Drs06fbditeSaVLc6i6wEY+A47HHzQmhCS1rzJgacNs1Tjw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ma Ke <make24@iscas.ac.cn>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>,
- Alex Hung <alex.hung@amd.com>, Alvin Lee <Alvin.Lee2@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Dillon Varone <dillon.varone@amd.com>, George Shen <george.shen@amd.com>,
- Hamza Mahfooz <hamza.mahfooz@amd.com>,
- Harry Wentland <harry.wentland@amd.com>, Jun Lei <jun.lei@amd.com>,
- Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
- Wenjing Liu <wenjing.liu@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Aurabindo Pillai <aurabindo.pillai@amd.com>,
- Natanel Roizenman <natanel.roizenman@amd.com>,
- Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-References: <20240624024835.2278651-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] drm/amd/display: Check pipe_ctx before it is used
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240624024835.2278651-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:iYOxbUd/7f3wK5ncEyBEN/Q53syMelXlMbVXqlZkEbL8mvcBZ6k
- ZrOms3leP2hoDMYqxo0dms8w44Dmr/iNZZ7w692BEhxfOZiYi+xgqiYUU6IK2zdnwpbyops
- xRSRpnX319A30gWC1+zvcpJpP+cu0n0yvD4xhJv0mOp98jFlyb8ILsG8sDVsR3Ax31U7R62
- mxwISQHFqPAKYd/Oj/OfQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:0FDCty/50O4=;LrAnG81ZmgYLa0YVEo58iS38UZ9
- y3xoIvBTWSsZzgqcBjpOBeApuEp38UKLHl/yMigDPUCFljO/tBRQ2fEJfZdGw8bs4jZTpg9Oh
- jfO+oBRhQOFKJLdgAZvmNeg4uds0gUO2pVyLnOBwegymz8jg+ciZeUT03IvKBjniqALbhedFY
- MSF2zaRByPL1srQTxDqI3EOSGXsVP89bPSIp7XEPnwaJc93lP671jA1iE6kJPS/4oqZcogvQR
- cZ5RPnalOZZb/rJRMxZuXFRXmAf2SRe5aorN7al1eHxtK46BR0yxGZbPzblKEZFzdtbyeErUm
- amMoO4byxprl7ZbBE4qFm9LQ4zgt0xbXSQU2f0FJ5C+lDD5+rtlbhZ/xUz5lXpkY8iO+PeOKi
- 0ZotloisqAEFfoNiFUWCT/OmB2Rd6LXuMTqH5nOenHlzg649SG8Itg3kZW+o9qXbJ2sJ8pxqB
- FlPBLZL24WZ2dB19zjNv8OBb5Q+SdQ8PALd43U+uP25MW8970VFRI2loz0MWG+YEIF+sGLXwc
- 6mijamvwM9Ul4XjWeaqODOLCFOOztr162i8DUKHmA/Hyu+ULnuAyPpkHaPRDXGZ7b2Y6mrYIm
- J4CuPJdQNV1sJh0vgD7VPz552b7NYbc9Bil2KDuHnoVyA6P/Ti2rCPPYKz+kYsT6dbELiUwHt
- ffrJhP0hZeNVP1hLi2qkyekWShsSrmoGDjMACW43n+j0unMm18AR+KzfrxbZabb0G2ZNBr6hj
- heK7Cfn47qc7jnu0W1pMY6RZagmvGypflug/SIc68vhna+hFM9mopX0IRd+UYsH6ZWKa8B3PK
- t8U3DX2Rklww8E3bSirqq52JMdX0ugPNxj9fIG5Vvi+PU=
+Mime-Version: 1.0
+References: <CAN5Drs06fbditeSaVLc6i6wEY+A47HHzQmhCS1rzJgacNs1Tjw@mail.gmail.com>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+Message-ID: <20240624172031.407921-3-yutingtseng@google.com>
+Subject: [PATCH v3] binder: frozen notification
+From: Yu-Ting Tseng <yutingtseng@google.com>
+To: cmllamas@google.com, tkjos@google.com, gregkh@linuxfoundation.org
+Cc: arve@android.com, maco@android.com, joel@joelfernandes.org, 
+	brauner@kernel.org, surenb@google.com, aliceryhl@google.com, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	Yu-Ting Tseng <yutingtseng@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-> resource_get_otg_master_for_stream() could return NULL, we
-> should check the return value of 'otg_master' before it is
-> used in resource_log_pipe_for_stream().
+Yu-Ting Tseng (1):
+  binder: frozen notification
 
-A similar fix was integrated already according to a contribution
-by Natanel Roizenman.
-From which Linux version did you take source files for your static code analyses?
+ drivers/android/binder.c            | 300 +++++++++++++++++++++++++++-
+ drivers/android/binder_internal.h   |  23 ++-
+ include/uapi/linux/android/binder.h |  35 ++++
+ 3 files changed, 354 insertions(+), 4 deletions(-)
 
-Please take another look at the corresponding software update.
-[PATCH 16/37] drm/amd/display: Add null check in resource_log_pipe_topology_update
-https://lore.kernel.org/amd-gfx/20240422152817.2765349-17-aurabindo.pillai@amd.com/
+> freeze was allocated with kzalloc(), you could drop the "= false".
+Done.
 
-Regards,
-Markus
+> If !node->proc then process is dead. Do we really need to continue?
+Update the code to return an error early if the process is already dead.
+
+> This access to node->proc->* doesn't seem safe
+Added locking.
+
+> Why do we queue this notification?
+Yes, this is to get the current state back to userspace. The userspace API delivers an initial event for the current state upon a listener registration, which makes it easier to track what the latest state is.
+
+> I'm looking at the death notification code and it seems it only queues a
+BR_ERROR after failing to allocate a "death" and that other errors are
+silently ignored?
+Sure. Please let me know if you think we need a change here.
+
+> these could be just bitfields.
+Done
+
+> freeze->work.type = BINDER_WORK_CLEAR_DEATH_NOTIFICATION
+Fixed. Working on a userspace test. Will post a link when it's ready.
+
+base-commit: 14d7c92f8df9c0964ae6f8b813c1b3ac38120825
+-- 
+2.45.2.741.gdbec12cfda-goog
+
 
