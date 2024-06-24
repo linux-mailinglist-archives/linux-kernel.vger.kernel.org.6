@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-227691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9111991558E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:40:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9B091558D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:40:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D2F0284A2E
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 298FB1C2235A
 	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:40:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 322A919F485;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321C019F484;
 	Mon, 24 Jun 2024 17:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8TTt8NB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WUOYVnPP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EEC219EEC4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFBC19EEDF
 	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:40:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719250831; cv=none; b=cpeUQpMS2XfLEcbdIs7pgIuxkNLJN/sgIaRrUG5mr4aFFPSAFKpUAJrAd6GnO+z3soiNqdQDQu8/7H9QQq+PUeEO1LhTccxYH2XvXe5pOcvD7MywgfES88Zi/8LrgqGQ1zDhjEAoS/6eoDWtb2hiUiT9MWISLoX4UvJMpuDbrTk=
+	t=1719250831; cv=none; b=mXO/4aMvGPb6wnksPt5FJeAd4HBbI76Aqp44kbWz/Op1EUr6gwTCPL53jyuhYZValC15FeC87fkTeWnKMmXOxYm2WsHxHUWL3hK5+oDKn+lNCfi2hMXacp97VIgjdxv0xryupGteo3vyzd/T0tQKcSP3xBLWV9DaYEAI/4RPTFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719250831; c=relaxed/simple;
-	bh=UgjBZziCdN2Taf5eSsXXsJtqJ7kU4QpFWTH/FtVBLpI=;
+	bh=yZJMLWqazJ2QSZSlbJ0fJBz37N1160tDc8KHGpb0W6s=;
 	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=O8AtLJHInTVD0wFaNnEIgoqvtrAFGaEVenXFxoKadxW+sqhZnY5sMA6adSp/Gpxw9UwCtg/qniP06Q8pFkvAeFNA82Wj7kvFZLJpVLke1XvHrG6gkebQWrZdGb9Q4CRC4mGqOM5a5EcvRepDi90dDrbajhgHbB97ImC7P/zJ0Mc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8TTt8NB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1E1E6C4AF09;
+	 In-Reply-To:To:Cc; b=rNVMIQA5PEGJMPdcDLu+SibrphfgXTOsDgTtaobxfCtzhRCG08SmO/Whwi/Q5zAJ66PJYQqckchKYc4wFLHpaInzt9/ohGdUMxc3yBzrXu/b5j/xpxxjyTw6Hd3OoiQ07lYBfKU3WgB/p0tZ4aiwP3dnAjDFGurq664uHykkSjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WUOYVnPP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 27101C4AF0C;
 	Mon, 24 Jun 2024 17:40:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1719250831;
-	bh=UgjBZziCdN2Taf5eSsXXsJtqJ7kU4QpFWTH/FtVBLpI=;
+	bh=yZJMLWqazJ2QSZSlbJ0fJBz37N1160tDc8KHGpb0W6s=;
 	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=X8TTt8NB9+lbJ16LgMefXf5QzIdmNGecHO8hwaP+8t3elXmTKdtteoLgirIQfg18c
-	 EzdiiZoDHp+jh6CvkhANt+NWw8UjjokUyl1/G4llWyGnTSt6H+xvI/pgWGWuXw7dqp
-	 4yLum1Trx21XMUBzd8NP2hkpbFKJyu8Rw8kUe3bqqxSBkTZ+jTx1+PlIluE2XukFyp
-	 krtFb64IFyu6Je63O5AkemsJ4kVFqOQ2nYjWCDPPDfOqvwcTExBqnmHVxRXUI8bjyj
-	 vXSB5ADRN8entcQcFaCmVHVkVFf+1DeUiQfWWxQieGHabh1RRm+w31fEj+5DWjBI7f
-	 iTHNetKJ+bDgA==
+	b=WUOYVnPP0ZW5NF0ER3QjMMCft4dA7JqbSVKFKJAyis27MUpaAVo3zpqh5R57k6RAl
+	 qaqAqiaRQhBPYM5vRsJ0/+cQjJCe4cTFXTf/Gsr0+B9qsIz9Z2IDCcap/8rVEf/Pc0
+	 CxhIiYTJFtdpCXK0RBkV1oBoWl6qQZrMZMtiP/2W0q015QiDtOclVbkZLOD/oeBPqD
+	 e8f3FPrNTWS5obhEwyzkhG9ZKctXotrnssRijrX8M3OtGj6/Khimm9uD39EQB4N9s+
+	 DBtLzW1ef812iOMpUTVQQbozhiirfpoAzTpkud0jti8rGpojAqDELQET6ENLa2R519
+	 XyW0+kpwhLl/w==
 Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id E2A33C43616;
-	Mon, 24 Jun 2024 17:40:30 +0000 (UTC)
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 056F9C43168;
+	Mon, 24 Jun 2024 17:40:31 +0000 (UTC)
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -51,37 +51,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH V2] f2fs: enable atgc dynamically if conditions
- are met
+Subject: Re: [f2fs-dev] [PATCH] f2fs: clean up set REQ_RAHEAD given rac
 From: patchwork-bot+f2fs@kernel.org
 Message-Id: 
- <171925083092.4247.2292355325725216488.git-patchwork-notify@kernel.org>
-Date: Mon, 24 Jun 2024 17:40:30 +0000
-References: <1717750830-15423-1-git-send-email-zhiguo.niu@unisoc.com>
-In-Reply-To: <1717750830-15423-1-git-send-email-zhiguo.niu@unisoc.com>
-To: Zhiguo Niu <zhiguo.niu@unisoc.com>
-Cc: jaegeuk@kernel.org, chao@kernel.org, ke.wang@unisoc.com,
- linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- Hao_hao.Wang@unisoc.com
+ <171925083101.4247.13790083235420551794.git-patchwork-notify@kernel.org>
+Date: Mon, 24 Jun 2024 17:40:31 +0000
+References: <20240612193831.106524-1-jaegeuk@kernel.org>
+In-Reply-To: <20240612193831.106524-1-jaegeuk@kernel.org>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
 
 Hello:
 
 This patch was applied to jaegeuk/f2fs.git (dev)
 by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-On Fri, 7 Jun 2024 17:00:30 +0800 you wrote:
-> Now atgc can only be enabled when umounted->mounted device
-> even related conditions have reached. If the device has not
-> be umounted->mounted for a long time, atgc can not work.
+On Wed, 12 Jun 2024 19:38:31 +0000 you wrote:
+> Let's set REQ_RAHEAD per rac by single source.
 > 
-> So enable atgc dynamically when atgc_age_threshold is less than
-> elapsed_time and ATGC mount option is on.
-> 
-> [...]
+> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> ---
+>  fs/f2fs/compress.c |  2 +-
+>  fs/f2fs/data.c     | 17 +++++++++++------
+>  fs/f2fs/f2fs.h     |  2 +-
+>  3 files changed, 13 insertions(+), 8 deletions(-)
 
 Here is the summary with links:
-  - [f2fs-dev,V2] f2fs: enable atgc dynamically if conditions are met
-    https://git.kernel.org/jaegeuk/f2fs/c/6efc3a05e613
+  - [f2fs-dev] f2fs: clean up set REQ_RAHEAD given rac
+    https://git.kernel.org/jaegeuk/f2fs/c/6aeb084fa0b1
 
 You are awesome, thank you!
 -- 
