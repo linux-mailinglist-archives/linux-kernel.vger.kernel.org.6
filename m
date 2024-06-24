@@ -1,260 +1,337 @@
-Return-Path: <linux-kernel+bounces-226892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D13DD91454F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:50:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D77914556
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:51:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F37B71C21F81
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:50:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 760461F23AC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688A812E1D1;
-	Mon, 24 Jun 2024 08:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978617E0F2;
+	Mon, 24 Jun 2024 08:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="UwujRacY"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Akb8+ceI"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9246E12BF1B;
-	Mon, 24 Jun 2024 08:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.148.174
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719218985; cv=fail; b=auIeNKBgEgU/1FGMkGjJJts6KcudodDE8GD4ELCCCbIDAN5leXQdVGPgK54010Bu4wTwbNUpwhY+oC90+2jkGPVZ2VQI/q8uA4sXX5es4oklqD2meCBH75gGeQYCRaEu4RlLiSLsfNI6TKU+7zK6Cf+PvoQSkSvcmU6J4QQPR0A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719218985; c=relaxed/simple;
-	bh=7UqsEDRTJWqcN+cNBCeHP4Jjcxsesf1i09jaJBke5G4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=hNXDrtD04qRuOYq7lY/N/i7N6bvuXkLY476HEI5IQty9Oyb1FTkaN8TKD+8eAKE+D3ehk/3Ox3rGDAKcL2gbgkLS8IF0k/Y9SULcsFkaVc/8lOhHiAgrRmpH/FkuaPA4bYDOBgW2P2O6kr0sEuWUiuHhi1SfMnUlpgVwXlYGptA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=UwujRacY; arc=fail smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NLvlxE014517;
-	Mon, 24 Jun 2024 01:49:23 -0700
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2046.outbound.protection.outlook.com [104.47.66.46])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3yxcgtjtj1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 01:49:23 -0700 (PDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=JmVwnMbIlkYVGwAkTKdzJvnwKR3/MvXiPfqfZ7PCGrXzWbhXbwJTbG4Nuch8FmjR1bg4W9CVUjiZSB1VJJsr/Ft6SZZ8n44RHHK+8cVMgA3HkNRpa+x0lidlL59VoIQvCGAVhhFd+OGowB2P8eWjGeY9SJShMBSd7MLlJvKYWTNEnuS1RdJXq4+R8eKqMy8T7+N2Njb1UZ3ehwdLJrjMrapuM8D4FJR/Bg3xbLHTnOlHpqXdgjCwrZ9hcJv9qBjAjlr0pPP85T9+/TaAB7dOo6HvjhNxjoeiqwsu3pGRKah2CCIPQt0dBS9s5xuM1k4B0MolfQen790mCzFlx5KchA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7UqsEDRTJWqcN+cNBCeHP4Jjcxsesf1i09jaJBke5G4=;
- b=fW1zFcbcLAtvl5rTBeP++mDgPrHOJAMQWjZvAgAxI7KANFcMfEVVnDgORM4ekai4TTPmhucB6rrXro+FPQLagyB5w1LKO9fYQM+fahpniyaV50tulPR+7y8IDD1unPPqg5iVy0yiz6L+MuHe5R2vGDEEwYezcbs6o09S9788XkqjRS9Z6fvKXCp6/zIDi1V99Ud713hMxgpQ+aaNeB7GuqWIsYKEikQWSqni1yMWkGq4cN75UeLzOYFVrvzrStV8RLfH8rx2eFGThFGXYifrtIY7c2Z0A32wB05AcPdlVYsbgEn3sz8BdeWAJD4N0GODFFNQ7XB3toPt0yh9ZaDrAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
- dkim=pass header.d=marvell.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7UqsEDRTJWqcN+cNBCeHP4Jjcxsesf1i09jaJBke5G4=;
- b=UwujRacYwTxBJZg9tvdCzvYh9iQFp/WoK/zKv12zl5PxvzSLu0DhuHwCQBG0DsRjb7Dpl+ZpjC512MXZ9SNNjgCciVZ1FLZVk+lbzKkMlHlN80ls43vIBvWNz20MIrdB7kL3TqTQQa/EcAkEzFw8e/TwZdnMHg+3Y52QY2177xY=
-Received: from CH0PR18MB4339.namprd18.prod.outlook.com (2603:10b6:610:d2::17)
- by CO3PR18MB4846.namprd18.prod.outlook.com (2603:10b6:303:172::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.26; Mon, 24 Jun
- 2024 08:49:21 +0000
-Received: from CH0PR18MB4339.namprd18.prod.outlook.com
- ([fe80::61a0:b58d:907c:16af]) by CH0PR18MB4339.namprd18.prod.outlook.com
- ([fe80::61a0:b58d:907c:16af%5]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
- 08:49:21 +0000
-From: Geethasowjanya Akula <gakula@marvell.com>
-To: Simon Horman <horms@kernel.org>
-CC: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kuba@kernel.org" <kuba@kernel.org>,
-        "davem@davemloft.net"
-	<davem@davemloft.net>,
-        "pabeni@redhat.com" <pabeni@redhat.com>,
-        "edumazet@google.com" <edumazet@google.com>,
-        Sunil Kovvuri Goutham
-	<sgoutham@marvell.com>,
-        Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
-        Hariprasad Kelam <hkelam@marvell.com>
-Subject: Re: [net-next PATCH v5 03/10] octeontx2-pf: Create representor netdev
-Thread-Topic: [net-next PATCH v5 03/10] octeontx2-pf: Create representor
- netdev
-Thread-Index: AQHaxhNn5j5hcb8xAEyFeoxvUdwGKA==
-Date: Mon, 24 Jun 2024 08:49:20 +0000
-Message-ID: 
- <CH0PR18MB4339400F88392B69B8191ADBCDD42@CH0PR18MB4339.namprd18.prod.outlook.com>
-References: <20240611162213.22213-1-gakula@marvell.com>
- <20240611162213.22213-4-gakula@marvell.com>
- <20240618082528.GD8447@kernel.org>
-In-Reply-To: <20240618082528.GD8447@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH0PR18MB4339:EE_|CO3PR18MB4846:EE_
-x-ms-office365-filtering-correlation-id: fb3c3076-ff11-4703-a8c9-08dc942a8a52
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230037|366013|376011|1800799021|38070700015;
-x-microsoft-antispam-message-info: 
- =?utf-8?B?ZmFPT1J0STd5RTNDOWIrWFg2M0tSWm9WbnU1K0owdzVKY2t5ekhrVEhBL1JK?=
- =?utf-8?B?ZzNjZm8vcFphMWZWZDVCWWhPbzJUbmZ2Nk40a2h6SjhQMFpBQXlrYVhUdk5k?=
- =?utf-8?B?WFpnMElYUURRbnc2NTVqL2MyWkJMTnJWN1pvbkJEOVNOTDhBbkUzTGlWTnN2?=
- =?utf-8?B?S0lEMXlXWlYyOHBieCtjRVZRNVgzR2NuekdmWk1TMWZUSkVaVVAzaDk3UmhY?=
- =?utf-8?B?aStpME8yOWhZTnNZUUdldlNEQWRiYUQwUlZDUFo1L0ZyeHR5RDV0dFBLczFZ?=
- =?utf-8?B?ZldmajdOUWlXd3NZR215SXNmY1pHWW5sZkNqcnhRaklyZXMxVENvRFlDTmUx?=
- =?utf-8?B?eHBWRW9JQ0RWd3k2TkVYV0ZKdGxIU1ltRmx2bmRVWVBBM1p1SHRQTHY0dzdh?=
- =?utf-8?B?dlloQ0xqR1RwM0NsZ1hUTm1XUm42UmRvNVdBaW5ESGtwcUxRQUdJUmpRSnpC?=
- =?utf-8?B?d2o3aUk5QUUxMHIyZWZHRGp3THQ1RXM2Tlp2bnhGOWkwRmVSRkJTUWZOYmlq?=
- =?utf-8?B?L05abkxtczlGK0hNSU0vaXhMNEpuOFNURHNPcHF6eEJpMzgzOFRYWDNjV0FH?=
- =?utf-8?B?ek82K1RPK2pVNGlndVNBL21ZWWRrTksrWVlleXdtZ3VaVnZZeDN1eURUVUZE?=
- =?utf-8?B?M2JmWWVRTDM1UFNhYkdzRWI2RCtzL3BWVlRnMys3dkFKK0Y2MXZSaHpYTG85?=
- =?utf-8?B?b0JzRVVMekVVT3E3WUxJZllYeUlPT1pkM1FWNTRpNzVmdWpJOXRhelY3c1dM?=
- =?utf-8?B?N28vdVZWeG50YzlzUjdUYVVreVJuelgzblEzckhTRENPd0dGS05uNmV5MXEz?=
- =?utf-8?B?K0hodDh6QXlySENGeDR6a1hqZkZmK21mT2ZPTjVTWW8rb3JtQXFiQVdJWDZ4?=
- =?utf-8?B?YVZHbHZOSkorNDJiSVkxVldhUnpaSUlITzBKcS9peXhHVU55WnFOcFFIZTkw?=
- =?utf-8?B?RVdNOUNuaGpIanBnSUFaSVI1cDd2c3Y4MHB6NmhPdkNxeCtIUmVkT2dkZVc0?=
- =?utf-8?B?VCtIbVJ4VUJvVUx1ZUVraE9Ja2VnUUlRK3lhVk5kK0FhdGhLYjVCN1EwcUxF?=
- =?utf-8?B?VFJJbzZwSERHckpLVzZUdGxidWs3dXNJa0hrSXhrd2JnU2srVXNWU2RhWlM4?=
- =?utf-8?B?SmJTS0U3WjVhMGw0T2JIWE5jNVZZQ2cyVUp4RFZoZHVPTmI5ZnFWazBrQlRv?=
- =?utf-8?B?UFVlUHB6ZmtBS0doK29uUEJnSlpOa0UrUTFoVmhsT1ZaaUNFYlk3ZFFTMnJG?=
- =?utf-8?B?R0tpSmxDMG1KZDJQbzBQRDJ6Y1V1eVE3ZWZMcE1INGtVV1JEOUlXL2k0NWRq?=
- =?utf-8?B?dFpQd29mMW11Q3BodVlrZGluYkNUVXVPWnJLV1ptaVNwNVY2Q2s2aDI5Qzhm?=
- =?utf-8?B?MjRwS0l5bWFKeG9YeXFvaVhJblVyU1g3ZXVkOHBiZ2NTMVJ4VnJ4Z2t0MUcw?=
- =?utf-8?B?eW9DSkRDNFFzalZ2UXg4MEdjMlh6WjM0UThhcW1oNlJsOXc0L2ppSTVTTmlz?=
- =?utf-8?B?YnVtaHNvZkF2b1VYeG1DZEVFMER0c3lIV20ydTNVRE1YRnZxMklsYWFwUGJ3?=
- =?utf-8?B?eUM2VVRlRFZEcVNXalplaUpVL01TUXRPaFMxQ25mV0plM04xNURHU0RvYWFR?=
- =?utf-8?B?VktXTTdaVVdNckJaQ0NSd2thU2UyY1p3bVIvMFRKelFkT0YrbEIrY1pKYUh5?=
- =?utf-8?B?dnp6YWN0S3hRSC9GMlhMd3M1Y3RnUmM1THdJUTdGWDNNMEtUNHVibktYeHhn?=
- =?utf-8?B?bGdEeWRyNlBnaDZDdFh5a3IwZXR1QVpOY3dUVXZSK3hvSGZVczNrZ0J3TDAr?=
- =?utf-8?Q?0Zl3vuF3os+KBw3B15gyRdGYb3t0zbOq17zkU=3D?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR18MB4339.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021)(38070700015);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?utf-8?B?N25kSVZEZzYrRFVxamZHU1FWUTBGNTlUN2dNRW9uUXJEaUVHN29jZmxkVmtE?=
- =?utf-8?B?dEhQS2xubjdHVmpQaTFkT2RFS1c5akNoYVhxVS80VzA2S2FqUmJoYVJpZ3U1?=
- =?utf-8?B?YXRpbnNHVHFKeTRzLzhETmNrUFVoYWlwMXdPZ0dGdFl3VmpxWER5a3NZeGFX?=
- =?utf-8?B?RUlyWGxZZ1NEcWZEWUVUdjdORVY1Z0JINXhUQkV0U3IvSjl2Zk0zNHdxL3dO?=
- =?utf-8?B?Q3VrUytrUzVlaDZBTnJ5VGorcUhVMGR3bHUzNHJuUithb09mNnVEeWk1Y0t0?=
- =?utf-8?B?YzVMWGVyUlNRQ0h3b29wbUM2ajNNNEs2anE2ajR2U0E0Z1VteDByeHQxZS9C?=
- =?utf-8?B?aVd1WHAxTzJncS9mS3JCemFiaG52NHNOcDJpM2RERStTVDYvbjljN2dQNkl3?=
- =?utf-8?B?Z0N0eVIwYThQbmFpUk9jd0p4MllwRGZuclFEMkd5TlE4Qkp4aWE4OXFFUTl5?=
- =?utf-8?B?TDhnNHN6eTNJMDJIZUlEUjMwM2haSERRZE1FU2JIOURJZExzYnBpOVdNeFZv?=
- =?utf-8?B?Q0RkUEppQWhWZDJRV3U3R3pHVHZOZWJlV0NyQWpPZDhBM21RbXFQTzVncGc1?=
- =?utf-8?B?UnBLckVKZXFCUjV2R2s5UTB5cjVCZTROYmxsK3NCQmRvMEZ1anJQMWpXcU5s?=
- =?utf-8?B?RVJmQk4rZTJNdUdDT0d1WUFDTjhVOWFrTmpkM1IvVzlucHVOdDNUWDJSY2Vz?=
- =?utf-8?B?QWVJaVFjN2s0YTBEL1N3MDRnOUNDZmJvVDBKUkR2RDYvRld6dHRIY2RUdUlQ?=
- =?utf-8?B?U0tKTEpCWFhVODFVSWRsb1d4NGZldFNpd1ZjREsrOUdOdXAzdlA2bXdJNmNG?=
- =?utf-8?B?WGVWN1ZZdmdhcGJNNjhMcnN4Rm5jQ0tQQkFHd2lyNEZsRWhXNVc3cHJEK0x6?=
- =?utf-8?B?RHE5Z09zcHVLNHpIQmNZV3JjRTJHY1dkdXNTR0ZuMHE0UW9GeG5GK05PNGZn?=
- =?utf-8?B?bUl0NGUwNHpjNTJQbmdxcXByajBFMXZiSDRsSHBtZ0RJRURiQWxmUEc5T0Zm?=
- =?utf-8?B?eXBRdHJnb2NpZHI3blF4L01rUVFVM2phQW45eUxtUWZWaHZDSWtsWndqOXhP?=
- =?utf-8?B?RytCd3hEbjY5akFBb25mdkZaN1ljYytDdEs0U29iYm5BcmNNQzgzUGdVb3R5?=
- =?utf-8?B?YjFxaTEvcWh3NUt5bVBhVTJhY1ZqeGxYNVAzWXZkWTJHU05XZXN3cW9HTFRQ?=
- =?utf-8?B?RFNYYmpKcG5kZGZ3bjliKzBocUh5Ulk4emtiSEtJYjlRUmMzT29XclJlQ2RM?=
- =?utf-8?B?Wk5pS0ZOcWZwQVRUU0dBVTFjWnhKZTB3NHBiOE12bmYwOVl6bndFalR4UDc1?=
- =?utf-8?B?TEZlU1gvSUV2Rmw1MmdZamZMQjVOdnNIVEd4SDM5K1NKUjlTY21mM0VkcUs5?=
- =?utf-8?B?bVZSWWZZb2hZR0M3dk9JSWhjMUtEUUdvYzZRMVQyQ1BQL1NxN2R2Vzd4NXZP?=
- =?utf-8?B?QXNyS2NZeXZyM3p0eTRjdmdiUlk2VS8xeDhHaXkvODZpa05CNlIzV0dJOW9J?=
- =?utf-8?B?NmNmY0dPYXc4MTNUWnZGZWw2Ri9lMExsOHdFWnlkY09OaW1KWE0yYmptbXhj?=
- =?utf-8?B?c1VrNFNzMkF1WDdiSWM4aHFWNVlueXRaMFh4akIwUHJxa0o5TVNwa0dMMWRN?=
- =?utf-8?B?bkE0OXRjZjRaWjRNSUx3elBQemlTYThPZkdTQmFBc01ueFFNZnd2c08rbVQ5?=
- =?utf-8?B?TC95WjFWbzBIOTJJaVk0akZ0L2gwNkQ3MytrM2ZoWDFkTVVvZlpweWZmUytO?=
- =?utf-8?B?UHdRbUtoUUQrb3pFN2hta2hLK044T3NZbkNNanZjeld5R01HSFJqRktjSzNp?=
- =?utf-8?B?TFQ3eTE2OGcyMnN1ZnJLc0orZ3AxdlR1ZmN2K2ZXUmh5Nm56QjY1SnpXUjF5?=
- =?utf-8?B?VnJkTjRJZGVaV3BnS292czNFT210Zytub0pWbGpITG5ldm12VnQxekp0ZHlq?=
- =?utf-8?B?TTJBejkrVUJrbFh0Q2dFWmxZMXhrbnZ3VWtKK2xqQmtscVJUZ2R6T1VEWHVB?=
- =?utf-8?B?OFZ4RDNZeTg1eGEwdWhZcmxqQjlaakNNMWpXUGtoWnE2UnhxWmhReWNYaUs3?=
- =?utf-8?B?am5FS0RVN1BDRFByMkRORjN5NGVMc2hCNStiNXVMVzdROWVKMHhPZlRqdjNh?=
- =?utf-8?Q?5kRU=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC645A4D5;
+	Mon, 24 Jun 2024 08:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719219084; cv=none; b=gKWOgz28y646bIx1jRn4W0hZOdKpzniZYio9uBRiEhdVJmmhDdTZxxn20AwvlUbesF6epOn2rNSNd8qcFAfI5utsbajQLf5RF6F2DHuxTR2CB9nlQgcH8I5DBa2TdUU3vbDbunmQqUoVPLN0eAXfez9dlMdhoNE0u3eMAtSPbyI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719219084; c=relaxed/simple;
+	bh=bR/D0cZcNZxtUGrIbt3MJF86EwDDVoIYS//ABn9SvEw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aDL+rUcQuMgn/CT2OTZ56ARrWL6CVh643CSRlkHPC/k+5nl5iJ3/U5oLDXgwl6doltlWJXh3sUyPBNFGCwUtbnEeTpyDtcPr725ChH1Sa+Ma46sfEmy8UhvYNZSUWbMRBC6PyoAy/r/8i35V0NPKxhqL97j3HpfA1udxhNqUolg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Akb8+ceI; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1719219079;
+	bh=bR/D0cZcNZxtUGrIbt3MJF86EwDDVoIYS//ABn9SvEw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Akb8+ceIjRPVLHXpOLTM5LSCrQTmXTpw0nD49ABxNEauFXmwyzS4SkmRwYHyFiIdb
+	 Uu0qNuhH/DOtGHnmTWO+xa8IO0XG/Aa7c4uIm9P/V2ODNJKgX7ottPvOxR6yvm7ZWS
+	 hOChv+on3LwOFg/7P8cVm5kdFTnXdgT1aulVqxsw=
+Received: from stargazer.. (unknown [113.200.174.117])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 8FC5666BF9;
+	Mon, 24 Jun 2024 04:51:13 -0400 (EDT)
+From: Xi Ruoyao <xry111@xry111.site>
+To: Christian Brauner <brauner@kernel.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Jan Kara <jack@suse.cz>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Xi Ruoyao <xry111@xry111.site>,
+	Alejandro Colomar <alx@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Huacai Chen <chenhuacai@loongson.cn>,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Icenowy Zheng <uwu@icenowy.me>,
+	linux-fsdevel@vger.kernel.org,
+	linux-arch@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] vfs: Shortcut AT_EMPTY_PATH early for statx, and add AT_NO_PATH for statx and fstatat
+Date: Mon, 24 Jun 2024 16:50:26 +0800
+Message-ID: <20240624085037.33442-2-xry111@xry111.site>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: marvell.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR18MB4339.namprd18.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fb3c3076-ff11-4703-a8c9-08dc942a8a52
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2024 08:49:20.9892
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: xkbDq68MOYbvmZGgPs3GLPI3UWR6UN1xBw+vDu1FTdVnASRQc0WE/JfvtYzTnv+i3A5I/MVG+L1P2qp3c8BB2w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO3PR18MB4846
-X-Proofpoint-GUID: kp1PAV2nZ5nKe1Fi9wLL_UILfL3cQYH_
-X-Proofpoint-ORIG-GUID: kp1PAV2nZ5nKe1Fi9wLL_UILfL3cQYH_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_08,2024-06-21_01,2024-05-17_01
+Content-Transfer-Encoding: 8bit
 
-DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IFNpbW9uIEhvcm1hbiA8aG9y
-bXNAa2VybmVsLm9yZz4NCj5TZW50OiBUdWVzZGF5LCBKdW5lIDE4LCAyMDI0IDE6NTUgUE0NCj5U
-bzogR2VldGhhc293amFueWEgQWt1bGEgPGdha3VsYUBtYXJ2ZWxsLmNvbT4NCj5DYzogbmV0ZGV2
-QHZnZXIua2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsga3ViYUBrZXJu
-ZWwub3JnOw0KPmRhdmVtQGRhdmVtbG9mdC5uZXQ7IHBhYmVuaUByZWRoYXQuY29tOyBlZHVtYXpl
-dEBnb29nbGUuY29tOyBTdW5pbA0KPktvdnZ1cmkgR291dGhhbSA8c2dvdXRoYW1AbWFydmVsbC5j
-b20+OyBTdWJiYXJheWEgU3VuZGVlcCBCaGF0dGENCj48c2JoYXR0YUBtYXJ2ZWxsLmNvbT47IEhh
-cmlwcmFzYWQgS2VsYW0gPGhrZWxhbUBtYXJ2ZWxsLmNvbT4NCj5TdWJqZWN0OiBbRVhURVJOQUxd
-IFJlOiBbbmV0LW5leHQgUEFUQ0ggdjUgMDMvMTBdIG9jdGVvbnR4Mi1wZjogQ3JlYXRlDQo+cmVw
-cmVzZW50b3IgbmV0ZGV2DQo+DQo+T24gVHVlLCBKdW4gMTEsIDIwMjQgYXQgMDk6NTI6MDZQTSAr
-MDUzMCwgR2VldGhhIHNvd2phbnlhIHdyb3RlOg0KPj4gQWRkcyBpbml0aWFsIGRldmxpbmsgc3Vw
-cG9ydCB0byBzZXQvZ2V0IHRoZSBzd2l0Y2hkZXYgbW9kZS4NCj4+IFJlcHJlc2VudG9yIG5ldGRl
-dnMgYXJlIGNyZWF0ZWQgZm9yIGVhY2ggcnZ1IGRldmljZXMgd2hlbiB0aGUgc3dpdGNoDQo+PiBt
-b2RlIGlzIHNldCB0byAnc3dpdGNoZGV2Jy4gVGhlc2UgbmV0ZGV2cyBhcmUgYmUgdXNlZCB0byBj
-b250cm9sIGFuZA0KPj4gY29uZmlndXJlIFZGcy4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBHZWV0
-aGEgc293amFueWEgPGdha3VsYUBtYXJ2ZWxsLmNvbT4NCj4NCj4uLi4NCj4NCj4+ICt2b2lkIHJ2
-dV9yZXBfZGVzdHJveShzdHJ1Y3Qgb3R4Ml9uaWMgKnByaXYpIHsNCj4+ICsJc3RydWN0IHJlcF9k
-ZXYgKnJlcDsNCj4+ICsJaW50IHJlcF9pZDsNCj4+ICsNCj4+ICsJcnZ1X3JlcF9mcmVlX2NxX3Jz
-cmMocHJpdik7DQo+PiArCWZvciAocmVwX2lkID0gMDsgcmVwX2lkIDwgcHJpdi0+cmVwX2NudDsg
-cmVwX2lkKyspIHsNCj4+ICsJCXJlcCA9IHByaXYtPnJlcHNbcmVwX2lkXTsNCj4+ICsJCXVucmVn
-aXN0ZXJfbmV0ZGV2KHJlcC0+bmV0ZGV2KTsNCj4+ICsJCWZyZWVfbmV0ZGV2KHJlcC0+bmV0ZGV2
-KTsNCj4+ICsJfQ0KPj4gKwlrZnJlZShwcml2LT5yZXBzKTsNCj4+ICt9DQo+PiArDQo+PiAraW50
-IHJ2dV9yZXBfY3JlYXRlKHN0cnVjdCBvdHgyX25pYyAqcHJpdiwgc3RydWN0IG5ldGxpbmtfZXh0
-X2Fjaw0KPj4gKypleHRhY2spIHsNCj4+ICsJaW50IHJlcF9jbnQgPSBwcml2LT5yZXBfY250Ow0K
-Pj4gKwlzdHJ1Y3QgbmV0X2RldmljZSAqbmRldjsNCj4+ICsJc3RydWN0IHJlcF9kZXYgKnJlcDsN
-Cj4+ICsJaW50IHJlcF9pZCwgZXJyOw0KPj4gKwl1MTYgcGNpZnVuYzsNCj4+ICsNCj4+ICsJcHJp
-di0+cmVwcyA9IGtjYWxsb2MocmVwX2NudCwgc2l6ZW9mKHN0cnVjdCByZXBfZGV2ICopLCBHRlBf
-S0VSTkVMKTsNCj4+ICsJaWYgKCFwcml2LT5yZXBzKQ0KPj4gKwkJcmV0dXJuIC1FTk9NRU07DQo+
-PiArDQo+PiArCWZvciAocmVwX2lkID0gMDsgcmVwX2lkIDwgcmVwX2NudDsgcmVwX2lkKyspIHsN
-Cj4+ICsJCW5kZXYgPSBhbGxvY19ldGhlcmRldihzaXplb2YoKnJlcCkpOw0KPj4gKwkJaWYgKCFu
-ZGV2KSB7DQo+PiArCQkJTkxfU0VUX0VSUl9NU0dfRk1UX01PRChleHRhY2ssDQo+PiArCQkJCQkg
-ICAgICAgIlBGVkYgcmVwcmVzZW50b3I6JWQgY3JlYXRpb24NCj5mYWlsZWQiLA0KPj4gKwkJCQkJ
-ICAgICAgIHJlcF9pZCk7DQo+PiArCQkJZXJyID0gLUVOT01FTTsNCj4+ICsJCQlnb3RvIGV4aXQ7
-DQo+PiArCQl9DQo+PiArDQo+PiArCQlyZXAgPSBuZXRkZXZfcHJpdihuZGV2KTsNCj4+ICsJCXBy
-aXYtPnJlcHNbcmVwX2lkXSA9IHJlcDsNCj4+ICsJCXJlcC0+bWRldiA9IHByaXY7DQo+PiArCQly
-ZXAtPm5ldGRldiA9IG5kZXY7DQo+PiArCQlyZXAtPnJlcF9pZCA9IHJlcF9pZDsNCj4+ICsNCj4+
-ICsJCW5kZXYtPm1pbl9tdHUgPSBPVFgyX01JTl9NVFU7DQo+PiArCQluZGV2LT5tYXhfbXR1ID0g
-cHJpdi0+aHcubWF4X210dTsNCj4+ICsJCXBjaWZ1bmMgPSBwcml2LT5yZXBfcGZfbWFwW3JlcF9p
-ZF07DQo+PiArCQlyZXAtPnBjaWZ1bmMgPSBwY2lmdW5jOw0KPj4gKw0KPj4gKwkJc25wcmludGYo
-bmRldi0+bmFtZSwgc2l6ZW9mKG5kZXYtPm5hbWUpLCAiciVkcCVkIiwgcmVwX2lkLA0KPj4gKwkJ
-CSBydnVfZ2V0X3BmKHBjaWZ1bmMpKTsNCj4+ICsNCj4+ICsJCWV0aF9od19hZGRyX3JhbmRvbShu
-ZGV2KTsNCj4+ICsJCWVyciA9IHJlZ2lzdGVyX25ldGRldihuZGV2KTsNCj4+ICsJCWlmIChlcnIp
-IHsNCj4+ICsJCQlOTF9TRVRfRVJSX01TR19NT0QoZXh0YWNrLA0KPj4gKwkJCQkJICAgIlBGVkYg
-cmVwcmVudGF0b3IgcmVnaXN0cmF0aW9uDQo+ZmFpbGVkIik7DQo+DQo+SGkgR2VldGhhLA0KPg0K
-PihUaGUgbW9zdCByZWNlbnRseSBhbGxvY2F0ZWQpIG5kZXYgYXBwZWFycyB0byBiZSBsZWFrZWQg
-aGVyZS4NCj4NCj5JIHRoaW5rIHRoYXQgb25lIHdheSB0byBhZGRyZXNzIHRoaXMgY291bGQgYmUg
-dG8gbW92aW5nIHRoZSBjb250ZW50cyBvZiB0aGlzDQo+bG9vcCBpbnRvIGEgc2VwYXJhdGUgZnVu
-Y3Rpb24gdGhhdCB1bndpbmRzIHRoZSBtb3N0IHJlY2VudCBhbGxvY2F0aW9uIG9uIGVycm9yLg0K
-Pg0KPkhpZ2hsaWdodGVkIGJ5IFNtYXRjaCAoYWx0aG91Z2ggaXQgc2VlbXMgYSBiaXQgY29uZnVz
-ZWQgaGVyZSkuDQo+DQo+IC4uLi9yZXAuYzoxODQgcnZ1X3JlcF9jcmVhdGUoKSB3YXJuOiAnbmRl
-dicgZnJvbSBhbGxvY19ldGhlcmRldl9tcXMoKSBub3QNCj5yZWxlYXNlZCBvbiBsaW5lczogMTg0
-Lg0KPiAuLi4vcmVwLmM6MTg0IHJ2dV9yZXBfY3JlYXRlKCkgd2FybjogJ25kZXYnIGZyb20gcmVn
-aXN0ZXJfbmV0ZGV2KCkgbm90DQo+cmVsZWFzZWQgb24gbGluZXM6IDE4NC4NCj4NCj5Tb3JyeSBm
-b3Igbm90IGJyaW5naW5nIHRoaXMgdXAgZWFybGllcjogaXQgaXMgYXQgbGVhc3QgdGhlIHRoaXJk
-IHRpbWUgSSBoYXZlIGxvb2tlZA0KPm92ZXIgdGhpcywgYW5kIGZvciBzb21lIHJlYXNvbiBJIGRp
-ZG4ndCBub3RpY2UgdGhpcyB0aGUgb3RoZXIgdGltZXMuDQo+DQpPayB3aWxsIHJlY2hlY2sgYW5k
-IGZpeCB0aGUgaXNzdWUgaW4gbmV4dCB2ZXJzaW9uLg0KDQo+PiArCQkJZ290byBleGl0Ow0KPj4g
-KwkJfQ0KPj4gKwl9DQo+PiArCWVyciA9IHJ2dV9yZXBfbmFwaV9pbml0KHByaXYsIGV4dGFjayk7
-DQo+PiArCWlmIChlcnIpDQo+PiArCQlnb3RvIGV4aXQ7DQo+PiArDQo+PiArCXJldHVybiAwOw0K
-Pj4gK2V4aXQ6DQo+PiArCXdoaWxlICgtLXJlcF9pZCA+PSAwKSB7DQo+PiArCQlyZXAgPSBwcml2
-LT5yZXBzW3JlcF9pZF07DQo+PiArCQl1bnJlZ2lzdGVyX25ldGRldihyZXAtPm5ldGRldik7DQo+
-PiArCQlmcmVlX25ldGRldihyZXAtPm5ldGRldik7DQo+PiArCX0NCj4+ICsJa2ZyZWUocHJpdi0+
-cmVwcyk7DQo+PiArCXJldHVybiBlcnI7DQo+PiArfQ0KPj4gKw0KPj4gIHN0YXRpYyBpbnQgcnZ1
-X3JlcF9yc3JjX2ZyZWUoc3RydWN0IG90eDJfbmljICpwcml2KSAgew0KPj4gIAlzdHJ1Y3Qgb3R4
-Ml9xc2V0ICpxc2V0ID0gJnByaXYtPnFzZXQ7DQo+DQo+Li4uDQo=
+It's cheap to check if the path is empty in the userspace, but expensive
+to check if a userspace string is empty from the kernel.  So it seems a
+waste to delay the check into the kernel, and using statx(AT_EMPTY_PATH)
+to implement fstat is slower than a "native" fstat call.
+
+In the past there was a similar performance issue with several Glibc
+releases using fstatat(AT_EMPTY_PATH) for fstat.  That issue was fixed
+by Glibc with reverting back to plain fstat, and worked around by the
+kernel with a special fast code path for fstatat(AT_EMPTY_PATH) at
+commit 9013c51c630a ("vfs: mostly undo glibc turning 'fstat()' into
+'fstatat(AT_EMPTY_PATH)'").
+
+But for arch/loongarch fstat does not exist, so we have to use statx.
+And on all 32-bit architectures we must use statx for fstat after 2037
+since the plain fstat call uses 32-bit timestamp.  Thus Glibc uses statx
+for fstat on LoongArch and all 32-bit platforms, and these platforms
+still suffer the performance issue.
+
+So port the fstatat(AT_EMPTY_PATH) fast path to statx(AT_EMPTY_PATH) as
+well, and add AT_NO_PATH (the name is suggested by Mateusz) which makes
+statx and fstatat completely skip the path check and assume the path is
+empty.
+
+Benchmark on LoongArch Loongson 3A6000:
+
+1. Unpatched kernel, Glibc fstat, actually statx(AT_EMPTY_PATH):
+   2575328 ops/s
+2. Patched kernel, Glibc fstat, actually statx(AT_EMPTY_PATH):
+   5434782 ops/s, +111% from 1
+3. Patched kernel, statx(AT_NO_PATH): 5773672 ops/s, +124% from 1,
+   +6.2% from 2.
+
+Seccomp sandboxes can also green light fstatat/statx(AT_NO_PATH) easier
+than fstatat/statx(AT_EMPTY_PATH) for which the audition needs to check
+5434782543478254347825434782the path but seccomp BPF program cannot do that now.
+
+Link: https://sourceware.org/pipermail/libc-alpha/2023-September/151364.html
+Link: https://sourceware.org/git/?p=glibc.git;a=commit;h=e6547d635b99
+Link: https://sourceware.org/git/?p=glibc.git;a=commit;h=551101e8240b
+Link: https://lore.kernel.org/loongarch/599df4a3-47a4-49be-9c81-8e21ea1f988a@xen0n.name/
+Cc: Christian Brauner <brauner@kernel.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>
+Cc: Alejandro Colomar <alx@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Huacai Chen <chenhuacai@loongson.cn>
+Cc: Xuerui Wang <kernel@xen0n.name>
+Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Icenowy Zheng <uwu@icenowy.me>
+Cc: linux-fsdevel@vger.kernel.org
+Cc: linux-arch@vger.kernel.org
+Cc: loongarch@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Xi Ruoyao <xry111@xry111.site>
+---
+
+Superseds
+https://lore.kernel.org/all/20240622105621.7922-1-xry111@xry111.site/.
+
+ fs/stat.c                  | 103 +++++++++++++++++++++++++------------
+ include/uapi/linux/fcntl.h |   3 ++
+ 2 files changed, 74 insertions(+), 32 deletions(-)
+
+diff --git a/fs/stat.c b/fs/stat.c
+index 70bd3e888cfa..2b7d4a22f971 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -208,7 +208,7 @@ int getname_statx_lookup_flags(int flags)
+ 		lookup_flags |= LOOKUP_FOLLOW;
+ 	if (!(flags & AT_NO_AUTOMOUNT))
+ 		lookup_flags |= LOOKUP_AUTOMOUNT;
+-	if (flags & AT_EMPTY_PATH)
++	if (flags & (AT_EMPTY_PATH | AT_NO_PATH))
+ 		lookup_flags |= LOOKUP_EMPTY;
+ 
+ 	return lookup_flags;
+@@ -217,7 +217,8 @@ int getname_statx_lookup_flags(int flags)
+ /**
+  * vfs_statx - Get basic and extra attributes by filename
+  * @dfd: A file descriptor representing the base dir for a relative filename
+- * @filename: The name of the file of interest
++ * @filename: The name of the file of interest, or NULL if the file of
++	      interest is dfd itself and dfd isn't AT_FDCWD
+  * @flags: Flags to control the query
+  * @stat: The result structure to fill in.
+  * @request_mask: STATX_xxx flags indicating what the caller wants
+@@ -232,42 +233,56 @@ int getname_statx_lookup_flags(int flags)
+ static int vfs_statx(int dfd, struct filename *filename, int flags,
+ 	      struct kstat *stat, u32 request_mask)
+ {
+-	struct path path;
++	struct path path, *p;
++	struct fd f;
+ 	unsigned int lookup_flags = getname_statx_lookup_flags(flags);
+ 	int error;
+ 
+ 	if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT | AT_EMPTY_PATH |
+-		      AT_STATX_SYNC_TYPE))
++		      AT_STATX_SYNC_TYPE | AT_NO_PATH))
+ 		return -EINVAL;
+ 
+ retry:
+-	error = filename_lookup(dfd, filename, lookup_flags, &path, NULL);
+-	if (error)
+-		goto out;
++	if (filename) {
++		p = &path;
++		error = filename_lookup(dfd, filename, lookup_flags, p,
++					NULL);
++		if (error)
++			goto out;
++	} else {
++		f = fdget_raw(dfd);
++		if (!f.file)
++			return -EBADF;
++		p = &f.file->f_path;
++	}
+ 
+-	error = vfs_getattr(&path, stat, request_mask, flags);
++	error = vfs_getattr(p, stat, request_mask, flags);
+ 
+ 	if (request_mask & STATX_MNT_ID_UNIQUE) {
+-		stat->mnt_id = real_mount(path.mnt)->mnt_id_unique;
++		stat->mnt_id = real_mount(p->mnt)->mnt_id_unique;
+ 		stat->result_mask |= STATX_MNT_ID_UNIQUE;
+ 	} else {
+-		stat->mnt_id = real_mount(path.mnt)->mnt_id;
++		stat->mnt_id = real_mount(p->mnt)->mnt_id;
+ 		stat->result_mask |= STATX_MNT_ID;
+ 	}
+ 
+-	if (path.mnt->mnt_root == path.dentry)
++	if (p->mnt->mnt_root == p->dentry)
+ 		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
+ 	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
+ 
+ 	/* Handle STATX_DIOALIGN for block devices. */
+ 	if (request_mask & STATX_DIOALIGN) {
+-		struct inode *inode = d_backing_inode(path.dentry);
++		struct inode *inode = d_backing_inode(p->dentry);
+ 
+ 		if (S_ISBLK(inode->i_mode))
+ 			bdev_statx_dioalign(inode, stat);
+ 	}
+ 
+-	path_put(&path);
++	if (filename)
++		path_put(p);
++	else
++		fdput(f);
++
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+ 		goto retry;
+@@ -276,33 +291,53 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
+ 	return error;
+ }
+ 
+-int vfs_fstatat(int dfd, const char __user *filename,
+-			      struct kstat *stat, int flags)
++static struct filename *getname_statx(int dfd, const char __user *filename,
++				      int flags)
+ {
+-	int ret;
+-	int statx_flags = flags | AT_NO_AUTOMOUNT;
+-	struct filename *name;
++	int r;
++	char c;
++	bool no_path = false;
++
++	if (dfd < 0 && dfd != AT_FDCWD)
++		return ERR_PTR(-EBADF);
+ 
+ 	/*
+-	 * Work around glibc turning fstat() into fstatat(AT_EMPTY_PATH)
++	 * Work around glibc turning fstat() into fstatat(AT_EMPTY_PATH) or
++	 * statx(AT_EMPTY_PATH)
+ 	 *
+ 	 * If AT_EMPTY_PATH is set, we expect the common case to be that
+ 	 * empty path, and avoid doing all the extra pathname work.
+ 	 */
+-	if (dfd >= 0 && flags == AT_EMPTY_PATH) {
+-		char c;
++	if (flags & AT_NO_PATH)
++		no_path = true;
++	else if (flags & AT_EMPTY_PATH) {
++		r = get_user(c, filename);
++		if (unlikely(r))
++			return ERR_PTR(r);
++		no_path = likely(!c);
++	}
+ 
+-		ret = get_user(c, filename);
+-		if (unlikely(ret))
+-			return ret;
++	if (no_path)
++		return dfd == AT_FDCWD ? getname_kernel("") : NULL;
+ 
+-		if (likely(!c))
+-			return vfs_fstat(dfd, stat);
+-	}
++	return getname_flags(filename, getname_statx_lookup_flags(flags),
++			     NULL);
++}
++
++int vfs_fstatat(int dfd, const char __user *filename,
++			      struct kstat *stat, int flags)
++{
++	int ret;
++	int statx_flags = flags | AT_NO_AUTOMOUNT;
++	struct filename *name = getname_statx(dfd, filename, flags);
++
++	if (IS_ERR(name))
++		return PTR_ERR(name);
+ 
+-	name = getname_flags(filename, getname_statx_lookup_flags(statx_flags), NULL);
+ 	ret = vfs_statx(dfd, name, statx_flags, stat, STATX_BASIC_STATS);
+-	putname(name);
++
++	if (name)
++		putname(name);
+ 
+ 	return ret;
+ }
+@@ -703,11 +738,15 @@ SYSCALL_DEFINE5(statx,
+ 		struct statx __user *, buffer)
+ {
+ 	int ret;
+-	struct filename *name;
++	struct filename *name = getname_statx(dfd, filename, flags);
++
++	if (IS_ERR(name))
++		return PTR_ERR(name);
+ 
+-	name = getname_flags(filename, getname_statx_lookup_flags(flags), NULL);
+ 	ret = do_statx(dfd, name, flags, mask, buffer);
+-	putname(name);
++
++	if (name)
++		putname(name);
+ 
+ 	return ret;
+ }
+diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+index c0bcc185fa48..470b5c77000c 100644
+--- a/include/uapi/linux/fcntl.h
++++ b/include/uapi/linux/fcntl.h
+@@ -113,6 +113,9 @@
+ #define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
+ 
+ #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
++#define AT_NO_PATH		0x10000	/* Ignore relative pathname,
++					   behave as if AT_EMPTY_PATH and
++					   the relative pathname is empty */
+ 
+ /* Flags for name_to_handle_at(2). We reuse AT_ flag space to save bits... */
+ #define AT_HANDLE_FID		AT_REMOVEDIR	/* file handle is needed to
+-- 
+2.45.2
+
 
