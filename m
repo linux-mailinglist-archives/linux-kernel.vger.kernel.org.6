@@ -1,147 +1,141 @@
-Return-Path: <linux-kernel+bounces-227622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4726D915496
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:44:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20BDE91549C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:45:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEF86B238B5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:44:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D21D8286421
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:45:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C228C19F463;
-	Mon, 24 Jun 2024 16:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4244419E839;
+	Mon, 24 Jun 2024 16:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUReekDi"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RPoQ5zju"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683E119E81F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C8019E7F1;
+	Mon, 24 Jun 2024 16:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719247451; cv=none; b=TP63v71k2CiUMillhrJ8o05/LWbidm7E9K8S9Du0gxTtsv2Cou7CpZWH1hy4UVYoS8Nk5o2z+1PV4+zKJ+dF7IsDqKggbiGKlWkW1mMIOFbtV9NUJ1YDAzcgVDmHv9keOpsD3e3BHp/hFyoMaQuLH7S3B1lgExgHaBpcEa7zlc0=
+	t=1719247477; cv=none; b=hgt5ZlthrQyIRme5NNPOunNMbdqCAEdlBvLDbJNkDp8SHLdDfLYrMA7d7Nz7BRh0QIF8aCYf+dmRElOnvNBrCDZGj02j8bC8LX22V531U+gHLbeU0PpwemA00EZfqDaWa3keTL+whlhxCJOki0znxufPIm+JnPabAJm2nyUGUeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719247451; c=relaxed/simple;
-	bh=wa0T80IF/y+nnAamP5x5ocsqIEtI9E9JOf3ilDfD1yo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=pzLMsSbLDx5iwTB8cDuVMGfkhTz8PBToj9shIy5elI05TpoMO3UaYsQ8gMTyVNs59Ja5mpxMmxAk4xrgEj7uAsyh5MeRUivBkrzGoLzpOJuELmg/1dHBktDq9bJlDJCIIHCu2o/99BE8Vtu+RQbMtme0FwEvsWq7T/Xr0Bkb66k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eUReekDi; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so27004735e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:44:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719247448; x=1719852248; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ved9pZHSLvDLUPYxuu5ADz4/DRMPqTel82rQmFgJsv8=;
-        b=eUReekDixC7xp2wkNcAxPFpnhMs+XJkPloPxjox4Tzsw8aqw3t5iHgfYrIHUDVpSyX
-         0/+JrKeXFUx61ZZjap8cqPzn3kffiMXMqYyt6NB7WPf4rH6g2G0iQWKi5zDqqeo0qAHl
-         6BlMvahxgd1GoaxkINDnnSLAgqPbaqKViKFDvDMYJcV5QUIRSJGVemKps7X2a5Xrb8M9
-         MXMTEh94Ut7CbBjzJdLAgWqkppdNr5HI5vDVMk8N6RXe9S45YllaB/t0sn36Kf4ZOoEY
-         LsLAyIWqCtE83M8eRj73Z1RzekhDmzcM0qFVWFmYJ3p51i27sCDd3ymQ1XM7cx2XV+5R
-         +VaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719247448; x=1719852248;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ved9pZHSLvDLUPYxuu5ADz4/DRMPqTel82rQmFgJsv8=;
-        b=P7+IzySL/PiovScCgnWVyoZGnlHpAkDBYNPbb33j4Jk4fVZSumeMGxXtIL6m0tYt+8
-         CjXslmLwBPXv3uzuZJBqtB4fP6i4aB/X36SBQryWirZhYOiTidtR+JqrJMoAISHJ3aJ4
-         G5HVHRqsdTUvxtYtUz6WwqAntXQbBJIeba/RIxuxCWZMaEFuvbjynm/frt6rQuWKYS6v
-         PHKx0q3CrhHuU1alt2rTQx0VAKU6hY5L10ulH7u6OokAl+Fh9Sjw0r+SkG30/2pR2YPT
-         2+8Xf/1GrRIZDJNYe8IGcGTY3Pf90t2t/Co4voyG+XeVi+V51ZYdV6L7wkspoBrHjo/7
-         1Hcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmLzMDCZY77d3tjFTLSU+uQOTLt+k1I090QEbVnpcdWNgcjxkYzKrklmP2/V2XFC8bMqbpjajJ3eSHCmclt1yfL62dhmICFHRr/Gzw
-X-Gm-Message-State: AOJu0YyuM7i4RlBKxjy5MVqSURVXqiQlTHuvGwRbcDF8U4Brzh0cb3uy
-	bgmrfZQz/SHKpa8o0/5awaBzvhebpGSQNhdd/izqjiEW+gcHZfvS
-X-Google-Smtp-Source: AGHT+IFxufk+8bZWSFo5H95XETmbIR8xWYc74lh7Lzz8/zakL9+PW+wJ3qLYXaIxadr7Xc+Z3bl8Bg==
-X-Received: by 2002:a05:600c:138e:b0:421:805f:ab3c with SMTP id 5b1f17b1804b1-42489533effmr61514635e9.14.1719247447674;
-        Mon, 24 Jun 2024 09:44:07 -0700 (PDT)
-Received: from [127.0.1.1] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42484fc0aecsm126090365e9.12.2024.06.24.09.44.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 09:44:07 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Mon, 24 Jun 2024 18:43:48 +0200
-Subject: [PATCH 3/3] drm/mediatek: ovl_adaptor: use scoped variant of
- for_each_child_of_node()
+	s=arc-20240116; t=1719247477; c=relaxed/simple;
+	bh=rqFwVvO7kc9furriT+NUoRa0+2A0hpN6NQP3M97zoLI=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=OdqGy1y8fELiCxlScKwmOtNBLMaimgsXFxR6C0MMud4+UwxbGiXHmycaLGhtxoBLKe3P3RnUvLtEfK2ZVqgLlAFPJjyusXm98RhRBRn6bqkJsYMoqEFvZzOgFDoztqp3MI5aVvhylW98uaUW4kjqjlZLNq9RvredFjI+hK7/cqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RPoQ5zju; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719247476; x=1750783476;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=rqFwVvO7kc9furriT+NUoRa0+2A0hpN6NQP3M97zoLI=;
+  b=RPoQ5zjuB7QRUglcWnRtO7QLOTgcn+fPMlvHAfS7wy6qRzZflENd7M+L
+   JmLLUAckpzoG4s6AHVa7DgmXmjA+AprJ2g3EnQEp/NqdQcWghRWDKnOI4
+   enrD71mX51aDtCkDDHu2vGUC1I6bkI2Li1gvKZ8abjY9Oy2Xf4UeoVV6e
+   RL3yrR86xDpaiH9SV6st+8QVjeayh6LWkkvz+xH/VrWbIAcYL65C+2B+8
+   Z7SIENOOMh27YHuz4bwblXEi4fypIh0tTdmHOyEg8B1+kuiuUcaIEh46S
+   +4DBdbQA8cTek78zq/hzrvBgPodNWnuR9bXlyGjbO8/PRyq1OB53Uiwrv
+   Q==;
+X-CSE-ConnectionGUID: YjlFGaxkSUCYQTy2F3w8nQ==
+X-CSE-MsgGUID: nIssueWOQ1Cw7uLCgIHyVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="16054535"
+X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
+   d="scan'208";a="16054535"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 09:44:35 -0700
+X-CSE-ConnectionGUID: Viurw4iDREuNu7E0+Riarw==
+X-CSE-MsgGUID: stii1T48R1uXiBgx2xfTYg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
+   d="scan'208";a="43234237"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.61])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 09:44:29 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 24 Jun 2024 19:44:26 +0300 (EEST)
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+    Sebastian Reichel <sre@kernel.org>, 
+    Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+    Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+    Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+    Hans de Goede <hdegoede@redhat.com>, 
+    Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+    Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pm@vger.kernel.org, 
+    devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, 
+    linux-arm-msm@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>, 
+    Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [GIT PULL RESEND] Immutable branch between pdx86 lenovo c630
+ branch, power/supply and USB
+In-Reply-To: <2024062440-guide-knoll-94d0@gregkh>
+Message-ID: <948b6f71-7a72-d03d-c36f-ff4f08987f0d@linux.intel.com>
+References: <e42fb2e9-81d4-4e40-ff3a-f9d6a46d03f9@linux.intel.com> <2024062440-guide-knoll-94d0@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240624-mtk_disp_ovl_adaptor_scoped-v1-3-9fa1e074d881@gmail.com>
-References: <20240624-mtk_disp_ovl_adaptor_scoped-v1-0-9fa1e074d881@gmail.com>
-In-Reply-To: <20240624-mtk_disp_ovl_adaptor_scoped-v1-0-9fa1e074d881@gmail.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
- Daniel Vetter <daniel@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- "Nancy.Lin" <nancy.lin@mediatek.com>
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719247441; l=1676;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=wa0T80IF/y+nnAamP5x5ocsqIEtI9E9JOf3ilDfD1yo=;
- b=M9kK0ImZkRyD1NOWZet5N+FhNkzhbstvrwy7I96XW9Qwjr5TGDy8zsCLgzUzrxPsLZTtpED/X
- cFIZmEu7appC+67/uzXN9oG5FM74e5jHbRgj7YIRdMdBI8ar0b/8ytM
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: multipart/mixed; BOUNDARY="8323328-236211645-1719247216=:1031"
+Content-ID: <a331f82f-a069-a912-3ae6-d6a9e525b17e@linux.intel.com>
 
-In order to avoid potential memory leaks if new error paths are added
-without a call to of_node_put(), use for_each_child_of_node_scoped()
-instead of for_each_child_of_node(). The former automatically decrements
-the refcount when the child goes out of scope, which removes the need
-for explicit calls to of_node_put().
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+--8323328-236211645-1719247216=:1031
+Content-Type: text/plain; CHARSET=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <a4bfb34c-7c70-2d12-377b-ceb5cfaa1972@linux.intel.com>
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-index 3faf26a55e77..aec927cce468 100644
---- a/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-+++ b/drivers/gpu/drm/mediatek/mtk_disp_ovl_adaptor.c
-@@ -493,12 +493,12 @@ static int compare_of(struct device *dev, void *data)
- static int ovl_adaptor_comp_init(struct device *dev, struct component_match **match)
- {
- 	struct mtk_disp_ovl_adaptor *priv = dev_get_drvdata(dev);
--	struct device_node *node, *parent;
-+	struct device_node *parent;
- 	struct platform_device *comp_pdev;
- 
- 	parent = dev->parent->parent->of_node->parent;
- 
--	for_each_child_of_node(parent, node) {
-+	for_each_child_of_node_scoped(parent, node) {
- 		const struct of_device_id *of_id;
- 		enum mtk_ovl_adaptor_comp_type type;
- 		int id;
-@@ -522,10 +522,8 @@ static int ovl_adaptor_comp_init(struct device *dev, struct component_match **ma
- 		}
- 
- 		comp_pdev = of_find_device_by_node(node);
--		if (!comp_pdev) {
--			of_node_put(node);
-+		if (!comp_pdev)
- 			return -EPROBE_DEFER;
--		}
- 
- 		priv->ovl_adaptor_comp[id] = &comp_pdev->dev;
- 
+On Mon, 24 Jun 2024, Greg Kroah-Hartman wrote:
 
--- 
-2.40.1
+> On Mon, Jun 24, 2024 at 07:24:55PM +0300, Ilpo J=E4rvinen wrote:
+> > Hi,
+> >=20
+> > This is v2 of the lenovo c630 IB branch with the build fix for non-ARM6=
+4=20
+> > platforms (built on top of the commits in the previous IB PR). Resent w=
+ith=20
+> > full Subject line.
+> >=20
+> > The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacf=
+abd0:
+> >=20
+> >   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+> >=20
+> > are available in the Git repository at:
+> >=20
+> >   https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-driver=
+s-x86.git tags/platform-drivers-x86-ib-lenovo-c630-v6.11-2
+> >=20
+> > for you to fetch changes up to 13bbe1c83bc401c2538c758228d27b4042b08341=
+:
+> >=20
+> >   platform/arm64: build drivers even on non-ARM64 platforms (2024-06-24=
+ 18:22:15 +0300)
+>
+> So was the first one rewritten?  Or is this just the second patch on
+> top of the previous one?
 
+Nothing was rewritten, just one patch added on top of the previous PR. The=
+=20
+previous PR had only 2 of these 3 commits:
+
+> > Bjorn Andersson (1):
+> >      dt-bindings: platform: Add Lenovo Yoga C630 EC
+> >
+> > Dmitry Baryshkov (2):
+> >      platform: arm64: add Lenovo Yoga C630 WOS EC driver
+> >      platform/arm64: build drivers even on non-ARM64 platforms
+
+--=20
+ i.
+--8323328-236211645-1719247216=:1031--
 
