@@ -1,113 +1,247 @@
-Return-Path: <linux-kernel+bounces-227319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F87A914F57
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:57:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F221C914F60
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEE68283A96
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:57:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE3D1F216CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA28142640;
-	Mon, 24 Jun 2024 13:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD763142648;
+	Mon, 24 Jun 2024 13:58:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I/7c5BSw"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Ymarozn8"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0435C1411C8
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865E81411C8;
+	Mon, 24 Jun 2024 13:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719237464; cv=none; b=aDwCaUyp/epGDGfB3/4M9h2C0ys7bC9wtYc8MBydpyP0Y5PaYu9M/TEfbLmkudNAre6hUdcr1mW9z8tRkkaOL0FVjsshSA9mpwwStHkg/eB3WAp5h6iH7FjGaCIM30CJMV0Tuq1gI14Z1tLfb5lNSXYHo5JZwzHuCMNFcAsXlwI=
+	t=1719237527; cv=none; b=dWaPjqJ851dlMVvsk/TkOJdikzqo5bc5Zr/kLi+bADYcdxFdBujTdvQxWyF+v7FAa5c1T953vpCia8p3qaeLc/Lome5FQzeIYFCguoKCFRTYN+iBNYkQw5J+3wBa0JbVS4nqjudkJxeJAv7s6OY9kePS+AuPAOpOZmwA9HHpxdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719237464; c=relaxed/simple;
-	bh=GFIi6zv2aihNbVR53CK6RvA6zLzaLwbCY3qxAG56vbE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oB6djadQYRUZGtbCrgPWoepAjSlfAKSKSc6MGPb1Ejkd1OBhhxruSb/C49+jps2JsVSYrUt4CSeCl95b0c893hlpmWtBF5ox+boYi7z/cLDKUHIIl1gAhRJ6A9laipYMyd4Rq+3vOHLzUu0iY9kCIqisS0HfMlfjlV8ucHRN7s4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I/7c5BSw; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57d106e69a2so3965213a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:57:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719237461; x=1719842261; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=IHD4jJpcuG4tMgpp91267iJ5OoLxZWbXVFw4XaeFi2c=;
-        b=I/7c5BSwfn9ObTM+7DhxM5SwCs/sfajtsRjao/ThsS4aOUnlVS3Opzuxh7vep/otNS
-         kqhTSPtZLV8d0AmIJDRdSBmLrqEHbxDNRj/iQiJwWfo9wohdbtemYStZn505XqxZ4zv0
-         cEvP4xCBnmZUCUZPRn1DuaV11xJS2GORfOPJG6+APLHpDfgQiofxyinYJ+Anqh7pI0DY
-         /tuoEgZi55VVE6yqUes4Qf/izCjgCDY/ckcQ81sGSrfuw35nADZ1dDYlb6tiFyMCziqU
-         muhv0EcTMnXbs8UxwZkqdGlHeCdZ5zusDpelTHpluSGIvB24i+T6+WbmrCdFPtswH4ST
-         z/RQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719237461; x=1719842261;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IHD4jJpcuG4tMgpp91267iJ5OoLxZWbXVFw4XaeFi2c=;
-        b=t2s+0TimXDQlqHAgJ709d3xq3f9IwjEnkEy8ThObZ7CMfz3eEvqcXfKXP/LrbM0whS
-         GJrRdjRM3lsYPewYRhI8fG7S89K7WDJw9glb/smeNZ2zbRU6lVtwupqh3MebarDV2RJZ
-         xqP0AKiSSy9x6ogsZvJWbDAob/7kHpzjyYPx+FOqfSOF4Nrj86UtrsiUv6wGlDdT1u8f
-         f7kkJIFErdRHq61PoQ6n+2sp9DJcAGzIKMgvILfZZjIl5gMxQtKpicyVTS5ynT+civ5s
-         +LPcGvP5Q3AH9zgWxFqIT8/5Ueu9jfejzUZZEbGXI2v0C5GRE8CrPY6Hse3J7SX6KKHk
-         yYmg==
-X-Forwarded-Encrypted: i=1; AJvYcCV4OH7JMPde2krPoeEqZzgr+m5uwWvSGTxFucYfKXtE5fZvwGPd07DA5reuROiFTW6QkcGc5+JOtoJXfrYIC6ydzjFy7amujydc0SMC
-X-Gm-Message-State: AOJu0Ywhoz/LjUNf8DMT49beRqgNSMjDwm9yWW2WZTN01ATMTPltPx+2
-	sH10Bj7lLjfIp31zIsrY1bP9H0TQxFojUDP01TmtZqQO0EwmOo8xRbZRGIVbD64=
-X-Google-Smtp-Source: AGHT+IGpGmgITj2Vbxhko8ZELCw5TU4oWE8gTzKLF+hMftNzpJ304FkSkyvJfotXe68/KgaWnf31Rg==
-X-Received: by 2002:a50:875e:0:b0:57d:4692:ba54 with SMTP id 4fb4d7f45d1cf-57d4692bb51mr4569953a12.6.1719237461074;
-        Mon, 24 Jun 2024 06:57:41 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:c03:9198:7df:6a16:3e8e:ed7b? ([2a00:f41:c03:9198:7df:6a16:3e8e:ed7b])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d66b04378sm405692a12.38.2024.06.24.06.57.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 06:57:40 -0700 (PDT)
-Message-ID: <f5ef4e3c-66e8-4833-86bb-c38658b923ae@linaro.org>
-Date: Mon, 24 Jun 2024 15:57:35 +0200
+	s=arc-20240116; t=1719237527; c=relaxed/simple;
+	bh=k7EsiwWu48lSPxdtRUnfEfHrKfVYjJpHJkgnJCKpzRk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=WHMSxcV0mgzslYbP/A+UEbQQzgT0zo3EIkogM95FySemgE6m3lSPdAQjH7BLvY5hX6YCoYMOIVOAB27OmetqQHpRyjaiVpHsP0QFuqxg5AahyLdzSh+cpy1QxzpjjsfLHujq+0f8Q7fK/M3upD+X/vZ4a9qFRk8S6SDN/yHguDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Ymarozn8; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ODupIT007124;
+	Mon, 24 Jun 2024 13:58:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:mime-version:content-transfer-encoding; s=pp1; bh=
+	CTZ4e0joJnVTwvbvvdwwYY7VAB9lj9okhi94KejEzBE=; b=Ymarozn8UhBR820r
+	Z5P34tcHLyH+W3cUGLkQ5h7tLOPJ/aSldtF7uouktOuJxwli+QDxosT37nDBOQVy
+	1B2ZxTW+eYYLVcrEI7PP0tzBKrhg0NvRH5Klx+wSK0/SQbUuh04XEMgSS8LEfOsH
+	XauZ5xtJwFxxJKWzRPi7jaDQm+4IAX7uPUNd5bjPeFfOGw359wC5J7ay64r0MnxM
+	OE+0xWsMKJUkWbSCZzKNnSo3Sf6ZXn3CA7vnJpoO9qAI70P6S8Agi/a+zMjUcVd7
+	/3Jr+nJ1YC96O9P4afs91u7cL+zfsadvjS/WTbuhs6UXSM9anzMluPg6HR+jLQ/r
+	I7OGEQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yy7ha8fkk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 13:58:33 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45ODwWwH010864;
+	Mon, 24 Jun 2024 13:58:32 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yy7ha8fkg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 13:58:32 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45ODpkLr019949;
+	Mon, 24 Jun 2024 13:58:32 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxb5m8tak-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 13:58:32 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45ODwT8Y14680726
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Jun 2024 13:58:31 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 349C958065;
+	Mon, 24 Jun 2024 13:58:29 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1B76E58043;
+	Mon, 24 Jun 2024 13:58:28 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.65.213])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 24 Jun 2024 13:58:27 +0000 (GMT)
+Message-ID: <bef69e74a011c8d4d084e9a60d3030a89402fcc3.camel@linux.ibm.com>
+Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from
+ security_audit_rule
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, paul@paul-moore.com,
+        linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+        john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+        stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+        mic@digikod.net, linux-integrity@vger.kernel.org
+Date: Mon, 24 Jun 2024 09:58:27 -0400
+In-Reply-To: <20231215221636.105680-2-casey@schaufler-ca.com>
+References: <20231215221636.105680-1-casey@schaufler-ca.com>
+	 <20231215221636.105680-2-casey@schaufler-ca.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-25.el8_9) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: x1e80100: Add gpu support
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>,
- freedreno <freedreno@lists.freedesktop.org>,
- dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
- Rob Clark <robdclark@gmail.com>, Bjorn Andersson <andersson@kernel.org>
-Cc: Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
- <20240623110753.141400-4-quic_akhilpo@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240623110753.141400-4-quic_akhilpo@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: lSd7AER_bEcm5DxB6kSlN5Ky-UmGMBJ_
+X-Proofpoint-ORIG-GUID: FgFfHrbx6Pod-atijOQ6GxA0zE0m4V_O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_10,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 adultscore=0 suspectscore=0 impostorscore=0
+ priorityscore=1501 spamscore=0 clxscore=1015 phishscore=0
+ lowpriorityscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406240111
 
-
-
-On 6/23/24 13:06, Akhil P Oommen wrote:
-> Add the necessary dt nodes for gpu support in X1E80100.
+On Fri, 2023-12-15 at 14:15 -0800, Casey Schaufler wrote:
+> Create real functions for the ima_filter_rule interfaces.
+> These replace #defines that obscure the reuse of audit
+> interfaces. The new functions are put in security.c because
+> they use security module registered hooks that we don't
+> want exported.
 > 
-> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> Acked-by: Paul Moore <paul@paul-moore.com>
+> Reviewed-by: John Johansen <john.johansen@canonical.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> To: Mimi Zohar <zohar@linux.ibm.com>
+> Cc: linux-integrity@vger.kernel.org
 > ---
+>  include/linux/security.h     | 24 ++++++++++++++++++++++++
+>  security/integrity/ima/ima.h | 26 --------------------------
+>  security/security.c          | 21 +++++++++++++++++++++
+>  3 files changed, 45 insertions(+), 26 deletions(-)
+> 
+> diff --git a/include/linux/security.h b/include/linux/security.h
+> index 750130a7b9dd..4790508818ee 100644
+> --- a/include/linux/security.h
+> +++ b/include/linux/security.h
+> @@ -2009,6 +2009,30 @@ static inline void security_audit_rule_free(void *lsmrule)
+>  #endif /* CONFIG_SECURITY */
+>  #endif /* CONFIG_AUDIT */
+>  
+> +#if defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY)
+> +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule);
+> +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule);
+> +void ima_filter_rule_free(void *lsmrule);
+> +
+> +#else
+> +
+> +static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
+> +					   void **lsmrule)
+> +{
+> +	return 0;
+> +}
+> +
+> +static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
+> +					    void *lsmrule)
+> +{
+> +	return 0;
+> +}
+> +
 
-[...]
+scripts/checkpatch.pl complains about the formatting of "void *lsmrule".
+
+
+> +static inline void ima_filter_rule_free(void *lsmrule)
+> +{ }
+> +
+> +#endif /* defined(CONFIG_IMA_LSM_RULES) && defined(CONFIG_SECURITY) */
+> +
+>  #ifdef CONFIG_SECURITYFS
+>  
+>  extern struct dentry *securityfs_create_file(const char *name, umode_t mode,
+> diff --git a/security/integrity/ima/ima.h b/security/integrity/ima/ima.h
+> index c29db699c996..560d6104de72 100644
+> --- a/security/integrity/ima/ima.h
+> +++ b/security/integrity/ima/ima.h
+> @@ -420,32 +420,6 @@ static inline void ima_free_modsig(struct modsig *modsig)
+>  }
+>  #endif /* CONFIG_IMA_APPRAISE_MODSIG */
+>  
+> -/* LSM based policy rules require audit */
+> -#ifdef CONFIG_IMA_LSM_RULES
+> -
+> -#define ima_filter_rule_init security_audit_rule_init
+> -#define ima_filter_rule_free security_audit_rule_free
+> -#define ima_filter_rule_match security_audit_rule_match
+> -
+> -#else
+> -
+> -static inline int ima_filter_rule_init(u32 field, u32 op, char *rulestr,
+> -				       void **lsmrule)
+> -{
+> -	return -EINVAL;
+> -}
+> -
+> -static inline void ima_filter_rule_free(void *lsmrule)
+> -{
+> -}
+> -
+> -static inline int ima_filter_rule_match(u32 secid, u32 field, u32 op,
+> -					void *lsmrule)
+> -{
+> -	return -EINVAL;
+> -}
+> -#endif /* CONFIG_IMA_LSM_RULES */
+> -
+>  #ifdef	CONFIG_IMA_READ_POLICY
+>  #define	POLICY_FILE_FLAGS	(S_IWUSR | S_IRUSR)
+>  #else
+> diff --git a/security/security.c b/security/security.c
+> index d7b15ea67c3f..8e5379a76369 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -5350,6 +5350,27 @@ int security_audit_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+>  }
+>  #endif /* CONFIG_AUDIT */
+>  
+> +#ifdef CONFIG_IMA_LSM_RULES
+> +/*
+> + * The integrity subsystem uses the same hooks as
+> + * the audit subsystem.
+
+- No reason for the comment to be split.
+- Please note that these calls are limited to IMA, not the integrity subsystem
+in general.
+
+> + */
+> +int ima_filter_rule_init(u32 field, u32 op, char *rulestr, void **lsmrule)
+> +{
+> +	return call_int_hook(audit_rule_init, 0, field, op, rulestr, lsmrule);
+> +}
+> +
+> +void ima_filter_rule_free(void *lsmrule)
+> +{
+> +	call_void_hook(audit_rule_free, lsmrule);
+> +}
+> +
+> +int ima_filter_rule_match(u32 secid, u32 field, u32 op, void *lsmrule)
+> +{
+> +	return call_int_hook(audit_rule_match, 0, secid, field, op, lsmrule);
+> +}
+> +#endif /* CONFIG_IMA_LSM_RULES */
+
+In terms of function naming, refer to thread with Roberto's response.
 
 > +
-> +				opp-1100000000 {
-> +					opp-hz = /bits/ 64 <1100000000>;
-> +					opp-level = <RPMH_REGULATOR_LEVEL_TURBO_L1>;
-> +					opp-peak-kBps = <16500000>;
+>  #ifdef CONFIG_BPF_SYSCALL
+>  /**
+>   * security_bpf() - Check if the bpf syscall operation is allowed
 
-No speedbins?
-
-Konrad
 
