@@ -1,161 +1,118 @@
-Return-Path: <linux-kernel+bounces-226550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64BF491403E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:56:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6AF491404A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E729D282066
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:56:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66FBDB22401
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7C884A33;
-	Mon, 24 Jun 2024 01:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187B146B5;
+	Mon, 24 Jun 2024 02:02:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AtphicwR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="TQ4kdwic"
+Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39731FB4;
-	Mon, 24 Jun 2024 01:56:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9290A33F7
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719194199; cv=none; b=qF5GxSsFmyqyC89/KBvpfRL9ZtNOTmB5BdMa/Y7BfzDRv3tU4+MMYG37Z0JxFW0dsuR67GDvyyKFIU8UVnffMVOiM3zTNCOOuGfzdRNJ5mpWeRu69xY93WQDyf124tzm1LezJ5PLmWBhIc4RNfjtKdz6+VJ+bf4m+aFQ95wc36I=
+	t=1719194566; cv=none; b=hPLKKKG/IwQ2+88/shcPNSWz80+C2DmOzPXazaYFU+cM1e2re+FY9VCkHtuK2eReIuE6AgpZMMB4wzjgz2YR7NcDBOkV3Z9+sHuU8A6FpE5Ecx8rJU94yo/TS/yH4MMN7yUPl+yJ/Azf7FeedD+6YTPA2RIOmWX2kn+figLWGcY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719194199; c=relaxed/simple;
-	bh=XJdYGezAnnfzkLza5p0gH2/hu7L/r81OIYinAKph/eA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EKM9RnpaAZ0LZ7ID7mRykiWneIO8lm2AxmZ5SZ8Wo8q5m6jZL40SKCgyMayb05DQhVApuVv4/ZbDoGd4wUq1Jta4gXin9lEDCc/B5tMWxs8WHD9lJB8VO21u+JKwieJQToTdTIY34cNhhH160Ovc1V9ruCxpEa7Jh35KkIU+B08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AtphicwR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97098C4AF09;
-	Mon, 24 Jun 2024 01:56:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719194198;
-	bh=XJdYGezAnnfzkLza5p0gH2/hu7L/r81OIYinAKph/eA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=AtphicwRqhYvDDxsGef2KsP3dETTTt4oo/DXzoHdS0g7N00M1zu/xIZ7wWW0OZy4D
-	 DbLIfnkEYhOsg+aH2JcYGUvbvL1Ho1za41PgJ7RvpuwEFdfzWvyGV6qT+OGqw9Y1T8
-	 PuXh/zvQx3/j7/c8zKQcBx61Xn109dPAwa+uP3ye90vtcxTDaJNzmnoyff9ShqxksE
-	 0nKSwkAF5jnWuQIW62ZHGCvUMVloAJkF9HqEDs4Mt1QaNmN8liiOw5c4zqR7IOUraM
-	 8W4Y8g4sX64ba3E77HRiy5rsEiUq1Xb0EAZCJwtgDbN0yADf6RhQVcFlVHBs2RpnVC
-	 lsDD6b+plEqaA==
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57d203d4682so4436508a12.0;
-        Sun, 23 Jun 2024 18:56:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX6xS9lU3JCpnNzlhxPq1PtSZzYkKac4CTvxk3s5mfyO4M8gpp++KEaR5RmslCbuCr/UZaZMC2j+tRaDwshw4hmNU/LPUb0hBHxUmBny5eX1scnypYF+BqDgII0jBZmWBw8
-X-Gm-Message-State: AOJu0Ywd9pHP2qCJILs80B7HoFLZF7+StDv1FQiAsGsNzUfsmu7EJqLq
-	EIKoG0tUyQR+QO4WucZRokI6duUgA/hltugzmqf5b1sA/IKCX6gdckyKRZoah5o4IOFgseWahjA
-	CmVZlrBdBPz6VywXr/GWShYeCoNM=
-X-Google-Smtp-Source: AGHT+IFHLJ81fdL6BQd3+HcxSDlhwR7+scIGYCbMSRFSy8DkmMqe/sJLPPYN1IMD8YKDubZqERsgpJGdPoxmPBuTMps=
-X-Received: by 2002:a50:bb45:0:b0:57c:bf3b:76f5 with SMTP id
- 4fb4d7f45d1cf-57d45809d0dmr2503658a12.35.1719194197193; Sun, 23 Jun 2024
- 18:56:37 -0700 (PDT)
+	s=arc-20240116; t=1719194566; c=relaxed/simple;
+	bh=tNnqahw2MNRxLzc0/22pn+P6saQU3Bz7sIub+/GCeTo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mxkfSysxgAZSivRDfNwa2Ny90HPSZfh5GtkyYQWWUXxghA5e2RZ6dSXYOubvVqwiAZ1fCiQJtdJbWczmhefu8LPZK51mmvNnvN07EQdZczqP5Se86uBOPaaAkd9WLB5gue9IJlsKLQREaN5DOSdgnL5Xw/fklkM8rq4+8fDZrqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=TQ4kdwic; arc=none smtp.client-ip=115.124.30.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1719194555; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=kEmEdnA6MmtMya8ZtsQJGZHyWERAexbeV4W5aGUBu08=;
+	b=TQ4kdwicIr1gpo6cqWNhIzOKTekG8dwCuDDQAmYbCMm7HCCOTfp7LYcAX5GrmF7v6vt3c4JArLeP1OHEtU8jBK2aYuwEppORNd6Mg/trkfHmIl39HuiRPGd3QG0GYhcINZD0oLTdFYv093e3yyVYY6P+ujGKdxnsU83G5Ytf6C0=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033045046011;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=13;SR=0;TI=SMTPD_---0W90odGI_1719194229;
+Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W90odGI_1719194229)
+          by smtp.aliyun-inc.com;
+          Mon, 24 Jun 2024 09:57:18 +0800
+From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+To: harry.wentland@amd.com
+Cc: sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+	Abaci Robot <abaci@linux.alibaba.com>
+Subject: [PATCH] drm/amd/display: use swap() in is_config_schedulable()
+Date: Mon, 24 Jun 2024 09:57:07 +0800
+Message-Id: <20240624015707.121287-1-jiapeng.chong@linux.alibaba.com>
+X-Mailer: git-send-email 2.20.1.7.g153144c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240619080940.2690756-1-maobibo@loongson.cn> <20240619080940.2690756-5-maobibo@loongson.cn>
- <CAAhV-H74raJ9eEWEHr=aN6LhVvNUyP6TLEDH006M6AnoE8tkPg@mail.gmail.com> <58d34b7d-eaad-8aa8-46c3-9212664431be@loongson.cn>
-In-Reply-To: <58d34b7d-eaad-8aa8-46c3-9212664431be@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 24 Jun 2024 09:56:24 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6CzPAxwymk16NfjPGO=oi+iBZJYsdSMiyp2N2cDsw54g@mail.gmail.com>
-Message-ID: <CAAhV-H6CzPAxwymk16NfjPGO=oi+iBZJYsdSMiyp2N2cDsw54g@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] LoongArch: KVM: Add memory barrier before update
- pmd entry
-To: maobibo <maobibo@loongson.cn>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>, 
-	Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 24, 2024 at 9:37=E2=80=AFAM maobibo <maobibo@loongson.cn> wrote=
-:
->
->
->
-> On 2024/6/23 =E4=B8=8B=E5=8D=886:18, Huacai Chen wrote:
-> > Hi, Bibo,
-> >
-> > On Wed, Jun 19, 2024 at 4:09=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> =
-wrote:
-> >>
-> >> When updating pmd entry such as allocating new pmd page or splitting
-> >> huge page into normal page, it is necessary to firstly update all pte
-> >> entries, and then update pmd entry.
-> >>
-> >> It is weak order with LoongArch system, there will be problem if other
-> >> vcpus sees pmd update firstly however pte is not updated. Here smp_wmb=
-()
-> >> is added to assure this.
-> > Memory barriers should be in pairs in most cases. That means you may
-> > lose smp_rmb() in another place.
-> The idea adding smp_wmb() comes from function __split_huge_pmd_locked()
-> in file mm/huge_memory.c, and the explanation is reasonable.
->
->                  ...
->                  set_ptes(mm, haddr, pte, entry, HPAGE_PMD_NR);
->          }
->          ...
->          smp_wmb(); /* make pte visible before pmd */
->          pmd_populate(mm, pmd, pgtable);
->
-> It is strange that why smp_rmb() should be in pairs with smp_wmb(),
-> I never hear this rule -:(
-https://docs.kernel.org/core-api/wrappers/memory-barriers.html
+Use existing swap() function rather than duplicating its implementation.
 
-SMP BARRIER PAIRING
--------------------
+./drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4_fams2.c:1171:103-104: WARNING opportunity for swap().
+./drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4_fams2.c:1231:99-100: WARNING opportunity for swap().
 
-When dealing with CPU-CPU interactions, certain types of memory barrier sho=
-uld
-always be paired.  A lack of appropriate pairing is almost certainly an err=
-or.
+Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9400
+Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+---
+ .../dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4_fams2.c  | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4_fams2.c b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4_fams2.c
+index 7272a04b9d1d..926d45496e79 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4_fams2.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/dml21/src/dml2_pmo/dml2_pmo_dcn4_fams2.c
+@@ -1158,7 +1158,6 @@ static bool is_config_schedulable(
+ 	schedulable = true;
+ 
+ 	/* sort disallow times from greatest to least */
+-	unsigned int temp;
+ 	for (i = 0; i < s->pmo_dcn4.num_timing_groups; i++) {
+ 		bool swapped = false;
+ 
+@@ -1167,9 +1166,8 @@ static bool is_config_schedulable(
+ 			double jp1_disallow_us = s->pmo_dcn4.group_common_fams2_meta[s->pmo_dcn4.sorted_group_gtl_disallow_index[j + 1]].disallow_time_us;
+ 			if (j_disallow_us < jp1_disallow_us) {
+ 				/* swap as A < B */
+-				temp = s->pmo_dcn4.sorted_group_gtl_disallow_index[j];
+-				s->pmo_dcn4.sorted_group_gtl_disallow_index[j] = s->pmo_dcn4.sorted_group_gtl_disallow_index[j + 1];
+-				s->pmo_dcn4.sorted_group_gtl_disallow_index[j + 1] = temp;
++				swap(s->pmo_dcn4.sorted_group_gtl_disallow_index[j],
++				     s->pmo_dcn4.sorted_group_gtl_disallow_index[j+1]);
+ 				swapped = true;
+ 			}
+ 		}
+@@ -1227,9 +1225,8 @@ static bool is_config_schedulable(
+ 			double jp1_period_us = s->pmo_dcn4.group_common_fams2_meta[s->pmo_dcn4.sorted_group_gtl_period_index[j + 1]].period_us;
+ 			if (j_period_us < jp1_period_us) {
+ 				/* swap as A < B */
+-				temp = s->pmo_dcn4.sorted_group_gtl_period_index[j];
+-				s->pmo_dcn4.sorted_group_gtl_period_index[j] = s->pmo_dcn4.sorted_group_gtl_period_index[j + 1];
+-				s->pmo_dcn4.sorted_group_gtl_period_index[j + 1] = temp;
++				swap(s->pmo_dcn4.sorted_group_gtl_period_index[j],
++				     s->pmo_dcn4.sorted_group_gtl_period_index[j+1]);
+ 				swapped = true;
+ 			}
+ 		}
+-- 
+2.20.1.7.g153144c
 
-Huacai
-
->
-> Regards
-> Bibo Mao
-> >
-> > Huacai
-> >
-> >>
-> >> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> >> ---
-> >>   arch/loongarch/kvm/mmu.c | 2 ++
-> >>   1 file changed, 2 insertions(+)
-> >>
-> >> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
-> >> index 1690828bd44b..7f04edfbe428 100644
-> >> --- a/arch/loongarch/kvm/mmu.c
-> >> +++ b/arch/loongarch/kvm/mmu.c
-> >> @@ -163,6 +163,7 @@ static kvm_pte_t *kvm_populate_gpa(struct kvm *kvm=
-,
-> >>
-> >>                          child =3D kvm_mmu_memory_cache_alloc(cache);
-> >>                          _kvm_pte_init(child, ctx.invalid_ptes[ctx.lev=
-el - 1]);
-> >> +                       smp_wmb(); /* make pte visible before pmd */
-> >>                          kvm_set_pte(entry, __pa(child));
-> >>                  } else if (kvm_pte_huge(*entry)) {
-> >>                          return entry;
-> >> @@ -746,6 +747,7 @@ static kvm_pte_t *kvm_split_huge(struct kvm_vcpu *=
-vcpu, kvm_pte_t *ptep, gfn_t g
-> >>                  val +=3D PAGE_SIZE;
-> >>          }
-> >>
-> >> +       smp_wmb();
-> >>          /* The later kvm_flush_tlb_gpa() will flush hugepage tlb */
-> >>          kvm_set_pte(ptep, __pa(child));
-> >>
-> >> --
-> >> 2.39.3
-> >>
->
->
 
