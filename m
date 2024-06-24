@@ -1,196 +1,248 @@
-Return-Path: <linux-kernel+bounces-226698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC485914273
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:03:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBA65914263
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE69C1C21491
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:03:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28687B2412E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 088E722064;
-	Mon, 24 Jun 2024 06:03:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="atsNQm54"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2049.outbound.protection.outlook.com [40.107.236.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7BB11C695;
-	Mon, 24 Jun 2024 06:03:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719209001; cv=fail; b=MXIoj39+G+3unQmm0eEGI2poMOXUUy7FfY/vXoPEhMdbFuZ/L1nrLluzLYvqoY0rb1UWtuz7CXZarktFGmeTsOyD00qmsOdStmbCQ2QiflhTLke12NXhvU7c5SjOjX87cC3ECX3rfci5uYg0wmFSuyriTC63+0hwYn8kebEUPic=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719209001; c=relaxed/simple;
-	bh=r3KZn4cY29i3ZVT8o0x7Etz+i2GyJ3TuDpeR2bPZpxY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q0dbyDMyIFIvh/k+rzZhKI/2cSFRrmp/q5HZc/yrIoXuOrAYyMmGkuKGMRCxdACfMgcX3CHoUI7jrn/AM/VC0HmulDyU9x26w0EhuJGL2Tiqu3mumWxkKRpTdUqVTx5nMqyOlxKkEJMNZUNPKICre/kXtL/NjFgs0Vieqxroxg4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=atsNQm54; arc=fail smtp.client-ip=40.107.236.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=G0sGoIYjYuEx307MArEB+TTdu78FOeNWLW2gZFYMhNaRxDaN+I3n3g+Qa+y5CcL4ZL/AutNNM1vLZzUYFuSMBJ20m/n15ZRV1sWJJVETlG9wNwOPA5YrJtuglK3LidlmnHFyHG/7C4kMvdmuwY1Z8xV/lqoO5MmB3VWE72hm2xxIa9CsUq0KL1eSbhBdgjbzGAy/48TDTM9uULRtadJGtkYtJyuWOS2Q40tcXtwRYltGYpQrpwkfqlACfbaTtumQoTg/vrSlzWz4GEZL7x4Qmph8jcbc38NYzFXJMiSgJlcUuwhOxeOtW1Fneox4EwIu//ezSQVkxllOXXvsk8CSLg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EJw2vpL4ySk0o0rEFGGvb5MNBmpk6BRClOy53vqQOIY=;
- b=fYNFrvc8QEkaCZJl+sajQrWUcGuIueqIcXv9ZMbOgZXig22X4Iej/YVbcnrmylGxuAqo4vUtg5qBBVx3f5Qz8dcrAHkyQE0aBENmitgjBMNsapjA2Y7DTKYxV8VnVLmSDc+ofX7BC0S3WrBr8XMiiWDuFmpeJ19c6VXfuWm7fvrmIaYRQGzVR56qALV0AkDZutanl4S7Bre3wl7l15Xwme2uNmHjc+IhVmm9YHpL1iHdZYJFNS/s21H6tGziDxczMeQgkQDFNcY4+RkUSyXw+eXA/l1wFxNumPUgLHXRtVO1NxpaZQKAWg5CGO3zlrqJ6EwPV35JA6UF2v+QzKtLLQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=infradead.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EJw2vpL4ySk0o0rEFGGvb5MNBmpk6BRClOy53vqQOIY=;
- b=atsNQm54cRZaa9ITFxuILApOiCq9sSrwe8qxv8XX9SQ3xibgNMMtc+FDTey7GSCUVauieNaxyGuLYyPmDOrVzWhVGSgN2DV8pmtyCEXrUuDSu61w89DyjRZeDreEfM5SmGjuWxb/6oeS3x2UL7hfOp71XVxV/ID++DUzPoTSqJk=
-Received: from BN0PR04CA0162.namprd04.prod.outlook.com (2603:10b6:408:eb::17)
- by DS7PR12MB5981.namprd12.prod.outlook.com (2603:10b6:8:7c::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Mon, 24 Jun
- 2024 06:03:16 +0000
-Received: from BN2PEPF000055DF.namprd21.prod.outlook.com
- (2603:10b6:408:eb:cafe::a6) by BN0PR04CA0162.outlook.office365.com
- (2603:10b6:408:eb::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.38 via Frontend
- Transport; Mon, 24 Jun 2024 06:03:16 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BN2PEPF000055DF.mail.protection.outlook.com (10.167.245.9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7741.0 via Frontend Transport; Mon, 24 Jun 2024 06:03:16 +0000
-Received: from shatadru.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Jun
- 2024 01:03:08 -0500
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-To: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
-	<namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<tglx@linutronix.de>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<x86@kernel.org>, <kees@kernel.org>, <gustavoars@kernel.org>,
-	<rui.zhang@intel.com>, <oleksandr@natalenko.name>
-CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-hardening@vger.kernel.org>, <ananth.narayan@amd.com>,
-	<gautham.shenoy@amd.com>, <kprateek.nayak@amd.com>, <ravi.bangoria@amd.com>,
-	<sandipan.das@amd.com>, <linux-pm@vger.kernel.org>, Dhananjay Ugwekar
-	<Dhananjay.Ugwekar@amd.com>
-Subject: [PATCH v3 09/10] perf/x86/rapl: Remove the global variable rapl_msrs
-Date: Mon, 24 Jun 2024 05:59:06 +0000
-Message-ID: <20240624055907.7720-10-Dhananjay.Ugwekar@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240624055907.7720-1-Dhananjay.Ugwekar@amd.com>
-References: <20240624055907.7720-1-Dhananjay.Ugwekar@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA27E1CAAC;
+	Mon, 24 Jun 2024 06:00:45 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27BE62564
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:00:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719208845; cv=none; b=CSKTLHQHm0Qsh4gZUkWZsx7IAMt8pvoKHL5HYVEKzV1TPQHp2wd4QJ1Opdh5mKAcQzkNU21BML4Q3ZOFR0s2iaKCKTvBDT18/O995fE2OQ+LJ9FzyFW5yzYDYOYqRvYYmntVRXMI9Y6vgWoX+Z7cOHtpz6F2uBDhgxXbobxQpaA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719208845; c=relaxed/simple;
+	bh=lnUIAGpGezrkbBThtobhS90+6tFYz6MywL7+mhnalJU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Uh8YFhupmLPGeW73dqd/1bSAeBoWUvQTn5ouJiY8aINr3sPwiaNl3dzmvVnM5KPM8rhfJf2K6RDx5n3V2Y0tqUhCXy8j5Lu2yQ6gtRl+l9oZ26doIZhWdfTDB9bA9qgkRyjefNaePL0eL0gnJ8OumxahSGjLTIdKzlfBkP+qNUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [209.85.128.179])
+	by gateway (Coremail) with SMTP id _____8Dx2OmGC3lmvm0JAA--.25609S3;
+	Mon, 24 Jun 2024 14:00:39 +0800 (CST)
+Received: from mail-yw1-f179.google.com (unknown [209.85.128.179])
+	by localhost.localdomain (Coremail) with SMTP id AQAAf8BxWcaCC3lm0cYuAA--.46023S3;
+	Mon, 24 Jun 2024 14:00:35 +0800 (CST)
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6316253dc52so27144257b3.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 23:00:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVCEi8RRKB7DtJ/2JE2AkIGYqgGboOcpL+ZekueTBg87dYag3ZrliI29mXEOpZnmhDDEqhfhhhLeUBFWaZZePck/zAqlWa3NOXiNiQx
+X-Gm-Message-State: AOJu0YxNqI7lmLaCL+N+gxQEatlIXhQIFVid3Z1Or1+zp624iqiPNHqC
+	25TqiNKdhY5SUITO0GurH9Y26anYzSnTWe9pOjMBArCog8WFvEXsXAt1n7HuWv+X49tZnfVXPuZ
+	VHbJOznl2/2ldU7AArpBr1PZ/KuhMTmoEEp3mKw==
+X-Google-Smtp-Source: AGHT+IEWUjupNHuM3RdDGeChoM6aWZ8jhq3FZacRC/PBQZ7E8+aUc5gejhVZY1pssbnBdzZmMRhB+xmByyg51iJe2L4=
+X-Received: by 2002:a05:690c:832:b0:628:c1f0:d8fd with SMTP id
+ 00721157ae682-643ac42dff3mr28386827b3.52.1719208833604; Sun, 23 Jun 2024
+ 23:00:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN2PEPF000055DF:EE_|DS7PR12MB5981:EE_
-X-MS-Office365-Filtering-Correlation-Id: 90176e88-f801-4d61-6aa0-08dc94135704
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|1800799021|36860700010|7416011|376011|82310400023|921017;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pVazGTeTPOiF/h9MpX4+vvb4mUq1wKSssS0x1vzglxxIM2JiMA2zKPlAASCh?=
- =?us-ascii?Q?u4PiIe+1p+ekHarCpgNetosJ+daK8oPcTK7Xq2g1MkYMOGKazjqWtrLbTyWE?=
- =?us-ascii?Q?nTYTbBHdcaoRvQw7NhqOpMc736TXzQafXmRqTCOHTQEinlaLlfvQqIjOuYel?=
- =?us-ascii?Q?eCoSja9naGB94T5DBNZ1VPxZJ4epNRexaVpFHMI6FNTl8S92AF2KV/nmKnLU?=
- =?us-ascii?Q?qh7K1RoXpspkvjWcwiqIf95/GArJiAM8AG9GoSGOabAwy2Msmm7bcG3yyTra?=
- =?us-ascii?Q?Y0Ohh0eNNgAL7M9V7ZGVQx1gbvVUQ/uPmXsJq668K61UespsglbLanexW5D+?=
- =?us-ascii?Q?9ALCZgUoz8BQLl4Bi161swErenPbLs2PHcATptDtLRTRUV3KxsgaydkY1SMQ?=
- =?us-ascii?Q?QBAta7L7/udOJ7M0BqesWiqvcf3pM8AqHuPfv5IynzqYsqx9CszQQpsDJaSR?=
- =?us-ascii?Q?P4o9b51Er+JlkUZ8+I3HTPUpD0GijuUpE458kA8XTdyJPUh4ZKHjVLyhS14o?=
- =?us-ascii?Q?c7mtb7gPWJqGPJ3Utrpxu5clxjjsnL3rDJVOfYAa2U4l62Vj5YO0O621Gutd?=
- =?us-ascii?Q?FA/Rmdur857XnUFw+Kaz4/ZNRe+JVaCW15ImVynWB6XEp0bw0MkaOxgD0BRO?=
- =?us-ascii?Q?bYaR18C0ig6dxFOSPcMG6TL88LW2ZJcnZBfFdgHl8CQlPgC8m+IhaaS5mtxM?=
- =?us-ascii?Q?rWyX0fRtU5ePs50Hw4uNDO19y2hDclO+NAVcUjz9NlyiqhctBNQHzoC0JKDn?=
- =?us-ascii?Q?IsrD6OrFLWIlM97tiOXKX9/3vjkM47iGAG40ypvp8tfPGyKIA054UU9DI91C?=
- =?us-ascii?Q?Q92oxFaxI3BR+xfPnEZjXwjrMa0P40rh+nR1bun5AaKXfanuL19SxjRIsECq?=
- =?us-ascii?Q?3C9uIIIf9I1nyyXrWNpdmPyPVE8eXT2MWdrO0NonJaiVkimFE51Pk7g7ESjA?=
- =?us-ascii?Q?iSBCZJ6ka2hxCJdi8/ZCq8KJxjEWM79reTgSyEN0RYFOBtoVzj8GW3VRj+uM?=
- =?us-ascii?Q?jSGJxazQ0L+UCNmHvjz81k2PGcAAVHphLb+hi65W11JTK6Lpv6CVsoFryniF?=
- =?us-ascii?Q?5L4Sic/suK9Iw05l6sA+R35B2GPJGxCg0qgF8oN8h5MY/pwm9mXmsDJexwXm?=
- =?us-ascii?Q?6gfu5VcQh/QS3d2VbaquBe+vN1awRxo+HC9zJkccudvjFREDo+5ERbbLafpt?=
- =?us-ascii?Q?UIHRnG8b/nrq5qoC5kDhN/6mtdpNdP/jHibRUtcSK5mv5ZgE7b0Xnm80iFa8?=
- =?us-ascii?Q?dUioDa5Dx4gBbUsT44t4uuoxj32KNPbzeGXOLFAJlLuyVKejU3jbmVUSe+5q?=
- =?us-ascii?Q?2595kjIblyEF7EWDi92sbgQhkEfJmPAmCWRF1xiqhmzdx/G8PBcpKhQkhP/y?=
- =?us-ascii?Q?IA9fWHffJXcBAm4/uFDTqtpM/dhwnPPRyITbcvLAAxkmKHWPfTm64PgbRbGQ?=
- =?us-ascii?Q?/X+GmA8mzyk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(36860700010)(7416011)(376011)(82310400023)(921017);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 06:03:16.4183
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 90176e88-f801-4d61-6aa0-08dc94135704
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN2PEPF000055DF.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5981
+References: <20240619080940.2690756-1-maobibo@loongson.cn> <20240619080940.2690756-5-maobibo@loongson.cn>
+ <CAAhV-H74raJ9eEWEHr=aN6LhVvNUyP6TLEDH006M6AnoE8tkPg@mail.gmail.com>
+ <58d34b7d-eaad-8aa8-46c3-9212664431be@loongson.cn> <CAAhV-H6CzPAxwymk16NfjPGO=oi+iBZJYsdSMiyp2N2cDsw54g@mail.gmail.com>
+ <379d63cc-375f-3e97-006c-edf7edb4b202@loongson.cn> <CAAhV-H6vXMr5bviGoE1pojVswOkUWBkv9hOS4Jd-6Exb+G+1+g@mail.gmail.com>
+In-Reply-To: <CAAhV-H6vXMr5bviGoE1pojVswOkUWBkv9hOS4Jd-6Exb+G+1+g@mail.gmail.com>
+From: WANG Rui <wangrui@loongson.cn>
+Date: Mon, 24 Jun 2024 14:00:22 +0800
+X-Gmail-Original-Message-ID: <CAHirt9gKJdxoPCSB8dhNCTuyGOKFUZZkgQoOoQL4Wm64+CrdVA@mail.gmail.com>
+Message-ID: <CAHirt9gKJdxoPCSB8dhNCTuyGOKFUZZkgQoOoQL4Wm64+CrdVA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] LoongArch: KVM: Add memory barrier before update
+ pmd entry
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: maobibo <maobibo@loongson.cn>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
+	WANG Xuerui <kernel@xen0n.name>, Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-CM-TRANSID:AQAAf8BxWcaCC3lm0cYuAA--.46023S3
+X-CM-SenderInfo: pzdqw2txl6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxCw1xWry5Ar15AF4rJF13trc_yoWrCrWfpr
+	ZrAF4qyF4kJryUGws2q3Wjvr10qryktF18X34Fq3WDZr90vw15tr1UJryakF17Ar95C3W8
+	ZF4UKanxZ3WUA3XCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	GVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMxCIbckI1I0E14v26r1Y
+	6r17MI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7
+	AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE
+	2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcV
+	C2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73
+	UjIFyTuYvjxUwtC7UUUUU
 
-After making the rapl_model struct global, the rapl_msrs global
-variable isn't needed, so remove it.
+Hi,
 
-Also it will be cleaner when new per-core scope PMU is added. As we will
-need to maintain two rapl_msrs array(one for per-core scope and one for
-package scope PMU), inside the rapl_model struct.
+On Mon, Jun 24, 2024 at 12:18=E2=80=AFPM Huacai Chen <chenhuacai@kernel.org=
+> wrote:
+>
+> On Mon, Jun 24, 2024 at 10:21=E2=80=AFAM maobibo <maobibo@loongson.cn> wr=
+ote:
+> >
+> >
+> >
+> > On 2024/6/24 =E4=B8=8A=E5=8D=889:56, Huacai Chen wrote:
+> > > On Mon, Jun 24, 2024 at 9:37=E2=80=AFAM maobibo <maobibo@loongson.cn>=
+ wrote:
+> > >>
+> > >>
+> > >>
+> > >> On 2024/6/23 =E4=B8=8B=E5=8D=886:18, Huacai Chen wrote:
+> > >>> Hi, Bibo,
+> > >>>
+> > >>> On Wed, Jun 19, 2024 at 4:09=E2=80=AFPM Bibo Mao <maobibo@loongson.=
+cn> wrote:
+> > >>>>
+> > >>>> When updating pmd entry such as allocating new pmd page or splitti=
+ng
+> > >>>> huge page into normal page, it is necessary to firstly update all =
+pte
+> > >>>> entries, and then update pmd entry.
+> > >>>>
+> > >>>> It is weak order with LoongArch system, there will be problem if o=
+ther
+> > >>>> vcpus sees pmd update firstly however pte is not updated. Here smp=
+_wmb()
+> > >>>> is added to assure this.
+> > >>> Memory barriers should be in pairs in most cases. That means you ma=
+y
+> > >>> lose smp_rmb() in another place.
+> > >> The idea adding smp_wmb() comes from function __split_huge_pmd_locke=
+d()
+> > >> in file mm/huge_memory.c, and the explanation is reasonable.
+> > >>
+> > >>                   ...
+> > >>                   set_ptes(mm, haddr, pte, entry, HPAGE_PMD_NR);
+> > >>           }
+> > >>           ...
+> > >>           smp_wmb(); /* make pte visible before pmd */
+> > >>           pmd_populate(mm, pmd, pgtable);
+> > >>
+> > >> It is strange that why smp_rmb() should be in pairs with smp_wmb(),
+> > >> I never hear this rule -:(
+> > > https://docs.kernel.org/core-api/wrappers/memory-barriers.html
+> > >
+> > > SMP BARRIER PAIRING
+> > > -------------------
+> > >
+> > > When dealing with CPU-CPU interactions, certain types of memory barri=
+er should
+> > > always be paired.  A lack of appropriate pairing is almost certainly =
+an error.
+> >     CPU 1                 CPU 2
+> >          =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D       =3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >          WRITE_ONCE(a, 1);
+> >          <write barrier>
+> >          WRITE_ONCE(b, 2);     x =3D READ_ONCE(b);
+> >                                <read barrier>
+> >                                y =3D READ_ONCE(a);
+> >
+> > With split_huge scenery to update pte/pmd entry, there is no strong
+> > relationship between address ptex and pmd.
+> > CPU1
+> >       WRITE_ONCE(pte0, 1);
+> >       WRITE_ONCE(pte511, 1);
+> >       <write barrier>
+> >       WRITE_ONCE(pmd, 2);
+> >
+> > However with page table walk scenery, address ptep depends on the
+> > contents of pmd, so it is not necessary to add smp_rmb().
+> >          ptep =3D pte_offset_map_lock(mm, pmd, address, &ptl);
+> >          if (!ptep)
+> >                  return no_page_table(vma, flags, address);
+> >          pte =3D ptep_get(ptep);
+> >          if (!pte_present(pte))
+> >
+> > It is just my option, or do you think where smp_rmb() barrier should be
+> > added in page table reader path?
+> There are some possibilities:
+> 1. Read barrier is missing in some places;
+> 2. Write barrier is also unnecessary here;
+> 3. Read barrier is really unnecessary, but there is a better API to
+> replace the write barrier;
+> 4. Read barrier is really unnecessary, and write barrier is really the
+> best API here.
+>
+> Maybe Rui Wang knows better here.
 
-Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
----
- arch/x86/events/rapl.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+It appears that reading the pte address is data-dependent on the pmd,
+rather than control-dependent. This creates an opportunity to omit the
+read-side memory barrier.
 
-diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
-index b03b044a390f..e962209e9e4d 100644
---- a/arch/x86/events/rapl.c
-+++ b/arch/x86/events/rapl.c
-@@ -142,7 +142,6 @@ static int rapl_hw_unit[NR_RAPL_PKG_DOMAINS] __read_mostly;
- static struct rapl_pmus *rapl_pmus_pkg;
- static unsigned int rapl_pkg_cntr_mask;
- static u64 rapl_timer_ms;
--static struct perf_msr *rapl_msrs;
- static struct rapl_model *rapl_model;
- 
- static inline unsigned int get_rapl_pmu_idx(int cpu)
-@@ -380,7 +379,7 @@ static int rapl_pmu_event_init(struct perf_event *event)
- 		return -EINVAL;
- 	event->cpu = rapl_pmu->cpu;
- 	event->pmu_private = rapl_pmu;
--	event->hw.event_base = rapl_msrs[bit].msr;
-+	event->hw.event_base = rapl_model->rapl_msrs[bit].msr;
- 	event->hw.config = cfg;
- 	event->hw.idx = bit;
- 
-@@ -866,9 +865,7 @@ static int __init rapl_pmu_init(void)
- 
- 	rapl_model = (struct rapl_model *) id->driver_data;
- 
--	rapl_msrs = rapl_model->rapl_msrs;
--
--	rapl_pkg_cntr_mask = perf_msr_probe(rapl_msrs, PERF_RAPL_PKG_EVENTS_MAX,
-+	rapl_pkg_cntr_mask = perf_msr_probe(rapl_model->rapl_msrs, PERF_RAPL_PKG_EVENTS_MAX,
- 					false, (void *) &rapl_model->pkg_events);
- 
- 	ret = rapl_check_hw_unit();
--- 
-2.34.1
+Cheers,
+-Rui
+
+
+>
+> Huacai
+>
+> >
+> > Regards
+> > Bibo Mao
+> > >
+> > >
+> > > Huacai
+> > >
+> > >>
+> > >> Regards
+> > >> Bibo Mao
+> > >>>
+> > >>> Huacai
+> > >>>
+> > >>>>
+> > >>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> > >>>> ---
+> > >>>>    arch/loongarch/kvm/mmu.c | 2 ++
+> > >>>>    1 file changed, 2 insertions(+)
+> > >>>>
+> > >>>> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
+> > >>>> index 1690828bd44b..7f04edfbe428 100644
+> > >>>> --- a/arch/loongarch/kvm/mmu.c
+> > >>>> +++ b/arch/loongarch/kvm/mmu.c
+> > >>>> @@ -163,6 +163,7 @@ static kvm_pte_t *kvm_populate_gpa(struct kvm =
+*kvm,
+> > >>>>
+> > >>>>                           child =3D kvm_mmu_memory_cache_alloc(cac=
+he);
+> > >>>>                           _kvm_pte_init(child, ctx.invalid_ptes[ct=
+x.level - 1]);
+> > >>>> +                       smp_wmb(); /* make pte visible before pmd =
+*/
+> > >>>>                           kvm_set_pte(entry, __pa(child));
+> > >>>>                   } else if (kvm_pte_huge(*entry)) {
+> > >>>>                           return entry;
+> > >>>> @@ -746,6 +747,7 @@ static kvm_pte_t *kvm_split_huge(struct kvm_vc=
+pu *vcpu, kvm_pte_t *ptep, gfn_t g
+> > >>>>                   val +=3D PAGE_SIZE;
+> > >>>>           }
+> > >>>>
+> > >>>> +       smp_wmb();
+> > >>>>           /* The later kvm_flush_tlb_gpa() will flush hugepage tlb=
+ */
+> > >>>>           kvm_set_pte(ptep, __pa(child));
+> > >>>>
+> > >>>> --
+> > >>>> 2.39.3
+> > >>>>
+> > >>
+> > >>
+> >
+> >
+>
 
 
