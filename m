@@ -1,124 +1,82 @@
-Return-Path: <linux-kernel+bounces-227864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12613915771
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:56:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 658F8915778
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:57:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F2A1F23ED7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:56:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1EF65283C4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:57:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7C11A0705;
-	Mon, 24 Jun 2024 19:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AB221A0708;
+	Mon, 24 Jun 2024 19:57:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="1TLiJhaT"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="5DhZ1MDG"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D67619FA7C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 19:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52D322313;
+	Mon, 24 Jun 2024 19:57:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719258973; cv=none; b=Ib+v1mFjCJ+L0cBxI2V/v8nh2CIvVpL1sECPQlGBrk49H3ofgsaH725wRuTBIFlzaOuWz6LQv4SSO4epXlDIvJlJjHrVj1yJDQtUeR8RiHt3ywfiJ7f7NyqFsB7R1THC5YZRLzI9LxJzyAQAyl2NeRdaQx/yXwAzQa1CBXl+Zz0=
+	t=1719259048; cv=none; b=kdmM3DO8sSGZ0hcX7xFO16EnbWdtxZ6sAD7V7Mc4PIrANOpaAjcPU1FoC0q1NQ5a3FfmYNqiLYBLRnSYvPBc/+Jkfs3eS9Bk8+mqqw9grjK7bsV91u0uUAKUO3LHsEGtlvohYYcu7TzCuDnT/AxSqxVttgardQvTucDvYorW48I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719258973; c=relaxed/simple;
-	bh=0Ry5iW7yjh4+dkK5KfmVxe6kFHr27wLyHfv1FVt7WXY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iHPI/DrQ75bLEz3bM+AKDE7xTcAUCEqigj3vyK4jjcUO+UJdb3CfHjNCxi0vU22rswbWKotIRy3i/qhwfsEC27rFGTKkE/2DNl6yqLNTGeGd8I5N1JLtQW8E8VUHrp+9hDL0k8JKLR1xnVI+0NZWt4tFFKKAv5alqhc7kSIk1Yk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=1TLiJhaT; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f9aeb96b93so33995385ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1719258972; x=1719863772; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3tqQIIuDCADHgpFY8cfM0SAO57n+ccJALQge0Cj32Ko=;
-        b=1TLiJhaTxEGzLEsso757SQ0WdBj5CFTFpJcLqshM0mSeDeAU80EcdNZ1pKw40IcNCb
-         JITd02bZ5k3WDqwpSLkBADxPj9C269gNpUKRVnzZCLVZq8pUOpQfvMszXFfpHU0aQkkx
-         +JdSQWnKgFxBnK8wrhPme5MC/rOzJQ23NOw6bvkCZUcmF1G0nfNQLrigXybIGGPozUp0
-         lm/WvX6lNnyn17kSN26N5Svgjiw9W86+S11poTvJdVanMUPa9RAu6u4qWVb8rqORVniD
-         DQGOAPcBdm7efpDk3mwNh+RrvNw+5nyL/oDzRvVbpa+45HrsXtomxfjbaV++i58e868G
-         /e3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719258972; x=1719863772;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3tqQIIuDCADHgpFY8cfM0SAO57n+ccJALQge0Cj32Ko=;
-        b=qX+wHl0WyE3+f7J6NnB/wGnulrVquUqwAbJgrULV9AQNxEfIUcrdzKdsszSoJVQg9F
-         GUSoWZ08+hII9Qg3q9cW7LTtcswsicWiLoq4XWuK9I76+N6wTwWym636qcacz9fTDrHS
-         YiES/CnPPsrbtZIq+byzsHfddbk7HxfvxfsfGtOjkX+AoOegacWxSOnvpHVtQfjnUtfa
-         ziMwy9pNSjnDSvjmbkWaAzaNlBQM1F7OzDBnazet5HeN2Xpaf2kpY8c4PywjSeLyuvTy
-         Y4nUVfOrWiLmYmj+JEBHz4/y99ct1pY8zN26O+KXK6jboisXZAMScjJDabYvy8j+s/Mh
-         Vwqw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIdAgWyp0DRPaXgYogtm4mqnnS7QxElp931WugToWwM4FZu4TULGMkjqNnmKtW69n9VAEwkxymyJy82N4odluqtOfFwfN9OriJrW55
-X-Gm-Message-State: AOJu0YwPyS1E4/fVI8nlnJSp7zxjqRNeccKmdwbU1bjkJjQnjpKzq15T
-	rJlc8zX/PSvzq198b5zAd/U3JWETVtn7Yg/5NODY3tfxvI8xeEj8vcmAwWuyG2t/h3Lf0QGo9LZ
-	eMvw=
-X-Google-Smtp-Source: AGHT+IGKGfFARVAVotDoRb++tXbqpiUnNusCVE2oSilNa9cJ0LvB+1RBjIPtkjrPvj4Lp3gTbojpBw==
-X-Received: by 2002:a17:902:6548:b0:1f7:167d:e291 with SMTP id d9443c01a7336-1fa23ef7e87mr57131195ad.47.1719258971650;
-        Mon, 24 Jun 2024 12:56:11 -0700 (PDT)
-Received: from fedora.vc.shawcable.net (S0106c09435b54ab9.vc.shawcable.net. [24.85.107.15])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3d5e63sm66161665ad.187.2024.06.24.12.56.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 12:56:11 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: martin.lau@linux.dev,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	yonghong.song@linux.dev,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] bpf, btf: Make if test explicit to fix Coccinelle error
-Date: Mon, 24 Jun 2024 21:54:27 +0200
-Message-ID: <20240624195426.176827-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719259048; c=relaxed/simple;
+	bh=upgGjOgKxNvCRyAmYv5Ll2icNt+vDymQ3iTZeWE0qCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fQOhwnElrGNpVh5jDw37mpc4SLuXDuFQzvNI66zXmmYnzzNzI3jvU6iwJ8FZQgYfBZNpb1cxvto5kKKdWxgYhMlT0847MO4JvP1Ywv4kT5p30SQRIEblPjd8rz47nZShVLydv4XpK09gA5yFCiZIOBbSBywuo4FWHBsyd5NHgFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=5DhZ1MDG; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Fb9cS9ErNodhZemY9huqhVErgGUP15fGMqWGrjz00UU=; b=5DhZ1MDGxSB6931aB2nA7spgfc
+	2G5SGizTpjCq8PmWtUoBDXwfmClahP1kr9XuVKhbPEnAogJFv0fWYytLI+1p2+zGKZLODMfiqKz6V
+	alwTrC2R01moO7XJ7x/YWyMTzFs/uHJffkJbwR678aLjARxVcrrAydHXJ8SnOtC9fgMk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sLpoN-000sl4-Tj; Mon, 24 Jun 2024 21:57:11 +0200
+Date: Mon, 24 Jun 2024 21:57:11 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Danielle Ratson <danieller@nvidia.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
+	linux@armlinux.org.uk, sdf@google.com, kory.maincent@bootlin.com,
+	maxime.chevallier@bootlin.com, vladimir.oltean@nxp.com,
+	przemyslaw.kitszel@intel.com, ahmed.zaki@intel.com,
+	richardcochran@gmail.com, shayagr@amazon.com,
+	paul.greenwalt@intel.com, jiri@resnulli.us,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mlxsw@nvidia.com, idosch@nvidia.com, petrm@nvidia.com
+Subject: Re: [PATCH net-next v7 8/9] ethtool: cmis_fw_update: add a layer for
+ supporting firmware update using CDB
+Message-ID: <34a8b5b8-75ac-45b4-85d4-6b38aadf880c@lunn.ch>
+References: <20240624175201.130522-1-danieller@nvidia.com>
+ <20240624175201.130522-9-danieller@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624175201.130522-9-danieller@nvidia.com>
 
-Explicitly test the iterator variable i > 0 to fix the following
-Coccinelle/coccicheck error reported by itnull.cocci:
+> +static int cmis_fw_update_reset(struct net_device *dev)
+> +{
+> +	__u32 reset_data = ETH_RESET_PHY;
+> +
+> +	return dev->ethtool_ops->reset(dev, &reset_data);
 
-	ERROR: iterator variable bound on line 4688 cannot be NULL
+Is there a test somewhere that this op is actually implemented?
 
-Compile-tested only.
+Maybe the next patch.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- kernel/bpf/btf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-index 821063660d9f..7720f8967814 100644
---- a/kernel/bpf/btf.c
-+++ b/kernel/bpf/btf.c
-@@ -4687,7 +4687,7 @@ static void btf_datasec_show(const struct btf *btf,
- 			    __btf_name_by_offset(btf, t->name_off));
- 	for_each_vsi(i, t, vsi) {
- 		var = btf_type_by_id(btf, vsi->type);
--		if (i)
-+		if (i > 0)
- 			btf_show(show, ",");
- 		btf_type_ops(var)->show(btf, var, vsi->type,
- 					data + vsi->offset, bits_offset, show);
--- 
-2.45.2
-
+      Andrew
 
