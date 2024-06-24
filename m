@@ -1,155 +1,105 @@
-Return-Path: <linux-kernel+bounces-227322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7210D914F65
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:59:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E57B1914F70
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:00:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18B351F21783
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:59:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98F771F21C67
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AB2E142649;
-	Mon, 24 Jun 2024 13:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41CA2142903;
+	Mon, 24 Jun 2024 13:59:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BONS/dmo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="INR8yCWv"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B9B1422CC;
-	Mon, 24 Jun 2024 13:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7711428E0
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719237569; cv=none; b=WrRNIo1RokwBvTwlaAVAbEfY90RMvse05b2dnr4NQXI2mO5B9PYUWS7CzPIIjugYUZQyJAADGmoOsGLEDlYQ1Qn+mML/U3DthcXdvi0agHMeT7RsUJwlQO/VPRUTlv33QIdQqVHwAuTaJ3YrzjCTv4cFkzWPI0rLLi+Q5RIUV3c=
+	t=1719237597; cv=none; b=rhEhJHDe2PkNoz5T86eT0BST3wiFtWHnqBdgR5TLjdFC8iyGLsRCcPlhdH5fFxflZhYiAV0Wzqf8T9O9hsJnpnLH5BJ8yiHubFBWJ3cXBaY3R0n7+NS9GA5KdLmz42NJvqWsdUWX0zc417dYFll0MtpWh1TQypPnrRNNMb4kVTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719237569; c=relaxed/simple;
-	bh=PHz9ID1AbaX4jCuzpUPTNRNnsrvk3q9VXc4Hy7Zq2wI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r2wQmn0OAl9+At8WC8rNTKRxIhUI0hsuBBcLnw34IdJyojod07GcYzMTaugEWGW7gHHdFymPqAPhTj1alZyi4pU7U3/oFDa8v6Mrfaf6qdojDoTGTYNJNm2BGZAlOFfweRt6pq8kfGeyoU7o638lK9h+ql7Gqgy0LRVlOSqJ4JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BONS/dmo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 987FAC2BBFC;
-	Mon, 24 Jun 2024 13:59:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719237569;
-	bh=PHz9ID1AbaX4jCuzpUPTNRNnsrvk3q9VXc4Hy7Zq2wI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BONS/dmo3sQIsRz+JgJu2D4HwU01CZjlWkts2blz3K7Dyv0vPd26HCtvgDz7t3YnF
-	 vmpf2jllVI8Gwj7wQ8zp+JnnMt1K2qXkuxHNXpfPgMZmTLWlK4wOrHF8jNM0csdY+S
-	 h00BJGGjeuQKXKS6wRiHzy4MRHO3hfAjx12drCQL4yfrgZDiDRN6jr9Pz5syCOXsQ9
-	 LJI8ky4fFLc1DkTUqqOYfMgechyYA5d6aoy+UnvtL5+AQYRKvF/4Xh4geDx8vPaCl3
-	 PTiuvc4/3nCLDwLLFREF66bHsHrypTmm12p1ZEfpqQm1ryOrPIAxwvAgrRdw7e33mD
-	 cVXqEhyw0rldQ==
-Date: Mon, 24 Jun 2024 14:59:21 +0100
-From: Will Deacon <will@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Jamie.Cunliffe@arm.com, a.hindborg@samsung.com, alex.gaynor@gmail.com,
-	ardb@kernel.org, benno.lossin@proton.me, bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com, broonie@kernel.org, catalin.marinas@arm.com,
-	gary@garyguo.net, keescook@chromium.org, kernel@valentinobst.de,
-	linux-arm-kernel@lists.infradead.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, mark.rutland@arm.com,
-	masahiroy@kernel.org, maz@kernel.org,
-	miguel.ojeda.sandonis@gmail.com, nathan@kernel.org,
-	ndesaulniers@google.com, nicolas@fjasle.eu, ojeda@kernel.org,
-	rust-for-linux@vger.kernel.org, samitolvanen@google.com,
-	wedsonaf@gmail.com
-Subject: Re: [PATCH v2] rust: add flags for shadow call stack sanitizer
-Message-ID: <20240624135921.GC8616@willie-the-truck>
-References: <20240409103120.GA22557@willie-the-truck>
- <20240430110925.1064685-1-aliceryhl@google.com>
- <20240604142941.GD20384@willie-the-truck>
- <CAH5fLgimyYmS33EPEQb6R5Lrmkzv+0GNRE7NQwhfEaJFqb4OYQ@mail.gmail.com>
+	s=arc-20240116; t=1719237597; c=relaxed/simple;
+	bh=1RmILU7sEfgOL5C8noYL1Mesy9QeXfx6SH6gs1dytiU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gIGNfpoKE4eDGDPqdsxtLINdH6zG2ICrSkRqEeX56qwDmL4byO0zR8IbYfnEXK7KrwRt4XejmmnNBcfDfKzrmlPhjShrhLlQK+Qrm4lz/AtuAKTmgrvKw4itVu6VHQFBncQHE4m0wNH1TxAzy/BAOd6ubCjjoOuXBX6oalwyz2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=INR8yCWv; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52cdf2c7454so3185903e87.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:59:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1719237594; x=1719842394; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=FRxJqV/9V3WmotPQQur7o3YnAN57z0pSUs0Lyii+xZw=;
+        b=INR8yCWvxDN0WlASBYa0RJ5hY56X0j0WVqqpWyFqkIBcie9IeVgqNBCeQ6IqODIV8T
+         +kVBx03zXy1AkKCbpU/eMglxCaXC799QQqo9n/KH2LmiKYii+q5nS85YUfyYu62SgTM4
+         /ga9LtwcJ0ZG8fXLZlM26alJE9hKDXaeAcRbM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719237594; x=1719842394;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FRxJqV/9V3WmotPQQur7o3YnAN57z0pSUs0Lyii+xZw=;
+        b=hWi5XTHvUxJ3+OJ5Et9Ek4np3iSAmheFl+Tao4sGkc8IeMkWsee648xx2fHtZz8IFg
+         ZOsbTt3EFSMEPI/FQprqaTYajOGe7JhFRvy3TCHZ7qPdr3mTbS/npUjVg860KOvkBLIq
+         IBv9yCUBaq1qSC8ULCU6SRhhTxCdENFDByi+GqZkR/YjnILx7gu0Q4Krn2LldcoPY6Kk
+         12NlmYarAV/NLhHdcNoOTrvmlQRlnEhZY5mKSk3ToC1ZXVgSu3sDocyWSopQBRzOHz79
+         EAyXu1FQbEZsCfrpYddKH72F7GB34qHFXGU9lTjb28VJcKkqhdqBnnzXesvdDmFGQNi5
+         yqDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEBfelSZsYr6X47EFqF24b2zjtLgUF76AhzsdBdFr+olIF7Bw+n5QLze72GYsNmhKZ1fSfLA+5lXqvVjpid8oqrZaz0alHueofDYLX
+X-Gm-Message-State: AOJu0Ywn3RizRB3g//F6Em5FqhbSsOvoblY/gr84C34IISOcB5qJ91Tc
+	KzprUvpJiWUynORHUNYmlmFp+ARbNSojOocwRVAbDtdR4h5LRK0G2gnn2O0Phki2asMa1mIMVbX
+	BNpz89Q==
+X-Google-Smtp-Source: AGHT+IHLZ5s8FlgdBw8OVk0rD7TQRnjWtRlh05yADu2VeRjqjG8QaZqEYy688IKH4wTgXr1BrBrBvQ==
+X-Received: by 2002:a05:6512:1cd:b0:52c:83c7:936a with SMTP id 2adb3069b0e04-52ce18526d3mr3546649e87.42.1719237593601;
+        Mon, 24 Jun 2024 06:59:53 -0700 (PDT)
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com. [209.85.167.54])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ce6accddesm269236e87.114.2024.06.24.06.59.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 06:59:52 -0700 (PDT)
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52ce6c93103so1171742e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:59:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWGgfvyOmhdSm6m4w8YhWHuxarLXqRPMA3Z8OJt1wjMdPRkMOvaMMvc0SX+POy+/qdFVFzGK4+LbkyWTHBIrvr15qkhjwL9SON0rVna
+X-Received: by 2002:ac2:592e:0:b0:52c:d5ac:d42 with SMTP id
+ 2adb3069b0e04-52ce182bcadmr3212857e87.9.1719237592124; Mon, 24 Jun 2024
+ 06:59:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgimyYmS33EPEQb6R5Lrmkzv+0GNRE7NQwhfEaJFqb4OYQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <202406230912.F6XFIyA6-lkp@intel.com> <CAFULd4YVOwxQ4JDaOdscX_vtJsqJBJ5zhd0RtXXutW=Eqh29Qw@mail.gmail.com>
+ <CAHk-=wg1h4w_m=Op1U4JsyDjsvqG0Kw1EOVMQ+=5GX_XytdorQ@mail.gmail.com>
+ <CAFULd4YR-VkAOKiS5yxSUYi0YMzY1p=pkYe4dOkgFs+A=9AFFA@mail.gmail.com>
+ <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
+ <CAHk-=whPqqZVSeJiQsMvsAxtAmtR9iAuB4gg_1sUK2D-uBPpLw@mail.gmail.com> <CAFULd4YAeF7=q7DYUh016kabxS8b32qRbFqDBJQrvLq6RjwEVg@mail.gmail.com>
+In-Reply-To: <CAFULd4YAeF7=q7DYUh016kabxS8b32qRbFqDBJQrvLq6RjwEVg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Mon, 24 Jun 2024 09:59:35 -0400
+X-Gmail-Original-Message-ID: <CAHk-=wiHo2YeA=TOUf8vxFLOc0+BoH8USaiT25fnX2ynXbrZkg@mail.gmail.com>
+Message-ID: <CAHk-=wiHo2YeA=TOUf8vxFLOc0+BoH8USaiT25fnX2ynXbrZkg@mail.gmail.com>
+Subject: Re: arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly
+ requires more registers than available
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Alice,
+On Mon, 24 Jun 2024 at 03:36, Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> A real fix, not only a workaround, is to rewrite asm arguments to
+> something like (untested, but "should work"TM):
 
-On Tue, Jun 04, 2024 at 04:53:16PM +0200, Alice Ryhl wrote:
-> On Tue, Jun 4, 2024 at 4:29 PM Will Deacon <will@kernel.org> wrote:
-> > On Tue, Apr 30, 2024 at 11:09:25AM +0000, Alice Ryhl wrote:
-> > > Will Deacon <will@kernel.org> wrote:
-> > > > On Tue, Mar 05, 2024 at 01:14:19PM +0100, Miguel Ojeda wrote:
-> > > >> Otherwise partially reverting to the `target.json` approach sounds good too.
-> > > >>
-> > > >> I added the `-Zuse-sync-unwind=n` to the list at
-> > > >> https://github.com/Rust-for-Linux/linux/issues/2. Given the default is
-> > > >> what we want, I have put it in the "Good to have" section.
-> > > >
-> > > > I think we have time to do this properly, like we did for the clang
-> > > > enablement a few years ago. In hindsight, avoiding hacks for the early
-> > > > toolchains back then was a really good idea because it meant we could
-> > > > rely on a solid baseline set of compiler features from the start.
-> > > >
-> > > > So, please can we fix this in rustc and just have SCS dependent on that?
-> > >
-> > > Just to keep you in the loop, I've posted a PR to make rustc recognize
-> > > the reserve-x18 target feature, so that the -Ctarget-feature=+reserve-x18
-> > > flag stops emitting a warning.
-> > >
-> > > This should be sufficient for adding support for CONFIG_DYNAMIC_SCS.
-> > >
-> > > You can find it here:
-> > > https://github.com/rust-lang/rust/pull/124323
-> > >
-> > > As for non-dynamic SCS, I plan to tackle that after the PR is merged.
-> > > See the "Future possibilities" section in the linked PR for more info on
-> > > that.
-> >
-> > Thanks for persevering with this, Alice. I read the pull request above,
-> > but it looks like you went with:
-> >
-> > https://github.com/rust-lang/rust/pull/124655
-> >
-> > instead, which was merged (hurrah!). Do we need anything else?
-> 
-> Yeah, it took a while, but I've managed to get a -Zfixed-x18 flag in.
-> It will be available starting with Rust 1.80, which will be released
-> on the 25th of July.
+Sadly, I already tried that, and it didn't help.
 
-Great, thank you!
-
-> A few things:
-> 
-> 1. The -Zsanitizer=shadow-call-stack flag still doesn't work because
-> the compiler thinks that the target doesn't support it. I'll fix this
-> eventually, but at least CONFIG_DYNAMIC_SCS works now.
-> 
-> 2. I haven't convinced the Rust maintainers that -Zfixed-x18 is the
-> way to go long term (flags starting with -Z are unstable and may
-> change). Some of the maintainers want to instead add a x18-available
-> target feature (that is, the inverse of the current reserve-x18 target
-> feature), that you can disable with -Ctarget-feature=-x18-available.
-> 
-> And a few questions for you:
-> 
-> By the time support for 1.80 goes in, we are probably supporting more
-> than one Rust compiler. For pre-1.80 compilers, should we fall back to
-> -Ctarget-feature=+reserve-x18 (which emits a warning, but works), or
-> fail compilation?
-
-I think we should just prevent the Kconfig option from being enabled if
-the toolchain doesn't give us what we need. So there's no need to fail
-compilation, but SCS =n. See how e.g. CONFIG_ARM64_BTI_KERNEL depends on
-CONFIG_CC_HAS_BRANCH_PROT_PAC_RET_BTI.
-
-> Similarly, we should probably submit a fix to the stable branches so
-> that SCS+Rust doesn't silently break in a hard-to-debug way. Do you
-> prefer a backport with -Ctarget-feature=+reserve-x18 or one that fails
-> compilation?
-
-As above, I think we should disable the feature in those cases.
-
-Make sense?
-
-Will
+             Linus
 
