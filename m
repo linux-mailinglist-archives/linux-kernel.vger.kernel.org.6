@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-226659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 535769141D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:08:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B149B9141D1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7698B1C20313
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:08:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10F08B232B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8609A17BCE;
-	Mon, 24 Jun 2024 05:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E51017BBE;
+	Mon, 24 Jun 2024 05:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQesso+X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="D8l868JZ"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07A74C6E;
-	Mon, 24 Jun 2024 05:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E69E4C6E;
+	Mon, 24 Jun 2024 05:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719205695; cv=none; b=uN2pZ2jrSgwx3ELHVZ7p9QB36P3gp9h6D2/ZgDmZerqXAuu87x4DaRO7kBWNXaQXKu0CQgZ37Awb3PqVbgp7VbJ4hHSem8WoVL4igK2QFCLM6Q3HMZbJPs/vzMBwo10DAjtUCqXiD+XFm/yntbJZLiOV5pp8JxyCJxBTJLXObh0=
+	t=1719205841; cv=none; b=cMFK7VMZujQqYTminOdHxrmtfWvaDGwefBsXK8N6IvX1btjvT5WWnPzY6YzH7l+YmwRMaYZuvCDUmw4DhxAFpj1W9okC/WS97b4mDwDp0y7QqNn4UTckZqVDOJpxhCzBV3zio6BnV3bCQQCWubLwlsDqrVO44x9FRJ7M7l4XRMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719205695; c=relaxed/simple;
-	bh=6+KKjq/eT7gr7k+QJSuzGCZBQdGHTI4JtnxHih2rCC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=agWVWU+jYqpbDrd27oXTyS8n8iu2P3hokVy9Z4N17VSKQzFdqu420DoUE9X8uGI0FBm72Qi+dXgOxszebX9lL5DABYWmrwPBVaq7d5kqFzDrkzQftQCJpk4mvTjrlT8dchJOEuDhwBGeGZJqkUQIO1VYYLrGK2o2LvxZEZVUuiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQesso+X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 894AAC2BBFC;
-	Mon, 24 Jun 2024 05:08:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719205695;
-	bh=6+KKjq/eT7gr7k+QJSuzGCZBQdGHTI4JtnxHih2rCC0=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=DQesso+Xb1M5Iy1U+VuhHtxlDRYMHkRyVuTlS48xL+PpATJQUPIXdDEVG+fmnVaUl
-	 8aVyCCEKZGlj96pOMa3Xd4SOjPw0uyVl8En+dgjoR71Xs+IxhqSZFfU+wguPSxcSCT
-	 nIbopvycu6fw0SDhsxbAwoz+FApomkYElnOtTPmznYXWBa1AHQqiZbbs6GjMt96baE
-	 UsVJC4g28PtEvLpR9hRq33dYRqFsL4NszNQPIFKkCC7WjHFz8Iv9j3rnF68U+J4Glo
-	 kmAM1SAocvRjyIArHn5Sh4Bce5opXeN0sCCd4UWNmWbJFXwVZQOWQm7PWia+0QaCIq
-	 RacW8tX786RJA==
-Message-ID: <f50e346b-4ce6-4528-87f7-f0545c16a72e@kernel.org>
-Date: Mon, 24 Jun 2024 07:08:06 +0200
+	s=arc-20240116; t=1719205841; c=relaxed/simple;
+	bh=R/AQnucWPHVJoUzglXiRflaLiUYHD6oWehzrbAPuae8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZpCSn4k+Aks7WER7s94Ue0EVhU9MmVZ5mJyfEWl0Lje0YQfK5wdTvn1E2XL8rTrfyCNzQO5GMBsOoftilEC/ahOFbeX0+Eb9HxKc5BeEiTxonyhMqHgxa7yUBY3iO8SL/XESIZz5ihkMS2D/FC7V6gNkNgG26b8UVe+fobjfWT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=D8l868JZ; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1719205830; x=1719810630; i=quwenruo.btrfs@gmx.com;
+	bh=mvVbTrj0kb8GPXZ6M4qrCoPqT+12BO6Z1jDN0Z1CuqU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=D8l868JZPpPEgEV9U5uQoHgxl3fuMy5lZ7EbbEjKxWp8+OAwfeGnN23ePhLnPm5m
+	 W6Y8ONhkV0NuvkEmQKoU/gAId6AigYwC0zZEUu9MceKZlloHdrSmlFZGyyLswGpcl
+	 9IB1jvHjz/9xXGNZBQLo7JbxhVMBhxKDkPJdLQaLwt1tXqtNRF2/V2HOdhHL8XscP
+	 j9vyyWZiT8HtreRQOcfqf/o0tXg87SGUdKF3xocKIlpg19tP7MY076aqDEHRg4Sdv
+	 gN4dd53bs+HAjMue+R3Ig/vxB8KibMG0JSLu88KmQjnkcVHo3djQOeBsri5I80q6A
+	 NLLdcB7UGy/SRTAyrA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx005
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MzQkE-1sYaQ93Fi4-012cBU; Mon, 24
+ Jun 2024 07:10:30 +0200
+Message-ID: <a0840520-929a-4973-8ce9-91db07d6a9ec@gmx.com>
+Date: Mon, 24 Jun 2024 14:40:23 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,80 +57,123 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/7] dt-bindings: clock: Add CPR clock defines for
- IPQ9574
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org,
- angelogioacchino.delregno@collabora.com, andersson@kernel.org,
- konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- ulf.hansson@linaro.org, quic_sibis@quicinc.com, abel.vesa@linaro.org,
- otto.pflueger@abscue.de, quic_rohiagar@quicinc.com, luca@z3ntu.xyz,
- quic_ipkumar@quicinc.com, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20240624050254.2942959-1-quic_varada@quicinc.com>
- <20240624050254.2942959-5-quic_varada@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] btrfs: qgroup: fix slab-out-of-bounds in
+ btrfs_qgroup_inherit
+To: Jeongjun Park <aha310510@gmail.com>, clm@fb.com, dsterba@suse.com,
+ josef@toxicpanda.com
+Cc: syzbot+a0d1f7e26910be4dc171@syzkaller.appspotmail.com, fdmanana@suse.com,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <20240624030720.137753-1-aha310510@gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240624050254.2942959-5-quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <20240624030720.137753-1-aha310510@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:vk3cyUEzXclr5/+wgykx2/GwZSt/yFHRUZyiQ3N41DfZHI8Bmyp
+ i/C96sA46vuL9GekAMiL0MgFJ3H1U6VuTfsxWRwfQPdEA/kAgmCSBMmT5274BIDqKAug59V
+ MkjzZxqs8QMZlyhUI/rn9HYaua3UfhTPRxcINrEGWGoLnmj/v2tBfQibsa4nUgT4x3qfSm6
+ GnbfOzfTtGWTjbxqCrWkg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:oQCF0QkMnD4=;Qyswfi7qKHPnSKiY5kDBxVi06U2
+ M9EApZU5tiyffLw5RNjpZyRVR/Wp4ZnMIprOnsBh4RVIFqwoR8qArR1yh2iSaR+x0RLeXnG55
+ l5gZ7GJl/V+g2mv+fn8B6XNOqXdwOcZDr0b0Gk9SEJnUc2Pf7LODy7ksWLSvZCO4FDKAVgEJU
+ jZgUhM0h8U70sleXUIkMAVmSBfr87TjMUiuHNo/4990p9MGfZJVYlT3pxmYie0J25PQRESrEy
+ NbOvD1WZslcRBq7kqjQYgW8P4T2MyauXLMn++8WllrAVG3y1JZQvFwVcPtDiJ0ylRobV4mdf5
+ cgqUN1g45h0PHC9Tdoc4sruT27emnXnc0BE1gaS2WcsEnSt+Z0ASlRcj7RjEm0+lRTNMbTjBR
+ 7NxhcOpXACfkYGqRMFl44RjaGJ6+pKadO0wnwUkBUBTYV8D+RCnBZk5qdWdBt3dsQnvmrMYHc
+ CJBuSexIsWt72FXQToYltyrlhx+AFhfTHGM3byEA1jLz6IJZVasa6JoI/8gRBa1gLbGOJ61dT
+ ity7jjAwUlSV50mhgWICxXKT352S/9gW0g0nr8FFXnq/0yNiP0epkG8NKfKzTS3MpZGy64Gci
+ V0poM0Hju5srj6CrYeuOgTmeOYMcEudyM15G76Zy1Xksf21un0ERvuSMxCR6Fxawn73SUXpnN
+ w112naoVrbCVw5T6mQSwEjeo2Ecq3VdsIKLceiW5+jobXKAQDTpReyWJuYx0W9qVseGEcvE9d
+ X89c5y1Ksqr5anOI2KOzIddO1UJ50I+AABZSzdQbEjHkwJYFF3kmjaeNNcxQoZ2DIrJiYtTUW
+ qZpI2jx6M+k7fkqgBclNDMEpf4bsyXiQikrX0KoPPJCNk=
 
-On 24/06/2024 07:02, Varadarajan Narayanan wrote:
-> Add defines for the CPR block present in IPQ9574.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+
+
+=E5=9C=A8 2024/6/24 12:37, Jeongjun Park =E5=86=99=E9=81=93:
+> If a value exists in inherit->num_ref_copies or inherit->num_excl_copies=
+,
+> an out-of-bounds vulnerability occurs.
+>
+
+Thanks for the fix.
+
+Although I'm still not 100% sure what's going wrong.
+
+The original report
+(https://lore.kernel.org/lkml/000000000000bc19ba061a67ca77@google.com/T/)
+is showing a backtrace when creating snapshot.
+
+In that case they should all go through __btrfs_ioctl_snap_create(), and
+since it has qgroup_inherit, it can only come from
+btrfs_ioctl_snap_create_v2().
+
+But in that function, we have just called btrfs_qgroup_check_inherit()
+function and it already has the check on num_ref_copies/num_excl_copies.
+
+So in that case it should not even happen.
+
+I think the root cause is why the existing btrfs_qgroup_check_inherit()
+doesn't catch the problem in the first place.
+
+Thanks,
+Qu
+
+> Therefore, you need to add code to check the presence or absence of
+> that value.
+>
+> Regards.
+> Jeongjun Park.
+>
+> Reported-by: syzbot+a0d1f7e26910be4dc171@syzkaller.appspotmail.com
+> Fixes: 3f5e2d3b3877 ("Btrfs: fix missing check in the btrfs_qgroup_inher=
+it()")
+> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
 > ---
-> v2: Add GCC_RBCPR_CLK_SRC define.
->     Not adding 'Acked-by: Krzysztof Kozlowski' as the file changed.
-> ---
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
-
+>   fs/btrfs/qgroup.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+>
+> diff --git a/fs/btrfs/qgroup.c b /fs/btrfs/qgroup.c
+> index fc2a7ea26354..23beac746637 100644
+> --- a/fs/btrfs/qgroup.c
+> +++ b/fs/btrfs/qgroup.c
+> @@ -3270,6 +3270,10 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handl=
+e *trans, u64 srcid,
+>   	}
+>
+>   	if (inherit) {
+> +		if (inherit->num_ref_copies > 0 || inherit->num_excl_copies > 0) {
+> +			ret =3D -EINVAL;
+> +			goto out;
+> +		}
+>   		i_qgroups =3D (u64 *)(inherit + 1);
+>   		nums =3D inherit->num_qgroups + 2 * inherit->num_ref_copies +
+>   		       2 * inherit->num_excl_copies;
+> --
+>
 
