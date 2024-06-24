@@ -1,137 +1,196 @@
-Return-Path: <linux-kernel+bounces-227615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F3F191547A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:40:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E2A991547E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:40:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B24C1F213F1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:40:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B805CB25861
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:40:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321D619E82F;
-	Mon, 24 Jun 2024 16:38:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E100A19E7F8;
+	Mon, 24 Jun 2024 16:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hR9kAiRb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfW6GWZw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55D4D19DF89;
-	Mon, 24 Jun 2024 16:38:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1537119E7C1;
+	Mon, 24 Jun 2024 16:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719247099; cv=none; b=p8qTO3AHq5nkuyQJn7sr9bGEFSe4mGuYNEmOx5Gpc8ElnyUaEweftzO2dFCJ+1KXDjS/TOYXwOhPOUcCKcDxLhc79E3GGdKBflFcZQ8eOch8DfmRlgXYNUVijvy8RKM9ZsejB+MC9DxRHjJQqtz0SgLnWOCUKz3KA9CyIk1XGaY=
+	t=1719247155; cv=none; b=bCpReFU9RBrl/XwdseVx8Yp5InevVW1aiLBdo2hl5YxqHLwdHpNJHJoFC1jyXQkPonJFFZTUuJcwiclKS22LvyLrrhJrY3Mmh74MErILF2uplo2D809cKvOFn3OrYDjt5401LGwGfDRkIT2+BOOEem00oaiW+y5nX/uJZrAAaU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719247099; c=relaxed/simple;
-	bh=YaBYUnqmG+n4LXnma2Z355DDZuqflriGSA+my20kuNc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NbkwEPAyIP12Dc0iWy6tEfhT+UFm/axKeew/etLlb+MaPo1rqNns8nXvHMK8q2yaKap4Mieta9bOX/sR2LpWSPyYCfOrfTS4bPi4tvXg7NuFpBYhX/VXno5wKIWSe+RZ7zkxQNhIhRqKFr8dK05w5qUUqSR3tUyOhuWUWXfHJls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hR9kAiRb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C59C8C32782;
-	Mon, 24 Jun 2024 16:38:12 +0000 (UTC)
+	s=arc-20240116; t=1719247155; c=relaxed/simple;
+	bh=eqs00n4+UDoC3Z/DNr8LAH5mFvTl7xb4hGQdQJEOuZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xs56eZLWhhmygf0WCkB+yc2RkAPuE6+PayUiZmDsLdGGNiCAS8GDmLAhsa2y266PCyUg21g7vKvSv4J5I9VDIikK+mE4otBrMTMnDgkX0433jPhX9/anPugTm27KjOZBjPmjQHzLISzefnuTEJ4NOuTBpupnCC6bEO4hQE9czAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfW6GWZw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F9DEC2BBFC;
+	Mon, 24 Jun 2024 16:39:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719247099;
-	bh=YaBYUnqmG+n4LXnma2Z355DDZuqflriGSA+my20kuNc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hR9kAiRbkPdSRmhr6Eizj3di1WfTP49V/w1YOyPaZim5rmw36OARQQmRPJoJIgcc+
-	 S4v6weKyemGxTeHfB6coHy40+7J8WwAqDr2nZbjBKjkhR9pEXksYh4lK6/uVwva9ag
-	 DxvpQk7ryDzKF8/l6QScCn61hEnSrMxLQrk7/f3P77LzhPLcr9Y0MRsnu/mYbLIeMl
-	 wEA4icKt3bELxbwttXXVIjoQjV4+pH+CiRResb8t2jJV/+LRGOsJqZQCouZxyctCWJ
-	 M/pWQWarPBHgrmvXXw9jiSVKx7MmK8dQ9v5SoJljL0czI9ePB0E2yF+juRGV4cW/Wr
-	 G9znttjNqjk7A==
-From: Arnd Bergmann <arnd@kernel.org>
-To: linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org,
-	Helge Deller <deller@gmx.de>,
-	linux-parisc@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	sparclinux@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	Brian Cain <bcain@quicinc.com>,
-	linux-hexagon@vger.kernel.org,
-	Guo Ren <guoren@kernel.org>,
-	linux-csky@vger.kernel.org,
-	Heiko Carstens <hca@linux.ibm.com>,
-	linux-s390@vger.kernel.org,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	linux-sh@vger.kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	libc-alpha@sourceware.org,
-	musl@lists.openwall.com,
-	stable@vger.kernel.org
-Subject: [PATCH v2 09/13] csky, hexagon: fix broken sys_sync_file_range
-Date: Mon, 24 Jun 2024 18:37:07 +0200
-Message-Id: <20240624163707.299494-10-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240624163707.299494-1-arnd@kernel.org>
-References: <20240624163707.299494-1-arnd@kernel.org>
+	s=k20201202; t=1719247155;
+	bh=eqs00n4+UDoC3Z/DNr8LAH5mFvTl7xb4hGQdQJEOuZk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZfW6GWZw5Y0LrI/oVFAJwcK4oxwxthA3Zm2OT/hia4TSG5E4ywv2jzg0Hvf3HM9+I
+	 8vf/G5Qw6rBF0b+si7MWoDVyw+SYlbvZoBBj5Q+1nbSH9+eqLplzSTaK47E5t0onhz
+	 3DM1TOBdE3noGu7IJEVDVQgjdMsneAjLW/MjyCkF8Yz+SAGC0KbrAkCV7AQlTp2tPn
+	 PorCU6P7zUzY2V3n0HjszJuqHpSsd12xnseBtaO0OV3UZRMl5W8/lbyLkCGDL5ddwY
+	 RDSW3ulJHiwwyiDVA2Ka1LKamMQxQW7Iy+TJPCVzHfW/LnkYtPqHAEAeg2lTuNekhk
+	 vQsvDpq7q7VJA==
+Date: Mon, 24 Jun 2024 17:39:09 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: renesas,sdhi: Document
+ RZ/V2H(P) support
+Message-ID: <20240624-request-demeanor-d66965d27935@spud>
+References: <20240624153229.68882-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240624153229.68882-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="L0bfX9GEU5XPf3Zo"
+Content-Disposition: inline
+In-Reply-To: <20240624153229.68882-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
 
-Both of these architectures require u64 function arguments to be
-passed in even/odd pairs of registers or stack slots, which in case of
-sync_file_range would result in a seven-argument system call that is
-not currently possible. The system call is therefore incompatible with
-all existing binaries.
+--L0bfX9GEU5XPf3Zo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-While it would be possible to implement support for seven arguments
-like on mips, it seems better to use a six-argument version, either
-with the normal argument order but misaligned as on most architectures
-or with the reordered sync_file_range2() calling conventions as on
-arm and powerpc.
+On Mon, Jun 24, 2024 at 04:32:27PM +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to that
+> of the R-Car Gen3, but it has some differences:
+> - HS400 is not supported.
+> - It supports the SD_IOVS bit to control the IO voltage level.
+> - It supports fixed address mode.
+>=20
+> To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a09g057'
+> compatible string is added.
+>=20
+> A 'vqmmc-regulator' object is introduced to handle the power enable (PWEN)
+> and voltage level switching for the SD/MMC.
+>=20
+> Additionally, the 'renesas,sdhi-use-internal-regulator' flag is introduced
+> to indicate that an internal regulator is used instead of a
+> GPIO-controlled regulator. This flag will help configure the internal
+> regulator and avoid special handling when GPIO is used for voltage
+> regulation instead of the SD_(IOVS/PWEN) pins.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3
+> - Renamed vqmmc-r9a09g057-regulator object to vqmmc-regulator
+> - Added regulator-compatible property for vqmmc-regulator
+> - Added 'renesas,sdhi-use-internal-regulator' property
+>=20
+> v1->v2
+> - Moved vqmmc object in the if block
+> - Updated commit message
+> ---
+>  .../devicetree/bindings/mmc/renesas,sdhi.yaml | 30 ++++++++++++++++++-
+>  1 file changed, 29 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Do=
+cumentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> index 3d0e61e59856..20769434a422 100644
+> --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> @@ -18,6 +18,7 @@ properties:
+>            - renesas,sdhi-r7s9210 # SH-Mobile AG5
+>            - renesas,sdhi-r8a73a4 # R-Mobile APE6
+>            - renesas,sdhi-r8a7740 # R-Mobile A1
+> +          - renesas,sdhi-r9a09g057 # RZ/V2H(P)
+>            - renesas,sdhi-sh73a0  # R-Mobile APE6
+>        - items:
+>            - enum:
+> @@ -118,7 +119,9 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: renesas,rzg2l-sdhi
+> +            enum:
+> +              - renesas,sdhi-r9a09g057
+> +              - renesas,rzg2l-sdhi
+>      then:
+>        properties:
+>          clocks:
+> @@ -204,6 +207,31 @@ allOf:
+>          sectioned off to be run by a separate second clock source to all=
+ow
+>          the main core clock to be turned off to save power.
+> =20
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,sdhi-r9a09g057
+> +    then:
+> +      properties:
 
-Cc: stable@vger.kernel.org
-Acked-by: Guo Ren <guoren@kernel.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/csky/include/uapi/asm/unistd.h    | 1 +
- arch/hexagon/include/uapi/asm/unistd.h | 1 +
- 2 files changed, 2 insertions(+)
+Please define properties at the top level and constrain then per
+compatible.
 
-diff --git a/arch/csky/include/uapi/asm/unistd.h b/arch/csky/include/uapi/asm/unistd.h
-index 7ff6a2466af1..e0594b6370a6 100644
---- a/arch/csky/include/uapi/asm/unistd.h
-+++ b/arch/csky/include/uapi/asm/unistd.h
-@@ -6,6 +6,7 @@
- #define __ARCH_WANT_SYS_CLONE3
- #define __ARCH_WANT_SET_GET_RLIMIT
- #define __ARCH_WANT_TIME32_SYSCALLS
-+#define __ARCH_WANT_SYNC_FILE_RANGE2
- #include <asm-generic/unistd.h>
- 
- #define __NR_set_thread_area	(__NR_arch_specific_syscall + 0)
-diff --git a/arch/hexagon/include/uapi/asm/unistd.h b/arch/hexagon/include/uapi/asm/unistd.h
-index 432c4db1b623..21ae22306b5d 100644
---- a/arch/hexagon/include/uapi/asm/unistd.h
-+++ b/arch/hexagon/include/uapi/asm/unistd.h
-@@ -36,5 +36,6 @@
- #define __ARCH_WANT_SYS_VFORK
- #define __ARCH_WANT_SYS_FORK
- #define __ARCH_WANT_TIME32_SYSCALLS
-+#define __ARCH_WANT_SYNC_FILE_RANGE2
- 
- #include <asm-generic/unistd.h>
--- 
-2.39.2
+Thanks,
+Conor.
 
+> +        renesas,sdhi-use-internal-regulator:
+> +          $ref: /schemas/types.yaml#/definitions/flag
+> +          description:
+> +            Flag to indicate internal regulator is being used instead of=
+ GPIO regulator.
+> +
+> +        vqmmc-regulator:
+> +          type: object
+> +          description: VQMMC SD regulator
+> +          $ref: /schemas/regulator/regulator.yaml#
+> +          unevaluatedProperties: false
+> +
+> +          properties:
+> +            regulator-compatible:
+> +              pattern: "^vqmmc-r9a09g057-regulator"
+> +
+> +      required:
+> +        - vqmmc-regulator
+> +
+>  required:
+>    - compatible
+>    - reg
+> --=20
+> 2.34.1
+>=20
+
+--L0bfX9GEU5XPf3Zo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnmhLQAKCRB4tDGHoIJi
+0u5GAP46hhJTW4dDlB7GHrPo+ArAzALm61T9XgVfP6aUk3bsgAD+L1E4/ScfugT+
+yptW3oL4pA4cCaNA86M1tx8LuoHJTwI=
+=axPI
+-----END PGP SIGNATURE-----
+
+--L0bfX9GEU5XPf3Zo--
 
