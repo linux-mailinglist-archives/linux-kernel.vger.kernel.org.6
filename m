@@ -1,85 +1,133 @@
-Return-Path: <linux-kernel+bounces-226758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42C44914331
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:07:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13A45914335
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:10:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 732121C21CCF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:07:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A351B223A0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AED3BBEA;
-	Mon, 24 Jun 2024 07:07:48 +0000 (UTC)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 292A03BBEF;
+	Mon, 24 Jun 2024 07:10:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CWy3qw4C"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D011B3B1BC;
-	Mon, 24 Jun 2024 07:07:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F583AC2B;
+	Mon, 24 Jun 2024 07:10:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719212868; cv=none; b=cdMJZyWIQnBHaZkcn4mHAa6oM/RPyJyehKy71kA+A1nbSwOPS7XHoTD/LafwclZesZzoYu1HxiOVY16XxLGAwhRqIA033ifuyym29yjSRqHcy3DTfl1qTBvJY0ALMX+VpSLag0dNnm4ZhPmXTLUAf/TEOXzpBc6Syzg4MYvUxhY=
+	t=1719213014; cv=none; b=UFU67thfp60dpX8d3sInNSh1nrYzzP8M4AjePbI0Wgm8/uXMGnfmkwvDA4VMZ+oYIE1RtmY3eMueZxE3OPADXHrD/Y8yJK0nfx3ov1HpDu252oAV6lAvf1O3H9j5ImwnZWyDKyd96kq2/fwPoewLzOw4bB36fAJ8TyaBeNLSsGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719212868; c=relaxed/simple;
-	bh=DIc2Ek2oqgATcYNtSqSUaLVDknlvsWuPQFBBIIrTz6c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C6NM1w9lhaWWt60FgXzV8ElQ9O2P4OuIMiaDJ8y+WctsA3Fu+mkW5hAJSaoscf+2Daki3i3lUNxynn/RUnTJpqUXWgpWuohBYKYVQZOQjEmDFcfPfbQnV0BeInOcthWr6vQ/ojC9SuVvIsGGD//mXKctXZohLG/YZ8CFhfPlTsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	s=arc-20240116; t=1719213014; c=relaxed/simple;
+	bh=HBCjUsYTDIVsStQ42c/crGHKv/Sq5eTsiD6VzI41u04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IdKoTuzKEtri86cZdWlvUzsQb74kSfJNZ923kte3VHnTJId6zcI6OHsiVQY1+1rtDs+mkmCJon42KlvOEAR2UkwjA75YOlFwQ7GS+F08RABYbl1fvMNCUTLyy/r1nSuROm0GbGfSSrGNc9J8e/p2Ca9fO6jjEOpljBLLkSwr+VI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CWy3qw4C; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f9aa039327so32051235ad.2;
-        Mon, 24 Jun 2024 00:07:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719212866; x=1719817666;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57d0699fd02so2031771a12.0;
+        Mon, 24 Jun 2024 00:10:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719213011; x=1719817811; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LSaP9BELHJPncXgtj87yjJDAYd2o3bEQl0Jgoge/tXc=;
-        b=C5a0FI9lbiblAJe9OdpL0pP07FYqYs8lkQZ00bU9vHDxNOEtV4Tqy34FKYAERXYP7f
-         YiWYIfqCKL+LoSF0/e022NrKd1tBG3lVH2vPbZVXcajsijozFmZrv4izYKMuY0Nb75XV
-         /h/ujBzBM7Als7U7whFxjiDgKGq0VvXPQQC9Vj3lzaqw64kzzIElFiBUinEqVTUFsWnR
-         diZXoR+ndemehu9JATXaw4j0Kh2RhdENUlP/+IYIEQaNaXYtYzz6VRCZYQad2u5SsuwH
-         tcsJYo/aNhVxv6IcmDVF6vWOjVvpBvD56yU5oVIA/v6uYYscRVWIKMyb52zaxKgiLhzI
-         uAGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVPqynwpftPcO18hCC6SMryfUhNJ8Mif3wlceubnZDVWsjKdZnf6I08DCwNwlCIlrjT5Q3LcCI03tEMXV4KX5oyXaJeAcP4ezizRRJzpQr3fxejnJXE0dtWmLhP9qH6tsHMBT13DRGLctBeIxDKfSu8fgcmPcXAi407wj/jjB3wejlBBMX
-X-Gm-Message-State: AOJu0YzpD1uvaM1xiYvnV0Oo9SfNsUFRTapTLmvvToAaTTdB43Z8tdXX
-	O69gTCLWYbbOs27wsbkujRzXF6tSThdn3xaSFf/uIdeyd4gzdspw
-X-Google-Smtp-Source: AGHT+IHn9Nj5BYs7dNR5EX+uaseXHvMuEo1uXR7vTbM98U6YZWH4x3owWhoYUg3Qi/ZZuGVx6QVpQg==
-X-Received: by 2002:a17:902:ccce:b0:1fa:209e:b4f4 with SMTP id d9443c01a7336-1fa209eb5fdmr46453815ad.44.1719212866028;
-        Mon, 24 Jun 2024 00:07:46 -0700 (PDT)
-Received: from liuwe-devbox-debian-v2 ([20.69.120.36])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbc479fsm55530025ad.291.2024.06.24.00.07.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 00:07:45 -0700 (PDT)
-Date: Mon, 24 Jun 2024 07:07:38 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: mhklinux@outlook.com
-Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
-	decui@microsoft.com, corbet@lwn.net, linux-kernel@vger.kernel.org,
-	linux-hyperv@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-coco@lists.linux.dev
-Subject: Re: [PATCH v2 1/1] Documentation: hyperv: Add overview of
- Confidential Computing VM support
-Message-ID: <ZnkbOkWeIcSO-pmt@liuwe-devbox-debian-v2>
-References: <20240618165059.10174-1-mhklinux@outlook.com>
+        bh=O4qDW7s+qlBBL2Paxw11bXPIks8QSc7Gri0w+bcYvP8=;
+        b=CWy3qw4CQ3C/EPqY4uHyBqBPfacTglQCTX7N8sz+Z/rBjWKsmsZz5a7gVOB08v+NqG
+         k01GtNO6raVyFUs4vhbpufhVKEVEt5/pYvJQd8UKvgDtrEhrDWnmgCmB7aA4xgazdGy8
+         TXms4q2owVdfDQyQRwKG9qErwsYT4xKeH7xTwU0NqsL1SF8O10RfH2whqYKSnudYgMug
+         2ZzusuttlZvpBz+dlEfBqJ6H+rDEuQ/Vyn1rrHWkeEm7SjB1qED8a3w9NIqsYmmNYXH1
+         fYFuNMolgcSSLonUuj6MPovEcrF9fyBVcw6617k+qhJwKDVzN05yblJj4OUzotW2HlZr
+         zO4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719213011; x=1719817811;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=O4qDW7s+qlBBL2Paxw11bXPIks8QSc7Gri0w+bcYvP8=;
+        b=QH56x7gqPs2s9Hoacl/2XOq5Kfl6Gt5XNIl2SJNgRvjrpgARyOzG7URazeMIsqOzXN
+         N1jp4h0sxSE/4f4oeAqO1ioEUyknNzEI7+Mn9Gab2dahUiJSYfnjBvKOyTt1vB3kkLmU
+         Azh+44iMLquxdzGTwWIFyUIO7eQ43gBiBe03eEvE8sGkDlv+mka8DdcdQoVhcXvkDRKu
+         hRRAQqsuUmspPEcgH+r2hDKzRg0EGruhPaK3jtEculaBgydk/bmp91RCcMwhSOa3K03l
+         HBvASm0jChrW5bKAEnuRDLnECTLucYAGi/3edGswugK7N9qhA63d2dKLxgds1Nb4estU
+         Cb+g==
+X-Forwarded-Encrypted: i=1; AJvYcCWZhHo7Hjz9oI6hG8qzY7XJe1eY4cZaB7qMMF5Ua++w3ZmTOTiktrFjyzTypJG2i3K4M2lNBw97xPSspCQQS17SGuxM3+Xkg1kZNSSeLFs3ZRl5pWUVIdwkMsPlr4CjUNVJTuFRPlXGv5l49Qq/Yy4tl9gkkYdTIfRWOXGSVbzcpXxlUQ==
+X-Gm-Message-State: AOJu0YxBzoPekA53Mpj+rFgEULqWeil3Pp7uSu4QIOQU1pgpLNFrgt/C
+	L7qkPLBXiOWEGkbWFn2w+camObT1Swdko0h+OHxYun9wQLEuwe7XCeLq4RTnM+V7A3Oq3EbWSjd
+	ijFOabl8zicFuQIkqo3AyYLaddW0=
+X-Google-Smtp-Source: AGHT+IGCwvm4fU7C/inQehbuThRxMqiaMf+6I5oQHFjehZBe1jdhyTY9kV3vEF5IWV0jJ4w9Ll+EXIMb8Mo0zTpqh7Q=
+X-Received: by 2002:a50:d697:0:b0:57d:3df:f881 with SMTP id
+ 4fb4d7f45d1cf-57d4bd5a1femr3013313a12.3.1719213010929; Mon, 24 Jun 2024
+ 00:10:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618165059.10174-1-mhklinux@outlook.com>
+References: <20240620054024.43627-2-kanakshilledar@gmail.com> <d613221e-f026-400a-acec-921ef110ac29@kernel.org>
+In-Reply-To: <d613221e-f026-400a-acec-921ef110ac29@kernel.org>
+From: Kanak Shilledar <kanakshilledar@gmail.com>
+Date: Mon, 24 Jun 2024 12:39:58 +0530
+Message-ID: <CAGLn_=t+GyhGvtfXO=VmXB6iC3XAsAexOpqGt6AWdMNW15Lf8g@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: i2c: nxp,lpc1788-i2c: convert to dt schema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vladimir Zapolskiy <vz@mleia.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 18, 2024 at 09:50:59AM -0700, mhkelley58@gmail.com wrote:
-> From: Michael Kelley <mhklinux@outlook.com>
-> 
-> Add documentation topic for Confidential Computing (CoCo) VM support
-> in Linux guests on Hyper-V.
-> 
-> Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+On Thu, Jun 20, 2024 at 4:27=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 20/06/2024 07:40, Kanak Shilledar wrote:
+> > Convert the NXP I2C controller for LPC2xxx/178x/18xx/43xx
+> > to newer DT schema. Created DT schema based on the .txt file
+> > which had `compatible`, `reg`, `interrupts`, `clocks`,
+> > `#address-cells` and `#size-cells` as required properties.
+> >
+>
+> Thank you for your patch. There is something to discuss/improve.
+>
+>
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-frequency:
+> > +    description: the desired I2C bus clock frequency in Hz
+> > +    default: 100000
+> > +
+> > +  resets:
+> > +    maxItems: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - interrupts
+> > +  - clocks
+> > +  - "#address-cells"
+> > +  - "#size-cells"
+>
+> These should not be required, because you can have an enabled I2C
+> controller without children in DT.
 
-Applied to hyperv-fixes, thanks.
+You suggest removing the address cells and size cells from the
+required properties?
+I saw a few i2c dt-bindings and these had the address cells and size
+cells in the required
+property.
+>
+>
+> Best regards,
+> Krzysztof
+
+Thanks and Regards,
+Kanak Shilledar
 
