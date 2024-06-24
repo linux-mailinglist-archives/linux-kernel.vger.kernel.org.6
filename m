@@ -1,99 +1,104 @@
-Return-Path: <linux-kernel+bounces-227352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F852914FE8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:28:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45977914FEE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 438541F22F22
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:28:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 769F21C21D03
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8532917334B;
-	Mon, 24 Jun 2024 14:28:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB17146A71;
+	Mon, 24 Jun 2024 14:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="UTb8ohZS"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jtbH4R6e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3941E3EA72
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271A73EA72;
+	Mon, 24 Jun 2024 14:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719239310; cv=none; b=lyZIis4Jr1MhPQkbmZIADhfP0mxI46NxIKi3BtARZnuStNt4m+Vp8oYqeEEvJp12/sKOO7M3qSo44OCl8KVSjc0Hg5Lckxnhluu/VGvtJ9xCd2z9VFGXKupizcBls8KFJC8N6jgJzRFRkB3gkT2TJKnRsPzTbscOvrKKyv+54Zk=
+	t=1719239383; cv=none; b=p9Let3bWXjir1B2eqP+JppEjLg17MdymzOmo1VZMX3mqSkOXghFpJMhPwh4NJElkLYnLwZnHA+rOz11aMo66KgWPeVGfZuCghwUT+iRZxH6f19d9uizpOUQErqeioB7bAmskRlNsMW8UeTsV7LwpfFkvISADFqEIoNYvHvSVv1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719239310; c=relaxed/simple;
-	bh=j3yW/z96FF8SUpUP6V7AyzKgmGiSp2jEP9gctQ8qesY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YlN+xpDLHeSdJyJ0rBLJHmDjbHEOr6iEyfxTgztdwvfkfHdylSBq9ZLLmVVYEAPfLU1PFDkW/JXXzPcFIADZdB3A5UWaYHF3ClxalORLFCnbp4y0HSBDb/8TLJRykZdgdlfsvjOyZlxW/uAWXn7BrnJagcim1rrbblklA1Lcel8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=UTb8ohZS; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c7f7fdd24so5061974e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:28:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1719239307; x=1719844107; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=7su3gRoP2LrGxszjFo9Cz/0CPHsqkmxZ3xjVUAFtNYk=;
-        b=UTb8ohZS/zYsBJMffvQDmSe6gBG1qxZeX2MI+KXLCuH1SiHpON1oRkMP//uQkW+3AE
-         XZIkvAPwDxRjHorly+/rxVSETwMgHY6hyoAY5buiCs3jn6KefCIZwI6Y25N6ySjyMp39
-         0F7+0S8ot0KpDtKDxScKNOzYJbrRt5YEHZzEU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719239307; x=1719844107;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7su3gRoP2LrGxszjFo9Cz/0CPHsqkmxZ3xjVUAFtNYk=;
-        b=pn3EsH7sFakXPk+iw68piQiZHrPSPphx9l2t0NKaxollHp5L6jbkQJrquPpE5wtvDK
-         cbKAxqHf3nG5nhKjlnjVoRbqBDaOCdjHmyZ3RLxd/gDrJS4qakCn/vUOCQGpLEDVmIbI
-         QrLxi4xQkhy5H8InGEpXAb8q3StKtG1aeKZrZQmvakrJvsYPr3JDtYkVRlXTPbeaczfb
-         rh3gAFJC/ApuLn4ZK2ADGV29yAXDwHe+2j3aR/yIXRC93qVp74taSIlH5q1z8YaavMj1
-         1L9jEp/+5Nq9TjI4KhfYKIc9CRnP2hTybqaeBsva2lEceMLNPEguEShY5dYipxdvAU0P
-         EPzg==
-X-Gm-Message-State: AOJu0Yz2eWDvQmzCQGNxqkHbMZ6L/jlH07NDX2BNbaJZBVTW3T2JVzq6
-	Ge7uFXfP+p1yHj8zh1RN5ohAo0Dz++SGrArgSGjF/GnIyeB1+LBlWGV/WZbjeTebh5SNxElIZNf
-	zqqtvkw==
-X-Google-Smtp-Source: AGHT+IHxZbuOUYGXaA+nY2BlrnHvpO5Qk0rxCzIkc3hgkrkBag6FHSbfLIUOIzSj6H5hpPKLj8S1pA==
-X-Received: by 2002:ac2:46c4:0:b0:52c:e312:249c with SMTP id 2adb3069b0e04-52ce3122574mr2738693e87.7.1719239307200;
-        Mon, 24 Jun 2024 07:28:27 -0700 (PDT)
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com. [209.85.167.45])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd644104esm985962e87.246.2024.06.24.07.28.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 07:28:26 -0700 (PDT)
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52c7f7fdd24so5061944e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:28:26 -0700 (PDT)
-X-Received: by 2002:ac2:4c38:0:b0:52c:d834:4f2d with SMTP id
- 2adb3069b0e04-52ce1834fd8mr2761302e87.18.1719239306227; Mon, 24 Jun 2024
- 07:28:26 -0700 (PDT)
+	s=arc-20240116; t=1719239383; c=relaxed/simple;
+	bh=WY5hYIC0PNBIF7V8uvQgCP/BsotrkH9mINLicqCn9KU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UrxQBA9HZMoj8ksJof244qmqqrCBYUK5djFdE/CrSY34f7HU9eSHWXyk651DYY2JXGxeSzjlkvj46VCH1RLLKJBBZU4odBucMJ3BF8WgZtCPp3TSkz+PhQHIZ4Ppk4u+tvlkxqU/oCb/6wognwytvx9VRnAEdBWXJ9M9Irnj5qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jtbH4R6e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8311C2BBFC;
+	Mon, 24 Jun 2024 14:29:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719239382;
+	bh=WY5hYIC0PNBIF7V8uvQgCP/BsotrkH9mINLicqCn9KU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jtbH4R6erQHvxOESUyXymA1LgB5ktOLpoVxTKUyEfXFZ3uEmZlLbYO6Y844Pnw6Fw
+	 +vNRCjwE2Late2zqXvnQy8HJW8EEPI5Ex9Ylj1BEg937YUS1LqU8Qx4Jj2jUi9jU6O
+	 Zhc2ClLLmLz14F30q3Vul601mxtP1fOPy/XQ6oug56MbucpGGN81v1BcOaFlupKNSf
+	 nMb/J4sVeU8bGBVYlo10LiKxjke+u7RK4O6ZugQgXhmk9uBmDsQ0nW9zgVGIlwBmd0
+	 2Yq84f0XsWMVrBIvrtTmpDDCCnvz5MulsiJrrrUl8TSlz2pMIR/akbLDLxA4+CMxAP
+	 RnZOcAVC7w/5Q==
+Date: Mon, 24 Jun 2024 15:29:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Witold Sadowski <wsadowski@marvell.com>
+Cc: linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+	devicetree@vger.kernel.org, robh@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	pthombar@cadence.com
+Subject: Re: [PATCH v9 4/9] spi: cadence: Add Marvell SDMA operations
+Message-ID: <67123003-9987-492f-b9ab-718e5dab0acc@sirena.org.uk>
+References: <20240619141716.1785467-1-wsadowski@marvell.com>
+ <20240619141716.1785467-5-wsadowski@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZniqQuGkosZYqIYE@google.com>
-In-Reply-To: <ZniqQuGkosZYqIYE@google.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Mon, 24 Jun 2024 10:28:09 -0400
-X-Gmail-Original-Message-ID: <CAHk-=wj730guvRzh4wo16Cq8tq1D1tyD8ub4CiBxV4Bk0Kq_-g@mail.gmail.com>
-Message-ID: <CAHk-=wj730guvRzh4wo16Cq8tq1D1tyD8ub4CiBxV4Bk0Kq_-g@mail.gmail.com>
-Subject: Re: [git pull] Input updates for v6.10-rc5
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="0y4A91JLAVwHzarg"
+Content-Disposition: inline
+In-Reply-To: <20240619141716.1785467-5-wsadowski@marvell.com>
+X-Cookie: Allow 6 to 8 weeks for delivery.
 
-On Sun, 23 Jun 2024 at 19:05, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
->
-> Please pull from:
->
->         git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.10-rc5
->
-> to receive updates for the input subsystem. You will get:
 
-Nope. I get something entirely different. I think you tagged the wrong state.
+--0y4A91JLAVwHzarg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-              Linus
+On Wed, Jun 19, 2024 at 07:17:10AM -0700, Witold Sadowski wrote:
+
+> +static void m_ioreadq(void __iomem  *addr, void *buf, int len)
+> +{
+> +	u64 tmp_buf;
+> +
+> +	while (len) {
+> +		tmp_buf = readq(addr);
+> +		memcpy(buf, &tmp_buf, len > 8 ? 8 : len);
+> +		len = len > 8 ? len - 8 : 0;
+> +		buf += 8;
+> +	}
+> +}
+
+Wouldn't it be more efficient and readable to only do the memcpy() for
+the trailing bytes and just do this memcpy() for the final word?
+
+--0y4A91JLAVwHzarg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ5gtEACgkQJNaLcl1U
+h9A91wf+MfWKw9rvsqrhvI5pJMUZJBxkHyv12uRMYD//3txZMDXLldRBBJoRqfIA
+amkaXeXG2LOqZD78edIt8x7fMRcMr3UYd4kXbtEkkRYPYlN3E30TObWWGWAJFQQA
+1Tch/oj5V/ohbLTK3hePmDqx1PsNWomMrxJECYOB7ZY1q8jQ6TObDdC7Gk7Q9Sw0
+AMWnIZZw8+eii1uMrBoSd5G4YjuMqMztoQy4nu7s5T0QhwWQIaa11Qfi8dK86ucL
+zj4uy/MxflSFzE8BFFBW0TRFn7+tw0r2uw26JXSXRCUX5XLtsroW+mbSm3mPMlEl
+Rtl58AgfCIW0OltjGxwuyqDLVHTTyw==
+=Pj+p
+-----END PGP SIGNATURE-----
+
+--0y4A91JLAVwHzarg--
 
