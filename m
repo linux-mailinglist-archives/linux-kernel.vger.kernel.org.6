@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-226662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 599B59141D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:17:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729C99141E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:19:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 104CF281448
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:17:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A42C41C220F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:19:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 879BF17BCB;
-	Mon, 24 Jun 2024 05:17:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31CA17BCE;
+	Mon, 24 Jun 2024 05:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HcPTo2Gd"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XHMJ1oEK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEE49376;
-	Mon, 24 Jun 2024 05:17:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 363BD17BA2;
+	Mon, 24 Jun 2024 05:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719206242; cv=none; b=YkpqJGA1dq7HUWNcvq/1or5Eapxa0YnqEarMJ+sG7faNzy/U12slxrU8V6WJmg31JPT3rbfugw/n/hYfEkliHWGW8ZuWt/5uh+LvZ978Gd+GSsoI+jbUokD8n/2fknjPZ+tDBGbZyOdtVOTVJvDR56sA8JIc2tYkpKCeYfao1/0=
+	t=1719206388; cv=none; b=XWf/kdyGhkv76dWlc5Qe/5TmkCy8c35rh6vx8Q6VyNh/0OxOKSgMU3AF/OcvEMVhYyWnEn3Xd3VMPf+KBeXZqGdNXur0IsM13vttLgXE6c32VYH/7YaoPfU6u720wXXS8KDCWw6OVkQmN92myFUCoby7bI266DBi+Zl49QgpiNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719206242; c=relaxed/simple;
-	bh=f3CSyQPnt4VQRDp0xyzNOTKzo6rzuItbewtSfQO1CQI=;
+	s=arc-20240116; t=1719206388; c=relaxed/simple;
+	bh=+EUnXjR3wwAOJNwcvE8bLduH/+zAa+qjz/9ZG7vIRN4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WGADFRq34XB8NNGcn7TZjdoNkukIBeGp9pFQgQfywYaFherG2wcyEU/ci5cbAhBkdGBKfgcLyGniZPAoG/pqrASHiX6rwTaDwx7/DT5p2pdcZCKr/pFQhud7OSpu6Fi59VgCY2d4H/ZjkoE28bwb7RMMrTTZP0LWA8nFPF316g8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HcPTo2Gd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA84C2BBFC;
-	Mon, 24 Jun 2024 05:17:18 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=bMtvANf9j4jkFAUbuLHrRnWmUOWe22kPv8CVYRy2czgU2vNvK1LSmmozyNdeA5/GwCSpbNxc2mDs66rKERiWsbRuJ6jt8gAFbKdJvI0KwkqqO2YO+pC5W+1TsyEA6X6B4MmBqm4KkIWSm4x9StLtnyT1ka8M39cdEH+7Nd7uNZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XHMJ1oEK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23DD9C2BBFC;
+	Mon, 24 Jun 2024 05:19:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719206242;
-	bh=f3CSyQPnt4VQRDp0xyzNOTKzo6rzuItbewtSfQO1CQI=;
+	s=k20201202; t=1719206387;
+	bh=+EUnXjR3wwAOJNwcvE8bLduH/+zAa+qjz/9ZG7vIRN4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HcPTo2GdhUbcDmljHZjgg9Hghocna1EtYlxaV6n9blyLE6bpJt6bafuZSKFRhNj34
-	 VNGiyXqnmrFbDe0N/qOWWcOxXZcDw+i6M0QMmQ5pWgH+U7NAgTCNNo8BM+7GuWdf/7
-	 3+1Qb1eh8dLBU9PPAaPxodguH+wSORur2phWNP92deH9Lu8EdV0D0mWQtEfIh6/5KU
-	 7/VZquSqYRIMPFrJ9mIa1vTIUevBeT7b/pePFD/Mx4P1tlinVYi/5FDmwzxpVuVJKz
-	 RW4MuzUEJab+iQ4UFUrBcNhtJjrvqJlHRtqeG+P5iHegMNbxmJKW9/E4F8MaPillsy
-	 Ee3bhKnwgjM8Q==
-Message-ID: <62c05c34-0b69-4091-8c3a-d0b8befa9150@kernel.org>
-Date: Mon, 24 Jun 2024 07:17:16 +0200
+	b=XHMJ1oEKmDqpdqpKxrr0cTfNYhRjKILb3DSjsdy7DM1jJDw9bCbfJJevc14FMslRr
+	 3v9csFJ9lfBD1nzo0HbC19Rf5yq/mLP8nN/OZoU+5vSTiB1MSfFHaQni1NhQWDXICA
+	 9Kn4bVgrbN4vuTEQGyzqB/dIUK5wylGjqHNKPQb9tgVSFb2vSy1Qu4wuO44Q/2DbZ8
+	 SmXJiD7zz0XDhWXjVgaV7hKkZB1SqPUHLzxtKRY0pPo5vbeAYm30xR0cBX8dBwnjH1
+	 M0LmzEXDrWw+IN3Coi/3qYwqKThbR4mlpqSOQPzlSqSFHf9oMab9rb74XGTRVcTkXF
+	 fCK5VzfgCYmgg==
+Message-ID: <b91eda69-5cdc-4cd3-93c9-5daa89bdbe23@kernel.org>
+Date: Mon, 24 Jun 2024 07:19:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,13 +49,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: dma: mv-xor-v2: Convert to dtschema
-To: Shresth Prasad <shresthprasad7@gmail.com>, vkoul@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
-Cc: dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
- javier.carrasco.cruz@gmail.com
-References: <20240623124507.27297-2-shresthprasad7@gmail.com>
+Subject: Re: [PATCH v3 1/6] dt-bindings: phy: samsung,usb3-drd-phy: add gs101
+ compatible
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Peter Griffin
+ <peter.griffin@linaro.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>,
+ Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>,
+ kernel-team@android.com, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org>
+ <20240617-usb-phy-gs101-v3-1-b66de9ae7424@linaro.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -101,128 +111,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240623124507.27297-2-shresthprasad7@gmail.com>
+In-Reply-To: <20240617-usb-phy-gs101-v3-1-b66de9ae7424@linaro.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/06/2024 14:45, Shresth Prasad wrote:
-> Convert txt bindings of Marvell XOR v2 engines to dtschema to allow
-> for validation.
+On 17/06/2024 18:44, André Draszik wrote:
+> Add a dedicated google,gs101-usb31drd-phy compatible for Google Tensor
+> gs101 SoC.
 > 
-> Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
-> ---
-> Tested against `marvell/armada-7040-db.dtb`, `marvell/armada-7040-mochabin.dtb`
-> and `marvell/armada-8080-db.dtb`
+> It needs additional clocks enabled for register access, and additional
+> memory regions (PCS & PMA) are required for successful configuration.
 > 
->  .../bindings/dma/marvell,xor-v2.yaml          | 69 +++++++++++++++++++
->  .../devicetree/bindings/dma/mv-xor-v2.txt     | 28 --------
->  2 files changed, 69 insertions(+), 28 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml
->  delete mode 100644 Documentation/devicetree/bindings/dma/mv-xor-v2.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml b/Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml
-> new file mode 100644
-> index 000000000000..3d7481c1917e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml
-> @@ -0,0 +1,69 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/dma/marvell,xor-v2.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Marvell XOR v2 engines
-> +
-> +maintainers:
-> +  - Vinod Koul <vkoul@kernel.org>
-
-Should be rather platform maintainer.
-
-> +
-> +properties:
-> +  compatible:
-> +    contains:
-
-This cannot be unspecific. Drop contains.
-
-> +      enum:
-> +        - marvell,armada-7k-xor
-> +        - marvell,xor-v2
-> +
-> +  reg:
-> +    items:
-> +      - description: DMA registers location and length
-> +      - description: global registers location and length
-
-Drop "location and length", redundant.
-
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    items:
-> +      - const: core
-> +      - const: reg
-
-This does not match number of items in clocks:
-
-> +
-> +  msi-parent:
-> +    description:
-> +      Phandle to the MSI-capable interrupt controller used for
-> +      interrupts.
-> +    maxItems: 1
-> +
-> +  dma-coherent: true
-
-This was not present in the binding and commit msg did not explain why
-this is needed. Are devices really DMA coherent?
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - msi-parent
-> +  - dma-coherent
-> +
-> +if:
-
-Put it under allOf: in this place.
-
-> +  required:
-> +    - clocks
-
-This does not work and does not make much sense. Probably you want to
-list the items per variant?
+> It also requires various power supplies (regulators) for the internal
 
 
-> +  properties:
-> +    clocks:
-> +      minItems: 2
-> +      maxItems: 2
-
-Instead list and describe the items.
-
-> +then:
-> +  required:
-> +    - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    xor0@6a0000 {
-> +        compatible = "marvell,armada-7k-xor", "marvell,xor-v2";
-
-This totally does not match your binding.
-
-Please, read example-schema, other bindings, my old talks and other
-resources before doing conversions, so we can avoid such trivial
-mistakes. You enumerated compatibles (enum), but here have a list. A
-list is not an enumeration, obviously...
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
