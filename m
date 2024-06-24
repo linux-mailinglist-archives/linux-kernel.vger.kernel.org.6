@@ -1,149 +1,131 @@
-Return-Path: <linux-kernel+bounces-227107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2198891486C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:21:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50554914872
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:22:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DAC7B23549
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:21:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81E321C21B3C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7434B13A24A;
-	Mon, 24 Jun 2024 11:20:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0138A139D09;
+	Mon, 24 Jun 2024 11:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OZn9KxIL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="N4K718ta"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D43D13B28F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4154137758;
+	Mon, 24 Jun 2024 11:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719228055; cv=none; b=mEqJUAd/4xqprwikWIscF6jIAkJuzTyGf+kFITxR6PFtB2fHhOd+oq8QSWk3sePAZKRV2VdunfeKLQt5BZkbDDi4FooTe68f9uVEQOUCeKjQaDyvW1rVLug3ShsN++oL3Yaz3o8AnTwdKtlJPvy6XNAWbWvRhsKffO3V5PJc/EU=
+	t=1719228132; cv=none; b=TubEWkYDcjTyn7OSU5bWnLMVcQIF7HPozI10qji/Q7KbTl9/WaOJXX4WN8wmW/EdJ0mcIxfS2Th5dIWMLQisTQ1CAwdKFjNDJwTQorOKPP9ZxsALwFFbYmb7z0UMravDxE1ujhf0JNouWv1qnQKDgCNhiw4b2/fBkzyc56XQ5rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719228055; c=relaxed/simple;
-	bh=LaJcfNfEkE5xFvXOrQDn6HmxI8zIWZaDy5jJkvJ8OtU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tieOQFaWvrisiYO9rHWfHKIVMK4UZgeQY2WKqXLTawwWMxJxw18HGilDCkZBHDu9i5SrILnWTkuCS3oVqYeuadeS5xPp8uF/A7EiVVEftUGtaSB5Ss6JpLlLt3tmTpbj9IhkbH27FC9sDuEfV7c76XSV66bbO8o03aev7p/H4V0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OZn9KxIL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719228049;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SyS9UuWlSuhl3v5J/At0OYlc0sWMnApISqtSSU2EeV8=;
-	b=OZn9KxILXZnHNxJ/Jd2imTpaET3bNSPaJNOfU7x7/EsGpse14Dsjk7P5JyRWhkfLtL8abN
-	v9NUMjnBd/wh34XbalYo6TMeoqUSDD87L2vUu02ziXsOVxAowwpzgMbp4pmKTISMIaNiMv
-	+9FJ5K5zCHh6qurmTkEEIBX128wGgy0=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-249-GvfwV5NLOAS8tA5rF9sgNA-1; Mon, 24 Jun 2024 07:20:45 -0400
-X-MC-Unique: GvfwV5NLOAS8tA5rF9sgNA-1
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-57a524f1f7eso1231005a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 04:20:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719228044; x=1719832844;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SyS9UuWlSuhl3v5J/At0OYlc0sWMnApISqtSSU2EeV8=;
-        b=D4hf+zxdpSq3SuARtSWQGp6vDcvoDYN8+t7CAPptq35RrqtSPg/v47HymD9Q1kxVkJ
-         8NLFHh1s+xeqTcPOeEK1YCLvVRoUFG3ZlWH7d+GgjQuR01WFtqWWWeDLvXZPQoLn48cP
-         nDS1A6qGFhe2vKxRibUE0arOX2gM0jgSVVJj7Hb0AGRiaF0/h4HzoCrWj5JgRIMFgdaN
-         ChQzBzyLlRDX6smdJ+rh8AAbhrWNdSKoqDrAh22fUuLthGblFdglCk7/f0swVzMoLcAt
-         W/IzNin1BfoGFafAUTxoqM9CaU21Jsd7KcpJq4XVwql1ufmNqhASpkhFUaUaOsGjjZ7n
-         RZHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXf35XGgFmUDETsFc9DsKKkbzxp+72H7fVhfRuAWmWX0wPaOLHFPUovedmLrmzt+qNlzzewMgT7URHYBa22BjSuzDbocuIUCDAAtqav
-X-Gm-Message-State: AOJu0Yzb9NeOr+FYuFQXG1FamcN2qAZAH0QXxyUn7+VKTcuMIL+PMvqN
-	4cvpLrNDRCQgSv9W0nBxYVyBn+7riLgUBHK2QyuR5jeAGU9CneFK8/wD7QSKBypsaJHITLRGJpV
-	9Lp3OO3Wf2UBUwARyoGuEv8xEECCqNfNOd3wVI5JHG346VsTlnv1ygGF5KSjA4A==
-X-Received: by 2002:a50:a6dd:0:b0:57d:2c9:6494 with SMTP id 4fb4d7f45d1cf-57d4bd67579mr2602884a12.10.1719228044386;
-        Mon, 24 Jun 2024 04:20:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHb+hCCh2C079aYaSOs5wClkvC6uFNqnHx93fwnd8yLsB1iy+iw2NHWkBjLsaFFhnIAlLPANw==
-X-Received: by 2002:a50:a6dd:0:b0:57d:2c9:6494 with SMTP id 4fb4d7f45d1cf-57d4bd67579mr2602865a12.10.1719228043934;
-        Mon, 24 Jun 2024 04:20:43 -0700 (PDT)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30563031sm4584404a12.86.2024.06.24.04.20.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 04:20:43 -0700 (PDT)
-Message-ID: <2b3e519e-10ab-4785-9a3a-6454b18c169d@redhat.com>
-Date: Mon, 24 Jun 2024 13:20:42 +0200
+	s=arc-20240116; t=1719228132; c=relaxed/simple;
+	bh=LGFzxEq9GIYT5eEJul9AB2CmTR+3zd4Vz6DgOmBbQ50=;
+	h=From:Subject:To:CC:References:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=OR/XQdT9rfw/kBHoUoWgCp8E8b/EUzu94ZK932LMfEBI7msCQCVmnZ6n2b+vUoV9ivWAos1sjLm6r6wcb6cxSj00uABRJ7HfFUbI/f2aG6wtBjqD0N5WI8MA3eJ8OlR3a17x2zhiFnEYdOTsRvgOsj2OOF2loD3BhU2/ObiY3ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=N4K718ta; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O8Yc4u001514;
+	Mon, 24 Jun 2024 11:22:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gJNdQbK2gK2RYTmxVTnJNWU0R/RM083z0YR2Im8uMmk=; b=N4K718ta5j+Fgfv9
+	4u5OthO9IW7ObNFfXx/0ETptMm8EmkzGQ/ioe9LIG+9RMbvjMpmc1bpUS2tLJ5Rt
+	JiZzMmI/hkhPdkP/ZVfPqZf0pc00MwmSBu4DQHbIH4XHyEJPYVKaQ+EuFBf82VdI
+	WTx5IDcFBgE0RHsF/yj5CTJrbrx4UlpL2Bq+reTHxLlr+DOMsjTUTr8rxTai3Eqy
+	ZPSb34ekR8baSwN7pm2p8dtwp4cMp2h2PMdU0tYOQQHo8sDSnNv7XqJD8iMnymGW
+	BJ2uvGUcMiZ0kOeYPR7xlgwHviqU0Fkzv57ktOLk5AYaxbVHMr6TtaCdzGA8YuFe
+	82EXZg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywmaeunag-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 11:22:06 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45OBM5Z5011086
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 11:22:05 GMT
+Received: from [10.214.66.219] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
+ 2024 04:22:02 -0700
+From: Naina Mehta <quic_nainmeht@quicinc.com>
+Subject: Re: [PATCH v3 3/5] arm64: dts: qcom: sdx75: update reserved memory
+ regions for mpss
+To: Konrad Dybcio <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
+        <mathieu.poirier@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <manivannan.sadhasivam@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240618131342.103995-1-quic_nainmeht@quicinc.com>
+ <20240618131342.103995-4-quic_nainmeht@quicinc.com>
+ <e5b7a888-8ca3-463a-a2de-cf719e58d7a0@linaro.org>
+Message-ID: <c186bd2e-a132-fbe6-2212-dcdb93a6c14a@quicinc.com>
+Date: Mon, 24 Jun 2024 16:51:38 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] platform/mellanox: nvsw-sn2201: Add check for
- platform_device_add_resources
-To: Chen Ni <nichen@iscas.ac.cn>, ilpo.jarvinen@linux.intel.com,
- vadimp@nvidia.com
-Cc: platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240605032745.2916183-1-nichen@iscas.ac.cn>
+In-Reply-To: <e5b7a888-8ca3-463a-a2de-cf719e58d7a0@linaro.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20240605032745.2916183-1-nichen@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KnjzrKftx_rUhhBC1-H2QVbmA3ABuHvV
+X-Proofpoint-GUID: KnjzrKftx_rUhhBC1-H2QVbmA3ABuHvV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_09,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406240091
 
-Hi,
 
-On 6/5/24 5:27 AM, Chen Ni wrote:
-> Add check for the return value of platform_device_add_resources() and
-> return the error if it fails in order to catch the error.
+
+On 6/18/2024 7:08 PM, Konrad Dybcio wrote:
 > 
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
+> 
+> On 6/18/24 15:13, Naina Mehta wrote:
+>> Rename qdss@88800000 memory region as qlink_logging memory region
+>> and add qdss_mem memory region at address of 0x88500000.
+>> Split mpss_dsmharq_mem region into 2 separate regions and
+>> reduce the size of mpssadsp_mem region.
+>>
+>> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+>> ---
+> 
+> Alright, we're getting somewhere. The commit message should however 
+> motivate
+> why such changes are necessary. For all we know, the splitting in two is
+> currently done for no reason, as qdss_mem and qlink_logging_mem are 
+> contiguous
+> - does the firmware have some expectations about them being separate?
+> 
 
-Thank you for your patch, I've applied this patch to my review-hans 
-branch:
-https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=review-hans
-
-Note it will show up in my review-hans branch once I've pushed my
-local branch there, which might take a while.
-
-I will include this patch in my next fixes pull-req to Linus
-for the current kernel development cycle.
+Since different DSM region size is required for different modem 
+firmware, mpss_dsmharq_mem region being split into 2 separate regions.
+This would provide the flexibility to remove the region which is
+not required for a particular platform.
+qlink_logging is being added at the memory region at the address of
+0x88800000 as the region is being used by modem firmware.
 
 Regards,
+Naina
 
-Hans
-
-
-
-> ---
->  drivers/platform/mellanox/nvsw-sn2201.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/platform/mellanox/nvsw-sn2201.c b/drivers/platform/mellanox/nvsw-sn2201.c
-> index 3ef655591424..abe7be602f84 100644
-> --- a/drivers/platform/mellanox/nvsw-sn2201.c
-> +++ b/drivers/platform/mellanox/nvsw-sn2201.c
-> @@ -1198,6 +1198,7 @@ static int nvsw_sn2201_config_pre_init(struct nvsw_sn2201 *nvsw_sn2201)
->  static int nvsw_sn2201_probe(struct platform_device *pdev)
->  {
->  	struct nvsw_sn2201 *nvsw_sn2201;
-> +	int ret;
->  
->  	nvsw_sn2201 = devm_kzalloc(&pdev->dev, sizeof(*nvsw_sn2201), GFP_KERNEL);
->  	if (!nvsw_sn2201)
-> @@ -1205,8 +1206,10 @@ static int nvsw_sn2201_probe(struct platform_device *pdev)
->  
->  	nvsw_sn2201->dev = &pdev->dev;
->  	platform_set_drvdata(pdev, nvsw_sn2201);
-> -	platform_device_add_resources(pdev, nvsw_sn2201_lpc_io_resources,
-> +	ret = platform_device_add_resources(pdev, nvsw_sn2201_lpc_io_resources,
->  				      ARRAY_SIZE(nvsw_sn2201_lpc_io_resources));
-> +	if (ret)
-> +		return ret;
->  
->  	nvsw_sn2201->main_mux_deferred_nr = NVSW_SN2201_MAIN_MUX_DEFER_NR;
->  	nvsw_sn2201->main_mux_devs = nvsw_sn2201_main_mux_brdinfo;
-
+> Konrad
 
