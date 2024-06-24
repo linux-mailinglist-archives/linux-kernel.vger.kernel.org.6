@@ -1,222 +1,263 @@
-Return-Path: <linux-kernel+bounces-227354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B64914FF0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:30:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D06914FF4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E9B61F23077
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:30:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E97B281C1B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93420144D37;
-	Mon, 24 Jun 2024 14:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PUaZsZuS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33234181CEF;
+	Mon, 24 Jun 2024 14:30:59 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 879013EA72;
-	Mon, 24 Jun 2024 14:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719239397; cv=fail; b=PyHT41MRQpR6PC1I6iV5KjNY7tzEoYDAQLiS/qVMXFdv4v4APDlhJXGmoyTCixdXmhBuAp8rbUqA819COVSfXc38je7g5waV21pPs9A1ZhCElTMQZs46FPXNdGLiXapI/6yImLuSa32O0Z49A9uTOXyYydm9UNqWWaJPcU4kiQI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719239397; c=relaxed/simple;
-	bh=X0VCMZY4BaJ3+9KoxtxZeSwhRV7W+Oqkw7GaRz4fWDQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=HG5GW0Ai7nCago1wgJKsIk9yZb25nXO9ForsbwKkEaj+HaEsfn7k5zJGzRXYGl9J5PEVWEKnFoOqUW1tLPUgSX8GCnIrBb809RVlR4/MnSufPlNuA9VPPaGXrM9RjaEdqe50e3qVT9fMSvoxkm7RWtn3lRE75O5Bl2fAIR9jMq8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PUaZsZuS; arc=fail smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719239396; x=1750775396;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=X0VCMZY4BaJ3+9KoxtxZeSwhRV7W+Oqkw7GaRz4fWDQ=;
-  b=PUaZsZuSZbcttIFrIGtOsiKf/n6HpA3T/t/vlXgr8cqDP62ku+KklX2B
-   WZu0VVy8R1/wpogAKmYCBqCFPUxxhadTLjfErF9hETzQZlCqri5JzV/xj
-   5yxfBXg/7iAf8H7MAVIgiFXIMYkW3fjsStCqavjyRPnJuqMCpbcNCF1tQ
-   M0cr4256mj4sSt2DIoXM5yUpjt57mmV6jt8QEexYInGHNmzg7FkaXKUAn
-   8mdXw3a2j9S/RKS6EUPiQb/QU0Ic6z9+XKrc6HEv4zcTgsQaRJfVkVHU2
-   p69agan9baR0TZtB4r+4v35oG32u+x9Q3iN7R6Kh/DHyJh7Z3F1a1fgCs
-   A==;
-X-CSE-ConnectionGUID: SDEYdFioQwCybRkqfaLHAA==
-X-CSE-MsgGUID: MSmBabLTTPuX9t584V/03w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="12214385"
-X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
-   d="scan'208";a="12214385"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 07:29:55 -0700
-X-CSE-ConnectionGUID: yNO0cW40RsGfkmwonkKCQQ==
-X-CSE-MsgGUID: S20A8NMgT6S8bpvSpgLirQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
-   d="scan'208";a="48264094"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa005.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Jun 2024 07:29:55 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 24 Jun 2024 07:29:54 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 24 Jun 2024 07:29:54 -0700
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (104.47.55.172)
- by edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26349180A84
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719239458; cv=none; b=nMehjCIDv7xAWlp3VxTA4xJGEHH6ow1ii0CQd0kjzFEJwc1I++tG9WNU2i3P2sD32bDpJ7B4MKtPJKl5EjW6PrOl+beYPphO9a81cbgWi7eitIf/BbK6VA7R+Ptw024RAOJoxFgatbiUc966i9qfthwqYsOvXmHzZhtl/48gUrA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719239458; c=relaxed/simple;
+	bh=uR2WIMGicOLXrwYDIJkabnCuTRz/+yAxtuxEevCIUqE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KXnCZzGUne/m+2Z9LCeBEclsQKTxk3tfSI1mWPvc7TT38m6pAjcRDAgwo6G29GXmiQ7CnHl2RaTeuUlsR5Gs1UFat+PmHTAVl1unRj/Y0obXpSj0v6kwCH4X68nyO3MK6uqiZ3lbUORcrM0YRai2RqT6pf2JT/eUHeCLyAOoo64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W79ML6fkQzddS9;
+	Mon, 24 Jun 2024 22:29:18 +0800 (CST)
+Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
+	by mail.maildlp.com (Postfix) with ESMTPS id F0305140156;
+	Mon, 24 Jun 2024 22:30:51 +0800 (CST)
+Received: from [10.174.177.243] (10.174.177.243) by
+ dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 24 Jun 2024 07:29:53 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=X/OWob/uxa+blr/C4+1FN9dL519X1TB2m1B2XelE6qQrvTm60bUK06171TkneALxBGJpehqpbxEEbmUxPNIi4I5b7WAT6KkOzHcXUsuhCX0X73k5SmvRv+Mh/x8fo0mr0ZpBAEBJ+yOLUpUNm4QPhsWZ9xAmS4xReSbYoaq1ct+zMsp9w7AFWz94QQVSdECrRNL1bKBZksnN8Rnc15zu4JDcmBSzc0smUy51VzcIU0WKl65XKhgPsTVKxniA6kvk7Dl+CjwAnIpjWwgGQpd7vyx+V0O/2NJMn3WTRxAC4mC9RaPY5+YTb61SyV31hOtLbtXZ3i0RcOh/UOO+ViybAA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=H8FFZhloUeftoHMl5VBhx5w/wPQhjFJNrgBDuU+2GlY=;
- b=JHs8uKWjGye+NC+EdNC64Lr62ekKDJVUS8FiHp7VUdqH161kokwKx76/G0rEDhViKaeRU/9nPbNdKo268hLE7rBubE+SjEQ94J1tkqHV7Z32ywrSh8AZBg0o9xCx5VNo5wXDNvXoDsmUPmOmhBX9qICap3j5oBYJ2Yq8yoMybEs3vaE5Orcn5A+2dbuC2zYU4gMl489j9bJg98rCWrzjeHXYDaL9f1Oubr4JIPzT0SIgAmFubfT0UKVN9tcrQ9RiJsNnHV6FIRpzKsVfoq5Nuh0jrUoPVQiMP/PfMYB0gDdNt7dDFqIjpnynkdmZECI/XPjh1uS7ZcQDU63ds6MCAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from PH7PR11MB7605.namprd11.prod.outlook.com (2603:10b6:510:277::5)
- by PH0PR11MB5951.namprd11.prod.outlook.com (2603:10b6:510:145::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.28; Mon, 24 Jun
- 2024 14:29:52 +0000
-Received: from PH7PR11MB7605.namprd11.prod.outlook.com
- ([fe80::d720:25db:67bb:6f50]) by PH7PR11MB7605.namprd11.prod.outlook.com
- ([fe80::d720:25db:67bb:6f50%7]) with mapi id 15.20.7677.030; Mon, 24 Jun 2024
- 14:29:51 +0000
-From: "Winkler, Tomas" <tomas.winkler@intel.com>
-To: "Wu, Wentong" <wentong.wu@intel.com>, "sakari.ailus@linux.intel.com"
-	<sakari.ailus@linux.intel.com>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>, "Chen, Jason Z"
-	<jason.z.chen@intel.com>
-Subject: RE: [PATCH v3 2/5] mei: vsc: Enhance SPI transfer of IVSC rom
-Thread-Topic: [PATCH v3 2/5] mei: vsc: Enhance SPI transfer of IVSC rom
-Thread-Index: AQHaxjqbEYOjsFYhhkWsdmv3oDBNALHW+N0Q
-Date: Mon, 24 Jun 2024 14:29:51 +0000
-Message-ID: <PH7PR11MB760513EA18085ECE635A6606E5D42@PH7PR11MB7605.namprd11.prod.outlook.com>
-References: <20240624132849.4174494-1-wentong.wu@intel.com>
- <20240624132849.4174494-3-wentong.wu@intel.com>
-In-Reply-To: <20240624132849.4174494-3-wentong.wu@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR11MB7605:EE_|PH0PR11MB5951:EE_
-x-ms-office365-filtering-correlation-id: 0cafc26c-3e49-4e4a-af7d-08dc945a1c08
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230037|376011|366013|1800799021|38070700015;
-x-microsoft-antispam-message-info: =?us-ascii?Q?PnYpe4ziMaw/T4B+9m8i9ry9KeHuwJnJIPvngB1Yq1aQjepMQIPY073CtfWY?=
- =?us-ascii?Q?/fet6dShf1GExM3L4YlLwC4kbqzkVAU1rrJtmuq49sPZKeY6PlcfbokhAtom?=
- =?us-ascii?Q?U1oe8vQEBYMn/syVy+eiI4nCA9OLdjMezaXQUPOOhpAD8SkI+JlWyxXWtZZZ?=
- =?us-ascii?Q?SFx6sgACobXStX22yBKKSQBlS6qQnUKAsgtrt1WQ1sr5WVMCFgfiZJe9hH48?=
- =?us-ascii?Q?Qe+Ti5W77gGbaaEZL+MDllHdc+4zVffQjRl2LDAtBLIP7q4MXwCEHY22V2ec?=
- =?us-ascii?Q?b1WNFN+rDog6JU+d4Hlzp+RfUMze/2NgMQOx3ATISKx45iBpcJ0RFsj/Vb8A?=
- =?us-ascii?Q?oqH8JdFcYq0NCE8yAZ1rzK/afqodActPLP5Gs4wUdf4ZIMfIjnyJ+vghpc1M?=
- =?us-ascii?Q?c6b+YcLr5jx9WE25w+/GxA1ZRbzM6noklR92cUF8dIq1FQCwARkdyYdl1wis?=
- =?us-ascii?Q?SRgrPKUc8ya+u+V0cCcN3iLEwOSrDGQuKvdAcYcWDzkOBSSFumtUnMJIPhlP?=
- =?us-ascii?Q?VUjaTbVurqmXdfdsbJeqevnKA4ErqGkmxwT0UExCJRP8FaqGCeCwfRku0j0D?=
- =?us-ascii?Q?DCXzKgunGB6+96n/Rnyx1atzZEGoA7AWsjLlIuCxOhjwVF4ftVlHK0yqnMcf?=
- =?us-ascii?Q?MTMa7umhrlY7svNwcq4PQdLs0wdATKsh/HfXCCJbyyxyHjaWIAQnZmkCsy22?=
- =?us-ascii?Q?E4eBjnkz0g32RtgJ+LyHUIp/nz4gdy0DJKIDr3k2QImJzJyFxiGEMIbXIMT4?=
- =?us-ascii?Q?sWCW0GoKA3UvfkO7r+pzV+QZbHrOF3mS8j/H31V4h+PQth9x1LfxTRFvrFL+?=
- =?us-ascii?Q?XmuArSr24UTdiM5Igsw0GwkrJOjc9T0u8tAp3RvwRLfZj34/DxDUeMs+Y6Fu?=
- =?us-ascii?Q?VJYn+bQYYpoN+k60O9PaVZLlzvNkxuwgQN0L7ltDn8ltqMdhemVYxb0YljK9?=
- =?us-ascii?Q?nVQy1jgmQXl3/A3rI2AtrHJVM8zpbp5ji+1UaBSdsA8wI6VbXPZ/LaM21DIO?=
- =?us-ascii?Q?Ukx51T9qNny+ZQAfH4jTKr+yRgA9QepdiG2k77iNDJuMoV9MGGEqEVD94Egn?=
- =?us-ascii?Q?BbYUdwyLH1fi6qNyYegJh6S0Hlfj1pBtVabTYtTmp/MN6lZOwgYIovlna8Uw?=
- =?us-ascii?Q?q/6FbSO08PfevuNo91DlD0TPFu/dLi/UlUFtCikEE2RKsK7lhpE+ms/Plqk0?=
- =?us-ascii?Q?5bDumT91E4fPITES1RVu359XveCeX2A9gntJeZeeagX8fExp4RbXgSpIyBoz?=
- =?us-ascii?Q?mieRnKoSTFtdpXWp64zPkhJvbvQwZ7tdoviY/xJj5bZlNitk7Vzg/TM0B64O?=
- =?us-ascii?Q?AcYd6KtvQvxxghkGn7kNLWlEmE1wOZ0uPFD8jH25QuvPd+iMoYuHN4FrZJdp?=
- =?us-ascii?Q?2h+tq7Q=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR11MB7605.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(366013)(1800799021)(38070700015);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?keLKd3jgQHcA30zN4s7/W28WYiMbjI52uw/Tok4nSTY5MSCjvRqHyxfbYZi7?=
- =?us-ascii?Q?mddvmDBgwlFo2jRbFiYzM3Q0t/+BE2OCIiqdq2sE6LFl1mS+qgCW71PfGhS7?=
- =?us-ascii?Q?g1ZO/s+h+vBx49qLe56RhzTuyzjW54RNp3ksf09P2HDRLkU2mO7m3AymIg3H?=
- =?us-ascii?Q?pdw6o+BrFndpbO3aEzWJ9JAXLiAQGzjWtv50pLyg/wEREKi1DGxyvqMQw2Rf?=
- =?us-ascii?Q?6wvyTqKzIXKj7Snv/UARMuT+IXMcRGyFvXQ/k3v5wPyhfLQYEb/ilUso3lse?=
- =?us-ascii?Q?IR99sUSetAzer7wxfHPR2LCqz/hnpCAuLOzlM8zi+3thc/G2ZYQwtcoBW3WW?=
- =?us-ascii?Q?tYk0vHH7t4rXkqonoDsuDta2qln5wRqfygV3lHs5PNMXu5aBaSvlQgSSftLd?=
- =?us-ascii?Q?FhG/CF5JXB8qfIRQjzOcaOtn2lt9dAvKIfVzrk6I45vD+VyH8E8qpjYwwSST?=
- =?us-ascii?Q?7V66y/ZkB4HNoXkMsWfqKeyh/2352BMCNTQJiEzW2suOvqInhS0CI1+YwJo2?=
- =?us-ascii?Q?ELufUOCrDPN447DmVjM60Vk+B4qzDbpms8Z2XgwmedY3z2HpZRz2XDJ0x2Lm?=
- =?us-ascii?Q?Bksh2zWsIu6yt/NGna8cnjDBH4oKb4igU9HyQtQxORtRZqAy1ZwyjCbUg7fR?=
- =?us-ascii?Q?dPAKVwKwFdQe0dKDUgT7Q6kRCo1b7XGzgRMbJ/bc1AY8IUQBAcGCHULR12lI?=
- =?us-ascii?Q?WetQzLonyMMZyiM3qPk1m+b1c3AKFYi2YMp4m2gvOM6KgYN8T1CwX51ajV0G?=
- =?us-ascii?Q?rPM0UnFot6i8VCZEmNT/WCQLDbgePLKgoVaqjcJ54UTeJcXJxicgM2v+4zM4?=
- =?us-ascii?Q?Er194Az/y3IayLXOWmwWBILfqpICr4LFO/e5thCBXo/EWXsx+Zt4+R0U+orX?=
- =?us-ascii?Q?UNQ6R6OBt7sgeB46Q/SIYe369ZKQSJOqoKCcBbswqjcElb7s4Nx+EgNfZ1bf?=
- =?us-ascii?Q?vD8ZzANArnk8IbqqYJO7oMHGu7Qunl4A42jjp64U9LqN/R1KBuUPK9Qijm5u?=
- =?us-ascii?Q?gM+wNcnDmUzc7XlFfum/QA+U7/rhHfAEKIiOUg2p6vHQ++s6b03/kDuRXb8b?=
- =?us-ascii?Q?JGZ6+mk6GHg4duAXtdM9BLVUY61mug8Np+Q8BW/c4e0CzHY+8P7BNgrT7KPV?=
- =?us-ascii?Q?OwRswCmdRzHBP71n4dh3/wmjuSDC4tAZejCL3x7ivxvC1EmOFZ5pLBdCcg1J?=
- =?us-ascii?Q?+zSihR9ZDSM0aVZLrSXywED0OE1qQLU3v62U6qLl+gsZCjgsowJHPyYtYjaO?=
- =?us-ascii?Q?FHjM7JNn26vGjRorr2h9+gZTkYiX3AK2x4pD0GEZpI4hbtEVODl7Bp2AAavL?=
- =?us-ascii?Q?Z5X9dQkLPMgGFpsDPdBOOuGv7ugkZ4VQWxK4wKQ1PtjOyoADXMQtnR2qDLXH?=
- =?us-ascii?Q?p3jYpKfHsVNKfXlvf2IfVkcCUOguRHzLy3VDwgkWsYJemSpkAjbXg/tYGOMD?=
- =?us-ascii?Q?O3nGhhRhFNMXwt0D71qUEtKNgHa9btMrEbdTT2CxVcL0ZF72JkLQMcubtZV8?=
- =?us-ascii?Q?B18BVhYTZPIMV6Vmf/5spSe/0qCXHQUDCYD8pmmUDyFrfCCbgIJzE6Sh9Na/?=
- =?us-ascii?Q?65xDsAs7Exl7APnzPUr7hLsw7y9KOOy+0miMPGJm?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ 15.2.1544.11; Mon, 24 Jun 2024 22:30:50 +0800
+Message-ID: <1285eb59-fcc3-4db8-9dd9-e7c4d82b1be0@huawei.com>
+Date: Mon, 24 Jun 2024 22:30:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR11MB7605.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0cafc26c-3e49-4e4a-af7d-08dc945a1c08
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2024 14:29:51.7568
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VdqrAtx5IXvsr5fSMQLrZW2D458BMQAEBEUHUzeBsdtMaejARHugg95lk1q3YdcgCEuVJ4TL4qrGWh6LYr0Jlw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5951
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 18/18] arm64/mm: Automatically fold contpte mappings
+Content-Language: en-US
+To: Ryan Roberts <ryan.roberts@arm.com>, Catalin Marinas
+	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Ard Biesheuvel
+	<ardb@kernel.org>, Marc Zyngier <maz@kernel.org>, James Morse
+	<james.morse@arm.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Matthew Wilcox <willy@infradead.org>,
+	Mark Rutland <mark.rutland@arm.com>, David Hildenbrand <david@redhat.com>,
+	John Hubbard <jhubbard@nvidia.com>, Zi Yan <ziy@nvidia.com>, Barry Song
+	<21cnbao@gmail.com>, Alistair Popple <apopple@nvidia.com>, Yang Shi
+	<shy828301@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+	<mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+	<dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <x86@kernel.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240215103205.2607016-1-ryan.roberts@arm.com>
+ <20240215103205.2607016-19-ryan.roberts@arm.com>
+From: Kefeng Wang <wangkefeng.wang@huawei.com>
+In-Reply-To: <20240215103205.2607016-19-ryan.roberts@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf100008.china.huawei.com (7.185.36.138)
 
-> Constructing the SPI transfer command as per the specific request.
+Hi Ryan,
 
-Please provide "Why" , this is not straight forward to understand, also des=
-erves a comment in code.
+A big regression on page-fault3("Separate file shared mapping page
+fault") testcase from will-it-scale on arm64, no issue on x86,
 
->=20
-> Fixes: 566f5ca97680 ("mei: Add transport driver for IVSC device")
-> Cc: stable@vger.kernel.org # for 6.8+
-> Signed-off-by: Wentong Wu <wentong.wu@intel.com>
-> Tested-by: Jason Chen <jason.z.chen@intel.com>
+./page_fault3_processes -t 128 -s 5
+
+1) large folio disabled on ext4:
+    92378735
+2) large folio  enabled on ext4 +  CONTPTE enabled
+    16164943
+3) large folio  enabled on ext4 +  CONTPTE disabled
+    80364074
+4) large folio  enabled on ext4 +  CONTPTE enabled + large folio mapping 
+enabled in finish_fault()[2]
+    299656874
+
+We found *contpte_convert* consume lots of CPU(76%) in case 2), and 
+disparaged by following change[2], it is easy to understood the 
+different between case 2) and case 4) since case 2) always map one page
+size, but always try to fold contpte mappings, which spend a lot of
+time. Case 4) is a workaround, any other better suggestion?
+
+Thanks.
+
+[1] https://github.com/antonblanchard/will-it-scale
+[2] enable large folio mapping in finish_fault()
+
+diff --git a/mm/memory.c b/mm/memory.c
+index 00728ea95583..5623a8ce3a1e 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4880,7 +4880,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+          * approach also applies to non-anonymous-shmem faults to avoid
+          * inflating the RSS of the process.
+          */
+-       if (!vma_is_anon_shmem(vma) || unlikely(userfaultfd_armed(vma))) {
++       if (unlikely(userfaultfd_armed(vma))) {
+                 nr_pages = 1;
+         } else if (nr_pages > 1) {
+                 pgoff_t idx = folio_page_idx(folio, page);
+
+
+On 2024/2/15 18:32, Ryan Roberts wrote:
+> There are situations where a change to a single PTE could cause the
+> contpte block in which it resides to become foldable (i.e. could be
+> repainted with the contiguous bit). Such situations arise, for example,
+> when user space temporarily changes protections, via mprotect, for
+> individual pages, such can be the case for certain garbage collectors.
+> 
+> We would like to detect when such a PTE change occurs. However this can
+> be expensive due to the amount of checking required. Therefore only
+> perform the checks when an indiviual PTE is modified via mprotect
+> (ptep_modify_prot_commit() -> set_pte_at() -> set_ptes(nr=1)) and only
+> when we are setting the final PTE in a contpte-aligned block.
+> 
+> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
 > ---
->  drivers/misc/mei/vsc-tp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/misc/mei/vsc-tp.c b/drivers/misc/mei/vsc-tp.c index
-> 5f3195636e53..26387e2f1dd7 100644
-> --- a/drivers/misc/mei/vsc-tp.c
-> +++ b/drivers/misc/mei/vsc-tp.c
-> @@ -331,7 +331,7 @@ int vsc_tp_rom_xfer(struct vsc_tp *tp, const void
-> *obuf, void *ibuf, size_t len)
->  		return ret;
->  	}
->=20
-> -	ret =3D vsc_tp_dev_xfer(tp, tp->tx_buf, tp->rx_buf, len);
-> +	ret =3D vsc_tp_dev_xfer(tp, tp->tx_buf, ibuf ? tp->rx_buf : NULL, len);
->  	if (ret)
->  		return ret;
->=20
-> --
-> 2.34.1
-
+>   arch/arm64/include/asm/pgtable.h | 26 +++++++++++++
+>   arch/arm64/mm/contpte.c          | 64 ++++++++++++++++++++++++++++++++
+>   2 files changed, 90 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
+> index 8310875133ff..401087e8a43d 100644
+> --- a/arch/arm64/include/asm/pgtable.h
+> +++ b/arch/arm64/include/asm/pgtable.h
+> @@ -1185,6 +1185,8 @@ extern void ptep_modify_prot_commit(struct vm_area_struct *vma,
+>    * where it is possible and makes sense to do so. The PTE_CONT bit is considered
+>    * a private implementation detail of the public ptep API (see below).
+>    */
+> +extern void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
+> +				pte_t *ptep, pte_t pte);
+>   extern void __contpte_try_unfold(struct mm_struct *mm, unsigned long addr,
+>   				pte_t *ptep, pte_t pte);
+>   extern pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte);
+> @@ -1206,6 +1208,29 @@ extern int contpte_ptep_set_access_flags(struct vm_area_struct *vma,
+>   				unsigned long addr, pte_t *ptep,
+>   				pte_t entry, int dirty);
+>   
+> +static __always_inline void contpte_try_fold(struct mm_struct *mm,
+> +				unsigned long addr, pte_t *ptep, pte_t pte)
+> +{
+> +	/*
+> +	 * Only bother trying if both the virtual and physical addresses are
+> +	 * aligned and correspond to the last entry in a contig range. The core
+> +	 * code mostly modifies ranges from low to high, so this is the likely
+> +	 * the last modification in the contig range, so a good time to fold.
+> +	 * We can't fold special mappings, because there is no associated folio.
+> +	 */
+> +
+> +	const unsigned long contmask = CONT_PTES - 1;
+> +	bool valign = ((addr >> PAGE_SHIFT) & contmask) == contmask;
+> +
+> +	if (unlikely(valign)) {
+> +		bool palign = (pte_pfn(pte) & contmask) == contmask;
+> +
+> +		if (unlikely(palign &&
+> +		    pte_valid(pte) && !pte_cont(pte) && !pte_special(pte)))
+> +			__contpte_try_fold(mm, addr, ptep, pte);
+> +	}
+> +}
+> +
+>   static __always_inline void contpte_try_unfold(struct mm_struct *mm,
+>   				unsigned long addr, pte_t *ptep, pte_t pte)
+>   {
+> @@ -1286,6 +1311,7 @@ static __always_inline void set_ptes(struct mm_struct *mm, unsigned long addr,
+>   	if (likely(nr == 1)) {
+>   		contpte_try_unfold(mm, addr, ptep, __ptep_get(ptep));
+>   		__set_ptes(mm, addr, ptep, pte, 1);
+> +		contpte_try_fold(mm, addr, ptep, pte);
+>   	} else {
+>   		contpte_set_ptes(mm, addr, ptep, pte, nr);
+>   	}
+> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+> index 50e0173dc5ee..16788f07716d 100644
+> --- a/arch/arm64/mm/contpte.c
+> +++ b/arch/arm64/mm/contpte.c
+> @@ -73,6 +73,70 @@ static void contpte_convert(struct mm_struct *mm, unsigned long addr,
+>   	__set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
+>   }
+>   
+> +void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
+> +			pte_t *ptep, pte_t pte)
+> +{
+> +	/*
+> +	 * We have already checked that the virtual and pysical addresses are
+> +	 * correctly aligned for a contpte mapping in contpte_try_fold() so the
+> +	 * remaining checks are to ensure that the contpte range is fully
+> +	 * covered by a single folio, and ensure that all the ptes are valid
+> +	 * with contiguous PFNs and matching prots. We ignore the state of the
+> +	 * access and dirty bits for the purpose of deciding if its a contiguous
+> +	 * range; the folding process will generate a single contpte entry which
+> +	 * has a single access and dirty bit. Those 2 bits are the logical OR of
+> +	 * their respective bits in the constituent pte entries. In order to
+> +	 * ensure the contpte range is covered by a single folio, we must
+> +	 * recover the folio from the pfn, but special mappings don't have a
+> +	 * folio backing them. Fortunately contpte_try_fold() already checked
+> +	 * that the pte is not special - we never try to fold special mappings.
+> +	 * Note we can't use vm_normal_page() for this since we don't have the
+> +	 * vma.
+> +	 */
+> +
+> +	unsigned long folio_start, folio_end;
+> +	unsigned long cont_start, cont_end;
+> +	pte_t expected_pte, subpte;
+> +	struct folio *folio;
+> +	struct page *page;
+> +	unsigned long pfn;
+> +	pte_t *orig_ptep;
+> +	pgprot_t prot;
+> +
+> +	int i;
+> +
+> +	if (!mm_is_user(mm))
+> +		return;
+> +
+> +	page = pte_page(pte);
+> +	folio = page_folio(page);
+> +	folio_start = addr - (page - &folio->page) * PAGE_SIZE;
+> +	folio_end = folio_start + folio_nr_pages(folio) * PAGE_SIZE;
+> +	cont_start = ALIGN_DOWN(addr, CONT_PTE_SIZE);
+> +	cont_end = cont_start + CONT_PTE_SIZE;
+> +
+> +	if (folio_start > cont_start || folio_end < cont_end)
+> +		return;
+> +
+> +	pfn = ALIGN_DOWN(pte_pfn(pte), CONT_PTES);
+> +	prot = pte_pgprot(pte_mkold(pte_mkclean(pte)));
+> +	expected_pte = pfn_pte(pfn, prot);
+> +	orig_ptep = ptep;
+> +	ptep = contpte_align_down(ptep);
+> +
+> +	for (i = 0; i < CONT_PTES; i++) {
+> +		subpte = pte_mkold(pte_mkclean(__ptep_get(ptep)));
+> +		if (!pte_same(subpte, expected_pte))
+> +			return;
+> +		expected_pte = pte_advance_pfn(expected_pte, 1);
+> +		ptep++;
+> +	}
+> +
+> +	pte = pte_mkcont(pte);
+> +	contpte_convert(mm, addr, orig_ptep, pte);
+> +}
+> +EXPORT_SYMBOL(__contpte_try_fold);
+> +
+>   void __contpte_try_unfold(struct mm_struct *mm, unsigned long addr,
+>   			pte_t *ptep, pte_t pte)
+>   {
 
