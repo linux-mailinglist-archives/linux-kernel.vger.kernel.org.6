@@ -1,94 +1,112 @@
-Return-Path: <linux-kernel+bounces-226518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F27913F9C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:52:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD746913F9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D072B21701
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 00:52:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E00A2817D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4C620E6;
-	Mon, 24 Jun 2024 00:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="meGrzdiu"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DE023C9;
+	Mon, 24 Jun 2024 01:01:19 +0000 (UTC)
+Received: from pidgin.makrotopia.org (pidgin.makrotopia.org [185.142.180.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 016E810E9;
-	Mon, 24 Jun 2024 00:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C18FD645;
+	Mon, 24 Jun 2024 01:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.142.180.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719190361; cv=none; b=e4d7tGeFCQvjkK7BFr3zBzv1LEvT8MOAXH1J3ojrui4sIfVR1XjhDvDEqS1NDCkD0u2xVx3oT1pBvVmUrXmaGVx17abVy9CTmydj8tXKaH8THCrMjYRpUMArjWyGhd0IIpS/2qr29WqsbgOt4jl2XhklkKPud+fbSl+fGVCGCzE=
+	t=1719190879; cv=none; b=tok/R0P6/JcMv0quTI36RN+dL2OvJlz8qvejr+jDRPzlM0+4a5L9fO2cF46YIDACiAoEfIfgFvI0PeKUX/EEhX0CA9Q5MxG4TBuRIcpEccYBddXHEyBR6GLqYpWlUbHX36WssNPx+gfMqqJOL8+kdGTfpSbbhbFRjeY0uIjCPdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719190361; c=relaxed/simple;
-	bh=xFnTlCEXYNUtSI9aate1sM51RDE4KwtaTjPN+GQK0Qw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=REfrY+6Xe2iKwir2T+a5t3pt3Wcv0HuXVeefpsiKN1PGyZQxy9I2Urtu4J7IQbj/UM/RwSMGMmhJS0/E7G/uDKHh0ZYGsxjUz0NAHZOxvD8CTVQb9U2/Uq+GKLBSQdLfUbKHCfu7THRv1FUGQRwOhg0X4YNtinbZQ5YwsqcASr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=meGrzdiu; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from [192.168.68.112] (ppp118-210-79-194.adl-adc-lon-bras32.tpg.internode.on.net [118.210.79.194])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 8D5012009F;
-	Mon, 24 Jun 2024 08:52:34 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1719190357;
-	bh=NQqL7DsqxZzghaWKR/8rkG8Pl+N6DaWnsqVc3zJk2M0=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=meGrzdiu/WAEEFAf5g1Gp251Pa8oZo7y56P+pBNGGYEQSlGxKyJJzf4Ft5MxIPlTL
-	 56x9n73PsCInkrlWhxqfVp80Zstmo8KnP5PhseWejB7r9NUrgWxP4wFLm9d5j7fFNm
-	 ZFIq+PeRz/h4T8C5QhdglMBfj6Hp9W2+on0+14vfcItCCLGOTIAHiPF1pA3JKfKmWW
-	 0bwI5xL0INEg+H+mV/YGGS3Em/HWBF/ZKylB9YkjHp5GJLWpxlt+INFsk8ttNzvbnt
-	 2XSdB1LCrcEC2+yLkX3bhU08x6JZ1TqMrdv+62TALyj+TmzAKNfvENO0vx/kiZWB0A
-	 P+qptu4/hC2XQ==
-Message-ID: <f31f59cc4381a41c57b94d10560ec2a7356f8868.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] usb: gadget: aspeed_udc: validate endpoint index for
- ast udc
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Ma Ke <make24@iscas.ac.cn>, neal_liu@aspeedtech.com, 
-	gregkh@linuxfoundation.org, joel@jms.id.au
-Cc: linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date: Mon, 24 Jun 2024 10:22:34 +0930
-In-Reply-To: <20240622095618.1890093-1-make24@iscas.ac.cn>
-References: <20240622095618.1890093-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1719190879; c=relaxed/simple;
+	bh=NZ4wCvC/W5FMr7YNpKy6YrXE3KgBt1IJ7qMewUbc0E0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dd8Vc7duETDyz4ShCgSxmCKwz9Oz533Xbm51C03YmOERIPycqdaLaP+e+xB/Vz+zNe8h46d4dBxUfY+qs2mtX7MARyeLAb1I5ssAXn/7s1whZTE/s1f9pFkfJIxwGnIMvxBD2V3uLzK2GTFVfIqhUNQvEarqHEc0eRp59SglOz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org; spf=pass smtp.mailfrom=makrotopia.org; arc=none smtp.client-ip=185.142.180.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=makrotopia.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=makrotopia.org
+Received: from local
+	by pidgin.makrotopia.org with esmtpsa (TLS1.3:TLS_AES_256_GCM_SHA384:256)
+	 (Exim 4.97.1)
+	(envelope-from <daniel@makrotopia.org>)
+	id 1sLY4u-000000001bx-1r1U;
+	Mon, 24 Jun 2024 01:01:04 +0000
+Date: Mon, 24 Jun 2024 02:01:01 +0100
+From: Daniel Golle <daniel@makrotopia.org>
+To: Marek Vasut <marex@denx.de>
+Cc: netdev@vger.kernel.org, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Christophe Roullier <christophe.roullier@foss.st.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Russell King <linux@armlinux.org.uk>, kernel@dh-electronics.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [net-next,PATCH] net: phy: realtek: Add support for PHY LEDs on
+ RTL8211F
+Message-ID: <ZnjFTSmF3MGX7OuY@makrotopia.org>
+References: <20240623234211.122475-1-marex@denx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240623234211.122475-1-marex@denx.de>
 
-On Sat, 2024-06-22 at 17:56 +0800, Ma Ke wrote:
-> We should verify the bound of the array to assure that host
-> may not manipulate the index to point past endpoint array.
->=20
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  drivers/usb/gadget/udc/aspeed_udc.c | 2 ++
->  1 file changed, 2 insertions(+)
->=20
-> diff --git a/drivers/usb/gadget/udc/aspeed_udc.c b/drivers/usb/gadget/udc=
-/aspeed_udc.c
-> index 3916c8e2ba01..95060592c231 100644
-> --- a/drivers/usb/gadget/udc/aspeed_udc.c
-> +++ b/drivers/usb/gadget/udc/aspeed_udc.c
-> @@ -1009,6 +1009,8 @@ static void ast_udc_getstatus(struct ast_udc_dev *u=
-dc)
->  		break;
->  	case USB_RECIP_ENDPOINT:
->  		epnum =3D crq.wIndex & USB_ENDPOINT_NUMBER_MASK;
-> +		if (epnum >=3D USB_MAX_ENDPOINTS)
+On Mon, Jun 24, 2024 at 01:40:33AM +0200, Marek Vasut wrote:
+> Realtek RTL8211F Ethernet PHY supports 3 LED pins which are used to
+> indicate link status and activity. Add minimal LED controller driver
+> supporting the most common uses with the 'netdev' trigger.
+> 
+> Signed-off-by: Marek Vasut <marex@denx.de>
 
-Shouldn't this be `epnum >=3D AST_UDC_NUM_ENDPOINTS`? Further,
-USB_MAX_ENDPOINTS doesn't appear to be defined here?
+> [...]
+> +static int rtl8211f_led_hw_is_supported(struct phy_device *phydev, u8 index,
+> +					unsigned long rules)
+> +{
+> +	const unsigned long mask = BIT(TRIGGER_NETDEV_LINK_10) |
+> +				   BIT(TRIGGER_NETDEV_LINK_100) |
+> +				   BIT(TRIGGER_NETDEV_LINK_1000) |
+> +				   BIT(TRIGGER_NETDEV_RX) |
+> +				   BIT(TRIGGER_NETDEV_TX);
+> +
+> +	/* The RTL8211F PHY supports these LED settings on up to three LEDs:
+> +	 * - Link: Configurable subset of 10/100/1000 link rates
+> +	 * - Active: Blink on activity, RX or TX is not differentiated
+> +	 * The Active option has two modes, A and B:
+> +	 * - A: Link and Active indication at configurable, but matching,
+> +	 *      subset of 10/100/1000 link rates
+> +	 * - B: Link indication at configurable subset of 10/100/1000 link
+> +	 *      rates and Active indication always at all three 10+100+1000
+> +	 *      link rates.
+> +	 * This code currently uses mode B only.
+> +	 */
+> +
+> +	if (index >= RTL8211F_LED_COUNT)
+> +		return -EINVAL;
+> +
+> +	/* Filter out any other unsupported triggers. */
+> +	if (rules & ~mask)
+> +		return -EOPNOTSUPP;
 
-What steps did you take to test this patch?
+It looks like it is not possible to let the hardware indicate only either
+RX or TX, it will always have to go together.
 
-Andrew
+Please express this in this function accordingly, so fallback to
+software-driven trigger works as expected.
+
+Example:
+if (!(rules & BIT(TRIGGER_NETDEV_RX)) ^ !(rules & BIT(TRIGGER_NETDEV_TX)))
+	return -EOPNOTSUPP;
+
+> +
+> +	return 0;
+> +}
 
