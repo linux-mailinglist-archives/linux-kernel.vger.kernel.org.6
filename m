@@ -1,181 +1,170 @@
-Return-Path: <linux-kernel+bounces-227316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C41BA914F46
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:56:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58AA914F4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D98A41C21F73
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:56:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D6CCB2105E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:56:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EBD1422D2;
-	Mon, 24 Jun 2024 13:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC8C142623;
+	Mon, 24 Jun 2024 13:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="DKVoMb6t"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WzKvr4BI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAFE71422C2;
-	Mon, 24 Jun 2024 13:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCFF913A894;
+	Mon, 24 Jun 2024 13:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719237360; cv=none; b=g/U2m871mf9aQrHumRznZbuXxVmc+80HG3K5F/0Ba96DOomPISf3zj035RqYJpRGAIHwGbLS81Hr/RfWbR2x2rRQoh5QoR3/fXwtD5CGVPbvQVf25MoGOPIhptCD3j0d+KEFnhfyaLnlSfrn2dzFVXHyo0ujVDQWh20fkpM8egg=
+	t=1719237404; cv=none; b=lAdUgbMvKD9UPnIZ+ejWyiGrJAXwkqJkU0QBk3v2ECIs95yZo1ycKanSMaFAiAiiEVnJ9/eqvqe81B15/o+L8+yYuUTp+IX1bty4OgS+2a9Mfim2sJN6MB2WQgHXV02mBfbmbsU1WGT1OTpKHG/f6FsWvR51Ip3XEA1IEE7pYXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719237360; c=relaxed/simple;
-	bh=5v0Iecke+jsVGTj1OuAtgk56rqbYKIIUBABpMnVGYWQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=s6uvJyLrfQ9Zzm2HsMNzoO2/obgKOvoYRtUgOPlF7fczhdl6pDRB/7k+uZDQQvvQ5WJvVBPHb82KFVWp/V59SelIIBnMpIgh/exWer1Y5E5cCBMYo/oVdYBVnKjv0zvY/GgBWub4fAUy6TzrejORf+WMNAEigSWwtz6Lv+8rhBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=DKVoMb6t; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 7818a4d0323111ef99dc3f8fac2c3230-20240624
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=aXkFnl1gbgMS/cNx7a1wFEypeYkF+yjqkt3QVTPW/A4=;
-	b=DKVoMb6tFT9PKxp3WtKBlPdu+3YCc2wVYx+jVjgkz8quwLJTgU9uBMA0qNIRaUKX7CYktkaW7LYyYhPaHEIYqAnJR6RcVSQ5RwjYoiBg0PrF75JRTd4HzxZOZQy1RPDx3Ow5yStWD70i15qBGBKnFs+IVvzKewIey95GCbYcu60=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.39,REQID:c5a760c6-4252-46fc-9de8-b354aade2cab,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-25
-X-CID-META: VersionHash:393d96e,CLOUDID:001d5f94-e2c0-40b0-a8fe-7c7e47299109,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 7818a4d0323111ef99dc3f8fac2c3230-20240624
-Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
-	(envelope-from <jiaxin.yu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 2084432780; Mon, 24 Jun 2024 21:55:52 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS14N2.mediatek.inc (172.21.101.76) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Mon, 24 Jun 2024 21:55:47 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Mon, 24 Jun 2024 21:55:47 +0800
-From: Jiaxin Yu <jiaxin.yu@mediatek.com>
-To: <broonie@kernel.org>, <angelogioacchino.delregno@collabora.com>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Jiaxin Yu <jiaxin.yu@mediatek.com>
-Subject: [PATCH RESEND,v2] ASoC: mediatek: mt6358: Add "Dmic Mode Switch" kcontrol for switch DMIC mode.
-Date: Mon, 24 Jun 2024 21:55:46 +0800
-Message-ID: <20240624135546.19275-1-jiaxin.yu@mediatek.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719237404; c=relaxed/simple;
+	bh=vANFnAG99ZBTN3omjVOHPVKZ4v5CDIJKSoOFmkpqaaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P5zZKbf/6HCJ1GyXvH9nmDmPX2tHNlGBgFm/RGZ/HsM8xkus9O9NnAssJXyKRwLJxbCzLiK/2JSRVHzz8BG7yWxQVGMThicFovf4Uuoef50iQk6tdSUVRPYKRZ7GcF1ejjnJA4H3Biw69oZGQGrFgvBpvg/9QMJdq/kfwSVhcO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WzKvr4BI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2DAEC32782;
+	Mon, 24 Jun 2024 13:56:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719237404;
+	bh=vANFnAG99ZBTN3omjVOHPVKZ4v5CDIJKSoOFmkpqaaY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WzKvr4BIYYeJNYN7pmnaYzA156L39ahzJVJZFD3Y2s27lJCVJM5tGcf0Tk6uCblwW
+	 baqIw9Ftz3SaOj4td3QGdf8NtMT38vlP/qnfA5S8g0Xo3FP2UL56YgPoYHCJk/k+B+
+	 PBk+E9UciwJ0fpxpQYL8+JJBoMopIqvf0VzNfmf1Cm84Xjk4Ibf22N+MyNBtWsDcyx
+	 7TrKd/5PzmeLIXipHq/sIER9Qurvmga2CNde/RWDTp8aZUNTpMQXcSfqTqqqOwM3gC
+	 VlkdhI6wuL55g24oZZCYqVW08KdxDBSlIcS0ytxTyL4f/a7Gq5MJvL+P/cV+DlnoVP
+	 mvtBV6Tf02gyA==
+Message-ID: <38fae674-f672-46e0-a44e-1278deaaf36a@kernel.org>
+Date: Mon, 24 Jun 2024 15:56:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--4.655100-8.000000
-X-TMASE-MatchedRID: gtvpwGSUn6ZUeA157rRKD2h77jTUbA6yoA9Le8XJpbovM0Gdq0fzqaJQ
-	wY2eSfAKzQCEFcQpqpiD1p+T3PkHc6o+znd4MHO5l1zsjZ1/6axDGFvBeB2nXEuCjz4ggdtwU7g
-	EPucszGcM1uAoS31c84on+M6nzz7EMtPBNyXS88a4jAucHcCqnX0tCKdnhB589yM15V5aWpj6C0
-	ePs7A07UngwKs5OejnuXgkVn0JDJE4akP/ZSUN3KtRKNFqtU0lysvSvATs2Zs4Wp3OuoY81CL+Y
-	Okaei+S6pCYQ5VLYGbfrVNSLotorpd/GKMggNgToydMlEjRcid9fBQSbWi4PMsNjEULX/uuMIFA
-	PLUElJzAvpLE+mvX8g==
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--4.655100-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	20DB901DD7FBC1216EBBCC858B30E70948715DD87123211B1B3E9751DD044ABB2000:8
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] pinctrl: samsung: Add support for pull-up and
+ pull-down
+To: Vishnu Reddy <vishnu.reddy@samsung.com>, krzysztof.kozlowski@linaro.org,
+ s.nawrocki@samsung.com, alim.akhtar@samsung.com, linus.walleij@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pankaj.dubey@samsung.com, ravi.patel@samsung.com, gost.dev@samsung.com
+References: <CGME20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7@epcas5p1.samsung.com>
+ <20240620103410.35786-1-vishnu.reddy@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20240620103410.35786-1-vishnu.reddy@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-There are two hardware connection methods for DMICs on the MT6358. In cases
-where more than two DMICs are used, we need to time-multiplex these DMICs.
-Therefore, we need to dynamically switch the modes of these DMICs based on
-the actual usage scenarios.
+On 20/06/2024 12:34, Vishnu Reddy wrote:
+> gpiolib framework has the implementation of setting up the
+> PUD configuration for GPIO pins but there is no driver support.
+> 
+> Add support to handle the PUD configuration request from the
+> userspace in samsung pinctrl driver.
+> 
+> Signed-off-by: Vishnu Reddy <vishnu.reddy@samsung.com>
+> ---
+> Verified the offset from the user manual of following Exynos SoC series
+> and found the current code is taking care of correct offset for pull-up
+> and pull-down
+> 
+> Exynos-3250
+> Exynos-3470
+> Exynos-4412
+> Exynos-4415
+> Exynos-5250
+> Exynos-5260
+> Exynos-5410
+> Exynos-5420
+> Exynos-5422
+> Exynos-7420
+> Exynos-7580
+> Exynos-7880
+> Exynos-9820
+> Exynos-9830
+> Exynos-4210
+> Exynos-S5PC210
+> Exynos-S5PV310
+> 
+> This patch is tested on FSD platform
 
-            ---- DMIC1
-AU_VIN0 ---
-            ---- DMIC2
+You verified but...
 
-AU_VIN2 --- ----DMIC3
+> diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> index d50ba6f07d5d..758b623a4bea 100644
+> --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
+> +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
+> @@ -61,6 +61,13 @@ enum pincfg_type {
+>  #define PIN_CON_FUNC_INPUT		0x0
+>  #define PIN_CON_FUNC_OUTPUT		0x1
+>  
+> +/*
+> + * Values for the pin PUD register.
+> + */
+> +#define PIN_PUD_PULL_UP_DOWN_DISABLE	0x0
+> +#define PIN_PUD_PULL_DOWN_ENABLE	0x1
+> +#define PIN_PUD_PULL_UP_ENABLE		0x3
 
-When we want to use DMIC1/2, configure it to one-wire mode. When we want to
-use DMIC1/3, configure it to two-wire mode.
+... I said it is not correct, so you send the same? If you think I was
+wrong, then please respond and keep discussion going. Sending the same
+suggests you just ignored my comment.
 
-Signed-off-by: Jiaxin Yu <jiaxin.yu@mediatek.com>
----
-Changes in v2:
-  - fix potential mixter-text errors, only allowing the user to set it
-  to 0 or 1.
+Look at two headers s5pv210-pinctrl.h and s3c64xx-pinctrl.h. How did you
+resolve these?
 
- sound/soc/codecs/mt6358.c | 38 +++++++++++++++++++++++++++++++++++++-
- 1 file changed, 37 insertions(+), 1 deletion(-)
-
-diff --git a/sound/soc/codecs/mt6358.c b/sound/soc/codecs/mt6358.c
-index 0284e29c11d3..9247b90d1b99 100644
---- a/sound/soc/codecs/mt6358.c
-+++ b/sound/soc/codecs/mt6358.c
-@@ -96,7 +96,7 @@ struct mt6358_priv {
- 
- 	int wov_enabled;
- 
--	unsigned int dmic_one_wire_mode;
-+	int dmic_one_wire_mode;
- };
- 
- int mt6358_set_mtkaif_protocol(struct snd_soc_component *cmpnt,
-@@ -577,6 +577,39 @@ static int mt6358_put_wov(struct snd_kcontrol *kcontrol,
- 	return 0;
- }
- 
-+static int mt6358_dmic_mode_get(struct snd_kcontrol *kcontrol,
-+				struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *c = snd_soc_kcontrol_component(kcontrol);
-+	struct mt6358_priv *priv = snd_soc_component_get_drvdata(c);
-+
-+	ucontrol->value.integer.value[0] = priv->dmic_one_wire_mode;
-+	dev_dbg(priv->dev, "%s() dmic_mode = %d", __func__, priv->dmic_one_wire_mode);
-+
-+	return 0;
-+}
-+
-+static int mt6358_dmic_mode_set(struct snd_kcontrol *kcontrol,
-+				struct snd_ctl_elem_value *ucontrol)
-+{
-+	struct snd_soc_component *c = snd_soc_kcontrol_component(kcontrol);
-+	struct mt6358_priv *priv = snd_soc_component_get_drvdata(c);
-+	int enabled = ucontrol->value.integer.value[0];
-+
-+	if (enabled < 0 || enabled > 1)
-+		return -EINVAL;
-+
-+	if (priv->dmic_one_wire_mode != enabled) {
-+		priv->dmic_one_wire_mode = enabled;
-+		dev_dbg(priv->dev, "%s() dmic_mode = %d", __func__, priv->dmic_one_wire_mode);
-+
-+		return 1;
-+	}
-+	dev_dbg(priv->dev, "%s() dmic_mode = %d", __func__, priv->dmic_one_wire_mode);
-+
-+	return 0;
-+}
-+
- static const DECLARE_TLV_DB_SCALE(playback_tlv, -1000, 100, 0);
- static const DECLARE_TLV_DB_SCALE(pga_tlv, 0, 600, 0);
- 
-@@ -599,6 +632,9 @@ static const struct snd_kcontrol_new mt6358_snd_controls[] = {
- 
- 	SOC_SINGLE_BOOL_EXT("Wake-on-Voice Phase2 Switch", 0,
- 			    mt6358_get_wov, mt6358_put_wov),
-+
-+	SOC_SINGLE_BOOL_EXT("Dmic Mode Switch", 0,
-+			    mt6358_dmic_mode_get, mt6358_dmic_mode_set),
- };
- 
- /* MUX */
--- 
-2.25.1
+Best regards,
+Krzysztof
 
 
