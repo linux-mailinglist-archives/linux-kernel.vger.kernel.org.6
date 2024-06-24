@@ -1,287 +1,163 @@
-Return-Path: <linux-kernel+bounces-227293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E07B4914ED8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:37:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730A2914EDC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C2CBB2141C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CD9C1F22FA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:37:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158DC14037E;
-	Mon, 24 Jun 2024 13:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49962140E23;
+	Mon, 24 Jun 2024 13:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="pz91OPMj"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ILygvCUw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F75B145B33
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:33:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7935113E888;
+	Mon, 24 Jun 2024 13:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719235988; cv=none; b=dKGPRYfi5bGsqXMBvtfmZWIT6o+SG2TxYJd1d7O+iY4Wwt9TA7zv00Q+iAF8TZo4LlQ+YlIDeZON9Cw+08+kFbk1n/L4tkvba8JN9VxZGaExXqYvgF3QEy2zrx9p/t+8gNcqmoOPYWob/AmtiONWCbLfkGci+QXwSvyM/GgQiD4=
+	t=1719236014; cv=none; b=uVvTY34c8rRSmpTIdShVN9FpfHwRTVxzZPC8Xrw8gPlbM8PgagtkFC4Otj/ObffTasP3YyA5LB091jXdKu4F8FxF1e1MM6ZZvt7ugM+GZhjt7UVu1L97/diFxYnPE2LR1zLzW9S6P90FDNMmQcIONRh+wuJN4mdk+xNU04ZRIsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719235988; c=relaxed/simple;
-	bh=W8I5P5mQ4gTk+N2ilXD5cs6B6MzlVlbx9bJ8spbSQgo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lMSlNmYG105s3afnpIDNPvDfStFX5yZ1xWQE8H+RfHsv88n0ZRxWrnsb7u2rSbNs6dQ+vUsDe7Fxv+rSyB5h6xGbRjU256Dab+VPjJmf7NhKHqQZsTHqirjkpng09GJcuP988EJ6VQXBobm02aox94vTkaTcV7hOJIFmBs1ZaGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=pz91OPMj; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-356c4e926a3so4079632f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:33:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719235983; x=1719840783; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=zWfDyGDcFNAxTxsQp6Q20zmxjVRAYUqme+mlYdreR20=;
-        b=pz91OPMj2iUnOqzeEgYFpbSEafoz6oyUju146hNa0a4PfKs2f0z6v+VXWBi7QjEToN
-         fuKI607iOR4b2CEUC1dYDBu5UdyytYFfW7/MWTtUGaJ7iiToxg3JAK9YZvgLO+ciSNMV
-         AWvhE4Awg7tPyva9Oy+Fuf0+hJWDOePfj+32xuve4SmT8rI8k56gtPihMVi14qjR63Vb
-         0ZwDX/XUmxEoLhtvfc/mruFijhh+61IKPIXNcVR5eo65OIGcL/Ct5e6NLlPvjvy6GORv
-         oUb7QhFVyPdoY0XzWOQXvGXFk+PU7FvAno+izOSuPQZWWgQJLGIKq2E77Sp+2Dnh1t/I
-         ItmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719235983; x=1719840783;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zWfDyGDcFNAxTxsQp6Q20zmxjVRAYUqme+mlYdreR20=;
-        b=K+3/eTT5wi7qGr1lXZ/6FDv/+SGetZFNuKDnOeldIrm2mETxICGxVcXH+mUBNyZ5Wo
-         7g0yXieBJzlGZjm9bCZqU0ScAsufS3iM9JW9HQgvne/cVt3rrHD+R4xFMUOnoEtoQERp
-         KW/DC5eD0PTux9nBD15mUWDknoiCVKoQ6wZAhR94K0vqZETc6+EXR7rW82A4EWbzI+2g
-         c3f+4e6qgKEBf5+bnOTmkpJDkoqjaDk57BvjaO84b8YivoxhpEPr0BQO8aZl78F9nm+k
-         RPqTDv5vwONPS9rsB6pn7HFy1U/MGormfySI0aKjc2lP0aVT4OjCcD3onGPRl9LlykE/
-         myag==
-X-Forwarded-Encrypted: i=1; AJvYcCVcb9BPbX0QmcAl6QaMcWoYFsyD3JlFPgSnKh2OYeeY/wxkz1MzOY82KLUMX3niZXZxzmkuAdbQceIMsAwiSDXsJTDuLHrT4s4a4d+V
-X-Gm-Message-State: AOJu0Yz7VnxDlVwwOql2U0/BRTazIaTRKwQUEpk8mXXY1Sy3EjmEcoNv
-	cQCyhGtFe0tS06u0oJys0tN30dNkNffCgXGeo0XfnK7+Px+IGzjCEyK2/SP1QQs=
-X-Google-Smtp-Source: AGHT+IGe0gm9OM+NRg50jGHaHWnbBA7Oet31hE0xxGLwue7vnzn3gUmRoP2BUtvpMXWKGZeth+FhuA==
-X-Received: by 2002:a5d:4686:0:b0:363:7816:7568 with SMTP id ffacd0b85a97d-366e9661d46mr2643541f8f.70.1719235983059;
-        Mon, 24 Jun 2024 06:33:03 -0700 (PDT)
-Received: from [10.2.5.170] (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c7dd8sm10126461f8f.99.2024.06.24.06.33.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 06:33:02 -0700 (PDT)
-Message-ID: <4a6b3c28-deb4-44bb-869f-0604a17be2ec@baylibre.com>
-Date: Mon, 24 Jun 2024 15:33:01 +0200
+	s=arc-20240116; t=1719236014; c=relaxed/simple;
+	bh=9zFosSwVy43COA5LXpYQ2Dm9NEd+eTcGR2GIviXSK5M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E8FT6sFL5aiWkwejHnJn+437ZnuL+KeiFEIG/IjU2iSo42PInW5dx/sOXQR/bBR9uOPIckTBp5hBgTGmR7YqELShB34kRcEp1E27lX0oOVuPNKuO57ok09Z4TBkJWR/pXQshb60fBLKktqm2AtceZGpctbWhFecRzITgW1eMiUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ILygvCUw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A801BC2BBFC;
+	Mon, 24 Jun 2024 13:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1719236014;
+	bh=9zFosSwVy43COA5LXpYQ2Dm9NEd+eTcGR2GIviXSK5M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ILygvCUwZtEwOsboz813cE78GyGTV1+Q536rrkhlPHQ5+yLrn2GWhzLTMIuP+Arum
+	 U3ndDYX9c8/ks0zT8QwCcVoUCfVeR3VOjK/RMfZmee50qL5/Y/ROePNjN6JkQF7Kbu
+	 4ZIGVuG0AkQKOXMzrX4zEOUvwWnZolPBaO00g44g=
+Date: Mon, 24 Jun 2024 15:33:31 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc: Jiri Slaby <jirislaby@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] serial: imx: ensure RTS signal is not left active after
+ shutdown
+Message-ID: <2024062427-cheating-cloning-3de1@gregkh>
+References: <20240524121246.1896651-1-linux@rasmusvillemoes.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] iio: adc: ad7606: remove frstdata check for serial
- mode
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, jstephan@baylibre.com, dlechner@baylibre.com
-References: <20240618-cleanup-ad7606-v2-1-b0fd015586aa@baylibre.com>
- <20240623165424.164b341b@jic23-huawei>
-Content-Language: en-US
-From: Guillaume Stols <gstols@baylibre.com>
-In-Reply-To: <20240623165424.164b341b@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240524121246.1896651-1-linux@rasmusvillemoes.dk>
 
+On Fri, May 24, 2024 at 02:12:45PM +0200, Rasmus Villemoes wrote:
+> If a process is killed while writing to a /dev/ttymxc* device in RS485
+> mode, we observe that the RTS signal is left high, thus making it
+> impossible for other devices to transmit anything.
+> 
+> Moreover, the ->tx_state variable is left in state SEND, which means
+> that when one next opens the device and configures baud rate etc., the
+> initialization code in imx_uart_set_termios dutifully ensures the RTS
+> pin is pulled down, but since ->tx_state is already SEND, the logic in
+> imx_uart_start_tx() does not in fact pull the pin high before
+> transmitting, so nothing actually gets on the wire on the other side
+> of the transceiver. Only when that transmission is allowed to complete
+> is the state machine then back in a consistent state.
+> 
+> This is completely reproducible by doing something as simple as
+> 
+>   seq 10000 > /dev/ttymxc0
+> 
+> and hitting ctrl-C, and watching with a logic analyzer.
+> 
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> ---
+> 
+> A screen dump from a logic analyzer can be seen at:
+> 
+>   https://ibb.co/xCcP7Jy
+> 
+> This is on an imx8mp board, with /dev/ttymxc0 and /dev/ttymxc2 both
+> configured for rs485 and connected to each other. I'm writing to
+> /dev/ttymxc2. This demonstrates both bugs; that RTS is left high when
+> a write is interrupted, and that a subsequent write actually fails to
+> have RTS high while TX'ing.
+> 
+> I'm not sure what commit to name as a Fixes:. This certainly happens
+> on 6.6 and onwards, but I assume the problem exists since the tx_state
+> machine was introduced in cb1a60923609 (serial: imx: implement rts
+> delaying for rs485), and possibly even before that.
+> 
+> 
+>  drivers/tty/serial/imx.c | 50 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
+> 
+> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+> index 2eb22594960f..35a47f4ab6ed 100644
+> --- a/drivers/tty/serial/imx.c
+> +++ b/drivers/tty/serial/imx.c
+> @@ -1551,6 +1551,7 @@ static void imx_uart_shutdown(struct uart_port *port)
+>  	struct imx_port *sport = (struct imx_port *)port;
+>  	unsigned long flags;
+>  	u32 ucr1, ucr2, ucr4, uts;
+> +	int loops;
+>  
+>  	if (sport->dma_is_enabled) {
+>  		dmaengine_terminate_sync(sport->dma_chan_tx);
+> @@ -1613,6 +1614,55 @@ static void imx_uart_shutdown(struct uart_port *port)
+>  	ucr4 &= ~UCR4_TCEN;
+>  	imx_uart_writel(sport, ucr4, UCR4);
+>  
+> +	/*
+> +	 * We have to ensure the tx state machine ends up in OFF. This
+> +	 * is especially important for rs485 where we must not leave
+> +	 * the RTS signal high, blocking the bus indefinitely.
+> +	 *
+> +	 * All interrupts are now disabled, so imx_uart_stop_tx() will
+> +	 * no longer be called from imx_uart_transmit_buffer(). It may
+> +	 * still be called via the hrtimers, and if those are in play,
+> +	 * we have to honour the delays.
+> +	 */
+> +	if (sport->tx_state == WAIT_AFTER_RTS || sport->tx_state == SEND)
+> +		imx_uart_stop_tx(port);
+> +
+> +	/*
+> +	 * In many cases (rs232 mode, or if tx_state was
+> +	 * WAIT_AFTER_RTS, or if tx_state was SEND and there is no
+> +	 * delay_rts_after_send), this will have moved directly to
+> +	 * OFF. In rs485 mode, tx_state might already have been
+> +	 * WAIT_AFTER_SEND and the hrtimer thus already started, or
+> +	 * the above imx_uart_stop_tx() call could have started it. In
+> +	 * those cases, we have to wait for the hrtimer to fire and
+> +	 * complete the transition to OFF.
+> +	 */
+> +	loops = port->rs485.flags & SER_RS485_ENABLED ?
+> +		port->rs485.delay_rts_after_send : 0;
+> +	while (sport->tx_state != OFF && loops--) {
+> +		uart_port_unlock_irqrestore(&sport->port, flags);
+> +		msleep(1);
+> +		uart_port_lock_irqsave(&sport->port, &flags);
+> +	}
+> +
+> +	if (dev_WARN_ONCE(sport->port.dev, sport->tx_state != OFF,
+> +			  "unexpected tx_state %d\n", sport->tx_state)) {
 
-On 6/23/24 17:54, Jonathan Cameron wrote:
-> On Tue, 18 Jun 2024 13:45:00 +0000
-> Guillaume Stols <gstols@baylibre.com> wrote:
->
->> Frstdata pin is set high during the first sample's transmission and then
->> set low.  This code chunk attempts to recover from an eventual glitch in
->> the clock by checking frstdata state after reading the first channel's
->> sample.  Currently, in serial mode, this check happens AFTER the 16th
->> pulse, and if frstdata is not set it resets the device and returns EINVAL.
->> According to the datasheet, "The FRSTDATA output returns to a logic low
->> following the 16th SCLK falling edge.", thus after the 16th pulse, the
->> check will always be true, and the driver will not work as expected.  Thus
->> it must be removed for serial mode.
-> when you say will not work as expected, is this is normal circumstances, or
-> when dealing with a clock glitch?  i.e. should this have a fixes tag and
-> got upstream asap or is it just cleaning up a corner case and can wait for
-> now?
->
-> One trivial comment inline.
->
-> Jonathan
+Please don't reboot devices that have panic-on-warn enabled for
+something like this, as you are handling it, but that didn't help for
+those devices that had that option turned on :(
 
-It completely prevents the driver to work when adi, first-data 
-(optional) is defined in the DT.
+thanks,
 
-So I guess anyone having the driver working with the serial interface 
-right now did not define frstdata in the DT.
-
-However, for someone new that sets adi, first-data in the DT, it is not 
-very straightforward to spot where the issue is.
-
->
->> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
->> ---
->> Changes in v2:
->>   - Remove frstdata check only for the serial interface as suggested by
->>     Michael Hennerich.
->>   - Link to v1: https://lore.kernel.org/r/20240417-cleanup-ad7606-v1-1-5c2a29662c0a@baylibre.com
->> ---
->>   drivers/iio/adc/ad7606.c     | 28 ++-----------------------
->>   drivers/iio/adc/ad7606.h     |  2 ++
->>   drivers/iio/adc/ad7606_par.c | 49 +++++++++++++++++++++++++++++++++++++++++---
->>   3 files changed, 50 insertions(+), 29 deletions(-)
->>
->> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
->> index 3a417595294f..c321c6ef48df 100644
->> --- a/drivers/iio/adc/ad7606.c
->> +++ b/drivers/iio/adc/ad7606.c
->> @@ -49,7 +49,7 @@ static const unsigned int ad7616_oversampling_avail[8] = {
->>   	1, 2, 4, 8, 16, 32, 64, 128,
->>   };
->>   
->> -static int ad7606_reset(struct ad7606_state *st)
->> +int ad7606_reset(struct ad7606_state *st)
->>   {
->>   	if (st->gpio_reset) {
->>   		gpiod_set_value(st->gpio_reset, 1);
->> @@ -60,6 +60,7 @@ static int ad7606_reset(struct ad7606_state *st)
->>   
->>   	return -ENODEV;
->>   }
->> +EXPORT_SYMBOL_NS_GPL(ad7606_reset, IIO_AD7606);
->>   
->>   static int ad7606_reg_access(struct iio_dev *indio_dev,
->>   			     unsigned int reg,
->> @@ -88,31 +89,6 @@ static int ad7606_read_samples(struct ad7606_state *st)
->>   {
->>   	unsigned int num = st->chip_info->num_channels - 1;
->>   	u16 *data = st->data;
->> -	int ret;
->> -
->> -	/*
->> -	 * The frstdata signal is set to high while and after reading the sample
->> -	 * of the first channel and low for all other channels. This can be used
->> -	 * to check that the incoming data is correctly aligned. During normal
->> -	 * operation the data should never become unaligned, but some glitch or
->> -	 * electrostatic discharge might cause an extra read or clock cycle.
->> -	 * Monitoring the frstdata signal allows to recover from such failure
->> -	 * situations.
->> -	 */
->> -
->> -	if (st->gpio_frstdata) {
->> -		ret = st->bops->read_block(st->dev, 1, data);
->> -		if (ret)
->> -			return ret;
->> -
->> -		if (!gpiod_get_value(st->gpio_frstdata)) {
->> -			ad7606_reset(st);
->> -			return -EIO;
->> -		}
->> -
->> -		data++;
->> -		num--;
->> -	}
->>   
->>   	return st->bops->read_block(st->dev, num, data);
->>   }
->> diff --git a/drivers/iio/adc/ad7606.h b/drivers/iio/adc/ad7606.h
->> index 0c6a88cc4695..6649e84d25de 100644
->> --- a/drivers/iio/adc/ad7606.h
->> +++ b/drivers/iio/adc/ad7606.h
->> @@ -151,6 +151,8 @@ int ad7606_probe(struct device *dev, int irq, void __iomem *base_address,
->>   		 const char *name, unsigned int id,
->>   		 const struct ad7606_bus_ops *bops);
->>   
->> +int ad7606_reset(struct ad7606_state *st);
->> +
->>   enum ad7606_supported_device_ids {
->>   	ID_AD7605_4,
->>   	ID_AD7606_8,
->> diff --git a/drivers/iio/adc/ad7606_par.c b/drivers/iio/adc/ad7606_par.c
->> index d8408052262e..1f7050297b64 100644
->> --- a/drivers/iio/adc/ad7606_par.c
->> +++ b/drivers/iio/adc/ad7606_par.c
->> @@ -7,6 +7,7 @@
->>   
->>   #include <linux/mod_devicetable.h>
->>   #include <linux/module.h>
->> +#include <linux/gpio/consumer.h>
->>   #include <linux/platform_device.h>
->>   #include <linux/types.h>
->>   #include <linux/err.h>
->> @@ -21,8 +22,30 @@ static int ad7606_par16_read_block(struct device *dev,
->>   	struct iio_dev *indio_dev = dev_get_drvdata(dev);
->>   	struct ad7606_state *st = iio_priv(indio_dev);
->>   
->> -	insw((unsigned long)st->base_address, buf, count);
->>   
->> +	/*
->> +	 * On the parallel interface, the frstdata signal is set to high while
->> +	 * and after reading the sample of the first channel and low for all
->> +	 * other channels.  This can be used to check that the incoming data is
->> +	 * correctly aligned.  During normal operation the data should never
->> +	 * become unaligned, but some glitch or electrostatic discharge might
->> +	 * cause an extra read or clock cycle.  Monitoring the frstdata signal
->> +	 * allows to recover from such failure situations.
->> +	 */
->> +	int num = count;
->> +	u16 *_buf = buf;
->> +
->> +	if (st->gpio_frstdata) {
->> +		insw((unsigned long)st->base_address, _buf, 1);
->> +		if (!gpiod_get_value(st->gpio_frstdata)) {
->> +			ad7606_reset(st);
->> +			return -EIO;
->> +		}
->> +		_buf++;
->> +		num--;
->> +	}
->> +	insw((unsigned long)st->base_address, _buf, num)
->> +;
-> Seems this slipped onto the next line.
-> Make sure to run checkpatch which I would have thought would catch this.
->
->>   	return 0;
->>   }
->>   
->> @@ -35,8 +58,28 @@ static int ad7606_par8_read_block(struct device *dev,
->>   {
->>   	struct iio_dev *indio_dev = dev_get_drvdata(dev);
->>   	struct ad7606_state *st = iio_priv(indio_dev);
->> -
->> -	insb((unsigned long)st->base_address, buf, count * 2);
->> +	/*
->> +	 * On the parallel interface, the frstdata signal is set to high while
->> +	 * and after reading the sample of the first channel and low for all
->> +	 * other channels.  This can be used to check that the incoming data is
->> +	 * correctly aligned.  During normal operation the data should never
->> +	 * become unaligned, but some glitch or electrostatic discharge might
->> +	 * cause an extra read or clock cycle.  Monitoring the frstdata signal
->> +	 * allows to recover from such failure situations.
->> +	 */
->> +	int num = count;
->> +	u16 *_buf = buf;
->> +
->> +	if (st->gpio_frstdata) {
->> +		insb((unsigned long)st->base_address, _buf, 2);
->> +		if (!gpiod_get_value(st->gpio_frstdata)) {
->> +			ad7606_reset(st);
->> +			return -EIO;
->> +		}
->> +		_buf++;
->> +		num--;
->> +	}
->> +	insb((unsigned long)st->base_address, _buf, num * 2);
->>   
->>   	return 0;
->>   }
->>
->> ---
->> base-commit: 07d4d0bb4a8ddcc463ed599b22f510d5926c2495
->> change-id: 20240416-cleanup-ad7606-161e2ed9818b
->>
->> Best regards,
+greg k-h
 
