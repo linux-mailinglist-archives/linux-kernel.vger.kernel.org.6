@@ -1,341 +1,199 @@
-Return-Path: <linux-kernel+bounces-227280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B41914EA9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:33:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCCB8914EAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5959928184D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:33:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F353DB214B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:34:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF43A1411FA;
-	Mon, 24 Jun 2024 13:30:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7B1144D3A;
+	Mon, 24 Jun 2024 13:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K4xZmgHp"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="Fl17fSLT"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90172FC08;
-	Mon, 24 Jun 2024 13:30:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D038BFC08;
+	Mon, 24 Jun 2024 13:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719235809; cv=none; b=EBaPLGTJ8K6Hp0stWDY9fVLGmom5o8Lj+l/JHkIQBDIgYyoM1i4GAc0oZAo4t02QTOEhmYBfZAqTbDOGydRDTXYgTpUoZDKI9v9K/V7mFtcu3qjkEW9pyuP0BwVREPx8deu1W6HxEL5FeiXwDJLUc+7djq06dCONMLzfYBJ2Ihc=
+	t=1719235818; cv=none; b=hTzx75bGAnoOYLRNSdhnWTnr16Nq0ChbaPnVh59LRiS9aFXNPPaFb5//yBuQur8ge4WImJgRCkQuQ9vHhhu21lyQlnG6/fSdGZvT9dDQ47vPUdCG1+Ci4uo4CFA4mpSQtTqrdzZSZH2iHuRY09rHa0T5pAFHDl/pCa/n1MR902k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719235809; c=relaxed/simple;
-	bh=4sv378fujeglQ3cZDizL0q0nX5zw8mKOUFqS0Dw6mp0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PN+F2Sow7GP3gekDOmR3DXCFHnmG9FVA5dMmrdYiMtrV4jPJW65RBZs96WQMxJB72/QsU82nTwCkP7W7wxWbuXRy+b05kqSdX6M6w79lG5gFIMvzmox7zDsrSWZBXqGfqvuub12bC/Uo243FIOq96DCFMr8OCQ3cLYRaTb8EL7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K4xZmgHp; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7066c9741fbso1756843b3a.2;
-        Mon, 24 Jun 2024 06:30:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719235807; x=1719840607; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=oXltrUw5MuEEzoCZGOtO9g4puazQVQqF/y+GWYY9aCI=;
-        b=K4xZmgHpwazKNXgybR3NDhcdVM6qkTuScL4D33Fhk6nWefsR5Ji09Ekv8hmcxglr/l
-         axecfbvyT9hEXqcREEIpclUPyCF4cpdykTpJSV/jaJgXcO3R/VHHolKz7WLudGFi8516
-         PeIbRUCsxwwfahhZR2lddZMbk75O0T5Gw1hrm/PArm14h7t43yppbHumvY+avcISc3ep
-         XKN6Kt3VPjEPbtMDHmat+ytVcGVySQvll4X7NqZpHgjOPxRsJnqvZ2aQcErgt0mBYIt9
-         /quFao/qRQCwEPaYZjmw8wPjb15fGIEw3wELlnDKhR7rG1iplG5jeUdDmnNt2McNQiSk
-         JUVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719235807; x=1719840607;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oXltrUw5MuEEzoCZGOtO9g4puazQVQqF/y+GWYY9aCI=;
-        b=rWS1Lh3P7w4OMoBY7Vk4f1RSM7d8wla9+qmTkFi335iqs1ING6xFDXRN8gWFDmOLsP
-         1ogx/H9A75jpnNvgXr/6IbB/v6yDvCyZ5x/vmrRztkv43opQZiNYDv9akf4oa/XZGHLF
-         aEJ01PMXg1YPfdQs06wzXom7TXoTmlrFvlkQR5SiunH/66C/Ruwu+eTxjy0u4fhQattS
-         d4DLVqYfFX1lexgIQpPjLN6Fdrh1FdnL3YqHz6pwRwUDPLl1uwH7zCu0xwQGCek/VgEp
-         9iuWOoGI0teW1p45MTuKRcoq0Up3W5HWeaKjHPbrKGKAunNTE9vHv3FfQd4K6gWlptG8
-         y/Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzb2Lum7+E5nvnpmszkZMSBAj/8qKjAqAVkBdUoKeXR3qpF/Ia71bhc259iT38O7K+NXnFgU2sQxCiqa+YgNCbb6cRLBdsYT1eLEisWK5ufP3cdFD+Go4IXV3TfZJgtu3fSBpOhBlJnALBTtplSJKP2jnLSG+bPvfEaIqhmQ/Gkt7E45DI
-X-Gm-Message-State: AOJu0YwsPQFms3bW0rl9YMMJWfEf5IjlH7IgDL8Uk+WdGH5TfnGqVV5k
-	e/RrMwaL2PGg5RAvUoLs1dWByfxUFUJ6k0H1vYF0QbrQ2nCj0ic7
-X-Google-Smtp-Source: AGHT+IE61dZOwYV8byHLse52VH790boyFMhcggAcxjd9FQDnZMeJLlzKLA12J88m2hbL/cwb8WUOhw==
-X-Received: by 2002:a05:6a00:1715:b0:705:9526:3c0d with SMTP id d2e1a72fcca58-706745bed3emr5452507b3a.12.1719235806683;
-        Mon, 24 Jun 2024 06:30:06 -0700 (PDT)
-Received: from fedora.one.one.one.one ([2405:201:6013:c0b2:ea4b:30e0:4e3a:ab56])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7066c7fb9casm4123931b3a.94.2024.06.24.06.30.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 06:30:06 -0700 (PDT)
-From: Animesh Agarwal <animeshagarwal28@gmail.com>
-To: 
-Cc: animeshagarwal28@gmail.com,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] ASoC: dt-bindings: realtek,rt5659: Convert to dtschema
-Date: Mon, 24 Jun 2024 18:59:44 +0530
-Message-ID: <20240624132949.124228-1-animeshagarwal28@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719235818; c=relaxed/simple;
+	bh=HccfLGLs+2vAsVTdnhMXqed4ZyzI1sE4rwYvGiswFz0=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=G9FJX2ZePEjSzHbI6/rPoAhGFITSCIoBjA2qFTyhxhOV2FHJgmjASkkzkSUhd0b9WTa1zOIj+WLzMA93/w6TdNRyC3O/6SsW43usneXapTMekSYwMbb5ACrns6evbtj4T7VVu+qCz7a3sGR29rUDAnQiAmXPAGMRjedHmLmXryI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=Fl17fSLT; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=ZMMmxbunf9noBGfoICHMb7iWweKWqqDXgeAEpAAQEoc=; b=Fl17fSLTHbjN96GEtB+/joCKBa
+	tDhZfM6AAJlbovMNDQhaBLH5QKmja+3kOINAmRUWn2ShLXtptr7gJhY0ogLKLrZN8Dx38iOsupt7H
+	ew3tgsvhmDUbXbJqqek4kENIlHLLiaDvhw5XSYdwX6qpNfZpf/yP5JgkFEjTT4Ehv81lKJKtbLUL6
+	01bMLZrteKKfqTmzSiBcZE/ZS82rKH+yn0uDV0JAeYgerqAoLfmMzjrti7ZfBFSNym2/sQTarrQBU
+	P3tz/Bb2zVTlCA7+1RyVMo7sf91ef0aaoF+DdEF72+6kMXJUCuuWuxs09q72ME6BnnPIstSAe1i1b
+	Cb7OEh2g==;
+Received: from sslproxy02.your-server.de ([78.47.166.47])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1sLjlt-000Nfq-3P; Mon, 24 Jun 2024 15:30:13 +0200
+Received: from [178.197.249.38] (helo=linux.home)
+	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1sLjlt-0000YL-0v;
+	Mon, 24 Jun 2024 15:30:12 +0200
+Subject: Re: [RFC net-next 1/9] skb: introduce gro_disabled bit
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Yan Zhai <yan@cloudflare.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, kernel-team <kernel-team@cloudflare.com>
+References: <cover.1718919473.git.yan@cloudflare.com>
+ <b8c183a24285c2ab30c51622f4f9eff8f7a4752f.1718919473.git.yan@cloudflare.com>
+ <66756ed3f2192_2e64f929491@willemb.c.googlers.com.notmuch>
+ <44ac34f6-c78e-16dd-14da-15d729fecb5b@iogearbox.net>
+ <CAO3-PbrhnvmdYmQubNsTX3gX917o=Q+MBWTBkxUd=YWt4dNGuA@mail.gmail.com>
+ <e6553be1-4eaa-e90a-17f8-dece2bb95e7b@iogearbox.net>
+ <CAO3-PboYruuLrF7D_rMiuG-AnWdR4BhsgP+MhVmOm-f3MzJFyQ@mail.gmail.com>
+ <6677db8b2ef78_33522729492@willemb.c.googlers.com.notmuch>
+From: Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <caecbff8-ffc4-976b-4516-dba41848ef30@iogearbox.net>
+Date: Mon, 24 Jun 2024 15:30:12 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <6677db8b2ef78_33522729492@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27316/Mon Jun 24 10:26:29 2024)
 
-Convert the RT5659/RT5658 audio CODEC bindings to DT schema.
+On 6/23/24 10:23 AM, Willem de Bruijn wrote:
+> Yan Zhai wrote:
+>> On Fri, Jun 21, 2024 at 11:41 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
+>>> On 6/21/24 6:00 PM, Yan Zhai wrote:
+>>>> On Fri, Jun 21, 2024 at 8:13 AM Daniel Borkmann <daniel@iogearbox.net> wrote:
+>>>>> On 6/21/24 2:15 PM, Willem de Bruijn wrote:
+>>>>>> Yan Zhai wrote:
+>>>>>>> Software GRO is currently controlled by a single switch, i.e.
+>>>>>>>
+>>>>>>>      ethtool -K dev gro on|off
+>>>>>>>
+>>>>>>> However, this is not always desired. When GRO is enabled, even if the
+>>>>>>> kernel cannot GRO certain traffic, it has to run through the GRO receive
+>>>>>>> handlers with no benefit.
+>>>>>>>
+>>>>>>> There are also scenarios that turning off GRO is a requirement. For
+>>>>>>> example, our production environment has a scenario that a TC egress hook
+>>>>>>> may add multiple encapsulation headers to forwarded skbs for load
+>>>>>>> balancing and isolation purpose. The encapsulation is implemented via
+>>>>>>> BPF. But the problem arises then: there is no way to properly offload a
+>>>>>>> double-encapsulated packet, since skb only has network_header and
+>>>>>>> inner_network_header to track one layer of encapsulation, but not two.
+>>>>>>> On the other hand, not all the traffic through this device needs double
+>>>>>>> encapsulation. But we have to turn off GRO completely for any ingress
+>>>>>>> device as a result.
+>>>>>>>
+>>>>>>> Introduce a bit on skb so that GRO engine can be notified to skip GRO on
+>>>>>>> this skb, rather than having to be 0-or-1 for all traffic.
+>>>>>>>
+>>>>>>> Signed-off-by: Yan Zhai <yan@cloudflare.com>
+>>>>>>> ---
+>>>>>>>     include/linux/netdevice.h |  9 +++++++--
+>>>>>>>     include/linux/skbuff.h    | 10 ++++++++++
+>>>>>>>     net/Kconfig               | 10 ++++++++++
+>>>>>>>     net/core/gro.c            |  2 +-
+>>>>>>>     net/core/gro_cells.c      |  2 +-
+>>>>>>>     net/core/skbuff.c         |  4 ++++
+>>>>>>>     6 files changed, 33 insertions(+), 4 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+>>>>>>> index c83b390191d4..2ca0870b1221 100644
+>>>>>>> --- a/include/linux/netdevice.h
+>>>>>>> +++ b/include/linux/netdevice.h
+>>>>>>> @@ -2415,11 +2415,16 @@ struct net_device {
+>>>>>>>        ((dev)->devlink_port = (port));                         \
+>>>>>>>     })
+>>>>>>>
+>>>>>>> -static inline bool netif_elide_gro(const struct net_device *dev)
+>>>>>>> +static inline bool netif_elide_gro(const struct sk_buff *skb)
+>>>>>>>     {
+>>>>>>> -    if (!(dev->features & NETIF_F_GRO) || dev->xdp_prog)
+>>>>>>> +    if (!(skb->dev->features & NETIF_F_GRO) || skb->dev->xdp_prog)
+>>>>>>>                return true;
+>>>>>>> +
+>>>>>>> +#ifdef CONFIG_SKB_GRO_CONTROL
+>>>>>>> +    return skb->gro_disabled;
+>>>>>>> +#else
+>>>>>>>        return false;
+>>>>>>> +#endif
+>>>>>>
+>>>>>> Yet more branches in the hot path.
+>>>>>>
+>>>>>> Compile time configurability does not help, as that will be
+>>>>>> enabled by distros.
+>>>>>>
+>>>>>> For a fairly niche use case. Where functionality of GRO already
+>>>>>> works. So just a performance for a very rare case at the cost of a
+>>>>>> regression in the common case. A small regression perhaps, but death
+>>>>>> by a thousand cuts.
+>>>>>
+>>>>> Mentioning it here b/c it perhaps fits in this context, longer time ago
+>>>>> there was the idea mentioned to have BPF operating as GRO engine which
+>>>>> might also help to reduce attack surface by only having to handle packets
+>>>>> of interest for the concrete production use case. Perhaps here meta data
+>>>>> buffer could be used to pass a notification from XDP to exit early w/o
+>>>>> aggregation.
+>>>>
+>>>> Metadata is in fact one of our interests as well. We discussed using
+>>>> metadata instead of a skb bit to carry this information internally.
+>>>> Since metadata is opaque atm so it seems the only option is to have a
+>>>> GRO control hook before napi_gro_receive, and let BPF decide
+>>>> netif_receive_skb or napi_gro_receive (echo what Paolo said). With BPF
+>>>> it could indeed be more flexible, but the cons is that it could be
+>>>> even more slower than taking a bit on skb. I am actually open to
+>>>> either approach, as long as it gives us more control on when to enable
+>>>> GRO :)
+>>>
+>>> Oh wait, one thing that just came to mind.. have you tried u64 per-CPU
+>>> counter map in XDP? For packets which should not be GRO-aggregated you
+>>> add count++ into the meta data area, and this forces GRO to not aggregate
+>>> since meta data that needs to be transported to tc BPF layer mismatches
+>>> (and therefore the contract/intent is that tc BPF needs to see the different
+>>> meta data passed to it).
+>>
+>> We did this before accidentally (we put a timestamp for debugging
+>> purposes in metadata) and this actually caused about 20% of OoO for
+>> TCP in production: all PSH packets are reordered. GRO does not fire
+>> the packet to the upper layer when a diff in metadata is found for a
+>> non-PSH packet, instead it is queued as a “new flow” on the GRO list
+>> and waits for flushing. When a PSH packet arrives, its semantic is to
+>> flush this packet immediately and thus precedes earlier packets of the
+>> same flow.
+> 
+> Is that a bug in XDP metadata handling for GRO?
+> 
+> Mismatching metadata should not be taken as separate flows, but as a
+> flush condition.
 
-Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
+Definitely a bug as it should flush. If noone is faster I can add it to my
+backlog todo to fix it, but might probably take a week before I get to it.
 
----
-Changes in v2:
-  - Dropped redundant descriptions from reg, interrupts and clocks.
-  - Added default to gpio properties.
-  - Dropped sound-name-prefix: true
----
- .../bindings/sound/realtek,rt5659.yaml        | 129 ++++++++++++++++++
- .../devicetree/bindings/sound/rt5659.txt      |  89 ------------
- 2 files changed, 129 insertions(+), 89 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
- delete mode 100644 Documentation/devicetree/bindings/sound/rt5659.txt
-
-diff --git a/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml b/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
-new file mode 100644
-index 000000000000..1100ffd9a7c0
---- /dev/null
-+++ b/Documentation/devicetree/bindings/sound/realtek,rt5659.yaml
-@@ -0,0 +1,129 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/sound/realtek,rt5659.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: RT5659/RT5658 audio CODEC
-+
-+maintainers:
-+  - Animesh Agarwal <animeshagarwal28@gmail.com>
-+
-+description: |
-+  This device supports I2C only.
-+
-+  Pins on the device (for linking into audio routes) for RT5659/RT5658:
-+    * DMIC L1
-+    * DMIC R1
-+    * DMIC L2
-+    * DMIC R2
-+    * IN1P
-+    * IN1N
-+    * IN2P
-+    * IN2N
-+    * IN3P
-+    * IN3N
-+    * IN4P
-+    * IN4N
-+    * HPOL
-+    * HPOR
-+    * SPOL
-+    * SPOR
-+    * LOUTL
-+    * LOUTR
-+    * MONOOUT
-+    * PDML
-+    * PDMR
-+    * SPDIF
-+
-+allOf:
-+  - $ref: dai-common.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - realtek,rt5659
-+      - realtek,rt5658
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: mclk
-+
-+  realtek,dmic1-data-pin:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum:
-+      - 0 # dmic1 is not used
-+      - 1 # using IN2N pin as dmic1 data pin
-+      - 2 # using GPIO5 pin as dmic1 data pin
-+      - 3 # using GPIO9 pin as dmic1 data pin
-+      - 4 # using GPIO11 pin as dmic1 data pin
-+    description: Specify which pin to be used as DMIC1 data pin.
-+    default: 0
-+
-+  realtek,dmic2-data-pin:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum:
-+      - 0 # dmic2 is not used
-+      - 1 # using IN2P pin as dmic2 data pin
-+      - 2 # using GPIO6 pin as dmic2 data pin
-+      - 3 # using GPIO10 pin as dmic2 data pin
-+      - 4 # using GPIO12 pin as dmic2 data pin
-+    description: Specify which pin to be used as DMIC2 data pin.
-+    default: 0
-+
-+  realtek,jd-src:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    enum:
-+      - 0 # No JD is used
-+      - 1 # using JD3 as JD source
-+      - 2 # JD source for Intel HDA header
-+    description: Specify which JD source be used.
-+    default: 0
-+
-+  realtek,ldo1-en-gpios:
-+    maxItems: 1
-+    description: CODEC's LDO1_EN pin.
-+
-+  realtek,reset-gpios:
-+    maxItems: 1
-+    description: CODEC's RESET pin.
-+
-+  ports:
-+    $ref: /schemas/graph.yaml#/properties/ports
-+
-+  port:
-+    $ref: audio-graph-port.yaml#
-+    unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/gpio/gpio.h>
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        codec@1b {
-+            compatible = "realtek,rt5659";
-+            reg = <0x1b>;
-+            interrupt-parent = <&gpio>;
-+            interrupts = <3 IRQ_TYPE_LEVEL_HIGH>;
-+            realtek,ldo1-en-gpios = <&gpio 3 GPIO_ACTIVE_HIGH>;
-+        };
-+    };
-diff --git a/Documentation/devicetree/bindings/sound/rt5659.txt b/Documentation/devicetree/bindings/sound/rt5659.txt
-deleted file mode 100644
-index 8f3f62c0226a..000000000000
---- a/Documentation/devicetree/bindings/sound/rt5659.txt
-+++ /dev/null
-@@ -1,89 +0,0 @@
--RT5659/RT5658 audio CODEC
--
--This device supports I2C only.
--
--Required properties:
--
--- compatible : One of "realtek,rt5659" or "realtek,rt5658".
--
--- reg : The I2C address of the device.
--
--- interrupts : The CODEC's interrupt output.
--
--Optional properties:
--
--- clocks: The phandle of the master clock to the CODEC
--- clock-names: Should be "mclk"
--
--- realtek,in1-differential
--- realtek,in3-differential
--- realtek,in4-differential
--  Boolean. Indicate MIC1/3/4 input are differential, rather than single-ended.
--
--- realtek,dmic1-data-pin
--  0: dmic1 is not used
--  1: using IN2N pin as dmic1 data pin
--  2: using GPIO5 pin as dmic1 data pin
--  3: using GPIO9 pin as dmic1 data pin
--  4: using GPIO11 pin as dmic1 data pin
--
--- realtek,dmic2-data-pin
--  0: dmic2 is not used
--  1: using IN2P pin as dmic2 data pin
--  2: using GPIO6 pin as dmic2 data pin
--  3: using GPIO10 pin as dmic2 data pin
--  4: using GPIO12 pin as dmic2 data pin
--
--- realtek,jd-src
--  0: No JD is used
--  1: using JD3 as JD source
--  2: JD source for Intel HDA header
--
--- realtek,ldo1-en-gpios : The GPIO that controls the CODEC's LDO1_EN pin.
--- realtek,reset-gpios : The GPIO that controls the CODEC's RESET pin.
--
--- sound-name-prefix: Please refer to dai-common.yaml
--
--- ports: A Codec may have a single or multiple I2S interfaces. These
--  interfaces on Codec side can be described under 'ports' or 'port'.
--  When the SoC or host device is connected to multiple interfaces of
--  the Codec, the connectivity can be described using 'ports' property.
--  If a single interface is used, then 'port' can be used. The usage
--  depends on the platform or board design.
--  Please refer to Documentation/devicetree/bindings/graph.txt
--
--Pins on the device (for linking into audio routes) for RT5659/RT5658:
--
--  * DMIC L1
--  * DMIC R1
--  * DMIC L2
--  * DMIC R2
--  * IN1P
--  * IN1N
--  * IN2P
--  * IN2N
--  * IN3P
--  * IN3N
--  * IN4P
--  * IN4N
--  * HPOL
--  * HPOR
--  * SPOL
--  * SPOR
--  * LOUTL
--  * LOUTR
--  * MONOOUT
--  * PDML
--  * PDMR
--  * SPDIF
--
--Example:
--
--rt5659 {
--	compatible = "realtek,rt5659";
--	reg = <0x1b>;
--	interrupt-parent = <&gpio>;
--	interrupts = <TEGRA_GPIO(W, 3) IRQ_TYPE_LEVEL_HIGH>;
--	realtek,ldo1-en-gpios =
--		<&gpio TEGRA_GPIO(V, 3) GPIO_ACTIVE_HIGH>;
--};
--- 
-2.45.2
-
+Thanks,
+Daniel
 
