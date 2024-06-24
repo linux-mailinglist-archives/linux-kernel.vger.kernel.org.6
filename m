@@ -1,204 +1,127 @@
-Return-Path: <linux-kernel+bounces-227260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F01B914E3C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:18:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB361914E4F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32F37281B71
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:18:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC16C1C20901
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7699F13B58C;
-	Mon, 24 Jun 2024 13:18:22 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3537013D8A1;
+	Mon, 24 Jun 2024 13:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M2zdx745";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EqOxUKcl"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5005013D88F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15AB513B58C;
+	Mon, 24 Jun 2024 13:19:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719235101; cv=none; b=Ic1S9T8z1L8XUIWk1GFgpXNfVR6k8prLeXuw74EeSXL+HKRQRVF1HgCZjmQ0k/ZKfDpngbIoxCrdw8o2Q6wljySlLgfe0WOcpfZ3qtTGtc/qjh+pnBt3nlJbmpc5iF1fyw69iqEYoK9WDI0VdQSceGgy+sphPKcXOUDDHiyfzgk=
+	t=1719235170; cv=none; b=t1d3MD+9vaBgymzkJYzC+e1L0hAC9pn89eqC8h17mGLfe8qgMkkbJlpw+//2m3JaUCuj62RYrkTDSR5vmBGXKAQFhTjGx+jsGtG4jFHENdJdJYug+rw1o0dm4X1oiHaR9AbvE6XhuzOzqL6S0Vciyek/V+vSnlERLWmL7WM4JvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719235101; c=relaxed/simple;
-	bh=4NmMqpXaheoJ2eP+Xne1NUKxoz3niDAQu5BZtNNH2gU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=fN8dRRv3SvoIczuUt5TXyn10ZmDm0oqUsBGwnsnfO2HmJLJJivmb3o1crYTBCseuwv56cvc9fBHubx0D0zWq9bhxM4/kDxEzpgi5lb/bXXqWTMTFdixR5QUlq32yHhg+4hQIKQL+EQRM2L0eQTzJGohpRU1vzGzBvkGdnyqAues=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7eb7cf84c6cso543063739f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:18:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719235099; x=1719839899;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=KUgcIyJliLtvlzg+fJF2Y49udiLnpDYPMvh9V/dPt3c=;
-        b=Vbt0Nz2gPoYRWbEpgHqBhT+zqIKN9ttXr8AtqDyPY7AArkqSeDYjXrRMpjfbZ7b/f+
-         Gyyx6bTim/OwcmJQFm6UPao57Tqh7+ky0NA03INhsrLS8a2uTMCx2M3Q2gnxkkuZVxtt
-         hEhxqw6irmq574vHl+nYWLnTKxMGp+71ZRdnlQcH94ep7am5QjSgNc9pspgmA4CNdCKH
-         7u+dr9sG4LJnmpkz7mBjSKmxiNilgvtTLIuEPt4rdj2NgavRd2mopaG4cQ6SnDl54skv
-         48ITXudnEeOmhd+WK2chUqDz49CTfwM4aZJBBhQKgpGxcRuTssuLpcNIX4NN6b151APa
-         yZIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKn4Sm2vuYGl4xD/yXPHVvIIuORJEu2CgufAEWhQx+mKHWcgOYv3/9hzDSNosuVrL36vWHLdbFj7m5lpCTLJ6TIoLpCV+oOv3ca5DP
-X-Gm-Message-State: AOJu0Yw/MvaTNqnCFE0djWyPi/WnXLBihaEsXG/Um5JVLRjZKg5lqBZu
-	tcXF7UiKVcBOhGGzMrMV9nIXo4cVgZlXvJ8DcyAIl3YXra+nYqBcPc+BliBQep1oynU+7V85oMN
-	iyTM03+dfPhNoai9Xonv/JzpRgkmI03zdon6xToV+turX72pL4kOXSr8=
-X-Google-Smtp-Source: AGHT+IG5jLSdDjyx8Re1F9TQ7Hravqbt2Fa9IJZVZaQE6ZebSOjuqXGqH7cAU2Qnvg1LpnMIVoJI6GgXiazIJVlOzjxJeNO3zgXB
+	s=arc-20240116; t=1719235170; c=relaxed/simple;
+	bh=Jo7FN8PZZfU3wYqvnE4Sde5fBlaTUIlJtITuXHbLVMI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ph2ak+q/xdmb66o0/PM8AYajhZvNkvLURfYbKlXdMDhYrzUnwMPpHWfLq/QGJtrH4lnabvII8dyOaT1sdPYKQ5+E9DJEwUqw0y1TOc/F8mLK+/t052OCL6fD8p8nPM1YukcD28BRtOZPVnwoDAAeeRSLfHWiTjO1QDzV2oscGXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M2zdx745; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EqOxUKcl; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719235164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sN+LBb66eM8b0W3aoSlv/AXVA+hQdwSwIferK2dDOUE=;
+	b=M2zdx745yT9xzMJKUkHwvgZIpZEQ7Ivblrav1JJmkg0WkEwwv3KFA5ujlyxicR/Ikn5IX6
+	l1kTLKN/RxUErfxqds4tcpcOaLsgGAHC7yWsEKal0oL8SVPA4Jcnt15qHcaOpyinkZs9nP
+	3vKHjxAUWf3BF6ve6jhCByt2/1A+dFn2GaCdeJV6UmJjMxR6N38DDR2IhR5ahdJfF5KOz+
+	jr9EMx7sm3mLTg+EVmZFeZPE/K0J7NiwaCulXT5rshCC9ve4+P4Vw327kuw2I9ZM7mCOsD
+	VqAOzX4Na5sRwzsQT27Vfe56ihSm/YHodjtiYrYDFd83T/4y6RFRi5vzBvIsog==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719235164;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sN+LBb66eM8b0W3aoSlv/AXVA+hQdwSwIferK2dDOUE=;
+	b=EqOxUKclsl840xyR1Zx+ZDj2r+Volbz8vJgiqTQJSEwAweHSWqHWHIZJp2Y00Zvk6xToLU
+	1VuheovmJWWHefBg==
+To: Marcello Sylvester Bauer <marcello.bauer@9elements.com>,
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, x86@kernel.org,
+ syzbot+c793a7eca38803212c61@syzkaller.appspotmail.com,
+ syzbot+5127feb52165f8ab165b@syzkaller.appspotmail.com,
+ oe-lkp@lists.linux.dev, bp@alien8.de, dave.hansen@linux.intel.com,
+ syzkaller-bugs@googlegroups.com
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Uwe
+ Kleine-Koenig <u.kleine-koenig@pengutronix.de>, gregkh@linuxfoundation.org,
+ hpa@zytor.com, mingo@redhat.com, stern@rowland.harvard.edu, Alan Stern
+ <stern@rowland.harvard.edu>, Matthias Stoeckl
+ <matthias.stoeckl@secunet.com>
+Subject: Re: Needed help: dummy_hcd: Fix stalls/inconsistent_lock_state due
+ to hrtimer migration
+In-Reply-To: <0eee9b08bf1f1889b3455099a68f9eed7f71c50e.camel@9elements.com>
+References: <000000000000f8112e0618995e6e@google.com>
+ <46cbe0a914065917ea1024636e864a1e2c982145.camel@9elements.com>
+ <0eee9b08bf1f1889b3455099a68f9eed7f71c50e.camel@9elements.com>
+Date: Mon, 24 Jun 2024 15:19:23 +0200
+Message-ID: <87y16u8omc.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1605:b0:7f3:a80e:8cec with SMTP id
- ca18e2360f4ac-7f3a80e8da1mr11642639f.0.1719235099486; Mon, 24 Jun 2024
- 06:18:19 -0700 (PDT)
-Date: Mon, 24 Jun 2024 06:18:19 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000063fd99061ba29d87@google.com>
-Subject: [syzbot] [nfs?] INFO: task hung in nfsd_nl_version_get_doit
-From: syzbot <syzbot+41bc60511c2884783c27@syzkaller.appspotmail.com>
-To: Dai.Ngo@oracle.com, chuck.lever@oracle.com, jlayton@kernel.org, 
-	kolga@netapp.com, linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	neilb@suse.de, syzkaller-bugs@googlegroups.com, tom@talpey.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 
-Hello,
+On Mon, Jun 24 2024 at 12:25, Marcello Sylvester Bauer wrote:
+> I need some help evaluating and fixing a regression due to migration to
+> hztimer scheduler in dummy_hcd.
+>
+> About two months ago I was investigating poor performance for the mass
+> storage gadget (g_mass_storage) due to slow timings in the loopback hcd
+> driver (dummy_hcd). One of the reasons was that dummy_hcd used the old
+> timer API, where the interval is tied to the internal kernel timer
+> frequency. So I submitted the patch to migrate to the hrtimer API[^1],
+> which was quickly approved.
+>
+> Since then, syzbot[^2][^3] and intel's kernel test bot[^4] are
+> detecting rcu stalls/inconsistent_lock_state due to my patch, and I'm
+> trying to figure out how to fix it.
+>
+> Both bots indicate that the problem is around the usb_hcd_giveback_urb
+> function call and it's locking mechanism. 
+>
+> My patch just replaces the timer API calls without changing anything
+> else in the code, so I'm not sure if my patch is actually the root
+> cause here. And following the instructions to reproduce syzbot
+> regressions[^5] even with the provided assets (bzImage, disk image,
+> repro.c) it is quite inconsistent to cause this stall. I have also
+> tried to follow Alex Stern's advice, but have not been able to cause a
+> stall manually.
+>
+> So I don't know what to do next. Can someone with more expertise in
+> timers look into this?
+> Any hints or help in investigating or fixing this regression would be
+> greatly appreciated.
 
-syzbot found the following issue on:
+The main difference between the timer list timer and the hrtimer is that
+the timer list timer callback runs in soft interrupt context, but the
+hrtimer callback runs in hard interrupt context.
 
-HEAD commit:    2ccbdf43d5e7 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17a8c3de980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=c79815c08cc14227
-dashboard link: https://syzkaller.appspot.com/bug?extid=41bc60511c2884783c27
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+I really don't know whether it matters, but you can make the hrtimer
+expire in soft interrupt context with HRTIMER_MODE_REL_SOFT instead of
+HRTIMER_MODE_REL. If you have a reproducer then that should tell you
+quickly.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Thanks,
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9fb20954c51e/disk-2ccbdf43.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/06d78b3cf960/vmlinux-2ccbdf43.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/15e5b0a8df77/bzImage-2ccbdf43.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+41bc60511c2884783c27@syzkaller.appspotmail.com
-
-INFO: task syz-executor.2:26515 blocked for more than 144 seconds.
-      Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:syz-executor.2  state:D stack:26328 pid:26515 tgid:26509 ppid:26207  flags:0x00000006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5408 [inline]
- __schedule+0x1796/0x49d0 kernel/sched/core.c:6745
- __schedule_loop kernel/sched/core.c:6822 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6837
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6894
- __mutex_lock_common kernel/locking/mutex.c:684 [inline]
- __mutex_lock+0x6a4/0xd70 kernel/locking/mutex.c:752
- nfsd_nl_version_get_doit+0x181/0x780 fs/nfsd/nfsctl.c:1892
- genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
- genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
- genl_rcv_msg+0xb14/0xec0 net/netlink/genetlink.c:1210
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2564
- genl_rcv+0x28/0x40 net/netlink/genetlink.c:1219
- netlink_unicast_kernel net/netlink/af_netlink.c:1335 [inline]
- netlink_unicast+0x7ea/0x980 net/netlink/af_netlink.c:1361
- netlink_sendmsg+0x8db/0xcb0 net/netlink/af_netlink.c:1905
- sock_sendmsg_nosec net/socket.c:730 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:745
- ____sys_sendmsg+0x525/0x7d0 net/socket.c:2585
- ___sys_sendmsg net/socket.c:2639 [inline]
- __sys_sendmsg+0x2b0/0x3a0 net/socket.c:2668
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7e21a7cea9
-RSP: 002b:00007f7e228320c8 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00007f7e21bb4120 RCX: 00007f7e21a7cea9
-RDX: 0000000000000000 RSI: 0000000020000180 RDI: 000000000000000c
-RBP: 00007f7e21aebff4 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 000000000000006e R14: 00007f7e21bb4120 R15: 00007ffcc0bd6078
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by pool_workqueue_/3:
-1 lock held by khungtaskd/30:
- #0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #0: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: debug_show_all_locks+0x55/0x2a0 kernel/locking/lockdep.c:6614
-2 locks held by kworker/u8:6/1098:
-2 locks held by getty/4840:
- #0: ffff88802abac0a0 (&tty->ldisc_sem){++++}-{0:0}, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: ffffc90002f0e2f0 (&ldata->atomic_read_lock){+.+.}-{3:3}, at: n_tty_read+0x6b5/0x1e10 drivers/tty/n_tty.c:2201
-2 locks held by syz-fuzzer/5091:
-3 locks held by kworker/0:0/15508:
- #0: ffff888015080948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3206 [inline]
- #0: ffff888015080948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x90a/0x1830 kernel/workqueue.c:3312
- #1: ffffc9000429fd00 (free_ipc_work){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3207 [inline]
- #1: ffffc9000429fd00 (free_ipc_work){+.+.}-{0:0}, at: process_scheduled_works+0x945/0x1830 kernel/workqueue.c:3312
- #2: ffffffff8e339378 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:323 [inline]
- #2: ffffffff8e339378 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x451/0x830 kernel/rcu/tree_exp.h:939
-2 locks held by kworker/u8:14/18935:
-2 locks held by syz-executor.0/25819:
- #0: ffffffff8f63b9d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
- #1: ffffffff8e600748 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_listener_set_doit+0x12d/0x1a90 fs/nfsd/nfsctl.c:1966
-2 locks held by syz-executor.2/26515:
- #0: ffffffff8f63b9d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
- #1: ffffffff8e600748 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_version_get_doit+0x181/0x780 fs/nfsd/nfsctl.c:1892
-2 locks held by syz-executor.3/26579:
- #0: ffffffff8f63b9d0 (cb_lock){++++}-{3:3}, at: genl_rcv+0x19/0x40 net/netlink/genetlink.c:1218
- #1: ffffffff8e600748 (nfsd_mutex){+.+.}-{3:3}, at: nfsd_nl_version_get_doit+0x181/0x780 fs/nfsd/nfsctl.c:1892
-1 lock held by syz-executor.2/28062:
- #0: ffffffff8e339378 (rcu_state.exp_mutex){+.+.}-{3:3}, at: exp_funnel_lock kernel/rcu/tree_exp.h:291 [inline]
- #0: ffffffff8e339378 (rcu_state.exp_mutex){+.+.}-{3:3}, at: synchronize_rcu_expedited+0x381/0x830 kernel/rcu/tree_exp.h:939
-1 lock held by syz-executor.3/28067:
-
-=============================================
-
-NMI backtrace for cpu 1
-CPU: 1 PID: 30 Comm: khungtaskd Not tainted 6.10.0-rc3-syzkaller-00044-g2ccbdf43d5e7 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
- watchdog+0xfde/0x1020 kernel/hung_task.c:379
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Sending NMI from CPU 1 to CPUs 0:
-NMI backtrace for cpu 0
-CPU: 0 PID: 28056 Comm: syz-executor.0 Not tainted 6.10.0-rc3-syzkaller
+        tglx
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
