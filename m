@@ -1,173 +1,138 @@
-Return-Path: <linux-kernel+bounces-227828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AB379156EA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:07:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D51C9156E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:06:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA1F71F257B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:07:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9D1F1F255E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6642F19F461;
-	Mon, 24 Jun 2024 19:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409EC1A00EF;
+	Mon, 24 Jun 2024 19:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Iabx3xQs"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M7ruaRUJ"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95438143C42
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 19:07:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0892419EEC8;
+	Mon, 24 Jun 2024 19:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719256023; cv=none; b=UJM5XuN0rsdb+EEAMkMrj213n5rbPQkrSFOKvsmSbG1qhgczgPXX5V/+Ftl1K6CwhIm7DgeTmZDyy7xdoPvZZgpfIS9nuT8QysW9BxMu1H5mcHw3DCZl/LuiO5eHxpPRhKogrfOJTyQ6WTNHr4Qsj25DWFvrbEbBQ/WR8cT8ArY=
+	t=1719256002; cv=none; b=BhSW9RCLYQC0ajfYKrMYh2USsA7fvmR9+iFDavWQ5KCFHNtH1tiQagzEkC8o0hvvUKIAodMy0gpCm01VioKSSIeFm2zi9sQweOcWjGAlk3HINJdsVwlvq9rKKZBHpkWsWtltVYWsBlN1Px5f1G3fJZfvPpYLXCGXOoMxgmfWdY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719256023; c=relaxed/simple;
-	bh=W6G+Q1tg7TlhM7SoVS9zsTvhMIzdziIrIDzgHW7QOWY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Pg1NdNjNnK4fLeJh06f4J4ozjc1i16Kk/tr2mslytpFx9xR7dVFg3HKPJJFXGRETFN4jb/V6hpuII6Itw0NRL4fsQgZJmXxQrJypPdMRuX26fDSN8gBqZo07vPijc8iW+N8DjAW+mM/ot1hNIyNsbBIE1AEwN90VnRFLqPkj2tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Iabx3xQs; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353723.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OIwsJJ003611;
-	Mon, 24 Jun 2024 19:06:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=J
-	QEkpOQYUKFNBRFaVU1A31CflhoQEmOK65Jsv4CqjkE=; b=Iabx3xQsZFmUQp3Qe
-	9Ty2HWQ6xi/0n0T9LxaIfVha4VO4UicTX3UWlwAVj68E/I3brha5uVQ4iaqefOeV
-	vJHmDSfw1feIB5/1wv+Y0gLT1Oz06TnWxWw0a1yUAk0eVJkLNZWvRunT2wvvmPNi
-	hN5+InKY55kozaAxl83gdlUqYcdQgi8OVRvQ4ckFh/unSjYBMSI7KB9/P6GECkj4
-	p4Kn7WsUDAjCwXNjwcAWIGKdvurTdN51yLINSqCZVttFcMbjlZthvV+AdEF8KuPc
-	VjJ/+FcgSaV98eGg1njcquFhZ3HNPEJp9eehJdO4LrGeiMkXhPEeyBidu9KkPyz+
-	g5yRA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyehy80n3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 19:06:42 +0000 (GMT)
-Received: from m0353723.ppops.net (m0353723.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45OJ6gZq015773;
-	Mon, 24 Jun 2024 19:06:42 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyehy80n1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 19:06:42 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45OFq5og019533;
-	Mon, 24 Jun 2024 19:06:41 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yx9xptdq0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 19:06:41 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45OJ6clc14680686
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Jun 2024 19:06:40 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1BF9858043;
-	Mon, 24 Jun 2024 19:06:38 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0760558059;
-	Mon, 24 Jun 2024 19:06:35 +0000 (GMT)
-Received: from [9.124.215.163] (unknown [9.124.215.163])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 24 Jun 2024 19:06:34 +0000 (GMT)
-Message-ID: <985e10dd-230b-4325-856f-1229361205d2@linux.ibm.com>
-Date: Tue, 25 Jun 2024 00:36:33 +0530
+	s=arc-20240116; t=1719256002; c=relaxed/simple;
+	bh=98K3I6JpoWZlFoBxPNgSj6G7nD056PuEl8Mzo6chLdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=amrNHP1tvp8BZP7IUyubaf9nQgoEqCAVAfFTZyYay908OkNd1J1QvZ2nHmoU+f0sXgO0Xi2HntUr6ZEKAbKB21Ycj7HG01mO1ra7Tm/B1Zw2rz4BJhX+pwxdSeMTJKfAYiGJNs51IlpGwGhdWH+HwF2flej5ITEOtFgqe/TPzvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M7ruaRUJ; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f480624d0fso36580075ad.1;
+        Mon, 24 Jun 2024 12:06:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719256000; x=1719860800; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oyqW3OxhXyEo8374isZdsKRGiqDGGV7DUgBfzoWrQ+A=;
+        b=M7ruaRUJ0TYWy2AUswZw9wXxaknGWInMIXRcHgVaz8clXLKnaPyrnh7D7tux0picTz
+         r3c7W3gL1hx9YhZw2JTo5zv0+BdQUN5oalQXoGHAKztwZ9Sl1u4SxlSntFK2fpV/rvbB
+         27fphHZa0Ssd6Gkw9OrZL1s8DPSb5cEgcwO1uxQXOoau1AOg62Wkz6dDQIGMrK97igBI
+         9XdRGjEe5bCHluc7rlGtut5EYqtkE7t0N28JLHbHBSCblrpm4auwqbnYk4nrSzwxVYhk
+         TAs0tAk8H23EdrBTbbPEw1y3rbhpAd1GtSVON0mfeMIXC9FZBkhQwmY1Q6inKQ61HIVI
+         CO6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719256000; x=1719860800;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oyqW3OxhXyEo8374isZdsKRGiqDGGV7DUgBfzoWrQ+A=;
+        b=n/sSXSEEFRMByVeR13phNpg0DqS4zpoLMyvuuXcAvNKKhSfCi4RrtOTAVFfk3au5lA
+         fjWM914C5V/njoL5VVHgT/UOz8R88m8ICymrPqswEowZmb5W6/o5ZypnXgL6J5We/WbL
+         WVhdK76MgQD5Ut3zwK8PTXPIyeHYu2ieiazT5i1mYVGeZB2xKz1XaQGKps65HA7NEDrA
+         ilqQ+FKbMdLt+F5mVscmYMKfKptg9aSyl0394xpCTl/9LBZ4mowD1BvEOsHj/2uPGdqs
+         vKplj43ej4PaYAe5dd4gCSIsrX+R/NiS4bUgMyqCVA7Z8of6XFFASTnMDozTnDv0R24L
+         r/sQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWwkw+5Re7edzrisLLb5tMET7J/v5NDHrSA/7Oa5Lw6wc/Zi1sAF3yw/mg9yrIXWkG45HRMZ+cnj7vL5YsB0vJrWljSsPZrAA4W/mmPSsfNqfzR3ggp0wfNOAm1W/Y6tSw
+X-Gm-Message-State: AOJu0YzykA84uzbwRIf/AY72nBtsXf6uBGkWkJmzNAxbCsNKrr/OTX30
+	PXgIqtFWxseGD9dFsCJRAu1crMhHXiDP/SYpm7RjnQkKeSX6DXHq
+X-Google-Smtp-Source: AGHT+IGKJ271VSNPC62Dp395/dIAHhklrFReOlcggoz7FxFOJ+zfobtEQEO5LKP2wkfZzm+TkYZTkg==
+X-Received: by 2002:a17:902:db06:b0:1f6:7f45:4d37 with SMTP id d9443c01a7336-1fa24187520mr48373015ad.66.1719256000120;
+        Mon, 24 Jun 2024 12:06:40 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb5e0a3esm66355225ad.215.2024.06.24.12.06.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 12:06:39 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 24 Jun 2024 09:06:38 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 18/39] sched_ext: Allow BPF schedulers to disallow
+ specific tasks from joining SCHED_EXT
+Message-ID: <ZnnDvlt1WmYm8LWN@slm.duckdns.org>
+References: <20240501151312.635565-1-tj@kernel.org>
+ <20240501151312.635565-19-tj@kernel.org>
+ <20240624124053.GN31592@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] powerpc/topology: Check if a core is online
-To: "Nysal Jan K.A." <nysal@linux.ibm.com>
-Cc: Tyrel Datwyler <tyreld@linux.ibm.com>,
-        Michal Suchanek
- <msuchanek@suse.de>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Laurent Dufour
- <ldufour@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Gleixner <tglx@linutronix.de>
-References: <20240612185046.1826891-1-nysal@linux.ibm.com>
- <20240612185046.1826891-3-nysal@linux.ibm.com>
-Content-Language: en-US
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-In-Reply-To: <20240612185046.1826891-3-nysal@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 8CnmPtPf1ckobgKt-cowbh8L9dENGwb7
-X-Proofpoint-ORIG-GUID: lXK-XR7efh7iYDJc7JT_EX6dUskqOI4D
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_15,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 phishscore=0 bulkscore=0 mlxscore=0
- impostorscore=0 adultscore=0 clxscore=1011 mlxlogscore=971 suspectscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406240150
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624124053.GN31592@noisy.programming.kicks-ass.net>
 
+Hello, Peter.
 
-
-On 6/13/24 12:20 AM, Nysal Jan K.A. wrote:
-> From: "Nysal Jan K.A" <nysal@linux.ibm.com>
+On Mon, Jun 24, 2024 at 02:40:53PM +0200, Peter Zijlstra wrote:
+> On Wed, May 01, 2024 at 05:09:53AM -1000, Tejun Heo wrote:
+> > BPF schedulers might not want to schedule certain tasks - e.g. kernel
+> > threads. This patch adds p->scx.disallow which can be set by BPF schedulers
+> > in such cases. The field can be changed anytime and setting it in
+> > ops.prep_enable() guarantees that the task can never be scheduled by
+> > sched_ext.
 > 
-> topology_is_core_online() checks if the core a CPU belongs to
-> is online. The core is online if at least one of the sibling
-> CPUs is online. The first CPU of an online core is also online
-> in the common case, so this should be fairly quick.
+> Why ?!?!
 > 
-> Signed-off-by: Nysal Jan K.A <nysal@linux.ibm.com>
-> ---
->  arch/powerpc/include/asm/topology.h | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
-> 
-> diff --git a/arch/powerpc/include/asm/topology.h b/arch/powerpc/include/asm/topology.h
-> index f4e6f2dd04b7..16bacfe8c7a2 100644
-> --- a/arch/powerpc/include/asm/topology.h
-> +++ b/arch/powerpc/include/asm/topology.h
-> @@ -145,6 +145,7 @@ static inline int cpu_to_coregroup_id(int cpu)
->  
->  #ifdef CONFIG_HOTPLUG_SMT
->  #include <linux/cpu_smt.h>
-> +#include <linux/cpumask.h>
+> By leaving kernel threads fair, and fair sitting above the BPF thing,
+> it is not dissimilar to promoting them to FIFO. They will instantly
+> preempt the BPF thing and keep running for as long as they need. The
+> only real difference between this and actual FIFO is the behaviour on
+> contention.
 
-Is this header file needed? 
-I don't see any reference to cpumask related code. 
+Yes, from sched_ext's POV, in partial mode, CFS isn't all that different
+from FIFO. Whenever there are tasks to run in CFS, CPUs are taken away.
+Right now, partial mode can be useful for leaving a part of system on CFS
+(e.g. in a cpuset partitioned system), when the scheduler is narrowly
+focused and doesn't cover everything necessary (e.g. EAS).
 
->  #include <asm/cputhreads.h>
->  
->  static inline bool topology_is_primary_thread(unsigned int cpu)
-> @@ -156,6 +157,18 @@ static inline bool topology_smt_thread_allowed(unsigned int cpu)
->  {
->  	return cpu_thread_in_core(cpu) < cpu_smt_num_threads;
->  }
-> +
+> This seems like a very bad thing to have, and your 'changelog' has no
+> justification what so ever.
 
-This is defined only if CONFIG_HOTPLUG_SMT is true. But this could be 
-generic function which might be used to check if a core is offline in other cases. 
-Would that make sense to keep it out of CONFIG_HOTPLUG_SMT ?
+This is a bit of duplicate interface in that in partial mode sched_ext can
+already be opted in by setting per-thread sched class. However, some use
+cases wanted this so that the BPF scheduler has the final say over who can
+be on it rather than the userspace. It's a convenience feature for some use
+cases.
 
-> +#define topology_is_core_online topology_is_core_online
-> +static inline bool topology_is_core_online(unsigned int cpu)
-> +{
-> +	int i, first_cpu = cpu_first_thread_sibling(cpu);
-> +
-> +	for (i = first_cpu; i < first_cpu + threads_per_core; ++i) {
-> +		if (cpu_online(i))
-> +			return true;
-> +	}
-> +	return false;
-> +}
->  #endif
->  
->  #endif /* __KERNEL__ */
+Thanks.
+
+-- 
+tejun
 
