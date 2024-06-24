@@ -1,51 +1,50 @@
-Return-Path: <linux-kernel+bounces-227258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479F5914E33
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:17:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD8BD914E34
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:17:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E8161C2274F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:17:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B7642822A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A2F313D62F;
-	Mon, 24 Jun 2024 13:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B05A13D61B;
+	Mon, 24 Jun 2024 13:17:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="0UVNZPOC"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Jtxjl/lz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9955161FF5;
-	Mon, 24 Jun 2024 13:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758E113A876;
+	Mon, 24 Jun 2024 13:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719235018; cv=none; b=iFszls0j/OfkjqVK/aflpHP20A1uvnhBpgex0AwU8dURsnYJARKgtTtSZlPmYzD1DuUbWxb+qKqPGYRVfJcCm6o16iUc7u6TUgNssuf300QpbbzntTqmDN9SRLliokmMpJBaPimaorRmeGRX6SA4A2yEKNOU9UrwwhglysjYgSA=
+	t=1719235067; cv=none; b=qqUUDl91EC8AEbTBNIzvSV7GFgKmyw8N7MVnVc5s6KfXATHgUjr8bsyOAAEcQ3CBk/iObORgBAUhNGNvib3w3WL6IB38XwNSgE1h0xAOi/eVuiSlvVFqvyUjEGtbm/9lZcyFtVx2d7GU7xL7mShPy5IefyS0QAfKmeNJ5SOdeB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719235018; c=relaxed/simple;
-	bh=j3tSMrNeaGr/GDA1b1OfEDf0WMzQpAsWSoGQg7nQuP8=;
+	s=arc-20240116; t=1719235067; c=relaxed/simple;
+	bh=x0qE1AbTE2E3Y2ugPMh1v8bbkWrZyWYuZzqqNaawNKY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hIjqszlsMiOGtbUulrORcwZafCDC9CkBlqUGvGYTszSIU4MdRHSlCGSUMpw03n1Sph7zP+LrnL4hmYDvLhkCb27CphLVblmtMA9EwXrGjHl0EzIkcSW0hCAiNPQvXySWPsHDM+RDv3IZg15qoQVvB2sENd/me2kUW2yWfrfXyvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=0UVNZPOC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD099C2BBFC;
-	Mon, 24 Jun 2024 13:16:57 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=qaapJIucjMx7ZJrqaW/lxiXmyqGBiSKzouP0Z/q6E+69EYcXKVzMp8vUOrFU+QchMyJUdTYS/z4mJRt2rsPVI5IpN5YadtE/UrkYeTIkvKxi+VM3DmCSivr9ycVTuWdmd62kqNy/9MgCcp1yxXqttOTcGEPAa9Rj3Ii6AwFV/nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Jtxjl/lz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B53F6C32781;
+	Mon, 24 Jun 2024 13:17:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1719235018;
-	bh=j3tSMrNeaGr/GDA1b1OfEDf0WMzQpAsWSoGQg7nQuP8=;
+	s=korg; t=1719235066;
+	bh=x0qE1AbTE2E3Y2ugPMh1v8bbkWrZyWYuZzqqNaawNKY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=0UVNZPOCgNL3Z2mOu+qR47HGLZKP0+08/YM6rEFZ3lEL0EEFSSXSiOmO1UXek/4/F
-	 qhC+gyxQn9Sr56P1iJ153yCcOyJSx9MRilZ5mN7bHYbzt0Psr0pG2bwhu7vV2+6qyj
-	 FAphyBwKfczxSMMotk9p0+Zm4Kq/SoAt9fDW/XpU=
-Date: Mon, 24 Jun 2024 15:16:55 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Shiva Kiran K <shiva_kr@riseup.net>
-Cc: Roshan Khatri <topofeverest8848@gmail.com>,
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: fbtft: Remove unnecessary parentheses
-Message-ID: <2024062443-udder-spotted-cc0d@gregkh>
-References: <20240617142746.51885-2-shiva_kr@riseup.net>
+	b=Jtxjl/lzbjh2ajHo7DZeSnk5oGRUzKwen5oZ7MHu7GoBj41yYpkL5/s8jieKSyRO3
+	 tvHlY3bjlDgyFFDWjv24w+IBc4jq8RKsY90o+glvK0Bbltgn7dfVL3jBd6cHDa7gmN
+	 QCQ3mRyayi81qP6HC9d402qkSbAtii8eguP+EWq8=
+Date: Mon, 24 Jun 2024 15:17:43 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Abhinav Jain <jain.abhinav177@gmail.com>
+Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
+Subject: Re: [PATCH] staging: rtl8723bs: Align address to 4-byte boundary
+Message-ID: <2024062408-stash-gluten-ef19@gregkh>
+References: <20240614224256.43131-1-jain.abhinav177@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,100 +53,45 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240617142746.51885-2-shiva_kr@riseup.net>
+In-Reply-To: <20240614224256.43131-1-jain.abhinav177@gmail.com>
 
-On Mon, Jun 17, 2024 at 07:57:47PM +0530, Shiva Kiran K wrote:
-> Remove unnecessary parentheses in `if` statements.
-> Reported by checkpatch.pl
+On Fri, Jun 14, 2024 at 10:42:56PM +0000, Abhinav Jain wrote:
+> Add address alignment in sdio_local_read, _sdio_local_read &
+> sdio_local_write functions as per the TODO.
+
+How was this tested?
+
 > 
-> Signed-off-by: Shiva Kiran K <shiva_kr@riseup.net>
+> Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
 > ---
->  drivers/staging/fbtft/fb_ili9320.c | 2 +-
->  drivers/staging/fbtft/fb_ra8875.c  | 2 +-
->  drivers/staging/fbtft/fbtft-bus.c  | 2 +-
->  drivers/staging/fbtft/fbtft-core.c | 2 +-
->  4 files changed, 4 insertions(+), 4 deletions(-)
+>  drivers/staging/rtl8723bs/hal/sdio_ops.c | 12 +++---------
+>  1 file changed, 3 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/staging/fbtft/fb_ili9320.c b/drivers/staging/fbtft/fb_ili9320.c
-> index 0be7c2d51..409b54cc5 100644
-> --- a/drivers/staging/fbtft/fb_ili9320.c
-> +++ b/drivers/staging/fbtft/fb_ili9320.c
-> @@ -37,7 +37,7 @@ static int init_display(struct fbtft_par *par)
->  	devcode = read_devicecode(par);
->  	fbtft_par_dbg(DEBUG_INIT_DISPLAY, par, "Device code: 0x%04X\n",
->  		      devcode);
-> -	if ((devcode != 0x0000) && (devcode != 0x9320))
-> +	if (devcode != 0x0000 && devcode != 0x9320)
->  		dev_warn(par->info->device,
->  			 "Unrecognized Device code: 0x%04X (expected 0x9320)\n",
->  			devcode);
-> diff --git a/drivers/staging/fbtft/fb_ra8875.c b/drivers/staging/fbtft/fb_ra8875.c
-> index 398bdbf53..ce305a0be 100644
-> --- a/drivers/staging/fbtft/fb_ra8875.c
-> +++ b/drivers/staging/fbtft/fb_ra8875.c
-> @@ -50,7 +50,7 @@ static int init_display(struct fbtft_par *par)
+> diff --git a/drivers/staging/rtl8723bs/hal/sdio_ops.c b/drivers/staging/rtl8723bs/hal/sdio_ops.c
+> index 107f427ee4aa..caee2d2043b3 100644
+> --- a/drivers/staging/rtl8723bs/hal/sdio_ops.c
+> +++ b/drivers/staging/rtl8723bs/hal/sdio_ops.c
+> @@ -478,9 +478,6 @@ void sdio_set_intf_ops(struct adapter *adapter, struct _io_ops *ops)
+>  	ops->_write_port = &sdio_write_port;
+>  }
 >  
->  	par->fbtftops.reset(par);
+> -/*
+> - * Todo: align address to 4 bytes.
+> - */
+>  static s32 _sdio_local_read(
+>  	struct adapter *adapter,
+>  	u32 addr,
+> @@ -494,6 +491,7 @@ static s32 _sdio_local_read(
+>  	u8 *tmpbuf;
+>  	u32 n;
 >  
-> -	if ((par->info->var.xres == 320) && (par->info->var.yres == 240)) {
-> +	if (par->info->var.xres == 320 && par->info->var.yres == 240) {
->  		/* PLL clock frequency */
->  		write_reg(par, 0x88, 0x0A);
->  		write_reg(par, 0x89, 0x02);
-> diff --git a/drivers/staging/fbtft/fbtft-bus.c b/drivers/staging/fbtft/fbtft-bus.c
-> index 3d422bc11..ab903c938 100644
-> --- a/drivers/staging/fbtft/fbtft-bus.c
-> +++ b/drivers/staging/fbtft/fbtft-bus.c
-> @@ -85,7 +85,7 @@ void fbtft_write_reg8_bus9(struct fbtft_par *par, int len, ...)
->  	if (len <= 0)
->  		return;
->  
-> -	if (par->spi && (par->spi->bits_per_word == 8)) {
-> +	if (par->spi && par->spi->bits_per_word == 8) {
->  		/* we're emulating 9-bit, pad start of buffer with no-ops
->  		 * (assuming here that zero is a no-op)
->  		 */
-> diff --git a/drivers/staging/fbtft/fbtft-core.c b/drivers/staging/fbtft/fbtft-core.c
-> index c8d52c63d..64babfe3a 100644
-> --- a/drivers/staging/fbtft/fbtft-core.c
-> +++ b/drivers/staging/fbtft/fbtft-core.c
-> @@ -666,7 +666,7 @@ struct fb_info *fbtft_framebuffer_alloc(struct fbtft_display *display,
->  		txbuflen = 0;
->  
->  #ifdef __LITTLE_ENDIAN
-> -	if ((!txbuflen) && (bpp > 8))
-> +	if (!txbuflen && bpp > 8)
->  		txbuflen = PAGE_SIZE; /* need buffer for byteswapping */
->  #endif
->  
-> -- 
-> 2.45.2
-> 
+> +	addr = addr & ~3;
 
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You sent a patch that has been sent multiple times in the past few
-  days, and is identical to ones that has been recently rejected.
-  Please always look at the mailing list traffic to determine if you are
-  duplicating other people's work.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
+Are you sure you are allowed to do this?  Why?  And a comment about what
+you are doing, and why it is required to do so, is needed for this to be
+acceptable.
 
 thanks,
 
-greg k-h's patch email bot
+greg k-h
 
