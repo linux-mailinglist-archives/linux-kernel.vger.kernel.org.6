@@ -1,240 +1,180 @@
-Return-Path: <linux-kernel+bounces-227532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC989152D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:49:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CE769152E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:51:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C276D1F22DEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:49:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFDB91C212CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF3619D08F;
-	Mon, 24 Jun 2024 15:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6FF319D889;
+	Mon, 24 Jun 2024 15:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JOTrLQVn"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ym6V7YxI"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39E8154276;
-	Mon, 24 Jun 2024 15:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7516019D881
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719244174; cv=none; b=c4yNBuCTD8VRAjhIYtg7zw0qrMMus6Ypjxzld9pZxiH0XaUnvWDCFYeDzOf++oFTh/HXcWwVgYez407z6LXeL5IOxxibWWWxct8hHLko60NzGYVn/QX+JQnlC0wDsjgDQjEsICheGk/Ywesf+EPbE3SBrHxArJjgfrORd2+td6g=
+	t=1719244256; cv=none; b=K5jJQR2abm7ZNYGoRUz3MNqv31/5G2KotTJ28a5PzMThHk1mu+q1V49cFmUmPtkNiCfkvQRr8ybdVeRxuFqyJBmH/0eqYKsnAtiA3D6OoX8IqYdsHKsDBY3DcpVgDk5sCyqG+Odz7OhVrqP2oP4ULcSRF2bzRW3cREB7EDFD4PE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719244174; c=relaxed/simple;
-	bh=a0UJSp2q0uve7X5kQB5gD7q6GeLF7iCBBBnuERdm2ag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gHsIFZ5X9Wjc83KLpIyDoW3I7GMCzo/LN7ZCypgC3Y6eZZK8bc28u/SEGKNSXW3uSLEP7GcnfIVD2uXWkOXbflzYbD8IBtLtPbPaRLtgFFXiVTfmxjdPo6l1hQY7BHJNY/6dShgD7/8LQTLI92DJwWxkn9AC2Qn+F6/rC9fdbkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JOTrLQVn; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4217d451f69so38392955e9.0;
-        Mon, 24 Jun 2024 08:49:30 -0700 (PDT)
+	s=arc-20240116; t=1719244256; c=relaxed/simple;
+	bh=cUb4t91fkOJFqq3qtAzQsp0q+PY2ZaA0247Ld/sOeek=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tpWTQGUqSntEOCOKXOpPSm5WcEbuhUW8SCuKRoRNk4aWpfRZFRaDFEzBy/ZuHds+ot3gKYikCWde7HYcVQ9YMwpW4mMYtSt0BvUShAFsSKxuaaQyQMZ76v9Ni5WfHRJY5Z4yzhp1GYZK4FWXrI2S//AreGcMbbBPv1hheHGBRZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ym6V7YxI; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f991bb9fb8so506505ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:50:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719244169; x=1719848969; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z9kgIYkCaEISawG3z3/PKDsfUfni6CT+YfmQGd+f5vk=;
-        b=JOTrLQVnFw7k0SpgoGmuc1vH77sP0y7e35A9qfordX0HHTIGvcGtKJgHzO28CWrAO6
-         VNFGh3Dvk7TtXMjXlR8Fbuk2OkKftRALHqg7WoGRsptUDeJd4wTBcCPrZ04EV8NwA4fS
-         1sCKJblDU+dlvO4w9/XzjQ6SIJLhh1b4xFhBtVO8PhzMqLP8VX9fNr/rnlS39xs3cYGy
-         cWCx56MAdM+dfpT1PNHmlnk07GVe6Lvedjcn0mq4BPVz4h8qwW0iDSovU735oJ7gVOtU
-         zltrRPEGFlF0iNHzqEfXOl+fvIbINa5KaY+vFTa7hzk2DYVT0YmNlfTtDSZwfiwlD4Qe
-         djLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719244169; x=1719848969;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1719244255; x=1719849055; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Z9kgIYkCaEISawG3z3/PKDsfUfni6CT+YfmQGd+f5vk=;
-        b=c0ZLKxtpytt+wX77YrK/ovrZBLBHYlv2cttptJBw69UFyItBlfkF69dUZOjKwNd4TX
-         1v16NGsKxW2dya00U/Fxhw50nP/xeN5GKwRF5hex38NyXuIdcOsyfhvaTDMIAhNvh7YH
-         6ha5h5NUBjejZLd3SYg4tIeLgodHevM7UFxmVcgMJE1nxgA2r1EbROoGlbqhXTV5GIuD
-         86pfQ1wuWAIIfTYwQXFl6UqeZtT1JgeqtC7cg5eelM3yb6tgwUBQro7XkaRyrqMurvvT
-         TuJLZK8LDs8xFAQp3FsSahehhwo3y8c49JClvZJfR0IjIUwF1RcGCat1v7leLA60qGeY
-         kMuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmmiuvgM6dyDA3yEKT+PZ1H9UWQguSolWg7MvJ5kuC5rB9eU0RAlJkEK1ugO+GuUSDEWRbnL6CGWZEgtoxv6OzKR8zIhD8QVyAxzdENh6lp5oUByNaKcgzT0mTWfKYGGOmc3hPegq6+C2jeBXFqfSdXAujeaAwR/amWJOAIlXL4nRr
-X-Gm-Message-State: AOJu0YwrgNQwWdNgJTSus4CnxoWZwVTrH8BNNs4ynC5lvDjNbhX9v9uX
-	HAftVl4DXVdmwAdhOmNgZMBOktctT8QtiwcDzuqPDMHw1bocirtn
-X-Google-Smtp-Source: AGHT+IF2O0vTFTR2Jv5inHaCYhFCJMD7FD4fHIJxFEqeF2HsybT87gdE0Y0w/WzRojs+ABU4W/YZag==
-X-Received: by 2002:a05:600c:548b:b0:421:f04d:ebd2 with SMTP id 5b1f17b1804b1-4248cc349afmr33870795e9.22.1719244169043;
-        Mon, 24 Jun 2024 08:49:29 -0700 (PDT)
-Received: from eichest-laptop ([2a02:168:af72:0:b172:75e:e42d:1a1d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0be80dsm177295645e9.19.2024.06.24.08.49.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 08:49:28 -0700 (PDT)
-Date: Mon, 24 Jun 2024 17:49:26 +0200
-From: Stefan Eichenberger <eichest@gmail.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: kernel@pengutronix.de, andi.shyti@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com, jic23@kernel.org,
-	lars@metafoo.de, nuno.sa@analog.com,
-	andriy.shevchenko@linux.intel.com, marcelo.schmitt@analog.com,
-	gnstark@salutedevices.com, francesco.dolcini@toradex.com,
-	wsa+renesas@sang-engineering.com, andrew@lunn.ch,
-	linux-i2c@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-iio@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [RFC PATCH] i2c: imx: avoid rescheduling when waiting for bus
- not busy
-Message-ID: <ZnmVhlTK4JmzXdyk@eichest-laptop>
-References: <20240531142437.74831-1-eichest@gmail.com>
- <ZnWaxtfgmLk3SplP@eichest-laptop>
- <ZnZa7x3kaYrzFkiV@pengutronix.de>
+        bh=akLaKPvhZ/iM4RU794u9yXTJLAPlEaTaPPmBTznkmMc=;
+        b=ym6V7YxIut1k7dsotnjWR3/T5sHzowR4mpDVnyHdcahZJGyNV5JITesOJbYmlINY42
+         mU+h4hRJc5BSyVB98OgfGCsOK7ct0cI1FU2GfW8GoDQF8GNinjXTRbc2JK+WYdCIbRnf
+         8kAR+fHtOLmegIKXFGc6Ea3x+N2OjjXW3jCWzJmllBXOwPz0chKcp+gsw7VDj1tsqUEX
+         LLz3hBmlYB1yLJkHODrOlN5YcR7q53VmMcGeqBMJFLF1b24FEpVmz26npOlOhfVypIbF
+         CtWStoKH1rhaF2cK5xZBmlFEEqp/+zOumfhhO1t4wrIi5Tspa6eW7dp/QcemOuxKUDq+
+         Fidw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719244255; x=1719849055;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=akLaKPvhZ/iM4RU794u9yXTJLAPlEaTaPPmBTznkmMc=;
+        b=B0YhtsW49eQNFtmKSqshj7y/MPqDhyP4N5p5b8MaTcN3ep3ZhjR0BfFvl2XNrkO6XA
+         IFrvRVX4XDc17OzJ3ZSh4ZFiF9Nns+6U5yZpLr0oeLIJzt4ugWGV2XNrxA903GdubMI3
+         AM5fMxD3VoLETv1SYLW9e+N++nHv1G3T6PmIyzVPNec7PNMOGwpAgotcw5kzwvfrDjnX
+         /k4p0/y3HpbWVFbwInL8JZX1Hkr310c29yKz/n4bxNzqPD6Ku6YdUIbpdxjAxM1yokYQ
+         3UR6rMQbQc7V3Ua/3AIBjlyeJfgZeuUlxeAZophZ8vYFmbnFTT2fBPB5yNrjD8DCGEu8
+         MaMA==
+X-Forwarded-Encrypted: i=1; AJvYcCXRPJTpq89Mt1VNXiVLMgMUK73GjomDNLi1a2IfRPLfGD1EH6vUh9mY2fRjG39nUWiAAiuwBVHXkUiMkfWK52ZeyMvsqu0EPiRqxdqc
+X-Gm-Message-State: AOJu0YyPWBxQqVthvNDd6hqIC7Z14RZqTl2bAfeix7CBMfrG2qrNV2ri
+	I/OF4is9F5k45UhV15xT/6Rp1NBweUJtOyT0maQhAq+heSqBZHvyGHvlVzSpOkHobvCbQm0ZSEi
+	4fn3exvWMDqqAsdo88YyvUsENZkKcyiV+fgP+
+X-Google-Smtp-Source: AGHT+IG+cIjYT+zWx6sVIyxvgnhbvK6mrOxgqxUWkierVX93yNdOjFGi7JUR2V+DrG39+IsLgB6g8fLO14r2YL4vhPc=
+X-Received: by 2002:a17:902:9307:b0:1f7:3764:1e16 with SMTP id
+ d9443c01a7336-1fa0a224b55mr5292565ad.18.1719244254293; Mon, 24 Jun 2024
+ 08:50:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnZa7x3kaYrzFkiV@pengutronix.de>
+References: <20240618221347.106627-1-yutingtseng@google.com>
+ <20240622031600.3762859-5-yutingtseng@google.com> <CAH5fLgjR7iLHaWGy0NAiKnOUKro7_fBLoqFFzkdjn926jUdyAA@mail.gmail.com>
+In-Reply-To: <CAH5fLgjR7iLHaWGy0NAiKnOUKro7_fBLoqFFzkdjn926jUdyAA@mail.gmail.com>
+From: Yu-Ting Tseng <yutingtseng@google.com>
+Date: Mon, 24 Jun 2024 08:50:43 -0700
+Message-ID: <CAN5Drs0Gw6=xYVi0Naxm+A86mqckG4xjbEuvO9+UbAYHoEqYCw@mail.gmail.com>
+Subject: Re: [PATCH v2] binder: frozen notification
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: cmllamas@google.com, tkjos@google.com, gregkh@linuxfoundation.org, 
+	arve@android.com, maco@android.com, joel@joelfernandes.org, 
+	brauner@kernel.org, surenb@google.com, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Oleksij,
+On Mon, Jun 24, 2024 at 7:25=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> On Sat, Jun 22, 2024 at 5:22=E2=80=AFAM Yu-Ting Tseng <yutingtseng@google=
+.com> wrote:
+> >
+> > Frozen processes present a significant challenge in binder transactions=
+.
+> > When a process is frozen, it cannot, by design, accept and/or respond t=
+o
+> > binder transactions. As a result, the sender needs to adjust its
+> > behavior, such as postponing transactions until the peer process
+> > unfreezes. However, there is currently no way to subscribe to these
+> > state change events, making it impossible to implement frozen-aware
+> > behaviors efficiently.
+> >
+> > Introduce a binder API for subscribing to frozen state change events.
+> > This allows programs to react to changes in peer process state,
+> > mitigating issues related to binder transactions sent to frozen
+> > processes.
+> >
+> > Implementation details:
+> > For a given binder_ref, the state of frozen notification can be one of
+> > the followings:
+> > 1. Userspace doesn't want a notification. binder_ref->freeze is null.
+> > 2. Userspace wants a notification but none is in flight.
+> >    list_empty(&binder_ref->freeze->work.entry) =3D true
+> > 3. A notification is in flight and waiting to be read by userspace.
+> >    binder_ref_freeze.sent is false.
+> > 4. A notification was read by userspace and kernel is waiting for an ac=
+k.
+> >    binder_ref_freeze.sent is true.
+> >
+> > When a notification is in flight, new state change events are coalesced=
+ into
+> > the existing binder_ref_freeze struct. If userspace hasn't picked up th=
+e
+> > notification yet, the driver simply rewrites the state. Otherwise, the
+> > notification is flagged as requiring a resend, which will be performed
+> > once userspace acks the original notification that's inflight.
+> >
+> > See https://android-review.googlesource.com/c/platform/frameworks/nativ=
+e/+/3070045
+> > for how userspace is going to use this feature.
+> >
+> > Signed-off-by: Yu-Ting Tseng <yutingtseng@google.com>
+>
+> [...]
+>
+> > +               /*
+> > +                * There is already a freeze notification. Take it over=
+ and rewrite
+> > +                * the work type. If it was already sent, flag it for r=
+e-sending;
+> > +                * Otherwise it's pending and will be sent soon.
+> > +                */
+> > +               freeze->work.type =3D BINDER_WORK_CLEAR_DEATH_NOTIFICAT=
+ION;
+>
+> I have not done a comprehensive review yet, but this looks wrong.
+[resending as plain text]
 
-On Sat, Jun 22, 2024 at 07:02:39AM +0200, Oleksij Rempel wrote:
-> Hi Stefan,
-> 
-> On Fri, Jun 21, 2024 at 05:22:46PM +0200, Stefan Eichenberger wrote:
-> > Hi Andi, Andrew, Wolfram, Oleksij,
-> > 
-> > After some internal discussion we still have some questions which are
-> > blocking us from solving the issue.
-> > 
-> > On Fri, May 31, 2024 at 04:24:37PM +0200, Stefan Eichenberger wrote:
-> > > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > > 
-> > > On our i.MX8M Mini based module we have an ADS1015 I2C ADC connected to
-> > > the I2C bus. The ADS1015 I2C ADC will timeout after 25ms when the I2C
-> > > bus is idle. The imx i2c driver will call schedule when waiting for the
-> > > bus to become idle after switching to master mode. When the i2c
-> > > controller switches to master mode it pulls SCL and SDA low, if the
-> > > ADS1015 I2C ADC sees this for more than 25 ms without seeing SCL
-> > > clocking, it will timeout and ignore all signals until the next start
-> > > condition occurs (SCL and SDA low). This can occur when the system load
-> > > is high and schedule returns after more than 25 ms.
-> > > 
-> > > This rfc tries to solve the problem by using a udelay for the first 10
-> > > ms before calling schedule. This reduces the chance that we will
-> > > reschedule. However, it is still theoretically possible for the problem
-> > > to occur. To properly solve the problem, we would also need to disable
-> > > interrupts during the transfer.
-> > > 
-> > > After some internal discussion, we see three possible solutions:
-> > > 1. Use udelay as shown in this rfc and also disable the interrupts
-> > >    during the transfer. This would solve the problem but disable the
-> > >    interrupts. Also, we would have to re-enable the interrupts if the
-> > >    timeout is longer than 1ms (TBD).
-> > > 2. We use a retry mechanism in the ti-ads1015 driver. When we see a
-> > >    timeout, we try again.
-> > > 3. We use the suggested solution and accept that there is an edge case
-> > >    where the timeout can happen.
-> > > 
-> > > There may be a better way to do this, which is why this is an RFC.
-> > > 
-> > > Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > > ---
-> > >  drivers/i2c/busses/i2c-imx.c | 14 +++++++++++---
-> > >  1 file changed, 11 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.c
-> > > index 3842e527116b7..179f8367490a5 100644
-> > > --- a/drivers/i2c/busses/i2c-imx.c
-> > > +++ b/drivers/i2c/busses/i2c-imx.c
-> > > @@ -503,10 +503,18 @@ static int i2c_imx_bus_busy(struct imx_i2c_struct *i2c_imx, int for_busy, bool a
-> > >  				"<%s> I2C bus is busy\n", __func__);
-> > >  			return -ETIMEDOUT;
-> > >  		}
-> > > -		if (atomic)
-> > > +		if (atomic) {
-> > >  			udelay(100);
-> > > -		else
-> > > -			schedule();
-> > > +		} else {
-> > > +			/*
-> > > +			 * Avoid rescheduling in the first 10 ms to avoid
-> > > +			 * timeouts for SMBus like devices
-> > > +			 */
-> > > +			if (time_before(jiffies, orig_jiffies + msecs_to_jiffies(10)))
-> > > +				udelay(10);
-> > > +			else
-> > > +				schedule();
-> > > +		}
-> > >  	}
-> > >  
-> > >  	return 0;
-> > > -- 
-> > > 2.40.1
-> > 
-> > If we want to be sure that the ADS1015 I2C ADC will never timeout, we
-> > would have to add a patch to disable preemption during transmission.
-> > This would look like this:
-> > 
-> > @@ -1244,6 +1248,12 @@ static int i2c_imx_xfer_common(struct i2c_adapter *adapter,
-> >  	bool is_lastmsg = false;
-> >  	struct imx_i2c_struct *i2c_imx = i2c_get_adapdata(adapter);
-> >  
-> > +	/* If we are in SMBus mode we need to do the transfer atomically */
-> > +	if (i2c_imx->smbus_mode) {
-> > +		preempt_disable();
-> > +		atomic = true;
-> > +	}
-> > +
-> >  	/* Start I2C transfer */
-> >  	result = i2c_imx_start(i2c_imx, atomic);
-> >  	if (result) {
-> > @@ -1320,6 +1330,9 @@ static int i2c_imx_xfer_common(struct i2c_adapter *adapter,
-> >  	if (i2c_imx->slave)
-> >  		i2c_imx_slave_init(i2c_imx);
-> >  
-> > +	if (i2c_imx->smbus_mode)
-> > +		preempt_enable();
-> > +
-> >  	return (result < 0) ? result : num;
-> >  }
-> > 
-> > However, we are aware that disabling preemption is not a good idea. So
-> > we were discussing how this is normally handled with SMBus devices? Is
-> > it just expected that SMBus devices will timeout in rare cases?
-> > 
-> > For our use case, the problem would be solved if we could get rid of the
-> > schedule call and replace it with a udelay. It seems that the i.MX8M
-> > Mini I2C controller needs a few ms to clear the IBB flag. In the
-> > reference manual, they write:
-> > > I2C bus busy bit. Indicates the status of the bus. NOTE: When I2C is
-> > > enabled (I2C_I2CR[IEN] = 1), it continuously polls the bus data (SDA)
-> > > and clock (SCL) signals to determine a Start or Stop condition. Bus is
-> > > idle. If a Stop signal is detected, IBB is cleared. Bus is busy. When
-> > > Start is detected, IBB is set.
-> > Unfortunately, it is not clear how often they poll. In our tests the
-> > issue disappeard when we used udelay instead of usleep or schedule for
-> > the first 10 ms.
-> 
-> I'm not really happy with this variant. It can be acceptable in some
-> use cases, but may have not pleasant side effects on other. Since this
-> is still valid case, I would prefer to have a UAPI to enable polling
-> mode as optional optimization with a warning that it may affect latency
-> on other corner of the system.
-> 
-> > Since we know we don't have a multi-master configuration, another way
-> > would be to not test for IBB and just start the transfer. We saw that
-> > other drivers use the multi-master device tree property to determine if
-> > multi-master is supported. Here another quote from the reference manual:
-> > > On a multimaster bus system, the busy bus (I2C_I2SR[IBB]) must be
-> > > tested to determine whether the serial bus is free.
-> > We assume this means it is not necessary to test for IBB if we know we
-> > are in a single-master configuration.
-> 
-> I interpret this part of documentation in the same way, so it will be
-> great if you can implement this option.
+Thanks for looking at the change!
 
-Perfect thanks a lot for the feedback. I will try to implement this
-option and run some tests to make sure it will not break anything.
+The code here seems correct to me. Could you please elaborate why this
+looks wrong?
 
-Best regards,
-Stefan
+This part of code gets executed if freeze->work.entry is in a list.
+There are two possibilities:
+1. The freeze work of type BINDER_WORK_FROZEN_BINDER is in the work
+queue, waiting to be picked up by binder_thread_read. Since it hasn't
+been picked up yet, this code rewrites the work type to
+BINDER_WORK_CLEAR_DEATH_NOTIFICATION, effectively canceling the state
+change notification and instead making binder_thread_read send a
+BR_CLEAR_FREEZE_NOTIFICATION_DONE to userspace. The API contract
+allows coalescing of events. I can explicitly mention this case if it
+helps.
+2. The freeze work of type BINDER_WORK_FROZEN_BINDER is in the
+proc->delivered_freeze queue. This means a state change notification
+was just sent to userspace and the kernel is waiting for an ack.
+freeze->sent is true. In this case we set freeze->resend to true. Once
+the kernel receives the ack, it would queue up the work again, whose
+type was already set to BINDER_WORK_CLEAR_DEATH_NOTIFICATION.
+
+Yu-Ting
+
+>
+>
+> Is there any chance that we could have a test in aosp that would have
+> caught this?
+>
+> Alice
 
