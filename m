@@ -1,194 +1,249 @@
-Return-Path: <linux-kernel+bounces-227971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5CEA915928
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:40:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B6391592A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:42:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D170B212D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:40:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8982B1F2431C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:42:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7162F1A0B04;
-	Mon, 24 Jun 2024 21:40:28 +0000 (UTC)
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D98D11A0AFB;
+	Mon, 24 Jun 2024 21:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="uGbZ9HvA"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891E68F6B;
-	Mon, 24 Jun 2024 21:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FF978F6B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 21:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719265227; cv=none; b=aBsoM9RMB+8YcJ1n9DsigaLdfy9GXKV5S2Vl/01bQ0ODn/SPN8l1w+Tr3bz+XAF7cl9qkGu8OapUUBL4VF6MBWc2CekMHoDy3nPFbWyVDm/4tGfVKS8tlZHX6Hr5/AR6HYDhP7FMUrv2+V79tiIqOA8OXTj30aYRT9zNhdMwsAw=
+	t=1719265315; cv=none; b=uTQVqHRzUww6WtfmOu0SHHnFNCEFz62QWGROfD6F6XaXVx+9ECa8su/QKZ6M/xvv1iaCjmMjTFR/l+/PGlYhEvyDw2HUzVR//hRFozumGoQ6wqUNKqcGeQbc8g47e53lzNf7q/nT9W+UCHBJ1VmVU9qdDrQQNJa/xJSuvasBcfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719265227; c=relaxed/simple;
-	bh=92CkypWCKRo21iK/39AGivsX+yFazOH7qt52Zq6Z2Xg=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=d9TQfKnQc86BQ4KLJfD85qKEia3DtMi20hO1rUtwtxLK57vNUQMz+VvyfBrZblYuLtYl+uviAMDQzMK8XBOMf1fDWTeXZdVQpGcxOSKo8oquCAuJ4+LV9jpTJOqfmBJN4PJ3CKdfoiPLIGPWr69vA9UGe4Wqsu7wFbLgkAlGEdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 39D5FC0003;
-	Mon, 24 Jun 2024 21:40:20 +0000 (UTC)
-Message-ID: <a0b35837-375b-4650-9e68-ef4883c0d0c9@ovn.org>
-Date: Mon, 24 Jun 2024 23:40:19 +0200
+	s=arc-20240116; t=1719265315; c=relaxed/simple;
+	bh=INDzkogUr8vsj6gysN5YnrA7Il5jPfEYwvp559Io+80=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oRsMcDYL7i9yiKlbngZijJAXVMPPW41ERfSmy6bPnK49G3fXlHv14x2z/jSDyheRVz64qGqrzIhE5wIWoCNuimOe+MbKeLMtBAb7YAY/4ZodZDqRyNYuwiqJ/uCukRWyDO/7WFEp8gV86EUi7128flk/KzEKO1NyoKbiOG/atqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=uGbZ9HvA; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52cd80e55efso5656640e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719265312; x=1719870112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=INDzkogUr8vsj6gysN5YnrA7Il5jPfEYwvp559Io+80=;
+        b=uGbZ9HvAzjUS6FCl1Beoczf235Z9NlQGhZCqPvgw7x6g/w0RZbhtZOI9cdmxi7WFXw
+         Avw8/hG2AjNr3PUXta5+lg8wBfqw9PgZTf2lOxJdIpCNEEkGYiHw082CYTjWND5/JS3/
+         C4WVTN0iMxNsc6lGi52zp0amGI4sNfDaGjw6OVGQjAvDf+odEuuo6RtkRpMbLgNAY0VU
+         RL6cLdp9xWGtPaJxVag5WLY8ItBTaeksG3dPVi45b3XbaBJ2smnEl9PV7d5qeIfWwNTF
+         1OFgCIJd1bIsLKlyjOfZ1OgsowscxS+6S0ogrzahDDPPR8dla0LRyrDKrhMZGGfrvB/1
+         90sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719265312; x=1719870112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=INDzkogUr8vsj6gysN5YnrA7Il5jPfEYwvp559Io+80=;
+        b=Q26SUHnZJE3mGC8wpxK6GhPGu68FGCUhWGH5Gk/rt3YhpkxJy3QFskw1o7yhdAyuZI
+         cYw2M+LM9Sbh50s8+ccg1lZJPn7QUHd7ENfVlrvqocPFDVXkiPdZ33xHikDEo3LV6+IH
+         zq/T0rSVvY2MYnna/V5yl/LNe+hOre4L6asHI1y7bS/mnvEfCoFYapec9qtYxYPsQqnk
+         sKQ5OqIrua7CKk6/VS8v9U9LL84xgf1g5Z61StZ3vPG50gCAh+zZgFr10Qphx9wP/HQ7
+         h8iowqz7l+mpnrdwqHuAu9s/6ndtQcVmXJaqQt1WB2R4GHKQiUX0YpFXCQ3X8ZiMEoys
+         w3Og==
+X-Forwarded-Encrypted: i=1; AJvYcCXvVForOilQx/+G4zhwl02uTKE3Ed1Kqj3b9Oxg8OtJhKQxXR5QX6oHyrv+bjBCltrjuFYyO54k0Csx3gr+fAz+j9m7j82aNU4JdW9r
+X-Gm-Message-State: AOJu0Yz25AmK/8ld+yJDKr7AWURV+wDe6h7pfbwvjNIFzztXUZ7JTVnh
+	F/9HJTDQCF5HxarED9K7yRv6WRVPHgWzoWu8xdHW2Lc0+bGMjByG17xXOkCqYVlS1C+eyfDu+LQ
+	U/bjEJUcXrpAJhkwZSmLADO1BwV119/bS2AzB
+X-Google-Smtp-Source: AGHT+IH4biSTMKC8IZqq6WCcH755yTV9BaCzTuN71r1TiTY+7lgmnJ215jo2AQXkmTd2z3feJGWR+YBWppOFTzYDEsg=
+X-Received: by 2002:a05:6512:745:b0:52c:8b69:e039 with SMTP id
+ 2adb3069b0e04-52ce182bd0amr3911904e87.4.1719265311700; Mon, 24 Jun 2024
+ 14:41:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: i.maximets@ovn.org, aconole@redhat.com, echaudro@redhat.com,
- horms@kernel.org, dev@openvswitch.org, Yotam Gigi <yotam.gi@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
- Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 04/10] net: psample: allow using rate as
- probability
-To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
-References: <20240619210023.982698-1-amorenoz@redhat.com>
- <20240619210023.982698-5-amorenoz@redhat.com>
-Content-Language: en-US
-From: Ilya Maximets <i.maximets@ovn.org>
-Autocrypt: addr=i.maximets@ovn.org; keydata=
- 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
-In-Reply-To: <20240619210023.982698-5-amorenoz@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: i.maximets@ovn.org
+References: <20240615081257.3945587-1-shakeel.butt@linux.dev>
+ <CAJD7tkbpFu8z1HaUgkaE6bup_fsD39QLPmgNyOnaTrm+hZ_9hA@mail.gmail.com>
+ <tbi7h7lw4gvl2lsobco4s2qq5phln4uilfvpzpqytlwwmerynd@5nrl5odpwcrx>
+ <CAJD7tka-Wa95t29G0EY4xd8TWXkw1q_QNQ-QjzNvqnUQovMtQw@mail.gmail.com>
+ <rbetatcg46uddpde3dw35g4kgzesbtrtyzhg666cqjneucey65@nhcc6i775qte>
+ <CAJD7tkaB+JgP=+Nb2Ecikw024eO7qHo6vkHKL-uf2f135LL4UQ@mail.gmail.com>
+ <ymi5ztypuurvtczjep3spulr7klfqh5y4rwuwu2g4pfgxb7hpw@7htpiuhzwc7n>
+ <CAJD7tkb74XVZx+g_xmdC8saH6AXg1seunNSmkYYNsMKfJfg0Cg@mail.gmail.com> <wlgw7fz4cgwlsnvzufeak26fqfj5ahutnfnbfifgob722il253@k2qxpgdtutmt>
+In-Reply-To: <wlgw7fz4cgwlsnvzufeak26fqfj5ahutnfnbfifgob722il253@k2qxpgdtutmt>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Mon, 24 Jun 2024 14:41:12 -0700
+Message-ID: <CAJD7tkZivAuP+ett0v8PgUZoQ98pbkBnsk9ThLsWX_C=Vcp-cA@mail.gmail.com>
+Subject: Re: [PATCH] memcg: use ratelimited stats flush in the reclaim
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@suse.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, Yu Zhao <yuzhao@google.com>, 
+	Muchun Song <songmuchun@bytedance.com>, Facebook Kernel Team <kernel-team@meta.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/19/24 23:00, Adrian Moreno wrote:
-> Although not explicitly documented in the psample module itself, the
-> definition of PSAMPLE_ATTR_SAMPLE_RATE seems inherited from act_sample.
-> 
-> Quoting tc-sample(8):
-> "RATE of 100 will lead to an average of one sampled packet out of every
-> 100 observed."
-> 
-> With this semantics, the rates that we can express with an unsigned
-> 32-bits number are very unevenly distributed and concentrated towards
-> "sampling few packets".
-> For example, we can express a probability of 2.32E-8% but we
-> cannot express anything between 100% and 50%.
-> 
-> For sampling applications that are capable of sampling a decent
-> amount of packets, this sampling rate semantics is not very useful.
-> 
-> Add a new flag to the uAPI that indicates that the sampling rate is
-> expressed in scaled probability, this is:
-> - 0 is 0% probability, no packets get sampled.
-> - U32_MAX is 100% probability, all packets get sampled.
-> 
-> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> ---
->  include/net/psample.h                 |  3 ++-
->  include/uapi/linux/psample.h          | 10 +++++++++-
->  include/uapi/linux/tc_act/tc_sample.h |  1 +
->  net/psample/psample.c                 |  3 +++
->  4 files changed, 15 insertions(+), 2 deletions(-)
-> 
-> diff --git a/include/net/psample.h b/include/net/psample.h
-> index 2ac71260a546..c52e9ebd88dd 100644
-> --- a/include/net/psample.h
-> +++ b/include/net/psample.h
-> @@ -24,7 +24,8 @@ struct psample_metadata {
->  	u8 out_tc_valid:1,
->  	   out_tc_occ_valid:1,
->  	   latency_valid:1,
-> -	   unused:5;
-> +	   rate_as_probability:1,
-> +	   unused:4;
->  	const u8 *user_cookie;
->  	u32 user_cookie_len;
->  };
-> diff --git a/include/uapi/linux/psample.h b/include/uapi/linux/psample.h
-> index e80637e1d97b..b765f0e81f20 100644
-> --- a/include/uapi/linux/psample.h
-> +++ b/include/uapi/linux/psample.h
-> @@ -8,7 +8,11 @@ enum {
->  	PSAMPLE_ATTR_ORIGSIZE,
->  	PSAMPLE_ATTR_SAMPLE_GROUP,
->  	PSAMPLE_ATTR_GROUP_SEQ,
-> -	PSAMPLE_ATTR_SAMPLE_RATE,
-> +	PSAMPLE_ATTR_SAMPLE_RATE,	/* u32, ratio between observed and
-> +					 * sampled packets or scaled probability
-> +					 * if PSAMPLE_ATTR_SAMPLE_PROBABILITY
-> +					 * is set.
-> +					 */
->  	PSAMPLE_ATTR_DATA,
->  	PSAMPLE_ATTR_GROUP_REFCOUNT,
->  	PSAMPLE_ATTR_TUNNEL,
-> @@ -20,6 +24,10 @@ enum {
->  	PSAMPLE_ATTR_TIMESTAMP,		/* u64, nanoseconds */
->  	PSAMPLE_ATTR_PROTO,		/* u16 */
->  	PSAMPLE_ATTR_USER_COOKIE,	/* binary, user provided data */
-> +	PSAMPLE_ATTR_SAMPLE_PROBABILITY,/* no argument, interpret rate in
-> +					 * PSAMPLE_ATTR_SAMPLE_RATE as a
-> +					 * probability scaled 0 - U32_MAX.
-> +					 */
->  
->  	__PSAMPLE_ATTR_MAX
->  };
-> diff --git a/include/uapi/linux/tc_act/tc_sample.h b/include/uapi/linux/tc_act/tc_sample.h
-> index fee1bcc20793..7ee0735e7b38 100644
-> --- a/include/uapi/linux/tc_act/tc_sample.h
-> +++ b/include/uapi/linux/tc_act/tc_sample.h
-> @@ -18,6 +18,7 @@ enum {
->  	TCA_SAMPLE_TRUNC_SIZE,
->  	TCA_SAMPLE_PSAMPLE_GROUP,
->  	TCA_SAMPLE_PAD,
-> +	TCA_SAMPLE_PROBABILITY,
->  	__TCA_SAMPLE_MAX
->  };
->  #define TCA_SAMPLE_MAX (__TCA_SAMPLE_MAX - 1)
+On Mon, Jun 24, 2024 at 1:01=E2=80=AFPM Shakeel Butt <shakeel.butt@linux.de=
+v> wrote:
+>
+> On Mon, Jun 24, 2024 at 12:06:28PM GMT, Yosry Ahmed wrote:
+> > On Mon, Jun 24, 2024 at 11:59=E2=80=AFAM Shakeel Butt <shakeel.butt@lin=
+ux.dev> wrote:
+> > >
+> > > On Mon, Jun 24, 2024 at 10:15:38AM GMT, Yosry Ahmed wrote:
+> > > > On Mon, Jun 24, 2024 at 10:02=E2=80=AFAM Shakeel Butt <shakeel.butt=
+@linux.dev> wrote:
+> > > > >
+> > > > > On Mon, Jun 24, 2024 at 05:57:51AM GMT, Yosry Ahmed wrote:
+> > > > > > > > and I will explain why below. I know it may be a necessary
+> > > > > > > > evil, but I would like us to make sure there is no other op=
+tion before
+> > > > > > > > going forward with this.
+> > > > > > >
+> > > > > > > Instead of necessary evil, I would call it a pragmatic approa=
+ch i.e.
+> > > > > > > resolve the ongoing pain with good enough solution and work o=
+n long term
+> > > > > > > solution later.
+> > > > > >
+> > > > > > It seems like there are a few ideas for solutions that may addr=
+ess
+> > > > > > longer-term concerns, let's make sure we try those out first be=
+fore we
+> > > > > > fall back to the short-term mitigation.
+> > > > > >
+> > > > >
+> > > > > Why? More specifically why try out other things before this patch=
+? Both
+> > > > > can be done in parallel. This patch has been running in productio=
+n at
+> > > > > Meta for several weeks without issues. Also I don't see how mergi=
+ng this
+> > > > > would impact us on working on long term solutions.
+> > > >
+> > > > The problem is that once this is merged, it will be difficult to
+> > > > change this back to a normal flush once other improvements land. We
+> > > > don't have a test that reproduces the problem that we can use to ma=
+ke
+> > > > sure it's safe to revert this change later, it's only using data fr=
+om
+> > > > prod.
+> > > >
+> > >
+> > > I am pretty sure the work on long term solution would be iterative wh=
+ich
+> > > will involve many reverts and redoing things differently. So, I think=
+ it
+> > > is understandable that we may need to revert or revert the reverts.
+> > >
+> > > > Once this mitigation goes in, I think everyone will be less motivat=
+ed
+> > > > to get more data from prod about whether it's safe to revert the
+> > > > ratelimiting later :)
+> > >
+> > > As I said I don't expect "safe in prod" as a strict requirement for a
+> > > change.
+> >
+> > If everyone agrees that we can experiment with reverting this change
+> > later without having to prove that it is safe, then I think it's fine.
+> > Let's document this in the commit log though, so that whoever tries to
+> > revert this in the future (if any) does not have to re-explain all of
+> > this :)
+>
+> Sure.
+>
+> >
+> > [..]
+> > > > > > >
+> > > > > > > For the cache trim mode, inactive file LRU size is read and t=
+he kernel
+> > > > > > > scales it down based on the reclaim iteration (file >> sc->pr=
+iority) and
+> > > > > > > only checks if it is zero or not. Again precise information i=
+s not
+> > > > > > > needed.
+> > > > > >
+> > > > > > It sounds like it is possible that we enter the cache trim mode=
+ when
+> > > > > > we shouldn't if the stats are stale. Couldn't this lead to
+> > > > > > over-reclaiming file memory?
+> > > > > >
+> > > > >
+> > > > > Can you explain how this over-reclaiming file will happen?
+> > > >
+> > > > In one reclaim iteration, we could flush the stats, read the inacti=
+ve
+> > > > file LRU size, confirm that (file >> sc->priority) > 0 and enter th=
+e
+> > > > cache trim mode, reclaiming file memory only. Let's assume that we
+> > > > reclaimed enough file memory such that the condition (file >>
+> > > > sc->priority) > 0 does not hold anymore.
+> > > >
+> > > > In a subsequent reclaim iteration, the flush could be skipped due t=
+o
+> > > > ratelimiting. Now we will enter the cache trim mode again and recla=
+im
+> > > > file memory only, even though the actual amount of file memory is l=
+ow.
+> > > > This will cause over-reclaiming from file memory and dismissing ano=
+n
+> > > > memory that we should have reclaimed, which means that we will need
+> > > > additional reclaim iterations to actually free memory.
+> > > >
+> > > > I believe this scenario would be possible with ratelimiting, right?
+> > > >
+> > >
+> > > So, the (old_file >> sc->priority) > 0 is true but the (new_file >>
+> > > sc->priority) > is false. In the next iteration, (old_file >>
+> > > (sc->priority-1)) > 0 will still be true but somehow (new_file >>
+> > > (sc->priority-1)) > 0 is false. It can happen if in the previous
+> > > iteration, somehow kernel has reclaimed more than double what it was
+> > > supposed to reclaim or there are concurrent reclaimers. In addition t=
+he
+> > > nr_reclaim is still less than nr_to_reclaim and there is no file
+> > > deactivation request.
+> > >
+> > > Yeah it can happen but a lot of wierd conditions need to happen
+> > > concurrently for this to happen.
+> >
+> > Not necessarily sc->priority-1. Consider two separate sequential
+> > reclaim attempts. At the same priority, the first reclaim attempt
+> > could rightfully enter cache trim mode, while the second one
+> > wrongfully enters cache trim mode due to stale stats, over-reclaim
+> > file memory, and stall longer to actually reclaim the anon memory.
+> >
+>
+> For two different reclaim attempts even more things need to go wrong.
+> Anyways we are talking too much in abstract here and focusing on the
+> corner cases which almost all heuristics have. Unless there is a clear
+> explanation that the corner case probability will be increased, I don't
+> think spending time discussing it is useful.
+>
+> > I am sure such a scenario is not going to be common, but I am also
+> > sure if it happens it will be a huge pain to debug.
+> >
+> > If others agree that this is fine, let's document this with a comment
+> > and in the commit log. I am not sure how common the cache trim mode is
+> > in practice to understand the potential severity of such problems.
+> > There may also be other consequences that I am not aware of.
+>
+> What is your definition of "others" though?
 
-Not a full review yet, but this hunk seems unrelated to the set
-as you're not adding rate_as_probability to act_sample.
+I am just interested to hear more opinions. If others (e.g. people in
+the CC) agree with you that this is the approach we should be taking
+then I won't stand in the way. If others share my concerns, then maybe
+we should not proceed. It seemed like at least Jesper had some
+concerns as well.
 
-I suppose, it was part of the plan at some point, but then 
-
-Best regards, Ilya Maximets.
+If no one cares enough to voice their opinions then I suppose it's up to yo=
+u :)
 
