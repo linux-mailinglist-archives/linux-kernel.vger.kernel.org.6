@@ -1,121 +1,119 @@
-Return-Path: <linux-kernel+bounces-227115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16D9914888
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:24:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D9991488B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:24:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EE581C21C76
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:24:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69E1D1C2146D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8EC139D16;
-	Mon, 24 Jun 2024 11:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 715EA13AA45;
+	Mon, 24 Jun 2024 11:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F0pCHklK"
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Hg7Pa1QZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E3B1386B3
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:24:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5065C13A894
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:24:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719228251; cv=none; b=i2hcOO0HDJun7IwVbSwJEZBVsDyqUEASjuY15DCADTE0aJAyNoZVmLrK/GSrKbbJUNJ/Ilhvupx66bFijERJmbxUAB/jZ3RBTGz+AFIuoBkFPvsQ5JK+jmBksWJXaWuI5MftzPKkY8IdtQ3Pitmy3LjgvhtwvDBQHdTZt2RPBf8=
+	t=1719228255; cv=none; b=Q9DmjTKaZyXKCroHo3wORPX+9h8QWNIGmiSuTShMJ9iWjO0H6R0YYttI4SpogBjHJMjQWtYJpsAyViYtCG7lWTqJfkJQt1tawTRAwjaiQ66BcGg81MVoso34Zg6Jk5pNx2/aA9kY5uQ9Vqm9C51CZu9z9UH5R9TV+uIlmwbpF3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719228251; c=relaxed/simple;
-	bh=4dq6+oB/CSwk781PF0vUGPbURV5g6ETTeJhVeud5l/8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kHlXrAMo+WpcaXq+FwFZTc0/AnTghnTKq6KQyp7lipqSefb2y4yPiUGIz4v+cvwJVWTEeIRoKe+JQH3xbNtg8XfyREHbEWGKVDmrXtFWRMiMIN7QYIv50UL4l/i46d3fX7D+IHBKOSrBS4XzMmLxJ2FrIf14B5a9rrsFLPYVF8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F0pCHklK; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5baf982f56dso2080270eaf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 04:24:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719228245; x=1719833045; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P/uG0pk/rOzEYyf9kgjbXb58wu9autIPkbU8eM8hrs0=;
-        b=F0pCHklK7EyVlYG2nmQ4OKISElFyQ5VUGQ4FXAIQvakUZ7lzhmP3eW9eYytPAqFyaz
-         wmWem7uPJFVKtYiWt/vOgWU1v4Tav2G1XFV6kh+qsbXTYja+/3HmtrQ853WHROMAlVC7
-         E+8tnP1r4RNyUiNwvkcfqJWipV1NskibcOYAe+7UVqDMDqKW2nBDcsAe5Yp9bIuxjZJQ
-         OifMfhjzyE4rZdb02UQaBown3/oBff0NKpYoxhUTRXF4EYoL5nSk6z+DvE7HVPhT/IFb
-         YwV5I7E18+g3S+YkmBlQPF96wvORTZycXpW0YVA17flJgie+lX6+DKCjFrguCFUScrqd
-         iesQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719228245; x=1719833045;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P/uG0pk/rOzEYyf9kgjbXb58wu9autIPkbU8eM8hrs0=;
-        b=wLuwgfBKxDPS+vTXwrqw95S2c0a11JUDRTx8H2asuB/ZDm/qpidoxL8zovHVE4ip7O
-         AQPBwSzmGZMH0hIk8BGt/EcEsf36QF3xSYO3wyIloqZTJULDsf1wxVtEoJiF9yFF3QdI
-         JvrZDbqgpc+KXZ71IxdxU/k7jj7+Rv04rXyWFBqrvL09FdNRTiIaeGqMcklkorBg1Osa
-         Xcok5wYS3CW+N05RbRa6XdCy5iXz+CjZDmUPo7PrYY9Pb3oP+dKQ5GtEW3FebN0W5NPC
-         iq72EC5qZ8bARJAvCt/A29G6CySumv2dRtPK+ikhAdh3ODXZMyhBZB0h9felheMfpkIP
-         cJfw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7nBVGyBcvfeWdOA3tLc01S9YggJRnZ5Ei+/xNAqpMr1RW+IPK9jiQHs9fM4XejkcQcSm2b2TeU2GBMMoEgvoxmE4FpFlipHYkCK+8
-X-Gm-Message-State: AOJu0Ywe1luVc+BL2U4MosZQbH22ug8RNpbvELWna53J12/kD3qcyt92
-	NPr05Sa54tnYUPAfDMiLm5n4//aiJrul81JjhftATpOdOVnrypxGNrFe71LfFJnwnq83LVaweck
-	aE5g3+UEcFiUmZU65HtTRcXpzPHZk/5yKyxSXgw==
-X-Google-Smtp-Source: AGHT+IHMLqDC2rTXhVuW4+7eVR8LzUhLBmZIQgM3baPjvR31e95ip2NrsiCp0QKxJlc/jUGwGVTWHwCoML9aCJwp+iA=
-X-Received: by 2002:a4a:85c1:0:b0:5bb:e55:56a8 with SMTP id
- 006d021491bc7-5c1eec84869mr3670014eaf.0.1719228245151; Mon, 24 Jun 2024
- 04:24:05 -0700 (PDT)
+	s=arc-20240116; t=1719228255; c=relaxed/simple;
+	bh=bGbOgZ7/GsB8UBgf0LqnNlTJgNKN+fPQoD9ErB4i4UQ=;
+	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=S+4Oqvdme/rzGhn5QFwiWE2M/iA2Mk07KXTm4sf81qek5YPl+EzSbZEklL2+Fpcuu9HoKvi6IzMpEdllYm7TOEn8o8Ea4FE9xC9tY3PLyqBCPtweyirMdBMUyqilV9ldEky3bue35aNi/pqWrXOi8yvg81EyY2G77DwKzVSS8RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Hg7Pa1QZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719228253;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=1MZhBdhakyXXyis3UviwdkIkQ/9gObuVjuoXkcPA6zY=;
+	b=Hg7Pa1QZAsPc87fCjsq6ba9K2BaOZkwSazul3hk+V9gYJVapW9mGSBGnyM3elY7ErNSBa7
+	V+aLEWSSZoEAaUq+Fx9DRllekXOYuQTJZLlzaK+NmscAbibW+WRa8W+tUjH8flmHKYQg+P
+	SKVy93pP99TxPwTTLo0FXgD7Uvg27iw=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-145-O_GMqFPHO-OqoLHMuqV_Ew-1; Mon,
+ 24 Jun 2024 07:24:10 -0400
+X-MC-Unique: O_GMqFPHO-OqoLHMuqV_Ew-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 24006195608C;
+	Mon, 24 Jun 2024 11:24:08 +0000 (UTC)
+Received: from warthog.procyon.org.uk (unknown [10.42.28.111])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9D0541956051;
+	Mon, 24 Jun 2024 11:24:04 +0000 (UTC)
+Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
+	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
+	Kingdom.
+	Registered in England and Wales under Company Registration No. 3798903
+From: David Howells <dhowells@redhat.com>
+To: Christian Brauner <christian@brauner.io>,
+    Matthew Wilcox <willy@infradead.org>
+cc: dhowells@redhat.com, Jeff Layton <jlayton@kernel.org>,
+    netfs@lists.linux.dev, v9fs@lists.linux.dev,
+    linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+    linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+    linux-kernel@vger.kernel.org
+Subject: [PATCH] netfs: Fix netfs_page_mkwrite() to flush conflicting data, not wait
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org> <20240617-usb-phy-gs101-v3-4-b66de9ae7424@linaro.org>
-In-Reply-To: <20240617-usb-phy-gs101-v3-4-b66de9ae7424@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Mon, 24 Jun 2024 12:23:54 +0100
-Message-ID: <CADrjBPoP_ZXyNrbS7vwVOqZTBqp3Brg7zigYukf-p1jX4AtHCg@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] phy: exynos5-usbdrd: convert (phy) register access
- clock to clk_bulk
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, kernel-team@android.com, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <614299.1719228243.1@warthog.procyon.org.uk>
 Content-Transfer-Encoding: quoted-printable
+Date: Mon, 24 Jun 2024 12:24:03 +0100
+Message-ID: <614300.1719228243@warthog.procyon.org.uk>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Hi Andr=C3=A9
+Fix netfs_page_mkwrite() to use filemap_fdatawrite_range(), not
+filemap_fdatawait_range() to flush conflicting data.
 
-On Mon, 17 Jun 2024 at 17:45, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
- wrote:
->
-> In preparation for support for additional platforms, convert the phy
-> register access clock to using the clk_bulk interfaces.
->
-> Newer SoCs like Google Tensor gs101 require additional clocks for
-> access to additional (different) register areas (PHY, PMA, PCS), and
-> converting to clk_bulk simplifies addition of those extra clocks.
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
->
-> ---
+Fixes: 102a7e2c598c ("netfs: Allow buffered shared-writeable mmap through =
+netfs_page_mkwrite()")
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: netfs@lists.linux.dev
+cc: v9fs@lists.linux.dev
+cc: linux-afs@lists.infradead.org
+cc: linux-cifs@vger.kernel.org
+cc: linux-mm@kvack.org
+cc: linux-fsdevel@vger.kernel.org
+---
+ fs/netfs/buffered_write.c |    6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
-and
-Tested-by: Peter Griffin <peter.griffin@linaro.org>
+diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+index 05745bcc54c6..9cbbeeee6170 100644
+--- a/fs/netfs/buffered_write.c
++++ b/fs/netfs/buffered_write.c
+@@ -554,9 +554,9 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault *vmf, st=
+ruct netfs_group *netfs_gr
+ 	group =3D netfs_folio_group(folio);
+ 	if (group !=3D netfs_group && group !=3D NETFS_FOLIO_COPY_TO_CACHE) {
+ 		folio_unlock(folio);
+-		err =3D filemap_fdatawait_range(mapping,
+-					      folio_pos(folio),
+-					      folio_pos(folio) + folio_size(folio));
++		err =3D filemap_fdatawrite_range(mapping,
++					       folio_pos(folio),
++					       folio_pos(folio) + folio_size(folio));
+ 		switch (err) {
+ 		case 0:
+ 			ret =3D VM_FAULT_RETRY;
 
-Tested using my Pixel 6 pro device. USB comes up and it is possible to
-use adb from the host computer to the phone.
-
-regards,
-
-Peter
-
-[..]
 
