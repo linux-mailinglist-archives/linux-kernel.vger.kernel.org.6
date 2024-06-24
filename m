@@ -1,410 +1,204 @@
-Return-Path: <linux-kernel+bounces-227669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468C5915551
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:26:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B51C0915552
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:26:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69AFE1C211A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D753F1C22369
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:26:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1020A19F48E;
-	Mon, 24 Jun 2024 17:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE4A19DF52;
+	Mon, 24 Jun 2024 17:26:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lr/oJjat"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lpjpk1Vb"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9AE7604D;
-	Mon, 24 Jun 2024 17:25:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A65179AA
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719249950; cv=none; b=foOoNbzcvxsyOjGczW5lb9Ev8LLLXWzSjZ2Vx4hoSby3V/G7YDHDSEUn0iYbHke0DzLoOvEyZ0dm6r8SU1L/LctiBlr7jAYFRX4xXJcH6izVAtaBRXL6FKXZ1nfNDh3pk7MRm8O8OJqYqYeNXAPXTljmR/cys60OA3KEJcf6ly4=
+	t=1719250006; cv=none; b=LSbV6sEmGxd+ceg9I3k7PjH+t+E6iAHWc9mAfQzNTQqvr6UiucAOVVdMIv+iPcu0evf3lxOBMB8w0xyQqhuY3crA2nkHJwP0/j5mAP7KA5ZANgVTJHH6ZyuPNSqee86CSA3XJWATQdvafisw/HcZLJU4DRnLBASCavbR3ykUha8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719249950; c=relaxed/simple;
-	bh=/vSEh/f9mAe6QHXHJr/MHCcGUf/sv/rw9DC35rnJP7g=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fWY1SGMRkjsbabiBazxTXaqUqTGuj1siTf2n9tWKOUInxNs2pFOoH6y0TalESONhp9wTsZo00OinL+lS2fXMFeSsBKG8s4RxMBY6Cr/YJtJBi5alXxdEc3czqWYy5i5iw8ZPf9yASxYcOyTuygC38CZseQl1TGCKVMNUDyPd7H4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lr/oJjat; arc=none smtp.client-ip=209.85.128.50
+	s=arc-20240116; t=1719250006; c=relaxed/simple;
+	bh=8WBsHr+/U0gPukS1DlHvQ0jQLtwGsvE19wwN4GIOeFg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WsU8987FzVy9vgMrupl5b5k729DJeOj0PFSkeHTwm+d5Zh2F43NMlMVCNfX6wBIWDX7I35IZXW0Tg20rUzXWuTcJiX6I71IwM8VghvQ3/UPhEtlnEOPl/Ibdpf6Q+TK4a/r0q+QdYuA1EMWNzlyZsou+uBlSd5F2/OTPoGiYp6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Lpjpk1Vb; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42198492353so38408875e9.1;
-        Mon, 24 Jun 2024 10:25:47 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-424720e73e1so37628485e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:26:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719249946; x=1719854746; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TAVTttRs5PidrklmuY1fGR9c9bOT7On0ewI0MWZLvUQ=;
-        b=lr/oJjat6nql48NALJQUUcVF13H2Gg95hZdJ6IaYbVXpvCuiIYqmXMf10B4zbmRTuZ
-         SrWpcQpCJC1YBU1/Fk+dOkULup+dlziZRzpi0SvsP8mJTljkrVl8m6FCoJ3AqGm65DTu
-         H/LJgSLE1A61jYcne3e9pn8axBr4GOuEQNH3PAUBvijcYJpAiMVVKqXP5RyrrPrsksNX
-         lncitabSXmUnijsMAmnxa87Qxa4oRF7H7DV+56nRZf54FGjTDAzCtETTWNQB0rHSRE86
-         rOo8625d3bmoWfk5AQ23KRj5Hslf2QJKBwqTtkDDXoTDzuRXttc3/RwoORk5MRh34GHy
-         XoaQ==
+        d=gmail.com; s=20230601; t=1719250003; x=1719854803; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r0zJj0i6Eef+mmmoD7VtRkp40psXLNI3uhnA1z5IfCo=;
+        b=Lpjpk1VbGj3uouSHZ9hefFA+ki3COMPMrUFrPIKCJG/tKw6TzaU2MlZS6fCdZELbXM
+         u3ziUEH1BGLA8DaNoUvuEfZf5ndmJEMunbwxYlw5jRWiu90xj83O3KmSxjjWUtv+YSqq
+         VHJPmDpqVt+CpBU4v2a5G5PsyicIaGc0fTk7JVS0bWacu9Jx8qR2Pf1XODLsxTZXMDtv
+         YpBY5W7peG4XwIIHDj6Ua/KAMHP/3+s9490N3pHn1hgj+0vDRwovjOeBd9fuwfBoNKzD
+         CBzI/2uVyI74BvSqb/OUAND1RYZjp+ky4kUWYoDdRPPr/dFTFKl7DTrSEZJkddg19b9M
+         H9Ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719249946; x=1719854746;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TAVTttRs5PidrklmuY1fGR9c9bOT7On0ewI0MWZLvUQ=;
-        b=ucVKMfKW6g5cycyVyOStdHuunBBXhclLeQE1SSCa+ySti4s3FCd0nyxbwT9/+N6EBm
-         kPCbsJZ2HQmkw2v9m/HY1cfUcFSyh0LvhVhRl5wZF0IkiPe+AWNq9tzpXP5vp/p+zXZQ
-         H2WX9JVR0xzuPLpz10VqYxXzkAm4zl2YmGx/ffuNPTU+pIx8v1EiQAQQh7n1UbtH/Bgf
-         3VZuNOi8Loq7HqI/6HzISpaBXFv+s6+Yw0Y5o3nSL0sSQd0pFWvKXXUPFFfGXUlN3zfm
-         PsEogW5K9TXZsNGCyovCXGnOUy/uru8hAoq9XOb1LTazcx/fUbSrM0U7MhP+2PVvNsln
-         yFKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXU1/EGW42a/GMoSCxdTePBjvO+ZukXAAuh2u9uGR5CBx+jhNW2xAXCjJYsqRyKtZwQd1iaB9jRUzvVUqHYBC4Ezk++Vij5RW5TQ0epSeMu4vT36Tb74B012BDOVvjXhVkamRM1AcjcSAlWWvkiKOuymjd4UQrH993E+1zZuJQVFoKhubuoLGUwLWRq
-X-Gm-Message-State: AOJu0YzBHSeYyxZi+IFHhoidgHAwSXNpS8OWqVLxr7Ma9Hs1UkE0OfNK
-	Iv9f/6rfcti2PsL7mjmyh7baHpsbK9CQZbyAd74UzoQHmpAMYTFW
-X-Google-Smtp-Source: AGHT+IHGovGNqn/ueDNjrgNKu9+GXPwXx/qlZT0HcCA8CJVyQcHdUv0/qw216/itNhHB4ejUsgX10w==
-X-Received: by 2002:a05:600c:4883:b0:424:90a2:2ff4 with SMTP id 5b1f17b1804b1-42490a25f49mr27624805e9.2.1719249946397;
-        Mon, 24 Jun 2024 10:25:46 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:c315:5cc8:bc92:639])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42481921f16sm140555005e9.41.2024.06.24.10.25.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 10:25:45 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 2/2] watchdog: Add Watchdog Timer driver for RZ/V2H(P)
-Date: Mon, 24 Jun 2024 18:25:09 +0100
-Message-Id: <20240624172509.106912-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240624172509.106912-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240624172509.106912-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1719250003; x=1719854803;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r0zJj0i6Eef+mmmoD7VtRkp40psXLNI3uhnA1z5IfCo=;
+        b=H9mPt+PNEam/TkMyLTiiAgOH4qOKkGlZ5GMj5lhZyKzK9laaHLmlT/nsdOIR0L/vDJ
+         rKkvFqyWE8NpBprGwtsr+uw3Wl9OOEChr9PrU9/8/WPHstOEobVB+fkEOw9nyfUU4+M4
+         j59FtUuNZxjsRjDdNVUiUl2ojJACgbIb3piaLP+KW1vvHhLl4WHqsxQDLbNLEd7kbkVh
+         fRuyQY9HRfj3HPmqLEC8HsC9DCXi3Gh6dAx3fSoBzPG1vmwRgqqg0rtP8cVfCyasEiI+
+         /jkcBCdV93IJ2J93adBA42knfHybpIn3Ugi7JE3bKng92BV547ehHNGFOzmD8sillwyB
+         w8SA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7R9IxvTMGjHhaletTz97R6zn11gHWeE48qKb4cxKdYvOy1xzr3fACtA/JAb/jD1hoC/kzmo0ZOx0sodUOcGUrWkFQ/8HKfaEjmI2X
+X-Gm-Message-State: AOJu0YwjYPgBgkYAP5nnj88GK99TXGXQxlGvwdgA6DfdmVOWi8/hLieH
+	G4pNZOqHjATCxZLPMquZy7nFGbzfUoDlRY2ubyukxBOyL/gU19x4
+X-Google-Smtp-Source: AGHT+IGxeNceUKaNcYx2Jxfd1Gj6bqVSWIOz94FDHmzgiaSghAMdf3VqII30KozGWxqHRnwKYMUtJw==
+X-Received: by 2002:a05:600c:4f96:b0:422:683b:df57 with SMTP id 5b1f17b1804b1-4248cc33ce7mr33926975e9.21.1719250003304;
+        Mon, 24 Jun 2024 10:26:43 -0700 (PDT)
+Received: from ?IPV6:2001:16a2:df66:b900:46d:aa3:6645:bcd8? ([2001:16a2:df66:b900:46d:aa3:6645:bcd8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d208b3dsm184640765e9.34.2024.06.24.10.26.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 10:26:42 -0700 (PDT)
+Message-ID: <cacd14a9-01fc-4844-9ac6-2e797af13c36@gmail.com>
+Date: Mon, 24 Jun 2024 20:26:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [linux-next:master] [mm] 0fa2857d23:
+ WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof
+To: Yosry Ahmed <yosryahmed@google.com>, Hugh Dickins <hughd@google.com>
+Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
+ lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Chengming Zhou <chengming.zhou@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
+ David Hildenbrand <david@redhat.com>, "Huang, Ying" <ying.huang@intel.com>,
+ Johannes Weiner <hannes@cmpxchg.org>, Matthew Wilcox <willy@infradead.org>,
+ Shakeel Butt <shakeel.butt@linux.dev>, Andi Kleen <ak@linux.intel.com>,
+ linux-kernel@vger.kernel.org, "Vlastimil Babka (SUSE)" <vbabka@kernel.org>,
+ Yury Norov <yury.norov@gmail.com>,
+ Rasmus Villemoes <linux@rasmusvillemoes.dk>
+References: <202406241651.963e3e78-oliver.sang@intel.com>
+ <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
+ <12fb19d1-3e57-4880-be59-0e83cdc4b7f1@gmail.com>
+ <61d19ec8-2ba7-e156-7bb7-f746dae8e120@google.com>
+ <5b3e732c-d23d-41ef-ae5c-947fa3e866ab@gmail.com>
+ <CAJD7tkYJVa=dd=hwqhJ8_-uzxFDaP6-GcTk3RdG_3DJouJ61AQ@mail.gmail.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <CAJD7tkYJVa=dd=hwqhJ8_-uzxFDaP6-GcTk3RdG_3DJouJ61AQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Add Watchdog Timer driver for RZ/V2H(P) SoC.
+On 24/06/2024 19:56, Yosry Ahmed wrote:
+> [..]
+>>>> -       p->zeromap = bitmap_zalloc(maxpages, GFP_KERNEL);
+>>>> +       p->zeromap = kvzalloc(DIV_ROUND_UP(maxpages, 8), GFP_KERNEL);
+>>> No, 8 is not right for 32-bit kernels. I think you want
+>>>        p->zeromap = kvzalloc(BITS_TO_LONGS(maxpages), GFP_KERNEL);
+>>> but please check it carefully, I'm easily confused by such conversions.
+>>>
+>>> Hugh
+>> Ah yes, didnt take into account 32-bit kernel. I think its supposed to be
+>>
+>>    p->zeromap = kvzalloc(BITS_TO_LONGS(maxpages) * sizeof(unsigned long),
+>> GFP_KERNEL);
+> You can do something similar to bitmap_zalloc() and use:
+>
+> kvmalloc_array(BITS_TO_LONGS(nbits), sizeof(unsigned long), GFP_KERNEL
+> | __GFP_ZERO)
+>
+> I don't see a kvzalloc_array() variant to use directly, but it should
+> be trivial to add it. I can see other users of kvmalloc_array() that
+> pass in __GFP_ZERO (e.g. fs/ntfs3/bitmap.c).
+>
+> , or you could take it a step further and add bitmap_kvzalloc(),
+> assuming the maintainers are open to that.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v1->v2
-- Stopped using PM runtime calls in restart handler
-- Dropped rstc deassert from probe
----
- drivers/watchdog/Kconfig     |   8 ++
- drivers/watchdog/Makefile    |   1 +
- drivers/watchdog/rzv2h_wdt.c | 251 +++++++++++++++++++++++++++++++++++
- 3 files changed, 260 insertions(+)
- create mode 100644 drivers/watchdog/rzv2h_wdt.c
+Thanks! bitmap_kvzalloc makes most sense to me. It doesnt make sense 
+that bitmap should only be limited to MAX_PAGE_ORDER size. I can add 
+this patch below at the start of the series and use it in the patch for 
+zeropage swap optimization.
 
-diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
-index 85eea38dbdf4..e5a7aaa2edcb 100644
---- a/drivers/watchdog/Kconfig
-+++ b/drivers/watchdog/Kconfig
-@@ -938,6 +938,14 @@ config RENESAS_RZG2LWDT
- 	  This driver adds watchdog support for the integrated watchdogs in the
- 	  Renesas RZ/G2L SoCs. These watchdogs can be used to reset a system.
- 
-+config RENESAS_RZV2HWDT
-+	tristate "Renesas RZ/V2H(P) WDT Watchdog"
-+	depends on ARCH_R9A09G011 || COMPILE_TEST
-+	select WATCHDOG_CORE
-+	help
-+	  This driver adds watchdog support for the integrated watchdogs in the
-+	  Renesas RZ/V2H(P) SoCs. These watchdogs can be used to reset a system.
-+
- config ASPEED_WATCHDOG
- 	tristate "Aspeed BMC watchdog support"
- 	depends on ARCH_ASPEED || COMPILE_TEST
-diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
-index 2d1117564f5b..295909a1b3b9 100644
---- a/drivers/watchdog/Makefile
-+++ b/drivers/watchdog/Makefile
-@@ -86,6 +86,7 @@ obj-$(CONFIG_RENESAS_WDT) += renesas_wdt.o
- obj-$(CONFIG_RENESAS_RZAWDT) += rza_wdt.o
- obj-$(CONFIG_RENESAS_RZN1WDT) += rzn1_wdt.o
- obj-$(CONFIG_RENESAS_RZG2LWDT) += rzg2l_wdt.o
-+obj-$(CONFIG_RENESAS_RZV2HWDT) += rzv2h_wdt.o
- obj-$(CONFIG_ASPEED_WATCHDOG) += aspeed_wdt.o
- obj-$(CONFIG_STM32_WATCHDOG) += stm32_iwdg.o
- obj-$(CONFIG_UNIPHIER_WATCHDOG) += uniphier_wdt.o
-diff --git a/drivers/watchdog/rzv2h_wdt.c b/drivers/watchdog/rzv2h_wdt.c
-new file mode 100644
-index 000000000000..c950d73ee7a8
---- /dev/null
-+++ b/drivers/watchdog/rzv2h_wdt.c
-@@ -0,0 +1,251 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Renesas RZ/V2H(P) WDT Watchdog Driver
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corporation.
-+ */
-+#include <linux/bitops.h>
-+#include <linux/clk.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
-+#include <linux/units.h>
-+#include <linux/watchdog.h>
-+
-+#define WDTRR			0x00	/* RW, 8  */
-+#define WDTCR			0x02	/* RW, 16 */
-+#define WDTRCR			0x06	/* RW, 8  */
-+
-+#define WDTCR_TOPS_1024		0x00
-+#define WDTCR_TOPS_16384	0x03
-+
-+#define WDTCR_CKS_CLK_1		0x00
-+#define WDTCR_CKS_CLK_256	0x50
-+
-+#define WDTCR_RPES_0		0x300
-+#define WDTCR_RPES_75		0x000
-+
-+#define WDTCR_RPSS_25		0x00
-+#define WDTCR_RPSS_100		0x3000
-+
-+#define WDTRCR_RSTIRQS         BIT(7)
-+
-+#define CLOCK_DIV_BY_256	256
-+
-+#define WDT_DEFAULT_TIMEOUT	60U
-+
-+static bool nowayout = WATCHDOG_NOWAYOUT;
-+module_param(nowayout, bool, 0);
-+MODULE_PARM_DESC(nowayout, "Watchdog cannot be stopped once started (default="
-+		 __MODULE_STRING(WATCHDOG_NOWAYOUT) ")");
-+
-+struct rzv2h_wdt_priv {
-+	void __iomem *base;
-+	struct clk *pclk;
-+	struct clk *oscclk;
-+	struct reset_control *rstc;
-+	struct watchdog_device wdev;
-+	unsigned long oscclk_rate;
-+};
-+
-+static int rzv2h_wdt_ping(struct watchdog_device *wdev)
-+{
-+	struct rzv2h_wdt_priv *priv = watchdog_get_drvdata(wdev);
-+	static unsigned long delay;
-+
-+	writeb(0x0, priv->base + WDTRR);
-+	writeb(0xFF, priv->base + WDTRR);
-+
-+	/*
-+	 * Refreshing the down-counter requires up to 4 cycles
-+	 * of the signal for counting
-+	 */
-+	if (!delay)
-+		delay = 4 * div64_ul(CLOCK_DIV_BY_256 * MICRO, priv->oscclk_rate);
-+	udelay(delay);
-+
-+	return 0;
-+}
-+
-+static void rzv2h_wdt_setup(struct watchdog_device *wdev, u16 wdtcr)
-+{
-+	struct rzv2h_wdt_priv *priv = watchdog_get_drvdata(wdev);
-+
-+	writew(wdtcr, priv->base + WDTCR);
-+
-+	/* LSI needs RSTIRQS to be cleared */
-+	writeb(readb(priv->base + WDTRCR) & ~WDTRCR_RSTIRQS, priv->base + WDTRCR);
-+}
-+
-+static int rzv2h_wdt_start(struct watchdog_device *wdev)
-+{
-+	struct rzv2h_wdt_priv *priv = watchdog_get_drvdata(wdev);
-+	int ret;
-+
-+	ret = reset_control_deassert(priv->rstc);
-+	if (ret)
-+		return ret;
-+
-+	ret = pm_runtime_resume_and_get(wdev->parent);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * WDTCR
-+	 * - CKS[7:4] - Clock Division Ratio Select - 0101b: oscclk/256
-+	 * - RPSS[13:12] - Window Start Position Select - 11b: 100%
-+	 * - RPES[9:8] - Window End Position Select - 11b: 0%
-+	 * - TOPS[1:0] - Timeout Period Select - 11b: 16384 cycles (3FFFh)
-+	 */
-+	rzv2h_wdt_setup(wdev, WDTCR_CKS_CLK_256 | WDTCR_RPSS_100 |
-+			WDTCR_RPES_0 | WDTCR_TOPS_16384);
-+
-+	rzv2h_wdt_ping(wdev);
-+
-+	return 0;
-+}
-+
-+static int rzv2h_wdt_stop(struct watchdog_device *wdev)
-+{
-+	struct rzv2h_wdt_priv *priv = watchdog_get_drvdata(wdev);
-+	int ret;
-+
-+	ret = pm_runtime_put(wdev->parent);
-+	if (ret < 0)
-+		return ret;
-+
-+	return reset_control_assert(priv->rstc);
-+}
-+
-+static const struct watchdog_info rzv2h_wdt_ident = {
-+	.options = WDIOF_MAGICCLOSE | WDIOF_KEEPALIVEPING | WDIOF_SETTIMEOUT,
-+	.identity = "Renesas RZ/V2H WDT Watchdog",
-+};
-+
-+static int rzv2h_wdt_restart(struct watchdog_device *wdev,
-+			     unsigned long action, void *data)
-+{
-+	if (!watchdog_active(wdev)) {
-+		struct rzv2h_wdt_priv *priv = watchdog_get_drvdata(wdev);
-+		int ret;
-+
-+		ret = reset_control_deassert(priv->rstc);
-+		if (ret)
-+			return ret;
-+
-+		ret = clk_enable(priv->pclk);
-+		if (ret) {
-+			reset_control_assert(priv->rstc);
-+			return ret;
-+		}
-+		ret = clk_enable(priv->oscclk);
-+		if (ret) {
-+			clk_disable(priv->pclk);
-+			reset_control_assert(priv->rstc);
-+			return ret;
-+		}
-+	}
-+
-+	/*
-+	 * WDTCR
-+	 * - CKS[7:4] - Clock Division Ratio Select - 0000b: oscclk/1
-+	 * - RPSS[13:12] - Window Start Position Select - 00b: 25%
-+	 * - RPES[9:8] - Window End Position Select - 00b: 75%
-+	 * - TOPS[1:0] - Timeout Period Select - 00b: 1024 cycles (03FFh)
-+	 */
-+	rzv2h_wdt_setup(wdev, WDTCR_CKS_CLK_1 | WDTCR_RPSS_25 |
-+			WDTCR_RPES_75 | WDTCR_TOPS_1024);
-+	rzv2h_wdt_ping(wdev);
-+
-+	/* wait for underflow to trigger... */
-+	mdelay(500);
-+
-+	return 0;
-+}
-+
-+static const struct watchdog_ops rzv2h_wdt_ops = {
-+	.owner = THIS_MODULE,
-+	.start = rzv2h_wdt_start,
-+	.stop = rzv2h_wdt_stop,
-+	.ping = rzv2h_wdt_ping,
-+	.restart = rzv2h_wdt_restart,
-+};
-+
-+static int rzv2h_wdt_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct rzv2h_wdt_priv *priv;
-+	unsigned long rate;
-+	int ret;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	priv->pclk = devm_clk_get_prepared(&pdev->dev, "pclk");
-+	if (IS_ERR(priv->pclk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(priv->pclk), "no pclk");
-+
-+	priv->oscclk = devm_clk_get_prepared(&pdev->dev, "oscclk");
-+	if (IS_ERR(priv->oscclk))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(priv->oscclk), "no oscclk");
-+
-+	priv->oscclk_rate = clk_get_rate(priv->oscclk);
-+	if (!priv->oscclk_rate)
-+		return dev_err_probe(&pdev->dev, -EINVAL, "oscclk rate is 0");
-+
-+	priv->rstc = devm_reset_control_get_exclusive(&pdev->dev, NULL);
-+	if (IS_ERR(priv->rstc))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(priv->rstc),
-+				     "failed to get cpg reset");
-+
-+	rate = priv->oscclk_rate / 256;
-+	priv->wdev.max_hw_heartbeat_ms = (1000 * 16383) / rate;
-+	dev_dbg(dev, "max hw timeout of %dms\n",
-+		priv->wdev.max_hw_heartbeat_ms);
-+
-+	priv->wdev.min_timeout = 1;
-+	priv->wdev.timeout = WDT_DEFAULT_TIMEOUT;
-+	priv->wdev.info = &rzv2h_wdt_ident;
-+	priv->wdev.ops = &rzv2h_wdt_ops;
-+	priv->wdev.parent = dev;
-+	watchdog_set_drvdata(&priv->wdev, priv);
-+	watchdog_set_nowayout(&priv->wdev, nowayout);
-+	watchdog_stop_on_unregister(&priv->wdev);
-+
-+	ret = watchdog_init_timeout(&priv->wdev, 0, dev);
-+	if (ret)
-+		dev_warn(dev, "Specified timeout invalid, using default");
-+
-+	ret = devm_pm_runtime_enable(&pdev->dev);
-+	if (ret)
-+		return ret;
-+
-+	return devm_watchdog_register_device(&pdev->dev, &priv->wdev);
-+}
-+
-+static const struct of_device_id rzv2h_wdt_ids[] = {
-+	{ .compatible = "renesas,r9a09g057-wdt", },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, rzv2h_wdt_ids);
-+
-+static struct platform_driver rzv2h_wdt_driver = {
-+	.driver = {
-+		.name = "rzv2h_wdt",
-+		.of_match_table = rzv2h_wdt_ids,
-+	},
-+	.probe = rzv2h_wdt_probe,
-+};
-+module_platform_driver(rzv2h_wdt_driver);
-+MODULE_AUTHOR("Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>");
-+MODULE_DESCRIPTION("Renesas RZ/V2H(P) WDT Watchdog Driver");
--- 
-2.34.1
 
+     bitmap: add support for virtually contiguous bitmap
+
+     The current bitmap_zalloc API limits the allocation to MAX_PAGE_ORDER,
+     which prevents larger order bitmap allocations. Introduce
+     bitmap_kvzalloc that will allow larger allocations of bitmap.
+     kvmalloc_array still attempts to allocate physically contiguous memory,
+     but upon failure, falls back to non-contiguous (vmalloc) allocation.
+
+     Suggested-by: Yosry Ahmed <yosryahmed@google.com>
+     Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+
+diff --git a/include/linux/bitmap.h b/include/linux/bitmap.h
+index 8c4768c44a01..881c2ff2e834 100644
+--- a/include/linux/bitmap.h
++++ b/include/linux/bitmap.h
+@@ -131,9 +131,11 @@ struct device;
+   */
+  unsigned long *bitmap_alloc(unsigned int nbits, gfp_t flags);
+  unsigned long *bitmap_zalloc(unsigned int nbits, gfp_t flags);
++unsigned long *bitmap_kvzalloc(unsigned int nbits, gfp_t flags);
+  unsigned long *bitmap_alloc_node(unsigned int nbits, gfp_t flags, int 
+node);
+  unsigned long *bitmap_zalloc_node(unsigned int nbits, gfp_t flags, int 
+node);
+  void bitmap_free(const unsigned long *bitmap);
++void bitmap_kvfree(const unsigned long *bitmap);
+
+  DEFINE_FREE(bitmap, unsigned long *, if (_T) bitmap_free(_T))
+
+diff --git a/lib/bitmap.c b/lib/bitmap.c
+index b97692854966..eabbfb85fb45 100644
+--- a/lib/bitmap.c
++++ b/lib/bitmap.c
+@@ -727,6 +727,13 @@ unsigned long *bitmap_zalloc(unsigned int nbits, 
+gfp_t flags)
+  }
+  EXPORT_SYMBOL(bitmap_zalloc);
+
++unsigned long *bitmap_kvzalloc(unsigned int nbits, gfp_t flags)
++{
++       return kvmalloc_array(BITS_TO_LONGS(nbits), sizeof(unsigned long),
++                             flags | __GFP_ZERO);
++}
++EXPORT_SYMBOL(bitmap_zalloc);
++
+  unsigned long *bitmap_alloc_node(unsigned int nbits, gfp_t flags, int 
+node)
+  {
+         return kmalloc_array_node(BITS_TO_LONGS(nbits), sizeof(unsigned 
+long),
+@@ -746,6 +753,12 @@ void bitmap_free(const unsigned long *bitmap)
+  }
+  EXPORT_SYMBOL(bitmap_free);
+
++void bitmap_kvfree(const unsigned long *bitmap)
++{
++       kvfree(bitmap);
++}
++EXPORT_SYMBOL(bitmap_kvfree);
++
+  static void devm_bitmap_free(void *data)
+  {
+         unsigned long *bitmap = data;
+
+
+>
+> The main reason I want to avoid doing the multiplication inline is
+> because kvmalloc_array() has a check_mul_overflow() check, and I
+> assume it must have been added for a reason.
 
