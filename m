@@ -1,115 +1,177 @@
-Return-Path: <linux-kernel+bounces-226946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9341914633
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:22:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAC59914571
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15ACF1C20955
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:22:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 672881F2138A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:54:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFD0913665F;
-	Mon, 24 Jun 2024 09:20:46 +0000 (UTC)
-Received: from spam.asrmicro.com (asrmicro.com [210.13.118.86])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C19412FB09;
+	Mon, 24 Jun 2024 08:54:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UDL3VUqo"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34FE7136647
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:20:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.13.118.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBD4873501;
+	Mon, 24 Jun 2024 08:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719220846; cv=none; b=Th3De04lzKnxGDVZLLgdyCTyFDclmpDxdCNhhnuJkQ05AITRMPJxvgyTg/c5zsotrRvFeL4OcB0mgC5UCslrgU9HZchoOjHNl0WLe9ARa4IvfdlHMUhyNqgsSZL4ojUoCxDDIpLHpYZhadv+IHuvJ1lCnqYtSPE98uDXz5detvw=
+	t=1719219257; cv=none; b=Yo2enwfHjvRVf8B6fxtYYrZEdNaJLrycOkYkHqjs2zUmA5WQzkjJxogP4WJF1Sp9y4Buyi1FQrCdyYnG6wwOFG93V8koTer6Zdktm8zrieYWw5/9QGWFkNCAYRuTV0+Z56yxPsjynwyjoV0YxtvNOMhRXcm2PgIDCl4deT0FAuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719220846; c=relaxed/simple;
-	bh=aKtpL8TEMGeUWkluo9pD8j4FnHMywJYbFfnGTPQOCA4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XNZDH0O8nXoyVSrliGuA4dPJZbzd7UKJf5L7iuMFUs78k5fExNVaRLWDI7+BtmFkhsxOJymTewEVhX9VNwIeKIMYEbAOX4AK1SshfZt+xcjFmfcryOebOErG0klV2rHkB/s7pZ+G1oO4AQSyDFBnMCWEHTLHB5cztE2Ab7LhY/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com; spf=pass smtp.mailfrom=asrmicro.com; arc=none smtp.client-ip=210.13.118.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asrmicro.com
-Received: from spam.asrmicro.com (localhost [127.0.0.2] (may be forged))
-	by spam.asrmicro.com with ESMTP id 45O8t5ci053343
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:55:05 +0800 (GMT-8)
-	(envelope-from zhengyan@asrmicro.com)
-Received: from exch03.asrmicro.com (exch03.asrmicro.com [10.1.24.118])
-	by spam.asrmicro.com with ESMTPS id 45O8s6oF053124
-	(version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=FAIL);
-	Mon, 24 Jun 2024 16:54:06 +0800 (GMT-8)
-	(envelope-from zhengyan@asrmicro.com)
-Received: from localhost (10.1.170.252) by exch03.asrmicro.com (10.1.24.118)
- with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 24 Jun 2024 16:54:09
- +0800
-From: zhengyan <zhengyan@asrmicro.com>
-To: <tglx@linutronix.de>, <maz@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <paul.walmsley@sifive.com>, <samuel.holland@sifive.com>,
-        <linux-riscv@lists.infradead.org>
-CC: <qiaozhou@asrmicro.com>, zhengyan <zhengyan@asrmicro.com>
-Subject: [PATCH] irqchip/sifive-plic: ensure interrupt is enable before EOI
-Date: Mon, 24 Jun 2024 08:53:41 +0000
-Message-ID: <20240624085341.3935-1-zhengyan@asrmicro.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1719219257; c=relaxed/simple;
+	bh=ohmEM9m42/wd/TxWYLsoFe7rjW2WX7rRc5MNewvWJ+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RPAixLgkZkEm9UsmI25YlvA7krNEIgsIwGMU166kS8wNzhAplxmSCjrv9uuKMbSWaVd2LVHkPQn9qw6Iph2U5ijCFNct9dXdERnDlUJdfkVur0uOrTC4055ZF4IQLFjwPaQatOlyZQtKzzKx/9C1K4glZz6VdGZLQMTWilre2C0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UDL3VUqo; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a725a918edaso64269866b.3;
+        Mon, 24 Jun 2024 01:54:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719219254; x=1719824054; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pv+RV8N0QpN1Ud2s2pIRCR72Ahfy/aJs1kgG36gGrLk=;
+        b=UDL3VUqoA0o0CECf0Y3473ua8ma8sNNOMM3PhMfWQcYF331ZjXIdk4aWTUqKvhkk7q
+         FGkPWQ7U6yEDDPN+OZVkyxtXNJ3wBY2JrHi236PeriKTC2L9Ww8M0VmjFoRsYAQADKSH
+         H/zJ79OBohLbBbuDFwZPaXInuNdMf291YacG7SIiD+Pe6TAURO00skz5NNVdbC6jmlQM
+         1v2hKpjuT3mWcTIER5nf4jRVqbVALUg+yHxs6O1QYnZ62Rn6l4hMhI4aXnm0zrbLVlRQ
+         PgoQb1y1J3r5IdGxhA5OOxGXJuMHX9LDkBb5HYut84YN4/VuVgXDVbxATt119VUMfENm
+         JPMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719219254; x=1719824054;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pv+RV8N0QpN1Ud2s2pIRCR72Ahfy/aJs1kgG36gGrLk=;
+        b=fIN3Vsh92j1jyjhG71Yck87/G3oYvPHQO8IywQLem9EtKyMP4bEJVJxroBM9zj5NX1
+         k3S/aKvAQvlavjLmWOq3hBGmYDMxoJxNNc17MVF94EQGqqAKImlKIyXflqK5YpGSD3lr
+         ilIQWnLHPKEQe3n80yujZEzq/ckv23mrFWy2bfEywvOFNTOkn1XfGlmALez0oO68H3CH
+         O4Ioad+XppV1j2bHx50YkLwJLDYZPOxw/Vc0JkwWPfdf4xwizNnWOQ1+LZ9AGWrItroN
+         FeiKowFPdvycpogeCSWIQDtb5xG/nKGCHWnGbqyz/5oPSb+D3EIeX4Ct2u/4nt4nw41h
+         PI3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWkqyP78VBcZ+NdAFiVgolqIyzkWmTU1oFWUJ7j3VS2UYhVNqAtxuDO+NLWtbM61AK0G0IxEp0pxZlMxX0zDhleO5SYbQm4+H4akg4EJ9067VIKiBWFIRJ6Rw4gZXAELhwNYi8IrlHf6tUHTw==
+X-Gm-Message-State: AOJu0Yyvaa8tfp1UNYtnyiIY3mssxgaEEbimOxcjnxaEyIO5OoMdeTiF
+	aRVCxAkVrGKpWx0uctVt3/kzK7rcBiu7E+Ct1WDp/3bEUsRZhEGideV43qpW
+X-Google-Smtp-Source: AGHT+IHxO+wFiekwRcIhzp1CPJgHEZF3oE57OtnkPZG236M1H3FMttHEXj+qYiiFlVl8qiHX6USccw==
+X-Received: by 2002:a17:906:80c2:b0:a6f:d867:4259 with SMTP id a640c23a62f3a-a7245ba3cb5mr260877866b.26.1719219253603;
+        Mon, 24 Jun 2024 01:54:13 -0700 (PDT)
+Received: from f.. (cst-prg-81-171.cust.vodafone.cz. [46.135.81.171])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a724fe52345sm126046666b.53.2024.06.24.01.54.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 01:54:13 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: akpm@linux-foundation.org
+Cc: brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] vfs: remove redundant smp_mb for thp handling in do_dentry_open
+Date: Mon, 24 Jun 2024 10:54:02 +0200
+Message-ID: <20240624085402.493630-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:spam.asrmicro.com 45O8t5ci053343
+Content-Transfer-Encoding: 8bit
 
-RISC-V PLIC cannot "end-of-interrupt" (EOI) disabled interrupts, as
-explained in the description of Interrupt Completion in the PLIC spec:
-"The PLIC signals it has completed executing an interrupt handler by
-writing the interrupt ID it received from the claim to the claim/complete
-register. The PLIC does not check whether the completion ID is the same
-as the last claim ID for that target. If the completion ID does not match
-an interrupt source that *is currently enabled* for the target, the
-completion is silently ignored."
+opening for write performs:
 
-Commit 9c92006b896c ("irqchip/sifive-plic: Enable interrupt if needed
-before EOI")
-ensured that EOI is enable when irqd IRQD_IRQ_DISABLED is set, before
-EOI
+if (f->f_mode & FMODE_WRITE) {
+[snip]
+        smp_mb();
+        if (filemap_nr_thps(inode->i_mapping)) {
+[snip]
+        }
+}
 
-Commit 69ea463021be ("irqchip/sifive-plic: Fixup EOI failed when masked")
-ensured that EOI is successful by enabling interrupt first, before EOI.
+filemap_nr_thps on kernels built without CONFIG_READ_ONLY_THP_FOR
+expands to 0, allowing the compiler to eliminate the entire thing, with
+exception of the fence (and the branch leading there).
 
-Commit a1706a1c5062 ("irqchip/sifive-plic: Separate the enable and mask
-operations") removed the interrupt enabling code from the previous
-commit, because it assumes that interrupt should already be enabled at the
-point of EOI.
+So happens required synchronisation between i_writecount and nr_thps
+changes is already provided by the full fence coming from
+get_write_access -> atomic_inc_unless_negative, thus the smp_mb instance
+above can be removed regardless of CONFIG_READ_ONLY_THP_FOR.
 
-However, here still miss a corner case that if SMP is enabled. When
-someone need to set affinity from a cpu to another (Maybe like
-boardcast-tick) the original cpu when handle the EOI meanwhile the IE is
-disabled by plic_set_affinity
+While I updated commentary in places claiming to match the now-removed
+fence, I did not try to patch them to act on the compile option.
 
-So this patch ensure that won't happened
+I did not bother benchmarking it, not issuing a spurious full fence in
+the fast path does not warrant justification from perf standpoint.
 
-Signed-off-by: zhengyan <zhengyan@asrmicro.com>
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- drivers/irqchip/irq-sifive-plic.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-sifive-plic.c b/drivers/irqchip/irq-sifive-plic.c
-index 9e22f7e378f5..e6acd134a691 100644
---- a/drivers/irqchip/irq-sifive-plic.c
-+++ b/drivers/irqchip/irq-sifive-plic.c
-@@ -149,8 +149,10 @@ static void plic_irq_mask(struct irq_data *d)
- static void plic_irq_eoi(struct irq_data *d)
- {
- 	struct plic_handler *handler = this_cpu_ptr(&plic_handlers);
-+	void __iomem *reg = handler->enable_base + (d->hwirq / 32) * sizeof(u32);
-+	u32 hwirq_mask = 1 << (d->hwirq % 32);
+v2:
+- just whack the fence instead of ifdefing
+- change To recipient, the person who committed the original change is
+  no longer active
+
+ fs/open.c       |  9 ++++-----
+ mm/khugepaged.c | 10 +++++-----
+ 2 files changed, 9 insertions(+), 10 deletions(-)
+
+diff --git a/fs/open.c b/fs/open.c
+index 28f2fcbebb1b..64976b6dc75f 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -986,12 +986,11 @@ static int do_dentry_open(struct file *f,
+ 	 */
+ 	if (f->f_mode & FMODE_WRITE) {
+ 		/*
+-		 * Paired with smp_mb() in collapse_file() to ensure nr_thps
+-		 * is up to date and the update to i_writecount by
+-		 * get_write_access() is visible. Ensures subsequent insertion
+-		 * of THPs into the page cache will fail.
++		 * Depends on full fence from get_write_access() to synchronize
++		 * against collapse_file() regarding i_writecount and nr_thps
++		 * updates. Ensures subsequent insertion of THPs into the page
++		 * cache will fail.
+ 		 */
+-		smp_mb();
+ 		if (filemap_nr_thps(inode->i_mapping)) {
+ 			struct address_space *mapping = inode->i_mapping;
  
--	if (unlikely(irqd_irq_disabled(d))) {
-+	if (unlikely(irqd_irq_disabled(d)) || (readl(reg) & hwirq_mask) == 0) {
- 		plic_toggle(handler, d->hwirq, 1);
- 		writel(d->hwirq, handler->hart_base + CONTEXT_CLAIM);
- 		plic_toggle(handler, d->hwirq, 0);
+diff --git a/mm/khugepaged.c b/mm/khugepaged.c
+index 409f67a817f1..2e017585f813 100644
+--- a/mm/khugepaged.c
++++ b/mm/khugepaged.c
+@@ -1997,9 +1997,9 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 	if (!is_shmem) {
+ 		filemap_nr_thps_inc(mapping);
+ 		/*
+-		 * Paired with smp_mb() in do_dentry_open() to ensure
+-		 * i_writecount is up to date and the update to nr_thps is
+-		 * visible. Ensures the page cache will be truncated if the
++		 * Paired with the fence in do_dentry_open() -> get_write_access()
++		 * to ensure i_writecount is up to date and the update to nr_thps
++		 * is visible. Ensures the page cache will be truncated if the
+ 		 * file is opened writable.
+ 		 */
+ 		smp_mb();
+@@ -2187,8 +2187,8 @@ static int collapse_file(struct mm_struct *mm, unsigned long addr,
+ 	if (!is_shmem && result == SCAN_COPY_MC) {
+ 		filemap_nr_thps_dec(mapping);
+ 		/*
+-		 * Paired with smp_mb() in do_dentry_open() to
+-		 * ensure the update to nr_thps is visible.
++		 * Paired with the fence in do_dentry_open() -> get_write_access()
++		 * to ensure the update to nr_thps is visible.
+ 		 */
+ 		smp_mb();
+ 	}
 -- 
-2.25.1
+2.43.0
 
 
