@@ -1,128 +1,133 @@
-Return-Path: <linux-kernel+bounces-227288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E7B914EC5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:36:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97BE7914EC7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A28841F230B6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:36:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C95F81C21F9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:36:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81817143739;
-	Mon, 24 Jun 2024 13:32:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C92713A86A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:32:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2060F13DB88;
+	Mon, 24 Jun 2024 13:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u7rTFSjB"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25A813D62A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719235938; cv=none; b=X8LCJ5KSNObR9OP4xh8cSCsESU3uR13xVUmKv+ThWzWV+LtT02id6EUpGrmCvvxxMYasm8iuuYHJhguiRytHOZqUn+WJgMottINHifqBlg/cfm2zeJsIIr3WMNItlPEudnzQB3ccOwwUFC3x9SyLVQTipAfU/m3aizQeU4Oxk68=
+	t=1719235963; cv=none; b=pPpBRK0D5KcnZC78jDuLSmTl6dga797HDluErR73zUacnqAuIbGQfcoQkhoRhm5PzsfB3Gp9mpLWEQjxjMp+BZXvsNhhlYOvwVgXwbP5Wr0gROpJf6bP/PixcrZhIXicNJuufcgff2b5ofQAspkpR/sjtuXu5OLdx46ZPh+945s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719235938; c=relaxed/simple;
-	bh=zrkwHiNIQ2L8lyXpvA3rc8HPF5KTBzpD1FEkTtXmBz4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QbQRRX7SupWKVzwnSlCS7tOq2DSujylP6p96aOzB2q8ByebWUIx0J+fi1z2rYD6yTiHcZDkZxxxbyKG5h9HATgE2AucIXYNKtZTvX4im1UrHm5k5XHRXP8PG6kdZHVQlwpnPuWCsCosPqJOx9RB6ogBN8X8iEjlz7vzC27URcEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 21F5FDA7;
-	Mon, 24 Jun 2024 06:32:40 -0700 (PDT)
-Received: from [10.57.74.124] (unknown [10.57.74.124])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 211473F6A8;
-	Mon, 24 Jun 2024 06:32:13 -0700 (PDT)
-Message-ID: <c4c44f66-fb9c-4d71-ac35-f3fef75832bd@arm.com>
-Date: Mon, 24 Jun 2024 14:32:12 +0100
+	s=arc-20240116; t=1719235963; c=relaxed/simple;
+	bh=7KHXkSiw3G2cL0hHR90JF2g8MSUEbE7fJYE8XhmJ2hA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Lc66m35HRN5bKfUIERlu6FMA9i/gjv5tFcss/Qw8DmHJj717w6zue4KCUvH0UyDVKyJeYiiiSUeO9CKtdR4v6Yx2InUHNztxUOO+9xFW+OsXF4y9fVrvHLIgqpMVKYva1TpEm6Lc2X5RSetPGRwjlopI1OJW+5DBKkbZvBXc33Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u7rTFSjB; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3621ac606e1so3172831f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:32:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719235960; x=1719840760; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i63v09sV0tTGN/3CN/lUxe+ocEmeawwsZ2O+wqtiMdY=;
+        b=u7rTFSjBRQOdJb/2ttfvtvUdTHxLJGwkxGdBRv2zt2ddEvaV9yV8CuZU5k8W2n+1Xw
+         L21P8bETdjwNZwuZc9Q/1E7rVLHzIYBNIgdhAsj4A1ftaq0ScLWqiiCpvGRykBc25u9o
+         FNx+OJTY4HQVjfgTob18S07F/WaKvseY3ap+tdZSSLpak2yKRpWTDRmJU3NIDw+ZLaqx
+         txTQS9Kar8whOVUTq1hOKt3mJmLgQwU0A9S4BIRMpIKQVoeFUj/T2LzlxA+EkzJ20Dmf
+         YiwVKovoXwx5nwcTg/MSmIbDWGK4WxeFQc9dzXHq8afb5NmOkKU1+kaf+QbRARbYetNQ
+         cdLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719235960; x=1719840760;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i63v09sV0tTGN/3CN/lUxe+ocEmeawwsZ2O+wqtiMdY=;
+        b=amKamUPGIbhzRvb2dAXC4M44oqyxFHnDhIc7NGVuUV0IBFEP8tp/sMj+fR0V3c7cix
+         mryDTV6kFaI/JiLsxgg+qGxxapfKHXJ2eVSRidHqV+ak+t6kLkiHzETgGWxr9fXDJZWg
+         pXI1KJVPsrzLvaM1ou/d/T8mW8BeRBFvj2SOe7AdOwzYlj3cOVEDV401hl7whJbuZtio
+         GJpCZdICIOzk1vCls6aleLvE6emn3EGAybtaL6QBaeXp7l3B3Gxf3slzSskj4p5IXWA/
+         spXChVuQ90gN4N4gSYwQxWEbuAJ+lU3ReL1Bb+xtNH5IYqvnXI1xPAqsdjIY6KgH7SH8
+         3imA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDBLnAgN/HN6ZMq0J+/tp1FHDm9km6ZL1lTpYWxc3tek5mjg1GtYxeEiVfQWWdelYZ6mjQjkdxD7uymzk3Pcx96RtiImYXS8SEn7Kb
+X-Gm-Message-State: AOJu0YzFG/HEGQtXLD91qzOdvQFwZu/T9IB3vEKmoSa/K90VKFcSklQg
+	rYV3I75xbWQeISYReG4ckpjBNyXDds5wbLbGzcLuX7SMxvngq9kYe9flNMSq6yY=
+X-Google-Smtp-Source: AGHT+IE4SN9gQRJbIu0u6FodUMhsPJCIqcZC7gf1k65l9XMDPiGEOXnzYwwzkZQjwtfhzTam4uGILA==
+X-Received: by 2002:adf:f990:0:b0:361:e909:60c3 with SMTP id ffacd0b85a97d-366e3267fb9mr4464756f8f.9.1719235960019;
+        Mon, 24 Jun 2024 06:32:40 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366f7406f4dsm1888274f8f.114.2024.06.24.06.32.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 06:32:39 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 0/3] arm64: dts: qcom: x1e80100: Add soundwire
+ controller resets
+Date: Mon, 24 Jun 2024 14:32:35 +0100
+Message-Id: <20240624-x1e-swr-reset-v2-0-8bc677fcfa64@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/iova: Bettering utilizing cpu_rcaches in no-strict
- mode
-To: "zhangzekun (A)" <zhangzekun11@huawei.com>, joro@8bytes.org,
- will@kernel.org, john.g.garry@oracle.com
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240624083952.52612-1-zhangzekun11@huawei.com>
- <5149c162-cf38-4aa4-9e96-27c6897cad36@arm.com>
- <0322849d-dc1f-4e1c-a47a-463f3c301bdc@huawei.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <0322849d-dc1f-4e1c-a47a-463f3c301bdc@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHN1eWYC/3WNQQ6CMBBFr0K6dkxbCIgr72FYtHQKk2irU4IYw
+ t0t7F2+//PyVpGQCZO4FqtgnClRDBn0qRD9aMKAQC6z0FJXstYVLAohfRgYE04gVVt76xt78a3
+ IjjUJwbIJ/bhb7z4+wUeGgMu0/y9GT8vRu3eZR0pT5O+Rn9W+/ivNCiQ4U+rayaYsXXV7UDAcz
+ 5EH0W3b9gPScq9jywAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=966;
+ i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
+ bh=7KHXkSiw3G2cL0hHR90JF2g8MSUEbE7fJYE8XhmJ2hA=;
+ b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmeXV2FihPkTNyQFaxVnVV8Ez3xGG+fon5oAYL+
+ 0Nf+l5Y0ZWJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZnl1dgAKCRB6of1ZxzRV
+ N80VCACmXKLC+CFKab5XrBN3rQA9JR1VEZIkPu2OWm9+AXi30FzKhuuSjsxgkXj3tbWhJzvAIgt
+ y6ldwqxwuy5YPlnNKdALkICl9wshQz23JtQqaGSTikgrxRjSAwrzYXSWWGA1v+4+MmtibDgOPfj
+ CDUSDoL6+3n3JiS7X37tch7wN26SdZSbhhgXH1A2jgQKBwZihRN9PHsaYJ17XbI/64KWKpDMSTU
+ wtCLmGSGbItEe4ZVUwg/yqlnkLcq9XZ8i89we3DhRnjP7f/l8Sfc0dLZMxS1/jNpCRxPodsHAHJ
+ gRADD17sgjKyFDVCDC8MyJaaNLMDevQ/Hya95I7evNf2CLi1
+X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
+ fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
 
-On 2024-06-24 2:13 pm, zhangzekun (A) wrote:
-> 
-> 在 2024/6/24 18:56, Robin Murphy 写道:
->> On 2024-06-24 9:39 am, Zhang Zekun wrote:
->>> Currently, when iommu working in no-strict mode, fq_flush_timeout()
->>> will always try to free iovas on one cpu. Freeing the iovas from all
->>> cpus on one cpu is not cache-friendly to iova_rcache, because it will
->>> first filling up the cpu_rcache and then pushing iovas to the depot,
->>> iovas in the depot will finally goto the underlying rbtree if the
->>> depot_size is greater than num_online_cpus().
->>
->> That is the design intent - if the excess magazines sit in the depot 
->> long enough to be reclaimed then other CPUs didn't want them either. 
->> We're trying to minimise the amount of unused cached IOVAs sitting 
->> around wasting memory, since IOVA memory consumption has proven to be 
->> quite significant on large systems.
-> 
-> Hi, Robin,
-> 
-> It does waste some memory after this change, but since we have been 
-> freeing iova on each cpu in strict-mode for years, I think this change 
-> seems reasonable to make the iova free logic identical to strict-mode.
-> This patch try to make the speed of allcating and freeing iova roughly 
-> same by better utilizing the iova_rcache, or we will more likely enter 
-> the slowpath. The save of memory consumption is actually at the cost of 
-> performance, I am not sure if we need such a optimization for no-strict 
-> mode which is mainly used for performance consideration.
-> 
->>
->> As alluded to in the original cover letter, 100ms for IOVA_DEPOT_DELAY 
->> was just my arbitrary value of "long enough" to keep the initial 
->> implementation straightforward - I do expect that certain workloads 
->> might benefit from tuning it differently, but without proof of what 
->> they are and what they want, there's little justification for 
->> introducing extra complexity and potential user ABI yet.
->>
->>> Let fq_flush_timeout()
->>> freeing iovas on cpus who call dma_unmap* APIs, can decrease the overall
->>> time caused by fq_flush_timeout() by better utilizing the iova_rcache,
->>> and minimizing the competition for the iova_rbtree_lock().
->>
->> I would have assumed that a single CPU simply throwing magazines into 
->> the depot list from its own percpu cache is quicker, or at least no 
->> slower, than doing the same while causing additional 
->> contention/sharing by interfering with other percpu caches as well. 
->> And where does the rbtree come into that either way? If an observable 
->> performance issue actually exists here, I'd like a more detailed 
->> breakdown to understand it.
->>
->> Thanks,
->> Robin.
->>
-> 
-> This patch is firstly intent to minimize the chance of softlock issue in 
-> fq_flush_timeout(), which is already dicribed erarlier in [1], which has 
-> beed applied in a commercial kernel[2] for years.
-> 
-> However, the later tests show that this single patch is not enough to 
-> fix the softlockup issue, since the root cause of softlockup is the 
-> underlying iova_rbtree_lock. In our softlockup scenarios, the average
-> time cost to get this spinlock is about 6ms.
+Soundwire resets are missing in the existing dts, add resets for all the 4
+instances of Soundwire controllers (WSA, WSA2, RX, TX).
 
-That should already be fixed, though. The only reason for 
-fq_flush_timeout() to interact with the rbtree at all was due to the 
-notion of a fixed-size depot which could become full. That no longer 
-exists since 911aa1245da8 ("iommu/iova: Make the rcache depot scale 
-better").
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+Changes in v2:
+- fixed dt bindings.
+- Link to v1: https://lore.kernel.org/r/20240624-x1e-swr-reset-v1-0-da326d0733d4@linaro.org
 
-Thanks,
-Robin.
+---
+Srinivas Kandagatla (3):
+      dt-bindings: clock: Add x1e80100 LPASS AUDIOCC reset controller
+      dt-bindings: clock: Add x1e80100 LPASSCC reset controller
+      arm64: dts: qcom: x1e80100: add soundwire controller resets
+
+ .../bindings/clock/qcom,sc8280xp-lpasscc.yaml      | 13 +++++++++---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 23 ++++++++++++++++++++++
+ 2 files changed, 33 insertions(+), 3 deletions(-)
+---
+base-commit: 781025f172e19ca5682d7bfc5243e7aa74c4977f
+change-id: 20240624-x1e-swr-reset-0196fbf7b8f9
+
+Best regards,
+-- 
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
 
