@@ -1,142 +1,150 @@
-Return-Path: <linux-kernel+bounces-226815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01371914446
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:09:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 140BD914449
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:10:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFFFC283CCB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:09:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A937B23511
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:10:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B536149645;
-	Mon, 24 Jun 2024 08:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="H5+VYylD"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4D949650;
+	Mon, 24 Jun 2024 08:10:22 +0000 (UTC)
+Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305ED4D584;
-	Mon, 24 Jun 2024 08:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFE249627
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719216591; cv=none; b=ow9AazyALNYBGiTEXSv2loH1RiDHxRoHkzxZqRPynTpGsCrS1XgdlYBYVjwlEkFhC+ZfZ3Ur5SD18leworjcgoW9iM8LMXfAn/eL+3jTeYzHj1nCjIjAmjKXnO5K/h6cnRbsivL9VG0brIFoyAATgE2hKW/eOT8Bq9z/tCd59n8=
+	t=1719216622; cv=none; b=TQNzM9J2kVdh2ZficB5qwDkx+QwnvPya5BrfHN11xKcFFnZsBsvht2VS7wTZdL7t7PxaMXwPpFpjI5gDtMVTNXUGR8lo3CIgS69Mi7X5W6fCogTkkimw9jTk0J4wFkCjP2JS1GYgfsc8TKkAxQoJVS3bnLvQyfwv5XDEDI2DLUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719216591; c=relaxed/simple;
-	bh=cLneobmR9mPQFGmHCF1wBlcgnI30OLmyymFnRX615y0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oDgvpyp/C2m0/fRNJ2f5HnMjtp56nqttAl+Qoy49wujKftJPFhWGFo8nOqe3a/U7T3B8+J8XXMM8/XTl9OZdC6qO10DzXvLxm1Jus/WPtdYBkspWguHNq67WD6ZfkevO/CixJBM9XJUR7VVD53lvX9m8EqotwqCN0EoZaAl6NII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=H5+VYylD; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 35F34A0771;
-	Mon, 24 Jun 2024 10:09:47 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=bsU3v5i9Yv4jZ0HjqioR
-	uViF9du/mK6SZHpke3lYZug=; b=H5+VYylDTO7FQ97ndrOyuJUa+viUl535br2J
-	mmQcgUCny3fGhmOxm51a6QfFY0hO/48Xnsy6JyT+rvsiiAvpF4cps98iRy2yCfeS
-	Q4sW3vgUtOHDl+6pYAYz2Sa2e/eKFS0UK/Ykrg1sZleec7cBqVbdGendM7d7dZxb
-	SY1KYDNphwI660wDf7FQl9bf/9glPX6cTfq28oL7ijrkKut/bFHWhCm3vQzF82rL
-	wziNsssKFZuAhNcS1yGWpxq2Ir3YoCoPYAdgNVG4+TorwtZq+BBqPc52XKGpHRiM
-	6XQZ785I7cbs0p6JpRF2bRs14ybEKjW8iJQxYoPLNsnr4fRLyUyH3a4gbPVVhNj8
-	zVBwNXXKPlc1sOtOF7ECeof/I8D2iZleRisUOQUnoiqvFg9PsuH6Src80er7Lctj
-	/XVLEN9uSkuuJYh6R0i0DcHNInxqx7u9tQzX0dFThFuE88d2SMu7dxEoM7rl+y27
-	QDlpR5FxZIdFGxlvD+CaTgB+3GmbojHyKE1sLZmgNm4sIPDMpFQyfu0C3omaxy8H
-	7AStYIHLJaSb30/D6TFA/UYMdrpsKqZzfEK/AqxOb4WCHDWmUtW18pCQzaf2LrKx
-	oRYIgVEd2bFabFGD2ESLHGJz9ss/Lw3AkXJFa5mu2qq1Ca8ah0ZK74qMzQKa3IJV
-	YhO4Fdc=
-Message-ID: <21ca87a0-6062-411d-88e4-c644c054e497@prolan.hu>
-Date: Mon, 24 Jun 2024 10:09:46 +0200
+	s=arc-20240116; t=1719216622; c=relaxed/simple;
+	bh=zIyvgWFaeIlC6wY0oLvhImDAkpB3sPxCGbJFpjHhtYU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=neKKS5zo2PAswxxzOkFdBSfWsHkre+qcQtx6/sQ3Horh5EkD/TOkwi0GQkj9oF+amRC5KJflG190FDMcpWM2FJ4LXTaeBBsmvliNo6pG+rsn8yr0ZWwlgAcsGPWM8G+NpaCNYTB/rJ+W6yMIaxTv5yXr3tgqwkZ2GYM550iKvbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-7f38e9f1f06so433624339f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:10:20 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719216620; x=1719821420;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b4ui/w/2QHEuTbhE9x9Ney1/6b+4+wI7ecwps7AMd9k=;
+        b=xO92PNU14e2jDrRh9zRzToOVmcKueVKH9RhI4enC+ccN8qmWV6oLI5mZgH5+PSRyl6
+         RM5MJaumurlu1HGD8SIrrNCKmCNM9ZUvAH95KQMnC36whFRzpTq1tf1smtSbC8UCpTCA
+         5+k3qhpqpZFgHANEdKTlBwezAJyC6mCWX4SnlrSfEGafHpnmGbM3s9ypmC5bTp194kO9
+         wEBDk83X+FT5AJ8SpXL9LjR22H43yZuPucmChSC55Tctv9Hd4Zq0PM75Cy3HGCb6WF1s
+         41zpnDdPk+cftRnVWsqV4Jf5afqRqWqLff0r4uJx8BskfXWu5FggbxjQft3UygfWHzhY
+         GBjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU7KubyLFS8WBk0OprkxKv2Yx0DhLWQhaaMnnc3bzNxgmzYOH9eq1jj751MkOsfrj6UeAoBuMdH60e9zKkHuH7vot2aEZAPJjxrG/6X
+X-Gm-Message-State: AOJu0YzeMHt+VJLthpAcZBnA2j0ySPke2EPUFa0TUE7tHNNZpd4nHjqS
+	XAbtZhaGrcboB5lJMH/c7hxuyThJYCZFQA34pRRKSQxX4RqhdyXFOczUnlN10DADBjGr7DCo4cY
+	ZwTFwr10025eldSQOqoQrvphrMNefBkDF4DpWN0fZe9igxRXazrSVvX8=
+X-Google-Smtp-Source: AGHT+IFswqZDd0QhNaYPhOWm4JfDIL0Iv6J8blqz9+BBmj1/+K3kKzSiDXIJPipv1kvIV1AM1Mm6qTt7FGoEpq14wibUmsx0yxms
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] drivers: rtc: Add driver for SD2405AL.
-To: <gomba007@gmail.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-rtc@vger.kernel.org>
-References: <20240620-rtc-sd2405al-v3-1-65d5bb01af50@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <20240620-rtc-sd2405al-v3-1-65d5bb01af50@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2945A129576C7661
+X-Received: by 2002:a05:6602:6d0c:b0:7eb:ee5e:cc05 with SMTP id
+ ca18e2360f4ac-7f3a4f6b459mr9015239f.4.1719216620082; Mon, 24 Jun 2024
+ 01:10:20 -0700 (PDT)
+Date: Mon, 24 Jun 2024 01:10:20 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000eea704061b9e4fb8@google.com>
+Subject: [syzbot] [ext4?] WARNING in __ext4_ioctl
+From: syzbot <syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com>
+To: adilger.kernel@dilger.ca, linux-ext4@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, tytso@mit.edu
+Content-Type: text/plain; charset="UTF-8"
 
-Hi!
+Hello,
 
-> +static int sd2405al_setup(struct sd2405al *sd2405al)
-> +{
-> +	unsigned int val;
-> +	int ret;
+syzbot found the following issue on:
 
-I would still remove `val` and inline everything.
+HEAD commit:    7c16f0a4ed1c Merge tag 'i2c-for-6.10-rc5' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10e04151980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3d112b9ab538ebab
+dashboard link: https://syzkaller.appspot.com/bug?extid=2cab87506a0e7885f4b9
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-> +static int sd2405al_check_state(struct sd2405al *sd2405al)
-> +{
-> +	u8 data[2] = { 0 };
-> +	int state;
-> +	int ret;
-> +
-> +	ret = regmap_bulk_read(sd2405al->regmap, SD2405AL_REG_CTR1, data, 2);
-> +	if (ret < 0) {
-> +		dev_err(sd2405al->dev, "read failed: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	/* CRT1 */
-> +	state = (data[0] & (SD2405AL_BIT_WRTC2 | SD2405AL_BIT_WRTC3)) != 0;
-> +
-> +	/* CTR2 */
-> +	state &= (data[1] & SD2405AL_BIT_WRTC1) != 0;
-> +
-> +	return state;
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Same here.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b29845d4c0ce/disk-7c16f0a4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e39e5d18a392/vmlinux-7c16f0a4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f6ac8c44d142/bzImage-7c16f0a4.xz
 
-> +static int sd2405al_read_time(struct device *dev, struct rtc_time *time)
-> +{
-> +	u8 hour;
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com
 
-This variable could also be inlined.
+------------[ cut here ]------------
+strnlen: detected buffer overflow: 17 byte read of buffer size 16
+WARNING: CPU: 1 PID: 19420 at lib/string_helpers.c:1029 __fortify_report+0x9c/0xd0 lib/string_helpers.c:1029
+Modules linked in:
+CPU: 1 PID: 19420 Comm: syz-executor.1 Not tainted 6.10.0-rc4-syzkaller-00330-g7c16f0a4ed1c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:__fortify_report+0x9c/0xd0 lib/string_helpers.c:1029
+Code: ed 48 c7 c0 20 c9 8f 8b 48 0f 44 d8 e8 8d 53 0b fd 4d 89 e0 48 89 ea 48 89 d9 4c 89 f6 48 c7 c7 a0 c9 8f 8b e8 e5 6e cd fc 90 <0f> 0b 90 90 5b 5d 41 5c 41 5d 41 5e e9 3e 67 8c 06 48 89 de 48 c7
+RSP: 0018:ffffc90004c2fbf0 EFLAGS: 00010286
+RAX: 0000000000000000 RBX: ffffffff8b8fc920 RCX: ffffc9000bb9b000
+RDX: 0000000000040000 RSI: ffffffff81514a46 RDI: 0000000000000001
+RBP: 0000000000000011 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 0000000000000000 R12: 0000000000000010
+R13: 0000000000000000 R14: ffffffff8b8fd2e0 R15: ffff88802bb42060
+FS:  00007f6eba6e46c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fff2d1cbc28 CR3: 0000000062552000 CR4: 0000000000350ef0
+Call Trace:
+ <TASK>
+ __fortify_panic+0x23/0x30 lib/string_helpers.c:1036
+ strnlen include/linux/fortify-string.h:235 [inline]
+ sized_strscpy include/linux/fortify-string.h:309 [inline]
+ ext4_ioctl_getlabel fs/ext4/ioctl.c:1154 [inline]
+ __ext4_ioctl+0x404d/0x4580 fs/ext4/ioctl.c:1609
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x196/0x220 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6eb987d0a9
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 20 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f6eba6e40c8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f6eb99b3f80 RCX: 00007f6eb987d0a9
+RDX: 0000000020000100 RSI: 0000000081009431 RDI: 0000000000000003
+RBP: 00007f6eb98ec074 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 000000000000000b R14: 00007f6eb99b3f80 R15: 00007ffcd312f958
+ </TASK>
 
-Other than that, LGTM. Though I don't have this chip, I can only go by 
-the linked datasheet.
 
-On 6/20/24 11:55, Tóth János via B4 Relay wrote:
- > From: Tóth János <gomba007@gmail.com>
- >
- > Add support for the DFRobot SD2405AL I2C RTC Module.
- >
- > Datasheet:
- > 
-https://image.dfrobot.com/image/data/TOY0021/SD2405AL%20datasheet%20(Angelo%20v0.1).pdf
- >
- > Product:
- > 	https://www.dfrobot.com/product-1600.html
- >
- > To instantiate (assuming device is connected to I2C-1)
- > as root:
- > 	echo sd2405al 0x32 > /sys/bus/i2c/devices/i2c-1/new_device
- > as user:
- > 	echo 'sd2405al 0x32' | sudo tee /sys/class/i2c-adapter/i2c-1/new_device
- >
- > The driver is tested with:
- > 	+ hwclock
- > 	+ tools/testing/selftests/rtc/setdate
- > 	+ tools/testing/selftests/rtc/rtctest
- >
- > Signed-off-by: Tóth János <gomba007@gmail.com>
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Reviewed-by: Csókás, Bence <csokas.bence@prolan.hu>
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
