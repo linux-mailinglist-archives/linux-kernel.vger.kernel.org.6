@@ -1,268 +1,178 @@
-Return-Path: <linux-kernel+bounces-226708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BA8B914293
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:15:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 568FD91429D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:18:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11F5128395D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:15:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DDBBB2332D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:18:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E03C24B2F;
-	Mon, 24 Jun 2024 06:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222EF224FD;
+	Mon, 24 Jun 2024 06:18:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="dQ9BR6as"
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="XJelGkza"
+Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2011.outbound.protection.outlook.com [40.92.103.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1164225D9;
-	Mon, 24 Jun 2024 06:14:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719209688; cv=none; b=BCDSkad1t9VpPpO8fEHnAEQfZj6jru9UokItF4ZPJxVyxMV/d6N6IDAVXlKlPj1GQdpAcGQfnbl3u3TqB77A2/NnV8Igf+SUjeikV10oEy4i6CLyANce57Ok0YwQu6g+T6v3p5r5Or4pt/yOjkoAik3PPAMlfcYZcK6gmCFCfI8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719209688; c=relaxed/simple;
-	bh=pRGt+YpMPsKjwZfW86V837WN4JGPkKGnorvBXTL/O2g=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=TJsUk8aKDtPzhpBKSkCP/knB9+oPmUw0UxXznm8RQjDRHObd+n9AwdJTEAIA3DEfE2GdBMcAextzEVpMKL2aRAk7eDd7tNxo4B0GAkS3VtnH4HVRh0DBV1zDpPZbrBV/gNlher+gpFdt21luf3gVKT8hgGH/SrSsMc04eArXobA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=dQ9BR6as; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ew1xoLiUEpaRO/Rd2+BU3bX5mn9fF1xUB9iaO1b3Vho=; t=1719209684; x=1719814484; 
-	b=dQ9BR6asAKMN2pqrPhzQT4pEo2OWxYr6vtX66xZ8kyycsc/u1IVh2RwUhv6K9mQu2KybYllWwPR
-	PCpBe6uSEwnvDJqPCmaOBYlF/Ztg+NcI09GK2cXDHqG8CNAwK5I67wKXaXP/TrUEg5/LUkGitqz4M
-	FjueDU0/MeYJV45J1ji5bCX8MAinSm/9TYjOFQ0PBLiQkOh+PDyJ8bs5CQNTG5C4I4J6TSLweF2Hg
-	BpfnO/2K3VGc0NJHulI0qn5eGL55Com37tDttEiS+kaSFzLhuxmSkwwwlGJ5WZqthjQbNzk82CNhY
-	nmUkL9vGte34g0uS6eVfqRFHRk58pTg/tcDA==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.97)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1sLcyL-00000003SnY-21KD; Mon, 24 Jun 2024 08:14:37 +0200
-Received: from dynamic-077-191-015-086.77.191.pool.telefonica.de ([77.191.15.86] helo=[192.168.178.20])
-          by inpost2.zedat.fu-berlin.de (Exim 4.97)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1sLcyL-00000002KF0-2nE0; Mon, 24 Jun 2024 08:14:37 +0200
-Message-ID: <e0e373fa13636a403322fd0ba96915fd25dbbefa.camel@physik.fu-berlin.de>
-Subject: Re: [PATCH 09/15] sh: rework sync_file_range ABI
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Cc: Rich Felker <dalias@libc.org>, Andreas Larsson <andreas@gaisler.com>, 
- guoren <guoren@kernel.org>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- "H. Peter Anvin" <hpa@zytor.com>, sparclinux@vger.kernel.org,
- linux-s390@vger.kernel.org, Helge Deller <deller@gmx.de>,
- linux-sh@vger.kernel.org, "linux-csky@vger.kernel.org"
- <linux-csky@vger.kernel.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-  Heiko Carstens <hca@linux.ibm.com>, "musl@lists.openwall.com"
- <musl@lists.openwall.com>, Nicholas Piggin <npiggin@gmail.com>, Alexander
- Viro <viro@zeniv.linux.org.uk>, LTP List <ltp@lists.linux.it>, Brian Cain
- <bcain@quicinc.com>, Christian Brauner <brauner@kernel.org>, Thomas
- Bogendoerfer <tsbogend@alpha.franken.de>, Xi Ruoyao
- <libc-alpha@sourceware.org>, linux-parisc@vger.kernel.org,
- linux-mips@vger.kernel.org,  stable@vger.kernel.org,
- linux-hexagon@vger.kernel.org,  linux-fsdevel@vger.kernel.org,
- linuxppc-dev@lists.ozlabs.org, "David S . Miller" <davem@davemloft.net>
-Date: Mon, 24 Jun 2024 08:14:36 +0200
-In-Reply-To: <9d4ba5e5-bb7f-432e-9354-47cc84eaa9e1@app.fastmail.com>
-References: <20240620162316.3674955-1-arnd@kernel.org>
-	 <20240620162316.3674955-10-arnd@kernel.org>
-	 <366548c1a0d9749e42c0d0c993414a353c9b0b02.camel@physik.fu-berlin.de>
-	 <9d4ba5e5-bb7f-432e-9354-47cc84eaa9e1@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594191B964;
+	Mon, 24 Jun 2024 06:18:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719209921; cv=fail; b=gw5CrSaM2gqLjZi3ncoucFR4O4OY/gCN+QQG7NXhQC9mtdQze6oTqH6wlTYud9qxUL9v1MtFukECEAPqjJR5eZuCEmf9w2eurV3TkNqjVtEbZZRhQVSfTg0RjyEgO1WiJimjV/7YsGLrh0ukEJGwyx9mjpJsaMBHXBj6eXs2aOo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719209921; c=relaxed/simple;
+	bh=oigBsLUKCt64VNyb660WA1uzBgsBXZ3mE6pBqbW6Z4s=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LXdNjhXKSY7daxIbfCA2I9R2WmfBT4ALKTanYh/N64n0GuVnEeblM0YHfEFvlFheVQ+mbu9kr2tXgvSHXqsIYSGiLiSSpNSgDKSOPiy/IrtRUAzehm2V9yWjuP6g1Jrg82d0ocaH/Un2rqVM5iZZiluo2ZDg90zoVCf/T49YefE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=XJelGkza; arc=fail smtp.client-ip=40.92.103.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=kPRzhxCKFmvAKJhdfy+awC/7e0JcIa+z2VbzjKjRLXwFceaKy2ODTq5ayVeRWKkX8Ya6r88HOluMMutXVue3uBt8xIy86hrL9BFOEyXN6L6HCHgjpB7tLxxuyawje6ue5B5ij2kV6s4ysn52jZygcW+/tBEzrMbMZTD55MBVHQVzcght+OJqMmwSIxZUaOJrDRfKoTx1jJtPpSl3MR7aRl7Ehz5x89S1OvGSjlcraCvamAZv3V3NGTrJCT/a27+oqq1P7eto8JuLDP8uvg0JiEVd3IehuDXvBRgtE+oM4GXPFxPgHK3B//xdfxwIuvjyBIM5Ge0tkS8YkYzscagROQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fMpxtLq1uACX48KRZXvxIm9ebdjdm2ZZlVEt4RWT6+0=;
+ b=NgzkLh9tklfWlRxj0E369VazjHuYPWWOImVaW1DT5hV86/7K5F3nR+rBvYqv11uP8yaHCzya6GTRGolkjjan7m/rgy+eVRogSk0L3/ul1we+of8Lav9iqo5I7/eMgQYZJcpOXp1R0XF1cZdqt/YZ4bka6je2o6rHkRx+lSE5m8glLcPZZjtde7TnxXsMKvZaH9p5YcByiiyCJLetb5lugb0JgrQYgGERkqXgWTqd38V65UBECnwzq3idFA8FUiiOuc198ypYthUVLeoLAwzgAKscInHdWnQTMg7s2gIYA5WIEFQH89NV7nK5aNRnPEY4fzF/9F1D6Z+to5R2bjSKFg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fMpxtLq1uACX48KRZXvxIm9ebdjdm2ZZlVEt4RWT6+0=;
+ b=XJelGkzaSTSHO+i3g/u7aBE3oBZVxZqysvFNzdP0EBEHpcsc+InBMMHl3DQfSDPzptUhSzgWkuuExjWbDAKdaLxWXnG1ywBfE1dx6wEXmbghhNhUM6KQr1UVSuKBcSH7DCOb7OS8sDL0W4sOCPQHm+mqSHRcXeR10OU0BrHzDmWm49m9vx3cMph4SEMKHGB0oAeGRvKwMkpTbtX8dw8jg4W/XtMZuiPrQWEseYDsJMmmK1Fx5g87uhUPl4gRsbtRO954GpQP7U3v52CDvVLxTKf2FcmjJb987EdTNQ/HlVSLynWQ79Zfeek1nfXeJbQEIJzbuDKM0qsw8ugvFFN25Q==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN3P287MB1617.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:192::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.28; Mon, 24 Jun
+ 2024 06:18:30 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
+ 06:18:30 +0000
+Message-ID:
+ <MA0P287MB28222A858B3AEE69925505E3FED42@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Mon, 24 Jun 2024 14:18:19 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] dt-bindings: mmc: sdhci-of-dwcmhsc: Add Sophgo
+ SG2042 support
+To: Jisheng Zhang <jszhang@kernel.org>, Chen Wang <unicornxw@gmail.com>
+Cc: adrian.hunter@intel.com, aou@eecs.berkeley.edu, conor+dt@kernel.org,
+ guoren@kernel.org, inochiama@outlook.com, krzysztof.kozlowski+dt@linaro.org,
+ palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org,
+ ulf.hansson@linaro.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, tingzhu.wang@sophgo.com
+References: <cover.1718697954.git.unicorn_wang@outlook.com>
+ <dcc060c3ada7a56eda02b586c16c47f0a0905c61.1718697954.git.unicorn_wang@outlook.com>
+ <ZnRVkPy5akurmi_D@xhacker>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <ZnRVkPy5akurmi_D@xhacker>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TMN: [L5wF9kl8CJPAy4EeB0CRP3JxcisOqSrf]
+X-ClientProxiedBy: TYBP286CA0019.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:404:ce::31) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <dd4f176e-817c-4713-8893-c0c7d001abe5@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN3P287MB1617:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3bf8b0b5-c355-40bd-4d88-08dc9415768b
+X-Microsoft-Antispam: BCL:0;ARA:14566002|461199025|3412199022|440099025;
+X-Microsoft-Antispam-Message-Info:
+	8l660ChnYY3yzO7/8qdsxJF7bLaUtfBqWmIrDbD9dos9Eb2h1OB4X/Rr/k9Ywa/MYKMa3yAEB4BQnoGLTqih6blpKSlqiHLsqEK2P6WW465vZDVSEfAHMXJg2HF2O14kEC4To9nt+TgVYCqSHa9IwrUYwtkYy4m8ZjcTPo8aAQSQ8VZkQBjd2FhTRoR4jDXnP7XY3fMLflw96ncGUx2tbbGy8EgCs5+sb4ZQnQ6aD4K4y3UJuBLucsZQ1cUO3ul3S5Mb+WKV36o8yu0zlbuZ/Ik7PT3+XWSWA5+sf+fD+fBhhqxmhuJPC4fqmXBxafYvD5H2k3ypgyb6xM9h8lACnyAgXbO5JXgunkobjuDWvP1a3A3IKaBVZZE5obmnlznquie/8KliQbK9mE0OtcvsBlfgoRvmSZ622N0KsMLMMPO2QQYeXzWjoonENTvXoNYluV5/97isT5oT9LS1+Sk5opZzCppgsFgUKZHw9prOgqkgPmDnUPAxc79+JC7OddmiWdHd56pmc8AOKPC85muE9EyFq54Q19Bub4Kbc9pibqW74Jan7oMiH2M+TT3TNbTd
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VElwS0NycG5YRlQ3aVZNUTVGZWIxd3o0cFpPU2N3N2NWNGM0eGhnbk5lWVFM?=
+ =?utf-8?B?SzZsbmw0ZFI1bHpYdlI4aW5kSG95RjNGMko5czVnc1htVWY1Z2kwbVdKRVkr?=
+ =?utf-8?B?M2hoVUtWTlZzYnhpR0VpeEVJRHkvM1M1TFRLUmxWZXFtK3ZvSXdXeHFhV21D?=
+ =?utf-8?B?LzlLTWw4SldUdzZ4SVJ2SS80eUlBV1krOVlPZkpXTnpHazJXYTRhUDh4OVJp?=
+ =?utf-8?B?YlFSSmJSVnA5bnBJN21YSHVIc280L0lSeG10R3pUTXpEVWYrbmZQT2gxZjF1?=
+ =?utf-8?B?eFhpQTRqUW9ONEZDUzROMlNDczRTK0JiZWNmWFF6UlRDYlBvMkY4SWNoZE1t?=
+ =?utf-8?B?M24zUVIyVEFSenpkeVRxbWNGdG9SWGIzbnBXNjVHeHdiUUM4L2QyK2wwaE5R?=
+ =?utf-8?B?R09lVUpDSTYrZ1NrWVY1WEF6MlM1R0ZqMlhxSHRqSmk2UDhJY2g2K2JTcGJY?=
+ =?utf-8?B?cTBTV0NCMGR3VHVjUUQ2d0Z1ZmExY2wxd2xnUWhxemEyeW5WYVEwTFduMG1W?=
+ =?utf-8?B?cmZpczcxTXFMc2Z6U09WRFVaK2JBWUN2MXdtOW83N2lLQnpncXEyWStKWHVZ?=
+ =?utf-8?B?eHhSRXZSdElBWFBqSkhDZkFFM3pkdGlUUGU1c0srTHpIMDBtdEI2TUplWGFz?=
+ =?utf-8?B?anVzTnMya1lzQTVmQXFZUFgxSW1Zb0Z2RmQwSUVieUJWanV5ZS9oSWFobnNT?=
+ =?utf-8?B?YVhSbDQrYjdVbVN5K1o1U1BhNjNQMHhEOWwwR3hPTkw0MHEyYzRTQm5tSXdl?=
+ =?utf-8?B?bzFnalNtKzdON09tS2xva29wSVNjcVRDdCtYQ3BCQjYwbTNrRFIrTUJFL2pp?=
+ =?utf-8?B?MTFKY0VnK1NPaXpqY1ZwbzhDamNNd3JORFltVVFlRWZkU004cXRvQ0ZIOHZO?=
+ =?utf-8?B?cDExTGhFL3VXTDR3QVloa2pFUXBnQURDQ3dSemZXSURMTFRlTEZCNG1zN0hq?=
+ =?utf-8?B?cTRMZ2tQMjF2T21Td0FocW9UMlFZWDZmUEpJbHNyMFFjMGpQa05aTVFDN0dv?=
+ =?utf-8?B?d3prSmRaZWxMUmJKRE1mODFVV3ljbVV2ZGV2Z1E0R01XNFJuelZ0aWRFbUZZ?=
+ =?utf-8?B?Uk5IL3pzK2hqcyt2VUNwUW4yT1ZYOTNmVFhPdTZVb2pDcWV2Z25qcS9tZGhE?=
+ =?utf-8?B?YmZTNFpXcVhSZzFFZnRjUkdoS1MzSmhKOTBIQjlkMmZjcld3MjBweHRMRmk5?=
+ =?utf-8?B?bVI0aTc5OVpaWjEycmpmVTJDN29FUC9xRmI4QU1NNEJBMnBIaDN0RC84QXMx?=
+ =?utf-8?B?eWQ2S1NNSGYzTVdMMU5sVDBCWHBQbzlDM2xCSTdBbktNekUrTStCQlVEaEtq?=
+ =?utf-8?B?U1lkYWF6MUh0WEROMlJtanlDKzBEUk1zc0E4VWYrbnI1YUdsTDZ4NTd0SVRq?=
+ =?utf-8?B?YXNJK2J6azJNaGFycVY3dXFxNzhRdzY5bEZQcXZEVXphQTFYclRCUlhWdzR2?=
+ =?utf-8?B?U1ltQkNyZk12V3NsNy82RmZqYXFORHhvWVh2amJBUndGVHgrL3d6ZmRiL0VJ?=
+ =?utf-8?B?WDJINGRrUDY2VnUvMmlvTkZONVcrcktlbXpSdis5VE1pZnFnZzR1SkZ0azJz?=
+ =?utf-8?B?V0l6Z3doQlZBclcxdHVpOHVoOVNnRnVaMUFVNkIweS9xNjUzNXdBU1hJUXJp?=
+ =?utf-8?B?M3dlTnBtOTdiRGo5NWlTWk1SYk5DblhVRis4NDZKK3ZCUlFnSWlDY1FlTHB1?=
+ =?utf-8?Q?KJmnP8gZM9Sp6AvEfwZE?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3bf8b0b5-c355-40bd-4d88-08dc9415768b
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 06:18:29.9719
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB1617
 
-Hi Arnd,
 
-On Fri, 2024-06-21 at 11:41 +0200, Arnd Bergmann wrote:
-> On Fri, Jun 21, 2024, at 10:44, John Paul Adrian Glaubitz wrote:
-> > On Thu, 2024-06-20 at 18:23 +0200, Arnd Bergmann wrote:
-> > > From: Arnd Bergmann <arnd@arndb.de>
-> > >=20
-> > > The unusual function calling conventions on superh ended up causing
-> >                                               ^^^^^^
-> >                                        It's spelled SuperH
->=20
-> Fixed now.
->=20
-> > > diff --git a/arch/sh/kernel/sys_sh32.c b/arch/sh/kernel/sys_sh32.c
-> > > index 9dca568509a5..d5a4f7c697d8 100644
-> > > --- a/arch/sh/kernel/sys_sh32.c
-> > > +++ b/arch/sh/kernel/sys_sh32.c
-> > > @@ -59,3 +59,14 @@ asmlinkage int sys_fadvise64_64_wrapper(int fd, u3=
-2 offset0, u32 offset1,
-> > >  				 (u64)len0 << 32 | len1, advice);
-> > >  #endif
-> > >  }
-> > > +
-> > > +/*
-> > > + * swap the arguments the way that libc wants it instead of
-> >=20
-> > I think "swap the arguments to the order that libc wants them" would
-> > be easier to understand here.
->=20
-> Done
+On 2024/6/21 0:15, Jisheng Zhang wrote:
+> On Tue, Jun 18, 2024 at 04:38:30PM +0800, Chen Wang wrote:
+>> From: Chen Wang <unicorn_wang@outlook.com>
+>>
+>> SG2042 use Synopsys dwcnshc IP for SD/eMMC controllers.
+>>
+>> SG2042 defines 3 clocks for SD/eMMC controllers.
+>> - AXI_EMMC/AXI_SD for aclk/hclk(Bus interface clocks in DWC_mshc)
+>>    and blck(Core Base Clock in DWC_mshc), these 3 clocks share one
+>>    source, so reuse existing "core".
+> No, this seems not correct. This should be the "bus" clk, and your above
+> sentence "aclk/hclk(Bus interface clocks in DWC_mshc)" implies this clk is
+> for bus
+>
+>> - 100K_EMMC/100K_SD for cqetmclk(Timer clocks in DWC_mshc), so reuse
+>>    existing "timer" which was added for rockchip specified.
+>> - EMMC_100M/SD_100M for cclk(Card clocks in DWC_mshc), add new "card".
+> I think this is "core" clk, no? Plz check which internal clks' clock
+> source is the so called EMMC_100M/SD_100M.
 
-Thanks for the two improvements!
+hi, Jisheng,
 
-> > > diff --git a/arch/sh/kernel/syscalls/syscall.tbl b/arch/sh/kernel/sys=
-calls/syscall.tbl
-> > > index bbf83a2db986..c55fd7696d40 100644
-> > > --- a/arch/sh/kernel/syscalls/syscall.tbl
-> > > +++ b/arch/sh/kernel/syscalls/syscall.tbl
-> > > @@ -321,7 +321,7 @@
-> > >  311	common	set_robust_list			sys_set_robust_list
-> > >  312	common	get_robust_list			sys_get_robust_list
-> > >  313	common	splice				sys_splice
-> > > -314	common	sync_file_range			sys_sync_file_range
-> > > +314	common	sync_file_range			sys_sh_sync_file_range6
-> >                                                                  ^^^^^^=
-=20
-> > Why the suffix 6 here?
->=20
-> In a later part of my cleanup, I'm consolidating all the
-> copies of this function (arm64, mips, parisc, powerpc,
-> s390, sh, sparc, x86) and picked the name
-> sys_sync_file_range6() for common implementation.
->=20
-> I end up with four entry points here, so the naming is a bit
-> confusing:
->=20
-> - sys_sync_file_range() is only used on 64-bit architectures,
->   on x32 and on mips-n32. This uses four arguments, including
->   two 64-bit wide ones.
->=20
-> - sys_sync_file_range2() continues to be used on arm, powerpc,
->   xtensa and now on sh, hexagon and csky. I change the
->   implementation to take six 32-bit arguments, but the ABI
->   remains the same as before, with the flags before offset.
->=20
-> - sys_sync_file_range6() is used for most other 32-bit ABIs:
->   arc, m68k, microblaze, nios2, openrisc, parisc, s390, sh, sparc
->   and x86. This also has six 32-bit arguments but in the
->   default order (fd, offset, nbytes, flags).
->=20
-> - sys_sync_file_range7() is exclusive to mips-o32, this one
->   has an unused argument and is otherwise the same as
->   sys_sync_file_range6().
->=20
-> My plan is to then have some infrastructure to ensure
-> userspace tools (libc, strace, qemu, rust, ...) use the
-> same calling conventions as the kernel. I'm doing the
-> same thing for all other syscalls that have architecture
-> specific calling conventions, so far I'm using
->=20
-> fadvise64_64_7
-> fanotify_mark6
-> truncate3
-> truncate4
-> ftruncate3
-> ftruncate4
-> fallocate6
-> pread5
-> pread6
-> pwrite5
-> pwrite6
-> preadv5
-> preadv6
-> pwritev5
-> pwritev6
-> sync_file_range6
-> fadvise64_64_2
-> fadvise64_64_6
-> fadvise64_5
-> fadvise64_6
-> readahead4
-> readahead5
->=20
-> The last number here is usually the number of 32-bit
-> arguments, except for fadvise64_64_2 that uses the
-> same argument reordering trick as sync_file_range2.
->=20
-> I'm not too happy with the naming but couldn't come up with
-> anything clearer either, so let me know if you have any
-> ideas there.
+Just want to double-confirm, corresponding to the definition of clock in 
+the dwc-mshc specification, what's the "core" clock in the 
+snps,dwcmshc-sdhci.yaml?
 
-OK, gotcha. I thought the 6 suffix was for SH only. I'm fine
-with the naming scheme.
+I get following clock definitions in user-guide of dwc-mshc 
+specification, in section 1.8 "Speed and Clock Requirements"
 
-> > >  315	common	tee				sys_tee
-> > >  316	common	vmsplice			sys_vmsplice
-> > >  317	common	move_pages			sys_move_pages
-> > > @@ -395,6 +395,7 @@
-> > >  385	common	pkey_alloc			sys_pkey_alloc
-> > >  386	common	pkey_free			sys_pkey_free
-> > >  387	common	rseq				sys_rseq
-> > > +388	common	sync_file_range2		sys_sync_file_range2
-> > >  # room for arch specific syscalls
-> > >  393	common	semget				sys_semget
-> > >  394	common	semctl				sys_semctl
-> >=20
-> > I wonder how you discovered this bug. Did you look up the calling=20
-> > convention on SuperH
-> > and compare the argument order for the sys_sync_file_range system call=
-=20
-> > documented there
-> > with the order in the kernel?
->=20
-> I had to categorize all architectures based on their calling
-> conventions to see if 64-bit arguments need aligned pairs or
-> not, so I wrote a set of simple C files that I compiled for
-> all architectures to see in which cases they insert unused
-> arguments or swap the order of the upper and lower halves.
->=20
-> SuperH, parisc and s390 are each slightly different from all the
-> others here, so I ended up reading the ELF psABI docs and/or
-> the compiler sources to be sure.
-> I also a lot of git history.
+- 1.8.1 Bus Interface Clocks，which are aclk and m_hclk/hclk
+- 1.8.2 Timer Clocks，which are tmclk，cqetmclk
+- 1.8.3 Card Clocks， whichi is cclk
+- 1.8.4 Core Base Clock，which is bclk
 
-Great job, thanks for doing the extra work to verify the ABI.
+I used to think "core" is "Core Base Clock".
 
-> > Did you also check what order libc uses? I would expect libc on SuperH=
-=20
-> > misordering the
-> > arguments as well unless I am missing something. Or do we know that the=
-=20
-> > code is actually
-> > currently broken?
->=20
-> Yes, I checked glibc, musl and uclibc-ng for all the cases in
-> which the ABI made no sense, as well as to check that my analysis
-> of the kernel sources matches the expectations of the libc.
+[......]
 
-OK, awesome.
-
-Will you send a v2 so I can ack the updated version of the patch?
-
-I'm also fine with the patch going through your tree, as I would
-like to start with the changes for v6.11 this week.
-
-Thanks,
-Adrian
-
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
