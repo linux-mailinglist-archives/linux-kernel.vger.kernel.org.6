@@ -1,203 +1,129 @@
-Return-Path: <linux-kernel+bounces-227093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C77914836
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:12:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A883914837
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:12:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 96E56B24F80
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:12:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB3281C221A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFE4C139587;
-	Mon, 24 Jun 2024 11:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832E813A402;
+	Mon, 24 Jun 2024 11:12:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XySVVeuc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="vsxkvzD/"
+Received: from mail.avm.de (mail.avm.de [212.42.244.120])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C60137901;
-	Mon, 24 Jun 2024 11:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60EB1386D8;
+	Mon, 24 Jun 2024 11:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719227542; cv=none; b=OP2tFYQdGSDXbhxxoaO4UmKvx7/4M8wWcvl5TULzkBekzC/eWF2ot9kFPq5ChmvwLSNhkMwIqLJx4VoHxPzgZyXqotwBlVxh1vikQhzUh/mSR8SH7bnZlkz45nOFAr8qWsBtQjaO2b7VbP2IMN/8sa9CHGECcQ6PSv9R5ik4Y4E=
+	t=1719227545; cv=none; b=DLbLEzjfSPEDfs5+TCB+ARx3pvyFuBKzlFYNIK4mPTUtkPgYk/CwxpFzIYDLWe+HTEW3sdloxj3rrz/99WD6sFUiwxYGxKETl7aiHOLAEmC63jbbkmI7aizvZRnoWMC0cbWjihjWEUyVlQ6LaS0dF9Qa464A6C8jfmqMdTLgM74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719227542; c=relaxed/simple;
-	bh=q+U3yN8gMGFBbMWuWPYKd/Spdf1yePuTY80TwZVFjuA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JyOxQzx1VuljQEI/7kp+2HswZQynLeVTL5X6b1YE+4Un/2d6CUxOcTrtB+6CaF19HS8gSQDJW0ZWR+rDnLOZLDeTRcj3TX2rcflpurQNMbr1aABYlBaVoAaO3apXE8DcxVXJbGvGcyz7l72kcFqvFmrjNVJ5e50i2GdxXjR3gF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XySVVeuc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O8YVN3017098;
-	Mon, 24 Jun 2024 11:12:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5MFzAd64mgrFlVIMi+8KFIONtKYwyev/KOmYz4G/GFM=; b=XySVVeucPFzwhDOL
-	sNZKAlGjQK32i4L6LgiNAzHDPRgHO1qkCIp2A+BUMR/h6Ys+5brCQeBdHjxcAKaM
-	hWaFBjsfwgYYH44PzsYdBfrvL3lokU6PHPmGuhL+EwWqwgArRQqP2B+0Oal8vfvI
-	NhJn/wF5dOKVb14vHrrnY7JYkgKREkBu9XzNUpd3CbkEEjDY5b2fiXv9WwXInH+s
-	IULRGPQfL+4a437cUuNdG74meIqCxERi/aZ4nzMzFHsF/YDmsrzvvUewryA3OXok
-	4Yvlpgx6G4osMdFnp4xxiVvJM7q2Tq1vyfUAUhe1AchWbWWFNZqC7ttlye52FIMZ
-	C/u5xg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqw9b78v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 11:12:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45OBCF7Z006920
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 11:12:15 GMT
-Received: from [10.214.67.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
- 2024 04:12:13 -0700
-Message-ID: <bc57891b-f318-4c4c-bae4-52617d5643ef@quicinc.com>
-Date: Mon, 24 Jun 2024 16:41:51 +0530
+	s=arc-20240116; t=1719227545; c=relaxed/simple;
+	bh=C7v68YrxalPAI1xgZuKhZ0iKr1W4zLTjeVWq5JmPBCM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=i4XScp26f9taEfVHE3ASt9NH6bED5mwabj+0qUZCohv1F4jTjAV0aYVgZEHrpEOq9jOR79KkOYhSemlVoXoaVUTFggHHZJueersd7kPIuGpfniSRgUUCFciTDWLQc4nksCTO2kSde1efGko6zZyDBBO8b9Gt/s5alN8byoLpMZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=vsxkvzD/; arc=none smtp.client-ip=212.42.244.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
+	t=1719227539; bh=C7v68YrxalPAI1xgZuKhZ0iKr1W4zLTjeVWq5JmPBCM=;
+	h=From:Date:Subject:To:Cc:From;
+	b=vsxkvzD/t6lUQg+ZjYCpxQLIWCla2f8VhYXq5yqJRHYiycrihWp/9H1dmE7vRWlzS
+	 D4WJUCaPvDSUiizzgylisPZIdhhdRxxYPW2pdrC+V3CmRRbqJAH4AggGEtc+hl1IW8
+	 ifVC0BcKSOnOaqjqmfWOP9DlEBTqq5r4JXT+XQwE=
+Received: from mail-auth.avm.de (unknown [IPv6:2001:bf0:244:244::71])
+	by mail.avm.de (Postfix) with ESMTPS;
+	Mon, 24 Jun 2024 13:12:19 +0200 (CEST)
+Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
+	by mail-auth.avm.de (Postfix) with ESMTPA id 6475280544;
+	Mon, 24 Jun 2024 13:12:20 +0200 (CEST)
+Received: from l-nschier-z2.ads.avm.de (unknown [IPv6:fde4:4c1b:acd5:7792::1])
+	by buildd.core.avm.de (Postfix) with ESMTP id 5B1061825E6;
+	Mon, 24 Jun 2024 13:12:20 +0200 (CEST)
+From: Nicolas Schier <n.schier@avm.de>
+Date: Mon, 24 Jun 2024 13:12:14 +0200
+Subject: [PATCH] kbuild: Use $(obj)/%.cc to fix host C++ module builds
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] soc: qcom: icc-bwmon: Add tracepoints in
- bwmon_intr_thread
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>
-CC: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_rgottimu@quicinc.com>
-References: <20240619135140.3581119-1-quic_kshivnan@quicinc.com>
- <a30fb728-d832-4309-8415-a28fed301e27@linaro.org>
- <461966ee-11ce-45e7-8ea8-abbb71431458@quicinc.com>
- <e84c3ab5-4064-425f-8c04-1d49f0425234@linaro.org>
- <xigukwbvqld5snjykp6h7qwob3r55w4evacbrp7svnzkqrmau3@enk5xlu5bbqn>
-Content-Language: en-US
-From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-In-Reply-To: <xigukwbvqld5snjykp6h7qwob3r55w4evacbrp7svnzkqrmau3@enk5xlu5bbqn>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 2G2DlhUoUlrbGLB7YSztdY4H8W5lPtB2
-X-Proofpoint-GUID: 2G2DlhUoUlrbGLB7YSztdY4H8W5lPtB2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_09,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 clxscore=1015 impostorscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=999 phishscore=0 bulkscore=0
- adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406240089
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240624-kbuild-fix-xconfig-v1-1-7c06eae6d3aa@avm.de>
+X-B4-Tracking: v=1; b=H4sIAI1UeWYC/x2MQQqAIBAAvxJ7bsHEivpKdEhdbSkslCKQ/p50H
+ IaZDIkiU4KxyhDp5sRHKNDUFZh1CZ6QbWGQQirRSYWbvni36PjBxxzBsUcnaGitsK2WPZTwjFT
+ 0P53m9/0AOMnJn2QAAAA=
+To: Masahiro Yamada <masahiroy@kernel.org>, 
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Rolf Eike Beer <eb@emlix.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1502; i=n.schier@avm.de;
+ h=from:subject:message-id; bh=C7v68YrxalPAI1xgZuKhZ0iKr1W4zLTjeVWq5JmPBCM=;
+ b=owEBbQKS/ZANAwAIAYjGvJyImm24AcsmYgBmeVSTwwHzE2AkX6U3spJ6AZ/tbJLl2pPamSCd3
+ Oi7543R5pmJAjMEAAEIAB0WIQQO/4WJ63TpgecLpGmIxryciJptuAUCZnlUkwAKCRCIxryciJpt
+ uPhkD/9tJSumJrr21ltO3uMLLOJPeisbT/hD89V0t7W/JOzS+kvK1RHUpViCPNsXEiwsQr/1q7I
+ kx3P4l6liMy57gMy+EWgFa6Oar74bPWyuEL3VelO73umM/FU359fc0UybEMM6ZjqIWxbA/KNRes
+ rdB1aXyHTG59y4iN0aq7UJWSeS+obS45uEvT03rUG95ym7F4nUlOzfXoJAy0dBnS9fGX4UVkL32
+ npV1bUuZ01Q7HfzOJ1Yhb5T0b0FDqy7t75qokXxwkybqM7PCHMmT+Q2BB9gdymp5CfXofNhBwXZ
+ lbzz0viHV0/WghPx9atwRZ8H7+VKnguSFu//jx/aP+LFBlVn6jwJA/XAJHj2VXuOFGfwgGdktsN
+ TjxiA+K0elRHGtg1e1iedGZFayZGOGPCfHRKJR/S+gANhYeheLyz212CIhUKlu6SeVP2p0BeK+5
+ 7wfaEfzBz/hm0A/6NLkewM/D6heDGm4JAoOSqWSl/irDni/dxCK7YNQjXSirWASkNNDq5qKlQb4
+ jCItw+Lyl7yvxTWb97deKmyf7jlvr1y4hr06i6rOS42b+ftlneVTrBuKwUJcj5cjECWrAywF4tM
+ o6MakZYL4qUfaVH6Jhijl0UmZtD5i2X4YTIBAoaGOp5fytL5Mn1RmR5vgObO8eiKFct8ybq9zl6
+ XzlKGf6vd2eoveQ==
+X-Developer-Key: i=n.schier@avm.de; a=openpgp;
+ fpr=7CF67EF8868721AFE53D73FDBDE3A6CC4E333CC8
+X-purgate-ID: 149429::1719227539-627AAE4F-BC86F478/0/0
+X-purgate-type: clean
+X-purgate-size: 1504
+X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
+X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
+X-purgate: clean
 
+Use $(obj)/ instead of $(src)/ prefix when building C++ modules for
+host, as explained in commit b1992c3772e6 ("kbuild: use $(src) instead
+of $(srctree)/$(src) for source directory").  This fixes build failures
+of 'xconfig':
 
+    $ make O=build/ xconfig
+    make[1]: Entering directory '/data/linux/kbuild-review/build'
+      GEN     Makefile
+    make[3]: *** No rule to make target '../scripts/kconfig/qconf-moc.cc', needed by 'scripts/kconfig/qconf-moc.o'.  Stop.
 
-On 6/21/2024 2:06 AM, Dmitry Baryshkov wrote:
-> On Thu, Jun 20, 2024 at 12:48:04PM GMT, Konrad Dybcio wrote:
->>
->>
->> On 6/20/24 10:55, Shivnandan Kumar wrote:
->>>
->>>
->>> On 6/20/2024 12:46 AM, Konrad Dybcio wrote:
->>>>
->>>>
->>>> On 6/19/24 15:51, Shivnandan Kumar wrote:
->>>>> Add tracepoint for tracing the measured traffic in kbps,
->>>>> up_kbps and down_kbps in bwmon. This information is valuable
->>>>> for understanding what bwmon hw measures at the system cache
->>>>> level and at the DDR level which is helpful in debugging
->>>>> bwmon behavior.
->>>>>
->>>>> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
->>>>> ---
->>>>>    MAINTAINERS                        |  1 +
->>>>>    drivers/soc/qcom/icc-bwmon.c       |  7 +++--
->>>>>    drivers/soc/qcom/trace_icc-bwmon.h | 49 ++++++++++++++++++++++++++++++
->>>>>    3 files changed, 55 insertions(+), 2 deletions(-)
->>>>>    create mode 100644 drivers/soc/qcom/trace_icc-bwmon.h
->>>>>
->>>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>>> index 242fc612fbc5..1b410c0183bb 100644
->>>>> --- a/MAINTAINERS
->>>>> +++ b/MAINTAINERS
->>>>> @@ -18573,6 +18573,7 @@ M:    Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>>    L:    linux-arm-msm@vger.kernel.org
->>>>>    S:    Maintained
->>>>>    F: Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
->>>>> +F:    drivers/soc/qcom/trace_icc-bwmon.h
->>>>>    F:    drivers/soc/qcom/icc-bwmon.c
->>>>>
->>>>>    QUALCOMM IOMMU
->>>>> diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
->>>>> index fb323b3364db..9b5ac1e62673 100644
->>>>> --- a/drivers/soc/qcom/icc-bwmon.c
->>>>> +++ b/drivers/soc/qcom/icc-bwmon.c
->>>>> @@ -17,6 +17,8 @@
->>>>>    #include <linux/pm_opp.h>
->>>>>    #include <linux/regmap.h>
->>>>>    #include <linux/sizes.h>
->>>>> +#define CREATE_TRACE_POINTS
->>>>> +#include "trace_icc-bwmon.h"
->>>>>
->>>>>    /*
->>>>>     * The BWMON samples data throughput within 'sample_ms' time. With three
->>>>> @@ -645,9 +647,9 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
->>>>>        struct icc_bwmon *bwmon = dev_id;
->>>>>        unsigned int irq_enable = 0;
->>>>>        struct dev_pm_opp *opp, *target_opp;
->>>>> -    unsigned int bw_kbps, up_kbps, down_kbps;
->>>>> +    unsigned int bw_kbps, up_kbps, down_kbps, meas_kbps;
->>>>>
->>>>> -    bw_kbps = bwmon->target_kbps;
->>>>> +    meas_kbps = bw_kbps = bwmon->target_kbps;
->>>>>
->>>>>        target_opp = dev_pm_opp_find_bw_ceil(bwmon->dev, &bw_kbps, 0);
->>>>
->>>> This breaks bwmon, as dev_pm_opp_find_bw_ceil is now fed a random
->>>> (uninitialized variable) value
->>>>
->>>
->>> Thank you for reviewing the patch.
->>> I didn't get it, still the variable "bw_kbps" is being initialized along with "meas_kbps". Which variable are you referring to as being fed to dev_pm_opp_find_bw_ceil  with an uninitialized value?
->>
->> Oh this one's on me, I skipped over the middle assignment.. Sorry!
-> 
-> Still:
-> 
-> CHECK: multiple assignments should be avoided
+Fixes: b1992c3772e6 ("kbuild: use $(src) instead of $(srctree)/$(src) for source directory")
+Reported-by: Rolf Eike Beer <eb@emlix.com>
+Signed-off-by: Nicolas Schier <n.schier@avm.de>
+---
+ scripts/Makefile.host | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-ack
+diff --git a/scripts/Makefile.host b/scripts/Makefile.host
+index d35f55e0d141..e85be7721a48 100644
+--- a/scripts/Makefile.host
++++ b/scripts/Makefile.host
+@@ -146,7 +146,7 @@ $(call multi_depend, $(host-cxxmulti), , -objs -cxxobjs)
+ # Create .o file from a single .cc (C++) file
+ quiet_cmd_host-cxxobjs	= HOSTCXX $@
+       cmd_host-cxxobjs	= $(HOSTCXX) $(hostcxx_flags) -c -o $@ $<
+-$(host-cxxobjs): $(obj)/%.o: $(src)/%.cc FORCE
++$(host-cxxobjs): $(obj)/%.o: $(obj)/%.cc FORCE
+ 	$(call if_changed_dep,host-cxxobjs)
+ 
+ # Create executable from a single Rust crate (which may consist of
 
-> #57: FILE: drivers/soc/qcom/icc-bwmon.c:652:
-> +	meas_kbps = bw_kbps = bwmon->target_kbps;
-> 
-> While we are at it:
-> 
-> CHECK: Alignment should match open parenthesis
-> #88: FILE: drivers/soc/qcom/trace_icc-bwmon.h:14:
-> +TRACE_EVENT(qcom_bwmon_update,
-> +
+---
+base-commit: 224a21441b0925ce1e60afb27629773a522c946e
+change-id: 20240624-kbuild-fix-xconfig-f0e95d0d5b27
 
-ack
+Best regards,
+-- 
+Nicolas Schier
 
-> 
-> CHECK: Alignment should match open parenthesis
-> #109: FILE: drivers/soc/qcom/trace_icc-bwmon.h:35:
-> +	TP_printk("name=%s meas_kbps=%u up_kbps=%u down_kbps=%u",
-> +		__get_str(name),
-> 
-> 
-
-Thanks,
-Shivnandan
 
