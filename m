@@ -1,107 +1,170 @@
-Return-Path: <linux-kernel+bounces-226904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA4E191457E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:56:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09D5B914584
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:57:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84BD4281280
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:56:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67191B236B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:57:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACCE84D03;
-	Mon, 24 Jun 2024 08:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFA712F592;
+	Mon, 24 Jun 2024 08:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NIlm3K+p"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GNbpvw3q"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10DB97346C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1F27FBA4;
+	Mon, 24 Jun 2024 08:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719219406; cv=none; b=L2ZnOe9Vld+WRlmkMgp4E7garwN1xeKQSDAt7oT//YQNUJjIIBXaWq5mL406tz29swL0vz5zj6bB1jWFrfplplP54FzTZSRgJKdJnL8Mfl8ATKHabhTtdd9R/NIdG5uL/2RfkFmfG0mSAbe0nzN5FB6NMqdx5Ul3v/X7e5G122c=
+	t=1719219427; cv=none; b=ZNQqZAc4tdKYDqAMceJAatp6N9V1EyQfjosOf9oTWU4rxGmLgl9AQdODCL8rlnrf8xWG+V7D30c45+hs8niFn2XRBSfyj191ZpdBCRoiNGVDXEDg+OmvoD+FQO9uP3FyRGepjYC1rWlPqChdYAL7SOzVvvsuYpTmg+dXc+98LtI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719219406; c=relaxed/simple;
-	bh=60jgSJ9BsP2kpjwq4csRJWDIIPPwj35/L6vDezVPoxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TAD4JjYOs/MAU2sZAMr44RWbkR6U58NAO8DkgeVCgePmRb2GFaIeFrEFN7X+Rm3KnT7TmAq3eDjTxiB7gCUI33UiLqxVXFcom0+1s0NZOcqhCsWlYTl63HJo8Ew7a5xNs5FL5lQXhgggGjOEOnyqAtrqJLxIRmogJxe2J5r/o48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NIlm3K+p; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7178727da84so1602977a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:56:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719219404; x=1719824204; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vfhjqO2J81Ssb/Fuz1ky6uYbmEEWMBrkgz3wOJNpA9M=;
-        b=NIlm3K+pzORHUe9l6BwvSACfmcVH+ETinoVmZpIIXh8GFbToUyF4UGFDERi1mg4V+O
-         5Tcj4b0eSdACEvPUq7ySlnNbRUnWdKN4dRUf/mCt+oEUA1abW8aBIsdey4CdmB1vszlO
-         Aa4eLADdgFZKnqAGVrFJPS7lHduO+5/9XHzIM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719219404; x=1719824204;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vfhjqO2J81Ssb/Fuz1ky6uYbmEEWMBrkgz3wOJNpA9M=;
-        b=loXRo7h/zm8b0Bw1yompts02w3T4IrDtz9qaF8uE2BAXssAQPkGKsiLGI/bS6DvT1V
-         S21/cZ/zmj5e7WFJ+CrgqIK+gQH9/cQa11SJnphGp0XvWbt4pQzDF6s9H7oNn576mamK
-         GtEAsUUEpdQZ93Mz7pIDfBgqcpaH0FiXCBXt+JjUgRB2I7Z11/+svu+Nx/UMkj65ShE0
-         k2jMo/rmr8BTiAjRIbISqa8y0cm3h/aHIt0icGzMgK1m5Ahczr5n1xLHnHgnqVNaL3rT
-         1jg9t/2xSVc2MwMMRKbQbLWdn1JOYAZoq9VozQqlJVKiowqdTyt7Xa2v6cg8Arh4HKkZ
-         5rCg==
-X-Forwarded-Encrypted: i=1; AJvYcCW216Fc+7x5bMGGJ894PSPgcpggmohvwsI131JGRKQOOaWyJXtKqclPPsW8cMjI68wYj8/bNtRTiZ5Ntv7NNIJxOO5JC4WNbJ/3pwlK
-X-Gm-Message-State: AOJu0YzjGedHKHJjz7o5ceczwpo0x3f0k7U8QvnrSQRs3wtUBuKmAib2
-	zPKUSbaz4KD8vzneZ/rZFZPaaFHfp6Oh6ZJ08FgnOxuee/wUj3J034L755G82A==
-X-Google-Smtp-Source: AGHT+IGOeL/QpfdM2r7m71ruASfasUfxopdj8Y8nJxGoGfAwF6tdeiBa/gyu/JEFhpZfPCnU8+m2MQ==
-X-Received: by 2002:a17:90a:9af:b0:2c7:e24d:f688 with SMTP id 98e67ed59e1d1-2c8504c7bc5mr3043128a91.7.1719219404223;
-        Mon, 24 Jun 2024 01:56:44 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:4e6:bef0:f574:7d51])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e64a1300sm8214557a91.48.2024.06.24.01.56.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 01:56:43 -0700 (PDT)
-Date: Mon, 24 Jun 2024 17:56:38 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>
-Cc: Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Yosry Ahmed <yosryahmed@google.com>, Nhat Pham <nphamcs@gmail.com>,
-	Yu Zhao <yuzhao@google.com>, Takero Funaki <flintglass@gmail.com>,
-	Chengming Zhou <zhouchengming@bytedance.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] mm/zsmalloc: change back to per-size_class lock
-Message-ID: <20240624085638.GB3130923@google.com>
-References: <20240621-zsmalloc-lock-mm-everything-v2-0-d30e9cd2b793@linux.dev>
- <20240621-zsmalloc-lock-mm-everything-v2-1-d30e9cd2b793@linux.dev>
+	s=arc-20240116; t=1719219427; c=relaxed/simple;
+	bh=UCw6cbBAt2RESnbbjnDzyzljalZmFBvcXqndqXVYdak=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kURa4ddTWzjZax+WEcZMASr3sh9VrwOrNXnRfkMG0nsRc/YOILUw4ISTH2gWO8YaNHEzY8K2GvQOXwaNPz8ZAusIQdMEryOYrbfUF+3coCTcvR7cqK65exOaEqT6s44nO1vG+uVK2bBtzRY3XRSJtJ3HQhb8E8l+QZurXHWs2BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GNbpvw3q; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O8Ycdd018129;
+	Mon, 24 Jun 2024 08:57:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	W2ApJLtM8F0b/DVXCbP+rOWZFCQMcxrOdYkrWU0hg9M=; b=GNbpvw3qe3DT8lVu
+	QfXXx8n/wGqCpblnWcGb7Eti3kbMBjENJw1ABNcIxhALI7BEP4yZEm90KMpK/y98
+	9ej3LPSXncHzspIusrQkARJVv7YdLnDpL5hIFbbK/OK5vEduEHmE3RJXYo+33HPP
+	2WP/xA5muLGwvUuNlCF96M9HjnzXOgMN1iealAwPK9Hu1n2ZwmTx4+6wx6TKwGEa
+	4Uo/txPvMVrqFXISRE4VArHNgu5n5UMWggMG7El02aOpNRU8KfIjcwMGt++16HQx
+	jfEbdxtzJgAPbAqR9Qlw74YP3VhkU8GnytPM8sAfSTI/3cMMZho0ZdQc4FcdGTJ1
+	zhBwpw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnm6k44d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 08:57:00 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45O8ux7g021092
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 08:56:59 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
+ 2024 01:56:54 -0700
+Message-ID: <75ed1065-d123-9193-7017-cce12889130b@quicinc.com>
+Date: Mon, 24 Jun 2024 14:26:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621-zsmalloc-lock-mm-everything-v2-1-d30e9cd2b793@linux.dev>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH V2 2/3] soc: qcom: icc-bwmon: Allow for interrupts to be
+ shared across instances
+Content-Language: en-US
+To: Bjorn Andersson <andersson@kernel.org>
+CC: <konrad.dybcio@linaro.org>, <djakov@kernel.org>, <robh+dt@kernel.org>,
+        <krzysztof.kozlowski+dt@linaro.org>, <srinivas.kandagatla@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <quic_rgottimu@quicinc.com>, <quic_kshivnan@quicinc.com>,
+        <conor+dt@kernel.org>, <dmitry.baryshkov@linaro.org>,
+        <abel.vesa@linaro.org>
+References: <20240618154306.279637-1-quic_sibis@quicinc.com>
+ <20240618154306.279637-3-quic_sibis@quicinc.com>
+ <vjes4lm3um44f6oguvrq3gozemquzmmmicj47ieczwfuqkmaqp@aby3dj6ttdig>
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <vjes4lm3um44f6oguvrq3gozemquzmmmicj47ieczwfuqkmaqp@aby3dj6ttdig>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: h1imEcxYojwwOV3vYfxhu0HRJbo0mvUS
+X-Proofpoint-ORIG-GUID: h1imEcxYojwwOV3vYfxhu0HRJbo0mvUS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_08,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
+ priorityscore=1501 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406240071
 
-On (24/06/21 15:15), Chengming Zhou wrote:
-> This patch is almost the revert of the commit c0547d0b6a4b ("zsmalloc:
-> consolidate zs_pool's migrate_lock and size_class's locks"), which
-> changed to use a global pool->lock instead of per-size_class lock and
-> pool->migrate_lock, was preparation for suppporting reclaim in zsmalloc.
-> Then reclaim in zsmalloc had been dropped in favor of LRU reclaim in
-> zswap.
-> 
-> In theory, per-size_class is more fine-grained than the pool->lock,
-> since a pool can have many size_classes. As for the additional
-> pool->migrate_lock, only free() and map() need to grab it to access
-> stable handle to get zspage, and only in read lock mode.
-> 
-> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
 
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+
+On 6/21/24 11:15, Bjorn Andersson wrote:
+> On Tue, Jun 18, 2024 at 09:13:05PM GMT, Sibi Sankar wrote:
+>> The multiple BWMONv4 instances available on the X1E80100 SoC use the
+>> same interrupt number. Mark them are shared to allow for re-use across
+>> instances. Handle the ensuing race introduced by relying on bwmon_disable
+> 
+> In an effort to educate the reader, could you please describe what the
+> race condition is here.
+> 
+> It would also make sense to break this ("Handle...") into a separate
+> paragraph.
+
+Ack, will make the changes in the next re-spin.
+
+-Sibi
+
+> 
+> Regards,
+> Bjorn
+> 
+>> to disable the interrupt and coupled with explicit request/free irqs.
+>>
+>> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+>> ---
+>>
+>> v2:
+>> * Use explicit request/free irq and add comments regarding the race
+>>    introduced when adding the IRQF_SHARED flag. [Krzysztof/Dmitry]
+>>
+>>   drivers/soc/qcom/icc-bwmon.c | 14 +++++++++++---
+>>   1 file changed, 11 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
+>> index fb323b3364db..4a4e28b41509 100644
+>> --- a/drivers/soc/qcom/icc-bwmon.c
+>> +++ b/drivers/soc/qcom/icc-bwmon.c
+>> @@ -781,9 +781,10 @@ static int bwmon_probe(struct platform_device *pdev)
+>>   	bwmon->dev = dev;
+>>   
+>>   	bwmon_disable(bwmon);
+>> -	ret = devm_request_threaded_irq(dev, bwmon->irq, bwmon_intr,
+>> -					bwmon_intr_thread,
+>> -					IRQF_ONESHOT, dev_name(dev), bwmon);
+>> +
+>> +	/* SoCs with multiple cpu-bwmon instances can end up using a shared interrupt line */
+>> +	ret = request_threaded_irq(bwmon->irq, bwmon_intr, bwmon_intr_thread,
+>> +				   IRQF_ONESHOT | IRQF_SHARED, dev_name(dev), bwmon);
+>>   	if (ret)
+>>   		return dev_err_probe(dev, ret, "failed to request IRQ\n");
+>>   
+>> @@ -798,6 +799,13 @@ static void bwmon_remove(struct platform_device *pdev)
+>>   	struct icc_bwmon *bwmon = platform_get_drvdata(pdev);
+>>   
+>>   	bwmon_disable(bwmon);
+>> +
+>> +	/*
+>> +	 * Handle the race introduced, when dealing with multiple bwmon instances
+>> +	 * using a shared interrupt line, by relying on bwmon_disable to disable
+>> +	 * the interrupt and followed by an explicit free.
+>> +	 */
+>> +	free_irq(bwmon->irq, bwmon);
+>>   }
+>>   
+>>   static const struct icc_bwmon_data msm8998_bwmon_data = {
+>> -- 
+>> 2.34.1
+>>
 
