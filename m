@@ -1,138 +1,148 @@
-Return-Path: <linux-kernel+bounces-227952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A15AE9158B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:18:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D2E19158B6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:19:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDF851C2246C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:18:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 116161F2494C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64291A08BC;
-	Mon, 24 Jun 2024 21:18:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7335F1A08C4;
+	Mon, 24 Jun 2024 21:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SALN9ePl"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="neTbh1IP"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A164C8F6B;
-	Mon, 24 Jun 2024 21:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD608F6B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 21:19:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719263890; cv=none; b=pBWt4tmf0CGLeZbWYBL/kzCH8p2lKj23HyJGj5ju7aBFvW0T/8Xj4LDgZ3G6hBbahriAF9tLx3VYQT1NLh3iZMgYMHV3Domg+E3rO4B4eWagk7Na1wjm/pL8qJwtyAPogVVTVf9x2av5ZC0RT0lt3MS8crLRx1q48MEeoO/Dt0k=
+	t=1719263951; cv=none; b=IjINFV60a0CaSUBJR+K9DdwvkV1UKcGFdHS3ip9kLK1aRj8VlZLBK4mlomwirZPeQ71ZSjgrRvmX+WgS6eQRAUORNC6MdDoW9DFBoDL43Qr3cqD+g8dW9jz+ZfW87pVpdI89qWoINcHwIjmT2DIQTg43vxvZjbxj8xy/pHhVjjo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719263890; c=relaxed/simple;
-	bh=l8Zv6zTZkrFFWNVvlwnKFMv5uzpJV0PDxOetpCVnLgE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iqZVh0JYZdqbBFzlc1bqRI1yNrlCuNG65vbuFyxmqmiW4VcoEHrgJnQKF0qMwGY+Bam/UBg6kZCcAlH5j/ZRjyci2Oq5uPYj71XulejZLCzbZmF7FmYpkfWK1WIMZjhOMVc8WbMjKSMhLyCtkIxRU7wZxjYYYvJFAhSqISX+/RM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SALN9ePl; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f47f07aceaso37717245ad.0;
-        Mon, 24 Jun 2024 14:18:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719263888; x=1719868688; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=XOg8+lXJdsURB0vv97T/giYlSsMyAfF7fszjN+D+tlo=;
-        b=SALN9ePl1kznUY6pNCKZ0Qor4wjnB/b3rL3XjdxtOFKG8napi1B2Bslw6xMbHojV+4
-         A/J+m40590MTlQAV/sqHo+HtLgKabsH+tLq+pcR6bLs5oUeQHoh+GzCcXTbqgVT1eJ3A
-         yyu1FG6ThIMbOP4sQNBmnBXObfZTb/8Cjt7ZXl/nInKf6b2Ble20R5n1bZJrNKMAf1ll
-         z/7DF09JKZ1wQJ0RQ9zDgubNcY+/01dUVD7BBlz5lE5e/tNV19r/WeZ8DZDrPGr87Qrw
-         6878BGfzzp9S5d4tm2hIXNlDpArFjOfCNweSn8lcxPBmz5yz11eJD+F5mgm3pynksj0k
-         eK1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719263888; x=1719868688;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XOg8+lXJdsURB0vv97T/giYlSsMyAfF7fszjN+D+tlo=;
-        b=kVKtoGuQRkOiouEAxL2dcyWdJ27cXPkPoE5z975zKFAu1nzYvuScNVZm6CkvWe9qfD
-         yzRD3dvdGyklPsKmuqJWleSv9tyo9eCYW4PwsLdAw8/EFZjvl+6vbx9zOECwA7sfS2wA
-         VyaTGaIslZd3KK4HWNwFthwRHMA/GCItSa4fMm7K1DWmMGPJdJ+nZN0UqFHHPa/BjuKR
-         P3g7tDjF1C5n0gW9uunc6jMxDohQcIuElydxAiyCSBAgF34Buf9ft+Z9U5vfyVFn8BAk
-         /z81K4VANOuwsopJPUBXO9aa1lrgkAAlkRtsmoUWBYh3Rgk2/FLFIJOGOStpIpYY8uTc
-         gNdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXft2nMgiJ27bmyBC/oeKos7frhYLQyrtusT2q1RkFm7i9v6vR/Zyl02EZVX//+KGscmpGRlQ8SIGI9/jCi56KO9CQLNOVEq3BCROKmkVANFR/c0vjH1R0EunedggRFsasn
-X-Gm-Message-State: AOJu0YykVjB7CyXr6h1oUi9xB82e7mraQ2l8qRr9eYsCUw248bbrHaYd
-	2MFLIvh3ALIrJPULBLLKBiUNq7/Z5JR4k8uimp5sTa84ML2SHkDG
-X-Google-Smtp-Source: AGHT+IHWmimvJ7K6ZtF/mv7MnJM5fetCwbtgJhLSAAJVi4lplWlvxGL5tFr+cHILNGkCYyOUoRuRTw==
-X-Received: by 2002:a17:902:f611:b0:1f6:89b1:a419 with SMTP id d9443c01a7336-1fa158de8e8mr62866925ad.17.1719263887840;
-        Mon, 24 Jun 2024 14:18:07 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbc3185sm66912095ad.289.2024.06.24.14.18.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 14:18:07 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 24 Jun 2024 11:18:06 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH 09/39] sched: Add @reason to
- sched_class->rq_{on|off}line()
-Message-ID: <ZnnijsMAQYgCnrZF@slm.duckdns.org>
-References: <20240501151312.635565-1-tj@kernel.org>
- <20240501151312.635565-10-tj@kernel.org>
- <20240624113212.GL31592@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1719263951; c=relaxed/simple;
+	bh=xn5Qihs7t7zWujdcg40cseZpnq9TY7P4nerxneGcaHs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T8/y2g2bOp+zjMgVuOUbOUzRsOhr8kCflXzZ0p5miHEVMJ15Dv6a9K0ux91quz98WoKvn/c8DgSBko2RdAq+33NbJUSLuulIU6aRhdJrhbTrFzMG9DXRvN1mWveOyYm7aa0qjZhZpIf9yv2hiq5X6QQv+AiAD0s8M8X/Gf8qvcg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=neTbh1IP; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id D3BCC2C0372;
+	Tue, 25 Jun 2024 09:19:00 +1200 (NZST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1719263940;
+	bh=sAZ4MdXH+h/nieLep2o7unhilYOwx9E3ZFeLERPASYE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=neTbh1IPTgIvBOYmvWBxHw9DKrpSox4my7sJ0vmhDgvtdU5SvdH84kCR3gZS/+N/o
+	 H2d9NN+zpiTuaouCeDmqW/SKcQPbh6VJxypE3NoAJVmBkVOCSI7wXTXLhEqf+hCi89
+	 BoorX7IJOaV96yE2SkWbFBkRSusyR+YPUKefxRkEqh3dumJJh1qtzaprS5jVPN4ny5
+	 lPQiIJRwk4yf0LDdv4JlLS/qS4a48OE4/lds+dcB+rtlFvVrJtt1BEyAJ7kuwmGnAb
+	 xkRIUEFgu0m24Vq7v9v0kTQoWlmJRA8e3dPX/6n5XOOXfrb3aSH2nTBz5VHZHB0L1k
+	 khkcC5We3KAwA==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B6679e2c40000>; Tue, 25 Jun 2024 09:19:00 +1200
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 9634713ED5B;
+	Tue, 25 Jun 2024 09:19:00 +1200 (NZST)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 9027B280ADD; Tue, 25 Jun 2024 09:19:00 +1200 (NZST)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: andrew@lunn.ch,
+	f.fainelli@gmail.com,
+	olteanv@gmail.com
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	=?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
+	Landen Chao <Landen.Chao@mediatek.com>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Daniel Golle <daniel@makrotopia.org>
+Subject: [PATCH v2] dt-bindings: net: dsa: mediatek,mt7530: Minor wording fixes
+Date: Tue, 25 Jun 2024 09:18:57 +1200
+Message-ID: <20240624211858.1990601-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624113212.GL31592@noisy.programming.kicks-ass.net>
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=CvQccW4D c=1 sm=1 tr=0 ts=6679e2c4 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=T1WGqf2p2xoA:10 a=Mc0CNVgLlbBwIVVfR90A:9 a=3ZKOabzyN94A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-Hello, Peter.
+Update the mt7530 binding with some minor updates that make the document
+easier to read.
 
-On Mon, Jun 24, 2024 at 01:32:12PM +0200, Peter Zijlstra wrote:
-> On Wed, May 01, 2024 at 05:09:44AM -1000, Tejun Heo wrote:
-> > ->rq_{on|off}line are called either during CPU hotplug or cpuset partition
-> > updates. A planned BPF extensible sched_class wants to tell the BPF
-> > scheduler progs about CPU hotplug events in a way that's synchronized with
-> > rq state changes.
-> > 
-> > As the BPF scheduler progs aren't necessarily affected by cpuset partition
-> > updates, we need a way to distinguish the two types of events. Let's add an
-> > argument to tell them apart.
-> 
-> That would be a bug. Must not be able to ignore partitions.
+Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+---
 
-So, first of all, this implementation was brittle in assuming CPU hotplug
-events would be called in first and broke after recent cpuset changes. In
-v7, it's replaced by hooks in sched_cpu_[de]activate(), which has the extra
-benefit of allowing the BPF hotplug methods to be sleepable.
+Notes:
+    I was referring to this dt binding and found a couple of places where
+    the wording could be improved. I'm not exactly a techical writer but
+    hopefully I've made things a bit better.
+   =20
+    Changes in v2:
+    - Update title, this is not just fixing grammar
+    - Add missing The instead of changing has to have
 
-Taking a step back to the sched domains. They don't translate well to
-sched_ext schedulers where task to CPU associations are often more dynamic
-(e.g. multiple CPUs sharing a task queue) and load balancing operations can
-be implemented pretty differently from CFS. The benefits of exposing sched
-domains directly to the BPF schedulers is unclear as most of relevant
-information can be obtained from userspace already.
+ .../devicetree/bindings/net/dsa/mediatek,mt7530.yaml        | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-The cgroup support side isn't fully developed yet (e.g. cpu.weight is
-available but I haven't added cpu.max yet) and plans can always change but I
-was thinking taking a similar approach as cpu.weight for cpuset's isolation
-features - ie. give the BPF scheduler a way to access the user's
-configuration and let it implement whatever it wants to implement.
+diff --git a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.ya=
+ml b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+index 1c2444121e60..7e405ad96eb2 100644
+--- a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
++++ b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+@@ -22,16 +22,16 @@ description: |
+=20
+   The MT7988 SoC comes with a built-in switch similar to MT7531 as well =
+as four
+   Gigabit Ethernet PHYs. The switch registers are directly mapped into t=
+he SoC's
+-  memory map rather than using MDIO. The switch got an internally connec=
+ted 10G
++  memory map rather than using MDIO. The switch has an internally connec=
+ted 10G
+   CPU port and 4 user ports connected to the built-in Gigabit Ethernet P=
+HYs.
+=20
+-  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs has got 10/1=
+00 PHYs
++  The MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs has 10/1=
+00 PHYs
+   and the switch registers are directly mapped into SoC's memory map rat=
+her than
+   using MDIO. The DSA driver currently doesn't support MT7620 variants.
+=20
+   There is only the standalone version of MT7531.
+=20
+-  Port 5 on MT7530 has got various ways of configuration:
++  Port 5 on MT7530 supports various configurations:
+=20
+     - Port 5 can be used as a CPU port.
+=20
+--=20
+2.45.2
 
-Thanks.
-
--- 
-tejun
 
