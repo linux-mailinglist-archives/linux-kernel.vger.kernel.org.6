@@ -1,115 +1,114 @@
-Return-Path: <linux-kernel+bounces-227935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416B7915843
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:48:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E019915842
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:47:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D36A2869F9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:48:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BBE7B1C235F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97A0D49649;
-	Mon, 24 Jun 2024 20:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3781645010;
+	Mon, 24 Jun 2024 20:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="eVSwj4gC"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="i9d/bZ5t"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865251BC2A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A811A3770C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719262117; cv=none; b=nq3Jd3gDgVLwig82aDZ6MkwCnArAA8W+qGkT6Qft5x3mEs6Ga9LOzWhLFszBTG18MUvgwHzJRhvQ6faivpvGqJiwuVv7wZnWMdJzvxfISy8LsxC4uo54i/mYQYoZtpNL92UW/mSVvk/E9akATcB4D3JmWXsvIpUw0FVv2UXaHGM=
+	t=1719262034; cv=none; b=JRiE5/wi1iQM0+sYp4KOn8MJCG2RyfvpfSesYHqfxorykiiLLE33eFMSSnDOx6UTNoEGqtod6rWymkcJH9BeIdgfcbemhNL3b7Z84OVM254AZmvuN1LusM2V49LrkN94UKGQ/cR867Um7trMtOsfKn8MALjnkQzTpzXltz/798k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719262117; c=relaxed/simple;
-	bh=/JKN7T+zJiS+J7qH/hGZCZULxf3iWFhpdNOhLehqgnw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f5MhrwQBXy+EWB8NpAlXkdc/uEJldsL1aKROVZ0cgzxj7VqO+xJZfAX3BpY/6wlvK5gcVlJchc9Dyku+TSbskTyRzUlIKZm5bFCOJYG+KsATREFRynx340xfK+zVW4wNwMTfsZ2htt9rBWN/M3yqX1KLK70Pdd+EGbXHXi+juqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=eVSwj4gC; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-706738c209bso1249602b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:48:36 -0700 (PDT)
+	s=arc-20240116; t=1719262034; c=relaxed/simple;
+	bh=tEHUYCkIIv4oi6rpppXJgZGALfgMl4SEQuChLwjNeho=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=R7jQLJRPr5RsRweNGafhkTCrQTbR3SFD0lOwIWAuKYpXgmVGtprRKcdZTMELpfkT1v3PHh+JQZdbWluYm24Oe4d5ZPPiKtbgyqW5EmNUSGnnNp6e5cy25HEBGM+y44H/xXd/9gKeE7AVyDnM//okfu8AaHc+9BmdEBanmCy8V+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=i9d/bZ5t; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ec52fbb50cso26322791fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:47:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1719262116; x=1719866916; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=5sXZy8fFmjl+2dWQsh2VTHEx+TqeWltCaGxMF+BW67w=;
-        b=eVSwj4gC5Y0ek6ZdCY+YHPZMGfYEFWPXX5C0gRGHLs/4O78zDkqzbPc/zcA311J3GB
-         hF2kFoiTCvKgbj+QeAECw8OeetoV5Z8CzdXMvhelmSGGF9tOhZC0K3zg94M3NVHC8qxJ
-         DGW4J9azXfo+MCZHP7QkF7gCM1kN6M83sj/eYaBxnMGj4WQ7HGr2L/GPt8jQ2aDjcUuB
-         JmLwpoBbrNEKJG2j/TBbwjdSlmkcOoIGJS/DMk2IXFyw8QaHRDuysHyF3G8umXFVP4AU
-         VZArpEWjFc/4AXB8pPLIfbw1X9c0lgZHxdKvljTVLW5dfh/kY8WmA0Wxss6cyUD2EmUq
-         PXuQ==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719262031; x=1719866831; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tEHUYCkIIv4oi6rpppXJgZGALfgMl4SEQuChLwjNeho=;
+        b=i9d/bZ5t/SR5m7oQpK6fTjQj4cvmArO8EM6U3TP0LY4cm9pcdvpnz+m4B0ZnJcaYSg
+         j/NrmSKGMPSw8jcbgIpSsk3Jyn9NtZTQ4qe33Y6AELi0X6+vlPmHtXB7oWiSUyAt/XyK
+         ipB/B6eFtDzKfS5amEXeNUkWZKQC6qJVMRk6NenL4WOD4vcsvdDU/N9yvUT8yEt4ksjd
+         v5V3Y0qtnHNoe4dVvaWp3oFRt4rlzTVCHLopeDFVEbPkWVXwIk4esi+GmYsPTFGEMOn5
+         AS2OClsFWDSd0xVA/nZZ9XMLxbJ0UQzZCWU4mqQZTJj+mawhg4jnj/BygOGVtPVt2dc1
+         yjFg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719262116; x=1719866916;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5sXZy8fFmjl+2dWQsh2VTHEx+TqeWltCaGxMF+BW67w=;
-        b=J+9d/WGaKOnhDK4Rs6V7IXJeLoyF/6QnSMR/wAArnT5/YUFGTo6hAYag/S8icD/P9V
-         eAiL/EwbZ2CUMYFKtWPIQaellS6cGGE1dILeoQSvoJxsRdKfa3Oz3SXzFrUl0SwtBd1V
-         3+KOApvasvPi/gqaqOODfNm2gjWyiYTuzi8UnAfIIt2yRF23tVkppbun2g0X1aIUGXp/
-         rkxtpX4PjldnBwFQ9pQP4b67gzCcGvcMucCIDHGxhwHc+nlJfYhRqHaidtujlsrHs7PH
-         KUYGanAefNOhPP7pTdKj1Fw09NBaZIFnrIcCARXnT8snTyzNZEm7HC0ib01mYVrUftIe
-         V1Mg==
-X-Forwarded-Encrypted: i=1; AJvYcCVfnv1FWvx/yMMPCgNBrVhrOqt5LLp+d6/2klDcfqkLV/jtJGz7qQ3SfCQLmpRneAHW/ODDQYiBS+qb0uG9Vfmbf7AM542p/93nPD4j
-X-Gm-Message-State: AOJu0YwP7OsJLkEj1IpT7+OJ9DPoqs5oJtNsMRR+O5rApBqxAVcJjS3r
-	/naSgfIGIAcBiVp0Ks1K+lAJeSU9ku2jMNXPcIlonZEHQqqwAx/uhxd1yg/N58P0BXX9tKoH4QQ
-	KbjI=
-X-Google-Smtp-Source: AGHT+IHROLAyORIu1MU6nTmKWMCgC/Gr83UJCjyNIbBhQcG3wsI2rQbFWey/4R362QhS8vyXdD8Zlw==
-X-Received: by 2002:a05:6a00:bd6:b0:706:742a:1c3b with SMTP id d2e1a72fcca58-706745bbed5mr4059913b3a.8.1719262115681;
-        Mon, 24 Jun 2024 13:48:35 -0700 (PDT)
-Received: from fedora.vc.shawcable.net (S0106c09435b54ab9.vc.shawcable.net. [24.85.107.15])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512900a0sm6869753b3a.149.2024.06.24.13.48.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 13:48:35 -0700 (PDT)
-From: Thorsten Blum <thorsten.blum@toblux.com>
-To: minyard@acm.org
-Cc: openipmi-developer@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Thorsten Blum <thorsten.blum@toblux.com>
-Subject: [PATCH] ipmi: Combine identical if checks
-Date: Mon, 24 Jun 2024 22:46:55 +0200
-Message-ID: <20240624204654.250258-2-thorsten.blum@toblux.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1719262031; x=1719866831;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tEHUYCkIIv4oi6rpppXJgZGALfgMl4SEQuChLwjNeho=;
+        b=v1PsOTSQsSKnvrjgoL+VfOvdiX6mY9sItMw3zge/OUPcRotFvFk7cH0RmCAUkFh3Rz
+         eajvjdhWlYBIHdLkh3T+h2IXckLKUY0aT1WmC7L4UINBhMlPoxZcQNPt01H6sOnEO1Bn
+         wMMit1TjZwliU/+0bSD74KYITbNCiMWIs6caoI3P0AdDXBZdvdqwgeGqiSR+QacY+Wdd
+         WWMX97Us1t7+RTjR5rowiQX1Yc+FRYtSANjWWXw5qEVqg6Z8jUqB53Cm/HC4T38Mm3qB
+         KB41xhk6Hkk0427HB9Gpli1Ob7fBYKE1uQpG+iPBcB8zn8QGaII7faQm/3DvyVDrE2na
+         p+Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCUE+i/9WpJvbyncWJBmg/Amu88bm3DXaj+3QSjGVJSNdxpLhSzBMsMNt53D9XCX4x7nHdby+WcRin3H5iI23YgraYRnbospVD1HVtA3
+X-Gm-Message-State: AOJu0YwaYS6rHr+EMDB8qwaRJB2i+EqoaeVn50u9MuOFX4KM+DazcqJK
+	B6z1U+Wxc5vYKlYXXIveziVs+54qwQrphYYIO//qDM16c7SQS4Hf+aai8sj6ApesD6HpXYHPPot
+	94ngpJrkQAbJ0HII5FQMO9/534f8Nxr3WlZtwag==
+X-Google-Smtp-Source: AGHT+IHL/+BVaSL1JwC3QdV7+dB7p9nj9FusdDMo3xQgiMwebDA1XqLs7ZH+yWvabVQljOToUMXD4dlenP+acuxj/IA=
+X-Received: by 2002:a05:6512:39c8:b0:52c:e4cf:4f31 with SMTP id
+ 2adb3069b0e04-52ce4cf502dmr3593154e87.49.1719262030535; Mon, 24 Jun 2024
+ 13:47:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240624194518.37458-1-brgl@bgdev.pl> <CAA8EJppMPeYrPH+ssDMnf6UwHRdKQetpY3PotGvR-cc2vE68AQ@mail.gmail.com>
+In-Reply-To: <CAA8EJppMPeYrPH+ssDMnf6UwHRdKQetpY3PotGvR-cc2vE68AQ@mail.gmail.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 24 Jun 2024 22:46:59 +0200
+Message-ID: <CAMRc=MeYy8MgBVbwmrR1Rd9oQMz1tUb+uL4eFJWTL7EOsRXxjg@mail.gmail.com>
+Subject: Re: [PATCH] Bluetooth: qca: don't disable power management for QCA6390
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Check for run_to_completion only once.
+On Mon, Jun 24, 2024 at 10:17=E2=80=AFPM Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Mon, 24 Jun 2024 at 22:45, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > We unnecessarily fallthrough the case for QCA6390 when initializing the
+> > device and hit the condition where - due to the lack of the enable-gpio
+> > - we disable power management despite using the power sequencer. We don=
+'t
+> > need to look for clocks on this model so it makes more sense to just
+> > register the hci device and break the switch.
+> >
+> > Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Fixes: 4029dba6b6f1 ("Bluetooth: qca: use the power sequencer for QCA63=
+90")
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>
+> Is this going to break the QCA6390 as present on M.2 / PCIe cards? Or
+> the older DT which didn't have pwrseq entries?
+>
 
-Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
----
- drivers/char/ipmi/ipmi_msghandler.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Neither of these has clocks that need to be driven by linux. The only
+user of QCA6390 Bluetooth in mainline is RB5. Bindings didn't exist
+before so no commitment was ever made.
 
-diff --git a/drivers/char/ipmi/ipmi_msghandler.c b/drivers/char/ipmi/ipmi_msghandler.c
-index e12b531f5c2f..b7d8eb0a3432 100644
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -4870,12 +4870,12 @@ void ipmi_smi_msg_received(struct ipmi_smi *intf,
- 	if (!run_to_completion)
- 		spin_lock_irqsave(&intf->waiting_rcv_msgs_lock, flags);
- 	list_add_tail(&msg->link, &intf->waiting_rcv_msgs);
--	if (!run_to_completion)
-+	if (!run_to_completion) {
- 		spin_unlock_irqrestore(&intf->waiting_rcv_msgs_lock,
- 				       flags);
--
--	if (!run_to_completion)
- 		spin_lock_irqsave(&intf->xmit_msgs_lock, flags);
-+	}
-+
- 	/*
- 	 * We can get an asynchronous event or receive message in addition
- 	 * to commands we send.
--- 
-2.45.2
-
+Bart
 
