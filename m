@@ -1,138 +1,129 @@
-Return-Path: <linux-kernel+bounces-227714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628C89155CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:49:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CC4E9155D3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14A61F2157A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 104991F2224B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8CF19FA93;
-	Mon, 24 Jun 2024 17:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3161A00DF;
+	Mon, 24 Jun 2024 17:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="v7KUkMzS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mbzILD+T"
-Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jxty3GNU"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A0519FA83;
-	Mon, 24 Jun 2024 17:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC9D1A01AD
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719251298; cv=none; b=sqdMGSaOptUDm+3sA9jJfPD72f4/Lnb8IZodFD0OwoBMf/DbU835aoE5KeieMZnuygtRjqpllvDWHhvMh78BUrxa2N/DDYPaWF0jYQkkoKfAZjVp3WtvHmQD87hwxVLQ8V55OGoKbvnWU/lrYiCnNTLGVE7Ac5CBfq0xmCrSGdk=
+	t=1719251388; cv=none; b=vE+h15vbUo2diBYJpotEHEnWiXVxGhGAXT9nccl6EzNlNPo2uInbcqxDPfaUMPnXDeMbleFAxB0iRep2LlKl20VY8il5HvCgG+b87FFOdE+w1ihK/jz2utTRxjGL/+mN8KxlkNMVdopbeQFHbwLP+LP4dRCgE/zc9Cx7gRuIfNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719251298; c=relaxed/simple;
-	bh=dKhJSsA3/03pyvMW1VMivxWq0gl5lOjReogd7JhGkxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TjGsdsCW/qZnUP4DfV7Mb8ugYoX6gC2rZCAYh8U8RYtM5zk6n7ZXIffT0wUjXiyhDzbi+3jJ5sbMFxFvqZXLj0d0qetdk2AmOL7pIcqOxn3Ws2+l1NMWRNftAuB0st8AVwXHPg3P2Qj5gFcpkJRo8Dqj4Lp0LTrmHrGZNAbC5NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=v7KUkMzS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mbzILD+T; arc=none smtp.client-ip=64.147.123.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 2981718000A7;
-	Mon, 24 Jun 2024 13:48:15 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute3.internal (MEProxy); Mon, 24 Jun 2024 13:48:15 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1719251294; x=1719337694; bh=DQqZBSRlw1
-	1TA9UCQzDY3rNG30Jucm240uJxEpV1QvA=; b=v7KUkMzSfRK3FcwklHHh+iwgs+
-	yeAU4342zmozsOOqTjLtOqdz/NRhQGgcMZRLvwhnrgnGPYBSeDgM9PkdBIBQ+W6G
-	/NaWZpOiw/8ldxE87pn6s7k5PwBYDILjkPVnB++vautCuZAAb7y8E6t1rtS8j2Rm
-	Ek6SD1aVcT5x+isqlh6Im0pnWrV/P16iUemCFWiG/FWinoYXuf3LzHpEX+MXJvj5
-	m6BhpRVkgbKUjIcc+WbW+KEMuSKqvO9LApO1fxjD1xeiTWdf2W4ztxaqtoOl/GlB
-	kDeoA1HEl/v8Lk26yz24/tZao2IJsn5ohNEuRqZHHK++ndvfTtncOSOimHsQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719251294; x=1719337694; bh=DQqZBSRlw11TA9UCQzDY3rNG30Ju
-	cm240uJxEpV1QvA=; b=mbzILD+TI3cLf6ebu1h/XlNbxZFsg/f13dWCK0slJLnB
-	MXUfeCfrkq3Re+XSPeuBAA+sULBSpj/aWj0jhl3C1tvMKuPBqYP/dbL+cHmlD/A3
-	65LA5JGonrU9qF+uFrIvG8RqVyy/CxE9kwpVczGSH6JYNZEarzKjrNRFORWwITAu
-	oIq6FICr36/kQAnD/3vXtZX0oeqpWOjMTap2KZCQ/XP3sjGpYf5VlWA2xWg8CXjQ
-	G9LPNjWwDEPUk+ny8yjB+TkOKgQK8dFPVfdjsJ6Gfuydxn6bWHR1zZVflOYGYeb1
-	+hDIDhn9j7xBrKKarSxFZFm13LKkcHGEkDY+FtY9yA==
-X-ME-Sender: <xms:XrF5Zj3Xy83Y-9bsoIC5B7WdYH2Naps9BsDTbayjRpUgDeL16vBBOg>
-    <xme:XrF5ZiGPXV2SVGmQF88wfpX16m2TXQ9GhNk_RhIHvuPRCyYGvzLU51-wi02V2yla4
-    X41d89AIMi20Q>
-X-ME-Received: <xmr:XrF5Zj7vOVca0QBpXNAfcaPpUWsUE484PDYR0USnArZ8K9cHg3n40-53CXcdbjJnpPq3fAs-EF7hvtqWTe8coC65RB2YzVMp9Cv0Kg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeguddguddukecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgv
-    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehge
-    dvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhroh
-    grhhdrtghomh
-X-ME-Proxy: <xmx:XrF5Zo39p8au5qVSs1-dlj3F1CWmbiz_t1BTBfIor3wnfvqBP42kPQ>
-    <xmx:XrF5ZmFnk8OLbWrn7gNs18CiD6REZ1wyy7FmSs1NrM5HWirUbvAELA>
-    <xmx:XrF5Zp_G9qAmrzqlPBZ3L8iK4M860MQKe0hDZqJTtQBoCYIhGxiOlg>
-    <xmx:XrF5Zjn9tq7Xq6eKi8wRiqDr8i2iFJ-VFexIfAXMhHKT3vFHPejD7A>
-    <xmx:XrF5Zu-Tlpcd3QrswlvLmmqWcGyNXoTKt7tk0YPsEhe766A_2BbemW2L>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Jun 2024 13:48:13 -0400 (EDT)
-Date: Mon, 24 Jun 2024 19:47:56 +0200
-From: Greg KH <greg@kroah.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Subject: Re: linux-next: manual merge of the driver-core tree with the reset
- tree
-Message-ID: <2024062443-runt-lard-fd07@gregkh>
-References: <Znmufb9L78FCoSSS@sirena.org.uk>
+	s=arc-20240116; t=1719251388; c=relaxed/simple;
+	bh=Ssjb3Uo4Iut5+I8dmIRqobRAiZrYRNHEz6Ht7+Uda/A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tm8XbFvWGV1ciJ9J8DZbcnwV44EofzjbrEQRo/zQviTLWzabw/n36l9+3RJr2lvMQzgiQKC2jStyuj7AxWxJONe9ZnM+KyryxYOYBcm6xZQy4VjTPg78f9+1GdncR5k1wCmfbL/L2u3mhHyyrdRUpkO1DR3IRPPdv6fPDp4N8Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jxty3GNU; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70673c32118so1251892b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:49:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719251387; x=1719856187; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mkH0vN6ua6Gjn09ocrkAPIaM9p5reMjO+llNAon/y1w=;
+        b=Jxty3GNUstZno9Rk3yheQPkMBR+REAhEfAw+VNBSFIES4+WADq0rT2AZz3F/k7pT6s
+         qebyO9pSmqklShva0U1kKBS31nFsfLqUuwFUww9+yztmDs+GckIaNCx4RQj9WzZnkC3C
+         c1jrKFbX+NaKGjavM2WcFdNGvcyiarIoYPxZVRuiQZ1bjds+2BNxpUn7bD0ohfvTBmia
+         xqT5GOrf3aqRCW6tltPQQR1YgN4dwBa3jfHISTh6s5gW7JhVYyZNeKFHqm4M4lV6IpSi
+         NWNqJj6nXiHD+m1mFmlmDN5LmX10PmMTCahfa8gjm3cRSknQ76feh2x7CQzusBCaAKOr
+         6weQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719251387; x=1719856187;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mkH0vN6ua6Gjn09ocrkAPIaM9p5reMjO+llNAon/y1w=;
+        b=S01U4RpWU0W3YUkMLVB9F4PDSJxv3+EL6Acc3te+w+/kb5/pPu2IBN1QuHJ0faraSh
+         NA5OuzOxAT5W1NOwjP2TWXDb7UI9C5KT60iZvySTRBTPz6Q8kgiPUjMm01NCnp78nGXl
+         NQ3OCk00H3YZ/6q4H322K3JY5eXz7F6ACPkKuPd57EU0ipXwPMN2O9MLXyjqSvcGZ49t
+         ZvcdDLdrTDJenoEM/ACJzmyKRRkzycP0wdPLyAmH01Dtjk3zPy/OGNLNlpKvsLN5TrpZ
+         bcaDSILrctxHT7cWXsMi+Jq998BYl7OmsureeFbfrHvG/tKSjKIx4LzC6w/g4JZd5rYc
+         rqOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSatxa+H39QDm3KUzjlIzaeEngX2HaedwdWecsirxEs9ui8jCT5RPjJBfzTzkAnPVALPR8L1hWq5KLI/k/0UgJ/7AXOMXVZcpVbQiS
+X-Gm-Message-State: AOJu0Yw0QXlvk0SUwrLQNOR54om4LkVORQPT1aLXr9g9dQJ9iWUEEYwP
+	W5e6CsbqgqPnoHP+0zotN14sxFpvUh1xmV1wXkzQwcFk//UFExdp
+X-Google-Smtp-Source: AGHT+IH+svNIq4Zyd95MOOzrn+9RVplI0PwbRSAbMW2J6ZziscrSXG44QMEcN53Xd1+ghzGSLAAj8Q==
+X-Received: by 2002:aa7:82c2:0:b0:706:6f39:1d63 with SMTP id d2e1a72fcca58-70674690fb3mr3975274b3a.22.1719251386616;
+        Mon, 24 Jun 2024 10:49:46 -0700 (PDT)
+Received: from localhost.localdomain ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065130078dsm6487825b3a.204.2024.06.24.10.49.44
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 24 Jun 2024 10:49:46 -0700 (PDT)
+From: yskelg@gmail.com
+To: "Michael S . Tsirkin" <mst@redhat.com>,
+	Jason Wang <jasowang@redhat.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
+Cc: Austin Kim <austindh.kim@gmail.com>,
+	MichelleJin <shjy180909@gmail.com>,
+	virtualization@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <yskelg@gmail.com>
+Subject: [PATCH RESEND v2] tools/virtio: creating pipe assertion in vringh_test
+Date: Tue, 25 Jun 2024 02:49:06 +0900
+Message-ID: <20240624174905.27980-2-yskelg@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Znmufb9L78FCoSSS@sirena.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 24, 2024 at 06:35:57PM +0100, Mark Brown wrote:
-> Hi all,
-> 
-> Today's linux-next merge of the driver-core tree got a conflict in:
-> 
->   drivers/reset/reset-meson-audio-arb.c
-> 
-> between commit:
-> 
->   0e8b3bca280a7 ("reset: meson-audio-arb: Use devm_clk_get_enabled()")
-> 
-> from the reset tree and commit:
-> 
->   b99e9c096148f ("reset: meson-audio-arb: Convert to platform remove callback returning void")
-> 
-> from the driver-core tree.
-> 
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
-> 
-> diff --cc drivers/reset/reset-meson-audio-arb.c
-> index 894ad9d37a665,8740f5f6abf80..0000000000000
-> --- a/drivers/reset/reset-meson-audio-arb.c
-> +++ b/drivers/reset/reset-meson-audio-arb.c
+From: Yunseong Kim <yskelg@gmail.com>
 
+parallel_test() function in vringh_test needs to verify
+the creation of the guest/host pipe.
 
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+---
+ tools/virtio/vringh_test.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-No diff for the conflict?
+diff --git a/tools/virtio/vringh_test.c b/tools/virtio/vringh_test.c
+index 98ff808d6f0c..43d3a6aa1dcf 100644
+--- a/tools/virtio/vringh_test.c
++++ b/tools/virtio/vringh_test.c
+@@ -139,7 +139,7 @@ static int parallel_test(u64 features,
+ 			 bool fast_vringh)
+ {
+ 	void *host_map, *guest_map;
+-	int fd, mapsize, to_guest[2], to_host[2];
++	int pipe_ret, fd, mapsize, to_guest[2], to_host[2];
+ 	unsigned long xfers = 0, notifies = 0, receives = 0;
+ 	unsigned int first_cpu, last_cpu;
+ 	cpu_set_t cpu_set;
+@@ -161,8 +161,11 @@ static int parallel_test(u64 features,
+ 	host_map = mmap(NULL, mapsize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+ 	guest_map = mmap(NULL, mapsize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
+ 
+-	pipe(to_guest);
+-	pipe(to_host);
++	pipe_ret = pipe(to_guest);
++	assert(!pipe_ret);
++
++	pipe_ret = pipe(to_host);
++	assert(!pipe_ret);
+ 
+ 	CPU_ZERO(&cpu_set);
+ 	find_cpus(&first_cpu, &last_cpu);
+-- 
+2.45.2
 
-thanks,
-
-greg k-h
 
