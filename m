@@ -1,109 +1,141 @@
-Return-Path: <linux-kernel+bounces-227318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E33D914F52
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:57:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86BB2914F5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:58:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7C3D1F231C3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:57:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41C8828458E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:58:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD4B142640;
-	Mon, 24 Jun 2024 13:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E906142649;
+	Mon, 24 Jun 2024 13:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zKSqq3tb"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kfnR7+z9"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 959121422D2
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:57:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96A91411C8;
+	Mon, 24 Jun 2024 13:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719237432; cv=none; b=caBEyUq2b+W9FG0VPE386SSZJ0QtpZP4PtT7RA3JjT6ukqSO1dDaW4KvMZ7w69W/XxhPpnTTM1uA6mLhmqmosfkv4Y0xWDhvigPBhobyLvyh0rU9q52h107/48uF4lCV0a21WM3yqikMqNzwP1TsJKkWhAN9ThXaa1lALd7kYQs=
+	t=1719237474; cv=none; b=uQUx1EWLOkNa4qmeBtw6AN/8og5dIWVNddOSKu6ATTsDhZ9uozOdroZys1nz6hwK+1hWfjSalgROKoZsKaLctn5P/Yj6Z4wMFjv1T62MhzUQT243cT0Q1hhA2nJHzGJv4WK8Tp+NQRr0SBiAesLrc2Ip+d5msViB6/YURiqBbeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719237432; c=relaxed/simple;
-	bh=JcmBNUGTwoexd4d4Kt7dKugDN2tASyAOaxDUgR2FYt8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eyTXXWgMqtYrcKF3Du+uSrO1bCtN+ZesReCbynOZiQ3Fisrz2SSD02w2EEX2NTVGu/KfoK5g9tPZFQ9vT3t2NmngDu7zFE/TCv9K3yul61dR6gPjzmmAVpyh8K7gCEK42zgQoj8vOYOiFk6mjhRCApJqVBSCzLPWWkEOwQGp9zU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zKSqq3tb; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57d00a51b71so24193a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:57:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719237429; x=1719842229; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JcmBNUGTwoexd4d4Kt7dKugDN2tASyAOaxDUgR2FYt8=;
-        b=zKSqq3tbKQHF6xoKyLxyN0BCC7BIOE8OriqJqlAx+ak1rHc818BjLW0eLEeL4/vXtQ
-         cUDdaoHBVk1s2RDDYorX7g64gvuhTHt008wBpmdujimn48GIepFPScIWgXKH1u2tjRHR
-         UbMNjp6VZe53F0O77pn1mK/88RfK1tsQnDR0bRTV3SNwIOBCF8eVjsn6nvFyX7tq54ue
-         jxRxbr8hjQPLb7SaCsbxu0TLsiNGqVvIYV1pxveVAsrIImXPQU3m2f0p5lYP3ddvH1n9
-         EBdnD+3izPVskyvaeOv0oQEo+nvTggR0xb+yb8egj5dd+QAccqciTRZ0Uj03jDAFzqNO
-         p19w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719237429; x=1719842229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JcmBNUGTwoexd4d4Kt7dKugDN2tASyAOaxDUgR2FYt8=;
-        b=M3WIunp/P0IhXkuvEUs8zW8HLG4H+lgXDdzIDgcfx79aJg8f6PnZFDIttflaooLsOq
-         GA8LewVT8d2JWmZZbIo8jSuW/XhwmqyYdbSv24bTG1RLiXHTSKKSPTG70xW3SQ3yk46I
-         uqggkAS3LDqYJbW+81yanmVbRQHNlckkv13hknkN8YiZ/iGyRAz38oAzSYw/TEhdp9fC
-         TnHQ9zJ/kWCmVmR410FgglBTcMCq6b/dXGPdtLXB+E4n/wm7HdDace6OdhWKHCO2qyCu
-         fNE6xaiS2f46NJpIIW8hWr0IsKd/KXsCLpKnhEejKM3JJp8BQ3L6zwi5M2LT29ni/fIa
-         Ls/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUMp3es7W+d2u8KUUwuo9WGzVGoOWM56+rhA7v/8/TEusFye9pzQnbzmlpDoTnTxYYZxx3sDSiR1Pw/Fa4P146LHX0Mx9WXQ0YJWlgn
-X-Gm-Message-State: AOJu0YzWaEz3labsF5moCeLq9gsRgXOU1Hf+QrbJeJZPGzWBR+rCqmnE
-	A0pf+wYowo2Z3dTF6dWngqE8MEQuHz61VymVI0wHPY0Vu3tpQvmtbBessj9cPl4GbVyJyLq9X9p
-	CfVb3yW8lHdvynuRJugK0FxtptzXOjbJu9q5y
-X-Google-Smtp-Source: AGHT+IHbiy1mlgv62NpSfQr4qTZMGNLyyk2z/JSEgEj2oQ6KuAX1jpFmQzh/as79B6TsYRiexfxYk9JCRIbRT718SCg=
-X-Received: by 2002:a05:6402:3549:b0:57c:c5e2:2c37 with SMTP id
- 4fb4d7f45d1cf-57d419e2fdbmr270398a12.3.1719237428649; Mon, 24 Jun 2024
- 06:57:08 -0700 (PDT)
+	s=arc-20240116; t=1719237474; c=relaxed/simple;
+	bh=0yxI92P/8LK00PUAQGJcV8c0/upOK1FZgPxXwQQ0Al8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:Mime-Version; b=mrcMlzgDhFI5V61ymZiDfDsoq1feIdn7XJ6ve7aWEGloHuqxDKrY/okR1Larl/2Nf6zANMSpNVzTTiiFOWXVkQh0wfPAgPsn0xYKm5dfVWavtBdVaF5AWGmx1XTp3MKHmzGk/DVPlNV02xD/3jaaKDtj8dGXBSfWXP0Oas9Qk/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kfnR7+z9; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ODvAC9022725;
+	Mon, 24 Jun 2024 13:57:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:subject:from:to:cc:date:in-reply-to:references
+	:content-type:mime-version:content-transfer-encoding; s=pp1; bh=
+	0yxI92P/8LK00PUAQGJcV8c0/upOK1FZgPxXwQQ0Al8=; b=kfnR7+z9LQDkyT2n
+	hLYfofbKwc3kEUSAKPKRbc9DpMkcWg0pThZj53NKp7dXWkFP5PK5psSVu1aEpbGs
+	X16gzO6XZBrPiyjrOtfd0P+ZaGeDOLCEyusty9K1L1MMJ+I479XI7qBw4rL2xyVw
+	sljtx3UCA1VLNnK2NA7WU1yNMG0U/C7eKgcrlGSWTEAE8wM8mRxoI6JbrOpXI8en
+	C6Tm8FOI/s61s0XrB+TecU8QAQAfJPr6f31pF5wIyxnh15eoXC9zRvB3jOMpQDVJ
+	oHXG7q9FjvqrMTByV1jhTV5nHbR7+M2PYAqr2N5duO/ZKz9jRid7eKNECtoWzOCl
+	Y4NEOQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yy7y20dq1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 13:57:20 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45ODvJ7a022895;
+	Mon, 24 Jun 2024 13:57:19 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yy7y20dpw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 13:57:19 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45OCa9dH019625;
+	Mon, 24 Jun 2024 13:57:18 GMT
+Received: from smtprelay02.wdc07v.mail.ibm.com ([172.16.1.69])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yx9xps3re-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 13:57:18 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay02.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45ODvGmU11797032
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Jun 2024 13:57:18 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4B7365805F;
+	Mon, 24 Jun 2024 13:57:16 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 133D058056;
+	Mon, 24 Jun 2024 13:57:15 +0000 (GMT)
+Received: from li-5cd3c5cc-21f9-11b2-a85c-a4381f30c2f3.ibm.com (unknown [9.61.65.213])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 24 Jun 2024 13:57:14 +0000 (GMT)
+Message-ID: <52bffc64dc7db2cc1912544514008eada1e058a7.camel@linux.ibm.com>
+Subject: Re: [PATCH v39 01/42] integrity: disassociate ima_filter_rule from
+ security_audit_rule
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
+        Paul Moore
+	 <paul@paul-moore.com>
+Cc: Roberto Sassu <roberto.sassu@huawei.com>,
+        linux-security-module@vger.kernel.org, jmorris@namei.org,
+        serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
+        penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+        linux-kernel@vger.kernel.org, mic@digikod.net,
+        linux-integrity@vger.kernel.org,
+        Casey Schaufler <casey@schaufler-ca.com>
+Date: Mon, 24 Jun 2024 09:57:14 -0400
+In-Reply-To: <aecad5ea129946dbf9cf5013331f9368ceb84326.camel@huaweicloud.com>
+References: <20231215221636.105680-1-casey@schaufler-ca.com>
+	 <20231215221636.105680-2-casey@schaufler-ca.com>
+	 <CAHC9VhT+QUuwH9Dv2PA9vUrx4ovA_HZsJ4ijTMEk9BVE4tLy8g@mail.gmail.com>
+	 <CAHC9VhSY2NyqTD35H7yb8qJtJF5+1=Z4MHy_ZpP_b7YDT-Mmtw@mail.gmail.com>
+	 <fbf7f344c518d70833398c2365bb2029480bd628.camel@linux.ibm.com>
+	 <d953fac4-9dbe-42a0-82eb-35eac862ca6a@huaweicloud.com>
+	 <CAHC9VhRKmkAPgQRt0YXrF4hLXCp7RyCSkG0K9ZchJ6x4bKKhEw@mail.gmail.com>
+	 <aecad5ea129946dbf9cf5013331f9368ceb84326.camel@huaweicloud.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-25.el8_9) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240621013929.1386815-1-luoxuanqiang@kylinos.cn>
-In-Reply-To: <20240621013929.1386815-1-luoxuanqiang@kylinos.cn>
-From: Eric Dumazet <edumazet@google.com>
-Date: Mon, 24 Jun 2024 15:56:57 +0200
-Message-ID: <CANn89i+mrA0CpNLvOCpNi4XS1XsftgAQu71jWb4Ahh++VUzkGA@mail.gmail.com>
-Subject: Re: [PATCH net v4] Fix race for duplicate reqsk on identical SYN
-To: luoxuanqiang <luoxuanqiang@kylinos.cn>
-Cc: kuniyu@amazon.com, kuba@kernel.org, davem@davemloft.net, pabeni@redhat.com, 
-	dccp@vger.kernel.org, dsahern@kernel.org, fw@strlen.de, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	alexandre.ferrieux@orange.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: jtA9RUYxkFCrtJv5OMGa8NU1o0JMmskp
+X-Proofpoint-ORIG-GUID: 3-yBhrzcszi56fSIXqpkYtsqRqA5YqUn
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_10,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=999 lowpriorityscore=0 mlxscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 spamscore=0 adultscore=0 phishscore=0
+ clxscore=1015 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406240111
 
-On Fri, Jun 21, 2024 at 3:39=E2=80=AFAM luoxuanqiang <luoxuanqiang@kylinos.=
-cn> wrote:
->
-> When bonding is configured in BOND_MODE_BROADCAST mode, if two identical
-> SYN packets are received at the same time and processed on different CPUs=
-,
-> it can potentially create the same sk (sock) but two different reqsk
-> (request_sock) in tcp_conn_request().
->
-> These two different reqsk will respond with two SYNACK packets, and since
-> the generation of the seq (ISN) incorporates a timestamp, the final two
-> SYNACK packets will have different seq values.
->
-> The consequence is that when the Client receives and replies with an ACK
-> to the earlier SYNACK packet, we will reset(RST) it.
->
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
+On Mon, 2024-06-24 at 10:45 +0200, Roberto Sassu wrote:
+> My only comment would be that I would not call the new functions with
+> the ima_ prefix, being those in security.c, which is LSM agnostic, but
+> I would rather use a name that more resembles the differences, if any.
 
-Reviewed-by: Eric Dumazet <edumazet@google.com>
+Commit 4af4662fa4a9 ("integrity: IMA policy") originally referred to these hooks
+as security_filter_rule_XXXX, but commit b8867eedcf76 ("ima: Rename internal
+filter rule functions") renamed the function to ima_filter_rule_XXX) to avoid
+security namespace polution.
+
+If these were regular security hooks, the hooks would be named:
+filter_rule_init, filter_rule_free, filter_rule_match with the matching
+"security" prefix functions. Audit and IMA would then register the hooks.
+
+I agree these functions should probably be renamed again, probably to
+security_ima_filter_rule_XXXX.
+
+Mimi
+
 
