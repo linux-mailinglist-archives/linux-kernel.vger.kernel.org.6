@@ -1,230 +1,281 @@
-Return-Path: <linux-kernel+bounces-226933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2985914606
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:16:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46C98914609
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C567E1C22389
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69BE71C20906
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:17:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C99130A49;
-	Mon, 24 Jun 2024 09:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089221304B0;
+	Mon, 24 Jun 2024 09:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SAqdX7Xt"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="InnWyQQh"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84BF97FBA4;
-	Mon, 24 Jun 2024 09:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719220590; cv=fail; b=XWEgPxBr+XRrxtVx0Rbn2HXN5RwFXlTs/GZgoKmiURUKQmo6UqAUXuduGOQqaWkkWLDv0fb1N7WCFtAUIsSH1PcYD0FYphdsMZ+16feVBrLc06ljli/ey8tPIUD2jg7SPvFc1af+l4/QyZtRZd53CDx51lWT3gxuX0rYWI4lk1o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719220590; c=relaxed/simple;
-	bh=YcW7PE2yAOs6c2mZd6JwyhPt/FcbBzQS0Om1hz9QUQ0=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=TtPnwAZLQ73x+vybvZ5vkHGanxmfw4758t446ffBHw6qsY6tmLJldw3rIx9sab/hN+woSoF2ZS+roKDc8L7BYeFCRoZHKD4i17LN0Vi5hCPVHY952i6dc+/R6QUqp2DrYXdsE5ItE9jI+btaV7YFnmTxSGbRzzHTxXwAxN8onmI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SAqdX7Xt; arc=fail smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719220588; x=1750756588;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=YcW7PE2yAOs6c2mZd6JwyhPt/FcbBzQS0Om1hz9QUQ0=;
-  b=SAqdX7XtnANPn7B8QR8aze8B1vvaPzbP3ICeooA7l2BEayoHq2mRP7Se
-   ECcH/bawFEfB3QG3xEFSuWfujfLFSrh9S6ZjVGSffHTyYIYx0D2gPTNyO
-   IhA3GDYtqRY2nkzuVI6JzEe7QaW/G7h5wPQrv9BmGpXc8EytW+Fz96lYE
-   RGnptrM4/2KyBArqUMUuMNQhDAt2eGepfET3udAYyjfuzcvR7MKrmBcTw
-   yLNaUCamAtq+5rAIT5w5IYSpDCJVambBVFmUN2ge+kWxY6tH02YL9NGcw
-   RzogvNc27WPj3aQiDkpELgBLYIi47IMJjvutQ0N4I9JKoy/vIS5FEb6ea
-   w==;
-X-CSE-ConnectionGUID: x/6dmwVzQs6vhP8pNo2g1g==
-X-CSE-MsgGUID: 0+9fmjapSRmE8oLHKWWEEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11112"; a="15871440"
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="15871440"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 02:16:27 -0700
-X-CSE-ConnectionGUID: uVRpzMTHRvC7sGnN+mnX8Q==
-X-CSE-MsgGUID: SgcPQ3lBR2u66CBcL+TAog==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="74466940"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Jun 2024 02:16:27 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 24 Jun 2024 02:16:27 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 24 Jun 2024 02:16:27 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.47) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 24 Jun 2024 02:16:26 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Al1wIoNEA1KPMWMT15K4S6nEzOiPNew4TZL0HZXYLIQBpUiY4ACaIvNuOSMFtpMt/J1D8yQ3g0eHhDYCU3cZQqWZZnrs7iVxxPe2UYc/SUUGt0VDenhSV7FcHyFESCgWSEXxRGN5pEPXKzqK+21wBHsuFB65kSruX6YtB3ge2+zCmcfiW1QnmX3Wc7hn0cBdAUTtgamg/dTd6NlkDjSjAyew9OBEnTyC/rHfSbvzLlE/4CBqaQb1hDxUq/V0dGIu6Ypx/kI9sqrIiX4Fd55MQE3SSK4DMKrPSdtwXysRGAxavFbm1+gnWY5i7BY9JWCejTKg/GplzI406DKwpVMs9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9w6FOT+lCj3QJzhDN5cvPDPwXlLLHQdcJ/EDHEPqN1M=;
- b=dr58F3OkTZdLnDhs/FH8stIovQfiV+PHKykl4V5B4s81PWbJvlXyII+mXVizkA02AMVz3bu42Nmq1RKdBc6U88R1qhF6hbeiqkn1CdfVb4zb/2nwbIZBkzpGew2KHfKRJ6EhVsbqWzLZmzKYN0EpRaJepRnkjNytcZb5VNP7LrikFGAW66hUpZCpn/7MyFRvzPd0FZ7Ad9VyqTAg4Sn3a7A/V+NIauFNmau5/FyNmmMp80aEmPYbfhZvB0HC28a6d0ExBwoZMueRHioBTpoKgNBfIMcvT3AJfFZGS20kcBCslfKlkB22tNPfd+K4eefmHKsf3U3ymTardmzR7tGJSg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by SJ1PR11MB6250.namprd11.prod.outlook.com (2603:10b6:a03:459::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.20; Mon, 24 Jun
- 2024 09:16:24 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.7698.017; Mon, 24 Jun 2024
- 09:16:24 +0000
-Message-ID: <776f3d3c-dfd5-4bad-a612-97806d234d0a@intel.com>
-Date: Mon, 24 Jun 2024 11:16:16 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net: mana: Fix possible double free in error handling
- path
-To: Ma Ke <make24@iscas.ac.cn>
-CC: <linux-hyperv@vger.kernel.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <kys@microsoft.com>,
-	<haiyangz@microsoft.com>, <wei.liu@kernel.org>, <decui@microsoft.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <shradhagupta@linux.microsoft.com>, <horms@kernel.org>,
-	<kotaranov@microsoft.com>, <linyunsheng@huawei.com>,
-	<schakrabarti@linux.microsoft.com>, <erick.archer@outlook.com>
-References: <20240624032112.2286526-1-make24@iscas.ac.cn>
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Content-Language: en-US
-In-Reply-To: <20240624032112.2286526-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR0P278CA0117.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:20::14) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D9C418E29
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719220646; cv=none; b=Uy4QrNTssxXUYXraNsRhgrW5bC7e1bZizxbjYU8fIqhIwNUS0/aMS4YuspTIzT6ty7CwRFNT1JGeYvUbuYVMeDA4OgF9N6ZGbFyw0TvA4CW0wK51jsgvpVztagT0/xC6l7j+9oPSRScj7k8fBeRQlLuMc6DY/LwilIBTz2dRfFk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719220646; c=relaxed/simple;
+	bh=+uqWxqydGNV60BGVNbNUNrlX212BiEPpsR3/wls/bNI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CwcKC5MeLs5EpZWCUtigXnwIPd4u2mzjIxtP/nuNQ1qR7qPnim5El88XMG35p21Wla2pQyU2BuINBDubg5bxFDOCqZ7WIf+6jDVu1kiJ6Wns9iA0zXWXAiiWLFnvfkQXZob/cSRQ5Xv4UndXKcQJ55ksh4csVEUQOI9hrxU66ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=InnWyQQh; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1719220615;
+ bh=V0z8fSGygfWQrGgys3mw+zwRnCICw2KPF1UnM/mzsfM=;
+ b=InnWyQQh9+bvjqeFYz1ea3PKSuz8nwZBn/Q20R/qxh3p/0m1wX0pkaTfUpuDxZxTMPdzveMYW
+ 0SEc+h23QFDnzGjmPq+BlCBnQ5kMUXZom62ViJ0OOwARXJ1daJCdnqsqAPc+gGotl4Bxz95beqX
+ 3dTDRRPHQY6MoA/yD+m/i071Xq/e/ltbndp1b7D4NwdH0K+t/6nTt13Z8NyK+/ipPkMtsdz06uu
+ h0ZYm0TP1Sj9SjelMufc8hJYj4dRNLz2Bk/Hb4jlYWSyFuTtLaG7CKvvyzNfBW8WG+60eNYW5+N
+ OjCZm/yC36tiZbNnDAlZ8C9PwATkUo3qZVS5AGKH25IQ==
+Message-ID: <156b5aaf-8b9a-46b9-82c2-d7e32f4899f5@kwiboo.se>
+Date: Mon, 24 Jun 2024 11:16:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|SJ1PR11MB6250:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5781fbe9-b684-4198-0a70-08dc942e51c0
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|376011|7416011|1800799021;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?WEUxMFlvWnVxcElmWTlHdG9uSkNVSHJiZ2s3OER3Tk5VTGdQcWJLa3NtZlZh?=
- =?utf-8?B?c1RMME4rOG1zK09iYm00ZXkxa1pWL0h1bkozcEpsaENXd3JzWXJudEpUa0N4?=
- =?utf-8?B?UU83SmlCeUhYTjdjbFdreVh5d0JKVFNyYmFQVWVsUm5LSmxrQUJmSFlNSVc4?=
- =?utf-8?B?cEY3Vzk4a2kvYmdFazc1NkR2MVFVYmpWZGxRcG1VcU1rMU9LR1JjdDc1YUls?=
- =?utf-8?B?bzdUL2FqSi84TGpZU3k3MW0wRWhubHRWYngvelFtMnNwK29TbWtQdlU4V05h?=
- =?utf-8?B?TXRtR2x4eURKaVQrVkErc20zZWFLTk1xZnovSHRWMU1HeWtZS3B2Snc3RkFT?=
- =?utf-8?B?Y0JMWmhjOElWbE82ekhWNkoreUlTNzRXY2IzS3pBQkxibzFSd3d1T2lyd216?=
- =?utf-8?B?RGUxNHNvQ1lINGhqa2t0V1B5MDhYSmMwMTViVkhKbWNvbnA4MXJtU0ZHck5m?=
- =?utf-8?B?WENJRVErM3pqd2g0OG9TRTZhZFZtbVNUdDRhMWhkb04zSGdPQlNRWGdBY05p?=
- =?utf-8?B?bU02cmJrcnIwMk0yL0d1OFlEVWI4STJZZ0NiN3ErSFJTRExJUFdHMTVOa25T?=
- =?utf-8?B?Y2RscXgxeCs0TS9VUWl3RGRwZHQyQVQrc1ZlWVlIQTZEV29JOGNNcTVJYThm?=
- =?utf-8?B?ZFBSRzhPN09GZ3VQdWlycEplMWRwVDRqOHJueDlkZFNiU01vMHVodVo2RnVR?=
- =?utf-8?B?RlRVQkZqRktMbnBVT21UbERkSStCTjhxTWYyRjFHWGpRUTBnK0I4VmZIbERj?=
- =?utf-8?B?MkY0dmVjaGVlUjBDcENzdmtleUduWFZLWE0zZDZFTlVObDUrMUNvMlZVS2t0?=
- =?utf-8?B?RnFBT0p5N0JPTDhOKzVRd2YvUDBlenJ4QUFTa05MSWswd05FSkdWMFhwUk1C?=
- =?utf-8?B?ZEVaLzRCdG5abFdaS3pGSDlxR1BsMDVCU1hnWERNZVV3MEwxOUlVMFRza24x?=
- =?utf-8?B?REVQTnR1VmVhaVZhYkVQWDVNdjIzQXAxQjJuaDdiT3o5UUVseEI1cFBKY3gr?=
- =?utf-8?B?RmJqWC9Ib1VBWGIyb2l3aWRSUVdnMFdJd2k1ZjRNeTRXVk1OMGN0bElJY08y?=
- =?utf-8?B?YnB4QXVCNWdEUkRrelNIalRUdUdMRVkwamovYVd1WUE4V1lWNjFKK1NaU3c1?=
- =?utf-8?B?TWZmTHp3cThWeDJpSE9Wc25LekxDemRMcGRMbGlWVUNndy9xakdSNUtTWk1L?=
- =?utf-8?B?Y2gySTcwTmxoVFkxSFMva1NVM21XdWZ1T3FST20xSW40NlBCOENneWdTb0ZP?=
- =?utf-8?B?NnRFZTErZzl6VjJ6S3MwWEljSThsa0l4OWoxK0kwTzNiZXdSUmtXcGJkWHV6?=
- =?utf-8?B?QjJablJQd0U5RTUvMUJOM00xd3ZXamJNNyt6Q0Z0b3Yzem9PVzBaQitDVXBK?=
- =?utf-8?B?NGVrdjVYSUZjM3lTRTEremtuZFdSWFB1ckZ3SERBZWRobDA4QVRETlJhcjBZ?=
- =?utf-8?B?QmRMeXQ4a1F6TERWWU5tdmo5T3JnMW50eFVXakJsUnpPOGpLVDd2K3ZGR01X?=
- =?utf-8?B?bnI2SEF5NHlLZ3h5Z3M3aU5wTmgwWFZPNUtIcGRtYUVKajFqZUx2c2F5N0tp?=
- =?utf-8?B?L3diODA4ZGdUUjI2R25NUE9sZ000WUR1M2dFVXNvT2NibktRUzdsUHRkamJK?=
- =?utf-8?B?Qk0xN25xTktrT0Q5bnZIZmc1WmJ6MkdNdDhKMWEvRERuWENaWTE4RUNCN2Ro?=
- =?utf-8?B?NzVoMlFocDNGLzJYV01xWnZZVG9RY1ZOY1BlZG90YzV5cHVZZWlIN0JNOW9U?=
- =?utf-8?Q?Rmv+EhDzhkBZWJZIIWyrwKHlsNTEGckoKJF01Ez?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(7416011)(1800799021);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?TmlYbUJ6bGxDM1Z6aVZxaGhSL0J4cXZ6RFdCSEZLeXdsMmlIRWRlZkRNMHhC?=
- =?utf-8?B?Y01QSmQ0NFlmQTQ1SlBwUU9lWFdsbDNQOVFHY1YxdVIzazhHaVp0SnArYnVV?=
- =?utf-8?B?OEZnbmZkc0FpdzJnNjFtdmIvakdqRWJNMGRBQWFHQytyNWZ6U0gxeDh1Y3dZ?=
- =?utf-8?B?U0U0SHlDdGM2Si9aRDc4OWpnS0VvRHpqT291R1cyeXJnMzR2LzQ0Z2RWS0g4?=
- =?utf-8?B?L1F3RmdvMVJHbkoydFovQ2hRSmdRYjluMkJ1TW5uM2pKMFh4V3lwU2VhMkpk?=
- =?utf-8?B?cjQ4VVdUcVVSMlRtOFY1VVhQVjg4U3YrUHhiQTMxeUFpTkx2V2tDSEZyS1JO?=
- =?utf-8?B?UzFsTkIySXp5ZE5SS3NJSkhGTEFmRWoxbFVFaDVZdFFVbzNkd25qL1dQN1RG?=
- =?utf-8?B?NGo5ekJtZDBNS082UFUzNGx3UEovcjNwN0RocXcyemNmdm9rK1lyaWlleTZJ?=
- =?utf-8?B?eWVacEhyU3lhVVJEUnR4MU5CT2hzYXpQWm9rT2xhb29HQ0d2d2orV1pMMjla?=
- =?utf-8?B?bE9zTUhNeS8zNHlVRG1EZTVENUtmUjFaR1YzUmQ5cDBtNW0xVUxOUFdTZVp1?=
- =?utf-8?B?QUhmUnBud1NVZVlzcHFXUFJ5Z3lCQXNjQzRKYnpwRGZKU3A0SHdEWHlHSjk2?=
- =?utf-8?B?bGY2Tk5UYytBSGJWZjNHbFN3aW9vVXhUUkpIaUdiL2UrL0ozSnlKYWZtSzZx?=
- =?utf-8?B?eFgyVVRzTk84cG5LSzBQNTNuanhXZUcvLzJxQkxxZ2M5YklqMnlzWVJTeEhq?=
- =?utf-8?B?Q21DdVk2Q0VmaGNJTW5IbVJkdElITEhSWmFlTElOVjRUOEdlUkdkN3pnMUtq?=
- =?utf-8?B?ZDltNDBpNWs0SkxHNndZUHBLK3RjenpLdTExTnZvUEZhczlsbTdsSFFiK3F3?=
- =?utf-8?B?dUNIYjV0bW1jbUt4SmtUQUh5RkYzRnk0YWxya28rUHIvYXlNWXh3UkNMWGJH?=
- =?utf-8?B?aDdkZ3A4c05FUlU5QVhDN3dmdGlENFp6QVNVTFVtb1BScGVpVXlpenFzdFU5?=
- =?utf-8?B?eGZTb1Qzcm9uZnFGZEQ2N3JCWXBwRXdRV2orOGR3YVl6SGhsbjlJQkErQzhm?=
- =?utf-8?B?cG80ekZFS1RIQ1NlS1JxUm1tWDg2aEI2cEpFMXJWek1KT0thN3o4MGhvTmc3?=
- =?utf-8?B?ejZCYWRoZDVMT28xRXFmaHV6eXl1WWQrWlVUQlJUTVFOd2RCbXB6SXdGSlVF?=
- =?utf-8?B?N0xubGFNSlFHeGcxV2pIL1FkZ1dFdmpibWwvZGpydnVUQ2l6cWNIRnZoRzJv?=
- =?utf-8?B?cld3VTJGM2xjbGlLMmM5QUFhYkVhTEtsVHJuNjNmcmcxV3h6V1l5dTFDZ3Zs?=
- =?utf-8?B?OXhSUXBlNkJrVTc2LzEzTWtrZUVWNUwrRC8rT3pvMnJYUXJWbXpjck8reWEx?=
- =?utf-8?B?T3hsczdzeXZjNFg0d2taSGhvOVFOaWVzWWxNUTI2LzJ2a0NkR3pZbk45Qnhy?=
- =?utf-8?B?NVkyaUl2QXhJWHY5VDdNUHVNLzFaeEN4WVBJTTdYdFlmZzU4a0hzaTJjdEhn?=
- =?utf-8?B?dFFmQUFOaDZua2FhTk5YOUw1dVRmVG1CNTE4ak02ZGVFYlFYQ3pROHNLeVFR?=
- =?utf-8?B?cWFBWUExNlNZbG00MmZXa0ZDcTRhNmorVkFTMEJIVFlGNC8xWjNZVE5kN1dv?=
- =?utf-8?B?QnVGcWZVMW8veExBOS9jcjRBV0paUjVxbmZ6dDV3Y2NmVkdxTGpURGNiV1d1?=
- =?utf-8?B?VmVXWnZWcjhFTldPOVpLZTRhbDhPd1NWbEJhY1hadHh2cEpqaW9mOEV4M1Zq?=
- =?utf-8?B?Z1hWZVpGWmhUSFMyVTF5MndZL2E3NmJzZ0VSMVBJcE1mOVhQVDMzaTJ0enhT?=
- =?utf-8?B?V3RpT2o1dk1SbFN5bDUrdW9pRXI4NktEVHNYOHg5UTAyVW5lVnpOek5vdFdC?=
- =?utf-8?B?WGc4eHd3YjdlV0Rod3lVSVM4SndDUk1UQUVHeFNVczRFL1QyQ2hXZVZ2N3Vr?=
- =?utf-8?B?cWdxOG1QSnUxYkVIYjk3WUl1S3JGUmRQYUtwaXJCcGdvYnVwNHhmbndzcjlZ?=
- =?utf-8?B?Q3diM2dmclMvOWNXZFF6LytGWVRwc3dDSzBGN1hNOCtXTlFLY0JpbDhOYnNO?=
- =?utf-8?B?OUkvcTVyUWNvS2drTHBzYUpjZnNFeHZCb042OHEzdkVwY3VKOTVMQlpKY2tq?=
- =?utf-8?B?SHNJNStPRmF1QlZETHZtN2xtdi9mUFdObVIxN1grbUhYWE1nakFsK1poeWhZ?=
- =?utf-8?B?OXc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5781fbe9-b684-4198-0a70-08dc942e51c0
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 09:16:24.2447
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7r5mZIIzXusEvdg+IoAyYDXnBK0RU4p28MKxKI88rlleRLIBs39Ngb66cTLYhXXjgzFoDeg4MKbCIqFmuj/nZlOSnUcwD39jjqcdk30olxE=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR11MB6250
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/4] arm64: dts: rockchip: Add rkvdec2 Video Decoder on
+ rk3588(s)
+To: Detlev Casanova <detlev.casanova@collabora.com>, Alex Bee
+ <knaerzche@gmail.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner
+ <heiko@sntech.de>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, Dragan Simic
+ <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>, Andy Yan
+ <andy.yan@rock-chips.com>, Boris Brezillon
+ <boris.brezillon@collabora.com>, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Daniel Almeida <daniel.almeida@collabora.com>, Paul Kocialkowski
+ <paul.kocialkowski@bootlin.com>, Nicolas Dufresne
+ <nicolas.dufresne@collabora.com>, Benjamin Gaignard
+ <benjamin.gaignard@collabora.com>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20240619150029.59730-1-detlev.casanova@collabora.com>
+ <052f2ea7-2ded-4d39-a513-3a47fee1bf02@gmail.com>
+ <e6e2e0f1-0b16-4a3d-ae7b-be5a04d7902b@kwiboo.se> <5790441.DvuYhMxLoT@arisu>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <5790441.DvuYhMxLoT@arisu>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 6679397778c9998650f049d1
 
-On 6/24/24 05:21, Ma Ke wrote:
-> When auxiliary_device_add() returns error and then calls
-> auxiliary_device_uninit(), callback function adev_release
+Hi Detlev and Alex,
 
-I would add () after function name
-
-> calls kfree(madev) to free memory. We shouldn't call kfree(padev)
-
-there is no `padev` in the patch :)
-"to free memory" part sounds redundant.
-
-> again in the error handling path.
+On 2024-06-20 15:31, Detlev Casanova wrote:
+> Hi Jonas, Alex,
 > 
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-
-you need a Fixes: tag
-
-> ---
->   drivers/net/ethernet/microsoft/mana/mana_en.c | 31 +++++++++----------
->   1 file changed, 14 insertions(+), 17 deletions(-)
+> On Wednesday, June 19, 2024 2:06:40 P.M. EDT Jonas Karlman wrote:
+>> Hi Alex,
+>>
+>> On 2024-06-19 19:19, Alex Bee wrote:
+>>> Am 19.06.24 um 17:28 schrieb Jonas Karlman:
+>>>> Hi Detlev,
+>>>>
+>>>> On 2024-06-19 16:57, Detlev Casanova wrote:
+>>>>> Add the rkvdec2 Video Decoder to the RK3588s devicetree.
+>>>>>
+>>>>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+>>>>> ---
+>>>>>
+>>>>>   arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 50 +++++++++++++++++++++++
+>>>>>   1 file changed, 50 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+>>>>> b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi index
+>>>>> 6ac5ac8b48ab..7690632f57f1 100644
+>>>>> --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+>>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
+>>>>> @@ -2596,6 +2596,16 @@ system_sram2: sram@ff001000 {
+>>>>>
+>>>>>   		ranges = <0x0 0x0 0xff001000 0xef000>;
+>>>>>   		#address-cells = <1>;
+>>>>>   		#size-cells = <1>;
+>>>>>
+>>>>> +
+>>>>> +		vdec0_sram: rkvdec-sram@0 {
+>>>>> +			reg = <0x0 0x78000>;
+>>>>> +			pool;
+>>>>> +		};
+>>>>> +
+>>>>> +		vdec1_sram: rkvdec-sram@1 {
+>>>>> +			reg = <0x78000 0x77000>;
+>>>>> +			pool;
+>>>>> +		};
+>>>>>
+>>>>>   	};
+>>>>>   	
+>>>>>   	pinctrl: pinctrl {
+>>>>>
+>>>>> @@ -2665,6 +2675,46 @@ gpio4: gpio@fec50000 {
+>>>>>
+>>>>>   			#interrupt-cells = <2>;
+>>>>>   		
+>>>>>   		};
+>>>>>   	
+>>>>>   	};
+>>>>>
+>>>>> +
+>>>>> +	vdec0: video-decoder@fdc38100 {
+>>>>> +		compatible = "rockchip,rk3588-vdec";
+>>>>> +		reg = <0x0 0xfdc38100 0x0 0x500>;
+>>>>> +		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
+>>>>> +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>, 
+> <&cru
+>>>>> CLK_RKVDEC0_CA>, +			 <&cru 
+> CLK_RKVDEC0_CORE>, <&cru
+>>>>> CLK_RKVDEC0_HEVC_CA>;
+>>>>> +		clock-names = "axi", "ahb", "cabac", "core", 
+> "hevc_cabac";
+>>>>> +		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru 
+> CLK_RKVDEC0_CORE>,
+>>>>> +				  <&cru CLK_RKVDEC0_CA>, <&cru 
+> CLK_RKVDEC0_HEVC_CA>;
+>>>>> +		assigned-clock-rates = <800000000>, <600000000>,
+>>>>> +				       <600000000>, <1000000000>;
+>>>>> +		resets = <&cru SRST_A_RKVDEC0>, <&cru SRST_H_RKVDEC0>, 
+> <&cru
+>>>>> SRST_RKVDEC0_CA>, +			 <&cru 
+> SRST_RKVDEC0_CORE>, <&cru
+>>>>> SRST_RKVDEC0_HEVC_CA>;
+>>>>> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
+>>>>> +			      "rst_core", "rst_hevc_cabac";
+>>>>> +		power-domains = <&power RK3588_PD_RKVDEC0>;
+>>>>> +		sram = <&vdec0_sram>;
+>>>>> +		status = "okay";
+>>>>> +	};
+>>>>> +
+>>>>> +	vdec1: video-decoder@fdc40100 {
+>>>>> +		compatible = "rockchip,rk3588-vdec";
+>>>>> +		reg = <0x0 0xfdc40100 0x0 0x500>;
+>>>>> +		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH 0>;
+>>>>> +		clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>, 
+> <&cru
+>>>>> CLK_RKVDEC1_CA>, +			 <&cru 
+> CLK_RKVDEC1_CORE>, <&cru
+>>>>> CLK_RKVDEC1_HEVC_CA>;
+>>>>> +		clock-names = "axi", "ahb", "cabac", "core", 
+> "hevc_cabac";
+>>>>> +		assigned-clocks = <&cru ACLK_RKVDEC1>, <&cru 
+> CLK_RKVDEC1_CORE>,
+>>>>> +				  <&cru CLK_RKVDEC1_CA>, <&cru 
+> CLK_RKVDEC1_HEVC_CA>;
+>>>>> +		assigned-clock-rates = <800000000>, <600000000>,
+>>>>> +				       <600000000>, <1000000000>;
+>>>>> +		resets = <&cru SRST_A_RKVDEC1>, <&cru SRST_H_RKVDEC1>, 
+> <&cru
+>>>>> SRST_RKVDEC1_CA>, +			 <&cru 
+> SRST_RKVDEC1_CORE>, <&cru
+>>>>> SRST_RKVDEC1_HEVC_CA>;
+>>>>> +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
+>>>>> +			      "rst_core", "rst_hevc_cabac";
+>>>>> +		power-domains = <&power RK3588_PD_RKVDEC1>;
+>>>>> +		sram = <&vdec1_sram>;
+>>>>> +		status = "okay";
+>>>>> +	};
+>>>>
+>>>> This is still missing the iommus, please add the iommus, they should be
+>>>>
+>>>> supported/same as the one used for e.g. VOP2:
+>>>>    compatible = "rockchip,rk3588-iommu", "rockchip,rk3568-iommu";
+>>>>
+>>>> The VOP2 MMUs does have one extra mmu_cfg_mode flag in AUTO_GATING,
+>>>> compared to the VDPU381 MMUs, however only the AV1D MMU should be
+>>>> special on RK3588.
+>>>>
+>>>> Please add the iommus :-)
+>>>
+>>> When looking add the vendor DT/iommu driver I'm seeing serval quirks
+>>> applied for vdec's iommus. Since it's rightly frowned upon adding such
+>>> boolean-quirk-properties to upstream devicetrees, we'd at least need
+>>> additional (fallback-) compatibles, even if it works with the iommu driver
+>>> as is (what I doubt, but haven't tested). We need to be able to apply
+>>> those
+>>> quirks later without changing the devicetree (as usual) and I'm sure RK
+>>> devs haven't added these quirks for the personal amusement.
+>>
+>> Based on what I investigated the hw should work similar, and the quirks
+>> mostly seem related to optimizations and sw quirks, like do not zap each
+>> line, keep it alive even when pm runtime say it is not in use and other
+>> quirks that seem to be more of sw nature on how to best utilize the hw.
 > 
+> I did some testing with the IOMMU but unfortunately, I'm only getting page 
+> fault errors. This may be something I'm doing wrong, but it clearly needs more 
+> investigation.
+
+I re-tested and the addition of sram seem to now cause page faults, the
+sram also need to be mapped in the iommu.
+
+However, doing more testing revealed that use of iommu present the same
+issue as seen with hevc on rk3399, after a fail fluster tests continue
+to fail until a reset.
+
+Seeing how this issue was very similar I re-tested on rk3399 without
+iommu and cma=1G and could observe that there was no longer any need to
+reset after a failed test. Interestingly the score also went up from
+135 to 137/147.
+
+Digging some more revealed that the iommu also is reset during the
+internal rkvdec soft reset on error, leaving the iommu with dte_addr=0
+and paging in disabled state.
+
+Ensuring that the iommu was reconfigured after a failure fixed the issue
+observed on rk3399 and I now also get 137/147 hevc fluster score using
+the iommu.
+
+Will send out a rkvdec hevc v2 series after some more testing.
+
+Guessing there is a similar need to reconfigure iommu on rk3588, and my
+initial tests also showed promising result, however more tests are
+needed.
+
+Regards,
+Jonas
+
+> 
+>>> If Detlev says
+>>> iommu is out of scope for this series (which is valid), I'd say it's fine
+>>> to leave them out for now (as no binding exists) and the HW works
+>>> (obviously) fine without them.
+>>
+>> Sure, use of MMU can be added later.
+> 
+> I'd rather go for that for now. I'll add that IMMU support is missing in the 
+> TODO file.
+> 
+>> Regards,
+>> Jonas
+>>
+>>>> Regards,
+>>>> Jonas
+>>>>
+>>>>>   };
+>>>>>   
+>>>>>   #include "rk3588s-pinctrl.dtsi"
+> 
+
 
