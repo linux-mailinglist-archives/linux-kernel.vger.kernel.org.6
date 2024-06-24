@@ -1,132 +1,90 @@
-Return-Path: <linux-kernel+bounces-227843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 994D8915728
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:29:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F44891576F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9F0E1C23428
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:29:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87D151C221AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA461A01A2;
-	Mon, 24 Jun 2024 19:29:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D95D1A01DE;
+	Mon, 24 Jun 2024 19:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aVH3akGp"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b="mdn+WCiP"
+Received: from ale.deltatee.com (ale.deltatee.com [204.191.154.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999D219EEDC
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 19:29:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB8319FA7C;
+	Mon, 24 Jun 2024 19:54:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=204.191.154.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719257351; cv=none; b=KCla5hRk0QFQQv1FrzXx7O4vRREWQ9lNvYBDSXUjNTWBxjNzIVOygZiy2KT/jUv+hNCtCbkFdA9+ysnmDJncDt8GaGN8cr7y/VXHLt/jFp2642ozNUi7hsQ+BaCbNYyATz1E9VUnbJTpPHMPw83KmSXNQbFRmDpXaxXSa7NCEr0=
+	t=1719258883; cv=none; b=KdPhk9yTK57rKzq3LoMBfgDAtZMPuNh2Wy7Z98rYeR//Q29AL7OQ9WVsBv4BBqznwvuH5KeSyS+7eNSHNesf03fRRfD17y8HjeXzT3ZdXDfJoYVjFF9K9MTcxOaCA8Hi5dR9OdgfRtloAu1PfgKMv+CXy8ouTKodfVsUgjxJCc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719257351; c=relaxed/simple;
-	bh=eRxLfJL/pkncDZellsqU80PotfWh5XvXDu95Ul0Zyp0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OgJqAbF5a8fUfzuhCn6/s8YxaBg3RaBVyy/3/bM1o/OkBIXPaoBtkYSVSYOyH9SHPRLNW3wd8chlURVYAG5zzpOti5ghEHXa7Oob69gKE9ksJDY41huQPPVm4mQaiXiOguIxPmFROxaMTIR4fG3HsZLHptToU9qX92PHGlZgFgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aVH3akGp; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: yosryahmed@google.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719257345;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=73YsBBClGIt5TbpSPiOKHwE9/5M+RqUyWGrm+k8BonY=;
-	b=aVH3akGpYdpiiuoa/xlXRi3TVb3tLF8wrOExf95ahoOmx+UryJXTKOo1HwsLG3NaTrHW9i
-	/iPoMlwVVa5wYX0iPZ4WF132PJtk+LhlPcroFQUE8hHifyJZIuibvjvtGQZwpocmkNVf38
-	rGivv3CUv/ajtvqG/vyScQQdhsz+T74=
-X-Envelope-To: hawk@kernel.org
-X-Envelope-To: tj@kernel.org
-X-Envelope-To: cgroups@vger.kernel.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: lizefan.x@bytedance.com
-X-Envelope-To: longman@redhat.com
-X-Envelope-To: kernel-team@cloudflare.com
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Date: Mon, 24 Jun 2024 12:29:00 -0700
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org, 
-	cgroups@vger.kernel.org, hannes@cmpxchg.org, lizefan.x@bytedance.com, longman@redhat.com, 
-	kernel-team@cloudflare.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V2] cgroup/rstat: Avoid thundering herd problem by kswapd
- across NUMA nodes
-Message-ID: <exnxkjyaslel2jlvvwxlmebtav4m7fszn2qouiciwhuxpomhky@ljkycu67efbx>
-References: <171923011608.1500238.3591002573732683639.stgit@firesoul>
- <CAJD7tkbHNvQoPO=8Nubrd5an7_9kSWM=5Wh5H1ZV22WD=oFVMg@mail.gmail.com>
- <tl25itxuzvjxlzliqsvghaa3auzzze6ap26pjdxt6spvhf5oqz@fvc36ntdeg4r>
- <CAJD7tkaKDcG+W+C6Po=_j4HLOYN23rtVnM0jmC077_kkrrq9xA@mail.gmail.com>
+	s=arc-20240116; t=1719258883; c=relaxed/simple;
+	bh=YjeIZMTsd0omzx/GT5djMmpkMHF0TUzcmkFbGvfVmVI=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:From:In-Reply-To:
+	 Content-Type:Subject; b=YN7C9H8tqeV7cKjhlniGzJZHpc2+RcPWq+izeA7XrTw9FAjWvQjtbcHBvuxR53k9OZReJ76k7t+f53LphWAMsxvAwwVSzSH0OV5yFcQMBq8ljSIQlTi9fJlbgOcsby2EysREUlQoHC6MEZGWIA6N2H5SDJ5p83XbT1FiIAYRKLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com; spf=pass smtp.mailfrom=deltatee.com; dkim=pass (2048-bit key) header.d=deltatee.com header.i=@deltatee.com header.b=mdn+WCiP; arc=none smtp.client-ip=204.191.154.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=deltatee.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=deltatee.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=deltatee.com; s=20200525; h=Subject:In-Reply-To:From:References:Cc:To:
+	MIME-Version:Date:Message-ID:content-disposition;
+	bh=YjeIZMTsd0omzx/GT5djMmpkMHF0TUzcmkFbGvfVmVI=; b=mdn+WCiPlUD/e/xuATkjETArAY
+	n6Eb+FlQbES0RDhy/Z7P/A2jM/xplHg2O+Coq12Rk8c09YT5qCkYewIvscGHj+QqLfriHkOuQTyQT
+	NE8+GzCVW/3cI/736SyYclnQR0kAxcXlBJWqgjwPuEoKXScJbcB31ObM4mWrhnDLgQbtyjMVR16MI
+	zqgzC1wMo3c4u+Tt2A/reaeYdcSCc7yvg/c8WvBqnMwC3JnIUxXaxuMgZj+8cXhVFSFOvm2SyGBAj
+	m3SIrNieBIMrBgitaOEoD1q91yZGsivZ3xyRfXaaBLl9tUTUwWMa2f3+csMT9rhpNyp9XjjiTrCr8
+	YSHocFnA==;
+Received: from d104-157-31-28.abhsia.telus.net ([104.157.31.28] helo=[192.168.1.250])
+	by ale.deltatee.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <logang@deltatee.com>)
+	id 1sLpP5-00AMSm-0E;
+	Mon, 24 Jun 2024 13:31:11 -0600
+Message-ID: <6e2dc59a-445d-435e-9066-4a00119acf02@deltatee.com>
+Date: Mon, 24 Jun 2024 13:31:01 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkaKDcG+W+C6Po=_j4HLOYN23rtVnM0jmC077_kkrrq9xA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+To: Bjorn Helgaas <helgaas@kernel.org>,
+ Shivasharan S <shivasharan.srikanteshwara@broadcom.com>
+Cc: linux-pci@vger.kernel.org, bhelgaas@google.com,
+ linux-kernel@vger.kernel.org, sumanesh.samanta@broadcom.com,
+ sathya.prakash@broadcom.com
+References: <20240621205327.GA1374772@bhelgaas>
+Content-Language: en-CA
+From: Logan Gunthorpe <logang@deltatee.com>
+In-Reply-To: <20240621205327.GA1374772@bhelgaas>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 104.157.31.28
+X-SA-Exim-Rcpt-To: helgaas@kernel.org, shivasharan.srikanteshwara@broadcom.com, linux-pci@vger.kernel.org, bhelgaas@google.com, linux-kernel@vger.kernel.org, sumanesh.samanta@broadcom.com, sathya.prakash@broadcom.com
+X-SA-Exim-Mail-From: logang@deltatee.com
+X-Spam-Level: 
+Subject: Re: [PATCH 1/2] switch_discovery: Add new module to discover inter
+ switch links between PCI-to-PCI bridges
+X-SA-Exim-Version: 4.2.1 (built Wed, 06 Jul 2022 17:57:39 +0000)
+X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
 
-On Mon, Jun 24, 2024 at 10:40:48AM GMT, Yosry Ahmed wrote:
-> On Mon, Jun 24, 2024 at 10:32 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > On Mon, Jun 24, 2024 at 05:46:05AM GMT, Yosry Ahmed wrote:
-> > > On Mon, Jun 24, 2024 at 4:55 AM Jesper Dangaard Brouer <hawk@kernel.org> wrote:
-> > >
-> > [...]
-> > > I am assuming this supersedes your other patch titled "[PATCH RFC]
-> > > cgroup/rstat: avoid thundering herd problem on root cgrp", so I will
-> > > only respond here.
-> > >
-> > > I have two comments:
-> > > - There is no reason why this should be limited to the root cgroup. We
-> > > can keep track of the cgroup being flushed, and use
-> > > cgroup_is_descendant() to find out if the cgroup we want to flush is a
-> > > descendant of it. We can use a pointer and cmpxchg primitives instead
-> > > of the atomic here IIUC.
-> > >
-> > > - More importantly, I am not a fan of skipping the flush if there is
-> > > an ongoing one. For all we know, the ongoing flush could have just
-> > > started and the stats have not been flushed yet. This is another
-> > > example of non deterministic behavior that could be difficult to
-> > > debug.
-> >
-> > Even with the flush, there will almost always per-cpu updates which will
-> > be missed. This can not be fixed unless we block the stats updaters as
-> > well (which is not going to happen). So, we are already ok with this
-> > level of non-determinism. Why skipping flushing would be worse? One may
-> > argue 'time window is smaller' but this still does not cap the amount of
-> > updates. So, unless there is concrete data that this skipping flushing
-> > is detrimental to the users of stats, I don't see an issue in the
-> > presense of periodic flusher.
-> 
-> As you mentioned, the updates that happen during the flush are
-> unavoidable anyway, and the window is small. On the other hand, we
-> should be able to maintain the current behavior that at least all the
-> stat updates that happened *before* the call to cgroup_rstat_flush()
-> are flushed after the call.
-> 
-> The main concern here is that the stats read *after* an event occurs
-> should reflect the system state at that time. For example, a proactive
-> reclaimer reading the stats after writing to memory.reclaim should
-> observe the system state after the reclaim operation happened.
 
-What about the in-kernel users like kswapd? I don't see any before or
-after events for the in-kernel users.
 
-> 
-> Please see [1] for more details about why this is important, which was
-> the rationale for removing stats_flush_ongoing in the first place.
-> 
-> [1]https://lore.kernel.org/lkml/20231129032154.3710765-6-yosryahmed@google.com/
-> 
+On 2024-06-21 14:53, Bjorn Helgaas wrote:
+> [+cc Logan]
+
+My apologies. I'm dealing with some health issues at the moment and I'm
+not able to review this in a timely fashion.
+
+I'll try to review this when I'm able but that may not be for a few weeks.
+
+Thanks,
+
+Logan
 
