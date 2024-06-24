@@ -1,201 +1,127 @@
-Return-Path: <linux-kernel+bounces-228003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F47491599C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:11:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC46491599E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C31081C220DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:11:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A9BC1F21783
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:12:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE2641A0B07;
-	Mon, 24 Jun 2024 22:11:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6201A0B09;
+	Mon, 24 Jun 2024 22:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="zT6JBiLG"
-Received: from mx0b-00823401.pphosted.com (mx0b-00823401.pphosted.com [148.163.152.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3okE+k5H"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1B213C901;
-	Mon, 24 Jun 2024 22:11:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.152.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 401611A01B4
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719267106; cv=none; b=IXkBksxcldm9oPptS0rX2aOFKdWj3ESq/k540UX4C2dBeaotXX1RHwiCet4/z7ySx36qMVTW+oDgljkG4isAxu72nc8cUx+e+hAd1NtL0CzcTbEKA7SN+Ika9XsQI4EX6qKEc1GhfPSKAJq0bSCtLD1Kb8lj7VvUYBTvjVU1ENE=
+	t=1719267149; cv=none; b=bDTWD+hKK2RVScnMZzGGYNmh1wQUUfhBvbcyWOOHkvDQzwfdeGweKG/tc68R+phD7OZxQ3bfpxGBlK+6v8OlkGON7P/QCVZX+Gla8Wmy66iUQ8zNAHJg8nH+kjAH1ZMKQQtsoKiQHVsnfE1Fu0Eks1SLJ/Y2bdqAapLHzOWc+rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719267106; c=relaxed/simple;
-	bh=rVLXPjUU65cDFYPGZHSyqE0j6jaP/PBzKrzb3ZaFV1o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aIS9rPjPKX+8mFDnnTFFasxpwCpq4VNutMZBtUL/dvT3yLk8JB8dJoPDqhINEfvga8w6irZspoVyIW5DTGFJCC+pZuzw1qPMZeVBeZdlGYAP+vOcS5vBA0kFtY03JtGfJnOJBcioSe8E2CTfA2KM0dJTNt+gyWaI6PkJ2pnClqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=zT6JBiLG; arc=none smtp.client-ip=148.163.152.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
-Received: from pps.filterd (m0355090.ppops.net [127.0.0.1])
-	by m0355090.ppops.net (8.18.1.2/8.18.1.2) with ESMTP id 45OEviBT032476;
-	Mon, 24 Jun 2024 22:11:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=DKIM202306; bh=UFM48GN3j3TGnx2m6Bd7A0f
-	60Mbw6SruFuO0J8syXfM=; b=zT6JBiLGKlW7OsPoAxDU7armuhbSVL4zAti3VIz
-	vcbbu4uTtdTgdZuhjEbC6MWV6AabXIk2EHJtQqHZndEl21H0ASABOLFoJoUnVR+7
-	XBtU2HQpJh4m0Y9DZpLHM/D103NqBvBDEcMs821PsalH2NBDeaSlHuOebrqxv/tQ
-	sYSoUuaDH0Qyj4dpGx5aR6QU+122CzuP4PHvWRoXN9/06km3nwekdAC0+Nf63+jx
-	EECjS3rEFp23fORSgPl55HXvDd9E32Qu5j8TvjZC7KBfiEmwMda8zbMSMUQH/7HB
-	XgdshYxnT+ZUQ6CsPhoptHDCHJPsbMHO0xVsHw+O4WFfD1w==
-Received: from va32lpfpp04.lenovo.com ([104.232.228.24])
-	by m0355090.ppops.net (PPS) with ESMTPS id 3yx9xrk9yd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 22:11:14 +0000 (GMT)
-Received: from ilclmmrp01.lenovo.com (ilclmmrp01.mot.com [100.65.83.165])
-	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by va32lpfpp04.lenovo.com (Postfix) with ESMTPS id 4W7McK3jM7zj9hH;
-	Mon, 24 Jun 2024 22:11:13 +0000 (UTC)
-Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: mbland)
-	by ilclmmrp01.lenovo.com (Postfix) with ESMTPSA id 4W7McK1zL8z3nd8L;
-	Mon, 24 Jun 2024 22:11:13 +0000 (UTC)
-Date: Mon, 24 Jun 2024 17:11:12 -0500
-From: Maxwell Bland <mbland@motorola.com>
-To: linux-mm@kvack.org
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Maxwell Bland <mbland@motorola.com>,
-        Alexandre Ghiti <alexghiti@rivosinc.com>,
-        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v5 1/6] mm: add ARCH_SUPPORTS_NON_LEAF_PTDUMP
-Message-ID: <yrgrhwfbl7rnmgekiolmojutaqf24x5zphyrwijakzma5pjhre@3yncjv5tqvar>
-References: <2bcb3htsjhepxdybpw2bwot2jnuezl3p5mnj5rhjwgitlsufe7@xzhkyntridw3>
+	s=arc-20240116; t=1719267149; c=relaxed/simple;
+	bh=V88kbQYMmksLo0hGgVvNJpR1yEr6VGpMad/TuUmx0Gk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=QNoTLb1I1DnubclQJyKsnv4JP85bcbUJ71euG4owW+Euiq9Jw6xZW4TvOPY9hfKevT1GZU5L+1AhjR8nLuQhZ88NOVz1MKJ/BlLiIfp5O+GxS+FYPGRR7waV86Wts2mep0ZNlAyuA6oKNuJgUeEWIlJtAFX9gc1EB7Yp0Y9E53c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3okE+k5H; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-631b498f981so85450117b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:12:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719267147; x=1719871947; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=TL/yt1aeykxZxZD2zlQYwkIf/JVQR0dKRLPmP/BJTrE=;
+        b=3okE+k5HpseRB3Jn204qhQCa9l+4Uw8/ZQiGIWCRTvH6KwdYxyKZYDlkcrqxd/2ICn
+         GsYfGURVoRbTcNxMdHglZuegXGsna64SAMYlc8PFphZucKYzG/iqMEfev8hC1hlGy/oz
+         0WstlA42fT4iKDQl8DnvDVxBw852/kdd5RZKpdMju6Hfp5Ac57+NhglqQvBxVvRjebGF
+         RqYD8ZFNAdbxM+Ii20YqUGmI74e38A4H7fA46oU2TCd4Z4BPllaCAbFG0pltGvP0Md/b
+         NWIWsAMsNl0ZBiAldwohS/6wKPI6c6UVEd76P4DiaX9DFVClZgz2gxfJRiyzEpdK7nL9
+         ODHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719267147; x=1719871947;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TL/yt1aeykxZxZD2zlQYwkIf/JVQR0dKRLPmP/BJTrE=;
+        b=qS+3hAxOpoUdX8ku0suCj4juIuwXnIu23xZgfDOJOwmBScXpTmZ5M4j5uPYCebRhVk
+         8dmBIOeI1sinl3XJV+Vetu+9PDvGG0HluKlNXtpVlR+Vb4w0SG0SrdgTspb1vDYKL0HS
+         WJJ4TXDqvzxtKHhRrPBbt6eO796D2gq6XY2GvmQOeLZgMtNFb6jqVpR91L0dFAGp95Qw
+         61R+8S+HkTOHGnrc40rfw4hvabuI1pAJHMH9qu7Ptdr5+rN7b8Smw+tssW6MpIpgldVy
+         WZ1lvb8YmiL6IAYch0BGCWC6EHsOlYb2TbdRI/nmhFSfkxMhqBl/SXEUei8eNOYBMHBw
+         nL7A==
+X-Forwarded-Encrypted: i=1; AJvYcCWhyh0BmmPIM9eZyLqNjtiu1CImHqw86ZahbjUv/KqAAOh1h3p9En0Pvi+r+EyDRH8J3qztolGfFxsPazKBzoJMIrX4hf6Rw2oj1T7F
+X-Gm-Message-State: AOJu0YyOmjL/k/xxpfcr19xaZK+hXs80VRU8HGfMy/hAYrNsB6MVZ+n6
+	dq71yajmuhnhj/XSP2pFrTpc5TSpZTioYpuEDnR4qnS/XIQfP+nyD8a/99ompuOcbAFP7gFgDO4
+	lWJB2XTvTCQ==
+X-Google-Smtp-Source: AGHT+IGlHRclBh4I8qdw95Zucf/j3km06XZvKd5bHZ5qYEohmfuPkKF/QDVdh2oto2O1iYTdnDAvlgr3u83Ixw==
+X-Received: from ip.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:57f3])
+ (user=ipylypiv job=sendgmr) by 2002:a05:6902:1242:b0:df4:920f:3192 with SMTP
+ id 3f1490d57ef6-e0301031c99mr14887276.8.1719267147153; Mon, 24 Jun 2024
+ 15:12:27 -0700 (PDT)
+Date: Mon, 24 Jun 2024 22:12:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2bcb3htsjhepxdybpw2bwot2jnuezl3p5mnj5rhjwgitlsufe7@xzhkyntridw3>
-X-Proofpoint-ORIG-GUID: aFZWZNnXyYrEtj8CTtxn_sgc6qmXaZgc
-X-Proofpoint-GUID: aFZWZNnXyYrEtj8CTtxn_sgc6qmXaZgc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_19,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- malwarescore=0 lowpriorityscore=0 mlxlogscore=615 priorityscore=1501
- clxscore=1015 impostorscore=0 bulkscore=0 mlxscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406240177
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+Message-ID: <20240624221211.2593736-1-ipylypiv@google.com>
+Subject: [PATCH v2 0/6] ATA PASS-THROUGH sense data fixes
+From: Igor Pylypiv <ipylypiv@google.com>
+To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Jason Yan <yanaijie@huawei.com>, 
+	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Igor Pylypiv <ipylypiv@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Provide a Kconfig option indicating if note_page can be called for
-intermediate page directories during ptdump.
+This patch series is fixing a few ATA PASS-THROUGH issues:
+1. Not reporting "ATA Status Return sense data descriptor" / "Fixed format
+   sense data" when ATA_QCFLAG_SENSE_VALID is set.
+2. Generating "fake" sk/asc/ascq based on ATA status/error registers when
+   ATA_QCFLAG_SENSE_VALID is set and CK_COND=1.
+3. Fixed format sense data was using incorrect field offsets for ATA
+   PASS-THROUGH commands.
+4. Using qc->result_tf in ATA sense data generation functions without
+   checking if qc->result_tf contains a valid data.
 
-Signed-off-by: Maxwell Bland <mbland@motorola.com>
----
- mm/Kconfig.debug |  8 ++++++++
- mm/ptdump.c      | 26 ++++++++++++++++++--------
- 2 files changed, 26 insertions(+), 8 deletions(-)
+Changes since v1:
 
-diff --git a/mm/Kconfig.debug b/mm/Kconfig.debug
-index afc72fde0f03..41071539bf9e 100644
---- a/mm/Kconfig.debug
-+++ b/mm/Kconfig.debug
-@@ -201,6 +201,14 @@ config PTDUMP_DEBUGFS
- 
- 	  If in doubt, say N.
- 
-+config ARCH_SUPPORTS_NON_LEAF_PTDUMP
-+	bool "Include intermediate directory entries in pagetable dumps"
-+	help
-+	  Enable the inclusion of intermediate page directory entries in calls
-+	  to the ptdump API. Once an architecture defines correct ptdump
-+	  behavior for PGD, PUD, P4D, and PMD entries, this config can be
-+	  selected.
-+
- config HAVE_DEBUG_KMEMLEAK
- 	bool
- 
-diff --git a/mm/ptdump.c b/mm/ptdump.c
-index 106e1d66e9f9..3c8eea232282 100644
---- a/mm/ptdump.c
-+++ b/mm/ptdump.c
-@@ -26,6 +26,11 @@ static inline int note_kasan_page_table(struct mm_walk *walk,
- }
- #endif
- 
-+static inline bool has_non_leaf_ptdump(void)
-+{
-+	return IS_ENABLED(CONFIG_ARCH_SUPPORTS_NON_LEAF_PTDUMP);
-+}
-+
- static int ptdump_pgd_entry(pgd_t *pgd, unsigned long addr,
- 			    unsigned long next, struct mm_walk *walk)
- {
-@@ -41,10 +46,11 @@ static int ptdump_pgd_entry(pgd_t *pgd, unsigned long addr,
- 	if (st->effective_prot)
- 		st->effective_prot(st, 0, pgd_val(val));
- 
--	if (pgd_leaf(val)) {
-+	if (has_non_leaf_ptdump() || pgd_leaf(val))
- 		st->note_page(st, addr, 0, pgd_val(val));
-+
-+	if (pgd_leaf(val))
- 		walk->action = ACTION_CONTINUE;
--	}
- 
- 	return 0;
- }
-@@ -64,10 +70,11 @@ static int ptdump_p4d_entry(p4d_t *p4d, unsigned long addr,
- 	if (st->effective_prot)
- 		st->effective_prot(st, 1, p4d_val(val));
- 
--	if (p4d_leaf(val)) {
-+	if (has_non_leaf_ptdump() || p4d_leaf(val))
- 		st->note_page(st, addr, 1, p4d_val(val));
-+
-+	if (p4d_leaf(val))
- 		walk->action = ACTION_CONTINUE;
--	}
- 
- 	return 0;
- }
-@@ -87,10 +94,11 @@ static int ptdump_pud_entry(pud_t *pud, unsigned long addr,
- 	if (st->effective_prot)
- 		st->effective_prot(st, 2, pud_val(val));
- 
--	if (pud_leaf(val)) {
-+	if (has_non_leaf_ptdump() || pud_leaf(val))
- 		st->note_page(st, addr, 2, pud_val(val));
-+
-+	if (pud_leaf(val))
- 		walk->action = ACTION_CONTINUE;
--	}
- 
- 	return 0;
- }
-@@ -108,10 +116,12 @@ static int ptdump_pmd_entry(pmd_t *pmd, unsigned long addr,
- 
- 	if (st->effective_prot)
- 		st->effective_prot(st, 3, pmd_val(val));
--	if (pmd_leaf(val)) {
-+
-+	if (has_non_leaf_ptdump() || pmd_leaf(val))
- 		st->note_page(st, addr, 3, pmd_val(val));
-+
-+	if (pmd_leaf(val))
- 		walk->action = ACTION_CONTINUE;
--	}
- 
- 	return 0;
- }
+Thanks Damien and Niklas for the reviews!
+
+- Squashed two v1 patches 2/4 and 3/4 into one patch with a different
+  implementation.
+- Added 'Cc: stable@vger.kernel.org' tags to patches that are fixing bugs.
+- Reordered patches with the 'Cc: stable@vger.kernel.org' tag to be applied
+  first in order to simplify backports to stable releases.
+- Restored the buffer memset in atapi_eh_request_sense().
+- Updated declaration order in v1 patch 4/4.
+- Added a patch to cleanup unused ATA device id in ata_to_sense_error().
+- Updated fill_result_tf() to set ATA_QCFLAG_RTF_FILLED after populating
+  the result taskfile. Removed now redundant flag sets/checks from ahci.
+- Updated ATA sense data generation functions to return early if result_tf
+  is not filled. Added WARN_ON_ONCE checks to generate a warning when
+  ATA_QCFLAG_RTF_FILLED is not set and libata needs to generate sense data.
+
+Igor Pylypiv (6):
+  ata: libata-scsi: Do not overwrite valid sense data when CK_COND=1
+  ata: libata-scsi: Fix offsets for the fixed format sense data
+  ata: libata-scsi: Remove redundant sense_buffer memsets
+  ata: libata-scsi: Do not pass ATA device id to ata_to_sense_error()
+  ata: libata: Set ATA_QCFLAG_RTF_FILLED in fill_result_tf()
+  ata: libata-scsi: Check ATA_QCFLAG_RTF_FILLED before using result_tf
+
+ drivers/ata/libahci.c     |  10 ---
+ drivers/ata/libata-core.c |   8 ++
+ drivers/ata/libata-scsi.c | 179 +++++++++++++++++++++-----------------
+ 3 files changed, 107 insertions(+), 90 deletions(-)
+
 -- 
-2.43.0
-
+2.45.2.741.gdbec12cfda-goog
 
 
