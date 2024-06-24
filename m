@@ -1,113 +1,93 @@
-Return-Path: <linux-kernel+bounces-227781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15B32915683
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:31:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CDB4915684
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:33:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C42EF2814E6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:30:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 286D428217D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:33:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBE319FA91;
-	Mon, 24 Jun 2024 18:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223F91A00C4;
+	Mon, 24 Jun 2024 18:33:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="c4I6WcIX"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vE8d0lxM"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24EB1E4AE
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA9B1E4AE;
+	Mon, 24 Jun 2024 18:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719253854; cv=none; b=dpykuvGQrCQO7Jqp7StmZBPRBdomc7ON2zBSDqwfpZEcn7pJWr40Z6j6ex208dmb7pFJKo1V6nOLEjAp3ROjBXUaayekDLBz7emM7eFB7aQXy0ZpOtNv8IDtDc918xNhf/dWvuHFqbjx4G1u4qwBMaIRuZBOPK4bsz49zE2nkaY=
+	t=1719253996; cv=none; b=i/oBpaLXyDlstQRX2T2D7NOndcpiUpGhpYvPND9+CznStddfXvIGV4oWiNa8kMgwWfWh0Sqs3saNbDyMpvMBwkFj3pG/kePHFzbm0ywtMNe4L82+l/MewyHzJTo/fFF8djob3v1wk+qIOnNdfwx7V1w1UDjL2izGq+/Am+dD9oE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719253854; c=relaxed/simple;
-	bh=S7VKDTR3Xo56GU9aYED27fx09bgfKjd0JPEhRNyWZWo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D4J0rW94tx7e5/EBW0Nm3Kmh5Rl2Pd9dpHkgf9Iy7qrHefEVKiSww2aQ7Dky26zTFK82T1k0LwIs65eE0YmIbpH06bSQjbcOG+V+4URXvSZBal1JY5jNuoBYAATDnCRFsdv154PatNRHPRxBqx1EdxM8PSVDDjqDhb3aJ/wDklc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=c4I6WcIX; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-422954bbe29so11365e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:30:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719253851; x=1719858651; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8Shn1gNr+ZSKDVx7UmmEnbrdkHfvlVC51T81dg1zeh4=;
-        b=c4I6WcIXE1g3xte4Dz4ZxfIEHIWaMKcYyEB8z0XYIaG5RTfAliAQDLvwWkKpwvce7T
-         wG5qQE/pp4ZgKCVp9EwX1Wq4uVeLPGzta0gc5nG65ESSOWIyw0JxWnyeBBF5+VSsNXza
-         NdjCRlZ6vgcOwIEhPoXDPalE1QP4tOc9qUz3y3Z4zYGyeoBH2Ymqb7n/mPD53zziW74N
-         VszVysPlNkvBBtyrhKyLcSzO4VKcCOslqiyHU4++j+ZJZwfn5p3LAX4Ap5XQ6oEALgmA
-         mHweHTPT5tzejr7ZqYq/uILGH56GOlZxzIROKeUD1B0m+Ycy3Jo6kvS8tKHg+r8KQom5
-         hq4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719253851; x=1719858651;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8Shn1gNr+ZSKDVx7UmmEnbrdkHfvlVC51T81dg1zeh4=;
-        b=cvp+AUAO428wQH6iWXCtsnG9tdM8Wo7hjbjx8u47/1b6K8WhLISGUkmJySH9kOyZo2
-         0fvNnYSbofJGgdmf7bxtCEDCbteQA9eFgtryPXQSODzP+R0Xi7kp6omEKCA0kaj8q8wp
-         e1W+xXyvQcPdP0Y6M1F0a6rifelihmp6CC7Dkh/hDO9ICeeM0oTJne+3T8b1qjNQKKMM
-         UlK86yCuAxdvUiliquYL79wIkDC965m4ii2OKJnkTgkFgX0i5tKo6/RK56rYZIxRIawJ
-         pxK3CTm9GB/p39QqRQlT4H00+rwfQQ6GlPcdSnZgxY898zdEKTmgKnMvMMb/3YK9atT4
-         lv1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUnATqIhpvHSmmG7F9IuNxG/OsYkhTfMNamCWdpcPvhWtWiWCMgWzBDPUlyYp2YHPVfSTTfpMB1yj4M7z6Pg7PgMsiM67hQPG99awKS
-X-Gm-Message-State: AOJu0YxgjT0qkx4A6/AQqnR68TQprBNg0ClyDRPHYYWp6EcZkCLKlfeY
-	YYuvbjq8uHbBvURNuMpy4Jw/mq1QVbOQWGSsm7geW30HPj0Cvv20zZvGhFZDhcFo260aGayWtSQ
-	SfrWIOAzb5MHoO+M581XZlf2+rpA2CbczE4W4oo2vfzbEu86Q
-X-Google-Smtp-Source: AGHT+IHepXwvl9I2Vy51Ew0cew4SEQBEx2TpEphb+SaWX+dky28XVIaOS5zH9O6qWSzNE9zj3F3c5bEaAEs+Sx8zWH8=
-X-Received: by 2002:a05:600c:4e0d:b0:424:898b:522b with SMTP id
- 5b1f17b1804b1-4249a203161mr201775e9.1.1719253851111; Mon, 24 Jun 2024
- 11:30:51 -0700 (PDT)
+	s=arc-20240116; t=1719253996; c=relaxed/simple;
+	bh=FImRCEJmQVuZdJUbFenwnuHnCEBuJyncLNxHvR/ex2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tw5k4Jp3KabHkz8xnafGl2MJNJLIEJJjAJ3YEisXGe4A0UQfZfWkz2v16oMnnkbAYIfUJj3bqdcZKrYWMqD93GPpRzVjWBvsrRl290pzzNc74at+hUXx0YNw9kxg088+YD1Mo0o8Vgr01/aCFh7WMij7EdZh2quZZMwMALj/pvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vE8d0lxM; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=WZcanLtIBn58D6P4Ny2Mji71UPrni7o62c3guhZTyt8=; b=vE8d0lxMu1NwuMeo/zSO6sxXI1
+	MAkftBHbgwA3nUxh2bs88Ur4e/jcH+hHc3evS+hsel7AmiPBbPmcRjTvND5X4q/ji1hRwt+uWMpM7
+	ThFHA2WduMwXYbq829XqW85hPpuKZ3Cp0opoWIfMvIs7ni2u0J+1LJx+GFQiR2+IjnAmu2U/6Fe0r
+	rliQ33+pB+UnsMVIBemr2MrS3RDi0mI09rCssODQ7S3PvpZ2f8HaBHaw71Q0OK5UWluaf+CpCcGPj
+	VIgV5gtoozfEcrM5ChzmD/E9XmOntKir5GyNVb5JPH3EfL8gdsyMODSIpdYa8XeDRlEZc2D6pnjwH
+	GXiU/EGw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sLoV1-0000000AKbW-1xRU;
+	Mon, 24 Jun 2024 18:33:07 +0000
+Date: Mon, 24 Jun 2024 19:33:07 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: kernel test robot <oliver.sang@intel.com>,
+	Usama Arif <usamaarif642@gmail.com>, oe-lkp@lists.linux.dev,
+	lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Nhat Pham <nphamcs@gmail.com>, David Hildenbrand <david@redhat.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	Hugh Dickins <hughd@google.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
+Subject: Re: [linux-next:master] [mm] 0fa2857d23:
+ WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof
+Message-ID: <Znm74wW3xARhR2qN@casper.infradead.org>
+References: <202406241651.963e3e78-oliver.sang@intel.com>
+ <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624062411.321995-2-thorsten.blum@toblux.com>
-In-Reply-To: <20240624062411.321995-2-thorsten.blum@toblux.com>
-From: John Stultz <jstultz@google.com>
-Date: Mon, 24 Jun 2024 11:30:39 -0700
-Message-ID: <CANDhNCpHfnhfb8zox5TKQLAH5636xzHk1W2zBDujhmM11sshsQ@mail.gmail.com>
-Subject: Re: [PATCH] timekeeping: Use min() to fix Coccinelle warning
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: tglx@linutronix.de, sboyd@kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
 
-On Sun, Jun 23, 2024 at 11:24=E2=80=AFPM Thorsten Blum <thorsten.blum@toblu=
-x.com> wrote:
->
-> Fixes the following Coccinelle/coccicheck warning reported by
-> minmax.cocci:
->
->         WARNING opportunity for min()
->
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
->  kernel/time/timekeeping.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-> index 4e18db1819f8..f1a9c52b7c66 100644
-> --- a/kernel/time/timekeeping.c
-> +++ b/kernel/time/timekeeping.c
-> @@ -799,7 +799,7 @@ static void timekeeping_forward_now(struct timekeeper=
- *tk)
->
->         while (delta > 0) {
->                 u64 max =3D tk->tkr_mono.clock->max_cycles;
-> -               u64 incr =3D delta < max ? delta : max;
-> +               u64 incr =3D min(delta, max);
+On Mon, Jun 24, 2024 at 05:05:56AM -0700, Yosry Ahmed wrote:
+> On Mon, Jun 24, 2024 at 1:49 AM kernel test robot <oliver.sang@intel.com> wrote:
+> > kernel test robot noticed "WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof" on:
+> >
+> > commit: 0fa2857d23aa170e5e28d13c467b303b0065aad8 ("mm: store zero pages to be swapped out in a bitmap")
+> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+> 
+> This is coming from WARN_ON_ONCE_GFP(order > MAX_PAGE_ORDER, gfp), and
+> is triggered by the new bitmap_zalloc() call in the swapon path. For a
+> sufficiently large swapfile, bitmap_zalloc() (which uses kmalloc()
+> under the hood) cannot be used to allocate the bitmap.
 
-Acked-by: John Stultz <jstultz@google.com>
+Do we need to use a bitmap?
 
-thanks
--john
+We could place a special entry in the swapcache instead (there's
+XA_ZERO_ENTRY already defined, and if we need a different entry that's
+not XA_ZERO_ENTRY, there's room for a few hundred more special entries).
 
