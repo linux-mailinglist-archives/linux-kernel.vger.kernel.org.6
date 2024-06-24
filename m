@@ -1,284 +1,256 @@
-Return-Path: <linux-kernel+bounces-226869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C660E914509
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:38:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ECB591450E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DFFCB221A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:38:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F6D1C216AD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FE2961FE7;
-	Mon, 24 Jun 2024 08:38:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DDB61FE7;
+	Mon, 24 Jun 2024 08:39:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="RLR+OlB4";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="RLR+OlB4"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="H731VOCs"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A2B4F201;
-	Mon, 24 Jun 2024 08:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719218281; cv=none; b=BSX9ZR3n0ksrvvdcvw25TIcJ4bcZpMn+Qh4uQoL/PItzifx6rU1vaAaIpScNhuFktIX1GmEFslpJRVH5t0jlN+BqhlJMz7qD68eNavrm9Eak/A6Ym3thdUNpyV6jpo04IlGVzfsVKOK3lC4h2r7wuEnKhafHZTxNPJSH8RrDxlU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719218281; c=relaxed/simple;
-	bh=S/7B2MsUNMvty6ZQKzTkFNvBoyrfX87rmchFj3A9s+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QIuk25TPV80BSk/7qzxTF+Eav/rG7c7Q6h7lw+vFnreIVDII5OPVen6B64G8N2hVGqZsxRazDyF4Gljfq1VfLxjn/GctuovYPiPPyliBEsmRkGYtk++/iaL+NM1Uys+jR7K/Cj/R0lGnIQWKqRa99hVRKmW9FGXJW2aQXuVgdws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=RLR+OlB4; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=RLR+OlB4; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8559821A3E;
-	Mon, 24 Jun 2024 08:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1719218277; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=98fTMwEf+6SsUi7Nji/bTtxwDz8Dltlq3IXSCx/PIwQ=;
-	b=RLR+OlB4jwmNTGBze3tJl5MW65PTZYFf+JXs6GPrEHdmbeqUuedS1FCS1kr3POVdUXPGZa
-	BK6BTaMnjZvxHxO++x/+gdKVbiJWKA9J2T3KkVJS091JZq7WuBm3yEf3WLbZ7edp1w9vbX
-	nlSgKm57tOD7MCnDpqlUynBVxD32YCU=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1719218277; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=98fTMwEf+6SsUi7Nji/bTtxwDz8Dltlq3IXSCx/PIwQ=;
-	b=RLR+OlB4jwmNTGBze3tJl5MW65PTZYFf+JXs6GPrEHdmbeqUuedS1FCS1kr3POVdUXPGZa
-	BK6BTaMnjZvxHxO++x/+gdKVbiJWKA9J2T3KkVJS091JZq7WuBm3yEf3WLbZ7edp1w9vbX
-	nlSgKm57tOD7MCnDpqlUynBVxD32YCU=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6815513AA4;
-	Mon, 24 Jun 2024 08:37:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0pNeF2UweWbxFAAAD6G6ig
-	(envelope-from <mhocko@suse.com>); Mon, 24 Jun 2024 08:37:57 +0000
-Date: Mon, 24 Jun 2024 10:37:52 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Waiman Long <longman@redhat.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shakeel Butt <shakeel.butt@linux.dev>, linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org, linux-mm@kvack.org,
-	Alex Kalenyuk <akalenyu@redhat.com>, Peter Hunt <pehunt@redhat.com>,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH] memcg: Add a new sysctl parameter for automatically
- setting memory.high
-Message-ID: <ZnkwYFx4DSvcc2Zs@tiehlicka>
-References: <20240623204514.1032662-1-longman@redhat.com>
- <77d4299e-e1ee-4471-9b53-90957daa984d@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499CF3EA71;
+	Mon, 24 Jun 2024 08:38:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719218340; cv=fail; b=Ji1XJ4QgD1PHPpbg3T9M3cl/ZxxHD+6S62F2BExoqYqOYjpWlt02VNzMEvqsepu+dwSy8+a+MzIjcPXSgnocmEp/OeEVdz6s7P+9/FSvHIwxASEbnkvg2BhOAefaMfIIAMXFAOFwvPgjSnn6nLHY6B6nT8N/OV0OMeHOZqqnnc8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719218340; c=relaxed/simple;
+	bh=lTnwBanNAsVYulhKf/XkkP1Oh9Da5jW1+TcOUGDJPpk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=iRnOIIOX78NDbSzB+CvB5vdZrztFIQHjs18+NbXFTzhv+zELvJ8x9Im6mlOsshpgd+VsfZeBWNgtiyAhcMvyL7jDJrJdAjObmL3nqhqglGWUQPjn1y1luYl/1BTfEHB8ij6T5DAZjiae1Rhp5u50cwwhJSGQAXA0qdqFaA0iVY4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=H731VOCs; arc=fail smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O8AQxr010082;
+	Mon, 24 Jun 2024 01:38:18 -0700
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2168.outbound.protection.outlook.com [104.47.59.168])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 3ywx4gc1g7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 01:38:17 -0700 (PDT)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=bwt+xNyh8z9h67/w2o9xxL9X3/X/RYbZsTZCAmMdgZ5PvsXzx7mjmhT3v9tyY3Swa6svks23lzxChxEqbYSrkBJmmmW7IkUYihFhIAqwVw9t8283q17hlZYFvHu8diUOYmyrTEiWFYxNYSuN0dJa5zqNidL0v39rwifcY4ysy9rZFXGjpoxKQY0wpTj7YXE9b4dBAiS3U1KsRNJOmjKNEIuehhIK8+STDuruLy9vet5w1r2EBACknuNAP2tN9T456C4dY9gbKu24KybbYGpuWOcX68YBYOcdeT/UxV6whn8qFrZgjczVpqe6dCREOQGxcpSDNDenjaGxN1bM8X9DZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lTnwBanNAsVYulhKf/XkkP1Oh9Da5jW1+TcOUGDJPpk=;
+ b=SdH27Lc35NYN8b1+JjG/9iFpsJ5Cg0mlcgKkx3wKcve2V9tuMWeRaZ7/I7dq9zodwOQh4UNhKgMWz1XWwjnYR81B9rdQW/XvzKqYBGqTq0Cx0iGgyF3GavGsnZ5Ir2Q/RgIBFycb1lVLkWVT1qfItL976Vcfc9dIzzJvsdZRKOpzqcK6kOq1IdhQ/Zb1hlvxViw7bPZcr5GGljXerVQTAMFgId97bil1CRXrJtY/mwyotU8e2A3MMsCpriLrnzTr+55Wqv2N3efxAHJ7iC24K2D9ls0GVC2jYIebc/IRRqjoLoYtFkLJIYinmIytUzJuJBon17cHvTEmMSNiMMWMqQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lTnwBanNAsVYulhKf/XkkP1Oh9Da5jW1+TcOUGDJPpk=;
+ b=H731VOCsbqQjhxxTllFCbpfguA/aeOTDWGYYPqYO7lU+cnh7Ih5Vyqql8EUYgx7+bClnhZOSQlNlb5xr+LlRkZFfTChdYoGmpKF9WRFsun5luyMOkzXfUhpbTWdjlbB4pUxZ30WaPRcygVxTCxfOQFLH0+u5h/832XE1p2kjCWU=
+Received: from BY3PR18MB4707.namprd18.prod.outlook.com (2603:10b6:a03:3ca::23)
+ by BY1PR18MB5952.namprd18.prod.outlook.com (2603:10b6:a03:4b3::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.28; Mon, 24 Jun
+ 2024 08:38:15 +0000
+Received: from BY3PR18MB4707.namprd18.prod.outlook.com
+ ([fe80::e225:5161:1478:9d30]) by BY3PR18MB4707.namprd18.prod.outlook.com
+ ([fe80::e225:5161:1478:9d30%4]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
+ 08:38:15 +0000
+From: Sai Krishna Gajula <saikrishnag@marvell.com>
+To: Ma Ke <make24@iscas.ac.cn>, "kys@microsoft.com" <kys@microsoft.com>,
+        "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+        "wei.liu@kernel.org"
+	<wei.liu@kernel.org>,
+        "decui@microsoft.com" <decui@microsoft.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        "kuba@kernel.org" <kuba@kernel.org>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "shradhagupta@linux.microsoft.com"
+	<shradhagupta@linux.microsoft.com>,
+        "horms@kernel.org" <horms@kernel.org>,
+        "kotaranov@microsoft.com" <kotaranov@microsoft.com>,
+        "linyunsheng@huawei.com"
+	<linyunsheng@huawei.com>,
+        "schakrabarti@linux.microsoft.com"
+	<schakrabarti@linux.microsoft.com>,
+        "erick.archer@outlook.com"
+	<erick.archer@outlook.com>
+CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] net: mana: Fix possible double free in error handling
+ path
+Thread-Topic: [PATCH] net: mana: Fix possible double free in error handling
+ path
+Thread-Index: AQHaxhHbIqFaCMxKQkmBA9OiqxGt5w==
+Date: Mon, 24 Jun 2024 08:38:15 +0000
+Message-ID: 
+ <BY3PR18MB47074E845C5C5CD540C8552DA0D42@BY3PR18MB4707.namprd18.prod.outlook.com>
+References: <20240624032112.2286526-1-make24@iscas.ac.cn>
+In-Reply-To: <20240624032112.2286526-1-make24@iscas.ac.cn>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BY3PR18MB4707:EE_|BY1PR18MB5952:EE_
+x-ms-office365-filtering-correlation-id: f75bb372-1344-4684-d9ef-08dc9428fdb4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: 
+ BCL:0;ARA:13230037|366013|376011|1800799021|7416011|921017|38070700015;
+x-microsoft-antispam-message-info: 
+ =?utf-8?B?ak1acUV4RlhkakxmNVhHKzNFdXp1T1pOYzN6SHAzdHZ4MW9MR0Y0RnRPK1p4?=
+ =?utf-8?B?YnVscUo1eHRUTmZvbGxSOXBLSmQ5WEpSVEV1aXptZDlDZm1TTWdMbU82bW4r?=
+ =?utf-8?B?cDVlNXY5bW5sZXJpcmpOWFhEejNVajJ0eEt2NlorUndhS0dPVE83M1B1U0JX?=
+ =?utf-8?B?UHNjaVdkdEVsamppNDF6c2w5YzMvcENqTll3TU0xS1BxMnR6RkE5NXJ5VlZZ?=
+ =?utf-8?B?aWpteGlTSURyUmVFbnh2aDUvdnhhVCtIZjJwZWlETG9wSmladzdxRUFnMUdF?=
+ =?utf-8?B?akkvREhLRU1HdEF3QjdYOE9kZHA0ZGJ2aGJtOW0wcUxLajhrL0tjRkJRKzZ1?=
+ =?utf-8?B?VVpNUEhtN2F4aVJhNkhlNW1ra3g1RGpPTXpLejBkODR6aUNRNkVNaEZ2MUt3?=
+ =?utf-8?B?d05RZ2ZNVTIxMGNpRHYwa1ZuL3d2ekNraUJkOElwR0hMMmR0alNqZEhKdWE1?=
+ =?utf-8?B?U0xQaVVpV0VSR3B6WkIrcmFtVUkrbGpOTm1OMzlUQjYrTkRsWXNtTHlsV1Vm?=
+ =?utf-8?B?Y25yT3BiRUFYaEVsQTFTUHBLUmFSYWV5QitwbmRCVWMwYnE2SzVIcGFiOHZl?=
+ =?utf-8?B?L0d3UFI4b1hKSHhsdS8xRnRDWjB0L2pNTExNeCtwU25aS3VIU2hXdHNRZjVQ?=
+ =?utf-8?B?UmE5eWNHV1VJY0pTSXdmMk56dC92MlhqSGRLVGlyQkk2RHZRb09DQ3NxZ3BB?=
+ =?utf-8?B?OWZmUDVySk5ENCs3aXN6aXpzbVJNMHNxelU2VVFST0x0dkZJaTVHVUR5WitB?=
+ =?utf-8?B?aFFSY1lVSW90aE92TU95S0JXQS9vVzloSDN5QVBHL29TakJYNUJHckNlL1VQ?=
+ =?utf-8?B?dHNTd1dBQzVRMGZVUGQzTEZVZ2RHdFpRcTlOTkVzNjF3NWQ5RGtycURlS3U5?=
+ =?utf-8?B?LzF0MWEyK1lvUmE1YUsrNG9ZaVlTQU90RGt3UFZUQkhnYSt5Rlk1Tlk4bTd0?=
+ =?utf-8?B?NSsxVGVmeVNDUTNkcjBhS1VrbUZGQXhrcDhWU0VjTGVwakE2UVgrUVB6cHF5?=
+ =?utf-8?B?bHhYSlFNSUE5T1hDbnBBZDR3SDlvdDExSVU2R25GenZSUmk2aEJjTy9vVlF4?=
+ =?utf-8?B?TmxwdTRXU0ppZ1A5Y2g0Q2RvN0k5S0pNMUVyVTJVZVNDa05ON2tualRIdXha?=
+ =?utf-8?B?RDFOczY2UXVzTlFEVHpNVnZ6c3orTGVsODNvSzFKUzROU1p5aC9iUE5zSEw4?=
+ =?utf-8?B?ZTFvYXRZcDFRcVNMU1Z2N1FpdFRxYUpDRU1XT08rWmx3ZXYvL3BrZ2NndTVQ?=
+ =?utf-8?B?VWVpb1k2cytIZjJkSmVoV2FpT3VHeTF6QjlDdmRzQU1xbEpSemRFTTI0Q242?=
+ =?utf-8?B?TjlIRnBTVTB5Zm9nL3FMbWcrTWxGYVdGSFMxVXFKZDR6U1p6MlR2aStvTXJi?=
+ =?utf-8?B?ZllkZGNQWmgySFgwWUNsaWplblFjbVdtQVVsbDl3aHdmZ0cwV2piaWg1N3Rj?=
+ =?utf-8?B?V3FMakRxU2djeXlONlEyMUFZV0tLcVVqbWkyT2FpaGVhMCtiUEVMN0RwbTA2?=
+ =?utf-8?B?ZVZ5T2JnUzZ4T2prU1QwRkc0QThadTZORXpsaTlNUlN5d0d2ZFNURzBOdWYz?=
+ =?utf-8?B?VElEZFVSU2pmM3gxU2kxTUdrVGhMZzNTWmQ1SFoxaXlxTWxXbTk5czBRdTgv?=
+ =?utf-8?B?amhqR0hUQWR4WVFvVDM2SDlyRXZrY3Z2Y1ZLUzFPQTRLMWJBdGh2d1ZnVXBE?=
+ =?utf-8?B?NHUrSXAwbUhuTkZOUVVrYlA2QVJQbVBiSWNMV0swZzQ2S2htYW5lVTFXYjBI?=
+ =?utf-8?B?eXZZOU9Jd0hCSFZLYVpWUm96SXZ2RTVzUXhvdklkWU9LcGdQMWdrYS8zYnQ3?=
+ =?utf-8?B?MTZSZm9Gb2hYd2ZMZUpQRm9EdUU5NEE2Nm1JYkZpZEprL3l5Z2tETTdoVE95?=
+ =?utf-8?Q?Wnh3Il2oVoSwr?=
+x-forefront-antispam-report: 
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY3PR18MB4707.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021)(7416011)(921017)(38070700015);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: 
+ =?utf-8?B?ZkYyVXdqelR5OEVTZm9GcUJYWVhDbVpDNjFGeU1EZVB0VFM5bm1ZRUNnbnp0?=
+ =?utf-8?B?LzNRd1pMM3FMcW5Va3A2bUNkT2JRbUphdUxxcldMUmMvVllETWhWakRRamtI?=
+ =?utf-8?B?YWNiU0tYbkRnN2JuamNCMThZdnhVQmlCbmRVU25GWUNzeDFrRjlEOEFveC94?=
+ =?utf-8?B?Y1p6K1B4SGJUNmJnZENIS3l4Wno1b0QremJzOUxwZEJaRE40Q1RKelhPSjhH?=
+ =?utf-8?B?NUk1a09BdzY1eVExbjVpNUlRWStKRlQvSlB3VkZBbnRjRXh6d2JSdUI1b1B1?=
+ =?utf-8?B?S0Q1Z3pnNWNOK0oxWGhYVlRkMVVnazVXUGJHWjNkTjdOYVUwd0t6akVnUDVF?=
+ =?utf-8?B?M2JFVGJ2T0hQdWVGUXhmS2VITWF4OVFJMVllS1R1b0syR3JqTmxxWE1udk8y?=
+ =?utf-8?B?S3pBbzRGRTR6L25RWndaeWJsTzltYVRuUHRwdUVTWEdleVZESWd5cGc3YTVS?=
+ =?utf-8?B?WUUrbTk5TEhUWUthZmU1WjhFTXhBZUpYVk1wU3E0ekVjdlo1MGFpQjJPSTRx?=
+ =?utf-8?B?TFBNUDJZQUEzRmcxQ1lqUHJOUTMycnJ0U3A0THlWS29PK2tsR1lEajV2UzU1?=
+ =?utf-8?B?VUk5c3dhSC80MUQrMGVHYU5GVXJKLzJlUTcyQ1N1aUNHVXJaekNkR0NLM3BM?=
+ =?utf-8?B?OEYzMUEwQzRIRGU4NXQxcVU0aVVXd0xTc0ZtUWVxNEIyWERxV29oT3JEZHhL?=
+ =?utf-8?B?WTBIeW8ydjhFTHJqeTBLMmNydDBxYmVmbW51eCtZTU1HckhLUlJGemJvUzVI?=
+ =?utf-8?B?K2I3N2FORHZLd1g0K2lPYUh3VlBkZXpFUEhyL0lvYnBqdnVjMVV3djA2RjE1?=
+ =?utf-8?B?R0MxVldjd1R5MlJKNFNaSEVseTBNR0s0a1RNUUZZS3Bjb3dGa1BYTTd5cGpo?=
+ =?utf-8?B?TDlIVWpWZ2w5cnpuNUIxOTcxRXpDaXJzYmlORkM5cUxaVm80Z0k0Q1Z3Ti93?=
+ =?utf-8?B?ZGxET2s0aFNoYjczdVU4NENFZ3RyYzZlVVBRSEdjcEFVK0RweDFCUWNyNU5C?=
+ =?utf-8?B?MTZKQ1B2b0l4elpUQzF4cjVTWmVrUXFFelFSNTJ0UFN4dExTMkU4L0RnUzhB?=
+ =?utf-8?B?MVM4MFhVbE1BREgzVUVaNExwWEtPQklnYXVoN1ZSd01zTHhUakpaYXdpVFpD?=
+ =?utf-8?B?NzZTRmlEOU1KQlVVK3pyOGpEaXlSVkl6R283Vm15QkZWUzYzTWxZMjRhNkFm?=
+ =?utf-8?B?VmhHY2lic0VtUWRWc0tmL3hydmtpdkZZQTVJdUFVczl4MHNSY2lvV2VBVWxi?=
+ =?utf-8?B?cjZpSklKTktOL0F5cGJickdQWUgzYUxjYk12R3R0L09ibXBhVlBCcnB2Sm1x?=
+ =?utf-8?B?TEp6R2p6Qnpoc0pYbzVyQlRrUTdVaytMbEhBU1grRUQzc3VCNDc1K1pUK0xj?=
+ =?utf-8?B?TFFTMGFuMy9TKytDdmVmSVFyVXE2TFpUTUltODBGcWIxaHZUUC9VTWpGZnV3?=
+ =?utf-8?B?ak5Sd3FveG4xU0ViZ3lNdWEyclRxdE9UZGlDamJxUlEzQU1ES3JJZUswT0xS?=
+ =?utf-8?B?aUd6QTcxYTArdHlMWEVZQ2VwODdFLzg5OFozZFBYYUliV1hIejl0cUw2N2Ir?=
+ =?utf-8?B?b08vSGplWklPSm1UdkpWUUcyeGI2NUVoaWxIWk0xYnhwd1JLSEl2OWcyaE9w?=
+ =?utf-8?B?NGJ6WS9kL0MreG9uSkxKejFROGhYeWRFOU9OMG92M3RSaWpVdlI5YXdmMkpt?=
+ =?utf-8?B?OFY2VHAxNWx0OTlNVG51ZlVqcjNKM1VKSElMQ0RKVWtTaklRTkwrZUFDV3ZF?=
+ =?utf-8?B?MkxUTFRQOFB5NTMzbHIrVUsvZlBDM0NUOXUwWTJxcVJXYmN4UEtqRGo2ay9F?=
+ =?utf-8?B?RmVUQU1rcFp2VC92YTR0QXpTZzNzZG8vZDh4OG9acXNkWjhBcG9vT1hxTnFl?=
+ =?utf-8?B?TXlFMXF1KzNaZmVBblZCVkpvVE8yckpRU1kwWCtQYmpVdU1xWUlWZnpQaHNz?=
+ =?utf-8?B?WFRRNk5RTmg0QmZ1WmtNbllSb2oxM1llSFAwR2x6NFdBOVlFalFIOWEvdnZX?=
+ =?utf-8?B?eDBUMWdhYVJGcy9CTC9QcHlZeWZVYWFvTWI5VGl1L0FEdjk1MUZoaVNENEo4?=
+ =?utf-8?B?d0xxMXh0dW5MWWlXdHE2TUtDdG1pcS9ST3VzaVlGWXhUTG8yL1UrVWE3YmY1?=
+ =?utf-8?Q?BRspkDNdHu5GU6oA/Vi+uPclg?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <77d4299e-e1ee-4471-9b53-90957daa984d@redhat.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MISSING_XM_UA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BY3PR18MB4707.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f75bb372-1344-4684-d9ef-08dc9428fdb4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jun 2024 08:38:15.5283
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: EVr40B7QklYMgVjGW2doOw5Tl75fKmfeA6SA/MFUTy5yuIL9jT3DEnCjHA676/MF/oorHXeeVK/9KfKQOUm20Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY1PR18MB5952
+X-Proofpoint-GUID: Sjc6dclqcxueX4oNyEuw0LTv0M8aQkAo
+X-Proofpoint-ORIG-GUID: Sjc6dclqcxueX4oNyEuw0LTv0M8aQkAo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_07,2024-06-21_01,2024-05-17_01
 
-On Sun 23-06-24 16:52:00, Waiman Long wrote:
-> Correct some email addresses.
-> 
-> On 6/23/24 16:45, Waiman Long wrote:
-> > With memory cgroup v1, there is only a single "memory.limit_in_bytes"
-> > to be set to specify the maximum amount of memory that is allowed to
-> > be used. So a lot of memory cgroup using tools and applications allow
-> > users to specify a single memory limit. When they migrate to cgroup
-> > v2, they use the given memory limit to set memory.max and disregard
-> > memory.high for the time being.
-> > 
-> > Without properly setting memory.high, these user space applications
-> > cannot make use of the memory cgroup v2 ability to further reduce the
-> > chance of OOM kills by throttling and early memory reclaim.
-> > 
-> > This patch adds a new sysctl parameter "vm/memory_high_autoset_ratio"
-> > to enable setting "memory.high" automatically whenever "memory.max" is
-> > set as long as "memory.high" hasn't been explicitly set before. This
-> > will allow a system administrator or a middleware layer to greatly
-> > reduce the chance of memory cgroup OOM kills without worrying about
-> > how to properly set memory.high.
-> > 
-> > The new sysctl parameter will allow a range of 0-100. The default value
-> > of 0 will disable memory.high auto setting. For any non-zero value "n",
-> > the actual ratio used will be "n/(n+1)". A user cannot set a fraction
-> > less than 1/2.
-
-I am sorry but this is a bad idea. It is also completely unnecessary. If
-somebody goes all the way to set the hard limit there is no reason to
-not set the high limit along the way. I see a zero reason to make a
-global hard coded policy for something like that.  Not to mention that
-%age is a really bad interface as it gets hugely impractical with large
-%limits.
-
-> > 
-> > Signed-off-by: Waiman Long <longman@redhat.com>
-
-Nacked-by: Michal Hocko <mhocko@suse.com>
-
-> > ---
-> >   Documentation/admin-guide/sysctl/vm.rst | 10 ++++++
-> >   include/linux/memcontrol.h              |  3 ++
-> >   mm/memcontrol.c                         | 41 +++++++++++++++++++++++++
-> >   3 files changed, 54 insertions(+)
-> > 
-> > diff --git a/Documentation/admin-guide/sysctl/vm.rst b/Documentation/admin-guide/sysctl/vm.rst
-> > index e86c968a7a0e..250ec39dd5af 100644
-> > --- a/Documentation/admin-guide/sysctl/vm.rst
-> > +++ b/Documentation/admin-guide/sysctl/vm.rst
-> > @@ -46,6 +46,7 @@ Currently, these files are in /proc/sys/vm:
-> >   - mem_profiling         (only if CONFIG_MEM_ALLOC_PROFILING=y)
-> >   - memory_failure_early_kill
-> >   - memory_failure_recovery
-> > +- memory_high_autoset_ratio
-> >   - min_free_kbytes
-> >   - min_slab_ratio
-> >   - min_unmapped_ratio
-> > @@ -479,6 +480,15 @@ Enable memory failure recovery (when supported by the platform)
-> >   0: Always panic on a memory failure.
-> > +memory_high_autoset_ratio
-> > +=========================
-> > +
-> > +Specify a ratio by which memory.high should be set as a fraction of
-> > +memory.max if it hasn't been explicitly set before.  It allows a range
-> > +of 0-100.  The default value of 0 means auto setting will be disabled.
-> > +For any non-zero value "n", the actual ratio used will be "n/(n+1)".
-> > +
-> > +
-> >   min_free_kbytes
-> >   ===============
-> > diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> > index 030d34e9d117..6be161a6b922 100644
-> > --- a/include/linux/memcontrol.h
-> > +++ b/include/linux/memcontrol.h
-> > @@ -221,6 +221,9 @@ struct mem_cgroup {
-> >   	 */
-> >   	bool oom_group;
-> > +	/* %true if memory.high has been explicitly set */
-> > +	bool memory_high_set;
-> > +
-> >   	/* protected by memcg_oom_lock */
-> >   	bool		oom_lock;
-> >   	int		under_oom;
-> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> > index 71fe2a95b8bd..2cfb000bf543 100644
-> > --- a/mm/memcontrol.c
-> > +++ b/mm/memcontrol.c
-> > @@ -48,6 +48,7 @@
-> >   #include <linux/swap.h>
-> >   #include <linux/swapops.h>
-> >   #include <linux/spinlock.h>
-> > +#include <linux/sysctl.h>
-> >   #include <linux/eventfd.h>
-> >   #include <linux/poll.h>
-> >   #include <linux/sort.h>
-> > @@ -6889,6 +6890,35 @@ static void mem_cgroup_attach(struct cgroup_taskset *tset)
-> >   }
-> >   #endif
-> > +/*
-> > + * The memory.high autoset ratio specifies a ratio by which memory.high
-> > + * should be set as a fraction of memory.max if it hasn't been explicitly
-> > + * set before. The default value of 0 means auto setting will be disabled.
-> > + * For any non-zero value "n", the actual ratio is "n/(n+1)".
-> > + */
-> > +static int sysctl_memory_high_autoset_ratio;
-> > +
-> > +#ifdef CONFIG_SYSCTL
-> > +static struct ctl_table memcg_table[] = {
-> > +	{
-> > +		.procname	= "memory_high_autoset_ratio",
-> > +		.data		= &sysctl_memory_high_autoset_ratio,
-> > +		.maxlen		= sizeof(int),
-> > +		.mode		= 0644,
-> > +		.proc_handler	= proc_dointvec_minmax,
-> > +		.extra1		= SYSCTL_ZERO,
-> > +		.extra2		= SYSCTL_ONE_HUNDRED,
-> > +	},
-> > +};
-> > +
-> > +static inline void memcg_sysctl_init(void)
-> > +{
-> > +	register_sysctl_init("vm", memcg_table);
-> > +}
-> > +#else
-> > +static void memcg_sysctl_init(void)	{ }
-> > +#endif /* CONFIG_SYSCTL */
-> > +
-> >   static int seq_puts_memcg_tunable(struct seq_file *m, unsigned long value)
-> >   {
-> >   	if (value == PAGE_COUNTER_MAX)
-> > @@ -6982,6 +7012,7 @@ static ssize_t memory_high_write(struct kernfs_open_file *of,
-> >   		return err;
-> >   	page_counter_set_high(&memcg->memory, high);
-> > +	memcg->memory_high_set = true;
-> >   	for (;;) {
-> >   		unsigned long nr_pages = page_counter_read(&memcg->memory);
-> > @@ -7023,6 +7054,7 @@ static ssize_t memory_max_write(struct kernfs_open_file *of,
-> >   	unsigned int nr_reclaims = MAX_RECLAIM_RETRIES;
-> >   	bool drained = false;
-> >   	unsigned long max;
-> > +	unsigned int high_ratio = sysctl_memory_high_autoset_ratio;
-> >   	int err;
-> >   	buf = strstrip(buf);
-> > @@ -7032,6 +7064,13 @@ static ssize_t memory_max_write(struct kernfs_open_file *of,
-> >   	xchg(&memcg->memory.max, max);
-> > +	if (high_ratio && !memcg->memory_high_set) {
-> > +		/* Set memory.high as a fraction of memory.max */
-> > +		unsigned long high = max * high_ratio / (high_ratio + 1);
-> > +
-> > +		page_counter_set_high(&memcg->memory, high);
-> > +	}
-> > +
-> >   	for (;;) {
-> >   		unsigned long nr_pages = page_counter_read(&memcg->memory);
-> > @@ -7977,6 +8016,8 @@ static int __init mem_cgroup_init(void)
-> >   		soft_limit_tree.rb_tree_per_node[node] = rtpn;
-> >   	}
-> > +	memcg_sysctl_init();
-> > +
-> >   	return 0;
-> >   }
-> >   subsys_initcall(mem_cgroup_init);
-
--- 
-Michal Hocko
-SUSE Labs
+DQo+IC0tLS0tT3JpZ2luYWwgTWVzc2FnZS0tLS0tDQo+IEZyb206IE1hIEtlIDxtYWtlMjRAaXNj
+YXMuYWMuY24+DQo+IFNlbnQ6IE1vbmRheSwgSnVuZSAyNCwgMjAyNCA4OjUxIEFNDQo+IFRvOiBr
+eXNAbWljcm9zb2Z0LmNvbTsgaGFpeWFuZ3pAbWljcm9zb2Z0LmNvbTsgd2VpLmxpdUBrZXJuZWwu
+b3JnOw0KPiBkZWN1aUBtaWNyb3NvZnQuY29tOyBkYXZlbUBkYXZlbWxvZnQubmV0OyBlZHVtYXpl
+dEBnb29nbGUuY29tOw0KPiBrdWJhQGtlcm5lbC5vcmc7IHBhYmVuaUByZWRoYXQuY29tOyBzaHJh
+ZGhhZ3VwdGFAbGludXgubWljcm9zb2Z0LmNvbTsNCj4gaG9ybXNAa2VybmVsLm9yZzsga290YXJh
+bm92QG1pY3Jvc29mdC5jb207IGxpbnl1bnNoZW5nQGh1YXdlaS5jb207DQo+IHNjaGFrcmFiYXJ0
+aUBsaW51eC5taWNyb3NvZnQuY29tOyBtYWtlMjRAaXNjYXMuYWMuY247DQo+IGVyaWNrLmFyY2hl
+ckBvdXRsb29rLmNvbQ0KPiBDYzogbGludXgtaHlwZXJ2QHZnZXIua2VybmVsLm9yZzsgbmV0ZGV2
+QHZnZXIua2VybmVsLm9yZzsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNCj4gU3Vi
+amVjdDogW1BBVENIXSBuZXQ6IG1hbmE6IEZpeCBwb3NzaWJsZSBkb3VibGUgZnJlZSBpbiBlcnJv
+cg0KPiBoYW5kbGluZyBwYXRoDQo+IA0KPiBXaGVuIGF1eGlsaWFyeV9kZXZpY2VfYWRkKCkgcmV0
+dXJucyBlcnJvciBhbmQgdGhlbiBjYWxscw0KPiBhdXhpbGlhcnlfZGV2aWNlX3VuaW5pdCgpLCBj
+YWxsYmFjayBmdW5jdGlvbiBhZGV2X3JlbGVhc2UgY2FsbHMga2ZyZWUobWFkZXYpDQo+IHRvIGZy
+ZWUgbWVtb3J5LiBXZSBzaG91bGRuJ3QgY2FsbCBrZnJlZShwYWRldikgYWdhaW4gaW4gdGhlIGVy
+cm9yIGhhbmRsaW5nDQo+IHBhdGguIFNpZ25lZC1vZmYtYnk6IE1hIEtlIDxtYWtlMjRA4oCKaXNj
+YXMu4oCKYWMu4oCKY24+DQoNCj4gV2hlbiBhdXhpbGlhcnlfZGV2aWNlX2FkZCgpIHJldHVybnMg
+ZXJyb3IgYW5kIHRoZW4gY2FsbHMNCj4gYXV4aWxpYXJ5X2RldmljZV91bmluaXQoKSwgY2FsbGJh
+Y2sgZnVuY3Rpb24gYWRldl9yZWxlYXNlIGNhbGxzIGtmcmVlKG1hZGV2KQ0KPiB0byBmcmVlIG1l
+bW9yeS4gV2Ugc2hvdWxkbid0IGNhbGwga2ZyZWUocGFkZXYpIGFnYWluIGluIHRoZSBlcnJvciBo
+YW5kbGluZw0KPiBwYXRoLg0KPiANCj4gU2lnbmVkLW9mZi1ieTogTWEgS2UgPG1ha2UyNEBpc2Nh
+cy5hYy5jbj4NCj4gLS0tDQo+ICBkcml2ZXJzL25ldC9ldGhlcm5ldC9taWNyb3NvZnQvbWFuYS9t
+YW5hX2VuLmMgfCAzMSArKysrKysrKystLS0tLS0tLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwgMTQg
+aW5zZXJ0aW9ucygrKSwgMTcgZGVsZXRpb25zKC0pDQo+IA0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
+cy9uZXQvZXRoZXJuZXQvbWljcm9zb2Z0L21hbmEvbWFuYV9lbi5jDQo+IGIvZHJpdmVycy9uZXQv
+ZXRoZXJuZXQvbWljcm9zb2Z0L21hbmEvbWFuYV9lbi5jDQo+IGluZGV4IGQwODdjZjk1NGY3NS4u
+MTc1NGM5MmE2YzE1IDEwMDY0NA0KPiAtLS0gYS9kcml2ZXJzL25ldC9ldGhlcm5ldC9taWNyb3Nv
+ZnQvbWFuYS9tYW5hX2VuLmMNCj4gKysrIGIvZHJpdmVycy9uZXQvZXRoZXJuZXQvbWljcm9zb2Z0
+L21hbmEvbWFuYV9lbi5jDQo+IEBAIC0yNzg1LDggKzI3ODUsMTAgQEAgc3RhdGljIGludCBhZGRf
+YWRldihzdHJ1Y3QgZ2RtYV9kZXYgKmdkKQ0KPiANCj4gIAlhZGV2ID0gJm1hZGV2LT5hZGV2Ow0K
+PiAgCXJldCA9IG1hbmFfYWRldl9pZHhfYWxsb2MoKTsNCj4gLQlpZiAocmV0IDwgMCkNCj4gLQkJ
+Z290byBpZHhfZmFpbDsNCj4gKwlpZiAocmV0IDwgMCkgew0KPiArCQlrZnJlZShtYWRldik7DQo+
+ICsJCXJldHVybiByZXQ7DQo+ICsJfQ0KPiAgCWFkZXYtPmlkID0gcmV0Ow0KPiANCj4gIAlhZGV2
+LT5uYW1lID0gInJkbWEiOw0KPiBAQCAtMjc5NSwyNiArMjc5NywyMSBAQCBzdGF0aWMgaW50IGFk
+ZF9hZGV2KHN0cnVjdCBnZG1hX2RldiAqZ2QpDQo+ICAJbWFkZXYtPm1kZXYgPSBnZDsNCj4gDQo+
+ICAJcmV0ID0gYXV4aWxpYXJ5X2RldmljZV9pbml0KGFkZXYpOw0KPiAtCWlmIChyZXQpDQo+IC0J
+CWdvdG8gaW5pdF9mYWlsOw0KPiArCWlmIChyZXQpIHsNCj4gKwkJbWFuYV9hZGV2X2lkeF9mcmVl
+KGFkZXYtPmlkKTsNCj4gKwkJa2ZyZWUobWFkZXYpOw0KPiArCQlyZXR1cm4gcmV0Ow0KPiArCX0N
+Cj4gDQo+ICAJcmV0ID0gYXV4aWxpYXJ5X2RldmljZV9hZGQoYWRldik7DQo+IC0JaWYgKHJldCkN
+Cj4gLQkJZ290byBhZGRfZmFpbDsNCj4gKwlpZiAocmV0KSB7DQo+ICsJCWF1eGlsaWFyeV9kZXZp
+Y2VfdW5pbml0KGFkZXYpOw0KPiArCQltYW5hX2FkZXZfaWR4X2ZyZWUoYWRldi0+aWQpOw0KPiAr
+CQlyZXR1cm4gcmV0Ow0KPiArCX0NCj4gDQo+ICAJZ2QtPmFkZXYgPSBhZGV2Ow0KPiAgCXJldHVy
+biAwOw0KPiAtDQo+IC1hZGRfZmFpbDoNCj4gLQlhdXhpbGlhcnlfZGV2aWNlX3VuaW5pdChhZGV2
+KTsNCj4gLQ0KPiAtaW5pdF9mYWlsOg0KPiAtCW1hbmFfYWRldl9pZHhfZnJlZShhZGV2LT5pZCk7
+DQo+IC0NCj4gLWlkeF9mYWlsOg0KPiAtCWtmcmVlKG1hZGV2KTsNCkkgdGhpbmsgeW91IGNhbiBq
+dXN0IGF2b2lkIHVzaW5nIGFkZF9mYWlsIGFuZCBrZWVwL3JldGFpbiByZXN0IG9mIGluaXRfZmFp
+bCwgaWR4X2ZhaWwgY29uZGl0aW9ucyBpbiBvbGQgd2F5IHJpZ2h0Pw0KPiAtDQo+IC0JcmV0dXJu
+IHJldDsNCj4gIH0NCj4gDQo+ICBpbnQgbWFuYV9wcm9iZShzdHJ1Y3QgZ2RtYV9kZXYgKmdkLCBi
+b29sIHJlc3VtaW5nKQ0KPiAtLQ0KPiAyLjI1LjENCj4gDQoNCg==
 
