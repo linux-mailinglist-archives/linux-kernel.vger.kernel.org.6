@@ -1,77 +1,95 @@
-Return-Path: <linux-kernel+bounces-227717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC729155D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:50:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31D1D9155D4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:51:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C09C1C20B5A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:50:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D473A1F24663
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 078691A01B8;
-	Mon, 24 Jun 2024 17:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED2319FA85;
+	Mon, 24 Jun 2024 17:50:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBJU53wA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqV7PdY9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C6C19F47C;
-	Mon, 24 Jun 2024 17:49:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9064318039;
+	Mon, 24 Jun 2024 17:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719251385; cv=none; b=SigehmQ/Rvo/UO8Qa/syo2AF3IlpX5lqIT2nE+O3kXDlXnyq+KuUHZ0pSePDINozf/cwJoZ4V28ipAj1RHtXcmtl+FM0shY8VEDewFd8giMUlEPdu6uHgneTDhqUUpU6xG24yOvqbFfHA1KNJIJVA+2Ka3pLusOWST3UD6q96rE=
+	t=1719251419; cv=none; b=aQ1F4KVs1lojd/yaUqP1zYp0H5vZCDDU1Ay9eM+uhrpasx3rH3d0mtt3LQzs1ziy8z9cvwDRnly/8FehjgLwJapNLcUSxVwnJiZEe4e3LGc2REq/R2N3cj6JvbFC6eC9S6nXlyAJTeatyOmJbgIdaHZ5uJsea5HBJ9/jYgEqIK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719251385; c=relaxed/simple;
-	bh=fdcZmVQTvBKlzGtJB0rbs38IWJtKIbhwGdF0unBeKpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A0+/judMB+dBVp1NlmR6nBZb/W/eZK41vhWir1pg5iu2yMTnLXrisJfRvujKrzCwyard5O7IHHlkLZE6Lvdpr+dFQd/ecD4FxDW3oQchk9f0ghe0ykKszqHyjfHbmeJvxK7Rnh+3A1hYExvXGzVHeHF5yd3EIpjo7JKZgjN/b00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBJU53wA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AF63C32782;
-	Mon, 24 Jun 2024 17:49:44 +0000 (UTC)
+	s=arc-20240116; t=1719251419; c=relaxed/simple;
+	bh=ogYUbuNQL5BXM2EOP0LvbHFudJK478Qsv5RWsROTs8o=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cZ4ZEGIS/2TeDwyc6d6VVW0R+xzwaiOb54egZjXcosXZmykkrMQKXNfReAncWhUGS7kcG3hZKdxJMmLrfriYt8pHsiIvn/BwRVbkLAXOQuqmvjdx0XCie3JiwNQopE/Zqs2McWa+A/NiLtx+px7IHTHUJEwvf3UpH2ij4I1xsGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqV7PdY9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A72ACC2BBFC;
+	Mon, 24 Jun 2024 17:50:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719251384;
-	bh=fdcZmVQTvBKlzGtJB0rbs38IWJtKIbhwGdF0unBeKpA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IBJU53wAz4XP+wG1BOPEmkGio5xLvrfONcN/uG83NH2IJyp3y2sk7TN+kd6Pq88o0
-	 SpWkIFQaAKJ1gxm0zIE5VFeAcZit5DHRxEsdSDCDSvmCQpZqIWM+b8+q4zomqPR5k6
-	 B/eJC4RCG8wq059J9xD7nqJ73GSLocwM2tp6ctB+cXa324YuFvTWX3rxtU/lDAXzRJ
-	 IDKqLIJrHDAi+jUq2KkNweYhGGgTF3pEpLxzGirbmGfDMrT+AkLNRwOXPC4HtE4QFk
-	 vQqkgRO6MHCs7wkwW7QI1aFff9AIQFclHIdUcUXdn9UyMOFVBKhcF7K48l7UdXQJNa
-	 sLQC9zGbbPZdQ==
-Date: Mon, 24 Jun 2024 11:49:43 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org,
-	Jun Wu <jun.wu@arm.com>, Sudeep Holla <sudeep.holla@arm.com>,
-	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>
-Subject: Re: [PATCH] dt-bindings: arm: cpus: Add new Cortex and Neoverse names
-Message-ID: <171925138023.25546.16081189790238958204.robh@kernel.org>
-References: <20240618160450.3168005-1-andre.przywara@arm.com>
+	s=k20201202; t=1719251419;
+	bh=ogYUbuNQL5BXM2EOP0LvbHFudJK478Qsv5RWsROTs8o=;
+	h=From:To:Subject:Date:In-Reply-To:References:From;
+	b=EqV7PdY97hcSM2SbHZIVtyfR9WNG860yRT5S9ybCYHPjIIpfGgGLLdpYp/wYxuzPE
+	 6/gZIKqSc2DxM/LeOG1ZbKumXhNoJ8D0Ls8k/7TotqXe6zDkn9Q85yRLYS2E6tjU3S
+	 b1Yvnaq4MpaRMllwUqJGDZbz56/ROkDnzGtrE/mWhUYn4Vi0vbZr68wRou+FQLEWYR
+	 Ca6Na+YXOM+N2roSO87OulpobuXNsZUQCS95SaGv1oW1H4RbYtcnJ7MLTibKIfJP9k
+	 E+9hhEijEVta4LTa1yWJzytUvlMTSae3Cy4biLAzvEdmZl8hudpt7QQZzvYQVuDd7+
+	 yXf7TZ5iZtu1w==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@arm.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yicong Yang <yangyicong@huawei.com>,
+	Ian Rogers <irogers@google.com>
+Subject: Re: [PATCH v1] perf arm: Workaround ARM PMUs cpu maps having offline cpus
+Date: Mon, 24 Jun 2024 10:50:17 -0700
+Message-ID: <171925138897.1926472.5821855651002898264.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+In-Reply-To: <20240607065343.695369-1-irogers@google.com>
+References: <20240607065343.695369-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618160450.3168005-1-andre.przywara@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+On Thu, 06 Jun 2024 23:53:43 -0700, Ian Rogers wrote:
 
-On Tue, 18 Jun 2024 17:04:50 +0100, Andre Przywara wrote:
-> Add compatible strings for the Arm Cortex-A725 and Cortex-A925 CPUs, as
-> well as new Neoverse cores: Arm Neoverse N3, Neoverse V2, Neoverse V3,
-> and Neoverse V3AE.
+> When PMUs have a cpu map in the 'cpus' or 'cpumask' file, perf will
+> try to open events on those CPUs. ARM doesn't remove offline CPUs
+> meaning taking a CPU offline will cause perf commands to fail unless a
+> CPU map is passed on the command line.
 > 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  Documentation/devicetree/bindings/arm/cpus.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
+> More context in:
+> https://lore.kernel.org/lkml/20240603092812.46616-1-yangyicong@huawei.com/
 > 
+> [...]
 
-Applied, thanks!
+Applied to perf-tools-next, thanks!
 
+Best regards,
+Namhyung
 
