@@ -1,75 +1,82 @@
-Return-Path: <linux-kernel+bounces-226680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97376914248
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:44:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D569D91424B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C1CE1F24064
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:44:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 121141C20510
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173EA199B8;
-	Mon, 24 Jun 2024 05:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C140918E25;
+	Mon, 24 Jun 2024 05:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="H7+oP0C2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BKq9L4FD"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDC417BCC;
-	Mon, 24 Jun 2024 05:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA6E4A3D;
+	Mon, 24 Jun 2024 05:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719207837; cv=none; b=QnSzvuz0dQYFZo3qpjQgwHIpVwVZMdfbqMRSMo9brXNQV+/9jVV9R/GqiuQZS1XF02EKimcrFnvHAqhWfS6u22G34UuT4VV6AmA5VCbNjW3cJgBm/XAWJYlstvQT9OUwLVjxcHwQBlNZpF3zAGds4PWG1T2nAxYidRok679+C3s=
+	t=1719208095; cv=none; b=p7fmVG14PjUcQYiPkCOYiz2wNTzt/Va2LNk/yzSbGacHtQ/0c3MnzaHKCBLMKJJ16jtRnCOLTgB7mc6AFMJxOsTxFmKR3PV9Z1vlIXWIMYprzuW9EHzT2nIWK53Mq5EflFuaifKsvJQ57PDfdeufhsdbHd2BLf9ecsaZ84QZPoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719207837; c=relaxed/simple;
-	bh=v0l6EL4R60u2j8fdedrN1MycsDZlxEJ0pdW2Bbc1hcA=;
+	s=arc-20240116; t=1719208095; c=relaxed/simple;
+	bh=P7D2dMLb4LOYZpWwddedj19OdPDHaTOoKLKfKE0fCqc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=scLcwnCmaj/QHnSnv8MHyJYS34e+oQR0JwZsCIE2F2DMvLAgcpL+ajKSMG2RSKWDqxEeKvvdkzA659eUCsKDt4VLwCpmRqH+sUlkZvaNSOCvUwH6MCDMhJBemY2x8vHfyrlYdtzkyw88XE6jW/nQdUDhYceUsHEEtfpltFRA9G4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=H7+oP0C2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B312C2BBFC;
-	Mon, 24 Jun 2024 05:43:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1719207836;
-	bh=v0l6EL4R60u2j8fdedrN1MycsDZlxEJ0pdW2Bbc1hcA=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=U72WAz2TqYfK8mz3Z0ir6nL9phGdeg3Ys92rvqhqpfeIJJFli4hzlticlB+a0bNG2fv0YXaEgbkvBslwkMyEBLldemp1GY6DVhG+sEZ3pBWXMSQq1j1WdrItnpqU1446dMKv0Rmru9fP+ft02l0x+5YClJkQsSl+Uc2NTPYnDZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BKq9L4FD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAB0AC2BBFC;
+	Mon, 24 Jun 2024 05:48:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719208094;
+	bh=P7D2dMLb4LOYZpWwddedj19OdPDHaTOoKLKfKE0fCqc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H7+oP0C2FjkfvoXyxekTiiWFbUVe0HVnU/CWsWr0kEXiZLa5zu0Ys4K9KCJin7wBH
-	 8uZTEujY/QiELIA/AXD+ezyme3mjLaHBZw9jZCqkEIgplQVydjlY+Wa+E4IDPHMzRE
-	 CoDizf7Y1J22CEPJ8R97Ux2SrjLQW9I+R5SK2/ag=
-Date: Mon, 24 Jun 2024 07:43:59 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Krzysztof =?utf-8?Q?Ol=C4=99dzki?= <ole@ans.pl>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, stable@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-hwmon@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Regression caused by "eeprom: at24: Probe for DDR3 thermal
- sensor in the SPD case" - "sysfs: cannot create duplicate filename"
-Message-ID: <2024062438-patriarch-spendable-96b9@gregkh>
-References: <a57e9a39-13ce-4e4d-a7a1-c591f6b4ac65@ans.pl>
+	b=BKq9L4FDZg0sGDs3TJTuxmpGFp9WMwdDO/jQZC9pXh97rtb/42Fr1QH+Bc35Kcnow
+	 KZyCJWeMA68YEXch+IJUBeKVuWLIo4gWJM5rIslrvykyJPJGDQqmwicBB6zgBm2lqU
+	 Muez8rpnYDwoGdVeDm0/pGRcQFrPnO/tGBHSlNLS132cO2XIC0ZqZNjMRYDPNw1yfH
+	 1pmi94PdHF8nr90v4zNbb45Q8M5+A5rOMUZfnJHolbIOL6+THVXjcKI0DEtrikX3Bm
+	 s4S/CDpzv9t4czsYq1imrBK3u30KQZ+v4nZyTnhnO4byAVw8GX0uBlz/xD9rzd0kcf
+	 W0J+TsUZl+BZQ==
+Date: Mon, 24 Jun 2024 11:18:10 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: nikita.shubin@maquefel.me
+Cc: Alexander Sverdlin <alexander.sverdlin@gmail.com>,
+	dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v10 09/38] dmaengine: cirrus: Convert to DT for Cirrus
+ EP93xx
+Message-ID: <ZnkImp8BtTdxl7O3@matsya>
+References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
+ <20240617-ep93xx-v10-9-662e640ed811@maquefel.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <a57e9a39-13ce-4e4d-a7a1-c591f6b4ac65@ans.pl>
+In-Reply-To: <20240617-ep93xx-v10-9-662e640ed811@maquefel.me>
 
-On Sun, Jun 23, 2024 at 11:47:39AM -0700, Krzysztof Olędzki wrote:
-> Hi,
+On 17-06-24, 12:36, Nikita Shubin via B4 Relay wrote:
+> From: Nikita Shubin <nikita.shubin@maquefel.me>
 > 
-> After upgrading kernel to Linux 6.6.34 on one of my systems, I noticed "sysfs: cannot create duplicate filename" and i2c registration errors in dmesg, please see below.
+> Convert Cirrus EP93xx DMA to device tree usage:
 > 
-> This seems to be related to https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git/commit/?h=linux-6.6.y&id=4d5ace787273cb159bfdcf1c523df957938b3e42 - reverting the change fixes the problem.
+> - add OF ID match table with data
+> - add of_probe for device tree
+> - add xlate for m2m/m2p
+> - drop subsys_initcall code
+> - drop platform probe
+> - drop platform structs usage
+> 
+> >From now on it only supports device tree probing.
 
-So is this also an issue in 6.9?
+Acked-by: Vinod Koul <vkoul@kernel.org>
 
-thanks,
-
-greg k-h
+-- 
+~Vinod
 
