@@ -1,278 +1,335 @@
-Return-Path: <linux-kernel+bounces-227476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 598CE9151C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:15:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEDDE9151B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C8EE1C220DE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:15:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AAF32828EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:13:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8A319DFBC;
-	Mon, 24 Jun 2024 15:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34AA713C3CD;
+	Mon, 24 Jun 2024 15:12:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LElEpYDp"
-Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b="ruIGpWZT"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71BA19CD18
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B7219B3F9
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242004; cv=none; b=cF+p40fg15NmKu0vPUywxB1Z1oJmVUl63JpdT1N1MMSGyIAlOaCHHRS7jWqxWHcHN3Ei9CPwhlSKXAUMQ1peTnO0WuR4ojqRaU9tVNDvDZIXmXMa3ROVAmM6iNfelhe54lcEpDaiLDVsSkLRVLszMf1VbM2lt1Gsowv+dAW4jHY=
+	t=1719241958; cv=none; b=sEJIHf5h7IckqVFjv0BFexvmqP/S8eFMzQ/vIElKyl29YDygGCVuxqZAOFOHjjlIf3dCK0nfsNnyKQ3qWjw8axip08FZF/RSGhurpvF70FlXZmxCt/l025HrGoUO2swXiUYJ3Kib7Aw8bWAK1Gkx9mIRQCMnFrzu4D/VKD4B7tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242004; c=relaxed/simple;
-	bh=D7KJ2HSxB7PIGbb9WDmXXZsKodedlLslsjiC1jbTloI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MF6BOOMv1LUVE8eFgOOHW/ylxyhwCei3Gp47qECf3JmN+6PUl0t6ITps5HplaRPnAiJwNozCY2QkwRWl9tohJg/MwW7wUqFLWUQyk5DH+h9moUUqeH2waFvftVCY8dJm1MmmnpPrluEu0mP/MzoRlPxwB7wRmsWt6+W66XB88pE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LElEpYDp; arc=none smtp.client-ip=209.85.210.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6f9b4d69f53so2473267a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:13:22 -0700 (PDT)
+	s=arc-20240116; t=1719241958; c=relaxed/simple;
+	bh=ojuN/mc5k607ZrfKqTQBy1V/hHjJkk3A7P6CMg1iw/4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GYHo0PdZZuZEj8LbmCO57mgO8f9BaklSv9wgcgaY5/ZjPxJSwD6byg7T9wUN+qbiMNk0+8s/CyT0fvqQft4spOhbJc4d+ahAnTvXLJZxKSPJ1t0g1xhgjewpmTDO+ON1IJR4FYcK+p7LJssVoslJZZjQmH3owqgOZuBllSJKdkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com; spf=none smtp.mailfrom=mojatatu.com; dkim=pass (2048-bit key) header.d=mojatatu-com.20230601.gappssmtp.com header.i=@mojatatu-com.20230601.gappssmtp.com header.b=ruIGpWZT; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mojatatu.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mojatatu.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fa0f143b85so13873745ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:12:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719242002; x=1719846802; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gOCAjND5OJytF3iiE7FsJqbOE8iBaZkfj12tePjBSS4=;
-        b=LElEpYDprJoIOCYdGnwYLnsPkuWRFsjcfPrDmDt3WsTfCmDFRtG2NtZ1Hp8wtY/Hgm
-         b9RzOUGGgmp8O7UXcWmDMY7iTBSVb098j7gQBlQnZ2QqihPTS488GjaplfVqw6rUaJDk
-         Zp4sx8NShPBf+aZBPvkAKDUbIFlrq7+wjcJ5gR+4hopm3OJ3VPFCV5JX6GBXgdNPJVmY
-         UYf5en25qN7ggeDCnFmD4QXPwW7yJBJuHrXnjEZqDepQjPmdRSpclae70V3jVrnnTAtF
-         6JGiQ+SdzSLOPGXDCmuW8Arn0DXtiukLQ5OBPKRyRKRHcOiKg/fl8CrAsctBxSlHtonh
-         Q2RA==
+        d=mojatatu-com.20230601.gappssmtp.com; s=20230601; t=1719241955; x=1719846755; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=peW8Z3S28CwGFuIpazhrzFeDoTUsFpCtaaEIifjimFQ=;
+        b=ruIGpWZTbUm+8KSzrQeE+pRiaZg0+NDCAUrWbgxEyi+WIZBvTS5sdGdHDSB39BhakO
+         /A6NKHQ5bX9okHcya0y2K5UUrw4tERU3iefT9FODPuMl+7so6jkO7A882ZoaqTawoSMB
+         k2RzYO0uaZa1ooYu4MvKL7frDglzj8/dSLG6czeWI6PcclysgBDQfRr5yrsOK6ICc6mQ
+         o5L+Ef3xsG5Wg+4FzRUSZJYWJB71n45nfpXP6e/OVCJVYkdGeOtUll8P5Vh7ii2u7lCb
+         MjNG6TL/JsaAcucX8LZ1Dp0V3kUzr+vbHXPKjISuVTyTBQJktOVb+ALCb7Sle0Fs+MZw
+         /POg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719242002; x=1719846802;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gOCAjND5OJytF3iiE7FsJqbOE8iBaZkfj12tePjBSS4=;
-        b=CAFivLXkw6e1Qm5QNqcksWvFuMGRE/bLQZEOs4Panyt9k/lxe+YOLAHMO86OG4xKnN
-         gnfUjwwKjlBI4Ha3g8/HQwxNNRzoPrQbQabwGUQtEQHZFxSMbptGYkavvv4m6MxCiwEG
-         b/wreVzaCTzxJScAU7psmciyBQOU1sI/YGqhJHu5YPzvvD448W498AJ9RqZqxiOBkOcX
-         AITpmEgMcaj0P8Zu/TErz+aoTOlBCWYzly2u5G2Z4P629tfBngHFZ83Yhmq8+mfLu1xr
-         xUQpP97ZBATOxjgoDmEU4R9cI6olUzXEbzWaTBOUM5RTa0nlMuOLnTdtum1yJhMO8qDq
-         d2pw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVssHo8Z9to/j785MZQvL8uVz3Tc+r1Kg4nOANUQ9Q7+UC5pcOBM5CN4ltjCPU/kKvbj9xSHRbPra8c91/pWqT+YUvk72DSDwUpUzg
-X-Gm-Message-State: AOJu0YzmVCNSL6oqGlhlXCtaJPcM0DxzzXiAtzTdWqJ1jcsScdrWzIHg
-	JJzgio2ZfxVf/NsPe62bbf7jyE2kTXwcIzons1Tz+ooYoYfpwkvX
-X-Google-Smtp-Source: AGHT+IGJZeIHR3bYjnZt2BJ48CgCThRslXvSl5y4f7Smq6oTjV8wFy4GC+RgRSYhcSELHg5KH2QuUQ==
-X-Received: by 2002:a05:6830:2693:b0:6f9:6299:1175 with SMTP id 46e09a7af769-700af9343c1mr6868586a34.13.1719242001851;
-        Mon, 24 Jun 2024 08:13:21 -0700 (PDT)
-Received: from localhost.localdomain ([142.198.217.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b529eb3decsm27243976d6.12.2024.06.24.08.13.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 08:13:21 -0700 (PDT)
-From: Wu Hoi Pok <wuhoipok@gmail.com>
-To: 
-Cc: Thomas Zimmermann <tzimmermann@suse.de>,
-	Wu Hoi Pok <wuhoipok@gmail.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
-	"Pan, Xinhui" <Xinhui.Pan@amd.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 7/7] drm/radeon: rdev->ddev to rdev_to_drm(rdev) 6
-Date: Mon, 24 Jun 2024 11:10:51 -0400
-Message-ID: <20240624151122.23724-8-wuhoipok@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240624151122.23724-1-wuhoipok@gmail.com>
-References: <20240624151122.23724-1-wuhoipok@gmail.com>
+        d=1e100.net; s=20230601; t=1719241955; x=1719846755;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=peW8Z3S28CwGFuIpazhrzFeDoTUsFpCtaaEIifjimFQ=;
+        b=TiHGcTGjxfZlaWgCzU3HMegZq8cQ7wJOXEzlwuwSIoMUglintCZTs26xhyaAPhMv+3
+         2mgtqF6MuPLXVu+EYtYIUcxlvYpmluLGOCvmUjAMGw+IKjIctkHtanUzsVW1VI7UIm4j
+         AUVmzl/iF29Lg8Ya08JB+4/hY4VYUUETn7dJSteenNCBT1sY+7jj2be73c/J5iHOqSa1
+         Q7Y5YWRBzCRzawqkZg3Xpgp/CeWZC/NJ1ff4ZkfDajqFQ3aMyDsPN5brPoAhh8zQS5FC
+         v4gDF+4BmHmCxsj6yd4cox9Hm3MVhNhzz1rokBC4B7j228rTLOBRxKpXfaUpa46EUQqA
+         WdzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6X5sJTlRpWYe6MW5bvPiQ9W8i+LHVUfx7tqixoOuNtM6SMBgc+d+xoS7mrGneCCc88jsI+NboZB7/ymSGazAev1sEKsExoDBPWsfU
+X-Gm-Message-State: AOJu0Yyb+YTgNQkzNOmwepaK67O+1v9GoqN+NEges79kkrtcwWfT6b/F
+	uKq+RDUaQn+vCZDqU/+2juBPGZOGxPtuDDJFmDk8dJp1b/sFTJ93Ed4lyLwDQQ==
+X-Google-Smtp-Source: AGHT+IEN/zBRCtieICYKZDxLphZvn5UQQKpSrMS/syCqKx2ld79T7HXLa1NJ87s4p+b/SOjvvRGY+Q==
+X-Received: by 2002:a17:902:cecc:b0:1f9:f3a0:629b with SMTP id d9443c01a7336-1fa23f1d33bmr46473115ad.54.1719241954864;
+        Mon, 24 Jun 2024 08:12:34 -0700 (PDT)
+Received: from ?IPV6:2804:14d:5c5e:44fb:8ef6:cdff:1677:b083? ([2804:14d:5c5e:44fb:8ef6:cdff:1677:b083])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f058bsm63929855ad.13.2024.06.24.08.12.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 08:12:34 -0700 (PDT)
+Message-ID: <fa8e452b-ad37-482b-8d9b-bc8b4cad0ff9@mojatatu.com>
+Date: Mon, 24 Jun 2024 12:12:26 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] tracing/net_sched: NULL pointer dereference in
+ perf_trace_qdisc_reset()
+To: yskelg@gmail.com
+Cc: netdev@vger.kernel.org, stable@vger.kernel.org,
+ Jakub Kicinski <kuba@kernel.org>, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Takashi Iwai <tiwai@suse.de>, "David S. Miller" <davem@davemloft.net>,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Jamal Hadi Salim
+ <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, Eric Dumazet <edumazet@google.com>,
+ Paolo Abeni <pabeni@redhat.com>, Taehee Yoo <ap420073@gmail.com>,
+ Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ ppbuk5246@gmail.com, Yeoreum Yun <yeoreum.yun@arm.com>
+References: <20240622045701.8152-2-yskelg@gmail.com>
+Content-Language: en-US
+From: Pedro Tammela <pctammela@mojatatu.com>
+In-Reply-To: <20240622045701.8152-2-yskelg@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Please refer to patch 1.
+On 22/06/2024 01:57, yskelg@gmail.com wrote:
+> From: Yunseong Kim <yskelg@gmail.com>
+> 
+> In the TRACE_EVENT(qdisc_reset) NULL dereference occurred from
+> 
+>   qdisc->dev_queue->dev <NULL> ->name
+> 
+> This situation simulated from bunch of veths and Bluetooth dis/reconnection.
+> 
+> During qdisc initialization, qdisc was being set to noop_queue.
+> In veth_init_queue, the initial tx_num was reduced back to one,
+> causing the qdisc reset to be called with noop, which led to the kernel panic.
+> 
+> I've attached the GitHub gist link that C converted syz-execprogram
+> source code and 3 log of reproduced vmcore-dmesg.
+> 
+>   https://gist.github.com/yskelg/cc64562873ce249cdd0d5a358b77d740
+> 
+> Yeoreum and I use two fuzzing tool simultaneously.
+> 
+> One process with syz-executor : https://github.com/google/syzkaller
+> 
+>   $ ./syz-execprog -executor=./syz-executor -repeat=1 -sandbox=setuid \
+>      -enable=none -collide=false log1
+> 
+> The other process with perf fuzzer:
+>   https://github.com/deater/perf_event_tests/tree/master/fuzzer
+> 
+>   $ perf_event_tests/fuzzer/perf_fuzzer
+> 
+> I think this will happen on the kernel version.
+> 
+>   Linux kernel version +v6.7.10, +v6.8, +v6.9 and it could happen in v6.10.
+> 
+> This occurred from 51270d573a8d. I think this patch is absolutely
+> necessary. Previously, It was showing not intended string value of name.
+> 
+> I've reproduced 3 time from my fedora 40 Debug Kernel with any other module
+> or patched.
+> 
+>   version: 6.10.0-0.rc2.20240608gitdc772f8237f9.29.fc41.aarch64+debug
+> 
+> [ 5287.164555] veth0_vlan: left promiscuous mode
+> [ 5287.164929] veth1_macvtap: left promiscuous mode
+> [ 5287.164950] veth0_macvtap: left promiscuous mode
+> [ 5287.164983] veth1_vlan: left promiscuous mode
+> [ 5287.165008] veth0_vlan: left promiscuous mode
+> [ 5287.165450] veth1_macvtap: left promiscuous mode
+> [ 5287.165472] veth0_macvtap: left promiscuous mode
+> [ 5287.165502] veth1_vlan: left promiscuous mode
+> …
+> [ 5297.598240] bridge0: port 2(bridge_slave_1) entered blocking state
+> [ 5297.598262] bridge0: port 2(bridge_slave_1) entered forwarding state
+> [ 5297.598296] bridge0: port 1(bridge_slave_0) entered blocking state
+> [ 5297.598313] bridge0: port 1(bridge_slave_0) entered forwarding state
+> [ 5297.616090] 8021q: adding VLAN 0 to HW filter on device bond0
+> [ 5297.620405] bridge0: port 1(bridge_slave_0) entered disabled state
+> [ 5297.620730] bridge0: port 2(bridge_slave_1) entered disabled state
+> [ 5297.627247] 8021q: adding VLAN 0 to HW filter on device team0
+> [ 5297.629636] bridge0: port 1(bridge_slave_0) entered blocking state
+> …
+> [ 5298.002798] bridge_slave_0: left promiscuous mode
+> [ 5298.002869] bridge0: port 1(bridge_slave_0) entered disabled state
+> [ 5298.309444] bond0 (unregistering): (slave bond_slave_0): Releasing backup interface
+> [ 5298.315206] bond0 (unregistering): (slave bond_slave_1): Releasing backup interface
+> [ 5298.320207] bond0 (unregistering): Released all slaves
+> [ 5298.354296] hsr_slave_0: left promiscuous mode
+> [ 5298.360750] hsr_slave_1: left promiscuous mode
+> [ 5298.374889] veth1_macvtap: left promiscuous mode
+> [ 5298.374931] veth0_macvtap: left promiscuous mode
+> [ 5298.374988] veth1_vlan: left promiscuous mode
+> [ 5298.375024] veth0_vlan: left promiscuous mode
+> [ 5299.109741] team0 (unregistering): Port device team_slave_1 removed
+> [ 5299.185870] team0 (unregistering): Port device team_slave_0 removed
+> …
+> [ 5300.155443] Bluetooth: hci3: unexpected cc 0x0c03 length: 249 > 1
+> [ 5300.155724] Bluetooth: hci3: unexpected cc 0x1003 length: 249 > 9
+> [ 5300.155988] Bluetooth: hci3: unexpected cc 0x1001 length: 249 > 9
+> ….
+> [ 5301.075531] team0: Port device team_slave_1 added
+> [ 5301.085515] bridge0: port 1(bridge_slave_0) entered blocking state
+> [ 5301.085531] bridge0: port 1(bridge_slave_0) entered disabled state
+> [ 5301.085588] bridge_slave_0: entered allmulticast mode
+> [ 5301.085800] bridge_slave_0: entered promiscuous mode
+> [ 5301.095617] bridge0: port 1(bridge_slave_0) entered blocking state
+> [ 5301.095633] bridge0: port 1(bridge_slave_0) entered disabled state
+> …
+> [ 5301.149734] bond0: (slave bond_slave_0): Enslaving as an active interface with an up link
+> [ 5301.173234] bond0: (slave bond_slave_0): Enslaving as an active interface with an up link
+> [ 5301.180517] bond0: (slave bond_slave_1): Enslaving as an active interface with an up link
+> [ 5301.193481] hsr_slave_0: entered promiscuous mode
+> [ 5301.204425] hsr_slave_1: entered promiscuous mode
+> [ 5301.210172] debugfs: Directory 'hsr0' with parent 'hsr' already present!
+> [ 5301.210185] Cannot create hsr debugfs directory
+> [ 5301.224061] bond0: (slave bond_slave_1): Enslaving as an active interface with an up link
+> [ 5301.246901] bond0: (slave bond_slave_0): Enslaving as an active interface with an up link
+> [ 5301.255934] team0: Port device team_slave_0 added
+> [ 5301.256480] team0: Port device team_slave_1 added
+> [ 5301.256948] team0: Port device team_slave_0 added
+> …
+> [ 5301.435928] hsr_slave_0: entered promiscuous mode
+> [ 5301.446029] hsr_slave_1: entered promiscuous mode
+> [ 5301.455872] debugfs: Directory 'hsr0' with parent 'hsr' already present!
+> [ 5301.455884] Cannot create hsr debugfs directory
+> [ 5301.502664] hsr_slave_0: entered promiscuous mode
+> [ 5301.513675] hsr_slave_1: entered promiscuous mode
+> [ 5301.526155] debugfs: Directory 'hsr0' with parent 'hsr' already present!
+> [ 5301.526164] Cannot create hsr debugfs directory
+> [ 5301.563662] hsr_slave_0: entered promiscuous mode
+> [ 5301.576129] hsr_slave_1: entered promiscuous mode
+> [ 5301.580259] debugfs: Directory 'hsr0' with parent 'hsr' already present!
+> [ 5301.580270] Cannot create hsr debugfs directory
+> [ 5301.590269] 8021q: adding VLAN 0 to HW filter on device bond0
+> 
+> [ 5301.595872] KASAN: null-ptr-deref in range [0x0000000000000130-0x0000000000000137]
+> [ 5301.595877] Mem abort info:
+> [ 5301.595881]   ESR = 0x0000000096000006
+> [ 5301.595885]   EC = 0x25: DABT (current EL), IL = 32 bits
+> [ 5301.595889]   SET = 0, FnV = 0
+> [ 5301.595893]   EA = 0, S1PTW = 0
+> [ 5301.595896]   FSC = 0x06: level 2 translation fault
+> [ 5301.595900] Data abort info:
+> [ 5301.595903]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+> [ 5301.595907]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+> [ 5301.595911]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+> [ 5301.595915] [dfff800000000026] address between user and kernel address ranges
+> [ 5301.595971] Internal error: Oops: 0000000096000006 [#1] SMP
+> …
+> [ 5301.596076] CPU: 2 PID: 102769 Comm:
+> syz-executor.3 Kdump: loaded Tainted:
+>   G        W         -------  ---  6.10.0-0.rc2.20240608gitdc772f8237f9.29.fc41.aarch64+debug #1
+> [ 5301.596080] Hardware name: VMware, Inc. VMware20,1/VBSA,
+>   BIOS VMW201.00V.21805430.BA64.2305221830 05/22/2023
+> [ 5301.596082] pstate: 01400005 (nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+> [ 5301.596085] pc : strnlen+0x40/0x88
+> [ 5301.596114] lr : trace_event_get_offsets_qdisc_reset+0x6c/0x2b0
+> [ 5301.596124] sp : ffff8000beef6b40
+> [ 5301.596126] x29: ffff8000beef6b40 x28: dfff800000000000 x27: 0000000000000001
+> [ 5301.596131] x26: 6de1800082c62bd0 x25: 1ffff000110aa9e0 x24: ffff800088554f00
+> [ 5301.596136] x23: ffff800088554ec0 x22: 0000000000000130 x21: 0000000000000140
+> [ 5301.596140] x20: dfff800000000000 x19: ffff8000beef6c60 x18: ffff7000115106d8
+> [ 5301.596143] x17: ffff800121bad000 x16: ffff800080020000 x15: 0000000000000006
+> [ 5301.596147] x14: 0000000000000002 x13: ffff0001f3ed8d14 x12: ffff700017ddeda5
+> [ 5301.596151] x11: 1ffff00017ddeda4 x10: ffff700017ddeda4 x9 : ffff800082cc5eec
+> [ 5301.596155] x8 : 0000000000000004 x7 : 00000000f1f1f1f1 x6 : 00000000f2f2f200
+> [ 5301.596158] x5 : 00000000f3f3f3f3 x4 : ffff700017dded80 x3 : 00000000f204f1f1
+> [ 5301.596162] x2 : 0000000000000026 x1 : 0000000000000000 x0 : 0000000000000130
+> [ 5301.596166] Call trace:
+> [ 5301.596175]  strnlen+0x40/0x88
+> [ 5301.596179]  trace_event_get_offsets_qdisc_reset+0x6c/0x2b0
+> [ 5301.596182]  perf_trace_qdisc_reset+0xb0/0x538
+> [ 5301.596184]  __traceiter_qdisc_reset+0x68/0xc0
+> [ 5301.596188]  qdisc_reset+0x43c/0x5e8
+> [ 5301.596190]  netif_set_real_num_tx_queues+0x288/0x770
+> [ 5301.596194]  veth_init_queues+0xfc/0x130 [veth]
+> [ 5301.596198]  veth_newlink+0x45c/0x850 [veth]
+> [ 5301.596202]  rtnl_newlink_create+0x2c8/0x798
+> [ 5301.596205]  __rtnl_newlink+0x92c/0xb60
+> [ 5301.596208]  rtnl_newlink+0xd8/0x130
+> [ 5301.596211]  rtnetlink_rcv_msg+0x2e0/0x890
+> [ 5301.596214]  netlink_rcv_skb+0x1c4/0x380
+> [ 5301.596225]  rtnetlink_rcv+0x20/0x38
+> [ 5301.596227]  netlink_unicast+0x3c8/0x640
+> [ 5301.596231]  netlink_sendmsg+0x658/0xa60
+> [ 5301.596234]  __sock_sendmsg+0xd0/0x180
+> [ 5301.596243]  __sys_sendto+0x1c0/0x280
+> [ 5301.596246]  __arm64_sys_sendto+0xc8/0x150
+> [ 5301.596249]  invoke_syscall+0xdc/0x268
+> [ 5301.596256]  el0_svc_common.constprop.0+0x16c/0x240
+> [ 5301.596259]  do_el0_svc+0x48/0x68
+> [ 5301.596261]  el0_svc+0x50/0x188
+> [ 5301.596265]  el0t_64_sync_handler+0x120/0x130
+> [ 5301.596268]  el0t_64_sync+0x194/0x198
+> [ 5301.596272] Code: eb15001f 54000120 d343fc02 12000801 (38f46842)
+> [ 5301.596285] SMP: stopping secondary CPUs
+> [ 5301.597053] Starting crashdump kernel...
+> [ 5301.597057] Bye!
+> 
+> Yeoreum and I don't know if the patch we wrote will fix the underlying cause,
+> but we think that priority is to prevent kernel panic happening.
+> So, we're sending this patch.
+> 
+> Link: https://lore.kernel.org/lkml/20240229143432.273b4871@gandalf.local.home/t/
+> Fixes: 51270d573a8d ("tracing/net_sched: Fix tracepoints that save qdisc_dev() as a string")
+> Cc: netdev@vger.kernel.org
+> Cc: stable@vger.kernel.org # +v6.7.10, +v6.8
+> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+> Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+> ---
+>   include/trace/events/qdisc.h | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/include/trace/events/qdisc.h b/include/trace/events/qdisc.h
+> index f1b5e816e7e5..170b51fbe47a 100644
+> --- a/include/trace/events/qdisc.h
+> +++ b/include/trace/events/qdisc.h
+> @@ -81,7 +81,7 @@ TRACE_EVENT(qdisc_reset,
+>   	TP_ARGS(q),
+>   
+>   	TP_STRUCT__entry(
+> -		__string(	dev,		qdisc_dev(q)->name	)
+> +		__string(dev, qdisc_dev(q) ? qdisc_dev(q)->name : "noop_queue")
+>   		__string(	kind,		q->ops->id		)
+>   		__field(	u32,		parent			)
+>   		__field(	u32,		handle			)
 
-Signed-off-by: Wu Hoi Pok <wuhoipok@gmail.com>
----
- drivers/gpu/drm/radeon/rs400.c |  6 +++---
- drivers/gpu/drm/radeon/rs600.c | 14 +++++++-------
- drivers/gpu/drm/radeon/rs690.c |  2 +-
- drivers/gpu/drm/radeon/rv515.c |  4 ++--
- drivers/gpu/drm/radeon/rv770.c |  2 +-
- drivers/gpu/drm/radeon/si.c    |  4 ++--
- 6 files changed, 16 insertions(+), 16 deletions(-)
+You missed the __assign_str portion (see below). Also let's just say 
+"(null)" as it's the correct device name. "noop_queue" could be misleading.
 
-diff --git a/drivers/gpu/drm/radeon/rs400.c b/drivers/gpu/drm/radeon/rs400.c
-index d4d1501e6576..d6c18fd740ec 100644
---- a/drivers/gpu/drm/radeon/rs400.c
-+++ b/drivers/gpu/drm/radeon/rs400.c
-@@ -379,7 +379,7 @@ DEFINE_SHOW_ATTRIBUTE(rs400_debugfs_gart_info);
- static void rs400_debugfs_pcie_gart_info_init(struct radeon_device *rdev)
- {
- #if defined(CONFIG_DEBUG_FS)
--	struct dentry *root = rdev->ddev->primary->debugfs_root;
-+	struct dentry *root = rdev_to_drm(rdev)->primary->debugfs_root;
- 
- 	debugfs_create_file("rs400_gart_info", 0444, root, rdev,
- 			    &rs400_debugfs_gart_info_fops);
-@@ -474,7 +474,7 @@ int rs400_resume(struct radeon_device *rdev)
- 			RREG32(R_0007C0_CP_STAT));
- 	}
- 	/* post */
--	radeon_combios_asic_init(rdev->ddev);
-+	radeon_combios_asic_init(rdev_to_drm(rdev));
- 	/* Resume clock after posting */
- 	r300_clock_startup(rdev);
- 	/* Initialize surface registers */
-@@ -552,7 +552,7 @@ int rs400_init(struct radeon_device *rdev)
- 		return -EINVAL;
- 
- 	/* Initialize clocks */
--	radeon_get_clock_info(rdev->ddev);
-+	radeon_get_clock_info(rdev_to_drm(rdev));
- 	/* initialize memory controller */
- 	rs400_mc_init(rdev);
- 	/* Fence driver */
-diff --git a/drivers/gpu/drm/radeon/rs600.c b/drivers/gpu/drm/radeon/rs600.c
-index 5c162778899b..88c8e91ea651 100644
---- a/drivers/gpu/drm/radeon/rs600.c
-+++ b/drivers/gpu/drm/radeon/rs600.c
-@@ -321,7 +321,7 @@ void rs600_pm_misc(struct radeon_device *rdev)
- 
- void rs600_pm_prepare(struct radeon_device *rdev)
- {
--	struct drm_device *ddev = rdev->ddev;
-+	struct drm_device *ddev = rdev_to_drm(rdev);
- 	struct drm_crtc *crtc;
- 	struct radeon_crtc *radeon_crtc;
- 	u32 tmp;
-@@ -339,7 +339,7 @@ void rs600_pm_prepare(struct radeon_device *rdev)
- 
- void rs600_pm_finish(struct radeon_device *rdev)
- {
--	struct drm_device *ddev = rdev->ddev;
-+	struct drm_device *ddev = rdev_to_drm(rdev);
- 	struct drm_crtc *crtc;
- 	struct radeon_crtc *radeon_crtc;
- 	u32 tmp;
-@@ -408,7 +408,7 @@ void rs600_hpd_set_polarity(struct radeon_device *rdev,
- 
- void rs600_hpd_init(struct radeon_device *rdev)
- {
--	struct drm_device *dev = rdev->ddev;
-+	struct drm_device *dev = rdev_to_drm(rdev);
- 	struct drm_connector *connector;
- 	unsigned enable = 0;
- 
-@@ -435,7 +435,7 @@ void rs600_hpd_init(struct radeon_device *rdev)
- 
- void rs600_hpd_fini(struct radeon_device *rdev)
- {
--	struct drm_device *dev = rdev->ddev;
-+	struct drm_device *dev = rdev_to_drm(rdev);
- 	struct drm_connector *connector;
- 	unsigned disable = 0;
- 
-@@ -797,7 +797,7 @@ int rs600_irq_process(struct radeon_device *rdev)
- 		/* Vertical blank interrupts */
- 		if (G_007EDC_LB_D1_VBLANK_INTERRUPT(rdev->irq.stat_regs.r500.disp_int)) {
- 			if (rdev->irq.crtc_vblank_int[0]) {
--				drm_handle_vblank(rdev->ddev, 0);
-+				drm_handle_vblank(rdev_to_drm(rdev), 0);
- 				rdev->pm.vblank_sync = true;
- 				wake_up(&rdev->irq.vblank_queue);
- 			}
-@@ -806,7 +806,7 @@ int rs600_irq_process(struct radeon_device *rdev)
- 		}
- 		if (G_007EDC_LB_D2_VBLANK_INTERRUPT(rdev->irq.stat_regs.r500.disp_int)) {
- 			if (rdev->irq.crtc_vblank_int[1]) {
--				drm_handle_vblank(rdev->ddev, 1);
-+				drm_handle_vblank(rdev_to_drm(rdev), 1);
- 				rdev->pm.vblank_sync = true;
- 				wake_up(&rdev->irq.vblank_queue);
- 			}
-@@ -1133,7 +1133,7 @@ int rs600_init(struct radeon_device *rdev)
- 		return -EINVAL;
- 
- 	/* Initialize clocks */
--	radeon_get_clock_info(rdev->ddev);
-+	radeon_get_clock_info(rdev_to_drm(rdev));
- 	/* initialize memory controller */
- 	rs600_mc_init(rdev);
- 	r100_debugfs_rbbm_init(rdev);
-diff --git a/drivers/gpu/drm/radeon/rs690.c b/drivers/gpu/drm/radeon/rs690.c
-index 14fb0819b8c1..016eb4992803 100644
---- a/drivers/gpu/drm/radeon/rs690.c
-+++ b/drivers/gpu/drm/radeon/rs690.c
-@@ -845,7 +845,7 @@ int rs690_init(struct radeon_device *rdev)
- 		return -EINVAL;
- 
- 	/* Initialize clocks */
--	radeon_get_clock_info(rdev->ddev);
-+	radeon_get_clock_info(rdev_to_drm(rdev));
- 	/* initialize memory controller */
- 	rs690_mc_init(rdev);
- 	rv515_debugfs(rdev);
-diff --git a/drivers/gpu/drm/radeon/rv515.c b/drivers/gpu/drm/radeon/rv515.c
-index bbc6ccabf788..1b4dfb645585 100644
---- a/drivers/gpu/drm/radeon/rv515.c
-+++ b/drivers/gpu/drm/radeon/rv515.c
-@@ -255,7 +255,7 @@ DEFINE_SHOW_ATTRIBUTE(rv515_debugfs_ga_info);
- void rv515_debugfs(struct radeon_device *rdev)
- {
- #if defined(CONFIG_DEBUG_FS)
--	struct dentry *root = rdev->ddev->primary->debugfs_root;
-+	struct dentry *root = rdev_to_drm(rdev)->primary->debugfs_root;
- 
- 	debugfs_create_file("rv515_pipes_info", 0444, root, rdev,
- 			    &rv515_debugfs_pipes_info_fops);
-@@ -636,7 +636,7 @@ int rv515_init(struct radeon_device *rdev)
- 	if (radeon_boot_test_post_card(rdev) == false)
- 		return -EINVAL;
- 	/* Initialize clocks */
--	radeon_get_clock_info(rdev->ddev);
-+	radeon_get_clock_info(rdev_to_drm(rdev));
- 	/* initialize AGP */
- 	if (rdev->flags & RADEON_IS_AGP) {
- 		r = radeon_agp_init(rdev);
-diff --git a/drivers/gpu/drm/radeon/rv770.c b/drivers/gpu/drm/radeon/rv770.c
-index 9ce12fa3c356..7d4b0bf59109 100644
---- a/drivers/gpu/drm/radeon/rv770.c
-+++ b/drivers/gpu/drm/radeon/rv770.c
-@@ -1935,7 +1935,7 @@ int rv770_init(struct radeon_device *rdev)
- 	/* Initialize surface registers */
- 	radeon_surface_init(rdev);
- 	/* Initialize clocks */
--	radeon_get_clock_info(rdev->ddev);
-+	radeon_get_clock_info(rdev_to_drm(rdev));
- 	/* Fence driver */
- 	radeon_fence_driver_init(rdev);
- 	/* initialize AGP */
-diff --git a/drivers/gpu/drm/radeon/si.c b/drivers/gpu/drm/radeon/si.c
-index 15759c8ca5b7..6c95575ce109 100644
---- a/drivers/gpu/drm/radeon/si.c
-+++ b/drivers/gpu/drm/radeon/si.c
-@@ -6277,7 +6277,7 @@ int si_irq_process(struct radeon_device *rdev)
- 				event_name = "vblank";
- 
- 				if (rdev->irq.crtc_vblank_int[crtc_idx]) {
--					drm_handle_vblank(rdev->ddev, crtc_idx);
-+					drm_handle_vblank(rdev_to_drm(rdev), crtc_idx);
- 					rdev->pm.vblank_sync = true;
- 					wake_up(&rdev->irq.vblank_queue);
- 				}
-@@ -6839,7 +6839,7 @@ int si_init(struct radeon_device *rdev)
- 	/* Initialize surface registers */
- 	radeon_surface_init(rdev);
- 	/* Initialize clocks */
--	radeon_get_clock_info(rdev->ddev);
-+	radeon_get_clock_info(rdev_to_drm(rdev));
- 
- 	/* Fence driver */
- 	radeon_fence_driver_init(rdev);
--- 
-2.45.2
+diff --git a/include/trace/events/qdisc.h b/include/trace/events/qdisc.h
+index 1f4258308b96..f54e0b4dbcf4 100644
+--- a/include/trace/events/qdisc.h
++++ b/include/trace/events/qdisc.h
+@@ -81,14 +81,14 @@ TRACE_EVENT(qdisc_reset,
+         TP_ARGS(q),
+
+         TP_STRUCT__entry(
+-               __string(       dev,            qdisc_dev(q)->name      )
++               __string(       dev,            qdisc_dev(q) ? 
+qdisc_dev(q)->name : "(null)"    )
+                 __string(       kind,           q->ops->id              )
+                 __field(        u32,            parent                  )
+                 __field(        u32,            handle                  )
+         ),
+
+         TP_fast_assign(
+-               __assign_str(dev, qdisc_dev(q)->name);
++               __assign_str(dev, qdisc_dev(q) ? qdisc_dev(q)->name : 
+"(null)");
+                 __assign_str(kind, q->ops->id);
+                 __entry->parent = q->parent;
+                 __entry->handle = q->handle;
+
 
 
