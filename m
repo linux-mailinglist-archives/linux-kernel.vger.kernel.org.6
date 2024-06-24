@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-227501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0C8915244
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:28:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5299915247
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:28:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E2371C22223
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:28:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E0E41F21EEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DDC19CD05;
-	Mon, 24 Jun 2024 15:27:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CD619DF44;
+	Mon, 24 Jun 2024 15:27:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M8DeJhSY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="35/1reV0"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l2UD3NRX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="odwh5+KR"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE9B143743;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DDD919B3CE;
 	Mon, 24 Jun 2024 15:27:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242860; cv=none; b=cNQKBtDpM3WOHSIkytAl5y2YFv8h5/WuLAUmZNbX7Bf5XLkJBtJk94Gq9lTdwIDgc6PfNMWPuqjFgdmdFa5fDvRcdHczVKZQbulEtmgm8OS9AoYPFWNPYRwzKXJXLupvob2huyt380u0g855JqgIN1vh4FPHcvsQf2p1XIP2AT8=
+	t=1719242861; cv=none; b=OmMqdo+vhJzuaNVESZW1/+3NEDjAQJJfN++aG/VjywQuxzz/1enrQHYukwnyIPXfKN/1z3RRW+hy6d/zMDVe6BT42llhx8c9x1OwCEgej5PpqvpqX3s3S8Y49Se/LUulVnRbv1uXgp4NDDIiXQb1fv+1t2tuZ30t6BobTTaoJsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242860; c=relaxed/simple;
-	bh=R22VLvRBGqkcOaV5Abv9K10MsA60Th5z1YfGvmr06ks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RRNjfhslmTgxXiFq9tSeJ1PO3EHvldjCxljARXKXIPtEUxPGTPz1h5eQW6N5dKgkyd8i6Qr355lA0bqcROc7nUx9UMhFPn2n1IT/KzquhS9l8suLW3Gy+zs+IGhYizkeQhUsILA6wZ0geEkyyY+EhikZcRv99t3jmCf4k7DVskI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M8DeJhSY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=35/1reV0; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1719242861; c=relaxed/simple;
+	bh=kC5TCeCXVnotUYnZW4koAmgq/beJ1ja5YqoIVqHEq4o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Cp8MYxtytY0YhH29c5AxjHq+TNjJSMBjwHxbCc3ZRMR4Up+gcFPKomdqZdvGF04Y6uLswY733heQExRR4/49AHM1KRjNRNpbSCffZy81eLiYee9CEfUjTxRnh1gvs++GB1dCANf4ozvMSUiszt+C6O+5sf2qb8VgUSXIFGAqOIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l2UD3NRX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=odwh5+KR; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020; t=1719242857;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ljmcA9yUQ7IuwfFMDJIXUw92GNp5/f/T73VWST4Pi+Q=;
-	b=M8DeJhSYnbNxdNL5DTiYDICJJkSxBdYkfHBFUb48/P8qUKVB4tT1Co8GRBM5Vm4l8EHJVX
-	0KNPLYHLjY1k7LyrMGoxo7XLX65dVqta8o4m229QiOr89+LOt2gXB3gQ/HYgjU6jxwy6PR
-	gc2p6c5Zaf2uE4IS3UHh60D29s5bSuMJmf9RcXauPzikAIUIBiKo6vvuXEGshs5U9ni99P
-	60RNvmN6AILhvHB4WT+TwcyWXZo5pkQEB16B8B135msLQOUQaMEMhCT/H9y0A3rya86AhD
-	PlM5GFm0cZJRjAW/qt3mBzjiJRW6VQMAxMh2h1mWVgEVg/WjjnVHQePYow8PEw==
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=31fHSUjnkfqCuDeXZGlbP04Jz3JzNZ4WYRhzRxDpIFo=;
+	b=l2UD3NRXBxB0yYObGI8FrUHvymKtHRWQgany4CSk+ETMF+inUBXnvuSBAtuonwfrK8Scbp
+	UZYEB9+qeW+OFAJpwEdHQEhWNvHDB1pu9w3/FLJZf7gTs/7IXCc36rpQeAv4IAR5/Vw6PB
+	YuKmu2gJ65Xb6mBYCSgeIFuM3ue0ep8jqOLmREOIuiJ2/7/JI/yqNAfSumBaCisZUdNGlk
+	N8eZtDLtTu5CYsglp7s3oFn3TSAb4ccOfMJJnnwziP7uTl8LYPPMQ9uK4aG3z2Dc/9Hwu+
+	ryIslLHfVgkUkZW0bVtDtyLGOiC3/4tYEC4hGntwrDTuoEx0zd8knv8AyEYnRg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
 	s=2020e; t=1719242857;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ljmcA9yUQ7IuwfFMDJIXUw92GNp5/f/T73VWST4Pi+Q=;
-	b=35/1reV0BvAD2EtgNYKDl9fQXKRVrMsfshs+Zks/3Mj+XehCLKzkRrKl52WAJCfvuWJ6a0
-	VQ0zcgORsbuFheBA==
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=31fHSUjnkfqCuDeXZGlbP04Jz3JzNZ4WYRhzRxDpIFo=;
+	b=odwh5+KR0F4tcN1Xm+KDepmvbkFaZ3WBZ5fggnyRuKUwnFCZbvixg/FRsjSXMKKPFWHrca
+	Bk9mp1zQoUnilkBw==
 To: linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org
 Cc: Adrian Hunter <adrian.hunter@intel.com>,
@@ -65,72 +68,71 @@ Cc: Adrian Hunter <adrian.hunter@intel.com>,
 	Mark Rutland <mark.rutland@arm.com>,
 	Namhyung Kim <namhyung@kernel.org>,
 	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH v4 0/6] perf: Make SIGTRAP and __perf_pending_irq() work on RT.
-Date: Mon, 24 Jun 2024 17:15:13 +0200
-Message-ID: <20240624152732.1231678-1-bigeasy@linutronix.de>
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Arnaldo Carvalho de Melo <acme@redhat.com>
+Subject: [PATCH v4 1/6] perf: Move irq_work_queue() where the event is prepared.
+Date: Mon, 24 Jun 2024 17:15:14 +0200
+Message-ID: <20240624152732.1231678-2-bigeasy@linutronix.de>
+In-Reply-To: <20240624152732.1231678-1-bigeasy@linutronix.de>
+References: <20240624152732.1231678-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+Only if perf_event::pending_sigtrap is zero, the irq_work accounted by
+increminging perf_event::nr_pending. The member perf_event::pending_addr
+might be overwritten by a subsequent event if the signal was not yet
+delivered and is expected. The irq_work will not be enqeueued again
+because it has a check to be only enqueued once.
 
-Arnaldo reported that "perf test sigtrap" fails on PREEMPT_RT. Sending
-the signal gets delayed until event_sched_out() which then uses
-task_work_add() for its delivery. This breaks on PREEMPT_RT because the
-signal is delivered with disabled preemption.
+Move irq_work_queue() to where the counter is incremented and
+perf_event::pending_sigtrap is set to make it more obvious that the
+irq_work is scheduled once.
 
-While looking at this, I also stumbled upon __perf_pending_irq() which
-requires disabled interrupts but this is not the case on PREEMPT_RT.
+Tested-by: Marco Elver <elver@google.com>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ kernel/events/core.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-This series aim to address both issues while not introducing a new issue
-at the same time ;)
-Any testing is appreciated.
-
-v3=E2=80=A6v4: https://lore.kernel.org/all/20240322065208.60456-1-bigeasy@l=
-inutronix.de/
-   - Rebased on top of Frederic's series
-      (https://lore.kernel.org/all/20240621091601.18227-1-frederic@kernel.o=
-rg)
-   - Frederick pointed out that perf_pending_task() needs to
-     perf_swevent_get_recursion_context() in order not to recurse if
-     something within perf_swevent_.*_recursion_context() triggers a
-     software event. To address this, the counters have been moved to
-     the task_struct (#3 + #4) and preemt_disable() has been replaced
-     with a RCU-read lock (#5).
-   - The remaning logic same that means the event is pushed to task-work
-     instead of delivering from IRQ-work. The series was tested with
-     remove_on_exec as suggested by Marco Elver: On PREEMPT_RT a single
-     invocation passes, 100 parallel invocations report (for some)
-     unexpected SIGTRAPs and timeouts. This also observed on !RT
-     (without the series) with a higher task-count.
-
-v2=E2=80=A6v3: https://lore.kernel.org/all/20240312180814.3373778-1-bigeasy=
-@linutronix.de/
-    - Marco suggested to add a few comments
-      - Added a comment to __perf_event_overflow() to explain why irq_work
-        is raised in the in_nmi() case.
-      - Added a comment to perf_event_exit_event() to explain why the
-        pending event is deleted.
-
-v1=E2=80=A6v2: https://lore.kernel.org/all/20240308175810.2894694-1-bigeasy=
-@linutronix.de/
-    - Marco pointed me to the testsuite that showed two problems:
-      - Delayed task_work from NMI / missing events.
-        Fixed by triggering dummy irq_work to enforce an interrupt for
-	the exit-to-userland path which checks task_work
-      - Increased ref-count on clean up/ during exec.
-        Mostly addressed by the former change. There is still a window
-	if the NMI occurs during execve(). This is addressed by removing
-	the task_work before free_event().
-      The testsuite (remove_on_exec) fails sometimes if the event/
-      SIGTRAP is sent before the sighandler is installed.
-
-Sebastian
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index 586d4f3676240..647abeeaeeb02 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -9738,6 +9738,11 @@ static int __perf_event_overflow(struct perf_event *=
+event,
+ 		if (!event->pending_sigtrap) {
+ 			event->pending_sigtrap =3D pending_id;
+ 			local_inc(&event->ctx->nr_pending);
++
++			event->pending_addr =3D 0;
++			if (valid_sample && (data->sample_flags & PERF_SAMPLE_ADDR))
++				event->pending_addr =3D data->addr;
++			irq_work_queue(&event->pending_irq);
+ 		} else if (event->attr.exclude_kernel && valid_sample) {
+ 			/*
+ 			 * Should not be able to return to user space without
+@@ -9753,11 +9758,6 @@ static int __perf_event_overflow(struct perf_event *=
+event,
+ 			 */
+ 			WARN_ON_ONCE(event->pending_sigtrap !=3D pending_id);
+ 		}
+-
+-		event->pending_addr =3D 0;
+-		if (valid_sample && (data->sample_flags & PERF_SAMPLE_ADDR))
+-			event->pending_addr =3D data->addr;
+-		irq_work_queue(&event->pending_irq);
+ 	}
+=20
+ 	READ_ONCE(event->overflow_handler)(event, data, regs);
+--=20
+2.45.2
 
 
