@@ -1,145 +1,111 @@
-Return-Path: <linux-kernel+bounces-227744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 245BF915626
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:01:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A42C591562B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:03:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C365F1F21411
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:01:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5934D1F21666
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1702B19FA9B;
-	Mon, 24 Jun 2024 18:00:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42E1D19F482;
+	Mon, 24 Jun 2024 18:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iM8gTWf2"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m09CcqNY"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19831182B2;
-	Mon, 24 Jun 2024 18:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BEA4182B2;
+	Mon, 24 Jun 2024 18:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719252054; cv=none; b=di9/Vfpg1YR5XuzA09uXtmDx9xeBD+W17zG59qG6AS8QnqoADhu/CzSU8kFu1n59NneSgY2tBHaTZi1096a2dOukjbwzFtsTazOgcua/WP1rA6Am16+4SSTbq6d/yBFJUx40OM6Qioj8iHYpEd4uPxQQHuZt3zf/2xLHLX7KY+Y=
+	t=1719252206; cv=none; b=RM+a//4BYsS0hpAu4g5vDtH5V/bBHJuIUhnlt9Ue/+EICKQ9YVjuSq6vYxwhnKd5Olk+wtAFFuJJzJ0l5qtL1z9SvcI+hgLNWcgYZahgR+AF6lM6Mw0H0DF1/E4O3bweu941wuxvq8OdVY66uFUDT3HN113Vq2xqurIgJtbjGTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719252054; c=relaxed/simple;
-	bh=2+rWco3zjx9eoYZtRJyYjuTVifGdlskumaDhQmygHso=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K28iwvkIUetw0Ddjjh41wEp8KOrV4iCjkX8lF1OCpv9LWZClUDwVB4RXRene2H7RskHX6YSwtRcEjsdohaH5G69lsPkp4DjPdP3aqUEMk9t/2CJb3Mw3bPv+TtAlrRe6c7YCS7S67tSUphYwwDsvI36B+PUTYY/1ly0gkVxymhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iM8gTWf2; arc=none smtp.client-ip=209.85.210.178
+	s=arc-20240116; t=1719252206; c=relaxed/simple;
+	bh=asm52OWDftS+lyFr+LMKyFJAkBcFCq2hCyMjZAWHKIg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=V4lFtyFVNz4c7+RuRUOPl/GbR9rfH2iZe7EQuaKezcgpX1u4Za/4dEBy9AyzbjcCMz6D+lX4mNTyd86m5TgICc8C2TC3RrgT1g5c5+KsIP/yMRmwRQwj49UW7H2ytcjmm/4zaoxYChLiDmwAruhYr9s9eU7RyhKFDcdlIv9PHkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m09CcqNY; arc=none smtp.client-ip=209.85.160.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-7066463c841so1625348b3a.1;
-        Mon, 24 Jun 2024 11:00:52 -0700 (PDT)
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4421cbba106so32618231cf.2;
+        Mon, 24 Jun 2024 11:03:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719252052; x=1719856852; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Sya32zh6rlTi+rX0XJSzUKROEQWEvMEkDKstbuTkhuk=;
-        b=iM8gTWf2B6okSNRaLN05K5iMIJujmh++WJfmPfmq4SCUIFx3ET1ICi9TXScm6/tfw9
-         UsLXI+nVmXeF7xGpe/2uBQEirDKkOWjnIIJ6N6yxHMJ39WRVMoYAanUaGmz8JYhA1Que
-         JJlBe9R5aieMQ2U/PuL8sc8fjFv1uT808Tu0rzk3pjja7Eoj2toqZdoJTn7pjQhufAb8
-         9dd/if9WxR7W/nGT1dnKBg8tQ9EB8hU4rvl6U6BSZ3mfR9tEq3GUMEq6z3WXWtf05qCO
-         dHSAwVYUUhJMFjmFSotSYqQBdQXDWv/wFBfEUi/2wsbMUqmCgdf7mAW/qPidGTRgwGHU
-         mJqQ==
+        d=gmail.com; s=20230601; t=1719252204; x=1719857004; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2pUaocMSsxJ5LjjEsnYP7jxj3QfqcMM8ZONVfrm8rtQ=;
+        b=m09CcqNYsjUyz7H9BFlAW5xpr/3s6M5D9s6CqoRhR24FnACIchqQqDr1rdo4S8Xo20
+         NnpOumunlOTalTlL9xNinR/A5/ckAUA7CkwKuBOpA1vU+vrLpXHFcoLCXyc6V7ufBfod
+         chKL+VQM+fRgt/R5pN/leM/s5L+ejFJlsqkZhsbJevXeL/bUVwrykuSLCXIWCny1odSG
+         yVDBWD5PDHjekg0hGYgNUggaIUrVKSaCn/8NisEsLlLW6riFcxMdpiHf1mGsc6jTOHV9
+         p9XOC6tbnuyg03iVdlwia/yIB+E/nLvIib6TbPe2tSbiBCaV2dpxsUhZ/DPpp1zZ5tQJ
+         WCvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719252052; x=1719856852;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Sya32zh6rlTi+rX0XJSzUKROEQWEvMEkDKstbuTkhuk=;
-        b=ohdQCAUzcfld5OP2oujuSp0K3Zitcisbh7rmxAD+oeFDSTvKz4s/Pl4LwFeG2zJx51
-         G0eiFMKdkNfXqAl22Ao1LbizV15ovfPOxnkVG/FJaxwn7yUonPVzZqNFqQgYeKZSAu6l
-         HN+Gcm7FnYddouNc44kDAGyHp6CXTj8U32vTIwIwfASao5i4kF6xIKidOeYaYGxmgDfW
-         bCRYALGZfa9NXo9JLKjI0a9005ql3ZEa1L/MvAnRZ92CJswTE/zgk2xW06OfmsXc88bq
-         7WvJ1K170AD4Cp29fdDIoo+t7BTki1riaJNVK0Ejk1if2mgR5v+Rncu+XeXOxQJrI74U
-         pPWg==
-X-Forwarded-Encrypted: i=1; AJvYcCVx96Q7IbiEfz+Fa9kTVlE1PVoyZGk5Z1CN1SAxVXL0YeR4nZTs3b3Ib3GGGsllYbQbB7CGdxrfGWn0gQ4r8Fj9ScOAyX0kUE7JU6xl4X6alcxKHojIRKtlUdRj6Wxamy3JBQ==
-X-Gm-Message-State: AOJu0YxTBMBSzqiDf7Hh1rmmXq7DUveFbvhu6w6aVAap7HL5TXnTOic+
-	SRu2SUYkvE4bVOHCqrio+jjlJklH3WrJV7U17rK8T82H69VulOOq
-X-Google-Smtp-Source: AGHT+IE+K1phdY5GT30UHXgU3WZqrmc5gCxbnU2koonmdTNPFJlh5LHz8q1SXDPLzxEatxjM4VVX2g==
-X-Received: by 2002:aa7:908f:0:b0:705:bc32:5357 with SMTP id d2e1a72fcca58-7067459c765mr5040693b3a.1.1719252052132;
-        Mon, 24 Jun 2024 11:00:52 -0700 (PDT)
-Received: from [192.168.50.95] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-717e1cdf921sm5241071a12.43.2024.06.24.11.00.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 11:00:51 -0700 (PDT)
-Message-ID: <880a70f0-89d6-4094-8a71-a9c331bab1ee@gmail.com>
-Date: Tue, 25 Jun 2024 03:00:47 +0900
+        d=1e100.net; s=20230601; t=1719252204; x=1719857004;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2pUaocMSsxJ5LjjEsnYP7jxj3QfqcMM8ZONVfrm8rtQ=;
+        b=TxjrL3w7twaJ8xAF1vjo464lSCsdcOvTQwCKGlBJKPNL//eaHsFkhEslqpqY2uANd6
+         0JMIjSgYRGqK7WwsU689HM46AM+R8r36uO+3cHoWMzhVcQR7gBK7xE0dmXBoi9v2uOwK
+         FsowZgLjT7bQAVFopSihzMNOVXTQQ9UZbf/OO97O0V2lYfqv+fNki9rt1JqsliDBIa1l
+         udkjKzBDoHWK3TgYWqJzltuO2HtC1CEiXG/ERA4haE26HJ0iUQoGKW+o1afuVbUjCgt2
+         0iZbRCCDXcrv5fc6rgwMhbv0jg8njOFSMuXEqmDHqlsFfC6ECjDx+A2q+WIdqBJw//NF
+         JwQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWNb5L+b4+3u+3Y5T/YiipoisaVPHsVWY61uGHGHE6QNvDFnA4+kUGA7q6dASDBNGjnoSxg/bo8mlL9rimZZjoyG5/xx4NdTvvr+FMOhz+zLaxddOLrSXeedrI8CMX6HYOac4HDlvZ56A==
+X-Gm-Message-State: AOJu0Yx4iVohA3Ja9XVmF6ieJCPws07PBPVwwjb7nD6sHWeZIkARPpsw
+	khwT3P/Mlc5Vy3nX0kuiBMEkHYas1HoB9aq02CPlQSmDvPbigsnB5Sv5cEPU4EDjX7Hbf8l1J8A
+	71GbQ6BQjAT5NuiOTgtEPy3xeNpY=
+X-Google-Smtp-Source: AGHT+IFO8I58PN4h1470uYhz00UihsCRoEeapPW6BWGVinHzOdAIibcD2ehHGZtef6GQQE0Ko3zTuBjLkhxyvplJDvE=
+X-Received: by 2002:a05:622a:553:b0:441:57ec:61e4 with SMTP id
+ d75a77b69052e-444d9388193mr65550061cf.47.1719252203930; Mon, 24 Jun 2024
+ 11:03:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] s390/netiucv: handle memory allocation failure in
- conn_action_start()
-To: Markus Elfring <Markus.Elfring@web.de>, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
- Alexandra Winter <wintera@linux.ibm.com>,
- =?UTF-8?Q?Christian_Borntr=C3=A4ger?= <borntraeger@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- Thorsten Winkler <twinkler@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, MichelleJin <shjy180909@gmail.com>
-References: <20240623131154.36458-2-yskelg@gmail.com>
- <bb03a384-b2c4-438f-b36b-a4af33a95b60@web.de>
-Content-Language: en-US
-From: Yunseong Kim <yskelg@gmail.com>
-In-Reply-To: <bb03a384-b2c4-438f-b36b-a4af33a95b60@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <4449f7d4eead787308300e2d1d37b88c9d1446b2.1717308862.git.dsimic@manjaro.org>
+ <ba9d41461f5d56947d7851473637722b@manjaro.org> <CABjd4YziNk1NJb6p+AxAVK0CR7igE3-6h-sN4MEWwyoW2qaKfw@mail.gmail.com>
+In-Reply-To: <CABjd4YziNk1NJb6p+AxAVK0CR7igE3-6h-sN4MEWwyoW2qaKfw@mail.gmail.com>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Mon, 24 Jun 2024 22:03:12 +0400
+Message-ID: <CABjd4YzWc6GPkDAbVGLaBCHBX26m97Mf1YVKriMVJYX8iy0LYQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: Delete the SoC variant dtsi for RK3399Pro
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	robh+dt@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Markus,
+On Mon, Jun 24, 2024 at 9:59=E2=80=AFPM Alexey Charkov <alchark@gmail.com> =
+wrote:
+>
+> On Mon, Jun 24, 2024 at 9:55=E2=80=AFPM Dragan Simic <dsimic@manjaro.org>=
+ wrote:
+> >
+> > Hello all,
+> >
+> > Just checking, are there any comments on this patch?  Is there somethin=
+g
+> > more I can do to have it accepted?
+>
+> Hi Dragan,
+>
+> Heiko has already applied it quietly a couple of days ago [1], and
+> also merged the v5 thermal and OPP code that I rebased on top of this
+> patch of yours.
 
-On 6/23/24 11:27 오후, Markus Elfring wrote:
->> This patch handle potential null pointer dereference in
->> iucv_path_connect(), When iucv_path_alloc() fails to allocate memory
->> for 'rc'.
-> 
-> 1. Can a wording approach (like the following) be a better change description?
-> 
->    A null pointer is stored in the data structure member “path” after a call
->    of the function “iucv_path_alloc” failed. This pointer was passed to
->    a subsequent call of the function “iucv_path_connect” where an undesirable
->    dereference will be performed then.
->    Thus add a corresponding return value check.
-
-Thank you very much for your detailed code review. I will thoughtfully
-incorporate your advices into the next patch.
-
-> 2. May the proposed error message be omitted
->    (because a memory allocation failure might have been reported
->    by an other function call already)?
-
-I agree.
-
-> 3. Is there a need to adjust the return type of the function “conn_action_start”?
-
-I had the same thoughts while writing the code. Thank you!
-
-> 4. Would you like to add any tags (like “Fixes”) accordingly?
-
-Yes, I will refer to the mailing list and include the fix tag.
-
-> 5. Under which circumstances will development interests grow for increasing
->    the application of scope-based resource management?
->    https://elixir.bootlin.com/linux/v6.10-rc4/source/include/linux/cleanup.h#L8
-
-I am considering the environment in which the micro Virtual Machine
-operates and testing the s390 architecture with QEMU on my Mac M2 PC.
-I have been reviewing the code under the assumption of using a lot of
-memory and having many micro Virtual Machines loaded simultaneously.
-
-> Regards,
-> Markus
-
-I really appreciate code review Markus!
-
+Oops, that was about a different patch, sorry. But still thanks a lot
+to Heiko and Dragan :)
 
 Best regards,
-
-Yunseong Kim
+Alexey
 
