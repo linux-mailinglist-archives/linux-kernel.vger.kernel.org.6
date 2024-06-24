@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-227157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8A2391492A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:52:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB1191492D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBEF01C20D65
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:52:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C49DB2111E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:53:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B65913B58A;
-	Mon, 24 Jun 2024 11:52:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5A9F13B2B2;
+	Mon, 24 Jun 2024 11:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFoybF2Q"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLrmS8iz"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1191799F;
-	Mon, 24 Jun 2024 11:52:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43A01799F;
+	Mon, 24 Jun 2024 11:53:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719229939; cv=none; b=MvgDnU+pvKMKSkvbBlPS70zLsN7KxtNQmNR0e0Hf276anRQIGVAvyBYp7wt5Bryxbn6XDwdvVrjc4bCHzVwHxQBlSeYn8o7pQ41qL61AuvnxPw/G49DxH+mdIiKuT3HnKD4k0k/C2I2WhigFME86f6nDY/DOGPSbPGPkD/sOIWY=
+	t=1719230001; cv=none; b=lnYahfb0pldzusu7avR75+5EZG2ozLscamestlTLTmWVIdxExgispjPK2Z5qn8m2ZPUYY69jedtlaq7vhD5X9q+NghG/z/Lfag920gJACkNWauLLvi1GVB0kFjWEZDDUA5T77XNZLIybiIjKABWDSToIbMC6dXv6NnV0IbEB3uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719229939; c=relaxed/simple;
-	bh=2OQksbAH8Q9SbTN0REsdjHjArfktyVjTfszbK5EBsSI=;
+	s=arc-20240116; t=1719230001; c=relaxed/simple;
+	bh=X3LUVF9n/Lh0ZRmeZ1J5tDM8TML65BM16E6Zc4Ii/d8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dktMI0JmaU+mUO9GkSSB+pPmnrmRUcoBLK0AmJy5Ci/ON31LE51182LJARdZWdEUx8pDv9utSphOyBtkFCgkULZOnhlK3Wz4DYbXya65EPdCRcK99aizPb+whenMW2ByUuMQ4zebt8gMolKKVL0kahaYSrkasKzJsV0L4TollSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFoybF2Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90E67C2BBFC;
-	Mon, 24 Jun 2024 11:52:12 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=kyZSYBk7L8cQwUTrik9BujxISSRUb0hhG8lSmmgXVXsyIJNEJDWQp1a0S9yijllWHUQGOXqVW/DCezgsb8V15amJwGSSohcb0VrvKXEM/G5l37ivtHoam0utJFKmhQHzIRkv43szre3zu2pivJ8lYnixqsLuH3fr9zdBNDClYHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLrmS8iz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8269BC2BBFC;
+	Mon, 24 Jun 2024 11:53:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719229938;
-	bh=2OQksbAH8Q9SbTN0REsdjHjArfktyVjTfszbK5EBsSI=;
+	s=k20201202; t=1719230001;
+	bh=X3LUVF9n/Lh0ZRmeZ1J5tDM8TML65BM16E6Zc4Ii/d8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UFoybF2QmzHzDpSA9CXWVyjHiOQ9YPR8OMBi+sPMMP0ssnLVTzoF5t0KVDy3TpASr
-	 4nSE78WUBjzVO5qCAy7ja3PWc0XnLvY15/40j4rMNhbOG5/L49v+tgSMA3CbYqHcmG
-	 Xjwl88GYkGyXJ0vSiawGY+MBFTBP3fRNIihw3efjAmWyVpB+oZqM0Q40IZsFHtaUOP
-	 f9mIyZV8SafgNTw8c9xjpRpImXFhXXXvR/ixsQ+DI9Abw7G29M99T39tCNKNckGoH/
-	 gzPRpKVTDM1fUZE1gfYaI5e2gRT2y6Oj0+NGnrHqps6ggYhAJv15XLydLelLjWH/a9
-	 jiHgveVgULiFg==
-Message-ID: <258459b8-549b-4a63-8d33-76c9631483f1@kernel.org>
-Date: Mon, 24 Jun 2024 13:52:10 +0200
+	b=CLrmS8izec1PLujYjvTR4p9BjHHaiwHbZLiPzCs0rBbIGuJOIAp3/jdhaDeb/i3Ul
+	 vEYrNFWAzGqw7kANXB1/HdKZeFCRgcV2w8oFN8d0sqQJ2kYL2UPeT0S9A3tQ2iWGOF
+	 xwqhaXjY8Meu5nkhoK0jwtH38JX3ILLxpJwleQXAHmQN3DHlyif5AuLhiBFUqE6/X8
+	 orr3kYpuriduh5D8k92XWxb3wxBXFz5J81raJIW/yXqYDGihFEGWwlurwgiR/pqVNF
+	 xplT/OHEwWu9/MJTTkLyhWZYdz+BWaduzhXSOv4FyjpTZX5OnAfP8MKSyZP16zHyDb
+	 gPhNLUwPwnViw==
+Message-ID: <6d8f80a0-d67a-416e-b395-7a33b539682e@kernel.org>
+Date: Mon, 24 Jun 2024 13:53:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/5] arm64: dts: rockchip: Add AP6275P wireless support
- to Khadas Edge 2
-To: Jacobe Zang <jacobe.zang@wesion.com>, arend.vanspriel@broadcom.com
-Cc: kvalo@kernel.org, duoming@zju.edu.cn, bhelgaas@google.com,
- minipli@grsecurity.net, linux-wireless@vger.kernel.org,
- brcm80211@lists.linux.dev, brcm80211-dev-list.pdl@broadcom.com, megi@xff.cz,
- robh@kernel.org, efectn@protonmail.com, krzk+dt@kernel.org,
- conor+dt@kernel.org, heiko@sntech.de, nick@khadas.com, jagan@edgeble.ai,
+Subject: Re: [PATCH v4 1/2] arm64: dts: rockchip: Add USB-C to Khadas Edge 2
+To: Jacobe Zang <jacobe.zang@wesion.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de
+Cc: nick@khadas.com, efectn@protonmail.com, jagan@edgeble.ai,
  dsimic@manjaro.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
  linux-kernel@vger.kernel.org
-References: <20240624081906.1399447-1-jacobe.zang@wesion.com>
- <20240624081906.1399447-2-jacobe.zang@wesion.com>
+References: <20240624083236.1401673-1-jacobe.zang@wesion.com>
+ <20240624083236.1401673-2-jacobe.zang@wesion.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -107,63 +103,69 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240624081906.1399447-2-jacobe.zang@wesion.com>
+In-Reply-To: <20240624083236.1401673-2-jacobe.zang@wesion.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/06/2024 10:19, Jacobe Zang wrote:
-> Khadas Edge2 uses the PCI-e Ampak AP6275P 2T2R Wi-Fi 6 module.
+On 24/06/2024 10:32, Jacobe Zang wrote:
+> Khadas Edge 2 has 2x Type-C port. One just supports PD and
+> controlled by MCU. The other one supports PD, DP Alt mode and DRD. This
+> commit adds support for DRD.
 > 
 > Co-developed-by: Muhammed Efe Cetin <efectn@protonmail.com>
 > Signed-off-by: Muhammed Efe Cetin <efectn@protonmail.com>
 > Signed-off-by: Jacobe Zang <jacobe.zang@wesion.com>
 > ---
->  .../boot/dts/rockchip/rk3588s-khadas-edge2.dts   | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+>  .../dts/rockchip/rk3588s-khadas-edge2.dts     | 118 ++++++++++++++++++
+>  1 file changed, 118 insertions(+)
 > 
 > diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-> index 3b6286461a746..f674deb6f7da8 100644
+> index dbddfc3bb4641..8c0bc675690dd 100644
 > --- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
 > +++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts
-> @@ -356,6 +356,22 @@ &pcie2x1l2 {
->  	reset-gpios = <&gpio3 RK_PD1 GPIO_ACTIVE_HIGH>;
->  	vpcie3v3-supply = <&vcc3v3_pcie_wl>;
->  	status = "okay";
-> +
-> +	pcie@0,0 {
-> +		reg = <0x400000 0 0 0 0>;
-> +		#address-cells = <3>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +		device_type = "pci";
-> +		bus-range = <0x40 0x4f>;
-
-Isn't bus-range a property of PCI host bridge, so the parent? This is a
-PCI device, right?
-
-> +
-> +		wifi: wifi@0,0 {
-
-Binding does not say anything about this. Rockchip PCI controller is the
-PCI host bridge, isn't it? Then the pci@0,0 is the child, so what is this?
-
-> +			reg = <0x410000 0 0 0 0>;
-> +			clocks = <&hym8563>;
-> +			clock-names = "32k";
-
-1. Bindings are before the users.
-2. Where is the compatible? Are you sure this validates?
-
-
-> +		};
+> @@ -6,6 +6,7 @@
+>  #include <dt-bindings/input/input.h>
+>  #include <dt-bindings/pinctrl/rockchip.h>
+>  #include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/usb/pd.h>
+>  #include "rk3588s.dtsi"
+>  
+>  / {
+> @@ -112,6 +113,18 @@ vcc5v0_sys: vcc5v0-sys-regulator {
+>  		regulator-max-microvolt = <5000000>;
+>  	};
+>  
+> +	vbus5v0_typec: vbus5v0-typec-regulator {
+> +		compatible = "regulator-fixed";
+> +		regulator-name = "vbus5v0_typec";
+> +		regulator-min-microvolt = <5000000>;
+> +		regulator-max-microvolt = <5000000>;
+> +		enable-active-high;
+> +		gpio = <&gpio3 RK_PA4 GPIO_ACTIVE_HIGH>;
+> +		vin-supply = <&vcc5v0_sys>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&typec5v_pwren>;
 > +	};
 > +
-
-No need for this blank line.
-
->  };
+>  	vcc_1v1_nldo_s3: vcc-1v1-nldo-s3-regulator {
+>  		compatible = "regulator-fixed";
+>  		regulator-name = "vcc_1v1_nldo_s3";
+> @@ -224,6 +237,56 @@ regulator-state-mem {
+>  &i2c2 {
+>  	status = "okay";
 >  
->  &pwm11 {
+> +	usbc0: usb-typec@22 {
+> +		compatible = "fcs,fusb302";
+> +		reg = <0x22>;
+> +		interrupt-parent = <&gpio1>;
+> +		interrupts = <RK_PB5 IRQ_TYPE_LEVEL_LOW>;
+> +		pinctrl-names = "default";
+> +		pinctrl-0 = <&usbc0_int>;
+> +		vbus-supply = <&vbus5v0_typec>;
+> +		status = "okay";
+
+Was it disabled anywhere?
+
 
 Best regards,
 Krzysztof
