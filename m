@@ -1,137 +1,288 @@
-Return-Path: <linux-kernel+bounces-226511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A06E6913F7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:15:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF93913F86
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:22:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31FB328143B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 00:15:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D2D1C2148B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 00:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7877C2907;
-	Mon, 24 Jun 2024 00:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AC11FAA;
+	Mon, 24 Jun 2024 00:21:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="Nfm/3a+4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ihs0ApKp"
-Received: from fhigh7-smtp.messagingengine.com (fhigh7-smtp.messagingengine.com [103.168.172.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JAcGG52x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E0E621;
-	Mon, 24 Jun 2024 00:15:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9563A7FD;
+	Mon, 24 Jun 2024 00:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719188102; cv=none; b=WZk4pBYtNRAYR+8ITQ908yL16QnrhSacO4lwKgREnDzXpu9dNCh+tB5tVKxgcjOWjL1Yhov/yvQYpGh5hEx2nfhDOGb6lf1vV6L/pjldQrv1V5r9y0JoAhmhKLuZxESpg4XL0xlfeNhmzgWn8js4ojDMisgyHB4QQzhggJlQjmY=
+	t=1719188518; cv=none; b=cEfHTethwP9QCtsQANF1SCHg/PttrxrEJvO26NiwTzUO5gCkA3ODggvzAzG4xtytayzY6QmEMDwkTOtp9Y3KVKYOFq45M64DAUtGndYSXM0aVxkaBvVlE4xv3qDIkEinB9TW89avsmPvnwU1Qb2dajrqo4NgJGiWLii2HPsIel4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719188102; c=relaxed/simple;
-	bh=I+7KIdR+hKd+1NieQ00+NxffCca5NU5MvzyLEbPkWGY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SbmcPVbpaBnslsdgh3gaCVKGdIK0sVU5OywTiRt39VhOi02D7Bj+mhMHPyfUjCiZ0JwKxamlf21ScJp5n7CfHi/MOZmnIVJx0o0EkVbUsfqCbAOOZzWi+4O3TFZeBfWZ/yzpH80waURkea5W/Brt/SEvCkwN+BG5crrjOvkUd7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=Nfm/3a+4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ihs0ApKp; arc=none smtp.client-ip=103.168.172.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id B1AF11140253;
-	Sun, 23 Jun 2024 20:14:59 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Sun, 23 Jun 2024 20:14:59 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm3; t=1719188099; x=1719274499; bh=Mv7TSFCTe8XCedmOUU7of
-	7g9Zk4gSaFYV2gd7QKBzjU=; b=Nfm/3a+4g2Xr24Dja+CYaAkID5dags8tUSutJ
-	eBdwR5NK/scX/Tvo0rDTxLdYMl9FrIIqWtMAgbbDcQFMD8QdvViQoU1mVHQZtL7A
-	7H40gdhkKimzZkW6PDJ10x2qgtWYIDo2ucGZ7/WTgN6F0OiRpNyQDKVZkk+nledG
-	qTsbMslG4u/vWzltV7ARaCSnCK+ky9Hc/rPmnAl5l8Z8idR1rUPjE3WN/SIjB6lr
-	3QbrBwrDZ6z2tpcUFcPrYcg6HMm5ZiN8TN69b9/ZvZnhK8QEoBC0o8R4zg/d5Wfn
-	ckThcH/Z30faDkTMhpmJ/Yd2ideHVeczPgAC5EhMzOxRwXJjQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719188099; x=1719274499; bh=Mv7TSFCTe8XCedmOUU7of7g9Zk4g
-	SaFYV2gd7QKBzjU=; b=Ihs0ApKpJaBDDXIn2ub8w+RdB6FKXYEJAGx/iCxdbI1Y
-	rGlRu8htjBfaXWJeRskFnDQ1QaLd/4PAf77oMCTtDtA+90qOdihds27XDUH9G48x
-	c2oxK6Njtsgi8yUoAATurytTQwEAeQ6mnJZIuQCWl8mH1UILXFZ76xL9ehBX09DQ
-	ceHJ4HlXWcYe6wEJkajLnUgs2ySa9I+cMilI/qT5XtMXcsKVFljpZdW5kgTMW0el
-	KNxFRihPmUeHpWpXT90IG33fAwhsUK5P6UmNSOVNr/PmSUL4jjM/Q8PWTVJwuOjl
-	0ZgFxW4vZ6iAqfZmyHD6IZ3ujBtKqDH88RVrjm4/ew==
-X-ME-Sender: <xms:g7p4Zmrv3goOpl3Us7Da-dWzVz7FJorKRwu0J7ZPYy26yw3yiFs-4A>
-    <xme:g7p4ZkpIs9WFFRsi1m8BPWVGV1809TGDgWxGIhyGq9ql39TTCaHDHkbJJl17RE8Bt
-    2LlbqrC4ajenQz-5_M>
-X-ME-Received: <xmr:g7p4ZrOb4NdO22N1UcRmtgmATTlbWqZsp6xE9qy2v_6ODqnNuG4BIx3xLRcZ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeegtddgfeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertd
-    ertddtnecuhfhrohhmpedfnfhukhgvucffrdculfhonhgvshdfuceolhhukhgvsehljhho
-    nhgvshdruggvvheqnecuggftrfgrthhtvghrnhepgfdujedthfduudekffefkeeiffdttd
-    dvhfegudduueffuefhfefggeefteevvdegnecuvehluhhsthgvrhfuihiivgeptdenucfr
-    rghrrghmpehmrghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvh
-X-ME-Proxy: <xmx:g7p4Zl6JbL4rRzdKzf4Y61Yu5JbZKY6j7NibtIvVA_sfbSJt2b4TJw>
-    <xmx:g7p4Zl61jPoQlTofLZ91DoS1zx9ZYyHrI15qt0d1RsFWtcX6Nv-6lA>
-    <xmx:g7p4ZlhJalBgw2j24UcnbQcqeplPZfJDf2tBXNKcwooTDFkYkiOClA>
-    <xmx:g7p4Zv7b4xodC9HnbUsmLjl8gKx68AvKemUibsACLQCbMbB_c77XKg>
-    <xmx:g7p4Zo2sqd8auSBGgi_jcA95omI8v5YSrZDOU7Z57RvZC9ScI0SXIn8x>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 23 Jun 2024 20:14:57 -0400 (EDT)
-From: "Luke D. Jones" <luke@ljones.dev>
-To: linux-input@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	jikos@kernel.org,
-	bentiss@kernel.org,
-	"Luke D. Jones" <luke@ljones.dev>
-Subject: [PATCH] Fixes: bda38f9a41 ("HID: asus: use hid for brightness control on keyboard")
-Date: Mon, 24 Jun 2024 12:14:50 +1200
-Message-ID: <20240624001450.969059-1-luke@ljones.dev>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719188518; c=relaxed/simple;
+	bh=uCPRT2E+EfB9PJdIfQTKp5PeAptuzL6IrbnRRcjc0HQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z6c6n+mfu4C4zK339auLJjvrXxxW9z0gOzpCwsjmN6MuYgKPJpcCzVAZRFBvsSFTELN0984QnYyDHlVuSsFsY3JFsqmrjMq07uCp7zWODRNY2QXqV/FFJ2uIYb1jwYdgRx5v0+WcfY55jnKsxzxWLwKPieGN+YsIEkJmr4c7sE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JAcGG52x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 552A4C2BD10;
+	Mon, 24 Jun 2024 00:21:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719188518;
+	bh=uCPRT2E+EfB9PJdIfQTKp5PeAptuzL6IrbnRRcjc0HQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JAcGG52x54XRwL4t/zWxcudJs6+YumbaK+yiTEudhk5sH+CCmGwLHY6uZbM9z4lpc
+	 LnPPgX9bX6614niKIMC12ilREW+tdfsFjyWoL0qlzrFIfMnH8Ux8UwgACLne5j2GY0
+	 4dVwXSBuU1G6IT/fgltSKj8UaoDnDGSchJHxT88pljX10tq7Gj4EJWXFwD1CLBbKQI
+	 45oxccjwf/L345QrMLzcgw8qM/Ruji94LGUzn6HgxD7Q3v3Rm41RYVQisUauDsHNrL
+	 BT3kCKBM3eUtsvVI17mV+HP+bns1RVCQ8uU7/pykDnqXGPiV20V3If/uY3yw/qBGHu
+	 gJyRJkDYmNS9A==
+Date: Sun, 23 Jun 2024 19:21:55 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, quic_kathirav@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 8/8] arm64: dts: qcom: ipq9574: add PCIe2 and PCIe3
+ nodes
+Message-ID: <7j4ubdfrfcrmtnv4ljpzpxevlufkmkddbgfzgp44ky2cmpjmbv@uozhn5vgishd>
+References: <20240501040800.1542805-1-mr.nuke.me@gmail.com>
+ <20240501040800.1542805-18-mr.nuke.me@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240501040800.1542805-18-mr.nuke.me@gmail.com>
 
-- Fix missing braces around initializer
-- Remove unused function declaration from asus-wmi.h
+On Tue, Apr 30, 2024 at 11:07:59PM GMT, Alexandru Gagniuc wrote:
+> On ipq9574, there are 4 PCIe controllers. Describe the pcie2 and pcie3
+> nodes, and their PHYs in devicetree.
+> 
+> The pcie0 and pcie1 controllers use a gen3x1 PHY, which is not
+> currently supported. Hence, only pcie2 and pcie3 are described. Only
+> pcie2 was tested because my devboard only has conenctions to pcie2.
+> 
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
 
-Signed-off-by: Luke D. Jones <luke@ljones.dev>
----
- include/linux/platform_data/x86/asus-wmi.h | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+Seems the clock and phy got merged, but I don't see any feedback on the
+PCI patches - and according to the msg-id there's 18 patches in the
+series.
 
-diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-index 96c780efa0d7..74b32e1d6735 100644
---- a/include/linux/platform_data/x86/asus-wmi.h
-+++ b/include/linux/platform_data/x86/asus-wmi.h
-@@ -162,15 +162,6 @@ static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
- #endif
- 
- /* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
--#if IS_ENABLED(CONFIG_ASUS_WMI)
--bool asus_use_hid_led(void);
--#else
--static inline bool asus_use_hid_led(void)
--{
--	return true;
--}
--#endif
--
- static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
- 	{
- 		.matches = {
-@@ -202,7 +193,7 @@ static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
- 			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
- 		},
- 	},
--	NULL,
-+	{ },
- };
- 
- #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
--- 
-2.45.2
+Please rebase on linux-next and submit v5, so we get clarity in what
+remains to be merged.
 
+Thanks,
+Bjorn
+
+> ---
+>  arch/arm64/boot/dts/qcom/ipq9574.dtsi | 178 +++++++++++++++++++++++++-
+>  1 file changed, 176 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> index 7f2e5cbf3bbb..c391886cf9ab 100644
+> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
+> @@ -300,8 +300,8 @@ gcc: clock-controller@1800000 {
+>  				 <0>,
+>  				 <0>,
+>  				 <0>,
+> -				 <0>,
+> -				 <0>,
+> +				 <&pcie2_phy>,
+> +				 <&pcie3_phy>,
+>  				 <0>;
+>  			#clock-cells = <1>;
+>  			#reset-cells = <1>;
+> @@ -745,6 +745,180 @@ frame@b128000 {
+>  				status = "disabled";
+>  			};
+>  		};
+> +
+> +		pcie2_phy: phy@8c000 {
+> +			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
+> +			reg = <0x0008c000 0x14f4>;
+> +
+> +			clocks = <&gcc GCC_PCIE2_AUX_CLK>,
+> +				 <&gcc GCC_PCIE2_AHB_CLK>,
+> +				 <&gcc GCC_PCIE2_PIPE_CLK>;
+> +			clock-names = "aux",
+> +				      "cfg_ahb",
+> +				      "pipe";
+> +
+> +			clock-output-names = "pcie_phy2_pipe_clk";
+> +			#clock-cells = <0>;
+> +			#phy-cells = <0>;
+> +
+> +			resets = <&gcc GCC_PCIE2_PHY_BCR>,
+> +				 <&gcc GCC_PCIE2PHY_PHY_BCR>;
+> +			reset-names = "phy",
+> +				      "common";
+> +			status = "disabled";
+> +		};
+> +
+> +		pcie3_phy: phy@f4000 {
+> +			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
+> +			reg = <0x000f4000 0x14f4>;
+> +
+> +			clocks = <&gcc GCC_PCIE3_AUX_CLK>,
+> +				 <&gcc GCC_PCIE3_AHB_CLK>,
+> +				 <&gcc GCC_PCIE3_PIPE_CLK>;
+> +			clock-names = "aux",
+> +				      "cfg_ahb",
+> +				      "pipe";
+> +
+> +			clock-output-names = "pcie_phy3_pipe_clk";
+> +			#clock-cells = <0>;
+> +			#phy-cells = <0>;
+> +
+> +			resets = <&gcc GCC_PCIE3_PHY_BCR>,
+> +				 <&gcc GCC_PCIE3PHY_PHY_BCR>;
+> +			reset-names = "phy",
+> +				      "common";
+> +			status = "disabled";
+> +		};
+> +
+> +		/* TODO: Populate pcie0/pcie1 when gen3x1 phy support is added. */
+> +
+> +		pcie2: pcie@20000000 {
+> +			compatible = "qcom,pcie-ipq9574";
+> +			reg = <0x20000000 0xf1d>,
+> +			      <0x20000f20 0xa8>,
+> +			      <0x20001000 0x1000>,
+> +			      <0x00088000 0x4000>,
+> +			      <0x20100000 0x1000>;
+> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
+> +
+> +			ranges = <0x81000000 0x0 0x20200000 0x20200000 0x0 0x00100000>,
+> +				 <0x82000000 0x0 0x20300000 0x20300000 0x0 0x07d00000>;
+> +
+> +			device_type = "pci";
+> +			linux,pci-domain = <3>;
+> +			bus-range = <0x00 0xff>;
+> +			num-lanes = <2>;
+> +			max-link-speed = <3>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			phys = <&pcie2_phy>;
+> +			phy-names = "pciephy";
+> +
+> +			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "msi";
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 0 164 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 2 &intc 0 0 165 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 3 &intc 0 0 186 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 4 &intc 0 0 187 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			clocks = <&gcc GCC_PCIE2_AXI_M_CLK>,
+> +				 <&gcc GCC_PCIE2_AXI_S_CLK>,
+> +				 <&gcc GCC_PCIE2_AXI_S_BRIDGE_CLK>,
+> +				 <&gcc GCC_ANOC_PCIE2_2LANE_M_CLK>,
+> +				 <&gcc GCC_SNOC_PCIE2_2LANE_S_CLK>,
+> +				 <&gcc GCC_PCIE2_RCHNG_CLK>;
+> +			clock-names = "axi_m",
+> +				      "axi_s",
+> +				      "axi_bridge",
+> +				      "rchng";
+> +
+> +			resets = <&gcc GCC_PCIE2_PIPE_ARES>,
+> +				 <&gcc GCC_PCIE2_AUX_ARES>,
+> +				 <&gcc GCC_PCIE2_CORE_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE2_AXI_M_ARES>,
+> +				 <&gcc GCC_PCIE2_AXI_S_ARES>,
+> +				 <&gcc GCC_PCIE2_AXI_S_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE2_AXI_M_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE2_AHB_ARES>;
+> +			reset-names = "pipe",
+> +				      "aux",
+> +				      "sticky",
+> +				      "axi_m",
+> +				      "axi_s",
+> +				      "axi_s_sticky",
+> +				      "axi_m_sticky",
+> +				      "ahb";
+> +			status = "disabled";
+> +		};
+> +
+> +		pcie3: pcie@18000000 {
+> +			compatible = "qcom,pcie-ipq9574";
+> +			reg = <0x18000000 0xf1d>,
+> +			      <0x18000f20 0xa8>,
+> +			      <0x18001000 0x1000>,
+> +			      <0x000f0000 0x4000>,
+> +			      <0x18100000 0x1000>;
+> +			reg-names = "dbi", "elbi", "atu", "parf", "config";
+> +
+> +			ranges = <0x81000000 0x0 0x18200000 0x18200000 0x0 0x00100000>,
+> +				 <0x82000000 0x0 0x18300000 0x18300000 0x0 0x07d00000>;
+> +
+> +			device_type = "pci";
+> +			linux,pci-domain = <4>;
+> +			bus-range = <0x00 0xff>;
+> +			num-lanes = <2>;
+> +			max-link-speed = <3>;
+> +			#address-cells = <3>;
+> +			#size-cells = <2>;
+> +
+> +			phys = <&pcie3_phy>;
+> +			phy-names = "pciephy";
+> +
+> +			interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "msi";
+> +
+> +			#interrupt-cells = <1>;
+> +			interrupt-map-mask = <0 0 0 0x7>;
+> +			interrupt-map = <0 0 0 1 &intc 0 0 189 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 2 &intc 0 0 190 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 3 &intc 0 0 192 IRQ_TYPE_LEVEL_HIGH>,
+> +					<0 0 0 4 &intc 0 0 192 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +			clocks = <&gcc GCC_PCIE3_AXI_M_CLK>,
+> +				 <&gcc GCC_PCIE3_AXI_S_CLK>,
+> +				 <&gcc GCC_PCIE3_AXI_S_BRIDGE_CLK>,
+> +				 <&gcc GCC_ANOC_PCIE3_2LANE_M_CLK>,
+> +				 <&gcc GCC_SNOC_PCIE3_2LANE_S_CLK>,
+> +				 <&gcc GCC_PCIE3_RCHNG_CLK>;
+> +			clock-names = "axi_m",
+> +				      "axi_s",
+> +				      "axi_bridge",
+> +				      "anoc",
+> +				      "snoc",
+> +				      "rchng";
+> +
+> +			resets = <&gcc GCC_PCIE3_PIPE_ARES>,
+> +				 <&gcc GCC_PCIE3_AUX_ARES>,
+> +				 <&gcc GCC_PCIE3_CORE_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE3_AXI_M_ARES>,
+> +				 <&gcc GCC_PCIE3_AXI_S_ARES>,
+> +				 <&gcc GCC_PCIE3_AXI_S_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE3_AXI_M_STICKY_ARES>,
+> +				 <&gcc GCC_PCIE3_AHB_ARES>;
+> +			reset-names = "pipe",
+> +				      "aux",
+> +				      "sticky",
+> +				      "axi_m",
+> +				      "axi_s",
+> +				      "axi_s_sticky",
+> +				      "axi_m_sticky",
+> +				      "ahb";
+> +			status = "disabled";
+> +		};
+>  	};
+>  
+>  	thermal-zones {
+> -- 
+> 2.40.1
+> 
 
