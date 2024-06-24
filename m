@@ -1,99 +1,96 @@
-Return-Path: <linux-kernel+bounces-226569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB9DA914074
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:23:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 688AC91407E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:24:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A65C1F2326C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:23:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEE811F235C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417674A31;
-	Mon, 24 Jun 2024 02:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7254979CF;
+	Mon, 24 Jun 2024 02:24:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="V5g7F1yN"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="KX8RM+U5"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B42AC8F6B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E6F4A2D;
+	Mon, 24 Jun 2024 02:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719195767; cv=none; b=Gcl53KJfkqiFlFB7sgLA3q7oUHZTl5crJ0ht1kDoAXNq17O7/WFJ7PUnPR/8wd+ijgWFojEbKtHrkrrFxYopZZVi+MQ007PFs0RppMtiS9om37DRs49iVSYQthsiWfUS7c+yKT2LkXl/XXApS5H09mYnmLaLGh2kz3iDAn/QrSU=
+	t=1719195848; cv=none; b=BYGl6V2YottxA4mmdJNhz2hxxF52DH/bDnFlcAyTh+Cff9M86lY3D8vwk4IAsfYn1ylvzG1G2mzdEnHIbaunY+J7ryXGs855/ASMvk953yQZKIIL+bXV6f84bXuVZDEgo6ETSUhR1xHrcmmJVvfm6Ah64HfQMO1rNKstPWJwd/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719195767; c=relaxed/simple;
-	bh=6YzOxnilk0PuhAwWxxsUzEExKINASZnAV6ozh9w/Mco=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=W0Pdo4DKYDQRU5HS8b15WaPPjGD4f7VvUSi8cmQ5feYdQHmzltqlXfnmJv0ti1kChhy4XDNFTbEZgqvQzJcDf/8Dw5GhFFqzgyqGPySvRDI0ThP1oG4zMdUBdeCmB7YArRdbIYb1+1gVNRFZyJ2QWaWUVxKKxT6BaDqFoowX9DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=V5g7F1yN; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1719195756; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=4oEKDf6ktKNvNm2YhLgJ2R/X0teHz21rhJGCnMtpSVo=;
-	b=V5g7F1yNeV15jSjRPEoaUld2zKeulaCaf7Lu7iaSgOcSo8p3Jl17yctn6SycMov8UEUbXa3eZF6N2tNErV6Y2eS1jNfAhrfufAXsjbuzTMToQO814h+ExWe6k2ir/5kWhfZ/8gKxbH8K9jar9SGC6NfhJr5kbQyN8sfiKK7LdeA=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R111e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=jiapeng.chong@linux.alibaba.com;NM=1;PH=DS;RN=10;SR=0;TI=SMTPD_---0W90xIIb_1719195747;
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0W90xIIb_1719195747)
-          by smtp.aliyun-inc.com;
-          Mon, 24 Jun 2024 10:22:35 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: alexander.deucher@amd.com
-Cc: christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH] drm/amd/display: Remove unused function reverse_planes_order
-Date: Mon, 24 Jun 2024 10:22:25 +0800
-Message-Id: <20240624022225.28655-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.20.1.7.g153144c
+	s=arc-20240116; t=1719195848; c=relaxed/simple;
+	bh=MIZ+d9HVKB7l6t281umhcoUxFGn6SV9luOFbz0dNbIs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qOzWokqrh9oTPjOnbqIAjS+rVB8urnmNeJXybRk5eQrHAfWvWaSsyZeEYblF01ZesFG207AOc51nbDM0XRBgNCuC/mFLqJfUuHSWuoAOrTt0UaeBkWR/aV3TfPMr4pudDiQQ+runS8udtbELqeHf4YfZBt3zChtxRZei815u1wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=KX8RM+U5; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1719195836;
+	bh=BKlnKRhf6nOKvpU2yiC5wPra7+gk0fCQGmL8XKcMn0U=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=KX8RM+U5NabS/m3sC+tWRHbeSjKdVCYygRWRhGcNZfuATg8lPbu11OtJuslFGBGAC
+	 Wz/fHPAOgow+LyxR89oZOXJd0a3f4dU9OFnc9eDWIjgE79UH+hrSeMYPjAAzI/IuFW
+	 NuU2PXZTUObRBcXVLvLq9fW/iHCjn9gTJ/D/BDT26gm+5spRewoRqZDHnknbA28Ozg
+	 G+STsT+QNuUpt0Ic340jHnh8m6iMF/pftiNpSUXevcqIiFEVW3/7qYFZEsrvdkpx2y
+	 gsAsX1el1xuveLygKU26SOCWitwndKbI71vrgTKYRAdZkRGPPV6fF7EhY6RmMITXEm
+	 8GV31u4x5U7mw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4W6sGC1H48z4w2N;
+	Mon, 24 Jun 2024 12:23:47 +1000 (AEST)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Arnd Bergmann <arnd@kernel.org>, linux-arch@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, Helge Deller
+ <deller@gmx.de>, linux-parisc@vger.kernel.org, "David S. Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>,
+ sparclinux@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N . Rao"
+ <naveen.n.rao@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org, Brian Cain
+ <bcain@quicinc.com>, linux-hexagon@vger.kernel.org, Guo Ren
+ <guoren@kernel.org>, linux-csky@vger.kernel.org, Heiko Carstens
+ <hca@linux.ibm.com>, linux-s390@vger.kernel.org, Rich Felker
+ <dalias@libc.org>, John Paul Adrian Glaubitz
+ <glaubitz@physik.fu-berlin.de>, linux-sh@vger.kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, Alexander Viro <viro@zeniv.linux.org.uk>, Christian
+ Brauner <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
+ libc-alpha@sourceware.org, musl@lists.openwall.com, ltp@lists.linux.it
+Subject: Re: [PATCH 08/15] powerpc: restore some missing spu syscalls
+In-Reply-To: <20240620162316.3674955-9-arnd@kernel.org>
+References: <20240620162316.3674955-1-arnd@kernel.org>
+ <20240620162316.3674955-9-arnd@kernel.org>
+Date: Mon, 24 Jun 2024 12:23:46 +1000
+Message-ID: <874j9jqdsd.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The function are defined in the amdgpu_dm.c file, but not called
-anywhere, so delete the unused function.
+Arnd Bergmann <arnd@kernel.org> writes:
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> A couple of system calls were inadventently removed from the table during
+> a bugfix for 32-bit powerpc entry. Restore the original behavior.
+>
+> Fixes: e23750623835 ("powerpc/32: fix syscall wrappers with 64-bit arguments of unaligned register-pairs")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/powerpc/kernel/syscalls/syscall.tbl | 4 ++++
+>  1 file changed, 4 insertions(+)
 
-drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:371:20: warning: unused function 'reverse_planes_order'.
+Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=9402
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 9 ---------
- 1 file changed, 9 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 4b86b30eddc4..1e0e33b565f1 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -368,15 +368,6 @@ static inline bool is_dc_timing_adjust_needed(struct dm_crtc_state *old_state,
- 		return false;
- }
- 
--static inline void reverse_planes_order(struct dc_surface_update *array_of_surface_update,
--					int planes_count)
--{
--	int i, j;
--
--	for (i = 0, j = planes_count - 1; i < j; i++, j--)
--		swap(array_of_surface_update[i], array_of_surface_update[j]);
--}
--
- /*
-  * DC will program planes with their z-order determined by their ordering
-  * in the dc_surface_updates array. This comparator is used to sort them
--- 
-2.20.1.7.g153144c
-
+cheers
 
