@@ -1,108 +1,155 @@
-Return-Path: <linux-kernel+bounces-227594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4070D9153D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:29:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A1909153D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:30:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EAA211F23EED
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:29:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B382E1F24BC8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:30:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31ED819DF75;
-	Mon, 24 Jun 2024 16:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AE219DF80;
+	Mon, 24 Jun 2024 16:29:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="GQSNA8rX"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKfKKjQK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3D913C3DD;
-	Mon, 24 Jun 2024 16:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56F5717BCC;
+	Mon, 24 Jun 2024 16:29:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719246564; cv=none; b=Sq5JlT9xerAHHXkOOwGPrmugHjfK+MJ/WW3+yJGG1rFGywnVhCfu6vKUVJ/DBTq6Qi31kAKQi6BVcLFj07GQGEqKNH0mlLKfFJTZKu3umieQxEtVYQYsWPVzSk25MkteYRP7MUx5OjfWJI79NJ9wHoihlHc5tzEn7ddapxMYgd8=
+	t=1719246592; cv=none; b=elPqLYzFYQDFp4RNugits4wtnP1awn4jmGQrB7T8+4qI4/p3Rcuo0UBvW8ALHpHwKW8MR2S6KRF7UQk7JxHU9N3xM8C04o12sYlKlIl8XF6OcPX/qTmNbpjN797TF77hEynVUhDE0Hx/bNSaSKJWB7q2+C++XVzhRSTgC/FmR/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719246564; c=relaxed/simple;
-	bh=y0XI1/zWy/ZAVLOadjpPIu2VmYpe0M8bW12T4D1J86I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U57OTf0rbpoaOfmuwBuLMv8ZUpjoN99nMft9Jc3Iax/wGqujHA0CcghFssGXom6WhBRUBfJXEDnwwR/glPsCiUKE6FSf6chQgHs820qBu/qthUV6r3Z7HPeLnHc0kXgkMRblLdiwHxq6NR31dxRRSyYqJFkPfnnU9bXf5Rc6hTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=GQSNA8rX; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4W7D1t3zL4zll9by;
-	Mon, 24 Jun 2024 16:29:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1719246557; x=1721838558; bh=XzBxWYiHnenCqjx10h/fb7Ug
-	T2+m8FdPyZracq6MfuY=; b=GQSNA8rXtyINheNGuFl4l9zKrSYImTDgHttLOADY
-	PRVJTWm0V2+XBTcRW2wsFnxqzB2tHkJWRWOFuMpHAplIn/Wie9sK8PIgv+G9YOOd
-	kX06mVgHmyoiGmoO8yUymVUILTd54YOFDLjNGt+7kJqnn42RQ5XZCn/wiky1Js2v
-	R6zPfpYRhcltpEdfVyB3JIyRyqCBkL+JkKaViTphd3IjwfqWW2vMveR9zVczt4s5
-	JO1qkvCueBhkizswEOg3YaMb7E7HnTMfcdt4mJOZCQ2kK0GRuVv9/1k3+ViBcISS
-	V2TZvGXvx/uRbhSdA8v0cppxGZgtjcb+ulQ2nNvwSoNzJg==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id usmbtpjiE8Fr; Mon, 24 Jun 2024 16:29:17 +0000 (UTC)
-Received: from [100.96.154.26] (unknown [104.132.0.90])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4W7D1j6PhJzll9Zx;
-	Mon, 24 Jun 2024 16:29:13 +0000 (UTC)
-Message-ID: <b1173b6f-445c-4d6d-9c78-b0351da2893a@acm.org>
-Date: Mon, 24 Jun 2024 09:29:12 -0700
+	s=arc-20240116; t=1719246592; c=relaxed/simple;
+	bh=X/rMjN+CKsJhOirRD2eijjnLJTdEH19Dqw1djQrGiEA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iHq4jzzxaxSro6i9nccsEwiHilqe8vq7uTckMdzaNpFZY04eASH1Yib/zoR+1JOnLR1h1ar6nXDLT+7CcJZTZi0b+0vLis/cUybmklzYZJ5WsRl6peXbq3F6p3Z9xXIWpu8ATnVc9/dDfyxYXzuMubo43NzgS0OjgDhDL1LnnYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKfKKjQK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FBFAC2BBFC;
+	Mon, 24 Jun 2024 16:29:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719246591;
+	bh=X/rMjN+CKsJhOirRD2eijjnLJTdEH19Dqw1djQrGiEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bKfKKjQKErKRle4L4qZor2AIEwUXmTDEr/XT+Nt3HoFf/jajYbs+kP7onhqYWhHfX
+	 T2BpJca6IBS5fdXH3eykDKUk4gMaVcnQs3RJGyyg+1gan81rxIfK5hFzTCHBNaf20x
+	 448cE14YBNpeUpTx2Usxh/lvTFIMpSs185vMVDeH5TtpVi79pYKVjV4S+Sw9galRNg
+	 OXflTR15kaxYhc99jCC9aw0wXkbpllKn9u7JyFm14UZ/nIg+jRKsFoZ5YoGTohHsbT
+	 5oDFrkB8OIj3Rn5NdogLI5Tr171ZT40Ux60xjuKeVr0ruojfF2F0XRZVH+/i5qkiaH
+	 hAonwZL7bW9sQ==
+Date: Mon, 24 Jun 2024 17:29:45 +0100
+From: Conor Dooley <conor@kernel.org>
+To: =?utf-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
+Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>, andrew@lunn.ch,
+	f.fainelli@gmail.com, olteanv@gmail.com, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Landen Chao <Landen.Chao@mediatek.com>,
+	DENG Qingfang <dqfext@gmail.com>,
+	Sean Wang <sean.wang@mediatek.com>,
+	Daniel Golle <daniel@makrotopia.org>
+Subject: Re: [PATCH] dt-bindings: net: dsa: mediatek,mt7530: Minor grammar
+ fixes
+Message-ID: <20240624-radiance-untracked-29369921c468@spud>
+References: <20240624025812.1729229-1-chris.packham@alliedtelesis.co.nz>
+ <704f4b95-2aed-4b76-87cb-83002698471c@arinc9.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: core: quiesce request queues before check
- pending cmds
-To: Ziqi Chen <quic_ziqichen@quicinc.com>, quic_cang@quicinc.com,
- mani@kernel.org, beanhuo@micron.com, avri.altman@wdc.com,
- junwoo80.lee@samsung.com, martin.petersen@oracle.com,
- quic_nguyenb@quicinc.com, quic_nitirawa@quicinc.com,
- quic_rampraka@quicinc.com
-Cc: linux-scsi@vger.kernel.org, Alim Akhtar <alim.akhtar@samsung.com>,
- "James E.J. Bottomley" <jejb@linux.ibm.com>,
- Peter Wang <peter.wang@mediatek.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Maramaina Naresh <quic_mnaresh@quicinc.com>,
- Asutosh Das <quic_asutoshd@quicinc.com>,
- open list <linux-kernel@vger.kernel.org>
-References: <1717754818-39863-1-git-send-email-quic_ziqichen@quicinc.com>
- <d3fc4d2b-81b0-4ab2-9606-5f4a5fb8b867@acm.org>
- <efc80348-46c0-4307-a363-a242a7b44d94@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <efc80348-46c0-4307-a363-a242a7b44d94@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="5G+CYpX+s72EcPeQ"
+Content-Disposition: inline
+In-Reply-To: <704f4b95-2aed-4b76-87cb-83002698471c@arinc9.com>
 
-On 6/24/24 2:56 AM, Ziqi Chen wrote:
-> 1. Why do we need to call blk_mq_quiesce_tagset() into 
-> ufshcd_scsi_block_requests() instead directly replace all 
-> ufshcd_scsi_block_requests() with blk_mq_quiesce_tagset()?
 
-Because ufshcd_scsi_block_requests() has more callers than the clock
-scaling code and because all callers of ufshcd_scsi_block_requests()
-should be fixed.
+--5G+CYpX+s72EcPeQ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> 2. This patch need to to do long-term stress test, I think many OEMs 
-> can't wait as it is a blocker issue for them.
-Patch "scsi: ufs: core: Quiesce request queues before checking pending
-cmds" is already in Linus' master branch. I will rebase my patch on top
-of linux-next.
+On Mon, Jun 24, 2024 at 10:00:25AM +0300, Ar=C4=B1n=C3=A7 =C3=9CNAL wrote:
+> On 24/06/2024 05.58, Chris Packham wrote:
+> > Update the mt7530 binding with some minor updates that make the document
+> > easier to read.
+> >=20
+> > Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+> > ---
+> >=20
+> > Notes:
+> >      I was referring to this dt binding and found a couple of places wh=
+ere
+> >      the wording could be improved. I'm not exactly a techical writer b=
+ut
+> >      hopefully I've made things a bit better.
+> >=20
+> >   .../devicetree/bindings/net/dsa/mediatek,mt7530.yaml        | 6 +++---
+> >   1 file changed, 3 insertions(+), 3 deletions(-)
+> >=20
+> > diff --git a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.=
+yaml b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+> > index 1c2444121e60..6c0abb020631 100644
+> > --- a/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+> > +++ b/Documentation/devicetree/bindings/net/dsa/mediatek,mt7530.yaml
+> > @@ -22,16 +22,16 @@ description: |
+> >     The MT7988 SoC comes with a built-in switch similar to MT7531 as we=
+ll as four
+> >     Gigabit Ethernet PHYs. The switch registers are directly mapped int=
+o the SoC's
+> > -  memory map rather than using MDIO. The switch got an internally conn=
+ected 10G
+> > +  memory map rather than using MDIO. The switch has an internally conn=
+ected 10G
+> >     CPU port and 4 user ports connected to the built-in Gigabit Etherne=
+t PHYs.
+> > -  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs has got 10=
+/100 PHYs
+> > +  MT7530 in MT7620AN, MT7620DA, MT7620DAN and MT7620NN SoCs have 10/10=
+0 PHYs
+>=20
+> MT7530 is singular, the sentence is correct as it is.
 
-Best regards,
+Actually, the sentence is missing a definite article, so is not correct
+as-is.
 
-Bart.
+>=20
+> >     and the switch registers are directly mapped into SoC's memory map =
+rather than
+> >     using MDIO. The DSA driver currently doesn't support MT7620 variant=
+s.
+> >     There is only the standalone version of MT7531.
+> > -  Port 5 on MT7530 has got various ways of configuration:
+> > +  Port 5 on MT7530 supports various configurations:
+>=20
+> This is a rewrite, not a grammar fix.
+
+In both cases "has got" is clumsy wording, "supports" is an improvement
+to readability, even if it might not qualify as a grammar fix.
+
+--5G+CYpX+s72EcPeQ
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnme+QAKCRB4tDGHoIJi
+0jayAP9QYPuQa14ospqghSRwh8Za6YGTODSI60an4wYfh+2zYAD/ccgLUsq74wfN
+kltsgO7yuo3NMEZPJMLGAg5ZqlyWlQc=
+=6noq
+-----END PGP SIGNATURE-----
+
+--5G+CYpX+s72EcPeQ--
 
