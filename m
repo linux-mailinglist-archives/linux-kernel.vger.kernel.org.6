@@ -1,169 +1,136 @@
-Return-Path: <linux-kernel+bounces-227477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A57889151C6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:15:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0C8915244
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:28:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7F6C1C2048D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:15:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E2371C22223
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC75419B59C;
-	Mon, 24 Jun 2024 15:14:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8DDC19CD05;
+	Mon, 24 Jun 2024 15:27:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2Y8qh2k"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M8DeJhSY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="35/1reV0"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0857619B3DA;
-	Mon, 24 Jun 2024 15:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE9B143743;
+	Mon, 24 Jun 2024 15:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242048; cv=none; b=lZDTiaQOBuvErrH6Hg+LlLqVM4FbxtY+lRh30VU8iqT1yeMsVKeFe1adA5I6SStZ+Foc3XgpFbtw7qohV3sVt8/3+Z9aFyv5yC4hJNoKTozdSPR++7xBI94ZVnDUYnPS1qH8lbABJY6h4x5rnte5ntEyoxlu9nE03mjOjPW2+I8=
+	t=1719242860; cv=none; b=cNQKBtDpM3WOHSIkytAl5y2YFv8h5/WuLAUmZNbX7Bf5XLkJBtJk94Gq9lTdwIDgc6PfNMWPuqjFgdmdFa5fDvRcdHczVKZQbulEtmgm8OS9AoYPFWNPYRwzKXJXLupvob2huyt380u0g855JqgIN1vh4FPHcvsQf2p1XIP2AT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242048; c=relaxed/simple;
-	bh=JrUnbyM+q1c3z7DUj0a7qxZEmOleJaUA+Pprv4ibD0g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dBhCiR2NzSK2tdx4MBCigs3C9GZr9njla3FrOLrD/4AA6ZcWi8lwfvuccFBdluL71SBop6QH88Y1LmP1bcN8cHHWErgqDSBfvzk1nunGHcm8VPKCx1zhJOIQt6DF/HXh5oNCnFnOE+o0XSsANVe2P75zfdw8LQgN/CIeYsUt0P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2Y8qh2k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B460C32789;
-	Mon, 24 Jun 2024 15:14:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719242047;
-	bh=JrUnbyM+q1c3z7DUj0a7qxZEmOleJaUA+Pprv4ibD0g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b2Y8qh2kUAE14ni+F6sttsOgX0qSTbQdpBDBuXgf074tDaOKsndopIqOqZ9uWCa0B
-	 BrXaucEOqeIZUwC9oaSjhq7jUU/zpYS9Z+PsSzOFyck7oEasH1mUU2xPxx+YzjM68O
-	 K3QNVUQkn25yMDLQe3dGSWk+XO+1w65xWgKZmNKAVV+s1Gcxy8tjGgw1gHHHF9NE/j
-	 P6vYP6bLXUyyYfjB/7uru8JWVbAHFu7UGqu6URItSy/b3+QpNoRTcdgx+CiH/KYT2W
-	 qYJfklHIpEjOU4XstNt9Xt7YAJberUNKrX+2rj/liCs5hFrUh8qTUlDRt7ofGmjfR9
-	 uJWjt0rj4JBLA==
-Date: Mon, 24 Jun 2024 16:14:01 +0100
-From: Will Deacon <will@kernel.org>
-To: Rob Clark <robdclark@gmail.com>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Boris Brezillon <boris.brezillon@collabora.com>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Joao Martins <joao.m.martins@oracle.com>,
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
-	"open list:IOMMU SUBSYSTEM" <iommu@lists.linux.dev>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 1/2] iommu/io-pgtable-arm: Add way to debug pgtable
- walk
-Message-ID: <20240624151401.GB8706@willie-the-truck>
-References: <20240523175227.117984-1-robdclark@gmail.com>
- <20240523175227.117984-2-robdclark@gmail.com>
+	s=arc-20240116; t=1719242860; c=relaxed/simple;
+	bh=R22VLvRBGqkcOaV5Abv9K10MsA60Th5z1YfGvmr06ks=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RRNjfhslmTgxXiFq9tSeJ1PO3EHvldjCxljARXKXIPtEUxPGTPz1h5eQW6N5dKgkyd8i6Qr355lA0bqcROc7nUx9UMhFPn2n1IT/KzquhS9l8suLW3Gy+zs+IGhYizkeQhUsILA6wZ0geEkyyY+EhikZcRv99t3jmCf4k7DVskI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M8DeJhSY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=35/1reV0; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719242857;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ljmcA9yUQ7IuwfFMDJIXUw92GNp5/f/T73VWST4Pi+Q=;
+	b=M8DeJhSYnbNxdNL5DTiYDICJJkSxBdYkfHBFUb48/P8qUKVB4tT1Co8GRBM5Vm4l8EHJVX
+	0KNPLYHLjY1k7LyrMGoxo7XLX65dVqta8o4m229QiOr89+LOt2gXB3gQ/HYgjU6jxwy6PR
+	gc2p6c5Zaf2uE4IS3UHh60D29s5bSuMJmf9RcXauPzikAIUIBiKo6vvuXEGshs5U9ni99P
+	60RNvmN6AILhvHB4WT+TwcyWXZo5pkQEB16B8B135msLQOUQaMEMhCT/H9y0A3rya86AhD
+	PlM5GFm0cZJRjAW/qt3mBzjiJRW6VQMAxMh2h1mWVgEVg/WjjnVHQePYow8PEw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719242857;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ljmcA9yUQ7IuwfFMDJIXUw92GNp5/f/T73VWST4Pi+Q=;
+	b=35/1reV0BvAD2EtgNYKDl9fQXKRVrMsfshs+Zks/3Mj+XehCLKzkRrKl52WAJCfvuWJ6a0
+	VQ0zcgORsbuFheBA==
+To: linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Daniel Bristot de Oliveira <bristot@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Kan Liang  <kan.liang@linux.intel.com>,
+	Marco Elver <elver@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH v4 0/6] perf: Make SIGTRAP and __perf_pending_irq() work on RT.
+Date: Mon, 24 Jun 2024 17:15:13 +0200
+Message-ID: <20240624152732.1231678-1-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240523175227.117984-2-robdclark@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 23, 2024 at 10:52:21AM -0700, Rob Clark wrote:
-> From: Rob Clark <robdclark@chromium.org>
-> 
-> Add an io-pgtable method to walk the pgtable returning the raw PTEs that
-> would be traversed for a given iova access.
-> 
-> Signed-off-by: Rob Clark <robdclark@chromium.org>
-> ---
->  drivers/iommu/io-pgtable-arm.c | 51 ++++++++++++++++++++++++++++------
->  include/linux/io-pgtable.h     |  4 +++
->  2 files changed, 46 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgtable-arm.c
-> index f7828a7aad41..f47a0e64bb35 100644
-> --- a/drivers/iommu/io-pgtable-arm.c
-> +++ b/drivers/iommu/io-pgtable-arm.c
-> @@ -693,17 +693,19 @@ static size_t arm_lpae_unmap_pages(struct io_pgtable_ops *ops, unsigned long iov
->  				data->start_level, ptep);
->  }
->  
-> -static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
-> -					 unsigned long iova)
-> +static int arm_lpae_pgtable_walk(struct io_pgtable_ops *ops, unsigned long iova,
-> +			int (*cb)(void *cb_data, void *pte, int level),
-> +			void *cb_data)
->  {
->  	struct arm_lpae_io_pgtable *data = io_pgtable_ops_to_data(ops);
->  	arm_lpae_iopte pte, *ptep = data->pgd;
->  	int lvl = data->start_level;
-> +	int ret;
->  
->  	do {
->  		/* Valid IOPTE pointer? */
->  		if (!ptep)
-> -			return 0;
-> +			return -EFAULT;
+Hi,
 
-nit: -ENOENT might be a little better, as we're only checking against a
-NULL entry rather than strictly any faulting entry.
+Arnaldo reported that "perf test sigtrap" fails on PREEMPT_RT. Sending
+the signal gets delayed until event_sched_out() which then uses
+task_work_add() for its delivery. This breaks on PREEMPT_RT because the
+signal is delivered with disabled preemption.
 
->  		/* Grab the IOPTE we're interested in */
->  		ptep += ARM_LPAE_LVL_IDX(iova, lvl, data);
-> @@ -711,22 +713,52 @@ static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *ops,
->  
->  		/* Valid entry? */
->  		if (!pte)
-> -			return 0;
-> +			return -EFAULT;
+While looking at this, I also stumbled upon __perf_pending_irq() which
+requires disabled interrupts but this is not the case on PREEMPT_RT.
 
-Same here (and at the end of the function).
+This series aim to address both issues while not introducing a new issue
+at the same time ;)
+Any testing is appreciated.
 
-> +
-> +		ret = cb(cb_data, &pte, lvl);
+v3=E2=80=A6v4: https://lore.kernel.org/all/20240322065208.60456-1-bigeasy@l=
+inutronix.de/
+   - Rebased on top of Frederic's series
+      (https://lore.kernel.org/all/20240621091601.18227-1-frederic@kernel.o=
+rg)
+   - Frederick pointed out that perf_pending_task() needs to
+     perf_swevent_get_recursion_context() in order not to recurse if
+     something within perf_swevent_.*_recursion_context() triggers a
+     software event. To address this, the counters have been moved to
+     the task_struct (#3 + #4) and preemt_disable() has been replaced
+     with a RCU-read lock (#5).
+   - The remaning logic same that means the event is pushed to task-work
+     instead of delivering from IRQ-work. The series was tested with
+     remove_on_exec as suggested by Marco Elver: On PREEMPT_RT a single
+     invocation passes, 100 parallel invocations report (for some)
+     unexpected SIGTRAPs and timeouts. This also observed on !RT
+     (without the series) with a higher task-count.
 
-Since pte is on the stack, rather than pointing into the actual pgtable,
-I think it would be clearer to pass it by value to the callback.
+v2=E2=80=A6v3: https://lore.kernel.org/all/20240312180814.3373778-1-bigeasy=
+@linutronix.de/
+    - Marco suggested to add a few comments
+      - Added a comment to __perf_event_overflow() to explain why irq_work
+        is raised in the in_nmi() case.
+      - Added a comment to perf_event_exit_event() to explain why the
+        pending event is deleted.
 
-> +		if (ret)
-> +			return ret;
->  
-> -		/* Leaf entry? */
-> +		/* Leaf entry?  If so, we've found the translation */
->  		if (iopte_leaf(pte, lvl, data->iop.fmt))
-> -			goto found_translation;
-> +			return 0;
->  
->  		/* Take it to the next level */
->  		ptep = iopte_deref(pte, data);
->  	} while (++lvl < ARM_LPAE_MAX_LEVELS);
->  
->  	/* Ran out of page tables to walk */
-> +	return -EFAULT;
-> +}
-> +
-> +struct iova_to_phys_walk_data {
-> +	arm_lpae_iopte pte;
-> +	int level;
-> +};
+v1=E2=80=A6v2: https://lore.kernel.org/all/20240308175810.2894694-1-bigeasy=
+@linutronix.de/
+    - Marco pointed me to the testsuite that showed two problems:
+      - Delayed task_work from NMI / missing events.
+        Fixed by triggering dummy irq_work to enforce an interrupt for
+	the exit-to-userland path which checks task_work
+      - Increased ref-count on clean up/ during exec.
+        Mostly addressed by the former change. There is still a window
+	if the NMI occurs during execve(). This is addressed by removing
+	the task_work before free_event().
+      The testsuite (remove_on_exec) fails sometimes if the event/
+      SIGTRAP is sent before the sighandler is installed.
 
-Expanding a little on Robin's suggestion, why don't we drop this structure
-in favour of something more generic:
+Sebastian
 
-	struct arm_lpae_walk_data {
-		arm_lpae_iopte ptes[ARM_LPAE_MAX_LEVELS];
-	};
-
-and then do something in the walker like:
-
-	if (cb && !cb(pte, lvl))
-		walk_data->ptes[lvl] = pte;
-
-which could return the physical address at the end, if it reaches a leaf
-entry. That way arm_lpae_iova_to_phys() is just passing a NULL callback
-to the walker and your debug callback just needs to return 0 (i.e. the
-callback is basically just saying whether or not to continue the walk).
-
-Will
 
