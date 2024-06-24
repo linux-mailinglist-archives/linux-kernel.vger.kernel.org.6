@@ -1,360 +1,187 @@
-Return-Path: <linux-kernel+bounces-227452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB49915175
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:09:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C39C7915165
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:08:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41D96289D43
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:09:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 410AA1F21E88
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8280019CD14;
-	Mon, 24 Jun 2024 15:08:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E45E19B3E2;
+	Mon, 24 Jun 2024 15:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OqYK+KWA"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vk8yt2ea"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A20A19B3FB
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C47913D88B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:08:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719241724; cv=none; b=r0O1fSCwgXyv16tp6Lxak07vTBWe4tK/R95Wrrd3n+sYWOis2W4Qml3LDh9NGpBPru/7LTG6jnklnK0qzMMmnRgaDsZ7zIvBJHvgeXzDdCMEwx9HP6Y9j9XA1OlfIWxLYKXOuD70OxYc0utXeF2iGZpN2WmRUEWtmVPkNRfJnA8=
+	t=1719241699; cv=none; b=GwCneah7i+4k0oyK70pcaD0H27/OFhgHRCCEuXLksB6U5HEfq+T1pYl8tvDIWQTMLvUZIrTGjSX4+4OhSjptxu/6SXirDZ8rubLaELOwDHy3+Zovy8pP0HVjU9I6/32OEqqWl05LjsQfkBoV6UsSv8xsyi+rDv+3gGLDgEjDdeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719241724; c=relaxed/simple;
-	bh=6OYh9GVmCFzlYYtPr1/rlWFN2LdtNayCv9r+cMa7gHA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rB6U/jQWTyUGtBhiKu1OVWefnYb5ri4OZoMoasDRnS3MyQ3hZ58yshEmROYU/7YyvMF1J6VS3e2qUxAX3rNoIgIHISAmF8ZNrOVgElc4tPuEJqXbm+wRgsl1+maon+Q78B3oJSQ7hzDb93eLazpeIsp6udfMWETCqMoRuvm/P+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OqYK+KWA; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ce09b76e0so1451827e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:08:41 -0700 (PDT)
+	s=arc-20240116; t=1719241699; c=relaxed/simple;
+	bh=ft4tT0UQ22Hu2W+Pyk0ebx25WCKyu/3L2mVuUHGIFQ4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PSmVVAm/mD6WElRLohov7SKcQTAFaFEvnQyMF+yUKFb6h+l2ClJQhI7FkgL2xl0VGSv5SbWTswxwR0yW864WT0GhHyzPOpItF/eg0TEI3WcEbHPlgAFY0NUWaPqlplPv6WQdB68H5HJOgQZgcfFhvLq2hUspTMbFAsvzV9pchP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vk8yt2ea; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4217c7eb6b4so36840845e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:08:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719241720; x=1719846520; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4fNkTYJPvQWZmgLjYfNjuf35JHpZNSgZEp1wXGwNUwU=;
-        b=OqYK+KWAOXHOKr9k0qfN19HHR8t4/aTmSIDdJvVrQBYqZzFr622ZyE9hu9/VV5wgoL
-         TkjeFTxmH4NAQNKIPnEUeeknA3Nft9fjTbYRK7h8kzlAeYlXgaL9lN4bDb7Q8WdgTIAz
-         B81lAQzW9bcboIva3sgg1Vu5gZfmPM2KTCQLd3HDK3ywcrHPNriNk7fbP+H6r09vtio3
-         Kd9epPLHwAW1hAnFJO0q3cNg/8njlO9z78QWTY4lKxSeC/3T3u3+U3lcWW7+cfAI7FhJ
-         MlBOObh5ZRG0QnJf5BjBf/NRjlkcvlhCBS8r9oBIGsulXiHI7WI4JXG+z5bnNwVC2JAR
-         foDA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719241696; x=1719846496; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wafc/q0nXR3Ye8LsHgCDkHwmKjVfo3c4oHVHMDrj/Aw=;
+        b=vk8yt2eaYwhW7f72SDOl5261xikcP+xruoLxe5Waa65T4fHod2eYL07PLwJkHZtFbj
+         iEmxo391Ym00xAFQ0Hny9vlN0ugeZbWxselJdlxPAYAfbLXKnoUSZ53i5d5OJfytpFOW
+         +A78H60YWZlKw5fwmLjOW16OawSag/ECkZ7QJuiOVSDfSMb9j4G75fiHeIPezy0MvuVQ
+         CJxw8DfieKdKqTqyZnm9mYsrg+XNxd8iGgHLXjD6VNkS5n1SGvM1WLT0BbjXUN0uIfPv
+         CxeZ3QX4usQi4M/KMqU+YkL0f2cyFKyVMSir5EkSDUCjrr7+JsVM9Z8/eGeQDSgl3zjV
+         LsGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719241720; x=1719846520;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4fNkTYJPvQWZmgLjYfNjuf35JHpZNSgZEp1wXGwNUwU=;
-        b=UxUg4lNVyDH7aluKfrkoiGFVqgoAjpgfc9iTBIU3Aj+QEdLCPv8cMf3HgmumhM0AvT
-         n5hlf7RKv4seeYOMqoiSq2AWCtxbakWvY46Iw4WiZ3UGDddIVtq7KejaZdhAVltnwkls
-         DEZHdQzIDsAR7gwLeQtmAS7UV566pQ4lwnhOctvQl0jBGeXhHRDlyBDhUrnf9DGWUbX8
-         a/AX+3CzVLVhd91uvp2REXkQT9vGd/HWSqTjBwIFHSIzq1ImP9Ni4vgsxaLtvDGewJz6
-         fBIihTHZ3FKfLmVypC0C2RueCi1uNuFdsh7YJF4Yku8i1TzBgA/aZ84IytdF1WJNFf61
-         0kog==
-X-Gm-Message-State: AOJu0Yxqn3supek7RM1xqqsJpqtKVy/Wleg9JkOUahUiCALa/PhCFykY
-	vyvafYPFtI99gP+yn6gkz1ga4kony8RB2NipMX9fJ9zTAEcF8wztwbzz3Eil5Qw=
-X-Google-Smtp-Source: AGHT+IGJJOO7DBibqLwx6Hc8BeWlnHSDRWgoKB3loXQyx2zDHel9Sd6tYg2Sfa480VSb8XhuJWknJg==
-X-Received: by 2002:a05:6512:2398:b0:52c:df4c:92d8 with SMTP id 2adb3069b0e04-52cdf4c93b3mr2306668e87.1.1719241720366;
-        Mon, 24 Jun 2024 08:08:40 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdbe1bcefsm840571e87.159.2024.06.24.08.08.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 08:08:40 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 24 Jun 2024 18:08:13 +0300
-Subject: [PATCH v9 2/2] usb: typec: ucsi: add Lenovo Yoga C630 glue driver
+        d=1e100.net; s=20230601; t=1719241696; x=1719846496;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wafc/q0nXR3Ye8LsHgCDkHwmKjVfo3c4oHVHMDrj/Aw=;
+        b=xQC/laKcrOAbYVvnKrWnDlwgSBn5ikjY7VTZlSEegfu7h5n4zsGLP0O86hJe688BGY
+         54b0aeWUTKbnraqK9TZ5OtI26tOqzlBtPq/B4vf19tqr8WvHyPlgLbI6Xplre8LadKDC
+         cfKdXxeQ4X26m8I2s+HFVT70YNnu/Phoolmpb63Y0/OlB6jrgyU0XdD5P07EFGK9pPGE
+         Jx8x5vdH3lZt/sU1bgejytCnwJztCC7gCAMpkIomEeFacjp+npS5dgQPGB2SyxWVpYir
+         EqxXcILqeZMSEeo3HIhRlmrHw+wsJOypAIBOarf3lzfE9UOy5f8IgVTPGsMYEyToCAE0
+         vhEA==
+X-Forwarded-Encrypted: i=1; AJvYcCV6gIUpHpH+7AbhZoCnOpOYs5GReXQChqxFkPaJNZLVF3gChLRe6RZ+G0UkrdXNH4ElDneqDf/uDG0nEo5FLBW8rMlzbC7lpQuRFh8c
+X-Gm-Message-State: AOJu0YxH5EsQwnpYD9GI5rGYNm58sxBXWAmEE0ARj33JpCWFooeLN5+e
+	zrZGakwP4ckDTuBq00EbzKduV57+nBiQ579Klh7RmnVOzSUQAYC2sVnrkFMmQdM=
+X-Google-Smtp-Source: AGHT+IE5Azx1tp6IG+TkRkPA4t2eMISvGoO8x7MCXtH6yPnmaWLIdsqd5JLP1NfTp42KWcMq7VY1ag==
+X-Received: by 2002:a05:600c:68c:b0:421:de31:81 with SMTP id 5b1f17b1804b1-4248cc35d9cmr32718155e9.24.1719241695473;
+        Mon, 24 Jun 2024 08:08:15 -0700 (PDT)
+Received: from [10.2.5.170] (amontpellier-556-1-151-252.w109-210.abo.wanadoo.fr. [109.210.7.252])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4248191116fsm142780645e9.37.2024.06.24.08.08.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 08:08:15 -0700 (PDT)
+Message-ID: <62dadd31-5fd1-45b4-99e8-44ffb367bad5@baylibre.com>
+Date: Mon, 24 Jun 2024 17:08:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/9] iio: adc: ad7606: fix oversampling gpio array
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Beniamin Bia <beniamin.bia@analog.com>,
+ Stefan Popa <stefan.popa@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ devicetree@vger.kernel.org, Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ jstephan@baylibre.com, dlechner@baylibre.com
+References: <20240618-cleanup-ad7606-v1-0-f1854d5c779d@baylibre.com>
+ <20240618-cleanup-ad7606-v1-8-f1854d5c779d@baylibre.com>
+ <20240623164542.53a9f2b1@jic23-huawei>
+Content-Language: en-US
+From: Guillaume Stols <gstols@baylibre.com>
+In-Reply-To: <20240623164542.53a9f2b1@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240624-ucsi-yoga-ec-driver-v9-2-53af411a9bd6@linaro.org>
-References: <20240624-ucsi-yoga-ec-driver-v9-0-53af411a9bd6@linaro.org>
-In-Reply-To: <20240624-ucsi-yoga-ec-driver-v9-0-53af411a9bd6@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org, 
- linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- Nikita Travkin <nikita@trvn.ru>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=7349;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=6OYh9GVmCFzlYYtPr1/rlWFN2LdtNayCv9r+cMa7gHA=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmeYvdhrwcwKivuj6eDm/PHIBmAdcmYYZD4QMUH
- a5KA5pWtSKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnmL3QAKCRCLPIo+Aiko
- 1WVPB/4zVzvlBpnvJAp+CJkVqEfu6jHS41VDf/RmAalcN9mnGq/ANCXrNP2Gy3q+IIU9bw5tN1Z
- 4zBdimIovfPhlIa5w5UXyJM7GFoyGXvYLNyBcLXNziSSFoJeVjtNHZr+5YEZAHKXGGGZPnd5N6x
- 8ZoFUuyYa5x1ZC815FDAE6m6hWZu/wk9TfQkAeClbJqeyB2ZB+vOEy7MPeMwdSI/HFJvcH0M34S
- nsrKRaZ18/Vuk9Q+WqhudJRi99c2kvpyR4JGuWlpPw2g2ke0KwW6RBBdECjK3EEyHBMeYQc1mKZ
- TZbs1ZmZAWFcZzdxeMcxBizCA8dJJspDwQCBrgYwBMTvdjUi
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-The Lenovo Yoga C630 WOS laptop provides implements UCSI interface in
-the onboard EC. Add glue driver to interface the platform's UCSI
-implementation.
+Resend, previous mail was erroneously sent in HTML. I apologize for the 
+spamming.
 
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/usb/typec/ucsi/Kconfig          |   9 ++
- drivers/usb/typec/ucsi/Makefile         |   1 +
- drivers/usb/typec/ucsi/ucsi_yoga_c630.c | 204 ++++++++++++++++++++++++++++++++
- 3 files changed, 214 insertions(+)
+On 6/23/24 17:45, Jonathan Cameron wrote:
 
-diff --git a/drivers/usb/typec/ucsi/Kconfig b/drivers/usb/typec/ucsi/Kconfig
-index bdcb1764cfae..680e1b87b152 100644
---- a/drivers/usb/typec/ucsi/Kconfig
-+++ b/drivers/usb/typec/ucsi/Kconfig
-@@ -69,4 +69,13 @@ config UCSI_PMIC_GLINK
- 	  To compile the driver as a module, choose M here: the module will be
- 	  called ucsi_glink.
- 
-+config UCSI_LENOVO_YOGA_C630
-+	tristate "UCSI Interface Driver for Lenovo Yoga C630"
-+	depends on EC_LENOVO_YOGA_C630
-+	help
-+	  This driver enables UCSI support on the Lenovo Yoga C630 laptop.
-+
-+	  To compile the driver as a module, choose M here: the module will be
-+	  called ucsi_yoga_c630.
-+
- endif
-diff --git a/drivers/usb/typec/ucsi/Makefile b/drivers/usb/typec/ucsi/Makefile
-index b4679f94696b..aed41d23887b 100644
---- a/drivers/usb/typec/ucsi/Makefile
-+++ b/drivers/usb/typec/ucsi/Makefile
-@@ -21,3 +21,4 @@ obj-$(CONFIG_UCSI_ACPI)			+= ucsi_acpi.o
- obj-$(CONFIG_UCSI_CCG)			+= ucsi_ccg.o
- obj-$(CONFIG_UCSI_STM32G0)		+= ucsi_stm32g0.o
- obj-$(CONFIG_UCSI_PMIC_GLINK)		+= ucsi_glink.o
-+obj-$(CONFIG_UCSI_LENOVO_YOGA_C630)	+= ucsi_yoga_c630.o
-diff --git a/drivers/usb/typec/ucsi/ucsi_yoga_c630.c b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
-new file mode 100644
-index 000000000000..8bee0b469041
---- /dev/null
-+++ b/drivers/usb/typec/ucsi/ucsi_yoga_c630.c
-@@ -0,0 +1,204 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2022-2024, Linaro Ltd
-+ * Authors:
-+ *  Bjorn Andersson
-+ *  Dmitry Baryshkov
-+ */
-+#include <linux/auxiliary_bus.h>
-+#include <linux/bitops.h>
-+#include <linux/completion.h>
-+#include <linux/container_of.h>
-+#include <linux/module.h>
-+#include <linux/notifier.h>
-+#include <linux/string.h>
-+#include <linux/platform_data/lenovo-yoga-c630.h>
-+
-+#include "ucsi.h"
-+
-+struct yoga_c630_ucsi {
-+	struct yoga_c630_ec *ec;
-+	struct ucsi *ucsi;
-+	struct notifier_block nb;
-+	struct completion complete;
-+	unsigned long flags;
-+#define UCSI_C630_COMMAND_PENDING	0
-+#define UCSI_C630_ACK_PENDING		1
-+	u16 version;
-+};
-+
-+static int yoga_c630_ucsi_read(struct ucsi *ucsi, unsigned int offset,
-+			       void *val, size_t val_len)
-+{
-+	struct yoga_c630_ucsi *uec = ucsi_get_drvdata(ucsi);
-+	u8 buf[YOGA_C630_UCSI_READ_SIZE];
-+	int ret;
-+
-+	ret = yoga_c630_ec_ucsi_read(uec->ec, buf);
-+	if (ret)
-+		return ret;
-+
-+	if (offset == UCSI_VERSION) {
-+		memcpy(val, &uec->version, min(val_len, sizeof(uec->version)));
-+		return 0;
-+	}
-+
-+	switch (offset) {
-+	case UCSI_CCI:
-+		memcpy(val, buf, min(val_len, YOGA_C630_UCSI_CCI_SIZE));
-+		return 0;
-+	case UCSI_MESSAGE_IN:
-+		memcpy(val, buf + YOGA_C630_UCSI_CCI_SIZE,
-+		       min(val_len, YOGA_C630_UCSI_DATA_SIZE));
-+		return 0;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int yoga_c630_ucsi_async_write(struct ucsi *ucsi, unsigned int offset,
-+				      const void *val, size_t val_len)
-+{
-+	struct yoga_c630_ucsi *uec = ucsi_get_drvdata(ucsi);
-+
-+	if (offset != UCSI_CONTROL ||
-+	    val_len != YOGA_C630_UCSI_WRITE_SIZE)
-+		return -EINVAL;
-+
-+	return yoga_c630_ec_ucsi_write(uec->ec, val);
-+}
-+
-+static int yoga_c630_ucsi_sync_write(struct ucsi *ucsi, unsigned int offset,
-+				     const void *val, size_t val_len)
-+{
-+	struct yoga_c630_ucsi *uec = ucsi_get_drvdata(ucsi);
-+	bool ack = UCSI_COMMAND(*(u64 *)val) == UCSI_ACK_CC_CI;
-+	int ret;
-+
-+	if (ack)
-+		set_bit(UCSI_C630_ACK_PENDING, &uec->flags);
-+	else
-+		set_bit(UCSI_C630_COMMAND_PENDING, &uec->flags);
-+
-+	reinit_completion(&uec->complete);
-+
-+	ret = yoga_c630_ucsi_async_write(ucsi, offset, val, val_len);
-+	if (ret)
-+		goto out_clear_bit;
-+
-+	if (!wait_for_completion_timeout(&uec->complete, 5 * HZ))
-+		ret = -ETIMEDOUT;
-+
-+out_clear_bit:
-+	if (ack)
-+		clear_bit(UCSI_C630_ACK_PENDING, &uec->flags);
-+	else
-+		clear_bit(UCSI_C630_COMMAND_PENDING, &uec->flags);
-+
-+	return ret;
-+}
-+
-+const struct ucsi_operations yoga_c630_ucsi_ops = {
-+	.read = yoga_c630_ucsi_read,
-+	.sync_write = yoga_c630_ucsi_sync_write,
-+	.async_write = yoga_c630_ucsi_async_write,
-+};
-+
-+static void yoga_c630_ucsi_notify_ucsi(struct yoga_c630_ucsi *uec, u32 cci)
-+{
-+	if (UCSI_CCI_CONNECTOR(cci))
-+		ucsi_connector_change(uec->ucsi, UCSI_CCI_CONNECTOR(cci));
-+
-+	if (cci & UCSI_CCI_ACK_COMPLETE &&
-+	    test_bit(UCSI_C630_ACK_PENDING, &uec->flags))
-+		complete(&uec->complete);
-+
-+	if (cci & UCSI_CCI_COMMAND_COMPLETE &&
-+	    test_bit(UCSI_C630_COMMAND_PENDING, &uec->flags))
-+		complete(&uec->complete);
-+}
-+
-+static int yoga_c630_ucsi_notify(struct notifier_block *nb,
-+				 unsigned long action, void *data)
-+{
-+	struct yoga_c630_ucsi *uec = container_of(nb, struct yoga_c630_ucsi, nb);
-+	u32 cci;
-+	int ret;
-+
-+	switch (action) {
-+	case LENOVO_EC_EVENT_USB:
-+	case LENOVO_EC_EVENT_HPD:
-+		ucsi_connector_change(uec->ucsi, 1);
-+		return NOTIFY_OK;
-+
-+	case LENOVO_EC_EVENT_UCSI:
-+		ret = uec->ucsi->ops->read(uec->ucsi, UCSI_CCI, &cci, sizeof(cci));
-+		if (ret)
-+			return NOTIFY_DONE;
-+
-+		yoga_c630_ucsi_notify_ucsi(uec, cci);
-+
-+		return NOTIFY_OK;
-+
-+	default:
-+		return NOTIFY_DONE;
-+	}
-+}
-+
-+static int yoga_c630_ucsi_probe(struct auxiliary_device *adev,
-+				const struct auxiliary_device_id *id)
-+{
-+	struct yoga_c630_ec *ec = adev->dev.platform_data;
-+	struct yoga_c630_ucsi *uec;
-+	int ret;
-+
-+	uec = devm_kzalloc(&adev->dev, sizeof(*uec), GFP_KERNEL);
-+	if (!uec)
-+		return -ENOMEM;
-+
-+	uec->ec = ec;
-+	init_completion(&uec->complete);
-+	uec->nb.notifier_call = yoga_c630_ucsi_notify;
-+
-+	uec->ucsi = ucsi_create(&adev->dev, &yoga_c630_ucsi_ops);
-+	if (IS_ERR(uec->ucsi))
-+		return PTR_ERR(uec->ucsi);
-+
-+	ucsi_set_drvdata(uec->ucsi, uec);
-+
-+	uec->version = yoga_c630_ec_ucsi_get_version(uec->ec);
-+
-+	auxiliary_set_drvdata(adev, uec);
-+
-+	ret = yoga_c630_ec_register_notify(ec, &uec->nb);
-+	if (ret)
-+		return ret;
-+
-+	return ucsi_register(uec->ucsi);
-+}
-+
-+static void yoga_c630_ucsi_remove(struct auxiliary_device *adev)
-+{
-+	struct yoga_c630_ucsi *uec = auxiliary_get_drvdata(adev);
-+
-+	yoga_c630_ec_unregister_notify(uec->ec, &uec->nb);
-+	ucsi_unregister(uec->ucsi);
-+}
-+
-+static const struct auxiliary_device_id yoga_c630_ucsi_id_table[] = {
-+	{ .name = YOGA_C630_MOD_NAME "." YOGA_C630_DEV_UCSI, },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(auxiliary, yoga_c630_ucsi_id_table);
-+
-+static struct auxiliary_driver yoga_c630_ucsi_driver = {
-+	.name = YOGA_C630_DEV_UCSI,
-+	.id_table = yoga_c630_ucsi_id_table,
-+	.probe = yoga_c630_ucsi_probe,
-+	.remove = yoga_c630_ucsi_remove,
-+};
-+
-+module_auxiliary_driver(yoga_c630_ucsi_driver);
-+
-+MODULE_DESCRIPTION("Lenovo Yoga C630 UCSI");
-+MODULE_LICENSE("GPL");
+ > On Tue, 18 Jun 2024 14:02:40 +0000
+ > Guillaume Stols <gstols@baylibre.com> wrote:
+ >> gpiod_set_array_value was misused here: the implementation relied on the
+ >> assumption that an unsigned long was required for each gpio, while the
+ >> function expects a bit array stored in "as much unsigned long as needed
+ >> for storing one bit per GPIO", i.e it is using a bit field.
+ >>
+ >> Fixes: d2a415c86c6b ("iio: adc: ad7606: Add support for AD7606B ADC")
+ >> Signed-off-by: Guillaume Stols <gstols@baylibre.com>
+ > Always drag fixes to the start of a series.  Probably doesn't matter
+ > in this case but we want it to be obvious there are no necessary 
+precursors
+ > in this series for anyone backporting.
 
--- 
-2.39.2
+OK will do this change in the next version.
 
+ >
+ > What is the user visible outcome of this bug?  Superficially the numbers
+ > all end up the same I think even though the code is clearly working
+ > mostly by luck.  So might not warrant a fixes tag?
+
+This is leading into some issues I should maybe have better documented 
+in the commit message.
+
+See below
+
+ >
+ >> ---
+ >>   drivers/iio/adc/ad7606.c     | 4 ++--
+ >>   drivers/iio/adc/ad7606_spi.c | 5 +++--
+ >>   2 files changed, 5 insertions(+), 4 deletions(-)
+ >>
+ >> diff --git a/drivers/iio/adc/ad7606.c b/drivers/iio/adc/ad7606.c
+ >> index e3426287edf6..502344e019e0 100644
+ >> --- a/drivers/iio/adc/ad7606.c
+ >> +++ b/drivers/iio/adc/ad7606.c
+ >> @@ -235,9 +235,9 @@ static int ad7606_write_os_hw(struct iio_dev 
+*indio_dev, int val)
+ >>       struct ad7606_state *st = iio_priv(indio_dev);
+ >>       DECLARE_BITMAP(values, 3);
+ >>   -    values[0] = val;
+ >> +    values[0] = val & GENMASK(2, 0);
+ >>   -    gpiod_set_array_value(ARRAY_SIZE(values), st->gpio_os->desc,
+ >> +    gpiod_set_array_value(st->gpio_os->ndescs, st->gpio_os->desc,
+ >>                     st->gpio_os->info, values);
+
+ARRAY_SIZE(values) is 1 because DECLARE_BITMAP will declare a dimension 
+1 unsigned long array (more than enough for 3 bits !).
+We want to set 3 bits in gpiod_set_array_value, thus the first parameter 
+should be 3, not 1.
+
+ >>         /* AD7616 requires a reset to update value */
+ >> diff --git a/drivers/iio/adc/ad7606_spi.c b/drivers/iio/adc/ad7606_spi.c
+ >> index 263a778bcf25..287a0591533b 100644
+ >> --- a/drivers/iio/adc/ad7606_spi.c
+ >> +++ b/drivers/iio/adc/ad7606_spi.c
+ >> @@ -249,8 +249,9 @@ static int ad7616_sw_mode_config(struct iio_dev 
+*indio_dev)
+ >>   static int ad7606B_sw_mode_config(struct iio_dev *indio_dev)
+ >>   {
+ >>       struct ad7606_state *st = iio_priv(indio_dev);
+ >> -    unsigned long os[3] = {1};
+ >> +    DECLARE_BITMAP(os, 3);
+ >>   +    bitmap_fill(os, 3);
+
+Here we need 3 bits set HIGH in one unsigned long (i.e 0x07) and we get 
+3 times 0x01 instead.
+
+Thus, it will not switch to software mode if OS pins are not hardwired 
+(which is I must admit, rather unlikely).
+
+ >>       /*
+ >>        * Software mode is enabled when all three oversampling
+ >>        * pins are set to high. If oversampling gpios are defined
+ >> @@ -258,7 +259,7 @@ static int ad7606B_sw_mode_config(struct iio_dev 
+*indio_dev)
+ >>        * otherwise, they must be hardwired to VDD
+ >>        */
+ >>       if (st->gpio_os) {
+ >> -        gpiod_set_array_value(ARRAY_SIZE(os),
+ >> +        gpiod_set_array_value(st->gpio_os->ndescs,
+ >>                         st->gpio_os->desc, st->gpio_os->info, os);
+ >>       }
+ >>       /* OS of 128 and 256 are available only in software mode */
+ >>
 
