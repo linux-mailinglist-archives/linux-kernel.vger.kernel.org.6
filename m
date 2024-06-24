@@ -1,195 +1,137 @@
-Return-Path: <linux-kernel+bounces-227687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04C6C915584
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:38:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79F67915588
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:39:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFB29283552
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:38:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3473E2838CB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F4919F466;
-	Mon, 24 Jun 2024 17:38:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC98419F465;
+	Mon, 24 Jun 2024 17:39:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="UYa8XJRC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="u3wAtqUT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="oRuclHGm";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1SGPMFjt"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ML0Y+EyK"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081D5FC08;
-	Mon, 24 Jun 2024 17:38:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56BA19EEC7
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719250708; cv=none; b=MCk29OvD0f+PMNgNcc9Fx9QzVFqzrXXY3Tno6QVYo334UNgk19JYi0EqfI3NeM5GVKi7KetMiHXuZ5nv79azAEcZ6EWdNHu+96hKnGFPq+izrI41r5jqq2H94X4COhA0jbnJLEKU/0P+Sbv/C5dpdAJLZY7y6atpqFqrA5TE234=
+	t=1719250769; cv=none; b=K79R0hPK7yew8bGeAzAnG5jJpaBqsMQgZuGl4ThrBhV+LH23JXeI0y4WYRm4uyfWcwYRuPwxT5UHXTx27OZgfzUjjDbdwz7bM3E8fPzkWycCX0Z8+Rt1h218xt4idKHjEGwqCBqUYzTJcKaVSlIrNXE8evPzJyejwQN+QuHqGXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719250708; c=relaxed/simple;
-	bh=+K9TrWo+nrR5Bp1WKgmjEixh6h0x8NnnpUzq/8maT6Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bWR5tSBeqO3VFNwsAxYXAgpaYt7nmf2H5TXzEB+IBjLqOzPbuZ+MCWhHBhIIddgVVvS/GrrQUpK1iXw6JVXgE+qNWGt7jZTOSr9zZF4dMX5H4BXZUUmkezakUI/+2FpAw3Y/Z3I7V9cN6zHymZVC7Ci7zjVDNWrGZwD3x4f+nZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=UYa8XJRC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=u3wAtqUT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=oRuclHGm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1SGPMFjt; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 868ED219B6;
-	Mon, 24 Jun 2024 17:38:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719250704; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UkOmw9j/RdejhDDiZkoe7o0qMyio1yTKvDD8d7IQx2k=;
-	b=UYa8XJRCxb5KSk89TibhhcZRXqJ1vDw/jCbdboVB6xe8MqXE36rvDt4LJSDs1HtJ+prGlI
-	CZtqBd0fG0cJy0N49FeO/ml3eyf54/45K9yz7x5doZYBRc/V7Kx+J0hHXvNa6pjEvMG7Ut
-	h5KV/+uQDEDIDR+De81iZ+lNKEBbA+U=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719250704;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UkOmw9j/RdejhDDiZkoe7o0qMyio1yTKvDD8d7IQx2k=;
-	b=u3wAtqUTujMA+DPHMTByML3vWHST6IwEU7yHv+wgVLCK9yufJ+LlPP5Zv/jDghI90lg9WY
-	6BZu3uw4KoKtNNAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=oRuclHGm;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=1SGPMFjt
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719250703; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UkOmw9j/RdejhDDiZkoe7o0qMyio1yTKvDD8d7IQx2k=;
-	b=oRuclHGmRQs+w6Uz+T2YVOYpROMjpG8I1V3Q+oGGJzQDLmBJaj5Ga7m9W0zOyYbJQYjPBI
-	BVK0LoTkfbG5GCPGZ0ArE0CYYXlcOcOdg4TCFbPOojfYbPgu3gZkrdS5KU6+8Hn/2QpWV7
-	CP5J+Ah0ZFUKnRq6eNIgQJp6tsH4Pz0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719250703;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UkOmw9j/RdejhDDiZkoe7o0qMyio1yTKvDD8d7IQx2k=;
-	b=1SGPMFjtJNTQtT8Gk6i7CCcNk/e+2zv2tWylo5gBcummSCeqymSMiuSStj8I0q4DUDYwyt
-	tpTMIHGmX6jy/UBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 75FF313AA4;
-	Mon, 24 Jun 2024 17:38:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cLuHHA+veWa5QgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 24 Jun 2024 17:38:23 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 0E883A08AA; Mon, 24 Jun 2024 19:38:23 +0200 (CEST)
-Date: Mon, 24 Jun 2024 19:38:23 +0200
-From: Jan Kara <jack@suse.cz>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Alexander Coffin <alex.coffin@maticrobots.com>,
-	Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: PROBLEM: ext4 resize2fs on-line resizing panic
-Message-ID: <20240624173823.qacrdbxfxwn42kmr@quack3>
-References: <CA+hUFcuGs04JHZ_WzA1zGN57+ehL2qmHOt5a7RMpo+rv6Vyxtw@mail.gmail.com>
- <20240624152658.GC280025@mit.edu>
- <20240624165350.madyxs74vx3niyy2@quack3>
+	s=arc-20240116; t=1719250769; c=relaxed/simple;
+	bh=RmWwBKqpQhgnS45GQ4aaZI6SvIbgoTYxZp32M5eQP5A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UJuI6UWAizoiC39ULFrlZE72ejotJ6URHm5Zo+rJH66gF3pAqbnrruMYe1ekNg1W270fN7lFSQ50Iu1NBDnIOrCgaAtmletGQBBvzyS/c5JKMcjPS+ebb5t21DESP/GLnnTXA8F8+wkpzJU/QzGzLE8tUeqW/7WO/cCR+wymH8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ML0Y+EyK; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7955841fddaso389568485a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:39:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1719250764; x=1719855564; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8bcigEvxElFnNf6XQZ1LGyn+920C2Rwm5nJUAotnto8=;
+        b=ML0Y+EyKNiVdw+KpF8EYsjABUHPy2ApYl+20TlGRetEgKhyzKR1uVtdJQ1b6+78ea4
+         1GmzoNFlLZXkd/28e1gra9helEvyM3LdVlJdyaEufFwizV+1sE5bh+htAt7hAxbvnz0j
+         FoHFC4NweDvyltpghFKryt9BsG77nxUSwLQDo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719250764; x=1719855564;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8bcigEvxElFnNf6XQZ1LGyn+920C2Rwm5nJUAotnto8=;
+        b=aR46vr/NzxptSzC26rIHc0G1bDhiP3NNHO2iaBW8WV1G2rdbShnWOcZ8xS0KtB5JAt
+         hSSXQ5NGz8F3b4yHmitUZjSLvBpR+PUneXzBCBWRqx1FGC0vOt31Gw5DtsugvE//T02g
+         6aHutkpTwfbt/MJY28+JGvreKDP9GTqIpLawIhhKeylYoF1SU0qEeFsow6JVJaKS0suQ
+         AtyM0vUj5DsXeaevi+vILB4ZC/ExK/SyzVz/7u5qjUDFgXjiRk1O7xGVh2ttol8vO+Nw
+         t3kLs4ufLcVAfBh1TRnYlfX/6sJ8ncPbkRbm7JvXqHDUWCiyYGSs0nZZfvAtg8JKhtcw
+         HLzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1Y07X4AH/yEGYnPgczNtnuE9oCgpRB38OOmuHfH8bo0D/zX4PbwHgyN2UdGOfQW8hXs8vjQxzYQjrsfsriuJxX5bIPZHFC2DQNU4C
+X-Gm-Message-State: AOJu0Yy/GMrrDbye/947ObVK1Bo/hd3OE81fz7RowACXMw1gHsKki0c4
+	qBb3FRDFkhWBvyv12MHjg1HuZG+T4g1IgMjmAvaOt8NUaLKN3OjtF7GTJBBFWvST4vGCyPzIMcg
+	=
+X-Google-Smtp-Source: AGHT+IFGJpa04YFdHzSZsZCqzWMh72J2zGBNzXc0eEg8QU5PQpD9Gghx4oGm5vXyurM4L8+mAYM5SA==
+X-Received: by 2002:a05:620a:270b:b0:795:50a9:f2f with SMTP id af79cd13be357-79bfd684d69mr159802085a.31.1719250764505;
+        Mon, 24 Jun 2024 10:39:24 -0700 (PDT)
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com. [209.85.160.175])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce8b38acsm335393285a.41.2024.06.24.10.39.23
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 10:39:23 -0700 (PDT)
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4405dffca81so12871cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:39:23 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWe2glm/PYNvEIwc8Xy0Th40LjNCmG9tsvPOSJ7Ui5TxQ7kMkgMPKfwQUhZilPkCqKt+MrjPx0cKeQyr4T4vDhAJh3pSvLMMEOlqLyj
+X-Received: by 2002:a05:622a:4b18:b0:444:e11d:709a with SMTP id
+ d75a77b69052e-444f2520e93mr65771cf.20.1719250762638; Mon, 24 Jun 2024
+ 10:39:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624165350.madyxs74vx3niyy2@quack3>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.com:email];
-	RCVD_COUNT_THREE(0.00)[3];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DNSWL_BLOCKED(0.00)[2a07:de40:b281:104:10:150:64:97:from,2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 868ED219B6
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+References: <20240624133135.7445-1-johan+linaro@kernel.org> <20240624133135.7445-2-johan+linaro@kernel.org>
+In-Reply-To: <20240624133135.7445-2-johan+linaro@kernel.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 24 Jun 2024 10:39:07 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=VZXnnbwTNc6dSqZvyCUc0=Wjg9mvBYsA1FJK3xR6bDEg@mail.gmail.com>
+Message-ID: <CAD=FV=VZXnnbwTNc6dSqZvyCUc0=Wjg9mvBYsA1FJK3xR6bDEg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] serial: qcom-geni: fix hard lockup on buffer flush
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon 24-06-24 18:53:50, Jan Kara wrote:
-> On Mon 24-06-24 11:26:58, Theodore Ts'o wrote:
-> > On Sun, Jun 23, 2024 at 06:57:13PM -0700, Alexander Coffin wrote:
-> > > [1.] One line summary of the problem:
-> > > Using resize2fs on-line resizing on a specific ext4 partition is
-> > > causing an Oops.
-> > > 
-> > > 
-> > > [6.] Output of Oops.. message (if applicable) with symbolic information
-> > >      resolved (see Documentation/admin-guide/bug-hunting.rst)
-> > > 
-> > > ```
-> > > [  445.552287] ------------[ cut here ]------------
-> > > [  445.552300] kernel BUG at fs/jbd2/journal.c:846!
-> > 
-> > Thanks for the bug report.  The BUG_ON is from the following assert in
-> > jbd2_journal_next_log_block:
-> > 
-> > 	J_ASSERT(journal->j_free > 1);
-> > 
-> > and it indicates that we ran out of space in the journal.  There are
-> > mechanisms to make sure that this should never happen, and if the
-> > journal is too small and the transaction couldn't be broken up, then
-> > the operation (whether it is a resize or a file truncate or some other
-> > operation) should have errored out, and not triggered a BUG.
-> 
-> Yeah, I was debugging this today and I'll shortly send a fix for JBD2 so
-> that we don't trigger this BUG. But the online resize will fail anyway
-> after my fixes (just gracefully) because the add_flex_bg() code tries to
-> start a transaction with more credits than the journal allows.
+Hi,
 
-To be more precise, the problem is that with this size of the journal,
-maximum transaction size is 250 metadata blocks (+6 blocks reserved for
-descriptors). Online resizing tries to start a transaction with 252 credits
-in ext4_flex_group_add(). 246 credits come from es->s_reserved_gdt_blocks
-so I don't see an easy way how to avoid that because to each of these
-reserve gdt blocks we need to add reserved gdt blocks from the new groups.
-So I see two possibilities:
+On Mon, Jun 24, 2024 at 6:31=E2=80=AFAM Johan Hovold <johan+linaro@kernel.o=
+rg> wrote:
+>
+> The Qualcomm GENI serial driver does not handle buffer flushing and used
+> to print garbage characters when the circular buffer was cleared. Since
+> commit 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo") this
+> instead results in a lockup due to qcom_geni_serial_send_chunk_fifo()
+> spinning indefinitely in the interrupt handler.
+>
+> This is easily triggered by interrupting a command such as dmesg in a
+> serial console but can also happen when stopping a serial getty on
+> reboot.
+>
+> Fix the immediate issue by printing NUL characters until the current TX
+> command has been completed.
+>
+> Fixes: 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
+> Reported-by: Douglas Anderson <dianders@chromium.org>
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  drivers/tty/serial/qcom_geni_serial.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-1) Just make mke2fs / tune2fs refuse so many reserved gdt blocks with a
-tiny journal.
+I don't love this, though it's better than a hard lockup. I will note
+that it doesn't exactly restore the old behavior which would have
+(most likely) continued to output data that had previously been in the
+FIFO but that had been cancelled.
 
-2) Allow larger transaction size - currently we require that 4 max sized
-transactions fit into the journal, we could reduce it to 3 without
-introducing deadlocks. But larger transactions could have other unexpected
-performance side effects so I'm not sure the risk is worth it for a corner
-case like this.
+...actually, if we're looking for a short term fix that mimics the old
+behavior more closely, what would you think about having a
+driver-local buffer that we fill when we kick off the transfer. Then
+the data can't go away from underneath us. It's an extra copy, but
+it's just a memory-to-memory copy which is much faster than the MMIO
+copy we'll eventually need to do anyway... This local buffer would
+essentially act as a larger FIFO.
 
-								Honza
+You could choose the local buffer size to balance being able to cancel
+quickly vs. using the FIFO efficiently.
 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+-Doug
 
