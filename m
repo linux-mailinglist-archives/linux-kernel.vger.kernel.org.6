@@ -1,98 +1,106 @@
-Return-Path: <linux-kernel+bounces-227424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CF42915101
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:55:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF912915104
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E3CF1C24565
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:55:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A2C62874F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1143D19DFBE;
-	Mon, 24 Jun 2024 14:48:52 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1F7819B5B0;
-	Mon, 24 Jun 2024 14:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74A519B5B0;
+	Mon, 24 Jun 2024 14:48:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3HL+ctw2";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="RTGtUhrs"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751FF19B5B3
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719240531; cv=none; b=Z9fosUGIaYKiuiee9l4a7XEeU7JNf5k9OKuL/Jmri+LhZSiRWJCUBuCWPFv6R+YIr2dSaNY/EekrApAhNKzXoefeU/JFXvuNGtIl9U3PVtsgWimPWGw5BEfzVwrGlQDPyVnNTwjkN/Y5P02NgRAhilICRm9kYDI4ZSND4bkK+mo=
+	t=1719240533; cv=none; b=qsVXPgIsKJUSH0pcrn81VNas1DauJRpeVCP72BAi6MwsBPql9zTM/h3wYVwOxTty2scTPar5NTCIbC6kYt9x7XvY/mIX+5C5JpL7pAigz3baiE02IAAA8Jrf4D+fphf9/+xFZV2CmWlwVQMt6FrHC2XFpfopyvGmw3jtfFR4JKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719240531; c=relaxed/simple;
-	bh=4/dgeUPK7JV/t7zHVj1dhDdp+7TjPbrs4jAQPOfn2Hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AVAa81p+7mHp1Nt5hGVJEI0thgifB19jDOG+Ulwx7ON877jRHmZF354IjyWjunnzxNBHbxrT5t3EKpEW+yU4yYyP4djrw36aIG4Cx5nARsfA2PFQ9SFFvojWfH5qtBaH3L08bZpG2Jjvin+ke7sxVqgxFWarE+blyhVvK6HLuw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 59A2BDA7;
-	Mon, 24 Jun 2024 07:49:07 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C26CE3F73B;
-	Mon, 24 Jun 2024 07:48:40 -0700 (PDT)
-Date: Mon, 24 Jun 2024 15:48:38 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Youwan Wang <youwan@nfschina.com>
-Cc: guohanjun@huawei.com, lenb@kernel.org, linux-acpi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	lpieralisi@kernel.org, rafael@kernel.org, catalin.marinas@arm.com,
-	will@kernel.org, Sudeep Holla <sudeep.holla@arm.com>
-Subject: Re: [PATCH v4] ACPI / amba: Drop unnecessary check for registered
- amba_dummy_clk
-Message-ID: <ZnmHRgnwNUsQidWj@bogus>
-References: <20240620133758.319392-1-youwan@nfschina.com>
- <20240624023101.369633-1-youwan@nfschina.com>
+	s=arc-20240116; t=1719240533; c=relaxed/simple;
+	bh=ZuUZl/MdSwZobl8eVZMKnwCIh7akcs8oYeGYYfgAsXs=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
+	 Content-Type; b=hpnEF01wCyYsUNVymmYPOMKNFIIQw518QDCD+MXr33fe0oHbShZmlxDPmYwpywmewnWmir4y0xvVJQuw323hzQtOCjVJ8Nxvlq6gKu9yB9k+P4ACXsGZx6xDru8SpNb5tCF8sTEcV5Ea3x+69gsJMQCQ+ROvrSmSiEn7avCw29c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3HL+ctw2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=RTGtUhrs; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719240526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=eW9JS4CRtD6TmnSj76hMtLfS9H5BnV1ORvXGhQ9awuE=;
+	b=3HL+ctw2EUoVtEUjZvAPAclEnSOswzY2vSIZC+pzwpWfE/sI+Ya7viLGFWljQhfi8CUIYV
+	mmQJEjspGgEpc1xOEEaiiqrEKedGW1AcbLGhMzlJvSkrWgn2mymc2ooBYxv6mQytFDCCXl
+	j3y67I7XVhKQQp+cJ1LaFZmsqrB/kbG3M55xxQd2OIsFTlScYE9orjRTLt1FJL5vifBptP
+	moRpgU9UpdN1Mw4Lp2oPMI4RhDwriTi13rAApd2z1X29E8j7sgGUTD+n9KdPqkSYP0p4Ir
+	PGSil84VSj99ZAFC7C4YfKlBbkEKjaFsM4ndNFZRj0VW62VSVNeE+PCDlHdAfA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719240526;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to; bh=eW9JS4CRtD6TmnSj76hMtLfS9H5BnV1ORvXGhQ9awuE=;
+	b=RTGtUhrsE8CbEp88o+V4L2qY9TmVLa3vXdVq0/U1Shy04rL6hX6urMHJkndm0HGA1wo4Ag
+	6BZVCjmrcUa9EWAg==
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+ Borislav Petkov <bp@alien8.de>, Narasimhan V <Narasimhan.V@amd.com>
+Subject: Re: [PATCH 0/3] timer_migration: Fix a possible race and improvements
+In-Reply-To: <ZnlS1QcFgHvJGm7J@lothringen>
+Date: Mon, 24 Jun 2024 16:48:46 +0200
+Message-ID: <871q4mflbl.fsf@somnus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624023101.369633-1-youwan@nfschina.com>
+Content-Type: text/plain
 
-On Mon, Jun 24, 2024 at 10:31:01AM +0800, Youwan Wang wrote:
-> amba_register_dummy_clk() is called only once from acpi_amba_init()
-> and acpi_amba_init() itself is called once during the initialisation.
-> amba_dummy_clk can't be initialised before this in any other code
-> path and hence the check for already registered amba_dummy_clk is
-> not necessary. Drop the same.
-> 
-> Signed-off-by: Youwan Wang <youwan@nfschina.com>
-> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-> Acked-by: Hanjun Guo <guohanjun@huawei.com>
-> ---
-> v1->v2->v3: Modify the commit log description
-> v3->v4: Update the commit message suggested by Sudeep;
->         Add Acked-by from Sudeep;
->         +Cc ARM64 maintainers Catalin and Will.
+Frederic Weisbecker <frederic@kernel.org> writes:
 
+> On Mon, Jun 24, 2024 at 10:58:26AM +0200, Anna-Maria Behnsen wrote:
+>> Frederic Weisbecker <frederic@kernel.org> writes:
+>> +static void tmigr_setup_active_up(struct tmigr_group *group, struct tmigr_group *child)
+>> +{
+>> +	union tmigr_state curstate, childstate;
+>> +	bool walk_done;
+>> +
+>> +	/*
+>> +	 * FIXME: Memory barrier is required here as the child state
+>> +	 * could have changed in the meantime
+>> +	 */
+>> +	curstate.state = atomic_read_acquire(&group->migr_state);
+>> +
+>> +	for (;;) {
+>> +		childstate.state = atomic_read(&child->migr_state);
+>> +		if (!childstate.active)
+>> +			return;
+>
+> Ok there could have been a risk that we miss the remote CPU going active. But
+> again thanks to the lock this makes sure that either we observe the childstate
+> as active or the remote CPU sees the link and propagates its active state. And
+> the unlocked optimization tmigr_update_events() still works because either it
+> sees the new parent and proceeds or it sees an intermediate parent and the next
+> ones will be locked.
+>
+> Phew!
+>
+> I'll do a deeper review this evening but it _looks_ ok.
+>
 
-I think I have told you many time now and you are missing to understand
-few basic stuff. So I suggest to give
-`Documentation/process/submitting-patches.rst`
-under the kernel source a read and especially the section
-`The canonical patch format`
+I will send you a v2 of the whole timer_migration series where the fix
+is also splitted. And review should then be a little easier.
 
-Ideally this patch should have been v5 as you added Hanjun's Ack
-Also "v1->v2->v3: Modify the commit log description" makes no sense.
+Thanks,
 
-The changelog should list all the deltas like:
-v4->v5:
-	- <blah3 blah3>
-v3->v4:
-	- <blah2 blah2>
-v2->v3:
-	- <blah1 blah1>
-v1->v2:
-	- <blah blah>
+        Anna-Maria
 
-Anyways, it is only for your learning and future references.
-
---
-Regards,
-Sudeep
 
