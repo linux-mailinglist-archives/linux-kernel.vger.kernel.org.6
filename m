@@ -1,264 +1,167 @@
-Return-Path: <linux-kernel+bounces-227188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77CC99149AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:20:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E18BE9149B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE4E5B22887
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:20:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 616301F22EFE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C84113B58C;
-	Mon, 24 Jun 2024 12:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F5B13B783;
+	Mon, 24 Jun 2024 12:20:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="PDBgmmQR"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hqX5dBrA"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 347B8137777
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 683ED137C2A;
+	Mon, 24 Jun 2024 12:20:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719231622; cv=none; b=qeOMt65iinQcAJcl2Fe+5on+HgS8msQd7Hfx2EB2dLL24M+wUh+3cZ6+n9q/AbDTDHtOFc8eobEMuusWdlAiIivC4TcEMaihyfvWv2E1EcU4XuOg0+ela3flXcb9g5UEipl9NaUSmiqMKMYJq3ohH8tHrbaVAI4cStWJ5WzTXjI=
+	t=1719231649; cv=none; b=AvbUgWcaFjiVC4hH20I2wsC2G2FCCYpMGlyNlzLAuhYSI9XeHDiBqeUF2CnO/GrOowc9RwJPna1JJrP8oypvHYAAsNCV03YoOFJ9I9AYNGQw14aUnG1hz7KyMRaKoSbQdn9MbxkZByfmRcDIL+/v2YlkT9KprNi/MwpdO+8EkPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719231622; c=relaxed/simple;
-	bh=5bKiNX7duhvm8bTe+AqPAZDwP5kUF0kWeoF+vCAFWak=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tDWXaYu6+BS9dHfZoCB9Kp2edoPA2bgA36feQzvEfgT/2QDJp2eV3s6FSZBI19UqOsB2H/oMKGNVduOJM1LlrPuszrPUKnUN/LsTkodlxnK/pcsQWyB8nSFXcrJIfg1x/9Ii5WJGgIod9zjKwd4qqeFWGLqlB7EnIYD65C9MzAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=PDBgmmQR; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1719231605;
- bh=pk4OJ05lJO30wCYaTyiWAs1biu8A+ZyGDUB/gIorX1c=;
- b=PDBgmmQR4mGx5PUWYKZg9cHY76qKAlAFeRVNRynFw+lWBQWx2GE+ePD/jKrC8hcjoU8NgbuSz
- wNj8ZGRHU35erw5mu6xycidlVSmAXiQgQIbESI7xplo/COQwFlbGzpF6HF3HNVdM6R2XMAbbHe4
- Kawkr7A37fIoWF/zdNE+zN06T2HgY5ugKODvGRhkfQNQbyy+DiNEVyz30ZS5Zx5XhSCco56DNNu
- qcyG4Pja8k8iIYS84DlHcn+onIlCTLGyX68NUArTRGadcwuNyLaViX9JDQ6pPGTl7WpV8RiZN66
- TCYfP+07Bq4f4XOQrl2Oe6JQqDGP/6wU1OjcoYEwF5/w==
-Message-ID: <52845f6f-2593-4ecf-9f0c-f4e948c0e896@kwiboo.se>
-Date: Mon, 24 Jun 2024 14:19:36 +0200
+	s=arc-20240116; t=1719231649; c=relaxed/simple;
+	bh=BzYVs4L6KpDuCZziyHHbj2IqHKvwwMV1R9l33WlK0HU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hQQ6/fLH+qv4iuyKsHMboxhzGwteKWLl5u+uUZeJhRe7U3Zs2JViTv4iytDMYhLXY5jc72PhgsxyCFxrejpgcdWfdeH77FB1OoUDweVyXdTJbLaivGNj3LpOh+JwZHQ1pJ62CgOcV5IiuXQbARmhLhox+NqwXmh5m1ZqYdcOlPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hqX5dBrA; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ec59193468so12134031fa.1;
+        Mon, 24 Jun 2024 05:20:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719231645; x=1719836445; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TSI4KQV7tp+wxmh1FMoXKiaVJwFpmSl7UPXF+v3NqxA=;
+        b=hqX5dBrA0nEX343JqqaKg3iPY1WkqygULyJj2+jzunoTPIRTPSFIwgkZbQwDTOQnLM
+         5AT++9Uxle3cSIIzQlpEhvt5XhdQsATXes0fQHt5maTbpIplpIQA0/SPLczb4vnse4+A
+         a7y1DSUgC2Ifjoppy15VTZ5T8gHSRHaKCCX0vZDW1/zDrk1Qy4Yxj/5cUEph3b9elxKT
+         iMfyx5e4SdQtcHGh8f0vlRJJB2EHZ11avNasemQ4VRKM0lvrjgKSpRletYDsftaHWa0L
+         VR2xYKvm0LjOU/4BUnaNoXiBkMt1gN7L71ps1psqmRa4Yx0cYzxcVK46YRbMWdLXyJ3d
+         2mhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719231645; x=1719836445;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TSI4KQV7tp+wxmh1FMoXKiaVJwFpmSl7UPXF+v3NqxA=;
+        b=BWpat0ts11UE1dfVngT+wlEY1PtZXoY6YD8dOicH5dm2Udw+4jdQKH5vT02lwAwbUc
+         y1cQgSs3miOHKADive2WjrU3MTlMKCYDnxbz7h6Au2Q3Q06K3rgrtYaKwWn91Rp6uL8h
+         2qlRNQKng9k8wDx+M9WEJZ4JWzypJYc6OHYig3beyxQw7LdWwKyNEaEGAUx+PvasQPFt
+         F+mqaOgdCJ7Wf+xFxVgzsTFyZj863zOT72TLUX8EXOGL96+QLSZ8Bn5exqzG+rU/ztky
+         EGNXCTaivWB6J5sQvhg3O5AVcFbaEqdoKjH6xgsO/AIhju2c65jbIPLDd4hjwbPYiCrI
+         FxHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPBXRD7PiWx2tLsSQoaZlPAtIfiUvFkMTO7cjKP8G3DGK3BVLa9Ku/Y1ycBU9hhg/IztLMYyVCw12zuWjDL5MxxQeVm+kX6D1Btg==
+X-Gm-Message-State: AOJu0YwXHIcK3IWeawxgygqegxz6VJ47McKb+7dZDLrGv1FaEfpF9aZX
+	Zexgibravqd4qRKFprMRYH2LFr4sfqH8k2IWxuCx4k9/gkkM0eaN
+X-Google-Smtp-Source: AGHT+IEOEr0sFekIupSP3xekgic9S7PT2e9fYoRzjDiwd7jQcu7Ky0Mjk2cBkuub50BcjRZKEkBxKQ==
+X-Received: by 2002:a2e:9b0b:0:b0:2ec:5364:c792 with SMTP id 38308e7fff4ca-2ec56c86e7cmr16601251fa.13.1719231645324;
+        Mon, 24 Jun 2024 05:20:45 -0700 (PDT)
+Received: from pc636 (host-90-233-219-252.mobileonline.telia.com. [90.233.219.252])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec63baecafsm1388471fa.122.2024.06.24.05.20.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 05:20:44 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 24 Jun 2024 14:20:42 +0200
+To: Nick Bowler <nbowler@draconx.ca>
+Cc: linux-kernel@vger.kernel.org,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	linux-mm@kvack.org, sparclinux@vger.kernel.org,
+	"Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
+Message-ID: <ZnlkmkDAi2CtgwDF@pc636>
+References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
+ <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] drm: bridge: dw_hdmi: Call poweron/poweroff from
- atomic enable/disable
-To: neil.armstrong@linaro.org
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss
- <rfoss@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240611155108.1436502-1-jonas@kwiboo.se>
- <20240611155108.1436502-2-jonas@kwiboo.se>
- <dd6f7a67-e338-4c08-8520-8e85a953834b@linaro.org>
- <af41d129-53ce-4875-bee2-c331aa47c248@kwiboo.se>
- <2759176e-031b-4c63-8dc8-b017a63f00b0@linaro.org>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <2759176e-031b-4c63-8dc8-b017a63f00b0@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-ForwardEmail-ID: 6679645de55100373d413d03
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
 
-Hi Neil,
-
-On 2024-06-24 11:56, neil.armstrong@linaro.org wrote:
-> On 24/06/2024 11:41, Jonas Karlman wrote:
->> Hi Neil,
->>
->> On 2024-06-24 11:23, Neil Armstrong wrote:
->>> On 11/06/2024 17:50, Jonas Karlman wrote:
->>>> Change to only call poweron/poweroff from atomic_enable/atomic_disable
->>>> ops instead of trying to keep a bridge_is_on state and poweron/off in
->>>> the hotplug irq handler.
->>>>
->>>> A benefit of this is that drm mode_config mutex is always held at
->>>> poweron/off, something that may reduce the need for our own mutex.
->>>>
->>>> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
->>>> ---
->>>>    drivers/gpu/drm/bridge/synopsys/dw-hdmi.c | 33 ++---------------------
->>>>    1 file changed, 2 insertions(+), 31 deletions(-)
->>>>
->>>> diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->>>> index 9f2bc932c371..34bc6f4754b8 100644
->>>> --- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->>>> +++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi.c
->>>> @@ -172,7 +172,6 @@ struct dw_hdmi {
->>>>    	enum drm_connector_force force;	/* mutex-protected force state */
->>>>    	struct drm_connector *curr_conn;/* current connector (only valid when !disabled) */
->>>>    	bool disabled;			/* DRM has disabled our bridge */
->>>> -	bool bridge_is_on;		/* indicates the bridge is on */
->>>>    	bool rxsense;			/* rxsense state */
->>>>    	u8 phy_mask;			/* desired phy int mask settings */
->>>>    	u8 mc_clkdis;			/* clock disable register */
->>>> @@ -2383,8 +2382,6 @@ static void initialize_hdmi_ih_mutes(struct dw_hdmi *hdmi)
->>>>    
->>>>    static void dw_hdmi_poweron(struct dw_hdmi *hdmi)
->>>>    {
->>>> -	hdmi->bridge_is_on = true;
->>>> -
->>>>    	/*
->>>>    	 * The curr_conn field is guaranteed to be valid here, as this function
->>>>    	 * is only be called when !hdmi->disabled.
->>>> @@ -2398,30 +2395,6 @@ static void dw_hdmi_poweroff(struct dw_hdmi *hdmi)
->>>>    		hdmi->phy.ops->disable(hdmi, hdmi->phy.data);
->>>>    		hdmi->phy.enabled = false;
->>>>    	}
->>>> -
->>>> -	hdmi->bridge_is_on = false;
->>>> -}
->>>> -
->>>> -static void dw_hdmi_update_power(struct dw_hdmi *hdmi)
->>>> -{
->>>> -	int force = hdmi->force;
->>>> -
->>>> -	if (hdmi->disabled) {
->>>> -		force = DRM_FORCE_OFF;
->>>> -	} else if (force == DRM_FORCE_UNSPECIFIED) {
->>>> -		if (hdmi->rxsense)
->>>> -			force = DRM_FORCE_ON;
->>>> -		else
->>>> -			force = DRM_FORCE_OFF;
->>>> -	}
->>>
->>> This means we always poweron the bridge even if rxsense is false ?
->>
->> If I follow the logic there should not be any difference, beside that
->> power on now only happen in atomic_enable instead of sometime in irq
->> handler.
->>
->> hdmi->rxsense is set to true based on hpd in dw_hdmi_setup_rx_sense().
->> For both meson and dw-hdmi this means HPD=1 and not rxsense=1.
+> On 2024-06-20 02:19, Nick Bowler wrote:
+> > After upgrading my sparc to 6.9.5 I noticed that attempting to run
+> > xfsdump instantly (within a couple seconds) and reliably crashes the
+> > kernel.  The same problem is also observed on 6.10-rc4.
+> [...]
+> >   062eacf57ad91b5c272f89dc964fd6dd9715ea7d is the first bad commit
+> >   commit 062eacf57ad91b5c272f89dc964fd6dd9715ea7d
+> >   Author: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> >   Date:   Thu Mar 30 21:06:38 2023 +0200
+> >   
+> >       mm: vmalloc: remove a global vmap_blocks xarray
 > 
-> Yeah I know, I was worried for other platforms using rxsense
-
-From what I can find only dw-hdmi.c and dw_hdmi_meson.c are caller of
-dw_hdmi_setup_rx_sense(). For meson the same value is passed for both
-hpd and rx_sense, everyone else hpd = HPD and rx_sense = RX_SENSE status.
-
-My understanding and testing based on Rockchip has shown that rx_sense
-has no significant impact before and after this change.
-
+> I think I might see what is happening here.
 > 
->>
->> drm core will call the force/detect ops and enable/disable based on
->> forced/HPD state, so I am not expecting any difference in how this
->> currently works.
->>
->> This change to only poweron/setup in atomic_enable should also fix
->> issues/situations where dw-hdmi was poweron too early during bootup in
->> irq handler, before the drm driver was fully probed.
-
-I may have been wrong here, there is a check for disabled here so it
-should not have setup() before atomic_enable().
-
-Still we should ensure configure happen in atomic_enable(). The
-hpd_irq_event/hpd_notify calls will trigger a detect() and signal core
-if the bridge should be enabled/disabled when connector status changes.
-
+> On this machine, there are two CPUs numbered 0 and 2 (there is no CPU1).
 > 
-> Hmm, but I thought the code wouldn't poweron the bridge is rxsense was 0
-> even if a mode was set, this won't work like this anymore right ?
-
-This is what I thought was happening, and the comment in code seem to
-indicate that. However, the code only seem to care about HPD=1 status to
-poweron() and possible both HPD=0 + RXSENSE=0 to poweroff().
-
-To make matter more complex core also mainly care about detect() status
-and most/all related drivers seem to only use the the HPD status.
-
-So I would say that there should not be any changes in impact of the
-rxsense signal.
-
-Will also send a new patch in a v2 for dw_hdmi_irq() that may be related:
-
--		if (phy_stat & HDMI_PHY_HPD)
-+		if ((intr_stat & HDMI_IH_PHY_STAT0_HPD) &&
-+		    (phy_stat & HDMI_PHY_HPD))
-			status = connector_status_connected;
-
-or there may be a status_connected event triggered when rxsense goes
-from 1 to 0 and a second one with status_disconnected shortly after when
-hpd goes from 1 to 0 when the cable is removed.
-
-Regards,
-Jonas
-
+> The per-cpu variables in mm/vmalloc.c are initialized like this, in
+> vmalloc_init
 > 
-> Neil
+>   for_each_possible_cpu(i) {
+>     /* ... */
+>     vbq = &per_cpu(vmap_block_queue, i);
+>     /* initialize stuff in vbq */
+>   }
 > 
->>
->> Regards,
->> Jonas
->>
->>>
->>> Neil
->>>
->>>> -
->>>> -	if (force == DRM_FORCE_OFF) {
->>>> -		if (hdmi->bridge_is_on)
->>>> -			dw_hdmi_poweroff(hdmi);
->>>> -	} else {
->>>> -		if (!hdmi->bridge_is_on)
->>>> -			dw_hdmi_poweron(hdmi);
->>>> -	}
->>>>    }
->>>>    
->>>>    /*
->>>> @@ -2546,7 +2519,6 @@ static void dw_hdmi_connector_force(struct drm_connector *connector)
->>>>    
->>>>    	mutex_lock(&hdmi->mutex);
->>>>    	hdmi->force = connector->force;
->>>> -	dw_hdmi_update_power(hdmi);
->>>>    	dw_hdmi_update_phy_mask(hdmi);
->>>>    	mutex_unlock(&hdmi->mutex);
->>>>    }
->>>> @@ -2955,7 +2927,7 @@ static void dw_hdmi_bridge_atomic_disable(struct drm_bridge *bridge,
->>>>    	mutex_lock(&hdmi->mutex);
->>>>    	hdmi->disabled = true;
->>>>    	hdmi->curr_conn = NULL;
->>>> -	dw_hdmi_update_power(hdmi);
->>>> +	dw_hdmi_poweroff(hdmi);
->>>>    	dw_hdmi_update_phy_mask(hdmi);
->>>>    	handle_plugged_change(hdmi, false);
->>>>    	mutex_unlock(&hdmi->mutex);
->>>> @@ -2974,7 +2946,7 @@ static void dw_hdmi_bridge_atomic_enable(struct drm_bridge *bridge,
->>>>    	mutex_lock(&hdmi->mutex);
->>>>    	hdmi->disabled = false;
->>>>    	hdmi->curr_conn = connector;
->>>> -	dw_hdmi_update_power(hdmi);
->>>> +	dw_hdmi_poweron(hdmi);
->>>>    	dw_hdmi_update_phy_mask(hdmi);
->>>>    	handle_plugged_change(hdmi, true);
->>>>    	mutex_unlock(&hdmi->mutex);
->>>> @@ -3073,7 +3045,6 @@ void dw_hdmi_setup_rx_sense(struct dw_hdmi *hdmi, bool hpd, bool rx_sense)
->>>>    		if (hpd)
->>>>    			hdmi->rxsense = true;
->>>>    
->>>> -		dw_hdmi_update_power(hdmi);
->>>>    		dw_hdmi_update_phy_mask(hdmi);
->>>>    	}
->>>>    	mutex_unlock(&hdmi->mutex);
->>>
->>
+> This loops over the set bits of cpu_possible_mask, bits 0 and 2 are set,
+> so it initializes stuff with i=0 and i=2, skipping i=1 (I added prints to
+> confirm this).
 > 
+> Then, in vm_map_ram, with the problematic change it calls the new
+> function addr_to_vb_xa, which does this:
+> 
+>   int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+>   return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> 
+> The num_possible_cpus() function counts the number of set bits in
+> cpu_possible_mask, so it returns 2.  Thus, index is either 0 or 1, which
+> does not correspond to what was initialized (0 or 2).  The crash occurs
+> when the computed index is 1 in this function.  In this case, the
+> returned value appears to be garbage (I added prints to confirm this).
+> 
+> If I change addr_to_vb_xa function to this:
+> 
+>   int index = ((addr / VMAP_BLOCK_SIZE) & 1) << 1; /* 0 or 2 */
+>   return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> 
+> xfsdump is working again.
+> 
+Could you please test below?
 
+<snip>
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 5d3aa2dc88a8..1733946f7a12 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -5087,7 +5087,13 @@ void __init vmalloc_init(void)
+         */
+        vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
+
+-       for_each_possible_cpu(i) {
++       /*
++        * We use "nr_cpu_ids" here because some architectures
++        * may have "gaps" in cpu-possible-mask. It is OK for
++        * per-cpu approaches but is not OK for cases where it
++        * can be used as hashes also.
++        */
++       for (i = 0; i < nr_cpu_ids; i++) {
+                struct vmap_block_queue *vbq;
+                struct vfree_deferred *p;
+<snip>
+
+Thank you in advance and i really appreciate for finding this
+issue!
+
+--
+Uladzislau Rezki
 
