@@ -1,172 +1,145 @@
-Return-Path: <linux-kernel+bounces-227651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81397915509
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:07:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FA791551A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:10:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 008B2B2578A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:07:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35084281AD8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D720419EEC4;
-	Mon, 24 Jun 2024 17:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B67419EEC6;
+	Mon, 24 Jun 2024 17:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lYM5g7GW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Hau3DsbR"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE991EA87;
-	Mon, 24 Jun 2024 17:07:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0F8A1EA87;
+	Mon, 24 Jun 2024 17:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719248851; cv=none; b=j1yjlI/T2sOE/lpM0gNWgGop4CEnoKpQdrMgGMTLOwPJF1ooJ/A+25MJdPl/V1YRMMnUQkAVeuw8b6Fb3GzaiS4S0GQPo71XKv+xwzvWUagl21mtMYJ7Ll2fMdTyMRSBZoVZFB+KhjHGN7QZg43p+E3R3vMs+JgDuv1KspupiTs=
+	t=1719248959; cv=none; b=TDffEnUUdLYn7KYP1yFbzRE061j6UrILbWqLFwkk+kf29l8FOD3dieesFYy6Ccu97udkJoVdz9vzm56gHV3wTeMhIqPvVvVZFJ8aFyn9YC0dzHK1DTs4Zus+ZpHFhhXTR7QMKyFlpt2Iowqz0e/Rj2eHJT4Dy03toFBBhEW65d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719248851; c=relaxed/simple;
-	bh=xVjgbxgIL6BdkCx5ma5KcWzBtgfiKZ7zaKg5Ec62yS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UvYzEhAWpTUQOcNa8JXgefsBLTF9DKtpN88wfCXgUlsP2+5i+KO/H1LB6AZAjH0SX0tyZlaUEWvasn+NsdKoUeP23x1fFBc3SJmvDfHAo3y7DiVSFfGxieZaYN1QL2WxicUx2c6PR9UUxIqh/hXdIixMuy+hXIs9KSGXXD6151w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lYM5g7GW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF49AC2BBFC;
-	Mon, 24 Jun 2024 17:07:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719248850;
-	bh=xVjgbxgIL6BdkCx5ma5KcWzBtgfiKZ7zaKg5Ec62yS0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lYM5g7GWxzB6c3iSoA/1v+VC4k5KN3q6bmB/o7J0uIcfPxuXTLLEaesMKs9/KZAX1
-	 kE770aoUUViwYqw34Ibhh4KMup0tKxx9pfGAa4oZ/HEDaYPF/l8rSznmLKjzvTUHmF
-	 p7sssG/whKSVdSA89NeEKmoFLWg3xJd8SbOy4dmSFUDlClOnGzSgJ7Hbrsl3LqWM0J
-	 LuBUCv/B4XMOKU/xf9XQbE0gfSWcxmhdzihvh8qz9mdQTbDnx/G/4BVNBUFC4jKC/l
-	 DmEoJE5bgoMYuEVfYN2vYLXcFu4fYMXDxxuzYCIk3ePLwouS4M5PdPGOBYj65kOTie
-	 Z5k+qna58BsSA==
-Date: Mon, 24 Jun 2024 18:07:26 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas@t-8ch.de>
-Subject: Re: [PATCH v5 1/2] dt-bindings: power: supply: add support for
- MAX17201/MAX17205 fuel gauge
-Message-ID: <20240624-risk-sixtyfold-3b5f82833615@spud>
-References: <20240621125744.363564-1-dima.fedrau@gmail.com>
- <20240621125744.363564-2-dima.fedrau@gmail.com>
+	s=arc-20240116; t=1719248959; c=relaxed/simple;
+	bh=dwEPjDc/BlYER6gzVye1cYTBbiMlwD39qUuDxRhvp3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VtRpZ9dNsSOUhbUHHM0sLPX81tFPXehi0eORLqYIgRroCBPHB/n0J/btyKLna8oArrAOQaV/wCojotPGp+WsnOH5bbVnXXWwlbpZqJMkGG7lFN4jrCL6/NeWk0zVi58UmKhhZWEEPDu9DLjIaxr9Iky55jgjTWngucX2tog0PEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Hau3DsbR; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45OH8sUs131022;
+	Mon, 24 Jun 2024 12:08:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719248934;
+	bh=GAL79usfS5BXcnKgQIqFLVN5w19xXDo6oQmCqfMOimM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=Hau3DsbR+OoDtcYVWY1O6vB947vzPQ460bV1HzJfcd+DmIMtE6G+KUPGqqRpsChW6
+	 UbJl0fpbQXnhLP54YbYZtihoebiZS6Uj6QgaPqsjYUJ2r10wQPwdlrN66Nkp2jjfCZ
+	 GVWXUk8Z1Jh54P/QwBpGBU8fMPkmKyB1xoZ18Mtc=
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45OH8s0e093596
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 24 Jun 2024 12:08:54 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 24
+ Jun 2024 12:08:54 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 24 Jun 2024 12:08:54 -0500
+Received: from [10.249.142.56] ([10.249.142.56])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45OH8oAe119122;
+	Mon, 24 Jun 2024 12:08:50 -0500
+Message-ID: <d59c67e3-1445-4005-8b2c-92cb7c898770@ti.com>
+Date: Mon, 24 Jun 2024 22:38:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="c4ZUpTGjldgbfpX4"
-Content-Disposition: inline
-In-Reply-To: <20240621125744.363564-2-dima.fedrau@gmail.com>
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v4] serial: 8250_omap: Implementation of Errata i2310
+To: Udit Kumar <u-kumar1@ti.com>, <nm@ti.com>, <tony@atomide.com>
+CC: <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
+        <ronald.wahl@raritan.com>, <thomas.richard@bootlin.com>,
+        <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <ilpo.jarvinen@linux.intel.com>,
+        <stable@vger.kernel.org>
+References: <20240624165656.2634658-1-u-kumar1@ti.com>
+From: "Raghavendra, Vignesh" <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20240624165656.2634658-1-u-kumar1@ti.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
 
---c4ZUpTGjldgbfpX4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 02:57:43PM +0200, Dimitri Fedrau wrote:
-> Adding documentation for MAXIMs MAX17201/MAX17205 fuel gauge.
->=20
-> Signed-off-by: Dimitri Fedrau <dima.fedrau@gmail.com>
+On 6/24/2024 10:26 PM, Udit Kumar wrote:
+> As per Errata i2310[0], Erroneous timeout can be triggered,
+> if this Erroneous interrupt is not cleared then it may leads
+> to storm of interrupts, therefore apply Errata i2310 solution.
+> 
+> [0] https://www.ti.com/lit/pdf/sprz536 page 23
+> 
+> Fixes: b67e830d38fa ("serial: 8250: 8250_omap: Fix possible interrupt storm on K3 SoCs")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
 > ---
->  .../bindings/power/supply/maxim,max1720x.yaml | 58 +++++++++++++++++++
->  1 file changed, 58 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/power/supply/maxim,=
-max1720x.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max1720=
-x.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max1720x.yaml
-> new file mode 100644
-> index 000000000000..dc3e0e7cb2ce
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/power/supply/maxim,max1720x.yaml
-> @@ -0,0 +1,58 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/power/supply/maxim,max1720x.yaml#
 
-s/1720x/17201/ both here, the title and in the filename please.
-With that changed,
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+[...]
 
-Thanks,
-Conor.
+> 
+> diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+> index 170639d12b2a..1af9aed99c65 100644
+> --- a/drivers/tty/serial/8250/8250_omap.c
+> +++ b/drivers/tty/serial/8250/8250_omap.c
+> @@ -115,6 +115,10 @@
+>  /* RX FIFO occupancy indicator */
+>  #define UART_OMAP_RX_LVL		0x19
+>  
+> +/* Timeout low and High */
+> +#define UART_OMAP_TO_L                 0x26
+> +#define UART_OMAP_TO_H                 0x27
+> +
+>  /*
+>   * Copy of the genpd flags for the console.
+>   * Only used if console suspend is disabled
+> @@ -663,13 +667,25 @@ static irqreturn_t omap8250_irq(int irq, void *dev_id)
+>  
+>  	/*
+>  	 * On K3 SoCs, it is observed that RX TIMEOUT is signalled after
+> -	 * FIFO has been drained, in which case a dummy read of RX FIFO
+> -	 * is required to clear RX TIMEOUT condition.
+> +	 * FIFO has been drained or erroneously.
+> +	 * So apply solution of Errata i2310 as mentioned in
+> +	 * https://www.ti.com/lit/pdf/sprz536
+>  	 */
+>  	if (priv->habit & UART_RX_TIMEOUT_QUIRK &&
+>  	    (iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT &&
+>  	    serial_port_in(port, UART_OMAP_RX_LVL) == 0) {
+> -		serial_port_in(port, UART_RX);
+> +		unsigned char efr2, timeout_h, timeout_l;
+> +
+> +		efr2 = serial_in(up, UART_OMAP_EFR2);
+> +		timeout_h = serial_in(up, UART_OMAP_TO_H);
+> +		timeout_l = serial_in(up, UART_OMAP_TO_L);
+> +		serial_out(up, UART_OMAP_TO_H, 0xFF);
+> +		serial_out(up, UART_OMAP_TO_L, 0xFF);
+> +		serial_out(up, UART_OMAP_EFR2, UART_OMAP_EFR2_TIMEOUT_BEHAVE);
+> +		serial_in(up, UART_IIR);
+> +		serial_out(up, UART_OMAP_EFR2, efr2);
+> +		serial_out(up, UART_OMAP_TO_H, timeout_h);
+> +		serial_out(up, UART_OMAP_TO_L, timeout_l);
+>  	}
+>  
+>  	/* Stop processing interrupts on input overrun */
 
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Maxim MAX1720x fuel gauge
-> +
-> +maintainers:
-> +  - Dimitri Fedrau <dima.fedrau@gmail.com>
-> +
-> +allOf:
-> +  - $ref: power-supply.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - const: maxim,max17201
-> +      - items:
-> +          - enum:
-> +              - maxim,max17205
-> +          - const: maxim,max17201
-> +
-> +  reg:
-> +    items:
-> +      - description: ModelGauge m5 registers
-> +      - description: Nonvolatile registers
-> +
-> +  reg-names:
-> +    items:
-> +      - const: m5
-> +      - const: nvmem
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +    i2c {
-> +      #address-cells =3D <1>;
-> +      #size-cells =3D <0>;
-> +
-> +      fuel-gauge@36 {
-> +        compatible =3D "maxim,max17201";
-> +        reg =3D <0x36>, <0xb>;
-> +        reg-names =3D "m5", "nvmem";
-> +        interrupt-parent =3D <&gpio0>;
-> +        interrupts =3D <31 IRQ_TYPE_LEVEL_LOW>;
-> +      };
-> +    };
-> --=20
-> 2.39.2
->=20
-
---c4ZUpTGjldgbfpX4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnmnzgAKCRB4tDGHoIJi
-0sJuAP4oa/nY+pl3xEPLYrrj7PVV/pGENjWvjklF0u403a1vWgD/d5QZLRwuI4KV
-VJW28K/aQ3STiD4yBgZusbMsdusRlwU=
-=twk9
------END PGP SIGNATURE-----
-
---c4ZUpTGjldgbfpX4--
+Reviewed-by: Vignesh Raghavendra <vigneshr@ti.com>
 
