@@ -1,124 +1,119 @@
-Return-Path: <linux-kernel+bounces-227186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3B39149A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B01D59149A9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15E2E1C2212E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:18:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18DC1C221C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:19:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C729513B58C;
-	Mon, 24 Jun 2024 12:18:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4A713BAE5;
+	Mon, 24 Jun 2024 12:19:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HTmr34s0"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="BZzQie7w"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D7B4776A;
-	Mon, 24 Jun 2024 12:18:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F23E74776A;
+	Mon, 24 Jun 2024 12:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719231529; cv=none; b=CmrMMnBEWikr/IrUtSRBiIzkdv45x5RZiRpr5m6x19v1+h6oWNEswd78qnQKBfq91h3oNuyJA6py8MQo98WiV7LoeO6x5yTkSBoHT3ACjZ6+I/HJ8EWObavKU4fxSLTkzVOXhEucxExRWiVN7A1mdlfbhcQ0qT7edhVWD+1vDgE=
+	t=1719231589; cv=none; b=Sg2Om7AA2SsqxeaMsOGggQuv7cntMpDXVSqnxhxYuAMJWb5Igd3qC+aBivlj3gTk73p9WQv7b6jn392kNPrHaGuvJ6aSYow42GUhwdnTxHwKSexjYZHrSHrPyAWHYErAZxxx8oIEblzBT+bsflrBVkexSLT62jlXBGl/ZUGyZMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719231529; c=relaxed/simple;
-	bh=Q2jwPxeSpOSVN20g5wzq07/iFIp8leiAtqDeGO2zsWg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qcqpheh0LRPvc0u6GBwZ2e5HpQ2nzZtMlKILn36GGQviciYEVdP0OAZtGyXt2mJISbSIiPrrj9xjiJ1Pns8vMO3RPcHttC2UkvvQKYq35/VYR687ACYs+x8kjCJ3cE9rySIIBO/Yqvp23B7r8ti4biAZNcr9+OC1P1yCAR3xkss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HTmr34s0; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52cd717ec07so3219377e87.0;
-        Mon, 24 Jun 2024 05:18:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719231526; x=1719836326; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pI+IBO8mbNLx4EB6hYvwY+pSQvTtQIyHsgLM0FFnMHc=;
-        b=HTmr34s0xs8VPQ4h0IxP8GxNdiUUZ4BgddehBGt9s6BRACNV/568yBHatwIl5JUQFw
-         PXZE4MIIqEte9myz/v2D/jNuXM7EH5hab2MbIeSAT/uHIUw2K7YzFxxVnY+udSJLE8ke
-         NqSWwa/uRWSfjaNlbM2FXOCiw2jI4KVJ08+fmkAT2tlEtLNM110mQK2tAei3y+GF3yqM
-         cIJyaWgGV2i3fFYNqL+U3haTIzE5YMFhW+rdKMdro+SCqmjyKXx0tiuqCsSV+Zj/ucLl
-         P68FJEPT1vzogxBK7KCDUxjrCY4hTuBAv8lBb03Jl2BDIA3dum58I9j3VD7ym2BhkgvL
-         ixvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719231526; x=1719836326;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pI+IBO8mbNLx4EB6hYvwY+pSQvTtQIyHsgLM0FFnMHc=;
-        b=ktxCBGSa9r1GoAnyp43JQg8xN1Ptye+4BEOkSW9tJFBDMOwy31VXSO6dhMU71HHrVJ
-         WfONmDoMKAvUY55waj1yYQRRlie5iwN4GTonyZx8kPQ4iuAp9OaFCi6XHa1PfWMW2hU5
-         hhNsv1UEYew9wSdpJIM/4b+jpvQXMpKI/IndkORFavlenhw8jlU80pDeUvGVyDzzwJhq
-         OBaZQHHKmnHWYNFyAgZtPrtfgrQ5nNSCjSG8YQZKfipJ3URTobZX4nwt7NZJZ80xf4o4
-         7MuChhMwEnwTuUXHolJHyZEZHdiCFVIGk6BnUXwQWmonElGPnOW3PVUt7hEQUzPoLlhD
-         9X5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVUTjGHgYA+g9hDQcqh7/ufGCwVNDF1tBiZ+aUDAdkGNH6nm235E6QQT/+0Ygo7qPZ3Zi8jk0XSPsr8zltqSfn9qja+D4PU+OpRXwqsr7e8eoXdfIgf0nEvwCp+us4P4rYpvDORVA3SEw==
-X-Gm-Message-State: AOJu0YzoihFe0a+uzsldC7gK63r1NY7uCUXXV4dTIO2lWYyas1ueusWe
-	0gjyHwhqdZr3yMVfwoG+KDIUBgx/04rfrXBEavJhNrszgYk4CH3OJkgv2Q==
-X-Google-Smtp-Source: AGHT+IGOhdNKCJLKfAuk/c+639B/KspuwzTM0seZDswX1n8I2/wI73HfO1Ej7KKMpMuoOrjlYz8GWA==
-X-Received: by 2002:a05:6512:3450:b0:52c:dea8:7ca0 with SMTP id 2adb3069b0e04-52ce185cf71mr2383149e87.55.1719231525645;
-        Mon, 24 Jun 2024 05:18:45 -0700 (PDT)
-Received: from pc636 (host-90-233-219-252.mobileonline.telia.com. [90.233.219.252])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd64390d6sm981488e87.238.2024.06.24.05.18.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 05:18:45 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Mon, 24 Jun 2024 14:18:43 +0200
-To: Hailong Liu <hailong.liu@oppo.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Baoquan He <bhe@redhat.com>,
-	Nick Bowler <nbowler@draconx.ca>, linux-kernel@vger.kernel.org,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	linux-mm@kvack.org, sparclinux@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
-Message-ID: <ZnlkIy4XuzGBKinQ@pc636>
-References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
- <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
- <20240621033005.6mccm7waduelb4m5@oppo.com>
- <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
- <ZnVLbCCkvhf5GaTf@pc636>
- <20240621111545.awvgrap2nscgehxv@oppo.com>
+	s=arc-20240116; t=1719231589; c=relaxed/simple;
+	bh=c6fJHiLFxyHf/F2gL1N8M/PRrwGCHjFJaJ3bTOGiUGU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=qCeyJOPcdVCIyOF7g9DEAxxtpr8r8tVqe7ojBOpT3M6igFeDxxUdCpSxrHPSraZ32+IFPDvtIAdxJ0YsAZbBva/9cENqD6vod7MVgOy8RpydMVBskVQ7Ny3mUINcUwH93JSe/aVKRBabMtAO4DIFYgOM7Zw294pssvTxw+ySS+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=BZzQie7w; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1719231580;
+	bh=c6fJHiLFxyHf/F2gL1N8M/PRrwGCHjFJaJ3bTOGiUGU=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=BZzQie7w1Pj6MR3+WeApxClpW5sMn5UJ5ak9L9c8JNahbSiH/xT6mI0/0ivl970m3
+	 IHTXZOdqO0KtxIpWDrImJ8IBrbiWOC3pePHjiFnZ9lLl4yi04cDF6nDi5OR5SXb8MI
+	 KvgzUmBaz+M/lmEwwBB1veZNcaT6g20Fov3x7slU=
+Received: from [192.168.124.13] (unknown [113.200.174.117])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 39A9E675C3;
+	Mon, 24 Jun 2024 08:19:36 -0400 (EDT)
+Message-ID: <b635271e73b35487a06cf17176243e6ce4cfcd58.camel@xry111.site>
+Subject: Re: [PATCH v2] vfs: Shortcut AT_EMPTY_PATH early for statx, and add
+ AT_NO_PATH for statx and fstatat
+From: Xi Ruoyao <xry111@xry111.site>
+To: Mateusz Guzik <mjguzik@gmail.com>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro
+	 <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, Alejandro Colomar
+	 <alx@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Huacai Chen
+	 <chenhuacai@loongson.cn>, Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang
+	 <jiaxun.yang@flygoat.com>, Icenowy Zheng <uwu@icenowy.me>, 
+	linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
+Date: Mon, 24 Jun 2024 20:19:33 +0800
+In-Reply-To: <e2lv3qamggymdjqzujvyhsd2q34jy5tryniac7d446tlaebqwy@5x4zn7z4d3xz>
+References: <20240624085037.33442-2-xry111@xry111.site>
+	 <e2lv3qamggymdjqzujvyhsd2q34jy5tryniac7d446tlaebqwy@5x4zn7z4d3xz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621111545.awvgrap2nscgehxv@oppo.com>
 
-> 
-> IMO, I thought we can fix this by following.
-> It doesn't initialize unused variables and utilize the percpu xarray. If I said
-> anything wrong, please do let me know. I can learn a lot from you all :).
-> 
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 11fe5ea208aa..f9f981674b2d 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -4480,17 +4480,21 @@ void __init vmalloc_init(void)
->          */
->         vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
-> 
-> -       for_each_possible_cpu(i) {
-> +       for (i = 0; i < nr_cpu_ids; i++) {
->                 struct vmap_block_queue *vbq;
->                 struct vfree_deferred *p;
-> 
->                 vbq = &per_cpu(vmap_block_queue, i);
-> +               xa_init(&vbq->vmap_blocks);
-> +
-> +               if (!cpu_possible(i))
-Why do you need such check?
+On Mon, 2024-06-24 at 11:04 +0200, Mateusz Guzik wrote:
+> Below is a diff which compiles but is untested. It adds AT_EMPTY_PATH +
+> NULL as suggsted by Linus, but it can be adjusted for AT_NO_PATH (which
+> would be my preffered option, or better yet not do that and add fstatx).
+>=20
+> It does not do the hack to 0-check if a pointer was passed along with
+> AT_EMPTY_PATH but that again is an easy addition.
+>=20
+> Feel free to take without attribution:
 
-Thanks!
+I'd still like to make it Co-developed-by: or just From: you.  Could you
+give a S-o-b?
 
---
-Uladzislau Rezki
+And with this change AT_FDCWD with AT_EMPTY_PATH and NULL path does not
+work.  For consistency it'd be better to make it work too:
+
+diff --git a/fs/stat.c b/fs/stat.c
+index b0a4db7b90df..d04f7ba46645 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -752,10 +752,14 @@ SYSCALL_DEFINE5(statx,
+ 	int ret;
+ 	struct filename *name;
+=20
+-	if (filename =3D=3D NULL && (flags & AT_EMPTY_PATH))
+-		return do_statx_fd(dfd, flags, mask, buffer);
++	if (filename =3D=3D NULL && (flags & AT_EMPTY_PATH)) {
++		if (dfd >=3D 0)
++			return do_statx_fd(dfd, flags, mask, buffer);
++		else
++			name =3D getname_kernel("");
++	} else
++		name =3D getname_flags(filename, getname_statx_lookup_flags(flags));
+=20
+-	name =3D getname_flags(filename, getname_statx_lookup_flags(flags));
+ 	ret =3D do_statx(dfd, name, flags, mask, buffer);
+ 	putname(name);
+=20
+And should we do it for fstatat() as well?
+
+Let's wait for comment from Linus anyway.
+
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
