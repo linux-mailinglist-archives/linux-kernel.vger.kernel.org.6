@@ -1,56 +1,67 @@
-Return-Path: <linux-kernel+bounces-226513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A82B3913F88
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:25:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DEC5913F8A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 02:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69487282210
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 00:25:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7187EB21770
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 00:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C46C1C2E;
-	Mon, 24 Jun 2024 00:25:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB6C02107;
+	Mon, 24 Jun 2024 00:27:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mti3JftW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="i9qXaJFI"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3A7804;
-	Mon, 24 Jun 2024 00:25:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DF710E9
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 00:27:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719188726; cv=none; b=bwjK7Hfj1GX4rQtXuSOgDRBr8egLTqBqJlL/xcF9EjbYT1t+cMKr3GERKS9Da6sf1Unw6U4hMZRTY3D0zjtUIycUWorNQo1khnDj+PTc+Ki3Ck+8bFQ48e0Qkw/PgFAKilk2aFVpJuSIZ0QS8e/SSjSbbei3T5h886GaT5QYTWc=
+	t=1719188832; cv=none; b=i0XJO4UWzrbym4UGw+/PAy3Zy1VCL/6D514mlay8DpxMc7BjfmZhACcecB8cuCwa5KuqyTn6ltq08UqmpxqlfJ7vQ9hAiCoa7Jy5EVfrgI0QY/j6ogYHH+z0K5xWnWDjAJ9lvbc2FjUoVb+JpZQV1IzLIp6cVi3JBTmgKJEj5Og=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719188726; c=relaxed/simple;
-	bh=HG3NPzAhcZM/uRXI3JXKb+2sxcEzaOy/qx4Q/ZBuHEM=;
+	s=arc-20240116; t=1719188832; c=relaxed/simple;
+	bh=52OxxuazX+R/Vnm0vYC5sNNoL62RwHytLf89hQ79Yng=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dkVC+CKwxLzLMItl0WDl6z5DoXdKt6nUDg59nbJ8CtDXaICWXr0Y1UxIwdD5Qx9RuZYQq5DUn1GQ3bdsxLjoqgCXOE2COnSL02XhdXP6rH7EMuk24llLzuRWFtgufAvLutbFBFvSxIaiq6Dt+2efC6RqZArN/hUVyOGHCn+De9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mti3JftW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97C54C2BD10;
-	Mon, 24 Jun 2024 00:25:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719188726;
-	bh=HG3NPzAhcZM/uRXI3JXKb+2sxcEzaOy/qx4Q/ZBuHEM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mti3JftWP9EjEWaqQC8GC66kLmepD1OA/+t5tKJIjrUA4K2Q2D65Pp8rmW6IDL/iw
-	 C+hv9fOfH1TLTzscpHOCE8GIiOwYhfLvOnbkLmiue2tJzOzs7ESWLtl9OIGZ0i8bJC
-	 HzR1Fxpa9gcHFiFae0BYYUtgX+iCs51iugtRPzZH6/Asp9u9OCLmAy8Q9J/tTpt5Ey
-	 3HHhL3LJbK65YQ1NGi+i8eofrweBdCdjtsXUJv6voOOoljztzJXegwhHQ7MR48+WQg
-	 0buCmC4yxUSwy1H5oENivgucwinSmrBFSZjXS/lNYzaRn5ivPYPP/6fF3ddNPmwigh
-	 EFHFda2Jb0E/A==
-Date: Sun, 23 Jun 2024 19:25:23 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Mukesh Ojha <quic_mojha@quicinc.com>
-Cc: konrad.dybcio@linaro.org, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] firmware: qcom_scm: Add a padded page to ensure DMA
- memory from lower 4GB
-Message-ID: <jcvu2irnung4u6v6ticafrqze73kqenpqpy6le6du2q6ag734u@jeqxv5y7pumm>
-References: <1716564705-9929-1-git-send-email-quic_mojha@quicinc.com>
- <h6omxqre7pod3ztn7x3sckjbgcg32u4btfmtxwn2rkjw7uwsgd@ncdmu5ed4gm3>
- <d85bf913-b6dc-e9fd-7c54-fe52b79c2593@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OdJKkVx4TMwna5Q9kAEu71T7LP2WfmrqeTDOci91+pmKFPksmU3f51/MvyvTbOYzHTY3th5Bdz7zrN4gfprGln2RSVs0lpzCREH5UgmGvh2RMb9GKJDQ//CV2X8eGbNQzwC2LZqz8gZOqUgdGHn7YajhR8m8wwPQtAylwl4/W0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=i9qXaJFI; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: tglx@linutronix.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719188826;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sfBODeRMCmHf0D59NB4VFxImeuRpP9l3RcbtejptEbM=;
+	b=i9qXaJFIM037T4xJ2YTfT/z1sFypaAX41vPyefFqjROA2U0FvkOU9mjNkciQ+op4EqykLT
+	mXQVlR/F/JG53YyNBNkOu22V26tWM/DuU/lfe/t904NMtmelY1lrxVWT1RJiJtZK0tCADG
+	ZrZYAJXQzjiO0WmGgTM6fRvtKpKVbQM=
+X-Envelope-To: linux-fsdevel@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: axboe@kernel.dk
+X-Envelope-To: brauner@kernel.org
+X-Envelope-To: viro@zeniv.linux.org.uk
+X-Envelope-To: bernd.schubert@fastmail.fm
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: josef@toxicpanda.com
+Date: Sun, 23 Jun 2024 20:27:02 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jens Axboe <axboe@kernel.dk>, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	Bernd Schubert <bernd.schubert@fastmail.fm>, linux-mm@kvack.org, Josef Bacik <josef@toxicpanda.com>
+Subject: Re: [PATCH 3/5] fs: sys_ringbuffer
+Message-ID: <imwmkwctn3req47oreiyyfw5s2o6o656utadjmu4w7f2thqjhs@ho5ifk5wlkqt>
+References: <20240603003306.2030491-1-kent.overstreet@linux.dev>
+ <20240603003306.2030491-4-kent.overstreet@linux.dev>
+ <87frt39ujz.ffs@tglx>
+ <odohwdryb2yhzi5kzvlwv65kazbhzqyps6fzr2wukksdewukmr@gono7fdsth5d>
+ <87a5jb9rnk.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,53 +70,59 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d85bf913-b6dc-e9fd-7c54-fe52b79c2593@quicinc.com>
+In-Reply-To: <87a5jb9rnk.ffs@tglx>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, May 29, 2024 at 05:24:29PM GMT, Mukesh Ojha wrote:
+On Mon, Jun 24, 2024 at 01:16:15AM +0200, Thomas Gleixner wrote:
+> Kent!
 > 
+> On Sun, Jun 23 2024 at 18:21, Kent Overstreet wrote:
+> > On Mon, Jun 24, 2024 at 12:13:36AM +0200, Thomas Gleixner wrote:
+> >> > +	/*
+> >> > +	 * We use u32s because this type is shared between the kernel and
+> >> > +	 * userspace - ulong/size_t won't work here, we might be 32bit userland
+> >> > +	 * and 64 bit kernel, and u64 would be preferable (reduced probability
+> >> > +	 * of ABA) but not all architectures can atomically read/write to a u64;
+> >> > +	 * we need to avoid torn reads/writes.
+> >> 
+> >> union rbmagic {
+> >> 	u64	__val64;
+> >>         struct {
+> >>                 // TOOTIRED: Add big/little endian voodoo
+> >> 	        u32	__val32;
+> >>                 u32	__unused;
+> >>         };
+> >> };
+> >> 
+> >> Plus a bunch of accessors which depend on BITS_PER_LONG, no?
+> >
+> > Not sure I follow?
+> >
+> > I know biendian machines exist, but I've never heard of both big and
+> > little endian being used at the same time. Nor why we'd care about
+> > BITS_PER_LONG? This just uses fixed size integer types.
 > 
-> On 5/27/2024 2:16 AM, Bjorn Andersson wrote:
-> > On Fri, May 24, 2024 at 09:01:45PM GMT, Mukesh Ojha wrote:
-> > > For SCM protection, memory allocation should be physically contiguous,
-> > > 4K aligned, and non-cacheable to avoid XPU violations. This granularity
-> > > of protection applies from the secure world. Additionally, it's possible
-> > > that a 32-bit secure peripheral will access memory in SoCs like
-> > > sm8{4|5|6}50 for some remote processors. Therefore, memory allocation
-> > > needs to be done in the lower 4 GB range. To achieve this, Linux's CMA
-> > > pool can be used with dma_alloc APIs.
-> > > 
-> > > However, dma_alloc APIs will fall back to the buddy pool if the requested
-> > > size is less than or equal to PAGE_SIZE. It's also possible that the remote
-> > > processor's metadata blob size is less than a PAGE_SIZE. Even though the
-> > > DMA APIs align the requested memory size to PAGE_SIZE, they can still fall
-> > > back to the buddy allocator, which may fail if `CONFIG_ZONE_{DMA|DMA32}`
-> > > is disabled.
-> > 
-> > Does "fail" here mean that the buddy heap returns a failure - in some
-> > case where dma_alloc would have succeeded, or that it does give you
-> > a PAGE_SIZE allocation which doesn't meeting your requirements?
+> Read your comment above. Ideally you want to use u64, right?
 > 
-> Yes, buddy will also try to allocate memory and may not get PAGE_SIZE memory
-> in lower 4GB(for 32bit capable device) if CONFIG_ZONE_{DMA|DMA32} is
-> disabled.
+> The problem is that you can't do this unconditionally because of 32-bit
+> systems which do not support 64-bit atomics.
+> 
+> So a binary which is compiled for 32-bit might unconditionally want the
+> 32-bit accessors. Ditto for 32-bit kernels.
+> 
+> The 64bit kernel where it runs on wants to utilize u64, right?
+> 
+> That's fortunately a unidirectional problem as 64-bit user space cannot
+> run on a 32-bit kernel ever.
 
-Is that -ENOMEM or does "not get" mean that the buddy fallback will
-provide an allocation above 4GB?
+Ah! Yeah, that's slick.
 
-Regards,
-Bjorn
+Your code doesn't quite work though; with this scheme, we can't just
+subtract the 64 bit head and tail to get the curretly used space in the
+ringbuffer, that'll give the wrong answer if the other end is 32 bit.
 
-> However, DMA memory would have successful such case if
-> padding is added to size to cross > PAGE_SIZE.
-> 
-> > 
-> >  From this I do find the behavior of dma_alloc unintuitive, do we know if
-> > there's a reason for the "equal to PAGE_SIZE" case you describe here?
-> 
-> I am not a memory expert but the reason i can think of could be, <=
-> PAGE_SIZE can anyway possible to be requested outside DMA coherent api's
-> with kmalloc and friends api and that could be the reason it is falling
-> back to buddy pool in DMA api.
-> 
-> -Mukesh
+But we just need to mask off the high 32 bits (after the subtract,
+even), and we can still use the full 64 bits for ABA avoidance.
+
+I think I like it...
 
