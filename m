@@ -1,103 +1,127 @@
-Return-Path: <linux-kernel+bounces-227839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE2A791571D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:26:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 534BE915723
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC72E1C22209
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:26:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF3C31F25C4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:27:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F161A00F5;
-	Mon, 24 Jun 2024 19:26:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EC81A00F7;
+	Mon, 24 Jun 2024 19:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O5Z1R62R"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="gF7CDuFF"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D3D3A1A8;
-	Mon, 24 Jun 2024 19:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4FD19FA75
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 19:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719257213; cv=none; b=t3l+Ncj0xfDMO3x5fGP3JusIFHei3Tt3D1rZH58KGs5hQhalxDwtHww0lUQyAAxzVIyHNY7lQ39HQ6FXlsm00Pg2O/JQZP1uGbbP1CE/D/354RuL4HU9jvovWGwaqkHA9YdQ3zUHg/RhGGLtPJYqO5cLEVHg231qas5GyWXI9oA=
+	t=1719257255; cv=none; b=lARE2OUFM1swXPSFULrywLrdBXWqK+JuXmL5aX8+xOKkOCtuoybWi48LaWHPZuoKGLDpiyBHzSn54tmpfkZ4dxxvs5Xqo/YOlVWbZWUlxZ5cHKzeiiV/AvypIkPJ5VTdhD9cfyYbowcReFg+RIFMmmzRDRosnwgwz/k/2ie78mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719257213; c=relaxed/simple;
-	bh=hgp34vR7CJ1TExcCjyfAzGRk69I6tcnwK5xq7DVAkz0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YhTnNyFe6Mew6lt9uLzQrok2HNvEFFtqD203Rf97HPejHu8Uaj1l9n7Ul54zGMO1KgpL6UTpqV27mKzxsoWjIs5q4fBflpIXInL7k5/HwzLRfgtr4atVz4clSKyL23eJxoqp6FSWOXVNofKrCVV94lNDmyjQRVj1LtVwLDpafdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O5Z1R62R; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=2ze4lo7T22dkN683PR4LGCHaCsLSG6Pgxy5Fyl8OuRo=; b=O5Z1R62RnZnqiIOsEyR5avK426
-	puj1m8I7kYzzPBFXfUyZZeikV/zaWA4UI5r1FCq79Fc0N/1G3t6YHmGYdzomqxXr28TjjsIzhRKpv
-	YQX3XFWVJIp6tZKXO/E52rUyTprf6/TqyadRDfanXwOa/TNyQjBj4H89ZT62ZbzhRkkUJoNAR2UF8
-	Vr9hq1DnRl99Mh2a0uwAfQ2+F4TJSgzqTtccGctvZ26zfdf7tZJmYT0F7fkBXvL5T7V+nnK+n1m/k
-	x6EEgPBCznF3LKa9ca5Hpn669DR6d3liQGDOwC0R0sgC8lArkssAyQzcN+o/A4ax3yjkesn7EhZSu
-	sICN1jbw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sLpKx-0000000AN1L-2GDk;
-	Mon, 24 Jun 2024 19:26:47 +0000
-Date: Mon, 24 Jun 2024 20:26:47 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: kernel test robot <oliver.sang@intel.com>,
-	Usama Arif <usamaarif642@gmail.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Nhat Pham <nphamcs@gmail.com>, David Hildenbrand <david@redhat.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Hugh Dickins <hughd@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [linux-next:master] [mm] 0fa2857d23:
- WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof
-Message-ID: <ZnnId18scFvE_a6K@casper.infradead.org>
-References: <202406241651.963e3e78-oliver.sang@intel.com>
- <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
- <Znm74wW3xARhR2qN@casper.infradead.org>
- <CAJD7tkbF9NwKa4q5J0xq1oG6EkTDLz8UcbekSfP+DYfoDSqRhQ@mail.gmail.com>
- <ZnnBVBItTNWZE42u@casper.infradead.org>
- <CAJD7tkaC6d_RkhRhMpEeS1zTEtoQYw56J3LLdzD1aM9_qu-3BA@mail.gmail.com>
+	s=arc-20240116; t=1719257255; c=relaxed/simple;
+	bh=aPrgENly1DR9PH/wdtIbg/hUadyOA+qJD/H7Iz6sMP0=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=IaQg99HO1/plZn3bUBXPywyRL6CVlgf74JXZa46/5BpUzzLHvDL+q6zTTuZbkwJN4zawtfzhiPyIokLDrCc+S79hrVcTJIfZubPFmtKk/pU9N00adkzSZYVOjWLz+V9cTuq/983tKVouPbM2ofXEmfMg/LfBT6iUvuuacg3xnTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=gF7CDuFF; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719257235; x=1719862035; i=markus.elfring@web.de;
+	bh=aPrgENly1DR9PH/wdtIbg/hUadyOA+qJD/H7Iz6sMP0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=gF7CDuFFsPMkq55gL++PZQnaBvPNfrsLcFDaC5Gn6ETiz9h1NCfMbw1kS1cjDAFL
+	 4roaIiv0lQU4VNam3oWBGaq1rNRQudAxstQFKSl6eQMHXzBKJ3Gvg0oCDS8OQGMZk
+	 iPuwDclIMKq/N82kjzh33YZOcWB/wStExXYqk7eiOC/brFUpC2ziZjiCyTO8xgu2m
+	 JQOeyR68hH4R78gRclgjehaj2260/FnRDLLaZ1maEMpFkzPIiCeFs4kxPS25LIjRK
+	 ShL5QDaIbp+5qlbC3nS2yzW2isjgEgRoy0YwpOy0qfvPvx+ye6Fo/+f5oyxy9puE6
+	 SkwZRwOi1hyq95aEtg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MC0LJ-1sBgTe0HC1-001mBe; Mon, 24
+ Jun 2024 21:27:15 +0200
+Message-ID: <b3492198-5345-4bb6-ba89-5efed7ee2440@web.de>
+Date: Mon, 24 Jun 2024 21:26:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkaC6d_RkhRhMpEeS1zTEtoQYw56J3LLdzD1aM9_qu-3BA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/amd/display: Check pipe_ctx before it is used
+From: Markus Elfring <Markus.Elfring@web.de>
+To: Ma Ke <make24@iscas.ac.cn>, amd-gfx@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>,
+ Alex Hung <alex.hung@amd.com>, Alvin Lee <Alvin.Lee2@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
+ Dillon Varone <dillon.varone@amd.com>, George Shen <george.shen@amd.com>,
+ Hamza Mahfooz <hamza.mahfooz@amd.com>,
+ Harry Wentland <harry.wentland@amd.com>, Jun Lei <jun.lei@amd.com>,
+ Leo Li <sunpeng.li@amd.com>, Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+ Wenjing Liu <wenjing.liu@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Aurabindo Pillai <aurabindo.pillai@amd.com>, Hersen Wu
+ <hersenxs.wu@amd.com>, Natanel Roizenman <natanel.roizenman@amd.com>,
+ Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+ Tom Chung <chiahsuan.chung@amd.com>
+References: <20240624024835.2278651-1-make24@iscas.ac.cn>
+ <8d9791ba-14cf-481f-8964-341880865a0a@web.de>
+Content-Language: en-GB
+In-Reply-To: <8d9791ba-14cf-481f-8964-341880865a0a@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:QsoC4SXldUzuk375Wc2WXmE91WuMdOt4J165MAo1T/Xm4WI8sDt
+ UkA4C/GmyyhBo/SKIBS9z1TwoSbHvJAxi+X86SGr2txUMITQrkUGi/UMa7HA/z4s9RE7kKV
+ kUzBUHz8aPd/H5w/C1UoLAeLcefnWp00R43lS8UC+sUjR9hNeAFetTmL8psYtT44BbS4M0E
+ 1VxnGZ6svJM3C2cRjgoEg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:Js37ALAPEAk=;yne6aFhk+Z7F/RX1fsfiZBHhWLF
+ HFyvXBX4LgW2UjswFYv6nrBC+5q3DRepStb137Z0h01MG15wDNLJkpMzBexoYTosFHDIPwr/K
+ hR67oFGyTo3pNZFNVBT+A+veLGbMxw/c00AtHgm9wzz7mwwbCJN5bIo90iA1bnaCBTKGYRKWh
+ O/JT37JysiO98iYXC2JuTyqEPZxNneG0/vgFiZrtH038Le5uvvifif2s+iZBps8KmO7yZ10aT
+ 4QzQGkf3k1F5BjwUeHacmA8Izzn83Q1mmUcQYBc8rNdI3+i+MhFGLy4vQp9saa1lw4CFXi72A
+ rDbrVBnWxfoLEXQ6HI52yNJDgcXJuq8On4uEF1UhSp4qyy/P6bxc5KwyD0zWJJ9TBIf5dsjTn
+ 4yzYRDbswggBHnEzqy057B560PTQHXPOgD7Mu2wBTqMFC3yVpTTfKXnTxvJtjJi2iYHkt6kEK
+ OYl/rti+o0wx02VIIy0AmoSv2a0+X7tHo0JOy17LQDqeBAnpTm4nvBKPRx8V/E4z4UkF+rrW7
+ 3HfkKK17zO52uMrHP60Ta/gbBm3pVHfHtHahPL7lAi8c3b+gW69+BMJ9W3wDzPDBUNdDND2LU
+ i0XfUkd8KJly6YXFOCZBGvV3Sypj1/D5Ehv+Y0tPxiS5H7qxqX1FCYO+R32/IA3pQoRnNDW6X
+ eQIhn5kTiKaKCnC6hZrM1kiacz46gCO4L+ngCS6zo4dHCgomrMJnHJSEpt+5eSb8OVZftNW15
+ IdLl23Pdz8Lt71q/Hi61PUv2ksuc69D46DMEXcia/X+PMIs0mju8EwjrN3cQCfSuKw+P87bOU
+ kZRPWCYoVFjnIVbHHLgdndT6RdGn9lH6T1iiIDv6o1x68=
 
-On Mon, Jun 24, 2024 at 11:57:45AM -0700, Yosry Ahmed wrote:
-> On Mon, Jun 24, 2024 at 11:56 AM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Mon, Jun 24, 2024 at 11:53:30AM -0700, Yosry Ahmed wrote:
-> > > After a page is swapped out during reclaim, __remove_mapping() will
-> > > call __delete_from_swap_cache() to replace the swap cache entry with a
-> > > shadow entry (which is an xa_value).
-> >
-> > Special entries are disjoint from shadow entries.  Shadow entries have
-> > the last two bits as 01 or 11 (are congruent to 1 or 3 modulo 4).
-> > Special entries have values below 4096 which end in 10 (are congruent
-> > to 2 modulo 4).
-> 
-> You are implying that we would no longer have a shadow entry for such
-> zero folios, because we will be storing a special entry instead.
-> Right?
+>> resource_get_otg_master_for_stream() could return NULL, we
+>> should check the return value of 'otg_master' before it is
+>> used in resource_log_pipe_for_stream().
+>
+> A similar fix was integrated already according to a contribution
+> by Natanel Roizenman.
+> From which Linux version did you take source files for your static code =
+analyses?
+>
+> Please take another look at the corresponding software update.
+> [PATCH 16/37] drm/amd/display: Add null check in resource_log_pipe_topol=
+ogy_update
+> https://lore.kernel.org/amd-gfx/20240422152817.2765349-17-aurabindo.pill=
+ai@amd.com/
 
-umm ... maybe I have a misunderstanding here.
+How =E2=80=9Cinteresting=E2=80=9D is it that a similar source code correct=
+ion needed
+to be repeated by Hersen Wu?
 
-I'm saying that there wouldn't be a _swap_ entry here because the folio
-wouldn't be stored anywhere on the swap device.  But there could be a
-_shadow_ entry.  Although if the page is full of zeroes, it was probably
-never referenced and doesn't really need a shadow entry.
+drm/amd/display: Add otg_master NULL check within resource_log_pipe_topolo=
+gy_update
+https://lore.kernel.org/amd-gfx/20240501071651.3541919-31-chiahsuan.chung@=
+amd.com/
+
+Regards,
+Markus
 
