@@ -1,136 +1,134 @@
-Return-Path: <linux-kernel+bounces-226997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16699146F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:05:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57759914708
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DB471C224C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:05:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8313B24D1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:06:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B280613665F;
-	Mon, 24 Jun 2024 10:05:13 +0000 (UTC)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3428139D16;
+	Mon, 24 Jun 2024 10:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iXgtj2TO"
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE92134410;
-	Mon, 24 Jun 2024 10:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F86213959B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:05:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719223513; cv=none; b=bdS0mPLWnqMMFMkQGUq5ka6NXWeT+Bl+aC14UfEMZ7cRXCjVlckuSJaNDp3bSFe/wQ4lGKCT199GiditRM3k1P/4bKwEEKUfbx+tTW6SViSP8lH4vNuzR12xxVFZgk4gXAIC3KWqYeGfvEYWjnk8vsQrxpYTA6stgyYJdeSzogA=
+	t=1719223543; cv=none; b=bJfivbemX0dJ4nXZNBE/UgNRbvF2voKRrBpvLWcCbK7BWhWUfGAhxnkbf6l86h3EOBe6hekjarGygrgJutXAmm4K6mvg/wnYAGaJhpPmicHcvd9RmFYJw6i4C4G7bsoSLPq2mURVIT6c4KyOQm05ZuYFCHtdmAMu1aGSLb5zDmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719223513; c=relaxed/simple;
-	bh=A7Fkj4mBCK5mp/zDLv2TuxMKh/LKlaVUT5j1NNeP9x8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ueJhFPijpt9mw3b+43qy7obemHsqPsSTbw1EbcM8bz7NQc5uEBkEy49xjINBa05AMhqIEDBcV4Ki3g+/T4RucsklQWPl4H1CD9IOX2PUnaHVUYSeGUExcD4uChKbmArbrdasjzfm8sE64/rggFR67Vos6SKFj3RQuwJP+Xp1gCY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e02da9b2db7so3614801276.3;
-        Mon, 24 Jun 2024 03:05:10 -0700 (PDT)
+	s=arc-20240116; t=1719223543; c=relaxed/simple;
+	bh=59Ceek29WST1fDSGduPHZlc7f0kSkPsfJjKjs8wR6EM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Liae3f23Rcmp6HaJwJq9tmFZQ1Kq1wzH1sFTRRFoKGJDRA54/wCr5mrAohfHnYnDJQwZgL0nmuBOSvxpl4TEFv8DD7Lf8giYjxUlZFhHHfwpss7y5WITUUWFTKkvKBQYG/y0xWykK5bzok+D3HPTv5XBOJ0zyNeHR4jFUVU6H/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iXgtj2TO; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-36279cf6414so3227044f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 03:05:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719223540; x=1719828340; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7YwHsXJujiD0iPTiagCaZU8j7Hkxo5Qj/O9XI+sxjQo=;
+        b=iXgtj2TOzWzi82xnt+sZcTBp7HP5FKXdvqcaKJiBeFOIHaunrZmotqyS1KJgtOSXZi
+         0WHJUxkn/s9GxL+BpaaBXUm++NCsETHDTbmr7ky+FznGxbpmEryL/cbEy1N+aQcfmSP2
+         ZW1vEKVcsFyec2TwWFYhydTqmBOKsQltg9Ghv1G7bv5bU2Wc3a3dpqs5BFjblv6sKQRP
+         RO4vF/CV5JEogLH5ICNC8G0zpbOLI/wc20WcQ+mWse2IinNY+QY8v73IcUlbB739aL78
+         ejr2Uj7fCx234paa9TZRBv8DME5GCL5oTxjUfF3AzpYanEfVZHrGYb662Uzd6B688BRW
+         XjnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719223509; x=1719828309;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gjeZCMf2tIUIgStBOY6HxHTekamYnDUVhCcCFqii2pA=;
-        b=naJMCh2rkdG65jJeFWJlM66rOb/XWfLIIBLeY6Uwz7yo+nyWhJYhnhA3o8LBeBHBy1
-         5IIGeYLOi+s/2US83DcVR30obGwsHjzfJqqI7eCGWW6+TftgkAUjdeN4Jl6FRJxIhiTF
-         1K2ybOm6tT+3RE3aJi1HYhDQwLOUDfDCTRt2dVK9UeCZakN5X/DYa3DVPFceeWw2rCuk
-         n4WDF0NXbtHpdUeFDM3yLvJ/700khubhLHYcoStB04/BhrIwkIYltACNWg2f/PFXzKKP
-         gJ2HDHnQZaVDFDZgaaEAppZZS/QxqmCzdoX3qpG94snk37pOQSr7UAEUORneZ/VLSiXE
-         W62g==
-X-Forwarded-Encrypted: i=1; AJvYcCUE6ZaWtbU4QtKvig+M674lXpR2amTh/l0aRApsPHpBRoj7XH2ljN/C45FwQeTRDexku/SIqgagJDXiYDK29+QbehHl6Sna7Zs1kG9WQCHzHrRJ+MWmSIe6dxX2yg8PHljWxcI31t6SHilON53wAlrPrrKGmkMdQIrD4HpgDcryAeVxv3/L+c0N0a2v
-X-Gm-Message-State: AOJu0YySwrZgPYTJfRRBLuzL3tFoZQCDp9fSewojgVsaPCP+9dHYw1hr
-	5CQG2gRCkE312aLMtgVrwT3XRieZbWp6MjDU7qTBpn3xlCKx+r6uCw4gsVV0
-X-Google-Smtp-Source: AGHT+IF5Fu8GfgflM96x7irF6dr1JRaHjDrM72MKILWv5cFGAJEkWcPhSbUQbExxlQdABwl8wq1NMA==
-X-Received: by 2002:a25:a28b:0:b0:dfd:bd4d:c0d3 with SMTP id 3f1490d57ef6-e0304042deemr3569599276.58.1719223508697;
-        Mon, 24 Jun 2024 03:05:08 -0700 (PDT)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e02e6116b08sm3081467276.13.2024.06.24.03.05.08
+        d=1e100.net; s=20230601; t=1719223540; x=1719828340;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7YwHsXJujiD0iPTiagCaZU8j7Hkxo5Qj/O9XI+sxjQo=;
+        b=P4U0jWHQ/ZPQptDL+poJimCin8OT+s0l5kBQCOMZx3E94MiBpXPbAO1RjaJLWgOOdJ
+         z7c0tHmL9QF8dITa7AWHwa5CSksNuUNjJ9pgrtQOReFaKYtZhse1iFk0OejimgVmflqK
+         jX/OJLybqF9snqSjIzhna7jV9bn5JZ8j5FSvhrfZxwJNO/d4P9RsCq/1zTzSIKIKQS5T
+         zeoVxvfpF00V/TjPqO1wVJIzR8VGhypI0P7ELL6QxkzTkot4/DkhjubjQtYBlEqwFux4
+         83Sze8jvbiKL7xWIfc6wRpFXhnPoZF+vgzDt/zytl3LdhxbZbR4S1k2g95qA/Cjjmakd
+         Rk0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV9BFgcRlvcK/u2s9lvJRzK/YYa0A0x2VopPzGf/J5jCDhbBHT2ZkcPUBpSInWU5Uxsl+DSTA8bS8vYOz4SalASDwPq1nNfOBy3QEPx
+X-Gm-Message-State: AOJu0Yx65sECxCIN/xlGFYBeP0zzKzt5fjlyj92Ctq/0MC4Sp3I4dDIZ
+	7RBDSuabttYKbMel2yQlhxudilb3Ep5zqdS22AUxJmIUA9n3pY+AytL3Uhcx3kc=
+X-Google-Smtp-Source: AGHT+IHQdmqz6uyjlSKsVponwiqLHfGjG3Nl2X4/xaxGmb+o+kzPfdjcq6JNP8vVbhGQSwbSFBWQdA==
+X-Received: by 2002:a05:6000:184f:b0:366:eb61:b47 with SMTP id ffacd0b85a97d-366eb610bafmr3041300f8f.8.1719223539762;
+        Mon, 24 Jun 2024 03:05:39 -0700 (PDT)
+Received: from [192.168.0.3] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366383f65bcsm9529360f8f.13.2024.06.24.03.05.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 03:05:08 -0700 (PDT)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-63186c222eeso37677567b3.2;
-        Mon, 24 Jun 2024 03:05:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVEdK4K71Qrm8zsVr4L0+uVdmE5yIeqQMFftyKFpu71nIULk1/2Tb5VW9maImuT9myPL5d5Cz+xm42d/pGTkADz2flkF5xzIZFcr0UeO3euRZF0hWyGzIdY7HDIbhb5v7R0qg/BVKMOdKFPI99FvHsg4QMFBiTkn6rGg+lsMGQnN0aOta8h50ei0wHJ
-X-Received: by 2002:a81:7241:0:b0:618:1034:f4ef with SMTP id
- 00721157ae682-643aab82db0mr33174677b3.16.1719223508049; Mon, 24 Jun 2024
- 03:05:08 -0700 (PDT)
+        Mon, 24 Jun 2024 03:05:39 -0700 (PDT)
+Message-ID: <c3240caf-a291-4f6b-a467-a424f1b3babb@linaro.org>
+Date: Mon, 24 Jun 2024 11:05:38 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <bb6b85722d80d665779e3043d1499c4fc38f0ff3.1714562004.git.mirq-linux@rere.qmqm.pl>
- <CAMuHMdUy+e1vQRBUfo2paBJi4pro-tKf9hOe3YaddcB=OtRfJw@mail.gmail.com> <ZjOJyGQE1ze2WXh8@qmqm.qmqm.pl>
-In-Reply-To: <ZjOJyGQE1ze2WXh8@qmqm.qmqm.pl>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Jun 2024 12:04:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWKcxh4TY-4=drdTDegUy_WYHFXm6g7dWaXH_Yh0j+Nvw@mail.gmail.com>
-Message-ID: <CAMuHMdWKcxh4TY-4=drdTDegUy_WYHFXm6g7dWaXH_Yh0j+Nvw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: renesas/sh73a0: use rdev_get_drvdata()
-To: =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, linux-renesas-soc@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/8] Add sc7180 camss subsys support
+To: gchan9527@gmail.com, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240624-b4-sc7180-camss-v2-0-0dfecdc50073@gmail.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240624-b4-sc7180-camss-v2-0-0dfecdc50073@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Micha=C5=82,
+On 24/06/2024 00:22, George Chan via B4 Relay wrote:
+> SM7125 is the SoC found in the Xiaomi Redmi Note 9 Pro(joyeuse) cellphone.
+> This series adds support to bring up the CSIPHY, CSID, VFE/RDI interfaces.
+> 
+> Since SM7125 is a low-speed variant of SC7180, SC7180 testers please
+> take a look and have a test as well.
+> 
+> sc7180 provides
+> 
+> - 2 x VFE
+> - 1 x VFE Lite
+> - 2 x CSID
+> - 1 x CSID Lite
+> - 4 x CSI PHY
+> 
+> The sc7180-camss binding should be comaptible with sdm845 yaml.
+> I've copied a new yaml from sdm845-camss.yaml, strip all _src clk and
+> put new maintainer information. If this is not desirable then i can add binding to
+> existing sdm845 yaml instead.
+> 
+> In addition, a bootable tree of sm7125/joyeuse is availble at:
+> https://github.com/99degree/linux/tree/camss
+>    
+> 
+> Signed-off-by: George Chan <gchan9527@gmail.com>
+> ---
 
-On Thu, May 2, 2024 at 2:40=E2=80=AFPM Micha=C5=82 Miros=C5=82aw <mirq-linu=
-x@rere.qmqm.pl> wrote:
-> On Thu, May 02, 2024 at 09:56:39AM +0200, Geert Uytterhoeven wrote:
-> > On Wed, May 1, 2024 at 1:16=E2=80=AFPM Micha=C5=82 Miros=C5=82aw <mirq-=
-linux@rere.qmqm.pl> wrote:
-> > > Replace `reg_data` access with the official wrapper. The field is goi=
-ng
-> > > away soon.
-> >
-> > Thanks for your patch!
-> >
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Closes: https://lore.kernel.org/oe-kbuild-all/202404301218.URkWO6dj-l=
-kp@intel.com/
-> >
-> > I am not sure these tags are needed, as the issue is not present in
-> > any tree yet?
-> >
-> > > Signed-off-by: Micha=C5=82 Miros=C5=82aw <mirq-linux@rere.qmqm.pl>
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Do you want me to pick this up (for v6.11), or do you want to queue
-> > this with the other patches from the series that removes reg_data?
-> > Please let me know.
-> > In case of the latter:
-> > Acked-by: Geert Uytterhoeven <geert+renesas@glider.be>
->
-> If you're ok with it going through the regulator tree, then I guess it
-> would be easier to manage as the series would build without observing
-> additional dependencies.
+Could you please rebase your series with
 
-I was wondering how the rest of the series is doing?
+https://lore.kernel.org/linux-arm-msm/20240522154659.510-1-quic_grosikop@quicinc.com/
 
-If you want me to queue this for v6.11, the deadline for that is
-this Friday.
+taken in ?
 
-Thanks!
+I think your patchset ends up with less churn in it as a result.
 
-Gr{oetje,eeting}s,
+---
+bod
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
