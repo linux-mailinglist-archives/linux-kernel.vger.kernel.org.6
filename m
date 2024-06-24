@@ -1,107 +1,126 @@
-Return-Path: <linux-kernel+bounces-227104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D2E3914865
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:20:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09E9E914869
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:20:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBFCC1F23F74
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:20:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B47F31F223F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E91F13B29F;
-	Mon, 24 Jun 2024 11:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF4A13958C;
+	Mon, 24 Jun 2024 11:20:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GJUCynfX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HmuiA2J2"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58D913A260;
-	Mon, 24 Jun 2024 11:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC86137758
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:20:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719227996; cv=none; b=boVzWCPMQRN4ZlOwRqIrOof9dSOZJ1EC5ZYqYw8G+ley4qcCQNMIXnsGZG+NyxtTyF0HB8n0XAskxKWdJ3nvCeaO6os87sWTgUUDzN/C4K/WcXbVj2Ygkw0KW0TTHK5xYB7GAjqbEEgMCbkgXmNkaZqhr61P1SoVzmK13JlJ0M4=
+	t=1719228041; cv=none; b=cG0aAVhbSBjnjOs3zbG2wNRuko4ku9S6vnxlCVGMmwaOAKusK4OErKwKqn5SCp4fQZyMWDEtFUKdAgsR+mrUId6k+5/5uSt2Htuz25qjB3bXXlmpUjd284uvLY4osG+B56/4wVFxLxKcYcu/mTxzg0JFHNJPwpqizLUJykjfjyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719227996; c=relaxed/simple;
-	bh=jwRuwDcYkx6HKhRYpj9ivnWyjbPJ2carDaco6Q3fl5c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EAzTVRdPCUZU1RAIfxiNpWBmUookvQSJWX5lkn4F34ZMVeUJZ3w7fOCoJZG2cdiUUI97n1bitpNKYxUT1N+lema3cCggedm6j/XJ3uTPptVNZd8ihIGnhmFC1HEJyI1qXv8HVeChtQMt63l182qzTit+IDZunKZtsYEiFFq1OBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GJUCynfX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 205A5C32781;
-	Mon, 24 Jun 2024 11:19:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719227996;
-	bh=jwRuwDcYkx6HKhRYpj9ivnWyjbPJ2carDaco6Q3fl5c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GJUCynfX/d55AUJywlTOmPPeEMHC2xfyNOTwW8d7xyIvfCEDRXl/UxyPqR5OlwycI
-	 K/c5LDiWNY0tmenmxAdvzTpuzEV7eMxdERVdcVLkv0xx8WA/PEROQD7XGSPj+gp3/Z
-	 20sACruQIHcT2ttGWZVpeR2DRhLaAAfXFh0OLgJB7xH+OJc3QvOZhmEQDlXH+JJ5rb
-	 MZj0HHmJGycB/QDgTWXLsyzEeX/Nq3YTejZCs3rFzT472QP30bg7G3W8MgokKsi3hf
-	 q1ZeojkU39GdnnAbN5FktmkRBW24CasiRZTdax0i/zqLr3+nDjoiB7S6+CURyGCurj
-	 IDBnVoJ715oEQ==
-Date: Mon, 24 Jun 2024 12:19:51 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, alsa-devel@alsa-project.org,
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ASoC: dt-bindings: amlogic,gx-sound-card: drop minItems
- for audio-widgets
-Message-ID: <2d33411e-b98c-4cd8-aca9-d65b55fe43bf@sirena.org.uk>
-References: <20240605-topic-amlogic-upstream-bindings-fixes-audio-widgets-v1-1-65bd7cc2e09b@linaro.org>
- <5318f6e2-7bb2-4ed5-b0aa-585a6a2d8a5d@linaro.org>
+	s=arc-20240116; t=1719228041; c=relaxed/simple;
+	bh=8SljLriCQU/R9iZ5gWt9zSCnrJAdSlcr5Md1yQsHitk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G0NNC18uaHApPrRDzPUP2L0nZAKec/jlyykUaQOBQhRxcLMbfnjgocHJyAUX1pl3yRpVKH0cV1h1xAuPlIpGfF3LulPMyNwkUyYISWEMOgF/ArJIMHlge9c00wMIWii0nDnIvs6Q/5W2Vf9N/yk9U3ewl6Zs1KuX+A2tx7xgV9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HmuiA2J2; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5c20995d038so178660eaf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 04:20:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719228037; x=1719832837; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hiWe4k8FtBd5fLnyYS4pxEhg5OzBr8vUWEFs5mIbuS4=;
+        b=HmuiA2J2rC+CpZ6U6KTdguUb92pH7DT52mE3U8EnDhUKPXpB49IFYd3c+oLszwXYBg
+         w8X5wMXwZCjFsvwgS4z3BHXvgGPrjfk92jQCVTVqTkDE8+5MHThp4TI6Tj5KtrPPLzm8
+         GsDWLqIlxIzdXvAWzRq0iDGDE+lV7FDMldHSy4pzBnBdq9b/b2u9wRsMb9BM//CDlhjX
+         UQmVsAzr/NJHb1inZCmDFLg3d5o98EFVFVaLE+B50Z/WjDLdE7vsh8HKDIXL0qlGuPg0
+         DFHWNSXElIibyfEhOT0gSMBg3br4W6qT9V2v4v6vFoH0AA6i/UtP0jqpBwTuCbX4rpU/
+         frMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719228037; x=1719832837;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hiWe4k8FtBd5fLnyYS4pxEhg5OzBr8vUWEFs5mIbuS4=;
+        b=IWyDhO6gyi62ZqtuQnodPb6PXmptKKpQ7OH6sASEAXferScpAWsxL3fWe/QOv+Pnb4
+         NCRBDBDKDEp+5B//RSH1IPu8E10SdXkumErFTTQdKZUnMxZ4DFepf8VXj256Jzld90xA
+         bNjusVuZPyhiz07DQircuqZRfbMDcPcAZnnggn89Kb7MGuxwdfITZudpGIp5X/LE0gCo
+         QXNAMY7RSdPNbNY8eUlXZfWCg2KxqKPOWIAy3SYNAzNmGDgHjhIKAiTSYqzhxoOwprI2
+         fDOPY997GbrSFn963QRMGw80UIWTzgMV3QLYd6HPCIY7aMkoMazI2oxLGmjoC/vOcvEm
+         rx1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVroRTUeBHtzTvMlf4wl3Vt01B8bLJHqqNsb7MxcnKx5BQ6p0u+V8ipmHrdP+UAAq/UzNqKWKbDjnSgLMwUK3RR/Kn6FROdduVUDZ+2
+X-Gm-Message-State: AOJu0YwyoFpABQqpzmoGF/+hLez1fWW9AWjf0PXspvXyMlQ28E/tSHET
+	qqLtOqmf4NomunL4UQOwnyW5XepOmTvPlIcA+Q4+UkARsO3m8qQo24zyh7I36HJVBiPU4at31GO
+	LF4wWacrfx9BJd6wONiG917Xl1lArmqwAphVGlw==
+X-Google-Smtp-Source: AGHT+IHfldjpB99ZpNwFcajstPYz4MdvmrWm26sCR24wJ27onowRiUicbCtcbFxhvjwoR18exO9DD0r6k4/LILVcIj4=
+X-Received: by 2002:a05:6820:2b0d:b0:5c1:eee6:6ed5 with SMTP id
+ 006d021491bc7-5c1eee66f99mr3951941eaf.2.1719228037550; Mon, 24 Jun 2024
+ 04:20:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3UDGno+ZHVOYsb7K"
-Content-Disposition: inline
-In-Reply-To: <5318f6e2-7bb2-4ed5-b0aa-585a6a2d8a5d@linaro.org>
-X-Cookie: Allow 6 to 8 weeks for delivery.
-
-
---3UDGno+ZHVOYsb7K
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240617-usb-phy-gs101-v3-0-b66de9ae7424@linaro.org> <20240617-usb-phy-gs101-v3-2-b66de9ae7424@linaro.org>
+In-Reply-To: <20240617-usb-phy-gs101-v3-2-b66de9ae7424@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Mon, 24 Jun 2024 12:20:26 +0100
+Message-ID: <CADrjBPpRCuQwLOG35mjAc==6mD4rgx2HzqLHgCA8fNGg79YOnw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/6] phy: exynos5-usbdrd: support isolating HS and SS
+ ports independently
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Sam Protsenko <semen.protsenko@linaro.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, kernel-team@android.com, 
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 24, 2024 at 11:13:44AM +0200, Neil Armstrong wrote:
+Hi Andr=C3=A9,
 
-> Gentle ping !
+On Mon, 17 Jun 2024 at 17:45, Andr=C3=A9 Draszik <andre.draszik@linaro.org>=
+ wrote:
+>
+> Some versions of this IP have been integrated using separate PMU power
+> control registers for the HS and SS parts. One example is the Google
+> Tensor gs101 SoC.
+>
+> Such SoCs can now set pmu_offset_usbdrd0_phy_ss in their
+> exynos5_usbdrd_phy_drvdata for the SS phy to the appropriate value.
+>
+> The existing 'usbdrdphy' alias can not be used in this case because
+> that is meant for determining the correct PMU offset if multiple
+> distinct PHYs exist in the system (as opposed to one PHY with multiple
+> isolators).
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>
+> ---
 
-Please don't send content free pings and please allow a reasonable time
-for review.  People get busy, go on holiday, attend conferences and so=20
-on so unless there is some reason for urgency (like critical bug fixes)
-please allow at least a couple of weeks for review.  If there have been
-review comments then people may be waiting for those to be addressed.
+Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
+and
+Tested-by: Peter Griffin <peter.griffin@linaro.org>
 
-Sending content free pings adds to the mail volume (if they are seen at
-all) which is often the problem and since they can't be reviewed
-directly if something has gone wrong you'll have to resend the patches
-anyway, so sending again is generally a better approach though there are
-some other maintainers who like them - if in doubt look at how patches
-for the subsystem are normally handled.
+Tested using my Pixel 6 pro device. USB comes up and it is possible to
+use adb from the host to the phone
 
---3UDGno+ZHVOYsb7K
-Content-Type: application/pgp-signature; name="signature.asc"
+regards,
 
------BEGIN PGP SIGNATURE-----
+Peter
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ5VlYACgkQJNaLcl1U
-h9D4twgAhu1ezJ/DoUKfgtWfZ0GmLxAwrgt6KsXsN4s3OGsbtIG3G0DKrCzFllHb
-k0rMkM4WRBfFDXwg9LbgeXw/KNfBFzx3jHpw/x1xEoaZr/+o3UNMeVeQ36NaYEtC
-IEKUb6secYEfRGfy56+J53ROIZEZIIFfaOx4lnKR+eC7WQPaAmWnRk7JKYkDnQso
-NnN7JzRoemLk8w0egCPLcybDDsZzaed5ONX4Cu8L3lFpUi5+8cPLVCrEaV8RLatt
-5736pIa94htZOdw8H7bA1LlHPtq+ZgUOA+FccPD/bbbDVTjes9hVJ8ymrYz6sS9O
-2eXFwNHNDwHts7s5tPlx4Nm8C4+Nkg==
-=i/+i
------END PGP SIGNATURE-----
-
---3UDGno+ZHVOYsb7K--
+[..]
 
