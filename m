@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-226810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9F4914439
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:07:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C97291443E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E4F1C209AB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:07:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E4551F22F31
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B0C49634;
-	Mon, 24 Jun 2024 08:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gRZ4cJ0d"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B3349653;
+	Mon, 24 Jun 2024 08:08:39 +0000 (UTC)
+Received: from mail-out.aladdin-rd.ru (mail-out.aladdin-rd.ru [91.199.251.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE9C1F93E;
-	Mon, 24 Jun 2024 08:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C3447F6C;
+	Mon, 24 Jun 2024 08:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.199.251.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719216469; cv=none; b=nfKLkdtUOZZSIaZnJI8S+hg6Bo+15Iwq9ixUUkQccQrguuGqO7IuXiQShlc+Apu53y27ao3NyzRgdlzRVMcz4gIGbqgKOAnQA5bYbnVVGJunBfWFBMCQ1bixPYqn2MXWnfiuSOiSCL8KtqeW7DJh+1sUzXF7mzf9SJj4goSsx7Y=
+	t=1719216518; cv=none; b=WgDbHyOTYBu62lV0FBwENghT9dA4p56zL184I5wlJSiQiMdMGaY62Sb7LBqixNF5KpOX3Ox50OvnAuPcDRgiDPObq0SNSGbC79qwZKen8Fgfy5DwAfNVQayvxtc0kwRPhyucFhmE7k2FCwsEGSRO0PRXkarSj2TCh2amAnK6RbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719216469; c=relaxed/simple;
-	bh=9c5oNZS+LjHH9na3DaPVfqiVtLQU+XdlPYhiu+MRJ28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4+TcCPI6gY8oj5eharPhCuKB5zJpHqvk8/P6OYG6SQIT2HCezZCOkX0SdKIVrto/efhs0SbDppklMvE+na+hljKcINNm4x7xrEV3lBSc0V6Df6DJcuzLMPUaVU0rFXC9YW0ZpV0/eI+px5O6vLEwoq9cPMkdQsQJwdriqteq/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gRZ4cJ0d; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719216468; x=1750752468;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=9c5oNZS+LjHH9na3DaPVfqiVtLQU+XdlPYhiu+MRJ28=;
-  b=gRZ4cJ0dVJzcCl9tIq8UffVG9H7k7I1wQIIPh0SqI5sgHEHw691hppfT
-   5nofj8G8sRfC4zSV0zaEWAzyTouqWcSgZy4GQdmmofWq0LlCs3ytvkceJ
-   nIIbTurJ6wP4Vgr4efFXSCid60xXncGmelIhm4Cc/st6vY5x5HfYqxPhi
-   j6BjJYLhfY69ZGTvdQ+HZOqji+oAzo8h1w0u+5eY3Gelcm2jMUSdVcNgR
-   5EH54pj9QdODjDNnmAS3+cuS1b5CGJwOo/07E25KYqyRNWtE+77s3FXpm
-   PqL2nnH7EYkGw/zGbU/5dYNl3XTRu0qr2kOwCgnX9Gj1QSUAdJiga0WwP
-   Q==;
-X-CSE-ConnectionGUID: 49PhHZ3MSleKXrVAk6GUBw==
-X-CSE-MsgGUID: 23tEh7f+QGiixPNX23JjWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11112"; a="33716755"
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="33716755"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 01:07:47 -0700
-X-CSE-ConnectionGUID: MQvdXJ9TSkKVqXhme9l+hw==
-X-CSE-MsgGUID: Bt7kKibZQGOUh8mDi6jAmQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
-   d="scan'208";a="43318449"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 01:07:46 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id C6EC011FA94;
-	Mon, 24 Jun 2024 11:07:42 +0300 (EEST)
-Date: Mon, 24 Jun 2024 08:07:42 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Wentong Wu <wentong.wu@intel.com>
-Cc: tomas.winkler@intel.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Jason Chen <jason.z.chen@intel.com>
-Subject: Re: [PATCH v2 2/5] mei: vsc: Enhance SPI transfer of IVSC rom
-Message-ID: <ZnkpTmeuHI53xrmf@kekkonen.localdomain>
-References: <20240624014223.4171341-1-wentong.wu@intel.com>
- <20240624014223.4171341-3-wentong.wu@intel.com>
+	s=arc-20240116; t=1719216518; c=relaxed/simple;
+	bh=1EfVWLN8EujHeW9ugE6PQVP6G/uH1aYrSaJvrCJ+/xA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S6yYMyNuHseliQeJG95Q0HXBEJ+3D7sDtfv6lhkj0HB6k1+CEeSN49p9NivdLmqxqKZRJlQ5IQ5OnFomyuF87ZJmf6LFA/augfkhkcRQcyB7eaCrjn9CiONA4dTw/4MJtfQQvL7vkZaGhfd9LZyRgAB8yfR0pM1qla0vG6BTs5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru; spf=pass smtp.mailfrom=aladdin.ru; arc=none smtp.client-ip=91.199.251.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aladdin.ru
+From: Daniil Dulov <d.dulov@aladdin.ru>
+To: Alexei Starovoitov <ast@kernel.org>
+CC: Daniil Dulov <d.dulov@aladdin.ru>, Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
+	<john.fastabend@gmail.com>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH v2] xdp: remove WARN() from __xdp_reg_mem_model()
+Date: Mon, 24 Jun 2024 11:07:47 +0300
+Message-ID: <20240624080747.36858-1-d.dulov@aladdin.ru>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624014223.4171341-3-wentong.wu@intel.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EXCH-2016-01.aladdin.ru (192.168.1.101) To
+ EXCH-2016-01.aladdin.ru (192.168.1.101)
 
-Hi Wentong,
+Syzkaller reports a warning in __xdp_reg_mem_model().
 
-On Mon, Jun 24, 2024 at 09:42:20AM +0800, Wentong Wu wrote:
-> Constructing the SPI transfer command as per the specific request.
-> 
-> Fixes: 566f5ca97680 ("mei: Add transport driver for IVSC device")
-> Cc: stable@vger.kernel.org # for 6.8+
-> Signed-off-by: Wentong Wu <wentong.wu@intel.com>
-> Tested-by: Jason Chen <jason.z.chen@intel.com>
-> ---
->  drivers/misc/mei/vsc-tp.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/misc/mei/vsc-tp.c b/drivers/misc/mei/vsc-tp.c
-> index 5f3195636e53..fed156919fda 100644
-> --- a/drivers/misc/mei/vsc-tp.c
-> +++ b/drivers/misc/mei/vsc-tp.c
-> @@ -331,7 +331,7 @@ int vsc_tp_rom_xfer(struct vsc_tp *tp, const void *obuf, void *ibuf, size_t len)
->  		return ret;
->  	}
->  
-> -	ret = vsc_tp_dev_xfer(tp, tp->tx_buf, tp->rx_buf, len);
-> +	ret = vsc_tp_dev_xfer(tp, tp->tx_buf, ibuf ? tp->rx_buf : ibuf, len);
+The warning occurs only if __mem_id_init_hash_table() returns
+an error. It returns the error in two cases:
 
-The latter ibuf should be NULL explicitly.
+  1. memory allocation fails;
+  2. rhashtable_init() fails when some fields of rhashtable_params
+     struct are not initialized properly.
 
->  	if (ret)
->  		return ret;
->  
+The second case cannot happen since there is a static const
+rhashtable_params struct with valid fields. So, warning is only triggered
+when there is a problem with memory allocation.
 
+Thus, there is no sense in using WARN() to handle this error and it can be
+safely removed.
+
+WARNING: CPU: 0 PID: 5065 at net/core/xdp.c:299 __xdp_reg_mem_model+0x2d9/0x650 net/core/xdp.c:299
+
+CPU: 0 PID: 5065 Comm: syz-executor883 Not tainted 6.8.0-syzkaller-05271-gf99c5f563c17 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
+RIP: 0010:__xdp_reg_mem_model+0x2d9/0x650 net/core/xdp.c:299
+
+Call Trace:
+ xdp_reg_mem_model+0x22/0x40 net/core/xdp.c:344
+ xdp_test_run_setup net/bpf/test_run.c:188 [inline]
+ bpf_test_run_xdp_live+0x365/0x1e90 net/bpf/test_run.c:377
+ bpf_prog_test_run_xdp+0x813/0x11b0 net/bpf/test_run.c:1267
+ bpf_prog_test_run+0x33a/0x3b0 kernel/bpf/syscall.c:4240
+ __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5649
+ __do_sys_bpf kernel/bpf/syscall.c:5738 [inline]
+ __se_sys_bpf kernel/bpf/syscall.c:5736 [inline]
+ __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5736
+ do_syscall_64+0xfb/0x240
+ entry_SYSCALL_64_after_hwframe+0x6d/0x75
+
+Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
+
+Fixes: 8d5d88527587 ("xdp: rhashtable with allocator ID to pointer mapping")
+Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
+Acked-by: Jesper Dangaard Brouer <hawk@kernel.org>
+---
+v2: Removed unnecessary brackets as Jakub Kicinski <kuba@kernel.org>
+suggested, also added Acked-by Jesper Dangaard Brouer <hawk@kernel.org>
+Link: https://lore.kernel.org/all/20240617162708.492159-1-d.dulov@aladdin.ru/
+
+ net/core/xdp.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+diff --git a/net/core/xdp.c b/net/core/xdp.c
+index 41693154e426..022c12059cf2 100644
+--- a/net/core/xdp.c
++++ b/net/core/xdp.c
+@@ -295,10 +295,8 @@ static struct xdp_mem_allocator *__xdp_reg_mem_model(struct xdp_mem_info *mem,
+ 		mutex_lock(&mem_id_lock);
+ 		ret = __mem_id_init_hash_table();
+ 		mutex_unlock(&mem_id_lock);
+-		if (ret < 0) {
+-			WARN_ON(1);
++		if (ret < 0)
+ 			return ERR_PTR(ret);
+-		}
+ 	}
+ 
+ 	xdp_alloc = kzalloc(sizeof(*xdp_alloc), gfp);
 -- 
-Kind regards,
+2.25.1
 
-Sakari Ailus
 
