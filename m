@@ -1,329 +1,276 @@
-Return-Path: <linux-kernel+bounces-226740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C9059142E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:39:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02FBF9142ED
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43882284BE6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:39:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE5D6284BC0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 579133EA90;
-	Mon, 24 Jun 2024 06:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC1238DE4;
+	Mon, 24 Jun 2024 06:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="sfzSSg0R"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2047.outbound.protection.outlook.com [40.107.92.47])
+	dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b="NUFP2TvS"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88293BBC2;
-	Mon, 24 Jun 2024 06:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719211159; cv=fail; b=vCIFElg5Bn8BNNFpVTSO1myopiaCjGR/NgxM1FdrsE3WOryRaxZXvTUcM5nv9qgI8rsEIt0HcZkV58VxYGZ/v5tLJZXbMcbq8JXdZQdv5EF+WiLhvzyXLOVIJP/HLFzG11NSLc86MV0B24GDKxRwbneqFNTjsLzlHwGQkw9nWpU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719211159; c=relaxed/simple;
-	bh=z79sT/BGkOzVjZNG6SYShpQp+1hOy+Rh4hau3hczsa8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Xc4cP6v4/PozgtJJxk8IO9Cy7Hc9PVziEzxJyyjZMYVFXLDX0SarFm7r2eG/ppPuuvRXHH7ippouVKGUtuPpeYiKiZAPwFLsTZassK2t568eIMBBnGj31jSKkEGOEmusRifTafYjnhczcRS7UIqa/L+ZwcKCIu+RB+78ebilopU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=sfzSSg0R; arc=fail smtp.client-ip=40.107.92.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Kz/YpudkTnexXX3GSNFRw10hrFLKbz/RsCByC/YbzjX7yb3f3xSw878VSkGLWUJaPSdHPtlRDAeGUyR5yaZGSZd9MAHVgSo9l5RUBN4SzOdFoAM4VkNWUKhwrohzKDPrCTxANsC3WGOQNAmasIbLYnO7Ri/BoMmBbxPO0KjTimDcfUzUDWQ/kCP+BIvTWup26wmMbi9S3BFmMXdkZpI3z0NR0+xvnXBdO+EyWLiiCze2k5ckOZjxCndYWJ3reUvY6gT9eYR/XSP6y2lKXac73m4W/lFb/UkVoQOsk0vPlThvdZ953HKJB9LgLIE0TQsAZuD2cvOJUj6H7E8dDiRGcw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PJOPF+/q8MQ7xRB7Z6D6kDajcKnyujjYO3CWF0fQ6F8=;
- b=KHNJI/cxR9BybmICLCLjz81KT5WxQTgfEQE96rZuo2d6Vn1sVpZ+VSmj8cwy8fRnK5gyeBgkA99+ShBgzlKl3qMqhy7X62uGf5cu6pxtBYJoaz4hiTpTTsRnrGQxs01F7YWt/F4H9h4JfThxxALcxjjsLQtQTuzBmOi/rbcHCMKbbwVi0j9p2zWzUID6OI0r7lQmdSmINlp4ZsnpmUscwGibnPEtOaZurnF8epe3DYPZnqLshfxF70/VZUUWFL5+9QfsQoqHkJd2U0SyjTw6vZwuo0MAqy0D5QeCQiMpJulnt6i9PtLlYF1FVdYb5JK5xFJ2vmD4NluhBgkk/132HQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=intel.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PJOPF+/q8MQ7xRB7Z6D6kDajcKnyujjYO3CWF0fQ6F8=;
- b=sfzSSg0ROkpQ/L6WUlhSkyXDq9dn2OUYRMzhrMPUvkSaKjKVvrWYaA/zJ3qlYfbifYc1RnFnyr0qAh6lwLbn6qmC3cXMVtuFHiUV6W0p5W/hWZKRHEqmRjXXANzYpCersINd9eM+dzIvCFRjVM1sNZLkkykrPAiUUl5dYpw67ic=
-Received: from CH0PR04CA0061.namprd04.prod.outlook.com (2603:10b6:610:74::6)
- by SA1PR12MB6704.namprd12.prod.outlook.com (2603:10b6:806:254::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.25; Mon, 24 Jun
- 2024 06:39:13 +0000
-Received: from DS3PEPF0000C37E.namprd04.prod.outlook.com
- (2603:10b6:610:74:cafe::46) by CH0PR04CA0061.outlook.office365.com
- (2603:10b6:610:74::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.38 via Frontend
- Transport; Mon, 24 Jun 2024 06:39:13 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- DS3PEPF0000C37E.mail.protection.outlook.com (10.167.23.8) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Mon, 24 Jun 2024 06:39:13 +0000
-Received: from [10.136.36.140] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 24 Jun
- 2024 01:39:06 -0500
-Message-ID: <0afc09f6-da93-dde5-45ad-d4784b9b4227@amd.com>
-Date: Mon, 24 Jun 2024 12:09:03 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C82413FEE;
+	Mon, 24 Jun 2024 06:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719211301; cv=none; b=GA4KmEcNwLv/qr4x+oAW97zmSogIZhSOaRhx8ZaKvIURImSulRAtyg1bmSeigz2fdnkrsdWVNLCQueniMIfScaPbqNzNmE6JOQ6DyVQWSkGyw77yeN4Y8wArPNTbWOaMztZxwFD2f7XjeGm7FIHaS+mCAC8gQBMwXrsq8JqydRM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719211301; c=relaxed/simple;
+	bh=JP5B+MQQugsOtC+vxbP5c8Qc99M6wSYruuOXlnDvx8Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wi23vlMD/0RDcsr/q6WE8CQcKbX5hDEsQDI2tg0BtL3fRPoEG6i82S7JPbnBUeI6x44+qnxI1vNCTG6FNXbb6Fv6/LyB32T0joCKIRfddTYkZZoiW2xaq4n3DjbjMZsSdUDu0zruQEMgOk69sOK+yUrdYTb+snntPC2shUT3V4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com; spf=pass smtp.mailfrom=gmx.com; dkim=pass (2048-bit key) header.d=gmx.com header.i=quwenruo.btrfs@gmx.com header.b=NUFP2TvS; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.com;
+	s=s31663417; t=1719211288; x=1719816088; i=quwenruo.btrfs@gmx.com;
+	bh=dQp6F7hrw8SpbrlKTnZJQMJNtEhqy2JqWEWubbGkggo=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=NUFP2TvSLUd8n7wH8clIHq8HZOO/Nia5xRhT6JM6/hPJaBtg6ig0NpOBsAZ+WOCF
+	 DqH3Mzh9nk/hJ5F+SCz7kBTFikl1xC0gGuJiVdG3jIRA0Lx3bD1JEEGlhjacsBgWG
+	 /x79DAjq+ILLRmhAg9JqQFm0Kq9IK4pcqYK/HwnFXu+V7WCP9TPQC5wMMVUEEfLu1
+	 iROk+rTpyvPYn6oyq3pCoP+63b9OCIKdCNccWYL7ACk297QELvbxZbWzxVJmJmO6P
+	 Ua+kYH6WQ5+IYcDP+MWItlLqgrEPCPWBtv3QpSPx1CGichLwV4Mp9mqnYocXiBRRy
+	 IV5UR3RGf4ulomoMeA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [172.16.0.191] ([159.196.52.54]) by mail.gmx.net (mrgmx004
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 1MqaxO-1shmvn3lOy-00o8ZP; Mon, 24
+ Jun 2024 08:41:28 +0200
+Message-ID: <40fbcb1c-e35f-4310-a2d9-9932570cb245@gmx.com>
+Date: Mon, 24 Jun 2024 16:11:21 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.1
-Subject: Re: [PATCH v3 00/10] Add per-core RAPL energy counter support for AMD
- CPUs
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] btrfs: qgroup: fix slab-out-of-bounds in
+ btrfs_qgroup_inherit
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: "clm@fb.com" <clm@fb.com>, "dsterba@suse.com" <dsterba@suse.com>,
+ "josef@toxicpanda.com" <josef@toxicpanda.com>,
+ "syzbot+a0d1f7e26910be4dc171@syzkaller.appspotmail.com"
+ <syzbot+a0d1f7e26910be4dc171@syzkaller.appspotmail.com>,
+ "fdmanana@suse.com" <fdmanana@suse.com>,
+ "linux-btrfs@vger.kernel.org" <linux-btrfs@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "syzkaller-bugs@googlegroups.com" <syzkaller-bugs@googlegroups.com>
+References: <20240624030720.137753-1-aha310510@gmail.com>
+ <a0840520-929a-4973-8ce9-91db07d6a9ec@gmx.com>
+ <c5646885-3368-4c49-9cbd-092d4b7b7551@gmx.com>
+ <CAO9qdTEJaM=gEgQJLXuhKnh2jNA2KPyU9b4_kMWn6YNa3CU4SQ@mail.gmail.com>
 Content-Language: en-US
-To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-CC: <rui.zhang@intel.com>, <mingo@redhat.com>, <acme@kernel.org>,
-	<irogers@google.com>, <mark.rutland@arm.com>, <jolsa@kernel.org>,
-	<alexander.shishkin@linux.intel.com>, <peterz@infradead.org>,
-	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-hardening@vger.kernel.org>, <ananth.narayan@amd.com>,
-	<gautham.shenoy@amd.com>, <ravi.bangoria@amd.com>, <sandipan.das@amd.com>,
-	<linux-pm@vger.kernel.org>, <namhyung@kernel.org>, <adrian.hunter@intel.com>,
-	<kan.liang@linux.intel.com>, <tglx@linutronix.de>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <kees@kernel.org>,
-	<gustavoars@kernel.org>, <oleksandr@natalenko.name>
-References: <20240624055907.7720-1-Dhananjay.Ugwekar@amd.com>
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20240624055907.7720-1-Dhananjay.Ugwekar@amd.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37E:EE_|SA1PR12MB6704:EE_
-X-MS-Office365-Filtering-Correlation-Id: e86476be-0b67-42e3-c445-08dc94185c91
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|1800799021|82310400023|7416011|36860700010|376011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K3Rqc0x6dmVJTU9jTG53cDJ1eTRpblVtcU5OeXhPK0s2QzhoaldmclFaN3Nm?=
- =?utf-8?B?QUxJMVN6M0FsWTZSUW9HUUExMkF6Vzdrc3l6dnozNmc4N1Ftek0yMTQrUjZt?=
- =?utf-8?B?TUhkbFJlbTlZdm9CUDVUa3FkU3VvS01OUjI4Z25PZnJWT1N3aTFKcm1Id0tF?=
- =?utf-8?B?dkloLzJkbnVGbzkwRjYyYmRUMTRzbENydzNuVVNvVm1tSm1yVGtFZEFYeUJm?=
- =?utf-8?B?dkx2eFJ3cFozQ1NWc2Q3dm1UemhQMzJPRnVUWmFYWUQwWitmKzlHdi9VUVQr?=
- =?utf-8?B?Y0NoTUFHUWxIdFdMbG9sVERuY09GNDVaVzdiQkx5VzJkbC9XVWFrd2NVem1G?=
- =?utf-8?B?Z0J3WG80Z3BycUhwK1kxaDZBRmM0cUhKZjE2ZmNYTFpHdUxMNnBtckIzalVL?=
- =?utf-8?B?QkliUkdsTkNxTkdYbU8yT3cyeEFrRDkrMHRLMXJBay95RWxmcXF5bTRpUmpF?=
- =?utf-8?B?dG8yZG5BVnVVY2R1ZTQ1dnlFczlxRldSanFrRTBOUi95YkpxRG9hNVJlaWpW?=
- =?utf-8?B?U1VDVHdhYlpJKy9wWGpra3VDQk01STdsdjlURTZCSVQ3NUVld28wN1UzeW9G?=
- =?utf-8?B?eWkrVG1jTUYxTDdyajlJbEdQa3BDRVRpN3hLeG5rTElsREQ4T2hjSkJSN2FF?=
- =?utf-8?B?OHZqT2J3UUNMTzdwdWEvOU14RjR6aGlBTTBDRVlxNUNHUTZYY05GQ2lsb0da?=
- =?utf-8?B?MEFxczE3ZmVMT0pDYTMyQ3ZPZzNodWMvTjJlV3B5UEExcUEzdDVpS1E0cHRL?=
- =?utf-8?B?dU41a3h3MnJLdlJXZzFaL2xLR1phTUxwcEFuOTBEeElXSkk0clB0STFUZXN1?=
- =?utf-8?B?RlM2S2RzN2RnaFVucGRva2JLV0RWU2h3cXRQWkxiVUFQYmpJYXZWVUxCL2RM?=
- =?utf-8?B?emR3MjUrTFpoMks0U1NramZDck10Vkh2SzRGay9QMlZHVU1DWnY4R2toZTZh?=
- =?utf-8?B?SE9vZkhlUU9SY200Y3NXcDhJL0tGNU9Ecm40aDZYbXVqL2MvMU1hcmxpbjdM?=
- =?utf-8?B?dFlWV1NGdnhINE1kdmErZWRQVy9xSVFxVEdVeFJzckVXUC9BSWlnSzVncGU3?=
- =?utf-8?B?bS8yc01LcUg0MEhOZmpUbEovb09jL0FVYmRHMVEyVXNxNFR1aUp2eTRDd3R5?=
- =?utf-8?B?a25COGVRRlgyZXIwdUZZRmx2VWtBRHJZOG9TZzdBMEpDS3FrUmFSTmdNOTE4?=
- =?utf-8?B?Z3Vlck1GT2t0cVc2aytJcG9qTzcxMHhtQU8rRExuNFVDWkp3aHBFZVcrMElU?=
- =?utf-8?B?MURvcXNyRVZoYmNub0dJSFhTbWVOY29LY3VIaXlQby9GdExJendrbFZ5RERx?=
- =?utf-8?B?MzZ0ZnFQbjFVbjYyejVsaFVZeEpGUGgzY2Z1eVdqbTZlLzdPQ0NuZXZuZjNs?=
- =?utf-8?B?NkxMM01ITURSdWp4UEIvazBHVWpHMmE3VlZJWFFoeUtsV0VtOXFRRGQyeFcv?=
- =?utf-8?B?akZnUWE5VEF1T3ZIcnFVMkZuaG5TbnVMOHF3Mm1oZkxVQlhGTDdmbXZDZmZR?=
- =?utf-8?B?U1JEV1l0Mi9rQmhDQlZPR2wrcmJUSXgyMjVFYXduc2lTZWE5TWV6UVUvdmFm?=
- =?utf-8?B?dENNVFRBdVhDckJGWm8vRXBGaEMyK2RoaGtZWG5Vd3l4MWVkdm9FNE5TR3lL?=
- =?utf-8?B?akFoYmc3a1VrSXdXVWdiVDQ3cHo5d0tyTnFPa0oxZVVZYi8ya3l6bDhCN2RW?=
- =?utf-8?B?LzZkYTl6SUs1NDNyVTFVNTdHM25tNHVMVHdtUWQ2WWYyQlpiR2lFU0J3N3Uv?=
- =?utf-8?B?eElVZzJNbWlrbmUvdDFYdG5kZnVrNklqZ0txMkVZNmRGQ1hPN3dIWlRpd3BN?=
- =?utf-8?Q?dn1BrUpCNQoRH63LLro3rJKqlyMJ8T3gCmDI0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(82310400023)(7416011)(36860700010)(376011);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 06:39:13.1700
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e86476be-0b67-42e3-c445-08dc94185c91
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	DS3PEPF0000C37E.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6704
+From: Qu Wenruo <quwenruo.btrfs@gmx.com>
+Autocrypt: addr=quwenruo.btrfs@gmx.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNIlF1IFdlbnJ1byA8cXV3ZW5ydW8uYnRyZnNAZ214LmNvbT7CwJQEEwEIAD4CGwMFCwkI
+ BwIGFQgJCgsCBBYCAwECHgECF4AWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00iVQUJDToH
+ pgAKCRDCPZHzoSX+qNKACACkjDLzCvcFuDlgqCiS4ajHAo6twGra3uGgY2klo3S4JespWifr
+ BLPPak74oOShqNZ8yWzB1Bkz1u93Ifx3c3H0r2vLWrImoP5eQdymVqMWmDAq+sV1Koyt8gXQ
+ XPD2jQCrfR9nUuV1F3Z4Lgo+6I5LjuXBVEayFdz/VYK63+YLEAlSowCF72Lkz06TmaI0XMyj
+ jgRNGM2MRgfxbprCcsgUypaDfmhY2nrhIzPUICURfp9t/65+/PLlV4nYs+DtSwPyNjkPX72+
+ LdyIdY+BqS8cZbPG5spCyJIlZonADojLDYQq4QnufARU51zyVjzTXMg5gAttDZwTH+8LbNI4
+ mm2YzsBNBFnVga8BCACqU+th4Esy/c8BnvliFAjAfpzhI1wH76FD1MJPmAhA3DnX5JDORcga
+ CbPEwhLj1xlwTgpeT+QfDmGJ5B5BlrrQFZVE1fChEjiJvyiSAO4yQPkrPVYTI7Xj34FnscPj
+ /IrRUUka68MlHxPtFnAHr25VIuOS41lmYKYNwPNLRz9Ik6DmeTG3WJO2BQRNvXA0pXrJH1fN
+ GSsRb+pKEKHKtL1803x71zQxCwLh+zLP1iXHVM5j8gX9zqupigQR/Cel2XPS44zWcDW8r7B0
+ q1eW4Jrv0x19p4P923voqn+joIAostyNTUjCeSrUdKth9jcdlam9X2DziA/DHDFfS5eq4fEv
+ ABEBAAHCwHwEGAEIACYCGwwWIQQt33LlpaVbqJ2qQuHCPZHzoSX+qAUCY00ibgUJDToHvwAK
+ CRDCPZHzoSX+qK6vB/9yyZlsS+ijtsvwYDjGA2WhVhN07Xa5SBBvGCAycyGGzSMkOJcOtUUf
+ tD+ADyrLbLuVSfRN1ke738UojphwkSFj4t9scG5A+U8GgOZtrlYOsY2+cG3R5vjoXUgXMP37
+ INfWh0KbJodf0G48xouesn08cbfUdlphSMXujCA8y5TcNyRuNv2q5Nizl8sKhUZzh4BascoK
+ DChBuznBsucCTAGrwPgG4/ul6HnWE8DipMKvkV9ob1xJS2W4WJRPp6QdVrBWJ9cCdtpR6GbL
+ iQi22uZXoSPv/0oUrGU+U5X4IvdnvT+8viPzszL5wXswJZfqfy8tmHM85yjObVdIG6AlnrrD
+In-Reply-To: <CAO9qdTEJaM=gEgQJLXuhKnh2jNA2KPyU9b4_kMWn6YNa3CU4SQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:c4VK82tujrsqVA9Ju4FJaT8h56hWDxiZWatwehLrc2whgjuWImH
+ 7w5WliJrzqSHEMwav6LkMqwL5w8QR82sTeknxpJ+OM71PWPfV+VgP84ce8L9Ar2g8uTy3s6
+ JGfPq85hx/4VGCm5kg/i/+vB0ZMyTLQXBmex4a4M/UJCpqEFTbCU2VrwPJz2nH6tnaLBlhD
+ DPjGm98xvhMciZTq6pIZQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:AYC4mI+8VwE=;UXs7BocHRdx8ULnuP1wauQhALC3
+ 1i82ViQtaaELXAuNV1zcauARdjfvISbCV29N8ZTSWIdakmS37Hx5i2LWyipfBYC/kYO1zyt2Z
+ gyRKYzPkQNYCxE5ALBWVTAYwqGzj1H6lsW6Whb+zv08qKeUgKJzHCGTnkhMDYXgIGNjbZgQdq
+ SkJby232NGjUzI0oW4hAplYhpiFrfn56PL3v/Z+q742FC6SFVx1EXrUJCMnNnP9xq35z3puGu
+ xR1Caj4WCSSa5DWHtjxSNhDGXRdErqTQ4SaiZwa0UCiIZmUkoPqv93QsndhqignKmidCBhUUj
+ 9ZYHpiSER5FCYAZ0Ovgtq8+vXfS7kXgDakkHrmJ2ppAkPKWWyqx4hjSzGLARPMTw0ryCdsZt3
+ 6PJMLS5P/ibNIzS23NNVAGxcl+COodKO8ke/fx2JPvYRI2MNYeGbY26NOK9gw302xpsgcsBfe
+ i7e3bK+3kcAGD9AZi3Hn3xjgAGeBAcqD0TKwBoE16oZ8JaFJnSXa8Z8Dfd0dFPJQY+w6rlWpM
+ fKwWRzZciolxpzXxuv273R9Uz8zUFHTWYmAi+pxibvEaZ2Y7ZrRLeRE7WmH0RKmNLbo3o8o1N
+ ObZBwaugT9F5pKlU6HhnAOCHoQSjcyPyXlI//F/SKQd1OPoJvmsSkwblc32i9UonplM7LgkBD
+ ZHGMnNPVPsZ3vOdm3I472flMdYpiN0u62Eu4Yu7gUFG5aEP1fiiwI2EpFvmxZxIgV0QkBZJeW
+ RT6hfQqFpXmSNHt2eo3m4YluP57+E/A0/QDnZ2LsJEFTNCAVFQfMiDFGt4x4AcPXkoWOWB37B
+ kRQe/QzDonq0lEQ8Eyo6J1pY5J3/Z1QtbknB5t8WRi6HI=
 
-Hello Dhananjay,
 
-On 6/24/2024 11:28 AM, Dhananjay Ugwekar wrote:
-> Currently the energy-cores event in the power PMU aggregates energy
-> consumption data at a package level. On the other hand the core energy
-> RAPL counter in AMD CPUs has a core scope (which means the energy
-> consumption is recorded separately for each core). Earlier efforts to add
-> the core event in the power PMU had failed [1], due to the difference in
-> the scope of these two events. Hence, there is a need for a new core scope
-> PMU.
-> 
-> This patchset adds a new "power_per_core" PMU alongside the existing
-> "power" PMU, which will be responsible for collecting the new
-> "energy-per-core" event.
-> 
-> Tested the package level and core level PMU counters with workloads
-> pinned to different CPUs.
-> 
-> Results with workload pinned to CPU 1 in Core 1 on an AMD Zen4 Genoa
-> machine:
-> 
-> $ perf stat -a --per-core -e power_per_core/energy-per-core/ -- sleep 1
-> 
->   Performance counter stats for 'system wide':
-> 
-> S0-D0-C0         1          0.02 Joules power_per_core/energy-per-core/
-> S0-D0-C1         1          5.72 Joules power_per_core/energy-per-core/
-> S0-D0-C2         1          0.02 Joules power_per_core/energy-per-core/
-> S0-D0-C3         1          0.02 Joules power_per_core/energy-per-core/
-> S0-D0-C4         1          0.02 Joules power_per_core/energy-per-core/
-> S0-D0-C5         1          0.02 Joules power_per_core/energy-per-core/
-> S0-D0-C6         1          0.02 Joules power_per_core/energy-per-core/
-> S0-D0-C7         1          0.02 Joules power_per_core/energy-per-core/
-> S0-D0-C8         1          0.02 Joules power_per_core/energy-per-core/
-> S0-D0-C9         1          0.02 Joules power_per_core/energy-per-core/
-> S0-D0-C10        1          0.02 Joules power_per_core/energy-per-core/
 
-Tested a bunch of scenarios on my 2P 3rd Generation EPYC server and this
-time around I'm seeing the expected behavior. I'll leave some of
-scenarios I've tested below:
+=E5=9C=A8 2024/6/24 15:59, Jeongjun Park =E5=86=99=E9=81=93:
+> While debugging, I also found that a problem
+> occurred in btrfs_qgroup_check_inherit().
+> While debugging, I also found that a problem
+> occurred in btrfs_qgroup_check_inherit().
+>
+> I think out-of-bounds can be prevented
+> more effectively if the inspection logic
+> containing btrfs_qgroup_enabled() is
+> moved a little lower.
+>
+> If possible, we will send you the v2 patch.
+> I think out-of-bounds can be prevented
+> more effectively if the inspection logic
+> containing btrfs_qgroup_enabled() is
+> moved a little lower.
+>
+> I will send you the v2 patch later after work.
 
-   $ for i in `seq 0 63`; do taskset -c $i loop & done
-   $ sudo perf stat -a --per-core -e power_per_core/energy-per-core/ -- sleep 5
+Mind to check my v2 patch?
 
-   S0-D0-C0              1              10.82 Joules power_per_core/energy-per-core/
-   S0-D0-C1              1              10.87 Joules power_per_core/energy-per-core/
-   S0-D0-C2              1              10.86 Joules power_per_core/energy-per-core/
-   S0-D0-C3              1              10.89 Joules power_per_core/energy-per-core/
-   S0-D0-C4              1              10.91 Joules power_per_core/energy-per-core/
-   ...
-   S0-D0-C63             1              11.03 Joules power_per_core/energy-per-core/
-   S1-D1-C0              1               0.19 Joules power_per_core/energy-per-core/
-   S1-D1-C1              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C2              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C3              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C4              1               0.00 Joules power_per_core/energy-per-core/
-   ...
-   S1-D1-C63             1               0.00 Joules power_per_core/energy-per-core/
+https://lore.kernel.org/linux-btrfs/47d3dd33f637b70f230fa31f98dbf9ff066b58=
+bb.1719207446.git.wqu@suse.com/T/#u
 
-   $ for i in `seq 64 127`; do taskset -c $i loop & done
-   $ sudo perf stat -a --per-core -e power_per_core/energy-per-core/ -- sleep 5
+I believe this would be enough to prevent the bug from happening, with
+all the existing checks in-place.
 
-   S0-D0-C0              1               0.17 Joules power_per_core/energy-per-core/
-   S0-D0-C1              1               0.00 Joules power_per_core/energy-per-core/
-   S0-D0-C2              1               0.00 Joules power_per_core/energy-per-core/
-   S0-D0-C3              1               0.00 Joules power_per_core/energy-per-core/
-   S0-D0-C4              1               0.00 Joules power_per_core/energy-per-core/
-   ...
-   S0-D0-C63             1               0.01 Joules power_per_core/energy-per-core/
-   S1-D1-C0              1              10.51 Joules power_per_core/energy-per-core/
-   S1-D1-C1              1              10.50 Joules power_per_core/energy-per-core/
-   S1-D1-C2              1              10.52 Joules power_per_core/energy-per-core/
-   S1-D1-C3              1              10.51 Joules power_per_core/energy-per-core/
-   S1-D1-C4              1              10.51 Joules power_per_core/energy-per-core/
-   ...
-   S1-D1-C63             1              10.59 Joules power_per_core/energy-per-core/
+Thanks,
+Qu
 
-   $ for i in `seq 0 15`; do taskset -c $i loop & done
-   $ sudo perf stat -a --per-core -e power_per_core/energy-per-core/ -- sleep 5
-
-   S0-D0-C0              1              11.16 Joules power_per_core/energy-per-core/
-   S0-D0-C1              1              11.21 Joules power_per_core/energy-per-core/
-   S0-D0-C2              1              11.20 Joules power_per_core/energy-per-core/
-   S0-D0-C3              1              11.24 Joules power_per_core/energy-per-core/
-   S0-D0-C4              1              11.25 Joules power_per_core/energy-per-core/
-   S0-D0-C5              1              11.26 Joules power_per_core/energy-per-core/
-   S0-D0-C6              1              11.25 Joules power_per_core/energy-per-core/
-   S0-D0-C7              1              11.25 Joules power_per_core/energy-per-core/
-   S0-D0-C8              1              11.42 Joules power_per_core/energy-per-core/
-   S0-D0-C9              1              11.43 Joules power_per_core/energy-per-core/
-   S0-D0-C10             1              11.47 Joules power_per_core/energy-per-core/
-   S0-D0-C11             1              11.43 Joules power_per_core/energy-per-core/
-   S0-D0-C12             1              11.44 Joules power_per_core/energy-per-core/
-   S0-D0-C13             1              11.41 Joules power_per_core/energy-per-core/
-   S0-D0-C14             1              11.40 Joules power_per_core/energy-per-core/
-   S0-D0-C15             1              11.41 Joules power_per_core/energy-per-core/
-   S0-D0-C16             1               0.33 Joules power_per_core/energy-per-core/
-   ...
-   S0-D0-C63             1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C0              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C1              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C2              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C3              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C4              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C5              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C6              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C7              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C8              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C9              1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C10             1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C11             1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C12             1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C13             1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C14             1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C15             1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C16             1               0.00 Joules power_per_core/energy-per-core/
-   ...
-   S1-D1-C63             1               0.01 Joules power_per_core/energy-per-core/
-
-   $ for i in `seq 0 7` `seq 128 131` `seq 64 71` `seq 192 199`; do taskset -c $i loop & done
-   $ sudo perf stat -a --per-core -e power_per_core/energy-per-core/ -- sleep 5
-
-   S0-D0-C0              1              18.68 Joules power_per_core/energy-per-core/
-   S0-D0-C1              1              18.20 Joules power_per_core/energy-per-core/
-   S0-D0-C2              1              18.27 Joules power_per_core/energy-per-core/
-   S0-D0-C3              1              18.41 Joules power_per_core/energy-per-core/
-   S0-D0-C4              1              16.94 Joules power_per_core/energy-per-core/
-   S0-D0-C5              1              16.95 Joules power_per_core/energy-per-core/
-   S0-D0-C6              1              16.92 Joules power_per_core/energy-per-core/
-   S0-D0-C7              1              16.94 Joules power_per_core/energy-per-core/
-   S0-D0-C8              1               0.39 Joules power_per_core/energy-per-core/
-   ...
-   S0-D0-C63             1               0.00 Joules power_per_core/energy-per-core/
-   S1-D1-C0              1              18.59 Joules power_per_core/energy-per-core/
-   S1-D1-C1              1              18.39 Joules power_per_core/energy-per-core/
-   S1-D1-C2              1              17.50 Joules power_per_core/energy-per-core/
-   S1-D1-C3              1              18.29 Joules power_per_core/energy-per-core/
-   S1-D1-C4              1              18.58 Joules power_per_core/energy-per-core/
-   S1-D1-C5              1              17.62 Joules power_per_core/energy-per-core/
-   S1-D1-C6              1              17.75 Joules power_per_core/energy-per-core/
-   S1-D1-C7              1              17.53 Joules power_per_core/energy-per-core/
-   S1-D1-C8              1               0.00 Joules power_per_core/energy-per-core/
-   ...
-   S1-D1-C63             1               0.00 Joules power_per_core/energy-per-core/
-
-Unlike last time, each socket is reporting accurate values for all the
-scenarios I've tried above.
-
-> 
-> [1]: https://lore.kernel.org/lkml/3e766f0e-37d4-0f82-3868-31b14228868d@linux.intel.com/
-> 
-> This patchset applies cleanly on top of v6.10-rc4 as well as latest
-> tip/master.
-
-P.S. I tested this on top of v6.10-rc4 this time around.
-
-Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-
-> 
-> v3 changes:
-> * Patch 1 added to introduce the logical_core_id which is unique across
->    the system (Prateek)
-> * Use the unique topology_logical_core_id() instead of
->    topology_core_id() (which is only unique within a package on tested
->    AMD and Intel systems) in Patch 10
-> 
-> [..snip..]
-> 
-
--- 
-Thanks and Regards,
-Prateek
+>
+> Regards.
+> Jeongjun Park.
+>
+> 2024=EB=85=84 6=EC=9B=94 24=EC=9D=BC =EC=9B=94=EC=9A=94=EC=9D=BC, Qu Wen=
+ruo <quwenruo.btrfs@gmx.com
+> <mailto:quwenruo.btrfs@gmx.com>>=EB=8B=98=EC=9D=B4 =EC=9E=91=EC=84=B1:
+>
+>
+>
+>     =E5=9C=A8 2024/6/24 14:40, Qu Wenruo =E5=86=99=E9=81=93:
+>
+>
+>
+>         =E5=9C=A8 2024/6/24 12:37, Jeongjun Park =E5=86=99=E9=81=93:
+>
+>             If a value exists in inherit->num_ref_copies or
+>             inherit->num_excl_copies,
+>             an out-of-bounds vulnerability occurs.
+>
+>
+>         Thanks for the fix.
+>
+>         Although I'm still not 100% sure what's going wrong.
+>
+>         The original report
+>         (https://lore.kernel.org/lkml/000000000000bc19ba061a67ca77@googl=
+e.com/T/ <https://lore.kernel.org/lkml/000000000000bc19ba061a67ca77@google=
+.com/T/>)
+>         is showing a backtrace when creating snapshot.
+>
+>         In that case they should all go through
+>         __btrfs_ioctl_snap_create(), and
+>         since it has qgroup_inherit, it can only come from
+>         btrfs_ioctl_snap_create_v2().
+>
+>         But in that function, we have just called
+>         btrfs_qgroup_check_inherit()
+>         function and it already has the check on
+>         num_ref_copies/num_excl_copies.
+>
+>         So in that case it should not even happen.
+>
+>         I think the root cause is why the existing
+>         btrfs_qgroup_check_inherit()
+>         doesn't catch the problem in the first place.
+>
+>
+>     OK, the root cause is the qgroup enable/disable race and delayed
+>     snapshot creation. So that we can have a btrfs_qgroup_inherit struct=
+ure
+>     passed in with qgroup disabled.
+>
+>     But at transaction commitment, the qgroup is enabled, so some unchec=
+ked
+>     inherit structure is passed in.
+>
+>     In that case, the added check is not strong enough (lacks the struct=
+ure
+>     size and flags checks etc).
+>
+>     A better fix would be only let btrfs_qgroup_check_inherit() to skip =
+the
+>     source qgroup checks.
+>
+>     I'll send a fix using the findings above.
+>
+>     Thanks,
+>     Qu
+>
+>
+>         Thanks,
+>         Qu
+>
+>             Therefore, you need to add code to check the presence or
+>             absence of
+>             that value.
+>
+>             Regards.
+>             Jeongjun Park.
+>
+>             Reported-by:
+>             syzbot+a0d1f7e26910be4dc171@syzkaller.appspotmail.com
+>             <mailto:syzbot+a0d1f7e26910be4dc171@syzkaller.appspotmail.co=
+m>
+>             Fixes: 3f5e2d3b3877 ("Btrfs: fix missing check in the
+>             btrfs_qgroup_inherit()")
+>             Signed-off-by: Jeongjun Park <aha310510@gmail.com
+>             <mailto:aha310510@gmail.com>>
+>             ---
+>              =C2=A0 fs/btrfs/qgroup.c | 4 ++++
+>              =C2=A0 1 file changed, 4 insertions(+)
+>
+>             diff --git a/fs/btrfs/qgroup.c b /fs/btrfs/qgroup.c
+>             index fc2a7ea26354..23beac746637 100644
+>             --- a/fs/btrfs/qgroup.c
+>             +++ b/fs/btrfs/qgroup.c
+>             @@ -3270,6 +3270,10 @@ int btrfs_qgroup_inherit(struct
+>             btrfs_trans_handle *trans, u64 srcid,
+>              =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>
+>              =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (inherit) {
+>             +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (inherit->num=
+_ref_copies > 0 ||
+>             inherit->num_excl_copies >
+>             0) {
+>             +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 ret =3D -EINVAL;
+>             +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 goto out;
+>             +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>              =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 i_qg=
+roups =3D (u64 *)(inherit + 1);
+>              =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 nums=
+ =3D inherit->num_qgroups + 2 *
+>             inherit->num_ref_copies +
+>              =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 2 * inherit->num_excl_copies;
+>             --
+>
+>
 
