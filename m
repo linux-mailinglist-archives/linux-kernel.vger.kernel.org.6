@@ -1,236 +1,190 @@
-Return-Path: <linux-kernel+bounces-227097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD3B914845
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:15:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF0DE914848
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:15:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59A61B23A7C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:15:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18771C2215D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93FA1386B3;
-	Mon, 24 Jun 2024 11:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HL+PwkPn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123A113791F;
+	Mon, 24 Jun 2024 11:15:36 +0000 (UTC)
+Received: from spam.asrmicro.com (asrmicro.com [210.13.118.86])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79EA49620;
-	Mon, 24 Jun 2024 11:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF3612FF8B
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.13.118.86
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719227693; cv=none; b=A8ElDtB7Iy1iq9JKkCatCFlhNZxV8Fef8ResTEcvqAOrE9mR7hNJSC16/0yhEl/T09YrBAb8frZIMNK/4PPoIVPC4sbT45cNIGiDEqegofuFc72M9+DZdxz7fyaWfLZT6HhdE5MMnsoOsoVQlMLI2S5IONapNoGUYQzuD0QaWZM=
+	t=1719227735; cv=none; b=U8owBzUbwNIJX1Vw8oNf2obc3xZ5ZnBSEWwpB6bgo3Fv5o9fKH6f7u7s7YdIB+7AnF1yH2SsoLg/wo93XMWMJNqjKpKt0kn+jYgGXDQWJE9Lk7mzE/ktDE3tdSnQWMDlfpzYzkaOPdvC/vXrAGw7voWdgaKjh1Q7mKHxECl1t6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719227693; c=relaxed/simple;
-	bh=zD2eSo75ryZYFX1va5sIibpLycZqPyqdenRQ6fO/VY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WZqeDARkc7DrtCIVU6CRWAcEyoQAqCAG4ccjpbAJMP9tMrNiYTGzrnotzzBPV5lENean6FdKSj+8IqAVBULcpzGsQOmJTaAe+tBlG3ZYyh9rb3eVNGF/46/WExF/Wh2erRDqlwjyzbD+AV1yPNvWiuVODZJxVkrdyXHxxNhJpJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HL+PwkPn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D08DC2BBFC;
-	Mon, 24 Jun 2024 11:14:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719227692;
-	bh=zD2eSo75ryZYFX1va5sIibpLycZqPyqdenRQ6fO/VY8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HL+PwkPniPDdrLpWKapbrtdsjGL4duzCq43MmME/DrHp1kfG8QgQLNtwlvT+r+0bM
-	 g6jHuep8jV3IR+KqWP92cVjMYJYCN3mCm3kxqC/ac65+iU3+HIXuZH7cqaLKsGnwaU
-	 gjVP+3Jt53e0DihoHnHQKXAluUUU7g8yoZdwWxQSyn7JgP+cZ+IYSV857/a8JMzOc2
-	 BD37e7J2yhwYNfal/i78WGrisQTX5CVLOh8aazyNNds5w6TKBBAd2kexhNTw/49hFY
-	 7d5ZYPsZimodO08QDbvmmdPyHUjRwSraMEkn22wpb0xxuomngdnxk2eSdiSuidrukv
-	 bXxlPgy5vj+fg==
-Date: Mon, 24 Jun 2024 12:14:46 +0100
-From: Lee Jones <lee@kernel.org>
-To: =?iso-8859-1?Q?Andr=E9?= Apitzsch <git@apitzsch.eu>
-Cc: Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Trilok Soni <quic_tsoni@quicinc.com>, Kees Cook <kees@kernel.org>,
-	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] leds: sy7802: Add support for Silergy SY7802
- flash LED controller
-Message-ID: <20240624111446.GT1318296@google.com>
-References: <20240616-sy7802-v4-0-789994180e05@apitzsch.eu>
- <20240616-sy7802-v4-2-789994180e05@apitzsch.eu>
- <20240621102656.GK1318296@google.com>
- <86f8110e8edc24d0df035b77a1aa68422e48bde1.camel@apitzsch.eu>
+	s=arc-20240116; t=1719227735; c=relaxed/simple;
+	bh=EV5lVcKm5S0wnaNwZOjnxeTmZJ31Z3sMooz6ocxoPpU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lienb73wi6p9m61ZPWmBdeNQc4+a2TLPS7bKFWB5KnOLC0uSs2g6U2KAJS7paKMHSxrFSzhXu0glqTI6EV0ueYK8hk5JGId2Pr3c4x5eO8fDE/uHxZcnNw4+6a0MhUmw/O8boklNLqIIY60GmQeiKr/3XpQOtBdaGnPblYboLGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com; spf=pass smtp.mailfrom=asrmicro.com; arc=none smtp.client-ip=210.13.118.86
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asrmicro.com
+Received: from exch03.asrmicro.com (exch03.asrmicro.com [10.1.24.118])
+	by spam.asrmicro.com with ESMTPS id 45OBEj78089188
+	(version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=FAIL);
+	Mon, 24 Jun 2024 19:14:45 +0800 (GMT-8)
+	(envelope-from zhengyan@asrmicro.com)
+Received: from exch03.asrmicro.com (10.1.24.118) by exch03.asrmicro.com
+ (10.1.24.118) with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 24 Jun
+ 2024 19:14:48 +0800
+Received: from exch03.asrmicro.com ([::1]) by exch03.asrmicro.com ([::1]) with
+ mapi id 15.00.0847.030; Mon, 24 Jun 2024 19:14:48 +0800
+From: =?gb2312?B?WWFuIFpoZW5no6jRz9X+o6k=?= <zhengyan@asrmicro.com>
+To: Nam Cao <namcao@linutronix.de>
+CC: "tglx@linutronix.de" <tglx@linutronix.de>,
+        "maz@kernel.org"
+	<maz@kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "paul.walmsley@sifive.com"
+	<paul.walmsley@sifive.com>,
+        "samuel.holland@sifive.com"
+	<samuel.holland@sifive.com>,
+        "linux-riscv@lists.infradead.org"
+	<linux-riscv@lists.infradead.org>,
+        =?gb2312?B?WmhvdSBRaWFvKNbcx8gp?=
+	<qiaozhou@asrmicro.com>
+Subject: =?gb2312?B?tPC4tDogW1BBVENIXSBpcnFjaGlwL3NpZml2ZS1wbGljOiBlbnN1cmUgaW50?=
+ =?gb2312?Q?errupt_is_enable_before_EOI?=
+Thread-Topic: [PATCH] irqchip/sifive-plic: ensure interrupt is enable before
+ EOI
+Thread-Index: AQHaxhQUdoMYNshWYUC/EJ5aDUOpkLHWIY8AgACb9jA=
+Date: Mon, 24 Jun 2024 11:14:47 +0000
+Message-ID: <69174a28eff44ad1b069887aa514971e@exch03.asrmicro.com>
+References: <20240624085341.3935-1-zhengyan@asrmicro.com>
+ <20240624093556.ZcZgu2GF@linutronix.de>
+In-Reply-To: <20240624093556.ZcZgu2GF@linutronix.de>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <86f8110e8edc24d0df035b77a1aa68422e48bde1.camel@apitzsch.eu>
+X-DNSRBL: 
+X-SPAM-SOURCE-CHECK: pass
+X-MAIL:spam.asrmicro.com 45OBEj78089188
 
-On Sat, 22 Jun 2024, André Apitzsch wrote:
-
-> Hello Lee,
-> 
-> Am Freitag, dem 21.06.2024 um 11:26 +0100 schrieb Lee Jones:
-> > On Sun, 16 Jun 2024, André Apitzsch via B4 Relay wrote:
-> > 
-> > > From: André Apitzsch <git@apitzsch.eu>
-> > > 
-> > > The SY7802 is a current-regulated charge pump which can regulate
-> > > two
-> > > current levels for Flash and Torch modes.
-> > > 
-> > > It is a high-current synchronous boost converter with 2-channel
-> > > high
-> > > side current sources. Each channel is able to deliver 900mA
-> > > current.
-> > > 
-> > > Signed-off-by: André Apitzsch <git@apitzsch.eu>
-> > > ---
-> > >  drivers/leds/flash/Kconfig       |  11 +
-> > >  drivers/leds/flash/Makefile      |   1 +
-> > >  drivers/leds/flash/leds-sy7802.c | 542
-> > > +++++++++++++++++++++++++++++++++++++++
-> > >  3 files changed, 554 insertions(+)
-> > 
-> > Generally very nice.
-> > 
-> > Just a couple of teensy nits to fix then add my and resubmit please.
-> > 
-> > Acked-by: Lee Jones <lee@kernel.org>
-> > 
-> > > [...]
-> > > diff --git a/drivers/leds/flash/leds-sy7802.c
-> > > b/drivers/leds/flash/leds-sy7802.c
-> > > new file mode 100644
-> > > index 000000000000..c4bea55a62d0
-> > > --- /dev/null
-> > > +++ b/drivers/leds/flash/leds-sy7802.c
-> > > @@ -0,0 +1,542 @@
-> > > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > > +/*
-> > > + * Silergy SY7802 flash LED driver with I2C interface
-> > 
-> > "an I2C interface"
-> > 
-> > Or
-> > 
-> > "I2C interfaces"
-> > 
-> > > + * Copyright 2024 André Apitzsch <git@apitzsch.eu>
-> > > + */
-> > > +
-> > > +#include <linux/gpio/consumer.h>
-> > > +#include <linux/i2c.h>
-> > > +#include <linux/kernel.h>
-> > > +#include <linux/led-class-flash.h>
-> > > +#include <linux/module.h>
-> > > +#include <linux/mutex.h>
-> > > +#include <linux/regmap.h>
-> > > +#include <linux/regulator/consumer.h>
-> > > +
-> > > +#define SY7802_MAX_LEDS 2
-> > > +#define SY7802_LED_JOINT 2
-> > > +
-> > > +#define SY7802_REG_ENABLE		0x10
-> > > +#define SY7802_REG_TORCH_BRIGHTNESS	0xa0
-> > > +#define SY7802_REG_FLASH_BRIGHTNESS	0xb0
-> > > +#define SY7802_REG_FLASH_DURATION	0xc0
-> > > +#define SY7802_REG_FLAGS		0xd0
-> > > +#define SY7802_REG_CONFIG_1		0xe0
-> > > +#define SY7802_REG_CONFIG_2		0xf0
-> > > +#define SY7802_REG_VIN_MONITOR		0x80
-> > > +#define SY7802_REG_LAST_FLASH		0x81
-> > > +#define SY7802_REG_VLED_MONITOR		0x30
-> > > +#define SY7802_REG_ADC_DELAY		0x31
-> > > +#define SY7802_REG_DEV_ID		0xff
-> > > +
-> > > +#define SY7802_MODE_OFF		0
-> > > +#define SY7802_MODE_TORCH	2
-> > > +#define SY7802_MODE_FLASH	3
-> > > +#define SY7802_MODE_MASK	GENMASK(1, 0)
-> > > +
-> > > +#define SY7802_LEDS_SHIFT	3
-> > > +#define SY7802_LEDS_MASK(_id)	(BIT(_id) << SY7802_LEDS_SHIFT)
-> > > +#define SY7802_LEDS_MASK_ALL	(SY7802_LEDS_MASK(0) |
-> > > SY7802_LEDS_MASK(1))
-> > > +
-> > > +#define SY7802_TORCH_CURRENT_SHIFT	3
-> > > +#define SY7802_TORCH_CURRENT_MASK(_id) \
-> > > +	(GENMASK(2, 0) << (SY7802_TORCH_CURRENT_SHIFT * (_id)))
-> > > +#define SY7802_TORCH_CURRENT_MASK_ALL \
-> > > +	(SY7802_TORCH_CURRENT_MASK(0) |
-> > > SY7802_TORCH_CURRENT_MASK(1))
-> > > +
-> > > +#define SY7802_FLASH_CURRENT_SHIFT	4
-> > > +#define SY7802_FLASH_CURRENT_MASK(_id) \
-> > > +	(GENMASK(3, 0) << (SY7802_FLASH_CURRENT_SHIFT * (_id)))
-> > > +#define SY7802_FLASH_CURRENT_MASK_ALL \
-> > > +	(SY7802_FLASH_CURRENT_MASK(0) |
-> > > SY7802_FLASH_CURRENT_MASK(1))
-> > > +
-> > > +#define SY7802_TIMEOUT_DEFAULT_US	512000U
-> > > +#define SY7802_TIMEOUT_MIN_US		32000U
-> > > +#define SY7802_TIMEOUT_MAX_US		1024000U
-> > > +#define SY7802_TIMEOUT_STEPSIZE_US	32000U
-> > > +
-> > > +#define SY7802_TORCH_BRIGHTNESS_MAX 8
-> > > +
-> > > +#define SY7802_FLASH_BRIGHTNESS_DEFAULT	14
-> > > +#define SY7802_FLASH_BRIGHTNESS_MIN	0
-> > > +#define SY7802_FLASH_BRIGHTNESS_MAX	15
-> > > +#define SY7802_FLASH_BRIGHTNESS_STEP	1
-> > > +
-> > > +#define SY7802_FLAG_TIMEOUT			BIT(0)
-> > > +#define SY7802_FLAG_THERMAL_SHUTDOWN		BIT(1)
-> > > +#define SY7802_FLAG_LED_FAULT			BIT(2)
-> > > +#define SY7802_FLAG_TX1_INTERRUPT		BIT(3)
-> > > +#define SY7802_FLAG_TX2_INTERRUPT		BIT(4)
-> > > +#define SY7802_FLAG_LED_THERMAL_FAULT		BIT(5)
-> > > +#define SY7802_FLAG_FLASH_INPUT_VOLTAGE_LOW	BIT(6)
-> > > +#define SY7802_FLAG_INPUT_VOLTAGE_LOW		BIT(7)
-> > > +
-> > > +#define SY7802_CHIP_ID	0x51
-> > > +
-> > > +static const struct reg_default sy7802_regmap_defs[] = {
-> > > +	{ SY7802_REG_ENABLE, SY7802_LEDS_MASK_ALL },
-> > > +	{ SY7802_REG_TORCH_BRIGHTNESS, 0x92 },
-> > > +	{ SY7802_REG_FLASH_BRIGHTNESS,
-> > > SY7802_FLASH_BRIGHTNESS_DEFAULT |
-> > > +		SY7802_FLASH_BRIGHTNESS_DEFAULT <<
-> > > SY7802_FLASH_CURRENT_SHIFT },
-> > > +	{ SY7802_REG_FLASH_DURATION, 0x6f },
-> > > +	{ SY7802_REG_FLAGS, 0x0 },
-> > > +	{ SY7802_REG_CONFIG_1, 0x68 },
-> > > +	{ SY7802_REG_CONFIG_2, 0xf0 },
-> > 
-> > Not your fault, but this interface is frustrating since we have no
-> > idea
-> > what these register values mean.  IMHO, they should be defined and
-> > ORed
-> > together in some human readable way.
-> > 
-> > I say that it's not your fault because I see that this is the most
-> > common usage.
-> > 
-> 
-> I don't know how to interpret some bits of the default values. I don't
-> have the documentation and changing the bits and observing the behavior
-> of the device also didn't help.
-
-And this is the problem.
-
-> Should I remove the entries from sy7802_regmap_defs, which have values
-> that we don't fully understand?
-
-No, as I say, it's not your fault.  Sadly this appears to be the norm.
-
--- 
-Lee Jones [李琼斯]
+PiBPbiBNb24sIEp1biAyNCwgMjAyNCBhdCAwODo1Mzo0MUFNICswMDAwLCB6aGVuZ3lhbiB3cm90
+ZToNCj4gPiBSSVNDLVYgUExJQyBjYW5ub3QgImVuZC1vZi1pbnRlcnJ1cHQiIChFT0kpIGRpc2Fi
+bGVkIGludGVycnVwdHMsIGFzDQo+ID4gZXhwbGFpbmVkIGluIHRoZSBkZXNjcmlwdGlvbiBvZiBJ
+bnRlcnJ1cHQgQ29tcGxldGlvbiBpbiB0aGUgUExJQyBzcGVjOg0KPiA+ICJUaGUgUExJQyBzaWdu
+YWxzIGl0IGhhcyBjb21wbGV0ZWQgZXhlY3V0aW5nIGFuIGludGVycnVwdCBoYW5kbGVyIGJ5DQo+
+ID4gd3JpdGluZyB0aGUgaW50ZXJydXB0IElEIGl0IHJlY2VpdmVkIGZyb20gdGhlIGNsYWltIHRv
+IHRoZQ0KPiA+IGNsYWltL2NvbXBsZXRlIHJlZ2lzdGVyLiBUaGUgUExJQyBkb2VzIG5vdCBjaGVj
+ayB3aGV0aGVyIHRoZQ0KPiA+IGNvbXBsZXRpb24gSUQgaXMgdGhlIHNhbWUgYXMgdGhlIGxhc3Qg
+Y2xhaW0gSUQgZm9yIHRoYXQgdGFyZ2V0LiBJZiB0aGUNCj4gPiBjb21wbGV0aW9uIElEIGRvZXMg
+bm90IG1hdGNoIGFuIGludGVycnVwdCBzb3VyY2UgdGhhdCAqaXMgY3VycmVudGx5DQo+ID4gZW5h
+YmxlZCogZm9yIHRoZSB0YXJnZXQsIHRoZSBjb21wbGV0aW9uIGlzIHNpbGVudGx5IGlnbm9yZWQu
+Ig0KPiA+DQo+ID4gQ29tbWl0IDljOTIwMDZiODk2YyAoImlycWNoaXAvc2lmaXZlLXBsaWM6IEVu
+YWJsZSBpbnRlcnJ1cHQgaWYgbmVlZGVkDQo+ID4gYmVmb3JlIEVPSSIpIGVuc3VyZWQgdGhhdCBF
+T0kgaXMgZW5hYmxlIHdoZW4gaXJxZCBJUlFEX0lSUV9ESVNBQkxFRCBpcw0KPiA+IHNldCwgYmVm
+b3JlIEVPSQ0KPiA+DQo+ID4gQ29tbWl0IDY5ZWE0NjMwMjFiZSAoImlycWNoaXAvc2lmaXZlLXBs
+aWM6IEZpeHVwIEVPSSBmYWlsZWQgd2hlbg0KPiA+IG1hc2tlZCIpIGVuc3VyZWQgdGhhdCBFT0kg
+aXMgc3VjY2Vzc2Z1bCBieSBlbmFibGluZyBpbnRlcnJ1cHQgZmlyc3QsIGJlZm9yZQ0KPiBFT0ku
+DQo+ID4NCj4gPiBDb21taXQgYTE3MDZhMWM1MDYyICgiaXJxY2hpcC9zaWZpdmUtcGxpYzogU2Vw
+YXJhdGUgdGhlIGVuYWJsZSBhbmQNCj4gPiBtYXNrDQo+ID4gb3BlcmF0aW9ucyIpIHJlbW92ZWQg
+dGhlIGludGVycnVwdCBlbmFibGluZyBjb2RlIGZyb20gdGhlIHByZXZpb3VzDQo+ID4gY29tbWl0
+LCBiZWNhdXNlIGl0IGFzc3VtZXMgdGhhdCBpbnRlcnJ1cHQgc2hvdWxkIGFscmVhZHkgYmUgZW5h
+YmxlZCBhdA0KPiA+IHRoZSBwb2ludCBvZiBFT0kuDQo+ID4NCj4gPiBIb3dldmVyLCBoZXJlIHN0
+aWxsIG1pc3MgYSBjb3JuZXIgY2FzZSB0aGF0IGlmIFNNUCBpcyBlbmFibGVkLiBXaGVuDQo+ID4g
+c29tZW9uZSBuZWVkIHRvIHNldCBhZmZpbml0eSBmcm9tIGEgY3B1IHRvIGFub3RoZXIgKE1heWJl
+IGxpa2UNCj4gPiBib2FyZGNhc3QtdGljaykgdGhlIG9yaWdpbmFsIGNwdSB3aGVuIGhhbmRsZSB0
+aGUgRU9JIG1lYW53aGlsZSB0aGUgSUUNCj4gPiBpcyBkaXNhYmxlZCBieSBwbGljX3NldF9hZmZp
+bml0eQ0KPiA+DQo+ID4gU28gdGhpcyBwYXRjaCBlbnN1cmUgdGhhdCB3b24ndCBoYXBwZW5lZA0K
+PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogemhlbmd5YW4gPHpoZW5neWFuQGFzcm1pY3JvLmNvbT4N
+Cj4gPiAtLS0NCj4gPiAgZHJpdmVycy9pcnFjaGlwL2lycS1zaWZpdmUtcGxpYy5jIHwgNCArKyst
+DQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4g
+Pg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lycWNoaXAvaXJxLXNpZml2ZS1wbGljLmMNCj4g
+PiBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtc2lmaXZlLXBsaWMuYw0KPiA+IGluZGV4IDllMjJmN2Uz
+NzhmNS4uZTZhY2QxMzRhNjkxIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvaXJxY2hpcC9pcnEt
+c2lmaXZlLXBsaWMuYw0KPiA+ICsrKyBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtc2lmaXZlLXBsaWMu
+Yw0KPiA+IEBAIC0xNDksOCArMTQ5LDEwIEBAIHN0YXRpYyB2b2lkIHBsaWNfaXJxX21hc2soc3Ry
+dWN0IGlycV9kYXRhICpkKQ0KPiA+IHN0YXRpYyB2b2lkIHBsaWNfaXJxX2VvaShzdHJ1Y3QgaXJx
+X2RhdGEgKmQpICB7DQo+ID4gIAlzdHJ1Y3QgcGxpY19oYW5kbGVyICpoYW5kbGVyID0gdGhpc19j
+cHVfcHRyKCZwbGljX2hhbmRsZXJzKTsNCj4gPiArCXZvaWQgX19pb21lbSAqcmVnID0gaGFuZGxl
+ci0+ZW5hYmxlX2Jhc2UgKyAoZC0+aHdpcnEgLyAzMikgKg0KPiBzaXplb2YodTMyKTsNCj4gPiAr
+CXUzMiBod2lycV9tYXNrID0gMSA8PCAoZC0+aHdpcnEgJSAzMik7DQo+ID4NCj4gPiAtCWlmICh1
+bmxpa2VseShpcnFkX2lycV9kaXNhYmxlZChkKSkpIHsNCj4gPiArCWlmICh1bmxpa2VseShpcnFk
+X2lycV9kaXNhYmxlZChkKSkgfHwgKHJlYWRsKHJlZykgJiBod2lycV9tYXNrKSA9PQ0KPiA+ICsw
+KSB7DQo+IA0KPiBJZiB3ZSByZWFkIGludGVycnVwdCBlbmFibGUgc3RhdGUgZnJvbSBoYXJkd2Fy
+ZSwgdGhlbiByZWFkaW5nIHRoZSBzb2Z0d2FyZQ0KPiBzdGF0ZSAoaXJxZF9pcnFfZGlzYWJsZWQp
+IGlzIHJlZHVuZGFudC4NCj4gDQpZZXMsIHlvdSBhcmUgcmlnaHQuIEkgd2FzIGFmcmFpZCBvZiBt
+aXNzaW5nIHNvbWUgY29ybmVyIGNhc2VzLCBzbyBJIGtlcHQgdGhlIG9yaWdpbmFsIGNvbmRpdGlv
+bmFsIGNoZWNrcy4NCkkgdGhpbmsgaXQgb3ZlciwgaXQgc2hvdWxkIGJlIHNhZmUgdG8gb25seSBj
+aGVjayBoYXJkd2FyZSBzdGF0ZXMNCkFuZCBJoa9kIGxpa2UgdG8gcHV0IGl0IGludG8gInVubGlr
+ZWx5IiBwYXRoIGFzIA0KaWYgKHVubGlrZWx5KChyZWFkbChyZWcpICYgaHdpcnFfbWFzaykpID09
+DQo+ID4gIAkJcGxpY190b2dnbGUoaGFuZGxlciwgZC0+aHdpcnEsIDEpOw0KPiA+ICAJCXdyaXRl
+bChkLT5od2lycSwgaGFuZGxlci0+aGFydF9iYXNlICsgQ09OVEVYVF9DTEFJTSk7DQo+ID4gIAkJ
+cGxpY190b2dnbGUoaGFuZGxlciwgZC0+aHdpcnEsIDApOw0KPiANCj4gSSBoYXZlIG5vIGtub3ds
+ZWRnZSBhYm91dCBhZmZpbml0eSBzdHVmZiwgc28gSSBkb24ndCByZWFsbHkgdW5kZXJzdGFuZCB0
+aGlzDQo+IHBhdGNoLiBCdXQgdGhlcmUgaXMgYW5vdGhlciBpZGVhIHJlZ2FyZGluZyB0aGlzICJp
+Z25vcmVkIEVPSSIgcHJvYmxlbToNCj4gYWx3YXlzICJjb21wbGV0ZSIgdGhlIGludGVycnVwdCB3
+aGlsZSBlbmFibGluZy4gVGhhdCB3b3VsZCBtb3ZlIHRoaXMgZXh0cmENCj4gY29tcGxpY2F0aW9u
+IG91dCBvZiB0aGUgaG90IHBhdGgsIGFuZCBhbHNvIGxvb2tzIHNpbXBsZXIgaW4gbXkgb3Bpbmlv
+bi4NCj4gDQo+IFNvbWV0aGluZyBsaWtlIHRoZSBwYXRjaCBiZWxvdy4gV291bGQgdGhpcyBzb2x2
+ZSB0aGlzICJhZmZpbml0eSBwcm9ibGVtIg0KPiB0b28/DQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+
+IE5hbQ0KPiANCk5vLCBJJ20gYWZyYWlkIHRoZSBmb2xsb3dpbmcgcGF0Y2ggY2FuJ3Qgc29sdmUg
+dGhpcyBjb3JuZXIgY2FzZS4gSSB0aG91Z2h0IGl0J3MgYmVjYXVzZSB0aGUgY29yZQ0KV2hvIGV4
+ZWN1dGVzIHBsaWNfaXJxX2VuYWJsZSBpcyBub3QgdGhlIGNvcmUgd2hvIG1pc3NpbmcgYSB3cml0
+ZSBjbGFpbS4NClNvIGlmIHdlIHdhbnQgdG8gZG8gaXQgaW4gZW5hYmxlIGl0IG1pZ2h0IGJlIHNv
+bWV0aGluZyBsaWtlIGZvbGxvd3MgOg0Kc3RhdGljIHZvaWQgcGxpY190b2dnbGUoc3RydWN0IHBs
+aWNfaGFuZGxlciAqaGFuZGxlciwgaW50IGh3aXJxLCBpbnQgZW5hYmxlKQ0KIHsNCiAgICAgICAg
+cmF3X3NwaW5fbG9jaygmaGFuZGxlci0+ZW5hYmxlX2xvY2spOw0KLSAgICAgICBfX3BsaWNfdG9n
+Z2xlKGhhbmRsZXItPmVuYWJsZV9iYXNlLCBod2lycSwgZW5hYmxlKTsNCisgICAgICAgaWYgKGVu
+YWJsZSkgew0KKyAgICAgICAgICAgICAgIHdyaXRlbChod2lycSwgaGFuZGxlci0+aGFydF9iYXNl
+ICsgQ09OVEVYVF9DTEFJTSk7DQorICAgICAgICAgICAgICAgX19wbGljX3RvZ2dsZShoYW5kbGVy
+LT5lbmFibGVfYmFzZSwgaHdpcnEsIGVuYWJsZSk7DQorICAgICAgIH0NCiAgICAgICAgcmF3X3Nw
+aW5fdW5sb2NrKCZoYW5kbGVyLT5lbmFibGVfbG9jayk7DQogfQ0KDQpCdXQgdGhlcmUgaXMgYSBs
+aXR0bGUgZGlmZmVyZW5jZToNCmEuIGNoZWNrIHdoZXRoZXIgaXQncyBlbmFibGVkICB3aGVuIGRv
+IHdyaXRlIGNsYWltDQpiLiB3cml0ZSBjbGFpbSBhbnl3YXkgYmVmb3JlIGVuYWJsZSANCg0Kc291
+bmRzIGxpa2UgYS4gaXMgYmV0dGVyPw0KDQpBbmQgSSdkIGxpa2UgdG8gaWxsdXN0cmF0ZSBtb3Jl
+IGFib3V0IHRoaXMgY2FzZToNCkZvciBleGFtcGxlLCBicm9hZGNhc3QgdGljayBpcyB3b3JraW5n
+LCBjcHUwIGlzIGFib3V0IHRvIHJlc3BvbnNlLCBjcHUxIGlzIHRoZSBuZXh0DQoxLiBjcHUwICBy
+ZXNwb25zZSB0aGUgdGltZXIgaXJxLCByZWFkIHRoZSBjbGFpbSBSRUcsIGFuZCBkbyB0aW1lciBp
+c3IgZXZlbnQsIA0KMi4gIGR1cmluZyB0aGUgdGltZXIgaXNyIGl0IHdpbGwgc2V0IG5leHQgZXZl
+bnQgDQp0aWNrX2Jyb2FkY2FzdF9zZXRfZXZlbnQgLT4gIGlycV9zZXRfYWZmaW5pdHktPiB4eHgt
+PiBwbGljX3NldF9hZmZpbml0eSAtPiBwbGljX2lycV9lbmFibGUNCjMuIGluIHBsaWNfc2V0X2Fm
+ZmluaXR5ICBkaXNhYmxlIGNwdTAncyBJRSBhbmQgZW5hYmxlIGNwdTEnSUUNCjQuIGNwdTAgZG8g
+dGhlIHdyaXRlIGNsYWltIHRvIGZpbmlzaCB0aGlzIGlycSwgd2hpbGUgY3B1MCdzIElFIGlzIGRp
+c2FibGVkICwgbGVmdCBhbiBhY3RpdmUgc3RhdGUgaW4gcGxpYw0KDQpCZXN0IHJlZ2FyZHMsDQp6
+aGVuZ3lhbg0KDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lycWNoaXAvaXJxLXNpZml2ZS1wbGlj
+LmMgYi9kcml2ZXJzL2lycWNoaXAvaXJxLXNpZml2ZS1wbGljLmMNCj4gaW5kZXggMGEyMzNlOWQ5
+NjA3Li42M2YyMTExY2VkNGEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaXJxY2hpcC9pcnEtc2lm
+aXZlLXBsaWMuYw0KPiArKysgYi9kcml2ZXJzL2lycWNoaXAvaXJxLXNpZml2ZS1wbGljLmMNCj4g
+QEAgLTEyMiw3ICsxMjIsMTUgQEAgc3RhdGljIGlubGluZSB2b2lkIHBsaWNfaXJxX3RvZ2dsZShj
+b25zdCBzdHJ1Y3QNCj4gY3B1bWFzayAqbWFzaywNCj4gDQo+ICBzdGF0aWMgdm9pZCBwbGljX2ly
+cV9lbmFibGUoc3RydWN0IGlycV9kYXRhICpkKSAgew0KPiArCXN0cnVjdCBwbGljX3ByaXYgKnBy
+aXYgPSBpcnFfZGF0YV9nZXRfaXJxX2NoaXBfZGF0YShkKTsNCglzdHJ1Y3QgcGxpY19oYW5kbGVy
+ICpoYW5kbGVyID0gdGhpc19jcHVfcHRyKCZwbGljX2hhbmRsZXJzKTsNCm1pc3NpbmcgYSBkZWZp
+bml0aW9uPyBJZiBhZGRzIGxpa2UgdGhpcyB3aWxsIGNhdXNlIGEgcHJvYmxlbS4NCj4gKw0KPiAr
+CXdyaXRlbCgwLCBwcml2LT5yZWdzICsgUFJJT1JJVFlfQkFTRSArIGQtPmh3aXJxICogUFJJT1JJ
+VFlfUEVSX0lEKTsNCj4gKw0KPiArCXdyaXRlbChkLT5od2lycSwgaGFuZGxlci0+aGFydF9iYXNl
+ICsgQ09OVEVYVF9DTEFJTSk7DQo+ICsNCj4gIAlwbGljX2lycV90b2dnbGUoaXJxX2RhdGFfZ2V0
+X2VmZmVjdGl2ZV9hZmZpbml0eV9tYXNrKGQpLCBkLCAxKTsNCj4gKw0KPiArCXdyaXRlbCgxLCBw
+cml2LT5yZWdzICsgUFJJT1JJVFlfQkFTRSArIGQtPmh3aXJxICogUFJJT1JJVFlfUEVSX0lEKTsN
+Cj4gIH0NCj4gDQo+ICBzdGF0aWMgdm9pZCBwbGljX2lycV9kaXNhYmxlKHN0cnVjdCBpcnFfZGF0
+YSAqZCkgQEAgLTE0OCwxMyArMTU2LDcgQEAgc3RhdGljDQo+IHZvaWQgcGxpY19pcnFfZW9pKHN0
+cnVjdCBpcnFfZGF0YSAqZCkgIHsNCj4gIAlzdHJ1Y3QgcGxpY19oYW5kbGVyICpoYW5kbGVyID0g
+dGhpc19jcHVfcHRyKCZwbGljX2hhbmRsZXJzKTsNCj4gDQo+IC0JaWYgKHVubGlrZWx5KGlycWRf
+aXJxX2Rpc2FibGVkKGQpKSkgew0KPiAtCQlwbGljX3RvZ2dsZShoYW5kbGVyLCBkLT5od2lycSwg
+MSk7DQo+IC0JCXdyaXRlbChkLT5od2lycSwgaGFuZGxlci0+aGFydF9iYXNlICsgQ09OVEVYVF9D
+TEFJTSk7DQo+IC0JCXBsaWNfdG9nZ2xlKGhhbmRsZXIsIGQtPmh3aXJxLCAwKTsNCj4gLQl9IGVs
+c2Ugew0KPiAtCQl3cml0ZWwoZC0+aHdpcnEsIGhhbmRsZXItPmhhcnRfYmFzZSArIENPTlRFWFRf
+Q0xBSU0pOw0KPiAtCX0NCj4gKwl3cml0ZWwoZC0+aHdpcnEsIGhhbmRsZXItPmhhcnRfYmFzZSAr
+IENPTlRFWFRfQ0xBSU0pOw0KPiAgfQ0KPiANCj4gICNpZmRlZiBDT05GSUdfU01QDQo=
 
