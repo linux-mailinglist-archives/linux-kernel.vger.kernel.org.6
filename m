@@ -1,196 +1,108 @@
-Return-Path: <linux-kernel+bounces-227616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E2A991547E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:40:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49155915481
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B805CB25861
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:40:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E68891F22AF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E100A19E7F8;
-	Mon, 24 Jun 2024 16:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55C219DFB7;
+	Mon, 24 Jun 2024 16:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZfW6GWZw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Iw2w4Y8W"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1537119E7C1;
-	Mon, 24 Jun 2024 16:39:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C685319E823
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719247155; cv=none; b=bCpReFU9RBrl/XwdseVx8Yp5InevVW1aiLBdo2hl5YxqHLwdHpNJHJoFC1jyXQkPonJFFZTUuJcwiclKS22LvyLrrhJrY3Mmh74MErILF2uplo2D809cKvOFn3OrYDjt5401LGwGfDRkIT2+BOOEem00oaiW+y5nX/uJZrAAaU0=
+	t=1719247208; cv=none; b=eCxMiJsh+CpSKk9NOxUOSxQkqF5tSxKVBt7fO9YwdOXaCj8BD8uzTpLMhFKF7sOL0G0KEGUkbqFfNH4pcGRg4Xsu+gv/cUjozM+fIQhMhB8jt5F3SARoh3gjR+5dXxOG16FK+QrfmOSXy9DDNcNYRB35at/RL0uke7pPTGN4F88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719247155; c=relaxed/simple;
-	bh=eqs00n4+UDoC3Z/DNr8LAH5mFvTl7xb4hGQdQJEOuZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xs56eZLWhhmygf0WCkB+yc2RkAPuE6+PayUiZmDsLdGGNiCAS8GDmLAhsa2y266PCyUg21g7vKvSv4J5I9VDIikK+mE4otBrMTMnDgkX0433jPhX9/anPugTm27KjOZBjPmjQHzLISzefnuTEJ4NOuTBpupnCC6bEO4hQE9czAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZfW6GWZw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F9DEC2BBFC;
-	Mon, 24 Jun 2024 16:39:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719247155;
-	bh=eqs00n4+UDoC3Z/DNr8LAH5mFvTl7xb4hGQdQJEOuZk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZfW6GWZw5Y0LrI/oVFAJwcK4oxwxthA3Zm2OT/hia4TSG5E4ywv2jzg0Hvf3HM9+I
-	 8vf/G5Qw6rBF0b+si7MWoDVyw+SYlbvZoBBj5Q+1nbSH9+eqLplzSTaK47E5t0onhz
-	 3DM1TOBdE3noGu7IJEVDVQgjdMsneAjLW/MjyCkF8Yz+SAGC0KbrAkCV7AQlTp2tPn
-	 PorCU6P7zUzY2V3n0HjszJuqHpSsd12xnseBtaO0OV3UZRMl5W8/lbyLkCGDL5ddwY
-	 RDSW3ulJHiwwyiDVA2Ka1LKamMQxQW7Iy+TJPCVzHfW/LnkYtPqHAEAeg2lTuNekhk
-	 vQsvDpq7q7VJA==
-Date: Mon, 24 Jun 2024 17:39:09 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: renesas,sdhi: Document
- RZ/V2H(P) support
-Message-ID: <20240624-request-demeanor-d66965d27935@spud>
-References: <20240624153229.68882-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240624153229.68882-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1719247208; c=relaxed/simple;
+	bh=bTHn335s8B1w66yFq/+OI5bVTKkN+nzUp2gyrYEy47I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LLUu3x6RNkzroI7XJD4dviph3/VFwpW5Y1iNaDVaC+BBmwv5bpe+URLonQf0isluGnZxVhQXXohEvoRzhUHJG+ivWH8dJQByUSwG0EvjHWHQptAfLOHQ1vtkCR7vn33rMqB/Gn/tlL9FbUb8DSoF6oTmKGdVVt4wEoJTrgopeKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Iw2w4Y8W; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-44056f72257so1751cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:40:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719247205; x=1719852005; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GZ+xnyCLREi74xq4k4heuccoqe9gphJLidfi9eaePRI=;
+        b=Iw2w4Y8WoxrwImRWC82vcBkWwThBcO9ba0j1ecw/0tWFvBNJiNCQrGZVNT5Ssp6iK/
+         Ou/l0kbFfslk34uT1j62W3eFaggnD9QGj3Nbp3JnR3p8+EspoR5P1ELUJcmH5q0qWSfs
+         oOus0EUT4zobcqvn3PYm4yjjyfh/bzjY7wIifQNfKVmI9m7ohPmeWTmpp+s6TEJ8swLy
+         dS/Y74eyiPqEq+7hAO/2RvgxGkoT8pNdO3BQqFzi5a3ToBXY0zJ4NKZZROzOyTFN5Pvz
+         UwRbmqOPHQbyo+lncpjyadAmSPLyrBF9CO8EfZdVu4oPH/mjAYq9gxYMYOV+I8PY63s8
+         oE9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719247205; x=1719852005;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GZ+xnyCLREi74xq4k4heuccoqe9gphJLidfi9eaePRI=;
+        b=gEMx97fiWIkyJYIbNN7nmSQHflr7/98neknQYwEtTkunOgGxrZEslFfLT5Je7r228T
+         TKRs4zu6TtZz7NcVskJlUZK+7XveJZBiAIi/a6vvQlMtCzl5D0PZ8JQrBoC0p3hDu0Em
+         iaVeexTTzmBgftTIK76c7G0IJALYSh6Bk/2yLUxhmfLuw4y9+od5OX95q7AT45knyCLs
+         0WvETAs1MVpiLptLWuxrq+FJlJsEi22pS8JBHgBhcfuwQfpaCXyc6GSjS61v3Qxde/TA
+         dI9BCz45k/doS0xFtLptdWL45YQmuAhQ5T03JminNmiKA/FzwxaWOQUIlsp5sT+Qhw6G
+         F57g==
+X-Forwarded-Encrypted: i=1; AJvYcCVQGsZw38NtR1JEw99MgE4Z8oHBiUqt9UKwcU6D9F9QtGME1qpz8+GpaGL8PQfd9Aah10mhZv68YiVtuKrQhlqhZAV7oBfF6DAC7eHQ
+X-Gm-Message-State: AOJu0YxC9JRwyGCMfKjdkyqGo67e9vIPDCrre8Zg4BYxjP0e1xIdC6bn
+	zHeHKaK7VoiVshu5YOAwBM0DRXm+I1YSclrFee00RQbPJc2zOWJrk7O+uwkAN6DrfX4ic9B4lXu
+	Z7cuztZ14Z25cNHoOTpeFC41X4WuphXLAuyry
+X-Google-Smtp-Source: AGHT+IFixPe77lWinjbn1l+sNnJv5Ui/C76Vx2CtkIRfQjKNjmI2FCb1bmRnLWcIP8e3ucRsKkrRobHHIY0Ljuz5GjU=
+X-Received: by 2002:a05:622a:109:b0:444:a760:55de with SMTP id
+ d75a77b69052e-444ce34a3b1mr5027131cf.24.1719247204577; Mon, 24 Jun 2024
+ 09:40:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="L0bfX9GEU5XPf3Zo"
-Content-Disposition: inline
-In-Reply-To: <20240624153229.68882-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-
---L0bfX9GEU5XPf3Zo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240624141926.5250-1-lvzhaoxiong@huaqin.corp-partner.google.com> <20240624141926.5250-4-lvzhaoxiong@huaqin.corp-partner.google.com>
+In-Reply-To: <20240624141926.5250-4-lvzhaoxiong@huaqin.corp-partner.google.com>
+From: Doug Anderson <dianders@google.com>
+Date: Mon, 24 Jun 2024 09:39:53 -0700
+Message-ID: <CAD=FV=XNS6sq1nuynDqU6gvfVa5pyBzVKPSiboEEYsTbwvV9fQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/5] drm/panel: panel-jadard-jd9365da-h3: use wrapped
+ MIPI DCS functions
+To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
+	benjamin.tissoires@redhat.co, hsinyi@google.com, jagan@edgeble.ai, 
+	neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
+	dmitry.baryshkov@linaro.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 24, 2024 at 04:32:27PM +0100, Prabhakar wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to that
-> of the R-Car Gen3, but it has some differences:
-> - HS400 is not supported.
-> - It supports the SD_IOVS bit to control the IO voltage level.
-> - It supports fixed address mode.
->=20
-> To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a09g057'
-> compatible string is added.
->=20
-> A 'vqmmc-regulator' object is introduced to handle the power enable (PWEN)
-> and voltage level switching for the SD/MMC.
->=20
-> Additionally, the 'renesas,sdhi-use-internal-regulator' flag is introduced
-> to indicate that an internal regulator is used instead of a
-> GPIO-controlled regulator. This flag will help configure the internal
-> regulator and avoid special handling when GPIO is used for voltage
-> regulation instead of the SD_(IOVS/PWEN) pins.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v2->v3
-> - Renamed vqmmc-r9a09g057-regulator object to vqmmc-regulator
-> - Added regulator-compatible property for vqmmc-regulator
-> - Added 'renesas,sdhi-use-internal-regulator' property
->=20
-> v1->v2
-> - Moved vqmmc object in the if block
-> - Updated commit message
-> ---
->  .../devicetree/bindings/mmc/renesas,sdhi.yaml | 30 ++++++++++++++++++-
->  1 file changed, 29 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml b/Do=
-cumentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> index 3d0e61e59856..20769434a422 100644
-> --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> @@ -18,6 +18,7 @@ properties:
->            - renesas,sdhi-r7s9210 # SH-Mobile AG5
->            - renesas,sdhi-r8a73a4 # R-Mobile APE6
->            - renesas,sdhi-r8a7740 # R-Mobile A1
-> +          - renesas,sdhi-r9a09g057 # RZ/V2H(P)
->            - renesas,sdhi-sh73a0  # R-Mobile APE6
->        - items:
->            - enum:
-> @@ -118,7 +119,9 @@ allOf:
->        properties:
->          compatible:
->            contains:
-> -            const: renesas,rzg2l-sdhi
-> +            enum:
-> +              - renesas,sdhi-r9a09g057
-> +              - renesas,rzg2l-sdhi
->      then:
->        properties:
->          clocks:
-> @@ -204,6 +207,31 @@ allOf:
->          sectioned off to be run by a separate second clock source to all=
-ow
->          the main core clock to be turned off to save power.
-> =20
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: renesas,sdhi-r9a09g057
-> +    then:
-> +      properties:
+Hi,
 
-Please define properties at the top level and constrain then per
-compatible.
-
-Thanks,
-Conor.
-
-> +        renesas,sdhi-use-internal-regulator:
-> +          $ref: /schemas/types.yaml#/definitions/flag
-> +          description:
-> +            Flag to indicate internal regulator is being used instead of=
- GPIO regulator.
+On Mon, Jun 24, 2024 at 7:21=E2=80=AFAM Zhaoxiong Lv
+<lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
+>
+> +static int radxa_display_8hd_ad002_init_cmds(struct jadard *jadard)
+> +{
+> +       struct mipi_dsi_multi_context dsi_ctx =3D { .dsi =3D jadard->dsi =
+};
 > +
-> +        vqmmc-regulator:
-> +          type: object
-> +          description: VQMMC SD regulator
-> +          $ref: /schemas/regulator/regulator.yaml#
-> +          unevaluatedProperties: false
-> +
-> +          properties:
-> +            regulator-compatible:
-> +              pattern: "^vqmmc-r9a09g057-regulator"
-> +
-> +      required:
-> +        - vqmmc-regulator
-> +
->  required:
->    - compatible
->    - reg
-> --=20
-> 2.34.1
->=20
+> +       mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xE0, 0x00);
 
---L0bfX9GEU5XPf3Zo
-Content-Type: application/pgp-signature; name="signature.asc"
+nit: could you convert the hex from UPPERCASE to lowercase in this
+patch. As an example, 0xE0 above should be 0xe0.
 
------BEGIN PGP SIGNATURE-----
+Other than that nit, this looks OK to me:
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnmhLQAKCRB4tDGHoIJi
-0u5GAP46hhJTW4dDlB7GHrPo+ArAzALm61T9XgVfP6aUk3bsgAD+L1E4/ScfugT+
-yptW3oL4pA4cCaNA86M1tx8LuoHJTwI=
-=axPI
------END PGP SIGNATURE-----
-
---L0bfX9GEU5XPf3Zo--
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 
