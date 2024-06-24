@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-226798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655929143FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:56:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56CEF914408
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D86421F2288A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:56:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D927281965
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:57:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042C648CFC;
-	Mon, 24 Jun 2024 07:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F068B481D3;
+	Mon, 24 Jun 2024 07:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MTYUAtWI"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VAcpGIdi"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E34C481C4
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF0E47F5F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719215798; cv=none; b=b6QN7ljsr4WtA3W1hct+RF/CFp39QGHY77TLlNbUotPBMamhZf3/SmE4KLIyzIFf4cazfxI9/pJnnJaEnTSV+wdRDvCcTAOrdDIxBsHNzZEBvbz5sjsqeLBtsYq88wmsvQ8P/U84dJmYabPCy72A7kDUHh+OxMhhlYGn+Wa+kmk=
+	t=1719215852; cv=none; b=YWnAUFYjY+ZOGU+lmLRdrU7zHnf+2w+hg5UQfh0S8ABinEhETeM2qNE2dmLu13fs7MSGtFgzJHvnfvTndfSYVpONxb8MkvVFxXZXNzMVwZW62x3BbUQ6GbcYySXlgXaBsfyvBSYUJtauldpqSpFYIPgM9qusKgEMYLCdlqSSrII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719215798; c=relaxed/simple;
-	bh=ZhGDo8cXsdmWgdlNHJfJ8MACqMu6lnyLvjl4GWo+aNo=;
+	s=arc-20240116; t=1719215852; c=relaxed/simple;
+	bh=FFUMUVVqTCMRi5LNC3E6gl33cqGAV4cXK11cOIpHev0=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=u5WL7yHKYVD/ARNWjBIAguq43HOGQZwG29l1EltvQ6w2LqFzBF9Xu7ZwIIFzQyJTsxFZcCdvrtWYuDacORLimmdr+1cRjsGz8MBmXf5PBKspxWVy252S6izgHQ4sWfHJ0gcE5qI2gi+EzF8zf/4T6OJrpfKoROoZnBgJlUHOrdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MTYUAtWI; arc=none smtp.client-ip=209.85.221.47
+	 In-Reply-To:Content-Type; b=Qaljl/GyGWCm0CjgpfjKBlNkjHR9NF6hYj8Qya8MdtE9oDTSoXdrUtdhfLSlEZbKECF7dniSa8KpCQ4ibGn24jtqwer74j3xtbyd8RyyMwLGax84FTHm5aPiKbAmPp1zydFHWPZFsas7W69UpFfMBtKCdDwZlcBbypc3WJEgCOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VAcpGIdi; arc=none smtp.client-ip=209.85.128.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3650f2e540dso2524173f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 00:56:36 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4217926991fso35259295e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 00:57:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719215795; x=1719820595; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719215849; x=1719820649; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bkAZCoR1EAxHYyMUSyL77CxZBsg/gsiAFxg+O7Lf1wE=;
-        b=MTYUAtWIZPkdidfXhufsPevB+toBMVMAJ8EmkzzUfZEDOwuAcuWj3+yItCi2V5RNIM
-         8nlHspmnbkuomP0GwMWvQyCLPKHIdTxbdTX3IFxZ8vhRaEFuIsM4dTDm73U7PIMn1WJH
-         1vv+gisIRdupyJ79Vl44L+fen6au4TpyjgowDgBgDDEbbK5v0QrvVTYJAG/eS2Wx+miK
-         eLBF1Q/xWeR3Qw2JQ6M+A+fmIxb6Ley4gW6ydYOgXkfDgpTMXHcclkbbEkbJG3GgEUv2
-         Wcd1lWdzrmWkA2958OPniUfQJ+oLlPqOFAJJ04eg2qdO1Jz12pxQHoF+aQULcGa9xk8P
-         pexQ==
+        bh=XkaBHpuC3DPU+3GGRecZB4kBIUF1paiWiYKZGEuOWys=;
+        b=VAcpGIdiNU4lJl0oM8YuzJOwaF1Mcjg/ox2J9xZ9FQ7UvhyiX6I1IWTpAOeCoYBsRn
+         5M2YWZ0G9YRWWzI9wEV3Y6R0WW3tdHUEbXzf6Ca8NsG0ahl/6YO7xAsv0fvammC0INnS
+         UfO0bVq2x7rGV+N7cqP5hFMjzFpj3mBGB/GwwEf+c0OgWQHm0thIZC5yZ797ooyzCp7s
+         kjZw5hcgIFbabSY4xkyPzKq05tn5uX8Er0jEFHlU+PioD5V0D6cy8ipatGiEW/UzqAwf
+         tTiKbwBvfbL9rh7YuO3z/XzJ35cu4PUsA+p7EahRtfDoGVuKEf6ecjo/sgWvtZslXpIz
+         8EYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719215795; x=1719820595;
+        d=1e100.net; s=20230601; t=1719215849; x=1719820649;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=bkAZCoR1EAxHYyMUSyL77CxZBsg/gsiAFxg+O7Lf1wE=;
-        b=euhv9A+dbTVBRnICrYQQrbYyzw1W1X8AgL78w1UL9+Z4GDay60K44iD4a1Qfis9UJU
-         AYT6neUvZEVEWisXUgLLVT343D7FZpSy/qcqlOd2thlnZwbxgXf1yRhMF16VlWTpghlr
-         gzM41iRGrKM2l525yVmYd7FdHRMJK6CRdw8jZdbRYnYhiWj8ylXz/T0TrYe8cMz/x4uz
-         x2IAzEIvl5wiRbxet0axYmy1Jn6whDLUN8X4O85epBwRqFkAtYwwuuGQP1f/5dzNMvq6
-         5u4JUWWu5g28khKc99Zon2BgZ0kJjGfm7GgjoecDewy00SImT48byHbAb2SeHAzPjcDG
-         24uA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6prsrdz0THexhIjyzvxsuVPqjkOhFr3VXpLQ+egoNuphq4jLYNvszUqVnBIxJAQ8paTp4hISjR51V6jBnANJSucRCzwyNAQrOkwU/
-X-Gm-Message-State: AOJu0Yxo3G7qZmV0hgc0WNq6+tSjEARtinRJF0O7kmzKnSpWcb9XPXp0
-	m8zILq/Wojlq+GovL7qxaJ35UaxIk9BGmoI2YptOvQlp8sgnR4Pmcny7TRU1oDY=
-X-Google-Smtp-Source: AGHT+IH5j/Ekjx/L85BTArhDYmuRCO9srSTxGbIrLpKT2Z6tyiKEDWQFgTXYpWagliPQeNJVMGiszg==
-X-Received: by 2002:a05:6000:1f88:b0:366:ec79:661f with SMTP id ffacd0b85a97d-366ec79679amr2370670f8f.48.1719215794728;
-        Mon, 24 Jun 2024 00:56:34 -0700 (PDT)
+        bh=XkaBHpuC3DPU+3GGRecZB4kBIUF1paiWiYKZGEuOWys=;
+        b=FpE7YEZg6vIG7XfasGPWOOYF+P9/l+7pxJq5HoLHGorrkmKrkBTu1EWsuLt2oTP4wB
+         3tLT2BHa9+4y9rMdjrD2NIz3rpSmprH0C7Y1vZjTzc8NOj95Nr/lNax4m96WXXZ2rq+s
+         zBgXKHzUTw6/FffwmbaoeBK/KVfEXEgHbKEfCjUTKSnu+sw+S82VVumNX4PQKAhUNmiT
+         S2WY7LXRErOqUiFunwCRH5ziEXMR5P/arJM3H7PJ0e9OaxHcatUcBWdkXM//52TgdAqb
+         t/3DkmRvFSSpTq09CkDho0M1gf74NsSxrOPMKedhKtlBTxGEYei6AbZL/8kXsGq7vgjQ
+         ZYtA==
+X-Forwarded-Encrypted: i=1; AJvYcCVEcPqtL2fE+7t7QmNO3igja7LPrB3sKtHD5WJGMfHTuQMssM4e1gxcmllUG1BeH6V/p0dU6Mw3xQIbZgCXweXxKx9KSQ0Gl2Z/PFJ6
+X-Gm-Message-State: AOJu0YyaDzWGHb4j4wOqQPlAWG1KoEqc/BsufkYgnURKGNVfIGIA1JLG
+	JPYIM4QGz0hERyKP8KOLADDzGcIJTcFUROtGS9dzYsSok23+8RBLhBh7S1k/KnM=
+X-Google-Smtp-Source: AGHT+IF6msK0az2v0jiwz2RmUc+bw2QJiim7NK5dx1B5XQlvaU6NxuzZ/pRAAiQqUtwNH0TtPCom0w==
+X-Received: by 2002:a05:600c:3b14:b0:424:8c44:b639 with SMTP id 5b1f17b1804b1-4248c44b70fmr27066285e9.19.1719215848792;
+        Mon, 24 Jun 2024 00:57:28 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:cf01:774b:55fd:ab74? ([2a01:e0a:982:cbb0:cf01:774b:55fd:ab74])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0bea05sm163671825e9.18.2024.06.24.00.56.34
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4248191116fsm129554925e9.37.2024.06.24.00.57.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 00:56:34 -0700 (PDT)
-Message-ID: <754a6ad5-f093-4426-9d68-3556978e1d2a@linaro.org>
-Date: Mon, 24 Jun 2024 09:56:33 +0200
+        Mon, 24 Jun 2024 00:57:28 -0700 (PDT)
+Message-ID: <c2c14080-25bd-4732-bf9c-0a9d385866f4@linaro.org>
+Date: Mon, 24 Jun 2024 09:57:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,17 +79,17 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 3/5] clk: qcom: dispcc-sm8650: drop TCXO from table when
- using rcg2_shared_ops
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH 5/5] clk: qcom: dispcc-sm8650: Update the GDSC wait_val
+ fields and flags
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
+ <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20240621-topic-sm8650-upstream-fix-dispcc-v1-0-7b297dd9fcc1@linaro.org>
- <20240621-topic-sm8650-upstream-fix-dispcc-v1-3-7b297dd9fcc1@linaro.org>
- <d508f8e5-8303-4f84-83d4-d63f6c612a02@linaro.org>
+ <20240621-topic-sm8650-upstream-fix-dispcc-v1-5-7b297dd9fcc1@linaro.org>
+ <tbslwm4xfknta4ufcvhxhknj3ypfi63spvm5askl2pqmuqssgj@v7a5oa3xfelc>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -116,30 +116,69 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <d508f8e5-8303-4f84-83d4-d63f6c612a02@linaro.org>
+In-Reply-To: <tbslwm4xfknta4ufcvhxhknj3ypfi63spvm5askl2pqmuqssgj@v7a5oa3xfelc>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 22/06/2024 13:01, Konrad Dybcio wrote:
-> On 21.06.2024 4:01 PM, Neil Armstrong wrote:
->> Since those clocks are using rcg2_shared_ops to park on TCXO
->> instead of disable, no need to have TCXO in the frequency table.
->>
->> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
+On 21/06/2024 23:39, Dmitry Baryshkov wrote:
+> On Fri, Jun 21, 2024 at 04:01:18PM GMT, Neil Armstrong wrote:
+>> Update the GDSC wait_val fields and flags as per the default hardware values.
 > 
-> I don't think that's correct.. some hardware can still run with the
-> core clock @ 19.2 / 38.4 MHz
+> If they are default, do we need to program them?
+> 
+>> Add the missing POLL_CFG_GDSCR flag.
+> 
+> I'd say, two distinct fixes.
 
-I agree, but the same table on other dispcc drivers don't have this TCXO entries,
-and the OPP table in DT neither...
-
-I'll drop this, but at some point we should align ourselves.
+I'll drop the wait_val fields changes and only add the missing flags.
 
 Neil
 
 > 
-> Konrad
+>>
+>> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/clk/qcom/dispcc-sm8650.c | 10 ++++++++--
+>>   1 file changed, 8 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
+>> index d88eebb32575..2da3c11b0c3d 100644
+>> --- a/drivers/clk/qcom/dispcc-sm8650.c
+>> +++ b/drivers/clk/qcom/dispcc-sm8650.c
+>> @@ -1604,20 +1604,26 @@ static struct clk_branch disp_cc_sleep_clk = {
+>>   
+>>   static struct gdsc mdss_gdsc = {
+>>   	.gdscr = 0x9000,
+>> +	.en_rest_wait_val = 0x2,
+>> +	.en_few_wait_val = 0x2,
+>> +	.clk_dis_wait_val = 0xf,
+>>   	.pd = {
+>>   		.name = "mdss_gdsc",
+>>   	},
+>>   	.pwrsts = PWRSTS_OFF_ON,
+>> -	.flags = HW_CTRL | RETAIN_FF_ENABLE,
+>> +	.flags = POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
+>>   };
+>>   
+>>   static struct gdsc mdss_int2_gdsc = {
+>>   	.gdscr = 0xb000,
+>> +	.en_rest_wait_val = 0x2,
+>> +	.en_few_wait_val = 0x2,
+>> +	.clk_dis_wait_val = 0xf,
+>>   	.pd = {
+>>   		.name = "mdss_int2_gdsc",
+>>   	},
+>>   	.pwrsts = PWRSTS_OFF_ON,
+>> -	.flags = HW_CTRL | RETAIN_FF_ENABLE,
+>> +	.flags = POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
+>>   };
+>>   
+>>   static struct clk_regmap *disp_cc_sm8650_clocks[] = {
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
 
 
