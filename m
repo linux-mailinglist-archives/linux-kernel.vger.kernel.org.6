@@ -1,197 +1,194 @@
-Return-Path: <linux-kernel+bounces-227970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227971-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4710D915926
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:38:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5CEA915928
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F189D28127D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:38:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D170B212D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B8B1A0AFE;
-	Mon, 24 Jun 2024 21:38:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qCPQwdxo";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1S8uA9rS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7162F1A0B04;
+	Mon, 24 Jun 2024 21:40:28 +0000 (UTC)
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A56F8F6B;
-	Mon, 24 Jun 2024 21:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891E68F6B;
+	Mon, 24 Jun 2024 21:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719265107; cv=none; b=hGFFM4ai8+1mGF0MYfiQzXU29WCQguR6AOViWfN9PNNE1jcMSUxr82dlpNLsO9umIb3TpaXOK1YZYGPNiczNmdfwIFn/6qqttWuaijJXuBc730HP6yxaQTrSbza2FaPC99gXWgp7NeU/fb5ulmKF6GzSoCz2nFIqC/j+ZLnpWXg=
+	t=1719265227; cv=none; b=aBsoM9RMB+8YcJ1n9DsigaLdfy9GXKV5S2Vl/01bQ0ODn/SPN8l1w+Tr3bz+XAF7cl9qkGu8OapUUBL4VF6MBWc2CekMHoDy3nPFbWyVDm/4tGfVKS8tlZHX6Hr5/AR6HYDhP7FMUrv2+V79tiIqOA8OXTj30aYRT9zNhdMwsAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719265107; c=relaxed/simple;
-	bh=kSPAP0ltARe2VIKg4M2LmwCAz4zBRuD++Xx7/4bmzUA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=ukQKsm1A5ojTeNVY4TqDOFHCtQCqtUKbSpbmynry2KnKSkHJzgbTFJMyqxv3ZhjGeBzlHXFGJk3cS6/g2o7lqEWHpoWS49sCu9wrvZoh8eVbYN1rFESROhbGlVNNkiuaHBs1Jgtsw6LWgHzJk4tI7NzXtqNUP69QOAuyaZnC6Jk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qCPQwdxo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1S8uA9rS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 24 Jun 2024 21:38:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719265103;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=795W2AEFSNy6I3D9oUUKI9VVdZefYPasni8MsUvS+5o=;
-	b=qCPQwdxogdFvtV1a+tlW7msctfIU5rhX2+bf7RS2TN5hywy7ma+fMqLqO6KvE9NEyHSwZv
-	L7eIOC5f5FM1LoXVD2iVcstoRrSRKwxByVEf0KdvSyVGNJGamhuvqdnJHbd9BSOOs4EJxA
-	nImNvDv2WBsL+END59TuupEuOPWayODZanCPz7+SZmDXdMdWoDYZKcFFhWbKi2Uhm2PF0W
-	K2XaGInCgprAnqq+XjyPv9ZGC6jekN53cxP1L4bnkCf99C3auNXgkiJjaylcnczCODFPfw
-	5Fdwf3unGhWsNNEIg2g7DxbWIgM3pYmHfC1Nu+lwdwT8FRbHVWWyxjZd6ahwBw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719265103;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=795W2AEFSNy6I3D9oUUKI9VVdZefYPasni8MsUvS+5o=;
-	b=1S8uA9rSYRrVPselldWaWKbCmnFfXeP5Wh0nv4UiI4Y3+uSPCanR2w76mV4x6C6OWjrNKA
-	ipV3rPl6wn5uxtCA==
-From: "tip-bot2 for Mostafa Saleh" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/urgent] PCI/MSI: Fix UAF in msi_capability_init
-Cc: Thomas Gleixner <tglx@linutronix.de>, Mostafa Saleh <smostafa@google.com>,
- Bjorn Heelgas <bhelgaas@google.com>, stable@vger.kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20240624203729.1094506-1-smostafa@google.com>
-References: <20240624203729.1094506-1-smostafa@google.com>
+	s=arc-20240116; t=1719265227; c=relaxed/simple;
+	bh=92CkypWCKRo21iK/39AGivsX+yFazOH7qt52Zq6Z2Xg=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=d9TQfKnQc86BQ4KLJfD85qKEia3DtMi20hO1rUtwtxLK57vNUQMz+VvyfBrZblYuLtYl+uviAMDQzMK8XBOMf1fDWTeXZdVQpGcxOSKo8oquCAuJ4+LV9jpTJOqfmBJN4PJ3CKdfoiPLIGPWr69vA9UGe4Wqsu7wFbLgkAlGEdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 39D5FC0003;
+	Mon, 24 Jun 2024 21:40:20 +0000 (UTC)
+Message-ID: <a0b35837-375b-4650-9e68-ef4883c0d0c9@ovn.org>
+Date: Mon, 24 Jun 2024 23:40:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171926510327.10875.9576124957334657501.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Cc: i.maximets@ovn.org, aconole@redhat.com, echaudro@redhat.com,
+ horms@kernel.org, dev@openvswitch.org, Yotam Gigi <yotam.gi@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>,
+ Jiri Pirko <jiri@resnulli.us>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v3 04/10] net: psample: allow using rate as
+ probability
+To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
+References: <20240619210023.982698-1-amorenoz@redhat.com>
+ <20240619210023.982698-5-amorenoz@redhat.com>
+Content-Language: en-US
+From: Ilya Maximets <i.maximets@ovn.org>
+Autocrypt: addr=i.maximets@ovn.org; keydata=
+ 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
+In-Reply-To: <20240619210023.982698-5-amorenoz@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-GND-Sasl: i.maximets@ovn.org
 
-The following commit has been merged into the irq/urgent branch of tip:
+On 6/19/24 23:00, Adrian Moreno wrote:
+> Although not explicitly documented in the psample module itself, the
+> definition of PSAMPLE_ATTR_SAMPLE_RATE seems inherited from act_sample.
+> 
+> Quoting tc-sample(8):
+> "RATE of 100 will lead to an average of one sampled packet out of every
+> 100 observed."
+> 
+> With this semantics, the rates that we can express with an unsigned
+> 32-bits number are very unevenly distributed and concentrated towards
+> "sampling few packets".
+> For example, we can express a probability of 2.32E-8% but we
+> cannot express anything between 100% and 50%.
+> 
+> For sampling applications that are capable of sampling a decent
+> amount of packets, this sampling rate semantics is not very useful.
+> 
+> Add a new flag to the uAPI that indicates that the sampling rate is
+> expressed in scaled probability, this is:
+> - 0 is 0% probability, no packets get sampled.
+> - U32_MAX is 100% probability, all packets get sampled.
+> 
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> ---
+>  include/net/psample.h                 |  3 ++-
+>  include/uapi/linux/psample.h          | 10 +++++++++-
+>  include/uapi/linux/tc_act/tc_sample.h |  1 +
+>  net/psample/psample.c                 |  3 +++
+>  4 files changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/net/psample.h b/include/net/psample.h
+> index 2ac71260a546..c52e9ebd88dd 100644
+> --- a/include/net/psample.h
+> +++ b/include/net/psample.h
+> @@ -24,7 +24,8 @@ struct psample_metadata {
+>  	u8 out_tc_valid:1,
+>  	   out_tc_occ_valid:1,
+>  	   latency_valid:1,
+> -	   unused:5;
+> +	   rate_as_probability:1,
+> +	   unused:4;
+>  	const u8 *user_cookie;
+>  	u32 user_cookie_len;
+>  };
+> diff --git a/include/uapi/linux/psample.h b/include/uapi/linux/psample.h
+> index e80637e1d97b..b765f0e81f20 100644
+> --- a/include/uapi/linux/psample.h
+> +++ b/include/uapi/linux/psample.h
+> @@ -8,7 +8,11 @@ enum {
+>  	PSAMPLE_ATTR_ORIGSIZE,
+>  	PSAMPLE_ATTR_SAMPLE_GROUP,
+>  	PSAMPLE_ATTR_GROUP_SEQ,
+> -	PSAMPLE_ATTR_SAMPLE_RATE,
+> +	PSAMPLE_ATTR_SAMPLE_RATE,	/* u32, ratio between observed and
+> +					 * sampled packets or scaled probability
+> +					 * if PSAMPLE_ATTR_SAMPLE_PROBABILITY
+> +					 * is set.
+> +					 */
+>  	PSAMPLE_ATTR_DATA,
+>  	PSAMPLE_ATTR_GROUP_REFCOUNT,
+>  	PSAMPLE_ATTR_TUNNEL,
+> @@ -20,6 +24,10 @@ enum {
+>  	PSAMPLE_ATTR_TIMESTAMP,		/* u64, nanoseconds */
+>  	PSAMPLE_ATTR_PROTO,		/* u16 */
+>  	PSAMPLE_ATTR_USER_COOKIE,	/* binary, user provided data */
+> +	PSAMPLE_ATTR_SAMPLE_PROBABILITY,/* no argument, interpret rate in
+> +					 * PSAMPLE_ATTR_SAMPLE_RATE as a
+> +					 * probability scaled 0 - U32_MAX.
+> +					 */
+>  
+>  	__PSAMPLE_ATTR_MAX
+>  };
+> diff --git a/include/uapi/linux/tc_act/tc_sample.h b/include/uapi/linux/tc_act/tc_sample.h
+> index fee1bcc20793..7ee0735e7b38 100644
+> --- a/include/uapi/linux/tc_act/tc_sample.h
+> +++ b/include/uapi/linux/tc_act/tc_sample.h
+> @@ -18,6 +18,7 @@ enum {
+>  	TCA_SAMPLE_TRUNC_SIZE,
+>  	TCA_SAMPLE_PSAMPLE_GROUP,
+>  	TCA_SAMPLE_PAD,
+> +	TCA_SAMPLE_PROBABILITY,
+>  	__TCA_SAMPLE_MAX
+>  };
+>  #define TCA_SAMPLE_MAX (__TCA_SAMPLE_MAX - 1)
 
-Commit-ID:     9eee5330656bf92f51cb1f09b2dc9f8cf975b3d1
-Gitweb:        https://git.kernel.org/tip/9eee5330656bf92f51cb1f09b2dc9f8cf975b3d1
-Author:        Mostafa Saleh <smostafa@google.com>
-AuthorDate:    Mon, 24 Jun 2024 20:37:28 
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 24 Jun 2024 23:33:38 +02:00
+Not a full review yet, but this hunk seems unrelated to the set
+as you're not adding rate_as_probability to act_sample.
 
-PCI/MSI: Fix UAF in msi_capability_init
+I suppose, it was part of the plan at some point, but then 
 
-KFENCE reports the following UAF:
-
- BUG: KFENCE: use-after-free read in __pci_enable_msi_range+0x2c0/0x488
-
- Use-after-free read at 0x0000000024629571 (in kfence-#12):
-  __pci_enable_msi_range+0x2c0/0x488
-  pci_alloc_irq_vectors_affinity+0xec/0x14c
-  pci_alloc_irq_vectors+0x18/0x28
-
- kfence-#12: 0x0000000008614900-0x00000000e06c228d, size=104, cache=kmalloc-128
-
- allocated by task 81 on cpu 7 at 10.808142s:
-  __kmem_cache_alloc_node+0x1f0/0x2bc
-  kmalloc_trace+0x44/0x138
-  msi_alloc_desc+0x3c/0x9c
-  msi_domain_insert_msi_desc+0x30/0x78
-  msi_setup_msi_desc+0x13c/0x184
-  __pci_enable_msi_range+0x258/0x488
-  pci_alloc_irq_vectors_affinity+0xec/0x14c
-  pci_alloc_irq_vectors+0x18/0x28
-
- freed by task 81 on cpu 7 at 10.811436s:
-  msi_domain_free_descs+0xd4/0x10c
-  msi_domain_free_locked.part.0+0xc0/0x1d8
-  msi_domain_alloc_irqs_all_locked+0xb4/0xbc
-  pci_msi_setup_msi_irqs+0x30/0x4c
-  __pci_enable_msi_range+0x2a8/0x488
-  pci_alloc_irq_vectors_affinity+0xec/0x14c
-  pci_alloc_irq_vectors+0x18/0x28
-
-Descriptor allocation done in:
-__pci_enable_msi_range
-    msi_capability_init
-        msi_setup_msi_desc
-            msi_insert_msi_desc
-                msi_domain_insert_msi_desc
-                    msi_alloc_desc
-                        ...
-
-Freed in case of failure in __msi_domain_alloc_locked()
-__pci_enable_msi_range
-    msi_capability_init
-        pci_msi_setup_msi_irqs
-            msi_domain_alloc_irqs_all_locked
-                msi_domain_alloc_locked
-                    __msi_domain_alloc_locked => fails
-                    msi_domain_free_locked
-                        ...
-
-That failure propagates back to pci_msi_setup_msi_irqs() in
-msi_capability_init() which accesses the descriptor for unmasking in the
-error exit path.
-
-Cure it by copying the descriptor and using the copy for the error exit path
-unmask operation.
-
-[ tglx: Massaged change log ]
-
-Fixes: bf6e054e0e3f ("genirq/msi: Provide msi_device_populate/destroy_sysfs()")
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Mostafa Saleh <smostafa@google.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: Bjorn Heelgas <bhelgaas@google.com>
-Cc: stable@vger.kernel.org
-Link: https://lore.kernel.org/r/20240624203729.1094506-1-smostafa@google.com
----
- drivers/pci/msi/msi.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pci/msi/msi.c b/drivers/pci/msi/msi.c
-index c5625dd..3a45879 100644
---- a/drivers/pci/msi/msi.c
-+++ b/drivers/pci/msi/msi.c
-@@ -352,7 +352,7 @@ static int msi_capability_init(struct pci_dev *dev, int nvec,
- 			       struct irq_affinity *affd)
- {
- 	struct irq_affinity_desc *masks = NULL;
--	struct msi_desc *entry;
-+	struct msi_desc *entry, desc;
- 	int ret;
- 
- 	/* Reject multi-MSI early on irq domain enabled architectures */
-@@ -377,6 +377,12 @@ static int msi_capability_init(struct pci_dev *dev, int nvec,
- 	/* All MSIs are unmasked by default; mask them all */
- 	entry = msi_first_desc(&dev->dev, MSI_DESC_ALL);
- 	pci_msi_mask(entry, msi_multi_mask(entry));
-+	/*
-+	 * Copy the MSI descriptor for the error path because
-+	 * pci_msi_setup_msi_irqs() will free it for the hierarchical
-+	 * interrupt domain case.
-+	 */
-+	memcpy(&desc, entry, sizeof(desc));
- 
- 	/* Configure MSI capability structure */
- 	ret = pci_msi_setup_msi_irqs(dev, nvec, PCI_CAP_ID_MSI);
-@@ -396,7 +402,7 @@ static int msi_capability_init(struct pci_dev *dev, int nvec,
- 	goto unlock;
- 
- err:
--	pci_msi_unmask(entry, msi_multi_mask(entry));
-+	pci_msi_unmask(&desc, msi_multi_mask(&desc));
- 	pci_free_msi_irqs(dev);
- fail:
- 	dev->msi_enabled = 0;
+Best regards, Ilya Maximets.
 
