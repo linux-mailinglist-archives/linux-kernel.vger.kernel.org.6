@@ -1,154 +1,93 @@
-Return-Path: <linux-kernel+bounces-228064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228065-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24706915A5E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:27:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 618B5915A5F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9B93B226B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:27:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B2C61F2263F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8181A2C17;
-	Mon, 24 Jun 2024 23:27:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ds2b3Eyu"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CCFF4AECE;
+	Mon, 24 Jun 2024 23:27:54 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA541A0731;
-	Mon, 24 Jun 2024 23:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 060A91A0731
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 23:27:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719271654; cv=none; b=hLEnHS0+q77NTAAsU31MvqJ/nHpwX3M26cJ8PVLkto5sFXAMD7FQ2TWMONTrWtot0bJjokfeMzxU2VWZyiwELs1gQyPnkq2sZM1D7kDM8OTkZENxztOaBXAB6RQtGXCGNHu8v7FbHYsd/BrPGQDXR6cLsy9qLtLkM+z6nDziPHE=
+	t=1719271673; cv=none; b=lDV7g3ocYQTBsb2keaUfffVwE7v79phvY0egalIkUztwVOSXynzrs31hkms74b0/lJkokld1zxr6Zy0BjcDlGlE5CYAdHoTmiTPo80MXysUe9iHCRmNjDgYj2ednKGWaLyRffnvI0LByogeY3OBRRZ9O7eGkVDTAm3jH7y+ewWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719271654; c=relaxed/simple;
-	bh=eZ/tsejhJEW9+MknetIC0IiipTDo2ppO5cy+oTceKOI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aeTi3UjTTPxGYG2K7OPQ1OLgm+4/SSbFFqHiliyVycjtYe4rRd9boax5WLLySGYVR7SznNLaH/qtPPuaMcoHAKnvwl+CXGlz6bDoebs6G4W2k8G0OzDf0OZSaZoIcorRO50w6q2cHdnoTNl1GipJUpEHJUaLlaczyvISYfzdkyU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ds2b3Eyu; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-707040e3017so3282032a12.3;
-        Mon, 24 Jun 2024 16:27:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719271653; x=1719876453; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HbgIUA5Ww9gKgFMAvp89SuldIPQYcPQe/Oqph+Abn7o=;
-        b=Ds2b3EyubY2TOSPvE4K3Ey119Thlp3f7NAiVX5SAmWQS8PTedd11OiIWUF717P2Id1
-         S/MhGn6ey8lWRitOOmuk7iOBLa7n1hNusUE7WfU0ZIbYFbbzSEMrSWrjxfbxAyX8vOHe
-         OAg0yflnFnS1NkVXuULatR9YLzZ7W79+dQJ1D2sjJBLIZ8f3SR9zPd084INpCQA02TC5
-         zRNMgw/RVJcQwL477FdCSelRbyInDOaYfJHeGHmEQqC4y2qaBrfzrHqlJavxl6rHdAKF
-         9P3ufqwe8rHzHnunj2K5WcOE8KjUHE1+TrG6P8KRIlnsDS/1+AA71tVx/+QQlarj/1eN
-         X5rQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719271653; x=1719876453;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=HbgIUA5Ww9gKgFMAvp89SuldIPQYcPQe/Oqph+Abn7o=;
-        b=fCopp8vk39jegvfhIdzrVzYKZiu7+OcUpAek4GTqQ+9keaYBjnITFBb+8DuKfNpaYm
-         wIHnnTagzSgrllKfzbpwuN53Ha3VUjjt1IYS8hihh14UVu2tLGYrAiciIHpU9V0ADROt
-         cHlAP+lKWkd7rNVi9nUns7d/C/xODfuPtQct01bXKdM36YlUsdKEpBhoh67wBv89aM3S
-         QiEZngQloXbvnq1XrAkv2EBr/IGIxjEdVBZhDtqA5sVrmrang+WpKvzhorCvCUI1nzek
-         3AU4x30mfBogJJjXFoNCG6wR8bDpCn4wQW+5mR7cwNJJL6xNueFCg+hfe7yJQzQy6m9l
-         dbmw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0abDUx3IKTYDcKPI4wiL3s/Yj8KuaKT6vh1F5zJTcJljt+RC3bgy1JhDrquLrOSk6s6otubeDM0ZW+qh4AEfznpt7F6o6PmHG9iMWpTn0NfIJTdheKWi5mY55D+KxXuw2
-X-Gm-Message-State: AOJu0YyoXw9NDNbMOlJAksso6RpPsqgsyWfFogJQOmqg8ioSdAfugk9z
-	PyiXCTkAq7vrSwme3EwEW69e6EEeSKfwQobWePepw6SUBSl3BiQ8
-X-Google-Smtp-Source: AGHT+IEnuLnGHYWtlo8YAYaho0QOw5BT3xFQXD2JXT3gL5OtGyQB083XvSVfXN3hMvuFFoO90tQc0w==
-X-Received: by 2002:a05:6a21:78a2:b0:1b8:5c3c:794f with SMTP id adf61e73a8af0-1bcf7e3caf7mr7593524637.10.1719271652677;
-        Mon, 24 Jun 2024 16:27:32 -0700 (PDT)
-Received: from [192.168.0.31] ([38.34.87.7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819db94f7sm7316285a91.35.2024.06.24.16.27.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 16:27:32 -0700 (PDT)
-Message-ID: <6d0a07082a064fa8b410a7e08d8b6b628845ac72.camel@gmail.com>
-Subject: Re: [PATCH] bpf, btf: Make if test explicit to fix Coccinelle error
-From: Eduard Zingerman <eddyz87@gmail.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: martin.lau@linux.dev, ast@kernel.org, daniel@iogearbox.net,
- andrii@kernel.org,  song@kernel.org, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me,  haoluo@google.com, jolsa@kernel.org,
- yonghong.song@linux.dev, bpf@vger.kernel.org,  linux-kernel@vger.kernel.org
-Date: Mon, 24 Jun 2024 16:27:27 -0700
-In-Reply-To: <99A36D9C-E171-452D-B0AB-AB0EE6C6410B@toblux.com>
-References: <20240624195426.176827-2-thorsten.blum@toblux.com>
-	 <faf99c63015c6a5f619d85bd45405b91a3498bf9.camel@gmail.com>
-	 <99A36D9C-E171-452D-B0AB-AB0EE6C6410B@toblux.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1719271673; c=relaxed/simple;
+	bh=UZqazkZPJpeazAOUHOZi8Hn82zP36UMCkFzsfu2KkqM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=GtjisOgVX41R13rMe9WbRFhNvT2tGjuPA3AOvjrtfD15gpI+YZTwmK5OKo6ImXssuNPqLUF1PKqKcmnOYfOjaWEY2V2MNd7vfBoFAEDH/zV1E5I+7iNKKx1gYTSsoZxycPqyC+KRpj6HHRsh+DZHfeaorpw5+3DzQsafdqXk+eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav112.sakura.ne.jp (fsav112.sakura.ne.jp [27.133.134.239])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 45ONRgXc036021;
+	Tue, 25 Jun 2024 08:27:42 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav112.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp);
+ Tue, 25 Jun 2024 08:27:42 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav112.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 45ONRg4v036018
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 25 Jun 2024 08:27:42 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <5aa5558f-90a4-4864-b1b1-5d6784c5607d@I-love.SAKURA.ne.jp>
+Date: Tue, 25 Jun 2024 08:27:39 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [kernfs?] possible deadlock in __kernfs_remove
+To: syzbot <syzbot+4762dd74e32532cda5ff@syzkaller.appspotmail.com>,
+        syzkaller-bugs@googlegroups.com, tj@kernel.org,
+        Peter Zijlstra <peterz@infradead.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Ashish Sangwan <a.sangwan@samsung.com>,
+        Namjae Jeon
+ <namjae.jeon@samsung.com>,
+        Dirk Behme <dirk.behme@de.bosch.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <0000000000007de4c3061ba8ca57@google.com>
+Content-Language: en-US
+Cc: linux-kernel@vger.kernel.org
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+In-Reply-To: <0000000000007de4c3061ba8ca57@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, 2024-06-24 at 16:08 -0700, Thorsten Blum wrote:
-> On 24. Jun 2024, at 13:16, Eduard Zingerman <eddyz87@gmail.com> wrote:
-> > On Mon, 2024-06-24 at 21:54 +0200, Thorsten Blum wrote:
-> > > Explicitly test the iterator variable i > 0 to fix the following
-> > > Coccinelle/coccicheck error reported by itnull.cocci:
-> > >=20
-> > > ERROR: iterator variable bound on line 4688 cannot be NULL
+This dependency is added by recent bug fix commit c0a40097f0bc ("drivers:
+core: synchronize really_probe() and dev_uevent()").
 
-[...]
+Commit 4a0079bc7aae ("nvdimm: Replace lockdep_mutex with local lock
+classes") changed to assign nvdimm_namespace_key on dev->mutex instead of
+__lockdep_no_validate__, which made lockdep to report this dependency.
 
-> > #define for_each_vsi(i, datasec_type, member) \
-> > for (i =3D 0, member =3D btf_type_var_secinfo(datasec_type); \
-> >     i < btf_type_vlen(datasec_type); \
-> >     i++, member++)
-> >=20
-> > Here it sets 'i' to zero for the first iteration.
-> > Why would the tool report that 'i' can't be zero?
->=20
-> Coccinelle thinks i can't be a NULL pointer (not the number zero). It's
-> essentially a false-positive warning, but since there are only 4 such
-> warnings under kernel/, I thought it would be worthwhile to remove some
-> of them by making the tests explicit.
+On 2024/06/25 5:40, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    626737a5791b Merge tag 'pinctrl-v6.10-2' of git://git.kern..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=143a383e980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=d6b9ee98d841760c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=4762dd74e32532cda5ff
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Sorry, not really familiar with the tool, but it seems like the
-following part of the itnull.cocci fires the warning:
-
-  @r depends on !patch exists@
-  iterator I;
-  expression x,E;
-  position p1,p2;
-  @@
- =20
-  *I@p1(x,...)
-  { ... when !=3D x =3D E
-  (
-  *  x@p2 =3D=3D NULL
-  |
-  *  x@p2 !=3D NULL
-  )
-    ... when any
-  }
- =20
-  @script:python depends on org@
-  p1 << r.p1;
-  p2 << r.p2;
-  @@
- =20
-  cocci.print_main("iterator-bound variable",p1)
-  cocci.print_secs("useless NULL test",p2)
- =20
-  @script:python depends on report@
-  p1 << r.p1;
-  p2 << r.p2;
-  @@
- =20
-  msg =3D "ERROR: iterator variable bound on line %s cannot be NULL" % (p1[=
-0].line)
-  coccilib.report.print_report(p2[0], msg)
-
-Is there a way to add a constraint here, requiring 'x' to have a pointer ty=
-pe?
-(So that the rule does not match, as it clearly shouldn't).
 
