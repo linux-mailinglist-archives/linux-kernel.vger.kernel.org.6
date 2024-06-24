@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-227914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD54C91580C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:33:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81CC91580E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0821E1C230F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:33:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1228F1C230B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:33:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18AD11A256A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57FF01A2C00;
 	Mon, 24 Jun 2024 20:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HjE+RST1"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R7bogNeZ"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E23491A08DF;
-	Mon, 24 Jun 2024 20:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5D71A0AE9;
+	Mon, 24 Jun 2024 20:32:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719261149; cv=none; b=KdUO2+TtOlFqfz43mnyS2LdKIsgT+v9RjPgt+cxARRzjjggwwVe9bg+rAKSizyMgKvzoQvQfMsph3Z5+pQy2tDJQcM7VexZ9QlF746zN7woi1m4EFmXYF1whgIRZdCG6sBIPXesW+h5ifcP4ER1LBJvOm3I64lXzSGQmP5Tc6/I=
+	t=1719261149; cv=none; b=YRtb7slQM4AAokBNL1xN9Mvo+KYvXQp8oEkx8kTf6lStVHB7DQlnyVqQBX9glvIgv9x9mFwH4fYCKwddr/fmGh/yc0pXrwaYHK80FWfNA4QBX5Wrc5hiQPPw1susu7o7yJGW78G+CxC0xPEQjamImqoBXngGANLvu1qkwy/DIlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719261149; c=relaxed/simple;
-	bh=pt1iApTIQNthj5gXBnuo+1qTGtwZiQtlZFNYjKNh1/c=;
+	bh=96Ch0fZf/zJPDrbaEiJHd17RxJsQjY7MRs38wnC1hG8=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cNzHf+BKrX58uJx+fkNr09ArLA5kkXhWXM9p+MpBe1staJ4wh9DnrOBUuvgeaqJ5KjN1rSo0hRvljfGoKX/KZe3Xj65APWlABRsDBUP/nX4Jw6XLb1Xtg3IcpVeqcGekl4gl34jvkzGIwPLKhLp+Xy9X8RxQgYeTI1mHluLcnxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HjE+RST1; arc=none smtp.client-ip=192.198.163.8
+	 MIME-Version; b=YPfLFCOu2QrdGBZ5N/DwEk9DSzdu3TTW3ra8ybrIisZbz1zySGakntPcfyZUiYgB97PORu2zuUA6BHmRCJMoSE0luyJTD4lXBD7zajJBfWruLvZHPObNWbFF3hvicE0UdOWiOu0BdvaJ8eQ9DngblaPOW/eH0GkbnlU9LbHWhiw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R7bogNeZ; arc=none smtp.client-ip=192.198.163.8
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
@@ -35,28 +35,28 @@ DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   t=1719261148; x=1750797148;
   h=from:to:subject:date:message-id:in-reply-to:references:
    mime-version:content-transfer-encoding;
-  bh=pt1iApTIQNthj5gXBnuo+1qTGtwZiQtlZFNYjKNh1/c=;
-  b=HjE+RST1d94HJmmAFem8qpv5a8yCDz6IU3FVG+s6EW9OFNY8WFgd4RyX
-   e1IyEersV42Xkfz7gSacPM520yejZWnBdREFJaUN7sdNEXUDkuDDxA8Z9
-   SzjdqI23Z41UX0Op4NFeNwN6iqn+IjxJMm25j0UWtM1QtX55DUt03T/BS
-   nrweH/TpwBFAwYFGj89KihpBzKljZshKNF8nSp4ZmHwV1p/CLG2CTmvUM
-   QZrc/11D+9ldd9lq/U6NmkV3bgilXNPDPmJnM6Iz28OBuqhkWw9oxIdP/
-   /ppcCHAtr1ITpGw1ssBKd3+nTKvMUBEcEIubYGBv0QOBW5YlmXU0R2vMj
-   g==;
-X-CSE-ConnectionGUID: p4QdP/5hRBq96/e44elykw==
-X-CSE-MsgGUID: 1b2wDX4aRFGh+OTmC0Aamg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="33792343"
+  bh=96Ch0fZf/zJPDrbaEiJHd17RxJsQjY7MRs38wnC1hG8=;
+  b=R7bogNeZLzv6W1fw2hclQHtWJrWyf4onFOHeL2xwRJdTMu8LGLRhtOVV
+   wxySpLPML3VrFcuuDRgXYuGbgdr8/v4d0gIdT5k1W1kZnCFqgQUWgRK+w
+   8C8/tjn8V2F3ZZO9DgniyWpy9adYYoNNd07z9w94S4HT5JLejJ4GEwLyq
+   7UTftcAHB4HkZZJL4G50ORiiog0QMsVXABQum6ve9YV8yI+2BBdxq2XNI
+   LKvAg9NUC8kgATtleHH59bj+rcYGlce5fNEDJOpRC5JCGejkX85gipDmN
+   Q0vQIzEy6gVFSPMURcgFHfsmLopB4Qo09+9DAbdB36+agnMtezH8lnS0d
+   A==;
+X-CSE-ConnectionGUID: /cZGedhsSfWT3L8MVaDUdA==
+X-CSE-MsgGUID: p33+tBR+T4GseYrMg3wfzQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="33792347"
 X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
-   d="scan'208";a="33792343"
+   d="scan'208";a="33792347"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 13:32:24 -0700
-X-CSE-ConnectionGUID: CbeKWuujRZWZbe85iO6WFw==
-X-CSE-MsgGUID: Ky4fuNk6RlWMllY85DmfaQ==
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 13:32:25 -0700
+X-CSE-ConnectionGUID: xo/DFFy2TV2EvexOvyhaLA==
+X-CSE-MsgGUID: E3b2PGQFTs+yMff2Mnamrg==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
-   d="scan'208";a="47949144"
+   d="scan'208";a="47949146"
 Received: from ticela-or-265.amr.corp.intel.com (HELO xpardee-test1.amr.corp.intel.com) ([10.209.54.237])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 13:32:24 -0700
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 13:32:25 -0700
 From: Xi Pardee <xi.pardee@linux.intel.com>
 To: xi.pardee@linux.intel.com,
 	irenic.rajneesh@gmail.com,
@@ -65,9 +65,9 @@ To: xi.pardee@linux.intel.com,
 	ilpo.jarvinen@linux.intel.com,
 	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/9] platform/x86:intel/pmc: Remove unneeded min_t check
-Date: Mon, 24 Jun 2024 13:32:15 -0700
-Message-Id: <20240624203218.2428475-7-xi.pardee@linux.intel.com>
+Subject: [PATCH 7/9] platform/x86:intel/pmc: Use DEFINE_SHOW_STORE_ATTRIBUTE macro
+Date: Mon, 24 Jun 2024 13:32:16 -0700
+Message-Id: <20240624203218.2428475-8-xi.pardee@linux.intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240624203218.2428475-1-xi.pardee@linux.intel.com>
 References: <20240624203218.2428475-1-xi.pardee@linux.intel.com>
@@ -79,32 +79,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-min_t() check is not needed in pmc_core_ltr_ignore_write().
-kstrtox() has a built-in overflow check.
+DEFINE_SHOW_STORE_ATTRIBUTE() macro can be used for the ltr_ignore
+attribute for better readability.
 
 Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
 ---
- drivers/platform/x86/intel/pmc/core.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+ drivers/platform/x86/intel/pmc/core.c | 16 ++--------------
+ 1 file changed, 2 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-index 3f271ca48164..99adef28b6d0 100644
+index 99adef28b6d0..e75c56ee54e6 100644
 --- a/drivers/platform/x86/intel/pmc/core.c
 +++ b/drivers/platform/x86/intel/pmc/core.c
-@@ -513,12 +513,10 @@ static ssize_t pmc_core_ltr_ignore_write(struct file *file,
+@@ -529,19 +529,7 @@ static int pmc_core_ltr_ignore_show(struct seq_file *s, void *unused)
  {
- 	struct seq_file *s = file->private_data;
- 	struct pmc_dev *pmcdev = s->private;
--	u32 buf_size, value;
-+	u32 value;
- 	int err;
- 
--	buf_size = min_t(u32, count, 64);
+ 	return 0;
+ }
 -
--	err = kstrtou32_from_user(userbuf, buf_size, 10, &value);
-+	err = kstrtou32_from_user(userbuf, count, 10, &value);
- 	if (err)
- 		return err;
+-static int pmc_core_ltr_ignore_open(struct inode *inode, struct file *file)
+-{
+-	return single_open(file, pmc_core_ltr_ignore_show, inode->i_private);
+-}
+-
+-static const struct file_operations pmc_core_ltr_ignore_ops = {
+-	.open           = pmc_core_ltr_ignore_open,
+-	.read           = seq_read,
+-	.write          = pmc_core_ltr_ignore_write,
+-	.llseek         = seq_lseek,
+-	.release        = single_release,
+-};
++DEFINE_SHOW_STORE_ATTRIBUTE(pmc_core_ltr_ignore);
+ 
+ static void pmc_core_slps0_dbg_latch(struct pmc_dev *pmcdev, bool reset)
+ {
+@@ -1218,7 +1206,7 @@ static void pmc_core_dbgfs_register(struct pmc_dev *pmcdev)
+ 				    pmcdev, &pmc_core_ppfear_fops);
+ 
+ 	debugfs_create_file("ltr_ignore", 0644, dir, pmcdev,
+-			    &pmc_core_ltr_ignore_ops);
++			    &pmc_core_ltr_ignore_fops);
+ 
+ 	debugfs_create_file("ltr_show", 0444, dir, pmcdev, &pmc_core_ltr_fops);
  
 -- 
 2.34.1
