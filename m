@@ -1,119 +1,85 @@
-Return-Path: <linux-kernel+bounces-227609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25DF8915437
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:38:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D4AF91540C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:37:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD79D286E82
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:38:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDC06281164
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:37:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBBE719EEAC;
-	Mon, 24 Jun 2024 16:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E1A19DFA0;
+	Mon, 24 Jun 2024 16:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uwn+jGCU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ir84Tycb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110FE19DF93;
-	Mon, 24 Jun 2024 16:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F531D53C;
+	Mon, 24 Jun 2024 16:37:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719247060; cv=none; b=YFPAdAgR37rqHv8LFfGIv84NjX1Jq2QyrPH1RGqeL//Wr4SCDHEhOoR1Z4DFq8lzzDxNj1sSRUES73iUQxKWMJp6f0KvSgISA0HjZ2ji0yB0Wu32Spusyl2SSpC8nJxYG97htzmopCyIbfQ3yE7KE5rbfZbOwfdvnUSPYBrauf4=
+	t=1719247024; cv=none; b=GoqKPKLp4ihKbO2vgOYZQe/e2Sf/RF8lUSLMI+DdjDou2hFtUXCcuEnvMKPXmtql5M5WEsCO6u9tNPHRgOIBawZrw72GDoAXszarFWNYGpixsqOM+4EE96W9Lwz59oE6taikyE0VvKXMnO+L2c/IlUD73CQL6ZphKgL4+E9FZxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719247060; c=relaxed/simple;
-	bh=cJPHgO7rC0lwgzSVqzH0rTJpOL4kkIXZCXlrSaP+FJc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=sXjIOC0/MZmHucvkU5DTJUT/w2fkv9C/xPxA2lfhZAFmCnO89WOt6i8s+xjDXZ+ZK+VJ2AHsr9eCBYrkOP/dDBBiL8rh9v9cUwEV+E00V7vUyzrfZboZVDrIehdRWHBsfQsiS5TrKpSLdU8URKxXLAx7q1gCmFKEWNmnX7L8aTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uwn+jGCU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E363C32782;
-	Mon, 24 Jun 2024 16:37:33 +0000 (UTC)
+	s=arc-20240116; t=1719247024; c=relaxed/simple;
+	bh=8vaRXZjqin2JDTOMmrFuxGajy9VxH/lsI1KpjXW2Q/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gXdh2fk6FpVO5bTfAI4mbPplFHYF1U5qujFexAAZXvvxo3mVjHt7piF9XWXlNXlnDllvr4E9zdGXmi5AcykNHK5J11CtymtIGbyxqbcRkUPaOAyF76GhomrJGPNF+703H+9S536wHh0D/6FA/MM57P606e9ynfqK09qT1SzbN+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ir84Tycb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86FAC2BBFC;
+	Mon, 24 Jun 2024 16:37:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719247059;
-	bh=cJPHgO7rC0lwgzSVqzH0rTJpOL4kkIXZCXlrSaP+FJc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=uwn+jGCUC3yfeHdr61T+R7qdpp7FtgKCRvyBo2uwU9O8wKwov+G6fl9loxbYrfqug
-	 0T6Js/X7H2q61DSlRIPr4w8OB38apm8CWjNpUWrRx79AQZShrNcEk27UBDHfmgWYb3
-	 pRabFRMmRSwHdCpeJRda6lIYrtM6QwCtmL8VC1jUjN9o258tf3w+MQor+GkMrwKMPk
-	 0O4uDPBeD8fo+0Dpfp87EEcbPVcLEkZLC9SRvqxt56F6WMn6+CkvBUe0dvtpcngVG3
-	 AUsNbT19IslMHtlvnF4KXjzBPZgqO8HsGtTrZVqZbf2zNhu14tg3iGC1E8WDctygF+
-	 xg8gIbf+mqW9A==
-From: Arnd Bergmann <arnd@kernel.org>
-To: linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-mips@vger.kernel.org,
-	Helge Deller <deller@gmx.de>,
-	linux-parisc@vger.kernel.org,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	sparclinux@vger.kernel.org,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	Brian Cain <bcain@quicinc.com>,
-	linux-hexagon@vger.kernel.org,
-	Guo Ren <guoren@kernel.org>,
-	linux-csky@vger.kernel.org,
-	Heiko Carstens <hca@linux.ibm.com>,
-	linux-s390@vger.kernel.org,
-	Rich Felker <dalias@libc.org>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	linux-sh@vger.kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>,
-	linux-fsdevel@vger.kernel.org,
-	libc-alpha@sourceware.org,
-	musl@lists.openwall.com
-Subject: [PATCH v2 03/13] sparc: fix old compat_sys_select()
-Date: Mon, 24 Jun 2024 18:37:01 +0200
-Message-Id: <20240624163707.299494-4-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240624163707.299494-1-arnd@kernel.org>
-References: <20240624163707.299494-1-arnd@kernel.org>
+	s=k20201202; t=1719247024;
+	bh=8vaRXZjqin2JDTOMmrFuxGajy9VxH/lsI1KpjXW2Q/Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ir84Tycbp3vKwaBQ9sVg0Io1tyqL4+98Ga3A8NmgEC4j8U/grDSE+vkAdJIywidxy
+	 lV053/uYb5MFJX6/V7iCt19JLOTPykVlURuq8ydLgUSX8ZuXiKTlnGJXOt1XmfhPLj
+	 sRsAUcC+rYxFuYhyLszaV1TK4d4O7+3V1ZoA/e/z03M23gO3L8DqWkHuLDSDC9BZPp
+	 RJ0noehGGMxT+sh889j4Sxfu9mnv40CC30GTiaFxSa1jCBBim0srR9QKRO1T6ud0ys
+	 jQ5C5uLYOAkt6Rq6GSwbSrZw1jWS93/kcl66Lo5b0owFRKQq79fXZ+R7pfhR9y8HmQ
+	 Pk2IcseYZllUQ==
+Date: Mon, 24 Jun 2024 10:37:02 -0600
+From: Rob Herring <robh@kernel.org>
+To: Etienne Carriere <etienne.carriere@foss.st.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>, Pascal Paillet <p.paillet@st.com>,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v2] dt-bindings: mfd: dual licensing for st,stpmic1
+ bindings
+Message-ID: <20240624163702.GA4048689-robh@kernel.org>
+References: <20240617092016.2958046-1-etienne.carriere@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617092016.2958046-1-etienne.carriere@foss.st.com>
 
-From: Arnd Bergmann <arnd@arndb.de>
+On Mon, Jun 17, 2024 at 11:20:16AM +0200, Etienne Carriere wrote:
+> Change include/dt-bindings/mfd/st,stpmic1.h license model from GPLv2.0
+> only to dual GPLv2.0 or BSD-2-Clause. I have every legitimacy to request
+> this change on behalf of STMicroelectronics. This change clarifies that
+> this DT binding header file can be shared with software components as
+> bootloaders and OSes that are not published under GPLv2 terms.
+> 
+> In CC are all the contributors to this header file.
+> 
+> Cc: Pascal Paillet <p.paillet@st.com>
+> Cc: Lee Jones <lee@kernel.org>
 
-sparc has two identical select syscalls at numbers 93 and 230, respectively.
-During the conversion to the modern syscall.tbl format, the older one of the
-two broke in compat mode, and now refers to the native 64-bit syscall.
+My copy comes from b4, and looks like it fixes old addresses. Neat.
 
-Restore the correct behavior. This has very little effect, as glibc has
-been using the newer number anyway.
+> Cc: Rob Herring <robh@kernel.org>
 
-Fixes: 6ff645dd683a ("sparc: add system call table generation support")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/sparc/kernel/syscalls/syscall.tbl | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The file only shows contributions from Pascal, so you don't need any 
+acks for license change. For the change itself:
 
-diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
-index b354139b40be..5e55f73f9880 100644
---- a/arch/sparc/kernel/syscalls/syscall.tbl
-+++ b/arch/sparc/kernel/syscalls/syscall.tbl
-@@ -117,7 +117,7 @@
- 90	common	dup2			sys_dup2
- 91	32	setfsuid32		sys_setfsuid
- 92	common	fcntl			sys_fcntl			compat_sys_fcntl
--93	common	select			sys_select
-+93	common	select			sys_select			compat_sys_select
- 94	32	setfsgid32		sys_setfsgid
- 95	common	fsync			sys_fsync
- 96	common	setpriority		sys_setpriority
--- 
-2.39.2
-
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
