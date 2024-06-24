@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-227676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08751915568
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:32:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66A8091556E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47574281895
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:32:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B063DB23542
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2076D19F46E;
-	Mon, 24 Jun 2024 17:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4893219FA77;
+	Mon, 24 Jun 2024 17:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="JI3cCecM"
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="QgU1SMyW"
 Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B341E13A894;
-	Mon, 24 Jun 2024 17:31:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8A119CD0B;
+	Mon, 24 Jun 2024 17:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719250299; cv=none; b=qxHVJHw2mOnMwmatX0mkfZahe9wjtADIeOCDRsgksMjL26z/YJRyY3jvlXBPianv3/dBJIpEuatClK3zeQVkf98wbrFYjeXYv6zvooil3/Oe/GAnYgAlvnGcGTtsic2yZoeInviWDOaJtd+Vj5tfY0iwZssUrEnQ1Fqxk71FTNs=
+	t=1719250300; cv=none; b=hGnfPdq9ttit27JOMTNkNY9a0akwP8ggjfDH2ZGhCCoLJdCqvUslys+Bexd4S5QRBZx4tcG6r3yQwd+SHWHe3nC+cfH1lPL/ATsI3OLQAqMU8T7wt9QMyvqH4mjd30k0ZPnTrFDVIz8Yknp1VJqnaVUIWg0hTdEKANYhj/BErEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719250299; c=relaxed/simple;
-	bh=XdxVXPs0FrzKGQmMSeDvltxdgcQwGC5Xcb4SblLsVFg=;
+	s=arc-20240116; t=1719250300; c=relaxed/simple;
+	bh=PKfC1wyJ0jC9WuWVPUlkKkRao8tanlKUXrZrk9kTYiQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ey7NM7NQYndLQN3PIwKcWhHAgFgxFrEekdPq+bICJzA1bDUaUGTa5U6Xyk6DWzeaPCvHRsJpIWMUYTOJXvhavg2SFSN+ytcIQXa+96pAS04ar+q4GrZeTIaiX9qHd+qC7pBVGR4p7TvP7qXKUAPaBpTeRSdM655syEv1TxkJNTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=JI3cCecM; arc=none smtp.client-ip=212.227.15.18
+	 MIME-Version:Content-Type; b=R0MjLaRnNeSoh+57Ry4M/UHGlCLW18ikhrr+CWvlJUMqBv41H3I/BwNvhOW9meHEDwz4s+sMga7Wm20UW69L/Sv9eJPUIqitiE7beVz/AvSCJiE4JrsBodaYvXDkwzd41oTva8CU9U6H4pz8NSMmjo1BzUUx8lk7dLUAHp0q8tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=QgU1SMyW; arc=none smtp.client-ip=212.227.15.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1719250287; x=1719855087; i=w_armin@gmx.de;
-	bh=+qJmOMBm25X7fZDXRedua2L1lHerFi2JeTAI7UKGdKk=;
+	s=s31663417; t=1719250289; x=1719855089; i=w_armin@gmx.de;
+	bh=IDaxS/x326fXcXmy8hZ1dWgd7Z/z9xvhU0lQQS1fboA=;
 	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
-	 References:MIME-Version:Content-Transfer-Encoding:cc:
+	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=JI3cCecMm8besxxcXmGOYXONs9qkoeG619t8y5fBh0ToWCDY4dKzBFtTi2vcH323
-	 vfSplnf3sOpGag4UBqeFFSodO4x9xLLzCzEf6Tj4soGJdM22dbdxGux+/LaOZuSdk
-	 dDKBMxG6w5rg/rSp0USVCisrH7ifR90apYe8O5Dq8cV4DzKMMUdPKcUqVnwYqT+9o
-	 3aiySMfhTm2gwKrz161PgUHINPSLDdXqLeAa/+6xxfyUrX3hIhFmkzstgbBklntEu
-	 +DpHaW1TYoRldIHg386MXJqleWWV5VTJCsaLOzWLoORCP4/ZLLoEpZe0i7kAI9kZT
-	 6ZbQz3zyIs87Qnb/fA==
+	b=QgU1SMyW3kEPsuDx7Xsq3cxFsA7HUrT7yX87jbYAvPhU8IBItq3F7ugz1B+bFiAQ
+	 hA5Cq+l8jIouJ9FyGpsJfuWmcUKSsrMVzfAS0qmcpnvIGkl2KM01BXVwOkNztjRGJ
+	 L6jbzjTUyqbOHrgFLSIGzNB3lpbCN4a8lXQQn6N1INOkA3glIGPrmimt2XalMRnoR
+	 3DDnnVCp0ElLkz70rr9mM8FYJROcxp6TEazOKLrfwXz6uhpV+zHzzco+UcjRTsLLX
+	 uq/lWqBRVwyxbLSNy1ptvS/nlYxLFkuPP1IVuV7e2ea7hHSeIlM3ieLcwuAHVhRjg
+	 KIZoEY/OMCuirKyIGg==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
- (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MxDkw-1sWjmY3xGa-00z3uT; Mon, 24 Jun 2024 19:31:27 +0200
+ (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MQMuR-1rzboe1ELB-00TXqG; Mon, 24 Jun 2024 19:31:29 +0200
 From: Armin Wolf <W_Armin@gmx.de>
 To: hdegoede@redhat.com,
 	ilpo.jarvinen@linux.intel.com
@@ -54,9 +54,9 @@ Cc: corbet@lwn.net,
 	platform-driver-x86@vger.kernel.org,
 	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] platform/x86: wmi: Add driver_override support
-Date: Mon, 24 Jun 2024 19:31:15 +0200
-Message-Id: <20240624173116.31314-2-W_Armin@gmx.de>
+Subject: [PATCH v2 2/2] platform/x86: wmi: Add bus ABI documentation
+Date: Mon, 24 Jun 2024 19:31:16 +0200
+Message-Id: <20240624173116.31314-3-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240624173116.31314-1-W_Armin@gmx.de>
 References: <20240624173116.31314-1-W_Armin@gmx.de>
@@ -66,125 +66,139 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:kQeSh2efmmUNKLT0JZocwEub67ShYeyMd8VPvF0B+CdEEdr9DsX
- QgOilNs47UzJkIfCvq23aWNMKRSiu5QN+dK590NfEhd60N4LkDGGPWVB8/njS66t1h6jY/r
- jKvpaugGwdJ9cvYOP+D7BRs7s9h0u2XQ4w/H9fccLYAUounLdpRifHv3aG8jKsBedGhZvtL
- m3eV0ioPrVm1bWhdKQ1gw==
+X-Provags-ID: V03:K1:6CGvYmV5GLtPBdwMI2/Ey6YGTQf9ZC5AxrDYHO17to/M0/BxY/8
+ 830ZgtdlH5RWuzkRMhsK/SqyRynMNJu/9UFR+tWlyv7L9gnFvM8NXMKO16wQOPb6I9Lzqtq
+ PkYcSxaFXfAbUJOJXnIx9yMlMrKXfohhW6TQQ3GroCO9RksUCyqIPIBVL6nOmf9lfQ5iC7a
+ +jjj90G1r4+4+CpnsT8IQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:QkVIK5W0X54=;fhB7SvGD/U4VJeC1+9iyD8JXu2q
- Rjg7YYiwRLbhFq3kAcZbUv48+M1f2QRgmHjM2RJtGwBMU+78e/PQ78gyMjBpmyCg5/tDwk6tO
- zuas7VRHvEVl4ZdBvHEurpcA5d7PUHcBywv/1yAQhWceXolWgMYNvjM2QMOQQ7WDDvRtpjKEN
- hx7msP8BFJubWA4ZSIx9hl33Ty1Gk3pwJY9JASSLr5j2Ta/AXFO24YbMQD57xrgi8Bt6/cXfh
- a94Q1J5y/bQWj9a43FT4A0/W7POP/8WQb7jm3tOG9Q7MU71BisGVYh2H2UUrQJuiGbOvk+PHP
- pBWQRkGBpW4cuEsL/B4As5GwUk2XqRden2MoutVUwkK1Gr4FT4YXMZm06kZ8cnSAjH1pXIZK4
- pGeHm3xQKmy05duG4hApENxlBTP9g3w6RKeFc2mDF8fHbP2uzMv5dlj3rC8YQ8adI7Z2iX5vM
- OJ9GQ14LzK71iO5L+mCd/baK5Aea5AnrHtilFT62Rp2cCtioNoXvjzNVx5bDiUR0ZAIxjXWS1
- /TXCzyax8EVzWPpoyvkD83f/iSyVW+JKJXew0YE2YhJjUe68b8fIVlOPPh1wXA6CbtKFEu86l
- 7aL6mQ4uUoMFc5IS7qk9b97OLiPVdg6uWVYZ0Com/4O260ei1eyk3h4Y42Yeft0tqOBJ1xaAa
- SoDmuFmE1N3cujwhE0uiQSi59oJrQ/FKqMneSxdPgUZ3Ro5F+sNDe2m4f3FQW3cJzZF+5L0WA
- WQuEI98CTGnqJezt+yUsRFHlXcNBqcis8z5l0ER59vVmNhmI2MO11Ak4WuRcxFobj5dKbovWZ
- kCmL/KGfBnTDTJ+yXg2+XedPFinHXEIUwM5u8I/zoVkY0=
+UI-OutboundReport: notjunk:1;M01:P0:LIqM02drmFI=;Mms0gEyqRCGaD+OKlkRhScXnbOC
+ siE2V6eXuc7eOQQLEirJnv1Bhi+ezJ3B4RBz6aHBDKf4Olzt78VLEXdVgvLM7/O4t591yVi1b
+ Fm7yQ+9TXYrkpiGclsaOeBBWnUJD0Sldp6EsXNxgOR8ofGKaIKQ+E3KLBSVYz5dSEK80Ns5PQ
+ NwMd2v8vuEx+2hVsHef73gIuHP8SkmZ3LLppqYQXVPpDY4R3hS31jEVpKOhnmnFamMNemJE1Q
+ vBKH8Ax32MtL5fcrwZp2KVG4k7y7E2SF2B+b15Ced6NS0LFMV/TQ5U4dJ2Lx/LhQf74ZiggM8
+ a2NX8IV9dtsp6p4d5iD+JkBHpnroJ2pM/9fHGpAiA7jDQliO6X0ycIYLmUSDEQukM1JYha0Fw
+ LcbdCSg3jhgzziwBw1ZcYuXKn1PpO10UWQv7HhCPBWZFvmylV9o5w5jMIWX8rV3hzpEriLl8x
+ e6npQ5Cm7v2JYNSangzK/VsvHl1PeCUxISPmsfSuHb15AERmCa95/wWkMzCAn8NhkYw8FX3AJ
+ 062ni03yYFMcL+qiwfrzAGy//+ZPx8t1YnOMARrWRrJ5uNyRAm83AYyBdXrIdSmfSJYFkSmfJ
+ nwbnAM083ut2Li3q2avGEbcBfrEAkxbMRX/uEYfxwtqJU3bb9I7Qm/aEFqIj4UhJ7g7uYoADZ
+ PnwKTd2QbCZg3PTrQH+q5fXARgS6gEuHQpggNnEnQvc0tH8NyxawwmQChSekrWTH2rleJ15C1
+ /UZWo8KeiDHaUjjoOTUFQdD63vzpBmIVXKdkMuhM8ocPVOJpKIj8qqRUt83xlnCe7at0yHmAy
+ YaJQfi/KAblw3WaJe1Z83AJ0rbxajcfbmN6Rzox/wbxAc=
 
-Add support for forcing the WMI driver core to bind
-a certain WMI driver to a WMI device. This will be
-necessary to support generic WMI drivers without an
-ID table
+Add documentation for the WMI bus sysfs interface so userspace
+applications can use it to access additional data about WMI devices.
 
 Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+Reviewed-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
 Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 =2D--
- drivers/platform/x86/wmi.c | 33 +++++++++++++++++++++++++++++++++
- include/linux/wmi.h        |  4 ++++
- 2 files changed, 37 insertions(+)
+ Documentation/ABI/testing/sysfs-bus-wmi | 81 +++++++++++++++++++++++++
+ MAINTAINERS                             |  1 +
+ 2 files changed, 82 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-bus-wmi
 
-diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-index d21f3fa25823..6bfae28b962a 100644
-=2D-- a/drivers/platform/x86/wmi.c
-+++ b/drivers/platform/x86/wmi.c
-@@ -772,11 +772,39 @@ static ssize_t expensive_show(struct device *dev,
- }
- static DEVICE_ATTR_RO(expensive);
-
-+static ssize_t driver_override_show(struct device *dev, struct device_att=
-ribute *attr,
-+				    char *buf)
-+{
-+	struct wmi_device *wdev =3D to_wmi_device(dev);
-+	ssize_t ret;
+diff --git a/Documentation/ABI/testing/sysfs-bus-wmi b/Documentation/ABI/t=
+esting/sysfs-bus-wmi
+new file mode 100644
+index 000000000000..aadb35b82198
+=2D-- /dev/null
++++ b/Documentation/ABI/testing/sysfs-bus-wmi
+@@ -0,0 +1,81 @@
++What:		/sys/bus/wmi/devices/.../driver_override
++Date:		February 2024
++Contact:	Armin Wolf <W_Armin@gmx.de>
++Description:
++		This file allows the driver for a device to be specified which
++		will override standard ID table matching.
++		When specified, only a driver with a name matching the value
++		written to driver_override will have an opportunity to bind
++		to the device.
++		The override is specified by writing a string to the
++		driver_override file (echo wmi-event-dummy > driver_override).
++		The override may be cleared with an empty string (echo > \
++		driver_override) which returns the device to standard matching
++		rules binding.
++		Writing to driver_override does not automatically unbind the
++		device from its current driver or make any attempt to automatically
++		load the specified driver. If no driver with a matching name is
++		currently loaded in the kernel, the device will not bind to any
++		driver.
++		This also allows devices to opt-out of driver binding using a
++		driver_override name such as "none". Only a single driver may be
++		specified in the override, there is no support for parsing delimiters.
 +
-+	device_lock(dev);
-+	ret =3D sysfs_emit(buf, "%s\n", wdev->driver_override);
-+	device_unlock(dev);
++What:		/sys/bus/wmi/devices/.../modalias
++Date:		November 20:15
++Contact:	Andy Lutomirski <luto@kernel.org>
++Description:
++		This file contains the MODALIAS value emitted by uevent for a
++		given WMI device.
 +
-+	return ret;
-+}
++		Format: wmi:XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX.
 +
-+static ssize_t driver_override_store(struct device *dev, struct device_at=
-tribute *attr,
-+				     const char *buf, size_t count)
-+{
-+	struct wmi_device *wdev =3D to_wmi_device(dev);
-+	int ret;
++What:		/sys/bus/wmi/devices/.../guid
++Date:		November 2015
++Contact:	Andy Lutomirski <luto@kernel.org>
++Description:
++		This file contains the GUID used to match WMI devices to
++		compatible WMI drivers. This GUID is not necessarily unique
++		inside a given machine, it is solely used to identify the
++		interface exposed by a given WMI device.
 +
-+	ret =3D driver_set_override(dev, &wdev->driver_override, buf, count);
-+	if (ret < 0)
-+		return ret;
++What:		/sys/bus/wmi/devices/.../object_id
++Date:		November 2015
++Contact:	Andy Lutomirski <luto@kernel.org>
++Description:
++		This file contains the WMI object ID used internally to construct
++		the ACPI method names used by non-event WMI devices. It contains
++		two ASCII letters.
 +
-+	return count;
-+}
-+static DEVICE_ATTR_RW(driver_override);
++What:		/sys/bus/wmi/devices/.../notify_id
++Date:		November 2015
++Contact:	Andy Lutomirski <luto@kernel.org>
++Description:
++		This file contains the WMI notify ID used internally to map ACPI
++		events to WMI event devices. It contains two ASCII letters.
 +
- static struct attribute *wmi_attrs[] =3D {
- 	&dev_attr_modalias.attr,
- 	&dev_attr_guid.attr,
- 	&dev_attr_instance_count.attr,
- 	&dev_attr_expensive.attr,
-+	&dev_attr_driver_override.attr,
- 	NULL
- };
- ATTRIBUTE_GROUPS(wmi);
-@@ -845,6 +873,7 @@ static void wmi_dev_release(struct device *dev)
- {
- 	struct wmi_block *wblock =3D dev_to_wblock(dev);
-
-+	kfree(wblock->dev.driver_override);
- 	kfree(wblock);
- }
-
-@@ -854,6 +883,10 @@ static int wmi_dev_match(struct device *dev, struct d=
-evice_driver *driver)
- 	struct wmi_block *wblock =3D dev_to_wblock(dev);
- 	const struct wmi_device_id *id =3D wmi_driver->id_table;
-
-+	/* When driver_override is set, only bind to the matching driver */
-+	if (wblock->dev.driver_override)
-+		return !strcmp(wblock->dev.driver_override, driver->name);
++What:		/sys/bus/wmi/devices/.../instance_count
++Date:		November 2015
++Contact:	Andy Lutomirski <luto@kernel.org>
++Description:
++		This file contains the number of WMI object instances being
++		present on a given WMI device. It contains a non-negative
++		number.
 +
- 	if (id =3D=3D NULL)
- 		return 0;
-
-diff --git a/include/linux/wmi.h b/include/linux/wmi.h
-index 63cca3b58d6d..3275470b5531 100644
-=2D-- a/include/linux/wmi.h
-+++ b/include/linux/wmi.h
-@@ -16,12 +16,16 @@
-  * struct wmi_device - WMI device structure
-  * @dev: Device associated with this WMI device
-  * @setable: True for devices implementing the Set Control Method
-+ * @driver_override: Driver name to force a match; do not set directly,
-+ *		     because core frees it; use driver_set_override() to
-+ *		     set or clear it.
-  *
-  * This represents WMI devices discovered by the WMI driver core.
-  */
- struct wmi_device {
- 	struct device dev;
- 	bool setable;
-+	const char *driver_override;
- };
-
- /**
++What:		/sys/bus/wmi/devices/.../expensive
++Date:		November 2015
++Contact:	Andy Lutomirski <luto@kernel.org>
++Description:
++		This file contains a boolean flag signaling if interacting with
++		the given WMI device will consume significant CPU resources.
++		The WMI driver core will take care of enabling/disabling such
++		WMI devices.
++
++What:		/sys/bus/wmi/devices/.../setable
++Date:		May 2017
++Contact:	Darren Hart (VMware) <dvhart@infradead.org>
++Description:
++		This file contains a boolean flags signaling the data block
++		aassociated with the given WMI device is writable. If the
++		given WMI device is not associated with a data block, then
++		this file will not exist.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 09ff0dfd65cb..4f76d6a5d348 100644
+=2D-- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -392,6 +392,7 @@ ACPI WMI DRIVER
+ M:	Armin Wolf <W_Armin@gmx.de>
+ L:	platform-driver-x86@vger.kernel.org
+ S:	Maintained
++F:	Documentation/ABI/testing/sysfs-bus-wmi
+ F:	Documentation/driver-api/wmi.rst
+ F:	Documentation/wmi/
+ F:	drivers/platform/x86/wmi.c
 =2D-
 2.39.2
 
