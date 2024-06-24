@@ -1,93 +1,125 @@
-Return-Path: <linux-kernel+bounces-227427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C54915111
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:56:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CBAB915116
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C39201C24449
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:56:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99A62B24567
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73C0A19CCF8;
-	Mon, 24 Jun 2024 14:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1DC519D088;
+	Mon, 24 Jun 2024 14:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="voDlwbo0"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PADTDCfv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GUWUdew6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD5C13D2BC;
-	Mon, 24 Jun 2024 14:53:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA0AB19B5AA
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:54:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719240789; cv=none; b=fnnNY8AXx5q5RUz6F0bcbykHLUPtkAV5LyUY6+dlwn6wbnpA6EZSYJ8B31jNczTG2lFxUF5oq+2O5LPyvrrpetNMGHDML6B2GZwgTh5YX/xu3GmCL4nvfwj3DIDS1a3X28bA9KaR6abP/MVGeByVzjc7AL48Whv+BaE1jDLGess=
+	t=1719240861; cv=none; b=kO0IcTHj8xFqgdPg1cYNuoB7SiGoSQQP20QH8LpCBZfNiQw0xKvVQtconcu2N9mE50dBMCxcCOMhJfGC7cU9yml7xDLXiVGNrVPyocfQxrhnlJ1ZnRbE0briJFrapE+vKuYBfY2uzTlZ1Dq33MJ+jdEzILILQJ0N53CfCqJ8U3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719240789; c=relaxed/simple;
-	bh=s0q0af3gE1JvSIq5I70dBZCqSI9BuF5ovM6No/hd+pM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QP+b+31cZk3/IgqVUWmSw71jA79L8dnWF9hL9IxA8U+fiaWEZdjuuAiREBQAOG9BNBZkCNWRm7PEhQO66MaBtlXAWKVdeVK3njCJ2AkPdIs5GZCMYgKxs46ICmUWPFAN0ru0Hy2/Rxo8Z+uAVLrjNNFBa1GxXseaT8NZ4BcsL64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=voDlwbo0; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=5rHWYHCAm83DOWUjTKARuD+awbDx8mZtltx+LBbgsnE=; b=voDlwbo07otYRFA64WcfZDadIZ
-	I/JqOvUSpR8kd5pxmTQ/I0kNte/4waxDZzigmgHdQI5p0FQZRhH+OnuiO+yzSH+lCQW+Ivoo0PQNG
-	4T6qRtCffKbCPaAVke7gGf/qeLjyepEnl6eNfRSnfnIkf/oGEvFStRntNJ8lvyiQpXBOr1VAXRHGK
-	nMd8WsdVA9GcC0E7TteVV1VSKKEi3bUZ3xan+HrXMdzwi8e7keddajUFVMAy1cjXmp/4WmKVP1tTD
-	tBRTLfC00nQr9g0i6LqgUOgqH3xKL4AhwXMTI/AOEnToy78pzlIi+4xN/MuBQEwI+bndT1ykCKSvT
-	YVGIIAkw==;
-Received: from [50.53.4.147] (helo=[192.168.254.15])
-	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sLl44-0000000HBJ0-2YAZ;
-	Mon, 24 Jun 2024 14:53:04 +0000
-Message-ID: <d9170236-3266-4be9-a513-d58104ef1d2c@infradead.org>
-Date: Mon, 24 Jun 2024 07:53:03 -0700
+	s=arc-20240116; t=1719240861; c=relaxed/simple;
+	bh=trZM8R7DoarjI8SaOB187M7Us4yWWK6gaFKH49ypgWE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=tEfHFKQ7rUZ2/Q1v66gqsreOnz7bwbd9//gL392TZyPYLK5kLEcBfJlquF5/OEPz+l5IlmSLhPewIgQxHiIBQD2zcHrd4GJg5JDzl35oc7iqbVzMsyekAFqw3WGGixv++F02Ia6KOTNvd+lCJgHVg/2xrEqcfORigcxP0eSohu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PADTDCfv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GUWUdew6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719240857;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QdDkM9MMzZwt+lqTaUX2iXhM7rchJJ4GVD5AtbkakpU=;
+	b=PADTDCfvQYGAXCtw8bQCjA/JfJ3z0qluiOxVdmYJl9Jc4FIZ6RPFuHy4GHOo71AwVs5r5G
+	RJxz4OxQanaxxCB7ytixYc2aYc2rpqOVsyq0xyg3ckK9AKaKiUFDiF48P7PuXFfZVxJEQo
+	h2hjl+Imzfmhu28Z1f19o3qu4PGVdOkJlo5bxTB6I0p0S4gDBKuN1SAiVZzDtHKd66ALGA
+	CHomNjIlONM3I/2oDgUM4qypooHbB+azv78muxL/heg95RtTYSZM5+klZZnz7LmoI8Oe3/
+	BSzJb/82/craIyG/TmZJmt/cifPQA20Kl2ufeLAnlzfcBVd51zexHyjsjolScw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719240857;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QdDkM9MMzZwt+lqTaUX2iXhM7rchJJ4GVD5AtbkakpU=;
+	b=GUWUdew6js/pef5V9uaQNhhj4qcKq7IxYUsebrYOs892UtOfk7xPt2HKtD5SbvjTbqIpGd
+	CNcwSZXF9MZthZDQ==
+Subject: [PATCH v2 0/5] timer_migration: Fix two possible races and an
+ improvement
+Date: Mon, 24 Jun 2024 16:53:52 +0200
+Message-Id: <20240624-tmigr-fixes-v2-0-3eb4c0604790@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] docs: Extend and refactor index of further kernel docs
-To: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>, corbet@lwn.net
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, bilbao@vt.edu
-References: <53bd3bbf-0410-425e-84e7-1d34cac60412@infradead.org>
- <20240622194727.2171845-1-carlos.bilbao.osdev@gmail.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20240622194727.2171845-1-carlos.bilbao.osdev@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAICIeWYC/22MQQ7CIBBFr9LMWgxM0KIr72G6aGDaTqJgAElNw
+ 93Frl2+//PeBokiU4Jrt0GkwomDb4CHDuwy+pkEu8aAErU8oxL5yXMUE6+UhEN7UhNqddEWmvG
+ KtB9NuA+NF045xM8eL+q3/u8UJaQw1ozoDBnX97cH+3eOwfN6dARDrfUL3WIXbKoAAAA=
+To: Frederic Weisbecker <frederic@kernel.org>, 
+ Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>, 
+ Anna-Maria Behnsen <anna-maria@linutronix.de>
 
+Borislav reported a warning in timer migration deactive path
 
+  https://lore.kernel.org/r/20240612090347.GBZmlkc5PwlVpOG6vT@fat_crate.local
 
-On 6/22/24 12:47 PM, Carlos Bilbao wrote:
-> From: Carlos Bilbao <bilbao@vt.edu>
-> 
-> Extend the Index of Further Kernel Documentation by adding entries for the
-> Rust for Linux website, the Linux Foundation's YouTube channel, and notes
-> on the second edition of Billimoria's kernel programming book. Also,
-> perform some refactoring: format the text to 75 characters per line and
-> sort per-section content in chronological order of publication.
-> 
-> Signed-off-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+Sadly it doesn't reproduce directly. But with the change of timing (by
+adding a trace prinkt before the warning), it is possible to trigger the
+warning reliable at least in my test setup. The problem here is a racy
+check agains group->parent pointer. This is also used in other places in
+the code and fixing this racy usage is adressed by the first patch.
 
+There was another race reported by Frederic in setup path:
 
-Tested-by: Randy Dunlap <rdunlap@infradead.org>
-Acked-by: Randy Dunlap <rdunlap@infradead.org>
+  https://lore.kernel.org/r/ZnWOswTMML6ShzYO@localhost.localdomain
 
-Thanks.
+It is addressed patch 2-4. Patch 2 is an already existing patch of v1
+(improve tracing) and makes the fix easier. Patch 3 is also a preparation
+patch for the final fix and Patch 4 is then the real fix. (I labelled all
+those three patches with Fixes tag to be easier selectable.)
 
-> ---
->  Documentation/process/kernel-docs.rst | 68 +++++++++++++++++----------
->  1 file changed, 44 insertions(+), 24 deletions(-)
-> 
+While working with the code, I saw that the update of per cpu group wakeup
+value could be improved. This improvement is adressed by the last patch.
 
--- 
-~Randy
+Patches are available here:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/anna-maria/linux-devel.git timers/misc
+
+---
+Changes in v2:
+
+- Address another possible race in setup code (reported by Frederic) and
+  recycle therefore one improvement patch
+- Change order and move the already existing improvement patch to the end
+  of the queue
+- Existing patches didn't change
+- Link to v1: https://lore.kernel.org/r/20240621-tmigr-fixes-v1-0-8c8a2d8e8d77@linutronix.de
+
+Thanks,
+
+        Anna-Maria
+
+---
+Anna-Maria Behnsen (5):
+      timer_migration: Do not rely always on group->parent
+      timer_migration: Improve tracing
+      timer_migration: Split out state update of tmigr_active_up()
+      timer_migration: Fix possible race in tmigr_active_up() in setup path
+      timer_migration: Spare write when nothing changed
+
+ kernel/time/timer_migration.c | 137 ++++++++++++++++++++++++------------------
+ kernel/time/timer_migration.h |  12 +++-
+ 2 files changed, 90 insertions(+), 59 deletions(-)
+
 
