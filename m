@@ -1,85 +1,359 @@
-Return-Path: <linux-kernel+bounces-227605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D4AF91540C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:37:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79C63915443
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDC06281164
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:37:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A21F7B24936
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:38:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E1A19DFA0;
-	Mon, 24 Jun 2024 16:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B761A19EED8;
+	Mon, 24 Jun 2024 16:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ir84Tycb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z3DnvLLc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F531D53C;
-	Mon, 24 Jun 2024 16:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922F119E7D9;
+	Mon, 24 Jun 2024 16:37:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719247024; cv=none; b=GoqKPKLp4ihKbO2vgOYZQe/e2Sf/RF8lUSLMI+DdjDou2hFtUXCcuEnvMKPXmtql5M5WEsCO6u9tNPHRgOIBawZrw72GDoAXszarFWNYGpixsqOM+4EE96W9Lwz59oE6taikyE0VvKXMnO+L2c/IlUD73CQL6ZphKgL4+E9FZxE=
+	t=1719247066; cv=none; b=TKkn9Iqf5NkCebHIeuSNoZ9quAt1D0J8dB6eWfSF5antGVZznsQy2KhxQn5yXPEz6AUAqW6d0h1mcFb7M6e2MWKBHQEIJi9bOKt5La+u0RrYlJafW3d7IFm4btAGDRwc7/Pmo9/vmsskotQ3nN42ZtcWCtoTvh4lqQfe9nLvZyE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719247024; c=relaxed/simple;
-	bh=8vaRXZjqin2JDTOMmrFuxGajy9VxH/lsI1KpjXW2Q/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gXdh2fk6FpVO5bTfAI4mbPplFHYF1U5qujFexAAZXvvxo3mVjHt7piF9XWXlNXlnDllvr4E9zdGXmi5AcykNHK5J11CtymtIGbyxqbcRkUPaOAyF76GhomrJGPNF+703H+9S536wHh0D/6FA/MM57P606e9ynfqK09qT1SzbN+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ir84Tycb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C86FAC2BBFC;
-	Mon, 24 Jun 2024 16:37:03 +0000 (UTC)
+	s=arc-20240116; t=1719247066; c=relaxed/simple;
+	bh=AKNrHrEDw/bOnYoPf4j9KvT8uWTmJp8Ho7k3J75gm1Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=cB7PfpkJnaKWQ/CiGn2Y43P6uLk98fUw3cmsEh9/1HN9xoQoqSenzYVRSUIU2XMM6TTXlGKFk1G/IHoNopz6pMHIKrlhMFGEvYJ9vNElI1s92pfiRqwQhnEFvsexhct1bvadgVcLl+a7qUasxfZZUPpyQA0yNczZ74acxv6w2mA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z3DnvLLc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19789C2BBFC;
+	Mon, 24 Jun 2024 16:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719247024;
-	bh=8vaRXZjqin2JDTOMmrFuxGajy9VxH/lsI1KpjXW2Q/Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ir84Tycbp3vKwaBQ9sVg0Io1tyqL4+98Ga3A8NmgEC4j8U/grDSE+vkAdJIywidxy
-	 lV053/uYb5MFJX6/V7iCt19JLOTPykVlURuq8ydLgUSX8ZuXiKTlnGJXOt1XmfhPLj
-	 sRsAUcC+rYxFuYhyLszaV1TK4d4O7+3V1ZoA/e/z03M23gO3L8DqWkHuLDSDC9BZPp
-	 RJ0noehGGMxT+sh889j4Sxfu9mnv40CC30GTiaFxSa1jCBBim0srR9QKRO1T6ud0ys
-	 jQ5C5uLYOAkt6Rq6GSwbSrZw1jWS93/kcl66Lo5b0owFRKQq79fXZ+R7pfhR9y8HmQ
-	 Pk2IcseYZllUQ==
-Date: Mon, 24 Jun 2024 10:37:02 -0600
-From: Rob Herring <robh@kernel.org>
-To: Etienne Carriere <etienne.carriere@foss.st.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lee Jones <lee@kernel.org>, Pascal Paillet <p.paillet@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v2] dt-bindings: mfd: dual licensing for st,stpmic1
- bindings
-Message-ID: <20240624163702.GA4048689-robh@kernel.org>
-References: <20240617092016.2958046-1-etienne.carriere@foss.st.com>
+	s=k20201202; t=1719247066;
+	bh=AKNrHrEDw/bOnYoPf4j9KvT8uWTmJp8Ho7k3J75gm1Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Z3DnvLLc0S3GDRh3Z3wU5ZaNTSEq+Wn2OrANNDixcoxujOHJUblDqHp+j6VCBNW1T
+	 mvuxtORUuCQURYccrvxC9ZYbYwlu/26UrmO5YasM169534CzY8mwsOnjNCsju5R9z2
+	 rOg58WNim2TMX5NAQrJwuI301BMZoV8DAzwNodYmbQBuTOfnt/WTVpP+aAg9E1Rwvm
+	 PrbVg9UBJrkQ2zzzqnlnkasEj8BMfzMZlz/9zaceBI7TiKJZPIuVgnnQBKJTVrODGy
+	 JIu0U3y9CR5YjDOfe1VfCTaXJWvqXRBtSMiag9JJhH5qlkQlNCdVFNXPK3rOCkYq8F
+	 FFz2CZeoXesOA==
+From: Arnd Bergmann <arnd@kernel.org>
+To: linux-arch@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org,
+	Helge Deller <deller@gmx.de>,
+	linux-parisc@vger.kernel.org,
+	"David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	sparclinux@vger.kernel.org,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	Brian Cain <bcain@quicinc.com>,
+	linux-hexagon@vger.kernel.org,
+	Guo Ren <guoren@kernel.org>,
+	linux-csky@vger.kernel.org,
+	Heiko Carstens <hca@linux.ibm.com>,
+	linux-s390@vger.kernel.org,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	linux-sh@vger.kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>,
+	linux-fsdevel@vger.kernel.org,
+	libc-alpha@sourceware.org,
+	musl@lists.openwall.com
+Subject: [PATCH v2 04/13] sparc: fix compat recv/recvfrom syscalls
+Date: Mon, 24 Jun 2024 18:37:02 +0200
+Message-Id: <20240624163707.299494-5-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240624163707.299494-1-arnd@kernel.org>
+References: <20240624163707.299494-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617092016.2958046-1-etienne.carriere@foss.st.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 17, 2024 at 11:20:16AM +0200, Etienne Carriere wrote:
-> Change include/dt-bindings/mfd/st,stpmic1.h license model from GPLv2.0
-> only to dual GPLv2.0 or BSD-2-Clause. I have every legitimacy to request
-> this change on behalf of STMicroelectronics. This change clarifies that
-> this DT binding header file can be shared with software components as
-> bootloaders and OSes that are not published under GPLv2 terms.
-> 
-> In CC are all the contributors to this header file.
-> 
-> Cc: Pascal Paillet <p.paillet@st.com>
-> Cc: Lee Jones <lee@kernel.org>
+From: Arnd Bergmann <arnd@arndb.de>
 
-My copy comes from b4, and looks like it fixes old addresses. Neat.
+sparc has the wrong compat version of recv() and recvfrom() for both the
+direct syscalls and socketcall().
 
-> Cc: Rob Herring <robh@kernel.org>
+The direct syscalls just need to use the compat version. For socketcall,
+the same thing could be done, but it seems better to completely remove
+the custom assembler code for it and just use the same implementation that
+everyone else has.
 
-The file only shows contributions from Pascal, so you don't need any 
-acks for license change. For the change itself:
+Fixes: 1dacc76d0014 ("net/compat/wext: send different messages to compat tasks")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ arch/sparc/kernel/sys32.S              | 221 -------------------------
+ arch/sparc/kernel/syscalls/syscall.tbl |   4 +-
+ 2 files changed, 2 insertions(+), 223 deletions(-)
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+diff --git a/arch/sparc/kernel/sys32.S b/arch/sparc/kernel/sys32.S
+index a45f0f31fe51..a3d308f2043e 100644
+--- a/arch/sparc/kernel/sys32.S
++++ b/arch/sparc/kernel/sys32.S
+@@ -18,224 +18,3 @@ sys32_mmap2:
+ 	sethi		%hi(sys_mmap), %g1
+ 	jmpl		%g1 + %lo(sys_mmap), %g0
+ 	 sllx		%o5, 12, %o5
+-
+-	.align		32
+-	.globl		sys32_socketcall
+-sys32_socketcall:	/* %o0=call, %o1=args */
+-	cmp		%o0, 1
+-	bl,pn		%xcc, do_einval
+-	 cmp		%o0, 18
+-	bg,pn		%xcc, do_einval
+-	 sub		%o0, 1, %o0
+-	sllx		%o0, 5, %o0
+-	sethi		%hi(__socketcall_table_begin), %g2
+-	or		%g2, %lo(__socketcall_table_begin), %g2
+-	jmpl		%g2 + %o0, %g0
+-	 nop
+-do_einval:
+-	retl
+-	 mov		-EINVAL, %o0
+-
+-	.align		32
+-__socketcall_table_begin:
+-
+-	/* Each entry is exactly 32 bytes. */
+-do_sys_socket: /* sys_socket(int, int, int) */
+-1:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_socket), %g1
+-2:	ldswa		[%o1 + 0x8] %asi, %o2
+-	jmpl		%g1 + %lo(sys_socket), %g0
+-3:	 ldswa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-	nop
+-do_sys_bind: /* sys_bind(int fd, struct sockaddr *, int) */
+-4:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_bind), %g1
+-5:	ldswa		[%o1 + 0x8] %asi, %o2
+-	jmpl		%g1 + %lo(sys_bind), %g0
+-6:	 lduwa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-	nop
+-do_sys_connect: /* sys_connect(int, struct sockaddr *, int) */
+-7:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_connect), %g1
+-8:	ldswa		[%o1 + 0x8] %asi, %o2
+-	jmpl		%g1 + %lo(sys_connect), %g0
+-9:	 lduwa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-	nop
+-do_sys_listen: /* sys_listen(int, int) */
+-10:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_listen), %g1
+-	jmpl		%g1 + %lo(sys_listen), %g0
+-11:	 ldswa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-	nop
+-	nop
+-do_sys_accept: /* sys_accept(int, struct sockaddr *, int *) */
+-12:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_accept), %g1
+-13:	lduwa		[%o1 + 0x8] %asi, %o2
+-	jmpl		%g1 + %lo(sys_accept), %g0
+-14:	 lduwa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-	nop
+-do_sys_getsockname: /* sys_getsockname(int, struct sockaddr *, int *) */
+-15:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_getsockname), %g1
+-16:	lduwa		[%o1 + 0x8] %asi, %o2
+-	jmpl		%g1 + %lo(sys_getsockname), %g0
+-17:	 lduwa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-	nop
+-do_sys_getpeername: /* sys_getpeername(int, struct sockaddr *, int *) */
+-18:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_getpeername), %g1
+-19:	lduwa		[%o1 + 0x8] %asi, %o2
+-	jmpl		%g1 + %lo(sys_getpeername), %g0
+-20:	 lduwa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-	nop
+-do_sys_socketpair: /* sys_socketpair(int, int, int, int *) */
+-21:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_socketpair), %g1
+-22:	ldswa		[%o1 + 0x8] %asi, %o2
+-23:	lduwa		[%o1 + 0xc] %asi, %o3
+-	jmpl		%g1 + %lo(sys_socketpair), %g0
+-24:	 ldswa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-do_sys_send: /* sys_send(int, void *, size_t, unsigned int) */
+-25:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_send), %g1
+-26:	lduwa		[%o1 + 0x8] %asi, %o2
+-27:	lduwa		[%o1 + 0xc] %asi, %o3
+-	jmpl		%g1 + %lo(sys_send), %g0
+-28:	 lduwa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-do_sys_recv: /* sys_recv(int, void *, size_t, unsigned int) */
+-29:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_recv), %g1
+-30:	lduwa		[%o1 + 0x8] %asi, %o2
+-31:	lduwa		[%o1 + 0xc] %asi, %o3
+-	jmpl		%g1 + %lo(sys_recv), %g0
+-32:	 lduwa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-do_sys_sendto: /* sys_sendto(int, u32, compat_size_t, unsigned int, u32, int) */
+-33:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_sendto), %g1
+-34:	lduwa		[%o1 + 0x8] %asi, %o2
+-35:	lduwa		[%o1 + 0xc] %asi, %o3
+-36:	lduwa		[%o1 + 0x10] %asi, %o4
+-37:	ldswa		[%o1 + 0x14] %asi, %o5
+-	jmpl		%g1 + %lo(sys_sendto), %g0
+-38:	 lduwa		[%o1 + 0x4] %asi, %o1
+-do_sys_recvfrom: /* sys_recvfrom(int, u32, compat_size_t, unsigned int, u32, u32) */
+-39:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_recvfrom), %g1
+-40:	lduwa		[%o1 + 0x8] %asi, %o2
+-41:	lduwa		[%o1 + 0xc] %asi, %o3
+-42:	lduwa		[%o1 + 0x10] %asi, %o4
+-43:	lduwa		[%o1 + 0x14] %asi, %o5
+-	jmpl		%g1 + %lo(sys_recvfrom), %g0
+-44:	 lduwa		[%o1 + 0x4] %asi, %o1
+-do_sys_shutdown: /* sys_shutdown(int, int) */
+-45:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_shutdown), %g1
+-	jmpl		%g1 + %lo(sys_shutdown), %g0
+-46:	 ldswa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-	nop
+-	nop
+-do_sys_setsockopt: /* sys_setsockopt(int, int, int, char *, int) */
+-47:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_setsockopt), %g1
+-48:	ldswa		[%o1 + 0x8] %asi, %o2
+-49:	lduwa		[%o1 + 0xc] %asi, %o3
+-50:	ldswa		[%o1 + 0x10] %asi, %o4
+-	jmpl		%g1 + %lo(sys_setsockopt), %g0
+-51:	 ldswa		[%o1 + 0x4] %asi, %o1
+-	nop
+-do_sys_getsockopt: /* sys_getsockopt(int, int, int, u32, u32) */
+-52:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_getsockopt), %g1
+-53:	ldswa		[%o1 + 0x8] %asi, %o2
+-54:	lduwa		[%o1 + 0xc] %asi, %o3
+-55:	lduwa		[%o1 + 0x10] %asi, %o4
+-	jmpl		%g1 + %lo(sys_getsockopt), %g0
+-56:	 ldswa		[%o1 + 0x4] %asi, %o1
+-	nop
+-do_sys_sendmsg: /* compat_sys_sendmsg(int, struct compat_msghdr *, unsigned int) */
+-57:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(compat_sys_sendmsg), %g1
+-58:	lduwa		[%o1 + 0x8] %asi, %o2
+-	jmpl		%g1 + %lo(compat_sys_sendmsg), %g0
+-59:	 lduwa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-	nop
+-do_sys_recvmsg: /* compat_sys_recvmsg(int, struct compat_msghdr *, unsigned int) */
+-60:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(compat_sys_recvmsg), %g1
+-61:	lduwa		[%o1 + 0x8] %asi, %o2
+-	jmpl		%g1 + %lo(compat_sys_recvmsg), %g0
+-62:	 lduwa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-	nop
+-do_sys_accept4: /* sys_accept4(int, struct sockaddr *, int *, int) */
+-63:	ldswa		[%o1 + 0x0] %asi, %o0
+-	sethi		%hi(sys_accept4), %g1
+-64:	lduwa		[%o1 + 0x8] %asi, %o2
+-65:	ldswa		[%o1 + 0xc] %asi, %o3
+-	jmpl		%g1 + %lo(sys_accept4), %g0
+-66:	 lduwa		[%o1 + 0x4] %asi, %o1
+-	nop
+-	nop
+-
+-	.section	__ex_table,"a"
+-	.align		4
+-	.word		1b, __retl_efault, 2b, __retl_efault
+-	.word		3b, __retl_efault, 4b, __retl_efault
+-	.word		5b, __retl_efault, 6b, __retl_efault
+-	.word		7b, __retl_efault, 8b, __retl_efault
+-	.word		9b, __retl_efault, 10b, __retl_efault
+-	.word		11b, __retl_efault, 12b, __retl_efault
+-	.word		13b, __retl_efault, 14b, __retl_efault
+-	.word		15b, __retl_efault, 16b, __retl_efault
+-	.word		17b, __retl_efault, 18b, __retl_efault
+-	.word		19b, __retl_efault, 20b, __retl_efault
+-	.word		21b, __retl_efault, 22b, __retl_efault
+-	.word		23b, __retl_efault, 24b, __retl_efault
+-	.word		25b, __retl_efault, 26b, __retl_efault
+-	.word		27b, __retl_efault, 28b, __retl_efault
+-	.word		29b, __retl_efault, 30b, __retl_efault
+-	.word		31b, __retl_efault, 32b, __retl_efault
+-	.word		33b, __retl_efault, 34b, __retl_efault
+-	.word		35b, __retl_efault, 36b, __retl_efault
+-	.word		37b, __retl_efault, 38b, __retl_efault
+-	.word		39b, __retl_efault, 40b, __retl_efault
+-	.word		41b, __retl_efault, 42b, __retl_efault
+-	.word		43b, __retl_efault, 44b, __retl_efault
+-	.word		45b, __retl_efault, 46b, __retl_efault
+-	.word		47b, __retl_efault, 48b, __retl_efault
+-	.word		49b, __retl_efault, 50b, __retl_efault
+-	.word		51b, __retl_efault, 52b, __retl_efault
+-	.word		53b, __retl_efault, 54b, __retl_efault
+-	.word		55b, __retl_efault, 56b, __retl_efault
+-	.word		57b, __retl_efault, 58b, __retl_efault
+-	.word		59b, __retl_efault, 60b, __retl_efault
+-	.word		61b, __retl_efault, 62b, __retl_efault
+-	.word		63b, __retl_efault, 64b, __retl_efault
+-	.word		65b, __retl_efault, 66b, __retl_efault
+-	.previous
+diff --git a/arch/sparc/kernel/syscalls/syscall.tbl b/arch/sparc/kernel/syscalls/syscall.tbl
+index 5e55f73f9880..cfdfb3707c16 100644
+--- a/arch/sparc/kernel/syscalls/syscall.tbl
++++ b/arch/sparc/kernel/syscalls/syscall.tbl
+@@ -155,7 +155,7 @@
+ 123	32	fchown			sys_fchown16
+ 123	64	fchown			sys_fchown
+ 124	common	fchmod			sys_fchmod
+-125	common	recvfrom		sys_recvfrom
++125	common	recvfrom		sys_recvfrom			compat_sys_recvfrom
+ 126	32	setreuid		sys_setreuid16
+ 126	64	setreuid		sys_setreuid
+ 127	32	setregid		sys_setregid16
+@@ -247,7 +247,7 @@
+ 204	32	readdir			sys_old_readdir			compat_sys_old_readdir
+ 204	64	readdir			sys_nis_syscall
+ 205	common	readahead		sys_readahead			compat_sys_readahead
+-206	common	socketcall		sys_socketcall			sys32_socketcall
++206	common	socketcall		sys_socketcall			compat_sys_socketcall
+ 207	common	syslog			sys_syslog
+ 208	common	lookup_dcookie		sys_ni_syscall
+ 209	common	fadvise64		sys_fadvise64			compat_sys_fadvise64
+-- 
+2.39.2
+
 
