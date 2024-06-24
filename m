@@ -1,150 +1,118 @@
-Return-Path: <linux-kernel+bounces-227525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 034699152AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:41:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F4B9152B8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26D121C21411
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:41:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D849F281A7B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3E019D061;
-	Mon, 24 Jun 2024 15:41:12 +0000 (UTC)
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCB619D89D;
+	Mon, 24 Jun 2024 15:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2nt5naGp"
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96991DA21;
-	Mon, 24 Jun 2024 15:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68D819D062
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719243672; cv=none; b=bI3eFJ+xahV/KwadhM3EuPIdhPRZxnQWIyAwhT0Q6yT8xnSuxyHwj2pPkObEsFeXlu9oLiCDmk3HoWoKCDVpvFkQDVR0lUDNMBYBqcewqeJPNIfV+DiKvGXZ9vj653PGIt8RGEdjgjYx+aQbnd/9tg9QRzeGU6gQZEdki4XZGyM=
+	t=1719243715; cv=none; b=EuaVMtCSU5MpJ4uZfey4K1cQylsgit7yLMqj2x1G+f8WWp+2Rjs3XtZRInGzZz/gn8BtYuN6wbk9g24A4tczrBdbO2mBd4LKsphdEv8FzN37POlnSf33dFrAybZGrIjmcJyGfsZgtX22Hdbr/7wNzjTDQQW/Z/o3GChFrh9tk2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719243672; c=relaxed/simple;
-	bh=N4Kf7Wuxy/4F/YKVzwXuyiruxJFedNgB2d/xx3ewM1w=;
+	s=arc-20240116; t=1719243715; c=relaxed/simple;
+	bh=ZF0XxN8KntgJA+IVilUh/38LJzSDeR5q7xJSolLUjpo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hvzsmxgFnFeEbaYWfX5AQIyuw8ssMqCTlJY8GVltqwMntnbrUJe/wzkdExzFQSopV1LoB0/bBR/+7e6pTNkfDqBhjrcyBze/squ2tffnRrLEL0OPbTYI0LAMYgLggGkIts4diiWXJiCJT1eTPld7NCaZsYGbtUatRMzCOORdF5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-645808a3294so7296797b3.3;
-        Mon, 24 Jun 2024 08:41:09 -0700 (PDT)
+	 To:Cc:Content-Type; b=tvbI2qEPbKjY+aEOoQ5LJig1kv4zHJEL4jM4XZhr/ILKdDl/HaqCoZ+hDkC6Mk0WzfwLzlloPxYF8z1Ufi600E+w4bm02OwBXVrftXIW/Oxd/3YdPwT25aEAVDH+xK5XChZralTya+IyzI8lJ1tKMs1OU3Akus8yqTQxWZC6UFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2nt5naGp; arc=none smtp.client-ip=209.85.217.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-48f409bd157so815961137.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:41:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719243713; x=1719848513; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=XgB/DwN9cphENzre81i4QwsnPfETm68iWHx9Hxb0Rb4=;
+        b=2nt5naGp9oxCa/XLwgmwcjxgFaXjYWSB8SZP0UZcCgYgndMvLhQOdPIwSN2ix7iJc9
+         Iv0vfwYAUQ+u6pQhOWeTfhPNBzvO59h39OK2aV3dSJGeB8uejhLqA4eQ2R2XOmYd7k7O
+         BrG/+C8UljmcU0NlGeXLlA+juZFKZW5ULhhQVUNkhKqwwHP1wEyMbNHsrGJcttUEXxdY
+         L0Yr8B7+o4JwGR3ZfZyIYvjShk9RM7fnql+jIV2Dkeqaw0ft6PbgUqSbRfoGnjZYV0cO
+         6ynWLb11O5eldiuLuble748m0Yu90QeOTpryw1Vd7BsD+z1UDvVeKU7PIJfApJptQRjJ
+         /QfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719243669; x=1719848469;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YyyZLKfbybyoHW1pomgo1ltrgcPpRsjdS5hXpqQgAyU=;
-        b=q7svj8yzhICghkVRJhNZFsC4mfAnDLiaB60k3m4AAIBfD7hrKnsgol3PHoQvHMg20L
-         lVs4zeIEpvBI7v5IVOiqQoTtq6vDmx+JnEuCsR44UOcdZZXAYmOyIcbIcOWMeUi2dpWn
-         jzOC8cP9xF8AWF1Ni4iM5FD/MY6P87xgYDEzKwaAFZ45urYe+UbX7MU3MYemYLHTOijN
-         Suy+msLx6/iv7Hp7U5D5Z0Hg28eKQbSxgG8h1PzlhQt45BEDR1I79G83pAP+a+yBVueA
-         HTBHZjkBbFN82o5apgY2Gd+lm3Z0XvbkXAmiL3DZMwSIJff1HcrwDHpE8BT9bWk1tb/p
-         lDiA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoevDyO3cnQVdJjk/40KR242wiv89dSL7iH6V2lDqP3goOaMmrwOZ2MrOz/JdNDUN8rBXO6Rg451qxDmuEZA0bejeunySFhICSKWJkssNRJhB85/ke3oL5jX0LiuMtKopVtwvaQWadIHXFzKxHD0JSKGEYSMhlROgfwsgroWbAOOV3IiaKrFpOCiqJ0TXWFc2YKuZkDn2FkR00kcWfkiw8lS9IivUG9SKPHYj5J7AII3D36Pvp0wv8QS2fiDC/nCVd
-X-Gm-Message-State: AOJu0YxODiwArWQEpAauriTHgtFTioRvi1/oKmqwI5Cm2nxDS5um210L
-	StyOo3Fyz43lVgoXc5Lz78Tl9Nnpqs1Fh65lFEjBrVXp0n9cCFMVIIMrpNra
-X-Google-Smtp-Source: AGHT+IHOF6I9BBSjYho30m6qIXh6XBnnpsOwooEsiBDSNpOIZzhhPjm7NCumeBH8UBtWc7pntCLGdg==
-X-Received: by 2002:a0d:c3c2:0:b0:631:3c7c:f766 with SMTP id 00721157ae682-64340ea9a89mr48626827b3.34.1719243668622;
-        Mon, 24 Jun 2024 08:41:08 -0700 (PDT)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f14c26102sm29111467b3.75.2024.06.24.08.41.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 08:41:08 -0700 (PDT)
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso4279281276.2;
-        Mon, 24 Jun 2024 08:41:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCULCC3ncAztxjHXNng8H6X/tsccXlHwsbkdc3kdWK49cofZO4Yg1ta3VTPw3wK9jdyw5pncPE/S+Ab3292bnwcncirwKAF/Yx6QidYAQPR8gcXZ/7sohZg0TKDj2Vn5dILLN+RcCmrUizSLfZ6OT8MXjVdQHvRxd2vs/aero3PmvRAtsh4+NluDA4wvcJe2xoI8Y44vhd0qkMK5HxIWuzfREXzJc0/I+lI6S6IZ4PuKTKFcT0HLrMzsSg9HWJYURGt9
-X-Received: by 2002:a25:b11f:0:b0:dff:3028:4631 with SMTP id
- 3f1490d57ef6-e0300f86570mr5309852276.33.1719243668079; Mon, 24 Jun 2024
- 08:41:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719243713; x=1719848513;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XgB/DwN9cphENzre81i4QwsnPfETm68iWHx9Hxb0Rb4=;
+        b=C1o3pmAi6Kb12Y5BD5wy1TvACFahiixwU/ThSMU9GXHghbgWBZ9MhHqaYtrDZIyqlG
+         2MgOk8PUTOdupsFB8XcxfZI3e9qldsYK/KJh/Flbx4m6XJWCiR78vG0pAmms5U9egp4E
+         FMDHRp0hRg6+7FZrgZyUFSQgxrc7jFVxsBECG707szgyCNDDQjPUk85608WoIucfXIHo
+         yGDFjVJgNm7jEaQ1tFS3WuoHCkrrgBWQ3B1Oe++/ANApnSjo3Y1DEw43qfkdqmeys4Is
+         6XSSRxFtEEKGuVi2mb2IdGdtrH9jfue4cuxHW5SuJdZDZE0vSuZMT3zPsIFEEgScHjSe
+         BUew==
+X-Forwarded-Encrypted: i=1; AJvYcCVClszDB+WBBdUraCSWxI++3ARWgaQlCocftE/qf7i/0r7i7YZO80tiDqZyj6vZiVU7TJg6bqydbnRpaQMcQIjqs2Hv3iCOrlmSn6cb
+X-Gm-Message-State: AOJu0YwifCIrlrxT+8AII05oeibPRIn4KwIAkNq1Ac9jbx4zMzBX4XlG
+	Bpc0nEBnqC8LmrYj6DsLGDNgpgAJr20VYpK8lSmHiNMlg5cSmPSRN2RCsWB3kLuqmwwMcHGCKtX
+	AronPLKJphUaYJVNua47lliG4v8xzz3fdfoV4
+X-Google-Smtp-Source: AGHT+IGnuWw7iW2l+BtMoSMyKLPH1RIsnNPbQ5cNHSWZt2as3tbAnI2PoOeCh4RRwK6qwksnQG83NrdZXDBBrVL/jv0=
+X-Received: by 2002:a05:6102:34c1:b0:48f:4580:ca67 with SMTP id
+ ada2fe7eead31-48f52b8daa6mr4256576137.32.1719243712596; Mon, 24 Jun 2024
+ 08:41:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com> <20240621112303.1607621-9-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240621112303.1607621-9-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Jun 2024 17:40:56 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdULaO2dH_wrcM5P6=rDYzRXcMSGfVsBz3okWPGjOsMN4A@mail.gmail.com>
-Message-ID: <CAMuHMdULaO2dH_wrcM5P6=rDYzRXcMSGfVsBz3okWPGjOsMN4A@mail.gmail.com>
-Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the
- R9A08G045 support
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <f214f15e-4a0a-4f24-9bd7-8f84cbc12e5a@p183> <CANpmjNO=zv6D807cNLAQ3eGLrigUs9xtYNxoHhyuYvHkhhSUWg@mail.gmail.com>
+ <2aab04d1-c16b-44e4-a283-7bbf8cba28e7@p183> <CANpmjNMZU=T6J5OBpELxB=ZqOnrkou2iRG7zaqoNy7bCGgH9hA@mail.gmail.com>
+ <fb62163f-ba21-4661-be5b-bb5124abc87d@p183>
+In-Reply-To: <fb62163f-ba21-4661-be5b-bb5124abc87d@p183>
+From: Marco Elver <elver@google.com>
+Date: Mon, 24 Jun 2024 17:41:14 +0200
+Message-ID: <CANpmjNMbLBLgy4-BGQYLkDcYO+vOzgq3ht41xzasEJ=x=o18Kw@mail.gmail.com>
+Subject: Re: [PATCH v2] compiler.h: simplify data_race() macro
+To: Alexey Dobriyan <adobriyan@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
+	akpm@linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
-
-On Fri, Jun 21, 2024 at 1:23=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Mon, 24 Jun 2024 at 17:39, Alexey Dobriyan <adobriyan@gmail.com> wrote:
 >
-> Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is compatible with
-> the version available on Renesas RZ/V2H (R9A09G075). Most of the IP
-> variants that the RIIC driver is working with supports fast mode plus.
-> However, it happens that on the same SoC to have IP instatiations that
-> support fast mode plus as well as IP instantiation that doesn't support
-> it. For this, introduced the renesas,riic-no-fast-mode-plus property.
+> -Wdeclaration-after-statement used since forever required statement
+> expressions to inject __kcsan_disable_current(), __kcsan_enable_current()
+> to mark data race. Now that it is gone, make macro expansion simpler.
 >
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
-> +++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
-> @@ -25,6 +25,10 @@ properties:
->                - renesas,riic-r9a07g054  # RZ/V2L
->            - const: renesas,riic-rz      # RZ/A or RZ/G2L
+> __unqual_scalar_typeof() is wordy macro by itself.
+> "expr" is expanded twice.
 >
-> +      - items:
-> +          - const: renesas,riic-r9a08g045   # RZ/G3S
-> +          - const: renesas,riic-r9a09g057
-> +
+> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 
-LGTM.
+Reviewed-by: Marco Elver <elver@google.com>
 
->        - const: renesas,riic-r9a09g057   # RZ/V2H(P)
+> ---
 >
->    reg:
-> @@ -66,6 +70,10 @@ properties:
->    resets:
->      maxItems: 1
+>  include/linux/compiler.h |    6 ++----
+>  1 file changed, 2 insertions(+), 4 deletions(-)
 >
-> +  renesas,riic-no-fast-mode-plus:
-> +    description: specifies if fast mode plus is not supported
-> +    type: boolean
-> +
-
-Do you really need this?
-The bus' clock-frequency property should take into account the combined
-capabilities of all of controller, target, and wiring.  It is up to the
-DTS writer to validate that all timing conditions are met.
-
->  required:
->    - compatible
->    - reg
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -200,10 +200,8 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
+>   */
+>  #define data_race(expr)                                                        \
+>  ({                                                                     \
+> -       __unqual_scalar_typeof(({ expr; })) __v = ({                    \
+> -               __kcsan_disable_current();                              \
+> -               expr;                                                   \
+> -       });                                                             \
+> +       __kcsan_disable_current();                                      \
+> +       __auto_type __v = (expr);                                       \
+>         __kcsan_enable_current();                                       \
+>         __v;                                                            \
+>  })
 
