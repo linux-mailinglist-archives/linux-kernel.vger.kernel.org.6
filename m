@@ -1,120 +1,383 @@
-Return-Path: <linux-kernel+bounces-226812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C97291443E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:08:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7ADF91443F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E4551F22F31
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 454201F230DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:09:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27B3349653;
-	Mon, 24 Jun 2024 08:08:39 +0000 (UTC)
-Received: from mail-out.aladdin-rd.ru (mail-out.aladdin-rd.ru [91.199.251.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48BF94F1F2;
+	Mon, 24 Jun 2024 08:08:43 +0000 (UTC)
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94C3447F6C;
-	Mon, 24 Jun 2024 08:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.199.251.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C24C4AEDA;
+	Mon, 24 Jun 2024 08:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719216518; cv=none; b=WgDbHyOTYBu62lV0FBwENghT9dA4p56zL184I5wlJSiQiMdMGaY62Sb7LBqixNF5KpOX3Ox50OvnAuPcDRgiDPObq0SNSGbC79qwZKen8Fgfy5DwAfNVQayvxtc0kwRPhyucFhmE7k2FCwsEGSRO0PRXkarSj2TCh2amAnK6RbQ=
+	t=1719216522; cv=none; b=BkWqwQ15kCFmo30UmLscOvG9UuuOIM0jnpniiZ8lBd7CRbg7aFUpv5yMqssTNCu0BWNXDYQJgHknbFBRm5GtrmaYlZV6r706b8Zfe3R7cKq6CWz4Gnb1QPiVTg/UEto4o2PvVqDQ/kQ78PG8/4SXnX7kgCPhRSSiH3aqwkZvmPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719216518; c=relaxed/simple;
-	bh=1EfVWLN8EujHeW9ugE6PQVP6G/uH1aYrSaJvrCJ+/xA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=S6yYMyNuHseliQeJG95Q0HXBEJ+3D7sDtfv6lhkj0HB6k1+CEeSN49p9NivdLmqxqKZRJlQ5IQ5OnFomyuF87ZJmf6LFA/augfkhkcRQcyB7eaCrjn9CiONA4dTw/4MJtfQQvL7vkZaGhfd9LZyRgAB8yfR0pM1qla0vG6BTs5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru; spf=pass smtp.mailfrom=aladdin.ru; arc=none smtp.client-ip=91.199.251.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aladdin.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aladdin.ru
-From: Daniil Dulov <d.dulov@aladdin.ru>
-To: Alexei Starovoitov <ast@kernel.org>
-CC: Daniil Dulov <d.dulov@aladdin.ru>, Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend
-	<john.fastabend@gmail.com>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <bpf@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH v2] xdp: remove WARN() from __xdp_reg_mem_model()
-Date: Mon, 24 Jun 2024 11:07:47 +0300
-Message-ID: <20240624080747.36858-1-d.dulov@aladdin.ru>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719216522; c=relaxed/simple;
+	bh=cURFtQNzlklKcKeDsHE51tGrjap8q+oMcWTHm3MWzbQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BKGxRsozGJ9DM6gz9x7wfumEYV8Og9hbo4R7tFosgJ2qw2g72rqP24oO++IV9MSRmT2IkvQLknI+tnCISbLcBG4XDyJL3CnW9xiXNvNmtUpZqJasGEHN7oho7FQ1HKQcUw2CbSBa/S3iu6b+EHXt6GMZXJ4A+yi4u013v43cTPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 48206C0009;
+	Mon, 24 Jun 2024 08:08:32 +0000 (UTC)
+Message-ID: <22fc7555-19a3-497f-914f-1ec102450fd2@ghiti.fr>
+Date: Mon, 24 Jun 2024 10:08:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] riscv: Fix early ftrace nop patching
+Content-Language: en-US
+From: Alexandre Ghiti <alex@ghiti.fr>
+To: Andy Chiu <andy.chiu@sifive.com>, Alexandre Ghiti <alexghiti@rivosinc.com>
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Andrea Parri <parri.andrea@gmail.com>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?=
+ <bjorn@rivosinc.com>, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ puranjay Mohan <puranjay12@gmail.com>
+References: <20240523115134.70380-1-alexghiti@rivosinc.com>
+ <20240613-lubricant-breath-061192a9489a@wendy>
+ <a396c024-f1a8-4636-85ee-e36950a2dca0@ghiti.fr>
+ <b603c8b5-3100-4ccf-b014-9274f980358d@ghiti.fr>
+ <CABgGipU1tjFAJ+KD7fFabVmLoqNtmQagn2sREHVzZCZ3OxozzQ@mail.gmail.com>
+ <CAHVXubiubf9oCHnFco19SReZRPELYJSRtZmwEnGQLR++N+aH-g@mail.gmail.com>
+ <CABgGipWu2sL0EiKGUgksCZta5Ru3N5fqiNZVQ-5mrDt00puyyQ@mail.gmail.com>
+ <92f64e0c-fe10-48df-9ede-d841741755d7@ghiti.fr>
+In-Reply-To: <92f64e0c-fe10-48df-9ede-d841741755d7@ghiti.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EXCH-2016-01.aladdin.ru (192.168.1.101) To
- EXCH-2016-01.aladdin.ru (192.168.1.101)
+X-GND-Sasl: alex@ghiti.fr
 
-Syzkaller reports a warning in __xdp_reg_mem_model().
 
-The warning occurs only if __mem_id_init_hash_table() returns
-an error. It returns the error in two cases:
+On 20/06/2024 19:03, Alexandre Ghiti wrote:
+>
+> On 19/06/2024 05:40, Andy Chiu wrote:
+>> On Tue, Jun 18, 2024 at 9:40 PM Alexandre Ghiti 
+>> <alexghiti@rivosinc.com> wrote:
+>>> Hi Andy,
+>>>
+>>> On Tue, Jun 18, 2024 at 2:48 PM Andy Chiu <andy.chiu@sifive.com> wrote:
+>>>> On Tue, Jun 18, 2024 at 8:02 PM Alexandre Ghiti <alex@ghiti.fr> wrote:
+>>>>> Hi Conor,
+>>>>>
+>>>>> On 17/06/2024 15:23, Alexandre Ghiti wrote:
+>>>>>> Hi Conor,
+>>>>>>
+>>>>>> Sorry for the delay here.
+>>>>>>
+>>>>>> On 13/06/2024 09:48, Conor Dooley wrote:
+>>>>>>> On Thu, May 23, 2024 at 01:51:34PM +0200, Alexandre Ghiti wrote:
+>>>>>>>> Commit c97bf629963e ("riscv: Fix text patching when IPI are used")
+>>>>>>>> converted ftrace_make_nop() to use patch_insn_write() which 
+>>>>>>>> does not
+>>>>>>>> emit any icache flush relying entirely on 
+>>>>>>>> __ftrace_modify_code() to do
+>>>>>>>> that.
+>>>>>>>>
+>>>>>>>> But we missed that ftrace_make_nop() was called very early 
+>>>>>>>> directly
+>>>>>>>> when
+>>>>>>>> converting mcount calls into nops (actually on riscv it 
+>>>>>>>> converts 2B
+>>>>>>>> nops
+>>>>>>>> emitted by the compiler into 4B nops).
+>>>>>>>>
+>>>>>>>> This caused crashes on multiple HW as reported by Conor and 
+>>>>>>>> Björn since
+>>>>>>>> the booting core could have half-patched instructions in its 
+>>>>>>>> icache
+>>>>>>>> which would trigger an illegal instruction trap: fix this by 
+>>>>>>>> emitting a
+>>>>>>>> local flush icache when early patching nops.
+>>>>>>>>
+>>>>>>>> Fixes: c97bf629963e ("riscv: Fix text patching when IPI are used")
+>>>>>>>> Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>>>>>>>> ---
+>>>>>>>>    arch/riscv/include/asm/cacheflush.h | 6 ++++++
+>>>>>>>>    arch/riscv/kernel/ftrace.c          | 3 +++
+>>>>>>>>    2 files changed, 9 insertions(+)
+>>>>>>>>
+>>>>>>>> diff --git a/arch/riscv/include/asm/cacheflush.h
+>>>>>>>> b/arch/riscv/include/asm/cacheflush.h
+>>>>>>>> index dd8d07146116..ce79c558a4c8 100644
+>>>>>>>> --- a/arch/riscv/include/asm/cacheflush.h
+>>>>>>>> +++ b/arch/riscv/include/asm/cacheflush.h
+>>>>>>>> @@ -13,6 +13,12 @@ static inline void local_flush_icache_all(void)
+>>>>>>>>        asm volatile ("fence.i" ::: "memory");
+>>>>>>>>    }
+>>>>>>>>    +static inline void local_flush_icache_range(unsigned long 
+>>>>>>>> start,
+>>>>>>>> +                        unsigned long end)
+>>>>>>>> +{
+>>>>>>>> +    local_flush_icache_all();
+>>>>>>>> +}
+>>>>>>>> +
+>>>>>>>>    #define PG_dcache_clean PG_arch_1
+>>>>>>>>      static inline void flush_dcache_folio(struct folio *folio)
+>>>>>>>> diff --git a/arch/riscv/kernel/ftrace.c 
+>>>>>>>> b/arch/riscv/kernel/ftrace.c
+>>>>>>>> index 4f4987a6d83d..32e7c401dfb4 100644
+>>>>>>>> --- a/arch/riscv/kernel/ftrace.c
+>>>>>>>> +++ b/arch/riscv/kernel/ftrace.c
+>>>>>>>> @@ -120,6 +120,9 @@ int ftrace_init_nop(struct module *mod, struct
+>>>>>>>> dyn_ftrace *rec)
+>>>>>>>>        out = ftrace_make_nop(mod, rec, MCOUNT_ADDR);
+>>>>>>>>        mutex_unlock(&text_mutex);
+>>>>>>> So, turns out that this patch is not sufficient. I've seen some 
+>>>>>>> more
+>>>>>>> crashes, seemingly due to initialising nops on this mutex_unlock().
+>>>>>>> Palmer suggested moving the if (!mod) ... into the lock, which 
+>>>>>>> fixed
+>>>>>>> the problem for me.
+>>>>>>
+>>>>>> Ok, it makes sense, I completely missed that. I'll send a fix for 
+>>>>>> that
+>>>>>> shortly so that it can be merged in rc5.
+>>>>>>
+>>>>>> Thanks,
+>>>>>>
+>>>>>> Alex
+>>>>>
+>>>>> So I digged a bit more and I'm afraid that the only way to make sure
+>>>>> this issue does not happen elsewhere is to flush the icache right 
+>>>>> after
+>>>>> the patching. We actually can't wait to batch the icache flush since
+>>>>> along the way, we may call a function that has just been patched (the
+>>>>> issue that you encountered here).
+>>>> Trying to provide my thoughts, please let me know if I missed
+>>>> anything. I think what Conor suggested is safe for init_nop, as it
+>>>> would be called only when there is only one core (booting) and at the
+>>>> loading stage of kernel modules. In the first case we just have to
+>>>> make sure there is no patchable entry before the core executes
+>>>> fence.i. The second case is unconditionally safe because there is no
+>>>> read-side of the race.
+>>>>
+>>>> It is a bit tricky for the generic (runtime) case of ftrace code
+>>>> patching, but that is not because of the batch fence.i maintenance. As
+>>>> long as there exists a patchable entry for the stopping thread, it is
+>>>> possible for them to execute on a partially patched instruction. A
+>>>> solution for this is again to prevent any patchable entry in the
+>>>> stop_machine's stopping thread. Another solution is to apply the
+>>>> atomic ftrace patching series which aims to get rid of the race.
+>>> Yeah but my worry is that we can't make sure that functions called
+>>> between the patching and the fence.i are not the ones that just get
+>>> patched. At least today, patch_insn_write() etc should be marked as
+>> IIUC, the compiler does not generate a patchable entry for
+>> patch_insn_write, and so do all functions in patch.c. The entire file
+>> is not compiled with patchable entry because the flag is removed in
+>> riscv's Makefile. Please let me know if I misunderstand it.
+>>
+>>> noinstr. But even then, we call core functions that could be patchable
+>>> (I went through all and it *seems* we are safe *for now*, but this is
+>>> very fragile).
+>> Yes, functions in the "else" clause, atomic_read() etc, are safe for
+>> now. However, it is impossible to fix as long as there exists a
+>> patchable entry along the way. This is the problem that we cannot
+>> patch 2 instructions with a concurrent read-side. On the other hand,
+>> the path of ftrace_modify_all_code may experience the batch fence.i
+>> maintenance issue, and can be fixed via a local fence.i. This is
+>> because the path is executed by only one core. There does not exist a
+>> concurrent write-side. As a result, we just need to make sure it
+>> leaves each patch-site with a local fence.i to make sure code is
+>> up-to-date.
+>>
+>>> Then what do you think we should do to fix Conor's issue right now:
+>>> should we mark the riscv specific functions as noinstr, cross fingers
+>>> that the core functions are not (and don't become) patchable and wait
+>>> for your atomic patching? Or should we flush as soon as possible as I
+>>> proposed above (which to me fixes the issue but hurts performance)?
+>> Either way works for me. IMHO, the fix should include:
+>>
+>> 1. move fence.i before mutex_unlock in init_nop
+>> 2. do local fence.i in __ftrace_modify_call
+>> 3. make sure the else clause does not happen to have a patchable entry
+>
+>
+> OK I have just checked again and I agree with you on the whole fix :) 
+> I may add some comments for 3 so that it is very clear.
 
-  1. memory allocation fails;
-  2. rhashtable_init() fails when some fields of rhashtable_params
-     struct are not initialized properly.
 
-The second case cannot happen since there is a static const
-rhashtable_params struct with valid fields. So, warning is only triggered
-when there is a problem with memory allocation.
+And after another check, a few other callsites need to emit a sfence.i 
+like ftrace_make_call() and ftrace_make_nop(), which in the end, amounts 
+to adding a sfence.i right after the patching is done. So after a 
+private discussion with Andy, we both agreed that the initial solution I 
+posted was the safest. Admittedly, the impact on performance is unknown, 
+so any input on this side would be appreciated.
 
-Thus, there is no sense in using WARN() to handle this error and it can be
-safely removed.
+@Conor: I'm sending this as a proper patch if you can give it a try so 
+that we can merge that in rc6.
 
-WARNING: CPU: 0 PID: 5065 at net/core/xdp.c:299 __xdp_reg_mem_model+0x2d9/0x650 net/core/xdp.c:299
+Thanks,
 
-CPU: 0 PID: 5065 Comm: syz-executor883 Not tainted 6.8.0-syzkaller-05271-gf99c5f563c17 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 03/27/2024
-RIP: 0010:__xdp_reg_mem_model+0x2d9/0x650 net/core/xdp.c:299
+Alex
 
-Call Trace:
- xdp_reg_mem_model+0x22/0x40 net/core/xdp.c:344
- xdp_test_run_setup net/bpf/test_run.c:188 [inline]
- bpf_test_run_xdp_live+0x365/0x1e90 net/bpf/test_run.c:377
- bpf_prog_test_run_xdp+0x813/0x11b0 net/bpf/test_run.c:1267
- bpf_prog_test_run+0x33a/0x3b0 kernel/bpf/syscall.c:4240
- __sys_bpf+0x48d/0x810 kernel/bpf/syscall.c:5649
- __do_sys_bpf kernel/bpf/syscall.c:5738 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:5736 [inline]
- __x64_sys_bpf+0x7c/0x90 kernel/bpf/syscall.c:5736
- do_syscall_64+0xfb/0x240
- entry_SYSCALL_64_after_hwframe+0x6d/0x75
 
-Found by Linux Verification Center (linuxtesting.org) with Syzkaller.
-
-Fixes: 8d5d88527587 ("xdp: rhashtable with allocator ID to pointer mapping")
-Signed-off-by: Daniil Dulov <d.dulov@aladdin.ru>
-Acked-by: Jesper Dangaard Brouer <hawk@kernel.org>
----
-v2: Removed unnecessary brackets as Jakub Kicinski <kuba@kernel.org>
-suggested, also added Acked-by Jesper Dangaard Brouer <hawk@kernel.org>
-Link: https://lore.kernel.org/all/20240617162708.492159-1-d.dulov@aladdin.ru/
-
- net/core/xdp.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/net/core/xdp.c b/net/core/xdp.c
-index 41693154e426..022c12059cf2 100644
---- a/net/core/xdp.c
-+++ b/net/core/xdp.c
-@@ -295,10 +295,8 @@ static struct xdp_mem_allocator *__xdp_reg_mem_model(struct xdp_mem_info *mem,
- 		mutex_lock(&mem_id_lock);
- 		ret = __mem_id_init_hash_table();
- 		mutex_unlock(&mem_id_lock);
--		if (ret < 0) {
--			WARN_ON(1);
-+		if (ret < 0)
- 			return ERR_PTR(ret);
--		}
- 	}
- 
- 	xdp_alloc = kzalloc(sizeof(*xdp_alloc), gfp);
--- 
-2.25.1
-
+>
+> Thanks Andy!
+>
+> Alex
+>
+>
+>>
+>> Thanks,
+>> Andy
+>>
+>>> Thanks,
+>>>
+>>> Alex
+>>>
+>>>>> I don't know how much it will impact the performance but I guess 
+>>>>> it will.
+>>>>>
+>>>>> Unless someone has a better idea (I added Andy and Puranjay in 
+>>>>> cc), here
+>>>>> is the patch that implements this, can you give it a try? Thanks
+>>>>>
+>>>>> diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
+>>>>> index 87cbd86576b2..4b95c574fd04 100644
+>>>>> --- a/arch/riscv/kernel/ftrace.c
+>>>>> +++ b/arch/riscv/kernel/ftrace.c
+>>>>> @@ -120,9 +120,6 @@ int ftrace_init_nop(struct module *mod, struct
+>>>>> dyn_ftrace *rec)
+>>>>>           out = ftrace_make_nop(mod, rec, MCOUNT_ADDR);
+>>>>>           mutex_unlock(&text_mutex);
+>>>>>
+>>>>> -       if (!mod)
+>>>>> -               local_flush_icache_range(rec->ip, rec->ip +
+>>>>> MCOUNT_INSN_SIZE);
+>>>>> -
+>>>>>           return out;
+>>>>>    }
+>>>>>
+>>>>> @@ -156,9 +153,9 @@ static int __ftrace_modify_code(void *data)
+>>>>>           } else {
+>>>>>                   while (atomic_read(&param->cpu_count) <= 
+>>>>> num_online_cpus())
+>>>>>                           cpu_relax();
+>>>>> -       }
+>>>>>
+>>>>> -       local_flush_icache_all();
+>>>>> +               local_flush_icache_all();
+>>>>> +       }
+>>>>>
+>>>>>           return 0;
+>>>>>    }
+>>>>> diff --git a/arch/riscv/kernel/patch.c b/arch/riscv/kernel/patch.c
+>>>>> index 4007563fb607..ab03732d06c4 100644
+>>>>> --- a/arch/riscv/kernel/patch.c
+>>>>> +++ b/arch/riscv/kernel/patch.c
+>>>>> @@ -89,6 +89,14 @@ static int __patch_insn_set(void *addr, u8 c, 
+>>>>> size_t len)
+>>>>>
+>>>>>           memset(waddr, c, len);
+>>>>>
+>>>>> +       /*
+>>>>> +        * We could have just patched a function that is about to be
+>>>>> +        * called so make sure we don't execute partially patched
+>>>>> +        * instructions by flushing the icache as soon as possible.
+>>>>> +        */
+>>>>> +       local_flush_icache_range((unsigned long)waddr,
+>>>>> +                                (unsigned long)waddr + len);
+>>>>> +
+>>>>>           patch_unmap(FIX_TEXT_POKE0);
+>>>>>
+>>>>>           if (across_pages)
+>>>>> @@ -135,6 +143,14 @@ static int __patch_insn_write(void *addr, const
+>>>>> void *insn, size_t len)
+>>>>>
+>>>>>           ret = copy_to_kernel_nofault(waddr, insn, len);
+>>>>>
+>>>>> +       /*
+>>>>> +        * We could have just patched a function that is about to be
+>>>>> +        * called so make sure we don't execute partially patched
+>>>>> +        * instructions by flushing the icache as soon as possible.
+>>>>> +        */
+>>>>> +       local_flush_icache_range((unsigned long)waddr,
+>>>>> +                                (unsigned long)waddr + len);
+>>>>> +
+>>>>>           patch_unmap(FIX_TEXT_POKE0);
+>>>>>
+>>>>>           if (across_pages)
+>>>>> @@ -189,9 +205,6 @@ int patch_text_set_nosync(void *addr, u8 c, 
+>>>>> size_t len)
+>>>>>
+>>>>>           ret = patch_insn_set(tp, c, len);
+>>>>>
+>>>>> -       if (!ret)
+>>>>> -               flush_icache_range((uintptr_t)tp, (uintptr_t)tp + 
+>>>>> len);
+>>>>> -
+>>>>>           return ret;
+>>>>>    }
+>>>>>    NOKPROBE_SYMBOL(patch_text_set_nosync);
+>>>>> @@ -224,9 +237,6 @@ int patch_text_nosync(void *addr, const void 
+>>>>> *insns,
+>>>>> size_t len)
+>>>>>
+>>>>>           ret = patch_insn_write(tp, insns, len);
+>>>>>
+>>>>> -       if (!ret)
+>>>>> -               flush_icache_range((uintptr_t) tp, (uintptr_t) tp 
+>>>>> + len);
+>>>>> -
+>>>>>           return ret;
+>>>>>    }
+>>>>>    NOKPROBE_SYMBOL(patch_text_nosync);
+>>>>> @@ -253,9 +263,9 @@ static int patch_text_cb(void *data)
+>>>>>           } else {
+>>>>>                   while (atomic_read(&patch->cpu_count) <= 
+>>>>> num_online_cpus())
+>>>>>                           cpu_relax();
+>>>>> -       }
+>>>>>
+>>>>> -       local_flush_icache_all();
+>>>>> +               local_flush_icache_all();
+>>>>> +       }
+>>>>>
+>>>>>           return ret;
+>>>>>    }
+>>>>>
+>>>>>
+>>>>>>
+>>>>>>>>    +    if (!mod)
+>>>>>>>> +        local_flush_icache_range(rec->ip, rec->ip + 
+>>>>>>>> MCOUNT_INSN_SIZE);
+>>>>>>>> +
+>>>>>>>>        return out;
+>>>>>>>>    }
+>>>>>>>>    --
+>>>>>>>> 2.39.2
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> _______________________________________________
+>>>>>>>> linux-riscv mailing list
+>>>>>>>> linux-riscv@lists.infradead.org
+>>>>>>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+>>>>>> _______________________________________________
+>>>>>> linux-riscv mailing list
+>>>>>> linux-riscv@lists.infradead.org
+>>>>>> http://lists.infradead.org/mailman/listinfo/linux-riscv
+>>>> Cheers,
+>>>> Andy
+>> _______________________________________________
+>> linux-riscv mailing list
+>> linux-riscv@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
