@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-227571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E32F915356
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:20:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8105691535A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F9561C2012A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:20:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31C831F20CD1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:21:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03EC819DF7B;
-	Mon, 24 Jun 2024 16:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9274219E7DE;
+	Mon, 24 Jun 2024 16:20:31 +0000 (UTC)
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8263019D063
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5261A19D8BB;
+	Mon, 24 Jun 2024 16:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719246029; cv=none; b=HE8FGKWs9apjE2Dw7U+GD5LeRo4zCrH+JeaZ8GpSlwzr9Alh9grSfFwMVDbePOhwjZSpkwhvTUkoMKEnTbNCIY3G6f8EuCfd1GUuY9jQiq2GWtj+lK8faXIRCJuHSEihcsVwj1LWkWk1oxVPTregzTwfSUmW3iUNk/A1PXNrOFM=
+	t=1719246031; cv=none; b=Z6c+m8mkIFHRji9KMlRp8kTXnUk6GYTaVvsekkIeH0lvH8TJYpSfR9vHGKtv74F3YzEJsRHSgqJYKNV9hS/4SdD0/3bvybA+rajGFtkG8a9g8lcxrlVppFySmeiDEt/fhEu+KV9JfW4Ki5z+6fg2IZEw+q3vqnmT5DcWso2rLu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719246029; c=relaxed/simple;
-	bh=Y8pWBcQyem82eKSXGISRLYFcUQpDIajsb11ofVNNahI=;
+	s=arc-20240116; t=1719246031; c=relaxed/simple;
+	bh=RKCRIRXniq1aPuUFeyToJ5cqXZib9LZUEvgH2O0YBUo=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tfXKZKe4AdaOFEeaAnG0uFHYSlNyBazjNDULI3ltTzKIZN53bI/tZwwnvaD17bHZkxGbk9QPhDqRH8XnpNqH0UWy74xDZtSwJdoMfr45TMd+QbPlyB3sizC3LFTRz6jYJ5x/3EmxxQz3gZ4yxdA5uziTffuthnvu8nWjfl0A93M=
+	 MIME-Version:Content-Type; b=Z3z8+jxRRkGJshebTyDcG0jOFZwwKVfdZUWOZoYcxV1ZlhP+9sbezHQCkzxdBUVh5dSFStjGWm/9kEE62Vj1F9uoV1efEF47jIh7mw8oHfzLAw3YtcngJgcnxyS+2r4Ith1NpuABzsZGPEGxxNXYCB9InsrqPS08f7UCaZd6+8c=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
@@ -32,20 +32,24 @@ Received: from i53875b6a.versanet.de ([83.135.91.106] helo=phil.lan)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1sLmQa-0001wn-5h; Mon, 24 Jun 2024 18:20:24 +0200
+	id 1sLmQc-0001wn-KC; Mon, 24 Jun 2024 18:20:26 +0200
 From: Heiko Stuebner <heiko@sntech.de>
-To: dri-devel@lists.freedesktop.org,
-	Jonas Karlman <jonas@kwiboo.se>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: (subset) [PATCH 00/13] rockchip: Enable 4K@60Hz mode on RK3228, RK3328, RK3399 and RK356x
-Date: Mon, 24 Jun 2024 18:20:15 +0200
-Message-Id: <171924573800.612064.11395186343493727609.b4-ty@sntech.de>
+To: linux-kernel@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>,
+	"open list:ARM/Rockchip SoC support" <linux-rockchip@lists.infradead.org>,
+	Trevor Woerner <twoerner@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Subject: Re: [PATCH] arm64: dts: rockchip: add gpio-line-names to radxa-zero-3
+Date: Mon, 24 Jun 2024 18:20:21 +0200
+Message-Id: <171924573799.612064.9218736887561595244.b4-ty@sntech.de>
 X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240615170417.3134517-1-jonas@kwiboo.se>
-References: <20240615170417.3134517-1-jonas@kwiboo.se>
+In-Reply-To: <20240620013301.33653-1-twoerner@gmail.com>
+References: <20240620013301.33653-1-twoerner@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,20 +59,21 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-On Sat, 15 Jun 2024 17:03:51 +0000, Jonas Karlman wrote:
-> This prepares and enable use of HDMI2.0 modes, e.g. 4K@60Hz, on RK3228,
-> RK3328, RK3399 and RK356x.
+On Wed, 19 Jun 2024 21:32:49 -0400, Trevor Woerner wrote:
+> Add names to the pins of the general-purpose expansion header as given
+> in the Radxa documentation[1] following the conventions in the kernel[2]
+> to make it easier for users to correlate pins with functions when using
+> utilities such as 'gpioinfo'.
 > 
-> Patch 1-3 fixes some issues to help support use of high-resolution modes.
-> 
-> Patch 4 fixes reading of EDID on RK3328 when using a forced mode.
+> [1] https://docs.radxa.com/en/zero/zero3/hardware-design/hardware-interface
+> [2] https://www.kernel.org/doc/Documentation/devicetree/bindings/gpio/gpio.txt
 > 
 > [...]
 
 Applied, thanks!
 
-[01/13] arm64: dts: rockchip: Increase VOP clk rate on RK3328
-        commit: 0f2ddb128fa20f8441d903285632f2c69e90fae1
+[1/1] arm64: dts: rockchip: add gpio-line-names to radxa-zero-3
+      commit: f7c742cbe664ebdedc075945e75443683d1175f7
 
 Best regards,
 -- 
