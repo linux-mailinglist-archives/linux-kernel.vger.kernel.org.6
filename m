@@ -1,154 +1,145 @@
-Return-Path: <linux-kernel+bounces-226626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B7A914141
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:48:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 72411914143
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:49:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A77B1F21620
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:48:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B9FB1F218EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:49:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78AEFC12;
-	Mon, 24 Jun 2024 04:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D1FDDD2;
+	Mon, 24 Jun 2024 04:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDe9JP7w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="e/KSLxsT"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91C4DDC1;
-	Mon, 24 Jun 2024 04:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FFED168A9
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 04:49:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719204511; cv=none; b=smtq/5LXU3F81TrlLC43CPlP5MXkngmZ+mXeYyE26qdrVhPJLb3KTcdvKuMkUw2Pg3OtSsKhOuRhWDpv2oA+7qyYPVXezwLIsLR3gm7DlcSrwelSxruDd1XIBzFwLrgS8KP8i2KDtHb4M9UTnA03bGCwpwB+ZXVf8+N5WnvVtfc=
+	t=1719204556; cv=none; b=GQaQJ6F3fpg6m6Xj7BQu5EA/76F3ELFKILEdMNAl1qwOjR4mXNYPhUDvVUjK5Jp+goLkZ9xXQsek1NLhL7jBExymKWHsPj7PJzwrrDOSRNJCLIKeDJGyQShvMAfuqJmfLo7z+peIW07vKwKSXJZMdMJpvN4g+JEDBJZTj/A4Z9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719204511; c=relaxed/simple;
-	bh=NDJaXB/nKzpYeop5UXLPi8qOuSov8fo+Km4a9y9Er+8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q8K1HVIRAL0nZlWL6XKsPDWWyf0l5YPY8I6DjMYA8z67T+sGsDh6mcud8RlfLPh0AaBe4HnKb+fyK7ApYlxklxhRum5tkQfNVOYVixQpbLYAf40mkRjGaEfnHH+yufpohAE92booT6fhaLFKz3Q3TdVFKMokKIBPGfjTlx/7s/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDe9JP7w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F16DC2BBFC;
-	Mon, 24 Jun 2024 04:48:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719204510;
-	bh=NDJaXB/nKzpYeop5UXLPi8qOuSov8fo+Km4a9y9Er+8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MDe9JP7w3gmPyoICO906486pxbci3aIpLWkvlgbUatgTKmm6WMYJrZjb2bB+UND5i
-	 xYl31CNbmgI/UsGU90WUHgIdKT91caUnSeUHX3yXbwPEeF9SGgZZvTbQvIt21L5EYt
-	 vIEGOPWC1dSN1kLXagmxnlcYODZgXDur2O6dK9SPhM27h5aldRvUbEU1ys5ivipRiK
-	 tzCAa+tBQWBmilucBsJEOYEG2Di2p9v/ZBepnJsvIflRqjdMWMh/+eXVasXJLjIDBL
-	 inQebxyh+DzG39A67NKYFfn9SZMlsMYyWy23ZlMvKryRgrqkPAoxj4WjmtVRxmNqvh
-	 NpbFaA4GYnBqg==
-Message-ID: <e71780a1-8d53-44ae-ac0f-d406de7e26e8@kernel.org>
-Date: Mon, 24 Jun 2024 06:48:22 +0200
+	s=arc-20240116; t=1719204556; c=relaxed/simple;
+	bh=mni7Xjh+W9N8YsIN4sLCAw2EtVVl7YuRtFktOF8G9k0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gF4/yCX1VkP1n9la5VOsIa7uwwELvJtPCQdKc9lpX5zT3lV4nIOu12MXquIZzM5TOFJqU6SQRzbVD2TvId9bj+FkkP2M15iN8Lfrt6AfPfYB9SFN9Mx+jv0WqFSlODOxh6lamUQgDAmVvoglU7YIjsyUz2SgVv1rCmdzM1jLoJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=e/KSLxsT; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-706680d3a25so937920b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 21:49:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1719204553; x=1719809353; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5yCT5VxgAao2DKcwL/n1MwIFuYF06UPFj6XxxbzHuqM=;
+        b=e/KSLxsTcJSOMYUBonD4vtVQahTG/gVPLWTp5R8CfCGHQ3vDNRY01A1T+EZY63m8as
+         XgGUHGQAXPJqyFNoKOgpnrQ7QI2bSXWQIy0sS0e9LYPAPtF15J0sFUidx61egU2cGO+3
+         DmLFc7oLEOiZ+y8yQbBryQTIFYh2I3rWzCvoZwdMYDfpRJAADjzu5RU5QSBXWOMIEV3q
+         A3PQo+FFmDnBYF4K4QRKpoVjdbDIpmBI1wB2Fc+vRfsXWCPaAO6K80E1JZE6M6+fgqJp
+         TdOkBym0TmcoLRsfKBl4L5Tc3Ia0Inv1+equh4XdoIwjzX5u+CA0C7D3Uk4dT/Io0D4e
+         /U8Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719204553; x=1719809353;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5yCT5VxgAao2DKcwL/n1MwIFuYF06UPFj6XxxbzHuqM=;
+        b=E99XC95DUmKYANGpbl7WIVO2LJxG72VJagifmJWzX7gzan4gWpnRQexwG9jcEmry4P
+         BzpnCVpWOBRVUKVoy5OSBQIsDQffUMxBr4lTrc5+S0Io7cC4yfhQJNJiguwmUHw+cWeo
+         IFpVwO70S4rrdTECeDS5NhHhqkaOObOJXhF8MDNw5R1udL+mk8D+n4IjYs2uLlqRPx9D
+         COIEkOqToMmXpES8Jbqc/c9qGGoYbsItWazz2rtNgwjKGY0HNdWa2mAbQuuZUcT+qJQe
+         TWpmS079z0VDhg6iF/0Itz57A3EyCOEvRWT/jVkLM8dCMvz+d8ThvBYm+kHORyWxlCdN
+         gBzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYFU6JqLhtmQpsrqzpCqAO40+1bx/2xgZMKBwryjWdbHPqsH8tpTw1BezjYe7yUlWnVSXa9uTaXz6FrRwOuLIiKoGTDap/aLakK9VP
+X-Gm-Message-State: AOJu0YwoU3MHNKf1jEMC8bL58PMeMgs/Sw7aagFjbdGrRyupQoSqddnS
+	0kCrxHaau95Wj2quxQDF4tmc5B6BUBTmfnNMd09h+WFOqSNlKUKqVF0rzrxYIc8=
+X-Google-Smtp-Source: AGHT+IFMV0C+R+NwkxEg9McBmus0ucAUY3nQfRaA6AfKEyZMnE1mK8ZXtSOnx+hXLXQWZw+NmSap4w==
+X-Received: by 2002:a05:6a00:69b7:b0:702:38ff:4a59 with SMTP id d2e1a72fcca58-70670e79d03mr4295625b3a.6.1719204553330;
+        Sun, 23 Jun 2024 21:49:13 -0700 (PDT)
+Received: from L4CR4519N7.bytedance.net ([2001:c10:ff04:0:1000:0:1:6])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70651194776sm5254865b3a.67.2024.06.23.21.49.09
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sun, 23 Jun 2024 21:49:12 -0700 (PDT)
+From: Rui Qi <qirui.001@bytedance.com>
+X-Google-Original-From: Rui Qi
+To: tony.luck@intel.com
+Cc: bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	hpa@zytor.com,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mingo@redhat.com,
+	qirui.001@bytedance.com,
+	tglx@linutronix.de,
+	x86@kernel.org
+Subject: Re: [External] [PATCH] x86/mce: count the number of occurrences of each MCE severity
+Date: Mon, 24 Jun 2024 12:48:39 +0800
+Message-Id: <20240624044839.87035-1-qirui.001@bytedance.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-145)
+In-Reply-To: <SJ1PR11MB6083E1173846A5C8B4529D25FCC82@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <SJ1PR11MB6083E1173846A5C8B4529D25FCC82@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/8] dt-bindings: mips: realtek: Add rtl930x-soc
- compatible
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- tsbogend@alpha.franken.de, daniel.lezcano@linaro.org, paulburton@kernel.org,
- peterz@infradead.org, mail@birger-koblitz.de, bert@biot.com,
- john@phrozen.org, sander@svanheule.net
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-mips@vger.kernel.org, kabel@kernel.org, ericwouds@gmail.com
-References: <20240624012300.1713290-1-chris.packham@alliedtelesis.co.nz>
- <20240624012300.1713290-4-chris.packham@alliedtelesis.co.nz>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240624012300.1713290-4-chris.packham@alliedtelesis.co.nz>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24/06/2024 03:22, Chris Packham wrote:
-> Add the rtl930x-soc and RTL9302C board to the list of Realtek compatible
+From: Rui Qi <qirui.001@bytedance.com>
 
-930x or 9302?
+Hi Tony,
 
-> strings.
+> You seem to have problems with the e-mail infrastructure. I got a few extra copies
+> of this in HTML format. This one is in plain text, but the From: header says "$(name)"
 > 
-> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> ---
+
+Sorry， some problem with my thunderbird mail agent. I will use git send-mail instead from now on.
 > 
-> Notes:
->     Changes in v2:
->     - Use specific compatible for rtl9302-soc
->     - Fix to allow correct board, soc compatible
+>>> So you either covered a case in the severities table, or you didn't. Does it
+>>> help to know that you covered a case multiple times?
+>>>
+>>
+>> In the fault injection test in the laboratory, we inject errors multiple
+>> times and need a counter to tell us how many times each case has
+>> occurred and compare it with the expected number to determine the test
+>> results
 > 
->  Documentation/devicetree/bindings/mips/realtek-rtl.yaml | 4 ++++
->  1 file changed, 4 insertions(+)
+> In my testing on Intel/x86 I don't always see a 1:1 mapping between my
+> test, and the severities rule. This is because of a h/w race between the
+> memory controller reporting the error when it sees an uncorrectable ECC
+> issue, and the core trying to consume the poisoned data. If the memory
+> controller signal wins the race, Linux takes the page offline and there isn't
+> a poison consumption error, just a page fault.
 > 
-> diff --git a/Documentation/devicetree/bindings/mips/realtek-rtl.yaml b/Documentation/devicetree/bindings/mips/realtek-rtl.yaml
-> index f8ac309d2994..05daa53417e5 100644
-> --- a/Documentation/devicetree/bindings/mips/realtek-rtl.yaml
-> +++ b/Documentation/devicetree/bindings/mips/realtek-rtl.yaml
-> @@ -20,5 +20,9 @@ properties:
->            - enum:
->                - cisco,sg220-26
->            - const: realtek,rtl8382-soc
-> +      - items:
-> +          - enum:
-> +              - realtek,rtl9302c
+>> In the production environment, the counter can reflect the actual number
+>> of times each MCE error type occurs, which can help us detect the MCE
+>> error distribution of large-scale Data center infrastructure
+> 
+> That could be useful.
+>
+Thank you for your expertise!
 
-Why board has the name of SoC?
+>>>> Due to the limitation of char type, the maximum supported statistics are
+>>>> currently 255 times
+>>>>
+>>
+>> How about changing char to u64, which is enough for real-world
+>> situations and won't waste a lot of memory?
+> 
+> u64 seems like serious overkill. A change from "unsigned char" to "unsigned int"
+> would keep track of 4 billion errors. That seems like plenty :-)
+>> -Tony
+Yes, unsinged int is far enough.
 
-> +          - const: realtek,rtl9302-soc
+BTW, if you dont mind, I will send a V2 patch based on our discussion.
 
-Drop the -soc suffix. The rtl9302 is the soc.
-
->  
->  additionalProperties: true
-
-Best regards,
-Krzysztof
 
 
