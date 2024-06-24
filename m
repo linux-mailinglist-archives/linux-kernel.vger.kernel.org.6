@@ -1,131 +1,169 @@
-Return-Path: <linux-kernel+bounces-226981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 612599146A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:47:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 615169146AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:49:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B577286E68
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:47:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1927A286F14
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FE313247D;
-	Mon, 24 Jun 2024 09:46:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502FA132131;
+	Mon, 24 Jun 2024 09:49:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pjWVgtMd"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xrD7WuTN"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B443130E44
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:46:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B632D5380F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719222418; cv=none; b=e1fABEM02/k3wSGzpzg2MgJu3igUI0tNTFlT6w7MMRYxElLbXF+pN2Zl7yeVy+3pIbQNlERhwKfBiJDl7Lla7ikYaFnURQOQAnOHgsSqGIWqfcm+LJfrAhn42j0ZFZizxqVxXBW7oFiWTDXCvBEmWTzYM8pBSaaUOn1Pui8uEEU=
+	t=1719222550; cv=none; b=Kazx4FRXuW2IiZsq9fP6EDf89tjDdU6N7hr3XXd2BdEKbKAKHjGcmejFAkyAKnbCkbO3naB153t5zhZmJ+g+3wIUKorg2q2rjNOVE7GbO9hM10jo+2frsU3JvQrbzkeSszF/9U0hFDNwH8dLhB3xGvcRSZIbFdeLe6S/t3oBa9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719222418; c=relaxed/simple;
-	bh=RlNqxuxlP3EHHraVSFgxxgaCZ5WLSQ4QVAjyJy1jP+c=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=EkIgOZRma/n8oipc3fvB9OwJQQsaTXuwRWDFA8+V3WVxRFfFEuKEkOHZ8SzQRr3zjHhlZertufb+oWXTDmzZV2DPT6JXq7Iw+UtFNuLQaao81ZmL7n5n8fnvqanVtPTP/9+lbPTZnA62wP6cWapSbyp4B0HRBtnN2yAA78fUgdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pjWVgtMd; arc=none smtp.client-ip=209.85.208.175
+	s=arc-20240116; t=1719222550; c=relaxed/simple;
+	bh=cBC9r5FiU07ZwTmGQi7v+3wcd5+NjF4lo+IUTbrfuzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AYhG8cRf+PEM/kDqoMKLXYrvJ0q24aty0OGIu6QXpw0Q7gOZzQk+jPVQVXwDk/D07SFxd9KT3iEU6hJUTc/V7DtzZqvEIDAazT48c39zMCZzgmwPQTUuiHk20/8pPVm9cI2kJhobqeqg2Gubf4XEr1Fs3Cq7ynJItRgL/gCJnMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xrD7WuTN; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eaea28868dso54124251fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:46:56 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2eabd22d3f4so50796641fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:49:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719222414; x=1719827214; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WcNWKnHkeIJRMOmqnabShMaVabM5q9PDRYhoyvuhdTA=;
-        b=pjWVgtMdEaz9H1bHGIQ2Laj+P7cee2a9ShZWkGLKRkKilAxwd+VKhuqSLLTE8J18Oh
-         MtRfxxeG+VtfJObTkqDwjsM/RH3OYnxTx9MgwgfKLoA2xhKoyMT29UVymHyZAlO6Hpkz
-         kgxgPEuignztkaNPJo45hLp85+hwd8bj2l9aDD+wFn4UGG1NAineqfDV7NDAmX/ZJkEy
-         AiiSRxV6eY7mEDvv48ngMBUSSD9BG5a8cOj4qVfDrgPi5PEs2zidmkh+eHy/oNJx5ryx
-         HUlTm/uMoPQ9uYpNAFodrM53/RqPCSfwaG9HsZzkOhHyINvgXg5AOl5QSIw4uKZljk1s
-         4J9g==
+        d=linaro.org; s=google; t=1719222547; x=1719827347; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8m390afH3EHC94T9TLjGH5rkccIMRXz02pwQnKceOW4=;
+        b=xrD7WuTNW+datTjyoZKZxOQNn8XARXD2qx3m0NgMK2BPO/yM8RvWgFUxYpyLOhc1FM
+         kv3aeOAmmfLuBB9fqAJAVgiICQaCCULAzvj7LFZc/KYQsTDoesYWbsN29HKykLg/KoLo
+         QnwCNujQ/Muar1/o+SwOykj7bPhXu0oDQwhr6E04LItsM1cgeLLINljTMkdtDXi2bA9Q
+         ou0VEgnk2T8USI14soO6krJ9v90/25g9HzDqusSjrQzoWT5QZxG81vZGjQXSa+gr0+MS
+         PkpYt/G6eEd+kQQB6Gxo0zC+yYibYEpx9Bc4Lj39Qk+jjqL0RSRIxdaOjMdQSO8QT1Dg
+         IVGQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719222414; x=1719827214;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WcNWKnHkeIJRMOmqnabShMaVabM5q9PDRYhoyvuhdTA=;
-        b=kEiYR6/QeOAvf4+IB2+WUCt98OfVoe5buTPBEFbzOXWgbgK4/VQ1q8jcQlef2dyMOH
-         LKMSAdehRVV31UzmLbLFZ5PXpHNxIrh6pdUDMmPbdv4xDIzK4NiL0ccE15CwKN2uqdQx
-         Paktxl5noZvVb6KVN1XVevREX/TFfckuvIV7K3nJVCZPpAQNJ09fLxGSLOu+UVCiM8az
-         Ns4jVinfCrHDWEw57yoOt43kKEgcrWyTaHIE+BI2/YL5dyYHArBZ2ToXuMsI8u7DBPps
-         BCBr9TNg8fcfZL8d4Ufu7lqqjUcHunvycrekgVaBspKPUJcc7/t8TldrdWmy6ZCHCXt/
-         2Xvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnU+JyQHlhHfV9JyYHEsjNZx1lFc7uAQNKQUtLNWMRqowGDRQLVg+e1X4nHSIrUOOlH6uMWvOT92mB0sxGCFXftPX07PWsyYqOpYog
-X-Gm-Message-State: AOJu0YytYoply8iu0cUKt9OokUP1M+rVI12qFjpItHnTNXOtMevKZv4x
-	uShx6gQG8UObY8nm+n4B1K6A56VZGmIzqYGbyA3XdI4MVjsN2rvk+KxiW5yAszA=
-X-Google-Smtp-Source: AGHT+IHpNq1ix8ySZk4ztfCVIL+kyhyoHsHxl6o2d4h29CU2dII6GfkHgVi26P1w+CJMTNmjxLwS1Q==
-X-Received: by 2002:a05:651c:22f:b0:2ec:1708:4db5 with SMTP id 38308e7fff4ca-2ec5b339debmr25928351fa.51.1719222413972;
-        Mon, 24 Jun 2024 02:46:53 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366383f65easm9528339f8f.23.2024.06.24.02.46.52
+        d=1e100.net; s=20230601; t=1719222547; x=1719827347;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8m390afH3EHC94T9TLjGH5rkccIMRXz02pwQnKceOW4=;
+        b=ABQwYmJoAeui1kkpGHJBhgRPHt6IEXLzSBDxQd3sW++cCrGop6oyAPH5gPPBsGJEsE
+         PpcwrzpPLrzBT76+1K/+3yXqhwlBykKTveQTrzILGtVeqj7MqEl7pTBwLIGs+uU0LTJb
+         HDTmf4Zi+5t+jf0zP1kH51U2HutmA6mIoPY9JrK4WSYHdYxOLrN3g3o0OiCsw5lbEPR2
+         rqY2TXBbhzb2uYByKFynG3X6PnfA4wXxQJ4R4lG6s3NrkL8s9R156NGca/8Skzwu96xK
+         smd4oRjVv3wr+dRfo5DqvVB1lSlKXmgkQsh0kFlteFW3uqZjtORw14hGJ9yYwUqWDtf9
+         CjuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWGi6OCFTxKbFcSRscw+ki5PsKiMfX5M6AhT05guz9+dPioBb5l9ueOr6bNd4b9ZzianbcAHwJ4a1yrTPzj+Jcrz29EXqaX/7EBnVf
+X-Gm-Message-State: AOJu0YwjFTyYCltzp8stP5riGFOTzWVhNwc2Us/aaH6vcq/ulwPOPWcy
+	lbtH0Nqw7eWQDZ41fBTI5Q7edav++wetuHdZs2+n3c+cr29e3qlWlzWr09ATeWg=
+X-Google-Smtp-Source: AGHT+IEdXV9FcgPiWFVGfg2bBJoCKqvS4QWdUnkhT4ii7J+rnercJlEkzH8zVTvYWjDnzWYF+vW+Ig==
+X-Received: by 2002:a05:651c:154b:b0:2ec:61b5:2162 with SMTP id 38308e7fff4ca-2ec61b521d6mr14914311fa.25.1719222546838;
+        Mon, 24 Jun 2024 02:49:06 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d601733sm9272031fa.22.2024.06.24.02.49.06
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 02:46:53 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Dmitry Rokosov <ddrokosov@salutedevices.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240624-topic-amlogic-upstream-bindings-fixes-dts-round-2-v1-1-0a21f456eb8d@linaro.org>
-References: <20240624-topic-amlogic-upstream-bindings-fixes-dts-round-2-v1-1-0a21f456eb8d@linaro.org>
-Subject: Re: [PATCH] arm64: dts: amlogic: ad402: fix thermal zone node name
-Message-Id: <171922241292.3679804.1552417731983704893.b4-ty@linaro.org>
-Date: Mon, 24 Jun 2024 11:46:52 +0200
+        Mon, 24 Jun 2024 02:49:06 -0700 (PDT)
+Date: Mon, 24 Jun 2024 12:49:04 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Aradhya Bhatia <a-bhatia1@ti.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>, 
+	Jan Kiszka <jan.kiszka@siemens.com>, Marek Vasut <marex@denx.de>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] drm/bridge: tc358767: Fix
+ DRM_BRIDGE_ATTACH_NO_CONNECTOR case
+Message-ID: <st6vgd2k6dxo4vd3pmqmqlc5haofhbym2jeb2eeh2pa2n6zcca@tradpzxrzexl>
+References: <f6af46e0-aadb-450a-9349-eec1337ea870@ti.com>
+ <2f3bb86b-6f8c-4807-985e-344a0c47864c@siemens.com>
+ <3277848.aeNJFYEL58@steina-w>
+ <b2052bc9-b2da-489b-9e5b-3c9b4f6c1c99@ideasonboard.com>
+ <bc96c6b5-a7f8-4ef3-a89b-bf577943f11c@denx.de>
+ <36ef53b6-57a3-42e4-95ef-a10eef4ca1c9@siemens.com>
+ <o4bwopeuyxm6344oqqm3e7p3xcx76aw2trsiuhhfyhel2e7po7@sz2jaj6i7kqd>
+ <71e809fa-b471-4bb3-8f7d-e497397c0de4@ti.com>
+ <bebvl4vycvpkdqjlz3xi33t7qtb4oj7mriywxmahfemyee3uxk@m3nbraynomg2>
+ <b221c978-2ce0-4d31-8146-ab43a9f86a1f@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b221c978-2ce0-4d31-8146-ab43a9f86a1f@ti.com>
 
-Hi,
-
-On Mon, 24 Jun 2024 10:59:36 +0200, Neil Armstrong wrote:
-> Fixes the following:
-> thermal-zones: 'soc_thermal' does not match any of the regexes: '^[a-zA-Z][a-zA-Z0-9\\-]{1,12}-thermal$', 'pinctrl-[0-9]+'
->         from schema $id: http://devicetree.org/schemas/thermal/thermal-zones.yaml#
+On Mon, Jun 24, 2024 at 03:07:10PM GMT, Aradhya Bhatia wrote:
 > 
 > 
+> On 22/06/24 17:49, Dmitry Baryshkov wrote:
+> > On Sat, Jun 22, 2024 at 05:16:58PM GMT, Aradhya Bhatia wrote:
+> >>
+> >>
+> >> On 17-Jun-24 13:41, Dmitry Baryshkov wrote:
+> >>> On Mon, Jun 17, 2024 at 07:40:32AM GMT, Jan Kiszka wrote:
+> >>>> On 16.02.24 15:57, Marek Vasut wrote:
+> >>>>> On 2/16/24 10:10, Tomi Valkeinen wrote:
+> >>>>>> Ok. Does anyone have a worry that these patches make the situation
+> >>>>>> worse for the DSI case than it was before? Afaics, if the DSI lanes
+> >>>>>> are not set up early enough by the DSI host, the driver would break
+> >>>>>> with and without these patches.
+> >>>>>>
+> >>>>>> These do fix the driver for DRM_BRIDGE_ATTACH_NO_CONNECTOR and DPI, so
+> >>>>>> I'd like to merge these unless these cause a regression with the DSI
+> >>>>>> case.
+> >>>>>
+> >>>>> 1/2 looks good to me, go ahead and apply .
+> >>
+> >> Isn't there any way for the second patch to move forward as well though?
+> >> The bridge device (under DPI to (e)DP mode) cannot really work without
+> >> it, and the patches have been pending idle for a long time. =)
+> >>
+> >>>>
+> >>>> My local patches still apply on top of 6.10-rc4, so I don't think this
+> >>>> ever happened. What's still holding up this long-pending fix (at least
+> >>>> for our devices)?
+> >>>
+> >>> Neither of the patches contains Fixes tags. If the first patch fixes an
+> >>> issue in previous kernels, please consider following the stable process.
+> >>>
+> >>> If we are unsure about the second patch, please send the first patch
+> >>> separately, adding proper tags.
+> >>>
+> >>
+> >> Thanks Dmitry! I can send the patches again with the required fixes
+> >> tags (or just patch-1 if we cannot do anything about patch-2).
+> > 
+> > The problem with the second patch is that it get mixed reviews. I can
+> > ack the first patch, but for the second one I'd need a confirmation from
+> > somebody else. I'll go on and apply the first patch later today.
+> > 
+> 
+> Thanks Dmitry!
+> 
+> However, would it be okay if I instead add another patch that makes 2
+> versions of the "tc_edp_bridge_funcs", say "tc_dpi_edp_bridge_funcs" and
+> "tc_dsi_edp_bridge_funcs", that have all the same function hooks except
+> for the .edid_read()?
+> 
+> The dsi edid_read() will remain the same, and Tomi's patch - patch 2/2 -
+> will only fix the dpi version of the edid_read()?
+> 
+> The bridge already has the capability to distinguish a DSI input from a
+> DPI input. This can be leveraged to decide which set of functions need
+> to be used without any major changes.
 
-Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.11/arm64-dt)
-
-[1/1] arm64: dts: amlogic: ad402: fix thermal zone node name
-      https://git.kernel.org/amlogic/c/ca88b172eebfaa923ea752f6eb41ec5c9cb587c5
-
-These changes has been applied on the intermediate git tree [1].
-
-The v6.11/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
-for inclusion in their intermediate git branches in order to be sent to Linus during
-the next merge window, or sooner if it's a set of fixes.
-
-In the cases of fixes, those will be merged in the current release candidate
-kernel and as soon they appear on the Linux master branch they will be
-backported to the previous Stable and Long-Stable kernels [2].
-
-The intermediate git branches are merged daily in the linux-next tree [3],
-people are encouraged testing these pre-release kernels and report issues on the
-relevant mailing-lists.
-
-If problems are discovered on those changes, please submit a signed-off-by revert
-patch followed by a corrective changeset.
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+I'd prefer if somebody with the DSI setup can ack / test the second
+patch.
 
 -- 
-Neil
-
+With best wishes
+Dmitry
 
