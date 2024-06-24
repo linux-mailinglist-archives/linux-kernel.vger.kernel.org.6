@@ -1,153 +1,154 @@
-Return-Path: <linux-kernel+bounces-227562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4724091533C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:15:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B3291533E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:16:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F08F2284733
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:15:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B25A61F2196F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCC3B19DF43;
-	Mon, 24 Jun 2024 16:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6174919D8BB;
+	Mon, 24 Jun 2024 16:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vvmdGyIV"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="rAuiIYhT"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A745E13DDC6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:15:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28644142625
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:15:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719245735; cv=none; b=uOIK9RogmnOXdSZ9nqBA54jegGzgKVIMvd6vx7NtctAEK5bqMhbvwnWLTCvSSOs32peYjXBco81HA/TsUh6SASeVmRDhQLgx0952VUcRQ5qBP78GYylHeu/MYJzU1aqvI+oaCetZOfY2/K3Octgpiq/DDvGaIesVZnBrD24Oweo=
+	t=1719245757; cv=none; b=JhyQt8fVyDksiDzPx0e5OXWakk5I00Xr6MQF7ZFliwRQsBwveiN5vM+LL2Lahjq/oEoEDib9NdyiP3Rnxj2w+voOgRGihBvTCnWndaWIRxpzdTbpbxH81NKolKGQmrhpLS1O26f4F1SoyatKo7pBl4eByY3b+IDm8U/obs997mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719245735; c=relaxed/simple;
-	bh=u8kHISbxUhLuHXYIrwQnWUymSkY9AbfwHSKffeBcQLk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QfW52v7MED+sKm+RRbm6F95XfcnnsjowvZ3TgHZADXGPZUKMwRgQhRQs/Y0q1r1fKm7nXfh5Z+yCT+JcXdD4WJHAob39tnlDhdV78/GebofJltzYliX9di1JB+7uLcZVXVrlY313OV0HvzCe1r5uQ0Tio/FYktcws2bPP31Xs2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vvmdGyIV; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7180308e90bso1888769a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:15:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719245732; x=1719850532; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ESCmjc+gXkWGK5qE/lkE2zydjhMGckqdJdyvpNpB8qk=;
-        b=vvmdGyIVXukZUdOAZZPbYRPsJpyKJ2PKhNejIdg3W99Y+LGtWQ7Dm7uaX9QondIZ1o
-         or1Zatu0nRAh8rQtXLJPGN6Tv71xHRIeO+441BlmDgx5TT+pTqAYCYWoCvxnMgDG+LNB
-         cg9ZWtUZgvxkS5qqFF1J4t0yyXXOgbqAkYMsu6ne6Swy6RJmtTUaiogcBln/+qndjrv+
-         3xvXKrebZMf/zIIB0eMq+RlzPTTw9HqGD+IzZBPromDoosXJ0OY+ky0splJV6d7aAs7C
-         FkU/U+l0wXfZVRHQlmM9bztfm2KUxsmzYLmAMFFKVn5mEkokOS9XK2fCc7RLKeglFdLM
-         nSgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719245732; x=1719850532;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ESCmjc+gXkWGK5qE/lkE2zydjhMGckqdJdyvpNpB8qk=;
-        b=RuS3UHKaXQkxtg0ddMuXuKKgm/n3izgPivwzjcT+CWxaewFHL8ydEcbNWyEe8/GDCP
-         pE64AMjCE4iXhFhculMxOm9XEr22TLRj5iMQbkdm+kyXG4L38KxJTDRUuAGcqfLX0xFd
-         sKjP10pPLw7dvPGHGHQG6+Y1XrVfiZctxbcXbNIaunxUvb9rM2/YXTVA6SOJSmyoc/vl
-         Pd/6n8I3w/nR3Jw0qxWxJBTWcwqlNtMaIx7QBnG6PgPXBnyBZOBI9wrr5hRtWvRMLXzD
-         /Xm/CCIuI1z5XwPs5+NRJStzb03wWfG6K4ae7v/4jT/+IIT56fqkJl/hxTjkVLOpDFdA
-         61PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAT/NbEzZl5fkdeJuANagR3sDinPgVr7rRkAj51VIBEyTvFqPm1qfZCBvlG2BaxLhO2vHntkd2/7y6xq/MWeDiim5vuxre7b78/jm+
-X-Gm-Message-State: AOJu0YwTgbddhSRrV6JiQpE/nw98mLqH1w6Uy+JBIarKkp1KAJSmfp92
-	fehgHmpuQJImuTqgtyM8antHNRcnWOfsVoutz/0txr1aj3QEXqQuU5ql5n2fxMH3E5Ek867FVQe
-	PcWEX7KVCtXijCxJI7kU3xs8SqnWvD03BGxo6BQ==
-X-Google-Smtp-Source: AGHT+IGQPaUFOQx7pbSZ9sEzbafpPFiLShdPhKC/UM/aacO/wIOQ9ZXjGD3jEx/22fVolV2PDs7b12IYbPpOQDQVJ30=
-X-Received: by 2002:a17:90b:4a82:b0:2c7:af6f:5e52 with SMTP id
- 98e67ed59e1d1-2c86124cbd9mr3477373a91.19.1719245731837; Mon, 24 Jun 2024
- 09:15:31 -0700 (PDT)
+	s=arc-20240116; t=1719245757; c=relaxed/simple;
+	bh=ekauXiAtBVr5GfQrcmb2k8SroxRH9xWkTJjHjRTKHMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ho0zLWa9v6DYWIv91q6g1q21A0/VcTe7w4gtlRo/Drqm8yPRjst0nReLC/nqpKpDmNFZ7v0oMmq+tsNeTQFeX2+cX+tUsYU+QamYVFPBy1IZ2bGSYP7WOjQ0JJOmTeZjkJayUBHJp/UyQHOJ1ix7yQ5qu/O2ZxOTPL6vRN+u5xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=rAuiIYhT; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1719245744;
+	bh=ekauXiAtBVr5GfQrcmb2k8SroxRH9xWkTJjHjRTKHMw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rAuiIYhTLn8Vb9lXRzeM8SN+hp4c+MW/ilnpvb5DiasQQW7Us+Jp31wGLeZwqV1DZ
+	 Mb3duKqXTFzwwT1dzAKBtgWA3mn7AAOg2mWXMNLA4gEFTBgVcVzAaqL7e1oO5g6O/3
+	 ECuHd/MnadJ2ZLn0NH5bx0DTmzpAD3drjqFJuwbE=
+Date: Mon, 24 Jun 2024 18:15:44 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	Christian =?utf-8?B?S8O2bmln?= <christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>, 
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>, Mario Limonciello <mario.limonciello@amd.com>, 
+	Matt Hartley <matt.hartley@gmail.com>, Kieran Levin <ktl@framework.net>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Dustin Howett <dustin@howett.net>
+Subject: Re: [PATCH v2 0/3] drm: backlight quirk infrastructure and lower
+ minimum for Framework AMD 13
+Message-ID: <51f68b3b-dd21-44ef-8ec8-05bea5db6e55@t-8ch.de>
+References: <20240623-amdgpu-min-backlight-quirk-v2-0-cecf7f49da9b@weissschuh.net>
+ <e61010e4-cb49-44d6-8f0d-044a193d29b2@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240501151312.635565-1-tj@kernel.org> <20240501151312.635565-11-tj@kernel.org>
- <20240624123529.GM31592@noisy.programming.kicks-ass.net>
-In-Reply-To: <20240624123529.GM31592@noisy.programming.kicks-ass.net>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 24 Jun 2024 18:15:20 +0200
-Message-ID: <CAKfTPtD-YHaLUKdApu=9AhKAdg5z7Bp-3089DcdA7NL2Y5pxiA@mail.gmail.com>
-Subject: Re: [PATCH 10/39] sched: Factor out update_other_load_avgs() from __update_blocked_others()
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Tejun Heo <tj@kernel.org>, torvalds@linux-foundation.org, mingo@redhat.com, 
-	juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com, 
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	martin.lau@kernel.org, joshdon@google.com, brho@google.com, pjt@google.com, 
-	derkling@google.com, haoluo@google.com, dvernet@meta.com, 
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com, 
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com, 
-	andrea.righi@canonical.com, joel@joelfernandes.org, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, kernel-team@meta.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e61010e4-cb49-44d6-8f0d-044a193d29b2@redhat.com>
 
-On Mon, 24 Jun 2024 at 14:35, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Wed, May 01, 2024 at 05:09:45AM -1000, Tejun Heo wrote:
-> > RT, DL, thermal and irq load and utilization metrics need to be decayed and
-> > updated periodically and before consumption to keep the numbers reasonable.
-> > This is currently done from __update_blocked_others() as a part of the fair
-> > class load balance path. Let's factor it out to update_other_load_avgs().
-> > Pure refactor. No functional changes.
-> >
-> > This will be used by the new BPF extensible scheduling class to ensure that
-> > the above metrics are properly maintained.
-> >
-> > Signed-off-by: Tejun Heo <tj@kernel.org>
-> > Reviewed-by: David Vernet <dvernet@meta.com>
-> > ---
-> >  kernel/sched/core.c  | 19 +++++++++++++++++++
-> >  kernel/sched/fair.c  | 16 +++-------------
-> >  kernel/sched/sched.h |  3 +++
-> >  3 files changed, 25 insertions(+), 13 deletions(-)
-> >
-> > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-> > index 90b505fbb488..7542a39f1fde 100644
-> > --- a/kernel/sched/core.c
-> > +++ b/kernel/sched/core.c
-> > @@ -7486,6 +7486,25 @@ int sched_core_idle_cpu(int cpu)
-> >  #endif
-> >
-> >  #ifdef CONFIG_SMP
-> > +/*
-> > + * Load avg and utiliztion metrics need to be updated periodically and before
-> > + * consumption. This function updates the metrics for all subsystems except for
-> > + * the fair class. @rq must be locked and have its clock updated.
-> > + */
-> > +bool update_other_load_avgs(struct rq *rq)
-> > +{
-> > +     u64 now = rq_clock_pelt(rq);
-> > +     const struct sched_class *curr_class = rq->curr->sched_class;
-> > +     unsigned long thermal_pressure = arch_scale_thermal_pressure(cpu_of(rq));
-> > +
-> > +     lockdep_assert_rq_held(rq);
-> > +
-> > +     return update_rt_rq_load_avg(now, rq, curr_class == &rt_sched_class) |
-> > +             update_dl_rq_load_avg(now, rq, curr_class == &dl_sched_class) |
-> > +             update_thermal_load_avg(rq_clock_thermal(rq), rq, thermal_pressure) |
-> > +             update_irq_load_avg(rq, 0);
-> > +}
->
-> Yeah, but you then ignore the return value and don't call into cpufreq.
->
-> Vincent, what would be the right thing to do here?
+Hi Hans!
 
-These metrics are only consumed by fair class so my first question would be:
+thanks for your feedback!
 
-- Do we plan to have a fair and sched_ext to coexist ? Or is it
-exclusive ? I haven't been able to get a clear answer on this while
-reading the cover letter
+On 2024-06-24 11:11:40+0000, Hans de Goede wrote:
+> On 6/23/24 10:51 AM, Thomas Weißschuh wrote:
+> > The value of "min_input_signal" returned from ATIF on a Framework AMD 13
+> > is "12". This leads to a fairly bright minimum display backlight.
+> > 
+> > Add a generic quirk infrastructure for backlight configuration to
+> > override the settings provided by the firmware.
+> > Also add amdgpu as a user of that infrastructure and a quirk for the
+> > Framework 13 matte panel.
+> > Most likely this will also work for the glossy panel, but I can't test
+> > that.
+> > 
+> > One solution would be a fixed firmware version, but given that the
+> > problem exists since the release of the hardware, it has been known for
+> > a month that the hardware can go lower and there was no acknowledgment
+> > from Framework in any way, I'd like to explore this alternative
+> > way forward.
+> 
+> There are many panels where the brightness can go lower then the advertised
+> minimum brightness by the firmware (e.g. VBT for i915). For most users
+> the minimum brightness is fine, especially since going lower often may lead
+> to an unreadable screen when indoors (not in the full sun) during daylight
+> hours. And some users get confused by the unreadable screen and find it
+> hard to recover things from this state.
 
-- If sched_ext is exclusive to fair then I'm not sure that you need to
-update them at all because they will not be used. RT uses a  fix freq
-and DL use the Sum of running DL bandwidth. But if both an coexist we
-use be sure to update them periodically
+There are a fair amount of complaints on the Framework forums about this.
+And that specific panel is actually readable even at 0% PWM.
+
+> So IMHO we should not be overriding the minimum brightness from the firmware
+> using quirks because:
+> 
+> a) This is going to be an endless game of whack-a-mole
+
+Indeed, but IMO it is better to maintain the list in the kernel than
+forcing all users to resort to random forum advise and fiddle with
+lowlevel system configuration.
+
+> b) The new value may be too low for certain users / use-cases
+
+The various userspace wrappers already are applying a safety
+threshold to not go to "0".
+At least gnome-settings-daemon and brightnessctl do not go below 1% of
+brightness_max. They already have to deal with panels that can go
+completely dark.
+
+> With that said I realize that there are also many users who want to have
+> a lower minimum brightness value for use in the evening, since they find
+> the available minimum value still too bright. I know some people want this
+> for e.g. various ThinkPad models too.
+
+From my experience with ThinkPads, the default brightness range there
+was fine for me. But on the Framework 13 AMD it is not.
+
+> So rather then quirking this, with the above mentioned disadvantages I believe
+> that it would be better to extend the existing video=eDP-1:.... kernel
+> commandline parsing to allow overriding the minimum brightness in a driver
+> agnostic way.
+
+I'm not a fan. It seems much too complicated for most users.
+
+Some more background to the Framework 13 AMD case:
+The same panel on the Intel variant already goes darker.
+The last responses we got from Framework didn't indicate that the high
+minimum brightness was intentional [0], [1].
+Coincidentally the "12" returned from ATIF matches
+AMDGPU_DM_DEFAULT_MIN_BACKLIGHT, so maybe the firmware is just not set
+up completely.
+
+> The minimum brightness override set this way will still need hooking up
+> in each driver separately but by using the video=eDP-1:... mechanism
+> we can document how to do this in driver independent manner. since
+> I know there have been multiple requests for something like this in
+> the past I believe that having a single uniform way for users to do this
+> will be good.
+> 
+> Alternatively we could have each driver have a driver specific module-
+> parameter for this. Either way I think we need some way for users to
+> override this as a config/setting tweak rather then use quirks for this.
+
+This also seems much too complicated for normal users.
+
+[0] https://community.frame.work/t/25711/26
+[1] https://community.frame.work/t/47036/7
 
