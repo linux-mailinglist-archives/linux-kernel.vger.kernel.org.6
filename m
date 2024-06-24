@@ -1,246 +1,227 @@
-Return-Path: <linux-kernel+bounces-227238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19905914DCD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:58:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BABF2914DD0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1A692850EB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:58:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E01FD1C220E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:00:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E645613D511;
-	Mon, 24 Jun 2024 12:58:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60F413D52C;
+	Mon, 24 Jun 2024 13:00:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wSsrsHzG"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="M1BSCwot"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2072.outbound.protection.outlook.com [40.107.236.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365382556F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719233914; cv=none; b=S67WTw4FDHD9cVMU5Yc8TQ6mYzzC77RVCi0rhwfY542geLe6WBRfMYx8W/eP6QCSwsL4fZFyi8WBCxqVEFVytIlZMlYxPs5mK6sZKoY/vpo4GoHGm8CWQhZBgo8nXSVEtz//3XtcCoK/sXaoGBEpev2ic8Wxatk+mFVlv1zNH0I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719233914; c=relaxed/simple;
-	bh=+v+7BRyLJ1ohCm2ckG9JfDQ7O4yGh9CdsiC9bRgDzMo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U5mpMZMpy8aqEJFpDPgZMdIL3IzoZ5GPRlFEP2qliCeMBspvS5PC35FTchZaKW1beNeJowCSzMdW0lqjPFaA5DbfFcIGSjZGHlwjVDErK0F6TNZqmmcFmdCjez8ViixNohseQSGdlpj2rSpd2KPNnagI9MDtB5Qa1XZgiH+HrcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wSsrsHzG; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52cdebf9f53so1679290e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 05:58:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719233909; x=1719838709; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=svysHleJ3ThFEGjJZROMuYTbIejZlxCKTHG9F3C7waE=;
-        b=wSsrsHzGnuhTLELocfe46XLqkhDQtwapcGv1MkP+ScN1CeZmMKjJHDKma9AR9dWQCt
-         jHY1yC84RXtzeceUG3T7EERgYKePaOfU3wUFXKLTrTMCCKdPQg1W0+im+TWzksRG9kKx
-         cxcneSFRUE88Wq2eSiApQyIuWIN6xgwwjY3JbPuRd0GgJ1IgmvZQ+NscUqwC+sN/Kkxz
-         BNcVEyKmbkQNth5DVwvZdu4tAruda5jMBWDiu4ZEFKHEHkcPv77GtQpkceqw87FzXmcn
-         Y4eR2afMNOiLoxj1Fjp429cT6kFu9eXGYSXYEqRjKY3+IVfV4I7nVDMsJjOF6eMDzfYW
-         dDpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719233909; x=1719838709;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=svysHleJ3ThFEGjJZROMuYTbIejZlxCKTHG9F3C7waE=;
-        b=NvpTpcYe/p6eVF/SR5ph1rCtHXDUMrom+BJzgqt3k/lwSJYjh0a5aAqg1P445kNbxV
-         aGTLNYU++UjwQiB1k/Z7eHRezT0hdlesj4eWgn4TLQZJs1tGQ4Q0EE9j4KS1KFQ8dtre
-         8amv0XwBE+nEAmDxolpDZ2rlwv1SPnQHRZI1t8xfjSzRPtJv5s7cyt8OEyPsCz9kDiov
-         YOS0ZJ+SfEeJkGfQx1f9oPd0RKkR4rs86UNS6IQb7L1nX077gQBGQvShaZWzMYzN8yNP
-         6oCABplls0R653Cda2elvSUxneC6Rjven1lWrvNIIRFj52n5Nq1yA1ERRHdnnynETRxR
-         LMiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWkwQyVXrTSYSfUjK9en2utAA+YyuKaSyM3lUzjzmdlCM8qvyOb+g0bH+2xfZAC/xbwO86htDJfKnllKz40Tjm+8eGwzYzGfhq6W6vQ
-X-Gm-Message-State: AOJu0YwcR0HiMT5ma94qmRwcLhuYigEPZPzeDgWxy7P1wLG81sjFdUoE
-	1sWEAtPMqRVvYPDN0D8rbGgbmS9JteqjVXJ8IVoHpVqYKY7pTqU+cyOQhZfd3XdMtBIiN/etD7i
-	HDqmUyjRpDJsvBOzaVuS5AdeR/zteOqsVUHFx
-X-Google-Smtp-Source: AGHT+IHR7EnIshHsOqxNajTCo/Fv6RaPV0imh+5nzrEusg/Kf5PiQf2EoH4z2P2/4yiiFNpQtoqoMY20WvudUWJbugw=
-X-Received: by 2002:a05:6512:39c6:b0:52b:c0b1:ab9e with SMTP id
- 2adb3069b0e04-52ce063d750mr3852298e87.5.1719233908660; Mon, 24 Jun 2024
- 05:58:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08C664DA04;
+	Mon, 24 Jun 2024 13:00:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719234046; cv=fail; b=odSSOBsSNH9yqS37cXUd17XCx5IR/Pamvc97ROWOgK3uo4i05dkL9PJbL0KN+YDmSKuUo9F13j5pRbRrtOrDvK8K0ktFV1uQ9ibOUVA/0uGj9Tt7AayjiSUhGSU5ulgB6bfekH7U/NwfST0YxwMTR0w81kQAO0RjQEnifr7FdOU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719234046; c=relaxed/simple;
+	bh=VUUJINQ0U5PEaEwU3dTP42Gnkpa9RmoAUMqPACcW/gQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZppKgnbb60FneHhWjVG9NLQbQ1DfMaaUr5nnVJrNbJh4yzkW0nugEZkzyyFxdcJu1W7pXaQilkPh+MrUfX94a8S7nq8LZM18Szzc90DYy/hQledqGY8r3NAaaciFAID4eOOWwrXouBTNBwk9B/Cs64vyZinVk7E4hLdxuK5PeiU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=M1BSCwot; arc=fail smtp.client-ip=40.107.236.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=j4LBnG55sZpyVaFBBj72b/SmRIDMGE+xElqFVuTy4T00FCcE3a3RIfubFT5f1Ju9sgKjyWH8RnH8BgOWCKppx43L0mZKsoXmXRD8YXVRh7UpRRocURjnb9kVk1vHSL2hq1EQLBpqb8ozAMdVeSla8lvC+F2PPNM22kS5kbTesCaGILYCNebGjSeQQOLeMjNSMlJaImGW15ObLKqFT2dld0tpRZ48kCDsgiCbUjm3tnMRFuHMQWsm/ZzX41G5JcOh9x5iVKXi9rrpQ7RHHKdvq5UYLBXXM+Ae2uTPJoDUVJVligkMaBbAe2JDmG+HSohiRCMQ3Ot95dJDGORh5WIUYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=dCkN7WZX4PE814h+oRidpoM8nmCqPXpU8QwdMT8XQeM=;
+ b=Tz9gWyEdPYlDv2mwhZdfqSL7fvWLddWUdqa25l3IaNoqjkdkF16oJRYpNlcK+QcHp8/dMjS5/L35buX3tmfEjzIg9qBrBcfqgasFvqwy6YH2kQbYONBXfy92T8M0AP4DPVtPMcm6iM/HWQHPdANbTfX453rcxiCtWhIRM+vPJLCArsIcPEBFFj4Tik3FqxUYoeNd68itfE618QJ8TvgF1Dqm3RSaumHRGQJLbgrrvOc/sFGQ26dg1vdfiwZCewTmM9z0ZlgU5xfg1QmBmMbKZY3OyboBReIZ6NrpAQbH5w0QKNAO/wR8riFPagWn9+8NdjnwaaIME37TfYkMvErT3w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dCkN7WZX4PE814h+oRidpoM8nmCqPXpU8QwdMT8XQeM=;
+ b=M1BSCwotWMaXnfv2yZK1sUTrOSUJ7ZoTjGMpqzIDuMB0aYxbNcXA+TXrRIgie3vvOob9rF3UPPry0yzdqLp/x6915o27FMAShxHby9NAdf3A4y3PX5huH8OoViQfj3JV/BPUmj3V+RElhcCRVW7aiBrN0RM1FAnXohX5I9S79dY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL1PR12MB5732.namprd12.prod.outlook.com (2603:10b6:208:387::17)
+ by MN0PR12MB6248.namprd12.prod.outlook.com (2603:10b6:208:3c0::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Mon, 24 Jun
+ 2024 13:00:41 +0000
+Received: from BL1PR12MB5732.namprd12.prod.outlook.com
+ ([fe80::bf0:d462:345b:dc52]) by BL1PR12MB5732.namprd12.prod.outlook.com
+ ([fe80::bf0:d462:345b:dc52%7]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
+ 13:00:41 +0000
+Message-ID: <fe74fd23-5a5f-9539-ba1e-fb22f4fa5fc1@amd.com>
+Date: Mon, 24 Jun 2024 08:00:38 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v9 03/24] virt: sev-guest: Make payload a variable length
+ array
+Content-Language: en-US
+To: "Nikunj A. Dadhania" <nikunj@amd.com>, Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, kvm@vger.kernel.org,
+ mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+ pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
+References: <20240531043038.3370793-1-nikunj@amd.com>
+ <20240531043038.3370793-4-nikunj@amd.com>
+ <20240621165410.GIZnWwMo80ZsPkFENV@fat_crate.local>
+ <7586ae76-71ba-2d6b-aa00-24f5ff428905@amd.com>
+From: Tom Lendacky <thomas.lendacky@amd.com>
+In-Reply-To: <7586ae76-71ba-2d6b-aa00-24f5ff428905@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR13CA0164.namprd13.prod.outlook.com
+ (2603:10b6:806:28::19) To BL1PR12MB5732.namprd12.prod.outlook.com
+ (2603:10b6:208:387::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240615081257.3945587-1-shakeel.butt@linux.dev>
- <CAJD7tkbpFu8z1HaUgkaE6bup_fsD39QLPmgNyOnaTrm+hZ_9hA@mail.gmail.com> <tbi7h7lw4gvl2lsobco4s2qq5phln4uilfvpzpqytlwwmerynd@5nrl5odpwcrx>
-In-Reply-To: <tbi7h7lw4gvl2lsobco4s2qq5phln4uilfvpzpqytlwwmerynd@5nrl5odpwcrx>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 24 Jun 2024 05:57:51 -0700
-Message-ID: <CAJD7tka-Wa95t29G0EY4xd8TWXkw1q_QNQ-QjzNvqnUQovMtQw@mail.gmail.com>
-Subject: Re: [PATCH] memcg: use ratelimited stats flush in the reclaim
-To: Shakeel Butt <shakeel.butt@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Michal Hocko <mhocko@suse.com>, Roman Gushchin <roman.gushchin@linux.dev>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, Yu Zhao <yuzhao@google.com>, 
-	Muchun Song <songmuchun@bytedance.com>, Facebook Kernel Team <kernel-team@meta.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL1PR12MB5732:EE_|MN0PR12MB6248:EE_
+X-MS-Office365-Filtering-Correlation-Id: 90a6508a-c55e-4e59-3e77-08dc944da6d2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|366013|7416011|376011|1800799021;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?SEJhbUxUb0VrVEZWaEF3cGRlUHpmSmc4VjdicWh2RldKUFNxT09FTFU1WUZG?=
+ =?utf-8?B?c1B3dFJRQ0ZDSXRoYmRCbFZoRjdvajIrdUEyaVVOZXZDdXU4Rm1SWG9aV0VL?=
+ =?utf-8?B?SFdROWREbkZnMWJaT3pwdzRVRTFXOUJTcTA3dDNZZUVuN3ZxWHV5Y3NiR0Nn?=
+ =?utf-8?B?V045MXpxUVY5N093NkpCM3VrVit4U3JCVTcvQjJ4WklBVGJQMkRlTVg3Qms3?=
+ =?utf-8?B?NWFMNTRKUmhpNEE4ZW5rUjNnYzkya2dzUktNV0JzNllNaUNYSVh5dk5tVVpp?=
+ =?utf-8?B?L0lyYXl2dzU0aUNwNkZwRU5LWHFTd0JLc29ER2VGNTV1TUZWaVFNOTdiZFV3?=
+ =?utf-8?B?c0pOVzE5TlNxWjdSaXB5bDFYNlV3VzgyTVZXd2h4Ukx6RWhVMk1ET2laa05w?=
+ =?utf-8?B?NTRDMVgveElDTmxNOTBpRTd0c3NBWC9hdUpJS0czTVFseUVZam9pZGNBYlVB?=
+ =?utf-8?B?RDlRK1RTbzUvbFlVYU4ycjM5NjhRRVoyZWVaZThFZVpyTnFlZXh4TjE3Qk5J?=
+ =?utf-8?B?VjZvNEJBS1hGaWNmWnpoUTQ5aVN6blRGWE5yTDVzSHRTMm1BbzlDZUJzaXhO?=
+ =?utf-8?B?NTZmNGhpMjdGdnNTUVczak9OR2d1YXBaeFRib2NyaGVEaG1pYXB2aDgrUFhB?=
+ =?utf-8?B?TlhyQzNXa2dyR2tTVkxaMSttZWRISExHRWtqVGxSV09NYzV4MTYyQVJCRnZM?=
+ =?utf-8?B?b2VybnJmNllXWDlYS1UyVlNBaU9Nb2xkUm85ZkdpWVd0ZzdmMHpKekxPeEtE?=
+ =?utf-8?B?Ti9udWdUTWZQMXNRYmQ3V1FKdVVjcDdRdDBwOTZJc01hS00yRFFNaW1YZWtG?=
+ =?utf-8?B?Wnp6V2d0TFAyS3QyNUszSHl1VjgvS3NBWHpXc3hoaEhiTVVOSC9aQXg4S05x?=
+ =?utf-8?B?bEJyVXVZbXVaSVlqZ25QRlFHd0k1cGsvdXdDUm5BUUd4ZVkwVjFmT1AyZ2NH?=
+ =?utf-8?B?V1g2ckkrOUpqZnJGNTVocVU4OWNJUWJSSW5ZWGlzNTVQMWNDUlVWeWJOUVpr?=
+ =?utf-8?B?UWNvenlOYUxsdTR1ZUJHKzFIb2dlUmprd3hSWDBvZExSQmNCcW55ZWw4clJW?=
+ =?utf-8?B?cjFBdTNDbEl4NjZjTW5BeUU0WlNPSDFiQkQyeGVvY2Q1Y1F6SHF3cUVieWwv?=
+ =?utf-8?B?NW1xWGFEV0t0VVdnM1dkYm1KcUJ0d0JjRys4aWdtdkN1Z0FSdm5BbGtTSUtv?=
+ =?utf-8?B?ck9NblRZaEs3TXpGc0VnWE40TkgwbTQrRWxqZHA4T2NFTktRWDFpL3VkVita?=
+ =?utf-8?B?SUpIZGVHdWF4dUx3TTV5ejNOT3BRNzMrTGt1TE5ITC9HU29LT3NtK1AyalV1?=
+ =?utf-8?B?WXBLMGduaDhmWHRHS3R2Uk45NWtwOGtEcG15SmNzUm1UVlBzZmpmVytSTjJB?=
+ =?utf-8?B?dXVuRFV1Ymg2OHg2QjlaNVFxaDZJaTU2TExRektIb3RXSVNybFRCb1VvWEV4?=
+ =?utf-8?B?Z0loM0VyclZOWUJlQjNvK1JDUVFWdkhiSFlVc2FuUFF1a3loVDRtUmZBUTM0?=
+ =?utf-8?B?bk5Fa2F3Rk5nMzArMUVHd3dEcmxZYVBtaWhTWGNFWnBHQy9jYUVGK3B5Y2Qz?=
+ =?utf-8?B?dm9CMkJKbndBWXBaVjVqcUJCSHhuWERXSDg0MHVlajJLczB3T3VhN2hPVldE?=
+ =?utf-8?B?MW5jODF2SDlzbE8wclZpNzJNWm9OWStMS01qdjltaTBYK0ZDUVkxay95RWNW?=
+ =?utf-8?B?UjZUUThGMVpURDJZNTdQakZ0eGpOZm1mcFZzeDRyM3Q1YW1XUUZmSFlxNHBz?=
+ =?utf-8?Q?qIb4rTs70ipLnuvnIQi9D0aI6Dd1J5ztB8D3aQQ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5732.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(376011)(1800799021);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RXpHc3VBdExCUUR6SHVDcC9nUGxtSTRKYURLNnFLSDFaZml6b2VlejRNVlpY?=
+ =?utf-8?B?YVJHWVgxYmNQZWZCY1ZpTEpGWG5vQlBNR21tcy90b1JQV21VTXpLU0VuWGZF?=
+ =?utf-8?B?RFUwbTlZUzVNQ0VPTDNqTUthenJRaURxRnMzSGptQWErT1BSWnlTSjlhaTYx?=
+ =?utf-8?B?Y2hTbzJUYlgzM3ovRURFTXRIbEo5R2JYYitzTVdrZUdSWlY2UTVqRjBxSUVq?=
+ =?utf-8?B?MDV3aW5iUFJZbllwZUVtQ09VQnNXbWdua1hXcmxXL1o2eVplYzVSWVJnRkcx?=
+ =?utf-8?B?MXVRM0FxNHZuUEVyNVNNNnhiektyTVVUeDUxLzA4V21nZ0oyWHI4NGE4YWgr?=
+ =?utf-8?B?UUZueGowSGIwZVB6bUQwTjdOdlFaSEk2TzQ2Z0Z5NndUU1JQME9jOEM0Znkz?=
+ =?utf-8?B?Y3FrTUFDYnFzZjBvM05ZVitjOEd4ck9Pc2MybTB1VHZFaWZFQktZdWJldkNY?=
+ =?utf-8?B?MDB2WE5jZnZ0ZENpTmoyaHJBK3hDbkRET1FmeEJtNC8wNm5JZjdtR2hRYXZ4?=
+ =?utf-8?B?bGFNOEp3cUlieW1GdlJaSDZZRVdIYzBtRUZYQmpLRi8yQ05kUW5BVjlaeFNz?=
+ =?utf-8?B?bENReTNEWWM2UjVuK3JtRTgvYXlsY2x0dGZWemg5OW9CWnAzRnhOUkRPeVRB?=
+ =?utf-8?B?Y2NGelpGdHE2SXZqR3B3Q0dBVk5QYlpoTXgrNUpQOWVla2F0dmg0YlcrNld6?=
+ =?utf-8?B?anhQU3cwRDNzR0I1R3RVTFdQeE8xcmhtbnZUaW9NbnVMMUhnVGk5TGoxdlZ4?=
+ =?utf-8?B?d0RLTkUyYXh6YTQ2S2FWdTB5Wk9TUFp0SHFhNHltWkpSN2ZmUTRPbDlDM3Nz?=
+ =?utf-8?B?NEFEaU5ySXpDYTdVVFg4M1RXdkE4L0djTFhLZVl6SUdFY3ZuUStNaTN3ME1q?=
+ =?utf-8?B?MlkrdUVYbnVqWnVoVURQQVJpdTNnU2ZXY1NSbFlqTFFrQUVKRzV3M2ZYWXJ0?=
+ =?utf-8?B?QXZoZnp3R2VLdG52TWcyRnRXRHQxSjJaNzRBNmc2M2YvSnI0WWtoTkQyMCtO?=
+ =?utf-8?B?SnZIUVQxOVFKSUdKbFFNK1BDbjF0OUhOWnlxSkdHVUp4OFljOVl1bk5JOUhX?=
+ =?utf-8?B?QXNEcTh0a1NYYzBIMWMvYlhiVkFpL0tSOHRlVVltQW5HQzBHelpqaE1QYkM4?=
+ =?utf-8?B?a3d2OGorbkN6bXRVb0RCSm9VdFlhMTRkelVGWi9tYWJnTCtsSmtQeHpBVm5R?=
+ =?utf-8?B?N3B0RlZxTVFsdHRiZkY5M0w0TE5KUGJ1STh1NkZDdGV1TlB0TUFNSi9CSDZD?=
+ =?utf-8?B?WE9oQ0o1b3dyVFozcFlKTTREam1sRGJDOG92WHdNUXkvRTVwYlRDc1d4NVdV?=
+ =?utf-8?B?YXFNS0FTTU10NXB6MmhVSi9NenJ1U1RhUGlBR2xSdmxrck5UdmNxamxSbjJI?=
+ =?utf-8?B?VnFPc0NaYVk5RVUxeWpnKytrK0pTNmRZb1ZxOWNGNXVzRkJhNCs5QkFhU0Ry?=
+ =?utf-8?B?RU1wdmwwNWN0cGZzbGgwY3dFd0J1Y2FGTmsxWFUxS1JaM1hnS3JIN0JPdkZt?=
+ =?utf-8?B?TDFIQVYvNWp1ci9JVVMwSG95S0o3L3I1WGc0VW0zRG5NWi81VXBWS1N2U2or?=
+ =?utf-8?B?WTdSSWgxZ2xtazRPdWVyME5vZU03KzRoWlprTVV5QlBEcWM2QVlxbXM3aVBz?=
+ =?utf-8?B?SGdKL1cxQ1JMM0NJSVlIMTcwL0FaWUdTRmcvamRYTWFscGFCVXBRUFc3YStJ?=
+ =?utf-8?B?MUdvdCs1WG55OVNsci9EVzV2RVA0c3dta3FHMk5qUkFtQkNHcUxOTHpqYVVR?=
+ =?utf-8?B?ZkF0SXg1N1AzRWdmemgrQlFrQ2tEQ2o5bjVTQXpzSmNlL21OQk5JWWFrNldN?=
+ =?utf-8?B?NkxXVDFRM2pQTHB6b1dLcllUWWhFMzQvMkdreUNwRkMzNi9aMGk5Q05xUE5F?=
+ =?utf-8?B?QklwY2J1NlhRK05vWVRQUzUycFpuZ2hKdTRhajE3ZkQ0ZUEzSkxad0lNcjN2?=
+ =?utf-8?B?YW9rSGlxZUlvVTA2Y1JHcHNhRmpSZHY4ODlVVlZITGw5SGlmSXdoeUZpWm1O?=
+ =?utf-8?B?ZmYxTDhLdFBNYmJ6RGIzUENBd1NEb21VQTNLR0pNSVhieUpYdWtLMTZzZlZD?=
+ =?utf-8?B?d2pTSDJsN05KUnh3aEZVdGlDNGlNcmEyL0k5QldGMzBmc1JMSUl3MFRzYXJV?=
+ =?utf-8?Q?JcI1xTpd0gX5nQIzaYfBlJz7q?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 90a6508a-c55e-4e59-3e77-08dc944da6d2
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5732.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 13:00:41.6183
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1IwN03ZlqDopRS1bQeK85y2D2ItGcHMUsj4gEtE1IXdzraa/3p12VyxOtp6ITif0I0A0/boYVjdeMK8XRi/Daw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6248
 
-> > and I will explain why below. I know it may be a necessary
-> > evil, but I would like us to make sure there is no other option before
-> > going forward with this.
->
-> Instead of necessary evil, I would call it a pragmatic approach i.e.
-> resolve the ongoing pain with good enough solution and work on long term
-> solution later.
+On 6/23/24 11:16, Nikunj A. Dadhania wrote:
+> On 6/21/2024 10:24 PM, Borislav Petkov wrote:
+>> On Fri, May 31, 2024 at 10:00:17AM +0530, Nikunj A Dadhania wrote:
+>>> Currently, guest message is PAGE_SIZE bytes and payload is hard-coded to
+>>> 4000 bytes, assuming snp_guest_msg_hdr structure as 96 bytes.
+>>>
+>>> Remove the structure size assumption and hard-coding of payload size and
+>>> instead use variable length array.
+>>
+>> I don't understand here what hard-coding is being removed?
+>>
+>> It is simply done differently:
+>>
+>> from
+>>
+>>> -     snp_dev->request = alloc_shared_pages(dev, sizeof(struct snp_guest_msg));
+>>
+>> to
+>>
+>>> +     snp_dev->request = alloc_shared_pages(dev, SNP_GUEST_MSG_SIZE);
+>>
+>> Maybe I'm missing the point here but do you mean by removing the hard-coding
+>> this:
+>>
+>> +#define SNP_GUEST_MSG_SIZE 4096
+>> +#define SNP_GUEST_MSG_PAYLOAD_SIZE (SNP_GUEST_MSG_SIZE - sizeof(struct snp_guest_msg))
+>>
+>> where the msg payload size will get computed at build time and you won't have
+>> to do that 4000 in the struct definition:
+>>
+>> 	u8 payload[4000];
+>>
+>> ?
+> 
+> Yes, payload was earlier fixed at 4000 bytes, without considering the size of snp_guest_msg.
 
-It seems like there are a few ideas for solutions that may address
-longer-term concerns, let's make sure we try those out first before we
-fall back to the short-term mitigation.
+An alternative to the #defines would be something like:
 
-[..]
-> >
-> > - Reclaim code is an iterative process, so not updating the stats on
-> > every retry is very counterintuitive. We are retrying reclaim using
-> > the same stats and heuristics used by a previous iteration,
-> > essentially dismissing the effects of those previous iterations.
-> >
->
-> I think I explained in the commit message why we don't need the precise
-> metrics for this specific case but let me reiterate.
->
-> The stats are needed for two specific heuristics in this case:
->
-> 1. Deactivate LRUs
-> 2. Cache trim mode
->
-> The deactivate LRUs heuristic is to maintain a desirable inactive:active
-> ratio of the LRUs. The specific stats needed are WORKINGSET_ACTIVATE*
-> and the hierarchical LRU size. The WORKINGSET_ACTIVATE* is needed to
-> check if there is a refault since last snapshot and the LRU size are
-> needed for the desirable ratio between inactive and active LRUs. See the
-> table below on how the desirable ratio is calculated.
->
-> /* total     target    max
->  * memory    ratio     inactive
->  * -------------------------------------
->  *   10MB       1         5MB
->  *  100MB       1        50MB
->  *    1GB       3       250MB
->  *   10GB      10       0.9GB
->  *  100GB      31         3GB
->  *    1TB     101        10GB
->  *   10TB     320        32GB
->  */
->
-> The desirable ratio only changes at the boundary of 1 GiB, 10 GiB,
-> 100 GiB, 1 TiB and 10 TiB. There is no need for the precise and accurate
-> LRU size information to calculate this ratio. In addition, if
-> deactivation is skipped for some LRU, the kernel will force deactive on
-> the severe memory pressure situation.
+struct snp_guest_msg {
+	struct snp_guest_msg_hdr hdr;
+	u8 payload[PAGE_SIZE - sizeof(struct snp_guest_msg_hdr)];
+ } __packed;
 
-Thanks for explaining this in such detail. It does make me feel
-better, but keep in mind that the above heuristics may change in the
-future and become more sensitive to stale stats, and very likely no
-one will remember that we decided that stale stats are fine
-previously.
+Not sure it matters, but does reduce the changes while ensuring the
+payload plus header doesn't exceed a page.
 
->
-> For the cache trim mode, inactive file LRU size is read and the kernel
-> scales it down based on the reclaim iteration (file >> sc->priority) and
-> only checks if it is zero or not. Again precise information is not
-> needed.
+Thanks,
+Tom
 
-It sounds like it is possible that we enter the cache trim mode when
-we shouldn't if the stats are stale. Couldn't this lead to
-over-reclaiming file memory?
-
->
-> > - Indeterministic behavior like this one is very difficult to debug if
-> > it causes problems. The missing updates in the last 2s (or whatever
-> > period) could be of any magnitude. We may be ignoring GBs of
-> > free/allocated memory. What's worse is, if it causes any problems,
-> > tracing it back to this flush will be extremely difficult.
->
-> This is indeed an issue but that is common with the heuristics in
-> general. They work most of the time and fail for small set of cases.
->
-> Anyways, I am not arguing to remove sync flush for all cases. Rather I
-> am arguing for this specific case, we don't need to be precise as I have
-> explained above.
->
-> >
-> > What can we do?
-> >
-> > - Try to make more fundamental improvements to the flushing code (for
-> > memcgs or cgroups in general). The per-memcg flushing thresholding is
-> > an example of this. For example, if flushing is taking too long
-> > because we are flushing all subsystems, it may make sense to have
-> > separate rstat trees for separate subsystems.
->
-> Yes separate flushing for each subsystems make sense and can be done
-> orthogonally.
->
-> >
-> > One other thing we can try is add a mutex in the memcg flushing path.
-> > I had initially had this in my subtree flushing series [1], but I
-> > dropped it as we thought it's not very useful. Currently in
-> > mem_cgroup_flush_stats(), we check if there are enough pending updates
-> > to flush, then we call cgroup_flush_stats() and spin on the lock. It
-> > is possible that while we spin, those pending updates we observed have
-> > been flushed. If we add back the mutex like in [1], then once we
-> > acquire the mutex we check again to make sure there are still enough
-> > stats to flush.
-> >
-> > [1]https://lore.kernel.org/all/20231010032117.1577496-6-yosryahmed@google.com/
->
-> My main beef with the global mutex is the possible priority inversion.
-> Unless you agree to add try_lock() and skip flushing i.e. no one sleeps
-> on the mutex, this is a no go.
-
-Jesper is working on ways to mitigate the possible priority inversion
-AFAICT. Let's see what comes out of this (I commented on Jesper's
-patch).
-
->
-> >
-> > - Try to avoid the need for flushing in this path. I am not sure what
-> > approach MGLRU uses to avoid the flush, but if we can do something
-> > similar for classic LRUs that would be preferable. I am guessing MGLRU
-> > may be maintaining its own stats outside of the rstat framework.
->
-> MGLRU simply don't use these heuristics (Yu Zhao please correct me if I
-> am wrong).
->
-> >
-> > - Try to figure out if one (or a few) update paths are regressing all
-> > flushers. If one specific stat or stats update path is causing most of
-> > the updates, we can try to fix that instead. Especially if it's a
-> > counter that is continuously being increased and decreases (so the net
-> > change is not as high as we think).
->
-> This is actually a good point. I remember Jasper telling that MEMCG_KMEM
-> might be the one with most updates. I can try to collect from Meta fleet
-> what is the cause of most updates.
-
-Let's also wait and see what comes out of this. It would be
-interesting if we can fix this on the update side instead.
-
->
-> >
-> > At the end of the day, all of the above may not work, and we may have
-> > to live with just using the ratelimited approach. But I *really* hope
-> > we could actually go the other way. Fix things on a more fundamental
-> > level and eventually drop the ratelimited variants completely.
-> >
-> > Just my 2c. Sorry for the long email :)
->
-> Please note that this is not some user API which can not be changed
-> later. We can change and disect however we want. My only point is not to
-> wait for the perfect solution and have some intermediate and good enough
-> solution.
-
-I agree that we shouldn't wait for a perfect solution, but it also
-seems like there are a few easy-ish solutions that we can discover
-first (Jesper's patch, investigating update paths, etc). If none of
-those pan out, we can fall back to the ratelimited flush, ideally with
-a plan on next steps for a longer-term solution.
+> 
+> Regards
+> Nikunj
 
