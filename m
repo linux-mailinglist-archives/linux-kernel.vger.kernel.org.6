@@ -1,157 +1,134 @@
-Return-Path: <linux-kernel+bounces-226837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40521914490
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:21:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2933591448B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:21:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE0281F23886
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D7A40281449
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:21:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B630D71B5B;
-	Mon, 24 Jun 2024 08:21:24 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5854C637;
+	Mon, 24 Jun 2024 08:21:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gVWFRtnU"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC34961FE1
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D44B38DD6
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719217284; cv=none; b=TEXIn8F+0G7U1NhfocP5eh6REdUDmPvj09NKVo7kC4YKnufhTZsxACepF1/bJahYPhAZPq6dq5AIiNxJb2FmcaOyvNIq30Dc2ubaVwn8ZUuglJc6j+vmkt18L20gLuInV7xEuDnqdxHhaFe/pMD94h97FD1Q9uQLcX6eg8RFzrE=
+	t=1719217277; cv=none; b=cF1nSRo+DCCTW7OTJ2n1CAt+vY8xlLRO/8U3Ao5BBwHzyymww2rXb54RG1Y7SwNbUlRhp5/SX7qF1nTrXauqjYkUuM7rAu6E8IAmbB3R8xDA0e+spseBWjxpOkcoK5er2KCIDRIl+f8LGkE+GILa2GMIanW/LArlFEGZYPZMKHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719217284; c=relaxed/simple;
-	bh=OGI/RW6LinusZct94/SSzXZaBON6c0uVVa057/4TXtQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YrF13G9SPZmf2FMDXFk0oXZD7P3/4/fL7S0oYmLYisRy5dMXHhsN+82g879ZoUyaze5lUHWNDyRrQTqOr+sO522m3JUHWmc3qjuf78LEpNHKIGpZdxZHNtKA6ZSMRA5HR9jut7ER/TWST+trpKXeLucapohlOAKkugXFlkH+t08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 45O8KsBk019217;
-	Mon, 24 Jun 2024 16:20:54 +0800 (+08)
-	(envelope-from Xuewen.Yan@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4W714v3FNCz2SwTfL;
-	Mon, 24 Jun 2024 16:16:15 +0800 (CST)
-Received: from BJ10918NBW01.spreadtrum.com (10.0.73.73) by
- BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Mon, 24 Jun 2024 16:20:50 +0800
-From: Xuewen Yan <xuewen.yan@unisoc.com>
-To: <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-        <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-        <qyousef@layalina.io>
-CC: <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
-        <bristot@redhat.com>, <vschneid@redhat.com>,
-        <christian.loehle@arm.com>, <vincent.donnefort@arm.com>,
-        <ke.wang@unisoc.com>, <di.shen@unisoc.com>, <xuewen.yan94@gmail.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH V2 2/2] sched/fair: Use actual_cpu_capacity everywhere in util_fits_cpu()
-Date: Mon, 24 Jun 2024 16:20:11 +0800
-Message-ID: <20240624082011.4990-3-xuewen.yan@unisoc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240624082011.4990-1-xuewen.yan@unisoc.com>
-References: <20240624082011.4990-1-xuewen.yan@unisoc.com>
+	s=arc-20240116; t=1719217277; c=relaxed/simple;
+	bh=u251a/XP+o9tdpIJnyIXU0QRyZMFEyMwDU/ICP5xX+E=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=ZJET2vdyLOTAuwoz7OXnl+EQJn6F4RPT2QvdEF6RoXxmH3QlXG1hKueVSW2eTsboAKltc75eTsDWRW8e1hE3CXwq34Af5kFTdyPm6yCQaU/DvW7jyzk1vBinZsuWBo7qPG99Rqk9IEnbWzIhRzVTjuLp5j9tFrxbBY2Dd3qoaEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gVWFRtnU; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec595d0acbso13886701fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:21:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719217274; x=1719822074; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BlDb4mi6NTpX7sDJc09JrhEmbwE1hAUanv6O8UAsVHQ=;
+        b=gVWFRtnUCOWiEJiNtfTEUV4VGj7AIHgcxB30BN9LLH1Pt3GUrTwnte+Xa9NAXYzW2N
+         MolteNWjvc4S6QaUjlrKEL4R56RyXEwn6BxqNNsKlOAJu/+Frch5UU6OxwXpEEMHMqCh
+         EueKcJwFZXGCXQLXhFciIosyuBIqyHoXZo6g/Phl0tA604BUZ0Cys//02uKDODqAkKpk
+         VXiLSsSz5ZNp+DUOc58iefwTMFesix8ovC/dpLgoGV13TaMrN9uIKeFWGRou8aVwwvFK
+         qePWgPYFKsox4R2rFKhqgw6glNf9wWpipZ5Kh3PRE71U3ojmbibIvIDYKaITGOdyAhL+
+         /nyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719217274; x=1719822074;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BlDb4mi6NTpX7sDJc09JrhEmbwE1hAUanv6O8UAsVHQ=;
+        b=rhcYVhkRHf+D7IxH93OaakXTzNvbSCTQodNbH0EqpdFtg78r5LeARuxpL3UbRiERjj
+         CzmfO2o6Vttx+yKu5ODmZikxxBb3pJUhluBgTlUhz9faZoVkUKenq1Tv5T2cNcVMd2Lx
+         J6FZj1k1F8BRjLCSkWjhXteEhPozFoSDxta2gjLgvRXxJQX9egO7TtThhjolRTnCGZeA
+         S4lHC+qEz5pIyMaTrS5TCwFV/gwMf4s2F1whwfhMhjWqgOZ9Szawl1UHtVOmWYkqwj+0
+         ZDlBkN5H73n/bqvvFbXMaOKbuGWFpj/15z6lNHxzSnIQjMAe0jQNfDpjZUuF3sBnUU20
+         hywg==
+X-Forwarded-Encrypted: i=1; AJvYcCXYgXYA52jZWt48K8X9qTlginBgkFpYbmrUVlG6VUGbd//I0KEmWi56NXdun8GzVnadt6gdw6ONNOQT/+xG9mJBvVlaG1ff26tBDAX9
+X-Gm-Message-State: AOJu0Yw8ZY5VtzUyQWigC/QTVJCaJOg5oFyg+zemZQYUeJg01qLufbLW
+	OTr+jBQnLwV7+eMZFk/00/WrU4ozMnddEpIgcctNgVVnYPQV2tngVYfNgvqkBI8=
+X-Google-Smtp-Source: AGHT+IFPKBuSxSa24ffNl0qmiOjXu2IewrcJ94Gg7qLXnxIIuPS9D7LNMxJIkCRpfUF0FuMsV3Vwkg==
+X-Received: by 2002:a2e:320a:0:b0:2ec:3d74:88c8 with SMTP id 38308e7fff4ca-2ec5b30bce2mr31274271fa.18.1719217273323;
+        Mon, 24 Jun 2024 01:21:13 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4248179d8e0sm132450205e9.3.2024.06.24.01.21.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 01:21:12 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Kevin Hilman <khilman@baylibre.com>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Christian Hewitt <christianshewitt@gmail.com>
+Cc: Sam Nazarko <email@samnazarko.co.uk>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240622135117.2608890-1-christianshewitt@gmail.com>
+References: <20240622135117.2608890-1-christianshewitt@gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: arm: amlogic: add OSMC Vero 4K
+Message-Id: <171921727248.3499124.11397122409029609758.b4-ty@linaro.org>
+Date: Mon, 24 Jun 2024 10:21:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL:SHSQR01.spreadtrum.com 45O8KsBk019217
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Commit f1f8d0a22422 ("sched/cpufreq: Take cpufreq feedback into account")
-introduced get_actual_cpu_capacity(), and it had aggregated the
-different pressures applied on the capacity of CPUs.
-And in util_fits_cpu(), it would return true when uclamp_max
-is smaller than SCHED_CAPACITY_SCALE, althought the uclamp_max
-is bigger than actual_cpu_capacity.
+Hi,
 
-So use actual_cpu_capacity everywhere in util_fits_cpu() to
-cover all cases.
+On Sat, 22 Jun 2024 13:51:16 +0000, Christian Hewitt wrote:
+> Add support for the OSMC Vero 4K Linux-based STB
+> 
+> 
 
-Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
----
- kernel/sched/fair.c | 19 +++++++++----------
- 1 file changed, 9 insertions(+), 10 deletions(-)
+Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.11/arm64-dt)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 5ca6396ef0b7..9c16ae192217 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4980,7 +4980,7 @@ static inline int util_fits_cpu(unsigned long util,
- 				int cpu)
- {
- 	unsigned long capacity = capacity_of(cpu);
--	unsigned long capacity_orig;
-+	unsigned long capacity_actual;
- 	bool fits, uclamp_max_fits;
- 
- 	/*
-@@ -4992,15 +4992,15 @@ static inline int util_fits_cpu(unsigned long util,
- 		return fits;
- 
- 	/*
--	 * We must use arch_scale_cpu_capacity() for comparing against uclamp_min and
-+	 * We must use actual_cpu_capacity() for comparing against uclamp_min and
- 	 * uclamp_max. We only care about capacity pressure (by using
- 	 * capacity_of()) for comparing against the real util.
- 	 *
- 	 * If a task is boosted to 1024 for example, we don't want a tiny
- 	 * pressure to skew the check whether it fits a CPU or not.
- 	 *
--	 * Similarly if a task is capped to arch_scale_cpu_capacity(little_cpu), it
--	 * should fit a little cpu even if there's some pressure.
-+	 * Similarly if a task is capped to actual_cpu_capacity, it should fit
-+	 * the cpu even if there's some pressure.
- 	 *
- 	 * Only exception is for HW or cpufreq pressure since it has a direct impact
- 	 * on available OPP of the system.
-@@ -5011,7 +5011,7 @@ static inline int util_fits_cpu(unsigned long util,
- 	 * For uclamp_max, we can tolerate a drop in performance level as the
- 	 * goal is to cap the task. So it's okay if it's getting less.
- 	 */
--	capacity_orig = arch_scale_cpu_capacity(cpu);
-+	capacity_actual = get_actual_cpu_capacity(cpu);
- 
- 	/*
- 	 * We want to force a task to fit a cpu as implied by uclamp_max.
-@@ -5039,7 +5039,7 @@ static inline int util_fits_cpu(unsigned long util,
- 	 *     uclamp_max request.
- 	 *
- 	 *   which is what we're enforcing here. A task always fits if
--	 *   uclamp_max <= capacity_orig. But when uclamp_max > capacity_orig,
-+	 *   uclamp_max <= capacity_actual. But when uclamp_max > capacity_actual,
- 	 *   the normal upmigration rules should withhold still.
- 	 *
- 	 *   Only exception is when we are on max capacity, then we need to be
-@@ -5050,8 +5050,8 @@ static inline int util_fits_cpu(unsigned long util,
- 	 *     2. The system is being saturated when we're operating near
- 	 *        max capacity, it doesn't make sense to block overutilized.
- 	 */
--	uclamp_max_fits = (capacity_orig == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
--	uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_orig);
-+	uclamp_max_fits = (capacity_actual == SCHED_CAPACITY_SCALE) && (uclamp_max == SCHED_CAPACITY_SCALE);
-+	uclamp_max_fits = !uclamp_max_fits && (uclamp_max <= capacity_actual);
- 	fits = fits || uclamp_max_fits;
- 
- 	/*
-@@ -5086,8 +5086,7 @@ static inline int util_fits_cpu(unsigned long util,
- 	 * handle the case uclamp_min > uclamp_max.
- 	 */
- 	uclamp_min = min(uclamp_min, uclamp_max);
--	if (fits && (util < uclamp_min) &&
--	    (uclamp_min > get_actual_cpu_capacity(cpu)))
-+	if (fits && (util < uclamp_min) && (uclamp_min > capacity_actual))
- 		return -1;
- 
- 	return fits;
+[1/2] dt-bindings: arm: amlogic: add OSMC Vero 4K
+      https://git.kernel.org/amlogic/c/7d7dd631d1af471a6c909e197be2ef3df526d00f
+[2/2] arm64: dts: meson: add support for OSMC Vero 4K
+      https://git.kernel.org/amlogic/c/5feff053b08ce5d2167b9f44bcea3b466b5a81a0
+
+These changes has been applied on the intermediate git tree [1].
+
+The v6.11/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
+for inclusion in their intermediate git branches in order to be sent to Linus during
+the next merge window, or sooner if it's a set of fixes.
+
+In the cases of fixes, those will be merged in the current release candidate
+kernel and as soon they appear on the Linux master branch they will be
+backported to the previous Stable and Long-Stable kernels [2].
+
+The intermediate git branches are merged daily in the linux-next tree [3],
+people are encouraged testing these pre-release kernels and report issues on the
+relevant mailing-lists.
+
+If problems are discovered on those changes, please submit a signed-off-by revert
+patch followed by a corrective changeset.
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
+[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
+[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
 -- 
-2.25.1
+Neil
 
 
