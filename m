@@ -1,127 +1,124 @@
-Return-Path: <linux-kernel+bounces-227861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3405915765
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:50:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12613915771
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:56:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B0A01F23EFD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:50:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84F2A1F23ED7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2AF1A01C9;
-	Mon, 24 Jun 2024 19:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7C11A0705;
+	Mon, 24 Jun 2024 19:56:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="DfVk7ryb"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="1TLiJhaT"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4EE1EB56;
-	Mon, 24 Jun 2024 19:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D67619FA7C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 19:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719258650; cv=none; b=ovtXGEB5mAK2MxVzdCW+1BAOOE5qkWDU/UCuPOQI19Q8JSs7AVDsOga1qZGb+I88lptnKEOQwzcKZ6TjG0OGsjoLbrc1CGPi4uC8q7WQUApl9tSSnwP8QG2hLaSI1rX3RkcV6j3VJDFbj/RzzzdFU/6agzi4i7SPyCJqOMqcjB4=
+	t=1719258973; cv=none; b=Ib+v1mFjCJ+L0cBxI2V/v8nh2CIvVpL1sECPQlGBrk49H3ofgsaH725wRuTBIFlzaOuWz6LQv4SSO4epXlDIvJlJjHrVj1yJDQtUeR8RiHt3ywfiJ7f7NyqFsB7R1THC5YZRLzI9LxJzyAQAyl2NeRdaQx/yXwAzQa1CBXl+Zz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719258650; c=relaxed/simple;
-	bh=s+NHv3ns0rqlyrer4kI3azjaudKLNVpbnW/XG1CSgKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FP+Uup1xGujJSyHeQeoix9Brb0v8VzbA9mx9RhnHyeq/UJeOdgvMSgD0hLlSgol1jK9/zsfiu0M0kxAAXXbM+6o9KaLN3YkxCvfYTr/B7BlWxR75hnrYNBCOl1EqoNLhqAFDMOjKhJyLBqiwejK6fjgVFFzJX7swu7liLUryjuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=DfVk7ryb; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=1HOmhYkqorxtw73lg/pG0orZL1FyfjnL9NoN4K798Og=; b=DfVk7rybxn+Cc8wqcCH/+tjnW7
-	WEsL9Bccp/JiwYUmuwjrkbC4Esa9isSp+GUVUE8MLHpF3hBD4q86WCPsxJPEn9yYtrxisP+41KOrD
-	0yOM9UcyfkldRSGfNj4JGDoJ8whIf+BJJzqTiWLwXNCt/xQc7s87t4IDb+ZpOI3SUpmQGrMavtOFc
-	GoUMoO7LEzVlh5raAjEtPBz36cSNDbkTFE6RvsypfaUK15YZJuXFl8coFVVxjgDXTcSWKY//EyPJB
-	pLJuLKyOlTXP8iTkVBMW3JEVO0+xLALfBF/KQguBBoRUUtJfriJRCf7PCfFAOduR9VE91+k0Asi4D
-	BCqE4Vvg==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sLpi9-0000000AO9F-0rfX;
-	Mon, 24 Jun 2024 19:50:45 +0000
-Date: Mon, 24 Jun 2024 20:50:45 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: kernel test robot <oliver.sang@intel.com>,
-	Usama Arif <usamaarif642@gmail.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Nhat Pham <nphamcs@gmail.com>, David Hildenbrand <david@redhat.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Hugh Dickins <hughd@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [linux-next:master] [mm] 0fa2857d23:
- WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof
-Message-ID: <ZnnOFSNKKMf5IpCU@casper.infradead.org>
-References: <202406241651.963e3e78-oliver.sang@intel.com>
- <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
- <Znm74wW3xARhR2qN@casper.infradead.org>
- <CAJD7tkbF9NwKa4q5J0xq1oG6EkTDLz8UcbekSfP+DYfoDSqRhQ@mail.gmail.com>
- <ZnnBVBItTNWZE42u@casper.infradead.org>
- <CAJD7tkaC6d_RkhRhMpEeS1zTEtoQYw56J3LLdzD1aM9_qu-3BA@mail.gmail.com>
- <ZnnId18scFvE_a6K@casper.infradead.org>
- <CAJD7tkZZHxXR9cFE=ZHQOnYXakrhXg0+ScT2ExxihovSgDz7_g@mail.gmail.com>
+	s=arc-20240116; t=1719258973; c=relaxed/simple;
+	bh=0Ry5iW7yjh4+dkK5KfmVxe6kFHr27wLyHfv1FVt7WXY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iHPI/DrQ75bLEz3bM+AKDE7xTcAUCEqigj3vyK4jjcUO+UJdb3CfHjNCxi0vU22rswbWKotIRy3i/qhwfsEC27rFGTKkE/2DNl6yqLNTGeGd8I5N1JLtQW8E8VUHrp+9hDL0k8JKLR1xnVI+0NZWt4tFFKKAv5alqhc7kSIk1Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=1TLiJhaT; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f9aeb96b93so33995385ad.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:56:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1719258972; x=1719863772; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=3tqQIIuDCADHgpFY8cfM0SAO57n+ccJALQge0Cj32Ko=;
+        b=1TLiJhaTxEGzLEsso757SQ0WdBj5CFTFpJcLqshM0mSeDeAU80EcdNZ1pKw40IcNCb
+         JITd02bZ5k3WDqwpSLkBADxPj9C269gNpUKRVnzZCLVZq8pUOpQfvMszXFfpHU0aQkkx
+         +JdSQWnKgFxBnK8wrhPme5MC/rOzJQ23NOw6bvkCZUcmF1G0nfNQLrigXybIGGPozUp0
+         lm/WvX6lNnyn17kSN26N5Svgjiw9W86+S11poTvJdVanMUPa9RAu6u4qWVb8rqORVniD
+         DQGOAPcBdm7efpDk3mwNh+RrvNw+5nyL/oDzRvVbpa+45HrsXtomxfjbaV++i58e868G
+         /e3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719258972; x=1719863772;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3tqQIIuDCADHgpFY8cfM0SAO57n+ccJALQge0Cj32Ko=;
+        b=qX+wHl0WyE3+f7J6NnB/wGnulrVquUqwAbJgrULV9AQNxEfIUcrdzKdsszSoJVQg9F
+         GUSoWZ08+hII9Qg3q9cW7LTtcswsicWiLoq4XWuK9I76+N6wTwWym636qcacz9fTDrHS
+         YiES/CnPPsrbtZIq+byzsHfddbk7HxfvxfsfGtOjkX+AoOegacWxSOnvpHVtQfjnUtfa
+         ziMwy9pNSjnDSvjmbkWaAzaNlBQM1F7OzDBnazet5HeN2Xpaf2kpY8c4PywjSeLyuvTy
+         Y4nUVfOrWiLmYmj+JEBHz4/y99ct1pY8zN26O+KXK6jboisXZAMScjJDabYvy8j+s/Mh
+         Vwqw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIdAgWyp0DRPaXgYogtm4mqnnS7QxElp931WugToWwM4FZu4TULGMkjqNnmKtW69n9VAEwkxymyJy82N4odluqtOfFwfN9OriJrW55
+X-Gm-Message-State: AOJu0YwPyS1E4/fVI8nlnJSp7zxjqRNeccKmdwbU1bjkJjQnjpKzq15T
+	rJlc8zX/PSvzq198b5zAd/U3JWETVtn7Yg/5NODY3tfxvI8xeEj8vcmAwWuyG2t/h3Lf0QGo9LZ
+	eMvw=
+X-Google-Smtp-Source: AGHT+IGKGfFARVAVotDoRb++tXbqpiUnNusCVE2oSilNa9cJ0LvB+1RBjIPtkjrPvj4Lp3gTbojpBw==
+X-Received: by 2002:a17:902:6548:b0:1f7:167d:e291 with SMTP id d9443c01a7336-1fa23ef7e87mr57131195ad.47.1719258971650;
+        Mon, 24 Jun 2024 12:56:11 -0700 (PDT)
+Received: from fedora.vc.shawcable.net (S0106c09435b54ab9.vc.shawcable.net. [24.85.107.15])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3d5e63sm66161665ad.187.2024.06.24.12.56.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 12:56:11 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: martin.lau@linux.dev,
+	ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	yonghong.song@linux.dev,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH] bpf, btf: Make if test explicit to fix Coccinelle error
+Date: Mon, 24 Jun 2024 21:54:27 +0200
+Message-ID: <20240624195426.176827-2-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkZZHxXR9cFE=ZHQOnYXakrhXg0+ScT2ExxihovSgDz7_g@mail.gmail.com>
 
-On Mon, Jun 24, 2024 at 12:34:04PM -0700, Yosry Ahmed wrote:
-> On Mon, Jun 24, 2024 at 12:26 PM Matthew Wilcox <willy@infradead.org> wrote:
-> >
-> > On Mon, Jun 24, 2024 at 11:57:45AM -0700, Yosry Ahmed wrote:
-> > > On Mon, Jun 24, 2024 at 11:56 AM Matthew Wilcox <willy@infradead.org> wrote:
-> > > >
-> > > > On Mon, Jun 24, 2024 at 11:53:30AM -0700, Yosry Ahmed wrote:
-> > > > > After a page is swapped out during reclaim, __remove_mapping() will
-> > > > > call __delete_from_swap_cache() to replace the swap cache entry with a
-> > > > > shadow entry (which is an xa_value).
-> > > >
-> > > > Special entries are disjoint from shadow entries.  Shadow entries have
-> > > > the last two bits as 01 or 11 (are congruent to 1 or 3 modulo 4).
-> > > > Special entries have values below 4096 which end in 10 (are congruent
-> > > > to 2 modulo 4).
-> > >
-> > > You are implying that we would no longer have a shadow entry for such
-> > > zero folios, because we will be storing a special entry instead.
-> > > Right?
-> >
-> > umm ... maybe I have a misunderstanding here.
-> >
-> > I'm saying that there wouldn't be a _swap_ entry here because the folio
-> > wouldn't be stored anywhere on the swap device.  But there could be a
-> > _shadow_ entry.  Although if the page is full of zeroes, it was probably
-> > never referenced and doesn't really need a shadow entry.
-> 
-> Is it possible to have a shadow entry AND a special entry (e.g.
-> XA_ZERO_ENTRY) at the same index? This is what would be required to
-> maintain the current behavior (assuming we really need the shadow
-> entries for such zeroed folios).
+Explicitly test the iterator variable i > 0 to fix the following
+Coccinelle/coccicheck error reported by itnull.cocci:
 
-No, just like it's not possible to have a swap entry and a shadow entry
-at the same location.  You have to choose.  But the zero entry is an
-alternative to the swap entry, not the shadow entry.
+	ERROR: iterator variable bound on line 4688 cannot be NULL
 
-As I understand the swap cache, at the moment, you can have four
-possible results from a lookup:
+Compile-tested only.
 
- - NULL
- - a swap entry
- - a shadow entry
- - a folio
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+---
+ kernel/bpf/btf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Do I have that wrong?
+diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+index 821063660d9f..7720f8967814 100644
+--- a/kernel/bpf/btf.c
++++ b/kernel/bpf/btf.c
+@@ -4687,7 +4687,7 @@ static void btf_datasec_show(const struct btf *btf,
+ 			    __btf_name_by_offset(btf, t->name_off));
+ 	for_each_vsi(i, t, vsi) {
+ 		var = btf_type_by_id(btf, vsi->type);
+-		if (i)
++		if (i > 0)
+ 			btf_show(show, ",");
+ 		btf_type_ops(var)->show(btf, var, vsi->type,
+ 					data + vsi->offset, bits_offset, show);
+-- 
+2.45.2
+
 
