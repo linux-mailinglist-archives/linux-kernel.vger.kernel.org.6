@@ -1,153 +1,153 @@
-Return-Path: <linux-kernel+bounces-227221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65FCE914AEB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:44:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA10D914AF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09FBC284510
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:44:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CFE01F23EC5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:46:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43D2213D2BE;
-	Mon, 24 Jun 2024 12:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2337713D28A;
+	Mon, 24 Jun 2024 12:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+Xb7Eqj"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="2S6rDUXA";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="frRNYPVV"
+Received: from wflow4-smtp.messagingengine.com (wflow4-smtp.messagingengine.com [64.147.123.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E322913C8E8;
-	Mon, 24 Jun 2024 12:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3A81E4A9;
+	Mon, 24 Jun 2024 12:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719233031; cv=none; b=fSrH3m3zS/3Ry4MZWrV1pJ+r3kWPLY3Sl6ZgmfvgRrc7l1BW0Sth3rC3pIRR9vgqoLKYu+qNefy5xQCdeJzDRaWwpzHBiqKoanX7Ww0COpWys+L6w6ra5e6PPyLcXHnB2gtgI4Da/cs57n8RGSETDDxySXWr2EIDmZqFm2Jyfok=
+	t=1719233151; cv=none; b=dxvdHlYFn0Fzitvk/yh5R2mXZEWfDWBvLe86K+3Up2rNPwhRkLw3VWxJnQXFyVcblcXv7cMGxLvVBlGQxXI/LNFyPdf32hSxa0iWy+VRL3vv99EXP6SaL6PS7vBU8oEWxd7GKtwHFK9eV4HQHe8oLpj8EyWnVoRqi8yz43VRHIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719233031; c=relaxed/simple;
-	bh=jApaBCYVztKacSl0tD+xU7VMd3kepWna98tjFc2atXk=;
+	s=arc-20240116; t=1719233151; c=relaxed/simple;
+	bh=bHk7oVY4HJSJXdcXraPj+8uJig3F5xX26sfibOwI8eE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k/2ukfNJGOWddPgioz9TXmcSatVsjnWR+a8oKS9zRtxgy3i13r/TRes5bqBmvS9Go/nDBvOwPp+BDEw5Hw77GwRbrPFq2EMKLdhWG7MNGJuPFDfLyWCI/141gJSweoGoOv+uof1LW4RD50yNR2yuDu3vGEoaQqJb+mu3OCBp7a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S+Xb7Eqj; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=groves.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-70024655285so2526972a34.0;
-        Mon, 24 Jun 2024 05:43:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719233029; x=1719837829; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bBWUBcLCVdqut0FXaHBFebSPJlfehSuxQfvsdHPCuNs=;
-        b=S+Xb7EqjVxc3j3OoCJTYc54j11b3C4cb6lIr7QTpudNbDtnEdEj+s9NLS3LlxrUYii
-         hBSUQtIGshHm6GjQBRlFsCBISGB69EMt0F5UYANMw5q5Ug/4dd2gDXu4y3khnEmNxxa+
-         sP1xjDu/4MEn5Sc3lAncEzeYDFC2zhIpMNi3WJrqiZaj/X+USMn68RD5NpRVJxEOPH9J
-         2WM47z8CzwO+E8cMAEHga8wMUFz87dXrs74MCZb0zHpF4/X/3LDgFZpN1t3/FWxZKo0J
-         +2LahXjsIcrS6eEqbaZlVsgUWvzIfTAduQnB28XNqsf04BlEYJQ92sbjAucxMgpsZdiV
-         luyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719233029; x=1719837829;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bBWUBcLCVdqut0FXaHBFebSPJlfehSuxQfvsdHPCuNs=;
-        b=S18PyGBUQch1qXLh0W7dBBdChUqPm/WFjlbnfMBxdCUhO8ctw4EqmckyNZFYKvCULT
-         YhvzNX49nzhwWQNY5vE4zPDO6GhgQclnnhcx8XX7brvCfrnSP/7CCa3PP+XiETFba+ka
-         p1ycRUGV8gIL58J12CtgPM8jAkeEJoeBN6vw41UjAXYh0STneDzKhZ1Mp1K5egQILG7O
-         MiYPv9xNkbtIxI9de0Zz6hP9mhZoEN/YbJ2/QL6B6AvBz/Azigcp3luKhreBnAvD1Web
-         wQ9GCktUtJEy1WGyFt48l8YeJgQN06GfLR4e+1xz6d2/wG+AbWwwWQJqq3DT0jzdC9ft
-         shBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUGuaG6ff2V6feO4rT4/mvHI3GqRxnHn5meNZpLUYEhUY+BD0sYfZzp9VH6DiBrnqn1fuCewqC1ADi45RFhu4/721ozL4iUwg8df/5DSA8B99t7Bci7PFqkEKzckq3ck3nAPwxQfn6TFwpqPA==
-X-Gm-Message-State: AOJu0YyZYN0pvVBki/2UnSac0XhiV7GyRx9WY79/8sVuW6M1aPVikVel
-	QdUniOXPkdLFDjT3j1UUMS6LYE8mRSLD12KWrd9g2SPSMf1xghBukMzl1Q==
-X-Google-Smtp-Source: AGHT+IHPKGaTZmBW+rU8cmPJFtr0bAvrNnbe4mzzl1KvoXfv+a11ztewBoNJxWmG2lMzzhvIIdBv+w==
-X-Received: by 2002:a9d:7385:0:b0:6f9:6065:5253 with SMTP id 46e09a7af769-700b1301e32mr4701499a34.38.1719233028841;
-        Mon, 24 Jun 2024 05:43:48 -0700 (PDT)
-Received: from Borg-110.local (syn-070-114-203-196.res.spectrum.com. [70.114.203.196])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7009c658d2fsm1166374a34.56.2024.06.24.05.43.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 05:43:48 -0700 (PDT)
-Sender: John Groves <grovesaustin@gmail.com>
-Date: Mon, 24 Jun 2024 07:43:47 -0500
-From: John Groves <John@groves.net>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-cxl@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev
-Subject: Re: [RFC PATCH 00/20] Introduce the famfs shared-memory file system
-Message-ID: <w47upqsgruckx6i43gaqkdr7lhgacggonr2uwodapfb7n2byqr@yeiiri5wluob>
-References: <cover.1708709155.git.john@groves.net>
- <CAOQ4uxiPc5ciD_zm3jp5sVQaP4ndb40mApw5hx2DL+8BZNd==A@mail.gmail.com>
- <CAJfpegv8XzFvty_x00UehUQxw9ai8BytvGNXE8SL03zfsTN6ag@mail.gmail.com>
- <CAOQ4uxg9WyQ_Ayh7Za_PJ2u_h-ncVUafm5NZqT_dt4oHBMkFQg@mail.gmail.com>
- <kejfka5wyedm76eofoziluzl7pq3prys2utvespsiqzs3uxgom@66z2vs4pe22v>
- <CAJfpegvQefgKOKMWC8qGTDAY=qRmxPvWkg2QKzNUiag1+q5L+Q@mail.gmail.com>
- <l2zbsuyxzwcozrozzk2ywem7beafmidzp545knnrnkxlqxd73u@itmqyy4ao43i>
- <CAJfpegsr-5MU-S4obTsu89=SazuG8zXmO6ymrjn5_BLofSRXdg@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gibUnF+4ayXkISZR7UR0xUNg2gJ7iM76stVn4YS7Y3Jx/VtYm2Us/xVssh6BztlfeY3PGB/yOipRT0z3g6YHZFgfvQYHvNDy5hQqMfIGyWg0yJCeydAOaIbnaM0jtUa0oapdketBdYgDNlNWXzqFoTA/1pmnqZL0FjLrkf9Vxoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=2S6rDUXA; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=frRNYPVV; arc=none smtp.client-ip=64.147.123.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailflow.west.internal (Postfix) with ESMTP id D38FB2CC00FE;
+	Mon, 24 Jun 2024 08:45:42 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 24 Jun 2024 08:45:44 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1719233142;
+	 x=1719240342; bh=VYXob4vhayXt3Bmdcst9br5mK/yayifQnerAn2TAL6o=; b=
+	2S6rDUXAJzJNfiTEwjdnFBRJcsQiu7lpzuhnbS7SaKurMHzWXklj4gA/B2p5Vt3o
+	XUM+C4KKErcyqF+a6+IXnKD3q4HdO/oxeRQwZr2DY+2V57pVArBnyuGbqrWfGtQH
+	tJN5NbQs1ha9Pi9/ze/Ih+etMcljFpIgwNKt8EFECgqGkbd43++t5PakJrkAQD7c
+	QOBLFaqLBCTwaGxVq5ndkSCI38twUpEpj16cv6ENKTTmar2mhf2NoOJjt3DP1npH
+	1QmVuJ/wpEv3emEulsCuUZxswDhWuYIClxJYbZkMjMUe1+gD6E3ZIgDqDqQ8wNU7
+	GbLw29QnQxVjTeBAUL8SKw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719233142; x=
+	1719240342; bh=VYXob4vhayXt3Bmdcst9br5mK/yayifQnerAn2TAL6o=; b=f
+	rRNYPVV/EqGu77I3z4gxzgFZq2jcV99gSpQWSPmed1ICqRPfznUwiQ90Fm/rAeie
+	LJEoiBluZSJ0Ts9EMzS42YaUzlXXr4lO7Du0tEgESRue86aY3kixa+hthEaSVjaW
+	1lVGG+uUCU2HzhiYV0ebNWiCkFq7RvFU33EU7YVTUK71cr1B8OfWMWBQImXWmR4T
+	1KcBlGWB8o/3o6CPEAXEMfZ4908oDQfB7WHvyx1TR5mVu/5RrKp8Aq0kKAYwIlns
+	e3hfKUlSYN/q8AH/A4mG4LsjBpMB6/5tEv8mISyX5+IwgikXVxI+tUSvb/Z1mL9y
+	f2cKGNzrR6lUaVW3T+Gsw==
+X-ME-Sender: <xms:dmp5ZhDvel6ocBI6jPwwhS9zrM4QRjc74tRGKyoYfEcnAknrul8_fA>
+    <xme:dmp5ZvhF1jfZ8IGlKHQt7nXLNddjZtpwPwBjCDcMdb06YGsxruheDBNFw64wkWDt3
+    4Pwrh4zBHJNqA>
+X-ME-Received: <xmr:dmp5ZsnyGNEng4qlOTsAxDpHXb-kZSYOkR-8solMDOPHHeyRJGkS_J1YLBTtRJKxQ9owKLe8lVqkQWNYZuEYoQ09voen-Bdg79wbkw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeguddgheeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefirhgv
+    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeelke
+    ehjeejieehjedvteehjeevkedugeeuiefgfedufefgfffhfeetueeikedufeenucffohhm
+    rghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
+    hmpehmrghilhhfrhhomhepghhrvghgsehkrhhorghhrdgtohhm
+X-ME-Proxy: <xmx:dmp5Zrxh79Ui8GtIN-vX5zQgPXmInzKsXaNl6zy_lCRG74tbsVcnRg>
+    <xmx:dmp5ZmRJT4Y9h0XoySEBLUtCn_ueaR5LFl9M1WTrBO_X0rmfrvRYVA>
+    <xmx:dmp5ZuazyEzbraA2iyHw1Sf-83siaKwmzLM2QVHObBUeL_iSvKY-7g>
+    <xmx:dmp5ZnTOusHuWZP5Jp3LAWg4gCcd3OLt2kcwiSUHFlyWg1ItRMaHdw>
+    <xmx:dmp5ZmJp-dg4Lw9dzogqq4oCJ9wEj-UYmf-V3nEA1KUZN5tGnZ5cKqMn>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Jun 2024 08:45:41 -0400 (EDT)
+Date: Mon, 24 Jun 2024 14:45:38 +0200
+From: Greg KH <greg@kroah.com>
+To: joeyli <jlee@suse.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-block@vger.kernel.org,
+	Chun-Yi Lee <joeyli.kernel@gmail.com>, stable@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jens Axboe <axboe@kernel.dk>, Justin Sanders <justin@coraid.com>,
+	Kirill Korotaev <dev@openvz.org>, Nicolai Stange <nstange@suse.com>,
+	Pavel Emelianov <xemul@openvz.org>
+Subject: Re: [PATCH v2] aoe: fix the potential use-after-free problem in more
+ places
+Message-ID: <2024062433-maximum-purplish-4ccc@gregkh>
+References: <20240624064418.27043-1-jlee@suse.com>
+ <b75a3e00-f3ec-4d06-8de8-6e93f74597e4@web.de>
+ <20240624110137.GI7611@linux-l9pv.suse>
+ <74d3454d-6141-462d-9de8-b11cf6ac814c@web.de>
+ <20240624115445.GL7611@linux-l9pv.suse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAJfpegsr-5MU-S4obTsu89=SazuG8zXmO6ymrjn5_BLofSRXdg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240624115445.GL7611@linux-l9pv.suse>
 
-On 24/05/23 03:57PM, Miklos Szeredi wrote:
-> [trimming CC list]
+On Mon, Jun 24, 2024 at 07:54:45PM +0800, joeyli wrote:
+> On Mon, Jun 24, 2024 at 01:43:25PM +0200, Markus Elfring wrote:
+> > >>>                   … So they should also use dev_hold() to increase the
+> > >>> refcnt of skb->dev.
+> > >> …
+> > >>
+> > >>   reference counter of “skb->dev”?
+> > >
+> > > Yes, I will update my wording.
+> > 
+> > Would you like to improve such a change description also with imperative wordings?
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc4#n94
+> > 
+> > 
+> > How do you think about the text “Prevent use-after-free issues at more places”
+> > for a summary phrase?
+> >
 > 
-> On Thu, 23 May 2024 at 04:49, John Groves <John@groves.net> wrote:
-> 
-> > - memmap=<size>!<hpa_offset> will reserve a pretend pmem device at <hpa_offset>
-> > - memmap=<size>$<hpa_offset> will reserve a pretend dax device at <hpa_offset>
-> 
-> Doesn't get me a /dev/dax or /dev/pmem
-> 
-> Complete qemu command line:
-> 
-> qemu-kvm -s -serial none -parallel none -kernel
-> /home/mszeredi/git/linux/arch/x86/boot/bzImage -drive
-> format=raw,file=/home/mszeredi/root_fs,index=0,if=virtio -drive
-> format=raw,file=/home/mszeredi/images/ubd1,index=1,if=virtio -chardev
-> stdio,id=virtiocon0,signal=off -device virtio-serial -device
-> virtconsole,chardev=virtiocon0 -cpu host -m 8G -net user -net
-> nic,model=virtio -fsdev local,security_model=none,id=fsdev0,path=/home
-> -device virtio-9p-pci,fsdev=fsdev0,mount_tag=hostshare -device
-> virtio-rng-pci -smp 4 -append 'root=/dev/vda console=hvc0
-> memmap=4G$4G'
-> 
-> root@kvm:~/famfs# scripts/chk_efi.sh
-> This system is neither Ubuntu nor Fedora. It is identified as debian.
-> /sys/firmware/efi not found; probably not efi
->  not found; probably nof efi
-> /boot/efi/EFI not found; probably not efi
-> /boot/efi/EFI/BOOT not found; probably not efi
-> /boot/efi/EFI/ not found; probably not efi
-> /boot/efi/EFI//grub.cfg not found; probably nof efi
-> Probably not efi; errs=6
-> 
-> Thanks,
-> Miklos
-
-I'm baffled as to why the memmap thing is not working for you. I don't see
-anything amiss in your config file, but the actual plumbing of that kernel 
-option isn't anything I've worked on. Out of curiosity, are you running on x86?
-
-Have you tried the 's/$/!/' method with memmap? That should give you a pmem
-device instead, which you will see with 'ndctl list', and can convert to
-devdax with ndctl (recipe above in this thread). Note that 4GiB is the minimum
-size that famfs supports.
-
-A quick status on where I am with famfs: I've made progress on my substantial
-learning curve with fuse, and have come up with a strategy for the famfs fuse 
-daemon to access metadata in a way that leverages the current famfs user space 
-without excessive re-writing (which is encouraging). 
-
-I haven't started test-hacking dax_iomap_* enabled files into the fuse
-kmod yet; initial RFCs in that area are probably a few weeks out, but 
-definitely coming - undoubtedly with a lot of questions.
-
-Regards,
-John
+> Thanks for your suggestion. I will update the wording in next version. 
 
 
+Hi,
+
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
+
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
+
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
+
+thanks,
+
+greg k-h's patch email bot
 
