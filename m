@@ -1,196 +1,138 @@
-Return-Path: <linux-kernel+bounces-227951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD31D9158AD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:15:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A15AE9158B3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C197284CD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:15:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDF851C2246C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8697E1A071F;
-	Mon, 24 Jun 2024 21:15:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A64291A08BC;
+	Mon, 24 Jun 2024 21:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NWZbaPg3"
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com [209.85.167.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SALN9ePl"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC743FB9F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 21:15:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A164C8F6B;
+	Mon, 24 Jun 2024 21:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719263725; cv=none; b=sMiTRPcNZqJOEtkK6oE1OvZlW1AtlatTs/g97FlfEXxm9x8HGtIO4DGUMe/c2LjNVAIhQMhWbDY4tNOkzezk7ELWdFlTCtBLzhMjiZoYO6jYIhUloR9FymO1I8n9uHwH4K1ADO9ccNCqtJLr5uoqTpKf+/bNxJMVKnsaHSGYe74=
+	t=1719263890; cv=none; b=pBWt4tmf0CGLeZbWYBL/kzCH8p2lKj23HyJGj5ju7aBFvW0T/8Xj4LDgZ3G6hBbahriAF9tLx3VYQT1NLh3iZMgYMHV3Domg+E3rO4B4eWagk7Na1wjm/pL8qJwtyAPogVVTVf9x2av5ZC0RT0lt3MS8crLRx1q48MEeoO/Dt0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719263725; c=relaxed/simple;
-	bh=1aS1C8+rNiEE9y97Tf7/4pGGQHLNNIZeCB3/TynbVHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ni95T2YhQ/xzF9hwrWapRXs6ejaj+gs5PMWcrexbBmzi0Q6M8zAsNp/ixaLRzX7LCzg64rj0XDhEyfREGYCBkqCt5hssgePhXsWjdp3L0iFuhyFHUf+EfEjx2vZUyOdvmHe2bBM3a61Z5mDzYdbVf0CI9rh/L4jY32vI8JWEFPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NWZbaPg3; arc=none smtp.client-ip=209.85.167.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oi1-f175.google.com with SMTP id 5614622812f47-3c9b94951cfso2767456b6e.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:15:23 -0700 (PDT)
+	s=arc-20240116; t=1719263890; c=relaxed/simple;
+	bh=l8Zv6zTZkrFFWNVvlwnKFMv5uzpJV0PDxOetpCVnLgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iqZVh0JYZdqbBFzlc1bqRI1yNrlCuNG65vbuFyxmqmiW4VcoEHrgJnQKF0qMwGY+Bam/UBg6kZCcAlH5j/ZRjyci2Oq5uPYj71XulejZLCzbZmF7FmYpkfWK1WIMZjhOMVc8WbMjKSMhLyCtkIxRU7wZxjYYYvJFAhSqISX+/RM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SALN9ePl; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f47f07aceaso37717245ad.0;
+        Mon, 24 Jun 2024 14:18:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719263721; x=1719868521; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=F/CQWIetOrwwmsDk4Xx3Bzc7g2Sp+y6oh+LBYo/o6no=;
-        b=NWZbaPg3jObOWzclWE+RbSuJ7UUwQkliNvdYe8/U+lJ57bQKKbnUEpTP70yooYRQN1
-         90J83zHg5m0zbDTCAA7VQSxCU4IdbLJD09AqqnFgLq/a920aYb47H2Bdk6b3SuB+F8FI
-         /44NxOahwCkba799Jymtzuc9SYZzdzLXW6wZA=
+        d=gmail.com; s=20230601; t=1719263888; x=1719868688; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XOg8+lXJdsURB0vv97T/giYlSsMyAfF7fszjN+D+tlo=;
+        b=SALN9ePl1kznUY6pNCKZ0Qor4wjnB/b3rL3XjdxtOFKG8napi1B2Bslw6xMbHojV+4
+         A/J+m40590MTlQAV/sqHo+HtLgKabsH+tLq+pcR6bLs5oUeQHoh+GzCcXTbqgVT1eJ3A
+         yyu1FG6ThIMbOP4sQNBmnBXObfZTb/8Cjt7ZXl/nInKf6b2Ble20R5n1bZJrNKMAf1ll
+         z/7DF09JKZ1wQJ0RQ9zDgubNcY+/01dUVD7BBlz5lE5e/tNV19r/WeZ8DZDrPGr87Qrw
+         6878BGfzzp9S5d4tm2hIXNlDpArFjOfCNweSn8lcxPBmz5yz11eJD+F5mgm3pynksj0k
+         eK1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719263721; x=1719868521;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719263888; x=1719868688;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F/CQWIetOrwwmsDk4Xx3Bzc7g2Sp+y6oh+LBYo/o6no=;
-        b=BBrfEVf3e1FENOkjos2pve797l07/8Unrd9anX8i1x9tawvFfaZO36FGQKO4BMhkoB
-         e7IK77rLQOKE4vfscMnnYQ2+1MJo7A6LD/RoO0tdzt8clQzb8CetWFSPPMOsh0iC3lwx
-         DuLk2M89oOAcH/iDTsbewcVJHh3c4Cjult/2uWPVg0SbaleXJttZdAjWmVum5NwWfs6G
-         2lAO+/acIajUG3X8mTGkVE9Km0F5iF44AflM8v/+TmFp6Oy7lZ/IHrhwxo/lQMwrSlDP
-         YikH9seqKck4jzFXEDCaDWm8VVUwBjf9dDO7pVC6x4kMZ/pbGZLOZrlSyLEsbiJAPoWW
-         BMww==
-X-Forwarded-Encrypted: i=1; AJvYcCUAknrDmPnkNH5X+hmrZ38BoF6uLFmE5PK5cmLouP+Blo8OfXEwOykWv/ELxMeTUbbPVE9JvxdI/D1NxelImhbc30B6Og6BWYkIM0lE
-X-Gm-Message-State: AOJu0YxdEDHLWDj+9KXroN0uHZM8xrI9p73jV6xo50cnrX1ICPwG9ERm
-	+uSzl20dDH4gC5qGiycV+o53G4D2sWUvl9TT1Z0AvyeZytpFi1TBvmn2ZTuAZE7R/X9K8m9OXW8
-	=
-X-Google-Smtp-Source: AGHT+IHv/tIZlaPh3bnBz9/mqpjIqS0az8Dqd3Jdp1k1ebvbzk6jV6e7HubTMv08jd7tharJbrHD4w==
-X-Received: by 2002:a05:6870:470c:b0:254:9570:e5aa with SMTP id 586e51a60fabf-25d06ef5925mr6355983fac.57.1719263721010;
-        Mon, 24 Jun 2024 14:15:21 -0700 (PDT)
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com. [209.85.160.175])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce8c0016sm346128985a.55.2024.06.24.14.15.19
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 14:15:20 -0700 (PDT)
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-443580f290dso27621cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:15:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX3CapHclgfA7qF6vGcyEu8dtcZQD9vvr2VcO36M1xN3dlyFbc+CrPX4ldoIaO3hqZqRKyQjvdoR9KUgOZerOekt1NhqmnH0z0w8ffx
-X-Received: by 2002:a05:622a:1981:b0:441:4920:1fc4 with SMTP id
- d75a77b69052e-444f256621dmr960771cf.28.1719263719282; Mon, 24 Jun 2024
- 14:15:19 -0700 (PDT)
+        bh=XOg8+lXJdsURB0vv97T/giYlSsMyAfF7fszjN+D+tlo=;
+        b=kVKtoGuQRkOiouEAxL2dcyWdJ27cXPkPoE5z975zKFAu1nzYvuScNVZm6CkvWe9qfD
+         yzRD3dvdGyklPsKmuqJWleSv9tyo9eCYW4PwsLdAw8/EFZjvl+6vbx9zOECwA7sfS2wA
+         VyaTGaIslZd3KK4HWNwFthwRHMA/GCItSa4fMm7K1DWmMGPJdJ+nZN0UqFHHPa/BjuKR
+         P3g7tDjF1C5n0gW9uunc6jMxDohQcIuElydxAiyCSBAgF34Buf9ft+Z9U5vfyVFn8BAk
+         /z81K4VANOuwsopJPUBXO9aa1lrgkAAlkRtsmoUWBYh3Rgk2/FLFIJOGOStpIpYY8uTc
+         gNdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXft2nMgiJ27bmyBC/oeKos7frhYLQyrtusT2q1RkFm7i9v6vR/Zyl02EZVX//+KGscmpGRlQ8SIGI9/jCi56KO9CQLNOVEq3BCROKmkVANFR/c0vjH1R0EunedggRFsasn
+X-Gm-Message-State: AOJu0YykVjB7CyXr6h1oUi9xB82e7mraQ2l8qRr9eYsCUw248bbrHaYd
+	2MFLIvh3ALIrJPULBLLKBiUNq7/Z5JR4k8uimp5sTa84ML2SHkDG
+X-Google-Smtp-Source: AGHT+IHWmimvJ7K6ZtF/mv7MnJM5fetCwbtgJhLSAAJVi4lplWlvxGL5tFr+cHILNGkCYyOUoRuRTw==
+X-Received: by 2002:a17:902:f611:b0:1f6:89b1:a419 with SMTP id d9443c01a7336-1fa158de8e8mr62866925ad.17.1719263887840;
+        Mon, 24 Jun 2024 14:18:07 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbc3185sm66912095ad.289.2024.06.24.14.18.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 14:18:07 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 24 Jun 2024 11:18:06 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 09/39] sched: Add @reason to
+ sched_class->rq_{on|off}line()
+Message-ID: <ZnnijsMAQYgCnrZF@slm.duckdns.org>
+References: <20240501151312.635565-1-tj@kernel.org>
+ <20240501151312.635565-10-tj@kernel.org>
+ <20240624113212.GL31592@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610222515.3023730-1-dianders@chromium.org>
- <20240610152420.v4.8.I1af05e555c42a9c98435bb7aee0ee60e3dcd015e@changeid> <Znlp1_F1u-70D3QQ@hovoldconsulting.com>
-In-Reply-To: <Znlp1_F1u-70D3QQ@hovoldconsulting.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 24 Jun 2024 14:15:07 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XmuKUKvCq7gG+wM-jAAgHLHnYw4NteFEKz5Fmczd=U7g@mail.gmail.com>
-Message-ID: <CAD=FV=XmuKUKvCq7gG+wM-jAAgHLHnYw4NteFEKz5Fmczd=U7g@mail.gmail.com>
-Subject: Re: [PATCH v4 8/8] serial: qcom-geni: Rework TX in FIFO mode to fix hangs/lockups
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Yicong Yang <yangyicong@hisilicon.com>, Tony Lindgren <tony@atomide.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Johan Hovold <johan+linaro@kernel.org>, 
-	John Ogness <john.ogness@linutronix.de>, linux-arm-msm@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624113212.GL31592@noisy.programming.kicks-ass.net>
 
-Hi,
+Hello, Peter.
 
-On Mon, Jun 24, 2024 at 5:43=E2=80=AFAM Johan Hovold <johan@kernel.org> wro=
-te:
->
-> On Mon, Jun 10, 2024 at 03:24:26PM -0700, Douglas Anderson wrote:
-> > The fact that the Qualcomm GENI hardware interface is based around
-> > "packets" is really awkward to fit into Linux's UART design.
-> > Specifically, in order to send bytes you need to start up a new
-> > "command" saying how many bytes you want to send and then you need to
-> > send all those bytes. Once you've committed to sending that number of
-> > bytes it's very awkward to change your mind and send fewer, especially
-> > if you want to do so without dropping bytes on the ground.
-> >
-> > There may be a few cases where you might want to send fewer bytes than
-> > you originally expected:
-> > 1. You might want to interrupt the transfer with something higher
-> >    priority, like the kernel console or kdb.
-> > 2. You might want to enter system suspend.
-> > 3. The user might have killed the program that had queued bytes for
-> >    sending over the UART.
-> >
-> > Despite this awkwardness the Linux driver has still tried to send
-> > bytes using large transfers. Whenever the driver started a new
-> > transfer it would look at the number of bytes in the OS's queue and
-> > start a transfer for that many. The idea of using larger transfers is
-> > that it should be more efficient. When you're in the middle of a large
-> > transfer you can get interrupted when the hardware FIFO is close to
-> > empty and add more bytes in. Whenever you get to the end of a transfer
-> > you have to wait until the transfer is totally done before you can add
-> > more bytes and, depending on interrupt latency, that can cause the
-> > UART to idle a bit.
->
-> As I mentioned last week, the slowdown from this is quite noticeable
-> (e.g. 25% slowdown at @115200), but this may be the price we need to pay
-> for correctness, at least temporarily.
->
-> An alternative might be to switch to using a 16 byte fifo. This should
-> reduce console latency even further, and may be able avoid the idling
-> UART penalty by continuing to use the watermark interrupt for refilling
-> the FIFO.
+On Mon, Jun 24, 2024 at 01:32:12PM +0200, Peter Zijlstra wrote:
+> On Wed, May 01, 2024 at 05:09:44AM -1000, Tejun Heo wrote:
+> > ->rq_{on|off}line are called either during CPU hotplug or cpuset partition
+> > updates. A planned BPF extensible sched_class wants to tell the BPF
+> > scheduler progs about CPU hotplug events in a way that's synchronized with
+> > rq state changes.
+> > 
+> > As the BPF scheduler progs aren't necessarily affected by cpuset partition
+> > updates, we need a way to distinguish the two types of events. Let's add an
+> > argument to tell them apart.
+> 
+> That would be a bug. Must not be able to ignore partitions.
 
-I'm a bit confused. Right now we're using (effectively) a 64-byte
-FIFO. The FIFO is 16-words deep and we have 4 bytes per word. ...so
-I'm not sure what you mean by switching to a 16-byte FIFO. Do you mean
-to make less use of the FIFO, or something else?
+So, first of all, this implementation was brittle in assuming CPU hotplug
+events would be called in first and broke after recent cpuset changes. In
+v7, it's replaced by hooks in sched_cpu_[de]activate(), which has the extra
+benefit of allowing the BPF hotplug methods to be sleepable.
 
-Overall the big problem I found in all my testing was that I needed to
-wait for a "command done" before kicking off a new command. When the
-"command done" arrives then the UART has stopped transmitting and
-you've got to suffer an interrupt latency before you can start
-transferring again. Essentially:
+Taking a step back to the sched domains. They don't translate well to
+sched_ext schedulers where task to CPU associations are often more dynamic
+(e.g. multiple CPUs sharing a task queue) and load balancing operations can
+be implemented pretty differently from CFS. The benefits of exposing sched
+domains directly to the BPF schedulers is unclear as most of relevant
+information can be obtained from userspace already.
 
-1. Pick a transfer size.
-2. You can keep sending bytes / using the FIFO efficiently as long as
-there are still bytes left in the transfer.
-3. When you get to the end of the transfer, you have to wait for the
-UART to stop, report that it's done, and then suffer an interrupt
-latency to start a new transfer.
+The cgroup support side isn't fully developed yet (e.g. cpu.weight is
+available but I haven't added cpu.max yet) and plans can always change but I
+was thinking taking a similar approach as cpu.weight for cpuset's isolation
+features - ie. give the BPF scheduler a way to access the user's
+configuration and let it implement whatever it wants to implement.
 
-So to be efficient you want to pick a big transfer size but if there's
-any chance that you might not need to transfer that many bytes then
-you need to figure out what to do. If you can handle that properly
-then that's great. If not then we have to make sure we never kick off
-a transfer that we might not finish.
+Thanks.
 
-I'd also mention that, as talked about in my response to your other
-patch [1], I'm not seeing a 25% slowdown. I tested both with my simple
-proposal and with this whole series applied and my slowdown is less
-than 2%. I guess there must be something different with your setup?
-Trying to think about what kind of slowdown would be reasonable for my
-patch series at 115200:
-
-a) We send 64 bytes efficiently, which takes 5.6ms (64 * 1000 / 11520)
-
-b) We stop transferring and wait for an interrupt.
-
-c) We start transferring 64 bytes again.
-
-Let's say that your interrupt latency is 1 ms, which would be really
-terrible. In that case you'll essentially transfer 64 bytes in 6.6ms
-instead of 5.6 ms, right? That would be an 18% hit. Let's imagine
-something more sensible and say that most of the time you can handle
-an interrupt in 100 ms. That would be about a 1.7% slowdown, which
-actually matches what I was seeing. For reference, even an old arm32
-rk3288-veyron device I worked with years ago could usually handle
-interrupts in ~100-200 ms since dwc2 needs you to handle at least one
-(sometimes more) interrupt per USB uFrame (250ms).
-
-...so I'm confused about where your 25% number is coming from...
-
-
-[1] https://lore.kernel.org/r/CAD=3DFV=3DUwyzA614tDoq7BntW1DWmic=3DDOszr+iR=
-JVafVEYrXhpw@mail.gmail.com
+-- 
+tejun
 
