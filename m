@@ -1,172 +1,200 @@
-Return-Path: <linux-kernel+bounces-226990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B2419146DD
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:59:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE4679146DF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93F581F20FC9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:59:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5807B1F20F4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321F8135A7D;
-	Mon, 24 Jun 2024 09:59:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A342C135A5B;
+	Mon, 24 Jun 2024 09:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Q1Dalikb"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="anTyDzlG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A4F130A79;
-	Mon, 24 Jun 2024 09:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7B9130A79
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719223169; cv=none; b=Ey9GT2P3fErjO72vBNmYjTNlV3JHUDUpjdjp5vPIDLyIUR7SS2F9xNJBMP/VWA42U5utSxvLmE3J66y6kWpDBZyqDVlHYUdTUxokGgEZV1VUCDfPMHZIup8JY09mTdvCQpwi5fQAHbuhFA0YHRo2Bzi0xILUUBMRjI3QKB/J9XQ=
+	t=1719223176; cv=none; b=UXrUm97wngGdntdaSA/Sy18Iq0JIskEPa4p/SVisk3ITnNDX2YoTQdeI/9vH88YlnpDcrhuHtRj9l1ODU2Lai6289lSKl5Ft30rmLfJjQQHUaJXDCvdv+u3SuZLxZWG2Qk95F7dVBqftm2ifw8WS40N8OgLzK2N68qOysBndBLg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719223169; c=relaxed/simple;
-	bh=zJcdGyUdZLuCNczx/nqzTFcVLN0OGiPutA1r790Kcfk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QpESRBh1noX8gkozAq4oAZmD3ae6+tTiC7Po3itI1edzAVemwrBrX3XtGsU5h1Y4zvdBg6b0inwU9HbqPKc3D+iVPLbm27xAv/d/gIlgvTXqxbN60UfNgKOdXb4SdUiiJzRdCup9BPRMRTCy4W1kpkDYw6FNkgPDcft8bGEanVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Q1Dalikb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O8xPPw013702;
-	Mon, 24 Jun 2024 09:59:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=2KZvX60DMd8P4EJ7ET6Mxr10IK
-	A4yiUdj/8yc/yPeuw=; b=Q1DalikbKwRIX2ui9vAnJIliYwjKN+vF8L9IRQz4XV
-	bCCGXzXE1PesPeCnXNUYTjrqHbB1hpwK7fxM+luQ584pncQ+M+0Bo7W/QMQhn/xp
-	mjb9FIuxdoqSt12E83wfQX+ixaKumEWhwXbdgcEuJZ0gQK3dl4v0HjN38B0MtVeA
-	KWYYMoWuDh23wEJawgQlerBGkktfNV7aoxS91/FsbWh960R8Ag8oLrPEISGI7J1f
-	dz7sJ107uv2AL2RA6D6FoIH3AMNmNWdir9d4Hs9D+z50UWkYsa71EZohL/GVEMyO
-	I31GF+8YQSHCpkJa9JxvjVS5qvSV24/ZkiDvKtfS9o6A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yy5s50a2f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 09:59:23 +0000 (GMT)
-Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45O9uJmh023233;
-	Mon, 24 Jun 2024 09:59:23 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yy5s50a2d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 09:59:23 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45O9FGbB020058;
-	Mon, 24 Jun 2024 09:59:22 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxb5m7ejj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 24 Jun 2024 09:59:22 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45O9xGAX47251768
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 24 Jun 2024 09:59:18 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id CEF3620043;
-	Mon, 24 Jun 2024 09:59:16 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 497BE20040;
-	Mon, 24 Jun 2024 09:59:16 +0000 (GMT)
-Received: from darkmoore.ibmuc.com (unknown [9.171.6.193])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 24 Jun 2024 09:59:16 +0000 (GMT)
-From: Christoph Schlameuss <schlameuss@linux.ibm.com>
-To: linux-s390@vger.kernel.org
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
-        linux-doc@vger.kernel.org
-Subject: [PATCH] s390/kvm: Reject memory region operations for ucontrol VMs
-Date: Mon, 24 Jun 2024 11:59:02 +0200
-Message-ID: <20240624095902.29375-1-schlameuss@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719223176; c=relaxed/simple;
+	bh=8IRKD2VDK4RtOqMcQRev9Lu8Sns19P6qT0a8xgsE+Ng=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oI2G3/PbqU90qy0G21B2YAToqf/k1RIzBZLOh1hlrSn4WbnuJ35tzyCB9JSGEXVZZ5KPrDGGkhKXKYUu6pI/gcBuHLamClP9TQl/wh6gnS+3h2Mbvyz2n16kLtBrHGr3OhehBh9Sst0T6Tum5ZrK0xXF5HGiOn5iRDuEwczJXak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=anTyDzlG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719223174;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PwlMgaE8+kBE4Dvy2LlPLjnBZ3dnXU/5g0//YUxNCgs=;
+	b=anTyDzlGzs5J9I3GCT+YOAGDgoDu7RCyHa7rgDBLbpLYn/G/EkXO0QNO6HvKC+mXq+uZKm
+	ip9M6WwXIbmkRlQG+JA0HDRcyXUAtz8Kx8YiDKj+6KGfP/nwlUnja5xxdTL59gj6SLs2IW
+	cqKC8j2pjOoQ66VGZn8HxnDeam2gRME=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-159-x3DuWd6PP6KNHU9CFNTEQg-1; Mon, 24 Jun 2024 05:59:32 -0400
+X-MC-Unique: x3DuWd6PP6KNHU9CFNTEQg-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52cd7e63b2aso1983536e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:59:32 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719223171; x=1719827971;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PwlMgaE8+kBE4Dvy2LlPLjnBZ3dnXU/5g0//YUxNCgs=;
+        b=Kj4Bd8mbTLy30Es05h0zkANKQDorZpDRjJ6uQdDjBiVOBLlQWHegmBBbymxWDrrpGC
+         ExMMnNPg5zszchmIa3tZl7V5Wghey5gdW7SCKiPfJpx89yJKTPCiN/+bcwBwVRdeVNpp
+         BQH6Bf1TKVksh9rZygelryLqEnv/auPlvWvo1EllzDObKBrA6gUJHNSxEKMkJQog583B
+         kZ+YXZPrvp7RPqLeGF+vDnDYYZ2n5LzG4/NybhcuDEUt3jyyHwaXiMoLp0yX3iJ6kzcz
+         YbnDzvjm5A7nUrtaa4RsG9XbLTmX9iPVE+uGijjamGc6UszshiHeZvx0H9xcKNlXkh0L
+         4gBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVvIqBLXjo71IDMTx0bwZf5zXOEKbh4QgHhFYkPb3Ckfk3l65fZApSYW4Sdcjb0F7Z5fgm7C/ddjXU3jaHYsawKijS1QLvheOLAMCoN
+X-Gm-Message-State: AOJu0YxgUsDXwa9ZrRvE8t1jNo/SrpgxnFRkAkrdvWjmqT49r+0+PY/H
+	MigoVigHPgotjeBupZt/J7YCfk7qIVz3Wqo+ooCL2fMfnXytbaVhA+UX0ZgL/6EFpfmW+Kv/IIN
+	uEyHm/v6qTvqvPMYwg+5aq2fd3wn0bibjCJoQB2yjGB9qXlx9sJagbjujbJ/7Og==
+X-Received: by 2002:a19:c219:0:b0:52c:d5b3:1a6a with SMTP id 2adb3069b0e04-52ce061cedfmr2938793e87.28.1719223170738;
+        Mon, 24 Jun 2024 02:59:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHa9zU5lz/eJ4TII5tOUnKtVMjwizb2UTpSRF7P4MzTiK4ikVcABLfXc8Ps4KqAgiNvWG1Y+Q==
+X-Received: by 2002:a19:c219:0:b0:52c:d5b3:1a6a with SMTP id 2adb3069b0e04-52ce061cedfmr2938775e87.28.1719223169992;
+        Mon, 24 Jun 2024 02:59:29 -0700 (PDT)
+Received: from redhat.com ([2.52.146.100])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366389b8985sm9587026f8f.43.2024.06.24.02.59.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 02:59:29 -0700 (PDT)
+Date: Mon, 24 Jun 2024 05:59:19 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, venkat.x.venkatsubra@oracle.com,
+	gia-khanh.nguyen@oracle.com
+Subject: Re: [PATCH V2 1/3] virtio: allow nested disabling of the configure
+ interrupt
+Message-ID: <20240624054403-mutt-send-email-mst@kernel.org>
+References: <20240624024523.34272-1-jasowang@redhat.com>
+ <20240624024523.34272-2-jasowang@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 2xcoGmAbfJM62j_PztwpAAUazTjoDst-
-X-Proofpoint-ORIG-GUID: 5H6cT5BBDe8iPSqQ5M6GVGr-JVHKY594
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_09,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- suspectscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=598 clxscore=1011
- spamscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406240079
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624024523.34272-2-jasowang@redhat.com>
 
-This change rejects the KVM_SET_USER_MEMORY_REGION and
-KVM_SET_USER_MEMORY_REGION2 ioctls when called on a ucontrol VM.
-This is neccessary since ucontrol VMs have kvm->arch.gmap set to 0 and
-would thus result in a null pointer dereference further in.
-Memory management needs to be performed in userspace and using the
-ioctls KVM_S390_UCAS_MAP and KVM_S390_UCAS_UNMAP.
+On Mon, Jun 24, 2024 at 10:45:21AM +0800, Jason Wang wrote:
+> Somtime driver may want to enable or disable the config callback. This
+> requires a synchronization with the core. So this patch change the
+> config_enabled to be a integer counter. This allows the toggling of
+> the config_enable to be synchronized between the virtio core and the
+> virtio driver.
+> 
+> The counter is not allowed to be increased greater than one, this
+> simplifies the logic where the interrupt could be disabled immediately
+> without extra synchronization between driver and core.
+> 
+> Signed-off-by: Jason Wang <jasowang@redhat.com>
+> ---
+>  drivers/virtio/virtio.c | 20 +++++++++++++-------
+>  include/linux/virtio.h  |  2 +-
+>  2 files changed, 14 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+> index b968b2aa5f4d..d3aa74b8ae5d 100644
+> --- a/drivers/virtio/virtio.c
+> +++ b/drivers/virtio/virtio.c
+> @@ -127,7 +127,7 @@ static void __virtio_config_changed(struct virtio_device *dev)
+>  {
+>  	struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
+>  
+> -	if (!dev->config_enabled)
+> +	if (dev->config_enabled < 1)
+>  		dev->config_change_pending = true;
+>  	else if (drv && drv->config_changed)
+>  		drv->config_changed(dev);
+> @@ -146,17 +146,23 @@ EXPORT_SYMBOL_GPL(virtio_config_changed);
+>  static void virtio_config_disable(struct virtio_device *dev)
+>  {
+>  	spin_lock_irq(&dev->config_lock);
+> -	dev->config_enabled = false;
+> +	--dev->config_enabled;
+>  	spin_unlock_irq(&dev->config_lock);
+>  }
+>  
+>  static void virtio_config_enable(struct virtio_device *dev)
+>  {
+>  	spin_lock_irq(&dev->config_lock);
+> -	dev->config_enabled = true;
+> -	if (dev->config_change_pending)
+> -		__virtio_config_changed(dev);
+> -	dev->config_change_pending = false;
+> +
+> +	if (dev->config_enabled < 1) {
+> +		++dev->config_enabled;
+> +		if (dev->config_enabled == 1 &&
+> +		    dev->config_change_pending) {
+> +			__virtio_config_changed(dev);
+> +			dev->config_change_pending = false;
+> +		}
+> +	}
+> +
+>  	spin_unlock_irq(&dev->config_lock);
+>  }
+>
 
-Also improve s390 specific documentation for KVM_SET_USER_MEMORY_REGION
-and KVM_SET_USER_MEMORY_REGION2.
+So every disable decrements the counter. Enable only increments it up to 1.
+You seem to be making some very specific assumptions
+about how this API will be used. Any misuse will lead to under/overflow
+eventually ...
 
-Signed-off-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
----
- Documentation/virt/kvm/api.rst | 12 ++++++++++++
- arch/s390/kvm/kvm-s390.c       |  3 +++
- 2 files changed, 15 insertions(+)
 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index a71d91978d9e..eec8df1dde06 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -1403,6 +1403,12 @@ Instead, an abort (data abort if the cause of the page-table update
- was a load or a store, instruction abort if it was an instruction
- fetch) is injected in the guest.
- 
-+S390:
-+^^^^^
-+
-+Returns -EINVAL if the VM has the KVM_VM_S390_UCONTROL flag set.
-+Returns -EINVAL if called on a protected VM.
-+
- 4.36 KVM_SET_TSS_ADDR
- ---------------------
- 
-@@ -6273,6 +6279,12 @@ state.  At VM creation time, all memory is shared, i.e. the PRIVATE attribute
- is '0' for all gfns.  Userspace can control whether memory is shared/private by
- toggling KVM_MEMORY_ATTRIBUTE_PRIVATE via KVM_SET_MEMORY_ATTRIBUTES as needed.
- 
-+S390:
-+^^^^^
-+
-+Returns -EINVAL if the VM has the KVM_VM_S390_UCONTROL flag set.
-+Returns -EINVAL if called on a protected VM.
-+
- 4.141 KVM_SET_MEMORY_ATTRIBUTES
- -------------------------------
- 
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 82e9631cd9ef..854d0d1410be 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -5748,6 +5748,9 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
- {
- 	gpa_t size;
- 
-+	if (kvm_is_ucontrol(kvm))
-+		return -EINVAL;
-+
- 	/* When we are protected, we should not change the memory slots */
- 	if (kvm_s390_pv_get_handle(kvm))
- 		return -EINVAL;
 
-base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
--- 
-2.45.2
+My suggestion would be to
+1. rename config_enabled to config_core_enabled
+2. rename virtio_config_enable/disable to virtio_config_core_enable/disable
+3. add bool config_driver_disabled and make virtio_config_enable/disable
+   switch that.
+4. Change logic from dev->config_enabled to
+   dev->config_core_enabled && !dev->config_driver_disabled
+
+
+
+  
+> @@ -455,7 +461,7 @@ int register_virtio_device(struct virtio_device *dev)
+>  		goto out_ida_remove;
+>  
+>  	spin_lock_init(&dev->config_lock);
+> -	dev->config_enabled = false;
+> +	dev->config_enabled = 0;
+>  	dev->config_change_pending = false;
+>  
+>  	INIT_LIST_HEAD(&dev->vqs);
+> diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> index 96fea920873b..4496f9ba5d82 100644
+> --- a/include/linux/virtio.h
+> +++ b/include/linux/virtio.h
+> @@ -132,7 +132,7 @@ struct virtio_admin_cmd {
+>  struct virtio_device {
+>  	int index;
+>  	bool failed;
+> -	bool config_enabled;
+> +	int config_enabled;
+>  	bool config_change_pending;
+>  	spinlock_t config_lock;
+>  	spinlock_t vqs_list_lock;
+> -- 
+> 2.31.1
 
 
