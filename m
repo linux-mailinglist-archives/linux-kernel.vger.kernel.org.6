@@ -1,337 +1,207 @@
-Return-Path: <linux-kernel+bounces-226894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D77914556
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:51:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7948691455A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:52:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 760461F23AC8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:51:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B76A5B22BD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:52:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 978617E0F2;
-	Mon, 24 Jun 2024 08:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D3812E1D3;
+	Mon, 24 Jun 2024 08:51:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Akb8+ceI"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b="LJ3oP58J"
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [208.88.110.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC645A4D5;
-	Mon, 24 Jun 2024 08:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 249284D108;
+	Mon, 24 Jun 2024 08:51:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=208.88.110.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719219084; cv=none; b=gKWOgz28y646bIx1jRn4W0hZOdKpzniZYio9uBRiEhdVJmmhDdTZxxn20AwvlUbesF6epOn2rNSNd8qcFAfI5utsbajQLf5RF6F2DHuxTR2CB9nlQgcH8I5DBa2TdUU3vbDbunmQqUoVPLN0eAXfez9dlMdhoNE0u3eMAtSPbyI=
+	t=1719219112; cv=none; b=kv9w/PZhsLsHjylnBjhdx+7tZaHk8ux1lfvhAOfm7U6qVxxiBuS09dSJU4gV1dWztXnXE7ldXQqBxcGPw/TUs7slOr0S2YXcUNT3PcyxtEFefr65GsCeUTlMaF6TLss6bycjNK8qgjguYuQ4MDqo/wqbwBk/bTSH/QMiS4LKok0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719219084; c=relaxed/simple;
-	bh=bR/D0cZcNZxtUGrIbt3MJF86EwDDVoIYS//ABn9SvEw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aDL+rUcQuMgn/CT2OTZ56ARrWL6CVh643CSRlkHPC/k+5nl5iJ3/U5oLDXgwl6doltlWJXh3sUyPBNFGCwUtbnEeTpyDtcPr725ChH1Sa+Ma46sfEmy8UhvYNZSUWbMRBC6PyoAy/r/8i35V0NPKxhqL97j3HpfA1udxhNqUolg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Akb8+ceI; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1719219079;
-	bh=bR/D0cZcNZxtUGrIbt3MJF86EwDDVoIYS//ABn9SvEw=;
-	h=From:To:Cc:Subject:Date:From;
-	b=Akb8+ceIjRPVLHXpOLTM5LSCrQTmXTpw0nD49ABxNEauFXmwyzS4SkmRwYHyFiIdb
-	 Uu0qNuhH/DOtGHnmTWO+xa8IO0XG/Aa7c4uIm9P/V2ODNJKgX7ottPvOxR6yvm7ZWS
-	 hOChv+on3LwOFg/7P8cVm5kdFTnXdgT1aulVqxsw=
-Received: from stargazer.. (unknown [113.200.174.117])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 8FC5666BF9;
-	Mon, 24 Jun 2024 04:51:13 -0400 (EDT)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Jan Kara <jack@suse.cz>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Xi Ruoyao <xry111@xry111.site>,
-	Alejandro Colomar <alx@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Huacai Chen <chenhuacai@loongson.cn>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	linux-fsdevel@vger.kernel.org,
-	linux-arch@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] vfs: Shortcut AT_EMPTY_PATH early for statx, and add AT_NO_PATH for statx and fstatat
-Date: Mon, 24 Jun 2024 16:50:26 +0800
-Message-ID: <20240624085037.33442-2-xry111@xry111.site>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719219112; c=relaxed/simple;
+	bh=12KblMR0lvQRAfXHF0Dq4rTSUBeNqIJvXxWeiiTICd0=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=ikCeaJ1x1fd1rRjssI4Y3R3n9CgTO/Bij0Q7Uu0EyuRuITKK2zfBPwxQqzgC1gkzeVi4ZWKHeBVpBNRt9pZ8jaHeQU5o3oIQhV9eJXcKg9DK2G3FmSQ0oTGUukwifgKtr7I0BpsIhYwbvjQyEqORRJISkEvR7qzxAkIA+gnqRgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com; spf=pass smtp.mailfrom=savoirfairelinux.com; dkim=pass (2048-bit key) header.d=savoirfairelinux.com header.i=@savoirfairelinux.com header.b=LJ3oP58J; arc=none smtp.client-ip=208.88.110.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=savoirfairelinux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=savoirfairelinux.com
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id C2AB69C0760;
+	Mon, 24 Jun 2024 04:51:41 -0400 (EDT)
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10032)
+ with ESMTP id l-RopYeFgXC4; Mon, 24 Jun 2024 04:51:40 -0400 (EDT)
+Received: from localhost (localhost [127.0.0.1])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id AF4929C5B22;
+	Mon, 24 Jun 2024 04:51:40 -0400 (EDT)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.savoirfairelinux.com AF4929C5B22
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=savoirfairelinux.com; s=DFC430D2-D198-11EC-948E-34200CB392D2;
+	t=1719219100; bh=a1b5vrBz8D1hFrcHDlPiNjC4drILw4QgPGHNsbulLy8=;
+	h=Date:From:To:Message-ID:MIME-Version;
+	b=LJ3oP58J27UKF0zNSSV68BId3PNm+CFg4j/XjBb7RPo+I2qJzahp6D+6n8tuTj44Z
+	 8QO9uwrbEK8Ct9ftBW+xDsS7pvHxNmTaJ7Vz+ZPWzzWGxnyYDG4hKSnJDR6BqyqfqT
+	 aKMvkDeyE3UySrLZ5dtjNhDKtvRB9XcRpgLs38/X8ZFG6IAizoGQnSCW3qYmOXMYW8
+	 EWWwPr/O/ZkpZUXoAjYmc4hAb/KO8BRTfRnrU9t0FEzdghxzTurVoRxrTXdtKmzVA1
+	 ocwPg6fi0EqzlfcJVjZmSgIAuHJRM3J7QUUV3OGWWWvW4zy3ILfNKhH1N5UbolwFP7
+	 Wta8qqaVcTY3w==
+X-Virus-Scanned: amavis at mail.savoirfairelinux.com
+Received: from mail.savoirfairelinux.com ([127.0.0.1])
+ by localhost (mail.savoirfairelinux.com [127.0.0.1]) (amavis, port 10026)
+ with ESMTP id TBS6RH3a0UlK; Mon, 24 Jun 2024 04:51:40 -0400 (EDT)
+Received: from mail.savoirfairelinux.com (mail.savoirfairelinux.com [192.168.48.237])
+	by mail.savoirfairelinux.com (Postfix) with ESMTP id 601DB9C0760;
+	Mon, 24 Jun 2024 04:51:40 -0400 (EDT)
+Date: Mon, 24 Jun 2024 04:51:39 -0400 (EDT)
+From: Elinor Montmasson <elinor.montmasson@savoirfairelinux.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, 
+	Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, 
+	shengjiu wang <shengjiu.wang@gmail.com>, 
+	Xiubo Lee <Xiubo.Lee@gmail.com>, 
+	Nicolin Chen <nicoleotsuka@gmail.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	linux-sound <linux-sound@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	alsa-devel <alsa-devel@alsa-project.org>, 
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, 
+	Philip-Dylan Gleonec <philip-dylan.gleonec@savoirfairelinux.com>
+Message-ID: <1327841247.1714446.1719219099909.JavaMail.zimbra@savoirfairelinux.com>
+In-Reply-To: <6fcbd97b-4172-48a9-bcdb-3bdf35aba8f7@kernel.org>
+References: <20240620132511.4291-1-elinor.montmasson@savoirfairelinux.com> <20240620132511.4291-7-elinor.montmasson@savoirfairelinux.com> <6fcbd97b-4172-48a9-bcdb-3bdf35aba8f7@kernel.org>
+Subject: Re: [PATCHv5 6/9] ASoC: dt-bindings: fsl-asoc-card: add compatible
+ string for spdif
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_4581 (ZimbraWebClient - GC112 (Linux)/8.8.15_GA_4581)
+Thread-Topic: ASoC: dt-bindings: fsl-asoc-card: add compatible string for spdif
+Thread-Index: mXPND1rvWgYNEmNI1MozJM8+FSSA0A==
 
-It's cheap to check if the path is empty in the userspace, but expensive
-to check if a userspace string is empty from the kernel.  So it seems a
-waste to delay the check into the kernel, and using statx(AT_EMPTY_PATH)
-to implement fstat is slower than a "native" fstat call.
+From: "Krzysztof Kozlowski" <krzk@kernel.org>
+Sent: Sunday, 23 June, 2024 13:07:46
+> On 20/06/2024 15:25, Elinor Montmasson wrote:
+>> The S/PDIF audio card support was merged from imx-spdif into the
+>> fsl-asoc-card driver, making it possible to use an S/PDIF with an ASRC.
+>> Add the new compatible and update properties.
+> 
+> Please use standard email subjects, so with the PATCH keyword in the
+> title. `git format-patch -v5` helps here to create proper versioned
+> patches. Another useful tool is b4.
+>
 
-In the past there was a similar performance issue with several Glibc
-releases using fstatat(AT_EMPTY_PATH) for fstat.  That issue was fixed
-by Glibc with reverting back to plain fstat, and worked around by the
-kernel with a special fast code path for fstatat(AT_EMPTY_PATH) at
-commit 9013c51c630a ("vfs: mostly undo glibc turning 'fstat()' into
-'fstatat(AT_EMPTY_PATH)'").
 
-But for arch/loongarch fstat does not exist, so we have to use statx.
-And on all 32-bit architectures we must use statx for fstat after 2037
-since the plain fstat call uses 32-bit timestamp.  Thus Glibc uses statx
-for fstat on LoongArch and all 32-bit platforms, and these platforms
-still suffer the performance issue.
+Acknowledged, I did not know this option and will be careful about it
+for next versions.
 
-So port the fstatat(AT_EMPTY_PATH) fast path to statx(AT_EMPTY_PATH) as
-well, and add AT_NO_PATH (the name is suggested by Mateusz) which makes
-statx and fstatat completely skip the path check and assume the path is
-empty.
 
-Benchmark on LoongArch Loongson 3A6000:
+>> @@ -33,6 +33,7 @@ properties:
+>>        - items:
+>>            - enum:
+>>                - fsl,imx-sgtl5000
+>> +              - fsl,imx-sabreauto-spdif
+>>                - fsl,imx25-pdk-sgtl5000
+>>                - fsl,imx53-cpuvo-sgtl5000
+>>                - fsl,imx51-babbage-sgtl5000
+>> @@ -54,6 +55,7 @@ properties:
+>>                - fsl,imx6q-ventana-sgtl5000
+>>                - fsl,imx6sl-evk-wm8962
+>>                - fsl,imx6sx-sdb-mqs
+>> +              - fsl,imx6sx-sdb-spdif
+>>                - fsl,imx6sx-sdb-wm8962
+>>                - fsl,imx7d-evk-wm8960
+>>                - karo,tx53-audio-sgtl5000
+>> @@ -65,6 +67,7 @@ properties:
+>>                - fsl,imx-audio-sgtl5000
+>>                - fsl,imx-audio-wm8960
+>>                - fsl,imx-audio-wm8962
+>> +              - fsl,imx-audio-spdif
+> 
+> This does not look right. It's quite generic, so now you allow any
+> variant to be used with this fallback.
+> 
+> Please do not grow more this list of all possible combinations and
+> instead add specific lists. Otherwise, please explain why this is valid
+> hardware:
+> "fsl,imx7d-evk-wm8960", "fsl,imx-audio-spdif"
 
-1. Unpatched kernel, Glibc fstat, actually statx(AT_EMPTY_PATH):
-   2575328 ops/s
-2. Patched kernel, Glibc fstat, actually statx(AT_EMPTY_PATH):
-   5434782 ops/s, +111% from 1
-3. Patched kernel, statx(AT_NO_PATH): 5773672 ops/s, +124% from 1,
-   +6.2% from 2.
 
-Seccomp sandboxes can also green light fstatat/statx(AT_NO_PATH) easier
-than fstatat/statx(AT_EMPTY_PATH) for which the audition needs to check
-5434782543478254347825434782the path but seccomp BPF program cannot do that now.
+I wanted to follow the current style of this documentation file,
+but I agree it's better to prevent using "fsl,imx-audio-spdif"
+with any compatible, I can use a specific list for the next version.
 
-Link: https://sourceware.org/pipermail/libc-alpha/2023-September/151364.html
-Link: https://sourceware.org/git/?p=glibc.git;a=commit;h=e6547d635b99
-Link: https://sourceware.org/git/?p=glibc.git;a=commit;h=551101e8240b
-Link: https://lore.kernel.org/loongarch/599df4a3-47a4-49be-9c81-8e21ea1f988a@xen0n.name/
-Cc: Christian Brauner <brauner@kernel.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-Cc: Jan Kara <jack@suse.cz>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>
-Cc: Alejandro Colomar <alx@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Cc: Huacai Chen <chenhuacai@loongson.cn>
-Cc: Xuerui Wang <kernel@xen0n.name>
-Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>
-Cc: Icenowy Zheng <uwu@icenowy.me>
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-arch@vger.kernel.org
-Cc: loongarch@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Xi Ruoyao <xry111@xry111.site>
----
 
-Superseds
-https://lore.kernel.org/all/20240622105621.7922-1-xry111@xry111.site/.
+> 
+> 
+>>        - items:
+>>            - enum:
+>>                - fsl,imx-audio-ac97
+>> @@ -81,6 +84,7 @@ properties:
+>>                - fsl,imx-audio-wm8960
+>>                - fsl,imx-audio-wm8962
+>>                - fsl,imx-audio-wm8958
+>> +              - fsl,imx-audio-spdif
+> 
+> Fallbacks should not be used alone. Why this is needed?
 
- fs/stat.c                  | 103 +++++++++++++++++++++++++------------
- include/uapi/linux/fcntl.h |   3 ++
- 2 files changed, 74 insertions(+), 32 deletions(-)
 
-diff --git a/fs/stat.c b/fs/stat.c
-index 70bd3e888cfa..2b7d4a22f971 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -208,7 +208,7 @@ int getname_statx_lookup_flags(int flags)
- 		lookup_flags |= LOOKUP_FOLLOW;
- 	if (!(flags & AT_NO_AUTOMOUNT))
- 		lookup_flags |= LOOKUP_AUTOMOUNT;
--	if (flags & AT_EMPTY_PATH)
-+	if (flags & (AT_EMPTY_PATH | AT_NO_PATH))
- 		lookup_flags |= LOOKUP_EMPTY;
- 
- 	return lookup_flags;
-@@ -217,7 +217,8 @@ int getname_statx_lookup_flags(int flags)
- /**
-  * vfs_statx - Get basic and extra attributes by filename
-  * @dfd: A file descriptor representing the base dir for a relative filename
-- * @filename: The name of the file of interest
-+ * @filename: The name of the file of interest, or NULL if the file of
-+	      interest is dfd itself and dfd isn't AT_FDCWD
-  * @flags: Flags to control the query
-  * @stat: The result structure to fill in.
-  * @request_mask: STATX_xxx flags indicating what the caller wants
-@@ -232,42 +233,56 @@ int getname_statx_lookup_flags(int flags)
- static int vfs_statx(int dfd, struct filename *filename, int flags,
- 	      struct kstat *stat, u32 request_mask)
- {
--	struct path path;
-+	struct path path, *p;
-+	struct fd f;
- 	unsigned int lookup_flags = getname_statx_lookup_flags(flags);
- 	int error;
- 
- 	if (flags & ~(AT_SYMLINK_NOFOLLOW | AT_NO_AUTOMOUNT | AT_EMPTY_PATH |
--		      AT_STATX_SYNC_TYPE))
-+		      AT_STATX_SYNC_TYPE | AT_NO_PATH))
- 		return -EINVAL;
- 
- retry:
--	error = filename_lookup(dfd, filename, lookup_flags, &path, NULL);
--	if (error)
--		goto out;
-+	if (filename) {
-+		p = &path;
-+		error = filename_lookup(dfd, filename, lookup_flags, p,
-+					NULL);
-+		if (error)
-+			goto out;
-+	} else {
-+		f = fdget_raw(dfd);
-+		if (!f.file)
-+			return -EBADF;
-+		p = &f.file->f_path;
-+	}
- 
--	error = vfs_getattr(&path, stat, request_mask, flags);
-+	error = vfs_getattr(p, stat, request_mask, flags);
- 
- 	if (request_mask & STATX_MNT_ID_UNIQUE) {
--		stat->mnt_id = real_mount(path.mnt)->mnt_id_unique;
-+		stat->mnt_id = real_mount(p->mnt)->mnt_id_unique;
- 		stat->result_mask |= STATX_MNT_ID_UNIQUE;
- 	} else {
--		stat->mnt_id = real_mount(path.mnt)->mnt_id;
-+		stat->mnt_id = real_mount(p->mnt)->mnt_id;
- 		stat->result_mask |= STATX_MNT_ID;
- 	}
- 
--	if (path.mnt->mnt_root == path.dentry)
-+	if (p->mnt->mnt_root == p->dentry)
- 		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
- 	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
- 
- 	/* Handle STATX_DIOALIGN for block devices. */
- 	if (request_mask & STATX_DIOALIGN) {
--		struct inode *inode = d_backing_inode(path.dentry);
-+		struct inode *inode = d_backing_inode(p->dentry);
- 
- 		if (S_ISBLK(inode->i_mode))
- 			bdev_statx_dioalign(inode, stat);
- 	}
- 
--	path_put(&path);
-+	if (filename)
-+		path_put(p);
-+	else
-+		fdput(f);
-+
- 	if (retry_estale(error, lookup_flags)) {
- 		lookup_flags |= LOOKUP_REVAL;
- 		goto retry;
-@@ -276,33 +291,53 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
- 	return error;
- }
- 
--int vfs_fstatat(int dfd, const char __user *filename,
--			      struct kstat *stat, int flags)
-+static struct filename *getname_statx(int dfd, const char __user *filename,
-+				      int flags)
- {
--	int ret;
--	int statx_flags = flags | AT_NO_AUTOMOUNT;
--	struct filename *name;
-+	int r;
-+	char c;
-+	bool no_path = false;
-+
-+	if (dfd < 0 && dfd != AT_FDCWD)
-+		return ERR_PTR(-EBADF);
- 
- 	/*
--	 * Work around glibc turning fstat() into fstatat(AT_EMPTY_PATH)
-+	 * Work around glibc turning fstat() into fstatat(AT_EMPTY_PATH) or
-+	 * statx(AT_EMPTY_PATH)
- 	 *
- 	 * If AT_EMPTY_PATH is set, we expect the common case to be that
- 	 * empty path, and avoid doing all the extra pathname work.
- 	 */
--	if (dfd >= 0 && flags == AT_EMPTY_PATH) {
--		char c;
-+	if (flags & AT_NO_PATH)
-+		no_path = true;
-+	else if (flags & AT_EMPTY_PATH) {
-+		r = get_user(c, filename);
-+		if (unlikely(r))
-+			return ERR_PTR(r);
-+		no_path = likely(!c);
-+	}
- 
--		ret = get_user(c, filename);
--		if (unlikely(ret))
--			return ret;
-+	if (no_path)
-+		return dfd == AT_FDCWD ? getname_kernel("") : NULL;
- 
--		if (likely(!c))
--			return vfs_fstat(dfd, stat);
--	}
-+	return getname_flags(filename, getname_statx_lookup_flags(flags),
-+			     NULL);
-+}
-+
-+int vfs_fstatat(int dfd, const char __user *filename,
-+			      struct kstat *stat, int flags)
-+{
-+	int ret;
-+	int statx_flags = flags | AT_NO_AUTOMOUNT;
-+	struct filename *name = getname_statx(dfd, filename, flags);
-+
-+	if (IS_ERR(name))
-+		return PTR_ERR(name);
- 
--	name = getname_flags(filename, getname_statx_lookup_flags(statx_flags), NULL);
- 	ret = vfs_statx(dfd, name, statx_flags, stat, STATX_BASIC_STATS);
--	putname(name);
-+
-+	if (name)
-+		putname(name);
- 
- 	return ret;
- }
-@@ -703,11 +738,15 @@ SYSCALL_DEFINE5(statx,
- 		struct statx __user *, buffer)
- {
- 	int ret;
--	struct filename *name;
-+	struct filename *name = getname_statx(dfd, filename, flags);
-+
-+	if (IS_ERR(name))
-+		return PTR_ERR(name);
- 
--	name = getname_flags(filename, getname_statx_lookup_flags(flags), NULL);
- 	ret = do_statx(dfd, name, flags, mask, buffer);
--	putname(name);
-+
-+	if (name)
-+		putname(name);
- 
- 	return ret;
- }
-diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-index c0bcc185fa48..470b5c77000c 100644
---- a/include/uapi/linux/fcntl.h
-+++ b/include/uapi/linux/fcntl.h
-@@ -113,6 +113,9 @@
- #define AT_STATX_DONT_SYNC	0x4000	/* - Don't sync attributes with the server */
- 
- #define AT_RECURSIVE		0x8000	/* Apply to the entire subtree */
-+#define AT_NO_PATH		0x10000	/* Ignore relative pathname,
-+					   behave as if AT_EMPTY_PATH and
-+					   the relative pathname is empty */
- 
- /* Flags for name_to_handle_at(2). We reuse AT_ flag space to save bits... */
- #define AT_HANDLE_FID		AT_REMOVEDIR	/* file handle is needed to
--- 
-2.45.2
+"fsl,imx-audio-spdif" is used alone in most DTS files.
+"fsl,imx-sabreauto-spdif" and "fsl,imx6sx-sdb-spdif" are used with
+"fsl,imx-audio-spdif" in only 2 specific DTS files. 
 
+
+> The compatible is already documented, so now you create duplicated binding.
+> 
+> This is very confusing.
+
+
+The double compatible documentation is only temporary, next commit (7/9)
+removes the previous binding in "fsl,imx-audio-spdif.yaml".
+I separated these changes in multiple commit to ease git history searching
+by subject/file.
+If required, I can merge commits 6/9 and 7/9.
+
+
+>> @@ -195,3 +208,12 @@ examples:
+>>               "AIN2L", "Line In Jack",
+>>               "AIN2R", "Line In Jack";
+>>      };
+>> +
+>> +  - |
+>> +    sound-spdif-asrc {
+>> +      compatible = "fsl,imx-audio-spdif";
+>> +      model = "spdif-asrc-audio";
+>> +      audio-cpu = <&spdif>;
+>> +      audio-asrc = <&easrc>;
+>> +      audio-codec = <&spdifdit>, <&spdifdir>;
+>> +    };
+> 
+> Do not introduce another indentation style. Look what is above.
+
+
+Ack, I'll correct this for next version.
+
+
+Best regards,
+Elinor Montmasson
 
