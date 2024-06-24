@@ -1,441 +1,188 @@
-Return-Path: <linux-kernel+bounces-226963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D22A491467A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:32:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E12091467E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879BD282150
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:32:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46402282A77
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E4D131BDD;
-	Mon, 24 Jun 2024 09:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3915131BDF;
+	Mon, 24 Jun 2024 09:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="R91uzJJ+"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=zytor.com header.i=@zytor.com header.b="AauTATGJ"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6EF256E
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1EC5256E;
+	Mon, 24 Jun 2024 09:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719221554; cv=none; b=mOb/BB5ovBf0ndgTcIwGdYcEyyaSXwXE97kC1mYaZnt8mFvJUf4EHOCKTdWNmKb05lqpalvWW/yKP/aVdjmxd8gmYnt/z275EvQZFhpi5193vRVwsJ6VO+gRi3dC8k7Jg/RgdaQcrCCjipG1OAE5F5six5qRzy0INmoeTTAWRKI=
+	t=1719221594; cv=none; b=gKqhW1kq3zHlQctxGtG1Wom8ttwAlMss8UnAjivbYOFJmSQY8FPVRKDkzEZxhqX/JM6v4coCJFbDyNiEAO5T1puwdcCZZdW/XIJSsPF9HnIv9bEd4LVfJMMmXMP9JuDU9ivibvmMgTV0//Q/dl+gQ3LzMBn6oaKYdkZlID7MM3I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719221554; c=relaxed/simple;
-	bh=cpjpeDG3Oi/Xaxnm8EApXaEf/9L0dpizxBqg7otXitA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Raji2P6/TCv9aMbzNkgbV+mjg+QVUa9X5fmj1kC1C1rsQi3AsDU34kx9Q9mTZUscqVotf/b6aA3474WwKZjWfbv1hxwZONfsX7O46bypU03mNeReD/XjidUUWoMv9eEs48nE19qYwDD1K9UYG/X0hUQc5jfTEE3W4KeHsSGHaLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=R91uzJJ+; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57d1d614049so4523648a12.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:32:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719221551; x=1719826351; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ylP9hhefoKdB6RU1zDeF3Hm4NcbTZcv1z2JYeHMCiz0=;
-        b=R91uzJJ+2u1BBwftt4T47R1zlNraZj9gfg9S2iZu5XUAddGVGclX1UnppKY2oFH+0C
-         C5+bSEi+moQLYHs0tdUE9jHhRPieibHLleHPKVfTQLu7AUeqV3Q/VNiY3YJd0u08ll4k
-         WyfJsgcJK8Ucbf/weEGhZFkM24Cn1n7Rex5DlLr92MvTeiNei4+4sOBlDv3u3wmn/ANe
-         k396nrPxB+VRYDrxu0iQHR8tCQBd8s2xhtOqyB+ib2iJA2PzpYxXnfOI5vzHsDVTfNdX
-         qf+ENpLNehv66Qn0Ko83hAJn3e3KaoV0j3zKTp8eR4J0jSjL0vDwWNHbXfhHXvONZV/5
-         Xgbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719221551; x=1719826351;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ylP9hhefoKdB6RU1zDeF3Hm4NcbTZcv1z2JYeHMCiz0=;
-        b=js9je19H/8EaOOS06vN/LIVnxVoDwjQd3F/Rz+Gj02J9pXwan7PJH5Ys5Z+IOpcOk+
-         2uo31KS/4Kg8WZSZmqyL1lNu/ou5gAFhQZRExEK4lyDkbNwUDv9IGiqZ01wZoJTyF/oC
-         dN/3hVpnLqJbnv3V4+4BFo8tgDHq4IisECnWBAV5Aip0AfjC/dfLBuhKDI/hh9NO8/pl
-         TXRAsUzeXqdZ6Anh7YnC0W1p2Kvom28rz5I9Ug5oclc4ZTx+zS9cXOIlF0D9dYAQVeeN
-         HZ0UTsBXjPuMnvH68oNPz/1PTluCVnYLScnCFh8UNJaOaDHarfUPhb95E+i4eVJ5PpC9
-         pTDA==
-X-Forwarded-Encrypted: i=1; AJvYcCVFwfsHzkfMwHiAgxLzFxmbtQPBY6qlevNK6hACVSMAtzXxsYFvmdSc6wjWvDgmE/z1rI6+Gk6gEwj0MWNK7DaPiMTOLOSBiqSZTKDK
-X-Gm-Message-State: AOJu0Yy4+hllGzDr/YcDcrGktkHGYlLQ4GMB0wbx1BHmJKxCKV+/dzjK
-	MFFbXNQ+gZBUk5EfqOz6UmDqEl3oxQZfz92RSikFr9jSxW64OP8MquIBrxbDnml8SIi/mu1BBpT
-	Pn+oB8Y12njI3oEXVagtP2oz8JgZuwmq1bX4MLg==
-X-Google-Smtp-Source: AGHT+IH/JL/qIpbyxq7hJOXhkGJPFyzywZEiucA6mKuy0VX/4fU0m7YLa6uwthvClRi+aVrun5e0UNcYS0P4SB4gud0=
-X-Received: by 2002:a50:d483:0:b0:57a:33a5:9b71 with SMTP id
- 4fb4d7f45d1cf-57d4bdbe8famr3538087a12.33.1719221550794; Mon, 24 Jun 2024
- 02:32:30 -0700 (PDT)
+	s=arc-20240116; t=1719221594; c=relaxed/simple;
+	bh=uGShTT3yWj6lQt8zWhRk4igFFEKuFOanTXDL9HxgtDE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=qpfIGvR9wZljM3DnNxNNAVRdmwXBDzzr0yqvvYIetbITGdxGWNqsQ9WOi6yHRghHmA3SrmIxeB3SOCeRlqcf7PAZe/kpC28bgCnaSrLh9bUyo3D6wOJx7R/TXRjcTqjaKiJ7EIAIJQTsRudZB0LDRbJFkJKT6ax+FejouOQCzbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=AauTATGJ; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45O9WbWG018555
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+	Mon, 24 Jun 2024 02:32:42 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45O9WbWG018555
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024061501; t=1719221563;
+	bh=HtK7zbTeMNBQDP5GRzOvrYRCcPCEB2uMzRmd/LSKfxw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=AauTATGJ9v5O07BVmaQzJ3F7KJz0F9iNn8mzFrDuOclNeIQ99SyuWK5vkLVqljDoz
+	 c9yrkzNz4hTwOdCW2R5McnIfhoe260Jmi2uZw5I2hrqCyCwzjIVdwncPmUZ30ntZ2Z
+	 2N4i2uiI/5javFiqz+PT1rp/hzHlwTz3yB0A/gGPwaGpwqw2ptov+9LMRgeAdFl6Lr
+	 b7V37V0AKcWPUMx4/P8ymu6Ai4zZ0sSGwxvIaduFJyM5TlZrmXZdY8BURZ7YCayrDQ
+	 nYPVRpID7mKaC8d2El6g2tyPS6eRbEgAl85zQ2oY23IE+vLXQwI8WHjl8KNwavCXYd
+	 JPN7TyGCyRdTw==
+From: "Xin Li (Intel)" <xin@zytor.com>
+To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
+Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+        will@kernel.org, peterz@infradead.org, akpm@linux-foundation.org,
+        acme@kernel.org, namhyung@kernel.org, brgerst@gmail.com
+Subject: [PATCH v3A 4/4] x86/cpufeatures: Use AWK to generate {REQUIRED|DISABLED}_MASK_BIT_SET
+Date: Mon, 24 Jun 2024 02:32:36 -0700
+Message-ID: <20240624093236.18543-1-xin@zytor.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <CAMzpN2hMP8c9PXy=0YV4Ln+u_1n1spJP2jaYXKzEABWLh0+hkQ@mail.gmail.com>
+References: <CAMzpN2hMP8c9PXy=0YV4Ln+u_1n1spJP2jaYXKzEABWLh0+hkQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605114100.315918-1-bjorn@kernel.org> <20240605114100.315918-7-bjorn@kernel.org>
-In-Reply-To: <20240605114100.315918-7-bjorn@kernel.org>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Mon, 24 Jun 2024 11:32:19 +0200
-Message-ID: <CAHVXubhO+Ew7dsykW63RcpCe6er2DohwUt51ZGxamdCc=EVi7w@mail.gmail.com>
-Subject: Re: [PATCH v4 06/11] riscv: mm: Add memory hotplugging support
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, David Hildenbrand <david@redhat.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	linux-riscv@lists.infradead.org, Oscar Salvador <osalvador@suse.de>, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Andrew Bresticker <abrestic@rivosinc.com>, 
-	Chethan Seshadri <Chethan.Seshadri@catalinasystems.io>, Lorenzo Stoakes <lstoakes@gmail.com>, 
-	Santosh Mamila <santosh.mamila@catalinasystems.io>, 
-	Sivakumar Munnangi <siva.munnangi@catalinasystems.io>, Sunil V L <sunilvl@ventanamicro.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 5, 2024 at 1:41=E2=80=AFPM Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.=
-org> wrote:
->
-> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
->
-> For an architecture to support memory hotplugging, a couple of
-> callbacks needs to be implemented:
->
->  arch_add_memory()
->   This callback is responsible for adding the physical memory into the
->   direct map, and call into the memory hotplugging generic code via
->   __add_pages() that adds the corresponding struct page entries, and
->   updates the vmemmap mapping.
->
->  arch_remove_memory()
->   This is the inverse of the callback above.
->
->  vmemmap_free()
->   This function tears down the vmemmap mappings (if
->   CONFIG_SPARSEMEM_VMEMMAP is enabled), and also deallocates the
->   backing vmemmap pages. Note that for persistent memory, an
->   alternative allocator for the backing pages can be used; The
->   vmem_altmap. This means that when the backing pages are cleared,
->   extra care is needed so that the correct deallocation method is
->   used.
->
->  arch_get_mappable_range()
->   This functions returns the PA range that the direct map can map.
->   Used by the MHP internals for sanity checks.
->
-> The page table unmap/teardown functions are heavily based on code from
-> the x86 tree. The same remove_pgd_mapping() function is used in both
-> vmemmap_free() and arch_remove_memory(), but in the latter function
-> the backing pages are not removed.
->
-> Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
-> ---
->  arch/riscv/mm/init.c | 267 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 267 insertions(+)
->
-> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-> index 1f7e7c223bec..bfa2dea95354 100644
-> --- a/arch/riscv/mm/init.c
-> +++ b/arch/riscv/mm/init.c
-> @@ -1534,3 +1534,270 @@ struct execmem_info __init *execmem_arch_setup(vo=
-id)
->  }
->  #endif /* CONFIG_MMU */
->  #endif /* CONFIG_EXECMEM */
-> +
-> +#ifdef CONFIG_MEMORY_HOTPLUG
-> +static void __meminit free_pte_table(pte_t *pte_start, pmd_t *pmd)
-> +{
-> +       struct page *page =3D pmd_page(*pmd);
-> +       struct ptdesc *ptdesc =3D page_ptdesc(page);
-> +       pte_t *pte;
-> +       int i;
-> +
-> +       for (i =3D 0; i < PTRS_PER_PTE; i++) {
-> +               pte =3D pte_start + i;
-> +               if (!pte_none(*pte))
-> +                       return;
-> +       }
-> +
-> +       pagetable_pte_dtor(ptdesc);
-> +       if (PageReserved(page))
-> +               free_reserved_page(page);
-> +       else
-> +               pagetable_free(ptdesc);
-> +       pmd_clear(pmd);
-> +}
-> +
-> +static void __meminit free_pmd_table(pmd_t *pmd_start, pud_t *pud)
-> +{
-> +       struct page *page =3D pud_page(*pud);
-> +       struct ptdesc *ptdesc =3D page_ptdesc(page);
-> +       pmd_t *pmd;
-> +       int i;
-> +
-> +       for (i =3D 0; i < PTRS_PER_PMD; i++) {
-> +               pmd =3D pmd_start + i;
-> +               if (!pmd_none(*pmd))
-> +                       return;
-> +       }
-> +
-> +       pagetable_pmd_dtor(ptdesc);
-> +       if (PageReserved(page))
-> +               free_reserved_page(page);
-> +       else
-> +               pagetable_free(ptdesc);
-> +       pud_clear(pud);
-> +}
-> +
-> +static void __meminit free_pud_table(pud_t *pud_start, p4d_t *p4d)
-> +{
-> +       struct page *page =3D p4d_page(*p4d);
-> +       pud_t *pud;
-> +       int i;
-> +
-> +       for (i =3D 0; i < PTRS_PER_PUD; i++) {
-> +               pud =3D pud_start + i;
-> +               if (!pud_none(*pud))
-> +                       return;
-> +       }
-> +
-> +       if (PageReserved(page))
-> +               free_reserved_page(page);
-> +       else
-> +               free_pages((unsigned long)page_address(page), 0);
-> +       p4d_clear(p4d);
-> +}
-> +
-> +static void __meminit free_vmemmap_storage(struct page *page, size_t siz=
-e,
-> +                                          struct vmem_altmap *altmap)
-> +{
-> +       int order =3D get_order(size);
-> +
-> +       if (altmap) {
-> +               vmem_altmap_free(altmap, size >> PAGE_SHIFT);
-> +               return;
-> +       }
-> +
-> +       if (PageReserved(page)) {
-> +               unsigned int nr_pages =3D 1 << order;
-> +
-> +               while (nr_pages--)
-> +                       free_reserved_page(page++);
-> +               return;
-> +       }
-> +
-> +       free_pages((unsigned long)page_address(page), order);
-> +}
-> +
-> +static void __meminit remove_pte_mapping(pte_t *pte_base, unsigned long =
-addr, unsigned long end,
-> +                                        bool is_vmemmap, struct vmem_alt=
-map *altmap)
-> +{
-> +       unsigned long next;
-> +       pte_t *ptep, pte;
-> +
-> +       for (; addr < end; addr =3D next) {
-> +               next =3D (addr + PAGE_SIZE) & PAGE_MASK;
-> +               if (next > end)
-> +                       next =3D end;
-> +
-> +               ptep =3D pte_base + pte_index(addr);
-> +               pte =3D ptep_get(ptep);
-> +               if (!pte_present(*ptep))
-> +                       continue;
-> +
-> +               pte_clear(&init_mm, addr, ptep);
-> +               if (is_vmemmap)
-> +                       free_vmemmap_storage(pte_page(pte), PAGE_SIZE, al=
-tmap);
-> +       }
-> +}
-> +
-> +static void __meminit remove_pmd_mapping(pmd_t *pmd_base, unsigned long =
-addr, unsigned long end,
-> +                                        bool is_vmemmap, struct vmem_alt=
-map *altmap)
-> +{
-> +       unsigned long next;
-> +       pte_t *pte_base;
-> +       pmd_t *pmdp, pmd;
-> +
-> +       for (; addr < end; addr =3D next) {
-> +               next =3D pmd_addr_end(addr, end);
-> +               pmdp =3D pmd_base + pmd_index(addr);
-> +               pmd =3D pmdp_get(pmdp);
-> +               if (!pmd_present(pmd))
-> +                       continue;
-> +
-> +               if (pmd_leaf(pmd)) {
-> +                       pmd_clear(pmdp);
-> +                       if (is_vmemmap)
-> +                               free_vmemmap_storage(pmd_page(pmd), PMD_S=
-IZE, altmap);
-> +                       continue;
-> +               }
-> +
-> +               pte_base =3D (pte_t *)pmd_page_vaddr(*pmdp);
-> +               remove_pte_mapping(pte_base, addr, next, is_vmemmap, altm=
-ap);
-> +               free_pte_table(pte_base, pmdp);
-> +       }
-> +}
-> +
-> +static void __meminit remove_pud_mapping(pud_t *pud_base, unsigned long =
-addr, unsigned long end,
-> +                                        bool is_vmemmap, struct vmem_alt=
-map *altmap)
-> +{
-> +       unsigned long next;
-> +       pud_t *pudp, pud;
-> +       pmd_t *pmd_base;
-> +
-> +       for (; addr < end; addr =3D next) {
-> +               next =3D pud_addr_end(addr, end);
-> +               pudp =3D pud_base + pud_index(addr);
-> +               pud =3D pudp_get(pudp);
-> +               if (!pud_present(pud))
-> +                       continue;
-> +
-> +               if (pud_leaf(pud)) {
-> +                       if (pgtable_l4_enabled) {
-> +                               pud_clear(pudp);
-> +                               if (is_vmemmap)
-> +                                       free_vmemmap_storage(pud_page(pud=
-), PUD_SIZE, altmap);
-> +                       }
-> +                       continue;
-> +               }
-> +
-> +               pmd_base =3D pmd_offset(pudp, 0);
-> +               remove_pmd_mapping(pmd_base, addr, next, is_vmemmap, altm=
-ap);
-> +
-> +               if (pgtable_l4_enabled)
-> +                       free_pmd_table(pmd_base, pudp);
-> +       }
-> +}
-> +
-> +static void __meminit remove_p4d_mapping(p4d_t *p4d_base, unsigned long =
-addr, unsigned long end,
-> +                                        bool is_vmemmap, struct vmem_alt=
-map *altmap)
-> +{
-> +       unsigned long next;
-> +       p4d_t *p4dp, p4d;
-> +       pud_t *pud_base;
-> +
-> +       for (; addr < end; addr =3D next) {
-> +               next =3D p4d_addr_end(addr, end);
-> +               p4dp =3D p4d_base + p4d_index(addr);
-> +               p4d =3D p4dp_get(p4dp);
-> +               if (!p4d_present(p4d))
-> +                       continue;
-> +
-> +               if (p4d_leaf(p4d)) {
-> +                       if (pgtable_l5_enabled) {
-> +                               p4d_clear(p4dp);
-> +                               if (is_vmemmap)
-> +                                       free_vmemmap_storage(p4d_page(p4d=
-), P4D_SIZE, altmap);
-> +                       }
-> +                       continue;
-> +               }
-> +
-> +               pud_base =3D pud_offset(p4dp, 0);
-> +               remove_pud_mapping(pud_base, addr, next, is_vmemmap, altm=
-ap);
-> +
-> +               if (pgtable_l5_enabled)
-> +                       free_pud_table(pud_base, p4dp);
-> +       }
-> +}
-> +
-> +static void __meminit remove_pgd_mapping(unsigned long va, unsigned long=
- end, bool is_vmemmap,
-> +                                        struct vmem_altmap *altmap)
-> +{
-> +       unsigned long addr, next;
-> +       p4d_t *p4d_base;
-> +       pgd_t *pgd;
-> +
-> +       for (addr =3D va; addr < end; addr =3D next) {
-> +               next =3D pgd_addr_end(addr, end);
-> +               pgd =3D pgd_offset_k(addr);
-> +
-> +               if (!pgd_present(*pgd))
-> +                       continue;
-> +
-> +               if (pgd_leaf(*pgd))
-> +                       continue;
-> +
-> +               p4d_base =3D p4d_offset(pgd, 0);
-> +               remove_p4d_mapping(p4d_base, addr, next, is_vmemmap, altm=
-ap);
-> +       }
-> +
-> +       flush_tlb_all();
-> +}
-> +
-> +static void __meminit remove_linear_mapping(phys_addr_t start, u64 size)
-> +{
-> +       unsigned long va =3D (unsigned long)__va(start);
-> +       unsigned long end =3D (unsigned long)__va(start + size);
-> +
-> +       remove_pgd_mapping(va, end, false, NULL);
-> +}
-> +
-> +struct range arch_get_mappable_range(void)
-> +{
-> +       struct range mhp_range;
-> +
-> +       mhp_range.start =3D __pa(PAGE_OFFSET);
-> +       mhp_range.end =3D __pa(PAGE_END - 1);
-> +       return mhp_range;
-> +}
-> +
-> +int __ref arch_add_memory(int nid, u64 start, u64 size, struct mhp_param=
-s *params)
-> +{
-> +       int ret =3D 0;
-> +
-> +       create_linear_mapping_range(start, start + size, 0, &params->pgpr=
-ot);
-> +       ret =3D __add_pages(nid, start >> PAGE_SHIFT, size >> PAGE_SHIFT,=
- params);
-> +       if (ret) {
-> +               remove_linear_mapping(start, size);
-> +               goto out;
-> +       }
-> +
-> +       max_pfn =3D PFN_UP(start + size);
-> +       max_low_pfn =3D max_pfn;
-> +
-> + out:
-> +       flush_tlb_all();
-> +       return ret;
-> +}
-> +
-> +void __ref arch_remove_memory(u64 start, u64 size, struct vmem_altmap *a=
-ltmap)
-> +{
-> +       __remove_pages(start >> PAGE_SHIFT, size >> PAGE_SHIFT, altmap);
-> +       remove_linear_mapping(start, size);
-> +       flush_tlb_all();
-> +}
-> +
-> +void __ref vmemmap_free(unsigned long start, unsigned long end, struct v=
-mem_altmap *altmap)
-> +{
-> +       remove_pgd_mapping(start, end, true, altmap);
-> +}
-> +#endif /* CONFIG_MEMORY_HOTPLUG */
-> --
-> 2.43.0
->
+Generate macros {REQUIRED|DISABLED}_MASK_BIT_SET in the newly added AWK
+script that generates the required and disabled feature mask header.
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+Suggested-by: Brian Gerst <brgerst@gmail.com>
+Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+---
 
-Thanks,
+Change since v3:
+* Checking NCAPINTS isn't necessary anymore.  It was needed when these
+  macros had to be manually updated, but now if cpufeatures.h changes
+  this header will be regenerated (Brian Gerst).
+---
+ arch/x86/include/asm/cpufeature.h | 69 -------------------------------
+ arch/x86/tools/featuremasks.awk   |  9 +++-
+ 2 files changed, 8 insertions(+), 70 deletions(-)
 
-Alex
+diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
+index 8332f596ba3c..8161dfb3255c 100644
+--- a/arch/x86/include/asm/cpufeature.h
++++ b/arch/x86/include/asm/cpufeature.h
+@@ -55,75 +55,6 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
+ #define test_cpu_cap(c, bit)						\
+ 	 arch_test_bit(bit, (unsigned long *)((c)->x86_capability))
+ 
+-/*
+- * There are 32 bits/features in each mask word.  The high bits
+- * (selected with (bit>>5) give us the word number and the low 5
+- * bits give us the bit/feature number inside the word.
+- * (1UL<<((bit)&31) gives us a mask for the feature_bit so we can
+- * see if it is set in the mask word.
+- */
+-#define CHECK_BIT_IN_MASK_WORD(maskname, word, bit)	\
+-	(((bit)>>5)==(word) && (1UL<<((bit)&31) & maskname##word ))
+-
+-/*
+- * {REQUIRED,DISABLED}_MASK_CHECK below may seem duplicated with the
+- * following BUILD_BUG_ON_ZERO() check but when NCAPINTS gets changed, all
+- * header macros which use NCAPINTS need to be changed. The duplicated macro
+- * use causes the compiler to issue errors for all headers so that all usage
+- * sites can be corrected.
+- */
+-#define REQUIRED_MASK_BIT_SET(feature_bit)		\
+-	 ( CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  0, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  1, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  2, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  3, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  4, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  5, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  6, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  7, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  8, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  9, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 10, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 11, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 12, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 13, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 14, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 15, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 16, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 19, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 20, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 21, feature_bit) ||	\
+-	   REQUIRED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 22))
+-
+-#define DISABLED_MASK_BIT_SET(feature_bit)				\
+-	 ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  1, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  2, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  3, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  4, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  5, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  6, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  7, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  8, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  9, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 10, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 11, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 12, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 13, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 14, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 15, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 19, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 20, feature_bit) ||	\
+-	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 21, feature_bit) ||	\
+-	   DISABLED_MASK_CHECK					  ||	\
+-	   BUILD_BUG_ON_ZERO(NCAPINTS != 22))
+-
+ #define cpu_has(c, bit)							\
+ 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
+ 	 test_cpu_cap(c, bit))
+diff --git a/arch/x86/tools/featuremasks.awk b/arch/x86/tools/featuremasks.awk
+index 989b021e73d3..2a936411c219 100755
+--- a/arch/x86/tools/featuremasks.awk
++++ b/arch/x86/tools/featuremasks.awk
+@@ -77,7 +77,14 @@ END {
+ 			printf "#define %s_MASK%d\t0x%08x\n", s, i, masks[i];
+ 		}
+ 
+-		printf "#define %s_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != %d)\n\n", s, ncapints;
++		printf "\n#define %s_MASK_BIT_SET(x)\t\t\t\\\n", s;
++		printf "\t((\t\t\t\t\t";
++		for (i = 0; i < ncapints; i++) {
++			if (masks[i])
++				printf "\t\\\n\t\t((x) >> 5) == %2d ? %s_MASK%d :", i, s, i;
++		}
++		printf " 0\t\\\n";
++		printf "\t) & (1 << ((x) & 31)))\n";
+ 	}
+ 
+ 	printf "#endif /* _ASM_X86_FEATUREMASKS_H */\n";
+-- 
+2.45.2
+
 
