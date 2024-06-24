@@ -1,207 +1,138 @@
-Return-Path: <linux-kernel+bounces-227713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 231219155C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:49:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628C89155CA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953771F21AEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:49:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14A61F2157A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:49:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A8FA1A070A;
-	Mon, 24 Jun 2024 17:48:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8CF19FA93;
+	Mon, 24 Jun 2024 17:48:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="Rh/zq9wI"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="v7KUkMzS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mbzILD+T"
+Received: from wfhigh3-smtp.messagingengine.com (wfhigh3-smtp.messagingengine.com [64.147.123.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3A219FA65
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:47:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2A0519FA83;
+	Mon, 24 Jun 2024 17:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719251282; cv=none; b=mJSNbDZ0r4+7GO6ssAUpPmJkbwrqCkeB4fuFacPZWxQIupMe9jrckTiZ14REL8CLiXj2TDw1KfnSjRDMhFhem0acfWTefbNv4T5Zi5n1IrtFSbXw4YOhJMvOJnde1qDsRFwWznOh4bhR81Ldy7bHNj+XyILs0GGXaitsOchU2Co=
+	t=1719251298; cv=none; b=sqdMGSaOptUDm+3sA9jJfPD72f4/Lnb8IZodFD0OwoBMf/DbU835aoE5KeieMZnuygtRjqpllvDWHhvMh78BUrxa2N/DDYPaWF0jYQkkoKfAZjVp3WtvHmQD87hwxVLQ8V55OGoKbvnWU/lrYiCnNTLGVE7Ac5CBfq0xmCrSGdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719251282; c=relaxed/simple;
-	bh=P1jGE0yj+W9MBcCc+1zGVoDh+/I8AA93BhngLeHVOT8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mr505th90Y4RkkiV5ABQIECZqS0LVvAajunqtEJk2suIuUqovYHRiIMkyGDn4cik6TMQW8A/q0zpva6mXGlR+L2KY2W/H19Qs9tg7aNrSchwQ9gFMsbptszguQsSBcDz3qAC8t/NtRhusMMRAqHAm0aYBtnNtbvkaA3j9LUc6ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=Rh/zq9wI; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-df4d5d0b8d0so4110587276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:47:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1719251278; x=1719856078; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GD6JszPohU81NGGS/aKdIrLNqexC1KvwW9h5dgcZ2tY=;
-        b=Rh/zq9wItMzkrJJuiqb+MSt3M5QW+41ZoEoUXas+4gioNtQwzsK3SIYcxhJL3rNSJF
-         TQR2cdKS+zUzwj3x7bxg8YYZQgy0IZRUYpfrLV7OICmCQygCwBS6xzaRXMOXXXi3vaqM
-         Mno0Cc1eje/5fGObXUHPsL47Y8mRnsEr+BM28Ev/ZLtr1IUfNcUp2ZXu545AK52TgVE7
-         LRYHyTvjwB2wTgh2u814jzx+8/zMGUdJ+05llRDB1UQWuga70Yyi8DzLOKX3A9bnMB34
-         yPExxQWM9vRZgxLwjalGzLzmjOPXtQ5liu3j22/c4IZmw/lVmPyGH4Dy4jtaDyzY6fIU
-         yEoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719251278; x=1719856078;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GD6JszPohU81NGGS/aKdIrLNqexC1KvwW9h5dgcZ2tY=;
-        b=jSjDUeuhnSNGM2lgFd2gxnFUCfW77AALMvi2TXQcI/2C4lbinHt/1jwYCW6qUjyfwh
-         aJ5+Pz1PeMWy1ut+2AaQOdFJ4D7qJtBAQY17xzRqFmk0EFmmVJMkLQ/nPxL4eKtvklPi
-         juteng935WhdZzwJb+4p6b5iEpnNZdLkTVXWpoJivQzjopFABzbfM/CddveOWf1OICru
-         h2uZ8qAmgb4FjMZBgOHwnH+bsArK6B0pr2vIBofOBl3GiorU9nWTiSfNT/6GMtb3ZBIr
-         KGyrr/1sKnp3POgeOggbL/+8riLzQZGJNiMSi2Lc1d5shmI4ykS/T3Mh93X4hnPS/dtL
-         5A0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWVRAETPL8GGtJT4NNDBn6E5F6X1bxrTzNsZEsZlbb4lVkv6zR8IfNVLzgZggeKlNirJ8bjrUbrg2jh9nQ3/vs0zC9+tfXZk1pGJnJ0
-X-Gm-Message-State: AOJu0YwIamMq6hnBf0j+SORfcfiyCuFJlA4rPd2e7VbTFnt/qzetrowZ
-	9DVDswWBXCJUeXimQaLxHwQtTHKlFB0euU6UDGYoYCI02N9Ha2FCtgS9RPCWTt756eUWh3iQ0e7
-	zOkCIzrCXo9B4DOsTXkME4rHNJSmw0H6cbWcUSw==
-X-Google-Smtp-Source: AGHT+IEam62Ke7h6aMEIOfZkOn8q0O/x65GpW/b4zmed/2bsjgtR1QeT3Q2l3hKiUKoRuWDKy+pcqMjQukMAFKYFW9Y=
-X-Received: by 2002:a25:291:0:b0:df4:f2d2:fcd6 with SMTP id
- 3f1490d57ef6-e0303fe9b62mr4805338276.44.1719251277992; Mon, 24 Jun 2024
- 10:47:57 -0700 (PDT)
+	s=arc-20240116; t=1719251298; c=relaxed/simple;
+	bh=dKhJSsA3/03pyvMW1VMivxWq0gl5lOjReogd7JhGkxo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TjGsdsCW/qZnUP4DfV7Mb8ugYoX6gC2rZCAYh8U8RYtM5zk6n7ZXIffT0wUjXiyhDzbi+3jJ5sbMFxFvqZXLj0d0qetdk2AmOL7pIcqOxn3Ws2+l1NMWRNftAuB0st8AVwXHPg3P2Qj5gFcpkJRo8Dqj4Lp0LTrmHrGZNAbC5NI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=v7KUkMzS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mbzILD+T; arc=none smtp.client-ip=64.147.123.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from compute3.internal (compute3.nyi.internal [10.202.2.43])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 2981718000A7;
+	Mon, 24 Jun 2024 13:48:15 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute3.internal (MEProxy); Mon, 24 Jun 2024 13:48:15 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1719251294; x=1719337694; bh=DQqZBSRlw1
+	1TA9UCQzDY3rNG30Jucm240uJxEpV1QvA=; b=v7KUkMzSfRK3FcwklHHh+iwgs+
+	yeAU4342zmozsOOqTjLtOqdz/NRhQGgcMZRLvwhnrgnGPYBSeDgM9PkdBIBQ+W6G
+	/NaWZpOiw/8ldxE87pn6s7k5PwBYDILjkPVnB++vautCuZAAb7y8E6t1rtS8j2Rm
+	Ek6SD1aVcT5x+isqlh6Im0pnWrV/P16iUemCFWiG/FWinoYXuf3LzHpEX+MXJvj5
+	m6BhpRVkgbKUjIcc+WbW+KEMuSKqvO9LApO1fxjD1xeiTWdf2W4ztxaqtoOl/GlB
+	kDeoA1HEl/v8Lk26yz24/tZao2IJsn5ohNEuRqZHHK++ndvfTtncOSOimHsQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1719251294; x=1719337694; bh=DQqZBSRlw11TA9UCQzDY3rNG30Ju
+	cm240uJxEpV1QvA=; b=mbzILD+TI3cLf6ebu1h/XlNbxZFsg/f13dWCK0slJLnB
+	MXUfeCfrkq3Re+XSPeuBAA+sULBSpj/aWj0jhl3C1tvMKuPBqYP/dbL+cHmlD/A3
+	65LA5JGonrU9qF+uFrIvG8RqVyy/CxE9kwpVczGSH6JYNZEarzKjrNRFORWwITAu
+	oIq6FICr36/kQAnD/3vXtZX0oeqpWOjMTap2KZCQ/XP3sjGpYf5VlWA2xWg8CXjQ
+	G9LPNjWwDEPUk+ny8yjB+TkOKgQK8dFPVfdjsJ6Gfuydxn6bWHR1zZVflOYGYeb1
+	+hDIDhn9j7xBrKKarSxFZFm13LKkcHGEkDY+FtY9yA==
+X-ME-Sender: <xms:XrF5Zj3Xy83Y-9bsoIC5B7WdYH2Naps9BsDTbayjRpUgDeL16vBBOg>
+    <xme:XrF5ZiGPXV2SVGmQF88wfpX16m2TXQ9GhNk_RhIHvuPRCyYGvzLU51-wi02V2yla4
+    X41d89AIMi20Q>
+X-ME-Received: <xmr:XrF5Zj7vOVca0QBpXNAfcaPpUWsUE484PDYR0USnArZ8K9cHg3n40-53CXcdbjJnpPq3fAs-EF7hvtqWTe8coC65RB2YzVMp9Cv0Kg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeguddguddukecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpefirhgv
+    ghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtffrrghtthgvrhhnpeehge
+    dvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueefhffgheekteenucevlhhu
+    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhroh
+    grhhdrtghomh
+X-ME-Proxy: <xmx:XrF5Zo39p8au5qVSs1-dlj3F1CWmbiz_t1BTBfIor3wnfvqBP42kPQ>
+    <xmx:XrF5ZmFnk8OLbWrn7gNs18CiD6REZ1wyy7FmSs1NrM5HWirUbvAELA>
+    <xmx:XrF5Zp_G9qAmrzqlPBZ3L8iK4M860MQKe0hDZqJTtQBoCYIhGxiOlg>
+    <xmx:XrF5Zjn9tq7Xq6eKi8wRiqDr8i2iFJ-VFexIfAXMhHKT3vFHPejD7A>
+    <xmx:XrF5Zu-Tlpcd3QrswlvLmmqWcGyNXoTKt7tk0YPsEhe766A_2BbemW2L>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 24 Jun 2024 13:48:13 -0400 (EDT)
+Date: Mon, 24 Jun 2024 19:47:56 +0200
+From: Greg KH <greg@kroah.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
+Subject: Re: linux-next: manual merge of the driver-core tree with the reset
+ tree
+Message-ID: <2024062443-runt-lard-fd07@gregkh>
+References: <Znmufb9L78FCoSSS@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524182702.1317935-1-dave.stevenson@raspberrypi.com>
- <20240524182702.1317935-7-dave.stevenson@raspberrypi.com> <ZmCl7LXbdCwJm/wJ@lizhi-Precision-Tower-5810>
-In-Reply-To: <ZmCl7LXbdCwJm/wJ@lizhi-Precision-Tower-5810>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Mon, 24 Jun 2024 18:47:41 +0100
-Message-ID: <CAPY8ntCUzU=T_RgJPGvunYXM2Zmd39Kei-qFaoM37-Vc62TyUQ@mail.gmail.com>
-Subject: Re: [PATCH 06/18] dmaengine: bcm2835: make address increment platform independent
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Vinod Koul <vkoul@kernel.org>, 
-	Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, 
-	Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Vladimir Murzin <vladimir.murzin@arm.com>, Phil Elwell <phil@raspberrypi.com>, 
-	Stefan Wahren <wahrenst@gmx.net>, Serge Semin <Sergey.Semin@baikalelectronics.ru>, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-sound@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Znmufb9L78FCoSSS@sirena.org.uk>
 
-Hi Frank
+On Mon, Jun 24, 2024 at 06:35:57PM +0100, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the driver-core tree got a conflict in:
+> 
+>   drivers/reset/reset-meson-audio-arb.c
+> 
+> between commit:
+> 
+>   0e8b3bca280a7 ("reset: meson-audio-arb: Use devm_clk_get_enabled()")
+> 
+> from the reset tree and commit:
+> 
+>   b99e9c096148f ("reset: meson-audio-arb: Convert to platform remove callback returning void")
+> 
+> from the driver-core tree.
+> 
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+> 
+> diff --cc drivers/reset/reset-meson-audio-arb.c
+> index 894ad9d37a665,8740f5f6abf80..0000000000000
+> --- a/drivers/reset/reset-meson-audio-arb.c
+> +++ b/drivers/reset/reset-meson-audio-arb.c
 
-Thanks for the review, and sorry for the delay in coming back to this.
 
-On Wed, 5 Jun 2024 at 18:53, Frank Li <Frank.li@nxp.com> wrote:
->
-> On Fri, May 24, 2024 at 07:26:50PM +0100, Dave Stevenson wrote:
-> > From: Stefan Wahren <stefan.wahren@i2se.com>
-> >
-> > Actually the criteria to increment source & destination address doesn't
-> > based on platform specific bits. It's just the DMA transfer direction which
-> > is translated into the info bits. So introduce two new helper functions
-> > and get the rid of these platform specifics.
-> >
->
-> Fix increment source & destination address depend on the platform drvdata.
 
-This is not platform drvdata.
+No diff for the conflict?
 
-The code was converting from the generic DMA transfer direction enum
-into the hardware specific bitmask, and then looking at that for
-whether it was using an address increment or not.
-It's more readable, and easier to add in the newer variant of the
-hardware, if we check the generic transfer direction.
+thanks,
 
-I've reworded it for V2 as
-
-"The criteria for whether an address increment is required is based
-solely on the DMA transfer direction. The driver was converting from
-direction into the hardware's "info" bitmask and using that, which
-is therefore dependent on the hardware variant.
-
-Change to using the DMA transfer direction via helper functions
-to remove this hardware specific dependency."
-
-Hopefully makes the situation clearer.
-
-> It should be depend on dma_transfer_direction.
->
-> look like it is bug fixes. Can you add fixes tag.
-
-No, as described above, it's not a bug fix.
-
-  Dave
-
-> > Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-> > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> > ---
-> >  drivers/dma/bcm2835-dma.c | 28 ++++++++++++++++++++++------
-> >  1 file changed, 22 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/dma/bcm2835-dma.c b/drivers/dma/bcm2835-dma.c
-> > index ef452ebb3c15..d6c5a2762a46 100644
-> > --- a/drivers/dma/bcm2835-dma.c
-> > +++ b/drivers/dma/bcm2835-dma.c
-> > @@ -252,6 +252,24 @@ static u32 bcm2835_dma_prepare_cb_extra(struct bcm2835_chan *c,
-> >       return result;
-> >  }
-> >
-> > +static inline bool need_src_incr(enum dma_transfer_direction direction)
-> > +{
-> > +     return direction != DMA_DEV_TO_MEM;
-> > +}
-> > +
-> > +static inline bool need_dst_incr(enum dma_transfer_direction direction)
-> > +{
-> > +     switch (direction) {
-> > +     case DMA_MEM_TO_MEM:
-> > +     case DMA_DEV_TO_MEM:
-> > +             return true;
-> > +     default:
-> > +             break;
-> > +     }
-> > +
-> > +     return false;
-> > +}
-> > +
-> >  static void bcm2835_dma_free_cb_chain(struct bcm2835_desc *desc)
-> >  {
-> >       size_t i;
-> > @@ -336,10 +354,8 @@ static inline size_t bcm2835_dma_count_frames_for_sg(
-> >   * @cyclic:         it is a cyclic transfer
-> >   * @info:           the default info bits to apply per controlblock
-> >   * @frames:         number of controlblocks to allocate
-> > - * @src:            the src address to assign (if the S_INC bit is set
-> > - *                  in @info, then it gets incremented)
-> > - * @dst:            the dst address to assign (if the D_INC bit is set
-> > - *                  in @info, then it gets incremented)
-> > + * @src:            the src address to assign
-> > + * @dst:            the dst address to assign
-> >   * @buf_len:        the full buffer length (may also be 0)
-> >   * @period_len:     the period length when to apply @finalextrainfo
-> >   *                  in addition to the last transfer
-> > @@ -408,9 +424,9 @@ static struct bcm2835_desc *bcm2835_dma_create_cb_chain(
-> >                       d->cb_list[frame - 1].cb->next = cb_entry->paddr;
-> >
-> >               /* update src and dst and length */
-> > -             if (src && (info & BCM2835_DMA_S_INC))
-> > +             if (src && need_src_incr(direction))
-> >                       src += control_block->length;
-> > -             if (dst && (info & BCM2835_DMA_D_INC))
-> > +             if (dst && need_dst_incr(direction))
-> >                       dst += control_block->length;
-> >
-> >               /* Length of total transfer */
-> > --
-> > 2.34.1
-> >
+greg k-h
 
