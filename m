@@ -1,314 +1,138 @@
-Return-Path: <linux-kernel+bounces-227602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F5009153F8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:34:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E45459153EF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC9291F21604
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:34:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E5101F24451
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:34:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188F519E7F6;
-	Mon, 24 Jun 2024 16:33:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA4B19DFAC;
+	Mon, 24 Jun 2024 16:33:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BZ1FBJ+d"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mqc/hYk6"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6037F19DF93
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200FF19DF6F;
+	Mon, 24 Jun 2024 16:33:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719246837; cv=none; b=pxkJZpPYmM277uFjLeQTJJe+2zRBAElvfNQ2t4WvXhy6g0SFSS1j2RGzROg/g5IGSt4mQWGUDUJHVOKuxZHAaklzoj6AMokvjjmoS1huoCVjhquuXEBm07Q0YL37T4tquy7PeOVRnRwRFzfyvpLWPK6CxQULJ4kkIqr9E1sfgPs=
+	t=1719246832; cv=none; b=fWmhtW86UjMbGveLeyF63eUX4HDyJmXJn6iOuP2qd7V/fyI6Vop5kkAq8eE41iHbsOxAoWboaJY9rb5Aks4hQmAxbAYY9bjE8dqGr/Gp4KzQpr78qVspyRbaqQ06qHeaSLt50+U1RHvTK0lNNgY1pS/VuTDH214PH5TUai+E5mA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719246837; c=relaxed/simple;
-	bh=ePLTU3MVmoYysngJOsWhUdOR/IkiiLLf0YE6F/whMG8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=B7/cLYqaI0kQZDyzTSW7IIApl+rG2tVFJMpswul9TBP9CbPQW57pk2m+0JfFHdzdYRVy4wQjpDK8+dS+tTvVgBnI//kEpEcrvlAl6nByIGr/8oS3w7ffXaoAiPtSGZkwLqJymFZ5wwJ25ldbr6s6vs+lBE1wQzszSIJJQ5L1jSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BZ1FBJ+d; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-42189d3c7efso49933585e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719246833; x=1719851633; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=wPB8AEXrk7JwEaJcT35joxIm2q6uTszDlsxeaOMhunQ=;
-        b=BZ1FBJ+diHtsu4FKfuuOAYgBEO2Z74kwQcW6bvP2YZU8K5ptRJ7Koi9jU2FJ7mDrIS
-         72IFxi5XSOKnxr8VzXr0UzoxU/qHvpQv9t+P7gjsjNs9bHkIqr8M8JcMKYgIjddY1/2y
-         XooiQfa1kTzEvUAu81pUWpUy5PJJkJxJFHWEikJWzWrcACmoV+cN2yR5ym8NQNOPzTTN
-         2+GF4TbKLUBUb+z31IKolvSFg6PZkfkLBzIF058bc+6LeJKKlsYrH0HqO2mAZ99uiAAC
-         8rcU3Nrv1r7/Pae6V1pEBapiWE/UE/INnBfMvC1LhdDgYjkDKHVO9crsM1mdYnHemM2s
-         ZycQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719246833; x=1719851633;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=wPB8AEXrk7JwEaJcT35joxIm2q6uTszDlsxeaOMhunQ=;
-        b=euHCk4x3qzEJPhj6mW3TKdOeHyEl070KE0bXoEkSiNObjDYfZE/Dh0Sc320rJFKo52
-         Nh0IiG7K7p2FHhsmbsj4WW3KD2mPG8YwpRPKE65oHhkCngW0rIHFVBXvI85EwiEn0anb
-         Lysrc585yDT/bzNLcmvaRwpLPqhWn10dlqP/v05ulKx97b66rY7z9yXmOSQLRAfEZGvR
-         GR0F8l0TaJQWDn0k8K38xrEnh1Nt4UjRC+jhgQP2THEJPVSCCMWgD6jvyNqQakpMkWit
-         EkZ3aLVdv/+YEmGb0tf7CnFugBrtASpJylYSxT9jTafF22SwSXcn8AvvnZfUKgYrQ8yC
-         6Liw==
-X-Forwarded-Encrypted: i=1; AJvYcCW/7xd3kiaMXHMpHOOCumV6H+fR9FMJNKru86TcTIGOoinR7y10bZ8bgtKDMPvk/+MK6HucnX0fFmArxHsW2AHrGpGmpKaLMHH1aBvP
-X-Gm-Message-State: AOJu0YzfzZ+qEZmyYi39QAjheGznsoosa4meA4SZgc4ogNsihQX4Gm+f
-	eBPSZtY1D/hQ1gFepKktiuzCX00sSSj/JI0RA0uDmrJ7bvRh5PSFLKKupAu5N8c=
-X-Google-Smtp-Source: AGHT+IH6aHHAbz234y/LW0+FZWOgpjse2wJCMDlHm5Bpni+PpOamfKNE1xxUNOAddUF+INn4Tv6ruw==
-X-Received: by 2002:a05:600c:354f:b0:424:798a:f803 with SMTP id 5b1f17b1804b1-4248cc586f7mr42319465e9.30.1719246833492;
-        Mon, 24 Jun 2024 09:33:53 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0c5179sm177636375e9.26.2024.06.24.09.33.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 09:33:52 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Mon, 24 Jun 2024 17:33:41 +0100
-Subject: [PATCH] arm64: dts: qcom: x1e80100-qcp: add audio support
+	s=arc-20240116; t=1719246832; c=relaxed/simple;
+	bh=IGbwXdFzVVVC8J3LcQvvs47dT5JIygTgPvdjH3cUZV8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=UDosmVnUsQ7PGTJXtOGpQ0hCoGTIj59QLoRadh23QX5xKzZLIAq7Nx1u3X+mzgrxeC7Xb6oCPIrEk14QnOpNnHc21r0029KJaB98p7bPsemUpyliXrM74L6AOKMAnCpWaH2+7S/LXgiS6qylVcm79Xu4oe0n/GDzXStypX/Q3pQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=mqc/hYk6; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45OGXhjW093075;
+	Mon, 24 Jun 2024 11:33:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719246823;
+	bh=LyzxEtnalIOT3X/WHYQzI/uymtmHBLKKY4oKDuw6WiQ=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=mqc/hYk6nq6ypK9kp0vNS2KHxHsmb2GU6CmBQhpgxNC2PiYJg82kTa/tRkVEcF5LR
+	 5gIznpo+KpiOAIlkuhzodn+YH/QspwG0YrtLzMG7MYlRIUEbxJ1osD+3xqlEhZuPSI
+	 z/CfcyBMSxqsTXu88SKSFoiSaQTsLsLZJg674fgo=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45OGXhB0072426
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 24 Jun 2024 11:33:43 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 24
+ Jun 2024 11:33:42 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 24 Jun 2024 11:33:42 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45OGXgwd127091;
+	Mon, 24 Jun 2024 11:33:42 -0500
+Message-ID: <24c0ed06-3c32-4cc3-922c-4717d35a1112@ti.com>
+Date: Mon, 24 Jun 2024 11:33:42 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] Add global CMA reserve area
+To: Randolph Sapp <rs@ti.com>, Devarsh Thakkar <devarsht@ti.com>, <nm@ti.com>,
+        <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <praneeth@ti.com>, <a-bhatia1@ti.com>, <j-luthra@ti.com>,
+        <b-brnich@ti.com>, <detheridge@ti.com>, <p-mantena@ti.com>,
+        <vijayp@ti.com>
+References: <20240613150902.2173582-1-devarsht@ti.com>
+ <D1ZXO8F3XN2I.3CTTE245I0TYY@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <D1ZXO8F3XN2I.3CTTE245I0TYY@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240624-qcp-audio-v1-1-323a6b5e1fe5@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAOSfeWYC/x2NQQ6CQAxFr0K6tglOihqvYlwMbZEunIGOGhLC3
- R1Yvvz381Yo6qYF7s0Krj8rllOF86kBHmN6KZpUhtAGai+BcOYJ41csowgF4quQdjeofh+LYu8
- x8bg/Zs5vHLJj0uWz75PrYMvRejy37Q9Lq67eewAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4810;
- i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
- bh=ePLTU3MVmoYysngJOsWhUdOR/IkiiLLf0YE6F/whMG8=;
- b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmeZ/w0SYAwP1bn1baA4OosqYp1rsFUYRiDgylo
- /pEOKZFvwaJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZnmf8AAKCRB6of1ZxzRV
- N3ehB/4gGk4RmImocaqA2JjLsDWZT0MqnyPqT0cRzlL9rXXJ7kYZjhP9bY/HKzi1JFSuaLBFM4z
- 8BKJgndZ9MUKf0wvkVOA5+B8+jzcwPt1HUv10ANE55KLRL755To/6SASUTTZ/Rkk3zRxJsmm3gA
- ouaTk32WimG3jPD/5sssGAf60qiRdB6STOMes1gicrZEFOoHun/3OVzduH84B3bW2ODCmRR5urV
- GZqvmfBm44A60/nYbi30SWsWgkNxCi8mQHe3oEXdoeYzAo/SAgZePwfhsgeHls7ifoZiKm73JqH
- gmvkONPp3HwU2OEPmGlb26+oEBT3ng1ug1lHNx1Gh9jDOFSW
-X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
- fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Add audio support to QCP platform which includes 2 x Speakers
-Headset Mic and Headset support.
+On 6/14/24 12:58 PM, Randolph Sapp wrote:
+> On Thu Jun 13, 2024 at 10:08 AM CDT, Devarsh Thakkar wrote:
+>> Add global CMA reserve area for AM62x, AM62A and AM62P SoCs.
+>> These SoCs do not have MMU and hence require contiguous memory pool to
+>> support various multimedia use-cases.
+>>
+>> Brandon Brnich (1):
+>>    arm64: dts: ti: k3-am62p5-sk: Reserve 576 MiB of global CMA
+>>
+>> Devarsh Thakkar (2):
+>>    arm64: dts: ti: k3-am62x-sk-common: Reserve 128MiB of global CMA
+>>    arm64: dts: ti: k3-am62a7-sk: Reserve 576MiB of global CMA
+>>
+>>   arch/arm64/boot/dts/ti/k3-am62a7-sk.dts        | 9 +++++++++
+>>   arch/arm64/boot/dts/ti/k3-am62p5-sk.dts        | 7 +++++++
+>>   arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 8 ++++++++
+>>   3 files changed, 24 insertions(+)
+> 
+> I'm still a little torn about putting this allocation into the device tree
+> directly as the actual required allocation size depends on the task.
+> 
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100-qcp.dts | 155 ++++++++++++++++++++++++++++++
- 1 file changed, 155 insertions(+)
+That is the exact reason this does not belong in DT. For everyone *not*
+using the most extreme case (12x decodes at the same time), this is
+all wasted space. If one is running out of CMA, they can add more on
+the kernel cmdline.
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-index b045b7bac9e0..02d30c0ada80 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-@@ -19,6 +19,32 @@ aliases {
- 		serial0 = &uart21;
- 	};
- 
-+	wcd938x: audio-codec {
-+		compatible = "qcom,wcd9385-codec";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&wcd_default>;
-+
-+		qcom,micbias1-microvolt = <1800000>;
-+		qcom,micbias2-microvolt = <1800000>;
-+		qcom,micbias3-microvolt = <1800000>;
-+		qcom,micbias4-microvolt = <1800000>;
-+		qcom,mbhc-buttons-vthreshold-microvolt = <75000 150000 237000 500000 500000 500000 500000 500000>;
-+		qcom,mbhc-headset-vthreshold-microvolt = <1700000>;
-+		qcom,mbhc-headphone-vthreshold-microvolt = <50000>;
-+		qcom,rx-device = <&wcd_rx>;
-+		qcom,tx-device = <&wcd_tx>;
-+
-+		reset-gpios = <&tlmm 191 GPIO_ACTIVE_LOW>;
-+
-+		vdd-buck-supply = <&vreg_l15b_1p8>;
-+		vdd-rxtx-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l15b_1p8>;
-+		vdd-mic-bias-supply = <&vreg_bob1>;
-+
-+		#sound-dai-cells = <1>;
-+	};
-+
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-@@ -127,6 +153,66 @@ linux,cma {
- 		};
- 	};
- 
-+	sound {
-+		compatible = "qcom,x1e80100-sndcard";
-+		model = "X1E80100-QCP";
-+		audio-routing = "SpkrLeft IN", "WSA WSA_SPK1 OUT",
-+				"SpkrRight IN", "WSA WSA_SPK2 OUT",
-+				"IN1_HPHL", "HPHL_OUT",
-+				"IN2_HPHR", "HPHR_OUT",
-+				"AMIC2", "MIC BIAS2",
-+				"TX SWR_INPUT1", "ADC2_OUTPUT";
-+
-+		wcd-playback-dai-link {
-+			link-name = "WCD Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai RX_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 0>, <&swr1 0>, <&lpass_rxmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wcd-capture-dai-link {
-+			link-name = "WCD Capture";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai TX_CODEC_DMA_TX_3>;
-+			};
-+
-+			codec {
-+				sound-dai = <&wcd938x 1>, <&swr2 1>, <&lpass_txmacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+
-+		wsa-dai-link {
-+			link-name = "WSA Playback";
-+
-+			cpu {
-+				sound-dai = <&q6apmbedai WSA_CODEC_DMA_RX_0>;
-+			};
-+
-+			codec {
-+				sound-dai = <&left_spkr>, <&right_spkr>,
-+					    <&swr0 0>, <&lpass_wsamacro 0>;
-+			};
-+
-+			platform {
-+				sound-dai = <&q6apm>;
-+			};
-+		};
-+	};
-+
- 	vph_pwr: vph-pwr-regulator {
- 		compatible = "regulator-fixed";
- 
-@@ -520,6 +606,16 @@ vreg_l3j_0p8: ldo3 {
- 	};
- };
- 
-+&lpass_tlmm {
-+	spkr_01_sd_n_active: spkr-01-sd-n-active-state {
-+		pins = "gpio12";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
-+};
-+
- &mdss {
- 	status = "okay";
- };
-@@ -638,6 +734,57 @@ &smb2360_2_eusb2_repeater {
- 	vdd3-supply = <&vreg_l8b_3p0>;
- };
- 
-+&swr0 {
-+	status = "okay";
-+
-+	pinctrl-0 = <&wsa_swr_active>, <&spkr_01_sd_n_active>;
-+	pinctrl-names = "default";
-+
-+	/* WSA8845, Left Speaker */
-+	left_spkr: speaker@0,0 {
-+		compatible = "sdw20217020400";
-+		reg = <0 0>;
-+		#sound-dai-cells = <0>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		sound-name-prefix = "SpkrLeft";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+	};
-+
-+	/* WSA8845, Right Speaker */
-+	right_spkr: speaker@0,1 {
-+		compatible = "sdw20217020400";
-+		reg = <0 1>;
-+		#sound-dai-cells = <0>;
-+		reset-gpios = <&lpass_tlmm 12 GPIO_ACTIVE_LOW>;
-+		sound-name-prefix = "SpkrRight";
-+		vdd-1p8-supply = <&vreg_l15b_1p8>;
-+		vdd-io-supply = <&vreg_l12b_1p2>;
-+	};
-+};
-+
-+&swr1 {
-+	status = "okay";
-+
-+	/* WCD9385 RX */
-+	wcd_rx: codec@0,4 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 4>;
-+		qcom,rx-port-mapping = <1 2 3 4 5>;
-+	};
-+};
-+
-+&swr2 {
-+	status = "okay";
-+
-+	/* WCD9385 TX */
-+	wcd_tx: codec@0,3 {
-+		compatible = "sdw20217010d00";
-+		reg = <0 3>;
-+		qcom,tx-port-mapping = <2 2 3 4>;
-+	};
-+};
-+
- &tlmm {
- 	gpio-reserved-ranges = <33 3>, /* Unused */
- 			       <44 4>, /* SPI (TPM) */
-@@ -679,6 +826,14 @@ wake-n-pins {
- 		       bias-pull-up;
- 	       };
- 	};
-+
-+	wcd_default: wcd-reset-n-active-state {
-+		pins = "gpio191";
-+		function = "gpio";
-+		drive-strength = <16>;
-+		bias-disable;
-+		output-low;
-+	};
- };
- 
- &uart21 {
+> If it's allowed though, this series is fine for introducing those changes. This
+> uses the long-tested values we've been using on our tree for a bit now. The only
+> thing that's a little worrying is the missing range definitions for devices with
+> more than 32bits of addressable memory as Brandon has pointed out. Once that's
+> addressed:
+> 
+> Reviewed-by: Randolph Sapp <rs@ti.com>
+> 
+> Specifying these regions using the kernel cmdline parameter via u-boot was
+> brought up as a potential workaround. This is fine until you get into distro
+> boot methods which will almost certainly attempt to override those. I don't
+> know. Still a little odd. Curious how the community feels about it.
+> 
+> Technically the user or distro can still override it with the cmdline parameter
+> if necessary, so this may be the best way to have a useful default.
+> 
 
----
-base-commit: 781025f172e19ca5682d7bfc5243e7aa74c4977f
-change-id: 20240624-qcp-audio-dd424c7d4e58
+The most useful default is one that doesn't eat 576 MiB of memory "just in case".
+Needing that much CMA is the exception case and should be the one that requires
+adding something to the kernel cmdline.
 
-Best regards,
--- 
-Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+If the kernel cmdline option does not work in some cases then we should
+fix that instead of hard-coding a workaround here in DT. We are robbing
+ourselves of a better solution here.
 
+Andrew
 
