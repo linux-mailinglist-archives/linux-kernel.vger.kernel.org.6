@@ -1,133 +1,237 @@
-Return-Path: <linux-kernel+bounces-226705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BA79914285
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72593914287
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBB351F21231
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:13:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26B64284C1C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC686219E2;
-	Mon, 24 Jun 2024 06:13:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F5622318;
+	Mon, 24 Jun 2024 06:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fNTGICP7"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="VRfb7lg8"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C236913FEE
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:13:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36342E822
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719209584; cv=none; b=L8S1lLWaY6h1qU5dqWIxLqAFpPuMt09kSjeUuyTur0B7qRK29q2vdOkQ5nzuqH17Ilu51Bgzb3hvUE/fdv5bH1KFiUdKkaJwp6vrbRcXyccX+S0p/bh8zB5xr3kt2G4CG+XGz4j/bUgYEDyR37kTh7p/3J8HKlA+e+/pq4VSziI=
+	t=1719209612; cv=none; b=VYoP3BqS9r00IW5mu/HdVYtg5E3MI/FCogWyyFu+PwRX7JXR7Ow5nSvM8gycEzBSGIAtBk44Y/olBIKYhTAsKR1l3Tgen36Zxldoj9OtTK56CAWhwifORtY4VA6QnPwkRyuX38WIvmMQzK+B7294bdst/3LUFjeD0d+GK8wCjDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719209584; c=relaxed/simple;
-	bh=aVHsVqa3Mw1s5TW5A0aHgn6rbR2d5USDh5nbiQUnUzI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u5Lw4CNM6w3FZavD5NPrlK1GZmnifILUbRJrh1wXZVUl2YzJP7K5AqLalgnlY+W3sczuxLCNY5xYeSQn5HsB/t/M/kFi0xC/bfvRWTZQ60CwChULZD8yuGnbIf2nPHVJYu6Z+G5GtJi8gdLk4r1BEcgtgVha67FTYIXMn+liEbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fNTGICP7; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-706524adf91so1886511b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 23:13:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719209582; x=1719814382; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4N2wMnACbjcCz14LY0USvKoVXrjwARwQKVYyLGYLpXg=;
-        b=fNTGICP7L4PPagNQGZZYQ93XSI5ql0aHiM6yphO2C3o/0uIywNvjd/tyBJMRtWcPL4
-         5mkafq7FG7jWM9y1LLOekaWfg8JlOD1gOL9HoiqLa9KFnGM4ULhXfpJIEvy3CJeEsXK0
-         vEgnV6kWPetAd4uOnEACDPSdXOnP+mZHMds9U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719209582; x=1719814382;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4N2wMnACbjcCz14LY0USvKoVXrjwARwQKVYyLGYLpXg=;
-        b=tQ4pFQ8BoAXTnsS6wNGYoN+c6erHphU5UjhSa72Fuh3ANd1Oq+RKYmVNkmcRllgbZw
-         2dTy6rGORGsM3H4IK83onnGZBvh0Dl7AeyBIsOyVoGZM/3I6nVytIyryFeUuZX9JVQvY
-         UaTKsrclA0rT6NHDSdYqVv6ZdCKkrpEKboaxNjHeZArnJdpnAq9F7jyneSoO6v6m6Nt+
-         1Oq4qj2Fcegzt7JXvKVep9EE4HSz8PT9P+Aspqqba6CTMM8MwEzXCJwOB/gAcjKbOGM7
-         Dl61NOAohsT7y9Tz+lpwCK760t+Dlv1EsTfmtLoNX47vY16AUB9PxDtWoUbFS9DXf9z/
-         vrjg==
-X-Forwarded-Encrypted: i=1; AJvYcCWI/ilvSIfuawQRl9HLZD5EaBXRBn5zKtua6k4rL8dAtKNtCvBe1xV75YbyUmk6s7MdLpeIsU86JcsmJqJiS7FEgVVaUTNohnq+OJZp
-X-Gm-Message-State: AOJu0YwmALpg9HXsCjHCqQOkNMt23TFUrJ5ksrl/eRO8RMlZHofSQXAt
-	gOKtaZXUxqAFaxMDqOt/xnUCa+2cvTCb2cyqE/ooGWXzTZTFYIkCVztqO2QJ+e+L0W2j84IRxB0
-	NZkSE
-X-Google-Smtp-Source: AGHT+IH+UlRR3GoF9E4C1DBHIOVlzoOCBHgWIsZ6epuQKT65Zpk0Nz9eUaoHFwng5u7QIXrd2vEFwg==
-X-Received: by 2002:a05:6a20:c120:b0:1b6:cd8e:4a5 with SMTP id adf61e73a8af0-1bcf4479e51mr4136921637.19.1719209581937;
-        Sun, 23 Jun 2024 23:13:01 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:62a6:1858:61eb:37a2])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb5e5629sm54687965ad.220.2024.06.23.23.13.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 23 Jun 2024 23:13:01 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Mark Brown <broonie@kernel.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	Trevor Wu <trevor.wu@mediatek.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v2] ASoC: mediatek: mt8195: Add platform entry for ETDM1_OUT_BE dai link
-Date: Mon, 24 Jun 2024 14:12:56 +0800
-Message-ID: <20240624061257.3115467-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+	s=arc-20240116; t=1719209612; c=relaxed/simple;
+	bh=cdnBedZb4FOnW8quf2UL9Z1D5XyTNQVbVtUhSgGcCfQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e9G/5+7KCZHJNyZqAX2UvuqVRt6hxGDs9BoSAuKtXiUDVEv/eX017KfS8jZcdVGFiMZXk68q2VSwUmTS+bBXXyYxAOQgOGF1rZBwChsjLB8CcSBP6oK/nSrnnDoRhyeTEv6jJj+oMQevcpQd3V4MpKGnjQnFNlNZBxmeZeXJlpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=VRfb7lg8; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: steven.price@arm.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719209608;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mpJVGKzhAAnl+G7DVS/61CyVmA2jlS1pyMs6oQAf4UY=;
+	b=VRfb7lg8Hm1GPd9QTdSPPyHShzFE4b3gkYZWvz8OB14SOgVYNeJ+o8qx9V4yO4z1/KLz7b
+	g/TdznUFaPtxj0a3jIBg+iO8BLJ9eWuk4fWUm7rbNJwj/Mje3Bcnbrp5HW2Sxj1dfSEEwl
+	7qy95MipRQa7iyzEV93E4wAVu7VK/iM=
+X-Envelope-To: kvm@vger.kernel.org
+X-Envelope-To: kvmarm@lists.linux.dev
+X-Envelope-To: catalin.marinas@arm.com
+X-Envelope-To: maz@kernel.org
+X-Envelope-To: will@kernel.org
+X-Envelope-To: james.morse@arm.com
+X-Envelope-To: oliver.upton@linux.dev
+X-Envelope-To: suzuki.poulose@arm.com
+X-Envelope-To: yuzenghui@huawei.com
+X-Envelope-To: linux-arm-kernel@lists.infradead.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: joey.gouly@arm.com
+X-Envelope-To: alexandru.elisei@arm.com
+X-Envelope-To: christoffer.dall@arm.com
+X-Envelope-To: tabba@google.com
+X-Envelope-To: linux-coco@lists.linux.dev
+X-Envelope-To: gankulkarni@os.amperecomputing.com
+Date: Mon, 24 Jun 2024 15:13:17 +0900
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Itaru Kitayama <itaru.kitayama@linux.dev>
+To: Steven Price <steven.price@arm.com>
+Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Subject: Re: [v2] Support for Arm CCA VMs on Linux
+Message-ID: <ZnkOfTVAaCJ_-_bG@vm3>
+References: <20240412084056.1733704-1-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240412084056.1733704-1-steven.price@arm.com>
+X-Migadu-Flow: FLOW_OUT
 
-Commit e70b8dd26711 ("ASoC: mediatek: mt8195: Remove afe-dai component
-and rework codec link") removed the codec entry for the ETDM1_OUT_BE
-dai link entirely instead of replacing it with COMP_EMPTY(). This worked
-by accident as the remaining COMP_EMPTY() platform entry became the codec
-entry, and the platform entry became completely empty, effectively the
-same as COMP_DUMMY() since snd_soc_fill_dummy_dai() doesn't do anything
-for platform entries.
+Hi Steven,
+On Fri, Apr 12, 2024 at 09:40:56AM +0100, Steven Price wrote:
+> We are happy to announce the second version of the Arm Confidential
+> Compute Architecture (CCA) support for the Linux stack. The intention is
+> to seek early feedback in the following areas:
+>  * KVM integration of the Arm CCA;
+>  * KVM UABI for managing the Realms, seeking to generalise the
+>    operations where possible with other Confidential Compute solutions;
+>  * Linux Guest support for Realms.
+> 
+> See the previous RFC[1] for a more detailed overview of Arm's CCA
+> solution, or visible the Arm CCA Landing page[2].
+> 
+> This series is based on the final RMM v1.0 (EAC5) specification[3].
+> 
+> Quick-start guide
+> =================
+> 
+> The easiest way of getting started with the stack is by using
+> Shrinkwrap[4]. Currently Shrinkwrap has a configuration for the initial
+> v1.0-EAC5 release[5], so the following overlay needs to be applied to
+> the standard 'cca-3world.yaml' file. Note that the 'rmm' component needs
+> updating to 'main' because there are fixes that are needed and are not
+> yet in a tagged release. The following will create an overlay file and
+> build a working environment:
+> 
+> cat<<EOT >cca-v2.yaml
+> build:
+>   linux:
+>     repo:
+>       revision: cca-full/v2
+>   kvmtool:
+>     repo:
+>       kvmtool:
+>         revision: cca/v2
+>   rmm:
+>     repo:
+>       revision: main
+>   kvm-unit-tests:
+>     repo:
+>       revision: cca/v2
+> EOT
+> 
+> shrinkwrap build cca-3world.yaml --overlay buildroot.yaml --btvar GUEST_ROOTFS='${artifact:BUILDROOT}' --overlay cca-v2.yaml
+> 
+> You will then want to modify the 'guest-disk.img' to include the files
+> necessary for the realm guest (see the documentation in cca-3world.yaml
+> for details of other options):
+> 
+>   cd ~/.shrinkwrap/package/cca-3world
+>   /sbin/e2fsck -fp rootfs.ext2 
+>   /sbin/resize2fs rootfs.ext2 256M
+>   mkdir mnt
+>   sudo mount rootfs.ext2 mnt/
+>   sudo mkdir mnt/cca
+>   sudo cp guest-disk.img KVMTOOL_EFI.fd lkvm Image mnt/cca/
+>   sudo umount mnt 
+>   rmdir mnt/
+> 
+> Finally you can run the FVP with the host:
+> 
+>   shrinkwrap run cca-3world.yaml --rtvar ROOTFS=$HOME/.shrinkwrap/package/cca-3world/rootfs.ext2
+> 
+> And once the host kernel has booted, login (user name 'root') and start
+> a realm guest:
+> 
+>   cd /cca
+>   ./lkvm run --realm --restricted_mem -c 2 -m 256 -k Image -p earlycon
+> 
+> Be patient and you should end up in a realm guest with the host's
+> filesystem mounted via p9.
+> 
+> It's also possible to use EFI within the realm guest, again see
+> cca-3world.yaml within Shrinkwrap for more details.
 
-This causes a KASAN out-of-bounds warning in mtk_soundcard_common_probe()
-in sound/soc/mediatek/common/mtk-soundcard-driver.c:
+I am trying to see if libvirt can work with the CCA-aware KVM with minimal Ubuntu22.10 filesystem, however virt-install triggers a system failure:
 
-	for_each_card_prelinks(card, i, dai_link) {
-		if (adsp_node && !strncmp(dai_link->name, "AFE_SOF", strlen("AFE_SOF")))
-			dai_link->platforms->of_node = adsp_node;
-		else if (!dai_link->platforms->name && !dai_link->platforms->of_node)
-			dai_link->platforms->of_node = platform_node;
-	}
+$ sudo virt-install -v --name f39 --ram 4096        --disk path=fedora40.img,cache=none --nographics --os-variant fedora38         --import --arch aarch64 --vcpus 4
+[sudo] password for realm:
+[ 3694.176579] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000e00
+[ 3694.176687] Mem abort info:
+[ 3694.176745]   ESR = 0x0000000096000004
+[ 3694.176817]   EC = 0x25: DABT (current EL), IL = 32 bits
+[ 3694.176907]   SET = 0, FnV = 0
+[ 3694.176978]   EA = 0, S1PTW = 0
+[ 3694.177049]   FSC = 0x04: level 0 translation fault
+[ 3694.177132] Data abort info:
+[ 3694.177189]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+[ 3694.177276]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[ 3694.177370]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[ 3694.177544] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000880f6e000
+[ 3694.177649] [0000000000000e00] pgd=0000000000000000, p4d=0000000000000000
+[ 3694.177788] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+[ 3694.177887] Modules linked in:
+[ 3694.177966] CPU: 2 PID: 540 Comm: qemu-system-aar Not tainted 6.10.0-rc1-00058-gd901c27a1783 #149
+[ 3694.178105] Hardware name: FVP Base RevC (DT)
+[ 3694.178180] pstate: 61400009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
+[ 3694.178315] pc : kvm_vm_ioctl_check_extension+0x1fc/0x3c4
+[ 3694.178447] lr : kvm_vm_ioctl_check_extension_generic+0x34/0x12c
+[ 3694.178587] sp : ffff800081523cb0
+[ 3694.178657] x29: ffff800081523cb0 x28: 0000000000000051 x27: 0000000000000000
+[ 3694.178840] x26: 0000000000000000 x25: 0000000000000000 x24: 0000000000000000
+[ 3694.179019] x23: 000000000000000a x22: 0000000000000051 x21: ffff000801075f00
+[ 3694.179200] x20: ffff000801075f01 x19: 000000000000ae03 x18: 0000000000000000
+[ 3694.179383] x17: 0000000000000000 x16: 0000000000000000 x15: 0000000000000000
+[ 3694.179565] x14: 0000000000000000 x13: 0000000000000000 x12: 0000000000000000
+[ 3694.179745] x11: 0000000000000000 x10: 0000000000000000 x9 : 0000000000000000
+[ 3694.179923] x8 : 0000000000000000 x7 : ffff000801075f18 x6 : 00000000401c5820
+[ 3694.180106] x5 : 000000000000000a x4 : 0000000000000800 x3 : 0000000000000000
+[ 3694.180285] x2 : 000000000000000b x1 : 0000000100061001 x0 : 0000000000000001
+[ 3694.180465] Call trace:
+[ 3694.180523]  kvm_vm_ioctl_check_extension+0x1fc/0x3c4
+[ 3694.180656]  kvm_vm_ioctl_check_extension_generic+0x34/0x12c
+[ 3694.180794]  kvm_dev_ioctl+0x3c8/0x8b8
+[ 3694.180938]  __arm64_sys_ioctl+0xac/0xf0
+[ 3694.181079]  invoke_syscall+0x48/0x114
+[ 3694.181220]  el0_svc_common.constprop.0+0x40/0xe0
+[ 3694.181367]  do_el0_svc+0x1c/0x28
+[ 3694.181507]  el0_svc+0x34/0xd8
+[ 3694.181608]  el0t_64_sync_handler+0x120/0x12c
+[ 3694.181723]  el0t_64_sync+0x190/0x194
+[ 3694.181865] Code: 17ffffbd 97fffc9d 12001c00 17ffff91 (39780060)
+[ 3694.181955] ---[ end trace 0000000000000000 ]---
 
-where the code expects the platforms array to have space for at least one entry.
+I'd appreciate it if you could take a look at it.
 
-Add an COMP_EMPTY() entry so that dai_link->platforms has space.
+Thanks,
+Itaru.
 
-Fixes: e70b8dd26711 ("ASoC: mediatek: mt8195: Remove afe-dai component and rework codec link")
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 
----
-Changes since v1:
-- Reword commit message with more details on how the original commit
-  got things wrong, and what this commit adds and fixes
----
- sound/soc/mediatek/mt8195/mt8195-mt6359.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/sound/soc/mediatek/mt8195/mt8195-mt6359.c b/sound/soc/mediatek/mt8195/mt8195-mt6359.c
-index ca8751190520..2832ef78eaed 100644
---- a/sound/soc/mediatek/mt8195/mt8195-mt6359.c
-+++ b/sound/soc/mediatek/mt8195/mt8195-mt6359.c
-@@ -827,6 +827,7 @@ SND_SOC_DAILINK_DEFS(ETDM2_IN_BE,
- 
- SND_SOC_DAILINK_DEFS(ETDM1_OUT_BE,
- 		     DAILINK_COMP_ARRAY(COMP_CPU("ETDM1_OUT")),
-+		     DAILINK_COMP_ARRAY(COMP_EMPTY()),
- 		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
- 
- SND_SOC_DAILINK_DEFS(ETDM2_OUT_BE,
--- 
-2.45.2.741.gdbec12cfda-goog
-
+> 
+> An branch of kvm-unit-tests including realm-specific tests is provided
+> here:
+>   https://gitlab.arm.com/linux-arm/kvm-unit-tests-cca/-/tree/cca/v2
+> 
+> [1] Previous RFC
+>     https://lore.kernel.org/r/20230127112248.136810-1-suzuki.poulose%40arm.com
+> [2] Arm CCA Landing page (See Key Resources section for various documentation)
+>     https://www.arm.com/architecture/security-features/arm-confidential-compute-architecture
+> [3] RMM v1.0-EAC5 specification
+>     https://developer.arm.com/documentation/den0137/1-0eac5/
+> [4] Shrinkwrap
+>     https://git.gitlab.arm.com/tooling/shrinkwrap
+> [5] Linux support for Arm CCA RMM v1.0-EAC5
+>     https://lore.kernel.org/r/fb259449-026e-4083-a02b-f8a4ebea1f87%40arm.com
 
