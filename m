@@ -1,303 +1,308 @@
-Return-Path: <linux-kernel+bounces-227706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677619155B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:47:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C957D9155BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:48:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D2C32855B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:47:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC0111C22B9E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:48:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F0719F477;
-	Mon, 24 Jun 2024 17:47:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 587C619FA8D;
+	Mon, 24 Jun 2024 17:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="0OT3HwX4"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2066.outbound.protection.outlook.com [40.107.94.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FiVzBHHb"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E1819B5BF;
-	Mon, 24 Jun 2024 17:47:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719251249; cv=fail; b=YrcZztzBFZVXvTy4ycvUO+Zag/LiEu0WWrFkZr8W1q+20G4VIb8XVlftY3PdvUBk9co3oQA9sepTNryEic+NWMN2fVKVvZHusOGLO78bAqEnPbvuYzpLmaKCdyjTXhYHMIewvPQy2tMK2I9hRy3z2H+nqH6ZU+KqYxsccwPeB3g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719251249; c=relaxed/simple;
-	bh=W4h7teomfFqI9X69KNjzuanTHZ55Ee2OxGyuElDCCJY=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Ge1MwxT1SY4BR/kSrItiPlvS7No5Zdwr2japOMgYF3kewLoIVyMm/HpQohSxuwrqv2fSZaybd87JSBDDNFtuqtYqI4NBcjz0jGzK8rG+HDKsqugJE+2IBjmF51EyQtXE9x318T5srTImHMD+T9/cZ3ZeGRqTCaSPuEuK+5g18hE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=0OT3HwX4; arc=fail smtp.client-ip=40.107.94.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QtCJFGXSRTvqMQFEgscHK5hJxg10kpQGd3RTutXtnzNKUFFGcCFjx4e6q1B9nsLqNla6krWG2H/utc4qD0J3il99cz9r08B4B9kYDNibHiU0ClskzsebxUNa1lnzFHup8cxHpPpldBSGp6+YdngqzaugtHRyjiWk1Z6ddCUnCNZcUJ5nySdWy+6sYWD6nTpGW7coz9VQnemOIpzHC59dxW79HUAHsXkQKOWxOOKgzne71Hn2ojVbxu/j8bM0mA1/x2NZ1o/ns7JlORajdR4GkQGSoBBMhFWPcANkvHkIwas42EFPgmvs7VE+QVlf0hAl4f7hxIm4K8Q58W0lu3KDtw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ZAp/FvTVjmGp8VC7aDGd0DfqhLy3h/nIU4kCd1y9jvk=;
- b=N4FL644oyszfXRueSs0jAuYjwLHmooSV3OTw3xNk06ztxIc43rzrPc6jxV/WJ+3D7Zf+u24MYtTAZnEMtqYzshl63t2xgGhpOKFbhV37DyBsdRbcaCtE0GeZNRYBBF8UFUcWYXB5Kr6pLVUDeiBjYzjFuEDKhrSBEXbB/yekgtYadkMMWR293PECglbJxySYfCEUvrqNg9OHZDPNHrngdQoZuyA8TtHkjEiZKVZNf6k16WyqqKuswOyVRKNC/kSNSzL4ovGAKMmnrnm+wC69/CS8bb3gFps5knAvKIZdKhi4wSbI3ymPjD7U2797L+Nx8/vG5rIxuGs8p4IdU83Z6A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZAp/FvTVjmGp8VC7aDGd0DfqhLy3h/nIU4kCd1y9jvk=;
- b=0OT3HwX4cwoUVcCISpZapbyuOww49tg+9UtL8W+u2mNsyAH89LX82AwOE1O2PUDY51a9K3ZLpaVRejIeW+DUIHzw8qW45y8xRg+8gW68m/yeUKwN5RNwEQb+FV3WRitoB+f3BZj0m0bzSjFaA65RAK3Cl/y95wyglUZw7WkGP6E=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from BL3PR12MB6380.namprd12.prod.outlook.com (2603:10b6:208:38d::18)
- by PH8PR12MB7255.namprd12.prod.outlook.com (2603:10b6:510:224::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Mon, 24 Jun
- 2024 17:47:22 +0000
-Received: from BL3PR12MB6380.namprd12.prod.outlook.com
- ([fe80::66cf:5409:24d1:532b]) by BL3PR12MB6380.namprd12.prod.outlook.com
- ([fe80::66cf:5409:24d1:532b%7]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
- 17:47:17 +0000
-Message-ID: <f4dffe22-b383-4118-bd3b-a3afb2df835e@amd.com>
-Date: Mon, 24 Jun 2024 12:47:15 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/9] Add RAS support for CXL root ports, CXL
- downstream switch ports, and CXL upstream switch ports
-Content-Language: en-US
-To: Dan Williams <dan.j.williams@intel.com>, ira.weiny@intel.com,
- dave@stgolabs.net, dave.jiang@intel.com, alison.schofield@intel.com,
- ming4.li@intel.com, vishal.l.verma@intel.com, jim.harris@samsung.com,
- ilpo.jarvinen@linux.intel.com, ardb@kernel.org,
- sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org, Yazen.Ghannam@amd.com, Robert.Richter@amd.com
-References: <20240617200411.1426554-1-terry.bowman@amd.com>
- <6675cece52eaf_57ac294ea@dwillia2-xfh.jf.intel.com.notmuch>
-From: Terry Bowman <Terry.Bowman@amd.com>
-In-Reply-To: <6675cece52eaf_57ac294ea@dwillia2-xfh.jf.intel.com.notmuch>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SA0PR12CA0003.namprd12.prod.outlook.com
- (2603:10b6:806:6f::8) To BL3PR12MB6380.namprd12.prod.outlook.com
- (2603:10b6:208:38d::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4217419E83E
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719251264; cv=none; b=pPaqYLRy6WBWB0hQqvBD37Hes4SIm7/jyRHl6r83+ZFcl5QZWtm7R/oc1J0AG4Vk24uDaaKeWIsIp1rLDdxWzt4GIXfUwhc0KzFtPk3ooi6wKpuMqQLwzoroDok21heFiwHi/hCiYhyas7oRP1c4x3gBpO20EWmPQoauDa2S+cQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719251264; c=relaxed/simple;
+	bh=Af/XeSo7xo9c6ggvLEarxiOjm+3QBleY3Jl6WDUunsw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ogmu6cqaTapFGF/qwE7jHFvx+MpQyC49ckbJjbWWZ7oFqdHE6fC4cV30vDPzd8D+XQIAMFz5cbE2C7eoMyLzS1RDe+10b1vthzde0+Zk2IlZ0vy9U1v3nDhXaLackFr7pzapX3WGPRWPeO1QCXPFmnEeFHJY0jsBCzoHZ3H/hlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FiVzBHHb; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57ccd1111aeso5506276a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719251260; x=1719856060; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BOb9gSLJ0xlleU+rm7RlY5Hz+BM/tF+SbhCCKq8yGvQ=;
+        b=FiVzBHHb4KlYSM48L92L48rVQe1J5FklORhMON+UajmL2bcS0TAoWTXvPOyeKSyyg5
+         Yo2zGglbUwssiPFpq1qobrMgmpI8jDo24aFN1y+IW6VDPvJRbNSbCxhOe/H2EpwF+uo2
+         0akX1kyHUAckZWMVLVdF+XB2K5fVf+/JyUbOa+HjiiIgrlcLQlYLuE4Vt7vK0wsGVgNU
+         qgFiHhE0G/0XJAFxxF4obZi0Lgiai3zn1VEJWZie86MKhVlEgItSlW3HfKbDDVL3G0WK
+         dZOEH8DDHRxCysqxl6odo8veuGaf/nGEKw/M/Ze0RC+YCXMxHx4ivGA0VWPqbtWJBwFA
+         xCiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719251260; x=1719856060;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BOb9gSLJ0xlleU+rm7RlY5Hz+BM/tF+SbhCCKq8yGvQ=;
+        b=N/RLAkz5RwnLMdPHaI6o/l5HrVKmptDm3vZOqYdsig+ruRVaTD808jsIwjJNl/rqOR
+         4N40Hc4dR63vjylsBm3DD/MQF+lzY0SxTDh5ro3fBil6QpxUPNtLdH/AstCD3wzEtu50
+         x+Jd1PZG/w2qQUe3Kf8R1c2NreiHtknBsykluEe0Lpiob8g6Pa54ZRcIRUmvplXNUWo9
+         7SDHw339oSHrO5jK/HmvLuNmU268d+PDaOZ9CZnHv3iKKc8SQf9mjNtZ46nMNaheSQox
+         B4DmjAD1Cfx4GEOLmYj5BjGORWVARpO0cuzC23M9g0STiU4nWJkuhKMpBj2rjXQNSmeJ
+         eWwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmD32bovORIvYO/HaRiXkCk9gOvUrfNR5RKrhxq9hjJ8JCUl7xhZBvAobfC/QAnlRybBa676DRGecF3p1WjKhEzIrPf0vn2LhCzKTM
+X-Gm-Message-State: AOJu0Yy/4xLOHaw31LPyb20qaiKSm30rFoBsSvgIGR6TMeEGufyssaXM
+	o6Cy7a6bpy3V9CQtGOcdakOlhw77K9zQNSVnOyBMpl/6fAQSu0693665uXJkLjjYlLOWC5rT3q/
+	VZiMFiCk0W8LD0mVWceMv3080wXY=
+X-Google-Smtp-Source: AGHT+IHDmLT6XkbgHSOTjmXW55Rq4W+NpYDNvMEVVZhKik2gn5XHtt5EBd2++dPx+QYdusQDPYH2YeYL/SSL9WXyWsI=
+X-Received: by 2002:a50:8e1b:0:b0:57d:22ef:d055 with SMTP id
+ 4fb4d7f45d1cf-57d7004c7f9mr317161a12.24.1719251260239; Mon, 24 Jun 2024
+ 10:47:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL3PR12MB6380:EE_|PH8PR12MB7255:EE_
-X-MS-Office365-Filtering-Correlation-Id: 63209b86-6da2-4a5f-5f85-08dc9475b05b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|7416011|376011|1800799021|366013|921017;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dnI1K20vZVNvejI1eG5yL3NSNDBray81aFYrdGNCaDlncFk1d2JGVDFBSW43?=
- =?utf-8?B?cGhPYVRhYTMyUUZxWmIyVHRRc21pSXNoZ0poWTQzOUNpSXAzS3QxaFNOYkNB?=
- =?utf-8?B?Ri85TVFJRXA0dGlKTjkxNVFJVjAzUFNrRjJQZEhyOWt2RDhpR1BwRE14UDln?=
- =?utf-8?B?Wis5RjZ2Sm9Qa2RsbWgxM0JxL0lsaHQ4NzdFeHJFVXB1ZTlnZGdka2VDZk9u?=
- =?utf-8?B?SzFGTXV0TVBLV0JxZ2dLQTRpVHBlN3BXWmZBVjY4a0g0cmtjM3BINEZaOTFp?=
- =?utf-8?B?TEk5QlpJazFPQVFNRVVqS1dzL0RraW0vTk5ncFpWcjBRWVNMZ0cxbHBOQk5q?=
- =?utf-8?B?VU8veGVXRlUzVWdaZHRIVUNNWlAzQ3pKQUhORHlIc1B1QnZZdGhDK2RldEQw?=
- =?utf-8?B?ZTh4aVV1Y0RhUzNOSUdQbkUvd3BVVFo4WFpaNnVHRCsybUh5OWNsQkNJby9B?=
- =?utf-8?B?OWREZzJoallVS3oxV29LNVlKOGNVN0hMZEIzZXlXcU5nUXlPM2dxZmFETEhM?=
- =?utf-8?B?a3RNUk9PNlB3NXZ0RXZwaFpHQUdCT3FSTzdRU0RKNkN5OEp0d0RWTHE0Wk9W?=
- =?utf-8?B?bmlLdkQ3QTVseCtUcWxJMFdXcTlTSlRBUndQQ2hrYjBHTWlqT3U0cjhHWmQr?=
- =?utf-8?B?Sm1mOUYzZnV3YUZQVTdXb2N0MUs2RHRMUm9nYjVPcFhBaFFyV1h2Z1l1SjFh?=
- =?utf-8?B?Q0ZGMUJ5a25GQmVEUTdoT2QySFQySGRmMlJ2MmZmNThqS2F4bE5kVmlabFF2?=
- =?utf-8?B?MnVhSllYVjRQYTArZUFyNGRKeWlYTGdhb002Y0N3bFhlZDN6TXRqZWRzV2ZU?=
- =?utf-8?B?OUJieW1aV3Rob1kxaWd3L3VhSW1jMmlLT3N6RFlESWJuaFhTMVNNSm14U2dB?=
- =?utf-8?B?U1cyZHE0OHNyYjRvcFY1ak1uempKcmVEQW1NcnhRQ29XREhTSzhseEpDcDBh?=
- =?utf-8?B?bXlESEpEYVB0U0JjM2dHbUdQWGlXK2hoa3FOWDZWZkRMdUV5eFNUSVVhcWVW?=
- =?utf-8?B?N05YS3NrTDlkMmlsbzQzM0U1R1VSc21qcERjUHo1NS80eGx3UFdJRVIrL3Yx?=
- =?utf-8?B?aXpSdVpFTk0yR2JXVDdJZlJabTNQbGxzYlR0Tk9TYmtFYnhnN0JoZ21YZWpl?=
- =?utf-8?B?TE44NlM3YXplOVE0enVNT08xNFVXVzFXVzlVS2EvaXZMYTFqSkVZdmg1V0I0?=
- =?utf-8?B?UUtaU05YQ0pqN2ZkNHVqcVAxMXRyYitQTU1BTmNWd1NNMGRmMjUwTE9vQ2l5?=
- =?utf-8?B?SEc4azA3QURsZUN6YzUxVnFraUdhVUpocGJQakIwNE9obnhzQUg1YzhxQlV2?=
- =?utf-8?B?b0kvK3Y5Nm56QThOczRmSGttK1B3ZlJKTG1aY2xTY0FxSGtoYWxxZ3U2TUlY?=
- =?utf-8?B?aDJnV2R3SXIxbE5vT2IwM1lMREZUR2plVk8vc202cWhIaUFPVVNkWkVlTHQv?=
- =?utf-8?B?dDRLaWxmTnAyV25kV0pTUy9rSTZYcElsYlRwQmJyOUFHK1ZvdXRFZXhjRXZS?=
- =?utf-8?B?WDBWRUdQcFg0c3p6RFZaakplQW15dHZSbWo1QkNGMkVaRUFmUTVSWWpHYWVK?=
- =?utf-8?B?S3VCRTdrZmVsMENkUG1QaGlHb0ZzYzVabHRSSnhnUUU0NFN3bG9hWXczU2FE?=
- =?utf-8?B?TGpkSklHN2RRUlB4R3RIQmNvOTMxYVRpN1lvOTRWckw2VHFhTzZEcHRTZ2tL?=
- =?utf-8?B?M0Q1TEF5MUZBQmd6dFNFNm1JRDdpWDZuMWFKV0NkN2pMby9KbjJEMUFYYlNz?=
- =?utf-8?B?ejBnY2piSW5BL3ZEU0wxNjJSM2t2ZWNKNDhkYy9ZMEQ3MkJjYXBjQ1hwL0Fk?=
- =?utf-8?Q?52Kd3pLqYMrXoxfBYtuayevser8x97dAG63CE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6380.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(7416011)(376011)(1800799021)(366013)(921017);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MkZyL2JrdlZhZ3J1MGNrVDhGRnBHQ2Rka1dkYU81a1BQbythekZQdzk0WE5m?=
- =?utf-8?B?OG5nQjd1Tm51ME5jY0dMc3ZmTFBzRjlpL2tJNTN0dlR4RUxYcWJVQm52TkJu?=
- =?utf-8?B?OWVJeTRtUnhsbzVKU0NaSE5lTUNhUXBvS3B1bUVwZm83M1pMbHRReWpOa05k?=
- =?utf-8?B?QjVINnBiNmJJZmJyS3J3R29QSW1yVE1uZzhwamF6eXVSdGk5SnVZWWh2L043?=
- =?utf-8?B?ZXhNZUxLZWtPVC9zdUppeTNnbllETDZOUThxVWNBV2F2Z2ZvRzlmaHU5bjlF?=
- =?utf-8?B?ck4vS1REbmwyM3FyREI5MjYwaWV1Y1BqdjYxamZrRWNKd0pmWEFXOVlxTG85?=
- =?utf-8?B?VGkzN1p1ekNKM0RDeThEdEhnUkdTcjhDekczNFRWRzc5WlpIamJhK2RQU1dK?=
- =?utf-8?B?dHlDb1IrbktMam1aQmduM1hqUkpPeFFLblA5OHZJZlk3YkFKMnd5UXBvdXNw?=
- =?utf-8?B?T05PQ01la1JRZUplS1hFczBBcjBzNVcyZjZYKzdZYThBU2RHQkQzTFo3RGpJ?=
- =?utf-8?B?SWFIcWhsTzU0akNlZDJzNzlyTEU4cjdZeDU0cUpzOFZpZVZFV3hZdWhGN0Rw?=
- =?utf-8?B?QThnYVAwdkJwS1lqYlVpcGU2N0tnOGp0U0ZndHo5TnJVb0RFNm5EYlY3Vys2?=
- =?utf-8?B?UjQvTnhZZ254V1ZNaVhXQTd3RHZqT1FuN0VWY2FTTFJvR0Q5UVpwMGRCVCtK?=
- =?utf-8?B?Sy92VGd4UStQT2k2anJ2N1ROYWx6NW9ZNm42a3ZHbWpVNkl2aDVNb2crb2Rt?=
- =?utf-8?B?eUZweWdadTlhYU1MQW9tMWV5MlNkZktuSnJLNUgxTXRPL1VvOTJwQ3pkMDdH?=
- =?utf-8?B?b3ROck9VVXBBMmgzMFVVVzVscDNzQm9XWk1Kcm9SbHM0Z2tobVoyc3IzTGY2?=
- =?utf-8?B?bE9XV2IxYnNKWkdTVXNRTFFuUTYvRjRqdGZGZk5uRDArNlhmZFR6TWJTK05s?=
- =?utf-8?B?YnlVM011aTE4NTcveXJqK3EvaG5FaCt4YlRBVDE5TmEyMkFQVDkvVUtjaVpY?=
- =?utf-8?B?MTJ6by80OW1oQy9rMzVvU2lLNHRXZWg0aHVTeUN1RlFpQjZqZnhyUjZtcm4r?=
- =?utf-8?B?WlAvNHA0N1ZoUkZHajltdS9UTzlHTm9pSmpOL3hFcWFNTzRhcXJIWUI2RGgr?=
- =?utf-8?B?dEExQkpVeXJvVElQMmNmQ1EzZGNFNjFNZDBwcHRLN3VZY25RQVNnN1E3eGEx?=
- =?utf-8?B?N29RSHZmQlBlYjBZYU10RFJmMlkwUHB6My83bzFVYW1WaEFvNFg1NGhTUHpl?=
- =?utf-8?B?czJEd20yNC9yeFhNem01bU5oQUw2U2htY2lIMTdYdktad3ZzbUsxR2VKUDF2?=
- =?utf-8?B?Znd2RVdyd295MmtmUEhqQjhzN2ZNWElMNW1tT0kvWDFqSzdRSWZOSy9LR2ZP?=
- =?utf-8?B?WVRORXJZcm0wQnFENFZzL1J2WHNCR2pnejhtREI4SWo0MmtBcW5mSERkeUhM?=
- =?utf-8?B?cTByR2ZadlA0NmtNUmplK29nb1ltcWlvNzRtcVlZMXQyNm1ENzk3Zm9TRHFI?=
- =?utf-8?B?K044RVU2aE1LQWVwSXBwUU54V0wyNUVmTkNGYXJYM1BkdkFFSTNWSzV0Z0cz?=
- =?utf-8?B?eWhiOUNoTkxNWlpMU3lHamhYT1p3a1RkQlNBVXZ1YmpxcWQyRHlsN1dURE5V?=
- =?utf-8?B?NnVhWFVKRUdvVXAybTJEcFFCVHRGQStUejJqRG1RRjJTOVBUWmdZdnB4UVdL?=
- =?utf-8?B?U3pKN1NiZ1lxN3h6aTIxUXhQajM5ampTZGZuaSt3RXJvRFRodVRyWUNCSUlL?=
- =?utf-8?B?OUo0Y1Nib1JEYjNrV09yNGVIRW9BdytTREx0aSszeWNSZmVhUFFXSXZaTUFX?=
- =?utf-8?B?SGZKV0hJV3lFYnkxZW5zWFVDV0FJbkxOMnh0aWJ0c1ZtWHFYajY2dDYxN2pK?=
- =?utf-8?B?TjE4dFkwWnRsT0JGWC9kbnErSGJiRzFHMSttK2QxVllUang1Y3VZNTh0N1Vo?=
- =?utf-8?B?YW5oNnlhOFhQVHRubkRoS2ZwSWdSRXRua1FIU3F4d3VwQmM1Yk1US2UvT3pP?=
- =?utf-8?B?d0U1ZCtsTlBidmx4Yy9EVWhQZUtTMm01L1VCZ1JmL2EyQUxZTjQzbXZXMHg1?=
- =?utf-8?B?WWVLdlJBcDJLUWhBdEtNcDloRXJYZXQ0U0pCTWYwY1g3bHJFd3ZZSGpKblF3?=
- =?utf-8?Q?YjcO+Vj+zBa6OExK9jP/CLG4R?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63209b86-6da2-4a5f-5f85-08dc9475b05b
-X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6380.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 17:47:17.2040
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jsApvQJd7ktLytHZ4t2GGU4Is4zavxhrTNmlffFLmrDjNkklscuIrw6D9IlGo2VyoJxOT1FHRdnq2aBz37jGlQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7255
+References: <20240606005416.1172431-1-adrian.larumbe@collabora.com>
+ <20240606005416.1172431-7-adrian.larumbe@collabora.com> <1c40ea3a-ac58-4fa9-a7e5-3af880effb0e@ursulin.net>
+In-Reply-To: <1c40ea3a-ac58-4fa9-a7e5-3af880effb0e@ursulin.net>
+From: Rob Clark <robdclark@gmail.com>
+Date: Mon, 24 Jun 2024 10:47:28 -0700
+Message-ID: <CAF6AEGsrSH-M0UMEC5=CfK3MGx96q5ohSpQe1e+V_E127w_7Bw@mail.gmail.com>
+Subject: Re: [PATCH v3 6/7] drm/drm_file: add display of driver's internal
+ memory size
+To: Tvrtko Ursulin <tursulin@ursulin.net>
+Cc: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Steven Price <steven.price@arm.com>, 
+	Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, kernel@collabora.com, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Dan,
+On Thu, Jun 6, 2024 at 1:35=E2=80=AFAM Tvrtko Ursulin <tursulin@ursulin.net=
+> wrote:
+>
+>
+> On 06/06/2024 02:49, Adri=C3=A1n Larumbe wrote:
+>
+> > Some drivers must allocate a considerable amount of memory for bookkeep=
+ing
+> > structures and GPU's MCU-kernel shared communication regions. These are
+> > often created as a result of the invocation of the driver's ioctl()
+> > interface functions, so it is sensible to consider them as being owned =
+by
+> > the render context associated with an open drm file.
+> >
+> > However, at the moment drm_show_memory_stats only traverses the UM-expo=
+sed
+> > drm objects for which a handle exists. Private driver objects and memor=
+y
+> > regions, though connected to a render context, are unaccounted for in t=
+heir
+> > fdinfo numbers.
+> >
+> > Add a new drm_memory_stats 'internal' memory category.
+> >
+> > Because deciding what constitutes an 'internal' object and where to fin=
+d
+> > these are driver-dependent, calculation of this size must be done throu=
+gh a
+> > driver-provided function pointer, which becomes the third argument of
+> > drm_show_memory_stats. Drivers which have no interest in exposing the s=
+ize
+> > of internal memory objects can keep passing NULL for unaltered behaviou=
+r.
+> >
+> > Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
+>
+> Please Cc people who were previously involved in defining
+> drm-usage-stats.rst. I added Rob, but I am not sure if I forgot someone
+> from the top of my head.
+>
+> Internal as a category sounds potentially useful. One reservation I have
+> though is itdoes not necessarily fit with the others but is something
+> semantically different from them.
+>
+> In i915 I had the similar desire to account for internal objects and
+> have approached it by similarly tracking them outside the DRM idr but
+> counting them under the existing respective categories and memory
+> regions. Ie. internal objects can also be purgeable or not, etc, and can
+> be backed by either system memory or device local memory.
+>
+> Advantage is it is more accurate in those aspect and does not require
+> adding a new category.
+>
+> Downside of this is that 'internal' is bunched with the explicit
+> userspace objects so perhaps less accurate in this other aspect.
+>
+> Regards,
+>
+> Tvrtko
+>
+> > ---
+> >   Documentation/gpu/drm-usage-stats.rst   | 4 ++++
+> >   drivers/gpu/drm/drm_file.c              | 9 +++++++--
+> >   drivers/gpu/drm/msm/msm_drv.c           | 2 +-
+> >   drivers/gpu/drm/panfrost/panfrost_drv.c | 2 +-
+> >   include/drm/drm_file.h                  | 7 ++++++-
+> >   5 files changed, 19 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/Documentation/gpu/drm-usage-stats.rst b/Documentation/gpu/=
+drm-usage-stats.rst
+> > index 6dc299343b48..0da5ebecd232 100644
+> > --- a/Documentation/gpu/drm-usage-stats.rst
+> > +++ b/Documentation/gpu/drm-usage-stats.rst
+> > @@ -157,6 +157,10 @@ The total size of buffers that are purgeable.
+> >
+> >   The total size of buffers that are active on one or more engines.
+> >
+> > +- drm-internal-<region>: <uint> [KiB|MiB]
+> > +
+> > +The total size of GEM objects that aren't exposed to user space.
+> > +
+> >   Implementation Details
+> >   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> >
+> > diff --git a/drivers/gpu/drm/drm_file.c b/drivers/gpu/drm/drm_file.c
+> > index 638ffa4444f5..d1c13eed8d34 100644
+> > --- a/drivers/gpu/drm/drm_file.c
+> > +++ b/drivers/gpu/drm/drm_file.c
+> > @@ -874,9 +874,10 @@ void drm_print_memory_stats(struct drm_printer *p,
+> >                           enum drm_gem_object_status supported_status,
+> >                           const char *region)
+> >   {
+> > -     print_size(p, "total", region, stats->private + stats->shared);
+> > +     print_size(p, "total", region, stats->private + stats->shared + s=
+tats->internal);
+> >       print_size(p, "shared", region, stats->shared);
+> >       print_size(p, "active", region, stats->active);
+> > +     print_size(p, "internal", region, stats->internal);
+> >
+> >       if (supported_status & DRM_GEM_OBJECT_RESIDENT)
+> >               print_size(p, "resident", region, stats->resident);
+> > @@ -890,11 +891,12 @@ EXPORT_SYMBOL(drm_print_memory_stats);
+> >    * drm_show_memory_stats - Helper to collect and show standard fdinfo=
+ memory stats
+> >    * @p: the printer to print output to
+> >    * @file: the DRM file
+> > + * @func: driver-specific function pointer to count the size of intern=
+al objects
+> >    *
+> >    * Helper to iterate over GEM objects with a handle allocated in the =
+specified
+> >    * file.
+> >    */
+> > -void drm_show_memory_stats(struct drm_printer *p, struct drm_file *fil=
+e)
+> > +void drm_show_memory_stats(struct drm_printer *p, struct drm_file *fil=
+e, internal_bos func)
+> >   {
+> >       struct drm_gem_object *obj;
+> >       struct drm_memory_stats status =3D {};
+> > @@ -940,6 +942,9 @@ void drm_show_memory_stats(struct drm_printer *p, s=
+truct drm_file *file)
+> >       }
+> >       spin_unlock(&file->table_lock);
+> >
+> > +     if (func)
+> > +             func(&status, file);
 
-I added responses below.
+Seems like it would be simpler to just pass `u64 internal` to
+drm_show_memory_stats() instead of a callback.
 
-On 6/21/24 14:04, Dan Williams wrote:
-> Terry Bowman wrote:
->> This patchset provides RAS logging for CXL root ports, CXL downstream
->> switch ports, and CXL upstream switch ports. This includes changes to
->> use a portdrv notifier chain to communicate CXL AER/RAS errors to a
->> cxl_pci callback.
->>
->> The first 3 patches prepare for and add an atomic notifier chain to the
->> portdrv driver. The portdrv's notifier chain reports the port device's
->> AER internal errors to the registered callback(s). The preparation changes
->> include a portdrv update to call the uncorrectable handler for PCIe root
->> ports and PCIe downstream switch ports. Also, the AER correctable error
->> (CE) status is made available to the AER CE handler.
->>
->> The next 4 patches are in preparation for adding an atomic notification
->> callback in the cxl_pci driver. This is for receiving AER internal error
->> events from the portdrv notifier chain. Preparation includes adding RAS
->> register block mapping, adding trace functions for logging, and
->> refactoring cxl_pci RAS functions for reuse.
->>
->> The final 2 patches enable the AER internal error interrupts.
-> [..] 
->>
->> Solutions Considered (1-4):
->>   Below are solutions that were considered. Solution #4 is
->>   implemented in this patchset. 
-> [..]
->>  2.) Update the AER driver to call cxl_pci driver's error handler before
->>  calling pci_aer_handle_error()
->>
->>  This is similar to the existing RCH port error approach in aer.c.
->>  In this solution the AER driver searches for a downstream CXL endpoint
->>  to 'handle' detected CXL port protocol errors.
->>
->>  This is a good solution to consider if the one presented in this patchset
->>  is not acceptable. I was initially reluctant to this approach because it
->>  adds more CXL coupling to the AER driver. But, I think this solution
->>  would technically work. I believe Ming was working towards this
->>  solution.
-> 
-> I feel like the coupling is warranted because these things *are* PCIe
-> and CXL ports, but it means solving the interrupt distribution problem.
-> 
+But I agree with Tvrtko's comment about being somewhat (I think?)
+orthogonal to active/resident.  I guess somewhere you have a list of
+internal BOs?
 
-I understand the service driver interrupt issue but it is not clear how it 
-applies to the CXL port error handling. Can you help me understand how the 
-interrupt issue affects CXL port AER UIE/CIE handling in the AER driver.
+Perhaps another option is to pass an (optionally NULL) list of BOs to
+drm_show_memory_stats() to iterate so that they can be counted as
+active/resident/etc?  Or yet another alternative, pass an (optionally
+NULL) `struct drm_memory_stats *` to initialize status.
 
+BR,
+-R
 
->>   3.) Refactor portdrv
->>   The portdrv refactoring solution is to change the portdrv service drivers
->>   into PCIe auxiliary drivers. With this change the facility drivers can be
->>   associated with a PCIe driver instead fixed bound to the portdrv driver.
->>
->>   In this case the CXL port functionality would be added either as a CXL
->>   auxiliary driver or as a CXL specific port driver
->>   (PCI_CLASS_BRIDGE_PCI_NORMAL).
->>
->>   This solution has challenges in the interrupt allocation by separate
->>   auxiliary drivers and in binding of a specific driver. Binding is
->>   currently based on PCIe class and would require extending the binding
->>   logic to support multiple drivers for the same class.
->>
->>   Jonathan Cameron is working towards this solution by initially solving
->>   for the PMU service driver.[1] It is using the auxiliary bus to associate
->>   what were service drivers with the portdrv driver. Using a CXL auxiliary
->>   for handling CXL port RAS errors would result in RAS logic called from
->>   the cxl_pci and CXL auxiliary drivers. This may need a library driver.
-> 
-> I don't think auxiliary bus is a fundamental step forward from pcie
-> portdrv, it's just a s/pcie_port_bus_type/auxiliary_bus_type/ rename,
-> but with all the same problems around how to distribute interrupt
-> services to different interested parties.
-> 
-> So I think notifiers are interesting from the perspective of a software
-> hack to enable interrupt distribution. However, given that dynamic MSI-X
-> support is within reach I am interested in exploring that path and
-> mandating that archs that want to handle CXL protocol errors natively
-> need to enable dynamic MSI-X. Otherwise, those platforms should disclaim
-> native protocol error handling support via CXL _OSC.
-> 
-> In other words, I expect native dynamic MSI-X support is more
-> maintainable in the sense of keeping all the code in one notification
-> domain.
-> 
->>   4.) Using a portdrv notifier chain/callback for CIE/UIE
->>   (Implemented in this patchset)
->>
->>   This solution uses a portdrv atomic chain notifier and a cxl_pci
->>   callback to handle and log CXL port RAS errors.
-> 
-> Oh, I will need to look that the cxl_pci tie in for this, I was
-> expecting cxl_pci only gets involved in the RCH case because the port
-> and the endpoint are one in the same object. in the VH case I would only
-> expect cxl_pci to get involved for its own observed protocol errors, not
-> those reported upstream from that endpoint.
-> 
-
-The CXL port error handling needs a place to live with few options at the moment.
-Where do you want the CXL port error handlers to reside? 
-
-Regards,
-Terry
-
->>   I chose this after trying solution#1 above. I see a couple advantages to
->>   this solution are:
->>   - Is general port implementation for CIE/UIE specific handling mentioned
->>   in the PCIe spec.[2]
->>   - Notifier is used in RAS MCE driver as an existing example.
->>   - Does not introduce further CXL dependencies into the AER driver.
->>   - The notifier chain provides registration/unregistration and
->>   synchronization.
->>
->>   A disadvantage of this approach is coupling still exists between the CXL
->>   port's driver (portdrv) and the cxl_pci driver. The CXL port device's RAS
->>   is handled by a notifier callback in the cxl_pci endpoint driver.
->>
->>   Most of the patches in this patchset could be reused to work with
->>   solution#3 or solution#2. The atomic notifier could be dropped and
->>   instead use an auxiliary device or AER driver awareness. The other
->>   changes in this patchset could possibly be reused.
-> 
-> I appreciate the discussion of tradeoffs, thanks Terry!
+> > +
+> >       drm_print_memory_stats(p, &status, supported_status, "memory");
+> >   }
+> >   EXPORT_SYMBOL(drm_show_memory_stats);
+> > diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_dr=
+v.c
+> > index 9c33f4e3f822..f97d3cdc4f50 100644
+> > --- a/drivers/gpu/drm/msm/msm_drv.c
+> > +++ b/drivers/gpu/drm/msm/msm_drv.c
+> > @@ -880,7 +880,7 @@ static void msm_show_fdinfo(struct drm_printer *p, =
+struct drm_file *file)
+> >
+> >       msm_gpu_show_fdinfo(priv->gpu, file->driver_priv, p);
+> >
+> > -     drm_show_memory_stats(p, file);
+> > +     drm_show_memory_stats(p, file, NULL);
+> >   }
+> >
+> >   static const struct file_operations fops =3D {
+> > diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/=
+panfrost/panfrost_drv.c
+> > index ef9f6c0716d5..53640ac44e42 100644
+> > --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> > @@ -570,7 +570,7 @@ static void panfrost_show_fdinfo(struct drm_printer=
+ *p, struct drm_file *file)
+> >
+> >       panfrost_gpu_show_fdinfo(pfdev, file->driver_priv, p);
+> >
+> > -     drm_show_memory_stats(p, file);
+> > +     drm_show_memory_stats(p, file, NULL);
+> >   }
+> >
+> >   static const struct file_operations panfrost_drm_driver_fops =3D {
+> > diff --git a/include/drm/drm_file.h b/include/drm/drm_file.h
+> > index ab230d3af138..d71a5ac50ea9 100644
+> > --- a/include/drm/drm_file.h
+> > +++ b/include/drm/drm_file.h
+> > @@ -464,6 +464,7 @@ void drm_send_event_timestamp_locked(struct drm_dev=
+ice *dev,
+> >    * @resident: Total size of GEM objects backing pages
+> >    * @purgeable: Total size of GEM objects that can be purged (resident=
+ and not active)
+> >    * @active: Total size of GEM objects active on one or more engines
+> > + * @internal: Total size of GEM objects that aren't exposed to user sp=
+ace
+> >    *
+> >    * Used by drm_print_memory_stats()
+> >    */
+> > @@ -473,16 +474,20 @@ struct drm_memory_stats {
+> >       u64 resident;
+> >       u64 purgeable;
+> >       u64 active;
+> > +     u64 internal;
+> >   };
+> >
+> >   enum drm_gem_object_status;
+> >
+> > +typedef void (*internal_bos)(struct drm_memory_stats *status,
+> > +                          struct drm_file *file);
+> > +
+> >   void drm_print_memory_stats(struct drm_printer *p,
+> >                           const struct drm_memory_stats *stats,
+> >                           enum drm_gem_object_status supported_status,
+> >                           const char *region);
+> >
+> > -void drm_show_memory_stats(struct drm_printer *p, struct drm_file *fil=
+e);
+> > +void drm_show_memory_stats(struct drm_printer *p, struct drm_file *fil=
+e, internal_bos func);
+> >   void drm_show_fdinfo(struct seq_file *m, struct file *f);
+> >
+> >   struct file *mock_drm_getfile(struct drm_minor *minor, unsigned int f=
+lags);
 
