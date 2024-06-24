@@ -1,179 +1,118 @@
-Return-Path: <linux-kernel+bounces-227770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6366915663
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:17:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78F0E915668
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:21:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 571C21F25400
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:17:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2223F1F25762
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0751A01A5;
-	Mon, 24 Jun 2024 18:17:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D432D1A00F0;
+	Mon, 24 Jun 2024 18:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="JiMQW0no"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iHM+4FSQ"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC65A19FA96
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6131A00E1;
+	Mon, 24 Jun 2024 18:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719253063; cv=none; b=SLUIbhg7F+NTCaTc2kUL6sI9gaARFggoaMx1+ihww5K3wYW/u22L03ZOCwIuwcg7C2YpRf2ftsrKxbhmTZaXxGC12XC9cDy3QMmRHj5s6vpFquJifRd1RMXEATB2f/KZHCkya+Y/NGsV+3DnbxCTJAkD69B5fkVgjZ9wEuUv360=
+	t=1719253272; cv=none; b=UtFIVzJpeDmxoIxK2W+wccz0S+ipJ29jR7w2iXThhxQ1tMxsI4+wN3d7FcbZ2xTMg2nEK2MiMnhFXGHzATjl11IVEnLvYMNqonxAjvdDFaA+hHA1DRzHswceISljopyt/sZZQ3YAMYaMJ43GDuBYp/bKpkzs32wIvFEPjz15I0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719253063; c=relaxed/simple;
-	bh=eS2NBgus2lhrJmMuOApu7qG31qWqdOhq592pTuDCHzE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LL4wdjsmQQHySFwLgjglBrULCD1mc3Q5zf7e98Bx9+Gg88ZmQgaYMtMrgrvjdPK9dAdqhoCkjn5KmsH2LphXI1Y0qvWqiHZQDsFFOXGG7/3187L/596IOGbFixgm1GQTm7saFTeVxO/BfIszk97O6QuMpvQfYcjj5iRYAe64yj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=JiMQW0no; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a724958f118so206719766b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:17:41 -0700 (PDT)
+	s=arc-20240116; t=1719253272; c=relaxed/simple;
+	bh=09AADDag4LI27YU4Ve+VnoSz7BYMdXf7ag8W+KFQ150=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PjIKJELM046+QXURVJOtGj97/O5RXFybp5/7uvLKJDKGh3JEWSlCk71nqhYcnpCzQGUnwOsAglHhKC6LfUA+XXA8+HwTQL2U/Go3rDubh0SXyNnTmcyVh2Jk30uwe9itI33DdhPW+oqE9iJjRA2zQ4mMcNANCas9ebAF1K3QiOs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iHM+4FSQ; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fa0f143b85so15629395ad.3;
+        Mon, 24 Jun 2024 11:21:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1719253060; x=1719857860; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D2a+NCZqg9T2WqRUZ+lmaVYwVwGQsZAgxI0oVQ2Ef2c=;
-        b=JiMQW0noKhNGNiC26nCAS1PoCe4H6NTuMR+MG3V11Ozhc7uSqk1xDd9TGMNjO87Ihu
-         576Rqr5r7v0wwQjSTtgoAKmeLmzFaMpHa+PGUw57juQviybVhotRFjM7iL97yqN7Jg/0
-         TUq6BKZtVUabCg6bqRrAmxoFtCQk0kQfqxLNztQ/7YnLReTgokWA9o1RfOp3ZPiYzeru
-         Aov2VdYaNgPvMIbM7mOXlDGlWRCGqY2KvhLenxtSj2IhvY5sK73YRC7WcDBUxJ3WN8lq
-         HH2BIJSOOdfd504lgqU/azmPlp/ykGRLfd/dxA7BoWsdT3t8W9MLZtUraFfVzykq7jBa
-         yT4g==
+        d=gmail.com; s=20230601; t=1719253270; x=1719858070; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=l3BP13dCu8i2ssz9SfynI8OeHky+ZXnMSTo9auq+UbE=;
+        b=iHM+4FSQpn/2oZcmUMut+AtIYYkuL8ZMjGgg5/rG47dfre8q844mJgCiSxNrxaZTVX
+         MKy0ne4vPrrCVDO78tXl8hiWTkl33bz/zbW5k6Vs/NJDOlROWJ/U729TmzYeB1jPpGKl
+         G3tBQP5LLIrEU3zgLz3kCXHeuEkv+smhHluMr2gqsjds72NzeQp5C2hySv/8bu4JBHCs
+         nGm5WjDKWeefi9SWv8F0GzficQCjcVFl72HuGmmAEWkHuh4q1sXDNt/+CtvCgjdWZYpW
+         EobqZlYkz3gqVLE1rZVlctoIdVNfpA5akbEyEh0XzxG8pvQ5toPXou9TvuqfbO0/msuO
+         ks+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719253060; x=1719857860;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D2a+NCZqg9T2WqRUZ+lmaVYwVwGQsZAgxI0oVQ2Ef2c=;
-        b=pLBsWHhkFKYlFHVpGk6VxdN9+OXphfAFGSAUDKhs/9WkLa1b2KwFzKPrMkp7qNJDIh
-         +h5p1Jqxg7eziG/woy9isbU6XRHwnWxClbMx7iBWvobhfQ7wzkChL5kU2WjUHVbIcAPF
-         fJHvKfbqUAY9RqJPOV24HmE6+VCrdEU2rXdYl71gN/c3jvN2ABWISGbEe6mtMN2TDB7n
-         IJTyg8jRX3fNeTWhrbPBsbb8LdO1zNhJBhLho4/AjL7iJp0nkicH7u08Q6f4Re4kseac
-         cA2OoRy6kL2jP3uV7p2czxrxjETRJVwhAtbGtz0gi31ewQjYzOlc7jLEEsfI0Q9GF6hd
-         Gb7g==
-X-Forwarded-Encrypted: i=1; AJvYcCV61hey7DViyN/N2Dh+8apS4XkrTQbVMDuNGe4lDjRPTPKBB3c19UDs04ImvxJadOW7rDKoDjTwcqcqIaChyqlJjmccdY0YOobxxQTN
-X-Gm-Message-State: AOJu0YyfQLFehRf67ac3KqwJcrQZJ9HyUHm9YYQdHuucpaTNwFaKxQ3G
-	wcZwVc+F3HPMvLkVIO0IoW3jqcroc0oCZPMvbMhRLrDA4fwilODPwW53OrIO824N3aKOGd/+BCi
-	WL6f2afgc1fKmBcxFtzYOpDj2OHt1L0adGOhaoQ==
-X-Google-Smtp-Source: AGHT+IFwdzvdf6eoTAzP+XmZu+K0VWtvprAM3USVdpUEkJfziQcuGP2kmcBKy+64YkMnSOHjdD8n+UixgPrLnQVWhIk=
-X-Received: by 2002:a17:906:e0c4:b0:a6f:96b0:ed2 with SMTP id
- a640c23a62f3a-a7242c39c5fmr451623566b.30.1719253059793; Mon, 24 Jun 2024
- 11:17:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719253270; x=1719858070;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l3BP13dCu8i2ssz9SfynI8OeHky+ZXnMSTo9auq+UbE=;
+        b=cJgjtVc49mbop3Pl6kdv/C0w30Uj053eF2Y6b+IAJYAiudDbILJR98plBRGqp3iDX7
+         2G1GRLHrPGOg+6S6PS3/bSSa1cpY+uSXSDgXCggirajwwGLPTmIMp0qmlt2s65VlyatD
+         yHvNyjmBFiOcU7/1pNxaygY3DXCRVGLQKd6GwjXl0wJXhLqmO3+Wlk8nfplLeMkc0gnB
+         1hT4FFB1LNFOmhHO+YbvKfRCcvshs5H8UuXP6NtGTMGmz1zND+3atffQHs6ITTVohFy8
+         RO6HiJY1OM1S56XC8v7eckirhLM+CXsx2BjXfV/Ck6gNvlnTcBB3DHR+B7Ml8lnxHpoH
+         7jAw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+rongpuNtWr12szD8z0pBFBz9zJnMyLjcCNDlmmoPx5ut4hXUoOU4jgW+hzwJvJJmrt/gatGUHzLHm5rD1NoDD6wQxw5+/Q2Yv2k=
+X-Gm-Message-State: AOJu0YxID4G4Q5Ao6qrgq3iL8hzLi/tgxz+iY3QXG8j5fPBeO2SvL4aZ
+	kR5751146A3bF4LMW/oJDcZyoKrkYF7urJQXlkNeAAOy5TQJty/aNsg0rA==
+X-Google-Smtp-Source: AGHT+IHwXXnwVKne+2KppR0cvgfENs/xvsTr42M5uZ1NUw/1HOEdKjD3W9Tq6oy4i9vEIiymenr9QQ==
+X-Received: by 2002:a17:902:d38d:b0:1f7:1730:b456 with SMTP id d9443c01a7336-1fa23f2699amr54022125ad.57.1719253270019;
+        Mon, 24 Jun 2024 11:21:10 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:eba1:6f76:e2d7:7858])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3208fbsm65818215ad.79.2024.06.24.11.21.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 11:21:09 -0700 (PDT)
+Date: Mon, 24 Jun 2024 11:21:07 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: Re: [git pull] Input updates for v6.10-rc5
+Message-ID: <Znm5EzNHCk_g4puh@google.com>
+References: <ZniqQuGkosZYqIYE@google.com>
+ <CAHk-=wj730guvRzh4wo16Cq8tq1D1tyD8ub4CiBxV4Bk0Kq_-g@mail.gmail.com>
+ <ZnmX1XeOzU1NfgrY@google.com>
+ <CAHk-=wh3ZpDhHseFjYf96CcgTSRoZtjbf41hoBCyfQJ=N+oMng@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1718919473.git.yan@cloudflare.com> <b8c183a24285c2ab30c51622f4f9eff8f7a4752f.1718919473.git.yan@cloudflare.com>
- <66756ed3f2192_2e64f929491@willemb.c.googlers.com.notmuch>
- <CAO3-Pbp8frVM-i6NKkmyNOFrqqW=g58rK8m4vfdWbiSHHdQBsg@mail.gmail.com> <6677dc5cb5cca_33522729474@willemb.c.googlers.com.notmuch>
-In-Reply-To: <6677dc5cb5cca_33522729474@willemb.c.googlers.com.notmuch>
-From: Yan Zhai <yan@cloudflare.com>
-Date: Mon, 24 Jun 2024 13:17:28 -0500
-Message-ID: <CAO3-PbrKRqeA4bCPnv7xkDiUFtuCMfzYZiEur3wM=+x8nc2xpQ@mail.gmail.com>
-Subject: Re: [RFC net-next 1/9] skb: introduce gro_disabled bit
-To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
-	Willem de Bruijn <willemb@google.com>, Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>, 
-	Mina Almasry <almasrymina@google.com>, Abhishek Chauhan <quic_abchauha@quicinc.com>, 
-	David Howells <dhowells@redhat.com>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
-	David Ahern <dsahern@kernel.org>, Richard Gobert <richardbgobert@gmail.com>, 
-	Antoine Tenart <atenart@kernel.org>, Felix Fietkau <nbd@nbd.name>, 
-	Soheil Hassas Yeganeh <soheil@google.com>, Pavel Begunkov <asml.silence@gmail.com>, 
-	Lorenzo Bianconi <lorenzo@kernel.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh3ZpDhHseFjYf96CcgTSRoZtjbf41hoBCyfQJ=N+oMng@mail.gmail.com>
 
-On Sun, Jun 23, 2024 at 3:27=E2=80=AFAM Willem de Bruijn
-<willemdebruijn.kernel@gmail.com> wrote:
->
-> Yan Zhai wrote:
-> > > > -static inline bool netif_elide_gro(const struct net_device *dev)
-> > > > +static inline bool netif_elide_gro(const struct sk_buff *skb)
-> > > >  {
-> > > > -     if (!(dev->features & NETIF_F_GRO) || dev->xdp_prog)
-> > > > +     if (!(skb->dev->features & NETIF_F_GRO) || skb->dev->xdp_prog=
-)
-> > > >               return true;
-> > > > +
-> > > > +#ifdef CONFIG_SKB_GRO_CONTROL
-> > > > +     return skb->gro_disabled;
-> > > > +#else
-> > > >       return false;
-> > > > +#endif
-> > >
-> > > Yet more branches in the hot path.
-> > >
-> > > Compile time configurability does not help, as that will be
-> > > enabled by distros.
-> > >
-> > > For a fairly niche use case. Where functionality of GRO already
-> > > works. So just a performance for a very rare case at the cost of a
-> > > regression in the common case. A small regression perhaps, but death
-> > > by a thousand cuts.
-> > >
+On Mon, Jun 24, 2024 at 02:10:49PM -0400, Linus Torvalds wrote:
+> On Mon, 24 Jun 2024 at 11:59, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
 > >
-> > I share your concern on operating on this hotpath. Will a
-> > static_branch + sysctl make it less aggressive?
->
-> That is always a possibility. But we have to use it judiciously,
-> cannot add a sysctl for every branch.
->
-> I'm still of the opinion that Paolo shared that this seems a lot of
-> complexity for a fairly minor performance optimization for a rare
-> case.
->
-Actually combining the discussion in this thread, I think it would be
-more than the corner cases that we encounter. Let me elaborate below.
-
-> > Speaking of
-> > performance, I'd hope this can give us more control so we can achieve
-> > the best of two worlds: for TCP and some UDP traffic, we can enable
-> > GRO, while for some other classes that we know GRO does no good or
-> > even harm, let's disable GRO to save more cycles. The key observation
-> > is that developers may already know which traffic is blessed by GRO,
-> > but lack a way to realize it.
->
-> Following up also on Daniel's point on using BPF as GRO engine. Even
-> earlier I tried to add an option to selectively enable GRO protocols
-> without BPF. Definitely worthwhile to be able to disable GRO handlers
-> to reduce attack surface to bad input.
->
-I was probably staring too hard at my own things, which is indeed a
-corner case. But reducing the attack surface is indeed a good
-motivation for this patch. I checked briefly with our DoS team today,
-the DoS scenario will definitely benefit from skipping GRO, for
-example on SYN/RST floods. XDP is our main weapon to drop attack
-traffic today, but it does not always drop 100% of the floods, and
-time by time it does need to fall back to iptables due to the delay of
-XDP program assembly or the BPF limitation on analyzing the packet. I
-did an ad hoc measurement just now on a mostly idle server, with
-~1.3Mpps SYN flood concentrated on one CPU and dropped them early in
-raw-PREROUTING. w/ GRO this would consume about 35-41% of the CPU
-time, while w/o GRO the time dropped to 9-12%. This seems a pretty
-significant breath room under heavy attacks.
-
-But I am not sure I understand "BPF as GRO engine" here, it seems to
-me that being able to disable GRO by XDP is already good enough. Any
-more motivations to do more complex work here?
-
-best
-Yan
-
->
+> > Ugh, I was on a wrong branch ('next' for the next merge window) when I
+> > created the tag. I'll fix my script, but in the meantime should I:
 > >
-> > best
-> > Yan
->
->
+> > - blow away the bad tag and re-create under the same name as before
+> >   (input-for-v6.10-rc5) or
+> >
+> > - blow away the bad tag and use new name for the correct one (somthing
+> >   like input-for-v6.10-rc5-fixed)?
+> 
+> Either works. Some people just re-use the same tag name, others will
+> always use new names. I don't personally worry about it, and whatever
+> you feel better about works for me.
+
+OK, great. I re-created the tag using the original name but tagging the
+right commit.
+
+Please pull from:
+
+git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git tags/input-for-v6.10-rc5
+
+It should resolve to 7c7b1be19b22 ("Input: ads7846 - use spi_device_id
+table").
+
+Thanks!
+
+-- 
+Dmitry
 
