@@ -1,399 +1,230 @@
-Return-Path: <linux-kernel+bounces-227961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 650F79158C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:21:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8E79158CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AE211C22EFB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:21:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 912512815A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2332C1A08C4;
-	Mon, 24 Jun 2024 21:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0A71A08CE;
+	Mon, 24 Jun 2024 21:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Ov/60meu"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jgZ/G8O1"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 697641A08BC;
-	Mon, 24 Jun 2024 21:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5D823746
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 21:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719264089; cv=none; b=gFwFQXZXKSvL+ys3M+sfKwMsB00SiHgZy8sfvgrVW2NvXXIdGN5DhyskQMghA2zAHtR5f7Q/OF/y1kBHNyHmwUQ+M2k+TNGei/zTw0wNf/vj4OLApbiyxW8LmZElzE1FJHAA98oM3Z22JjhPGcfIv9pTwh2WFOXoeCaE7EDmq7Q=
+	t=1719264251; cv=none; b=opPayOV8CBvDhvuHXThiAKT4QPRHnNsocaSeo7BWTGtvWF6zVwIJ1NDNyOpAMQ0axIrMMeO6Ava8HaCj/9lNI9sqYbHAHzbaHS8ZLcMKC7T/CxGFQu/sP3JCmOWQt09B9FewL6l/LTJrBGHHnBEs+15tklEvORP+dVsuAd1zZ5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719264089; c=relaxed/simple;
-	bh=irpaptYDVwkRaCNdV7yrDMA5ELpgSIooZG+nQu0NVSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ACkRqAqAnoDyoCbHMOBh/w7XBIu5O1oHPabxkPsVX4R4CkwazK0GJdT31qxt1EVrasGPv9AV6JUCrY0dooNSHRCrXJ9o1xz+abH3nc5w1sLcZdpHSn3xlg06/WJXZgKMPblkG0BHV2X+jrvVTvSXdA6RPiREoKJH83Pw/XgE6yQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Ov/60meu; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D464F1BF203;
-	Mon, 24 Jun 2024 21:21:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719264084;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=S8IZwJ0ZKIbmEXea9LL/+cvNYFqXpFASQ2x1kGqhifw=;
-	b=Ov/60meujivFjPlHv4flQlGHOMb5LyJY7umMDfQLZ9WIIt+YdivmrWKT3K07dus9doKIZb
-	RrFM5XVI/w3A0HtoCISKbbhSgwhUpxJ23llk29/+FWS643FyrOwMG+LOaeNfp4+wm+Zhzf
-	7nyJzYrsaW7qCHp4Af2UCXTHCKsfSW2YHssrygkGGNUn9JL+iAnSfd+Gs9qA23nm/COzud
-	KTw6bgX1j0HuOz014p9oS9yBJA5VeBI8mh1fOPm1pHh2KUvzA0y+Tfr5gYBow4aQ5kftO5
-	A5kYfFfXpmjwkCG6kp8xaJqI0X113Pj9ysDllzRyfYwf5S8QIvgQrI/Sq9fE2A==
-Date: Mon, 24 Jun 2024 23:21:22 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>, Conor Dooley  <conor@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Cc: Bartosz  Golaszewski <brgl@bgdev.pl>, Saravana Kannan
- <saravanak@google.com>, linux-kernel@vger.kernel.org, =?UTF-8?Q?Herv?=
- =?UTF-8?Q?=C3=A9?= Codina  <herve.codina@bootlin.com>, Thomas  Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Fixing property memory leaks on device tree overlay removal
-Message-ID: <20240624232122.3cfe03f8@booty>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719264251; c=relaxed/simple;
+	bh=IFZr6MV4AR6r14kqmLG6qUlrfX6va9/24Y1lP+Gq/00=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XV+dPBBH4PZpWcyaK0HX7UoF+pPvvvQwDPYbwIsLOo16LiyoVAWnSokfOm2MkXLYSNt26M2TipHnJlWIXsBpR7mxmCIODhPEH6p+8i7Cz64dGHKC9cphUznfYzUHcqWeeTOkJNbX7mxk2Nx4qJNa3HTO4o4KhSFVOyAi1UpL3R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jgZ/G8O1; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7954f8b818fso303502785a.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:24:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1719264247; x=1719869047; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1JOTUT9twe9eD9jXfuDuG0OciOCniJECQvgGWn276Tc=;
+        b=jgZ/G8O1Pey0zI7uBb6xrIqUDn8wqqMQXc0w3XMr8tdeHrGhA/289FK/L96tLs6Vup
+         H6xJvLH+PbEwhqgBSE8Kwj4E/lGSEXRYbuUMZQGiaYkHplf0HuVp1X1+fX+X6KHEsejp
+         lS2G51hXMyfloZ4uWONcMIIpkN86NFlW/A7I0=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719264247; x=1719869047;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1JOTUT9twe9eD9jXfuDuG0OciOCniJECQvgGWn276Tc=;
+        b=LWSzcyff/jjWqDJT+/8r6NdQgBXvM/kN554LN25gUiv+0nsaxaKCe7pH7sn2wkk4We
+         EZdM493RUH4YCb8mtXWs8Y0XFvL6oBtzrp11oPdqfnzY6wEBhC8FJ2Yj1RI8aYkO1ICL
+         XlElgqJk90RMZzhfOlUXJMQdcA6saviRi/N4f4qUQoTa09f6a4MW4MJ6nROONM1m7W41
+         w/c0hycYnKjmBI8/DOEeCu3k66hv/KMS2iiIQtrEjJ3avYHe88sAUPQ8BpqZdQ9vY0V2
+         GtixNMTKA0pVx6wDkj/YUCt9l09h0ydc2QWpemWKBgFYmetM1NoPdcxrqScNi2bQKFyO
+         NNtA==
+X-Forwarded-Encrypted: i=1; AJvYcCW7w4SqxZQ1MxMr23oQP1RMK29fh6G2YGF3NTdUjTISYqJqf7uib91lPtLunHNDfpQklj7rkfWksDi8uDrJk2vl+tuKqDNeAo02WmDo
+X-Gm-Message-State: AOJu0YxWiy4//9EdUW5qy9gR9shJPsX1bYliSwV4m79x42t/d+yR8LI0
+	p56K9O5ji8rfLgbmp0kYLCOldygpCdWBEBCOg60v2BuRtnqvv2WMKXPpmIvAUMnZ1F+5gzcw1Qo
+	=
+X-Google-Smtp-Source: AGHT+IFZzCTUjR+w4URku14OHgT46/LzAIM0oAGDv4Arqt5GE12zmUB8403RvUYQVtQH0JJYJr9pPg==
+X-Received: by 2002:a05:620a:29d5:b0:79b:f10e:1196 with SMTP id af79cd13be357-79bf10e148fmr497226085a.0.1719264247513;
+        Mon, 24 Jun 2024 14:24:07 -0700 (PDT)
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com. [209.85.160.179])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce92f538sm348243585a.99.2024.06.24.14.24.04
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 14:24:04 -0700 (PDT)
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-44056f72257so35951cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:24:04 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXzfxBaGUYOOP57c6cSCKw8TJQ28mkZh+o3YVAgByiaL0SNbyhIKjjr7zYpmQeJk84SI0KAT4Bru+OkriXB/vWqwXzVBXmapTerK0Du
+X-Received: by 2002:ac8:7fc6:0:b0:444:b755:2aa1 with SMTP id
+ d75a77b69052e-444f368e55amr295621cf.17.1719264244099; Mon, 24 Jun 2024
+ 14:24:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20240624133135.7445-1-johan+linaro@kernel.org> <20240624133135.7445-3-johan+linaro@kernel.org>
+In-Reply-To: <20240624133135.7445-3-johan+linaro@kernel.org>
+From: Doug Anderson <dianders@chromium.org>
+Date: Mon, 24 Jun 2024 14:23:52 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=UauWffRM45FsU2SHoKtkVaOEf=Adno+jV+Ashf7NFHuA@mail.gmail.com>
+Message-ID: <CAD=FV=UauWffRM45FsU2SHoKtkVaOEf=Adno+jV+Ashf7NFHuA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] serial: qcom-geni: fix soft lockup on sw flow control
+ and suspend
+To: Johan Hovold <johan+linaro@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hello,
-
-device tree overlays are implemented in the kernel since a long time,
-but there is currently no code using them, except unittest. The
-largest (in terms of code lines involved) blocker for enabling it is the
-memory leak of properties that happen on overlay removal [0]. The
-kernel warns about it on overlay insertion:
-
-  OF: overlay: WARNING: memory leak will occur if overlay removed, property=
-: /...
-
-We are working on a driver for a proprietary connector allowing a device
-to connect to an add-on board adding new non-discoverable hardware, and
-the driver is based on overlays. This has been discussed during ELC last
-April [1] and I sent a patch series implementing it in May [2].
-
-The property memory leak topic was mentioned but we haven't addressed
-the detail so far. This e-mail is meant to present our proposed plan
-to fix it.
-
-Receiving comments from the kernel community would be very valuable
-given the amount of work involved.
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Problem description
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-In the kernel every 'struct device_node' is refcounted so the OF core
-knows when to free it. There are of course get/put imbalance bugs
-around, but these are "just" bugs that need to be fixed as they are
-found.
-
-On the other hand, there is no refcounting for 'struct property'. Yet
-some of the internal kernel APIs to access properties, e.g.
-of_property_read_string(), return either a 'struct property' pointer or
-a copy of the 'char *value' field. This is not a bug, it is an API
-design flaw: any user (e.g. any OF driver) can take a pointer to
-property data that was allocated and should be deallocated by the OF
-core, but the OF core has no idea of when that pointer will stop being
-used.=20
-
-Now, when loading a DT overlay there are three possible cases:
-
- 1. both the property and the containing node are in the base tree
- 2. both the property and the containing node are in the same overlay
- 3. the property is in an overlay and the containing node is either
-    in the base tree or in a previously-loaded overlay
-
-Cases 1 and 2 are not problematic. In case 1 the data allocated for the
-properties is never removed. In case 2 the properties are removed when
-removing the parent node, which gets removed when removing the overlay
-thanks to 'struct device_node' refcounting, based on the assumption
-that the property lifetime is a subset of the parent node lifetime. The
-problem exists in case 3. Properties in case 3 are usually a small part
-of all the properties but there can be some (and there are some in the
-product we are working on), and that's what needs to be addressed.
-
-The kernel just doesn't know when to release these property structures,
-so the OF core code currently stores the properties loaded by overlays
-in a "deadprops" list within the parent node. They will be freed when
-the node itself is freed (based on node refcounting) in order to be
-safe. However it means they are memory leaks for case 3, where the node
-can be never removed.
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Approach 1: adding property refcount
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-The first option we considered is the obvious one: adding a refcount to
-'struct property'. However this does not look like a very good solution
-as every user of a DT property in the kernel would need to put the
-property after getting and using it: this is already cumbersome and
-error-prone for nodes, and properties are usually many more than nodes.
-Besides it would add a memory and execution overhead to all properties,
-while only a small fraction is affected.
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Approach 2: change the property APIs to not return pointers
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-So we went back to the API design flaw and thought what API we would
-invent if we had to start from scratch now with the laodable overlay
-requirement in mind. We concluded the property API should just not
-return any pointer to 'struct property' or one of its fields. In other
-words, this is internal data of the OF core.
-
-We think the API to access DT properties should instead do one of these:
-
- 1. check whatever is needed and return the outcome, not the internal
-    data, e.g. like of_property_match_string()
- 2. if that is not possible, return a copy of the property value, that
-    the called will be responsible of, and which can outlive the struct
-    property if that make sense
-
-With this approach, it becomes safe to remove the overlay at any moment
-_unless_ one of these API functions is currently executing on any CPU
-core. To ensure there is no race condition we need a lock, probably
-using rwsem or RCU, to guard the APIs accessing properties. This can be
-coarse-grained (one global lock, or one lock per changeset) and needs no
-cooperation from callers, being all managed by the OF core.
-
-So this is is the option we plan to take.
-
-~~~~~~~~~~~~~~~~~~~~~~~
-Accessor classification
-~~~~~~~~~~~~~~~~~~~~~~~
-
-We examined and classified the various APIs that allow accessing the OF
-properties, which we called accessors, and counted their call sites.
-
-There are three kinds of property accessor functions in the OF APIs
-that need to be fixed:
-
- 1. classic accessors
- 2. for_each loop macros and supporting functions
- 3. OF reconfig notifiers
-
------------------
-Classic accessors
------------------
-
-Classic accessors are those that return some property value. Examples
-include:
-
-  of_find_property()
-  of_property_read_string()
-  of_get_property()
-  of_property_read_string_index()
-
-Classic accessors have lots of call sites: we counted about 1900. Many
-are in drivers and will need to be addressed individually, one by one.
-So the plan is to add new "safe" accessors and progressively convert
-drivers and other call sites to use them, to eventually remove the
-current unsafe accessors.
-
-One supporting strategy in that direction is making 'struct property'
-opaque, which would ensure its fields just cannot be accessed directly.
-I attempted it and the amount of code that gets broken and needs to be
-fixed is "manageable".
-
-An even stronger strategy is to move struct property completely outside
-in-kernel public include files (i.e. from include/linux/of.h to
-drivers/of/of_private.h) so even struct property pointer cannot exist
-anymore outside of the OF core. However this is quite extreme and very
-hard to apply (see the section about for_each loops).
-
----------------------------------------------
-for_each loop macros and supporting functions
----------------------------------------------
-
-Fixing the for_each iterators (about 140 call sites) is hard because
-they use 'struct property' pointers "internally", but being macros the
-iterarot is exposed to code using those macros. So we propose a
-mitigation strategy that is more approachable and a removal strategy.
-
-The mitigation strategy is based on the declaring variables in the for
-loop init clause, as allowed since the kernel has moved to C gnu11.
-This would allow replacing typical code like:
-
-  struct device_node *node =3D <...>;
-  struct property *prop;
-  const __be32 *cur;
-  u32 rate;
-
-  of_property_for_each_u32(node, "my-property", prop, cur, rate) {
-
-with code like:
-
-  struct device_node *node =3D <...>;
-  u32 rate;
-
-  of_property_for_each_u32(node, "my-property", rate) {
-
-This is only a mitigation strategy because it would not strictly forbid
-access to the struct property and the __be32 variables. But it would
-make it less easy and much more visible to code reviewers and possibly
-checkpatch, and as such it would make it hard to add my mistake. It
-also makes code simpler and more readable so it is an overall
-improvement as well.
-
-This is simple to implement and at first glance about half of the call
-sites can benefit. For those which cannot, an ad-hoc solution must be
-devised, possibly based on a full array copy as a last resort.
-
-The removal strategy involves a total removal of these looping macros,
-in lack of a way to implement them without giving access to the
-property and iterator pointers. Removal of these APIs would involve
-replacing them with specific accessors that internally loop and do what
-is needed (for common cases) or return a full copy for other cases.
-Passing a callback for the looping function to operate on members is
-also potentially doable but cumbersome for callers.
-
-Instead of the removal strategy I think there might be better tools,
-but I still haven't done a real evaluations so far.
-
-Note that if struct property were made internal, the removal strategy
-would become unavoidable.
-
----------------------
-OF reconfig notifiers
----------------------
-
-Reconfig notifiers are callbacks that can be enabled in order to be
-notified of changes to the device tree. The APIs themselves are not
-leaking internal pointers, but the notifier callbacks are passed a
-'struct of_reconfig_data *' parameter which contains pointers to the
-old and new struct property pointers.
-
-If struct property were opaque this would not expose pointers to
-property name/len/value. Still the struct property pointer would be
-exposed. So we propose to make the entire struct of_reconfig_data
-opaque.
-
-The drawback is that several new (trivial) accessors would be needed to
-get the data from such an opaque structure. However call sites of
-notifiers are limited (about 10), some don=E2=80=99t even access properties=
- at
-all and others appear to use them carefully, so a fix would be
-relatively simple to do.
-
-~~~~~~~~~~~~~~~
-Transition plan
-~~~~~~~~~~~~~~~
-
-Transitioning to the new accessors is not going to happen quickly given
-the amount of call sites, so we devised a strategy to incrementally
-approach it while avoiding introducing new calls to the old APIs.
-
-The transition plan is based on adding a Kconfig symbol (a tentative
-name is CONFIG_EXPORT_UNSAFE_OF_ACCESSORS) meaning =E2=80=9Cexport old OF
-accessor functions returning pointers to firmware data=E2=80=9D and default=
-ing
-to =E2=80=98y=E2=80=99 to avoid breaking current usages. When this is set t=
-o =E2=80=98n=E2=80=99:
-
- - The old accessors returning pointers to struct property values are
-   not built, or at least not exported outside the OF core
- - So any defconfig with at least one driver using the old accessors
-   would just not build, which allows to easily find out what needs to
-   be updated if one wants to remove overlays in their specific
-   configuration, or to disable unneeded drivers that are not yet
-   updated
- - The property leaks under discussion are not possible anymore
- - The deadprops list and the warning are not built
- - Note: we need to ensure automated test bots won=E2=80=99t set this setti=
-ng
-   to =E2=80=98n=E2=80=99 or they will fail
-
-Any code using DT overlays, including the connector driver proposed in
-[2], can depend on CONFIG_EXPORT_UNSAFE_OF_ACCESSORS=3Dn, to ensure the
-leaking APIs are never called when runtime-loadable overlays are in use.
-
-Preventing new usages of old accessors will be important. Tools to
-achieve that:
-
- * Extend checkpatch to report an error on their usage
- * Add a 'K:' entry to MAINTAINERS so that patches trying to use them
-   will be reported (to me at least)
-
-Once all call sites are updated to the new API, the old API can be
-removed entirely along with the deadprops list and the
-CONFIG_EXPORT_UNSAFE_OF_ACCESSORS Kconfig symbol.
-
-=3D=3D=3D=3D=3D=3D=3D
-Roadmap
-=3D=3D=3D=3D=3D=3D=3D
-
-We plan to address this in various steps, in order to allow an easier
-review process and to have the various changes tested progressively.
-
-The main steps in our roadmap are:
-
- 1. Make struct property opaque and fix code that gets broken
- 2. Main API transition (class 1):
-    - Add new safe accessors
-    - Implement CONFIG_EXPORT_UNSAFE_OF_ACCESSORS to hide leaking
-      accessors
-    - Document the above
-    - OF implementation
-    - fwnode wrapper (for ACPI+SWNODE)
-    - rwsem/RCU synchronisation mechanism
-    - convert a few drivers
- 3. Prevent new patches using old accessors from being merged
-    (checkpatch, MAINTAINERS...)
- 4. Convert a significant number of drivers (enough to support a
-    complex SoC)
- 5. for_each loops (class 2) mitigation strategy
- 6. Make struct of_reconfig_data opaque (class 3)
- 7. for_each loops (class 2) full removal strategy
-
-We think the necessity of the last two step is subject to discussion,
-while all the previous ones are required.
-
-Note there is no "convert all call sites" in the plan. The amount of
-drivers alone is huge, and converting all of them would not be doable
-entirely by us both in terms of amount of work and for lack of hardware
-to test the changes.
-
-However we plan to convert many drivers and we will be glad to support
-the community in fixing the existing code, as well as in avoiding new
-code using old accessors to be accepted.
-
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Conclusion
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-
-So, that's our proposed plan. As stated, any comment will be
-appreciated. This includes both (hopefully constructive) criticism and
-positive feedback. This would mean starting a relevant work with a good
-assurance that the approach is approved by the relevant kernel
-maintainers.
-
-Best regards,
-Luca
-
-[0] https://elinux.org/Frank%27s_Evolving_Overlay_Thoughts#issues_and_what_=
-needs_to_be_completed_--_Not_an_exhaustive_list
-[1] https://lore.kernel.org/all/20240426115141.201f257a@booty/
-[2] https://lore.kernel.org/all/20240510-hotplug-drm-bridge-v2-0-ec32f2c66d=
-56@bootlin.com/
-
---=20
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Hi,
+
+On Mon, Jun 24, 2024 at 6:31=E2=80=AFAM Johan Hovold <johan+linaro@kernel.o=
+rg> wrote:
+>
+> The stop_tx() callback is used to implement software flow control and
+> must not discard data as the Qualcomm GENI driver is currently doing
+> when there is an active TX command.
+>
+> Cancelling an active command can also leave data in the hardware FIFO,
+> which prevents the watermark interrupt from being enabled when TX is
+> later restarted. This results in a soft lockup and is easily triggered
+> by stopping TX using software flow control in a serial console but this
+> can also happen after suspend.
+>
+> Fix this by only stopping any active command, and effectively clearing
+> the hardware fifo, when shutting down the port. Make sure to temporarily
+> raise the watermark level so that the interrupt fires when TX is
+> restarted.
+
+Nice! I did quite a few experiments, but it sounds like you found
+something that I wasn't able to find. Specifically once I cancelled an
+ongoing command I could never manage to get it started back up, but it
+must have just been that data was still in the FIFO and thus the
+watermark never fired again.
+
+When I was experimenting, I also swore that there were cases where
+geni would sometimes fully drop bytes when I tried to "cancel" a
+command, but maybe I was mistaken. Everything I figured out was
+essentially by running experiments and I could easily have had a bug
+in my experiment.
+
+
+> Fixes: c4f528795d1a ("tty: serial: msm_geni_serial: Add serial driver sup=
+port for GENI based QUP")
+> Cc: stable@vger.kernel.org      # 4.17
+> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  drivers/tty/serial/qcom_geni_serial.c | 28 +++++++++++++++++----------
+>  1 file changed, 18 insertions(+), 10 deletions(-)
+>
+> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/q=
+com_geni_serial.c
+> index 1d5d6045879a..72addeb9f461 100644
+> --- a/drivers/tty/serial/qcom_geni_serial.c
+> +++ b/drivers/tty/serial/qcom_geni_serial.c
+> @@ -651,13 +651,8 @@ static void qcom_geni_serial_start_tx_fifo(struct ua=
+rt_port *uport)
+>  {
+>         u32 irq_en;
+>
+> -       if (qcom_geni_serial_main_active(uport) ||
+> -           !qcom_geni_serial_tx_empty(uport))
+> -               return;
+> -
+>         irq_en =3D readl(uport->membase + SE_GENI_M_IRQ_EN);
+>         irq_en |=3D M_TX_FIFO_WATERMARK_EN | M_CMD_DONE_EN;
+> -
+>         writel(DEF_TX_WM, uport->membase + SE_GENI_TX_WATERMARK_REG);
+>         writel(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
+>  }
+> @@ -665,16 +660,28 @@ static void qcom_geni_serial_start_tx_fifo(struct u=
+art_port *uport)
+>  static void qcom_geni_serial_stop_tx_fifo(struct uart_port *uport)
+>  {
+>         u32 irq_en;
+> -       struct qcom_geni_serial_port *port =3D to_dev_port(uport);
+>
+>         irq_en =3D readl(uport->membase + SE_GENI_M_IRQ_EN);
+>         irq_en &=3D ~(M_CMD_DONE_EN | M_TX_FIFO_WATERMARK_EN);
+>         writel(0, uport->membase + SE_GENI_TX_WATERMARK_REG);
+>         writel(irq_en, uport->membase + SE_GENI_M_IRQ_EN);
+> -       /* Possible stop tx is called multiple times. */
+
+If qcom_geni_serial_stop_tx_fifo() is supposed to be used for UART
+flow control and you have a way to stop the transfer immediately
+without losing data (by using geni_se_cancel_m_cmd), maybe we should
+do that? If the other side wants us to stop transferring data and we
+can stop it right away that would be ideal...
+
+
+> +}
+> +
+> +static void qcom_geni_serial_clear_tx_fifo(struct uart_port *uport)
+> +{
+> +       struct qcom_geni_serial_port *port =3D to_dev_port(uport);
+> +
+>         if (!qcom_geni_serial_main_active(uport))
+>                 return;
+>
+> +       /*
+> +        * Increase watermark level so that TX can be restarted and wait =
+for
+> +        * sequencer to start to prevent lockups.
+> +        */
+> +       writel(port->tx_fifo_depth, uport->membase + SE_GENI_TX_WATERMARK=
+_REG);
+> +       qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
+> +                                       M_TX_FIFO_WATERMARK_EN, true);
+
+Oh, maybe this "wait for sequencer to start to prevent lockups." is
+the part that I was missing? Can you explain more about what's going
+on here? Why does waiting for the watermark interrupt to fire prevent
+lockups? I would have imagined that the watermark interrupt would be
+part of the geni hardware and have nothing to do with the firmware
+running on the other end, so I'm not sure why it firing somehow would
+prevent a lockup. Was this just by trial and error?
+
+
+> @@ -684,6 +691,8 @@ static void qcom_geni_serial_stop_tx_fifo(struct uart=
+_port *uport)
+>                 writel(M_CMD_ABORT_EN, uport->membase + SE_GENI_M_IRQ_CLE=
+AR);
+>         }
+>         writel(M_CMD_CANCEL_EN, uport->membase + SE_GENI_M_IRQ_CLEAR);
+> +
+> +       port->tx_remaining =3D 0;
+>  }
+>
+>  static void qcom_geni_serial_handle_rx_fifo(struct uart_port *uport, boo=
+l drop)
+> @@ -1069,11 +1078,10 @@ static void qcom_geni_serial_shutdown(struct uart=
+_port *uport)
+>  {
+>         disable_irq(uport->irq);
+>
+> -       if (uart_console(uport))
+> -               return;
+
+Can you explain this part of the patch? I'm not saying it's wrong to
+remove this special case since this driver seems to have lots of
+needless special cases that are already handled by the core or by
+other parts of the driver, but this change seems unrelated to the rest
+of the patch. Could it be a separate patch?
 
