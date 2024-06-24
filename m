@@ -1,235 +1,164 @@
-Return-Path: <linux-kernel+bounces-227396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37B3D9150B7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:48:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFD3991506D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:46:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC5581F241DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:48:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B12DB231A6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:46:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD8E19E7CD;
-	Mon, 24 Jun 2024 14:45:52 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F2C19DF57
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:45:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719240351; cv=none; b=lk8o0sugEqhaUISThWLamuxu+jMoDZDNvtqz4x1xZg2XXqL1dDlJ/1wFJQKXzSnB9D11awsmmnjaXZ+VxhFP+BXit6Y9QPWsN6WingZjx3a/Msu+WcDDpNk7z6AOmRm6uyUBMxYI4sH5Ib7Vcyh3PetkntMuTIMHZLxxdilP0RI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719240351; c=relaxed/simple;
-	bh=xLCNUDu40aLCYUBXXMUH9tJ5hNEyfwbDsv7k7YO+29E=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PCgKXLw8BcSUC5B66Nnx54sSi97WbejQTcBY9TqixUkOhYhptEintRsskFV7jOszCFPHgLC/+ZaKAHZxTLeVS1cUo5JJ7koqrxPEI4DdsThrv74rvA+09vlXxmkMDKtNkmkyLKgH8fx96vVH8HRPlIdRTON467uTnRn2XTvmLtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sLkx1-0002zp-6K
-	for linux-kernel@vger.kernel.org; Mon, 24 Jun 2024 16:45:47 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sLkwy-004fqU-MB
-	for linux-kernel@vger.kernel.org; Mon, 24 Jun 2024 16:45:44 +0200
-Received: from dspam.blackshift.org (localhost [127.0.0.1])
-	by bjornoya.blackshift.org (Postfix) with SMTP id 529362F1A8A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:45:44 +0000 (UTC)
-Received: from hardanger.blackshift.org (unknown [172.20.34.65])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bjornoya.blackshift.org (Postfix) with ESMTPS id 7F4792F1A12;
-	Mon, 24 Jun 2024 14:45:38 +0000 (UTC)
-Received: from [192.168.178.131] (localhost [::1])
-	by hardanger.blackshift.org (OpenSMTPD) with ESMTP id f1d79382;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D36019AD8D;
 	Mon, 24 Jun 2024 14:45:37 +0000 (UTC)
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-Date: Mon, 24 Jun 2024 16:45:13 +0200
-Subject: [PATCH v3 9/9] can: mcp251xfd: tef: update workaround for erratum
- DS80000789E 6 of mcp2518fd
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8/qjH6G"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B13131BDD
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:45:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719240336; cv=none; b=Ix4ZLkY/E29yJikK1Q5TSwrGTqb+EaHq1ls4ahZH0VKTTX2R+2M06/KsRdtlGPPkjLXKagUH/URdps0Fp7l3LCuxLI1BXMjW0INJK0q7DrSBzFQYUN6sGhKEN45COc3Yh1kbsiu/XHxaNrmypqjdz9ysGewhKaLl/o6mJt6S8J8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719240336; c=relaxed/simple;
+	bh=+1UNFUYPOjdpoUsKYW+sFGo41wX1gq0AEnfQE0aY6Dc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tWMPQxLKOsDg6gUz+jzld02z1r9676TehL31RahM4K5EazUiDYMwO4HRPfS67QQrOGEhkLjmu/pZno4euPy8GhkeSVEu0AfMF9cmmEhKkn/wIwLsSDYCpTcOqMVjLz5mNFmr+JbbtyfnDExYf8hQ576AYeFCBImJR1Qv0fR4yOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J8/qjH6G; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-6eab07ae82bso3052421a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 07:45:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719240334; x=1719845134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4mDsOwzKtQuTbrnZkosOYMHtSypsAJlM4HZ6rzIl0Ik=;
+        b=J8/qjH6Godgku0YeByzZIC6vmEcMXa3l01GuQB+u0gmoQGLVY0rvXwqtJhwaQnpc6g
+         L9Al8zccGpAJAHXcT6JZiay/zCHW1Yw01Awng/DCbhKlIh2122Yq+WMwYHdyzKMmPgim
+         HiING5W/NxvRJ+pc7VBEJtlNWxcYKM7ZJS3XqbXyvBU6Y5x/cEAEPmyj6p4YS2Hk4qJd
+         Xywuxk7t9Ofy01lGnYbSweAT7p0OAG2jA7VMCsksDvxbhXH7vESwUqS/p7zcy5IVRe9C
+         OLOFiYS2BbFUBQ0oXYuxqaSyq2p5dzibTo35RcB6rqCBITJ4g+SwzDdIMIPwoTphJLjq
+         q2sQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719240334; x=1719845134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4mDsOwzKtQuTbrnZkosOYMHtSypsAJlM4HZ6rzIl0Ik=;
+        b=FsInNaSB1uC6cg6SvTLHLV3MKvd9N/e05LUsw+O9QsCczXKzDMD2dtcKbGFo8XzKaj
+         xRe0vKICNo8Rc5fS967t66jcUPHoGI1Z0J8m7mIeAWmnaOUvlHKpGXDcY6mySo5wI7c0
+         aBIEqqdqnsW3qEncbXwgKWvQ6epluDRuTldRpFpmB4kW8wkUGwnf0Pttl7nrvzJ/Bc0F
+         9IqqUu4KLbk9Deuyp1qJiCj349UyuFOGiMOpe2W2mJlJrPoovgFI1VRPCxEV4esgGTZ5
+         3jCCxQ2YE0UJbjNo834x22Ve+tc+IOjXoJlqENIA3XejfCpdZOXy+mVEVZNv3GRKNXy7
+         0XVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMqhtRuHAWNWf5NtA/Q6qb5trOR5gfnnE+r028amu2xY4dRXSoH/BLtHOHFnAWXLs96/jLaWQ2gHq+PVFammJwUSemiGnTgoMdjzeK
+X-Gm-Message-State: AOJu0YxMSg/XDu81z0IoNdPLGGMLykwJ/JaACdnJEUZ0SoaQvPIq7PeE
+	5TO/Kk/Wfoyt9Lt9wajjNmbtpmyUB38/rJhXS6evXP0myBuZvzh2Rf1+BsUJo8FHSjdmjcHyXeq
+	yb1Adww5ik4C0QdO8QGs/f9qugio=
+X-Google-Smtp-Source: AGHT+IH3bebP0lY82vBlI8fNjwjTmbTeUHhU1OC4AzvNPEhJLF7y9pOSUVbKPACUzSAvVhS9/A0KI7pXKbrOwgq+IQA=
+X-Received: by 2002:a17:90b:1c0c:b0:2c2:e45b:ecd with SMTP id
+ 98e67ed59e1d1-2c86124b3eemr3530884a91.12.1719240334393; Mon, 24 Jun 2024
+ 07:45:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240624-mcp251xfd-workaround-erratum-6-v3-9-caf7e5f27f60@pengutronix.de>
-References: <20240624-mcp251xfd-workaround-erratum-6-v3-0-caf7e5f27f60@pengutronix.de>
-In-Reply-To: <20240624-mcp251xfd-workaround-erratum-6-v3-0-caf7e5f27f60@pengutronix.de>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: Manivannan Sadhasivam <mani@kernel.org>, 
- Thomas Kopp <thomas.kopp@microchip.com>, 
- =?utf-8?q?Stefan_Alth=C3=B6fer?= <Stefan.Althoefer@janztec.com>, 
- kernel@pengutronix.de, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Marc Kleine-Budde <mkl@pengutronix.de>
-X-Mailer: b4 0.15-dev-13183
-X-Developer-Signature: v=1; a=openpgp-sha256; l=5274; i=mkl@pengutronix.de;
- h=from:subject:message-id; bh=xLCNUDu40aLCYUBXXMUH9tJ5hNEyfwbDsv7k7YO+29E=;
- b=owEBbQGS/pANAwAKASg4oj56LbxvAcsmYgBmeYaP3y5supn8zqp69efl0JrQmRQk/Fmc5LnL6
- N9UB9KAr3iJATMEAAEKAB0WIQRQQLqG4LYE3Sm8Pl8oOKI+ei28bwUCZnmGjwAKCRAoOKI+ei28
- b6xiB/wIYEL3bAcqMfubvzhFoJXKC6fsS4Phf2P1rVa7FaW/ETUdZ4xHk2llJet1UBnEFeweFGv
- Zt+4kJMTGspntzHnKPoeDwXJ1raqhRGNnKkdXVaWBPAmfY9MM+1rNsS8pw39qTVfAAmiGxNSDRU
- vq/qP6zQtGjzjci7asncxjdzsr19YTLWYSA1H8GGY5rKEzh6j0S7b9wX8XQWXxriQlThYyubEAL
- fbqRJD97LaaLymYvZN5h8PYZzXL29N8lZjN03svJjXUYkyV8Nu1km93fVM+aRV90fme6xuhZNoY
- JgJJD3t7ZF/eFWpTwcMUr005JiZrNCFXHAZrtDpqvWs8Tnzs
-X-Developer-Key: i=mkl@pengutronix.de; a=openpgp;
- fpr=C1400BA0B3989E6FBC7D5B5C2B5EE211C58AEA54
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+References: <20240624031158.98502-1-jiapeng.chong@linux.alibaba.com>
+In-Reply-To: <20240624031158.98502-1-jiapeng.chong@linux.alibaba.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 24 Jun 2024 10:45:22 -0400
+Message-ID: <CADnq5_O5eQ5oU7+oX+Hg8jsWY-9DLiRYJA6SOfotDQupnALgYA@mail.gmail.com>
+Subject: Re: [PATCH] drm/amd/display: Use ARRAY_SIZE for array length
+To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+Cc: harry.wentland@amd.com, sunpeng.li@amd.com, Rodrigo.Siqueira@amd.com, 
+	alexander.deucher@amd.com, christian.koenig@amd.com, Xinhui.Pan@amd.com, 
+	airlied@gmail.com, daniel@ffwll.ch, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Abaci Robot <abaci@linux.alibaba.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch updates the workaround for a problem similar to erratum
-DS80000789E 6 of the mcp2518fd, the other variants of the chip
-family (mcp2517fd and mcp251863) are probably also affected.
+Applied.  Thanks!
 
-Erratum DS80000789E 6 says "reading of the FIFOCI bits in the FIFOSTA
-register for an RX FIFO may be corrupted". However observation shows
-that this problem is not limited to RX FIFOs but also effects the TEF
-FIFO.
-
-In the bad case, the driver reads a too large head index. As the FIFO
-is implemented as a ring buffer, this results in re-handling old CAN
-transmit complete events.
-
-Every transmit complete event contains with a sequence number that
-equals to the sequence number of the corresponding TX request. This
-way old TX complete events can be detected.
-
-If the original driver detects a non matching sequence number, it
-prints an info message and tries again later. As wrong sequence
-numbers can be explained by the erratum DS80000789E 6, demote the info
-message to debug level, streamline the code and update the comments.
-
-Keep the behavior: If an old CAN TX complete event is detected, abort
-the iteration and mark the number of valid CAN TX complete events as
-processed in the chip by incrementing the FIFO's tail index.
-
-Cc: Stefan Althöfer <Stefan.Althoefer@janztec.com>
-Cc: Thomas Kopp <thomas.kopp@microchip.com>
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
----
- drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c | 71 ++++++++++-----------------
- 1 file changed, 27 insertions(+), 44 deletions(-)
-
-diff --git a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
-index f5f05e7baef2..2c92e127cef8 100644
---- a/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
-+++ b/drivers/net/can/spi/mcp251xfd/mcp251xfd-tef.c
-@@ -60,56 +60,39 @@ static int mcp251xfd_check_tef_tail(const struct mcp251xfd_priv *priv)
- 	return 0;
- }
- 
--static int
--mcp251xfd_handle_tefif_recover(const struct mcp251xfd_priv *priv, const u32 seq)
--{
--	const struct mcp251xfd_tx_ring *tx_ring = priv->tx;
--	u32 tef_sta;
--	int err;
--
--	err = regmap_read(priv->map_reg, MCP251XFD_REG_TEFSTA, &tef_sta);
--	if (err)
--		return err;
--
--	if (tef_sta & MCP251XFD_REG_TEFSTA_TEFOVIF) {
--		netdev_err(priv->ndev,
--			   "Transmit Event FIFO buffer overflow.\n");
--		return -ENOBUFS;
--	}
--
--	netdev_info(priv->ndev,
--		    "Transmit Event FIFO buffer %s. (seq=0x%08x, tef_tail=0x%08x, tef_head=0x%08x, tx_head=0x%08x).\n",
--		    tef_sta & MCP251XFD_REG_TEFSTA_TEFFIF ?
--		    "full" : tef_sta & MCP251XFD_REG_TEFSTA_TEFNEIF ?
--		    "not empty" : "empty",
--		    seq, priv->tef->tail, priv->tef->head, tx_ring->head);
--
--	/* The Sequence Number in the TEF doesn't match our tef_tail. */
--	return -EAGAIN;
--}
--
- static int
- mcp251xfd_handle_tefif_one(struct mcp251xfd_priv *priv,
- 			   const struct mcp251xfd_hw_tef_obj *hw_tef_obj,
- 			   unsigned int *frame_len_ptr)
- {
- 	struct net_device_stats *stats = &priv->ndev->stats;
-+	u32 seq, tef_tail_masked, tef_tail;
- 	struct sk_buff *skb;
--	u32 seq, seq_masked, tef_tail_masked, tef_tail;
- 
--	seq = FIELD_GET(MCP251XFD_OBJ_FLAGS_SEQ_MCP2518FD_MASK,
-+	 /* Use the MCP2517FD mask on the MCP2518FD, too. We only
-+	  * compare 7 bits, this is enough to detect old TEF objects.
-+	  */
-+	seq = FIELD_GET(MCP251XFD_OBJ_FLAGS_SEQ_MCP2517FD_MASK,
- 			hw_tef_obj->flags);
--
--	/* Use the MCP2517FD mask on the MCP2518FD, too. We only
--	 * compare 7 bits, this should be enough to detect
--	 * net-yet-completed, i.e. old TEF objects.
--	 */
--	seq_masked = seq &
--		field_mask(MCP251XFD_OBJ_FLAGS_SEQ_MCP2517FD_MASK);
- 	tef_tail_masked = priv->tef->tail &
- 		field_mask(MCP251XFD_OBJ_FLAGS_SEQ_MCP2517FD_MASK);
--	if (seq_masked != tef_tail_masked)
--		return mcp251xfd_handle_tefif_recover(priv, seq);
-+
-+	/* According to mcp2518fd erratum DS80000789E 6. the FIFOCI
-+	 * bits of a FIFOSTA register, here the TX FIFO tail index
-+	 * might be corrupted and we might process past the TEF FIFO's
-+	 * head into old CAN frames.
-+	 *
-+	 * Compare the sequence number of the currently processed CAN
-+	 * frame with the expected sequence number. Abort with
-+	 * -EBADMSG if an old CAN frame is detected.
-+	 */
-+	if (seq != tef_tail_masked) {
-+		netdev_dbg(priv->ndev, "%s: chip=0x%02x ring=0x%02x\n", __func__,
-+			   seq, tef_tail_masked);
-+		stats->tx_fifo_errors++;
-+
-+		return -EBADMSG;
-+	}
- 
- 	tef_tail = mcp251xfd_get_tef_tail(priv);
- 	skb = priv->can.echo_skb[tef_tail];
-@@ -219,12 +202,12 @@ int mcp251xfd_handle_tefif(struct mcp251xfd_priv *priv)
- 		unsigned int frame_len = 0;
- 
- 		err = mcp251xfd_handle_tefif_one(priv, &hw_tef_obj[i], &frame_len);
--		/* -EAGAIN means the Sequence Number in the TEF
--		 * doesn't match our tef_tail. This can happen if we
--		 * read the TEF objects too early. Leave loop let the
--		 * interrupt handler call us again.
-+		/* -EBADMSG means we're affected by mcp2518fd erratum
-+		 * DS80000789E 6., i.e. the Sequence Number in the TEF
-+		 * doesn't match our tef_tail. Don't process any
-+		 * further and mark processed frames as good.
- 		 */
--		if (err == -EAGAIN)
-+		if (err == -EBADMSG)
- 			goto out_netif_wake_queue;
- 		if (err)
- 			return err;
-
--- 
-2.43.0
-
-
+On Sun, Jun 23, 2024 at 11:37=E2=80=AFPM Jiapeng Chong
+<jiapeng.chong@linux.alibaba.com> wrote:
+>
+> Use of macro ARRAY_SIZE to calculate array size minimizes
+> the redundant code and improves code reusability.
+>
+> ./drivers/gpu/drm/amd/display/modules/hdcp/hdcp_ddc.c:164:45-46: WARNING:=
+ Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/modules/hdcp/hdcp_ddc.c:183:47-48: WARNING:=
+ Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/modules/hdcp/hdcp_ddc.c:237:45-46: WARNING:=
+ Use ARRAY_SIZE.
+> ./drivers/gpu/drm/amd/display/modules/hdcp/hdcp_ddc.c:257:47-48: WARNING:=
+ Use ARRAY_SIZE.
+>
+> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
+> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=3D9405
+> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
+> ---
+>  drivers/gpu/drm/amd/display/modules/hdcp/hdcp_ddc.c | 12 ++++--------
+>  1 file changed, 4 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_ddc.c b/driver=
+s/gpu/drm/amd/display/modules/hdcp/hdcp_ddc.c
+> index 1b2df97226a3..7ecf76aea950 100644
+> --- a/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_ddc.c
+> +++ b/drivers/gpu/drm/amd/display/modules/hdcp/hdcp_ddc.c
+> @@ -161,8 +161,7 @@ static enum mod_hdcp_status read(struct mod_hdcp *hdc=
+p,
+>                 return MOD_HDCP_STATUS_DDC_FAILURE;
+>
+>         if (is_dp_hdcp(hdcp)) {
+> -               int num_dpcd_addrs =3D sizeof(hdcp_dpcd_addrs) /
+> -                       sizeof(hdcp_dpcd_addrs[0]);
+> +               int num_dpcd_addrs =3D ARRAY_SIZE(hdcp_dpcd_addrs);
+>                 if (msg_id >=3D num_dpcd_addrs)
+>                         return MOD_HDCP_STATUS_DDC_FAILURE;
+>
+> @@ -180,8 +179,7 @@ static enum mod_hdcp_status read(struct mod_hdcp *hdc=
+p,
+>                         data_offset +=3D cur_size;
+>                 }
+>         } else {
+> -               int num_i2c_offsets =3D sizeof(hdcp_i2c_offsets) /
+> -                       sizeof(hdcp_i2c_offsets[0]);
+> +               int num_i2c_offsets =3D ARRAY_SIZE(hdcp_i2c_offsets);
+>                 if (msg_id >=3D num_i2c_offsets)
+>                         return MOD_HDCP_STATUS_DDC_FAILURE;
+>
+> @@ -234,8 +232,7 @@ static enum mod_hdcp_status write(struct mod_hdcp *hd=
+cp,
+>                 return MOD_HDCP_STATUS_DDC_FAILURE;
+>
+>         if (is_dp_hdcp(hdcp)) {
+> -               int num_dpcd_addrs =3D sizeof(hdcp_dpcd_addrs) /
+> -                       sizeof(hdcp_dpcd_addrs[0]);
+> +               int num_dpcd_addrs =3D ARRAY_SIZE(hdcp_dpcd_addrs);
+>                 if (msg_id >=3D num_dpcd_addrs)
+>                         return MOD_HDCP_STATUS_DDC_FAILURE;
+>
+> @@ -254,8 +251,7 @@ static enum mod_hdcp_status write(struct mod_hdcp *hd=
+cp,
+>                         data_offset +=3D cur_size;
+>                 }
+>         } else {
+> -               int num_i2c_offsets =3D sizeof(hdcp_i2c_offsets) /
+> -                       sizeof(hdcp_i2c_offsets[0]);
+> +               int num_i2c_offsets =3D ARRAY_SIZE(hdcp_i2c_offsets);
+>                 if (msg_id >=3D num_i2c_offsets)
+>                         return MOD_HDCP_STATUS_DDC_FAILURE;
+>
+> --
+> 2.20.1.7.g153144c
+>
 
