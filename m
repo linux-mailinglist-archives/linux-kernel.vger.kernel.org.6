@@ -1,129 +1,248 @@
-Return-Path: <linux-kernel+bounces-227718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC4E9155D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:50:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A3879155CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 104991F2224B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:50:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3940287C39
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:49:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3161A00DF;
-	Mon, 24 Jun 2024 17:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92DDE19F48D;
+	Mon, 24 Jun 2024 17:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jxty3GNU"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="d31jN/H9"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FC9D1A01AD
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8BF19F47C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719251388; cv=none; b=vE+h15vbUo2diBYJpotEHEnWiXVxGhGAXT9nccl6EzNlNPo2uInbcqxDPfaUMPnXDeMbleFAxB0iRep2LlKl20VY8il5HvCgG+b87FFOdE+w1ihK/jz2utTRxjGL/+mN8KxlkNMVdopbeQFHbwLP+LP4dRCgE/zc9Cx7gRuIfNA=
+	t=1719251375; cv=none; b=pNPAqHsaXni3YqyNlY/kysntynr6Gzvt/ozb6ceK08x9uYL5uiMX+ll5q4xh18yw9xpSlTuIgkF+CojBI0u4KpAwrq75jfYDvqMUxP8dcDQPHudPKAo1NUt5UKFcQ3snbGFD11u75mAI4CwPTJO5TnxDtvZt1OXwrOghNrrECv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719251388; c=relaxed/simple;
-	bh=Ssjb3Uo4Iut5+I8dmIRqobRAiZrYRNHEz6Ht7+Uda/A=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tm8XbFvWGV1ciJ9J8DZbcnwV44EofzjbrEQRo/zQviTLWzabw/n36l9+3RJr2lvMQzgiQKC2jStyuj7AxWxJONe9ZnM+KyryxYOYBcm6xZQy4VjTPg78f9+1GdncR5k1wCmfbL/L2u3mhHyyrdRUpkO1DR3IRPPdv6fPDp4N8Bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jxty3GNU; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70673c32118so1251892b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:49:47 -0700 (PDT)
+	s=arc-20240116; t=1719251375; c=relaxed/simple;
+	bh=Bf9Guv1QNbjMVDwFxJHiYuhL1KV7H82L0MrTLCU+2YI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OlWCa9+0Gyg9l86M6P4f7W9qX6RfVhUhJ9MJnXcN/whTrEeTQKqJbAKqeu0B12ptj2hzzYugngrXt6fptHNJqk2mealH4KstPK6JJRuMypDrwhrSwnfgUpn8ZHPVIP6eNb2ckfNWhwvlVwelB/z4wBM7FBXINH+05gFwm1cf3KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=d31jN/H9; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec5779b423so23612561fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:49:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719251387; x=1719856187; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mkH0vN6ua6Gjn09ocrkAPIaM9p5reMjO+llNAon/y1w=;
-        b=Jxty3GNUstZno9Rk3yheQPkMBR+REAhEfAw+VNBSFIES4+WADq0rT2AZz3F/k7pT6s
-         qebyO9pSmqklShva0U1kKBS31nFsfLqUuwFUww9+yztmDs+GckIaNCx4RQj9WzZnkC3C
-         c1jrKFbX+NaKGjavM2WcFdNGvcyiarIoYPxZVRuiQZ1bjds+2BNxpUn7bD0ohfvTBmia
-         xqT5GOrf3aqRCW6tltPQQR1YgN4dwBa3jfHISTh6s5gW7JhVYyZNeKFHqm4M4lV6IpSi
-         NWNqJj6nXiHD+m1mFmlmDN5LmX10PmMTCahfa8gjm3cRSknQ76feh2x7CQzusBCaAKOr
-         6weQ==
+        d=cloudflare.com; s=google09082023; t=1719251372; x=1719856172; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SbbAfpo2+pMau+1QdjEGlkS2E4OZnyRsc/b85mU5Vvg=;
+        b=d31jN/H9XfV+QTnqrFSjSR/Z58iD2vSnlVATBKEAz4vtBQZAL7Gwi7E4MNME7Kdh7p
+         HBmMZEPxbo/HApDx4doayGNSSZkzQh9FaoMI0uLDgiFUvATpTF2/iP6FW5QbNVx0dxHQ
+         BCtIJY30d3WLe9bgAuxV5ZpK4n6o1N9hp0ncVqje1jNLcyRH+2VZX5tgt7p5mzdq/ou2
+         cwBgmTjgs0W5Wzi66vXYvVKX8fsou4KnrLOQUxFkg05KLjfR3UR5MX4XXx7sck+iyU7S
+         AhcWDMgcqeGiyJyUujkUUMCCwKCe9Bh2PCwVrqUdPCs2gVFWG/toVuWMrpPbYciAw48E
+         BxPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719251387; x=1719856187;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mkH0vN6ua6Gjn09ocrkAPIaM9p5reMjO+llNAon/y1w=;
-        b=S01U4RpWU0W3YUkMLVB9F4PDSJxv3+EL6Acc3te+w+/kb5/pPu2IBN1QuHJ0faraSh
-         NA5OuzOxAT5W1NOwjP2TWXDb7UI9C5KT60iZvySTRBTPz6Q8kgiPUjMm01NCnp78nGXl
-         NQ3OCk00H3YZ/6q4H322K3JY5eXz7F6ACPkKuPd57EU0ipXwPMN2O9MLXyjqSvcGZ49t
-         ZvcdDLdrTDJenoEM/ACJzmyKRRkzycP0wdPLyAmH01Dtjk3zPy/OGNLNlpKvsLN5TrpZ
-         bcaDSILrctxHT7cWXsMi+Jq998BYl7OmsureeFbfrHvG/tKSjKIx4LzC6w/g4JZd5rYc
-         rqOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXSatxa+H39QDm3KUzjlIzaeEngX2HaedwdWecsirxEs9ui8jCT5RPjJBfzTzkAnPVALPR8L1hWq5KLI/k/0UgJ/7AXOMXVZcpVbQiS
-X-Gm-Message-State: AOJu0Yw0QXlvk0SUwrLQNOR54om4LkVORQPT1aLXr9g9dQJ9iWUEEYwP
-	W5e6CsbqgqPnoHP+0zotN14sxFpvUh1xmV1wXkzQwcFk//UFExdp
-X-Google-Smtp-Source: AGHT+IH+svNIq4Zyd95MOOzrn+9RVplI0PwbRSAbMW2J6ZziscrSXG44QMEcN53Xd1+ghzGSLAAj8Q==
-X-Received: by 2002:aa7:82c2:0:b0:706:6f39:1d63 with SMTP id d2e1a72fcca58-70674690fb3mr3975274b3a.22.1719251386616;
-        Mon, 24 Jun 2024 10:49:46 -0700 (PDT)
-Received: from localhost.localdomain ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065130078dsm6487825b3a.204.2024.06.24.10.49.44
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 24 Jun 2024 10:49:46 -0700 (PDT)
-From: yskelg@gmail.com
-To: "Michael S . Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	=?UTF-8?q?Eugenio=20P=C3=A9rez?= <eperezma@redhat.com>
-Cc: Austin Kim <austindh.kim@gmail.com>,
-	MichelleJin <shjy180909@gmail.com>,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Yunseong Kim <yskelg@gmail.com>
-Subject: [PATCH RESEND v2] tools/virtio: creating pipe assertion in vringh_test
-Date: Tue, 25 Jun 2024 02:49:06 +0900
-Message-ID: <20240624174905.27980-2-yskelg@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1719251372; x=1719856172;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SbbAfpo2+pMau+1QdjEGlkS2E4OZnyRsc/b85mU5Vvg=;
+        b=Ov90d2hWYimV+Z7ZQRTl6oOyYTU428uB/UEE9PE4nqjn/8gMfBPmfyOfQBe0NB027m
+         P/NBM231J7Gjcp6iZK2BT4LLifVbDyJQlxnEFWcXLwGwENrHWXrnsk5uSyx8JvYpHzd8
+         EldQ+Q5OwdWVcslWqVQHBxavYk3SOJAFLj3ARh8itMiVbGRzFOup/pU7k+hQTcKcxbBF
+         tA6Q1jHTTE2QaLOent4Igh4XSNMw2zJsXqENtHQ0MO0cO4sFrxbtbBJUF1/URND9JnWb
+         SpUjGAQDTwXKHGj9Fj24fDl3lbhEFN59P3OoVFCyQiN6i43GIdh6O4JUOy1x2gDALqil
+         2gHw==
+X-Forwarded-Encrypted: i=1; AJvYcCXj5f+b0lTN8XLHSTO8rujGNKdODUJGYikxCnUWLqqOX0viCd1rPbZ163Mr8aVCUK7DoOOCwTyZgQrqKCCQAbpbSzrgJk47vnDjMBbz
+X-Gm-Message-State: AOJu0YyA7OBwjncMqOTU8mid3YBbBzUwr+G9t5vKP4l4joRehhgvSllF
+	iPjjzsKUvajl6Z1cfcl3zDFO9jwy5F3CoTFwCPX3UxCuuR528nfhs42OcW86+tlvORsGa8+ssX1
+	ZQwsTCRxLGmGEB0A95rp5DnmfQQfmVwmNtFKysA==
+X-Google-Smtp-Source: AGHT+IH3pCfEpAMJvD46ojBZBA0m7JkKFkrZwsZS3r+xQwu70WEB/qS1C/CtVh4wZ7UKbN75NfSbPn/QZn+xXZNnu9M=
+X-Received: by 2002:a2e:87d3:0:b0:2ec:55b5:ed41 with SMTP id
+ 38308e7fff4ca-2ec5931d876mr41742601fa.16.1719251371796; Mon, 24 Jun 2024
+ 10:49:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1718919473.git.yan@cloudflare.com> <b8c183a24285c2ab30c51622f4f9eff8f7a4752f.1718919473.git.yan@cloudflare.com>
+ <66756ed3f2192_2e64f929491@willemb.c.googlers.com.notmuch>
+ <44ac34f6-c78e-16dd-14da-15d729fecb5b@iogearbox.net> <CAO3-PbrhnvmdYmQubNsTX3gX917o=Q+MBWTBkxUd=YWt4dNGuA@mail.gmail.com>
+ <e6553be1-4eaa-e90a-17f8-dece2bb95e7b@iogearbox.net> <CAO3-PboYruuLrF7D_rMiuG-AnWdR4BhsgP+MhVmOm-f3MzJFyQ@mail.gmail.com>
+ <6677db8b2ef78_33522729492@willemb.c.googlers.com.notmuch> <caecbff8-ffc4-976b-4516-dba41848ef30@iogearbox.net>
+In-Reply-To: <caecbff8-ffc4-976b-4516-dba41848ef30@iogearbox.net>
+From: Yan Zhai <yan@cloudflare.com>
+Date: Mon, 24 Jun 2024 12:49:20 -0500
+Message-ID: <CAO3-PbpmS8=gTSb84X8wV4NiCA8JNXrEXYONJKmc6RoM4QQwYg@mail.gmail.com>
+Subject: Re: [RFC net-next 1/9] skb: introduce gro_disabled bit
+To: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Willem de Bruijn <willemdebruijn.kernel@gmail.com>, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, 
+	kernel-team <kernel-team@cloudflare.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Yunseong Kim <yskelg@gmail.com>
+On Mon, Jun 24, 2024 at 8:30=E2=80=AFAM Daniel Borkmann <daniel@iogearbox.n=
+et> wrote:
+>
+> On 6/23/24 10:23 AM, Willem de Bruijn wrote:
+> > Yan Zhai wrote:
+> >> On Fri, Jun 21, 2024 at 11:41=E2=80=AFAM Daniel Borkmann <daniel@iogea=
+rbox.net> wrote:
+> >>> On 6/21/24 6:00 PM, Yan Zhai wrote:
+> >>>> On Fri, Jun 21, 2024 at 8:13=E2=80=AFAM Daniel Borkmann <daniel@ioge=
+arbox.net> wrote:
+> >>>>> On 6/21/24 2:15 PM, Willem de Bruijn wrote:
+> >>>>>> Yan Zhai wrote:
+> >>>>>>> Software GRO is currently controlled by a single switch, i.e.
+> >>>>>>>
+> >>>>>>>      ethtool -K dev gro on|off
+> >>>>>>>
+> >>>>>>> However, this is not always desired. When GRO is enabled, even if=
+ the
+> >>>>>>> kernel cannot GRO certain traffic, it has to run through the GRO =
+receive
+> >>>>>>> handlers with no benefit.
+> >>>>>>>
+> >>>>>>> There are also scenarios that turning off GRO is a requirement. F=
+or
+> >>>>>>> example, our production environment has a scenario that a TC egre=
+ss hook
+> >>>>>>> may add multiple encapsulation headers to forwarded skbs for load
+> >>>>>>> balancing and isolation purpose. The encapsulation is implemented=
+ via
+> >>>>>>> BPF. But the problem arises then: there is no way to properly off=
+load a
+> >>>>>>> double-encapsulated packet, since skb only has network_header and
+> >>>>>>> inner_network_header to track one layer of encapsulation, but not=
+ two.
+> >>>>>>> On the other hand, not all the traffic through this device needs =
+double
+> >>>>>>> encapsulation. But we have to turn off GRO completely for any ing=
+ress
+> >>>>>>> device as a result.
+> >>>>>>>
+> >>>>>>> Introduce a bit on skb so that GRO engine can be notified to skip=
+ GRO on
+> >>>>>>> this skb, rather than having to be 0-or-1 for all traffic.
+> >>>>>>>
+> >>>>>>> Signed-off-by: Yan Zhai <yan@cloudflare.com>
+> >>>>>>> ---
+> >>>>>>>     include/linux/netdevice.h |  9 +++++++--
+> >>>>>>>     include/linux/skbuff.h    | 10 ++++++++++
+> >>>>>>>     net/Kconfig               | 10 ++++++++++
+> >>>>>>>     net/core/gro.c            |  2 +-
+> >>>>>>>     net/core/gro_cells.c      |  2 +-
+> >>>>>>>     net/core/skbuff.c         |  4 ++++
+> >>>>>>>     6 files changed, 33 insertions(+), 4 deletions(-)
+> >>>>>>>
+> >>>>>>> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.=
+h
+> >>>>>>> index c83b390191d4..2ca0870b1221 100644
+> >>>>>>> --- a/include/linux/netdevice.h
+> >>>>>>> +++ b/include/linux/netdevice.h
+> >>>>>>> @@ -2415,11 +2415,16 @@ struct net_device {
+> >>>>>>>        ((dev)->devlink_port =3D (port));                         =
+\
+> >>>>>>>     })
+> >>>>>>>
+> >>>>>>> -static inline bool netif_elide_gro(const struct net_device *dev)
+> >>>>>>> +static inline bool netif_elide_gro(const struct sk_buff *skb)
+> >>>>>>>     {
+> >>>>>>> -    if (!(dev->features & NETIF_F_GRO) || dev->xdp_prog)
+> >>>>>>> +    if (!(skb->dev->features & NETIF_F_GRO) || skb->dev->xdp_pro=
+g)
+> >>>>>>>                return true;
+> >>>>>>> +
+> >>>>>>> +#ifdef CONFIG_SKB_GRO_CONTROL
+> >>>>>>> +    return skb->gro_disabled;
+> >>>>>>> +#else
+> >>>>>>>        return false;
+> >>>>>>> +#endif
+> >>>>>>
+> >>>>>> Yet more branches in the hot path.
+> >>>>>>
+> >>>>>> Compile time configurability does not help, as that will be
+> >>>>>> enabled by distros.
+> >>>>>>
+> >>>>>> For a fairly niche use case. Where functionality of GRO already
+> >>>>>> works. So just a performance for a very rare case at the cost of a
+> >>>>>> regression in the common case. A small regression perhaps, but dea=
+th
+> >>>>>> by a thousand cuts.
+> >>>>>
+> >>>>> Mentioning it here b/c it perhaps fits in this context, longer time=
+ ago
+> >>>>> there was the idea mentioned to have BPF operating as GRO engine wh=
+ich
+> >>>>> might also help to reduce attack surface by only having to handle p=
+ackets
+> >>>>> of interest for the concrete production use case. Perhaps here meta=
+ data
+> >>>>> buffer could be used to pass a notification from XDP to exit early =
+w/o
+> >>>>> aggregation.
+> >>>>
+> >>>> Metadata is in fact one of our interests as well. We discussed using
+> >>>> metadata instead of a skb bit to carry this information internally.
+> >>>> Since metadata is opaque atm so it seems the only option is to have =
+a
+> >>>> GRO control hook before napi_gro_receive, and let BPF decide
+> >>>> netif_receive_skb or napi_gro_receive (echo what Paolo said). With B=
+PF
+> >>>> it could indeed be more flexible, but the cons is that it could be
+> >>>> even more slower than taking a bit on skb. I am actually open to
+> >>>> either approach, as long as it gives us more control on when to enab=
+le
+> >>>> GRO :)
+> >>>
+> >>> Oh wait, one thing that just came to mind.. have you tried u64 per-CP=
+U
+> >>> counter map in XDP? For packets which should not be GRO-aggregated yo=
+u
+> >>> add count++ into the meta data area, and this forces GRO to not aggre=
+gate
+> >>> since meta data that needs to be transported to tc BPF layer mismatch=
+es
+> >>> (and therefore the contract/intent is that tc BPF needs to see the di=
+fferent
+> >>> meta data passed to it).
+> >>
+> >> We did this before accidentally (we put a timestamp for debugging
+> >> purposes in metadata) and this actually caused about 20% of OoO for
+> >> TCP in production: all PSH packets are reordered. GRO does not fire
+> >> the packet to the upper layer when a diff in metadata is found for a
+> >> non-PSH packet, instead it is queued as a =E2=80=9Cnew flow=E2=80=9D o=
+n the GRO list
+> >> and waits for flushing. When a PSH packet arrives, its semantic is to
+> >> flush this packet immediately and thus precedes earlier packets of the
+> >> same flow.
+> >
+> > Is that a bug in XDP metadata handling for GRO?
+> >
+> > Mismatching metadata should not be taken as separate flows, but as a
+> > flush condition.
+>
+> Definitely a bug as it should flush. If noone is faster I can add it to m=
+y
+> backlog todo to fix it, but might probably take a week before I get to it=
+.
+>
+In theory we should flush if the same flow has different metadata.
+However "same flow" is not finally confirmed until GRO proceeds to the
+TCP layer in this case. So to achieve this flush semantic, metadata
+should be compared at the leaf protocol handlers instead of initially
+inside dev_gro_receive. I am not quite sure if it is worthwhile, or
+just allow skipping GRO from XDP, since it's the XDP program who sets
+this metadata.
 
-parallel_test() function in vringh_test needs to verify
-the creation of the guest/host pipe.
+Yan
 
-Signed-off-by: Yunseong Kim <yskelg@gmail.com>
----
- tools/virtio/vringh_test.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/tools/virtio/vringh_test.c b/tools/virtio/vringh_test.c
-index 98ff808d6f0c..43d3a6aa1dcf 100644
---- a/tools/virtio/vringh_test.c
-+++ b/tools/virtio/vringh_test.c
-@@ -139,7 +139,7 @@ static int parallel_test(u64 features,
- 			 bool fast_vringh)
- {
- 	void *host_map, *guest_map;
--	int fd, mapsize, to_guest[2], to_host[2];
-+	int pipe_ret, fd, mapsize, to_guest[2], to_host[2];
- 	unsigned long xfers = 0, notifies = 0, receives = 0;
- 	unsigned int first_cpu, last_cpu;
- 	cpu_set_t cpu_set;
-@@ -161,8 +161,11 @@ static int parallel_test(u64 features,
- 	host_map = mmap(NULL, mapsize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
- 	guest_map = mmap(NULL, mapsize, PROT_READ|PROT_WRITE, MAP_SHARED, fd, 0);
- 
--	pipe(to_guest);
--	pipe(to_host);
-+	pipe_ret = pipe(to_guest);
-+	assert(!pipe_ret);
-+
-+	pipe_ret = pipe(to_host);
-+	assert(!pipe_ret);
- 
- 	CPU_ZERO(&cpu_set);
- 	find_cpus(&first_cpu, &last_cpu);
--- 
-2.45.2
-
+> Thanks,
+> Daniel
 
