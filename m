@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-226668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A3359141EE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:29:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A9EB9141F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:29:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2E21F1F24305
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:29:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 35057B23F2C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E65317C60;
-	Mon, 24 Jun 2024 05:29:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4591118C38;
+	Mon, 24 Jun 2024 05:29:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wKghoiXp"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PQ3P2j6F"
 Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D78E18C38
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 05:29:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2469F1BC3C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 05:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719206954; cv=none; b=dPmszk66Toqv/JV0M9u8UoavTxOWEiwe6L8+/pvVINfIaaQrTPSzWWI2aBy1sin9ikmtPvAiY+RoCBx8Hp5vLL1Gxf9BtZIAnkeo5zhm5bGW2YssuWedFIFfGjCUcofdRCUpFMP7MOk5VHsqwhhgmccPZyri468B1JuVy4ZU3Bo=
+	t=1719206959; cv=none; b=eMTaUTQ44k8b41UgtZQoF1rWjkhEVhApndmUR0dcAbn4Ga1j3pXRLoXYM86+3FWhkAU9r9p6aarI5aQrOmu9l3eDK7KqF/6YrxMsl8FoBA0ze9lgmg5XDRIF9nnguHCSewVbwv89JbTPI7Dw1alCP2IsUVWS1nKcp+ypC3BV+Ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719206954; c=relaxed/simple;
-	bh=CfPZiFmfp0Qs9eggBxskJJLc/pbaINcjbBZ7ulzGj0w=;
+	s=arc-20240116; t=1719206959; c=relaxed/simple;
+	bh=8InZIp7y2zwsO4oF6fUGa/AKQ9soRf44nwDuYbc/fZQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=pb41t0X/Zc0djXePLs5dG6TkDcoj8Pv6YVcVZxbzwRYNcl8u7gIJ1QgDHXafM8HjA6QxtorIXh47kYSqTMtxqXFtORpeTPFEe2pxzXdIFtoAJifOLh9DI+mOZFzskg9nyf7pomdZ6+HiSKFgKONmJgraFM4rBw7SWp8AppdIH5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wKghoiXp; arc=none smtp.client-ip=209.85.219.202
+	 To:Cc:Content-Type; b=DhV0c9UnTy9dCjxyV+cumv9b5/psArKTcJ1BZGp6WrcNZ+fVr0KtCuIw/SbqXc5wBe0t5eA+Bn+yKmlgCAD25zwGSUGNNkeavz8uIYBEKI/yBFAgFnpcCqciQeR1s9dHi8gIuMSmk2KfDE64iFyA+qAXYMa8Jc8hKPZME6GEtqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PQ3P2j6F; arc=none smtp.client-ip=209.85.219.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfdff0a9f26so7306156276.1
-        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 22:29:13 -0700 (PDT)
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e02b5792baaso8158029276.2
+        for <linux-kernel@vger.kernel.org>; Sun, 23 Jun 2024 22:29:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719206952; x=1719811752; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719206957; x=1719811757; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=xRFts49NKsibYysZG1mN4zOHSnI8JrcU21XVbqexR8c=;
-        b=wKghoiXpi08EVp1V0jFehKzn5khACAp0ZlqZEoyhaLFuUKRSDcEo6BuJ0nUf4QwBUk
-         atWdDw0ZVoFkaqu60HBarPcaN1AJ+AJmFRZp6K9pQ3ihzQLAnscjuMf5IlXulYZkiPTf
-         SvMp1BgZWJ6AGCvnUovk5igM6s+HI413qF+FxTWAzrzxEZ8ZJvAGTCpZ+KG59X++QxEz
-         EJZAU1soRSglgNFNh+fn0lK9ttEH7nzI+jf7WjLxdjQ7szU9U22XeTzF3PrmKwjNNIc1
-         JAQgdF05g9U/Hf0oKv6/gsQWb0Qqz8N7H19SLgSETQ9Q2NpvrSFQ+CTAi83/0WPwml3I
-         xwKA==
+        bh=z1lDGMLBKOZjPQERPgHQ2A9MuACw0+8pMDHkdqTSITw=;
+        b=PQ3P2j6FIp0z8UcrJEeANyB+43hqZROi1TVjPCGiCDykbWkrECMQZa/XNyQQVGZ44j
+         LFd25UKETZLW8rUilZDBhizUUOMer+WB06a+OAeEG+qWamwbTuQSEdY4gKCKpxE+zvCX
+         DBeWtWYGrsjNjx3hPTw9G7W8zzqFPG6s/GYkD+dx48qJVj9HF2lXXtvhhgLR5mlhbQHF
+         TVosdzXF8TVlUUObLVO7EAWlDJfeT60n6GsGLRFzb2o6B+PtEsWVHTIonQnOOTaKVxWM
+         1Hb5la7muxAemVE9Ac9vy4QcGTqftkV8JhTgTqD71Y0v3tLXRa/bjadhM+MAW2UZth8q
+         iUCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719206952; x=1719811752;
+        d=1e100.net; s=20230601; t=1719206957; x=1719811757;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xRFts49NKsibYysZG1mN4zOHSnI8JrcU21XVbqexR8c=;
-        b=GQGflZaLDjFyM4xPDQK7X6jJZdGBm5Gyb/Bl5mAd4g5TANlJmMAO+WywNtNteIR/vf
-         9g5DHCdW9rcsMWSwB5lPKkxXs9/KPvfL0Ayu2YAnf7kkjpXB9U1+Sx6omwfHYLeg3Yrv
-         FQDgXbwvJVkWrTqzjIypYBb+sUSB3c0KI9pL6uZ702z3wq7R04+QuPo7+iNxukhekOL8
-         hkoweUFg6uyJDA+zRWSrxJ5wmsR5cik0gun7cjDcwpfxh9PJSB9i/ahFaXFPHUK7YP+3
-         L3gyq30AhFir7P0D5cl3/Nl9piJHTsgXYukIA8YHHRfeobUQnA+j9oc5n8Fa6JFQz2rW
-         agqw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLdt1trHoZLoJJnkT4XcH4Xf1C2ZHeL7DFuv+/pM+xnez7UQC/CNNY8jctmDXm+KLhSiCV6EwHJ0O1PYiJPdqI/GfgmErmCz3aaU9/
-X-Gm-Message-State: AOJu0YzR/p5asv07IcR7DklcFAbGYJec4r/rGh8ZUTCZABWGAYGvIdXE
-	G6xgWCSxotzB7zVoJuSlMNrTeangTfpi5eYS9a+Mt2PIcgguys93nFgHj6HlsNm/ZDU3Ticxa3n
-	yXdEIrZhGbhgb+fpr79qvmbIlxw==
-X-Google-Smtp-Source: AGHT+IEPFtuLDU7qM5B+Hh1VvGYKz7iFDuXzYucZ4EYIl/bThe8hJCvlk8EEUhg4hesztK7Po0cAT9oQQFYv0eq6Ez0=
+        bh=z1lDGMLBKOZjPQERPgHQ2A9MuACw0+8pMDHkdqTSITw=;
+        b=BFxukh+ctEXFfOk7IAAj+/RsxtHll5BIwu2RhnteS/gcTq4Bhlbt/SPMbIVGqznpN4
+         E1tdk3fHLA4NNFHDNQDR9/3vAZWntboX+P1R1tfljqEzlDzWFW4Byoj+UeveZ0ABKptB
+         GYZzWJbAcux5NrrsZiIgcC3IK8M4jzab3BehRp59/syz0OTpUXsQ/XyZT3mr5CmfAU8T
+         EJDh1lx+WZVZ/BDYADMpHvWsUaK3JNU8RfTLsoypvdt7umP1ApgrDquy3PEL9gu7zkRk
+         o2bEnMTfrPqkseebrB1MUwR/wot6bLMVTGckGeny+kfQmjI8/IEA/qn3Xo9FPOoOGIIo
+         7V3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXPoT760Qfe+W+YVas1nvljp8M04raDpPSAh20v8E+GO5l1hl1DUQe8cSX/RV7skgSpfnNwf3WT5JfJAuHRvtkUOpTE4ohNATYk/ngD
+X-Gm-Message-State: AOJu0YxH1ttaUBcKCHmHOt0Lz0jCm2We537XNhaglY5Ky37uDG5dkq6A
+	EwNeA/vEbgt0aR+jcLZiQ4g5/3uH1LEgUzBQ62h5prkOX+aIVEvx2lWrzCVIKj44zydb10Ahu5g
+	jLsKGiGG/C0+7G3btNmUw/gMYuw==
+X-Google-Smtp-Source: AGHT+IFg4S5f43LgnXGlfi54t9Ut10DZcSLiBehSOlBVrIz63/P6FEWtc9+rMh5c0FMT9ZFPAyecpjuZbGRYntXsAoc=
 X-Received: from aniketm.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:3387])
- (user=aniketmaurya job=sendgmr) by 2002:a05:6902:1006:b0:dfa:59bc:8858 with
- SMTP id 3f1490d57ef6-e0300f01d20mr12307276.1.1719206952193; Sun, 23 Jun 2024
- 22:29:12 -0700 (PDT)
-Date: Mon, 24 Jun 2024 05:28:49 +0000
+ (user=aniketmaurya job=sendgmr) by 2002:a25:c747:0:b0:e02:6dcf:e9b2 with SMTP
+ id 3f1490d57ef6-e0303d64058mr25487276.0.1719206957343; Sun, 23 Jun 2024
+ 22:29:17 -0700 (PDT)
+Date: Mon, 24 Jun 2024 05:28:50 +0000
 In-Reply-To: <20240624052851.1030799-1-aniketmaurya@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240611171600.1105124-1-aniketmaurya@google.com> <20240624052851.1030799-1-aniketmaurya@google.com>
 X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-Message-ID: <20240624052851.1030799-2-aniketmaurya@google.com>
-Subject: [PATCH v2 1/3] dt-bindings: i3c: dw: Add apb clock binding
+Message-ID: <20240624052851.1030799-3-aniketmaurya@google.com>
+Subject: [PATCH v2 2/3] i3c: dw: Add optional apb clock
 From: Aniket <aniketmaurya@google.com>
 To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jeremy Kerr <jk@codeconstruct.com.au>, 
 	Joel Stanley <joel@jms.id.au>, Billy Tsai <billy_tsai@aspeedtech.com>, 
@@ -83,35 +83,70 @@ Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org, Aniket <aniketmaurya@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Add dt binding for optional apb clock. Core clock is mandatory.
+Besides the core clock, IP also has an apb interface clock.
+Add an optional hook for the same and appropriately enable/disable.
 
 Signed-off-by: Aniket <aniketmaurya@google.com>
 ---
- .../devicetree/bindings/i3c/snps,dw-i3c-master.yaml   | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
+ drivers/i3c/master/dw-i3c-master.c | 12 ++++++++++++
+ drivers/i3c/master/dw-i3c-master.h |  1 +
+ 2 files changed, 13 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
-index c0e805e531be..4fc13e3c0f75 100644
---- a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
-+++ b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
-@@ -20,7 +20,16 @@ properties:
-     maxItems: 1
+diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
+index 77a2a1c3fd1d..41cdfd6741e3 100644
+--- a/drivers/i3c/master/dw-i3c-master.c
++++ b/drivers/i3c/master/dw-i3c-master.c
+@@ -1470,12 +1470,20 @@ int dw_i3c_common_probe(struct dw_i3c_master *master,
+ 	if (IS_ERR(master->core_clk))
+ 		return PTR_ERR(master->core_clk);
  
-   clocks:
--    maxItems: 1
-+    minItems: 1
-+    items:
-+      - description: Core clock
-+      - description: APB clock
++	master->pclk = devm_clk_get_optional(&pdev->dev, "pclk");
++	if (IS_ERR(master->pclk))
++		return PTR_ERR(master->pclk);
 +
-+  clock-names:
-+    minItems: 1
-+    items:
-+      - const: core
-+      - const: apb
+ 	master->core_rst = devm_reset_control_get_optional_exclusive(&pdev->dev,
+ 								    "core_rst");
+ 	if (IS_ERR(master->core_rst))
+ 		return PTR_ERR(master->core_rst);
  
-   interrupts:
-     maxItems: 1
+ 	ret = clk_prepare_enable(master->core_clk);
++	if (ret)
++		return ret;
++
++	ret = clk_prepare_enable(master->pclk);
+ 	if (ret)
+ 		goto err_disable_core_clk;
+ 
+@@ -1520,6 +1528,8 @@ int dw_i3c_common_probe(struct dw_i3c_master *master,
+ err_assert_rst:
+ 	reset_control_assert(master->core_rst);
+ 
++	clk_disable_unprepare(master->pclk);
++
+ err_disable_core_clk:
+ 	clk_disable_unprepare(master->core_clk);
+ 
+@@ -1533,6 +1543,8 @@ void dw_i3c_common_remove(struct dw_i3c_master *master)
+ 
+ 	reset_control_assert(master->core_rst);
+ 
++	clk_disable_unprepare(master->pclk);
++
+ 	clk_disable_unprepare(master->core_clk);
+ }
+ EXPORT_SYMBOL_GPL(dw_i3c_common_remove);
+diff --git a/drivers/i3c/master/dw-i3c-master.h b/drivers/i3c/master/dw-i3c-master.h
+index 8cb617b8147e..50c38e790c0e 100644
+--- a/drivers/i3c/master/dw-i3c-master.h
++++ b/drivers/i3c/master/dw-i3c-master.h
+@@ -36,6 +36,7 @@ struct dw_i3c_master {
+ 	void __iomem *regs;
+ 	struct reset_control *core_rst;
+ 	struct clk *core_clk;
++	struct clk *pclk;
+ 	char version[5];
+ 	char type[5];
+ 	bool ibi_capable;
 -- 
 2.45.2.741.gdbec12cfda-goog
 
