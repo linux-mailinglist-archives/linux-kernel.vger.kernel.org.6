@@ -1,97 +1,173 @@
-Return-Path: <linux-kernel+bounces-227981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A1291593F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:49:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B2B915942
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 23:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A31701C22E40
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:49:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E24B2849D6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:50:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67FBD132122;
-	Mon, 24 Jun 2024 21:49:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1D0131732;
+	Mon, 24 Jun 2024 21:50:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrOHeK73"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bP6Yshgl"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB02A4962C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 21:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46D54962C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 21:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719265773; cv=none; b=ObMwro9SNRTegeL5+6rSaH8m/1p+9POgPbiBLqI0EC8VWwei6bVtO64r4av7COnaabyMHWLP+VgSVBTQZVY6TCgmnNgi8panZDi3pyyBsnWQgiVQHCs142Rw8bRWI1BUlqOExzisjXuZDvWbu4PDSWFxwQcjJEUB67PvDPeHbNk=
+	t=1719265823; cv=none; b=slngEn1pTvahJOALaLwFWGCMDE+hT28pacvyaThEEAyjH1gp53WBq/iOVTM92v7J7LD6obGfP9Uv/8917w+hxdJlBy4QY4xLOR7y2y4S4GBfzS1w5Pv1/hPcbSu/uH0+FCDDbySWE9GruOTl5Lnpm+2twcTdm4p0Y6PziXPkXf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719265773; c=relaxed/simple;
-	bh=NoMsGuylpEJI82FlH9CaAKGAu0TMQ1SmZandLQUgBAQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=b+jwnKIsWYJmLWCIbA25Ji6sJa9LXyp9gpSrDYCWMU5J5HCnOCuiv85BzXsB5TmIuJ3s27/SoSbsDEWz1/UQYKtIOkeOV1HnhhMoM1HAlDo/KY0Pb2CgSrfhIGrwvqC9zr7703LaHb9P6+uDKUPV/7YwW7W6CLjOb3E29oVwMSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YrOHeK73; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BEB7C2BBFC;
-	Mon, 24 Jun 2024 21:49:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719265773;
-	bh=NoMsGuylpEJI82FlH9CaAKGAu0TMQ1SmZandLQUgBAQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YrOHeK73b3yB8k38TuJJReLU6gzg4sMKkvH5ANgXzeW5/xQx0OKtFTIRbxwFtRNoO
-	 qan8ddebJOC2QYDsL3T9qBd+wCjcsOBhWbvnjEiScHqaF7mXWGAz39UwPh9emChG4N
-	 V6rEYXBGH9SGmbzumMZD2RPyThE6hKDvS8bbhxHdG16qH7QboWHkWjX2tszqnqWC9Q
-	 NiUXQ+3dBzRBx29nbiT0M1ipYMyznkgf/c+2PwnMbN2d4v06U513MEUxequy5lNQgp
-	 +FZW0mQHVDW+7GSd4eM5ruRp9CrQScW/vre7iMKGhmOeBpayFlqbUzGTSCZX/x4Y7a
-	 QYJbqEVjyAjDA==
-Date: Mon, 24 Jun 2024 15:49:30 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: guanwentao@uniontech.com, huanglin@uniontech.com, axboe@fb.com,
-	hch@lst.de, sagi@grimberg.me, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RESEND. PATCH] nvme/pci: Add APST quirk for Lenovo N60z laptop
-Message-ID: <Znnp6jIfcNYoDb2m@kbusch-mbp.dhcp.thefacebook.com>
-References: <AFD9EEAB191702D0+20240622042108.10427-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1719265823; c=relaxed/simple;
+	bh=FoiUdQ7swPpEh3VgIWO/eUW1hfzGK5LLI1M3/9Im2U0=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=iPsVM/FyGKljO3qoDlgc3PAUj1jzn67JSfkDToEoK0RPhp9lM3KyC+KZ5iErkmZ11KmdHdy8w7pExlwp3aku3JY6ZCxq1DGNQ905N6Km7M+24tnLWcPshup6cuU5we0fh0W71EMhlOeEV1luvgj9rDOTagCIEFilPkowrk6BPBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bP6Yshgl; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1fa4b332645so21885ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 14:50:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719265821; x=1719870621; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=2lDDpbzZjbYoW0ZccZa58xFekph1Nf38bp9Ut4WlNiM=;
+        b=bP6YshglPnfMT1TYeGsO8YPNaNPRGJOUu9HQKh7VA7ZFNRGl0Spty3bgoLnY3UzACa
+         7529QdJhEtwHQcQFKGWi4LtgsiRKFo9uJKCO5uCd+36+VM1zA0NwbtmiERRadBf4kHDy
+         ra/tj857m6PZPheO9lDZ7MkzKIRji9olg5nfPC3B3mmaq6ye0b6JhGIS/hXIirbbx+8e
+         aULE2s309uq3oH+MRjIdECUEq0nLUGXMYo7ttPjxEFHb4Qwj0OADZTL0CpVd5Pt+VG7T
+         thntXvEzlGe7ueZqRCgcOZ8xl2CPT4AAKSwlH5eQstcpwY8SBaPwTbZERSoy3LiLGejh
+         MZDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719265821; x=1719870621;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2lDDpbzZjbYoW0ZccZa58xFekph1Nf38bp9Ut4WlNiM=;
+        b=Ea77QfcSFYSRQghXZHDK0/EorMzWUmor6dxg9irSsdAFWv5/4nFAomEptYlAycXIpZ
+         LX/at63ji1coVcdtf3n46V1jjIUdZGNKzm6vK5kl7vdpSyRdYxGtmcSdjKc8iEgmtfnu
+         piQ0IXOC/7gjmlTi/+tiiA9wCr2I/mZvxHm5LI/2hFYBJKeFjdC5win7PcNqR6Twpfel
+         DyetsntCj6kXjnZBF7tUfwMcsXqEigG7giew7yAeM8UnFPy4aCRpGLlpzCmnaZEQSdoM
+         ZWyrBjdm9awUHsS7b0Y30eSFy2AQEzxJNy4E/Q5a4+R6Z9WpgPjQRs3NT7996OdDSbA4
+         kuzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmBU19GXsZTYktIaGs3H28uwfvhmqvGth+fkhhmIIDViTmkBfUOQ9H/EyviVu2lFlLWcYn6bKBeVsxny1tT3JAG0fAaMg8KEsu/qQA
+X-Gm-Message-State: AOJu0YwroTsVy4GY4Q9HmIyOMThhAbehYZDbQy2gWNTy8gMCZXJ8VtEE
+	ZlmVG9AhthCWDRQBWoal2JVL+O9+pIHa1V14Mo9wGlCReFxn9Iq65DlOk0BOKQ==
+X-Google-Smtp-Source: AGHT+IFeFR7zMjbNB9DCvgCjRBXeGOiI4lkJ8SgQ6QWD0Q5nCQ7py7AEvLDgXuqqLYyDF5Y75QDGNA==
+X-Received: by 2002:a17:902:bd46:b0:1fa:2c8c:7e8 with SMTP id d9443c01a7336-1fa68fe3318mr1035325ad.4.1719265820845;
+        Mon, 24 Jun 2024 14:50:20 -0700 (PDT)
+Received: from [2620:0:1008:15:5ad8:4b69:7e4b:92e2] ([2620:0:1008:15:5ad8:4b69:7e4b:92e2])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c5ef4sm67546215ad.163.2024.06.24.14.50.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 14:50:20 -0700 (PDT)
+Date: Mon, 24 Jun 2024 14:50:19 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+To: Sean Christopherson <seanjc@google.com>
+cc: Elliot Berman <quic_eberman@quicinc.com>, Fuad Tabba <tabba@google.com>, 
+    David Hildenbrand <david@redhat.com>, Jason Gunthorpe <jgg@nvidia.com>, 
+    John Hubbard <jhubbard@nvidia.com>, 
+    Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
+    Matthew Wilcox <willy@infradead.org>, maz@kernel.org, kvm@vger.kernel.org, 
+    linux-arm-msm@vger.kernel.org, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+    pbonzini@redhat.com
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+In-Reply-To: <ZnnC6eh-zl16Cxn3@google.com>
+Message-ID: <5e14ebf6-2a7f-3828-c3f6-5155026d59ae@google.com>
+References: <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com> <20240619115135.GE2494510@nvidia.com> <CA+EHjTz_=J+bDpqciaMnNja4uz1Njcpg5NVh_GW2tya-suA7kQ@mail.gmail.com> <ZnRMn1ObU8TFrms3@google.com> <CA+EHjTxvOyCqWRMTS3mXHznQtAJzDJLgqdS0Er2GA9FGdxd1vA@mail.gmail.com>
+ <4c8b81a0-3a76-4802-875f-f26ff1844955@redhat.com> <CA+EHjTzvjsc4DKsNFA6LVT44YR_1C5A2JhpVSPG=R9ottfu70A@mail.gmail.com> <8e9436f2-6ebb-4ce1-a44f-2a941d354e2a@redhat.com> <CA+EHjTzj9nDEG_ANMM3z90b08YRHegiX5ZqgvLihYS2bSyw1KA@mail.gmail.com>
+ <20240621095319587-0700.eberman@hu-eberman-lv.qualcomm.com> <ZnnC6eh-zl16Cxn3@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <AFD9EEAB191702D0+20240622042108.10427-1-wangyuli@uniontech.com>
+Content-Type: multipart/mixed; boundary="2003064516-1965583562-1719265820=:2019105"
 
-On Sat, Jun 22, 2024 at 12:21:08PM +0800, WangYuli wrote:
-> There is a hardware power-saving problem with the Lenovo N60z
-> board. When turn it on and leave it for 30 minutes, there is a
-> 20% chance that a nvme disk will not wake up until reboot.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
+
+--2003064516-1965583562-1719265820=:2019105
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+
+On Mon, 24 Jun 2024, Sean Christopherson wrote:
+
+> On Fri, Jun 21, 2024, Elliot Berman wrote:
+> > On Fri, Jun 21, 2024 at 11:16:31AM +0100, Fuad Tabba wrote:
+> > > On Fri, Jun 21, 2024 at 10:10 AM David Hildenbrand <david@redhat.com> wrote:
+> > > > On 21.06.24 10:54, Fuad Tabba wrote:
+> > > > > On Fri, Jun 21, 2024 at 9:44 AM David Hildenbrand <david@redhat.com> wrote:
+> > > > >>
+> > > > >>>> Again from that thread, one of most important aspects guest_memfd is that VMAs
+> > > > >>>> are not required.  Stating the obvious, lack of VMAs makes it really hard to drive
+> > > > >>>> swap, reclaim, migration, etc. from code that fundamentally operates on VMAs.
+> > > > >>>>
+> > > > >>>>    : More broadly, no VMAs are required.  The lack of stage-1 page tables are nice to
+> > > > >>>>    : have; the lack of VMAs means that guest_memfd isn't playing second fiddle, e.g.
+> > > > >>>>    : it's not subject to VMA protections, isn't restricted to host mapping size, etc.
+> > > > >>>>
+> > > > >>>> [1] https://lore.kernel.org/all/Zfmpby6i3PfBEcCV@google.com
+> > > > >>>> [2] https://lore.kernel.org/all/Zg3xF7dTtx6hbmZj@google.com
+> > > > >>>
+> > > > >>> I wonder if it might be more productive to also discuss this in one of
+> > > > >>> the PUCKs, ahead of LPC, in addition to trying to go over this in LPC.
+> > > > >>
+> > > > >> I don't know in  which context you usually discuss that, but I could
+> > > > >> propose that as a topic in the bi-weekly MM meeting.
+> > > > >>
+> > > > >> This would, of course, be focused on the bigger MM picture: how to mmap,
+> > > > >> how how to support huge pages, interaction with page pinning, ... So
+> > > > >> obviously more MM focused once we are in agreement that we want to
+> > > > >> support shared memory in guest_memfd and how to make that work with core-mm.
+> > > > >>
+> > > > >> Discussing if we want shared memory in guest_memfd might be betetr
+> > > > >> suited for a different, more CC/KVM specific meeting (likely the "PUCKs"
+> > > > >> mentioned here?).
+> > > > >
+> > > > > Sorry, I should have given more context on what a PUCK* is :) It's a
+> > > > > periodic (almost weekly) upstream call for KVM.
+> > > > >
+> > > > > [*] https://lore.kernel.org/all/20230512231026.799267-1-seanjc@google.com/
+> > > > >
+> > > > > But yes, having a discussion in one of the mm meetings ahead of LPC
+> > > > > would also be great. When do these meetings usually take place, to try
+> > > > > to coordinate across timezones.
 > 
-> Signed-off-by: hmy <huanglin@uniontech.com>
-> Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-> ---
->  drivers/nvme/host/pci.c | 7 +++++++
->  1 file changed, 7 insertions(+)
+> Let's do the MM meeting.  As evidenced by the responses, it'll be easier to get
+> KVM folks to join the MM meeting as opposed to other way around.
 > 
-> diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-> index 282d808400c5..1e0991667453 100644
-> --- a/drivers/nvme/host/pci.c
-> +++ b/drivers/nvme/host/pci.c
-> @@ -2903,6 +2903,13 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
->  			return NVME_QUIRK_SIMPLE_SUSPEND;
->  	}
->  
-> +	/*
-> +	 * NVMe SSD drops off the PCIe bus after system idle
-> +	 * for 30 minuites on a Lenovo N60z board.
-> +	 */
-> +	if (dmi_match(DMI_BOARD_NAME, "LXKT-ZXEG-N6"))
-> +		return NVME_QUIRK_NO_APST;
+> > > > It's Wednesday, 9:00 - 10:00am PDT (GMT-7) every second week.
+> > > >
+> > > > If we're in agreement, we could (assuming there are no other planned
+> > > > topics) either use the slot next week (June 26) or the following one
+> > > > (July 10).
+> > > >
+> > > > Selfish as I am, I would prefer July 10, because I'll be on vacation
+> > > > next week and there would be little time to prepare.
+> > > >
+> > > > @David R., heads up that this might become a topic ("shared and private
+> > > > memory in guest_memfd: mmap, pinning and huge pages"), if people here
+> > > > agree that this is a direction worth heading.
+> > > 
+> > > Thanks for the invite! Tentatively July 10th works for me, but I'd
+> > > like to talk to the others who might be interested (pKVM, Gunyah, and
+> > > others) to see if that works for them. I'll get back to you shortly.
+> > > 
+> > 
+> > I'd like to join too, July 10th at that time works for me.
+> 
+> July 10th works for me too.
+> 
 
-Based on your commit message, it sounds like the platform works the
-majority of the time. Is it possible that NVME_QUIRK_NO_DEEPEST_PS is
-sufficient for this? Or do you really need to disable it entirely? The
-power usage differences can be meaningful.
-
-Also, 30 minutes of idle is an eternity for APST to kick in, so I'm
-curious if there's something else going on here or if the breakage
-occurs earlier than that.
+Thanks all, and David H for the topic suggestion.  Let's tentatively 
+pencil this in for the Wednesday, July 10th instance at 9am PDT and I'll 
+follow-up offlist with those will be needed to lead the discussion to make 
+sure we're on track.
+--2003064516-1965583562-1719265820=:2019105--
 
