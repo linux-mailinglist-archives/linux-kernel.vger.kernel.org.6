@@ -1,175 +1,121 @@
-Return-Path: <linux-kernel+bounces-226599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB7E49140C4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:07:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6DE9140C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 05:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91BE3283A8D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:07:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D66E1C21D6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:07:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606DD8C11;
-	Mon, 24 Jun 2024 03:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4D6881E;
+	Mon, 24 Jun 2024 03:07:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="MCxluoEi";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="MW80LOAS";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="HYjSw+8O";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="P3R3uk6X"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="muXNjzfI"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98547FC08;
-	Mon, 24 Jun 2024 03:07:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3578D515;
+	Mon, 24 Jun 2024 03:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719198462; cv=none; b=ZDXPc6b0DFePb/q06IWOvNkkSRG8llpeDEEWSLYjhdzo6W4oW8jOxcOJH5xIpIeN8RYrrd7PBG2ra4qQEFnLoIC+5SMCNzGTYUn7PQzTZJiRtYcJqgUINAu9cGbyz1jfKaEXeqBjWtsHNiN/rNGz/cy0/qWQnNdWQh6UoE+PafI=
+	t=1719198450; cv=none; b=QJA0QfVCbN2qSeN7JCia07UNvFA+o9O0Dy2zuhjbsxaBmiVa/j5EcaBs46DMjdOUFkRL6pI/iOHkoCVgzyAuGvbO4nLv7PVBXyh6KfZvU3OfH73EeOd5168+EXOwjpq54P4vzQs9530Dc5cPEhBQMUIZRER67SP45Q3KGIoQMgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719198462; c=relaxed/simple;
-	bh=iDeTlKAMZTGI/rcvTWmvET1oitZnGzPi11/Cywy/X7E=;
-	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
-	 References:Date:Message-id; b=Bbosd9/+9OKLU5TjS6vj8k/S60GG8U53HxOZY4YOQ+clGIUlCyrjGbGNWlMSeyrDvjkDgB/EHDfSLSx/ig8TX6KmzOt7bgtcuTe/hoM0MJD5szqCKyECBMfXGa5jFYu2kj0Jbc+xCl0YRPkNhSsx1GnOZ/WuFygKApBhpWT6kAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=MCxluoEi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=MW80LOAS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=HYjSw+8O; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=P3R3uk6X; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D1E10219E1;
-	Mon, 24 Jun 2024 03:07:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719198453; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zhy82VCQc8NYnvf05ol+V2ksrLtovCjP3VgqR99bqBo=;
-	b=MCxluoEiDo3kRMcLY5wd0J+vjZBK9gL6AlCSKth6rLrNzydRNylmop/nq6VZHGGVHT+Ed5
-	2eRBGlasPPPXCt6TW/8Wtj7juEkzAH9ZP+4edWGqYYF7GQABkTc9eiczCDuU63KzQ9SWkQ
-	f+A4BTgOzLg82/8gvTlCVh6hF0WUfCE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719198453;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zhy82VCQc8NYnvf05ol+V2ksrLtovCjP3VgqR99bqBo=;
-	b=MW80LOASf/G8s/D9ifiBmsuTjC3QLa8pCAIhSE6Zs714oZ55eh+cCYDlEJY+7xr/xRWliq
-	5AltQiJmR8tkDgCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719198452; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zhy82VCQc8NYnvf05ol+V2ksrLtovCjP3VgqR99bqBo=;
-	b=HYjSw+8Ogh0laWZGrCR4xzYY045DpfD6AYoVaHYXOjGPcuRYcF0l5yuNn5iX1pHsoCqlAI
-	MesFQuusZxQ2iXha/qeb3pg6o/JztClmBMOQl+/DHehlrTOtKkEGQWWZRJYqbpSMOLkzoV
-	r5Z5RVEOOT2s04/zl+i7b9V7KIwbvh0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719198452;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Zhy82VCQc8NYnvf05ol+V2ksrLtovCjP3VgqR99bqBo=;
-	b=P3R3uk6X0WrlWbNlf5OI9HQ1WTJ3FNLIcNwLbMxsaEEba64nZt8a/I386pVBDt3nIP0L2F
-	Wim5x9SW2g0yWcAg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A290C13ACD;
-	Mon, 24 Jun 2024 03:07:26 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id xxJPEe7ieGbILwAAD6G6ig
-	(envelope-from <neilb@suse.de>); Mon, 24 Jun 2024 03:07:26 +0000
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+	s=arc-20240116; t=1719198450; c=relaxed/simple;
+	bh=yJOIut0szfEzOnJOmqfOvO5sdb+iCam29V3jupcmOas=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=thlzHa1CCWzCDIptMDBePW8f3KogXjqe15qFM8aO1i31EuoeNSaKByCEUXz5Zlqo6t0zoyhZw3EZJ1KyyxHIVFu/b8HBpabz+YZd2acdYzV1vP4csf6+EcIGHBjCwCFsjrJkjE25EvuUooWDE2PaWRKdr1DIL1leFX537a35s3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=muXNjzfI; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70666aceb5bso1155630b3a.1;
+        Sun, 23 Jun 2024 20:07:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719198448; x=1719803248; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=t2Ev2SnpvIc9PeMEYJ75DMX+rnT35qAdjQGrKk69Hf0=;
+        b=muXNjzfIMd7SLL9gJYAXHb9qs/5h4K7w0x4v6F2xbrb3pSfWz8GeqdPLUfSiNIq7CQ
+         O1AgZn2uF/kWO1ho+4gV8yegiQYIm6taj1pH0o8CtpeounhtWWFI3YCManGP5iWX7lxG
+         CjmT84aBt2C0XEw9TfXszSNwOQxpiAI5YF/gnOykdS63MyUZmxl6eAfKjafyd/GhH7cA
+         NwfSWxOayjDdbVK+Zgrti1hO6AjFO1kzvCS+PCQm4CC2gfTk3OtTWFvixbzN+XZGM4xm
+         ksnGDwvuQqs73kxf53mZ8IEk1urPHla1sxkZhebSjK/tuUUVs/kagxFYK2mW1fQMCsJa
+         gxOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719198448; x=1719803248;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t2Ev2SnpvIc9PeMEYJ75DMX+rnT35qAdjQGrKk69Hf0=;
+        b=RQn06oKH9Vv66tOS/VLLQsxRs22IuwadkyhDFb2olz7wxyQXNf5NsnPQEHrB999Zi8
+         xPtSQ+LIwSyyq/XBuUtJ+IkqRbavpPDtkxQUGWr+thWpLaLHSDXshjsA/YL298PASOyo
+         FuTLUSgKAVuiSnfMrHxY9qXGKSKV0Zyd8Lxudsvgk8VlnG3tNEqve55yA8X6f3/vh87Y
+         yYfu+K4uOKVN+LqI1PK+N5q9dUmhYY6yFCSvv7+N3Zo73gs9fd+a/ricNeQmmiWj/5xt
+         N+piH/Z7IOseUrpuelMpzS/Vf+e/DcKRe2xUVN3FKPnNQSsAfbkwSI1rUSJGckKqkoSL
+         q0QQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmLsdTEKTjNwlBk+rpb7DM1kPWCFCqlM1EXCYQZCrT3ut4t4lff1zOpbLOIzMUuy7NmHq5ftgsevgK/s4KG0QS25bnb+9c5IbH9UIwId8MY3NawPMovIQ7Seu3f0Pru4CO/tRBP7wZOX4=
+X-Gm-Message-State: AOJu0YzmbMsKtM4PO7CgLOdMiQ8aP3ZgA+vapGESmZ+pgjQx7KT1TAFq
+	gRVmdOt64dJiDaHmdUtqDwaCP7IsqBpJEaJribH8bARR1WnJz2wv
+X-Google-Smtp-Source: AGHT+IGf1J9QbqM9KO5sJmtk53ZgT/H0K+Zsy4i9oBx7wjlAXwnsjFARyzYLWQPIvNoQGJDqHk8+zg==
+X-Received: by 2002:a05:6a20:6a9a:b0:1af:e3f1:9af7 with SMTP id adf61e73a8af0-1bcf7efdc24mr3286980637.36.1719198447927;
+        Sun, 23 Jun 2024 20:07:27 -0700 (PDT)
+Received: from kernelexploit-virtual-machine.localdomain ([121.185.186.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e5af9ddesm7570599a91.38.2024.06.23.20.07.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 23 Jun 2024 20:07:27 -0700 (PDT)
+From: Jeongjun Park <aha310510@gmail.com>
+To: clm@fb.com,
+	dsterba@suse.com,
+	josef@toxicpanda.com
+Cc: syzbot+a0d1f7e26910be4dc171@syzkaller.appspotmail.com,
+	fdmanana@suse.com,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com,
+	Jeongjun Park <aha310510@gmail.com>
+Subject: [PATCH] btrfs: qgroup: fix slab-out-of-bounds in btrfs_qgroup_inherit
+Date: Mon, 24 Jun 2024 12:07:20 +0900
+Message-Id: <20240624030720.137753-1-aha310510@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "NeilBrown" <neilb@suse.de>
-To: "Ma Ke" <make24@iscas.ac.cn>
-Cc: chuck.lever@oracle.com, jlayton@kernel.org, kolga@netapp.com,
- Dai.Ngo@oracle.com, tom@talpey.com, trondmy@kernel.org, anna@kernel.org,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, "Ma Ke" <make24@iscas.ac.cn>
-Subject: Re: [PATCH] SUNRPC: check mlen in ip_map_parse()
-In-reply-to: <20240624023118.2268917-1-make24@iscas.ac.cn>
-References: <20240624023118.2268917-1-make24@iscas.ac.cn>
-Date: Mon, 24 Jun 2024 13:07:17 +1000
-Message-id: <171919843728.14261.13994470964681717916@noble.neil.brown.name>
-X-Spamd-Result: default: False [-4.26 / 50.00];
-	BAYES_HAM(-2.96)[99.81%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[16];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -4.26
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Mon, 24 Jun 2024, Ma Ke wrote:
-> We should check the parameter mlen before using 'mlen - 1'
-> expression for the 'mesg' array index.
+If a value exists in inherit->num_ref_copies or inherit->num_excl_copies,
+an out-of-bounds vulnerability occurs.
 
-There is no need.  This function is only called from cache_do_downcall()
-and that function already checks for zero.
+Therefore, you need to add code to check the presence or absence of 
+that value.
 
-That function is only called from cache_downcall() which checks the
-size_t count is not >= 32768 so the fact that it is cast to an int for
-the ->cache_parse function cannot cause and overflow.
+Regards.
+Jeongjun Park.
 
-I wouldn't object to ->cache_parse() and qword_get() and maybe others
-having their len parameter changed from int to size_t.  
-But adding this extra test on mlen add no value.
+Reported-by: syzbot+a0d1f7e26910be4dc171@syzkaller.appspotmail.com
+Fixes: 3f5e2d3b3877 ("Btrfs: fix missing check in the btrfs_qgroup_inherit()")
+Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+---
+ fs/btrfs/qgroup.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thanks,
-NeilBrown
-
-
-> 
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  net/sunrpc/svcauth_unix.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/net/sunrpc/svcauth_unix.c b/net/sunrpc/svcauth_unix.c
-> index 04b45588ae6f..816bf56597dd 100644
-> --- a/net/sunrpc/svcauth_unix.c
-> +++ b/net/sunrpc/svcauth_unix.c
-> @@ -196,7 +196,7 @@ static int ip_map_parse(struct cache_detail *cd,
->  	struct auth_domain *dom;
->  	time64_t expiry;
->  
-> -	if (mesg[mlen-1] != '\n')
-> +	if (mlen && mesg[mlen - 1] != '\n')
->  		return -EINVAL;
->  	mesg[mlen-1] = 0;
->  
-> -- 
-> 2.25.1
-> 
-> 
-
+diff --git a/fs/btrfs/qgroup.c b /fs/btrfs/qgroup.c
+index fc2a7ea26354..23beac746637 100644
+--- a/fs/btrfs/qgroup.c
++++ b/fs/btrfs/qgroup.c
+@@ -3270,6 +3270,10 @@ int btrfs_qgroup_inherit(struct btrfs_trans_handle *trans, u64 srcid,
+ 	}
+ 
+ 	if (inherit) {
++		if (inherit->num_ref_copies > 0 || inherit->num_excl_copies > 0) {
++			ret = -EINVAL;
++			goto out;
++		}
+ 		i_qgroups = (u64 *)(inherit + 1);
+ 		nums = inherit->num_qgroups + 2 * inherit->num_ref_copies +
+ 		       2 * inherit->num_excl_copies;
+--
 
