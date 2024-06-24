@@ -1,124 +1,204 @@
-Return-Path: <linux-kernel+bounces-227701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFD289155A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:46:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 609C39155A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D61B222DC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:46:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3D591F243C8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD6019E81B;
-	Mon, 24 Jun 2024 17:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="jvgWuTqF"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D00319F460;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC8319E83A;
 	Mon, 24 Jun 2024 17:46:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719251165; cv=none; b=MMOhrKmXugZh3mHgoyRT6Vt6Dwk5uDnAdfivksF0fjLeHppIIS+ExXJsl8ASvQTiV2gzrv3BEz9gyRZjQ96TCQhllSkRxzjyRFEv+1LVjyASUPoH20A8yXws+AzaiKS9iylEgYABe5/x6zFVw4h34cdyxC1pMiVf/6dNMGao/0g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719251165; c=relaxed/simple;
-	bh=wnlrNGQMlnKCxKZZnq/IoYFHt1i1ApodOFEfFtEwzfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TqA1BNI6b+Nfz0MzT2UBITWE5RWKPORUd+saXLaY5ZmlWOESI/Z0UDsxUpHe4RPP6wZLkyLKcKm2XDJK2li+1jkNNeDiP+FS6lW4oiXXpVNq5qcSdgxBcgLq360vrzCEBrp3GfVegXNycGC8HK+zI5X4r4Up7dPYiGF/XSyaH3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=jvgWuTqF; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 935CC40E021A;
-	Mon, 24 Jun 2024 17:45:59 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Bo3Cj6EJxago; Mon, 24 Jun 2024 17:45:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719251155; bh=A0FFsYhCpP+dP8qHNI+qcpY3a4kmsg7NF0TjBowZK7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jvgWuTqFvY7DjYES3a6Zf3ZF36tLbjE9NPe9k+mJbSYNSOBYLFsdIP52otr/3cYCx
-	 wFvrinVOx3Ilr2BO9JK3a4y9/faHvtKdRS2bZ6jLaa21Is1b3yW/5drp7jci9o/YnK
-	 mguqzUX4QMtA4RsYIcs1gSux4I04qmiFme4UI4jR7MVh2tvr1GxiXdaGVXiP2QZvI+
-	 WK0NuMbRGYPi/SmfNJoU3X89V568QC/DEF+b9EepCGUtpxMFb7alzO63LzHreMjAfu
-	 WwxXZ0YJof2QdxZxmayEezgVne6WVZgN/UERWm5nBfpKybeTb1RKd8860+OS85zbGi
-	 e2RP+rq22uPvA6FwCshntsPU4tF/QQnt9RfOBfrs6PgJBd7E4db+rvlmFVwyGEWzOZ
-	 U+reCMjqcLv5Ut0AkJ65hkemyhQYKZ7BwOgtlTWk/1Upl2UBlnsXCMIuyzktj51+kX
-	 kHAmSeT4ib1VtbuAUXYelm3m8ThyUGfNlJYDjDa6CvmHlPwXvE24O+uWHF26OkdnRi
-	 HDKTmFTj6YabZr6uZ6egaOurRcWqmdF559PJn1creKmAnHopvGr56pSkxN1nqpJnTL
-	 bPmsfDBis9Ljh87jEXs9+WXs6Z50gIAr52JQQc21OkT34FW+ab9QVzkEfeijpO/zfZ
-	 hARq6BQlb+svA1tluOQP5LNg=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NSiaM+xL"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8F54F40E01D6;
-	Mon, 24 Jun 2024 17:45:45 +0000 (UTC)
-Date: Mon, 24 Jun 2024 19:45:38 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Cc: rafael@kernel.org, viresh.kumar@linaro.org, tglx@linutronix.de,
-	mingo@redhat.com, dave.hansen@linux.intel.com, hpa@zytor.com,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [PATCH v2 1/2] x86/cpufeatures: Add HWP highest perf change
- feature flag
-Message-ID: <20240624174538.GGZnmwwt3K_J-FtpJA@fat_crate.local>
-References: <20240624161109.1427640-1-srinivas.pandruvada@linux.intel.com>
- <20240624161109.1427640-2-srinivas.pandruvada@linux.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239BA19B5BF
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:45:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719251160; cv=none; b=aphmSTYeCUSwBSpt2bBiR/MAaJp2/+KV1yyYwK87NdRKM+u86YvtTI+DsAVwssf1NvVy2MAZTBR/oo23yTQvECcgzvh8spJa6XmgpZfzdJYS/g+SgDyZg+uLp5ics9+FlDjoH4QI08rkUvI9zior3VDdkbRHkx+X82mmGFqmPzk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719251160; c=relaxed/simple;
+	bh=5QZzthf4QIhoF2mbEheDkBRmFAebz/r8IKomEq+FEI4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=U9clDxFMeHE1usH/WTdYSiw+yC6Uf4s1TdchuiOLu0tZSH/b6BSMCv2MphY7SxZa+TsDV/SJzLkREPgLdz26dLXdZ6EpEHaY9E/hzZgRAaBNIovwNE4KvTql9dtegLWCx4OZk9U/eulS98Yj84uVOxWeQEWCRS6eVETOjNeJyck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NSiaM+xL; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a7245453319so283950366b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:45:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719251157; x=1719855957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sZYo2+ECZA8zTSTbRF5VYWEcTe4tY+q+w5/GiTenvpA=;
+        b=NSiaM+xLwoR+VA+yVzkj3V8eybHCbHbg8d4+MYI9BVqv/I7eyH6ZaiL8RFU38nE4M8
+         NhcRIxZvneEaQs5UlinYU7duSdW2r3/fpYclPKABe4muH9e6QNah0A3bwCCncYdr39zD
+         0PIqjjydhAD0UmpBMBSKtydsPko3KwPLl0162kc8liyeV8hVjNFWnvOs7zi0/TczRmR7
+         q9AKNQAYioM7JFmFnoI6VGsc7gpZ4IlE8m52ePudSkXENltyS8wOTin+WCs41swuyAsE
+         9cCBjXlRt+UMHV6Hw+66Vcf7tq/G2ivaMwom4qYknlau+MYu6rUj7YDO6EquBQlFnOYB
+         mTuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719251157; x=1719855957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sZYo2+ECZA8zTSTbRF5VYWEcTe4tY+q+w5/GiTenvpA=;
+        b=EdI7Htbahl37pAyv3FF/FIbBQTqrfkhYOMqIY7JIW6gUgsMNGg02zMTOXvxJchDbsM
+         M6w/nZ8gAiOxiYAk8T1HYvFHDHHowgJS3tkD9bdQ2x5VHlSfE1wCyL5ibHfzmgLClnoL
+         FdtRz3egeoekFF/65Ohpv6b4RDVMspYfqxTnU40dmqI4sbezVW6uQcgWCnxbyyzb93lm
+         +ODvrlCbNWOmRX1xvf1pSrVcD7yKMysRevnEBiC43X5vqB0BZDt4Smy2ONzEO17dnmM4
+         uSqTlQB2/4LKr2VcDQDvtKPiRD09P5GZ4RvtD7UuCWgXCYs+sOnFNqckmx0w0HeBACqE
+         FqPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUPnTP6dKwsUTd1mnPTPDxPeBRtgG3AJzBg4jXCSut4a8zl0oOb7I28TlrMzZeUjQ1UNzCMK1fA06T9rUWJE8vluT4PnLclNnopaV++
+X-Gm-Message-State: AOJu0YwOjRDWKAJ6+EgH8h9JK6VBajKw1Qd7vRHjG/IkF0o0T/7tsSxl
+	BmoztbB/NYCkWRlBE7FuPXijwW7Gp7aqOWA1PyHp1MMxcvTx4lNZho/v+qFv+fAsKSvDuE8A4SW
+	kqEGkyCDUkQr5io1QjCEg+xAtfeE=
+X-Google-Smtp-Source: AGHT+IEK2tK6rYzn4sB+7rfr1nwSQOK4Jcvm8x3U7EK8lUjz2q4DDHHncsAyU5rn5neLiJRN/nDaFSTXyuOY9lpfqgk=
+X-Received: by 2002:a17:906:abd2:b0:a6f:e2f1:537b with SMTP id
+ a640c23a62f3a-a700e706f07mr511078566b.28.1719251156998; Mon, 24 Jun 2024
+ 10:45:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240624161109.1427640-2-srinivas.pandruvada@linux.intel.com>
+References: <20240614040133.24967-1-jason-jh.lin@mediatek.com>
+ <20240614040133.24967-3-jason-jh.lin@mediatek.com> <CABb+yY2bwj2BcdJLGe1ZYwCrnXL3LtcePMb=wQPaBKorBSs2yA@mail.gmail.com>
+ <fc92d51cc6e55301c081ea2d589e1ba6cdd295ee.camel@mediatek.com>
+ <CABb+yY1L+YGjf6O9UgPYkS2gWAdo=7QoojSAUNWC_8o7XtZQSg@mail.gmail.com>
+ <1f815ff8-2b7a-48de-8b47-0bc9b3cb67ab@collabora.com> <CABb+yY1Yy8o3ofAiC-uV+gDrO3QDTWz3_XTUMai_2uyrnj-VrQ@mail.gmail.com>
+ <b7ebc021d391452eaf2149976ea2d53fba3d89fc.camel@mediatek.com>
+ <CABb+yY3+pnuXDK_jZMDYOAzahdSZ5iig51VqzM=FFHrFpK+9LA@mail.gmail.com> <4e5d4362-4940-4ba0-95aa-627b82e21e41@collabora.com>
+In-Reply-To: <4e5d4362-4940-4ba0-95aa-627b82e21e41@collabora.com>
+From: Jassi Brar <jassisinghbrar@gmail.com>
+Date: Mon, 24 Jun 2024 12:45:45 -0500
+Message-ID: <CABb+yY3eXvJRUq7MOqB8QZ9N4aiuogaUCTfP7MerKdNbAbLkvw@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mailbox: mtk-cmdq: Move pm_runimte_get and put to
+ mbox_chan_ops API
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, 
+	=?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>, 
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>, =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>, 
+	Project_Global_Chrome_Upstream_Group <Project_Global_Chrome_Upstream_Group@mediatek.com>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 24, 2024 at 09:11:08AM -0700, Srinivas Pandruvada wrote:
-> When CPUID[6].EAX[15] is set to 1, this CPU supports notification for
-> HWP (Hardware P-states) highest performance change.
-> 
-> Add a feature flag to check if the CPU supports HWP highest performance
-> change.
-> 
-> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-> ---
-> v2:
-> - Prevent display in /proc/cpuinfo flags as suggested by Borris
-> 
->  arch/x86/include/asm/cpufeatures.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 3c7434329661..4cf929c457bb 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -361,6 +361,7 @@
->  #define X86_FEATURE_HWP_ACT_WINDOW	(14*32+ 9) /* HWP Activity Window */
->  #define X86_FEATURE_HWP_EPP		(14*32+10) /* HWP Energy Perf. Preference */
->  #define X86_FEATURE_HWP_PKG_REQ		(14*32+11) /* HWP Package Level Request */
-> +#define X86_FEATURE_HWP_HIGHEST_PERF_CHANGE (14*32+15) /* "" HWP Highest perf change */
+On Mon, Jun 24, 2024 at 6:29=E2=80=AFAM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Il 20/06/24 16:39, Jassi Brar ha scritto:
+> > On Thu, Jun 20, 2024 at 1:33=E2=80=AFAM Jason-JH Lin (=E6=9E=97=E7=9D=
+=BF=E7=A5=A5)
+> > <Jason-JH.Lin@mediatek.com> wrote:
+> >>
+> >> On Wed, 2024-06-19 at 10:38 -0500, Jassi Brar wrote:
+> >>>
+> >>> External email : Please do not click links or open attachments until
+> >>> you have verified the sender or the content.
+> >>>   On Wed, Jun 19, 2024 at 3:18=E2=80=AFAM AngeloGioacchino Del Regno
+> >>> <angelogioacchino.delregno@collabora.com> wrote:
+> >>>> Il 18/06/24 17:59, Jassi Brar ha scritto:
+> >>> .....
+> >>>
+> >>>> For example, when static content is displayed on screen, the CMDQ
+> >>> mailbox never
+> >>>> gets shut down, but no communication happens for a relatively long
+> >>> time; the
+> >>>> overhead of actually shutting down the mailbox and setting it back
+> >>> up would be
+> >>>> increasing latency in an unacceptable manner.
+> >>>>
+> >>> Hmm...  in your driver,  startup() is _empty_   and  shutdown() is
+> >>> all
+> >>> under a spin-lock with irqs disabled, so that too shouldn't be
+> >>> expensive. Right?
+> >>> Then what causes unacceptable latencies?
+> >>>
+> >>
+> >> I found that the BUG report only occurred when opening the camera APP.
+> >> Maybe something in imgsys_cmdq_sendtask() is too expensive or somewher=
+e
+> >> else in imgsys driver.
+> >>
+> > If you move anything from submit() into startup(), which is once per
+> > lifetime of a channel, it will only make imgsys_cmdq_sendtask()
+> > cheaper.
+> > Btw, the imgsys code is not public, I don't know how it looks.
+> >
+> >
+> >> I'm wondering why this BUG report is not occurred in display use case
+> >> which is more frequent than imgsys use case.
+> >> Does this mean sleep() is not always called in pm_runtime_get_sync()
+> >> and if we can guarantee this sleep() won't be called, then using
+> >> pm_runtime_get_sync() in atomic context is OK?
+> >>
+> > Instead of hacking around, maybe try using startup() and shutdown()
+> > which is for such uses? Maybe request/release channel as part of RPM
+> > in your client driver if you are worried about the noise?
+> >
+> >
+> >>>> This is why I opted for autosuspend - it's only bringing down
+> >>> certain clocks for
+> >>>> the CMDQ HW, adding up a bit of power saving to the mix which, for
+> >>> some use cases
+> >>>> such as mobile devices with relatively small batteries, is
+> >>> definitely important.
+> >>>>
+> >>>> I'll also briefly (and only briefly) mention that 120Hz displays
+> >>> are already a
+> >>>> common thing and in this case the gap between TX and ACK is ~8.33ms
+> >>> instead, let
+> >>>> alone that displays with a framerate of more than 120Hz also do
+> >>> exist even though
+> >>>> they're less common.
+> >>>>
+> >>> I don't know how even busier channels help your point.
+> >>>
+> >>>> All of the above describes a few of the reasons why autosuspend is
+> >>> a good choice
+> >>>> here, instead of a shutdown->startup flow.
+> >>>> And again - I can place some bets that PM would also be applicable
+> >>> to SoCs from
+> >>>> other vendors as well, with most probably different benefits (but
+> >>> still with some
+> >>>> power related benefits!) compared to MediaTek.
+> >>
+> >> I agree with Angelo's point!
+> >>
+> > Ok, but you or Angelo still don't explain "unacceptable latencies"
+> > when your startup() and shutdown() are empty. You just want api
+> > changed, which we can but at least do you part and tell me where the
+> > bottleneck (unexpected latency) comes from.
+> >
+>
+> "I want numbers" is a sensible request, honestly I would do the same so I=
+ totally
+> understand that.
+>
+> Jason, can you please perform latency measurements on 60Hz and *especiall=
+y* ISP/cam
+> cases while "continuously" calling startup() and shutdown() for every pow=
+er saving
+> operation?
+>
+To be clear, do with the mailbox channel that you do with the clocks
+now, because your startup() is literally and shutdown() is practically
+empty.
+Call shutdown() when no request has come in for a while, so you know
+the client has quiesced likely. So try putting request/release in
+higher level RPM with autosuspend.
 
-Yeah, in the meantime I made it even simpler:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=x86/cpu&id=78ce84b9e0a54a0c91a7449f321c1f852c0cd3fc
-
-so in case you have to send your patch again, you can drop the "" too.
-
-New flags are not exposed in /proc/cpuinfo by default after the above change.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+thanks
 
