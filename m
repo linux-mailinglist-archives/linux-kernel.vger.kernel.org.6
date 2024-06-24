@@ -1,108 +1,324 @@
-Return-Path: <linux-kernel+bounces-227482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7D009151D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:17:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8788F9151DA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:17:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D76B1F22FBC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:17:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1554F1F23104
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:17:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC0919DF52;
-	Mon, 24 Jun 2024 15:15:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874B719B3FD;
+	Mon, 24 Jun 2024 15:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D5HhcE4r"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fivKHzQD"
+Received: from mail-ua1-f48.google.com (mail-ua1-f48.google.com [209.85.222.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 331AC19DF4D
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:15:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB9851E869
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242128; cv=none; b=UKxQvNiKwLgItCd/SdtyZeTc32Ehop1EVZr1rvWYMr9Eraadc69ZEECj1Zl+WBwYE6D3mOslobXR/nkbJmND7K5yslpXOgz6it6xxliOnyaL1ZwPgxoMYIbo1+Ga8itu7pjTmdUyRvManLueJ35GiUUGdqcOt0o5wBeVIYSB9jg=
+	t=1719242156; cv=none; b=Xd5nOtY/yKbYgXczvoolWk+MPX0yRBSVa7X0iuwiMlTOYnApzcCzpwt1CP3g/wZ8n/7P+7NEbvxI8/J+RRxEJ6WaoTSlOd50MAQ3G+q2WGxk0bw0YXEkxRoflfY1f8YRvpZGIov+R8j7nI9P71+Ddt0rQnxlWYGpmJH+aJg2H2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242128; c=relaxed/simple;
-	bh=GAsy1hrmvNMsy+al1UKDpEJrsqmugZd4+qdldQYyXSA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PgRAkBsTbaeVwbYWXb4gGu5255NuINf27LxLzrKCMIepo96F0+thJSBSKfFbN/yoDceXkA0YlBhwDjrCJen0r+8pEK8rU9GnR+iycFcUzw82CDZySGF3oVp+WuBrPqyPR1Hrw6l66XgDOVvcszBnFmYtn+IbamUcPoRUcr/G2W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D5HhcE4r; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52cd628f21cso3488291e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:15:25 -0700 (PDT)
+	s=arc-20240116; t=1719242156; c=relaxed/simple;
+	bh=A4JieXLrNl6XYMc9LNNsw0UvMsz39nHhVErea3Z2QJI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CDbshLbkEl4LhKCdSR8bURecS/cIfkZTzgY9bm+X2O1rXQIs2gnAjn4ayut/kyUQL7YeqxglqJ6WXT3h5IRZJzGeDdGqKdMoBoM5aR0mYDUNDoruYyDw4yUF02bCNfhjo9ssv2GBd7stE8xIhjiYzZ3B9/uj1Xc1WFs5QxaYhjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fivKHzQD; arc=none smtp.client-ip=209.85.222.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f48.google.com with SMTP id a1e0cc1a2514c-80f9e894b7eso317997241.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:15:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719242124; x=1719846924; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9gDB4H9hEb1ddKk08sFFh7SUVmxRRs8hMx/zYwxqCrw=;
-        b=D5HhcE4rUbkgNTrPuWdRxMLlER6URmvc3dLoO6U6qqBUQwnNhdG7kSwtyAt/NQhF1C
-         QExawB1ot4Y2idWTFDFCKFGRdFZuJgiuIaE9ztLe4ypsdUIjltLvofV3oCz0uCoacJLF
-         ml9Tp0ex1SJJtM7P+KA0N+Kqe7N1OJkwo0WzqDDrUz+0ewnxMvn40QnIAzK1Kqa3+aJL
-         M2Ki/dSRqgfgf/0qlhga0fPGrnQCHs1f2ec/omb3UaH1VXN3/Z34uVVvznJAdT3XZ5MR
-         wvUGILo5/ZhJhPT8P0eK2jYrwozzp9KjKg7U4GcY/8FFN2t8Hn04QRr2ONMH64VitNtj
-         HwsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719242124; x=1719846924;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719242154; x=1719846954; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=9gDB4H9hEb1ddKk08sFFh7SUVmxRRs8hMx/zYwxqCrw=;
-        b=UG6RVHx5K3pC4ZGkb2+ScxMdNC5qRsLBCzmtS2tNv1Z30EMEKbMCcxA6DeXhKpFSWf
-         5tQhGlAj6kIFGnWy8Pa+RHQAwZQUpzJwqMP7mwDT2zXCIQSolq7fa3O9DO3Rx/WoY8CF
-         qydYmnZZwRk6RPqZ1YreL9P0grs8cLOenyCmnop1XeRT3NUPasRNrxGX89GgHRS8qzDE
-         JvPn48wyNy0eiiqaOmxm8CToGM1kcucsZourIUTC9HGg0YpOhZpvRBa5oUHvYMr8tXVU
-         wuGkLnVF3ajY4CSqxpvQ33q5hTvL+mbb9nST88G+5QruiSY7UYxo4LZOzuXjxGhhpGJD
-         PHvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUriL8GWYhDJFx/thVn50JONw715IYVxrN5JmEy8cvOBH+sf89yIC8iwWuqlzt8NEi1ruDYf8zCRw5iCXtmUQnImlrJPAJHBYx/9Smt
-X-Gm-Message-State: AOJu0YxPqfxEXPTAsSRZuHLs9nnxkHczAg127gNXWGNBF2CnDxO26Ckh
-	18G7XhLm3bR5qfN4VZrEKS0WzWiX8y3shh38yx04K7se4a3N8Lu/FznHI3acvNw=
-X-Google-Smtp-Source: AGHT+IGewbbtNYBe9HGO4cnqDGWmxOyzFNvsNZLeojJsAjYmh08AcYDCbzTBurLxo6pTj/6Sf3tmPg==
-X-Received: by 2002:a05:6512:55c:b0:52c:d9c6:f934 with SMTP id 2adb3069b0e04-52ce18356e5mr2814162e87.18.1719242124247;
-        Mon, 24 Jun 2024 08:15:24 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd63b46ecsm1004471e87.10.2024.06.24.08.15.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 08:15:23 -0700 (PDT)
-Date: Mon, 24 Jun 2024 18:15:22 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/3] arm64: dts: qcom: x1e80100: Add soundwire
- controller resets
-Message-ID: <2lnbogqx2mxgyn47vgnbp4ameydjq6ajuauklgzslmfinpmnk5@ez2sz3nyd3wj>
-References: <20240624-x1e-swr-reset-v2-0-8bc677fcfa64@linaro.org>
+        bh=o6XxZIGYzmHYKk5hBAwXmEAGY4eTfn+xjzR45XBe2AU=;
+        b=fivKHzQDf9BAZryxH8ihSZrqGb/gXIZBfvdPnkCyFNWF7COdWnPyuQUkxFOUJUAJgr
+         hqLVgrD0lzLqZ1oFnmuRTi9Qw4Ps/cNwoU2/EBoAVhOe/owLo+J1EPQMMIjCe12rDfc6
+         zt7ukj0Sz5uU7g/JmNjXHP7p9hLFL/B2OD+9AkMPw1cEvj7yGxtiBtqxelvDH1v9PltV
+         PR4I823y1WQm4tZELZBLivDDihfdvgl1sa+An8EGchUQDPE1wtKC4DuTfoab+XNhlE8R
+         40a8x2sCiG4PgdlGX+i9sp3P+DProbqXV0eBV6NpRdfRfLPhV0ngQPbbMnZbdisXvZOV
+         HmOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719242154; x=1719846954;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o6XxZIGYzmHYKk5hBAwXmEAGY4eTfn+xjzR45XBe2AU=;
+        b=r4Li1mL+f0hKMRBF+ygyEQOU9Z0KWQf6Qv+kJXwpr7J2SI4kP3iCZa1Q9TkwRCb2Qo
+         EcsOhIHoss9omzQ2bMXuWSUBPMNOFyNh5DTVlQ4lkWsrLM5fmm3R8N1oTugn9PTXGOeR
+         mmxcZVsmamsKtPrdZZIHH7scjKOj6ppoovnKsWoXtT+u3sabxK80j8REhHSnb9mSz4iB
+         Y9XW9vPiQw4kyGnfp9mfKf7gRM6kvuT8Eo+lq/I87QWh9c4UndSQDjEeZoQ5JY4bipCc
+         oc4K9IHVEEsAeTOzgV+mu7zk4Szp9FO3wcuatxie7MbIP89WZiewhjQnzY8LZnStsFow
+         IOfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrFkFeBvBjLTrEn7dYPXlZmsa8R9ZozYmaA97U+iwRoO+DUgOXPaZLP2JmXPpai5mQGJxnGHGtGq7fqnhBSfRbqzNp5qneaPmafb5z
+X-Gm-Message-State: AOJu0YyKC0Fx5a+ZBprQdze6XQ8eQt+ysYsA0hMKfGsW3AXa5KVRJz3D
+	ZQSCyuAejUx+IP4S59oqu4fZIz0uUVanmbYcMKBtA6MJPg3ewtg4ziEQnXPSKI9ow7dk7qirMif
+	lLYG1R7oDbJp/6icFzxic+Hk5+FQ=
+X-Google-Smtp-Source: AGHT+IFB5QsNgsJSFPtcEP92eW7cfFDedCMXa/ggdy5azjcQ/5i7MbFikgpASl1lTkYIB96qa7Vt9ue8yLqubTjHixg=
+X-Received: by 2002:a05:6122:d9a:b0:4ef:6c71:9a29 with SMTP id
+ 71dfb90a1353d-4ef6d8af4e0mr3333199e0c.13.1719242153640; Mon, 24 Jun 2024
+ 08:15:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624-x1e-swr-reset-v2-0-8bc677fcfa64@linaro.org>
+References: <20240621141544.19817-1-wuhoipok@gmail.com> <dd5ec9e5-14c1-4bd3-b210-fdba2766dfd7@suse.de>
+In-Reply-To: <dd5ec9e5-14c1-4bd3-b210-fdba2766dfd7@suse.de>
+From: Hoi Pok Wu <wuhoipok@gmail.com>
+Date: Mon, 24 Jun 2024 11:15:39 -0400
+Message-ID: <CANyH0kB4ECdjwNm=X6iAQkc1_+U+gdwumtqqeRtKPmvTb6G=cA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/7] drm/radeon: remove load callback
+To: Thomas Zimmermann <tzimmermann@suse.de>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	"Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	"open list:RADEON and AMDGPU DRM DRIVERS" <amd-gfx@lists.freedesktop.org>, 
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 24, 2024 at 02:32:35PM GMT, Srinivas Kandagatla wrote:
-> Soundwire resets are missing in the existing dts, add resets for all the 4
-> instances of Soundwire controllers (WSA, WSA2, RX, TX).
-> 
-> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-> ---
-> Changes in v2:
-> - fixed dt bindings.
-> - Link to v1: https://lore.kernel.org/r/20240624-x1e-swr-reset-v1-0-da326d0733d4@linaro.org
+Thank you. I have resubmitted with a cover letter.
 
-Thanks!
-
-Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-
--- 
-With best wishes
-Dmitry
+On Mon, Jun 24, 2024 at 3:22=E2=80=AFAM Thomas Zimmermann <tzimmermann@suse=
+.de> wrote:
+>
+> Hi
+>
+> Am 21.06.24 um 16:15 schrieb Wu Hoi Pok:
+> > This is "drm/radeon: remove load callback" v2, the only changes
+> > were made are adding "ddev->dev_private =3D rdev;", right after
+> > the allocation of "struct radeon_device". Patch v2 2-7 mostly
+> > describes simple "rdev->ddev" to "rdev_to_drm(rdev)" to suit
+> > Patch v2 1/7.
+> >
+> > Please be aware that these 7 patches depends on each other.
+>
+> Thanks for the update. In the current form, it's not reviewable, or
+> trackable in patchwork
+> (https://patchwork.freedesktop.org/project/dri-devel/series/).
+>
+> For sending patch series, please use 'git send-email' with the
+> --cover-letter option. This will provide you with a single email for
+> describing the patchset as a whole, and create all actual patch mails as
+> replies to the cover letter.
+>
+> Maybe test this first with your local email account and then please
+> resubmit to the mailing list.
+>
+> Best regards
+> Thomas
+>
+> >
+> > Thank you.
+> >
+> > Signed-off-by: Wu Hoi Pok <wuhoipok@gmail.com>
+> > ---
+> >   drivers/gpu/drm/radeon/radeon.h     | 11 ++++++++---
+> >   drivers/gpu/drm/radeon/radeon_drv.c | 27 ++++++++++++++++++---------
+> >   drivers/gpu/drm/radeon/radeon_drv.h |  1 -
+> >   drivers/gpu/drm/radeon/radeon_kms.c | 18 ++++++------------
+> >   4 files changed, 32 insertions(+), 25 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/radeon/radeon.h b/drivers/gpu/drm/radeon/r=
+adeon.h
+> > index 0999c8eaae94..69bb30ced189 100644
+> > --- a/drivers/gpu/drm/radeon/radeon.h
+> > +++ b/drivers/gpu/drm/radeon/radeon.h
+> > @@ -2297,7 +2297,7 @@ typedef void (*radeon_wreg_t)(struct radeon_devic=
+e*, uint32_t, uint32_t);
+> >
+> >   struct radeon_device {
+> >       struct device                   *dev;
+> > -     struct drm_device               *ddev;
+> > +     struct drm_device               ddev;
+> >       struct pci_dev                  *pdev;
+> >   #ifdef __alpha__
+> >       struct pci_controller           *hose;
+> > @@ -2440,10 +2440,13 @@ struct radeon_device {
+> >       u64 gart_pin_size;
+> >   };
+> >
+> > +static inline struct drm_device *rdev_to_drm(struct radeon_device *rde=
+v)
+> > +{
+> > +     return &rdev->ddev;
+> > +}
+> > +
+> >   bool radeon_is_px(struct drm_device *dev);
+> >   int radeon_device_init(struct radeon_device *rdev,
+> > -                    struct drm_device *ddev,
+> > -                    struct pci_dev *pdev,
+> >                      uint32_t flags);
+> >   void radeon_device_fini(struct radeon_device *rdev);
+> >   int radeon_gpu_wait_for_idle(struct radeon_device *rdev);
+> > @@ -2818,6 +2821,8 @@ struct radeon_device *radeon_get_rdev(struct ttm_=
+device *bdev);
+> >
+> >   /* KMS */
+> >
+> > +int radeon_driver_load_kms(struct radeon_device *dev, unsigned long fl=
+ags);
+> > +
+> >   u32 radeon_get_vblank_counter_kms(struct drm_crtc *crtc);
+> >   int radeon_enable_vblank_kms(struct drm_crtc *crtc);
+> >   void radeon_disable_vblank_kms(struct drm_crtc *crtc);
+> > diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/rade=
+on/radeon_drv.c
+> > index 7bf08164140e..ae9cadceba83 100644
+> > --- a/drivers/gpu/drm/radeon/radeon_drv.c
+> > +++ b/drivers/gpu/drm/radeon/radeon_drv.c
+> > @@ -259,7 +259,8 @@ static int radeon_pci_probe(struct pci_dev *pdev,
+> >                           const struct pci_device_id *ent)
+> >   {
+> >       unsigned long flags =3D 0;
+> > -     struct drm_device *dev;
+> > +     struct drm_device *ddev;
+> > +     struct radeon_device *rdev;
+> >       int ret;
+> >
+> >       if (!ent)
+> > @@ -300,28 +301,37 @@ static int radeon_pci_probe(struct pci_dev *pdev,
+> >       if (ret)
+> >               return ret;
+> >
+> > -     dev =3D drm_dev_alloc(&kms_driver, &pdev->dev);
+> > -     if (IS_ERR(dev))
+> > -             return PTR_ERR(dev);
+> > +     rdev =3D devm_drm_dev_alloc(&pdev->dev, &kms_driver, typeof(*rdev=
+), ddev);
+> > +     if (IS_ERR(rdev))
+> > +             return PTR_ERR(rdev);
+> > +
+> > +     rdev->dev  =3D &pdev->dev;
+> > +     rdev->pdev =3D pdev;
+> > +     ddev =3D rdev_to_drm(rdev);
+> > +     ddev->dev_private =3D rdev;
+> >
+> >       ret =3D pci_enable_device(pdev);
+> >       if (ret)
+> >               goto err_free;
+> >
+> > -     pci_set_drvdata(pdev, dev);
+> > +     pci_set_drvdata(pdev, ddev);
+> > +
+> > +     ret =3D radeon_driver_load_kms(rdev, flags);
+> > +     if (ret)
+> > +             goto err_agp;
+> >
+> > -     ret =3D drm_dev_register(dev, ent->driver_data);
+> > +     ret =3D drm_dev_register(ddev, flags);
+> >       if (ret)
+> >               goto err_agp;
+> >
+> > -     radeon_fbdev_setup(dev->dev_private);
+> > +     radeon_fbdev_setup(ddev->dev_private);
+> >
+> >       return 0;
+> >
+> >   err_agp:
+> >       pci_disable_device(pdev);
+> >   err_free:
+> > -     drm_dev_put(dev);
+> > +     drm_dev_put(ddev);
+> >       return ret;
+> >   }
+> >
+> > @@ -569,7 +579,6 @@ static const struct drm_ioctl_desc radeon_ioctls_km=
+s[] =3D {
+> >   static const struct drm_driver kms_driver =3D {
+> >       .driver_features =3D
+> >           DRIVER_GEM | DRIVER_RENDER | DRIVER_MODESET,
+> > -     .load =3D radeon_driver_load_kms,
+> >       .open =3D radeon_driver_open_kms,
+> >       .postclose =3D radeon_driver_postclose_kms,
+> >       .unload =3D radeon_driver_unload_kms,
+> > diff --git a/drivers/gpu/drm/radeon/radeon_drv.h b/drivers/gpu/drm/rade=
+on/radeon_drv.h
+> > index 02a65971d140..6c1eb75a951b 100644
+> > --- a/drivers/gpu/drm/radeon/radeon_drv.h
+> > +++ b/drivers/gpu/drm/radeon/radeon_drv.h
+> > @@ -117,7 +117,6 @@
+> >   long radeon_drm_ioctl(struct file *filp,
+> >                     unsigned int cmd, unsigned long arg);
+> >
+> > -int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags=
+);
+> >   void radeon_driver_unload_kms(struct drm_device *dev);
+> >   int radeon_driver_open_kms(struct drm_device *dev, struct drm_file *f=
+ile_priv);
+> >   void radeon_driver_postclose_kms(struct drm_device *dev,
+> > diff --git a/drivers/gpu/drm/radeon/radeon_kms.c b/drivers/gpu/drm/rade=
+on/radeon_kms.c
+> > index a16590c6247f..d2df194393af 100644
+> > --- a/drivers/gpu/drm/radeon/radeon_kms.c
+> > +++ b/drivers/gpu/drm/radeon/radeon_kms.c
+> > @@ -91,7 +91,7 @@ void radeon_driver_unload_kms(struct drm_device *dev)
+> >   /**
+> >    * radeon_driver_load_kms - Main load function for KMS.
+> >    *
+> > - * @dev: drm dev pointer
+> > + * @rdev: radeon dev pointer
+> >    * @flags: device flags
+> >    *
+> >    * This is the main load function for KMS (all asics).
+> > @@ -101,24 +101,18 @@ void radeon_driver_unload_kms(struct drm_device *=
+dev)
+> >    * (crtcs, encoders, hotplug detect, etc.).
+> >    * Returns 0 on success, error on failure.
+> >    */
+> > -int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags=
+)
+> > +int radeon_driver_load_kms(struct radeon_device *rdev, unsigned long f=
+lags)
+> >   {
+> > -     struct pci_dev *pdev =3D to_pci_dev(dev->dev);
+> > -     struct radeon_device *rdev;
+> > +     struct pci_dev *pdev =3D rdev->pdev;
+> > +     struct drm_device *dev =3D rdev_to_drm(rdev);
+> >       int r, acpi_status;
+> >
+> > -     rdev =3D kzalloc(sizeof(struct radeon_device), GFP_KERNEL);
+> > -     if (rdev =3D=3D NULL) {
+> > -             return -ENOMEM;
+> > -     }
+> > -     dev->dev_private =3D (void *)rdev;
+> > -
+> >   #ifdef __alpha__
+> >       rdev->hose =3D pdev->sysdata;
+> >   #endif
+> >
+> >       if (pci_find_capability(pdev, PCI_CAP_ID_AGP))
+> > -             rdev->agp =3D radeon_agp_head_init(dev);
+> > +             rdev->agp =3D radeon_agp_head_init(rdev_to_drm(rdev));
+> >       if (rdev->agp) {
+> >               rdev->agp->agp_mtrr =3D arch_phys_wc_add(
+> >                       rdev->agp->agp_info.aper_base,
+> > @@ -147,7 +141,7 @@ int radeon_driver_load_kms(struct drm_device *dev, =
+unsigned long flags)
+> >        * properly initialize the GPU MC controller and permit
+> >        * VRAM allocation
+> >        */
+> > -     r =3D radeon_device_init(rdev, dev, pdev, flags);
+> > +     r =3D radeon_device_init(rdev, flags);
+> >       if (r) {
+> >               dev_err(dev->dev, "Fatal error during GPU init\n");
+> >               goto out;
+>
+> --
+> --
+> Thomas Zimmermann
+> Graphics Driver Developer
+> SUSE Software Solutions Germany GmbH
+> Frankenstrasse 146, 90461 Nuernberg, Germany
+> GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+> HRB 36809 (AG Nuernberg)
+>
 
