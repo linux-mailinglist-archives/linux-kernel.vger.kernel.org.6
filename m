@@ -1,112 +1,119 @@
-Return-Path: <linux-kernel+bounces-227590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D34F9153B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:27:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CC459153BB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:28:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA76A1F246A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:27:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0E391B24629
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:28:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0A319DF84;
-	Mon, 24 Jun 2024 16:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E0919DFAA;
+	Mon, 24 Jun 2024 16:27:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SFRlphi8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LIXSY2SU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCA019D073;
-	Mon, 24 Jun 2024 16:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B201E19DF5D;
+	Mon, 24 Jun 2024 16:27:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719246439; cv=none; b=Bl7AZCMmapkxHtRcP7xm8xhhv0pRn5I4efi2UeQRBqrpgZ/qHCtvimuNf+AK2WMWeiN0jAoHS2X2P86hEdFEpORXqUcyqX3sZ+IaL6r4QDHgwwmNWP1gzk0S0ak0lyRrTIL0DOqaRBZMM3GpELq47qH6+IAc4IERS18It2JM/ik=
+	t=1719246471; cv=none; b=jiRpsq/kD5RTLHeRweXgk01rsmG7VvsxRHxel3TAZ7aJQ0K6GSd7w4D4bHif9bNDcTnbtvaDjbnQIeL5DrThYKVGdcTIm9ClymAVJtTW4cgjK4XZa0m8o5D42KSl5efUmveiHxbb0vv1mD+HX0qDJITWLb6K4pVTK2vlwFlkhaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719246439; c=relaxed/simple;
-	bh=gQWoEMp5t0Y9g3UhBIyAiLjSmCTWrouWgYwkGd+av4Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jbl2R8Njf8LZOxlBgYVZcc4h1O5O3ysMuFOH8hOU8QJmbHwYZSgvevqZ80eGRKi2HSqWifw8eqC/i+FnGU8Tnm6UiLF5eyGooCsa9R9eHw76bJapsWAjeEXxHII8Ycy5627nwr7a6RTxm7KatdhFDDqTo5d8UOldkEKzcGo+wPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SFRlphi8; arc=none smtp.client-ip=198.175.65.11
+	s=arc-20240116; t=1719246471; c=relaxed/simple;
+	bh=YjtWJQm9QqPK9v0wi70UmdCLPRdILJAl2N3WIxmkRgw=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=W0eTg2wemkVzDJSwE9dsq6z98HqmCRKs89ZNBKWc13WwO8KTsEgHIIjRj6JaJRwxUfHK/BGJWPuo3WER6ph9aihL3GUwkAUO8kG9WaR0LRtgS2kgE3TFwFbWMXOymst2lQ9RY3itm8viAsjVYwWNPgLN7kU/TrOjuQ67TTJbuIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LIXSY2SU; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719246439; x=1750782439;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=gQWoEMp5t0Y9g3UhBIyAiLjSmCTWrouWgYwkGd+av4Q=;
-  b=SFRlphi8dBQOv82i9vD8kI7HPJHGFlJcEZwyxvXcInfonzKeF1R8BqWk
-   CdVrEGbjR6RcA3/+Z1/tRsiNutf0WPCfF+3qZ31i+e8WTK/pY8zRBnTn9
-   AJ+cHgl2xZmJ8PMKdSp30XgYkMe7Hl7mCDueHTClnEwHEl4XJCKKEE1ZW
-   5xex++LIb7OZQko/R/H9wVhvHBZyeQGITDcV0EvfxvlHq+15WSFQ1l4hq
-   1SUHGTvALUu2rWdr8L3RPtfKETv7oKK2AJ6osdYd3LMR2Qhz8i5BV5wnD
-   ODIZ4Wj/kXzmDIMY29QMr0CZDVGvxdyDeYC0Gfby7aIm82EnhpmYdPIRG
+  t=1719246470; x=1750782470;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=YjtWJQm9QqPK9v0wi70UmdCLPRdILJAl2N3WIxmkRgw=;
+  b=LIXSY2SUSl6v4Bquvyqm8/LpIChFRiDcgllVb59BrkXiZxTwR+clq6Do
+   OnT14PnISDzRc+ogcCZH5lEHoK43TqFXA3Cm6a/sy8GrRknsTgoTPEbYD
+   YqcHgOab2kZTxvqgXtGFbHp3fEvGI060H+7WDVvEUyJuqpmLIFYD2R1pr
+   fzau30SLordJfVIXRAMcKaqNRR62vmi3VbjtRNcqpH2qCnhzJ8tgi0L3Z
+   eZLD25i4gQdnuy5xhDAeX07BPG8yizYDUVWxYFGuj0E96nBAdMGluWFzQ
+   5Rge3+X6QV+HlQt4GP4oGcqtdga28iWpmvczsZQBCDLBO3GG9sWXljVA1
    Q==;
-X-CSE-ConnectionGUID: dPsXdzkjSVGAVCOeli19DQ==
-X-CSE-MsgGUID: QXRzkkeuSbenKEaIvexmKA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="26816579"
+X-CSE-ConnectionGUID: /kPfGTUjQd6Dx6LSJi/N7w==
+X-CSE-MsgGUID: e5Gj7rO1Txa/sKNsraMztQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="16356859"
 X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
-   d="scan'208";a="26816579"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 09:27:18 -0700
-X-CSE-ConnectionGUID: E3VqrhfcS1ygxX0cYJAejw==
-X-CSE-MsgGUID: 9NyfRYSMSke55y++fFR9PA==
+   d="scan'208";a="16356859"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 09:27:49 -0700
+X-CSE-ConnectionGUID: sV4ipX9bQmGll7jRK377kA==
+X-CSE-MsgGUID: 9Xmm6K/BS7C9/MoeqSa4Hw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
-   d="scan'208";a="43322750"
-Received: from spandruv-desk.jf.intel.com ([10.54.75.19])
-  by fmviesa008.fm.intel.com with ESMTP; 24 Jun 2024 09:27:18 -0700
-From: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-To: rafael@kernel.org,
-	viresh.kumar@linaro.org
-Cc: linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH] cpufreq: intel_pstate: Replace boot_cpu_has()
-Date: Mon, 24 Jun 2024 09:27:14 -0700
-Message-ID: <20240624162714.1431182-1-srinivas.pandruvada@linux.intel.com>
-X-Mailer: git-send-email 2.44.0
+   d="scan'208";a="74578186"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.61])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 09:27:45 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 24 Jun 2024 19:27:41 +0300 (EEST)
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+cc: Bjorn Andersson <andersson@kernel.org>, 
+    Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+    Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+    Konrad Dybcio <konrad.dybcio@linaro.org>, 
+    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org, 
+    linux-usb@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+    Nikita Travkin <nikita@trvn.ru>
+Subject: Re: [PATCH v9 1/2] platform/arm64: build drivers even on non-ARM64
+ platforms
+In-Reply-To: <20240624-ucsi-yoga-ec-driver-v9-1-53af411a9bd6@linaro.org>
+Message-ID: <645b8ae6-10ad-11f9-eb18-a931f258bfd2@linux.intel.com>
+References: <20240624-ucsi-yoga-ec-driver-v9-0-53af411a9bd6@linaro.org> <20240624-ucsi-yoga-ec-driver-v9-1-53af411a9bd6@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Replace boot_cpu_has() with cpu_feature_enabled().
+On Mon, 24 Jun 2024, Dmitry Baryshkov wrote:
 
-Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
-This is based on comment from Borislov for the change to suppot HWP
-highest interrupt.
+> The Kconfig for platforms/arm64 has 'depends on ARM64 || COMPILE_TEST'.
+> However due to Makefile having just obj-$(CONFIG_ARM64) the subdir will
+> not be descended for !ARM64 platforms and thus the drivers won't get
+> built. This breaks modular builds of other driver drivers which depend
+> on arm64 platform drivers.
+> 
+> Reported-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Fixes: 363c8aea2572 ("platform: Add ARM64 platform directory")
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/platform/Makefile | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/platform/Makefile b/drivers/platform/Makefile
+> index fbbe4f77aa5d..837202842a6f 100644
+> --- a/drivers/platform/Makefile
+> +++ b/drivers/platform/Makefile
+> @@ -11,4 +11,4 @@ obj-$(CONFIG_OLPC_EC)		+= olpc/
+>  obj-$(CONFIG_GOLDFISH)		+= goldfish/
+>  obj-$(CONFIG_CHROME_PLATFORMS)	+= chrome/
+>  obj-$(CONFIG_SURFACE_PLATFORMS)	+= surface/
+> -obj-$(CONFIG_ARM64)		+= arm64/
+> +obj-$(CONFIG_ARM64_PLATFORM_DEVICES)	+= arm64/
 
- drivers/cpufreq/intel_pstate.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I made a second ib tag with this patch.
 
-diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstate.c
-index d53b99bab687..4ee244f59f54 100644
---- a/drivers/cpufreq/intel_pstate.c
-+++ b/drivers/cpufreq/intel_pstate.c
-@@ -1635,7 +1635,7 @@ void notify_hwp_interrupt(void)
- 	u64 value, status_mask;
- 	unsigned long flags;
- 
--	if (!hwp_active || !boot_cpu_has(X86_FEATURE_HWP_NOTIFY))
-+	if (!hwp_active || !cpu_feature_enabled(X86_FEATURE_HWP_NOTIFY))
- 		return;
- 
- 	status_mask = HWP_GUARANTEED_PERF_CHANGE_STATUS;
-@@ -1667,7 +1667,7 @@ static void intel_pstate_disable_hwp_interrupt(struct cpudata *cpudata)
- {
- 	bool cancel_work;
- 
--	if (!boot_cpu_has(X86_FEATURE_HWP_NOTIFY))
-+	if (!cpu_feature_enabled(X86_FEATURE_HWP_NOTIFY))
- 		return;
- 
- 	/* wrmsrl_on_cpu has to be outside spinlock as this can result in IPC */
+I'm a bit disappointed that LKP didn't catch this in the patch stage, it 
+feels almost as if it never built any of the versions.
+
+
 -- 
-2.44.0
+ i.
 
 
