@@ -1,176 +1,134 @@
-Return-Path: <linux-kernel+bounces-227236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B73914DBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:53:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EB24914DC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E72B284CE4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:53:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E8125B23F6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:54:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1607013D52C;
-	Mon, 24 Jun 2024 12:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFBC13D518;
+	Mon, 24 Jun 2024 12:54:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="hj8g+3Oo";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZCi/NfA7"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DtSvxBEE"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74D4E1E868;
-	Mon, 24 Jun 2024 12:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548352556F
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:54:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719233591; cv=none; b=rh7WCkuRvxT1sXT14/zKzJYs+ND4uE0/MhrwKEZCj6R7pMjEuAQr6w+cyVIHyzCeTmh9Q1PH3NzCP5GJ5BfDzQ4oFwWC4NyMLMA62VjdxIrkwAYGB9zT3S+xXFEYojb5xxYjM6TXZBSJt87ODagm509Y0bfbWmLF9N1tSCzSrVw=
+	t=1719233676; cv=none; b=QB42cXEw37NPQu4GJolqKs/f1bAam2hq68NtDQWq65HnBZ9IX8akRpPf4zgCfdzlFjz8yRjP9m38ceMqnidBTtKdLbrb8JdGgLbDkbEbKkGvw8Fo8FP832lB4ynhO67/lAfEsXHgvMqbbUNBAkb5QbsxmnsglguuPltoGkHSvGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719233591; c=relaxed/simple;
-	bh=gkOCJdJk+yKTW4RqeE1LxGsDvjSflGa8F/6v/0JODbY=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=F1bLJsyUCvUJDZYviBF19UzMOkleWyLVIZGnhLXnyYeBxXPxoMZAgp3VxixgLxqcyZMG3pXyFK+aUUbsCkH/cq2KdLkUQ1kets2TvWwURsHlDVnM1TdtA+TzxnWlZ5CZiEDQq+erlWQT75g5RJv6nadLDpRy8MrP+kPS8uo9tOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=hj8g+3Oo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZCi/NfA7; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 8F9E313801B5;
-	Mon, 24 Jun 2024 08:53:08 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 24 Jun 2024 08:53:08 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1719233588; x=1719319988; bh=xWKRucLiTm
-	pWwmmRX8FZ+pQR2gzXCPeFFp5WbUeFfbU=; b=hj8g+3OooVka8gNBjbWNY0qyAL
-	Z6vhvHJoz9J9I0++1woXG7Ge7EifFpbLdlmvrkBZicJ0Vuzhe4E65yfemaw0dpnz
-	ezbi2d09aLDF7ImuAp7ePDjUCcxqHHTdYBm1BZek/TB0JoKaPQYXQIQoZ6Ju8mOB
-	wJHI0OVjjjp4u23oFnNEB7nzInWRR+TgaFrQTVv59rGbcP+I49knsJba70p5D5dX
-	Q5dWWoC06j/c71Hvbmvv7UXEBlX1BHogMWVK0cFu3TYfKqxJtX6AOJv/ZHj8k8Wz
-	mczS6v5JUo7LbjeTVmLp9rK2m7s3ayQKBQJwHt4h6ceJB75BnOFzmPxvTpcQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719233588; x=1719319988; bh=xWKRucLiTmpWwmmRX8FZ+pQR2gzX
-	CPeFFp5WbUeFfbU=; b=ZCi/NfA7A/RQ9uffYWdnOth3zq0Nr7nYZ6oyyv9JWPOj
-	xm28gfJIalTQ9/Kdb3z5NDEv5ViTQHpwDzh6N2EeBHUDTVkRXgciUBMMS7AkgJUj
-	m/mZbf+ejaW10hmpd2gpqA98HnK/cBDtPVX3x7KTkifmry6qtJLpqiIaPkXjblZ4
-	K7U1Q9y0NRupMUuTkp76UIKEdKjVDI2+kJz8w5XDLyPvrBl9f3pDL8siN6LnFZYc
-	NHOsGh9Hg19uIehl2i3Z+NCBcSIcICMOlvBqO5de2EYJe0DcK20O5S+BIXOjPhfU
-	Ags7pPfYnlnunrnOo2Ffj4stHt2oG0X14wweQw4qyQ==
-X-ME-Sender: <xms:NGx5ZiVg1gGRlt9ve2AaCtdW00-4mkL4YYmnOlzPKKmgIemKoVjYew>
-    <xme:NGx5ZulJumI0JaGXmMii6JT6fzQIe9Qzlss726rjLTBIdsG1udtt43SlcJaGFmM4z
-    _U7v720kyBtwitGg-E>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeguddgheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:NGx5ZmYm5Y8_qZxXMutSnpZE-wAmIMkn8Co-Mc0N0PmSj90GZrpw9g>
-    <xmx:NGx5ZpVp_EN-CxgbfK-hH9-RsnW40Aj5LDE45CtCcZJj11OxT0IahQ>
-    <xmx:NGx5ZsmW9IB7O6E2KjShAvsf5qyGRubEB8ghp8lTi4rt0SC82Pq-OQ>
-    <xmx:NGx5Zudlz3chAaIISEKXN8oIN5P3itL3KhonJd_OA7jWYnsbt1Oh_g>
-    <xmx:NGx5ZnCn48KYTyY9DzCFIK7ydsxiaLAQcCK1tdYkGjcqKFPdDXZkeYYz>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 47B3CB6008D; Mon, 24 Jun 2024 08:53:08 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1719233676; c=relaxed/simple;
+	bh=DOxpGDRPXOULudQMfRyURG+LRWh3ynkAOi8ERNjON/s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gUsDbTwRZaXaI+gNUIyl/abLDDRBg582d5a0juToRPt/63zgPrN0Hsm3KeoRY72GE28i//Ty5BP+0Sfjf3R9stpc7ajlRnII2E3MZkiSQ9kJM+uTKclAtqZtKLi7ELLzOdOIjDtJ6NqWrAlNgdmMzahb5ZMDQrsQo8QLRbntj58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DtSvxBEE; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dfe1aa7cce2so4014832276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 05:54:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719233672; x=1719838472; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=T4MhoPIjswsMp7f7a8/ndhL9pANhZJFzHy+iV0sTzTk=;
+        b=DtSvxBEEy6zDc7eqfmXzzgHKKeEFIglDj7rFFmslwBAG4coJwbFa3tTmqmHjZEMzgN
+         3j0yo8GpMAAZ6rVGKRPyazs2FH6qTvUReAznA0gIiTzapS8XxIojuL4SLTlTmhTMHEZ7
+         pESD+GwERCoS/86FQ5j6MuUsQHva//d85yDzZEGEfxeeFPQg3amVHgY4vMYqr28jLapQ
+         cVz7mMzkj/cxdbmZScoiXn4Ke33r7tQwAAxEikgoA6A5FUS1Gcg3X8AwFy6h2dk3XRS6
+         ZL/Sj94EEL8GLqriVthUuvUjt1nU2PaWCokok3W9MIn8d02E/VX/LgRsbLjzF3gR2nAn
+         XHKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719233672; x=1719838472;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T4MhoPIjswsMp7f7a8/ndhL9pANhZJFzHy+iV0sTzTk=;
+        b=jpJwNK8ymx7VU23xi4FVaqlyKnDKKDhtP9ahtJyc5yfVxqqfNqd6xHTiT6ZWnUhOb2
+         DPOBZA922947aiF3LZytpY1g8vRs61rGP00pIX69FAJxGQkjkVjnEzOuW+VIia03TPNw
+         2+ZfJNqRAIKRY4+Dxhkd/FdI4ATcwHzpP3Vzptdaw2maBLWGJBxErcN645zidLev82sH
+         kZAfzLRRmRMPKV0LxXCX9SEARrIPexQLHoCR92k6q0b0hMAeA4MgCf05IEMBIuQHchGj
+         bYWTsFbW6YB4KK1F4SYQsufvmE+JyOmdI8SOl6vvham44X/eiaq8mKOSwuImjARWh8mt
+         VouQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRxwkiAQAgKxT3DhoXP+64NiDbD3rPesmuJueJtg/k2ResOy9pdpuEjt9wEPZbW8fzaTaBdmwXZrsCejjZixm5xX3AR1/KR6LCmZJU
+X-Gm-Message-State: AOJu0YwiHP/WyAWeltoaDdGOAID9BFgnn5AebRDrtn3ZKV11Z6jJ7mps
+	s+zZoeXWvabzldQnSjrgvsQ6OaD3XHq/0CgY75F0S5GLtOxjxE2PbaeyADL+TZ1lUhm358hrhFm
+	cUfKTb+Ulnbe6DwyYkpCWEbYTbx+1c0pLf0+Nvw==
+X-Google-Smtp-Source: AGHT+IEEe2Wox3jWC9RV0LVT1QsuSsNWmLHgdKtfDBvlgM6eb1pktgBqHVRKocFL/tWEa8Hwpz7Px1YRrvmHbynoaFc=
+X-Received: by 2002:a5b:bce:0:b0:df4:476e:7577 with SMTP id
+ 3f1490d57ef6-e03040182b2mr3570101276.60.1719233672328; Mon, 24 Jun 2024
+ 05:54:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <b31072d5-865b-4cda-be37-d93c36397d39@app.fastmail.com>
-In-Reply-To: <20240620162316.3674955-3-arnd@kernel.org>
-References: <20240620162316.3674955-1-arnd@kernel.org>
- <20240620162316.3674955-3-arnd@kernel.org>
-Date: Mon, 24 Jun 2024 14:52:47 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Arnd Bergmann" <arnd@kernel.org>,
- Linux-Arch <linux-arch@vger.kernel.org>, linux-kernel@vger.kernel.org
-Cc: "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- linux-mips@vger.kernel.org, "Helge Deller" <deller@gmx.de>,
- linux-parisc@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
- "Andreas Larsson" <andreas@gaisler.com>, sparclinux@vger.kernel.org,
- "Michael Ellerman" <mpe@ellerman.id.au>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- linuxppc-dev@lists.ozlabs.org, "Brian Cain" <bcain@quicinc.com>,
- linux-hexagon@vger.kernel.org, guoren <guoren@kernel.org>,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- "Heiko Carstens" <hca@linux.ibm.com>, linux-s390@vger.kernel.org,
- "Rich Felker" <dalias@libc.org>,
- "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- linux-sh@vger.kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "Christian Brauner" <brauner@kernel.org>, linux-fsdevel@vger.kernel.org,
- "Xi Ruoyao" <libc-alpha@sourceware.org>,
- "musl@lists.openwall.com" <musl@lists.openwall.com>,
- "LTP List" <ltp@lists.linux.it>, stable@vger.kernel.org
-Subject: Re: [PATCH 02/15] syscalls: fix compat_sys_io_pgetevents_time64 usage
-Content-Type: text/plain
+References: <20240619-lpass-wsa-vi-v2-0-7aff3f97a490@linaro.org>
+ <20240619-lpass-wsa-vi-v2-2-7aff3f97a490@linaro.org> <hz5eqta4ttzsnwttqzqrec4vcwvyleoow7thoiym3g3wjsfqk4@tx23nktde3gh>
+ <fe75671f-c292-44b7-9024-15e0825c55c2@linaro.org>
+In-Reply-To: <fe75671f-c292-44b7-9024-15e0825c55c2@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 24 Jun 2024 15:54:20 +0300
+Message-ID: <CAA8EJpoLE5zUEvC4-q8h5KH=c_ucew=py5TV2qCTaSEQNQeQzQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] ASoC: codecs:lpass-wsa-macro: Fix logic of
+ enabling vi channels
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Banajit Goswami <bgoswami@quicinc.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>, alsa-devel@alsa-project.org, 
+	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Manikantan R <quic_manrav@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Jun 20, 2024, at 18:23, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On Mon, 24 Jun 2024 at 15:35, Srinivas Kandagatla
+<srinivas.kandagatla@linaro.org> wrote:
 >
-> Using sys_io_pgetevents() as the entry point for compat mode tasks
-> works almost correctly, but misses the sign extension for the min_nr
-> and nr arguments.
 >
-> This was addressed on parisc by switching to
-> compat_sys_io_pgetevents_time64() in commit 6431e92fc827 ("parisc:
-> io_pgetevents_time64() needs compat syscall in 32-bit compat mode"),
-> as well as by using more sophisticated system call wrappers on x86 and
-> s390. However, arm64, mips, powerpc, sparc and riscv still have the
-> same bug.
 >
-> Changes all of them over to use compat_sys_io_pgetevents_time64()
-> like parisc already does. This was clearly the intention when the
-> function was originally added, but it got hooked up incorrectly in
-> the tables.
+> On 20/06/2024 21:28, Dmitry Baryshkov wrote:
+> > On Wed, Jun 19, 2024 at 02:42:01PM GMT, Srinivas Kandagatla wrote:
+> >> Existing code only configures one of WSA_MACRO_TX0 or WSA_MACRO_TX1
+> >> paths eventhough we enable both of them. Fix this bug by adding proper
+> >> checks and rearranging some of the common code to able to allow setting
+> >> both TX0 and TX1 paths
+> >
+> > Same question. What is the observed issue? Corrupted audio? Cracking?
+> > Under/overruns?
 >
-> Cc: stable@vger.kernel.org
-> Fixes: 48166e6ea47d ("y2038: add 64-bit time_t syscalls to all 32-bit 
-> architectures")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->  arch/arm64/include/asm/unistd32.h         | 2 +-
->  arch/mips/kernel/syscalls/syscall_n32.tbl | 2 +-
->  arch/mips/kernel/syscalls/syscall_o32.tbl | 2 +-
->  arch/powerpc/kernel/syscalls/syscall.tbl  | 2 +-
->  arch/s390/kernel/syscalls/syscall.tbl     | 2 +-
->  arch/sparc/kernel/syscalls/syscall.tbl    | 2 +-
->  arch/x86/entry/syscalls/syscall_32.tbl    | 2 +-
->  include/uapi/asm-generic/unistd.h         | 2 +-
->  8 files changed, 8 insertions(+), 8 deletions(-)
+> two Issues with existing code which are addressed by these two patches.
+>
+> -> only one channels gets enabled on VI feedback path instead of 2
+> channels. resulting in 1 channel recording instead of 2.
+> -> rate is not set correctly for the VI record path.
 
-The build bot reported a randconfig regressions with this
-patch, which I've now fixed up like this:
+Thanks. This should be a part of the commit message.
 
-diff --git a/kernel/sys_ni.c b/kernel/sys_ni.c
-index d7eee421d4bc..b696b85ac63e 100644
---- a/kernel/sys_ni.c
-+++ b/kernel/sys_ni.c
-@@ -46,8 +46,8 @@ COND_SYSCALL(io_getevents_time32);
- COND_SYSCALL(io_getevents);
- COND_SYSCALL(io_pgetevents_time32);
- COND_SYSCALL(io_pgetevents);
--COND_SYSCALL_COMPAT(io_pgetevents_time32);
- COND_SYSCALL_COMPAT(io_pgetevents);
-+COND_SYSCALL_COMPAT(io_pgetevents_time64);
- COND_SYSCALL(io_uring_setup);
- COND_SYSCALL(io_uring_enter);
- COND_SYSCALL(io_uring_register);
+>
+>
+> --srini
+>
+>
+> >
+> >>
+> >> Fixes: 2c4066e5d428 ("ASoC: codecs: lpass-wsa-macro: add dapm widgets and route")
+> >> Co-developed-by: Manikantan R <quic_manrav@quicinc.com>
+> >> Signed-off-by: Manikantan R <quic_manrav@quicinc.com>
+> >> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> >> ---
+> >>   sound/soc/codecs/lpass-wsa-macro.c | 112 ++++++++++++++++++++++---------------
+> >>   1 file changed, 68 insertions(+), 44 deletions(-)
+> >>
+> >
 
-This was already broken on parisc the same way, but the
-mistake in sys_ni.c turned into a link failure for every
-compat architecture after my patch.
 
-      Arnd
+
+-- 
+With best wishes
+Dmitry
 
