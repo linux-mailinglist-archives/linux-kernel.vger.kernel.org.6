@@ -1,93 +1,63 @@
-Return-Path: <linux-kernel+bounces-227827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D51C9156E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:06:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBAF59156F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 21:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E9D1F1F255E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:06:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A151C234CC
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:09:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 409EC1A00EF;
-	Mon, 24 Jun 2024 19:06:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D743919FA9B;
+	Mon, 24 Jun 2024 19:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M7ruaRUJ"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="AcvmvniS"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0892419EEC8;
-	Mon, 24 Jun 2024 19:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CD4107A0;
+	Mon, 24 Jun 2024 19:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719256002; cv=none; b=BhSW9RCLYQC0ajfYKrMYh2USsA7fvmR9+iFDavWQ5KCFHNtH1tiQagzEkC8o0hvvUKIAodMy0gpCm01VioKSSIeFm2zi9sQweOcWjGAlk3HINJdsVwlvq9rKKZBHpkWsWtltVYWsBlN1Px5f1G3fJZfvPpYLXCGXOoMxgmfWdY4=
+	t=1719256160; cv=none; b=jFzgbwmSCBtimDoXEfcirjfCQWFP0dktRbMmIdpnCHPYEjDGur+1MbmDg/EjZOn1sMToYXtYiLZXQ+XSmq+QUAMvz3ANJr711++bUF7n5+OXSQdqb+dp3H6zyCVrxLyaUiE2F7RzqwoD8o8FZHDppf7LX2SM7YWh/0jc+DhSkNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719256002; c=relaxed/simple;
-	bh=98K3I6JpoWZlFoBxPNgSj6G7nD056PuEl8Mzo6chLdI=;
+	s=arc-20240116; t=1719256160; c=relaxed/simple;
+	bh=RHmeLpdkT3bCwHx017JxwaBkmSWFMJo/nKxozA4MNic=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=amrNHP1tvp8BZP7IUyubaf9nQgoEqCAVAfFTZyYay908OkNd1J1QvZ2nHmoU+f0sXgO0Xi2HntUr6ZEKAbKB21Ycj7HG01mO1ra7Tm/B1Zw2rz4BJhX+pwxdSeMTJKfAYiGJNs51IlpGwGhdWH+HwF2flej5ITEOtFgqe/TPzvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M7ruaRUJ; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f480624d0fso36580075ad.1;
-        Mon, 24 Jun 2024 12:06:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719256000; x=1719860800; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oyqW3OxhXyEo8374isZdsKRGiqDGGV7DUgBfzoWrQ+A=;
-        b=M7ruaRUJ0TYWy2AUswZw9wXxaknGWInMIXRcHgVaz8clXLKnaPyrnh7D7tux0picTz
-         r3c7W3gL1hx9YhZw2JTo5zv0+BdQUN5oalQXoGHAKztwZ9Sl1u4SxlSntFK2fpV/rvbB
-         27fphHZa0Ssd6Gkw9OrZL1s8DPSb5cEgcwO1uxQXOoau1AOg62Wkz6dDQIGMrK97igBI
-         9XdRGjEe5bCHluc7rlGtut5EYqtkE7t0N28JLHbHBSCblrpm4auwqbnYk4nrSzwxVYhk
-         TAs0tAk8H23EdrBTbbPEw1y3rbhpAd1GtSVON0mfeMIXC9FZBkhQwmY1Q6inKQ61HIVI
-         CO6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719256000; x=1719860800;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oyqW3OxhXyEo8374isZdsKRGiqDGGV7DUgBfzoWrQ+A=;
-        b=n/sSXSEEFRMByVeR13phNpg0DqS4zpoLMyvuuXcAvNKKhSfCi4RrtOTAVFfk3au5lA
-         fjWM914C5V/njoL5VVHgT/UOz8R88m8ICymrPqswEowZmb5W6/o5ZypnXgL6J5We/WbL
-         WVhdK76MgQD5Ut3zwK8PTXPIyeHYu2ieiazT5i1mYVGeZB2xKz1XaQGKps65HA7NEDrA
-         ilqQ+FKbMdLt+F5mVscmYMKfKptg9aSyl0394xpCTl/9LBZ4mowD1BvEOsHj/2uPGdqs
-         vKplj43ej4PaYAe5dd4gCSIsrX+R/NiS4bUgMyqCVA7Z8of6XFFASTnMDozTnDv0R24L
-         r/sQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWwkw+5Re7edzrisLLb5tMET7J/v5NDHrSA/7Oa5Lw6wc/Zi1sAF3yw/mg9yrIXWkG45HRMZ+cnj7vL5YsB0vJrWljSsPZrAA4W/mmPSsfNqfzR3ggp0wfNOAm1W/Y6tSw
-X-Gm-Message-State: AOJu0YzykA84uzbwRIf/AY72nBtsXf6uBGkWkJmzNAxbCsNKrr/OTX30
-	PXgIqtFWxseGD9dFsCJRAu1crMhHXiDP/SYpm7RjnQkKeSX6DXHq
-X-Google-Smtp-Source: AGHT+IGKJ271VSNPC62Dp395/dIAHhklrFReOlcggoz7FxFOJ+zfobtEQEO5LKP2wkfZzm+TkYZTkg==
-X-Received: by 2002:a17:902:db06:b0:1f6:7f45:4d37 with SMTP id d9443c01a7336-1fa24187520mr48373015ad.66.1719256000120;
-        Mon, 24 Jun 2024 12:06:40 -0700 (PDT)
-Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb5e0a3esm66355225ad.215.2024.06.24.12.06.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 12:06:39 -0700 (PDT)
-Sender: Tejun Heo <htejun@gmail.com>
-Date: Mon, 24 Jun 2024 09:06:38 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
-	joshdon@google.com, brho@google.com, pjt@google.com,
-	derkling@google.com, haoluo@google.com, dvernet@meta.com,
-	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
-	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
-	andrea.righi@canonical.com, joel@joelfernandes.org,
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH 18/39] sched_ext: Allow BPF schedulers to disallow
- specific tasks from joining SCHED_EXT
-Message-ID: <ZnnDvlt1WmYm8LWN@slm.duckdns.org>
-References: <20240501151312.635565-1-tj@kernel.org>
- <20240501151312.635565-19-tj@kernel.org>
- <20240624124053.GN31592@noisy.programming.kicks-ass.net>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GAAiZImgO6jh3OevzqNBAiTGuPcJzkBdwLeQW8DwYoYT9AzbH4AfdxUjJ/uyl9FP9bR19fcdU9MglnHcs+K4RmoEro66omfxLLDeE9owLcv/X84o+vUcpsrUW8i68PqnCyjvomQ6yhRiAv4vegrUFDM/CHYlinfWZu/K79PYtNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=AcvmvniS; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=Lkmr7/aSeqTjcSX6Kf2zcrLRYl7jDTF7KgIGMoYK4gI=; b=AcvmvniSFj0aOeDhtVQTTlyN2D
+	l6usijwm+2M89Dh4RBRxoiT9bx2+bAF/iywcDBcAXtQUeeUniFNx/k4w8lFxsZW/wZMlLiPED28P4
+	QQ+ybr9kGC6F1lfNAFP8OV66IPU7IgTI4wHQc7x/mENAi4ZJefU/TrYHrjCCsnExjCpg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sLp3n-000sUy-Ky; Mon, 24 Jun 2024 21:09:03 +0200
+Date: Mon, 24 Jun 2024 21:09:03 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Danielle Ratson <danieller@nvidia.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, corbet@lwn.net,
+	linux@armlinux.org.uk, sdf@google.com, kory.maincent@bootlin.com,
+	maxime.chevallier@bootlin.com, vladimir.oltean@nxp.com,
+	przemyslaw.kitszel@intel.com, ahmed.zaki@intel.com,
+	richardcochran@gmail.com, shayagr@amazon.com,
+	paul.greenwalt@intel.com, jiri@resnulli.us,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	mlxsw@nvidia.com, idosch@nvidia.com, petrm@nvidia.com
+Subject: Re: [PATCH net-next v7 2/9] mlxsw: Implement ethtool operation to
+ write to a transceiver module EEPROM
+Message-ID: <89c631e7-8664-4377-b38c-d371409b71b4@lunn.ch>
+References: <20240624175201.130522-1-danieller@nvidia.com>
+ <20240624175201.130522-3-danieller@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,43 +66,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240624124053.GN31592@noisy.programming.kicks-ass.net>
+In-Reply-To: <20240624175201.130522-3-danieller@nvidia.com>
 
-Hello, Peter.
-
-On Mon, Jun 24, 2024 at 02:40:53PM +0200, Peter Zijlstra wrote:
-> On Wed, May 01, 2024 at 05:09:53AM -1000, Tejun Heo wrote:
-> > BPF schedulers might not want to schedule certain tasks - e.g. kernel
-> > threads. This patch adds p->scx.disallow which can be set by BPF schedulers
-> > in such cases. The field can be changed anytime and setting it in
-> > ops.prep_enable() guarantees that the task can never be scheduled by
-> > sched_ext.
+On Mon, Jun 24, 2024 at 08:51:52PM +0300, Danielle Ratson wrote:
+> From: Ido Schimmel <idosch@nvidia.com>
 > 
-> Why ?!?!
+> Implement the ethtool_ops::set_module_eeprom_by_page operation to allow
+> ethtool to write to a transceiver module EEPROM, in a similar fashion to
+> the ethtool_ops::get_module_eeprom_by_page operation.
 > 
-> By leaving kernel threads fair, and fair sitting above the BPF thing,
-> it is not dissimilar to promoting them to FIFO. They will instantly
-> preempt the BPF thing and keep running for as long as they need. The
-> only real difference between this and actual FIFO is the behaviour on
-> contention.
+> Signed-off-by: Ido Schimmel <idosch@nvidia.com>
+> Reviewed-by: Petr Machata <petrm@nvidia.com>
 
-Yes, from sched_ext's POV, in partial mode, CFS isn't all that different
-from FIFO. Whenever there are tasks to run in CFS, CPUs are taken away.
-Right now, partial mode can be useful for leaving a part of system on CFS
-(e.g. in a cpuset partitioned system), when the scheduler is narrowly
-focused and doesn't cover everything necessary (e.g. EAS).
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-> This seems like a very bad thing to have, and your 'changelog' has no
-> justification what so ever.
-
-This is a bit of duplicate interface in that in partial mode sched_ext can
-already be opted in by setting per-thread sched class. However, some use
-cases wanted this so that the BPF scheduler has the final say over who can
-be on it rather than the userspace. It's a convenience feature for some use
-cases.
-
-Thanks.
-
--- 
-tejun
+    Andrew
 
