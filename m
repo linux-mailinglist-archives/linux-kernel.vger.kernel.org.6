@@ -1,113 +1,161 @@
-Return-Path: <linux-kernel+bounces-227626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91BE09154A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:46:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E6499154AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:47:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C307F1C21DAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:46:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2230AB27907
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C7719CCF7;
-	Mon, 24 Jun 2024 16:46:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88ED319E82E;
+	Mon, 24 Jun 2024 16:46:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1zaXE/2O"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fZB2jBe1"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C070419E81C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 16:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E5242F24;
+	Mon, 24 Jun 2024 16:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719247578; cv=none; b=iDQOPeKkS+cfQ9a6LrLFxvkveP3EUz7MAWhV3eyoNp3raMTY8VU+1HnjsqIPWSQX/ljRzmRD+E9yLt6n27wKs0sURQo1FEPzgBbKeLlvCF8xo/9lQ6aRSN0+fuWCVdIUM+/xgvdQueTt5+nVF/jl0BsLnH7xAcdrelhSNwTMvMY=
+	t=1719247608; cv=none; b=MsWimIeHNgLauxYKZUj+gyRv0Za059jUFkrYmnEqLUj0/bwkZBL1N5teWJQaXmFu7iWbwuT1gZ2mSDDSwiyTHo45jZUWlCY4AheQgcaC1+Y+4yuVtPB29Bb6kMUnQ0EVrzX8mNt0Llxj+eex88N7vxrZVOLxKxwuZ+CY1T79l6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719247578; c=relaxed/simple;
-	bh=j3mtCDro6szPMoGWAAjyIwhY8Z8hnROYefTX4WK/Chc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WOuAmyGxBPN8dVqhh4Dh37KY+9gLTbRzVXCFejh6cPXxex7+PcR8m1g4k9Z4/P1nKnAPro3uLy8J5XahS3GFCRFetlRsqW3ih/693aeTsX+bR8RnfzMAOeA+SAK2WOIfP8XtAlrK5KO1Mno/T+ELKwUJe58HHGk3q7O9Zh6osbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1zaXE/2O; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-443586c2091so1101cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:46:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719247575; x=1719852375; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AMSaelTgm9+gZJLzvg/KOZGEZUTdUOqVskLSww0Rudo=;
-        b=1zaXE/2OmbLVH3YFlvHlhrCUNdqVIEoEgQbgiPzkP7DCI5I4nTGOH50t/YuZSEK9qi
-         HpcuI0bwf2BrNnccQ6Wc1aM+E+IELLJpNWRQcVLw4p72m1WlDz0cuZxqhBv0D+1b3rZl
-         vF/qOHLKcfCTSYSeUm7825gwkfw73ef5h+fItFYtr117Km0c1M4PF19F4GGcwvu19ko2
-         /TWa5T59en6SS4doQGbtMd77MEkjYgMm/Ufu2F9i/gyEiAtUmPZUqdkxBRisHFR2sYtX
-         DSyFsx8MNNngg9oyskxOsFXEH3QXHnkhb9MZETW5pZIiV8uorpsG24CRAE4GFqX9bh5T
-         +T9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719247575; x=1719852375;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AMSaelTgm9+gZJLzvg/KOZGEZUTdUOqVskLSww0Rudo=;
-        b=G673WpCRUw48EXgrVKawM4FSucd8bR3WY/6PxLDZ26ihfdkXYJobvA4pLS+K9LoyKw
-         X+rs9p4dWG23mkLJ38FQj+NQjLLr4eyENqJcbmGxHZidiobq/rii02Y8HPU3IbvFVSjk
-         ELrmk7LJ4JHQJQMm+WWFi4MPEtPjKnlCjWq09ygxDQYJi2RfTuiBaf5SlhcwgXicUzlC
-         5Ih3pa2g85UIL3FxuT2KMChFnzAPhVFhPbdvtyypIsy/c4u60D1tEo4tLlhmOX386bFM
-         M78w2wlELknEmkr7eAWiJ1jAP/8GVbMebcJDBOCW6/OlH0TS6XGmMH7Q6CvSMze6swj3
-         LF6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXai3B3SXn8LEKu2FDi0G1nMiiM9Y0k3UfJdgxKALeJbdaGtkwt3K+lXBAeGPYbP/Ew/MRzBr6LdTJompJK4js3yBk3sVTGiKov2EgO
-X-Gm-Message-State: AOJu0Yx8l6K/wgSiVnwhYYyQTfKDpkG+xhaTXBgMXmZoOMoTKRDsWrxp
-	UGeYTosvrA7l061fjQuU4HdEnd9WIZO+bBXv7x727l1bXn2YZaHyKCr8Ugcr2Qj9nn/afNPDOh0
-	XC+MnrwIfUq4DTrJeBx3Fv8jxyR2ZJLOZjJmX
-X-Google-Smtp-Source: AGHT+IFjApab6MaKv6PsrlmopTYXcXjrUWTT++GwSbVbvFdm1I8gzP3WA9e+zP+3yfQBYNCgLHo0PSNfLdJekbpatUs=
-X-Received: by 2002:a05:622a:83:b0:441:54bb:50eb with SMTP id
- d75a77b69052e-444ce39fd5dmr5217641cf.28.1719247574572; Mon, 24 Jun 2024
- 09:46:14 -0700 (PDT)
+	s=arc-20240116; t=1719247608; c=relaxed/simple;
+	bh=Z0KOoAgihY9+2olzC1EakZj1hVSDqO9ADCzWhcqulHw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=oPruGRN1FyqVklvuTcsJQ+z8yYEDxsldPbua+zR5uEHEcl4XjASJ8lNjv+3aWWsCLPgNdNTYaf4QvCHTKXu+cXtp/1Eps0WywBxNMcxJF4bsO9eErB0mkJHWGRhaJxyOAKnVceoF/y/fbGA7IufpupdQfK6yM8sMNCuTC5v9sYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=fZB2jBe1; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45OGkIgZ099626;
+	Mon, 24 Jun 2024 11:46:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719247578;
+	bh=ftKRQUamjpJWDefpfpwbKp7EZqAIxw/kXhR8Z/Mx5zs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=fZB2jBe1GUWTGU75xB7pLY7UhFEn3HYvewkq5kyAi+/eEvYDBMponWXnJxO/O5NID
+	 Go4QUK0V6VnoC9bUYlmqUncnOtuqIQ9c6zT4e/3TtUbiA7xykxUhK/XcpjTikJibDk
+	 Gv8OdQKX2Uno445OwA1TIGcD5DpXTey4CgQLBSlk=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45OGkInC079934
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 24 Jun 2024 11:46:18 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 24
+ Jun 2024 11:46:18 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 24 Jun 2024 11:46:18 -0500
+Received: from [10.249.142.56] ([10.249.142.56])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45OGkEin083808;
+	Mon, 24 Jun 2024 11:46:15 -0500
+Message-ID: <e96d0c55-0b12-4cbf-9d23-48963543de49@ti.com>
+Date: Mon, 24 Jun 2024 22:16:13 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624141926.5250-1-lvzhaoxiong@huaqin.corp-partner.google.com> <20240624141926.5250-6-lvzhaoxiong@huaqin.corp-partner.google.com>
-In-Reply-To: <20240624141926.5250-6-lvzhaoxiong@huaqin.corp-partner.google.com>
-From: Doug Anderson <dianders@google.com>
-Date: Mon, 24 Jun 2024 09:46:03 -0700
-Message-ID: <CAD=FV=XsRrB_Y=_rTTDhvzQPwxr+_LuY-YUjfm5H7mY8YgxG0w@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] drm/panel: jd9365da: Add the function of adjusting orientation
-To: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
-Cc: dmitry.torokhov@gmail.com, robh@kernel.org, 
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, jikos@kernel.org, 
-	benjamin.tissoires@redhat.co, hsinyi@google.com, jagan@edgeble.ai, 
-	neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
-	dmitry.baryshkov@linaro.org, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: Betterbird (Windows)
+Subject: Re: [PATCH v3] serial: 8250_omap: Implementation of Errata i2310
+To: Udit Kumar <u-kumar1@ti.com>, <nm@ti.com>, <tony@atomide.com>
+CC: <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
+        <ronald.wahl@raritan.com>, <thomas.richard@bootlin.com>,
+        <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, <ilpo.jarvinen@linux.intel.com>,
+        <stable@vger.kernel.org>
+References: <20240619105903.165434-1-u-kumar1@ti.com>
+From: "Raghavendra, Vignesh" <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20240619105903.165434-1-u-kumar1@ti.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Hi,
 
-On Mon, Jun 24, 2024 at 7:21=E2=80=AFAM Zhaoxiong Lv
-<lvzhaoxiong@huaqin.corp-partner.google.com> wrote:
->
-> This driver does not have the function to adjust the orientation,
-> so this function is added.
->
-> Signed-off-by: Zhaoxiong Lv <lvzhaoxiong@huaqin.corp-partner.google.com>
+
+On 6/19/2024 4:29 PM, Udit Kumar wrote:
+> As per Errata i2310[0], Erroneous timeout can be triggered,
+> if this Erroneous interrupt is not cleared then it may leads
+> to storm of interrupts, therefore apply Errata i2310 solution.
+> 
+> [0] https://www.ti.com/lit/pdf/sprz536 page 23
+> 
+> Fixes: b67e830d38fa ("serial: 8250: 8250_omap: Fix possible interrupt storm on K3 SoCs")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Udit Kumar <u-kumar1@ti.com>
 > ---
-> Changes between V5 and V4:
-> - 1. Change dev_err() to dev_err_probe().
->
-> V4:https://lore.kernel.org/all/20240620080509.18504-5-lvzhaoxiong@huaqin.=
-corp-partner.google.com/
->
-> Changes between V4 and V3:
-> - No changes.
->
-> ---
->  drivers/gpu/drm/panel/panel-jadard-jd9365da-h3.c | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
+> Change logs
+> Changes in v3:
+> - CC stable in commit message
+> Link to v2:
+> https://lore.kernel.org/all/20240617052253.2188140-1-u-kumar1@ti.com/
+> 
+> Changes in v2:
+> - Added Fixes Tag and typo correction in commit message
+> - Corrected bit position to UART_OMAP_EFR2_TIMEOUT_BEHAVE
+> Link to v1
+> https://lore.kernel.org/all/20240614061314.290840-1-u-kumar1@ti.com/
+> 
+>  drivers/tty/serial/8250/8250_omap.c | 25 ++++++++++++++++++++-----
+>  1 file changed, 20 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+> index 170639d12b2a..ddac0a13cf84 100644
+> --- a/drivers/tty/serial/8250/8250_omap.c
+> +++ b/drivers/tty/serial/8250/8250_omap.c
+> @@ -115,6 +115,10 @@
+>  /* RX FIFO occupancy indicator */
+>  #define UART_OMAP_RX_LVL		0x19
+>  
+> +/* Timeout low and High */
+> +#define UART_OMAP_TO_L                 0x26
+> +#define UART_OMAP_TO_H                 0x27
+> +
+>  /*
+>   * Copy of the genpd flags for the console.
+>   * Only used if console suspend is disabled
+> @@ -663,13 +667,24 @@ static irqreturn_t omap8250_irq(int irq, void *dev_id)
+>  
+>  	/*
+>  	 * On K3 SoCs, it is observed that RX TIMEOUT is signalled after
+> -	 * FIFO has been drained, in which case a dummy read of RX FIFO
+> -	 * is required to clear RX TIMEOUT condition.
+> +	 * FIFO has been drained or erroneously.
+> +	 * So apply solution of Errata i2310 as mentioned in
+> +	 * https://www.ti.com/lit/pdf/sprz536
+>  	 */
+>  	if (priv->habit & UART_RX_TIMEOUT_QUIRK &&
+> -	    (iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT &&
+> -	    serial_port_in(port, UART_OMAP_RX_LVL) == 0) {
+> -		serial_port_in(port, UART_RX);
+> +		(iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT) {
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+This still doesn't match the errata workaround described in the above
+doc. Need a check for RX FIFO LVL to be empty (like before). Else we end
+up applying workaround on every timeout (including those that are not
+spurious) which is undesirable in the IRQ hotpath.
+
+> +		unsigned char efr2, timeout_h, timeout_l;
+> +
+> +		efr2 = serial_in(up, UART_OMAP_EFR2);
+> +		timeout_h = serial_in(up, UART_OMAP_TO_H);
+> +		timeout_l = serial_in(up, UART_OMAP_TO_L);
+> +		serial_out(up, UART_OMAP_TO_H, 0xFF);
+> +		serial_out(up, UART_OMAP_TO_L, 0xFF);
+> +		serial_out(up, UART_OMAP_EFR2, UART_OMAP_EFR2_TIMEOUT_BEHAVE);
+> +		serial_in(up, UART_IIR);
+> +		serial_out(up, UART_OMAP_EFR2, efr2);
+> +		serial_out(up, UART_OMAP_TO_H, timeout_h);
+> +		serial_out(up, UART_OMAP_TO_L, timeout_l);
+>  	}
+>  
+>  	/* Stop processing interrupts on input overrun */
 
