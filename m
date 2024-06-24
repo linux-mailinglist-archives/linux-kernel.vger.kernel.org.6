@@ -1,148 +1,119 @@
-Return-Path: <linux-kernel+bounces-227226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECACC914B00
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:49:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B007E914B03
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A8371C2236F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C7B52849AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1EC13D518;
-	Mon, 24 Jun 2024 12:49:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717B413D298;
+	Mon, 24 Jun 2024 12:50:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="OAf6pynk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Dq00BKlg"
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IEOvaOYh"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB1C137906;
-	Mon, 24 Jun 2024 12:49:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330F413C8E8;
+	Mon, 24 Jun 2024 12:50:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719233385; cv=none; b=UgAT+uoUEqF9+uNz1fGIIN4ax04AM6K5SPBnrfnwjwJxBiYbobhxb1FkVAus4C4Py3ZLj3nr9oqT0ysrVL+uPR263vVJ99rQI6es8ZeC2/lEyo9a1lR3hX9sEJIIU8GpDlQ+2Gif9y8PJqrSxpCPnsGowQ1Z/XrN5XbuMMrkG9s=
+	t=1719233404; cv=none; b=Jdvh49Dy9EQSz8rtJn9ra9KB6fTuUZXRCG5WbVPCQ1zPcRBmNwNCZJpoDJ+InoV/0/2Ina2RcIh/ZYyIaA9JEU0k8Sfvl03n001VlEFsM13c+ZmaRFp5BqRiLJki5ZSjgWXuV/YpRF4B5C78z0nOlHOhwv0mTileT8pexZ3AEuo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719233385; c=relaxed/simple;
-	bh=KW2K4lEnELwtLG0Du0+Zd4BIXmuwRSaKhU0g1LsZhUA=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=AJRb4307peY9QD4FY4mM8UP/2Ks2rBKItjyhcsiw9F/r6MpuG9O1iTXCFEY+zIYytZWz9SX6ulTxmEvz6KFaHyZATrSJ8Sh/JoPGGxoYBSt3KS4IgS8zjSQ+O3wQgk40hMP7cVJOE89zETR4opysH1py8Uabs1JKtV36IMQZ+3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=OAf6pynk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Dq00BKlg; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 260581380261;
-	Mon, 24 Jun 2024 08:49:43 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Mon, 24 Jun 2024 08:49:43 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1719233383; x=1719319783; bh=Q8W2Cb9GFW
-	M70Zj4xc8kK2Hh9EKM/M/jx4sXVXZP+3s=; b=OAf6pynk2o03dZJWLhP6GDlAxJ
-	FMzfO/dvmu5fdm73KzJkM1LnqZGKiKn8CWVYsp3dmTWuDMIBIWoYhh6vr1PW7c6x
-	X5LLN/7eWAiAuZTLwhw+VUqqHf/WvPmCXqJDig+xPglKZij5IPl5KtV2yQyAxnsD
-	V1GG4MDIVSLDsKwjPsxPmBBV4u9O2xItNLnF0HYeDMjv9qLxKXMYzGjYQ50qHvmA
-	N6s5NOtIl699D5DB1/+EIrhDEEBAP+IWmDeno9UkcqBqYZpcufjbu0upHnUzcXr2
-	Uwjk1/dGhC556BTXFBhLGJOUYuOfFFx3PBDQarsAG0OBGIbwBX3ZQVy/aeKw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719233383; x=1719319783; bh=Q8W2Cb9GFWM70Zj4xc8kK2Hh9EKM
-	/M/jx4sXVXZP+3s=; b=Dq00BKlgKaP2cR5obvsJardd5sHd9Ykq5efCVVGog+nY
-	ejg8pe39LicQJvVJMJm98jFZiE0f5sU/BNIAmMZuBWD1s7b8wUOZH7IDRkxnwy9L
-	20pktHRucFeYXNE8Ov04HVCEA1mEOvh5mU9lzG3rsABEr3hCEeNYiqzxo9zeIYVR
-	T+sGC+SoCmPqOmsC2r1jv3RZbqG/zCeNgo2QrLfN4qSqSFK+KJdLRzqz52+V6OCA
-	dw0oNLNkKYuuWhoJa4+CFdfVM2wVo2hJrGCoZ1aiu6zdwVt1SmP5qMy7hluTdjHd
-	XTdZ86xdE0oeOHzrvwGoKVglC+HKu92EOVB7LKAx2g==
-X-ME-Sender: <xms:ZWt5Zmo9Zflv53gEv_xAYaz3ZgjN2LFMq8ZcaazgXEXKTVDHZjnmRw>
-    <xme:ZWt5Zkp-9vYTfxoCtBTsQ_a9xtN_zmiG9sTGVTG72IV7B3s9gCacCtNBhFM2a8QLz
-    uG4BdynV8hhJAhxjfo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeeguddgheejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftehr
-    nhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrth
-    htvghrnhepffehueegteeihfegtefhjefgtdeugfegjeelheejueethfefgeeghfektdek
-    teffnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
-    hrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:ZWt5ZrOZAiz2nbP-dxzpKXw26eHKJrS1YOSSsbwyBud5s6eAvob2OA>
-    <xmx:ZWt5Zl6vGUPX59Lw3lY0Tyt1AdaaAdHcaT0BjBh9fr_8i7EtcLhUdQ>
-    <xmx:ZWt5Zl7jaRBngBaLhLO40vwqouxH1t5VOYZFgId6_qSRFoJE-4wUSQ>
-    <xmx:ZWt5Zljf6r7CH-Ty6sABQ5-XQgqnuX2oE8HXfOHCkmmOE2ObsTof6g>
-    <xmx:Z2t5ZhF7Cw9mWCj0vKv96n8S7QkrlfALxn7h6emOqKQiQkmifdr12eOL>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id C7FAFB60092; Mon, 24 Jun 2024 08:49:41 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-522-ga39cca1d5-fm-20240610.002-ga39cca1d
+	s=arc-20240116; t=1719233404; c=relaxed/simple;
+	bh=LlD7I6/pjywuSMhSXawgkM+HR5f/d4MMCMlGcT05+3k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ogi2b6Tiw647M0Ul5P4DSOL9p7WwH4vR19kPJWJ1H71au0M6/kA+e7QV2Ak2G0ExGVo2nd/mlFZI6WeAn+7QcJ1a9uogLOqEzPE9xFeRk/yLy2v6SjAMyDMmQsMT5Cy+PIz7XqgGd4WcDSNItSxaZunVf49+DnrbnH2OLMRq68k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IEOvaOYh; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52cd87277d8so2625945e87.2;
+        Mon, 24 Jun 2024 05:50:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719233401; x=1719838201; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HlcYgPsud4Nd776nRkjr0CZ1auzWK784DbKxqK8ksAY=;
+        b=IEOvaOYhHL6EsQBaNMJ7MzT8Yp16DvZvueyRMRRd23KGzdIwNptOnqhUzctY4h9c8C
+         Y/vK5HWzsnlwUw9Qh0sWaJShhj2An8PDaFu0eo0b9vHWAtX1bXaPLFv8w4iev4YkR6u5
+         GQOb2FSvEFXMS62eyce40Vy2GOLbFstqPwsJVyCbC0jFmcoHMHZecFOPSZJTswRFCfZB
+         qAbVuc7xgjO9akTFfZsaxJYlKaIgwVYh4nK/rx4Csz4BxgZmqpbfuip5BtnpjlUHg9l5
+         XC1SnqjGeMli6/Ta4jrrIpWoUUqjfm4TRdf97uXr5xTaGkmUC+IvUOl+tWA87Bwqu5if
+         vMXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719233401; x=1719838201;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HlcYgPsud4Nd776nRkjr0CZ1auzWK784DbKxqK8ksAY=;
+        b=aIvTqcNyZLmXDZgYsyqBt8AykstARjlJAF9C7h04vuWxiHZ+rSOsEBCM/oaDftPyYp
+         835+74N9XzbPs62sDC5UpHY875BJ8e+vW9KyNyZhWaTIKgrCmRIHdNM3iNi+yL2UzJew
+         S07OnNnwgQU5e0fBWEWkLwg5oh59+JOsqXA4eid89iI26Hno+mwCpxYa2xLz3pbl8nH4
+         EaFGv55aWjte+IMSyNn/pzz+fn/yz+ldZ9ByC0rNHf9BzfXDscvIcfPlEjLEYiEQmXlW
+         s9psEOYSbhsK174sYK0S72bTzHroNLNfWE8jKmuWwjaxDKMRwRytNdKX2KK7+hZVLR6N
+         V8FA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUSu6W/wT2uS+FEfGOCJ4/qPfM/lbYsF2M2Y3KTz5A/PEZV7pDweqjj6RwOiTJXI7MVsCGBPm5nxH+8BgU/4xb8ufxxTNpqB0XHEpkn2S97n6T3NdoW10Pvq4mk7KjujX7eB9rrWpXgsN4VhoAWXyCp+e47soBFvvz/d6zbdTR7yczHw==
+X-Gm-Message-State: AOJu0YyvwaExiGvHBdEpYHLy4jBw+7ZrOW/BR6ongqvwWVweMfIPeZvL
+	lI+xuWalLVXLIwtDDYv5kGltM/EGwCNOnGkL+wsWqs9yN+jdNOdX
+X-Google-Smtp-Source: AGHT+IEvU9jLflOR3HhDPuOmbxjiN4CV0nc67vU9AQemjdEf4OtCXn61GBvDbmxYBSGg8J5mSGqMsw==
+X-Received: by 2002:a05:6512:4884:b0:52c:896f:930d with SMTP id 2adb3069b0e04-52ce18613d1mr2593801e87.57.1719233400881;
+        Mon, 24 Jun 2024 05:50:00 -0700 (PDT)
+Received: from spiri.. ([5.14.146.128])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d208b60sm174127905e9.37.2024.06.24.05.49.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 05:50:00 -0700 (PDT)
+From: Alisa-Dariana Roman <alisadariana@gmail.com>
+X-Google-Original-From: Alisa-Dariana Roman <alisa.roman@analog.com>
+To: Alisa-Dariana Roman <alisa.roman@analog.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH v6 0/6] iio: adc: ad7192: Improvements
+Date: Mon, 24 Jun 2024 15:49:35 +0300
+Message-Id: <20240624124941.113010-1-alisa.roman@analog.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <2b46da4c-fbe8-4b97-abf4-96aa7ddc1a9a@app.fastmail.com>
-In-Reply-To: 
- <e0e373fa13636a403322fd0ba96915fd25dbbefa.camel@physik.fu-berlin.de>
-References: <20240620162316.3674955-1-arnd@kernel.org>
- <20240620162316.3674955-10-arnd@kernel.org>
- <366548c1a0d9749e42c0d0c993414a353c9b0b02.camel@physik.fu-berlin.de>
- <9d4ba5e5-bb7f-432e-9354-47cc84eaa9e1@app.fastmail.com>
- <e0e373fa13636a403322fd0ba96915fd25dbbefa.camel@physik.fu-berlin.de>
-Date: Mon, 24 Jun 2024 14:49:20 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
- "Arnd Bergmann" <arnd@kernel.org>, Linux-Arch <linux-arch@vger.kernel.org>,
- linux-kernel@vger.kernel.org
-Cc: "Rich Felker" <dalias@libc.org>, "Andreas Larsson" <andreas@gaisler.com>,
- guoren <guoren@kernel.org>,
- "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
- "H. Peter Anvin" <hpa@zytor.com>, sparclinux@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-hexagon@vger.kernel.org,
- "Helge Deller" <deller@gmx.de>, linux-sh@vger.kernel.org,
- "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- "Heiko Carstens" <hca@linux.ibm.com>,
- "musl@lists.openwall.com" <musl@lists.openwall.com>,
- "Nicholas Piggin" <npiggin@gmail.com>,
- "Alexander Viro" <viro@zeniv.linux.org.uk>,
- "LTP List" <ltp@lists.linux.it>, "Brian Cain" <bcain@quicinc.com>,
- "Christian Brauner" <brauner@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Xi Ruoyao" <libc-alpha@sourceware.org>, linux-parisc@vger.kernel.org,
- linux-mips@vger.kernel.org, stable@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- "David S . Miller" <davem@davemloft.net>
-Subject: Re: [PATCH 09/15] sh: rework sync_file_range ABI
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 24, 2024, at 08:14, John Paul Adrian Glaubitz wrote:
-> On Fri, 2024-06-21 at 11:41 +0200, Arnd Bergmann wrote:
->> On Fri, Jun 21, 2024, at 10:44, John Paul Adrian Glaubitz wrote:
->> > Did you also check what order libc uses? I would expect libc on SuperH 
->> > misordering the
->> > arguments as well unless I am missing something. Or do we know that the 
->> > code is actually
->> > currently broken?
->> 
->> Yes, I checked glibc, musl and uclibc-ng for all the cases in
->> which the ABI made no sense, as well as to check that my analysis
->> of the kernel sources matches the expectations of the libc.
->
-> OK, awesome.
->
-> Will you send a v2 so I can ack the updated version of the patch?
->
-> I'm also fine with the patch going through your tree, as I would
-> like to start with the changes for v6.11 this week.
+Dear everyone,
 
-I should be able to get a v2 out today and apply that to my
-asm-generic tree to have in linux-next before I send the
-pull request.
+Thank you very much for your feedback!
 
-       Arnd
+The series is based on testing branch, since the initial first commit
+was applied there.
+
+Here is the upgraded series. Please consider applying the commits in
+order!
+
+Conor, please note that I didn't add your Reviewed-by tag, since I
+modified that commit in this series.
+
+Kind regards,
+Alisa-Dariana Roman.
+
+v5 -> v6
+	add my SoB to David's commit
+	add restrictions to the bindings patches and also modify their
+commit messages
+
+v5: https://lore.kernel.org/all/20240618142138.520192-1-alisa.roman@analog.com/
+
+
 
