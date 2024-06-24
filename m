@@ -1,117 +1,120 @@
-Return-Path: <linux-kernel+bounces-227487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A46391521B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:21:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DDA5915220
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:21:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C8231C21E4C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:21:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4A41F238CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 15:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B7019B5A3;
-	Mon, 24 Jun 2024 15:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3DE19B5B7;
+	Mon, 24 Jun 2024 15:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LABlbFyf"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BOxl82ld"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4008A19B590
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE49919B3FB
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719242482; cv=none; b=tCqXFrb7oGQipW61iqDfW9rrX0sBgquqfC/6YWz6zPqJiDPlmNRMhqdxw30Fq+UN1PEeo3tvmWgwW5bamFsMerQELrY1XVL1nhdZarZj3Oot17YNJNthM0XgShK9oI9QNTsSex5fG6Hn7btcqxAvSJlOKpdUAt+nbQAXTd0KAsg=
+	t=1719242502; cv=none; b=W2Nrp+5IL0F/4odqBL8nMeCePQ2uDZGF/3pQ/7RNUtlYHDkWQ4RVdlp8JaBzDvlAzGZK9VqfR0XfD9B15bY8UPowYh5p0AeBKF4OGea78RyofZLZZ+c3zrXmlRCLWafTE8bgkh18WMa1SVUSj1zrMVzoho81/4sAlcz7P/zleow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719242482; c=relaxed/simple;
-	bh=hCnoEuFCTRQR9QbbMC3rjbRc7yr7l2zx0pRkaU7p//4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=OVzILUxQ62RsA0OvpOiwSYdm+RTayYO5c7fndWcT0WopLsqQES3DwChlalPmqpVCJ/ZAhRPXm0LDRAC1LwpgYWXY+dZY/56zyHX5D/O4xcrFaAaoG04q5VeGgeC+iEyOjlW4vAGXoWkFPp167CdP59vlCQvJgbYdEUHWT5DhjaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LABlbFyf; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719242479;
-	bh=hCnoEuFCTRQR9QbbMC3rjbRc7yr7l2zx0pRkaU7p//4=;
-	h=From:Date:Subject:To:Cc:From;
-	b=LABlbFyfHbekXgdIews0D1zN3a6fC1g+d//YZ6fcsS7yuWe2ZkPgZy0RAeLDuWxAn
-	 ojN2T4m38/XuGfZAlZuu1BiVpaTj8ORfAREfyiLDELuQvboSPbX/hE1LJxF9qmtTST
-	 iw+15h6eCTxXYf+3J5BPJL3hDGXlWWH4Mkvm4vFwLuLlWcU/daWTuz+fk7IJCotePp
-	 zNykCG/eq/VOpDAeikOIGHhmYaHni/msXjotmNAdToonE67FxcaTlCed8nxO2oyX10
-	 yUKknql+wBDv6IbUD7IhdRUoOvtElPCwH3T8vbqERrmHfbxc5cIs6E6k+A/n/v6Z5y
-	 iz+nDLCvvVGcw==
-Received: from [192.168.1.28] (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0BA2337809D2;
-	Mon, 24 Jun 2024 15:21:17 +0000 (UTC)
-From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-Date: Mon, 24 Jun 2024 11:20:53 -0400
-Subject: [PATCH] driver core: Don't log intentional skip of device link
- creation as error
+	s=arc-20240116; t=1719242502; c=relaxed/simple;
+	bh=S8s+yX1kDXLOn8wBss/z5XFgwphs6CKYipXZlWpknUA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fkWUghbp6jsLFEYBQDL2gPrY0abnw25To2HfU9Ng+V5vPHEKm8+oF/NLsXiaXUb1NNXRdsiJNXyTmEI/L/mP7VeDEYjr18laqvVigppMA+N+lMUVYNo+WSP8K7lHc9r2u4mMPpOSl90vlPY+3iaYisi5JQc9nKstMXUWe0sMfGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BOxl82ld; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: longman@redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719242497;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6mlbe76eIK+t44kk/XWRZhfvBA54CwR57wx+DLukPvU=;
+	b=BOxl82ldM/sEeuyRdG8oshCF6F9eOz/ZaPVCp9WOZRn5XKX2sSPGKZVal/U+0GNteeVT/L
+	/kvORp6v/YdGVZrAu4/KgDBwWXhRnWnXZVA3bZBjwdL3BxLwDT+uyl2y/NOR2kwFHjgBOX
+	XKwGLTr2YvVPwp2qWDmGrhD2Y4eBYO8=
+X-Envelope-To: hannes@cmpxchg.org
+X-Envelope-To: mhocko@kernel.org
+X-Envelope-To: muchun.song@linux.dev
+X-Envelope-To: akpm@linux-foundation.org
+X-Envelope-To: corbet@lwn.net
+X-Envelope-To: shakeel.butt@linux.dev
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: cgroups@vger.kernel.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: akalenyu@redhat.com
+X-Envelope-To: pehunt@redhat.com
+X-Envelope-To: linux-doc@vger.kernel.org
+Date: Mon, 24 Jun 2024 08:21:22 -0700
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Waiman Long <longman@redhat.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, Michal Hocko <mhocko@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shakeel Butt <shakeel.butt@linux.dev>, linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org, linux-mm@kvack.org,
+	Alex Kalenyuk <akalenyu@redhat.com>, Peter Hunt <pehunt@redhat.com>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH] memcg: Add a new sysctl parameter for automatically
+ setting memory.high
+Message-ID: <ZnmO8izZPwYfiaRz@castle.lan>
+References: <20240623204514.1032662-1-longman@redhat.com>
+ <77d4299e-e1ee-4471-9b53-90957daa984d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240624-fwdevlink-probed-no-err-v1-1-d1213cd354e2@collabora.com>
-X-B4-Tracking: v=1; b=H4sIANSOeWYC/x3MQQqDMBBG4avIrDsQQ3TRqxQX2vmjQ0siE7CC5
- O4NLr/FexcVmKLQs7vIcGjRnBr6R0fvbU4rWKWZvPPBjT5w/AmOr6YP75YXCKfMMOMwiO8jFjd
- EoVbvhqjnfX5Ntf4BpfuoUmkAAAA=
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Saravana Kannan <saravanak@google.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org, 
- =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <77d4299e-e1ee-4471-9b53-90957daa984d@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-Commit ac66c5bbb437 ("driver core: Allow only unprobed consumers for
-SYNC_STATE_ONLY device links") introduced an early return in
-device_link_add() to prevent useless links from being created. However
-the calling function fw_devlink_create_devlink() unconditionally prints
-an error if device_link_add() didn't create a link, even in this case
-where it is intentionally skipping the link creation.
+On Sun, Jun 23, 2024 at 04:52:00PM -0400, Waiman Long wrote:
+> Correct some email addresses.
+> 
+> On 6/23/24 16:45, Waiman Long wrote:
+> > With memory cgroup v1, there is only a single "memory.limit_in_bytes"
+> > to be set to specify the maximum amount of memory that is allowed to
+> > be used. So a lot of memory cgroup using tools and applications allow
+> > users to specify a single memory limit. When they migrate to cgroup
+> > v2, they use the given memory limit to set memory.max and disregard
+> > memory.high for the time being.
+> > 
+> > Without properly setting memory.high, these user space applications
+> > cannot make use of the memory cgroup v2 ability to further reduce the
+> > chance of OOM kills by throttling and early memory reclaim.
+> > 
+> > This patch adds a new sysctl parameter "vm/memory_high_autoset_ratio"
+> > to enable setting "memory.high" automatically whenever "memory.max" is
+> > set as long as "memory.high" hasn't been explicitly set before. This
+> > will allow a system administrator or a middleware layer to greatly
+> > reduce the chance of memory cgroup OOM kills without worrying about
+> > how to properly set memory.high.
+> > 
+> > The new sysctl parameter will allow a range of 0-100. The default value
+> > of 0 will disable memory.high auto setting. For any non-zero value "n",
+> > the actual ratio used will be "n/(n+1)". A user cannot set a fraction
+> > less than 1/2.
 
-Add a check to detect if the link wasn't created intentionally and in
-that case don't log an error.
+Hi Waiman,
 
-Fixes: ac66c5bbb437 ("driver core: Allow only unprobed consumers for SYNC_STATE_ONLY device links")
-Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
----
- drivers/base/core.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+I'm not sure that setting memory.high is always a good idea (it comes
+with a certain cost, e.g. can increase latency), but even if it is,
+why systemd or similar userspace tools can't do this?
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index 2b4c0624b704..5eaafe3a280c 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2187,8 +2187,13 @@ static int fw_devlink_create_devlink(struct device *con,
- 		}
- 
- 		if (con != sup_dev && !device_link_add(con, sup_dev, flags)) {
--			dev_err(con, "Failed to create device link (0x%x) with %s\n",
--				flags, dev_name(sup_dev));
-+			if (flags & DL_FLAG_SYNC_STATE_ONLY &&
-+			    con->links.status != DL_DEV_NO_DRIVER &&
-+			    con->links.status != DL_DEV_PROBING)
-+				dev_dbg(con, "Skipping device link creation for probed device\n");
-+			else
-+				dev_err(con, "Failed to create device link (0x%x) with %s\n",
-+					flags, dev_name(sup_dev));
- 			ret = -EINVAL;
- 		}
- 
+I wonder what's special about your case if you do see a lot of OOMs
+which can be avoided by setting memory.high? Do you have a bursty workload?
 
----
-base-commit: b992b79ca8bc336fa8e2c80990b5af80ed8f36fd
-change-id: 20240624-fwdevlink-probed-no-err-45d21feb05fd
-
-Best regards,
--- 
-Nícolas F. R. A. Prado <nfraprado@collabora.com>
-
+Thanks!
 
