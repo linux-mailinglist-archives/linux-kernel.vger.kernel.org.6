@@ -1,136 +1,144 @@
-Return-Path: <linux-kernel+bounces-228041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 501D09159EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:35:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E279159F0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:37:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05242283EC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:35:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0A331C2242F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39911A01BD;
-	Mon, 24 Jun 2024 22:35:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="cnbjUSLi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="J7hn6uLS"
-Received: from fhigh5-smtp.messagingengine.com (fhigh5-smtp.messagingengine.com [103.168.172.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B096C1A254A;
+	Mon, 24 Jun 2024 22:37:26 +0000 (UTC)
+Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFDD45C1C
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:35:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6DC45C1C
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719268511; cv=none; b=DvHXkwdrGKP4PB0iRGhLyYgeiTX5uWuivesGYhnYpe9/kJUIlIGyU91qQW1dnbHvb+4hRGlH3AzMqM0+jyKRdT7kZVzg/wl8o8YFiDhDGEwr1jz3jYfhL+ROL/yqWxJwbCXLTWZDbXWsywgwgwOkelb3ngqllZxrDh39+RR99iY=
+	t=1719268646; cv=none; b=SrWDS3wRay9P1XUpRcVM4XaO5zLWJa6UutCNitQgtifjPozAQ26ibw0XbFONI//E2vYjztSJ9GCJn7U3DiPAdHLqJ5+WdyiPBOD+GCrrybhYlXNnZ8vJ2zp7GFDlrZ8TW3xDgF9bDRf/eecyiFLp+AcQBbTWwiVNsXw3vaFhMFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719268511; c=relaxed/simple;
-	bh=g9CCplZUsUmLr/C1GpaJfts48R+o+I/ETKnQ+2KmeK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RfDM7fsJzKCJAqaiAMvie0CUEOrh7Neejn9UcF8yoLRfhkGMHA2ULV4JORPbW8lHJoS0mwkRZnfjKMQsd6DXwiElkWc3WqVYH4aTJ/7opanSd6+jIqHDKgtbqnqa/dGb98wy0EaW9sIXzG1tVVqC3L5u6i1UU5Ccwi6KXZmgfwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=cnbjUSLi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=J7hn6uLS; arc=none smtp.client-ip=103.168.172.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 905891140098;
-	Mon, 24 Jun 2024 18:35:07 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute2.internal (MEProxy); Mon, 24 Jun 2024 18:35:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1719268507; x=
-	1719354907; bh=vLjiFJxOdYepXvTDQroB0EYKMbWZPsdolq8sznSWlMs=; b=c
-	nbjUSLi0y3fVTXvUsjB8bo884WeQyaoKdUCMDa0QdsMgxxOlJjKf0W6mRIN3Up8n
-	uSFlBhajk6RcLbBE+/n7XHV0BhuDXrVit+DS5eMYXpPEumqr0stY7U9UkiRTbmMW
-	aMCnQFMlgbFClCPqBHBsw3puHJyCALLZtZ9iw7Tj5dseva+ciLi2xu8/rtVZnRnT
-	pNoFFCEEQ+WFG/YT8bW3J6EDFQDjZzRNlbBkjv4Ts/+8ha+dQYDxnkRQchJ5N1Md
-	xKpSAlz93jqKMarHENcz3kC7eYkKok824/PgyyQL7HLJ6OzH8m8U+CkWsFZaXQ1A
-	L8WBwFeGb3grKCqQXpHAw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719268507; x=1719354907; bh=vLjiFJxOdYepXvTDQroB0EYKMbWZ
-	Psdolq8sznSWlMs=; b=J7hn6uLSuIOVQ/XD+0lXN4rsCJbwtAsoysgcgZNW0M4J
-	X+nLMb/By3zbWuG1joYuX7/kL2a38zYucSu4HPI6AIrUChPv2ohtKJt81XwjxZ7T
-	iK8LmjcS4AuqlLFATdp0N6HUfvZVYVfU18kL7rAHOYohVMeSLieBjn2jVP1NihqE
-	5O+kbQHqqadKSw7JfyKA8bY80b9AUSq4nMKOBOkT1pvp0VVu4KbOtl3ftBJJtn9s
-	Nsdotrb96SwJXE7HzCJBy8h2TW+OvYvuGbzfqW5967lhNjWIGs+VF6e6kjIpugCQ
-	JhmM6xyhdwt1AfokboiWEoc9t3y3Zb+yNAMAOXgQsg==
-X-ME-Sender: <xms:m_R5Zv28NqJAFCZlmfjkjF-zf1JWEhe2tzCkHK7dxfW4LdJkrH_MlA>
-    <xme:m_R5ZuHhSyb7RBAZCLpJJ1KPu906dtHqS-oY8pmXxqoxHZJvbbBgib9hU0KzJb8jP
-    Rb_R8fvf-IeICfcirQ>
-X-ME-Received: <xmr:m_R5Zv6qC8z1ZcCinHUIwkS1jBLd4K9MK5_nC-SEGMva9HyDXJQ7fN6EtZcn5aa1GMaauPbE9oQF0LoRAHvZI9dG5PqhWKpuqJE>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeegvddgudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpeffhffvvefukfhfgggtuggjsehttd
-    ertddttddvnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghk
-    rghshhhisehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeehhffhte
-    etgfekvdeiueffveevueeftdelhfejieeitedvleeftdfgfeeuudekueenucevlhhushht
-    vghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhise
-    hsrghkrghmohgttghhihdrjhhp
-X-ME-Proxy: <xmx:m_R5Zk1uo4eK0ILrWeOyfAjtmbMFxRK8GeSawl-ACEByCraCaMDaQQ>
-    <xmx:m_R5ZiHp7kZq8R9dJzUO4uo9I6f6TTb4HxfWBO6cfYzoUDIluliLBg>
-    <xmx:m_R5Zl-Ff-KWkyrMjNy5hIEtHx9iFDhub3qI4YUwU95zemp-otYNVA>
-    <xmx:m_R5Zvm0UMrnE5GpchvJUjLq4WyjrgPN0jvCIe8fpnIjpGP5yZiyYQ>
-    <xmx:m_R5ZnSZJ3VMZ_nBF2TzWZa8bVCkI1eIczIkgCZVDCMCxPr0J5s0znxj>
-Feedback-ID: ie8e14432:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 24 Jun 2024 18:35:06 -0400 (EDT)
-Date: Tue, 25 Jun 2024 07:35:03 +0900
-From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-To: linux1394-devel@lists.sourceforge.net
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] firewire: core: add tracepoints events for
- isochronous context
-Message-ID: <20240624223503.GA914180@workstation.local>
-Mail-Followup-To: linux1394-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org
-References: <20240623220859.851685-1-o-takashi@sakamocchi.jp>
+	s=arc-20240116; t=1719268646; c=relaxed/simple;
+	bh=JDkANpAzKfpwY21Y7NCdTNYTbCi8+eAWHQXouTPV7bA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=qlwH5OkMTvMo+jbmBpBtfInlzb5JAELd9TvPSa5sTelUdkaBbYKidbA/O+Io/BcQdIqJXOBN/O2fD67xftelz9enKJVdm5UmdoiVXRH/fR3dPMiP5XTzbvrhz+v+RErBQ0fg4+rhf0WxmkIucUL2CsvCV8HDVpunio/l25mXV+g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7e94cac3c71so643526939f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 15:37:24 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719268644; x=1719873444;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vhr9yhJD+Sp+Sh7U/H6JRx2Ajx13ocgLIDyrtpn2EFg=;
+        b=Bon4su0pydorim+6mmEVaaDnazNgXfj1b7bOz410n+6fYlc/3zlVuLJs16ivjK3be5
+         C27PSORl06JB/nUcHrs3WZIHDSTxIWK9ULEFfbphyvh1/O5a+IoLjz+smeR7LYcGiUyj
+         onaj7ep75shN1fsvg7EAhqraYwShuev6gCog3G3u5/F1ydCp8p/W75bab7duqFb95W/J
+         mel3cEat7Edb3CoMjT1nijMziq2YSvVAq9lVW3PfefemzKI9wRn6rWd6nwPE4BpNG846
+         qRl56MVg2kxtAINc6cMZMhtZ4ViQZG23gVRKrj1j3W57eIOP65fc7bnvNBeTXhiPlUr7
+         dnPw==
+X-Forwarded-Encrypted: i=1; AJvYcCWwG2SeWYclbuCT8mmsqthXdCEURO24E1iD1O2opHwwF0YdunLhcHEYRIUr7C8GxKK1v4DZfNzkryA+7lfc41SAhGw/RjkQ1ZEcbOLj
+X-Gm-Message-State: AOJu0YxRqsWH4FfgH2d8NvZgj5CneVl9CfOsZBZ+ZZ50YOqvcVx/v5PG
+	DUh3Uv48PUb8/EteT0Sia6LTFhPnE4TLkjOuYlwPKkaxAgVsJxgYKJDmzj9/hq67KDASMgYs8HX
+	XRcPgKWV9d4oMwQi8xCex5MuhjaohnTByyvQMfZ4ru83JtT1ENsC1qfU=
+X-Google-Smtp-Source: AGHT+IFw5Hh+qqyrlBrJGjC5aFTYZw7im9QZBrBYbN8R0LtLxwwBcOTLmXpiv+k8uQ/iJRNRoH5aRMAwnZ+SsqP2GFkGPfDNc6A+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240623220859.851685-1-o-takashi@sakamocchi.jp>
+X-Received: by 2002:a05:6e02:13a1:b0:376:46d5:6583 with SMTP id
+ e9e14a558f8ab-37646d56846mr5623545ab.5.1719268643971; Mon, 24 Jun 2024
+ 15:37:23 -0700 (PDT)
+Date: Mon, 24 Jun 2024 15:37:23 -0700
+In-Reply-To: <0000000000009ce262061963e5e4@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000cc372e061baa6cd6@google.com>
+Subject: Re: [syzbot] [hams?] WARNING: refcount bug in ax25_release (3)
+From: syzbot <syzbot+33841dc6aa3e1d86b78a@syzkaller.appspotmail.com>
+To: davem@davemloft.net, edumazet@google.com, jreuter@yaina.de, 
+	kuba@kernel.org, linux-hams@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 24, 2024 at 07:08:51AM +0900, Takashi Sakamoto wrote:
-> Hi,
-> 
-> It is helpful to trace any operation for isochronous context for
-> debugging purposes. This series of changes is the last part to add
-> tracepoints events into core function.
-> 
-> Takashi Sakamoto (7):
->   firewire: core: add tracepoints events for allocation/deallocation of
->     isochronous context
->   firewire: core: add tracepoints events for setting channels of
->     multichannel context
->   firewire: core: add tracepoints events for starting/stopping of
->     isochronous context
->   firewire: core: add tracepoints events for flushing of isochronous
->     context
->   firewire: core: add tracepoints events for flushing completions of
->     isochronous context
->   firewire: core: add tracepoints events for queueing packets of
->     isochronous context
->   firewire: core: add tracepoints events for completions of packets in
->     isochronous context
-> 
->  drivers/firewire/core-iso.c     |  32 +++
->  drivers/firewire/core-trace.c   |   4 +
->  drivers/firewire/ohci.c         |  25 +-
->  include/trace/events/firewire.h | 463 ++++++++++++++++++++++++++++++++
->  4 files changed, 518 insertions(+), 6 deletions(-)
+syzbot has found a reproducer for the following issue on:
 
-Applied to for-next branch.
+HEAD commit:    568ebdaba637 MAINTAINERS: adjust file entry in FREESCALE Q..
+git tree:       net-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=132d6dea980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
+dashboard link: https://syzkaller.appspot.com/bug?extid=33841dc6aa3e1d86b78a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=121324ae980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1607cdda980000
 
-Regards
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/1d754ea220a6/disk-568ebdab.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/232f2545fca4/vmlinux-568ebdab.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/6398bb41810d/bzImage-568ebdab.xz
 
-Takashi Sakamoto
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+33841dc6aa3e1d86b78a@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+refcount_t: decrement hit 0; leaking memory.
+WARNING: CPU: 0 PID: 5091 at lib/refcount.c:31 refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:31
+Modules linked in:
+CPU: 0 PID: 5091 Comm: syz-executor127 Not tainted 6.10.0-rc4-syzkaller-00875-g568ebdaba637 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+RIP: 0010:refcount_warn_saturate+0xfa/0x1d0 lib/refcount.c:31
+Code: b2 00 00 00 e8 37 51 e7 fc 5b 5d c3 cc cc cc cc e8 2b 51 e7 fc c6 05 d6 3f e9 0a 01 90 48 c7 c7 a0 97 1f 8c e8 67 81 a9 fc 90 <0f> 0b 90 90 eb d9 e8 0b 51 e7 fc c6 05 b3 3f e9 0a 01 90 48 c7 c7
+RSP: 0018:ffffc900033df9c8 EFLAGS: 00010246
+RAX: 9aea901d1711a200 RBX: ffff88807bf2c664 RCX: ffff8880287d9e00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 0000000000000004 R08: ffffffff81585822 R09: fffffbfff1c39994
+R10: dffffc0000000000 R11: fffffbfff1c39994 R12: ffff88807bf2c620
+R13: 0000000000000000 R14: ffff88807bf2c664 R15: dffffc0000000000
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fa556961110 CR3: 0000000075faa000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __refcount_dec include/linux/refcount.h:336 [inline]
+ refcount_dec include/linux/refcount.h:351 [inline]
+ ref_tracker_free+0x6af/0x7e0 lib/ref_tracker.c:236
+ netdev_tracker_free include/linux/netdevice.h:4056 [inline]
+ netdev_put include/linux/netdevice.h:4073 [inline]
+ ax25_release+0x368/0x950 net/ax25/af_ax25.c:1069
+ __sock_release net/socket.c:659 [inline]
+ sock_close+0xbc/0x240 net/socket.c:1421
+ __fput+0x406/0x8b0 fs/file_table.c:422
+ task_work_run+0x24f/0x310 kernel/task_work.c:180
+ exit_task_work include/linux/task_work.h:38 [inline]
+ do_exit+0xa27/0x27e0 kernel/exit.c:874
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1023
+ __do_sys_exit_group kernel/exit.c:1034 [inline]
+ __se_sys_exit_group kernel/exit.c:1032 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa5568e5c49
+Code: Unable to access opcode bytes at 0x7fa5568e5c1f.
+RSP: 002b:00007ffc83eaf9b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa5568e5c49
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
+RBP: 00007fa5569602b0 R08: ffffffffffffffb8 R09: 0000000000000006
+R10: 00000000200003c0 R11: 0000000000000246 R12: 00007fa5569602b0
+R13: 0000000000000000 R14: 00007fa556960d00 R15: 00007fa5568b6e90
+ </TASK>
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
