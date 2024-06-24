@@ -1,167 +1,200 @@
-Return-Path: <linux-kernel+bounces-227209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 238FF914A49
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:38:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87171914A4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5424B1C23171
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:38:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA1131C2326F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D57B13C9AE;
-	Mon, 24 Jun 2024 12:37:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA9C13C9AF;
+	Mon, 24 Jun 2024 12:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KEKj/I/e"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="rqoK/l18"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96A0113C671
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429C31386DA;
+	Mon, 24 Jun 2024 12:38:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719232671; cv=none; b=VIBivFe9f+QFn7OS5UcDTwgitu6nAej45auRKnQCn3rc7fxeEHirX2YHuBo9rS8MkyEw2lQ4JLEcRd5aMlphHmIsZLEfJ4dfFW6BhYVVZ5BOSVSf3QCnrh/76eN1AV4yb6CwaH3tH7WUkLQCLIbCISqHNmnkUuPPdtyjVfCrV4E=
+	t=1719232721; cv=none; b=hvl/nhNVxx7ZNeTe1pAmuxbOHQKCMQNHpUdqRG62hKNaCLFZqwxrcg6lns/5L2RZitVJMRaWo2ylqi1fzCDvnknMBC4TE8KQRM4zMAzqQRXQrHFa+whDq5sB+MowEyE/2FC1QtCnf2W5y6wqKilrsfNP3LjI7a1cGBDMYv6Hx0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719232671; c=relaxed/simple;
-	bh=h7SBJgprK/PqM3HhStAAvdA5PpzlXX7T8W6H1Jv0SMk=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=hU00q8x8P1uY/nJn47q/GqOIN9LVn20y5K5e5X1b6uIa2xotvKmQTmhSp/2JieitjcKW9vsKXwz6M/85x0i9PDcLF1kvPqc6K4mWSpsFzoE5/9UFQGjH2a+MjIxVnD5PtZBCVC2urOOVbRbDFUgi0jo+p0lh27F7CzsMX6G1YC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KEKj/I/e; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1f9c6e59d34so35691815ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 05:37:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1719232668; x=1719837468; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zbZyZ7fz7ak/B9v8/rQ3CdUP5dwY5kUtPEgHFuTvKOM=;
-        b=KEKj/I/eBrcoIQsQGjPeYi93kfsPSZzVEx+aEtBcmfGdqHwWS0o740xczPx3nasmCe
-         6tFfGTXzaolM9/CNZ8/n41MsHBPdCaLNRLozAOTiSUQNMvC3VIOuIZ6facFvJXMj4KOS
-         3gpqF4OHktG8IbpqWze9V6M9GHKpgC5Ump5LRNNHAHWBPeOt/YKtn3tKuejkvY9OWO4z
-         KIvXOjbhCsPUEqM561GtZiIyX0KCrLKCcCUnbIa+utXEySEHi2O+KHxA2DX5ZYkUmHah
-         +Gfry+iuvq0xPSG1taHbrKrMfdGH3bBgLFjETWB0fmNcxOBldbXiWoi2C6HGxat9pVA0
-         Zjvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719232668; x=1719837468;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zbZyZ7fz7ak/B9v8/rQ3CdUP5dwY5kUtPEgHFuTvKOM=;
-        b=HxGddvNMPnvz6Mnt/flFj0SR+faRosqeZe0q5hNMOGVL4BQl/9LIDJDE1Ef8ZbQPFr
-         Uy1VNI+Hlo8pyf5VQKl1bBUGfGlAfF8I/+idw3SpeuolkZJ2f6YTKNyr5cGk0rFVmn85
-         OdK57X5OztrIqTzxd27TATFnbim2L1mFJRY9Hy/CABBtzr7k0a6VD6m9beTekvU2VKbj
-         0yMngzVCaBDAaQxB/8pLyF3spi+gWIa7ufaJJJfmI+gw0qcGDr4YpAVlimJfGhbKdYHo
-         SH7JOvFmKCqajDT1q2QL1FScIEpIyT6hTT6lavY0KwAU0MUDouWiirkSU+YllHHrl6J0
-         mmlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUd4f7evXupyYnNyQIJwY5m/EHV43iIoMtpits9oSTBJtuD58W6ak1m20ltLdvi6tUNPq29YLpUqsgo5BBOy8iB/cve2RjYnPruWWIy
-X-Gm-Message-State: AOJu0Yx0DNj6RCQbTU2gRg15jgit3TpOSsG57gm9M7oEa1X3DGNT3qxk
-	lgNJ5XvXqRN3+mVy0kt4cbSgm+o/AjaBZkqkhkjJBXJRhCGls5641LYCT5NJl6o=
-X-Google-Smtp-Source: AGHT+IHJ9F4XF7VGHuPvKjcxxMV8vO98uROcYUIEgAeMFW3fBwLSElryc+wH0ZZPa4HI2F5PgJ5AjA==
-X-Received: by 2002:a17:90a:ea17:b0:2c2:df58:bb8c with SMTP id 98e67ed59e1d1-2c8581d4effmr3947874a91.18.1719232668592;
-        Mon, 24 Jun 2024 05:37:48 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([61.213.176.14])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c738c1b741sm8675666a91.1.2024.06.24.05.37.43
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 24 Jun 2024 05:37:48 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: charlie@rivosinc.com,
-	rppt@kernel.org,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alexghiti@rivosinc.com,
-	akpm@linux-foundation.org,
-	bhe@redhat.com,
-	dawei.li@shingroup.cn,
-	jszhang@kernel.org,
-	namcao@linutronix.de,
-	chenjiahao16@huawei.com,
-	bjorn@rivosinc.com,
-	cuiyunhui@bytedance.com,
-	vishal.moola@gmail.com,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] RISC-V: cmdline: Add support for 'memmap' parameter
-Date: Mon, 24 Jun 2024 20:37:39 +0800
-Message-Id: <20240624123739.43604-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1719232721; c=relaxed/simple;
+	bh=Fy0Vwku4i/edg06rEdhL5d0t9NVWZcRpigQqhSDnT3k=;
+	h=Subject:From:To:Cc:Date:Message-ID:Content-Type:MIME-Version; b=Swmv+GZLNdr3jvsvlIvjpHQJW7fs3LmXpkKV0O0N23ZRCbDg1SoJMTypb8Rb7sbglqmMLgXIeaL0hbOUatlH5NecDRbGzR7wwVkYeg1TYgjyweospivKvOqM/4hv/S5d0AP8aO4UQJimXkT4h/Cv6OiCtGYGWjGVSVLgQstqF2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=rqoK/l18; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353722.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OCQRWH029828;
+	Mon, 24 Jun 2024 12:38:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	subject:from:to:cc:date:message-id:content-type
+	:content-transfer-encoding:mime-version; s=pp1; bh=Hvf40/4DRmlQ9
+	1blYNCyK9m/dwqfbQqI7vBUaRHYyg0=; b=rqoK/l18AdsFoiaJ/roNzrnHQ5DIt
+	hrmvGtFuM/6zDgAYH4m6VUho7K/aYwzxVjc9XvnI1VeZYaJkxdLpYnaibncp/2mH
+	GNjpVTu7bpjgmtMROsOzRj8BL/3s7U34zMwmfdGwzUMdm8M6iyBk7xwU1HYjwWmS
+	quPYwahqPiQxJ2s6xCft0K8G6v7DYZqBg1FzyxTsAiJQTFYHiLbFbLp3o1owCy3b
+	uQBZVYAXYKh3sU9brsQnyLQtWDJ2Y5h4wEAoX5sehNUJNzkwwOE8EgLQmFbL9rio
+	JfixG0xJWQZdK+bg+/F5oHrjG9ffwCvdBRLAKghGIjfaN0IOOxJ1d4v6g==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yy72xgbh6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 12:38:19 +0000 (GMT)
+Received: from m0353722.ppops.net (m0353722.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45OCcIZt020362;
+	Mon, 24 Jun 2024 12:38:18 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yy72xgbh2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 12:38:18 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45OARoKF000685;
+	Mon, 24 Jun 2024 12:38:17 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yxaemrm6j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 12:38:17 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45OCcBVu15008022
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Jun 2024 12:38:14 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D46C22004B;
+	Mon, 24 Jun 2024 12:38:11 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7036820040;
+	Mon, 24 Jun 2024 12:38:08 +0000 (GMT)
+Received: from [172.17.0.2] (unknown [9.3.101.175])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 24 Jun 2024 12:38:08 +0000 (GMT)
+Subject: [PATCH v4 0/6] powerpc: pSeries: vfio: iommu: Re-enable support for
+ SPAPR TCE VFIO
+From: Shivaprasad G Bhat <sbhat@linux.ibm.com>
+To: mpe@ellerman.id.au, tpearson@raptorengineering.com,
+        alex.williamson@redhat.com, linuxppc-dev@lists.ozlabs.org, aik@amd.com
+Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, aneesh.kumar@kernel.org,
+        naveen.n.rao@linux.ibm.com, gbatra@linux.vnet.ibm.com,
+        brking@linux.vnet.ibm.com, sbhat@linux.ibm.com, aik@ozlabs.ru,
+        jgg@ziepe.ca, ruscur@russell.cc, robh@kernel.org,
+        sanastasio@raptorengineering.com, linux-kernel@vger.kernel.org,
+        joel@jms.id.au, kvm@vger.kernel.org, msuchanek@suse.de,
+        oohall@gmail.com, mahesh@linux.ibm.com, jroedel@suse.de,
+        vaibhav@linux.ibm.com, svaidy@linux.ibm.com
+Date: Mon, 24 Jun 2024 12:38:07 +0000
+Message-ID: <171923268781.1397.8871195514893204050.stgit@linux.ibm.com>
+User-Agent: StGit/1.5
+Content-Type: text/plain; charset="utf-8"
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: 4Eg-QjpYq1jt1FFXcOrWoVZgTo2BR1kZ
+X-Proofpoint-GUID: 7ktYKp9B7e3FR1syAWiiqnWMoAhoIetx
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_09,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 phishscore=0
+ suspectscore=0 priorityscore=1501 lowpriorityscore=0 impostorscore=0
+ clxscore=1011 bulkscore=0 spamscore=0 mlxscore=0 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406240099
 
-Add parsing of 'memmap' to use or reserve a specific region of memory.
+The patches reimplement the iommu table_group_ops for pSeries
+for VFIO SPAPR TCE sub-driver thereby bringing consistency with
+PowerNV implementation and getting rid of limitations/bugs which
+were emanating from these differences on the earlier approach on
+pSeries.
 
-Implement the following memmap variants:
-- memmap=nn[KMG]@ss[KMG]: force usage of a specific region of memory;
-- memmap=nn[KMG]$ss[KMG]: mark specified memory as reserved;
+Structure of the patchset:
+-------------------------
+The first and fifth patches just code movements.
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+Second patch takes care of collecting the TCE and DDW information
+for the vfio_iommu_spapr_tce_ddw_info during probe.
+
+Third patch fixes the convention of using table[1] for VFs on
+pSeries when used by the host driver.
+
+Fourth patch fixes the VFIO to call TCE clear before unset window.
+
+The last patch has the API reimplementations, please find the
+details on its commit description.
+
+Testing:
+-------
+Tested with nested guest for NVME card, Mellanox multi-function
+card by attaching them to nested kvm guest running on a pSeries
+lpar.
+Also vfio-test [2] by Alex Willamson, was forked and updated to
+add support for pSeries guest and used to test these patches[3].
+
+Limitations/Known Issues:
+------------------------
+* The DMA window restrictions with SRIOV VF scenarios of having
+maximum 1 dma window is taken care in the current patches itself.
+However, the necessary changes required in
+vfio_iommu_spapr_tce_ddw_info to expose the default window being
+a 64-bit one and the qemu changes handle the same will be taken
+care in future versions.
+
+References:
+----------
+[1] https://lore.kernel.org/linuxppc-dev/171026724548.8367.8321359354119254395.stgit@linux.ibm.com/
+[2] https://github.com/awilliam/tests
+[3] https://github.com/nnmwebmin/vfio-ppc-tests/tree/vfio-ppc-ex
+
 ---
- arch/riscv/mm/init.c | 46 ++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+Changelog:
+v3: https://lore.kernel.org/linuxppc-dev/171810893836.1721.2640631616827396553.stgit@linux.ibm.com/
+ - Rebased to top of the tree.
+ - In the first patch, spapr_tce_table_group_ops is only used locally in
+   the pseries/iommu.c file. So, made it static.
+ - Fixed the test robot reported issues 202406121640.yr6LK5HJ-lkp@intel.com
+   and 202406142110.r97Ts8Xm-lkp@intel.com
+ - Updated the commit messages
 
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index e3405e4b99af..8e1d93ae5cb2 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -208,6 +208,52 @@ static int __init early_mem(char *p)
- }
- early_param("mem", early_mem);
- 
-+static void __init parse_memmap_one(char *p)
-+{
-+	char *oldp;
-+	unsigned long start_at, mem_size;
-+
-+	if (!p)
-+		return;
-+
-+	oldp = p;
-+	mem_size = memparse(p, &p);
-+	if (p == oldp)
-+		return;
-+
-+	switch (*p) {
-+	case '@':
-+		start_at = memparse(p + 1, &p);
-+		memblock_add(start_at, mem_size);
-+		break;
-+
-+	case '$':
-+		start_at = memparse(p + 1, &p);
-+		memblock_reserve(start_at, mem_size);
-+		break;
-+
-+	default:
-+		pr_warn("Unrecognized memmap syntax: %s\n", p);
-+		break;
-+	}
-+}
-+
-+static int __init parse_memmap_opt(char *str)
-+{
-+	while (str) {
-+		char *k = strchr(str, ',');
-+
-+		if (k)
-+			*k++ = 0;
-+
-+		parse_memmap_one(str);
-+		str = k;
-+	}
-+
-+	return 0;
-+}
-+early_param("memmap", parse_memmap_opt);
-+
- static void __init setup_bootmem(void)
- {
- 	phys_addr_t vmlinux_end = __pa_symbol(&_end);
--- 
-2.20.1
+v2: https://lore.kernel.org/linuxppc-dev/171450753489.10851.3056035705169121613.stgit@linux.ibm.com/
+ - Rebased to upstream. So, required the explicit vmalloc.h inclusion as its
+   removed from the system header io.h now.
+ - Fixed the DLPAR hotplugged device assignment case. The dma window
+   property is backed up before removal. That copy is restored when required.
+ - Cleaned up bit more. Removed leftover debug prints and dump_stack()s.
+ - The warning at remap_pfn_range_notrack() during kvm guest boot is no longer
+   seen after the rebase.
+
+v1: https://lore.kernel.org/linuxppc-dev/171026724548.8367.8321359354119254395.stgit@linux.ibm.com/
+ - Rewrite as to stop borrowing the DMA windows and implemented
+ the table_group_ops for pSeries.
+ - Cover letter and Patch 6 has more details as this was a rewrite.
+
+Shivaprasad G Bhat (6):
+      powerpc/iommu: Move pSeries specific functions to pseries/iommu.c
+      powerpc/pseries/iommu: Fix the VFIO_IOMMU_SPAPR_TCE_GET_INFO ioctl output
+      powerpc/pseries/iommu: Use the iommu table[0] for IOV VF's DDW
+      vfio/spapr: Always clear TCEs before unsetting the window
+      powerpc/iommu: Move dev_has_iommu_table() to iommu.c
+      powerpc/iommu: Reimplement the iommu_table_group_ops for pSeries
+
+
+ arch/powerpc/include/asm/iommu.h          |  14 +-
+ arch/powerpc/kernel/eeh.c                 |  16 -
+ arch/powerpc/kernel/iommu.c               | 170 +-----
+ arch/powerpc/platforms/powernv/pci-ioda.c |   6 +-
+ arch/powerpc/platforms/pseries/iommu.c    | 704 +++++++++++++++++++++-
+ drivers/vfio/vfio_iommu_spapr_tce.c       |  13 +-
+ 6 files changed, 718 insertions(+), 205 deletions(-)
+
+--
+Signature
 
 
