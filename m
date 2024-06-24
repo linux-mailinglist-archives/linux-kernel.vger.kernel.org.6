@@ -1,93 +1,142 @@
-Return-Path: <linux-kernel+bounces-227782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CDB4915684
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:33:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F353915686
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 286D428217D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:33:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82BEC1C2217A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:34:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 223F91A00C4;
-	Mon, 24 Jun 2024 18:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6291A00EE;
+	Mon, 24 Jun 2024 18:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="vE8d0lxM"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LumA4zE7"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA9B1E4AE;
-	Mon, 24 Jun 2024 18:33:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F1E1E4AE;
+	Mon, 24 Jun 2024 18:34:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719253996; cv=none; b=i/oBpaLXyDlstQRX2T2D7NOndcpiUpGhpYvPND9+CznStddfXvIGV4oWiNa8kMgwWfWh0Sqs3saNbDyMpvMBwkFj3pG/kePHFzbm0ywtMNe4L82+l/MewyHzJTo/fFF8djob3v1wk+qIOnNdfwx7V1w1UDjL2izGq+/Am+dD9oE=
+	t=1719254082; cv=none; b=pmC+PB5PbhtNq2pw19I/siRlqouGl0yXaPcxgbTcJZI6FNrFpVR3/MLXsbnsra3WHp5+CelXOogTnuaPknjXx9CH2MPzo8a4lxCWWolD3THhZwfVw+fc+9ux22d1LUWDV3RZbc07Tu4ZRb0lI6r0urKKYIh87kYSMWf+uF4NxMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719253996; c=relaxed/simple;
-	bh=FImRCEJmQVuZdJUbFenwnuHnCEBuJyncLNxHvR/ex2k=;
+	s=arc-20240116; t=1719254082; c=relaxed/simple;
+	bh=v/KIbbApgJ4bHyw2dAkwpivzE7uNXHS1xfRko7iogSw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tw5k4Jp3KabHkz8xnafGl2MJNJLIEJJjAJ3YEisXGe4A0UQfZfWkz2v16oMnnkbAYIfUJj3bqdcZKrYWMqD93GPpRzVjWBvsrRl290pzzNc74at+hUXx0YNw9kxg088+YD1Mo0o8Vgr01/aCFh7WMij7EdZh2quZZMwMALj/pvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=vE8d0lxM; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=WZcanLtIBn58D6P4Ny2Mji71UPrni7o62c3guhZTyt8=; b=vE8d0lxMu1NwuMeo/zSO6sxXI1
-	MAkftBHbgwA3nUxh2bs88Ur4e/jcH+hHc3evS+hsel7AmiPBbPmcRjTvND5X4q/ji1hRwt+uWMpM7
-	ThFHA2WduMwXYbq829XqW85hPpuKZ3Cp0opoWIfMvIs7ni2u0J+1LJx+GFQiR2+IjnAmu2U/6Fe0r
-	rliQ33+pB+UnsMVIBemr2MrS3RDi0mI09rCssODQ7S3PvpZ2f8HaBHaw71Q0OK5UWluaf+CpCcGPj
-	VIgV5gtoozfEcrM5ChzmD/E9XmOntKir5GyNVb5JPH3EfL8gdsyMODSIpdYa8XeDRlEZc2D6pnjwH
-	GXiU/EGw==;
-Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sLoV1-0000000AKbW-1xRU;
-	Mon, 24 Jun 2024 18:33:07 +0000
-Date: Mon, 24 Jun 2024 19:33:07 +0100
-From: Matthew Wilcox <willy@infradead.org>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: kernel test robot <oliver.sang@intel.com>,
-	Usama Arif <usamaarif642@gmail.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Nhat Pham <nphamcs@gmail.com>, David Hildenbrand <david@redhat.com>,
-	"Huang, Ying" <ying.huang@intel.com>,
-	Hugh Dickins <hughd@google.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [linux-next:master] [mm] 0fa2857d23:
- WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof
-Message-ID: <Znm74wW3xARhR2qN@casper.infradead.org>
-References: <202406241651.963e3e78-oliver.sang@intel.com>
- <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kf6wP+1R0RKnUplR3YIJPQP5CL4yqeoZNxvd+mpEBj+luhrKAyeR1ZGQ1k0iOJATaKci0bLno4BaidFAk8g9NvqDmWtDh6tlqyXTOp6ecQfWH85n1+1YDncBh7n5Cw17OCFkxCxXGv5kSkv1apOs8/kcBeHTrjm8/IFAJ+UTYE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LumA4zE7; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-706524adf91so2473593b3a.2;
+        Mon, 24 Jun 2024 11:34:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719254080; x=1719858880; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TohhoMIowz1ewOVnpSvu5LM9Byxn119/5fGaNjoth3g=;
+        b=LumA4zE75uz+7hQEviUDrVH/xjYbwP5Nzy4+f2RfT2olwypqaHcLq3aiwsl4+PHm8E
+         pqmO7FqV/aGBQA7xaBj1MwQmzGNkPHkn4GhWUO2jKLy+ZyUtHU5/Owaemw6Wh93io7pL
+         RAlUObc3h5W6GX3bMtCWYYSxaEZj4cohtNHn7SduzpKjW9KsAq5zQhc9icWAYyxVIipO
+         +tV1iNJPQllextGNEIjTIAIkleay66MCjEqaJ2S+d4SbZ4sJ2pwfhCeO/8mRKVtY4FdW
+         4OzOXtCBEyINEiFFI9uclsCvN31oJ4OFeOMsbxa6R/nD7RgUQ2Ey3A+LOnvtf3YvwtqW
+         YhzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719254080; x=1719858880;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TohhoMIowz1ewOVnpSvu5LM9Byxn119/5fGaNjoth3g=;
+        b=JyprvySZto+/FOWdPq9ykyT8XId9VKwvkbR3Yn7ahBnbFW5dTUMkzxKZV8Cw4O89F8
+         2S9gS2RRsOT6SyqvRkR6vz91wN1Fc18skWSqPyVLz0pCz93HS1r7PN/ifVC7djvq8Ip9
+         cBTxFmLsfML5p1io1+vnx/Z+DeglXWT5OqAcdlxjfxtybtgYFRFFP02LsyyU7ZWnoa7c
+         WFpPz1ovpElquPNKZQ+c8Mc6xYIWrHXkTpP3BtEeZmHKj8mNJmJmzBKhnhjQgJIU+vXv
+         9TdyqN9+x7sw0VXwh2DXx6dQRd08rhgRGFsU5Utc9d+5V3utT1ygnEWy/RMdI0cCQ3Kp
+         Iq5w==
+X-Forwarded-Encrypted: i=1; AJvYcCWYZeRE7yBmpQ+ard+vFCNPW/bRAg/abrBxzqra3drYRCL7MT62g+kQU/CEqEEZZeqOb6mQD+LKkkc+gKPYjeGmV44YSI2YGI32/SPFj7kURvJs47jpF+MopJNMRGOVEe/X
+X-Gm-Message-State: AOJu0YziOFTiW+T2pgOqXRa2AnbiF2Q0v4gVRZqVg8NHmIk5KJYyPWKJ
+	AsRs5yB8abHIwsfDbPAT9s1QOorxqoQNTn1z/Ts5bj3R8+J9G1cM
+X-Google-Smtp-Source: AGHT+IGQ4YU+NCXEsr5X/u9JQrGaDAnvi3FJsNGxnW0xgNqEw4eZ0V3syDgaR3+qGLet/VOfoWQ7Ag==
+X-Received: by 2002:a05:6a20:1a01:b0:1bd:3a8:dd42 with SMTP id adf61e73a8af0-1bd03a8e020mr3985782637.44.1719254079950;
+        Mon, 24 Jun 2024 11:34:39 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065124dd26sm6507293b3a.127.2024.06.24.11.34.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 11:34:39 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 24 Jun 2024 08:34:38 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com, David Vernet <void@manifault.com>
+Subject: Re: [PATCH 19/39] sched_ext: Print sched_ext info when dumping stack
+Message-ID: <Znm8PhfeK7nSQuuo@slm.duckdns.org>
+References: <20240501151312.635565-1-tj@kernel.org>
+ <20240501151312.635565-20-tj@kernel.org>
+ <20240624124618.GO31592@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
+In-Reply-To: <20240624124618.GO31592@noisy.programming.kicks-ass.net>
 
-On Mon, Jun 24, 2024 at 05:05:56AM -0700, Yosry Ahmed wrote:
-> On Mon, Jun 24, 2024 at 1:49 AM kernel test robot <oliver.sang@intel.com> wrote:
-> > kernel test robot noticed "WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof" on:
-> >
-> > commit: 0fa2857d23aa170e5e28d13c467b303b0065aad8 ("mm: store zero pages to be swapped out in a bitmap")
-> > https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
+Hello, Peter.
+
+On Mon, Jun 24, 2024 at 02:46:18PM +0200, Peter Zijlstra wrote:
+> On Wed, May 01, 2024 at 05:09:54AM -1000, Tejun Heo wrote:
 > 
-> This is coming from WARN_ON_ONCE_GFP(order > MAX_PAGE_ORDER, gfp), and
-> is triggered by the new bitmap_zalloc() call in the swapon path. For a
-> sufficiently large swapfile, bitmap_zalloc() (which uses kmalloc()
-> under the hood) cannot be used to allocate the bitmap.
+> > +static long jiffies_delta_msecs(unsigned long at, unsigned long now)
+> > +{
+> > +	if (time_after(at, now))
+> > +		return jiffies_to_msecs(at - now);
+> > +	else
+> > +		return -(long)jiffies_to_msecs(now - at);
+> > +}
+> 
+> You have this weird superfluous else:
+> 
+> 	if ()
+> 		return foo;
+> 	else
+> 		return bar;
+> 
+> pattern in multiple patches, please change that to:
+> 
+> 	if ()
+> 		return foo;
+> 	return bar;
+> 
+> Throughout the series.
 
-Do we need to use a bitmap?
+It's just my personal preference. When the if and else blocks are relatively
+short and completely symmetric like the above case, using exlicit if/else
+structure looks more immediately intuitive to me. If it isn't too bothersome
+to everybody, I'd like to keep it that way.
 
-We could place a special entry in the swapcache instead (there's
-XA_ZERO_ENTRY already defined, and if we need a different entry that's
-not XA_ZERO_ENTRY, there's room for a few hundred more special entries).
+> Also, if we consider 2s complement, does the above actually make sense?
+
+Maybe we can update jiffifes_to_msecs() to be 2s complement transparent but
+probably not a good idea given how many are calling it.
+
+Thanks.
+
+-- 
+tejun
 
