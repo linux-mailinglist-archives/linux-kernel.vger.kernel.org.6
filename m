@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-227870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C07191578C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:05:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37AFC915789
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:05:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FF5D283E6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:05:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C8181C23354
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14981A01D8;
-	Mon, 24 Jun 2024 20:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79CC21A01D8;
+	Mon, 24 Jun 2024 20:05:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2NqJVsV"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fv8xUNAp"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366FA19E7F8;
-	Mon, 24 Jun 2024 20:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E806E19D08F;
+	Mon, 24 Jun 2024 20:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719259540; cv=none; b=rzahD2RZ7hlSnNmtlJQhdoPaLtxkDNEeWUsoVCwrqhxCTvbDrlkZTaUGgk4PBHgAB3ibrtJ5K4Zk9WzY9PH6nmOxgw1kM24fm+nWKSUDNaja8/dLIpXMUdFFAoruu/0IchZF+MvZZagVheN9J099Mxramsf3jPfufI2lFrRskwU=
+	t=1719259528; cv=none; b=aJ6B8cy9HTsF8yIE+MSfN2mN3j10vMQFdo7neytNM8sy7hl9s49YP83ksWjVq1+xpMUZsLWgTtTgN7zrNfhNk+VJWfQQZF0OGdSeZ68Fi0IsEgIq8n7VWwIe5k/HJiUgWF+lYoiIhifsNMyo6wa4xmtOJfKH+No/jMig3/hECu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719259540; c=relaxed/simple;
-	bh=N1Vlrk3mnh1mJEtCrRuvn/jo5HxD3wKwkfdpi3Ma9pQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jG+pLgoEl+yY/iC71XtLpoFwrNHDXr/r9yzPlkAjcJ4wtyIBFpAtsRa7Vby+NflRK8yw48e2b7HR0c1kQXQ7R156E+ithQD51lfZnTElez4o2cAgQOP3zYhM/TviMTvqWmPsqM0GFmhwL6bgAULoPxmznz2LLwjq4Su10GCPMuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D2NqJVsV; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	s=arc-20240116; t=1719259528; c=relaxed/simple;
+	bh=MyuLxVa9djGmJjwYX9q2rqv9NPBaa87X9GdSAeU8RdQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nxI0hfjZCBMqkAMdrN68AwzV+HKBP3U6l+6RFp8BLhfmfCBBMwVkaJp8Y2Ul4GjT9OcgC95YdGyEKFZlpWt1vSosVIn0TVHznB8sp4ABFvEJZ4dwXNkM3qjv4olBzZ77so90ED+SvJ0pbVApaB1vNhcifQb5uYsFT6gQoYdaY0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fv8xUNAp; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-70b2421471aso3330637a12.0;
-        Mon, 24 Jun 2024 13:05:38 -0700 (PDT)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7241b2fe79so242654066b.1;
+        Mon, 24 Jun 2024 13:05:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719259538; x=1719864338; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719259525; x=1719864325; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=nwgTn6bXgujACIEx1Xs09av+Z52LVqFmWoBJ01Ymr7k=;
-        b=D2NqJVsVv50W7qI+UAsplE+pkmCPqCyJ9u98FbLqCTpECYoOSynpWlqNGn9/PJCf6e
-         7tGbephvpnnaCRPtuislvVL06CFyw0O9otcM2kxJB+TRUUjUjALKoHBVMlEV0BIteMCC
-         ULwlNYhJb/ZDJNMT+npd6gvrqVG+ebXY0hoG2v3BTuPXQ/4+I1T6km9G2E8720XfZ75b
-         RSsEacQFL0GVNTLCOij2/Yfxxn/4lr2PO45kNJ11fpT94p72DB5cDxgGXm1UR8l+83MC
-         KetiEbE7yupO5yx31Jwl2WUtCLCdODWpRnZ2VLvo7LyaUEXABLLgw2qrIMDIXVUjfzRY
-         4Qqw==
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZSb7Ej4Ntq/nF2qlOXQSXh23B09xXPUbc9p3HR70r/g=;
+        b=Fv8xUNApPXw4WYwvkq3pVoDmN0J17KRxTFpMODzavzHT6QwkgoPAjMZmDx2G2wJG2v
+         m4AjTz/BDbqSgi8q0kEPgnrrcmiynyvk/9mV4OLcknQhmG/7VcdeELn7Ni2GMO7wMe8/
+         eKBjS/57Y11XTj/QBysOMWdz9YGB4cS2rl10tjKUp8IrYf44wzMoCi1/uMn4SB7uwLqb
+         DkwclW1xN14591/KBfiUtYkb16zuoOGdSZbY6Iavdu+nlVEOUMBf1LGoo1M/TqPp6lVp
+         i6LFGt3Ey3jsBNudnthZifw7uw31W3xAcaqM9gAlgstyHbKbizcE+LSmJHqGmc3b2a/b
+         JG8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719259538; x=1719864338;
+        d=1e100.net; s=20230601; t=1719259525; x=1719864325;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nwgTn6bXgujACIEx1Xs09av+Z52LVqFmWoBJ01Ymr7k=;
-        b=l5+pUUPCnJYpjCYyw+ESJJhKjiqDKgfraBBNHXVVOk+E2Hn7yvjFg93yfFYHLOcH5M
-         vCtcCMIqU+Qv39+SXZYSfME1mZ2wd0J+f64zR7obviytbLONxsX/zhMz8JTTMXnpPcmB
-         ZLau9FxA2eGKb6Dbg7QnMWEkPri3ydosisoaQNJ7JW0L8ru7LQXobsYIl+V35ozMV/ys
-         UoTAJKFnwg0iZ9ABOSLb8FVGHGhasMMJDJ5jQggutO/o08SUJH4YNxH9vM2xxX5lZUJd
-         CXXEU0CVUI48yVh3WV7CVxwDb8mORqvoJushRXDum9xoAFuB4N93VE65WABm8GS/mNKE
-         mAAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCKat8GeH+3f2jNJvaV8vUaOByN5fx0WnlDC1YpWxDdryI3LGNa5pYf7BDwSmDFhTDYR2ZE67tJ2yoDR1OvUQ1egNM+Oadjn5+PMIBaJCsOxJ0gmV9wORSWMhJPv1c9v3088WWfps=
-X-Gm-Message-State: AOJu0YzE9R1h+XC5EdctsoqGXCdj94un8s5+Z9LauBoLsbtaWGKJehA6
-	ymh7I6RQASP0iG/1IVhOFLz1ogAmN9nYKwZksbaUKEEaXnXdjpka
-X-Google-Smtp-Source: AGHT+IG52lMviWOfBi/8g86U82c+TCR1BOMXXE2Kh4QFdVG20V50dp/PEbET3hpdDIwaxmTzCqOk7g==
-X-Received: by 2002:a17:90b:1b0a:b0:2c8:85c:750b with SMTP id 98e67ed59e1d1-2c86146c84fmr4726058a91.34.1719259538050;
-        Mon, 24 Jun 2024 13:05:38 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c7e649f5b7sm9114446a91.47.2024.06.24.13.05.36
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZSb7Ej4Ntq/nF2qlOXQSXh23B09xXPUbc9p3HR70r/g=;
+        b=jjKci6FUPhpsD3yP/eVUT29T5u/1SJm4xIQYgFWfgCTuS/jQb/FsFMGQagJ/4e5ipv
+         ewY9e2eYXEyQAz5wp+7K9fg9zaSxZrX6aSrHwVDslBBCkxui4jFJ1VI7K2DKvk7TbiDL
+         6oXceLBXMvnO5z+v6UKuRR4kZ8mwBBLOBoNZHfaCOCDHAawGGEtWYe4x8lygEIvVC8uY
+         u1lwFRLZTTbwboTveAMHPX/rw150npbgHGv5C0nXqvqJPae3ihoXpd8LLXvMLFDfKTbg
+         6JuiuqW/+mDahzZm/FOoJxDXia/kF5Qzu3ZRv4m9Brhf1Y+pzJPW4XtJHisez73cMdDG
+         MHtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVq/Co5Ko7VjRCt7bui8iaLD/PZ3+ZGx+6JpafuSJzXj/7laq+pkzYLDQjzvqCaxrmztCzq2B8kvHPmqEkUEM/SmY5zPHC418DWpEtSsfmYin1BH1kSX3fjFK2MLxgmI4loMO4CmK4fHWqUTDRXjZ/nAwFGNfoTQ56KrWbX8UlwAg3VHkHHGhsu/zhjscc3HhymtoscDk2cTV6DuxoQQ6H+
+X-Gm-Message-State: AOJu0YxVeVYZvrE9FYxz/s37cT1I3u78F8mcRQ2A+ddmCVeoI9HiM4RL
+	66YqFO9Em+APumOOHTai4dAbUhMZEJcoF0UjLpUexPlq/DWw71GO
+X-Google-Smtp-Source: AGHT+IEJRX6HByuxz940DKiakW8YDHAVFH4n++RFvUajH74pVeumXtNekgcQOaQlowfS4l15IQeGtw==
+X-Received: by 2002:a17:907:c98a:b0:a6f:d082:a2c1 with SMTP id a640c23a62f3a-a7242d2ab88mr360503066b.71.1719259524873;
+        Mon, 24 Jun 2024 13:05:24 -0700 (PDT)
+Received: from ?IPV6:2a01:c23:c07d:2d00:ad78:a407:846a:969b? (dynamic-2a01-0c23-c07d-2d00-ad78-a407-846a-969b.c23.pool.telefonica.de. [2a01:c23:c07d:2d00:ad78:a407:846a:969b])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7248825d4bsm217402866b.207.2024.06.24.13.05.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 13:05:37 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <11e054b6-a116-417b-9112-f32a8bc6b121@roeck-us.net>
-Date: Mon, 24 Jun 2024 13:05:35 -0700
+        Mon, 24 Jun 2024 13:05:24 -0700 (PDT)
+Message-ID: <9183dfda-d3f3-4fa1-9a4b-c6edeb30482d@gmail.com>
+Date: Mon, 24 Jun 2024 22:06:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,100 +76,143 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] hwmon: iio: Add labels from IIO channels
-To: Sean Anderson <sean.anderson@linux.dev>,
- Jonathan Cameron <jic23@kernel.org>, Jean Delvare <jdelvare@suse.com>,
- linux-iio@vger.kernel.org, linux-hwmon@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Lars-Peter Clausen <lars@metafoo.de>
-References: <20240624174601.1527244-1-sean.anderson@linux.dev>
- <20240624174601.1527244-3-sean.anderson@linux.dev>
- <ff43e01e-5a26-4b75-bfaa-ed3ad4395e7c@roeck-us.net>
- <63046df2-e1fb-442b-a55f-2a9847c6c59e@linux.dev>
+Subject: Re: [PATCH v4 5/6] i2c: smbus: Support DDR5 SPD EEPROMs
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Guenter Roeck <linux@roeck-us.net>, Armin Wolf <W_Armin@gmx.de>,
+ linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, =?UTF-8?Q?Ren=C3=A9_Rebe?=
+ <rene@exactcode.de>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?=
+ <linux@weissschuh.net>, Stephen Horvath <s.horvath@outlook.com.au>
+References: <20240604040237.1064024-1-linux@roeck-us.net>
+ <20240604040237.1064024-6-linux@roeck-us.net>
+ <c939b0c7-2c8c-4cf1-8d5c-9309ce0b371a@gmx.de>
+ <txliuvufu6muqucno2uex2q6xvnveozpjzahx7zryqlvvvzrs7@flv2zztine6r>
+ <a7e38754-ff1a-4e15-99b2-4785827efc83@roeck-us.net>
+ <ib6p4ivqdn56l3jzzarsoeijjhwak33bmqvj2qiddbhxdqzchk@txl4gdslx4gq>
+ <79f406ae-cfc9-48bb-9c80-20f998c40b69@roeck-us.net>
+ <veggn7y6qeeqx2dsmjykktudpwifnt5xzxcx5ulfglkgtq574p@f5dzhj4otjgl>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <63046df2-e1fb-442b-a55f-2a9847c6c59e@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Heiner Kallweit <hkallweit1@gmail.com>
+Autocrypt: addr=hkallweit1@gmail.com; keydata=
+ xsFNBF/0ZFUBEAC0eZyktSE7ZNO1SFXL6cQ4i4g6Ah3mOUIXSB4pCY5kQ6OLKHh0FlOD5/5/
+ sY7IoIouzOjyFdFPnz4Bl3927ClT567hUJJ+SNaFEiJ9vadI6vZm2gcY4ExdIevYHWe1msJF
+ MVE4yNwdS+UsPeCF/6CQQTzHc+n7DomE7fjJD5J1hOJjqz2XWe71fTvYXzxCFLwXXbBiqDC9
+ dNqOe5odPsa4TsWZ09T33g5n2nzTJs4Zw8fCy8rLqix/raVsqr8fw5qM66MVtdmEljFaJ9N8
+ /W56qGCp+H8Igk/F7CjlbWXiOlKHA25mPTmbVp7VlFsvsmMokr/imQr+0nXtmvYVaKEUwY2g
+ 86IU6RAOuA8E0J5bD/BeyZdMyVEtX1kT404UJZekFytJZrDZetwxM/cAH+1fMx4z751WJmxQ
+ J7mIXSPuDfeJhRDt9sGM6aRVfXbZt+wBogxyXepmnlv9K4A13z9DVLdKLrYUiu9/5QEl6fgI
+ kPaXlAZmJsQfoKbmPqCHVRYj1lpQtDM/2/BO6gHASflWUHzwmBVZbS/XRs64uJO8CB3+V3fa
+ cIivllReueGCMsHh6/8wgPAyopXOWOxbLsZ291fmZqIR0L5Y6b2HvdFN1Xhc+YrQ8TKK+Z4R
+ mJRDh0wNQ8Gm89g92/YkHji4jIWlp2fwzCcx5+lZCQ1XdqAiHQARAQABzSZIZWluZXIgS2Fs
+ bHdlaXQgPGhrYWxsd2VpdDFAZ21haWwuY29tPsLBjgQTAQgAOBYhBGxfqY/yOyXjyjJehXLe
+ ig9U8DoMBQJf9GRVAhsDBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAAAoJEHLeig9U8DoMSycQ
+ AJbfg8HZEK0ljV4M8nvdaiNixWAufrcZ+SD8zhbxl8GispK4F3Yo+20Y3UoZ7FcIidJWUUJL
+ axAOkpI/70YNhlqAPMsuudlAieeYZKjIv1WV5ucNZ3VJ7dC+dlVqQdAr1iD869FZXvy91KhJ
+ wYulyCf+s4T9YgmLC6jLMBZghKIf1uhSd0NzjyCqYWbk2ZxByZHgunEShOhHPHswu3Am0ftt
+ ePaYIHgZs+Vzwfjs8I7EuW/5/f5G9w1vibXxtGY/GXwgGGHRDjFM7RSprGOv4F5eMGh+NFUJ
+ TU9N96PQYMwXVxnQfRXl8O6ffSVmFx4H9rovxWPKobLmqQL0WKLLVvA/aOHCcMKgfyKRcLah
+ 57vGC50Ga8oT2K1g0AhKGkyJo7lGXkMu5yEs0m9O+btqAB261/E3DRxfI1P/tvDZpLJKtq35
+ dXsj6sjvhgX7VxXhY1wE54uqLLHY3UZQlmH3QF5t80MS7/KhxB1pO1Cpcmkt9hgyzH8+5org
+ +9wWxGUtJWNP7CppY+qvv3SZtKJMKsxqk5coBGwNkMms56z4qfJm2PUtJQGjA65XWdzQACib
+ 2iaDQoBqGZfXRdPT0tC1H5kUJuOX4ll1hI/HBMEFCcO8++Bl2wcrUsAxLzGvhINVJX2DAQaF
+ aNetToazkCnzubKfBOyiTqFJ0b63c5dqziAgzsFNBF/0ZFUBEADF8UEZmKDl1w/UxvjeyAeX
+ kghYkY3bkK6gcIYXdLRfJw12GbvMioSguvVzASVHG8h7NbNjk1yur6AONfbUpXKSNZ0skV8V
+ fG+ppbaY+zQofsSMoj5gP0amwbwvPzVqZCYJai81VobefTX2MZM2Mg/ThBVtGyzV3NeCpnBa
+ 8AX3s9rrX2XUoCibYotbbxx9afZYUFyflOc7kEpc9uJXIdaxS2Z6MnYLHsyVjiU6tzKCiVOU
+ KJevqvzPXJmy0xaOVf7mhFSNQyJTrZpLa+tvB1DQRS08CqYtIMxRrVtC0t0LFeQGly6bOngr
+ ircurWJiJKbSXVstLHgWYiq3/GmCSx/82ObeLO3PftklpRj8d+kFbrvrqBgjWtMH4WtK5uN5
+ 1WJ71hWJfNchKRlaJ3GWy8KolCAoGsQMovn/ZEXxrGs1ndafu47yXOpuDAozoHTBGvuSXSZo
+ ythk/0EAuz5IkwkhYBT1MGIAvNSn9ivE5aRnBazugy0rTRkVggHvt3/7flFHlGVGpBHxFUwb
+ /a4UjJBPtIwa4tWR8B1Ma36S8Jk456k2n1id7M0LQ+eqstmp6Y+UB+pt9NX6t0Slw1NCdYTW
+ gJezWTVKF7pmTdXszXGxlc9kTrVUz04PqPjnYbv5UWuDd2eyzGjrrFOsJEi8OK2d2j4FfF++
+ AzOMdW09JVqejQARAQABwsF2BBgBCAAgFiEEbF+pj/I7JePKMl6Fct6KD1TwOgwFAl/0ZFUC
+ GwwACgkQct6KD1TwOgxUfg//eAoYc0Vm4NrxymfcY30UjHVD0LgSvU8kUmXxil3qhFPS7KA+
+ y7tgcKLHOkZkXMX5MLFcS9+SmrAjSBBV8omKoHNo+kfFx/dUAtz0lot8wNGmWb+NcHeKM1eb
+ nwUMOEa1uDdfZeKef/U/2uHBceY7Gc6zPZPWgXghEyQMTH2UhLgeam8yglyO+A6RXCh+s6ak
+ Wje7Vo1wGK4eYxp6pwMPJXLMsI0ii/2k3YPEJPv+yJf90MbYyQSbkTwZhrsokjQEaIfjrIk3
+ rQRjTve/J62WIO28IbY/mENuGgWehRlTAbhC4BLTZ5uYS0YMQCR7v9UGMWdNWXFyrOB6PjSu
+ Trn9MsPoUc8qI72mVpxEXQDLlrd2ijEWm7Nrf52YMD7hL6rXXuis7R6zY8WnnBhW0uCfhajx
+ q+KuARXC0sDLztcjaS3ayXonpoCPZep2Bd5xqE4Ln8/COCslP7E92W1uf1EcdXXIrx1acg21
+ H/0Z53okMykVs3a8tECPHIxnre2UxKdTbCEkjkR4V6JyplTS47oWMw3zyI7zkaadfzVFBxk2
+ lo/Tny+FX1Azea3Ce7oOnRUEZtWSsUidtIjmL8YUQFZYm+JUIgfRmSpMFq8JP4VH43GXpB/S
+ OCrl+/xujzvoUBFV/cHKjEQYBxo+MaiQa1U54ykM2W4DnHb1UiEf5xDkFd4=
+In-Reply-To: <veggn7y6qeeqx2dsmjykktudpwifnt5xzxcx5ulfglkgtq574p@f5dzhj4otjgl>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 6/24/24 12:34, Sean Anderson wrote:
-> On 6/24/24 14:47, Guenter Roeck wrote:
->> On 6/24/24 10:46, Sean Anderson wrote:
->>> Add labels from IIO channels to our channels. This allows userspace to
->>> display more meaningful names instead of "in0" or "temp5".
+On 12.06.2024 18:19, Wolfram Sang wrote:
+> 
+> CCing Heiner...
+> 
+>>>>> Yes, maybe this could be simplified to "(LP)DDR memory types"
+>>>>>
+>>>>
+>>>> I rephrased it to "Only works for (LP)DDR memory types up to DDR5".
 >>>
->>> Although lm-sensors gracefully handles errors when reading channel
->>> labels, the ABI says the label attribute
+>>> Thanks!
 >>>
->>>> Should only be created if the driver has hints about what this voltage
->>>> channel is being used for, and user-space doesn't.
+>>>> How about "Only works on systems with 1 to 8 memory slots" ?
 >>>
->>> Therefore, we test to see if the channel has a label before
->>> creating the attribute.
+>>> This is a question for Heiner. I'd think it is is still correct, but I
+>>> don't know exactly.
 >>>
 >>
->> FWIW, complaining about an ABI really does not belong into a commit
->> message. Maybe you and lm-sensors don't care about error returns when
->> reading a label, but there are other userspace applications which may
->> expect drivers to follow the ABI. Last time I checked, the basic rule
->> was still "Don't break userspace", and that doesn't mean "it's ok to
->> violate / break an ABI as long as no one notices".
-> 
-> This isn't complaining about the ABI, just documenting the reason it was
-> done this way...
-> 
+>> My interpretation was that it should work if the DIMMs are connected to
+>> multiplexed I2C busses, but probably not if they are connected to
+>> different adapters. The error message in that case is a bit misleading,
+>> though, because it claims that "More than 8 memory slots on a single bus",
+>> which isn't necessarily the case. For example, it should be perfectly valid
+>> to have up to 24 DIMMs in this system.
+>>
+>> i2c-0/name:SMBus PIIX4 adapter port 0 at 0b00
+>> i2c-1/name:SMBus PIIX4 adapter port 2 at 0b00
+>> i2c-2/name:SMBus PIIX4 adapter port 1 at 0b20
+>>
+>> ... but I guess that is a question for someone with such a system to answer.
+>>
+>> Ultimately the handling of systems with more than 8 memory slots will need
+>> to be updated at some point. On my systems, with 'i2c: piix4: Register SPDs'
+>> applied, I see
+>>
+>> i2c i2c-0: 4/4 memory slots populated (from DMI)
+>>     [my system is running 6.6.y which still generates that message]
+>> i2c i2c-0: Successfully instantiated SPD at 0x50
+>> i2c i2c-0: Successfully instantiated SPD at 0x51
+>> i2c i2c-0: Successfully instantiated SPD at 0x52
+>> i2c i2c-0: Successfully instantiated SPD at 0x53
+>> i2c i2c-1: 4/4 memory slots populated (from DMI)
+>> i2c i2c-2: 4/4 memory slots populated (from DMI)
+>>
+>> meaning the function is called for each adapter (which makes sense).
+>> However, the code counting the DIMMs doesn't really take the adapter
+>> into account, meaning adapters 1 and 2 are still probed even though
+>> all DIMMs were already instantiated from adapter 0.
+>>
+>> On a system with more than 8 DIMMs connected to different piix4 adapters
+>> (without mux) we'd probably see something like
+>>
+>> i2c i2c-0: More than 8 memory slots on a single bus, contact i801 maintainer ...
+>> i2c i2c-1: More than 8 memory slots on a single bus, contact i801 maintainer ...
+>> i2c i2c-2: More than 8 memory slots on a single bus, contact i801 maintainer ...
+>>
+>> which wouldn't be very helpful. I think the main problem may be that
+>> the i801 driver implements sub-adapters as muxes, but the piix4 driver
+>> doesn't do (or need) that. The message is also i801 centric which doesn't
+>> apply anymore after 'i2c: piix4: Register SPDs' is applied.
+>>
+>> However, I would not want to even try changing that code without access
+>> to a system using piix4 and supporting more than 8 memory slots.
+>>
+>> Thanks,
+>> Guenter
+>>
+>>
 
-That a patch is implemented to follow its ABI is not worth mentioning
-in the commit message. You _do_ mention it, and added "Although lm-sensors
-gracefully ... ". So, from my perspective it is complaining about the ABI,
-unless you think that pretty much all patches should include "this is done
-to comply with the ABI, even though <some userspace application> is fine
-with violating it".
-
-Never mind though, I gave it my Acked-by:, and consider the issue closed.
-
-Guenter
+It seems Intel systems never have more than one i801 SMBUS adapter,
+therefore systems with more than 8 memory slots have to use muxing.
+The current code was developed for the Intel use case, and therefore
+doesn't consider that a system may have dedicated SMBUS controllers
+per 8 memory slots. So support for this scenario has to be added.
 
 
