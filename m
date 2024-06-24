@@ -1,125 +1,123 @@
-Return-Path: <linux-kernel+bounces-227797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41AC69156A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:50:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9FB79156AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:53:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 411E31C21F66
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:50:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E4422840C6
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46A21BC20;
-	Mon, 24 Jun 2024 18:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC70F19EED7;
+	Mon, 24 Jun 2024 18:53:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z87RTDvE"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VXtXonHv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25C8107A0
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC1E1BC20;
+	Mon, 24 Jun 2024 18:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719255028; cv=none; b=e4egZjoL9CwQMvmbNpAwWO5eJ5SIEHPFIbn7cg6B2lM7JCkwbeszuDWt1qV97OlelMUvR/g1j2wwMhQ+FaLU5peKmqzuE0YsR0mFdKbYORbz6H6hxejPEKbCfzHpIJg6ugCGFD3M1/s+2luiYtIOW/xrVlPOsFKxWAVHYrnaEao=
+	t=1719255200; cv=none; b=bZYnrvq/OSifWc+Q7V0y5ib43XvjeIoZDkUXQgTOm3hVu8UOcll1JW7lQb5DX4eTuFF6+BG84CFxBZFAqNSirmay8CKJRAsVpdQxb9Xwi17i6EUkePnN+Kx9ylpUHpfiDpO/4bFf3KHkGBkgCEtBNTh/8pRsNDENJ6weQTbL1fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719255028; c=relaxed/simple;
-	bh=qcsG6vyr1tXaw2vLVjmbHIg584Hl51LOJd9BkXwOpMc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aVzbKJntQKQlsIebHn8GbaXFyNmrKC/CAHVrbeFkAwiomdP54zNvnK7o9FT7g7w3mYPAOMNqgNQ/4nGrlFqYG4ZCZo056nTZISvZ43PpgXwEffwl9bdqiuTHEnZFcbqt5EenCP52vLsyXn8+8D/Xp/7OILVhtdYizvEkHjcVBOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z87RTDvE; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-421d32fda86so51662045e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:50:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719255024; x=1719859824; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yBiWnUshv9OkKg3tPzc7vkd68oaE09mot+Fd5BTkZ5w=;
-        b=Z87RTDvErLdTSQbEAMguT2HWxnfXsartkRT7UmxkRm+hkWj3STBEAjyHiLsyWLbE40
-         94UnIdbT7RnluvZCPDpHfZaJgPy23jlKwly0XaWcaU482uRFlNkVPC6aQhiT15bWnnzQ
-         5E5caQlczTJc84O+wP34lrfyND9pmx4614L8DP+LZuqhw37pLpQW76U19ZVQRYgmJnHj
-         yf4/D6n3Nwzq99sPOjrJK3Rp+9tbzFnzxbD9rVmxWJuxJAVoNjd2GekXnhom68n8K8zT
-         NhLwq1Q6FCTeFdx1pjdwSq7hba7ajUV0lWGNJCgtpKRjIJ7V1GSF/A+n4TUmoEl7/igS
-         AFhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719255024; x=1719859824;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yBiWnUshv9OkKg3tPzc7vkd68oaE09mot+Fd5BTkZ5w=;
-        b=l8jUc/7KxxHJAS1XqM6GVLAYOLqdpEtKYTq3wxmNdC2lTpHEpZ6QRMFp11VKOrfRlS
-         IOVwTYw3S3/aSUd3JU4A1O5cIJ4EH4nHarCuXg+OVvI+ihQfWWWablRkEgCWkJtiZEgn
-         yzroq7JnVvk0MANu/Al7SUSkGhrgzDrnUunY4xGBURw/LlUVlpWHs4o6UT5Y3c9srsPO
-         PQPvBTHSU4NduZZUiW6DwKJdTWDn2uWHuRFtg1PuTtCIxwS5Dg9G7ap7ZwcSwXF118DO
-         BEqvDqbWkpA9/yuBo+BQnLXgMhSIy7qTnIQWamzn1XdGnkRRGMWY4xqnicfFfBwQe6xY
-         hSsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZFQw7GY08Ob3mqFfbQf/X+i0DT4DKiVju7iyxWc+j+hylhXJHNSYPGxo3qxlwhS/l/gmnFOc7o0b/Vlo7mBrX2DwN3hdULBVuECOE
-X-Gm-Message-State: AOJu0YxWtMe8dert5pH7x7gby+3NCV46GVyjBXcl41VxMO9wv5raRh8b
-	ipIfMQAcSegSHALFoMgru9dNNfinq1kdJz4wRs0PYmL614PjaAoP
-X-Google-Smtp-Source: AGHT+IEG0ohM8vCl8uLGcKYTGbH3rrX+tD6F5+jka/SZNjxategSPRKu6VYzlsUqtGUOqJetdRzptg==
-X-Received: by 2002:a05:600c:21cc:b0:421:756f:b2e8 with SMTP id 5b1f17b1804b1-4248cc271b9mr48044475e9.11.1719255023980;
-        Mon, 24 Jun 2024 11:50:23 -0700 (PDT)
-Received: from ?IPV6:2001:16a2:df66:b900:46d:aa3:6645:bcd8? ([2001:16a2:df66:b900:46d:aa3:6645:bcd8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366383f65easm10837829f8f.23.2024.06.24.11.50.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 11:50:23 -0700 (PDT)
-Message-ID: <ad18c6fb-7d00-494b-a1f6-3d4acfbd2323@gmail.com>
-Date: Mon, 24 Jun 2024 21:50:21 +0300
+	s=arc-20240116; t=1719255200; c=relaxed/simple;
+	bh=5SQ6k8ql2FtQ24ggunQpn42cMs/9ehVKj7ffUjrSWaY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MLg9oNn3B52jrj0ynaJOqin26VxBpxwm88RoxzDWwRcwCx0Ws6bNR6fTS+AQDSzDFJsQLaQejHPuG8/k3++qIQpkRxc+iYT7VR3GxKkSlwgBqCzgLUElSUXQcbcbQsEvwr2Xv3zT9DBOtuQtn701X0v/SULYElD74Kb6FUJGeYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VXtXonHv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C84DEC2BBFC;
+	Mon, 24 Jun 2024 18:53:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719255199;
+	bh=5SQ6k8ql2FtQ24ggunQpn42cMs/9ehVKj7ffUjrSWaY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=VXtXonHvyo+lWD0+pd+wr848CsLJDdbee4dVtqEC+taFZleV+/ScGSS1Uh5KTQv5a
+	 QnFj79HuE41StMAO09LmxsiUmLstImWmWCDWn9q/8trkmxUYT8DvzromPaS2Qg6S+c
+	 yV+9dimLGjxNQQ9lyL5Leh41aBeHHK3yr2nSTCCobOdAmIQfQluJ2yGek/SeYlcNbS
+	 NwEYmE70UeDPIsdiuGmk/c3RnO+nRiAyMNO1/lHiMhtxOY+SkmgIYqN7gcT3Z1UQaq
+	 +sF+wjYNdfcq3fyuNJpJ+OypNUfBlIgqoSAUVIEwvBslVQ4xxkIFgnhj+a4ejS3oRM
+	 Svk9o0CE5wYNw==
+From: SeongJae Park <sj@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: SeongJae Park <sj@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alex Shi <alexs@kernel.org>,
+	Avadhut Naik <avadhut.naik@amd.com>,
+	Bill Wendling <morbo@google.com>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+	Federico Vaga <federico.vaga@vaga.pv.it>,
+	Hu Haowen <2023002089@link.tyut.edu.cn>,
+	Justin Stitt <justinstitt@google.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Yanteng Si <siyanteng@loongson.cn>,
+	linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	llvm@lists.linux.dev,
+	workflows@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] minor document fixups
+Date: Mon, 24 Jun 2024 11:53:05 -0700
+Message-Id: <20240624185312.94537-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next:master] [mm] 0fa2857d23:
- WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof
-To: Matthew Wilcox <willy@infradead.org>, Yosry Ahmed <yosryahmed@google.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
- lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Chengming Zhou <chengming.zhou@linux.dev>, Nhat Pham <nphamcs@gmail.com>,
- David Hildenbrand <david@redhat.com>, "Huang, Ying" <ying.huang@intel.com>,
- Hugh Dickins <hughd@google.com>, Johannes Weiner <hannes@cmpxchg.org>,
- Shakeel Butt <shakeel.butt@linux.dev>, Andi Kleen <ak@linux.intel.com>,
- linux-kernel@vger.kernel.org
-References: <202406241651.963e3e78-oliver.sang@intel.com>
- <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
- <Znm74wW3xARhR2qN@casper.infradead.org>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <Znm74wW3xARhR2qN@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+This patch series is for minor document fixups.  First five patches
+clean up and remove 'Other material' section of process/index in favor
+of 'staging/' and better place for docs on the section.  A patch for
+adding DAMON maintainer-profile reference on maintainers' handbook
+follows.  And then the last patch adds 'hkml' as one of available email
+tools on email-clients document.
 
-On 24/06/2024 21:33, Matthew Wilcox wrote:
-> On Mon, Jun 24, 2024 at 05:05:56AM -0700, Yosry Ahmed wrote:
->> On Mon, Jun 24, 2024 at 1:49 AM kernel test robot <oliver.sang@intel.com> wrote:
->>> kernel test robot noticed "WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof" on:
->>>
->>> commit: 0fa2857d23aa170e5e28d13c467b303b0065aad8 ("mm: store zero pages to be swapped out in a bitmap")
->>> https://git.kernel.org/cgit/linux/kernel/git/next/linux-next.git master
->> This is coming from WARN_ON_ONCE_GFP(order > MAX_PAGE_ORDER, gfp), and
->> is triggered by the new bitmap_zalloc() call in the swapon path. For a
->> sufficiently large swapfile, bitmap_zalloc() (which uses kmalloc()
->> under the hood) cannot be used to allocate the bitmap.
-> Do we need to use a bitmap?
->
-> We could place a special entry in the swapcache instead (there's
-> XA_ZERO_ENTRY already defined, and if we need a different entry that's
-> not XA_ZERO_ENTRY, there's room for a few hundred more special entries).
+SeongJae Park (7):
+  Docs/process/index: Remove unaligned-memory-access from 'Other
+    material'
+  Docs/process/index: Remove riscv/patch-acceptance from 'Other
+    material' section
+  Docs: Move magic-number from process to staging
+  Docs: Move clang-format from process/ to dev-tools/
+  Docs/process/index: Remove unsorted docs section
+  Docs/maintainer/maintainer-entry-profile: add DAMON maintainer profile
+  Docs/process/email-clients: Document HacKerMaiL
 
-I was going for the most space-efficient and simplest data structure, 
-which is bitmap. I believe xarray is either pointer or integer between 0 
-and LONG_MAX? We could convert the individual bits into integer and 
-store them, and have another function to extract the integer stored in 
-xarray to a bit, but I think thats basically a separate bitmap_xarray 
-API (which would probably take more space than a traditional bitmap API, 
-and I dont want to make this series dependent on something like that), 
-so I would prefer to use bitmap.
+ .clang-format                                         |  2 +-
+ Documentation/{process => dev-tools}/clang-format.rst |  0
+ Documentation/dev-tools/index.rst                     |  1 +
+ Documentation/maintainer/maintainer-entry-profile.rst |  1 +
+ Documentation/process/4.Coding.rst                    |  2 +-
+ Documentation/process/coding-style.rst                |  2 +-
+ Documentation/process/email-clients.rst               |  9 +++++++++
+ Documentation/process/index.rst                       | 11 -----------
+ Documentation/staging/index.rst                       |  1 +
+ Documentation/{process => staging}/magic-number.rst   |  0
+ .../translations/it_IT/process/clang-format.rst       |  2 +-
+ .../translations/it_IT/process/magic-number.rst       |  2 +-
+ .../translations/sp_SP/process/coding-style.rst       |  2 +-
+ .../translations/sp_SP/process/magic-number.rst       |  2 +-
+ Documentation/translations/zh_CN/process/4.Coding.rst |  2 +-
+ .../translations/zh_CN/process/coding-style.rst       |  2 +-
+ .../translations/zh_CN/process/magic-number.rst       |  2 +-
+ Documentation/translations/zh_TW/process/4.Coding.rst |  2 +-
+ .../translations/zh_TW/process/coding-style.rst       |  2 +-
+ .../translations/zh_TW/process/magic-number.rst       |  2 +-
+ 20 files changed, 25 insertions(+), 24 deletions(-)
+ rename Documentation/{process => dev-tools}/clang-format.rst (100%)
+ rename Documentation/{process => staging}/magic-number.rst (100%)
+
+
+base-commit: 88407e61007a3d3ebb62fc65479cc58d891ef74e
+-- 
+2.39.2
 
 
