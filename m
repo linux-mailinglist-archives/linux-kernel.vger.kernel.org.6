@@ -1,101 +1,73 @@
-Return-Path: <linux-kernel+bounces-227635-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE179154D2
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:54:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25DB9154D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82992B21526
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:54:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98B8B1F24357
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B0719E7FF;
-	Mon, 24 Jun 2024 16:53:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6590E19E802;
+	Mon, 24 Jun 2024 16:54:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XE4eOXYH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H6Z99u4e";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="XE4eOXYH";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="H6Z99u4e"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fzfZLeE7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A76B2F24;
-	Mon, 24 Jun 2024 16:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A37522F24;
+	Mon, 24 Jun 2024 16:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719248034; cv=none; b=mzR/2NhoDf+Stfsnd89TZ4mT+MyUrJXaH230EkFWiauW3SXw8O6a1rFH3KgkMczcBZX4X6aD2zjjOl5NvXgBjKqJuuw9Lu1XSANN8MjGXVxoVbP7zbmd5HX/TBElQFIVGFV7bwiQ00bjgROhVVL91jj62SJaDjDT7RAdoS8WH7s=
+	t=1719248093; cv=none; b=fmsoEKJ+hBvz30rrOqN7dbK19Jp8MkCgJ6wloVeQJhdRmzbLa+hFaNBJ+tTciiBLPfPQC9lEMESHbRgVDSdg9psHUQhc9EaUBGSwhx6D0UPvPHVJSrFP8Xt0qkDlS7zl/bdiy0y+HyHXtbfHnJPL9ctIYC5G1dBo7PmfTWeOEJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719248034; c=relaxed/simple;
-	bh=HwZd8EBFezechcjlh/DZYRg80NRaVK6S2q4FyzxMzcI=;
+	s=arc-20240116; t=1719248093; c=relaxed/simple;
+	bh=Uwv+K0RBgShdFEgwsCqjkVywOnyT8K9fp50gjDKdzSM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GtoOMy+p0WczX95Zh6aWEK7OxGVVGv1CG1mgjvd2a7edpLRedjfZoLc5VZI2vWQRJdEjrUFkvcnyjx/WV6pAODBOgEwVkrFaXYpIplyPbIH1s4g5x7xeTcMCuD6qm4JmNMiUxKjnGRvpO/WXwqYxeRGpWhXXAmaj16fQCdG803o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XE4eOXYH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H6Z99u4e; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=XE4eOXYH; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=H6Z99u4e; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 28AE71F7D1;
-	Mon, 24 Jun 2024 16:53:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719248031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4TWOup02Yc3C8yKWXbJzQeMjL6ZnMIgYxFd9eout+Yo=;
-	b=XE4eOXYHStl8Tl3femccYkSxHa9Zcha3fhJVHn2af+WSgAZfr9haAx6vVeOH/FwWPpYnpS
-	sEVmlZw6JfNa7Ai26JvZJi5qx2lm4/vjLLCR5B5+Qyj5w9SrLeXtQudKTSjCJaTijLFh++
-	ihVH77zg8qHMwzZmWyT2GG7cGdUFwKs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719248031;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4TWOup02Yc3C8yKWXbJzQeMjL6ZnMIgYxFd9eout+Yo=;
-	b=H6Z99u4eAVmEjrkNrvVcnGYn0ErthfE8vW3k8VG8LRLeQBjjNaA62CMkAZ5x2+VduEPUUC
-	w2eVp+muxTn6L6Dg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=XE4eOXYH;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=H6Z99u4e
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719248031; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4TWOup02Yc3C8yKWXbJzQeMjL6ZnMIgYxFd9eout+Yo=;
-	b=XE4eOXYHStl8Tl3femccYkSxHa9Zcha3fhJVHn2af+WSgAZfr9haAx6vVeOH/FwWPpYnpS
-	sEVmlZw6JfNa7Ai26JvZJi5qx2lm4/vjLLCR5B5+Qyj5w9SrLeXtQudKTSjCJaTijLFh++
-	ihVH77zg8qHMwzZmWyT2GG7cGdUFwKs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719248031;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4TWOup02Yc3C8yKWXbJzQeMjL6ZnMIgYxFd9eout+Yo=;
-	b=H6Z99u4eAVmEjrkNrvVcnGYn0ErthfE8vW3k8VG8LRLeQBjjNaA62CMkAZ5x2+VduEPUUC
-	w2eVp+muxTn6L6Dg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1A9AA1384C;
-	Mon, 24 Jun 2024 16:53:51 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id YeU8Bp+keWaTNgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 24 Jun 2024 16:53:51 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id A3325A08AA; Mon, 24 Jun 2024 18:53:50 +0200 (CEST)
-Date: Mon, 24 Jun 2024 18:53:50 +0200
-From: Jan Kara <jack@suse.cz>
-To: Theodore Ts'o <tytso@mit.edu>
-Cc: Alexander Coffin <alex.coffin@maticrobots.com>,
-	Jan Kara <jack@suse.com>, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: PROBLEM: ext4 resize2fs on-line resizing panic
-Message-ID: <20240624165350.madyxs74vx3niyy2@quack3>
-References: <CA+hUFcuGs04JHZ_WzA1zGN57+ehL2qmHOt5a7RMpo+rv6Vyxtw@mail.gmail.com>
- <20240624152658.GC280025@mit.edu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=WSX7E/c5O+mHLLXZzxXhJYV9dbuwWBs86fxwlgelGGM8bYyeQdxDIq3kXSqs0F9+Ji+oAOeeHWJNbOLXK8bawfFWDPmzDvNNS01p/SZYxvc+pZA/6l5Bzk4E/uHFtfS5QEwgvqtD2094qfYYveF9/uz1F4rdtU8rtgLKfPx4MTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fzfZLeE7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 188AEC2BBFC;
+	Mon, 24 Jun 2024 16:54:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719248093;
+	bh=Uwv+K0RBgShdFEgwsCqjkVywOnyT8K9fp50gjDKdzSM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fzfZLeE74prGw8oCXjR5/rO1KjhmsGoc9161nfGRNSbcvYsMdPHOfZKTwHeqHX9Yh
+	 3JatS+dLKc9d4qecawuIGwKbC8NtSegb90VteEJf/B5AtLQ0mIDoCrhC7+hItOtDfr
+	 lC7CHLnkFKq0SyuZ1AoDAEhxF23ZbMfRXo2+QcYVFOJIBAr8X7cMR/rjsuSdrCVG54
+	 CpRIrwVZS2eIonaEphM9fE7qF/w//pazAU+9OfE27fA1U091NNzVhvxyP+DIJVoDkJ
+	 QBhuOvoMqo3eyNPhoD5ogN34E5p+w6QIfWy/1rmgeSaN6rqdaXzP+O/sIiWsxtiJy9
+	 iX0mWI909Cy6g==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sLmy2-0000000038V-2H1o;
+	Mon, 24 Jun 2024 18:54:59 +0200
+Date: Mon, 24 Jun 2024 18:54:58 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v4 7/8] serial: qcom-geni: Fix suspend while active UART
+ xfer
+Message-ID: <Znmk4oYapM9EQH37@hovoldconsulting.com>
+References: <20240610222515.3023730-1-dianders@chromium.org>
+ <20240610152420.v4.7.I0f81a5baa37d368f291c96ee4830abca337e3c87@changeid>
+ <ZnlilDj5UrvrVasv@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,69 +76,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240624152658.GC280025@mit.edu>
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: 28AE71F7D1
-X-Spam-Flag: NO
-X-Spam-Score: -4.01
-X-Spam-Level: 
+In-Reply-To: <ZnlilDj5UrvrVasv@hovoldconsulting.com>
 
-On Mon 24-06-24 11:26:58, Theodore Ts'o wrote:
-> On Sun, Jun 23, 2024 at 06:57:13PM -0700, Alexander Coffin wrote:
-> > [1.] One line summary of the problem:
-> > Using resize2fs on-line resizing on a specific ext4 partition is
-> > causing an Oops.
-> > 
-> > 
-> > [6.] Output of Oops.. message (if applicable) with symbolic information
-> >      resolved (see Documentation/admin-guide/bug-hunting.rst)
-> > 
-> > ```
-> > [  445.552287] ------------[ cut here ]------------
-> > [  445.552300] kernel BUG at fs/jbd2/journal.c:846!
-> 
-> Thanks for the bug report.  The BUG_ON is from the following assert in
-> jbd2_journal_next_log_block:
-> 
-> 	J_ASSERT(journal->j_free > 1);
-> 
-> and it indicates that we ran out of space in the journal.  There are
-> mechanisms to make sure that this should never happen, and if the
-> journal is too small and the transaction couldn't be broken up, then
-> the operation (whether it is a resize or a file truncate or some other
-> operation) should have errored out, and not triggered a BUG.
+On Mon, Jun 24, 2024 at 02:12:04PM +0200, Johan Hovold wrote:
 
-Yeah, I was debugging this today and I'll shortly send a fix for JBD2 so
-that we don't trigger this BUG. But the online resize will fail anyway
-after my fixes (just gracefully) because the add_flex_bg() code tries to
-start a transaction with more credits than the journal allows.
+> I've prepared a minimal three patch series which fixes most of the
+> discussed issues (hard and soft lockup and garbage characters) and that
+> should be backportable as well.
+> 
+> Currently, the diffstat is just:
+> 
+> 	 drivers/tty/serial/qcom_geni_serial.c | 36 +++++++++++++++++++++++++-----------
+> 	 1 file changed, 25 insertions(+), 11 deletions(-)
+> 
+> Fixing the hard lockup 6.10-rc1 regression is just a single line.
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+For the record, I've posted the series here:
+
+	https://lore.kernel.org/lkml/20240624133135.7445-1-johan+linaro@kernel.org/
+ 
+Johan
 
