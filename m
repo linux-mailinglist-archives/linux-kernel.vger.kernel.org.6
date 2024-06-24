@@ -1,178 +1,96 @@
-Return-Path: <linux-kernel+bounces-226710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 568FD91429D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:18:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AEE2D9142A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:21:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9DDBBB2332D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:18:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03AB7B231B1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 222EF224FD;
-	Mon, 24 Jun 2024 06:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C032E634;
+	Mon, 24 Jun 2024 06:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="XJelGkza"
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2011.outbound.protection.outlook.com [40.92.103.11])
+	dkim=pass (1024-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="m74dkdwA"
+Received: from mta-65-227.siemens.flowmailer.net (mta-65-227.siemens.flowmailer.net [185.136.65.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594191B964;
-	Mon, 24 Jun 2024 06:18:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719209921; cv=fail; b=gw5CrSaM2gqLjZi3ncoucFR4O4OY/gCN+QQG7NXhQC9mtdQze6oTqH6wlTYud9qxUL9v1MtFukECEAPqjJR5eZuCEmf9w2eurV3TkNqjVtEbZZRhQVSfTg0RjyEgO1WiJimjV/7YsGLrh0ukEJGwyx9mjpJsaMBHXBj6eXs2aOo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719209921; c=relaxed/simple;
-	bh=oigBsLUKCt64VNyb660WA1uzBgsBXZ3mE6pBqbW6Z4s=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=LXdNjhXKSY7daxIbfCA2I9R2WmfBT4ALKTanYh/N64n0GuVnEeblM0YHfEFvlFheVQ+mbu9kr2tXgvSHXqsIYSGiLiSSpNSgDKSOPiy/IrtRUAzehm2V9yWjuP6g1Jrg82d0ocaH/Un2rqVM5iZZiluo2ZDg90zoVCf/T49YefE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=XJelGkza; arc=fail smtp.client-ip=40.92.103.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kPRzhxCKFmvAKJhdfy+awC/7e0JcIa+z2VbzjKjRLXwFceaKy2ODTq5ayVeRWKkX8Ya6r88HOluMMutXVue3uBt8xIy86hrL9BFOEyXN6L6HCHgjpB7tLxxuyawje6ue5B5ij2kV6s4ysn52jZygcW+/tBEzrMbMZTD55MBVHQVzcght+OJqMmwSIxZUaOJrDRfKoTx1jJtPpSl3MR7aRl7Ehz5x89S1OvGSjlcraCvamAZv3V3NGTrJCT/a27+oqq1P7eto8JuLDP8uvg0JiEVd3IehuDXvBRgtE+oM4GXPFxPgHK3B//xdfxwIuvjyBIM5Ge0tkS8YkYzscagROQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fMpxtLq1uACX48KRZXvxIm9ebdjdm2ZZlVEt4RWT6+0=;
- b=NgzkLh9tklfWlRxj0E369VazjHuYPWWOImVaW1DT5hV86/7K5F3nR+rBvYqv11uP8yaHCzya6GTRGolkjjan7m/rgy+eVRogSk0L3/ul1we+of8Lav9iqo5I7/eMgQYZJcpOXp1R0XF1cZdqt/YZ4bka6je2o6rHkRx+lSE5m8glLcPZZjtde7TnxXsMKvZaH9p5YcByiiyCJLetb5lugb0JgrQYgGERkqXgWTqd38V65UBECnwzq3idFA8FUiiOuc198ypYthUVLeoLAwzgAKscInHdWnQTMg7s2gIYA5WIEFQH89NV7nK5aNRnPEY4fzF/9F1D6Z+to5R2bjSKFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fMpxtLq1uACX48KRZXvxIm9ebdjdm2ZZlVEt4RWT6+0=;
- b=XJelGkzaSTSHO+i3g/u7aBE3oBZVxZqysvFNzdP0EBEHpcsc+InBMMHl3DQfSDPzptUhSzgWkuuExjWbDAKdaLxWXnG1ywBfE1dx6wEXmbghhNhUM6KQr1UVSuKBcSH7DCOb7OS8sDL0W4sOCPQHm+mqSHRcXeR10OU0BrHzDmWm49m9vx3cMph4SEMKHGB0oAeGRvKwMkpTbtX8dw8jg4W/XtMZuiPrQWEseYDsJMmmK1Fx5g87uhUPl4gRsbtRO954GpQP7U3v52CDvVLxTKf2FcmjJb987EdTNQ/HlVSLynWQ79Zfeek1nfXeJbQEIJzbuDKM0qsw8ugvFFN25Q==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN3P287MB1617.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:192::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.28; Mon, 24 Jun
- 2024 06:18:30 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
- 06:18:30 +0000
-Message-ID:
- <MA0P287MB28222A858B3AEE69925505E3FED42@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Mon, 24 Jun 2024 14:18:19 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/4] dt-bindings: mmc: sdhci-of-dwcmhsc: Add Sophgo
- SG2042 support
-To: Jisheng Zhang <jszhang@kernel.org>, Chen Wang <unicornxw@gmail.com>
-Cc: adrian.hunter@intel.com, aou@eecs.berkeley.edu, conor+dt@kernel.org,
- guoren@kernel.org, inochiama@outlook.com, krzysztof.kozlowski+dt@linaro.org,
- palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org,
- ulf.hansson@linaro.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
- linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
- haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, tingzhu.wang@sophgo.com
-References: <cover.1718697954.git.unicorn_wang@outlook.com>
- <dcc060c3ada7a56eda02b586c16c47f0a0905c61.1718697954.git.unicorn_wang@outlook.com>
- <ZnRVkPy5akurmi_D@xhacker>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <ZnRVkPy5akurmi_D@xhacker>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN: [L5wF9kl8CJPAy4EeB0CRP3JxcisOqSrf]
-X-ClientProxiedBy: TYBP286CA0019.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:404:ce::31) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <dd4f176e-817c-4713-8893-c0c7d001abe5@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B810E219E2
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:21:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.227
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719210064; cv=none; b=DLJ3llazo4V4UdblJD4vsfJ6t1rl54zmVLaSlGyeC3IdOATu9eMwMMigDpLK7Tg5Geuala7j2/S7602zLL+tgW7RSJNVwojCLYid9QOdrDg05+ttNaEpAPibdIgBbIJjfOcdw6px9JWDHJy32ISipb7pji5I08+i0BTiTBY/StM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719210064; c=relaxed/simple;
+	bh=SzW6cn9eF2sLMVyLCIwKgHrm9CzWs0jupIthfanDrvE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FA6K4AmThopkPacxtq68ijU+fY/gxF9O0f2s+4pUPpsEaFlHM8OcpEIgKbn57y60g6fiZC+zYuCYN4XXRMZmDhIQlELwOwS97NinTdm8CbdzoFlhKqu8fBDaT6zno2335vr/g/so3NPyOY8vzv2yXK49uUiBixS57FZTMqC2Ats=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (1024-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=m74dkdwA; arc=none smtp.client-ip=185.136.65.227
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-65-227.siemens.flowmailer.net with ESMTPSA id 202406240620513eba7ef6efa4ae131d
+        for <linux-kernel@vger.kernel.org>;
+        Mon, 24 Jun 2024 08:20:51 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=U5Al01NInRE5eNw4cY1NN/SMc3B+GgOjVG6GYVB63YE=;
+ b=m74dkdwATXboj70ZO3PVscC3eIk3io9SYRXzvgyYZlQdon2ozrfNnAmtwm6Npfr9mbV1T4
+ WTAu33LoT3R/8xBxq5nUi8IG2nxbt16vZBtuIZ5m3qwoacpbKRIwPQg0YxWnESFQJJCADCQl
+ C04SiKFSPteduKgreApoqRNmJv/ig=;
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Bao Cheng Su <baocheng.su@siemens.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>
+Subject: [PATCH 0/4] arm64: dts: k3: Resolve remaining dtbs_check warnings
+Date: Mon, 24 Jun 2024 08:20:46 +0200
+Message-ID: <cover.1719210050.git.jan.kiszka@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN3P287MB1617:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3bf8b0b5-c355-40bd-4d88-08dc9415768b
-X-Microsoft-Antispam: BCL:0;ARA:14566002|461199025|3412199022|440099025;
-X-Microsoft-Antispam-Message-Info:
-	8l660ChnYY3yzO7/8qdsxJF7bLaUtfBqWmIrDbD9dos9Eb2h1OB4X/Rr/k9Ywa/MYKMa3yAEB4BQnoGLTqih6blpKSlqiHLsqEK2P6WW465vZDVSEfAHMXJg2HF2O14kEC4To9nt+TgVYCqSHa9IwrUYwtkYy4m8ZjcTPo8aAQSQ8VZkQBjd2FhTRoR4jDXnP7XY3fMLflw96ncGUx2tbbGy8EgCs5+sb4ZQnQ6aD4K4y3UJuBLucsZQ1cUO3ul3S5Mb+WKV36o8yu0zlbuZ/Ik7PT3+XWSWA5+sf+fD+fBhhqxmhuJPC4fqmXBxafYvD5H2k3ypgyb6xM9h8lACnyAgXbO5JXgunkobjuDWvP1a3A3IKaBVZZE5obmnlznquie/8KliQbK9mE0OtcvsBlfgoRvmSZ622N0KsMLMMPO2QQYeXzWjoonENTvXoNYluV5/97isT5oT9LS1+Sk5opZzCppgsFgUKZHw9prOgqkgPmDnUPAxc79+JC7OddmiWdHd56pmc8AOKPC85muE9EyFq54Q19Bub4Kbc9pibqW74Jan7oMiH2M+TT3TNbTd
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?VElwS0NycG5YRlQ3aVZNUTVGZWIxd3o0cFpPU2N3N2NWNGM0eGhnbk5lWVFM?=
- =?utf-8?B?SzZsbmw0ZFI1bHpYdlI4aW5kSG95RjNGMko5czVnc1htVWY1Z2kwbVdKRVkr?=
- =?utf-8?B?M2hoVUtWTlZzYnhpR0VpeEVJRHkvM1M1TFRLUmxWZXFtK3ZvSXdXeHFhV21D?=
- =?utf-8?B?LzlLTWw4SldUdzZ4SVJ2SS80eUlBV1krOVlPZkpXTnpHazJXYTRhUDh4OVJp?=
- =?utf-8?B?YlFSSmJSVnA5bnBJN21YSHVIc280L0lSeG10R3pUTXpEVWYrbmZQT2gxZjF1?=
- =?utf-8?B?eFhpQTRqUW9ONEZDUzROMlNDczRTK0JiZWNmWFF6UlRDYlBvMkY4SWNoZE1t?=
- =?utf-8?B?M24zUVIyVEFSenpkeVRxbWNGdG9SWGIzbnBXNjVHeHdiUUM4L2QyK2wwaE5R?=
- =?utf-8?B?R09lVUpDSTYrZ1NrWVY1WEF6MlM1R0ZqMlhxSHRqSmk2UDhJY2g2K2JTcGJY?=
- =?utf-8?B?cTBTV0NCMGR3VHVjUUQ2d0Z1ZmExY2wxd2xnUWhxemEyeW5WYVEwTFduMG1W?=
- =?utf-8?B?cmZpczcxTXFMc2Z6U09WRFVaK2JBWUN2MXdtOW83N2lLQnpncXEyWStKWHVZ?=
- =?utf-8?B?eHhSRXZSdElBWFBqSkhDZkFFM3pkdGlUUGU1c0srTHpIMDBtdEI2TUplWGFz?=
- =?utf-8?B?anVzTnMya1lzQTVmQXFZUFgxSW1Zb0Z2RmQwSUVieUJWanV5ZS9oSWFobnNT?=
- =?utf-8?B?YVhSbDQrYjdVbVN5K1o1U1BhNjNQMHhEOWwwR3hPTkw0MHEyYzRTQm5tSXdl?=
- =?utf-8?B?bzFnalNtKzdON09tS2xva29wSVNjcVRDdCtYQ3BCQjYwbTNrRFIrTUJFL2pp?=
- =?utf-8?B?MTFKY0VnK1NPaXpqY1ZwbzhDamNNd3JORFltVVFlRWZkU004cXRvQ0ZIOHZO?=
- =?utf-8?B?cDExTGhFL3VXTDR3QVloa2pFUXBnQURDQ3dSemZXSURMTFRlTEZCNG1zN0hq?=
- =?utf-8?B?cTRMZ2tQMjF2T21Td0FocW9UMlFZWDZmUEpJbHNyMFFjMGpQa05aTVFDN0dv?=
- =?utf-8?B?d3prSmRaZWxMUmJKRE1mODFVV3ljbVV2ZGV2Z1E0R01XNFJuelZ0aWRFbUZZ?=
- =?utf-8?B?Uk5IL3pzK2hqcyt2VUNwUW4yT1ZYOTNmVFhPdTZVb2pDcWV2Z25qcS9tZGhE?=
- =?utf-8?B?YmZTNFpXcVhSZzFFZnRjUkdoS1MzSmhKOTBIQjlkMmZjcld3MjBweHRMRmk5?=
- =?utf-8?B?bVI0aTc5OVpaWjEycmpmVTJDN29FUC9xRmI4QU1NNEJBMnBIaDN0RC84QXMx?=
- =?utf-8?B?eWQ2S1NNSGYzTVdMMU5sVDBCWHBQbzlDM2xCSTdBbktNekUrTStCQlVEaEtq?=
- =?utf-8?B?U1lkYWF6MUh0WEROMlJtanlDKzBEUk1zc0E4VWYrbnI1YUdsTDZ4NTd0SVRq?=
- =?utf-8?B?YXNJK2J6azJNaGFycVY3dXFxNzhRdzY5bEZQcXZEVXphQTFYclRCUlhWdzR2?=
- =?utf-8?B?U1ltQkNyZk12V3NsNy82RmZqYXFORHhvWVh2amJBUndGVHgrL3d6ZmRiL0VJ?=
- =?utf-8?B?WDJINGRrUDY2VnUvMmlvTkZONVcrcktlbXpSdis5VE1pZnFnZzR1SkZ0azJz?=
- =?utf-8?B?V0l6Z3doQlZBclcxdHVpOHVoOVNnRnVaMUFVNkIweS9xNjUzNXdBU1hJUXJp?=
- =?utf-8?B?M3dlTnBtOTdiRGo5NWlTWk1SYk5DblhVRis4NDZKK3ZCUlFnSWlDY1FlTHB1?=
- =?utf-8?Q?KJmnP8gZM9Sp6AvEfwZE?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3bf8b0b5-c355-40bd-4d88-08dc9415768b
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 06:18:29.9719
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB1617
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
 
+This goes on top of
+https://patchwork.kernel.org/project/linux-arm-kernel/cover/20240518-dt-bindings-ti-soc-mfd-v1-0-b3952f104c9a@linaro.org/
 
-On 2024/6/21 0:15, Jisheng Zhang wrote:
-> On Tue, Jun 18, 2024 at 04:38:30PM +0800, Chen Wang wrote:
->> From: Chen Wang <unicorn_wang@outlook.com>
->>
->> SG2042 use Synopsys dwcnshc IP for SD/eMMC controllers.
->>
->> SG2042 defines 3 clocks for SD/eMMC controllers.
->> - AXI_EMMC/AXI_SD for aclk/hclk(Bus interface clocks in DWC_mshc)
->>    and blck(Core Base Clock in DWC_mshc), these 3 clocks share one
->>    source, so reuse existing "core".
-> No, this seems not correct. This should be the "bus" clk, and your above
-> sentence "aclk/hclk(Bus interface clocks in DWC_mshc)" implies this clk is
-> for bus
->
->> - 100K_EMMC/100K_SD for cqetmclk(Timer clocks in DWC_mshc), so reuse
->>    existing "timer" which was added for rockchip specified.
->> - EMMC_100M/SD_100M for cclk(Card clocks in DWC_mshc), add new "card".
-> I think this is "core" clk, no? Plz check which internal clks' clock
-> source is the so called EMMC_100M/SD_100M.
+As we are working in this area, having a zero-warning baseline helps a
+lot finding own issues quicker. Maybe not all of the suggested
+resolutions are optimal, open for feedback, just want to have them all
+fixed now soon.
 
-hi, Jisheng,
+Jan
 
-Just want to double-confirm, corresponding to the definition of clock in 
-the dwc-mshc specification, what's the "core" clock in the 
-snps,dwcmshc-sdhci.yaml?
+Jan Kiszka (4):
+  arm64: dts: ti: k3-j72xx-mcu-wakeup: add dedicated wakeup controller
+    compatible
+  arm64: dts: ti: k3-am642-evm: Silence schema warning
+  dt-bindings: soc: ti: am645-system-controller: add child nodes used by
+    main domain
+  arm64: dts: ti: k3-am65-main: add system controller compatible
 
-I get following clock definitions in user-guide of dwc-mshc 
-specification, in section 1.8 "Speed and Clock Requirements"
+ .../soc/ti/ti,am654-system-controller.yaml    | 29 +++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts       |  4 +++
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi      |  2 +-
+ .../boot/dts/ti/k3-j7200-mcu-wakeup.dtsi      |  2 +-
+ .../boot/dts/ti/k3-j721e-mcu-wakeup.dtsi      |  2 +-
+ .../boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi     |  2 +-
+ 6 files changed, 37 insertions(+), 4 deletions(-)
 
-- 1.8.1 Bus Interface Clocks，which are aclk and m_hclk/hclk
-- 1.8.2 Timer Clocks，which are tmclk，cqetmclk
-- 1.8.3 Card Clocks， whichi is cclk
-- 1.8.4 Core Base Clock，which is bclk
-
-I used to think "core" is "Core Base Clock".
-
-[......]
+-- 
+2.43.0
 
 
