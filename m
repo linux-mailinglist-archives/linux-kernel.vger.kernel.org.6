@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-227118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 863F9914891
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:25:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D1F0914895
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:25:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7ABC1C20AE7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:25:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5CB6B25E6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFCA13B7B3;
-	Mon, 24 Jun 2024 11:24:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0F213BC39;
+	Mon, 24 Jun 2024 11:24:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHr3nDiD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxngycje"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0CA13B59C;
-	Mon, 24 Jun 2024 11:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E65F13BAD5;
+	Mon, 24 Jun 2024 11:24:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719228272; cv=none; b=MKOee3T8X/rO430dQhudHKHlPTIRohE8rWEleldSpcHK32VaGACfc+jKU57rCNflLANFwdJVhtr9eu7jkg0DPgdh/R++D9VIvo5CNr6POEWr7s46Vwd0ckaEhyGWq1Wys3tG/8FWdyPYGkP/7ax31M1Bfpv+K8qHgqEDfm/iyqw=
+	t=1719228273; cv=none; b=PV5q/f3YixniEedgwCTY4w4IZH3qEV/afqQFA5qmt/4hjZVEkZjghHcLrCwtRz0pntf9DB+aFltd1XvnZUkOlakCUOAEvjhiRAeTzW0e2iB10PUymHlD4Ix/2T3F7wOSEfGUfDGQ/bPND7uUlT4X5ZXe2GQcwFPpc+9xVMzlLb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719228272; c=relaxed/simple;
-	bh=VZYpS8Qko/tJCe+83RS2/zT1QgITqLuMJJGSXP7WR9s=;
+	s=arc-20240116; t=1719228273; c=relaxed/simple;
+	bh=6FG4g8WOMTlTCUG9kUMTzoYUhqGKv7txyGP6CFbyer0=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=c0bEsPvelCK3cn4TNtvSRb1LzxJh05vriKv36QNlLwwOiJFE3GufzjUAuHtYJ1lKHLNRkGMUNHgzjDC5f7ih4aaXPbUHgRg0LvGciK552XJpDZTbIv6r2OF6t0C4CWhbu2RLfueSoxAqr2Px+0NPlFQc9BLVgw8ETfkblOID+io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHr3nDiD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E3EDC32781;
-	Mon, 24 Jun 2024 11:24:31 +0000 (UTC)
+	 Message-Id:Subject; b=L9uPvQ5x5hpyn8KeUAMizjbEee60CmeFWbI3PqDe0VVu4coy6CBPkRfj75cp/0AbCy1PL57QSp6TeBRLQmhm1uIpwhxZioHzFAcJ4vHU/spUY4bGX0E77X2T/bz/wNGPoMI+7Eu4vFEBCHnXNVqBr64xMylJ92/tO3UDe+a3uTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxngycje; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D46D1C32781;
+	Mon, 24 Jun 2024 11:24:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719228271;
-	bh=VZYpS8Qko/tJCe+83RS2/zT1QgITqLuMJJGSXP7WR9s=;
+	s=k20201202; t=1719228273;
+	bh=6FG4g8WOMTlTCUG9kUMTzoYUhqGKv7txyGP6CFbyer0=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=VHr3nDiDsuB9x0eQfc6/Y+A+I0kKeE1dYpqo2+E0ysvuvmodvqQMxf0hERYop/CqR
-	 vwbSqzw3N4GWZJt9Ez5Rq3sNOVhcAoTGL9L5lieGUUb0uGIA2qiVZpNcP4rfi4HbhG
-	 ezlfm/9sJ/BI0wVJ2yBaphyUtn7JoHePkWcs7pl+d5lk0NywrXGpLFH6nVzPeqrPft
-	 p/T+xnU4MKXCvoGbFdrzo5+fyeWJJBprBefTFfyY5Q2WuHHDe0wb9xXlXqJONvyhCL
-	 tZ8VtgtDGPRSuexGKUP9o4GyY0ZIXohsPHFCsqctX6NIwjf3XQ5R/a6zXLxmSEMzr3
-	 K6U238iCPDKCw==
-Date: Mon, 24 Jun 2024 05:24:30 -0600
+	b=nxngycjevwg2xHMUjCATV/iuoYDR3PAcjTpM1UCaq4Bh1fG4oZ4mufn/b2VCVoMkO
+	 Wqa6bRsEM06rBThx3GMZVmbNqTEBtiC65X+AJUZylR06uLJVykMzgQjP2KXT/BF9wE
+	 HSqGkP3x7KGKebQ8fMjZhHjyu62zSj00l2SDPuY5N7jgXb6b57r0ZmRRUEKkO98VLL
+	 yQZZBfCHfV1uzbrGUx3VLySK09Y11reepIWZ/YTGrIvUiRHFOjQC2LU912KFRktZOD
+	 HJazIKVFFBhsyXq8ckefDl9OAmw+j3NoXcmtsthO8jFhMDrh7UOQS82GgOYue4KK+j
+	 1A1SK5VJI/clQ==
+Date: Mon, 24 Jun 2024 05:24:31 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,60 +50,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Manikandan Muralidharan <manikandan.m@microchip.com>
-Cc: Balamanikandan.Gunasundar@microchip.com, conor+dt@kernel.org, 
- alexandre.belloni@bootlin.com, Charan.Pedumuru@microchip.com, 
- devicetree@vger.kernel.org, linus.walleij@linaro.org, 
- Dharma.B@microchip.com, arnd@arndb.de, Varshini.Rajendran@microchip.com, 
- krzk+dt@kernel.org, Balakrishnan.S@microchip.com, 
- durai.manickamkr@microchip.com, nicolas.ferre@microchip.com, 
- claudiu.beznea@tuxon.dev, brgl@bgdev.pl, linux-gpio@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, Durai.ManickamKR@microchip.com, 
- Nayabbasha.Sayed@microchip.com, Hari.PrasathGE@microchip.com, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240624100431.191172-6-manikandan.m@microchip.com>
-References: <20240624100431.191172-1-manikandan.m@microchip.com>
- <20240624100431.191172-6-manikandan.m@microchip.com>
-Message-Id: <171922826737.2823150.8347884175806280966.robh@kernel.org>
-Subject: Re: [PATCH 5/5] dt-bindings: pinctrl: Convert Atmel PIO3 pinctrl
- to json-schema
+To: Thippeswamy Havalige <thippesw@amd.com>
+Cc: linux-arm-kernel@lists.infradead.org, conor+dt@kernel.org, 
+ bharat.kumar.gogada@amd.com, krzk+dt@kernel.org, devicetree@vger.kernel.org, 
+ michal.simek@amd.com, lpieralisi@kernel.org, kw@linux.com, 
+ bhelgaas@google.com, linux-kernel@vger.kernel.org, 
+ linux-pci@vger.kernel.org
+In-Reply-To: <20240624104239.132159-2-thippesw@amd.com>
+References: <20240624104239.132159-1-thippesw@amd.com>
+ <20240624104239.132159-2-thippesw@amd.com>
+Message-Id: <171922826860.2823206.15042792370053552959.robh@kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: PCI: xilinx-xdma: Add schemas for
+ Xilinx QDMA PCIe Root Port Bridge
 
 
-On Mon, 24 Jun 2024 15:34:31 +0530, Manikandan Muralidharan wrote:
-> Convert Atmel PIO3 pinctrl binding document to DT schema format
-> json-schema.
+On Mon, 24 Jun 2024 16:12:38 +0530, Thippeswamy Havalige wrote:
+> Add YAML devicetree schemas for Xilinx QDMA Soft IP PCIe Root Port Bridge.
 > 
-> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+> Signed-off-by: Thippeswamy Havalige <thippesw@amd.com>
 > ---
->  .../bindings/pinctrl/atmel,at91-pinctrl.txt   | 178 ----------------
->  .../pinctrl/atmel,at91rm9200-pinctrl.yaml     | 194 ++++++++++++++++++
->  2 files changed, 194 insertions(+), 178 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/atmel,at91rm9200-pinctrl.yaml
+>  .../devicetree/bindings/pci/xlnx,xdma-host.yaml    | 41 ++++++++++++++++++++--
+>  1 file changed, 39 insertions(+), 2 deletions(-)
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
 
 yamllint warnings/errors:
-./Documentation/devicetree/bindings/pinctrl/atmel,at91rm9200-pinctrl.yaml:145:11: [error] string value is redundantly quoted with any quotes (quoted-strings)
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/atmel,at91rm9200-pinctrl.example.dtb: pinctrl@fffff400: gpio@fffff400:compatible: 'oneOf' conditional failed, one must be fixed:
-	['atmel,at91rm9200-gpio'] is too short
-	'atmel,at91rm9200-gpio' is not one of ['atmel,at91sam9x5-gpio', 'microchip,sam9x60-gpio']
-	'atmel,at91rm9200-gpio' is not one of ['microchip,sam9x7-gpio']
-	from schema $id: http://devicetree.org/schemas/pinctrl/atmel,at91rm9200-pinctrl.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/atmel,at91rm9200-pinctrl.example.dtb: pinctrl@fffff400: gpio@fffff400: Unevaluated properties are not allowed ('compatible' was unexpected)
-	from schema $id: http://devicetree.org/schemas/pinctrl/atmel,at91rm9200-pinctrl.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pinctrl/atmel,at91rm9200-pinctrl.example.dtb: gpio@fffff400: compatible: 'oneOf' conditional failed, one must be fixed:
-	['atmel,at91rm9200-gpio'] is too short
-	'atmel,at91rm9200-gpio' is not one of ['atmel,at91sam9x5-gpio', 'microchip,sam9x60-gpio']
-	'atmel,at91rm9200-gpio' is not one of ['microchip,sam9x7-gpio']
-	from schema $id: http://devicetree.org/schemas/gpio/atmel,at91rm9200-gpio.yaml#
+Documentation/devicetree/bindings/pci/xlnx,xdma-host.example.dts:55.31-79.15: Warning (pci_bridge): /example-0/soc/axi-pcie@80000000: node name is not "pci" or "pcie"
+Documentation/devicetree/bindings/pci/xlnx,xdma-host.example.dtb: Warning (unit_address_format): Failed prerequisite 'pci_bridge'
+Documentation/devicetree/bindings/pci/xlnx,xdma-host.example.dtb: Warning (pci_device_reg): Failed prerequisite 'pci_bridge'
+Documentation/devicetree/bindings/pci/xlnx,xdma-host.example.dtb: Warning (pci_device_bus_num): Failed prerequisite 'pci_bridge'
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/xlnx,xdma-host.example.dtb: axi-pcie@80000000: $nodename:0: 'axi-pcie@80000000' does not match '^pcie?@'
+	from schema $id: http://devicetree.org/schemas/pci/xlnx,xdma-host.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/xlnx,xdma-host.example.dtb: axi-pcie@80000000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'device_type' were unexpected)
+	from schema $id: http://devicetree.org/schemas/pci/xlnx,xdma-host.yaml#
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240624100431.191172-6-manikandan.m@microchip.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240624104239.132159-2-thippesw@amd.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
