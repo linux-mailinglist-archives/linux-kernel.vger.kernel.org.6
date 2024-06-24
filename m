@@ -1,158 +1,121 @@
-Return-Path: <linux-kernel+bounces-227884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7E99157B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:14:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7EC49157B5
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6563E1F217D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:14:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 507EBB22977
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0330C1A070A;
-	Mon, 24 Jun 2024 20:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3201A1A0710;
+	Mon, 24 Jun 2024 20:15:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuFvNqsB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TuCX+Mj7"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A8D1A01B7;
-	Mon, 24 Jun 2024 20:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D859A567D;
+	Mon, 24 Jun 2024 20:15:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719260090; cv=none; b=R4uSLv7/10kI+T3nZst7Vp28ALfU0S5hjKpZbLQjT3XoQ7gBF0dw4C8QlPcZZfF8sl1g9/hVhawG6vNqDjA0XcROadiu4DmefBtYlJSn83S3nVZVN5wDEbgjfrrkLYzlqDAb1jFsnJgaz4XytcHqn5ZYScy3yvSw1Wy6SAN60Y8=
+	t=1719260126; cv=none; b=hSDXd54Io0UaQTRoACbgxB3EqUhBhY9KnrHxSfoQF3LwewTjoxJqSXlXf+PpsGRZUnMsivriYAc30E40wl/rxViY0cvYaU32RBWx1GKLpMXb8MFrbNJAEkKPnCXLxThDHvOh+MPVN+13C9dB/Lk21BZpTbw9I9K2HMfvBkXl3Ek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719260090; c=relaxed/simple;
-	bh=B7G4o+wl4uVsOmOk5mkRzYTclrWJ1qPeYOyEfL5YUNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HihgAvXUE2zMnqReZJD20UljoxvOBMmstHvnWLuTSWnm4SvvQ0Sej2xmQ3GSEHj3k2pg4kyTgMEwZCNvPPubpxI8a7RHq3fyuqd743XdM1Q4wR2oJgUhzFQwdhrIHRI1INpRvLfP33NJELbk99dhEREmQuJyUSNdeQ8r5WMisCE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nuFvNqsB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CD15C2BBFC;
-	Mon, 24 Jun 2024 20:14:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719260089;
-	bh=B7G4o+wl4uVsOmOk5mkRzYTclrWJ1qPeYOyEfL5YUNs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nuFvNqsBwAJtlu4pr/J7euof725uBNi2M7AwbpWG+GLkXBxGcxi4M4b0bSxKclnZX
-	 OVGOsA+MXgga4gPerliU6Kaw2x/QrA6zXG50VYbq48Fqy1eUvNxf3iKXW1sr+DLYf4
-	 iqHq69B0OaV1VNTvklt9o7C5NZ0qufAAvwJl0AHg3q00g3ta3c2ZRHUoK3+YhPyp2L
-	 Sz0ulQ6AmLS1sf+kyvbfm/Xz+LDDoRpGaOQdTN31nUkRs1BuDDHaCUGWLTgHBM67BL
-	 HDtx89T3wCoxd67+IPDu1RlPBvwfM3PZHWkxB1/TLpOJ2unp6CbEF5MJxPV1vdx5MM
-	 k/5NDuyZN7kAA==
-Date: Mon, 24 Jun 2024 13:14:47 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Koakuma <koachan@protonmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de,
-	sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] sparc/build: Make all compiler flags also
- clang-compatible
-Message-ID: <20240624201447.GA774138@thelio-3990X>
-References: <20240620-sparc-cflags-v1-1-bba7d0ff7d42@protonmail.com>
- <20240621185345.GA416370@thelio-3990X>
- <e26PTXUXEz8OYXmaeKn4Mpuejr4IOlFfFwdB5vpsluXlYiqDdlyQTYcDtdAny_o4gO4SfPeQCCN2qpyT6e0nog5EaP3xk2SeUPTrF54p1gM=@protonmail.com>
+	s=arc-20240116; t=1719260126; c=relaxed/simple;
+	bh=aVkOK88AkhLmTVM6VEAF1SVUngOXxAhrap9TMQSyhOk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o+cB5TKggY96A20ACXT21cn9zHMXx5YSbx2cGaYFH9HeuzDAyEQS2GHNA03CXPB+r11BLMcPQBwosMuDiU/+8RAbI9AixI4xw8lmeNXOw9NiPLTnl4dCXNbLUbm+7vkuwRI67om3oz27CyDKqQoCxPgAOFJROxBKf/2ovOprQ8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TuCX+Mj7; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-364a39824baso3497794f8f.1;
+        Mon, 24 Jun 2024 13:15:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719260122; x=1719864922; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7XoPGrz+J640jf8Qz52xgWMn9YkrrI8mbi/FnE4/1pA=;
+        b=TuCX+Mj7jnvHHdQbece9WssB/rUpJGX0vewYpCf1jNFw1wKQ4pxXj3SOvWYI710+nv
+         7LWVqieMERpGur34lltb9jNplhFFHghgmJwH7nQEl7u8r5FmMOuGLMnCawZ4+ywCXGwj
+         EKP187OM+oqBgVx2iK1/nbs9Fnii6P/wTq0hSshDU41q+XZtTQNoIGpPGqrxEOElXMyv
+         LSdLPt8QvxU+KNIMoHSfZf+2ZnIuV7To5ze9smCTk/FEPcWDkUY3+WbC0EEA2FEoQepn
+         6FXb6FOrC0VolgCjRrVsC5eH7jA/w8w5pCaV54yd95azv9LeguxSn2H/nNokNWpTHMCS
+         dpCQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719260122; x=1719864922;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7XoPGrz+J640jf8Qz52xgWMn9YkrrI8mbi/FnE4/1pA=;
+        b=ot1y+u/ljAd3pgLqy5aaBCzm0evpIG2a5YF2Tk1VcxWs6BTzKBHFtelxqDjT3y7dyr
+         PIwMEQcL8Rydh6eDcjEM4ssy8/H9nfN3PoDDBqIF7fZksqoXa6hIMvpBG5VjAJ8IK9PO
+         z5JiL1WJycJ3VKJAepz7p1xyKHQmPRckI+6L7I5dOzGKpFv3EcjESmyItxeqBBcPzKJb
+         /9/ov/SEyBkqLClZrroMunhW9icT47HH/IOs3l07UQ2YvzjgPD5NLiRmk8JabnOAiuPD
+         x0bU4SFs2X5DC2+PYKOyv9EltjRmvoCuXm9EDU8GtdIJj+KpIdj+BXFS+vDxeeemE1i0
+         roUw==
+X-Forwarded-Encrypted: i=1; AJvYcCUGZHd57itBfe1T8kD2nu9nhS3SOTQuwF+4g/+PT4etFa+Fob3aU11wji0Uq9QE/NKo1tUcWtS24TZUohXXLmufrajHLYA5TZZTHgd72b9fz7t5wkl/l16fOVnXMlwMf0Dj
+X-Gm-Message-State: AOJu0YxK6aClXu2AYpmhRj11Pg5Tb8kOWKA4HtRDX5kf2V3+YpK0rU23
+	De/PwmSzyN21L2sxCg3lfHJ4x1deqOvzqivec1AIIJaYiNOMcp5eX8PGsN/dfawJ8t/HRObEfzL
+	mpvbPZi4lfqQi9iZEx4suIq8Gyqc=
+X-Google-Smtp-Source: AGHT+IHag9dlexMIAnzbwEYQHNUn7hDAVMEOkIXphuPM28zMNtn2XzmpEHyqSZXarRr6Zz5PEtyw4tnEhEnnh6R7qkI=
+X-Received: by 2002:adf:e412:0:b0:35f:2366:12c5 with SMTP id
+ ffacd0b85a97d-366e79fe9f5mr3827971f8f.23.1719260121970; Mon, 24 Jun 2024
+ 13:15:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e26PTXUXEz8OYXmaeKn4Mpuejr4IOlFfFwdB5vpsluXlYiqDdlyQTYcDtdAny_o4gO4SfPeQCCN2qpyT6e0nog5EaP3xk2SeUPTrF54p1gM=@protonmail.com>
+References: <20240624195426.176827-2-thorsten.blum@toblux.com>
+In-Reply-To: <20240624195426.176827-2-thorsten.blum@toblux.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Mon, 24 Jun 2024 13:15:10 -0700
+Message-ID: <CAADnVQJ6A-BUwa85-4Fg7vn1vWb9e_mVgvegtd6WKYM0Opysmw@mail.gmail.com>
+Subject: Re: [PATCH] bpf, btf: Make if test explicit to fix Coccinelle error
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: Martin KaFai Lau <martin.lau@linux.dev>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Eddy Z <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Koakuma,
+On Mon, Jun 24, 2024 at 12:56=E2=80=AFPM Thorsten Blum <thorsten.blum@toblu=
+x.com> wrote:
+>
+> Explicitly test the iterator variable i > 0 to fix the following
+> Coccinelle/coccicheck error reported by itnull.cocci:
+>
+>         ERROR: iterator variable bound on line 4688 cannot be NULL
+>
+> Compile-tested only.
+>
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+>  kernel/bpf/btf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> index 821063660d9f..7720f8967814 100644
+> --- a/kernel/bpf/btf.c
+> +++ b/kernel/bpf/btf.c
+> @@ -4687,7 +4687,7 @@ static void btf_datasec_show(const struct btf *btf,
+>                             __btf_name_by_offset(btf, t->name_off));
+>         for_each_vsi(i, t, vsi) {
+>                 var =3D btf_type_by_id(btf, vsi->type);
+> -               if (i)
+> +               if (i > 0)
+>                         btf_show(show, ",");
 
-On Sat, Jun 22, 2024 at 12:18:17PM +0000, Koakuma wrote:
-> Nathan Chancellor <nathan@kernel.org> wrote:
-> 
-> > I saw through the LLVM issue above that one other patch is necessary to
-> > fix an issue in the vDSO [1], which I applied in testing this one. 
-> 
-> Mhmm, I did not submit that yet because I don't feel fully confident
-> with it. I think it should probably live in include/vdso/math64.h
-> as plain C code instead of the current asm version, but I don't know
-> what is the proper way to check the current environment's word size.
-> Is checking BITS_PER_LONG enough, or should I do it in another way?
+Sorry, I don't think this is a sustainable approach.
+We cannot fix such things all over the kernel.
+Pls make cocci smarter instead.
 
-Yes, I believe that is what BITS_PER_LONG is there for, you will see
-other checks in the tree for that. You could also reach out to the
-maintainers of the generic vDSO infrastructure to see if they have any
-ideas or suggestions for integration.
-
-> > I noticed in applying that change that you appear to be working on 6.1,
-> > which is fine for now, but you'll need another diff once you get to a
-> > newer version, as we stopped using CROSS_COMPILE to set clang's
-> > '--target=' value:
-> > 
-> > diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
-> > index 6c23c6af797f..2435efae67f5 100644
-> > --- a/scripts/Makefile.clang
-> > +++ b/scripts/Makefile.clang
-> > @@ -10,6 +10,7 @@ CLANG_TARGET_FLAGS_mips := mipsel-linux-gnu
-> > CLANG_TARGET_FLAGS_powerpc := powerpc64le-linux-gnu
-> > CLANG_TARGET_FLAGS_riscv := riscv64-linux-gnu
-> > CLANG_TARGET_FLAGS_s390 := s390x-linux-gnu
-> > +CLANG_TARGET_FLAGS_sparc := sparc64-linux-gnu
-> > CLANG_TARGET_FLAGS_x86 := x86_64-linux-gnu
-> > CLANG_TARGET_FLAGS_um := $(CLANG_TARGET_FLAGS_$(SUBARCH))
-> > CLANG_TARGET_FLAGS := $(CLANG_TARGET_FLAGS_$(SRCARCH))
-> 
-> Yeah, I was working with 6.1 at that time since it's the version
-> that my distro have installed for me. Now this is more of a workflow
-
-That makes sense. I do think you should start working off of a more
-recent version (ideally at least mainline) for your future revisions,
-just so that your patches can be applied with less friction on
-maintainers. That can help your patches get picked up quicker :)
-
-> question, but this means I should submit a v2 with this change
-> merged in with mine too, right?
-
-Here is what I would do:
-
-1. Either keep this patch the way that it is or break it up into two
-   separate patches (especially given Adrian's other review comment):
-
-   One for removing the '-fcall-used' flags, with the comments about how
-   it does not impact the ABI and the registers can still be used in
-   assembly if needed, perhaps with some benchmarks with any codegen?
-   Might not be strictly necessary since Sam did not seem opposed in the
-   previous discussion.
-
-   One for changing the vDSO from '-mv8plus' to '-mcpu=v9' (if this is
-   still okay).
-
-2. Add another patch with that diff above with some notes about what was
-   tested to justify allowing this now.
-
-You'll end up with either a two or three patch series. I would send this
-series to both the SPARC people that you have added here along with the
-Kbuild and ClangBuiltLinux folks, which you can get from the output of
-
-  $ scripts/get_maintainers.pl scripts/Makefile.clang
-
-or use 'b4 prep --auto-to-cc' after crafting the series, since it
-appears you used it for this series. For the cover letter, you can add
-some commentary about what was tested and request integration from
-either the SPARC folks or Masahiro, depending on who wants to carry the
-changes, since they should go through one tree atomically ideally.
-
-If you have any questions about or issues with that comment or any other
-aspect of this process, I am happy to answer or clarify as necessary!
-I am in the #clang-built-linux channel in the LLVM Discord and
-#clangbuiltlinux on Libera if anything comes up.
-
-> And thanks for the feedback!
-
-Always happy to help get more people involved with the kernel,
-especially from the clang/LLVM side :)
-
-Cheers,
-Nathan
+pw-bot: cr
 
