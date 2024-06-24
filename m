@@ -1,81 +1,84 @@
-Return-Path: <linux-kernel+bounces-226983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CCBB9146BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:54:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 853EF9146BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91650B23596
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:54:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6A911C222E2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:55:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5265C13248E;
-	Mon, 24 Jun 2024 09:54:24 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAC9E12E1F6
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:54:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47FB4134406;
+	Mon, 24 Jun 2024 09:55:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD8B212E1F6;
+	Mon, 24 Jun 2024 09:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719222863; cv=none; b=C61nD5EXtwAB3PPhYzA/bC+gjDSIdpH95mjitg4lS9YIx4zU2UBJl0Fg9qAHriU/GKRE3Bb3tnwbWCjsd/QUOkW3l3tXi3uVM02wLhvzsfjDH5Z+GEUOBOg7J1KhKDBbZVlvJenIbllnjFWHILHBWOgtM2YNCPo9EJP8yYZBekY=
+	t=1719222909; cv=none; b=gGhIKuxcn3ufBD8Re8D3qlt9UIfLhDqQdeE1UIrUzzuMsu1Jw/uYYd4vGqxhv+4upvHGh+YHRNsYbHL3EEAQDM3gOBzXsxwbLEi2eILWbYfqS3YnQxRVdrHGGxE5g86Y8cE2KusW1DHm9/UMMCk35a1goocDbLmXuv7uqFHMqys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719222863; c=relaxed/simple;
-	bh=MnNVvBSDsOMIPt/b2tzEfPO7/omY4YQpUvF6zseL4s8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=n7dlWVhxGDE/PRiijv2mgab9olrU753O7uV0UaeT9aPOVWOKB/kl+kjPwxdYekryPj/KsIu3ZvtBQ2E6sVN4Ckm9JBBWy/KhnqzpteC2ZXrNVcGOciNEigmUOqVTmvKeJNpmdoWgoj82tXZnhq3dSd7kvrEYEaipLfvBErGKzzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sLgOu-0004Tb-Ql; Mon, 24 Jun 2024 11:54:16 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sLgOu-004cQ6-3T; Mon, 24 Jun 2024 11:54:16 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sLgOu-0005EK-08;
-	Mon, 24 Jun 2024 11:54:16 +0200
-Message-ID: <a40f77cbf17f6d8ff0de100849bff0c9bcc42df0.camel@pengutronix.de>
-Subject: Re: [PATCH linux-next] gpu:ipu-v3:pre: replace of_node_put() with
- __free
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: R Sundar <prosunofficial@gmail.com>, airlied@gmail.com, daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com, Julia Lawall
-	 <julia.lawall@inria.fr>
-Date: Mon, 24 Jun 2024 11:54:15 +0200
-In-Reply-To: <20240427045024.7083-1-prosunofficial@gmail.com>
-References: <20240427045024.7083-1-prosunofficial@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1719222909; c=relaxed/simple;
+	bh=v/VLYrHvVkTUrCyMvPKpBePUaxRKbdUISF2/lIX6ftk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=ila7rb/+Evubg8T7bko1pHzbfrUHjgQADOwoCzxpHSN+h9EzT1xDJacMc6qykPP61Lv1QxIGql4IOD8SMd0G1VQrauNx25w5IVqV2Du/Dqw9ajJhfoLwX2L+QFhfOzQMy41U1A/+rKTH1/qRZWHWr3l08Ujgu9dCZWfjOuigZAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ABEB6DA7;
+	Mon, 24 Jun 2024 02:55:30 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 687FC3F766;
+	Mon, 24 Jun 2024 02:55:02 -0700 (PDT)
+Message-ID: <7212d3ff-bbf8-43f2-835d-0a1289f1fed9@arm.com>
+Date: Mon, 24 Jun 2024 10:55:03 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/2] perf mem: Support multiple Arm SPE PMUs
+To: Leo Yan <leo.yan@arm.com>
+References: <20240623133437.222736-1-leo.yan@arm.com>
+Content-Language: en-US
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Mike Leach
+ <mike.leach@linaro.org>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, Kajol Jain <kjain@linux.ibm.com>,
+ coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <20240623133437.222736-1-leo.yan@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Sa, 2024-04-27 at 10:20 +0530, R Sundar wrote:
-> use the new cleanup magic to replace of_node_put() with
-> __free(device_node) marking to auto release when they get out of scope.
->=20
-> Suggested-by: Julia Lawall <julia.lawall@inria.fr>
-> Signed-off-by: R Sundar <prosunofficial@gmail.com>
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
 
-regards
-Philipp
+On 23/06/2024 14:34, Leo Yan wrote:
+> This patch series is to enable multiple Arm SPE PMUs.
+> 
+> The patch 01 is to enable multiple Arm SPE PMUs. The second patch is to
+> print out warning if not all CPUs support memory events, this can give
+> users a hint that the memory profiling is absent on some CPUs.
+> 
+> 
+> Leo Yan (2):
+>   perf arm-spe: Support multiple Arm SPE PMUs
+>   perf mem: Warn if memory events are not supported on all CPUs
+> 
+>  tools/perf/arch/arm/util/pmu.c |  2 +-
+>  tools/perf/util/mem-events.c   | 14 ++++++++++++++
+>  2 files changed, 15 insertions(+), 1 deletion(-)
+> 
+
+Reviewed-by: James Clark <james.clark@arm.com>
 
