@@ -1,62 +1,58 @@
-Return-Path: <linux-kernel+bounces-227903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C66B9157EF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:25:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A309157F2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24FFC1C20A33
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:25:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DE31F215BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3029F1A071A;
-	Mon, 24 Jun 2024 20:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FC021A0726;
+	Mon, 24 Jun 2024 20:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UAwocCHD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HiKMBa/k"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E319137748;
-	Mon, 24 Jun 2024 20:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7371A01AD;
+	Mon, 24 Jun 2024 20:25:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719260701; cv=none; b=qdhsHvoqoT84zsHulbG62oqxHcTCMDskc8loYZPNGGnCSM3Ikr+3JnwGGycKwj0RqDADd/BOeXDkm/If7lWuaKRhZsaahW5vFOF+xOiu8w2BpGaJ0eCcK3TXWKoxAV/REmSq0i1Yoccq1NxegPayNFwSZzWc+OPZOLa8HumeXpE=
+	t=1719260719; cv=none; b=LpeCkamrmEKbEDg+laG2sYlGjO1Yx8l5EZs7dur0XBTYB+vchcZEJ5iGXOUE9XSJNr0StEwXCMYTjhWouRbhchNZFemMqlFwcQwI16Zyb8r1uoPY+RvXhusp4ik1VUR30uXn9KaEWYq8l9/yEahK8j0H34u9lB4hk7YcR9qbxHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719260701; c=relaxed/simple;
-	bh=1LlVpG91dCauwKR+1U2omHxHfo85V5EN8OuH9YnYOUU=;
+	s=arc-20240116; t=1719260719; c=relaxed/simple;
+	bh=Fdq+OcitQnYEPP9+kNdjQc7D1WlpTYAAifc1gtkVyRM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bj8Kodh8yLbGnlFFr0X6xB6Ngosgc6o4UIqK1Njo/q0gM2Mt4cIvvOxQRNVfC8PIUHeYEk6mtkhg9saurT8lBoHhJmaLLKGPewKTTGaYHFuQoSt36TZg6dqw2RtLxU5Td1W+3a59qlgQEQSzcnI4/w88DFVvJwfRFZZZ5aDZVcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UAwocCHD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4F59C32781;
-	Mon, 24 Jun 2024 20:25:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=XQ0iPsAgoi1hWD2r2g/EaXM0/aRb652xMYDiAeG7WM0BN6dj3QWckoWD/8MCgJzIuXmzZhahPtfVYnNmPRseyRjOEhDlj9x9mCq+LPYq3y4ka5nAVDtuLyyzcC7QTAOyDHSDwGn72sB54D3bWBPUluY0VZV+E6Rz2uA4yqsy/rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HiKMBa/k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 177D1C2BBFC;
+	Mon, 24 Jun 2024 20:25:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719260700;
-	bh=1LlVpG91dCauwKR+1U2omHxHfo85V5EN8OuH9YnYOUU=;
+	s=k20201202; t=1719260719;
+	bh=Fdq+OcitQnYEPP9+kNdjQc7D1WlpTYAAifc1gtkVyRM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UAwocCHDYAJ4QE5ItFkJ0saC3DnMWCURC3KjDEwDoOi7noHtcUOU9KpikCNa5R/9G
-	 2/eIaULQzI+skNPUBpsgxeegX0/kVJLYkW/FjembKY0eu3eaDqkJ/8O7mTsIMar1UD
-	 4HbJyeyTcFtpb3iqGqlpGc+f9WdAmd0f+DUDu0MDdIUpcP04yeg3FvGuPBg52gK7x3
-	 6zOiTKT7SABgUO/EQkmI9uKj9kK2CR/y5r1Gor8yegifYKc4bReTOuOf7yhi7SrgKV
-	 F5e4wTvoMKsy6AZka1GVLb1foOjyn8m5OypAgbdFZGtTAeOuI2Q2zTnlREesErJC38
-	 mOWzu1QrOo1tg==
-Date: Mon, 24 Jun 2024 14:24:59 -0600
+	b=HiKMBa/kqOJlHMLOaTWQW6+Yy0lW5X+cwIa+W8iHSg3iUjI2GTBITPqchAm/UK6/u
+	 wZU4JozlsKF6V4AXrurrj6OSaspAhNgPs6jLmk4rpHbY7UrPB+xB+QHhMevCYrDdwK
+	 1T+3T0MCRvPmCYOT5jc4PsNT4kgRwHdOJgZFbPzBaFTeSktAUuE2e0EooNJ+oAvZvt
+	 l04jDONpSkTgVqmZXLdVBXgM+0qbmEMqh52AbOFd4zNi3q+GTAqfSKnbY8AjvzuR8/
+	 F2ojkL03CaeLE9h3PurS6faaRZRj+50WYIqE6A2ZbCMi9xnO07D3BAkXf16qyZmXnl
+	 I8hkK+/kJ3P9w==
+Date: Mon, 24 Jun 2024 14:25:17 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Kanak Shilledar <kanakshilledar@gmail.com>
-Cc: Samuel Holland <samuel.holland@sifive.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-kernel@vger.kernel.org, Albert Ou <aou@eecs.berkeley.edu>,
-	linux-riscv@lists.infradead.org, kanakshilledar111@protonmail.com,
-	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [RESEND v4 2/2] dt-bindings: riscv: cpus: add ref to
- interrupt-controller
-Message-ID: <171926069663.349368.14347809571943198470.robh@kernel.org>
-References: <20240615021507.122035-1-kanakshilledar@gmail.com>
- <20240615021507.122035-3-kanakshilledar@gmail.com>
+To: Stanislav Jakubek <stano.jakubek@gmail.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH] dt-bindings: clock: drop obsolete stericsson,abx500.txt
+Message-ID: <171926071549.350046.4840202614412404395.robh@kernel.org>
+References: <Zm7I2Zbq1JNPoEJp@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,29 +61,18 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240615021507.122035-3-kanakshilledar@gmail.com>
+In-Reply-To: <Zm7I2Zbq1JNPoEJp@standask-GA-A55M-S2HP>
 
 
-On Sat, 15 Jun 2024 07:45:04 +0530, Kanak Shilledar wrote:
-> removed the redundant properties for interrupt-controller
-> and provide reference to the riscv,cpu-intc.yaml which defines
-> the interrupt-controller. making the properties for riscv
-> interrupt-controller at a central place.
+On Sun, 16 Jun 2024 13:13:29 +0200, Stanislav Jakubek wrote:
+> These bindings are already (better) described in mfd/stericsson,ab8500.yaml,
+> drop these now obsolete bindings.
 > 
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 > ---
-> Changes in v4:
-> - Change DCO email to @gmail.com
-> Changes in v3:
-> - No change.
-> - Rolling out as RESEND.
-> Changes in v2:
-> - Fix warning of `type` is a required property during `make
-> dt_bindings_check`.
-> ---
->  .../devicetree/bindings/riscv/cpus.yaml       | 21 +------------------
->  1 file changed, 1 insertion(+), 20 deletions(-)
+>  .../bindings/clock/stericsson,abx500.txt      | 20 -------------------
+>  1 file changed, 20 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/stericsson,abx500.txt
 > 
 
 Applied, thanks!
