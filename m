@@ -1,201 +1,268 @@
-Return-Path: <linux-kernel+bounces-227071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E21129147F0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:56:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CDC79147F1
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:57:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 10BC21C21EEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:56:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56F891C22080
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C9913A87C;
-	Mon, 24 Jun 2024 10:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aDrUVMsX"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81CF1384B9
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A61137774;
+	Mon, 24 Jun 2024 10:56:10 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D5F013B584
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719226556; cv=none; b=dMMjtix9DzT8fZ3/KEAx7/shl3TcHyyIj2jZpnZZesDa10zy+5+jb344oSuFEJfkz3WRVHkGiE75X9sXDBpwxewNM0FYlYBXMPmumXMA6+d77u8I8zr8JAGkps+PhdGzYC0WjqS4bAnXUvmCZONsZt0LxU/3mVMFmU+9kGL3cuM=
+	t=1719226570; cv=none; b=oQfCMMKigewALbl8JdzgplehtGSoOBSwJZDWlV8aF5FYeJzqYFqXI+G2J4ITal/GfgfgMS9TaLtZN9K5Bj9VJ2xkhOdv76zOOySnZDGQbZ+fknrIbFdeN88NL4s1T/F2nF9hgeEevabAMEJqsfgQXy5JgMBNRI6r8qXO6O1EsY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719226556; c=relaxed/simple;
-	bh=eN0nSauQHWzcpR3ztkX7wbxGkq9GOgpa8mxkvBiq8XY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=byedk9eK4pz7iXWiEHfdcNgVQMAmtpw27VAw8KFQKmMSv2iSn4fRNxJazhd1GU72H6pIAPgXVzRJwWKNkyYfipCU+OGMKlIZLvwPw0Nhc3j6cTf0qxFnXNqn/3dONuj5rPEcHrInnVhpWj6ZxCM5ZdZxB5iw+0ZJyIrpyki9MWE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aDrUVMsX; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52cdebf9f6fso2241591e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 03:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719226553; x=1719831353; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vw7X1i/YW4Fd35XXIuhTMVk8l2VygEA6NsiqdF81ctI=;
-        b=aDrUVMsX1+kHXl5UtWe7xBUKNqU39cZNvksQ4eOzByM/DmdmsrRlmikQ1Zz5L54F8l
-         9yGVn3TKN7Y/5O5IlrgI8JEuJ5YVkVPx6J4Mcf0ITWkivzSJvXMotoWYH0eItpQ/Vuf4
-         tQzAIHsOfu6qR2gPlCazXzt8QJr0S6oeqyvoddQDLowIFU4w3VckvAShdCxz3x8zwSSl
-         tf/fFU8pw9eYLrwb/fPJujwFt1qy/y0z9KzR9cQDZHFD3n8nBPl/AHxVR4T9Ala7CRiQ
-         45HO6oC690QXMVNymWukxaoWfWZMkbHipBBzFwfU87704B9jlFQWMKmt5KBLAd8BvJnW
-         ZtUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719226553; x=1719831353;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vw7X1i/YW4Fd35XXIuhTMVk8l2VygEA6NsiqdF81ctI=;
-        b=cdNJppnS/nS/EnAVtZ92o8E+XbgYsks6A36efgD2mp9BYeDYIJlhhDeUuD6Z8FCsLK
-         wupWdwfLppyQ/snfpQlHotynK1ii/r8eO3WkAx7XbWDWBGEcRp2AsrBdnv6bPVczkjwt
-         HWp1PEDXxrsXYeK1qgm8pRBKVf623tYnf2pcACMRE21PWZeYTs9uYcUefNFaU0ls9SUa
-         qt1jOKciCejHNbGi2UQS9lt1PGn5C4vqGy8pVaqrYL5GVvEtH68qhQrS6zpXv3WWieZj
-         bNrKooN+JKZesxpgWyB2MwmOdjq8aX0RC0CgarP0ofzECdVFXuU6EeyY9NQMbtoxihKe
-         lwzA==
-X-Forwarded-Encrypted: i=1; AJvYcCVy/kr6XzRArnwnZf4X91/M+5kBVYmQvGMRvmqMj0zaeocGRzybmy3YG0+8to7k4RJAGW85WFwlxKJsMqr6VVHnl/A6rvJDn5k4/qBd
-X-Gm-Message-State: AOJu0YyaiK6E8CA3HQNKN8aY46gJfwT5SCI3SkfMVafn19bHEyjsDNy3
-	B/2wcFN82kHDb0edjt/3ECk+NjTd0Cp/UlDbCsQloRm2tN1d3AnHDXHaB67zsfblpRYcQb8k2Tz
-	BSEY=
-X-Google-Smtp-Source: AGHT+IHOcp5tf8fAOVkV5QK6fvlUJTLkRoDLcluVbNV8P6vD+BtVUiFlh40iHx6m5tkPhE9cC23jFQ==
-X-Received: by 2002:a05:6512:1cb:b0:52c:dd59:6784 with SMTP id 2adb3069b0e04-52ce183c00bmr3375347e87.40.1719226552761;
-        Mon, 24 Jun 2024 03:55:52 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d208b6bsm172479595e9.32.2024.06.24.03.55.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 03:55:51 -0700 (PDT)
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Date: Mon, 24 Jun 2024 11:55:32 +0100
-Subject: [PATCH 3/3] arm64: dts: qcom: x1e80100: add soundwire controller
- resets
+	s=arc-20240116; t=1719226570; c=relaxed/simple;
+	bh=OFyLE1q7WBU8Ccw3gBNY/owYbpctX5c3SO2pO98pqzQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ur1pLZERWhakA+YaCPrM5qDv2XnHDLypFIveQzvHIgqqjBE01vJQqDIBniW5zGzIMX3HsDVvqp+FxHlPzoS+pvC1txsp/wiQDE/MbFfO4jSdeNdJQERp08/mj3G/cI0y9EFJSwv6WXGWLWgi5c6X+yZ3yn2tCaYVfrLR9g7se0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 86899DA7;
+	Mon, 24 Jun 2024 03:56:32 -0700 (PDT)
+Received: from [10.57.74.124] (unknown [10.57.74.124])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7D86B3F73B;
+	Mon, 24 Jun 2024 03:56:06 -0700 (PDT)
+Message-ID: <5149c162-cf38-4aa4-9e96-27c6897cad36@arm.com>
+Date: Mon, 24 Jun 2024 11:56:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iommu/iova: Bettering utilizing cpu_rcaches in no-strict
+ mode
+To: Zhang Zekun <zhangzekun11@huawei.com>, joro@8bytes.org, will@kernel.org,
+ john.g.garry@oracle.com
+Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240624083952.52612-1-zhangzekun11@huawei.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240624083952.52612-1-zhangzekun11@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240624-x1e-swr-reset-v1-3-da326d0733d4@linaro.org>
-References: <20240624-x1e-swr-reset-v1-0-da326d0733d4@linaro.org>
-In-Reply-To: <20240624-x1e-swr-reset-v1-0-da326d0733d4@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-X-Mailer: b4 0.12.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2919;
- i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
- bh=eN0nSauQHWzcpR3ztkX7wbxGkq9GOgpa8mxkvBiq8XY=;
- b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmeVC0etr46PFmqC8tcv68s/rrRR9NINlx8eGLk
- Ko5+v6MPriJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZnlQtAAKCRB6of1ZxzRV
- Nz/HCACTQTILhlLBUNy/vu+8U+Rv3PS2fuTGx5AyFGtUyb/on0bVtUxUkxvNT1aN2aLxhLaB7Jm
- mMKqd8F9a31VGal1C41nY1XztbOoTBafahLkCv6pk0VYqHDAmiujSV+sCxWiofG3xocAlSwh01p
- tYTg6Lg0i2QTGUNR6ZNLpISHyk4G2lOznGBbuQZDJxDr9ay0QxE9UIYxSRfQavFkcMaEUMmbB3M
- T7PXm4sYj4Bx9rH+5YUYfCfjHsQZ2SZIFDHNR1dfSnlxtG/3rdrbL3E6dO4eLd3AsNdFqEmn5TV
- TRyPEclDSP/+R69ZvPVxAuIYvtOkyNe52jKX0v3c4AsPPXU8
-X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
- fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
 
-Soundwire controllers (WSA, WSA2, RX, TX) require reset lines to enable
-switching clock control from hardware to software.
+On 2024-06-24 9:39 am, Zhang Zekun wrote:
+> Currently, when iommu working in no-strict mode, fq_flush_timeout()
+> will always try to free iovas on one cpu. Freeing the iovas from all
+> cpus on one cpu is not cache-friendly to iova_rcache, because it will
+> first filling up the cpu_rcache and then pushing iovas to the depot,
+> iovas in the depot will finally goto the underlying rbtree if the
+> depot_size is greater than num_online_cpus().
 
-Add them along with the reset control providers.
+That is the design intent - if the excess magazines sit in the depot 
+long enough to be reclaimed then other CPUs didn't want them either. 
+We're trying to minimise the amount of unused cached IOVAs sitting 
+around wasting memory, since IOVA memory consumption has proven to be 
+quite significant on large systems.
 
-Without this reset we might hit fifo under/over run when we try to write to
-soundwire device registers.
+As alluded to in the original cover letter, 100ms for IOVA_DEPOT_DELAY 
+was just my arbitrary value of "long enough" to keep the initial 
+implementation straightforward - I do expect that certain workloads 
+might benefit from tuning it differently, but without proof of what they 
+are and what they want, there's little justification for introducing 
+extra complexity and potential user ABI yet.
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
+> Let fq_flush_timeout()
+> freeing iovas on cpus who call dma_unmap* APIs, can decrease the overall
+> time caused by fq_flush_timeout() by better utilizing the iova_rcache,
+> and minimizing the competition for the iova_rbtree_lock().
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 09fd6c8e53bb..fa28dbdd1419 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -4,6 +4,7 @@
-  */
- 
- #include <dt-bindings/clock/qcom,rpmh.h>
-+#include <dt-bindings/clock/qcom,sc8280xp-lpasscc.h>
- #include <dt-bindings/clock/qcom,x1e80100-dispcc.h>
- #include <dt-bindings/clock/qcom,x1e80100-gcc.h>
- #include <dt-bindings/clock/qcom,x1e80100-tcsr.h>
-@@ -3177,6 +3178,8 @@ swr3: soundwire@6ab0000 {
- 
- 			pinctrl-0 = <&wsa2_swr_active>;
- 			pinctrl-names = "default";
-+			resets = <&lpass_audiocc LPASS_AUDIO_SWR_WSA2_CGCR>;
-+			reset-names = "swr_audio_cgcr";
- 
- 			qcom,din-ports = <4>;
- 			qcom,dout-ports = <9>;
-@@ -3225,6 +3228,8 @@ swr1: soundwire@6ad0000 {
- 			pinctrl-0 = <&rx_swr_active>;
- 			pinctrl-names = "default";
- 
-+			resets = <&lpass_audiocc LPASS_AUDIO_SWR_RX_CGCR>;
-+			reset-names = "swr_audio_cgcr";
- 			qcom,din-ports = <1>;
- 			qcom,dout-ports = <11>;
- 
-@@ -3289,6 +3294,8 @@ swr0: soundwire@6b10000 {
- 
- 			pinctrl-0 = <&wsa_swr_active>;
- 			pinctrl-names = "default";
-+			resets = <&lpass_audiocc LPASS_AUDIO_SWR_WSA_CGCR>;
-+			reset-names = "swr_audio_cgcr";
- 
- 			qcom,din-ports = <4>;
- 			qcom,dout-ports = <9>;
-@@ -3309,6 +3316,13 @@ swr0: soundwire@6b10000 {
- 			status = "disabled";
- 		};
- 
-+		lpass_audiocc: clock-controller@6b6c000 {
-+			compatible = "qcom,x1e80100-lpassaudiocc", "qcom,sc8280xp-lpassaudiocc";
-+			reg = <0 0x06b6c000 0 0x1000>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		swr2: soundwire@6d30000 {
- 			compatible = "qcom,soundwire-v2.0.0";
- 			reg = <0 0x06d30000 0 0x10000>;
-@@ -3318,6 +3332,8 @@ swr2: soundwire@6d30000 {
- 				     <GIC_SPI 520 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "core", "wakeup";
- 			label = "TX";
-+			resets = <&lpasscc LPASS_AUDIO_SWR_TX_CGCR>;
-+			reset-names = "swr_audio_cgcr";
- 
- 			pinctrl-0 = <&tx_swr_active>;
- 			pinctrl-names = "default";
-@@ -3474,6 +3490,13 @@ data-pins {
- 			};
- 		};
- 
-+		lpasscc: clock-controller@6ea0000 {
-+			compatible = "qcom,x1e80100-lpasscc", "qcom,sc8280xp-lpasscc";
-+			reg = <0 0x06ea0000 0 0x12000>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+		};
-+
- 		lpass_ag_noc: interconnect@7e40000 {
- 			compatible = "qcom,x1e80100-lpass-ag-noc";
- 			reg = <0 0x7e40000 0 0xE080>;
+I would have assumed that a single CPU simply throwing magazines into 
+the depot list from its own percpu cache is quicker, or at least no 
+slower, than doing the same while causing additional contention/sharing 
+by interfering with other percpu caches as well. And where does the 
+rbtree come into that either way? If an observable performance issue 
+actually exists here, I'd like a more detailed breakdown to understand it.
 
--- 
-2.25.1
+Thanks,
+Robin.
 
+> Signed-off-by: Zhang Zekun <zhangzekun11@huawei.com>
+> ---
+>   drivers/iommu/dma-iommu.c | 22 +++++++++++++---------
+>   drivers/iommu/iova.c      | 21 ++++++++++++++-------
+>   include/linux/iova.h      |  7 +++++++
+>   3 files changed, 34 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+> index 43520e7275cc..217b7c70d06c 100644
+> --- a/drivers/iommu/dma-iommu.c
+> +++ b/drivers/iommu/dma-iommu.c
+> @@ -145,7 +145,8 @@ static inline unsigned int fq_ring_add(struct iova_fq *fq)
+>   	return idx;
+>   }
+>   
+> -static void fq_ring_free_locked(struct iommu_dma_cookie *cookie, struct iova_fq *fq)
+> +static void fq_ring_free_locked(struct iommu_dma_cookie *cookie, struct iova_fq *fq,
+> +				int cpu)
+>   {
+>   	u64 counter = atomic64_read(&cookie->fq_flush_finish_cnt);
+>   	unsigned int idx;
+> @@ -158,20 +159,21 @@ static void fq_ring_free_locked(struct iommu_dma_cookie *cookie, struct iova_fq
+>   			break;
+>   
+>   		iommu_put_pages_list(&fq->entries[idx].freelist);
+> -		free_iova_fast(&cookie->iovad,
+> +		free_iova_fast_cpu(&cookie->iovad,
+>   			       fq->entries[idx].iova_pfn,
+> -			       fq->entries[idx].pages);
+> +			       fq->entries[idx].pages, cpu);
+>   
+>   		fq->head = (fq->head + 1) & fq->mod_mask;
+>   	}
+>   }
+>   
+> -static void fq_ring_free(struct iommu_dma_cookie *cookie, struct iova_fq *fq)
+> +static void fq_ring_free(struct iommu_dma_cookie *cookie, struct iova_fq *fq,
+> +			 int cpu)
+>   {
+>   	unsigned long flags;
+>   
+>   	spin_lock_irqsave(&fq->lock, flags);
+> -	fq_ring_free_locked(cookie, fq);
+> +	fq_ring_free_locked(cookie, fq, cpu);
+>   	spin_unlock_irqrestore(&fq->lock, flags);
+>   }
+>   
+> @@ -191,10 +193,11 @@ static void fq_flush_timeout(struct timer_list *t)
+>   	fq_flush_iotlb(cookie);
+>   
+>   	if (cookie->options.qt == IOMMU_DMA_OPTS_SINGLE_QUEUE) {
+> -		fq_ring_free(cookie, cookie->single_fq);
+> +		cpu = smp_processor_id();
+> +		fq_ring_free(cookie, cookie->single_fq, cpu);
+>   	} else {
+>   		for_each_possible_cpu(cpu)
+> -			fq_ring_free(cookie, per_cpu_ptr(cookie->percpu_fq, cpu));
+> +			fq_ring_free(cookie, per_cpu_ptr(cookie->percpu_fq, cpu), cpu);
+>   	}
+>   }
+>   
+> @@ -205,6 +208,7 @@ static void queue_iova(struct iommu_dma_cookie *cookie,
+>   	struct iova_fq *fq;
+>   	unsigned long flags;
+>   	unsigned int idx;
+> +	int cpu = smp_processor_id();
+>   
+>   	/*
+>   	 * Order against the IOMMU driver's pagetable update from unmapping
+> @@ -227,11 +231,11 @@ static void queue_iova(struct iommu_dma_cookie *cookie,
+>   	 * flushed out on another CPU. This makes the fq_full() check below less
+>   	 * likely to be true.
+>   	 */
+> -	fq_ring_free_locked(cookie, fq);
+> +	fq_ring_free_locked(cookie, fq, cpu);
+>   
+>   	if (fq_full(fq)) {
+>   		fq_flush_iotlb(cookie);
+> -		fq_ring_free_locked(cookie, fq);
+> +		fq_ring_free_locked(cookie, fq, cpu);
+>   	}
+>   
+>   	idx = fq_ring_add(fq);
+> diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+> index d59d0ea2fd21..46a2188c263b 100644
+> --- a/drivers/iommu/iova.c
+> +++ b/drivers/iommu/iova.c
+> @@ -20,7 +20,7 @@
+>   
+>   static bool iova_rcache_insert(struct iova_domain *iovad,
+>   			       unsigned long pfn,
+> -			       unsigned long size);
+> +			       unsigned long size, int cpu);
+>   static unsigned long iova_rcache_get(struct iova_domain *iovad,
+>   				     unsigned long size,
+>   				     unsigned long limit_pfn);
+> @@ -423,12 +423,19 @@ EXPORT_SYMBOL_GPL(alloc_iova_fast);
+>   void
+>   free_iova_fast(struct iova_domain *iovad, unsigned long pfn, unsigned long size)
+>   {
+> -	if (iova_rcache_insert(iovad, pfn, size))
+> +	free_iova_fast_cpu(iovad, pfn, size, smp_processor_id());
+> +}
+> +EXPORT_SYMBOL_GPL(free_iova_fast);
+> +
+> +void
+> +free_iova_fast_cpu(struct iova_domain *iovad, unsigned long pfn,
+> +		   unsigned long size, int cpu)
+> +{
+> +	if (iova_rcache_insert(iovad, pfn, size, cpu))
+>   		return;
+>   
+>   	free_iova(iovad, pfn);
+>   }
+> -EXPORT_SYMBOL_GPL(free_iova_fast);
+>   
+>   static void iova_domain_free_rcaches(struct iova_domain *iovad)
+>   {
+> @@ -762,13 +769,13 @@ EXPORT_SYMBOL_GPL(iova_domain_init_rcaches);
+>    */
+>   static bool __iova_rcache_insert(struct iova_domain *iovad,
+>   				 struct iova_rcache *rcache,
+> -				 unsigned long iova_pfn)
+> +				 unsigned long iova_pfn, int cpu)
+>   {
+>   	struct iova_cpu_rcache *cpu_rcache;
+>   	bool can_insert = false;
+>   	unsigned long flags;
+>   
+> -	cpu_rcache = raw_cpu_ptr(rcache->cpu_rcaches);
+> +	cpu_rcache = per_cpu_ptr(rcache->cpu_rcaches, cpu);
+>   	spin_lock_irqsave(&cpu_rcache->lock, flags);
+>   
+>   	if (!iova_magazine_full(cpu_rcache->loaded)) {
+> @@ -799,14 +806,14 @@ static bool __iova_rcache_insert(struct iova_domain *iovad,
+>   }
+>   
+>   static bool iova_rcache_insert(struct iova_domain *iovad, unsigned long pfn,
+> -			       unsigned long size)
+> +			       unsigned long size, int cpu)
+>   {
+>   	unsigned int log_size = order_base_2(size);
+>   
+>   	if (log_size >= IOVA_RANGE_CACHE_MAX_SIZE)
+>   		return false;
+>   
+> -	return __iova_rcache_insert(iovad, &iovad->rcaches[log_size], pfn);
+> +	return __iova_rcache_insert(iovad, &iovad->rcaches[log_size], pfn, cpu);
+>   }
+>   
+>   /*
+> diff --git a/include/linux/iova.h b/include/linux/iova.h
+> index d2c4fd923efa..91e4e3d5bcb3 100644
+> --- a/include/linux/iova.h
+> +++ b/include/linux/iova.h
+> @@ -93,6 +93,8 @@ struct iova *alloc_iova(struct iova_domain *iovad, unsigned long size,
+>   	bool size_aligned);
+>   void free_iova_fast(struct iova_domain *iovad, unsigned long pfn,
+>   		    unsigned long size);
+> +void free_iova_fast_cpu(struct iova_domain *iovad, unsigned long pfn,
+> +			unsigned long size, int cpu);
+>   unsigned long alloc_iova_fast(struct iova_domain *iovad, unsigned long size,
+>   			      unsigned long limit_pfn, bool flush_rcache);
+>   struct iova *reserve_iova(struct iova_domain *iovad, unsigned long pfn_lo,
+> @@ -134,6 +136,11 @@ static inline void free_iova_fast(struct iova_domain *iovad,
+>   {
+>   }
+>   
+> +static inline void free_iova_fast_cpu(struct iova_domain *iovad, unsigned long pfn,
+> +				      unsigned long size, int cpu);
+> +{
+> +}
+> +
+>   static inline unsigned long alloc_iova_fast(struct iova_domain *iovad,
+>   					    unsigned long size,
+>   					    unsigned long limit_pfn,
 
