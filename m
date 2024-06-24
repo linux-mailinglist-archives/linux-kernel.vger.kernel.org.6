@@ -1,110 +1,78 @@
-Return-Path: <linux-kernel+bounces-227820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D247A9156D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:58:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 982829156D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:59:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7067AB23FC7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:58:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D6E61F2469B
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:59:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 503B23A1B5;
-	Mon, 24 Jun 2024 18:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E38919FA9B;
+	Mon, 24 Jun 2024 18:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NEk2i8XH"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="GR1Zx25p"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA982556F
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A692E400;
+	Mon, 24 Jun 2024 18:58:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719255505; cv=none; b=GB8L2lQEWIo9vQE+XwhuEDgeDo7LwNrON3KJLJtK5vYhMPr99tkvrbZNNYpxnSecW1V6q6iSw4LuCTx4xeWlOIczcTwT+ks4uvV0lvTVLQ5xn3xgoT5fulDM7+aNQvz5WZpgM7oYQBsjOFuXAj3f1UiU31iFSgYyWRwSa1S4RmA=
+	t=1719255541; cv=none; b=fvJIvSp7BC4DsSlo+84UA2JZpke7/fLy0YsSEKacWHCdlvHdCjwQMDaxRqFkEiIAuxeCa8W3/CBq5I9hyY0uNG0GhvrREUBhEu28YgJk59ULQiSNwrSvsH9F/zj94bgFP+8JFBMo5Wl0Bkbpf1iTVqNtLfI3rHKRjtJXWjXccB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719255505; c=relaxed/simple;
-	bh=DfhT8mFcn1a2LnOPe6P8pC0Ip5/ghH5Ia7q534z27A4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fecu/kcQ18xoNJB0ugZnMZA1LvMcUc63bsJTgRLEnJlP9LNciG7E1bRHhK76dzSbxIDwgIVbq4L1A3ThMeMna6gGI2bKRZsopVcQNAkEEHDX5mxJF4wQowg1BTdGTRgBJLSFs3lmwnC4GC7xE2LJdB9uX9z4l0iG6HOEzOdkXnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NEk2i8XH; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52ce674da85so1405377e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:58:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719255502; x=1719860302; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=R6eHEi9SDkMR5e8OVKWA2OEJfqCnQ6uOrn8cT6wmAEU=;
-        b=NEk2i8XHqfDNSnDytQwUPYCdJPr8AgSs9Ko1gu0EGAveLSOlVumtUu82kiE+RcL7GG
-         m/CFXbr6/Aak14aU0FtcES7/aEfS9JitVENhQD0UmmACGAnAp25ApHG7+Os6fXADw11W
-         2YQZgUpyEdJXuvMt2oZpT08fEbUYqsm1AErh/iLiZyDGCUZJ/UeJvgA50OGoKAlCxUuY
-         iptylppEq3u5VgAxUNR9AMFpfkaGntOsoysS6gqOwcm9tAS85XHRx7Rit55sXf0jg2Mv
-         aQNuYQZXxlttqW4PDhTyPqIyDrQUkqRtLodFrgdCU7noRAbeOs03ZZ2xex/NY0M7QfX0
-         v6Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719255502; x=1719860302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=R6eHEi9SDkMR5e8OVKWA2OEJfqCnQ6uOrn8cT6wmAEU=;
-        b=EiyofzdvYxyGJwBUfGLZph9WbiMQedR5xx8eOFCWV7UN0HRbRrgc+9P4vR8t1uFd6m
-         ZmV4TchV+icIlD9GC3GU3jB7gF/CThvok55+hQhjSxksDocFCUkOGYfyny47d58IpJbQ
-         jShkhklZXrPTNMmAUsUAFuJLJ/SlTcyuChgvFNe7A4Cw0ilroLxxQVmajeG6TPkiOREM
-         gygWKgQhvLRabBzq7vyH/polGLoeItBhyYCZnLCa2jSr+qk75nZcx7PMbU4whoah1P5u
-         vzmcl7gFZK6S1e8LNneEPKmGbBCsPRzJjpnji2kZaojF3F5521HIRyArCV1vI0/GBjjA
-         2VAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUw7kOYm/b8DglI8p62TMWv9QEGEf6va880IrPqX5dUHIWmWerb3SKVVNRrNGNc5ytP57+b65O3vXRUI3AaghbBTUoloBVCoIxXzpDc
-X-Gm-Message-State: AOJu0YxPw22YSsN5md+Tirag4ahfVL55Hl662JMzxZi/CrYZJRcymh1j
-	NE9j6zy9CH3hVpxsKgZuB3JUeiVr4H8g2GyziT39VAo3DwbqWj+JqWtfTWkEIsBKB0t60GIoXlI
-	FUCB3oCqMKITZ0CtyTVgHXZQR4h0WSsfiFxLz
-X-Google-Smtp-Source: AGHT+IHZyMdLsQ0W8EhH8qJWEWYjdB11FpXA4gznRxXggQHm6CWkxFasr+6EMUBtpjMO8i0fGNvQ63unX8iPSPC2YxI=
-X-Received: by 2002:a19:8c0a:0:b0:52c:842b:c276 with SMTP id
- 2adb3069b0e04-52ce185d1c2mr3618157e87.53.1719255501855; Mon, 24 Jun 2024
- 11:58:21 -0700 (PDT)
+	s=arc-20240116; t=1719255541; c=relaxed/simple;
+	bh=vjAK4BHFcZgLQEnSbH4lyl2FcXXdbm52EvC+Zt7q808=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FTEcaXLG1+GTkA97Bfw/1fUt7T/IjqMQP5p14K91Cs7RuRPxTQIogm3SYf3xRRN3WURICjjth0qGOfprsnZKUMMaTtRVEwUf1GPvXFfu+rHF6N2Z+VSSfoi7owlq0kp79ItlfbVeCRGQG10owqc3C0aW52sMu8xq78pXUJKNcgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=GR1Zx25p; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=K0lyMj3UXzLsvO1X8aghEUe7sBxLcfkkq8Bk5NmS9R0=; b=GR1Zx25pDUYo+GXpfSmZwsELQt
+	AAa5cyhowk4dKjxhY8eSrpEBGFha3acBmMNL7oaLMCytLbSsEdAvJQqdZ3a/GS0FAQmt5SRl+lfyQ
+	FxUHxVoTRnAVk5UIbTS8pD/nISsPXT3JoYQVBOV2TZcKBXepFcsLFK5fzuzmIqLTbmS4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sLott-000sSc-Nk; Mon, 24 Jun 2024 20:58:49 +0200
+Date: Mon, 24 Jun 2024 20:58:49 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: netdev@vger.kernel.org, conor+dt@kernel.org, davem@davemloft.net,
+	devicetree@vger.kernel.org, edumazet@google.com,
+	imx@lists.linux.dev, krzk+dt@kernel.org, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, madalin.bucur@nxp.com,
+	pabeni@redhat.com, richardcochran@gmail.com, robh@kernel.org,
+	sean.anderson@seco.com, yangbo.lu@nxp.com
+Subject: Re: [PATCH 1/1] MAINTAINERS: Change fsl-fman.yaml to fsl,fman.yaml
+Message-ID: <af3c9b4b-e315-4f8b-b76f-f68911645227@lunn.ch>
+References: <20240624144655.801607-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202406241651.963e3e78-oliver.sang@intel.com> <CAJD7tkbqHyNUzQg_Qh+-ZryrKtMzdf5RE-ndT+4iURTqEo3o6A@mail.gmail.com>
- <Znm74wW3xARhR2qN@casper.infradead.org> <CAJD7tkbF9NwKa4q5J0xq1oG6EkTDLz8UcbekSfP+DYfoDSqRhQ@mail.gmail.com>
- <ZnnBVBItTNWZE42u@casper.infradead.org>
-In-Reply-To: <ZnnBVBItTNWZE42u@casper.infradead.org>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 24 Jun 2024 11:57:45 -0700
-Message-ID: <CAJD7tkaC6d_RkhRhMpEeS1zTEtoQYw56J3LLdzD1aM9_qu-3BA@mail.gmail.com>
-Subject: Re: [linux-next:master] [mm] 0fa2857d23: WARNING:at_mm/page_alloc.c:#__alloc_pages_noprof
-To: Matthew Wilcox <willy@infradead.org>
-Cc: kernel test robot <oliver.sang@intel.com>, Usama Arif <usamaarif642@gmail.com>, 
-	oe-lkp@lists.linux.dev, lkp@intel.com, 
-	Linux Memory Management List <linux-mm@kvack.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Nhat Pham <nphamcs@gmail.com>, 
-	David Hildenbrand <david@redhat.com>, "Huang, Ying" <ying.huang@intel.com>, Hugh Dickins <hughd@google.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Shakeel Butt <shakeel.butt@linux.dev>, 
-	Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624144655.801607-1-Frank.Li@nxp.com>
 
-On Mon, Jun 24, 2024 at 11:56=E2=80=AFAM Matthew Wilcox <willy@infradead.or=
-g> wrote:
->
-> On Mon, Jun 24, 2024 at 11:53:30AM -0700, Yosry Ahmed wrote:
-> > After a page is swapped out during reclaim, __remove_mapping() will
-> > call __delete_from_swap_cache() to replace the swap cache entry with a
-> > shadow entry (which is an xa_value).
->
-> Special entries are disjoint from shadow entries.  Shadow entries have
-> the last two bits as 01 or 11 (are congruent to 1 or 3 modulo 4).
-> Special entries have values below 4096 which end in 10 (are congruent
-> to 2 modulo 4).
+On Mon, Jun 24, 2024 at 10:46:55AM -0400, Frank Li wrote:
+> fsl-fman.yaml is typo. "-" should be ",". Fix below warning.
+> 
+> Warning: MAINTAINERS references a file that doesn't exist: Documentation/devicetree/bindings/net/fsl-fman.yaml
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406211320.diuZ3XYk-lkp@intel.com/
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-You are implying that we would no longer have a shadow entry for such
-zero folios, because we will be storing a special entry instead.
-Right?
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-This is the "fundamental" change I am talking about.
+    Andrew
 
