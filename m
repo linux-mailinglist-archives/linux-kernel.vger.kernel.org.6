@@ -1,54 +1,77 @@
-Return-Path: <linux-kernel+bounces-227999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96A82915995
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:06:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A0ED91599A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:08:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503A0282471
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:06:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56C60284B26
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D12F1A0B09;
-	Mon, 24 Jun 2024 22:06:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C3F1A2548;
+	Mon, 24 Jun 2024 22:08:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HvjTQ5rg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b="z1hvrSNs"
+Received: from mx0a-00823401.pphosted.com (mx0a-00823401.pphosted.com [148.163.148.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EE6213C901;
-	Mon, 24 Jun 2024 22:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB971A01B4;
+	Mon, 24 Jun 2024 22:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.148.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719266790; cv=none; b=hatZzgSalZHCtChgURqb6Ee9GKcdUzNfJBllaRRoaZXCyzvRhTekIm9Ur4Uy0mtVQxA4Sqco/BndPvegNx8eZUV+E2t2pRNo6VR5MNVp8oqefvVbZJkBGqA1sQYdJajVpUX88KooxlUHUP4wdlKXC7tOpSFxCI7PW8DNsFQPGPA=
+	t=1719266892; cv=none; b=p4d6F6ZtD0y8As9aMmLUZuQZjSUmxTWOZO8II03DEl7M4MXHcPkJeZy+WJjMZRVrS+SFqcMKYQ6nSF9cp/WXiYIZNsR3nQBpfTn1vgY89gLGRwve85MwqpGWaaJqTnaP7FBtYg/BWfdk/NMHRDL865BDPp87zSKfgetqYKxtc3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719266790; c=relaxed/simple;
-	bh=v5EkkTErtysweJ6YBb/ej7mjjeGRSkbHCB9ia2QeuFc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BzvCMBG5EDWm7BBHiHm9jwpBleHBPvBKhb+5wmv6Eu9GFMBjwVb4CMnIRBpOs9XgBEmWicxGa5VUGeV7vH9iuhA042ZG1WhJ561CoknBZiir6DHgHY43w/9NpVDVU3SajYExuwsJATo6TAlVzgl0yQPrwev5IwXB/UzUJVLeCho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HvjTQ5rg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93567C2BBFC;
-	Mon, 24 Jun 2024 22:06:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719266790;
-	bh=v5EkkTErtysweJ6YBb/ej7mjjeGRSkbHCB9ia2QeuFc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HvjTQ5rgu3zGt9wN2MRPnEvNll8mjcQ6CS1kmgzj5nt9VOwCAl4HVUoQSiy0WsPZf
-	 N+dvkL1GVSMPJCuLXXf0BfueooXspVvUMf3zCUq77PYwkytXL6RTxmuOcMK0kVoNtQ
-	 igxE/jSUPkfUPdK3EDumWTuzhXv088yN8ej/ISKT3/vQc1ZEHcWhEiwc/Ci4U45apT
-	 d4+/FmnxiSXdVe92T9/RYNhA7y5uQdCODpQ66bv5pUbcNqqLFW9EBCa69e3H4V/AwX
-	 R12FM2R2BIoChA2gnOClYF3E3LhMAHgGQclWvn3LcJTOZYQjBrOZWUxU4VJPB4KGXE
-	 2AhqYfkPYRI3A==
-Date: Mon, 24 Jun 2024 19:06:26 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: adrian.hunter@intel.com, irogers@google.com, jolsa@kernel.org,
-	kan.liang@linux.intel.com, namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/8] perf trace: Augment enum arguments with BTF
-Message-ID: <Znnt4sTOx6ANJZPV@x1>
-References: <20240624181345.124764-1-howardchu95@gmail.com>
+	s=arc-20240116; t=1719266892; c=relaxed/simple;
+	bh=e1mlxflYcobsNxnMgqj/AyP0hSinTpvsQU/K4JMmvRY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=sR/fPhjzwnmpBoSjFdei6ConVrei5lEO0epADe/LWBlyuaXH7ZLzHq564Q5sw4IiifLHKvtg43fQPvEHgzxdp9uLUVUU6kYgClKZ48gFEY+RtAiZVo2DUhGu0q7iL8RsPo1MXLfvX3C5XTRnDvoGzon7ggmbLG6CDodwi2VFI2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com; spf=pass smtp.mailfrom=motorola.com; dkim=pass (2048-bit key) header.d=motorola.com header.i=@motorola.com header.b=z1hvrSNs; arc=none smtp.client-ip=148.163.148.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=motorola.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=motorola.com
+Received: from pps.filterd (m0355087.ppops.net [127.0.0.1])
+	by mx0a-00823401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OEu2kd021591;
+	Mon, 24 Jun 2024 22:07:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=motorola.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	DKIM202306; bh=rh6vKXe7UkpTIRLRBOBHrto3kTiRhPZ1UTIBaRKUd9U=; b=z
+	1hvrSNs0b2F/HuX0iLBrIxbIWWtprDdu46KpaHdefI4ZusVDvm/PXMqwzPnCfCZx
+	fQkP4TcYRrTxxl2klotx6hgUfbd4yUsHQsubAydUmsZxe962Po4UZv/O7YPw/So4
+	noyNzNsxSg/NgEwNHsk6tnh1tcxaCA6bZWuxc0Aw/PaSyIh5MOXjBXtPYe28KBmO
+	a+7smItmRoU5IeoG3FD4fP14PvgYeip+b1gJ9sLzLEceAQuRv49XXyGE/DXgoNbT
+	/y3Pi5DhBpq6humP9+lKCyciEPN1bsP4DeHAv4OT4Umow3JxcbseilC8N18+tt4y
+	zeKUiYgU9OajVT2/ETFdg==
+Received: from va32lpfpp02.lenovo.com ([104.232.228.22])
+	by mx0a-00823401.pphosted.com (PPS) with ESMTPS id 3yxbfkaye0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 22:07:38 +0000 (GMT)
+Received: from ilclmmrp02.lenovo.com (ilclmmrp02.mot.com [100.65.83.26])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by va32lpfpp02.lenovo.com (Postfix) with ESMTPS id 4W7MX953C0z53xyW;
+	Mon, 24 Jun 2024 22:07:37 +0000 (UTC)
+Received: from ilclasset02 (ilclasset02.mot.com [100.64.49.13])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: mbland)
+	by ilclmmrp02.lenovo.com (Postfix) with ESMTPSA id 4W7MX93R4jz3p6jp;
+	Mon, 24 Jun 2024 22:07:37 +0000 (UTC)
+Date: Mon, 24 Jun 2024 17:07:36 -0500
+From: Maxwell Bland <mbland@motorola.com>
+To: linux-mm@kvack.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Maxwell Bland <mbland@motorola.com>,
+        Alexandre Ghiti <alexghiti@rivosinc.com>,
+        linux-arm-kernel@lists.infradead.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/6] ptdump: add intermediate directory support
+Message-ID: <2bcb3htsjhepxdybpw2bwot2jnuezl3p5mnj5rhjwgitlsufe7@xzhkyntridw3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,78 +80,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240624181345.124764-1-howardchu95@gmail.com>
+X-Proofpoint-ORIG-GUID: raIFYTMSO8rW7zddTOUtcmSxsmAxGQ34
+X-Proofpoint-GUID: raIFYTMSO8rW7zddTOUtcmSxsmAxGQ34
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_19,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ priorityscore=1501 suspectscore=0 bulkscore=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 clxscore=1015 spamscore=0
+ malwarescore=0 phishscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406240176
 
-On Tue, Jun 25, 2024 at 02:13:37AM +0800, Howard Chu wrote:
-> In this patch, BTF is used to turn enum value to the corresponding
-> enum variable name. There is only one system call that uses enum value
-> as its argument, that is `landlock_add_rule()`.
-> 
-> Enum arguments of non-syscall tracepoints can also be augmented, for
-> instance timer:hrtimer_start and timer:hrtimer_init's 'mode' argument.
-> 
-> Changes in v3:
+Makes several improvements to (arm64) ptdump debugging, including:
 
-Did a quick test, from a quick look you did the adjustments we agreed
-(if (val == 0 && !trace->show_zeros && !arg->show_zero && arg->strtoul
-!= STUL_BTF_TYPE), etc), thanks!
+- support note_page on intermediate table entries
+- (arm64) print intermediate entries and add an array for their specific
+  attributes
+- (arm64) bitfield definitions and printing for hierarchical access
+  control bits
+- (arm64) adjust the entry ranges to remove the implicit exclusive upper
+  bound
+- (arm64) indent page table by level while maintaining attribute
+  alignment
+- (arm64) improve documentation clarity, detail, and precision
 
-And that is the way for collaboration we go on talking on the mailing
-list and sometimes writing code, making it available for review and
-adopting what we deem best at that point, rinse repeat.
+Thank you again to the maintainers for their review of this patch.
 
-Now I think it would be great if someone like Namhyung or Ian could try
-this last patch.
+A comparison of the differences in output is provided here:
+github.com/maxwell-bland/linux-patch-data/tree/main/ptdump-non-leaf
 
-I have to comb thru it but, again, from a quick look and test, it seems
-great and probably ready for merging.
+New in v5:
+- Clean up and fix ptdump.c calls to reference right directory level
+- Change "pxd" bit specifier for non-leaf directories to tbl_bits,
+  introduce a proper delineation between blk_bits and tbl_bits,
+  where table entries will no longer print attributes that are
+  specific to blocks
+- Because we now support printing details on table descriptors, add
+  encodings for the ARMv8 APTable bits
+- Make attributes uniformly capitalized, make their explanations more
+  precise
+- Fix typos
 
-Thanks a lot!
+v4:
+https://lore.kernel.org/all/aw675dhrbplkitj3szjut2vyidsxokogkjj3vi76wl2x4wybtg@5rhk5ca5zpmv/
+- Inclusive upper bounds on range specifications
+- Splits commit into multiple smaller commits and separates cosmetic,
+  documentation, and logic changes
+- Updates documentation more sensibly
+- Fixes bug in size computation and handles ULONG_MAX bound overflow
 
-- Arnaldo
- 
-> - Add trace__btf_scnprintf() helper function
-> - Remove is_enum memeber in struct syscall_arg_fmt, replace it with 
-> btf_is_enum()
-> - Add syscall_arg_fmt__cache_btf_enum() to cache btf_type only
-> - Resolve NO_LIBBPF=1 build error
-> - Skip BTF augmentation test if landlock_add_rule syscall and LIBBPF are not
-> available
-> - Rename landlock.c workload, add a comment to landlock.c workload
-> - Change the way of skipping 'enum ' prefix
-> - Add type_name member to struct syscall_arg
-> 
-> Changes in v2:
-> 
-> - Add trace_btf_enum regression test, and landlock workload
-> 
-> Arnaldo Carvalho de Melo (2):
->   perf trace: Introduce trace__btf_scnprintf()
->   perf trace: Remove arg_fmt->is_enum, we can get that from the BTF type
-> 
-> Howard Chu (6):
->   perf trace: Fix iteration of syscall ids in syscalltbl->entries
->   perf trace: BTF-based enum pretty printing for syscall args
->   perf trace: Augment non-syscall tracepoints with enum arguments with
->     BTF
->   perf trace: Filter enum arguments with enum names
->   perf test: Add landlock workload
->   perf test trace_btf_enum: Add regression test for the BTF augmentation
->     of enums in 'perf trace'
-> 
->  tools/perf/builtin-trace.c               | 229 ++++++++++++++++++++---
->  tools/perf/tests/builtin-test.c          |   1 +
->  tools/perf/tests/shell/trace_btf_enum.sh |  61 ++++++
->  tools/perf/tests/tests.h                 |   1 +
->  tools/perf/tests/workloads/Build         |   1 +
->  tools/perf/tests/workloads/landlock.c    |  39 ++++
->  tools/perf/trace/beauty/beauty.h         |   1 +
->  tools/perf/util/syscalltbl.c             |   7 +
->  tools/perf/util/syscalltbl.h             |   1 +
->  9 files changed, 317 insertions(+), 24 deletions(-)
->  create mode 100755 tools/perf/tests/shell/trace_btf_enum.sh
->  create mode 100644 tools/perf/tests/workloads/landlock.c
-> 
-> -- 
-> 2.45.2
+v3:
+https://lore.kernel.org/all/fik5ys53dbkpkl22o4s7sw7cxi6dqjcpm2f3kno5tyms73jm5y@buo4jsktsnrt/
+- Added tabulation to delineate entries
+- Fixed formatting issues with mailer and rebased to mm/linus
+
+v2:
+https://lore.kernel.org/r/20240423142307.495726312-1-mbland@motorola.com
+- Rebased onto linux-next/akpm (the incorrect branch)
+
+v1:
+https://lore.kernel.org/all/20240423121820.874441838-1-mbland@motorola.com/
+
+Maxwell Bland (6):
+  mm: add ARCH_SUPPORTS_NON_LEAF_PTDUMP
+  arm64: add APTable encoding to pagetable defs
+  arm64: table descriptor ptdump support
+  arm64: indent ptdump by level, aligning attributes
+  arm64: exclusive upper bound for ptdump entries
+  arm64: add attrs and format to ptdump document
+
+ Documentation/arch/arm64/ptdump.rst    | 131 ++++++++++-----------
+ arch/arm64/Kconfig                     |   1 +
+ arch/arm64/include/asm/pgtable-hwdef.h |   6 +
+ arch/arm64/mm/ptdump.c                 | 150 +++++++++++++++++++------
+ mm/Kconfig.debug                       |   8 ++
+ mm/ptdump.c                            |  26 +++--
+ 6 files changed, 214 insertions(+), 108 deletions(-)
+
+-- 
+2.43.0
+
+
 
