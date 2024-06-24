@@ -1,126 +1,258 @@
-Return-Path: <linux-kernel+bounces-227580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FF9691537F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:23:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312C5915380
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:23:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9D46B26236
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:23:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5421D1C230AE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 16:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97CD619DF92;
-	Mon, 24 Jun 2024 16:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1428319DFB3;
+	Mon, 24 Jun 2024 16:22:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eM1bwwsT"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="yiJ7plHk"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2052.outbound.protection.outlook.com [40.107.92.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394A119DF63;
-	Mon, 24 Jun 2024 16:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719246142; cv=none; b=gqi7fvyXdJfLUYsMl7xl3DI0qVyVtazZ4qix4isDZ7CkIXw9mWC64f0bVHM/QLTmrqB0mzaC08dyJePjDlo+tUxu7jHX0Nx2ZJOPmKCSv9inCI9iwbP4Vt1c9Gw10iJko02O/XmAiGugPqirON8ez+Fr+QtOvLCB7MsTDwGOfCg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E003319DF61;
+	Mon, 24 Jun 2024 16:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719246142; cv=fail; b=iy7qPoPakhCTjZtwVZcdAq++7yL25tEy12tLymOlE5UouS2FaCQgWdnfEZu5C1Rbvxd4pkegoRP3koLatpk/XvJD3ci/dOSAksnSmEZeQJeFrgIJmBUDZYdMW8ngAt4odh+sZbD9ePwbT4K7fyfRiqKyhLZ6Wnnckh/t7v/Wt2Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719246142; c=relaxed/simple;
-	bh=F4+Y3cxc/O7I9mHF0Tndy0UmovZrdLKD0A9V49BygtI=;
-	h=From:Date:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=nXuhygwfx39l/+x6EXaXsu9NiDpgW/cMVlwcgNSdCs0BLg2UTUhyjYOTdHJpgt5S7SmYu7VDib7+3qkZOHxmnDaeWqrt99RCmo2wEyTnzZjuNM2gmnMvfASUoSbDkgVghPeLKuek2q2p2jJNAEqxKWyWwUHjOAk6qNIN8ywPV5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eM1bwwsT; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719246142; x=1750782142;
-  h=from:date:to:cc:subject:message-id:mime-version;
-  bh=F4+Y3cxc/O7I9mHF0Tndy0UmovZrdLKD0A9V49BygtI=;
-  b=eM1bwwsTyLz961F2i2fWFMs5Hb7hpZ9n4YTirz3ZQh6RIYb0fU3ksSum
-   yDbVs2hm0ICAIhyADK8r5BmuVdz0S4NxRlzhbMBijqMfkOkJFyNgvw/Qq
-   5j5romH4MvkBS2vNpqXHeCT5CoFbdOyxemb3E4LbiRoDkt9f6NZ8WofOw
-   8ewXKJikSv0OWIpF6fUgMZzkarYbxq/JWfeOuLZ72GppjLMOOccpuWfxf
-   t6SgnsErOJxOT5oyUTfG93coGsOLtOYQJr+9CRBwIZya7+R8sESG4MY99
-   I4eNumFEid/GhJVURymVoxQ10/glSZaUjry0GY2UQ6cvP9ig9RzPe6EEs
-   Q==;
-X-CSE-ConnectionGUID: JA7CPWkbRBaIRtwIdsSpUg==
-X-CSE-MsgGUID: psOO9gwFS72skdqjCSkJLQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="27637272"
-X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
-   d="scan'208";a="27637272"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 09:22:21 -0700
-X-CSE-ConnectionGUID: BYOU9KmYQaW5pzZiTrNtkw==
-X-CSE-MsgGUID: 0uzXkmujTjyvFcGh+4A4Pg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,262,1712646000"; 
-   d="scan'208";a="47721812"
-Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.61])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 09:22:14 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 24 Jun 2024 19:22:10 +0300 (EEST)
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-    Sebastian Reichel <sre@kernel.org>, 
-    Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-    Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-    Hans de Goede <hdegoede@redhat.com>, 
-    Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
-    Konrad Dybcio <konrad.dybcio@linaro.org>, linux-pm@vger.kernel.org, 
-    devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-    platform-driver-x86@vger.kernel.org, linux-usb@vger.kernel.org, 
-    linux-arm-msm@vger.kernel.org, Nikita Travkin <nikita@trvn.ru>, 
-    Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: branch between pdx86 lenovo c630 branch, power/supply and USB
-Message-ID: <0986fbac-7fba-56ea-cabb-c040ae12a795@linux.intel.com>
+	bh=OpUTy/sWZmTSXm3fxKBq5Wdz3m5upUvCphh1YVtDhWc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kDvotpUZPaT7AyWsA0HUtUgd1lJvFWQUXd60+5xcE/JchC46rxTVt+VApK8pmRL3Le/Fq1s5eJjfykeRYH5UDGpMKu35Xi27mUP/TU7GASmA3wRUTwdFzSoDceoSO6Q8dFWUdjMS8drjtyhzRa5XX98p0AtzLww3a73aPBXbGcU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=yiJ7plHk; arc=fail smtp.client-ip=40.107.92.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HVqGlluhvqa0T+Z1UUiTEOIr/N/8clOmn0+GlzC/4fP+ADUc6PjjMl6XEndU/J45KVZOLoUOzz6HC3Ytckw11AGAopuWxK/nOdSq5WGGyeu5Sv7VVoWV9n2Dr4CtKotRfbaCdcJToiUvNvkxMTz18WxajXVQmn0sAJ2Nii7N5x4oKEDPX8k7u85I627U2pDH/hHgL/+9qQAUspA5+WamxyJ+pUfIMW3wSHV2GDbVeGSNBC/oJj60UYbibfXThk/8ibxQd8yl/gzgrE8IDEbhapf9psUvMolqvneHa2Wpc0TxvlOZfJxwj/z3c+UByUia7oob1imw8By9i1Hfuuy45g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iHMe7rvPqpZIXMLxD+JVWGbNXfZ+GtmfB1UBAVZaVCk=;
+ b=GsOfnbNitPMCC4X6OWNGc/YduZpDRaV7ka6+OBuVPPZTNlFECBU3Qt82LoJZnaMgwoAym3MfGKXI4pBLz7mD1ReUF+5Tda3aA2/rqYilGaPq1GJMTeeMWH9bNP6T6+OKUNri68fHM4H4PRhz2zHJ72SYmZ4h2RXH/DoKVsKyMSqJ9iEf9z6ddpIziCfGYgI5uZlQEFGy/Z2kzgHnz4oI8g7dlAeRL+sLX1oT16BIjq7Zt0E2nc1G+z3XKmq/geIVCKpbQ9Sa50Z/LqVTdTYKtRNzxYkCMqEHf4MvVHXWi6Fk+Pddg0bKiFWWgDovCPUKA/i5J18kl6dEk4VylTRQNQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iHMe7rvPqpZIXMLxD+JVWGbNXfZ+GtmfB1UBAVZaVCk=;
+ b=yiJ7plHkkPomCtH1/heO2/Rf4C4+ARjswiQjXQK93NRPw8/5rDCGmqjSfRyS2pUEax97pMjkpTYIjG80R61iVfJuc174D4KZbukHcuZYLLOAlWIJm8P8GkxDovzhUvkojL8G6KCQaX3X79pWR1+jPt+wiWpHpFch16V9MTu8BpQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from BL3PR12MB6380.namprd12.prod.outlook.com (2603:10b6:208:38d::18)
+ by DM3PR12MB9351.namprd12.prod.outlook.com (2603:10b6:8:1ac::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.26; Mon, 24 Jun
+ 2024 16:22:15 +0000
+Received: from BL3PR12MB6380.namprd12.prod.outlook.com
+ ([fe80::66cf:5409:24d1:532b]) by BL3PR12MB6380.namprd12.prod.outlook.com
+ ([fe80::66cf:5409:24d1:532b%7]) with mapi id 15.20.7698.025; Mon, 24 Jun 2024
+ 16:22:15 +0000
+Message-ID: <a9dfbb38-4108-47cf-8305-fa9b4eb9a87f@amd.com>
+Date: Mon, 24 Jun 2024 11:22:11 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 8/9] PCI/AER: Export pci_aer_unmask_internal_errors()
+Content-Language: en-US
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: dan.j.williams@intel.com, ira.weiny@intel.com, dave@stgolabs.net,
+ dave.jiang@intel.com, alison.schofield@intel.com, ming4.li@intel.com,
+ vishal.l.verma@intel.com, jim.harris@samsung.com,
+ ilpo.jarvinen@linux.intel.com, ardb@kernel.org,
+ sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yazen.Ghannam@amd.com, Robert.Richter@amd.com,
+ Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org
+References: <20240617200411.1426554-1-terry.bowman@amd.com>
+ <20240617200411.1426554-9-terry.bowman@amd.com>
+ <20240620141142.00005cf0@Huawei.com>
+From: Terry Bowman <Terry.Bowman@amd.com>
+In-Reply-To: <20240620141142.00005cf0@Huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN7PR04CA0001.namprd04.prod.outlook.com
+ (2603:10b6:806:f2::6) To BL3PR12MB6380.namprd12.prod.outlook.com
+ (2603:10b6:208:38d::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL3PR12MB6380:EE_|DM3PR12MB9351:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67df2569-dbfe-4bd8-d343-08dc9469cf5e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|7416011|376011|366013|1800799021;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Wkw0dHJsWGE0Y0dieDBhM3docVpvVUc4OTJaVGRxVXRTV1pBL1NCR2pKb2d6?=
+ =?utf-8?B?UDZNZGZZZkRZd2dEM3BldUpwemlhUXkrWlh4WlpKUEFNVkRjNlJmVklqcGM4?=
+ =?utf-8?B?bVlGajFVZG5JZTR6eUZ6THd1UlRQWHcxTWFzaWVLVHhZVzFWV0FrTzBpYVJx?=
+ =?utf-8?B?RU5QRmVFUktIRkxjZFdMNVhLMmwvS2tkeHkzT2ZlNC9qcEY5VTloakkrN1BF?=
+ =?utf-8?B?QUxQVUErcVJlUUlpaGpqS25lOHR2MGpad2RhaS9SMi9ZR3pvajBEVzNzajR3?=
+ =?utf-8?B?ZW1KMklYRllFQ1gvR0RYU0YzZldYRWptbTM4TEhraG1GN1dYZHY0ZjZEd3E3?=
+ =?utf-8?B?bC9YT2poQXBCWGxXamxUalV3WFlLV2tOWmJGT2EyazFKUXVXcDR2ajZ3d0Zt?=
+ =?utf-8?B?bG4vQmxnZHJrelA0UnExSnRYdjF6TnNEM2FkeThKQkhTZ0YyNHVlaXFGaHM1?=
+ =?utf-8?B?NGZTcFdTVDNmWHE5VHRsMmw0UDkvMHJ6MVY0cm96Z3lXTDFQTjZMY3hIcTgw?=
+ =?utf-8?B?dDFzNXJ2U2ZzcDRBNERhVDU0cXYyWVd3ZWNmYkJiN3o5VHZqYWZMaDlvWnJY?=
+ =?utf-8?B?Z2NZNzdCMjRQa1JTOXd2Qk9JY3d3U1ZiTTQvVGFKdmtRY2lQcFgwenRoK29S?=
+ =?utf-8?B?WDVYL3F4TVRlTTluRVpBZWpzWUlqVWFYaHFWZWs2dHJqc3Q2UC9GeDhHajhR?=
+ =?utf-8?B?MzFLU1lUQUJUQzlQc3pzQ2hoSWlFWnNEWHM3REpRMkhxaTRUcWtFWFF4RW5m?=
+ =?utf-8?B?ZXhtUWdLZVJEN2pyR1prYy9maHFnWVNIaEtZSnJ6VVRDUGdvdFhSUk1SaDVy?=
+ =?utf-8?B?QkdrNnJKYVJmZEtxNDRjMFZkS0daRXJza2lndGJzWUFBRlc3YVFidEVaRkM1?=
+ =?utf-8?B?cVpXQ3FxQ0NKRk1rV01IbGtMWkxjYitHYXZQeTZIQmxoUGRTNUZxYUZUeElq?=
+ =?utf-8?B?aXltdWxyNXVsNFp5elJjdTFTSHk0RXdsamNabDR0MnNPRnN0bnRNR3ZRQmlp?=
+ =?utf-8?B?QmZXSHErdGlSbldmRzhZMWt1cDZBZk9xd2Rnb29va1lMSjhEbHI4UGh4bUFT?=
+ =?utf-8?B?NG5RcjljVmlNM1ZtbjhaS1U5Q0gyZllNYzZLNzZBMWcvUkFCYXVwelVvSEFn?=
+ =?utf-8?B?ZVA4Wk53TC9FQmJISlBGS05GalBQSGlrVXNYTVBGMlcxRFUvVW84bjlMUzZh?=
+ =?utf-8?B?NjEreVhuaE1CdkFCaitpQzdHOWFLbnhQV3lYL3B4MFFsTDJ1YlY1RmFRRHd2?=
+ =?utf-8?B?aVBnKzBOY1Yvb2RnZE9jbVFFcktpdWFRdmlGemxrRzJiV25rbVZwS05VaWE1?=
+ =?utf-8?B?UDNZbEU0NVpEb20rczgwZ1VGOVh4VHZlSjVoNllxbnhkTE45NkJLK0s5MW5u?=
+ =?utf-8?B?c3BndDl1NllYcnFOTWFUNXVSNGZRZllmZjg0dS90eVVXc1JRYmYreTF4Q2VQ?=
+ =?utf-8?B?aGlrWkpDZEU2VXYwNFNnU1ZUT3FNdnkxL0V4OW1pTUhSUVdaOTNsVFFXcTBs?=
+ =?utf-8?B?RE4vSUhpOGVtd0hyamJsekpIemlscC9KeGJqUUxlVFptY0l5T0FIazROak1F?=
+ =?utf-8?B?S1B3TnRnYzdZeW1lVGpKRlNQQlI4akQwbUNrWDdwMGdrSmhXWlpKOXRuRXA1?=
+ =?utf-8?B?TTJyN0Z3OEh5Z3ZNeTUvY01lSU5uWWVRaGNjQzhDY1QrNUFBb1BNTEdRQzBi?=
+ =?utf-8?B?MktHS0pPeUN5ckRRSmlmSSt1bDVnc2o2TFQ5TEdCQmZzKzBBeStQYUg4ZFls?=
+ =?utf-8?Q?H0wdvDJRquTgXcSEyFer4imYWiZfzcPPs06CNny?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL3PR12MB6380.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(7416011)(376011)(366013)(1800799021);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?WFhxSHZuZXBCT21FUGhKbXlGM3VTMFFnOFVGRi9sMWhJMmhFc0dKVng3dVN4?=
+ =?utf-8?B?M3lPWC9ySzg1dkFMc0xyclNuU1pEd3Vib0s4dHBYazNGRWxuV2x1WHM3eG1z?=
+ =?utf-8?B?K0FhZjBOV3V5NTlQV20xaWlHRENZTk9aV1RRMGtobU4xeTF6R25hQ1R3Rnp2?=
+ =?utf-8?B?b2tBVlY0REFRSzhOWGR2eDcydzgrNi9JSTJrTXBWMzZRb0R6TTFkU1dKNitM?=
+ =?utf-8?B?RFF2R2ltYzNYQXlqcTgyK1YwL0kxY0FtY2NaeFp6YnpMb3FzU1g3UWV4R25j?=
+ =?utf-8?B?K1c1MmhwcG85VEFqYmoyNXNRUEJ2MktSN0pVdXJKSFY4YTJhOElsWmljZnNq?=
+ =?utf-8?B?U3JQYmxMQ2wwcDI1T0g0dlJ3RHBBcURZSk5WTkd1MWpYdG1SYTd3VWJienZu?=
+ =?utf-8?B?eEkwYU9GRC9ud3dxZTg3U1dBZTFwc0lzaDNBenF3UUloZk5oaExSTC93SFJ6?=
+ =?utf-8?B?bE4wdU4xdnR2TURySzJJNkxONDliVzZMbGxRbnZNeDF4ZjZhbHVscE9KOWl3?=
+ =?utf-8?B?N1lIV1liaXJadEUyTnhmV0tJNzRydTYwRitORGFDRDNqbDhRS3BabU4raFZG?=
+ =?utf-8?B?cWdvc2RuVmFGMkZkVFR0YXNTQ05QSDc1RytjR2hCRXhseDRrSzNUb1UxS2JX?=
+ =?utf-8?B?M09XRkpRdXZocyt0bjNEeThIUzA4bXJkWFlSK1ZoWEVFRmZxcnVKT25hQ0N3?=
+ =?utf-8?B?ZHEvRDNxVElpcGdDa1ZBNzlUbzdMSUwxZWhxZG4rd3kycXoyUTVtai9IL0g5?=
+ =?utf-8?B?SUtXUDI2VFlhRVEvZ2tMc3o1U3RqZGlGYXJyK2xUaG1pNHlSVllZbktseG5G?=
+ =?utf-8?B?WlJ3b2REQ2NqUDZsSllRS2ozYVJud1VSdFdDYWZUMjRhbkllQTVUbUljZmo1?=
+ =?utf-8?B?RzNPVENPeWZTM3JEWWxCb3hWQk8za2h4WHliaGp6b2VWVVNZL0xMNFkyK2hE?=
+ =?utf-8?B?Zk93TTlvdVkzcjVIaWlhdGVpSk5mdHhaNVMxRGJhaWpBZnJ1czBqRjU1R0JM?=
+ =?utf-8?B?bkMwR281ZWxIMDBHaEVYdktQL0NPNG9NWHQ2TU1RMEhYUi9tcG55UkVNR0tM?=
+ =?utf-8?B?VHA2R1I2d3hPWHFOY1RLWmNPOXduRm9Rck96cEpzK2k3VnhIYjB5TWdmbkNS?=
+ =?utf-8?B?dXpYWmpxRlZzVWhjSTYxdGdobFY5ZWJnTERrQmk2dHNDeE5ZKzVPYzdxeDM1?=
+ =?utf-8?B?OEdXbyt0dlg5WFhyZFJxV2kvT0ZzWldNR3M5T2RRN2xGMHBxKy93OXNXTUtI?=
+ =?utf-8?B?VTh4RDRqOG5oT2huL1J4a3JCdHBFdzNPUkUzanVZZVRHcU9TeDB6a3ZsNWhN?=
+ =?utf-8?B?b2ZNYlhFTVZpbTgxbFdXNE4rSEk5WGdSbEk5RUVCZ0Z5QnVkYnpvNTVrbUpt?=
+ =?utf-8?B?dkpjS2poTzlMNjNQYkNqcDNMUmlhTHpDUXRIa0VCYllzalQzbGpwRVAzMVUr?=
+ =?utf-8?B?elg3ay80MUhPQ05iOEk0dGZLUUh0YjVobi9aaFFCT2ZDbFo3ZmxLK2JTQlVM?=
+ =?utf-8?B?M0Q5cS8zbG84ZWd6dnpRYVRSdmhMc2I1VEZqZkt1WUgrSks5L3lwRDd2ZW1v?=
+ =?utf-8?B?elFydkh5SnpYWFZXazJCeHVSQzllamRNbzZ0NDZTMVJkOTFZeEJlNllieWdj?=
+ =?utf-8?B?M2d6MGFoUXFDUWxJdExEejdXcDlyc3N6VUo3ektPUWJwVXYrVTdid2FDdWRB?=
+ =?utf-8?B?cGQrMnFCZDloejJmK0N2ODcvaHUxZXBUNmxWR05UeHJjbFBsSnFCTXNEaUxW?=
+ =?utf-8?B?akNYdEc4YVRWREdUc0hZcWNYcS9JSVd3ZjIxaGorL25pbk1kOG0xd2E5TUFI?=
+ =?utf-8?B?dWNKSUdIUHQ3QjNnblgvZS93akgvc1JGaXZtTVNxSWpjSmloMlBvWDNOZ3di?=
+ =?utf-8?B?UG9zKzF3ZVZEd3ZmYWs3bnJNNlJaSTZPbnlZdktFRkdmVzdGVXJjWTdtV1Ex?=
+ =?utf-8?B?aVc1eXZ3KzRGdVdEajVoQll4alJTb2VuV0QrZFNnZkJVVXZUTzQrUWNNcDcv?=
+ =?utf-8?B?aWRqWXJVaTBoYnNiOUd3VFErdlBWMFpYaEREVEREODlqYURKcjRwVnViR1E1?=
+ =?utf-8?B?RDBvcDhhTVhJemloTGR5eVQvV0VCTnhUZTJQT1pqOU0rNDBBaXkvU2hVWXYv?=
+ =?utf-8?Q?2G5+CCgdbpt7/olsaflmuFf7O?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67df2569-dbfe-4bd8-d343-08dc9469cf5e
+X-MS-Exchange-CrossTenant-AuthSource: BL3PR12MB6380.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Jun 2024 16:22:15.2561
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: W7E9IXvy9u37dFsYUIChNOx4wLZTopD2Sp46IMRVCJ7tzYtoic7sWFmN+SJnyqJdFVNQ2vyZDSiAVcnXt6fAFw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB9351
 
-Hi,
+Hi Jonathan,
 
-This is v2 of the lenovo c630 IB branch with the build fix for non-ARM64 
-platforms (built on top of the commits in the previous IB PR).
+I added a response inline below.
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+On 6/20/24 08:11, Jonathan Cameron wrote:
+> On Mon, 17 Jun 2024 15:04:10 -0500
+> Terry Bowman <terry.bowman@amd.com> wrote:
+> 
+>> AER correctable internal errors (CIE) and AER uncorrectable internal
+>> errors (UIE) are disabled through the AER mask register by default.[1]
+>>
+>> CXL PCIe ports use the CIE/UIE to report RAS errors and as a result
+>> need CIE/UIE enabled.[2]
+>>
+>> Change pci_aer_unmask_internal_errors() function to be exported for
+>> the CXL driver and other drivers to use.
+> 
+> I've perhaps forgotten the end conclusion, but I thought there was
+> a request to just try enabling this in general and mask it out only
+> for known broken devices?
+> 
+> Admittedly that's a more daring path, so maybe I hallucinated it!
+> 
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+I remember there was discussion. A quick search for PCI_ERR_COR_INTERNAL and 
+PCI_ERR_UNC_INTERNAL doesn't find any default enablement. 
 
-are available in the Git repository at:
+Regards,
+Terry 
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git tags/platform-drivers-x86-ib-lenovo-c630-v6.11-2
-
-for you to fetch changes up to 13bbe1c83bc401c2538c758228d27b4042b08341:
-
-  platform/arm64: build drivers even on non-ARM64 platforms (2024-06-24 18:22:15 +0300)
-
-----------------------------------------------------------------
-Immutable branch between pdx86 lenovo c630 branch, power/supply and USB
-subsystems due for the v6.11 merge window.
-
-platform-drivers-x86-ib-lenovo-c630-v6.11-2:
-  v6.10-rc1 + platform-drivers-x86-lenovo-c630
-for merging into the power/supply and USB subsystems for v6.11.
-
-----------------------------------------------------------------
-Bjorn Andersson (1):
-      dt-bindings: platform: Add Lenovo Yoga C630 EC
-
-Dmitry Baryshkov (2):
-      platform: arm64: add Lenovo Yoga C630 WOS EC driver
-      platform/arm64: build drivers even on non-ARM64 platforms
-
- .../bindings/platform/lenovo,yoga-c630-ec.yaml     |  83 ++++++
- drivers/platform/Makefile                          |   2 +-
- drivers/platform/arm64/Kconfig                     |  14 +
- drivers/platform/arm64/Makefile                    |   1 +
- drivers/platform/arm64/lenovo-yoga-c630.c          | 291 +++++++++++++++++++++
- include/linux/platform_data/lenovo-yoga-c630.h     |  44 ++++
- 6 files changed, 434 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/platform/lenovo,yoga-c630-ec.yaml
- create mode 100644 drivers/platform/arm64/lenovo-yoga-c630.c
- create mode 100644 include/linux/platform_data/lenovo-yoga-c630.h
+>>
+>> [1] PCI6.0 - 7.8.4.3 Uncorrectable
+>> [2] CXL3.1 - 12.2.2 CXL Root Ports, Downstream Switch Ports, and Upstream
+>>              Switch Ports
+>>
+>> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
+>> Cc: Bjorn Helgaas <bhelgaas@google.com>
+>> Cc: linux-pci@vger.kernel.org
+>> ---
+>>  drivers/pci/pcie/aer.c | 3 ++-
+>>  include/linux/aer.h    | 6 ++++++
+>>  2 files changed, 8 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+>> index 4dc03cb9aff0..d7a1982f0c50 100644
+>> --- a/drivers/pci/pcie/aer.c
+>> +++ b/drivers/pci/pcie/aer.c
+>> @@ -951,7 +951,7 @@ static bool find_source_device(struct pci_dev *parent,
+>>   * Note: AER must be enabled and supported by the device which must be
+>>   * checked in advance, e.g. with pcie_aer_is_native().
+>>   */
+>> -static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+>> +void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+>>  {
+>>  	int aer = dev->aer_cap;
+>>  	u32 mask;
+>> @@ -964,6 +964,7 @@ static void pci_aer_unmask_internal_errors(struct pci_dev *dev)
+>>  	mask &= ~PCI_ERR_COR_INTERNAL;
+>>  	pci_write_config_dword(dev, aer + PCI_ERR_COR_MASK, mask);
+>>  }
+>> +EXPORT_SYMBOL_GPL(pci_aer_unmask_internal_errors);
+>>  
+>>  static bool is_cxl_mem_dev(struct pci_dev *dev)
+>>  {
+>> diff --git a/include/linux/aer.h b/include/linux/aer.h
+>> index 4b97f38f3fcf..a4fd25ea0280 100644
+>> --- a/include/linux/aer.h
+>> +++ b/include/linux/aer.h
+>> @@ -50,6 +50,12 @@ static inline int pci_aer_clear_nonfatal_status(struct pci_dev *dev)
+>>  static inline int pcie_aer_is_native(struct pci_dev *dev) { return 0; }
+>>  #endif
+>>  
+>> +#ifdef CONFIG_PCIEAER_CXL
+>> +void pci_aer_unmask_internal_errors(struct pci_dev *dev);
+>> +#else
+>> +static inline void pci_aer_unmask_internal_errors(struct pci_dev *dev) { }
+>> +#endif
+>> +
+>>  void pci_print_aer(struct pci_dev *dev, int aer_severity,
+>>  		    struct aer_capability_regs *aer);
+>>  int cper_severity_to_aer(int cper_severity);
+> 
 
