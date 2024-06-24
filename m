@@ -1,300 +1,192 @@
-Return-Path: <linux-kernel+bounces-226610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19CB9140E9
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:06:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14AFB9140F3
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49831282D59
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:06:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36E731C21537
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 04:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41D848BE8;
-	Mon, 24 Jun 2024 04:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42708EAF6;
+	Mon, 24 Jun 2024 04:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZAUaXmh0"
-Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="KrD5HtQJ"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09EB376;
-	Mon, 24 Jun 2024 04:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D436FD0;
+	Mon, 24 Jun 2024 04:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719201960; cv=none; b=D35N15c8//2mNcFtAWRDA3lujmDbe/qVyuzTz/M0GsRCTLsORYXYCWOE44CpVEqJjU/asO6c8IaxtZkvPlh7qnvFoyKgAUpwizNWRI4CflMX0194vdt/9iY4yQ2UXObP/i3fjH+3qcus2Vj1DDAK48bOEJlRMy3Jz3MIYBdRixU=
+	t=1719202208; cv=none; b=MMkRQQtVSTW2d7XkJH7hJv9MhS5KGombphoxqnrw9WV/nysPwTPMUCKlsMUE+anURLnfMRDQqAkucU4ltua//qR3b9lFqathdZbm+NEJsG9TZMHRKEcJ4G/UiE0Bu/0eBQ7W/NTXLMHftH18lMFSzuXSPSGAGl8122J34zAFpqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719201960; c=relaxed/simple;
-	bh=FWt5CXDOVLZF0RY7H2vzKgPZsHf23vWMih7MvtWQ0Ls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q55r9B+VZtKYXO+/32pR5A7DI2Ci63VLBbQGxOb7fvf/offiE4WJbsqQ3/+wU0uducLKo9D9HtQNAVij7inAoW2abgzU3SCEWowJJC7McbDHB3Qysr1KGpUTKlCbrGPEsPULlvSrkvp6lp08q0ToDeriAJTn2lGHJ+A/Ehi73LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZAUaXmh0; arc=none smtp.client-ip=209.85.221.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4ef12e5658bso1082952e0c.2;
-        Sun, 23 Jun 2024 21:05:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719201957; x=1719806757; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nFYYQvDriXIp8ZXDGg/PZl7S86PYVcjLjRy0AZ9fGK4=;
-        b=ZAUaXmh0u/CCs4Wvfa9DHD1Qubhth/tBhs4K78Yh/nxxdEtFI//WCjU+Uf2M0A7Z1L
-         krrNv5mufU6FyoXdGqTSYKQNgYmq/oejQtiyaeXGOzVCkvopsxwZd21elJyI4gqCXJYz
-         1Owd2HzOJJtnHNAuk28tdnBE7JqH9+nS6uQQrNLe/G3xqo97PpOuaIAYZ3ORMvLn11qG
-         cIXaXR25jtzPl8FVpNJOvNSrQP8eDqBS6gtrD1r9axEURJUfM3gkkuYQICqjwetMjKBN
-         FgoEnKtMoiekC6gtZAGb/F5m96qcsihVHKUvRy2A3g3Geb68+zVwyE+9PPASR9E5iokY
-         sxww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719201957; x=1719806757;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nFYYQvDriXIp8ZXDGg/PZl7S86PYVcjLjRy0AZ9fGK4=;
-        b=pyn57LiE9xRLp+HjnnR+Et4pFPybpXNow/aFxBIFxUt65X0vSLqcLYxgZwtVF/zhwu
-         Y25qZM7TEqQeZXnp/aFf2kvNe9zKzGjrhV8YYsf+eZ2qzzp8C4FU6r0hD96qXkDvP21P
-         t2l02ucakVy/LBOvT2Z0jV7MWTUv6cnHJQ4n+O6mm5TswYzlygqvEAURqVEAAdyyL3IF
-         +WKiXN+n/BsfhA9gCIft2V8V2uIPSDZud3O63uOYHImGdT7kJCKI/qfdNG3x9qzChdoa
-         kaju54Zsy0ij2MsfERkStx8b/8yelOwEfxL54CWGfAIoKa+rlwO4zImbKSugUh2FM/Tv
-         nW1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUkG7HL/eLp/0x9UTzTN1afp0U7OYcNphxzJso9Z9NdK8uOS0dbcWq4ypjNLspEoLZjKhtLjN+gFw63QfgYZBfr1cbaWMMXdVJXSAyVKfmNeYXT3hH6lbLvPPVXHxPRPbQ6PiimXt6zUnmI0xs4
-X-Gm-Message-State: AOJu0YyJyEsaW6ucYVIOCi37wWI/v8yVJFEQ2pq8aqtI22PaJPZbo6Ol
-	HUYuFe2cR0amUqP5j0L5txY5uQ8zTKseFD9MrMqYK6qknDlvlFcVw9O132sGhdR1qxSiOQTauXC
-	L9XlTQEYj60z7rLEEGhhuSbGjwRA=
-X-Google-Smtp-Source: AGHT+IGPTUnYz46c/rYn3eU3BAHwiHrWl6KuTHDvpUvUvzhUDIRlvAJ3b0pmr5gYcl/o3/6HW1IDCV3P3qnqmdqE20U=
-X-Received: by 2002:a05:6122:2a52:b0:4e4:ee60:a60b with SMTP id
- 71dfb90a1353d-4ef6d7d0a70mr1240888e0c.3.1719201957445; Sun, 23 Jun 2024
- 21:05:57 -0700 (PDT)
+	s=arc-20240116; t=1719202208; c=relaxed/simple;
+	bh=f8MsT2ydR8FVWHQfUu9aV03i/fvtgmg81rTBmx7wZtI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=BDbg8UXsQuKwnl38pr1dFyyykIA5bUdgqaZXlEo0KrJmyXo5ziesZV0DQmwcNIDyNEyNH8rjo5N1ooStaOofS/MrKwDF2muXZyY4N48S8ql97UdkndUr64B6f8KpUiPj2Js6KxUXLJoqJyqxDi4hutiNiCXj6D3nVnWy0xEoIFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=KrD5HtQJ; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240624041002epoutp017f05577018b2eadddc8b8cb81ec3826f~b1Ut0SVjH1592015920epoutp01L;
+	Mon, 24 Jun 2024 04:10:02 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240624041002epoutp017f05577018b2eadddc8b8cb81ec3826f~b1Ut0SVjH1592015920epoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1719202202;
+	bh=f8MsT2ydR8FVWHQfUu9aV03i/fvtgmg81rTBmx7wZtI=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=KrD5HtQJlXwla8TJO98EzEGmbC6U6iFckhBxukcjB1yovmR3lz02KUcrhstmuFHwP
+	 HlU6mB/4SedvqN4YiOBGO9STneKReT3yuKLSGYAj6kOz4v/+HseOzds5BjWWMSF78Z
+	 UX56cYaK573oQ0K1epKtk2kmiCwRbV6WxQq+ulZM=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20240624041002epcas5p32f5ba38ddb47660961e77f59341cfae1~b1Utit_tu2048920489epcas5p3C;
+	Mon, 24 Jun 2024 04:10:02 +0000 (GMT)
+Received: from epcpadp3 (unknown [182.195.40.17]) by epsnrtp1.localdomain
+	(Postfix) with ESMTP id 4W6vcp3M22z4x9Q8; Mon, 24 Jun 2024 04:10:02 +0000
+	(GMT)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240624040636epcas5p37dc56f380e9e84e273a040775a8e6f6a~b1RtorJGk1881818818epcas5p3e;
+	Mon, 24 Jun 2024 04:06:36 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240624040636epsmtrp207b25ba1110f1c95c77dc40514d58f15~b1Rtmp5HY1015110151epsmtrp2s;
+	Mon, 24 Jun 2024 04:06:36 +0000 (GMT)
+X-AuditID: b6c32a29-72dff700000074f4-8b-6678f0cc0a0d
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	76.5B.29940.CC0F8766; Mon, 24 Jun 2024 13:06:36 +0900 (KST)
+Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240624040628epsmtip2a5b53ed83b9eac43f0d7a7bd0cd4bb48~b1RlznvHY0728807288epsmtip2H;
+	Mon, 24 Jun 2024 04:06:27 +0000 (GMT)
+From: "Alim Akhtar" <alim.akhtar@samsung.com>
+To: "'Krzysztof Kozlowski'" <krzk@kernel.org>, "'Krzysztof Kozlowski'"
+	<krzysztof.kozlowski@linaro.org>, "'Daniel Lezcano'"
+	<daniel.lezcano@linaro.org>, "'Zhang Rui'" <rui.zhang@intel.com>, "'Lukasz
+ Luba'" <lukasz.luba@arm.com>, "'Rob Herring'" <robh@kernel.org>, "'Conor
+ Dooley'" <conor+dt@kernel.org>, "'Guillaume La Roque'"
+	<glaroque@baylibre.com>, "'Krzysztof Kozlowski'" <krzk+dt@kernel.org>,
+	"'Vasily Khoruzhick'" <anarsoul@gmail.com>, "'Chen-Yu Tsai'"
+	<wens@csie.org>, "'Jernej Skrabec'" <jernej.skrabec@gmail.com>, "'Samuel
+ Holland'" <samuel@sholland.org>, "'Shawn	Guo'" <shawnguo@kernel.org>,
+	"'Sascha Hauer'" <s.hauer@pengutronix.de>, "'Pengutronix Kernel Team'"
+	<kernel@pengutronix.de>, "'Fabio Estevam'" <festevam@gmail.com>, "'Anson
+ Huang'" <Anson.Huang@nxp.com>, "'Thierry Reding'"
+	<thierry.reding@gmail.com>, "'Jonathan Hunter'" <jonathanh@nvidia.com>,
+	"'Dmitry Baryshkov'" <dmitry.baryshkov@linaro.org>, "'Amit Kucheria'"
+	<amitk@kernel.org>, =?utf-8?Q?'Niklas_S=C3=B6derlund'?=
+	<niklas.soderlund@ragnatech.se>, "'Heiko Stuebner'" <heiko@sntech.de>,
+	"'Biju	Das'" <biju.das.jz@bp.renesas.com>, "'Orson Zhai'"
+	<orsonzhai@gmail.com>, "'Baolin Wang'" <baolin.wang@linux.alibaba.com>,
+	"'Chunyan Zhang'" <zhang.lyra@gmail.com>, "'Alexandre Torgue'"
+	<alexandre.torgue@foss.st.com>, "'Pascal Paillet'" <p.paillet@foss.st.com>,
+	"'Keerthy'" <j-keerthy@ti.com>, "'Broadcom internal kernel review list'"
+	<bcm-kernel-feedback-list@broadcom.com>, "'Florian Fainelli'"
+	<florian.fainelli@broadcom.com>, "'Scott Branden'" <sbranden@broadcom.com>,
+	"'zhanghongchen'" <zhanghongchen@loongson.cn>, "'Matthias Brugger'"
+	<matthias.bgg@gmail.com>, "'AngeloGioacchino Del Regno'"
+	<angelogioacchino.delregno@collabora.com>, "'Bjorn Andersson'"
+	<andersson@kernel.org>, "'Geert Uytterhoeven'" <geert+renesas@glider.be>
+Cc: <linux-pm@vger.kernel.org>, <linux-samsung-soc@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <imx@lists.linux.dev>,
+	<linux-tegra@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+	<linux-renesas-soc@vger.kernel.org>, <linux-rockchip@lists.infradead.org>,
+	<linux-stm32@st-md-mailman.stormreply.com>, "'Florian Fainelli'"
+	<f.fainelli@gmail.com>, <linux-rpi-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, <cpgs@samsung.com>
+In-Reply-To: <003b73f2-3b5d-40b7-a87c-2fc937e81bcd@kernel.org>
+Subject: RE: [PATCH 01/22] dt-bindings: thermal: samsung,exynos: specify
+ cells
+Date: Mon, 24 Jun 2024 09:36:22 +0530
+Message-ID: <1296674576.21719202202469.JavaMail.epsvc@epcpadp3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620002648.75204-1-21cnbao@gmail.com> <f3c18806-34ac-41d3-8c79-d7dd6504547e@arm.com>
- <d0b20f47-384d-49f1-8449-0da6da11089c@redhat.com> <b99c2f80-3b53-4b04-b610-a66179b928a9@arm.com>
- <CAGsJ_4y_pjMpNOFzrPZ6u7=M83-CQ0umDCPt=ZDuSKJWssiCqA@mail.gmail.com>
- <87cyoa1wgm.fsf@yhuang6-desk2.ccr.corp.intel.com> <CAGsJ_4xX52FKG+o7vsjAwBLjvfPH=tg_36xqjCnwc5yGV=SaVg@mail.gmail.com>
- <878qyv0zwk.fsf@yhuang6-desk2.ccr.corp.intel.com>
-In-Reply-To: <878qyv0zwk.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 24 Jun 2024 16:05:44 +1200
-Message-ID: <CAGsJ_4y9JinvzA6Wd2aXe_FRYhxED0vkkvU2HwWW8WBEX+8oqw@mail.gmail.com>
-Subject: Re: [PATCH] selftests/mm: Introduce a test program to assess swap
- entry allocation for thp_swapout
-To: "Huang, Ying" <ying.huang@intel.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, 
-	shuah@kernel.org, linux-mm@kvack.org, chrisl@kernel.org, hughd@google.com, 
-	kaleshsingh@google.com, kasong@tencent.com, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQGhCdcVAXQc0tvKk5x9QOKQ/J0WewGh/L0BAiWHCW4CgfI42AIboMv/sgabD1A=
+Content-Language: en-us
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0xbZRjH956ennPogp4VYs8gKiHRZBdgBGKeKcNLNj3ROJfMfcHorFAY
+	chn2DIYzbqyAWjZGOybQMsrVcSsTWi6lBYblsjEHTFEYcpFroYMBAYKWIZXSaPj2ey7/3/N+
+	eCmesITwoCJjz0mkseJob0KA17d5v+jzYCkx/FDH4LNgs2YhaMtPhNROC4L674Lg13IGGlSh
+	YG/uRFCV3oGDxrCGgba5BwOreR9oVp6H/PYePih7bQSsL7STMP77B3C7fpQHebnXERRm5hFg
+	n5jjg2o0lYD7DTIMZvJvI0hRF+FQ8X0jDlb1KAG9vdUkNM/VkVCQuxt0k/1byjvdJPQZbxLQ
+	l/wLgpX0dgR11gUMlsfsPFAObQVyelswSOuf4sONFiMB8lU1AYWyFBJkKQFwN+saH7KXchG0
+	TmfiYG8ykDA1fo2Afxp0OMxMyAlYqJxCMFsrAptRg4PN3ItB6ZiRhLX+Bt4bwGo1WsQuPkol
+	2fLZXJJV/9lNsIaREsRWT1Ty2emMOpJVdvuwjeoRki1usmKsrkJOsMP9TQTbOH6Y1ZdcYmf1
+	KsRelhVhJzxCBEFhkujIBInUL/hTwRmT5QmKqxUk6tqMvCRUTaUhF4qhA5lK/RNeGhJQQtqE
+	mHm7CTkHnsxAjYJ0shtTvjmzzULaghj1Pc7BBO3DGIq/IRxhd3rwGaZqoZR0FDz6Mc7oF8r4
+	Tu1djHk0YSUcERc6mCmxTG6fcKOPM5orU3gaoiicfolZVQU42q70YcYuv086eQ/TpXKsuGxJ
+	DzDTg9P/863COZ7zdV6MbfoW38HuW0rt5lXCuSNirB3tpAK5qXeo1DtU6h0q9Y5IAcIr0F5J
+	HBcTEcP5x/nHSs77cuIYLj42wjf0bIwObX/k/fsMqKFiydeMMAqZEUPxvN1dsy8lhAtdw8Rf
+	XpBIz56WxkdLODPypHBvkatoNj1MSEeIz0miJJI4ifS/KUa5eCRhhfrqbzfHZJHK+RPvkMNe
+	wW5rFxbPH4rZbdwbWfNKl19iYk5UskvJRenAg67VWvnf1Mb73Py8ebm5aS5izTPjdLop2e94
+	q+jzEI61jNBfLRZ2vveR5cdTTzUvrAQykw8DPhw6om/N/ixHsaFYjzYkiF696nXAqPXfCBJM
+	Hc2JbN38GAqUjZ9wsoGTip9VnjfeDfpCZdHuEq5nHFQ8N+y7p9Z0rLKsh91Aj9d6fug72vKb
+	PmXm7eXc6rd08ofxYlNelPGPLCT3R389HbkXUiT9etfJ8s6q0KGiU6a66wgrO/Lam6Uv+17J
+	Lr6zXpC0cvCy9WamsOb1Y+HKn2xpXPzQmCjwojfOnRH77+dJOfG/2JYK7DcEAAA=
+X-CMS-MailID: 20240624040636epcas5p37dc56f380e9e84e273a040775a8e6f6a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+X-CPGSPASS: Y
+X-Hop-Count: 3
+X-CMS-RootMailID: 20240614094638epcas5p115d52130f45e130652b6f1d946358d19
+References: <20240614-dt-bindings-thermal-allof-v1-0-30b25a6ae24e@linaro.org>
+	<CGME20240614094638epcas5p115d52130f45e130652b6f1d946358d19@epcas5p1.samsung.com>
+	<20240614-dt-bindings-thermal-allof-v1-1-30b25a6ae24e@linaro.org>
+	<1891546521.01718433481489.JavaMail.epsvc@epcpadp4>
+	<003b73f2-3b5d-40b7-a87c-2fc937e81bcd@kernel.org>
 
-On Mon, Jun 24, 2024 at 3:44=E2=80=AFPM Huang, Ying <ying.huang@intel.com> =
-wrote:
->
-> Barry Song <21cnbao@gmail.com> writes:
->
-> > On Fri, Jun 21, 2024 at 9:24=E2=80=AFPM Huang, Ying <ying.huang@intel.c=
-om> wrote:
-> >>
-> >> Barry Song <21cnbao@gmail.com> writes:
-> >>
-> >> > On Fri, Jun 21, 2024 at 7:25=E2=80=AFPM Ryan Roberts <ryan.roberts@a=
-rm.com> wrote:
-> >> >>
-> >> >> On 20/06/2024 12:34, David Hildenbrand wrote:
-> >> >> > On 20.06.24 11:04, Ryan Roberts wrote:
-> >> >> >> On 20/06/2024 01:26, Barry Song wrote:
-> >> >> >>> From: Barry Song <v-songbaohua@oppo.com>
-> >> >> >>>
-> >> >> >>> Both Ryan and Chris have been utilizing the small test program =
-to aid
-> >> >> >>> in debugging and identifying issues with swap entry allocation.=
- While
-> >> >> >>> a real or intricate workload might be more suitable for assessi=
-ng the
-> >> >> >>> correctness and effectiveness of the swap allocation policy, a =
-small
-> >> >> >>> test program presents a simpler means of understanding the prob=
-lem and
-> >> >> >>> initially verifying the improvements being made.
-> >> >> >>>
-> >> >> >>> Let's endeavor to integrate it into the self-test suite. Althou=
-gh it
-> >> >> >>> presently only accommodates 64KB and 4KB, I'm optimistic that w=
-e can
-> >> >> >>> expand its capabilities to support multiple sizes and simulate =
-more
-> >> >> >>> complex systems in the future as required.
-> >> >> >>
-> >> >> >> I'll try to summarize the thread with Huang Ying by suggesting t=
-his test program
-> >> >> >> is "neccessary but not sufficient" to exhaustively test the mTHP=
- swap-out path.
-> >> >> >> I've certainly found it useful and think it would be a valuable =
-addition to the
-> >> >> >> tree.
-> >> >> >>
-> >> >> >> That said, I'm not convinced it is a selftest; IMO a selftest sh=
-ould provide a
-> >> >> >> clear pass/fail result against some criteria and must be able to=
- be run
-> >> >> >> automatically by (e.g.) a CI system.
-> >> >> >
-> >> >> > Likely we should then consider moving other such performance-rela=
-ted thingies
-> >> >> > out of the selftests?
-> >> >>
-> >> >> Yes, that would get my vote. But of the 4 tests you mentioned that =
-use
-> >> >> clock_gettime(), it looks like transhuge-stress is the only one tha=
-t doesn't
-> >> >> have a pass/fail result, so is probably the only candidate for movi=
-ng.
-> >> >>
-> >> >> The others either use the times as a timeout and determines failure=
- if the
-> >> >> action didn't occur within the timeout (e.g. ksm_tests.c) or use it=
- to add some
-> >> >> supplemental performance information to an otherwise functionality-=
-oriented test.
-> >> >
-> >> > Thank you very much, Ryan. I think you've found a better home for th=
-is
-> >> > tool . I will
-> >> > send v2, relocating it to tools/mm and adding a function to swap in
-> >> > either the whole
-> >> > mTHPs or a portion of mTHPs by "-a"(aligned swapin).
-> >> >
-> >> > So basically, we will have
-> >> >
-> >> > 1. Use MADV_PAGEPUT for rapid swap-out, putting the swap allocation =
-code under
-> >> > high exercise in a short time.
-> >> >
-> >> > 2. Use MADV_DONTNEED to simulate the behavior of libc and Java heap =
-in freeing
-> >> > memory, as well as for munmap, app exits, or OOM killer scenarios. T=
-his ensures
-> >> > new mTHP is always generated, released or swapped out, similar to th=
-e behavior
-> >> > on a PC or Android phone where many applications are frequently star=
-ted and
-> >> > terminated.
-> >>
-> >> MADV_DONTNEED 64KB memory, then memset() it, this just simulates the
-> >> large folio swap-in exactly, which hasn't been merged by upstream.  I
-> >> don't think that it's a good idea to make such kind of trick.
+
+
+> -----Original Message-----
+> From: Krzysztof Kozlowski <krzk@kernel.org>
+> Sent: Saturday, June 15, 2024 3:09 PM
+> To: Alim Akhtar <alim.akhtar@samsung.com>; 'Krzysztof Kozlowski'
+> <krzysztof.kozlowski@linaro.org>; 'Daniel Lezcano'
+[snip]
+> On 14/06/2024 16:29, Alim Akhtar wrote:
+> > Hi Krzysztof,
 > >
-> > I disagree. This is how userspace heaps can manage memory
-> > deallocation.
->
-> Sorry, I don't understand how.  Can you show some examples?  Such as
-> strace log with 64KB aligned MADV_DONTNEED?
-
-In Java heap and memory allocators such as jemalloc and Scudo, memory is fr=
-eed
-using the MADV_DONTNEED flag when either free() is called or garbage collec=
-tion
-occurs. In Android, the Java heap is freed in chunks aligned to 64KB
-or larger. In
-Scudo and jemalloc, there is a configuration option to set the
-management granularity.
-This granularity is set to match the mTHP size(though the default
-value is 16KB in the
-latest Android if we don't run mTHP). Otherwise, you could end up with
-millions of
-partial unmap operations, which would severely degrade the performance of m=
-THP.
-
-Imagine libc/Java functioning like a slab allocator. When kfree() is
-called, some pages
-may become completely unoccupied and can be returned to the buddy allocator=
-. In
-userspace, memory is given back to the kernel in a similar manner,
-typically using
-MADV_DONTNEED. Therefore, MADV_DONTNEED is the most common memory
-reclamation behavior in Android, coming with free(), delete() or GC.
-
-Imagine a system with extensive malloc, free, new, and delete
-operations, where objects
-are constantly being created and destroyed.
-
-On the other hand, whether libc/Java use MADV_DONTNEED to free memory is no=
-t
-crucial, although they do. We need a method to simulate the lifecycle
-of applications
-=E2=80=94exiting and starting anew=E2=80=94on PCs or Android phones. It doe=
-sn't matter if you
-use MADV_DONTNEED or munmap to achieve this.
-
-It is important to note that mTHP currently operates on a one-shot
-basis(after swap-out,
-you never get them back as mTHP as we don't support large folios
-swapin). For the test
-program, we need a method to generate new mTHPs continuously. Without this,
-after the initial iterations, we would be left with only folios,
-rendering the entire
-test program *pointless*.
-
->
-> > Additionally, in the event of an application exit, munmap, or OOM kille=
-r, the
-> > amount of freed memory can be much larger than 64KB. The primary purpos=
-e
-> > of using MADV_DONTNEED is to release anonymous memory and generate
-> > new mTHP so that the iteration can continue. Otherwise, the test progra=
-m
-> > becomes entirely pointless, as we only have large folios at the beginni=
-ng.
-> > That is exactly why Chris has failed to find his bugs by using other sm=
-all
-> > programs.
->
-> Although I still don't understand how 64KB aligned MADV_DONTNEED is used
-> for libc/java heap or munmap in a practical way.  After more thoughts, I
-> think 64KB Aligned MADV_DONTNEED can simulate the fragmentation effect
-> of processes exit at some degree if 64KB folios in these processes are
-> swapped out without splitting.  If you have no other practical use
-> cases, I suggest to make it explicit with comments in program.
->
-> > On the other hand, we definitely want large folios swap-in, otherwise, =
-mTHP
-> > is just a toy to Android or similar system where more than 2/3 memory c=
-ould
-> > be in swap. We do NOT want single-use mTHP.
->
-> I agree that large folios swap-in has its value at least in some
-> situations.  Whether we should take it as default behavior is another
-> topic, we can discuss it further in the future.
-
-Cool. Just imagine that mTHP is beneficial for systems that don't frequentl=
-y
-use swap. However, for Android, where most memory resides in swap, mTHP
-acts like a one-way ticket: you end up with small folios and can't revert t=
-o
-large ones. This is so BAD.
-
->
+> >> -----Original Message-----
+> >> From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> >> Sent: Friday, June 14, 2024 3:16 PM
+> >> To: Daniel Lezcano <daniel.lezcano@linaro.org
+> > .stormreply.com;
+> >> Subject: [PATCH 01/22] dt-bindings: thermal: samsung,exynos: specify
+> >> cells
 > >>
-> >> > 3. Swap in with or without the "-a" option to observe how fragments
-> >> > due to swap-in
-> >> > and the incoming swap-in of large folios will impact swap-out fallba=
-ck.
+> >> All Samsung Exynos SoCs Thermal Management Units have only one
+> >> sensor, so make '#thermal-sensor-cells' fixed at 0.
 > >>
-> >> It's good to create fragmentation with swap-in.  Which is more practic=
-al
-> >> and future-proof.  And, I believe that we can reduce large folio
-> >> swap-out fallback rate without the large folio swap-in trick.
-> >>
-> >> > And many thanks to Chris for the suggestion on improving it within
-> >> > selftest, though I
-> >> > prefer to place it in tools/mm.
->
-> --
-> Best Regards,
-> Huang, Ying
+> > This is not entirely true, there are SoCs which have multiple temp sens=
+ors.
+> > It is true that currently only one sensor support is added though.
+>=20
+> All supported by mainline. Others do not exist now :)
+>=20
+> >
+> > So we can leave this as is or you suggest to make it to support only
+> > one sensor (to match the current DT support), and later (in near
+> > future) change it again to match what HW actually support?
+>=20
+> Yes, different devices can have different value (and bindings).
+Ok, this is fine for now.
 
-Thanks
-Barry
+> Best regards,
+> Krzysztof
+
+
+
 
