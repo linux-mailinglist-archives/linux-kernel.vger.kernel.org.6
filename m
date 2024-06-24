@@ -1,356 +1,179 @@
-Return-Path: <linux-kernel+bounces-227766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 940F3915653
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:14:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6366915663
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B58431C23865
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 571C21F25400
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884031A01B7;
-	Mon, 24 Jun 2024 18:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0751A01A5;
+	Mon, 24 Jun 2024 18:17:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJWTh8+c"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="JiMQW0no"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE26E1A254B;
-	Mon, 24 Jun 2024 18:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC65A19FA96
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719252753; cv=none; b=Tjgas+pBSsfYELO6Oe87EXWnKNE3rdphZS0DxY5nTepkpmy0x7iUwqY2vCsLjp660fBW/DpjEo/ESLcIISCH7zVBlENbfD0Y2TxCrk3U2DH7xgI6+EFwl2Yy6Eolhf1+3XZe+3kQXEVxRaTZDgt9hOb5NO0sdEI/vJ597XUyibo=
+	t=1719253063; cv=none; b=SLUIbhg7F+NTCaTc2kUL6sI9gaARFggoaMx1+ihww5K3wYW/u22L03ZOCwIuwcg7C2YpRf2ftsrKxbhmTZaXxGC12XC9cDy3QMmRHj5s6vpFquJifRd1RMXEATB2f/KZHCkya+Y/NGsV+3DnbxCTJAkD69B5fkVgjZ9wEuUv360=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719252753; c=relaxed/simple;
-	bh=GM9v3HZVSqEmxMUKc0Yu6DGDU60uwNCVUO5wC3LrEag=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kWG2mjln49sXen9Qpp3uuWBibEqYYdeDN62Fd3ue37dd+x0EHsgGa050rOf2dzj3EpaL61XX4CX+DaeJgYHwfk8z7vNZxTc0qu7En3SD6XOi4zdXErGaSwDDDONSTbuSEVJAlsI+GkejNHfhOE5dMlTRnDuwS9ktW/YoMvC4QZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJWTh8+c; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-706627ff48dso2001633b3a.1;
-        Mon, 24 Jun 2024 11:12:31 -0700 (PDT)
+	s=arc-20240116; t=1719253063; c=relaxed/simple;
+	bh=eS2NBgus2lhrJmMuOApu7qG31qWqdOhq592pTuDCHzE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LL4wdjsmQQHySFwLgjglBrULCD1mc3Q5zf7e98Bx9+Gg88ZmQgaYMtMrgrvjdPK9dAdqhoCkjn5KmsH2LphXI1Y0qvWqiHZQDsFFOXGG7/3187L/596IOGbFixgm1GQTm7saFTeVxO/BfIszk97O6QuMpvQfYcjj5iRYAe64yj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=JiMQW0no; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a724958f118so206719766b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:17:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719252751; x=1719857551; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=cloudflare.com; s=google09082023; t=1719253060; x=1719857860; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OnH79mxvIGsSdhtVkYLh+ulDnBmSarYvEBG6ogLOhec=;
-        b=JJWTh8+c/Igvq3/UWDzdvl4itcH5y6sEYV4Wc4mDDVsEpGchgKfyjswh1g3AlhJnF2
-         66zIapCWGO9jjgPdoCnSCCzMaZN6+LamRNUiYeyJy0CegOROpWifvl8eqGG4lbOIOdZI
-         jsFjjiursZVnd/12g2+j5OKjoMhYCbO+Zxv/hOarCxSo0jTP/vjQF3D6CxJBWgeX0Ahv
-         Uu9aRSKNdj6mp3uip2UIE6Ju3xxMVfpaVdRIw5cxsZCek+dlTuP1HPhirNgBdNoxogWu
-         /jCGY2/ZDnX+zCEVeySR7sR0thfZ5TFrj9Vsmy6n58gDplv5hxoTDIAKZA1IL/CeccUV
-         ckwA==
+        bh=D2a+NCZqg9T2WqRUZ+lmaVYwVwGQsZAgxI0oVQ2Ef2c=;
+        b=JiMQW0noKhNGNiC26nCAS1PoCe4H6NTuMR+MG3V11Ozhc7uSqk1xDd9TGMNjO87Ihu
+         576Rqr5r7v0wwQjSTtgoAKmeLmzFaMpHa+PGUw57juQviybVhotRFjM7iL97yqN7Jg/0
+         TUq6BKZtVUabCg6bqRrAmxoFtCQk0kQfqxLNztQ/7YnLReTgokWA9o1RfOp3ZPiYzeru
+         Aov2VdYaNgPvMIbM7mOXlDGlWRCGqY2KvhLenxtSj2IhvY5sK73YRC7WcDBUxJ3WN8lq
+         HH2BIJSOOdfd504lgqU/azmPlp/ykGRLfd/dxA7BoWsdT3t8W9MLZtUraFfVzykq7jBa
+         yT4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719252751; x=1719857551;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719253060; x=1719857860;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OnH79mxvIGsSdhtVkYLh+ulDnBmSarYvEBG6ogLOhec=;
-        b=s45252OVKW1Esrbn4lNueqhKhYNHM+5yhMMmTSEOqFbGa+pJJc/nOnyX99VePyox47
-         6uyIOfsf0RUrTIS5F25VaDYdGN6xqyWUaLCfmWo2Nk6igCAZJ1p51rlkicyaQJWsgS4e
-         ILOBk+m7cS/PUSO7EoMPAX6CsOJ2Sp+DsQqMa8pR1KekeK2miqCStHJmA31JJGqh2QsD
-         zUJyTCnoQgmY5XQ7I+HKktMVkZ4cbNigQP9X01JX9Bhu/JKZXPmGaxE2i7enCfdXfEsn
-         91f4gZr+GkXzIREz3WLZY1x//3nFIQoUMHEqxbY+J8SqyiDKAjZWu4Bg6baF4zBExFfA
-         OhwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWAIPefff8KyzVGsZdyfLAHZ0OZ0YCGqWE1wvEoBHS4dbXkD4sX47NuWu0ZbYGvVMrk7OiOjPlu61pxPHXmvcDiidpTfvUSlcngtkdH9l/a97Uv/JOswS0j4SWkEvd1jQmGgz5IoatynTD8BWH7fA==
-X-Gm-Message-State: AOJu0YzVJicnYB5uDvqQMxBeWRzp89IU/9iNDqBvq01lri2MGBdFW3bH
-	0ag9hwR7M/bf6rhkl02UZWGu161MwLYN9sMeXvvFNhE9INa6OUlY
-X-Google-Smtp-Source: AGHT+IENNX+FrsxUvhp0lLd1yCJyDpoX5U2JbUho2R9JjsaMpUMzUO1PcNtDSUaBK0G8XVUxdAIe4A==
-X-Received: by 2002:a05:6a20:da9c:b0:1b8:7cd7:7aa8 with SMTP id adf61e73a8af0-1bcf7fb9e2fmr7821556637.41.1719252751088;
-        Mon, 24 Jun 2024 11:12:31 -0700 (PDT)
-Received: from localhost.localdomain ([120.229.49.45])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70651290157sm6525157b3a.150.2024.06.24.11.12.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 11:12:30 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: acme@kernel.org
-Cc: adrian.hunter@intel.com,
-	irogers@google.com,
-	jolsa@kernel.org,
-	kan.liang@linux.intel.com,
-	namhyung@kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH v3 8/8] perf trace: Remove arg_fmt->is_enum, we can get that from the BTF type
-Date: Tue, 25 Jun 2024 02:13:45 +0800
-Message-ID: <20240624181345.124764-9-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240624181345.124764-1-howardchu95@gmail.com>
-References: <20240624181345.124764-1-howardchu95@gmail.com>
+        bh=D2a+NCZqg9T2WqRUZ+lmaVYwVwGQsZAgxI0oVQ2Ef2c=;
+        b=pLBsWHhkFKYlFHVpGk6VxdN9+OXphfAFGSAUDKhs/9WkLa1b2KwFzKPrMkp7qNJDIh
+         +h5p1Jqxg7eziG/woy9isbU6XRHwnWxClbMx7iBWvobhfQ7wzkChL5kU2WjUHVbIcAPF
+         fJHvKfbqUAY9RqJPOV24HmE6+VCrdEU2rXdYl71gN/c3jvN2ABWISGbEe6mtMN2TDB7n
+         IJTyg8jRX3fNeTWhrbPBsbb8LdO1zNhJBhLho4/AjL7iJp0nkicH7u08Q6f4Re4kseac
+         cA2OoRy6kL2jP3uV7p2czxrxjETRJVwhAtbGtz0gi31ewQjYzOlc7jLEEsfI0Q9GF6hd
+         Gb7g==
+X-Forwarded-Encrypted: i=1; AJvYcCV61hey7DViyN/N2Dh+8apS4XkrTQbVMDuNGe4lDjRPTPKBB3c19UDs04ImvxJadOW7rDKoDjTwcqcqIaChyqlJjmccdY0YOobxxQTN
+X-Gm-Message-State: AOJu0YyfQLFehRf67ac3KqwJcrQZJ9HyUHm9YYQdHuucpaTNwFaKxQ3G
+	wcZwVc+F3HPMvLkVIO0IoW3jqcroc0oCZPMvbMhRLrDA4fwilODPwW53OrIO824N3aKOGd/+BCi
+	WL6f2afgc1fKmBcxFtzYOpDj2OHt1L0adGOhaoQ==
+X-Google-Smtp-Source: AGHT+IFwdzvdf6eoTAzP+XmZu+K0VWtvprAM3USVdpUEkJfziQcuGP2kmcBKy+64YkMnSOHjdD8n+UixgPrLnQVWhIk=
+X-Received: by 2002:a17:906:e0c4:b0:a6f:96b0:ed2 with SMTP id
+ a640c23a62f3a-a7242c39c5fmr451623566b.30.1719253059793; Mon, 24 Jun 2024
+ 11:17:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1718919473.git.yan@cloudflare.com> <b8c183a24285c2ab30c51622f4f9eff8f7a4752f.1718919473.git.yan@cloudflare.com>
+ <66756ed3f2192_2e64f929491@willemb.c.googlers.com.notmuch>
+ <CAO3-Pbp8frVM-i6NKkmyNOFrqqW=g58rK8m4vfdWbiSHHdQBsg@mail.gmail.com> <6677dc5cb5cca_33522729474@willemb.c.googlers.com.notmuch>
+In-Reply-To: <6677dc5cb5cca_33522729474@willemb.c.googlers.com.notmuch>
+From: Yan Zhai <yan@cloudflare.com>
+Date: Mon, 24 Jun 2024 13:17:28 -0500
+Message-ID: <CAO3-PbrKRqeA4bCPnv7xkDiUFtuCMfzYZiEur3wM=+x8nc2xpQ@mail.gmail.com>
+Subject: Re: [RFC net-next 1/9] skb: introduce gro_disabled bit
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>, 
+	Willem de Bruijn <willemb@google.com>, Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>, 
+	Mina Almasry <almasrymina@google.com>, Abhishek Chauhan <quic_abchauha@quicinc.com>, 
+	David Howells <dhowells@redhat.com>, Alexander Lobakin <aleksander.lobakin@intel.com>, 
+	David Ahern <dsahern@kernel.org>, Richard Gobert <richardbgobert@gmail.com>, 
+	Antoine Tenart <atenart@kernel.org>, Felix Fietkau <nbd@nbd.name>, 
+	Soheil Hassas Yeganeh <soheil@google.com>, Pavel Begunkov <asml.silence@gmail.com>, 
+	Lorenzo Bianconi <lorenzo@kernel.org>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Sun, Jun 23, 2024 at 3:27=E2=80=AFAM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
+>
+> Yan Zhai wrote:
+> > > > -static inline bool netif_elide_gro(const struct net_device *dev)
+> > > > +static inline bool netif_elide_gro(const struct sk_buff *skb)
+> > > >  {
+> > > > -     if (!(dev->features & NETIF_F_GRO) || dev->xdp_prog)
+> > > > +     if (!(skb->dev->features & NETIF_F_GRO) || skb->dev->xdp_prog=
+)
+> > > >               return true;
+> > > > +
+> > > > +#ifdef CONFIG_SKB_GRO_CONTROL
+> > > > +     return skb->gro_disabled;
+> > > > +#else
+> > > >       return false;
+> > > > +#endif
+> > >
+> > > Yet more branches in the hot path.
+> > >
+> > > Compile time configurability does not help, as that will be
+> > > enabled by distros.
+> > >
+> > > For a fairly niche use case. Where functionality of GRO already
+> > > works. So just a performance for a very rare case at the cost of a
+> > > regression in the common case. A small regression perhaps, but death
+> > > by a thousand cuts.
+> > >
+> >
+> > I share your concern on operating on this hotpath. Will a
+> > static_branch + sysctl make it less aggressive?
+>
+> That is always a possibility. But we have to use it judiciously,
+> cannot add a sysctl for every branch.
+>
+> I'm still of the opinion that Paolo shared that this seems a lot of
+> complexity for a fairly minor performance optimization for a rare
+> case.
+>
+Actually combining the discussion in this thread, I think it would be
+more than the corner cases that we encounter. Let me elaborate below.
 
-This is to pave the way for other BTF types, i.e. we try to find BTF
-type then use things like btf_is_enum(btf_type) that we cached to find
-the right strtoul and scnprintf routines.
+> > Speaking of
+> > performance, I'd hope this can give us more control so we can achieve
+> > the best of two worlds: for TCP and some UDP traffic, we can enable
+> > GRO, while for some other classes that we know GRO does no good or
+> > even harm, let's disable GRO to save more cycles. The key observation
+> > is that developers may already know which traffic is blessed by GRO,
+> > but lack a way to realize it.
+>
+> Following up also on Daniel's point on using BPF as GRO engine. Even
+> earlier I tried to add an option to selectively enable GRO protocols
+> without BPF. Definitely worthwhile to be able to disable GRO handlers
+> to reduce attack surface to bad input.
+>
+I was probably staring too hard at my own things, which is indeed a
+corner case. But reducing the attack surface is indeed a good
+motivation for this patch. I checked briefly with our DoS team today,
+the DoS scenario will definitely benefit from skipping GRO, for
+example on SYN/RST floods. XDP is our main weapon to drop attack
+traffic today, but it does not always drop 100% of the floods, and
+time by time it does need to fall back to iptables due to the delay of
+XDP program assembly or the BPF limitation on analyzing the packet. I
+did an ad hoc measurement just now on a mostly idle server, with
+~1.3Mpps SYN flood concentrated on one CPU and dropped them early in
+raw-PREROUTING. w/ GRO this would consume about 35-41% of the CPU
+time, while w/o GRO the time dropped to 9-12%. This seems a pretty
+significant breath room under heavy attacks.
 
-For now only enum is supported, all the other types simple return zero
-for scnprintf which makes it have the same behaviour as when BTF isn't
-available, i.e. fallback to no pretty printing. Ditto for strtoul.
+But I am not sure I understand "BPF as GRO engine" here, it seems to
+me that being able to disable GRO by XDP is already good enough. Any
+more motivations to do more complex work here?
 
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~# perf test -v enum
-  124: perf trace enum augmentation tests                              : Ok
-  root@x1:~#
+best
+Yan
 
-Tested-by: Howard Chu <howardchu95@gmail.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Howard Chu <howardchu95@gmail.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
----
- tools/perf/builtin-trace.c       | 101 +++++++++++++++++--------------
- tools/perf/trace/beauty/beauty.h |   1 +
- 2 files changed, 56 insertions(+), 46 deletions(-)
-
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index 1dd8b839e502..14141f09b4d6 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -111,7 +111,6 @@ struct syscall_arg_fmt {
- 	const char *name;
- 	u16	   nr_entries; // for arrays
- 	bool	   show_zero;
--	bool	   is_enum;
- #ifdef HAVE_LIBBPF_SUPPORT
- 	const struct btf_type *type;
- #endif
-@@ -910,33 +909,46 @@ static size_t syscall_arg__scnprintf_getrandom_flags(char *bf, size_t size,
- #define SCA_GETRANDOM_FLAGS syscall_arg__scnprintf_getrandom_flags
- 
- #ifdef HAVE_LIBBPF_SUPPORT
--static int syscall_arg_fmt__cache_btf_enum(struct syscall_arg_fmt *arg_fmt, struct btf *btf, char *type)
-+static void syscall_arg_fmt__cache_btf_enum(struct syscall_arg_fmt *arg_fmt, struct btf *btf, char *type)
- {
- 	int id;
- 
--	// Already cached?
--	if (arg_fmt->type != NULL)
--		return 0;
--
- 	type = strstr(type, "enum ");
- 	if (type == NULL)
--		return -1;
-+		return;
- 
- 	type += 5; // skip "enum " to get the enumeration name
- 
- 	id = btf__find_by_name(btf, type);
- 	if (id < 0)
--		return -1;
-+		return;
- 
- 	arg_fmt->type = btf__type_by_id(btf, id);
--	return arg_fmt->type == NULL ? -1 : 0;
- }
- 
- static bool syscall_arg__strtoul_btf_enum(char *bf, size_t size, struct syscall_arg *arg, u64 *val)
-+{
-+	const struct btf_type *bt = arg->fmt->type;
-+	struct btf *btf = arg->trace->btf;
-+	struct btf_enum *be = btf_enum(bt);
-+
-+	for (int i = 0; i < btf_vlen(bt); ++i, ++be) {
-+		const char *name = btf__name_by_offset(btf, be->name_off);
-+		int max_len = max(size, strlen(name));
-+
-+		if (strncmp(name, bf, max_len) == 0) {
-+			*val = be->val;
-+			return true;
-+		}
-+	}
-+
-+	return false;
-+}
-+
-+static bool syscall_arg__strtoul_btf_type(char *bf, size_t size, struct syscall_arg *arg, u64 *val)
- {
- 	const struct btf_type *bt;
--	char *type = arg->parm;
--	struct btf_enum *be;
-+	char *type = arg->type_name;
- 	struct btf *btf;
- 
- 	trace__load_vmlinux_btf(arg->trace);
-@@ -945,20 +957,19 @@ static bool syscall_arg__strtoul_btf_enum(char *bf, size_t size, struct syscall_
- 	if (btf == NULL)
- 		return false;
- 
--	if (syscall_arg_fmt__cache_btf_enum(arg->fmt, btf, type) < 0)
--		return false;
-+	if (arg->fmt->type == NULL) {
-+		// See if this is an enum
-+		syscall_arg_fmt__cache_btf_enum(arg->fmt, btf, type);
-+	}
- 
-+	// Now let's see if we have a BTF type resolved
- 	bt = arg->fmt->type;
--	be = btf_enum(bt);
--	for (int i = 0; i < btf_vlen(bt); ++i, ++be) {
--		const char *name = btf__name_by_offset(btf, be->name_off);
--		int max_len = max(size, strlen(name));
-+	if (bt == NULL)
-+		return false;
- 
--		if (strncmp(name, bf, max_len) == 0) {
--			*val = be->val;
--			return true;
--		}
--	}
-+	// If it is an enum:
-+	if (btf_is_enum(arg->fmt->type))
-+		return syscall_arg__strtoul_btf_enum(bf, size, arg, val);
- 
- 	return false;
- }
-@@ -978,23 +989,23 @@ static size_t btf_enum_scnprintf(const struct btf_type *type, struct btf *btf, c
- 	return 0;
- }
- 
--static size_t trace__btf_enum_scnprintf(struct trace *trace, struct syscall_arg_fmt *arg_fmt, char *bf,
--					size_t size, int val, char *type)
--{
--	if (syscall_arg_fmt__cache_btf_enum(arg_fmt, trace->btf, type) < 0)
--		return 0;
--
--	return btf_enum_scnprintf(arg_fmt->type, trace->btf, bf, size, val);
--}
--
- static size_t trace__btf_scnprintf(struct trace *trace, struct syscall_arg_fmt *arg_fmt, char *bf,
- 				   size_t size, int val, char *type)
- {
- 	if (trace->btf == NULL)
- 		return 0;
- 
--	if (arg_fmt->is_enum)
--		return trace__btf_enum_scnprintf(trace, arg_fmt, bf, size, val, type);
-+	if (arg_fmt->type == NULL) {
-+		// Check if this is an enum and if we have the BTF type for it.
-+		syscall_arg_fmt__cache_btf_enum(arg_fmt, trace->btf, type);
-+	}
-+
-+	// Did we manage to find a BTF type for the syscall/tracepoint argument?
-+	if (arg_fmt->type == NULL)
-+		return 0;
-+
-+	if (btf_is_enum(arg_fmt->type))
-+		return btf_enum_scnprintf(arg_fmt->type, trace->btf, bf, size, val);
- 
- 	return 0;
- }
-@@ -1007,14 +1018,14 @@ static size_t trace__btf_scnprintf(struct trace *trace __maybe_unused, struct sy
- 	return 0;
- }
- 
--static bool syscall_arg__strtoul_btf_enum(char *bf __maybe_unused, size_t size __maybe_unused,
-+static bool syscall_arg__strtoul_btf_type(char *bf __maybe_unused, size_t size __maybe_unused,
- 					  struct syscall_arg *arg __maybe_unused, u64 *val __maybe_unused)
- {
- 	return false;
- }
- #endif // HAVE_LIBBPF_SUPPORT
- 
--#define STUL_BTF_ENUM syscall_arg__strtoul_btf_enum
-+#define STUL_BTF_TYPE syscall_arg__strtoul_btf_type
- 
- #define STRARRAY(name, array) \
- 	  { .scnprintf	= SCA_STRARRAY, \
-@@ -1887,7 +1898,6 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 			continue;
- 
- 		len = strlen(field->name);
--		arg->is_enum = false;
- 
- 		if (strcmp(field->type, "const char *") == 0 &&
- 		    ((len >= 4 && strcmp(field->name + len - 4, "name") == 0) ||
-@@ -1915,8 +1925,8 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
- 			 */
- 			arg->scnprintf = SCA_FD;
- 		} else if (strstr(field->type, "enum") && use_btf != NULL) {
--			*use_btf = arg->is_enum = true;
--			arg->strtoul = STUL_BTF_ENUM;
-+			*use_btf = true;
-+			arg->strtoul = STUL_BTF_TYPE;
- 		} else {
- 			const struct syscall_arg_fmt *fmt =
- 				syscall_arg_fmt__find_by_name(field->name);
-@@ -2236,10 +2246,13 @@ static size_t syscall__scnprintf_args(struct syscall *sc, char *bf, size_t size,
- 			/*
- 			 * Suppress this argument if its value is zero and show_zero
- 			 * property isn't set.
-+			 *
-+			 * If it has a BTF type, then override the zero suppression knob
-+			 * as the common case is for zero in an enum to have an associated entry.
- 			 */
- 			if (val == 0 && !trace->show_zeros &&
- 			    !(sc->arg_fmt && sc->arg_fmt[arg.idx].show_zero) &&
--			    !(sc->arg_fmt && sc->arg_fmt[arg.idx].is_enum))
-+			    !(sc->arg_fmt && sc->arg_fmt[arg.idx].strtoul == STUL_BTF_TYPE))
- 				continue;
- 
- 			printed += scnprintf(bf + printed, size - printed, "%s", printed ? ", " : "");
-@@ -2942,7 +2955,7 @@ static size_t trace__fprintf_tp_fields(struct trace *trace, struct evsel *evsel,
- 		val = syscall_arg_fmt__mask_val(arg, &syscall_arg, val);
- 
- 		/* Suppress this argument if its value is zero and show_zero property isn't set. */
--		if (val == 0 && !trace->show_zeros && !arg->show_zero && !arg->is_enum)
-+		if (val == 0 && !trace->show_zeros && !arg->show_zero && arg->strtoul != STUL_BTF_TYPE)
- 			continue;
- 
- 		printed += scnprintf(bf + printed, size - printed, "%s", printed ? ", " : "");
-@@ -3910,14 +3923,10 @@ static int trace__expand_filter(struct trace *trace, struct evsel *evsel)
- 				struct syscall_arg syscall_arg = {
- 					.trace = trace,
- 					.fmt   = fmt,
-+					.type_name = type,
-+					.parm = fmt->parm,
- 				};
- 
--				if (fmt->is_enum) {
--					syscall_arg.parm = type;
--				} else {
--					syscall_arg.parm = fmt->parm;
--				}
--
- 				if (fmt->strtoul(right, right_size, &syscall_arg, &val)) {
- 					char *n, expansion[19];
- 					int expansion_lenght = scnprintf(expansion, sizeof(expansion), "%#" PRIx64, val);
-diff --git a/tools/perf/trace/beauty/beauty.h b/tools/perf/trace/beauty/beauty.h
-index 78d10d92d351..3ed11e18ee2d 100644
---- a/tools/perf/trace/beauty/beauty.h
-+++ b/tools/perf/trace/beauty/beauty.h
-@@ -113,6 +113,7 @@ struct syscall_arg {
- 	struct thread *thread;
- 	struct trace  *trace;
- 	void	      *parm;
-+	char	      *type_name;
- 	u16	      len;
- 	u8	      idx;
- 	u8	      mask;
--- 
-2.45.2
-
+>
+> >
+> > best
+> > Yan
+>
+>
 
