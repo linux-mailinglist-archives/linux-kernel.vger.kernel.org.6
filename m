@@ -1,112 +1,158 @@
-Return-Path: <linux-kernel+bounces-227883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7529157AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:14:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7E99157B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 22:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C7D31C225BE
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:14:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6563E1F217D8
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E283A1A01B7;
-	Mon, 24 Jun 2024 20:14:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0330C1A070A;
+	Mon, 24 Jun 2024 20:14:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FibGNk3b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuFvNqsB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29192FBEF
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:14:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A8D1A01B7;
+	Mon, 24 Jun 2024 20:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719260063; cv=none; b=JQjMr6Nb9N10xfZEItXWRaGWytar74HpL1SwtWUPcKlp9VPQuI5XJsCGJjJnDsF7TIRYfFSGlALAKia69tXWKCiikzn6433EIsKQzcna6XERnwjDWMrpDuFdXtWlaGga9KrwtJiAJO9t591TMDZFcpW3R2sB6EjoU4tkEzTYv8Q=
+	t=1719260090; cv=none; b=R4uSLv7/10kI+T3nZst7Vp28ALfU0S5hjKpZbLQjT3XoQ7gBF0dw4C8QlPcZZfF8sl1g9/hVhawG6vNqDjA0XcROadiu4DmefBtYlJSn83S3nVZVN5wDEbgjfrrkLYzlqDAb1jFsnJgaz4XytcHqn5ZYScy3yvSw1Wy6SAN60Y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719260063; c=relaxed/simple;
-	bh=+T0EC+BKMDCsEfLu0EC918+5a958Z0xU9XA+x12y4X4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dp2h3133wqjzXZQw5yu0KacBFEogkvKNh8DXGTVQ+Owe5E0xy1MOK9NrDA89AFy6VjmTsmyXUI6ie4WARn9ophtCVDDEE558yIDVBnt/44enBYBM7Vf+z728b7wQsxklow/pWAnqn3SgL4EXRmExTZ8aY/+cpXny7FQCd6a3mwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FibGNk3b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7A17C4AF0A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:14:22 +0000 (UTC)
+	s=arc-20240116; t=1719260090; c=relaxed/simple;
+	bh=B7G4o+wl4uVsOmOk5mkRzYTclrWJ1qPeYOyEfL5YUNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HihgAvXUE2zMnqReZJD20UljoxvOBMmstHvnWLuTSWnm4SvvQ0Sej2xmQ3GSEHj3k2pg4kyTgMEwZCNvPPubpxI8a7RHq3fyuqd743XdM1Q4wR2oJgUhzFQwdhrIHRI1INpRvLfP33NJELbk99dhEREmQuJyUSNdeQ8r5WMisCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nuFvNqsB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CD15C2BBFC;
+	Mon, 24 Jun 2024 20:14:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719260062;
-	bh=+T0EC+BKMDCsEfLu0EC918+5a958Z0xU9XA+x12y4X4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=FibGNk3b2bUqC1f8zvTTFZYw0VManLnp29Jx1O6va2p7l+FJQ5cuzDKqin4ClBJ3H
-	 xjskbMaGb9uH7J/OrWUD1DFzPk8vY54DS439q1jnZSd4tbdtSBYzCIUSlPjrXet/G3
-	 QRuDuj4Qs9Hw+U8J1xpoRq8+X8RAcQ3QSolfsPpJ4WAIRPr/LstsoBudDeUoriABWU
-	 YySUNxYitYAWHpI8YpfQ6tyGp3ksiKX3SXlySeIk/07XhjIWvVIvtA0YFejI9v4Rw/
-	 uuS28X1yNP6iFzHLfyA2JjoymJXgAcHhYFJvXLeTPgMPXJ0iEwQAgBn9k3OeyA8QQb
-	 oyk2IVPX058AA==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2eaa89464a3so55216101fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 13:14:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUMBNQuW6o0l7SdwldRBmU2VE361rR7PW0nM+SiaRpObvYhe7TEaegxZoYLcvrBn1FRRe8zdhADKJkB7+5e1VhM7GqnjF4QQQmXwU5I
-X-Gm-Message-State: AOJu0YyQ82bn9qV6RARHMhvNtGzFhpsT1reUQD0e/fwnu65bSf6pPQ+o
-	fr1ZEeUiKsIoJq7uL0ZUboORVt0JhlPcPvPY8Vlmv7V5Hv1/ju2Ot9rUpJu9d8qhF0QGZjZHeOY
-	JJHhNUaD0hNGN7L0exbeh7P1JIA==
-X-Google-Smtp-Source: AGHT+IGCThMCqv0QdDLhB3+rM3hc+kx0hOPXWMbQFGNrbXIWQLJ1n1x+2xafjuOiPqLi00MvzHiFOn8ELjn/Yj/6k54=
-X-Received: by 2002:a2e:9cc8:0:b0:2ec:3fb8:6a91 with SMTP id
- 38308e7fff4ca-2ec5797a562mr43562221fa.19.1719260061029; Mon, 24 Jun 2024
- 13:14:21 -0700 (PDT)
+	s=k20201202; t=1719260089;
+	bh=B7G4o+wl4uVsOmOk5mkRzYTclrWJ1qPeYOyEfL5YUNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nuFvNqsBwAJtlu4pr/J7euof725uBNi2M7AwbpWG+GLkXBxGcxi4M4b0bSxKclnZX
+	 OVGOsA+MXgga4gPerliU6Kaw2x/QrA6zXG50VYbq48Fqy1eUvNxf3iKXW1sr+DLYf4
+	 iqHq69B0OaV1VNTvklt9o7C5NZ0qufAAvwJl0AHg3q00g3ta3c2ZRHUoK3+YhPyp2L
+	 Sz0ulQ6AmLS1sf+kyvbfm/Xz+LDDoRpGaOQdTN31nUkRs1BuDDHaCUGWLTgHBM67BL
+	 HDtx89T3wCoxd67+IPDu1RlPBvwfM3PZHWkxB1/TLpOJ2unp6CbEF5MJxPV1vdx5MM
+	 k/5NDuyZN7kAA==
+Date: Mon, 24 Jun 2024 13:14:47 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Koakuma <koachan@protonmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de,
+	sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] sparc/build: Make all compiler flags also
+ clang-compatible
+Message-ID: <20240624201447.GA774138@thelio-3990X>
+References: <20240620-sparc-cflags-v1-1-bba7d0ff7d42@protonmail.com>
+ <20240621185345.GA416370@thelio-3990X>
+ <e26PTXUXEz8OYXmaeKn4Mpuejr4IOlFfFwdB5vpsluXlYiqDdlyQTYcDtdAny_o4gO4SfPeQCCN2qpyT6e0nog5EaP3xk2SeUPTrF54p1gM=@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611155012.2286044-1-robh@kernel.org> <20240618154102.GD2354@willie-the-truck>
-In-Reply-To: <20240618154102.GD2354@willie-the-truck>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 24 Jun 2024 14:14:08 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJaavfSUGLs4Uoi7ibiYG6=ebzRsUnzdNMU9vo70FA-Xw@mail.gmail.com>
-Message-ID: <CAL_JsqJaavfSUGLs4Uoi7ibiYG6=ebzRsUnzdNMU9vo70FA-Xw@mail.gmail.com>
-Subject: Re: [PATCH] perf: arm_pmuv3: Avoid assigning fixed cycle counter with threshold
-To: Will Deacon <will@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>, James Clark <james.clark@arm.com>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e26PTXUXEz8OYXmaeKn4Mpuejr4IOlFfFwdB5vpsluXlYiqDdlyQTYcDtdAny_o4gO4SfPeQCCN2qpyT6e0nog5EaP3xk2SeUPTrF54p1gM=@protonmail.com>
 
-On Tue, Jun 18, 2024 at 9:41=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
-:
->
-> On Tue, Jun 11, 2024 at 09:50:12AM -0600, Rob Herring (Arm) wrote:
-> > If the user has requested a counting threshold for the CPU cycles event=
-,
-> > then the fixed cycle counter can't be assigned as it lacks threshold
-> > support. Currently, the thresholds will work or not randomly depending
-> > on which counter the event is assigned.
-> >
-> > While using thresholds for CPU cycles doesn't make much sense, it can b=
-e
-> > useful for testing purposes.
-> >
-> > Fixes: 816c26754447 ("arm64: perf: Add support for event counting thres=
-hold")
-> > Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> > ---
-> >  drivers/perf/arm_pmuv3.c | 3 ++-
-> >  1 file changed, 2 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/perf/arm_pmuv3.c b/drivers/perf/arm_pmuv3.c
-> > index 23fa6c5da82c..2612be29ee23 100644
-> > --- a/drivers/perf/arm_pmuv3.c
-> > +++ b/drivers/perf/arm_pmuv3.c
-> > @@ -939,9 +939,10 @@ static int armv8pmu_get_event_idx(struct pmu_hw_ev=
-ents *cpuc,
-> >       struct arm_pmu *cpu_pmu =3D to_arm_pmu(event->pmu);
-> >       struct hw_perf_event *hwc =3D &event->hw;
-> >       unsigned long evtype =3D hwc->config_base & ARMV8_PMU_EVTYPE_EVEN=
-T;
-> > +     bool has_threshold =3D !!(hwc->config_base & ARMV8_PMU_EVTYPE_TH)=
-;
->
-> Just a nit, but I don't think you need the '!!' here.
+Hi Koakuma,
 
-Right, I guess since bool is a first class type in C9X we don't have
-to worry about truncation. Old habits...
+On Sat, Jun 22, 2024 at 12:18:17PM +0000, Koakuma wrote:
+> Nathan Chancellor <nathan@kernel.org> wrote:
+> 
+> > I saw through the LLVM issue above that one other patch is necessary to
+> > fix an issue in the vDSO [1], which I applied in testing this one. 
+> 
+> Mhmm, I did not submit that yet because I don't feel fully confident
+> with it. I think it should probably live in include/vdso/math64.h
+> as plain C code instead of the current asm version, but I don't know
+> what is the proper way to check the current environment's word size.
+> Is checking BITS_PER_LONG enough, or should I do it in another way?
 
-Rob
+Yes, I believe that is what BITS_PER_LONG is there for, you will see
+other checks in the tree for that. You could also reach out to the
+maintainers of the generic vDSO infrastructure to see if they have any
+ideas or suggestions for integration.
+
+> > I noticed in applying that change that you appear to be working on 6.1,
+> > which is fine for now, but you'll need another diff once you get to a
+> > newer version, as we stopped using CROSS_COMPILE to set clang's
+> > '--target=' value:
+> > 
+> > diff --git a/scripts/Makefile.clang b/scripts/Makefile.clang
+> > index 6c23c6af797f..2435efae67f5 100644
+> > --- a/scripts/Makefile.clang
+> > +++ b/scripts/Makefile.clang
+> > @@ -10,6 +10,7 @@ CLANG_TARGET_FLAGS_mips := mipsel-linux-gnu
+> > CLANG_TARGET_FLAGS_powerpc := powerpc64le-linux-gnu
+> > CLANG_TARGET_FLAGS_riscv := riscv64-linux-gnu
+> > CLANG_TARGET_FLAGS_s390 := s390x-linux-gnu
+> > +CLANG_TARGET_FLAGS_sparc := sparc64-linux-gnu
+> > CLANG_TARGET_FLAGS_x86 := x86_64-linux-gnu
+> > CLANG_TARGET_FLAGS_um := $(CLANG_TARGET_FLAGS_$(SUBARCH))
+> > CLANG_TARGET_FLAGS := $(CLANG_TARGET_FLAGS_$(SRCARCH))
+> 
+> Yeah, I was working with 6.1 at that time since it's the version
+> that my distro have installed for me. Now this is more of a workflow
+
+That makes sense. I do think you should start working off of a more
+recent version (ideally at least mainline) for your future revisions,
+just so that your patches can be applied with less friction on
+maintainers. That can help your patches get picked up quicker :)
+
+> question, but this means I should submit a v2 with this change
+> merged in with mine too, right?
+
+Here is what I would do:
+
+1. Either keep this patch the way that it is or break it up into two
+   separate patches (especially given Adrian's other review comment):
+
+   One for removing the '-fcall-used' flags, with the comments about how
+   it does not impact the ABI and the registers can still be used in
+   assembly if needed, perhaps with some benchmarks with any codegen?
+   Might not be strictly necessary since Sam did not seem opposed in the
+   previous discussion.
+
+   One for changing the vDSO from '-mv8plus' to '-mcpu=v9' (if this is
+   still okay).
+
+2. Add another patch with that diff above with some notes about what was
+   tested to justify allowing this now.
+
+You'll end up with either a two or three patch series. I would send this
+series to both the SPARC people that you have added here along with the
+Kbuild and ClangBuiltLinux folks, which you can get from the output of
+
+  $ scripts/get_maintainers.pl scripts/Makefile.clang
+
+or use 'b4 prep --auto-to-cc' after crafting the series, since it
+appears you used it for this series. For the cover letter, you can add
+some commentary about what was tested and request integration from
+either the SPARC folks or Masahiro, depending on who wants to carry the
+changes, since they should go through one tree atomically ideally.
+
+If you have any questions about or issues with that comment or any other
+aspect of this process, I am happy to answer or clarify as necessary!
+I am in the #clang-built-linux channel in the LLVM Discord and
+#clangbuiltlinux on Libera if anything comes up.
+
+> And thanks for the feedback!
+
+Always happy to help get more people involved with the kernel,
+especially from the clang/LLVM side :)
+
+Cheers,
+Nathan
 
