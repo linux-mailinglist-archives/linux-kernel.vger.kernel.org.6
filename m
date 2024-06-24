@@ -1,147 +1,229 @@
-Return-Path: <linux-kernel+bounces-227012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D696C914726
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:12:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED9DD91472A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:14:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 106D31C20CAF
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:12:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C2C31C22208
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26115136994;
-	Mon, 24 Jun 2024 10:12:05 +0000 (UTC)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED4D136995;
+	Mon, 24 Jun 2024 10:14:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lw0znWnr"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469DC5380F;
-	Mon, 24 Jun 2024 10:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D4F5380F;
+	Mon, 24 Jun 2024 10:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719223924; cv=none; b=bVR0rL6+g10TFXHh5mGO5qQx7Kt+/yg2cu5on3eAfPJh24yFQtg4Zk4VszmH8FK0559wax4q2n+QGlk5Zp5ij280yxR9cJ+Mf6dvINiTZuhgDO5JohEo2qf8sQv9TyZG0B3bYVkNlV0+f+s1qxVrMhz7UwGYMOsKlU2lmrTO+4c=
+	t=1719224092; cv=none; b=hRkZz5cDLvbXeGlNNswwfPIjLTXaZHr38haG9Ww6sEstL/Rb8FKzJQmCNN6bTiHkmDLKjpk9DenlBXsfQQ+uq7ReaDAL490gQ8knZ/zH1+MPc8Vb9RO4WyLNN3zaDsHkLCaIfjEL9FVxcV+pSoR9X5eJAYZ7MPttRRz2bHl7wto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719223924; c=relaxed/simple;
-	bh=IBvZyxdbo97T0/Tgj7l4fyQGXy0qXDZWL3VU4l7Hxnk=;
+	s=arc-20240116; t=1719224092; c=relaxed/simple;
+	bh=RE24KLqID2EC6vA+5KK6hVTlaj0wsAEo2phM0U2W/ug=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YLxBCt4VwzQatNlCqf1cf+ZCzGuJZF1i8MNh+BU83MTwreErSmm6ypbATIt0Ice8cAetGazsBk2BGLO0xj2YdJVSNLbr2HOsl6m2THTpyaYF/cnL56LfABJEWlD3WVr/xMmBGCYxuuB5rQg4uXSxs6GtOnrVuNjwyJO0wYLNP4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=PZyhlpmD33AunyKotF+V8YdC4p3f0unp0hcV/VriL2jAVW1ifpwxAWpWhrxMnTrTyfAZrFpk38zrUTy53dTLu+EYjNJgUPVRBhrag9dhPNQ2MQ5d/kTfrMhC9NgjKBPw1kHsQfnny4adQ7/2miu1Bp3poIq/NeCuPFHQ4Ylge3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lw0znWnr; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-63bce128c70so29333967b3.0;
-        Mon, 24 Jun 2024 03:12:03 -0700 (PDT)
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2c84df0e2f4so945254a91.1;
+        Mon, 24 Jun 2024 03:14:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719224090; x=1719828890; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hCbtAJmIzGDqUkK6LAUHtM0hWFXhplCtNg6zF/80eAQ=;
+        b=lw0znWnrgnfl9Wvu7DCm6Hag+M+v3uDqn6Kq5Q9JInPvrxcShMlNNNh63E6CS1yB8P
+         ji5wXL0OM8kZIXOSVnfadLt01MLPBwqmQWqh2tL4WJSgJYGhf/FH3ujib7cF8/l3qEHg
+         GIHV8TNg+m3PsFnTQ4a/cU+W54k3sWASp5YlUS635sZcN6Nhk8zZcr81ZqZQmiLCmrmu
+         xIGmUV3WNypm3797TTO9S9jiHwT8S0EU2CMhiqaQMJMjBxDB1nRkj8d2gFd/k/RXPpFc
+         EaOILeEK6ojd4bPf1YSCohMSXrFgEtEsrWUSNHRdYdn8yEukYqo9iLd0dYL745dABa9y
+         x2CA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719223922; x=1719828722;
+        d=1e100.net; s=20230601; t=1719224090; x=1719828890;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ElYVxUQdlVxuSMCsySI9p98sI8g3FQfvxxo+f8vrW3A=;
-        b=B+uZKr0lH6JmviH8D2iolqv8ocr3WOyV0LyglkCTlJjHVd6lx8SpSdnh1yYMTmSx5m
-         GJH6rC4VRgxIvpZ6be2HXbpu/NpfhR/GhahgWfsipmdrulzazrQFGSyomdcdxpKDKnwZ
-         0Gvn1g26qCDtEdki4PW3LxhW1lEHH6Q7UXbUAjxwgwcMETZwQZJ6VtMC8srvOqVxCwKD
-         qFwhtGGVPxPHaIYH46B8O6jud+bfltLa/RYnLZdz+ljFZ8ZVuNcm5+3xIK+uKZI9yYtW
-         ODJkmZdSXrNZOodI74FKNNuPavhVlCuctD3FWorVOVCuZaSABZgE9MhXI7zVvuIpWMuw
-         k/Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCWQjYvO8l7+XO4kUvqcsGFkCr1LVOVHnxpx1th1R/J5l95fLrze0mKxX6S1ZKSEpF/hCMa58iADZSU5SS2lFaHtnXnUhBM8MhaDZuB6lVXAUxgExsmMZk2svlAj2PgWDR7Fi8TT/JzzXeJjhVQm
-X-Gm-Message-State: AOJu0YwKgJaNQ4Li7m0cayPEho4zItDTdG0mT4vfm137I+TmCmJ7ghgz
-	QQT1YiW6jJm7JNv9+bYf3MT1BtQoVNxi3hNW6DofxVItKLd5f8Zc8z8jPb0g
-X-Google-Smtp-Source: AGHT+IFG6IBsf5sqYD7hE8J+CzWP4DoAu8XA6RkB3juDN/fqYtxUFtoxfvgKxna4g1eTGkepiLNdSw==
-X-Received: by 2002:a81:4322:0:b0:622:c70b:ab2b with SMTP id 00721157ae682-6424821b6e8mr26768427b3.2.1719223921940;
-        Mon, 24 Jun 2024 03:12:01 -0700 (PDT)
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f11c03cb6sm27860207b3.31.2024.06.24.03.12.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 03:12:01 -0700 (PDT)
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e02b605bca2so3616553276.1;
-        Mon, 24 Jun 2024 03:12:01 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU02JQuTOS23FKCjRMPylulJMOJToH99u/+MHGJNEiVIwlZNMfz6zEys0PYT2kQ+NtV3ueRJpe78Yafn+wIdbMVHQ1cGBq+2BfTONTap/NRQSufjWRt5QA99LRgsN6ojAiMF+BTkSODDj+BoFHw
-X-Received: by 2002:a25:3607:0:b0:e02:d13b:5e19 with SMTP id
- 3f1490d57ef6-e02f9f44593mr2748225276.9.1719223921597; Mon, 24 Jun 2024
- 03:12:01 -0700 (PDT)
+        bh=hCbtAJmIzGDqUkK6LAUHtM0hWFXhplCtNg6zF/80eAQ=;
+        b=AIaIlT1FHw4rGPcBTJTzat1RGtJNsnpmEvA3SGLtV4g09AwDTvZ4QRIqdd/UcJ3WHb
+         SthRdAqfJpn3EIBokFmOTTjbK2qjqu3RV6PgTlcJSelbK+HlwrwgFfxYHwBVT+6HTxuU
+         3YYpcMvqvC65YlYLV7nc2gYrh8MF5h3IU9YzVDknlJFFqe4NYqx9zvWwm324HOlNUisP
+         JihKfO6nsk5qmDj2OmB+mKxaCI05UoONLSd7ptL0bcKCpgUM5ZsVT6UYjFgiPKz0hGbq
+         c+rWzUTiWFSPvDkYxZfDiki5Na3bTJO3eyWrM2CTzwlv8vqpmdEV1V5mUx4Oi7zvjVxF
+         VWeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXjTa12iRcmvmMVwcelucEsVV8340JQNkUOtKlKPQGG4mm6wRmKD60+P9vuU0jQBpNIDhuh/BW1LOuX9lkJkG/9RodXEOdMO0JvX6E0hWqzE3ex5hs8OkXGAOiz9kUJcd699wcepgNhOrcvgKzltTPzRwPUuXKWMPc/QOCMtncf0QEOxA==
+X-Gm-Message-State: AOJu0YyWJte3k68h89SRp0s2H9QjRMf0Z3cCmMdfK6/YpcctuN4CA9xk
+	xqcz6HdZQqdAxMOJbLReB2479jxj4DDYx7eAPB9++0pwhx0vcAIrp8ZRffS1NFiRwRUdrTlhg3o
+	G2nf20peXzuUD/HmP8JFdokPIXCQ=
+X-Google-Smtp-Source: AGHT+IFzFiRLl/5gFSYk5S5BLFBGj4iF9pD+4XnLnZj+Li7/qTVD4bPy+jBR9mZRCKfO0rRQBbb3vKQ9sQxLTuXyYO8=
+X-Received: by 2002:a17:90b:d85:b0:2c3:2f5a:17d4 with SMTP id
+ 98e67ed59e1d1-2c8a232c548mr46096a91.4.1719224089949; Mon, 24 Jun 2024
+ 03:14:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240617-md-m68k-arch-m68k-v1-1-57d38beaeb13@quicinc.com>
- <CAMuHMdWD0Je3HZ+RJyfdxKxKcBp7nt6ooP_YUpiju77Zf1QzVw@mail.gmail.com> <a9a90666-5b3f-478d-8c88-002e23aee48b@quicinc.com>
-In-Reply-To: <a9a90666-5b3f-478d-8c88-002e23aee48b@quicinc.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 24 Jun 2024 12:11:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdX1GEuWz-SfhuRvofgryzHApNTrWkvmyJuQ4Av8TZY=1w@mail.gmail.com>
-Message-ID: <CAMuHMdX1GEuWz-SfhuRvofgryzHApNTrWkvmyJuQ4Av8TZY=1w@mail.gmail.com>
-Subject: Re: [PATCH] m68k: add missing MODULE_DESCRIPTION() macros
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
+References: <20240623124507.27297-2-shresthprasad7@gmail.com> <62c05c34-0b69-4091-8c3a-d0b8befa9150@kernel.org>
+In-Reply-To: <62c05c34-0b69-4091-8c3a-d0b8befa9150@kernel.org>
+From: Shresth Prasad <shresthprasad7@gmail.com>
+Date: Mon, 24 Jun 2024 15:44:37 +0530
+Message-ID: <CAE8VWiLXS1gsxjk7aK335QtZJk7Se+k5VsFzmUpQHfaVJnKa7g@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: dma: mv-xor-v2: Convert to dtschema
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+	javier.carrasco.cruz@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Jeff,
-
-On Tue, Jun 18, 2024 at 4:46=E2=80=AFPM Jeff Johnson <quic_jjohnson@quicinc=
-.com> wrote:
-> On 6/18/2024 12:36 AM, Geert Uytterhoeven wrote:
-> > On Tue, Jun 18, 2024 at 1:47=E2=80=AFAM Jeff Johnson <quic_jjohnson@qui=
-cinc.com> wrote:
-> >> With ARCH=3Dm68k, make allmodconfig && make W=3D1 C=3D1 reports:
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/m68k/emu/nfbloc=
-k.o
-> >> WARNING: modpost: missing MODULE_DESCRIPTION() in arch/m68k/emu/nfcon.=
-o
-> >>
-> >> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> >>
-> >> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> >
-> > Thanks for your patch!
-> >
-> >> --- a/arch/m68k/emu/nfblock.c
-> >> +++ b/arch/m68k/emu/nfblock.c
-> >> @@ -193,4 +193,5 @@ static void __exit nfhd_exit(void)
-> >>  module_init(nfhd_init);
-> >>  module_exit(nfhd_exit);
-> >>
-> >> +MODULE_DESCRIPTION("ARAnyM block device driver");
-> >
-> > I think that should be s/ARAnyM/Atari NatFeat/, as I believe NatFeat
-> > is also available on other Atari emulators. See also nfeth.c
-> >
-> >>  MODULE_LICENSE("GPL");
-> >> diff --git a/arch/m68k/emu/nfcon.c b/arch/m68k/emu/nfcon.c
-> >> index 17b2987c2bf5..0ab2e4d08871 100644
-> >> --- a/arch/m68k/emu/nfcon.c
-> >> +++ b/arch/m68k/emu/nfcon.c
-> >> @@ -173,4 +173,5 @@ static void __exit nfcon_exit(void)
-> >>  module_init(nfcon_init);
-> >>  module_exit(nfcon_exit);
-> >>
-> >> +MODULE_DESCRIPTION("ARAnyM console driver");
-> >
-> > Likewise.
-> >
-> >>  MODULE_LICENSE("GPL");
-> >
-> > If you agree, I can make these changes while queuing in the m68k tree
-> > for v6.11.
+On Mon, Jun 24, 2024 at 10:47=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.o=
+rg> wrote:
 >
-> You are the domain expert here. I'd be very happy for you to make the cha=
-nges :)
+> On 23/06/2024 14:45, Shresth Prasad wrote:
+> > Convert txt bindings of Marvell XOR v2 engines to dtschema to allow
+> > for validation.
+> >
+> > Signed-off-by: Shresth Prasad <shresthprasad7@gmail.com>
+> > ---
+> > Tested against `marvell/armada-7040-db.dtb`, `marvell/armada-7040-mocha=
+bin.dtb`
+> > and `marvell/armada-8080-db.dtb`
+> >
+> >  .../bindings/dma/marvell,xor-v2.yaml          | 69 +++++++++++++++++++
+> >  .../devicetree/bindings/dma/mv-xor-v2.txt     | 28 --------
+> >  2 files changed, 69 insertions(+), 28 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/dma/marvell,xor-v=
+2.yaml
+> >  delete mode 100644 Documentation/devicetree/bindings/dma/mv-xor-v2.txt
+> >
+> > diff --git a/Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml =
+b/Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml
+> > new file mode 100644
+> > index 000000000000..3d7481c1917e
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/dma/marvell,xor-v2.yaml
+> > @@ -0,0 +1,69 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/dma/marvell,xor-v2.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Marvell XOR v2 engines
+> > +
+> > +maintainers:
+> > +  - Vinod Koul <vkoul@kernel.org>
+>
+> Should be rather platform maintainer.
+>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    contains:
+>
+> This cannot be unspecific. Drop contains.
+>
+> > +      enum:
+> > +        - marvell,armada-7k-xor
+> > +        - marvell,xor-v2
+> > +
+> > +  reg:
+> > +    items:
+> > +      - description: DMA registers location and length
+> > +      - description: global registers location and length
+>
+> Drop "location and length", redundant.
+>
+> > +
+> > +  clocks:
+> > +    minItems: 1
+> > +    maxItems: 2
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: core
+> > +      - const: reg
+>
+> This does not match number of items in clocks:
 
-I made these changes while applying your patch. No need to resend.
+I'm not sure what you mean, the original txt stated that `clock-names`
+is only required if there are two `clocks`.
 
-Gr{oetje,eeting}s,
+>
+> > +
+> > +  msi-parent:
+> > +    description:
+> > +      Phandle to the MSI-capable interrupt controller used for
+> > +      interrupts.
+> > +    maxItems: 1
+> > +
+> > +  dma-coherent: true
+>
+> This was not present in the binding and commit msg did not explain why
+> this is needed. Are devices really DMA coherent?
 
-                        Geert
+Sorry about that, I added this because all the nodes I looked at
+contained `dma-coherent`.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+>
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - msi-parent
+> > +  - dma-coherent
+> > +
+> > +if:
+>
+> Put it under allOf: in this place.
+>
+> > +  required:
+> > +    - clocks
+>
+> This does not work and does not make much sense. Probably you want to
+> list the items per variant?
+>
+>
+> > +  properties:
+> > +    clocks:
+> > +      minItems: 2
+> > +      maxItems: 2
+>
+> Instead list and describe the items.
+>
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+I did it this way to allow for `clock-names` to only be required if there
+are two `clocks` present. Is there another way I should be doing this?
+
+> > +then:
+> > +  required:
+> > +    - clock-names
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    xor0@6a0000 {
+> > +        compatible =3D "marvell,armada-7k-xor", "marvell,xor-v2";
+>
+> This totally does not match your binding.
+>
+> Please, read example-schema, other bindings, my old talks and other
+> resources before doing conversions, so we can avoid such trivial
+> mistakes. You enumerated compatibles (enum), but here have a list. A
+> list is not an enumeration, obviously...
+
+Right, thank you for your feedback.
+I'll most certainly read up more on this more.
+
+Regards,
+Shresth
 
