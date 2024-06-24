@@ -1,137 +1,165 @@
-Return-Path: <linux-kernel+bounces-227688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79F67915588
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:39:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 194D691558A
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 19:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3473E2838CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:39:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989931F24409
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 17:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC98419F465;
-	Mon, 24 Jun 2024 17:39:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A8419EEDF;
+	Mon, 24 Jun 2024 17:40:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ML0Y+EyK"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J9uB0i/A"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56BA19EEC7
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9181019E83A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:40:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719250769; cv=none; b=K79R0hPK7yew8bGeAzAnG5jJpaBqsMQgZuGl4ThrBhV+LH23JXeI0y4WYRm4uyfWcwYRuPwxT5UHXTx27OZgfzUjjDbdwz7bM3E8fPzkWycCX0Z8+Rt1h218xt4idKHjEGwqCBqUYzTJcKaVSlIrNXE8evPzJyejwQN+QuHqGXA=
+	t=1719250803; cv=none; b=gqK6RpbuLgB8wf7Z+PYufY4YDy1Botpq/jMfsyMIs29F3yENSRuzOLMYk0YKKo7DIj0KSwHMXCMKJ2S+s6yxpG/hrZEjBTMNSZtv0GDQiFdbgXp847D8myxNamgiyMd4bGTDZSRAjIUyRBS9f8ln6riI6Otvucgxhkhxj6B7ur4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719250769; c=relaxed/simple;
-	bh=RmWwBKqpQhgnS45GQ4aaZI6SvIbgoTYxZp32M5eQP5A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UJuI6UWAizoiC39ULFrlZE72ejotJ6URHm5Zo+rJH66gF3pAqbnrruMYe1ekNg1W270fN7lFSQ50Iu1NBDnIOrCgaAtmletGQBBvzyS/c5JKMcjPS+ebb5t21DESP/GLnnTXA8F8+wkpzJU/QzGzLE8tUeqW/7WO/cCR+wymH8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ML0Y+EyK; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7955841fddaso389568485a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:39:27 -0700 (PDT)
+	s=arc-20240116; t=1719250803; c=relaxed/simple;
+	bh=rFspHFmOyiFGXqZvDfFVtBS2+jLZUsqxipNk0i6GmJE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SKzcCW8voHaPxBOoRY2HZGW8USWCfBlR5+qfSQk4CrUwexwe2bPEM5wAVml8TYVe8YqeZ6MaYf8oSNUgm1xA1650d/lcS4Iq2UZbxe8TCIYaSgl5xGXW2QgWRKvuiGmxtqmu5AHFLgo7DpWnkcObZa7uvF4UB8V8sEVFqAXSodc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J9uB0i/A; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so51032631fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:40:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719250764; x=1719855564; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8bcigEvxElFnNf6XQZ1LGyn+920C2Rwm5nJUAotnto8=;
-        b=ML0Y+EyKNiVdw+KpF8EYsjABUHPy2ApYl+20TlGRetEgKhyzKR1uVtdJQ1b6+78ea4
-         1GmzoNFlLZXkd/28e1gra9helEvyM3LdVlJdyaEufFwizV+1sE5bh+htAt7hAxbvnz0j
-         FoHFC4NweDvyltpghFKryt9BsG77nxUSwLQDo=
+        d=linaro.org; s=google; t=1719250800; x=1719855600; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=X4I6nP/vTxwMdJ/dV3TQHmb3v1qJ/dluw5GaWCNXlms=;
+        b=J9uB0i/A+T0QJg8TIpsw5GqmgS5+XDK1TDR/QhsPR7OFiU8OwY6t2m3vKRsN9bgsjX
+         BAV1kKK8jJsMkV2r+0Pb5CD9Zep8VGXx1ifv7luzR8AInO3DavpkF1FejjGXq3QG3f3H
+         9Tjv5n5W5Wx+p3YflBoyFfDvTNnMDdmSD16t1MC3yDT70cGByqoWdCtjBVogJyAhvQuw
+         SkBKKny0zHGY2SwCqLce71OIjiH9WZsXtPDx+qSQmD8sn0GiGjs3I9WM2iqxb7kZV1lr
+         X1TgjVeF5Lz3b1b33iEcishtqU4vDKdT3sw6K47mcTRTawm9NzFO9gkujPuHKFqCE3lB
+         U8FA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719250764; x=1719855564;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8bcigEvxElFnNf6XQZ1LGyn+920C2Rwm5nJUAotnto8=;
-        b=aR46vr/NzxptSzC26rIHc0G1bDhiP3NNHO2iaBW8WV1G2rdbShnWOcZ8xS0KtB5JAt
-         hSSXQ5NGz8F3b4yHmitUZjSLvBpR+PUneXzBCBWRqx1FGC0vOt31Gw5DtsugvE//T02g
-         6aHutkpTwfbt/MJY28+JGvreKDP9GTqIpLawIhhKeylYoF1SU0qEeFsow6JVJaKS0suQ
-         AtyM0vUj5DsXeaevi+vILB4ZC/ExK/SyzVz/7u5qjUDFgXjiRk1O7xGVh2ttol8vO+Nw
-         t3kLs4ufLcVAfBh1TRnYlfX/6sJ8ncPbkRbm7JvXqHDUWCiyYGSs0nZZfvAtg8JKhtcw
-         HLzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW1Y07X4AH/yEGYnPgczNtnuE9oCgpRB38OOmuHfH8bo0D/zX4PbwHgyN2UdGOfQW8hXs8vjQxzYQjrsfsriuJxX5bIPZHFC2DQNU4C
-X-Gm-Message-State: AOJu0Yy/GMrrDbye/947ObVK1Bo/hd3OE81fz7RowACXMw1gHsKki0c4
-	qBb3FRDFkhWBvyv12MHjg1HuZG+T4g1IgMjmAvaOt8NUaLKN3OjtF7GTJBBFWvST4vGCyPzIMcg
-	=
-X-Google-Smtp-Source: AGHT+IFGJpa04YFdHzSZsZCqzWMh72J2zGBNzXc0eEg8QU5PQpD9Gghx4oGm5vXyurM4L8+mAYM5SA==
-X-Received: by 2002:a05:620a:270b:b0:795:50a9:f2f with SMTP id af79cd13be357-79bfd684d69mr159802085a.31.1719250764505;
-        Mon, 24 Jun 2024 10:39:24 -0700 (PDT)
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com. [209.85.160.175])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce8b38acsm335393285a.41.2024.06.24.10.39.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 10:39:23 -0700 (PDT)
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4405dffca81so12871cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 10:39:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWe2glm/PYNvEIwc8Xy0Th40LjNCmG9tsvPOSJ7Ui5TxQ7kMkgMPKfwQUhZilPkCqKt+MrjPx0cKeQyr4T4vDhAJh3pSvLMMEOlqLyj
-X-Received: by 2002:a05:622a:4b18:b0:444:e11d:709a with SMTP id
- d75a77b69052e-444f2520e93mr65771cf.20.1719250762638; Mon, 24 Jun 2024
- 10:39:22 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719250800; x=1719855600;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=X4I6nP/vTxwMdJ/dV3TQHmb3v1qJ/dluw5GaWCNXlms=;
+        b=wL0DtptlcxaMb8if3Jg9kBKCfP37nluaadhwl1zVa9nKuqQUR2wb3CP7+vTm/QGSVP
+         /5vajtXieRymbX5TXm9LSPm5vTrvWbv0tHTH++QA2+jZi7Rdrhy/2hrMYZIbWzOaD/Aw
+         MKXypfq2G2JGjhOTGEzQAH6cF4NliGAldZJ3gUe6ODFNIlViFnWWksoL/SkU2DHZ8bcq
+         vSTV4LGOrrR9cPhKSVu8Qx3vGVkBSVbnVJ2g/XlnJPChOQep4snw4H9Y4pLvFj8NiD/2
+         eiWE+xPyP8DJYdbfb694EJZHa4Sy0G2QrzAI2ii+HB8j68EXlWxULzQqby9wf/Arx0SD
+         GSnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxcbSfKBOkVzGA1hOiKVgLlM6WSecR+JJIKkadx/fBteegJnGC7PzaMRn0s/CmeFbku+TVl5DxXErEB2aT2ZfzRqaTXKFaKOWjnIki
+X-Gm-Message-State: AOJu0Yx/htmbn1rZKqrQi59DtlH68ovvwjQTkydZyCaImxXXcs6zfrOL
+	XBMOXnWhi6w94pg0bzk6X1wReCfhCo1ZNXPV0upWGbEAOtHZCjVAd1CrgJBYzyIF9EGD0eMqy7a
+	tGvs=
+X-Google-Smtp-Source: AGHT+IEh/iyrIRntkObUotPBA+wdBYxw0BsT77HvhE4PadtEX9XW7b2sxv0RwYrWpQ0mB8zBTSgWgQ==
+X-Received: by 2002:a05:651c:2119:b0:2ec:681b:5b50 with SMTP id 38308e7fff4ca-2ec681b5f72mr4572391fa.11.1719250799656;
+        Mon, 24 Jun 2024 10:39:59 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec5d2c3446sm5120581fa.38.2024.06.24.10.39.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 10:39:59 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 24 Jun 2024 20:39:58 +0300
+Subject: [PATCH] drm/connector: hdmi: shorten too long function name
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624133135.7445-1-johan+linaro@kernel.org> <20240624133135.7445-2-johan+linaro@kernel.org>
-In-Reply-To: <20240624133135.7445-2-johan+linaro@kernel.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Mon, 24 Jun 2024 10:39:07 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VZXnnbwTNc6dSqZvyCUc0=Wjg9mvBYsA1FJK3xR6bDEg@mail.gmail.com>
-Message-ID: <CAD=FV=VZXnnbwTNc6dSqZvyCUc0=Wjg9mvBYsA1FJK3xR6bDEg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] serial: qcom-geni: fix hard lockup on buffer flush
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240624-hdmi-connector-shorten-name-v1-1-5bd3410138db@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAG2veWYC/x3MwQqDMAwA0F+RnA3UWNzYrwwPXRvXHExHKjIQ/
+ 93i8V3eAZVNuMKrO8B4lypFG4a+g5iDfhklNQM58m4ijzmtgrGoctyKYc3FNlbUsDKOA1F6Ov+
+ Z4gPa8DNe5H/v7/k8L1LoJTltAAAA
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3067;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=rFspHFmOyiFGXqZvDfFVtBS2+jLZUsqxipNk0i6GmJE=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmea9uPJTjZRiOibJPcz5nFHytq9vOX0HcFPm1P
+ jPg/exgeCOJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnmvbgAKCRCLPIo+Aiko
+ 1WQDB/4zH94esAY7J/6Qv7nPTGRI9qb7iXNNoQI+f3yug4LgXeV2+rvQDDc2z7dPfb1VKWNFy6Y
+ Et9nvs2Xv6lQ3QHh3xl0X3l/DqhzxOtfmg8XO7LhqRqS5KhWXA95CyrGzOLwuNgxVFC7R+GxX95
+ qE18uh8iTr9U4iKLZ+FliIekM+kz+hAw8KkP3B7UqBU1PnTI7ZyerW6XS3Si6C6vcodm8E8gkwb
+ IVljS88TG9+eOzSfUqrjqklLZYOsfQbGMnSZkrSHrXKFIN+fyj8y5QMfuSmVAmxOF4n0guNS81d
+ CN7+Om6r/u9MJplaEeaang585QgXa4+pAvjXFD96gK+TNEIN
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Hi,
+If CONFIG_MODVERSIONS is enabled, then using the HDMI Connector
+framework can result in build failures. Rename the function to make it
+fit into the name requirements.
 
-On Mon, Jun 24, 2024 at 6:31=E2=80=AFAM Johan Hovold <johan+linaro@kernel.o=
-rg> wrote:
->
-> The Qualcomm GENI serial driver does not handle buffer flushing and used
-> to print garbage characters when the circular buffer was cleared. Since
-> commit 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo") this
-> instead results in a lockup due to qcom_geni_serial_send_chunk_fifo()
-> spinning indefinitely in the interrupt handler.
->
-> This is easily triggered by interrupting a command such as dmesg in a
-> serial console but can also happen when stopping a serial getty on
-> reboot.
->
-> Fix the immediate issue by printing NUL characters until the current TX
-> command has been completed.
->
-> Fixes: 1788cf6a91d9 ("tty: serial: switch from circ_buf to kfifo")
-> Reported-by: Douglas Anderson <dianders@chromium.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->  drivers/tty/serial/qcom_geni_serial.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+ERROR: modpost: too long symbol "drm_atomic_helper_connector_hdmi_disable_audio_infoframe" [drivers/gpu/drm/msm/msm.ko]
 
-I don't love this, though it's better than a hard lockup. I will note
-that it doesn't exactly restore the old behavior which would have
-(most likely) continued to output data that had previously been in the
-FIFO but that had been cancelled.
+Reported-by: Mark Brown <broonie@kernel.org>
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ drivers/gpu/drm/display/drm_hdmi_state_helper.c | 6 +++---
+ include/drm/display/drm_hdmi_state_helper.h     | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-...actually, if we're looking for a short term fix that mimics the old
-behavior more closely, what would you think about having a
-driver-local buffer that we fill when we kick off the transfer. Then
-the data can't go away from underneath us. It's an extra copy, but
-it's just a memory-to-memory copy which is much faster than the MMIO
-copy we'll eventually need to do anyway... This local buffer would
-essentially act as a larger FIFO.
+diff --git a/drivers/gpu/drm/display/drm_hdmi_state_helper.c b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+index 2dab3ad8ce64..7854820089ec 100644
+--- a/drivers/gpu/drm/display/drm_hdmi_state_helper.c
++++ b/drivers/gpu/drm/display/drm_hdmi_state_helper.c
+@@ -716,7 +716,7 @@ drm_atomic_helper_connector_hdmi_update_audio_infoframe(struct drm_connector *co
+ EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_update_audio_infoframe);
+ 
+ /**
+- * drm_atomic_helper_connector_hdmi_disable_audio_infoframe - Stop sending the Audio Infoframe
++ * drm_atomic_helper_connector_hdmi_clear_audio_infoframe - Stop sending the Audio Infoframe
+  * @connector: A pointer to the HDMI connector
+  *
+  * This function is meant for HDMI connector drivers to stop sending their
+@@ -727,7 +727,7 @@ EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_update_audio_infoframe);
+  * Zero on success, error code on failure.
+  */
+ int
+-drm_atomic_helper_connector_hdmi_disable_audio_infoframe(struct drm_connector *connector)
++drm_atomic_helper_connector_hdmi_clear_audio_infoframe(struct drm_connector *connector)
+ {
+ 	struct drm_connector_hdmi_infoframe *infoframe =
+ 		&connector->hdmi.infoframes.audio;
+@@ -749,4 +749,4 @@ drm_atomic_helper_connector_hdmi_disable_audio_infoframe(struct drm_connector *c
+ 
+ 	return ret;
+ }
+-EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_disable_audio_infoframe);
++EXPORT_SYMBOL(drm_atomic_helper_connector_hdmi_clear_audio_infoframe);
+diff --git a/include/drm/display/drm_hdmi_state_helper.h b/include/drm/display/drm_hdmi_state_helper.h
+index 285f366cf716..2d45fcfa4619 100644
+--- a/include/drm/display/drm_hdmi_state_helper.h
++++ b/include/drm/display/drm_hdmi_state_helper.h
+@@ -16,7 +16,7 @@ int drm_atomic_helper_connector_hdmi_check(struct drm_connector *connector,
+ 
+ int drm_atomic_helper_connector_hdmi_update_audio_infoframe(struct drm_connector *connector,
+ 							    struct hdmi_audio_infoframe *frame);
+-int drm_atomic_helper_connector_hdmi_disable_audio_infoframe(struct drm_connector *connector);
++int drm_atomic_helper_connector_hdmi_clear_audio_infoframe(struct drm_connector *connector);
+ int drm_atomic_helper_connector_hdmi_update_infoframes(struct drm_connector *connector,
+ 						       struct drm_atomic_state *state);
+ 
 
-You could choose the local buffer size to balance being able to cancel
-quickly vs. using the FIFO efficiently.
+---
+base-commit: f76698bd9a8ca01d3581236082d786e9a6b72bb7
+change-id: 20240624-hdmi-connector-shorten-name-3122d804b6c7
 
--Doug
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
