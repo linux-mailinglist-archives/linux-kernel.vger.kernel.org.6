@@ -1,190 +1,121 @@
-Return-Path: <linux-kernel+bounces-227099-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0DE914848
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:15:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F395C914847
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 13:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E18771C2215D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:15:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 310081C21F7D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:15:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 123A113791F;
-	Mon, 24 Jun 2024 11:15:36 +0000 (UTC)
-Received: from spam.asrmicro.com (asrmicro.com [210.13.118.86])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17E61386C0;
+	Mon, 24 Jun 2024 11:15:13 +0000 (UTC)
+Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF3612FF8B
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.13.118.86
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 928DF130A79;
+	Mon, 24 Jun 2024 11:15:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719227735; cv=none; b=U8owBzUbwNIJX1Vw8oNf2obc3xZ5ZnBSEWwpB6bgo3Fv5o9fKH6f7u7s7YdIB+7AnF1yH2SsoLg/wo93XMWMJNqjKpKt0kn+jYgGXDQWJE9Lk7mzE/ktDE3tdSnQWMDlfpzYzkaOPdvC/vXrAGw7voWdgaKjh1Q7mKHxECl1t6E=
+	t=1719227713; cv=none; b=u1IDek2o8PCs/+uYuT7FOFz1Ki62GP6wIJK8y/nirbfHge6ri04Sz4rOC2ryy4tI+2c29+3sg5iigZCci7mE/TiDm24KZf60dOx2lF55hsi22ffwCMnCLRR1g7D01rcc4ajMeP3Kl16e1TkqvmNH2Dvqa5Tl2ug5VJi/UaxpAyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719227735; c=relaxed/simple;
-	bh=EV5lVcKm5S0wnaNwZOjnxeTmZJ31Z3sMooz6ocxoPpU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lienb73wi6p9m61ZPWmBdeNQc4+a2TLPS7bKFWB5KnOLC0uSs2g6U2KAJS7paKMHSxrFSzhXu0glqTI6EV0ueYK8hk5JGId2Pr3c4x5eO8fDE/uHxZcnNw4+6a0MhUmw/O8boklNLqIIY60GmQeiKr/3XpQOtBdaGnPblYboLGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com; spf=pass smtp.mailfrom=asrmicro.com; arc=none smtp.client-ip=210.13.118.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=asrmicro.com
-Received: from exch03.asrmicro.com (exch03.asrmicro.com [10.1.24.118])
-	by spam.asrmicro.com with ESMTPS id 45OBEj78089188
-	(version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=FAIL);
-	Mon, 24 Jun 2024 19:14:45 +0800 (GMT-8)
-	(envelope-from zhengyan@asrmicro.com)
-Received: from exch03.asrmicro.com (10.1.24.118) by exch03.asrmicro.com
- (10.1.24.118) with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 24 Jun
- 2024 19:14:48 +0800
-Received: from exch03.asrmicro.com ([::1]) by exch03.asrmicro.com ([::1]) with
- mapi id 15.00.0847.030; Mon, 24 Jun 2024 19:14:48 +0800
-From: =?gb2312?B?WWFuIFpoZW5no6jRz9X+o6k=?= <zhengyan@asrmicro.com>
-To: Nam Cao <namcao@linutronix.de>
-CC: "tglx@linutronix.de" <tglx@linutronix.de>,
-        "maz@kernel.org"
-	<maz@kernel.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "paul.walmsley@sifive.com"
-	<paul.walmsley@sifive.com>,
-        "samuel.holland@sifive.com"
-	<samuel.holland@sifive.com>,
-        "linux-riscv@lists.infradead.org"
-	<linux-riscv@lists.infradead.org>,
-        =?gb2312?B?WmhvdSBRaWFvKNbcx8gp?=
-	<qiaozhou@asrmicro.com>
-Subject: =?gb2312?B?tPC4tDogW1BBVENIXSBpcnFjaGlwL3NpZml2ZS1wbGljOiBlbnN1cmUgaW50?=
- =?gb2312?Q?errupt_is_enable_before_EOI?=
-Thread-Topic: [PATCH] irqchip/sifive-plic: ensure interrupt is enable before
- EOI
-Thread-Index: AQHaxhQUdoMYNshWYUC/EJ5aDUOpkLHWIY8AgACb9jA=
-Date: Mon, 24 Jun 2024 11:14:47 +0000
-Message-ID: <69174a28eff44ad1b069887aa514971e@exch03.asrmicro.com>
-References: <20240624085341.3935-1-zhengyan@asrmicro.com>
- <20240624093556.ZcZgu2GF@linutronix.de>
-In-Reply-To: <20240624093556.ZcZgu2GF@linutronix.de>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1719227713; c=relaxed/simple;
+	bh=2z3Eqkol4JEiYQ5tJoZAaoWTE1bCIiqERw5USNnFyqg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VHatrxKpMQxI5hFFKJKlCB+AO50kGtLYsXHjoI3bdkytS1AicgC4dUiPfp1+a3mcO/ygXhHBqdJRpBmxae/vLhCYR0SdhTX4PQcbN6xMx9IeUHHHTm4ktVf8S64hK/3J89kZABM9Cv4iGEUa9Z7XiINR2+rn4m+B0qDoSkavnG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
+Received: from mailer.emlix.com (cr-emlix.sta.goetel.net [81.20.112.87])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.emlix.com (Postfix) with ESMTPS id 4D3855F869;
+	Mon, 24 Jun 2024 13:15:07 +0200 (CEST)
+From: Rolf Eike Beer <eb@emlix.com>
+To: Masahiro Yamada <masahiroy@kernel.org>,
+ Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
+ Nicolas Schier <n.schier@avm.de>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: Use $(obj)/%.cc to fix host C++ module builds
+Date: Mon, 24 Jun 2024 13:14:58 +0200
+Message-ID: <4576559.LvFx2qVVIh@devpool47.emlix.com>
+Organization: emlix GmbH
+In-Reply-To: <20240624-kbuild-fix-xconfig-v1-1-7c06eae6d3aa@avm.de>
+References: <20240624-kbuild-fix-xconfig-v1-1-7c06eae6d3aa@avm.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-DNSRBL: 
-X-SPAM-SOURCE-CHECK: pass
-X-MAIL:spam.asrmicro.com 45OBEj78089188
+Content-Type: multipart/signed; boundary="nextPart2330569.ElGaqSPkdT";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-PiBPbiBNb24sIEp1biAyNCwgMjAyNCBhdCAwODo1Mzo0MUFNICswMDAwLCB6aGVuZ3lhbiB3cm90
-ZToNCj4gPiBSSVNDLVYgUExJQyBjYW5ub3QgImVuZC1vZi1pbnRlcnJ1cHQiIChFT0kpIGRpc2Fi
-bGVkIGludGVycnVwdHMsIGFzDQo+ID4gZXhwbGFpbmVkIGluIHRoZSBkZXNjcmlwdGlvbiBvZiBJ
-bnRlcnJ1cHQgQ29tcGxldGlvbiBpbiB0aGUgUExJQyBzcGVjOg0KPiA+ICJUaGUgUExJQyBzaWdu
-YWxzIGl0IGhhcyBjb21wbGV0ZWQgZXhlY3V0aW5nIGFuIGludGVycnVwdCBoYW5kbGVyIGJ5DQo+
-ID4gd3JpdGluZyB0aGUgaW50ZXJydXB0IElEIGl0IHJlY2VpdmVkIGZyb20gdGhlIGNsYWltIHRv
-IHRoZQ0KPiA+IGNsYWltL2NvbXBsZXRlIHJlZ2lzdGVyLiBUaGUgUExJQyBkb2VzIG5vdCBjaGVj
-ayB3aGV0aGVyIHRoZQ0KPiA+IGNvbXBsZXRpb24gSUQgaXMgdGhlIHNhbWUgYXMgdGhlIGxhc3Qg
-Y2xhaW0gSUQgZm9yIHRoYXQgdGFyZ2V0LiBJZiB0aGUNCj4gPiBjb21wbGV0aW9uIElEIGRvZXMg
-bm90IG1hdGNoIGFuIGludGVycnVwdCBzb3VyY2UgdGhhdCAqaXMgY3VycmVudGx5DQo+ID4gZW5h
-YmxlZCogZm9yIHRoZSB0YXJnZXQsIHRoZSBjb21wbGV0aW9uIGlzIHNpbGVudGx5IGlnbm9yZWQu
-Ig0KPiA+DQo+ID4gQ29tbWl0IDljOTIwMDZiODk2YyAoImlycWNoaXAvc2lmaXZlLXBsaWM6IEVu
-YWJsZSBpbnRlcnJ1cHQgaWYgbmVlZGVkDQo+ID4gYmVmb3JlIEVPSSIpIGVuc3VyZWQgdGhhdCBF
-T0kgaXMgZW5hYmxlIHdoZW4gaXJxZCBJUlFEX0lSUV9ESVNBQkxFRCBpcw0KPiA+IHNldCwgYmVm
-b3JlIEVPSQ0KPiA+DQo+ID4gQ29tbWl0IDY5ZWE0NjMwMjFiZSAoImlycWNoaXAvc2lmaXZlLXBs
-aWM6IEZpeHVwIEVPSSBmYWlsZWQgd2hlbg0KPiA+IG1hc2tlZCIpIGVuc3VyZWQgdGhhdCBFT0kg
-aXMgc3VjY2Vzc2Z1bCBieSBlbmFibGluZyBpbnRlcnJ1cHQgZmlyc3QsIGJlZm9yZQ0KPiBFT0ku
-DQo+ID4NCj4gPiBDb21taXQgYTE3MDZhMWM1MDYyICgiaXJxY2hpcC9zaWZpdmUtcGxpYzogU2Vw
-YXJhdGUgdGhlIGVuYWJsZSBhbmQNCj4gPiBtYXNrDQo+ID4gb3BlcmF0aW9ucyIpIHJlbW92ZWQg
-dGhlIGludGVycnVwdCBlbmFibGluZyBjb2RlIGZyb20gdGhlIHByZXZpb3VzDQo+ID4gY29tbWl0
-LCBiZWNhdXNlIGl0IGFzc3VtZXMgdGhhdCBpbnRlcnJ1cHQgc2hvdWxkIGFscmVhZHkgYmUgZW5h
-YmxlZCBhdA0KPiA+IHRoZSBwb2ludCBvZiBFT0kuDQo+ID4NCj4gPiBIb3dldmVyLCBoZXJlIHN0
-aWxsIG1pc3MgYSBjb3JuZXIgY2FzZSB0aGF0IGlmIFNNUCBpcyBlbmFibGVkLiBXaGVuDQo+ID4g
-c29tZW9uZSBuZWVkIHRvIHNldCBhZmZpbml0eSBmcm9tIGEgY3B1IHRvIGFub3RoZXIgKE1heWJl
-IGxpa2UNCj4gPiBib2FyZGNhc3QtdGljaykgdGhlIG9yaWdpbmFsIGNwdSB3aGVuIGhhbmRsZSB0
-aGUgRU9JIG1lYW53aGlsZSB0aGUgSUUNCj4gPiBpcyBkaXNhYmxlZCBieSBwbGljX3NldF9hZmZp
-bml0eQ0KPiA+DQo+ID4gU28gdGhpcyBwYXRjaCBlbnN1cmUgdGhhdCB3b24ndCBoYXBwZW5lZA0K
-PiA+DQo+ID4gU2lnbmVkLW9mZi1ieTogemhlbmd5YW4gPHpoZW5neWFuQGFzcm1pY3JvLmNvbT4N
-Cj4gPiAtLS0NCj4gPiAgZHJpdmVycy9pcnFjaGlwL2lycS1zaWZpdmUtcGxpYy5jIHwgNCArKyst
-DQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCAzIGluc2VydGlvbnMoKyksIDEgZGVsZXRpb24oLSkNCj4g
-Pg0KPiA+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lycWNoaXAvaXJxLXNpZml2ZS1wbGljLmMNCj4g
-PiBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtc2lmaXZlLXBsaWMuYw0KPiA+IGluZGV4IDllMjJmN2Uz
-NzhmNS4uZTZhY2QxMzRhNjkxIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvaXJxY2hpcC9pcnEt
-c2lmaXZlLXBsaWMuYw0KPiA+ICsrKyBiL2RyaXZlcnMvaXJxY2hpcC9pcnEtc2lmaXZlLXBsaWMu
-Yw0KPiA+IEBAIC0xNDksOCArMTQ5LDEwIEBAIHN0YXRpYyB2b2lkIHBsaWNfaXJxX21hc2soc3Ry
-dWN0IGlycV9kYXRhICpkKQ0KPiA+IHN0YXRpYyB2b2lkIHBsaWNfaXJxX2VvaShzdHJ1Y3QgaXJx
-X2RhdGEgKmQpICB7DQo+ID4gIAlzdHJ1Y3QgcGxpY19oYW5kbGVyICpoYW5kbGVyID0gdGhpc19j
-cHVfcHRyKCZwbGljX2hhbmRsZXJzKTsNCj4gPiArCXZvaWQgX19pb21lbSAqcmVnID0gaGFuZGxl
-ci0+ZW5hYmxlX2Jhc2UgKyAoZC0+aHdpcnEgLyAzMikgKg0KPiBzaXplb2YodTMyKTsNCj4gPiAr
-CXUzMiBod2lycV9tYXNrID0gMSA8PCAoZC0+aHdpcnEgJSAzMik7DQo+ID4NCj4gPiAtCWlmICh1
-bmxpa2VseShpcnFkX2lycV9kaXNhYmxlZChkKSkpIHsNCj4gPiArCWlmICh1bmxpa2VseShpcnFk
-X2lycV9kaXNhYmxlZChkKSkgfHwgKHJlYWRsKHJlZykgJiBod2lycV9tYXNrKSA9PQ0KPiA+ICsw
-KSB7DQo+IA0KPiBJZiB3ZSByZWFkIGludGVycnVwdCBlbmFibGUgc3RhdGUgZnJvbSBoYXJkd2Fy
-ZSwgdGhlbiByZWFkaW5nIHRoZSBzb2Z0d2FyZQ0KPiBzdGF0ZSAoaXJxZF9pcnFfZGlzYWJsZWQp
-IGlzIHJlZHVuZGFudC4NCj4gDQpZZXMsIHlvdSBhcmUgcmlnaHQuIEkgd2FzIGFmcmFpZCBvZiBt
-aXNzaW5nIHNvbWUgY29ybmVyIGNhc2VzLCBzbyBJIGtlcHQgdGhlIG9yaWdpbmFsIGNvbmRpdGlv
-bmFsIGNoZWNrcy4NCkkgdGhpbmsgaXQgb3ZlciwgaXQgc2hvdWxkIGJlIHNhZmUgdG8gb25seSBj
-aGVjayBoYXJkd2FyZSBzdGF0ZXMNCkFuZCBJoa9kIGxpa2UgdG8gcHV0IGl0IGludG8gInVubGlr
-ZWx5IiBwYXRoIGFzIA0KaWYgKHVubGlrZWx5KChyZWFkbChyZWcpICYgaHdpcnFfbWFzaykpID09
-DQo+ID4gIAkJcGxpY190b2dnbGUoaGFuZGxlciwgZC0+aHdpcnEsIDEpOw0KPiA+ICAJCXdyaXRl
-bChkLT5od2lycSwgaGFuZGxlci0+aGFydF9iYXNlICsgQ09OVEVYVF9DTEFJTSk7DQo+ID4gIAkJ
-cGxpY190b2dnbGUoaGFuZGxlciwgZC0+aHdpcnEsIDApOw0KPiANCj4gSSBoYXZlIG5vIGtub3ds
-ZWRnZSBhYm91dCBhZmZpbml0eSBzdHVmZiwgc28gSSBkb24ndCByZWFsbHkgdW5kZXJzdGFuZCB0
-aGlzDQo+IHBhdGNoLiBCdXQgdGhlcmUgaXMgYW5vdGhlciBpZGVhIHJlZ2FyZGluZyB0aGlzICJp
-Z25vcmVkIEVPSSIgcHJvYmxlbToNCj4gYWx3YXlzICJjb21wbGV0ZSIgdGhlIGludGVycnVwdCB3
-aGlsZSBlbmFibGluZy4gVGhhdCB3b3VsZCBtb3ZlIHRoaXMgZXh0cmENCj4gY29tcGxpY2F0aW9u
-IG91dCBvZiB0aGUgaG90IHBhdGgsIGFuZCBhbHNvIGxvb2tzIHNpbXBsZXIgaW4gbXkgb3Bpbmlv
-bi4NCj4gDQo+IFNvbWV0aGluZyBsaWtlIHRoZSBwYXRjaCBiZWxvdy4gV291bGQgdGhpcyBzb2x2
-ZSB0aGlzICJhZmZpbml0eSBwcm9ibGVtIg0KPiB0b28/DQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+
-IE5hbQ0KPiANCk5vLCBJJ20gYWZyYWlkIHRoZSBmb2xsb3dpbmcgcGF0Y2ggY2FuJ3Qgc29sdmUg
-dGhpcyBjb3JuZXIgY2FzZS4gSSB0aG91Z2h0IGl0J3MgYmVjYXVzZSB0aGUgY29yZQ0KV2hvIGV4
-ZWN1dGVzIHBsaWNfaXJxX2VuYWJsZSBpcyBub3QgdGhlIGNvcmUgd2hvIG1pc3NpbmcgYSB3cml0
-ZSBjbGFpbS4NClNvIGlmIHdlIHdhbnQgdG8gZG8gaXQgaW4gZW5hYmxlIGl0IG1pZ2h0IGJlIHNv
-bWV0aGluZyBsaWtlIGZvbGxvd3MgOg0Kc3RhdGljIHZvaWQgcGxpY190b2dnbGUoc3RydWN0IHBs
-aWNfaGFuZGxlciAqaGFuZGxlciwgaW50IGh3aXJxLCBpbnQgZW5hYmxlKQ0KIHsNCiAgICAgICAg
-cmF3X3NwaW5fbG9jaygmaGFuZGxlci0+ZW5hYmxlX2xvY2spOw0KLSAgICAgICBfX3BsaWNfdG9n
-Z2xlKGhhbmRsZXItPmVuYWJsZV9iYXNlLCBod2lycSwgZW5hYmxlKTsNCisgICAgICAgaWYgKGVu
-YWJsZSkgew0KKyAgICAgICAgICAgICAgIHdyaXRlbChod2lycSwgaGFuZGxlci0+aGFydF9iYXNl
-ICsgQ09OVEVYVF9DTEFJTSk7DQorICAgICAgICAgICAgICAgX19wbGljX3RvZ2dsZShoYW5kbGVy
-LT5lbmFibGVfYmFzZSwgaHdpcnEsIGVuYWJsZSk7DQorICAgICAgIH0NCiAgICAgICAgcmF3X3Nw
-aW5fdW5sb2NrKCZoYW5kbGVyLT5lbmFibGVfbG9jayk7DQogfQ0KDQpCdXQgdGhlcmUgaXMgYSBs
-aXR0bGUgZGlmZmVyZW5jZToNCmEuIGNoZWNrIHdoZXRoZXIgaXQncyBlbmFibGVkICB3aGVuIGRv
-IHdyaXRlIGNsYWltDQpiLiB3cml0ZSBjbGFpbSBhbnl3YXkgYmVmb3JlIGVuYWJsZSANCg0Kc291
-bmRzIGxpa2UgYS4gaXMgYmV0dGVyPw0KDQpBbmQgSSdkIGxpa2UgdG8gaWxsdXN0cmF0ZSBtb3Jl
-IGFib3V0IHRoaXMgY2FzZToNCkZvciBleGFtcGxlLCBicm9hZGNhc3QgdGljayBpcyB3b3JraW5n
-LCBjcHUwIGlzIGFib3V0IHRvIHJlc3BvbnNlLCBjcHUxIGlzIHRoZSBuZXh0DQoxLiBjcHUwICBy
-ZXNwb25zZSB0aGUgdGltZXIgaXJxLCByZWFkIHRoZSBjbGFpbSBSRUcsIGFuZCBkbyB0aW1lciBp
-c3IgZXZlbnQsIA0KMi4gIGR1cmluZyB0aGUgdGltZXIgaXNyIGl0IHdpbGwgc2V0IG5leHQgZXZl
-bnQgDQp0aWNrX2Jyb2FkY2FzdF9zZXRfZXZlbnQgLT4gIGlycV9zZXRfYWZmaW5pdHktPiB4eHgt
-PiBwbGljX3NldF9hZmZpbml0eSAtPiBwbGljX2lycV9lbmFibGUNCjMuIGluIHBsaWNfc2V0X2Fm
-ZmluaXR5ICBkaXNhYmxlIGNwdTAncyBJRSBhbmQgZW5hYmxlIGNwdTEnSUUNCjQuIGNwdTAgZG8g
-dGhlIHdyaXRlIGNsYWltIHRvIGZpbmlzaCB0aGlzIGlycSwgd2hpbGUgY3B1MCdzIElFIGlzIGRp
-c2FibGVkICwgbGVmdCBhbiBhY3RpdmUgc3RhdGUgaW4gcGxpYw0KDQpCZXN0IHJlZ2FyZHMsDQp6
-aGVuZ3lhbg0KDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2lycWNoaXAvaXJxLXNpZml2ZS1wbGlj
-LmMgYi9kcml2ZXJzL2lycWNoaXAvaXJxLXNpZml2ZS1wbGljLmMNCj4gaW5kZXggMGEyMzNlOWQ5
-NjA3Li42M2YyMTExY2VkNGEgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvaXJxY2hpcC9pcnEtc2lm
-aXZlLXBsaWMuYw0KPiArKysgYi9kcml2ZXJzL2lycWNoaXAvaXJxLXNpZml2ZS1wbGljLmMNCj4g
-QEAgLTEyMiw3ICsxMjIsMTUgQEAgc3RhdGljIGlubGluZSB2b2lkIHBsaWNfaXJxX3RvZ2dsZShj
-b25zdCBzdHJ1Y3QNCj4gY3B1bWFzayAqbWFzaywNCj4gDQo+ICBzdGF0aWMgdm9pZCBwbGljX2ly
-cV9lbmFibGUoc3RydWN0IGlycV9kYXRhICpkKSAgew0KPiArCXN0cnVjdCBwbGljX3ByaXYgKnBy
-aXYgPSBpcnFfZGF0YV9nZXRfaXJxX2NoaXBfZGF0YShkKTsNCglzdHJ1Y3QgcGxpY19oYW5kbGVy
-ICpoYW5kbGVyID0gdGhpc19jcHVfcHRyKCZwbGljX2hhbmRsZXJzKTsNCm1pc3NpbmcgYSBkZWZp
-bml0aW9uPyBJZiBhZGRzIGxpa2UgdGhpcyB3aWxsIGNhdXNlIGEgcHJvYmxlbS4NCj4gKw0KPiAr
-CXdyaXRlbCgwLCBwcml2LT5yZWdzICsgUFJJT1JJVFlfQkFTRSArIGQtPmh3aXJxICogUFJJT1JJ
-VFlfUEVSX0lEKTsNCj4gKw0KPiArCXdyaXRlbChkLT5od2lycSwgaGFuZGxlci0+aGFydF9iYXNl
-ICsgQ09OVEVYVF9DTEFJTSk7DQo+ICsNCj4gIAlwbGljX2lycV90b2dnbGUoaXJxX2RhdGFfZ2V0
-X2VmZmVjdGl2ZV9hZmZpbml0eV9tYXNrKGQpLCBkLCAxKTsNCj4gKw0KPiArCXdyaXRlbCgxLCBw
-cml2LT5yZWdzICsgUFJJT1JJVFlfQkFTRSArIGQtPmh3aXJxICogUFJJT1JJVFlfUEVSX0lEKTsN
-Cj4gIH0NCj4gDQo+ICBzdGF0aWMgdm9pZCBwbGljX2lycV9kaXNhYmxlKHN0cnVjdCBpcnFfZGF0
-YSAqZCkgQEAgLTE0OCwxMyArMTU2LDcgQEAgc3RhdGljDQo+IHZvaWQgcGxpY19pcnFfZW9pKHN0
-cnVjdCBpcnFfZGF0YSAqZCkgIHsNCj4gIAlzdHJ1Y3QgcGxpY19oYW5kbGVyICpoYW5kbGVyID0g
-dGhpc19jcHVfcHRyKCZwbGljX2hhbmRsZXJzKTsNCj4gDQo+IC0JaWYgKHVubGlrZWx5KGlycWRf
-aXJxX2Rpc2FibGVkKGQpKSkgew0KPiAtCQlwbGljX3RvZ2dsZShoYW5kbGVyLCBkLT5od2lycSwg
-MSk7DQo+IC0JCXdyaXRlbChkLT5od2lycSwgaGFuZGxlci0+aGFydF9iYXNlICsgQ09OVEVYVF9D
-TEFJTSk7DQo+IC0JCXBsaWNfdG9nZ2xlKGhhbmRsZXIsIGQtPmh3aXJxLCAwKTsNCj4gLQl9IGVs
-c2Ugew0KPiAtCQl3cml0ZWwoZC0+aHdpcnEsIGhhbmRsZXItPmhhcnRfYmFzZSArIENPTlRFWFRf
-Q0xBSU0pOw0KPiAtCX0NCj4gKwl3cml0ZWwoZC0+aHdpcnEsIGhhbmRsZXItPmhhcnRfYmFzZSAr
-IENPTlRFWFRfQ0xBSU0pOw0KPiAgfQ0KPiANCj4gICNpZmRlZiBDT05GSUdfU01QDQo=
+--nextPart2330569.ElGaqSPkdT
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Rolf Eike Beer <eb@emlix.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Mon, 24 Jun 2024 13:14:58 +0200
+Message-ID: <4576559.LvFx2qVVIh@devpool47.emlix.com>
+Organization: emlix GmbH
+In-Reply-To: <20240624-kbuild-fix-xconfig-v1-1-7c06eae6d3aa@avm.de>
+References: <20240624-kbuild-fix-xconfig-v1-1-7c06eae6d3aa@avm.de>
+MIME-Version: 1.0
+
+On Montag, 24. Juni 2024 13:12:14 MESZ Nicolas Schier wrote:
+> Use $(obj)/ instead of $(src)/ prefix when building C++ modules for
+> host, as explained in commit b1992c3772e6 ("kbuild: use $(src) instead
+> of $(srctree)/$(src) for source directory").  This fixes build failures
+> of 'xconfig':
+>=20
+>     $ make O=3Dbuild/ xconfig
+>     make[1]: Entering directory '/data/linux/kbuild-review/build'
+>       GEN     Makefile
+>     make[3]: *** No rule to make target '../scripts/kconfig/qconf-moc.cc',
+> needed by 'scripts/kconfig/qconf-moc.o'.  Stop.
+>=20
+> Fixes: b1992c3772e6 ("kbuild: use $(src) instead of $(srctree)/$(src) for
+> source directory")
+> Reported-by: Rolf Eike Beer <eb@emlix.com>
+> Signed-off-by: Nicolas Schier <n.schier@avm.de>
+
+Thanks, works for me.
+
+Tested-by: Rolf Eike Beer <eb@emlix.com>
+
+=2D-=20
+Rolf Eike Beer
+
+emlix GmbH
+Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
+Phone +49 (0)551 30664-0, e-mail info@emlix.com
+District Court of G=C3=B6ttingen, Registry Number HR B 3160
+Managing Directors: Heike Jordan, Dr. Uwe Kracke
+VAT ID No. DE 205 198 055
+Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
+Office Bonn: Bachstr. 6, 53115 Bonn, Germany
+http://www.emlix.com
+
+emlix - your embedded Linux partner
+--nextPart2330569.ElGaqSPkdT
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iLMEAAEIAB0WIQQ/Uctzh31xzAxFCLur5FH7Xu2t/AUCZnlVMgAKCRCr5FH7Xu2t
+/Fq4BACjgFonAJrrWCLHfZuZXRuL9At20+vxLyztALiBItlEzmAZvFaoD++uwlh0
+JoqvNeHQWGkTPKfDvWO+T6Nnv1hMDBLNl4zG7e4Tc2htyXQr3WP1jA5ZLYV4Zqxg
+SYEuSqukITD7qy/uyGhPRT340SRbVjxCu4mXio+EASJsqoV1aA==
+=si0o
+-----END PGP SIGNATURE-----
+
+--nextPart2330569.ElGaqSPkdT--
+
+
+
 
