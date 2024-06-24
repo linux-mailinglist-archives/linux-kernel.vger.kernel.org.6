@@ -1,143 +1,116 @@
-Return-Path: <linux-kernel+bounces-226538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10AC91401F
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:37:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 999CA914021
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 03:43:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A51281F2157E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:37:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C56641C21B43
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 01:43:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC2534A2D;
-	Mon, 24 Jun 2024 01:37:20 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CD01FAA;
-	Mon, 24 Jun 2024 01:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884B84414;
+	Mon, 24 Jun 2024 01:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qxx1kG/e"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2FE21FAA
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:43:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719193040; cv=none; b=DgVHfpisreaS/4Iv76bUY5YAs7TGfBJ6HZgjS7QcPukPMOQoGcFz/m+/GpAVMPaOf722A/lPJhySqAG3iVx1/82ISmRXiB5TLKhdCbH49gDPJy566f55QUXUDxh2JVxSfgruIWmSbRqvMRqtZxweaReMw96OkooftGw1uOi3Cbo=
+	t=1719193395; cv=none; b=eXWXJn49/emP6uanjyxWaOF6BVyHWdMUpAoM6+Bu7sLSndQMNsvlt5PNj1XQTvIE/CVN6CaDA/eVF0z2ElSmd1fW8hKVL7113BNp7BsgiRK0P8sKAamaPJH+fDKjPATu52hHtt9R9VghKvpkFlFdJQZuMknObb2OnWvgD8wMGeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719193040; c=relaxed/simple;
-	bh=OlatsLJ07m207ro1biI6ooU0BKX5ADw7TM9VnLtFbwo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=J816fzra9zDn319ixpuyH1rseCfKA54Njk/soQMscEdDtkqIhNR/0c3bkXYhlBdf4JjfVFtwPtOIk7WWGu0dwb3ZoqdUXtlvqz5YLydxALVwe1mRY0TbWx1gKTFOnQEVwGYlYCZDsRZrHBLxWXgsUrr/itapP0smd9e6Pp43mVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8AxnOrMzXhm_GIJAA--.37709S3;
-	Mon, 24 Jun 2024 09:37:16 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8AxDMfJzXhmmYcuAA--.45539S3;
-	Mon, 24 Jun 2024 09:37:15 +0800 (CST)
-Subject: Re: [PATCH v2 4/6] LoongArch: KVM: Add memory barrier before update
- pmd entry
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
- Sean Christopherson <seanjc@google.com>, kvm@vger.kernel.org,
- loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20240619080940.2690756-1-maobibo@loongson.cn>
- <20240619080940.2690756-5-maobibo@loongson.cn>
- <CAAhV-H74raJ9eEWEHr=aN6LhVvNUyP6TLEDH006M6AnoE8tkPg@mail.gmail.com>
-From: maobibo <maobibo@loongson.cn>
-Message-ID: <58d34b7d-eaad-8aa8-46c3-9212664431be@loongson.cn>
-Date: Mon, 24 Jun 2024 09:37:13 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1719193395; c=relaxed/simple;
+	bh=jCl3O5dV5d6DMpZu3smPaGwRINEJpFKNIlJvn9Fjsfc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WFh17Xlw0f9dZJ/62T6sPBzUBbyYbfKZFBq73gaWU+lUOmOUgqi1dGROq1j+slK+bIYk6U2AKOcyfF1I5+ML5nvrtqpL8FUC66QBJu/9REc3rKTjz0O7C+yYBGZ+9BxGlTEBMf1RGKYkGpXkEH6mCi2QoOfavS3h8UayptD1BdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qxx1kG/e; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719193394; x=1750729394;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=jCl3O5dV5d6DMpZu3smPaGwRINEJpFKNIlJvn9Fjsfc=;
+  b=Qxx1kG/eIO3tg8PkCiM/G3j8thg610QFnNxonv58JpuHkrssWmzv5XYo
+   X/tYUW4vHYOlDOBzU+OsBjeN3U1FJNcmMa08bNao3myR2I/M9tbWjV9vJ
+   GfqXzeft6U8zfgF0ycSzCIMMvSKxZ81MxU2j2qAGE4pyKSw/fUQQP21hA
+   6oHYHTl4czQxi8iEuPjZV2W7iFeAdAQdRwIhM2savedVRkfNwt0EIvgpH
+   83WOAqdVX/zbDRAdU2IHN9RUKHpPml9Q5+iw5wkLDiS8j6O4QoHA1x0pN
+   zBUdJWcr7VreWBXonsuTbya2AsMR+O1wL95VfptmmdpMpSdR9XNITO/lc
+   w==;
+X-CSE-ConnectionGUID: +q2BABtUQR6RBFOf8gzGWQ==
+X-CSE-MsgGUID: QbawSHIRTH6iaGzukw8UqQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11112"; a="12202743"
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="12202743"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Jun 2024 18:43:13 -0700
+X-CSE-ConnectionGUID: X0yUEwjASBCvhHgL8WGs9g==
+X-CSE-MsgGUID: dIVT0Sl6SoOmZLLjm3p3Ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="43821140"
+Received: from wentongw-optiplex-7000.sh.intel.com ([10.239.154.127])
+  by orviesa007.jf.intel.com with ESMTP; 23 Jun 2024 18:43:12 -0700
+From: Wentong Wu <wentong.wu@intel.com>
+To: sakari.ailus@linux.intel.com,
+	tomas.winkler@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	Wentong Wu <wentong.wu@intel.com>
+Subject: [PATCH v2 0/5] Fix MEI command timeout issue following warm reboot
+Date: Mon, 24 Jun 2024 09:42:18 +0800
+Message-Id: <20240624014223.4171341-1-wentong.wu@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H74raJ9eEWEHr=aN6LhVvNUyP6TLEDH006M6AnoE8tkPg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8AxDMfJzXhmmYcuAA--.45539S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7Zw17urW5JF43Xr4rGF48uFX_yoW8Zr4kpF
-	ZrAF1DKrs5GrnFg3Z7X3Z0gr42qrZ7KFyxXFy3u34DCrZIqw1093W8JrZa9F18A34rCa1F
-	qa1rKan8Zay5AacCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUB0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
-	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUtVWr
-	XwAv7VC2z280aVAFwI0_Gr0_Cr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
-	k0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_
-	Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67
-	AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8I
-	cVAFwI0_JFI_Gr1lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8VAvwI
-	8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF7I0E14v2
-	6r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU4AhLUUUUU
 
+While enabling the IVSC on certain recent commercial products, the chipset
+may occasionally enter an unknown state following a warm reboot. This issue
+can cause the firmware to fail in responding to the MEI command from the
+host, despite the firmware being re-downloaded. To resolve this, the current
+patch set incorporates reset logic during system shutdown to ensure that the
+IVSC chipset remains in a valid state after a warm reboot.
 
+Furthermore, after the firmware download is complete, the firmware requires
+some time to become operational. To enhance this, additional sleep time has
+been introduced before the initial read operation to prevent a confusing
+timeout error in vsc_tp_xfer().
 
-On 2024/6/23 下午6:18, Huacai Chen wrote:
-> Hi, Bibo,
-> 
-> On Wed, Jun 19, 2024 at 4:09 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>
->> When updating pmd entry such as allocating new pmd page or splitting
->> huge page into normal page, it is necessary to firstly update all pte
->> entries, and then update pmd entry.
->>
->> It is weak order with LoongArch system, there will be problem if other
->> vcpus sees pmd update firstly however pte is not updated. Here smp_wmb()
->> is added to assure this.
-> Memory barriers should be in pairs in most cases. That means you may
-> lose smp_rmb() in another place.
-The idea adding smp_wmb() comes from function __split_huge_pmd_locked()
-in file mm/huge_memory.c, and the explanation is reasonable.
+Additionally, this patch set includes several enhancements as well:
+1) utilizing the appropriate byte order swap function for data received
+from the ROM;
+2) correcting a spelling error in a comment;
+3) Constructing the SPI transfer command as per the specific request.
 
-                 ...
-                 set_ptes(mm, haddr, pte, entry, HPAGE_PMD_NR);
-         }
-         ...
-         smp_wmb(); /* make pte visible before pmd */
-         pmd_populate(mm, pmd, pgtable);
+---
+v1 -> v2:
+ - remove cc spelling fix to stable
+ - remove the reset toggling enhancement
 
-It is strange that why smp_rmb() should be in pairs with smp_wmb(),
-I never hear this rule -:(
+Wentong Wu (5):
+  mei: vsc: Enhance IVSC chipset stability during warm reboot
+  mei: vsc: Enhance SPI transfer of IVSC rom
+  mei: vsc: Utilize the appropriate byte order swap function
+  mei: vsc: Prevent timeout error with added delay post-firmware
+    download
+  mei: vsc: Fix spelling error
 
-Regards
-Bibo Mao
-> 
-> Huacai
-> 
->>
->> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->> ---
->>   arch/loongarch/kvm/mmu.c | 2 ++
->>   1 file changed, 2 insertions(+)
->>
->> diff --git a/arch/loongarch/kvm/mmu.c b/arch/loongarch/kvm/mmu.c
->> index 1690828bd44b..7f04edfbe428 100644
->> --- a/arch/loongarch/kvm/mmu.c
->> +++ b/arch/loongarch/kvm/mmu.c
->> @@ -163,6 +163,7 @@ static kvm_pte_t *kvm_populate_gpa(struct kvm *kvm,
->>
->>                          child = kvm_mmu_memory_cache_alloc(cache);
->>                          _kvm_pte_init(child, ctx.invalid_ptes[ctx.level - 1]);
->> +                       smp_wmb(); /* make pte visible before pmd */
->>                          kvm_set_pte(entry, __pa(child));
->>                  } else if (kvm_pte_huge(*entry)) {
->>                          return entry;
->> @@ -746,6 +747,7 @@ static kvm_pte_t *kvm_split_huge(struct kvm_vcpu *vcpu, kvm_pte_t *ptep, gfn_t g
->>                  val += PAGE_SIZE;
->>          }
->>
->> +       smp_wmb();
->>          /* The later kvm_flush_tlb_gpa() will flush hugepage tlb */
->>          kvm_set_pte(ptep, __pa(child));
->>
->> --
->> 2.39.3
->>
+ drivers/misc/mei/platform-vsc.c  |  4 ++--
+ drivers/misc/mei/vsc-fw-loader.c |  2 +-
+ drivers/misc/mei/vsc-tp.c        | 18 ++++++++++++++++--
+ 3 files changed, 19 insertions(+), 5 deletions(-)
+
+-- 
+2.34.1
 
 
