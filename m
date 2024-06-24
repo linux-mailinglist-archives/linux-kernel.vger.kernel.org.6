@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-226702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8432091427C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:05:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E639B914281
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20F771F2576B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:05:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 227641C21211
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 06:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9E1219E1;
-	Mon, 24 Jun 2024 06:05:17 +0000 (UTC)
-Received: from www571.your-server.de (www571.your-server.de [78.46.3.230])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710DB22313;
+	Mon, 24 Jun 2024 06:08:55 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3D1208B6;
-	Mon, 24 Jun 2024 06:05:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.46.3.230
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF9352030A
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 06:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719209117; cv=none; b=IT2S/Sz43BsIY/mTnlATCcBJkGEVGn32QkTg/jZJHtld/6x52oQQJ3YIMjJpoJ5LZ4N3D20i8kVMHFzjT3V67xAVIbifYtXcO1o0pu0uBNrGsN+P1rBLDCg86kU3S8x6wGw4t8CrHJN+UFZjGo6HH0WVQ//wBQ8MEzVonIqlD4w=
+	t=1719209335; cv=none; b=O6rmrF+15TJfPYYMVrYSS1nY7zlooGY9fYLuyBxFD9ChvrFMljJyvk4aG+3vDfrvd7nsO7Js50O3st4lh9patUbbpB6aOt6f084m9i2XJWrd+ipVUtwkVa2UlQH4NhwozZcyWgWG5LtInlX4PeclK9dE4H6jE9aPHlutQmAdIE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719209117; c=relaxed/simple;
-	bh=nX9bqQjZFp8P1j34oX2PBFHzvpt8zyD/vC3kpmgdvgA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=hBG68TqFsKqoh7VtDtxduAqDNaEg4dFNcJnbZtQTCIxAKhBSRKF2qmCbP88Ovuxh1RBaGAVfOFsXqgZkerUAWL+EPM5qaSPB939TAwEclScmeKGMl8Cke0H2OjFDeVRnzK+/r119SQ8G3tThApD0fOkYGYGS/nAPJk/YkowfCAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de; spf=pass smtp.mailfrom=it-klinger.de; arc=none smtp.client-ip=78.46.3.230
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=it-klinger.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=it-klinger.de
-Received: from sslproxy02.your-server.de ([78.47.166.47])
-	by www571.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96.2)
-	(envelope-from <ak@it-klinger.de>)
-	id 1sLcpC-000N8W-3D;
-	Mon, 24 Jun 2024 08:05:11 +0200
-Received: from [31.220.119.164] (helo=mail.your-server.de)
-	by sslproxy02.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ak@it-klinger.de>)
-	id 1sLcpD-000AOA-0m;
-	Mon, 24 Jun 2024 08:05:10 +0200
-Date: Mon, 24 Jun 2024 08:05:09 +0200
-From: Andreas Klinger <ak@it-klinger.de>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Andreas Klinger <ak@it-klinger.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Nuno Sa <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/10] iio: adc: hx711: use dev_err_probe()
-Message-ID: <ZnkMlWIewq8s_XeS@mail.your-server.de>
+	s=arc-20240116; t=1719209335; c=relaxed/simple;
+	bh=uqcv/aHeTQl9D7dU4EYZ7Ku6Q1CiTbRy9t97GNtn1p4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aaMj7sKC3TeipOL5wK9QxQBIFdTO0QKLasP9UX8oOuVV3dxBNpp3pQrZneGBVyF4N7i7IYa5kklaqxL8G8V+tF7ESVgyee3PhzFohzvSVRCmdjIpNPN2gxTKOe/54w8oyJrizobsigXgzUr8kyWSRKM5nMfyS4pV69woTpdf6k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sLcsS-0000Da-BK; Mon, 24 Jun 2024 08:08:32 +0200
+Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1sLcsP-004aCs-Me; Mon, 24 Jun 2024 08:08:29 +0200
+Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 53F332F07FC;
+	Mon, 24 Jun 2024 06:08:29 +0000 (UTC)
+Date: Mon, 24 Jun 2024 08:08:27 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
+	linux-can@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next] can: m_can: Constify struct m_can_ops
+Message-ID: <20240624-cornflower-stoat-of-satiation-717464-mkl@pengutronix.de>
+References: <a17b96d1be5341c11f263e1e45c9de1cb754e416.1719172843.git.christophe.jaillet@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,43 +63,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="NPQkkl0HGmmU9H1y"
+	protocol="application/pgp-signature"; boundary="7zlcot2btxy24qan"
 Content-Disposition: inline
-In-Reply-To: <20240621-iio-regulator-refactor-round-2-v1-4-49e50cd0b99a@baylibre.com>
-X-Authenticated-Sender: ak@it-klinger.de
-X-Virus-Scanned: Clear (ClamAV 1.0.3/27315/Sun Jun 23 10:23:58 2024)
+In-Reply-To: <a17b96d1be5341c11f263e1e45c9de1cb754e416.1719172843.git.christophe.jaillet@wanadoo.fr>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
 
---NPQkkl0HGmmU9H1y
-Content-Type: text/plain; charset=us-ascii
+--7zlcot2btxy24qan
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-06-21 at 22:11 +0000, David Lechner wrote:
-> Use dev_err_probe() to simplify error returns in the probe function.
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+On 23.06.2024 22:01:50, Christophe JAILLET wrote:
+> 'struct m_can_ops' is not modified in these drivers.
+>=20
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+>=20
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>    text	   data	    bss	    dec	    hex	filename
+>    4806	    520	      0	   5326	   14ce	drivers/net/can/m_can/m_can_pci.o
+>=20
+> After:
+> =3D=3D=3D=3D=3D
+>    text	   data	    bss	    dec	    hex	filename
+>    4862	    464	      0	   5326	   14ce	drivers/net/can/m_can/m_can_pci.o
+>=20
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-Reviewed-by: Andreas Klinger <ak@it-klinger.de>
+Applied to linuc-can-next.
+
+Thanks,
+Marc
+
 
 --=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
 
---NPQkkl0HGmmU9H1y
+--7zlcot2btxy24qan
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQGzBAABCgAdFiEE7/NrAFtB/Pj7rTUyyHDM+xwPAVEFAmZ5DJQACgkQyHDM+xwP
-AVHJ3gv+PRSmvwbaW2ps2R6YXJOC29aMqR0YVYDpdDqIf3xvOIhYnprCAA7bcXC+
-OX/Rs0lUvs1HwTDFrrF2jXesHX88JYQoB591HXOje5Hi4quzkyZcow3kRdV9AyQo
-3r4Y5X3M73ywkTrn4Xx+oFewOVo0TQflZdxl9YBzcOFkIZPh8d8p3B/eTII/n1Pr
-BartrbGrHK8pBu5pOPzLxJKQoDXqbAkV8sAGbBGm33Ow/Y+X2TA10VylOmi1FGlZ
-YmVcyA9zQlXy9zy4zZpOyX9awx7trBJAcaHCVu7pwNlaleGwbQZSiycBzrYOyOi2
-VBH9GXchSoyECiz+1bmqdKuGebpJMCvHq1DPeT4oCBftE1MGRz035qU6o2+7RvQW
-iEhzKLo8wXBrOwmCOjTrCOsX76Uycbp50vjhuqsqpDHlpA2oJKIMT6hoOVlCnL41
-CM58is3YqqssMMaE7XaiwGsCqZ6annaoIrQY/PdtGtw8L4x4UNmTE1OV4szDejAO
-FZwXdwBE
-=Py/z
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZ5DVQACgkQKDiiPnot
+vG9onggAjzcvQznEZasi4ojbK7VfBcU+q7wF0chZCy58b4piDm3E0XwFmV313AnF
+JVdWPsZRTe6iKt4bh4ZnBeGOfPhKFs89Fqog52tW+8V80F1bIIi6IN3Wd15FoYuT
+whfDJcEcyEdKDkfHdhP57bslbCiZC+5ORf6idElcPSY9B6U/X/OEYiiRP6WdMBZ4
+yAj9SoX0BlKdiS8W8E9jWBGk3yAxclztj6BNuGzrd9gaTgdPvRVuxbK3ifEv5iEc
+0ev8E0ZuEP8N304cLOvsTiM64vHHFxx1QNGHc1qgPv+VjKqDbRNPBN/SCM0RlEj8
+L6hg2B7VFUweY5c+Myd14dV411nOPQ==
+=Qckk
 -----END PGP SIGNATURE-----
 
---NPQkkl0HGmmU9H1y--
+--7zlcot2btxy24qan--
 
