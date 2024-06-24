@@ -1,88 +1,92 @@
-Return-Path: <linux-kernel+bounces-226839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B01914493
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:22:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8326B914496
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 991BA1C2149D
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:22:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C88F7B237CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:22:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A445A4D5;
-	Mon, 24 Jun 2024 08:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C014D584;
+	Mon, 24 Jun 2024 08:22:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="jy20IWaa"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="fxYpPcUZ"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F0649649
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:21:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194694C637
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719217310; cv=none; b=u8ePq/muob7bgoe0wJZI8ihfDl9uGv6cAVNDPGctUCmPH0WqsqxaZ1KeQUv4gEiEU4ykndDqSk9Nf4xWtfaTDwrqYWnGgD4Qlfx+3QCrpMZvQK8xbKPWCN63VjswtdICrtOQgg93BXlyByOEMy7X5jjFtCPXjz1CgpgJT++kXww=
+	t=1719217371; cv=none; b=oHgoMAzsjkLNvEqEIppJAeS8SR8tcL2uYT95ZVrGahTrHjmFh8/1MBGB9GRpXYJjVMeWUpRCHWSrMHY4ms7bAZLRZNPjteSMINFTA1i7rY2TqaX+GjyqAE2PcguRZS32TIAiAuFH68Sozh4SDNU3gkTEgbBAE5/vfRhu14zCHiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719217310; c=relaxed/simple;
-	bh=Q8+lA3g3VpMDpv4RGNngoyb1uea582m7nevs6ZhhA+k=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mA7AilJBR5BU4C0U0kNl+Z98+xqecqyZe4f30thtugHXGk6QhSZZgEFaTnMwaF8/SZStcatuGfAksSU7rNILJZoJovUPPsXP45ntfvJJjDcuz7+AHlZwD1GMyFsawMcAqF7HolJuF2Wg8e8Dl39tY/lSBlDDMVRO38iQ9a4CAvs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=jy20IWaa; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a72517e6225so89793066b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:21:46 -0700 (PDT)
+	s=arc-20240116; t=1719217371; c=relaxed/simple;
+	bh=l8PxRcYIUV+BwhTr/9tnWDMOzSzkqoN1MtjHSsnguGg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RtXTTehJq/u21iod7e51T4qj+qvdjVqvBWDy9dTchRteEeqm33IbCi8TgUq2aLa01tJejZVmQIcC3jE1aOsi5on/A6oyBmjvbw5C7Z0QZbXNaY/HYj5ehRWgXXm7oFr63aR+vrLug0/Nxltmlf7zF3O367dycT+4R813FhK1c48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=fxYpPcUZ; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1f9aa039327so32564295ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:22:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719217305; x=1719822105; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=zZ1i8mi9BqNSECU2gQQmd4hyYzq+GyjZ8nLWHvP5TDw=;
-        b=jy20IWaaRcWo9WyHfcChvBwlUhDWl8RI2w7mBXaAJpDKQpXB1UtsSQPBHnChJ5Lamu
-         /QioMSHX6yDu3ThkINiqpJQhOujFrUqNos+L/XODrEorpyfDni2YmuJX2wGn6i5JjfXe
-         LARkIp7OpRrgIpCdqdHv/Tcyx6ens751p5LFcAiaDF/2GSw7vJuUMq++JsTo1kCNbhxR
-         c5pZOwTgh2XzjISNRI7wgMKaY42uwkhrayHjDmNOkHwBIOIb9/lFL7UB2Ig97B37Y2yb
-         bV/sPm5LXwi2AWam9a/JtRiT3AUTs3BGWAadEG14eza6q6I/7L/oOxk7mh/qeTWo0N2J
-         vfMQ==
+        d=endlessos.org; s=google; t=1719217369; x=1719822169; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TKqXgp0PeCY7zVPXIYmvQu6WZY+HEs+Sn2Z47Kgx7oM=;
+        b=fxYpPcUZsuE9aiH3471SZiJQzzMoSlqLkowXosNEkyMWVlKz/QwPk+rVLeFOaDBOWt
+         N4PQkstLuhKl02eVi0yv9ZAkq/dSRCWjcVznar6vEWRu5Qg29be95rINkTgoKhlz7aqw
+         Xjp7AmCl41xYlm+SDDqkZzzxJVXbvURJs6mw/YJnjiBcat0Ut8xOyfmTdC70EkchrZG7
+         V7eojFfhBN7KsMGLKEmlQUt9dvYfj5QiHHzFvvGfsYQbtPbd/6lVGpyMLBtripypYIf+
+         ZJEs0UGYOl/fj+BwPZu3u5Yq1mugqVsgo8R9R2ZZPajgCrfFmjxg9Mxsn74g7BjK7r+l
+         r4tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719217305; x=1719822105;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zZ1i8mi9BqNSECU2gQQmd4hyYzq+GyjZ8nLWHvP5TDw=;
-        b=Pdm+CX6z4WAdzFDv9T01+jVWqdp0jBHemfQ+FFNSxftiXJ63fhyA0ttVysIzTiEEd9
-         AA9hCBv9AQ3fg4AX/TVv59i9u7VKI4Z4ghig5fJEau9yAHbxoK6rCGOc9DpAdBfcUbCo
-         +uxnC5CXbNO1JV8F2F8FYllTXxhYsLfHQ4kPFVFAyGENNwpBqe6kNMJ1Ptjegh9rOgBQ
-         O8xBXib8T24TQt+97gBoG5KuwJOdsE1iWjrk7cW9uUBwfIbJxjMxHEqQW2QZrPEs3JtU
-         j2RBK2UDCvNIuaG4CmIWmokjOdEPbOREOifKGlvKecgpiHwioHmd6IUtuWjg6CML6nIh
-         M0NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvU26f73xAagpMDhTw3iv/C/haVTgZCxN+QLakTyzkeAMijLpDTmT0yqslEplWEh1PlnqO9Pzej0HusNHskF0pT6Xgys2JNSKTanoY
-X-Gm-Message-State: AOJu0YzB5ZyeyTQ6Oq615tP00qoz41i++8vh1aLQvBeM2l9pbtf1P8pG
-	/8U5WQ2GMG3uInN7n0BtqNh9dhmqtTbY13GDRwkGQyKEHoJ/tQvdFsAmWz61a5s=
-X-Google-Smtp-Source: AGHT+IGBH8KsRxnkr+7B5tqjabfbteV9WIQqVq8let6lqDrgcfIE+H/7OcoN0EbyyGuJFz1zez80FQ==
-X-Received: by 2002:a17:907:c281:b0:a72:5e67:19dd with SMTP id a640c23a62f3a-a725e671ad7mr48004166b.6.1719217305317;
-        Mon, 24 Jun 2024 01:21:45 -0700 (PDT)
-Received: from alex-rivos.ba.rivosinc.com ([89.207.171.145])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf428c18sm385774466b.24.2024.06.24.01.21.43
+        d=1e100.net; s=20230601; t=1719217369; x=1719822169;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TKqXgp0PeCY7zVPXIYmvQu6WZY+HEs+Sn2Z47Kgx7oM=;
+        b=XR/YY5x/GBVyOkAqQ+yG3pblfp7rtiEL/DCyST1xbhUS51u7CkkZM0jDwqPoF32UvA
+         3E9NZWx1bNU/8YJkY3yednjJSUJOwLqpj3SkdlT8E2uIZ3S4Qng9BJpKNQO0k7Ldne3V
+         NgFwGKWTHxni01KmDe1o8k3sq5Lu71WTFSEzolsRxoGCXkBIDckR58OzutrgAg/4PA5N
+         LiNNrLBUs8V5Yvn4Fm+4mAHzOuAH2kPEojIYtBoq+pL/Zf2EwXzQXVlZzH06CHYaASMm
+         fxY5PCV3Pd71e034ZKMW6hdtGLqkxxO8sq5mOx1vPwdfL16zu0d4ibPFBPpqN6fSa6ve
+         P5Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzH6eHc1jeSL2MieldSKJ8imQTBnK2umpcugWMOFQDXbbfGZMC9yK+sbNbUdA0hUt3nSpdfB+40dxdSrYlw9VdPAlvfpcKvxY+TeSP
+X-Gm-Message-State: AOJu0YzylhQxKlGbgIW5zBTtk00zKVJivwS3F2qHw/3HAsnjGM8I9Jia
+	zJmlNFaCq8sStcMObailB+c0qka66sRsEKsm/O2KwDvcfntQORwRH+AX3J2npT0=
+X-Google-Smtp-Source: AGHT+IGkoHJq/Uha60iVDfgi2zLJGjHRCAI0OByy2xj9MuNZhuILpLYTi5YuR8zGMv4NTd34FPkw1Q==
+X-Received: by 2002:a17:902:ec91:b0:1f7:1b97:e91f with SMTP id d9443c01a7336-1fa1d5173d9mr51886265ad.26.1719217369112;
+        Mon, 24 Jun 2024 01:22:49 -0700 (PDT)
+Received: from localhost.localdomain ([123.51.167.56])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1f9eb3c8b5dsm57068405ad.181.2024.06.24.01.22.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 01:21:44 -0700 (PDT)
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Puranjay Mohan <puranjay12@gmail.com>,
+        Mon, 24 Jun 2024 01:22:48 -0700 (PDT)
+From: Jian-Hong Pan <jhp@endlessos.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Francisco Munoz <francisco.munoz.ruiz@linux.intel.com>,
+	Johan Hovold <johan@kernel.org>,
+	David Box <david.e.box@linux.intel.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH -fixes] riscv: patch: Flush the icache right after patching to avoid illegal insns
-Date: Mon, 24 Jun 2024 10:21:41 +0200
-Message-Id: <20240624082141.153871-1-alexghiti@rivosinc.com>
-X-Mailer: git-send-email 2.39.2
+	linux@endlessos.org,
+	Jian-Hong Pan <jhp@endlessos.org>
+Subject: [PATCH v6 3/3] PCI: vmd: Drop resetting PCI bus action after scan mapped PCI child bus
+Date: Mon, 24 Jun 2024 16:21:45 +0800
+Message-ID: <20240624082144.10265-2-jhp@endlessos.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240624081108.10143-2-jhp@endlessos.org>
+References: <20240624081108.10143-2-jhp@endlessos.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,115 +95,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-We cannot delay the icache flush after patching some functions as we may
-have patched a function that will get called before the icache flush.
+According to "PCIe r6.0, sec 5.5.4", before enabling ASPM L1.2 on the PCIe
+Root Port and the child device, they should be programmed with the same
+LTR1.2_Threshold value. However, they have different values on VMD mapped
+PCI child bus. For example, Asus B1400CEAE's VMD mapped PCI bridge and NVMe
+SSD controller have different LTR1.2_Threshold values:
 
-The only way to completely avoid such scenario is by flushing the icache
-as soon as we patch a function. This will probably be costly as we don't
-batch the icache maintenance anymore.
+10000:e0:06.0 PCI bridge: Intel Corporation 11th Gen Core Processor PCIe Controller (rev 01) (prog-if 00 [Normal decode])
+    ...
+    Capabilities: [200 v1] L1 PM Substates
+        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
+        	  PortCommonModeRestoreTime=45us PortTPowerOnTime=50us
+        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+        	   T_CommonMode=45us LTR1.2_Threshold=101376ns
+        L1SubCtl2: T_PwrOn=50us
 
-Fixes: 6ca445d8af0e ("riscv: Fix early ftrace nop patching")
-Reported-by: Conor Dooley <conor.dooley@microchip.com>
-Closes: https://lore.kernel.org/linux-riscv/20240613-lubricant-breath-061192a9489a@wendy/
-Signed-off-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+10000:e1:00.0 Non-Volatile memory controller: Sandisk Corp WD Blue SN550 NVMe SSD (rev 01) (prog-if 02 [NVM Express])
+    ...
+    Capabilities: [900 v1] L1 PM Substates
+        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substates+
+                  PortCommonModeRestoreTime=32us PortTPowerOnTime=10us
+        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+                   T_CommonMode=0us LTR1.2_Threshold=0ns
+        L1SubCtl2: T_PwrOn=10us
+
+After debug in detail, both of the VMD mapped PCI bridge and the NVMe SSD
+controller have been configured properly with the same LTR1.2_Threshold
+value. But, become misconfigured after reset the VMD mapped PCI bus which
+is introduced from commit 0a584655ef89 ("PCI: vmd: Fix secondary bus reset
+for Intel bridges") and commit 6aab5622296b ("PCI: vmd: Clean up domain
+before enumeration"). So, drop the resetting PCI bus action after scan VMD
+mapped PCI child bus.
+
+Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
 ---
- arch/riscv/kernel/ftrace.c |  7 ++-----
- arch/riscv/kernel/patch.c  | 26 ++++++++++++++++++--------
- 2 files changed, 20 insertions(+), 13 deletions(-)
+v6:
+- Introduced based on the discussion https://lore.kernel.org/linux-pci/CAPpJ_efYWWxGBopbSQHB=Y2+1RrXFR2XWeqEhGTgdiw3XX0Jmw@mail.gmail.com/ 
 
-diff --git a/arch/riscv/kernel/ftrace.c b/arch/riscv/kernel/ftrace.c
-index 87cbd86576b2..4b95c574fd04 100644
---- a/arch/riscv/kernel/ftrace.c
-+++ b/arch/riscv/kernel/ftrace.c
-@@ -120,9 +120,6 @@ int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec)
- 	out = ftrace_make_nop(mod, rec, MCOUNT_ADDR);
- 	mutex_unlock(&text_mutex);
+ drivers/pci/controller/vmd.c | 20 --------------------
+ 1 file changed, 20 deletions(-)
+
+diff --git a/drivers/pci/controller/vmd.c b/drivers/pci/controller/vmd.c
+index 5309afbe31f9..af413cdb4f4e 100644
+--- a/drivers/pci/controller/vmd.c
++++ b/drivers/pci/controller/vmd.c
+@@ -793,7 +793,6 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+ 	resource_size_t offset[2] = {0};
+ 	resource_size_t membar2_offset = 0x2000;
+ 	struct pci_bus *child;
+-	struct pci_dev *dev;
+ 	int ret;
  
--	if (!mod)
--		local_flush_icache_range(rec->ip, rec->ip + MCOUNT_INSN_SIZE);
+ 	/*
+@@ -935,25 +934,6 @@ static int vmd_enable_domain(struct vmd_dev *vmd, unsigned long features)
+ 	pci_scan_child_bus(vmd->bus);
+ 	vmd_domain_reset(vmd);
+ 
+-	/* When Intel VMD is enabled, the OS does not discover the Root Ports
+-	 * owned by Intel VMD within the MMCFG space. pci_reset_bus() applies
+-	 * a reset to the parent of the PCI device supplied as argument. This
+-	 * is why we pass a child device, so the reset can be triggered at
+-	 * the Intel bridge level and propagated to all the children in the
+-	 * hierarchy.
+-	 */
+-	list_for_each_entry(child, &vmd->bus->children, node) {
+-		if (!list_empty(&child->devices)) {
+-			dev = list_first_entry(&child->devices,
+-					       struct pci_dev, bus_list);
+-			ret = pci_reset_bus(dev);
+-			if (ret)
+-				pci_warn(dev, "can't reset device: %d\n", ret);
 -
- 	return out;
- }
- 
-@@ -156,9 +153,9 @@ static int __ftrace_modify_code(void *data)
- 	} else {
- 		while (atomic_read(&param->cpu_count) <= num_online_cpus())
- 			cpu_relax();
+-			break;
+-		}
 -	}
- 
--	local_flush_icache_all();
-+		local_flush_icache_all();
-+	}
- 
- 	return 0;
- }
-diff --git a/arch/riscv/kernel/patch.c b/arch/riscv/kernel/patch.c
-index 4007563fb607..ab03732d06c4 100644
---- a/arch/riscv/kernel/patch.c
-+++ b/arch/riscv/kernel/patch.c
-@@ -89,6 +89,14 @@ static int __patch_insn_set(void *addr, u8 c, size_t len)
- 
- 	memset(waddr, c, len);
- 
-+	/*
-+	 * We could have just patched a function that is about to be
-+	 * called so make sure we don't execute partially patched
-+	 * instructions by flushing the icache as soon as possible.
-+	 */
-+	local_flush_icache_range((unsigned long)waddr,
-+				 (unsigned long)waddr + len);
-+
- 	patch_unmap(FIX_TEXT_POKE0);
- 
- 	if (across_pages)
-@@ -135,6 +143,14 @@ static int __patch_insn_write(void *addr, const void *insn, size_t len)
- 
- 	ret = copy_to_kernel_nofault(waddr, insn, len);
- 
-+	/*
-+	 * We could have just patched a function that is about to be
-+	 * called so make sure we don't execute partially patched
-+	 * instructions by flushing the icache as soon as possible.
-+	 */
-+	local_flush_icache_range((unsigned long)waddr,
-+				 (unsigned long)waddr + len);
-+
- 	patch_unmap(FIX_TEXT_POKE0);
- 
- 	if (across_pages)
-@@ -189,9 +205,6 @@ int patch_text_set_nosync(void *addr, u8 c, size_t len)
- 
- 	ret = patch_insn_set(tp, c, len);
- 
--	if (!ret)
--		flush_icache_range((uintptr_t)tp, (uintptr_t)tp + len);
 -
- 	return ret;
- }
- NOKPROBE_SYMBOL(patch_text_set_nosync);
-@@ -224,9 +237,6 @@ int patch_text_nosync(void *addr, const void *insns, size_t len)
+ 	pci_assign_unassigned_bus_resources(vmd->bus);
  
- 	ret = patch_insn_write(tp, insns, len);
- 
--	if (!ret)
--		flush_icache_range((uintptr_t) tp, (uintptr_t) tp + len);
--
- 	return ret;
- }
- NOKPROBE_SYMBOL(patch_text_nosync);
-@@ -253,9 +263,9 @@ static int patch_text_cb(void *data)
- 	} else {
- 		while (atomic_read(&patch->cpu_count) <= num_online_cpus())
- 			cpu_relax();
--	}
- 
--	local_flush_icache_all();
-+		local_flush_icache_all();
-+	}
- 
- 	return ret;
- }
+ 	pci_walk_bus(vmd->bus, vmd_pm_enable_quirk, &features);
 -- 
-2.39.2
+2.45.2
 
 
