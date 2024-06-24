@@ -1,228 +1,146 @@
-Return-Path: <linux-kernel+bounces-227753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D479915642
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:11:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 783A5915645
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 20:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E4F41C2102E
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:11:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D574E28B128
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 18:11:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 993831A00ED;
-	Mon, 24 Jun 2024 18:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C7761A00DE;
+	Mon, 24 Jun 2024 18:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="sQS08B5U"
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEgrqU2l"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA1A1A00F0
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69B4F13BC1E;
+	Mon, 24 Jun 2024 18:11:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719252678; cv=none; b=nGtedDGDVgE8gxcP8Q3yxANUAAjBz8ig6DE6IK3uBaF21zKWR2HNA45DCOtl/dgEvYdXwsF2r0vyUJVFUCQx/IerBw5FlzNk36qN6RdwvAmZXq8X2ozMoDll1hVHze8o2Wjr3pVzipIiSafgJVvycrwKtYEQ6P8HPf9xDxdyDJw=
+	t=1719252701; cv=none; b=gstAfrbTFZ0axfmY5SS88cLmWxBSST+u4ldKZRyFpgJel+5csZ1KnnASk9Hv8TL1DS8ZduAH/j2eZKrrJ0OMxuubhBiW2tbuRMJKyNKb6xoC9svOYBms7Sdf6UahPqlSBAp4a3hsoo9Liur/YQX3UC2xlmqOpP+PagPg48vbYL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719252678; c=relaxed/simple;
-	bh=nIUdy22oglBfUryv7MbqxD7BiJz15+mnbfSouo20eE4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WUONbxVSefsRHBDNajDtJDIBAsXxfDuTUrQItXvFzA2vHaI12B1ULA3IITBV1pbDCisl8Guo5V5VGjpY7ZVvigOSdvrA9zKSpNytfX3R8SD+GjbzgLlsG2euBzbZf1zbs5aiqMtRUBLGMqjKtJsETdtoRM9JWka4m8+npxpD5XI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=sQS08B5U; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e02c4168e09so4327873276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 11:11:15 -0700 (PDT)
+	s=arc-20240116; t=1719252701; c=relaxed/simple;
+	bh=8ZpHeMdA41tz6VxVLKTzAZjGJmZnGo+/owcvRa6kIcs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DvDn33RTpoAemAIyQh8JwfpE9ZKI9kkq1mIah+CAaHLhPVIWr0Fh9xzdxQ5rfckohOg/nhFt/3Z7Dsijp1FDiqColsvYW+dJkatqmEzYlSb2EAg5HZJ5zHVnn8ZCjXpZnbyRTc1Tv3sve/aZgS9z4bUO+knbnTCPE0As3Rlp/Ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CEgrqU2l; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fa07e4f44eso19718215ad.2;
+        Mon, 24 Jun 2024 11:11:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1719252675; x=1719857475; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5jGR9g/Bb8Va571zVMLt5UXvxDZ++mFdkIqRAoUvAic=;
-        b=sQS08B5UMSb+22J6GNJ5ErP7KnMW9h8n6ml0sPCi3JxLUevLqlfHukKB4+MNafmjFr
-         Zvu8x2tY5+hDkZd2xiVhyE6A7h6+YsbTDhvGf9FVq3c/4Ykxp1wBQoMp/hDQzN/zyIvM
-         MgqCiNEyS/+6hejeKqWCB2FtGJe35f++BaaIto0tLABzGT3kL62KJcXKqYG4Dm5iYtMN
-         Gpo6gOCiOYAyW3PLT55pqqDgh1CeDU0BCKREBK8EzYNt6pykUYsltNSkYowCb3Xh2udu
-         iW/izwf4f486KNpMOoKQEgO/QrrkYc3e/CHa1ML8WBOaeJ/VJ8vqoubs1ARqEmbzUhRl
-         Zhjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719252675; x=1719857475;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=gmail.com; s=20230601; t=1719252700; x=1719857500; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=5jGR9g/Bb8Va571zVMLt5UXvxDZ++mFdkIqRAoUvAic=;
-        b=KFAR2MAY1gK3w9zepE3Jbet9JayQlAmbPXT/PGWgB1xqzmz6wZtEwzzBVWC9IwMgjj
-         clYTtzYljClaGvM5QnwYo8rqW4j+1x0NfMWP5mikdL5GD8DpViSu6q7oGjzGszR6R+5S
-         iiotOLiVGQKt7ip6C6ajaDbhhzr54eGy6EcAM1zGmCJrHko88w9RajArREl9JywP4DHb
-         VgYjqwYdTEsghYdfo7l6EXzYGrijMSiqGvHmn/JA+3w6+OVbNWrsnsKtUnlDDFRR0W78
-         oNyDTMC0XU8neO0Rvdv6TUaZtqGkQ+Glv6MyEY0Jjidgk5A4rLOhXZ3rY/RMz9G6Hh9W
-         PWOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUv0ieAlklbRwLE6Ba6zWdk9jxYr9aQBE9OOQU/kCEANWzFg54Om5lzTAqoepZhIsLMlIw1j8wjtL5fFLk+/Uh4axRdYNEGZxGKKmZD
-X-Gm-Message-State: AOJu0YzDxZf7tZ6cr3Il4IS9uroesXbAlGZwCtl8TM9tRL9d3UKV18Mh
-	U7s81Hv5/SM2nZAR58N1hkh3JlrlxmSyte8D7dUtDxJwjUAYMTu2odGqsmXGjutb0pRD0ocJ7RJ
-	BVQJ1aU62X7y0Lr03wX11MPEsyeCUN4BrGmuAYw==
-X-Google-Smtp-Source: AGHT+IFaAqmhNPlm6MCoDVgffhkfuksOWP1wIZM8AnbBnkW6RDpNrHr6R7v3rNj3Wz45MorU/sgEZjJu5xv7+4bnw1s=
-X-Received: by 2002:a25:c54d:0:b0:e02:bf87:7cd4 with SMTP id
- 3f1490d57ef6-e0303fea2bdmr5469380276.53.1719252675064; Mon, 24 Jun 2024
- 11:11:15 -0700 (PDT)
+        bh=eAzqIGCealTp3KkbLdhI79UaVuk53m7yBh30uNglZCY=;
+        b=CEgrqU2lTve33ptZTEq9WwbqwLUw/DehrwLWEcn9p4gjSmJt/n/CHdOdBTpd8QPHCe
+         QwIYa8kpPXGb+dcUabVzhJ4GX8ifjhulvyvae1KnAhrn8N9IuMlepwE7xI1oq1GUwmnl
+         AmHI3tlkf9hp0VkF4Rb/48nxa25aKUEWF2d++UUdYqoumhmSb+J5emx29YT6TwZa530N
+         lbzavOzoj9My8cbZxF9fNt7FiV5Px95pD6nYlFJs1C9uz85AlP7hkyvEHpmDr2gllvuD
+         yNRPSZDQQ5rUSxP30XfGGSBKbmmgmk8Juux5mWnC+NIlgE3IpRvBeXsujQFuzljfMdRX
+         bLFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719252700; x=1719857500;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eAzqIGCealTp3KkbLdhI79UaVuk53m7yBh30uNglZCY=;
+        b=sgNcuKnH1DwWdg3OqhWhxLzuEep+49y4tRD4VJvvaR5HrmHomBzXCa3PzGte0RqLwc
+         2PPLMNUX0a3mzUJdx3lL+ZxK6L5HVsdaTe+L5GqbLWBTYR40J+K9DJmbaDfLdeWBRWvp
+         iL+inp7gXeAjgTD/JfLlWKYNWSIbErzf0/4534UVBJ4bdxCCBBf4cCF39mQze5zoa2Fe
+         5FHkCWusvcTa+EVPP49xqvADh6QrGrklR9MTEsVDBA21cSy7QsFJed+k2XBBXCOjJKms
+         A2VXow+deQm3vOwXb3Z2UyzRCZJEUow1y2YdC+C3hYowF7bRmsm78lGmq5UQKLLpph1y
+         Yz5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUqmYmMpwRL+s95wjofC30QPyYpItfJcoXQolzcFAok+l5e07JPEQdMLpR/Ux+v/Xbrofz04KMpkhnSaH6w7qiVMqbAUOkuKrJ9G5P4Dzg3bTTg/Mr39DQhbgDnRA0Uv9xQ
+X-Gm-Message-State: AOJu0YzpycYdVkY4XhfRQKrpmJXRPRwyv2kxNAa5sfeFXsF/c4aZlBAG
+	CHWxzThqEQrMe+IiulbYcp6qXWdIWuTPHWkpzJJAXljTENHKj/3C
+X-Google-Smtp-Source: AGHT+IGJJRR3n10wLw3QMIlVWhHQKtg3N1/E34FVbH9wm7We3eJKltNoMxQv8m3zZbFI3++mznQ7iw==
+X-Received: by 2002:a17:902:ce81:b0:1f7:2bed:226 with SMTP id d9443c01a7336-1fa23ecee77mr65422275ad.36.1719252699549;
+        Mon, 24 Jun 2024 11:11:39 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbc7cbesm65663735ad.298.2024.06.24.11.11.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 11:11:39 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Mon, 24 Jun 2024 08:11:37 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Chris Mason <clm@meta.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Linus Torvalds <torvalds@linux-foundation.org>, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCHSET v6] sched: Implement BPF extensible scheduler class
+Message-ID: <Znm22Sgt-rIU_sp5@slm.duckdns.org>
+References: <87ed8sps71.ffs@tglx>
+ <CAHk-=wg3RDXp2sY9EXA0JD26kdNHHBP4suXyeqJhnL_3yjG2gg@mail.gmail.com>
+ <87bk3wpnzv.ffs@tglx>
+ <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
+ <878qz0pcir.ffs@tglx>
+ <ZnSEeO8MHIQRJyt1@slm.duckdns.org>
+ <87r0cqo9p0.ffs@tglx>
+ <364ed9fa-e614-4994-8dd3-48b1d8887712@meta.com>
+ <878qywyt1c.ffs@tglx>
+ <612c8f18-21e5-452d-8e9f-583f224d8e54@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524182702.1317935-1-dave.stevenson@raspberrypi.com>
- <20240524182702.1317935-9-dave.stevenson@raspberrypi.com> <ZmCo4IfRhEzMf9gs@lizhi-Precision-Tower-5810>
-In-Reply-To: <ZmCo4IfRhEzMf9gs@lizhi-Precision-Tower-5810>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Mon, 24 Jun 2024 19:10:58 +0100
-Message-ID: <CAPY8ntBNz5tGfVz7FJ0wvzxWZ+AyjbTn7JbDFX=cNq-EN2Vu5A@mail.gmail.com>
-Subject: Re: [PATCH 08/18] dmaengine: bcm2835: pass dma_chan to generic functions
-To: Frank Li <Frank.li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Vinod Koul <vkoul@kernel.org>, 
-	Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, Mark Brown <broonie@kernel.org>, 
-	Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Vladimir Murzin <vladimir.murzin@arm.com>, Phil Elwell <phil@raspberrypi.com>, 
-	Stefan Wahren <wahrenst@gmx.net>, Serge Semin <Sergey.Semin@baikalelectronics.ru>, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	dmaengine@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-mmc@vger.kernel.org, linux-spi@vger.kernel.org, iommu@lists.linux.dev, 
-	linux-sound@vger.kernel.org, Stefan Wahren <stefan.wahren@i2se.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <612c8f18-21e5-452d-8e9f-583f224d8e54@meta.com>
 
-Hi Frank.
+Hello,
 
-On Wed, 5 Jun 2024 at 19:05, Frank Li <Frank.li@nxp.com> wrote:
->
-> On Fri, May 24, 2024 at 07:26:52PM +0100, Dave Stevenson wrote:
-> > From: Stefan Wahren <stefan.wahren@i2se.com>
-> >
-> > In preparation to support more platforms pass the dma_chan to the
-> > generic functions. This provides access to the DMA device and possible
-> > platform specific data.
->
-> why need this change? you can easy convert between dma_chan and
-> bcm2835_chan.
+On Mon, Jun 24, 2024 at 12:42:01PM -0400, Chris Mason wrote:
+...
+> >     - How is this supposed to work with different applications requiring
+> >       different sched_ext schedulers?
+> 
+> I'll let Tejun pitch in on this one.
 
-These patches are leading to adding a bcm2711_chan structure for a new
-(but very closely related) variant of the DMA controller.
+Long term, the tentative plan is to support a hierarchy of schedulers where
+the intermediate schedulers are responsible for granting CPUs to leaf
+schedulers which are responsible for scheduling tasks. Barret Rhoden has a
+framework called flux on top of ghost which already implements this albeit
+with compile time composition. Nothing is set in stone yet but it's likely
+that I'll follow what Barret is doing in many parts.
 
-dma_chan is the generic structure, therefore we can keep more
-commonality between the variants if we use that wherever possible.
+Taking a step back, because sched_ext currently supports a single
+system-wide scheduler, many of the techniques that the current crop of
+schedulers are playing with are pretty generic, at least to a class of
+problems - e.g. gaming.
 
-  Dave
+Even for scx_layered which is the least generic in a sense, while we it's
+also used for a really specific ML setup internally too, what it's more
+widely used for is experimenting with things like soft affinity where e.g.
+workloads that are not latency sensitive are grouped into few hot running
+CPUs which are dynamically scaled to keep caches cleaner (and other effects
+too) for the latency sensitive parts of the system. Dan Schatzberg is trying
+to generalize that with scx_mitosis.
 
-> >
-> > Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-> > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> > ---
-> >  drivers/dma/bcm2835-dma.c | 24 ++++++++++++++----------
-> >  1 file changed, 14 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/drivers/dma/bcm2835-dma.c b/drivers/dma/bcm2835-dma.c
-> > index e2f9c8692e6b..aefaa1f01d7f 100644
-> > --- a/drivers/dma/bcm2835-dma.c
-> > +++ b/drivers/dma/bcm2835-dma.c
-> > @@ -288,12 +288,13 @@ static void bcm2835_dma_desc_free(struct virt_dma_desc *vd)
-> >  }
-> >
-> >  static bool
-> > -bcm2835_dma_create_cb_set_length(struct bcm2835_chan *chan,
-> > +bcm2835_dma_create_cb_set_length(struct dma_chan *chan,
-> >                                struct bcm2835_dma_cb *control_block,
-> >                                size_t len, size_t period_len,
-> >                                size_t *total_len)
-> >  {
-> > -     size_t max_len = bcm2835_dma_max_frame_length(chan);
-> > +     struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
-> > +     size_t max_len = bcm2835_dma_max_frame_length(c);
-> >
-> >       /* set the length taking lite-channel limitations into account */
-> >       control_block->length = min_t(u32, len, max_len);
-> > @@ -417,7 +418,7 @@ static struct bcm2835_desc *bcm2835_dma_create_cb_chain(
-> >               /* set up length in control_block if requested */
-> >               if (buf_len) {
-> >                       /* calculate length honoring period_length */
-> > -                     if (bcm2835_dma_create_cb_set_length(c, control_block,
-> > +                     if (bcm2835_dma_create_cb_set_length(chan, control_block,
-> >                                                            len, period_len,
-> >                                                            &total_len)) {
-> >                               /* add extrainfo bits in info */
-> > @@ -485,8 +486,9 @@ static void bcm2835_dma_fill_cb_chain_with_sg(
-> >       }
-> >  }
-> >
-> > -static void bcm2835_dma_abort(struct bcm2835_chan *c)
-> > +static void bcm2835_dma_abort(struct dma_chan *chan)
-> >  {
-> > +     struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
-> >       void __iomem *chan_base = c->chan_base;
-> >       long int timeout = 10000;
-> >
-> > @@ -513,8 +515,9 @@ static void bcm2835_dma_abort(struct bcm2835_chan *c)
-> >       writel(BCM2835_DMA_RESET, chan_base + BCM2835_DMA_CS);
-> >  }
-> >
-> > -static void bcm2835_dma_start_desc(struct bcm2835_chan *c)
-> > +static void bcm2835_dma_start_desc(struct dma_chan *chan)
-> >  {
-> > +     struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
-> >       struct virt_dma_desc *vd = vchan_next_desc(&c->vc);
-> >       struct bcm2835_desc *d;
-> >
-> > @@ -533,7 +536,8 @@ static void bcm2835_dma_start_desc(struct bcm2835_chan *c)
-> >
-> >  static irqreturn_t bcm2835_dma_callback(int irq, void *data)
-> >  {
-> > -     struct bcm2835_chan *c = data;
-> > +     struct dma_chan *chan = data;
-> > +     struct bcm2835_chan *c = to_bcm2835_dma_chan(chan);
-> >       struct bcm2835_desc *d;
-> >       unsigned long flags;
-> >
-> > @@ -566,7 +570,7 @@ static irqreturn_t bcm2835_dma_callback(int irq, void *data)
-> >                       vchan_cyclic_callback(&d->vd);
-> >               } else if (!readl(c->chan_base + BCM2835_DMA_ADDR)) {
-> >                       vchan_cookie_complete(&c->desc->vd);
-> > -                     bcm2835_dma_start_desc(c);
-> > +                     bcm2835_dma_start_desc(chan);
-> >               }
-> >       }
-> >
-> > @@ -594,7 +598,7 @@ static int bcm2835_dma_alloc_chan_resources(struct dma_chan *chan)
-> >       }
-> >
-> >       return request_irq(c->irq_number, bcm2835_dma_callback,
-> > -                        c->irq_flags, "DMA IRQ", c);
-> > +                        c->irq_flags, "DMA IRQ", chan);
-> >  }
-> >
-> >  static void bcm2835_dma_free_chan_resources(struct dma_chan *chan)
-> > @@ -682,7 +686,7 @@ static void bcm2835_dma_issue_pending(struct dma_chan *chan)
-> >
-> >       spin_lock_irqsave(&c->vc.lock, flags);
-> >       if (vchan_issue_pending(&c->vc) && !c->desc)
-> > -             bcm2835_dma_start_desc(c);
-> > +             bcm2835_dma_start_desc(chan);
-> >
-> >       spin_unlock_irqrestore(&c->vc.lock, flags);
-> >  }
-> > @@ -846,7 +850,7 @@ static int bcm2835_dma_terminate_all(struct dma_chan *chan)
-> >       if (c->desc) {
-> >               vchan_terminate_vdesc(&c->desc->vd);
-> >               c->desc = NULL;
-> > -             bcm2835_dma_abort(c);
-> > +             bcm2835_dma_abort(chan);
-> >       }
-> >
-> >       vchan_get_all_descriptors(&c->vc, &head);
-> > --
-> > 2.34.1
-> >
+So, the summry is that there are plans to support a tree of schedulers but
+we're currently mostly focusing on more generic single scheduler
+experiments.
+
+Thanks.
+
+-- 
+tejun
 
