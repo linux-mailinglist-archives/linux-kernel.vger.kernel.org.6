@@ -1,125 +1,124 @@
-Return-Path: <linux-kernel+bounces-227197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF879149D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:28:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 697A29149CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 516E51C22101
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:28:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22FED28460E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB31113C83A;
-	Mon, 24 Jun 2024 12:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 048CF13C3C4;
+	Mon, 24 Jun 2024 12:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PS/xHdOR"
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fjQ2gUgE"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E54A13C682
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F07137C2A;
+	Mon, 24 Jun 2024 12:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719232104; cv=none; b=fvxUE8P5Nmwp3KWdzmlUmCrkjSbAGX7iaG6Y71DxwCsMbVp1VajsfWuL4+PmPzZXTMB3/9NvXdeXa17w+6CTmZ/tgnHs/kReUlBcQEVO/UaYAI4pY3K2P5qO48glYboncapVBhRuQVyYiVhj4fo942J1IdGUYYP7JZVJg/zDcOU=
+	t=1719232100; cv=none; b=ac8WDJ/NUaAJwmJ8QXI5Zy0MTNP3qlR4adbyBJ+ixZCh0etcgjFuf0vf7GpiY3WUvTtXbBSqajNngz1ExVGs8WebglErLhLyMli943y7i2X0zZu/wArY33ipFk4hMBp47v2uUpHjPaH0IHsn6r9ydxIenA4tDCjZ7pQe3pcDjCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719232104; c=relaxed/simple;
-	bh=kvTHFbGwSn0IbVatzWle3jPEgWzYIiq7ayVFCi8dSZg=;
+	s=arc-20240116; t=1719232100; c=relaxed/simple;
+	bh=vDRm043puDoGOMdb6yxVqyoLpLEK0Mr7K2kShYPQA4M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IyUWd/hBAT67EX/A+gsXqxmjTCX8K26GdALvvyCVBgYq27c2JYna0ly3icd8zlTZB+Wvl0yE2LpOMkfAp/voI55yK0CqTg0vUeorEaVFfWrR5R+T4Jc1qATsVc+Vsrj7FUvrlmd5zY4bT+gM814CSz1/YsRaMn5TYPklsISJVtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PS/xHdOR; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4e4efbc3218so1664646e0c.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 05:28:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=MCXoY63wg7y4yJJsRCo3nO+0VB4UyrPdOVTYy+c25U2YkkKKijYULvW62JBVooFH2anB6L11foNIMhhKRRKz98ln1oNjxqySHotqds4H/6ulw3/uCH2LIigaoYvh7C8tjhEecSPeqPi7zy0Lk73Ql0X5heJ9d+mAmwlhaCsG1+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fjQ2gUgE; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a724b9b34b0so123007666b.1;
+        Mon, 24 Jun 2024 05:28:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719232101; x=1719836901; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Veq9TPKZ17jNotCvSeoq8DmaGeF2hh54pN8hjaplz58=;
-        b=PS/xHdORlCUV/pNJIdzlT73EkbzCqf+i3fBotoQ/YDmOq1tX72rvKiQn0TwlrTBKqr
-         Nem9gQWqhMQko+WDaZXzW310ggLeMw0uhOLsvCstjhV2eIljQvkAEaaj4TMR8qN/OnDr
-         bJwojc0aFJL4jqPdUVmjbOZPUzFHdrn2a8YA3OEvEhAyC+L1DzaEkHiwbfXil3m4j1ex
-         UpAbdF5ULwyzyFvSM8jX9WMScAjnz8+sOv+ogH7xT3EXuYN3J78YHKWiOAZ13valh+53
-         YdqcP03rSGrlpQM1vbbxHuuKF+jjB16tUiyFdK5qL6DBCRuDBhjdpXzSSwN2xdxyUmIq
-         85sA==
+        d=gmail.com; s=20230601; t=1719232097; x=1719836897; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xHJsxhxdOLaqizliJLOPpaKHXoqhdyk0yF3LIbtNF28=;
+        b=fjQ2gUgEx3MlqtXHGQaCz3zuAIa54ALaXXrBTvEfqoEzfhvHYFe/qG1Rul+NMtmame
+         7lE1GEl/DOXfoPR3abMSi4SNip9GxFuo6SuI7DzIWtsO4tUpUzmbw30Sq/gcpY8n6o2e
+         yiFDlVpBCHKpMsr8JGegRysONZx2D4Lk+Srnil/zbagjhMoHp4bXrzY9zKiYCMFrxzLw
+         RSuhg2DYAsjIZvEMPpxUlNMDAoAb7FFrpD372ih/QcbM2Kh1aP4vEfnCtffwRBmKL6qV
+         Ru85gOmzaGkO578gcEcCJsf3mZf8hbIM/GHLXPNKQs9uWcezdVK+pSWf6BO1wEoWFbrX
+         N8zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719232101; x=1719836901;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Veq9TPKZ17jNotCvSeoq8DmaGeF2hh54pN8hjaplz58=;
-        b=utesAHWxsw+HPcez99/53bOTpaJEVQGIujsoQRQboGCisUpo9duJx8ln3HR1Gf8i7t
-         lwSCj5jcJ/oT74jAaSaJm49LbximCi42+7tReSHrXofMJ1CnhfGcRyWnqrP2vIfxI6JL
-         2DV8uHWfsxF1dPVSCxEerIgLHYSL/byXV78/rzYQ0ylQPkQN0+zcW6aUMyvVb/M+K6fk
-         9TIRhBrOa+DHHagYo2fVgnL9dzsgYOn+yk6Yf8Jr0sJCLbIqQOUgzxbIS++9wC2GeN/F
-         3j3m8J8oqoamWK+jRKQIeyeX0gaa4i2b0nQ5NB2PUy7RajzyZxVtTbl4ne5JI6RqKg+5
-         ZXkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWqaW0ErKgY+d6mrkKsbfUc5YGNvLNRQip/Bpr1RXYLzntZmjj9oEgVMi24PfP2j9RvD8rNZCcxfM+WAmP5oP9OQuHeU+B6Cnnmi1/Y
-X-Gm-Message-State: AOJu0YxlaYlQuYUfOmErgor5l50k+UlRl1KCfHZb00irXTkQ7lqtRewL
-	Oii5efp8rh+zgziF6hvRqFGgd4pI5Yqv8n8f4cfuSwaPSQy6NugCVqceH1IF0JCbb2IQyuoF8zZ
-	e+zNtjrYwWaH30QVoWihDLzrAWQUMmi1J3yoU
-X-Google-Smtp-Source: AGHT+IEXY6PfnqaCkx4O1P/wV/eai3a7cnOBgNvRi5EAgYDjt9F/J+oZ3D9g8gZzjIfIUtDcMFymywqTTqC2iMwIxw0=
-X-Received: by 2002:a05:6122:921:b0:4ec:f758:e514 with SMTP id
- 71dfb90a1353d-4ef6d8ad6e8mr2427978e0c.11.1719232101181; Mon, 24 Jun 2024
- 05:28:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719232097; x=1719836897;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xHJsxhxdOLaqizliJLOPpaKHXoqhdyk0yF3LIbtNF28=;
+        b=XkJ5hbVrTdN/bxBIxnYXJYODuJcaXNtH835sSI6FMV+tlotZwf3qIz6Z+0Ld4Eemrr
+         uHmJkgNGjC88fZuDQW6W17eRDU4nf2XC6BL/QaTHlBp1KAeDPPPQ6AJFnbSHCzThYfCP
+         BI35P3rZ+RcD9gRYxqSJZJMeH6tO/l5M+rPuRIP0ZyYPsnK5FkANBdNbBuzoxMPFmHrt
+         ozKwTAvwDLvsj3efWM9KDncbmaTPuI/lSw5Oh8TcKCk6f0yzjrgbf6m75yEUbbvrDuLm
+         +TsAHgXz9Oxo7E+dOZYXK3g0DE65fALnAAWDm/dUn6T7L9GIGzOfUge8DlyVvjYmiRn+
+         do/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUaoj3PljwfGmbGnoy8oBr/2RKrrFqaa9nz/fl/+iAcWHD0E8NHdMPWo/2lZIvbbwfLtqYwy4RCWyDy8xVwKUsZE65/jAdtUZC9HJqh2v0RqejpG4AqbVxNxuleG7fR6THq2dD/QfkYUVjWA5/M0E1amQPIA0EzqamFN9khSbw7Db24zQZCt10=
+X-Gm-Message-State: AOJu0Yx6LONvsMl4a59/AgrSjzI5z1jkneWUEg3aVaDYCO0Z7N9R0hWr
+	oZHAZkyi5V0t5OXOXQYgNaF+PbF0e+sctVaG8+gwWkEFC79yC1OSTrBWSb+RviPN1a3e/VGVqnT
+	CzOT3wuIBVsqnq13iOU/3RHCUpVM=
+X-Google-Smtp-Source: AGHT+IFLuihGCVppoutdyi8cBVHlab+e+O4qV5jLbe5dJIxrWHY4mdjCw71NzObZvquv4leyc73TcWAQqFe10tnNgqU=
+X-Received: by 2002:a17:907:c5c7:b0:a72:52a6:a06b with SMTP id
+ a640c23a62f3a-a7252a6a114mr194276366b.46.1719232096844; Mon, 24 Jun 2024
+ 05:28:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f214f15e-4a0a-4f24-9bd7-8f84cbc12e5a@p183>
-In-Reply-To: <f214f15e-4a0a-4f24-9bd7-8f84cbc12e5a@p183>
-From: Marco Elver <elver@google.com>
-Date: Mon, 24 Jun 2024 14:27:43 +0200
-Message-ID: <CANpmjNO=zv6D807cNLAQ3eGLrigUs9xtYNxoHhyuYvHkhhSUWg@mail.gmail.com>
-Subject: Re: [PATCH] compiler.h: simplify data_race() macro
-To: Alexey Dobriyan <adobriyan@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org, 
-	akpm@linux-foundation.org
+References: <20240624085037.33442-2-xry111@xry111.site> <e2lv3qamggymdjqzujvyhsd2q34jy5tryniac7d446tlaebqwy@5x4zn7z4d3xz>
+ <b635271e73b35487a06cf17176243e6ce4cfcd58.camel@xry111.site>
+In-Reply-To: <b635271e73b35487a06cf17176243e6ce4cfcd58.camel@xry111.site>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 24 Jun 2024 14:28:03 +0200
+Message-ID: <CAGudoHFQ1SnKubuDsSxE39W+MR6Af2PbHkrNwAAbZFb-9ETswQ@mail.gmail.com>
+Subject: Re: [PATCH v2] vfs: Shortcut AT_EMPTY_PATH early for statx, and add
+ AT_NO_PATH for statx and fstatat
+To: Xi Ruoyao <xry111@xry111.site>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Alejandro Colomar <alx@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@loongson.cn>, 
+	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	Icenowy Zheng <uwu@icenowy.me>, linux-fsdevel@vger.kernel.org, linux-arch@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 24 Jun 2024 at 13:49, Alexey Dobriyan <adobriyan@gmail.com> wrote:
+On Mon, Jun 24, 2024 at 2:19=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wrot=
+e:
 >
-> Use auto type deduction and comma expression to decrease macro expansion
-> size.
+> On Mon, 2024-06-24 at 11:04 +0200, Mateusz Guzik wrote:
+> > Below is a diff which compiles but is untested. It adds AT_EMPTY_PATH +
+> > NULL as suggsted by Linus, but it can be adjusted for AT_NO_PATH (which
+> > would be my preffered option, or better yet not do that and add fstatx)=
+.
+> >
+> > It does not do the hack to 0-check if a pointer was passed along with
+> > AT_EMPTY_PATH but that again is an easy addition.
+> >
+> > Feel free to take without attribution:
 >
-> __unqual_scalar_typeof() is quite wordy macro by itself.
+> I'd still like to make it Co-developed-by: or just From: you.  Could you
+> give a S-o-b?
 >
-> "expr" can be arbitrary complex so not expanding it twice is good.
-> Should be faster too because type is deduced only once
-> from the initializer.
->
-> Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
 
-Thanks for cleaning up.  That code certainly predates the availability
-of __auto_type. Although if I recall correctly, __unqual_scalar_typeof
-became the first user of _Generic (the first C11 keyword we used in
-the kernel?), but we used some ifdef to still support ancient
-compilers initially (that definitely also didn't have __auto_type).
+I just trivially shuffled some things around and did not even test, so
+I'm not signing off on squat here. :)
 
-Reviewed-by: Marco Elver <elver@google.com>
+However, if you insist you can add something like "Written after
+picking up an initial patch written by Mateusz Guzik, see [link goes
+here]" or similar.
 
-Which tree is this for?
-
-> ---
+> And with this change AT_FDCWD with AT_EMPTY_PATH and NULL path does not
+> work.  For consistency it'd be better to make it work too:
 >
->  include/linux/compiler.h |    5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->
-> --- a/include/linux/compiler.h
-> +++ b/include/linux/compiler.h
-> @@ -200,10 +200,7 @@ void ftrace_likely_update(struct ftrace_likely_data *f, int val,
->   */
->  #define data_race(expr)                                                        \
->  ({                                                                     \
-> -       __unqual_scalar_typeof(({ expr; })) __v = ({                    \
-> -               __kcsan_disable_current();                              \
-> -               expr;                                                   \
-> -       });                                                             \
-> +       __auto_type __v = (__kcsan_disable_current(), expr);            \
->         __kcsan_enable_current();                                       \
->         __v;                                                            \
->  })
+
+Good catch, I have no opinion which way to fix it.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
