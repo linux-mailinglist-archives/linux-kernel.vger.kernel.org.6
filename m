@@ -1,212 +1,178 @@
-Return-Path: <linux-kernel+bounces-227182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-227183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B3C791499A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:16:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5428D9149A2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 14:17:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02D49282046
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:16:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 98C47B2017E
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 12:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B57713B783;
-	Mon, 24 Jun 2024 12:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DD413A889;
+	Mon, 24 Jun 2024 12:17:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YaVGONJF"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IT1iQSvo"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079072232A
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 12:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072CC4503C;
+	Mon, 24 Jun 2024 12:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719231333; cv=none; b=B637yBacUJGuQ7asbIOdJUMjs52JkOGsm1Xt+p0Xz5SKScOtZe3lS4UnksP5R3FMDseLw+L42o/jibpb/TFkuDPco5xh8Doh/NOeWIGuUrU4xLNJqQThXv6lyDNgx8BQWlCircABxDxqYBXtiMIvqyIy7YjWmmnCU1nRIH+Wz6A=
+	t=1719231420; cv=none; b=Bh06/W8nDwMZsIUMm4JZryPnib44DAnawxz25kXTeuDmPgQ6ZWeDeANXPCnbcyQNjQuVyxWHNJtmnA19X0zpe8C3DdhUeNGty1ygkSLh6oDE5JKP/Pv+HuE9DjY/yGy5B1jX6HfXE7lcqRHqtJD7E1iQ3DM+Arsayu6o3UFnpp4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719231333; c=relaxed/simple;
-	bh=xB3jc8JBrcnafMCdPaVW7LYaQa6NMAwud2DG8BDdnis=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CD8bac5Jl/6pdv3UU063T6DFpOVH0ZIul3BbWujHILLiEfHbMyEU5HmH0jAeeT8ErjdI7AYxr+jFB1W5FcT9PYaTWx7XfkQCg7kC6M5FAANT2TPW7oDj5e/p6rYcbz5tNc+93VipawPOHfpmupJ8OGLEhJdDuUqMeDgYAAYiBoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YaVGONJF; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7245453319so217563666b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 05:15:31 -0700 (PDT)
+	s=arc-20240116; t=1719231420; c=relaxed/simple;
+	bh=qyFUq+scYKsMZVcWCOoCO9/4yb0PF8TUDetkIaa6PBQ=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t3Y1GAKwq5GaH4TOkX+e4x1t5NwmtFiatltHtL0/+w8yxP55mzmzyi+NdidDNm/3emfz/KUfIP75glieLAnWAaYE/oCzvoB0kd3WVOt+JCbMxm8inTJMF8M5tGSqiZDTarIc+9DA0Lik3feX/zo0AXKJgkHNd4CSzJFlCaAbglY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IT1iQSvo; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5295e488248so4814323e87.2;
+        Mon, 24 Jun 2024 05:16:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719231330; x=1719836130; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6Rn8JlgpPAk4s18V2/yagiw1mvhWTbcQX4Wl/KIshJs=;
-        b=YaVGONJFzgE7OiZTwJ2JkDNoMi9zHL8JZZYbPsUAGknlX6YeLu8wlZBbpXIoAbd9T8
-         2rW33C5xYzkj+pYJ3bMZkKQGekojlbJ1prHL8WJKlXgUTPayJQBqyMOsgfDvhCs+6ObY
-         n/n6MKfrAYHBMTiSpoqcSTNI2IpQflBfTDAiu3PBSe3rrwjfsJQXcBbTFcjE2ruS5B4x
-         +oIhjcDC1b8+pDIPWE/sbbhFnp+AZY/QXAracC8UXKQvBaF5m2QLsSycxQO6Mfz/0mvp
-         4FFYdRc+gDuqfUkNLCD5vlZaz3ZO3gg1LyAauNxyGUZhzNTiT2n+XufZRU85pZo4/Ewy
-         iv+g==
+        d=gmail.com; s=20230601; t=1719231417; x=1719836217; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VOwwUCn4o91Hx00RzgGfd9DNWIUVFFDkTLA5vyA8/fM=;
+        b=IT1iQSvofs+xKudYU/qcflUGPg256N3lEMX/a1pts6S090LHTfLol/BX0z19ILGRcF
+         jGcfkVg6O7ZyFHOR4QpR6npJw1Pm8OwaRkxd51Ku/tDbJpSKkFvrNe0pfhTyr252aPLe
+         BLzq7veJn5qmpbPRUQQtI3+NGzfZrHjcdZY2z0VtLnVMRKimpcUXrdkfuivGP78SZm/Z
+         qGzEeHrjyFYUTMQk991kn28qSc11HJT0CfQjwBYcU5ubb7a0prt5IQEcYfk9u0Uj5Ao/
+         TSPbv34yBGGNwv372dhbg8T0U0hfdIY5u4H+aV3YfSy9rHLry/AkGiQJPJWhtbv16glh
+         lndA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719231330; x=1719836130;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6Rn8JlgpPAk4s18V2/yagiw1mvhWTbcQX4Wl/KIshJs=;
-        b=O85PGBtJRnC8IoDzMdz+UsNKKM8viGXXe7P7+ISsjo7j/4ORHpuvJfB50aqjjBgUzU
-         mJb2Bhqs4fWHjvLMF4QY15Ju+A4PHvR3VEHllz/nLjqQrx3A+u5ra6Iqu6ri9Mioi6Rq
-         DGti4z0ZhUtT94qPENTDqRmi99Sl1Mc9yt09GHGeGoAEfSbovp+vn88SL8rTuRMqlPr4
-         i5Fio2Zje6V+tPTQ6GKr1b82adfPUxvuJDoP9bWRkhTNv8wUiYWt95FbO5cDbnVqp/Ya
-         2/vjJ5ps4vlekiRdKeXy3WE8C3GA8s11uWpSxxXSmNZMDjjuaLHQBCXgqeTaZq0LkmzM
-         Fa9g==
-X-Forwarded-Encrypted: i=1; AJvYcCU7s6h6S7soeEM075npT4f4zY2OJERDQDLuUPK0ZnizVRWxJqj6GcQmfRw52/T6or96pyRXM/UB6le3KuIYFtrxqTOc/kDjJqXUeFfP
-X-Gm-Message-State: AOJu0Yz7fYwwWPwCTbA4WCUYKJjw9gXCN+l002KLbZkuvk4S3hf8HjUM
-	znTK3RWuyAjG0JEbM+tO8tj/1i9mdCOFoQzyZRNy0utTVePJ8ZleHRY/+SMcbPIUNqRnSmweLBC
-	tj9bP/WSslrD8LQSebZZ2SXAvDFSOmPuRkqzI
-X-Google-Smtp-Source: AGHT+IGSKV4fU1bi706Eu3CbP9AhRzpsXlqcY5iC2z9Vo8PRO/8Eec0SObLM2788WGTPyjSrt9tF3ntG0wNdZVr/By8=
-X-Received: by 2002:a17:906:580a:b0:a6e:f793:fcf6 with SMTP id
- a640c23a62f3a-a6ffe39d9aamr399384666b.16.1719231329826; Mon, 24 Jun 2024
- 05:15:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719231417; x=1719836217;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VOwwUCn4o91Hx00RzgGfd9DNWIUVFFDkTLA5vyA8/fM=;
+        b=nHIrTIMCsrA1m8aLfJ+aai1xLDi5DoftpmuXsHqQUS2bRQ3KH1aWntURoAGc0Uf18h
+         aJ+vl1sNZT+n/UcExSxUdK5l2BaG+QXlH0vP3vR7guZAa4dLBpLPjWKIuY2/zRsgjxsy
+         0Po+Vgtfj+Deq/BaDSZWGRR7dXrWEUZjyCKL6q2PfRTVcBYk9u55frUPvwqhQi+1e5a9
+         Mh67+DJEwwy7zOm9IoXesJxwJm6bqSWD/LkszfKxJOUdwprFl28fB2c9OcBeLXCoZeLJ
+         1G842+1sTMuzuybTHL5N9w5gJgcdo+kQg+pWQqUnEKUS8meqz86JHCROMDEHJ61qG2AR
+         j9fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWW3Tkobz0IYbmuXL4MIQx7lDZS9V3tpiVGRxhySGLxR0lmorZaLFpzVnJu7AabibknGLhrnhKqszoTF0vlvIa8rPCGarQgw+4l0Sj8Z7fQYiGkaiTmG33rNzqWn/6TeSGFHYtD2+D+rQ==
+X-Gm-Message-State: AOJu0YxWyLn93ahwSD60T/NsOjvRSMvzT07mcA3/vSCEzDK49Ja+IA6d
+	ofbi3cz7qzvs/M6HwN+zsYg5JEjwDZx3XfVHOEom7Mb14JadN/j9
+X-Google-Smtp-Source: AGHT+IEsFRWCKZJoK13E+Pt3s17fNddxxyoVj/A//QIxbCu+pr046XEFbPnc02WFGZ3DEx8RMoJ0rA==
+X-Received: by 2002:a05:6512:3b13:b0:52c:dbee:bdb0 with SMTP id 2adb3069b0e04-52ce186271amr3543920e87.59.1719231416848;
+        Mon, 24 Jun 2024 05:16:56 -0700 (PDT)
+Received: from pc636 (host-90-233-219-252.mobileonline.telia.com. [90.233.219.252])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd6449b48sm957965e87.275.2024.06.24.05.16.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 05:16:56 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Mon, 24 Jun 2024 14:16:54 +0200
+To: Baoquan He <bhe@redhat.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Nick Bowler <nbowler@draconx.ca>,
+	Hailong Liu <hailong.liu@oppo.com>, linux-kernel@vger.kernel.org,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	linux-mm@kvack.org, sparclinux@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
+Message-ID: <Znljtv5n-6EBgpsF@pc636>
+References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
+ <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
+ <20240621033005.6mccm7waduelb4m5@oppo.com>
+ <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
+ <ZnVLbCCkvhf5GaTf@pc636>
+ <ZnWICsPgYuBlrWlt@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621-zsmalloc-lock-mm-everything-v2-0-d30e9cd2b793@linux.dev> <20240621-zsmalloc-lock-mm-everything-v2-2-d30e9cd2b793@linux.dev>
-In-Reply-To: <20240621-zsmalloc-lock-mm-everything-v2-2-d30e9cd2b793@linux.dev>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Mon, 24 Jun 2024 05:14:53 -0700
-Message-ID: <CAJD7tkYUuAdwhSbq+m9KTtC2T8db7tiaKYjfS0M4LOA1yBtCkA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] mm/zswap: use only one pool in zswap
-To: Chengming Zhou <chengming.zhou@linux.dev>
-Cc: Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Yu Zhao <yuzhao@google.com>, 
-	Takero Funaki <flintglass@gmail.com>, Chengming Zhou <zhouchengming@bytedance.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnWICsPgYuBlrWlt@MiWiFi-R3L-srv>
 
-On Fri, Jun 21, 2024 at 12:15=E2=80=AFAM Chengming Zhou
-<chengming.zhou@linux.dev> wrote:
->
-> Zswap uses 32 pools to workaround the locking scalability problem in
-> zswap backends (mainly zsmalloc nowadays), which brings its own problems
-> like memory waste and more memory fragmentation.
->
-> Testing results show that we can have near performance with only one
-> pool in zswap after changing zsmalloc to use per-size_class lock instead
-> of pool spinlock.
->
-> Testing kernel build (make bzImage -j32) on tmpfs with memory.max=3D1GB,
-> and zswap shrinker enabled with 10GB swapfile on ext4.
->
->                                 real    user    sys
-> 6.10.0-rc3                      138.18  1241.38 1452.73
-> 6.10.0-rc3-onepool              149.45  1240.45 1844.69
-> 6.10.0-rc3-onepool-perclass     138.23  1242.37 1469.71
->
-> And do the same testing using zbud, which shows a little worse performanc=
-e
-> as expected since we don't do any locking optimization for zbud. I think
-> it's acceptable since zsmalloc became a lot more popular than other
-> backends, and we may want to support only zsmalloc in the future.
->
->                                 real    user    sys
-> 6.10.0-rc3-zbud                 138.23  1239.58 1430.09
-> 6.10.0-rc3-onepool-zbud         139.64  1241.37 1516.59
->
-> Reviewed-by: Nhat Pham <nphamcs@gmail.com>
-> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
-> ---
->  mm/zswap.c | 60 +++++++++++++++++++-------------------------------------=
-----
->  1 file changed, 19 insertions(+), 41 deletions(-)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index e25a6808c2ed..7925a3d0903e 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -122,9 +122,6 @@ static unsigned int zswap_accept_thr_percent =3D 90; =
-/* of max pool size */
->  module_param_named(accept_threshold_percent, zswap_accept_thr_percent,
->                    uint, 0644);
->
-> -/* Number of zpools in zswap_pool (empirically determined for scalabilit=
-y) */
-> -#define ZSWAP_NR_ZPOOLS 32
-> -
->  /* Enable/disable memory pressure-based shrinker. */
->  static bool zswap_shrinker_enabled =3D IS_ENABLED(
->                 CONFIG_ZSWAP_SHRINKER_DEFAULT_ON);
-> @@ -160,7 +157,7 @@ struct crypto_acomp_ctx {
->   * needs to be verified that it's still valid in the tree.
->   */
->  struct zswap_pool {
-> -       struct zpool *zpools[ZSWAP_NR_ZPOOLS];
-> +       struct zpool *zpool;
->         struct crypto_acomp_ctx __percpu *acomp_ctx;
->         struct percpu_ref ref;
->         struct list_head list;
-> @@ -237,7 +234,7 @@ static inline struct xarray *swap_zswap_tree(swp_entr=
-y_t swp)
->
->  #define zswap_pool_debug(msg, p)                               \
->         pr_debug("%s pool %s/%s\n", msg, (p)->tfm_name,         \
-> -                zpool_get_type((p)->zpools[0]))
-> +                zpool_get_type((p)->zpool))
->
->  /*********************************
->  * pool functions
-> @@ -246,7 +243,6 @@ static void __zswap_pool_empty(struct percpu_ref *ref=
-);
->
->  static struct zswap_pool *zswap_pool_create(char *type, char *compressor=
-)
->  {
-> -       int i;
->         struct zswap_pool *pool;
->         char name[38]; /* 'zswap' + 32 char (max) num + \0 */
->         gfp_t gfp =3D __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM=
-;
-> @@ -267,18 +263,14 @@ static struct zswap_pool *zswap_pool_create(char *t=
-ype, char *compressor)
->         if (!pool)
->                 return NULL;
->
-> -       for (i =3D 0; i < ZSWAP_NR_ZPOOLS; i++) {
-> -               /* unique name for each pool specifically required by zsm=
-alloc */
-> -               snprintf(name, 38, "zswap%x",
-> -                        atomic_inc_return(&zswap_pools_count));
-> -
-> -               pool->zpools[i] =3D zpool_create_pool(type, name, gfp);
-> -               if (!pool->zpools[i]) {
-> -                       pr_err("%s zpool not available\n", type);
-> -                       goto error;
-> -               }
-> +       /* unique name for each pool specifically required by zsmalloc */
-> +       snprintf(name, 38, "zswap%x", atomic_inc_return(&zswap_pools_coun=
-t));
-> +       pool->zpool =3D zpool_create_pool(type, name, gfp);
-> +       if (!pool->zpool) {
-> +               pr_err("%s zpool not available\n", type);
-> +               return NULL;
+On Fri, Jun 21, 2024 at 10:02:50PM +0800, Baoquan He wrote:
+> On 06/21/24 at 11:44am, Uladzislau Rezki wrote:
+> > On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
+> > > On 06/21/24 at 11:30am, Hailong Liu wrote:
+> > > > On Thu, 20. Jun 14:02, Nick Bowler wrote:
+> > > > > On 2024-06-20 02:19, Nick Bowler wrote:
+> ......
+> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > index be2dd281ea76..18e87cafbaf2 100644
+> > > --- a/mm/vmalloc.c
+> > > +++ b/mm/vmalloc.c
+> > > @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> > >  static struct xarray *
+> > >  addr_to_vb_xa(unsigned long addr)
+> > >  {
+> > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> > >  
+> > >  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> > >  }
+> > > 
+> > The problem i see is about not-initializing of the:
+> > <snip>
+> > 	for_each_possible_cpu(i) {
+> > 		struct vmap_block_queue *vbq;
+> > 		struct vfree_deferred *p;
+> > 
+> > 		vbq = &per_cpu(vmap_block_queue, i);
+> > 		spin_lock_init(&vbq->lock);
+> > 		INIT_LIST_HEAD(&vbq->free);
+> > 		p = &per_cpu(vfree_deferred, i);
+> > 		init_llist_head(&p->list);
+> > 		INIT_WORK(&p->wq, delayed_vfree_work);
+> > 		xa_init(&vbq->vmap_blocks);
+> > 	}
+> > <snip>
+> > 
+> > correctly or fully. It is my bad i did not think that CPUs in a possible mask
+> > can be non sequential :-/
+> > 
+> > nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
+> > when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
+> 
+> I checked the generic version of setup_nr_cpu_ids(), from codes, they
+> are different with my understanding.
+> 
+> kernel/smp.c
+> void __init setup_nr_cpu_ids(void)
+> {
+>         set_nr_cpu_ids(find_last_bit(cpumask_bits(cpu_possible_mask), NR_CPUS) + 1);
+> }
+> 
+I see that it is not a weak function, so it is generic, thus the
+behavior can not be overwritten, which is great. This does what we
+need.
 
-We need to goto error here to free the pool.
+Thank you for checking this you are right!
 
->         }
-> -       pr_debug("using %s zpool\n", zpool_get_type(pool->zpools[0]));
-> +       pr_debug("using %s zpool\n", zpool_get_type(pool->zpool));
->
->         strscpy(pool->tfm_name, compressor, sizeof(pool->tfm_name));
->
-> @@ -311,8 +303,7 @@ static struct zswap_pool *zswap_pool_create(char *typ=
-e, char *compressor)
->  error:
->         if (pool->acomp_ctx)
->                 free_percpu(pool->acomp_ctx);
-> -       while (i--)
-> -               zpool_destroy_pool(pool->zpools[i]);
-> +       zpool_destroy_pool(pool->zpool);
+Then it is just a matter of proper initialization of the hash:
 
-.. and then we will need a NULL check needed here.
+<snip>
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 5d3aa2dc88a8..1733946f7a12 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -5087,7 +5087,13 @@ void __init vmalloc_init(void)
+         */
+        vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
+ 
+-       for_each_possible_cpu(i) {
++       /*
++        * We use "nr_cpu_ids" here because some architectures
++        * may have "gaps" in cpu-possible-mask. It is OK for
++        * per-cpu approaches but is not OK for cases where it
++        * can be used as hashes also.
++        */
++       for (i = 0; i < nr_cpu_ids; i++) {
+                struct vmap_block_queue *vbq;
+                struct vfree_deferred *p;
+<snip>
+
+--
+Uladzislau Rezki
 
