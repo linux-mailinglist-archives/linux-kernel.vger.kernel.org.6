@@ -1,126 +1,164 @@
-Return-Path: <linux-kernel+bounces-226964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE70391467C
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:33:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ECF6914681
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:33:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF4231C2083A
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:33:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49FB8282C4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:33:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E299A1311A1;
-	Mon, 24 Jun 2024 09:33:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520E1132116;
+	Mon, 24 Jun 2024 09:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="CwbxnPKc"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="iJy3SyWT"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7DB2F855
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113BF79DE
+	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 09:33:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719221580; cv=none; b=EXgrhRCRMDGI7o7N7cx1GRtSTTlp8FzHndTue7CfpMIsB++kynUGxuvQrtrdc9hQGCsQFIyvvxLvEdzXNunA9ISa+8L/6b2IQXQIUu1xZt0nHzvi96W5LqELumoRVaex+ejuuqRMygiD7/07lxfr7MYd+ONMqGbTUOw0lGuJtrk=
+	t=1719221629; cv=none; b=mfkEmGdAjP/1MfXcHJJDHSOF+otaI0lI9IbP/y6A0hWBEEYi5cJaWxOEX/I2IM7qji/t6AYCGGJk5Q1QJT6VoZnky08l4hFxs4JOVbgTTG+x9ipGzoWQKX0RgMQmjDQCmuAH435bJT2VznobCha/j50yFkdybYbjQu4kqIF8Fqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719221580; c=relaxed/simple;
-	bh=xgYPXAcahwrokBgBsI1bgHqC/P6ivXlthaKEV07Du10=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pprSfdpwNWLX7syHaX67JqVcAEtScfAgvwbphKA5Np+IYqkTR2575D5IMpMGQJIV7nIgM6aHF2Fqas7mG0U0tLWlvPZwj1jbYah40VQ2IvXTKYJ+y/6n0gNEhsj/cjc/TxcLH7g24QvMxP4tHmlv9NSySIAUYzgVI1aDcawwvGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=CwbxnPKc; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57d07f07a27so4389295a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:32:58 -0700 (PDT)
+	s=arc-20240116; t=1719221629; c=relaxed/simple;
+	bh=/KL/NdBDG58xCIPAw4YwdMeg/5iy22kVY2U90t04DA8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fG3VzUAmhRIKojK3uS5o/8HPohSVUm5pgv5WvdM3fA9lNLhf7eIZtwILwMa1TtOI5vWV4qiAdO4wjL3YQnJEUO1FXH/iP5zdpPoyiFt25gg0dE4Q7mT5Jy0nENWwDmnQypFpYibUtuH/FtADxreN87PK9JFZ9Q6d8W/0MveX6t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=iJy3SyWT; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-3635f991f4bso307491f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 02:33:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719221577; x=1719826377; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RSDzT24BI2p7JqoVBNan8p02CfsKp3kht22xLj1zjCQ=;
-        b=CwbxnPKctSgI3lWN8dPjiV/v3oCragSTAzgNS7nDZ0I5AmzBDx+UC2YD5IymoRq6/d
-         8n7ft0K8XCuL4MxAChbCJNHBH0auY88bQzXS5c25DZx57u1NpEeb62lxMGwf+m2urMyY
-         TP46KG06r/5wttZihA3d9yLY7cn84MqeJkXeOnEMzzKMMj7gEMA7uFPxKH7IxzlP3vkO
-         hwwOo0lZbZL3ZVodCZEbnrBdpZl6Se7ExZ6VJjBWHRmE41GvNfVPjhyylofImB/HgmFC
-         9kPvTE45j61G7wdWAq1VM0XtmHoaIVsFUAKrNTkMNksllsZ2GMrZcthHVQRTs5Kj4ANy
-         WiAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719221577; x=1719826377;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=ffwll.ch; s=google; t=1719221626; x=1719826426; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=RSDzT24BI2p7JqoVBNan8p02CfsKp3kht22xLj1zjCQ=;
-        b=xBJ9Kq6QBD58xz0gFRi4iL+Qh1JLd5WuWDp3WcoVffeOcf+bjtB2X63ijDVNtNjOze
-         PfVZvBPfimmQj8uXi53t4PsJRO1QML7Mrnw/IfJonp5gXbnMT90NN9EcyeDcvd43Va78
-         PIm3YEx0gfgd46Yg4NeyVuaolQeqW1t5Ayp3/BhExgflMbxXDxHQaGP6DhHPfBNmArZg
-         H+iz/hkRWaNEh3CfyPl+5thOumaaDcNLDiE8FlMga9VTo3MY1ZLXTDWbwniw1hHSZMgK
-         7REsmaak9CoffPcZYt9xNV28f9kYglQ8tKThCsHGRK1mCcaZhcA5qNH5r0bRXmSi5RMM
-         edXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsD++KqvNo4Z8tAc2pLq2k2Jj/qR0ch1qSSZc+hQPYezcNTaJKyVf0lcRXSW/diSuvVe00lYA1LEkeGa+rK+tavpAPHIvXUcF3F+Ch
-X-Gm-Message-State: AOJu0YzoQK6MNF53Hdbqr/bLOg9ENcv6vHuRFWjSZ2GYO3JEIH1hUlcU
-	a1WP6tbbh4SeObfl4O8K43p1uEIbvxqa2gKmA06yCXlPUC/xO3J7bHl1t5Gu+wLxoA2aOEN+Wfx
-	mpToZHgOgWBcqqdEtW+ezbrbhvKbR715Sis3aYw==
-X-Google-Smtp-Source: AGHT+IHXOtFoZ5Ms1VnEXer+u/bYL40w+BzdSznB1Ran7dPtsex2PEoJ5U03ch/VSdRA5dnKWSL056SniQ6koP4dx3Y=
-X-Received: by 2002:a05:6402:40c5:b0:57d:543d:e35e with SMTP id
- 4fb4d7f45d1cf-57d543de513mr1968208a12.5.1719221577025; Mon, 24 Jun 2024
- 02:32:57 -0700 (PDT)
+        bh=hDecevrNwUO63hAzBHMfL3jldrZsRCPWB7PKUAe6PW4=;
+        b=iJy3SyWTvK5GK2A6Nr6YdO4jXj+vSOuOiimH1UrurVIIUz01VnrJfOe5IdPD0rWzCa
+         jXJiSqZuhjzfmMnUOaudSiBAzL8/XyEMC6fjiBRyzQg3+efsizwg1TtuB36R0c1FufHN
+         ZxwCBub7McDu9+h4ME7w0CGrMudV9Z4lywclg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719221626; x=1719826426;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hDecevrNwUO63hAzBHMfL3jldrZsRCPWB7PKUAe6PW4=;
+        b=lefNe4p5V9wuf1bcEaoCSDvtmB8AZiCuoSU09ZJgNa60Wr8DGWAyPWUrDenFOMJMp7
+         K6bERZkKHpjbdGUF2OA715zFhM/qNHgDkFPBFZHJ5jzG2wuv888v3oogUGcx2xVuJAZc
+         O3SCDoEofhc2RNw3AHPPzG11Ks3c94ttwJCFTBrekRJjcMMICfqmOne/qeTimcURRG8Y
+         JmOnO7dCwtVa7n4+YLXF6daxorWFI5qLETK6YRYeTddRb9s+ezMSxqsjl8f32eOormRq
+         +o8hDBgKgnQca+z33LCJ6aBIm3UKdvgup9qB96uavRC5J/aM1hpkxKtgGHO470wPzOik
+         RFBg==
+X-Forwarded-Encrypted: i=1; AJvYcCV9SR0yyKD9KNFn7kK+cDwf1TcleDqCRizxvsn/Fe5e9olQ520vK5ILu/wp97AIJawGnvDl0ckfvaYAPBRBmo5VUotMidj8hhHQavI0
+X-Gm-Message-State: AOJu0YwG/R5s7UMizH9r4oQEgjHTQP7ss52YGi5/oe9k4pfXkz6vi3yb
+	LdAaFG9W+p89UqLSnkK9K/DGRtZOAj3aqKb25KX4x7EA4wE5VEbQkxENIeljsHw=
+X-Google-Smtp-Source: AGHT+IFmDBOhp59HDggw1pz7CehJXLtxtOoh3bEUePIFnDfBhsEsaT5adH0/nPk85Q2FcM5IFWiknA==
+X-Received: by 2002:a5d:5983:0:b0:35f:2929:8460 with SMTP id ffacd0b85a97d-366dfa2d903mr4504328f8f.3.1719221626371;
+        Mon, 24 Jun 2024 02:33:46 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366389b8634sm9593317f8f.34.2024.06.24.02.33.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 02:33:45 -0700 (PDT)
+Date: Mon, 24 Jun 2024 11:33:43 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Ekansh Gupta <quic_ekangupt@quicinc.com>,
+	Oded Gabbay <ogabbay@kernel.org>, srinivas.kandagatla@linaro.org,
+	linux-arm-msm@vger.kernel.org, gregkh@linuxfoundation.org,
+	quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org,
+	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org,
+	Dave Airlie <airlied@gmail.com>
+Subject: Re: [PATCH v1] misc: fastrpc: Move fastrpc driver to misc/fastrpc/
+Message-ID: <Znk9d80pd67cWEYU@phenom.ffwll.local>
+Mail-Followup-To: Bjorn Andersson <andersson@kernel.org>,
+	Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Ekansh Gupta <quic_ekangupt@quicinc.com>,
+	Oded Gabbay <ogabbay@kernel.org>, srinivas.kandagatla@linaro.org,
+	linux-arm-msm@vger.kernel.org, gregkh@linuxfoundation.org,
+	quic_bkumar@quicinc.com, linux-kernel@vger.kernel.org,
+	quic_chennak@quicinc.com, dri-devel@lists.freedesktop.org,
+	Dave Airlie <airlied@gmail.com>
+References: <20240612064731.25651-1-quic_ekangupt@quicinc.com>
+ <zbpia232dh4ojfsvhcqxrp6cwfygaalu5cycdrs47pqmnrisvk@dq24nww26gkm>
+ <z6g5ool5vomkudiroyaxh532rhlfu5x4i3l5xoqrsho2sxv4im@v5ghemjkpc3v>
+ <CAA8EJprgCJKOnZo7Q31KZV3SA3NqWxcMmoUxuqnVF+8cQW5ucg@mail.gmail.com>
+ <6f59552d-d7a3-5e05-3465-e707c1b7eaf2@quicinc.com>
+ <ZnWhwJtTXS32UI9H@phenom.ffwll.local>
+ <fin5dnpf3jyo5mk4b7fktdutbds5lkpxwzojecxa4zh7gwfad2@rkryxqzt6maq>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605114100.315918-1-bjorn@kernel.org> <20240605114100.315918-12-bjorn@kernel.org>
-In-Reply-To: <20240605114100.315918-12-bjorn@kernel.org>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Mon, 24 Jun 2024 11:32:46 +0200
-Message-ID: <CAHVXubgBKxOh0UjbSw2J_76MvZuiwSLL7d5=wAfiRZvgiUD=Ag@mail.gmail.com>
-Subject: Re: [PATCH v4 11/11] riscv: Enable DAX VMEMMAP optimization
-To: =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, David Hildenbrand <david@redhat.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	linux-riscv@lists.infradead.org, Oscar Salvador <osalvador@suse.de>, 
-	=?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
-	Andrew Bresticker <abrestic@rivosinc.com>, 
-	Chethan Seshadri <Chethan.Seshadri@catalinasystems.io>, Lorenzo Stoakes <lstoakes@gmail.com>, 
-	Santosh Mamila <santosh.mamila@catalinasystems.io>, 
-	Sivakumar Munnangi <siva.munnangi@catalinasystems.io>, Sunil V L <sunilvl@ventanamicro.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	virtualization@lists.linux-foundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fin5dnpf3jyo5mk4b7fktdutbds5lkpxwzojecxa4zh7gwfad2@rkryxqzt6maq>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-On Wed, Jun 5, 2024 at 1:42=E2=80=AFPM Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.=
-org> wrote:
->
-> From: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
->
-> Now that DAX is usable, enable the DAX VMEMMAP optimization as well.
->
-> Signed-off-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
-> ---
->  arch/riscv/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index 8a49b5f4c017..1631bf568158 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -73,6 +73,7 @@ config RISCV
->         select ARCH_WANT_GENERAL_HUGETLB if !RISCV_ISA_SVNAPOT
->         select ARCH_WANT_HUGE_PMD_SHARE if 64BIT
->         select ARCH_WANT_LD_ORPHAN_WARN if !XIP_KERNEL
-> +       select ARCH_WANT_OPTIMIZE_DAX_VMEMMAP
->         select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
->         select ARCH_WANTS_NO_INSTR
->         select ARCH_WANTS_THP_SWAP if HAVE_ARCH_TRANSPARENT_HUGEPAGE
-> --
-> 2.43.0
->
+On Sun, Jun 23, 2024 at 03:19:17PM -0500, Bjorn Andersson wrote:
+> On Fri, Jun 21, 2024 at 05:52:32PM GMT, Daniel Vetter wrote:
+> > On Fri, Jun 21, 2024 at 09:40:09AM -0600, Jeffrey Hugo wrote:
+> > > On 6/21/2024 5:19 AM, Dmitry Baryshkov wrote:
+> > > > On Fri, 21 Jun 2024 at 09:19, Bjorn Andersson <andersson@kernel.org> wrote:
+> > > > > 
+> > > > > On Wed, Jun 12, 2024 at 09:28:39PM GMT, Dmitry Baryshkov wrote:
+> > > > > > On Wed, Jun 12, 2024 at 12:17:28PM +0530, Ekansh Gupta wrote:
+> > > > > > > Move fastrpc.c from misc/ to misc/fastrpc/. New C files are planned
+> > > > > > > to be added for PD notifications and other missing features. Adding
+> > > > > > > and maintaining new files from within fastrpc directory would be easy.
+> > > > > > > 
+> > > > > > > Example of feature that is being planned to be introduced in a new C
+> > > > > > > file:
+> > > > > > > https://lore.kernel.org/all/20240606165939.12950-6-quic_ekangupt@quicinc.com/
+> > > > > > > 
+> > > > > > > Signed-off-by: Ekansh Gupta <quic_ekangupt@quicinc.com>
+> > > > > > > ---
+> > > > > > >   MAINTAINERS                          |  2 +-
+> > > > > > >   drivers/misc/Kconfig                 | 13 +------------
+> > > > > > >   drivers/misc/Makefile                |  2 +-
+> > > > > > >   drivers/misc/fastrpc/Kconfig         | 16 ++++++++++++++++
+> > > > > > >   drivers/misc/fastrpc/Makefile        |  2 ++
+> > > > > > >   drivers/misc/{ => fastrpc}/fastrpc.c |  0
+> > > > > > >   6 files changed, 21 insertions(+), 14 deletions(-)
+> > > > > > >   create mode 100644 drivers/misc/fastrpc/Kconfig
+> > > > > > >   create mode 100644 drivers/misc/fastrpc/Makefile
+> > > > > > >   rename drivers/misc/{ => fastrpc}/fastrpc.c (100%)
+> > > > > > 
+> > > > > > Please consider whether it makes sense to move to drivers/accel instead
+> > > > > > (and possibly writing a better Kconfig entry, specifying that the driver
+> > > > > > is to be used to offload execution to the DSP).
+> > > > > > 
+> > > > > 
+> > > > > Wouldn't this come with the expectation of following the ABIs of
+> > > > > drivers/accel and thereby breaking userspace?
+> > > > 
+> > > > As I wrote earlier, that depends on the accel/ maintainers decision,
+> > > > whether it's acceptable to have non-DRM_ACCEL code underneath.
+> > > > But at least I'd try doing that on the grounds of keeping the code at
+> > > > the proper place in the drivers/ tree, raising awareness of the
+> > > > FastRPC, etc.
+> > > > For example current fastrpc driver bypasses dri-devel reviews, while
+> > > > if I remember correctly, at some point it was suggested that all
+> > > > dma-buf-handling drivers should also notify the dri-devel ML.
+> 
+> If the agreement is that dma-buf-handling drivers must get reviews from
+> dri-devel, then let's document that in MAINTAINERS and agree with the
+> maintainer.
 
-Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+About 5 years ahead of you here with 78baee8d3b97 ("MAINTAINERS: Match on
+dma_buf|fence|resv anywhere").
 
-Thanks,
-
-Alex
+Cheers, Sima
+-- 
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
