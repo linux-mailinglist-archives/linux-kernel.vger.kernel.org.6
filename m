@@ -1,154 +1,128 @@
-Return-Path: <linux-kernel+bounces-226827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E36491446B
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:17:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 726CD914475
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 10:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C98C8281DB6
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:17:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D0972845D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 08:17:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1018D4AECE;
-	Mon, 24 Jun 2024 08:17:23 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D564CDEC;
+	Mon, 24 Jun 2024 08:17:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CdTB7s3j"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C30849652
-	for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 08:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7044965D;
+	Mon, 24 Jun 2024 08:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719217042; cv=none; b=ZTxYPYMjWGevzLRskuUckd9jGgx2kJmP0VX3m5lx4dfsu+rSN70s6PMJ2as3LGlkWt6DlQR+RuHFibgkJHFJedaf+8gvTdn4nJ0ZGSL5HVCg2+VRhakQXd0uZDPWpCTXy5mKc8j5Kkn4EaBRTGdk2yxh+HwSbWramfCspw0TpME=
+	t=1719217063; cv=none; b=L/zL/P/Pmlf3n0ct9rqC0qgDrIWfefb08pNg912SyxdMeVQzKxr7mPaN8ihWzH+4Afc0cqQJgSZOH4jwoG4eTiWzieOjX6rLQUKPw4Si7+I9+QEAvqUlTJoyc0aZMfzbEr2PmM4hE5/ISq8QgxcSP8sdB9cJBFtSbrSSvgP+S2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719217042; c=relaxed/simple;
-	bh=48cOdN4PuePxmojtyTa2DfkcwJPJsmX9zBw4qHtg6ZU=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Ryo4797mWR+pBtFnPp0FQ4N7g8Rgtzg6MA52LT2E+I2n1qq/GmLRuAosXFYHhUqF4AWypqqVT+OxJ0p/EBmU4yWT8QCcZtnrsjXQNereeyLdsC4xZ9FzMbJFHFMTbEIWQTyLvY/Z4oXjzt6XfvqliK3+bpi3iVYPgg+lOYman+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-7eb01189491so536922939f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 01:17:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719217040; x=1719821840;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cb7YV6N594TNGXj5Z0so7J+YBmlEIUP0oD8xrTwJKVk=;
-        b=tUObsEguB5kOEFbeLxr1IL+KRvdyss/71csW78y0Raaytx1HfyXOggXi27P/bZdSuE
-         9EqQneYsvXBujpR2H7xCzg/AomeBQ7/fl/YpUgpjhqM2MRjgaMAznaQkrlvCGxyidt3j
-         m+Dk7ztxsmY/3ZyHR/XH9gOSHk004IkgcAhOkT6omPJ8zixEybXdg8HxYJpHrPqT0q20
-         tPqHB4CNbJDsfLyDbKlrJzeMNFgUZLzZIbBkD76UXNXHUwRKGqPivO/XgeYnFuSuKOL+
-         Jz5UdhO0cOijP7IhVr1XttSwOS+GIXqGm0pno2dGb72NFzBjKGSueSMHBRz9aHVl+ReW
-         21uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUX7kH4vsB1nHRGyjX2mO4fz+clegPyO1+AadQR8jceqSpBzSPqhRCtgbTFqzFXqcOozjNo5LERIvUvJHO7md5qd0j0RNRFbrIXliy/
-X-Gm-Message-State: AOJu0Yz46+du+1uWvJC8roiGl45EFhQEH742pfb202ksMxK31b2R3C83
-	6+dDAAlVMKs6qEgaWvdWbaNWlcN7W5sPMx79Zzd3wOdY5ggCXeiH+jZOZEl4Vjas9qaN4YVAb0l
-	10WCBYh8TqNeW21fm0sSBYWkHj2Mgyuh1EORGjtPfUu6vD08kqZCEtRY=
-X-Google-Smtp-Source: AGHT+IFpZwUj1I08hTQpAF6jqKtPR3PEAwWD9FJ6deqxfVhGRxLunCTDw6JmCIQ+vKvwp0g256eG4gIDisJTUSaSCgvrVqit/ldN
+	s=arc-20240116; t=1719217063; c=relaxed/simple;
+	bh=6+GHfUnPZAlT+q17Ycp/jdFR/9U3hxnnlC2UC3hGHMo=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=gS7qeYkHuS3/5TaRgX3Vu+b+JVMP7BQ5ajBdaPY4Zac2m1jQDCoyfzRz5/VyLlbPjtGFL3Xd5+DPuhLthgZowQmgE3niQHi9N3nt7J3IumtQ9wYP7MMo4qdbs8qU+NmmEWWmw1YQdr6jBXqVl7v6OOS6C7LQS8yQVQQQsBDoDDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CdTB7s3j; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719217062; x=1750753062;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=6+GHfUnPZAlT+q17Ycp/jdFR/9U3hxnnlC2UC3hGHMo=;
+  b=CdTB7s3j5KVcN/LUne+zxpICVALEA4mMV2BHgelNXc1k/9J3m4p9Cjza
+   BlK9IA6iV08gNotvFlPR7ezJkvW2NsX3VJtEbGU/Cd2fOfWGDRKcmxBSv
+   gZqBDuCFTA/zhOTdKiuWGIcDOuceMCfd0owLUrjP6zCD9wDnI67t/uX0m
+   QIoB0WIo0/xO+gMPKsmqtdYbztlhyeTgBuQ5zWLHDefZSZgeL2+bvRg/Q
+   L7sLyOm9Gkmll+h2Iw3anse2lQVXBulnODz8bxDpAUSCeze8q6SDgQV5+
+   lS66AMb8X3cA9eGzOPbD2arlCwvUs0lWsXbBlLBaus2u71sL19qAls6n1
+   A==;
+X-CSE-ConnectionGUID: 2VGsX5TtRlacc09yWvc2+Q==
+X-CSE-MsgGUID: kq6QuwA9TKGzNhbrF23y7w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11112"; a="16405083"
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="16405083"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 01:17:42 -0700
+X-CSE-ConnectionGUID: AOFchtFWTHm0M2PYlnWh6w==
+X-CSE-MsgGUID: FDVFmvu3QO6XWzbGuuYvIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,261,1712646000"; 
+   d="scan'208";a="43293208"
+Received: from ijarvine-desk1.ger.corp.intel.com (HELO localhost) ([10.245.247.61])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 01:17:39 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 24 Jun 2024 11:17:35 +0300 (EEST)
+To: Devin Bayer <dev@doubly.so>
+cc: corentin.chary@gmail.com, luke@ljones.dev, 
+    Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, linux-api@vger.kernel.org
+Subject: Re: [PATCH v2] platform/x86: asus-wmi: support the disable camera
+ LED on F10 of Zenbook 2023
+In-Reply-To: <20240621085745.233107-1-dev@doubly.so>
+Message-ID: <a80c09f8-e932-722f-8c68-19a254d94633@linux.intel.com>
+References: <20240621085745.233107-1-dev@doubly.so>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:629f:b0:4b9:a647:36d0 with SMTP id
- 8926c6da1cb9f-4b9ec60ef56mr187572173.0.1719217040322; Mon, 24 Jun 2024
- 01:17:20 -0700 (PDT)
-Date: Mon, 24 Jun 2024 01:17:20 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000fb03a7061b9e68eb@google.com>
-Subject: [syzbot] [mm?] KCSAN: data-race in __anon_vma_prepare /
- handle_mm_fault (3)
-From: syzbot <syzbot+3d69e72f363bbb907374@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 
-Hello,
+On Fri, 21 Jun 2024, Devin Bayer wrote:
 
-syzbot found the following issue on:
+> Adds a sysfs entry for the LED on F10 above the crossed out camera icon on 2023 Zenbooks.
 
-HEAD commit:    7c16f0a4ed1c Merge tag 'i2c-for-6.10-rc5' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17a1b551980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=704451bc2941bcb0
-dashboard link: https://syzkaller.appspot.com/bug?extid=3d69e72f363bbb907374
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Please wrap paragraphs at 72 characters.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> 
+> v2
+> - Changed name from `platform::camera` to `asus::camera`
+> - Separated patch from patchset
+> 
+> v1
+> - https://lore.kernel.org/platform-driver-x86/20240620082223.20178-1-dev@doubly.so/
+> 
+> Signed-off-by: Devin Bayer <dev@doubly.so>
+> ---
+>  drivers/platform/x86/asus-wmi.c            | 36 ++++++++++++++++++++++
+>  include/linux/platform_data/x86/asus-wmi.h |  2 ++
+>  2 files changed, 38 insertions(+)
+> 
+> diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+> index 3f07bbf809ef..20b7ed6a27b5 100644
+> --- a/drivers/platform/x86/asus-wmi.c
+> +++ b/drivers/platform/x86/asus-wmi.c
+> @@ -73,6 +73,7 @@ module_param(fnlock_default, bool, 0444);
+>  #define NOTIFY_LID_FLIP_ROG		0xbd
+>  
+>  #define ASUS_WMI_FNLOCK_BIOS_DISABLED	BIT(0)
+> +#define ASUS_WMI_DEVID_CAMERA_LED		0x00060079
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9acd4869df3e/disk-7c16f0a4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a5b6e853a6e5/vmlinux-7c16f0a4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/23b225386827/bzImage-7c16f0a4.xz
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index ab1c7deff118..fb0b00f7d292 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -50,6 +50,8 @@
+>  #define ASUS_WMI_DEVID_LED5		0x00020015
+>  #define ASUS_WMI_DEVID_LED6		0x00020016
+>  #define ASUS_WMI_DEVID_MICMUTE_LED		0x00040017
+> +#define ASUS_WMI_DEVID_CAMERA_LED_NEG		0x00060078
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3d69e72f363bbb907374@syzkaller.appspotmail.com
+This is not used?
 
-==================================================================
-BUG: KCSAN: data-race in __anon_vma_prepare / handle_mm_fault
+> +#define ASUS_WMI_DEVID_CAMERA_LED		0x00060079
 
-write to 0xffff888103d6e888 of 8 bytes by task 6933 on cpu 0:
- __anon_vma_prepare+0x180/0x310 mm/rmap.c:213
- vmf_anon_prepare mm/memory.c:3239 [inline]
- do_anonymous_page mm/memory.c:4451 [inline]
- do_pte_missing mm/memory.c:3895 [inline]
- handle_pte_fault mm/memory.c:5380 [inline]
- __handle_mm_fault mm/memory.c:5523 [inline]
- handle_mm_fault+0x1c03/0x2a80 mm/memory.c:5688
- do_user_addr_fault arch/x86/mm/fault.c:1389 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x296/0x650 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
- __put_user_4+0x11/0x20 arch/x86/lib/putuser.S:86
- __sys_socketpair+0xba/0x430 net/socket.c:1756
- __do_sys_socketpair net/socket.c:1822 [inline]
- __se_sys_socketpair net/socket.c:1819 [inline]
- __x64_sys_socketpair+0x52/0x60 net/socket.c:1819
- x64_sys_call+0x27a9/0x2d70 arch/x86/include/generated/asm/syscalls_64.h:54
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Why is ASUS_WMI_DEVID_CAMERA_LED added here and into the .c file?
 
-read to 0xffff888103d6e888 of 8 bytes by task 6932 on cpu 1:
- vmf_anon_prepare mm/memory.c:3231 [inline]
- do_anonymous_page mm/memory.c:4451 [inline]
- do_pte_missing mm/memory.c:3895 [inline]
- handle_pte_fault mm/memory.c:5380 [inline]
- __handle_mm_fault mm/memory.c:5523 [inline]
- handle_mm_fault+0xcf3/0x2a80 mm/memory.c:5688
- do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x3b9/0x650 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+-- 
+ i.
 
-value changed: 0x0000000000000000 -> 0xffff888118538138
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 1 PID: 6932 Comm: syz-executor.4 Not tainted 6.10.0-rc4-syzkaller-00330-g7c16f0a4ed1c #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
