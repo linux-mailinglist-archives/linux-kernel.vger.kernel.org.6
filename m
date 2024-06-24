@@ -1,156 +1,172 @@
-Return-Path: <linux-kernel+bounces-226989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED2C59146D7
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:58:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B2419146DD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 11:59:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 965311F246B1
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:58:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93F581F20FC9
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1939A136648;
-	Mon, 24 Jun 2024 09:58:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321F8135A7D;
+	Mon, 24 Jun 2024 09:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I5xr7yrX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Q1Dalikb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5412A18E29;
-	Mon, 24 Jun 2024 09:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A4F130A79;
+	Mon, 24 Jun 2024 09:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719223082; cv=none; b=hi/BVZ+VtGYwUjBHoOqUmsi2g07np/yVEnsX4G7EO8/736SggAlUNAoUSy9pAjAU2jb4r8eaCvF4qPwGIzjQhN5jhoN8GvdlD4Rid9UxL+cwDVbzOHtCvmZ60U7TGfIzjJkWnp0SE6Gx9gDcOsGr/N/btTeaPjvldYBSCZ/MBjo=
+	t=1719223169; cv=none; b=Ey9GT2P3fErjO72vBNmYjTNlV3JHUDUpjdjp5vPIDLyIUR7SS2F9xNJBMP/VWA42U5utSxvLmE3J66y6kWpDBZyqDVlHYUdTUxokGgEZV1VUCDfPMHZIup8JY09mTdvCQpwi5fQAHbuhFA0YHRo2Bzi0xILUUBMRjI3QKB/J9XQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719223082; c=relaxed/simple;
-	bh=PCS2eND6dMFRmJ0JLYMJ4gA10c9zYgjNA+oAXwfioCc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LvBvyO1x87LR6hVBDmBZVWh2+uqBFK35Sl7noWPi28F/livNmOB1llqSMuY4wP2tmP1w3sY720E3U3ujwLS2+RBUtoPtZES9bXDCfNG7xKhdGuSaEwfFOhZ2U4dL4xeygDjUtdkkTXTv3OvDYgznz6gb3+be41IdmMgmXJr69JA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I5xr7yrX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1720CC2BBFC;
-	Mon, 24 Jun 2024 09:58:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719223081;
-	bh=PCS2eND6dMFRmJ0JLYMJ4gA10c9zYgjNA+oAXwfioCc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I5xr7yrXbJ8Qc0ndufSrQMupRZDo3MF/ERahKv94iV6hBOvlFGq/TxzGQ+6cp3CTI
-	 Oqt+I0HS1CXrwhwAb3MqCrkjuNzyBdf8NsVGvkUDD8zWDl36I+S4WO2dA2beim7Hq7
-	 u0426QL0TWD3ENp2k3pF7J3aqTtg4eKIR2eLdRb7pgqOkcFpkW1daqwqBTA+8i95eW
-	 YVQ2ZtWQ+n2j4wVTzWkzr/3jwSvS6oBNeN7AZCJ1KexEu+qJ+zto84T68b4YremBl/
-	 NCnnwXhv6JEcWrlL3H+R7eFBzwxzdI7nRsjCbLKT4rremQoRZnPa2NcUBvgmCeH0i5
-	 4VyyJVFPGvoaQ==
-Date: Mon, 24 Jun 2024 12:57:57 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Anand Khoje <anand.a.khoje@oracle.com>
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, saeedm@mellanox.com, tariqt@nvidia.com,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	davem@davemloft.net
-Subject: Re: [PATCH v4] net/mlx5: Reclaim max 50K pages at once
-Message-ID: <20240624095757.GD29266@unreal>
-References: <20240619132827.51306-1-anand.a.khoje@oracle.com>
+	s=arc-20240116; t=1719223169; c=relaxed/simple;
+	bh=zJcdGyUdZLuCNczx/nqzTFcVLN0OGiPutA1r790Kcfk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QpESRBh1noX8gkozAq4oAZmD3ae6+tTiC7Po3itI1edzAVemwrBrX3XtGsU5h1Y4zvdBg6b0inwU9HbqPKc3D+iVPLbm27xAv/d/gIlgvTXqxbN60UfNgKOdXb4SdUiiJzRdCup9BPRMRTCy4W1kpkDYw6FNkgPDcft8bGEanVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Q1Dalikb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353724.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45O8xPPw013702;
+	Mon, 24 Jun 2024 09:59:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=2KZvX60DMd8P4EJ7ET6Mxr10IK
+	A4yiUdj/8yc/yPeuw=; b=Q1DalikbKwRIX2ui9vAnJIliYwjKN+vF8L9IRQz4XV
+	bCCGXzXE1PesPeCnXNUYTjrqHbB1hpwK7fxM+luQ584pncQ+M+0Bo7W/QMQhn/xp
+	mjb9FIuxdoqSt12E83wfQX+ixaKumEWhwXbdgcEuJZ0gQK3dl4v0HjN38B0MtVeA
+	KWYYMoWuDh23wEJawgQlerBGkktfNV7aoxS91/FsbWh960R8Ag8oLrPEISGI7J1f
+	dz7sJ107uv2AL2RA6D6FoIH3AMNmNWdir9d4Hs9D+z50UWkYsa71EZohL/GVEMyO
+	I31GF+8YQSHCpkJa9JxvjVS5qvSV24/ZkiDvKtfS9o6A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yy5s50a2f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 09:59:23 +0000 (GMT)
+Received: from m0353724.ppops.net (m0353724.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45O9uJmh023233;
+	Mon, 24 Jun 2024 09:59:23 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yy5s50a2d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 09:59:23 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45O9FGbB020058;
+	Mon, 24 Jun 2024 09:59:22 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxb5m7ejj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 24 Jun 2024 09:59:22 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45O9xGAX47251768
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 24 Jun 2024 09:59:18 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CEF3620043;
+	Mon, 24 Jun 2024 09:59:16 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 497BE20040;
+	Mon, 24 Jun 2024 09:59:16 +0000 (GMT)
+Received: from darkmoore.ibmuc.com (unknown [9.171.6.193])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon, 24 Jun 2024 09:59:16 +0000 (GMT)
+From: Christoph Schlameuss <schlameuss@linux.ibm.com>
+To: linux-s390@vger.kernel.org
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        Claudio Imbrenda <imbrenda@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+        linux-doc@vger.kernel.org
+Subject: [PATCH] s390/kvm: Reject memory region operations for ucontrol VMs
+Date: Mon, 24 Jun 2024 11:59:02 +0200
+Message-ID: <20240624095902.29375-1-schlameuss@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240619132827.51306-1-anand.a.khoje@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 2xcoGmAbfJM62j_PztwpAAUazTjoDst-
+X-Proofpoint-ORIG-GUID: 5H6cT5BBDe8iPSqQ5M6GVGr-JVHKY594
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_09,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ suspectscore=0 mlxscore=0 priorityscore=1501 mlxlogscore=598 clxscore=1011
+ spamscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406240079
 
-On Wed, Jun 19, 2024 at 06:58:27PM +0530, Anand Khoje wrote:
-> In non FLR context, at times CX-5 requests release of ~8 million FW pages.
-> This needs humongous number of cmd mailboxes, which to be released once
-> the pages are reclaimed. Release of humongous number of cmd mailboxes is
-> consuming cpu time running into many seconds. Which with non preemptible
-> kernels is leading to critical process starving on that cpu’s RQ.
-> To alleviate this, this change restricts the total number of pages
-> a worker will try to reclaim maximum 50K pages in one go.
-> The limit 50K is aligned with the current firmware capacity/limit of
-> releasing 50K pages at once per MLX5_CMD_OP_MANAGE_PAGES + MLX5_PAGES_TAKE
-> device command.
-> 
-> Our tests have shown significant benefit of this change in terms of
-> time consumed by dma_pool_free().
-> During a test where an event was raised by HCA
-> to release 1.3 Million pages, following observations were made:
-> 
-> - Without this change:
-> Number of mailbox messages allocated was around 20K, to accommodate
-> the DMA addresses of 1.3 million pages.
-> The average time spent by dma_pool_free() to free the DMA pool is between
-> 16 usec to 32 usec.
->            value  ------------- Distribution ------------- count
->              256 |                                         0
->              512 |@                                        287
->             1024 |@@@                                      1332
->             2048 |@                                        656
->             4096 |@@@@@                                    2599
->             8192 |@@@@@@@@@@                               4755
->            16384 |@@@@@@@@@@@@@@@                          7545
->            32768 |@@@@@                                    2501
->            65536 |                                         0
-> 
-> - With this change:
-> Number of mailbox messages allocated was around 800; this was to
-> accommodate DMA addresses of only 50K pages.
-> The average time spent by dma_pool_free() to free the DMA pool in this case
-> lies between 1 usec to 2 usec.
->            value  ------------- Distribution ------------- count
->              256 |                                         0
->              512 |@@@@@@@@@@@@@@@@@@                       346
->             1024 |@@@@@@@@@@@@@@@@@@@@@@                   435
->             2048 |                                         0
->             4096 |                                         0
->             8192 |                                         1
->            16384 |                                         0
-> 
-> Signed-off-by: Anand Khoje <anand.a.khoje@oracle.com>
-> Reviewed-by: Leon Romanovsky <leonro@nvidia.com>
-> ---
-> Changes in v4:
->   - Fixed a nit in patch subject.
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> index dcf58ef..06eee3a 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
-> @@ -608,6 +608,7 @@ enum {
->  	RELEASE_ALL_PAGES_MASK = 0x4000,
->  };
->  
-> +#define MAX_RECLAIM_NPAGES -50000
->  static int req_pages_handler(struct notifier_block *nb,
->  			     unsigned long type, void *data)
->  {
-> @@ -639,9 +640,13 @@ static int req_pages_handler(struct notifier_block *nb,
->  
->  	req->dev = dev;
->  	req->func_id = func_id;
-> -	req->npages = npages;
->  	req->ec_function = ec_function;
->  	req->release_all = release_all;
-> +	if (npages < MAX_RECLAIM_NPAGES)
-> +		req->npages = MAX_RECLAIM_NPAGES;
-> +	else
-> +		req->npages = npages;
-> +
+This change rejects the KVM_SET_USER_MEMORY_REGION and
+KVM_SET_USER_MEMORY_REGION2 ioctls when called on a ucontrol VM.
+This is neccessary since ucontrol VMs have kvm->arch.gmap set to 0 and
+would thus result in a null pointer dereference further in.
+Memory management needs to be performed in userspace and using the
+ioctls KVM_S390_UCAS_MAP and KVM_S390_UCAS_UNMAP.
 
-BTW, this can be written as:
-	req->npages = max_t(s32, npages, MAX_RECLAIM_NPAGES);
+Also improve s390 specific documentation for KVM_SET_USER_MEMORY_REGION
+and KVM_SET_USER_MEMORY_REGION2.
 
-Thanks
+Signed-off-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
+---
+ Documentation/virt/kvm/api.rst | 12 ++++++++++++
+ arch/s390/kvm/kvm-s390.c       |  3 +++
+ 2 files changed, 15 insertions(+)
 
->  	INIT_WORK(&req->work, pages_work_handler);
->  	queue_work(dev->priv.pg_wq, &req->work);
->  	return NOTIFY_OK;
-> -- 
-> 1.8.3.1
-> 
+diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
+index a71d91978d9e..eec8df1dde06 100644
+--- a/Documentation/virt/kvm/api.rst
++++ b/Documentation/virt/kvm/api.rst
+@@ -1403,6 +1403,12 @@ Instead, an abort (data abort if the cause of the page-table update
+ was a load or a store, instruction abort if it was an instruction
+ fetch) is injected in the guest.
+ 
++S390:
++^^^^^
++
++Returns -EINVAL if the VM has the KVM_VM_S390_UCONTROL flag set.
++Returns -EINVAL if called on a protected VM.
++
+ 4.36 KVM_SET_TSS_ADDR
+ ---------------------
+ 
+@@ -6273,6 +6279,12 @@ state.  At VM creation time, all memory is shared, i.e. the PRIVATE attribute
+ is '0' for all gfns.  Userspace can control whether memory is shared/private by
+ toggling KVM_MEMORY_ATTRIBUTE_PRIVATE via KVM_SET_MEMORY_ATTRIBUTES as needed.
+ 
++S390:
++^^^^^
++
++Returns -EINVAL if the VM has the KVM_VM_S390_UCONTROL flag set.
++Returns -EINVAL if called on a protected VM.
++
+ 4.141 KVM_SET_MEMORY_ATTRIBUTES
+ -------------------------------
+ 
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index 82e9631cd9ef..854d0d1410be 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -5748,6 +5748,9 @@ int kvm_arch_prepare_memory_region(struct kvm *kvm,
+ {
+ 	gpa_t size;
+ 
++	if (kvm_is_ucontrol(kvm))
++		return -EINVAL;
++
+ 	/* When we are protected, we should not change the memory slots */
+ 	if (kvm_s390_pv_get_handle(kvm))
+ 		return -EINVAL;
+
+base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+-- 
+2.45.2
+
 
