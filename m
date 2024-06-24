@@ -1,122 +1,168 @@
-Return-Path: <linux-kernel+bounces-226791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-226792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F789143CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:39:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC679143CD
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 09:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37010282217
-	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:39:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44A3C1C2134C
+	for <lists+linux-kernel@lfdr.de>; Mon, 24 Jun 2024 07:41:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0F44594D;
-	Mon, 24 Jun 2024 07:39:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B874642D;
+	Mon, 24 Jun 2024 07:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="kppcXub/"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bMpz7szl"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9142C4436E;
-	Mon, 24 Jun 2024 07:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53D443BBC2;
+	Mon, 24 Jun 2024 07:41:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719214767; cv=none; b=avheLYdd26tsOerySkA4jZ1A8YDiutX1F5pClqZEFEmSo173WITO6YayXjXVHbJSa+TCqF6m1D+3Zonl/he/0u8Jx5J4JHZR3Dsem01OfFPkFjNXCVVc66b/gIHmer0sgZmops81HlfN0SgMXdPVg6XLsfoYuuB0w8E/UI/NywQ=
+	t=1719214908; cv=none; b=M1ye21ksC/JGMImSetk7PWwfY/4pRmKqG45nWZELDq5B9dH1KsE2iLBVw8j0x26mNhQuoyF0sMqMvPpUgZ2S50NFM2sJPA+idOMvOYAI+C9QkzWmG3Sbavopxk2zlXOXO8feDNF2biuHd+Grn3kevRd0UKBci1lDoh9BlKjji1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719214767; c=relaxed/simple;
-	bh=V+/MuvOB5oRpHrUXIua2jOm8NVL5toa1d2l3vx43fvc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n1k312EUmTS8FDb+ao7wFf0wpecC5VlhnTSEUptUdA3+PBIh1pW+IvEwizcy3HE5sCgbdj3hP0CQHv9HhfxEtotywNHbZAdaB52CTRpzOotw1Mqr0ZyGjtgD3dBIPmtJEQSgRqdSbqTtfqnTB5AIMYSst7CvyXBz75ziQEMx5Iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=kppcXub/; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719214758;
-	bh=V+/MuvOB5oRpHrUXIua2jOm8NVL5toa1d2l3vx43fvc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kppcXub/wGYVKDXZW9lsyJvZlE+MHw94Ab2zNNosm0jdkPczLSeXIa1mX4CnB0TH3
-	 Yb4E0vqO3PjC9VKzOt94QYra2asAz1mEXL6qdPrzeUV6k0kfkfIAGNjjidmDutXjkx
-	 jsSsLzOtK/Ei0/dHmSjjlfMHlGaNxutpfeWUPXqGmg70DzoOe7p/L/gO5rcfofNGCh
-	 UzEFxUwjQIZ9Xr2d5UaBFjQ0XqYnx37U/cIJpHRFV5DMamkEVIJW4boJpkbktShAqi
-	 j78oPgSc40mkbwC6rOjvnJXUWGPueXDg5W3arSGPIQptFoOFBh/14pPeR9ZJ4u2DAC
-	 PqUdQOigkcQHA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 950BA378216B;
-	Mon, 24 Jun 2024 07:39:17 +0000 (UTC)
-Message-ID: <aefe76a3-5712-4e34-8990-0463a5036324@collabora.com>
-Date: Mon, 24 Jun 2024 09:39:16 +0200
+	s=arc-20240116; t=1719214908; c=relaxed/simple;
+	bh=9M+z8MklXk3FMG61i6vFgkF3D2d9ZvYbgMrZC3gQ29E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ddfAjJnfy3VhwXZGKzN/nlmNfubnGRu5Ws7XQqhfkQZQQLNrGzpfHOwpZnw3O8CsjROlp7afcJOUl/tEBgAI9zRpmujr2LH3j2NYM0EqChtRJzvioIp7we2mvdq0LA21QvmBzPw6Aq9z4a2T4ia+S8Om/iOXffY3cEDXmPFOWFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bMpz7szl; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ebe0a81dc8so50258611fa.2;
+        Mon, 24 Jun 2024 00:41:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719214904; x=1719819704; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oXBCIub9Fx6A3rK4w/i/XPN7m1LBrK8LUX9NK9s/egM=;
+        b=bMpz7szlo0VmJiJssgTtgLLX4lY02dBLUgi/59344ZgTOm4LgKBValTGoqNocqQs5W
+         a04fCvoG7rfUdMwinlQAjeDCYCxvYb6rjG8A/wsZaOqzTrHNMiKtl7q7nHhh46xHeZdL
+         rIncThs0wGjlY6mMJGcVDGr25qCwecrZXNP/+oJhhu41bmCydMD8iwd2Sae1Kb68rqqn
+         8kPBFdudZV6R6Pshpt0QVl8BEDWs65L0/MNFyB3PJN3NZgDz/jx14VHFDQU608agt9Zd
+         Y2S1pYfKcWgbZwBEPJWKp8Zs9E1uqOxz24hM80SjVRcwok4rTOUfwWiLoAU5zNKAPxYd
+         lJZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719214904; x=1719819704;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oXBCIub9Fx6A3rK4w/i/XPN7m1LBrK8LUX9NK9s/egM=;
+        b=OSeKGb8ulBpc1Mq6Iza8KFp+h9/kTr1Euw0zt4YaKL0Do8RW5drsEj4adCzwRg4bMH
+         TctfVbwoK7Tq0axywrYnJsfOTy4Q61i+E8evz44Iwi3Ao07Bsh6l9AoOPQfAxtq+hmbW
+         2+OyjGERtI+GMhdEE8OchFoeZEa3RkH1roS4PcHmLtb2FL6f9ruoMyicK3sIQLjRFFoE
+         A2yVwHCGlG63ZKWoZMSkMmIhn/H+lJSLAmbY9Co9RKLpFysKg3iIddevFva0RfqFNHR1
+         Y13aAPwYPN+FCZSmEA8HzHfTPRG5Y0ydiuYLKnJ1ymwyFQZgiIyjOvobQ5bdNk0DdeGh
+         di4g==
+X-Forwarded-Encrypted: i=1; AJvYcCWNfdEGeELX2Trr1MWA3iSBelKtjO0cDEb7tqooWPbO1UqKYy14hFIWqmSuBXwJoSZ7NydLnFU1DRYdfBVk3LPav5zv6uctEaJo6yyxooW5RC4PExSkbBId94N8l86op8RmteUXe7+pRa2cww==
+X-Gm-Message-State: AOJu0YzR3E0GIx6iX41GRxyhROvIXRBgH3zL0YRmy1JoU/gqF1whTyV9
+	DdF/R+//qwdso81po3TtV9ZOnXCOhnxJCUoLbTumPRpjU3Bwadgt
+X-Google-Smtp-Source: AGHT+IG11fsxSsN23a0lExAwPS2/6Bzf3b+gb697LzAFSY2k3/HMvphibAWbFWauunANWEB252UUcA==
+X-Received: by 2002:a2e:720c:0:b0:2ec:4e79:b416 with SMTP id 38308e7fff4ca-2ec5b2fc299mr27368231fa.6.1719214904154;
+        Mon, 24 Jun 2024 00:41:44 -0700 (PDT)
+Received: from f.. (cst-prg-87-23.cust.vodafone.cz. [46.135.87.23])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30535010sm4370063a12.59.2024.06.24.00.41.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 00:41:43 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: cfijalkovich@google.com
+Cc: brauner@kernel.org,
+	viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [RFC PATCH] vfs: wrap CONFIG_READ_ONLY_THP_FOR_FS-related code with an ifdef
+Date: Mon, 24 Jun 2024 09:41:34 +0200
+Message-ID: <20240624074135.486845-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] ASoC: mediatek: mt8195: Add platform entry for
- ETDM1_OUT_BE dai link
-To: Chen-Yu Tsai <wenst@chromium.org>, Mark Brown <broonie@kernel.org>
-Cc: Trevor Wu <trevor.wu@mediatek.com>, linux-sound@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20240624061257.3115467-1-wenst@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240624061257.3115467-1-wenst@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 24/06/24 08:12, Chen-Yu Tsai ha scritto:
-> Commit e70b8dd26711 ("ASoC: mediatek: mt8195: Remove afe-dai component
-> and rework codec link") removed the codec entry for the ETDM1_OUT_BE
-> dai link entirely instead of replacing it with COMP_EMPTY(). This worked
-> by accident as the remaining COMP_EMPTY() platform entry became the codec
-> entry, and the platform entry became completely empty, effectively the
-> same as COMP_DUMMY() since snd_soc_fill_dummy_dai() doesn't do anything
-> for platform entries.
-> 
-> This causes a KASAN out-of-bounds warning in mtk_soundcard_common_probe()
-> in sound/soc/mediatek/common/mtk-soundcard-driver.c:
-> 
-> 	for_each_card_prelinks(card, i, dai_link) {
-> 		if (adsp_node && !strncmp(dai_link->name, "AFE_SOF", strlen("AFE_SOF")))
-> 			dai_link->platforms->of_node = adsp_node;
-> 		else if (!dai_link->platforms->name && !dai_link->platforms->of_node)
-> 			dai_link->platforms->of_node = platform_node;
-> 	}
-> 
-> where the code expects the platforms array to have space for at least one entry.
-> 
-> Add an COMP_EMPTY() entry so that dai_link->platforms has space.
-> 
-> Fixes: e70b8dd26711 ("ASoC: mediatek: mt8195: Remove afe-dai component and rework codec link")
-> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+On kernels compiled without this option (which is currently the default
+state) filemap_nr_thps expands to 0.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+do_dentry_open has a big chunk dependent on it, most of which gets
+optimized away, except for a branch and a full fence:
 
-> 
-> ---
-> Changes since v1:
-> - Reword commit message with more details on how the original commit
->    got things wrong, and what this commit adds and fixes
-> ---
->   sound/soc/mediatek/mt8195/mt8195-mt6359.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/sound/soc/mediatek/mt8195/mt8195-mt6359.c b/sound/soc/mediatek/mt8195/mt8195-mt6359.c
-> index ca8751190520..2832ef78eaed 100644
-> --- a/sound/soc/mediatek/mt8195/mt8195-mt6359.c
-> +++ b/sound/soc/mediatek/mt8195/mt8195-mt6359.c
-> @@ -827,6 +827,7 @@ SND_SOC_DAILINK_DEFS(ETDM2_IN_BE,
->   
->   SND_SOC_DAILINK_DEFS(ETDM1_OUT_BE,
->   		     DAILINK_COMP_ARRAY(COMP_CPU("ETDM1_OUT")),
-> +		     DAILINK_COMP_ARRAY(COMP_EMPTY()),
->   		     DAILINK_COMP_ARRAY(COMP_EMPTY()));
->   
->   SND_SOC_DAILINK_DEFS(ETDM2_OUT_BE,
+if (f->f_mode & FMODE_WRITE) {
+[snip]
+        smp_mb();
+        if (filemap_nr_thps(inode->i_mapping)) {
+[snip]
+	}
+}
 
+While the branch is pretty minor the fence really does not need to be
+there.
+
+This is a bare-minimum patch which takes care of it until someone(tm)
+cleans this up. Notably it does not conditionally compile other spots
+which issue the matching fence.
+
+I did not bother benchmarking it, not issuing a spurious full fence in
+the fast path does not warrant justification from perf standpoint.
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+I am not particularly familiar with any of this, the smp_mb in the open
+for write path was sticking out like a sore thumb on code read so I
+figured there may be One Weird Trick to whack it.
+
+If the stock code is correct as is, then the ifdef as above is fine.
+
+The ifdefed chunk is big enough that it should probably be its own
+routine. I don't want to bikeshed so I did not go for it.
+
+For a moment I considered adding filemap_nr_thps_mb which would expand
+to 0 or issue the fence + do the read, but then I figured a routine
+claiming to post a fence and only conditionally do it is misleading at
+best.
+
+As per the commit message fences in collapse_file remain compiled in.
+It is unclear to me if the code following them is doing anything useful
+on kernels !CONFIG_READ_ONLY_THP_FOR_FS.
+
+All that said, if there is cosmetic touch ups you want done here, I can
+do them.
+
+However, a nice full patch would take care of all of the above and I
+have neither the information needed to do it nor the interest to get it,
+so should someone insinst on a full version I'm going to suggest they
+write it themselves. I repeat this is merely a damage control until
+someone sorts thigs out.
+
+ fs/open.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/open.c b/fs/open.c
+index 28f2fcbebb1b..654c300b3c33 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -980,6 +980,7 @@ static int do_dentry_open(struct file *f,
+ 	if ((f->f_flags & O_DIRECT) && !(f->f_mode & FMODE_CAN_ODIRECT))
+ 		return -EINVAL;
+ 
++#ifdef CONFIG_READ_ONLY_THP_FOR_FS
+ 	/*
+ 	 * XXX: Huge page cache doesn't support writing yet. Drop all page
+ 	 * cache for this file before processing writes.
+@@ -1007,6 +1008,7 @@ static int do_dentry_open(struct file *f,
+ 			filemap_invalidate_unlock(inode->i_mapping);
+ 		}
+ 	}
++#endif
+ 
+ 	return 0;
+ 
+-- 
+2.43.0
 
 
