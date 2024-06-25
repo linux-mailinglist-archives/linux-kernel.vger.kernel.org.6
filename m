@@ -1,119 +1,109 @@
-Return-Path: <linux-kernel+bounces-229140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89133916BAD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:04:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBA4D916BD1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:06:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA2CE1C25378
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:04:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 657601F281A1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB66A171E6C;
-	Tue, 25 Jun 2024 15:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFFA16FF36;
+	Tue, 25 Jun 2024 15:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="trYLAgpC";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hZKiQZ9H"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNubxXsR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB44716C6AE;
-	Tue, 25 Jun 2024 15:01:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A379116F29C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:02:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327687; cv=none; b=Svj7gFXXm1yetVBiQauA89LRgnIl26mf4zLqMbdH3IyLXgdNmTJdsk/ImKdqWWihM9Ropk/bxXa81tAUpUeJyr7u6JEEQVYdjreawy+c6SiZfAnTd5qjYa/UXVJjTDuxmvzhy8P9/F5jxdZ7o1MaW+3f0SX3Bb6Irmyb4urzp/8=
+	t=1719327725; cv=none; b=dVyz9ItvhgMhRhZE3xNtmD5xb9yWTjM826qxeAY6Svv9HqMZN4oCpu/b2n4VwnSMIx5P+MF2lU8PZbVq4qPJrfLGgLikxA3P7ZTArBTVol+isrMDLQlN4NKKkP7gEoIbJMoHkd31pIotRTF2J7AWGGi05CbDhhz4J9cdPyPMcvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327687; c=relaxed/simple;
-	bh=4eLqse1vF9JmYCi/WvX+PCNtXrG8+aGWPyh7rKifTmk=;
-	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=Jvsu/MJrQNuRl9yKZ6CElOHA/WkfpEL2LX7Cj53x5QlCXEB+H5wjnTWbK5GeLFPqlFAZ+mfE987ip6wxMV8441YaJdwLaxr1d2ebAYA4VKyoC5BCj0IkODbe1z1WW+LKOtrjewnRpFVf2NoLtcO7vF+24bP+dtif5CTmp6yeyAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=trYLAgpC; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hZKiQZ9H; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Jun 2024 15:01:23 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719327684;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=fklcLLhd5eg8GBZwiepm0m7fp8mS0c6yldyXI1gupng=;
-	b=trYLAgpCbVnj77g9I14Q5Voc4Eq7EZSpRas4tll+44Oux3GFWbdOnXIu5oyvY4yLBliwVt
-	VprhtfDdcILB1pPuA/uVXvBjPqYMvyPYwgGuqoEnwlOpIWCyYzmaVuU2qQf3gaZj8/35Sg
-	h3ncmzgOA25Lz3oUEWdGHccu9KRSN3PYeHIVkETKLqrw/AMi3iWFHk/WStNRaObTafB7Nm
-	A6RXM0OW040IbNpz6J+HNHHCvmygQMa/4TFpWpLLlDEoa3biy2QtMyrwBa30oHzfJYMYyW
-	TKP8PmoWE5u+MlqQtfzhi++hWcXv37lYOqlmRWgYX5efbUqaPMkweWYhbHJcbQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719327684;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
-	bh=fklcLLhd5eg8GBZwiepm0m7fp8mS0c6yldyXI1gupng=;
-	b=hZKiQZ9HtbyAui4TFCJTh9EtKq4f6E6AOp1ASqXJ9+1KUtXDF7G4i3cUCc+/o/Ix81XPpE
-	sx8Of3EFstpjVcAg==
-From: "tip-bot2 for Phil Chang" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: timers/urgent] hrtimer: Prevent queuing of hrtimer without a
- function callback
-Cc: Phil Chang <phil.chang@mediatek.com>,
- "Anna-Maria Behnsen" <anna-maria@linutronix.de>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
+	s=arc-20240116; t=1719327725; c=relaxed/simple;
+	bh=INcxNrZ3BKjPhQAlptK0WjFeAG+V7+PP8PzXSvOmrp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cNIa0hyvvc7TmMddtuYpMehEttwMsNzQRufx01IjurGawrJyayCloq1MZwz+iCtbas8Gi9x9gn+82RBmhyD8NcBPRYc1sjG5FPqt7F96i7RuI38X33ygdgvQhBGncqKcaqqZb9YJDOMQ1M/5wiaLMi2iMEltn2r0ckaslsZiIIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNubxXsR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02B1EC32782;
+	Tue, 25 Jun 2024 15:02:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719327725;
+	bh=INcxNrZ3BKjPhQAlptK0WjFeAG+V7+PP8PzXSvOmrp4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hNubxXsR8135P9Ti0UdT/F7+tHikXwxB3dgj8F7oClalIBZxZyLnO11IlQ1PwQNOR
+	 Z0eV03pVqnEhU14faRurBffY8m9Kqcmhn6JOc5A+d8n8BNVWDEgu4iEtciTh82YOxZ
+	 X1xVIuqr//E4wTzFGd2LMBmTzp0UEs/bduOaSEt/CdYCvu324Qiq+gr6/HsshRvSHy
+	 wpJsfK4zNHHMXVPR9i5qTgJQ8911iRmmYbfT1vHzwYbJvYhvEjUHt9QU2RmtYou8MS
+	 8LsrtOK70CTxUaVoI3Z9PmHQcv9wKWB9tbP/QfoZPDtzNRaVm5kFUpxKoKKnQylYe9
+	 WCHbD46uaz83g==
+Date: Tue, 25 Jun 2024 17:02:02 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] drm/bridge-connector: reset the HDMI connector
+ state
+Message-ID: <20240625-feathered-loon-of-health-ec7e6d@houat>
+References: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-0-8590d44912ce@linaro.org>
+ <20240623-drm-bridge-connector-fix-hdmi-reset-v2-1-8590d44912ce@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171932768353.2215.17369057757603861329.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="eciqjr2zrynuoq6o"
+Content-Disposition: inline
+In-Reply-To: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-1-8590d44912ce@linaro.org>
 
-The following commit has been merged into the timers/urgent branch of tip:
 
-Commit-ID:     5a830bbce3af16833fe0092dec47b6dd30279825
-Gitweb:        https://git.kernel.org/tip/5a830bbce3af16833fe0092dec47b6dd30279825
-Author:        Phil Chang <phil.chang@mediatek.com>
-AuthorDate:    Mon, 10 Jun 2024 21:31:36 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Tue, 25 Jun 2024 16:54:27 +02:00
+--eciqjr2zrynuoq6o
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-hrtimer: Prevent queuing of hrtimer without a function callback
+Hi,
 
-The hrtimer function callback must not be NULL. It has to be specified by
-the call side but it is not validated by the hrtimer code. When a hrtimer
-is queued without a function callback, the kernel crashes with a null
-pointer dereference when trying to execute the callback in __run_hrtimer().
+On Sun, Jun 23, 2024 at 08:40:12AM GMT, Dmitry Baryshkov wrote:
+> On HDMI connectors which use drm_bridge_connector and DRM_BRIDGE_OP_HDMI
+> IGT chokes on the max_bpc property in several kms_properties tests due
+> to the the drm_bridge_connector failing to reset HDMI-related
+> properties.
+>=20
+> Call __drm_atomic_helper_connector_hdmi_reset() if there is a
+> the drm_bridge_connector has bridge_hdmi.
+>=20
+> Note, the __drm_atomic_helper_connector_hdmi_reset() is moved to
+> drm_atomic_state_helper.c because drm_bridge_connector.c can not depend
+> on DRM_DISPLAY_HDMI_STATE_HELPER. At the same time it is impossible to
+> call this function from HDMI bridges, there is is no function that
+> corresponds to the drm_connector_funcs::reset().
 
-Introduce a validation before queuing the hrtimer in
-hrtimer_start_range_ns().
+Why can't it depend on DRM_DISPLAY_HDMI_STATE_HELPER?
 
-[anna-maria: Rephrase commit message]
+Maxime
 
-Signed-off-by: Phil Chang <phil.chang@mediatek.com>
-Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
----
- kernel/time/hrtimer.c | 2 ++
- 1 file changed, 2 insertions(+)
+--eciqjr2zrynuoq6o
+Content-Type: application/pgp-signature; name="signature.asc"
 
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 492c14a..b8ee320 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1285,6 +1285,8 @@ void hrtimer_start_range_ns(struct hrtimer *timer, ktime_t tim,
- 	struct hrtimer_clock_base *base;
- 	unsigned long flags;
- 
-+	if (WARN_ON_ONCE(!timer->function))
-+		return;
- 	/*
- 	 * Check whether the HRTIMER_MODE_SOFT bit and hrtimer.is_soft
- 	 * match on CONFIG_PREEMPT_RT = n. With PREEMPT_RT check the hard
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZnrb6QAKCRDj7w1vZxhR
+xaDaAQDbirOcRJFXYMvi3AKNZOjDVfThaLfVJff4sukVoq4dDwD/VNP5qyY7y2ZR
+HY41NMoYCoKnWRZsHLDLNdlbLAKdwgk=
+=/z+8
+-----END PGP SIGNATURE-----
+
+--eciqjr2zrynuoq6o--
 
