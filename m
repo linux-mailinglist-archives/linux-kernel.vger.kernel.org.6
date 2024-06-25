@@ -1,142 +1,83 @@
-Return-Path: <linux-kernel+bounces-228545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBDEE91617E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:40:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1A6191617F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FC6AB26185
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:40:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 767E828558B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:43:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4B4148838;
-	Tue, 25 Jun 2024 08:40:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA19E1487F7;
+	Tue, 25 Jun 2024 08:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eGBtcii0"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h5Nc5AVP"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945CA148832
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB09E1CABF
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:43:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719304828; cv=none; b=M3xU7vv1DMhULaNK/OIPmaVnnigtWuIiLXvlqMu5apfdujmbUKtwzgo6Ka/4bV0+AJg+ZR7bR5OhA6CiwSkK8DvXexbuHBdrnt1TRx1Fw92AT1C88Ea73dCm9+IBr2dcnIwEDogei3XU2/kQZb77TvZn64HcbxRAhTs7vuMm18k=
+	t=1719305002; cv=none; b=Ye411o1DEU9kFa9E7u1yYFv5vrU9M02t9ckncgM4Rebf+M/gfNzgnpG+qRRhihSik3ZvGp22AEcv8vzjw8FYPGiBf4djZv4bXZMPKv4y631hNtB/5/ZiWJvqfPsyT5oHyDCbNjGlT1uPu3VB1OE/MKr51FrxIB4JrZNnPu5uxOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719304828; c=relaxed/simple;
-	bh=H0GBfM58+YQiml4VxIdC28FHy6s9KdUDhokOUjeIMWQ=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=udSmNF6swADmtDzN1UdJGSUoqXFNZwHjRX2hXAsIbtsu/rvDAiZzcC4d6wRypzq1w2wWTzFaLHJzf+otBAu9bXjiWZ2dT2saUQaq090uRsQACtFwVbi6myUGQyc9xmcA+lEEovGY64mANywxmlyEWSFWnEqHlShjE5Fb6yTRz8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eGBtcii0; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719304826; x=1750840826;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=H0GBfM58+YQiml4VxIdC28FHy6s9KdUDhokOUjeIMWQ=;
-  b=eGBtcii0SvM2fjLOuQ9sTEjgGeEj4f8osvSrxCqDYW1u3F49N6jL4eLM
-   U2yKFBFT7JbKvofWtGmnpNQrDohdpMq8NJy2bRpSY/K5B0m2866TMFVfe
-   u21spkVoxlE4trK37PdbEA9TjHWgVsUQyHbNvP7ZdTfz5muTvLwC21crV
-   gK9yTx8YOCpqwkPEmhebw7lW3MRH0DcHY1cuhXNmelq9TvQxJY/ZTwlN3
-   OTJat5hXxhsNSYXwOE/A6QfmqEdq0nr1qQzxkIac5HG2Egzz9MR3p4xdS
-   y+ny3EzKkvC6+muhVMn34pSDgcdlf6YGJnECQ8vL3fxrYqOctSHSyS4Ac
-   g==;
-X-CSE-ConnectionGUID: 1ItLB+yHR0ClrJcVHaLD6A==
-X-CSE-MsgGUID: AAAKgfpqRfG8FkABGbFQSw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="16063711"
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="16063711"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 01:40:26 -0700
-X-CSE-ConnectionGUID: HMnY4KrCSBSem8ysH9srPQ==
-X-CSE-MsgGUID: 3sBzE1SYQE2YHQf+Dc9XHA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="74339718"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.237.100]) ([10.124.237.100])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 01:40:24 -0700
-Message-ID: <55d50738-cbb6-4bf5-8748-1b1c8c2de21e@linux.intel.com>
-Date: Tue, 25 Jun 2024 16:40:21 +0800
+	s=arc-20240116; t=1719305002; c=relaxed/simple;
+	bh=zkOjfyKhZ0zxDTbHHw6mP/bcgD2m4oY2XNCEYdpg4L8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mfHWiRbji30c003dPBU7C5jwBMwwCwlgAUBjA8O9tdjoQSE8WUQThL5lxNMpmQmFkL9LGkTImgPKTQ2I1lXSCKCs94v8tbnMwMqhJ+76ExBy/j8u92HY2onygzrS8QgSEujcto7rqaHWlK1a69FzxI+5V4uoE9NxPHR8DgqGF/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h5Nc5AVP; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Gn4+W1/TLGbgbomMvxeNcnCegXEs4p9DDVw0WGXpnIU=; b=h5Nc5AVP/zcrKYNZeicOE3LC3i
+	5LWSwscGByffJYtp8rmlez/PSgJN1m9SkeB0xDPepvoC4jXihYIGWoxH/yq6gKCwQ5M5GKzOJa8mn
+	9+IzmALYgBbZO0KL9fRMqxOAjH2OmSeFhqqYyoPyfC5Dev2lhx8a9ipZLMxOjDAlPt8mWkFJo4+UK
+	g3HvInpx0cwQx0PNSBkqYKXF5JJHmRefU5lyF+9/9wE7yfnel4jORdYfb/0wRXrTjJyWXwXpYhGMY
+	jpZDC++PqX9g4GUkCbKk5cbKT0Pecc+12uy2vmr/l7UXnc551WPPvm+WWk5+OeZJhu0PVkik7vKn9
+	xmcCLZag==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sM1la-00000008NFP-2bRV;
+	Tue, 25 Jun 2024 08:43:07 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BD587300754; Tue, 25 Jun 2024 10:43:05 +0200 (CEST)
+Date: Tue, 25 Jun 2024 10:43:05 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Subject: Re: [PATCH 0/4 v4] perf: Fix leaked sigtrap events
+Message-ID: <20240625084305.GV31592@noisy.programming.kicks-ass.net>
+References: <20240621091601.18227-1-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Will Deacon <will@kernel.org>,
- Robin Murphy <robin.murphy@arm.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] iommu/vt-d: Remove hardware automatic ATS dependency
-To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
- "Liu, Yi L" <yi.l.liu@intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>
-References: <20240624052501.253405-1-baolu.lu@linux.intel.com>
- <20240624052501.253405-2-baolu.lu@linux.intel.com>
- <BN9PR11MB5276C8112DEF56C11CFC6F198CD52@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <BN9PR11MB5276C8112DEF56C11CFC6F198CD52@BN9PR11MB5276.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621091601.18227-1-frederic@kernel.org>
 
-On 2024/6/25 10:32, Tian, Kevin wrote:
->> From: Lu Baolu<baolu.lu@linux.intel.com>
->> Sent: Monday, June 24, 2024 1:25 PM
->>
->> If a device is listed in the SATC table with ATC_REQUIRED flag set, it
->> indicates that the device has a functional requirement to enable its ATC
->> (via the ATS capability) for device operation. However, when IOMMU is
->> running in the legacy mode, ATS could be automatically supported by the
->> hardware so that the OS has no need to support the ATS functionality.
-> hmm I don't think "has no need to support" matches...
+On Fri, Jun 21, 2024 at 11:15:57AM +0200, Frederic Weisbecker wrote:
+> Hi,
 > 
->> This is a backward compatibility feature which enables older OSs. Since
->> Linux VT-d implementation has already supported ATS features for a long
->> time, there is no need to rely on this compatibility hardware. Remove it
->> to make the driver future-proof.
->>
->> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
->> ---
->>   drivers/iommu/intel/iommu.c | 9 +--------
->>   1 file changed, 1 insertion(+), 8 deletions(-)
->>
->> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
->> index 07e394dfccc1..b63347c8bf5d 100644
->> --- a/drivers/iommu/intel/iommu.c
->> +++ b/drivers/iommu/intel/iommu.c
->> @@ -3056,14 +3056,7 @@ static bool dmar_ats_supported(struct pci_dev
->> *dev, struct intel_iommu *iommu)
->>   	dev = pci_physfn(dev);
->>   	satcu = dmar_find_matched_satc_unit(dev);
->>   	if (satcu)
->> -		/*
->> -		 * This device supports ATS as it is in SATC table.
->> -		 * When IOMMU is in legacy mode, enabling ATS is done
->> -		 * automatically by HW for the device that requires
->> -		 * ATS, hence OS should not enable this device ATS
->> -		 * to avoid duplicated TLB invalidation.
->> -		 */
-> ...what above comment tries to convey.
-> 
-> If this comment is valid, it's not about whether the OS itself supports
-> ATS. instead it's a requirement for the OS to not manage ATS when
-> it's already managed by HW.
-> 
-> Unless there is a way to disable hw management with this change...
+> This is essentially a resend to remind the patchset on people's pile,
+> using a small typo fix on patch 3 (thanks Sebastian) as an excuse.
 
-This comment is not correct. The hardware automatic ATS is for older OS
-compatible purposes, where the ATS is not aware of by the OS yet, but
-ATS is functionally required for some SOC-integrated accelerators.
+Poke worked -- I remember going through this a while ago and only having
+small niggles. So this one must be good :-)
 
-The HAS specification for those platforms states that OSs supporting ATS
-(so-called enlightened OSs) don't require automatic ATS anymore.
-
- From the iommu driver's point of view, automatic ATS is not part of the
-VT-d spec and also not enumerable, hence it should be transparent.
-
-Best regards,
-baolu
+I've queued the thing for perf/urgent.
 
