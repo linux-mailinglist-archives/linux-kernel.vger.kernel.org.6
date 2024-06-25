@@ -1,121 +1,180 @@
-Return-Path: <linux-kernel+bounces-228646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 092BE916428
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:55:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFBD9916436
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:55:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD911C22415
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:54:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66BE0280EB1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:55:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4968A14A617;
-	Tue, 25 Jun 2024 09:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4367614A4EC;
+	Tue, 25 Jun 2024 09:54:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vy+NdduB"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ZDROzvCT"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1ED91465A8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F1D14A0B6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:54:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719309253; cv=none; b=RSYU0WfLbR4oZAhRjczgELAaGSJ+ePAjXTl0ZkdgQUMg/wQ6CqQQHQT/yZScOCxjUPDc+nyBOWZoLcOxzB/PbQ+I7m3GiUd5H1+J1/iBruB+7LePjrlmZ4HEDL3JzsJ3uhjMF5olDcqMqGUrWyxTdO1+zGgOi8gwmnDwZmn0iHs=
+	t=1719309288; cv=none; b=SZkN8anNIzntrBpwlWYUJ2aj1Lt8V+PKnNVAfvEqnFs82zzoMAlHlNtym8zUHHIZdhhUCwLGOMIxC+eK4ETHmBqlI4o1MelH/M+8z6nxeiYV9FJxfJh4fvKURLSlyMAqXB1eLJJbeGcFyuCqT9HDSiRm2nzKaaeJwIDhqinvJCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719309253; c=relaxed/simple;
-	bh=vCZknvWy4gZ+0EG4By1EfCHN6bgG2+2IALEZDL9WTVo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LP0qOiYGkk/uYwgjsTJdeWXMI20gMOpvZyxktf8EG2k8OVgSKYlCmzuFv2FjfAtpmbIrKpySbnDGSTzT/bP9bdsM1R3S0G9Hq6kn52uKoNxCon046tjqq771impV/nT+ToJ49YhipweMgiruSDdAbUhZu2nSkDFcVXfMY5dUlNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vy+NdduB; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a725d756d41so239388066b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:54:11 -0700 (PDT)
+	s=arc-20240116; t=1719309288; c=relaxed/simple;
+	bh=F2TBDSZ8k1FqFBVOT3iU4+2Ss5mw37wLotRpUvkzFiA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JHnsINe600YG5q0+DFnJVV/2XJaNRhlyA76LSBkQvCqLYXcOGh5+0qMe7xK4VRNt1oFvLyC/4ygkkL2A5HnJyaInC4ge+i3jiO4XgWMm68L/gzP7bIKYE8dersVnaKGrr31HkmebSE7mBzofeXAhh5Xbo5J+yzsF7wdNGjePdso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=ZDROzvCT; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70675977d0eso2111029b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:54:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719309250; x=1719914050; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yeDhT7EoWv2TdoSvGYalLiHtwKn/aqX3ezTK+oGJl0I=;
-        b=vy+NdduBHLIE5sqQ8E7W8zCNIyWUHpo3upCyEYtx0MU5AVlgHUWlucmrC9L50JO65E
-         5bbu2VwmnCAHONPOIr2FGMAdKh/Ja89sqsXnhUrMw2ly8s0frtmL0lr0BHrB4DPMiLeW
-         a1269YoWyGlSRw+sud+iyktSxIHF4IM51UVtZjZD14HLb7UGWs5VkxUWGP7u63T/9twK
-         NWqM3+Qszp2/GmdG+G6hcaKALdkuP1re/rsUT+7fhVEZ4EqB44tK7vfedFVo8gvm12LK
-         2nNjD0haXqECJp9ZUv98q4RWrG1M/nmQ+JvbfDctbrfkDVR9z6k/APOeNwmPJsA8Z2v+
-         RipA==
+        d=chromium.org; s=google; t=1719309286; x=1719914086; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QckC6gjfMonIYwuSOvK7TGa+d6/Qqazmh3+ZmkkxyWM=;
+        b=ZDROzvCTM2GUzgnNEYXgKMgiGnTz6TzCU89cYJpklRtrSMT8UORWllBzpRLBe7HDZV
+         D2/KcVGWEav7KuT9klycVOovo1mkcIlGAGeESog4G2KF08EMza3iujAXvn8ASSrfzMH5
+         0z5NjHna19MZ482iWOynL62dGl+CWPM3QFfyU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719309250; x=1719914050;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yeDhT7EoWv2TdoSvGYalLiHtwKn/aqX3ezTK+oGJl0I=;
-        b=DOu5NB+cX8kbSPnuJ5I1CfxkqrYcky4LHEfphvAJhhkyxg1QyykSceUrkCPa8YSh77
-         MDkhoBZPN64tPVqb6oc4Fp1q+tKjSzHkc3fYglBCbSZL+Z7clS5z4tbansmT5GEqzEJS
-         2VIQAbWKhFvwf2WnqSVFONYShxIdpCmlMJVqWnBhKOtfDZxKx4DIukM5NEU8dE+iBRoz
-         zP0BAFzWdeolQqSKbko89VV5FC7DY+OzrVfbkQ0jdj2BCVfpZEREMX+OJYSJ9PfUb9gt
-         RGBjsctjfwwoWAWlaEqsDBpZF0QpEmjpdJRDJd8/zf/4JvJTrpYwo495YEqoTXBOMQ+Q
-         kQBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVc5OcXpgpVvr2kdJ7ikMvyG8cH9wUIMI8EChGoiON9KkXySvKtcXW/ePBpZjbYi8DQKSbYsdC6jx0nUA5yRILqGR2DQtzZLbXkSFxo
-X-Gm-Message-State: AOJu0YwUhZ+OyLFqkMIyE/tIb+7lBJMUpJ82WecqDdTDgf77Oly3mk/f
-	xcYCLa1aGIWYUA8B8sY/6xe8aU8aX05E8o35hu2ZUn34Ww7NdXM4vjSTPOE7bWd+bd69OuA49w6
-	5flKf0K/7/BZZRfkB1JfKNQ0H5hOuhU7B7d9L
-X-Google-Smtp-Source: AGHT+IGQr3gDvpr8JF7pmHZzOzdkUDy6Ofz3HL4FcKxDHJdY48KE95RHXANN2CuKb0IZFWJK6QYmk9mXx8vyBQulAKk=
-X-Received: by 2002:a17:906:3593:b0:a6f:b352:a74b with SMTP id
- a640c23a62f3a-a700e7334d5mr575850466b.38.1719309249848; Tue, 25 Jun 2024
- 02:54:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719309286; x=1719914086;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QckC6gjfMonIYwuSOvK7TGa+d6/Qqazmh3+ZmkkxyWM=;
+        b=HO/a2Je+HFnCRctHT/ktHCzBKQWHRf+Mk9MpaZdp0ylG636IMyrS8dDnSa2nr9I9XL
+         r0/ARB9caZz7Xilng/q/hEu18fVIRE5KneIvqSfb5gajU1O+EqlAvLfQfYYj4XIBMNAT
+         bp7iZUUbT5VuSXg2Uv24rm7q3CfLQkp9PWXRhsZ/2vANLxY9Fzn3xcGdSU1UqURv2JGy
+         ix+zTVEk7xl4/lJVBtKpxPPqz27FDR0JLK2efyGGY7gYdi5kFCVtIMeZnLW+D9EB5t0O
+         cQrjwV8ls+MOn4N7uLOa22ym677EvL81UI2kAvuxzCckU4/ivSYFVO7H2e6wTHaDnj+5
+         l4+w==
+X-Forwarded-Encrypted: i=1; AJvYcCU2izrHSSglXivwhth+JeCFhN01SMsixryOzAX/wylvoLLvafOCeSA9ZdI492CP3HiIamPP7qVbLOgYjlCs45mpBg0QvsjHfjcnbFIE
+X-Gm-Message-State: AOJu0YwIN/cKXrnD4KYshkhVdAF9n5mndo2ZChP70toPeGEOmkD12E3R
+	1XScBq/IP+ckwLqgFmHRqWbrlGHOaRP89ph1D/W/U/iko5+YgewqjiVMM5m54usB58zMh4wGSvF
+	xA80L
+X-Google-Smtp-Source: AGHT+IFKN9C95q1Ki5Q76MKs7sOPj07I0lD5UA8cTwdJwE3Zz3ZT22U72tlalk92pRM7lhXvwJPtPg==
+X-Received: by 2002:aa7:92c2:0:b0:705:c029:c9a7 with SMTP id d2e1a72fcca58-706745b6d61mr6257366b3a.15.1719309286177;
+        Tue, 25 Jun 2024 02:54:46 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:ea5a:67dd:bd1e:edef])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70691ef0c7bsm1747683b3a.4.2024.06.25.02.54.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 02:54:45 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: mt8183-kukui: clean up regulator tree
+Date: Tue, 25 Jun 2024 17:54:38 +0800
+Message-ID: <20240625095441.3474194-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625-zsmalloc-lock-mm-everything-v3-0-ad941699cb61@linux.dev> <20240625-zsmalloc-lock-mm-everything-v3-2-ad941699cb61@linux.dev>
-In-Reply-To: <20240625-zsmalloc-lock-mm-everything-v3-2-ad941699cb61@linux.dev>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 25 Jun 2024 02:53:33 -0700
-Message-ID: <CAJD7tkZD82pVHBV68DoMXsrjfT8ntiwZ5Oe91LpOc2dhy9G3nA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] mm/zswap: use only one pool in zswap
-To: Chengming Zhou <chengming.zhou@linux.dev>
-Cc: Minchan Kim <minchan@kernel.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Nhat Pham <nphamcs@gmail.com>, Yu Zhao <yuzhao@google.com>, 
-	Takero Funaki <flintglass@gmail.com>, Chengming Zhou <zhouchengming@bytedance.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 24, 2024 at 9:40=E2=80=AFPM Chengming Zhou <chengming.zhou@linu=
-x.dev> wrote:
->
-> Zswap uses 32 pools to workaround the locking scalability problem in
-> zswap backends (mainly zsmalloc nowadays), which brings its own problems
-> like memory waste and more memory fragmentation.
->
-> Testing results show that we can have near performance with only one
-> pool in zswap after changing zsmalloc to use per-size_class lock instead
-> of pool spinlock.
->
-> Testing kernel build (make bzImage -j32) on tmpfs with memory.max=3D1GB,
-> and zswap shrinker enabled with 10GB swapfile on ext4.
->
->                                 real    user    sys
-> 6.10.0-rc3                      138.18  1241.38 1452.73
-> 6.10.0-rc3-onepool              149.45  1240.45 1844.69
-> 6.10.0-rc3-onepool-perclass     138.23  1242.37 1469.71
->
-> And do the same testing using zbud, which shows a little worse performanc=
-e
-> as expected since we don't do any locking optimization for zbud. I think
-> it's acceptable since zsmalloc became a lot more popular than other
-> backends, and we may want to support only zsmalloc in the future.
->
->                                 real    user    sys
-> 6.10.0-rc3-zbud                 138.23  1239.58 1430.09
-> 6.10.0-rc3-onepool-zbud         139.64  1241.37 1516.59
->
-> Reviewed-by: Nhat Pham <nphamcs@gmail.com>
-> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
+Some regulators in the kukui device tree are modeled incorrectly. Some
+are missing supplies and some switches are incorrectly modeled as
+voltage regulators. A pass-through was incorrectly modeled as a
+regulator.
 
-Acked-by: Yosry Ahmed <yosryahmed@google.com>
+Add supplies where missing, remove voltage constraints for "switches",
+and drop the "bl_pp5000" pass-through.
+
+This depends on commit 2a99858c172e ("arm64: dts: mediatek: mt8183-kukui:
+Add PMIC regulator supplies") for reg_vsys.
+
+Fixes: cd894e274b74 ("arm64: dts: mt8183: Add krane-sku176 board")
+Fixes: f15722c0fef0 ("arm64: dts: mt8183: Add pwm and backlight node")
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+ .../arm64/boot/dts/mediatek/mt8183-kukui.dtsi | 22 +++++--------------
+ 1 file changed, 6 insertions(+), 16 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+index 64b3389028e9..57d962e94af7 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+@@ -24,7 +24,7 @@ chosen {
+ 	backlight_lcd0: backlight_lcd0 {
+ 		compatible = "pwm-backlight";
+ 		pwms = <&pwm0 0 500000>;
+-		power-supply = <&bl_pp5000>;
++		power-supply = <&reg_vsys>;
+ 		enable-gpios = <&pio 176 0>;
+ 		brightness-levels = <0 1023>;
+ 		num-interpolated-steps = <1023>;
+@@ -47,10 +47,9 @@ clk32k: oscillator1 {
+ 	it6505_pp18_reg: regulator0 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "it6505_pp18";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
+ 		gpio = <&pio 178 0>;
+ 		enable-active-high;
++		vin-supply = <&pp1800_alw>;
+ 	};
+ 
+ 	lcd_pp3300: regulator1 {
+@@ -62,27 +61,16 @@ lcd_pp3300: regulator1 {
+ 		regulator-boot-on;
+ 	};
+ 
+-	bl_pp5000: regulator2 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "bl_pp5000";
+-		regulator-min-microvolt = <5000000>;
+-		regulator-max-microvolt = <5000000>;
+-		regulator-always-on;
+-		regulator-boot-on;
+-	};
+-
+ 	mmc1_fixed_power: regulator3 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "mmc1_power";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
++		vin-supply = <&pp3300_alw>;
+ 	};
+ 
+ 	mmc1_fixed_io: regulator4 {
+ 		compatible = "regulator-fixed";
+ 		regulator-name = "mmc1_io";
+-		regulator-min-microvolt = <1800000>;
+-		regulator-max-microvolt = <1800000>;
++		vin-supply = <&pp1800_alw>;
+ 	};
+ 
+ 	pp1800_alw: regulator5 {
+@@ -92,6 +80,7 @@ pp1800_alw: regulator5 {
+ 		regulator-boot-on;
+ 		regulator-min-microvolt = <1800000>;
+ 		regulator-max-microvolt = <1800000>;
++		vin-supply = <&reg_vsys>;
+ 	};
+ 
+ 	pp3300_alw: regulator6 {
+@@ -101,6 +90,7 @@ pp3300_alw: regulator6 {
+ 		regulator-boot-on;
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
++		vin-supply = <&reg_vsys>;
+ 	};
+ 
+ 	/* system wide semi-regulated power rail from charger */
+-- 
+2.45.2.741.gdbec12cfda-goog
+
 
