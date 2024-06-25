@@ -1,53 +1,55 @@
-Return-Path: <linux-kernel+bounces-228740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77D3916647
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:34:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B233091664A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:35:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3B1E1C223CD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:34:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24077B2648C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7893D149DF4;
-	Tue, 25 Jun 2024 11:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16116156862;
+	Tue, 25 Jun 2024 11:34:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pz/bqknJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUX4QIWA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFD5714B96D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:34:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE7514BF98;
+	Tue, 25 Jun 2024 11:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315249; cv=none; b=aIOWPNJVS77PEA3loudFlLQxW2n1F1BcnKAlFx9qij8s8yYc8cGOeNYF3/imK6Q8oAZOppAYPYsvctFxb0dV8CkohdeQATfWvvKMllfUw3PcT10EnG89TV/zIBSGbQP5WD+5Zb3vFcZI/mdlRpf0KACbeTZkvdLOaVD0YRHnskI=
+	t=1719315255; cv=none; b=brKp6jLPJoK1KouQegzWoZsltjLYjEzeYzpZGrNsq7qRIu6ijvevV3QBxXGv+EQrliQaamwEaWkcS83+G6wNe0/zUGlihaXxRk3xDoZqOCKPYmN1+di8LArn5cV1t917VGVODQ3w5pM9elO1vsmIBePLIB0qSkOwU9jdEMCtp5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315249; c=relaxed/simple;
-	bh=476fFSSkHcV1Nidn93ERYD/fKP8Ds8ppHiNFPO7X/ZM=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TOGLWHAtVijnAlnjfI/Heq4gkDTYOR/RM4D1oFS4fWKdZQZCHRnpBTuNUWuRKgnKv0ed1ImyiVgO+Dgw0FrrQllCrkpfzAhtusf7DQbh8rNE2CHyNgudBsp/WQggktsaq70CXC7UhFuglt1qzK103dt5Rkbwm9dSPezZpd10UlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pz/bqknJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AE50C32789;
-	Tue, 25 Jun 2024 11:34:08 +0000 (UTC)
+	s=arc-20240116; t=1719315255; c=relaxed/simple;
+	bh=NouGFcuOua729I814AHnnARTJV2fpjUJpj0FtKSwIyU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Sl4wJ4k+McAF/CUB1oyDJ0qE3kv0L1UsAppxCcc7fqfOT/AHE9rSQW3aqukAR5K8BCKYxIdEwVbK0RoxOxKCdyYROqjQbwvmj026o35o17B8hLa3zyjGsi/QtEK50PWiKHYkX7sN89tFGD8z1AeYj7/b9m6A0oyK+ffQzax/YAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RUX4QIWA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B93DC32781;
+	Tue, 25 Jun 2024 11:34:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719315249;
-	bh=476fFSSkHcV1Nidn93ERYD/fKP8Ds8ppHiNFPO7X/ZM=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=Pz/bqknJ/2D1Xcf+3QQLErowkalR3433wZLUDLkWAMnGHpRL9kJ49bU+ipQpuUWdA
-	 ApJ/Au1RzSzTcWzg+MBE7n3tgY3kTz+bm8fLRtY1PyrYVdBgEi8UebjNADJ/qM2pxd
-	 uCnTw9rmY/1aw6dmfYwol6BxIWmKRnzZgccOGBB1FZAfE4jZXsj3RDC5TXYe2TFlJN
-	 aaVLucVhJ/25XKCwVViHBTi3HjXPbFwd+vtD8OVBd9io7CFj2yrCyENgMGuaa8sakT
-	 RMqxFLRFQm6E+im42NRdVnuTSqlT82Q0Kb4Sp38nXbmtWwPFaapI/o/H0juG5X3UIM
-	 qrwi9sEqcyqoA==
+	s=k20201202; t=1719315255;
+	bh=NouGFcuOua729I814AHnnARTJV2fpjUJpj0FtKSwIyU=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=RUX4QIWA7XM42SPtOgUSUd1vh2zbIfP9Yr2V9lhNhtOXE7nMv0JY3YlQ7SiUaXkYZ
+	 YcITbpq5GIN3zEKf1STKt3Ah09aw+E1HHsAUrUjld7URaNubmO7rv3iWN3pYZSKQQl
+	 fetwEPtZNScl41atfCgVNernOtDEcisJ6aD0QDNWaH7uy6BczIhNDWtHSNmawYNywv
+	 L7AJB0KAMkiuODP6waJ0pJ+iI3TcuZeyWTRVSbnSDawsxYb3laECr+7yOPBDAXM9ez
+	 qDiclITwpXLrpzkcnv+5PRIq2L/M/LFNhq4WQac+nVGZ+w7qNxhe0PYaBUdUQC8X0X
+	 DwcrdZbxJ11Cw==
 From: Mark Brown <broonie@kernel.org>
-To: lgirdwood@gmail.com, linux-kernel@vger.kernel.org, 
- Robert Marko <robimarko@gmail.com>
-In-Reply-To: <20240623140947.1252376-1-robimarko@gmail.com>
-References: <20240623140947.1252376-1-robimarko@gmail.com>
-Subject: Re: [PATCH] regulator: userspace-consumer: quiet device deferral
-Message-Id: <171931524836.64387.7654955890138539082.b4-ty@kernel.org>
-Date: Tue, 25 Jun 2024 12:34:08 +0100
+To: David Lechner <dlechner@baylibre.com>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, linux-spi@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240620-spi-axi-spi-engine-fix-sleep-time-v1-1-b20b527924a0@baylibre.com>
+References: <20240620-spi-axi-spi-engine-fix-sleep-time-v1-1-b20b527924a0@baylibre.com>
+Subject: Re: [PATCH] spi: axi-spi-engine: fix sleep calculation
+Message-Id: <171931525390.64438.17593023139078720275.b4-ty@kernel.org>
+Date: Tue, 25 Jun 2024 12:34:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,24 +60,26 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Sun, 23 Jun 2024 16:09:35 +0200, Robert Marko wrote:
-> Trying to use userspace-consumer when the required supplies have not yet
-> been probed will throw an error message on deferral:
-> reg-userspace-consumer output-led-power: Failed to get supplies: -517
+On Thu, 20 Jun 2024 11:43:58 -0500, David Lechner wrote:
+> The sleep calculation was not taking into account increased delay when
+> the SPI device is not running at the maximum SCLK frequency.
 > 
-> So, lets simply use dev_err_probe() instead of dev_err() to not print
-> errors in case when driver probe is being deferred.
+> Rounding down when one SCLK tick was the same as the instruction
+> execution time was fine, but it rounds down too much when SCLK is
+> slower. This changes the rounding to round up instead while still
+> taking into account the instruction execution time so that small
+> delays remain accurate.
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
 
 Thanks!
 
-[1/1] regulator: userspace-consumer: quiet device deferral
-      commit: 61a98ffc2081ac1e9070150932d9eb91d3935cf8
+[1/1] spi: axi-spi-engine: fix sleep calculation
+      commit: 40b3d0838a1ff242e61f341e49226074bbdd319f
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
