@@ -1,121 +1,130 @@
-Return-Path: <linux-kernel+bounces-228107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1AD915AE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:17:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349CA915AE9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:17:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A8D1283630
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:17:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2DDF1F223A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:17:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1614610D;
-	Tue, 25 Jun 2024 00:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C08CA64;
+	Tue, 25 Jun 2024 00:17:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VuSL3EIs"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mcfhvtP0"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D22E1184;
-	Tue, 25 Jun 2024 00:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E41BC152
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719274616; cv=none; b=M+CfFZYPfFW9lpplhH96uNLFLSdY+4hq+aZv71Os8K+7/FIe7wRvUS+LtNW1508GHKYIOIzGmulivWsW0BGsb6ojGaSr4YI786kjoUKJ4FtXJmTlkA6DHmmTMb29ZNteqLHyYwDYIWjQ9mblCWi8VkeqOeGziJEKvkKWz0rlEtQ=
+	t=1719274643; cv=none; b=oR6AsV+CLezm7Ov07Z3U2AmDbGa5BiyJuesZmYY1YRmpWNGYMIId+KsRAJbzBokSRGrj4OcTqr20cbkBlhPq4g+4dzFNd6bJhjbVJBKyf8tLGsymUssq3QYZNT0qUqBNuibOIbPMvkSa5DPjw0GCegfjbgqrg/WeiAEtESAV8pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719274616; c=relaxed/simple;
-	bh=YrHjmskoSDhVJcXEIqH2WB58kyPIz/2ktO3XAPa8PPk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GeWQr0BIZAj9mjpX2boxdY4WWZfMaYL0Ml2vefXkyYP9Y4VzRzDjpJSVegyuYSls57kdpfUbbq4fxCABoZaPY1wF4OBuHPCrYgyexWBEb0Y2XDDuVRCp+XLT3M8DD9CUEXKgb7u+evvHC55/4kVLqYmPBIJFd927xEcgMy2fkt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VuSL3EIs; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-717f17d7c63so2351736a12.0;
-        Mon, 24 Jun 2024 17:16:54 -0700 (PDT)
+	s=arc-20240116; t=1719274643; c=relaxed/simple;
+	bh=PQCaIXBKRkTpIH7rHnct2JPFyefG21e52zzrGXOzSWE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PLExwW5q4ffiW/dJ/R+yC9iAyPG5iP+Npmcd35fISWK5Re3seDXQ44Yvhr0keKBcmM9kj062qxes1FGu1QslhPj7HExjL6QgZLP+HGLCSoH11RBCwdA3JWWbRqNbHV9yyQSKDyra4ljCj7kRfAw7PDdurQIcTpFezwXEulTya/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mcfhvtP0; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-25cb15eed97so2434654fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:17:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719274614; x=1719879414; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZPulY/FFLXx2qRuEGoIYRBxFDaCi/EahkPsQ00jC1wI=;
-        b=VuSL3EIsypVcbc6CWmGLFxYuscKk8VeWNcyPzWWKGTNyAyeBUcqJSqtseSrH7JMWvV
-         y7dX8g/9cz3/hoM68kiSdSvaJCQB97VnQqi4KZ/Wy3hxF5tlM5bz4K5L0fUgT9Xks9RL
-         iCtGLyxIcuqjlS0eVvvqjYFQDrEnuBJyA0yDDbuhcKUTh3VoKOnL1Uab3MFNDnZYBk7k
-         XskrSRcEMCi7AmpJaxEt37aWh8CLOMnQoDxJGj/aRkZSnTB8s9ptRk61r632MoCRcr8f
-         awLl1hmBmLIygiVxZXLoiDKdn561L2LKS9J0lPhae4sZ31uAkrgi/YUZLZm6EcJh4B8H
-         diYA==
+        d=google.com; s=20230601; t=1719274640; x=1719879440; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C7AZEyQCZ5iHIrHP4p2aQPTDBULcrYpchoF8OaJtU/0=;
+        b=mcfhvtP01Suk1tP2RT3cuEYG55TOsL/VKiScyC1WE6QgYw3r0lRC5PHTnx9c9frD7a
+         m9z3osi7Nt7/oXmGKiY4qkfM2jBC9OqQyxD40t+QF/mu7g5biCnwuUwFdGE9sRypL9jF
+         JNS3OhqlvpmTXJB5EpSnryzSzMOcwmRhPNUYrVr7IlWNO8kQHdl3CX6ErfcmScdi/WCo
+         Y5S/GSXLSWY2X8Z4G5qLHedIsN3opE/HN4FSmfyVvlB5Ip/Ay/RdMwngWge4NEa6aGYU
+         0Y5YDl8A7o1KDzo8n+xWRouqjFbptgqkL47jQewkgifbgQJnnuX7snTDD4wOQ/zcw/Lu
+         xrmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719274614; x=1719879414;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZPulY/FFLXx2qRuEGoIYRBxFDaCi/EahkPsQ00jC1wI=;
-        b=sOu08nT+3bVmw4EHk+56R3m18rziCYrCFqplMgAhVkXTTSIN1lIFlw8TYXT/5dxkPs
-         2KApHhVG7zTFkcBj2ejZHCAgJCNC4b/vlXGwojMlA95mmdtDP/VWcGrqnoQ7oCmJSG9i
-         /afJtxcgr3gVkQVPD+20j9FskABYxp+1BQFZ4b9bYKuVxcn9QgKlBY39foXzfnYYz2Mn
-         OhKbtvN9bCQ/qJTpFG9ujL0bQ5bZbOuIy66E75L+IdWRbM8HU/eoVAXN5VfH2/1qlDdr
-         Cyirndl//IHWRsTBuiLgxPXJn+Cy9dZvYAzu1RCcoSXKkBqGoGb0dUaAJHhCzZku6O6m
-         DO3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUFThWbT8bfW9AFcS+Lj+G6nsnMxQ9lyfCn7udQqu1W6U5Dgxvy3+0aAtri/FugiBIWRewtWsYFRxCqby3JRpCYKEEJZnOyJeKCwdmX9MRzcxK+AgaE0yGss0haNOAC6UfS6ZsNarYLRrW8
-X-Gm-Message-State: AOJu0YxY25qib19Ns7dqBU8fqnr236gzKLNb0+uF27MEUcYpjq9ZefB1
-	bRlauqlJosLNRApuZ7tmsnQjF+ven2Jb1jVXl47npCgCUs0heAnC
-X-Google-Smtp-Source: AGHT+IF9BMSkE/ux+AVW7JbiLQQPv8C6XRkzWf+ZclsqfrnQ8j5lIAMEMb2kreKQKUdDeFUgLD0t0g==
-X-Received: by 2002:a05:6a20:af19:b0:1b1:ed95:c9b1 with SMTP id adf61e73a8af0-1bcf7fc2cc4mr4822661637.40.1719274614054;
-        Mon, 24 Jun 2024 17:16:54 -0700 (PDT)
-Received: from [172.19.1.47] (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3205e8sm68609215ad.68.2024.06.24.17.16.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 17:16:53 -0700 (PDT)
-Message-ID: <2ea41efa-2160-446f-9fb0-0df0ffdeab05@gmail.com>
-Date: Tue, 25 Jun 2024 08:16:50 +0800
+        d=1e100.net; s=20230601; t=1719274640; x=1719879440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=C7AZEyQCZ5iHIrHP4p2aQPTDBULcrYpchoF8OaJtU/0=;
+        b=Fc5sDhh4+W/ueKQxpFfAbDkJxRRYMOiSEGmoU/fmEm0k5ld+3KLc4htiwuzhfAvUSD
+         cgQTYPKCC92EJBJy7Gn5iEZ6r4sHIiNThRsoJBZcG2vaUbDmhq+nNbVAVXYCJrskeWol
+         BW2BhLuHmrs6hQ5JrMTLy+KIeSpFG+hio1aMGKcGmvJ0a25XkeG4eFk6jyyM5CKwJQ/h
+         /GbXHyNjVCKdETpsiXacteb3/H6kPB7tPd2xbKUv/4Av4cnQB6LEfXar+vWOFGtB8dGi
+         nCkTGYJ0K6WgbXIt6c39C4kB9FjLWAJUsO19dvsao/QIDo7Bb1X+wosa0M7WMsim93Zu
+         D2jg==
+X-Gm-Message-State: AOJu0Yxr/B7eEesNArrtSIAJX7oRXoe/TWt9qohrpoT7eDdselg/feZ8
+	Yjp3f3o1iSJu+79Zi57IGQwI32Rk9YV3aqTWlrTuFP/ieaTvufwAqsWlHXDanrVoV48whAb8X/d
+	uViulNr24rAkArvZbnKLtkb1gtscSFQACZJwD
+X-Google-Smtp-Source: AGHT+IEnzS7r1NSqg1iygUMu/HKfcZwvBqGLrIEQCn+Vgu3xfcYwn9pb+03j11Up8B3bVLoOarsAMQwjDfmrjCPmMOI=
+X-Received: by 2002:a05:6871:14c:b0:254:956f:ff9a with SMTP id
+ 586e51a60fabf-25d06cc0d05mr5359084fac.32.1719274640285; Mon, 24 Jun 2024
+ 17:17:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] tty: serial: ma35d1: Add a NULL check for of_node
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: dan.carpenter@linaro.org, jirislaby@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org, Jacky Huang <ychuang3@nuvoton.com>
-References: <20240614054554.80-1-ychuang570808@gmail.com>
- <2024062404-avoid-grieving-a3fa@gregkh>
-Content-Language: en-US
-From: Jacky Huang <ychuang570808@gmail.com>
-In-Reply-To: <2024062404-avoid-grieving-a3fa@gregkh>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240523014540.372255-1-avagin@google.com>
+In-Reply-To: <20240523014540.372255-1-avagin@google.com>
+From: Andrei Vagin <avagin@google.com>
+Date: Mon, 24 Jun 2024 17:17:09 -0700
+Message-ID: <CAEWA0a4_-SLpW1Bx0ZS-nqhG5hGn6+_9qG5-jtHk1hrnHZcp7A@mail.gmail.com>
+Subject: Re: [PATCH 0/3 v2] seccomp: improve handling of SECCOMP_IOCTL_NOTIF_RECV
+To: Kees Cook <keescook@chromium.org>, Andy Lutomirski <luto@amacapital.net>, 
+	Will Drewry <wad@chromium.org>, Oleg Nesterov <oleg@redhat.com>, 
+	Christian Brauner <brauner@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Tycho Andersen <tandersen@netflix.com>, 
+	Jens Axboe <axboe@kernel.dk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Dear Greg,
+Kees,
 
+Are you waiting for anything from me? I think this series is ready to be me=
+rged.
 
-On 2024/6/24 下午 09:37, Greg KH wrote:
-> On Fri, Jun 14, 2024 at 05:45:54AM +0000, Jacky Huang wrote:
->> From: Jacky Huang <ychuang3@nuvoton.com>
->>
->> The pdev->dev.of_node can be NULL if the "serial" node is absent.
->> Add a NULL check to return an error in such cases.
->>
->> Fixes: 930cbf92db01 ("tty: serial: Add Nuvoton ma35d1 serial driver support")
->> Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
-> You forgot a "Reported-by:" line as Dan did report this to you.
+Thanks,
+Andrei
+
+On Wed, May 22, 2024 at 6:45=E2=80=AFPM Andrei Vagin <avagin@google.com> wr=
+ote:
 >
->> ---
->>   drivers/tty/serial/ma35d1_serial.c | 13 +++++++------
->>   1 file changed, 7 insertions(+), 6 deletions(-)
-> Also, no info as to what changed from v1 :(
+> This patch set addresses two problems with the SECCOMP_IOCTL_NOTIF_RECV
+> ioctl:
+> * it doesn't return when the seccomp filter becomes unused (all tasks
+>   have exited).
+> * EPOLLHUP is triggered not when a task exits, but rather when its zombie
+>   is collected.
 >
-> thanks,
+> v2: - Remove unnecessary checks of PF_EXITING.
+>     - Take siglock with disabling irqs.
+>     Thanks to Oleg for the review and the help with the first version.
 >
-> greg k-h
-
-I got it. I will add the "Reported-by:" line and version info to the v3 
-patch.
-
-
-Best Regards,
-Jacky Huang
-
+> Andrei Vagin (3):
+>   seccomp: interrupt SECCOMP_IOCTL_NOTIF_RECV when all users have exited
+>   seccomp: release task filters when the task exits
+>   selftests/seccomp: add test for NOTIF_RECV and unused filters
+>
+>  kernel/exit.c                                 |  3 +-
+>  kernel/seccomp.c                              | 38 ++++++++++---
+>  tools/testing/selftests/seccomp/seccomp_bpf.c | 54 +++++++++++++++++++
+>  3 files changed, 88 insertions(+), 7 deletions(-)
+>
+> Cc: Kees Cook <keescook@chromium.org>
+> Cc: Andy Lutomirski <luto@amacapital.net>
+> Cc: Will Drewry <wad@chromium.org>
+> Cc: Jens Axboe <axboe@kernel.dk>
+> Cc: Christian Brauner <brauner@kernel.org>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Tycho Andersen <tandersen@netflix.com>
+>
+>
+> --
+> 2.45.0.rc1.225.g2a3ae87e7f-goog
+>
 
