@@ -1,309 +1,101 @@
-Return-Path: <linux-kernel+bounces-229027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2184B9169E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:09:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A7C29169E3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:10:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 455D71C227B8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:09:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 366A228241E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:10:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D5516A397;
-	Tue, 25 Jun 2024 14:09:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C488169AD0;
+	Tue, 25 Jun 2024 14:09:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+eb/ipd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OrfeJvW+";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="AKlBEBF6"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6635161936;
-	Tue, 25 Jun 2024 14:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4ECA1B7F7;
+	Tue, 25 Jun 2024 14:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719324557; cv=none; b=iLmyIh1Qg7vjvYUa/qkLCRYGeqQJxHgPZvDn+HUJ21isWf12d6YGPg7nB7Xp61mnp3AFo8yJEOkrPIcTVNFkYTUCTg7Buiya4dhDiN/q/AOQjUnALoQ7di8tIj1JtKVJrSHfnxzNGkxnxDS64CtN0kpGptc+YK2cv/nrCRr6E7o=
+	t=1719324598; cv=none; b=KbEeHTrvCRTrHZXYTYvBzBb3sPoyA+WCt/JaTeEghR2T+dT/GI9mLa3+T8x/KVBgfmiyTGoL1a/aVI35uGbZmNwB/OFL5WDQ79pJ/J+A55ipQGvs3wqcr1vUiSgmjKNmt/Tt/n6f7TI5YADJHYVeFgaXT53oRW1+AAbi2JvprKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719324557; c=relaxed/simple;
-	bh=hlLqkbvsl8FfkgUGGlRARxPGbfNFx55w1hPBJfOAgHA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZRusZwLVBsbkRUn+2vTpw5Xx1VikYxUcrTzbEb1QkIEJNyvr8wl1y8WweepNnRgHldEuuT32iKyJZjNbEHzG+LDesIogCVGqfGiHvXHOi1omRrPLegQiPIC1qgq9IixfOrKHymYwQ9Q3w56FgL1sEPdfUspz1SaWA6LWjEHzgUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+eb/ipd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 509B3C4AF0D;
-	Tue, 25 Jun 2024 14:09:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719324557;
-	bh=hlLqkbvsl8FfkgUGGlRARxPGbfNFx55w1hPBJfOAgHA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=h+eb/ipdqcIcRdvSbvGtXe4k7qKlrw4eg1+t2K9U6LQ5UX8fdR9zwGuBKtngfshIl
-	 kFtqRsh3xy9fzUodplSyP342b0vnDAWrTHl3yfbHNJ+IlxXMwNE4y5mSaJhJx3oWRC
-	 wZ/tqG3EEuVRdxgAnmKL4JuTRpaNBL05YI8R34GNBWVDmCDBkHZlHzcSTRmU8jfNWt
-	 miRQQRawvrtnRFpXvqu80jk7MgPdIyKGINjgUO/AGfL1R2R6+WCv6eUcagh8B//G8T
-	 DT/XuRFBDOH0EziQSmnoBxvLORphfDR1YeQZmyHhSh95IEt8WSsW7Ni3Bg3SSRhoAF
-	 ko1XCwZPRxu3A==
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a724598cfe3so376524566b.1;
-        Tue, 25 Jun 2024 07:09:17 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX0uH/He3/jrXJPTHqtT1A5Tl3IXpOsqQ48+F4mrvF/DLSy4JlNg+O5xR6jLUO7HT0U3zmAuH9+WxqE9iiIsQ97WzNbByzuzMKHYGDLSvDxO7NPylO7/1er3ASLC0JhQ0UPF4F4gNAzFI2CVr3zaL6VhPQzYwVnauk/BrSnhQrykK3QCm0E
-X-Gm-Message-State: AOJu0Yx31cGx+LsjimTvUFq/depJFtsa9dxAikKBUmpW7IG9GDBvqL12
-	EKroHq7qT9CPPM1YDnzJQ5/ZjIGfRDLqMwJWU+GiKepCdCAePHyY7bXpmivCgwgtHbIkZkRn5HA
-	xAyOvr08+IuBb/YsmDffgkERgKbo=
-X-Google-Smtp-Source: AGHT+IEv9khsq2McMAXCvCjQIz/xAD9ySx6njXlkyLTzNeiNd5EGy8BvIQl/0d6ORcdPqvhugAT19KVNDnaYOwS7k8s=
-X-Received: by 2002:a17:907:160e:b0:a72:5e6f:b28d with SMTP id
- a640c23a62f3a-a725e6fb35dmr440530566b.73.1719324555779; Tue, 25 Jun 2024
- 07:09:15 -0700 (PDT)
+	s=arc-20240116; t=1719324598; c=relaxed/simple;
+	bh=YAITqrRrzZ6v3MsH8//+1u3BgJ69ZP2A0keeXhwDXis=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=E9ALo8U6/rC1KCQXADqlg/X7/jz0QbCAmKA/0jfxlKNB1J3JHFGWxeyDiPb4iW6HAc+qilsLpkut58s1Ze5wGA4qMnTFK/7VU7fyRBnfdVAyXZCXtYJRkvYMKcC9RTmoYHPxiRyD7taCuUHi7sS3BqjHehIsxU8MbXQlGGuBgCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OrfeJvW+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=AKlBEBF6; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719324594;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WLRAASEKt9cSOd1wXV/lLTFBcxPcrp1VcIrjbo3059o=;
+	b=OrfeJvW+zdt0BEzq1QAtGLtUuAfkqiDcjp/pFK2jBbC02SBYdQEUbmXPuT3i/oojMuNmay
+	DIYIKJkXNgAgaeI3UjJ5lg//t2+sc5JNFGSvNzytm+myc9VoN1XqrhwkPFoi9BGSweJP3s
+	nQ2hIewxiUoMyfCB9U//peK31QqD1GJdDgRiaK+drii7gYeNMwiZNCJbO9q4R39E7Z5szL
+	mY45lNKyRV+3n03YkHSiLzP3z5AQfrIu0G1BnErJiorMkGP2l4kTz6iQTqsO1sy+E7LGnI
+	gh/V9iR9qDLgUnvJKTnJZKIkX8mjzXHDR9jl96v/znEw8Xhp8kz0sk0JSWXIhg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719324594;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WLRAASEKt9cSOd1wXV/lLTFBcxPcrp1VcIrjbo3059o=;
+	b=AKlBEBF6U+ssOn61YRfNpEYFD6j5Oa45b5bv5usDGCyZVSXSqi34E6kEdlq6ebUzMX7BfG
+	exeeWj2KlSNRa1Cg==
+To: Steven Rostedt <rostedt@goodmis.org>, Andrew Halaney <ahalaney@redhat.com>
+Cc: Song Chen <chensong_2000@189.cn>, Derek Barbosa <debarbos@redhat.com>,
+ pmladek@suse.com, senozhatsky@chromium.org,
+ linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ williams@redhat.com, jlelli@redhat.com
+Subject: Re: a question about how to debug this case in ftrace
+In-Reply-To: <20240625094406.42acfacf@rorschach.local.home>
+References: <ZnGlt4uQRP_4nWu4@debarbos-thinkpadt14sgen2i.remote.csb>
+ <6802e81c-1926-4195-812a-1a5fe13bcdde@189.cn>
+ <xiune2bsqgin5ksk33q5bkihuz5qrv5casjofdyopes55zfcpc@uvvnlwxb4wcp>
+ <20240625094406.42acfacf@rorschach.local.home>
+Date: Tue, 25 Jun 2024 16:15:54 +0206
+Message-ID: <87h6dhxgel.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625110029.606032-1-mjguzik@gmail.com> <20240625110029.606032-3-mjguzik@gmail.com>
-In-Reply-To: <20240625110029.606032-3-mjguzik@gmail.com>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 25 Jun 2024 22:09:10 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
-Message-ID: <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, axboe@kernel.dk, torvalds@linux-foundation.org, 
-	xry111@xry111.site, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Jun 25, 2024 at 7:01=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> w=
-rote:
+On 2024-06-25, Steven Rostedt <rostedt@goodmis.org> wrote:
+> You may be interested in some work I'm doing that allows you to read
+> the ring buffer from a previous kernel after a crash.
 >
-> The newly used helper also checks for 0-sized buffers.
+> https://lore.kernel.org/linux-trace-kernel/20240612231934.608252486@goodmis.org/
 >
-> This avoids path lookup code, lockref management, memory allocation and
-> in case of NULL path userspace memory access (which can be quite
-> expensive with SMAP on x86_64).
+> I also have a way to ask for any memory, that should be able to get the
+> same location most times, via a "reserve_mem=" kernel command line
+> parameter.
 >
-> statx with AT_EMPTY_PATH paired with "" or NULL argument as appropriate
-> issued on Sapphire Rapids (ops/s):
-> stock:     4231237
-> 0-check:   5944063 (+40%)
-> NULL path: 6601619 (+11%/+56%)
+> https://lore.kernel.org/linux-trace-kernel/20240613233415.734483785@goodmis.org/
 >
-> Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-Hi, Ruoyao,
+> They are both destined for the next merge window. After that, I have
+> one more patch that ties the two together, so that you can have a
+> kernel command line of:
+>
+>  reserve_mem=12M:4096:trace trace_instance=bootmap@trace
+>
+> and then when you boot up, you would have a trace instance that would
+> be mapped to that memory. If your machine doesn't clear memory after a
+> crash, you can read the data from the crash on the next boot.
 
-I'm a bit confused. Ii this patch a replacement of your recent patch?
+Nice. Thanks for the heads up. It will be nice to implement a "printk"
+label as well. ;-)
 
-Huacai
-> ---
->  fs/internal.h    |  2 ++
->  fs/stat.c        | 90 ++++++++++++++++++++++++++++++++++--------------
->  io_uring/statx.c | 23 +++++++------
->  3 files changed, 80 insertions(+), 35 deletions(-)
->
-> diff --git a/fs/internal.h b/fs/internal.h
-> index 1caa6a8f666f..0a018ebcaf49 100644
-> --- a/fs/internal.h
-> +++ b/fs/internal.h
-> @@ -244,6 +244,8 @@ extern const struct dentry_operations ns_dentry_opera=
-tions;
->  int getname_statx_lookup_flags(int flags);
->  int do_statx(int dfd, struct filename *filename, unsigned int flags,
->              unsigned int mask, struct statx __user *buffer);
-> +int do_statx_fd(int fd, unsigned int flags, unsigned int mask,
-> +               struct statx __user *buffer);
->
->  /*
->   * fs/splice.c:
-> diff --git a/fs/stat.c b/fs/stat.c
-> index 106684034fdb..1214826f3a36 100644
-> --- a/fs/stat.c
-> +++ b/fs/stat.c
-> @@ -214,6 +214,43 @@ int getname_statx_lookup_flags(int flags)
->         return lookup_flags;
->  }
->
-> +static int vfs_statx_path(struct path *path, int flags, struct kstat *st=
-at,
-> +                         u32 request_mask)
-> +{
-> +       int error =3D vfs_getattr(path, stat, request_mask, flags);
-> +
-> +       if (request_mask & STATX_MNT_ID_UNIQUE) {
-> +               stat->mnt_id =3D real_mount(path->mnt)->mnt_id_unique;
-> +               stat->result_mask |=3D STATX_MNT_ID_UNIQUE;
-> +       } else {
-> +               stat->mnt_id =3D real_mount(path->mnt)->mnt_id;
-> +               stat->result_mask |=3D STATX_MNT_ID;
-> +       }
-> +
-> +       if (path->mnt->mnt_root =3D=3D path->dentry)
-> +               stat->attributes |=3D STATX_ATTR_MOUNT_ROOT;
-> +       stat->attributes_mask |=3D STATX_ATTR_MOUNT_ROOT;
-> +
-> +       /* Handle STATX_DIOALIGN for block devices. */
-> +       if (request_mask & STATX_DIOALIGN) {
-> +               struct inode *inode =3D d_backing_inode(path->dentry);
-> +
-> +               if (S_ISBLK(inode->i_mode))
-> +                       bdev_statx_dioalign(inode, stat);
-> +       }
-> +
-> +       return error;
-> +}
-> +
-> +static int vfs_statx_fd(int fd, int flags, struct kstat *stat,
-> +                         u32 request_mask)
-> +{
-> +       CLASS(fd_raw, f)(fd);
-> +       if (!f.file)
-> +               return -EBADF;
-> +       return vfs_statx_path(&f.file->f_path, flags, stat, request_mask)=
-;
-> +}
-> +
->  /**
->   * vfs_statx - Get basic and extra attributes by filename
->   * @dfd: A file descriptor representing the base dir for a relative file=
-name
-> @@ -243,36 +280,13 @@ static int vfs_statx(int dfd, struct filename *file=
-name, int flags,
->  retry:
->         error =3D filename_lookup(dfd, filename, lookup_flags, &path, NUL=
-L);
->         if (error)
-> -               goto out;
-> -
-> -       error =3D vfs_getattr(&path, stat, request_mask, flags);
-> -
-> -       if (request_mask & STATX_MNT_ID_UNIQUE) {
-> -               stat->mnt_id =3D real_mount(path.mnt)->mnt_id_unique;
-> -               stat->result_mask |=3D STATX_MNT_ID_UNIQUE;
-> -       } else {
-> -               stat->mnt_id =3D real_mount(path.mnt)->mnt_id;
-> -               stat->result_mask |=3D STATX_MNT_ID;
-> -       }
-> -
-> -       if (path.mnt->mnt_root =3D=3D path.dentry)
-> -               stat->attributes |=3D STATX_ATTR_MOUNT_ROOT;
-> -       stat->attributes_mask |=3D STATX_ATTR_MOUNT_ROOT;
-> -
-> -       /* Handle STATX_DIOALIGN for block devices. */
-> -       if (request_mask & STATX_DIOALIGN) {
-> -               struct inode *inode =3D d_backing_inode(path.dentry);
-> -
-> -               if (S_ISBLK(inode->i_mode))
-> -                       bdev_statx_dioalign(inode, stat);
-> -       }
-> -
-> +               return error;
-> +       error =3D vfs_statx_path(&path, flags, stat, request_mask);
->         path_put(&path);
->         if (retry_estale(error, lookup_flags)) {
->                 lookup_flags |=3D LOOKUP_REVAL;
->                 goto retry;
->         }
-> -out:
->         return error;
->  }
->
-> @@ -677,6 +691,29 @@ int do_statx(int dfd, struct filename *filename, uns=
-igned int flags,
->         return cp_statx(&stat, buffer);
->  }
->
-> +int do_statx_fd(int fd, unsigned int flags, unsigned int mask,
-> +            struct statx __user *buffer)
-> +{
-> +       struct kstat stat;
-> +       int error;
-> +
-> +       if (mask & STATX__RESERVED)
-> +               return -EINVAL;
-> +       if ((flags & AT_STATX_SYNC_TYPE) =3D=3D AT_STATX_SYNC_TYPE)
-> +               return -EINVAL;
-> +
-> +       /* STATX_CHANGE_COOKIE is kernel-only for now. Ignore requests
-> +        * from userland.
-> +        */
-> +       mask &=3D ~STATX_CHANGE_COOKIE;
-> +
-> +       error =3D vfs_statx_fd(fd, flags, &stat, mask);
-> +       if (error)
-> +               return error;
-> +
-> +       return cp_statx(&stat, buffer);
-> +}
-> +
->  /**
->   * sys_statx - System call to get enhanced stats
->   * @dfd: Base directory to pathwalk from *or* fd to stat.
-> @@ -696,6 +733,9 @@ SYSCALL_DEFINE5(statx,
->         int ret;
->         struct filename *name;
->
-> +       if (flags =3D=3D AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
-> +               return do_statx_fd(dfd, flags, mask, buffer);
-> +
->         name =3D getname_flags(filename, getname_statx_lookup_flags(flags=
-), NULL);
->         ret =3D do_statx(dfd, name, flags, mask, buffer);
->         putname(name);
-> diff --git a/io_uring/statx.c b/io_uring/statx.c
-> index abb874209caa..fe967ecb1762 100644
-> --- a/io_uring/statx.c
-> +++ b/io_uring/statx.c
-> @@ -23,6 +23,7 @@ struct io_statx {
->  int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
->  {
->         struct io_statx *sx =3D io_kiocb_to_cmd(req, struct io_statx);
-> +       struct filename *filename;
->         const char __user *path;
->
->         if (sqe->buf_index || sqe->splice_fd_in)
-> @@ -36,15 +37,14 @@ int io_statx_prep(struct io_kiocb *req, const struct =
-io_uring_sqe *sqe)
->         sx->buffer =3D u64_to_user_ptr(READ_ONCE(sqe->addr2));
->         sx->flags =3D READ_ONCE(sqe->statx_flags);
->
-> -       sx->filename =3D getname_flags(path,
-> -                                    getname_statx_lookup_flags(sx->flags=
-),
-> -                                    NULL);
-> -
-> -       if (IS_ERR(sx->filename)) {
-> -               int ret =3D PTR_ERR(sx->filename);
-> -
-> -               sx->filename =3D NULL;
-> -               return ret;
-> +       sx->filename =3D NULL;
-> +       if (!(sx->flags =3D=3D AT_EMPTY_PATH && vfs_empty_path(sx->dfd, p=
-ath))) {
-> +               filename =3D getname_flags(path,
-> +                                        getname_statx_lookup_flags(sx->f=
-lags),
-> +                                        NULL);
-> +               if (IS_ERR(filename))
-> +                       return PTR_ERR(filename);
-> +               sx->filename =3D filename;
->         }
->
->         req->flags |=3D REQ_F_NEED_CLEANUP;
-> @@ -59,7 +59,10 @@ int io_statx(struct io_kiocb *req, unsigned int issue_=
-flags)
->
->         WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
->
-> -       ret =3D do_statx(sx->dfd, sx->filename, sx->flags, sx->mask, sx->=
-buffer);
-> +       if (sx->filename =3D=3D NULL)
-> +               ret =3D do_statx_fd(sx->dfd, sx->flags, sx->mask, sx->buf=
-fer);
-> +       else
-> +               ret =3D do_statx(sx->dfd, sx->filename, sx->flags, sx->ma=
-sk, sx->buffer);
->         io_req_set_res(req, ret, 0);
->         return IOU_OK;
->  }
-> --
-> 2.43.0
->
->
+John Ogness
 
