@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-229491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 665B291701A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:23:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF50917018
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C091C257C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:23:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71FAD1F24205
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A909017D34C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1092C17C7D8;
 	Tue, 25 Jun 2024 18:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bmFKDxpp"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nB5x4Zoz"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC5517CA0F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:22:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE9C17A930
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719339762; cv=none; b=m7G7vkCHRQw0dLSwOcbmroQUe7qefQXKZrJUF+xdHW15wqg+/1Vh9tSAUXG7UU94e3U9DbHHFp85/dsWrL8568/kYJaonKrqu7MW8cwA5fgHNf0q6t1hIUIRNzfz5Mv7HjSZyA5DpZrZzHfHInzIK3Z2CwkqtC6VOVg7J3FpS9E=
+	t=1719339762; cv=none; b=cSP65ztrIWbuxuK1NeLgiCVYEkhGUW2OhINlDIPSk4g4c4kd1b40AL4IAtdCIeDXrKlzftXXNoZPjcPi+6IWoV4K+j3nXReO7BUWiIgxHOyzxA7NO3F552m7wSUsu1X2KUrEnc/Bs/DWsedNUD7yhqaudTe1xSpNCOe0kWHOHa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719339762; c=relaxed/simple;
-	bh=bMA/O1OoTClfjxzm+m4jzRIzazEs5iv3K3dpOJbjtZQ=;
+	bh=oyliGb9SJBroaFCNoK5ImTzKTS8q76GZV+Ze6fVUPMc=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kEa4+gH/bC28WRYskR3yAkEd+ZMAS4hf0IBQRB4wzx7KylhKeNwP50S7g0hskoYQebNOYoTiJ1Wn5F2To8pE6sYYPQUxqR5XSDcZJoSspl9NN0TJtAtVAnNgVte0GIOzRlCJWi/U68sfdwujBsj3Oq4PLI0iMMFxdyHc2smT5as=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bmFKDxpp; arc=none smtp.client-ip=198.175.65.19
+	 MIME-Version; b=Fbl4N4RcHIjwHqB0wFEMvzZedB1jjwUB0dTpC5OWVhOwKosp3bpENrL8IWytrRRXFosXMQfULXq6YdJx0Ek0+pPVe+FSJZgW9HhIHPiETtgxr3zpS4zTOZTihFZ91PzlN0WOBRYuR939HVuBnFnQpCaxHaGfx63RcH2rY3/klUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nB5x4Zoz; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719339761; x=1750875761;
+  t=1719339760; x=1750875760;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=bMA/O1OoTClfjxzm+m4jzRIzazEs5iv3K3dpOJbjtZQ=;
-  b=bmFKDxppqzqaVTZvHQmlQT59RqMC1G7AYVk7QZrsEQgmeK06+//rYFH1
-   FrC/tg7Y3jiLOE8PTuNWoUir3QQyUQ7V/aQmHKUjqwrUJEI2SDEThIE3a
-   gQtzUF3aubOXvMwxrmUSjUCYGcev+2ND5l5SncFhGX0KDa3kJLOyEzOnU
-   4rAO1BVJKOLtEquSYm21rLP3noPhpDy9uBj+AFaEPefThHBVgcYYEIFaF
-   Z7HIqajwRIcv4ZmXrUgY15xpjlw78KUl9DB5szsdqhzgLxlcAxS7N4zJx
-   Bxb75qFn84Ler2OUn6GV5I6IQ/fT/I+yV8+7dZ7UOt4WaCFOvZ3uD9RYS
-   g==;
-X-CSE-ConnectionGUID: lTLa6BpiR+uLdYCXaw3K6Q==
-X-CSE-MsgGUID: DIe6bm46Q8aT3xpVQyqPZg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16204025"
+  bh=oyliGb9SJBroaFCNoK5ImTzKTS8q76GZV+Ze6fVUPMc=;
+  b=nB5x4Zoz3F6rqLEm9+dRRBrDXWhOSeqn3gkjN40O2I8Yl7jtlvVc1tQs
+   J65QKSDMF8VFcGZVwxwdsVoICQIrXfStcEpUn0W6yLIJWSTyLJzaHnpQD
+   Y4oqsopbY+VtaXdfWleYlcRbknD10BuP9bSSLI66Yjtvn2mP+A0cZ6kQj
+   +XivfH0ujFSw7MLp4dqRq2kN18gw8MAsruL3jjz4vR+99Mt5YPVVJIjKp
+   kJmVRY3ANa6CdVoitilbBMwd38sB8tTrO+tcL3dG1LbpMr8Lf/x6r+Lie
+   p82Inr5TI4SuQYghnplgcDgAwo0lUrND9vim4wSerExjUmzatxIbpGuiZ
+   w==;
+X-CSE-ConnectionGUID: wkGB+b7bS0COdVWL0FXRLA==
+X-CSE-MsgGUID: AM29JG5IRd2eSOPqKj654w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16204014"
 X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
-   d="scan'208";a="16204025"
+   d="scan'208";a="16204014"
 Received: from orviesa004.jf.intel.com ([10.64.159.144])
   by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 11:22:22 -0700
-X-CSE-ConnectionGUID: SGNj8gxYTlafrk0uJvs6mw==
-X-CSE-MsgGUID: 0yzQDzimRSy26CSafY8WwA==
+X-CSE-ConnectionGUID: G7uVnQQSQ0Oewrqy9XZ6TQ==
+X-CSE-MsgGUID: Fg2u0HKhRsihYB/OzT3vew==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
-   d="scan'208";a="48913348"
+   d="scan'208";a="48913350"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
-  by orviesa004.jf.intel.com with ESMTP; 25 Jun 2024 11:22:06 -0700
+  by orviesa004.jf.intel.com with ESMTP; 25 Jun 2024 11:22:07 -0700
 From: kan.liang@linux.intel.com
 To: peterz@infradead.org,
 	mingo@kernel.org,
@@ -68,10 +68,11 @@ To: peterz@infradead.org,
 	linux-kernel@vger.kernel.org
 Cc: ak@linux.intel.com,
 	eranian@google.com,
-	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V2 05/13] perf/x86/intel: Support new data source for Lunar Lake
-Date: Tue, 25 Jun 2024 11:22:48 -0700
-Message-Id: <20240625182256.291914-6-kan.liang@linux.intel.com>
+	Kan Liang <kan.liang@linux.intel.com>,
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Subject: [PATCH V2 06/13] perf/x86: Add config_mask to represent EVENTSEL bitmask
+Date: Tue, 25 Jun 2024 11:22:49 -0700
+Message-Id: <20240625182256.291914-7-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
 In-Reply-To: <20240625182256.291914-1-kan.liang@linux.intel.com>
 References: <20240625182256.291914-1-kan.liang@linux.intel.com>
@@ -85,255 +86,92 @@ Content-Transfer-Encoding: 8bit
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-A new PEBS data source format is introduced for the p-core of Lunar
-Lake. The data source field is extended to 8 bits with new encodings.
+Different vendors may support different fields in EVENTSEL MSR, such as
+Intel would introduce new fields umask2 and eq bits in EVENTSEL MSR
+since Perfmon version 6. However, a fixed mask X86_RAW_EVENT_MASK is
+used to filter the attr.config.
 
-A new layout is introduced into the union intel_x86_pebs_dse.
-Introduce the lnl_latency_data() to parse the new format.
-Enlarge the pebs_data_source[] accordingly to include new encodings.
-
-Only the mem load and the mem store events can generate the data source.
-Introduce INTEL_HYBRID_LDLAT_CONSTRAINT and
-INTEL_HYBRID_STLAT_CONSTRAINT to mark them.
-
-Add two new bits for the new cache-related data src, L2_MHB and MSC.
-The L2_MHB is short for L2 Miss Handling Buffer, which is similar to
-LFB (Line Fill Buffer), but to track the L2 Cache misses.
-The MSC stands for the memory-side cache.
+Introduce a new config_mask to record the real supported EVENTSEL
+bitmask.
+Only apply it to the existing code now. No functional change.
 
 Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Co-developed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
 Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
 ---
- arch/x86/events/intel/core.c    |  2 +
- arch/x86/events/intel/ds.c      | 88 ++++++++++++++++++++++++++++++++-
- arch/x86/events/perf_event.h    | 16 +++++-
- include/uapi/linux/perf_event.h |  6 ++-
- 4 files changed, 107 insertions(+), 5 deletions(-)
+ arch/x86/events/core.c       | 5 ++++-
+ arch/x86/events/intel/core.c | 1 +
+ arch/x86/events/perf_event.h | 7 +++++++
+ 3 files changed, 12 insertions(+), 1 deletion(-)
 
+diff --git a/arch/x86/events/core.c b/arch/x86/events/core.c
+index 848dbe9cbd0e..8ea1c988e19b 100644
+--- a/arch/x86/events/core.c
++++ b/arch/x86/events/core.c
+@@ -624,7 +624,7 @@ int x86_pmu_hw_config(struct perf_event *event)
+ 		event->hw.config |= ARCH_PERFMON_EVENTSEL_OS;
+ 
+ 	if (event->attr.type == event->pmu->type)
+-		event->hw.config |= event->attr.config & X86_RAW_EVENT_MASK;
++		event->hw.config |= x86_pmu_get_event_config(event);
+ 
+ 	if (event->attr.sample_period && x86_pmu.limit_period) {
+ 		s64 left = event->attr.sample_period;
+@@ -2098,6 +2098,9 @@ static int __init init_hw_perf_events(void)
+ 	if (!x86_pmu.intel_ctrl)
+ 		x86_pmu.intel_ctrl = x86_pmu.cntr_mask64;
+ 
++	if (!x86_pmu.config_mask)
++		x86_pmu.config_mask = X86_RAW_EVENT_MASK;
++
+ 	perf_events_lapic_init();
+ 	register_nmi_handler(NMI_LOCAL, perf_event_nmi_handler, 0, "PMI");
+ 
 diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
-index ca46c5c31f78..ab61b9ef677a 100644
+index ab61b9ef677a..23e074fd25e1 100644
 --- a/arch/x86/events/intel/core.c
 +++ b/arch/x86/events/intel/core.c
-@@ -6960,6 +6960,7 @@ __init int intel_pmu_init(void)
- 	case INTEL_FAM6_ARROWLAKE:
- 		intel_pmu_init_hybrid(hybrid_big_small);
- 
-+		x86_pmu.pebs_latency_data = lnl_latency_data;
- 		x86_pmu.get_event_constraints = mtl_get_event_constraints;
- 		x86_pmu.hw_config = adl_hw_config;
- 
-@@ -6977,6 +6978,7 @@ __init int intel_pmu_init(void)
- 		pmu = &x86_pmu.hybrid_pmu[X86_HYBRID_PMU_ATOM_IDX];
- 		intel_pmu_init_skt(&pmu->pmu);
- 
-+		intel_pmu_pebs_data_source_lnl();
- 		pr_cont("Lunarlake Hybrid events, ");
- 		name = "lunarlake_hybrid";
- 		break;
-diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
-index 8a11f72a22b6..ce7e98409f29 100644
---- a/arch/x86/events/intel/ds.c
-+++ b/arch/x86/events/intel/ds.c
-@@ -63,6 +63,15 @@ union intel_x86_pebs_dse {
- 		unsigned int mtl_fwd_blk:1;
- 		unsigned int ld_reserved4:24;
- 	};
-+	struct {
-+		unsigned int lnc_dse:8;
-+		unsigned int ld_reserved5:2;
-+		unsigned int lnc_stlb_miss:1;
-+		unsigned int lnc_locked:1;
-+		unsigned int lnc_data_blk:1;
-+		unsigned int lnc_addr_blk:1;
-+		unsigned int ld_reserved6:18;
-+	};
- };
- 
- 
-@@ -77,7 +86,7 @@ union intel_x86_pebs_dse {
- #define SNOOP_NONE_MISS (P(SNOOP, NONE) | P(SNOOP, MISS))
- 
- /* Version for Sandy Bridge and later */
--static u64 pebs_data_source[] = {
-+static u64 pebs_data_source[PERF_PEBS_DATA_SOURCE_MAX] = {
- 	P(OP, LOAD) | P(LVL, MISS) | LEVEL(L3) | P(SNOOP, NA),/* 0x00:ukn L3 */
- 	OP_LH | P(LVL, L1)  | LEVEL(L1) | P(SNOOP, NONE),  /* 0x01: L1 local */
- 	OP_LH | P(LVL, LFB) | LEVEL(LFB) | P(SNOOP, NONE), /* 0x02: LFB hit */
-@@ -173,6 +182,40 @@ void __init intel_pmu_pebs_data_source_cmt(void)
- 	__intel_pmu_pebs_data_source_cmt(pebs_data_source);
- }
- 
-+/* Version for Lion Cove and later */
-+static u64 lnc_pebs_data_source[PERF_PEBS_DATA_SOURCE_MAX] = {
-+	P(OP, LOAD) | P(LVL, MISS) | LEVEL(L3) | P(SNOOP, NA),	/* 0x00: ukn L3 */
-+	OP_LH | P(LVL, L1)  | LEVEL(L1) | P(SNOOP, NONE),	/* 0x01: L1 hit */
-+	OP_LH | P(LVL, L1)  | LEVEL(L1) | P(SNOOP, NONE),	/* 0x02: L1 hit */
-+	OP_LH | P(LVL, LFB) | LEVEL(LFB) | P(SNOOP, NONE),	/* 0x03: LFB/L1 Miss Handling Buffer hit */
-+	0,							/* 0x04: Reserved */
-+	OP_LH | P(LVL, L2)  | LEVEL(L2) | P(SNOOP, NONE),	/* 0x05: L2 Hit */
-+	OP_LH | LEVEL(L2_MHB) | P(SNOOP, NONE),			/* 0x06: L2 Miss Handling Buffer Hit */
-+	0,							/* 0x07: Reserved */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3) | P(SNOOP, NONE),	/* 0x08: L3 Hit */
-+	0,							/* 0x09: Reserved */
-+	0,							/* 0x0a: Reserved */
-+	0,							/* 0x0b: Reserved */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3) | P(SNOOPX, FWD),	/* 0x0c: L3 Hit Snoop Fwd */
-+	OP_LH | P(LVL, L3)  | LEVEL(L3) | P(SNOOP, HITM),	/* 0x0d: L3 Hit Snoop HitM */
-+	0,							/* 0x0e: Reserved */
-+	P(OP, LOAD) | P(LVL, MISS) | P(LVL, L3)  | LEVEL(L3) | P(SNOOP, HITM),	/* 0x0f: L3 Miss Snoop HitM */
-+	OP_LH | LEVEL(MSC) | P(SNOOP, NONE),			/* 0x10: Memory-side Cache Hit */
-+	OP_LH | P(LVL, LOC_RAM)  | LEVEL(RAM) | P(SNOOP, NONE), /* 0x11: Local Memory Hit */
-+};
-+
-+void __init intel_pmu_pebs_data_source_lnl(void)
-+{
-+	u64 *data_source;
-+
-+	data_source = x86_pmu.hybrid_pmu[X86_HYBRID_PMU_CORE_IDX].pebs_data_source;
-+	memcpy(data_source, lnc_pebs_data_source, sizeof(lnc_pebs_data_source));
-+
-+	data_source = x86_pmu.hybrid_pmu[X86_HYBRID_PMU_ATOM_IDX].pebs_data_source;
-+	memcpy(data_source, pebs_data_source, sizeof(pebs_data_source));
-+	__intel_pmu_pebs_data_source_cmt(data_source);
-+}
-+
- static u64 precise_store_data(u64 status)
- {
- 	union intel_x86_pebs_dse dse;
-@@ -264,7 +307,7 @@ static u64 __adl_latency_data_grt(struct perf_event *event, u64 status,
- 
- 	WARN_ON_ONCE(hybrid_pmu(event->pmu)->pmu_type == hybrid_big);
- 
--	dse &= PERF_PEBS_DATA_SOURCE_MASK;
-+	dse &= PERF_PEBS_DATA_SOURCE_GRT_MASK;
- 	val = hybrid_var(event->pmu, pebs_data_source)[dse];
- 
- 	pebs_set_tlb_lock(&val, tlb, lock);
-@@ -300,6 +343,45 @@ u64 mtl_latency_data_cmt(struct perf_event *event, u64 status)
- 				      dse.mtl_fwd_blk);
- }
- 
-+u64 lnl_latency_data(struct perf_event *event, u64 status)
-+{
-+	struct x86_hybrid_pmu *pmu = hybrid_pmu(event->pmu);
-+	union intel_x86_pebs_dse dse;
-+	union perf_mem_data_src src;
-+	u64 val;
-+
-+	if (pmu->pmu_type == hybrid_small)
-+		return mtl_latency_data_cmt(event, status);
-+
-+	dse.val = status;
-+
-+	/* LNC core latency data */
-+	val = hybrid_var(event->pmu, pebs_data_source)[status & PERF_PEBS_DATA_SOURCE_MASK];
-+	if (!val)
-+		val = P(OP, LOAD) | LEVEL(NA) | P(SNOOP, NA);
-+
-+	if (dse.lnc_stlb_miss)
-+		val |= P(TLB, MISS) | P(TLB, L2);
-+	else
-+		val |= P(TLB, HIT) | P(TLB, L1) | P(TLB, L2);
-+
-+	if (dse.lnc_locked)
-+		val |= P(LOCK, LOCKED);
-+
-+	if (dse.lnc_data_blk)
-+		val |= P(BLK, DATA);
-+	if (dse.lnc_addr_blk)
-+		val |= P(BLK, ADDR);
-+	if (!dse.lnc_data_blk && !dse.lnc_addr_blk)
-+		val |= P(BLK, NA);
-+
-+	src.val = val;
-+	if (event->hw.flags & PERF_X86_EVENT_PEBS_ST_HSW)
-+		src.mem_op = P(OP, STORE);
-+
-+	return src.val;
-+}
-+
- static u64 load_latency_data(struct perf_event *event, u64 status)
- {
- 	union intel_x86_pebs_dse dse;
-@@ -1090,6 +1172,8 @@ struct event_constraint intel_lnc_pebs_event_constraints[] = {
- 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x100, 0x100000000ULL),	/* INST_RETIRED.PREC_DIST */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT(0x0400, 0x800000000ULL),
- 
-+	INTEL_HYBRID_LDLAT_CONSTRAINT(0x1cd, 0x3ff),
-+	INTEL_HYBRID_STLAT_CONSTRAINT(0x2cd, 0x3),
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_LD(0x11d0, 0xf),	/* MEM_INST_RETIRED.STLB_MISS_LOADS */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_ST(0x12d0, 0xf),	/* MEM_INST_RETIRED.STLB_MISS_STORES */
- 	INTEL_FLAGS_UEVENT_CONSTRAINT_DATALA_LD(0x21d0, 0xf),	/* MEM_INST_RETIRED.LOCK_LOADS */
+@@ -6144,6 +6144,7 @@ static __always_inline int intel_pmu_init_hybrid(enum hybrid_pmu_type pmus)
+ 		pmu->cntr_mask64 = x86_pmu.cntr_mask64;
+ 		pmu->fixed_cntr_mask64 = x86_pmu.fixed_cntr_mask64;
+ 		pmu->pebs_events_mask = intel_pmu_pebs_mask(pmu->cntr_mask64);
++		pmu->config_mask = X86_RAW_EVENT_MASK;
+ 		pmu->unconstrained = (struct event_constraint)
+ 				     __EVENT_CONSTRAINT(0, pmu->cntr_mask64,
+ 							0, x86_pmu_num_counters(&pmu->pmu), 0, 0);
 diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
-index e9374b4360d4..0d333bb9c8f4 100644
+index 0d333bb9c8f4..a226565a9333 100644
 --- a/arch/x86/events/perf_event.h
 +++ b/arch/x86/events/perf_event.h
-@@ -476,6 +476,14 @@ struct cpu_hw_events {
- 	__EVENT_CONSTRAINT(c, n, INTEL_ARCH_EVENT_MASK|X86_ALL_EVENT_FLAGS, \
- 			  HWEIGHT(n), 0, PERF_X86_EVENT_PEBS_LAT_HYBRID)
+@@ -695,6 +695,7 @@ struct x86_hybrid_pmu {
+ 	union perf_capabilities		intel_cap;
+ 	u64				intel_ctrl;
+ 	u64				pebs_events_mask;
++	u64				config_mask;
+ 	union {
+ 			u64		cntr_mask64;
+ 			unsigned long	cntr_mask[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
+@@ -790,6 +791,7 @@ struct x86_pmu {
+ 	int		(*rdpmc_index)(int index);
+ 	u64		(*event_map)(int);
+ 	int		max_events;
++	u64		config_mask;
+ 	union {
+ 			u64		cntr_mask64;
+ 			unsigned long	cntr_mask[BITS_TO_LONGS(X86_PMC_IDX_MAX)];
+@@ -1241,6 +1243,11 @@ static inline int x86_pmu_max_num_counters_fixed(struct pmu *pmu)
+ 	return find_last_bit(hybrid(pmu, fixed_cntr_mask), INTEL_PMC_MAX_FIXED) + 1;
+ }
  
-+#define INTEL_HYBRID_LDLAT_CONSTRAINT(c, n)	\
-+	__EVENT_CONSTRAINT(c, n, INTEL_ARCH_EVENT_MASK|X86_ALL_EVENT_FLAGS, \
-+			  HWEIGHT(n), 0, PERF_X86_EVENT_PEBS_LAT_HYBRID|PERF_X86_EVENT_PEBS_LD_HSW)
++static inline u64 x86_pmu_get_event_config(struct perf_event *event)
++{
++	return event->attr.config & hybrid(event->pmu, config_mask);
++}
 +
-+#define INTEL_HYBRID_STLAT_CONSTRAINT(c, n)	\
-+	__EVENT_CONSTRAINT(c, n, INTEL_ARCH_EVENT_MASK|X86_ALL_EVENT_FLAGS, \
-+			  HWEIGHT(n), 0, PERF_X86_EVENT_PEBS_LAT_HYBRID|PERF_X86_EVENT_PEBS_ST_HSW)
-+
- /* Event constraint, but match on all event flags too. */
- #define INTEL_FLAGS_EVENT_CONSTRAINT(c, n) \
- 	EVENT_CONSTRAINT(c, n, ARCH_PERFMON_EVENTSEL_EVENT|X86_ALL_EVENT_FLAGS)
-@@ -655,8 +663,10 @@ enum {
- 	x86_lbr_exclusive_max,
- };
+ extern struct event_constraint emptyconstraint;
  
--#define PERF_PEBS_DATA_SOURCE_MAX	0x10
-+#define PERF_PEBS_DATA_SOURCE_MAX	0x100
- #define PERF_PEBS_DATA_SOURCE_MASK	(PERF_PEBS_DATA_SOURCE_MAX - 1)
-+#define PERF_PEBS_DATA_SOURCE_GRT_MAX	0x10
-+#define PERF_PEBS_DATA_SOURCE_GRT_MASK	(PERF_PEBS_DATA_SOURCE_GRT_MAX - 1)
- 
- enum hybrid_cpu_type {
- 	HYBRID_INTEL_NONE,
-@@ -1552,6 +1562,8 @@ u64 adl_latency_data_grt(struct perf_event *event, u64 status);
- 
- u64 mtl_latency_data_cmt(struct perf_event *event, u64 status);
- 
-+u64 lnl_latency_data(struct perf_event *event, u64 status);
-+
- extern struct event_constraint intel_core2_pebs_event_constraints[];
- 
- extern struct event_constraint intel_atom_pebs_event_constraints[];
-@@ -1673,6 +1685,8 @@ void intel_pmu_pebs_data_source_mtl(void);
- 
- void intel_pmu_pebs_data_source_cmt(void);
- 
-+void intel_pmu_pebs_data_source_lnl(void);
-+
- int intel_pmu_setup_lbr_filter(struct perf_event *event);
- 
- void intel_pt_interrupt(void);
-diff --git a/include/uapi/linux/perf_event.h b/include/uapi/linux/perf_event.h
-index 3a64499b0f5d..4842c36fdf80 100644
---- a/include/uapi/linux/perf_event.h
-+++ b/include/uapi/linux/perf_event.h
-@@ -1349,12 +1349,14 @@ union perf_mem_data_src {
- #define PERF_MEM_LVLNUM_L2	0x02 /* L2 */
- #define PERF_MEM_LVLNUM_L3	0x03 /* L3 */
- #define PERF_MEM_LVLNUM_L4	0x04 /* L4 */
--/* 5-0x7 available */
-+#define PERF_MEM_LVLNUM_L2_MHB	0x05 /* L2 Miss Handling Buffer */
-+#define PERF_MEM_LVLNUM_MSC	0x06 /* Memory-side Cache */
-+/* 0x7 available */
- #define PERF_MEM_LVLNUM_UNC	0x08 /* Uncached */
- #define PERF_MEM_LVLNUM_CXL	0x09 /* CXL */
- #define PERF_MEM_LVLNUM_IO	0x0a /* I/O */
- #define PERF_MEM_LVLNUM_ANY_CACHE 0x0b /* Any cache */
--#define PERF_MEM_LVLNUM_LFB	0x0c /* LFB */
-+#define PERF_MEM_LVLNUM_LFB	0x0c /* LFB / L1 Miss Handling Buffer */
- #define PERF_MEM_LVLNUM_RAM	0x0d /* RAM */
- #define PERF_MEM_LVLNUM_PMEM	0x0e /* PMEM */
- #define PERF_MEM_LVLNUM_NA	0x0f /* N/A */
+ extern struct event_constraint unconstrained;
 -- 
 2.35.1
 
