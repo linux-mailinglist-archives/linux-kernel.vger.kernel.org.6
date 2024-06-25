@@ -1,116 +1,163 @@
-Return-Path: <linux-kernel+bounces-229649-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7B5917252
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:12:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36A5917257
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:16:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88D701C22A77
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:12:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7651A282773
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:16:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150E017C9F1;
-	Tue, 25 Jun 2024 20:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1488617D36F;
+	Tue, 25 Jun 2024 20:16:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FJ+60aRS"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oHO3cal/"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0522114A0AA
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 20:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A936A178394
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 20:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719346353; cv=none; b=ByXaQJgIj3iPZAoBT29pEuqxz36/GpH+60aWrhwtnnSulZeHTegeMHvduJEJEcPzK4LkP8qwCVipBla1cBdddVnsGvurVFFK1tio3ykRXrV1XkBQ3ksbBfwJFnzlSRLGg5kuGT1UmTj97JHe+uy2Knhy6e/+vWEJOky/WDdVCD0=
+	t=1719346584; cv=none; b=VUrgP7hGXd+rAYbohfokOSdvWofUp+DSMu595SL8apZ9EHMTTOO9njJqESabnoY1GEJdJgQWDrshD3Lt+2+hhqXBZgfkX/X9zsZOayUAiylQn6RisOdwVIuFqTr2cfNZ/VF9n6pVXP+HTkVAwJSjUlGKWDx680tzkoTD6diGUUk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719346353; c=relaxed/simple;
-	bh=zq+1GyEy3QN7Hvly1B7/f9e4Nuk3KlypxkX84M+gbh8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=LTfUWBMJ3bjCvDTjSQ+u9eETlTVfTWf3JJDgdkNi2f1UkSdvORweUgLHwth4bJqiUvYE2NV9VJzMz6N5rVLCcjAB6QGx+ncInCcjV5X9+8v0/CYVZpQy7G40kWPRZcklLc3dJ/mXx4eAxT+HlvH6e6zoJPSWSywkr58RA7xiy3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FJ+60aRS; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5c1adbcaad3so2640815eaf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:12:31 -0700 (PDT)
+	s=arc-20240116; t=1719346584; c=relaxed/simple;
+	bh=nWWwFYPj5hSxETQn+GjyApQgH8kPlMG7B9D7jQerNto=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Cb1QodEUlLMgOdomS/yb5PGY7BnT6wUGOTRuvmplgDSl8HK805bI92J4Gq0Ui5HDBCR+r72SLSQL2BidG6yQB9t2dJzFUFBngWKVpnal0S6q6Q9J6o2AIanw8nEI8FeXkf4tXx6UYxWwFeRyP0eXbENymD4Z2FiqwLCUqQCvH3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oHO3cal/; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52db11b1d31so189916e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:16:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719346351; x=1719951151; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=a5ALH0o4wCkPNRcsw7b9kjeSziGi/YAjVTN8e30pO6c=;
-        b=FJ+60aRSe+zJH4HFRD8oddrV3vl7yuzMYxYc6iMyiaD3vF3iltcM/BfnphxrDY+h+e
-         xsbCb/n4gqsp4tEv3SzIqa9X3bJhSzRTW05lCiZvAv1ALDEyBcdwBp2ikloEuK0k2udA
-         RZk8doF5ub7EFWObB63w5H/9No/9gyUOcPoDhS8DtCysl8RDmN/tE9nRmx2S1frbfuNW
-         H5bdYcFMAML3kq4ZJ6Q1SS/hpzTjjU1fpSQbSwjrqb+ib4EgFPLJq3kl13Ic9s6wjvpm
-         +gNvmMOXcnwEPGqYkJSORLAEDgrTOsJ1JVwytnUSc1SrxlMKQ43esNOTqqyvaImEa01G
-         noNw==
+        d=linaro.org; s=google; t=1719346580; x=1719951380; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TkU0X6SUBRJEq9ZcCHQgWMpdIwIb4pG7UUUsMWhF69k=;
+        b=oHO3cal/X/Ww1LYxRquo5wfacNEnukB5iBvKse0Bolrmcw5Jg4TAGUbdH7FdVGnxMZ
+         OTtcQYSVuh7t0YneMkVK+6e8Y4peeSoiWrgOcnCTbTzD773qqMM2bGlCtruVOBfwLxpy
+         Tl2ym1KRY5QNZKU0JuCEu4fuTqh7jQLVrzxsojFXQfkDahGViaK6GZRxXRkW30+pAYop
+         C8mEcX3fZCnBgnzNGYSYpM4kUs7NZhuSX14DULiD2eXBT3QVGb566pNjQqWK14Cg5o2/
+         Fzr/PT8qJpXDWTEpXKWVcNEUKM0FSrYuAcUZYdbuypY9KS4TMmKLYZ+7M0W9TW5Rz802
+         EgHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719346351; x=1719951151;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=a5ALH0o4wCkPNRcsw7b9kjeSziGi/YAjVTN8e30pO6c=;
-        b=gbZiropTeRwPdbY32XUnjdsjKu+oLBOR/ZpnynaaxipWM5pJ/yWVyv8kFifJWqlK2N
-         jd7zR5daFbNrnWVJNhky8BIeTimpLEiZhdICD43tRZJKaWxgb7LYF2+9GnaO+goJxJ7N
-         jPCfri1QewetceX09GwXy+Uidq2zTO3kT7iz9183NFQBCJ0MkGGc8+6Sn+H1vVC/CxIf
-         dI+ELnFIpFjTElX4J/A4ZHhG2+3GdIlUKWRe3aCvFQoAA5ITN2NjwxiKf7TKnQp57WNH
-         0ndJGeoqdavKYNGgRSB/58VQPs33t51Mp+ZrFdwMiN7TCHhVmbCWwv5rg4QfNsFO6j7Q
-         k5sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoiGTuwWlf3VbKcGiAGrB0rAb8n5OmECCfCR50qpIhmrnqZv9eLcxmiJ3VKwUE3KrzvVoufySY4oUnwo92y8jUS2jygo4olcNdYhev
-X-Gm-Message-State: AOJu0Yzq2jnNaAHj5TExvSLAJpsjMmK2rmB7rWZy/dloSIQlDft4Oi1m
-	4+wnnkAjObe7vdb8IqS2wTZnK4DKHHoyKhpa3jOglK/fcdo/YJAyOyNmvjUNdA==
-X-Google-Smtp-Source: AGHT+IFWvGUa5p/ox2mzwxVRrOw0xLck1CoWcMZTXwVYkVJW4z6AQtgo9Luvs6iReQ3fQmDzPAdXrw==
-X-Received: by 2002:a4a:2d01:0:b0:5c1:e955:95bc with SMTP id 006d021491bc7-5c20ec105e2mr2204436eaf.2.1719346350715;
-        Tue, 25 Jun 2024 13:12:30 -0700 (PDT)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5c1d58ff7e1sm1873751eaf.39.2024.06.25.13.12.28
+        d=1e100.net; s=20230601; t=1719346580; x=1719951380;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TkU0X6SUBRJEq9ZcCHQgWMpdIwIb4pG7UUUsMWhF69k=;
+        b=Q0zaB4z+8EtqaP0Jl2NBxRNE3ksX/NeVQvpSdyjHndpLmEWh/WigIpL6ylbT4y9DDM
+         YV/4ZMmh78ArdCHCCNYcRTM+KZIiRMjUTznZf4XCdOnGLmfligV7Cwc0x22uvLjG3k8A
+         LcleJDCHNaYJhhrOO7a6lQFmK2/QcHDntmFyMbZNGiJZBEUPGNi/vwXtG/Jj9ItBradX
+         2Pf7chZUOY53ewHmTigK67ktQAVtp/dNexJfm2cMhm7xJNilANCvDhxzs0Hup2sww0Co
+         3SbQE2o8K4iyo/4GmzYvFdDX49YWpbEoigyJgMxNJvkCDnO8o/emfhrRJr2CuiPbnZdP
+         EojA==
+X-Forwarded-Encrypted: i=1; AJvYcCUetIPk5v9Z3q2PaMeZiznuUynhKkLHl/rxgLDeyLHbdKyW31ZNrY877ThTK+jzrFXUvirOk8CxbJoXXeaJ0DfcaMNXeSpSxsojT8ZJ
+X-Gm-Message-State: AOJu0YwkGU9hzNegedNXemKbzmdTKiKoCvxOqdYkV4le9PQ2X0Y9JyWY
+	lPp2fQMlRUpH3LhvT5p+Mv4skWH0e89R66xJBBJBMNZGX10HNsyoS5zg1BLhnvZ+kTqiNLwYCxU
+	KEnI=
+X-Google-Smtp-Source: AGHT+IHtuB4vKKiiL28FswxIZMiWkQFPyJNHVbIyD55OOgZqWimzmngAS1rELc4hJG+TxFn6BdcgKg==
+X-Received: by 2002:ac2:424b:0:b0:52c:ab2c:19c4 with SMTP id 2adb3069b0e04-52cdf7e7a41mr5756139e87.10.1719346579671;
+        Tue, 25 Jun 2024 13:16:19 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cec15c9f2sm360722e87.276.2024.06.25.13.16.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 13:12:30 -0700 (PDT)
-Date: Tue, 25 Jun 2024 13:12:17 -0700 (PDT)
-From: Hugh Dickins <hughd@google.com>
-To: David Hildenbrand <david@redhat.com>
-cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-    Barry Song <21cnbao@gmail.com>, baolin.wang@linux.alibaba.com, 
-    chrisl@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-    mhocko@suse.com, ryan.roberts@arm.com, shy828301@gmail.com, 
-    surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org, 
-    ying.huang@intel.com, yosryahmed@google.com, yuanshuai@oppo.com, 
-    yuzhao@google.com
-Subject: Re: [PATCH mm-unstable] mm: folio_add_new_anon_rmap() careful
- __folio_set_swapbacked()
-In-Reply-To: <9e8d71f4-69dc-4bf4-a40d-e1b89586f5c9@redhat.com>
-Message-ID: <ada1b9f4-82de-f25c-f8ed-45e589644bd5@google.com>
-References: <f3599b1d-8323-0dc5-e9e0-fdb3cfc3dd5a@google.com> <0a41d5fc-d1a1-4b1b-873e-a701b20bbcb3@redhat.com> <f7c74073-f19a-0f59-3801-a20d319bc0ea@google.com> <9e8d71f4-69dc-4bf4-a40d-e1b89586f5c9@redhat.com>
+        Tue, 25 Jun 2024 13:16:18 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 25 Jun 2024 23:16:18 +0300
+Subject: [PATCH] arm64: dts: qcom: pm8916: add temp-alarm thermal zone
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240625-pm8916-tz-v1-1-a4c1f61e92dd@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAJEle2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMyNT3YJcC0tDM92SKt1ki5QUMwMzSxODlGQloPqCotS0zAqwWdGxtbU
+ A7MqbglsAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1448;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=nWWwFYPj5hSxETQn+GjyApQgH8kPlMG7B9D7jQerNto=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmeyWSrj/UKGLjilr5dmMSckl505jL1GzwPO4+C
+ E0kWatUjTKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnslkgAKCRCLPIo+Aiko
+ 1V8WB/sEvBuY7vTlEn6ie74fqpW1GrxDKUq3hybzlXwtR1DbCwD/zT5ZPWZ4Hx6RkxYUFD5gqVc
+ vAmTELrvIEjU8bViyXFzMp/Zxv0f99mlGyfxo6/ropn6O2rLlgThRyIrK3AYtyJUp3Sf9CSOVYL
+ aQTWE2IpzCp7aUDATZcxoalMQpi6//XshzLmJh3xOatORAabRSFy4fGr1yW9FcWVnInjB7TjQDb
+ 9nrTpKtmq+vWTrSwMRNV0+4BrkuTHG/Wm8jdpHrHLoA9KR3oXpKPUJe1cWnZwZv4MpbmT/Ydngv
+ h43OBN7A2sBoIteS5eYqiCsz+prvr+f/lmSGCMIUG+veLdeM
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-On Tue, 25 Jun 2024, David Hildenbrand wrote:
-> On 25.06.24 21:37, Hugh Dickins wrote:
-> > On Tue, 25 Jun 2024, David Hildenbrand wrote:
-> >>
-> >> I'll point out that it's sufficient for a PFN walker to do a tryget +
-> >> trylock
-> >> to cause trouble.
-> > 
-> > That surprises me.  I thought a racer's tryget was irrelevant (touching
-> > a different field) and its trylock not a problem, since "we" hold the
-> > folio lock throughout.  If my mental model is too naive there, please
-> > explain in more detail: we all need to understand this better.
-> 
-> Sorry, I was imprecise.
-> 
-> tryget+trylock should indeed not be a problem, tryget+lock would be, because
-> IIRC folio_wait_bit_common()->folio_set_waiters() would be messing with folio
-> flags.
+Define the themal zones using the temperature values in stage1 for this
+platform so that the spmi-temp-alarm driver becomes active.
 
-Interesting observation, thanks.  I had imagined that a folio locker was
-safe, but think you're right that (before the fix) this could have erased
-its PG_waiters.  Typically, I guess something else would come along sooner
-or later to lock the folio, and that succeed in waking up the earlier one:
-so probably not an issue that would be detected in testing, but not good.
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/pm8916.dtsi | 31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
 
-Hugh
+diff --git a/arch/arm64/boot/dts/qcom/pm8916.dtsi b/arch/arm64/boot/dts/qcom/pm8916.dtsi
+index 4b2e8fb47d2d..2def48f2d101 100644
+--- a/arch/arm64/boot/dts/qcom/pm8916.dtsi
++++ b/arch/arm64/boot/dts/qcom/pm8916.dtsi
+@@ -4,8 +4,37 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/spmi/spmi.h>
+ 
+-&spmi_bus {
++/ {
++	thermal-zones {
++		pm8150-thermal {
++			polling-delay-passive = <100>;
++
++			thermal-sensors = <&pm8916_temp>;
++
++			trips {
++				trip0 {
++					temperature = <105000>;
++					hysteresis = <0>;
++					type = "passive";
++				};
++
++				trip1 {
++					temperature = <125000>;
++					hysteresis = <0>;
++					type = "hot";
++				};
++
++				trip2 {
++					temperature = <145000>;
++					hysteresis = <0>;
++					type = "critical";
++				};
++			};
++		};
++	};
++};
+ 
++&spmi_bus {
+ 	pm8916_0: pmic@0 {
+ 		compatible = "qcom,pm8916", "qcom,spmi-pmic";
+ 		reg = <0x0 SPMI_USID>;
+
+---
+base-commit: 62c97045b8f720c2eac807a5f38e26c9ed512371
+change-id: 20240625-pm8916-tz-c8dd606940dc
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
