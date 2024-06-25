@@ -1,159 +1,164 @@
-Return-Path: <linux-kernel+bounces-228659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 242C1916504
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:11:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0C2791652B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:20:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 982211F224F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:11:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86EF3281602
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:20:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B533314A4DE;
-	Tue, 25 Jun 2024 10:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D5C14A0B8;
+	Tue, 25 Jun 2024 10:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="j/WwbyUp";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="hB6sBP7d"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="zqNYzLUW"
+Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14127149C4F;
-	Tue, 25 Jun 2024 10:11:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D679146A67;
+	Tue, 25 Jun 2024 10:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719310264; cv=none; b=NwK65jgReGMn24Oe8EAfdMqVZu+MCHrhoDKKHJiX025A9OQZY9Y+9FrCYYnFdmEhIci/rXWqSjjrAkMz3eJo9s8/jhQVHGGwgbuvRctbetHBwzzbgpCZa4inMYKazKoHvDD/uOBb55wnDh/MEoCf06aUQJlI1mXMr+pzn9U+qvw=
+	t=1719310830; cv=none; b=iK0Xx6xEbN0qpHo9vYJJ5uakhMtxeqgSQR8GJdqhtgutbkWmXA1dq/b5XyNyMNrwPNtdF43fMkH4lxrM1fUUihS4vA8J2KhfRuzP5qWtU2QSBzL/yq49RSRXxiebgSdY7LqHd7fjAwJJH71cI0rDXBpAjo7jV+GcCPNuNl+XRwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719310264; c=relaxed/simple;
-	bh=O5k6HiCgGzdumVyAm2y+a4Xb1B54fWyGUfCrc2+Wtpg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OhgqvW32DJ69/znFp8SZero9TTzKNXANbtyO5WrVgSPHN0XWS84wbf1LWJMipJBw6/iKRpW1auak2CgKaLWUNZUa9VghuJiz4TyN3Kz8rL+0xGpBLY8UCNra54uodFSxl/wrZkVtbB147lVvFBiIQ8L01VEqqa6HFZYmX/68/2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=j/WwbyUp; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=hB6sBP7d; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 08B5421A65;
-	Tue, 25 Jun 2024 10:10:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1719310260; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nrj3iYY7vg8oGyDA8rTIg8nVgzOuP92Uvoq0xxIIzzk=;
-	b=j/WwbyUpZcc6pbf65F3+sa3Ny2gNkzXTdQnjASCE9nlGTfrnFwZTOZ1MgOSpxb78hlXZj8
-	EhIMGcsqufURQ8DuC+CO/4GpBmZ9fXK0vxurfQTIINqbqvzf1AReNC7mc6nr1bevIhIvz1
-	cEbeeiga9QADjEInTlut3pyL/JGdlsU=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1719310259; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Nrj3iYY7vg8oGyDA8rTIg8nVgzOuP92Uvoq0xxIIzzk=;
-	b=hB6sBP7dbna49SyFSh72Z2R4YXZJ7jCPGFZGz0r3bnBdn3PH0KeVKW9/zb2qaWjcc4G8Tb
-	Vhx+6yypcuSRGiDc1rDxOqFLGdk6BFA9oWu9eJXGa9t72R6RboclBHaCf/enopCFhZ4vvV
-	Kh6yDqYefzEV8bEKWCFcp93rWffkhHc=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EDD5013A9A;
-	Tue, 25 Jun 2024 10:10:58 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id PBWdObKXemalVgAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Tue, 25 Jun 2024 10:10:58 +0000
-Date: Tue, 25 Jun 2024 12:10:49 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: chenridong <chenridong@huawei.com>
-Cc: Waiman Long <longman@redhat.com>, tj@kernel.org, 
-	lizefan.x@bytedance.com, hannes@cmpxchg.org, bpf@vger.kernel.org, cgroups@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] cgroup: fix uaf when proc_cpuset_show
-Message-ID: <gke4hn67e2js2wcia4gopr6u26uy5epwpu7r6sepjwvp5eetql@nuwvwzg2k4dy>
-References: <20240622113814.120907-1-chenridong@huawei.com>
- <19648b9c-6df7-45cd-a5ae-624a3e4d860f@redhat.com>
- <52f72d1d-602e-4dca-85a3-adade925b056@huawei.com>
- <71a9cc3a-1b58-4051-984b-dd4f18dabf84@redhat.com>
- <8f83ecb3-4afa-4e0b-be37-35b168eb3c7c@huawei.com>
- <ee30843f-2579-4dcf-9688-6541fd892678@redhat.com>
- <3322ce46-78a1-45c5-ad07-a982dec21c8e@huawei.com>
+	s=arc-20240116; t=1719310830; c=relaxed/simple;
+	bh=mrkCbUN4T0q6BoY0m/gooEG5R4amkIb+uH8GJY8h6fQ=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=SpXBliQ/569xYTkUqs2RNrCVb/xbffFlqCZrx/FHcXQqYMCAWw9LWpGQy/KHXzwR+rUMnJgE35z5cdLRS+XwJg/KjvSAcmTz9rq9DeHRO9r8ufuCZcUFwhoA8zwW9ji8cuztMKjndGCzXxjQCwE1VKcEqVmirgoHQn1G5ucpV/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=zqNYzLUW; arc=none smtp.client-ip=203.205.221.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1719310519; bh=NZOSPeiPAVveuWbrnAInxDlcsoHJ6JgaucOMtYnKhwA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=zqNYzLUWj88NKtIKPLkX0Nn3dCD1RObpt623bS4HnUgR+lLG5anw3fBbcglABS6RB
+	 9g/a4rBlf1vLpg/D/Z+t5G3uib2jIe7po55uHgfOoKqt0Xv+feLvPXvuA9+GWinG3Q
+	 zGzy3G4KhLGUXK1f1JO6+aT4/qNYm7Rxr/Lo7jZQ=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
+	id 30EA185C; Tue, 25 Jun 2024 18:12:14 +0800
+X-QQ-mid: xmsmtpt1719310334tv296kjyp
+Message-ID: <tencent_CFD37DA36B4965E3A7C45E7770776C86DB05@qq.com>
+X-QQ-XMAILINFO: MtZ4zLDUQmWf8BIMzYOceNsyYxmg35httaPj3YYnwhHxtvnQssNEIax9AzBl3i
+	 43lZ3m5xTxQQ20u2+uvs+jEHKbqQrtTGvEob8aycLQrF+xKJPSq1nCEkNzD9rqxIMujpEBm5/Zb3
+	 SWi0kiBnC5mTGjrp+Q3GvMCX7eZ/IhmO1kOk/P8zu9bgjcnTFDczGiEzQjht2pdOPjqralUE+N0B
+	 dZ4ho/u3iylVHlMxoF6Uvq8QU/DxnPBnVOeJ6onPpzkW1TJj3J3IE0/0tPOuWxvgNiztavUH2FiS
+	 fMGeIYVz7upsm86hgDDNapcQn3RR85ipvBUTsDvd+JyyFQzj9qP8MJkMBwjJoRwDIEpV1s7oldiL
+	 c4TEeuGjrm/8BUrk7mm2zkR4hYpPPibvAgP0aW02NnNjxgzoeQwHOUZNdBcPQiZ/knxlxacljlcj
+	 eVwUx4NAjgj86d6r74lEQLECHkCFYMzHFr+jQ1SPmc4KdYHa+SMHAyCmU7hUOTFHxwfRdEgE2JVq
+	 P31DCe+BePQUW6yu4l9jpl6DyRwg5P2iMANnSjok34w84l/RaLp/Ee4yYpc3QCVgjmfkEfuIR5M5
+	 V5BEofSxgDplfEWQuQ9nRIHcjoDt/0gOliRBE0842Ki9lMfIpQrFg9Jvr4gkPPyXvpDHNFKw4XtP
+	 NNX9lyL3FMHG7079UCdFGA44DlnBIzWuXKjKnyh4jMAJDvYXOSUMSpWmleo27WmrUH0zuY5RM/aO
+	 BDcR0K8SIypwhhd5ay63y9ROqqirTongh2qPjrd8Tmimwj4OoPvHT1m7ozSxb2YAdctSw/TDSeOZ
+	 p+rhIAQvCJExBW0OdRdJHoaTAVJtKU531rkNrxS/u57hZpPgI0zqXWYPnGBJM1JaDXt7xFKeaHyb
+	 1jGZUho3+1VtMtfvhqeSHvfaqaAEduT/UGIqYTly1rVyLFZK2Mryqlin76NylQVpg7GzNbRaVovQ
+	 22LGyacIq4hDQ4fslQdw==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+From: Edward Adam Davis <eadavis@qq.com>
+To: luiz.dentz@gmail.com
+Cc: eadavis@qq.com,
+	johan.hedberg@gmail.com,
+	linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	marcel@holtmann.org,
+	syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V3] Bluetooth/l2cap: sync sock recv cb and release
+Date: Tue, 25 Jun 2024 18:12:15 +0800
+X-OQ-MSGID: <20240625101214.598651-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CABBYNZL5xiNDzDa3JJiwx2D-qpmA8Y3RBVWLetZ0fd4jURpN7g@mail.gmail.com>
+References: <CABBYNZL5xiNDzDa3JJiwx2D-qpmA8Y3RBVWLetZ0fd4jURpN7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3fin4heviwo2qame"
-Content-Disposition: inline
-In-Reply-To: <3322ce46-78a1-45c5-ad07-a982dec21c8e@huawei.com>
-X-Spam-Score: -5.90
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-5.90 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SIGNED_PGP(-2.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	ARC_NA(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,huawei.com:email]
+Content-Transfer-Encoding: 8bit
 
+The problem occurs between the system call to close the sock and hci_rx_work,
+where the former releases the sock and the latter accesses it without lock protection.
 
---3fin4heviwo2qame
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+           CPU0                       CPU1
+           ----                       ----
+           sock_close                 hci_rx_work
+	   l2cap_sock_release         hci_acldata_packet
+	   l2cap_sock_kill            l2cap_recv_frame
+	   sk_free                    l2cap_conless_channel
+	                              l2cap_sock_recv_cb
 
-Hello.
+If hci_rx_work processes the data that needs to be received before the sock is
+closed, then everything is normal; Otherwise, the work thread may access the
+released sock when receiving data.
 
-On Tue, Jun 25, 2024 at 11:12:20AM GMT, chenridong <chenridong@huawei.com> wrote:
-> I am considering whether the cgroup framework has a method to fix this
-> issue, as other subsystems may also have the same underlying problem.
-> Since the root css will not be released, but the css->cgrp will be
-> released.
+Add a chan lock in the l2cap_conless_channel of the sock to achieve sync
+between the sock release and recv cb.
 
-<del>First part is already done in
-	d23b5c5777158 ("cgroup: Make operations on the cgroup root_list RCU safe")
-second part is that</del>
-you need to take RCU read lock and check for NULL, similar to
-	9067d90006df0 ("cgroup: Eliminate the need for cgroup_mutex in proc_cgroup_show()")
+Sock is dead, so set chan data to NULL, avoid others use invalid sock pointer.
 
-Does that make sense to you?
+Reported-by: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+ net/bluetooth/l2cap_core.c |  3 +++
+ net/bluetooth/l2cap_sock.c | 13 +++++++++++--
+ 2 files changed, 14 insertions(+), 2 deletions(-)
 
-A Fixes: tag would be nice, it seems at least
-	a79a908fd2b08 ("cgroup: introduce cgroup namespaces")
-played some role. (Here the RCU lock is not for cgroup_roots list but to
-preserve the root cgrp itself css_free_rwork_fn/cgroup_destroy_root.
+diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
+index aed025734d04..35a9534eb62d 100644
+--- a/net/bluetooth/l2cap_core.c
++++ b/net/bluetooth/l2cap_core.c
+@@ -6771,10 +6771,13 @@ static void l2cap_conless_channel(struct l2cap_conn *conn, __le16 psm,
+ 	bacpy(&bt_cb(skb)->l2cap.bdaddr, &hcon->dst);
+ 	bt_cb(skb)->l2cap.psm = psm;
+ 
++	l2cap_chan_lock(chan);
+ 	if (!chan->ops->recv(chan, skb)) {
++		l2cap_chan_unlock(chan);
+ 		l2cap_chan_put(chan);
+ 		return;
+ 	}
++	l2cap_chan_unlock(chan);
+ 
+ drop:
+ 	l2cap_chan_put(chan);
+diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
+index 6db60946c627..25091fb992a7 100644
+--- a/net/bluetooth/l2cap_sock.c
++++ b/net/bluetooth/l2cap_sock.c
+@@ -1239,6 +1239,10 @@ static void l2cap_sock_kill(struct sock *sk)
+ 
+ 	BT_DBG("sk %p state %s", sk, state_to_string(sk->sk_state));
+ 
++	/* Sock is dead, so set chan data to NULL, avoid other task use invalid
++	 * sock pointer.
++	 */
++	l2cap_pi(sk)->chan->data = NULL;
+ 	/* Kill poor orphan */
+ 
+ 	l2cap_chan_put(l2cap_pi(sk)->chan);
+@@ -1481,11 +1485,16 @@ static struct l2cap_chan *l2cap_sock_new_connection_cb(struct l2cap_chan *chan)
+ 
+ static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff *skb)
+ {
+-	struct sock *sk = chan->data;
+-	struct l2cap_pinfo *pi = l2cap_pi(sk);
++	struct sock *sk;
++	struct l2cap_pinfo *pi;
+ 	int err;
+ 
++	if (!chan->data)
++		return -ENXIO;
++
++	sk = chan->data;
+ 	lock_sock(sk);
++	pi = l2cap_pi(sk);
+ 
+ 	if (chan->mode == L2CAP_MODE_ERTM && !list_empty(&pi->rx_busy)) {
+ 		err = -ENOMEM;
+-- 
+2.43.0
 
-HTH,
-Michal
-
---3fin4heviwo2qame
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZnqXpwAKCRAt3Wney77B
-SRfRAQCp3qpPjMr/V93EnQBn55wrHhON4TlrezYJc+buOblYxAEAuJyDRQUA9Jxr
-sAuWz53C0zuFeXpcKwPfaEbF5fhTrAU=
-=O2Ze
------END PGP SIGNATURE-----
-
---3fin4heviwo2qame--
 
