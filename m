@@ -1,115 +1,338 @@
-Return-Path: <linux-kernel+bounces-229728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E66A91733F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:20:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 981D5917343
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:20:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79A741C2522E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:20:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E4F32892CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:20:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FA9183088;
-	Tue, 25 Jun 2024 21:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D7A17E462;
+	Tue, 25 Jun 2024 21:19:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t0hfLTOH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HUJW3oKe"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1F2181D16;
-	Tue, 25 Jun 2024 21:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C3312EBEA;
+	Tue, 25 Jun 2024 21:19:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719350306; cv=none; b=fJ09/dSwS7xxd8pnb6JPRwl9rcjvaUYBKmRqpN4a4vDFPgeyopCRk2uzAuApEZEEzArpYsWM5RkW0XxnhTV4DGLzV2+tlJLd+hXTFLauQapXsaVMQJI2iFZLs0IcHg5wyuPC19r2aUDIfDJgILuBBPRMOBxHdFjTB3tRUo+a63o=
+	t=1719350394; cv=none; b=BDxwym9Enaj+Vwhb3qJZ253dG/6HnOUPxcPoli4BSiqH16l6WBhH/9MLadm+W4rpCYLFlS7ajQqbC8DkVKeiSkeyQfOkKHtvW4Bki8rhyUCkVFu79l+CZwqf1c5qk0wJEFA6kG+1jE7FGsJhLBoC3fra/HxqE3mCysjKXkGDsYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719350306; c=relaxed/simple;
-	bh=KPOiqngDeZl30NH1XxIF5gTrFiubBnjvbTlQRWh4xYg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZBsSoabBQiGV8VYX737BpVkvQhInv1DycI9uCSOvEa6nR43yR5ecTy9yzkv70++e+qOcGLdmCmgy0+aBr0mGRoOfwbKu2a4LqusvbnlySO8fFNErM6Yg2gPIIRgOlHz8BdxOw5C/3KyX7KrQ2qcAsMpa5n02STkG693tk4fECkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t0hfLTOH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91760C32781;
-	Tue, 25 Jun 2024 21:18:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719350305;
-	bh=KPOiqngDeZl30NH1XxIF5gTrFiubBnjvbTlQRWh4xYg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=t0hfLTOHb4/Mwqe3tFIXULykvTPoVb2REU4j7462zAQty0DovUsgeBXIqkLjqTLCw
-	 HAGGft70l/PDuzHefiOHehrFlRKSrR2du/bLm5kK/kbDVcfh5m4xuWI0nWWxN56Lse
-	 xoUzU8Gzwq8KVXsiWU7/X+KQsUpd/zU0nzfWUbMkzVLwAg5YNaPWJvF4vmbMa+Jo//
-	 ejLlCdHGRNNyLNU47GweDERCIXIrzxqnH6i4N7xmQwTBfwy2yhYXdAO9k3GDtb+dyH
-	 MVVxfnSkqkn+xi+mkIsrRuWCPS7HdZdlkTRY04vfu/n9mTzh99hGbiMKV9MjDu+sWU
-	 wHnnw0LQ19EWA==
-Message-ID: <05c7c08d-f512-4727-ae3c-aba6e8f2973f@kernel.org>
-Date: Wed, 26 Jun 2024 06:18:18 +0900
+	s=arc-20240116; t=1719350394; c=relaxed/simple;
+	bh=+XuujLBS0rgkeBGp3M5ppyNf4ixXXSxMbm51M/ZFzVw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nEKMuwvBH/DVJSE0/jcpRFYomfRe7wqoZkEHTVPLqcGZJntKQojrf6outfJbNFMPk8rFfNX7JKilO77/iT5zJjWntwfqsnwGxQ5LJYKbks5TdtGiqzzA0b0NychU4X7yjAAmn6R0gwj9gHSQyaFjphkwRck2g++c/2NYxEXq1Vs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HUJW3oKe; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3d5288e6513so3123808b6e.0;
+        Tue, 25 Jun 2024 14:19:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719350392; x=1719955192; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8pE+mGdO/b9jNU7f8ar060kbPsajGXfM93JqBNGUkgg=;
+        b=HUJW3oKeBMH3of2opiqm4gZ7Ptd1siDfublP1hFAEhYgAJzbMNH7A7KMoR1hy4zDcf
+         uiolxjjb6QQCdP9Hm7Cnfo7Nj1ey2lWPKpJSJprUwjHf5JfxasnML536KlIFKjBrtR44
+         N7T99u8lPtGaSDF3Kr378X5hILf1tw6I6xuHeS11cvGrP7o+aSwvRrnCC3Z4x6oorm3S
+         WY2Ix1D4SPFOu1/jL3xxUARdrWESjn3tIs+gO3/bxWEwqpHphlNi/Ih+BfVJSzNHSX+q
+         YYye/FQ2BQA8OiruvX1Q0jr2TiUiuz0AWcxhINAMACP7/EViuB6NEb6zzo+mSvAxRXrd
+         e1fA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719350392; x=1719955192;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8pE+mGdO/b9jNU7f8ar060kbPsajGXfM93JqBNGUkgg=;
+        b=nqJsDoLPPXE8+9Us0khu75Q5d1CnxyF9B9jbiRUR3OPjdP0omzMCOowT2sJsHP8z2G
+         YAvUAnfPtMUyJk64w5GHuO7YgU4WVab49GTG8qgcVX0M1lv9ZCZdl+tpJrQwOA8jJ+hm
+         zeF+mT1vndWgPE/F80WGrwX5vmhNZ0DYnjJ8izebuKhsl8ysTNiNPjjmqKhaD0CxQOh1
+         1WY/D5twDJDEEX3DzEV77SPBkt3bZ5VSbI9XaMiHZZwHRBhSQGuQbovfpup2gm9gsv5o
+         h5g0ohvcsyqkf2M6hg44JVHgHg/hxbkBzDT61KjwHUQVKYPMhpfxaaJWTEMfY3w8R4K3
+         5E2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUE5cQc5GYnI3kNZ5eaf0AyVE7KZH33K/8B0abuUCQ2IZ5vCWrCLu6HP9cHo9Qlsrfz86Uo+EJNeo1sRLWeYvATj/Osiv254qyK9nu35let6fS0KtQrN8yin3vGcBQR6qOctWJDVkx6uczQCQ==
+X-Gm-Message-State: AOJu0YxChsQFZuvtIngqTWdbb9o5nBPMFp9vDRRTVqAefm8jX1olmwBj
+	aGP1Tc/qdIoH0seelC1/cM11zNZUg5u3Kwo2H73sGMszHaiAvQ820hd8O7OE3BoWAUBPMEifWLt
+	wVHxC+4vAT/Crn3BpmM6mP328qiE=
+X-Google-Smtp-Source: AGHT+IFfpS/mJqzmwoGoJ1zaWvoriUTloqnkED1TLqGgvkdc3QDnupkHUmMDbY7hT8896/uRk2P5PekLygV2OxySsj8=
+X-Received: by 2002:a05:6808:1491:b0:3d1:be9f:c9a3 with SMTP id
+ 5614622812f47-3d54587950amr10755257b6e.0.1719350391814; Tue, 25 Jun 2024
+ 14:19:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v20 02/12] Add infrastructure for copy offload in block
- and request layer.
-To: Bart Van Assche <bvanassche@acm.org>,
- Nitesh Shetty <nj.shetty@samsung.com>, Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>,
- Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>,
- Mikulas Patocka <mpatocka@redhat.com>, Keith Busch <kbusch@kernel.org>,
- Sagi Grimberg <sagi@grimberg.me>, Chaitanya Kulkarni <kch@nvidia.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
- martin.petersen@oracle.com, david@fromorbit.com, hare@suse.de,
- damien.lemoal@opensource.wdc.com, anuj20.g@samsung.com, joshi.k@samsung.com,
- nitheshshetty@gmail.com, gost.dev@samsung.com, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-nvme@lists.infradead.org,
- linux-fsdevel@vger.kernel.org
-References: <eda6c198-3a29-4da4-94db-305cfe28d3d6@acm.org>
- <9f1ec1c1-e1b8-48ac-b7ff-8efb806a1bc8@kernel.org>
- <a866d5b5-5b01-44a2-9ccb-63bf30aa8a51@acm.org>
- <665850bd.050a0220.a5e6b.5b72SMTPIN_ADDED_BROKEN@mx.google.com>
- <abe8c209-d452-4fb5-90eb-f77b5ec1a2dc@acm.org> <20240601055931.GB5772@lst.de>
- <d7ae00c8-c038-4bed-937e-222251bc627a@acm.org>
- <20240604044042.GA29094@lst.de>
- <4ffad358-a3e6-4a88-9a40-b7e5d05aa53c@acm.org>
- <20240605082028.GC18688@lst.de>
- <CGME20240624105121epcas5p3a5a8c73bd5ef19c02e922e5829a4dff0@epcas5p3.samsung.com>
- <6679526f.170a0220.9ffd.aefaSMTPIN_ADDED_BROKEN@mx.google.com>
- <4ea90738-afd1-486c-a9a9-f7e2775298ff@acm.org>
- <de54c406-9270-4145-ab96-5fc3dd51765e@kernel.org>
- <b5d93f2c-29fc-4ee4-9936-0f134abc8063@acm.org>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <b5d93f2c-29fc-4ee4-9936-0f134abc8063@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240608-adreno-v1-1-2e470480eee7@gmail.com> <CAF6AEGsd6jfDqV-EOWr+oMjPpVr2S+71VYmp1JoY8xU51eeEEw@mail.gmail.com>
+ <20240625175926.4xyzwjyx7oxcwnzx@hu-akhilpo-hyd.qualcomm.com>
+ <CAF6AEGt5=bcni0K1ysot3-hVj9gWECJ5qP=M-sEDkRrAmEHFGg@mail.gmail.com> <20240625202308.prg72urp4mvtxzax@hu-akhilpo-hyd.qualcomm.com>
+In-Reply-To: <20240625202308.prg72urp4mvtxzax@hu-akhilpo-hyd.qualcomm.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 25 Jun 2024 14:19:38 -0700
+Message-ID: <CAF6AEGs4i4mM9dpD3weG8GunHHfM0JESkzgX1Wd4PBDYatbQqg@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/a6xx: request memory region
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Kiarash Hajian <kiarash8112hajian@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/26/24 03:18, Bart Van Assche wrote:
-> On 6/24/24 2:55 PM, Damien Le Moal wrote:
->> I am still a little confused as to why we need 2 BIOs, one for src and one for
->> dst... Is it because of the overly complex scsi extended copy support ?
->>
->> Given that the main use case is copy offload for data within the same device,
->> using a single BIO which somehow can carry a list of LBA sources and a single
->> destination LBA would be far simpler and perfectly matching nvme simple copy and
->> ATA write gathered. And I think that this would also match the simplest case for
->> scsi extended copy as well.
-> 
-> Hi Damien,
-> 
-> What are the implications for the device mapper code if the copy source
-> and destination LBAs are encoded in the bio payload instead of in
-> bio->bi_sector?
+On Tue, Jun 25, 2024 at 1:23=E2=80=AFPM Akhil P Oommen <quic_akhilpo@quicin=
+c.com> wrote:
+>
+> On Tue, Jun 25, 2024 at 11:03:42AM -0700, Rob Clark wrote: > On Tue, Jun =
+25, 2024 at 10:59=E2=80=AFAM Akhil P Oommen <quic_akhilpo@quicinc.com> wrot=
+e:
+> > >
+> > > On Fri, Jun 21, 2024 at 02:09:58PM -0700, Rob Clark wrote:
+> > > > On Sat, Jun 8, 2024 at 8:44=E2=80=AFAM Kiarash Hajian
+> > > > <kiarash8112hajian@gmail.com> wrote:
+> > > > >
+> > > > > The driver's memory regions are currently just ioremap()ed, but n=
+ot
+> > > > > reserved through a request. That's not a bug, but having the requ=
+est is
+> > > > > a little more robust.
+> > > > >
+> > > > > Implement the region-request through the corresponding managed
+> > > > > devres-function.
+> > > > >
+> > > > > Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
+> > > > > ---
+> > > > > Changes in v6:
+> > > > >     -Fix compile error
+> > > > >     -Link to v5: https://lore.kernel.org/all/20240607-memory-v1-1=
+-8664f52fc2a1@gmail.com
+> > > > >
+> > > > > Changes in v5:
+> > > > >     - Fix error hanlding problems.
+> > > > >     - Link to v4: https://lore.kernel.org/r/20240512-msm-adreno-m=
+emory-region-v4-1-3881a64088e6@gmail.com
+> > > > >
+> > > > > Changes in v4:
+> > > > >     - Combine v3 commits into a singel commit
+> > > > >     - Link to v3: https://lore.kernel.org/r/20240512-msm-adreno-m=
+emory-region-v3-0-0a728ad45010@gmail.com
+> > > > >
+> > > > > Changes in v3:
+> > > > >     - Remove redundant devm_iounmap calls, relying on devres for =
+automatic resource cleanup.
+> > > > >
+> > > > > Changes in v2:
+> > > > >     - update the subject prefix to "drm/msm/a6xx:", to match the =
+majority of other changes to this file.
+> > > > > ---
+> > > > >  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 33 +++++++++++----------=
+------------
+> > > > >  1 file changed, 11 insertions(+), 22 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/=
+drm/msm/adreno/a6xx_gmu.c
+> > > > > index 8bea8ef26f77..d26cc6254ef9 100644
+> > > > > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > > > > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > > > > @@ -525,7 +525,7 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gm=
+u *gmu)
+> > > > >         bool pdc_in_aop =3D false;
+> > > > >
+> > > > >         if (IS_ERR(pdcptr))
+> > > > > -               goto err;
+> > > > > +               return;
+> > > > >
+> > > > >         if (adreno_is_a650(adreno_gpu) ||
+> > > > >             adreno_is_a660_family(adreno_gpu) ||
+> > > > > @@ -541,7 +541,7 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gm=
+u *gmu)
+> > > > >         if (!pdc_in_aop) {
+> > > > >                 seqptr =3D a6xx_gmu_get_mmio(pdev, "gmu_pdc_seq")=
+;
+> > > > >                 if (IS_ERR(seqptr))
+> > > > > -                       goto err;
+> > > > > +                       return;
+> > > > >         }
+> > > > >
+> > > > >         /* Disable SDE clock gating */
+> > > > > @@ -633,12 +633,6 @@ static void a6xx_gmu_rpmh_init(struct a6xx_g=
+mu *gmu)
+> > > > >         wmb();
+> > > > >
+> > > > >         a6xx_rpmh_stop(gmu);
+> > > > > -
+> > > > > -err:
+> > > > > -       if (!IS_ERR_OR_NULL(pdcptr))
+> > > > > -               iounmap(pdcptr);
+> > > > > -       if (!IS_ERR_OR_NULL(seqptr))
+> > > > > -               iounmap(seqptr);
+> > > > >  }
+> > > > >
+> > > > >  /*
+> > > > > @@ -1503,7 +1497,7 @@ static void __iomem *a6xx_gmu_get_mmio(stru=
+ct platform_device *pdev,
+> > > > >                 return ERR_PTR(-EINVAL);
+> > > > >         }
+> > > > >
+> > > > > -       ret =3D ioremap(res->start, resource_size(res));
+> > > > > +       ret =3D devm_ioremap_resource(&pdev->dev, res);
+> > > >
+> > > > So, this doesn't actually work, failing in __request_region_locked(=
+),
+> > > > because the gmu region partially overlaps with the gpucc region (wh=
+ich
+> > > > is busy).  I think this is intentional, since gmu is controlling th=
+e
+> > > > gpu clocks, etc.  In particular REG_A6XX_GPU_CC_GX_GDSCR is in this
+> > > > overlapping region.  Maybe Akhil knows more about GMU.
+> > >
+> > > We don't really need to map gpucc region from driver on behalf of gmu=
+.
+> > > Since we don't access any gpucc register from drm-msm driver, we can
+> > > update the range size to correct this. But due to backward compatibil=
+ity
+> > > requirement with older dt, can we still enable region locking? I pref=
+er
+> > > it if that is possible.
+> >
+> > Actually, when I reduced the region size to not overlap with gpucc,
+> > the region is smaller than REG_A6XX_GPU_CC_GX_GDSCR * 4.
+> >
+> > So I guess that register is actually part of gpucc?
+>
+> Yes. It has *GPU_CC* in its name. :P
+>
+> I just saw that we program this register on legacy a6xx targets to
+> ensure retention is really ON before collapsing gdsc. So we can't
+> avoid mapping gpucc region in legacy a6xx GPUs. That is unfortunate!
 
-DM can deal with "abnormal" BIOs on its own. There is code for that.
-See is_abnormal_io() and __process_abnormal_io(). Sure, that will need more code
-compared to a bio sector+size based simple split, but I do not think it is a big
-deal given the potential benefits of the offloading.
+I guess we could still use devm_ioremap().. idk if there is a better
+way to solve this
 
--- 
-Damien Le Moal
-Western Digital Research
+BR,
+-R
 
+> -Akhil.
+>
+> >
+> > BR,
+> > -R
+> >
+> > > FYI, kgsl accesses gpucc registers to ensure gdsc has collapsed. So
+> > > gpucc region has to be mapped by kgsl and that is reflected in the kg=
+sl
+> > > device tree.
+> > >
+> > > -Akhil
+> > >
+> > > >
+> > > > BR,
+> > > > -R
+> > > >
+> > > > >         if (!ret) {
+> > > > >                 DRM_DEV_ERROR(&pdev->dev, "Unable to map the %s r=
+egisters\n", name);
+> > > > >                 return ERR_PTR(-EINVAL);
+> > > > > @@ -1613,13 +1607,13 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu=
+ *a6xx_gpu, struct device_node *node)
+> > > > >         gmu->mmio =3D a6xx_gmu_get_mmio(pdev, "gmu");
+> > > > >         if (IS_ERR(gmu->mmio)) {
+> > > > >                 ret =3D PTR_ERR(gmu->mmio);
+> > > > > -               goto err_mmio;
+> > > > > +               goto err_cleanup;
+> > > > >         }
+> > > > >
+> > > > >         gmu->cxpd =3D dev_pm_domain_attach_by_name(gmu->dev, "cx"=
+);
+> > > > >         if (IS_ERR(gmu->cxpd)) {
+> > > > >                 ret =3D PTR_ERR(gmu->cxpd);
+> > > > > -               goto err_mmio;
+> > > > > +               goto err_cleanup;
+> > > > >         }
+> > > > >
+> > > > >         if (!device_link_add(gmu->dev, gmu->cxpd, DL_FLAG_PM_RUNT=
+IME)) {
+> > > > > @@ -1635,7 +1629,7 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *=
+a6xx_gpu, struct device_node *node)
+> > > > >         gmu->gxpd =3D dev_pm_domain_attach_by_name(gmu->dev, "gx"=
+);
+> > > > >         if (IS_ERR(gmu->gxpd)) {
+> > > > >                 ret =3D PTR_ERR(gmu->gxpd);
+> > > > > -               goto err_mmio;
+> > > > > +               goto err_cleanup;
+> > > > >         }
+> > > > >
+> > > > >         gmu->initialized =3D true;
+> > > > > @@ -1645,9 +1639,7 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *=
+a6xx_gpu, struct device_node *node)
+> > > > >  detach_cxpd:
+> > > > >         dev_pm_domain_detach(gmu->cxpd, false);
+> > > > >
+> > > > > -err_mmio:
+> > > > > -       iounmap(gmu->mmio);
+> > > > > -
+> > > > > +err_cleanup:
+> > > > >         /* Drop reference taken in of_find_device_by_node */
+> > > > >         put_device(gmu->dev);
+> > > > >
+> > > > > @@ -1762,7 +1754,7 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu=
+, struct device_node *node)
+> > > > >                 gmu->rscc =3D a6xx_gmu_get_mmio(pdev, "rscc");
+> > > > >                 if (IS_ERR(gmu->rscc)) {
+> > > > >                         ret =3D -ENODEV;
+> > > > > -                       goto err_mmio;
+> > > > > +                       goto err_cleanup;
+> > > > >                 }
+> > > > >         } else {
+> > > > >                 gmu->rscc =3D gmu->mmio + 0x23000;
+> > > > > @@ -1774,13 +1766,13 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_g=
+pu, struct device_node *node)
+> > > > >
+> > > > >         if (gmu->hfi_irq < 0 || gmu->gmu_irq < 0) {
+> > > > >                 ret =3D -ENODEV;
+> > > > > -               goto err_mmio;
+> > > > > +               goto err_cleanup;
+> > > > >         }
+> > > > >
+> > > > >         gmu->cxpd =3D dev_pm_domain_attach_by_name(gmu->dev, "cx"=
+);
+> > > > >         if (IS_ERR(gmu->cxpd)) {
+> > > > >                 ret =3D PTR_ERR(gmu->cxpd);
+> > > > > -               goto err_mmio;
+> > > > > +               goto err_cleanup;
+> > > > >         }
+> > > > >
+> > > > >         link =3D device_link_add(gmu->dev, gmu->cxpd, DL_FLAG_PM_=
+RUNTIME);
+> > > > > @@ -1824,10 +1816,7 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gp=
+u, struct device_node *node)
+> > > > >  detach_cxpd:
+> > > > >         dev_pm_domain_detach(gmu->cxpd, false);
+> > > > >
+> > > > > -err_mmio:
+> > > > > -       iounmap(gmu->mmio);
+> > > > > -       if (platform_get_resource_byname(pdev, IORESOURCE_MEM, "r=
+scc"))
+> > > > > -               iounmap(gmu->rscc);
+> > > > > +err_cleanup:
+> > > > >         free_irq(gmu->gmu_irq, gmu);
+> > > > >         free_irq(gmu->hfi_irq, gmu);
+> > > > >
+> > > > >
+> > > > > ---
+> > > > > base-commit: 1b294a1f35616977caddaddf3e9d28e576a1adbc
+> > > > > change-id: 20240608-adreno-98c412bfdc03
+> > > > >
+> > > > > Best regards,
+> > > > > --
+> > > > > Kiarash Hajian <kiarash8112hajian@gmail.com>
+> > > > >
 
