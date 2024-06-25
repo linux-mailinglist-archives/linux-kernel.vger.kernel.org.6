@@ -1,286 +1,156 @@
-Return-Path: <linux-kernel+bounces-229427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B687D916F6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:41:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E67D1916F73
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EB711F22ADC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:41:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A560B286747
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C346176AA9;
-	Tue, 25 Jun 2024 17:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D521487C4;
+	Tue, 25 Jun 2024 17:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="dE11m+b9"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RxVzR+vP"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D57FC147C74;
-	Tue, 25 Jun 2024 17:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 146251482F8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 17:41:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719337285; cv=none; b=NSJ9ck4E8cJgOxtKiUMa7rlZ7ZFk87SZo0JTN/DQ+OAYl/WXoXPpfwQ5wofN46td688IsY+RJKrEQ62kz4sRE69D3M0ITDKNCYRcOunIZc9ka+zLTdGjSLCK6FbLQJWjKQiBvheAnfTFwsTSsR7TTDT9q9e15OcQuIppaxL2IXU=
+	t=1719337295; cv=none; b=lopEe5PJMjV6YgeNUifDwfV16x7RYNM8jk1JIzYulULZfo598qQVGO1iPvtkuJ5bapUmCRyKmppKuL/U9UXORrs4kQskjG+heSsJwR0VtdzQx+pYhMdFWGmZhMGLnCq3EkQc3S8ZOPkFQ5sHRd+9LeFyLnO+pmNWQw68fMej+1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719337285; c=relaxed/simple;
-	bh=SpYw8cVTSv38pw6L8vipG+mNWuwy7NhLdes7jhapxkE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XW6zarm7OTvl0IbjktfKMbrOqfHp4W2D88J/4Xw56U+S13Ti1n/V8bbLoPxH1ZX1h2xmc/nbdf+edjVkK3clkV6go9S6RVdAoIHC37X9E3HhkeiV3KEugwb1o/MOI04UMolLdEsB1eK4BtqeGKfHJb9eigOZMqIUPIg3zqr8qm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=dE11m+b9; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719337281;
-	bh=SpYw8cVTSv38pw6L8vipG+mNWuwy7NhLdes7jhapxkE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=dE11m+b9R+OmHNCOvAAv2nVgeF4NEMdaQ6vSfJmG72Y+wcDrPdrFLYlbT09ESEhtP
-	 xE6eyg4+gcSzSFk10/ej1H/K+yowQU82DTwd1J6NHDElfi+4GoGMbmVL00aNYf/thX
-	 jOB07m0lBUx2l24vCqk/O8DKl7KvtNvj9+dLZK9wq9xTiAXi1w9Tb0b0RxVvfmuu8w
-	 YNp2w6yMFola0bikNbzZ3sVk2fIw4BZ1N9s2+4wwLAk7BcgZJi8KP48tQg+dC5GV87
-	 zCK7HSsEEjC6a+CQ2ZRwjrOm03dnrYp932k1K8mO1WnRY9cxYIg9edekhBi+cCLuOL
-	 z7TSs0Mw8vPPA==
-Received: from arisu.localnet (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: detlev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0BEEB378000A;
-	Tue, 25 Jun 2024 17:41:17 +0000 (UTC)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>
-Cc: linux-kernel@vger.kernel.org,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Reichel <sebastian.reichel@collabora.com>,
- Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>,
- Andy Yan <andy.yan@rock-chips.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Hans Verkuil <hverkuil-cisco@xs4all.nl>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Alex Bee <knaerzche@gmail.com>, linux-media@vger.kernel.org,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev
-Subject:
- Re: [PATCH v3 4/4] arm64: dts: rockchip: Add rkvdec2 Video Decoder on
- rk3588(s)
-Date: Tue, 25 Jun 2024 13:40:50 -0400
-Message-ID: <3228705.5fSG56mABF@arisu>
-Organization: Collabora
-In-Reply-To: <311770c3-d3ea-4650-ae11-7c278e043d0a@kwiboo.se>
-References:
- <20240620142532.406564-1-detlev.casanova@collabora.com>
- <20240620142532.406564-5-detlev.casanova@collabora.com>
- <311770c3-d3ea-4650-ae11-7c278e043d0a@kwiboo.se>
+	s=arc-20240116; t=1719337295; c=relaxed/simple;
+	bh=f2yi2IU5DqWZIEXUr163XMRTonIYeoABOkfrHnRrqA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rh46gOj7pVoiDBPqZBQtiirMLeSK/zjlBpLm2Ns497eI4Ev25BXguPkKI9v6VTuf3x43QayAKOZHQI5FXPNG85qMTMRMFPQnB1jau6CpL2Ntw3wdoa4mnvtqIZPhtUAff5CwRoa6u7prJmgjxvsdaCEvScg3F5lSTAJSnRuwR24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RxVzR+vP; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57d4ee2aaabso3268659a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:41:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719337292; x=1719942092; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ki9v7ssaSA6BilWg71XryVj/a0M5d7KUYpdv/4KTd0Q=;
+        b=RxVzR+vPUcHsN2I/boFKTX7y6TXIpaX8ltD8jQGxIqXaf7Rq+0t3VCqy2nNDATq4RW
+         HKvwNqJipaK+2XVA0JvIgRZs8mwAHlmxp3jxpEFfBc75+M7j6WgDMFL7NCdcy9PTslyg
+         dKWRo5W6bfjHlNzP64YObhf+KJwE10X5Wn6Bxdm2XfIlPp/xFgbuAapbN/8oLqVpsCJB
+         hL+DWkb47Dg0fBJ+CcyBRhcNkogn5lwF2/uwpamVCtErTbUOJaAGvx4E99I6gd13XKGR
+         onUZQLP+IG58PuP3qusilUknh/7hPqQebbZ76QSjtS+hHT/j4G/M1NFN0BxpK2v4jqeh
+         7vwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719337292; x=1719942092;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ki9v7ssaSA6BilWg71XryVj/a0M5d7KUYpdv/4KTd0Q=;
+        b=Q2qyqii2vCDQ4c0wRGvrPJUkQBk1bUMD228CUUXRT+5bmEoIcK5umAsNQcFkJMQSbS
+         Mw1PB+QNXHsr/lmh40qWZIEfng41cyue3dVvYTc+zBelPuz25kHKs5RBhABxkfrDnYdW
+         vVMk16cgz/p0RxhVAm5dX1yw09mkJQ16hUAF6N4ueuvMSXrRlKFrN3p98V1OGQH8g8VF
+         ZnZ5diiTxmlGaKG3AQCfrZXhS/lthRZRiGYJQowqxY8SPMmIuH3tSO8186+o9aMuDEhL
+         4SBquOZ0FdI0sRWpeBry265mVB1jku1QhEh1TetyJwz/+j0hgQBJLCYHZjS/6YEFa4Qd
+         PMUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXr/rreiWlVArSBdJ6l9l1UOgPBk0Sr5yAR2cttJSOYNmuoFF0WPHA2BdPpZyAi/IcMfiCGUAtL6QBK2lE1FVEEE5zGB2AaQ/Gs2Njt
+X-Gm-Message-State: AOJu0YwCgE3cpMjmwG3HCtO12GxleH+rp23tEvw6slUs5ye448yFMBWG
+	SrB96MLOkGB7Lc10X3biD8HlPVI/8qvaVxnAIS1/Sms6ZLo8C+kXEdYnyK3jau8=
+X-Google-Smtp-Source: AGHT+IFXHpuFLvxmcMU5LXabZFM8fwkTghiihqugi+FKQXdejdfFDChRosc3BCFa3DfzN7rIEvPrsA==
+X-Received: by 2002:a50:9e84:0:b0:57c:60f0:98bc with SMTP id 4fb4d7f45d1cf-57d4bd69fa4mr6031728a12.11.1719337292154;
+        Tue, 25 Jun 2024 10:41:32 -0700 (PDT)
+Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30413446sm6244711a12.31.2024.06.25.10.41.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 10:41:31 -0700 (PDT)
+Message-ID: <11e54c5d-a53b-40ec-b72e-db608ecfd23c@linaro.org>
+Date: Tue, 25 Jun 2024 19:41:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart5952195.MhkbZ0Pkbq";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/7] drm/msm/adreno: Implement SMEM-based speed bin
+To: Rob Clark <robdclark@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+ Neil Armstrong <neil.armstrong@linaro.org>
+References: <20240605-topic-smem_speedbin-v2-0-8989d7e3d176@linaro.org>
+ <20240605-topic-smem_speedbin-v2-3-8989d7e3d176@linaro.org>
+ <CAF6AEGvhkEWCtCKdRjhyk18+cxbn0QLkRUrMqEfgGU-c+K1YxQ@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <CAF6AEGvhkEWCtCKdRjhyk18+cxbn0QLkRUrMqEfgGU-c+K1YxQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---nextPart5952195.MhkbZ0Pkbq
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Jonas Karlman <jonas@kwiboo.se>
-Date: Tue, 25 Jun 2024 13:40:50 -0400
-Message-ID: <3228705.5fSG56mABF@arisu>
-Organization: Collabora
-In-Reply-To: <311770c3-d3ea-4650-ae11-7c278e043d0a@kwiboo.se>
-MIME-Version: 1.0
+On 25.06.2024 7:20 PM, Rob Clark wrote:
+> On Wed, Jun 5, 2024 at 1:10 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
 
-Hi Jonas,
+[...]
 
-On Thursday, June 20, 2024 11:00:49 A.M. EDT Jonas Karlman wrote:
-> Hi Detlev,
+>>  struct adreno_speedbin {
+>> -       uint16_t fuse;
+>> +       /* <= 16-bit for NVMEM fuses, 32b for SOCID values */
+>> +       uint32_t fuse;
+>> +/* As of SM8650, PCODE on production SoCs is meaningless wrt the GPU bin */
+>> +#define ADRENO_SKU_ID_FCODE            GENMASK(15, 0)
+>> +#define ADRENO_SKU_ID(fcode)   (SOCINFO_PC_UNKNOWN << 16 | fcode)
 > 
-> On 2024-06-20 16:19, Detlev Casanova wrote:
-> > Add the rkvdec2 Video Decoder to the RK3588s devicetree.
-> > 
-> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > ---
-> > 
-> >  arch/arm64/boot/dts/rockchip/rk3588s.dtsi | 48 +++++++++++++++++++++++
-> >  1 file changed, 48 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> > b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi index
-> > 6ac5ac8b48ab..9c44c99125b4 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3588s.dtsi
-> > @@ -2596,6 +2596,16 @@ system_sram2: sram@ff001000 {
-> > 
-> >  		ranges = <0x0 0x0 0xff001000 0xef000>;
-> >  		#address-cells = <1>;
-> >  		#size-cells = <1>;
-> > 
-> > +
-> > +		vdec0_sram: rkvdec-sram@0 {
-> > +			reg = <0x0 0x78000>;
-> > +			pool;
-> > +		};
-> > +
-> > +		vdec1_sram: rkvdec-sram@1 {
-> > +			reg = <0x78000 0x77000>;
-> > +			pool;
-> > +		};
-> > 
-> >  	};
-> >  	
-> >  	pinctrl: pinctrl {
-> > 
-> > @@ -2665,6 +2675,44 @@ gpio4: gpio@fec50000 {
-> > 
-> >  			#interrupt-cells = <2>;
-> >  		
-> >  		};
-> >  	
-> >  	};
-> > 
-> > +
-> > +	vdec0: video-decoder@fdc38100 {
-> 
-> This and the vdec1 node should probably be added between
-> 
->   pmu: power-management@fd8d8000
-> 
-> and
-> 
->   av1d: video-codec@fdc70000
-> 
-> to follow reg order.
-> 
-> Also I am wondering if the nodes should be named
-> 
->   video-codec@fdc38000
-> 
-> and
-> 
->   video-codec@fdc40000
-> 
-> to match "1.1 Address Mapping" in TRM and the actual base address for
-> the VDPU381 IP and video-codec is used for other codec nodes.
-> 
-> > +		compatible = "rockchip,rk3588-vdec";
-> > +		reg = <0x0 0xfdc38100 0x0 0x500>;
-> 
-> For existing rkvdec1 devices the cache regs is also included in the
-> range, should cache regs also be included for rkvdec2?, e.g.:
-> 
->   reg = <0x0 0xfdc38100 0x0 0x600>;
-> 
-> And maybe it also should include the link list regs, e.g.:
-> 
->   reg = <0x0 0xfdc38000 0x0 0x700>;
-> 
-> or possible:
-> 
->   reg = <0x0 0xfdc38000 0x0 0x100>,
->         <0x0 0xfdc38100 0x0 0x500>,
->         <0x0 0xfdc38600 0x0 0x100>;
-> 
-> Something like that may be a better description of the hw.
+> So, as I understand this, we are actually only using the feature-code,
+> which is the low 16b.  So in reality the "fuse" is still only 16b?
 
-Would it make sense to also add reg-names then ?
-reg-names = "link", "function", "cache";
+Right, a leftover from when the pcode was used too.. None of them should
+exceed 16b.
 
-Detlev.
-
-> > +		interrupts = <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +		clocks = <&cru ACLK_RKVDEC0>, <&cru HCLK_RKVDEC0>, 
-<&cru
-> > CLK_RKVDEC0_CA>, +			 <&cru CLK_RKVDEC0_CORE>, <&cru
-> > CLK_RKVDEC0_HEVC_CA>;
-> > +		clock-names = "axi", "ahb", "cabac", "core", 
-"hevc_cabac";
-> > +		assigned-clocks = <&cru ACLK_RKVDEC0>, <&cru 
-CLK_RKVDEC0_CORE>,
-> > +				  <&cru CLK_RKVDEC0_CA>, <&cru 
-CLK_RKVDEC0_HEVC_CA>;
-> > +		assigned-clock-rates = <800000000>, <600000000>,
-> > +				       <600000000>, <1000000000>;
-> > +		resets = <&cru SRST_A_RKVDEC0>, <&cru SRST_H_RKVDEC0>, 
-<&cru
-> > SRST_RKVDEC0_CA>, +			 <&cru SRST_RKVDEC0_CORE>, <&cru
-> > SRST_RKVDEC0_HEVC_CA>;
-> > +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
-> > +			      "rst_core", "rst_hevc_cabac";
-> 
-> Do we need to include the rst prefix in the reset name?, does not look
-> like other DT/bindings normally include rst in their name.
-> 
-> > +		power-domains = <&power RK3588_PD_RKVDEC0>;
-> > +		sram = <&vdec0_sram>;
-> > +	};
-> > +
-> > +	vdec1: video-decoder@fdc40100 {
-> 
-> Same as above.
-> 
-> > +		compatible = "rockchip,rk3588-vdec";
-> > +		reg = <0x0 0xfdc40100 0x0 0x500>;
-> 
-> Same as above.
-> 
-> Regards,
-> Jonas
-> 
-> > +		interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH 0>;
-> > +		clocks = <&cru ACLK_RKVDEC1>, <&cru HCLK_RKVDEC1>, 
-<&cru
-> > CLK_RKVDEC1_CA>, +			 <&cru CLK_RKVDEC1_CORE>, <&cru
-> > CLK_RKVDEC1_HEVC_CA>;
-> > +		clock-names = "axi", "ahb", "cabac", "core", 
-"hevc_cabac";
-> > +		assigned-clocks = <&cru ACLK_RKVDEC1>, <&cru 
-CLK_RKVDEC1_CORE>,
-> > +				  <&cru CLK_RKVDEC1_CA>, <&cru 
-CLK_RKVDEC1_HEVC_CA>;
-> > +		assigned-clock-rates = <800000000>, <600000000>,
-> > +				       <600000000>, <1000000000>;
-> > +		resets = <&cru SRST_A_RKVDEC1>, <&cru SRST_H_RKVDEC1>, 
-<&cru
-> > SRST_RKVDEC1_CA>, +			 <&cru SRST_RKVDEC1_CORE>, <&cru
-> > SRST_RKVDEC1_HEVC_CA>;
-> > +		reset-names = "rst_axi", "rst_ahb", "rst_cabac",
-> > +			      "rst_core", "rst_hevc_cabac";
-> > +		power-domains = <&power RK3588_PD_RKVDEC1>;
-> > +		sram = <&vdec1_sram>;
-> > +	};
-> > 
-> >  };
-> >  
-> >  #include "rk3588s-pinctrl.dtsi"
-
-
---nextPart5952195.MhkbZ0Pkbq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEEonF9IvGrXNkDg+CX5EFKUk4x7bYFAmZ7ASIACgkQ5EFKUk4x
-7ba5dwf/RdfDrZB8mD/RDu84s+6YT5Jip9mee5p9Fi0EC75O5KteglNHTpcUCm15
-y6/KblK2i8JCLcSGbqX18YBPuezNdOnHdjJq5Dgv6oYlqKVrQkE0AAOfdbY5Yrd9
-513emUmA1CV6yfwXMWR8BWNAphh9osoCGhIOlIfvtFQV+50LRF6Vp3X/JkH/Wj0S
-AZWY2Jp3MxX1qr6MVCAyau/NT1Gj775M8kilIKy+njYqBSX2ob0czNNpQVTElvZw
-HWDZ7ZWL6XcCUWu6zeWJmHCMIy316fKzfbJPLWz0oASb7XxEKZ2cZ2xTOO9hNk5M
-znC8qElWyebrFyyVk2A5sc7twyAQOg==
-=A5Jn
------END PGP SIGNATURE-----
-
---nextPart5952195.MhkbZ0Pkbq--
-
-
-
+Konrad
 
