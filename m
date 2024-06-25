@@ -1,197 +1,248 @@
-Return-Path: <linux-kernel+bounces-228633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A1A9162FE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:41:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D252D916313
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:42:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0792528A9B3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:41:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F499B26E3F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:42:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6708149E03;
-	Tue, 25 Jun 2024 09:41:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0909149E16;
+	Tue, 25 Jun 2024 09:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="ESteSO35"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2124.outbound.protection.outlook.com [40.107.21.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iksqhWGi"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD4313C90B;
-	Tue, 25 Jun 2024 09:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.124
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719308486; cv=fail; b=Zw2DVxWgmxvY/EU0ZNBajyTe2Uks8oc/wD2n8A5FRP7tCDEsi5wJV40LqMaxQM+yG/xk7rLSddQqlGwodXC5OUyrNxb6Uj6hsKCbOWkzN41/nsIwipH+lYDQTHhne2frCHuat5SaQtjlUVxtWMl1s+NdrJzJuigzXFpjz2Hj+sg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719308486; c=relaxed/simple;
-	bh=uaVlcPv0nTVoZd5XaPjPyL3V13Er39KzSSB5euuEMfE=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=sv3W0gAb+nLcQlCfg+NdQR0jTHicyH3Bkrx1YL73Dl4+dFiCoq+a7WDXN6Kmlhxvy8Wj0Gxm//ct1W88OKLipCXd97hHVXy1PWZKQdmoqcJqgCbpni/ANCPSJSffgfruGRr46OqWYKkrYOnHn/bqnszEWvxrdVyAiAI/WoSYBb0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=ESteSO35; arc=fail smtp.client-ip=40.107.21.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=H20JXWpGeKTuvuya2HPVyZNszKFdodFwVhSEXEMHtQOtQdifcQnvk04AdsAvYRIj04z8zYXlKdCIZOOuGJzld5e6+/GH4bLzrBGG+7AxuCucpUQPJl8pEZ45Rh7fbcjDMGJuphZbchtHQB49nW3nPiz7BvkkgPwArlMktcQyYgOqNk3t9MkIE0PFbzqN0fyGSjGv2/dY9h4RLaJBYgURTqYTCVoVtWdxMZBCa1/r7bSfC34ry/JEhgT8VOvGUasDi61M8t+mVKLYlyhOJjwLyeFiIvUGi5jOH0UIEZNZ9igLpwx2YR7jnp7B+xEyXk+EL3BVIzjzOXAm6YLIEXHbUA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uaVlcPv0nTVoZd5XaPjPyL3V13Er39KzSSB5euuEMfE=;
- b=g00KI/ewQsoC+4+SeHzD8yTdK/4djGJSFx+YBCliaRAGtROJd1Cmu5yyXT2eboQmm06toZ/m+32sp9UBojlC8nDXi7ipMzouX9W/dXvLZxfXLxU3QRkj1pMhwsHixBgq0foBLqLqibd+oFCF6mFSpGjGoR35X/YziEMRib4rKpjPV+e2BGPQ2vaocYWFC4mWR6IoYGNl4UtxZjpR3Crsg7IzhEOFtb89Qjvx2o+S2piO1nw9ukAUOOoEMeqOhDGPuKg25cteMKy1lzQRQluhFuJfv3ZcsPQSLavBwu4Bomndjf9nJsdOMrUqE05Ty7lOcRDmMWvAvrEeACQwWIdapw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uaVlcPv0nTVoZd5XaPjPyL3V13Er39KzSSB5euuEMfE=;
- b=ESteSO35vVMDDjW+MDWL2uDnlATyEGrT2CJAG12SaHST2bariVAByNj2iClh3Zl5vduQR/KQ0HNWZ0wQ8Vn6erZwx4Cwl3udHxzsIZt6aSK5GnzhdQLQdrD/E+qq3cJJwJhxVzw3RZjhDhLSGikksNFgIeQhD8eVVvSck4k+Df8=
-Received: from PAXPR83MB0559.EURPRD83.prod.outlook.com (2603:10a6:102:246::15)
- by GV1PR83MB0803.EURPRD83.prod.outlook.com (2603:10a6:150:206::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.8; Tue, 25 Jun
- 2024 09:41:21 +0000
-Received: from PAXPR83MB0559.EURPRD83.prod.outlook.com
- ([fe80::3706:393d:dc70:11b1]) by PAXPR83MB0559.EURPRD83.prod.outlook.com
- ([fe80::3706:393d:dc70:11b1%4]) with mapi id 15.20.7741.001; Tue, 25 Jun 2024
- 09:41:21 +0000
-From: Konstantin Taranov <kotaranov@microsoft.com>
-To: Ma Ke <make24@iscas.ac.cn>, KY Srinivasan <kys@microsoft.com>, Haiyang
- Zhang <haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
-	Dexuan Cui <decui@microsoft.com>, "davem@davemloft.net"
-	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
-	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
-	"shradhagupta@linux.microsoft.com" <shradhagupta@linux.microsoft.com>,
-	"horms@kernel.org" <horms@kernel.org>, "schakrabarti@linux.microsoft.com"
-	<schakrabarti@linux.microsoft.com>, "erick.archer@outlook.com"
-	<erick.archer@outlook.com>
-CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] net: mana: Fix possible double free in error handling
- path
-Thread-Topic: [PATCH v2] net: mana: Fix possible double free in error handling
- path
-Thread-Index: AQHaxuPWNX6rSNu0PUuc4QdHOZtO9g==
-Date: Tue, 25 Jun 2024 09:41:21 +0000
-Message-ID:
- <PAXPR83MB0559828A8A2511451BE7C7DBB4D52@PAXPR83MB0559.EURPRD83.prod.outlook.com>
-References: <20240625083816.2623936-1-make24@iscas.ac.cn>
-In-Reply-To: <20240625083816.2623936-1-make24@iscas.ac.cn>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=eaa0f138-2867-42cc-8e41-21706f380e60;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-06-25T09:39:02Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR83MB0559:EE_|GV1PR83MB0803:EE_
-x-ms-office365-filtering-correlation-id: 5a05262c-bf4e-4823-6c0a-08dc94faf883
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230037|376011|1800799021|7416011|366013|921017|38070700015;
-x-microsoft-antispam-message-info:
- =?utf-8?B?bjZJdHpkQ29YdEhIRmwwcG5DZzJZcXhXdFZMaWNOeXRQdDdMTzJ0eUdFNCtY?=
- =?utf-8?B?UW81eVpkNG82QklaZ1UveGplTnpNTlVzb2hVa2JKdGczdkQ0M01oNnhlYktz?=
- =?utf-8?B?SjZQYVZEZDRXZiswS0s4bDB5b3VXWGRJNnROSm91TUFnYzMzKzFXSW5uSGtO?=
- =?utf-8?B?UnlZckVySkhkSGRFUHpPNUxqamV0NklNdXd2bHlhU1lkWXdzN1ErSE5VMEVt?=
- =?utf-8?B?eEx4U2t6NnJUSDdkN04wUVZqWm9BeVhuNDZIUEw3UzZWS3BLcUw3UjlOOWFi?=
- =?utf-8?B?NVR4d1NPYVBJMHM2K3JlMnkwN2xUc0lrZGNEc1lLN2Q5d1pZcmNVUDNtM29v?=
- =?utf-8?B?UkhPZWJxN3BEaUJHRUtaOGFMZitCTUJZTytROXlJVVhKS3JlWHVsZWt2YnZS?=
- =?utf-8?B?VWQ1clpTOFVheFlnRlNqem4rNDBTd3h6Mk1hRVdleFJybzBGL1d6Ylg4YTZS?=
- =?utf-8?B?eVFxS2pQdmN4N0dCa0RyMExLeDNCeGltU1JVR2lWNm5SZ1NMYmhtZHJUZGc5?=
- =?utf-8?B?bGxyaEt1MU83SjNHendZaGl0Y29JcjkyRGdmSFlWSml2M25zakNES25HZzN3?=
- =?utf-8?B?a3VuUDNndTRhaVgwYjF5YUxrK3ZMSVdLeVQvWEF1TnVLMUJ1V3FiaDhmQXZU?=
- =?utf-8?B?ZkFSR1VDeWRvemw5dnhMUk4yVlN4VWFaeGZ4cXZFSFdLd280NS90Z1FrOVJT?=
- =?utf-8?B?VGRSU0NRc01TaUVDcmQrOWZ2ZW4xZmNxNzFOb3cxamlxMGtITThFd3ZvM3hM?=
- =?utf-8?B?YkRtcFBMcHVUbi8xMTZ2RTBNWlVDVyt0eitiUEtpRERKOWF0MmIwYXNwV1NL?=
- =?utf-8?B?d1lSVXhCUzkvQjZPQTI3Wmk1elJwdC8raHpCSEtXRVMwY0RveHFTS1EyZlpE?=
- =?utf-8?B?bW1ZUVpnellZbkNOdVFJRmw2SWdxa0ZRQjd3eG41RnZHT2VkZFh4cUtVakYz?=
- =?utf-8?B?a0lTdG1nOXBJcXZZNDdva1JmQ1RQRDZIM2JTSUVCcWsraXpTWjVlR0tLUnhm?=
- =?utf-8?B?eEJVMFlvM3ZoMWh6YUhlZHh5dUV3cUpUY2hWWXh4Q3B2TEZVdnpEU2Fwcm5W?=
- =?utf-8?B?a21XYWk1aFloSmJ2WXFRZk9IVnNvRkVLOE9zMlhvUTkxdmlEMUNWRVNIeVlF?=
- =?utf-8?B?dnY3aWhpUVR6d205V1pLaDlVWjdJRVVCU1FKRk9BS3ZhQzBuRmdwM21GQUR6?=
- =?utf-8?B?djNWOVNKbHV3d0ZhQTRXL1Rqd0wwVmFZNWxFVGxOMXpBQkhMMTVzTEE2K2pG?=
- =?utf-8?B?U05ZVTJUMXFzcXFoc1EvYlRkQ2RqWlR0cE5WOEQvdlNXZm43UVJETzA3bllK?=
- =?utf-8?B?TFRYcmFCMks2OVRtQ1cyNVRTWTY3R2pSbTRPaExqL0QwNTJqT0tvQm9lWW9l?=
- =?utf-8?B?TGY0eWVuWTFXUld0YnprWmVBMUVyZi9xaEhiMkRXTkZTMHZMOGNGcDVwckJQ?=
- =?utf-8?B?NXFhTXpWT2kyVUNNVHBCdmNIcEZzM0hyVlV2SS9RNnhoTlRlM2cxMHh5S3hF?=
- =?utf-8?B?T1FEYm00cERQaE92SitmaGlTazhaNjAxR1JoNGlmckUwQUtkYTZldEtjZFMr?=
- =?utf-8?B?aHpmNFRhVStLTFkyaWo0bEg0ZS9laGg5OWx1SXJ3c29aVzdQaUlKdUhjVmFJ?=
- =?utf-8?B?NWNoajB1YkEzWTJoT09OVUYyWitWalpoa1BZU0MrajRkNXF4c0txYzUvdnNT?=
- =?utf-8?B?U05JQ3kyZXBncFdWNTNQdW9CYWU3UmoyQlhHcktWNXorcEg4NzJhcFpvSmho?=
- =?utf-8?B?aGltYUtSS21tSllsZjUvamJuUU5OTlR6QUpUa09XbisyTFVpMDcyb3l4OVQ1?=
- =?utf-8?B?SXdvNFRnOWZUOFM4WDVtSGRPcmhjbitDWEtJMmlMallJeFlMbEhiT1NHZ2Rn?=
- =?utf-8?B?UWV5a0VlVUYvckRCRUVBL0wwRE1HSS83b1BlR3huVEhyeE1GNjF1SHpReUJv?=
- =?utf-8?Q?O3p4gQOpkw8=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR83MB0559.EURPRD83.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(7416011)(366013)(921017)(38070700015);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?cGxYVCtONm9tVDNuaFE1a2FnYUNHT0hxbjJ6ckRQY2J1TkFoNmhoemxxOGNa?=
- =?utf-8?B?S1U5L0EzTm8waVlwVEtvbXZxRWZ0LzhzeThiWWEvV3E5SVZjRXBCa0FzK2NR?=
- =?utf-8?B?R2htZlRwaUhIV2ZUNEQ5OHFpTE5uNnlEVmxvVWQydEM4SVplMmp1OFUybDli?=
- =?utf-8?B?a0ZPUFVBZ0Q3WW5YQUZ0TnkwdGxnQWlEbURlakFrY0pmTkpSUENsa05GMFAz?=
- =?utf-8?B?S05qK1RCUE1STDFzQkdOUS9rZ3hwRGw4RjNNYU9ZcXJqcUJ3Q0JJQlpSTW1N?=
- =?utf-8?B?RjM3RGZDUVQxUUM4ZGREZjVVRTVJVVBiSzBRTysxb3V1Vm1IVkUvaTZiUXVN?=
- =?utf-8?B?VjM2NDlYd0I0UlR2UmZaYVROWnlDQWkwZFdQNFc0Ull3T0x5QlM3eEJnVUN1?=
- =?utf-8?B?SG1rejhTYkwvbUJJZGlHSjVwWjBuYXFaOHg5ekl5YnJkS2RWaGdvN3NyeUdv?=
- =?utf-8?B?RTdZcVMrK0FUU3VLTS9rUFdzeGhmN2FSWElnS1NxbGl1ZFlPTFRMRncrdnVC?=
- =?utf-8?B?cm15OXluVTJ4TERLWUVWZWlqcFdoQkprQVZCYVI3YkR4ZG0yZmxWeUcwcVJH?=
- =?utf-8?B?Mzdwc2tWd1I0eVczNFEzKzNjdG43Slo5Vnk0VnNoZ1RlaVF1UmJBVzhFZnRp?=
- =?utf-8?B?RW80QmdmT3orRURCTWRmRE9hUVdHLzZuZ1plSkR5SlNkclVKSTR1RHNFTERR?=
- =?utf-8?B?NHFST0tLaVBSQ21BZ1hDclBoVlZBVlFFSzBFKzJSclZyRHNDOTNnRkEzSmZl?=
- =?utf-8?B?ZkJmUmZ3NkJZNkZIZjJFckZjTEYyd3dDMHhYcDFZRjNYVDR4MDVrcHhyejUr?=
- =?utf-8?B?cU01OFhkOWZEaXNTQXVpcUkvbnMxVGpGLzlQSEEyUG1ZSmxzYnkzSzVCcytz?=
- =?utf-8?B?SzBtUk9GSzZGUExJcXpNOWZNUGZzTGtkcXF5VUlVemQ1cldDdEh3VVF3Q1Vv?=
- =?utf-8?B?QTZBSzhmKytjenJISWFDUVpwMVhoVExjS05PL09ESDl1ZHJudU5KbGRRRXB5?=
- =?utf-8?B?cnZkS2IyUnRTVVJkS1JZR0JQd0NUKzlGZllIdFJoL3loSnBza09KVU91ZC9Q?=
- =?utf-8?B?dVJWaGpHUGVLcVB6YlE3V3dEQkxpa21VS1RZTFBraHFaMm9INUViYTJWeHo1?=
- =?utf-8?B?eVJ2R3pBNGNJbG1nQSsybi8zWS9sL1pRRkJKY3BGOHZiN1dIWmljL0NqMk1L?=
- =?utf-8?B?T1ZoRkNzVjE0SHZBTWdSZGN6eDJ6SVRDMmsvWWwwZjZyTnVEV1VFSTNuUk1n?=
- =?utf-8?B?TzB1ay92L0RESFlRbktDSEtTL0tBeUFmVlFwSDdRSHVraklPUVFOYW12bWx6?=
- =?utf-8?B?RzFkeG1KRkRyWVFORmNWTTdNL2xJY2MvVExNclYzZFRUQWw4ekphZE9XbmJk?=
- =?utf-8?B?cUIxVXNUbWxRZTV6bWY3Und1ajJMVUMvOG4rNEtTbFc3QjZsYmFsVHdXMUVI?=
- =?utf-8?B?UmMyTExpL1BUL0hzaW1FeUFKZWNtTkJ3SEp6MW0xUVRLaS9ZZTZVcWk3UjQ1?=
- =?utf-8?B?a3dzR0grOFM2NUM1dmJZbVFRT3NTR0Q3QVkvb0NNOEE2K3NQMFBNYUpXd0VO?=
- =?utf-8?B?T1NOcFZ3NXFvYWFoUlJKK0VHQWJ1MjNnYlB4ZlNwSnRTU2wyRzYvQVVzYlc3?=
- =?utf-8?B?WUk2S0xOS2dNUDd3YkI5Q1lnbTBXR1k3ZDkxUmhSalJ5WVlmYVVRY1Z6RjNN?=
- =?utf-8?B?ZU5sUDY5ZXhpdEQraExnOHZYbHY0R25nV1Z5YkZwcmdTMnVvamgrRkRCSkhM?=
- =?utf-8?B?OHU2NEhvdXdYQmlnZlRoeWdudk9WbGVscnhzQUN1aUhJUXBFU2tPTmVyaHBu?=
- =?utf-8?B?RmVHWnZ6Z3lmY2hJQUxtOUo1bG9TVG1ZVE45T0VYOCswTVYySVlFUFh1WElU?=
- =?utf-8?B?YkJ0cnVPVll1am9qVlZLTEtyZTBPSllEdnIwYWtHdTcvVWN6a1h4NWp3Q3Mv?=
- =?utf-8?B?eCs2ZzhpN1BsY1BoR2RxdGZ3Vm42T3JlblpqTkRIWGlHR2JPUlVjZVdqNTFP?=
- =?utf-8?B?aDRPSW5XcjdVeThsZmFNL1E5NVlvVE5UN3JJVHR2NU5qMXRDeHFVdXJLc3dS?=
- =?utf-8?Q?SoBXBu?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79D9149C50
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719308546; cv=none; b=hwQnozIzXLkRfyg3gZsLQjlCb1ccIB92tfRdAtjftMhHl9ytbqJ6cKtMXVI6DnfRn4n0EKhvkRx23LjJXjXRMLpMumBFBGDNl2S0iK9+Dm+ODAgGvr2RLyS4E7jOektesICCxATKf9Hc2VduIyeTwjOvroU8EXOxAkVkEmh3eA4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719308546; c=relaxed/simple;
+	bh=IQoC9h/J89BQa2nWVHcB9CCO9b8Kqv5BOP5Ve84yTy8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=F2EPU3mmWkkarw7Q0j2DzP5qesn0d30DLJi83DJWWxjSNArxyHvR2/RXVl81QpXtgB0751durF6jtIcSLdC71jX4uELZWKBlz9IlAClr9BcJjw2PhgWZCKIz/i4DMnkwFsFcinkxgkLRg+sicyh7WV1NDmVKqcA/4h4MA+Xm/EY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iksqhWGi; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a724b9b34b0so251109166b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719308543; x=1719913343; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5rrnOyyPx1s0VuaEDx73PVRxOQwVD4HvpbQ0NNGg+qU=;
+        b=iksqhWGiQQrudKApbQpRb0NW4mvjcXoBufqVJ5/2uoWj5eMRQ6XHORLITIGPcKCC1J
+         PIOtY8NwJxtGIYYKAdUni38xvqOoSTwBPmy+ZNj6sXeNrfrFpg01X3NZGGuDEsZbJz46
+         ZivP95kw9f1HsbB9q+zSW5aRRtKXJB2UX8j4PCsHSBiq2XXGtSoiff8+Q6+Q0/79XPoU
+         t54f4EpcUsImTS0ebB0HQqXIeVim0tYqt7u4Z8ReEKQqmz43x93MxnWxf7mLPY+o9ICK
+         Qky3HNqxBwFOmFKDPSjRNSrIoG3KH8yupWsT4fXFCQB+ws2Fns7zz8GfxcxIBDoLAmz+
+         NY+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719308543; x=1719913343;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5rrnOyyPx1s0VuaEDx73PVRxOQwVD4HvpbQ0NNGg+qU=;
+        b=qKXN448PZ9C6KyDkKNQ8uOxH4ZGrZlIRd/Mvd17cuQZGxKsmv0pFIyJol45+EqKR0C
+         u+l7T76QPkgx7GO8bowtHuhBFLjsMr/QkWYpiJjgeenR6rE/p35w3c53caarUvhajTq5
+         gsvBqKdf1XyXCgbUMxcSfApn5tSQNN1+9KRb4Q9/6QDJoqZ00EqY3bpMIVDhT64OpTc2
+         SuwWItcpUOseWssdsdV7E2OQAAqw5bfZ8ByOwJNIvaD58k4I6TKg0WPRgMxUZf2SWO2W
+         tlXYQfTRYb9QVHXZkF7LXlLtipLUcodWyxsd04n6qM+EzYUMKlkaldOtbpI9lhA2Aexy
+         K3wQ==
+X-Gm-Message-State: AOJu0YyYwyiNA3DvrkiZkuICaFj80XB+pcVkuPWOC9XWsl0EV/Knsafk
+	IF4Au5EaK+0kidLECoj9SIzjB9wKQtBoqHlftjkZwgpAVWuP9lHci4Ev/DVI/jY=
+X-Google-Smtp-Source: AGHT+IEP7P0jnBbsE9ZI9yHg7Dc72C6tzs6TcbvwmSqykJ99FDoJ1yVZDgh0NbjeYsfF9NICJC87Sg==
+X-Received: by 2002:a17:907:7782:b0:a6f:49bc:e857 with SMTP id a640c23a62f3a-a7245b6dc99mr444223066b.6.1719308543041;
+        Tue, 25 Jun 2024 02:42:23 -0700 (PDT)
+Received: from lino.lan ([85.235.12.238])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48a038sm492967966b.48.2024.06.25.02.42.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 02:42:22 -0700 (PDT)
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 25 Jun 2024 11:42:21 +0200
+Subject: [PATCH] sched/eevdf: Augment comments to account for reality
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR83MB0559.EURPRD83.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a05262c-bf4e-4823-6c0a-08dc94faf883
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2024 09:41:21.1838
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: kDFEk4ur5AFYRLy/2vePgMsGJTQtYcBrLg+0mMCukT1biZBwuhjPkaX3j0zw/8U9ugXgpFyFbwvnjk5Ge9dahQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR83MB0803
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240625-eevdf-doc-v1-1-215da9eb9354@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAPyQemYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMyNT3dTUspQ03ZT8ZF2jREMLc7MUS5PUVBMloPqCotS0zAqwWdGxtbU
+ AroxoJlsAAAA=
+To: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Juri Lelli <juri.lelli@redhat.com>, 
+ Vincent Guittot <vincent.guittot@linaro.org>, 
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
+ Mel Gorman <mgorman@suse.de>, 
+ Daniel Bristot de Oliveira <bristot@redhat.com>, 
+ Valentin Schneider <vschneid@redhat.com>
+Cc: linux-kernel@vger.kernel.org, Linus Walleij <linus.walleij@linaro.org>
+X-Mailer: b4 0.14.0
 
-DQo+IFdoZW4gYXV4aWxpYXJ5X2RldmljZV9hZGQoKSByZXR1cm5zIGVycm9yIGFuZCB0aGVuIGNh
-bGxzDQo+IGF1eGlsaWFyeV9kZXZpY2VfdW5pbml0KCksIGNhbGxiYWNrIGZ1bmN0aW9uIGFkZXZf
-cmVsZWFzZSBjYWxscyBrZnJlZShtYWRldikuDQo+IFdlIHNob3VsZG4ndCBjYWxsIGtmcmVlKG1h
-ZGV2KSBhZ2FpbiBpbiB0aGUgZXJyb3IgaGFuZGxpbmcgcGF0aC4gU2V0ICdtYWRldicNCj4gdG8g
-TlVMTC4NCj4gDQo+IFNpZ25lZC1vZmYtYnk6IE1hIEtlIDxtYWtlMjRAaXNjYXMuYWMuY24+DQo+
-IC0tLQ0KPiBDaGFuZ2VzIGluIHYyOg0KPiAtIHN0cmVhbWxpbmVkIHRoZSBwYXRjaCBhY2NvcmRp
-bmcgc3VnZ2VzdGlvbnM7DQo+IC0gcmV2aXNlZCB0aGUgZGVzY3JpcHRpb24uDQoNClRoZSBjaGFu
-Z2UgaXMgb2ssIGJ1dCB0aGUgY29tbWl0IG1lc3NhZ2UgaXMgbWlzc2luZyBhICJGaXhlcyIgdGFn
-L2xpbmUuDQotIEtvbnN0YW50aW4NCg==
+The references to "CFS" is a bit misleading these days since
+the scheduling principe is EEVDF.
+
+Rewrite the top level comment, and trim other comments and
+kerneldoc to implicitly refer to the scheduling implemented
+in this file, or just "the fair scheduler".
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+This isn't fixing everything and isn't changing any kernel
+symbols containing CFS, as I think that would be churny.
+---
+ kernel/sched/fair.c | 31 +++++++++++++++++--------------
+ 1 file changed, 17 insertions(+), 14 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index 8a5b1ae0aa55..03a8b36e8126 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1,6 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Completely Fair Scheduling (CFS) Class (SCHED_NORMAL/SCHED_BATCH)
++ * Earliest Elegible Deadline First (EEVDF) Class (SCHED_NORMAL/SCHED_BATCH)
++ * also known as the fair time-sharing scheduler, refactored from the
++ * Completely Fair Scheduler (CFS).
+  *
+  *  Copyright (C) 2007 Red Hat, Inc., Ingo Molnar <mingo@redhat.com>
+  *
+@@ -17,7 +19,8 @@
+  *  Scaled math optimizations by Thomas Gleixner
+  *  Copyright (C) 2007, Thomas Gleixner <tglx@linutronix.de>
+  *
+- *  Adaptive scheduling granularity, math enhancements by Peter Zijlstra
++ *  Adaptive scheduling granularity, math enhancements and rewrite to EEVDF
++ *  by Peter Zijlstra
+  *  Copyright (C) 2007 Red Hat, Inc., Peter Zijlstra
+  */
+ #include <linux/energy_model.h>
+@@ -297,7 +300,7 @@ static inline u64 calc_delta_fair(u64 delta, struct sched_entity *se)
+ const struct sched_class fair_sched_class;
+ 
+ /**************************************************************
+- * CFS operations on generic schedulable entities:
++ * Operations on generic schedulable entities:
+  */
+ 
+ #ifdef CONFIG_FAIR_GROUP_SCHED
+@@ -5540,7 +5543,7 @@ entity_tick(struct cfs_rq *cfs_rq, struct sched_entity *curr, int queued)
+ 
+ 
+ /**************************************************
+- * CFS bandwidth control machinery
++ * Bandwidth control machinery
+  */
+ 
+ #ifdef CONFIG_CFS_BANDWIDTH
+@@ -6630,7 +6633,7 @@ static inline void sched_fair_update_stop_tick(struct rq *rq, struct task_struct
+ #endif
+ 
+ /**************************************************
+- * CFS operations on tasks:
++ * Operations on tasks:
+  */
+ 
+ #ifdef CONFIG_SCHED_HRTICK
+@@ -7666,7 +7669,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+ }
+ 
+ /**
+- * cpu_util() - Estimates the amount of CPU capacity used by CFS tasks.
++ * cpu_util() - Estimates the amount of CPU capacity used by tasks.
+  * @cpu: the CPU to get the utilization for
+  * @p: task for which the CPU utilization should be predicted or NULL
+  * @dst_cpu: CPU @p migrates to, -1 if @p moves from @cpu or @p == NULL
+@@ -7677,7 +7680,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+  *
+  * CPU utilization is the sum of running time of runnable tasks plus the
+  * recent utilization of currently non-runnable tasks on that CPU.
+- * It represents the amount of CPU capacity currently used by CFS tasks in
++ * It represents the amount of CPU capacity currently used by tasks in
+  * the range [0..max CPU capacity] with max CPU capacity being the CPU
+  * capacity at f_max.
+  *
+@@ -7689,7 +7692,7 @@ static int select_idle_sibling(struct task_struct *p, int prev, int target)
+  * of such a task would be significantly decayed at this point of time.
+  *
+  * Boosted CPU utilization is defined as max(CPU runnable, CPU utilization).
+- * CPU contention for CFS tasks can be detected by CPU runnable > CPU
++ * CPU contention for tasks can be detected by CPU runnable > CPU
+  * utilization. Boosting is implemented in cpu_util() so that internal
+  * users (e.g. EAS) can use it next to external users (e.g. schedutil),
+  * latter via cpu_util_cfs_boost().
+@@ -9359,7 +9362,7 @@ static bool __update_blocked_others(struct rq *rq, bool *done)
+ 
+ 	/*
+ 	 * update_load_avg() can call cpufreq_update_util(). Make sure that RT,
+-	 * DL and IRQ signals have been updated before updating CFS.
++	 * DL and IRQ signals have been updated before updating the scheduler.
+ 	 */
+ 	curr_class = rq->curr->sched_class;
+ 
+@@ -9517,7 +9520,7 @@ struct sg_lb_stats {
+ 	unsigned long group_util;		/* Total utilization   over the CPUs of the group */
+ 	unsigned long group_runnable;		/* Total runnable time over the CPUs of the group */
+ 	unsigned int sum_nr_running;		/* Nr of all tasks running in the group */
+-	unsigned int sum_h_nr_running;		/* Nr of CFS tasks running in the group */
++	unsigned int sum_h_nr_running;		/* Nr of tasks running in the group */
+ 	unsigned int idle_cpus;                 /* Nr of idle CPUs         in the group */
+ 	unsigned int group_weight;
+ 	enum group_type group_type;
+@@ -9721,7 +9724,7 @@ static inline int sg_imbalanced(struct sched_group *group)
+  * be used by some tasks.
+  * We consider that a group has spare capacity if the number of task is
+  * smaller than the number of CPUs or if the utilization is lower than the
+- * available capacity for CFS tasks.
++ * available capacity for fairly scheduled tasks.
+  * For the latter, we use a threshold to stabilize the state, to take into
+  * account the variance of the tasks' load and to return true if the available
+  * capacity in meaningful for the load balancer.
+@@ -11211,7 +11214,7 @@ static int need_active_balance(struct lb_env *env)
+ 		return 1;
+ 
+ 	/*
+-	 * The dst_cpu is idle and the src_cpu CPU has only 1 CFS task.
++	 * The dst_cpu is idle and the src_cpu CPU has only 1 task.
+ 	 * It's worth migrating the task if the src_cpu's capacity is reduced
+ 	 * because of other sched_class or IRQs if more capacity stays
+ 	 * available on dst_cpu.
+@@ -11952,7 +11955,7 @@ static void nohz_balancer_kick(struct rq *rq)
+ 	sd = rcu_dereference(rq->sd);
+ 	if (sd) {
+ 		/*
+-		 * If there's a runnable CFS task and the current CPU has reduced
++		 * If there's a runnable task and the current CPU has reduced
+ 		 * capacity, kick the ILB to see if there's a better CPU to run on:
+ 		 */
+ 		if (rq->cfs.h_nr_running >= 1 && check_cpu_capacity(rq, sd)) {
+@@ -12577,7 +12580,7 @@ static inline void task_tick_core(struct rq *rq, struct task_struct *curr)
+ }
+ 
+ /*
+- * se_fi_update - Update the cfs_rq->min_vruntime_fi in a CFS hierarchy if needed.
++ * se_fi_update - Update the cfs_rq->min_vruntime_fi in the hierarchy if needed.
+  */
+ static void se_fi_update(const struct sched_entity *se, unsigned int fi_seq,
+ 			 bool forceidle)
+
+---
+base-commit: 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0
+change-id: 20240625-eevdf-doc-2a1876d94ee4
+
+Best regards,
+-- 
+Linus Walleij <linus.walleij@linaro.org>
+
 
