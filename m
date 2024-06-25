@@ -1,95 +1,113 @@
-Return-Path: <linux-kernel+bounces-229022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746319169D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:07:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6064D9169DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:08:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A3151C21A9B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:07:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C7882863F4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F17D71667DA;
-	Tue, 25 Jun 2024 14:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E389816193C;
+	Tue, 25 Jun 2024 14:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FkHBIoSF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NdrqBK+X"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37CB31B7F7;
-	Tue, 25 Jun 2024 14:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858651B7F7;
+	Tue, 25 Jun 2024 14:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719324416; cv=none; b=FW1O0yTFrVB5x7Bc7YXKuWHw6UHTjMnSprtu8lRaeDB/+j2YZ9orlhyg627JBZ/C86OX9Yclcj7efSVNk4mfohT4S7ixcrlMbchRybqLlzNAfYN4KqwNntTYTcMk0ZEGFHArbJMhKa7HqCP2kUn7lGjbNTnNFpWYY8AHRqMhTfg=
+	t=1719324484; cv=none; b=I90DyAVzMaGOzWMuOEGGLEYg8UQmkSFwqEKQK7Hsl3rUvbgFKFlIw4I9wmyNrAWmnnib/hmTs32IEaBRie4b6pd4fqMD3zhS6cD/4qdtnou++sCr1kzHKhM2a3zwM5I972ZHtALtWbDwpHDcTJyeW91JVgNlxJxOcib4LihEAPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719324416; c=relaxed/simple;
-	bh=7J8V+A2m4KYY9Ousnw3i3fJCgNrKZAjhDaETttSPm0c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z9U+2aVAwjoCCdGQJa0lkoD3MFgcqWCnDu2jv1Welfzdanzb1jseiKNTuNy+qrJ+1n1PGoWL5RUfNuLcaEtQdoYxxLIBzmV99gD7w/eellt4J5e7JLEv4ePYgN8foc4qCx2tTasErA4vtLNqPM5glOB04fQdK6uj5Hg5lSVCujk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FkHBIoSF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42DF7C32781;
-	Tue, 25 Jun 2024 14:06:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719324415;
-	bh=7J8V+A2m4KYY9Ousnw3i3fJCgNrKZAjhDaETttSPm0c=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FkHBIoSFBTopDeTKT/XI/obwtTFmXbucUL0Iu8XhW1Hh/aHREi75sUiaICLONLA4v
-	 VV5lyqmmZMmhPCcUvuctzn0VxJ36EkxN45CGmVg3yFXcFDmPCf9vNE6HU0c13hb7Ha
-	 DzyYVA3cSOJqLGOTWSVDgUeee6ZzY9fss+4GOZn6XrTeU7X9ckCXO/0lJdbp0yPMrU
-	 53DN+2G82EQ6Bkgq6mbGI/wP08QT3TSvMOzkXjSQZLm0i+YhfdX5qB+x2oyR47NoSE
-	 8BKvWhPcg6xeqn8Mxjd1Rn8lUNsGtW0Jx9UjQg3ukp5b6NA1LsZh275De8C7f/IdAP
-	 ga5ghxOaAIz5Q==
-Date: Tue, 25 Jun 2024 07:06:54 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Aaron Conole <aconole@redhat.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
- dev@openvswitch.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Pravin B Shelar <pshelar@ovn.org>, "David S.
- Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Shuah
- Khan <shuah@kernel.org>, Stefano Brivio <sbrivio@redhat.com>,
- =?UTF-8?B?QWRyacOhbg==?= Moreno <amorenoz@redhat.com>, Simon Horman
- <horms@kernel.org>
-Subject: Re: [PATCH v2 net-next 0/7] selftests: net: Switch pmtu.sh to use
- the internal ovs script.
-Message-ID: <20240625070654.6a00efef@kernel.org>
-In-Reply-To: <f7th6dhgnvm.fsf@redhat.com>
-References: <20240620125601.15755-1-aconole@redhat.com>
-	<20240621180126.3c40d245@kernel.org>
-	<f7ttthjh33w.fsf@redhat.com>
-	<f7tpls6gu3q.fsf@redhat.com>
-	<e4f69335f90aae3f1daa47ba8f69b24ea15ed3b7.camel@redhat.com>
-	<f7th6dhgnvm.fsf@redhat.com>
+	s=arc-20240116; t=1719324484; c=relaxed/simple;
+	bh=/zUFtZIZeDqCZmg2bLovLTDoYyRMpRKMLFnhpzZz4Ko=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LQXa+1gWR5sitAzI3qfCNidGDs8KHvTvqnfUQaR7RNOD0d1S0Mo/siJWLKjpyM4FAqGiEPqoyJQB7XDkRQDTysuSkMYikM43NXn0UnBG5FKC+XGQJnAf9kDSuA8UTsWm/6cXXUcHproVeX84WxWAHnifR7qHJ7vFd8kWIBU6ao8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NdrqBK+X; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719324482; x=1750860482;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/zUFtZIZeDqCZmg2bLovLTDoYyRMpRKMLFnhpzZz4Ko=;
+  b=NdrqBK+Xk4naks2YZ8JPe4Ggx/DcQAhZ7X2uZvBpEaf+sJbFzCjucIcp
+   +SpKhQJs8Wn3X4m82hn9Qf4aIsF4g34suihOyXaV14q5m0iz9QW0puKGZ
+   LLql+wdd/gNDInQnRQrpAmnCMlQA/ZOktKDMPkxr0CL3+Rz6s71HlkEHi
+   8DoVZUXPccXGSqOzonHLsar5XaVgqDiyGvbgFg8XJOTMAb5Cq4dcs1Xiz
+   D6njJk1m0DrJmyn7EvpVckEQaMF/fulPEUrCNOPbDuJLiuhT6euUs9WUe
+   TqnRCRuRpnBz0WYB781tBOzOZBXyAmZfZvHuUOghdR1PPd0ClB5iavb/p
+   g==;
+X-CSE-ConnectionGUID: mNnL1xX6R32tJxWt3uNsxg==
+X-CSE-MsgGUID: MHngs37/TA2YW8YvARgOVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16488633"
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="16488633"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 07:07:39 -0700
+X-CSE-ConnectionGUID: YAPSikMWSHOQCK5CMfhtAg==
+X-CSE-MsgGUID: YRWR93OnTlWlnb/zDvkXaw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="43764953"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa010.fm.intel.com with ESMTP; 25 Jun 2024 07:07:37 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 4C29C346; Tue, 25 Jun 2024 17:07:36 +0300 (EEST)
+Date: Tue, 25 Jun 2024 17:07:36 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Aapo Vienamo <aapo.vienamo@linux.intel.com>
+Cc: Andy Shevchenko <andy@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] gpio: graniterapids: Add missing raw_spinlock_init()
+Message-ID: <20240625140736.GV1532424@black.fi.intel.com>
+References: <20240625135343.673745-1-aapo.vienamo@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240625135343.673745-1-aapo.vienamo@linux.intel.com>
 
-On Tue, 25 Jun 2024 09:20:29 -0400 Aaron Conole wrote:
-> > I'm still wondering if the issue is Kconfig-related (plus possibly bad
-> > interaction with vng). I don't see the OVS knob enabled in the self-
-> > tests config. If it's implied by some other knob, and ends-up being
-> > selected as a module, vng could stumble upon loading the module at
-> > runtime, especially on incremental build (at least I experience that
-> > problem locally). I'm not even sure if the KCI is building
-> > incrementally or not, so all the above could is quite a wild guess.
-> >
-> > In any case I think adding the explicit CONFIG_OPENVSWITCH=y the
-> > selftest config would make the scenario more well defined.  
+On Tue, Jun 25, 2024 at 04:53:43PM +0300, Aapo Vienamo wrote:
+> Add the missing raw_spin_lock_init() call to gnr_gpio_probe().
 > 
-> That is in 7/7 - but there was a collision with a netfilter knob getting
-> turned on.  I can repost it as-is (just after rebasing) if you think
-> that is the only issue.
+> Fixes: ecc4b1418e23 ("gpio: Add Intel Granite Rapids-D vGPIO driver")
+> Signed-off-by: Aapo Vienamo <aapo.vienamo@linux.intel.com>
 
-Sorry for not checking it earlier, looks like the runner was missing
-pyroute:
+Acked-by: Mika Westerberg <mika.westerberg@linux.intel.com>
 
-# python3 ./tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-Need to install the python pyroute2 package >= 0.6.
+Linus/Bartosz, I wonder if you can take this one directly? Andy is
+currently on vacation and mine starts after this week so there is nobody
+handling these until August. Thanks!
 
-I guess run_cmd counter-productively eats the stderr output ? :(
+> ---
+>  drivers/gpio/gpio-graniterapids.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/gpio/gpio-graniterapids.c b/drivers/gpio/gpio-graniterapids.c
+> index c693fe05d50f..f2e911a3d2ca 100644
+> --- a/drivers/gpio/gpio-graniterapids.c
+> +++ b/drivers/gpio/gpio-graniterapids.c
+> @@ -296,6 +296,8 @@ static int gnr_gpio_probe(struct platform_device *pdev)
+>  	if (!priv)
+>  		return -ENOMEM;
+>  
+> +	raw_spin_lock_init(&priv->lock);
+> +
+>  	regs = devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(regs))
+>  		return PTR_ERR(regs);
+> -- 
+> 2.45.2
 
