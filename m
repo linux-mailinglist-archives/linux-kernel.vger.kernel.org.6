@@ -1,257 +1,347 @@
-Return-Path: <linux-kernel+bounces-229035-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229036-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD0E916A0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:17:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEC8916A0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F18271F2286F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:17:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF466B22C2C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:17:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9400216D4D6;
-	Tue, 25 Jun 2024 14:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E420016DEB8;
+	Tue, 25 Jun 2024 14:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XK6wS4d+"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jtL3pPs7"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF08E16D33A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D46016B720;
+	Tue, 25 Jun 2024 14:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719324984; cv=none; b=MAtGGIHO/234WtxMp8VCVnhM9sy7XXmqzIKlGe4G0UFVkm8sMi2zUI7UQqb7EIkQfDzoSwuT+z4LqWfwVNk6W/cBE1iX45jsXK92OZMORaXSEcXhDIvpSQ/zCTnsloRpa7x4WyuyQi2X0q22Cn14Fq8gZsrEoQd1kNrlPm+OnR8=
+	t=1719324991; cv=none; b=Z+bYLd5Cv4DrwpyR1K068kQl8pqSbBc3j3KX0Mv5OwLqnGYYgChigK0ST4Lxg0x94qTXNO9nwS+fAaNcL4WfuKOgbmNt/YfgfVNLsmz2G+LdauN5yy6lKlkSPxVCZeui8+0kUaY0HqLPz5J28HgitUQU3nRvFv3A+kWoD0StlkM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719324984; c=relaxed/simple;
-	bh=7Qt8Rb0tw48IIFP/mjLMps8oBUfWXZCTQDsgdNYlkSY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JWulxjBIthfeNFZtWMAgNN5hJOp3owWT8L2B7W9E0Whhgen2UHS7dnimqTbPyIAodh986QOjSqr2qxBbAegK4qZEPhO+RFVTOSKT9xvzgyR1pLh+z0k768zop6/fzgVzSE6WoVm8YqFU41BpK/4CJhFPyePYI/BzduuDMVsQVAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XK6wS4d+; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-424aa70fbc4so1166855e9.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:16:22 -0700 (PDT)
+	s=arc-20240116; t=1719324991; c=relaxed/simple;
+	bh=xtx+rik6uFoGmkuS+8tWAviD3+bYuderKym6eq6WVk8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=upNtK30xACcSyc/v4g5cjZAi6POatBvc+HR2bly5xB7/MCDTKjZAHEhd3UQvN51CuSJiRR+jXu6QeLl8T+zFc+1zDUF081mI6VbOkynhCnzyV0LQMPcg+RGGkypnB4ZLTTMTrWTqGO42EdePblEJ+lOghj6BCOoDz9JnUvTIH40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jtL3pPs7; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a72420e84feso405572066b.0;
+        Tue, 25 Jun 2024 07:16:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719324981; x=1719929781; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/XbwCezfhWbmSEC4HDR62w3HCK7ee4grHDBBWM8UBvM=;
-        b=XK6wS4d++hAYbnhTfnPem78I7LxAvBOeHkQ0NLgdeglZqXApZyTaRAxvus/8QJ+pDk
-         VA6KNbXCj1LnSYbDPQ6fHcI4br7qnDkS1xw10crNcJt3Y4l5iDQIF4SJkST2LOAzfzQg
-         ruMgnheSIJ4NWHBS1m3SYRQ8nJjyEp8eeCWbjcj2KQv/bXYVG1RF6nJH6VbN8nN3BnZO
-         PhdLXOJlazcTk6icmT1qPy3HpWMnR0T0naMPGJ6H5h4Xjf+WvVeRK32eVs77p1un8UUR
-         UP7JgtLxtfZfTDXCV5+FAFNz2bGBAXW+c9oyXbxlxNGVx6t5E+hk/kAn4e+z6BOObaR/
-         aZow==
+        d=gmail.com; s=20230601; t=1719324987; x=1719929787; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UueIcfEBB+sTw8Da4EHrqDDA6zoe//kf6xowUDRXxM4=;
+        b=jtL3pPs79ONdqIsleB3qPmdoGo2C3R08POPbaK4qVZPq0ig0XdqP+JoPeoUHfo3er6
+         Xw2EXZ0Adn5y8tMi1ZZ9e0truOFnEukc0Z/BX0dajoAnnarOeY7fmt6jKjdd1MTzBplj
+         3csbF+I9WTf0qLInRZR2u/lMRACZ8P6fYvZW9cZMP+I3x+u4HBoAmhbuf5AXtlWRvBum
+         LKgiaVXK2UmAxTb5+TpzGa/oDzssy181mtSLmlQf7H9bmVeV+rt72lDIhNu6s335dkfO
+         nCOKsGcB48293ErRyXPw++Ze7C2n7xgrJMi6KuXmV4zSmiNmX2f5i01QnJi1pHQD0/F/
+         SchA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719324981; x=1719929781;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=/XbwCezfhWbmSEC4HDR62w3HCK7ee4grHDBBWM8UBvM=;
-        b=qpPjPz+seUiXlsYpGObkUv/N/T5/uAn736VVjowEvwA4OJiaY5tx1J2FuD8OG/ujQr
-         sNBxvHylyw0g6BY09ybc69uZB0s5J/jmFAYl9hemM+ArSTIWAwUorOPEiXQqedbSjgiG
-         VcId3vR8OrJhSYVLGYZndjsp+Q2DXaWjf+nM3DfUlufk9SuEDTkh8HVgmMDixZPuV5ab
-         Ak2dMd1Ndm3//2ydpXOz8dL5K0Awt99jCjbUP0TwttW7ibJfstc9Lp+mmRByoaHCa8ND
-         uztjY2U3Dwc3LfCGmwiOV5GYDcSMdbkInHUqf0X11NlZAxJyRM7BKnlifHMMA1epQiY0
-         JVcw==
-X-Forwarded-Encrypted: i=1; AJvYcCVp17nPc4i2GN75vhpUGVrzXmmOw4Q465A8dil/ufKIjNa+C97EparrsWGDh7SpgbnKc8FVgTFvqjgLogh0Q9Iqbi2guMVLedBf9sto
-X-Gm-Message-State: AOJu0Yzg8ZbCXe6N0zHUF2HRKTu1M16w1lvBM+lxnbJxukLQi5a4eacT
-	rbT89xpssE2t+wq3NoQUUUg7NA5gY6wNXha688vK60romLf4tlnsN5SeQwVCgmU=
-X-Google-Smtp-Source: AGHT+IEDwR3R+Yc2zndJ2m2H9HBzMvQCVx6dbHj7Y+/+ZwJjUOOAdQw1yOvr/BHHrG5A7T3tsUhPPQ==
-X-Received: by 2002:a05:600c:4658:b0:420:66e:4c31 with SMTP id 5b1f17b1804b1-4248cc6693fmr67042985e9.34.1719324980468;
-        Tue, 25 Jun 2024 07:16:20 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:bd71:2ff1:592d:f52a? ([2a01:e0a:982:cbb0:bd71:2ff1:592d:f52a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0c54e4sm217625085e9.23.2024.06.25.07.16.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 07:16:20 -0700 (PDT)
-Message-ID: <1de36429-a27a-4244-8e39-4cb0b09b2689@linaro.org>
+        d=1e100.net; s=20230601; t=1719324987; x=1719929787;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UueIcfEBB+sTw8Da4EHrqDDA6zoe//kf6xowUDRXxM4=;
+        b=toHebCrO42r+yF0Y4Vhwh6BKEHkFueuGZEjGPYCBfTu6nHLiMAcRaLuQ+xXg+hInWO
+         EUShnxizUKMSvZDsyWsTxC2TriPoQxeVxsRsFbs2jYodpvuLwrgujRrrlMxPFmwBGvyr
+         L5cADLdcEEUKYUUsHD7Xa2IAGYhI3gjetuci0mN5i1VfHSgkCSG9B5MxmGdqwBi/VyZ5
+         ph/wR+qRqK869rnapstK2pnpySQqmfaKCDK3zdehn2pmcci7I9tcoV++8ziHLPTD5nNJ
+         ETCahsG9vry6bmbA+m2W3B7nANovsElM2uroIEVAlJKloby/8CISEzo4K6B/0j4WNRBo
+         7XZg==
+X-Forwarded-Encrypted: i=1; AJvYcCVi/Hm5GzRJhyCX+nBa3gzm0tXguxwJLTbzMIx2hK+rDkDh5E72pol/cXcz9pubKfD75k/2S9fveWoMDYwjKjQHHuBG1TSlIutyiuDcRh2O6vaw1RLgSjn2gH3mHZdeI+2d1B7b+TDrxD0IhL1hAyQmBkAgSIQFsOs8bgcRiHMqE46f2G0K
+X-Gm-Message-State: AOJu0YzDUr8RnfBdOwUZeM6PWsdjfCKWBqBiA81VEbMgwAj6EDESy34H
+	Q6WUwZId6nZGnQtqQ/Amv5V+YMn7wEpIVKkPIj292XrTp2mQZazj
+X-Google-Smtp-Source: AGHT+IHyA3C7f0akc1PTU2Nv2Jzlwg/+RN1NlHaJr2fR0Xd3DwDz3CVE3sjnYANSyRnzAAt9+tn50g==
+X-Received: by 2002:a17:906:46cd:b0:a6f:ddb3:bf2b with SMTP id a640c23a62f3a-a7245bf6786mr606179066b.41.1719324987145;
+        Tue, 25 Jun 2024 07:16:27 -0700 (PDT)
+Received: from f.. (cst-prg-81-171.cust.vodafone.cz. [46.135.81.171])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7247ccb868sm299695566b.208.2024.06.25.07.16.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 07:16:26 -0700 (PDT)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: brauner@kernel.org
+Cc: viro@zeniv.linux.org.uk,
+	jack@suse.cz,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	io-uring@vger.kernel.org,
+	axboe@kernel.dk,
+	torvalds@linux-foundation.org,
+	xry111@xry111.site,
+	loongarch@lists.linux.dev,
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH v2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
 Date: Tue, 25 Jun 2024 16:16:18 +0200
+Message-ID: <20240625141618.615247-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] drm/bridge: display-connector: Fix
- atomic_get_input_bus_fmt hook
-To: Aradhya Bhatia <a-bhatia1@ti.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Sam Ravnborg <sam@ravnborg.org>
-Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>,
- Devarsh Thakkar <devarsht@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
- Jai Luthra <j-luthra@ti.com>
-References: <20240625095049.328461-1-a-bhatia1@ti.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240625095049.328461-1-a-bhatia1@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/06/2024 11:50, Aradhya Bhatia wrote:
-> The display-connector acts as a pass-through bridge. To truly reflect
-> that, this bridge should accept the same input format, as it expects to
-> output. That in turn should be the same as what the preceding bridge has
-> to output.
-> 
-> While the get_output_fmt hook does exactly that by calling the same hook
-> of the previous bridge, the get_input_fmt hook should simply propagate
-> the expected output format as its required input format.
-> 
-> Let's say bridge(n) converts YUV bus format to RGB before transmitting
-> the video signals. B is supposed to be RGB and A is YUV. The
-> get_input_fmt hook of bridge(n) should receive RGB as its expected
-> output format for it to select YUV as its required input format.
-> 
-> Moreover, since the display-connector is a pass-through bridge, X and Y
-> should both be RGB as well.
-> 
->      +-------------+            +-------------+
-> A   |             |   B    X   |             |   Y
-> --->|  Bridge(n)  +--->    --->| Display     +--->
->      |             |            | Connector   |
->      |             |            |             |
->      +-------------+            +-------------+
-> 
-> But that's not what's happening at the moment.
-> 
-> The core will call get_output_fmt hook of display-connector, which will
-> call the same hook of bridge(n). Y will get set to RGB because B is RGB.
-> 
-> Now the core will call get_input_fmt hook of display-connector with Y =
-> RGB as its expected output format. This hook will in turn call the
-> get_input_fmt hook of bridge(n), with expected output as RGB. This hook
-> will then return YUV as its required input format, which will set X =
-> YUV.
-> 
-> This is where things get off the track. The core will then call
-> bridge(n)'s get_input_fmt hook but this time the expected output will
-> have changed to X = YUV, instead of what ideally should have been X =
-> RGB. We don't know how bridge(n)'s input format requirement will change
-> now that its expected output format isn't RGB but YUV.
-> 
-> Ideally, formats Y, X, B need to be the same and the get_input_fmt hook
-> for bridge(n) should be called with these as its expected output format.
-> Calling that hook twice can potentially change the expected output
-> format - which can then change the required input format again, or it
-> might just throw an -ENOTSUPP error.
-> 
-> While many bridges don't utilize these APIs, or in a lot of cases A and
-> B are same anyway, it is not the biggest problem, but one that should be
-> fixed anyway.
-> 
-> Fix this.
-> 
-> Fixes: 7cd70656d128 ("drm/bridge: display-connector: implement bus fmts callbacks")
-> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
-> ---
->   drivers/gpu/drm/bridge/display-connector.c | 40 +---------------------
->   1 file changed, 1 insertion(+), 39 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/bridge/display-connector.c b/drivers/gpu/drm/bridge/display-connector.c
-> index ab8e00baf3f1..eebf1fbcdd23 100644
-> --- a/drivers/gpu/drm/bridge/display-connector.c
-> +++ b/drivers/gpu/drm/bridge/display-connector.c
-> @@ -131,50 +131,12 @@ static u32 *display_connector_get_output_bus_fmts(struct drm_bridge *bridge,
->   							      num_output_fmts);
->   }
->   
-> -/*
-> - * Since this bridge is tied to the connector, it acts like a passthrough,
-> - * so concerning the input bus formats, either pass the bus formats from the
-> - * previous bridge or MEDIA_BUS_FMT_FIXED (like select_bus_fmt_recursive())
-> - * when atomic_get_input_bus_fmts is not supported.
-> - * This supports negotiation if the bridge chain has all bits in place.
-> - */
-> -static u32 *display_connector_get_input_bus_fmts(struct drm_bridge *bridge,
-> -					struct drm_bridge_state *bridge_state,
-> -					struct drm_crtc_state *crtc_state,
-> -					struct drm_connector_state *conn_state,
-> -					u32 output_fmt,
-> -					unsigned int *num_input_fmts)
-> -{
-> -	struct drm_bridge *prev_bridge = drm_bridge_get_prev_bridge(bridge);
-> -	struct drm_bridge_state *prev_bridge_state;
-> -
-> -	if (!prev_bridge || !prev_bridge->funcs->atomic_get_input_bus_fmts) {
-> -		u32 *in_bus_fmts;
-> -
-> -		*num_input_fmts = 1;
-> -		in_bus_fmts = kmalloc(sizeof(*in_bus_fmts), GFP_KERNEL);
-> -		if (!in_bus_fmts)
-> -			return NULL;
-> -
-> -		in_bus_fmts[0] = MEDIA_BUS_FMT_FIXED;
-> -
-> -		return in_bus_fmts;
-> -	}
-> -
-> -	prev_bridge_state = drm_atomic_get_new_bridge_state(crtc_state->state,
-> -							    prev_bridge);
-> -
-> -	return prev_bridge->funcs->atomic_get_input_bus_fmts(prev_bridge, prev_bridge_state,
-> -							     crtc_state, conn_state, output_fmt,
-> -							     num_input_fmts);
-> -}
-> -
->   static const struct drm_bridge_funcs display_connector_bridge_funcs = {
->   	.attach = display_connector_attach,
->   	.detect = display_connector_detect,
->   	.edid_read = display_connector_edid_read,
->   	.atomic_get_output_bus_fmts = display_connector_get_output_bus_fmts,
-> -	.atomic_get_input_bus_fmts = display_connector_get_input_bus_fmts,
-> +	.atomic_get_input_bus_fmts = drm_atomic_helper_bridge_propagate_bus_fmt,
->   	.atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
->   	.atomic_destroy_state = drm_atomic_helper_bridge_destroy_state,
->   	.atomic_reset = drm_atomic_helper_bridge_reset,
-> 
-> base-commit: 62c97045b8f720c2eac807a5f38e26c9ed512371
+The newly used helper also checks for 0-sized buffers.
 
-This will break dw-hdmi YUV output negociation because returning output_format
-it won't even try to select something else than the connector output_fmt.
+NULL paths with any flag value other than AT_EMPTY_PATH go the usual
+route and end up with -EFAULT to retain compatibility (Rust is abusing
+calls of the sort to detect availability of statx).
 
-This is limitation of the bus_fmt negociation, it negociates in backwards, but
-if the last one uses bridge_propagate_bus_fmt, and a bridge before depends on the
-display support, it will be constrained by the first output_fmt.
+This avoids path lookup code, lockref management, memory allocation and
+in case of NULL path userspace memory access (which can be quite
+expensive with SMAP on x86_64).
 
-Neil
+statx(..., AT_EMPTY_PATH, ...) issued on Sapphire Rapids (ops/s):
+stock:     4231237
+0-check:   5944063 (+40%)
+NULL path: 6601619 (+11%/+56%)
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
+---
+
+Diffed against fs-next and assumes c050122bdbb4 ("fs: new helper
+vfs_empty_path()") from vfs.empty.path is already applied.
+
+WARNING: io_uring remains untested (modulo compilation). I presume
+Jens has a handy way of making sure things still work. 
+
+While the io_uring part can be added at a later date, but I'm trying to
+avoid a scenario where someone has code which works with the NULL path
+and breaks when moving to io_uring. I am not going to argue about it
+however, worst case changes to io_uring can be trivially dropped and
+someone(tm) can add their own variant whenever they see fit.
+
+v2:
+- support glibc passing AT_NO_AUTOMOUNT | AT_EMPTY_PATH
+- tidy up some commentary
+- drop the fdget_raw CLASS addition as it is already present in newer
+  trees
+
+ fs/internal.h    |   2 +
+ fs/stat.c        | 106 +++++++++++++++++++++++++++++++++++------------
+ io_uring/statx.c |  21 ++++++----
+ 3 files changed, 93 insertions(+), 36 deletions(-)
+
+diff --git a/fs/internal.h b/fs/internal.h
+index 84f371193f74..1d820018e6dc 100644
+--- a/fs/internal.h
++++ b/fs/internal.h
+@@ -247,6 +247,8 @@ extern const struct dentry_operations ns_dentry_operations;
+ int getname_statx_lookup_flags(int flags);
+ int do_statx(int dfd, struct filename *filename, unsigned int flags,
+ 	     unsigned int mask, struct statx __user *buffer);
++int do_statx_fd(int fd, unsigned int flags, unsigned int mask,
++		struct statx __user *buffer);
+ 
+ /*
+  * fs/splice.c:
+diff --git a/fs/stat.c b/fs/stat.c
+index 5039c34a385d..8114eed25d93 100644
+--- a/fs/stat.c
++++ b/fs/stat.c
+@@ -214,6 +214,43 @@ int getname_statx_lookup_flags(int flags)
+ 	return lookup_flags;
+ }
+ 
++static int vfs_statx_path(struct path *path, int flags, struct kstat *stat,
++			  u32 request_mask)
++{
++	int error = vfs_getattr(path, stat, request_mask, flags);
++
++	if (request_mask & STATX_MNT_ID_UNIQUE) {
++		stat->mnt_id = real_mount(path->mnt)->mnt_id_unique;
++		stat->result_mask |= STATX_MNT_ID_UNIQUE;
++	} else {
++		stat->mnt_id = real_mount(path->mnt)->mnt_id;
++		stat->result_mask |= STATX_MNT_ID;
++	}
++
++	if (path->mnt->mnt_root == path->dentry)
++		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
++	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
++
++	/* Handle STATX_DIOALIGN for block devices. */
++	if (request_mask & STATX_DIOALIGN) {
++		struct inode *inode = d_backing_inode(path->dentry);
++
++		if (S_ISBLK(inode->i_mode))
++			bdev_statx_dioalign(inode, stat);
++	}
++
++	return error;
++}
++
++static int vfs_statx_fd(int fd, int flags, struct kstat *stat,
++			  u32 request_mask)
++{
++	CLASS(fd_raw, f)(fd);
++	if (!f.file)
++		return -EBADF;
++	return vfs_statx_path(&f.file->f_path, flags, stat, request_mask);
++}
++
+ /**
+  * vfs_statx - Get basic and extra attributes by filename
+  * @dfd: A file descriptor representing the base dir for a relative filename
+@@ -243,36 +280,13 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
+ retry:
+ 	error = filename_lookup(dfd, filename, lookup_flags, &path, NULL);
+ 	if (error)
+-		goto out;
+-
+-	error = vfs_getattr(&path, stat, request_mask, flags);
+-
+-	if (request_mask & STATX_MNT_ID_UNIQUE) {
+-		stat->mnt_id = real_mount(path.mnt)->mnt_id_unique;
+-		stat->result_mask |= STATX_MNT_ID_UNIQUE;
+-	} else {
+-		stat->mnt_id = real_mount(path.mnt)->mnt_id;
+-		stat->result_mask |= STATX_MNT_ID;
+-	}
+-
+-	if (path.mnt->mnt_root == path.dentry)
+-		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
+-	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
+-
+-	/* Handle STATX_DIOALIGN for block devices. */
+-	if (request_mask & STATX_DIOALIGN) {
+-		struct inode *inode = d_backing_inode(path.dentry);
+-
+-		if (S_ISBLK(inode->i_mode))
+-			bdev_statx_dioalign(inode, stat);
+-	}
+-
++		return error;
++	error = vfs_statx_path(&path, flags, stat, request_mask);
+ 	path_put(&path);
+ 	if (retry_estale(error, lookup_flags)) {
+ 		lookup_flags |= LOOKUP_REVAL;
+ 		goto retry;
+ 	}
+-out:
+ 	return error;
+ }
+ 
+@@ -683,16 +697,40 @@ int do_statx(int dfd, struct filename *filename, unsigned int flags,
+ 	return cp_statx(&stat, buffer);
+ }
+ 
++int do_statx_fd(int fd, unsigned int flags, unsigned int mask,
++	     struct statx __user *buffer)
++{
++	struct kstat stat;
++	int error;
++
++	if (mask & STATX__RESERVED)
++		return -EINVAL;
++	if ((flags & AT_STATX_SYNC_TYPE) == AT_STATX_SYNC_TYPE)
++		return -EINVAL;
++
++	/* STATX_CHANGE_COOKIE is kernel-only for now. Ignore requests
++	 * from userland.
++	 */
++	mask &= ~STATX_CHANGE_COOKIE;
++
++	error = vfs_statx_fd(fd, flags, &stat, mask);
++	if (error)
++		return error;
++
++	return cp_statx(&stat, buffer);
++}
++
+ /**
+  * sys_statx - System call to get enhanced stats
+  * @dfd: Base directory to pathwalk from *or* fd to stat.
+- * @filename: File to stat or "" with AT_EMPTY_PATH
++ * @filename: File to stat or either NULL or "" with AT_EMPTY_PATH
+  * @flags: AT_* flags to control pathwalk.
+  * @mask: Parts of statx struct actually required.
+  * @buffer: Result buffer.
+  *
+  * Note that fstat() can be emulated by setting dfd to the fd of interest,
+- * supplying "" as the filename and setting AT_EMPTY_PATH in the flags.
++ * supplying "" (or preferably NULL) as the filename and setting AT_EMPTY_PATH
++ * in the flags.
+  */
+ SYSCALL_DEFINE5(statx,
+ 		int, dfd, const char __user *, filename, unsigned, flags,
+@@ -700,8 +738,22 @@ SYSCALL_DEFINE5(statx,
+ 		struct statx __user *, buffer)
+ {
+ 	int ret;
++	unsigned lflags;
+ 	struct filename *name;
+ 
++	/*
++	 * Short-circuit handling of NULL and "" paths.
++	 *
++	 * For a NULL path we require and accept only the AT_EMPTY_PATH flag.
++	 *
++	 * However, glibc on 32-bit architectures implements fstatat as statx
++	 * with the "" pathname and AT_NO_AUTOMOUNT | AT_EMPTY_PATH flags.
++	 * Supporting this results in the uglification below.
++	 */
++	lflags = flags & ~AT_NO_AUTOMOUNT;
++	if (lflags == AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
++		return do_statx_fd(dfd, lflags, mask, buffer);
++
+ 	name = getname_flags(filename, getname_statx_lookup_flags(flags));
+ 	ret = do_statx(dfd, name, flags, mask, buffer);
+ 	putname(name);
+diff --git a/io_uring/statx.c b/io_uring/statx.c
+index f7f9b202eec0..a7216058b05b 100644
+--- a/io_uring/statx.c
++++ b/io_uring/statx.c
+@@ -23,6 +23,7 @@ struct io_statx {
+ int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ {
+ 	struct io_statx *sx = io_kiocb_to_cmd(req, struct io_statx);
++	struct filename *filename;
+ 	const char __user *path;
+ 
+ 	if (sqe->buf_index || sqe->splice_fd_in)
+@@ -36,14 +37,13 @@ int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
+ 	sx->buffer = u64_to_user_ptr(READ_ONCE(sqe->addr2));
+ 	sx->flags = READ_ONCE(sqe->statx_flags);
+ 
+-	sx->filename = getname_flags(path,
+-				     getname_statx_lookup_flags(sx->flags));
+-
+-	if (IS_ERR(sx->filename)) {
+-		int ret = PTR_ERR(sx->filename);
+-
+-		sx->filename = NULL;
+-		return ret;
++	sx->filename = NULL;
++	if (!(sx->flags == AT_EMPTY_PATH && vfs_empty_path(sx->dfd, path))) {
++		filename = getname_flags(path,
++					 getname_statx_lookup_flags(sx->flags));
++		if (IS_ERR(filename))
++			return PTR_ERR(filename);
++		sx->filename = filename;
+ 	}
+ 
+ 	req->flags |= REQ_F_NEED_CLEANUP;
+@@ -58,7 +58,10 @@ int io_statx(struct io_kiocb *req, unsigned int issue_flags)
+ 
+ 	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
+ 
+-	ret = do_statx(sx->dfd, sx->filename, sx->flags, sx->mask, sx->buffer);
++	if (sx->filename == NULL)
++		ret = do_statx_fd(sx->dfd, sx->flags, sx->mask, sx->buffer);
++	else
++		ret = do_statx(sx->dfd, sx->filename, sx->flags, sx->mask, sx->buffer);
+ 	io_req_set_res(req, ret, 0);
+ 	return IOU_OK;
+ }
+-- 
+2.43.0
 
 
