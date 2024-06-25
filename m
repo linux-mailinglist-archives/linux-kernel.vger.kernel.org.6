@@ -1,281 +1,257 @@
-Return-Path: <linux-kernel+bounces-228422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62B33915FB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:13:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB753915FBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:14:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4B4A1F220CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:13:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F7422814FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:14:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 464A71487F7;
-	Tue, 25 Jun 2024 07:11:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43415146A9A;
+	Tue, 25 Jun 2024 07:13:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cq6UPiEQ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ffzzuXD8"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7730B33C0
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA75873463;
+	Tue, 25 Jun 2024 07:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719299507; cv=none; b=i+mtyLhFtxcrfapj3APl2IlHSPJsJH28eWUrFYYhXuC24Y4IGs57uSNFEKaeH2T4wHvyvDzS5bh0yGAFYA703zlJWcY8CivfBl+FDnJpI1oTiZCw5Kh8d9sb3/5elhk4I87OydsmQJLApjTkTFYnPd2AbPHdQBVxOtSnEsSOKyk=
+	t=1719299602; cv=none; b=nA7JIn9YOn/j7Vdjo6g9w96u/GLA9R0OgrcWUzX1ZRWN5dFi4Z+OB9Q+nuxLAiAQDuGVldVVEqrcl9oBGE1ttlA4725y+B6zWmuQ7oJZ+arj+BS1VML0QsFoOvA8XIJxBOmpgNTM+hVYQrU1qjxouU/zLnSTxAlGENA9JWY6uQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719299507; c=relaxed/simple;
-	bh=TLrvzNSGRIjfjk0ds0hDGYrbMsuv7YV9Cx8PsRvbsvo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tQoxpkBGhlFeTdfVRZJFAFlc+9czTreGuJoNXkcxjHtVIPtyLstP/W3566PU+PQh1MEqWq68bR/DI7lXeorIlulP5rqEue6JeKZ+6JxEzTxwAQ+/xulbENaygQAM6m1Vr7E2DYLAIffJ0olu/srk7ieWUlSrSjOzCQbQvLD5QsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cq6UPiEQ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719299503;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UnIdsJMqMkoDF6UPKRzG7Hc37h3V7D0wsMm0QIPwULU=;
-	b=cq6UPiEQ/IEO3eokqd1njKcZGoJqm/v2ZN05x8Db6dEo2EzKBNOyweNlObzVuMqT9/KbIm
-	fLh+iTeyqTD2drelqgvseDovEuc27k52+QeMXTU/BBd7hbZ1FPDReTL8qy04IYGFliBd8/
-	KWaeKohRt1fUJrJdqrNWVKmq0FjLhbI=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-156-12ML2gppP7u9KFsjEtdsMQ-1; Tue, 25 Jun 2024 03:11:41 -0400
-X-MC-Unique: 12ML2gppP7u9KFsjEtdsMQ-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-42476eda16cso3415655e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:11:41 -0700 (PDT)
+	s=arc-20240116; t=1719299602; c=relaxed/simple;
+	bh=eeHPwgkpAFO71TVTQMuDmcgFPFM0V9lv/vHn3xfW8PY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Vdcj/2S7XGi47kkb9uRD6Ba0JwpbTi8pz41jUHonvypabGW+SVmrgbNY/ICGeRBOybP4euWwhScD1LSIy17QjqURrfLNV7t0bFeGDATx/OUrQIHBCAIxKTnIg/zIt2gFwtx37zeVrLdWVSEd9PmdVi8yGGG8mF346jk9JnLBtGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ffzzuXD8; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2c70c08d98fso4092111a91.0;
+        Tue, 25 Jun 2024 00:13:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719299600; x=1719904400; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QqS5qkvxYIguDPc+6nwFBzR1BGeFxAODD+Dwe8rZa64=;
+        b=ffzzuXD8dbrZu+vV0vdWZTEpiw6fheI+yO2kgfyeTUBuDnJzlX2HuHTbiL3eKx/XF7
+         7Zk0bTj6zf84et0BKCMIUPp8ZWkVPlDcRoRFr7CQUAHrXKFtvPsUI1ATfTJ4jq+fkePI
+         MGJivUQeJpg/4loiJ2d/KkLC09Db6FSukDfWxtlWylvQSdCs+I80F0PBMbcJHUUoSWKc
+         wiBCJ+ehHDUctVY9riSWfuQkoXXel2oFR6pEG0Qe4wH0AtJVCT0SHdQzPkcia0MAa4DX
+         Zvyhwi53ZomYyduDIdyrqxzdoDtbXcY6eYlmrZwJEVgWXuh/A0sG0U6z5F1GppHkTi9F
+         Kbeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719299500; x=1719904300;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UnIdsJMqMkoDF6UPKRzG7Hc37h3V7D0wsMm0QIPwULU=;
-        b=FmfnGnnH7Yub6gs6FfVVxEfWu4HkZ1T0VqxVkWXhtq+1AclcvOeOiEePjntX/QNxdH
-         E3fH55D2+c2IkG7KJTxy1KvSM5K+t9GGmUAvSB1PTLJEO8hch9NLKeCqKqUg+ynS+4Gu
-         AoNuviyswls7ljLmc3C4J4s/RzXsFRkno9S7b8nSRZYTKSZNu0OPuzPfXdF6J7yTcFd1
-         BZZVVLnhBHMEjDuFxWUgPv4QuHzvQKko1G+/SMh3NnyEp/dFGD1HJ8GyxBf0ABaXBjkx
-         nYb6Svkxwgcpeolnm8uNgvgIkERIolA4HI+SJgZ4t+/nPwBJnFNhno2uVXVYXv+ay9sT
-         rq1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVQvERofsdBKOyuawJwlhSsC9FaSqHHcf4/JtoJf+JuseR/f7XXs0wByKkAGjHBXMT9dGlOIWUwhRm9NPGNCt+oVflPuT+maPt7vErm
-X-Gm-Message-State: AOJu0YxY+EW5i3lnN6+Z7C6H0LJZuY5mIKuoNRJr7iyMG0qc7KCjRLF0
-	GrhVwxYqxIPpflV6wI5u8xfe6KJfhj2b7k8Lm97PWVpiCGfmXBaFZtfgO01aUrKzjGlOGebIw4Z
-	Bv1Qj8yev1W/9jPzu3T7/IIbRtSzpQ0MxBID6J9HWL4JVPfgt/biJrW+YAxrkLw==
-X-Received: by 2002:a05:600c:4fcb:b0:421:c211:a57e with SMTP id 5b1f17b1804b1-4248cc6673emr41636725e9.35.1719299500124;
-        Tue, 25 Jun 2024 00:11:40 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGLLu5OdsdrE20B7Tz2kH8m837OaXN5E0lckyzm0dvKRWIthJJP3coYroXleaJKHDI2+Pm53w==
-X-Received: by 2002:a05:600c:4fcb:b0:421:c211:a57e with SMTP id 5b1f17b1804b1-4248cc6673emr41636375e9.35.1719299499386;
-        Tue, 25 Jun 2024 00:11:39 -0700 (PDT)
-Received: from redhat.com ([2a02:14f:1f6:f72:b8c7:9fc2:4c8b:feb3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366389b8ad2sm11987747f8f.33.2024.06.25.00.11.37
+        d=1e100.net; s=20230601; t=1719299600; x=1719904400;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QqS5qkvxYIguDPc+6nwFBzR1BGeFxAODD+Dwe8rZa64=;
+        b=YVE1KtVFI4z3Q1mnZ2IJd8mazbieQlhrOfO6zViNVkC4stT0lvWBgivvCmdUeNK5oB
+         uzycviUWd+KC7x3QYj9iS8zZsgLW1k2zTuWRodcYaQEQfFRb3u7f2Yx9LCuR48naQVA5
+         FSZEK5APY99efM7nHHGxb2j0r4csBL3WxyYbncC00aNvIsOpAOr/OPcswXnArhx+CqI6
+         EHhuVdZDm5L4+q562Obq5US3XjgedgCQQU5tHJXjN427+MGLBDp9BO2Xx4urfu55/h+Z
+         6dNxuUouJ2cUc5qcyB/9arQCalGdVlH88zVMT4DNdFW3mf5ldjlfjwa1u8WiqwlmBrUi
+         PSnw==
+X-Forwarded-Encrypted: i=1; AJvYcCVBpM5uBnUi1UYbRSsHfcbvOUbab0CTEnY9Zr4qqaVwBEVreNSF8gOhvrRXSeD+xyd3n+qSKEc8gRlIEI4ECSSIrH6Q2doSM0kmJztrf0w978cMzOtYVQ8e5Nm846Kw1x7G76h0
+X-Gm-Message-State: AOJu0YwgUryn2XwAxHonitG9lhDs6qrqOHvkssT6w7NgLhb+wOSi+pLT
+	MLCT+SYJFhhyuD8E0oL4cm4W7RGs2uZTDI6rZyZucL+r0JTrF8qM
+X-Google-Smtp-Source: AGHT+IHwy8BVEfsToz9CtNaX3E5F7pOK9zAZozi3JW/gRbDDAmNqkArpx5hpW2LXxCI9HnkVh1L1ww==
+X-Received: by 2002:a17:90a:a40b:b0:2c8:87e:c4cf with SMTP id 98e67ed59e1d1-2c85819841bmr6033897a91.4.1719299600018;
+        Tue, 25 Jun 2024 00:13:20 -0700 (PDT)
+Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819a8e466sm7941932a91.32.2024.06.25.00.13.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 00:11:38 -0700 (PDT)
-Date: Tue, 25 Jun 2024 03:11:35 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, venkat.x.venkatsubra@oracle.com,
-	gia-khanh.nguyen@oracle.com
-Subject: Re: [PATCH V2 1/3] virtio: allow nested disabling of the configure
- interrupt
-Message-ID: <20240625030259-mutt-send-email-mst@kernel.org>
-References: <20240624024523.34272-1-jasowang@redhat.com>
- <20240624024523.34272-2-jasowang@redhat.com>
- <20240624054403-mutt-send-email-mst@kernel.org>
- <CACGkMEv1U7N-RRgQ=jbhBK1SWJ3EJz84qYaxC2kk6keM6J6MaQ@mail.gmail.com>
+        Tue, 25 Jun 2024 00:13:19 -0700 (PDT)
+Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
+	by twhmp6px (Postfix) with ESMTPS id 24EFF800F4;
+	Tue, 25 Jun 2024 15:15:40 +0800 (CST)
+From: Cheng Ming Lin <linchengming884@gmail.com>
+To: miquel.raynal@bootlin.com,
+	dwmw2@infradead.org,
+	computersforpeace@gmail.com,
+	marek.vasut@gmail.com,
+	vigneshr@ti.com,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: richard@nod.at,
+	alvinzhou@mxic.com.tw,
+	leoyu@mxic.com.tw,
+	Cheng Ming Lin <chengminglin@mxic.com.tw>,
+	stable@vger.kernel.org,
+	Jaime Liao <jaimeliao@mxic.com.tw>
+Subject: [PATCH v5.4.y v4] mtd: spinand: macronix: Add support for serial NAND flash
+Date: Tue, 25 Jun 2024 15:12:51 +0800
+Message-Id: <20240625071251.62100-1-linchengming884@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACGkMEv1U7N-RRgQ=jbhBK1SWJ3EJz84qYaxC2kk6keM6J6MaQ@mail.gmail.com>
 
-On Tue, Jun 25, 2024 at 09:27:04AM +0800, Jason Wang wrote:
-> On Mon, Jun 24, 2024 at 5:59 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Mon, Jun 24, 2024 at 10:45:21AM +0800, Jason Wang wrote:
-> > > Somtime driver may want to enable or disable the config callback. This
-> > > requires a synchronization with the core. So this patch change the
-> > > config_enabled to be a integer counter. This allows the toggling of
-> > > the config_enable to be synchronized between the virtio core and the
-> > > virtio driver.
-> > >
-> > > The counter is not allowed to be increased greater than one, this
-> > > simplifies the logic where the interrupt could be disabled immediately
-> > > without extra synchronization between driver and core.
-> > >
-> > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > ---
-> > >  drivers/virtio/virtio.c | 20 +++++++++++++-------
-> > >  include/linux/virtio.h  |  2 +-
-> > >  2 files changed, 14 insertions(+), 8 deletions(-)
-> > >
-> > > diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-> > > index b968b2aa5f4d..d3aa74b8ae5d 100644
-> > > --- a/drivers/virtio/virtio.c
-> > > +++ b/drivers/virtio/virtio.c
-> > > @@ -127,7 +127,7 @@ static void __virtio_config_changed(struct virtio_device *dev)
-> > >  {
-> > >       struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
-> > >
-> > > -     if (!dev->config_enabled)
-> > > +     if (dev->config_enabled < 1)
-> > >               dev->config_change_pending = true;
-> > >       else if (drv && drv->config_changed)
-> > >               drv->config_changed(dev);
-> > > @@ -146,17 +146,23 @@ EXPORT_SYMBOL_GPL(virtio_config_changed);
-> > >  static void virtio_config_disable(struct virtio_device *dev)
-> > >  {
-> > >       spin_lock_irq(&dev->config_lock);
-> > > -     dev->config_enabled = false;
-> > > +     --dev->config_enabled;
-> > >       spin_unlock_irq(&dev->config_lock);
-> > >  }
-> > >
-> > >  static void virtio_config_enable(struct virtio_device *dev)
-> > >  {
-> > >       spin_lock_irq(&dev->config_lock);
-> > > -     dev->config_enabled = true;
-> > > -     if (dev->config_change_pending)
-> > > -             __virtio_config_changed(dev);
-> > > -     dev->config_change_pending = false;
-> > > +
-> > > +     if (dev->config_enabled < 1) {
-> > > +             ++dev->config_enabled;
-> > > +             if (dev->config_enabled == 1 &&
-> > > +                 dev->config_change_pending) {
-> > > +                     __virtio_config_changed(dev);
-> > > +                     dev->config_change_pending = false;
-> > > +             }
-> > > +     }
-> > > +
-> > >       spin_unlock_irq(&dev->config_lock);
-> > >  }
-> > >
-> >
-> > So every disable decrements the counter. Enable only increments it up to 1.
-> > You seem to be making some very specific assumptions
-> > about how this API will be used. Any misuse will lead to under/overflow
-> > eventually ...
-> >
-> 
-> Well, a counter gives us more information than a boolean. With
-> boolean, misuse is even harder to be noticed.
+From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
-With boolean we can prevent misuse easily because previous state
-is known exactly. E.g.:
+commit c374839f9b4475173e536d1eaddff45cb481dbdf upstream.
 
-static void virtio_config_driver_disable(struct virtio_device *dev)
-{
-	BUG_ON(dev->config_driver_disabled);
-	dev->config_driver_disabled = true;
-}
+Macronix NAND Flash devices are available in different configurations
+and densities.
 
+MX"35" means SPI NAND
+MX35"LF"/"UF" , LF means 3V and UF meands 1.8V
+MX35LF"2G" , 2G means 2Gbits
+MX35LF2G"E4"/"24"/"14",
+E4 means internal ECC and Quad I/O(x4)
+24 means 8-bit ecc requirement and Quad I/O(x4)
+14 means 4-bit ecc requirement and Quad I/O(x4)
 
+MX35LF2G14AC is 3V 2Gbit serial NAND flash device
+(without on-die ECC)
+https://www.mxic.com.tw/Lists/Datasheet/Attachments/7926/MX35LF2G14AC,%203V,%202Gb,%20v1.1.pdf
 
-static void virtio_config_driver_enable(struct virtio_device *dev)
-{
-	BUG_ON(!dev->config_driver_disabled);
-	dev->config_driver_disabled = false;
-}
+MX35UF4G24AD/MX35UF2G24AD/MX35UF1G24AD is 1.8V 4Gbit serial NAND flash device
+(without on-die ECC)
+https://www.mxic.com.tw/Lists/Datasheet/Attachments/7980/MX35UF4G24AD,%201.8V,%204Gb,%20v0.00.pdf
 
+MX35UF4GE4AD/MX35UF2GE4AD/MX35UF1GE4AD are 1.8V 4G/2Gbit serial
+NAND flash device with 8-bit on-die ECC
+https://www.mxic.com.tw/Lists/Datasheet/Attachments/7983/MX35UF4GE4AD,%201.8V,%204Gb,%20v0.00.pdf
 
-Does not work with integer you simply have no idea what the value
-should be at point of call.
+MX35UF2GE4AC/MX35UF1GE4AC are 1.8V 2G/1Gbit serial
+NAND flash device with 8-bit on-die ECC
+https://www.mxic.com.tw/Lists/Datasheet/Attachments/7974/MX35UF2GE4AC,%201.8V,%202Gb,%20v1.0.pdf
 
+MX35UF2G14AC/MX35UF1G14AC are 1.8V 2G/1Gbit serial
+NAND flash device (without on-die ECC)
+https://www.mxic.com.tw/Lists/Datasheet/Attachments/7931/MX35UF2G14AC,%201.8V,%202Gb,%20v1.1.pdf
 
-> >
-> >
-> > My suggestion would be to
-> > 1. rename config_enabled to config_core_enabled
-> > 2. rename virtio_config_enable/disable to virtio_config_core_enable/disable
-> > 3. add bool config_driver_disabled and make virtio_config_enable/disable
-> >    switch that.
-> > 4. Change logic from dev->config_enabled to
-> >    dev->config_core_enabled && !dev->config_driver_disabled
-> 
-> If we make config_driver_disabled by default true,
+Validated via normal(default) and QUAD mode by read, erase, read back,
+on Xilinx Zynq PicoZed FPGA board which included Macronix
+SPI Host(drivers/spi/spi-mxic.c).
 
-No, we make it false by default.
+Cc: stable@vger.kernel.org # 5.4.y
+Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
+Signed-off-by: Jaime Liao <jaimeliao@mxic.com.tw>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Link: https://lore.kernel.org/linux-mtd/1621475108-22523-1-git-send-email-jaimeliao@mxic.com.tw
+---
+ drivers/mtd/nand/spi/macronix.c | 99 +++++++++++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
 
-> we need someone to
-> enable it explicitly. If it's core, it breaks the semantic that it is
-> under the control of the driver (or needs to synchronize with the
-> driver). If it's a driver, each driver needs to enable it at some time
-> which can be easily forgotten. And if we end up with workarounds like:
-> 
->         /* If probe didn't do it, mark device DRIVER_OK ourselves. */
->         if (!(dev->config->get_status(dev) & VIRTIO_CONFIG_S_DRIVER_OK))
->                 virtio_device_ready(dev);
-> 
-> It's another break of the semantics. And actually the above is also racy.
-> 
-> It seems the only choice is to make config_driver_disabled by default
-> false. But the driver needs to be aware of this and take extra care
-> when calling virtio_device_ready() which is also tricky.
-
-
-No, false by default simply means no change to semantics.
-
-
-> 
-> So in conclusion, two booleans seems sut-optimal than a counter. For
-> example we can use different bits for the counter as preempt_count
-> did. With counter(s), core and driver don't need any implicit/explicit
-> synchronization.
-> 
-> Thanks
-> 
-
-We have a simple problem, we can solve it simply. reference counting
-is tricky to get right and hard to debug, if we don't need it let us
-not go there.
-
-
-
-But in conclusion ;) if you don't like my suggestion do something else
-but make the APIs make sense, at least do better than +5
-on Rusty's interface design scale.
-
-> 
-> 
-> 
-> >
-> >
-> >
-> >
-> > > @@ -455,7 +461,7 @@ int register_virtio_device(struct virtio_device *dev)
-> > >               goto out_ida_remove;
-> > >
-> > >       spin_lock_init(&dev->config_lock);
-> > > -     dev->config_enabled = false;
-> > > +     dev->config_enabled = 0;
-> > >       dev->config_change_pending = false;
-> > >
-> > >       INIT_LIST_HEAD(&dev->vqs);
-> > > diff --git a/include/linux/virtio.h b/include/linux/virtio.h
-> > > index 96fea920873b..4496f9ba5d82 100644
-> > > --- a/include/linux/virtio.h
-> > > +++ b/include/linux/virtio.h
-> > > @@ -132,7 +132,7 @@ struct virtio_admin_cmd {
-> > >  struct virtio_device {
-> > >       int index;
-> > >       bool failed;
-> > > -     bool config_enabled;
-> > > +     int config_enabled;
-> > >       bool config_change_pending;
-> > >       spinlock_t config_lock;
-> > >       spinlock_t vqs_list_lock;
-> > > --
-> > > 2.31.1
-> >
+diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/macronix.c
+index f18c6cfe8ff5..a38d0de5f765 100644
+--- a/drivers/mtd/nand/spi/macronix.c
++++ b/drivers/mtd/nand/spi/macronix.c
+@@ -132,6 +132,105 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 					      &update_cache_variants),
+ 		     SPINAND_HAS_QE_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
++	SPINAND_INFO("MX35LF2G14AC", 0x20,
++		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 2, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF4G24AD", 0xb5,
++		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 2, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF4GE4AD", 0xb7,
++		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF2G14AC", 0xa0,
++		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 2, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF2G24AD", 0xa4,
++		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 2, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF2GE4AD", 0xa6,
++		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF2GE4AC", 0xa2,
++		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF1G14AC", 0x90,
++		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF1G24AD", 0x94,
++		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF1GE4AD", 0x96,
++		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF1GE4AC", 0x92,
++		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
+ };
+ 
+ static int macronix_spinand_detect(struct spinand_device *spinand)
+-- 
+2.25.1
 
 
