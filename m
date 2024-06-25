@@ -1,105 +1,86 @@
-Return-Path: <linux-kernel+bounces-228172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFFB6915BD7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:48:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA662915BEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC47A2837AE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:48:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 222C81C214FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D931CAB5;
-	Tue, 25 Jun 2024 01:47:58 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37421D54F;
+	Tue, 25 Jun 2024 01:54:05 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D754918030;
-	Tue, 25 Jun 2024 01:47:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D43DA1BC2F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719280078; cv=none; b=N/BFvuRnM5sq+fbdk4ePlZhuCBfvf6/apZ+kJYQU5SPE5kIvPMmAhLp9JRPI6sv9LDvPuNJ41cMdXt/KzjJUnGAarjVCPos8lrdSK97+LZrhvqQ8F0xP0cE4xFpRT8d6ACfI/GypUGQ89AHQ899ftWfI5z3MYD6l2HtGFjK7dUo=
+	t=1719280445; cv=none; b=k2hnW60SeYNCDFxNyvFLVR2dxQ5YCQQ5rirqJQ/YmJrak2TG0W8cnObo/v7wkvUFxBhzpG9Z/vkq8tBnga6DG0n4hEDLk8RjQOYdh3e3D7ovXAuEZoXvaCnxX6feXvbizkXiBMlhNoYBiA8Noh6BXtOV/J2rRito7A+FLIEEZH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719280078; c=relaxed/simple;
-	bh=9Rsb31kwR8ngFnYt1tUrH4yXXEL3qfuG/Tay2QGDL1Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Xx20V8PL+1wz9sldP0PhKGU3jeY6g4xgA/vBe2u5rTPL6Z0uj1XOko09cgA6PXpvQ3asbUiiDZZRlVLjJYsYClyjOyDom3v24W5Rp3mhsqMlzt94iwLjZEM1/eW3AHPhhF4c8EPSingoKES87aWV4UkETXebNpNOw9naF7AWBH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W7SKJ2fVBzZg0K;
-	Tue, 25 Jun 2024 09:43:32 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (unknown [7.221.188.204])
-	by mail.maildlp.com (Postfix) with ESMTPS id CB9C21401E0;
-	Tue, 25 Jun 2024 09:47:54 +0800 (CST)
-Received: from kwepemd100011.china.huawei.com (7.221.188.204) by
- kwepemd100011.china.huawei.com (7.221.188.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 25 Jun 2024 09:47:54 +0800
-Received: from kwepemd100011.china.huawei.com ([7.221.188.204]) by
- kwepemd100011.china.huawei.com ([7.221.188.204]) with mapi id 15.02.1258.034;
- Tue, 25 Jun 2024 09:47:54 +0800
-From: duchangbin <changbin.du@huawei.com>
-To: Namhyung Kim <namhyung@kernel.org>
-CC: duchangbin <changbin.du@huawei.com>, Peter Zijlstra
-	<peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, "Arnaldo Carvalho de
- Melo" <acme@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Mark Rutland
-	<mark.rutland@arm.com>, Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, "Ian
- Rogers" <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>, Nick Desaulniers
-	<ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt
-	<justinstitt@google.com>, "linux-perf-users@vger.kernel.org"
-	<linux-perf-users@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev" <llvm@lists.linux.dev>
-Subject: Re: [PATCH v3 2/4] perf: disasm: use build_id_path if fallback failed
-Thread-Topic: [PATCH v3 2/4] perf: disasm: use build_id_path if fallback
- failed
-Thread-Index: AQHawSK1ifvJzOPE3ES+2w16NY3J17HXHy4AgACh0oA=
-Date: Tue, 25 Jun 2024 01:47:54 +0000
-Message-ID: <bfdcb5d8f0664f48a3d6be93954ebdb2@huawei.com>
-References: <20240618015530.3699434-1-changbin.du@huawei.com>
- <20240618015530.3699434-3-changbin.du@huawei.com>
- <ZnoKcoHtjvJgjETL@google.com>
-In-Reply-To: <ZnoKcoHtjvJgjETL@google.com>
-Accept-Language: en-US
-Content-Language: zh-CN
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-exchange-imapappendstamp: kwepemd100011.china.huawei.com (15.02.1258.034)
-x-ms-exchange-messagesentrepresentingtype: 1
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1063B9E35DDEF04BBCEB437215F3D84E@huawei.com>
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1719280445; c=relaxed/simple;
+	bh=B3cTI03E83giNkhPzE8JU3Wu9pw6OTt+bv5Zxzi290E=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ptwzTjj0kunJyYOjB6e5J4tyQDc2V8LMvSzA6TYEbZ21j5lA6oEVOHN29LKOwwu4xQSeQ/CHL125TOeVxsSuQhqKTgQGcjTI9dz9S4mzr64VWmyTWZHiCdfEqPmV2gMbswWX/pJwL7rc62bw2EZP8wVXJXCni2VnH27c5JiKX1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7f3b0bc9cf6so298342939f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 18:54:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719280443; x=1719885243;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0WH3oatX4L/Z/LJOY8UOhXU2iv8F6YHqV5JpcSbW4rM=;
+        b=NOblQTnV3TCSBCLwsVqpJMoBZyDKGnr1ME5MODMcOutVucROL81TBn8R1rbsFzniZw
+         IrCEnWJ4GoNFxKrMiQH9f+enN3h8l6EzA+phb/7AfOvGGSYY7OkQf3ubU8QNZGkJNJ/F
+         nfxdMuZ8IcXDjftr0I229aj+MNP6TMR9zVJYqDodQk4Xsqgo8y35swu5ZzsQ/Bd1LuAb
+         P5V/Mq4zKK4vnGduGQZFXY5iBA/oZNCDMZglxTyoUpaYQ5auH7JrQYS7rjIq+D62s0dl
+         Pzeuy5WGzPr2oJO+thY7fQBjNEqEHYDjKb8gzQrmqscZHykuolO3ERwml+z6PAJBv4dw
+         4g6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXZfiAdqk5GH7pTZG7Pw96TEYsxkoJ5HaXCktIc61xR4I1guvzqBwDhxVPnEYFmslSb6s7hjHNMsAqnqvQmlXhT4/4Evm1g8zmcgAQV
+X-Gm-Message-State: AOJu0YwLttD2cwBM/st/YqllXVSnKpbft4C7bTudt6lr1RW6xa8xuUaA
+	NM1kjHo7lL5FFxA4AHynU0Kd7kCtd2BFnc71zYruMzujK3gOY51eB3vfXx4bZeTMYp2NdA5GpSG
+	pJx7WeyDNT4HGIK+wDbZI7LRzYgKmLmm7jY/Wv+8hvMH8Dags1HVWLJc=
+X-Google-Smtp-Source: AGHT+IEL4OECKwMI0ZgbgkcTjG4wnE4zH434Rtbum4HY8hAuuICt/X2tMpZdmsg9Zt8otVLGFiC67u6Y+gM0YcSSk6h7X2+ZQuqJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1fcb:b0:375:9e20:bee3 with SMTP id
+ e9e14a558f8ab-3763f493866mr5817375ab.0.1719280442961; Mon, 24 Jun 2024
+ 18:54:02 -0700 (PDT)
+Date: Mon, 24 Jun 2024 18:54:02 -0700
+In-Reply-To: <tencent_76254CBA77BBB533DB9E261BD64BF01BF008@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000012847c061bad2c74@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in sk_skb_reason_drop
+From: syzbot <syzbot+f115fcf7e49b2ebc902d@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Jun 24, 2024 at 05:08:18PM -0700, Namhyung Kim wrote:
-> Hello,
->=20
-> On Tue, Jun 18, 2024 at 09:55:28AM +0800, Changbin Du wrote:
-> > If we can not fallback for special dso (vmlinx and vdso), use the
-> > build_id_path found previously.
-> >=20
-> > To make change easy, this change first refactors the code by extracting
-> > two functions read_buildid_linkname() and fallback_filename().
->=20
-> Can you please split the refactoring from the actual change?  It'd be
-> easier to review and to maintain the code.
->=20
-Sure, I'll do it taday.
+Hello,
 
-> Thanks,
-> Namhyung
->=20
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
---=20
-Cheers,
-Changbin Du
+Reported-and-tested-by: syzbot+f115fcf7e49b2ebc902d@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         84562f99 Merge branch '100GbE' of git://git.kernel.org..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f0202a980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=e78fc116033e0ab7
+dashboard link: https://syzkaller.appspot.com/bug?extid=f115fcf7e49b2ebc902d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12de383e980000
+
+Note: testing is done by a robot and is best-effort only.
 
