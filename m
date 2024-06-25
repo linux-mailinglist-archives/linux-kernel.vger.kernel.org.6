@@ -1,164 +1,239 @@
-Return-Path: <linux-kernel+bounces-228665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0C2791652B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:20:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B17291650B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:16:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86EF3281602
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:20:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A1511C21B9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:16:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6D5C14A0B8;
-	Tue, 25 Jun 2024 10:20:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C9E814A0B8;
+	Tue, 25 Jun 2024 10:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="zqNYzLUW"
-Received: from out203-205-221-205.mail.qq.com (out203-205-221-205.mail.qq.com [203.205.221.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="R+7/Me23"
+Received: from mail-oa1-f53.google.com (mail-oa1-f53.google.com [209.85.160.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D679146A67;
-	Tue, 25 Jun 2024 10:20:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1023D5EE97
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719310830; cv=none; b=iK0Xx6xEbN0qpHo9vYJJ5uakhMtxeqgSQR8GJdqhtgutbkWmXA1dq/b5XyNyMNrwPNtdF43fMkH4lxrM1fUUihS4vA8J2KhfRuzP5qWtU2QSBzL/yq49RSRXxiebgSdY7LqHd7fjAwJJH71cI0rDXBpAjo7jV+GcCPNuNl+XRwE=
+	t=1719310553; cv=none; b=gxvl9ZqzpFhZmgEIoHCFlMgUuaINW/OGVhCsF7Xuo8OG6KqS5DqnnyjfmS6x0C4yl2BkZGBQcbyBeQ9G5fAfzsGPMmNwbCpxwqGBKQbpr6QnXAcxaZ/OZvcKRG+dQo0g6BnQTKXP4wbLUzkJXIRhNs3JH89VPZPKCFY7t1XU+0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719310830; c=relaxed/simple;
-	bh=mrkCbUN4T0q6BoY0m/gooEG5R4amkIb+uH8GJY8h6fQ=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=SpXBliQ/569xYTkUqs2RNrCVb/xbffFlqCZrx/FHcXQqYMCAWw9LWpGQy/KHXzwR+rUMnJgE35z5cdLRS+XwJg/KjvSAcmTz9rq9DeHRO9r8ufuCZcUFwhoA8zwW9ji8cuztMKjndGCzXxjQCwE1VKcEqVmirgoHQn1G5ucpV/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=zqNYzLUW; arc=none smtp.client-ip=203.205.221.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1719310519; bh=NZOSPeiPAVveuWbrnAInxDlcsoHJ6JgaucOMtYnKhwA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=zqNYzLUWj88NKtIKPLkX0Nn3dCD1RObpt623bS4HnUgR+lLG5anw3fBbcglABS6RB
-	 9g/a4rBlf1vLpg/D/Z+t5G3uib2jIe7po55uHgfOoKqt0Xv+feLvPXvuA9+GWinG3Q
-	 zGzy3G4KhLGUXK1f1JO6+aT4/qNYm7Rxr/Lo7jZQ=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszc5-2.qq.com (NewEsmtp) with SMTP
-	id 30EA185C; Tue, 25 Jun 2024 18:12:14 +0800
-X-QQ-mid: xmsmtpt1719310334tv296kjyp
-Message-ID: <tencent_CFD37DA36B4965E3A7C45E7770776C86DB05@qq.com>
-X-QQ-XMAILINFO: MtZ4zLDUQmWf8BIMzYOceNsyYxmg35httaPj3YYnwhHxtvnQssNEIax9AzBl3i
-	 43lZ3m5xTxQQ20u2+uvs+jEHKbqQrtTGvEob8aycLQrF+xKJPSq1nCEkNzD9rqxIMujpEBm5/Zb3
-	 SWi0kiBnC5mTGjrp+Q3GvMCX7eZ/IhmO1kOk/P8zu9bgjcnTFDczGiEzQjht2pdOPjqralUE+N0B
-	 dZ4ho/u3iylVHlMxoF6Uvq8QU/DxnPBnVOeJ6onPpzkW1TJj3J3IE0/0tPOuWxvgNiztavUH2FiS
-	 fMGeIYVz7upsm86hgDDNapcQn3RR85ipvBUTsDvd+JyyFQzj9qP8MJkMBwjJoRwDIEpV1s7oldiL
-	 c4TEeuGjrm/8BUrk7mm2zkR4hYpPPibvAgP0aW02NnNjxgzoeQwHOUZNdBcPQiZ/knxlxacljlcj
-	 eVwUx4NAjgj86d6r74lEQLECHkCFYMzHFr+jQ1SPmc4KdYHa+SMHAyCmU7hUOTFHxwfRdEgE2JVq
-	 P31DCe+BePQUW6yu4l9jpl6DyRwg5P2iMANnSjok34w84l/RaLp/Ee4yYpc3QCVgjmfkEfuIR5M5
-	 V5BEofSxgDplfEWQuQ9nRIHcjoDt/0gOliRBE0842Ki9lMfIpQrFg9Jvr4gkPPyXvpDHNFKw4XtP
-	 NNX9lyL3FMHG7079UCdFGA44DlnBIzWuXKjKnyh4jMAJDvYXOSUMSpWmleo27WmrUH0zuY5RM/aO
-	 BDcR0K8SIypwhhd5ay63y9ROqqirTongh2qPjrd8Tmimwj4OoPvHT1m7ozSxb2YAdctSw/TDSeOZ
-	 p+rhIAQvCJExBW0OdRdJHoaTAVJtKU531rkNrxS/u57hZpPgI0zqXWYPnGBJM1JaDXt7xFKeaHyb
-	 1jGZUho3+1VtMtfvhqeSHvfaqaAEduT/UGIqYTly1rVyLFZK2Mryqlin76NylQVpg7GzNbRaVovQ
-	 22LGyacIq4hDQ4fslQdw==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: luiz.dentz@gmail.com
-Cc: eadavis@qq.com,
-	johan.hedberg@gmail.com,
-	linux-bluetooth@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	marcel@holtmann.org,
-	syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V3] Bluetooth/l2cap: sync sock recv cb and release
-Date: Tue, 25 Jun 2024 18:12:15 +0800
-X-OQ-MSGID: <20240625101214.598651-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <CABBYNZL5xiNDzDa3JJiwx2D-qpmA8Y3RBVWLetZ0fd4jURpN7g@mail.gmail.com>
-References: <CABBYNZL5xiNDzDa3JJiwx2D-qpmA8Y3RBVWLetZ0fd4jURpN7g@mail.gmail.com>
+	s=arc-20240116; t=1719310553; c=relaxed/simple;
+	bh=FtJYuNRCDykwAb6CpLYPt+xx6IOhdHG/dTfV7HrvJC8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BbplV90031ZVmjhemnTEMYwPLh2lu3lYV/UVpj30UH0EUHkGS4ficVsL1xVIKj1pm8nTu8f15kx9SDM4ChQ/lwWFETuTVTzounZOraCh/JMJWO37zDS/ZbmmoeyM6DM1NOfnMYnejUEiMZ/B4D7zbI9Jxgun1y2FwQnz6ESn/So=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=R+7/Me23; arc=none smtp.client-ip=209.85.160.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-oa1-f53.google.com with SMTP id 586e51a60fabf-24c9f6338a4so2663117fac.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:15:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1719310551; x=1719915351; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BktDRqnPMFELB/prBTikpiW5DTpaK+CgtgFHB2p1S0w=;
+        b=R+7/Me23kQzX8uN2ERTqEZ8BuW3YDAvFCq4pii/7s9nz1l82ipZOXcp5ECxTt4hJT1
+         mPjiCShxsT4II7paG5YoVksy95f46Ozk4RdTrtLTiPdWnbVaJOKLi1NEGsaxoCf8PT9o
+         zTOg73iXt+WarRMrcHerWjTEHCmlhskxSuGS4b6tYLKtWXxoAtivpf3MK5NjW9s+PYAs
+         eusdsPbAZB3NWBFPUJp7sAxwF/WVjK4ibvmwyuPm4jMGmIxhZGYQZBtb5vgPuP7cOvSA
+         uhVow5drNvVnu2GMTOVp1Wip8ta/DPnPEBptp5c1RJ/HSAC5/8G1sJ8UsHE0MqSfKPLC
+         UitA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719310551; x=1719915351;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BktDRqnPMFELB/prBTikpiW5DTpaK+CgtgFHB2p1S0w=;
+        b=Ss1dLxDhtILZNoc9JCOerNMW5WJ/mvU5mLqLWVGTW25fwyUhUGUIj5sL7/dCSvmbg3
+         1nGYXNkyQRZm0KVExUaexfZk3ZhFuu1ye7r9PPBgZLsAK1I956bw3mAtXi5VPlKcD5Dk
+         73uF3wtykB91KYmT5Q5lM7wZlRBj2T+ISifSCwytw9uuSUTxDi72xBkiniAJkWUTnFwJ
+         BNO4D07mFrFua6k6OdYJD3UjfB/Sr52x3oun8HtTU1g/6S+oDgBFTY7kIxxmPCLzV2OK
+         FmajNij3jjhRJj7jei6cDSkRL47HRWEoPBJ+ppkLBKyysdOUBftDAQ39BFvh9nVVuWgL
+         lghw==
+X-Forwarded-Encrypted: i=1; AJvYcCVa8p7ntZDglsCd3qY7jbSz+zTqwkaXhixIMm84QRjFQGyID1Ao3QNwiQc7VLzNVAfVt+OHp5Y5Gwo3B5XLIWdGRywRm8BuDV/WPKDi
+X-Gm-Message-State: AOJu0YzLBlYY4Cr+pqT66BV5p6U4DVJMWFQX5e7IpUsSwJid6I+yDicV
+	8GizVSbg5/CRcLr112y8A6wR0AUItmhgHQaOeBmv+8jVQQU4NKaIU/Cf0axEGj9zWBRDhzUCOfm
+	0m+d533sGH6ItnVxXx9tRFK5TKypg5AuXB+o8iw==
+X-Google-Smtp-Source: AGHT+IHdQg0dChXalsihdVM0gzMAZlwgRB+W6UlnBn8/daYZeHmLyMfFupx8YsHVo6AIVJIsqQvv/HsqJ6VBzCA/IqE=
+X-Received: by 2002:a05:6870:d69c:b0:254:e4a0:4d9c with SMTP id
+ 586e51a60fabf-25cfcfa117amr8027802fac.58.1719310551082; Tue, 25 Jun 2024
+ 03:15:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
+ <20240605121512.32083-3-yongxuan.wang@sifive.com> <20240605-atrium-neuron-c2512b34d3da@spud>
+ <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com> <20240621-10d503a9a2e7d54e67db102c@orel>
+In-Reply-To: <20240621-10d503a9a2e7d54e67db102c@orel>
+From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+Date: Tue, 25 Jun 2024 18:15:40 +0800
+Message-ID: <CAMWQL2gGfpotAR_YmU05bciGV98r80PZ1GWDSk6A03YRxD8wug@mail.gmail.com>
+Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
+To: Andrew Jones <ajones@ventanamicro.com>
+Cc: Anup Patel <apatel@ventanamicro.com>, Conor Dooley <conor@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, alex@ghiti.fr, 
+	greentime.hu@sifive.com, vincent.chen@sifive.com, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The problem occurs between the system call to close the sock and hci_rx_work,
-where the former releases the sock and the latter accesses it without lock protection.
+Hi Anup/Andrew/Alexandre,
 
-           CPU0                       CPU1
-           ----                       ----
-           sock_close                 hci_rx_work
-	   l2cap_sock_release         hci_acldata_packet
-	   l2cap_sock_kill            l2cap_recv_frame
-	   sk_free                    l2cap_conless_channel
-	                              l2cap_sock_recv_cb
+Thanks a lot! So the description of dt-binding of Svade would be:
 
-If hci_rx_work processes the data that needs to be received before the sock is
-closed, then everything is normal; Otherwise, the work thread may access the
-released sock when receiving data.
+The standard Svade supervisor-level extension for SW-managed PTE A/D
+bit updates as ratified in the 20240213 version of the privileged
+ISA specification.
+1) Neither Svade nor Svadu present in DT =3D> It is technically
+    unknown whether the platform uses Svade or Svadu. Supervisor may
+    assume Svade to be present and enabled or it can discover based
+    on mvendorid, marchid, and mimpid.
+2) Only Svade present in DT =3D> Supervisor must assume Svade
+    to be always enabled. (Obvious)
+3) Only Svadu present in DT =3D> Supervisor must assume Svadu
+    to be always enabled. (Obvious)
+4) Both Svade and Svadu present in DT =3D> Supervisor must
+    assume Svadu turned-off at boot time. To use Svadu, supervisor
+    must explicitly enable it using the SBI FWFT extension.
 
-Add a chan lock in the l2cap_conless_channel of the sock to achieve sync
-between the sock release and recv cb.
+Would you mind providing a Co-developed-by for this patch?
 
-Sock is dead, so set chan data to NULL, avoid others use invalid sock pointer.
+Regards,
+Yong-Xuan
 
-Reported-by: syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
- net/bluetooth/l2cap_core.c |  3 +++
- net/bluetooth/l2cap_sock.c | 13 +++++++++++--
- 2 files changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/net/bluetooth/l2cap_core.c b/net/bluetooth/l2cap_core.c
-index aed025734d04..35a9534eb62d 100644
---- a/net/bluetooth/l2cap_core.c
-+++ b/net/bluetooth/l2cap_core.c
-@@ -6771,10 +6771,13 @@ static void l2cap_conless_channel(struct l2cap_conn *conn, __le16 psm,
- 	bacpy(&bt_cb(skb)->l2cap.bdaddr, &hcon->dst);
- 	bt_cb(skb)->l2cap.psm = psm;
- 
-+	l2cap_chan_lock(chan);
- 	if (!chan->ops->recv(chan, skb)) {
-+		l2cap_chan_unlock(chan);
- 		l2cap_chan_put(chan);
- 		return;
- 	}
-+	l2cap_chan_unlock(chan);
- 
- drop:
- 	l2cap_chan_put(chan);
-diff --git a/net/bluetooth/l2cap_sock.c b/net/bluetooth/l2cap_sock.c
-index 6db60946c627..25091fb992a7 100644
---- a/net/bluetooth/l2cap_sock.c
-+++ b/net/bluetooth/l2cap_sock.c
-@@ -1239,6 +1239,10 @@ static void l2cap_sock_kill(struct sock *sk)
- 
- 	BT_DBG("sk %p state %s", sk, state_to_string(sk->sk_state));
- 
-+	/* Sock is dead, so set chan data to NULL, avoid other task use invalid
-+	 * sock pointer.
-+	 */
-+	l2cap_pi(sk)->chan->data = NULL;
- 	/* Kill poor orphan */
- 
- 	l2cap_chan_put(l2cap_pi(sk)->chan);
-@@ -1481,11 +1485,16 @@ static struct l2cap_chan *l2cap_sock_new_connection_cb(struct l2cap_chan *chan)
- 
- static int l2cap_sock_recv_cb(struct l2cap_chan *chan, struct sk_buff *skb)
- {
--	struct sock *sk = chan->data;
--	struct l2cap_pinfo *pi = l2cap_pi(sk);
-+	struct sock *sk;
-+	struct l2cap_pinfo *pi;
- 	int err;
- 
-+	if (!chan->data)
-+		return -ENXIO;
-+
-+	sk = chan->data;
- 	lock_sock(sk);
-+	pi = l2cap_pi(sk);
- 
- 	if (chan->mode == L2CAP_MODE_ERTM && !list_empty(&pi->rx_busy)) {
- 		err = -ENOMEM;
--- 
-2.43.0
-
+On Fri, Jun 21, 2024 at 4:33=E2=80=AFPM Andrew Jones <ajones@ventanamicro.c=
+om> wrote:
+>
+> On Thu, Jun 20, 2024 at 11:55:44AM GMT, Anup Patel wrote:
+> > On Wed, Jun 5, 2024 at 10:25=E2=80=AFPM Conor Dooley <conor@kernel.org>=
+ wrote:
+> > >
+> > > On Wed, Jun 05, 2024 at 08:15:08PM +0800, Yong-Xuan Wang wrote:
+> > > > Add entries for the Svade and Svadu extensions to the riscv,isa-ext=
+ensions
+> > > > property.
+> > > >
+> > > > Signed-off-by: Yong-Xuan Wang <yongxuan.wang@sifive.com>
+> > > > ---
+> > > >  .../devicetree/bindings/riscv/extensions.yaml | 30 +++++++++++++++=
+++++
+> > > >  1 file changed, 30 insertions(+)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/riscv/extensions.yam=
+l b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > > index 468c646247aa..1e30988826b9 100644
+> > > > --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > > +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> > > > @@ -153,6 +153,36 @@ properties:
+> > > >              ratified at commit 3f9ed34 ("Add ability to manually t=
+rigger
+> > > >              workflow. (#2)") of riscv-time-compare.
+> > > >
+> > > > +        - const: svade
+> > > > +          description: |
+> > > > +            The standard Svade supervisor-level extension for rais=
+ing page-fault
+> > > > +            exceptions when PTE A/D bits need be set as ratified i=
+n the 20240213
+> > > > +            version of the privileged ISA specification.
+> > > > +
+> > > > +            Both Svade and Svadu extensions control the hardware b=
+ehavior when
+> > > > +            the PTE A/D bits need to be set. The default behavior =
+for the four
+> > > > +            possible combinations of these extensions in the devic=
+e tree are:
+> > > > +            1. Neither svade nor svadu in DT: default to svade.
+> > >
+> > > I think this needs to be expanded on, as to why nothing means svade.
+> >
+> > Actually if both Svade and Svadu are not present in DT then
+> > it is left to the platform and OpenSBI does nothing.
+>
+> This is a good point, and maybe it's worth integrating something that
+> states this case is technically unknown into the final text. (Even though
+> historically this has been assumed to mean svade.)
+>
+> >
+> > >
+> > > > +            2. Only svade in DT: use svade.
+> > >
+> > > That's a statement of the obvious, right?
+> > >
+> > > > +            3. Only svadu in DT: use svadu.
+> > >
+> > > This is not relevant for Svade.
+> > >
+> > > > +            4. Both svade and svadu in DT: default to svade (Linux=
+ can switch to
+> > > > +               svadu once the SBI FWFT extension is available).
+> > >
+> > > "The privilege level to which this devicetree has been provided can s=
+witch to
+> > > Svadu if the SBI FWFT extension is available".
+> > >
+> > > > +        - const: svadu
+> > > > +          description: |
+> > > > +            The standard Svadu supervisor-level extension for hard=
+ware updating
+> > > > +            of PTE A/D bits as ratified at commit c1abccf ("Merge =
+pull request
+> > > > +            #25 from ved-rivos/ratified") of riscv-svadu.
+> > > > +
+> > > > +            Both Svade and Svadu extensions control the hardware b=
+ehavior when
+> > > > +            the PTE A/D bits need to be set. The default behavior =
+for the four
+> > > > +            possible combinations of these extensions in the devic=
+e tree are:
+> > >
+> > > @Anup/Drew/Alex, are we missing some wording in here about it only be=
+ing
+> > > valid to have Svadu in isolation if the provider of the devicetree ha=
+s
+> > > actually turned on Svadu? The binding says "the default behaviour", b=
+ut
+> > > it is not the "default" behaviour, the behaviour is a must AFAICT. If
+> > > you set Svadu in isolation, you /must/ have turned it on. If you set
+> > > Svadu and Svade, you must have Svadu turned off?
+> >
+> > Yes, the wording should be more of requirement style using
+> > must or may.
+> >
+> > How about this ?
+>
+> I'm mostly just +1'ing everything below, but with a minor wording change
+> suggestion
+>
+> > 1) Both Svade and Svadu not present in DT =3D> Supervisor may
+>
+> Neither Svade nor Svadu present...
+>
+> >     assume Svade to be present and enabled or it can discover
+> >     based on mvendorid, marchid, and mimpid.
+> > 2) Only Svade present in DT =3D> Supervisor must assume Svade
+> >     to be always enabled. (Obvious)
+> > 3) Only Svadu present in DT =3D> Supervisor must assume Svadu
+> >     to be always enabled. (Obvious)
+> > 4) Both Svade and Svadu present in DT =3D> Supervisor must
+> >     assume Svadu turned-off at boot time. To use Svadu, supervisor
+> >     must explicitly enable it using the SBI FWFT extension.
+> >
+> > IMO, the #2 and #3 are definitely obvious but still worth mentioning.
+>
+> Thanks,
+> drew
 
