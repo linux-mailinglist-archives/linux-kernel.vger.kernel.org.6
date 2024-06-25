@@ -1,154 +1,199 @@
-Return-Path: <linux-kernel+bounces-228538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45C7E91616F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:36:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFC5916171
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD1D4B25D5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:36:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F832B20E11
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:36:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46C91494D6;
-	Tue, 25 Jun 2024 08:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4FB1487C3;
+	Tue, 25 Jun 2024 08:36:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="oRTfm4FJ"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gieiIzEd"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA8E1494CF;
-	Tue, 25 Jun 2024 08:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930DF146D7C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:36:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719304490; cv=none; b=IkMlWRNuEuKXlM/dSlKwDBWWlJ341W1mwDbZxi3Kr94yTXFVMFF3GuLsspAbNb1UF4E57TRMzBWnQ1nlNQ60O7FFVwaEmJUOBPN6XrfHH0BX+efCbEhAPfMTHoGv7D2wKG+UB2aoo6iZugA5Qze2FhUCKKGr5XI/IROQB6x4hRo=
+	t=1719304592; cv=none; b=XvtlyDa8e9HBazni+1M/2XLvh5kre/6+p4R/B72tInAM1twxKfqkPO2AYHyP/0/aEq3REoeYif88EoSpMwzPY0dKNbzjcYEFJnCP9v6fTqRCa/RQlKAWmkd/QUWLJ2ElO+ZdGhkuuBmdeTQNOfyGLirWS8dzOjtDUFHhBDUkzuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719304490; c=relaxed/simple;
-	bh=2DrgvTFh1Y8ZBhAo2bGZlrCNTrt/32SfYiX9Ov/4Dtc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LS1FEWi6JmX/5de0vkj/vId6vATTTQ5wymYgS5/Nss4BwCCDEqsP0piSfr1M3KDq38CVYApM8vDmdbI0krcxqMyWpRWoLMqwQQjC94BGfXhigPYrZG8JnjNQBayEXgLhtj4EQ7ZF73UIWHuoBhaH1l6MwrVYNpZDCVxHq5VjjfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=oRTfm4FJ; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 6A00F60006;
-	Tue, 25 Jun 2024 08:34:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719304486;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=TBmCVBHWFHxT12SEsWkRlk2XPtdKv1K+6AK5GF/8j/A=;
-	b=oRTfm4FJmcuLCm98NAnXX2V2+6CxC4YdhTNbFffE7pf1i/kvK1gf3W6vMNiyDmnRlxwAZi
-	qz8XwxiQJRE3ZaZsZT8U1WkOQeRiwqMf/nWe9PtpmLOglDKWWgqICQKbWnMYumBGx5SLNz
-	i7Jb+rMhkzNZdZG2PH9h8GghP+OzMKE6KReRc7NXEGokCyTM1Zdq0jqbvRh48UntzvgdYZ
-	Sndsp8x2OqHPMTTNMDwxTXDaH0zhqaUEbfmMSeAAiWa+mh4l5BD+mqCekcUPKiakljIjhz
-	UX9ZECkzxTCv8iB+vQEyBMWZ0+gNn162g9i/tpbHCu1G5jX0EY4H9f7eAyAVOg==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Tue, 25 Jun 2024 10:34:38 +0200
-Subject: [PATCH v2] Revert "leds: led-core: Fix refcount leak in
- of_led_get()"
+	s=arc-20240116; t=1719304592; c=relaxed/simple;
+	bh=dRHpzmSsFYDlsse5ShwVsot0eEz8ENEC+BQ1G/fIUGg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L0HirorzfrxBsbfKo0n9Pnqpd1/03z3hH1XdQ4O02XD7wRQTgyRQUUTrudEmW6qdtDb+40L7QhGOIVHLRYF6+evT8haGbGMban4BOaxQVJRP6niEtGMRkMhLbDQcJqeb2xpPYASAZLSq9VsgSDWoSNPfehaMBMY4AZugkTXynFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gieiIzEd; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ec408c6d94so60208901fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:36:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719304588; x=1719909388; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=FuS5DPpmOhroPWtajZKPoCKp87zKc8dy5+EvwOudsqM=;
+        b=gieiIzEdJhnf3NlEFttCHc7pU32Gk2tZltm1/mD9HYrFdBr+KslMu6UZ0Y4M/3PUVK
+         OYESWzM/B78r/6SdcLYueBxdJenM3wirP/aiynfjSRr8N43xacw8Fxe4L+vOIeDz+a1S
+         sTcXZnyYwoMpqfb76HHkoWYMpSTyoNFjp9i7xJ1Ouecd0Ys5DVxc2zVhxbkKELzygDZT
+         3rRq4cph3NPXi6C6TE7RQ9YQKOPolvCUgzV/Ak0S+lL6jWmu2O7eOCqZU2BcAzKnw5m/
+         fIU9GORWAwCjxkhlgnKnuM9jHdE6YHKvGz/u9dooFMz0Qmcg9NuCZqLZfssJRxte2v6l
+         9zqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719304588; x=1719909388;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FuS5DPpmOhroPWtajZKPoCKp87zKc8dy5+EvwOudsqM=;
+        b=xSYvZZjOwnb7Yi8VNajTAP5qqpQ9+62cR5Z83idAOBBz5jojCbHc9muE1TjjkAobZa
+         xibMZ/C4mKGV5HKJvc4BR/Oay3H8MgCjE8nMK5SuT5DGTM+0C70ZF8mQu4NOU7uM0RDu
+         MqOZMC3UxOdS/SbCNTbSbhnzHoqGeScuaSqbnaCrRw2E3wouxl7o9GBs6nDd+d9aYUu8
+         JTanCgMbfL/p8xw/oSHOb83mphhaCRysPxak14/vvHdkwwmyM4e6ylK8DKafPfiVvNOu
+         WjJ5BsqDH3l/8OgCNWhgGZltSpaLlUwKjA40ByE4Hly8VBeuMHSgPP2qHnfHEixbo0c9
+         d5Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWVnEtKnd5RsWvnEdmMSEpjcZ2p5RJU+p7zldj2pdliYdIV2Plj1gRPMtPMcFbsO1Z8Nggcun0ewpgv2CxheCy9XOGDJsdrind/8kgU
+X-Gm-Message-State: AOJu0YzGY+NVHN9SBVAZ0yN7dqUVeYkr0F0G+E7EMpoupMWUEF+tzaSE
+	ODFFNfy6r7gUY1hJ15mvnaR4Owxk2ol5RI0BKVgje5mNsyU2EuOgWp0VgGuluG0=
+X-Google-Smtp-Source: AGHT+IFJSQeKryvBLg7sTeJHjYSYhVOrI7eqMtkBjerN8ltNdjpw3ldSHWOmIRgJjXl3sI6jC2Lb0Q==
+X-Received: by 2002:a2e:9bc7:0:b0:2ec:30ee:6972 with SMTP id 38308e7fff4ca-2ec59328425mr50534431fa.24.1719304587672;
+        Tue, 25 Jun 2024 01:36:27 -0700 (PDT)
+Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb5e2e46sm75625205ad.223.2024.06.25.01.36.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 01:36:27 -0700 (PDT)
+Date: Tue, 25 Jun 2024 10:36:17 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Tony Lindgren <tony.lindgren@linux.intel.com>,
+	Linus Torvalds <torvalds@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] Fixes for console command line ordering
+Message-ID: <ZnqBYAV7iplmeh1R@pathway.suse.cz>
+References: <20240620124541.164931-1-tony.lindgren@linux.intel.com>
+ <ZnWRup3MvcVQ4MX8@pathway.suse.cz>
+ <2024062403-skid-gotten-7585@gregkh>
+ <ZnpRozsdw6zbjqze@tlindgre-MOBL1>
+ <2024062551-hubcap-bauble-fae5@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240625-led-class-device-leak-v2-1-75fdccf47421@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIAB2BemYC/4WNTQ6CMBBGr0Jm7Rg6YEFW3sOwKO0oE5GaljQaw
- t2tXMDle/l+VogchCN0xQqBk0TxcwY6FGBHM98ZxWUGKqkuNZ1wYod2MjGiy3HLWZgHal01hlp
- Sumkhd1+Bb/Led6995lHi4sNnv0nqZ/8tJoUKzzzUdaUrVVq6DN4vk8xH65/Qb9v2BYGTnMm8A
- AAA
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Miaoqian Lin <linmq006@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-leds@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.13.0
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024062551-hubcap-bauble-fae5@gregkh>
 
-This reverts commit da1afe8e6099980fe1e2fd7436dca284af9d3f29.
+On Tue 2024-06-25 08:20:06, Greg Kroah-Hartman wrote:
+> On Tue, Jun 25, 2024 at 08:12:03AM +0300, Tony Lindgren wrote:
+> > On Mon, Jun 24, 2024 at 03:35:39PM +0200, Greg Kroah-Hartman wrote:
+> > > On Fri, Jun 21, 2024 at 04:44:10PM +0200, Petr Mladek wrote:
+> > > > Added Linus into Cc.
+> > > > 
+> > > > On Thu 2024-06-20 15:45:25, Tony Lindgren wrote:
+> > > > > Hi,
+> > > > > 
+> > > > > Recent changes to add support for DEVNAME:0.0 style consoles caused a
+> > > > > regression with the preferred console order where the last console on
+> > > > > the kernel command line is no longer the preferred console.
+> > > > > 
+> > > > > The following four changes fix the issue using Petr's suggestion that
+> > > > > does not involve calling __add_preferred_console() later on again, and
+> > > > > adds the deferred consoles to the console_cmdline[] directly to be
+> > > > > updated when the console is ready.
+> > > > > 
+> > > > > We revert the earlier printk related changes, and then add back the
+> > > > > DEVNAME:0.0 functionality based on Petr's code snippet. And we end up
+> > > > > reducing the code quite a bit too this way.
+> > > > > 
+> > > > > And we also revert all the unusable serial core console quirk handling,
+> > > > > it does not do anything for the legacy "ttyS" named consoles. And then
+> > > > > we add a minimal serial_base_match_and_update_preferred_console().
+> > > > > 
+> > > > > The reason we want DEVNAME:0.0 style consoles is it helps addressing the
+> > > > > console based on the connected serial port controller device rather than
+> > > > > using the hardcoded ttyS addressing. And that helps with issues related
+> > > > > to the console moving around after togging the HSUART option in the BIOS,
+> > > > > or when new ports are enabled in devicetree and aliases are not updated.
+> > > > > 
+> > > > > Tony Lindgren (4):
+> > > > >   printk: Revert add_preferred_console_match() related commits
+> > > > >   printk: Add match_devname_and_update_preferred_console()
+> > > > >   serial: core: Revert unusable console quirk handling
+> > > > >   serial: core: Add serial_base_match_and_update_preferred_console()
+> > > > > 
+> > > > >  drivers/tty/serial/8250/8250_core.c  |   5 -
+> > > > >  drivers/tty/serial/serial_base.h     |  22 +---
+> > > > >  drivers/tty/serial/serial_base_bus.c | 116 +++------------------
+> > > > >  drivers/tty/serial/serial_core.c     |   2 +-
+> > > > >  include/linux/printk.h               |   5 +-
+> > > > >  kernel/printk/Makefile               |   2 +-
+> > > > >  kernel/printk/conopt.c               | 146 ---------------------------
+> > > > >  kernel/printk/console_cmdline.h      |   7 +-
+> > > > >  kernel/printk/printk.c               | 122 ++++++++++++++++------
+> > > > >  9 files changed, 112 insertions(+), 315 deletions(-)
+> > > > >  delete mode 100644 kernel/printk/conopt.c
+> > > > 
+> > > > The patchset looks ready for linux-next. And I have pushed it
+> > > > into printk/linux.git, branch for-6.10-register-console-devname.
+> > > > 
+> > > > I am not sure about the mainline. We need to fix the regression in 6.10.
+> > > > The change is not trivial and rc5 is knocking on the doors.
+> > > > 
+> > > > Unfortunately, the patchset intermixes reverts and new code.
+> > > > So that it can't be used for simple revert as is.
+> > > > 
+> > > > I am quite confident that the new code works as expected.
+> > > > It changes tricky code but the logic of the change is quite
+> > > > straightforward.
+> > > > 
+> > > > 
+> > > > I see three solutions:
+> > > > 
+> > > > 1. Linus could merge the changes directly into rc5.
+> > > > 
+> > > > 2. I could send a pull request after it survives few days in
+> > > >    linux-next.
+> > > > 
+> > > > 3. Or we rework the patchset. And do pure revert for 6.10 and
+> > > >    add the feature a clean way for-6.11.
+> > > 
+> > > Pure revert for 6.10 might be good, as it's late in the cycle.  Let me
+> > > know the git ids and I can do that.
+> > 
+> > Here's the list of git ids to revert:
+> > 
+> > $ git log --abbrev=12 --pretty=format:"%h (\"%s\")" v6.9..v6.10-rc5 \
+> > --author="Tony Lindgren" kernel/printk drivers/tty/ Documentation/admin-guide/
+> > b20172ca6bf4 ("serial: core: Fix ifdef for serial base console functions")
+> > 4547cd76f08a ("serial: 8250: Fix add preferred console for serial8250_isa_init_ports()")
+> > 5c3a766e9f05 ("Documentation: kernel-parameters: Add DEVNAME:0.0 format for serial ports")
+> > a8b04cfe7dad ("serial: 8250: Add preferred console in serial8250_isa_init_ports()")
+> > a0f32e2dd998 ("serial: core: Handle serial console options")
+> > 787a1cabac01 ("serial: core: Add support for DEVNAME:0.0 style naming for kernel console")
+> > b73c9cbe4f1f ("printk: Flag register_console() if console is set on command line")
+> > 8a831c584e6e ("printk: Don't try to parse DEVNAME:0.0 console options")
+> > f03e8c1060f8 ("printk: Save console options for add_preferred_console_match()")
+> 
+> All now reverted, thanks!
 
-Commit 699a8c7c4bd3 ("leds: Add of_led_get() and led_put()"), introduced in
-5.5, added of_led_get() and led_put() but missed a put_device() in
-led_put(), thus creating a leak in case the consumer device is removed.
+Great, thanks Greg!
 
-Arguably device removal was not very popular, so this went apparently
-unnoticed until 2022. In January 2023 two different patches got merged to
-fix the same bug:
+Tony, could you please send a new patchset which would provide
+the new solution on top of this revert? It might make sense
+to wait until the revert reaches mainline.
 
- - commit da1afe8e6099 ("leds: led-core: Fix refcount leak in of_led_get()")
- - commit 445110941eb9 ("leds: led-class: Add missing put_device() to led_put()")
-
-They fix the bug in two different ways, which creates no patch conflicts,
-and both were merged in v6.2. The result is that now there is one more
-put_device() than get_device()s, instead of one less.
-
-Arguably device removal is not very popular yet, so this apparently hasn't
-been noticed as well up to now. But it blew up here while I'm working with
-device tree overlay insertion and removal. The symptom is an apparently
-unrelated list of oopses on device removal, with reasons:
-
-  kernfs: can not remove 'uevent', no directory
-  kernfs: can not remove 'brightness', no directory
-  kernfs: can not remove 'max_brightness', no directory
-  ...
-
-Here sysfs fails removing attribute files, which is because the device name
-changed and so the sysfs path. This is because the device name string got
-corrupted, which is because it got freed too early and its memory reused.
-
-Different symptoms could appear in different use cases.
-
-Fix by removing one of the two fixes.
-
-The choice was to remove commit da1afe8e6099 because:
-
- * it is calling put_device() inside of_led_get() just after getting the
-   device, thus it is basically not refcounting the LED device at all
-   during its entire lifetime
- * it does not add a corresponding put_device() in led_get(), so it fixes
-   only the OF case
-
-The other fix (445110941eb9) is adding the put_device() in led_put() so it
-covers the entire lifetime, and it works even in the non-DT case.
-
-Fixes: da1afe8e6099 ("leds: led-core: Fix refcount leak in of_led_get()")
-Co-developed-by: Hervé Codina <herve.codina@bootlin.com>
-Signed-off-by: Hervé Codina <herve.codina@bootlin.com>
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
-Changes in v2:
-- Add missing SoB line for co-developer
-- Link to v1: https://lore.kernel.org/r/20240625-led-class-device-leak-v1-1-9eb4436310c2@bootlin.com
----
-
-Changed in v2:
- - add missing SoM line for Hervé
----
- drivers/leds/led-class.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 24fcff682b24..b23d2138cd83 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -258,7 +258,6 @@ struct led_classdev *of_led_get(struct device_node *np, int index)
- 
- 	led_dev = class_find_device_by_of_node(&leds_class, led_node);
- 	of_node_put(led_node);
--	put_device(led_dev);
- 
- 	return led_module_get(led_dev);
- }
-
----
-base-commit: 28ef3e64d0a22f6a29a1ea489293715a29623e52
-change-id: 20240625-led-class-device-leak-6637a2821678
-
-Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
-
+Best Regards,
+Petr
 
