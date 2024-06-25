@@ -1,138 +1,121 @@
-Return-Path: <linux-kernel+bounces-228862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E96C9167E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:33:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FF1A916809
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80F0C1C20D37
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:33:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B35521F2867C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DB01553B3;
-	Tue, 25 Jun 2024 12:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81A10156C63;
+	Tue, 25 Jun 2024 12:34:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6fZjpz2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="P0xrSaMp"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7A414831F;
-	Tue, 25 Jun 2024 12:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA35516F26B;
+	Tue, 25 Jun 2024 12:34:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719318794; cv=none; b=NagYlL9f3ewqD1CmOxHXtVGz8IURXmjuUZy+OFyLRxl5yyohg39pI/qJ3XuMIYlKyLNKDDSxEtWEaBXPIEYFfAN47Q5IkJj/BZPjZge1xTTWAtxshod9560+wYua4WIUTNHb8dAvF7DjfNGH5bWVSRNiXfje4oaAv1vqooT8odE=
+	t=1719318857; cv=none; b=hcBhAX5tNbkYDdpyUjH5eihCPQo+nwKamIvAXkrj4Ew5qrxrjnz7itTEE0VUMSNpAqMF/us7/nZcq1TWW1QUb6cssIgmnA1RVNnEUlP29O5pOD+Y30dtZzuo5BHjESmCRxl1JjduVq2DsGBS1zTF8GdfDc09r2+h9L/TgNFkV8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719318794; c=relaxed/simple;
-	bh=IvZsxcaW6DWWuyobmb7LUklrNc1sMFAOoDwMsv2+SXw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TA2Sj5VfsOm2FYfZ6AyviEz3a1G8T6ZcZTsr8oEht2wSOUstp1vRs0YxqlyZnD59yZQyhvF1CaC7UGFLc5C0bRIUBgSoco7kfal5NAhiUkz+7Jy6W5LD6WIXqWOFtMpmKy9cfxC0Ocago7hh4ppgMF2srjnx4KRORGoBjheROFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6fZjpz2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 336B6C32786;
-	Tue, 25 Jun 2024 12:33:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719318794;
-	bh=IvZsxcaW6DWWuyobmb7LUklrNc1sMFAOoDwMsv2+SXw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=B6fZjpz2qM+OlaAn+QOLgRtJRLrNQmM07NvNguBZvqYOZ52EB8ncyg+CPkbfQpmj3
-	 7/ihZezX9cYkMtriQFuAxMvQm3Ue7AYLSkBn/6RbF+RF2S6VsZ1yi7iXbGmC3xZTHE
-	 IjqP4uhudcfn8XCtpC7+w1ILaJEbMA2Ew/1URK79ycgFE8dcyNCqbWFo7p5nYdujka
-	 au9lyf7iBd8oQA8QVtiULXumJQn7Roex2VVU5uTe+JEuEHiiFh8thh08bi49bb0Wie
-	 xfxorqF7b2Y7PxkR2thHf2niEzQtZ2atiZ7DPSGjpuz9atkM04FbMXz9+u6JZH6rPL
-	 1B9rPvsH9usEQ==
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-25075f3f472so656859fac.2;
-        Tue, 25 Jun 2024 05:33:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVCx55Ve+AzwWOtSunFIaJVcwhYU/h4l2uheD7fuv3EyU3SMGieS/q9sJF0lqGL6yDTXwyW4rVCkO3so/W371MX2Ar/13fH7ZYjnwUNZ+beTQJh0EhzTZSWbrlYVUTLy6jHT6SEj50=
-X-Gm-Message-State: AOJu0YyzkEymJv+KXMNqjbi/Teeajn5P9hXkSjdN9YRqLaFo4w+8W1Ri
-	iWn5V3dwgt8h92GHhBy/yIdFoopha7WzWhHSSbww4+kSzbIcwfn4oEF/WcK2W5CMI3MDBxR7N90
-	T5zuI//tK/bZZoE17GBFH3MrQN1s=
-X-Google-Smtp-Source: AGHT+IFRr9D925+0qBI83k8w0CC7kMzAiMaZXAnsNnt6khprfnp9xrRlQy4NDHwFieqMb3UKWHtgvj/qu3nKhOI02rA=
-X-Received: by 2002:a05:6870:9a1b:b0:25d:d69:eaf with SMTP id
- 586e51a60fabf-25d0d69146bmr7449277fac.4.1719318793453; Tue, 25 Jun 2024
- 05:33:13 -0700 (PDT)
+	s=arc-20240116; t=1719318857; c=relaxed/simple;
+	bh=h64D8fpBD1lKfgd7DANWqsP5wNcgHjfFMPaZVfLP9w4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UJ3gD1XM7tM631qugdCKeS1o3LBaPb5tQQJT8ubQVN4pi1Odm38EwGRno28LKPpdiOwC+O6NpbA9/3wxPGLG81iy7uW2peazytVJUvghx/a9jchRSkkdv0n2cxBl6YERgIkxmKoDPpvRMmS42HekcO20ZSZ+bB31IsKympcx4Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=P0xrSaMp; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1719318856; x=1750854856;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=h64D8fpBD1lKfgd7DANWqsP5wNcgHjfFMPaZVfLP9w4=;
+  b=P0xrSaMpyxVJ4XREOE2mSHNXAWulGwlSbWGTte6YCONdvUiF0nlRWmtM
+   qYr4hg2sUEII8g066Pgi9Pa3lazs7/kck6H8VqfroB75LbYGemnJB7piD
+   6I4V3H171Y3MSFwy1SyYeieserxdKCmW0t4uBQ2QT48rbqtkrZ2ITEVeE
+   NXn6BXasrhd6+EMrZj2DlgcGm4lftPELMAoQGw0ajguavINQTNg+lpUE/
+   +sAo0nMpIOphCT3W1iAeNJeZq7Uz+bt2tYwO7wWvP5DGb+Ysup2UxXqWc
+   kyMYrCUVc4WkftHc5tIO/A3rMPdMwnh/RCC9noMGulU6Ffcnlq5uwd7PT
+   Q==;
+X-CSE-ConnectionGUID: XriPB4ONTrq6zgOQXS01lw==
+X-CSE-MsgGUID: iYJuNYuDTuy+amZy3+QVBA==
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="28472536"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 25 Jun 2024 05:34:15 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Tue, 25 Jun 2024 05:33:44 -0700
+Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex02.mchp-main.com
+ (10.10.85.144) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Tue, 25 Jun 2024 05:33:43 -0700
+From: Conor Dooley <conor.dooley@microchip.com>
+To: <linux-kernel@vger.kernel.org>
+CC: <conor@kernel.org>, <conor.dooley@microchip.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>, Cyril Jean <cyril.jean@microchip.com>,
+	<linux-mmc@vger.kernel.org>
+Subject: [PATCH v2] mmc: mmc_spi: allow for spi controllers incapable of getting as low as 400k
+Date: Tue, 25 Jun 2024 13:33:21 +0100
+Message-ID: <20240625-gigantic-frown-1ef4afa3e6fa@wendy>
+X-Mailer: git-send-email 2.43.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <12464461.O9o76ZdvQC@rjwysocki.net> <ZnpzBuWbKxbrKvoR@hovoldconsulting.com>
-In-Reply-To: <ZnpzBuWbKxbrKvoR@hovoldconsulting.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 25 Jun 2024 14:33:01 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0gytZB=WcEhFkuoOOf_X1=QBYy7+FnVEWLavXzFZc5E=g@mail.gmail.com>
-Message-ID: <CAJZ5v0gytZB=WcEhFkuoOOf_X1=QBYy7+FnVEWLavXzFZc5E=g@mail.gmail.com>
-Subject: Re: [PATCH v1] thermal: gov_step_wise: Go straight to instance->lower
- when mitigation is over
-To: Johan Hovold <johan@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Lukasz Luba <lukasz.luba@arm.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
-	Jens Glathe <jens.glathe@oldschoolsolutions.biz>, Steev Klimaszewski <steev@kali.org>, 
-	Johan Hovold <johan+linaro@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1574; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=h64D8fpBD1lKfgd7DANWqsP5wNcgHjfFMPaZVfLP9w4=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGlVOwU3cm5oCFlWnv3X8f7s60VqYjd0fiqm6N08/F7y0Iev RdJ3OkpZGMQ4GGTFFFkSb/e1SK3/47LDuectzBxWJpAhDFycAjCRL2sYGabPdTw6W+x8cVRUuJ8Zyx aBcObLL/6+P8Z645jSpDcsaacYGT7cuF6dZCdikviw4Nea/nnM15TnflmuWnzMxuf8E5YsWW4A
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Tue, Jun 25, 2024 at 9:34=E2=80=AFAM Johan Hovold <johan@kernel.org> wro=
-te:
->
-> On Sat, Jun 22, 2024 at 02:26:33PM +0200, Rafael J. Wysocki wrote:
-> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> >
-> > Commit b6846826982b ("thermal: gov_step_wise: Restore passive polling
-> > management") attempted to fix a Step-Wise thermal governor issue
-> > introduced by commit 042a3d80f118 ("thermal: core: Move passive polling
-> > management to the core"), which caused the governor to leave cooling
-> > devices in high states, by partially revering that commit.
->
-> typo: reverting
+Some controllers may not be able to reach a bus clock as low as 400 KHz
+due to a lack of sufficient divisors. In these cases, the SD card slot
+becomes non-functional as Linux continuously attempts to set the bus
+clock to 400 KHz. If the controller is incapable of getting that low,
+set its minimum frequency instead. While this may eliminate some SD
+cards, it allows those capable of operating at the controller's minimum
+frequency to be used.
 
-Thanks!
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
 
-> > However, this turns out to be insufficient on some systems due to
-> > interactions between the governor code restored by commit b6846826982b
-> > and the passive polling management in the thermal core.
->
-> Care to elaborate on what went wrong here? In my test of the previous
-> fix I saw the frequency ramping up in steps as expected when the
-> temperature dropped. Under what circumstances would that fail to happen?
+Without the RFC tag, but otherwise unchanged.
 
-System suspend-resume would interfere with that as it would call
-thermal_zone_device_init().
+rfc/v1: https://lore.kernel.org/all/20240612-dense-resample-563f07c30185@spud/
 
-> > For this reason, revert commit b6846826982b and make the governor set
-> > the target cooling device state to the "lower" one as soon as the zone
-> > temperature falls below the threshold of the trip point corresponding
-> > to the given thermal instance, which means that thermal mitigation is
-> > not necessary any more.
-> >
-> > Before this change the "lower" cooling device state would be reached in
-> > steps through the passive polling mechanism which was questionable for
-> > three reasons: (1) cooling device were kept in high states when that wa=
-s
-> > not necessary (and it could adversely impact performance), (2) it only
-> > worked for thermal zones with nonzero passive_delay_jiffies value, and
-> > (3) passive polling belongs to the core and should not be hijacked by
-> > governors for their internal purposes.
->
-> I've tested this patch on the Lenovo ThinkPad X13s, where I could
-> reproduce the rc1 regression, and things works as intended with the
-> fix applied to rc5:
->
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
->
-> The CPU frequency still oscillates heavily but now with a more
-> sawtoothed curve.
->
-> Not sure if it helps with performance, though, as running the CPU at
-> full speed as soon as we drop below the threshold (with hysteresis)
-> also means that we get back to running at the lowest frequency even
-> faster.
+CC: Ulf Hansson <ulf.hansson@linaro.org>
+CC: Cyril Jean <cyril.jean@microchip.com>
+CC: linux-mmc@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+ drivers/mmc/host/mmc_spi.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-True, but assuming that the reason for the mitigation is still there.
-If it's actually gone, it's better to stop cooling as soon as it can
-be done.
+diff --git a/drivers/mmc/host/mmc_spi.c b/drivers/mmc/host/mmc_spi.c
+index 09d7a6a0dc1aa..c9caa1ece7ef9 100644
+--- a/drivers/mmc/host/mmc_spi.c
++++ b/drivers/mmc/host/mmc_spi.c
+@@ -1208,7 +1208,10 @@ static int mmc_spi_probe(struct spi_device *spi)
+ 	 * that's the only reason not to use a few MHz for f_min (until
+ 	 * the upper layer reads the target frequency from the CSD).
+ 	 */
+-	mmc->f_min = 400000;
++	if (spi->controller->min_speed_hz > 400000)
++		dev_warn(&spi->dev,"Controller unable to reduce bus clock to 400 KHz\n");
++
++	mmc->f_min = max(spi->controller->min_speed_hz, 400000);
+ 	mmc->f_max = spi->max_speed_hz;
+ 
+ 	host = mmc_priv(mmc);
+-- 
+2.43.2
 
-Thanks!
 
