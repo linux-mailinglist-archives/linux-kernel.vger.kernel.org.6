@@ -1,149 +1,182 @@
-Return-Path: <linux-kernel+bounces-229229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82BBF916D1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:32:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D85E916D1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 406E828BDCF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:32:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37D4928C284
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:33:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935AC16F91B;
-	Tue, 25 Jun 2024 15:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD62D2F5;
+	Tue, 25 Jun 2024 15:32:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EyueiWsa"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVpVooIv"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9B816F8F4;
-	Tue, 25 Jun 2024 15:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C31543ADE;
+	Tue, 25 Jun 2024 15:32:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719329564; cv=none; b=KeqZsUuC9n6biFakVuccH3zzUM4wFJmfXu4rc21mb1wIQsbAt7Ki/QrLc+GP9Y496d7m7UKr+/gxSTp1Nye/dGoEtpqFV5Wl9TwYB3/vNpkjCfjqADeFEryMGwL/eBJndD/bv3/+m2msiOy9QsiWS3M+kEQlpUEa+uBSF45Aih0=
+	t=1719329577; cv=none; b=WmYmLKaVbn53W5fXz3brYcDeqy4lKev6sFJZ2sPa/pnqX7HxU3TLukarGEwUZYwMuBfwG181g7p1XrHl7SGwYKf/h+uPul8WHzD9C3EjLCdiMxjQbr2cgoTSu8lx12ojk+rebXL070w6PP9kx9Gihr7wdUtkLjDoH+ijdnRIq1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719329564; c=relaxed/simple;
-	bh=cq7+BrMAkAlCHKRvPkqveb4zS9P8Oq4n7IJ0yNZ13PA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r7spLqF54mfYjF06c0IpZPQRa1X0cyK/CKHusbha9/8oyouHp9X9Gezf7vTB1OpGHWxmOAbmBcUHsetpdqswLg4JBifL9SlQ+X6OOUdbPKyMO047U7SttHRKhrJr2pG/MRFvQr2WyGgXI7DtiBYu2sa1zILa8/LUMs4XkVbSNxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EyueiWsa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C21CC32781;
-	Tue, 25 Jun 2024 15:32:39 +0000 (UTC)
+	s=arc-20240116; t=1719329577; c=relaxed/simple;
+	bh=uZ8BwQJ/Kdq0iyp8vn3LgQFFUO/XtKzGirgwze/0unA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DAzJ34pY8m09UE8lv3L+F/s8m2sajOhMEcHTTkGJY0pbgYS4UOWGk6eBzc+Zhzy6lF3IVMKYzVaPqTub2Q+Ee6T4w7uCIt9XunRvSSWsUSbelye49RQvZRIehtdXuDSvDk7sbllWYmUjDSdm0aiRGzp2IQ1jsJnNbDrop0nQ9xM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVpVooIv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C83A3C32781;
+	Tue, 25 Jun 2024 15:32:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719329564;
-	bh=cq7+BrMAkAlCHKRvPkqveb4zS9P8Oq4n7IJ0yNZ13PA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EyueiWsau1nCa84s90fBc5vKKqSqQjiqhgw7Wk+CtrztedCSmayUtUT0UL4LkYCdF
-	 nE3JOALfmo2hf8qF189ey6hdoUX18x+tv7gss5yDp6rRcXBPhpszAoEtjtxqDH5MVX
-	 7JIdjGcPgZhBv+wmucIQyqbA1ysuYVfMTmBeznITkfq4uqYA2OtjshcfSrgr8OWadX
-	 cdy/xs0ri5JFvn2IRiwopj/jXyj3aFmJ6Ntq10Bz0JuA13Mg1uubLwzH6XaSUIRf05
-	 iB9u96+gWPbtL58BswewyWYzaP8zP3AR2BxvffcWSoguypp/wGAG+HjuQKYKpaMGbi
-	 bYOLVZHrl30EQ==
-Date: Tue, 25 Jun 2024 16:32:36 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: shuah@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, Catalin.Marinas@arm.com,
-	will@kernel.org, ryan.roberts@arm.com, rob.herring@arm.com,
-	mark.rutland@arm.com, linux@armlinux.org.uk, suzuki.poulose@arm.com,
-	Anshuman.Khandual@arm.com, aneesh.kumar@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 9/9] selftests: Add build infrastructure along with
- README
-Message-ID: <8bbcc081-7e0b-4cab-8312-c5a5d60f4d7d@sirena.org.uk>
-References: <20240625122408.1439097-1-dev.jain@arm.com>
- <20240625122408.1439097-10-dev.jain@arm.com>
+	s=k20201202; t=1719329576;
+	bh=uZ8BwQJ/Kdq0iyp8vn3LgQFFUO/XtKzGirgwze/0unA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OVpVooIv/ne2KJwP31QW0B8pvv2CFLfRpajLqK33jScWmGhBOKtLs50n/Q8riekVo
+	 b2XhWqcmUwnFziccfC3QkrJWgfndsFYXnzayD2Lq+7A+hBtQ0xrIeGVk+dhrT/mWxM
+	 LtkWadLfKMF7otN1jwMyjn9nhEP8StXTvJhEAJWpfqsU40ku5jS1KSS7yv5pvZOi/P
+	 mUkKdbQX7Psjkoiwk+d9AMsRA21zryclmEdt5367GSPa7BO64Hak7ukKTaKaqYd/zu
+	 X10vIZYeLxtkcADsaeihFWqZB5i7HDnXFNxkK7/m+TUb8XYZOPug30piF3O7u/J1Ob
+	 DT60ahSF/KEbQ==
+Message-ID: <d3b5f10a-2649-446c-a6f9-9311f96e7569@kernel.org>
+Date: Tue, 25 Jun 2024 17:32:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UU48VnmcH3/0WAef"
-Content-Disposition: inline
-In-Reply-To: <20240625122408.1439097-10-dev.jain@arm.com>
-X-Cookie: Results vary by individual.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] cgroup/rstat: Avoid thundering herd problem by kswapd
+ across NUMA nodes
+To: Yosry Ahmed <yosryahmed@google.com>, Shakeel Butt <shakeel.butt@linux.dev>
+Cc: tj@kernel.org, cgroups@vger.kernel.org, hannes@cmpxchg.org,
+ lizefan.x@bytedance.com, longman@redhat.com, kernel-team@cloudflare.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <171923011608.1500238.3591002573732683639.stgit@firesoul>
+ <CAJD7tkbHNvQoPO=8Nubrd5an7_9kSWM=5Wh5H1ZV22WD=oFVMg@mail.gmail.com>
+ <tl25itxuzvjxlzliqsvghaa3auzzze6ap26pjdxt6spvhf5oqz@fvc36ntdeg4r>
+ <CAJD7tkaKDcG+W+C6Po=_j4HLOYN23rtVnM0jmC077_kkrrq9xA@mail.gmail.com>
+ <exnxkjyaslel2jlvvwxlmebtav4m7fszn2qouiciwhuxpomhky@ljkycu67efbx>
+ <CAJD7tkaJXNfWQtoURyf-YWS7WGPMGEc5qDmZrxhH2+RE-LeEEg@mail.gmail.com>
+ <a45ggqu6jcve44y7ha6m6cr3pcjc3xgyomu4ml6jbsq3zv7tte@oeovgtwh6ytg>
+ <CAJD7tkZT_2tyOFq5koK0djMXj4tY8BO3CtSamPb85p=iiXCgXQ@mail.gmail.com>
+ <qolg56e7mjloynou6j7ar7xzefqojp4cagzkb3r6duoj5i54vu@jqhi2chs4ecj>
+ <CAJD7tka0b52zm=SjqxO-gxc0XTib=81c7nMx9MFNttwVkCVmSg@mail.gmail.com>
+ <u3jrec5n42v35f3xiigfqabajjt4onh44eyfajewnzbfqxaekw@5x2daobkkbxh>
+ <CAJD7tkaMeevj2TS_aRj_WXVi26CuuBrprYwUfQmszJnwqqJrHw@mail.gmail.com>
+Content-Language: en-US
+From: Jesper Dangaard Brouer <hawk@kernel.org>
+In-Reply-To: <CAJD7tkaMeevj2TS_aRj_WXVi26CuuBrprYwUfQmszJnwqqJrHw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
 
---UU48VnmcH3/0WAef
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-On Tue, Jun 25, 2024 at 05:54:08PM +0530, Dev Jain wrote:
+On 25/06/2024 11.28, Yosry Ahmed wrote:
+> On Mon, Jun 24, 2024 at 5:24 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+>>
+>> On Mon, Jun 24, 2024 at 03:21:22PM GMT, Yosry Ahmed wrote:
+>>> On Mon, Jun 24, 2024 at 3:17 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
+>>>>
+>>>> On Mon, Jun 24, 2024 at 02:43:02PM GMT, Yosry Ahmed wrote:
+>>>> [...]
+>>>>>>
+>>>>>>> There is also
+>>>>>>> a heuristic in zswap that may writeback more (or less) pages that it
+>>>>>>> should to the swap device if the stats are significantly stale.
+>>>>>>>
+>>>>>>
+>>>>>> Is this the ratio of MEMCG_ZSWAP_B and MEMCG_ZSWAPPED in
+>>>>>> zswap_shrinker_count()? There is already a target memcg flush in that
+>>>>>> function and I don't expect root memcg flush from there.
+>>>>>
+>>>>> I was thinking of the generic approach I suggested, where we can avoid
+>>>>> contending on the lock if the cgroup is a descendant of the cgroup
+>>>>> being flushed, regardless of whether or not it's the root memcg. I
+>>>>> think this would be more beneficial than just focusing on root
+>>>>> flushes.
+>>>>
+>>>> Yes I agree with this but what about skipping the flush in this case?
+>>>> Are you ok with that?
+>>>
+>>> Sorry if I am confused, but IIUC this patch affects all root flushes,
+>>> even for userspace reads, right? In this case I think it's not okay to
+>>> skip the flush without waiting for the ongoing flush.
+>>
+>> So, we differentiate between userspace and in-kernel users. For
+>> userspace, we should not skip flush and for in-kernel users, we can skip
+>> if flushing memcg is the ancestor of the given memcg. Is that what you
+>> are saying?
+> 
+> Basically, I prefer that we don't skip flushing at all and keep
+> userspace and in-kernel users the same. We can use completions to make
+> other overlapping flushers sleep instead of spin on the lock.
+> 
 
-> Add arm target, individual Makefile targets, and instructions to build the
-> tests, along with .gitignore files. All the Makefiles are similar to
-> selftests/arm64, except abi: use TEST_CUSTOM_PROGS to override the make
-> rule from lib.mk. Also, do not build ptrace_64 if we are running a
-> 32-bit kernel.
+I think there are good reasons for skipping flushes for userspace when 
+reading these stats. More below.
 
-Also the documentation which could probably go separately.
+I'm looking at kernel code to spot cases where the flush MUST to be
+completed before returning.  There are clearly cases where we don't need
+100% accurate stats, evident by mem_cgroup_flush_stats_ratelimited() and
+mem_cgroup_flush_stats() that use memcg_vmstats_needs_flush().
 
-> +- This is a series of compatibility tests, wherein the source files are
-> +  built statically into a 32 bit ELF; they should pass on both 32 and 64
-> +  bit kernels. They are not built or run but just skipped completely when
-> +  env-variable ARCH is found to be different than 'arm64' or 'arm' and
-> +  `uname -m` reports other than 'aarch64', 'armv7l' or 'armv8l'.
+The cgroup_rstat_exit() call seems to depend on cgroup_rstat_flush() 
+being strict/accurate, because need to free the percpu resources.
 
-These are just plain old tests for arm, the fact that we can use them to
-test 32 bit mode on a 64 bit host is a nice bonus but the tests are just
-as useful with actual arm hardware.
+The obj_cgroup_may_zswap() have a comments that says it needs to get 
+accurate stats for charging.
 
-> +- If building the tests on a 64-bit kernel, please ensure that the kernel is
-> +  built with CONFIG_COMPAT enabled.
+These were the two cases, I found, do you know of others?
 
-Running, not building.
 
-> +- Holding true the above, ARM KSFT tests can be run within the KSelfTest
-> +  framework using standard Linux top-level-makefile targets. Please set
-> +  $(CROSS_COMPILE) to 'arm-linux-gnueabi-' or 'arm-linux-gnueabihf-'.
+> A proof of concept is basically something like:
+> 
+> void cgroup_rstat_flush(cgroup)
+> {
+>      if (cgroup_is_descendant(cgroup, READ_ONCE(cgroup_under_flush))) {
+>          wait_for_completion_interruptible(&cgroup_under_flush->completion);
+>          return;
+>      }
 
-Or whatever your toolchain is set to!  We should also consider the
-LLVM=1 case here for building with clang (which is even easier as it
-supports all architectures in a single binary).
+This feels like what we would achieve by changing this to a mutex.
 
-> +      $ make TARGETS=arm kselftest-clean
-> +      $ make $(CROSS_COMPILE) TARGETS=arm kselftest
+> 
+>      __cgroup_rstat_lock(cgrp, -1);
+>      reinit_completion(&cgroup->completion);
+>      /* Any overlapping flush requests after this write will not spin
+> on the lock */
+>      WRITE_ONCE(cgroup_under_flush, cgroup);
+> 
+>      cgroup_rstat_flush_locked(cgrp);
+>      complete_all(&cgroup->completion);
+>      __cgroup_rstat_unlock(cgrp, -1);
+> }
+> 
+> There may be missing barriers or chances to reduce the window between
+> __cgroup_rstat_lock and WRITE_ONCE(), but that's what I have in mind.
+> I think it's not too complicated, but we need to check if it fixes the
+> problem.
+> 
+> If this is not preferable, then yeah, let's at least keep the
+> userspace behavior intact. This makes sure we don't affect userspace
+> negatively, and we can change it later as we please.
 
-> +      or
+I don't think userspace reading these stats need to be 100% accurate.
+We are only reading the io.stat, memory.stat and cpu.stat every 53 
+seconds. Reading cpu.stat print stats divided by NSEC_PER_USEC (1000).
 
-> +      $ make $(CROSS_COMPILE) -C tools/testing/selftests TARGETS=arm \
-> +		INSTALL_PATH=<your-installation-path> install
+If userspace is reading these very often, then they will be killing the 
+system as it disables IRQs.
 
-> +      or, alternatively, only specific arm/ subtargets can be picked:
+On my prod system the flush of root cgroup can take 35 ms, which is not 
+good, but this inaccuracy should not matter for userspace.
 
-> +      $ make $(CROSS_COMPILE) -C tools/testing/selftests TARGETS=arm \
-> +		ARM_SUBTARGETS="signal" INSTALL_PATH=<your-installation-path> \
-> +			install
+Please educate me on why we need accurate userspace stats?
 
-I would expect the Makefile to have machinery which if we're building
-for arm64 would use CROSS_COMPILE_COMPAT here and force 32 bit builds.
 
-> +# Do not build 64-bit programs if running on a native 32-bit kernel
-> +UNAME_M := $(shell uname -m)
-> +ifneq (,$(filter $(UNAME_M),aarch64 arm64))
-> +TEST_CUSTOM_PROGS := $(OUTPUT)/ptrace_64
-
-Where we're building shouldn't affect what gets run - it is very common
-especially in CI systems to build on one system and then run the tests
-on a completely separate machine.
-
---UU48VnmcH3/0WAef
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ64xMACgkQJNaLcl1U
-h9BY0Af8CGA4C9tw/lNUx4oUt9cjeuXWgxUbAfWEfMpOLIRAscwaks6VQ24BSuax
-Unqbiuj8MKH3pn4A9OSzhvwHlzwcAWy2GXITHPs3V8S10TPpG2sQ+U1DN4dTzu8p
-NyuHp6DtwrNn50tq9dM60WUkZK8zRCv4FmAtm+nRRX0KM3sxr+/afzWlLpW/5XSa
-JcHlPQPelZRzvMF56SpIUs/HuB6a/UDqZ8wjePlgWRSe/NXYCXu4dpSKyPFD3cF9
-5fk0K7xmFVbPk4ZACYnPTHX+CTgwLRKL5eshTxBzFytj8AVgVAGGyxJt0WG90KAt
-FJzqkpIETgGu+D56E4WFAUZRMmWBdQ==
-=OVR4
------END PGP SIGNATURE-----
-
---UU48VnmcH3/0WAef--
+--Jesper
 
