@@ -1,250 +1,127 @@
-Return-Path: <linux-kernel+bounces-229351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6065D916EAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:00:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75FA9916EB4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:00:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42F31F23A9C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:00:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FB5128B9E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8183E2F56;
-	Tue, 25 Jun 2024 17:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70F43176232;
+	Tue, 25 Jun 2024 17:00:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LododlXE"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lCUAn4R0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5DB176241
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 17:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEEC12F56;
+	Tue, 25 Jun 2024 17:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719334804; cv=none; b=UWpbOQr+p2HBh/wlwsZuuSJsmp1MUd3t9wJZyNTDJ213HrAYCb7GDajK5vmr8E+JEm3CJHeonigU3oxxxPPi+Rz5327hIYYSl/cIY6jRrLPjxyTH/c5nbSdWAEQgWVkE5i3vBUr5Kh3SIlVae/z+VSQXj6yXXWCkkU8THq8Cc6Q=
+	t=1719334850; cv=none; b=L3A78jgqrml1hoZF4zwOshbL/UHaNNk4ftHkjUiQxm+APpJhVml+HdUlRAkjjMkT6TVOZAaNxsgEfkmNCK8YMwy1J8tg58e7TRGDh0pzuoHLnUnq6k9/4wminDF5pOBS8mAKIlZ4fiHM/3+Fx0z0FK/CDrfE5WG0Dx0NH1s14x4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719334804; c=relaxed/simple;
-	bh=c69UeNsbBXYB+FXw5XwrxO/smJEaHUULsm7ttMq/Tvs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=awGD5Niq6MY9zrU09fEXP1IbFuWUihUz1lmQszgNyRMHOBCupnVn3+vzn2U/n404t85y1V1Sw2XdZrJaKDNDA7ayQDjB8D+RTxdV+/w7J4aFv0z5be3uAko3nEi3JNjBSmA3FOfdjCAQqoSYcy0ACbowIiJAi8bF89JEzFJ8ETc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LododlXE; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4217c7eb6b4so47014615e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:00:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719334800; x=1719939600; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKhLA/uuVpBLqDNuK6HoaxS7wD29CsICGUEF4cAMpms=;
-        b=LododlXE/V884i9p2+T+JsNxhMvgqXkBxIKhEzMS6Ii+c38fAt4eNu8h2U0hbyHSJF
-         fdEethm94nztDxUqa6uGzrMPsOBjdDLQptgyddmax0VD/i6nzOtVLKhhWGJ70hZ5kD1s
-         Nw9bNtpKF+cezIYyQgXqtF3BI1Ql7DW0QzQcVxjOkZ4nhVV476G/RwMWhiCvn7yYLKQF
-         oTilxvlgKVVWJX1WfQT6kDQ6uW2InXCgpwDdgAFELlOe5rfWWZenSug451S+VkIlonfC
-         PJ9YSddQ8P5USQ6tP2TQ/a366NUKrvBUoqvFbN2t2YlDRmW9ooln0JuLUG4LfD3beFBO
-         Y2Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719334800; x=1719939600;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKhLA/uuVpBLqDNuK6HoaxS7wD29CsICGUEF4cAMpms=;
-        b=OE8c7ilTMVhwn24W26bgxzCpkVXZrrbsbHJ/EcLlYd8f7z/dn70qnJv2gguVBxJGIN
-         cUOBC9xXZccuK6Sc3N0PoefSazla96rsz+hbc1XAJ2WfPikC2Q1Q5N7GP+6g95/JWmNI
-         h4L1R+6JSSZIZBanA0Bbf7olzeJALp4YlKARMVlhCgydSPuQDCViB3ak5RcR11BAG2es
-         petwxM2oUlgoxU2ePObvCowVojoYrCBD4QqG4PgZbM2phKCgMvfvNbekUiKiylR2Av19
-         HZ4OLEhmZ+o8HA7dkYj3FzXHdlxvFvBQ4cItg3WCHcBktWPyHUm7TvoF4F6WEtnViSnY
-         IEdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQAnSuHHyAWZniC0e4Ht74DbkHEoXWzbqTsa5G84SYuC0obN0QOf/ABQ5zpWIvps17Brkk9heK6c2b2hHDSJcwVW+XvoP53upAV4rW
-X-Gm-Message-State: AOJu0YzxxIUGlek/uB16aJ5bdSnkq3YGL2DWanAkBCU1h8Pu5ll6pW93
-	I2vcoLdaeJeLJW5+Zmuq98lXJZWWlFt6wO895LGFfEcAiPGRhecYbk/qjZen4oQ=
-X-Google-Smtp-Source: AGHT+IGuDftD/fHoijaVLzFccwmGUpMG5buqZhT6v/Ke1w4CDd5JIUPcSTNtgPBRlJeit4/74Hb6Nw==
-X-Received: by 2002:a05:6000:154d:b0:362:5816:f134 with SMTP id ffacd0b85a97d-366e9463da3mr7697083f8f.13.1719334800016;
-        Tue, 25 Jun 2024 10:00:00 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:b30c:4c5e:f49e:ab33])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638301cffsm13399466f8f.10.2024.06.25.09.59.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 09:59:59 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,  Lars-Peter Clausen
- <lars@metafoo.de>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
- Hilman <khilman@baylibre.com>,  linux-kernel@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-iio@vger.kernel.org,  Rob
- Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 2/2] iio: frequency: add amlogic clock measure support
-In-Reply-To: <190ccd62-0803-46fa-87ee-0f9cef5a784e@baylibre.com> (David
-	Lechner's message of "Tue, 25 Jun 2024 09:52:30 -0500")
-References: <20240624173105.909554-1-jbrunet@baylibre.com>
-	<20240624173105.909554-3-jbrunet@baylibre.com>
-	<04254d15-2f6e-435d-ba4c-8e2e87766b9b@baylibre.com>
-	<1j4j9hift4.fsf@starbuckisacylon.baylibre.com>
-	<190ccd62-0803-46fa-87ee-0f9cef5a784e@baylibre.com>
-Date: Tue, 25 Jun 2024 18:59:58 +0200
-Message-ID: <1jr0clgdpt.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1719334850; c=relaxed/simple;
+	bh=jReVo7cPZTHRyUkIyfpym6pSDuf/auj8AgpkL5o2CB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RgteNO0VjTGUvt5dtxmzknM2M4id220tsXZ0+6LDOl9FWdZSKcd7xb7kuQfPVO85i8bNwpMHY/q3xAVV+RpIYY+In62bZoK6rf+NZNm9Ecp0ggmPOJdPi/ZykaYXnk7Ll6lK4JrxtYLBFY/DYukNSph0hzu2W0oGQML4Lsw8Vxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lCUAn4R0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4356C32781;
+	Tue, 25 Jun 2024 17:00:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719334850;
+	bh=jReVo7cPZTHRyUkIyfpym6pSDuf/auj8AgpkL5o2CB4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lCUAn4R0OjjxVaZ0BjsGnpfYkLZbXggT1fE/1jSLHqFDlU0p66q7LfWE9In34TCRF
+	 ady2ml0BMXSmYDB4fblFjdAa7hKMTazENuOssVgFfMDmK1E6ab0xE6V+WdGzkx9LqK
+	 lhoMTMr419fToBuIelmXY0cWbUeRnHErQGb/RmRKTc/ovHWoCPjiSJXkmyEJlu80Hd
+	 tSNnk9SShWKSOY8ibyxcu7WeHgZL32w3oszDEnO6nvMOUPGLEQ3Clgc/VjnQOYKo2S
+	 t9dHhzppU/ejOah4G6CTzfp+x+StCFDsgfwQZYAS9EIXQxrJZTWj7cnaisAcd/u5lC
+	 ZvyHKJfj1JB0A==
+Date: Tue, 25 Jun 2024 10:00:48 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Nicolas Schier <n.schier@avm.de>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kbuild: deb-dpkg: Check optional env variables before use
+Message-ID: <20240625170048.GA3877857@thelio-3990X>
+References: <20240625-mkdebian-check-if-optional-vars-are-defined-v1-1-53f196b9f83a@avm.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625-mkdebian-check-if-optional-vars-are-defined-v1-1-53f196b9f83a@avm.de>
 
-On Tue 25 Jun 2024 at 09:52, David Lechner <dlechner@baylibre.com> wrote:
+On Tue, Jun 25, 2024 at 02:45:56PM +0200, Nicolas Schier wrote:
+> Add checks to mkdebian for undefined optional environment variables
+> before evaluating them.
+> 
+> Some variables used by scripts/package/mkdebian are fully optional and
+> not set by kbuild.  In order to allow enabling 'set -u' (shell script
+> exits on dereference of undefined variables), introduce the explicit
+> checking.
+> 
+> Suggested-by: Masahiro Yamada <masahiroy@kernel.org>
+> Signed-off-by: Nicolas Schier <n.schier@avm.de>
 
-> On 6/25/24 3:31 AM, Jerome Brunet wrote:
->> On Mon 24 Jun 2024 at 17:51, David Lechner <dlechner@baylibre.com> wrote:
->> 
->>> On 6/24/24 12:31 PM, Jerome Brunet wrote:
->>>> Add support for the HW found in most Amlogic SoC dedicated to measure
->>>> system clocks.
->>>>
->>>
->>>
->>>
->>>> +static int cmsr_read_raw(struct iio_dev *indio_dev,
->>>> +			 struct iio_chan_spec const *chan,
->>>> +			 int *val, int *val2, long mask)
->>>> +{
->>>> +	struct amlogic_cmsr *cm = iio_priv(indio_dev);
->>>> +
->>>> +	guard(mutex)(&cm->lock);
->>>> +
->>>> +	switch (mask) {
->>>> +	case IIO_CHAN_INFO_RAW:
->>>> +		*val = cmsr_measure_unlocked(cm, chan->channel);
->>>
->>> Is this actually returning an alternating voltage magnitutde?
->>> Most frequency drivers don't have a raw value, only frequency.
->> 
->> No it is not the magnitude, it is the clock rate (frequency) indeed.
->> Maybe altvoltage was not the right pick for that but nothing obvious
->> stands out for Hz measurements
->
-> I'm certainly not an expert on the subject, but looking at the other
-> frequency drivers, using altvoltage looks correct.
->
-> But, we in those drivers, nearly all only have a "frequency" attribute
-> but don't have a "raw" attribute. The ones that do have a "raw" attribute
-> are frequency generators that use the raw attribute determine the output
-> voltage.
->
->> 
->>>
->>>> +		if (*val < 0)
->>>> +			return *val;
->>>> +		return IIO_VAL_INT;
->>>> +
->>>> +	case IIO_CHAN_INFO_PROCESSED: /* Result in Hz */
->>>
->>> Shouldn't this be IIO_CHAN_INFO_FREQUENCY?
->> 
->> How would I get raw / processed / scale with IIO_CHAN_INFO_FREQUENCY ?
->> 
->>>
->>> Processed is just (raw + offset) * scale which would be a voltage
->>> in this case since the channel type is IIO_ALTVOLTAGE.
->> 
->> This is was Processed does here, along with selecting the most
->> appropriate scale to perform the measurement.
->> 
->>>
->>>> +		*val = cmsr_measure_processed_unlocked(cm, chan->channel, val2);
->>>> +		if (*val < 0)
->>>> +			return *val;
->>>> +		return IIO_VAL_INT_64;
->>>> +
->>>> +	case IIO_CHAN_INFO_SCALE:
->>>
->>> What is this attribute being used for?
->> 
->> Hz
->> 
->>>
->>> (clearly not used to convert the raw value to millivolts :-) )
->>>
->>> Maybe IIO_CHAN_INFO_INT_TIME is the right one for this? Although
->>> so far, that has only been used with light sensors.
->> 
->> I think you are mixing up channel info and type here.
->> I do want the info
->>  * IIO_CHAN_INFO_RAW
->>  * IIO_CHAN_INFO_PROCESSED
->>  * IIO_CHAN_INFO_SCALE
->> 
->> I want those info to represent an alternate voltage frequency in Hz.
->> I thought type 'IIO_ALTVOLTAGE' was the right pick for that. Apparently
->> it is not. What is the appropriate type then ? Should I add a new one ?
->
->
-> The documentation at Documentation/ABI/testing/sysfs-bus-iio explains
-> what the combination of a channel type and info means.
+Looks good to me.
 
-Oh missed that, Thx
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
 
->
-> For example, out_altvoltageY_raw is defined as it used for the frequency
-> generator case that I mentioned above. in_altvoltageY_raw is not defined
-> which means probably no one has needed it yet. But it would still be the
-> voltage value, not the frequency.
-
-Got it. So the type I picked is wrong for sure.
-So, maybe I need something new to measure a frequency ?
-
->
-> There also isn't a in_altvoltageY_input defined ("_input" is the sysfs
-> name for IIO_CHAN_INFO_PROCESSED). But in general, "input" (processed) in
-> IIO just means the value in standard units instead of a raw value. It
-> doesn't mean that any extra signal processing was done. And "scale" is
-> just a way to convert "raw" to "input" (processed). So channels will either
-> have "raw" and "scale" or only have "input" (processed), but not both.
->
-> Could you describe at a higher level what the use case for the various
-> values being exposed here are? I think that would be helpful in figuring
-> out where they actually fit in to the standard IIO attributes.
-
-So as discussed in the cover letter, This HW used to be driven by a driver
-living in drivers/soc/amlogic/meson-clk-measure.c .
-It provides debugfs entries to observe the rate of 128 system clocks.
-It was fine until now and mostly used for debug in userspace.
-
-To solve a problem with implementing eARC support in ASoC, I need
-another driver to access the measurements, as simply as possible.
-IIO provides an interface like this and the HW actually does
-measurements so I seems like a good fit. I've got it to work
-and happy with the result, both on the IIO and ASoC side.
-
-What is really important to me is the information provided with
-IIO_CHAN_INFO_PROCESSED, because the algorithm will adapt the scale (the
-duration the clock is observed for) to not overflow the output and get the
-best precision achievable. It is a compromise really. Consumer do not
-have to worry about it, they'll get Hz.
-
-I'd prefer to avoid having that algorithm (duplicated) in the consumers,
-especially if it is a driver.
-
-I've provided RAW and SCALE because it is cheap and easy to do TBH.
-I can live without it. It is meant for consumers (if any?) that would
-know better, like want to prioritize speed over precision.
-
-Eventually that driver could evolve and also provide duty cycle
-measurements, which is another reason why I think IIO is a good fit for
-it.
-
->
->> 
->>>
->>>> +		*val2 = cmsr_get_time_unlocked(cm);
->>>> +		*val = 1000000;
->>>> +		return IIO_VAL_FRACTIONAL;
->>>> +
->>>> +	default:
->>>> +		return -EINVAL;
->>>> +	}
->>>> +}
->>>> +
->> 
-
--- 
-Jerome
+> ---
+> This allows application of the original patch
+>    [PATCH 1/2] kconfig: add -e and -u options to *conf-cfg.sh scripts
+>    [PATCH 2/2] kbuild: package: add -e and -u options to shell scripts
+> as sent https://lore.kernel.org/linux-kbuild/20240611160938.3511096-1-masahiroy@kernel.org/
+> ---
+>  scripts/package/mkdebian | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+> index b9a5b789c655..2a7bb05c7f60 100755
+> --- a/scripts/package/mkdebian
+> +++ b/scripts/package/mkdebian
+> @@ -19,7 +19,7 @@ if_enabled_echo() {
+>  }
+>  
+>  set_debarch() {
+> -	if [ -n "$KBUILD_DEBARCH" ] ; then
+> +	if [ "${KBUILD_DEBARCH:+set}" ] ; then
+>  		debarch="$KBUILD_DEBARCH"
+>  		return
+>  	fi
+> @@ -147,7 +147,7 @@ fi
+>  
+>  # Some variables and settings used throughout the script
+>  version=$KERNELRELEASE
+> -if [ -n "$KDEB_PKGVERSION" ]; then
+> +if [ "${KDEB_PKGVERSION:+set}" ]; then
+>  	packageversion=$KDEB_PKGVERSION
+>  else
+>  	packageversion=$(${srctree}/scripts/setlocalversion --no-local ${srctree})-$($srctree/scripts/build-version)
+> @@ -164,7 +164,7 @@ debarch=
+>  set_debarch
+>  
+>  # Try to determine distribution
+> -if [ -n "$KDEB_CHANGELOG_DIST" ]; then
+> +if [ "${KDEB_CHANGELOG_DIST:+set}" ]; then
+>          distribution=$KDEB_CHANGELOG_DIST
+>  # In some cases lsb_release returns the codename as n/a, which breaks dpkg-parsechangelog
+>  elif distribution=$(lsb_release -cs 2>/dev/null) && [ -n "$distribution" ] && [ "$distribution" != "n/a" ]; then
+> 
+> ---
+> base-commit: 3893a22a160edd1c15b483deb3dee36b36ee4226
+> change-id: 20240625-mkdebian-check-if-optional-vars-are-defined-a46cf0524e4e
+> 
+> Best regards,
+> -- 
+> Nicolas Schier
+> 
 
