@@ -1,184 +1,126 @@
-Return-Path: <linux-kernel+bounces-229068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9F0A916A69
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:31:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D76D0916A6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:32:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 808891F24831
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:31:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5816CB20E6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:32:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9B1F16D9DA;
-	Tue, 25 Jun 2024 14:29:54 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12BE3154C18;
+	Tue, 25 Jun 2024 14:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JCoZn9FD"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5126416C68B;
-	Tue, 25 Jun 2024 14:29:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC676170848
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719325794; cv=none; b=sl2OJ76IhOzR26h2+aBu2ZHvTab2Y5Bd9PPfO1akSf57/ePnxlu85HQCLyKXICaSmDoWJnaoe7syCxx0PqNnMyDRFf8RE+NXXWdamflF4FwhkrYFe+XfZBvaPombmHqzq8s+dAbyGRKTzU56p/LtDa7OyhfHuoGnMRHIh5yKnBI=
+	t=1719325805; cv=none; b=O9Vnw9QVgwvc4I/HAoLyOPS0IDfKYJrjxrnxwUxoO41UNcZM3+kmX1a/222VxYHinruiHtXiBn18CGwtbIT4u/3YGVCkS/vw+oOB8fKuzGDO+V3kgyZCHOR+K5Suy9A4TVrkbRTrK7GttvuQP8uhCWflDS6wzPE8nGw/n09JRt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719325794; c=relaxed/simple;
-	bh=3RVvHeyAWipkeVyMwWIsWzeZ9VvPaM9h3uVyhNJkd/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XGHmzUyYdwwJn4J+1zeNLU5hF8egu9wjqtIczR2kvHGQZ5j/ZYZw8siFbHcy30a+x2Wss6GIGfjQZtafpe1iSefI5NzI87SEfGx5tJYm009QHnnfe/a5HqaV3v08ugyBwVdfDxXNnj6ELb11o0ZGkpnl5u+1Bhng+1RGb+Sh9bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W7nHg0Vvxzddj8;
-	Tue, 25 Jun 2024 22:28:15 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 8F05F180085;
-	Tue, 25 Jun 2024 22:29:48 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 25 Jun
- 2024 22:29:47 +0800
-Message-ID: <b5f49ae4-a905-4c64-8918-83aa53d3dbcd@huawei.com>
-Date: Tue, 25 Jun 2024 22:29:47 +0800
+	s=arc-20240116; t=1719325805; c=relaxed/simple;
+	bh=rpNZYAlxmN/rG9fSu368ufRQuDICSKYr4IHageIwSjc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bK7be6ck9cPqvOsICquyc4rCMIXC5SQhx1ouSQoIqQssGsKJljl1DvCIfde9rDsI6n4LwiK48KZJuZIn1zupfXTtUn6KmDJZ59MsDbgL/oTqWiH22SdqimCEHGum+0goHGKGkAZ5pAc2ID2BLVXQUCioDUYTZsn9hXNJFr748zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JCoZn9FD; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52cdebf9f53so3001098e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:30:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719325802; x=1719930602; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=TIW+BEEpFZxcaSiuFdd6E7EOCLgPKt/xKVONfeyzByw=;
+        b=JCoZn9FDzDJF9bIK7ae6jlvXz9UyZEzOA5sePhmJKDcviVdT6P4Lu2UX+WPSxVwEpe
+         yyp7lJPLQyh0d4/+WBr9vyVaB1hQIuglLgAPIDd/W2YdHPQ5toFu7oi3rUW1kz3PVl0K
+         HbpfBTitL7wyn1DEOAqYGwF13o2RdxnKfgJUSsuyzL11NEo8bfAuJj/Ej+Ig5l40Kdi2
+         kBZA9c4P4ASJKMnvWCnWvNXbZufFHLgx4nOtiB4JccTUqrepQpGjadhgFdk54wbs8p4b
+         FAu3NIGE8qmwR4KG+itQCAzkgdsd5LmT+DYgeKqk9awG1Hs7fSXUzzKdbPHJvF3BDfx1
+         fVqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719325802; x=1719930602;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TIW+BEEpFZxcaSiuFdd6E7EOCLgPKt/xKVONfeyzByw=;
+        b=KaZZmWJM7vU9230p9UGV6agN25beZsfqwrKHKinXAGHAshr37+Jnn10/mYPXcwXhoW
+         yjGMoffYVB2K1yM0yMZTtOky3RVI397vGoOkt3zxBWEKPmi3x1RBSB728f951VDhe9jz
+         rkU6vqqyZBq3ybla2jBhquVyITl/fRivjV2Y+xUNd/ceCAHD1r4Rur9eyvfzFUzmZhkT
+         Jvn4VtknRLtgN8R1b+kD+k7jXsQsoKXc45UQDhlmAZS78znU9Vb0bKtIX358Kghhv4VM
+         /FnMeZFKsK4BbsBO1FffgsEJ1/zPvM9R08fbn3yD/0fKaeIPuN7j1J/2VAdo5pIHLq1s
+         vHKw==
+X-Forwarded-Encrypted: i=1; AJvYcCX9Bwm17qnvnRZi0Vp/HaG/YCx9gsi95S/iuIAfEOfMiskYiE8k2LCfMDVxuMRt9ZZ/wD84DWpULP9rFbmLgJdkXYQ5bUEyFGnObb56
+X-Gm-Message-State: AOJu0Yw7XIRd2n7ZgKSVt9auamBKKwtRGb5CtjoZFJm5Rm0HSnQPrOMI
+	hgi1E/diHMEfq2CkQ0tgE8YrnSh9yKgw3V2ya3h7JdBipkdeZXyuBnQnAcBkAYM=
+X-Google-Smtp-Source: AGHT+IHZ8OaLyMHtv2S65EE9rCSfAJ0Z6PqtA32z4W6qeFVbOuiH5///ycCmgXTPqmIPXgTzGR093g==
+X-Received: by 2002:a19:9115:0:b0:52c:df63:bebd with SMTP id 2adb3069b0e04-52ce0673528mr5256172e87.49.1719325801936;
+        Tue, 25 Jun 2024 07:30:01 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd63bd28dsm1258950e87.92.2024.06.25.07.30.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 07:30:01 -0700 (PDT)
+Date: Tue, 25 Jun 2024 17:29:59 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Michael Walle <mwalle@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Gunnar Dibbern <gunnar.dibbern@lht.dlh.de>
+Subject: Re: [PATCH 2/2] drm/panel: add Ilitek ILI9806E panel driver
+Message-ID: <d23fsb53p2at6rldkkolujgjfmbxpc7ulbsd5cak3pksacsvk7@b37rq4vnskjl>
+References: <20240625133317.2869038-1-mwalle@kernel.org>
+ <20240625133317.2869038-3-mwalle@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] cgroup: fix uaf when proc_cpuset_show
-To: Waiman Long <longman@redhat.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
-	<mkoutny@suse.com>
-CC: <tj@kernel.org>, <lizefan.x@bytedance.com>, <hannes@cmpxchg.org>,
-	<bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240622113814.120907-1-chenridong@huawei.com>
- <19648b9c-6df7-45cd-a5ae-624a3e4d860f@redhat.com>
- <52f72d1d-602e-4dca-85a3-adade925b056@huawei.com>
- <71a9cc3a-1b58-4051-984b-dd4f18dabf84@redhat.com>
- <8f83ecb3-4afa-4e0b-be37-35b168eb3c7c@huawei.com>
- <ee30843f-2579-4dcf-9688-6541fd892678@redhat.com>
- <3322ce46-78a1-45c5-ad07-a982dec21c8e@huawei.com>
- <gke4hn67e2js2wcia4gopr6u26uy5epwpu7r6sepjwvp5eetql@nuwvwzg2k4dy>
- <920bbfaa-bb76-4aa1-bd07-9a552e3bfdf2@huawei.com>
- <80e87513-aa48-4548-893e-ed339690c941@redhat.com>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <80e87513-aa48-4548-893e-ed339690c941@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625133317.2869038-3-mwalle@kernel.org>
 
+On Tue, Jun 25, 2024 at 03:33:17PM GMT, Michael Walle wrote:
+> The Ortustech COM35H3P70ULC panel is based on the ILI9806E DSI display
+> controller.
+> 
 
-On 2024/6/25 22:16, Waiman Long wrote:
-> On 6/25/24 10:11, chenridong wrote:
->>
->>
->> On 2024/6/25 18:10, Michal Koutný wrote:
->>> Hello.
->>>
->>> On Tue, Jun 25, 2024 at 11:12:20AM GMT, 
->>> chenridong<chenridong@huawei.com>  wrote:
->>>> I am considering whether the cgroup framework has a method to fix this
->>>> issue, as other subsystems may also have the same underlying problem.
->>>> Since the root css will not be released, but the css->cgrp will be
->>>> released.
->>> <del>First part is already done in
->>>     d23b5c5777158 ("cgroup: Make operations on the cgroup root_list 
->>> RCU safe")
->>> second part is that</del>
->>> you need to take RCU read lock and check for NULL, similar to
->>>     9067d90006df0 ("cgroup: Eliminate the need for cgroup_mutex in 
->>> proc_cgroup_show()")
->>>
->>> Does that make sense to you?
->>>
->>> A Fixes: tag would be nice, it seems at least
->>>     a79a908fd2b08 ("cgroup: introduce cgroup namespaces")
->>> played some role. (Here the RCU lock is not for cgroup_roots list 
->>> but to
->>> preserve the root cgrp itself css_free_rwork_fn/cgroup_destroy_root.
->>>
->>> HTH,
->>> Michal
->>
->> Thank you, Michal, that is a good idea. Do you mean as below?
->>
->> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->>
->> index c12b9fdb22a4..2ce0542067f1 100644
->> --- a/kernel/cgroup/cpuset.c
->> +++ b/kernel/cgroup/cpuset.c
->> @@ -5051,10 +5051,17 @@ int proc_cpuset_show(struct seq_file *m, 
->> struct pid_namespace *ns,
->>         if (!buf)
->>                 goto out;
->>
->> +       rcu_read_lock();
->> +       spin_lock_irq(&css_set_lock);
->>         css = task_get_css(tsk, cpuset_cgrp_id);
->> -       retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
->> - current->nsproxy->cgroup_ns);
->> +
->> +       retval = cgroup_path_ns_locked(css->cgroup, buf, PATH_MAX,
->> +               current->nsproxy->cgroup_ns);
->>         css_put(css);
->> +
->> +       spin_unlock_irq(&css_set_lock);
->> +       cgroup_unlock();
->> +
->>         if (retval == -E2BIG)
->>                 retval = -ENAMETOOLONG;
->>
->>         if (retval < 0)
->>
-> That should work. However, I would suggest that you take 
-> task_get_css() and css_put() outside of the critical section. The 
-> task_get_css() is a while loop that may take a while to execute and 
-> you don't want run it with interrupt disabled.
->
-> Cheers,
-> Longman
->
->
->
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -5050,11 +5050,18 @@ int proc_cpuset_show(struct seq_file *m, struct 
-pid_namespace *ns,
-         buf = kmalloc(PATH_MAX, GFP_KERNEL);
-         if (!buf)
-                 goto out;
--
-         css = task_get_css(tsk, cpuset_cgrp_id);
--       retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
--                               current->nsproxy->cgroup_ns);
-+
-+       rcu_read_lock();
-+       spin_lock_irq(&css_set_lock);
-+
-+       retval = cgroup_path_ns_locked(css->cgroup, buf, PATH_MAX,
-+               current->nsproxy->cgroup_ns);
-+
-+       spin_unlock_irq(&css_set_lock);
-+       rcu_read_unlock();
-         css_put(css);
-+
-         if (retval == -E2BIG)
-                 retval = -ENAMETOOLONG;
+[...]
 
-         if (retval < 0)
+> +static int ili9806e_get_modes(struct drm_panel *panel,
+> +			      struct drm_connector *connector)
+> +{
+> +	struct ili9806e_panel *ctx = to_ili9806e_panel(panel);
+> +	struct drm_display_mode *mode;
+> +
+> +	mode = drm_mode_duplicate(connector->dev, ctx->desc->display_mode);
+> +	if (!mode)
+> +		return -ENOMEM;
+> +
+> +	drm_mode_set_name(mode);
+> +
+> +	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
+> +	connector->display_info.width_mm = mode->width_mm;
+> +	connector->display_info.height_mm = mode->height_mm;
+> +	drm_mode_probed_add(connector, mode);
 
+drm_connector_helper_get_modes_fixed(), please.
 
-Yeah, that looks good, i will test for a while. I will send a new patch 
-if no other problem occurs.
+> +
+> +	return 1;
+> +}
+> +
 
-Thank you.
-
-Regards,
-Ridong
-
-
+-- 
+With best wishes
+Dmitry
 
