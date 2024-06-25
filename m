@@ -1,85 +1,70 @@
-Return-Path: <linux-kernel+bounces-229279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2F3916DBC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:06:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4982916DCA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:08:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDAA71C21A40
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:06:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EA4F1F23932
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:08:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B72173357;
-	Tue, 25 Jun 2024 16:06:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B5E16F91B;
+	Tue, 25 Jun 2024 16:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kgpudbNA"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="pZ/R2Q18"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6B317165B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 16:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68F816FF33;
+	Tue, 25 Jun 2024 16:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719331582; cv=none; b=eiKUZRwQT6xiAKLBArB+w0HM+O6F+X6yRDyuTdPVkIxvNDUJAMOKTz+5HNZFgZA9h3qkwGiK2RFmn7D/D+ThxDnludWjgfb9bxrJY/0+KiMx7TIA/u4iNKvvYWZfcS+eFVrBiiYgDuA6cVGJTl8KGrGHsXRk21gGmeJr2qhlJ1w=
+	t=1719331685; cv=none; b=V7X/TBScixR71XUfHixejmwUoJsK9ciebpGnsvPd9DIozhHhtBdTXI7oXX3vv07YD4tth9w/pLq49STXuG3jRm4aO7orgeQczzlM0C7u0DBaiDJAj5mvQOnhFyjffZsG+2Djokm7HXZoP9nrjJpjHDyoynOZSiBeEy01iMSOxvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719331582; c=relaxed/simple;
-	bh=LVjZ47687PxS3iFKdhrNIBTElhvjuA83Mgge5wOGN3k=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mjA+RVSaEUB9Jn1EfDwv1pxnGreibMDHA988mjxYH5dc7DeBOXBC+9YqyvbP56d8CWvnSUV0qyFzSTZUCrTKtrepF1fa4qT8JdeKjI5eooAyeG0pMUq4x9g67YBLKsg/qTLevOPYvieFpJOtwSjPigqoL5v1kDXQcmHFUHy7FGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kgpudbNA; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a725a918edaso77125566b.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:06:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719331578; x=1719936378; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=DbBz/UlSDHmmQE9XJzoYyy6K5428MNeACZ+/dAMQ9N8=;
-        b=kgpudbNAW+GxftY75GUMRhkTXF2HsogfroBZm+zhHvc3ZgvGFgqivTAUfzSYCErDRL
-         YMPMzs9tmxQbXrf9qYVK8ap4AtWGvV83bDXRrChldnSol5dGiCy8dFtipg9Olx6BpgRc
-         8egD5gMHF89tD2queGI/FE/SuzXmifgW6Xf3q4IY6HuHwhtjE46Yd2z1mET+Vh8TP44H
-         BlT1LECP1LxEH8vSQKZz2uA4K8hYlUqUaQOm48/Hrtncsahky5YaAn0V5eawMW4yUyYx
-         pB0uNbNpMYdSRss+2/TG2IA3hTmnVu7JGO8G8CmIGHoZHsfRs9D6selsdB3kFBBCQvnw
-         0PbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719331578; x=1719936378;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DbBz/UlSDHmmQE9XJzoYyy6K5428MNeACZ+/dAMQ9N8=;
-        b=c4ZtIYZ+zFDJmVUsg8kX2kQ+ila3pEJ0sdOqbBsDM/siI+zlFNLmBc7I09PHD+du0m
-         pKbtfhHOBOxhYqbaUfwVVdaSykmTZr8kc17dx96EzYTh6YApuXPHlgRANbbcU8tBKzYf
-         Pa5nqzsdTo58b3xEZciansf2lLqhFrNx4xDDw6om38gnoe7KdXzOd3irLvtgncvYimBB
-         on5kegwBert1txZkgd0nx1rUmUgewYYY3bJwihGvcbExdsl7PPziIEwGpB0B9fG7rF//
-         Rwj2kqrMBjvR5O+kKa6wW5P4SLdy1i3PEqRe7GSVhJizVuc3N4/saGKA+vK5Wmz9vEn0
-         RkyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrzZNIA21rdR7FABBLfA6sqwpjDvB0EWuG6WGRHEuhqIlAqsHh9ESJZYypiKIvDxaukY8V65WitAQmHsVCqJ8ESleet/BfGE61m95b
-X-Gm-Message-State: AOJu0Yx5d+llIy8pDmLbUxsrS160NEi9JSMWvnhpdJgEtJx+i+y89vB4
-	8719cqYeWBIRQZJS07WiBm4BVdlLPMxa+tN4/UrHM68PteRD2fRMYFc6At5uk4A=
-X-Google-Smtp-Source: AGHT+IG5pxrjRiSGtKXXcaujES4bHVw1Q9Xh73VMtvmgJPjR5I4xLxhhFfkpqfCUKfVMEnurVpstpw==
-X-Received: by 2002:a17:907:c787:b0:a6f:b6c3:fb30 with SMTP id a640c23a62f3a-a7245b84f56mr796716166b.7.1719331578008;
-        Tue, 25 Jun 2024 09:06:18 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30535010sm6066987a12.59.2024.06.25.09.06.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 09:06:17 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Banajit Goswami <bgoswami@quicinc.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] ASoC: codecs: lpass-rx-macro: add missing handling of v2.1 codec
-Date: Tue, 25 Jun 2024 18:06:14 +0200
-Message-ID: <20240625160614.450506-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1719331685; c=relaxed/simple;
+	bh=YFQd4AGBmj/dBhWp9vE7IpteCEtWvtn5T0veylKLQsQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jcyxPKk4zWKRic5IKNTZTAz+/2Ktx2+eycwWEdk7vhlxTeJibSJgr8FB3VPQbMvImUmlXLdKu+7ToOj4ZZaSGkbTSLSWJRkyqD39ahoaJGhCUfTq+rviPH0JvLgWxf8oS4CoJzTpgL4wG0wxso1omANPnkC+dmlwIpg3g+ma2PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=pZ/R2Q18; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45PG7h84089051;
+	Tue, 25 Jun 2024 11:07:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719331663;
+	bh=urAGycXTBoHdLtPtjfxHTcGyuwKBYenkT3TbkTOFkAk=;
+	h=From:To:CC:Subject:Date;
+	b=pZ/R2Q18HcSnlwK24ZMqS5X8GOW/1K66pkaCb90lP/QSzT+xUYvy24N6/blAUrZxw
+	 mYcxtdMAB73BIgdtA5ugVTDiAcw1rrdv0NbB7tRWn6GOMtl679zxZlS0sHme1/Dt8y
+	 zRtP2ut+/UPZ2AL/BiQfS/v0LIcFQh2QguM6YMU4=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45PG7hx2069246
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 25 Jun 2024 11:07:43 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 25
+ Jun 2024 11:07:43 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 25 Jun 2024 11:07:43 -0500
+Received: from udit-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (udit-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.18])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45PG7dxE122229;
+	Tue, 25 Jun 2024 11:07:40 -0500
+From: Udit Kumar <u-kumar1@ti.com>
+To: <vigneshr@ti.com>, <nm@ti.com>, <tony@atomide.com>
+CC: <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
+        <ronald.wahl@raritan.com>, <thomas.richard@bootlin.com>,
+        <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
+        <linux-serial@vger.kernel.org>, Udit Kumar <u-kumar1@ti.com>,
+        <stable@vger.kernel.org>
+Subject: [PATCH v2] serial: 8250_omap: Fix Errata i2310 with RX FIFO level check
+Date: Tue, 25 Jun 2024 21:37:25 +0530
+Message-ID: <20240625160725.2102194-1-u-kumar1@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,45 +72,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-We have also v2.1 version of the codec (see 'enum lpass_codec_version'),
-so handle it as well in all switch cases.
+Errata i2310[0] says, Erroneous timeout can be triggered,
+if this Erroneous interrupt is not cleared then it may leads
+to storm of interrupts.
 
-Fixes: dbacef05898d ("ASoC: codec: lpass-rx-macro: prepare driver to accomdate new codec versions")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Commit 9d141c1e6157 ("serial: 8250_omap: Implementation of Errata i2310")
+which added the workaround but missed ensuring RX FIFO is really empty
+before applying the errata workaround as recommended in the errata text.
+Fix this by adding back check for UART_OMAP_RX_LVL to be 0 for
+workaround to take effect.
+
+[0] https://www.ti.com/lit/pdf/sprz536 page 23
+
+Fixes: 9d141c1e6157 ("serial: 8250_omap: Implementation of Errata i2310")
+Cc: stable@vger.kernel.org
+Reported-by: Vignesh Raghavendra <vigneshr@ti.com>
+Closes: https://lore.kernel.org/all/e96d0c55-0b12-4cbf-9d23-48963543de49@ti.com/
+Signed-off-by: Udit Kumar <u-kumar1@ti.com>
 ---
- sound/soc/codecs/lpass-rx-macro.c | 3 +++
- 1 file changed, 3 insertions(+)
+Testlogs
+https://gist.github.com/uditkumarti/4f5120f203a238fbebe411eb82b63753
 
-diff --git a/sound/soc/codecs/lpass-rx-macro.c b/sound/soc/codecs/lpass-rx-macro.c
-index 00ecc470ba8b..1c3429f004ed 100644
---- a/sound/soc/codecs/lpass-rx-macro.c
-+++ b/sound/soc/codecs/lpass-rx-macro.c
-@@ -1601,6 +1601,7 @@ static bool rx_is_rw_register(struct device *dev, unsigned int reg)
- 	case LPASS_CODEC_VERSION_1_1:
- 	case LPASS_CODEC_VERSION_1_2:
- 	case LPASS_CODEC_VERSION_2_0:
-+	case LPASS_CODEC_VERSION_2_1:
- 		return rx_pre_2_5_is_rw_register(dev, reg);
- 	case LPASS_CODEC_VERSION_2_5:
- 	case LPASS_CODEC_VERSION_2_6:
-@@ -3639,6 +3640,7 @@ static int rx_macro_component_probe(struct snd_soc_component *component)
- 	case LPASS_CODEC_VERSION_1_1:
- 	case LPASS_CODEC_VERSION_1_2:
- 	case LPASS_CODEC_VERSION_2_0:
-+	case LPASS_CODEC_VERSION_2_1:
- 		controls = rx_macro_def_snd_controls;
- 		num_controls = ARRAY_SIZE(rx_macro_def_snd_controls);
- 		widgets = rx_macro_def_dapm_widgets;
-@@ -3812,6 +3814,7 @@ static int rx_macro_probe(struct platform_device *pdev)
- 	case LPASS_CODEC_VERSION_1_1:
- 	case LPASS_CODEC_VERSION_1_2:
- 	case LPASS_CODEC_VERSION_2_0:
-+	case LPASS_CODEC_VERSION_2_1:
- 		rx->rxn_reg_stride = 0x80;
- 		def_count = ARRAY_SIZE(rx_defaults) + ARRAY_SIZE(rx_pre_2_5_defaults);
- 		reg_defaults = kmalloc_array(def_count, sizeof(struct reg_default), GFP_KERNEL);
+Changelog:
+Changes in v2
+- Update commit message, subject, Fixes tag
+link to v1:
+https://lore.kernel.org/all/20240625051338.2761599-1-u-kumar1@ti.com/
+
+ drivers/tty/serial/8250/8250_omap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+index ddac0a13cf84..1af9aed99c65 100644
+--- a/drivers/tty/serial/8250/8250_omap.c
++++ b/drivers/tty/serial/8250/8250_omap.c
+@@ -672,7 +672,8 @@ static irqreturn_t omap8250_irq(int irq, void *dev_id)
+ 	 * https://www.ti.com/lit/pdf/sprz536
+ 	 */
+ 	if (priv->habit & UART_RX_TIMEOUT_QUIRK &&
+-		(iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT) {
++	    (iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT &&
++	    serial_port_in(port, UART_OMAP_RX_LVL) == 0) {
+ 		unsigned char efr2, timeout_h, timeout_l;
+ 
+ 		efr2 = serial_in(up, UART_OMAP_EFR2);
 -- 
-2.43.0
+2.34.1
 
 
