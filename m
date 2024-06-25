@@ -1,129 +1,119 @@
-Return-Path: <linux-kernel+bounces-228651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C84591646F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:57:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3459891648A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:58:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC2C21F21683
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:57:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E52B728628B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:58:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20005149E0A;
-	Tue, 25 Jun 2024 09:57:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43F4E14A090;
+	Tue, 25 Jun 2024 09:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q8BwNeJi"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="dyihsoCC"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13657146A67
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:57:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67871465A8;
+	Tue, 25 Jun 2024 09:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719309433; cv=none; b=TgUk4rYs1eH44dS6s0SwkY6h1YpWt1OGtVEEulS5K2jWfUR3NKkyu1mndLnrA6xDPVWumrMS09kVqp8tChQWo/9q6vUX3tQpaArdq7nKLJeZ2JkshakwpVZ/c3HHrAxVw7PMchfZT1geAIFKfVytFW3NM3GDZA77Yvc9vqnSjfg=
+	t=1719309507; cv=none; b=aEdhx490gdUbR24KdkjPwNqlsoA07v/dy5kTYCH+M428sxS2N0tfVYku4Eoo8gLbLk0AvJonS1SPxfFQkPp0mCgDI0iNMDqMpcb37H7mSuICPG1dZh73Nx/D9sPN3MXxBlMQwhSc8BbxKLR5E3zFxrOsfQ4wt+cE95wa4Y9tYIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719309433; c=relaxed/simple;
-	bh=7OhOcEoC2/OIsLcMb4NkqN+LajE+kQwwBjp6vqC8DeY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RUSlGZBebBcx+wLsC1Uh0bkQPBK1VAqEv5l7LDJTqas7ucX01ubIsve/myEGwlPuwoLU82ZYlTYzXJFbbxF3X/jkEFihXdssAPhOEO1z2et96AzdFfL6KRNu6/KIjAMyupilIj5Rx3fJGLbkmZ/Ej+3wTq3dWrpCgC3aPjKLsaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Q8BwNeJi; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-70df2135426so3377453a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:57:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719309431; x=1719914231; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=qF1YJYptXWfDBxwzTIeTgvB7dEj4RfJtD5/KNTKFabM=;
-        b=Q8BwNeJiHBqZ7W5KiMVBs4DrEUaG4ht77jVeIBojyiaIo+WluUncdxFfrrG9Qylelv
-         XrXifIyk+KifNFuK8Xhi22C7fH+7d9KKvOyXGkgAEDwjG0GdeBy7iLpxLGJ6y2R1wfeM
-         SpvFwYU0yy6PGjv4Key5pnc5JiFjJQdxxeqFI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719309431; x=1719914231;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qF1YJYptXWfDBxwzTIeTgvB7dEj4RfJtD5/KNTKFabM=;
-        b=kSZFbkNbUWFpp2gEl84bWjSDG9HpLbzbe+e2zpwZAHbkMrenDde6Fa54HJnNAN5kxS
-         Zt9FVuACDMmB03ZXa+Kdc5IFu8W2TK3co5QFOEabARqT5c5UCWCWE6aW29RVDD5cM0oX
-         xX8L9ogZzD3fhEjSwCOoPS+OPJ8tYK10XfZwmwr7nStIkBoHBJtQP4PwXJ52/g5mQvr7
-         L2fnAV7SBJwgmsQ4KBCresz9DmnlRxuORNAqx00eBcQZ/v6knWDxFecdBfs/hgtRxUtt
-         2Nq7hyMMMbGia5C7phMA1WQVJjrLMCzyB9rXz75NifNr6phZB1DuFu05vFuhFGOilb9o
-         BpiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVh+iPamwXzeygUEv9hjIdqq7ygY3fTXxvTa2YGfXgEQYZRA8VCRs1QwMV93+uA7z3Qxo1K+mwNshudJOFYqnbG+P/W/1uP3XXWzUdD
-X-Gm-Message-State: AOJu0YxHPdpvgnuih81RTMGdJw9ylTK7y1WJox8qf8nHaa2Rn0xs0jHQ
-	Rc8ZbXUfMJihgMhSrUst+xiATJ0k364vXhHLRAYmDLbF2ii8r+Uz201WtonfRNX5L8rVBKxm2BS
-	Lkc7i
-X-Google-Smtp-Source: AGHT+IHpPnnOVZu547p/nqZZHcdZDYKUwYH9Z0EG/miyFDAKG8tkNavHDYu9ST2rn8SZoZX4/BKRwQ==
-X-Received: by 2002:a05:6a20:b906:b0:1b6:6d41:7bd5 with SMTP id adf61e73a8af0-1bcf7e7664dmr5586707637.15.1719309431324;
-        Tue, 25 Jun 2024 02:57:11 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:ea5a:67dd:bd1e:edef])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb32b8absm77094295ad.117.2024.06.25.02.57.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 02:57:10 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: mediatek: mt8183-kukui-jacuzzi: Simplify DSI endpoint replacement
-Date: Tue, 25 Jun 2024 17:57:04 +0800
-Message-ID: <20240625095705.3474713-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+	s=arc-20240116; t=1719309507; c=relaxed/simple;
+	bh=mCh1S/zv9T0LxQ/VIDcjCSxK47VDHa4Fq1mKhnurmw0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ep3otG1+B3AOmCYHaX74kzKqR1/QYU0pCpVWVu9zCrIVkD/blsYlCsRtBANZv9IAm66aD5Llbyh5lGg0TltTbgIqTOxk19fTejeUIIthn1g3E0BjcUGUM6waMpnIoP2HDePVEYsprKWexnZ4smNpS+cgN+3xHUivP+754Jp+QP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=dyihsoCC; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45P9w5eh120857;
+	Tue, 25 Jun 2024 04:58:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719309485;
+	bh=YYbaCGjM9Dz35Gz2eCP629JCL3wzQ9QkaGDO7vlRNiw=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=dyihsoCCCqu88Ov04PV/ubjbfy5rjw9UbR+YKkzhASXR28FggaBWmZ7QFwwt3BPgz
+	 vlcFY8Bt3BTIiu0IQsQSiLzwsSJJn4v0QrCqa1LCNJ61e1lw0OKX4Z9Zdk/i4Ez1m6
+	 AIIcpExV26lMFCEFrea+xv+MnzKs2Ewt+cNrvYVE=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45P9w4GO124382
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 25 Jun 2024 04:58:05 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 25
+ Jun 2024 04:58:04 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 25 Jun 2024 04:58:04 -0500
+Received: from [172.24.227.248] (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.248])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45P9vxvl093913;
+	Tue, 25 Jun 2024 04:58:00 -0500
+Message-ID: <76d816b4-6a20-4cda-8552-cfd07203a4d2@ti.com>
+Date: Tue, 25 Jun 2024 15:27:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] arm64: dts: ti: k3-j784s4-main: Add McASP nodes
+To: Vignesh Raghavendra <vigneshr@ti.com>, <linux-kernel@vger.kernel.org>,
+        <nm@ti.com>, <j-luthra@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <u-kumar1@ti.com>
+References: <20240619095253.290552-1-j-choudhary@ti.com>
+ <20240619095253.290552-2-j-choudhary@ti.com>
+ <f9f5178b-1e94-489b-8e71-43b814b7252a@ti.com>
+Content-Language: en-US
+From: Jayesh Choudhary <j-choudhary@ti.com>
+In-Reply-To: <f9f5178b-1e94-489b-8e71-43b814b7252a@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Currently the Jacuzzi dtsi file redeclares the full DSI endpoint tree
-from the DSI controller just to replace the remote endpoint. This is
-not necessary since the local endpoint already has a label that can be
-referenced. This will also confusion when the inherited layout is
-changed.
+Hello Vignesh!
 
-Replace the redeclared DSI endpoint tree with a label reference.
+On 25/06/24 14:01, Vignesh Raghavendra wrote:
+> 
+> 
+> On 19/06/24 15:22, Jayesh Choudhary wrote:
+>> Add McASP 0-4 instances and keep them disabled as several required
+>> properties are missing as they are board specific.
+>>
+>> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
+>> ---
+>>   arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 80 ++++++++++++++++++++++
+>>   1 file changed, 80 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+>> index fd3d3344efbe..96085dc7bc18 100644
+>> --- a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+>> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
+>> @@ -2617,4 +2617,84 @@ dss_ports: ports {
+>>   			 */
+>>   		};
+>>   	};
+>> +
+>> +	mcasp0: mcasp@2b00000 {
+>> +		compatible = "ti,am33xx-mcasp-audio";
+>> +		reg = <0x0 0x02b00000 0x0 0x2000>,
+>> +		      <0x0 0x02b08000 0x0 0x1000>;
+> 
+> 			^^ Should be 0x00 (elsewhere as well) to be inline with rest of the file
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
- .../boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi     | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+Will fix the padding.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi
-index fa4ab4d2899f..783c333107bc 100644
---- a/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui-jacuzzi.dtsi
-@@ -91,16 +91,11 @@ cros_ec_pwm: pwm {
- 
- &dsi0 {
- 	status = "okay";
--	/delete-property/#size-cells;
--	/delete-property/#address-cells;
- 	/delete-node/panel@0;
--	ports {
--		port {
--			dsi_out: endpoint {
--				remote-endpoint = <&anx7625_in>;
--			};
--		};
--	};
-+};
-+
-+&dsi_out {
-+	remote-endpoint = <&anx7625_in>;
- };
- 
- &i2c0 {
--- 
-2.45.2.741.gdbec12cfda-goog
+Warm Regards,
+-Jayesh
+
 
 
