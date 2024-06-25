@@ -1,174 +1,128 @@
-Return-Path: <linux-kernel+bounces-229107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 340A9916B00
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:51:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFC2916B05
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:51:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF517289ADE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:51:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 897621C22443
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6FB16F919;
-	Tue, 25 Jun 2024 14:50:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BD7116F0F4;
+	Tue, 25 Jun 2024 14:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="AdUkITCW"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G4PxwaZp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08DCC16EC07
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:50:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674F616D33B;
+	Tue, 25 Jun 2024 14:51:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327037; cv=none; b=U12PI0aizdmHjqasqKFe06uHfowC2F4AOF725QS1Ur1j1rNuQjUP4CrMGCPzfA9fOeJum9xKrqU8+UnxfSDuKycmentAlAW4mhKPlczIPlptT9Jy0bffmTmixACjfb8tJ9i1WE3fisOVL+NBfaxZni1YLOjyyjYZJRoFtGrvcjc=
+	t=1719327065; cv=none; b=bshVKgYm+gcpbBDjMHOpzgxN4r4yDGUaRL6GJ4sT6tCIn6Zy5AuxKFWGpmCfvZeGzNFYM7O/khx5WR5iJZYQvME8v97GFKK2Y66X1bc1F+1KtdDyvm8MiU5SMRjU56LG6Q3lMyGLrRJGVigwJ6TvVRZSj3mvoJhpRlhWtDuKACE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327037; c=relaxed/simple;
-	bh=oHXJo4PrLGPaAFmiAS/KTJpjakAA/N8r3HA5aYOSdz0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RMF5c+hJ9of6hqCYx5eGirnLR6wyFEqAkYhx3fziCUJN20//EPMtaS+aIhAKFfYL2ihlU4tRoTPdcQdGE5qaRYEqIfRkMrk57HzBznHVVcukVuxCAaiBHCodsFLHxUaRTR1zPn1oLye8x7cK9Q2SjsqsELAIGuPfgZ47OZRKmI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=AdUkITCW; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a72510ebc3fso346820366b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:50:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719327034; x=1719931834; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XNAdTcacMLHiwcp3rwtVy5TsM3diOedzVRX0xlC3b4s=;
-        b=AdUkITCWy9fCHR8rBbQpq3oNfVuOjmgfjIAydsmPPHzO6vzM5lVuTbFR1Cn0jzAVZ2
-         wpWqHvPXpYZisHubY1+9StPHvBZNVU6GEe0PC3huigo3rgoI96Jd+/5K7ciCZY0qiYif
-         ygLGGllzDQEaTh9qUQYRpUB/T/6JuDfbGb/12Hwotpx1bPneRH8CQJ5XIz0nRoIibnCH
-         Z5yT7O2+PUihqWFdzyUOqyijITpfIwiTDA6v2jZoAurtNyEvuZPnazPWRvPHuEMgNpX1
-         A/apxQ5bKtioZvJcaNnGFWoxTUhU1zI2DPYSpYDUw0hZjR2QcTgK5iRG6b9Tz7jwu7Wr
-         LAXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719327034; x=1719931834;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XNAdTcacMLHiwcp3rwtVy5TsM3diOedzVRX0xlC3b4s=;
-        b=FySgVFsePcINx/rUpA8FTnWyE9UBItuYesdaYVjKAy1Kh7LlpB0t1MsdJ4Qy+bUMCQ
-         w+EPlkgUP9anDXm9riEZRRsbxZzy1Tg4DiYQ9J732T+U+isjuGPLmMmVU/MRtvP9MMmM
-         xK7ac4RSbwV8rifGDs11JJ/vC+BecQtLYQ1aQKsrMnWBqqJD1Q0qwOQ6INLnD3txdWCm
-         iVGqU+6bvNVWoWLytlrW4DNMTu8aLD8EPrzeHGXGPB0HF7bAzXtaCTAziAu0ltt3p9Bd
-         EvcITGFZ3t42buYOSKsljRxEWv8UmNiZ5LvH5nJea3jnIis4FuvAGulfnSBZt8HUqFk9
-         VCKA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8ja74ijZEnWFc6w/mJ/UuiG7SUjGPIgjQMdpO9qUJfzJ9CP745+hgIyxndt4qgGPRHcxS+ot9TCEidLVvSR9t/EfzWMVei4L8JjhC
-X-Gm-Message-State: AOJu0YxFhL6DDzEJOGQUS1NYEwHoKZnEyCzbZtbFnoULv6Fu6czF2JcT
-	XHohuEsuPWQE1yHgA4j7VBv+eYLTujeQyhAaV7RXWAEP5FDN3NB+cQZ968QCjVk=
-X-Google-Smtp-Source: AGHT+IEAx+7PNBsfh1PecChpyxyxGCwBCHXZraE/xlVLiq1yJ87mv2cTQeKVv1iemDFLo464qB8MVw==
-X-Received: by 2002:a17:907:a649:b0:a72:8135:2d4f with SMTP id a640c23a62f3a-a7281352e3cmr12762066b.48.1719327034140;
-        Tue, 25 Jun 2024 07:50:34 -0700 (PDT)
-Received: from toaster.lan ([2a01:e0a:3c5:5fb1:b30c:4c5e:f49e:ab33])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a724162f037sm355945066b.194.2024.06.25.07.50.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 07:50:33 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-amlogic@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH 2/2] arm64: dts: amlogic: add power domain to hdmitx
-Date: Tue, 25 Jun 2024 16:50:15 +0200
-Message-ID: <20240625145017.1003346-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240625145017.1003346-1-jbrunet@baylibre.com>
-References: <20240625145017.1003346-1-jbrunet@baylibre.com>
+	s=arc-20240116; t=1719327065; c=relaxed/simple;
+	bh=h7/s1erSrTInKP/WfJXKAlirzQaaLfNgEqTkzmlNeWk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tmDV18FeomUYhiNpg9fqyM+OIVAi/7kIX7Dz+/X8TgxYypDPiIfn/pjnW3wwRiJDcx/1+ACMmajnThkeW2mdqIxWPuA2qx/EEYdCHQYc8bfIdJFDTR8o1djwPD212PJLKw2hXgPzolWgl+/U9ykImgwo4TsKP0rVj3i7N5lPmNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G4PxwaZp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82C64C32781;
+	Tue, 25 Jun 2024 14:51:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719327064;
+	bh=h7/s1erSrTInKP/WfJXKAlirzQaaLfNgEqTkzmlNeWk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G4PxwaZptC/mrLUYem2vzCWclAWJx9yUlEjjlguMsEA9cwvaZ4yPel74R2ZxiLnvR
+	 A2oNPJYNkBWtKFXwwhHJiaCYvXTF85t20gmIgjaqjwc1odeAUqS9bIF2/4hZKUwz3+
+	 6qqo97tDKElp69yt/8DzNYaYXcvGfR9a4QHsztGl/X50GjCD/s+0y+miYPoM0eB+Xi
+	 ev3nMUoY2hiJLqfosv4jiwJwBtFfZRh0wDz2YnKgLyxzrB7w0EEVm8/HHCOh+0QRa7
+	 Uvdv5NSIsVY142FaeawS/1wDcH5JjVEmljs2c60LL5lHTt3YwP/RWL8WfIenQjuzS/
+	 j64abmeLhVVmQ==
+Date: Tue, 25 Jun 2024 15:50:59 +0100
+From: Conor Dooley <conor@kernel.org>
+To: =?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Anup Patel <anup@brainfault.org>, Shuah Khan <shuah@kernel.org>,
+	Atish Patra <atishp@atishpatra.org>, linux-doc@vger.kernel.org,
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, kvm@vger.kernel.org,
+	kvm-riscv@lists.infradead.org, linux-kselftest@vger.kernel.org,
+	Charlie Jenkins <charlie@rivosinc.com>
+Subject: Re: [PATCH v7 01/16] dt-bindings: riscv: add Zimop ISA extension
+ description
+Message-ID: <20240625-blimp-richly-f5828cbfe6a6@spud>
+References: <20240619113529.676940-1-cleger@rivosinc.com>
+ <20240619113529.676940-2-cleger@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="9PA0Wx6xMQTCxIcL"
+Content-Disposition: inline
+In-Reply-To: <20240619113529.676940-2-cleger@rivosinc.com>
 
-HDMI Tx needs HDMI Tx memory power domain turned on. This power domain is
-handled under the VPU power domain.
 
-The HDMI Tx currently works because it is enabling the PD by directly
-poking the power controller register. It is should not do that but properly
-use the power domain controller.
+--9PA0Wx6xMQTCxIcL
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Fix this by adding the power domain to HDMI Tx.
+On Wed, Jun 19, 2024 at 01:35:11PM +0200, Cl=E9ment L=E9ger wrote:
+> Add description for the Zimop (May-Be-Operations) ISA extension which
+> was ratified in commit 58220614a5f of the riscv-isa-manual.
+>=20
+> Signed-off-by: Cl=E9ment L=E9ger <cleger@rivosinc.com>
+> Reviewed-by: Charlie Jenkins <charlie@rivosinc.com>
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- arch/arm64/boot/dts/amlogic/meson-g12.dtsi  | 4 ++++
- arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi | 1 +
- arch/arm64/boot/dts/amlogic/meson-gxl.dtsi  | 1 +
- arch/arm64/boot/dts/amlogic/meson-sm1.dtsi  | 4 ++++
- 4 files changed, 10 insertions(+)
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
-index e732df3f3114..664912d1beaa 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
-@@ -363,6 +363,10 @@ &ethmac {
- 	power-domains = <&pwrc PWRC_G12A_ETH_ID>;
- };
- 
-+&hdmi_tx {
-+	power-domains = <&pwrc PWRC_G12A_VPU_ID>;
-+};
-+
- &vpu {
- 	power-domains = <&pwrc PWRC_G12A_VPU_ID>;
- };
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-index 12ef6e81c8bd..d8a386c31914 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxbb.dtsi
-@@ -315,6 +315,7 @@ &hdmi_tx {
- 		 <&clkc CLKID_CLK81>,
- 		 <&clkc CLKID_GCLK_VENCI_INT0>;
- 	clock-names = "isfr", "iahb", "venci";
-+	power-domains = <&pwrc PWRC_GXBB_VPU_ID>;
- };
- 
- &sysctrl {
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-index 17bcfa4702e1..82386feb5177 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxl.dtsi
-@@ -327,6 +327,7 @@ &hdmi_tx {
- 		 <&clkc CLKID_CLK81>,
- 		 <&clkc CLKID_GCLK_VENCI_INT0>;
- 	clock-names = "isfr", "iahb", "venci";
-+	power-domains = <&pwrc PWRC_GXBB_VPU_ID>;
- };
- 
- &sysctrl {
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-index cd0046c0fe72..c76dcb0158a7 100644
---- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-@@ -514,6 +514,10 @@ &gpio_intc {
- 		     "amlogic,meson-gpio-intc";
- };
- 
-+&hdmi_tx {
-+	power-domains = <&pwrc PWRC_SM1_VPU_ID>;
-+};
-+
- &pcie {
- 	power-domains = <&pwrc PWRC_SM1_PCIE_ID>;
- };
--- 
-2.43.0
+> ---
+>  Documentation/devicetree/bindings/riscv/extensions.yaml | 5 +++++
+>  1 file changed, 5 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/riscv/extensions.yaml b/Do=
+cumentation/devicetree/bindings/riscv/extensions.yaml
+> index cfed80ad5540..e214679ab6da 100644
+> --- a/Documentation/devicetree/bindings/riscv/extensions.yaml
+> +++ b/Documentation/devicetree/bindings/riscv/extensions.yaml
+> @@ -363,6 +363,11 @@ properties:
+>              ratified in the 20191213 version of the unprivileged ISA
+>              specification.
+> =20
+> +        - const: zimop
+> +          description:
+> +            The standard Zimop extension version 1.0, as ratified in com=
+mit
+> +            58220614a5f ("Zimop is ratified/1.0") of the riscv-isa-manua=
+l.
+> +
+>          - const: ztso
+>            description:
+>              The standard Ztso extension for total store ordering, as rat=
+ified
+> --=20
+> 2.45.2
+>=20
 
+--9PA0Wx6xMQTCxIcL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnrZUwAKCRB4tDGHoIJi
+0h+2AQD3yl1OivAnczjSlHzmMNfjOS/06MsBmq0xtbv8bTLpNAD/RzbgHtntHnej
+NyEPsFHW7yXdXAU1j8rFsiMmhti6igo=
+=/o9k
+-----END PGP SIGNATURE-----
+
+--9PA0Wx6xMQTCxIcL--
 
