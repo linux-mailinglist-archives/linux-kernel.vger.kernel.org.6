@@ -1,92 +1,133 @@
-Return-Path: <linux-kernel+bounces-229514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704C991705C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:37:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B69091705E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:37:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBC23B21210
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:37:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A4771C25387
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF74917A932;
-	Tue, 25 Jun 2024 18:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 897E0179206;
+	Tue, 25 Jun 2024 18:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="u1TlpRqL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z0im+Bxi"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89D8132127;
-	Tue, 25 Jun 2024 18:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C1AB17C7B4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719340642; cv=none; b=dNuRZsORdQniKXNKIriH2W0m3hgK/M70cZrMXzxSNxsB68xTgdwPbF62+pVi5ili/6ZD83r9ges4mt+Pd/DUb9SlPebCI24Q2UlSmMakoKBCoV1IqGC+5HPEQj4i4ZdRCfYT6RqlNwCXNuqjcJAaE4OZSMmeLURVyybIETc23TM=
+	t=1719340650; cv=none; b=eImZHeHhMjpMx1ydmbNl/A4Q8LAQfn9yLgUKh+2qf8qe+dhm4VOMOdMwaJ7CtOsGNBwTBPOybKVESFfLWEde22AENSj5p4ZoyY+tyovSVqp0A8DYwSCpht3xBjmH85wuFKtOjEdPXxsQ8Ok2sLe3IYJGw6B2nKVIXeHGVP6Gdpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719340642; c=relaxed/simple;
-	bh=1h4rROOxpCnlElzRIWvA2/kJeM+WjouN22bwU9nLz1s=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=cqiPFxt19xmxAzU9rTylwg1k5VAprOanm4EREQfacoEY+1EgaI60KGxAYiupLZTYCGoB6PMOVoZdd/n068P9phKvFCCYA6MN9f4z6rH518qPvjLzmH0a3Liyy5fjihUre/A5iM3i9igRn1VCxEYSAu5o2MEAXKSNHLeZCG1KnUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=u1TlpRqL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0DB0C32781;
-	Tue, 25 Jun 2024 18:37:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1719340641;
-	bh=1h4rROOxpCnlElzRIWvA2/kJeM+WjouN22bwU9nLz1s=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=u1TlpRqL78dZgPhrTAw5P+r9y6/4V6xBYVNNv9k0Rl1NGpihej4QO7wtZqt4BklL0
-	 z0ynv2MCb7D0DLfXz5/AHoAT8M+QWZMDrO0lELqXTB6R8WDaH4+h7ouYjw+vArgkge
-	 pah1TG1ondChQkaJY88ARyFz1udcI0vIfXT9Nd/4=
-Date: Tue, 25 Jun 2024 11:37:20 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Gavin Shan <gshan@redhat.com>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, david@redhat.com, djwong@kernel.org,
- willy@infradead.org, hughd@google.com, torvalds@linux-foundation.org,
- zhenyzha@redhat.com, shan.gavin@gmail.com
-Subject: Re: [PATCH 0/4] mm/filemap: Limit page cache size to that supported
- by xarray
-Message-Id: <20240625113720.a2fa982b5cb220b1068e5177@linux-foundation.org>
-In-Reply-To: <20240625090646.1194644-1-gshan@redhat.com>
-References: <20240625090646.1194644-1-gshan@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719340650; c=relaxed/simple;
+	bh=xaBiOUCcbhsEiDDlr9ft/ApwQ3CgJk9n92ap/EN2vY4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bErttaMTCLkyZaG2LU5Ic/sLJiaLOk6xrq+TV7bopDksKFQfJtteS+mBoqtSdU+mloVX98n1Q7kNNNyZ9aU7VscOH+oKoLENSQCjYTInnNUKNVFQVzL/BIG5IzXN6Ic8y5NOceqHbkrsyJ+k9NYvc0hQKWUmcLA1e0nhY0Z4Mqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z0im+Bxi; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719340648;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rjP8zqa9DjMRaFNMcMFYFsi4VJ9TPziW2E5FbrHXUKo=;
+	b=Z0im+BxitRMpa3efI7Gc4GXDv6uxULwyAdkPmaMCbIq7S0H5uiVARBoEQnp4tnmEol2cJv
+	HDFAdCHpDWzOTZPslsqLVMtzF6VTHEiCwy0W/IbWrPMf6uimpMctrlUVpI9RMYoqM1VAle
+	yRRCFJqTg4iH789GEktvq9NaNX+hD2w=
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com
+ [209.85.222.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-455-L-8Hp2u8NACDbRsmZqYdSg-1; Tue, 25 Jun 2024 14:37:26 -0400
+X-MC-Unique: L-8Hp2u8NACDbRsmZqYdSg-1
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7955f448a2dso924462985a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:37:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719340646; x=1719945446;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rjP8zqa9DjMRaFNMcMFYFsi4VJ9TPziW2E5FbrHXUKo=;
+        b=ozhISPuY0j5Y4TG1y3dZrlBvtcRS3duQCkRq6BARSyZubp8Lsi9HZ8+uTHHLNSqsVk
+         SlvOKqf8MCdcT02oRkk0jc8GA3GpHa7KrUwhI+wD3rorkJBK9IS+/syy+ENgiGFZGKNs
+         8BqMEMJgchg5zthy1ZblyM01qWy2qiOc+lT5VcSuHP8V2vW/9T1JFZv8uQFdpTN9p6vU
+         KEWAdRspnRRrqmvzSO+f10ooTK89WRfd+oEvcpLOTvWXGGuALDo18MxGsVBsB2kqn08G
+         A/t5qdgNU38VRJsrDwT4U7h/KVrK4ISVOTR7g9TI5WuR+N5E/pyD/Gb1vn2TFecYed60
+         uNCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWukJmnBZ0JInC2X41mSjj/usMzQMGpJk1UH9bC4P6n49iDpbcPb5psOurmcQ3KcK9F5kiR6qIK4XN7/UA0dG4NbJzK8sKkimPP0cDR
+X-Gm-Message-State: AOJu0YzZBvsdDhHh4/TlagE4uWgFTq9mwmJXtT6/9W6QyXY6mK4ChqV9
+	BMLk8AWIkbzlKCCrBxQUW3eVlKf9QfOHckEbtPTwTf/7c+g0b6195PTNCx2u/cFizW87/w5P4h8
+	Eu3sWSMEB3nkCC3Go6oB/kfrKWDUPsZQ/VqNfTk4xFSE5U+i8LKjYEjvimOhMIQ==
+X-Received: by 2002:a05:620a:838b:b0:797:9c76:32a6 with SMTP id af79cd13be357-79be6f1457dmr796242385a.56.1719340646353;
+        Tue, 25 Jun 2024 11:37:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGoWPotw+0VrcrvK+GuskbqBpoUwqThBFYkTLju4QKTs3hCDfwBWUdZAosjHkIX634yXoPh6w==
+X-Received: by 2002:a05:620a:838b:b0:797:9c76:32a6 with SMTP id af79cd13be357-79be6f1457dmr796241185a.56.1719340646055;
+        Tue, 25 Jun 2024 11:37:26 -0700 (PDT)
+Received: from [192.168.1.152] ([70.22.187.239])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce8b3777sm427599985a.54.2024.06.25.11.37.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 11:37:25 -0700 (PDT)
+Message-ID: <c08ab47c-944c-7393-d403-e4435cb283dc@redhat.com>
+Date: Tue, 25 Jun 2024 14:37:24 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.12.0
+Subject: Re: [PATCH] dm cache metadata: remove unused struct 'thunk'
+Content-Language: en-US
+To: linux@treblig.org, agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com
+Cc: dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20240523210550.309116-1-linux@treblig.org>
+From: Matthew Sakai <msakai@redhat.com>
+In-Reply-To: <20240523210550.309116-1-linux@treblig.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Tue, 25 Jun 2024 19:06:42 +1000 Gavin Shan <gshan@redhat.com> wrote:
 
-> Currently, xarray can't support arbitrary page cache size. More details
-> can be found from the WARN_ON() statement in xas_split_alloc(). In our
-> test whose code is attached below, we hit the WARN_ON() on ARM64 system
-> where the base page size is 64KB and huge page size is 512MB. The issue
-> was reported long time ago and some discussions on it can be found here
-> [1].
+On 5/23/24 17:05, linux@treblig.org wrote:
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
-> [1] https://www.spinics.net/lists/linux-xfs/msg75404.html 
+> 'thunk' has been unused since
+> commit f177940a8091 ("dm cache metadata: switch to using the new
+> cursor api for loading metadata").
 > 
-> In order to fix the issue, we need to adjust MAX_PAGECACHE_ORDER to one
-> supported by xarray and avoid PMD-sized page cache if needed. The code
-> changes are suggested by David Hildenbrand.
+> Remove it.
 > 
-> PATCH[1] adjusts MAX_PAGECACHE_ORDER to that supported by xarray
-> PATCH[2-3] avoids PMD-sized page cache in the synchronous readahead path
-> PATCH[4] avoids PMD-sized page cache for shmem files if needed
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Reviewed-by: Matthew Sakai <msakai@redhat.com>
 
-Questions on the timing of these.
+> ---
+>   drivers/md/dm-cache-metadata.c | 9 ---------
+>   1 file changed, 9 deletions(-)
+> 
+> diff --git a/drivers/md/dm-cache-metadata.c b/drivers/md/dm-cache-metadata.c
+> index 96751cd3d181..0ad9dc1824fa 100644
+> --- a/drivers/md/dm-cache-metadata.c
+> +++ b/drivers/md/dm-cache-metadata.c
+> @@ -1282,15 +1282,6 @@ int dm_cache_insert_mapping(struct dm_cache_metadata *cmd,
+>   	return r;
+>   }
+>   
+> -struct thunk {
+> -	load_mapping_fn fn;
+> -	void *context;
+> -
+> -	struct dm_cache_metadata *cmd;
+> -	bool respect_dirty_flags;
+> -	bool hints_valid;
+> -};
+> -
+>   static bool policy_unchanged(struct dm_cache_metadata *cmd,
+>   			     struct dm_cache_policy *policy)
+>   {
 
-1&2 are cc:stable whereas 3&4 are not.
-
-I could split them and feed 1&2 into 6.10-rcX and 3&4 into 6.11-rc1.  A
-problem with this approach is that we're putting a basically untested
-combination into -stable: 1&2 might have bugs which were accidentally
-fixed in 3&4.  A way to avoid this is to add cc:stable to all four
-patches.
-
-What are your thoughts on this matter?
 
