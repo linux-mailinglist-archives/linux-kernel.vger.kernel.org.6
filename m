@@ -1,129 +1,74 @@
-Return-Path: <linux-kernel+bounces-228684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2619D91655F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:39:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 50DCB916564
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D53AA2816DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:39:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E321281FF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A51B611CBD;
-	Tue, 25 Jun 2024 10:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mCBmk0z8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D304D1494A8;
+	Tue, 25 Jun 2024 10:40:41 +0000 (UTC)
+Received: from smtp134-31.sina.com.cn (smtp134-31.sina.com.cn [180.149.134.31])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E43A5132126;
-	Tue, 25 Jun 2024 10:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0CD11CBD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.31
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719311973; cv=none; b=ZDhrzsAz+Pnh/UnF+EtrIejTz0YcCAF3/7Q5tligmkZAjZNosTU0FSdYLCY2Mg3XrztSlMrghOOgT8E32SLPnSAv3eX8Diw4jk7vWeJbzc5E28I47UIoh7ltYp1n/M8gSzvwS0e4JOI3h/2XJQLXriF39tpzqbmayjVhZqQGkoU=
+	t=1719312041; cv=none; b=OUfd6dx69mvosQP47CQZcY2hg/xsBM6Rv3FYe87CJh2+uAyQv1ejBxPgh2PXMzsI0JO+9QUUoYYUXTMGJD7ina6yuZEao7fRRogMVYJhCZpVntzpiKK3ZldME82GyXcx7AVIXyh90+5LkOmvlOeUsI168Yys0r/N1WGCbiQK+zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719311973; c=relaxed/simple;
-	bh=MWi10bchGaB3p+CYjNt+OuuVHKqqAoA2TCw67+dnpHs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=uHJFhKXEzBj3Nr6oiVhfyN2rC4Ec4VPED4FV9TfLWvGKdsFfVrSqzG/bPagMV6wA0GkFfll1b/U7T6zacyihlViR2C7haLqfRhy/19ARFMOId2DdNRmsaD+dv6cQE9XK2ez0bp8vqy1qT5t5YQ12ERYlgR/ZpHkb0fBMUmuSCSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mCBmk0z8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86E04C32781;
-	Tue, 25 Jun 2024 10:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719311972;
-	bh=MWi10bchGaB3p+CYjNt+OuuVHKqqAoA2TCw67+dnpHs=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mCBmk0z8MrCpCx0/FY9rlasLXLRoEeI/hiNxJolhH8EGMpWrdnaTFwvZucHIT0wbk
-	 w4YRyeHXmckpdY+b9tMgI68WjrC6c0vFgwnzlUkp0RsLXybj/Fb3or0KhNYc+OvWcA
-	 /AWXGOyiM/J+XQFs2mK5hrcKtMC8oNLC8UXIYl5nrZlP1tofEtPgCGsQGdGMGtn4xi
-	 VafkJGe1oxdy0MwLcJ7bbVeB9jxgdzdqUTQTym+G4eqa3b+735SYONpyDvdlgK0th0
-	 H+5RKbo+ZSA6HqO+4/b2PBS1pYigp9MK8D7TLVr6eO9SMSO7WPIFcFhT4/I4yLjJ9T
-	 v+tPgO95w3diA==
-From: Kalle Valo <kvalo@kernel.org>
-To: linux-wireless@vger.kernel.org
+	s=arc-20240116; t=1719312041; c=relaxed/simple;
+	bh=dKfAK8plA4IahhHvqwTPlagtmVUVjKb28291j0EsxqE=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tZCZzEfiHvWHgbxAFf61B8yNb9/EjNgoX4fvXQe0/5Cn2ign9xSBRL4tM838hTAtS8i2YvMyrJ0b6MclBLib/WJ9e1Lx3rQl29o5+zhWqWJuC9ryaj8tP4OQadTlsxbhmeKTGeBGEvYQB09SqQHsIQ9n0UrcXwocJtM7zD7hILI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.31
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([116.24.9.32])
+	by sina.com (10.185.250.21) with ESMTP
+	id 667A9E95000009D0; Tue, 25 Jun 2024 18:40:24 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1686863408362
+X-SMAIL-UIID: 47D335CAE67D4931B159B6E06EAA91C5-20240625-184024-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot+f115fcf7e49b2ebc902d@syzkaller.appspotmail.com
 Cc: linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	florian.c.schilhabel@googlemail.com
-Subject: [PATCH wireless] MAINTAINERS: Remembering Larry Finger
-Date: Tue, 25 Jun 2024 13:39:29 +0300
-Message-Id: <20240625103929.1332926-1-kvalo@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in sk_skb_reason_drop
+Date: Tue, 25 Jun 2024 18:40:12 +0800
+Message-Id: <20240625104012.2056-1-hdanton@sina.com>
+In-Reply-To: <000000000000387998061ba467ac@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-We got sad news that Larry is not with us anymore. He was a long time
-Linux developer, his first commit was back in 2005 and he has
-maintained several wireless drivers over the years. He was known for
-patiently supporting Linux users with all sorts of problems they had.
-Larry's work helped so many people around the world and I always
-enjoyed working with him, even though I sadly never met him.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git  2ccbdf43d5e7
 
-Rest in Peace, Larry. You will be missed.
-
-Link: https://lore.kernel.org/all/77997185-86a6-41c5-af7a-74e4e9064437@lwfinger.net/
-Link: https://arstechnica.com/gadgets/2024/06/larry-finger-linux-wireless-hero-was-a-persistent-patient-coder-and-mentor/
-Signed-off-by: Kalle Valo <kvalo@kernel.org>
----
- CREDITS     | 4 ++++
- MAINTAINERS | 5 +----
- 2 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/CREDITS b/CREDITS
-index 0107047f807b..1a1a54555e11 100644
---- a/CREDITS
-+++ b/CREDITS
-@@ -1214,6 +1214,10 @@ D: UDF filesystem
- S: (ask for current address)
- S: USA
+--- x/net/bluetooth/hci_request.c
++++ h/net/bluetooth/hci_request.c
+@@ -160,6 +160,8 @@ int __hci_req_sync(struct hci_dev *hdev,
  
-+N: Larry Finger
-+E: Larry.Finger@lwfinger.net
-+D: Maintainer of wireless drivers, too many to list here
-+
- N: Jürgen Fischer
- E: fischer@norbit.de
- D: Author of Adaptec AHA-152x SCSI driver
-diff --git a/MAINTAINERS b/MAINTAINERS
-index d6c90161c7bf..250c4c3aee22 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -3602,10 +3602,9 @@ W:	https://wireless.wiki.kernel.org/en/users/Drivers/b43
- F:	drivers/net/wireless/broadcom/b43/
+ 	if (err == -ERESTARTSYS)
+ 		return -EINTR;
++	if (!err)
++		return -ETIMEDOUT;
  
- B43LEGACY WIRELESS DRIVER
--M:	Larry Finger <Larry.Finger@lwfinger.net>
- L:	linux-wireless@vger.kernel.org
- L:	b43-dev@lists.infradead.org
--S:	Maintained
-+S:	Orphan
- W:	https://wireless.wiki.kernel.org/en/users/Drivers/b43
- F:	drivers/net/wireless/broadcom/b43legacy/
- 
-@@ -19511,7 +19510,6 @@ F:	drivers/net/wireless/realtek/rtl818x/rtl8180/
- 
- RTL8187 WIRELESS DRIVER
- M:	Hin-Tak Leung <hintak.leung@gmail.com>
--M:	Larry Finger <Larry.Finger@lwfinger.net>
- L:	linux-wireless@vger.kernel.org
- S:	Maintained
- T:	git https://github.com/pkshih/rtw.git
-@@ -21249,7 +21247,6 @@ W:	http://wiki.laptop.org/go/DCON
- F:	drivers/staging/olpc_dcon/
- 
- STAGING - REALTEK RTL8712U DRIVERS
--M:	Larry Finger <Larry.Finger@lwfinger.net>
- M:	Florian Schilhabel <florian.c.schilhabel@googlemail.com>.
- S:	Odd Fixes
- F:	drivers/staging/rtl8712/
-
-base-commit: 14f89946b6b383e617657a1e81fe6bf520ce86d5
--- 
-2.39.2
-
+ 	switch (hdev->req_status) {
+ 	case HCI_REQ_DONE:
+--
 
