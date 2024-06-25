@@ -1,211 +1,167 @@
-Return-Path: <linux-kernel+bounces-228269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37A10915D7C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:53:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC90F915D82
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:55:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B783C1F222C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:53:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75448282847
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:55:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4274313B5B7;
-	Tue, 25 Jun 2024 03:52:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6A7135A69;
+	Tue, 25 Jun 2024 03:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTCPW3iU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtN0VewR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7623C3E49E
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B4538F9A;
+	Tue, 25 Jun 2024 03:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719287566; cv=none; b=D5V7/DxqSsOMusZVWVpsCf22V/epB+/wzbF0E81v9nKSELWlbfItoUsmSCiRPCFRSIW9W2cejakCHT0F/CZN0X3fx2p/4PKBtOkCUbx71llMM042wQu/2/XEp3f+L4IWHZOAiSsoaDTc1riKm15AAWadlf0jeGTGk2O6MhowWbs=
+	t=1719287747; cv=none; b=FQfN3ZwAmYRHmN113f16gcnNU5rZRbE2TxWx/kcKjRhFC1bLa/QrfUWkcSFvGoxdt5T9F/69HARoCZVwrwqjPxDmiesHFM3M6n6S4Zp1RZvxtbjEhDLYp8Lk8TeAsCTNEhoxlzEzbrJ5UdCZ/P7JBdtBiw0YeQYlRZzoo6FxXc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719287566; c=relaxed/simple;
-	bh=z5urP9LmonVj1+HWK1Z4RP53MeJ9CgTGlShcGRnU5d8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=d8pF21PPUW8HneWlQkIM8INWrTNj/92bDHr44uci8axA3Cs+1Y6gFaAL8LwzTA2epnDZutMq1hIq0x19OchlOMOI4iEciLLXSZwI7sLuLkdMg2DybKQuqs616LsKigU/G4PkY60lk93uH0B2QeMn9FbqewWlkKtgJHTSpMfs5DU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HTCPW3iU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EE98C32782;
-	Tue, 25 Jun 2024 03:52:44 +0000 (UTC)
+	s=arc-20240116; t=1719287747; c=relaxed/simple;
+	bh=cQaTKnbbQKLHRvFAP0Ke1Gk/g4E7YkyDRfUGaWmHRtE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oijSYpHdvkeMT79VsTCC43Ke45rdKrONP5RZ6ERA3Lrudbg0mDTKIAwAzbJx9MhXE0iz81TVG/TdsshN/KgJ7BZzg3eE6qvNMabv8uq+Z6KmR3InzGtb9+sUpNz/6gQiyL8UdiRCOPj6a6G1WUrLD1cbS/I8uIA704DRpzlrqis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtN0VewR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E2F8C4AF0A;
+	Tue, 25 Jun 2024 03:55:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719287566;
-	bh=z5urP9LmonVj1+HWK1Z4RP53MeJ9CgTGlShcGRnU5d8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HTCPW3iUCAhqdm1Ud/ZUaC0sYGyAzGoZ/dbtFmHNTEKnhSfnXszL9EBxj7kXR3nb2
-	 kAGhjFQa4noI4X3WTb9wDvYPFGNbkQZYdWjBkm5EgmUibnKhEQ3n9DDO8hiwKYYWXR
-	 flYza6dtOhcUJI48Bxwm5uDAZT5T1luoa9pRkTS4oBhhrpUz3G+JFW/GFIA79tVH5Q
-	 58Vjc682QbzYDYdN9kjEVTzlY4IjIlrU+ILSOps29IhLEXsbU0ttt9jYNUbpeQuY9+
-	 Py3CU6sBpP77FW0fynqe4klgVBYoy+ZLrepMYJbKseFK9r4+INtF5uGtkzSjKJl4JX
-	 MgS6dLdC9Qatw==
-Message-ID: <874174e3-79ba-452d-afff-615fe0bc8d0d@kernel.org>
-Date: Tue, 25 Jun 2024 11:52:42 +0800
+	s=k20201202; t=1719287747;
+	bh=cQaTKnbbQKLHRvFAP0Ke1Gk/g4E7YkyDRfUGaWmHRtE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CtN0VewRu6rSd7ETBhqeZb9oIsW9ianhZG2gpxnYGznwuXP6NtkFzCg5rxnrb2g/B
+	 pJrKZLJD/VQ0nTodyJ9MpaCAh0W4ks3FJH8NXNvWMcTaN9btIhwfGA1UUR3cPYZcMp
+	 g3c2CcGNzpHMqNc7Vgdu83ca8t4kcXR6xn1Va9kde3fhATTwrJcAAWrrSGJmWayEdk
+	 NBw58IY6QicXI3wst7P/9PdWdNa7Za8w9sq1yXGWxgxTSwTYdZn3rERWGDB2XYrcRq
+	 HiOmCArbD1ig07LK8oX6/wOd7p9wvNX+NtNQslosF0Odp95WOaJOwAlK4NxjqoYDrn
+	 dC4OyGwAjuLnA==
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7241b2fe79so277218866b.1;
+        Mon, 24 Jun 2024 20:55:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVELi1U2ZzYHaIaeu40DE0bOdnicn5jxmVjPjF8FaEnopWIa/HHwn+ETBZmOjT3qaxnjlFU/9rf+LnEaZRE6eJVtX5wgburaGMQVia+YDFvdtDAiUbFBeN2oZx6Wu279ssadk0J3pBwjA==
+X-Gm-Message-State: AOJu0Yy/J3vP4oC/mYrcY4wF1xXHQS5w4HUsHVoyfw2j/VuHklsWOWq2
+	IM0rMWZMMGeNaS7QSDrQtruptawdMaNwUiZVH58uZetvD8JTvxT1gLybaRAPnrplqoAlKi6Bu3T
+	ApFmlsPuqy41t4rSC6PgVBpzURio=
+X-Google-Smtp-Source: AGHT+IFpMrmDvhxYYpFAqoCj+v/ziYjdVaIIAkZShbx9udkdSPZQ9vpFAE6n7C6kUJa0fixtVlDWWvqsRB4url4vpsw=
+X-Received: by 2002:a17:906:bcf3:b0:a6e:fb9b:6769 with SMTP id
+ a640c23a62f3a-a7242d2ac25mr496698666b.75.1719287745662; Mon, 24 Jun 2024
+ 20:55:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [f2fs-dev] [PATCH v3] f2fs: reduce expensive checkpoint trigger
- frequency
-To: wangzijie <wangzijie1@honor.com>
-Cc: jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
- linux-kernel@vger.kernel.org, zhiguo.niu@unisoc.com, bintian.wang@honor.com
-References: <20240111081743.2999210-1-chao@kernel.org>
- <20240625021433.798568-1-wangzijie1@honor.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240625021433.798568-1-wangzijie1@honor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <tencent_22BA0425B4DF1CA1713B62E4423C1BFBF809@qq.com>
+ <20240410-unwoven-march-299a9499f5f4@spud> <20240619-hammock-drum-04bfc16a8ef6@spud>
+ <CAJF2gTRYpDLij1aQoftz6ZqEgXDrfhNA39KiFVrwm7qc4WH6Fg@mail.gmail.com> <20240623-graveyard-consonant-97eff0f11808@spud>
+In-Reply-To: <20240623-graveyard-consonant-97eff0f11808@spud>
+From: Guo Ren <guoren@kernel.org>
+Date: Tue, 25 Jun 2024 11:55:32 +0800
+X-Gmail-Original-Message-ID: <CAJF2gTS_KkQjyQPubc2+naYiammLjN8jJyptGtCe8Z56MAmT2A@mail.gmail.com>
+Message-ID: <CAJF2gTS_KkQjyQPubc2+naYiammLjN8jJyptGtCe8Z56MAmT2A@mail.gmail.com>
+Subject: Re: (subset) [PATCH RESEND v8 0/6] riscv: add initial support for
+ Canaan Kendryte K230
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-riscv@lists.infradead.org, Yangyu Chen <cyy@cyyself.name>, 
+	Conor Dooley <conor.dooley@microchip.com>, Damien Le Moal <dlemoal@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/6/25 10:14, wangzijie wrote:
->> We may trigger high frequent checkpoint for below case:
->> 1. mkdir /mnt/dir1; set dir1 encrypted
->> 2. touch /mnt/file1; fsync /mnt/file1
->> 3. mkdir /mnt/dir2; set dir2 encrypted
->> 4. touch /mnt/file2; fsync /mnt/file2
->> ...
->>
->> Although, newly created dir and file are not related, due to
->> commit bbf156f7afa7 ("f2fs: fix lost xattrs of directories"), we will
->> trigger checkpoint whenever fsync() comes after a new encrypted dir
->> created.
->>
->> In order to avoid such condition, let's record an entry including
->> directory's ino into global cache when we initialize encryption policy
->> in a checkpointed directory, and then only trigger checkpoint() when
->> target file's parent has non-persisted encryption policy, for the case
->> its parent is not checkpointed, need_do_checkpoint() has cover that
->> by verifying it with f2fs_is_checkpointed_node().
->>
->> Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->> Tested-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
->> Reported-by: Yunlei He <heyunlei@hihonor.com>
->> Signed-off-by: Chao Yu <chao@kernel.org>
->> ---
->> v3:
->> - Recently, Zhiguo Niu reported the same issue, so I repost this
->> patch for comments.
->>   fs/f2fs/f2fs.h              |  2 ++
->>   fs/f2fs/file.c              |  3 +++
->>   fs/f2fs/xattr.c             | 16 ++++++++++++++--
->>   include/trace/events/f2fs.h |  3 ++-
->>   4 files changed, 21 insertions(+), 3 deletions(-)
->>
->> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->> index e2e0ca45f881..0094a8c85f4a 100644
->> --- a/fs/f2fs/f2fs.h
->> +++ b/fs/f2fs/f2fs.h
->> @@ -279,6 +279,7 @@ enum {
->>   	APPEND_INO,		/* for append ino list */
->>   	UPDATE_INO,		/* for update ino list */
->>   	TRANS_DIR_INO,		/* for transactions dir ino list */
->> +	ENC_DIR_INO,		/* for encrypted dir ino list */
->>   	FLUSH_INO,		/* for multiple device flushing */
->>   	MAX_INO_ENTRY,		/* max. list */
->>   };
->> @@ -1147,6 +1148,7 @@ enum cp_reason_type {
->>   	CP_FASTBOOT_MODE,
->>   	CP_SPEC_LOG_NUM,
->>   	CP_RECOVER_DIR,
->> +	CP_ENC_DIR,
->>   };
->>   
->>   enum iostat_type {
->> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
->> index 8198afb5fb9c..18b33b1f0c83 100644
->> --- a/fs/f2fs/file.c
->> +++ b/fs/f2fs/file.c
->> @@ -218,6 +218,9 @@ static inline enum cp_reason_type need_do_checkpoint(struct inode *inode)
->>   		f2fs_exist_written_data(sbi, F2FS_I(inode)->i_pino,
->>   							TRANS_DIR_INO))
->>   		cp_reason = CP_RECOVER_DIR;
->> +	else if (f2fs_exist_written_data(sbi, F2FS_I(inode)->i_pino,
->> +							ENC_DIR_INO))
->> +		cp_reason = CP_ENC_DIR;
->>   
->>   	return cp_reason;
->>   }
->> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
->> index f290fe9327c4..cbd1b88297fe 100644
->> --- a/fs/f2fs/xattr.c
->> +++ b/fs/f2fs/xattr.c
->> @@ -629,6 +629,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
->>   			const char *name, const void *value, size_t size,
->>   			struct page *ipage, int flags)
->>   {
->> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
->>   	struct f2fs_xattr_entry *here, *last;
->>   	void *base_addr, *last_base_addr;
->>   	int found, newsize;
->> @@ -772,8 +773,19 @@ static int __f2fs_setxattr(struct inode *inode, int index,
->>   	if (index == F2FS_XATTR_INDEX_ENCRYPTION &&
->>   			!strcmp(name, F2FS_XATTR_NAME_ENCRYPTION_CONTEXT))
->>   		f2fs_set_encrypted_inode(inode);
->> -	if (S_ISDIR(inode->i_mode))
->> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
->> +
->> +	if (S_ISDIR(inode->i_mode)) {
->> +		/*
->> +		 * In restrict mode, fsync() always tries triggering checkpoint
->> +		 * for all metadata consistency, in other mode, it only triggers
->> +		 * checkpoint when parent's encryption metadata updates.
->> +		 */
->> +		if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
->> +			set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
->> +		else if (IS_ENCRYPTED(inode) &&
->> +			f2fs_is_checkpointed_node(sbi, inode->i_ino))
->> +			f2fs_add_ino_entry(sbi, inode->i_ino, ENC_DIR_INO);
->> +	}
->>   
->>   same:
->>   	if (is_inode_flag_set(inode, FI_ACL_MODE)) {
->> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
->> index 7ed0fc430dc6..48f2e399e184 100644
->> --- a/include/trace/events/f2fs.h
->> +++ b/include/trace/events/f2fs.h
->> @@ -139,7 +139,8 @@ TRACE_DEFINE_ENUM(EX_BLOCK_AGE);
->>   		{ CP_NODE_NEED_CP,	"node needs cp" },		\
->>   		{ CP_FASTBOOT_MODE,	"fastboot mode" },		\
->>   		{ CP_SPEC_LOG_NUM,	"log type is 2" },		\
->> -		{ CP_RECOVER_DIR,	"dir needs recovery" })
->> +		{ CP_RECOVER_DIR,	"dir needs recovery" },		\
->> +		{ CP_ENC_DIR,		"persist encryption policy" })
->>   
->>   #define show_shutdown_mode(type)					\
->>   	__print_symbolic(type,						\
->> -- 
->> 2.40.1
-> 
-> Hi, Chao
-> I noticed the discussion about patch v2, Jaegeuk mentioned no encryption case:
-> 1) parent is checkpointed
-> 2) set_xattr(dir) w/ new xnid
-> 3) create(file)
-> 4) fsync(file)
-> We will not trigger checkpoint() after this change.
-> So, how about adding a rule in need_do_checkpoint? We can judge if the parent has xnid
-> being checkpointed or not, if not we can still trigger checkpoint() and keep the same
-> behavior before this change.
+On Mon, Jun 24, 2024 at 1:32=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
+te:
+>
+> On Mon, Jun 24, 2024 at 01:07:55AM +0800, Guo Ren wrote:
+> > On Wed, Jun 19, 2024 at 6:45=E2=80=AFPM Conor Dooley <conor@kernel.org>=
+ wrote:
+> > >
+> > > On Wed, Apr 10, 2024 at 11:30:25AM +0100, Conor Dooley wrote:
+> > > > From: Conor Dooley <conor.dooley@microchip.com>
+> > > >
+> > > > On Mon, 08 Apr 2024 00:26:58 +0800, Yangyu Chen wrote:
+> > > > > K230 is an ideal chip for RISC-V Vector 1.0 evaluation now. Add i=
+nitial
+> > > > > support for it to allow more people to participate in building dr=
+ivers
+> > > > > to mainline for it.
+> > > > >
+> > > > > This kernel has been tested upon factory SDK [1] with
+> > > > > k230_evb_only_linux_defconfig and patched mainline opensbi [2] to=
+ skip
+> > > > > locked pmp and successfully booted to busybox on initrd with this=
+ log [3].
+> > > > >
+> > > > > [...]
+> > > >
+> > > > Applied to riscv-dt-for-next, thanks!
+> > > >
+> > > > [1/6] dt-bindings: riscv: Add T-HEAD C908 compatible
+> > > >       https://git.kernel.org/conor/c/64cbc46bb854
+> > > > [2/6] dt-bindings: add Canaan K230 boards compatible strings
+> > > >       https://git.kernel.org/conor/c/b065da13ea9c
+> > > > [3/6] dt-bindings: timer: Add Canaan K230 CLINT
+> > > >       https://git.kernel.org/conor/c/b3ae796d0a4f
+> > > > [4/6] dt-bindings: interrupt-controller: Add Canaan K230 PLIC
+> > > >       https://git.kernel.org/conor/c/db54fda11b13
+> > > > [5/6] riscv: dts: add initial canmv-k230 and k230-evb dts
+> > > >       https://git.kernel.org/conor/c/5db2c4dc413e
+> > >
+> > > After some discussion on the k1 thread
+> > > (https://lore.kernel.org/all/ZnEOU7D00J8Jzy-1@xhacker/, https://lore.=
+kernel.org/all/ZnA6pZLkI2StP8Hh@xhacker/)
+> > > I am going to drop this series. It's not very useful in the current
+> > > state and there's not really been any interest from people in getting
+> > > the platform to a more complete state. Jisheng made some good points =
+in
+> > > the k1 thread about the missing clock controller stuff, and I think I=
+'m
+> > > going to make having basic things like clocks and where applicable
+> > > resets and pinctrl the minimum requirement for the platforms I'm look=
+ing
+> > > after.
+> > Here is the k230 clock driver based on Linux-6.6:
+> > https://github.com/ruyisdk/linux-xuantie-kernel/commit/196242fd9b9b4a19=
+1dab0c7c3c5bf851ed857d8d
+> >
+> > pinctrl:
+> > https://github.com/ruyisdk/linux-xuantie-kernel/commit/baf26b6622c9de2f=
+f64a6ed58eeeb98c8b2c828b
+> >
+> > No reset driver.
+> >
+> > Most of the k230 drivers are under Linux-5.10, and we are porting them
+> > into the newest version of Linux, which takes time.
+> >
+> > So, if the clock & punctual drivers mentioned above could satisfy the
+> > minimum requirements for the platforms, we will update the version of
+> > this series as a supplement.
+> >
+> > Is that okay?
+>
+> I don't understand how that changes anything, these are all out of tree
+> drivers based on an old kernel. I know that there are drivers for a lot
+> of the peripherals that are in-use in the vendor tree etc. What I am
+> looking to happen, before I apply patches for the k230, is that the clock
+> dt-bindings will have landed in linux-next - and ideally the pinctrl ones
+> too.
+Okay, clock & pinctrl, the reply is clear to me. Thx.
 
-Hi wangzijie,
+>
+> Thanks,
+> Conor.
 
-It may cause performance overhead to get parent's xnid by parent ino,
-so I prefer to tag ENC_DIR_INO for the inode if its parent's xnid is
-not checkpointed, it that fine to you?
 
-Thanks,
 
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
+--=20
+Best Regards
+ Guo Ren
 
