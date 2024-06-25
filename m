@@ -1,212 +1,140 @@
-Return-Path: <linux-kernel+bounces-228346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FA4B915E82
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:57:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EBCA915E80
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B56331C2229F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:57:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 358761F23353
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF40D145FFF;
-	Tue, 25 Jun 2024 05:56:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65158145B33;
+	Tue, 25 Jun 2024 05:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bQ5rl1sx"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="WtK3zRrQ"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BF9145FE4;
-	Tue, 25 Jun 2024 05:56:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1029313C672;
+	Tue, 25 Jun 2024 05:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719295015; cv=none; b=XUme0ZbpARplq7xbaye+jjO/8UReZkv5xC0tl/GgGeJhtWGSsMXkOmAUfrCWiqWRdb70Kk2a+z2u6B95olnHB1q0huieosPcJ3vz/lgDFYzPKarp4B1BEUoodhxJLDFY8sqkyXLE8+HWvsFfnCN/sZK7thcDfcH0D7YGiAfgvtU=
+	t=1719295011; cv=none; b=F4lVDSaP7mIb4G/kDVeTVUDWSLJysMKEm/8Ej9o/TNTpulBGCyhD7Q4GF/D/FmSlfEQ3rVHgX1q1rBUg1ajYfV+YshZ+SknW86CrEzqEFP4kCtyhEgJEOzBB8UXYAFviuOweCBEDfu9qWvIajdPYvjJyrXjy1sQEUgoglPW/GZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719295015; c=relaxed/simple;
-	bh=ZB7Mz6gtH9b5BvWQkyMyWRwbWNU2M19sW8KwcbZ0Bsw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kjiHIBZRJmW2cGwLSCoJB2UC5k2Hi2nvsplFqdJF2dnMEMDlVer/6FzTxWu4+ho23AAXgqJ1jRhLpodgmBnWE+9it6LGsZ46FZbIjocGX7mGn7WVCWVgXK4atFtA7d5QfoWPtYR1Mpy8LXy18uL6dm91fONzxjg+0Tb3qZhKJ1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bQ5rl1sx; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OJMkc9031591;
-	Tue, 25 Jun 2024 05:56:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=dlN2+PRPkHN1NR7qzHwb7h
-	aLNKrscoNXSgDA+AqB/J4=; b=bQ5rl1sxHBk5Z73qfiinWc+2Sg7Z3jLRr8c2OD
-	WWEjj1leZs3/srlllLWniXdVkNSGKFnDv+19UPQpa/raL7ryXfVUtm5ZlysRLVrj
-	K3PsIKZ02yyLN3Y7LGWrAhCNp3bwWBYnB9/qYpOwwsf7zoj1pZUv1/YNyYxUvpR6
-	Z6X0Kc9H6q0ZohHsmOF5tX8a9sjshiBUs+8jzozqlMoUsGS2mroKj/nI32g+sH8E
-	5KFVhVW0fXdK8ZSIv28RxtyWOqXctvxN2ifF/zjYOJ+VOmHxycmGW9zFqiqdLPV3
-	ke+MvP6m/u98mpDpAFsEjwFkrcYqxUXMcIuxWR8WeZqn5Cjw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv5euy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 05:56:49 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45P5umTw023398
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 05:56:48 GMT
-Received: from hu-kshivnan-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 24 Jun 2024 22:56:45 -0700
-From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <quic_rgottimu@quicinc.com>,
-        Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Subject: [PATCH v2] soc: qcom: icc-bwmon: Add tracepoints in bwmon_intr_thread
-Date: Tue, 25 Jun 2024 11:26:11 +0530
-Message-ID: <20240625055611.1375273-1-quic_kshivnan@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719295011; c=relaxed/simple;
+	bh=e0hrp29pJGltLjFx/bA1YnlRBCvvlo7g+owpNA6BfM4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yty11959ZEZMsH9ZLc0xemlVY/psejuzf3dDTJF+ZnjlCqZGw/7F+jTti6qDHlDnRJ0Ov/1KbsYSrAr6EQtY1kWnD42kprCegSg35sMMzdxl1hTSuWwgYgjhixt/Ijo3lh7m5/a3ZoJwbA+7FzEe+cwJiWloL/5UEwm9nXx8HfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=WtK3zRrQ; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	In-Reply-To:References; bh=Fi0PpkRAy7VQ2C54ZJo6BAKncB41h/I16eVpJYJGK3U=;
+	t=1719295009; x=1719727009; b=WtK3zRrQ5t2CsfcpBMn/YxXgnp1YaNsEds/5wVeR7giu74A
+	FGNKXRpKR+qkia8UqERgiB4pFQlPvBtQp00TLcbd9J/+KnbuChwn7MqASi23mCGa2BEcbhDiM9GBl
+	dFzD+g/BNLlK62YWQUidLdIGqmr82T9UR32mpi/ynIV+7J+3HDrqsymJs1GHecI0uUWpkdLghQKH8
+	3eSU5fnDe6kLxzeV+yvTnIsAN6/xTvgoagY+vqhqyEnD3/uMr4gA1cugKZh36/4rY/QpizsLukfI+
+	ePnnIBUjksq85SPWNmY46uqbAsPGCAXYHdCSshY63hLToWclOhtzqQ2G+Rwm7CDg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1sLzAM-0002GH-6n; Tue, 25 Jun 2024 07:56:30 +0200
+Message-ID: <750a60a6-4585-4bd2-97be-cf944e51fbdb@leemhuis.info>
+Date: Tue, 25 Jun 2024 07:56:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
+To: Paolo Abeni <pabeni@redhat.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Daniel Golle <daniel@makrotopia.org>, frank-w@public-files.de,
+ Frank Wunderlich <linux@fw-web.de>, =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?=
+ <arinc.unal@arinc9.com>,
+ Linux regressions mailing list <regressions@lists.linux.dev>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+References: <20240516204847.171029-1-linux@fw-web.de>
+ <a29dd7d1-40a8-4c88-99aa-651a3305b640@arinc9.com>
+ <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
+ <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
+ <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
+ <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
+ <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
+ <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
+ <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
+ <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
+ <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
+ <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
+ <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
+ <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
+ <4416ef22-78cc-4ce5-b61d-69ff0903811e@arinc9.com>
+ <bd6b6929-d34d-4bd5-9cb0-bc8fe850ee46@leemhuis.info>
+ <af561268-9793-4b5d-aa0f-d09698fd6fb0@arinc9.com>
+From: "Linux regression tracking (Thorsten Leemhuis)"
+ <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
+In-Reply-To: <af561268-9793-4b5d-aa0f-d09698fd6fb0@arinc9.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9iM7gy2ufKUN_bhAHgvgdy5tVqjvBw0J
-X-Proofpoint-ORIG-GUID: 9iM7gy2ufKUN_bhAHgvgdy5tVqjvBw0J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_02,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406250044
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1719295009;5742f5c7;
+X-HE-SMSGID: 1sLzAM-0002GH-6n
 
-Add tracepoint for tracing the measured traffic in kbps,
-up_kbps and down_kbps in bwmon. This information is valuable
-for understanding what bwmon hw measures at the system cache
-level and at the DDR level which is helpful in debugging
-bwmon behavior.
+On 17.06.24 13:08, Arınç ÜNAL wrote:
+> On 17/06/2024 11:33, Linux regression tracking (Thorsten Leemhuis) wrote:
+> [...]
+> I've submitted a patch series that fixes the regression. Angelo argued
+> against the way the regression is fixed. I've very clearly argued back why
+> I find Angelo's approach wrong. There's been no response back. I don't
+> understand why reverting the patch is the likely outcome
 
-Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
----
+Long story short: because that how things like that are handled in the
+Linux kernel project, as Linus wants it like that. See some of the
+quotes from https://docs.kernel.org/process/handling-regressions.html
+for details.
 
-v2:
-* Fix multiple assignments [Dmitry]
-* Fix alignment [Dmitry]
+> whilst the
+> standing argument points towards applying the said patch series. If a
+> revert happens before this discussion with Angelo finalises, this will set
+> a precedent that will tell maintainers that they can have their way by just
+> not replying to the ongoing discussions.
+> 
+> That said, the decision of resolving the regression by either reverting the
+> patch or applying the patch series shall not depend on whether or not
+> Angelo is pleased but rather there're no counter-arguments left on the
+> points brought, meaning the decision shall be made depending on the
+> argument that stands.
+> 
+> Therefore, I suggest that unless Angelo responds back with a
+> counter-argument in the window of a week or two, as you've described, my
+> patch series shall be applied.
 
- MAINTAINERS                        |  1 +
- drivers/soc/qcom/icc-bwmon.c       |  6 +++-
- drivers/soc/qcom/trace_icc-bwmon.h | 48 ++++++++++++++++++++++++++++++
- 3 files changed, 54 insertions(+), 1 deletion(-)
- create mode 100644 drivers/soc/qcom/trace_icc-bwmon.h
+It looks more and more like we are stuck here (or was there progress and
+I just missed it?) while the 6.10 final is slowly getting closer. Hence:
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 242fc612fbc5..1b410c0183bb 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -18573,6 +18573,7 @@ M:	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- L:	linux-arm-msm@vger.kernel.org
- S:	Maintained
- F:	Documentation/devicetree/bindings/interconnect/qcom,msm8998-bwmon.yaml
-+F:	drivers/soc/qcom/trace_icc-bwmon.h
- F:	drivers/soc/qcom/icc-bwmon.c
+AngeloGioacchino, should we ask the net maintainers to revert
+868ff5f4944aa9 ("net: dsa: mt7530-mdio: read PHY address of switch from
+device tree") for now to resolve this regression? Reminder, there is
+nothing wrong with that commit per se afaik, it just exposes a problem
+that needs to be fixed first before it can be reapplied.
 
- QUALCOMM IOMMU
-diff --git a/drivers/soc/qcom/icc-bwmon.c b/drivers/soc/qcom/icc-bwmon.c
-index fb323b3364db..fc391d077d93 100644
---- a/drivers/soc/qcom/icc-bwmon.c
-+++ b/drivers/soc/qcom/icc-bwmon.c
-@@ -17,6 +17,8 @@
- #include <linux/pm_opp.h>
- #include <linux/regmap.h>
- #include <linux/sizes.h>
-+#define CREATE_TRACE_POINTS
-+#include "trace_icc-bwmon.h"
-
- /*
-  * The BWMON samples data throughput within 'sample_ms' time. With three
-@@ -645,9 +647,10 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
- 	struct icc_bwmon *bwmon = dev_id;
- 	unsigned int irq_enable = 0;
- 	struct dev_pm_opp *opp, *target_opp;
--	unsigned int bw_kbps, up_kbps, down_kbps;
-+	unsigned int bw_kbps, up_kbps, down_kbps, meas_kbps;
-
- 	bw_kbps = bwmon->target_kbps;
-+	meas_kbps = bwmon->target_kbps;
-
- 	target_opp = dev_pm_opp_find_bw_ceil(bwmon->dev, &bw_kbps, 0);
- 	if (IS_ERR(target_opp) && PTR_ERR(target_opp) == -ERANGE)
-@@ -679,6 +682,7 @@ static irqreturn_t bwmon_intr_thread(int irq, void *dev_id)
- 	bwmon_clear_irq(bwmon);
- 	bwmon_enable(bwmon, irq_enable);
-
-+	trace_qcom_bwmon_update(dev_name(bwmon->dev), meas_kbps, up_kbps, down_kbps);
- 	if (bwmon->target_kbps == bwmon->current_kbps)
- 		goto out;
-
-diff --git a/drivers/soc/qcom/trace_icc-bwmon.h b/drivers/soc/qcom/trace_icc-bwmon.h
-new file mode 100644
-index 000000000000..beb8e6b485a9
---- /dev/null
-+++ b/drivers/soc/qcom/trace_icc-bwmon.h
-@@ -0,0 +1,48 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+#undef TRACE_SYSTEM
-+#define TRACE_SYSTEM icc_bwmon
-+
-+#if !defined(_TRACE_ICC_BWMON_H) || defined(TRACE_HEADER_MULTI_READ)
-+#define _TRACE_ICC_BWMON_H
-+#include <linux/tracepoint.h>
-+
-+TRACE_EVENT(qcom_bwmon_update,
-+	    TP_PROTO(const char *name,
-+		     unsigned int meas_kbps, unsigned int up_kbps, unsigned int down_kbps),
-+
-+	    TP_ARGS(name, meas_kbps, up_kbps, down_kbps),
-+
-+	    TP_STRUCT__entry(
-+			     __string(name, name)
-+			     __field(unsigned int, meas_kbps)
-+			     __field(unsigned int, up_kbps)
-+			     __field(unsigned int, down_kbps)
-+	    ),
-+
-+	    TP_fast_assign(
-+			   __assign_str(name);
-+			   __entry->meas_kbps = meas_kbps;
-+			   __entry->up_kbps = up_kbps;
-+			   __entry->down_kbps = down_kbps;
-+	    ),
-+
-+	    TP_printk("name=%s meas_kbps=%u up_kbps=%u down_kbps=%u",
-+		      __get_str(name),
-+		      __entry->meas_kbps,
-+		      __entry->up_kbps,
-+		      __entry->down_kbps)
-+);
-+
-+#endif /* _TRACE_ICC_BWMON_H */
-+
-+#undef TRACE_INCLUDE_PATH
-+#define TRACE_INCLUDE_PATH ../../drivers/soc/qcom/
-+
-+#undef TRACE_INCLUDE_FILE
-+#define TRACE_INCLUDE_FILE trace_icc-bwmon
-+
-+#include <trace/define_trace.h>
+Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
 --
-2.25.1
+Everything you wanna know about Linux kernel regression tracking:
+https://linux-regtracking.leemhuis.info/about/#tldr
+If I did something stupid, please tell me, as explained on that page.
 
+#regzbot poke
 
