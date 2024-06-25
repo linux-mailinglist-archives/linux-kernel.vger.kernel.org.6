@@ -1,325 +1,233 @@
-Return-Path: <linux-kernel+bounces-228488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F82291609A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:04:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B77B91609D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C87A328409F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:04:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 201B9284237
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521161474BF;
-	Tue, 25 Jun 2024 08:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dC9EA9Lw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8778514830F;
+	Tue, 25 Jun 2024 08:04:57 +0000 (UTC)
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2106.outbound.protection.outlook.com [40.107.215.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FFA145A0B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:04:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719302676; cv=none; b=F4xRxT8D7ATY0RWtWha2H9hLXn65M9vYsL/b8qNi7DehGfD5NR/jOVQoPvShVfwf8UYOXpQJ2LrGMqF1LupTJboTtEJaewy6O52fx28NQvv6zR8U7lOFb3vXjNNCISH/Jk3MEP+VIrAo/XlpRT06Sn9VCJvTkgEhfcoqZz69Flc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719302676; c=relaxed/simple;
-	bh=jdAl9hgOe+lm4QJHggd51ixmWg6oswKRPQGrQWVujIM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jQ1jdtI2pE0i/bztBnrmxxc4ZmtMjJo85zqgM8UwCX7HlTAGp1TWmxWysYi65mo8DiHNj2zHYXO6GIMQ6bxirGXxI0JdITzP5DLSp6ffTpbhWVBAyo4fh73lolmXXjKvnmYFIibG11L0WDseUyLo4KY1deEzaghaEPm6QZ2oiX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dC9EA9Lw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719302673;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kSS73y9Kiy+O00pohzbPddbUXuAkYxpsCkdkEqZR1A8=;
-	b=dC9EA9LwTjOqWs4UHkf+PUWWPyEixclNhE30/oZlQ+vJUAa3zwu96l8ulgaWzmqF6zuf4l
-	h+9nspxYYIH90A9BAkHucCdSiBRecEva6Rn/NOGATYlS1Cqw4unQk4xy4UTllUBlHBOmoX
-	yPFDnZmNgkkQyxMF2OIU7pdhzZgjMU4=
-Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
- [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-251-0KBMekiYP9qlTIjnIVJ1kg-1; Tue, 25 Jun 2024 04:04:27 -0400
-X-MC-Unique: 0KBMekiYP9qlTIjnIVJ1kg-1
-Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-57d702721e8so388051a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:04:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719302666; x=1719907466;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kSS73y9Kiy+O00pohzbPddbUXuAkYxpsCkdkEqZR1A8=;
-        b=ZnwVDyy5ThGqVOxve+z8f/TpUT4c1ss5RvijMLnXOGP+N0eEGc/PHpXGxMuSVBXssS
-         2U4c/GzJvWjMBl6aj6QLC4VQMaPgXSj2sim1/DE3SyQAiHgtPw/e6F15U+uUBLgM5e36
-         RAoW5wvNaR/SZvf/h83+/F9SiNYMAEG1amHH49LhMzsXjJqLT23o4X6ut2vFVa/UpMlC
-         7yCjd6BZmvxx8p/SnrFzTUZPy20+p2a6VEqNXN5WK8c/jyuNsHj+JXPJfagQKVHR/CyL
-         bddeHPkHH0HX5htJoq+7ckcwsDFG3GvQPlGuDhNKwWhPws6B/wc7Y0tU5k/qfONFoqoO
-         jtaA==
-X-Forwarded-Encrypted: i=1; AJvYcCWTldJmrOiVGyXjnGEGCZxx4vjvUDSpvfC9UjmouMX5fGbmxEsHfnnbSTNg61psSgXIFvmpsD7cuEP1gqkaNX03aVcVtYuQKCTnop09
-X-Gm-Message-State: AOJu0YxnzPi1zBCXE17Tu50IZGdm39OjKxWlnwQrdVBVS6kg/8qBN6bE
-	foOMfUGdujNHbEtjKGQ26vq/DeBQtSH9WXtwnM810fsM+A3SZFW3ZqwkT5H3VAq7aKMRJ4X+t+y
-	uilzPppxbLEwjhgZ39n4oDxeF0EAY4Gj2b1WEciU+mz+RMUTiB2zyniJwokn1zgy2U8B2QA==
-X-Received: by 2002:a50:aa9d:0:b0:57d:ef3:c3b7 with SMTP id 4fb4d7f45d1cf-57d4580ab11mr5326062a12.36.1719302665577;
-        Tue, 25 Jun 2024 01:04:25 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGoYzcue/Hrd6k4TsIo7q/NbJMBliNIcO2bdnok/sTeZ5hfgBoqKAK4z/dZ6sDP+eLnFv6wNA==
-X-Received: by 2002:a50:aa9d:0:b0:57d:ef3:c3b7 with SMTP id 4fb4d7f45d1cf-57d4580ab11mr5326012a12.36.1719302664647;
-        Tue, 25 Jun 2024 01:04:24 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc7:342:f1b5:a48c:a59a:c1d6:8d0a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5827db501d9sm96342a12.7.2024.06.25.01.04.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 01:04:24 -0700 (PDT)
-Date: Tue, 25 Jun 2024 04:04:19 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, venkat.x.venkatsubra@oracle.com,
-	gia-khanh.nguyen@oracle.com
-Subject: Re: [PATCH V2 1/3] virtio: allow nested disabling of the configure
- interrupt
-Message-ID: <20240625035746-mutt-send-email-mst@kernel.org>
-References: <20240624024523.34272-1-jasowang@redhat.com>
- <20240624024523.34272-2-jasowang@redhat.com>
- <20240624054403-mutt-send-email-mst@kernel.org>
- <CACGkMEv1U7N-RRgQ=jbhBK1SWJ3EJz84qYaxC2kk6keM6J6MaQ@mail.gmail.com>
- <20240625030259-mutt-send-email-mst@kernel.org>
- <CACGkMEuP5GJTwcSoG6UP0xO6V7zeJynYyTDVRtF8R=PJ5z8aLg@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38DCC145A0B;
+	Tue, 25 Jun 2024 08:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.106
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719302696; cv=fail; b=ZJG0UZ3+Pvwmymc31oEuHTZKyROb3UwOnTxOwnk/mp9m8/VVM4rqZ66H9byO3NAWuRsV6FuooeN+uip2IMXupgyg2CesSNnwdiUCvLIS3QXXxxSitkxcBMjtK6ZgZ6qFH45TeSYbWl64JUhVEY9wTSn44hgucdLFRtbjCzqeVIU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719302696; c=relaxed/simple;
+	bh=9wbwainGNPXTd8qpx8tBhCor0IX1504EGhMzCqkYWME=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=DFSYYUbMFfvnGE22LcAsPoEGb5W70ixocrSsRzTM9WwF1NWlh/rjPfNppVfLuHFQxoMpllkscuM/GP8dmvOw2V8krCJFKOsOXZGGsBFdP04YW+JXMFoa9vW0CRxD7WQGgY9ieBQyBBc/Pq9q6Pg1sXUD1cP1JcPbQObx1ZfebRM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com; spf=pass smtp.mailfrom=wesion.com; arc=fail smtp.client-ip=40.107.215.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wesion.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wesion.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=oQSp2SEkCsIYs4LxnirynNRyukeu0+H4AnuTa8xdXlDscZ+EsSrhMLs9WU/lv2wxQ5n7oG+NTel1VezpmJKsXGGFOagda8iwQ2yqkalG4e7mU3S6ukhQoqbHcru39yE2hlHw9zZrv//wZ8VYhYqocRqMNCB8QqlyJDUpbYBIFew4Z/KmnKqL/i6kcf/bmremgYfUS78n2Qp1bV5O0b77qDwp2/i84ii6wyTVuu2EheiZa4Y7RgaHmrQkNiFOZbDUL+/Tntrhw3HWzUY6Ujpa41y8873KL+UR+ov4LJlxRs1bWrSdG4SiGi6FvXc7Dzt4CWXb5IwXZeK+oP48K7Zyug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9wbwainGNPXTd8qpx8tBhCor0IX1504EGhMzCqkYWME=;
+ b=V13ZMEQkw0Ak2aTvP1slhyibh3TRupC+I+Izo4Nahg9ua49EJryjkPiICDBOaTRCG5fR2SDQ6olhO1mBb97T2ANOkeXbLa6A8tEJvNQnUxGkbIrvoPZWvkyI7/Yq+a01sXyc1VR4flfLH5vlBKfo/oXsWv2CVXeT3Hxy8Yv1XRnfTkCNp5Z9Jf4AbbDrjRbcl8+8rlbE54F08DzDmNuPCvR8BAMQN7fdmynBLgG3eOynMnCIgTQsB9WK02G4DWv6D42qXTTK4Wsw0m8WuPkpbGV75RXQ6bVVbUPNhUFgjgA1u7NpA2MygYpptzeBSAqhenAwycuS0h2PpKRU8BE08g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=wesion.com; dmarc=pass action=none header.from=wesion.com;
+ dkim=pass header.d=wesion.com; arc=none
+Received: from TYZPR03MB7001.apcprd03.prod.outlook.com (2603:1096:400:26a::14)
+ by SEYPR03MB7480.apcprd03.prod.outlook.com (2603:1096:101:142::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Tue, 25 Jun
+ 2024 08:04:48 +0000
+Received: from TYZPR03MB7001.apcprd03.prod.outlook.com
+ ([fe80::78dd:5e68:1a9c:36c0]) by TYZPR03MB7001.apcprd03.prod.outlook.com
+ ([fe80::78dd:5e68:1a9c:36c0%6]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
+ 08:04:47 +0000
+From: Jacobe Zang <jacobe.zang@wesion.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, "arend.vanspriel@broadcom.com"
+	<arend.vanspriel@broadcom.com>
+CC: "kvalo@kernel.org" <kvalo@kernel.org>, "duoming@zju.edu.cn"
+	<duoming@zju.edu.cn>, "bhelgaas@google.com" <bhelgaas@google.com>,
+	"minipli@grsecurity.net" <minipli@grsecurity.net>,
+	"linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+	"brcm80211@lists.linux.dev" <brcm80211@lists.linux.dev>,
+	"brcm80211-dev-list.pdl@broadcom.com" <brcm80211-dev-list.pdl@broadcom.com>,
+	"megi@xff.cz" <megi@xff.cz>, "robh@kernel.org" <robh@kernel.org>,
+	"efectn@protonmail.com" <efectn@protonmail.com>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"heiko@sntech.de" <heiko@sntech.de>, Nick Xie <nick@khadas.com>,
+	"jagan@edgeble.ai" <jagan@edgeble.ai>, "dsimic@manjaro.org"
+	<dsimic@manjaro.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-rockchip@lists.infradead.org"
+	<linux-rockchip@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/5] arm64: dts: rockchip: Add AP6275P wireless support
+ to Khadas Edge 2
+Thread-Topic: [PATCH v2 1/5] arm64: dts: rockchip: Add AP6275P wireless
+ support to Khadas Edge 2
+Thread-Index: AQHaxg/hc6qZ2pXlVU2sUa/trZv6q7HWzcQAgAFPx8w=
+Date: Tue, 25 Jun 2024 08:04:47 +0000
+Message-ID:
+ <TYZPR03MB7001D4DE507C919802B2F7F380D52@TYZPR03MB7001.apcprd03.prod.outlook.com>
+References: <20240624081906.1399447-1-jacobe.zang@wesion.com>
+ <20240624081906.1399447-2-jacobe.zang@wesion.com>
+ <258459b8-549b-4a63-8d33-76c9631483f1@kernel.org>
+In-Reply-To: <258459b8-549b-4a63-8d33-76c9631483f1@kernel.org>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=wesion.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB7001:EE_|SEYPR03MB7480:EE_
+x-ms-office365-filtering-correlation-id: be169834-4924-4652-f1e1-08dc94ed7b76
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230037|366013|376011|7416011|1800799021|38070700015;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?RLj/LFIROvYZHN5H9lAZ1a0pif+p2Z+ujvjrIiguntrK4MPtQ9337UFmco?=
+ =?iso-8859-1?Q?c12BiJc5Xrd/zbAK6UgSU0Qj5S8E79w+sFmwqIUeyZe6fEFmgWLXGqf6Ow?=
+ =?iso-8859-1?Q?TgQtjKmzap/Oewwl+huV7Xet/03Vi1J6W4kpW+49MWmFmlzmrmnUmtKcSc?=
+ =?iso-8859-1?Q?duDf9PyHzrs/wqzQpU6BsGEfjmE/zSvdrxrEtNFoZlBTi7kNKm6SXLnBCM?=
+ =?iso-8859-1?Q?7vKau75CUysQHOSrMAwIJfDoCgBxCvAHge9aufwoURBt+jdF0eXpCih1jW?=
+ =?iso-8859-1?Q?nvEVbbbf74LIrshNck2LtXAos9Z+CFMn9+Y9UhyGIaxsWtQq1NbRshwLnF?=
+ =?iso-8859-1?Q?k2FhMfZuZNr+2NqSP1Q3qaVr8/oIm+r1Norl+fzY81tbysF3GyhkgGkD9b?=
+ =?iso-8859-1?Q?gmgH3Igh/8QTI01YzM+usGijTR9xK6zCY/nSfsaSRCgRvl3MofJEEdGwpf?=
+ =?iso-8859-1?Q?UVfr34lBfjy1LjQsaHkF5PY/2IzcrOUOMSfxf4LoFWpbPkTYRRe9nzRpsU?=
+ =?iso-8859-1?Q?ghGTGrXf0s5Yvp70FWxXLZJ0AbQCKcffyB4D+NprpzFO1LsC0vAMGf3AO5?=
+ =?iso-8859-1?Q?eSTuqI6w1t0gTMzkcABqH5Fw/GfIMecDbvg1fQm9r2E6YzIICFJNXPpNCC?=
+ =?iso-8859-1?Q?WJVbGdGbO+3XFKEY/WvbNN640gXom/S5OEP0D7nj4cG5OYxs5VyUWoZ5rl?=
+ =?iso-8859-1?Q?8rCa/OWkbTgf0IH3f6swHBrv3i/DnrDZbCf2QmLoEBKVI1mZa4eeK/iHhr?=
+ =?iso-8859-1?Q?8JrQ8DOGJhzstZhPVxnlgyOvrF7lqJTGWx39k/LlvgqWj1RB0L1Tq6Gt8I?=
+ =?iso-8859-1?Q?zgzMkVDUeC8J4JLPoG8fvww8EOzUg7TeFDD8/1LqUHemXSbQSla/nx9XWU?=
+ =?iso-8859-1?Q?VByorQNDOKMrzCDaus93OJsX2DCFqLyEu6tv3elwLoo/TCjRAT2M1OBgMo?=
+ =?iso-8859-1?Q?OlUQfU24Tx5IS5Cryp343mM/RNEOmTNuXJr43T4pdEkvMou0vB7SWx81fp?=
+ =?iso-8859-1?Q?czQ9iPaNpZr54bWx9uVrTvZk5ylwbwe8gl8kkrljBUd84iBp2DvWIFth9f?=
+ =?iso-8859-1?Q?rEX0baoNP75rQXBvLJgRFWU5vvDKdyz4vFyU8q7iLCSaCFae5NdEJw4FKv?=
+ =?iso-8859-1?Q?7Ef3pc62kwoYThwmEC2wqSVuSaH3JjlTd2VNiUpLm6PPE3ZauCZ9GRhScn?=
+ =?iso-8859-1?Q?O40wZxscbvaQf+LekvRiTHwfIeWeeb3pVJ6nxQaupW2u/F4TFWEmmqoAno?=
+ =?iso-8859-1?Q?Qvs03PDu7cTzIsWLw+pyQm3xPfvVrLgKFXpiVIZBhcLz+yCNTxRrXV2Q6e?=
+ =?iso-8859-1?Q?sn0YVyiduePlCgpGD6k7wl0LBgaHgUpF2q9lgGrq5wp9DRsAMipfcDAecM?=
+ =?iso-8859-1?Q?ruk67esvWNW/BntTTQtYCbhf6B614yKf6j4hHtXfTrIohe9qyPWuE=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB7001.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(7416011)(1800799021)(38070700015);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?Gh5czEkRlkkP/Fgk5cOyW3LXBmafQEApPvn3w6JBN2lXEp9Z22+hyanML2?=
+ =?iso-8859-1?Q?nuuEro7jMUL/Bo+G7E5K5AZQPwHQ/TJgkQgJYujL41uwsEzFspO7TMckB7?=
+ =?iso-8859-1?Q?rQbIdfQKIcrf1K929/rNuDVDAzZecEjm1phIvy4z5ZMbskIjqzBQNtNcKL?=
+ =?iso-8859-1?Q?OpTTrl4Exhy6o8zT9ssME/EH89jC45GHcuQ/50Mn9I66Kj+qVZoiiT5pKl?=
+ =?iso-8859-1?Q?UM59LUNh+C0rhBycPgEk3/aGDy2pscgFrKNXrcOMWBWxl/JzA0PevpbEmy?=
+ =?iso-8859-1?Q?tPXkiZOlvI7/OHqKiU/RyrkLcw055Ly+/19rcVztrfhb9C9h/ZD4UDX/F0?=
+ =?iso-8859-1?Q?O/geegZEoanylmxdtLN6LJxzZmJgCMRNzkNTKS1Ba27WOxyTiXnUM8dfEb?=
+ =?iso-8859-1?Q?wLct5kBzF0ZX20wbyM/50Sn/NmKoTZJZ0OG35ythJq8QiO26XFLcPproIV?=
+ =?iso-8859-1?Q?6KHQOtRfFnnAgFH4ZTtYIA9wlNuMnO0w0UEEOAYwa+F4dwpUNLZphBylWZ?=
+ =?iso-8859-1?Q?IEzqckH3C49zCC2hG3HNvntyYyprPM6KqD34JTNIeLfiIQ96vofE9TZNeY?=
+ =?iso-8859-1?Q?jig+6hlHLMt7OMzpnBhbtVUhM/6XuemLeWQT0LMcDsJtULpbtzKtRTzLsj?=
+ =?iso-8859-1?Q?lN+GNWxnn+XwP/XrIOzV4/Ut5bkZ5QXIywYDIee/euYUA5a0dEbLx73OjY?=
+ =?iso-8859-1?Q?vpIBsxI3x8cbEWIDiBcz96uyq/PxcZDziy5vmvoGPN/odTXMOGNsvhSeBn?=
+ =?iso-8859-1?Q?Z+apbGcSWHcXH8XEfzzZiZF03aJ6qjJ/ixxWjM9bGdyC9nBusTvA1d4q1y?=
+ =?iso-8859-1?Q?D4gMitEipyqtPmMvs/uIfaERslah8dcbuvhQ0PKdlKcyRRtlBK8HNaXHSv?=
+ =?iso-8859-1?Q?PAZfwB3AwJJYYggtW6dZ6XAUkJly/aT3PWP6Im0maklEo3qAmVItD2fdaJ?=
+ =?iso-8859-1?Q?oPgOrY8aSv9MxqVz3dklwCG6ZngqtjmO13qHMZHfBvJS8PwyQEqr14cEOX?=
+ =?iso-8859-1?Q?XIm8dnfUCSvDJPMrVJ1c9+aAH2s7qYmTQhjVe/RUqylQY3IiVT+unI1bIW?=
+ =?iso-8859-1?Q?bZ+1t4xch5VdOgzWMOCO8kVPGoyHG78N6vMIyaMPVhkdJJDktM1Vjw/ZMq?=
+ =?iso-8859-1?Q?VeNJ8ufic/vuTJByPnvQPUhS+gAiU2wacO6ZycPqBSOxpcg1e3H2udhn7I?=
+ =?iso-8859-1?Q?91cyRxvHRU2xq5tLw9bpz0Da1iYxhXHJEW2i+POBE2yvKs9HCewY3J5vGE?=
+ =?iso-8859-1?Q?5VsUgKVWT8I29vrdrsaadSMD5TmeFytv7BgbuNsLcLQgnBXK97XU6FfKMr?=
+ =?iso-8859-1?Q?zZlM9kb4kPUhzXolSewlxySAA17ASU+ulf7TkLM495qfTdwItILdCXoJSr?=
+ =?iso-8859-1?Q?FJ/IeqJJgAjnubk3uH/H/w2f6JNE+K9bjb6w68y0dV8Om4XG2rD9r3DC4P?=
+ =?iso-8859-1?Q?lRh+4whl388OWdSZ+ED+Clw57UsC+9SpumWIOf+jftKMcn/7ToQIfIEBbq?=
+ =?iso-8859-1?Q?PnI8efIeqO2vY04+70XJvqWzS8RYyQG97+xOnjcBrD1na26qrCJKQhC09V?=
+ =?iso-8859-1?Q?g30t9d0Ft6PBPqXMnn081af5sC8K+WqTW0t0O3HkDoaJhpy85WxBHXCbb1?=
+ =?iso-8859-1?Q?ECe4Gv17XVWLlviSzjl3jOBdjALqJTDi9X?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACGkMEuP5GJTwcSoG6UP0xO6V7zeJynYyTDVRtF8R=PJ5z8aLg@mail.gmail.com>
+X-OriginatorOrg: wesion.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB7001.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: be169834-4924-4652-f1e1-08dc94ed7b76
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2024 08:04:47.8865
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 2dc3bd76-7ac2-4780-a5b7-6c6cc6b5af9b
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: aLzcv40eSWkx4a91zcHShIJkbozJjIC2cXPbeCQQ257BCFWXVFpXKJDank52aRf7uNMRz1nWYfZ3MULx/e1FNA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR03MB7480
 
-On Tue, Jun 25, 2024 at 03:50:30PM +0800, Jason Wang wrote:
-> On Tue, Jun 25, 2024 at 3:11 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-> > On Tue, Jun 25, 2024 at 09:27:04AM +0800, Jason Wang wrote:
-> > > On Mon, Jun 24, 2024 at 5:59 PM Michael S. Tsirkin <mst@redhat.com> wrote:
-> > > >
-> > > > On Mon, Jun 24, 2024 at 10:45:21AM +0800, Jason Wang wrote:
-> > > > > Somtime driver may want to enable or disable the config callback. This
-> > > > > requires a synchronization with the core. So this patch change the
-> > > > > config_enabled to be a integer counter. This allows the toggling of
-> > > > > the config_enable to be synchronized between the virtio core and the
-> > > > > virtio driver.
-> > > > >
-> > > > > The counter is not allowed to be increased greater than one, this
-> > > > > simplifies the logic where the interrupt could be disabled immediately
-> > > > > without extra synchronization between driver and core.
-> > > > >
-> > > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > > > ---
-> > > > >  drivers/virtio/virtio.c | 20 +++++++++++++-------
-> > > > >  include/linux/virtio.h  |  2 +-
-> > > > >  2 files changed, 14 insertions(+), 8 deletions(-)
-> > > > >
-> > > > > diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-> > > > > index b968b2aa5f4d..d3aa74b8ae5d 100644
-> > > > > --- a/drivers/virtio/virtio.c
-> > > > > +++ b/drivers/virtio/virtio.c
-> > > > > @@ -127,7 +127,7 @@ static void __virtio_config_changed(struct virtio_device *dev)
-> > > > >  {
-> > > > >       struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
-> > > > >
-> > > > > -     if (!dev->config_enabled)
-> > > > > +     if (dev->config_enabled < 1)
-> > > > >               dev->config_change_pending = true;
-> > > > >       else if (drv && drv->config_changed)
-> > > > >               drv->config_changed(dev);
-> > > > > @@ -146,17 +146,23 @@ EXPORT_SYMBOL_GPL(virtio_config_changed);
-> > > > >  static void virtio_config_disable(struct virtio_device *dev)
-> > > > >  {
-> > > > >       spin_lock_irq(&dev->config_lock);
-> > > > > -     dev->config_enabled = false;
-> > > > > +     --dev->config_enabled;
-> > > > >       spin_unlock_irq(&dev->config_lock);
-> > > > >  }
-> > > > >
-> > > > >  static void virtio_config_enable(struct virtio_device *dev)
-> > > > >  {
-> > > > >       spin_lock_irq(&dev->config_lock);
-> > > > > -     dev->config_enabled = true;
-> > > > > -     if (dev->config_change_pending)
-> > > > > -             __virtio_config_changed(dev);
-> > > > > -     dev->config_change_pending = false;
-> > > > > +
-> > > > > +     if (dev->config_enabled < 1) {
-> > > > > +             ++dev->config_enabled;
-> > > > > +             if (dev->config_enabled == 1 &&
-> > > > > +                 dev->config_change_pending) {
-> > > > > +                     __virtio_config_changed(dev);
-> > > > > +                     dev->config_change_pending = false;
-> > > > > +             }
-> > > > > +     }
-> > > > > +
-> > > > >       spin_unlock_irq(&dev->config_lock);
-> > > > >  }
-> > > > >
-> > > >
-> > > > So every disable decrements the counter. Enable only increments it up to 1.
-> > > > You seem to be making some very specific assumptions
-> > > > about how this API will be used. Any misuse will lead to under/overflow
-> > > > eventually ...
-> > > >
-> > >
-> > > Well, a counter gives us more information than a boolean. With
-> > > boolean, misuse is even harder to be noticed.
-> >
-> > With boolean we can prevent misuse easily because previous state
-> > is known exactly. E.g.:
-> >
-> > static void virtio_config_driver_disable(struct virtio_device *dev)
-> > {
-> >         BUG_ON(dev->config_driver_disabled);
-> >         dev->config_driver_disabled = true;
-> > }
-> >
-> >
-> >
-> > static void virtio_config_driver_enable(struct virtio_device *dev)
-> > {
-> >         BUG_ON(!dev->config_driver_disabled);
-> >         dev->config_driver_disabled = false;
-> > }
-> >
-> >
-> > Does not work with integer you simply have no idea what the value
-> > should be at point of call.
-> 
-> Yes but I meant if we want the config could be disabled by different
-> parties (core, driver and others)
-
-For now, we don't have others ;)
-
-> >
-> >
-> > > >
-> > > >
-> > > > My suggestion would be to
-> > > > 1. rename config_enabled to config_core_enabled
-> > > > 2. rename virtio_config_enable/disable to virtio_config_core_enable/disable
-> > > > 3. add bool config_driver_disabled and make virtio_config_enable/disable
-> > > >    switch that.
-> > > > 4. Change logic from dev->config_enabled to
-> > > >    dev->config_core_enabled && !dev->config_driver_disabled
-> > >
-> > > If we make config_driver_disabled by default true,
-> >
-> > No, we make it false by default.
-> >
-> > > we need someone to
-> > > enable it explicitly. If it's core, it breaks the semantic that it is
-> > > under the control of the driver (or needs to synchronize with the
-> > > driver). If it's a driver, each driver needs to enable it at some time
-> > > which can be easily forgotten. And if we end up with workarounds like:
-> > >
-> > >         /* If probe didn't do it, mark device DRIVER_OK ourselves. */
-> > >         if (!(dev->config->get_status(dev) & VIRTIO_CONFIG_S_DRIVER_OK))
-> > >                 virtio_device_ready(dev);
-> > >
-> > > It's another break of the semantics. And actually the above is also racy.
-> > >
-> > > It seems the only choice is to make config_driver_disabled by default
-> > > false. But the driver needs to be aware of this and take extra care
-> > > when calling virtio_device_ready() which is also tricky.
-> >
-> >
-> > No, false by default simply means no change to semantics.
-> 
-> No change to current semantics, probably. But we need to document
-> 
-> 1) driver config is enabled by default
-> 2) no nested enabling and disabling
-> 
-> If you think they are all fine, I can go with that way.
-
-yes, a good idea to document this.
-
-
-> >
-> >
-> > >
-> > > So in conclusion, two booleans seems sut-optimal than a counter. For
-> > > example we can use different bits for the counter as preempt_count
-> > > did. With counter(s), core and driver don't need any implicit/explicit
-> > > synchronization.
-> > >
-> > > Thanks
-> > >
-> >
-> > We have a simple problem, we can solve it simply. reference counting
-> > is tricky to get right and hard to debug, if we don't need it let us
-> > not go there.
-> 
-> I fully agree, and that's why I limit the change to virtio-net driver
-> in the first version.
-
-I got that. I didn't like the code duplication though.
-
-> >
-> >
-> >
-> > But in conclusion ;) if you don't like my suggestion do something else
-> > but make the APIs make sense,
-> 
-> I don't say I don't like it:)
-> 
-> Limiting it to virtio-net seems to be the most easy way. And if we
-> want to do it in the core, I just want to make nesting to be supported
-> which might not be necessary now.
-
-I feel limiting it to a single driver strikes the right balance ATM.
-
-> 
-> > at least do better than +5
-> > on Rusty's interface design scale.
-> >
-> > >
-> 
-> Thanks
-> 
-> 
-> > >
-> > >
-> > > >
-> > > >
-> > > >
-> > > >
-> > > > > @@ -455,7 +461,7 @@ int register_virtio_device(struct virtio_device *dev)
-> > > > >               goto out_ida_remove;
-> > > > >
-> > > > >       spin_lock_init(&dev->config_lock);
-> > > > > -     dev->config_enabled = false;
-> > > > > +     dev->config_enabled = 0;
-> > > > >       dev->config_change_pending = false;
-> > > > >
-> > > > >       INIT_LIST_HEAD(&dev->vqs);
-> > > > > diff --git a/include/linux/virtio.h b/include/linux/virtio.h
-> > > > > index 96fea920873b..4496f9ba5d82 100644
-> > > > > --- a/include/linux/virtio.h
-> > > > > +++ b/include/linux/virtio.h
-> > > > > @@ -132,7 +132,7 @@ struct virtio_admin_cmd {
-> > > > >  struct virtio_device {
-> > > > >       int index;
-> > > > >       bool failed;
-> > > > > -     bool config_enabled;
-> > > > > +     int config_enabled;
-> > > > >       bool config_change_pending;
-> > > > >       spinlock_t config_lock;
-> > > > >       spinlock_t vqs_list_lock;
-> > > > > --
-> > > > > 2.31.1
-> > > >
-> >
-
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts b/arc=
+h/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts=0A=
+>> index 3b6286461a746..f674deb6f7da8 100644=0A=
+>> --- a/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts=0A=
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-khadas-edge2.dts=0A=
+>> @@ -356,6 +356,22 @@ &pcie2x1l2 {=0A=
+>>=A0=A0=A0=A0=A0=A0=A0 reset-gpios =3D <&gpio3 RK_PD1 GPIO_ACTIVE_HIGH>;=
+=0A=
+>>=A0=A0=A0=A0=A0=A0=A0 vpcie3v3-supply =3D <&vcc3v3_pcie_wl>;=0A=
+>>=A0=A0=A0=A0=A0=A0=A0 status =3D "okay";=0A=
+>> +=0A=
+>> +=A0=A0=A0=A0 pcie@0,0 {=0A=
+>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x400000 0 0 0 0>;=0A=
+>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 #address-cells =3D <3>;=0A=
+>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 #size-cells =3D <2>;=0A=
+>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 ranges;=0A=
+>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 device_type =3D "pci";=0A=
+>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 bus-range =3D <0x40 0x4f>;=0A=
+>=0A=
+>Isn't bus-range a property of PCI host bridge, so the parent? This is a=0A=
+>PCI device, right?=0A=
+>=0A=
+>> +=0A=
+>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 wifi: wifi@0,0 {=0A=
+>=0A=
+>Binding does not say anything about this. Rockchip PCI controller is the=
+=0A=
+>PCI host bridge, isn't it? Then the pci@0,0 is the child, so what is this?=
+=0A=
+=0A=
+The host bridge is the parent of pcie@0,0. And pcie@0,0 is Bridge1, so the=
+=0A=
+wifi@0,0 as a device under the Bridge1.=0A=
+=0A=
+>=0A=
+>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0=
+x410000 0 0 0 0>;=0A=
+>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 clocks =3D=
+ <&hym8563>;=0A=
+>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 clock-name=
+s =3D "32k";=0A=
+>=0A=
+>1. Bindings are before the users.=0A=
+>2. Where is the compatible? Are you sure this validates?=0A=
+=0A=
+Before, the compatible is "pci14e4,449d", but when I checkpatch the warning=
+=0A=
+said that "pci14e4" was not documented, so I remove the compatible which =
+=0A=
+doesn't affect the Wi-Fi function. I have tried to add "pci14e4" to =0A=
+vendor-prefixes.yaml but was refused. So whether should I add the compatibl=
+e =0A=
+with warning? =0A=
+=0A=
+References: =0A=
+https://lore.kernel.org/all/20220629155956.1138955-15-nfraprado@collabora.c=
+om/=0A=
+=0A=
+---=0A=
+Best Regards=0A=
+Jacobe=
 
