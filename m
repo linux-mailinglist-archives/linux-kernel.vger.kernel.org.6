@@ -1,163 +1,252 @@
-Return-Path: <linux-kernel+bounces-229539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18C62917097
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:52:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA25917099
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D9F41C22FE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:52:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9D44284730
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:53:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51974176AC3;
-	Tue, 25 Jun 2024 18:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459BC17BB1A;
+	Tue, 25 Jun 2024 18:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BbWf/VIx"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="Ul9RtZ8Z"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2111.outbound.protection.outlook.com [40.107.93.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3050E1369B6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719341525; cv=none; b=Zplvw4sjGad7ruYzGZ0Rdjyc1gOw9uoVMGN+gIcOiIwrPs6yadP2Hp35HW9zVSTre5u/j5WzeRdTCktBJGALJI8Qtto/auwcjVgGiNenRQyhPwIw8Fz9/hFVjbhzDYYS/t/TJt/1caX9NOxwEBe8JDfTtZdy19U67tLUOovyYag=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719341525; c=relaxed/simple;
-	bh=FURXO1WeM9KERwVxU7l70dy29D6wHhmffFfGT/ThtuU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ftfnd6GakK+cKE+0MzQqX3pl3rTMPQzfGf8U7IimqwFk8adk7SMJdVqYYLXlqdRxVTsStkm7/pQ5ldDXinbgKTHJdFS4f0P5qoUv5ktMrdRLY6HbgCTULTZOqaNwmnqX/5EA0Ra0hk99HkpxHTymNqxlycK0/HgnRxoCXkcVgMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BbWf/VIx; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-79c0f8d6ec5so41462285a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:52:03 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70DF81369B6;
+	Tue, 25 Jun 2024 18:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.111
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719341627; cv=fail; b=sKEeMWsHHHsSz5Oy+cDF61AMxe1vOxH1PbSyVNdKqTzW31dN5a6/Cn4fKUF8TrX5rXwnk1M3geT4au5zJWReIRtUOgoivNargliiW/zcOncTWqHA6suHiRCBDEZIbQ3zPynhjzpDtIfsW4P215LrWv+hvMBn/JPetLkarZh7Dqg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719341627; c=relaxed/simple;
+	bh=E61rF2DHsYdZ8Cm3LQN+6hmd1qUjlWw1mAKxJwPp/Fk=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=ZsWetAyNguX58B6QnsHnKP3M+rf44MyLwkBbGF/9hiGQ5b61157E0Cs6W6UUPFTo4KYq4k1S5r0sNj43BxRKMQTJxGSjye5S5piSnUURkL/lu353b3AhlZLmg3Pn+AYDZF49DSfBNVRRovM/M1C5K5ByDicVme1kpkoDplbVJ0c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=Ul9RtZ8Z; arc=fail smtp.client-ip=40.107.93.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UlMrlh91F173AjBPd2d52IU3HhuQNyFavDFUlud9tz6e1ojVh9aLFT9TiqiEz7Wi2wkrOWmOhnprHNUHrlXai9NQW4gJtdlqbP/KW4bMy+XRyfQf+Sl0PxFymnUYUKpxoMm/qhVkBl6U4WgVIbzVwu5woeqwBJSEIimkmNoWJagRdFnEjEWjpzhF5fCsCRw7RxL7lthsMDGS6hjwYI77OwNK3JtZUEFGphiGaAOfSdxGp8KR4JWG5AVEfAzdrj7m4qix7HJCYOAolz1987wUrfSHu24kkQjy1Crj1/CKUeihAEc4NTdjLlNz5HbY7y1XDFAiziRPUgkZ7YSpdomkXA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y0TyFhP4oQOjkMaqQccmVS+P7J+h1bXacPZCSPNA1bM=;
+ b=mYB/iEKxEKaJzY8pLx86+MZvq7f5xnZkl4QqTHmsxYBFZcRbeVQR4zxvo5hsX4JBg4RyVhp7yeAYc31C7WxdY5OvT+6P80txhVtnOjTBO6vA2x8x3VyH8lF3+PRi3JHdw8D/EX1J6PVQKRl7PhXW2tnvB1G6TYzXfLinhQreB95kp0bK2TjqzqFKk1q6bOASIVWOHVuo2tcD9ettdOg4R4q30PN6tQ5yfmRAbbt5VqwB1foXFXH3EldGsUd+sQDu25R41p5/BI8k3V1UYSkWuLkN9YC7Qn15eMvkQFSlcqnJxZlLtvL9x7eTz2F5xUlb08ZC4UfVQw28aJJWXWIevA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719341523; x=1719946323; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LMdSyT3TskY0tTwnKiqqMsQwUOsNCEG9Wo5ZTR+RF68=;
-        b=BbWf/VIxczt1R7s0/nbnWNV3lze4rYsiwKA8PO3EvWyHaVYvBuuStU3WSCtXZ/34aV
-         PQ+b4h90LYto/BuRuzpha8YgmhdKhZYlhy/abV/LjlUfn8L0OBkvZm5RnUu867xRkQEX
-         vhwFPp7tbVACn97wEUZFFpyDElkv5AyiZwRhqUTG7qrIXcNDxT5TeZ1DnLkgUcLBIO0j
-         3ZV4TvazLjoDlmjUSQ/475i4MRxAZxEFYka8w5RiOzEVD6JbSPmNkYdbgq+5RAVMuc47
-         vmtUIS4WL5lWfyOg1ZferVh5eFoAIn++hkYJbzAdghvi70bc9GYwyacevQ23QaBZfzve
-         D25w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719341523; x=1719946323;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LMdSyT3TskY0tTwnKiqqMsQwUOsNCEG9Wo5ZTR+RF68=;
-        b=m24XoejEuqN1NpjXcV9bzugZpF/hZNd4CqwjpTbFWhp849BDPKwV/DrLuxFsUCero6
-         mFEmxBqzMzQaumWJ/Jm/ToaLjfivaYbK0cZO+Og0Txnmj2VYbXBarxUCLFqowkUvW5DX
-         S33MIU8OSAQd77JVafeRAIDvSRiRSBgi8xHsecX4u7VaA+5+JUanT7iK92me4+EKifUq
-         7EB58d/72tosiGyCtunMAracOcRgDI/PAkwOwkAzwCIPgQEyF7gikJkmeP9qFQZnithp
-         Qw/fqyqpGExmylmpvHdcJrOC0uNM8ENAot693Yl6Mc0Zx8s8si63qilBqWDoS5AgYb3Z
-         5FQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyXksuy/wvAM9+tIUWwKHn6wNRf267AOvu89EU6TV0i96jpqNdWvs4w6C6ys9jjWNl9zrf5rU88RdjBGIYpRn0Q6CDyQ3Y88+n8T4u
-X-Gm-Message-State: AOJu0YydhHa2xjw65yd7SzwZVGZo9BKpIe5K8oKpv+EdyGDT1uZHcQsF
-	2M9AY3jo+071tr03Hd7D9W+lGijhV02+yhd3NB9OgMsukXk2sI2W
-X-Google-Smtp-Source: AGHT+IFVlzLKfW2XCNk1dbKb+dJ8oL0T0fua+QmFIyZ0d5tbTe1TzD7WGsmsb6LBcX1Z63xkfBC3RQ==
-X-Received: by 2002:a05:620a:240a:b0:79b:efe1:1221 with SMTP id af79cd13be357-79befe112f7mr863743985a.48.1719341523018;
-        Tue, 25 Jun 2024 11:52:03 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce933e28sm430784785a.120.2024.06.25.11.52.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 11:52:01 -0700 (PDT)
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id 2D06D120006B;
-	Tue, 25 Jun 2024 14:52:01 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Tue, 25 Jun 2024 14:52:01 -0400
-X-ME-Sender: <xms:0RF7Zi4cCwR_2FODPaE_7FeHVem8MDWqwS4NTWWmVxWyBvw1QAVWAA>
-    <xme:0RF7Zr5vato65g-qckf9tV0sTMuzk97uUQ61jKPH1liKzEIHrtahAYFkY8tvCn5CI
-    mQI2H7yHO-VkQBs1Q>
-X-ME-Received: <xmr:0RF7ZhegPl7nkM2qRWPjNQoDHlGfw1gBwBU8WlbnEQ48Rp6uHs-QFzpbtg8HYw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtddtgdelkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
-    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
-    htvghrnhephedugfduffffteeutddvheeuveelvdfhleelieevtdeguefhgeeuveeiudff
-    iedvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsg
-    hoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieeg
-    qddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigi
-    hmvgdrnhgrmhgv
-X-ME-Proxy: <xmx:0RF7ZvI_ljCVI6m0sZT4hN8n0VmMOvU2Q_ix2HcmJkITQN5YisVFrw>
-    <xmx:0RF7ZmJqyLhitldL8C2O3d2yp5fmTEqQLPO9Io6X6Zc2e3Ih3YhAZg>
-    <xmx:0RF7Zgz0J0wvDHQqeZ1547t6VZvKf1jD-Dm_g7zjufymrDnvZq5Rgg>
-    <xmx:0RF7ZqJC8ydfOY3LVrFGwtlZfl-V6weIVhH_SS-H5eAT8OhxPwGUbQ>
-    <xmx:0RF7Zta3eYLagYLdZx9_jAjELamV3pyR5pvr2KwBtCCCBB6LVDMvumxl>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Jun 2024 14:52:00 -0400 (EDT)
-Date: Tue, 25 Jun 2024 11:51:23 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Alexander Potapenko <glider@google.com>, elver@google.com,
-	dvyukov@google.com, dave.hansen@linux.intel.com,
-	peterz@infradead.org, akpm@linux-foundation.org, x86@kernel.org,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>
-Subject: Re: [PATCH 2/3] lib/Kconfig.debug: disable LOCK_DEBUGGING_SUPPORT
- under KMSAN
-Message-ID: <ZnsRq7RNLMnZsr6S@boqun-archlinux>
-References: <20240621094901.1360454-1-glider@google.com>
- <20240621094901.1360454-2-glider@google.com>
- <5a38bded-9723-4811-83b5-14e2312ee75d@intel.com>
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Y0TyFhP4oQOjkMaqQccmVS+P7J+h1bXacPZCSPNA1bM=;
+ b=Ul9RtZ8Z4jNOFtbPwQMSCA1w4EuC0PQI99CUD+ZDXdqwK32hAR9MEetsy5nCmukpTB9PwHnYxbhTFHnPr1pL0R83ayxhtG+nG0+HbkUQbBOt2hhOkK4FkiTTAlN/TsTp+KsHOUI9ekmQCbHpqtuZ3vg75eANYUgpg/Pvx5HTsvA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from SA0PR01MB6171.prod.exchangelabs.com (2603:10b6:806:e5::16) by
+ PH0PR01MB8070.prod.exchangelabs.com (2603:10b6:510:295::15) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7698.29; Tue, 25 Jun 2024 18:53:40 +0000
+Received: from SA0PR01MB6171.prod.exchangelabs.com
+ ([fe80::b0e5:c494:81a3:5e1d]) by SA0PR01MB6171.prod.exchangelabs.com
+ ([fe80::b0e5:c494:81a3:5e1d%7]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
+ 18:53:40 +0000
+From: admiyo@os.amperecomputing.com
+To:
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeremy Kerr <jk@codeconstruct.com.au>,
+	Matt Johnston <matt@codeconstruct.com.au>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Subject: [PATCH v3 0/3] MCTP over PCC
+Date: Tue, 25 Jun 2024 14:53:30 -0400
+Message-Id: <20240625185333.23211-1-admiyo@os.amperecomputing.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BY3PR03CA0008.namprd03.prod.outlook.com
+ (2603:10b6:a03:39a::13) To SA0PR01MB6171.prod.exchangelabs.com
+ (2603:10b6:806:e5::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5a38bded-9723-4811-83b5-14e2312ee75d@intel.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA0PR01MB6171:EE_|PH0PR01MB8070:EE_
+X-MS-Office365-Filtering-Correlation-Id: 3b548d25-48d5-46f3-5f12-08dc954820c2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230038|366014|52116012|376012|1800799022;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?cIfqOT5yiNok+r1Wd4c6ff2F1Rr7+OPuR7HXaEUYbAG2kKMd2JYQCcCQc63S?=
+ =?us-ascii?Q?JHnABugkVq0t5Ej90yNSuXhSP3PENolnhMHPSvyTCkGd5sn17Qk0ZXo8u2Xj?=
+ =?us-ascii?Q?65yj9d5/NF+QOUYurM9LqseNeCX9RLr3qr2IRuhoMpn0EI4xextNLEnwpc91?=
+ =?us-ascii?Q?8d2n/KuS+ItD6HzoZkz76uVd5J1O0omf1PK6JgsxEDQxos+jmDTyJ9yEw0Ei?=
+ =?us-ascii?Q?pOXiWbCVS4Mx2S+/zC9hJtPisBQRnrEqximT/X14nMWg0cq/2dhlT16GrEBk?=
+ =?us-ascii?Q?TfEJXxCfcZxUp6E6gPqtRHO1e/HWDPtRwRB/5Jv2XQvy0pP9QnuFocw1xoxc?=
+ =?us-ascii?Q?zekVm4Y1BmrgN8UsmOchJ85pd6VISoXEaTln0HNeNlLK6Xq4c2MzVBpmQNBb?=
+ =?us-ascii?Q?0OCpLrwHY6I3P7RK8Z4hJ8owjMsg2E5/2t5Azn3X2OdxhtniJI+AEpt8diVn?=
+ =?us-ascii?Q?fjeseJ4Dcis8zh27POve1GD6xLlAEAAOD8e/mIDTQptuWL5UNqjque67QdQX?=
+ =?us-ascii?Q?z3c3i+PP6CGDo5Bges4pBZmt05d4G0wmAbHoq4rxXT5y5fMXBNExnTd9Pyrn?=
+ =?us-ascii?Q?SWVVev+lZpdEek/G1mNSnNxc8lK+dWkvbTU5eqhOpgqXy/YUIJ3XFXP0cGQ6?=
+ =?us-ascii?Q?WK4neIyPO/isMwUZdNE+VKNiMQWvHMV7D75XKuSn0wkTtMZZ0TAnEP66h4Dp?=
+ =?us-ascii?Q?+UI2oPEgT+l8qDYWvQ8g8C4hha6nN45Afq7Lqrmc5ZewKABNE5RfHccDfJki?=
+ =?us-ascii?Q?n4JIspHKdkRVRHccFC3T0Ge6/pbFJ5lDI/RPyMOZs6YaYD6457eg2IxIOdBv?=
+ =?us-ascii?Q?7su7jYb2WUTMaRy911EI48YcrKGwMwO1CDBiaXgroD4cXHPR71D6EYzjeIYb?=
+ =?us-ascii?Q?z/VMwepLD9lf7vn8TAjYptYISMgBiSm8rlO4nV3NFatUxpG1mm6WRrRhwizR?=
+ =?us-ascii?Q?iKBfNGDaoFQEVhMiEQo8EYE//+jA9rEEAc4GCFDu1cEgx9EvJ6bZ6cVwDoWs?=
+ =?us-ascii?Q?9a5mjFbi77z6Rmp0eDM3J8YOJJg+L+MipGQgfuRKPqk9W1uNnFNN6bzBjvrJ?=
+ =?us-ascii?Q?EJcxVP7FRvoApBnrVpZKNCkb2Weq4/h2rjEg73OD9M+GMoL6/37MgCw7s3oR?=
+ =?us-ascii?Q?By4a+3Q7/WAwHN8zg+gRJ3yONO37YdBlfB7n17DfQdaG82UxpHq7TYW3QtTz?=
+ =?us-ascii?Q?9h2tqblGzuU3LfKxELJ5eNmUZD7bkGg50c84GQ2jneF8FdvUO0qBzFeASOVD?=
+ =?us-ascii?Q?WK7REPnXoVAwxzcEiMlr?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA0PR01MB6171.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(52116012)(376012)(1800799022);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?0iwwBTZAAkvKmohkUEMsSsT0UawwrkZBSvowaZtWo2ioBK2TUOpnpxNvnbui?=
+ =?us-ascii?Q?D1Ox0xwk3JFb/ZY49aWU6GeGcIjaZlKl52iy95V85CKAD5C3xZd6P2laEx9k?=
+ =?us-ascii?Q?y/rrvvGk/ujIyiT0E3TUFxE/IIaRIOfm303H9jJucIpsvG4Gia8ZxpdkOLpl?=
+ =?us-ascii?Q?zizasUNV9kl5qziL5R/AB1anIqBqNwl2aHwjMm18R8nJSsk7mW5jFOimarjG?=
+ =?us-ascii?Q?f8xv7WOu8WkrXLkuTCtgEqh6SDAb1CqTrOHMh0Spp9lvIju3Vm6JuXjxuYcx?=
+ =?us-ascii?Q?0Zn04yfGzQTI6LZHW0aLAEO8P300AU49OQgrjIeF0lTVY/NBzSKm/XS0ciBu?=
+ =?us-ascii?Q?Y4EopzgD7QrIbZ2ccgZ62iZWZUbKQJab7XkbpEytihGgjxXzCCe8GUzX5sJC?=
+ =?us-ascii?Q?frJDe2y7ER7gXX2tF1jqUgPokNpC0ULVGmJbmpJYosSGus+LFDNIAZrdhLXd?=
+ =?us-ascii?Q?bzINNvvilS1z0AMMPGPckgtiSmoc+ThqHIxAAqwjYN/5ENJgYaPfRSI3hASu?=
+ =?us-ascii?Q?0yTMq1uD2G+bXJPiaoOmHBvaj7C6Y0HEGzAx+NUGdtGGCuS59uP81Kg5bRLp?=
+ =?us-ascii?Q?SWS/YBHLFOzp96CW6PCcrVVVmBCBWohAMfnofcl7BJbJcNwOS8LDWo24lyDC?=
+ =?us-ascii?Q?14J6gPp4OXqf5/D7Q/WQ7FCwrxtYiM4mguewrb6fLNlXAdT5A0MNTnmm6ogK?=
+ =?us-ascii?Q?9WsK1BJ84v/nxsPB15bioIXm7qc/SsAsEiS0bN/1XhM/4nkPh3pMymSDD97m?=
+ =?us-ascii?Q?9Y3LFceMGHNO+fYYMNvkIvf6cVPsahwsTn/wfopu6ml0J8H0AjcbB3jEPhFW?=
+ =?us-ascii?Q?eOCgoWvPx7dChaZvBbRJ8TAnCA63pQfnpbu01vnJRrqAtRpCNnI50sLEtn9s?=
+ =?us-ascii?Q?rVvKLV5KD/7Lwz4SoO/Zzxh+x4was4B2Cy5yU+boLUuvauADTbshgpU2gW+J?=
+ =?us-ascii?Q?f0yVe/MU1lNkCDCflyY5/KOKT/jI4nIxQPhB73LEFB7idpqMie4dVU21SY3u?=
+ =?us-ascii?Q?TaWJLnazJgQmpgVwFXlKUA8QoigzmlBiUW883MJJkrWESa3cpaYI8NP5vOEJ?=
+ =?us-ascii?Q?/BY61hQIWx7+HIrOot5ZpEZktLVZElXf2bHqmwuPkTDKm9gacwGk/3lPuIyj?=
+ =?us-ascii?Q?vTc+cMYFRnLSs1zp5McT/BSW8yFMxUW5GaQ2stYdsMNI9yqTAwYPTvZtCK6T?=
+ =?us-ascii?Q?W5L2fikEs4rfaBGD91EZ+/D0N/rQmY4moqKF/lEXqBymJ9MbxDsie4qAVmQx?=
+ =?us-ascii?Q?YI7dITMFqp8+fhGY5T/GCymi0Nmgc7TV7KvaB3iUk1T87s1j6qEIq1CQ5rbH?=
+ =?us-ascii?Q?IaM0DTe3KzLx84VKFcP1YTZZ5kQYbHLr5WtkR7dhMGS2oOxMjJGNEkdxETW0?=
+ =?us-ascii?Q?XnUZfFQe0T4nNGr/5udwFwiqQ8Nt0jCtRwG5GnbaYcanXtwboVMPMPyz3Ww+?=
+ =?us-ascii?Q?dd5pkv1hwwYIpQKSsdCdPxUgKUxYCMlc5MoT0ivGoTZTZOcNwJokSvHOGcSI?=
+ =?us-ascii?Q?EcHy7RkLgJRSBmJU8tV5HM0jc3pIVrE4TfaApTlQS4QgI19J3gVUxZIO/zOu?=
+ =?us-ascii?Q?6bqyLe4qp+GIVOIIkxbiESOFMfREMqNcKGkju0kw9L6jXHhtodxef89vTmlq?=
+ =?us-ascii?Q?mCnPX0Qb5LedNahNWOcKp08QnRc6H0BljtOGjk/NgroOLNxSX5LC1yMds42D?=
+ =?us-ascii?Q?BjTaqQV0lDePTDwbKHqAdTnBEjc=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3b548d25-48d5-46f3-5f12-08dc954820c2
+X-MS-Exchange-CrossTenant-AuthSource: SA0PR01MB6171.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 18:53:40.1545
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: TOVGVc8LAeQ7R6QjrvqFfsJabFA2knVyoYYNtNIjLnAyxzgtoKSVe5QT90iYzZIHUC34TNUdIGXMLHB2guBXR2lVRQWaWV0zBpEH+0x9OyWc9s8e+xxoKt20f+kyTYw7
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR01MB8070
 
-On Fri, Jun 21, 2024 at 09:23:25AM -0700, Dave Hansen wrote:
-> On 6/21/24 02:49, Alexander Potapenko wrote:
-> >  config LOCK_DEBUGGING_SUPPORT
-> >  	bool
-> > -	depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-> > +	depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT && !KMSAN
-> >  	default y
-> 
-> This kinda stinks.  Practically, it'll mean that anyone turning on KMSAN
-> will accidentally turn off lockdep.  That's really nasty, especially for
-> folks who are turning on debug options left and right to track down
-> nasty bugs.
-> 
-> I'd *MUCH* rather hide KMSAN:
-> 
-> config KMSAN
->         bool "KMSAN: detector of uninitialized values use"
->         depends on HAVE_ARCH_KMSAN && HAVE_KMSAN_COMPILER
->         depends on DEBUG_KERNEL && !KASAN && !KCSAN
->         depends on !PREEMPT_RT
-> +	depends on !LOCKDEP
-> 
-> Because, frankly, lockdep is way more important than KMSAN.
-> 
-> But ideally, we'd allow them to coexist somehow.  Have we even discussed
-> the problem with the lockdep folks?  For instance, I'd much rather have
-> a relaxed lockdep with no checking in pfn_valid() than no lockdep at all.
+From: Adam Young <admiyo@os.amperecomputing.com>
 
-The only locks used in pfn_valid() are rcu_read_lock_sched(), right? If
-so, could you try (don't tell Paul ;-)) replace rcu_read_lock_sched()
-with preempt_disable() and rcu_read_unlock_sched() with
-preempt_enable()? That would avoid calling into lockdep. If that works
-for KMSAN, we can either have a special rcu_read_lock_sched() or call
-lockdep_recursion_inc() in instrumented pfn_valid() to disable lockdep
-temporarily.
+This series adds support for the Management Control Transport Protocol (MCTP)
+over the Platform Communication Channel (PCC) mechanism.
 
-[Cc Paul]
+MCTP defines a communication model intended to
+facilitate communication between Management controllers
+and other management controllers, and between Management
+controllers and management devices
 
-Regards,
-Boqun
+PCC is a mechanism for communication between components within
+the  Platform.  It is a composed of shared memory regions,
+interrupt registers, and status registers.
+
+The MCTP over PCC driver makes use of two PCC channels. For
+sending messages, it uses a Type 3 channel, and for receiving
+messages it uses the paired Type 4 channel.  The device
+and corresponding channels are specified via ACPI.
+
+The first patch in the series implements a mechanism to allow the driver
+to indicate whether an ACK should be sent back to the caller
+after processing the interrupt.  This is an optional feature in
+the PCC code, but has been made explicitly required in another driver.
+The implementation here maintains the backwards compatibility of that
+driver.
+
+The second patch in the series is the required change from ACPICA
+code that will be imported into the Linux kernel when synchronized
+with the ACPICA repository. It ahs already merged there and will
+be merged in as is.  It is included here so that the patch series
+can run and be tested prior to that merge.
+
+Previous Version:
+https://lore.kernel.org/20240619200552.119080-1-admiyo@os.amperecomputing.com/
+
+Changes in V3
+- removed unused header
+- removed spurious space
+- removed spurious semis after functiomns
+- removed null assignment for init
+- remove redundant set of device on skb
+- tabify constant declarations
+- added  rtnl_link_stats64 function
+- set MTU to minimum to start
+- clean up logic on driver removal
+- remove cast on void * assignment
+- call cleanup function directly
+- check received length before allocating skb
+- introduce symbolic constatn for ACK FLAG MASK
+- symbolic constant for PCC header flag.
+- Add namespace ID to PCC magic
+- replaced readls with copy from io of PCC header
+- replaced custom modules init and cleanup with ACPI version
+
+Changes in V2
+
+- All Variable Declarations are in reverse Xmass Tree Format
+- All Checkpatch Warnings Are Fixed
+- Removed Dead code
+- Added packet tx/rx stats
+- Removed network physical address.  This is still in
+  disucssion in the spec, and will be added once there
+  is consensus. The protocol can be used with out it.
+  This also lead to the removal of the Big Endian
+  conversions.
+- Avoided using non volatile pointers in copy to and from io space
+- Reorderd the patches to put the ACK check for the PCC Mailbox
+  as a pre-requisite.  The corresponding change for the MCTP
+  driver has been inlined in the main patch.
+- Replaced magic numbers with constants, fixed typos, and other
+  minor changes from code review.
+
+Code Review Change not made
+
+- Did not change the module init unload function to use the
+  ACPI equivalent as they do not remove all devices prior
+  to unload, leading to dangling references and seg faults.
+
+Adam Young (3):
+  mctp pcc: Check before sending MCTP PCC response ACK
+  mctp pcc: Allow PCC Data Type in MCTP resource.
+  mctp pcc: Implement MCTP over PCC Transport
+
+ drivers/acpi/acpica/rsaddr.c |   2 +-
+ drivers/mailbox/pcc.c        |   6 +-
+ drivers/net/mctp/Kconfig     |  13 ++
+ drivers/net/mctp/Makefile    |   1 +
+ drivers/net/mctp/mctp-pcc.c  | 343 +++++++++++++++++++++++++++++++++++
+ include/acpi/pcc.h           |   1 +
+ 6 files changed, 364 insertions(+), 2 deletions(-)
+ create mode 100644 drivers/net/mctp/mctp-pcc.c
+
+-- 
+2.34.1
+
 
