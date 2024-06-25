@@ -1,96 +1,108 @@
-Return-Path: <linux-kernel+bounces-228415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6544915FA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:11:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B26EF915F9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:10:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 441D92849E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:11:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A74B284EA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:09:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B6341494DE;
-	Tue, 25 Jun 2024 07:08:30 +0000 (UTC)
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E73714831F;
+	Tue, 25 Jun 2024 07:07:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ipv+GCo/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="T+H7/aRC"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE58146A61;
-	Tue, 25 Jun 2024 07:08:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E5E7148307;
+	Tue, 25 Jun 2024 07:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719299309; cv=none; b=BIxIWy3WnY7SvmdQbwA+iBhhrwDinhyyepnJvew764t52XkMghOiEPvSJoiDMqBwASFlDZVts9TG8PTGyWPhSYyIFSwb+fATuntgjluP5XPOjxAnYTElo/MSuOphnVwi+LHtRoUWKPcxOp1rNLWcfFHYRuCLUVFxskAgedZRT0M=
+	t=1719299254; cv=none; b=CgF7xiSX1v6iwpcNwl4VQoaFlx62cjuLEB2zaj4i0WGNPBVBMoijEuZk31wI8RmReVn+nMjwZj/sKW0nCYVNagOtt6xyHnotDanHnoQydZPncyqLH18Iiq7dXGrbdcMg2CcQt2SDUQB8YtNQ31/WUunh0fDf9bUozt+eDOKjbqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719299309; c=relaxed/simple;
-	bh=jAhgjQFN+adi60g26UrrBz1dnQ/ZYDx4EBX/2olRQIk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QUTJq1HZrjlFcc1mkcq3ssXobArjOyoTxQw9lwyXwOrCBAUxmRPgWH+RRhvvPScyM4lpAUQzwnnfCAxzbQlvyoB0B/W0hv6dk/4VNPlXG1NXkjyWShOwsnYif78hEjdkrJPfJr0+TcdO8vZrpXwEFOPdrBtoEkmMyRKnbPyGWcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.207.19.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-X-QQ-mid: bizesmtp81t1719299249tfmqd336
-X-QQ-Originating-IP: YsTpw8TXEcRnmEuuIyqSvNkkmr5rT8eEDSQNnxCh5hw=
-Received: from localhost.localdomain ( [113.57.152.160])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 25 Jun 2024 15:07:28 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 1584190134348375892
-From: tuhaowen <tuhaowen@uniontech.com>
-To: stern@rowland.harvard.edu,
-	gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org,
-	usb-storage@lists.one-eyed-alien.net,
-	linux-kernel@vger.kernel.org,
-	wangyuli@uniontech.com,
-	tuhaowen <tuhaowen@uniontech.com>
-Subject: [PATCH] drv/usb: Fix the issue with Realtek USB wireless adapter AC650
-Date: Tue, 25 Jun 2024 15:07:24 +0800
-Message-Id: <20240625070724.22044-1-tuhaowen@uniontech.com>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1719299254; c=relaxed/simple;
+	bh=dGrZjtVSHKU5+GCBAYFSpZpDnRcUS3c9ECKW1gTcYsQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=U/QZGgpTloWgU+N4ExkC9oMynLJ0vEyzd8p43yW65WDZsBrjGDlka7cA1biQRW1dx/CtFtZzX3/bZoGzyTxuUdwDWbWGutBBqYbf9M9rbcDZ6jSYi5wmcTfkgWrC9dfFdfpnoAMXg1o3YTa4wFZZrOaTJz2yfefg12dqoMyICoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ipv+GCo/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=T+H7/aRC; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719299250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iSI7fj3SMbgXLwqwSqXjXKJNJqsQgRCaFKgsC6I5fZU=;
+	b=ipv+GCo/a3XKt1bVhJ8qHmQ5iX9Y3xQeAwTl/NVuKmfo3NwwWPQ4ZG+8oJfO6PUR/YrrRV
+	qzcPbG2cqMmLO3jzlf3kxT3KrpJ/HSBr8DwOgIHJ0Zgo770WTAClKqwUE8pJyIpRtpqsn8
+	+C/RtY6LHcyXj61YjXH+LSSOOy5L0Jf6l7lVR71qp5J06nzqXRsc7BifCtuuC2chCMIfHK
+	ccTgrQBT55cPvqX827TetCpeLSAFybY18O4YDXVtuwUBajpQN7AR3PWlzYPZV8FLPAIswh
+	6z/3dQxrXIDT1lvoBnoMiLHntKaIo4Gg4iHl5Ud9S94WGbOl3GhdeumZ5Ssxaw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719299250;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iSI7fj3SMbgXLwqwSqXjXKJNJqsQgRCaFKgsC6I5fZU=;
+	b=T+H7/aRCp62Ttz3TJuYUoPdXWA9RMxgNdzwdKonscOY2UYnMchLq93iXOKqY8hFfo3KAYU
+	fYuHJypFsZD1HqDw==
+To: Hannes Reinecke <hare@suse.de>, Daniel Wagner <dwagner@suse.de>,
+ Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, Sagi
+ Grimberg <sagi@grimberg.me>, Frederic Weisbecker <fweisbecker@suse.com>,
+ Mel Gorman <mgorman@suse.de>, Sridhar Balaraman
+ <sbalaraman@parallelwireless.com>, "brookxu.cn" <brookxu.cn@gmail.com>,
+ Ming Lei <ming.lei@redhat.com>, linux-kernel@vger.kernel.org,
+ linux-block@vger.kernel.org, linux-nvme@lists.infradead.org
+Subject: Re: [PATCH 1/3] sched/isolation: Add io_queue housekeeping option
+In-Reply-To: <55315fc9-4439-43b0-a4d2-89ab4ea598f0@suse.de>
+References: <20240621-isolcpus-io-queues-v1-0-8b169bf41083@suse.de>
+ <20240621-isolcpus-io-queues-v1-1-8b169bf41083@suse.de>
+ <20240622051156.GA11303@lst.de>
+ <x2mjbnluozxykdtqns47f37ssdkziovkdzchon5zkcadgkuuif@qloym5wjwomm>
+ <20240624084705.GA20292@lst.de>
+ <sjna556zvxyyj6as5pk6bbgmdwoiybl4gubqnlrxyfdvhbnlma@ewka5cxxowr7>
+ <55315fc9-4439-43b0-a4d2-89ab4ea598f0@suse.de>
+Date: Tue, 25 Jun 2024 09:07:30 +0200
+Message-ID: <878qyt7b65.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+Content-Type: text/plain
 
-Due to the dual-mode functionality of the Realtek USB wireless
-adapter AC650, it initially presents itself as a flash drive
-before the driver is installed.
+On Tue, Jun 25 2024 at 08:37, Hannes Reinecke wrote:
+> On 6/24/24 11:00, Daniel Wagner wrote:
+>> On Mon, Jun 24, 2024 at 10:47:05AM GMT, Christoph Hellwig wrote:
+>>>> Do you think we should introduce a new type or just use the existing
+>>>> managed_irq for this?
+>>>
+>>> No idea really.  What was the reason for adding a new one?
+>> 
+>> I've added the new type so that the current behavior of spreading the
+>> queues over to the isolated CPUs is still possible. I don't know if this
+>> a valid use case or not. I just didn't wanted to kill this feature it
+>> without having discussed it before.
+>> 
+>> But if we agree this doesn't really makes sense with isolcpus, then I
+>> think we should use the managed_irq one as nvme-pci is using the managed
+>> IRQ API.
+>> 
+> I'm in favour in expanding/modifying the managed irq case.
+> For managed irqs the driver will be running on the housekeeping CPUs 
+> only, and has no way of even installing irq handlers for the isolcpus.
 
-In Linux, multi-state devices are recognized as storage devices
-on startup because the driver has not yet been loaded.
+Yes, that's preferred, but please double check with the people who
+introduced that in the first place.
 
-As a result, the AC650 is identified as a DISK device at boot,
-preventing the use of its WLAN mode. The issue can only be
-resolved by unplugging and replugging the adapter.
+Thanks,
 
-Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
----
- drivers/usb/storage/unusual_devs.h | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/usb/storage/unusual_devs.h b/drivers/usb/storage/unusual_devs.h
-index fd68204374f2..f660d3e52436 100644
---- a/drivers/usb/storage/unusual_devs.h
-+++ b/drivers/usb/storage/unusual_devs.h
-@@ -1487,6 +1487,12 @@ UNUSUAL_DEV( 0x0bc2, 0x3332, 0x0000, 0x9999,
- 		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
- 		US_FL_NO_WP_DETECT ),
- 
-+UNUSUAL_DEV(0x0bda, 0x1a2b, 0x0000, 0x9999,
-+		"Realtek",
-+		"USB Network Device",
-+		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
-+		US_FL_IGNORE_DEVICE),
-+
- UNUSUAL_DEV(  0x0d49, 0x7310, 0x0000, 0x9999,
- 		"Maxtor",
- 		"USB to SATA",
--- 
-2.20.1
-
+        tglx
 
