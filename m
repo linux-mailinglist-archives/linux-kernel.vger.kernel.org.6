@@ -1,56 +1,72 @@
-Return-Path: <linux-kernel+bounces-229630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E35EF917211
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:02:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83605917217
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:02:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DC4E1F216FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:02:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B31AD1C25377
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:02:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1521717F393;
-	Tue, 25 Jun 2024 19:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC85717E46C;
+	Tue, 25 Jun 2024 19:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="n3Wtluo9"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="MIOkeoC9"
+Received: from smtp-fw-80008.amazon.com (smtp-fw-80008.amazon.com [99.78.197.219])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4339117D8BE;
-	Tue, 25 Jun 2024 19:57:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EAC417D37E;
+	Tue, 25 Jun 2024 19:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.219
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719345479; cv=none; b=J/BLgAbjZSaWnHpIpy85qSzgaElTo7ulwT7Tbt47Ogmfe+BPyWbNLexpq31kwR/RgBqBXkJYYZkNGuWavI/xnNcov/9GszvdlAYVG/1uOaMObD3eNwn4wTnY4zimW7HfEk8KlFvbPH/8E9aXzgxxxqY7EJcYf+WU1oHPJMWqci8=
+	t=1719345556; cv=none; b=eYAC/rIsd5SGN75HEt3YlQ0kYwjAxB2d+uUKz85UbPyAOWQ4CcNtwiydUw6mnoXbaG9PIzh5hfjj7GTzm7cMFi/xj6+1jlKszD7auUuODo1cgjhuhRNu/365nSs9PJUmaxVyzz8hKmLOyFjbcIGuNK1C8jkEWq07hDvjNDqTm5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719345479; c=relaxed/simple;
-	bh=5WXuGLJgM+QtAIwqwDjoNKPak65DDHF2eYjfAS6luTg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=trdKc/wcx9WuQiHNyRmllnAKxlkTkWI5k6KzeQ8KpJe2ezDjfA9Hul+8PY+m42NcwtpNxxqxVqiMRfuOKSHzDN/9OiQJ8D8lTka9csum5gimfu8gDFF6fdB37yTwehOfJYZ5iTs63e6m4l1VuIB68sPo8f5CjPygvCU5JO/8xJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=n3Wtluo9; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id A053B1FACA;
-	Tue, 25 Jun 2024 21:57:52 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1719345472;
-	bh=mTXmTyJB6Z16tkKRKJPTeo4y+EeQ33t7StEL4G7pefM=; h=From:To:Subject;
-	b=n3Wtluo9CY/ZpmDsBaRaLJGIdRIlFtqyG8HeR+smMxSV4SlPj0P+LjDIYhrwdLzWw
-	 6fazspF2nXAI2Zv15SnmQqnoleC3a3yhzDeh86uF9FVfW3OJjCSSuexlvGVMR7hx3t
-	 GtCy9CfuTHTd4B8eIA0j/NMHk0GNe3bCzpx+sCfeoSIuGFI7+qA4wa6CQoabuE+JZn
-	 DZiDXBcLRGvr411TY4HVOVejjRPmCzXOe/HvGgXG8h7f2B+Lvr1bob8C9+DLbD4Zio
-	 p+f+kJjbBoqDv8sGNtE3/s8SSKnZp06CmXXdavn/fWb3bJVkD1iWCR3oDGUcRjACoq
-	 C8RASSzdAC6Ww==
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] hwrng: Kconfig - Do not enable by default CN10K driver
-Date: Tue, 25 Jun 2024 21:57:46 +0200
-Message-Id: <20240625195746.48905-1-francesco@dolcini.it>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1719345556; c=relaxed/simple;
+	bh=ZOz8lyWN2kgHyZJOCeL+C/MiTWY1XJbAbPRQYE6+Z3M=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Y74ItxKhc28hLr6ZKbMlipv2thqONujTvbpLVLI/sGnQ/A5MMZTMRXn38HUN/nasGRSkpvtCIvVR6X2406yEyS/E1jtavn0oCpaSb8UZ5y/nYkPAF9135952JXW4Ot9nkjee/R244Fn+wmV9ppGl5Fl6+iYaeM8gc0jJHupSff0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=MIOkeoC9; arc=none smtp.client-ip=99.78.197.219
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1719345554; x=1750881554;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=kishX8nABOvSFBWLgjMLQIC7J+lezddID4sm2eyUYT8=;
+  b=MIOkeoC9s64uk9I9T76vAnneNNmKOzOOu6kCISiu19Ti7ksMC4rzR3bU
+   szJdp0wQ/WMKb9Dk20RTPD371pOBfl5OektvBoxyNE83AlaNjcG0oF5UV
+   JKmsjo1M1V/kRdvrrPKajNjmD5AmR1zWs82XnIZJLgbaM6Q0lRrW1x+VA
+   4=;
+X-IronPort-AV: E=Sophos;i="6.08,264,1712620800"; 
+   d="scan'208";a="99511191"
+Received: from pdx4-co-svc-p1-lb2-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.214])
+  by smtp-border-fw-80008.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 19:59:12 +0000
+Received: from EX19MTAUWB001.ant.amazon.com [10.0.21.151:40898]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.20.169:2525] with esmtp (Farcaster)
+ id 758f2c13-0468-40bf-998a-3e3f37ff1949; Tue, 25 Jun 2024 19:59:12 +0000 (UTC)
+X-Farcaster-Flow-ID: 758f2c13-0468-40bf-998a-3e3f37ff1949
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWB001.ant.amazon.com (10.250.64.248) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 25 Jun 2024 19:59:12 +0000
+Received: from 88665a182662.ant.amazon.com (10.106.100.6) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 25 Jun 2024 19:59:09 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <syoshida@redhat.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<kuniyu@amazon.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <syzkaller@googlegroups.com>
+Subject: Re: [PATCH net] af_unix: Fix uninit-value in __unix_walk_scc()
+Date: Tue, 25 Jun 2024 12:58:48 -0700
+Message-ID: <20240625195849.55006-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240625152713.1147650-1-syoshida@redhat.com>
+References: <20240625152713.1147650-1-syoshida@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,38 +74,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D044UWB004.ant.amazon.com (10.13.139.134) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-From: Francesco Dolcini <francesco.dolcini@toradex.com>
+From: Shigeru Yoshida <syoshida@redhat.com>
+Date: Wed, 26 Jun 2024 00:27:13 +0900
+> KMSAN reported uninit-value access in __unix_walk_scc() [1].
+> 
+> In the list_for_each_entry_reverse() loop, when the vertex's index equals
+> it's scc_index, the loop uses the variable vertex as a temporary variable
+> that points to a vertex in scc. And when the loop is finished, the variable
+> vertex points to the list head, in this case scc, which is a local variable
+> on the stack.
 
-Do not enable by default the CN10K HW random generator driver.
+Thanks for the fix !
 
-CN10K Random Number Generator is available only on some specific
-Marvell SoCs, however the driver is in practice enabled by default on
-all arm64 configs.
+More precisely, it's not even scc and might underflow the call
+stack of __unix_walk_scc():
 
-Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
----
-as an alternative I could propose
+  container_of(&scc, struct unix_vertex, scc_entry)
 
-default HW_RANDOM if ARCH_THUNDER=y
 
----
- drivers/char/hw_random/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+> 
+> However, the variable vertex is used under the label prev_vertex. So if the
+> edge_stack is not empty and the function jumps to the prev_vertex label,
+> the function will access invalid data on the stack. This causes the
+> uninit-value access issue.
+> 
+> Fix this by introducing a new temporary variable for the loop.
+> 
+> [1]
+> BUG: KMSAN: uninit-value in __unix_walk_scc net/unix/garbage.c:478 [inline]
+> BUG: KMSAN: uninit-value in unix_walk_scc net/unix/garbage.c:526 [inline]
+> BUG: KMSAN: uninit-value in __unix_gc+0x2589/0x3c20 net/unix/garbage.c:584
+>  __unix_walk_scc net/unix/garbage.c:478 [inline]
 
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index 442c40efb200..01e2e1ef82cf 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -555,7 +555,6 @@ config HW_RANDOM_ARM_SMCCC_TRNG
- config HW_RANDOM_CN10K
-        tristate "Marvell CN10K Random Number Generator support"
-        depends on HW_RANDOM && PCI && (ARM64 || (64BIT && COMPILE_TEST))
--       default HW_RANDOM
-        help
- 	 This driver provides support for the True Random Number
- 	 generator available in Marvell CN10K SoCs.
--- 
-2.39.2
+Could you validate the test case below without/with your patch
+and post it within v2 with your SOB tag ?
 
+I ran the test below and confrimed the bug with a manual WARN_ON()
+but didn't see KMSAN splat, so what version of clang do you use ?
+
+---8<---
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+Date: Tue, 25 Jun 2024 19:46:59 +0000
+Subject: [PATCH] selftest: af_unix: Add test case for backtrack after
+ finalising SCC.
+
+syzkaller reported a KMSAN splat in __unix_walk_scc() while backtracking
+edge_stack after finalising SCC.
+
+Let's add a test case exercising the path.
+
+Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+
+diff --git a/tools/testing/selftests/net/af_unix/scm_rights.c b/tools/testing/selftests/net/af_unix/scm_rights.c
+index 2bfed46e0b19..d66336256580 100644
+--- a/tools/testing/selftests/net/af_unix/scm_rights.c
++++ b/tools/testing/selftests/net/af_unix/scm_rights.c
+@@ -14,12 +14,12 @@
+ 
+ FIXTURE(scm_rights)
+ {
+-	int fd[16];
++	int fd[32];
+ };
+ 
+ FIXTURE_VARIANT(scm_rights)
+ {
+-	char name[16];
++	char name[32];
+ 	int type;
+ 	int flags;
+ 	bool test_listener;
+@@ -172,6 +172,8 @@ static void __create_sockets(struct __test_metadata *_metadata,
+ 			     const FIXTURE_VARIANT(scm_rights) *variant,
+ 			     int n)
+ {
++	ASSERT_LE(n * 2, sizeof(self->fd) / sizeof(self->fd[0]));
++
+ 	if (variant->test_listener)
+ 		create_listeners(_metadata, self, n);
+ 	else
+@@ -283,4 +285,23 @@ TEST_F(scm_rights, cross_edge)
+ 	close_sockets(8);
+ }
+ 
++TEST_F(scm_rights, backtrack_from_scc)
++{
++	create_sockets(10);
++
++	send_fd(0, 1);
++	send_fd(0, 4);
++	send_fd(1, 2);
++	send_fd(2, 3);
++	send_fd(3, 1);
++
++	send_fd(5, 6);
++	send_fd(5, 9);
++	send_fd(6, 7);
++	send_fd(7, 8);
++	send_fd(8, 6);
++
++	close_sockets(10);
++}
++
+ TEST_HARNESS_MAIN
+---8<---
 
