@@ -1,222 +1,142 @@
-Return-Path: <linux-kernel+bounces-228543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228545-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C82791617C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:40:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBDEE91617E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D37091F21415
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:40:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FC6AB26185
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:40:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2208A148829;
-	Tue, 25 Jun 2024 08:40:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B4B4148838;
+	Tue, 25 Jun 2024 08:40:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="NWYItuT/"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eGBtcii0"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEB51487D8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 945CA148832
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719304807; cv=none; b=O8qRhdVVP9+kFTS449kQ+WeVXr/r4bO+al98Gp1EksJAakWt1p55a8uROSbqRbavA/fBBjAa1WKb4Naj5yWdjkoCxBg31Wcmr0I59YlWw5WWvtTMo0Rnvlib1/mOq6kAfxFNXz6rhaS3Nunz21zxCGL7zJqpEEUN8g5Bf2dL/g0=
+	t=1719304828; cv=none; b=M3xU7vv1DMhULaNK/OIPmaVnnigtWuIiLXvlqMu5apfdujmbUKtwzgo6Ka/4bV0+AJg+ZR7bR5OhA6CiwSkK8DvXexbuHBdrnt1TRx1Fw92AT1C88Ea73dCm9+IBr2dcnIwEDogei3XU2/kQZb77TvZn64HcbxRAhTs7vuMm18k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719304807; c=relaxed/simple;
-	bh=aCU7F80QRCvZK9ERBs+1z/isxE3iEOP4UYkzLyOszNo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a9R4LbmJdITMW6uY2m6F7pOujhg6nh9WpdhwXMefpMiOXTVvQg7MrK+bjO38dBuIhYajXsOKFTxTjMZr14tDKcZ9NoRWgdAFSlnNBXhkZjwnEzbxJ7ez0gxgzcUZkeOrvcy9dW0evpYrtKJsLgOIdv8corlUpwfFpco60KdB7OY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=NWYItuT/; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 82060bac32ce11ef8da6557f11777fc4-20240625
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=P6NGLArjM/jU5V8YJGX2B1WlLVZG4c754OTzUfKkh2M=;
-	b=NWYItuT/8PY92qGnJ8xdpDMBi5qhVJrOSKSGhCvE3RZHKe6AkJgopVetG4LnQZTM9v5fCeDr/Fj8K3x1C5K3VYNOLE+8ei+gzq7jOWFuiq5L9prbMqIP7jiJQOjfjgM6xpqYJRK3cuu7pxc+I7zkLJdibs1P//ncxs8H2CBi6uQ=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.39,REQID:cb501b69-c089-4d6c-a0fc-36401257f995,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:393d96e,CLOUDID:f00dff44-4544-4d06-b2b2-d7e12813c598,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 82060bac32ce11ef8da6557f11777fc4-20240625
-Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 51181535; Tue, 25 Jun 2024 16:39:59 +0800
-Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
- mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Tue, 25 Jun 2024 16:39:58 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Tue, 25 Jun 2024 16:39:58 +0800
-From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-To: Jassi Brar <jassisinghbrar@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Chun-Kuang Hu
-	<chunkuang.hu@kernel.org>
-CC: Matthias Brugger <matthias.bgg@gmail.com>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	Jason-ch Chen <jason-ch.chen@mediatek.com>, "Jason-JH . Lin"
-	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Nancy
- Lin <nancy.lin@mediatek.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Hsiao Chien Sung
-	<shawn.sung@mediatek.com>
-Subject: [PATCH] soc: mtk-cmdq: Add cmdq_pkt_logic_command to support math operation
-Date: Tue, 25 Jun 2024 16:39:57 +0800
-Message-ID: <20240625083957.3540-1-jason-jh.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1719304828; c=relaxed/simple;
+	bh=H0GBfM58+YQiml4VxIdC28FHy6s9KdUDhokOUjeIMWQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=udSmNF6swADmtDzN1UdJGSUoqXFNZwHjRX2hXAsIbtsu/rvDAiZzcC4d6wRypzq1w2wWTzFaLHJzf+otBAu9bXjiWZ2dT2saUQaq090uRsQACtFwVbi6myUGQyc9xmcA+lEEovGY64mANywxmlyEWSFWnEqHlShjE5Fb6yTRz8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eGBtcii0; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719304826; x=1750840826;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=H0GBfM58+YQiml4VxIdC28FHy6s9KdUDhokOUjeIMWQ=;
+  b=eGBtcii0SvM2fjLOuQ9sTEjgGeEj4f8osvSrxCqDYW1u3F49N6jL4eLM
+   U2yKFBFT7JbKvofWtGmnpNQrDohdpMq8NJy2bRpSY/K5B0m2866TMFVfe
+   u21spkVoxlE4trK37PdbEA9TjHWgVsUQyHbNvP7ZdTfz5muTvLwC21crV
+   gK9yTx8YOCpqwkPEmhebw7lW3MRH0DcHY1cuhXNmelq9TvQxJY/ZTwlN3
+   OTJat5hXxhsNSYXwOE/A6QfmqEdq0nr1qQzxkIac5HG2Egzz9MR3p4xdS
+   y+ny3EzKkvC6+muhVMn34pSDgcdlf6YGJnECQ8vL3fxrYqOctSHSyS4Ac
+   g==;
+X-CSE-ConnectionGUID: 1ItLB+yHR0ClrJcVHaLD6A==
+X-CSE-MsgGUID: AAAKgfpqRfG8FkABGbFQSw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="16063711"
+X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
+   d="scan'208";a="16063711"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 01:40:26 -0700
+X-CSE-ConnectionGUID: HMnY4KrCSBSem8ysH9srPQ==
+X-CSE-MsgGUID: 3sBzE1SYQE2YHQf+Dc9XHA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
+   d="scan'208";a="74339718"
+Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.237.100]) ([10.124.237.100])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 01:40:24 -0700
+Message-ID: <55d50738-cbb6-4bf5-8748-1b1c8c2de21e@linux.intel.com>
+Date: Tue, 25 Jun 2024 16:40:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK: N
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>,
+ "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] iommu/vt-d: Remove hardware automatic ATS dependency
+To: "Tian, Kevin" <kevin.tian@intel.com>, Joerg Roedel <joro@8bytes.org>,
+ "Liu, Yi L" <yi.l.liu@intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>
+References: <20240624052501.253405-1-baolu.lu@linux.intel.com>
+ <20240624052501.253405-2-baolu.lu@linux.intel.com>
+ <BN9PR11MB5276C8112DEF56C11CFC6F198CD52@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <BN9PR11MB5276C8112DEF56C11CFC6F198CD52@BN9PR11MB5276.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add cmdq_pkt_logic_command to support math operation.
+On 2024/6/25 10:32, Tian, Kevin wrote:
+>> From: Lu Baolu<baolu.lu@linux.intel.com>
+>> Sent: Monday, June 24, 2024 1:25 PM
+>>
+>> If a device is listed in the SATC table with ATC_REQUIRED flag set, it
+>> indicates that the device has a functional requirement to enable its ATC
+>> (via the ATS capability) for device operation. However, when IOMMU is
+>> running in the legacy mode, ATS could be automatically supported by the
+>> hardware so that the OS has no need to support the ATS functionality.
+> hmm I don't think "has no need to support" matches...
+> 
+>> This is a backward compatibility feature which enables older OSs. Since
+>> Linux VT-d implementation has already supported ATS features for a long
+>> time, there is no need to rely on this compatibility hardware. Remove it
+>> to make the driver future-proof.
+>>
+>> Signed-off-by: Lu Baolu<baolu.lu@linux.intel.com>
+>> ---
+>>   drivers/iommu/intel/iommu.c | 9 +--------
+>>   1 file changed, 1 insertion(+), 8 deletions(-)
+>>
+>> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+>> index 07e394dfccc1..b63347c8bf5d 100644
+>> --- a/drivers/iommu/intel/iommu.c
+>> +++ b/drivers/iommu/intel/iommu.c
+>> @@ -3056,14 +3056,7 @@ static bool dmar_ats_supported(struct pci_dev
+>> *dev, struct intel_iommu *iommu)
+>>   	dev = pci_physfn(dev);
+>>   	satcu = dmar_find_matched_satc_unit(dev);
+>>   	if (satcu)
+>> -		/*
+>> -		 * This device supports ATS as it is in SATC table.
+>> -		 * When IOMMU is in legacy mode, enabling ATS is done
+>> -		 * automatically by HW for the device that requires
+>> -		 * ATS, hence OS should not enable this device ATS
+>> -		 * to avoid duplicated TLB invalidation.
+>> -		 */
+> ...what above comment tries to convey.
+> 
+> If this comment is valid, it's not about whether the OS itself supports
+> ATS. instead it's a requirement for the OS to not manage ATS when
+> it's already managed by HW.
+> 
+> Unless there is a way to disable hw management with this change...
 
-cmdq_pkt_logic_command can append logic command to the CMDQ packet,
-ask GCE to execute a arithmetic calculate instruction,
-such as add, subtract, multiply, AND, OR and NOT, etc.
+This comment is not correct. The hardware automatic ATS is for older OS
+compatible purposes, where the ATS is not aware of by the OS yet, but
+ATS is functionally required for some SOC-integrated accelerators.
 
-Note that all arithmetic instructions are unsigned calculations.
-If there are any overflows, GCE will sent the invalid IRQ to notify
-CMDQ driver.
+The HAS specification for those platforms states that OSs supporting ATS
+(so-called enlightened OSs) don't require automatic ATS anymore.
 
-Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
-Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
----
- drivers/soc/mediatek/mtk-cmdq-helper.c | 34 +++++++++++++++++++++
- include/linux/soc/mediatek/mtk-cmdq.h  | 42 ++++++++++++++++++++++++++
- 2 files changed, 76 insertions(+)
+ From the iommu driver's point of view, automatic ATS is not part of the
+VT-d spec and also not enumerable, hence it should be transparent.
 
-diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
-index 046522664dc1..f3cd15387f2d 100644
---- a/drivers/soc/mediatek/mtk-cmdq-helper.c
-+++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
-@@ -15,6 +15,7 @@
- /* dedicate the last GPR_R15 to assign the register address to be poll */
- #define CMDQ_POLL_ADDR_GPR	(15)
- #define CMDQ_EOC_IRQ_EN		BIT(0)
-+#define CMDQ_IMMEDIATE_VALUE	0
- #define CMDQ_REG_TYPE		1
- #define CMDQ_JUMP_RELATIVE	0
- #define CMDQ_JUMP_ABSOLUTE	1
-@@ -45,6 +46,16 @@ struct cmdq_instruction {
- 	u8 op;
- };
- 
-+static inline u8 cmdq_operand_get_type(struct cmdq_operand *op)
-+{
-+	return op->reg ? CMDQ_REG_TYPE : CMDQ_IMMEDIATE_VALUE;
-+}
-+
-+static inline u16 cmdq_operand_get_idx_value(struct cmdq_operand *op)
-+{
-+	return op->reg ? op->idx : op->value;
-+}
-+
- int cmdq_dev_get_client_reg(struct device *dev,
- 			    struct cmdq_client_reg *client_reg, int idx)
- {
-@@ -461,6 +472,29 @@ int cmdq_pkt_poll_addr(struct cmdq_pkt *pkt, dma_addr_t addr, u32 value, u32 mas
- }
- EXPORT_SYMBOL(cmdq_pkt_poll_addr);
- 
-+int cmdq_pkt_logic_command(struct cmdq_pkt *pkt, u16 result_reg_idx,
-+			   struct cmdq_operand *left_operand,
-+			   enum cmdq_logic_op s_op,
-+			   struct cmdq_operand *right_operand)
-+{
-+	struct cmdq_instruction inst = { {0} };
-+
-+	if (!left_operand || !right_operand || s_op >= CMDQ_LOGIC_MAX)
-+		return -EINVAL;
-+
-+	inst.op = CMDQ_CODE_LOGIC;
-+	inst.dst_t = CMDQ_REG_TYPE;
-+	inst.src_t = cmdq_operand_get_type(left_operand);
-+	inst.arg_c_t = cmdq_operand_get_type(right_operand);
-+	inst.sop = s_op;
-+	inst.reg_dst = result_reg_idx;
-+	inst.src_reg = cmdq_operand_get_idx_value(left_operand);
-+	inst.arg_c = cmdq_operand_get_idx_value(right_operand);
-+
-+	return cmdq_pkt_append_command(pkt, inst);
-+}
-+EXPORT_SYMBOL(cmdq_pkt_logic_command);
-+
- int cmdq_pkt_assign(struct cmdq_pkt *pkt, u16 reg_idx, u32 value)
- {
- 	struct cmdq_instruction inst = {};
-diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
-index d4a8e34505e6..5bee6f7fc400 100644
---- a/include/linux/soc/mediatek/mtk-cmdq.h
-+++ b/include/linux/soc/mediatek/mtk-cmdq.h
-@@ -25,6 +25,31 @@
- 
- struct cmdq_pkt;
- 
-+enum cmdq_logic_op {
-+	CMDQ_LOGIC_ASSIGN = 0,
-+	CMDQ_LOGIC_ADD = 1,
-+	CMDQ_LOGIC_SUBTRACT = 2,
-+	CMDQ_LOGIC_MULTIPLY = 3,
-+	CMDQ_LOGIC_XOR = 8,
-+	CMDQ_LOGIC_NOT = 9,
-+	CMDQ_LOGIC_OR = 10,
-+	CMDQ_LOGIC_AND = 11,
-+	CMDQ_LOGIC_LEFT_SHIFT = 12,
-+	CMDQ_LOGIC_RIGHT_SHIFT = 13,
-+	CMDQ_LOGIC_MAX,
-+};
-+
-+struct cmdq_operand {
-+	/* register type */
-+	bool reg;
-+	union {
-+		/* index */
-+		u16 idx;
-+		/* value */
-+		u16 value;
-+	};
-+};
-+
- struct cmdq_client_reg {
- 	u8 subsys;
- 	u16 offset;
-@@ -272,6 +297,23 @@ int cmdq_pkt_poll(struct cmdq_pkt *pkt, u8 subsys,
- int cmdq_pkt_poll_mask(struct cmdq_pkt *pkt, u8 subsys,
- 		       u16 offset, u32 value, u32 mask);
- 
-+/**
-+ * cmdq_pkt_logic_command() - Append logic command to the CMDQ packet, ask GCE to
-+ *		          execute an instruction that store the result of logic operation
-+ *		          with left and right operand into result_reg_idx.
-+ * @pkt:		the CMDQ packet
-+ * @result_reg_idx:	SPR index that store operation result of left_operand and right_operand
-+ * @left_operand:	left operand
-+ * @s_op:		the logic operator enum
-+ * @right_operand:	right operand
-+ *
-+ * Return: 0 for success; else the error code is returned
-+ */
-+int cmdq_pkt_logic_command(struct cmdq_pkt *pkt, u16 result_reg_idx,
-+			   struct cmdq_operand *left_operand,
-+			   enum cmdq_logic_op s_op,
-+			   struct cmdq_operand *right_operand);
-+
- /**
-  * cmdq_pkt_assign() - Append logic assign command to the CMDQ packet, ask GCE
-  *		       to execute an instruction that set a constant value into
--- 
-2.18.0
-
+Best regards,
+baolu
 
