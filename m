@@ -1,225 +1,203 @@
-Return-Path: <linux-kernel+bounces-229013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F11D9169B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:00:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51C5E9169B8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8ED0B258FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:00:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6B921F2755C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483FF16C848;
-	Tue, 25 Jun 2024 13:56:52 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C3716D4C5;
+	Tue, 25 Jun 2024 13:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BFVo98BP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4871649C6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CA3169AE4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719323811; cv=none; b=lYPvU8hvhOIY+zoh7JsuNoEt1nxgyM/s6SF9ZYEfawdpDRQqsK7S7sGIicfDzUTFWA7pACAZKFDe3ZdmMa9aN+1zkWlOiwJ4qD7e3gXETZaldLK10WFAkq8s/2/Qtxjdgzgzd4Nc1EFA5PfFjhPMxvQJW/O174X723oUTRZUw9c=
+	t=1719323909; cv=none; b=N4WdDFswk8AL7wmS6Y4yYNomDRMSTpjJpFYHzPymS5YW7gObn0qNuuQ/3XYYfpcwbnSDZxyBu/Lk61K/T5cY7z6Fwd3C/00N/phDxARyDXK0ks2EFDJcFSv+c8tn7uxQyixJz8wHy5QpCquz8A2cs0pLYi8RsqU3S4thpay/m0g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719323811; c=relaxed/simple;
-	bh=/AP6gEorBpwDQnG344uS3Wlw5D6CjbrUi1vHojLfLBw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=OwtDwVUtk4MTOf0W8GFRF/K/y21i8CkVghUuwhNncgE10q7S0IoG6lJdQ/Bf9M1ux81IkHAM7Hr8DfWq8OFyvCUNGp62yHQNapv57s/s8DdzWXAmXFdDhk5Mv36rODrcrhMI+fipwC3/DnjTxTrn5EjYfbmh7Vf69zJjzOBl/a0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav119.sakura.ne.jp (fsav119.sakura.ne.jp [27.133.134.246])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 45PDuk1Z048237;
-	Tue, 25 Jun 2024 22:56:46 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav119.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp);
- Tue, 25 Jun 2024 22:56:46 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 45PDukUu048233
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 25 Jun 2024 22:56:46 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
-Date: Tue, 25 Jun 2024 22:56:46 +0900
+	s=arc-20240116; t=1719323909; c=relaxed/simple;
+	bh=z/SrKzFh8FsvTvW1LfwzGcSQlXiVohodF0eVYwHlPW0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=roQHZiU3E5qjfsnpByRVcVrCEvLr3jcmo8dhBPJxlzhz8CyCFLIe3VgzszEaGuwZIv2jWzPlW0DIV9GMJtWr8xsEIMQuZ7Zjd1ZdKVRDyKlx7uPuarKakJ4E39UlDO+hLH8+dEIK16AzBDID3SVLN1z3H2yLrVE63TKgR9i5pkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BFVo98BP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F6C0C32781;
+	Tue, 25 Jun 2024 13:58:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719323908;
+	bh=z/SrKzFh8FsvTvW1LfwzGcSQlXiVohodF0eVYwHlPW0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BFVo98BP1EpOONpMW26fOQOBm4cwNPwIzH9LM1svSb4OgBjgSQwmp6/8tZtb9wyHO
+	 3AGWJAcLChikXIa9hIxaiUmhBt9h4/mtqaobnzZ69jT7iP0/lYDBT+SV0YWEeCd4+X
+	 iSsTiCOzeTpniz+UG3sEkP2HU+mXi+iSN6UErJq6R5CisZsXohrQoFREAO5MoGbkad
+	 lMFjuCsQJyRU7Qii7T5EXB06nR73vO/sEYZ+15We3a6Dd7emnQGGDJPnF2plMCEJxX
+	 e6JvhXyitPLMXkyP4L0u7ALWPLYjpomcP0dju74JPHqomGJxsOdH0UJR72Vph3oArd
+	 J1iMXM9gs3vgA==
+Date: Tue, 25 Jun 2024 15:58:25 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, "igt-dev@lists.freedesktop.org" <igt-dev@lists.freedesktop.org>, 
+	Petri Latvala <adrinael@adrinael.net>, Kamil Konieczny <kamil.konieczny@linux.intel.com>, 
+	Ville =?utf-8?B?U3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] drm/connector: automatically set immutable flag
+ for max_bpc property
+Message-ID: <20240625-enlightened-optimistic-fossa-fdd128@houat>
+References: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-0-8590d44912ce@linaro.org>
+ <20240623-drm-bridge-connector-fix-hdmi-reset-v2-2-8590d44912ce@linaro.org>
+ <99ff549c-f5c4-dc9c-42f3-396dc3d29d6b@quicinc.com>
+ <CAA8EJppcH-z275m6xDQaigsxmVhnfJkLVsq68GHLFoAq_p_2GA@mail.gmail.com>
+ <30fa4e53-5a03-4030-2be5-f383a1c60077@quicinc.com>
+ <CAA8EJpo_dBDqLUVH-SkufhFchu64rhC+vkhVBFdt++E4pdCrQg@mail.gmail.com>
+ <20240625-yellow-shrimp-of-genius-17c662@houat>
+ <CAA8EJpr_kn=x080KLGfwsLi3PnnNhTjJhvL=hiRNLBD=WqSuZQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>,
-        Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
-        John Ogness
- <john.ogness@linutronix.de>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Subject: [PATCH] bpf: defer printk() inside __bpf_prog_run()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2wb3bjjqeq4p5mtd"
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpr_kn=x080KLGfwsLi3PnnNhTjJhvL=hiRNLBD=WqSuZQ@mail.gmail.com>
 
-syzbot is reporting circular locking dependency inside __bpf_prog_run(),
-for fault injection calls printk() despite rq lock is already held.
 
-Guard __bpf_prog_run() using printk_deferred_{enter,exit}() (and
-preempt_{disable,enable}() if CONFIG_PREEMPT_RT=n) in order to defer any
-printk() messages. (migrate_{disable,enable}() is not needed if
-CONFIG_PREEMPT_RT=y because cant_migrate() asserts that caller already
-disabled migration.)
+--2wb3bjjqeq4p5mtd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.10.0-rc4-syzkaller-00874-g84562f9953ec #0 Not tainted
-------------------------------------------------------
-syz-executor.1/25480 is trying to acquire lock:
-ffffffff8e328140 (console_owner){..-.}-{0:0}, at: rcu_try_lock_acquire include/linux/rcupdate.h:334 [inline]
-ffffffff8e328140 (console_owner){..-.}-{0:0}, at: srcu_read_lock_nmisafe include/linux/srcu.h:232 [inline]
-ffffffff8e328140 (console_owner){..-.}-{0:0}, at: console_srcu_read_lock kernel/printk/printk.c:286 [inline]
-ffffffff8e328140 (console_owner){..-.}-{0:0}, at: console_flush_all+0x152/0xfd0 kernel/printk/printk.c:2986
+On Tue, Jun 25, 2024 at 10:23:14AM GMT, Dmitry Baryshkov wrote:
+> On Tue, 25 Jun 2024 at 10:19, Maxime Ripard <mripard@kernel.org> wrote:
+> >
+> > Hi,
+> >
+> > On Tue, Jun 25, 2024 at 09:21:27AM GMT, Dmitry Baryshkov wrote:
+> > > On Tue, 25 Jun 2024 at 01:56, Abhinav Kumar <quic_abhinavk@quicinc.co=
+m> wrote:
+> > > >
+> > > >
+> > > >
+> > > > On 6/24/2024 3:46 PM, Dmitry Baryshkov wrote:
+> > > > > On Tue, 25 Jun 2024 at 01:39, Abhinav Kumar <quic_abhinavk@quicin=
+c.com> wrote:
+> > > > >>
+> > > > >> + IGT dev
+> > > > >>
+> > > > >> On 6/22/2024 10:40 PM, Dmitry Baryshkov wrote:
+> > > > >>> With the introduction of the HDMI Connector framework the drive=
+r might
+> > > > >>> end up creating the max_bpc property with min =3D max =3D 8. IG=
+T insists
+> > > > >>> that such properties carry the 'immutable' flag. Automatically =
+set the
+> > > > >>> flag if the driver asks for the max_bpc property with min =3D=
+=3D max.
+> > > > >>>
+> > > > >>
+> > > > >> This change does not look right to me.
+> > > > >>
+> > > > >> I wonder why we need this check because DRM_MODE_PROP_IMMUTABLE =
+means
+> > > > >> that as per the doc, userspace cannot change the property.
+> > > > >>
+> > > > >>            * DRM_MODE_PROP_IMMUTABLE
+> > > > >>            *     Set for properties whose values cannot be chang=
+ed by
+> > > > >>            *     userspace. The kernel is allowed to update the =
+value of
+> > > > >> these
+> > > > >>            *     properties. This is generally used to expose pr=
+obe state to
+> > > > >>            *     userspace, e.g. the EDID, or the connector path=
+ property
+> > > > >> on DP
+> > > > >>            *     MST sinks. Kernel can update the value of an im=
+mutable
+> > > > >> property
+> > > > >>            *     by calling drm_object_property_set_value().
+> > > > >>            */
+> > > > >>
+> > > > >> Here we are allowing userspace to change max_bpc
+> > > > >>
+> > > > >>
+> > > > >> drm_atomic_connector_set_property()
+> > > > >> {
+> > > > >>          **********
+> > > > >>
+> > > > >>           } else if (property =3D=3D connector->max_bpc_property=
+) {
+> > > > >>                   state->max_requested_bpc =3D val;
+> > > > >>
+> > > > >>          **********
+> > > > >> }
+> > > > >>
+> > > > >> I believe you are referring to this IGT check right?
+> > > > >>
+> > > > >> https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/t=
+ests/kms_properties.c#L428
+> > > > >
+> > > > > Yes
+> > > > >
+> > > > >>
+> > > > >> I think we should fix IGT in this case unless there is some reas=
+on we
+> > > > >> are missing. Because just because it has the same min and max do=
+es not
+> > > > >> mean its immutable by the doc of the IMMUTABLE flag.
+> > > > >
+> > > > > Well, having the same min and max means that it is impossible to
+> > > > > change the property. So the property is immutable, but doesn't ha=
+ve
+> > > > > the flag.
+> > > > >
+> > > >
+> > > > True, then does DRM_MODE_PROP_IMMUTABLE need a doc update too indic=
+ating
+> > > > that even if the min and max is same, property will be interpreted =
+as
+> > > > immutable.
+> > >
+> > > Granted that I'm only doing it for max_bpc property I don't think so.
+> >
+> > Yeah, I have to agree with Abhinav here, it does look fishy to me too,
+> > even more so that it's only ever "documented" through an igt routine
+> > that has never documented why we want that.
+> >
+> > I'm fine with the change if it's indeed what we expect, and it might
+> > very well be, but I'd like to clear that up and document it first.
+>=20
+> Should I also move the setting of the IMMUTABLE flag to a more generic co=
+de?
 
-but task is already holding lock:
-ffff8880b943e798 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
+Possibly, but I guess that will depend on the outcome of that discussion
 
-which lock already depends on the new lock.
+Maxime
 
-(...snipped...)
+--2wb3bjjqeq4p5mtd
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Chain exists of:
-  console_owner --> &p->pi_lock --> &rq->__lock
+-----BEGIN PGP SIGNATURE-----
 
- Possible unsafe locking scenario:
+iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZnrNAQAKCRDj7w1vZxhR
+xVzsAQCnu6DC0Ka/hvDQ2v8nWmyLROciJ0aE03Y99+Psr1oDQwD+JlXJWLZr4PzM
+VUzEa4rZRsI9MAKL3N5mWA5QF0rn5AY=
+=3G09
+-----END PGP SIGNATURE-----
 
-       CPU0                    CPU1
-       ----                    ----
-  lock(&rq->__lock);
-                               lock(&p->pi_lock);
-                               lock(&rq->__lock);
-  lock(console_owner);
-
- *** DEADLOCK ***
-
-6 locks held by syz-executor.1/25480:
- #0: ffffffff8f5e6f48 (rtnl_mutex){+.+.}-{3:3}, at: dev_ioctl+0x706/0x1340 net/core/dev_ioctl.c:785
- #1: ffffffff8f67dd68 (flowtable_lock){+.+.}-{3:3}, at: nf_flow_table_cleanup+0x23/0xb0 net/netfilter/nf_flow_table_core.c:593
- #2: ffff8880b943e798 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
- #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
- #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2402 [inline]
- #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run4+0x244/0x590 kernel/trace/bpf_trace.c:2446
- #4: ffffffff8e20fa60 (console_lock){+.+.}-{0:0}, at: _printk+0xd5/0x120 kernel/printk/printk.c:2370
- #5: ffffffff8e20f690 (console_srcu){....}-{0:0}, at: rcu_try_lock_acquire include/linux/rcupdate.h:334 [inline]
- #5: ffffffff8e20f690 (console_srcu){....}-{0:0}, at: srcu_read_lock_nmisafe include/linux/srcu.h:232 [inline]
- #5: ffffffff8e20f690 (console_srcu){....}-{0:0}, at: console_srcu_read_lock kernel/printk/printk.c:286 [inline]
- #5: ffffffff8e20f690 (console_srcu){....}-{0:0}, at: console_flush_all+0x152/0xfd0 kernel/printk/printk.c:2986
-
-stack backtrace:
-CPU: 0 PID: 25480 Comm: syz-executor.1 Not tainted 6.10.0-rc4-syzkaller-00874-g84562f9953ec #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:88 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
- check_prev_add kernel/locking/lockdep.c:3134 [inline]
- check_prevs_add kernel/locking/lockdep.c:3253 [inline]
- validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
- __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
- console_lock_spinning_enable kernel/printk/printk.c:1870 [inline]
- console_emit_next_record kernel/printk/printk.c:2922 [inline]
- console_flush_all+0x810/0xfd0 kernel/printk/printk.c:2994
- console_unlock+0x13b/0x4d0 kernel/printk/printk.c:3063
- vprintk_emit+0x5a6/0x770 kernel/printk/printk.c:2345
- _printk+0xd5/0x120 kernel/printk/printk.c:2370
- fail_dump lib/fault-inject.c:45 [inline]
- should_fail_ex+0x391/0x4e0 lib/fault-inject.c:153
- __copy_to_user_inatomic include/linux/uaccess.h:123 [inline]
- copy_to_user_nofault+0x86/0x140 mm/maccess.c:149
- bpf_prog_b0a3dac844962ed2+0x47/0x4d
- bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
- __bpf_prog_run include/linux/filter.h:691 [inline]
- bpf_prog_run include/linux/filter.h:698 [inline]
- __bpf_trace_run kernel/trace/bpf_trace.c:2403 [inline]
- bpf_trace_run4+0x334/0x590 kernel/trace/bpf_trace.c:2446
- __traceiter_sched_switch+0x98/0xd0 include/trace/events/sched.h:222
- trace_sched_switch include/trace/events/sched.h:222 [inline]
- __schedule+0x2587/0x4a20 kernel/sched/core.c:6742
- preempt_schedule_notrace+0x100/0x140 kernel/sched/core.c:7017
- preempt_schedule_notrace_thunk+0x1a/0x30 arch/x86/entry/thunk.S:13
- rcu_is_watching+0x7e/0xb0 kernel/rcu/tree.c:725
- trace_lock_acquire include/trace/events/lock.h:24 [inline]
- lock_acquire+0xe3/0x550 kernel/locking/lockdep.c:5725
- rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
- rcu_read_lock include/linux/rcupdate.h:781 [inline]
- start_flush_work kernel/workqueue.c:4122 [inline]
- __flush_work+0x107/0xd00 kernel/workqueue.c:4181
- flush_work kernel/workqueue.c:4232 [inline]
- flush_delayed_work+0x169/0x1c0 kernel/workqueue.c:4254
- nf_flow_table_gc_cleanup net/netfilter/nf_flow_table_core.c:585 [inline]
- nf_flow_table_cleanup+0x62/0xb0 net/netfilter/nf_flow_table_core.c:595
- flow_offload_netdev_event+0x51/0x70 net/netfilter/nft_flow_offload.c:492
- notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
- __dev_notify_flags+0x207/0x400
- dev_change_flags+0xf0/0x1a0 net/core/dev.c:8858
- dev_ifsioc+0x7c8/0xe70 net/core/dev_ioctl.c:529
- dev_ioctl+0x719/0x1340 net/core/dev_ioctl.c:786
- sock_do_ioctl+0x240/0x460 net/socket.c:1236
- sock_ioctl+0x629/0x8e0 net/socket.c:1341
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Reported-by: syzbot <syzbot+f78380e4eae53c64125c@syzkaller.appspotmail.com>
-Closes: https://syzkaller.appspot.com/bug?extid=f78380e4eae53c64125c
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
----
-Only compile tested.
-
- include/linux/filter.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/include/linux/filter.h b/include/linux/filter.h
-index dd41a93f06b2e..977ae5b486164 100644
---- a/include/linux/filter.h
-+++ b/include/linux/filter.h
-@@ -674,6 +674,10 @@ static __always_inline u32 __bpf_prog_run(const struct bpf_prog *prog,
- 	u32 ret;
- 
- 	cant_migrate();
-+#ifndef CONFIG_PREEMPT_RT
-+	preempt_disable();
-+#endif
-+	printk_deferred_enter();
- 	if (static_branch_unlikely(&bpf_stats_enabled_key)) {
- 		struct bpf_prog_stats *stats;
- 		u64 duration, start = sched_clock();
-@@ -690,6 +694,10 @@ static __always_inline u32 __bpf_prog_run(const struct bpf_prog *prog,
- 	} else {
- 		ret = dfunc(ctx, prog->insnsi, prog->bpf_func);
- 	}
-+	printk_deferred_exit();
-+#ifndef CONFIG_PREEMPT_RT
-+	preempt_enable();
-+#endif
- 	return ret;
- }
- 
--- 
-2.43.0
+--2wb3bjjqeq4p5mtd--
 
