@@ -1,109 +1,108 @@
-Return-Path: <linux-kernel+bounces-229109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 627CB916B09
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:52:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91433916B0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:52:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09CB71F28E8B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:52:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 485781F28EC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B96B916C840;
-	Tue, 25 Jun 2024 14:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9AA16D9DA;
+	Tue, 25 Jun 2024 14:52:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="hDAvsikJ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LoFJl8+t"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC34616D4C4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D69516D4FD;
+	Tue, 25 Jun 2024 14:51:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327119; cv=none; b=e5pXa/YdQuErdUPqXwE+CHctMoluDcJkrAGJ2SjGRIMnM5qZLhtxYDQh6C9rXBTdoLWb7q9TWtbdgvV1cZ0i635VF/HrWpbYIiioCVJVSV0uBNlO/nYL4rVXbdLWFnSeiqfFLrWxy686qjazhnRyaWUsEyoRe6bKOPrKPbEp2ac=
+	t=1719327121; cv=none; b=ftPAfHEogewzFapTaHyz9k7Dn4szQ4e4UZTeWr0ms3CVhFWQWnRBVJH/otkwNmFUDNqy+XBckc4ACxIroAO1uZi9YgJBRQFJ3E5pk4rRoakBFQsRjwzQHJ+de5EyuVpa309ldG+kkqAqUaJ5EWh+JasyuX1TlNTxVo/dvwVpIRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327119; c=relaxed/simple;
-	bh=jEr7anQAPkYvzkC2SFRisvG5HDx4DP/ad1oW/ENiDas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XZpfTxIEvY6IULbFsku5Ush5U89ZiyRTeTnrWCckA7WezeCiAaQKItecbQpykPJqEecgMKmzzur9lQOSgnO32R7H2b8C6NywYrIhpdvPoU7W34m98syuVs68Y8lRxEQd78M+xOH+T00zC7iiilGmTAwQBaH/dU0PyqDIqpfNb1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=hDAvsikJ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id AF79540E0177;
-	Tue, 25 Jun 2024 14:51:49 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id DQfD-sV-ACFT; Tue, 25 Jun 2024 14:51:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719327105; bh=j9RZt/+5pkMkrV/swftoHy/cSkvH1sDrCipVa9ihigc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hDAvsikJLAMdBlQtf0W4aW6UMan/XJYXkbbRzPDRthP2Wce34hJ+8oBXcdJb2eysr
-	 RMOxtwq9EjuEc2zIRSD1F19EkliGH/U/yk3wgpJfEoKw7btc6hTBT8d5i7f0SJhgGW
-	 oxYn/c6fLL3z08LsQnt8GZNN26wGfWgWxzyw88lC+wN5p2xbuxpzPIP1U35QQ712Q8
-	 KlZPDt7n6RiA9LuZUsDsbwub3NqKyueMXKMBdeR4rharx+6UmAzI5dYvp29PpJ+alh
-	 CL8mYJEKCPGAwN/yjriXbsXLU62Ji1R10TxnNcq4xRsBZf35plF9xVmGiJnIF6xdeb
-	 jVpsFPP/tkafRoqhVMUenoalx0QDrBERl28MRsFiOFvJndg3Mk6BkIuhQGP3tjHe/p
-	 Pnl/EmRYvJsxvcMR7Q7xxLPUv+SLnYbckRecUgbHrmBioj6H3kZPizpu0vnplwie2V
-	 8B/zXVTzwxApQatp2m9gMVZ2nTjfWiEerCgJh4IbJ32WvkVzI0M8i1c1t7VHqzNZeO
-	 gkZl+05AXNUXwBhE6kX28ldEc9n5BKbuYE3DXyj3pOmARceGieLvaYNRbhA+fepyMB
-	 j5W6r5N1QR3pYjnitFTX4Ad00Ib0gonm6IMsBD8wR1uorB4KSgSRiHCCFIy6eabSoz
-	 M2LLlDaDZfAUfBRv4HwN8cA4=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	s=arc-20240116; t=1719327121; c=relaxed/simple;
+	bh=JoqWTqCrbpFahu8o+ed8C7pB2idzuicnlVb3Hvo7YX4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gJJUfEioyjCs6TZu0kx/ytMFI5MFwDiruhu6EOszt0Eikfi4MxDUXfwhtEGy6bRUrfliIfwsQyHPr0e1bEWHNobWZcGstj1wQqoKxTQS9yFMkQPiidE9KBD4DEc6CMafiEHwmTuii8mrbdBwYYO/045tvdDmynNgdOyC1ojtGMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LoFJl8+t; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719327117;
+	bh=JoqWTqCrbpFahu8o+ed8C7pB2idzuicnlVb3Hvo7YX4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LoFJl8+tL0lnXDqDz4HvwTijUuSmkbuE+NLkZOjaOi7VCLcqq1y1re+8CKRDG5Vki
+	 DhuuTw/Kaz5ZFRYJ7slLQuLySI8MjReLJRnXO5nyNsFKrjU3wbEUoL1oPCvEwNgfFG
+	 zk1gCqU/OoINZd+/aIsXoND5uV/R8VxawnV7zcS3eDbbjPbpY3giTsPgfoPRVlDarU
+	 Sla29TKwdhxp63FRJpRWq1BZVRSij5eC1lP8YvVd2+7L5W0A/8NOjDVfxMb3pSK0pz
+	 4spRjEPVpDyOAySNtu0kLVoDiZrpGQvoQDKb02Zo8a1K1BdBIXsrwPJ8f6tcgFQLXW
+	 hDfGLOzIKCk4w==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 35AAE40E0219;
-	Tue, 25 Jun 2024 14:51:34 +0000 (UTC)
-Date: Tue, 25 Jun 2024 16:51:28 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Alexey Makhalov <alexey.makhalov@broadcom.com>
-Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
-	hpa@zytor.com, dave.hansen@linux.intel.com, mingo@redhat.com,
-	tglx@linutronix.de, x86@kernel.org, ajay.kaher@broadcom.com,
-	bcm-kernel-feedback-list@broadcom.com,
-	Alex James <alex.james@broadcom.com>
-Subject: Re: [PATCH] x86/vmware: fix panic in vmware_hypercall_slow()
-Message-ID: <20240625145128.GGZnrZcEK4YWOJyEMq@fat_crate.local>
-References: <20240625083348.2299-1-alexey.makhalov@broadcom.com>
- <20240625084721.GCZnqEGbrkNNW6ZCfZ@fat_crate.local>
- <8193d6d2-5322-4a9a-82ed-50ac24dd3525@broadcom.com>
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id A18A7378219B;
+	Tue, 25 Jun 2024 14:51:56 +0000 (UTC)
+Message-ID: <f855f6ec-f0f7-467a-9823-d19706574408@collabora.com>
+Date: Tue, 25 Jun 2024 16:51:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8193d6d2-5322-4a9a-82ed-50ac24dd3525@broadcom.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/7] MediaTek DVFSRC Bus Bandwidth and Regulator knobs
+To: Mark Brown <broonie@kernel.org>
+Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, lgirdwood@gmail.com, keescook@chromium.org,
+ gustavoars@kernel.org, henryc.chen@mediatek.com, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com, wenst@chromium.org, amergnat@baylibre.com,
+ djakov@kernel.org
+References: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
+ <f7b4cd98-1acf-4f6b-a7e0-57419abadba1@collabora.com>
+ <57cf8f9f-4320-4c55-a9f8-a4c1facabfe8@sirena.org.uk>
+ <39ed7b8c-b19a-40de-9b30-a731ac83ad20@collabora.com>
+ <2e8a9cf2-2bc0-45d8-b6c1-e3a9441d5641@sirena.org.uk>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <2e8a9cf2-2bc0-45d8-b6c1-e3a9441d5641@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 25, 2024 at 07:45:50AM -0700, Alexey Makhalov wrote:
-> My test environment was screwed up during the last version of the patchset.
-> I was using a kernel which was built previously and didn't pay attention to
-> commit hash suffix in `uname -r`.
-> Human mistake, apologize for that.
-
-Ok, no worries, happens.
-
-> Alex found it while doing TDX testing on x86/vmware on tip.
+Il 25/06/24 14:50, Mark Brown ha scritto:
+> On Tue, Jun 25, 2024 at 01:58:57PM +0200, AngeloGioacchino Del Regno wrote:
+>> Il 25/06/24 12:25, Mark Brown ha scritto:
+>>> On Tue, Jun 25, 2024 at 10:32:30AM +0200, AngeloGioacchino Del Regno wrote:
 > 
-> Do you want me to resubmit the patchset to do not brake a git bisect?
+>>>> The main issue here is that the main soc/mediatek dvfsrc binding
+>>>> dt-bindings: soc: mediatek: Add DVFSRC bindings for MT8183 and MT8195
+>>>> does use the others, so I can't pick this one without the others being present
+>>>> or the validation obviously fails.
+> 
+>>> I can't tell what you want from me here.
+> 
+>> I'm asking you to pick the regulator patches :-)
+> 
+>>     dt-bindings: regulator: Add bindings for MediaTek DVFSRC Regulators
+>>     regulator: Remove mtk-dvfsrc-regulator.c
+>>     regulator: Add refactored mtk-dvfsrc-regulator driver
+> 
+> Is there no interdependency with the rest of the series?  There was in
+> some earlier version at least I think.  If I reviewed the patches it's
+> because I wasn't expecting to apply them.
 
-Nah, I'll fold it into the broken patch and rebase.
+The interdependency is for soc/mediatek commits, which depend on:
+  - Interconnect commits (which Georgi picked already); and
+  - Regulator commits
 
-Btw, pls do me a favor and do not top-post but put your reply underneath the
-quoted text, like we all do.
+And... you reviewed the patch in the previous merge window :-)
 
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Cheers
 
