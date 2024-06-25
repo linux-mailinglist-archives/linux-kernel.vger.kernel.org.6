@@ -1,138 +1,160 @@
-Return-Path: <linux-kernel+bounces-229746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B907F917397
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:37:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21750917399
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:39:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B64D28253A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:37:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D721B21B72
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:39:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C451917DE32;
-	Tue, 25 Jun 2024 21:37:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73FE417E447;
+	Tue, 25 Jun 2024 21:39:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dAvRsXTc"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="QuazZayf"
+Received: from smtp-fw-9105.amazon.com (smtp-fw-9105.amazon.com [207.171.188.204])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95C4A1369B6;
-	Tue, 25 Jun 2024 21:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487AA2F56;
+	Tue, 25 Jun 2024 21:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.171.188.204
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719351469; cv=none; b=FWnwN1BY82X1AyP4/7tAJuliYwyl2sFb9bCCBEM4W1fi4aovp8OkC1K0vQLEa1Qw1W1ioMlcwdBZAr9yZbAXydvInlmGrJE1OpRXarJr857jZnCJKn/N3ubGBhsmZVX7vUBeXaioY0PfHbacpc8O9ktLyUqAkzY6ymcCrRRLKqI=
+	t=1719351559; cv=none; b=apFPSoMYRRT69EPMvmbj7conFS0CbYV15c1e3qXn02iCSX+QiQ0Xzb3oROe9TWidSjo/EvvBirAoLRMC3BdbXAl0X80eMoCq2t6pDV0OFsRViZEWCb1auPwlhaSPu7U/dIVT/kAlqn7i7cKPNm6Nsd4GtRru1HInFMJdnowuWCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719351469; c=relaxed/simple;
-	bh=pl2TqE2z9lm/nLZCVVZYqoMH+AryhVyL7hcdq1r/Nas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GvVpcHtRBdYOaeCT+oEsCcvx1YfJOlv9H+RPhEYsB6HaWT/xDXG+zEBZyBi9sxr67BG9Y5KZvSgyaGQQbKcCM+EqHeER9gkyl+NoEL8K+OjXzAUGRtQjRCAFse5m3Hvz7J1wkgxw27Xu0kZHZv9dOeaPNbDqDGkQkRmBZmR5Q/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dAvRsXTc; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7066cba4ebbso2408287b3a.3;
-        Tue, 25 Jun 2024 14:37:47 -0700 (PDT)
+	s=arc-20240116; t=1719351559; c=relaxed/simple;
+	bh=I7CGd1qyxMUB8zlJZZTnebEtJHmRGYQRKwlgpbToofY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZGycx00QkRby/FDLIgyzFezY7FyKYM/LVa3yL8JiYfnkaDgVFuMUvNgbgcib2568r+sclbIZ04LijeNmSOV/24uvFYr6snugLdd4p8UFl1lkrYamVBCVYYrk2NveW0bcsoYEWD8xpTWhm72qnbNyRS4X6YAyi/ORvVPim9ooSds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.jp; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=QuazZayf; arc=none smtp.client-ip=207.171.188.204
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.jp
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719351467; x=1719956267; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=weB+BtIEG/QYH8z5HEJPhBi6ESLOJWOiD/JGuYsu58s=;
-        b=dAvRsXTcrEjb7+2B1yMPEMTmD07vVN90s8bjaFiGp8ZWYv6OLimfRjoZmeF/eR6woh
-         oK+9eBeIZPwt3yOf66yMewl6r9WKxvnPDyv+3h/26M6mIZXFre+Vl5ski+EscLbgkGvD
-         uxFS/pEnqvL+lAmaCRAmEts8sx8d1CZsHF3qvLPhUzQcd+wuTYtETp48hQ4RHX/HB9Zg
-         KAPvniEhAzaJ5BQydcYI89hpNMRYMGJPOmBan0STEEF1pIrfMJOK/WKi17AR/iBAKjyq
-         d4j7orBu+TRMRd0GFDyybTP5GsZ0W5LaoQAV7UA8ZWsb0sJHlcPTZqmSRdbmJfzQK3tH
-         CbeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719351467; x=1719956267;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=weB+BtIEG/QYH8z5HEJPhBi6ESLOJWOiD/JGuYsu58s=;
-        b=MqVCT+oMpKL7d0cGxsUhnkCNtArFYiLjJONAL7pS76XoMa+zCm4iNjScxQoB4uiV91
-         e3bHtYMoDp3aiIc++/MHzSIebUXr4WbBCHI/dKLGWy9uaSNOdQa7D7rtbpRfhyS0fmL6
-         d93yqV2yrwKaY9WOATStR1GheFKlxAtovm8/97uhyMFKzVWgzr8JbvlE/pUt092NlbLy
-         AF9lHkbaa9YQmfllrRZ8Zn2tjsiDMpbQYPqzSeToDunrCNSiF3J9K0+A1I9J6I4ref+E
-         IKAOzTUILeYNFBNt9KINxhHil8tAmkKNdhJyAtML2QWATgPhj++aiCJnq4HfPtoCHISu
-         /Lkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVYL6Yz+V7rocEIifZolfzeYy9dxE9dLv1GEHSxyM1QTKF822aFz25+Lg2rXJKbcbe0fG8nwJUuacq3gpjV2mD5qEl6vxR509MLwlfzZ4vfhqlMmaNU4JCtcLMiTukZecl9wmTzqK0r+Ss=
-X-Gm-Message-State: AOJu0YxAFqdc2jEAGkgtzogh9oZj+KAd+OzmZpjJPUcsqfPSm+AbkOok
-	izDGb+b8gLpWVDWcN1tmwHVGUjyJVQM4a8rJbwwv8pPaPU/2sITd
-X-Google-Smtp-Source: AGHT+IH6ihr8MB0JtEUmCJt93CanJKKkIIEErjZEigCIacEIyFu5swR7SLrYKP5W5xM4WXF1iH/qpw==
-X-Received: by 2002:a05:6a00:1891:b0:705:a450:a993 with SMTP id d2e1a72fcca58-7066e542f24mr11560458b3a.17.1719351466813;
-        Tue, 25 Jun 2024 14:37:46 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70673ca69efsm5638390b3a.168.2024.06.25.14.37.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 14:37:45 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 25 Jun 2024 14:37:44 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Cc: Amadeusz =?utf-8?B?U8WCYXdpxYRza2k=?= <amadeuszx.slawinski@linux.intel.com>,
-	Allen Ballway <ballway@chromium.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Brady Norander <bradynorander@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
-	Mark Brown <broonie@kernel.org>, linux-sound@vger.kernel.org,
-	Mark Hasemeyer <markhas@chromium.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Cezary Rojewski <cezary.rojewski@intel.com>
-Subject: Re: [PATCH] ALSA: hda: intel-dsp-config: Fix Azulle Access 4 quirk
- detection
-Message-ID: <01904abc-5e7c-4006-96d9-83fc5de8bb21@roeck-us.net>
-References: <20240430212838.1.I77b0636d5df17c275042fd66cfa028de8ad43532@changeid>
- <83e218f9-29f5-4f35-bd0c-b298e3bb9e8c@linux.intel.com>
- <CAEs41JC-vJaMHj6fzmNO=-bu5oURRA-u565sN2=yzBeVtKb=4g@mail.gmail.com>
- <b2375610-4044-49e6-86e9-5c172abb2ffa@linux.intel.com>
- <CAEs41JAPPr3xRR42H6vKic5rVrtV-on4HyT5wNCXxbJtwijnCA@mail.gmail.com>
- <3d44c749-6c81-4c11-9409-b01815fe1a91@linux.intel.com>
- <3d9ef693-75e9-4be0-b1c0-488d3e2d41c5@linux.intel.com>
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1719351558; x=1750887558;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=lC5Ihbc1v1YGg/yIWksJtHnmIp6/hSGbGAZit1bJ8iI=;
+  b=QuazZayfsnEcva7IYqbw/YInE8VCJDRvEuDvne+8p0XE5fGu2Su585tG
+   fw0nVmNwmzFWTIArQ32XLBfcLJMKDC5mKovlEX12ZMe1DrY/HIDewzJJz
+   xSYQQ6k8pcb6bYwskQ59aGnwBw2OxTDO72ovn4LpJZAp8EK6vhavK1ZMH
+   I=;
+X-IronPort-AV: E=Sophos;i="6.08,265,1712620800"; 
+   d="scan'208";a="736073815"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-9105.sea19.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 21:39:13 +0000
+Received: from EX19MTAUWA002.ant.amazon.com [10.0.38.20:35824]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.20.169:2525] with esmtp (Farcaster)
+ id f892e3ac-3faf-44b3-af11-a144650b3889; Tue, 25 Jun 2024 21:39:12 +0000 (UTC)
+X-Farcaster-Flow-ID: f892e3ac-3faf-44b3-af11-a144650b3889
+Received: from EX19D004ANA001.ant.amazon.com (10.37.240.138) by
+ EX19MTAUWA002.ant.amazon.com (10.250.64.202) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 25 Jun 2024 21:39:11 +0000
+Received: from 88665a182662.ant.amazon.com (10.106.100.6) by
+ EX19D004ANA001.ant.amazon.com (10.37.240.138) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 25 Jun 2024 21:39:07 +0000
+From: Kuniyuki Iwashima <kuniyu@amazon.com>
+To: <mathis.marion@silabs.com>
+CC: <alex.aring@gmail.com>, <davem@davemloft.net>, <dsahern@kernel.org>,
+	<edumazet@google.com>, <jerome.pouiller@silabs.com>, <kuba@kernel.org>,
+	<kylian.balan@silabs.com>, <linux-kernel@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <kuniyu@amazon.com>
+Subject: Re: [PATCH v1 2/2] ipv6: always accept routing headers with 0 segments left
+Date: Tue, 25 Jun 2024 14:38:59 -0700
+Message-ID: <20240625213859.65542-1-kuniyu@amazon.com>
+X-Mailer: git-send-email 2.30.2
+In-Reply-To: <20240624141602.206398-3-Mathis.Marion@silabs.com>
+References: <20240624141602.206398-3-Mathis.Marion@silabs.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <3d9ef693-75e9-4be0-b1c0-488d3e2d41c5@linux.intel.com>
+Content-Type: text/plain
+X-ClientProxiedBy: EX19D046UWA001.ant.amazon.com (10.13.139.112) To
+ EX19D004ANA001.ant.amazon.com (10.37.240.138)
 
-On Fri, Jun 21, 2024 at 10:35:31AM +0200, Pierre-Louis Bossart wrote:
+From: Mathis Marion <Mathis.Marion@silabs.com>
+Date: Mon, 24 Jun 2024 16:15:33 +0200
+> From: Mathis Marion <mathis.marion@silabs.com>
 > 
+> Routing headers of type 3 and 4 would be rejected even if segments left
+> was 0, in the case that they were disabled through system configuration.
 > 
-> On 6/21/24 08:15, Amadeusz Sławiński wrote:
-> > On 6/20/2024 9:27 PM, Allen Ballway wrote:
-> >> I filed a bug and after sharing the requested information it looks
-> >> like this device won't work on SOF without vendor support. Given this,
-> >> would the original patch returning this device to using HDAudio be
-> >> reasonable, or is there an preferred alternative to force this device
-> >> into using HDAudio?
-> >>
-> > 
-> > And can you share link to the issue on mailing list, so someone reading
-> > this thread in the future doesn't have to guess where it is? ;)
+> RFC 8200 section 4.4 specifies:
 > 
-> https://github.com/thesofproject/linux/issues/4981
-> 
-> I don't know what to do with this configuration.
-> We added a quirk to force SOF to be used for ES8336 devices. It worked
-> for some, but not for others. Now we have quite a few ES8336-based
-> platforms that are broken with zero support from the vendor, with
-> obscure I2C/GPIO/clk issues.
-> Are we going to tag each one of them and say 'not supported, use HDMI only'?
-> That's pushing a bit the notion of quirk...It would generate an endless
-> stream of patches. The alternative is to do nothing and ask that those
-> platforms revert to HDMI audio only with a kernel parameter. That latter
-> alternative has my vote.
-> 
+>       If Segments Left is zero, the node must ignore the Routing header
+>       and proceed to process the next header in the packet, whose type
+>       is identified by the Next Header field in the Routing header.
 
-Given that this apparently does not work for many ES8336 devices,
-would it make more sense to disable SOF support for those by default
-and _enable_ them with a kernel parameter ?
+I think this part is only applied to an unrecognized Routing Type,
+so only applied when the network stack does not know the type.
 
-Guenter
+   https://www.rfc-editor.org/rfc/rfc8200.html#section-4.4
+
+   If, while processing a received packet, a node encounters a Routing
+   header with an unrecognized Routing Type value, the required behavior
+   of the node depends on the value of the Segments Left field, as
+   follows:
+
+      If Segments Left is zero, the node must ignore the Routing header
+      and proceed to process the next header in the packet, whose type
+      is identified by the Next Header field in the Routing header.
+
+That's why RPL with segment length 0 was accepted before 8610c7c6e3bd.
+
+But now the kernel recognizes RPL and it's intentionally disabled
+by default with net.ipv6.conf.$DEV.rpl_seg_enabled since introduced.
+
+And SRv6 has been rejected since 1ababeba4a21f for the same reason.
+
+
+> 
+> Signed-off-by: Mathis Marion <mathis.marion@silabs.com>
+> ---
+>  net/ipv6/exthdrs.c | 17 ++++++-----------
+>  1 file changed, 6 insertions(+), 11 deletions(-)
+> 
+> diff --git a/net/ipv6/exthdrs.c b/net/ipv6/exthdrs.c
+> index 083dbbafb166..913160b0fe13 100644
+> --- a/net/ipv6/exthdrs.c
+> +++ b/net/ipv6/exthdrs.c
+> @@ -662,17 +662,6 @@ static int ipv6_rthdr_rcv(struct sk_buff *skb)
+>  		return -1;
+>  	}
+>  
+> -	switch (hdr->type) {
+> -	case IPV6_SRCRT_TYPE_4:
+> -		/* segment routing */
+> -		return ipv6_srh_rcv(skb);
+> -	case IPV6_SRCRT_TYPE_3:
+> -		/* rpl segment routing */
+> -		return ipv6_rpl_srh_rcv(skb);
+> -	default:
+> -		break;
+> -	}
+> -
+>  looped_back:
+>  	if (hdr->segments_left == 0) {
+>  		switch (hdr->type) {
+> @@ -708,6 +697,12 @@ static int ipv6_rthdr_rcv(struct sk_buff *skb)
+>  		}
+>  		break;
+>  #endif
+> +	case IPV6_SRCRT_TYPE_3:
+> +		/* rpl segment routing */
+> +		return ipv6_rpl_srh_rcv(skb);
+> +	case IPV6_SRCRT_TYPE_4:
+> +		/* segment routing */
+> +		return ipv6_srh_rcv(skb);
+>  	default:
+>  		goto unknown_rh;
+>  	}
+> -- 
+> 2.43.0
 
