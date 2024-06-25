@@ -1,166 +1,145 @@
-Return-Path: <linux-kernel+bounces-228612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80860916241
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:23:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAFAB916244
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDA5EB26640
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:23:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28E571C208DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:23:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18810149C5A;
-	Tue, 25 Jun 2024 09:23:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBEFF149C68;
+	Tue, 25 Jun 2024 09:23:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LDnc7mAO"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V41gf9nu"
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24341494AF
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08981494D1
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719307389; cv=none; b=mXm0ivDOudWz4XI8Nt/r2vaepYWIvJYdKzAm+RoTbOrRRYjymBUxcGmfYw7fjHKJ+HoWO2kcyZkZIUUcSnmRQLVHzsluFBPWeXP9PUnDMFU88k7XDQkqE9SU3ZWqkZ227wneaafU3qWLCiw424oRFQ4MwLQdunx7EsYL1CgfEIE=
+	t=1719307422; cv=none; b=JXaSTE47A7/kn5oPojU+4JDxERlzJ88pfKPSL76q5zepz4Vt1i4Z8G86mlEhZ8moblrU9cGHl0VIpDokEFVJNVgafFoLoIr6SMIf8vsdv/osgByKQTEkOMbgnVScLx7rtxCMjd7R1+MjEc1ukAMZFvchJddQn0kPc4LsC96S8NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719307389; c=relaxed/simple;
-	bh=8SACIkCe/rEQcO2uzmtJLJ1fzayy+8J8k4KMfAwiNO0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=bLhZLLR3x0wP0IZscT0tIt5MLI4gm9NP7QemcYHMivHwVMLW7dd3WX/TW5QtMediNUPlvlZ9IWuwWkRLCT5Eu7ZlMY6bB51F7jI14NCe4geILC2ecICo6cd6otTFGOyY6jihDd3BjE/aagTLyYidRWwQT6/Btbw5W/Wq4F0GWvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LDnc7mAO; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52cdea1387eso2972426e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:23:06 -0700 (PDT)
+	s=arc-20240116; t=1719307422; c=relaxed/simple;
+	bh=rOUdR4UXlPv0HMOIols1rL3X/KRjDi1uSyCL6yzW3zY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oU+u0ChYGbrVQgOA1NTXAOIjpEeeZeQQVGdi+nCUTfhcYK7pHSTAFyHRjQBoOkOVaZnHW9YgG1VwUFHpTAFCDhpWpnxXrYHu11nz+eUYrovK37/w2faFkRGQ3bJME0kabcC8Ux87eWohIrl4FJv9i6UNPnJN+fnkW6a5D/+PAds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V41gf9nu; arc=none smtp.client-ip=209.85.167.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3d5288e6513so2735348b6e.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:23:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719307385; x=1719912185; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
+        d=linaro.org; s=google; t=1719307420; x=1719912220; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=LlRhdkp6kAFepHjID66aLvJv1DZVnaI5n6pLIDvUVYM=;
-        b=LDnc7mAOVIQyQw9YX0yh10j84cYwv+flect6lYWP9eaDqBApGiMZpKOanwg6r+IoRB
-         NLiJ4vMxUIcXon/uwT6m6NelzHct10gJa8hmWyM6Z9a/RAGvHe/uRfPwQw4+XsmyBe5T
-         KywcylE0go9nqjbopOv0qscZ9I3HAtqLIL0/4Sb+mvxxlhk6KkAO6oh8Zxik258u2Syk
-         T2qtsP4+xpPk4yWc+CwP8ySivyBBw44BIlQLaXJ2BiFxjBo/vm/fleedrZAAPzUbKpUs
-         ZvDCfj9xn2CkBaq7M4vLio//ZtlQwEDnTM/bG98Kglv/wTXWJt2Q31ej+AXUu8Pq01y9
-         XGIg==
+        bh=uVGzFd5q8l7ZZf1kAdLFB+K/N7ZL5du4NsuCLhAw664=;
+        b=V41gf9nugabNO+AK/QGfHKZ6xhPj+Y0p2xXMAZgj52sM92QHcMwoJg8cfJtzffZYNm
+         vhuqeTUKT2Jfuq+KGcx5ie4jdsF8WyYID4t2hIaNSzh3R7YvmXMBW9efwx39z+uWkZPZ
+         Rjw/welp8xSz34CKQWnGJygi4mGCbwrezXupNQgRU98UmnFA9cFTOeecKDYD7+ksvlDG
+         Xovi5GEHo3keUuLbfnsuHX6D+lUq7MNam1vICile/RODSD/GAtAErV8pMO3+BjvXt9Fw
+         JYoUMqQiYAtLGccrkXpOoyzvJlmbxYlQjARvPbygglEW4W/KufzjaJumpuNkP5Mnw3ZD
+         xrAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719307385; x=1719912185;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1719307420; x=1719912220;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LlRhdkp6kAFepHjID66aLvJv1DZVnaI5n6pLIDvUVYM=;
-        b=lqYF9+CWexGtcRe96b/YwOBMqSPUuirwuHliph42JBoH9P3f29fMPO84ItQdNKAAW0
-         sbyVIxPKGnghYycJiLz/U2uSSMAi6PbJZWL3KvF153Pi41J5QrEPL5OtU/CnzptoGo4M
-         aTzAEi+4zIkBYe9rQ98vxblNZAUnqZQmPO1BuUagHCxyyJrrK3fXWR1tNIsGhSuYxyA5
-         TScegp8NzW4CKcw/H+4JqcIhm9m92XfSsftCqUTzvpZIYIE8LgHnnLwa8UmJh46XeJn3
-         WPkblKAGB6zbCfOZOQ9iD9Yt/DojGtPAFk+nX53ndllNewpqcYhsYedEz7v2m1ilUCHj
-         wfJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVFUaEOWU/gpOKTQdtA/Rr+Fb4gaPg2UfH4zZiE5qW+P4AvfK9apaIAokoZxbC4j1Npeb8/nYBFJf6tMBnCRifBIXeVFXXAJyWDkAzc
-X-Gm-Message-State: AOJu0Yzzb3JIxYIOrXhinb5l3Si53Q1Ep1Ij+6KrXGuvy9Yy+1s+zYLM
-	ALDWi8HefssZz3A7P16znhlAO0+ZJAVH+V86xNvWTz1gEdVjRIuYouaI9/6mst0=
-X-Google-Smtp-Source: AGHT+IETSGc5PC+/KSXGB7oMPpuYoRZNE+bp/p6Mqr9WgOryoy8prGpDjhg+IZxxEgRRH3Pn20MxJA==
-X-Received: by 2002:a05:6512:3e24:b0:52c:dff5:8087 with SMTP id 2adb3069b0e04-52ce185f998mr5011614e87.51.1719307384919;
-        Tue, 25 Jun 2024 02:23:04 -0700 (PDT)
-Received: from [192.168.1.172] ([93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366f624cdacsm4476317f8f.70.2024.06.25.02.23.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 02:23:04 -0700 (PDT)
-Message-ID: <95bab90f-b196-4e79-bb88-7fd534cca721@baylibre.com>
-Date: Tue, 25 Jun 2024 11:23:02 +0200
+        bh=uVGzFd5q8l7ZZf1kAdLFB+K/N7ZL5du4NsuCLhAw664=;
+        b=d8mbO4wAlmF7f7A+gk/725zeOsF9JT2MvFX/KSFWQgcDBjpUnvUM9dkCarTJ5gik6B
+         skSdwkWNk2IPGId+xe93CpG7OXSjn7ybFNwQqyJY2CgQ9OD4PUFzukbfuTvKD4sMO9AQ
+         AVGd5MKgHpnokbxWBaRW6bHW6dLk1hLUjGHZ835vtovKiG4vmwWm2izl6fQgOkb/bBgE
+         LNKW5IqfK1jFGva1lkB/EaS0jAfnKZ8iwtbXEptkg/BaMbJ0/PWUjWpFkimpZK/59t8q
+         dvrWMlP/8Piib07ZA52o3mKjqmF8E55KGRwMRX72MeEGB8rEG8ykLtw6dyqVMluxVxGz
+         2srQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5evjV/3asEnOkWMHCTO1gAT6a2aSUbl4B19daOHRsT0MCzsZ4uri47If3F2p85KyiPi11XmdUYcLfyrtSpwqOUGMF5CVcgBcQaTmY
+X-Gm-Message-State: AOJu0YxybhzGrSbyHNehRtu1f9O8BbmQlFU0hQIj6voXZHrt0NBPlZD9
+	7m0yrmDk8IbeLoIOR98M/OICFMGbN3Z61JitzlQwQEqGRGZqTcbjfS4c2ChGlQ==
+X-Google-Smtp-Source: AGHT+IF/TD8QJ6PBiGj+PIp+ZPQnfxQrPZRAsnw7JmWE9Cx2usjPK36heD0+jTYNL7QGRrft9W9G1Q==
+X-Received: by 2002:a05:6808:17a2:b0:3d2:3e31:6cd9 with SMTP id 5614622812f47-3d54599437dmr8266510b6e.26.1719307419614;
+        Tue, 25 Jun 2024 02:23:39 -0700 (PDT)
+Received: from thinkpad ([117.193.213.113])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065129b9edsm7840159b3a.148.2024.06.25.02.23.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 02:23:38 -0700 (PDT)
+Date: Tue, 25 Jun 2024 14:53:32 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Slark Xiao <slark_xiao@163.com>
+Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Loic Poulain <loic.poulain@linaro.org>, ryazanov.s.a@gmail.com,
+	johannes@sipsolutions.net, netdev@vger.kernel.org,
+	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Re: Re: Re: [PATCH v2 1/2] bus: mhi: host: Import mux_id item
+Message-ID: <20240625092332.GE2642@thinkpad>
+References: <20240612094609.GA58302@thinkpad>
+ <87aecf24-cdbb-70d2-a3d1-8d1cacf18401@quicinc.com>
+ <20240612145147.GB58302@thinkpad>
+ <CAMZdPi-6GPWkj-wu4_mRucRBWXR03eYXu4vgbjtcns6mr0Yk9A@mail.gmail.com>
+ <c275ee49-ac59-058c-7482-c8a92338e7a2@quicinc.com>
+ <5055db15.37d8.19038cc602c.Coremail.slark_xiao@163.com>
+ <20240623134430.GD58184@thinkpad>
+ <6365d9b8.265a.1904d287cfa.Coremail.slark_xiao@163.com>
+ <20240625074449.GB2642@thinkpad>
+ <6dfe6dac.89aa.1904e82ae8c.Coremail.slark_xiao@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Alexandre Mergnat <amergnat@baylibre.com>
-Subject: Re: [PATCH v6 03/16] dt-bindings: mfd: mediatek: Add codec property
- for MT6357 PMIC
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Lee Jones <lee@kernel.org>, Flora Fu <flora.fu@mediatek.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-media@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linaro-mm-sig@lists.linaro.org
-References: <20240226-audio-i350-v6-0-f754ec1a7634@baylibre.com>
- <20240226-audio-i350-v6-3-f754ec1a7634@baylibre.com>
- <cd190d35-1658-43d8-9606-5e73257bbf3a@linaro.org>
-Content-Language: en-US
-In-Reply-To: <cd190d35-1658-43d8-9606-5e73257bbf3a@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6dfe6dac.89aa.1904e82ae8c.Coremail.slark_xiao@163.com>
 
+On Tue, Jun 25, 2024 at 04:28:25PM +0800, Slark Xiao wrote:
 
+[...]
 
-On 21/06/2024 17:00, Krzysztof Kozlowski wrote:
-> On 19/06/2024 16:46, Alexandre Mergnat wrote:
->> Add the audio codec sub-device. This sub-device is used to set the
->> optional voltage values according to the hardware.
->> The properties are:
->>    - Setup of microphone bias voltage.
->>    - Setup of the speaker pin pull-down.
->>
->> Also, add the audio power supply property which is dedicated for
->> the audio codec sub-device.
->>
->> Signed-off-by: Alexandre Mergnat<amergnat@baylibre.com>
->> ---
->>   .../devicetree/bindings/mfd/mediatek,mt6357.yaml   | 33 ++++++++++++++++++++++
->>   1 file changed, 33 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml b/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
->> index 37423c2e0fdf..d95307393e75 100644
->> --- a/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
->> +++ b/Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml
->> @@ -37,6 +37,32 @@ properties:
->>     "#interrupt-cells":
->>       const: 2
->>   
->> +  vaud28-supply:
->> +    description: 2.8 volt supply phandle for the audio codec
->> +
->> +  audio-codec:
->> +    type: object
-> Still not much improved. You do not have any resources there, so these
-> should go to the parent node.
+> >Hmm, sadly we shouldn't have used the same controller config for all these
+> >devices across different product families. I didn't really paid attention to the
+> >device name which is supposed to be unique (that's my bad).
+> >
+> >For instance, because of the controller config reuse, your SDX62 modem would
+> >print:
+> >
+> >"MHI PCI device found: foxconn-sdx65"
+> >
+> >which clearly is misleading the users...
+> >
+> >I've submitted a patch that uses unique product name across the product families
+> >[1]. Please take a look. After this patch, you can use the modem name to
+> >differentiate in client drivers.
+> >
+> >- Mani
+> >
+> >[1] https://lore.kernel.org/mhi/20240625074148.7412-1-manivannan.sadhasivam@linaro.org/
+> >
+> >-- 
+> >மணிவண்ணன் சதாசிவம்
+> For same chip platform, I don't think it's necessary to separate into different parts.
+> Like t99w368 and DW5932e, all things are same except the 'name'. For previous
+> mux_id settings, we would like to add it for sdx72/sdx75 platforms, but shall
+> no difference on T99W515 and DW5934e. 
+> Otherwise, we must to update both mhi and wwan side if we have a new foxconn
+> SDX72 device support since the name is different with foxconn-t99w515 or
+> foxconn-dw5934e.
+> 
 
-Hi Krzysztof,
+Name is an important factor for an end user. Because, even though both products
+are same in functionality, they are marketed as different products. So the users
+should be provided with the actual product name, not baseline.
 
-vaud28-supply seems to be a mistake that I forward port.
-In the V4, AFAII, your feedback [1] suggested me to move the vaud28-supply from the "audio-codec" 
-sub-node to the parent node, which for me is the "pmic" (mfd), because the property is considered as 
-power-supply.
+Even though it requires an update to the pci_generic driver, it ought to happen
+for correctness.
 
-     pwrap {
-         pmic {
-             ...
-             audio-codec {
-                 ...
-
-Hardware side, vaud28-supply is the output of PMIC-regulator subsystem, and AVDD28 is the input of 
-PMIC-audio-codec subsystem. Then:
-- The property name is wrong and must be change to AVDD28, which is a consumer (power input), not a 
-power-supply. => description: 2.8 volt power input for microphones (AU_VIN0, AU_VIN1, AU_VIN2)
-- IMHO, move this property to the next parent (pwrap) isn't consistent. It should be moved back to 
-Documentation/devicetree/bindings/mfd/mediatek,mt6357.yaml (Done in the V4) into audio-codec 
-substystem, beside mediatek,micbias0-microvolt
-
-Does this sound good to you ?
+- Mani
 
 -- 
-Regards,
-Alexandre
+மணிவண்ணன் சதாசிவம்
 
