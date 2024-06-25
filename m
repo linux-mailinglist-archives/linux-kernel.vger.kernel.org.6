@@ -1,128 +1,157 @@
-Return-Path: <linux-kernel+bounces-228753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1138B916667
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:44:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5BC5916668
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:44:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C251C2878E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:44:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B9D287CA5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:44:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5531415624B;
-	Tue, 25 Jun 2024 11:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A63mRVtH"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E89414B973;
+	Tue, 25 Jun 2024 11:44:13 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3E71553AF
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02761494A0
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315796; cv=none; b=HpIOTk6+xRvrLvpj3Z5njbVbqcqq0B1980KsUEmc1gWAYLJY5fZ2f/ZuvGURJGtk0uDSxivEWPVvYYBb/KQug1UFi9RJ7nGWhIv4uxqlur+zovi9oGLw/JBWevkWSJ1trAI2gnGHGjt4WJ32xV6m8wPQRLQlNMJldsIhFeCM0A0=
+	t=1719315853; cv=none; b=qMnIvpkLq8bxBBYQuyKe3F9Plra0a0jdyt5aPhOTUOHqHIxzkJWDDlgwHCV8broyaJiZDDdzt6F4p2Wwh04l7WKjzJFlDn4kbP0Kf+85Ruzpu1v3eAddWXxKeJLoat3av6bPi2L5ONgI8bnqU4A43x7a+EA8eG8jqHuhUWG2G/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315796; c=relaxed/simple;
-	bh=1eOgL4cfAMljELnjAjinh7SrzTqU4VK/mnGfkMlWVVE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=WIEw/XETyK+glet1EkDeh0PbL+qowKhN3A5VglYCOaxUJTL4pff/xT4N7FQx2UPnIJVw2oy9pUeEkAJcCD7kW225XPizJhQIamkSfVIxYAJiIJzngPOEwmkGTWvELC6CCJNI4eAKLBKMvgHxUYdmCcFArKVAnq7c+IjrqWssZR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A63mRVtH; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f65a3abd01so43750215ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 04:43:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719315795; x=1719920595; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4Ut/C6qhA9aOwITbcjH8dIajqyGZCkEHhPgDreABlew=;
-        b=A63mRVtHCQ+WyZ/fndhX6EdPXZsBzHnowhAu1I0yzU/KIsoDtQji3P+hZ+Jrd5b993
-         2nlYAlAkQat+sjh9y/+gix5YLHf3JMKA4e3wDfo477hcST2s/6lqSpby14mC/+CQu2Ab
-         4zVLHpDPt16GUhmI37keRMueddOcykotYqYpEN1FEyLQNP4STmIbkOhi1lB5+1wrnsUb
-         7PRz2Yahjirgv2GqymZ28c8ezIt94qlEAFw8JZDlsTfCIInQDTAp0dX4xOlEzgTvJsdw
-         rvpe3XdSo/AWL7MlT0LIb7FpUp5YsdMQAjSu8kdS4GJjAt0v6MXjcNF4EXhq6SkHUDVM
-         9Gkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719315795; x=1719920595;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4Ut/C6qhA9aOwITbcjH8dIajqyGZCkEHhPgDreABlew=;
-        b=Ag/1SQtQMt1M0PzvwVOlVKWRb/e5CTyBVce2Aa1zjbmiVJub4+R7nrrbr5pHKN4Z8M
-         L5Cz+x/1cdlicOzOQFi6Sp/NnqUgoMwVQdbSKMaZMPYqfAbDzIwxh3B67WSPomZAyoFi
-         E3G6recrVDC8djEsqUksZHMo7bRHnQ9lJHcSEfRnMG29cGXEe1A1xtCc3ldrzGopd/K/
-         fpF1m0CH/9bbioAIeAcmRNvUPf4GQsYk3+NUsj30WtIFb7gQLN91O1coQYkSTVWPvdv/
-         d6CHlxgvV3oBkJptjGfa2oDCAPckvc4qrM/y4gIwkOWQoYpe/SuAje06f0pteJed1xLL
-         OAaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsV042WtqR+ROiGbqV1JGcol2JUTuGoSrJUYuW0rveXuIgWazk/4UqfwdFo61c0NEUC21+3qErVRSrRgminPV/Yh4KqkHgKIE1XDxv
-X-Gm-Message-State: AOJu0Yx8w06AF22kw6S+XVKDbHIISS67E3FQ4kilgMPoJJtjEJYugHvw
-	q9M3VCVov6PJw+ShkuwxVOlDONMMga/X43sQVZube6Gk+X5qd5qS
-X-Google-Smtp-Source: AGHT+IGSAGczVwLSd1GZrjMQPgs8n8ea+P8Fg9++dGsm24hVGUX2QdMSqhOgaBAS+lj6bPr0jrTxIA==
-X-Received: by 2002:a17:902:6847:b0:1f7:123e:2c6f with SMTP id d9443c01a7336-1fa23ee5b60mr70122115ad.37.1719315794786;
-        Tue, 25 Jun 2024 04:43:14 -0700 (PDT)
-Received: from wheely.local0.net (118-211-5-80.tpgi.com.au. [118.211.5.80])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f028asm79638525ad.3.2024.06.25.04.43.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 04:43:14 -0700 (PDT)
-From: Nicholas Piggin <npiggin@gmail.com>
-To: Tejun Heo <tj@kernel.org>
-Cc: Nicholas Piggin <npiggin@gmail.com>,
-	"Paul E . McKenney" <paulmck@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Lai Jiangshan <jiangshanlai@gmail.com>,
-	Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] stop_machine: Add a delay between multi_cpu_stop touching watchdogs
-Date: Tue, 25 Jun 2024 21:42:47 +1000
-Message-ID: <20240625114249.289014-5-npiggin@gmail.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240625114249.289014-1-npiggin@gmail.com>
-References: <20240625114249.289014-1-npiggin@gmail.com>
+	s=arc-20240116; t=1719315853; c=relaxed/simple;
+	bh=4OdVZANUBZdomjUgbpqvZtAztIJDon54DfzXWoNKkLA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=BDnGTBVUKZRfJZ3R0ErIGLAsmseXlZuMF3JQAU/Bs7BYlTDOMM1U93U6e6LV9GIM5e1cord39eOj5qVD6UY7KcJyzfQX0Jwtg1SnHZu5lpmmCMWLQCRAP5GnRFuXgBaFsGkz9pVdeBBXPy/edC0UfjDtD0wD3TccQreTh9Ceayg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W7jYJ3z5XzxSv5;
+	Tue, 25 Jun 2024 19:39:48 +0800 (CST)
+Received: from dggpemd100004.china.huawei.com (unknown [7.185.36.20])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4F72E140415;
+	Tue, 25 Jun 2024 19:44:07 +0800 (CST)
+Received: from [10.67.109.211] (10.67.109.211) by
+ dggpemd100004.china.huawei.com (7.185.36.20) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Tue, 25 Jun 2024 19:44:07 +0800
+Message-ID: <8841edbc-dd65-452c-a459-b5ce42e289d9@huawei.com>
+Date: Tue, 25 Jun 2024 19:44:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] RISC-V: Dynamically allocate cpumasks and further
+ increase range and default value of NR_CPUS
+Content-Language: en-US
+To: Andrew Jones <ajones@ventanamicro.com>
+CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>
+References: <20240614075306.357861-1-liuyuntao12@huawei.com>
+ <20240625-c1c3b9fcb6ee148294d4ceb4@orel>
+From: "liuyuntao (F)" <liuyuntao12@huawei.com>
+In-Reply-To: <20240625-c1c3b9fcb6ee148294d4ceb4@orel>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpemd100004.china.huawei.com (7.185.36.20)
 
-If a lot of CPUs call rcu_momentary_dyntick_idle() in a tight loop,
-this can cause contention that could slow other CPUs reaching
-multi_cpu_stop. Add a 10ms delay between patting the various dogs.
 
-Signed-off-by: Nicholas Piggin <npiggin@gmail.com>
----
- kernel/stop_machine.c | 14 ++++++++++++--
- 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/stop_machine.c b/kernel/stop_machine.c
-index 1e5c4702e36c..626199b572c6 100644
---- a/kernel/stop_machine.c
-+++ b/kernel/stop_machine.c
-@@ -243,8 +243,18 @@ static int multi_cpu_stop(void *data)
- 			ack_state(msdata);
- 
- 		} else {
--			/* No state change, chill out */
--			stop_machine_yield(cpumask);
-+			/*
-+			 * No state change, chill out. Delay here to prevent
-+			 * the watchdogs and RCU being hit too hard by lots
-+			 * of CPUs, which can cause contention and slowdowns.
-+			 */
-+			unsigned long t = jiffies + msecs_to_jiffies(10);
-+
-+			while (time_before(jiffies, t)) {
-+				if (READ_ONCE(msdata->state) != curstate)
-+					break;
-+				stop_machine_yield(cpumask);
-+			}
- 			if (curstate > MULTI_STOP_PREPARE) {
- 				/*
- 				 * At this stage all other CPUs we depend on
--- 
-2.45.1
+On 2024/6/25 19:11, Andrew Jones wrote:
+> On Fri, Jun 14, 2024 at 07:53:06AM GMT, Yuntao Liu wrote:
+>> Currently default NR_CPUS is 64 for riscv64, since the latest QEMU virt
+>> machine supports up to 512 CPUS, so set default NR_CPUS 512 for riscv64.
+>>
+>> Under the promotion of RISC-V International and related chip
+>> manufacturers, RISC-V has also begun to enter the server market, which
+>> demands higher performance. Other major architectures (such as ARM64,
+>> x86_64, MIPS, etc) already have a higher range, so further increase
+>> this range up to 4096 for riscv64.
+>>
+>> Due to the fact that increasing NR_CPUS enlarges the size of cpumasks,
+>> there is a concern that this could significantly impact stack usage,
+>> especially for code that allocates cpumasks on the stack. To address
+>> this, we have the option to enable CPUMASK_OFFSTACK, which prevents
+>> cpumasks from being allocated on the stack. we choose to enable this
+>> feature only when NR_CPUS is greater than 512, why 512, since then
+>> the kernel size with offstack is smaller.
+> 
+> This isn't the reason why Arm decided to start at 512, afaict. The reason
+> for Arm was because hackbench did better with onstack for 256. What are
+> the hackbench results for riscv?
 
+Okay, I will add the test results of hacktest soon.
+
+> 
+>>
+>> vmlinux size comparison(difference to vmlinux_onstack_NR_CPUS baseline):
+>>
+>> NR_CPUS     256         512         1024        2048        4096
+>> onstack     19814536    19840760    19880584    19969672    20141704
+>> offstack    19819144    19840936    19880480    19968544    20135456
+>> difference  +0.023%     +0.001%     -0.001%     -0.001      -0.031%
+>> is_smaller  n           n           y           y           y
+> 
+> Since the savings are almost nothing we must not have too many global
+> cpumasks. But I'm in favor of ensuring stack depths stay under control,
+> so turning on CPUMASK_OFFSTACK sounds good to me in general.
+> 
+>>
+>> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+>> ---
+>>   arch/riscv/Kconfig | 5 +++--
+>>   1 file changed, 3 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+>> index 0525ee2d63c7..5960713b3bf9 100644
+>> --- a/arch/riscv/Kconfig
+>> +++ b/arch/riscv/Kconfig
+>> @@ -77,6 +77,7 @@ config RISCV
+>>   	select CLINT_TIMER if RISCV_M_MODE
+>>   	select CLONE_BACKWARDS
+>>   	select COMMON_CLK
+>> +	select CPUMASK_OFFSTACK if NR_CPUS > 512
+>>   	select CPU_PM if CPU_IDLE || HIBERNATION || SUSPEND
+>>   	select EDAC_SUPPORT
+>>   	select FRAME_POINTER if PERF_EVENTS || (FUNCTION_TRACER && !DYNAMIC_FTRACE)
+>> @@ -428,11 +429,11 @@ config SCHED_MC
+>>   config NR_CPUS
+>>   	int "Maximum number of CPUs (2-512)"
+>>   	depends on SMP
+>> -	range 2 512 if !RISCV_SBI_V01
+>> +	range 2 4096 if !RISCV_SBI_V01
+>>   	range 2 32 if RISCV_SBI_V01 && 32BIT
+>>   	range 2 64 if RISCV_SBI_V01 && 64BIT
+>>   	default "32" if 32BIT
+>> -	default "64" if 64BIT
+>> +	default "512" if 64BIT
+> 
+> This is somewhat reasonable, even if nothing is going to use this for
+> quite a while, since it'll help avoid bugs popping up when NR_CPUS gets
+> bumped later, but it feels excessive right now for riscv, so I'm a bit
+> on the fence about it. Maybe if hackbench doesn't show any issues we
+> could turn CPUMASK_OFFSTACK on for a smaller NR_CPUS and also select
+> a smaller default?
+> 
+> Thanks,
+> drew
+> 
+>>   
+>>   config HOTPLUG_CPU
+>>   	bool "Support for hot-pluggable CPUs"
+>> -- 
+>> 2.34.1
+>>
+>>
+>> _______________________________________________
+>> linux-riscv mailing list
+>> linux-riscv@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
