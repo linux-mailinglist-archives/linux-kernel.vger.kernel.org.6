@@ -1,123 +1,233 @@
-Return-Path: <linux-kernel+bounces-228426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34E00915FC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:15:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B8E915FC6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:15:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10491F22442
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:15:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 852B21C21999
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D4D1465BF;
-	Tue, 25 Jun 2024 07:13:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2BE6146A89;
+	Tue, 25 Jun 2024 07:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vXmifm8q"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XDDxzY2c"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1F91465B3
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:13:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF8CB33C0;
+	Tue, 25 Jun 2024 07:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719299638; cv=none; b=fKz0oxbPlb/32WxOmjwmCPXZ5fO1l1hlGId1B7TDUQ5DICntmB/zXF3C3/+Jtek1PwPOfLMbmh9OyyGhMepTsaiYpGjMvE5Sq6aeYXZRBzswzU2k5bGg3fZ623JTL534RgEMojpDEqpjuDgYHUTfpjB0fzjpPdHLAbJ4Qvi1C4M=
+	t=1719299669; cv=none; b=bWxW4Zt/dG10ayiRv43V9Fnq3EvFuR16ELDhymsDuDVP8aHDt9vWK/cK8oMt+I0X+apISvcVUJDMZKeRtaCG3QTj9waKJyzPVOVSqgPG3DiZEEagh91xXW5SE0sdpBGUSTqZt64WHeYTeRUuL3s5XUvZytYlSgqf+8uCGyriON8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719299638; c=relaxed/simple;
-	bh=M0PusBwUOnvIKi4gdlLdWjip9P0B6wyISd2JaNhue0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sxSEcYkBZ8MTv61HNvjbCH/4uNvqje2Otlk4mwzSpP7EzuX/XOy/I2iy2D5W/DRVHK4IGDJWowsc9/uDCVWKHBTTSnZT1Y7S3ejmNhWsn2qphM4djxhRzYvYKYGKEbGubI4eAa1iPUXHJFeoiaI/VqLLpDv7YKDsvLM41onBfR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vXmifm8q; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cd80e55efso6158666e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719299635; x=1719904435; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=dzKPriaP/94IulqToxJJrPFAwt2XeR1A21mNIKltOqQ=;
-        b=vXmifm8q/8E5agcvZoJRFXS/zmOUa5QSFcvCZpOm3ZkFXx2PCkHMiAyn2BFChQP5Pu
-         BKSM3cUytxBEtk0/eMNWWvh20Yp8vEEBqVbXiAW2DZNTyneXlG5PBoUDZS6fdfUqylkR
-         aUwnPjqLNcPaN9Sva7E5zEpbGaoJTTXspyhdNedhwpjnE0Ag7i76kvLoP+7OYsU04IgA
-         qP9eaIYz0MslDR4eQhHs+Jmlg4TyBNm52LPYVyFBu+Eo2x1B9VU/yCsFIg1P5zCELiIC
-         eEK9ocgXWDclrGO/QAu1biEYJ0Fe3q+MFa8y8tEVlctxqzD59LFXGICjn5vOZfujkMr0
-         zHgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719299635; x=1719904435;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dzKPriaP/94IulqToxJJrPFAwt2XeR1A21mNIKltOqQ=;
-        b=Bhq+t/JpoYk/0wKCUk5J0fAOVHh/I/PP7/UI42R+wFMte6pxybVo8a583VZBEuRbte
-         t6BtWlR6xSKYX74fCPB7MGq85DY+dt2y51TmbnCyXvE0Vauv3x8wCjGChvRQ6/OFyHnb
-         I6e73w8meqg1kp9hNHBqhDoGY51Lcyk3tny6zMjFPv2SkBvaaijCmRaIlU0HZ1YW4ZDh
-         Mw7Wk3+Ss5lggpNqOQRnbkNw4q1ppasBeIP2oRlglIgw7s3xcYkDWniz1ypvTScdMGQL
-         Bt0OKRyTjSl1s/f7y2WkA7Mt5F8X0kcdBU1YPQzQeXkmlffDv0H87tfxOGGaSR3HBXHc
-         SNuA==
-X-Forwarded-Encrypted: i=1; AJvYcCWeOUdeVIYL1Zol3eTpVxMjk56rUERJDzVteW50veECPaIqT4HSs9Oqngqw+SO0EjIz/xRd6q4+QXpVZvgnWw6TxAfEdBEXUZ10AbS3
-X-Gm-Message-State: AOJu0YwkOPQJ9GYHhvXecaXTZgprA4PRjEKaNyQGkUwrEvbCzt1muCV8
-	sBgFilBb/h4rISf5/ShkHaRr9yt/AFjheXOrH/rUWGFZnIXhpxMaTLtY6I7H7zA=
-X-Google-Smtp-Source: AGHT+IG64J5RDl5yaNGvIky6EGoSsPTbRPhzUi9sDW1lxe4MxCOfYS/ESUmKFf0+XtJh628T1VqfDg==
-X-Received: by 2002:a05:6512:308c:b0:52c:c9e4:3291 with SMTP id 2adb3069b0e04-52ce185ce9amr6238633e87.60.1719299634940;
-        Tue, 25 Jun 2024 00:13:54 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdeafa562sm820431e87.154.2024.06.25.00.13.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 00:13:54 -0700 (PDT)
-Date: Tue, 25 Jun 2024 10:13:52 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Gokul Sriram P <quic_gokulsri@quicinc.com>, sboyd@kernel.org, 
-	andersson@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, 
-	devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
-	mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh@kernel.org, 
-	sricharan@codeaurora.org, gokulsri@codeaurora.org
-Subject: Re: [PATCH v9 4/8] remoteproc: qcom: Add ssr subdevice identifier
-Message-ID: <76mrajqeteocstj2akjtyk7rhfnqvksqw3fqsntlm6n3mqqaff@z343xmmunnzj>
-References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
- <20240621114659.2958170-5-quic_gokulsri@quicinc.com>
- <d7923435-ba13-4aad-b3f1-67e3469ec7fc@kernel.org>
- <8adae0a7-d496-4c9f-ab0c-f162c06e90c4@quicinc.com>
- <87353911-b108-4b87-aa40-862acfc95aca@kernel.org>
+	s=arc-20240116; t=1719299669; c=relaxed/simple;
+	bh=gV5H2/+wJ39fHmY1vLnJqPvHYi5BeCn6GqIMHKbRROU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=juYhKCXOR9g7TgXU8LkZ9nEmVJWfgjOSyYtBNtKTa0ft3PfyuNE8FUqA6G0TtxpNDjipLwJ5yAvFcucZzqKkE9fSVnB21OXAShAPAIeyKk+hU6vxSkSafsLAx1YZqjesA2bPwjK6bl+FMnuLOBXAt0EmkkcaSRdk711UhwQBmPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XDDxzY2c; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353728.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P6wxNb006810;
+	Tue, 25 Jun 2024 07:14:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=R
+	cmRhsFtilKqERwPnwEI5aWMqtyGlt3CqGQPHQLZ2Fo=; b=XDDxzY2cUZIJtP511
+	gcnINNOd95Jt6inbpPZpzRfJH2mEEHBchV8P3FNrZYreX78Gv/E9p2TCId27pVjY
+	o/Agz4WBlHk4BZORjWd+SnoCWFN94Dv3g8+LPu1tp3ka3J4acREu7uzZuA9Qf6/t
+	XTeGvHusECv43xT2ZJqbUk0qp0NwOk8n/Gc/3DwI6hfcT4MpKKikMJasPO3RhFKH
+	EmIPsueYiJ08mdW5liF7i7HEW4fG7EJeyQWRjECYwse4ttyqO9m30zx5rtnVaG+Z
+	Zv/XsmEGsLVuDjKNlULnf4jmTU26sj5SfIOFa4oY7dXOLjICjSJayk9Zu8QyqavS
+	jWkNQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yys3f01aa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 07:14:08 +0000 (GMT)
+Received: from m0353728.ppops.net (m0353728.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45P7E8Lh030436;
+	Tue, 25 Jun 2024 07:14:08 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yys3f01a7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 07:14:08 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45P4rQgF020024;
+	Tue, 25 Jun 2024 07:14:07 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxb5mctta-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 07:14:07 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45P7E45020447854
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Jun 2024 07:14:06 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9620858057;
+	Tue, 25 Jun 2024 07:14:04 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E73B05805D;
+	Tue, 25 Jun 2024 07:13:55 +0000 (GMT)
+Received: from [9.43.96.146] (unknown [9.43.96.146])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue, 25 Jun 2024 07:13:55 +0000 (GMT)
+Message-ID: <061fce39-3ca8-4f49-9b4a-974024a84b3f@linux.ibm.com>
+Date: Tue, 25 Jun 2024 12:43:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87353911-b108-4b87-aa40-862acfc95aca@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] perf sched map: Add command-name, fuzzy-name options
+ to filter the output map
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Athira Rajeev
+ <atrajeev@linux.vnet.ibm.com>,
+        Chen Yu <yu.c.chen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+        Kan Liang <kan.liang@linux.intel.com>, acme@redhat.com,
+        Fernand Sieber <sieberf@amazon.com>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+References: <20240618180708.14144-1-vineethr@linux.ibm.com>
+ <ZnpOD-Y9nHbO861i@google.com>
+Content-Language: en-US
+From: Madadi Vineeth Reddy <vineethr@linux.ibm.com>
+In-Reply-To: <ZnpOD-Y9nHbO861i@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: qCVg9K45l_k8xYGs2k_SZPa9gI1kIH6L
+X-Proofpoint-ORIG-GUID: YFnDz_qVQ-_CpNh4569gIX5heqm6oiRb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_03,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ bulkscore=0 lowpriorityscore=0 phishscore=0 priorityscore=1501
+ clxscore=1015 malwarescore=0 spamscore=0 suspectscore=0 mlxlogscore=999
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406250051
 
-On Tue, Jun 25, 2024 at 09:04:17AM GMT, Krzysztof Kozlowski wrote:
-> On 25/06/2024 08:28, Gokul Sriram P wrote:
-> > 
-> > On 6/21/2024 8:40 PM, Krzysztof Kozlowski wrote:
-> >> On 21/06/2024 13:46, Gokul Sriram Palanisamy wrote:
-> >>> Add name for ssr subdevice on IPQ8074 SoC.
-> >> Why?
-> >    Oops! Missed the change. Will add and update.
-> >>> Signed-off-by: Nikhil Prakash V<quic_nprakash@quicinc.com>
-> >>> Signed-off-by: Sricharan R<quic_srichara@quicinc.com>
-> >>> Signed-off-by: Gokul Sriram Palanisamy<quic_gokulsri@quicinc.com>
-> >> Three people developed that single line?
-> >>
-> >> Something is really odd with your DCO chain.
-> >   The change was originally authored by Nikhil and reviewed by 
-> > Sricharan. I'm just submitting the change to upstream so retained their 
-> > names.
-> >>
+Hi Namhyung,
+
+On 25/06/24 10:26, Namhyung Kim wrote:
+> Hello,
 > 
-> Then your DCO chain is not correct. Please carefully read submitting
-> patches, especially documents about authorship, DCO, reviewed tags.
+> On Tue, Jun 18, 2024 at 11:37:08PM +0530, Madadi Vineeth Reddy wrote:
+>> By default, perf sched map prints sched-in events for all the tasks
+>> which may not be required all the time as it prints lot of symbols
+>> and rows to the terminal.
+>>
+>> With --command-name option, one could specify the specific command(s)
+>> for which the map has to be shown. This would help in analyzing the
+>> CPU usage patterns easier for that specific command(s). Since multiple
+>> PID's might have the same command name, using command-name filter
+>> would be more useful for debugging.
+>>
+>> Multiple command names can be given with a comma separator without
+>> whitespace.
+>>
+>> The --fuzzy-name option can be used if fuzzy name matching is required.
+>> For example, "taskname" can be matched to any string that contains
+>> "taskname" as its substring.
+> 
+> Can we split the changes into separate commit?
+> 
+>  1. add --command-name filter, but I think --task-name is better.
+>  2. add multiple name support using CSV
+>  3. add --fuzzy-name support
+> 
+> Although change 2 and 3 can be trivial, having them separately would be
+> better for reviewers.
+> 
 
-Also there should be From: Nikhil header before the patch.
+Sure, I will do that.
 
--- 
-With best wishes
-Dmitry
+>>
+>> For other tasks, instead of printing the symbol, ** is printed and
+>> the same . is used to represent idle. ** is used instead of symbol
+>> for other tasks because it helps in clear visualization of command(s)
+>> of interest and secondly the symbol itself doesn't mean anything
+>> because the sched-in of that symbol will not be printed(first sched-in
+>> contains pid and the corresponding symbol).
+> 
+> I feel like '**' might be getting too much attention in the output.  As
+> it's not interested, less characters like '-' could be used.
+> 
+
+Yes, '-' seems better, will do that.
+
+>>
+>> When using the --command-name option, the sched-out time is represented
+>> by a '+'. Since not all task sched-in events are printed, the sched-out
+>> time of the relevant commands might be lost. This representation ensures
+>> that the sched-out time of the interested commands is not overlooked.
+>> The sched-out values for non-current CPUs are skipped because the sched-out
+>> symbol would be irrelevant.
+> 
+> Well, I think it's also a sched-in of another task, we can use '*- '
+> instead of adding a new '+' sign for sched-out.
+> 
+
+Sure, will change it.
+
+>>
+>> 6.10.0-rc1
+>> ==========
+>> *A0                     794225.687532 secs A0 => migration/0:18
+>>   *.                    794225.687544 secs .  => swapper:0
+>>    .  *B0               794225.687628 secs B0 => migration/1:21
+>>    .  *.                794225.687639 secs
+>>    .   .  *C0           794225.687704 secs C0 => migration/2:26
+>>    .   .  *.            794225.687715 secs
+>>   *D0  .   .            794225.687829 secs D0 => perf-exec:332914
+>>    D0  .   .  *.        794225.687926 secs
+>>    D0  .   .  *E0       794225.689369 secs E0 => schbench:332916
+>>    D0  .  *F0  E0       794225.689409 secs F0 => schbench:332917
+>>
+>> 6.10.0-rc1 + patch (--command-name perf)
+>> =============
+>>    ** *A0  **  **       794226.581112 secs A0 => perf:332915
+>>       +A0               794226.581145 secs
+>>    ** *A0  **  **       794227.582150 secs
+>>       +A0               794227.582162 secs
+>>    ** *A0  .   .        794228.583167 secs
+>>       +A0               794228.583177 secs
+>>    ** *A0  **  **       794229.634027 secs
+>>       +A0               794229.634040 secs
+>>    ** *A0  .   **       794230.635045 secs
+>>       +A0               794230.635058 secs
+>>    **  **  ** *B0       794231.204272 secs B0 => perf:332912
+>>               +B0       794231.204352 secs
+> 
+> Something like:
+> 
+>      -  *A0  -   -
+>      -  *-   -   -
+>      -  *A0  -   -
+>      -  *-   -   -
+>   ...
+>      -   -   -  *B0
+>      -   -   -  *-
+>
+ 
+Got it. I will send a v5 with the suggested changes. Thank you for reviewing it.
+
+Thanks and Regards
+Madadi Vineeth Reddy
+
+> Thanks,
+> Namhyung
+> 
+
 
