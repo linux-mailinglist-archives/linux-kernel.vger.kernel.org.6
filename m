@@ -1,544 +1,471 @@
-Return-Path: <linux-kernel+bounces-229227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8409F916D13
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:29:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC0A916D1A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:32:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7FAB1C23335
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:29:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62B1528BCBC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:32:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E076C16D4D7;
-	Tue, 25 Jun 2024 15:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0D816F0EA;
+	Tue, 25 Jun 2024 15:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="py/gfmFz"
-Received: from GBR01-LO4-obe.outbound.protection.outlook.com (mail-lo4gbr01olkn2012.outbound.protection.outlook.com [40.92.113.12])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="j00yzSkr"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2053.outbound.protection.outlook.com [40.107.236.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31DF72E62F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.113.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E9BD2F5;
+	Tue, 25 Jun 2024 15:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.53
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719329325; cv=fail; b=lrJx+hFo2aY3iWNaZfiFSpSN2wz0Jd3icJd5GepNF4MPpFnLa3JsAJCewORm3LpIXfXn0SSKBz0tLb8O/ospouKzLa27HgZVWVMQAqOFfjptZAgFS5DkxodVhOBD2zPWAMHVntLqr5svl14cMvP4lZYBh32bYnIvrM3Rmnd3uwc=
+	t=1719329561; cv=fail; b=UyIYPh8UbY17414aRaFxJEkZURIdW+DEaLfM2tFu7qHFFIhuIipF+gqcnm93l9l+eUXsNJkxflAUpslltVHRLGPgmdlhiyEnRlxWaWYCcX0ZszvkaUQHsWjvgI6hlcXQHmyQJi8SPhbmvxMf/ywhhFk4T8gr6gJFJ6l7DK0csIU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719329325; c=relaxed/simple;
-	bh=bFtHkvFMBwM91f6eSXMaM5409kr/TEe5AgO1S1ul+9c=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=KE2hlxtIgQ1GHHN/jSbHZqy4o7lT31sAE4PB3pNLiT0ELIPVyHeEpm6Z+m11OmU0RUu80aLzIecOUhKCNMPiED0Zm4W5QIqSuyYP8qn+/EGjAugwMAJLjP/xaFn+uxKZvwsnahQXqrkS+kleOAxuuaXLrpCePGjShDRFrmPxpkY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=py/gfmFz; arc=fail smtp.client-ip=40.92.113.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	s=arc-20240116; t=1719329561; c=relaxed/simple;
+	bh=KHt0RpG5dnA8kOae25yt32DIykKult4obl/GjxJeeYI=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=CypYcgA2wSZDP5ucT0k8cWOWUIEeZEDnoRoXn7oQ9dzd/DvkxyrznzOY019A+1V9Hq5fzy4nsGNSH6JEb9tTXExzL90K2ACXKVUjPgPdO+u7tor3GFgc6oAuiBpr9RqLiA6Z3K+IuUgUdKwb5hA1E1Gh+xPxdH/LKcNrmPRCWSY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=j00yzSkr; arc=fail smtp.client-ip=40.107.236.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=UYdkHDNyeWVVd7dSeoyZa+RKcTOYFUmujtaGofMaSYWggPZOf4nor1PT2uHGlAyD7hvt15Z06HBjL6sMGfvQMlXoluK8wLd8HmYxIrwiAWcAXtCi3MF+CMIecqEfJ6Fr9pohgp7o0vjvQxZ2eRkj6kjND09e/mgF9waTMDyaPrHjI9pceB64VmQ9Ssl4JeZFZxD134bJXrOmtJOSr2DJfI/vL0g5osC6dD38Ydgz9aybsjMyqxdBfjRu9DBRqRFSzlxrUm/mWMrjpZ3fjqgPCRU18x+3KBP2eRwG3qASI10nr31dlD5WzoE/igyF2asuf+Gi5nXKgwHp2xuzZTioDQ==
+ b=FCsR3aFCjyogkDFisn1v2SKm8F1Y74+pzfW7p6WJ1kt5B/TgAleZdK7kEXSDhMrWOAmrK2KaXC7FFhVRZXFtMznW7cKY/pGT5RVSoPUks4tAotz8hJVJmmO8XtMvnwc7DfGs4AEnQlFvJbh2zlycTUfV4sYfauEDt0bot5CG4VQjsbDHmR6VQy+M9FZ83knntwuh2fbbzTEwTswsf5bqgc2TYT81jhLFOGMzU3V4fsuqUilGQurQqKCIQpko6vh2I5hVCRAH2krQ1O01yri/cFbGIwZNh0uhT5w/ab5ERgnKQ+Dy4/G3mCPmCJwU3ZTlprRQ72n5KWye9WvxwIdwAA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=DfYi5+YdkE5FEt9XtCNMMSqBUshLjrAVT6sgbWe5/AA=;
- b=MYH0zs3T3bpOGJVgVFQEFpbvYGnMf4HL7p5pHp1VkL5jKnQmz9ziH6F0hNkaHkaYfVES8kpwQtqWto0Ue0SFMwlNR8Tvzey207frsB4leUWCXg8f+dL9IOV7qFzJWkabkmd4ninwPLUawnz6O0PRrEmBHOvAiX9OyatV5Ung/45DFzTZoOwH0wnX/SorYnCsbEH2YpxJzB6wHX8zgUrJ47CpgP/do8G3xC53xjpRpBbG6KHfO/RmlXo98jCVtElC5MVyL5sJ1IcVKcn+Nsw9K6gKEikPGX1WAo2RN1A8XxO60hB2wq3sddjPfz69Ii1xfu8FmkyjbyoZ/1+qCTHKBw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
+ bh=GaPJcGVSdfrhNeh0Ebq+VIaaX4/pI0PSg5FeC3SeCTw=;
+ b=MGYS7sYGGQfPRGAXHt6iefdsPqD29zY7eBhbe2l34stvMwJsjgJ7Buzs7i3WrNilzX+25EfFTTULWa6CoUKpoP0uG1B8WURjhpsQgluFz13Fgcq5Am0lF7vp3vm8RkKWSQ0YEdwC2cymIFFUNJvZnyTG9/qdCZTyRJc5DJInAkQlkqAvcgPspGYPL4K8ORxubHEsB73EWDN38LFgipJaSR6MSh9kRZi9fO5i/8W0i9Iy2pwRSEWcGK4XXAOzPBR6FuTznGPh2u9dPZS1xR/08Dg863j2v7xRo86ick6omkPE0SnBfOjuC5VO7VhVaCj13OLjikSDckwJ1nCrfE8vcA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=lwn.net smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DfYi5+YdkE5FEt9XtCNMMSqBUshLjrAVT6sgbWe5/AA=;
- b=py/gfmFznHmUs/iP+9wORpnNsp1NRkFtjGVDttFhupCRSUZJbwPHdGbQgXiJ/NJKHIP0bOPh74pyGhXkUvyTAmUMW/9zmtXw8qXobmjN2qQ3PHaCBRN1KsJII5vzg333o+dadm5y/IxkMhpXPek1oid76gI1OTAmTFZkualS7jFqtQMdN4phowqOsGAy8RFYKkOpwkYJcs1/12WkHtCIpcuoUsCNbDvLB45juIuid2tev6dxM5STFiBAgVMKR+xmrVGWzHZ3wmsKXZ/LBKihlk88zJzuJF0BdSp/f4iYFhcSp6wNIRCnzsRVET7MT3fuwc5qQ4Hg7+CDURyA38sR9g==
-Received: from CWLP265MB6516.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:1da::7)
- by CWXP265MB2919.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:c0::11) with
+ bh=GaPJcGVSdfrhNeh0Ebq+VIaaX4/pI0PSg5FeC3SeCTw=;
+ b=j00yzSkrfUBpk6eLCSFBNOZue7l8S0iYQKoQs7yTAs9xZ/hRs9W/lpIomSvb8Ll7zCQOl9wZTF3uwvjLco6RAuDCmQy1zm4kbckuRIzdQeqLKw+DauSoResECskwcJF9sHfIzMMRu1ZYHvbfI/ShA5uwRfFRt3SJPqTczfDZEBeHEnVodhYzvqGhPbC9y+2ODkJ0XfQn+0cnvFzYRaqWGxN5ClYT8d9Qyd+CqBh2+zrnfQMQQ9v4dh5l9o3HMTtrbOykU8p+m+sMj43zrQvW3Bcf/WWQm3c6lNBhym0IFTb9yOV9CjwoiAe9imRy5auNjNhsicfjGH4GHWvP7mZBHA==
+Received: from BYAPR06CA0071.namprd06.prod.outlook.com (2603:10b6:a03:14b::48)
+ by PH7PR12MB5618.namprd12.prod.outlook.com (2603:10b6:510:134::14) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.31; Tue, 25 Jun
- 2024 15:28:39 +0000
-Received: from CWLP265MB6516.GBRP265.PROD.OUTLOOK.COM
- ([fe80::a912:f233:4847:e806]) by CWLP265MB6516.GBRP265.PROD.OUTLOOK.COM
- ([fe80::a912:f233:4847:e806%5]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
- 15:28:39 +0000
-Message-ID:
- <CWLP265MB651697C43A8A396DE8989CD8FDD52@CWLP265MB6516.GBRP265.PROD.OUTLOOK.COM>
-Subject: [PATCH] Staging: rtl8192e: rtllib_rx: fixed alignment
-From: Yusef Aslam <yuzi54780@outlook.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Date: Tue, 25 Jun 2024 16:28:38 +0100
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.2 
-X-TMN: [4xibs7ad+0Dff58LTk1XYNPd62fZCcCQ]
-X-ClientProxiedBy: LO4P265CA0155.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:2c7::7) To CWLP265MB6516.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:400:1da::7)
-X-Microsoft-Original-Message-ID:
- <51c93280b0d7547d7cc6e2d8dfc8dcdb855a1f4c.camel@outlook.com>
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Tue, 25 Jun
+ 2024 15:32:30 +0000
+Received: from SJ5PEPF000001F6.namprd05.prod.outlook.com
+ (2603:10b6:a03:14b:cafe::a) by BYAPR06CA0071.outlook.office365.com
+ (2603:10b6:a03:14b::48) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.38 via Frontend
+ Transport; Tue, 25 Jun 2024 15:32:30 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ SJ5PEPF000001F6.mail.protection.outlook.com (10.167.242.74) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7677.15 via Frontend Transport; Tue, 25 Jun 2024 15:32:29 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 25 Jun
+ 2024 08:32:13 -0700
+Received: from vidyas-desktop.nvidia.com (10.126.230.35) by
+ rnnvmail201.nvidia.com (10.129.68.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 25 Jun 2024 08:32:07 -0700
+From: Vidya Sagar <vidyas@nvidia.com>
+To: <corbet@lwn.net>, <bhelgaas@google.com>, <galshalom@nvidia.com>,
+	<leonro@nvidia.com>, <jgg@nvidia.com>, <treding@nvidia.com>,
+	<jonathanh@nvidia.com>
+CC: <mmoshrefjava@nvidia.com>, <shahafs@nvidia.com>, <vsethi@nvidia.com>,
+	<sdonthineni@nvidia.com>, <jan@nvidia.com>, <tdave@nvidia.com>,
+	<linux-doc@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <kthota@nvidia.com>,
+	<mmaddireddy@nvidia.com>, <vidyas@nvidia.com>, <sagar.tv@gmail.com>
+Subject: [PATCH V4] PCI: Extend ACS configurability
+Date: Tue, 25 Jun 2024 21:01:50 +0530
+Message-ID: <20240625153150.159310-1-vidyas@nvidia.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240523063528.199908-1-vidyas@nvidia.com>
+References: <20240523063528.199908-1-vidyas@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
+X-NVConfidentiality: public
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: rnnvmail203.nvidia.com (10.129.68.9) To
+ rnnvmail201.nvidia.com (10.129.68.8)
+X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CWLP265MB6516:EE_|CWXP265MB2919:EE_
-X-MS-Office365-Filtering-Correlation-Id: d44f2a96-f9e8-4142-a299-08dc952b7cf4
-X-Microsoft-Antispam: BCL:0;ARA:14566002|461199025|3412199022|440099025;
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F6:EE_|PH7PR12MB5618:EE_
+X-MS-Office365-Filtering-Correlation-Id: 586d6fab-24da-4653-ca1b-08dc952c062c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|36860700010|376011|1800799021|82310400023;
 X-Microsoft-Antispam-Message-Info:
-	VTI5JcyXmqpq4SKMmD7thws9BFE1tsfKsVjA//8Rg90qzr7S+6qMK7sIEcmhlkIONtLukkzkmUHCA5wn/O7Xa3I+faCZw6SqoDuaWmVZrHS56CZFJB7q+4TmO1jfySQXSHLxFeqwzHvTJpaPEsKy2fbTrkb1qftl2WIkecDXANiDydxWIZkUHz+ncDqDdmMaEXbCBwdOifZGkL6nDaGGZgF+J4rKpBxWbFQyzBSs8vdsLIaBilaQX76hHUn27uh6vYgRDuV6MLhWoGH8BwaOF4zMUTQapb5CAq7rAkSfx/ydV9Fgh4Gejp6NL4PsVlvT7PYjMOejM62VhKG1Fo4zTdM1T8f8JCz2dO8AGzEBebAl/eZYRvZyTP9f8tRx5pO7z2RpWvrUqSee8xONS6LSnNrlnW8h7EBvDZldwbxl/kStuii67tT4RaCE+e3ChmHW8vI+8XVvAZfu2rRl0ELG4oDCgaIzDnBvYwOVbtgFqXWKELR/UcvYpleh2EI6qIRZYaLfdyS+SzLKgN06tXbuqgby7ZIN7dILvioQAOnEgAOWZ1v+r5LTtU1iF4/76eQq
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZlVia1g0UVdFc1hLM3RsU1hwSkZDU3dnZVhsdUdYSDZvUnJ3WDVKOGtVbFlD?=
- =?utf-8?B?VTlqQmhhbHRPL1ZTRWtoU2tmb0g0ZDRtZDJsSCs1THBJQWpyWEExLzQvUGNp?=
- =?utf-8?B?NUdmZUx4L3I3amhVZEZLUmp6azF2YmZ2QVdmNlRxUGFHUDg0cWs4TCtnUTEy?=
- =?utf-8?B?dFpzQkxxMFlSeU1TV3JONkMwZlZ0STBTR3MvS3NxRlNxZWE2S0hGVHhLTmpP?=
- =?utf-8?B?UkI3djhlWjFEOHMzVzRvL1crVEtJakFkZVl4V2FVbDFrSWptVWswZmdnQmRu?=
- =?utf-8?B?YnBNL0oxRktBZHpTMnkzUDh0MWdtTWxBVWJ4dThHVXdDWmtFNmdWdUtFdXp0?=
- =?utf-8?B?czN1OVFYSmVwM2YzTUt5OHNvWDIzSkM2b1ZsUDVGdUtHbEpsUzFJWUZ1UWxj?=
- =?utf-8?B?cnRuMlBWYmgxK2t3MjVEUFVDeXVTbnRUaG1kWVhCVVI3OHNCQzRlKytaZVEw?=
- =?utf-8?B?ZmdmZ2FMZmYrbkZSczVUQVIyblBFMXV6NTNWT0ZFZWllUE12RTFqUXRWQkVH?=
- =?utf-8?B?NUpTYmhtelhTTzk4OGVVZGxqZE1WOXM5cGVoUmJGb010UFdpLytKVXpzcXpy?=
- =?utf-8?B?VnBFSkE0T3NtT3BTOU1UUUtLZ3F4MWdFQk5mZEhHVjNNd0lFUjZKaTJSRm84?=
- =?utf-8?B?NTdORmFhMXNRN3F6MHV2RHRjZk41Ym0xYkpQeHdNQnovTzF0c1hwY2N6NEVa?=
- =?utf-8?B?aWRVRGluUjY0OWpTL1VWbWxGTnRvWXdNSXNFVEthU2ViRFNkd1dRU0NiVlg0?=
- =?utf-8?B?QTNvRzZQbDBtbEtPK1VsT1hsakdDT3l5UUZEaUtaL2tpb05ITWNjRWtzQjdP?=
- =?utf-8?B?RUpUQlhrWEJ2YWlza09zbDRVN3A0bjhuYW5BRExCeDljRUZKUy9oVXZPdkZu?=
- =?utf-8?B?Y0dERUxnRlUwQUlGU0t2SE5XR05jdjR6MUFWdkg1cm8yMWN0MldSc2Npd3R2?=
- =?utf-8?B?S1lPaDVLL3QrTXRwaGFZNmQzUkVoOE5OcWN1b1BvOEw5YVZreFV6MU5BOGUr?=
- =?utf-8?B?Wi9vSXlvdHUwQk50TnMrUHNqT2xjeERqTFR3a1dJVVBackRKVldMSzdScU9V?=
- =?utf-8?B?NGVrNlR3NW4rTkNBTHJGVDZjd3B4WTdMbjJpaFlXR1lFWUh0SEdTZk41Y1M5?=
- =?utf-8?B?QUVYcEwya3hxZVdRc2MrQTl5SjBqK2c1bFBLYys2M21CWlpQTVgyNXo0aVd6?=
- =?utf-8?B?TTdkVWl0SGN4N0ZHSEU5c0MwUmhxY1E4SmsrM29VenE3VU4rRXZGYUMreVZm?=
- =?utf-8?B?Y1F0dk1yNkJNOVZVQ2Z3aUR0M014azlrZnlPUWRjcE5JUGpFOWdUczlYYmF1?=
- =?utf-8?B?VXkvQlhOTWNjWXBpYjB5QVFZcWVQZkpxUHB0d3ZXS1BLSHhqcVNwYnBiMnhD?=
- =?utf-8?B?eXVWd2t4S0xRZmFYU3NNL0pBbnkxM2U1dGFkYnBzZzhwV1pVNEFERGRCS050?=
- =?utf-8?B?VEtZVzljcjlzcW54WXIvanhpaURqWkpUWjJGWENhSFZRWGI4MHlUcCtzUTNo?=
- =?utf-8?B?cmZFcUVIUWxrQ1pRU2czalYxckZHMTU0a0dTcUZPOVdRWCtqUzM2V1VveXlI?=
- =?utf-8?B?YWJkRlJNSkpUbC8xeEtrb2x0V2d2OGo2Z3VIMkVTMWk5THBLQkZpejN6QWRC?=
- =?utf-8?Q?Q1MzBo1wulndR9O4R96zEOzHItW/Kcr8uAC0pct3XNnw=3D?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d44f2a96-f9e8-4142-a299-08dc952b7cf4
-X-MS-Exchange-CrossTenant-AuthSource: CWLP265MB6516.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 15:28:39.4421
+	=?utf-8?B?NFdRUThXbXpxN3R0eThkb3Nza1E3SG5Ba0twMTVzNUlPS3g4dXgyMWw0TzFI?=
+ =?utf-8?B?eW9USFhLWkpzNTc2R3lpcWdpVDlyRS9tSUxHZHVBbjUxM2F5ZWQwcDEwL0lm?=
+ =?utf-8?B?YjZGUkpvQUtJQTlQL2VSYm1YNDFWS1RuOHdRRzNnL2pPNUY1N1ROcHVwY04w?=
+ =?utf-8?B?RzNkZjRqUDRrTndQQUQyY3pON0g4VHl3alVFdFhuRDc4aXhZZ0JCVEU2cm94?=
+ =?utf-8?B?aWVrZlhHYS9OdjAwSUdPVU1IR3NHYVNKOG9hV1NpRTFTYngxb2NPT3dyeGZF?=
+ =?utf-8?B?WEM5RE5NYnRDZ0tTRlhuTTQ0ZVp1ekYzRnZGSjR2S2hUOHVKTVZnZ2ZLaUZv?=
+ =?utf-8?B?KzdBalp3MTlrN3hGa0liNWdFcFkwaFlmUUt2L1o2c2NibjJtdDdnWWgyRUsw?=
+ =?utf-8?B?Vno3M0NUNHZ5anYxTDN4UHA5NTRybythWTlVKzZNdGdvRnZkNW5rRWkrRE1C?=
+ =?utf-8?B?WURPR282OVBGS3I0M1dnZG8wajRTWkNBNThBR0RJQ3VrbHhBS0M3cFk4SUc0?=
+ =?utf-8?B?dlJHcGFHMkRCbFJ3S1RGSm9tWEgrK1FEVytHRWtpNWRhYVFiakZhNzRnaW0w?=
+ =?utf-8?B?bWNsOXBsNmxuK2p1REgxY2E1S0R4K1BFQXVyeUNPalc3V2JNR2QyK1hMWG0z?=
+ =?utf-8?B?eXhzV1o4WGhOVW9PQUUyNXdqdTljT1BjM1NUdEtNa084Zno3VjJleDFUNVdj?=
+ =?utf-8?B?WTZOZXNLdGNzOU1uSDRGTVFvb3BMWFlzeW1wa3BRcWNVZVNuNzR3QlUyRjFR?=
+ =?utf-8?B?OHRwMk9mbzRZaTJuS3FQR0J2SHRvNlZZOXV4NGkwNTZ2QTl6eGx0TGhXQ3ov?=
+ =?utf-8?B?K2RIcks1SmdRd3dDVzdaQnlsSzRGNk5HOUgrM3orZWZXMWpTL09HRGFhWE1M?=
+ =?utf-8?B?Q3FvUTNTVXdhWnZGNzFYZWpuU0VRMk9QNC9xOWlmQXkwNmppZ094NWptaHpz?=
+ =?utf-8?B?a01GZVQwTGg0N3lGSEFOc1pnQzZ2Y0kwTGZaSytvOWpGQ1hwNE1HdnpscmNy?=
+ =?utf-8?B?OWQySklLTGxOVjhVTWNCdFRwRk1jUk1qZlZuNVIwclpBWEtkTjdGSVB2bml4?=
+ =?utf-8?B?U3gyUmJmOCtXeVFpZGdBMFB0ZzR5c1NFYVFtWlF1blRGTTUxb3pHQkNiNFBp?=
+ =?utf-8?B?Y1RGeWpyckVyWGp5cHVnSXlRdHV0UTk0Q0FzT3hBeFhhQkhSUTlZMlAzYjN6?=
+ =?utf-8?B?WFNrWkx3emJDWkYya1g4UW1QTnpMbTlERi9NZ3pRSUwvTGkwcFQ1YUttTm1y?=
+ =?utf-8?B?S3VYYUZ4M3MrL2lScXdGT0ZqNXlRVUJKUVFBeVVlYlQzQkRIYzFjNVdqaEJ5?=
+ =?utf-8?B?SE9DTDZUTktSWGxEdk44OU1VN2pOVFR0L0tOa1VqaGpZN0tWZzFSR0hBZmNU?=
+ =?utf-8?B?NTAxQVdRV0gzdzBBMHhWMVZqRGJncTRtRDIwU3VHZXFDRk9XQmVjUFk0Z3o2?=
+ =?utf-8?B?Vjc2YXFMREZNbHMvVk02TVBIVDMxTFJjZ3kreGdid2ZUV2dQVnZXSldrYmxk?=
+ =?utf-8?B?ZlRadjkxOUFtRHVZY0FsNlNkZjRDL2J3UnUvZGpXbkljditTaktHQ2dnNXRz?=
+ =?utf-8?B?bWVxZlVqcEpkNmE1ZUsyWVZXR3N1cUFHNkp2YkxZTnZRUWQwVmV0c0l4czFP?=
+ =?utf-8?B?cDk4MnA0M25PUkgrNTk5VU5zWTBXWmFSNER4ckRaeVFWdGx3Z0xpT2tsY2tY?=
+ =?utf-8?B?Zm1MdlN6YVJNNlMzNi9vL1MzMVVmVHlDbU5jRkZNaVRWQXNMOXFreVMyUmhB?=
+ =?utf-8?B?MEtPQy90N0o1S1FZZXBkZjh4Y3N2MUZCc1RDdGZnTnNjbDQ3SmJUVXJlYm9w?=
+ =?utf-8?B?NWkrVk91Q3VCVXJHNVZMcHNzVFdnb0lyc1gzY1RpUkVYbWJ3M09MT1BXM1d6?=
+ =?utf-8?B?MGpFYTljamlDR0dQdG1ZSlcraklPemNyYitTcEVDcmVEbUE9PQ==?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230037)(36860700010)(376011)(1800799021)(82310400023);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 15:32:29.4153
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWXP265MB2919
+X-MS-Exchange-CrossTenant-Network-Message-Id: 586d6fab-24da-4653-ca1b-08dc952c062c
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F6.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5618
 
-From 3acc0622bca28c1a00696e7abd7c305ca5ad1f72 Mon Sep 17 00:00:00 2001
-From: Yusef Aslam <YUZi54780@outlook.com>
-Date: Tue, 25 Jun 2024 15:03:08 +0100
-Subject: [PATCH] Staging: rtl8192e: rtllib_rx: fixed alignment
+PCIe ACS settings control the level of isolation and the possible P2P
+paths between devices. With greater isolation the kernel will create
+smaller iommu_groups and with less isolation there is more HW that
+can achieve P2P transfers. From a virtualization perspective all
+devices in the same iommu_group must be assigned to the same VM as
+they lack security isolation.
 
-Fixed alignment.
+There is no way for the kernel to automatically know the correct
+ACS settings for any given system and workload. Existing command line
+options (ex:- disable_acs_redir) allow only for large scale change,
+disabling all isolation, but this is not sufficient for more complex cases.
 
-Signed-off-by: Yusef Aslam <YUZi54780@outlook.com>
+Add a kernel command-line option 'config_acs' to directly control all the
+ACS bits for specific devices, which allows the operator to setup the
+right level of isolation to achieve the desired P2P configuration.
+The definition is future proof, when new ACS bits are added to the spec
+the open syntax can be extended.
+
+ACS needs to be setup early in the kernel boot as the ACS settings
+effect how iommu_groups are formed. iommu_group formation is a one
+time event during initial device discovery, changing ACS bits after
+kernel boot can result in an inaccurate view of the iommu_groups
+compared to the current isolation configuration.
+
+ACS applies to PCIe Downstream Ports and multi-function devices.
+The default ACS settings are strict and deny any direct traffic
+between two functions. This results in the smallest iommu_group the
+HW can support. Frequently these values result in slow or
+non-working P2PDMA.
+
+ACS offers a range of security choices controlling how traffic is
+allowed to go directly between two devices. Some popular choices:
+  - Full prevention
+  - Translated requests can be direct, with various options
+  - Asymmetric direct traffic, A can reach B but not the reverse
+  - All traffic can be direct
+Along with some other less common ones for special topologies.
+
+The intention is that this option would be used with expert knowledge
+of the HW capability and workload to achieve the desired
+configuration.
+
+Signed-off-by: Vidya Sagar <vidyas@nvidia.com>
 ---
- drivers/staging/rtl8192e/rtllib_rx.c | 98 ++++++++++++++--------------
- 1 file changed, 49 insertions(+), 49 deletions(-)
+v4:
+* Changed commit message (Courtesy: Jason) to provide more details
 
-diff --git a/drivers/staging/rtl8192e/rtllib_rx.c
-b/drivers/staging/rtl8192e/rtllib_rx.c
-index ebf8a2fd36d3..b1a476e29670 100644
---- a/drivers/staging/rtl8192e/rtllib_rx.c
-+++ b/drivers/staging/rtl8192e/rtllib_rx.c
-@@ -55,7 +55,7 @@ static inline void rtllib_monitor_rx(struct
-rtllib_device *ieee,
- /* Called only as a tasklet (software IRQ) */
- static struct rtllib_frag_entry *
- rtllib_frag_cache_find(struct rtllib_device *ieee, unsigned int seq,
--			  unsigned int frag, u8 tid, u8 *src, u8 *dst)
-+		       unsigned int frag, u8 tid, u8 *src, u8 *dst)
- {
- 	struct rtllib_frag_entry *entry;
- 	int i;
-@@ -84,7 +84,7 @@ rtllib_frag_cache_find(struct rtllib_device *ieee,
-unsigned int seq,
- /* Called only as a tasklet (software IRQ) */
- static struct sk_buff *
- rtllib_frag_cache_get(struct rtllib_device *ieee,
--			 struct ieee80211_hdr *hdr)
-+		      struct ieee80211_hdr *hdr)
- {
- 	struct sk_buff *skb =3D NULL;
- 	u16 fc =3D le16_to_cpu(hdr->frame_control);
-@@ -143,7 +143,7 @@ rtllib_frag_cache_get(struct rtllib_device *ieee,
- 		 * should have already been received
- 		 */
- 		entry =3D rtllib_frag_cache_find(ieee, seq, frag, tid,
-hdr->addr2,
--						  hdr->addr1);
-+					       hdr->addr1);
- 		if (entry) {
- 			entry->last_frag =3D frag;
- 			skb =3D entry->skb;
-@@ -155,7 +155,7 @@ rtllib_frag_cache_get(struct rtllib_device *ieee,
-=20
- /* Called only as a tasklet (software IRQ) */
- static int rtllib_frag_cache_invalidate(struct rtllib_device *ieee,
--					   struct ieee80211_hdr *hdr)
-+					struct ieee80211_hdr *hdr)
- {
- 	u16 fc =3D le16_to_cpu(hdr->frame_control);
- 	u16 sc =3D le16_to_cpu(hdr->seq_ctrl);
-@@ -181,7 +181,7 @@ static int rtllib_frag_cache_invalidate(struct
-rtllib_device *ieee,
- 	}
-=20
- 	entry =3D rtllib_frag_cache_find(ieee, seq, -1, tid, hdr->addr2,
--					  hdr->addr1);
-+				       hdr->addr1);
-=20
- 	if (!entry) {
- 		netdev_dbg(ieee->dev,
-@@ -202,8 +202,8 @@ static int rtllib_frag_cache_invalidate(struct
-rtllib_device *ieee,
-  */
- static inline int
- rtllib_rx_frame_mgmt(struct rtllib_device *ieee, struct sk_buff *skb,
--			struct rtllib_rx_stats *rx_stats, u16 type,
--			u16 stype)
-+		     struct rtllib_rx_stats *rx_stats, u16 type,
-+		     u16 stype)
- {
- 	/* On the struct stats definition there is written that
- 	 * this is not mandatory.... but seems that the probe
-@@ -228,7 +228,7 @@ rtllib_rx_frame_mgmt(struct rtllib_device *ieee,
-struct sk_buff *skb,
-=20
- /* Called by rtllib_rx_frame_decrypt */
- static int rtllib_is_eapol_frame(struct rtllib_device *ieee,
--				    struct sk_buff *skb, size_t
-hdrlen)
-+				 struct sk_buff *skb, size_t hdrlen)
- {
- 	struct net_device *dev =3D ieee->dev;
- 	u16 fc, ethertype;
-@@ -346,7 +346,7 @@ rtllib_rx_frame_decrypt_msdu(struct rtllib_device
-*ieee, struct sk_buff *skb,
- /* this function is stolen from ipw2200 driver*/
- #define IEEE_PACKET_RETRY_TIME (5 * HZ)
- static int is_duplicate_packet(struct rtllib_device *ieee,
--				      struct ieee80211_hdr *header)
-+			       struct ieee80211_hdr *header)
- {
- 	u16 fc =3D le16_to_cpu(header->frame_control);
- 	u16 sc =3D le16_to_cpu(header->seq_ctrl);
-@@ -411,10 +411,10 @@ static bool AddReorderEntry(struct rx_ts_record
-*ts,
- 	while (pList->next !=3D &ts->rx_pending_pkt_list) {
- 		if (SN_LESS(pReorderEntry->SeqNum, ((struct
-rx_reorder_entry *)
- 		    list_entry(pList->next, struct rx_reorder_entry,
--		    list))->SeqNum))
-+			       list))->SeqNum))
- 			pList =3D pList->next;
- 		else if (SN_EQUAL(pReorderEntry->SeqNum,
--			((struct rx_reorder_entry *)list_entry(pList-
->next,
-+				  ((struct rx_reorder_entry
-*)list_entry(pList->next,
- 			struct rx_reorder_entry, list))->SeqNum))
- 			return false;
- 		else
-@@ -601,7 +601,7 @@ static void RxReorderIndicatePacket(struct
-rtllib_device *ieee,
- 		if (!list_empty(&ieee->RxReorder_Unused_List)) {
- 			pReorderEntry =3D (struct rx_reorder_entry *)
- 					list_entry(ieee-
->RxReorder_Unused_List.next,
--					struct rx_reorder_entry,
-list);
-+						   struct
-rx_reorder_entry, list);
- 			list_del_init(&pReorderEntry->list);
-=20
- 			/* Make a reorder entry and insert
-@@ -738,7 +738,7 @@ static u8 parse_subframe(struct rtllib_device
-*ieee, struct sk_buff *skb,
- 	/* just for debug purpose */
- 	SeqNum =3D WLAN_GET_SEQ_SEQ(le16_to_cpu(hdr->seq_ctrl));
- 	if ((RTLLIB_QOS_HAS_SEQ(fc)) &&
--	   (((union frameqos *)(skb->data + RTLLIB_3ADDR_LEN))-
->field.reserved))
-+	    (((union frameqos *)(skb->data + RTLLIB_3ADDR_LEN))-
->field.reserved))
- 		is_aggregate_frame =3D true;
-=20
- 	if (RTLLIB_QOS_HAS_SEQ(fc))
-@@ -880,7 +880,7 @@ static int rtllib_rx_check_duplicate(struct
-rtllib_device *ieee,
- 	frag =3D WLAN_GET_SEQ_FRAG(sc);
-=20
- 	if (!ieee->ht_info->cur_rx_reorder_enable ||
--		!ieee->current_network.qos_data.active ||
-+	    !ieee->current_network.qos_data.active ||
- 		!IsDataFrame(skb->data) ||
- 		IsLegacyDataFrame(skb->data)) {
- 		if (!ieee80211_is_beacon(hdr->frame_control)) {
-@@ -980,7 +980,7 @@ static int rtllib_rx_data_filter(struct
-rtllib_device *ieee, struct ieee80211_hd
+v3:
+* Fixed a documentation issue reported by kernel test bot
+
+v2:
+* Refactored the code as per Jason's suggestion
+
+ .../admin-guide/kernel-parameters.txt         |  22 +++
+ drivers/pci/pci.c                             | 148 +++++++++++-------
+ 2 files changed, 112 insertions(+), 58 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 500cfa776225..42d0f6fd40d0 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -4619,6 +4619,28 @@
+ 				bridges without forcing it upstream. Note:
+ 				this removes isolation between devices and
+ 				may put more devices in an IOMMU group.
++		config_acs=
++				Format:
++				=<ACS flags>@<pci_dev>[; ...]
++				Specify one or more PCI devices (in the format
++				specified above) optionally prepended with flags
++				and separated by semicolons. The respective
++				capabilities will be enabled, disabled or unchanged
++				based on what is specified in flags.
++				ACS Flags is defined as follows
++				bit-0 : ACS Source Validation
++				bit-1 : ACS Translation Blocking
++				bit-2 : ACS P2P Request Redirect
++				bit-3 : ACS P2P Completion Redirect
++				bit-4 : ACS Upstream Forwarding
++				bit-5 : ACS P2P Egress Control
++				bit-6 : ACS Direct Translated P2P
++				Each bit can be marked as
++				‘0‘ – force disabled
++				‘1’ – force enabled
++				‘x’ – unchanged.
++				Note: this may remove isolation between devices
++				and may put more devices in an IOMMU group.
+ 		force_floating	[S390] Force usage of floating interrupts.
+ 		nomio		[S390] Do not use MIO instructions.
+ 		norid		[S390] ignore the RID field and force use of
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 55078c70a05b..6661932afe59 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -946,30 +946,67 @@ void pci_request_acs(void)
  }
-=20
- static int rtllib_rx_get_crypt(struct rtllib_device *ieee, struct
-sk_buff *skb,
--			struct lib80211_crypt_data **crypt, size_t
-hdrlen)
-+			       struct lib80211_crypt_data **crypt,
-size_t hdrlen)
+ 
+ static const char *disable_acs_redir_param;
++static const char *config_acs_param;
+ 
+-/**
+- * pci_disable_acs_redir - disable ACS redirect capabilities
+- * @dev: the PCI device
+- *
+- * For only devices specified in the disable_acs_redir parameter.
+- */
+-static void pci_disable_acs_redir(struct pci_dev *dev)
++struct pci_acs {
++	u16 cap;
++	u16 ctrl;
++	u16 fw_ctrl;
++};
++
++static void __pci_config_acs(struct pci_dev *dev, struct pci_acs *caps,
++			     const char *p, u16 mask, u16 flags)
  {
- 	struct ieee80211_hdr *hdr =3D (struct ieee80211_hdr *)skb->data;
- 	u16 fc =3D le16_to_cpu(hdr->frame_control);
-@@ -1012,8 +1012,8 @@ static int rtllib_rx_get_crypt(struct
-rtllib_device *ieee, struct sk_buff *skb,
- }
-=20
- static int rtllib_rx_decrypt(struct rtllib_device *ieee, struct
-sk_buff *skb,
--		      struct rtllib_rx_stats *rx_stats,
--		      struct lib80211_crypt_data *crypt, size_t
-hdrlen)
-+			     struct rtllib_rx_stats *rx_stats,
-+			     struct lib80211_crypt_data *crypt, size_t
-hdrlen)
- {
- 	struct ieee80211_hdr *hdr;
- 	int keyidx =3D 0;
-@@ -1096,7 +1096,7 @@ static int rtllib_rx_decrypt(struct rtllib_device
-*ieee, struct sk_buff *skb,
- 	 * encrypted/authenticated
- 	 */
- 	if ((fc & IEEE80211_FCTL_PROTECTED) &&
--		rtllib_rx_frame_decrypt_msdu(ieee, skb, keyidx,
-crypt)) {
-+	    rtllib_rx_frame_decrypt_msdu(ieee, skb, keyidx, crypt)) {
- 		netdev_info(ieee->dev, "%s: =3D=3D>decrypt msdu error\n",
-__func__);
- 		return -1;
- 	}
-@@ -1156,10 +1156,10 @@ static void rtllib_rx_check_leave_lps(struct
-rtllib_device *ieee, u8 unicast,
- }
-=20
- static void rtllib_rx_indicate_pkt_legacy(struct rtllib_device *ieee,
--		struct rtllib_rx_stats *rx_stats,
--		struct rtllib_rxb *rxb,
--		u8 *dst,
--		u8 *src)
-+					  struct rtllib_rx_stats
-*rx_stats,
-+					  struct rtllib_rxb *rxb,
-+					  u8 *dst,
-+					  u8 *src)
- {
- 	struct net_device *dev =3D ieee->dev;
- 	u16 ethertype;
-@@ -1179,8 +1179,8 @@ static void rtllib_rx_indicate_pkt_legacy(struct
-rtllib_device *ieee,
- 			 */
- 			ethertype =3D (sub_skb->data[6] << 8) | sub_skb-
->data[7];
- 			if (sub_skb->len >=3D 8 &&
--				((memcmp(sub_skb->data,
-rfc1042_header, SNAP_SIZE) =3D=3D 0 &&
--				ethertype !=3D ETH_P_AARP && ethertype
-!=3D ETH_P_IPX) ||
-+			    ((memcmp(sub_skb->data, rfc1042_header,
-SNAP_SIZE) =3D=3D 0 &&
-+			      ethertype !=3D ETH_P_AARP && ethertype !=3D
-ETH_P_IPX) ||
- 				memcmp(sub_skb->data,
-bridge_tunnel_header, SNAP_SIZE) =3D=3D 0)) {
- 				/* remove RFC1042 or Bridge-Tunnel
-encapsulation
- 				 * and replace EtherType
-@@ -1224,7 +1224,7 @@ static void rtllib_rx_indicate_pkt_legacy(struct
-rtllib_device *ieee,
- }
-=20
- static int rtllib_rx_InfraAdhoc(struct rtllib_device *ieee, struct
-sk_buff *skb,
--		 struct rtllib_rx_stats *rx_stats)
-+				struct rtllib_rx_stats *rx_stats)
- {
- 	struct net_device *dev =3D ieee->dev;
- 	struct ieee80211_hdr *hdr =3D (struct ieee80211_hdr *)skb->data;
-@@ -1327,7 +1327,7 @@ static int rtllib_rx_InfraAdhoc(struct
-rtllib_device *ieee, struct sk_buff *skb,
- 		TID =3D Frame_QoSTID(skb->data);
- 		SeqNum =3D WLAN_GET_SEQ_SEQ(sc);
- 		rtllib_get_ts(ieee, (struct ts_common_info **)&ts,
-hdr->addr2, TID,
--		      RX_DIR, true);
-+			      RX_DIR, true);
- 		if (TID !=3D 0 && TID !=3D 3)
- 			ieee->bis_any_nonbepkts =3D true;
- 	}
-@@ -1384,7 +1384,7 @@ static int rtllib_rx_InfraAdhoc(struct
-rtllib_device *ieee, struct sk_buff *skb,
- }
-=20
- static int rtllib_rx_Monitor(struct rtllib_device *ieee, struct
-sk_buff *skb,
--		 struct rtllib_rx_stats *rx_stats)
-+			     struct rtllib_rx_stats *rx_stats)
- {
- 	struct ieee80211_hdr *hdr =3D (struct ieee80211_hdr *)skb->data;
- 	u16 fc =3D le16_to_cpu(hdr->frame_control);
-@@ -1416,7 +1416,7 @@ static int rtllib_rx_Monitor(struct rtllib_device
-*ieee, struct sk_buff *skb,
-  * This function is called only as a tasklet (software IRQ).
-  */
- int rtllib_rx(struct rtllib_device *ieee, struct sk_buff *skb,
--		 struct rtllib_rx_stats *rx_stats)
-+	      struct rtllib_rx_stats *rx_stats)
- {
- 	int ret =3D 0;
-=20
-@@ -1581,10 +1581,10 @@ static int
-rtllib_parse_qos_info_param_IE(struct rtllib_device *ieee,
- 		struct rtllib_qos_parameter_info param_element;
-=20
- 		rc =3D rtllib_read_qos_param_element(&param_element,
--						      info_element);
-+						   info_element);
- 		if (rc =3D=3D 0) {
-			rtllib_qos_convert_ac_to_parameters(&param_element,
--							     =20
-&(network->qos_data));
-+							    &(network-
->qos_data));
- 			network->flags |=3D NETWORK_HAS_QOS_PARAMETERS;
- 			network->qos_data.param_count =3D
- 			    param_element.info_element.ac_info & 0x0F;
-@@ -1698,7 +1698,7 @@ static void rtllib_parse_mife_generic(struct
-rtllib_device *ieee,
- 			if (*tmp_htcap_len !=3D 0) {
- 				network->bssht.bd_ht_spec_ver =3D
-HT_SPEC_VER_EWC;
- 				network->bssht.bd_ht_cap_len =3D
-min_t(u16, *tmp_htcap_len,
--								=20
-sizeof(network->bssht.bd_ht_cap_buf));
-+							    =20
-sizeof(network->bssht.bd_ht_cap_buf));
- 				memcpy(network->bssht.bd_ht_cap_buf,
- 				       info_element->data,
- 				       network->bssht.bd_ht_cap_len);
-@@ -1868,7 +1868,7 @@ static void rtllib_parse_mfie_ht_cap(struct
-rtllib_info_element *info_element,
- 	if (*tmp_htcap_len !=3D 0) {
- 		ht->bd_ht_spec_ver =3D HT_SPEC_VER_EWC;
- 		ht->bd_ht_cap_len =3D min_t(u16, *tmp_htcap_len,
--				       sizeof(ht->bd_ht_cap_buf));
-+					  sizeof(ht->bd_ht_cap_buf));
- 		memcpy(ht->bd_ht_cap_buf, info_element->data, ht-
->bd_ht_cap_len);
-=20
- 		ht->bd_support_ht =3D true;
-@@ -1886,10 +1886,10 @@ static void rtllib_parse_mfie_ht_cap(struct
-rtllib_info_element *info_element,
- }
-=20
- int rtllib_parse_info_param(struct rtllib_device *ieee,
--		struct rtllib_info_element *info_element,
--		u16 length,
--		struct rtllib_network *network,
--		struct rtllib_rx_stats *stats)
-+			    struct rtllib_info_element *info_element,
-+			    u16 length,
-+			    struct rtllib_network *network,
-+			    struct rtllib_rx_stats *stats)
- {
- 	u8 i;
- 	short offset;
-@@ -1914,7 +1914,7 @@ int rtllib_parse_info_param(struct rtllib_device
-*ieee,
- 		switch (info_element->id) {
- 		case MFIE_TYPE_SSID:
- 			if (rtllib_is_empty_essid(info_element->data,
--						     info_element-
->len)) {
-+						  info_element->len))
-{
- 				network->flags |=3D NETWORK_EMPTY_ESSID;
- 				break;
- 			}
-@@ -2193,10 +2193,10 @@ static inline int rtllib_network_init(
- 	network->wzc_ie_len =3D 0;
-=20
- 	if (rtllib_parse_info_param(ieee,
--			beacon->info_element,
--			(stats->len - sizeof(*beacon)),
--			network,
--			stats))
-+				    beacon->info_element,
-+				    (stats->len - sizeof(*beacon)),
-+				    network,
-+				    stats))
- 		return 1;
-=20
- 	network->mode =3D 0;
-@@ -2333,9 +2333,9 @@ static inline void update_network(struct
-rtllib_device *ieee,
-=20
- 	dst->wmm_info =3D src->wmm_info;
- 	if (src->wmm_param[0].ac_aci_acm_aifsn ||
--	   src->wmm_param[1].ac_aci_acm_aifsn ||
--	   src->wmm_param[2].ac_aci_acm_aifsn ||
--	   src->wmm_param[3].ac_aci_acm_aifsn)
-+	    src->wmm_param[1].ac_aci_acm_aifsn ||
-+	    src->wmm_param[2].ac_aci_acm_aifsn ||
-+	    src->wmm_param[3].ac_aci_acm_aifsn)
- 		memcpy(dst->wmm_param, src->wmm_param,
-WME_AC_PRAM_LEN);
-=20
- 	dst->SignalStrength =3D src->SignalStrength;
-@@ -2454,7 +2454,7 @@ static inline void rtllib_process_probe_response(
-=20
- 	spin_lock_irqsave(&ieee->lock, flags);
- 	if (is_same_network(&ieee->current_network, network,
--	   (network->ssid_len ? 1 : 0))) {
-+			    (network->ssid_len ? 1 : 0))) {
- 		update_network(ieee, &ieee->current_network, network);
- 		if ((ieee->current_network.mode =3D=3D WIRELESS_MODE_N_24G
-||
- 		     ieee->current_network.mode =3D=3D WIRELESS_MODE_G) &&
-@@ -2471,7 +2471,7 @@ static inline void rtllib_process_probe_response(
- 	}
- 	list_for_each_entry(target, &ieee->network_list, list) {
- 		if (is_same_network(target, network,
--		   (target->ssid_len ? 1 : 0)))
-+				    (target->ssid_len ? 1 : 0)))
++	char *delimit;
+ 	int ret = 0;
+-	const char *p;
+-	int pos;
+-	u16 ctrl;
+ 
+-	if (!disable_acs_redir_param)
++	if (!p)
+ 		return;
+ 
+-	p = disable_acs_redir_param;
+ 	while (*p) {
++		if (!mask) {
++			/* Check for ACS flags */
++			delimit = strstr(p, "@");
++			if (delimit) {
++				int end;
++				u32 shift = 0;
++
++				end = delimit - p - 1;
++
++				while (end > -1) {
++					if (*(p + end) == '0') {
++						mask |= 1 << shift;
++						shift++;
++						end--;
++					} else if (*(p + end) == '1') {
++						mask |= 1 << shift;
++						flags |= 1 << shift;
++						shift++;
++						end--;
++					} else if ((*(p + end) == 'x') || (*(p + end) == 'X')) {
++						shift++;
++						end--;
++					} else {
++						pci_err(dev, "Invalid ACS flags... Ignoring\n");
++						return;
++					}
++				}
++				p = delimit + 1;
++			} else {
++				pci_err(dev, "ACS Flags missing\n");
++				return;
++			}
++		}
++
++		if (mask & ~(PCI_ACS_SV | PCI_ACS_TB | PCI_ACS_RR | PCI_ACS_CR |
++			    PCI_ACS_UF | PCI_ACS_EC | PCI_ACS_DT)) {
++			pci_err(dev, "Invalid ACS flags specified\n");
++			return;
++		}
++
+ 		ret = pci_dev_str_match(dev, p, &p);
+ 		if (ret < 0) {
+-			pr_info_once("PCI: Can't parse disable_acs_redir parameter: %s\n",
+-				     disable_acs_redir_param);
+-
++			pr_info_once("PCI: Can't parse acs command line parameter\n");
  			break;
- 		if (!oldest || (target->last_scanned < oldest-
->last_scanned))
- 			oldest =3D target;
-@@ -2532,7 +2532,7 @@ static inline void rtllib_process_probe_response(
- 	spin_unlock_irqrestore(&ieee->lock, flags);
- 	if (ieee80211_is_beacon(frame_ctl) &&
- 	    is_same_network(&ieee->current_network, network,
--	    (network->ssid_len ? 1 : 0)) &&
-+			    (network->ssid_len ? 1 : 0)) &&
- 	    (ieee->link_state =3D=3D MAC80211_LINKED)) {
- 		ieee->handle_beacon(ieee->dev, beacon, &ieee-
->current_network);
- 	}
-@@ -2557,8 +2557,8 @@ static void rtllib_rx_mgt(struct rtllib_device
-*ieee,
- 				stats);
-=20
- 		if (ieee->sta_sleep || (ieee->ps !=3D RTLLIB_PS_DISABLED
-&&
--		    ieee->iw_mode =3D=3D IW_MODE_INFRA &&
--		    ieee->link_state =3D=3D MAC80211_LINKED))
-+					ieee->iw_mode =3D=3D IW_MODE_INFRA
-&&
-+					ieee->link_state =3D=3D
-MAC80211_LINKED))
- 			schedule_work(&ieee->ps_task);
- 	} else if (ieee80211_is_probe_resp(header->frame_control)) {
- 		netdev_dbg(ieee->dev, "received PROBE RESPONSE\n");
---=20
-2.44.2
-
+ 		} else if (ret == 1) {
+ 			/* Found a match */
+@@ -989,56 +1026,38 @@ static void pci_disable_acs_redir(struct pci_dev *dev)
+ 	if (!pci_dev_specific_disable_acs_redir(dev))
+ 		return;
+ 
+-	pos = dev->acs_cap;
+-	if (!pos) {
+-		pci_warn(dev, "cannot disable ACS redirect for this hardware as it does not have ACS capabilities\n");
+-		return;
+-	}
+-
+-	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &ctrl);
++	pci_dbg(dev, "ACS mask  = 0x%X\n", mask);
++	pci_dbg(dev, "ACS flags = 0x%X\n", flags);
+ 
+-	/* P2P Request & Completion Redirect */
+-	ctrl &= ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC);
++	/* If mask is 0 then we copy the bit from the firmware setting. */
++	caps->ctrl = (caps->ctrl & ~mask) | (caps->fw_ctrl & mask);
++	caps->ctrl |= flags;
+ 
+-	pci_write_config_word(dev, pos + PCI_ACS_CTRL, ctrl);
+-
+-	pci_info(dev, "disabled ACS redirect\n");
++	pci_info(dev, "Configured ACS to 0x%x\n", caps->ctrl);
+ }
+ 
+ /**
+  * pci_std_enable_acs - enable ACS on devices using standard ACS capabilities
+  * @dev: the PCI device
++ * @caps: default ACS controls
+  */
+-static void pci_std_enable_acs(struct pci_dev *dev)
++static void pci_std_enable_acs(struct pci_dev *dev, struct pci_acs *caps)
+ {
+-	int pos;
+-	u16 cap;
+-	u16 ctrl;
+-
+-	pos = dev->acs_cap;
+-	if (!pos)
+-		return;
+-
+-	pci_read_config_word(dev, pos + PCI_ACS_CAP, &cap);
+-	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &ctrl);
+-
+ 	/* Source Validation */
+-	ctrl |= (cap & PCI_ACS_SV);
++	caps->ctrl |= (caps->cap & PCI_ACS_SV);
+ 
+ 	/* P2P Request Redirect */
+-	ctrl |= (cap & PCI_ACS_RR);
++	caps->ctrl |= (caps->cap & PCI_ACS_RR);
+ 
+ 	/* P2P Completion Redirect */
+-	ctrl |= (cap & PCI_ACS_CR);
++	caps->ctrl |= (caps->cap & PCI_ACS_CR);
+ 
+ 	/* Upstream Forwarding */
+-	ctrl |= (cap & PCI_ACS_UF);
++	caps->ctrl |= (caps->cap & PCI_ACS_UF);
+ 
+ 	/* Enable Translation Blocking for external devices and noats */
+ 	if (pci_ats_disabled() || dev->external_facing || dev->untrusted)
+-		ctrl |= (cap & PCI_ACS_TB);
+-
+-	pci_write_config_word(dev, pos + PCI_ACS_CTRL, ctrl);
++		caps->ctrl |= (caps->cap & PCI_ACS_TB);
+ }
+ 
+ /**
+@@ -1047,23 +1066,33 @@ static void pci_std_enable_acs(struct pci_dev *dev)
+  */
+ static void pci_enable_acs(struct pci_dev *dev)
+ {
+-	if (!pci_acs_enable)
+-		goto disable_acs_redir;
++	struct pci_acs caps;
++	int pos;
++
++	pos = dev->acs_cap;
++	if (!pos)
++		return;
+ 
+-	if (!pci_dev_specific_enable_acs(dev))
+-		goto disable_acs_redir;
++	pci_read_config_word(dev, pos + PCI_ACS_CAP, &caps.cap);
++	pci_read_config_word(dev, pos + PCI_ACS_CTRL, &caps.ctrl);
++	caps.fw_ctrl = caps.ctrl;
+ 
+-	pci_std_enable_acs(dev);
++	/* If an iommu is present we start with kernel default caps */
++	if (pci_acs_enable) {
++		if (pci_dev_specific_enable_acs(dev))
++			pci_std_enable_acs(dev, &caps);
++	}
+ 
+-disable_acs_redir:
+ 	/*
+-	 * Note: pci_disable_acs_redir() must be called even if ACS was not
+-	 * enabled by the kernel because it may have been enabled by
+-	 * platform firmware.  So if we are told to disable it, we should
+-	 * always disable it after setting the kernel's default
+-	 * preferences.
++	 * Always apply caps from the command line, even if there is no iommu.
++	 * Trust that the admin has a reason to change the ACS settings.
+ 	 */
+-	pci_disable_acs_redir(dev);
++	__pci_config_acs(dev, &caps, disable_acs_redir_param,
++			 PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC,
++			 ~(PCI_ACS_RR | PCI_ACS_CR | PCI_ACS_EC));
++	__pci_config_acs(dev, &caps, config_acs_param, 0, 0);
++
++	pci_write_config_word(dev, pos + PCI_ACS_CTRL, caps.ctrl);
+ }
+ 
+ /**
+@@ -6740,6 +6769,8 @@ static int __init pci_setup(char *str)
+ 				pci_add_flags(PCI_SCAN_ALL_PCIE_DEVS);
+ 			} else if (!strncmp(str, "disable_acs_redir=", 18)) {
+ 				disable_acs_redir_param = str + 18;
++			} else if (!strncmp(str, "config_acs=", 11)) {
++				config_acs_param = str + 11;
+ 			} else {
+ 				pr_err("PCI: Unknown option `%s'\n", str);
+ 			}
+@@ -6764,6 +6795,7 @@ static int __init pci_realloc_setup_params(void)
+ 	resource_alignment_param = kstrdup(resource_alignment_param,
+ 					   GFP_KERNEL);
+ 	disable_acs_redir_param = kstrdup(disable_acs_redir_param, GFP_KERNEL);
++	config_acs_param = kstrdup(config_acs_param, GFP_KERNEL);
+ 
+ 	return 0;
+ }
+-- 
+2.25.1
 
 
