@@ -1,80 +1,39 @@
-Return-Path: <linux-kernel+bounces-229529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 332B1917073
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:45:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8027E91707A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567891C26827
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:45:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1A2C1C2294A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0264717C9E2;
-	Tue, 25 Jun 2024 18:43:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H2DCIAGW"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9C34204E
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517B617D36B;
+	Tue, 25 Jun 2024 18:44:12 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D7D17D353;
+	Tue, 25 Jun 2024 18:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719341001; cv=none; b=WrfP1/Cwimf2ZbG1im/y24VRSoN98rMLPDyuHV5W6765FqtspJqEK/Q0PU4meG2bvvOHK+ETRwyHG9I8ydkJpXs7fQx2RwrMYvWVDEx+S/nRaKn6eRoW/DAXakoP6BuMf7cgk/URbeD3px3uYN1H1rRVhh+jLYBm/sO7rIJSNEk=
+	t=1719341051; cv=none; b=mw9bNE1T8v5/dwvktoLJz7ashQQg1+xxHuDJc3IV/lfOKqNJTliRahbNijk/VKbWH3lbR0RPFda82bMw5K+Isb+Oy/E5m5CSHvw0wHP+aX1RUzh2Jp/KnRiIE1uXb/Z3VR2UORROqEPjmarXUUnpdk90Y9aL14tvWYuuqzn5FNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719341001; c=relaxed/simple;
-	bh=4T8zplSVDGP/25a2/9dQBVYyzCn7VHheFPmanqVzF7s=;
+	s=arc-20240116; t=1719341051; c=relaxed/simple;
+	bh=hohhvTJMwbP+pwz9eCrw5mTIHit6f9kP1oYy87iud3I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dZB/vJ+3u6Zxrqg33A0QtyTCtTIdrXR0eROgr7LsQ7JaaAcIxv/gs2F83XP/kEZQ4GfoCKD+8qncfeLIVx9NLZdmBM3b1TUHDaPruamfcx9eVJPYSile8kgeiKd+xIe2NcLKxdRPJViqn5xVyv1ZBChep2fO/LrCScPgEniC7l4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H2DCIAGW; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719340998;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=BKlZK3pNZ+wzGcnEvjLqIaoCKeBTm9H3YzmiNb6G+3g=;
-	b=H2DCIAGWsk6tCq1I3t0mVdWudM2s6qnzRkoco37+pt8BXSptjdUsKPkvlI1K8h0fwBRDTl
-	C7y+llhoI0B/Hztf8ZHmAlflIbb6LTe3Jkf2b+WnI2LClhx2khiOBgdZXmrRsTJuu3ozhw
-	YKwTyXEGYV36f5DF2BD+iw6pfnfQB38=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-79-SXSB9sEONRqod2PkkyAbww-1; Tue, 25 Jun 2024 14:43:15 -0400
-X-MC-Unique: SXSB9sEONRqod2PkkyAbww-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-36536118656so3011255f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:43:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719340993; x=1719945793;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BKlZK3pNZ+wzGcnEvjLqIaoCKeBTm9H3YzmiNb6G+3g=;
-        b=OFUoq03dfdOIDNxUSkRXjxt6VLR8Nqd6CBJuSu40MXUzuW+zQWgNSHmamd7FXfuvrW
-         fVeu7ph/HeXhbvpZd6dEmETd600urFqgO53Bn7qwDqazQrXeK/LOk+2hBHThTc2L/7QW
-         M8Ji479TH0nUfsVAvZNvagq01XSBa9qrf447Qbic00hXvhOIsTxGbxGuTMQbiZTdss1Q
-         j6KnFG7hcvjy4nuhwiQCzLtYc7YdZ4vtSSpMDsRWFiUWNNP9YTVElgR0PGjIeFqdlemz
-         TiPnOGl8g6Z6xdDHBqBQGIOCvki/eu32qVCNCjUMsY14MQ1OLdnWqnSB1Qc/T4n0jMMY
-         JsgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/KijaQGtIIREsTcn+S+/xcVNKrDf+Fn9JD0MQvVuC7HUvz19QB2yST2mJ+vW+/ortBYhxPr4DPgTNZem6hrw7chdJuh4AB8BVDiGG
-X-Gm-Message-State: AOJu0YxUe7852vajjg7KpX+ky3RLruehkR6sDoHvwlOYtaAWhkf5KQTr
-	uBlJfT4Aliu4aXwy2UqR2UzxY3+wo5AoZVb+6nN3I11DOik7866jbPL4VdrewU+jlptu9nmu9lX
-	MOEliBkIN3L9scQll/PRRDHYRdjnA4gnXADKdoW8ATzj3hOnYp8AzbMQn0o6xvw==
-X-Received: by 2002:a05:6000:184d:b0:366:ebc4:2574 with SMTP id ffacd0b85a97d-366ebc425fdmr6053847f8f.33.1719340993705;
-        Tue, 25 Jun 2024 11:43:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE40JIDmew9s1ZPwIzg7JyzT8Oeg/+C7vF7SC0rIHkvt7fva8hqcnM0roa+VTY43CmqAbnaTA==
-X-Received: by 2002:a05:6000:184d:b0:366:ebc4:2574 with SMTP id ffacd0b85a97d-366ebc425fdmr6053826f8f.33.1719340993195;
-        Tue, 25 Jun 2024 11:43:13 -0700 (PDT)
-Received: from [192.168.1.34] (p548825e3.dip0.t-ipconnect.de. [84.136.37.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663ada00e7sm13679617f8f.112.2024.06.25.11.43.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 11:43:12 -0700 (PDT)
-Message-ID: <ca1d734c-e755-4730-bcaa-a439a9635c38@redhat.com>
-Date: Tue, 25 Jun 2024 20:43:11 +0200
+	 In-Reply-To:Content-Type; b=WXBD50Jk8MLbZbxjpiBEXVtNkWI3jnOH5mj8d61WLwQA2ckb/2WQLoJ/RMu1e+IvKHfx0WcimeoY4MLzNZxCYEYHf6bS+GRoqo1hvSIJyxRnsG7398r+nA5IGfgweTpWG3Qf/8j4c6+iyDA0iuoYaEUrlxD0yyuYk9VFK4SgkTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1AF6339;
+	Tue, 25 Jun 2024 11:44:33 -0700 (PDT)
+Received: from [10.57.73.131] (unknown [10.57.73.131])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2B5193F73B;
+	Tue, 25 Jun 2024 11:44:06 -0700 (PDT)
+Message-ID: <4db1945e-ec8c-4e96-90fc-cd5386a9d6b4@arm.com>
+Date: Tue, 25 Jun 2024 19:44:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,158 +41,70 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] mm/filemap: Make MAX_PAGECACHE_ORDER acceptable to
- xarray
-To: Gavin Shan <gshan@redhat.com>, linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- djwong@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
- hughd@google.com, torvalds@linux-foundation.org, zhenyzha@redhat.com,
- shan.gavin@gmail.com
-References: <20240625090646.1194644-1-gshan@redhat.com>
- <20240625090646.1194644-2-gshan@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20240625090646.1194644-2-gshan@redhat.com>
+Subject: Re: [PATCH v2 3/4] OF: Simplify of_iommu_configure()
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+ linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+ Saravana Kannan <saravanak@google.com>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
+ <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
+ Jean-Philippe Brucker <jean-philippe@linaro.org>
+References: <cover.1718994350.git.robin.murphy@arm.com>
+ <0dc14431c8a495e1135fc1d9c4500d4cb96b4e39.1718994350.git.robin.murphy@arm.com>
+ <CAHp75VdnoOyKYbaNtr_UKn9NMSzXR1Syn9W7u0qtLgGuwYX6-Q@mail.gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <CAHp75VdnoOyKYbaNtr_UKn9NMSzXR1Syn9W7u0qtLgGuwYX6-Q@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25.06.24 11:06, Gavin Shan wrote:
-> The largest page cache order can be HPAGE_PMD_ORDER (13) on ARM64
-> with 64KB base page size. The xarray entry with this order can't
-> be split as the following error messages indicate.
+On 2024-06-22 11:23 pm, Andy Shevchenko wrote:
+> On Fri, Jun 21, 2024 at 8:47 PM Robin Murphy <robin.murphy@arm.com> wrote:
+>>
+>> We no longer have a notion of partially-initialised fwspecs existing,
+>> and we also no longer need to use an iommu_ops pointer to return status
+>> to of_dma_configure(). Clean up the remains of those, which lends itself
+>> to clarifying the logic around the dma_range_map allocation as well.
 > 
-> ------------[ cut here ]------------
-> WARNING: CPU: 35 PID: 7484 at lib/xarray.c:1025 xas_split_alloc+0xf8/0x128
-> Modules linked in: nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib  \
-> nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct    \
-> nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4    \
-> ip_set rfkill nf_tables nfnetlink vfat fat virtio_balloon drm      \
-> fuse xfs libcrc32c crct10dif_ce ghash_ce sha2_ce sha256_arm64      \
-> sha1_ce virtio_net net_failover virtio_console virtio_blk failover \
-> dimlib virtio_mmio
-> CPU: 35 PID: 7484 Comm: test Kdump: loaded Tainted: G W 6.10.0-rc5-gavin+ #9
-> Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20240524-1.el9 05/24/2024
-> pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-> pc : xas_split_alloc+0xf8/0x128
-> lr : split_huge_page_to_list_to_order+0x1c4/0x720
-> sp : ffff800087a4f6c0
-> x29: ffff800087a4f6c0 x28: ffff800087a4f720 x27: 000000001fffffff
-> x26: 0000000000000c40 x25: 000000000000000d x24: ffff00010625b858
-> x23: ffff800087a4f720 x22: ffffffdfc0780000 x21: 0000000000000000
-> x20: 0000000000000000 x19: ffffffdfc0780000 x18: 000000001ff40000
-> x17: 00000000ffffffff x16: 0000018000000000 x15: 51ec004000000000
-> x14: 0000e00000000000 x13: 0000000000002000 x12: 0000000000000020
-> x11: 51ec000000000000 x10: 51ece1c0ffff8000 x9 : ffffbeb961a44d28
-> x8 : 0000000000000003 x7 : ffffffdfc0456420 x6 : ffff0000e1aa6eb8
-> x5 : 20bf08b4fe778fca x4 : ffffffdfc0456420 x3 : 0000000000000c40
-> x2 : 000000000000000d x1 : 000000000000000c x0 : 0000000000000000
-> Call trace:
->   xas_split_alloc+0xf8/0x128
->   split_huge_page_to_list_to_order+0x1c4/0x720
->   truncate_inode_partial_folio+0xdc/0x160
->   truncate_inode_pages_range+0x1b4/0x4a8
->   truncate_pagecache_range+0x84/0xa0
->   xfs_flush_unmap_range+0x70/0x90 [xfs]
->   xfs_file_fallocate+0xfc/0x4d8 [xfs]
->   vfs_fallocate+0x124/0x2e8
->   ksys_fallocate+0x4c/0xa0
->   __arm64_sys_fallocate+0x24/0x38
->   invoke_syscall.constprop.0+0x7c/0xd8
->   do_el0_svc+0xb4/0xd0
->   el0_svc+0x44/0x1d8
->   el0t_64_sync_handler+0x134/0x150
->   el0t_64_sync+0x17c/0x180
+> ...
 > 
-> Fix it by decreasing MAX_PAGECACHE_ORDER to the largest supported order
-> by xarray. For this specific case, MAX_PAGECACHE_ORDER is dropped from
-> 13 to 11 when CONFIG_BASE_SMALL is disabled.
+>> +       if (!err && dev->bus)
+>> +               err = iommu_probe_device(dev);
+>>
+>> +       if (err && err != -EPROBE_DEFER)
+>> +               dev_dbg(dev, "Adding to IOMMU failed: %d\n", err);
 > 
-> Fixes: 4f6617011910 ("filemap: Allow __filemap_get_folio to allocate large folios")
-> Cc: stable@kernel.org # v6.6+
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Gavin Shan <gshan@redhat.com>
-> ---
->   include/linux/pagemap.h | 11 +++++++++--
->   1 file changed, 9 insertions(+), 2 deletions(-)
+> Hmm... I'm wondering if dev_err_probe() can be used here.
+
+It's still possible to have other errors here benignly [1] (however 
+questionable the underlying reason), and this has always been a 
+dev_dbg(), it's just getting shuffled around again. The aim here is to 
+carry on removing cruft to work towards getting rid of this 
+iommu_probe_device() call altogether since it's fundamentally wrong, so 
+I'm not inclined to add anything new or spend too much effort polishing 
+code I still want to delete.
+
+>>          return err;
 > 
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index 59f1df0cde5a..a0a026d2d244 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -354,11 +354,18 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
->    * a good order (that's 1MB if you're using 4kB pages)
->    */
->   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
-> -#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
-> +#define PREFERRED_MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
->   #else
-> -#define MAX_PAGECACHE_ORDER	8
-> +#define PREFERRED_MAX_PAGECACHE_ORDER	8
->   #endif
->   
-> +/*
-> + * xas_split_alloc() does not support arbitrary orders. This implies no
-> + * 512MB THP on ARM64 with 64KB base page size.
-> + */
-> +#define MAX_XAS_ORDER		(XA_CHUNK_SHIFT * 2 - 1)
-> +#define MAX_PAGECACHE_ORDER	min(MAX_XAS_ORDER, PREFERRED_MAX_PAGECACHE_ORDER)
-> +
->   /**
->    * mapping_set_large_folios() - Indicate the file supports large folios.
->    * @mapping: The file.
+> ...
+> 
+>> +       dev_dbg(dev, "device is%sbehind an iommu\n",
+>> +               !ret ? " " : " not ");
+> 
+> Why not a positive test?
 
-Thanks!
+Again, mostly because that's how it was written in 2014, same reason I'm 
+not deduplicating the redundant space despite it still being the tiniest 
+bit irritating. If you make me think about it, though, I suppose when 
+both outcomes are otherwise equally weighted it does seems natural to 
+consider "success" before "failure", thus the condition tests for success.
 
-Acked-by: David Hildenbrand <david@redhat.com>
+Thanks,
+Robin.
 
--- 
-Cheers,
-
-David / dhildenb
-
+[1] 
+https://lore.kernel.org/linux-iommu/bbmhcoghrprmbdibnjum6lefix2eoquxrde7wyqeulm4xabmlm@b6jy32saugqh/
 
