@@ -1,58 +1,63 @@
-Return-Path: <linux-kernel+bounces-229293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5054916DF1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:22:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9D1F916DF9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:23:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3BA6BB24F83
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:22:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26F6F1C22324
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:23:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E6F172BC2;
-	Tue, 25 Jun 2024 16:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54DC172BC2;
+	Tue, 25 Jun 2024 16:23:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kgDzJGYh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JCe+ijNM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5992F17082D;
-	Tue, 25 Jun 2024 16:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E843C49629;
+	Tue, 25 Jun 2024 16:23:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719332543; cv=none; b=cemuWuaTmbQQ5vWwrvOexgfFmNDwPxmavh8iihHpLjQj1Wy1ERzQjHwMEmVaT6pa18puySL6JfAQclkW7bfmdw45tP7Twns99Oo7V5MG8BL7LobaVK1Ob/iNZkV7hvEnR3BUL6KeUCmExjdgZW/OQfs9VZ+JoRD/lU37nn7OexQ=
+	t=1719332623; cv=none; b=byowBXlahRJRbdaMzjIUwbWum0FbVqga76gcLzgtdxtlRrwoTrxXDAutgB6QDAQTwDb1rtxwCWtzH+PqAfTX8WRohKaOe/nNePZf58xMt+eGCvf0B5WwdfF89CWb202WOqmyrTMdCn8+EwoLrShikkMN37SNFlBTmUlamrRMed0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719332543; c=relaxed/simple;
-	bh=akzr2Tcmr8hvoXCrldFTf3vxOcOP1rC3e1w/56iBGCw=;
+	s=arc-20240116; t=1719332623; c=relaxed/simple;
+	bh=T6WcmYyrG4RDnVy0C9I1xyHe/lqPeAD4ypoU12fA2sY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rx89qVRU7DaJMdhzioxKerS3Wil5hHQTO+D+beAX7vzjFbNuD26ixI60neMpbgUtwZ90Xmk1tjyOVMKR8sx39ZKqHRRts6mIpnHda+tqdybFZtQOxXMWaWOWTw2H2sp1kThWna2szv8yLpjMYS1Q++Vt479esCU7jtvaOQoYSQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kgDzJGYh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8676DC32781;
-	Tue, 25 Jun 2024 16:22:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gh5ATZeA/HmOz7Dl4z1HMDeMbDRo3lLlPndwoCdLhhUUWJ9uJWH+GNzzAC6BAzZUERrxMNfIUf1vILOLHMfpV3EdARisLu204stZMGNOcsyd7c8BZpMdqFW1aoDfXtVqdXAE31Q+UKqyEv7F9K23xrxbyPCe4lN4KaiBAIUvb7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JCe+ijNM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BE2C32781;
+	Tue, 25 Jun 2024 16:23:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719332542;
-	bh=akzr2Tcmr8hvoXCrldFTf3vxOcOP1rC3e1w/56iBGCw=;
+	s=k20201202; t=1719332620;
+	bh=T6WcmYyrG4RDnVy0C9I1xyHe/lqPeAD4ypoU12fA2sY=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kgDzJGYhBaKcP6lEFjj4Tas4lTM4uNMNjxCcJSfTfs7MGHnesN9d6V0ysjucd8ApJ
-	 oGsYgeiLYVUa2J5vjhepCeohL/GNZjw7XkXjWHaYssoEdRIhI2n7uODbb8iBMwyEqX
-	 4S57r7ji7tpfhAJcbpsLJY34qc4ZNUCjdN9MVMn1g88vg6Tk+pRScjFqmoIxmueID9
-	 r4VRe56YSCVllR1HdOYWbROv/2LVmyhvDR7V4/VcP66FC1vZTZ9Q+9cNvSMdrdbsdn
-	 wrR0GQFivlLs3qkoVNHJ9F0yODORAVaO98ansY5enl0Y2V3pUPM9LcJMkkXNN4/SKr
-	 qq+kKY/VEPUYw==
-Date: Tue, 25 Jun 2024 17:22:18 +0100
+	b=JCe+ijNMzfgTJ8otc6zD+pzRapbGk8sJQ8A41JfbOlO4wTgmQSH4RH3QrTP8eyzmo
+	 M0KTLmYsBNKMlM8tNqcpHQJR7XmMgT7RM+CMlPWTuCgI4yB3hJzwPZGlsUVwcXMzlJ
+	 +4GwL1Up06l+dkuzxzIW2wZ6GxHU1Evns7R5+bcZNaM4NZpPmXOn7SgwdfcVUBxkHZ
+	 PaEeDjt3vxoNe8KGCyj7AS1PrxRkUobtWC/xfnQyljoK5Ds0iffqi+J0juuviWEZ4y
+	 LJB3UegpXQESQu+qTblA0t/hv1+IMomRPs/evTRhpSOZPlTBqG0HYLpv5RCRc0U4hM
+	 46HFiD2YDSQZA==
+Date: Tue, 25 Jun 2024 17:23:33 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Chris Packham <chris.packham@alliedtelesis.co.nz>, jdelvare@suse.com,
-	linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, ukleinek@kernel.org,
-	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v4 1/3] dt-bindings: hwmon: Add adt7475 fan/pwm properties
-Message-ID: <20240625-oppressor-scaling-5713b4719a89@spud>
-References: <20240528225638.1211676-1-chris.packham@alliedtelesis.co.nz>
- <20240528225638.1211676-2-chris.packham@alliedtelesis.co.nz>
- <20240529-faucet-vending-3e330f8eb67b@wendy>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 1/2] dt-bindings: display: meson-dw-hdmi: add missing
+ power-domain
+Message-ID: <20240625-growl-unseated-e612193d93bd@spud>
+References: <20240625145017.1003346-1-jbrunet@baylibre.com>
+ <20240625145017.1003346-2-jbrunet@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,136 +65,39 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="R3N5fZNUTuh/Iu6H"
+	protocol="application/pgp-signature"; boundary="ryZ1T0F0MK8qog8O"
 Content-Disposition: inline
-In-Reply-To: <20240529-faucet-vending-3e330f8eb67b@wendy>
+In-Reply-To: <20240625145017.1003346-2-jbrunet@baylibre.com>
 
 
---R3N5fZNUTuh/Iu6H
+--ryZ1T0F0MK8qog8O
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Uwe,
-
-On Wed, May 29, 2024 at 08:58:41AM +0100, Conor Dooley wrote:
-> On Wed, May 29, 2024 at 10:56:36AM +1200, Chris Packham wrote:
-> > Add fan child nodes that allow describing the connections for the
-> > ADT7475 to the fans it controls. This also allows setting some
-> > initial values for the pwm duty cycle and frequency.
-> >=20
-> > Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> > ---
-> >=20
-> > Notes:
-> >     I realise there is still some discussion about how to express the
-> >     frequency and duty cycle. I have a personal preference for using he=
-rtz
-> >     for the frequency and 0-255 for the duty cycle but if the consensus=
- is
-> >     to express these things some other way I'm fine with doing some mat=
-h.
+On Tue, Jun 25, 2024 at 04:50:14PM +0200, Jerome Brunet wrote:
+> All Amlogic instances of the Synopsys HDMI controller need a power domain
+> enabled. This is currently missing because the Amlogic HDMI driver direct=
+ly
+> pokes the power domain controller registers, which it should not do.
 >=20
-> Probably worth carrying a link to it here:
-> https://lore.kernel.org/all/4de798f3-069e-4028-a5b5-5e6a639277e3@alliedte=
-lesis.co.nz/
+> Instead The HDMI controller should use the power controller.
+> Fix the bindings accordingly.
 >=20
-> I asked Uwe to take a look & it's on his todo list.
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-This is an attempt to bump this up on your todo list a bit!
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Thanks,
-Conor.
-
-> >    =20
-> >     Changes in v4:
-> >     - 0 is not a valid frequency value
-> >     Changes in v3:
-> >     - Use the pwm provider/consumer bindings
-> >     Changes in v2:
-> >     - Document 0 as a valid value (leaves hardware as-is)
-> >=20
-> >  .../devicetree/bindings/hwmon/adt7475.yaml    | 25 ++++++++++++++++++-
-> >  1 file changed, 24 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/hwmon/adt7475.yaml b/Doc=
-umentation/devicetree/bindings/hwmon/adt7475.yaml
-> > index 051c976ab711..bfef4c803bf7 100644
-> > --- a/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-> > +++ b/Documentation/devicetree/bindings/hwmon/adt7475.yaml
-> > @@ -51,6 +51,15 @@ properties:
-> >        enum: [0, 1]
-> >        default: 1
-> > =20
-> > +  "#pwm-cells":
-> > +    const: 4
-> > +    description: |
-> > +      Number of cells in a PWM specifier.
-> > +      - 0: The pwm channel
-> > +      - 1: The pwm frequency in hertz - 11, 14, 22, 29, 35, 44, 58, 88=
-, 22500
-> > +      - 2: PWM flags 0 or PWM_POLARITY_INVERTED
-> > +      - 3: The default pwm duty cycle - 0-255
-> > +
-> >  patternProperties:
-> >    "^adi,bypass-attenuator-in[0-4]$":
-> >      description: |
-> > @@ -81,6 +90,10 @@ patternProperties:
-> >        - smbalert#
-> >        - gpio
-> > =20
-> > +  "^fan-[0-9]+$":
-> > +    $ref: fan-common.yaml#
-> > +    unevaluatedProperties: false
-> > +
-> >  required:
-> >    - compatible
-> >    - reg
-> > @@ -89,11 +102,12 @@ additionalProperties: false
-> > =20
-> >  examples:
-> >    - |
-> > +    #include <dt-bindings/pwm/pwm.h>
-> >      i2c {
-> >        #address-cells =3D <1>;
-> >        #size-cells =3D <0>;
-> > =20
-> > -      hwmon@2e {
-> > +      pwm: hwmon@2e {
-> >          compatible =3D "adi,adt7476";
-> >          reg =3D <0x2e>;
-> >          adi,bypass-attenuator-in0 =3D <1>;
-> > @@ -101,5 +115,14 @@ examples:
-> >          adi,pwm-active-state =3D <1 0 1>;
-> >          adi,pin10-function =3D "smbalert#";
-> >          adi,pin14-function =3D "tach4";
-> > +        #pwm-cells =3D <4>;
-> > +
-> > +        fan-0 {
-> > +          pwms =3D <&pwm 0 22500 PWM_POLARITY_INVERTED 255>;
-> > +        };
-> > +
-> > +        fan-1 {
-> > +          pwms =3D <&pwm 2 22500 PWM_POLARITY_INVERTED 255>;
-> > +        };
-> >        };
-> >      };
-> > --=20
-> > 2.45.1
-> >=20
-
-
-
---R3N5fZNUTuh/Iu6H
+--ryZ1T0F0MK8qog8O
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnruugAKCRB4tDGHoIJi
-0kFRAQCZIrHaisIz4R0cjPl4ENnCGHKMXBh7j/mC8rYE/KB85wD/RTIZIcVxwnp3
-vJJ40zdLuhvyve24lm/u4nEf90mDYwc=
-=rn/M
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnrvBQAKCRB4tDGHoIJi
+0j6wAQCWm7LMe5lduj3W/J09vudOmNS2YYempj7Y7+BPJ0R2gQEA1WXqC9XZoQ97
+I4MAXT7SsMcT9W2RDG9SUfFvkITeNwU=
+=UL7b
 -----END PGP SIGNATURE-----
 
---R3N5fZNUTuh/Iu6H--
+--ryZ1T0F0MK8qog8O--
 
