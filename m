@@ -1,249 +1,331 @@
-Return-Path: <linux-kernel+bounces-228252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14992915D50
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:25:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE896915D53
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 387421C20F96
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:25:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E8EC2837B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECFC49642;
-	Tue, 25 Jun 2024 03:25:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9868245012;
+	Tue, 25 Jun 2024 03:25:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fe6eizxz";
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="YZsfpr38"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PnshiffU"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C03286AE;
-	Tue, 25 Jun 2024 03:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=68.232.153.233
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719285908; cv=fail; b=RwFdaRNe2yEQt3HW4TEPtGg0BwjEeZYpHR8uyULMPnqQ1sjtTGLozi74MJ0BlFElB5914DUN61b3evoCNXWyiXGKcDjgEm1AKAWNQO76F5iKLXVIh7qun/EO5gJqvzSL2SuTQMwPUG6bHWrGm6ZJRIrbDp9QrT2beVkrvIaN3UM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719285908; c=relaxed/simple;
-	bh=Ke6zrvYMqb0S4t+w3smr5xyNXoQFTB8/570rC/I6qUk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=S9CvkHjObiKJ/a6Rc3tigbne5DmhFJA2Cl0lSJ9WuqVkE+5IQBbc9ZYsZ9xdM17MA7AU2vfgrt45SwiME+ziwKHINzo9oTDX22bRj1U7mSMkXcVgF0jwtYMcvE7o51/PAJGrV9F3bRD6J8LzmyG5WB5GaG/r0E7qAilCsDzXjko=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=fe6eizxz; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=YZsfpr38; arc=fail smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1719285905; x=1750821905;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:content-transfer-encoding:
-   mime-version;
-  bh=Ke6zrvYMqb0S4t+w3smr5xyNXoQFTB8/570rC/I6qUk=;
-  b=fe6eizxzrOM0+NZ3oNhUJMhbPJ5H+0dtwSFV3MlqRuiKDaus1sD3/3q3
-   vfcTsVc/BIvaYvDBdnSuzhWvS+Qxx0892VtN8jAPMABDAJsScE85nCEXu
-   A/v6Dq4vOs06OBzDLPhIobhZadVkPhAD+h8cI1L1vLBy8qlkC4xWBjbVs
-   c17nh/NaK5Lj4lx8vyXFB/2pCMtywo4lL+BhDsAL81zMlvIE0Yq3hp46v
-   YHY+0tESS3VslzxaBVdVaVVh80NX1n3DsCFyCsc+3eQuFOWEkVzU1erKb
-   H5LfXQhXfN9DnMvjP6KpzLzHMF/l55JHgfoxMA14iJe4TkVmqQuz9nvCM
-   A==;
-X-CSE-ConnectionGUID: HktIpVJmQbiFSsHr5Jn3CA==
-X-CSE-MsgGUID: Sy+r5k/3RH+m0h8/MOqcXg==
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="259326505"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2024 20:25:04 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 24 Jun 2024 20:24:23 -0700
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (10.10.215.250)
- by email.microchip.com (10.10.87.72) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35 via Frontend Transport; Mon, 24 Jun 2024 20:24:23 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=leq2INLbh45Ddstu+rn2D+AK0Mg7RXSEEzJ003+Y8ujl7ODPR6To33xfXFuZ6j4dd+nsH1XmOdYvfHx/RgO5ENkPrxKaF4bf3Jg1IoobuBmmfkfyX+8tP7GhaWbhdTz8WbNs+zRl0m1gQ5hyJrdXF2DWyfng0C/Y2wZzXzbntZuNqI9pTfz1znanVyfDVWAIo1+SEVZ223dRSvEJ7wp4EWmpA7zRt6yK/JJr1BuU2nlow5iYMiYG6SXgR7ClizjAlsw9NrwDU8imIqZ6tA5rku5bsNqZT5g8Qa/KGqGxGa9gvUfnjfPF27tTbzesUnNAFtW8Zf6daxYVlzLzVhg2HQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Ke6zrvYMqb0S4t+w3smr5xyNXoQFTB8/570rC/I6qUk=;
- b=WzAncNUvVDJJwU8oGw9uxqpt1eeqKFQ3zW7g0C+u/KAwaTN7Vggqr6xv5C0vs0t0eaWPB6AAAWC+08I490muwYrsVq8+P7JNEND16kg+L48VIyCh4OneKnpiCpKJ5dfiPb3ZvaGYe7iOeglcSK76WbuMNi8jF10JN6Celgkms8C9UmQV5d0xVdhgdOZ36KrwipbxXvuMREPWvJVsjm6tOD0RWpEhkgGKBKHDyrz+8hvG7LXuFFens4nxZ1SMcFvGJzUF0YfUfZi6eKJPPk0vU9WXONBuPbQqTKEpCw7L7zsClHfBlpTvjixQMWdvRURs7u+SxWNuGISwvNwpCT7cOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Ke6zrvYMqb0S4t+w3smr5xyNXoQFTB8/570rC/I6qUk=;
- b=YZsfpr38YFTx1xBb/D3n464JXxDN/CoRcDuXJ/HFk0ID/raswQwXXSLRJO1Vt7dbur7cUzhAN8xIP/ElbppfCPSw+v+Vv6BCL334NSHLibsHe01SIJIQQFw7yMUtyPBIPCJ0Sx2eWMdKmTaedjeyqvmhgP5RC4FzZSSRjV04JxRwBukVVz7PsGmXswLgCZdISclsEE9MagVMoWCsCc5r1UiE70zz6VdG35udA3Wb5UrlUVEC7yI8kNp0x7SzHBadgM9Vn5SoAsT/UTkRCm5utUJHj8gYnebzKh0H9Qmo3NLx4EB2Y5VDVm817x2/RTyuAnoTg2OL7FPcgh/rXK45MQ==
-Received: from PH8PR11MB6609.namprd11.prod.outlook.com (2603:10b6:510:1cc::16)
- by CH3PR11MB8186.namprd11.prod.outlook.com (2603:10b6:610:15a::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Tue, 25 Jun
- 2024 03:24:28 +0000
-Received: from PH8PR11MB6609.namprd11.prod.outlook.com
- ([fe80::ebc1:5d63:a07c:60d]) by PH8PR11MB6609.namprd11.prod.outlook.com
- ([fe80::ebc1:5d63:a07c:60d%4]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
- 03:24:28 +0000
-From: <Manikandan.M@microchip.com>
-To: <robh@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <Balakrishnan.S@microchip.com>,
-	<claudiu.beznea@tuxon.dev>, <Durai.ManickamKR@microchip.com>,
-	<conor+dt@kernel.org>, <Balamanikandan.Gunasundar@microchip.com>,
-	<Hari.PrasathGE@microchip.com>, <brgl@bgdev.pl>, <linus.walleij@linaro.org>,
-	<linux-arm-kernel@lists.infradead.org>, <arnd@arndb.de>,
-	<alexandre.belloni@bootlin.com>, <linux-gpio@vger.kernel.org>,
-	<Nicolas.Ferre@microchip.com>, <Varshini.Rajendran@microchip.com>,
-	<Charan.Pedumuru@microchip.com>, <Nayabbasha.Sayed@microchip.com>,
-	<krzk+dt@kernel.org>, <Dharma.B@microchip.com>, <devicetree@vger.kernel.org>
-Subject: Re: [PATCH 4/5] dt-bindings: gpio: convert Atmel GPIO to json-schema
-Thread-Topic: [PATCH 4/5] dt-bindings: gpio: convert Atmel GPIO to json-schema
-Thread-Index: AQHaxh4ahtr6jTH5jk608x62f/zCsLHWxeoAgAEMN4A=
-Date: Tue, 25 Jun 2024 03:24:28 +0000
-Message-ID: <910382a4-bc65-42cd-993c-68853707e63a@microchip.com>
-References: <20240624100431.191172-1-manikandan.m@microchip.com>
- <20240624100431.191172-5-manikandan.m@microchip.com>
- <171922826608.2823095.16579055566825356768.robh@kernel.org>
-In-Reply-To: <171922826608.2823095.16579055566825356768.robh@kernel.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-GB
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH8PR11MB6609:EE_|CH3PR11MB8186:EE_
-x-ms-office365-filtering-correlation-id: 01d1a3ee-d3cd-4b61-e3b8-08dc94c6523d
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230037|7416011|376011|1800799021|366013|38070700015;
-x-microsoft-antispam-message-info: =?utf-8?B?aXZMYkQyS3k4blI1TmQyNW8vdU1kWnNzMjU1ekVrUGtVVm5tSHFScVMrSDUx?=
- =?utf-8?B?ckZ4MUtleExIaTZhY0NGMmc2ODVvWjNOdkxOWHQxM1ZOOWQwQ1pTRzA4aGxX?=
- =?utf-8?B?SzZZeFlObTNabDRsSm9MZkI1TzdhWXZKWUR0aEJRekhoNDFjcEdaVVJhYU9E?=
- =?utf-8?B?NTMrOW8xOU81eWVIVTlnazlFQkZrV3Q2bW95VVpZaVhPVW5HNHF4amw3Mk1S?=
- =?utf-8?B?emIxb3R5MUtQTDBZeGZrelJ0cktYYWVRRjFsVDNndzVDWVBOSWozaXlDWWpP?=
- =?utf-8?B?emIyNXlBbGp5eDZTd0VoM0tXTmtXTlRDUkp2N2twbWFFMVk3dGhPWGxpb3Yz?=
- =?utf-8?B?TG4wc0xkOGMyRE9tY3hORG02andQVWYzMnBrYXRlZUxOakJjaUI5Q0pocGM1?=
- =?utf-8?B?SzErUFBjVzA5NVliblYxRUlXbGxIMkZ1YjZmOWRJVUdSOFdWUzh2Q1daL2xJ?=
- =?utf-8?B?d09QcTB5UWU4M1c3VU4yME9aVnJaWnpMa24rV01mRUhrV2QxZmJheGpTNGJx?=
- =?utf-8?B?eFRnUGxvMnJYU2VDakpPTzlwYjJpZlV3NE1aVVYrMGNib1ZIaVlROHRBZ2tZ?=
- =?utf-8?B?WFVhWUNaenBhaEtVaFhSTE96ZnhkaUc5aUhyVXI4ZG51RnJlRFVnS2tnWmxz?=
- =?utf-8?B?Szl6VUVtbVcxSFRGK1N2Ni96VDFIWDRiNE5Cb3NRdzNTdkFzOVhVdGp6Umxm?=
- =?utf-8?B?bzhvZEsvTWtrbTZEbE5UajBzTHhOVjJVVG5SZkJiVUpWY1lhUmw3bTRyMDRs?=
- =?utf-8?B?OEIzdUJkak93NGxYRVBjVlFMOWp3NkcxWkwzdDdSVHR5VXRnTXlzckVaZlZn?=
- =?utf-8?B?b2RZMzlIR2doZkhibTBRUkZaKzRtbkJuZmxNaUk4Z09aTnNhaXdmbjFsR01G?=
- =?utf-8?B?MVlNRmRBYmdNZWlJU2VaSkZQS2QxTUw2ZXFEOGovTmo5NjVxUmY0Z00zUVRI?=
- =?utf-8?B?cFNuUTQxM0V5bWhlK2FPbE5HTERjbTFpS2IwT0k3ckkvaXh5SDJyb0JHRDha?=
- =?utf-8?B?TjRSV0NSbFVpRklZOWNEbDYwbHBZTGs0b0t4eGgyWmsramIvODVnVXd0Sk5R?=
- =?utf-8?B?N29DU2ZBVm1pcnc1MlZMM2dReHU2NFJiMFJJWG9MUFJFdFhoeGYvMERJeHlu?=
- =?utf-8?B?Sm9MbnB2RklZYmJWSkFWNTNBcDhhaE14T3pJNGgwaGVQY3J1aUFUcExYYko4?=
- =?utf-8?B?T3RzdzVEK2xLS0lpOU5UK29WMVhkTTJTbmlaa3BQUEYrYm1QWHdGZmtlNVdz?=
- =?utf-8?B?cVl4cnpUYzFhUkMybkZvZEJ4REkyUGtyOWJ3Wnp5Yk5SUzFnVm5nYSttZEx2?=
- =?utf-8?B?NjRNQkxoMVlNTnZ0dEQ1Sk1hdEdXSFExbkFkRzF4Y1VVUWZqS2ZWQW92Ui9O?=
- =?utf-8?B?ZFFzS3RpbXlWRU5wSUpwNHZVc0s1cE9xRTJwdE5UZW9ibisxdWV3QThhRGY3?=
- =?utf-8?B?M2NxTk43VkNkM0JEclJkSVUrU3BwUE5idUJrVTBhZHkzSU53SFFVTXl2Wlda?=
- =?utf-8?B?OFNmQ2tCK2JwQW4wOEcvdWk0SzNVNGUveGhWbXpQakVJbzNILzNBZHc5NFpi?=
- =?utf-8?B?cWZyWnllYUVIankwa0JSZm15Qm5qL0RtR0xsQWU1cjQ3dkFqMC9ZcHBIN2hu?=
- =?utf-8?B?S1dYUWRVWXVvVGE5Wjd0UkFrVzU3aXBJZ2U4VTRuUWY2TmNuSE1peExUOWZZ?=
- =?utf-8?B?MUlWMDhVWThqT3NGWUFiVklNTjhmc0FaODh3WlNUVHBCTERkL0xsM01lSEpX?=
- =?utf-8?B?elkrUTljeDFzK2tLTTdlUGRpaWx4N1kyaFFza2FJZnhsekk5Y1pRK0svS1Bw?=
- =?utf-8?Q?QnvpSZEmCzyt+zFsAt6txc0JYhrJVOQaofYLY=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB6609.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(7416011)(376011)(1800799021)(366013)(38070700015);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?VUhvUms3cVFNZ0Zsc083NzhQNno0RXJuWTJPNDZFVmlHNE9YQ0J4N3BTcXlY?=
- =?utf-8?B?bUtTck1vRmtyNEI1Qk9Menp4SVREK0ZKMEMvWXJwT2ovMUIwZlVDZ3k3NnZl?=
- =?utf-8?B?Z3lWTnNtZTRrdUduR3RMZVFzV2xrY2FaWmgzYWEvWGNIcGdJWFlnTkRFeHZO?=
- =?utf-8?B?M3RwNFVaMm40N09pd1lqaFlZcnN5RG5yRE5FT1BYYlNlc1dmREV5UmtyMUFR?=
- =?utf-8?B?aVZucHQ4QmNZZ3MzdEFaS2xjNHI0R01ab0lhL0lNZlFjSE1oUlJZQXFNYy9v?=
- =?utf-8?B?cFJXQ09hUXZXaCt1Rjd5NHVuQjdYb0Z5UXZWMEpCdmsycnBUSjFpd3R6bEYy?=
- =?utf-8?B?SDlSVXFrSFBiLzI2MzBjUUZvQWNOSGlwazEzemxOUVNkY1lLRlhVV2w3THZU?=
- =?utf-8?B?Z2ErS0dFSTVaMUo1OUNJT1hkc3Nac2ozcGxpNC8weitQMWVVMWNycUxaN1Q5?=
- =?utf-8?B?Nmt2SkE4WU9PVzVyNlJCWldVcEtTdHJ1c0dEWlora29DTFptUDVXZis1NHZE?=
- =?utf-8?B?WXcvcThpamNOakpCMGcxN29lRmRKcDBEbW43TGlYSkY3LzJJUjRJU2ZzQVN1?=
- =?utf-8?B?NnZYTzRlUXNzcDVNMGgvL0t0aTBWOHFMZi9RTmgrY2luQUVhRjM2c3BHSjV4?=
- =?utf-8?B?ZnNHZTgzWENlYmFvTnZWQmcxbFY4ckJ1Zitla0JSeGt4dGNNUWxzTWxoVngz?=
- =?utf-8?B?b3VUcm1HaWdQakE0ejg0ZllzVjA1TFpKMVVjeEpVbDYzUUNKd3ptcXZHcHRn?=
- =?utf-8?B?UE5saU0wbTZNK0pWSEF5N21GSlJWYysrZE9pNi9PSEZYdE5YeHVjaUhGK2x1?=
- =?utf-8?B?NHJuWFp2OUtNWnZMbm9lUHc3RGxyc2NJV2ZFWkpaVmg1YUF4Sk5SbGNlc0w0?=
- =?utf-8?B?SFBRTXpnV1phZzlsZURXeXhwRHhxVnN5cVJjVEhWR1o5UkNwT0YxdWxDbHpt?=
- =?utf-8?B?M2xNenpQVmJMWUtSYlFWMDVobkozWVhJVWUxQkpUZWt5NFJKbTd1S1BhUGdm?=
- =?utf-8?B?N1BienVlOGJRVWVNUzF3S2VwMFdNakRFTFlNc1BqRVVHcTNuM0g4dWF6eUJG?=
- =?utf-8?B?MWFXZ1EyQUtWOVNpUHJmaXRONzRKbnBLM3lqK2wyTUxFUmQwbW5yd3hzeENZ?=
- =?utf-8?B?Kytlb0ZPYUlsVEhvampjUVBwUXJMQTdwM2xaMFNOM1ZvUTZDUDRXNmV3NHpK?=
- =?utf-8?B?TUQrcitDQUs1aHFmdGNWQUczcEdYc25vRzdZeS9YSkx6UytPQ2tUK3B3Wm55?=
- =?utf-8?B?UXR6bGl4aEFqOHA5dXJYV0xzUm1ZeUkyR2Ewc0xzZ1JGZ1krcmROUEp1WC9o?=
- =?utf-8?B?RTRaZVVkeUFKcGhYdVhhTy9sN2JQTG9iT2tvRnJNb3FBNXJKSXNJbS9uSXNy?=
- =?utf-8?B?WVVzN2Y5NXNBS0ZzZy9abFpnRWZPVkRraWJlOVREdE1tQXd2aU1sTzQvVUxw?=
- =?utf-8?B?QU8yU2czOWN2QUF3aEdHMzdlZkxVMUExRFgvMnNuZDJWbjgwcW1POVh6bW40?=
- =?utf-8?B?OVRFL3psYytPVzRHeDk3REZuN0IyVGtqUW5WSi9XZFlTNzZHQms2MVMzaFRW?=
- =?utf-8?B?anJTQU44NXVLTGNabGp3LzU5ZUZUN2s3N1NMNURZZVZvTWRVd2VYc3IzSXJi?=
- =?utf-8?B?dXpodkIzbUN6MVl5T2xaNUdyN0FSeWVKWWFxanh1c3AxQnd3dVBsWkNpaE5B?=
- =?utf-8?B?bzZkNk10MngwamVQWlNpNXhHdVZ0MjNoaDZ1WW9vQjk4dEd3enZuNmhGVXlR?=
- =?utf-8?B?cnVCTDI1V2JoVURxdUF5TENKY0djNVN5UENybmo5YldsRzBMVzZEQlRzbFAx?=
- =?utf-8?B?Y3pmaUVCVmVjNlV4dk9hZFIxTU5wVjU2dGpvajByaVdla0hqNzUwam45NnJR?=
- =?utf-8?B?VmV4SU5RTjhoVUkydkhyRmo1azBsTkJ4VEtxYlpyaXFodlNnZTR3Y2NHOE13?=
- =?utf-8?B?L2F6R3RFcTFlaG9RNG81ejBiZENxdmZKdlQ1cmhtRTMyaDVaYnNMMzlPdzVD?=
- =?utf-8?B?SDRXRElmeVN5eTdvNy9yTjM1eVRYMkpxUjUvZnhaZjB0elF1NXcxdTRaUndV?=
- =?utf-8?B?M1plL3B2YXRCcmZJbWlFWiswdGxKTzNDTHBLVWk0ZE5GRXZvYitRRnRSVFpN?=
- =?utf-8?Q?LOYWq/CybJWnT+wecPxuc/454?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <734F51723515E543898B7D7B0E169226@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1803EA90;
+	Tue, 25 Jun 2024 03:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719285945; cv=none; b=UQYf+DsQ8QofSwuFQgtiQowFHtQ65oW6Hq9cw8F8XEGh8awn1WbNw+ul5p0yFOL3Uiq/raVa3pXQGmfkVxevPtFcdSp77sV2GgZEGh8MYuo7PnTT7DJjG1zM/Ag81PpvJ3AvzljH2rEmb7xgIKY5JT4QJfh/eNecwksZ4Dur7pI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719285945; c=relaxed/simple;
+	bh=uf26h1JYSU7JrV3mjnHTrBZp7ZfhjcGx4cTJNUqiRx0=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=qjxefpAQguXJhbFFLJVOsO7oStLbxPXnPkruexNPhQP+z77hxBFZQMEJm8ZPu0N+6eVAuFdxnoGPcFDfqo+UtC+o+y+cb6dZU/mQlyGKV9eSDqxWKQ/cApJdpaEVgtACNMrLeadwEhA5UmGVPxjd6a1xwJfFcV150GISUWj+FEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PnshiffU; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70666ac8f81so1942808b3a.1;
+        Mon, 24 Jun 2024 20:25:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719285943; x=1719890743; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GgG88c9JE6XnPF8CRgN3glLQvH9X2RESdGb7e77LJso=;
+        b=PnshiffUhPhZ03vv3Y17L6KS1nniBixMwtYNyw7Aacs8Fdq6JrA3XN9VbHS5oWvVHQ
+         Oo3IQMCnNlYr7TWLQeP/NL/YRuzCeBeIbTCrCtBqxsQZyc8Gx8TxF8Nu6KvnbTz0KRjx
+         CZNJaPb6sxq/DXTF300P4+oLI8P0NqS+MOezdADAfsLB6B4Uh3TqbodcbQpwTdY3hdCs
+         pvMxQ+PQ7Pm6+FeHVKQWdXq21SaeLjdmPvQj4rihfWx8fdXnEBYLMo7qqKez+Dzshl3e
+         yhJQ+3yd/YglgNwZ1mYcoDsjtyNyYJT+JM7RMRSH1uf25qDL6qsyvwdYZmGlJ5zj739a
+         f3zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719285943; x=1719890743;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GgG88c9JE6XnPF8CRgN3glLQvH9X2RESdGb7e77LJso=;
+        b=GLP8kcv80tk1fm6+ovqP+1Sx3mm5d4IasMKYmPo88piZjgLfLaVNuDO521OXwYR3jq
+         ErKwiv5gq17aspkzJWuaHg41L24h6KOlzZzmcOeRxO6Cg+0ADv6COl9SSt+YYRCHgeDS
+         QT7johEq5IxkQeuoYRSxW0sc/E/W7tDD7smxkfPNKOJRbU0A7et6JOWFxPA6f2en5Utn
+         R0qpgj0zf86BXwyhDDere1/VsE9Zxv6LqphNpnMpPYSI0t5XIeP7MOwSLYo+N9ivJggU
+         Ld+quA0io4NRH9gc3hUfm9uoHiMxgCZBRLW/Dr8gBTDeDBZz56X7d7MB7Cwu0rA7Rnqk
+         Npsw==
+X-Forwarded-Encrypted: i=1; AJvYcCX7jnmMFL7fmBKqrwGiV83ATXp0Ezp4/kpndZ/INvhJBG8Ea+QqOIjhm/Tspk4SWhV1SS+mFoWwnG6AwM8yqru084YbgTGD6IlHNE0UCyFgs+eSII7lQJ9APIImnIQFpkVSDf4RPfg9RFsx7xvD
+X-Gm-Message-State: AOJu0Yw+N8OH2owIHHUF9t0I/tiqVAu9+paZF5L2MKhKIYIS9P7b0fbo
+	/CPM7GSQaTzEmxHuUXQzAISFXZz9w9nUsAY4nb92rDztMBMQcpjt
+X-Google-Smtp-Source: AGHT+IEPpdrb00fx09/ouYLd+x1w4KtAvaDoWKza0/Jgyrp0J2ugLXcWaREba6NFaQo03yrDjlVbUg==
+X-Received: by 2002:a05:6a21:6da4:b0:1b5:d07a:57b2 with SMTP id adf61e73a8af0-1bd13bb76camr3898830637.12.1719285942871;
+        Mon, 24 Jun 2024 20:25:42 -0700 (PDT)
+Received: from localhost.localdomain ([2604:a880:4:1d0::427:6000])
+        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-706512e1f6esm6952010b3a.180.2024.06.24.20.25.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 20:25:42 -0700 (PDT)
+From: Gatlin Newhouse <gatlin.newhouse@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Kees Cook <keescook@chromium.org>,
+	Marco Elver <elver@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Gatlin Newhouse <gatlin.newhouse@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Mike Rapoport (IBM)" <rppt@kernel.org>,
+	Baoquan He <bhe@redhat.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Changbin Du <changbin.du@huawei.com>,
+	Pengfei Xu <pengfei.xu@intel.com>,
+	Xin Li <xin3.li@intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com,
+	linux-hardening@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH v3] x86/traps: Enable UBSAN traps on x86
+Date: Tue, 25 Jun 2024 03:24:55 +0000
+Message-Id: <20240625032509.4155839-1-gatlin.newhouse@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB6609.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01d1a3ee-d3cd-4b61-e3b8-08dc94c6523d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2024 03:24:28.3594
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dTwwoGnX2Yf55x9HZ/q+ubeGjc3eSFqB3E0aiW5s6syqD0VW3ppXtcXuaWasmayeLgzznU6tddYckC6h2VZAWLlDanJGUQHUC7R9q4+JwQI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8186
+Content-Transfer-Encoding: 7bit
 
-SGkgUm9iLA0KDQpUaGFuayB5b3UuDQpJIGdldCB0aGVzZSBlcnJvcnMgYWZ0ZXIgdXBncmFkaW5n
-IHRoZSBkdC1zY2hlbWEuSSB3aWxsIGZpeCB0aGVtIGFuZCANCnJlLXN1Ym1pdCB0aGUgcGF0Y2hl
-cy4NCg0KT24gMjQvMDYvMjQgNDo1NCBwbSwgUm9iIEhlcnJpbmcgKEFybSkgd3JvdGU6DQo+IEVY
-VEVSTkFMIEVNQUlMOiBEbyBub3QgY2xpY2sgbGlua3Mgb3Igb3BlbiBhdHRhY2htZW50cyB1bmxl
-c3MgeW91IGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZQ0KPiANCj4gT24gTW9uLCAyNCBKdW4gMjAy
-NCAxNTozNDozMCArMDUzMCwgTWFuaWthbmRhbiBNdXJhbGlkaGFyYW4gd3JvdGU6DQo+PiBDb252
-ZXJ0IHRoZSBBdG1lbCBHUElPIGNvbnRyb2xsZXIgYmluZGluZyBkb2N1bWVudCB0byBEVCBzY2hl
-bWEgZm9ybWF0DQo+PiB1c2luZyBqc29uLXNjaGVtYS4NCj4+DQo+PiBTaWduZWQtb2ZmLWJ5OiBN
-YW5pa2FuZGFuIE11cmFsaWRoYXJhbiA8bWFuaWthbmRhbi5tQG1pY3JvY2hpcC5jb20+DQo+PiAt
-LS0NCj4+ICAgLi4uL2JpbmRpbmdzL2dwaW8vYXRtZWwsYXQ5MXJtOTIwMC1ncGlvLnlhbWwgIHwg
-NzggKysrKysrKysrKysrKysrKysrKw0KPj4gICAuLi4vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlv
-L2dwaW9fYXRtZWwudHh0ICAgfCAzMSAtLS0tLS0tLQ0KPj4gICAyIGZpbGVzIGNoYW5nZWQsIDc4
-IGluc2VydGlvbnMoKyksIDMxIGRlbGV0aW9ucygtKQ0KPj4gICBjcmVhdGUgbW9kZSAxMDA2NDQg
-RG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2dwaW8vYXRtZWwsYXQ5MXJtOTIwMC1n
-cGlvLnlhbWwNCj4+ICAgZGVsZXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJl
-ZS9iaW5kaW5ncy9ncGlvL2dwaW9fYXRtZWwudHh0DQo+Pg0KPiANCj4gTXkgYm90IGZvdW5kIGVy
-cm9ycyBydW5uaW5nICdtYWtlIGR0X2JpbmRpbmdfY2hlY2snIG9uIHlvdXIgcGF0Y2g6DQo+IA0K
-PiB5YW1sbGludCB3YXJuaW5ncy9lcnJvcnM6DQo+IA0KPiBkdHNjaGVtYS9kdGMgd2FybmluZ3Mv
-ZXJyb3JzOg0KPiAvYnVpbGRzL3JvYmhlcnJpbmcvZHQtcmV2aWV3LWNpL2xpbnV4L0RvY3VtZW50
-YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9ncGlvL2F0bWVsLGF0OTFybTkyMDAtZ3Bpby5leGFt
-cGxlLmR0YjogZ3Bpb0BmZmZmZjQwMDogY29tcGF0aWJsZTogJ29uZU9mJyBjb25kaXRpb25hbCBm
-YWlsZWQsIG9uZSBtdXN0IGJlIGZpeGVkOg0KPiAgICAgICAgICBbJ2F0bWVsLGF0OTFybTkyMDAt
-Z3BpbyddIGlzIHRvbyBzaG9ydA0KPiAgICAgICAgICAnYXRtZWwsYXQ5MXJtOTIwMC1ncGlvJyBp
-cyBub3Qgb25lIG9mIFsnYXRtZWwsYXQ5MXNhbTl4NS1ncGlvJywgJ21pY3JvY2hpcCxzYW05eDYw
-LWdwaW8nXQ0KPiAgICAgICAgICAnYXRtZWwsYXQ5MXJtOTIwMC1ncGlvJyBpcyBub3Qgb25lIG9m
-IFsnbWljcm9jaGlwLHNhbTl4Ny1ncGlvJ10NCj4gICAgICAgICAgZnJvbSBzY2hlbWEgJGlkOiBo
-dHRwOi8vZGV2aWNldHJlZS5vcmcvc2NoZW1hcy9ncGlvL2F0bWVsLGF0OTFybTkyMDAtZ3Bpby55
-YW1sIw0KPiANCj4gZG9jIHJlZmVyZW5jZSBlcnJvcnMgKG1ha2UgcmVmY2hlY2tkb2NzKToNCj4g
-DQo+IFNlZSBodHRwczovL3BhdGNod29yay5vemxhYnMub3JnL3Byb2plY3QvZGV2aWNldHJlZS1i
-aW5kaW5ncy9wYXRjaC8yMDI0MDYyNDEwMDQzMS4xOTExNzItNS1tYW5pa2FuZGFuLm1AbWljcm9j
-aGlwLmNvbQ0KPiANCj4gVGhlIGJhc2UgZm9yIHRoZSBzZXJpZXMgaXMgZ2VuZXJhbGx5IHRoZSBs
-YXRlc3QgcmMxLiBBIGRpZmZlcmVudCBkZXBlbmRlbmN5DQo+IHNob3VsZCBiZSBub3RlZCBpbiAq
-dGhpcyogcGF0Y2guDQo+IA0KPiBJZiB5b3UgYWxyZWFkeSByYW4gJ21ha2UgZHRfYmluZGluZ19j
-aGVjaycgYW5kIGRpZG4ndCBzZWUgdGhlIGFib3ZlDQo+IGVycm9yKHMpLCB0aGVuIG1ha2Ugc3Vy
-ZSAneWFtbGxpbnQnIGlzIGluc3RhbGxlZCBhbmQgZHQtc2NoZW1hIGlzIHVwIHRvDQo+IGRhdGU6
-DQo+IA0KPiBwaXAzIGluc3RhbGwgZHRzY2hlbWEgLS11cGdyYWRlDQo+IA0KPiBQbGVhc2UgY2hl
-Y2sgYW5kIHJlLXN1Ym1pdCBhZnRlciBydW5uaW5nIHRoZSBhYm92ZSBjb21tYW5kIHlvdXJzZWxm
-LiBOb3RlDQo+IHRoYXQgRFRfU0NIRU1BX0ZJTEVTIGNhbiBiZSBzZXQgdG8geW91ciBzY2hlbWEg
-ZmlsZSB0byBzcGVlZCB1cCBjaGVja2luZw0KPiB5b3VyIHNjaGVtYS4gSG93ZXZlciwgaXQgbXVz
-dCBiZSB1bnNldCB0byB0ZXN0IGFsbCBleGFtcGxlcyB3aXRoIHlvdXIgc2NoZW1hLg0KPiANCg0K
-LS0gDQpUaGFua3MgYW5kIFJlZ2FyZHMsDQpNYW5pa2FuZGFuIE0uDQoNCg==
+Currently ARM architectures output which specific sanitizer caused
+the trap, via the encoded data in the trap instruction. Clang on
+x86 currently encodes the same data in ud1 instructions but the x86
+handle_bug() and is_valid_bugaddr() functions currently only look
+at ud2s.
+
+Bring x86 to parity with arm64, similar to commit 25b84002afb9
+("arm64: Support Clang UBSAN trap codes for better reporting").
+Enable the output of UBSAN type information on x86 architectures
+compiled with clang when CONFIG_UBSAN_TRAP=y.
+
+Signed-off-by: Gatlin Newhouse <gatlin.newhouse@gmail.com>
+---
+Changes in v3:
+  - Address Thomas's remarks about: change log structure,
+    get_ud_type() instead of is_valid_bugaddr(), handle_bug()
+    changes, and handle_ubsan_failure().
+
+Changes in v2:
+  - Name the new constants 'LEN_ASOP' and 'INSN_ASOP' instead of
+    'LEN_REX' and 'INSN_REX'
+  - Change handle_ubsan_failure() from enum bug_trap_type to void
+    function
+
+v1: https://lore.kernel.org/linux-hardening/20240529022043.3661757-1-gatlin.newhouse@gmail.com/
+v2: https://lore.kernel.org/linux-hardening/20240601031019.3708758-1-gatlin.newhouse@gmail.com/
+---
+ MAINTAINERS                  |  2 ++
+ arch/x86/include/asm/bug.h   | 11 ++++++++++
+ arch/x86/include/asm/ubsan.h | 23 +++++++++++++++++++++
+ arch/x86/kernel/Makefile     |  1 +
+ arch/x86/kernel/traps.c      | 40 +++++++++++++++++++++++++++++++-----
+ arch/x86/kernel/ubsan.c      | 21 +++++++++++++++++++
+ 6 files changed, 93 insertions(+), 5 deletions(-)
+ create mode 100644 arch/x86/include/asm/ubsan.h
+ create mode 100644 arch/x86/kernel/ubsan.c
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 28e20975c26f..b8512887ffb1 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -22635,6 +22635,8 @@ L:	kasan-dev@googlegroups.com
+ L:	linux-hardening@vger.kernel.org
+ S:	Supported
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
++F:	arch/x86/include/asm/ubsan.h
++F:	arch/x86/kernel/ubsan.c
+ F:	Documentation/dev-tools/ubsan.rst
+ F:	include/linux/ubsan.h
+ F:	lib/Kconfig.ubsan
+diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
+index a3ec87d198ac..a363d13c263b 100644
+--- a/arch/x86/include/asm/bug.h
++++ b/arch/x86/include/asm/bug.h
+@@ -13,6 +13,17 @@
+ #define INSN_UD2	0x0b0f
+ #define LEN_UD2		2
+ 
++/*
++ * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
++ */
++#define INSN_UD1	0xb90f
++#define INSN_UD_MASK	0xFFFF
++#define LEN_UD1		2
++#define INSN_ASOP	0x67
++#define INSN_ASOP_MASK	0x00FF
++#define BUG_UD_NONE	0xFFFF
++#define BUG_UD2		0xFFFE
++
+ #ifdef CONFIG_GENERIC_BUG
+ 
+ #ifdef CONFIG_X86_32
+diff --git a/arch/x86/include/asm/ubsan.h b/arch/x86/include/asm/ubsan.h
+new file mode 100644
+index 000000000000..ac2080984e83
+--- /dev/null
++++ b/arch/x86/include/asm/ubsan.h
+@@ -0,0 +1,23 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _ASM_X86_UBSAN_H
++#define _ASM_X86_UBSAN_H
++
++/*
++ * Clang Undefined Behavior Sanitizer trap mode support.
++ */
++#include <linux/bug.h>
++#include <linux/ubsan.h>
++#include <asm/ptrace.h>
++
++/*
++ * UBSAN uses the EAX register to encode its type in the ModRM byte.
++ */
++#define UBSAN_REG	0x40
++
++#ifdef CONFIG_UBSAN_TRAP
++void handle_ubsan_failure(struct pt_regs *regs, u16 insn);
++#else
++static inline void handle_ubsan_failure(struct pt_regs *regs, u16 insn) { return; }
++#endif /* CONFIG_UBSAN_TRAP */
++
++#endif /* _ASM_X86_UBSAN_H */
+diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
+index 74077694da7d..fe1d9db27500 100644
+--- a/arch/x86/kernel/Makefile
++++ b/arch/x86/kernel/Makefile
+@@ -145,6 +145,7 @@ obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
+ obj-$(CONFIG_AMD_MEM_ENCRYPT)		+= sev.o
+ 
+ obj-$(CONFIG_CFI_CLANG)			+= cfi.o
++obj-$(CONFIG_UBSAN_TRAP)		+= ubsan.o
+ 
+ obj-$(CONFIG_CALL_THUNKS)		+= callthunks.o
+ 
+diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
+index 4fa0b17e5043..aef21287e7ed 100644
+--- a/arch/x86/kernel/traps.c
++++ b/arch/x86/kernel/traps.c
+@@ -67,6 +67,7 @@
+ #include <asm/vdso.h>
+ #include <asm/tdx.h>
+ #include <asm/cfi.h>
++#include <asm/ubsan.h>
+ 
+ #ifdef CONFIG_X86_64
+ #include <asm/x86_init.h>
+@@ -91,6 +92,29 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
+ 	return *(unsigned short *)addr == INSN_UD2;
+ }
+ 
++/*
++ * Check for UD1, UD2, with or without Address Size Override Prefixes instructions.
++ */
++__always_inline u16 get_ud_type(unsigned long addr)
++{
++	u16 insn;
++
++	if (addr < TASK_SIZE_MAX)
++		return BUG_UD_NONE;
++	insn = *(u16 *)addr;
++	if ((insn & INSN_UD_MASK) == INSN_UD2)
++		return BUG_UD2;
++	if ((insn & INSN_ASOP_MASK) == INSN_ASOP)
++		insn = *(u16 *)(++addr);
++
++	// UBSAN encode the failure type in the two bytes after UD1
++	if ((insn & INSN_UD_MASK) == INSN_UD1)
++		return *(u16 *)(addr + LEN_UD1);
++
++	return BUG_UD_NONE;
++}
++
++
+ static nokprobe_inline int
+ do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
+ 		  struct pt_regs *regs,	long error_code)
+@@ -216,6 +240,7 @@ static inline void handle_invalid_op(struct pt_regs *regs)
+ static noinstr bool handle_bug(struct pt_regs *regs)
+ {
+ 	bool handled = false;
++	int ud_type;
+ 
+ 	/*
+ 	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
+@@ -223,7 +248,8 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+ 	 * irqentry_enter().
+ 	 */
+ 	kmsan_unpoison_entry_regs(regs);
+-	if (!is_valid_bugaddr(regs->ip))
++	ud_type = get_ud_type(regs->ip);
++	if (ud_type == BUG_UD_NONE)
+ 		return handled;
+ 
+ 	/*
+@@ -236,10 +262,14 @@ static noinstr bool handle_bug(struct pt_regs *regs)
+ 	 */
+ 	if (regs->flags & X86_EFLAGS_IF)
+ 		raw_local_irq_enable();
+-	if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
+-	    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
+-		regs->ip += LEN_UD2;
+-		handled = true;
++	if (ud_type == INSN_UD2) {
++		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
++		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
++			regs->ip += LEN_UD2;
++			handled = true;
++		}
++	} else {
++		handle_ubsan_failure(regs, ud_type);
+ 	}
+ 	if (regs->flags & X86_EFLAGS_IF)
+ 		raw_local_irq_disable();
+diff --git a/arch/x86/kernel/ubsan.c b/arch/x86/kernel/ubsan.c
+new file mode 100644
+index 000000000000..c90e337a1b6a
+--- /dev/null
++++ b/arch/x86/kernel/ubsan.c
+@@ -0,0 +1,21 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Clang Undefined Behavior Sanitizer trap mode support.
++ */
++#include <linux/bug.h>
++#include <linux/string.h>
++#include <linux/printk.h>
++#include <linux/ubsan.h>
++#include <asm/ptrace.h>
++#include <asm/ubsan.h>
++
++/*
++ * Checks for the information embedded in the UD1 trap instruction
++ * for the UB Sanitizer in order to pass along debugging output.
++ */
++void handle_ubsan_failure(struct pt_regs *regs, u16 type)
++{
++	if ((type & 0xFF) == UBSAN_REG)
++		type >>= 8;
++	pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
++}
+-- 
+2.25.1
+
 
