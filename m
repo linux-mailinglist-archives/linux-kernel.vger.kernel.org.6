@@ -1,123 +1,252 @@
-Return-Path: <linux-kernel+bounces-229032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29CC79169F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:15:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 687849169F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3FDA1F2197E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:15:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B4BB6B222B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50BA16A397;
-	Tue, 25 Jun 2024 14:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ABA1168C33;
+	Tue, 25 Jun 2024 14:14:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F76G5rtT"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ydP0TQ/G";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ZPj1vUVL";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mpove98n";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lIb7qUGt"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9BB39FD6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EAF1684AC
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719324949; cv=none; b=YHaM9yDHWPQ8JtjL9W0yPrtQ1romuNFTdD2vJO8LCcYJdVybc8gu8VPLpJ6xw655CRdQP4pYaU5JV0CClkyp44oSrgxjyE4HBDlmFc3rhhrMH1zPJoFxiJWfgT0wB6wYTb5wg9XqWG/XdGAnmwB5JI6n4+LOP7y+INFVy3Y001w=
+	t=1719324884; cv=none; b=eVIjzLzKtb2NQ/cgN5qRwE3LvBivKW3WaG9ib6ItUXb6xC97MkU+HSst0U5bpSOvQcbncWPWnrT7Q9GGvvA7OWWdJdAxREi+i7X1HEPPhgygrNqzegcHpDvvcAydKiWFcaQVKuKNdpVEH/yAhMpwxMuvvVrA2xN1W2o9bDwqenw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719324949; c=relaxed/simple;
-	bh=8M2qHHwCjXkaeZROkxqCF62UlYq9qGHUVUS3TBwEOM8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QIATX1iptYmUSdNd7SdSjTIgjeN0uT+3Ns1zKvK3kGv+Bu7VwzRch1+dPpIGazRoulH92fts6NyswxJoaAgPG5yn26l0E8X6dvEr9gpiQRUERf2f9Ll02frXIuXF7ZbV9P4fNW4Z8zQoXhbsFWqmsTGNDM6UqNbYl0+LdneRfYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F76G5rtT; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719324946;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=W7ydIp+uRxv9vpeC5lM+Zdk/FaOMqbxesom5QUbL9cA=;
-	b=F76G5rtTa4uo7mzqeW1lLJeC5nyWWEgNMAgNXEa0yYvu5ET4H8aMZb59G1VzLZ3M+EGgds
-	zgknFWTC/87lYudoLs5a9x2oECfXpcdtSbYBpWTKo/Vohvx5yZ18GzzCQ0PUL8Is6YQaLh
-	I7ztbSlYGUkB8wCrTIGZuE3fPYR9YX0=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-568-OPeVeDlENNmCBT0iajHARA-1; Tue,
- 25 Jun 2024 10:15:41 -0400
-X-MC-Unique: OPeVeDlENNmCBT0iajHARA-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	s=arc-20240116; t=1719324884; c=relaxed/simple;
+	bh=T/MY/ZLi7H0M62WKHXTOan985XadcyGAwt/TxTEKwJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GWQ/cOKVSyYMzRKDJQE9FVxs3up2OdD+7vFNMYz3GjPgcoB/mY5S+IfEgnlkrfk017eMbvyH7amyfFLf8DXztaYLpAqrDzK1T3nl+MgRLinsiZOt7c3542bVBZGUFqABkdL1D5KnAZvSCrxXA+/53tctKNE2nqad3KDG5Du1nh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ydP0TQ/G; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ZPj1vUVL; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mpove98n; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lIb7qUGt; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AE49D189BF8B;
-	Tue, 25 Jun 2024 14:14:43 +0000 (UTC)
-Received: from RHTRH0061144 (dhcp-17-72.bos.redhat.com [10.18.17.72])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C4B5C196C0D8;
-	Tue, 25 Jun 2024 14:14:30 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Paolo Abeni <pabeni@redhat.com>,  netdev@vger.kernel.org,
-  dev@openvswitch.org,  linux-kselftest@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  Pravin B Shelar <pshelar@ovn.org>,  "David
- S. Miller" <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,
-  Shuah Khan <shuah@kernel.org>,  Stefano Brivio <sbrivio@redhat.com>,
-  =?utf-8?Q?Adri=C3=A1n?= Moreno <amorenoz@redhat.com>,  Simon Horman
- <horms@kernel.org>
-Subject: Re: [PATCH v2 net-next 0/7] selftests: net: Switch pmtu.sh to use
- the internal ovs script.
-In-Reply-To: <20240625070654.6a00efef@kernel.org> (Jakub Kicinski's message of
-	"Tue, 25 Jun 2024 07:06:54 -0700")
-References: <20240620125601.15755-1-aconole@redhat.com>
-	<20240621180126.3c40d245@kernel.org> <f7ttthjh33w.fsf@redhat.com>
-	<f7tpls6gu3q.fsf@redhat.com>
-	<e4f69335f90aae3f1daa47ba8f69b24ea15ed3b7.camel@redhat.com>
-	<f7th6dhgnvm.fsf@redhat.com> <20240625070654.6a00efef@kernel.org>
-Date: Tue, 25 Jun 2024 10:14:24 -0400
-Message-ID: <f7t1q4lgldr.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id F1629219A3;
+	Tue, 25 Jun 2024 14:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719324881; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=24k5i67hRgymQTObx7I9vnlLhjMkfOViIjbcxV4j27M=;
+	b=ydP0TQ/GvL8gg00yOf+T9Mi0F5lsuItJ7CtOhe6WcWzs6T8CfpcM2DtCrRAQHV5Zt2Rh/r
+	/NoY3xsTiPB86Tl4gxCFSuCZI8gVAO9IAeFS1iXL19AqHGZeFr/E95JZ2NkgXhnT3Lkclq
+	FbuiyuprZH34Cj3X5i7tzseKOXlp1C8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719324881;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=24k5i67hRgymQTObx7I9vnlLhjMkfOViIjbcxV4j27M=;
+	b=ZPj1vUVLnT2kqRlz4N2IrEz+jZ6VsN3+vQMQCcaNTTtcvfE7n49U7zNc/itpvF3HX9pdkt
+	hI0AEO9C3y0r/hCQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=mpove98n;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=lIb7qUGt
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719324880; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=24k5i67hRgymQTObx7I9vnlLhjMkfOViIjbcxV4j27M=;
+	b=mpove98nPt0ZKaeq0ZARv8PyOqKkzmBjt2KadMpXCIKVrcA+kBVNujoGGiR+9HwOv/sCJf
+	DCN1QWIAss8D1Vy1QvYsDFM/npqhHLLsDkrKj7mfFzbsDIZIr7IiAOQxFUZ/N+s3qeIN1s
+	BV4SD0fPGklo61SVUnOfw5GsWtHznyE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719324880;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=24k5i67hRgymQTObx7I9vnlLhjMkfOViIjbcxV4j27M=;
+	b=lIb7qUGtxrAnQEvu0Twj250p0HP1TA3JvYR+DN7uAfpoMvclvTZfoA1YD4SjfOsnmFkMU2
+	fx7n1/mdIc1OHiAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A506B13A9A;
+	Tue, 25 Jun 2024 14:14:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KpL8JtDQemaEKAAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 25 Jun 2024 14:14:40 +0000
+Message-ID: <cbe57a4a-de59-42d1-882f-f66cbd09ecf2@suse.de>
+Date: Tue, 25 Jun 2024 16:14:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] drm/fb-helper: Don't schedule_work() to flush frame
+ buffer during panic()
+To: Qiuxu Zhuo <qiuxu.zhuo@intel.com>, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, airlied@gmail.com, daniel@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ tony.luck@intel.com, yudong.wang@intel.com
+References: <20240531074521.30406-1-qiuxu.zhuo@intel.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <20240531074521.30406-1-qiuxu.zhuo@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: F1629219A3
+X-Spam-Score: -4.50
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-4.50 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	XM_UA_NO_VERSION(0.01)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_TO(0.00)[intel.com,linux.intel.com,kernel.org,gmail.com,ffwll.ch];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,intel.com:email]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
 
-Jakub Kicinski <kuba@kernel.org> writes:
+Hi
 
-> On Tue, 25 Jun 2024 09:20:29 -0400 Aaron Conole wrote:
->> > I'm still wondering if the issue is Kconfig-related (plus possibly bad
->> > interaction with vng). I don't see the OVS knob enabled in the self-
->> > tests config. If it's implied by some other knob, and ends-up being
->> > selected as a module, vng could stumble upon loading the module at
->> > runtime, especially on incremental build (at least I experience that
->> > problem locally). I'm not even sure if the KCI is building
->> > incrementally or not, so all the above could is quite a wild guess.
->> >
->> > In any case I think adding the explicit CONFIG_OPENVSWITCH=y the
->> > selftest config would make the scenario more well defined.  
->> 
->> That is in 7/7 - but there was a collision with a netfilter knob getting
->> turned on.  I can repost it as-is (just after rebasing) if you think
->> that is the only issue.
+Am 31.05.24 um 09:45 schrieb Qiuxu Zhuo:
+> Sometimes the system [1] hangs on x86 I/O machine checks. However, the
+> expected behavior is to reboot the system, as the machine check handler
+> ultimately triggers a panic(), initiating a reboot in the last step.
 >
-> Sorry for not checking it earlier, looks like the runner was missing
-> pyroute:
+> The root cause is that sometimes the panic() is blocked when
+> drm_fb_helper_damage() invoking schedule_work() to flush the frame buffer.
+> This occurs during the process of flushing all messages to the frame
+> buffer driver as shown in the following call trace:
 >
-> # python3 ./tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> Need to install the python pyroute2 package >= 0.6.
+>    Machine check occurs [2]:
+>      panic()
+>        console_flush_on_panic()
+>          console_flush_all()
+>            console_emit_next_record()
+>              con->write()
+>                vt_console_print()
+>                  hide_cursor()
+>                    vc->vc_sw->con_cursor()
+>                      fbcon_cursor()
+>                        ops->cursor()
+>                          bit_cursor()
+>                            soft_cursor()
+>                              info->fbops->fb_imageblit()
+>                                drm_fbdev_generic_defio_imageblit()
+>                                  drm_fb_helper_damage_area()
+>                                    drm_fb_helper_damage()
+>                                      schedule_work() // <--- blocked here
+>      ...
+>      emergency_restart()  // wasn't invoked, so no reboot.
 >
-> I guess run_cmd counter-productively eats the stderr output ? :(
+> During panic(), except the panic CPU, all the other CPUs are stopped.
+> In schedule_work(), the panic CPU requires the lock of worker_pool to
+> queue the work on that pool, while the lock may have been token by some
+> other stopped CPU. So schedule_work() is blocked.
+>
+> Additionally, during a panic(), since there is no opportunity to execute
+> any scheduled work, it's safe to fix this issue by skipping schedule_work()
+> on 'oops_in_progress' in drm_fb_helper_damage().
+>
+> [1] Enable the kernel option CONFIG_FRAMEBUFFER_CONSOLE,
+>      CONFIG_DRM_FBDEV_EMULATION, and boot with the 'console=tty0'
+>      kernel command line parameter.
+>
+> [2] Set 'panic_timeout' to a non-zero value before calling panic().
+>
+> Reported-by: Yudong Wang <yudong.wang@intel.com>
+> Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 
-Awesome :)  I will add a patch to ovs-dpctl that will turn the
-sys.exit(0) into sys.exit(1) - that way it should do the skip.
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-When I previously tested, I put an error in the `try` without reading
-the except being specifically for a ModuleNotFound error.
+> ---
+>   drivers/gpu/drm/drm_fb_helper.c | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index d612133e2cf7..6d7b6f038821 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -628,6 +628,9 @@ static void drm_fb_helper_add_damage_clip(struct drm_fb_helper *helper, u32 x, u
+>   static void drm_fb_helper_damage(struct drm_fb_helper *helper, u32 x, u32 y,
+>   				 u32 width, u32 height)
+>   {
+> +	if (oops_in_progress)
+> +		return;
+> +
+>   	drm_fb_helper_add_damage_clip(helper, x, y, width, height);
+>   
+>   	schedule_work(&helper->damage_work);
 
-I'll make sure pyroute2 isn't installed when I run it again.
-
-Thanks for your help Jakub and Paolo!
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
