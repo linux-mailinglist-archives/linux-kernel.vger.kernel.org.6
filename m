@@ -1,82 +1,91 @@
-Return-Path: <linux-kernel+bounces-229810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71D849174A1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:19:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB619174A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A36FD1C20A97
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:19:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63B681C21BB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:22:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4619017F4FE;
-	Tue, 25 Jun 2024 23:19:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EDC217F504;
+	Tue, 25 Jun 2024 23:22:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b="WkCxcBsq"
-Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IUNvtPfP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 553A117E447
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 23:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C9217D88C;
+	Tue, 25 Jun 2024 23:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719357554; cv=none; b=tg4GkK/SL2IfRumUC8CcIDw4EfVnyNWQ5NKOb7W/NRJReTyY/q9pwLPcfUQLpWUU4rwC1VzpFz/EKbwDUrpEI3kwEpl+FXtf6l9cd0sL5ithHokqtichcbNFHLgJWDSrXW+xp6/uHlXuYNxiRGhUkU26FYtXOeBappwuPOeW918=
+	t=1719357746; cv=none; b=D7TpfDcSwz1+wTtajXvhOEfTfGv72sPt62GClkhwsCzW9SfhSGco4+YFn9r3D1cV9dnm4qgN40WebhGfveNsbt6ScA0SvzG5Gijl6CUDR8DikbQou33lHwSNFxtxne7oDg0z1MOktdPfLUNr81BR7dp6RsKBSCxnY6Kgncvek/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719357554; c=relaxed/simple;
-	bh=3cLkEoQgP1YdwO0BfLrc2Nt9hXh8gTQtQS3drljKsUE=;
+	s=arc-20240116; t=1719357746; c=relaxed/simple;
+	bh=MRb7OZFN9oJW3BW6eAiPKWLGZEUnI6dcSkkPxJNaOPM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I0lnsJB0pMTJ70TeL4WzxL2InfMoQ0sDjgTlvvtwJRP7WSN2J8el41zenMDC7EnxJ68d43EEEJzviVn5uxxfPMi29OjX7T8qXL9Mf6RIsV0HqeMh6xmj5FLE2/o9THYx6K2z6coafFKxlttVO/rj8KnxaA+bNwsbBvCnn1/MNf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org; spf=pass smtp.mailfrom=linuxtx.org; dkim=pass (1024-bit key) header.d=linuxtx.org header.i=@linuxtx.org header.b=WkCxcBsq; arc=none smtp.client-ip=209.85.166.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=fedoraproject.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxtx.org
-Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-7ec2d71059dso234789239f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 16:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxtx.org; s=google; t=1719357551; x=1719962351; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W1GHJHK8fYZOK8MQRqagipkH8Y/cWBs/Aado6nOWSJY=;
-        b=WkCxcBsqNgiIe+3TCH7eiNHC40xBNI0jZupXolTlcmkVkVUQaD9QmVnW9NheN5GPfh
-         j4D+5OpyAEn9IXAH3o0ny6lIXwEwGTpSA2qwfKkrwU80HRRQP5KZgYuDhq8b1U5Yfgnp
-         7X1IdXkgJH+qbsFeo27pytyp/mhj5+Wh/vUIs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719357551; x=1719962351;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W1GHJHK8fYZOK8MQRqagipkH8Y/cWBs/Aado6nOWSJY=;
-        b=KrRMKBNi4BS5SmBAAIXaedvqL5UtxE9uTbDp60u5nJY/f7fkystrAvef5H37jBMYqQ
-         E7vnCKyP57GHkDYhMtB4fOcCBAUZwQO5TKBpQBtpT86dAH/LRQfE/LgOr4Q78cSd01AM
-         mtLH2qCIa46ellWASvQywIJ7JGcDdCJsuQFC3h3+EYg5mFUbvHaaDVUAVujHCJ+TlFDF
-         eRVheK8iko1+vA9YaehkfcHYRXXw0NRVffqg3M54TuKiPzpcY8JdB4wqjW3F7rlEr5Hs
-         Wb8WfCxNn0ipBbN2qgNW9TrtNtucW/wB/dGCBaC8g5XKkTiM5pAgKYCwLNrBYie+xca4
-         8oiA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+Khk2dH2NU16ITH419mEqoA95mlnSAuBepOSr1Pxj1NfGBEHzP/fw8nPmeTm6Fsar2ciS9dJU2N2aOYBn8iXbvy7gbDq93ciGPqo1
-X-Gm-Message-State: AOJu0YweDRhUNBxVvGmQIfSzHoBuMpBmswZNVRtOSzuNdquMMBJT6B71
-	pg8HgBo9Qf4bkKRq/UrEPbQkmFFoQGjpMk5LFwEdjbAvCEElE62RazHjFoF1/g==
-X-Google-Smtp-Source: AGHT+IF9PvWW+uGfCOxuE7/74/1AIT0M4Il4mBFOfwU/j90/kgt3HudyWaRkt4x9JkWeKxP9KFOJEg==
-X-Received: by 2002:a05:6602:3fcc:b0:7de:a982:c4a5 with SMTP id ca18e2360f4ac-7f3a7532b56mr1053100839f.6.1719357551339;
-        Tue, 25 Jun 2024 16:19:11 -0700 (PDT)
-Received: from fedora64.linuxtx.org ([72.42.103.171])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9d127b6f0sm2837019173.178.2024.06.25.16.19.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 16:19:11 -0700 (PDT)
-Sender: Justin Forbes <jmforbes@linuxtx.org>
-Date: Tue, 25 Jun 2024 17:19:09 -0600
-From: Justin Forbes <jforbes@fedoraproject.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.9 000/250] 6.9.7-rc1 review
-Message-ID: <ZntQbVyebJZZCbh_@fedora64.linuxtx.org>
-References: <20240625085548.033507125@linuxfoundation.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=IeInAlEusmJWCfc4j33KMQwK7z2J5B2QHdcC2ZMEyj441GmdBH+4tc0Ikli2aWUzUM21lUnG4q6lM428XRMJaVrdAAHScf28O3ySza8jo5/Fp0QhK6YTpL7SE+cieZVvCF1WJKHM3zHa9K3/WExnyq7AB3RoNJnqPojrJ8kxTTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IUNvtPfP; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719357745; x=1750893745;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MRb7OZFN9oJW3BW6eAiPKWLGZEUnI6dcSkkPxJNaOPM=;
+  b=IUNvtPfP5HgiHJXzEBTVl2hxT0b/4tThLKa4yBNl6PFnazT3o4nBbyh2
+   adr2CCb8sIyNqyYA1w6lTBVzESd0nqnrYR8vc7IOxBrFCEAN8y+L5y4fU
+   neVXbcPuPs58SwkQKK0WQ7jZCl1PfF9onl43cMOwk3TSd/ME1nQh3SmVX
+   gbx98FtPAE1KXsMCfFQDdDxlAQlBxtyhzwEpZxHSY+KaMQ1HC5ovKUeh4
+   fHAQmsKWyxHsQQJqobURfmaH5za4vw0+SakOvld0IIkHo/XzsMy0s/R7K
+   Iydb6wb2/VV0ip76bLMUxbpFrQEdhS/s6IjjqENGofk0F1peS0d9RB7PW
+   Q==;
+X-CSE-ConnectionGUID: uK/ZPlm8QROt/7tmkOcaBg==
+X-CSE-MsgGUID: drb0QLgEQU+lF0Vw5NZ/kQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="20214828"
+X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
+   d="scan'208";a="20214828"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 16:22:23 -0700
+X-CSE-ConnectionGUID: 5XpBwJOvRH+bgZftcdtTvA==
+X-CSE-MsgGUID: 0Qd4cPB1RiWmt6IggA96bw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
+   d="scan'208";a="43876572"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 25 Jun 2024 16:22:19 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sMFUO-000Enu-0L;
+	Tue, 25 Jun 2024 23:22:16 +0000
+Date: Wed, 26 Jun 2024 07:21:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: oe-kbuild-all@lists.linux.dev, Jonathan Corbet <corbet@lwn.net>,
+	Andy Lutomirski <luto@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Jan Kiszka <jan.kiszka@siemens.com>,
+	Kieran Bingham <kbingham@kernel.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	Brijesh Singh <brijesh.singh@amd.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Juergen Gross <jgross@suse.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-efi@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH 3/3] x86/64/mm: Make 5-level paging support unconditional
+Message-ID: <202406260735.rkb4c8N7-lkp@intel.com>
+References: <20240621164406.256314-4-kirill.shutemov@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,29 +94,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240625085548.033507125@linuxfoundation.org>
+In-Reply-To: <20240621164406.256314-4-kirill.shutemov@linux.intel.com>
 
-On Tue, Jun 25, 2024 at 11:29:18AM +0200, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.9.7 release.
-> There are 250 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 27 Jun 2024 08:54:55 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.9.7-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.9.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Kirill,
 
-Tested rc1 against the Fedora build system (aarch64, ppc64le, s390x,
-x86_64), and boot tested x86_64. No regressions noted.
+kernel test robot noticed the following build errors:
 
-Tested-by: Justin M. Forbes <jforbes@fedoraproject.org>
+[auto build test ERROR on tip/x86/core]
+[also build test ERROR on tip/master linus/master tip/x86/mm v6.10-rc5 next-20240625]
+[cannot apply to tip/auto-latest]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Kirill-A-Shutemov/x86-64-mm-Always-use-dynamic-memory-layout/20240625-183159
+base:   tip/x86/core
+patch link:    https://lore.kernel.org/r/20240621164406.256314-4-kirill.shutemov%40linux.intel.com
+patch subject: [PATCH 3/3] x86/64/mm: Make 5-level paging support unconditional
+config: i386-buildonly-randconfig-004-20240626 (https://download.01.org/0day-ci/archive/20240626/202406260735.rkb4c8N7-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406260735.rkb4c8N7-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406260735.rkb4c8N7-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> arch/x86/mm/pgtable.c:699:5: error: redefinition of 'p4d_set_huge'
+     699 | int p4d_set_huge(p4d_t *p4d, phys_addr_t addr, pgprot_t prot)
+         |     ^~~~~~~~~~~~
+   In file included from include/linux/mm.h:30,
+                    from arch/x86/mm/pgtable.c:2:
+   include/linux/pgtable.h:1665:19: note: previous definition of 'p4d_set_huge' with type 'int(p4d_t *, phys_addr_t,  pgprot_t)' {aka 'int(p4d_t *, long long unsigned int,  struct pgprot)'}
+    1665 | static inline int p4d_set_huge(p4d_t *p4d, phys_addr_t addr, pgprot_t prot)
+         |                   ^~~~~~~~~~~~
+>> arch/x86/mm/pgtable.c:709:6: error: redefinition of 'p4d_clear_huge'
+     709 | void p4d_clear_huge(p4d_t *p4d)
+         |      ^~~~~~~~~~~~~~
+   include/linux/pgtable.h:1669:20: note: previous definition of 'p4d_clear_huge' with type 'void(p4d_t *)'
+    1669 | static inline void p4d_clear_huge(p4d_t *p4d) { }
+         |                    ^~~~~~~~~~~~~~
+
+
+vim +/p4d_set_huge +699 arch/x86/mm/pgtable.c
+
+6b6378355b9250 Toshi Kani         2015-04-14  692  
+6b6378355b9250 Toshi Kani         2015-04-14  693  #ifdef CONFIG_HAVE_ARCH_HUGE_VMAP
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  694  /**
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  695   * p4d_set_huge - setup kernel P4D mapping
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  696   *
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  697   * No 512GB pages yet -- always return 0
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  698   */
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30 @699  int p4d_set_huge(p4d_t *p4d, phys_addr_t addr, pgprot_t prot)
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  700  {
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  701  	return 0;
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  702  }
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  703  
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  704  /**
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  705   * p4d_clear_huge - clear kernel P4D mapping when it is set
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  706   *
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  707   * No 512GB pages yet -- always return 0
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  708   */
+c8db8c2628afc7 Li kunyu           2022-05-12 @709  void p4d_clear_huge(p4d_t *p4d)
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  710  {
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  711  }
+b8504058a06bd1 Kirill A. Shutemov 2017-03-30  712  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
