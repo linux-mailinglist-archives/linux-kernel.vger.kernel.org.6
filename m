@@ -1,93 +1,106 @@
-Return-Path: <linux-kernel+bounces-229259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46964916D7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:50:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F4D6916D7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:50:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0344828EFBF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:50:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0E5C28EF1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A28D170824;
-	Tue, 25 Jun 2024 15:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7DA416FF59;
+	Tue, 25 Jun 2024 15:50:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngFQLq1H"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXgl0tgF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4625B169AE4;
-	Tue, 25 Jun 2024 15:50:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D9B16EC10;
+	Tue, 25 Jun 2024 15:50:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719330629; cv=none; b=dEaFVMXP2tkEqbsveI0H8t6W9QZhNZwYD2r3Rqf+fU6aOA63G2OckHWRzeunXo0nV+UollbEOBD2k4xavUJsZTWKEOUkoyW/MFjUqozSp5F5iM5SY9aX3InVlxB6+vYwI7TSfdDciyGHdiMvkplyIiqie2Eov55H1HNwdEwu3js=
+	t=1719330651; cv=none; b=MIKfHyYLBwfIBnk6fxPSmrh1fmPctiuGWnsPqDkf7uuqAlpjGBQdYgzFfvlLx/lO8BCla9hZ8xtew0g+tz3FttPOk8XcJfzMEObmoz9sf5YlN4yuT2Lq0+Hh+wBOZiYNfqfHxLy4MNhjfnSrFp62xP0A8JRDPS4D/ST3UeDZIAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719330629; c=relaxed/simple;
-	bh=Mix5r5R2/Tn4EDBwTAiE8pSBL0Zhkpu7IRc3aKgd5QY=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=rgRmTnFxGJ8hIS6Ry69KzeJOkTTy7mA1LKbAKC7JbE0LWhWVPrw/9B/iwc34RnFgp6eLz6TBTYtg1hJkMWrvP/9p0xePzplgteK/cDVms/H9H4fhXzB6gVbRVEYl/yVNZkz09m1xS3k2KdMu8qy9Coxh4jRzCSGr/3hyuMwZFnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngFQLq1H; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id BC8E8C4AF0A;
-	Tue, 25 Jun 2024 15:50:28 +0000 (UTC)
+	s=arc-20240116; t=1719330651; c=relaxed/simple;
+	bh=ZaDeCopv0PJ1QwF2b0WCd5Id1ccH0b00NTXA6Ny1H0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4I7AH+0tvmYOMxe+9C32iWDJbudf4uPEBovQS5rEeZgfc9gPY59bWtucMkxPT1FVpN6PMgOq56VET0ElkS+GdZTz86DBsRtBwGZFfHoI5vFEQs4ttajLI5MRGsqIa5Q9+QguMAbhbkbp8oM934LudEwrfZ4gx/dtQHtK5jtFWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXgl0tgF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B4F7C32781;
+	Tue, 25 Jun 2024 15:50:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719330628;
-	bh=Mix5r5R2/Tn4EDBwTAiE8pSBL0Zhkpu7IRc3aKgd5QY=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=ngFQLq1HFtEkZqjgfYin1JzZ+sQWxmRhIRDg8SWEjp5MDlc9tJm+ePI1EGT/b9G46
-	 nk/JkVlUZv3DhQ7WCm724BrhoN20OGVKs/XN2texdn5Bd+1W06TzaDSbpP4HpB7rDw
-	 8nNG9M/4uogxYnH3Fbd/cHrDtDhQNkq2VcfLtj76kELXLr4yYv8ViTUQAtu2h5n8xn
-	 IzrYc+n5BHEUzhxv/eHZyyRQy9dK11zYXuVKUeLnw5+LY2CWMucobhtEwGQgZOUtDN
-	 gFBwXavdY/7iTNpdkUGCPDh6smkxI+QjY7Jzs3sUmCmnQBKQuf+IMxBVC/XfdHCE6L
-	 SgB4Pcr526efw==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id AEB2AC43638;
-	Tue, 25 Jun 2024 15:50:28 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1719330650;
+	bh=ZaDeCopv0PJ1QwF2b0WCd5Id1ccH0b00NTXA6Ny1H0Q=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=mXgl0tgF674ieLxrHGX9nw9jrSsq8mEVLOQBhUA69O1Oir11f0AiqcNg+PtLLiCkR
+	 hIJkoY3nhi/1JXPgcoCoOO+p7O28KjUbSpizAu78UDIePT95th/DJgvEEKLX5wgo67
+	 PNjAXOUJS9Qy3d9VzY75+nPbe+FbD4mox9lN+MtNMBoI57k+Ezhv1iTxeECfGDV8ku
+	 ZjXabwx/hLSXwgIas452xONwVYd7z6FPpvGeI5Kdev5Bl/IW+UmiQt5w/xOkjJxvTH
+	 22Gr0UZHcvx+ZSXc+SidA10pmrPz3KmZqIZmvM48w4nLRB0e8ArHaQ7dBA0u7VzF13
+	 Ce3eo9gO54T2w==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 7C774CE0760; Tue, 25 Jun 2024 08:50:49 -0700 (PDT)
+Date: Tue, 25 Jun 2024 08:50:49 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Akira Yokosawa <akiyks@gmail.com>
+Cc: Marco Elver <elver@google.com>, Andrea Parri <parri.andrea@gmail.com>,
+	Will Deacon <will@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	David Howells <dhowells@redhat.com>,
+	Jade Alglave <j.alglave@ucl.ac.uk>,
+	Luc Maranget <luc.maranget@inria.fr>,
+	Daniel Lustig <dlustig@nvidia.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH lkmm v2 0/2] tools/memory-model: Add locking.txt and
+ glossary.txt to README
+Message-ID: <ab561ed0-51c9-4f17-a71a-5743735a2efa@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <a07d41c9-5236-44ad-8e89-f3be5da90e98@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] selftests: net: remove unneeded IP_GRE config
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171933062871.13323.17119507002483608528.git-patchwork-notify@kernel.org>
-Date: Tue, 25 Jun 2024 15:50:28 +0000
-References: <20240624055539.2092322-1-yujie.liu@intel.com>
-In-Reply-To: <20240624055539.2092322-1-yujie.liu@intel.com>
-To: Yujie Liu <yujie.liu@intel.com>
-Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
- pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, lkp@intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a07d41c9-5236-44ad-8e89-f3be5da90e98@gmail.com>
 
-Hello:
-
-This patch was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Mon, 24 Jun 2024 13:55:39 +0800 you wrote:
-> It seems that there is no definition for config IP_GRE, and it is not a
-> dependency of other configs, so remove it.
+On Tue, Jun 25, 2024 at 05:56:49PM +0900, Akira Yokosawa wrote:
+> Hi all,
 > 
-> linux$ find -name Kconfig | xargs grep "IP_GRE"
-> <-- nothing
+> Here is a v2 series with the trailing white space fixed and Acked-by's
+> from Andrea applied.
 > 
-> There is a IPV6_GRE config defined in net/ipv6/Kconfig. It only depends
-> on NET_IPGRE_DEMUX but not IP_GRE.
+> Please find v1 at [1] if you need to.
 > 
-> [...]
+> [1]: https://lore.kernel.org/ae2b0f62-a593-4e7c-ab51-06d4e8a21005@gmail.com/
+> 
+>         Thanks, Akira
 
-Here is the summary with links:
-  - [net] selftests: net: remove unneeded IP_GRE config
-    https://git.kernel.org/netdev/net-next/c/c4532232fa2a
+Queued for further review, thank you all!
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+							Thanx, Paul
 
-
+> --
+> Akira Yokosawa (2):
+>   tools/memory-model: Add locking.txt and glossary.txt to README
+>   tools/memory-model: simple.txt: Fix stale reference to
+>     recipes-pairs.txt
+> 
+>  tools/memory-model/Documentation/README     | 17 +++++++++++++++++
+>  tools/memory-model/Documentation/simple.txt |  2 +-
+>  2 files changed, 18 insertions(+), 1 deletion(-)
+> 
+> 
+> base-commit: 5bdd17ab5a7259d2da562eab63abab3a6d95adcd
+> -- 
+> 2.34.1
+> 
 
