@@ -1,118 +1,188 @@
-Return-Path: <linux-kernel+bounces-228569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9578F9161BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 87EC59161C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 521D628327C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:57:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4027F285A40
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C7C148FEB;
-	Tue, 25 Jun 2024 08:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A661148FF7;
+	Tue, 25 Jun 2024 08:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z0wXqZb1"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="EvB9fFdk";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kJDBYi6x";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="lLGWY32y";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="fCDG/Nxf"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490CD13A252;
-	Tue, 25 Jun 2024 08:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2313A252;
+	Tue, 25 Jun 2024 08:57:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719305815; cv=none; b=oVWLY14qwk7sAhff7YFGqNYCpGP4uCKdqa3pal6YvVbJYxm/1gNm3pipufLNfxXRUd/WhIJsSXuEYSNTB+29VhkcrJBQelrNoe/Y67VXXAnicsUjwYRozc833xTuHzOtg3wtQbqkXvXphGAX2DeYVCLY/rqNezPd66Ho2D3RtiA=
+	t=1719305874; cv=none; b=qpIGkFS4aQlPCyT1G3HMzWBw2s4BI6dfE5iyORQH+CfA8Lvg5xaohb0XbnFlnxOaWYdDnXU5VGLm8q4GuvtS0AhB90wdjdirPqwIXKZb7cxoIxJPJThjNB6be1fZW/ZJpLxIv78s2KlthIRKoSOkKvos0ugcNTd+VFpkIpMtl2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719305815; c=relaxed/simple;
-	bh=y2qrsRso46CBes0z7OB5RrzyhO34/c+yxkccrBiwXDc=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=ZPeO77EVIr1HpQdnyQMdgPhs7k+68TnYYW2omxpxdJum8um/+us6dfaWkTME7naEfP5V5mkbDonT7rLK3lsRqMLjHTrTSxezJ1sLvw+MEzJ/I57lTLR1cWs8cVJJKJ73qqEy3+m57fWasad/SizwVI6YmNQzTG5+bOBqA2YEZVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z0wXqZb1; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1f6a837e9a3so32361435ad.1;
-        Tue, 25 Jun 2024 01:56:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719305813; x=1719910613; darn=vger.kernel.org;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vlB7dSU+Mw2GQd/jrnmHHXfnYRQZZOWLx8QiX1ye4+8=;
-        b=Z0wXqZb1W0olrL4eYh73rEXn78ThRQBCP94HPyJXVY05O6/+p/gWAIVufPZBjkxWwh
-         LTFlOuoysBpulfXLIvI+E/ijvjarJpPvfS06Nsjz/gzNrdo/fFWRh9YZkGi0sfvI8CTZ
-         ayjdTcakCSkkEy01nKFB1J/sCX7PhF4kpYCIbHWfJ8RVrt+miIW1kU8ukGjF+42zNQH9
-         kLrLIjeX5l86zM7TK/DaJWMUkg99StJRztwXvpnKvIFfQLHp2q7d35di3ulXmQ5uo/0Q
-         cN2Q3ALSdqy75GGQkQzDHJi4sMdq/4OzGqqkJgK2i/dIhXWl0cB/eSSfj1Sm8Q56G5Zo
-         SHBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719305813; x=1719910613;
-        h=content-transfer-encoding:subject:from:cc:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=vlB7dSU+Mw2GQd/jrnmHHXfnYRQZZOWLx8QiX1ye4+8=;
-        b=Fz+tii/tD1tgIxzYvbwlPmebCDZwKpus2V8Ui8gLtd5nfpz15Em4Ff/8V+Q1DuArs4
-         Vxa4nd9jtkURW00fLXB+LCK1r987YOOKqygEpxM77996QfLjWrjWiauWZdXQnFpLhFwv
-         BHYsQta8yGVhPLu2B5cksxCARgo2uZATLYgvHT1IPBSeNY0pWI2C5izPyFsMJiP+7KPW
-         iiiQK3h9/86aJw+5TNYetk9AlT0ozPQwO2eKvIF2IE9jCSjzJoOHbyC75+RzTipXHvck
-         VPqzb9hukRCKogBqzX5WlpJSWvjsMN9k7CS2205tKFPZpcAodJGjN+vV9oeFNWeSWSmT
-         ygCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUnxjbdzr2tCA3Qi6tFsM3GEtRK7vRPrQeT5cqGsxJeSQh6YAs7He0Mh+KIvKStQ+mCTSSGZzNoXPKwxF4TGJIvBteT9mg+4TzojCFyvC92HdxerdnPQiDa8ABFfg9fMrPMJGUkRprGvw==
-X-Gm-Message-State: AOJu0YyTFg7vXAIe85XKXxC2uVmG3KycUjXFTJjr8wF6dcXpGQsh7bea
-	ZS3OZUyKUi8L9Kg1tCz8WUALNU2+4nm8krJXhORHalcZIGMrfb/r
-X-Google-Smtp-Source: AGHT+IHT3Lgr8tkPxMOEQ+9hWwpayu+BAXdhIJa+kUpv0N2DEa49YrOWg+P6iT/wz3J9RfiWQS9ASw==
-X-Received: by 2002:a17:903:41cd:b0:1f9:b16d:f988 with SMTP id d9443c01a7336-1fa23f227efmr68520145ad.22.1719305813502;
-        Tue, 25 Jun 2024 01:56:53 -0700 (PDT)
-Received: from [10.0.2.15] (KD106167171201.ppp-bb.dion.ne.jp. [106.167.171.201])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3d51d2sm76051065ad.198.2024.06.25.01.56.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 01:56:53 -0700 (PDT)
-Message-ID: <a07d41c9-5236-44ad-8e89-f3be5da90e98@gmail.com>
-Date: Tue, 25 Jun 2024 17:56:49 +0900
+	s=arc-20240116; t=1719305874; c=relaxed/simple;
+	bh=Bt44MWjSmQh4ybu+gQWRv0eFpTA9/ta5LwmLPJcuEg8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KC+qJizlVCve8lynUxrKwv+zh9/0TirtuFfdoz7jo9GON+lyttUhAnwjKfvNJcc4R5yfnNAGgHAZYAYmztQVL60BOWmwXfO+dtxZBox88va2yb/Q5B/W9ysTccrDGepaM4oI2zPB+YINy6zAZrIYWR57EjFxnqHGy8vhqBX6brs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=EvB9fFdk; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kJDBYi6x; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=lLGWY32y; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=fCDG/Nxf; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E39CC1F7D3;
+	Tue, 25 Jun 2024 08:57:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719305871; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PgrnSv7iTsORqiBqIbgAFanma+OLSb36OJTxyTfWs8A=;
+	b=EvB9fFdkD+Sop+gsGm20VvTbFcL5U04T+3ULHB8KIUL95RbBbEApOMewpM2Xc8Z9zK6HQS
+	vnrNa6FUw+e+1ew3LREZZaUJNo7BXVc2GBXiRMNBNfnX7rZfUW0+kdQPjqCDiKAt0R5ZdS
+	PbpiaxpmL4dGGMkN4MX/ua2z6xf6md8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719305871;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PgrnSv7iTsORqiBqIbgAFanma+OLSb36OJTxyTfWs8A=;
+	b=kJDBYi6xqWkn4x42bKVzxW2FGnKTdDUWAS4g4TG4+5w031jEP7umiactHn/TtywgGUqjXA
+	35bOGL24O+zUdaAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719305870; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PgrnSv7iTsORqiBqIbgAFanma+OLSb36OJTxyTfWs8A=;
+	b=lLGWY32yF5j0kwO7OBOonfkM6oIZB1LQW2hrc1oBvuf28zUkLAPHj9YfdoETurlqVKx8uB
+	hjrntORUK2oSHu9nAE9xPwQ/Pv+72vDSD5oXsAy3KWjw0RCn2KjMzMsJmhEuw8pgMjygek
+	mxtxTJq/6kr3+8jTKY4Bv+6/HEs7+/Y=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719305870;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=PgrnSv7iTsORqiBqIbgAFanma+OLSb36OJTxyTfWs8A=;
+	b=fCDG/Nxf5Riz7Jnv5fCpd+9O/F2i8/BTJ1xbRptUXcGq6fzEe+L71oCEXFo886mXYMVKJR
+	SW7Reb6ZWhSXCaBA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3D391384C;
+	Tue, 25 Jun 2024 08:57:50 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 4RoVM46Gema8PQAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Tue, 25 Jun 2024 08:57:50 +0000
+Date: Tue, 25 Jun 2024 10:57:42 +0200
+From: Daniel Wagner <dwagner@suse.de>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Hannes Reinecke <hare@suse.de>, Christoph Hellwig <hch@lst.de>, 
+	Jens Axboe <axboe@kernel.dk>, Keith Busch <kbusch@kernel.org>, 
+	Sagi Grimberg <sagi@grimberg.me>, Frederic Weisbecker <fweisbecker@suse.com>, 
+	Mel Gorman <mgorman@suse.de>, Sridhar Balaraman <sbalaraman@parallelwireless.com>, 
+	"brookxu.cn" <brookxu.cn@gmail.com>, linux-kernel@vger.kernel.org, linux-block@vger.kernel.org, 
+	linux-nvme@lists.infradead.org, Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 1/3] sched/isolation: Add io_queue housekeeping option
+Message-ID: <rk2ywo6y3ppki2gfogter2p2p2b556kmawqsuqrif3xcalsc2m@aosprmhypcav>
+References: <20240621-isolcpus-io-queues-v1-0-8b169bf41083@suse.de>
+ <20240621-isolcpus-io-queues-v1-1-8b169bf41083@suse.de>
+ <20240622051156.GA11303@lst.de>
+ <x2mjbnluozxykdtqns47f37ssdkziovkdzchon5zkcadgkuuif@qloym5wjwomm>
+ <20240624084705.GA20292@lst.de>
+ <sjna556zvxyyj6as5pk6bbgmdwoiybl4gubqnlrxyfdvhbnlma@ewka5cxxowr7>
+ <55315fc9-4439-43b0-a4d2-89ab4ea598f0@suse.de>
+ <878qyt7b65.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: "Paul E. McKenney" <paulmck@kernel.org>, Marco Elver <elver@google.com>,
- Andrea Parri <parri.andrea@gmail.com>
-Cc: Will Deacon <will@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Boqun Feng <boqun.feng@gmail.com>, Nicholas Piggin <npiggin@gmail.com>,
- David Howells <dhowells@redhat.com>, Jade Alglave <j.alglave@ucl.ac.uk>,
- Luc Maranget <luc.maranget@inria.fr>, Daniel Lustig <dlustig@nvidia.com>,
- Joel Fernandes <joel@joelfernandes.org>,
- Alan Stern <stern@rowland.harvard.edu>, linux-kernel@vger.kernel.org,
- linux-arch@vger.kernel.org, Akira Yokosawa <akiyks@gmail.com>
-From: Akira Yokosawa <akiyks@gmail.com>
-Subject: [PATCH lkmm v2 0/2] tools/memory-model: Add locking.txt and
- glossary.txt to README
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <878qyt7b65.ffs@tglx>
+X-Spamd-Result: default: False [-2.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_COUNT_TWO(0.00)[2];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FREEMAIL_CC(0.00)[suse.de,lst.de,kernel.dk,kernel.org,grimberg.me,suse.com,parallelwireless.com,gmail.com,vger.kernel.org,lists.infradead.org,linutronix.de];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -2.30
+X-Spam-Level: 
 
-Hi all,
+On Tue, Jun 25, 2024 at 09:07:30AM GMT, Thomas Gleixner wrote:
+> On Tue, Jun 25 2024 at 08:37, Hannes Reinecke wrote:
+> > On 6/24/24 11:00, Daniel Wagner wrote:
+> >> On Mon, Jun 24, 2024 at 10:47:05AM GMT, Christoph Hellwig wrote:
+> >>>> Do you think we should introduce a new type or just use the existing
+> >>>> managed_irq for this?
+> >>>
+> >>> No idea really.  What was the reason for adding a new one?
+> >> 
+> >> I've added the new type so that the current behavior of spreading the
+> >> queues over to the isolated CPUs is still possible. I don't know if this
+> >> a valid use case or not. I just didn't wanted to kill this feature it
+> >> without having discussed it before.
+> >> 
+> >> But if we agree this doesn't really makes sense with isolcpus, then I
+> >> think we should use the managed_irq one as nvme-pci is using the managed
+> >> IRQ API.
+> >> 
+> > I'm in favour in expanding/modifying the managed irq case.
+> > For managed irqs the driver will be running on the housekeeping CPUs 
+> > only, and has no way of even installing irq handlers for the isolcpus.
+> 
+> Yes, that's preferred, but please double check with the people who
+> introduced that in the first place.
 
-Here is a v2 series with the trailing white space fixed and Acked-by's
-from Andrea applied.
+The relevant code was added by Ming:
 
-Please find v1 at [1] if you need to.
+11ea68f553e2 ("genirq, sched/isolation: Isolate from handling managed
+interrupts")
 
-[1]: https://lore.kernel.org/ae2b0f62-a593-4e7c-ab51-06d4e8a21005@gmail.com/
+    [...] it can happen that a managed interrupt whose affinity
+    mask contains both isolated and housekeeping CPUs is routed to an isolated
+    CPU. As a consequence IO submitted on a housekeeping CPU causes interrupts
+    on the isolated CPU.
 
-        Thanks, Akira
---
-Akira Yokosawa (2):
-  tools/memory-model: Add locking.txt and glossary.txt to README
-  tools/memory-model: simple.txt: Fix stale reference to
-    recipes-pairs.txt
+    Add a new sub-parameter 'managed_irq' for 'isolcpus' and the corresponding
+    logic in the interrupt affinity selection code.
 
- tools/memory-model/Documentation/README     | 17 +++++++++++++++++
- tools/memory-model/Documentation/simple.txt |  2 +-
- 2 files changed, 18 insertions(+), 1 deletion(-)
+    The subparameter indicates to the interrupt affinity selection logic that
+    it should try to avoid the above scenario.
+    [...]
 
+From the commit message I read the original indent is that managed_irq
+should avoid speading queues on isolcated CPUs.
 
-base-commit: 5bdd17ab5a7259d2da562eab63abab3a6d95adcd
--- 
-2.34.1
-
+Ming, do you agree to use the managed_irq mask to limit the queue
+spreading on isolated CPUs? It would make the io_queue option obsolete.
 
