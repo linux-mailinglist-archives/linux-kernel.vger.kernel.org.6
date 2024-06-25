@@ -1,347 +1,98 @@
-Return-Path: <linux-kernel+bounces-229036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DEC8916A0F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:17:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA06F916A12
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF466B22C2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:17:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A02FB2373E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:17:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E420016DEB8;
-	Tue, 25 Jun 2024 14:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EC9169AD0;
+	Tue, 25 Jun 2024 14:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jtL3pPs7"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WfFsXmCU"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D46016B720;
-	Tue, 25 Jun 2024 14:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A90813B295;
+	Tue, 25 Jun 2024 14:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719324991; cv=none; b=Z+bYLd5Cv4DrwpyR1K068kQl8pqSbBc3j3KX0Mv5OwLqnGYYgChigK0ST4Lxg0x94qTXNO9nwS+fAaNcL4WfuKOgbmNt/YfgfVNLsmz2G+LdauN5yy6lKlkSPxVCZeui8+0kUaY0HqLPz5J28HgitUQU3nRvFv3A+kWoD0StlkM=
+	t=1719325055; cv=none; b=qwmpZPJL46ef6fu32pS2tD8Gi7iP3EnFLpYSUvTLE62Ak1FCK+825F7K4YH7kj35QWEYUUBE+Mf18AICBScW5kDkgaD7hnU9TZXAAwXqlmzH9/4dBoINCphQQzaMW0xrU9QUyvqer6m+NEf3TQFzG/Ahk9NpF/jMHNnrUaI4xEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719324991; c=relaxed/simple;
-	bh=xtx+rik6uFoGmkuS+8tWAviD3+bYuderKym6eq6WVk8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=upNtK30xACcSyc/v4g5cjZAi6POatBvc+HR2bly5xB7/MCDTKjZAHEhd3UQvN51CuSJiRR+jXu6QeLl8T+zFc+1zDUF081mI6VbOkynhCnzyV0LQMPcg+RGGkypnB4ZLTTMTrWTqGO42EdePblEJ+lOghj6BCOoDz9JnUvTIH40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jtL3pPs7; arc=none smtp.client-ip=209.85.218.53
+	s=arc-20240116; t=1719325055; c=relaxed/simple;
+	bh=dNv7RNmIhoI1Vd5UKHN/136wv1r6HCioWcj5Hz4gunM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oxGZsowN4wELbxCZjFFEqmoRe1QxtQanYK+zu0bfXYLMVljQja2A+l4p1ehmPHHFFULz7AIUG0+RQhpoYGi8u1Gkz4VUSox10X30sNDsmGjH1NLP/2Nvo3DPYpUDMvHV/HpVkEnKFYoYfhrJjeW8TKb9YbmL90RS6Z9rj1qV1Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WfFsXmCU; arc=none smtp.client-ip=209.85.216.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a72420e84feso405572066b.0;
-        Tue, 25 Jun 2024 07:16:28 -0700 (PDT)
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2c7dbdc83bfso4316527a91.1;
+        Tue, 25 Jun 2024 07:17:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719324987; x=1719929787; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UueIcfEBB+sTw8Da4EHrqDDA6zoe//kf6xowUDRXxM4=;
-        b=jtL3pPs79ONdqIsleB3qPmdoGo2C3R08POPbaK4qVZPq0ig0XdqP+JoPeoUHfo3er6
-         Xw2EXZ0Adn5y8tMi1ZZ9e0truOFnEukc0Z/BX0dajoAnnarOeY7fmt6jKjdd1MTzBplj
-         3csbF+I9WTf0qLInRZR2u/lMRACZ8P6fYvZW9cZMP+I3x+u4HBoAmhbuf5AXtlWRvBum
-         LKgiaVXK2UmAxTb5+TpzGa/oDzssy181mtSLmlQf7H9bmVeV+rt72lDIhNu6s335dkfO
-         nCOKsGcB48293ErRyXPw++Ze7C2n7xgrJMi6KuXmV4zSmiNmX2f5i01QnJi1pHQD0/F/
-         SchA==
+        d=gmail.com; s=20230601; t=1719325053; x=1719929853; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=dNv7RNmIhoI1Vd5UKHN/136wv1r6HCioWcj5Hz4gunM=;
+        b=WfFsXmCUKsFdlOGA5f5oGFikYReLm5S1P3hT6NRfA0cNxLc2GB2OGM6usFtec3WtBu
+         dGN5AcmE1+3nVpib+KVInCuMsn3S23GF9ijUdyTs5nFnXEfsqjbIdlm4FwCV4Yl5N99Q
+         KO38bfEMAYZqlYAVt0m2EHOCNclZHpl7r5b4tlvcsz+GeXArpZO+7sS4GYZwxkhLiDQQ
+         f6HLj2i3JYoFyCw2+x+UgrDXuTBT8u90uGVCf+92BlMuz48nB1Mt1fu1waD9xnEU9/Iv
+         7jUiMcV5800dSlU3xTqCoWbYPnpp+Rfc5sR9fULEcD4dmcOZWhyscOOuW/2WtjMLFq/Y
+         Buhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719324987; x=1719929787;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1719325053; x=1719929853;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UueIcfEBB+sTw8Da4EHrqDDA6zoe//kf6xowUDRXxM4=;
-        b=toHebCrO42r+yF0Y4Vhwh6BKEHkFueuGZEjGPYCBfTu6nHLiMAcRaLuQ+xXg+hInWO
-         EUShnxizUKMSvZDsyWsTxC2TriPoQxeVxsRsFbs2jYodpvuLwrgujRrrlMxPFmwBGvyr
-         L5cADLdcEEUKYUUsHD7Xa2IAGYhI3gjetuci0mN5i1VfHSgkCSG9B5MxmGdqwBi/VyZ5
-         ph/wR+qRqK869rnapstK2pnpySQqmfaKCDK3zdehn2pmcci7I9tcoV++8ziHLPTD5nNJ
-         ETCahsG9vry6bmbA+m2W3B7nANovsElM2uroIEVAlJKloby/8CISEzo4K6B/0j4WNRBo
-         7XZg==
-X-Forwarded-Encrypted: i=1; AJvYcCVi/Hm5GzRJhyCX+nBa3gzm0tXguxwJLTbzMIx2hK+rDkDh5E72pol/cXcz9pubKfD75k/2S9fveWoMDYwjKjQHHuBG1TSlIutyiuDcRh2O6vaw1RLgSjn2gH3mHZdeI+2d1B7b+TDrxD0IhL1hAyQmBkAgSIQFsOs8bgcRiHMqE46f2G0K
-X-Gm-Message-State: AOJu0YzDUr8RnfBdOwUZeM6PWsdjfCKWBqBiA81VEbMgwAj6EDESy34H
-	Q6WUwZId6nZGnQtqQ/Amv5V+YMn7wEpIVKkPIj292XrTp2mQZazj
-X-Google-Smtp-Source: AGHT+IHyA3C7f0akc1PTU2Nv2Jzlwg/+RN1NlHaJr2fR0Xd3DwDz3CVE3sjnYANSyRnzAAt9+tn50g==
-X-Received: by 2002:a17:906:46cd:b0:a6f:ddb3:bf2b with SMTP id a640c23a62f3a-a7245bf6786mr606179066b.41.1719324987145;
-        Tue, 25 Jun 2024 07:16:27 -0700 (PDT)
-Received: from f.. (cst-prg-81-171.cust.vodafone.cz. [46.135.81.171])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7247ccb868sm299695566b.208.2024.06.25.07.16.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 07:16:26 -0700 (PDT)
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: brauner@kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	jack@suse.cz,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	io-uring@vger.kernel.org,
-	axboe@kernel.dk,
-	torvalds@linux-foundation.org,
-	xry111@xry111.site,
-	loongarch@lists.linux.dev,
-	Mateusz Guzik <mjguzik@gmail.com>
-Subject: [PATCH v2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-Date: Tue, 25 Jun 2024 16:16:18 +0200
-Message-ID: <20240625141618.615247-1-mjguzik@gmail.com>
-X-Mailer: git-send-email 2.43.0
+        bh=dNv7RNmIhoI1Vd5UKHN/136wv1r6HCioWcj5Hz4gunM=;
+        b=lCeSQjZ5NptYy1wOnwpgAqWINOAXwsA863uzPTWb0cny7ZwMPOZFJj253LI60+RqLy
+         l0hDFMZLQDIcIH19mk7vLylmSoGmWPgT1aStNPPl2McBcrMieST0AVPhXLjvPaAe7Tuz
+         hrNwDxw9Vl8ITBXQgeqCPehhubkQVuDyCEYvb5BVch+1au+OLYtoZwuwdtIob1cxgP4M
+         aXBTcxOvJpkyWGPEfe6nwRR1iTlQwyAF5WEpfqN5RckF+Plru6mqFgyyG5CCHrJirBhA
+         GMeeGFWPVCof6v+mhbNcmTAQVTL26Q/j/AOUqTZxMgv+Uqm+jbrsXt9oMPDvzyoGsxlr
+         nxIg==
+X-Forwarded-Encrypted: i=1; AJvYcCU5XUHOTXuHDg+RtbdOQM9RTN5Z2PvBgaVwLy9fZj0lvUu/7zBtT3PQikw5zXjLnX1NAgkP78qUxoqE/C7woW+csxm6BWdqWodnSXl2hDroxl50j1QBbn10MctAoOrrWrJIoyzEJkotVfc=
+X-Gm-Message-State: AOJu0YwIRaXgX8Znnef9oKrTf70B3+siibm3tp5Gd88lkHHr5H9GnfSt
+	rLcVchkxXMSe9dpHWBYm46Yit5ZfyMv9rwUxVkcVH/3ynEN0rwExr2RqVWXrt33DQKSZwqOdPR3
+	fwwSmKwuQ7JuRMUipYSwWksocc+Q=
+X-Google-Smtp-Source: AGHT+IHY7Moi01QIYMw8+dg60IWdW1gG2DDDcZwhJsFqksbTDefj52yE4EiZx3Z6hOL2VBFqe9ICXoFxbyCzGwhsxSE=
+X-Received: by 2002:a17:90a:b014:b0:2c2:c61f:e09 with SMTP id
+ 98e67ed59e1d1-2c8613d204dmr6953843a91.20.1719325053001; Tue, 25 Jun 2024
+ 07:17:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240615125457.167844-1-rauty@altlinux.org> <2c9ba341bc95d4b9010bf5f8794c0d14b1c57dc9.camel@irl.hu>
+ <CAGpJQTHoBAixmxta2WuZfjHjiK9GXF=hkfPyV7PBD5rt9Z_0WA@mail.gmail.com>
+ <CAGpJQTGqxEkfp003QLsp-syUgzDFCmHSmNaoOaem0ZMVf7_=bg@mail.gmail.com>
+ <c0a9e15e7926e098bdea97a7d31c32427e0910c9.camel@irl.hu> <871q4lm9dp.wl-tiwai@suse.de>
+ <CAGpJQTFF=gKN2h105dGhBOEhN0Q1Tpj5hJWpSdQ_-nCoUTzj5A@mail.gmail.com>
+ <87tthhktdz.wl-tiwai@suse.de> <87sex1kt6t.wl-tiwai@suse.de>
+In-Reply-To: <87sex1kt6t.wl-tiwai@suse.de>
+From: Rauty <rautyrauty@gmail.com>
+Date: Tue, 25 Jun 2024 17:16:56 +0300
+Message-ID: <CAGpJQTGR5WKuHUFGFUC286TUkOXYgcqigZRDb4K5deyE9uuz8w@mail.gmail.com>
+Subject: Re: [PATCH v2] ALSA: hda/realtek: Enable headset mic on IdeaPad
+ 330-17IKB 81DM
+To: Takashi Iwai <tiwai@suse.de>
+Cc: wzhd@ustc.edu, Gergo Koteles <soyer@irl.hu>, alsa-devel@alsa-project.org, 
+	tiwai@suse.com, perex@perex.cz, kailang@realtek.com, 
+	sbinding@opensource.cirrus.com, luke@ljones.dev, shenghao-ding@ti.com, 
+	simont@opensource.cirrus.com, foss@athaariq.my.id, rf@opensource.cirrus.com, 
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The newly used helper also checks for 0-sized buffers.
+On Tue, 25 Jun 2024 at 17:11, Takashi Iwai <tiwai@suse.de> wrote:
+> Zihao, do you still have the access to this machine?
+> If yes, could you give alsa-info.sh output, or a proc file output?
 
-NULL paths with any flag value other than AT_EMPTY_PATH go the usual
-route and end up with -EFAULT to retain compatibility (Rust is abusing
-calls of the sort to detect availability of statx).
-
-This avoids path lookup code, lockref management, memory allocation and
-in case of NULL path userspace memory access (which can be quite
-expensive with SMAP on x86_64).
-
-statx(..., AT_EMPTY_PATH, ...) issued on Sapphire Rapids (ops/s):
-stock:     4231237
-0-check:   5944063 (+40%)
-NULL path: 6601619 (+11%/+56%)
-
-Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
----
-
-Diffed against fs-next and assumes c050122bdbb4 ("fs: new helper
-vfs_empty_path()") from vfs.empty.path is already applied.
-
-WARNING: io_uring remains untested (modulo compilation). I presume
-Jens has a handy way of making sure things still work. 
-
-While the io_uring part can be added at a later date, but I'm trying to
-avoid a scenario where someone has code which works with the NULL path
-and breaks when moving to io_uring. I am not going to argue about it
-however, worst case changes to io_uring can be trivially dropped and
-someone(tm) can add their own variant whenever they see fit.
-
-v2:
-- support glibc passing AT_NO_AUTOMOUNT | AT_EMPTY_PATH
-- tidy up some commentary
-- drop the fdget_raw CLASS addition as it is already present in newer
-  trees
-
- fs/internal.h    |   2 +
- fs/stat.c        | 106 +++++++++++++++++++++++++++++++++++------------
- io_uring/statx.c |  21 ++++++----
- 3 files changed, 93 insertions(+), 36 deletions(-)
-
-diff --git a/fs/internal.h b/fs/internal.h
-index 84f371193f74..1d820018e6dc 100644
---- a/fs/internal.h
-+++ b/fs/internal.h
-@@ -247,6 +247,8 @@ extern const struct dentry_operations ns_dentry_operations;
- int getname_statx_lookup_flags(int flags);
- int do_statx(int dfd, struct filename *filename, unsigned int flags,
- 	     unsigned int mask, struct statx __user *buffer);
-+int do_statx_fd(int fd, unsigned int flags, unsigned int mask,
-+		struct statx __user *buffer);
- 
- /*
-  * fs/splice.c:
-diff --git a/fs/stat.c b/fs/stat.c
-index 5039c34a385d..8114eed25d93 100644
---- a/fs/stat.c
-+++ b/fs/stat.c
-@@ -214,6 +214,43 @@ int getname_statx_lookup_flags(int flags)
- 	return lookup_flags;
- }
- 
-+static int vfs_statx_path(struct path *path, int flags, struct kstat *stat,
-+			  u32 request_mask)
-+{
-+	int error = vfs_getattr(path, stat, request_mask, flags);
-+
-+	if (request_mask & STATX_MNT_ID_UNIQUE) {
-+		stat->mnt_id = real_mount(path->mnt)->mnt_id_unique;
-+		stat->result_mask |= STATX_MNT_ID_UNIQUE;
-+	} else {
-+		stat->mnt_id = real_mount(path->mnt)->mnt_id;
-+		stat->result_mask |= STATX_MNT_ID;
-+	}
-+
-+	if (path->mnt->mnt_root == path->dentry)
-+		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
-+	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
-+
-+	/* Handle STATX_DIOALIGN for block devices. */
-+	if (request_mask & STATX_DIOALIGN) {
-+		struct inode *inode = d_backing_inode(path->dentry);
-+
-+		if (S_ISBLK(inode->i_mode))
-+			bdev_statx_dioalign(inode, stat);
-+	}
-+
-+	return error;
-+}
-+
-+static int vfs_statx_fd(int fd, int flags, struct kstat *stat,
-+			  u32 request_mask)
-+{
-+	CLASS(fd_raw, f)(fd);
-+	if (!f.file)
-+		return -EBADF;
-+	return vfs_statx_path(&f.file->f_path, flags, stat, request_mask);
-+}
-+
- /**
-  * vfs_statx - Get basic and extra attributes by filename
-  * @dfd: A file descriptor representing the base dir for a relative filename
-@@ -243,36 +280,13 @@ static int vfs_statx(int dfd, struct filename *filename, int flags,
- retry:
- 	error = filename_lookup(dfd, filename, lookup_flags, &path, NULL);
- 	if (error)
--		goto out;
--
--	error = vfs_getattr(&path, stat, request_mask, flags);
--
--	if (request_mask & STATX_MNT_ID_UNIQUE) {
--		stat->mnt_id = real_mount(path.mnt)->mnt_id_unique;
--		stat->result_mask |= STATX_MNT_ID_UNIQUE;
--	} else {
--		stat->mnt_id = real_mount(path.mnt)->mnt_id;
--		stat->result_mask |= STATX_MNT_ID;
--	}
--
--	if (path.mnt->mnt_root == path.dentry)
--		stat->attributes |= STATX_ATTR_MOUNT_ROOT;
--	stat->attributes_mask |= STATX_ATTR_MOUNT_ROOT;
--
--	/* Handle STATX_DIOALIGN for block devices. */
--	if (request_mask & STATX_DIOALIGN) {
--		struct inode *inode = d_backing_inode(path.dentry);
--
--		if (S_ISBLK(inode->i_mode))
--			bdev_statx_dioalign(inode, stat);
--	}
--
-+		return error;
-+	error = vfs_statx_path(&path, flags, stat, request_mask);
- 	path_put(&path);
- 	if (retry_estale(error, lookup_flags)) {
- 		lookup_flags |= LOOKUP_REVAL;
- 		goto retry;
- 	}
--out:
- 	return error;
- }
- 
-@@ -683,16 +697,40 @@ int do_statx(int dfd, struct filename *filename, unsigned int flags,
- 	return cp_statx(&stat, buffer);
- }
- 
-+int do_statx_fd(int fd, unsigned int flags, unsigned int mask,
-+	     struct statx __user *buffer)
-+{
-+	struct kstat stat;
-+	int error;
-+
-+	if (mask & STATX__RESERVED)
-+		return -EINVAL;
-+	if ((flags & AT_STATX_SYNC_TYPE) == AT_STATX_SYNC_TYPE)
-+		return -EINVAL;
-+
-+	/* STATX_CHANGE_COOKIE is kernel-only for now. Ignore requests
-+	 * from userland.
-+	 */
-+	mask &= ~STATX_CHANGE_COOKIE;
-+
-+	error = vfs_statx_fd(fd, flags, &stat, mask);
-+	if (error)
-+		return error;
-+
-+	return cp_statx(&stat, buffer);
-+}
-+
- /**
-  * sys_statx - System call to get enhanced stats
-  * @dfd: Base directory to pathwalk from *or* fd to stat.
-- * @filename: File to stat or "" with AT_EMPTY_PATH
-+ * @filename: File to stat or either NULL or "" with AT_EMPTY_PATH
-  * @flags: AT_* flags to control pathwalk.
-  * @mask: Parts of statx struct actually required.
-  * @buffer: Result buffer.
-  *
-  * Note that fstat() can be emulated by setting dfd to the fd of interest,
-- * supplying "" as the filename and setting AT_EMPTY_PATH in the flags.
-+ * supplying "" (or preferably NULL) as the filename and setting AT_EMPTY_PATH
-+ * in the flags.
-  */
- SYSCALL_DEFINE5(statx,
- 		int, dfd, const char __user *, filename, unsigned, flags,
-@@ -700,8 +738,22 @@ SYSCALL_DEFINE5(statx,
- 		struct statx __user *, buffer)
- {
- 	int ret;
-+	unsigned lflags;
- 	struct filename *name;
- 
-+	/*
-+	 * Short-circuit handling of NULL and "" paths.
-+	 *
-+	 * For a NULL path we require and accept only the AT_EMPTY_PATH flag.
-+	 *
-+	 * However, glibc on 32-bit architectures implements fstatat as statx
-+	 * with the "" pathname and AT_NO_AUTOMOUNT | AT_EMPTY_PATH flags.
-+	 * Supporting this results in the uglification below.
-+	 */
-+	lflags = flags & ~AT_NO_AUTOMOUNT;
-+	if (lflags == AT_EMPTY_PATH && vfs_empty_path(dfd, filename))
-+		return do_statx_fd(dfd, lflags, mask, buffer);
-+
- 	name = getname_flags(filename, getname_statx_lookup_flags(flags));
- 	ret = do_statx(dfd, name, flags, mask, buffer);
- 	putname(name);
-diff --git a/io_uring/statx.c b/io_uring/statx.c
-index f7f9b202eec0..a7216058b05b 100644
---- a/io_uring/statx.c
-+++ b/io_uring/statx.c
-@@ -23,6 +23,7 @@ struct io_statx {
- int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- {
- 	struct io_statx *sx = io_kiocb_to_cmd(req, struct io_statx);
-+	struct filename *filename;
- 	const char __user *path;
- 
- 	if (sqe->buf_index || sqe->splice_fd_in)
-@@ -36,14 +37,13 @@ int io_statx_prep(struct io_kiocb *req, const struct io_uring_sqe *sqe)
- 	sx->buffer = u64_to_user_ptr(READ_ONCE(sqe->addr2));
- 	sx->flags = READ_ONCE(sqe->statx_flags);
- 
--	sx->filename = getname_flags(path,
--				     getname_statx_lookup_flags(sx->flags));
--
--	if (IS_ERR(sx->filename)) {
--		int ret = PTR_ERR(sx->filename);
--
--		sx->filename = NULL;
--		return ret;
-+	sx->filename = NULL;
-+	if (!(sx->flags == AT_EMPTY_PATH && vfs_empty_path(sx->dfd, path))) {
-+		filename = getname_flags(path,
-+					 getname_statx_lookup_flags(sx->flags));
-+		if (IS_ERR(filename))
-+			return PTR_ERR(filename);
-+		sx->filename = filename;
- 	}
- 
- 	req->flags |= REQ_F_NEED_CLEANUP;
-@@ -58,7 +58,10 @@ int io_statx(struct io_kiocb *req, unsigned int issue_flags)
- 
- 	WARN_ON_ONCE(issue_flags & IO_URING_F_NONBLOCK);
- 
--	ret = do_statx(sx->dfd, sx->filename, sx->flags, sx->mask, sx->buffer);
-+	if (sx->filename == NULL)
-+		ret = do_statx_fd(sx->dfd, sx->flags, sx->mask, sx->buffer);
-+	else
-+		ret = do_statx(sx->dfd, sx->filename, sx->flags, sx->mask, sx->buffer);
- 	io_req_set_res(req, ret, 0);
- 	return IOU_OK;
- }
--- 
-2.43.0
-
+He sent it to me:
+https://alsa-project.org/db/?f=268601dbdb76f9a4c18d71e210091ffed4bf2818
 
