@@ -1,137 +1,145 @@
-Return-Path: <linux-kernel+bounces-228666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A10891652D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:20:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 173EE916531
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:22:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0135D1F22513
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:20:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E40BEB21D84
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC66F14A617;
-	Tue, 25 Jun 2024 10:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE2314A0BF;
+	Tue, 25 Jun 2024 10:21:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="v1oo70p7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TaE1pnkO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L/DsslZ1"
+Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82D2214A4C7;
-	Tue, 25 Jun 2024 10:20:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4E7146A67
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719310833; cv=none; b=b1A052BIRnvaJU/hjx59dt47nYHeqDqXer37bM1J+/6X3BIpjs1+tEs5E8LfjgL+FoqyYNVoX+PTCj6knYNSmu0yWk5r8YGadAh8E8EAdAlroqamLYZwfPr/Xz8g3T5De2g6Sgv41b69K/B9cXTE5Nq8CiAALhiVB2V80MKKkWY=
+	t=1719310918; cv=none; b=Cjh9OzJf5NENTEE4faXF3h2zXYsjwHgVXSdUki+FrOwMDgIC7xfKeJJhM2Nus8cn6s4Mi5jWYioQ46ihdEoLNJSpMiYLT7YzK28mHSJbZpB1ygWn58rhJRSAGyMSoG9vTGY5/0qlZBtb+zRyQ1VHoKLoAhPVh8SSx6Of+h4+uJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719310833; c=relaxed/simple;
-	bh=U4UKmSL+yS6H3laaPMwSWiFQQcV7Z7beDMbwiaN27C8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=EV4XfFSaNsiqVOWyn5xE8XDS74Q7yXNrSr5UZh3kD3zWxoF++LEeUCxMG8xfjfvl0bxMwc7tyn2O9chb1FLswgXeUxxE7o25bmtWKG7R7KMQTbOVWd91N41+Bcm5jquRRpnGgI60dhe10Q4I8l7jlqMSaFzu/63PJsvRlOujRLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=v1oo70p7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TaE1pnkO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 25 Jun 2024 10:20:27 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719310828;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r2uSvmOwiL69UqeLQmZ71n4aVeb3D8wrFq0BB119oCQ=;
-	b=v1oo70p79LGHJNJl2whku34B0Bj+IFzzK33G/4fhUYjJ9KDpS+BPqoq7/w7bdVTArsaueq
-	8h8Jpsxz8mWxVTz6pF11VXFJogiXTNkDgFmV3W1b1N2CNyGgVDZAvtZWPskqMyK/3UpbgK
-	z/xLrnY5f9W0O5jg1jHS//La8ETy/1ZCLYVazzVE1jbApFb0oXys4qksGTULJ6/f0xW6/c
-	gbdoKTSNh0Bh3/BXULyAz3W08Ju62DWTIr9GZKRaWUcShaWwoXblFVa3W/S+e8L178jMYA
-	goRJXXK6wxD4MDsMPdH8NXFDKUz1+ReuU42mkpK42JqT8fCxPdkI8WlRJxVKOg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719310828;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r2uSvmOwiL69UqeLQmZ71n4aVeb3D8wrFq0BB119oCQ=;
-	b=TaE1pnkObbnlss4mEYvpHPS0FKSP/hiJC+eeCq/l8ddVLPAjS66mVQFoCw26Kr9FTeg+6a
-	pY9SM200aav84YDQ==
-From: "tip-bot2 for Brian Johannesmeyer" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/misc] x86/kmsan: Fix hook for unaligned accesses
-Cc: Brian Johannesmeyer <bjohannesmeyer@gmail.com>,
- "Borislav Petkov (AMD)" <bp@alien8.de>,
- Alexander Potapenko <glider@google.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240523215029.4160518-1-bjohannesmeyer@gmail.com>
-References: <20240523215029.4160518-1-bjohannesmeyer@gmail.com>
+	s=arc-20240116; t=1719310918; c=relaxed/simple;
+	bh=7eV+FC8D6zjFgWnptjlUDQlEzJ1ee9CaqujklxBCwc8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bue4/4fna3pfOr6sCqjiCxAVjeh6I/eo2T6hSYjbmVjW60bGz+QloiBrjxRbblIAF0Bk93g0+LjdxvPb5JHpngInNA0T7lOTSVv5mTnJKe6vgjYsqzU7HzXeah6skIDvdJwzp4pY7cQgnjgA2HYbRW9c2Ty+l+ZlrXGMCgQBb4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=L/DsslZ1; arc=none smtp.client-ip=209.85.214.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-1fa2782a8ccso16214785ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:21:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1719310915; x=1719915715; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+VjACVZoPp7eN7kJksXj5MfvnAImL5JxKUjwBijavO4=;
+        b=L/DsslZ1xJ/RcgZWEc4OFvYGI9wRjWwxXzhejYpuLjnS7POewgUElXfrxZntPaE5PR
+         Ja3ClYsYtcgZ2UkoK0N5VbfR64dV/slOPgJerqFKlo2IhArYLZ/sAOoHUAK3wP4gOSlB
+         H/qSzk0q5H8BZy+UeSGvfJiem4mYTBKsDUhbM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719310915; x=1719915715;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+VjACVZoPp7eN7kJksXj5MfvnAImL5JxKUjwBijavO4=;
+        b=VIFcxW/JXOhz37fxJbt9qer25Dhj43JOQu/HMUToFYjpoDqxsCdf39ehqy1EC3pWDx
+         SO8f01nN1KyiPIAYqTo7PSPnE421kSjkq+2nyKj+Nly/nxk0muREn60rPsVLvErIY+k+
+         ydhB42e8+o+RzB+/bLGB6hBTqnU5kz+iGfPJZ5X1alGy+55YN4Q1Anm3AT4fHHe+TU1o
+         jTTu1YOqobHqVbhFwLV6zFWAOCKsAfHbvGnx/zHO2spcr4n7uFLD8xS5bwLPRkkjBXgQ
+         cEXIRK+on69ooQBY1yC005L6dM4jtu8R3FGpnFLgnld1CtNM1DIqCI2fENgGrOn761l3
+         DAzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVQuDmWYSvP6tVncBYmVZ7cRamY8J6994BqQ8DsHUYCvgW95LXmByUNbvEbJw4MjwGQ1FujHAbh7T4iN6MXAAZoUvKq7yN0lEDIJBO2
+X-Gm-Message-State: AOJu0YwZApIs5mK+io+h4zN0oynvcw4yyeWb0J15ASPWO4tvLE451x7A
+	1Eu+PUC1OJ7uxJ/4srzpk2JOXE/dc8YqV7D+dB3JLZ5ibfP0a49RVQIq9D01RA==
+X-Google-Smtp-Source: AGHT+IGncBwvYK00pVmw01gvxPmXxXQ/V/u6BoVJ3vRhjdCIb8ngRmdVTYU+9aqp9QEJNIvJV3icOw==
+X-Received: by 2002:a17:902:d50b:b0:1f7:4ff:d03 with SMTP id d9443c01a7336-1fa23f4a0e0mr73386365ad.67.1719310915385;
+        Tue, 25 Jun 2024 03:21:55 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:ea5a:67dd:bd1e:edef])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb328f57sm77590855ad.110.2024.06.25.03.21.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 03:21:54 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	linux-bluetooth@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sean Wang <sean.wang@kernel.org>
+Subject: [PATCH] Bluetooth: btmtksdio: Lookup device node only as fallback
+Date: Tue, 25 Jun 2024 18:21:45 +0800
+Message-ID: <20240625102147.3496597-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <171931082781.2215.2814033580551774313.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/misc branch of tip:
+If the device tree is properly written, the SDIO function device node
+should be correctly defined, and the mmc core in Linux should correctly
+tie it to the device being probed.
 
-Commit-ID:     bf6ab33d8487f5e2a0998ce75286eae65bb0a6d6
-Gitweb:        https://git.kernel.org/tip/bf6ab33d8487f5e2a0998ce75286eae65bb0a6d6
-Author:        Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-AuthorDate:    Thu, 23 May 2024 23:50:29 +02:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Tue, 25 Jun 2024 11:37:21 +02:00
+Only fall back to searching for the device node by compatible if the
+original device node tied to the device is incorrect, as seen in older
+device trees.
 
-x86/kmsan: Fix hook for unaligned accesses
-
-When called with a 'from' that is not 4-byte-aligned, string_memcpy_fromio()
-calls the movs() macro to copy the first few bytes, so that 'from' becomes
-4-byte-aligned before calling rep_movs(). This movs() macro modifies 'to', and
-the subsequent line modifies 'n'.
-
-As a result, on unaligned accesses, kmsan_unpoison_memory() uses the updated
-(aligned) values of 'to' and 'n'. Hence, it does not unpoison the entire
-region.
-
-Save the original values of 'to' and 'n', and pass those to
-kmsan_unpoison_memory(), so that the entire region is unpoisoned.
-
-Signed-off-by: Brian Johannesmeyer <bjohannesmeyer@gmail.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Reviewed-by: Alexander Potapenko <glider@google.com>
-Link: https://lore.kernel.org/r/20240523215029.4160518-1-bjohannesmeyer@gmail.com
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- arch/x86/lib/iomem.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+This follows up on the MT7921S bluetooth binding and DT fixup patches [1].
+This should not be backported.
 
-diff --git a/arch/x86/lib/iomem.c b/arch/x86/lib/iomem.c
-index e0411a3..5eecb45 100644
---- a/arch/x86/lib/iomem.c
-+++ b/arch/x86/lib/iomem.c
-@@ -25,6 +25,9 @@ static __always_inline void rep_movs(void *to, const void *from, size_t n)
- 
- static void string_memcpy_fromio(void *to, const volatile void __iomem *from, size_t n)
+[1] https://lore.kernel.org/linux-bluetooth/20240412073046.1192744-1-wenst@chromium.org/
+
+ drivers/bluetooth/btmtksdio.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/bluetooth/btmtksdio.c b/drivers/bluetooth/btmtksdio.c
+index b4e560a17aa6..d81fa8dacb4e 100644
+--- a/drivers/bluetooth/btmtksdio.c
++++ b/drivers/bluetooth/btmtksdio.c
+@@ -1330,6 +1330,8 @@ static int btmtksdio_probe(struct sdio_func *func,
  {
-+	const void *orig_to = to;
-+	const size_t orig_n = n;
-+
- 	if (unlikely(!n))
- 		return;
+ 	struct btmtksdio_dev *bdev;
+ 	struct hci_dev *hdev;
++	struct device_node *old_node;
++	bool restore_node;
+ 	int err;
  
-@@ -39,7 +42,7 @@ static void string_memcpy_fromio(void *to, const volatile void __iomem *from, si
- 	}
- 	rep_movs(to, (const void *)from, n);
- 	/* KMSAN must treat values read from devices as initialized. */
--	kmsan_unpoison_memory(to, n);
-+	kmsan_unpoison_memory(orig_to, orig_n);
+ 	bdev = devm_kzalloc(&func->dev, sizeof(*bdev), GFP_KERNEL);
+@@ -1413,13 +1415,24 @@ static int btmtksdio_probe(struct sdio_func *func,
+ 	if (err)
+ 		bt_dev_err(hdev, "failed to initialize device wakeup");
+ 
+-	bdev->dev->of_node = of_find_compatible_node(NULL, NULL,
+-						     "mediatek,mt7921s-bluetooth");
++	restore_node = false;
++	if (!of_device_is_compatible(bdev->dev->of_node, "mediatek,mt7921s-bluetooth")) {
++		restore_node = true;
++		old_node = bdev->dev->of_node;
++		bdev->dev->of_node = of_find_compatible_node(NULL, NULL,
++							     "mediatek,mt7921s-bluetooth");
++	}
++
+ 	bdev->reset = devm_gpiod_get_optional(bdev->dev, "reset",
+ 					      GPIOD_OUT_LOW);
+ 	if (IS_ERR(bdev->reset))
+ 		err = PTR_ERR(bdev->reset);
+ 
++	if (restore_node) {
++		of_node_put(bdev->dev->of_node);
++		bdev->dev->of_node = old_node;
++	}
++
+ 	return err;
  }
  
- static void string_memcpy_toio(volatile void __iomem *to, const void *from, size_t n)
+-- 
+2.45.2.741.gdbec12cfda-goog
+
 
