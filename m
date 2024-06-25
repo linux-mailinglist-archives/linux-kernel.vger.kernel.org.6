@@ -1,83 +1,93 @@
-Return-Path: <linux-kernel+bounces-228481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F0691607F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:57:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E386916081
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38D4EB221DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:57:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6ACC282D35
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF561474A0;
-	Tue, 25 Jun 2024 07:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F8E146D7E;
+	Tue, 25 Jun 2024 07:57:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ihFDOdlD"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uov8r4kX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A51B146A65
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95126144312
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:57:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719302211; cv=none; b=MAVlo06IcS0njOVxo4ppK807gkX0C2DWUd8z/VMb3xhn/aptxBUO1yZTRrrOTK232IQu/IxVuTQmlvcsNTJW8AxYjiLXNp0/QO15W0FqRwiOtgxFU9hbSAvLiWiTzojSqxKZPHYkU0xsJVmrEK5YHUGdGK6iebBKL8IBYEBOYz0=
+	t=1719302262; cv=none; b=cvw0JaOnfObXJNeyWlU8efniS0WyVC68YBfsPQg+tEl0TrMZK3vrTPfo2Zhc8GmWH0PQPmsi01UgUjdvzXz7TjN4FVZdugjX2/wKzLyYc+OjIZTKBIks31CTw3rRqLKQVJwigrhRWySAgMJlDJ2IBKz2UBcHOcOtWnxvbypt+fI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719302211; c=relaxed/simple;
-	bh=Er54hzoJL/uBqscVhrnJB4RPDvTokiz2zlLnOKZuEeQ=;
+	s=arc-20240116; t=1719302262; c=relaxed/simple;
+	bh=Wlc36+PGhvjjvSPA9aoelCfxeFiMdalGPnlYKE9au40=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ny/L6qHECx7tb79Tl+AJtIooTraJESrDfvj3pEQnV7Z1POuRiOk9R+7xWJChmKp7SbbXXs7r/sh869/9h+JXWi/aYKOhHeQjCe/k+VQmfxknky2upFGI8nNgazb8G8f9Dn4m8ux7E2fXFq17ICkVm+vetbmIk4rlbQY8XxV7MAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ihFDOdlD; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f9e2affc8cso30493705ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:56:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719302208; x=1719907008; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IEOsHLG09FJ166d3yJqKGK3joSXVHY47hFt5h8JjELw=;
-        b=ihFDOdlD24gpdN5Fv8teF4iq8uMQgrqBnWrzdNZTyhA5bFySlSSD4UK5Q3oGhAczKb
-         AMG95q68Nb4/5+x57nDMD4LGKk8oK53SIhJ5tL1papflRZGqU8j18QokNahEuEu6UY1n
-         DFrEbxnQBAw7fh+BeqTSrJy4SzpDoIIhIVAoEJdan3POQVIeOvgCFRrBWa7nKZfjHWAY
-         PU94lpH0XleurKTL5kOf/MhROEf4K7FHSMy0ivm8iZObakLsHrMyRpGkYbLKHMbD5SD2
-         fvHt7CaXsgxd+nossTv4pDu3Acihg49yjcRIY6JUuQom28WSY9Sup4I+/+oQ5RBn5GTh
-         2nNg==
+	 Content-Type:Content-Disposition:In-Reply-To; b=SltYHw9AzATAn0xzovmUws/aDo+bDxqeHYoXHplI8E9RFjSCboo5yL4GGtAq1P4NFYztWpDgHTJd9x2F9WB0DunPbiD2fCAclKwAh8gvDP/8gUFG7JAJRPK9OWq1s51EEEaClWSjpOhd6aX7/jPkarklxXZBaM2TYqE196fetTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uov8r4kX; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719302259;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wlc36+PGhvjjvSPA9aoelCfxeFiMdalGPnlYKE9au40=;
+	b=Uov8r4kXBQHUdTzizROlqWIYSbiN9+KLF10i9bK/ldvR/q205cH6E7Zlb47tFX0Lahp23A
+	YwDU6A+1D3S+JSnT1GxAPok79b+Mq5Ol742YkUVg9sFSgDPF9pmskJ8YryCmPzmAaj8eWT
+	WWg9Y7rwR9dCqxNtiMDy5OP8ORyq9xc=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-159-Rd0a-9DDN7KS4bxxcjHf7w-1; Tue, 25 Jun 2024 03:57:37 -0400
+X-MC-Unique: Rd0a-9DDN7KS4bxxcjHf7w-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52cd67cee83so2738196e87.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:57:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719302208; x=1719907008;
+        d=1e100.net; s=20230601; t=1719302256; x=1719907056;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IEOsHLG09FJ166d3yJqKGK3joSXVHY47hFt5h8JjELw=;
-        b=AP5iwbqDwGzI2xKKk7UGwh1mESZphNx8H5uKunqEiNb8WeMaJGq/BI4E7JwEx6XHGA
-         jJVtwGDrDfOto9haczVkDh/ImX31cuDWGm4SFwICKPe6MvCdGOg2sXS9pUnwU/C2i7Ow
-         0u7ZKLVchxOh0eb6oGYRLRZYCAb5GkHCqyZaFxwtKBsFa/LL5On7kKoToI8k7VuL7gR9
-         qXm3DXKZ6aUPRFnBLAoHVX2TcoQfn8Z1b0HkW7a6ap5Hdl1ABVS9ZQoChb/28jk3Pcii
-         wwF0rvXU0CBDuTdyrpwGyzNtYVDrc2F4c6PFigDp+ZDYw6IiSFRLA5KM3HyVcFu8BN4W
-         BvUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUy6Tfn5UsaB5jlGyOwJ2DUALSjDD+vkD77fQ3MkEaHbvObRC9qhGx22zWlSAQkzAT+fmvP2N5qKsP5sEs/bkjvEKjNn2Pa+2rGv3YA
-X-Gm-Message-State: AOJu0YyEFq8qDCYwLsgW0aPuj1a7NUSYsxsq8bK5KaAUSN6nf/+bExbL
-	hHzRYimtmOqOutob2fB4gl5ugEIdcVsxo96gLK7/+wlADb5RJG4td/DbgJ3SUfM=
-X-Google-Smtp-Source: AGHT+IGEp15Jfy3REpH/U6UeTo/Wcw4MB9bvqxwK9Qh1Za/yONGMRp85aZ2O5Nx+Mef6DjIyKoOjXw==
-X-Received: by 2002:a17:902:f54c:b0:1f7:3763:5ffb with SMTP id d9443c01a7336-1fa23f2696dmr78289395ad.59.1719302208164;
-        Tue, 25 Jun 2024 00:56:48 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbc7ccasm74462435ad.299.2024.06.25.00.56.47
+        bh=Wlc36+PGhvjjvSPA9aoelCfxeFiMdalGPnlYKE9au40=;
+        b=bo2M7rK2ZsNtflacoxBDkZkurllKSeVij768b4UDxQSbgcMeuz2/f6O8vq0t1vIyJ7
+         bZuPrBZhxgZbKE1MI6N3qSB3ffDzs7IdO/g7a3BjMfXrYDObLpA3TY4yXffqnMdQiwgO
+         QYNx14brhGO8IHfPdDLzaU9KVcj+xXcYvpIA2j3lvV7rxzV0AaXej/F5kInGHBF2AYcV
+         NwrE8HoQoMDUmO0BTB6JzT9GCJWSEJAcfQW9sa5Va9zDA5iMgUxE4WQH3P8T5tIiWUxB
+         mmVhB8BYtS6Ktw1qwiINHhqYzvK61eqEDRbfzvGDWwqfvCnsWozNLpZche0qZVXlf1rE
+         dFZg==
+X-Forwarded-Encrypted: i=1; AJvYcCWtRiJb1N+bvTrojw5Nl+aD4tfpgK/mK/T+vBZ0xaMNoimNtieODyR4w8GANJOD1OWYDNsIdSJyPV3lt2xdKlx3YpidNw6JkU6VxWTT
+X-Gm-Message-State: AOJu0YySZEOCEU+yq+CaOwgn06ww4Knw4Isn1LQ0StjuxpjVJ1cKOqLA
+	wa6Grj0Cl+8c2iDMoRlzmx7HpgIoN7DG2xS/YaCq9EPYOTIVlIvrJ/cm0DTJ7aDr6FF9rSxstkC
+	grJxmVfCdBu5bCyS6wsGa/Cr9goM/urDor741n+OQNvpSGcmocQj3vpUvWB9QjQ==
+X-Received: by 2002:a05:6512:402a:b0:52c:8051:5799 with SMTP id 2adb3069b0e04-52ce1832b57mr4772812e87.11.1719302256143;
+        Tue, 25 Jun 2024 00:57:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGtSiI6MnJMyKcIBakFxsAacJJgrU/9spzJO8lG47UPorN5R3MoQXUk1RYI4fQLSyfsKsVUtQ==
+X-Received: by 2002:a05:6512:402a:b0:52c:8051:5799 with SMTP id 2adb3069b0e04-52ce1832b57mr4772784e87.11.1719302255343;
+        Tue, 25 Jun 2024 00:57:35 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc7:342:f1b5:a48c:a59a:c1d6:8d0a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4248191fac8sm160640555e9.42.2024.06.25.00.57.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 00:56:47 -0700 (PDT)
-Date: Tue, 25 Jun 2024 13:26:45 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Huacai Chen <chenhuacai@loongson.cn>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Subject: Re: [PATCH 2/2] cpufreq: Add Loongson-3 CPUFreq driver support
-Message-ID: <20240625075645.m372bpbe7m2dozil@vireshk-i7>
-References: <20240612064205.2041548-1-chenhuacai@loongson.cn>
- <20240612064205.2041548-3-chenhuacai@loongson.cn>
+        Tue, 25 Jun 2024 00:57:34 -0700 (PDT)
+Date: Tue, 25 Jun 2024 03:57:30 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, venkat.x.venkatsubra@oracle.com,
+	gia-khanh.nguyen@oracle.com
+Subject: Re: [PATCH V2 3/3] virtio-net: synchronize operstate with admin
+ state on up/down
+Message-ID: <20240625035638-mutt-send-email-mst@kernel.org>
+References: <20240624024523.34272-1-jasowang@redhat.com>
+ <20240624024523.34272-4-jasowang@redhat.com>
+ <20240624060057-mutt-send-email-mst@kernel.org>
+ <CACGkMEsysbded3xvU=qq6L_SmR0jmfvXdbthpZ0ERJoQhveZ3w@mail.gmail.com>
+ <20240625031455-mutt-send-email-mst@kernel.org>
+ <CACGkMEt4qnbiotLgBx+jHBSsd-k0UAVSxjHovfXk6iGd6uSCPg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,593 +96,11 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240612064205.2041548-3-chenhuacai@loongson.cn>
+In-Reply-To: <CACGkMEt4qnbiotLgBx+jHBSsd-k0UAVSxjHovfXk6iGd6uSCPg@mail.gmail.com>
 
-On 12-06-24, 14:42, Huacai Chen wrote:
-> Some of LoongArch processors (Loongson-3 series) support DVFS, their
-> IOCSR.FEATURES has IOCSRF_FREQSCALE set. And they has a micro-core in
-> the package called SMC (System Management Controller), which can be
-> used to detect temperature, control fans, scale frequency and voltage,
-> etc.
-> 
-> The Loongson-3 CPUFreq driver is very simple now, it communicate with
-> SMC, get DVFS info, set target frequency from CPUFreq core, and so on.
-> 
-> There is a command list to interact with SMC, widely-used commands in
-> the CPUFreq driver include:
-> 
-> CMD_GET_VERSION: Get SMC firmware version.
-> 
-> CMD_GET_FEATURE: Get enabled SMC features.
-> 
-> CMD_SET_FEATURE: Enable SMC features, such as basic DVFS, BOOST.
-> 
-> CMD_GET_FREQ_LEVEL_NUM: Get the number of normal frequency levels.
-> 
-> CMD_GET_FREQ_BOOST_NUM: Get the number of boost frequency levels.
-> 
-> CMD_GET_FREQ_LEVEL_INFO: Get the detail info of a frequency level.
-> 
-> CMD_GET_FREQ_INFO: Get the current frequency.
-> 
-> CMD_SET_FREQ_INFO: Set the target frequency.
-> 
-> In future we will add automatic frequency scaling, which is similar to
-> Intel's HWP (HardWare P-State).
-> 
-> Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
-> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> ---
->  drivers/cpufreq/Kconfig             |  12 +
->  drivers/cpufreq/Makefile            |   1 +
->  drivers/cpufreq/loongson3_cpufreq.c | 442 ++++++++++++++++++++++++++++
->  3 files changed, 455 insertions(+)
->  create mode 100644 drivers/cpufreq/loongson3_cpufreq.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index aacccb376c28..f2e47ec28d77 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -12968,6 +12968,7 @@ F:	Documentation/arch/loongarch/
->  F:	Documentation/translations/zh_CN/arch/loongarch/
->  F:	arch/loongarch/
->  F:	drivers/*/*loongarch*
-> +F:	drivers/cpufreq/loongson3_cpufreq.c
->  
->  LOONGSON GPIO DRIVER
->  M:	Yinbo Zhu <zhuyinbo@loongson.cn>
-> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-> index 94e55c40970a..10cda6f2fe1d 100644
-> --- a/drivers/cpufreq/Kconfig
-> +++ b/drivers/cpufreq/Kconfig
-> @@ -262,6 +262,18 @@ config LOONGSON2_CPUFREQ
->  	  If in doubt, say N.
->  endif
->  
-> +if LOONGARCH
-> +config LOONGSON3_CPUFREQ
-> +	tristate "Loongson3 CPUFreq Driver"
-> +	help
-> +	  This option adds a CPUFreq driver for Loongson processors which
-> +	  support software configurable cpu frequency.
-> +
-> +	  Loongson-3 family processors support this feature.
-> +
-> +	  If in doubt, say N.
-> +endif
-> +
->  if SPARC64
->  config SPARC_US3_CPUFREQ
->  	tristate "UltraSPARC-III CPU Frequency driver"
-> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> index 8d141c71b016..0f184031dd12 100644
-> --- a/drivers/cpufreq/Makefile
-> +++ b/drivers/cpufreq/Makefile
-> @@ -103,6 +103,7 @@ obj-$(CONFIG_POWERNV_CPUFREQ)		+= powernv-cpufreq.o
->  # Other platform drivers
->  obj-$(CONFIG_BMIPS_CPUFREQ)		+= bmips-cpufreq.o
->  obj-$(CONFIG_LOONGSON2_CPUFREQ)		+= loongson2_cpufreq.o
-> +obj-$(CONFIG_LOONGSON3_CPUFREQ)		+= loongson3_cpufreq.o
->  obj-$(CONFIG_SH_CPU_FREQ)		+= sh-cpufreq.o
->  obj-$(CONFIG_SPARC_US2E_CPUFREQ)	+= sparc-us2e-cpufreq.o
->  obj-$(CONFIG_SPARC_US3_CPUFREQ)		+= sparc-us3-cpufreq.o
-> diff --git a/drivers/cpufreq/loongson3_cpufreq.c b/drivers/cpufreq/loongson3_cpufreq.c
-> new file mode 100644
-> index 000000000000..5dbac0d55a32
-> --- /dev/null
-> +++ b/drivers/cpufreq/loongson3_cpufreq.c
-> @@ -0,0 +1,442 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * CPUFreq driver for the loongson-3 processors
-> + *
-> + * All revisions of Loongson-3 processor support this feature.
-> + *
-> + * Author: Huacai Chen <chenhuacai@loongson.cn>
-> + * Copyright (C) 2020-2024 Loongson Technology Corporation Limited
-> + */
-> +#include <linux/delay.h>
-> +#include <linux/module.h>
-> +#include <linux/cpufreq.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/units.h>
-> +
-> +#include <asm/idle.h>
-> +#include <asm/loongarch.h>
-> +#include <asm/loongson.h>
-> +
-> +/* Message */
-> +union smc_message {
-> +	u32 value;
-> +	struct {
-> +		u32 id		: 4;
-> +		u32 info	: 4;
-> +		u32 val		: 16;
-> +		u32 cmd		: 6;
-> +		u32 extra	: 1;
-> +		u32 complete	: 1;
-> +	};
-> +};
-> +
-> +/* Command return values */
-> +#define CMD_OK				0  /* No error */
-> +#define CMD_ERROR			1  /* Regular error */
-> +#define CMD_NOCMD			2  /* Command does not support */
-> +#define CMD_INVAL			3  /* Invalid Parameter */
-> +
-> +/* Version commands */
-> +/*
-> + * CMD_GET_VERSION - Get interface version
-> + * Input: none
-> + * Output: version
-> + */
-> +#define CMD_GET_VERSION			0x1
-> +
-> +/* Feature commands */
-> +/*
-> + * CMD_GET_FEATURE - Get feature state
-> + * Input: feature ID
-> + * Output: feature flag
-> + */
-> +#define CMD_GET_FEATURE			0x2
-> +
-> +/*
-> + * CMD_SET_FEATURE - Set feature state
-> + * Input: feature ID, feature flag
-> + * output: none
-> + */
-> +#define CMD_SET_FEATURE			0x3
-> +
-> +/* Feature IDs */
-> +#define FEATURE_SENSOR			0
-> +#define FEATURE_FAN			1
-> +#define FEATURE_DVFS			2
-> +
-> +/* Sensor feature flags */
-> +#define FEATURE_SENSOR_ENABLE		BIT(0)
-> +#define FEATURE_SENSOR_SAMPLE		BIT(1)
-> +
-> +/* Fan feature flags */
-> +#define FEATURE_FAN_ENABLE		BIT(0)
-> +#define FEATURE_FAN_AUTO		BIT(1)
-> +
-> +/* DVFS feature flags */
-> +#define FEATURE_DVFS_ENABLE		BIT(0)
-> +#define FEATURE_DVFS_BOOST		BIT(1)
-> +#define FEATURE_DVFS_AUTO		BIT(2)
-> +#define FEATURE_DVFS_SINGLE_BOOST	BIT(3)
-> +
-> +/* Sensor commands */
-> +/*
-> + * CMD_GET_SENSOR_NUM - Get number of sensors
-> + * Input: none
-> + * Output: number
-> + */
-> +#define CMD_GET_SENSOR_NUM		0x4
-> +
-> +/*
-> + * CMD_GET_SENSOR_STATUS - Get sensor status
-> + * Input: sensor ID, type
-> + * Output: sensor status
-> + */
-> +#define CMD_GET_SENSOR_STATUS		0x5
-> +
-> +/* Sensor types */
-> +#define SENSOR_INFO_TYPE		0
-> +#define SENSOR_INFO_TYPE_TEMP		1
-> +
-> +/* Fan commands */
-> +/*
-> + * CMD_GET_FAN_NUM - Get number of fans
-> + * Input: none
-> + * Output: number
-> + */
-> +#define CMD_GET_FAN_NUM			0x6
-> +
-> +/*
-> + * CMD_GET_FAN_INFO - Get fan status
-> + * Input: fan ID, type
-> + * Output: fan info
-> + */
-> +#define CMD_GET_FAN_INFO		0x7
-> +
-> +/*
-> + * CMD_SET_FAN_INFO - Set fan status
-> + * Input: fan ID, type, value
-> + * Output: none
-> + */
-> +#define CMD_SET_FAN_INFO		0x8
-> +
-> +/* Fan types */
-> +#define FAN_INFO_TYPE_LEVEL		0
-> +
-> +/* DVFS commands */
-> +/*
-> + * CMD_GET_FREQ_LEVEL_NUM - Get number of freq levels
-> + * Input: CPU ID
-> + * Output: number
-> + */
-> +#define CMD_GET_FREQ_LEVEL_NUM		0x9
-> +
-> +/*
-> + * CMD_GET_FREQ_BOOST_LEVEL - Get number of boost levels
-> + * Input: CPU ID
-> + * Output: number
-> + */
-> +#define CMD_GET_FREQ_BOOST_LEVEL	0x10
-> +
-> +/*
-> + * CMD_GET_FREQ_LEVEL_INFO - Get freq level info
-> + * Input: CPU ID, level ID
-> + * Output: level info
-> + */
-> +#define CMD_GET_FREQ_LEVEL_INFO		0x11
-> +
-> +/*
-> + * CMD_GET_FREQ_INFO - Get freq info
-> + * Input: CPU ID, type
-> + * Output: freq info
-> + */
-> +#define CMD_GET_FREQ_INFO		0x12
-> +
-> +/*
-> + * CMD_SET_FREQ_INFO - Set freq info
-> + * Input: CPU ID, type, value
-> + * Output: none
-> + */
-> +#define CMD_SET_FREQ_INFO		0x13
-> +
-> +/* Freq types */
-> +#define FREQ_INFO_TYPE_FREQ		0
-> +#define FREQ_INFO_TYPE_LEVEL		1
-> +
-> +#define FREQ_MAX_LEVEL			(16 + 1)
-> +
-> +enum freq {
-> +	FREQ_LEV0, /* Reserved */
-> +	FREQ_LEV1, FREQ_LEV2, FREQ_LEV3, FREQ_LEV4,
-> +	FREQ_LEV5, FREQ_LEV6, FREQ_LEV7, FREQ_LEV8,
-> +	FREQ_LEV9, FREQ_LEV10, FREQ_LEV11, FREQ_LEV12,
-> +	FREQ_LEV13, FREQ_LEV14, FREQ_LEV15, FREQ_LEV16,
-> +	FREQ_RESV
-> +};
-> +
-> +struct loongson3_freq_data {
-> +	unsigned int cur_cpu_freq;
+On Tue, Jun 25, 2024 at 03:46:44PM +0800, Jason Wang wrote:
+> Workqueue is used to serialize those so we won't lose any change.
 
-You never use it. Remove it.
+So we don't need to re-read then?
 
-> +	struct cpufreq_frequency_table table[];
-> +};
-> +
-> +static struct mutex cpufreq_mutex[MAX_PACKAGES];
-> +static struct cpufreq_driver loongson3_cpufreq_driver;
-> +static DEFINE_PER_CPU(struct loongson3_freq_data *, freq_data);
-> +
-> +static inline int do_service_request(union smc_message *msg)
-> +{
-> +	int retries;
-> +	union smc_message last;
-> +
-> +	last.value = iocsr_read32(LOONGARCH_IOCSR_SMCMBX);
-> +	if (!last.complete)
-> +		return -EPERM;
-> +
-> +	iocsr_write32(msg->value, LOONGARCH_IOCSR_SMCMBX);
-> +	iocsr_write32(iocsr_read32(LOONGARCH_IOCSR_MISC_FUNC) | IOCSR_MISC_FUNC_SOFT_INT,
-> +		      LOONGARCH_IOCSR_MISC_FUNC);
-> +
-> +	for (retries = 0; retries < 10000; retries++) {
-> +		msg->value = iocsr_read32(LOONGARCH_IOCSR_SMCMBX);
-> +		if (msg->complete)
-> +			break;
-> +
-> +		usleep_range(8, 12);
-> +	}
-> +
-> +	if (!msg->complete || msg->cmd != CMD_OK)
-> +		return -EPERM;
-> +
-> +	return 0;
-> +}
-> +
-> +static unsigned int loongson3_cpufreq_get(unsigned int cpu)
-> +{
-> +	union smc_message msg;
-> +
-> +	msg.id		= cpu;
-> +	msg.info	= FREQ_INFO_TYPE_FREQ;
-> +	msg.cmd		= CMD_GET_FREQ_INFO;
-> +	msg.extra	= 0;
-> +	msg.complete	= 0;
-> +	do_service_request(&msg);
-> +
-> +	per_cpu(freq_data, cpu)->cur_cpu_freq = msg.val * KILO;
-> +
-> +	return per_cpu(freq_data, cpu)->cur_cpu_freq;
-> +}
-> +
-> +static int loongson3_cpufreq_set(struct cpufreq_policy *policy, int freq_level)
-> +{
-> +	union smc_message msg;
-> +
-> +	msg.id		= cpu_data[policy->cpu].core;
-> +	msg.info	= FREQ_INFO_TYPE_LEVEL;
-> +	msg.val		= freq_level;
-> +	msg.cmd		= CMD_SET_FREQ_INFO;
-> +	msg.extra	= 0;
-> +	msg.complete	= 0;
-> +	do_service_request(&msg);
-> +
-> +	return 0;
-> +}
-> +
-> +/*
-> + * Here we notify other drivers of the proposed change and the final change.
-> + */
-> +static int loongson3_cpufreq_target(struct cpufreq_policy *policy, unsigned int index)
-> +{
-> +	unsigned int cpu = policy->cpu;
-> +	unsigned int package = cpu_data[cpu].package;
-> +
-> +	if (!cpu_online(cpu))
-
-No need to check this.
-
-> +		return -ENODEV;
-> +
-> +	/* setting the cpu frequency */
-> +	mutex_lock(&cpufreq_mutex[package]);
-
-No locking required here. Core doesn't call them in parallel.
-
-> +	loongson3_cpufreq_set(policy, index);
-> +	mutex_unlock(&cpufreq_mutex[package]);
-> +
-> +	return 0;
-> +}
-> +
-> +static int loongson3_cpufreq_get_freq_table(int cpu)
-> +{
-> +	union smc_message msg;
-> +	int i, ret, boost_level, max_level, freq_level;
-> +	struct loongson3_freq_data *data;
-> +
-> +	if (per_cpu(freq_data, cpu))
-> +		return 0;
-
-Will this ever be true ?
-
-> +
-> +	msg.id		= cpu;
-> +	msg.cmd		= CMD_GET_FREQ_LEVEL_NUM;
-> +	msg.extra	= 0;
-> +	msg.complete	= 0;
-> +	ret = do_service_request(&msg);
-> +	if (ret < 0)
-> +		return ret;
-> +	max_level = msg.val;
-> +
-
-
-> +	msg.id		= cpu;
-> +	msg.cmd		= CMD_GET_FREQ_BOOST_LEVEL;
-> +	msg.extra	= 0;
-> +	msg.complete	= 0;
-> +	ret = do_service_request(&msg);
-> +	if (ret < 0)
-> +		return ret;
-> +	boost_level = msg.val;
-
-This stuff is repeated a lot, maybe create a generic function for this
-?
-
-> +
-> +	freq_level = min(max_level, FREQ_MAX_LEVEL);
-> +	data = kzalloc(struct_size(data, table, freq_level + 1), GFP_KERNEL);
-
-devm_kzalloc(pdev, ...) ?
-
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < freq_level; i++) {
-> +		msg.id		= cpu;
-> +		msg.info	= FREQ_INFO_TYPE_FREQ;
-> +		msg.cmd		= CMD_GET_FREQ_LEVEL_INFO;
-> +		msg.val		= i;
-> +		msg.complete	= 0;
-> +
-> +		ret = do_service_request(&msg);
-> +		if (ret < 0) {
-> +			kfree(data);
-> +			return ret;
-> +		}
-> +
-> +		data->table[i].frequency = msg.val * KILO;
-> +		data->table[i].driver_data = FREQ_LEV0 + i;
-> +		data->table[i].flags = (i >= boost_level) ? CPUFREQ_BOOST_FREQ : 0;
-> +	}
-> +
-> +	data->table[freq_level].frequency = CPUFREQ_TABLE_END;
-> +	data->table[freq_level].driver_data = FREQ_RESV;
-> +	data->table[freq_level].flags = 0;
-> +
-> +	per_cpu(freq_data, cpu) = data;
-> +
-> +	return 0;
-> +}
-> +
-> +static int loongson3_cpufreq_cpu_init(struct cpufreq_policy *policy)
-> +{
-> +	int ret;
-> +
-> +	if (!cpu_online(policy->cpu))
-
-No need to check this. Core takes care of this already.
-
-> +		return -ENODEV;
-> +
-> +	ret = loongson3_cpufreq_get_freq_table(policy->cpu);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	policy->cur = loongson3_cpufreq_get(policy->cpu);
-> +	policy->cpuinfo.transition_latency = 10000;
-> +	policy->freq_table = per_cpu(freq_data, policy->cpu)->table;
-> +	cpumask_copy(policy->cpus, topology_sibling_cpumask(policy->cpu));
-> +
-> +	if (policy_has_boost_freq(policy)) {
-> +		ret = cpufreq_enable_boost_support();
-> +		if (ret < 0) {
-> +			pr_warn("cpufreq: Failed to enable boost: %d\n", ret);
-> +			return ret;
-> +		}
-> +		loongson3_cpufreq_driver.boost_enabled = true;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int loongson3_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-> +{
-> +	return 0;
-> +}
-
-Just drop the routine, it is optional.
-
-> +
-> +static struct cpufreq_driver loongson3_cpufreq_driver = {
-> +	.name = "loongson3",
-> +	.flags = CPUFREQ_CONST_LOOPS,
-> +	.init = loongson3_cpufreq_cpu_init,
-> +	.exit = loongson3_cpufreq_cpu_exit,
-> +	.verify = cpufreq_generic_frequency_table_verify,
-> +	.target_index = loongson3_cpufreq_target,
-> +	.get = loongson3_cpufreq_get,
-> +	.attr = cpufreq_generic_attr,
-> +};
-> +
-> +static struct platform_device_id cpufreq_id_table[] = {
-> +	{ "loongson3_cpufreq", },
-> +	{ /* sentinel */ }
-> +};
-> +
-
-Remove this blank line please.
-
-> +MODULE_DEVICE_TABLE(platform, cpufreq_id_table);
-> +
-> +static struct platform_driver loongson3_platform_driver = {
-> +	.driver = {
-> +		.name = "loongson3_cpufreq",
-> +	},
-> +	.id_table = cpufreq_id_table,
-> +};
-> +
-> +static int configure_cpufreq_info(void)
-> +{
-> +	int ret;
-> +	union smc_message msg;
-> +
-> +	msg.cmd		= CMD_GET_VERSION;
-> +	msg.extra	= 0;
-> +	msg.complete	= 0;
-> +	ret = do_service_request(&msg);
-> +	if (ret < 0 || msg.val < 0x1)
-> +		return -EPERM;
-> +
-> +	msg.id		= FEATURE_DVFS;
-> +	msg.cmd		= CMD_SET_FEATURE;
-> +	msg.val		= FEATURE_DVFS_ENABLE | FEATURE_DVFS_BOOST;
-> +	msg.extra	= 0;
-> +	msg.complete	= 0;
-> +	ret = do_service_request(&msg);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	return 0;
-> +}
-> +
-> +static int __init cpufreq_init(void)
-> +{
-> +	int i, ret;
-> +
-> +	ret = platform_driver_register(&loongson3_platform_driver);
-> +	if (ret)
-> +		return ret;
-
-What is the use of this platform driver ? I thought the whole purpose
-of the platform device/driver in your case was to probe this driver.
-In that case cpufreq_init() should only be doing above and not the
-below part. The rest should be handled in the probe() function of the
-driver.
-
-> +
-> +	ret = configure_cpufreq_info();
-> +	if (ret)
-> +		goto err;
-> +
-> +	for (i = 0; i < MAX_PACKAGES; i++)
-> +		mutex_init(&cpufreq_mutex[i]);
-
-You don't need this at all.
-
-> +
-> +	ret = cpufreq_register_driver(&loongson3_cpufreq_driver);
-> +	if (ret)
-> +		goto err;
-> +
-> +	pr_info("cpufreq: Loongson-3 CPU frequency driver.\n");
-
-Make this pr_debug if you want.. There is not much use of this for the
-user.
-
-> +
-> +	return 0;
-> +
-> +err:
-> +	platform_driver_unregister(&loongson3_platform_driver);
-> +	return ret;
-> +}
-> +
-> +static void __exit cpufreq_exit(void)
-> +{
-> +	cpufreq_unregister_driver(&loongson3_cpufreq_driver);
-> +	platform_driver_unregister(&loongson3_platform_driver);
-> +}
-> +
-> +module_init(cpufreq_init);
-> +module_exit(cpufreq_exit);
-
-You can just use: module_platform_driver() instead of above functions
-and declarations.
-
-> +
-> +MODULE_AUTHOR("Huacai Chen <chenhuacai@loongson.cn>");
-> +MODULE_DESCRIPTION("CPUFreq driver for Loongson-3 processors");
-> +MODULE_LICENSE("GPL");
-
--- 
-viresh
 
