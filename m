@@ -1,87 +1,86 @@
-Return-Path: <linux-kernel+bounces-228781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 128089166B6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:58:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AA249166B9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCE731F2239B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:58:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C907128CB7D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC9814D280;
-	Tue, 25 Jun 2024 11:58:01 +0000 (UTC)
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1EB152780;
+	Tue, 25 Jun 2024 11:58:05 +0000 (UTC)
+Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 974C414B96D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCE3F14AD24
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719316680; cv=none; b=sE1rAPK2FyYCdtuhrLzpQPGXl7BpTNELUoKLgePmpDfQXi+LA3CYkixI3ZDuXBR7geZTmXuZAyjA8HPHyYR5HLr7aUwWPJ0MgOm+60J+HbIhigAbwi2tgVEhPDK1k9Y/r+Y2ybNsz7pjhCk/Tdcppl+n6dCdjxWiItZY5G8wx74=
+	t=1719316685; cv=none; b=gy6c3Bo3t02O7C4CpC2+BghNMNlQcxRQ6ZFaWqsjwJQKUajDngEqIv6RWmXMlkpisCXQx+5hqJ8qkwccMekGZjtUhFxB+tsaGQsbqbwbeR4eK/C817OpABLcpliGFe0lGTSzqLLZrRXCn91pSJUVN5diGh7Y8wvYv1zc34G8DRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719316680; c=relaxed/simple;
-	bh=qefgQ2G5ufqpvQJb6grWZ8/56m9FStxqeu0exVtC6FY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XPxbPTSNthlXRcsFw7bBf8wLHXBJSUHZQcjsc9A3vNwIiDdCPZkIZD9MDbI+ZdV5qHLrGoIEse35L2GbSJV809MZuH8hzm9DEPHEHf97gMpyy+l9zOP4pJ0DbeJYLZkB2wBvkE5P/3qvtEkACHE5YBM1E08iCd4CCP4DtyZSHRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:4e71:737f:f905:c457])
-	by michel.telenet-ops.be with bizsmtp
-	id fnxq2C0045EKelT06nxqGJ; Tue, 25 Jun 2024 13:57:50 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sM4ny-000Ln0-I8;
-	Tue, 25 Jun 2024 13:57:50 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sM4o1-00AR1V-T1;
-	Tue, 25 Jun 2024 13:57:49 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Marco Felsch <m.felsch@pengutronix.de>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] reset: RESET_IMX8MP_AUDIOMIX should depend on ARCH_MXC
-Date: Tue, 25 Jun 2024 13:57:48 +0200
-Message-Id: <6d8116a56186fbf468229e823c7c8dfcd9488959.1719316665.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719316685; c=relaxed/simple;
+	bh=0f15n8ma0Q9Mpzfd1+X3vqQiq3EkG7Lb13nsN85k3yc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nFTdEtj58ld1Dd6Li8gVtw3tSSGLVpDKQdlkSQEn88RILnEa4BFlKO8HwsSKnLMPuvJ16EfWFunwoF1/KmxtuVsfJH+mD1YIUfrgri+uQjoR+A2Rm0737giT9H5QWGhyU/vZf3iqtC+XxXeYoC7rPl56MeaPhqZ2RWKUD0kMQG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-7e94cac3c71so751617139f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 04:58:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719316683; x=1719921483;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xetq9jceR+ywtf2s5NLXm7q53h6udxfHF1HBrH/NKzE=;
+        b=aygJxDYXkJKosJvkY7vta4BlGHHMq1MXoDCOFbIB0pzWlCEIFmOSTuEcgBLjPv6Bns
+         p1ENc+PFGB+l9JSK1p0T3xWA0iUufGT/nbO8VHv8d19a+LZaow6sHvV6IP+ghTQRZqra
+         3FJj8kO7J0bj2YuNObxH5wKjRUlQgkh5JnVmMeQzVMjxbgBL0jCye7tKWWyc2lvWm4qs
+         BfxPm/NkcqQTFA8gWvQ/nRnOd1gb9iq/Ro6dyI9D5Wgyt3EM7qPfi6pdiNf7SCGNfuUz
+         6R/TuQfRGayQJB+8ZUib4Wl/LPcziXIoWu+hUor1wyP8z9GGqK75DqAzRAQigU4zSfvd
+         tBzw==
+X-Forwarded-Encrypted: i=1; AJvYcCUQx90C9VjXenOSCqVj4KmYRQRFx7ATOnE2ZB6iexLpHsGWIJJCXuLrWBfEZJsJIsxAUyFecABNVGF9q/h2dfOwGcuYMj28Agy0Fjv5
+X-Gm-Message-State: AOJu0YxeqXJX3Vv8LzbCPEKU0iJKq8RD3dUK/JFwuCVyK8Xxd3B2IQdy
+	Yb4kNZBpDufnXeaiRi1nCTwU03gUmQbnig6Xd2SUwWwDfc5Yr3PBbCKSxfhniIg5p2Zm9hWUBI5
+	R5iXJRzJDCFXNdarDHT2U7cbRXswUi3MMOPrmE8mSu9Abdke6lmzUaKw=
+X-Google-Smtp-Source: AGHT+IHy900GyA/6Nh8mg9c2NeWOMmgouP5pIH731lkx8ELXk/A6fc1GOPSre8tDyscasugvkpZFrTRB/MoMxARaZdULUraSEADm
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6638:1688:b0:4b9:13c9:b0fb with SMTP id
+ 8926c6da1cb9f-4b9ecede8f9mr522106173.5.1719316682963; Tue, 25 Jun 2024
+ 04:58:02 -0700 (PDT)
+Date: Tue, 25 Jun 2024 04:58:02 -0700
+In-Reply-To: <20240625104012.2056-1-hdanton@sina.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000250dcc061bb59cf8@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in sk_skb_reason_drop
+From: syzbot <syzbot+f115fcf7e49b2ebc902d@syzkaller.appspotmail.com>
+To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The i.MX8MP AudioMix reset controller is only present on Freescale i.MX8
-SoCs.  Hence add a dependency on ARCH_MXC, to prevent asking the user
-about this driver when configuring a kernel without i.MX SoC support.
+Hello,
 
-Fixes: fe125601d17cc1ea ("reset: imx8mp-audiomix: Add AudioMix Block Control reset driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/reset/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index e59da17ea0b2d620..36cfdb81cd345f94 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -93,6 +93,7 @@ config RESET_IMX7
- 
- config RESET_IMX8MP_AUDIOMIX
- 	tristate "i.MX8MP AudioMix Reset Driver"
-+	depends on ARCH_MXC || COMPILE_TEST
- 	select AUXILIARY_BUS
- 	default CLK_IMX8MP
- 	help
--- 
-2.34.1
+Reported-and-tested-by: syzbot+f115fcf7e49b2ebc902d@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         2ccbdf43 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+console output: https://syzkaller.appspot.com/x/log.txt?x=175a07b6980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1437ab35b9d90e65
+dashboard link: https://syzkaller.appspot.com/bug?extid=f115fcf7e49b2ebc902d
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12f1f389980000
+
+Note: testing is done by a robot and is best-effort only.
 
