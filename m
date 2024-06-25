@@ -1,225 +1,180 @@
-Return-Path: <linux-kernel+bounces-228840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D6C39167AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:25:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1C59167BA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:26:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76CFCB27322
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:24:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1815A1F25599
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:26:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0F38157E78;
-	Tue, 25 Jun 2024 12:23:34 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9690E156F3C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:23:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2C8F158D87;
+	Tue, 25 Jun 2024 12:24:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1B91667DA;
+	Tue, 25 Jun 2024 12:24:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719318214; cv=none; b=EDq/Gbg5PAvHroRueuIzPLuC8JYNTYLuKiyjteT4p2GgQDljBKZGnL4DTf3hXX28+SeCHPtkteZu19DHzSgi+q1DI/Sls6eyxcV7xIIDzwKHQfbDcAtNQ4SMKbQLYW2PanjFzls4ABG5qSHMVq4ROrDkHwTp1ru6gIKr8cqHNKc=
+	t=1719318275; cv=none; b=iRvB8H15P3dBG5m2oejdWbKx8yPxw3WCxyzLGzqlGQvYuPv8M13UYwY9oydV9vp5VEQj02/pEfYDi2q9XaUYoBVmdXoiVDBYBdCy17S/tQsR1gqwdEFiPNuAhquQiAzUAw+pqm2bqy+m6a4feEkKjdqD4AqtedxqlOjI/j4SPII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719318214; c=relaxed/simple;
-	bh=fLNGKEeUcyj8W09Kxqed9HSBb7f/vmOQ3U8CdiDNSXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LkyPTqGR0Nay0vXbMfs/9xbaI3tZcgEWXSox3hUZ/FMdZPpuBKxXqWP6w2dlLOZBsSfUSEcjBterjOuFjlMzU9WkdNsktXczMSgoDtIvv2URKn8O578JUzBnD/+gljw/3vhJrWGuA0pkofmdVJgh4CGudpwQn8VuVyyULn+wnTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4W7kQz2cbWz1j5kH;
-	Tue, 25 Jun 2024 20:19:23 +0800 (CST)
-Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
-	by mail.maildlp.com (Postfix) with ESMTPS id 576A8140381;
-	Tue, 25 Jun 2024 20:23:22 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 25 Jun 2024 20:23:21 +0800
-Message-ID: <99aa61b6-afc9-445f-8f50-1e017450efd1@huawei.com>
-Date: Tue, 25 Jun 2024 20:23:20 +0800
+	s=arc-20240116; t=1719318275; c=relaxed/simple;
+	bh=/rRCtskBhXeBwcbcNVT7TAc07rOolkzrAOHf7Do32aQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NsB/19HSGUoDD/urinWhtucz4gLcQcftTGGM0f7+kFPWYX9vgI9c9IXTbXCiWntVEa9e0Y3qbGwYBpO3blPQTxZK6BdgCaw+NJcoRvlfmEAKf/FSWE43QoWkDnVUqrA7U+qkhRDZvlTnM8ne3ksQh3y5Zx2pbKXP4JJN1pCOqoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE051339;
+	Tue, 25 Jun 2024 05:24:56 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.41.12])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id F04E83F766;
+	Tue, 25 Jun 2024 05:24:26 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: shuah@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	Catalin.Marinas@arm.com,
+	will@kernel.org
+Cc: broonie@kernel.org,
+	ryan.roberts@arm.com,
+	rob.herring@arm.com,
+	mark.rutland@arm.com,
+	linux@armlinux.org.uk,
+	suzuki.poulose@arm.com,
+	Anshuman.Khandual@arm.com,
+	aneesh.kumar@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v3 0/9] A new selftests/ directory for arm compatibility testing
+Date: Tue, 25 Jun 2024 17:53:59 +0530
+Message-Id: <20240625122408.1439097-1-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 18/18] arm64/mm: Automatically fold contpte mappings
-Content-Language: en-US
-To: Baolin Wang <baolin.wang@linux.alibaba.com>, Ryan Roberts
-	<ryan.roberts@arm.com>, Catalin Marinas <catalin.marinas@arm.com>, Will
- Deacon <will@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier
-	<maz@kernel.org>, James Morse <james.morse@arm.com>, Andrey Ryabinin
-	<ryabinin.a.a@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, Matthew
- Wilcox <willy@infradead.org>, Mark Rutland <mark.rutland@arm.com>, David
- Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>, Zi Yan
-	<ziy@nvidia.com>, Barry Song <21cnbao@gmail.com>, Alistair Popple
-	<apopple@nvidia.com>, Yang Shi <shy828301@gmail.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin"
-	<hpa@zytor.com>, "Yin, Fengwei" <fengwei.yin@intel.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <x86@kernel.org>,
-	<linuxppc-dev@lists.ozlabs.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240215103205.2607016-1-ryan.roberts@arm.com>
- <20240215103205.2607016-19-ryan.roberts@arm.com>
- <1285eb59-fcc3-4db8-9dd9-e7c4d82b1be0@huawei.com>
- <8d57ed0d-fdd0-4fc6-b9f1-a6ac11ce93ce@arm.com>
- <018b5e83-789e-480f-82c8-a64515cdd14a@huawei.com>
- <b75aa60d-e058-4b5c-877a-9c0cd295e96f@linux.alibaba.com>
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <b75aa60d-e058-4b5c-877a-9c0cd295e96f@linux.alibaba.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf100008.china.huawei.com (7.185.36.138)
 
+This series introduces the selftests/arm directory, which tests 32 and
+64-bit kernel compatibility with 32-bit ELFs running on the Aarch platform.
+The need for this bucket of tests is that 32 bit applications built on
+legacy ARM architecture must not break on the new Aarch64 platforms and
+the 64-bit kernel. The kernel must emulate the data structures, system
+calls and the registers according to Aarch32, when running a 32-bit
+process; this directory fills that testing requirement.
 
+One may find similarity between this directory and selftests/arm64; it is
+advisable to refer to that since a lot has been pulled from there itself.
 
-On 2024/6/25 15:23, Baolin Wang wrote:
-> 
-> 
-> On 2024/6/25 11:16, Kefeng Wang wrote:
->>
->>
->> On 2024/6/24 23:56, Ryan Roberts wrote:
->>> + Baolin Wang and Yin Fengwei, who maybe able to help with this.
->>>
->>>
->>> Hi Kefeng,
->>>
->>> Thanks for the report!
->>>
->>>
->>> On 24/06/2024 15:30, Kefeng Wang wrote:
->>>> Hi Ryan,
->>>>
->>>> A big regression on page-fault3("Separate file shared mapping page
->>>> fault") testcase from will-it-scale on arm64, no issue on x86,
->>>>
->>>> ./page_fault3_processes -t 128 -s 5
->>>
->>> I see that this program is mkstmp'ing a file at 
->>> "/tmp/willitscale.XXXXXX". Based
->>> on your description, I'm inferring that /tmp is backed by ext4 with 
->>> your large
->>> folio patches enabled?
->>
->> Yes, mount /tmp by ext4, sorry to forget to mention that.
->>
->>>
->>>>
->>>> 1) large folio disabled on ext4:
->>>>     92378735
->>>> 2) large folio  enabled on ext4 +  CONTPTE enabled
->>>>     16164943
->>>> 3) large folio  enabled on ext4 +  CONTPTE disabled
->>>>     80364074
->>>> 4) large folio  enabled on ext4 +  CONTPTE enabled + large folio 
->>>> mapping enabled
->>>> in finish_fault()[2]
->>>>     299656874
->>>>
->>>> We found *contpte_convert* consume lots of CPU(76%) in case 2),
->>>
->>> contpte_convert() is expensive and to be avoided; In this case I 
->>> expect it is
->>> repainting the PTEs with the PTE_CONT bit added in, and to do that it 
->>> needs to
->>> invalidate the tlb for the virtual range. The code is there to mop up 
->>> user space
->>> patterns where each page in a range is temporarily made RO, then 
->>> later changed
->>> back. In this case, we want to re-fold the contpte range once all 
->>> pages have
->>> been serviced in RO mode.
->>>
->>> Of course this path is only intended as a fallback, and the more 
->>> optimium
->>> approach is to set_ptes() the whole folio in one go where possible - 
->>> kind of
->>> what you are doing below.
->>>
->>>> and disappeared
->>>> by following change[2], it is easy to understood the different 
->>>> between case 2)
->>>> and case 4) since case 2) always map one page
->>>> size, but always try to fold contpte mappings, which spend a lot of
->>>> time. Case 4) is a workaround, any other better suggestion?
->>>
->>> See below.
->>>
->>>>
->>>> Thanks.
->>>>
->>>> [1] https://github.com/antonblanchard/will-it-scale
->>>> [2] enable large folio mapping in finish_fault()
->>>>
->>>> diff --git a/mm/memory.c b/mm/memory.c
->>>> index 00728ea95583..5623a8ce3a1e 100644
->>>> --- a/mm/memory.c
->>>> +++ b/mm/memory.c
->>>> @@ -4880,7 +4880,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->>>>           * approach also applies to non-anonymous-shmem faults to 
->>>> avoid
->>>>           * inflating the RSS of the process.
->>>>           */
->>>> -       if (!vma_is_anon_shmem(vma) || 
->>>> unlikely(userfaultfd_armed(vma))) {
->>>> +       if (unlikely(userfaultfd_armed(vma))) {
->>>
->>> The change to make finish_fault() handle multiple pages in one go are 
->>> new; added
->>> by Baolin Wang at [1]. That extra conditional that you have removed 
->>> is there to
->>> prevent RSS reporting bloat. See discussion that starts at [2].
->>>
->>> Anyway, it was my vague understanding that the fault around mechanism
->>> (do_fault_around()) would ensure that (by default) 64K worth of pages 
->>> get mapped
->>> together in a single set_ptes() call, via filemap_map_pages() ->
->>> filemap_map_folio_range(). Looking at the code, I guess fault around 
->>> only
->>> applies to read faults. This test is doing a write fault.
->>>
->>> I guess we need to do a change a bit like what you have done, but 
->>> also taking
->>> into account fault_around configuration?
-> 
-> For the writable mmap() of tmpfs, we will use mTHP interface to control 
-> the size of folio to allocate, as discussed in previous meeting [1], so 
-> I don't think fault_around configuration will be helpful for tmpfs.
+The mm directory includes a test for checking 4GB limit of the virtual
+address space of a process.
 
-Yes, tmpfs is different from ext4.
+The signal directory contains two tests, following a common theme: mangle
+with arm_cpsr, dumped by the kernel to user space while invoking the signal
+handler; kernel must spot this illegal attempt and terminate the program by
+SEGV.
 
-> 
-> For other filesystems, like ext4, I did not found the logic to determin 
-> what size of folio to allocate in writable mmap() path (Kefeng, please 
-> correct me if I missed something). If there is a control like mTHP, we 
-> can rely on that instead of 'fault_around'?
+The elf directory includes a test for checking the 32-bit status of the ELF.
 
-For ext4 or most filesystems, the folio is allocated from filemap_fault(),
-we don't have explicit interface like mTHP to control the folio size.
+The abi directory includes two ptrace tests, in the first, a 32-bit parent
+debugs a 32-bit child, and in the second, a 64-bit parent debugs a 32-bit
+child. The second test will be skipped when running on a 32-bit kernel.
 
+Credits to Mark Brown for suggesting this work.
 
-> 
-> [1] 
-> https://lore.kernel.org/all/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com/
-> 
->> Yes, the current changes is not enough, I hint some issue and still 
->> debugging, so our direction is trying to map large folio for 
->> do_shared_fault(), right?
-> 
-> I think this is the right direction to do. I add this 
-> '!vma_is_anon_shmem(vma)' conditon to gradually implement support for 
-> large folio mapping buidling, especially for writable mmap() support in 
-> tmpfs.
-> 
->>> [1]
->>> https://lore.kernel.org/all/3a190892355989d42f59cf9f2f98b94694b0d24d.1718090413.git.baolin.wang@linux.alibaba.com/
->>> [2] 
->>> https://lore.kernel.org/linux-mm/13939ade-a99a-4075-8a26-9be7576b7e03@arm.com/
+Testing:
+The series has been tested on the Aarch64 kernel. For the Aarch32 kernel,
+I used qemu-system-arm with machine 'vexpress-a15', along with a buildroot
+rootfs; the individual statically built tests pass on that, but building
+the entire test suite on that remains untested, due to my lack of
+experience with qemu and rootfses.
+Since I have done some changes in selftests/arm64, I have tested that
+those tests do not break.
+
+v2->v3:
+ - mm, elf: Split into multiple testcases
+ - Eliminate copying in signal/ using ifdeffery and pulling from selftests/arm64
+ - Delete config file, since it does not make sense for testing a 32-bit kernel
+ - Split ptrace in selftests/arm64, and pull some stuff from there
+ - Add abi tests containing ptrace and ptrace_64
+ - Fix build warnings in selftests/arm64 (can be applied independent of this series)
+
+v1->v2:
+ - Formatting changes
+ - Add .gitignore files and config file
+
+v1:
+ - https://lore.kernel.org/all/20240405084410.256788-1-dev.jain@arm.com/
+
+Dev Jain (9):
+  selftests/arm: Add mm test
+  selftests/arm: Add elf test
+  selftests: arm, arm64: Use ifdeffery to pull signal infrastructure
+  selftests/arm: Add signal tests
+  selftests/arm64: Fix build warnings for ptrace
+  selftests/arm64: Split ptrace, use ifdeffery
+  selftests/arm: Add ptrace test
+  selftests/arm: Add ptrace_64 test
+  selftests: Add build infrastructure along with README
+
+ tools/testing/selftests/Makefile              |   1 +
+ tools/testing/selftests/arm/Makefile          |  56 ++++++++
+ tools/testing/selftests/arm/README            |  32 +++++
+ tools/testing/selftests/arm/abi/.gitignore    |   4 +
+ tools/testing/selftests/arm/abi/Makefile      |  26 ++++
+ tools/testing/selftests/arm/abi/ptrace.c      |  82 +++++++++++
+ tools/testing/selftests/arm/abi/ptrace.h      |  57 ++++++++
+ tools/testing/selftests/arm/abi/ptrace_64.c   |  91 ++++++++++++
+ .../selftests/arm/abi/trivial_32bit_program.c |  14 ++
+ tools/testing/selftests/arm/elf/.gitignore    |   2 +
+ tools/testing/selftests/arm/elf/Makefile      |   6 +
+ tools/testing/selftests/arm/elf/parse_elf.c   |  77 ++++++++++
+ tools/testing/selftests/arm/mm/.gitignore     |   2 +
+ tools/testing/selftests/arm/mm/Makefile       |   6 +
+ tools/testing/selftests/arm/mm/compat_va.c    |  89 ++++++++++++
+ tools/testing/selftests/arm/signal/.gitignore |   3 +
+ tools/testing/selftests/arm/signal/Makefile   |  30 ++++
+ .../selftests/arm/signal/test_signals.c       |   2 +
+ .../selftests/arm/signal/test_signals.h       |   2 +
+ .../selftests/arm/signal/test_signals_utils.c |   2 +
+ .../selftests/arm/signal/test_signals_utils.h |   2 +
+ .../testcases/mangle_cpsr_invalid_aif_bits.c  |  33 +++++
+ .../mangle_cpsr_invalid_compat_toggle.c       |  29 ++++
+ tools/testing/selftests/arm64/abi/ptrace.c    | 121 ++--------------
+ tools/testing/selftests/arm64/abi/ptrace.h    | 135 ++++++++++++++++++
+ .../selftests/arm64/signal/test_signals.h     |  12 ++
+ .../arm64/signal/test_signals_utils.c         |  51 +++++--
+ .../arm64/signal/test_signals_utils.h         |   3 +
+ 28 files changed, 850 insertions(+), 120 deletions(-)
+ create mode 100644 tools/testing/selftests/arm/Makefile
+ create mode 100644 tools/testing/selftests/arm/README
+ create mode 100644 tools/testing/selftests/arm/abi/.gitignore
+ create mode 100644 tools/testing/selftests/arm/abi/Makefile
+ create mode 100644 tools/testing/selftests/arm/abi/ptrace.c
+ create mode 100644 tools/testing/selftests/arm/abi/ptrace.h
+ create mode 100644 tools/testing/selftests/arm/abi/ptrace_64.c
+ create mode 100644 tools/testing/selftests/arm/abi/trivial_32bit_program.c
+ create mode 100644 tools/testing/selftests/arm/elf/.gitignore
+ create mode 100644 tools/testing/selftests/arm/elf/Makefile
+ create mode 100644 tools/testing/selftests/arm/elf/parse_elf.c
+ create mode 100644 tools/testing/selftests/arm/mm/.gitignore
+ create mode 100644 tools/testing/selftests/arm/mm/Makefile
+ create mode 100644 tools/testing/selftests/arm/mm/compat_va.c
+ create mode 100644 tools/testing/selftests/arm/signal/.gitignore
+ create mode 100644 tools/testing/selftests/arm/signal/Makefile
+ create mode 100644 tools/testing/selftests/arm/signal/test_signals.c
+ create mode 100644 tools/testing/selftests/arm/signal/test_signals.h
+ create mode 100644 tools/testing/selftests/arm/signal/test_signals_utils.c
+ create mode 100644 tools/testing/selftests/arm/signal/test_signals_utils.h
+ create mode 100644 tools/testing/selftests/arm/signal/testcases/mangle_cpsr_invalid_aif_bits.c
+ create mode 100644 tools/testing/selftests/arm/signal/testcases/mangle_cpsr_invalid_compat_toggle.c
+ create mode 100644 tools/testing/selftests/arm64/abi/ptrace.h
+
+-- 
+2.39.2
+
 
