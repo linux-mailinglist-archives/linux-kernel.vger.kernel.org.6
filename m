@@ -1,131 +1,152 @@
-Return-Path: <linux-kernel+bounces-228233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127EB915D1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:01:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8DA915D1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF5562832DA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:01:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2558A1C212DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED0048781;
-	Tue, 25 Jun 2024 03:01:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC3543ACC;
+	Tue, 25 Jun 2024 03:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rSn1R8Jf"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KHafoOKd"
+Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D981943AB2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:01:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD15212B93
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:05:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719284476; cv=none; b=ObYq6q2ZsHfLFjKPdrX1doJ1Cjx0FnVqV+XqYBRgRZvRaWQoEcR2gbu7O1ATqbo9FAjEXUda5rKC35khdInZ1qwG+hJC3g5L2k+c+1d3duq2PLULE17R0auj69eCD5Z+tbLEnU8mUJ/qZU/9frNtL6Fx0fsHTS+/MJoVaC6cjzg=
+	t=1719284713; cv=none; b=QUPXjkddGoQ4rKL1Bs9BTDR26aoEyXX2wdev801DfwaGvimwTz1lGPT4LkL2/EeN4OvBBWkG2Q7wHRdt54BmA2JSJQc25JE6IH/xodsLeG/x4RdBYaB1IgxD+Hee2a3bWLn8RPgH2sxQYXw+4SqNskgeSOQKJ5K/Foi0CTjmioI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719284476; c=relaxed/simple;
-	bh=bnnC/dqrjS4foui7kpRH2jpknYshPmEp6/ETawt0H+0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PVUseI+1hgdqrKNpWuMhRJnirRiMs7+gOcf3fhfarmGfok1iMge7VrucF6tRyb+EAy9mc0JneVb68HU7ORoUCWjPTH8Rqe/e6ivdPsYpMLo6Ts2gEzhiBdcsTUVfPUxVC/YzdhzGIpIQ5heuhG+BmNs2J73W++mT7h4Jqx5sT8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rSn1R8Jf; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fa4b332645so61845ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:01:14 -0700 (PDT)
+	s=arc-20240116; t=1719284713; c=relaxed/simple;
+	bh=XfOFKdE9hUufZU8y6Sa2ZLlLi2R6XOvdzIp9gvD7yAE=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=nAh0RCCCKZjgcDKgwX5hSC3PM9M4jkax2PwXztk7H7TUPFBzfJ/kehS82yj4JVTkK4tU1Hy/AL9O3oLqhmU7utQlr/jaWO6YGLyHoRc0EDXwVoNlfRGvWLXwmS3b0ZAZsdit17rIEFrdx+YHxOYscEZfOc6dfKwlgTtXg5GecNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KHafoOKd; arc=none smtp.client-ip=209.85.160.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25cba5eea69so2414677fac.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:05:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719284474; x=1719889274; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aTjGlVJ1RY73P+Mt+ZETqoUU/1f9b8tlU+jZHRFte7U=;
-        b=rSn1R8JfEYRy8OF18qFxAw/9BdC3wJv6crU7u/eNj2GhhrWHS4NFHfWBz3p+IKguoJ
-         yMk/FfPNmPYoryaMJVWEcmnsLhTTRKmkQj4dUN/mskCg4/ZaNuBZB7gHgrjQE7AdLM60
-         R2TLHodM/1xhDC8H5xmSZiRlwCcuWYj7Cr6+gcxV5eCVHLBBLZxtgi1cvm8DYDMWDmpE
-         ys1deGFvNW5i1Fmqn1w2aZ/q2pM5hAzNzZRqsAhHGV+Nc1+ZtqhcZj9hyz1RfGzaao0+
-         kuWdy5fEAl57H8XJvAmfPAjDmIf9uiFlQUR7TaAjEwNEu88JHtfmYcbqW5dcQe1O662f
-         o1NA==
+        d=bytedance.com; s=google; t=1719284711; x=1719889511; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zyv67PSeQklNr28uKAOt2rKwosz6YdgLMWHbFyWOHQA=;
+        b=KHafoOKdd7nkNIFE5qellh5ppry8477rsUTkKgE4zMpFIbZtKyVHMscKvOAb0qc4S8
+         gYqoQlb22wFq9/uatWAoXvJy9e46XaCm/XdJcvma/hY8w5KDl2epmn2006VrRxIQa1vN
+         r1P2E4CMr/VeY8fxLXb/8murB+Wl7okUzfjVAhs0qFOSkVFfXvW44P1KLA4nYOBfjdXf
+         sVqPGntCYxW/dKnQPH/pZ6Tbhc1FUvXOycf63RaXvCksoQ3FuZI+hELJe+tyopZwvkvO
+         Qw6XQj2wpvHYDhyD9AEKJSiEraR/jG3XgVYKYhX5Aar/shvr0cQUZ8XCvbh+L2j+NSDQ
+         3y5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719284474; x=1719889274;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aTjGlVJ1RY73P+Mt+ZETqoUU/1f9b8tlU+jZHRFte7U=;
-        b=qdYXu9sVhmsWjEm5SSfJ7bYZao1jFuzH+OFmweQb+11eeAYn0RdE+0dxIPJeaMRLB+
-         Jase3qTvvfMkIJr7gyBOl1cCemlxNZ1VZSdf1TMlqN6PVUBVFZ05t3/l1DO53cKUMdjK
-         zMW1dCEIW3D22YBt7JaBrck7DKf1NDTfw/VLWBD5WEMEYAXWNU3aIs0LNnN7zGoemcC4
-         ox7Lb0V7DtmYt7Xh0OfFaMzMZQSIDN/oGXVR+NvnAI4pykcTj399zACD/e/2qvvHKtsi
-         U9RRDIHuXS65EyPOKmmCQssFxmv6ORmuG/2YGjjN8nL7NUb6XXQzYjbwV+bfS0BBrfzc
-         t45Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWWXVFrzUAjDF46GeLUlfPFuVVlsojTZQbvI3ypNq1xmO1CPSrxqaJ5caH+wK276VN3wmNTGis+Aq8pJXQ5iazBzF6QOaCuq+xr3DvA
-X-Gm-Message-State: AOJu0Yz8z2+GfWGuGIsSBDHvYtZERbODmqowNRJtRmWYcUEynuG0F568
-	ap4hjt/AkM3yz46RSs9UfKeG0n9nnHDwtrw8ea9LHfz533O5edLDccuw1i5/YhLl1nKvH/SQjl8
-	UFqCAFc+HQvXt1xymASBlMZqQywJ26HpZ2DgA
-X-Google-Smtp-Source: AGHT+IG9m9BVMYcaMNGS7ztr/o3XHCakZCxiZueHNFuAs779MmAohr1PJ1QYoaUOEda25/VUT+0mAhvoVK0sF9xn49Y=
-X-Received: by 2002:a17:902:8bc8:b0:1f3:2b46:47ce with SMTP id
- d9443c01a7336-1fa6ca7467dmr1134555ad.15.1719284473733; Mon, 24 Jun 2024
- 20:01:13 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719284711; x=1719889511;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Zyv67PSeQklNr28uKAOt2rKwosz6YdgLMWHbFyWOHQA=;
+        b=HFHnSN8Ov18ITJctLlRjYzPTSuhUztKB/2HIeEczq0IHvLurrz1oRa6B0GpMYcySfD
+         EGmyjQltW+hdz5Ry4ht/0q/gQhFNhuDmt/81JV5qPArrPbU1yvOK8ZOv+RK1IvS4aH1B
+         KdQm+ciCEgrf6olcA4zaTUc+GZp3FLcEbYi3coJA3e5FgJy/dqpn1gD+gxFZvoeLvDvd
+         EJMIzyHsOnrMcBtupKdIrWhH+5jyYDQXo1uujB+XpRnuyJfMx+lVAbOgkLoqF3DxbwrF
+         zwTsQBphhVyP9eflymJrIYjIR3pH93Az+JjuXIEU/6xsWsLdkzPo3odXjBZWK7uC1j+X
+         46tw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAU6KMdq2gbcErQqEA2rHlfhD20+EOPV/dkhCr5JROxNxiibm4wb7c4xYz++6LzIoh8PkxRO6LDxuOyvZ9z3P/X5SqP0+ncaexs9ZV
+X-Gm-Message-State: AOJu0YxgDa5t4CLfRWqOqy7z3meyeFdyHvK1e7E5iemf9828Qb6xb7iO
+	nxJHYaVEPUT4ORm3NE+MxRuMxP+g23lfMc1HLEVlCt3/gGJnIsPORw6S1BDyOTE=
+X-Google-Smtp-Source: AGHT+IF/DCn5jWj92MzkN0yS/LWMwk7ZFFRCntu0ONoViUjMQuwNY8dwceKK1l9FQfJHBePotKTjNQ==
+X-Received: by 2002:a05:6870:524c:b0:254:9c46:8877 with SMTP id 586e51a60fabf-25d0168c516mr6589661fac.16.1719284710706;
+        Mon, 24 Jun 2024 20:05:10 -0700 (PDT)
+Received: from L6YN4KR4K9.bytedance.net ([61.213.176.5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065129acc6sm6953329b3a.157.2024.06.24.20.05.07
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 24 Jun 2024 20:05:10 -0700 (PDT)
+From: Yunhui Cui <cuiyunhui@bytedance.com>
+To: paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	cuiyunhui@bytedance.com,
+	andy.chiu@sifive.com,
+	alexghiti@rivosinc.com,
+	conor.dooley@microchip.com,
+	bjorn@rivosinc.com,
+	sorear@fastmail.com,
+	cleger@rivosinc.com,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] riscv: Randomize lower bits of stack address
+Date: Tue, 25 Jun 2024 11:05:02 +0800
+Message-Id: <20240625030502.68988-1-cuiyunhui@bytedance.com>
+X-Mailer: git-send-email 2.39.2 (Apple Git-143)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAN5Drs06fbditeSaVLc6i6wEY+A47HHzQmhCS1rzJgacNs1Tjw@mail.gmail.com>
- <20240624172031.407921-3-yutingtseng@google.com>
-In-Reply-To: <20240624172031.407921-3-yutingtseng@google.com>
-From: Yu-Ting Tseng <yutingtseng@google.com>
-Date: Mon, 24 Jun 2024 20:01:02 -0700
-Message-ID: <CAN5Drs0i7KZHXnrhHRT-KrLs5ZAYGOpixHk-CU=Ah+ycqxkwOQ@mail.gmail.com>
-Subject: Re: [PATCH v3] binder: frozen notification
-To: cmllamas@google.com, tkjos@google.com, gregkh@linuxfoundation.org
-Cc: arve@android.com, maco@android.com, joel@joelfernandes.org, 
-	brauner@kernel.org, surenb@google.com, aliceryhl@google.com, 
-	kernel-team@android.com, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 24, 2024 at 10:22=E2=80=AFAM Yu-Ting Tseng <yutingtseng@google.=
-com> wrote:
->
-> Yu-Ting Tseng (1):
->   binder: frozen notification
->
->  drivers/android/binder.c            | 300 +++++++++++++++++++++++++++-
->  drivers/android/binder_internal.h   |  23 ++-
->  include/uapi/linux/android/binder.h |  35 ++++
->  3 files changed, 354 insertions(+), 4 deletions(-)
->
-> > freeze was allocated with kzalloc(), you could drop the "=3D false".
-> Done.
->
-> > If !node->proc then process is dead. Do we really need to continue?
-> Update the code to return an error early if the process is already dead.
->
-> > This access to node->proc->* doesn't seem safe
-> Added locking.
->
-> > Why do we queue this notification?
-> Yes, this is to get the current state back to userspace. The userspace AP=
-I delivers an initial event for the current state upon a listener registrat=
-ion, which makes it easier to track what the latest state is.
->
-> > I'm looking at the death notification code and it seems it only queues =
-a
-> BR_ERROR after failing to allocate a "death" and that other errors are
-> silently ignored?
-> Sure. Please let me know if you think we need a change here.
->
-> > these could be just bitfields.
-> Done
->
-> > freeze->work.type =3D BINDER_WORK_CLEAR_DEATH_NOTIFICATION
-> Fixed. Working on a userspace test. Will post a link when it's ready.
-New test now included in the aosp patch:
-https://android-review.googlesource.com/c/platform/frameworks/native/+/3070=
-045/6/libs/binder/tests/binderDriverInterfaceTest.cpp
->
-> base-commit: 14d7c92f8df9c0964ae6f8b813c1b3ac38120825
-> --
-> 2.45.2.741.gdbec12cfda-goog
->
+Implement arch_align_stack() to randomize the lower bits
+of the stack address.
+
+Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+---
+ arch/riscv/include/asm/exec.h | 8 ++++++++
+ arch/riscv/kernel/process.c   | 9 +++++++++
+ 2 files changed, 17 insertions(+)
+ create mode 100644 arch/riscv/include/asm/exec.h
+
+diff --git a/arch/riscv/include/asm/exec.h b/arch/riscv/include/asm/exec.h
+new file mode 100644
+index 000000000000..07d9942682e0
+--- /dev/null
++++ b/arch/riscv/include/asm/exec.h
+@@ -0,0 +1,8 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++
++#ifndef __ASM_EXEC_H
++#define __ASM_EXEC_H
++
++extern unsigned long arch_align_stack(unsigned long sp);
++
++#endif	/* __ASM_EXEC_H */
+diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
+index e4bc61c4e58a..e3142d8a6e28 100644
+--- a/arch/riscv/kernel/process.c
++++ b/arch/riscv/kernel/process.c
+@@ -15,6 +15,7 @@
+ #include <linux/tick.h>
+ #include <linux/ptrace.h>
+ #include <linux/uaccess.h>
++#include <linux/personality.h>
+ 
+ #include <asm/unistd.h>
+ #include <asm/processor.h>
+@@ -26,6 +27,7 @@
+ #include <asm/cpuidle.h>
+ #include <asm/vector.h>
+ #include <asm/cpufeature.h>
++#include <asm/exec.h>
+ 
+ #if defined(CONFIG_STACKPROTECTOR) && !defined(CONFIG_STACKPROTECTOR_PER_TASK)
+ #include <linux/stackprotector.h>
+@@ -99,6 +101,13 @@ void show_regs(struct pt_regs *regs)
+ 		dump_backtrace(regs, NULL, KERN_DEFAULT);
+ }
+ 
++unsigned long arch_align_stack(unsigned long sp)
++{
++	if (!(current->personality & ADDR_NO_RANDOMIZE) && randomize_va_space)
++		sp -= get_random_u32_below(PAGE_SIZE);
++	return sp & ~0xf;
++}
++
+ #ifdef CONFIG_COMPAT
+ static bool compat_mode_supported __read_mostly;
+ 
+-- 
+2.20.1
+
 
