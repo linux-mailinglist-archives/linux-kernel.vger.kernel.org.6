@@ -1,115 +1,92 @@
-Return-Path: <linux-kernel+bounces-229516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9891F917060
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:37:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704C991705C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9CD61C2557C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:37:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBC23B21210
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC93D17C7CF;
-	Tue, 25 Jun 2024 18:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF74917A932;
+	Tue, 25 Jun 2024 18:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EEwzxnfX"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="u1TlpRqL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6913417BB2C;
-	Tue, 25 Jun 2024 18:37:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89D8132127;
+	Tue, 25 Jun 2024 18:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719340657; cv=none; b=H6sRSqPwa5N3ZDJyyUW/jv8nz00Bv/AwgEol2X8u2DVYXp9ks3qsCRf3+VaGAw77+D5MWQSBvLsP0uMSLei1+6huVcXgoKxlIqR0AsfAg7CCq9hRtVShcksvtDgwjO5iaCkSKZx7Q7s7i/7E3q/xOfY5WE/OOptHGvG/PI2qrS0=
+	t=1719340642; cv=none; b=dNuRZsORdQniKXNKIriH2W0m3hgK/M70cZrMXzxSNxsB68xTgdwPbF62+pVi5ili/6ZD83r9ges4mt+Pd/DUb9SlPebCI24Q2UlSmMakoKBCoV1IqGC+5HPEQj4i4ZdRCfYT6RqlNwCXNuqjcJAaE4OZSMmeLURVyybIETc23TM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719340657; c=relaxed/simple;
-	bh=BcNPqhdX1Jezx47Nm2DHVvZlt4TXAklF0cVVOknZOAE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
-	 In-Reply-To:Content-Type; b=AXopq2akhrMMw/zrfLu87mo9nCvUVLxDeEi4lUEZFxq6pjvIcPiercUxg/N3uthAwPWkTxldlzqTncajTyLNUSTfeSiAtPGMl80fV+tt3L3TzYgH3SFUMXK0rkPdNCncSGnQCsV1wneXjPRXHZOdfOnO4rehMKRbcIzeJp0UdUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EEwzxnfX; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719340631; x=1719945431; i=markus.elfring@web.de;
-	bh=4FeUMM41rBgZTT/36ibhfoknQQkhU5GwynYwSWPeRUU=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:Cc:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=EEwzxnfXFB9eRWf5Y7/oJ6mX4Sh9+1zSm69ip3KnNTJ5aua1HTfO6tCFLvIps9Gb
-	 iSzBaaFqdetVvULFS8vd+CQ7X+7K8SXc5teDStoy6j+YYYVOuHcUTNmLb/SjieA/2
-	 Mkdvv7I8XIvqEcPV7Nq0vnjjInIxUhDzMoIE9OZlY4C5xq9AJA0i97V/w132ebFXi
-	 XqCzkGFOpRcvZupYP6TBs+U2v00//5liJLfiDKK5m+cUYME8CNL0dsZqfi5sQEhGC
-	 nns8tJY7CI45XmzOOGKrajI0y88IqEU+aV9cka8YyeIjnq297R1EvozU7BHKPEELT
-	 jozLfqne81XFzO8wuw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M1aDp-1sJ8u41eQd-009WO3; Tue, 25
- Jun 2024 20:37:11 +0200
-Message-ID: <1bee6344-cc98-4746-921f-31454a9c3008@web.de>
-Date: Tue, 25 Jun 2024 20:37:09 +0200
+	s=arc-20240116; t=1719340642; c=relaxed/simple;
+	bh=1h4rROOxpCnlElzRIWvA2/kJeM+WjouN22bwU9nLz1s=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=cqiPFxt19xmxAzU9rTylwg1k5VAprOanm4EREQfacoEY+1EgaI60KGxAYiupLZTYCGoB6PMOVoZdd/n068P9phKvFCCYA6MN9f4z6rH518qPvjLzmH0a3Liyy5fjihUre/A5iM3i9igRn1VCxEYSAu5o2MEAXKSNHLeZCG1KnUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=u1TlpRqL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0DB0C32781;
+	Tue, 25 Jun 2024 18:37:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1719340641;
+	bh=1h4rROOxpCnlElzRIWvA2/kJeM+WjouN22bwU9nLz1s=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u1TlpRqL78dZgPhrTAw5P+r9y6/4V6xBYVNNv9k0Rl1NGpihej4QO7wtZqt4BklL0
+	 z0ynv2MCb7D0DLfXz5/AHoAT8M+QWZMDrO0lELqXTB6R8WDaH4+h7ouYjw+vArgkge
+	 pah1TG1ondChQkaJY88ARyFz1udcI0vIfXT9Nd/4=
+Date: Tue, 25 Jun 2024 11:37:20 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Gavin Shan <gshan@redhat.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, david@redhat.com, djwong@kernel.org,
+ willy@infradead.org, hughd@google.com, torvalds@linux-foundation.org,
+ zhenyzha@redhat.com, shan.gavin@gmail.com
+Subject: Re: [PATCH 0/4] mm/filemap: Limit page cache size to that supported
+ by xarray
+Message-Id: <20240625113720.a2fa982b5cb220b1068e5177@linux-foundation.org>
+In-Reply-To: <20240625090646.1194644-1-gshan@redhat.com>
+References: <20240625090646.1194644-1-gshan@redhat.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net PATCH 2/7] octeontx2-af: Fix klockwork issues in
- mcs_rvu_if.c
-To: Suman Ghosh <sumang@marvell.com>, netdev@vger.kernel.org
-References: <20240625173350.1181194-1-sumang@marvell.com>
- <20240625173350.1181194-4-sumang@marvell.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jerin Jacob <jerinj@marvell.com>, Eric Dumazet <edumazet@google.com>,
- Geethasowjanya Akula <gakula@marvell.com>,
- Hariprasad Kelam <hkelam@marvell.com>, Linu Cherian <lcherian@marvell.com>,
- Paolo Abeni <pabeni@redhat.com>,
- Subbaraya Sundeep Bhatta <sbhatta@marvell.com>,
- Sunil Goutham <sgoutham@marvell.com>
-In-Reply-To: <20240625173350.1181194-4-sumang@marvell.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:gjsARz0OXTzGo09X+uY9zbdeX+i9ULc5X99l7Y26zZmPNTkqT9X
- ounZnHSvO/ZJ8BFJ/y8p+fV0tFzsA4npi6M71NXHrmuXaFviMZnCQf70rYhYMje6jDl4FYC
- troS5BHz0JYtaFu7EkrZxJKCauK08ZZ7/O5N7fzzVLmnc9edLZjG72lWrqiJau0Ge4PNGx6
- uE/VpS4YP85Aoh6oZoG9g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:G4ISI3yF0CQ=;HVZzIVT24a58uqzOjvHPMI7ckAs
- leN1ngfHBbKVFuWv9Ce3UgCzW/F9VCVTHfMKvSjYI2lM41nSJe5RgjIhvUpZLXde9COtwHnCM
- v/vwOA0PQra2aNkRxATwyTw4LDYH9zay27VSz773nMQEBK2Src9nXACg+NqfVkLQQ7veFUoMk
- f+uwfpcpvLlmWqiB3LvcvyVmyGTsKm/r2/iO/1N0AElSGS/SAIUiwsF0o2Co5fwfNLDn5S4Cj
- Ew36PWr9gZz7fhhnqVPZw45OSpHC75+fnYlEAnNQNx3QhLu1+Vgb4yBGim096jIj41VUPPCQn
- j4QROYkxMn3TVgcieMgX50uFygDPybRamb3ckXC4MsPeOR7aiD7K9X4RPQEmYnnMgSC9DUojm
- x2Nki7kPlzPrgAXax2TcMDEVgn9yBT4ukUMWGzq+X36lBVen++grnutp3gvzBOJIi+NqPqKzp
- pkbPiMcbfpO4rWpHEkew9qEmBSZwRXedxTmobCmtleiPHTvwNAXal91c7/yNooIzZEjOVtoNv
- VzDi27Bkz0feSWPhOPa5t+3ZdNEFJcpPQj3S5pEaZXV6JLzJ9SyhYk4zcLlG+c83uWxl1p9fj
- VUio6bDEqZnsZBXYiFzsoTIpiloEWhhqTQm5HTQNnTF/2I3GLX4JA91HF8P5RwMgU+DDO0PBS
- 5BmY6Uy60RuibJfnqyoErCJUvPTRCPVbjaaao/os1krJlqLMnXhjFmb+lECZAefepzuXSg5cF
- c5gOKvPDRZTI/XlxjclTBPhRMzwml0WICnMk53Te59v40nlt3z1yT/N5s7VMt87HoqiNGntpS
- VzpW15iBXirGJSq8wxC2jvtPhSPlzD1q/PUYqDnIxcI3E=
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> These are not real issues but sanity checks.
-=E2=80=A6
+On Tue, 25 Jun 2024 19:06:42 +1000 Gavin Shan <gshan@redhat.com> wrote:
 
-* Did the mentioned source code analysis tool present more detailed report=
-s
-  and special development views?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc5#n45
+> Currently, xarray can't support arbitrary page cache size. More details
+> can be found from the WARN_ON() statement in xas_split_alloc(). In our
+> test whose code is attached below, we hit the WARN_ON() on ARM64 system
+> where the base page size is 64KB and huge page size is 512MB. The issue
+> was reported long time ago and some discussions on it can be found here
+> [1].
+> 
+> [1] https://www.spinics.net/lists/linux-xfs/msg75404.html 
+> 
+> In order to fix the issue, we need to adjust MAX_PAGECACHE_ORDER to one
+> supported by xarray and avoid PMD-sized page cache if needed. The code
+> changes are suggested by David Hildenbrand.
+> 
+> PATCH[1] adjusts MAX_PAGECACHE_ORDER to that supported by xarray
+> PATCH[2-3] avoids PMD-sized page cache in the synchronous readahead path
+> PATCH[4] avoids PMD-sized page cache for shmem files if needed
 
-* You accidentally overlooked to specify a corresponding version identific=
-ation
-  in the message subject, didn't you?
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/submitting-patches.rst?h=3Dv6.10-rc5#n668
+Questions on the timing of these.
 
+1&2 are cc:stable whereas 3&4 are not.
 
-Regards,
-Markus
+I could split them and feed 1&2 into 6.10-rcX and 3&4 into 6.11-rc1.  A
+problem with this approach is that we're putting a basically untested
+combination into -stable: 1&2 might have bugs which were accidentally
+fixed in 3&4.  A way to avoid this is to add cc:stable to all four
+patches.
+
+What are your thoughts on this matter?
 
