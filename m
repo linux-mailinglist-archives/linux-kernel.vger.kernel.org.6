@@ -1,46 +1,55 @@
-Return-Path: <linux-kernel+bounces-228439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CCC6915FEF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:24:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE293915FF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:24:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B2921C208C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:24:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D72EF1C20A1F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:24:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D2B146A77;
-	Tue, 25 Jun 2024 07:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5719C146A96;
+	Tue, 25 Jun 2024 07:24:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="AlUPuc2F"
-Received: from out30-118.freemail.mail.aliyun.com (out30-118.freemail.mail.aliyun.com [115.124.30.118])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wudPUnsY"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB2A73463
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.118
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E9D1465B4;
+	Tue, 25 Jun 2024 07:24:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719300238; cv=none; b=pNH/cgqI1FecLqbiamAfSENOabqc9IUDXHGH7jXQ0n2PpoIk8MIaeXfDYA6nrZqU+Vok0g6ekPo9OztoH/P/dYMBs/20OwZtKRUhonsEd3js/3HIRXxvkWhswv9kIhJnILWDSk65DuHkRT/pDSmTskjExjjbNWREXkughpIx3Qk=
+	t=1719300274; cv=none; b=Dr2SNklTWET8TxGhk2WY25qLHZuC1utGu0LPvqRLYFZAmA4N2z6jaP5Yu2qVmLdC6EveFetGHHqexy1bNqQiRhjZx+T0X+evMVv0EGwYWcEtSpfFZ/JZS1nlAseG6zRs6cpqp5mO89xoOc2FxM+G6POhBVORH5MhFUHk5Op3Y78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719300238; c=relaxed/simple;
-	bh=2mDqnhILabi8G3USJRb9Kjk+v31nuMm5Jo65LqpdrX8=;
+	s=arc-20240116; t=1719300274; c=relaxed/simple;
+	bh=mRvFVyvVyYCA41TPZ3NZn7mVrf3EpsO19RlK9j6iwQI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MajwgLauDHRik+dD0/AwLSOnZjUeZ+cokPAHKD5Vkv+WgyjoPd69ERhq4fJomTXJPWfkey1LkjyKugjOyUGfCEF9aHYz41RnSmJWTKBq0FUEgIEo2eQWEXJRNvM2rFEmR3NlElpxOTYS3Ii/+F4VfxitofweugbKX+JeFRRPOGA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=AlUPuc2F; arc=none smtp.client-ip=115.124.30.118
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1719300227; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=EpL1ML1Qxvyo0PZnVzDkzwJfmB9IWGcUzOTkk3cp7eY=;
-	b=AlUPuc2FZtK/h/0iByJs9Hdd5Crj7IsksSYDZC+gFhe1gli/7bhIlt+ByktyxY+A0vTgIeFtCokCwU3pUV5U89RgmzDtFBgcsYuV0FZBr6EwBNwD/iXvMCqQ1puyMZzMHP2U0bDc2OqI4ZBHcoGL7o3RvW96xJyjwtlvf5lzZQ8=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R141e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067111;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=28;SR=0;TI=SMTPD_---0W9EwpXj_1719300224;
-Received: from 30.97.56.75(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9EwpXj_1719300224)
-          by smtp.aliyun-inc.com;
-          Tue, 25 Jun 2024 15:23:45 +0800
-Message-ID: <b75aa60d-e058-4b5c-877a-9c0cd295e96f@linux.alibaba.com>
-Date: Tue, 25 Jun 2024 15:23:43 +0800
+	 In-Reply-To:Content-Type; b=QCTzYlz/N8+TT3dPZ4wifg6G8ZKef2QbK/nwvweeqj/z6SE8eA2MSkCpVxXUICggxzRiQnQEamp70fnp7i+BxkcI4dNIVmvzbSsFIH1b/fWLlvt6TPYLxfVttviBrVdep8OV7c/TnGAiLWg9yE5ZS972OjvtXN962gtEDRywasA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wudPUnsY; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719300259; x=1719905059; i=markus.elfring@web.de;
+	bh=yvtjxpM7bpCaDgBj5p/L3xBN/x/zlwPE6yFAfHbQXso=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=wudPUnsYLOmfOK9BNcxAC9yaVT3mS0T7l0tw+ha64sOWaboyIP4+oy1ZRQ5mci/r
+	 8yhkfmJFUjVPpfj8FPBcS0wXsv5gb3ZImQuFIDQDnX170ypB9ccRFrXCmb19VRtG8
+	 uPK7xWmtY6WuWEdiKX5uCuHJmmfOISTXIgAfw/PWkuA/nj6HFXoaJmuzR7Yb/4NUD
+	 AxfF+13kOfDYx0PpctHmoD5SMgCd9My/e5rsFIteMym9J9krFLJx0BP3h86/X0Ugl
+	 WOAC2lwF570VpucH67St38zFLf6c2z9allMKoCnh+uyqkC6w0NOVSEmc8HxhE3pid
+	 nltbEWuPquBTlgJeTw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MPKFD-1rz72U2r2T-00Rz17; Tue, 25
+ Jun 2024 09:24:19 +0200
+Message-ID: <c5fd03df-3ab3-4258-949a-fc85aebb842a@web.de>
+Date: Tue, 25 Jun 2024 09:24:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -48,344 +57,85 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 18/18] arm64/mm: Automatically fold contpte mappings
-To: Kefeng Wang <wangkefeng.wang@huawei.com>,
- Ryan Roberts <ryan.roberts@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
- James Morse <james.morse@arm.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Mark Rutland <mark.rutland@arm.com>,
- David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>,
- Zi Yan <ziy@nvidia.com>, Barry Song <21cnbao@gmail.com>,
- Alistair Popple <apopple@nvidia.com>, Yang Shi <shy828301@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, "Yin, Fengwei" <fengwei.yin@intel.com>
-Cc: linux-arm-kernel@lists.infradead.org, x86@kernel.org,
- linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240215103205.2607016-1-ryan.roberts@arm.com>
- <20240215103205.2607016-19-ryan.roberts@arm.com>
- <1285eb59-fcc3-4db8-9dd9-e7c4d82b1be0@huawei.com>
- <8d57ed0d-fdd0-4fc6-b9f1-a6ac11ce93ce@arm.com>
- <018b5e83-789e-480f-82c8-a64515cdd14a@huawei.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <018b5e83-789e-480f-82c8-a64515cdd14a@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v2] s390/netiucv: handle memory allocation failure in
+ conn_action_start()
+To: Yunseong Kim <yskelg@gmail.com>, linux-s390@vger.kernel.org,
+ netdev@vger.kernel.org, Alexander Gordeev <agordeev@linux.ibm.com>,
+ Alexandra Winter <wintera@linux.ibm.com>,
+ =?UTF-8?Q?Christian_Borntr=C3=A4ger?= <borntraeger@linux.ibm.com>,
+ Heiko Carstens <hca@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ Thorsten Winkler <twinkler@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, MichelleJin <shjy180909@gmail.com>
+References: <20240625024819.26299-2-yskelg@gmail.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240625024819.26299-2-yskelg@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:AiRcrO6AwaGJoZh2E6gmZ5n+xNMzlOc+OpqOHMv1hVO7We2AXq1
+ +KBFhoWL78zRzddalhoEya/vg58C5i7q7ufzcBk4bOIr/nTp70bYJ1ueSjVueCdH7oNbcFn
+ C7kJFJKQMDUxWl/HnVfOh8gMcERztUICXkzap1LIrnFotUtL5XjfaHRyLQMgOBm9LXCobkP
+ c/jiWSJPfuZ0AY1iWaVaQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:IqMhFaV1PhE=;aWGpnyBRXMEHYUll37WExiI/aU6
+ HfTJl+m83I4uFTSo71FEJ5n/zzZwu4LGOhRIY5Ayj+ZFXqu5ZibBoFzx3a7Le5O+hHoxdTRth
+ auEqYCKEyeYH03sQu/KKnQ3haR1AJU3Z5nixxvZm6KYtJy+kA33M1IVjLmXM8kROuYhLdoz1n
+ jIoD5M4Gzo45Dv+e+iI26XIqd3DBVu879WBgyyLHaxtJJBB4c9hmKD+x1xHBmbbvcWqmR6g4s
+ vwxxg3lG8N0jJ0dio/AjLQE9Kwj9SqeljJ0vsMSjuBbSCXAAKBQ2eKgp0DPjobtbewuI2dz6r
+ TM61l54REH1o7sB7WiV3T76wE3wYN/H7Ll8GTY0hUgD7Cnf5297rNbTpCfGwOh1P10KaEiWmh
+ 6blUKWskkgkNbCaeUfXZ6x45K+srA3auj7wO6naVgeenUuXD1G1XTMvGWjevLnaBp5P16OEuh
+ EmjSQwMDfBIlvG/Lsk8GHfM2C/lijuUEByH/pfMg2xmV5ORx9RvlouTO/GP3kAPerathOwauW
+ xWKtlvmIMUjAFEISQkG/D3sX8+Jk1X1oWwwbPtCbXY/skXnopriBjMhtMy7zB7Wb+ugJLo1K/
+ NTzZpWruETm5GSFHv0DgLM/KUUVNd0ln14V+8uotMEg5eQ2WURFg5GEgjVrayGVuGwjHN14vI
+ hE8PjsCsyWdrGzYIVDqWL+vxbqTmO6xF8VilV2+pVJDdglEOarL9J6h75Ez3/xempLDWEw6JE
+ kY8pUFvQneFdv4uDpaf11UNYb/MAvdg5g9tdgmkvSlGo4RPchNh7XqltOYGZ/CvGqEHJi/2R5
+ gmGBJb4rHWBf1mFy9KsE05h+GcAQcgNzkE4YEa3fOZaqk=
+
+> =E2=80=A6 Thus add a corresponding return value
+
+I suggest to move this sentence into a subsequent text line.
 
 
+>      =E2=80=A6 This prevent null pointer dereferenced kernel panic when =
+memory
+> exhausted situation with the netiucv driver operating as an FSM state
+> in "conn_action_start".
 
-On 2024/6/25 11:16, Kefeng Wang wrote:
-> 
-> 
-> On 2024/6/24 23:56, Ryan Roberts wrote:
->> + Baolin Wang and Yin Fengwei, who maybe able to help with this.
->>
->>
->> Hi Kefeng,
->>
->> Thanks for the report!
->>
->>
->> On 24/06/2024 15:30, Kefeng Wang wrote:
->>> Hi Ryan,
->>>
->>> A big regression on page-fault3("Separate file shared mapping page
->>> fault") testcase from will-it-scale on arm64, no issue on x86,
->>>
->>> ./page_fault3_processes -t 128 -s 5
->>
->> I see that this program is mkstmp'ing a file at 
->> "/tmp/willitscale.XXXXXX". Based
->> on your description, I'm inferring that /tmp is backed by ext4 with 
->> your large
->> folio patches enabled?
-> 
-> Yes, mount /tmp by ext4, sorry to forget to mention that.
-> 
->>
->>>
->>> 1) large folio disabled on ext4:
->>>     92378735
->>> 2) large folio  enabled on ext4 +  CONTPTE enabled
->>>     16164943
->>> 3) large folio  enabled on ext4 +  CONTPTE disabled
->>>     80364074
->>> 4) large folio  enabled on ext4 +  CONTPTE enabled + large folio 
->>> mapping enabled
->>> in finish_fault()[2]
->>>     299656874
->>>
->>> We found *contpte_convert* consume lots of CPU(76%) in case 2),
->>
->> contpte_convert() is expensive and to be avoided; In this case I 
->> expect it is
->> repainting the PTEs with the PTE_CONT bit added in, and to do that it 
->> needs to
->> invalidate the tlb for the virtual range. The code is there to mop up 
->> user space
->> patterns where each page in a range is temporarily made RO, then later 
->> changed
->> back. In this case, we want to re-fold the contpte range once all 
->> pages have
->> been serviced in RO mode.
->>
->> Of course this path is only intended as a fallback, and the more optimium
->> approach is to set_ptes() the whole folio in one go where possible - 
->> kind of
->> what you are doing below.
->>
->>> and disappeared
->>> by following change[2], it is easy to understood the different 
->>> between case 2)
->>> and case 4) since case 2) always map one page
->>> size, but always try to fold contpte mappings, which spend a lot of
->>> time. Case 4) is a workaround, any other better suggestion?
->>
->> See below.
->>
->>>
->>> Thanks.
->>>
->>> [1] https://github.com/antonblanchard/will-it-scale
->>> [2] enable large folio mapping in finish_fault()
->>>
->>> diff --git a/mm/memory.c b/mm/memory.c
->>> index 00728ea95583..5623a8ce3a1e 100644
->>> --- a/mm/memory.c
->>> +++ b/mm/memory.c
->>> @@ -4880,7 +4880,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
->>>           * approach also applies to non-anonymous-shmem faults to avoid
->>>           * inflating the RSS of the process.
->>>           */
->>> -       if (!vma_is_anon_shmem(vma) || 
->>> unlikely(userfaultfd_armed(vma))) {
->>> +       if (unlikely(userfaultfd_armed(vma))) {
->>
->> The change to make finish_fault() handle multiple pages in one go are 
->> new; added
->> by Baolin Wang at [1]. That extra conditional that you have removed is 
->> there to
->> prevent RSS reporting bloat. See discussion that starts at [2].
->>
->> Anyway, it was my vague understanding that the fault around mechanism
->> (do_fault_around()) would ensure that (by default) 64K worth of pages 
->> get mapped
->> together in a single set_ptes() call, via filemap_map_pages() ->
->> filemap_map_folio_range(). Looking at the code, I guess fault around only
->> applies to read faults. This test is doing a write fault.
->>
->> I guess we need to do a change a bit like what you have done, but also 
->> taking
->> into account fault_around configuration?
+Do you find an improved wording still relevant for a separate paragraph?
 
-For the writable mmap() of tmpfs, we will use mTHP interface to control 
-the size of folio to allocate, as discussed in previous meeting [1], so 
-I don't think fault_around configuration will be helpful for tmpfs.
 
-For other filesystems, like ext4, I did not found the logic to determin 
-what size of folio to allocate in writable mmap() path (Kefeng, please 
-correct me if I missed something). If there is a control like mTHP, we 
-can rely on that instead of 'fault_around'?
+> Fixes: eebce3856737 ("[S390]: Adapt netiucv driver to new IUCV API")
+> Cc: linux-s390@vger.kernel.org
 
-[1] 
-https://lore.kernel.org/all/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com/
+Would you like to specify a =E2=80=9Cstable tag=E2=80=9D?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/stable-kernel-rules.rst?h=3Dv6.10-rc5#n34
 
-> Yes, the current changes is not enough, I hint some issue and still 
-> debugging, so our direction is trying to map large folio for 
-> do_shared_fault(), right?
 
-I think this is the right direction to do. I add this 
-'!vma_is_anon_shmem(vma)' conditon to gradually implement support for 
-large folio mapping buidling, especially for writable mmap() support in 
-tmpfs.
+> ---
 
->> [1]
->> https://lore.kernel.org/all/3a190892355989d42f59cf9f2f98b94694b0d24d.1718090413.git.baolin.wang@linux.alibaba.com/
->> [2] 
->> https://lore.kernel.org/linux-mm/13939ade-a99a-4075-8a26-9be7576b7e03@arm.com/
->>
->>
->>>                  nr_pages = 1;
->>>          } else if (nr_pages > 1) {
->>>                  pgoff_t idx = folio_page_idx(folio, page);
->>>
->>>
->>> On 2024/2/15 18:32, Ryan Roberts wrote:
->>>> There are situations where a change to a single PTE could cause the
->>>> contpte block in which it resides to become foldable (i.e. could be
->>>> repainted with the contiguous bit). Such situations arise, for example,
->>>> when user space temporarily changes protections, via mprotect, for
->>>> individual pages, such can be the case for certain garbage collectors.
->>>>
->>>> We would like to detect when such a PTE change occurs. However this can
->>>> be expensive due to the amount of checking required. Therefore only
->>>> perform the checks when an indiviual PTE is modified via mprotect
->>>> (ptep_modify_prot_commit() -> set_pte_at() -> set_ptes(nr=1)) and only
->>>> when we are setting the final PTE in a contpte-aligned block.
->>>>
->>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
->>>> ---
->>>>    arch/arm64/include/asm/pgtable.h | 26 +++++++++++++
->>>>    arch/arm64/mm/contpte.c          | 64 
->>>> ++++++++++++++++++++++++++++++++
->>>>    2 files changed, 90 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/include/asm/pgtable.h 
->>>> b/arch/arm64/include/asm/pgtable.h
->>>> index 8310875133ff..401087e8a43d 100644
->>>> --- a/arch/arm64/include/asm/pgtable.h
->>>> +++ b/arch/arm64/include/asm/pgtable.h
->>>> @@ -1185,6 +1185,8 @@ extern void ptep_modify_prot_commit(struct
->>>> vm_area_struct *vma,
->>>>     * where it is possible and makes sense to do so. The PTE_CONT 
->>>> bit is
->>>> considered
->>>>     * a private implementation detail of the public ptep API (see 
->>>> below).
->>>>     */
->>>> +extern void __contpte_try_fold(struct mm_struct *mm, unsigned long 
->>>> addr,
->>>> +                pte_t *ptep, pte_t pte);
->>>>    extern void __contpte_try_unfold(struct mm_struct *mm, unsigned 
->>>> long addr,
->>>>                    pte_t *ptep, pte_t pte);
->>>>    extern pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte);
->>>> @@ -1206,6 +1208,29 @@ extern int contpte_ptep_set_access_flags(struct
->>>> vm_area_struct *vma,
->>>>                    unsigned long addr, pte_t *ptep,
->>>>                    pte_t entry, int dirty);
->>>>    +static __always_inline void contpte_try_fold(struct mm_struct *mm,
->>>> +                unsigned long addr, pte_t *ptep, pte_t pte)
->>>> +{
->>>> +    /*
->>>> +     * Only bother trying if both the virtual and physical 
->>>> addresses are
->>>> +     * aligned and correspond to the last entry in a contig range. 
->>>> The core
->>>> +     * code mostly modifies ranges from low to high, so this is the 
->>>> likely
->>>> +     * the last modification in the contig range, so a good time to 
->>>> fold.
->>>> +     * We can't fold special mappings, because there is no 
->>>> associated folio.
->>>> +     */
->>>> +
->>>> +    const unsigned long contmask = CONT_PTES - 1;
->>>> +    bool valign = ((addr >> PAGE_SHIFT) & contmask) == contmask;
->>>> +
->>>> +    if (unlikely(valign)) {
->>>> +        bool palign = (pte_pfn(pte) & contmask) == contmask;
->>>> +
->>>> +        if (unlikely(palign &&
->>>> +            pte_valid(pte) && !pte_cont(pte) && !pte_special(pte)))
->>>> +            __contpte_try_fold(mm, addr, ptep, pte);
->>>> +    }
->>>> +}
->>>> +
->>>>    static __always_inline void contpte_try_unfold(struct mm_struct *mm,
->>>>                    unsigned long addr, pte_t *ptep, pte_t pte)
->>>>    {
->>>> @@ -1286,6 +1311,7 @@ static __always_inline void set_ptes(struct 
->>>> mm_struct
->>>> *mm, unsigned long addr,
->>>>        if (likely(nr == 1)) {
->>>>            contpte_try_unfold(mm, addr, ptep, __ptep_get(ptep));
->>>>            __set_ptes(mm, addr, ptep, pte, 1);
->>>> +        contpte_try_fold(mm, addr, ptep, pte);
->>>>        } else {
->>>>            contpte_set_ptes(mm, addr, ptep, pte, nr);
->>>>        }
->>>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
->>>> index 50e0173dc5ee..16788f07716d 100644
->>>> --- a/arch/arm64/mm/contpte.c
->>>> +++ b/arch/arm64/mm/contpte.c
->>>> @@ -73,6 +73,70 @@ static void contpte_convert(struct mm_struct *mm, 
->>>> unsigned
->>>> long addr,
->>>>        __set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
->>>>    }
->>>>    +void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
->>>> +            pte_t *ptep, pte_t pte)
->>>> +{
->>>> +    /*
->>>> +     * We have already checked that the virtual and pysical 
->>>> addresses are
->>>> +     * correctly aligned for a contpte mapping in 
->>>> contpte_try_fold() so the
->>>> +     * remaining checks are to ensure that the contpte range is fully
->>>> +     * covered by a single folio, and ensure that all the ptes are 
->>>> valid
->>>> +     * with contiguous PFNs and matching prots. We ignore the state 
->>>> of the
->>>> +     * access and dirty bits for the purpose of deciding if its a 
->>>> contiguous
->>>> +     * range; the folding process will generate a single contpte 
->>>> entry which
->>>> +     * has a single access and dirty bit. Those 2 bits are the 
->>>> logical OR of
->>>> +     * their respective bits in the constituent pte entries. In 
->>>> order to
->>>> +     * ensure the contpte range is covered by a single folio, we must
->>>> +     * recover the folio from the pfn, but special mappings don't 
->>>> have a
->>>> +     * folio backing them. Fortunately contpte_try_fold() already 
->>>> checked
->>>> +     * that the pte is not special - we never try to fold special 
->>>> mappings.
->>>> +     * Note we can't use vm_normal_page() for this since we don't 
->>>> have the
->>>> +     * vma.
->>>> +     */
->>>> +
->>>> +    unsigned long folio_start, folio_end;
->>>> +    unsigned long cont_start, cont_end;
->>>> +    pte_t expected_pte, subpte;
->>>> +    struct folio *folio;
->>>> +    struct page *page;
->>>> +    unsigned long pfn;
->>>> +    pte_t *orig_ptep;
->>>> +    pgprot_t prot;
->>>> +
->>>> +    int i;
->>>> +
->>>> +    if (!mm_is_user(mm))
->>>> +        return;
->>>> +
->>>> +    page = pte_page(pte);
->>>> +    folio = page_folio(page);
->>>> +    folio_start = addr - (page - &folio->page) * PAGE_SIZE;
->>>> +    folio_end = folio_start + folio_nr_pages(folio) * PAGE_SIZE;
->>>> +    cont_start = ALIGN_DOWN(addr, CONT_PTE_SIZE);
->>>> +    cont_end = cont_start + CONT_PTE_SIZE;
->>>> +
->>>> +    if (folio_start > cont_start || folio_end < cont_end)
->>>> +        return;
->>>> +
->>>> +    pfn = ALIGN_DOWN(pte_pfn(pte), CONT_PTES);
->>>> +    prot = pte_pgprot(pte_mkold(pte_mkclean(pte)));
->>>> +    expected_pte = pfn_pte(pfn, prot);
->>>> +    orig_ptep = ptep;
->>>> +    ptep = contpte_align_down(ptep);
->>>> +
->>>> +    for (i = 0; i < CONT_PTES; i++) {
->>>> +        subpte = pte_mkold(pte_mkclean(__ptep_get(ptep)));
->>>> +        if (!pte_same(subpte, expected_pte))
->>>> +            return;
->>>> +        expected_pte = pte_advance_pfn(expected_pte, 1);
->>>> +        ptep++;
->>>> +    }
->>>> +
->>>> +    pte = pte_mkcont(pte);
->>>> +    contpte_convert(mm, addr, orig_ptep, pte);
->>>> +}
->>>> +EXPORT_SYMBOL(__contpte_try_fold);
->>>> +
->>>>    void __contpte_try_unfold(struct mm_struct *mm, unsigned long addr,
->>>>                pte_t *ptep, pte_t pte)
->>>>    {
->>
->>
+I would appreciate a version description behind the marker line.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.10-rc5#n713
+
+
+=E2=80=A6
+> +++ b/drivers/s390/net/netiucv.c
+> @@ -855,6 +855,9 @@ static void conn_action_start(fsm_instance *fi, int =
+event, void *arg)
+>
+>  	fsm_newstate(fi, CONN_STATE_SETUPWAIT);
+>  	conn->path =3D iucv_path_alloc(NETIUCV_QUEUELEN_DEFAULT, 0, GFP_KERNEL=
+);
+> +	if (!conn->path)
+> +		return;
+=E2=80=A6
+
+Would the following statement variant become more appropriate here?
+
++		return -ENOMEM;
+
+
+Regards,
+Markus
 
