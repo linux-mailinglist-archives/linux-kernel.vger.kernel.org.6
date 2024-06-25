@@ -1,109 +1,92 @@
-Return-Path: <linux-kernel+bounces-229146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA4D916BD1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:06:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA67916BE6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:07:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 657601F281A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:06:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C602809CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:07:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BFFA16FF36;
-	Tue, 25 Jun 2024 15:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B628C17E8EA;
+	Tue, 25 Jun 2024 15:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hNubxXsR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/FAZIg5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A379116F29C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BEB17E45F;
+	Tue, 25 Jun 2024 15:02:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327725; cv=none; b=dVyz9ItvhgMhRhZE3xNtmD5xb9yWTjM826qxeAY6Svv9HqMZN4oCpu/b2n4VwnSMIx5P+MF2lU8PZbVq4qPJrfLGgLikxA3P7ZTArBTVol+isrMDLQlN4NKKkP7gEoIbJMoHkd31pIotRTF2J7AWGGi05CbDhhz4J9cdPyPMcvM=
+	t=1719327749; cv=none; b=kRIK1UyOQgBuAaxoa+L+HVpi6uOoKIDn98wWr7KNZ/fAlT0kfpDCbgNT/xfRTaoS8OEhl7I81q/tTj05tCWppSUXmdMKA927CLLiU/vTdytAg+P+AJd59NyW4qNyfn+IzdTfP38p81NdUkgswJCkpbs0gFhWNO9tTaQE12IygHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327725; c=relaxed/simple;
-	bh=INcxNrZ3BKjPhQAlptK0WjFeAG+V7+PP8PzXSvOmrp4=;
+	s=arc-20240116; t=1719327749; c=relaxed/simple;
+	bh=cQwiOqtjV6/LzwjVLbeFZMGFz4XLbTBs1wQo2HzADdc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cNIa0hyvvc7TmMddtuYpMehEttwMsNzQRufx01IjurGawrJyayCloq1MZwz+iCtbas8Gi9x9gn+82RBmhyD8NcBPRYc1sjG5FPqt7F96i7RuI38X33ygdgvQhBGncqKcaqqZb9YJDOMQ1M/5wiaLMi2iMEltn2r0ckaslsZiIIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hNubxXsR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02B1EC32782;
-	Tue, 25 Jun 2024 15:02:04 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZA5QymXGU/kPiERDPkrey4xYyiYCXHDJn+nWbFWTUN6F9uYnn/b25YzzFPZQ2zsmTnAtwET5mEUXwTe7wxLiU8LgtTXEcv1A+fTvHc0yyZEFzDFMnCyq1OWlnOkOufJ7mjeQpvzyEROyulqy6NXM0oEr7HxHVMCIZZwEAZnTRHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/FAZIg5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1F0FC4AF09;
+	Tue, 25 Jun 2024 15:02:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719327725;
-	bh=INcxNrZ3BKjPhQAlptK0WjFeAG+V7+PP8PzXSvOmrp4=;
+	s=k20201202; t=1719327748;
+	bh=cQwiOqtjV6/LzwjVLbeFZMGFz4XLbTBs1wQo2HzADdc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hNubxXsR8135P9Ti0UdT/F7+tHikXwxB3dgj8F7oClalIBZxZyLnO11IlQ1PwQNOR
-	 Z0eV03pVqnEhU14faRurBffY8m9Kqcmhn6JOc5A+d8n8BNVWDEgu4iEtciTh82YOxZ
-	 X1xVIuqr//E4wTzFGd2LMBmTzp0UEs/bduOaSEt/CdYCvu324Qiq+gr6/HsshRvSHy
-	 wpJsfK4zNHHMXVPR9i5qTgJQ8911iRmmYbfT1vHzwYbJvYhvEjUHt9QU2RmtYou8MS
-	 8LsrtOK70CTxUaVoI3Z9PmHQcv9wKWB9tbP/QfoZPDtzNRaVm5kFUpxKoKKnQylYe9
-	 WCHbD46uaz83g==
-Date: Tue, 25 Jun 2024 17:02:02 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] drm/bridge-connector: reset the HDMI connector
- state
-Message-ID: <20240625-feathered-loon-of-health-ec7e6d@houat>
-References: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-0-8590d44912ce@linaro.org>
- <20240623-drm-bridge-connector-fix-hdmi-reset-v2-1-8590d44912ce@linaro.org>
+	b=g/FAZIg5g9GspsRS1oZEUx1XMb7JnV6OPKtwjj7pzqlVVTB1YRhHRxjcWtSMN9o7Y
+	 cxRrgpPomRRAopypxPfFIGKcXfiaUB6xmCM3j0WDYtCQsN5QKB2ISGDa5JFrbfKpjj
+	 GvwNiLfqWihb+V3LHzIknd7QAMIXwU0KP/blfj3kogEzfR8tmV/gXL5sS0w8G9hUNV
+	 car9avFTq71nw51eIbox7DSAU9X+SiyW+fqDAwpaftpWSxmUhY2PQBOwOhOcgVUqVc
+	 1Yh01wHIcKzraKAbm9DqLSdA9q96hiVWbzR+VEvJdANSF8KcHuUHpnUdJgMxxJ30vo
+	 8pP5iKqEvd3lw==
+Date: Tue, 25 Jun 2024 17:02:25 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: Jiri Kosina <jikos@kernel.org>
+Cc: Luke Jones <luke@ljones.dev>, linux-input@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] hid-asus: use hid for brightness control on
+ keyboard
+Message-ID: <efd7izqwobohv644j63oeruf5suwo4gcw7r5wvvh5koqn7lwgu@3m3aczbbwhrg>
+References: <20240607040532.1074379-1-luke@ljones.dev>
+ <20240607040532.1074379-2-luke@ljones.dev>
+ <dd0a211a-bef1-4eb2-8d1f-2d63799af94c@app.fastmail.com>
+ <9e4ee526-2b94-45f3-9fe9-0f1d0918916b@app.fastmail.com>
+ <nycvar.YFH.7.76.2406191639360.24940@cbobk.fhfr.pm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="eciqjr2zrynuoq6o"
-Content-Disposition: inline
-In-Reply-To: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-1-8590d44912ce@linaro.org>
-
-
---eciqjr2zrynuoq6o
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <nycvar.YFH.7.76.2406191639360.24940@cbobk.fhfr.pm>
 
-Hi,
+On Jun 19 2024, Jiri Kosina wrote:
+> On Sun, 16 Jun 2024, Luke Jones wrote:
+> 
+> > > I thought this was finalised but I'm still getting conflicting 
+> > > reports. Please don't merge until I confirm the fix.
+> > 
+> > This is ready for merge now. I have more confirmation that the single 
+> > patch with no adjustment to report_id works well.
+> 
+> Applied, thanks.
 
-On Sun, Jun 23, 2024 at 08:40:12AM GMT, Dmitry Baryshkov wrote:
-> On HDMI connectors which use drm_bridge_connector and DRM_BRIDGE_OP_HDMI
-> IGT chokes on the max_bpc property in several kms_properties tests due
-> to the the drm_bridge_connector failing to reset HDMI-related
-> properties.
->=20
-> Call __drm_atomic_helper_connector_hdmi_reset() if there is a
-> the drm_bridge_connector has bridge_hdmi.
->=20
-> Note, the __drm_atomic_helper_connector_hdmi_reset() is moved to
-> drm_atomic_state_helper.c because drm_bridge_connector.c can not depend
-> on DRM_DISPLAY_HDMI_STATE_HELPER. At the same time it is impossible to
-> call this function from HDMI bridges, there is is no function that
-> corresponds to the drm_connector_funcs::reset().
+This patch should have been taken through the platform x86 tree [0].
 
-Why can't it depend on DRM_DISPLAY_HDMI_STATE_HELPER?
+I have now reverted it (and it was buggy, it failed to compile on
+linux-next).
 
-Maxime
+Cheers,
+Benjamin
 
---eciqjr2zrynuoq6o
-Content-Type: application/pgp-signature; name="signature.asc"
+[0] https://lore.kernel.org/all/b0d8eebc-5abb-4ec0-898c-af7eedc730d9@redhat.com/
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCZnrb6QAKCRDj7w1vZxhR
-xaDaAQDbirOcRJFXYMvi3AKNZOjDVfThaLfVJff4sukVoq4dDwD/VNP5qyY7y2ZR
-HY41NMoYCoKnWRZsHLDLNdlbLAKdwgk=
-=/z+8
------END PGP SIGNATURE-----
-
---eciqjr2zrynuoq6o--
+> 
+> -- 
+> Jiri Kosina
+> SUSE Labs
+> 
 
