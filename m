@@ -1,100 +1,225 @@
-Return-Path: <linux-kernel+bounces-228508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A92B79160F3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:19:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 943909160F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7B9F1C22F1A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14AEB1F236B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072111482E2;
-	Tue, 25 Jun 2024 08:19:06 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDFA01482F0;
+	Tue, 25 Jun 2024 08:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zDEqWpDK"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2EA22313;
-	Tue, 25 Jun 2024 08:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29465145B3E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719303545; cv=none; b=U9dOfNyEdEgTxnAYD/heABd81iXnMBttkQddeF0B7ORysd86Im5TctjvXJXCJEUJ7utMIvPxZ+k3eml46qATih/i1mhW6VVCx+WQo/cW5l+oQ5++qF2tIIbUEM43WIs2t6UuHtumeMn1AyVaxu9Gg4glxbWod/UmfsrozOsP4Lc=
+	t=1719303613; cv=none; b=OMKnXfam5sDMoKtqh2u2iyOIQXYltseBuXcl0byRSTKLrVsZJLydf1XI+TdU1BKA3QD21laT2c9N1OkZMKb6QwPtW/TeACbR+95mcceRAx9k1FNgeHnbxdVFtru6r+rMJIwYc2k5sZ5hExjA4RoAsRggRKsQZ/3FJrA+iKhW2Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719303545; c=relaxed/simple;
-	bh=Yq1WRv08jggnqbMUyRoA/zm+6wOIWqrYPnZxhCbRipc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=dQvK/iAGyOHoVhFOLBAwbUTBeESKsqammi/gnb4gddmDmp0dIQIwJhHy0A+Z/zUryFAc2U7GIW/W6la4WMXDrkxgGN/UWNKwqXwMefLmBq0H4zcjggISCf5ylUhttUb8bpo3JNaqaNyBg67A1upHaLgI2D08/jffl3AqBdPblys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowAA3PRFlfXpm3tmhDA--.2895S2;
-	Tue, 25 Jun 2024 16:18:53 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: kherbst@redhat.com,
-	lyude@redhat.com,
-	dakr@redhat.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	make24@iscas.ac.cn
-Cc: dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] drm/nouveau/dispnv04: fix null pointer dereference in nv17_tv_get_ld_modes
-Date: Tue, 25 Jun 2024 16:18:28 +0800
-Message-Id: <20240625081828.2620794-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719303613; c=relaxed/simple;
+	bh=QVq4HM7y2dnXQGL6NEAuXEayijUuHVo9Mn2wpAEGeSQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kdpXXTg0MtE/zkFHexFXph4npx15tpUIpMGNlSjP1khUpcwI2IJm/sNy42gT39693vUGzi6v77qq0Qmv9y3S8Dmp35K1cSAWBp2ovsw1DMxewH4O2KhUqcsrzIWNjWyyBnVfypuXVo4f/3v9dtaOZogAKVqJsSWICE1QVoQfSVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zDEqWpDK; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52cd6784aa4so4208458e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:20:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719303609; x=1719908409; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EWCiwD2F7GvS6ILidCuuM+NWtCPTY//mkBwwHB/PAwU=;
+        b=zDEqWpDKsacFqeQFvEa1y1hGqzOtIyhdpD35XN51wSZ6hYBRccLuV8mHjbmzYAHuGg
+         dyRyTEr5B4Kz5OEE/Ig+dAdokNwx/oC2vw2PGujYoiGUIE3K8oyG/spOHd3+D7allKv1
+         mOWtSpEiAIdnDe5O9syyyCcd2cUK7BMp18to1vkNtUFRD5FxyEhyMDRqBQZm/gO/9SM2
+         kilrBAUJUly5hntEhdSNqMk5omt4h5N4zk5wBthDP29g4SqDZ0WclM6P8TPgkiSBMTtR
+         y7gpltdmNbhOqGK+7sodl7J8R7FWlgc5uW0VqZZPB/FYvnUXq2ZoIp7SyoVmtoJpCyMO
+         Rs8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719303609; x=1719908409;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=EWCiwD2F7GvS6ILidCuuM+NWtCPTY//mkBwwHB/PAwU=;
+        b=GbsozxeKHlobn7w8HdKp72UGO2tqe/iXRpLlv/aLX3LLZ4zVzZSGvUiov5Slf1efdd
+         0k2HvZ26lL6unHYgBdkbij4yR3X4IpDUBi5nkgtdPn2M/VWewVENSOWmJYS/qCrTnclL
+         /pDBxpnaIDslGW+s9KHre1GQHa9C1BoxpfUzaAQeoSHqbXphUa+QQgwibjCza5sUL7B2
+         OwDTjPTMxWCtk4zhETya/xMdb7qFYd0j70a4OTJgiLJDQvWmBv2eb1/maoRmhUuTE9Sm
+         gZEW4XkYryW4ewGqG2360yQLjoG59HaFZPQ93iVYwMx/cL/25lgk47FxBLCBfZFwMKDc
+         6DDw==
+X-Forwarded-Encrypted: i=1; AJvYcCW84ldDdCjUJukydRj1LnV70is5dvbwnQaD5xZRAFfU36ucIUyFq9d090s3eQPsZgIxNtSZhYB3rF286jm/OkhTmqFvDROaIt2UI1hb
+X-Gm-Message-State: AOJu0YwX4fqhKHzTc1NLwKg8t19KBMMg5dEILecQshMq41BL9O1lLijR
+	iEXT+8FtAzZf7abq98SuRN6wN8mxvVF4AO9zE76FGq4CEixrWoz5BxtJUoHp2V8=
+X-Google-Smtp-Source: AGHT+IGschyJIRrjSGV8MI/uUMMke9I7XA20tehM3rxh0wtEbI4ylJlNZVV28a0dcLcxUWKiEyqonQ==
+X-Received: by 2002:ac2:4838:0:b0:52b:c27c:ea1f with SMTP id 2adb3069b0e04-52ce185faa8mr3407033e87.55.1719303606782;
+        Tue, 25 Jun 2024 01:20:06 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:bd71:2ff1:592d:f52a? ([2a01:e0a:982:cbb0:bd71:2ff1:592d:f52a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817b5ca0sm161908245e9.24.2024.06.25.01.20.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 01:20:06 -0700 (PDT)
+Message-ID: <2e22734e-6577-445d-af5e-846dbcce076e@linaro.org>
+Date: Tue, 25 Jun 2024 10:20:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAA3PRFlfXpm3tmhDA--.2895S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw1xZFWUur1xuF4UKw1Dtrb_yoWfurgEkr
-	18Zr97Gr1Uuw4vyr4DAw1fZr9Ikw4Uua1IyFn29FyrtasrJrn0qry7tryrX3WUAFy8WFyD
-	JanrZwn8KrsrGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
-	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
-	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
-	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
-	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
-	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
-	VFxhVjvjDU0xZFpf9x0JUAkucUUUUU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: Lockdep broken on x1e80100
+To: Abel Vesa <abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
+Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ "vkoul@kernel.org" <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20230208190200.2966723-1-abel.vesa@linaro.org>
+ <ZnpoAVGJMG4Zu-Jw@hovoldconsulting.com> <ZnpzuhXqSLPkpkhn@linaro.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <ZnpzuhXqSLPkpkhn@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In nv17_tv_get_ld_modes(), the return value of drm_mode_duplicate() is
-assigned to mode, which will lead to a possible NULL pointer dereference
-on failure of drm_mode_duplicate(). Add a check to avoid npd.
+On 25/06/2024 09:37, Abel Vesa wrote:
+> On 24-06-25 08:47:29, Johan Hovold wrote:
+>> On Wed, Feb 08, 2023 at 09:01:53PM +0200, Abel Vesa wrote:
+>>> This patchset adds support for the eUSB2 repeater found in pmic PM8550B,
+>>> used along with SM8550. Since there is no dedicated generic framework
+>>> for eUSB2 repeaters, the most appropriate subsystem to model it is the
+>>> generic phy. This patchset also adds support for such repeater to the
+>>> eUSB2 PHY found in SM8550. Basically, the eUSB2 PHY will have its own
+>>> "phy" which is actually a repeater.
+>>
+>> The decision to model the repeater as a PHY unfortunately breaks lockdep
+>> as you now have functions like phy_init() calling phy_init() for a
+>> second PHY (the repeater, see splat below).
+>>
+> 
+> This was reported by Bjorn off-list a couple of months ago. I did check
+> it then and the order is perfectly fine. The solution here should be to
+> use mutex_lock_nested in the PHY framework. This would allow supporting
+> chain-linked PHYs. The possibility of moving out the repeater out of PHY
+> was also discussed. Unfortunately, I didn't have the bandwidth to
+> circle back and properly investigate and fix it.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/gpu/drm/nouveau/dispnv04/tvnv17.c | 2 ++
- 1 file changed, 2 insertions(+)
+Well technically it's a PHY, and moving out from PHY will basically duplicate
+the PHY core code... so we should rather make sure we can call phy code from
+phy callbacks safely.
 
-diff --git a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-index 670c9739e5e1..4a08e61f3336 100644
---- a/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-+++ b/drivers/gpu/drm/nouveau/dispnv04/tvnv17.c
-@@ -209,6 +209,8 @@ static int nv17_tv_get_ld_modes(struct drm_encoder *encoder,
- 		struct drm_display_mode *mode;
- 
- 		mode = drm_mode_duplicate(encoder->dev, tv_mode);
-+		if (!mode)
-+			continue;
- 
- 		mode->clock = tv_norm->tv_enc_mode.vrefresh *
- 			mode->htotal / 1000 *
--- 
-2.25.1
+Neil
+
+> 
+>> As long as the locks are always taken in the same order there should be
+>> no risk for a deadlock, but can you please verify that and add the
+>> missing lockdep annotation so that lockdep can be used on platforms like
+>> x1e80100 (e.g. to prevent further locking issues from being introduced)?
+>>
+>> Johan
+>>
+>>
+>> [    8.613248] ============================================
+>> [    8.669073] WARNING: possible recursive locking detected
+>> [    8.669074] 6.10.0-rc5 #122 Not tainted
+>> [    8.669075] --------------------------------------------
+>> [    8.669075] kworker/u50:0/77 is trying to acquire lock:
+>> [    8.669076] ffff5cae8733ecf8 (&phy->mutex){+.+.}-{3:3}, at: phy_init+0x4c/0x12c
+>> [    8.669087]
+>>                 but task is already holding lock:
+>> [    8.669088] ffff5cae8a056cf8 (&phy->mutex){+.+.}-{3:3}, at: phy_init+0x4c/0x12c
+>> [    8.669092]
+>>                 other info that might help us debug this:
+>> [    8.669092]  Possible unsafe locking scenario:
+>>
+>> [    8.669093]        CPU0
+>> [    8.669093]        ----
+>> [    8.669094]   lock(&phy->mutex);
+>> [    8.669095]   lock(&phy->mutex);
+>> [    8.669097]
+>>                  *** DEADLOCK ***
+>>
+>> [    8.669097]  May be due to missing lock nesting notation
+>>
+>> [    8.669097] 4 locks held by kworker/u50:0/77:
+>> [    8.669099]  #0: ffff5cae80010948 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1a4/0x638
+>> [    8.669108]  #1: ffff800080333de0 (deferred_probe_work){+.+.}-{0:0}, at: process_one_work+0x1cc/0x638
+>> [    8.669112]  #2: ffff5cae854038f8 (&dev->mutex){....}-{3:3}, at: __device_attach+0x38/0x1d4
+>> [    8.669117]  #3: ffff5cae8a056cf8 (&phy->mutex){+.+.}-{3:3}, at: phy_init+0x4c/0x12c
+>> [    8.669121]
+>>                 stack backtrace:
+>> [    8.669122] CPU: 9 PID: 77 Comm: kworker/u50:0 Not tainted 6.10.0-rc5 #122
+>> [    8.669124] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
+>> [    8.669125] Workqueue: events_unbound deferred_probe_work_func
+>> [    8.669128] Call trace:
+>> [    8.669129]  dump_backtrace+0x9c/0x11c
+>> [    8.870384]  show_stack+0x18/0x24
+>> [    8.870386]  dump_stack_lvl+0x90/0xd0
+>> [    8.870391]  dump_stack+0x18/0x24
+>> [    8.870393]  print_deadlock_bug+0x25c/0x348
+>> [    8.870396]  __lock_acquire+0x10a4/0x2064
+>> [    8.870399]  lock_acquire.part.0+0xc8/0x20c
+>> [    8.870401]  lock_acquire+0x68/0x84
+>> [    8.870403]  __mutex_lock+0x98/0x428
+>> [    8.870407]  mutex_lock_nested+0x24/0x30
+>> [    8.870410]  phy_init+0x4c/0x12c
+>> [    8.870412]  qcom_snps_eusb2_hsphy_init+0x54/0x420 [phy_qcom_snps_eusb2]
+>> [    8.870416]  phy_init+0xe0/0x12c
+>> [    8.870418]  dwc3_core_init+0x484/0x1214
+>> [    8.870421]  dwc3_probe+0xe54/0x171c
+>> [    8.870424]  platform_probe+0x68/0xd8
+>> [    8.870426]  really_probe+0xc0/0x388
+>> [    8.870427]  __driver_probe_device+0x7c/0x160
+>> [    8.870429]  driver_probe_device+0x40/0x114
+>> [    8.870430]  __device_attach_driver+0xbc/0x158
+>> [    8.870432]  bus_for_each_drv+0x84/0xe0
+>> [    8.870433]  __device_attach+0xa8/0x1d4
+>> [    8.870435]  device_initial_probe+0x14/0x20
+>> [    8.870436]  bus_probe_device+0xb0/0xb4
+>> [    8.870437]  deferred_probe_work_func+0xa0/0xf4
+>> [    8.870439]  process_one_work+0x224/0x638
+>> [    8.870441]  worker_thread+0x268/0x3a8
+>> [    8.870442]  kthread+0x124/0x128
+>> [    8.870443]  ret_from_fork+0x10/0x20
 
 
