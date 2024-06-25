@@ -1,107 +1,176 @@
-Return-Path: <linux-kernel+bounces-229239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA8A4916D32
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:35:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3E49916D39
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:36:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 774F228A7FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:35:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0A11C20128
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB3CC170848;
-	Tue, 25 Jun 2024 15:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29E516F0E2;
+	Tue, 25 Jun 2024 15:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfxKrQVm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PyiOTurf"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C28816D4D7;
-	Tue, 25 Jun 2024 15:34:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A91D16FF3D;
+	Tue, 25 Jun 2024 15:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719329693; cv=none; b=iEgj5mfva85FQ48dOwhmd1L/mpJ36/iSRDbfCR+wgnghBJl2YjxRCqGNeBLFUOZGuYfG00CpVOwiwSBxwV3wJAwmaL4GgX2KAmcTgDauzfrAilbZloGmxCYgS5EPmWeKtMLJyNriGy+mQZr3y6eO+aDCFrOXa3zlqg/vXvszV0A=
+	t=1719329785; cv=none; b=se4QK7XXctrTwSpIaJTTPlPlrxy3sIXOKAcOjPBa1+UZ8l0NRK5+sTMjxYnUY+lyQkTH/7D7d5IkMgO/EgyFq7jgOnL8bkrsltmGwH7mCs0+oD3K6osJq95LCUabvoYPEx3ae2T9dj2dM+qmlm+Dr+dnJrKKo2nP0BhtKIvd0w4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719329693; c=relaxed/simple;
-	bh=gTk+23CWObg9MzmcWZm2zgAuR93E18j1kHQXDncw/IQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LKH80D59xxPnfJsZJAJa4a8Knn8yIveOMUr4HEcpPnEkWkwPTfCWhPbVT3HOuunu6s17IunIaLyM0eI6kQnwhUUMiSh4BTwSAyP81NhmoA+NGyn/beHH5oPZdFCFqUqc1k8n7R45eD4HKNoEWaYdT6eYChOBX9hAFyJ5BPCHyOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VfxKrQVm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C156C32781;
-	Tue, 25 Jun 2024 15:34:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719329692;
-	bh=gTk+23CWObg9MzmcWZm2zgAuR93E18j1kHQXDncw/IQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VfxKrQVmEXHydhg2JMRrdJksEl6mtPFVm1kZLokSsoYnP1rNV8IlH9tx2fSogMisE
-	 sMhyI1skUjSjWMRGDKZOZUU3pmObIITZ3DV08N2h52FUWpdbmXwCI41ac5XGRepXCJ
-	 FOKhc+aDyTX//lJwTg1QTqpCY8G952KcXyhiLJ6V8Kbxb6zVPT2ZNjDNd6dHSyE3d7
-	 lBtROSdEWVmX5N2XvRvbMaapRSw60+4yn2KmbeNJEwKEJjpvE1Ujrb01qr4yGvPaip
-	 PAX/e/YH22qMIFhmpVFmYXuqG2pcEJrKBopcQ5UaRRksqi0xDDHwr5WBvg4GPmugr8
-	 v9jmL1plGrtxA==
-Date: Tue, 25 Jun 2024 16:34:48 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: fabrice.gasnier@foss.st.com, Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] dt-bindings: iio: add sigma delta modulator
- backend
-Message-ID: <20240625-babied-skies-0722dbdfc524@spud>
-References: <20240625150717.1038212-1-olivier.moysan@foss.st.com>
- <20240625150717.1038212-6-olivier.moysan@foss.st.com>
+	s=arc-20240116; t=1719329785; c=relaxed/simple;
+	bh=cRmziDwgNra4eake5aUYRKgsQh9E0oLGcu/fKvQHGsY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dIIt+rF0XIZHbtqvi6gL9hJhLy71Qq4n/vAdtquU+ClvZwTFc9ekdK1dbFv5anPn9/PAOpeFEMvpBOlKRqLbztzTm2mdTIrLuINESqOJHZQfGMGY6aNC4XipOicKMGJlAo+HJOyK5L1eXajBRuy9y7jGca171lgZcUfAEhjLdrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PyiOTurf; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6fe61793e2so211209966b.0;
+        Tue, 25 Jun 2024 08:36:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719329781; x=1719934581; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ox1lbjwU21POUzsTNWtq+35PHOWR0ci2ck/cLItWRLY=;
+        b=PyiOTurfKHTXuD+ri2C/5aBUQA8TDBK6EoxN5ko+DWZ4Q4INkvGESkaql1VhBBZ7ot
+         akiTC8cJZ2FfODqQxJQhg2kWxvI2SA4dpSK3rJlfsWy70kiaGrLVIuwRZBQSXl/aLROG
+         9AivxWYAXoOw2ng/uNVKcSx85z53id0wyAdSX0DYtO3wCSz51M0ZkN3+Pi8b8277Nyzz
+         bWsrdaNn5EeBDO78omqeJidMHLifNchyEa7sTwrXSk3V42gAZncWiSc+mmOujvYNGDs2
+         nLJDWRw1VoFsqcaegjcpJxcQmpi85RzkVjnFrMsB20g7ygM58vhb2Bhkd1CrkK6VlYnQ
+         qcZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719329781; x=1719934581;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ox1lbjwU21POUzsTNWtq+35PHOWR0ci2ck/cLItWRLY=;
+        b=TNU1AFvaswQh6rGQPPLVLBrTveLXcxc1WqmgdkOPRYFpEeM9jkOmudP57Ez/mbXyp1
+         dy/4HredoQP8k8nvJzugSj3LeCyRbFpwXkBdbxEviF2eJftOSlnGUmEr1GDF4/Bq2kaU
+         yAa+i7IBC2CwYRfQS4tNA7LIPYeIKq0q0LcFgte89PxpbaG2IBxD6Vod6QTikJ6bGwxY
+         NytaqMJBftv/5xoz70FO1hiUB8BulHhXaScKKwOicWsasWUEm+k1PncGYK2/V5dTBUtA
+         +oWCU2grHv/cRg5fcJhYOT2xgTEZEmtqC5iemE0C/6xO2/VgAlZnwrCz6XDKs7bU7rE3
+         cL+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUjyOfaf7P6TVa/zO9l+yYNX85xRDTK5wWejqa+SC1JsIIHga7hofjzeueZeaYSTfZIEZdQx48vc0OKrva/sRd0j+yfdcVcgrHaMB14f2xNlo4PS4rJ2gxzGB5ZkiRhj+82ufo9eL3VIt8FxQ==
+X-Gm-Message-State: AOJu0YzegiwB5QaMd6Qr9bnd1i0BSGeOuCb2qjNBnm2pwLd1/vXNhZxI
+	g9Cl2dkNQLh3n1Xswnmm+vuQwaMIhzqIbNNNHqmVBCWpjl+MCUIlXskJWkwferHgaI9awJM94m7
+	PWnfvPItBsT7EvtVml2K9EzIVq6g=
+X-Google-Smtp-Source: AGHT+IHxpsEaiq7s8p8MnTUzi0PLbTnU1MrdrE7dFVtZiMWrVR2nmXkgwgR1pOTuRiNCFznIg23NJHs+fBN4vaKf6Qw=
+X-Received: by 2002:a50:cdd2:0:b0:57c:5f77:1136 with SMTP id
+ 4fb4d7f45d1cf-57d4bd8fcf3mr6998806a12.24.1719329780722; Tue, 25 Jun 2024
+ 08:36:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="koaKMre3ntrtIL26"
-Content-Disposition: inline
-In-Reply-To: <20240625150717.1038212-6-olivier.moysan@foss.st.com>
-
-
---koaKMre3ntrtIL26
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240523175227.117984-1-robdclark@gmail.com> <20240523175227.117984-2-robdclark@gmail.com>
+ <20240624151401.GB8706@willie-the-truck> <CAF6AEGttkHPOsO+NSHZeRXiZBxU_26HZyGMjOZ3-Y8NZUgz0gA@mail.gmail.com>
+ <20240625112703.GA10175@willie-the-truck>
+In-Reply-To: <20240625112703.GA10175@willie-the-truck>
+From: Rob Clark <robdclark@gmail.com>
+Date: Tue, 25 Jun 2024 08:36:08 -0700
+Message-ID: <CAF6AEGu-NxM0HO_sKxu_bhAxMEwOZkisPmoouocvisk6ng_6Bg@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] iommu/io-pgtable-arm: Add way to debug pgtable walk
+To: Will Deacon <will@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
+	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Boris Brezillon <boris.brezillon@collabora.com>, Kevin Tian <kevin.tian@intel.com>, 
+	Joao Martins <joao.m.martins@oracle.com>, 
+	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
+	"open list:IOMMU SUBSYSTEM" <iommu@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 05:07:13PM +0200, Olivier Moysan wrote:
-> Add documentation of device tree bindings to support
-> sigma delta modulator backend in IIO framework.
->=20
-> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+On Tue, Jun 25, 2024 at 4:27=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
+:
+>
+> On Mon, Jun 24, 2024 at 08:37:26AM -0700, Rob Clark wrote:
+> > On Mon, Jun 24, 2024 at 8:14=E2=80=AFAM Will Deacon <will@kernel.org> w=
+rote:
+> > >
+> > > On Thu, May 23, 2024 at 10:52:21AM -0700, Rob Clark wrote:
+> > > > From: Rob Clark <robdclark@chromium.org>
+> > > >
+> > > > Add an io-pgtable method to walk the pgtable returning the raw PTEs=
+ that
+> > > > would be traversed for a given iova access.
+> > > >
+> > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
+> > > > ---
+> > > >  drivers/iommu/io-pgtable-arm.c | 51 ++++++++++++++++++++++++++++--=
+----
+> > > >  include/linux/io-pgtable.h     |  4 +++
+> > > >  2 files changed, 46 insertions(+), 9 deletions(-)
+> > > >
+> > > > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgta=
+ble-arm.c
+> > > > index f7828a7aad41..f47a0e64bb35 100644
+> > > > --- a/drivers/iommu/io-pgtable-arm.c
+> > > > +++ b/drivers/iommu/io-pgtable-arm.c
+> > > > @@ -693,17 +693,19 @@ static size_t arm_lpae_unmap_pages(struct io_=
+pgtable_ops *ops, unsigned long iov
+> > > >                               data->start_level, ptep);
+> > > >  }
+> > > >
+> > > > -static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *op=
+s,
+> > > > -                                      unsigned long iova)
+> > > > +static int arm_lpae_pgtable_walk(struct io_pgtable_ops *ops, unsig=
+ned long iova,
+> > > > +                     int (*cb)(void *cb_data, void *pte, int level=
+),
+> > > > +                     void *cb_data)
+> > > >  {
+> > > >       struct arm_lpae_io_pgtable *data =3D io_pgtable_ops_to_data(o=
+ps);
+> > > >       arm_lpae_iopte pte, *ptep =3D data->pgd;
+> > > >       int lvl =3D data->start_level;
+> > > > +     int ret;
+> > > >
+> > > >       do {
+> > > >               /* Valid IOPTE pointer? */
+> > > >               if (!ptep)
+> > > > -                     return 0;
+> > > > +                     return -EFAULT;
+> > >
+> > > nit: -ENOENT might be a little better, as we're only checking against=
+ a
+> > > NULL entry rather than strictly any faulting entry.
+> > >
+> > > >               /* Grab the IOPTE we're interested in */
+> > > >               ptep +=3D ARM_LPAE_LVL_IDX(iova, lvl, data);
+> > > > @@ -711,22 +713,52 @@ static phys_addr_t arm_lpae_iova_to_phys(stru=
+ct io_pgtable_ops *ops,
+> > > >
+> > > >               /* Valid entry? */
+> > > >               if (!pte)
+> > > > -                     return 0;
+> > > > +                     return -EFAULT;
+> > >
+> > > Same here (and at the end of the function).
+> > >
+> > > > +
+> > > > +             ret =3D cb(cb_data, &pte, lvl);
+> > >
+> > > Since pte is on the stack, rather than pointing into the actual pgtab=
+le,
+> > > I think it would be clearer to pass it by value to the callback.
+> >
+> > fwiw, I passed it as a void* to avoid the pte size.. although I guess
+> > it could be a union of all the possible pte types
+>
+> Can you just get away with a u64?
 
-I don't review bindings for a job, I can only reliably get to look at
-my mail queue in the evenings, please give me a chance to reply to you
-before you submit a new version.
+yeah, that wfm if you're ok with it
 
-> +$id: http://devicetree.org/schemas/iio/adc/sd-modulator-backend.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Sigma delta modulator backend
-
-Same comments about filename and title apply here as the previous
-version. "TI $foo Sigma Delta Modulator" and drop the reference to back
-ends or the pretence of being generic.
-
-Thanks,
-Conor.
-
---koaKMre3ntrtIL26
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnrjmAAKCRB4tDGHoIJi
-0sNBAQCP50UL3FxvbZG06MZSx6eP+Y3JyhmEoK0Mk9xWXPPCzgD+OeI3SdHYwF20
-IctMHlmMqzaZ5Wbb1FsV3kP+AprUiww=
-=bzse
------END PGP SIGNATURE-----
-
---koaKMre3ntrtIL26--
+BR,
+-R
 
