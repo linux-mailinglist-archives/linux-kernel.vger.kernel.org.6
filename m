@@ -1,282 +1,174 @@
-Return-Path: <linux-kernel+bounces-229443-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A17916FAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:59:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 138AB916FAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:00:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19ECB283D79
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939671F2308E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1366417837A;
-	Tue, 25 Jun 2024 17:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C6mm9Wrf"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E64917837E;
+	Tue, 25 Jun 2024 17:59:58 +0000 (UTC)
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D481448E0;
-	Tue, 25 Jun 2024 17:59:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277CF1448E0;
+	Tue, 25 Jun 2024 17:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719338386; cv=none; b=O+5EvQ3UgQYOSL09sa/AafBXKl6MSE206rYeT0j+/fegc+pNlDNvLiu+Tyl6dfVGvDr7kwNCGu30CCoTMFHentXavxNj9ccMt1G5KMGXiMFS78v7xRYad1PpgIghsJUzTEnQFpQqXvbATc4fZUIBWoI+/AlarfSOgKStk3gJuaM=
+	t=1719338397; cv=none; b=dmyu4wQlCEkbO12BJk6rOYVVsuXF+oJ8fTOgiap9dkfd/rocFHwCbhW/JaCivwNIFw7tyPrHrhHI2nISVh12BoodYpO19i7V90G4TleYV9LEvCn5WcuSqonuPK+OVjhGHkq/JkN+W4rS+K2vTRi0xvAv+lBtF3EXNmkl8oBqqEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719338386; c=relaxed/simple;
-	bh=sDQffB9oZyzDB8ATdhv1cVWtsRz1caHVEDRP7yqauwU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PZI7N3UAt2ZtFvf4rIKLw9ZuK8qInzTnekfrESQdFLPiMQOeO/p3NlZiTWZD5/cS/4ooveN+KrEFXNdF5nM7v5WrHToku+Rsl3Au0mCr4HsNymnNXkc4/JuJ6SPvoyPvdQuOHtP7NwMXWsLQ8qxlj/X673iBqf5fevUiLE4NRmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C6mm9Wrf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PGaA8q001878;
-	Tue, 25 Jun 2024 17:59:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UTXlyPMimfPsdML5XnWhbzPWKtt05rNdQQcAZFX6ebk=; b=C6mm9WrfCP2fAyiN
-	uGJmkrE714XbvzqP4lHhTORx/H7Un+7wK4oWGEnUkkI0W+hToVZgQfTkjzDkgREs
-	qkDBuyYfzoemvvFN0b8ABNFUxnZVDf0FLuJ/29hZ5rmqizw7qVkiOHyYicbsy1OM
-	ndUSAq3Y7PhBP2nQhk/v1sFFAIN2VCkytV5Q0X6ThASWCWmG7/24tTt2ThEgve1O
-	5gDiTXp2U3xJSG5sN2zYoLdHyRbPjgD42AN1VegwFXSo34yOMY7wA/j42wBS5e6h
-	YWchrcP76Xk0AL0xnM2LAcajGgTN/LTJWYqsJ7nRMuQAv9slTtMZY7fA56qdXoo0
-	mVIwhg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywmaeyqjt-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 17:59:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45PHxYDN006098
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 17:59:34 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 25 Jun 2024 10:59:29 -0700
-Date: Tue, 25 Jun 2024 23:29:26 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>
-CC: Kiarash Hajian <kiarash8112hajian@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/msm/a6xx: request memory region
-Message-ID: <20240625175926.4xyzwjyx7oxcwnzx@hu-akhilpo-hyd.qualcomm.com>
-References: <20240608-adreno-v1-1-2e470480eee7@gmail.com>
- <CAF6AEGsd6jfDqV-EOWr+oMjPpVr2S+71VYmp1JoY8xU51eeEEw@mail.gmail.com>
+	s=arc-20240116; t=1719338397; c=relaxed/simple;
+	bh=hpOYBpdg6gThR5b1N227DpI9cC6+qivPwLINqm+V7N0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ia7V9ZLNnY7y91AQCxXJf9OROUKZKOgjUnAuK3cpuLhRMekzIAvovUWcTIqxLj1uQ/7XLF6UIZYheDFTZ5/ddFwXEMK3XEc3Fq1aXp7jk5imS8kpkhRcKY9IhYSFLpjSJyh6uux0UaHhBoAXEKXVleIIuQGTNLJfbF4eXMcMvU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-6e3741519d7so3984518a12.2;
+        Tue, 25 Jun 2024 10:59:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719338395; x=1719943195;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f5PoShk9ER6oKuETO3bdJUevSzjYujmcfx3i8qQ0MKo=;
+        b=WyGMrdA1r8KVw5KZriQ0MtWosR81TcjYDQKVJdCzqi38c88RvqtvuCFa2YQMJjImU0
+         NhdKzlm2TPFbGbQbjquq6rRAtwjnU6gtDKpG961FxsIyQxXSUa4ZqUDPDjLdRMsv6Fl5
+         qZx9F/JNL0SQi21uroe/TkDmF3MwX5Gw2CLbbkYkoZDa9x0biw/j2P3xlaXI1OIy4S21
+         mVNyNB/evfFj/je5B1ZdavAST+q+0XgHLN6oN3WIZDdShYvoEioL6QJATWvh8IhiMDao
+         wor879eeOQmUbu8/rNZxJGoaa3bqTns6o5gbus14vVenrjyg05sgkTIj9u8pCnfJS5Lo
+         MPnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV47idPos36259TTI4SPksLk/pFt1qiNN+bU9QbaV+Fs5w3qNRSS9m+8H8K2rfpG08hj3cHuccFv4YiXS3xOl5wQZuNYkEKU/rEtGEb44vH4kPSjskPqcdM7MfbHcF661Ed+ZmZBEl3Tz5QLPM8Yg==
+X-Gm-Message-State: AOJu0YwAr8lgeLJAwCYv7yPiUIqj/K6kHlni9jkDFRGVAO+HqIjJLkiD
+	zc3ITFOd3WgtUGDSeF4as0zxH5tmHHMg5MQ6mMEhBkNVVH/U6G0ycNfiHLOehOOXri40ajZkOmB
+	vCbnjWo29p94lEPtf7XYe2V/PAio=
+X-Google-Smtp-Source: AGHT+IGG+13e+IM6YaHCDjgHhxzZwK9iqPFhSJtEBdaJ14Pj4FVkbJjvKOBZjXrBtApOOtBEaVA2FM1ujUiSxA6mseE=
+X-Received: by 2002:a05:6a20:7b1b:b0:1b5:5ee0:378a with SMTP id
+ adf61e73a8af0-1bcee771ca1mr7839615637.36.1719338395163; Tue, 25 Jun 2024
+ 10:59:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAF6AEGsd6jfDqV-EOWr+oMjPpVr2S+71VYmp1JoY8xU51eeEEw@mail.gmail.com>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 7nTEj92ALSLleOguYyx3PJoc7eZow3XW
-X-Proofpoint-GUID: 7nTEj92ALSLleOguYyx3PJoc7eZow3XW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_13,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
- clxscore=1011 mlxscore=0 lowpriorityscore=0 priorityscore=1501
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406250132
+References: <20240623064850.83720-1-atrajeev@linux.vnet.ibm.com>
+ <722cb4bc-89d4-4e03-a80d-ffe05be52c05@intel.com> <f65ff3cf-1724-45a1-ad88-200d72251042@intel.com>
+In-Reply-To: <f65ff3cf-1724-45a1-ad88-200d72251042@intel.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Tue, 25 Jun 2024 10:59:44 -0700
+Message-ID: <CAM9d7ci2raJmUjb7X2m6O1mCJm5xYLEWS8g_gC7tTjvshm1XFQ@mail.gmail.com>
+Subject: Re: [PATCH V4 1/3] tools/perf: Fix the string match for
+ "/tmp/perf-$PID.map" files in dso__load
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, acme@kernel.org, jolsa@kernel.org, 
+	irogers@google.com, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com, 
+	disgoel@linux.vnet.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 21, 2024 at 02:09:58PM -0700, Rob Clark wrote:
-> On Sat, Jun 8, 2024 at 8:44 AM Kiarash Hajian
-> <kiarash8112hajian@gmail.com> wrote:
-> >
-> > The driver's memory regions are currently just ioremap()ed, but not
-> > reserved through a request. That's not a bug, but having the request is
-> > a little more robust.
-> >
-> > Implement the region-request through the corresponding managed
-> > devres-function.
-> >
-> > Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
-> > ---
-> > Changes in v6:
-> >     -Fix compile error
-> >     -Link to v5: https://lore.kernel.org/all/20240607-memory-v1-1-8664f52fc2a1@gmail.com
-> >
-> > Changes in v5:
-> >     - Fix error hanlding problems.
-> >     - Link to v4: https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v4-1-3881a64088e6@gmail.com
-> >
-> > Changes in v4:
-> >     - Combine v3 commits into a singel commit
-> >     - Link to v3: https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v3-0-0a728ad45010@gmail.com
-> >
-> > Changes in v3:
-> >     - Remove redundant devm_iounmap calls, relying on devres for automatic resource cleanup.
-> >
-> > Changes in v2:
-> >     - update the subject prefix to "drm/msm/a6xx:", to match the majority of other changes to this file.
-> > ---
-> >  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 33 +++++++++++----------------------
-> >  1 file changed, 11 insertions(+), 22 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > index 8bea8ef26f77..d26cc6254ef9 100644
-> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> > @@ -525,7 +525,7 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu)
-> >         bool pdc_in_aop = false;
-> >
-> >         if (IS_ERR(pdcptr))
-> > -               goto err;
-> > +               return;
-> >
-> >         if (adreno_is_a650(adreno_gpu) ||
-> >             adreno_is_a660_family(adreno_gpu) ||
-> > @@ -541,7 +541,7 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu)
-> >         if (!pdc_in_aop) {
-> >                 seqptr = a6xx_gmu_get_mmio(pdev, "gmu_pdc_seq");
-> >                 if (IS_ERR(seqptr))
-> > -                       goto err;
-> > +                       return;
-> >         }
-> >
-> >         /* Disable SDE clock gating */
-> > @@ -633,12 +633,6 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu)
-> >         wmb();
-> >
-> >         a6xx_rpmh_stop(gmu);
-> > -
-> > -err:
-> > -       if (!IS_ERR_OR_NULL(pdcptr))
-> > -               iounmap(pdcptr);
-> > -       if (!IS_ERR_OR_NULL(seqptr))
-> > -               iounmap(seqptr);
-> >  }
-> >
-> >  /*
-> > @@ -1503,7 +1497,7 @@ static void __iomem *a6xx_gmu_get_mmio(struct platform_device *pdev,
-> >                 return ERR_PTR(-EINVAL);
-> >         }
-> >
-> > -       ret = ioremap(res->start, resource_size(res));
-> > +       ret = devm_ioremap_resource(&pdev->dev, res);
-> 
-> So, this doesn't actually work, failing in __request_region_locked(),
-> because the gmu region partially overlaps with the gpucc region (which
-> is busy).  I think this is intentional, since gmu is controlling the
-> gpu clocks, etc.  In particular REG_A6XX_GPU_CC_GX_GDSCR is in this
-> overlapping region.  Maybe Akhil knows more about GMU.
+Hello,
 
-We don't really need to map gpucc region from driver on behalf of gmu.
-Since we don't access any gpucc register from drm-msm driver, we can
-update the range size to correct this. But due to backward compatibility
-requirement with older dt, can we still enable region locking? I prefer
-it if that is possible.
+On Tue, Jun 25, 2024 at 5:02=E2=80=AFAM Adrian Hunter <adrian.hunter@intel.=
+com> wrote:
+>
+> On 25/06/24 14:57, Adrian Hunter wrote:
+> > On 23/06/24 09:48, Athira Rajeev wrote:
+> >> Perf test for perf probe of function from different CU fails
+> >> as below:
+> >>
+> >>      ./perf test -vv "test perf probe of function from different CU"
+> >>      116: test perf probe of function from different CU:
+> >>      --- start ---
+> >>      test child forked, pid 2679
+> >>      Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.Msa=
+7iy89bx/testfile
+> >>        Error: Failed to add events.
+> >>      --- Cleaning up ---
+> >>      "foo" does not hit any event.
+> >>        Error: Failed to delete events.
+> >>      ---- end(-1) ----
+> >>      116: test perf probe of function from different CU               =
+    : FAILED!
+> >>
+> >> The test does below to probe function "foo" :
+> >>
+> >>      # gcc -g -Og -flto -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7=
+/testfile-foo.c
+> >>      -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+> >>      # gcc -g -Og -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testf=
+ile-main.c
+> >>      -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+> >>      # gcc -g -Og -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testf=
+ile
+> >>      /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+> >>      /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+> >>
+> >>      # ./perf probe -x /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/tes=
+tfile foo
+> >>      Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.Xni=
+NxNEVT7/testfile
+> >>         Error: Failed to add events.
+> >>
+> >> Perf probe fails to find symbol foo in the executable placed in
+> >> /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7
+> >>
+> >> Simple reproduce:
+> >>
+> >>  # mktemp -d /tmp/perf-checkXXXXXXXXXX
+> >>    /tmp/perf-checkcWpuLRQI8j
+> >>
+> >>  # gcc -g -o test test.c
+> >>  # cp test /tmp/perf-checkcWpuLRQI8j/
+> >>  # nm /tmp/perf-checkcWpuLRQI8j/test | grep foo
+> >>    00000000100006bc T foo
+> >>
+> >>  # ./perf probe -x /tmp/perf-checkcWpuLRQI8j/test foo
+> >>    Failed to find symbol foo in /tmp/perf-checkcWpuLRQI8j/test
+> >>       Error: Failed to add events.
+> >>
+> >> But it works with any files like /tmp/perf/test. Only for
+> >> patterns with "/tmp/perf-", this fails.
+> >>
+> >> Further debugging, commit 80d496be89ed ("perf report: Add support
+> >> for profiling JIT generated code") added support for profiling JIT
+> >> generated code. This patch handles dso's of form
+> >> "/tmp/perf-$PID.map" .
+> >>
+> >> The check used "if (strncmp(self->name, "/tmp/perf-", 10) =3D=3D 0)"
+> >> to match "/tmp/perf-$PID.map". With this commit, any dso in
+> >> /tmp/perf- folder will be considered separately for processing
+> >> (not only JIT created map files ). Fix this by changing the
+> >> string pattern to check for "/tmp/perf-%d.map". Add a helper
+> >> function is_perf_pid_map_name to do this check. In "struct dso",
+> >> dso->long_name holds the long name of the dso file. Since the
+> >> /tmp/perf-$PID.map check uses the complete name, use dso___long_name f=
+or
+> >> the string name.
+> >>
+> >> With the fix,
+> >>      # ./perf test "test perf probe of function from different CU"
+> >>      117: test perf probe of function from different CU               =
+    : Ok
+> >>
+> >> Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
+> >
+> > Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+> >
+>
+> Although it could use a Fixes tag
+>
 
-FYI, kgsl accesses gpucc registers to ensure gdsc has collapsed. So
-gpucc region has to be mapped by kgsl and that is reflected in the kgsl
-device tree.
+Thanks, I will add
 
--Akhil
+Fixes: 56cbeacf1435 ("perf probe: Add test for regression introduced
+by switch to die_get_decl_file()")
 
-> 
-> BR,
-> -R
-> 
-> >         if (!ret) {
-> >                 DRM_DEV_ERROR(&pdev->dev, "Unable to map the %s registers\n", name);
-> >                 return ERR_PTR(-EINVAL);
-> > @@ -1613,13 +1607,13 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
-> >         gmu->mmio = a6xx_gmu_get_mmio(pdev, "gmu");
-> >         if (IS_ERR(gmu->mmio)) {
-> >                 ret = PTR_ERR(gmu->mmio);
-> > -               goto err_mmio;
-> > +               goto err_cleanup;
-> >         }
-> >
-> >         gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
-> >         if (IS_ERR(gmu->cxpd)) {
-> >                 ret = PTR_ERR(gmu->cxpd);
-> > -               goto err_mmio;
-> > +               goto err_cleanup;
-> >         }
-> >
-> >         if (!device_link_add(gmu->dev, gmu->cxpd, DL_FLAG_PM_RUNTIME)) {
-> > @@ -1635,7 +1629,7 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
-> >         gmu->gxpd = dev_pm_domain_attach_by_name(gmu->dev, "gx");
-> >         if (IS_ERR(gmu->gxpd)) {
-> >                 ret = PTR_ERR(gmu->gxpd);
-> > -               goto err_mmio;
-> > +               goto err_cleanup;
-> >         }
-> >
-> >         gmu->initialized = true;
-> > @@ -1645,9 +1639,7 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
-> >  detach_cxpd:
-> >         dev_pm_domain_detach(gmu->cxpd, false);
-> >
-> > -err_mmio:
-> > -       iounmap(gmu->mmio);
-> > -
-> > +err_cleanup:
-> >         /* Drop reference taken in of_find_device_by_node */
-> >         put_device(gmu->dev);
-> >
-> > @@ -1762,7 +1754,7 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
-> >                 gmu->rscc = a6xx_gmu_get_mmio(pdev, "rscc");
-> >                 if (IS_ERR(gmu->rscc)) {
-> >                         ret = -ENODEV;
-> > -                       goto err_mmio;
-> > +                       goto err_cleanup;
-> >                 }
-> >         } else {
-> >                 gmu->rscc = gmu->mmio + 0x23000;
-> > @@ -1774,13 +1766,13 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
-> >
-> >         if (gmu->hfi_irq < 0 || gmu->gmu_irq < 0) {
-> >                 ret = -ENODEV;
-> > -               goto err_mmio;
-> > +               goto err_cleanup;
-> >         }
-> >
-> >         gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
-> >         if (IS_ERR(gmu->cxpd)) {
-> >                 ret = PTR_ERR(gmu->cxpd);
-> > -               goto err_mmio;
-> > +               goto err_cleanup;
-> >         }
-> >
-> >         link = device_link_add(gmu->dev, gmu->cxpd, DL_FLAG_PM_RUNTIME);
-> > @@ -1824,10 +1816,7 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
-> >  detach_cxpd:
-> >         dev_pm_domain_detach(gmu->cxpd, false);
-> >
-> > -err_mmio:
-> > -       iounmap(gmu->mmio);
-> > -       if (platform_get_resource_byname(pdev, IORESOURCE_MEM, "rscc"))
-> > -               iounmap(gmu->rscc);
-> > +err_cleanup:
-> >         free_irq(gmu->gmu_irq, gmu);
-> >         free_irq(gmu->hfi_irq, gmu);
-> >
-> >
-> > ---
-> > base-commit: 1b294a1f35616977caddaddf3e9d28e576a1adbc
-> > change-id: 20240608-adreno-98c412bfdc03
-> >
-> > Best regards,
-> > --
-> > Kiarash Hajian <kiarash8112hajian@gmail.com>
-> >
+Namhyung
 
