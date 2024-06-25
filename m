@@ -1,125 +1,203 @@
-Return-Path: <linux-kernel+bounces-229376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70382916F09
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:21:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01220916F0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:23:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0B42284D82
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4BB2852FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:22:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE61176AD9;
-	Tue, 25 Jun 2024 17:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2309178390;
+	Tue, 25 Jun 2024 17:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZO2LjxV5"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fPLB7Ol3"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E24E17554D;
-	Tue, 25 Jun 2024 17:21:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCBB178361
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 17:22:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719336105; cv=none; b=Lw28Em1AXwQh9+Hy1PukwiQ021pLgiYy/pcSrMoGrXHqeid25OE9U/37yW8Zig8zwn2FkhVg6R3C3HbLeamzE3ak+acXdaZG114qgiH6AgSZ4Ojph3X7J/j7muX6U0vatqxPHzIjnhehWROrC1juNijNl4qppSHkWfsHc7aEHrw=
+	t=1719336158; cv=none; b=DBfeOD3AwnCLVPfm7mqLu1EQS06tYFouSyAyuKjTg+nW36iwq3eN0x0Fzmi1VNevrr/f7VE2X5+REH9VuE0m827nvL81Ftld/N9bZt42bQ3P09d/Y5UUczKsAC/2qqD0LcMehcO58OWnYbfAUE24QBIoBvRwZoC0FfVi2GTxRx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719336105; c=relaxed/simple;
-	bh=s8KbmMcm4KLYRhQkh2vJq5ToCwm0f8AYwsjrhCzNrxc=;
+	s=arc-20240116; t=1719336158; c=relaxed/simple;
+	bh=dqG7w43iPHnt0PDr2DMEYcCiCAJjt30o8hAILUS/iJg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G0gHbxIf92w6JCBXxh8blxFl7ygF4lOoZNoIcO6drIC39HueBqg8f4VfaxU4ex5cdoVI+jzPLr2m8n+Zs/+6wNUgNPhgalQ3+1vcysEhaGgXoW6SBXnzG+nC7JphAh2Dnt/G2WibZm6qzYX+E7S5/Dn//U8w6lTL0qZFW9U5hhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZO2LjxV5; arc=none smtp.client-ip=209.85.208.51
+	 To:Cc:Content-Type; b=oYRUVDkFxZdbH+lM0GTY7yiaEPNT8Fe5Iq4q4qWGrU0jwhQoBQpeTSSc2lnHkaBFWS7gC9APKvQqCfJCKkHKIEvIS4l/7WyGofA8S9nYx0YQd1sn+xuwAAunKdeo4fuZA6LpWnEYhH70NjfP40jKVsTRWcG+2LecA8hJjG2GhWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fPLB7Ol3; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57d046f4afdso3085746a12.1;
-        Tue, 25 Jun 2024 10:21:44 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso71536641fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:22:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719336103; x=1719940903; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719336155; x=1719940955; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=PF8X3EVfaOc0m47BxMvYz7nb1AddbCK1NzyBkiDSsiE=;
-        b=ZO2LjxV5R5HCQX5oxnCcMyZB6f3Fr2P9J8ilPfL6g/DfwUBEzOQKeIdoBPvvxE4WiW
-         EwCk7XIHxZD4BTygb/WyTMx0pqeOa88V34yRw0JmitSM58dQz9uHkQsw7inC4Y87ReM3
-         kapX7O2BAfFq+Ua+0KCOWyONmkXRlhM/2bIzMabegkjyuGIAighxSWfaExbY02QLpXHt
-         O2Q/1fGR3NSsy6gLMX3o8RD8BpmbQ8FNEf6x9lMzToWP00xcDnMwqhMlTw+SMLRvDcYS
-         GHKGFvZSiYrrpz/Q9JKE/yboXdMSxnoYe4UbY4VkpL0+XBlZcmd9gNWKQdWyYa2OMn6f
-         b6SA==
+        bh=U8+vxqtoku9WMxCA6PXoqwBfKDqGzEMaoj9vVLQWGmg=;
+        b=fPLB7Ol3vzGD74KsnaSC8WbN4C3U5sSAegZiFd/eezcBkdUEEBWY3hVeNyTZOMSe1b
+         C6Y4aCfQobfECCBjrQmbf2OUvIc7BQ4Alj9t5dYDyKOVgzQZeZCypfSzX7yJnDYon8Xq
+         44z5aNs3d3tFizLzsKoRDcB7sRipN5vgqCGCTAxo9p927+a+iCASWawSoyRDDbbhJhbV
+         +AxJTXlEB3YQqyK5Eu1gMd6YXh2A1jkWhleVjc6nuVIBdzJFlWfGxUVoDQd/tobpuhrp
+         uHWrtrwtdAQuPh/N9iar6GBGk5t9nqcMPmYfstHu8JCfx92VpbiMytgeZuQpPkpt9iMA
+         quNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719336103; x=1719940903;
+        d=1e100.net; s=20230601; t=1719336155; x=1719940955;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=PF8X3EVfaOc0m47BxMvYz7nb1AddbCK1NzyBkiDSsiE=;
-        b=cdjdF/pwJ8O71ejQno8AfSLkXmnxylMhyWLPdkeJ8WQvpdGnrkzc3vDPrhi/uLyzse
-         rmP8cGXip/uXylxF49amryrei7n0T7OjRZ7mZ8kbZyMhBYWTuxS6gWTQ4iaqK2vvp7jg
-         KLIf81CNfLNiV2goO21bwM+qScUJmmR/yDj86qUJ9kAxX1W67W55qQJh2cKs5c33q6e9
-         a2f5FDXusGq8hx9ZMQhUDTlC71c1CGUXMz60ht+ciqCa6Mhc842eSaqtKuK5Pb62Y2ji
-         0VXZ7h8cGJokhOGOt0IcPQD9bDpdPkh5KQdj2FygZpaalywbObv3hivOie7k9B9XengQ
-         oSMg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUh9M2Y0o77AvYc7w0csWb5mlUD3Oc+z8xsEiMDXxy07LH8kD578nCrBmUIqFPKQQ0G2DHsycfeTVJY/fz7dEPI/FmVUiAwDinoELxvG5iPsXfo174BdEfwJoN+6PFxrg4ZOgq7g4b6aXCoueKFkqT5iv6J+iXxOuB5bx3jvXgBmKRmnv6N50=
-X-Gm-Message-State: AOJu0YwqI8HaKKwV/IA9Xf1RqCOJwMuEscUGi75U6OYd14UQFFsKUOs5
-	j9RK3vkprhvCvbE5bnrrunH/YqbedM8+MJowj1I3mFwVUJGY3N0KAEVpQWecTk8HKGwXie3CZ9t
-	V9dAwaUO05gungkpeUAkOvlhGeRE=
-X-Google-Smtp-Source: AGHT+IFeIuyJQKXKtU7lWnptJ+g4b8NhOfTie3eIuQqqinLgHNlVbZ9//tdM3Vu2irFhjN3um1vvb0W6+8VMOyR8YoE=
-X-Received: by 2002:a50:cdd2:0:b0:57c:5f77:1136 with SMTP id
- 4fb4d7f45d1cf-57d4bd8fcf3mr7296749a12.24.1719336102439; Tue, 25 Jun 2024
- 10:21:42 -0700 (PDT)
+        bh=U8+vxqtoku9WMxCA6PXoqwBfKDqGzEMaoj9vVLQWGmg=;
+        b=JDz0WsM25/JcEx+Wyt+cUabrX1iVvSq6c211OGvvClxPei54sam9/21crjhTAHSKQL
+         vgX6G+Cn+uwq9kFPzrKjJ2JvR9aBKRtuXKwVJxlDyoZZfgmqSJKA/1UERnZ43w6I5Cti
+         otVc807rlu1UGxrHWYY+MscdiS1GBzRLlcMFy+w2gnqCZ16GZXTC4iFqF8WZtb6j+5zU
+         aR3PzPCSiojcdkyZ6ToxESOehtpmz03tVNNVii6viXD3obvrxca+ztDcFWcMfPb5x0YP
+         yVVNJFpOYZgM9pvoAMBxsFFIt3WsqU0bCQsYvRl/cCr+3maAx0+1jamccYhtXkGV57RV
+         iidQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVJLQtMfyHFMYW1A65tDdISy4By4RL0m0wf0cfrB4Fv3o9oTNV7h4NrK5saQYzfJjbAy4lZj5w7WqwuzgzzVC+7lc3D8DLypOvlKxkg
+X-Gm-Message-State: AOJu0Yz2Mwl636tHKZrLIkgqLuGH8T2we5frSpBS4xGVxa54NfjctZgS
+	d8dHwrLxizncPUjLn2yAw9NXlDgh0ff13CvPwWV0r6yOYXAJ7/QXRLPhRpBFEWguLOe4tn6QQ4e
+	yDNHIYnzH2+f6aNroLnJDwKK4yyM=
+X-Google-Smtp-Source: AGHT+IENflu0IhOwnz3G7CoO5qIYDSrf3yQTxo4pN2s8oFrddW68LdZ70xyM8SUrG1NNxvukXAkxa3vCptR2WVA9VfU=
+X-Received: by 2002:a05:651c:b0d:b0:2ec:5f0d:8b08 with SMTP id
+ 38308e7fff4ca-2ec5f0d8f83mr62208701fa.37.1719336154320; Tue, 25 Jun 2024
+ 10:22:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605-topic-smem_speedbin-v2-0-8989d7e3d176@linaro.org> <20240605-topic-smem_speedbin-v2-4-8989d7e3d176@linaro.org>
-In-Reply-To: <20240605-topic-smem_speedbin-v2-4-8989d7e3d176@linaro.org>
-From: Rob Clark <robdclark@gmail.com>
-Date: Tue, 25 Jun 2024 10:21:30 -0700
-Message-ID: <CAF6AEGsqv3c8EfBK_CxP7Xgoxj5w6n+XdHcGMC8HxrC8C=D8qg@mail.gmail.com>
-Subject: Re: [PATCH v2 4/7] drm/msm/adreno: Add speedbin data for SM8550 / A740
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	Neil Armstrong <neil.armstrong@linaro.org>
+References: <20240622071231.576056-1-21cnbao@gmail.com> <20240622071231.576056-2-21cnbao@gmail.com>
+In-Reply-To: <20240622071231.576056-2-21cnbao@gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Wed, 26 Jun 2024 01:22:17 +0800
+Message-ID: <CAMgjq7BNC_O5zqh522rs78_SPiiq1KXxGyOCUstwQUgucTLgxA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] tools/mm: Introduce a tool to assess swap entry
+ allocation for thp_swapout
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, chrisl@kernel.org, linux-mm@kvack.org, 
+	ryan.roberts@arm.com, david@redhat.com, hughd@google.com, 
+	kaleshsingh@google.com, linux-kernel@vger.kernel.org, v-songbaohua@oppo.com, 
+	ying.huang@intel.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 5, 2024 at 1:10=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linaro.=
-org> wrote:
+On Sat, Jun 22, 2024 at 3:13=E2=80=AFPM Barry Song <21cnbao@gmail.com> wrot=
+e:
 >
-> Add speebin data for A740, as found on SM8550 and derivative SoCs.
+> From: Barry Song <v-songbaohua@oppo.com>
 >
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Both Ryan and Chris have been utilizing the small test program to aid
+> in debugging and identifying issues with swap entry allocation. While
+> a real or intricate workload might be more suitable for assessing the
+> correctness and effectiveness of the swap allocation policy, a small
+> test program presents a simpler means of understanding the problem and
+> initially verifying the improvements being made.
+>
+> Let's endeavor to integrate it into tools/mm. Although it presently
+> only accommodates 64KB and 4KB, I'm optimistic that we can expand
+> its capabilities to support multiple sizes and simulate more
+> complex systems in the future as required.
+>
+> Basically, we have
+> 1. Use MADV_PAGEPUT for rapid swap-out, putting the swap allocation code
+> under high exercise in a short time.
+> 2. Use MADV_DONTNEED to simulate the behavior of libc and Java heap in
+> freeing memory, as well as for munmap, app exits, or OOM killer scenarios=
+.
+> This ensures new mTHP is always generated, released or swapped out, simil=
+ar
+> to the behavior on a PC or Android phone where many applications are
+> frequently started and terminated.
+> 3. Swap in with or without the "-a" option to observe how fragments
+> due to swap-in and the incoming swap-in of large folios will impact
+> swap-out fallback.
+>
+> Due to 2, we ensure a certain proportion of mTHP. Similarly, because
+> of 3, we maintain a certain proportion of small folios, as we don't
+> support large folios swap-in, meaning any swap-in will immediately
+> result in small folios. Therefore, with both 2 and 3, we automatically
+> achieve a system containing both mTHP and small folios. Additionally,
+> 1 provides the ability to continuously swap them out.
+>
+> We can also use "-s" to add a dedicated small folios memory area.
+>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 > ---
->  drivers/gpu/drm/msm/adreno/adreno_device.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  tools/mm/Makefile                  |   2 +-
+>  tools/mm/thp_swap_allocator_test.c | 233 +++++++++++++++++++++++++++++
+>  2 files changed, 234 insertions(+), 1 deletion(-)
+>  create mode 100644 tools/mm/thp_swap_allocator_test.c
 >
-> diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm=
-/msm/adreno/adreno_device.c
-> index 901ef767e491..e00eef8099ae 100644
-> --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-> +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-> @@ -570,6 +570,10 @@ static const struct adreno_info gpulist[] =3D {
->                 .zapfw =3D "a740_zap.mdt",
->                 .hwcg =3D a740_hwcg,
->                 .address_space_size =3D SZ_16G,
-> +               .speedbins =3D ADRENO_SPEEDBINS(
-> +                       { ADRENO_SKU_ID(SOCINFO_FC_AC), 0 },
-> +                       { ADRENO_SKU_ID(SOCINFO_FC_AF), 0 },
+> diff --git a/tools/mm/Makefile b/tools/mm/Makefile
+> index 7bb03606b9ea..15791c1c5b28 100644
+> --- a/tools/mm/Makefile
+> +++ b/tools/mm/Makefile
+> @@ -3,7 +3,7 @@
+>  #
+>  include ../scripts/Makefile.include
+>
+> -BUILD_TARGETS=3Dpage-types slabinfo page_owner_sort
+> +BUILD_TARGETS=3Dpage-types slabinfo page_owner_sort thp_swap_allocator_t=
+est
+>  INSTALL_TARGETS =3D $(BUILD_TARGETS) thpmaps
+>
+>  LIB_DIR =3D ../lib/api
+> diff --git a/tools/mm/thp_swap_allocator_test.c b/tools/mm/thp_swap_alloc=
+ator_test.c
+> new file mode 100644
+> index 000000000000..a363bdde55f0
+> --- /dev/null
+> +++ b/tools/mm/thp_swap_allocator_test.c
+> @@ -0,0 +1,233 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * thp_swap_allocator_test
+> + *
+> + * The purpose of this test program is helping check if THP swpout
+> + * can correctly get swap slots to swap out as a whole instead of
+> + * being split. It randomly releases swap entries through madvise
+> + * DONTNEED and swapin/out on two memory areas: a memory area for
+> + * 64KB THP and the other area for small folios. The second memory
+> + * can be enabled by "-s".
+> + * Before running the program, we need to setup a zRAM or similar
+> + * swap device by:
+> + *  echo lzo > /sys/block/zram0/comp_algorithm
+> + *  echo 64M > /sys/block/zram0/disksize
+> + *  echo never > /sys/kernel/mm/transparent_hugepage/hugepages-2048kB/en=
+abled
+> + *  echo always > /sys/kernel/mm/transparent_hugepage/hugepages-64kB/ena=
+bled
+> + *  mkswap /dev/zram0
+> + *  swapon /dev/zram0
+> + * The expected result should be 0% anon swpout fallback ratio w/ or
+> + * w/o "-s".
+> + *
+> + * Author(s): Barry Song <v-songbaohua@oppo.com>
+> + */
+> +
+> +#define _GNU_SOURCE
+> +#include <stdio.h>
+> +#include <stdlib.h>
+> +#include <unistd.h>
+> +#include <string.h>
+> +#include <sys/mman.h>
 
-Did you really mean for these both to map to the same speedbin?
+Hi Barry,
 
-> +               ),
->         }, {
->                 .chip_ids =3D ADRENO_CHIP_IDS(0x43051401), /* "C520v2" */
->                 .family =3D ADRENO_7XX_GEN3,
->
-> --
-> 2.43.0
->
+Found a small issue while testing your tool.. for better
+compatibility, I think you missed <linux/mman.h>, I'm getting
+following error without it (with glibc-headers-2.28-236 on el8
+system):
+
+thp_swap_allocator_test.c:161:30: error: =E2=80=98MADV_PAGEOUT=E2=80=99 und=
+eclared
+(first use in this function); did you mean =E2=80=98MADV_RANDOM=E2=80=99?
+  madvise(mem1, MEMSIZE_MTHP, MADV_PAGEOUT);
+                              ^~~~~~~~~~~~
+
+Other in-tree test tools using this flag also includes <linux/mman.h>.
 
