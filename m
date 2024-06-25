@@ -1,189 +1,137 @@
-Return-Path: <linux-kernel+bounces-228453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D26916027
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:37:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED67B916029
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3530C1C20B23
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:37:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57AF5B20FEE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E89B146A76;
-	Tue, 25 Jun 2024 07:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC181146A99;
+	Tue, 25 Jun 2024 07:38:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VPTNJduO"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JXKoLgBn"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4801DFFD
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830C51369AE
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719301056; cv=none; b=XSYX91KRoxPsNGSkqXOrk+E8hIvCNf+6YQWJtANoJojeDoHck8/wxdDXfjJWhuL8JC3yEmQjepRSeUO5KyWNsv9rF8K+UEEiSHP4/58E3lu6CWmsCSPK+/fl56F3PsET2m0cpOY3J/HsU0kU8EDcIZZh/dYVf6ody4Dw/+86sLg=
+	t=1719301101; cv=none; b=bWkpn9eEt1aiY0K+19cja+D4mZ1Jt2sip6+ilpNaQQB3kApygBLRqxt4E2hZ+NAA9hwSW2BlErZADc2y658Ga+vJGzW/3nPGoxuVA/X/gabxEmTAD1QeqtmCo1VJqx98ZyPsgX8A2ZfBmZP6ErIg/N6H8MhDXnL/CqpUBUr93CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719301056; c=relaxed/simple;
-	bh=f64MBD/7cfJDhhgnjCP+On1Bk31p8L2ViRRHIH0YTDQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y3bvepqmjIJ/wvgPxS6CZpLT63aVzTZVczwEuRWJQwiKCL38QrFnEfAl3aRj47dggQN/OVcJDkLNx0cbNZr5f9IjPc/IBHygxLyUpvOfsNsrQRH5rScfmqfppcrKH+WEFs8mqI9kxoiQWQBxTNFs/AK7b9prHyn63b7nWkScL3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VPTNJduO; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4217990f997so39085025e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:37:34 -0700 (PDT)
+	s=arc-20240116; t=1719301101; c=relaxed/simple;
+	bh=xnd34nsHVB3Bb1w9b0swEF5Kneh0p23nUetcrUBUo+Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PtJsi6FuYF7oUnZQVMy007tX83noSRZEcF0NwMeepLP+tDidXXOpvXJa4HYRKMdfVlcCYX4AcBSuTS1PpaDK0K6/kjaXKl2C0oXWVo9DuTmMQ42qWaly2h9poNXGpgiUSuHDzJhATdOImSzIKa6t5srw9Jr6lJfU5xGYjrR5qu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JXKoLgBn; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4217926991fso45631135e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:38:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719301053; x=1719905853; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=IA00d3kXembGJbTRrQC3GHeXDT+bmLkyWcsrNiRNxk4=;
-        b=VPTNJduOx1Mm87Lp4Z6goxiVu2ZStu4Tn6mybsxRr8TbXabuc3mW6Sl1JLncd6xX+j
-         38GYmwXjp3cbt5W+Qs5cTH2waQaWzVKB3HdEujiCvALAtvYbMavzfnIwbVWdbmN8X9lH
-         MaEbXPD4iUwZOKUZMIa9kuJniAQVqYSPrc2rKT0/dSB8OnsXnngn0O5nkqgPky+o8Ur6
-         fdW5eA1t5bOMFMEMrt12GHjHjsIwWOXr+0WNeiE5fxT3N1J49zrr17jyzlRU/m+dvwki
-         cKTUc67aeq9kcgg//oyqBUtTUceFT4HfZG+4vEmAz2BDCp8+CVmBHUGa7OK/nNaCnSvw
-         XjGg==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719301098; x=1719905898; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kg+ROxAEkhG3YixyHjk8IESjY4JYPzhuw/Z95rZo6PY=;
+        b=JXKoLgBnvKm0SWXb9T0dFGyGzC1GJeUSpGdFGmrwTqj1ZzGc3+rlxgZ1VRdKGHg9zQ
+         HWxg1bvLSFTFhIPOoBgUXN/bGhQ6uIpkAyajqWz9orWcH3lHh0LjZLjraDfcl8fXkH3v
+         ePCDU1nTwqm+TjFGenaG5BRfiZR5IADV8Nz174Kezz6TH4hQqWIJAmCFnaZcXLwCfEbq
+         T/uXhNa4YxYIw4HlyUcazZHr/FqaTrMUstU0pYB4/DR/DyuUg5RqGrwMflBoSD+Zz2Ny
+         tdEqTpwJq4OQan9V8epjXmQ+oXKxhbN0wkRbgpLvPZiho/SaSUS3RYRdq3fw8jdRPPAi
+         7HaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719301053; x=1719905853;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IA00d3kXembGJbTRrQC3GHeXDT+bmLkyWcsrNiRNxk4=;
-        b=rzdgs+E63qQS2MeEL+GRa3YrOXSzGbPUYb5/vBSJvODyeMKxK40ydWWvsjT79rxxPd
-         H5xqrmbeZIeUoVkYV8xXtVwK1G+TrfzL3hEay4/hf0vk7gnQgSWplzCfHygYk3OkKD2j
-         kHfnt7uNHW5wXmE7am9DtQW31anovhSn92DI8hVSolOPLO3+VJhMTRHZVFJUf8uVKcgV
-         UoNj/HB4TQg03Pb0lWncusxoRUyXkMd8U41HpCLQevPvZI3F3DWmV9h3Wh34UYNc4IST
-         oi/FRqAx7Upcq0tqKtLP7hCz8XpGwA4kjrnu83qoTz938McLG7qWf0I2Lpw3LP3qHRlu
-         GgeA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKuW7cjR7khQ7++GOBlUuMmhaumVvGdiCwNeHl3nbhM12swrD0ICKTkkwoidqOfpq4BuM3SWYL8ayScTWD7OLVUKIFRagt/7kNSX3J
-X-Gm-Message-State: AOJu0YxNHlLFz8/9KpEi/LxYqjLfORHi3yMaIlY+//IVbKjaLq2ca3QO
-	iuVsn64ADSopI2Arv70MBdcm8kbRctDsO5E54Q9dJ4N5kEzGTBs9ah/XPoob70Q=
-X-Google-Smtp-Source: AGHT+IF4VdM5dOrZ8HlsLIbSrR8JwJNLzbY53ONjUMXT1TZ83NWHj7Bn0RpZNW4PB6R45XccK7Ja7A==
-X-Received: by 2002:a05:600c:3011:b0:421:72f3:33b5 with SMTP id 5b1f17b1804b1-42489e66ab0mr48271005e9.35.1719301052973;
-        Tue, 25 Jun 2024 00:37:32 -0700 (PDT)
-Received: from linaro.org ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817a8ec8sm161372335e9.11.2024.06.25.00.37.31
+        d=1e100.net; s=20230601; t=1719301098; x=1719905898;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kg+ROxAEkhG3YixyHjk8IESjY4JYPzhuw/Z95rZo6PY=;
+        b=TNJBtCjhTy+jECKznuf/sIhC/QAxV9RL9XKBqZAjWH1KSLG5BUs/iKeSrk53clfLew
+         1uIuXjfaMSvw+uR0xkCGAXKOw43UlNgRbBO11oeDMi/QjInvOowpdPXRBYRMEIpCE0sh
+         r6EFZHU2LKiePsSzfZmzDoLfiPpQEfm8MM+mJK0HIoYVsjLRiEt0Y7L7LKSWb1ynK3KG
+         q6GtbRnw+2plhUPGdXwQhwLY6TqZSy0AlxzzHvqdJeKMmxLAAIimP34iboiywVwkqUEx
+         O0gchO947fX5JePZP1QOgUpF138t+NdEWb+NROQl7icscFFLj1sSHldb3X7W3Ntqt5BU
+         2BYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXQojVQuUiUaAFDJW+0Kq7nWdAJXP+42hv2kf/eZsSLF78qwirhTdCWY+AJnTr+7JOAt55z/Kv+iNn3XRdvSg5TZcZlYh0IJjILYN2m
+X-Gm-Message-State: AOJu0YyxwHkiqMfg8uFlicUak3PCXahUL3jbI9RYKMpAdGF2K3nGJCPz
+	cdJapFMK4MkfIAW8BfFNxX7qY5Oo4OkP0qdNSzWzqUJzIZNL1oTlhWl6PxXvCgc=
+X-Google-Smtp-Source: AGHT+IGq5IuN9x17sYOYh81hjhx9M1UaQ7AfJsvFZGT4XI/Jx+CqnuM9j2WVotD0ag3CEpwFPVUmsg==
+X-Received: by 2002:a05:600c:4f4d:b0:424:8ff5:67cb with SMTP id 5b1f17b1804b1-4248ff5681cmr33842205e9.39.1719301097768;
+        Tue, 25 Jun 2024 00:38:17 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2b2c:4971:1887:588b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4248e63a897sm83139275e9.44.2024.06.25.00.38.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 00:37:32 -0700 (PDT)
-Date: Tue, 25 Jun 2024 10:37:30 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	"vkoul@kernel.org" <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: Lockdep broken on x1e80100 (was: Re: [PATCH v5 0/7] sm8550: Add
- support for eUSB2 repeater)
-Message-ID: <ZnpzuhXqSLPkpkhn@linaro.org>
-References: <20230208190200.2966723-1-abel.vesa@linaro.org>
- <ZnpoAVGJMG4Zu-Jw@hovoldconsulting.com>
+        Tue, 25 Jun 2024 00:38:17 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpiolib: unexport gpiochip_get_desc()
+Date: Tue, 25 Jun 2024 09:38:15 +0200
+Message-ID: <20240625073815.12376-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnpoAVGJMG4Zu-Jw@hovoldconsulting.com>
+Content-Transfer-Encoding: 8bit
 
-On 24-06-25 08:47:29, Johan Hovold wrote:
-> On Wed, Feb 08, 2023 at 09:01:53PM +0200, Abel Vesa wrote:
-> > This patchset adds support for the eUSB2 repeater found in pmic PM8550B,
-> > used along with SM8550. Since there is no dedicated generic framework
-> > for eUSB2 repeaters, the most appropriate subsystem to model it is the
-> > generic phy. This patchset also adds support for such repeater to the
-> > eUSB2 PHY found in SM8550. Basically, the eUSB2 PHY will have its own
-> > "phy" which is actually a repeater.
-> 
-> The decision to model the repeater as a PHY unfortunately breaks lockdep
-> as you now have functions like phy_init() calling phy_init() for a
-> second PHY (the repeater, see splat below).
-> 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-This was reported by Bjorn off-list a couple of months ago. I did check
-it then and the order is perfectly fine. The solution here should be to
-use mutex_lock_nested in the PHY framework. This would allow supporting
-chain-linked PHYs. The possibility of moving out the repeater out of PHY
-was also discussed. Unfortunately, I didn't have the bandwidth to
-circle back and properly investigate and fix it.
+This function has been deprecated for some time and is now only used
+within the GPIOLIB core. Remove it from the public header and unexport
+it as all current users are linked against the compilation unit where
+it is defined.
 
-> As long as the locks are always taken in the same order there should be
-> no risk for a deadlock, but can you please verify that and add the
-> missing lockdep annotation so that lockdep can be used on platforms like
-> x1e80100 (e.g. to prevent further locking issues from being introduced)?
-> 
-> Johan
-> 
-> 
-> [    8.613248] ============================================
-> [    8.669073] WARNING: possible recursive locking detected
-> [    8.669074] 6.10.0-rc5 #122 Not tainted
-> [    8.669075] --------------------------------------------
-> [    8.669075] kworker/u50:0/77 is trying to acquire lock:
-> [    8.669076] ffff5cae8733ecf8 (&phy->mutex){+.+.}-{3:3}, at: phy_init+0x4c/0x12c
-> [    8.669087]
->                but task is already holding lock:
-> [    8.669088] ffff5cae8a056cf8 (&phy->mutex){+.+.}-{3:3}, at: phy_init+0x4c/0x12c
-> [    8.669092]
->                other info that might help us debug this:
-> [    8.669092]  Possible unsafe locking scenario:
-> 
-> [    8.669093]        CPU0
-> [    8.669093]        ----
-> [    8.669094]   lock(&phy->mutex);
-> [    8.669095]   lock(&phy->mutex);
-> [    8.669097]
->                 *** DEADLOCK ***
-> 
-> [    8.669097]  May be due to missing lock nesting notation
-> 
-> [    8.669097] 4 locks held by kworker/u50:0/77:
-> [    8.669099]  #0: ffff5cae80010948 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1a4/0x638
-> [    8.669108]  #1: ffff800080333de0 (deferred_probe_work){+.+.}-{0:0}, at: process_one_work+0x1cc/0x638
-> [    8.669112]  #2: ffff5cae854038f8 (&dev->mutex){....}-{3:3}, at: __device_attach+0x38/0x1d4
-> [    8.669117]  #3: ffff5cae8a056cf8 (&phy->mutex){+.+.}-{3:3}, at: phy_init+0x4c/0x12c
-> [    8.669121]
->                stack backtrace:
-> [    8.669122] CPU: 9 PID: 77 Comm: kworker/u50:0 Not tainted 6.10.0-rc5 #122
-> [    8.669124] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
-> [    8.669125] Workqueue: events_unbound deferred_probe_work_func
-> [    8.669128] Call trace:
-> [    8.669129]  dump_backtrace+0x9c/0x11c
-> [    8.870384]  show_stack+0x18/0x24
-> [    8.870386]  dump_stack_lvl+0x90/0xd0
-> [    8.870391]  dump_stack+0x18/0x24
-> [    8.870393]  print_deadlock_bug+0x25c/0x348
-> [    8.870396]  __lock_acquire+0x10a4/0x2064
-> [    8.870399]  lock_acquire.part.0+0xc8/0x20c
-> [    8.870401]  lock_acquire+0x68/0x84
-> [    8.870403]  __mutex_lock+0x98/0x428
-> [    8.870407]  mutex_lock_nested+0x24/0x30
-> [    8.870410]  phy_init+0x4c/0x12c
-> [    8.870412]  qcom_snps_eusb2_hsphy_init+0x54/0x420 [phy_qcom_snps_eusb2]
-> [    8.870416]  phy_init+0xe0/0x12c
-> [    8.870418]  dwc3_core_init+0x484/0x1214
-> [    8.870421]  dwc3_probe+0xe54/0x171c
-> [    8.870424]  platform_probe+0x68/0xd8
-> [    8.870426]  really_probe+0xc0/0x388
-> [    8.870427]  __driver_probe_device+0x7c/0x160
-> [    8.870429]  driver_probe_device+0x40/0x114
-> [    8.870430]  __device_attach_driver+0xbc/0x158
-> [    8.870432]  bus_for_each_drv+0x84/0xe0
-> [    8.870433]  __device_attach+0xa8/0x1d4
-> [    8.870435]  device_initial_probe+0x14/0x20
-> [    8.870436]  bus_probe_device+0xb0/0xb4
-> [    8.870437]  deferred_probe_work_func+0xa0/0xf4
-> [    8.870439]  process_one_work+0x224/0x638
-> [    8.870441]  worker_thread+0x268/0x3a8
-> [    8.870442]  kthread+0x124/0x128
-> [    8.870443]  ret_from_fork+0x10/0x20
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpiolib.c      | 1 -
+ drivers/gpio/gpiolib.h      | 1 +
+ include/linux/gpio/driver.h | 1 -
+ 3 files changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index ed620442f32c..edaeee53db75 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -179,7 +179,6 @@ struct gpio_desc *gpiochip_get_desc(struct gpio_chip *gc,
+ {
+ 	return gpio_device_get_desc(gc->gpiodev, hwnum);
+ }
+-EXPORT_SYMBOL_GPL(gpiochip_get_desc);
+ 
+ /**
+  * gpio_device_get_desc() - get the GPIO descriptor corresponding to the given
+diff --git a/drivers/gpio/gpiolib.h b/drivers/gpio/gpiolib.h
+index a75635891c6f..4de0bf1a62d3 100644
+--- a/drivers/gpio/gpiolib.h
++++ b/drivers/gpio/gpiolib.h
+@@ -243,6 +243,7 @@ int gpio_set_debounce_timeout(struct gpio_desc *desc, unsigned int debounce);
+ int gpiod_hog(struct gpio_desc *desc, const char *name,
+ 		unsigned long lflags, enum gpiod_flags dflags);
+ int gpiochip_get_ngpios(struct gpio_chip *gc, struct device *dev);
++struct gpio_desc *gpiochip_get_desc(struct gpio_chip *gc, unsigned int hwnum);
+ const char *gpiod_get_label(struct gpio_desc *desc);
+ 
+ /*
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 6d31388dde0a..2dd7cb9cc270 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -787,7 +787,6 @@ struct gpio_desc *gpiochip_request_own_desc(struct gpio_chip *gc,
+ 					    enum gpiod_flags dflags);
+ void gpiochip_free_own_desc(struct gpio_desc *desc);
+ 
+-struct gpio_desc *gpiochip_get_desc(struct gpio_chip *gc, unsigned int hwnum);
+ struct gpio_desc *
+ gpio_device_get_desc(struct gpio_device *gdev, unsigned int hwnum);
+ 
+-- 
+2.43.0
+
 
