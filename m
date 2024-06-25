@@ -1,279 +1,154 @@
-Return-Path: <linux-kernel+bounces-229073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A280916A76
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:33:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFBBA916A77
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:33:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 82E2A1F267FD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:33:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D5D71C235B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:33:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49853175579;
-	Tue, 25 Jun 2024 14:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7B717624D;
+	Tue, 25 Jun 2024 14:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mw4+zxgf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="h/2JJ2XX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="p16LuvBY"
+Received: from flow3-smtp.messagingengine.com (flow3-smtp.messagingengine.com [103.168.172.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58FF616C684;
-	Tue, 25 Jun 2024 14:30:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB73F16C684;
+	Tue, 25 Jun 2024 14:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719325838; cv=none; b=M4D7RwkcFVaepBMihem2CQAxjGgBTCZCyOD3Xzqw2yZRAwTJIOyGENylQJhwlePkaSGqQhCXGFbtMweinYlzMKiBGKSKZvlxQj3KIyloDsjfgeQJPmv+DfWnGvMEVHNMOtykrECRwNMFfQ/gfzizQ0pLMmIbqgUy2HuKH/s5aqM=
+	t=1719325848; cv=none; b=KOwiaBetMmzoe3ljN7ys84BcEoLKjDFrfjs9elg6FUj7lTGzmrswTfwpm1ABl0sYN5sRjGTnu6/BSr9DqyxEU2zdQHRVTZkgRNGzj9DIAmfHkeTvvVAEyJi56kIV3u4ecOhPfmTWY3BwZeVFj5ys00oIejgOxwj1BXmSjzQ8HR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719325838; c=relaxed/simple;
-	bh=QyE+Sxb3U+i0uaspQKpsAKm2DDnimmEaiUTl1PRDY9Y=;
-	h=Date:Message-ID:From:To:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PH6c8u9SVyqBRivU4byhI2I8TAm2HwNEDg21N+mnp+JUDFF+zQv4r+SIW5ByYh3Ea4WhlD1vCbPzdGQVLohQqH7SkrYbhoSkSChGMWoudGXzQJGbXaR1TZDxcD5PwWxIzLXKAxkanUt5xdZsJEaMs2gyJkosqRwbG2Q5E0N3y3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mw4+zxgf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6866C32781;
-	Tue, 25 Jun 2024 14:30:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719325837;
-	bh=QyE+Sxb3U+i0uaspQKpsAKm2DDnimmEaiUTl1PRDY9Y=;
-	h=Date:From:To:Subject:In-Reply-To:References:From;
-	b=Mw4+zxgfnWRquhYCTQZqTvdvo6VTQSluc9sAbFC/XHS4HghQDZ+a5wXd4wgeeCp+o
-	 mks+Yk8XQTUdQ1dM6wGwP/VbFsV+kYGdP2AGITPxuD5/BWUQ3ScO2ylK0fuJKdBhLI
-	 lRUHqem/KnJssINtstZH9j1p92Vvg6befNWJvlOTmY7DgFYANnXn3xmIIkctit+PFD
-	 Nheq2DTgy1KLMrvUIm9CM5EePL47LLNmxuof7un+0rXXE+GedytyqVenRDKbLUamyc
-	 Eefh44U7cV40keR99U6yHDmLS/z+0mGhlzefcIvPwuQoyWNpU0vBljmos2GDNJ1285
-	 O6GBsqYBXtezw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1sM7Br-007BSl-Jh;
-	Tue, 25 Jun 2024 15:30:35 +0100
-Date: Tue, 25 Jun 2024 15:30:35 +0100
-Message-ID: <86sex1hz78.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Roman Kagan <rkagan@amazon.de>,
-	Marc Zyngier <maz@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	nh-open-source@amazon.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] irqchip/gicv3-its: Workaround for GIC-700 erratum 2195890
-In-Reply-To: <ZnrMFIEyr8SKLDKk@u40bc5e070a0153.ant.amazon.com>
-References: <20240624165541.1286227-1-rkagan@amazon.de>
-	<86v81xif6l.wl-maz@kernel.org>
-	<ZnrMFIEyr8SKLDKk@u40bc5e070a0153.ant.amazon.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.2
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1719325848; c=relaxed/simple;
+	bh=rm3CLFCzMhJqfskxnyAupX5rytUWBY3x7q/xs8yTacY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S69mo2VBMf1tDi0k7JfX6pU6dNduG3G956Wd4pcxfgNWnU3M+S+m21yhfpcYw9tHaXayg6ZCuVJwY0fUKvlfC+kxKwEQU/0iUWwts19kfeSAZJEIykko5db3ZHHtXmGAfjoy1nwxg5VbKIqdXHI9mOF/4HJsmpBTi1XjW1PT+Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=h/2JJ2XX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=p16LuvBY; arc=none smtp.client-ip=103.168.172.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailflow.nyi.internal (Postfix) with ESMTP id BDBD820045E;
+	Tue, 25 Jun 2024 10:30:45 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Tue, 25 Jun 2024 10:30:45 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1719325845;
+	 x=1719333045; bh=n40rkhfGjzu8AxDo0A/VhYrpxULagui6L3eRoobEu9s=; b=
+	h/2JJ2XXSHYRlUkmpcnT1ZYxUEoM6+aze6cr1UQaAOuDFuFFq7+vZwHHjJ5+gA9e
+	taFX8BCOJfr9P/3hlGF0KCr4czzK+1CRyL6PEPuzqAQj/hsvPAUG7r9p/mtX1Xie
+	4wnUj30g3HssVJe0R/Gt6pQUbHv8pCX+J39cJZFFf0mW0yhotgEeTvLdXVQWGSry
+	XvdNPh1t1gUkRzLlMOTOyX/crmFlxhq3xu1n5r5qFkUQx8ao8+NiTyIgmC9nt1kQ
+	Yvf8cvzLGee5cjDVEGJVnShhckvCSRwIdSTym+vzBsBnf1J9wZg0PacopLPx2yQG
+	FT8o4XUAGI8/0+btZP4cWA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1719325845; x=
+	1719333045; bh=n40rkhfGjzu8AxDo0A/VhYrpxULagui6L3eRoobEu9s=; b=p
+	16LuvBYPifBPtp1l8HXW0WgcAp5qGByADd/cqp/p258PeINNUDIwl64Ivtnd/6jP
+	KP2qFgL9nsOXI5jERVMjQCmcgaGb7OqEvy5gyng4MqOZbyFCuzeItKZ52RhTQ04x
+	HT+CFMINatNqgVpUGWMR/8TkA10jpY0tKJ5ekhIM5jDwJXKEtlBkV1CX5PYWto/s
+	hUq2OkPosmu+IUge0TffWt207BPm7za49vZA/ZjjKWEsaBx2CGn/8yMhBXRbxVlX
+	foasR8S9k88K50s/VK6pPcKnfQrGs2gJnk2ItaeLbf4tG4VMVLWpdRS/CwedMIy3
+	a1+bRPM/Or4YCy9tUGF1w==
+X-ME-Sender: <xms:ldR6ZgBpRWP8mS3VA2Qms6OZM9ckhp2ODlyswd4iLVJMxG4GyYBVhQ>
+    <xme:ldR6ZijR2bT4v8GuzSqLgvs_JN-mtU4fg_zEFVmVFTxaVi-xKN2ByhcgWPALxupLf
+    W0rIPje73BbIA>
+X-ME-Received: <xmr:ldR6ZjlW6CpJaTkmgHMK6qtDoy9t12v8oJoegXoTg_k_o2dozihWVxvTZa79t6Ria-rl3mmM8DVB6iPuo0DPe2x5la9fWRzcJmCfRA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtddtgdeggecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepgfekff
+    eifeeiveekleetjedvtedvtdeludfgvdfhteejjeeiudeltdefffefvdeinecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorg
+    hhrdgtohhm
+X-ME-Proxy: <xmx:ldR6ZmxY0zFwG6pWHsU-y6YkcmngJmKUn9oPpTIHsv4G346eRrdlnA>
+    <xmx:ldR6ZlRyQYCTt1DG04kEg57pOpQ8KoojDGl47d9FpoQ1qWgp1cZiBg>
+    <xmx:ldR6ZhbC6ybWV8DlIc4L8v9H8l8ZOOnF0r6vJpa9NY3LU5Do76bTkg>
+    <xmx:ldR6ZuT4ptUDAasIrsTeXyADiCA_LMQqFynBKgYq7xqX3qlCrbtVCA>
+    <xmx:ldR6ZnmM9XBOBtZyCNgYz6zqBuHcXPrEJjuGSn2Hkv78Acq8H7ggnLJC>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 25 Jun 2024 10:30:44 -0400 (EDT)
+Date: Tue, 25 Jun 2024 16:30:41 +0200
+From: Greg KH <greg@kroah.com>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Ma Ke <make24@iscas.ac.cn>, nouveau@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
+	Danilo Krummrich <dakr@redhat.com>,
+	David Airlie <airlied@gmail.com>, Karol Herbst <kherbst@redhat.com>,
+	Lyude Paul <lyude@redhat.com>, stable@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/nouveau/dispnv04: fix null pointer dereference in
+ nv17_tv_get_ld_modes
+Message-ID: <2024062533-quiver-cacti-b068@gregkh>
+References: <20240625081828.2620794-1-make24@iscas.ac.cn>
+ <8517da06-3010-4356-b5df-d9a14454feec@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: rkagan@amazon.de, maz@kernel.org, linux-arm-kernel@lists.infradead.org, catalin.marinas@arm.com, will@kernel.org, nh-open-source@amazon.com, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de, corbet@lwn.net
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8517da06-3010-4356-b5df-d9a14454feec@web.de>
 
-On Tue, 25 Jun 2024 14:54:28 +0100,
-Roman Kagan <rkagan@amazon.de> wrote:
+On Tue, Jun 25, 2024 at 03:43:37PM +0200, Markus Elfring wrote:
+> > In nv17_tv_get_ld_modes(), the return value of drm_mode_duplicate() is
+> > assigned to mode, which will lead to a possible NULL pointer dereference
+> > on failure of drm_mode_duplicate(). Add a check to avoid npd.
 > 
-> On Tue, Jun 25, 2024 at 09:45:22AM +0100, Marc Zyngier wrote:
-> > On Mon, 24 Jun 2024 17:55:41 +0100,
-> > Roman Kagan <rkagan@amazon.de> wrote:
-> > >
-> > > According to Arm CoreLink GIC-700 erratum 2195890, on GIC revisions
-> > > r0p0, r0p1, r1p0 under certain conditions LPIs may remain in the Pending
-> > > Table until one of a number of external events occurs.
-> > 
-> > Please add a link to the errata document.
+> Can a wording approach (like the following) be a better change description?
 > 
-> https://developer.arm.com/documentation/SDEN-1769194/
-> Will include when respinning.
+>   A null pointer is stored in the local variable “mode” after a call
+>   of the function “drm_mode_duplicate” failed. This pointer was used
+>   in a subsequent statement where an undesirable dereference will
+>   be performed then.
+>   Thus add a corresponding return value check.
 > 
-> > >
-> > > No LPIs are lost but they may not be delivered in a finite time.
-> > >
-> > > The workaround is to issue an INV using GICR_INVLPIR to an unused, in
-> > > range LPI ID to retrigger the search.
-> > >
-> > > Add this workaround to the quirk table.  When the quirk is applicable,
-> > > carve out one LPI ID from the available range and run periodic work to
-> > > do INV to it, in order to prevent GIC from stalling.
-> > 
-> > The errata document says a lot more:
-> > 
-> > <quote>
-> > For physical LPIs the workaround is to issue an INV using GICR_INVLPIR
-> > to an unused, in range LPI ID to retrigger the search. This could be
-> > done periodically, for example, in line with a residency change, or as
-> > part of servicing LPIs.  If using LPIs as the event, then the
-> > GICR_INVLPIR write could be issued after servicing every LPI.
-> > 
-> > However, it only needs to be issued if:
-> > 
-> > * At least 4 interrupts in the block of 32 are enabled and mapped to
-> >   the current PE or, if easier,
-> > 
-> > * At least 4 interrupts in the block of 32 are enabled and mapped to
-> >   any PE
-> > </quote>
 > 
-> It didn't feel like worth optimizing for.  I'll reconsider.
+> > Cc: stable@vger.kernel.org
+> 
+> Would you like to add the tag “Fixes” accordingly?
+> 
+> 
+> How do you think about to use a summary phrase like
+> “Prevent null pointer dereference in nv17_tv_get_ld_modes()”?
+> 
+> 
+> Regards,
+> Markus
+> 
+Hi,
 
-I'm not sure we want to optimise for it, but I'd certainly want to
-hear the *rationale* behind not considering the optimisation.
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
-> 
-> > > TT: https://t.corp.amazon.com/D82032616
-> > 
-> > Gniii????
-> 
-> Indeed Q-/
-> 
-> > > Signed-off-by: Elad Rosner <eladros@amazon.com>
-> > > Signed-off-by: Mohamed Mediouni <mediou@amazon.com>
-> > > Signed-off-by: Roman Kagan <rkagan@amazon.de>
-> > 
-> > Who is the author?
-> 
-> Joint effort aka inherited ownership.  Will fix according to the
-> process doc.
-> 
-> > > +static void __maybe_unused its_quirk_gic700_2195890_work_handler(struct work_struct *work)
-> > > +{
-> > > +     int cpu;
-> > > +     void __iomem *rdbase;
-> > > +     u64 gicr_invlpir_val;
-> > > +
-> > > +     for_each_online_cpu(cpu) {
-> > 
-> > The errata document doesn't say that this need to happen for *every*
-> > RD. Can you please clarify this?
-> 
-> (Digging out a year-old comms with ARM)
-> > > In multi-chip GIC system, does this write have to happen in each
-> > > chip or would a write to a single GICR trigger the search in all
-> > > GICDs?
-> > The write needs to occur for each physical PE - in other words, to
-> > each individual GICR that the search needs to be re-triggered for.
+Markus, you seem to have sent a nonsensical or otherwise pointless
+review comment to a patch submission on a Linux kernel developer mailing
+list.  I strongly suggest that you not do this anymore.  Please do not
+bother developers who are actively working to produce patches and
+features with comments that, in the end, are a waste of time.
 
-OK, that pretty much rules out doing anything clever (note to self,
-check the GIC revision before buying the HW...).
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
 
-> 
-> > > +             raw_spin_lock(&gic_data_rdist_cpu(cpu)->rd_lock);
-> > > +             gic_write_lpir(gicr_invlpir_val, rdbase + GICR_INVLPIR);
-> > > +             raw_spin_unlock(&gic_data_rdist_cpu(cpu)->rd_lock);
-> > 
-> > No synchronisation? How is that supposed to work?
-> > 
-> > Also, if you need to dig into the internals of the driver, extract a
-> > helper from __direct_lpi_inv().
-> 
-> ACK
-> 
-> > > +     }
-> > > +
-> > > +     schedule_delayed_work(&its_quirk_gic700_2195890_data.work,
-> > > +             msecs_to_jiffies(ITS_QUIRK_GIC700_2195890_PERIOD_MSEC));
-> > 
-> > It would be pretty easy to detect whether an LPI was ack'ed since the
-> > last pass, and not issue the invalidate.
-> 
-> Makes sense, will look into it.
-> 
-> Overall, do you think this approach with a global work looping over cpus
-> is the right one, or we should better try and implement something
-> per-cpu?
+thanks,
 
-One of my worries is that you're crossing all node boundaries by doing
-this, which is going to suck on really large systems. If anything,
-you'd be better off with a per-node worker.
-
-It doesn't need to be implemented right now, but I have the feeling
-that someone is going to ask.
-
-> 
-> > > +}
-> > > +
-> > > +static bool __maybe_unused its_enable_quirk_gic700_2195890(void *data)
-> > > +{
-> > > +     struct its_node *its = data;
-> > > +
-> > > +     if (its_quirk_gic700_2195890_data.lpi)
-> > > +             return true;
-> > > +
-> > > +     /*
-> > > +      * Use one LPI INTID from the start of the LPI range for GIC prodding,
-> > > +      * and make it unavailable for regular LPI use later.
-> > > +      */
-> > > +     its_quirk_gic700_2195890_data.lpi = lpi_id_base++;
-> > > +
-> > > +     INIT_DELAYED_WORK(&its_quirk_gic700_2195890_data.work,
-> > > +                       its_quirk_gic700_2195890_work_handler);
-> > > +     schedule_delayed_work(&its_quirk_gic700_2195890_data.work, 0);
-> > > +
-> > > +     return true;
-> > > +}
-> > 
-> > It is a bit odd to hook this on an ITS being probed when the ITS isn't
-> > really involved. Not a big deal, but a bit clumsy.
-> 
-> True, but the LPI allocation lives in this file so it looked easier to
-> wire it all up here.  Where do you think it's more appropriate?
-
-But the allocation doesn't really take place, does it? You just nick
-one LPI. Which by the way I'd rather you pick the last one instead of
-the first, as this messes with devices that require ye oldie MultiMSI
-and its stupid alignment requirements.
-
-Also, you have its_cpu_init() which takes care of RDs. You could
-absolutely add the quirk to the main GIC driver (based on the
-distributor IIDR), add a flag to rdists.flags, and let it roll.
-
-Either way, I don't really care. Maybe keeping it centralised is good
-enough.
-
-> 
-> > >  static const struct gic_quirk its_quirks[] = {
-> > >  #ifdef CONFIG_CAVIUM_ERRATUM_22375
-> > >       {
-> > > @@ -4822,6 +4879,17 @@ static const struct gic_quirk its_quirks[] = {
-> > >               .property = "dma-noncoherent",
-> > >               .init   = its_set_non_coherent,
-> > >       },
-> > > +#ifdef CONFIG_ARM64_ERRATUM_2195890
-> > > +     {
-> > > +             .desc   = "ITS: GIC-700 erratum 2195890",
-> > > +             /*
-> > > +              * Applies to r0p0, r0p1, r1p0: iidr_var(bits 16..19) == 0 or 1
-> > > +              */
-> > > +             .iidr   = 0x0400043b,
-> > > +             .mask   = 0xfffeffff,
-> > > +             .init   = its_enable_quirk_gic700_2195890,
-> > 
-> > This catches r0p0 and r1p0, but not r0p1 (you require that bits 15:12
-> > are 0).
-> 
-> Ouch, right.  Given the erratum exact wording
-> 
-> > Fault Status: Present in: r0p0, r0p1, r1p0 Fixed in: r2p0
-> 
-> I guess I should match everything below r2p0 and allow arbitrary bits
-> 15:12 (i.e. set the third nibble in the mask to 0).
-
-Either that or you could have two entries. Or use the fact that there
-is no released r1p1 to your advantage...
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+greg k-h's patch email bot
 
