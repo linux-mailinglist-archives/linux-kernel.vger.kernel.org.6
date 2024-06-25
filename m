@@ -1,132 +1,215 @@
-Return-Path: <linux-kernel+bounces-228255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C832915D57
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:29:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31128915D59
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:30:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD6D41C213E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:29:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B00D11F22044
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC926CDBA;
-	Tue, 25 Jun 2024 03:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C2471B4C;
+	Tue, 25 Jun 2024 03:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eo9yWolK"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="emnUOOtn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8323D6B;
-	Tue, 25 Jun 2024 03:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375036EB4D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:30:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719286166; cv=none; b=ndpNCrBDMVmLZqmftAKPNPOIN37Z5+OH5TuU0WniJrKRZfl8iTUiIxLQH7SfVmJuuGMXAWCwZS12alo5u61L/gxm821mA4YZuc5df+cvxdfK6Sw4fw84Rd5D52l/mdLUTxALCngBvVhFwupQnpQc26G94TK9QXqLoYeRS/+jJcU=
+	t=1719286249; cv=none; b=AfdqwLqH+ov99VbgVmGxpcrnA0I1282qpcT9E+6c148y8wkwkSD6GOW7jBknFlkEbRVZ7iGTlr8ILSEX2zgET472tKXLJY4/VFsJVfbjuvKme/VmN9yt2tqpM+aBCDxlcmX9ZDsIBl9kC4+TN/PUYW7jttor8U4F/iykNKIDlV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719286166; c=relaxed/simple;
-	bh=hMt95qPFh9h9Zx/Ca4oF85z9W6nnZ+/2MO02CE5C0ho=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=spZsLNfNhr0ukS88SGFz5vcyEY4fSyXBx3kadMC31kucyAQipxn6QZvLu0VyPb56ZVoTIGqOxYvjRbse2nfzxfovk59JhKgs29RrdH2IMQC56nsoQn9Hsq5NUbhv6xZRW+wxfyIma5217YzP5CreXNOwMRGkDKxvMZFCGCpDnRk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eo9yWolK; arc=none smtp.client-ip=209.85.160.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-25cba5eea69so2420048fac.2;
-        Mon, 24 Jun 2024 20:29:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719286164; x=1719890964; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cbyQAZieaq4eQ23w2TzylROJa2sRShj9GyMl0x0ukyk=;
-        b=eo9yWolKiOJ0FOH5GGbKZpORlFw9S7LGsbq+PHZ+QYcVSnJAMeqs96D/lPIcLJlMUM
-         k7aTENLFSq+JJPvy8KPgXOMofbiyqxfD16tnwaMQ2EswZcv4ou9ZK+43aRnPycaVKNbP
-         n8Tt/oRoWMLTYzncntrHbP7mN2xQ75RPdTSo8F17x6LBJB8ciyEZN/89AXjKEMSxqPS+
-         eG+iWZMRDwzU3cHqyJYDFatvKdciBFUXfq2AdVmBYGh1Pp+XbzoeOtAIXNCY5BXI1iUY
-         MuoIr8ha+9neWanB3aJoOrgruhtX3ifrPb6jH3ELa2+w/QtxnxgEJmP+z/qnGtwRyvN9
-         YauQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719286164; x=1719890964;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cbyQAZieaq4eQ23w2TzylROJa2sRShj9GyMl0x0ukyk=;
-        b=EDwjTSiiC5qdAblt44y1x64XPdd01gYHN1SwbABf+lK7PBw1B0Kg77dDhxUkfUDX65
-         BDxAYAFvqd2zXoDoDEqvT4FFO3NVxBNtlMAJadQAI8sC3W3imyVOdSMktBLFXJ1+Jduk
-         k/y7UtaWk12njxonmmRHqsAq0vOm7tmRRp+mkc6vAiKQqxppaUyp1jKDy4p13YGDbqW2
-         x9e1Ay+ToI9mOKpzLJrCQDgZ1co/iy5XXfNnEnxUBpGhM9m7z6WrW+U4i9de8ADDevrK
-         NkxgPhAt1Nv+d0qSXFdV6fNOXf081t8OxM2XS3nuU8387zsDtBgR70BQBBMH07788266
-         aEww==
-X-Forwarded-Encrypted: i=1; AJvYcCXBb5ANozwnCn4T+vS2i4LTg8BFJiZJLEIA+FhabPL8+jvA3WLnRoOug9ijeTsVioP5EKOgqAUKq6OV9L8diCuy3qfTq/pSaAFynJcNR7WKhgFZfCbgv8IM2K8D37Kdt7LGWGpwcqyduHqg
-X-Gm-Message-State: AOJu0Yy7Hrk33eW2Mg01FFCM3GQdoJWVmNuUNYPS1frd6+z+l7Xylrqy
-	M1dxJNqflY+GFRCvCCIeoGsY9B2EMU7R6aw1rjUARW/y369q0Uyf
-X-Google-Smtp-Source: AGHT+IFGBxRpq0C82hTfGZ42YkgflUopHUOHx0vsbP08KBRE2jMXSSB/smCiH3gnRYrK1egFXazYJg==
-X-Received: by 2002:a05:6870:55d0:b0:259:89a5:440e with SMTP id 586e51a60fabf-25d016d2a18mr7438054fac.27.1719286164365;
-        Mon, 24 Jun 2024 20:29:24 -0700 (PDT)
-Received: from a28aa0606c51.. (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7067ce3670asm3288937b3a.76.2024.06.24.20.29.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 20:29:23 -0700 (PDT)
-From: Jacky Huang <ychuang570808@gmail.com>
-To: dan.carpenter@linaro.org,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1719286249; c=relaxed/simple;
+	bh=obtN4FIZCGHWBgEuYxhVZcQaprmAm9UaJ5RFq/VLNBs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ejidvl/fOo89MUuq1DcGYVKdSmNePwxPcZQZGE7nT8JeuZIoPwEKmgKXdGq2Z1vjhVw5doB9aDR5skcSRw4PdRj5PGD+FK0SdMhLn27BGxYYVA8osjVAv38sDjOdOHw+ukq1YdyMqWhEzR28O4u4jkabN8Vr5kz/YDvZ3ZdOX1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=emnUOOtn; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719286246;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/m8GXm0K69AMAk67ZrMEf4R6vclpB6T2QuYU2G6K8jY=;
+	b=emnUOOtnRLEKYASzOd9OOLTjuk4mTKd8sH6kIzUFQD8WacsCw9MB6TsB+QB4ZRNJD1sloy
+	DaqXBxtg7ga6OzkhwU4Z0pyy4dBiahI8sadxQ8yhYFlu1JT5KXs3zGRdnJW6GSa57WxDft
+	iDr9HYqUbM+UVxGy0kxZ7QW9lehp5Po=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-256-WvBvJypYP3eb65TvXjMe_g-1; Mon,
+ 24 Jun 2024 23:30:41 -0400
+X-MC-Unique: WvBvJypYP3eb65TvXjMe_g-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4A4E819560B1;
+	Tue, 25 Jun 2024 03:30:39 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.8])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB24F19560BF;
+	Tue, 25 Jun 2024 03:30:37 +0000 (UTC)
+Date: Tue, 25 Jun 2024 11:30:33 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Nick Bowler <nbowler@draconx.ca>, Hailong Liu <hailong.liu@oppo.com>,
 	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Jacky Huang <ychuang3@nuvoton.com>
-Subject: [PATCH v3] tty: serial: ma35d1: Add a NULL check for of_node
-Date: Tue, 25 Jun 2024 03:29:19 +0000
-Message-Id: <20240625032919.73-1-ychuang570808@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	linux-mm@kvack.org, sparclinux@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
+Message-ID: <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
+References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
+ <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
+ <20240621033005.6mccm7waduelb4m5@oppo.com>
+ <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
+ <ZnVLbCCkvhf5GaTf@pc636>
+ <ZnWICsPgYuBlrWlt@MiWiFi-R3L-srv>
+ <Znljtv5n-6EBgpsF@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Znljtv5n-6EBgpsF@pc636>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-From: Jacky Huang <ychuang3@nuvoton.com>
+On 06/24/24 at 02:16pm, Uladzislau Rezki wrote:
+> On Fri, Jun 21, 2024 at 10:02:50PM +0800, Baoquan He wrote:
+> > On 06/21/24 at 11:44am, Uladzislau Rezki wrote:
+> > > On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
+> > > > On 06/21/24 at 11:30am, Hailong Liu wrote:
+> > > > > On Thu, 20. Jun 14:02, Nick Bowler wrote:
+> > > > > > On 2024-06-20 02:19, Nick Bowler wrote:
+> > ......
+> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > index be2dd281ea76..18e87cafbaf2 100644
+> > > > --- a/mm/vmalloc.c
+> > > > +++ b/mm/vmalloc.c
+> > > > @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> > > >  static struct xarray *
+> > > >  addr_to_vb_xa(unsigned long addr)
+> > > >  {
+> > > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> > > >  
+> > > >  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> > > >  }
+> > > > 
+> > > The problem i see is about not-initializing of the:
+> > > <snip>
+> > > 	for_each_possible_cpu(i) {
+> > > 		struct vmap_block_queue *vbq;
+> > > 		struct vfree_deferred *p;
+> > > 
+> > > 		vbq = &per_cpu(vmap_block_queue, i);
+> > > 		spin_lock_init(&vbq->lock);
+> > > 		INIT_LIST_HEAD(&vbq->free);
+> > > 		p = &per_cpu(vfree_deferred, i);
+> > > 		init_llist_head(&p->list);
+> > > 		INIT_WORK(&p->wq, delayed_vfree_work);
+> > > 		xa_init(&vbq->vmap_blocks);
+> > > 	}
+> > > <snip>
+> > > 
+> > > correctly or fully. It is my bad i did not think that CPUs in a possible mask
+> > > can be non sequential :-/
+> > > 
+> > > nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
+> > > when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
+> > 
+> > I checked the generic version of setup_nr_cpu_ids(), from codes, they
+> > are different with my understanding.
+> > 
+> > kernel/smp.c
+> > void __init setup_nr_cpu_ids(void)
+> > {
+> >         set_nr_cpu_ids(find_last_bit(cpumask_bits(cpu_possible_mask), NR_CPUS) + 1);
+> > }
+> > 
+> I see that it is not a weak function, so it is generic, thus the
+> behavior can not be overwritten, which is great. This does what we
+> need.
+> 
+> Thank you for checking this you are right!
 
-The pdev->dev.of_node can be NULL if the "serial" node is absent.
-Add a NULL check to return an error in such cases.
+Thanks for confirming this.
 
-v3:
-    - Added "Reported-by:" line.
-v2:
-    - Added "Fixes" line.
+> 
+> Then it is just a matter of proper initialization of the hash:
+> 
+> <snip>
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 5d3aa2dc88a8..1733946f7a12 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -5087,7 +5087,13 @@ void __init vmalloc_init(void)
+>          */
+>         vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
+>  
+> -       for_each_possible_cpu(i) {
+> +       /*
+> +        * We use "nr_cpu_ids" here because some architectures
+> +        * may have "gaps" in cpu-possible-mask. It is OK for
+> +        * per-cpu approaches but is not OK for cases where it
+> +        * can be used as hashes also.
+> +        */
+> +       for (i = 0; i < nr_cpu_ids; i++) {
 
-Fixes: 930cbf92db01 ("tty: serial: Add Nuvoton ma35d1 serial driver support")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/8df7ce45-fd58-4235-88f7-43fe7cd67e8f@moroto.mountain/
-Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
----
- drivers/tty/serial/ma35d1_serial.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+I was wrong about earlier comments. Percpu variables are only available
+on possible CPUs. For those nonexistent possible CPUs of static percpu
+variable vmap_block_queue, there isn't memory allocated and mapped for
+them. So accessing into them will cause problem.
 
-diff --git a/drivers/tty/serial/ma35d1_serial.c b/drivers/tty/serial/ma35d1_serial.c
-index 19f0a305cc43..3b4206e815fe 100644
---- a/drivers/tty/serial/ma35d1_serial.c
-+++ b/drivers/tty/serial/ma35d1_serial.c
-@@ -688,12 +688,13 @@ static int ma35d1serial_probe(struct platform_device *pdev)
- 	struct uart_ma35d1_port *up;
- 	int ret = 0;
- 
--	if (pdev->dev.of_node) {
--		ret = of_alias_get_id(pdev->dev.of_node, "serial");
--		if (ret < 0) {
--			dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
--			return ret;
--		}
-+	if (!pdev->dev.of_node)
-+		return -ENODEV;
+In Nick's case, there are only CPU0, CPU2. If you access
+&per_cpu(vmap_block_queue, 1), problem occurs. So I think we may need to
+change to take other way for vbq. E.g:
+1) Storing the vb in the nearest neighbouring vbq on possible CPU as
+   below draft patch;
+2) create an normal array to store vbq of size nr_cpu_ids, then we can
+   store/fetch each vbq on non-possible CPU?
+
+The way 1) is simpler, the existing code can be adapted a little just as
+below.
+
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 633363997dec..59a8951cc6c0 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+ static struct xarray *
+ addr_to_vb_xa(unsigned long addr)
+ {
+-	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
++	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
 +
-+	ret = of_alias_get_id(pdev->dev.of_node, "serial");
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
-+		return ret;
- 	}
- 	up = &ma35d1serial_ports[ret];
- 	up->port.line = ret;
--- 
-2.34.1
++	if (!cpu_possible(idex))
++		index = cpumask_next(index, cpu_possible_mask);
+ 
+ 	return &per_cpu(vmap_block_queue, index).vmap_blocks;
+ }
+@@ -2556,9 +2559,15 @@ addr_to_vb_xa(unsigned long addr)
+ 
+ static unsigned long addr_to_vb_idx(unsigned long addr)
+ {
++	int id = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
++	int id_dest = id; 
++
++	if (!cpu_possible(id))
++		id_dest = cpumask_next(id, cpu_possible_mask);
++
+ 	addr -= VMALLOC_START & ~(VMAP_BLOCK_SIZE-1);
+ 	addr /= VMAP_BLOCK_SIZE;
+-	return addr;
++	return addr + (id_dest - id);
+ }
 
 
