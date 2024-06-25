@@ -1,164 +1,315 @@
-Return-Path: <linux-kernel+bounces-228766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9D37916692
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:48:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 311B7916695
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:49:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3873B1F2429A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:48:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CD14B271D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:49:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BCA154C12;
-	Tue, 25 Jun 2024 11:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEA314B96A;
+	Tue, 25 Jun 2024 11:49:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="QWIe5at1"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LVjeXkbR"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88F4154C03
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E266013DDC6;
+	Tue, 25 Jun 2024 11:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315926; cv=none; b=EoPliFbHrJkkRMhdICcs5yzOx0suZHURIavTgaOVbksX7OWmLfGHhHgVKaI243XAvhWtYJg+KTYs8zLH68wwxTWdSt4lTME83kRJDHLnwuNRSGxFDWcT/uKT4HHihL4UkWdXQgObPzNZKNClS7LnarRmPJpKYOQ7No0AnRyvKTw=
+	t=1719316149; cv=none; b=QWx3F3YoimKA5m8qOIlDGxYC62PjLSkxmgCmKPEmZj3koFPAZpLsUo7W2673JFWRYh299bWGJu/NARCW3+N8/z+dtrwnLiqImScjUWQUQkAGEU6a6cv82iwnHZXopuZc7lQZJn3DcsqbOXkGXn467zjII0o6fWP94UQ6SEtV2is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315926; c=relaxed/simple;
-	bh=wu4prykytf2AM+/fQHl+GXpgJchAjyAXSdSuKMRSYNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eiiIXGbQ1a8xik8eL6IGyVq6GqR0yNE477tVd1142hbIEsBv/dd9TA4aIybTwubLtdnY3m5V+NBUN8KhuhQk80TsH6pXBy1Ql1jUOZ9mBDwjcCKNSWiJSXsQgIxsXcV7coizxklipE2hA0vxNMOppI9xeYAS7hbNf9lJUKhvrcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=QWIe5at1; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57d20d89748so5193560a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 04:45:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719315922; x=1719920722; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DMUhzznUZed7QosruqCaiTofY87z0Rh5ZDjCpva9+sA=;
-        b=QWIe5at1o8RJK6o12ZQL8QWh5uGvNNWilbN+mHYodhQ0tFORZ4eZUkAGjkj5aQxSLW
-         SNgkKtlVfO9Gwj0hCOeSS1JXD34daCopjRpjM5FpF3SfMWwK7rvqAv+YitRXqc99xbR0
-         HWen3yWXn0/N/iNsftpRdAR84n/7emcALeaNu4cn+Z25i/nLFBWfKlwaqqlIy1/lAUf6
-         YuV5f8wrbZhG8wSRh+oqxi8fQCupQSkqiUmB2W60nObFUejpCWlm4Njd69iQegCvzPga
-         lFCpZSmfydofwgBo99BcJWOCpxnF1kxncJOzvvCYlVgOKfBpMS34h3CurmFGxbG+X6oV
-         h5NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719315922; x=1719920722;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DMUhzznUZed7QosruqCaiTofY87z0Rh5ZDjCpva9+sA=;
-        b=RnbhjZJyt/fy75+Z6LGGk/nWmjLjgcMP3h8/izMqTgWJBW3rD6j6chlvjjl+WnobOf
-         fHLghUjXiEzA8oiUViiwQu0pRb7dv/ksW7sFqQW83S5oaILkTtbyRqceVn1dA5r1Y7Ts
-         P0TEossWJxOd68FQlcqrvwRgFGuVOL1V0UHfTmvHZOqmZTBn2u+hVGPdWm5O1gXj2dmH
-         nr/TVasz40Zun9SX9IdttKt5SIoVy39CtX6cnoR/HB4u/f8pAZ0H4Ualyw4pB7WzhG6j
-         rOSR48F3HD7iWMbnGwIYizaGNJdVomO18ilMlj/A2bw4Wnk7UMBtFh76IiR3r4eeCYEU
-         PKzw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmGCvypTNOsXYcv0qpVf9wPDLCR6/lOEv4b1E+bUTgV/chGgQLIii1jVKcFHFcOi7QBj817gU2Ek6/XCdmnSqVzkYPb0OlMJlttcKd
-X-Gm-Message-State: AOJu0YxqU5cAU6DOaphXmD2043NW1j26n8Wa0nVEojhreqjJhQ42YS3A
-	peYe4TR0PBpvnrd6skHKU61mbqdVwG/g6HyKZVGg47hAs1wMvQzm3DBgjb2lOyHYBfUF9V6NmqU
-	X5O0fXGBkjamGvBqaDc3pM9SuDwa+1OdalTz68g==
-X-Google-Smtp-Source: AGHT+IH9oE5avAcWE1dPfuPWXIMdR/bUBTzCledqBKIgAA1sscmeeXwl9hobU0kHO9Oj+2sOIr59kjUvaPz1Cy6Hh38=
-X-Received: by 2002:a17:907:c78e:b0:a6f:bc02:a008 with SMTP id
- a640c23a62f3a-a7242c4de49mr533457666b.4.1719315921872; Tue, 25 Jun 2024
- 04:45:21 -0700 (PDT)
+	s=arc-20240116; t=1719316149; c=relaxed/simple;
+	bh=2RVJmAEsGhuxdhdydanoYpOhdLdnrCswsnr/8U2j75Q=;
+	h=Content-Type:Subject:From:In-Reply-To:Date:Cc:Message-Id:
+	 References:To:MIME-Version; b=esmAYxYkpRuzJxNk1UV+5KRjX0iB3swXYILM3y6G00UMHtD+G3k3VSSqdfKsvZKUHbm5KuPIDR55ijqwfu9s47eZwW9LrtKq9OoDOFYSIEIl8faRdHnRt0WFG7UMXBMEscI89cR56lhPUvXoUu8aEFQGqC7aB5E4/SM0wl1DpA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LVjeXkbR; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PBeYGp025112;
+	Tue, 25 Jun 2024 11:48:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-type:subject:from:in-reply-to:date:cc:message-id
+	:references:to:content-transfer-encoding:mime-version; s=pp1;
+	 bh=Y2hhtNXdnOP2URjK6F8cNvjZytpeeXwrjcm6KAj53Bw=; b=LVjeXkbRiSVb
+	PNnpqhI/AQS/E1x+ZdTYg6RTMisFfB6qZDeUAnbCiU2jErwV48kcKbwdkrdHHgJZ
+	4wZ0iyh7CMK9bnkmqQBP9tWmf+DogKDoAyHuUJELnW9rn94kOaTB8sATbgSWP6cW
+	LoB6YeM4IVW66Nr26nua/sxhQWIwlMwamLa6ATMv043JP914A7oMwEHDzM2nLlVd
+	bojtg8m541dwOn6TAxt8LvF8ibaMbYFnlZV7+EMrYpsBQ8OUuEzZPECMU/omGBO4
+	ELGvflxvJdETmw+sTWHY4+oucYt+U3Se1t7dZONcAd1NFuqWqSQXEqPRTvgz2VLg
+	KI022QQH5A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyw21819n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 11:48:56 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45PBmtc9005441;
+	Tue, 25 Jun 2024 11:48:55 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyw21819h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 11:48:55 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45PBGRKf019602;
+	Tue, 25 Jun 2024 11:48:54 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yx9xpx5kw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 11:48:54 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45PBmmCI45875550
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Jun 2024 11:48:50 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 746CF20043;
+	Tue, 25 Jun 2024 11:48:48 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8233B20040;
+	Tue, 25 Jun 2024 11:48:45 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.43.30.249])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 25 Jun 2024 11:48:45 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
+Subject: Re: [V4 00/16] Add data type profiling support for powerpc
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <ZnYVitG1tffUNTn6@google.com>
+Date: Tue, 25 Jun 2024 17:18:34 +0530
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ian Rogers <irogers@google.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        Disha Goel <disgoel@linux.vnet.ibm.com>
+Message-Id: <B34AF03E-FD05-4600-9548-ADDB33A534EF@linux.vnet.ibm.com>
+References: <20240614172631.56803-1-atrajeev@linux.vnet.ibm.com>
+ <C84A4D8E-3BCD-47A7-B41E-1B39744AECDF@linux.vnet.ibm.com>
+ <ZnYVitG1tffUNTn6@google.com>
+To: Namhyung Kim <namhyung@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: _z5g5GnrlNUwrrJan91ypYAkkS5LQD5T
+X-Proofpoint-GUID: vMLeO6i0WB3tQse4eVMru0MJLMYVJ24F
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_7721F6B72F58AA6154DFBDFF@qq.com>
-In-Reply-To: <tencent_7721F6B72F58AA6154DFBDFF@qq.com>
-From: Alexandre Ghiti <alexghiti@rivosinc.com>
-Date: Tue, 25 Jun 2024 13:45:10 +0200
-Message-ID: <CAHVXubhkrDv3Fx1KH-jjjWjo-LGKBMabvafAPsDZeSpGMEt-gg@mail.gmail.com>
-Subject: Re: [PATCH] riscv: Only flush the mm icache when setting an exec pte
-To: =?UTF-8?B?5qGC5YW1?= <guibing@nucleisys.com>
-Cc: aou <aou@eecs.berkeley.edu>, linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-riscv <linux-riscv@lists.infradead.org>, palmer <palmer@dabbelt.com>, 
-	"paul.walmsley" <paul.walmsley@sifive.com>, =?UTF-8?B?5pa55Y2O5ZCv?= <hqfang@nucleisys.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_06,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
+ adultscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
+ impostorscore=0 phishscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406250084
 
-Hi Guibing,
 
-You sent your email in html, so it got rejected by the ML, make sure
-you reply in plain text mode :)
 
-On Tue, Jun 25, 2024 at 10:45=E2=80=AFAM =E6=A1=82=E5=85=B5 <guibing@nuclei=
-sys.com> wrote:
->
-> Hi alex=EF=BC=8C
->
-> We have encountered a problem related to this patch and would like to ask=
- for your advice, thank you in advance!
->
-> Problem description:
-> When we use the v6.9 kernel, there is an illegal instruction problem when=
- executing a statically linked application on an SD card, and this problem =
-is not reproduced in v6.6/v6.1 kernel.
-> SD card driver uses PIO mode, and the SD card interrupt is bound to core0=
-. If the system schedule the apllication to execute on core1, core2, or cor=
-e3, it will report an illegal instruction, and if scheduled to execute on c=
-ore0, it will be executed successfully.
+> On 22 Jun 2024, at 5:36=E2=80=AFAM, Namhyung Kim <namhyung@kernel.org> wr=
+ote:
+>=20
+> Hello,
+>=20
+> On Thu, Jun 20, 2024 at 09:01:01PM +0530, Athira Rajeev wrote:
+>>=20
+>>=20
+>>> On 14 Jun 2024, at 10:56=E2=80=AFPM, Athira Rajeev <atrajeev@linux.vnet=
+.ibm.com> wrote:
+>>>=20
+>>> The patchset from Namhyung added support for data type profiling
+>>> in perf tool. This enabled support to associate PMU samples to data
+>>> types they refer using DWARF debug information. With the upstream
+>>> perf, currently it possible to run perf report or perf annotate to
+>>> view the data type information on x86.
+>>>=20
+>>> Initial patchset posted here had changes need to enable data type
+>>> profiling support for powerpc.
+>>>=20
+>>> https://lore.kernel.org/all/6e09dc28-4a2e-49d8-a2b5-ffb3396a9952@csgrou=
+p.eu/T/
+>>>=20
+>>> Main change were:
+>>> 1. powerpc instruction nmemonic table to associate load/store
+>>> instructions with move_ops which is use to identify if instruction
+>>> is a memory access one.
+>>> 2. To get register number and access offset from the given
+>>> instruction, code uses fields from "struct arch" -> objump.
+>>> Added entry for powerpc here.
+>>> 3. A get_arch_regnum to return register number from the
+>>> register name string.
+>>>=20
+>>> But the apporach used in the initial patchset used parsing of
+>>> disassembled code which the current perf tool implementation does.
+>>>=20
+>>> Example: lwz     r10,0(r9)
+>>>=20
+>>> This line "lwz r10,0(r9)" is parsed to extract instruction name,
+>>> registers names and offset. Also to find whether there is a memory
+>>> reference in the operands, "memory_ref_char" field of objdump is used.
+>>> For x86, "(" is used as memory_ref_char to tackle instructions of the
+>>> form "mov  (%rax), %rcx".
+>>>=20
+>>> In case of powerpc, not all instructions using "(" are the only memory
+>>> instructions. Example, above instruction can also be of extended form (X
+>>> form) "lwzx r10,0,r19". Inorder to easy identify the instruction catego=
+ry
+>>> and extract the source/target registers, second patchset added support =
+to use
+>>> raw instruction. With raw instruction, macros are added to extract opco=
+de
+>>> and register fields.
+>>> Link to second patchset:
+>>> https://lore.kernel.org/all/20240506121906.76639-1-atrajeev@linux.vnet.=
+ibm.com/
+>>>=20
+>>> Example representation using --show-raw-insn in objdump gives result:
+>>>=20
+>>> 38 01 81 e8     ld      r4,312(r1)
+>>>=20
+>>> Here "38 01 81 e8" is the raw instruction representation. In powerpc,
+>>> this translates to instruction form: "ld RT,DS(RA)" and binary code
+>>> as:
+>>> _____________________________________
+>>> | 58 |  RT  |  RA |      DS       | |
+>>> -------------------------------------
+>>> 0    6     11    16              30 31
+>>>=20
+>>> Second patchset used "objdump" again to read the raw instruction.
+>>> But since there is no need to disassemble and binary code can be read
+>>> directly from the DSO, third patchset (ie this patchset) uses below
+>>> apporach. The apporach preferred in powerpc to parse sample for data
+>>> type profiling in V3 patchset is:
+>>> - Read directly from DSO using dso__data_read_offset
+>>> - If that fails for any case, fallback to using libcapstone
+>>> - If libcapstone is not supported, approach will use objdump
+>>>=20
+>>> Patchset adds support to pick the opcode and reg fields from this
+>>> raw/binary instruction code. This approach came in from review comment
+>>> by Segher Boessenkool and Christophe for the initial patchset.
+>>>=20
+>>> Apart from that, instruction tracking is enabled for powerpc and
+>>> support function is added to find variables defined as registers
+>>> Example, in powerpc, below two registers are
+>>> defined to represent variable:
+>>> 1. r13: represents local_paca
+>>> register struct paca_struct *local_paca asm("r13");
+>>>=20
+>>> 2. r1: represents stack_pointer
+>>> register void *__stack_pointer asm("r1");
+>>>=20
+>>> These are handled in this patchset.
+>>>=20
+>>> - Patch 1 is to rearrange register state type structures to header file
+>>> so that it can referred from other arch specific files
+>>> - Patch 2 is to make instruction tracking as a callback to"struct arch"
+>>> so that it can be implemented by other archs easily and defined in arch
+>>> specific files
+>>> - Patch 3 adds support to capture and parse raw instruction in powerpc
+>>> using dso__data_read_offset utility
+>>> - Patch 4 adds logic to support using objdump when doing default "perf
+>>> report" or "perf annotate" since it that needs disassembled instruction.
+>>> - Patch 5 adds disasm_line__parse to parse raw instruction for powerpc
+>>> - Patch 6 update parameters for reg extract functions to use raw
+>>> instruction on powerpc
+>>> - Patch 7 add support to identify memory instructions of opcode 31 in
+>>> powerpc
+>>> - Patch 8 adds more instructions to support instruction tracking in pow=
+erpc
+>>> - Patch 9 and 10 handles instruction tracking for powerpc.
+>>> - Patch 11, 12 and 13 add support to use libcapstone in powerpc
+>>> - Patch 14 and patch 15 handles support to find global register variabl=
+es
+>>> - Patch 16 handles insn-stat option for perf annotate
+>>>=20
+>>> Note:
+>>> - There are remaining unknowns (25%) as seen in annotate Instruction st=
+ats
+>>> below.
+>>> - This patchset is not tested on powerpc32. In next step of enhancements
+>>> along with handling remaining unknowns, plan to cover powerpc32 changes
+>>> based on how testing goes.
+>>>=20
+>>> With the current patchset:
+>>>=20
+>>> ./perf record -a -e mem-loads sleep 1
+>>> ./perf report -s type,typeoff --hierarchy --group --stdio
+>>> ./perf annotate --data-type --insn-stat
+>>>=20
+>>> perf annotate logs:
+>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>>=20
+>>> Annotate Instruction stats
+>>> total 609, ok 446 (73.2%), bad 163 (26.8%)
+>>>=20
+>>> Name/opcode:  Good   Bad
+>>> -----------------------------------------------------------
+>>> 58                  :   323    80
+>>> 32                  :    49    43
+>>> 34                  :    33    11
+>>> OP_31_XOP_LDX       :     8    20
+>>> 40                  :    23     0
+>>> OP_31_XOP_LWARX     :     5     1
+>>> OP_31_XOP_LWZX      :     2     3
+>>> OP_31_XOP_LDARX     :     3     0
+>>> 33                  :     0     2
+>>> OP_31_XOP_LBZX      :     0     1
+>>> OP_31_XOP_LWAX      :     0     1
+>>> OP_31_XOP_LHZX      :     0     1
+>>>=20
+>>> perf report logs:
+>>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>>=20
+>>> Total Lost Samples: 0
+>>>=20
+>>> Samples: 1K of event 'mem-loads'
+>>> Event count (approx.): 937238
+>>>=20
+>>> Overhead  Data Type  Data Type Offset
+>>> ........  .........  ................
+>>>=20
+>>> 48.60%  (unknown)  (unknown) +0 (no field)
+>>> 12.85%  long unsigned int  long unsigned int +0 (current_stack_pointer)
+>>>  4.68%  struct paca_struct  struct paca_struct +2312 (__current)
+>>>  4.57%  struct paca_struct  struct paca_struct +2354 (irq_soft_mask)
+>>>  2.69%  struct paca_struct  struct paca_struct +2808 (canary)
+>>>  2.68%  struct paca_struct  struct paca_struct +8 (paca_index)
+>>>  2.24%  struct paca_struct  struct paca_struct +48 (data_offset)
+>>>  1.41%  struct vm_fault  struct vm_fault +0 (vma)
+>>>  1.29%  struct task_struct  struct task_struct +276 (flags)
+>>>  1.03%  struct pt_regs  struct pt_regs +264 (user_regs.msr)
+>>>  0.90%  struct security_hook_list  struct security_hook_list +0 (list.n=
+ext)
+>>>  0.76%  struct irq_desc  struct irq_desc +304 (irq_data.chip)
+>>>  0.76%  struct rq  struct rq +2856 (cpu)
+>>>=20
+>>> Thanks
+>>> Athira Rajeev
+>>=20
+>> Hi All
+>>=20
+>> Requesting for review comments for this patchset
+>=20
+> Sorry about the delay, I was traveling and busy with other things.
+> I'll review this next week!
 
-Is it a multithreaded application? You mean that if the application
-always runs on core1/2/3, you get an illegal instruction, but that
-does not happen when run on core0?
+Thanks Namhyung
+>=20
+> Thanks,
+> Namhyung
 
->
-> We track the source code, flush_icache_pte function patch leads to this i=
-ssue on our riscv hardware.
-> If you merge this patch into the v6.1 kernel, the same problem can be rep=
-roduced in v6.1 kernel.
-> If using flush_icache_all() not flush_icache_mm in v6.9 kernel ; this iss=
-ue can not be reproduced in v6.9 kernel.
->
-> +void flush_icache_pte(struct mm_struct *mm, pte_t pte)
->  {
->  struct folio *folio =3D page_folio(pte_page(pte));
->
->  if (!test_bit(PG_dcache_clean, &folio->flags)) {
-> -=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=
-=E2=80=82=E2=80=82=E2=80=82flush_icache_all();
-> +=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=
-=E2=80=82=E2=80=82=E2=80=82flush_icache_mm(mm, false);
->  set_bit(PG_dcache_clean, &folio->flags);
->  }
->  }
 
-Did you check if the instruction in badaddr is different from the
-expected instruction? The image you provided is not available here,
-but it indicated 0xf486 which corresponds to "c.sdsp  ra, 104(sp)", is
-that correct?
-
->
->
-> Our riscv cpu IP supports multi-core L1 dcache synchronization, but does =
-not support multi-core L1 icache synchronization. iCache synchronization re=
-quires software maintenance.
-> Does the RISCV architecture kernel in future have mandatory requirements =
-for multi-core iCache hardware consistency?
-
-No no, we try to introduce icache flushes whenever it is needed for such ua=
-rch.
-
->
-> Thank you for your reply!
->
->
-> Link=EF=BC=9A[PATCH] riscv: Only flush the mm icache when setting an exec=
- pte - Alexandre Ghiti (kernel.org)
->
-> ________________________________
-> =E5=8F=91=E8=87=AA=E6=88=91=E7=9A=84=E4=BC=81=E4=B8=9A=E5=BE=AE=E4=BF=A1
->
->
-
-Thanks for the report,
-
-Alex
 
