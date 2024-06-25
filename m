@@ -1,315 +1,242 @@
-Return-Path: <linux-kernel+bounces-228768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 311B7916695
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:49:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80EBA9166A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6CD14B271D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:49:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F12A6B24A19
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FEA314B96A;
-	Tue, 25 Jun 2024 11:49:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271DE14C59C;
+	Tue, 25 Jun 2024 11:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LVjeXkbR"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qFfTLU/f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8IiHEfLD";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qFfTLU/f";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8IiHEfLD"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E266013DDC6;
-	Tue, 25 Jun 2024 11:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A701494A0;
+	Tue, 25 Jun 2024 11:52:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719316149; cv=none; b=QWx3F3YoimKA5m8qOIlDGxYC62PjLSkxmgCmKPEmZj3koFPAZpLsUo7W2673JFWRYh299bWGJu/NARCW3+N8/z+dtrwnLiqImScjUWQUQkAGEU6a6cv82iwnHZXopuZc7lQZJn3DcsqbOXkGXn467zjII0o6fWP94UQ6SEtV2is=
+	t=1719316381; cv=none; b=rM9qGqhAJFbJd6rJiQMbhCG15ahim0Z7ZzYK0LO2ZxuZhq1pSi4Oo9io1x7VPYdGMFVD8b1SW7fcpgzZlfTh5JgFdYJKOzm5VDNfOMUX6pdv2/hwSpj823peeBjlNxqVcBMaUGTUC3ONe2lcfy0lT8CGP8NlsAvRunfzyNWIvYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719316149; c=relaxed/simple;
-	bh=2RVJmAEsGhuxdhdydanoYpOhdLdnrCswsnr/8U2j75Q=;
-	h=Content-Type:Subject:From:In-Reply-To:Date:Cc:Message-Id:
-	 References:To:MIME-Version; b=esmAYxYkpRuzJxNk1UV+5KRjX0iB3swXYILM3y6G00UMHtD+G3k3VSSqdfKsvZKUHbm5KuPIDR55ijqwfu9s47eZwW9LrtKq9OoDOFYSIEIl8faRdHnRt0WFG7UMXBMEscI89cR56lhPUvXoUu8aEFQGqC7aB5E4/SM0wl1DpA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LVjeXkbR; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PBeYGp025112;
-	Tue, 25 Jun 2024 11:48:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-type:subject:from:in-reply-to:date:cc:message-id
-	:references:to:content-transfer-encoding:mime-version; s=pp1;
-	 bh=Y2hhtNXdnOP2URjK6F8cNvjZytpeeXwrjcm6KAj53Bw=; b=LVjeXkbRiSVb
-	PNnpqhI/AQS/E1x+ZdTYg6RTMisFfB6qZDeUAnbCiU2jErwV48kcKbwdkrdHHgJZ
-	4wZ0iyh7CMK9bnkmqQBP9tWmf+DogKDoAyHuUJELnW9rn94kOaTB8sATbgSWP6cW
-	LoB6YeM4IVW66Nr26nua/sxhQWIwlMwamLa6ATMv043JP914A7oMwEHDzM2nLlVd
-	bojtg8m541dwOn6TAxt8LvF8ibaMbYFnlZV7+EMrYpsBQ8OUuEzZPECMU/omGBO4
-	ELGvflxvJdETmw+sTWHY4+oucYt+U3Se1t7dZONcAd1NFuqWqSQXEqPRTvgz2VLg
-	KI022QQH5A==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyw21819n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 11:48:56 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45PBmtc9005441;
-	Tue, 25 Jun 2024 11:48:55 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyw21819h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 11:48:55 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45PBGRKf019602;
-	Tue, 25 Jun 2024 11:48:54 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yx9xpx5kw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 11:48:54 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45PBmmCI45875550
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Jun 2024 11:48:50 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 746CF20043;
-	Tue, 25 Jun 2024 11:48:48 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8233B20040;
-	Tue, 25 Jun 2024 11:48:45 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.43.30.249])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 25 Jun 2024 11:48:45 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
-Subject: Re: [V4 00/16] Add data type profiling support for powerpc
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <ZnYVitG1tffUNTn6@google.com>
-Date: Tue, 25 Jun 2024 17:18:34 +0530
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ian Rogers <irogers@google.com>,
-        Segher Boessenkool <segher@kernel.crashing.org>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Kajol Jain <kjain@linux.ibm.com>,
-        Disha Goel <disgoel@linux.vnet.ibm.com>
-Message-Id: <B34AF03E-FD05-4600-9548-ADDB33A534EF@linux.vnet.ibm.com>
-References: <20240614172631.56803-1-atrajeev@linux.vnet.ibm.com>
- <C84A4D8E-3BCD-47A7-B41E-1B39744AECDF@linux.vnet.ibm.com>
- <ZnYVitG1tffUNTn6@google.com>
-To: Namhyung Kim <namhyung@kernel.org>
-X-Mailer: Apple Mail (2.3774.600.62)
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: _z5g5GnrlNUwrrJan91ypYAkkS5LQD5T
-X-Proofpoint-GUID: vMLeO6i0WB3tQse4eVMru0MJLMYVJ24F
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1719316381; c=relaxed/simple;
+	bh=yEXI9upsTGwmng1fzr/TmblhbgESfn49eFsRtzhxKMg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M8MtgZQEYpfWFlu/+jPapf/oKDO2FJtXlsbIEZhoDRyIMuYJigjsLBEOMex8+6YeGOZLECZnXJRXqNxGKyhM1hV5qP3Pz2oO0+hld6PMUfq381M2/eBrimg040JvnQ9TeZE67bwzym1NNQTXiOvhcboUKGd98DE6FDP7QoURqks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qFfTLU/f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8IiHEfLD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qFfTLU/f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8IiHEfLD; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 8FDD121A74;
+	Tue, 25 Jun 2024 11:52:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719316377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g6QReXCptVvvnhWONvHMOQ9mYHpbTZJLv+/buDH78sM=;
+	b=qFfTLU/feSIY+EL+6nPRavFzspOM/dJdK3v5F2BlmPNoOiENE4myYURQSXCFpXm/5KmZA2
+	of63qoq/wSVl4Xj29vqXOrjxOyLWDMTPy/HWtwOXNbhg3ZwkZHLI2jV/Im5/OkHDqa2fui
+	ShIYL2MqqIxGAEOYURuLn4h/doAiALs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719316377;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g6QReXCptVvvnhWONvHMOQ9mYHpbTZJLv+/buDH78sM=;
+	b=8IiHEfLD271bS+UYd+Tfo//IJ4Em+a6JhIiifj/ICepXl2IwZnhQjxk4/5KzEFitcuBVK1
+	iUJ0sZXiSIQeOwCw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1719316377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g6QReXCptVvvnhWONvHMOQ9mYHpbTZJLv+/buDH78sM=;
+	b=qFfTLU/feSIY+EL+6nPRavFzspOM/dJdK3v5F2BlmPNoOiENE4myYURQSXCFpXm/5KmZA2
+	of63qoq/wSVl4Xj29vqXOrjxOyLWDMTPy/HWtwOXNbhg3ZwkZHLI2jV/Im5/OkHDqa2fui
+	ShIYL2MqqIxGAEOYURuLn4h/doAiALs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1719316377;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=g6QReXCptVvvnhWONvHMOQ9mYHpbTZJLv+/buDH78sM=;
+	b=8IiHEfLD271bS+UYd+Tfo//IJ4Em+a6JhIiifj/ICepXl2IwZnhQjxk4/5KzEFitcuBVK1
+	iUJ0sZXiSIQeOwCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7770C13A9A;
+	Tue, 25 Jun 2024 11:52:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0/0jHZmvemYWeAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Tue, 25 Jun 2024 11:52:57 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 3054BA083E; Tue, 25 Jun 2024 13:52:57 +0200 (CEST)
+Date: Tue, 25 Jun 2024 13:52:57 +0200
+From: Jan Kara <jack@suse.cz>
+To: Yu Ma <yu.ma@intel.com>
+Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
+	mjguzik@gmail.com, edumazet@google.com,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
+Message-ID: <20240625115257.piu47hzjyw5qnsa6@quack3>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240622154904.3774273-1-yu.ma@intel.com>
+ <20240622154904.3774273-2-yu.ma@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_06,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- adultscore=0 bulkscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 phishscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406250084
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240622154904.3774273-2-yu.ma@intel.com>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_THREE(0.00)[3];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,gmail.com,google.com,vger.kernel.org,intel.com,linux.intel.com];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Score: -3.80
+X-Spam-Level: 
 
+On Sat 22-06-24 11:49:02, Yu Ma wrote:
+> There is available fd in the lower 64 bits of open_fds bitmap for most cases
+> when we look for an available fd slot. Skip 2-levels searching via
+> find_next_zero_bit() for this common fast path.
+> 
+> Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
+> free slot is available there, as:
+> (1) The fd allocation algorithm would always allocate fd from small to large.
+> Lower bits in open_fds bitmap would be used much more frequently than higher
+> bits.
+> (2) After fdt is expanded (the bitmap size doubled for each time of expansion),
+> it would never be shrunk. The search size increases but there are few open fds
+> available here.
+> (3) find_next_zero_bit() itself has a fast path inside to speed up searching
+> when size<=64.
+> 
+> Besides, "!start" is added to fast path condition to ensure the allocated fd is
+> greater than start (i.e. >=0), given alloc_fd() is only called in two scenarios:
+> (1) Allocating a new fd (the most common usage scenario) via
+> get_unused_fd_flags() to find fd start from bit 0 in fdt (i.e. start==0).
+> (2) Duplicating a fd (less common usage) via dup_fd() to find a fd start from
+> old_fd's index in fdt, which is only called by syscall fcntl.
+> 
+> With the fast path added in alloc_fd(), pts/blogbench-1.1.0 read is improved
+> by 17% and write by 9% on Intel ICX 160 cores configuration with v6.10-rc4.
+> 
+> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
+> Signed-off-by: Yu Ma <yu.ma@intel.com>
+> ---
+>  fs/file.c | 35 +++++++++++++++++++++--------------
+>  1 file changed, 21 insertions(+), 14 deletions(-)
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index a3b72aa64f11..50e900a47107 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -515,28 +515,35 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
+>  	if (fd < files->next_fd)
+>  		fd = files->next_fd;
+>  
+> -	if (fd < fdt->max_fds)
+> +	error = -EMFILE;
+> +	if (likely(fd < fdt->max_fds)) {
+> +		if (~fdt->open_fds[0] && !start) {
+> +			fd = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, fd);
 
+So I don't think this is quite correct. If files->next_fd is set, we could
+end up calling find_next_zero_bit() starting from quite high offset causing
+a regression? Also because we don't expand in this case, we could cause access
+beyond end of fdtable?
 
-> On 22 Jun 2024, at 5:36=E2=80=AFAM, Namhyung Kim <namhyung@kernel.org> wr=
-ote:
->=20
-> Hello,
->=20
-> On Thu, Jun 20, 2024 at 09:01:01PM +0530, Athira Rajeev wrote:
->>=20
->>=20
->>> On 14 Jun 2024, at 10:56=E2=80=AFPM, Athira Rajeev <atrajeev@linux.vnet=
-.ibm.com> wrote:
->>>=20
->>> The patchset from Namhyung added support for data type profiling
->>> in perf tool. This enabled support to associate PMU samples to data
->>> types they refer using DWARF debug information. With the upstream
->>> perf, currently it possible to run perf report or perf annotate to
->>> view the data type information on x86.
->>>=20
->>> Initial patchset posted here had changes need to enable data type
->>> profiling support for powerpc.
->>>=20
->>> https://lore.kernel.org/all/6e09dc28-4a2e-49d8-a2b5-ffb3396a9952@csgrou=
-p.eu/T/
->>>=20
->>> Main change were:
->>> 1. powerpc instruction nmemonic table to associate load/store
->>> instructions with move_ops which is use to identify if instruction
->>> is a memory access one.
->>> 2. To get register number and access offset from the given
->>> instruction, code uses fields from "struct arch" -> objump.
->>> Added entry for powerpc here.
->>> 3. A get_arch_regnum to return register number from the
->>> register name string.
->>>=20
->>> But the apporach used in the initial patchset used parsing of
->>> disassembled code which the current perf tool implementation does.
->>>=20
->>> Example: lwz     r10,0(r9)
->>>=20
->>> This line "lwz r10,0(r9)" is parsed to extract instruction name,
->>> registers names and offset. Also to find whether there is a memory
->>> reference in the operands, "memory_ref_char" field of objdump is used.
->>> For x86, "(" is used as memory_ref_char to tackle instructions of the
->>> form "mov  (%rax), %rcx".
->>>=20
->>> In case of powerpc, not all instructions using "(" are the only memory
->>> instructions. Example, above instruction can also be of extended form (X
->>> form) "lwzx r10,0,r19". Inorder to easy identify the instruction catego=
-ry
->>> and extract the source/target registers, second patchset added support =
-to use
->>> raw instruction. With raw instruction, macros are added to extract opco=
-de
->>> and register fields.
->>> Link to second patchset:
->>> https://lore.kernel.org/all/20240506121906.76639-1-atrajeev@linux.vnet.=
-ibm.com/
->>>=20
->>> Example representation using --show-raw-insn in objdump gives result:
->>>=20
->>> 38 01 81 e8     ld      r4,312(r1)
->>>=20
->>> Here "38 01 81 e8" is the raw instruction representation. In powerpc,
->>> this translates to instruction form: "ld RT,DS(RA)" and binary code
->>> as:
->>> _____________________________________
->>> | 58 |  RT  |  RA |      DS       | |
->>> -------------------------------------
->>> 0    6     11    16              30 31
->>>=20
->>> Second patchset used "objdump" again to read the raw instruction.
->>> But since there is no need to disassemble and binary code can be read
->>> directly from the DSO, third patchset (ie this patchset) uses below
->>> apporach. The apporach preferred in powerpc to parse sample for data
->>> type profiling in V3 patchset is:
->>> - Read directly from DSO using dso__data_read_offset
->>> - If that fails for any case, fallback to using libcapstone
->>> - If libcapstone is not supported, approach will use objdump
->>>=20
->>> Patchset adds support to pick the opcode and reg fields from this
->>> raw/binary instruction code. This approach came in from review comment
->>> by Segher Boessenkool and Christophe for the initial patchset.
->>>=20
->>> Apart from that, instruction tracking is enabled for powerpc and
->>> support function is added to find variables defined as registers
->>> Example, in powerpc, below two registers are
->>> defined to represent variable:
->>> 1. r13: represents local_paca
->>> register struct paca_struct *local_paca asm("r13");
->>>=20
->>> 2. r1: represents stack_pointer
->>> register void *__stack_pointer asm("r1");
->>>=20
->>> These are handled in this patchset.
->>>=20
->>> - Patch 1 is to rearrange register state type structures to header file
->>> so that it can referred from other arch specific files
->>> - Patch 2 is to make instruction tracking as a callback to"struct arch"
->>> so that it can be implemented by other archs easily and defined in arch
->>> specific files
->>> - Patch 3 adds support to capture and parse raw instruction in powerpc
->>> using dso__data_read_offset utility
->>> - Patch 4 adds logic to support using objdump when doing default "perf
->>> report" or "perf annotate" since it that needs disassembled instruction.
->>> - Patch 5 adds disasm_line__parse to parse raw instruction for powerpc
->>> - Patch 6 update parameters for reg extract functions to use raw
->>> instruction on powerpc
->>> - Patch 7 add support to identify memory instructions of opcode 31 in
->>> powerpc
->>> - Patch 8 adds more instructions to support instruction tracking in pow=
-erpc
->>> - Patch 9 and 10 handles instruction tracking for powerpc.
->>> - Patch 11, 12 and 13 add support to use libcapstone in powerpc
->>> - Patch 14 and patch 15 handles support to find global register variabl=
-es
->>> - Patch 16 handles insn-stat option for perf annotate
->>>=20
->>> Note:
->>> - There are remaining unknowns (25%) as seen in annotate Instruction st=
-ats
->>> below.
->>> - This patchset is not tested on powerpc32. In next step of enhancements
->>> along with handling remaining unknowns, plan to cover powerpc32 changes
->>> based on how testing goes.
->>>=20
->>> With the current patchset:
->>>=20
->>> ./perf record -a -e mem-loads sleep 1
->>> ./perf report -s type,typeoff --hierarchy --group --stdio
->>> ./perf annotate --data-type --insn-stat
->>>=20
->>> perf annotate logs:
->>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>=20
->>> Annotate Instruction stats
->>> total 609, ok 446 (73.2%), bad 163 (26.8%)
->>>=20
->>> Name/opcode:  Good   Bad
->>> -----------------------------------------------------------
->>> 58                  :   323    80
->>> 32                  :    49    43
->>> 34                  :    33    11
->>> OP_31_XOP_LDX       :     8    20
->>> 40                  :    23     0
->>> OP_31_XOP_LWARX     :     5     1
->>> OP_31_XOP_LWZX      :     2     3
->>> OP_31_XOP_LDARX     :     3     0
->>> 33                  :     0     2
->>> OP_31_XOP_LBZX      :     0     1
->>> OP_31_XOP_LWAX      :     0     1
->>> OP_31_XOP_LHZX      :     0     1
->>>=20
->>> perf report logs:
->>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->>>=20
->>> Total Lost Samples: 0
->>>=20
->>> Samples: 1K of event 'mem-loads'
->>> Event count (approx.): 937238
->>>=20
->>> Overhead  Data Type  Data Type Offset
->>> ........  .........  ................
->>>=20
->>> 48.60%  (unknown)  (unknown) +0 (no field)
->>> 12.85%  long unsigned int  long unsigned int +0 (current_stack_pointer)
->>>  4.68%  struct paca_struct  struct paca_struct +2312 (__current)
->>>  4.57%  struct paca_struct  struct paca_struct +2354 (irq_soft_mask)
->>>  2.69%  struct paca_struct  struct paca_struct +2808 (canary)
->>>  2.68%  struct paca_struct  struct paca_struct +8 (paca_index)
->>>  2.24%  struct paca_struct  struct paca_struct +48 (data_offset)
->>>  1.41%  struct vm_fault  struct vm_fault +0 (vma)
->>>  1.29%  struct task_struct  struct task_struct +276 (flags)
->>>  1.03%  struct pt_regs  struct pt_regs +264 (user_regs.msr)
->>>  0.90%  struct security_hook_list  struct security_hook_list +0 (list.n=
-ext)
->>>  0.76%  struct irq_desc  struct irq_desc +304 (irq_data.chip)
->>>  0.76%  struct rq  struct rq +2856 (cpu)
->>>=20
->>> Thanks
->>> Athira Rajeev
->>=20
->> Hi All
->>=20
->> Requesting for review comments for this patchset
->=20
-> Sorry about the delay, I was traveling and busy with other things.
-> I'll review this next week!
+Finally, AFAIU this speeds up the lookup for cases where fd < 64 is
+available at the cost of cases where the first long is full (there we
+unnecessarily load open_fds[0] into cache). Did you check if the cost is
+visible (e.g. by making blogbench occupy first 64 fds before starting its
+load)?
 
-Thanks Namhyung
->=20
-> Thanks,
-> Namhyung
+								Honza
 
-
+> +			goto fastreturn;
+> +		}
+>  		fd = find_next_fd(fdt, fd);
+> +	}
+> +
+> +	if (unlikely(fd >= fdt->max_fds)) {
+> +		error = expand_files(files, fd);
+> +		if (error < 0)
+> +			goto out;
+> +		/*
+> +		 * If we needed to expand the fs array we
+> +		 * might have blocked - try again.
+> +		 */
+> +		if (error)
+> +			goto repeat;
+> +	}
+>  
+> +fastreturn:
+>  	/*
+>  	 * N.B. For clone tasks sharing a files structure, this test
+>  	 * will limit the total number of files that can be opened.
+>  	 */
+> -	error = -EMFILE;
+> -	if (fd >= end)
+> +	if (unlikely(fd >= end))
+>  		goto out;
+>  
+> -	error = expand_files(files, fd);
+> -	if (error < 0)
+> -		goto out;
+> -
+> -	/*
+> -	 * If we needed to expand the fs array we
+> -	 * might have blocked - try again.
+> -	 */
+> -	if (error)
+> -		goto repeat;
+> -
+>  	if (start <= files->next_fd)
+>  		files->next_fd = fd + 1;
+>  
+> -- 
+> 2.43.0
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
