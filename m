@@ -1,219 +1,272 @@
-Return-Path: <linux-kernel+bounces-229235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF2A916D2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:34:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7718E916D2E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 609BD1C22E74
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:34:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2846A28A57D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3670175563;
-	Tue, 25 Jun 2024 15:33:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414E216FF33;
+	Tue, 25 Jun 2024 15:34:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xn15kazM"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H9z+rctq"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0902317333B;
-	Tue, 25 Jun 2024 15:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A86816FF36;
+	Tue, 25 Jun 2024 15:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719329621; cv=none; b=kwij41Aaoks4lbVxFe3qv2LSrKrxSR8a67a0ckM3g3xA+Zw9UbHyOHRwj5PQ0/X2ufSPC62javso5qFQXMGSb+ENDtFWlo2dbea9CHD6Dr6JusCrsMtqO/OsfAw73jHymK6YnOJOqaIjYAOKsQGCI7vUOEGFvJHNMVuxu+jqw+w=
+	t=1719329644; cv=none; b=PZ2agoeMRUojd5AN3RG2pZJBl3GsFetozyM8rGgBN4l7RqIl2eBY5lMZfufk4pPR0HrB0nHybkJQW4akWDhwY11o7U+TpM3shxOME95i6a5BnCyz0eWCHKfY5Sf5tSYcFx9FrnGdEeHuiKfhfq3BjsNPqe/oFmW6X24EmaaAAvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719329621; c=relaxed/simple;
-	bh=uPLUs+i0sWGfpRm6c5Uu6lzqMGMSQX3L/kQuHlglG8I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xv1DOvA6F7BcCv3XIe1cwcAw4A3uKbO5ZZJQXhH7mzjTi9/inl7PD1IOf4bj/odznBeqmZOw7doc5RhLTebRTACMO9qMtkxnAHDiYyARm4TMjMFL8FEKJTmzqyt4loy+wUX1EzVnGXafMHFJHTF5D9k2cIVL9MNdNdnJPjYPYgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xn15kazM; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719329620; x=1750865620;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=uPLUs+i0sWGfpRm6c5Uu6lzqMGMSQX3L/kQuHlglG8I=;
-  b=Xn15kazMOTeoa5nwaFyiZonjheDfVoMo5zWGLKN/lphAzGt0v3lx+LKG
-   BPSMa0bUJeWfhxzntqOU/n2aroNIYZ/TI51A2xfuJKRjpUNqUfo72eoAx
-   HjoO4+/6PJ1e6kJpJIzOjCPQlGaPfNrkmX2zDI/dlHQgMfD/m5/Brh5lg
-   6+Ah6MF6CQwKpK/vxzT2jqMaekRrfJa824KSupGxPyuz/hPtTKqN+2QT/
-   qiYd1/1A6n6dxDhU8t9Chdgea6lX6JVER3L/8sA5rXU+wmlNEWtdrGvHe
-   BnU7NL1T6hi6aFMQ9FnCimIY2Pj8wwhq4z526W3ck48qeZ01JpERDiiou
-   A==;
-X-CSE-ConnectionGUID: RV9Kgbi5ScWlydNCVHStfQ==
-X-CSE-MsgGUID: 6gaQ3wV5TWqU/QYndULoYQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16112763"
-X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
-   d="scan'208";a="16112763"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 08:33:39 -0700
-X-CSE-ConnectionGUID: AYIIf208RJOkFbGrjuYamQ==
-X-CSE-MsgGUID: gJ+esJnnQOCfkh0szhdzDQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
-   d="scan'208";a="43660078"
-Received: from wenjun3x-mobl1.ccr.corp.intel.com (HELO [10.124.232.196]) ([10.124.232.196])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 08:33:36 -0700
-Message-ID: <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
-Date: Tue, 25 Jun 2024 23:33:34 +0800
+	s=arc-20240116; t=1719329644; c=relaxed/simple;
+	bh=yrSTLdvsNJuOyrIIDeJhSlKNmfKDLtNCQ44eQ4kZF+Q=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mlapm5eDirLt5ArprLHSmiqq+usVryF6TegoG0QCPozKJUzXe9/Md7pX+CniIsNotPEvABKCce9hTtH40xNRsljiMdEYZrJxY1XD5/BTuyMrJA7QSd4lU1bTFjdXBA8NWWQkl/fG5KuzipQp0lFtLt22jIwdEBbERVygNXh7Otc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H9z+rctq; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52ce6c8db7bso2804127e87.1;
+        Tue, 25 Jun 2024 08:34:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719329640; x=1719934440; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fWL9aq1cdURVir5BADc2ZTz6Xz4eWUl6fxWllepmeqQ=;
+        b=H9z+rctqwFgGuLacwSAOq3LjznEXvqY8IlWcQy23uetBDdP7YJBCC0wUzRCBCqjugK
+         Un8lt9lMxqi3h2iwRC4hQ+T9tuAjVH/AaDP8yUlIqdQx7Khl9M2q9zXqB3XUPbmD07HN
+         OZsWHfA7aUSuyR5J2QgrlzrvUDQTpztGcxEbeA/OsNWszQt4TOOywHpuMaIlJWPiqoM2
+         2yi8fYQ1Gt7fabFlDwMo2xXk1mW7Rxen3Z66cSAl/9SYl1b3RLyERxi9hCGI4eRK1VG9
+         dR9/q7SAWOIcI4SNPm1Ckos1S7Rb+cPGkxZKDfoCIZwV+Zks5h1GzXVnl9YeoRbj4+nl
+         qjsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719329640; x=1719934440;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fWL9aq1cdURVir5BADc2ZTz6Xz4eWUl6fxWllepmeqQ=;
+        b=lVjCj4oTU/suWMQkoP+L+Svzd20IYUk8Xnv3n2NOlACs7FN8+KuEqCRzcQ3qG3BJtH
+         9sO2SmVXK8HjIjLoMOmx821XLzj+WVlVjlUuYV6SC9gLf2sWZYehGV8H2Aa8AO+hJhc6
+         4k/h+wTsrf+MZKzNYiJ5DuoZasdkXb/483gUNIDTUub8rc/vO2Y/zq1gl12i9Rz/9M8q
+         zVyAcqE7kmtIPg2RJZGmR1rhyhA084wyWaS54DIiC/lU2xZE6H2yqwwzdUv/m1QdYBXM
+         X4wtu0gVc+flrqSLDaV8VUatYqg8irVslCkc2zdV93wSMzoFWR+qHBeqDivgVQ4jcdZI
+         Ca0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXpnG675aVTTJz5u8iM6TThfWbXAUYPXpxD8kX+VPN+d4U/7rn26ngV3qJcjW9iyn/ZoY0c7eCIYD1XyksKgR3MrJZrEOPHX50BVf4umczBWWGZPPduW5OPYrkAKkRM1sV5vcHZ1fjK9A==
+X-Gm-Message-State: AOJu0YzK2CCLhPB8Sk0Twus/DMkA4zkGLJSg9y/aOVQrnVF8l9We5DQA
+	qfjRkzMK2tFlznhOdxzrDVyZ3TT+trC28bwC95EFsAYAPiFN/VXs
+X-Google-Smtp-Source: AGHT+IHnZjnJMconf8H13iDPWZ8xrfkoezsaE3ZY5gP+CacdGRe1jWjN1MqrVToiHaNuNaAbqOT5eQ==
+X-Received: by 2002:ac2:5119:0:b0:52c:db52:3cb3 with SMTP id 2adb3069b0e04-52ce183b56bmr4507221e87.39.1719329640074;
+        Tue, 25 Jun 2024 08:34:00 -0700 (PDT)
+Received: from pc636 (host-90-233-219-252.mobileonline.telia.com. [90.233.219.252])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cf33265d6sm153493e87.160.2024.06.25.08.33.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 08:33:59 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 25 Jun 2024 17:33:57 +0200
+To: Baoquan He <bhe@redhat.com>, Hailong Liu <hailong.liu@oppo.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Nick Bowler <nbowler@draconx.ca>,
+	Hailong Liu <hailong.liu@oppo.com>, linux-kernel@vger.kernel.org,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	linux-mm@kvack.org, sparclinux@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
+Message-ID: <ZnrjZRq5-_hemrbD@pc636>
+References: <20240621033005.6mccm7waduelb4m5@oppo.com>
+ <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
+ <ZnVLbCCkvhf5GaTf@pc636>
+ <ZnWICsPgYuBlrWlt@MiWiFi-R3L-srv>
+ <Znljtv5n-6EBgpsF@pc636>
+ <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
+ <ZnqcuKt2qrR-wmH3@pc636>
+ <ZnqspTVl/76jM9WD@MiWiFi-R3L-srv>
+ <Znq6tEtCgB6QnnJH@pc638.lan>
+ <Znq/8/HAc/0p6Ja0@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
-To: Jan Kara <jack@suse.cz>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, mjguzik@gmail.com,
- edumazet@google.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com,
- tim.c.chen@intel.com, tim.c.chen@linux.intel.com, yu.ma@intel.com
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240622154904.3774273-1-yu.ma@intel.com>
- <20240622154904.3774273-2-yu.ma@intel.com>
- <20240625115257.piu47hzjyw5qnsa6@quack3>
- <20240625125309.y2gs4j5jr35kc4z5@quack3>
-Content-Language: en-US
-From: "Ma, Yu" <yu.ma@intel.com>
-In-Reply-To: <20240625125309.y2gs4j5jr35kc4z5@quack3>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Znq/8/HAc/0p6Ja0@MiWiFi-R3L-srv>
 
+On Tue, Jun 25, 2024 at 09:02:43PM +0800, Baoquan He wrote:
+> On 06/25/24 at 02:40pm, Uladzislau Rezki wrote:
+> > On Tue, Jun 25, 2024 at 07:40:21PM +0800, Baoquan He wrote:
+> > > On 06/25/24 at 12:32pm, Uladzislau Rezki wrote:
+> > > > On Tue, Jun 25, 2024 at 11:30:33AM +0800, Baoquan He wrote:
+> > > > > On 06/24/24 at 02:16pm, Uladzislau Rezki wrote:
+> > > > > > On Fri, Jun 21, 2024 at 10:02:50PM +0800, Baoquan He wrote:
+> > > > > > > On 06/21/24 at 11:44am, Uladzislau Rezki wrote:
+> > > > > > > > On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
+> > > > > > > > > On 06/21/24 at 11:30am, Hailong Liu wrote:
+> > > > > > > > > > On Thu, 20. Jun 14:02, Nick Bowler wrote:
+> > > > > > > > > > > On 2024-06-20 02:19, Nick Bowler wrote:
+> > > > > > > ......
+> > > > > > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > > > > > > index be2dd281ea76..18e87cafbaf2 100644
+> > > > > > > > > --- a/mm/vmalloc.c
+> > > > > > > > > +++ b/mm/vmalloc.c
+> > > > > > > > > @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> > > > > > > > >  static struct xarray *
+> > > > > > > > >  addr_to_vb_xa(unsigned long addr)
+> > > > > > > > >  {
+> > > > > > > > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > > > > > > > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> > > > > > > > >  
+> > > > > > > > >  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> > > > > > > > >  }
+> > > > > > > > > 
+> > > > > > > > The problem i see is about not-initializing of the:
+> > > > > > > > <snip>
+> > > > > > > > 	for_each_possible_cpu(i) {
+> > > > > > > > 		struct vmap_block_queue *vbq;
+> > > > > > > > 		struct vfree_deferred *p;
+> > > > > > > > 
+> > > > > > > > 		vbq = &per_cpu(vmap_block_queue, i);
+> > > > > > > > 		spin_lock_init(&vbq->lock);
+> > > > > > > > 		INIT_LIST_HEAD(&vbq->free);
+> > > > > > > > 		p = &per_cpu(vfree_deferred, i);
+> > > > > > > > 		init_llist_head(&p->list);
+> > > > > > > > 		INIT_WORK(&p->wq, delayed_vfree_work);
+> > > > > > > > 		xa_init(&vbq->vmap_blocks);
+> > > > > > > > 	}
+> > > > > > > > <snip>
+> > > > > > > > 
+> > > > > > > > correctly or fully. It is my bad i did not think that CPUs in a possible mask
+> > > > > > > > can be non sequential :-/
+> > > > > > > > 
+> > > > > > > > nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
+> > > > > > > > when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
+> > > > > > > 
+> > > > > > > I checked the generic version of setup_nr_cpu_ids(), from codes, they
+> > > > > > > are different with my understanding.
+> > > > > > > 
+> > > > > > > kernel/smp.c
+> > > > > > > void __init setup_nr_cpu_ids(void)
+> > > > > > > {
+> > > > > > >         set_nr_cpu_ids(find_last_bit(cpumask_bits(cpu_possible_mask), NR_CPUS) + 1);
+> > > > > > > }
+> > > > > > > 
+> > > > > > I see that it is not a weak function, so it is generic, thus the
+> > > > > > behavior can not be overwritten, which is great. This does what we
+> > > > > > need.
+> > > > > > 
+> > > > > > Thank you for checking this you are right!
+> > > > > 
+> > > > > Thanks for confirming this.
+> > > > > 
+> > > > > > 
+> > > > > > Then it is just a matter of proper initialization of the hash:
+> > > > > > 
+> > > > > > <snip>
+> > > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > > > index 5d3aa2dc88a8..1733946f7a12 100644
+> > > > > > --- a/mm/vmalloc.c
+> > > > > > +++ b/mm/vmalloc.c
+> > > > > > @@ -5087,7 +5087,13 @@ void __init vmalloc_init(void)
+> > > > > >          */
+> > > > > >         vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
+> > > > > >  
+> > > > > > -       for_each_possible_cpu(i) {
+> > > > > > +       /*
+> > > > > > +        * We use "nr_cpu_ids" here because some architectures
+> > > > > > +        * may have "gaps" in cpu-possible-mask. It is OK for
+> > > > > > +        * per-cpu approaches but is not OK for cases where it
+> > > > > > +        * can be used as hashes also.
+> > > > > > +        */
+> > > > > > +       for (i = 0; i < nr_cpu_ids; i++) {
+> > > > > 
+> > > > > I was wrong about earlier comments. Percpu variables are only available
+> > > > > on possible CPUs. For those nonexistent possible CPUs of static percpu
+> > > > > variable vmap_block_queue, there isn't memory allocated and mapped for
+> > > > > them. So accessing into them will cause problem.
+> > > > > 
+> > > > > In Nick's case, there are only CPU0, CPU2. If you access
+> > > > > &per_cpu(vmap_block_queue, 1), problem occurs. So I think we may need to
+> > > > > change to take other way for vbq. E.g:
+> > > > > 1) Storing the vb in the nearest neighbouring vbq on possible CPU as
+> > > > >    below draft patch;
+> > > > > 2) create an normal array to store vbq of size nr_cpu_ids, then we can
+> > > > >    store/fetch each vbq on non-possible CPU?
+> > > > > 
+> > > > A correct way, i think, is to create a normal array. A quick fix can be
+> > > > to stick to a next possible CPU.
+> > > > 
+> > > > > The way 1) is simpler, the existing code can be adapted a little just as
+> > > > > below.
+> > > > > 
+> > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > > index 633363997dec..59a8951cc6c0 100644
+> > > > > --- a/mm/vmalloc.c
+> > > > > +++ b/mm/vmalloc.c
+> > > > > @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> > > > >  static struct xarray *
+> > > > >  addr_to_vb_xa(unsigned long addr)
+> > > > >  {
+> > > > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > > > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> > > > > +
+> > > > > +	if (!cpu_possible(idex))
+> > > > > +		index = cpumask_next(index, cpu_possible_mask);
+> > > > >
+> > > > cpumask_next() can return nr_cpu_ids if no next bits set.
+> > > 
+> > > It won't. nr_cpu_ids is the largest index + 1, the hashed index will
+> > > be:  0 =<  index  <= (nr_cpu_ids - 1) e.g cpu_possible_mask is
+> > > b10001111, the nr_cpu_ids is 8, the largest bit is cpu7.
+> > > cpu_possible(index) will check that. So the largest bit of cpumask_next()
+> > > returns is (nr_cpu_ids - 1).
+> > > 
+> > /**
+> >  * cpumask_next - get the next cpu in a cpumask
+> >  * @n: the cpu prior to the place to search (i.e. return will be > @n)
+> >  * @srcp: the cpumask pointer
+> >  *
+> >  * Return: >= nr_cpu_ids if no further cpus set.
+> 
+> Ah, I got what you mean. In the vbq case, it may not have chance to get
+> a return number as nr_cpu_ids. Becuase the hashed index limits the
+> range to [0, nr_cpu_ids-1], and cpu_possible(index) will guarantee it
+> won't be the highest cpu number [nr_cpu_ids-1] since CPU[nr_cpu_ids-1] must
+> be possible CPU.
+> 
+> Do I miss some corner cases?
+> 
+Right. We guarantee that a highest CPU is available by doing: % nr_cpu_ids.
+So we do not need to use *next_wrap() variant. You do not miss anything :)
 
-On 6/25/2024 8:53 PM, Jan Kara wrote:
-> On Tue 25-06-24 13:52:57, Jan Kara wrote:
->> On Sat 22-06-24 11:49:02, Yu Ma wrote:
->>> There is available fd in the lower 64 bits of open_fds bitmap for most cases
->>> when we look for an available fd slot. Skip 2-levels searching via
->>> find_next_zero_bit() for this common fast path.
->>>
->>> Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
->>> free slot is available there, as:
->>> (1) The fd allocation algorithm would always allocate fd from small to large.
->>> Lower bits in open_fds bitmap would be used much more frequently than higher
->>> bits.
->>> (2) After fdt is expanded (the bitmap size doubled for each time of expansion),
->>> it would never be shrunk. The search size increases but there are few open fds
->>> available here.
->>> (3) find_next_zero_bit() itself has a fast path inside to speed up searching
->>> when size<=64.
->>>
->>> Besides, "!start" is added to fast path condition to ensure the allocated fd is
->>> greater than start (i.e. >=0), given alloc_fd() is only called in two scenarios:
->>> (1) Allocating a new fd (the most common usage scenario) via
->>> get_unused_fd_flags() to find fd start from bit 0 in fdt (i.e. start==0).
->>> (2) Duplicating a fd (less common usage) via dup_fd() to find a fd start from
->>> old_fd's index in fdt, which is only called by syscall fcntl.
->>>
->>> With the fast path added in alloc_fd(), pts/blogbench-1.1.0 read is improved
->>> by 17% and write by 9% on Intel ICX 160 cores configuration with v6.10-rc4.
->>>
->>> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
->>> Signed-off-by: Yu Ma <yu.ma@intel.com>
->>> ---
->>>   fs/file.c | 35 +++++++++++++++++++++--------------
->>>   1 file changed, 21 insertions(+), 14 deletions(-)
->>>
->>> diff --git a/fs/file.c b/fs/file.c
->>> index a3b72aa64f11..50e900a47107 100644
->>> --- a/fs/file.c
->>> +++ b/fs/file.c
->>> @@ -515,28 +515,35 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->>>   	if (fd < files->next_fd)
->>>   		fd = files->next_fd;
->>>   
->>> -	if (fd < fdt->max_fds)
->>> +	error = -EMFILE;
->>> +	if (likely(fd < fdt->max_fds)) {
->>> +		if (~fdt->open_fds[0] && !start) {
->>> +			fd = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, fd);
->> So I don't think this is quite correct. If files->next_fd is set, we could
->> end up calling find_next_zero_bit() starting from quite high offset causing
->> a regression? Also because we don't expand in this case, we could cause access
->> beyond end of fdtable?
-> OK, I've misunderstood the next_fd logic. next_fd is the lowest 0-bit in
-> the open_fds bitmap so if next_fd is big, the ~fdt->open_fds[0] should
-> be false. As such the above condition could be rewritten as:
->
-> 		if (!start && files->next_fd < BITS_PER_LONG)
->
-> to avoid loading the first bitmap long if we know it is full? Or we could
-> maybe go as far as:
->
-> 		if (!start && fd < BITS_PER_LONG && !test_bit(fd, fdt->open_fds))
-> 			goto fastreturn;
->
-> because AFAIU this should work in exactly the same cases as your code?
->
-> 								Honza
+Hailong Liu has proposed more simpler version:
 
-Thanks Honza for the good concern and suggestions here, while both above 
-conditions are not enough to ensure that there is available fd in the 
-first 64 bits of open_fds. As next_fd just means there is no available 
-fd before next_fd, just imagine that fd from 0 to 66 are already 
-occupied, now fd=3 is returned back, then next_fd would be set as 3 per 
-fd recycling logic (i.e. in __put_unused_fd()), next time when 
-alloc_fd() being called, it would return fd=3 to the caller and set 
-next_fd=4. Then next time when alloc_fd() being called again, 
-next_fd==4, but actually it's already been occupied. So 
-find_next_zero_bit() is needed to find the real 0 bit anyway. The 
-conditions should either be like it is in patch or if (!start && 
-!test_bit(0, fdt->full_fds_bits)), the latter should also have the 
-bitmap loading cost, but another point is that a bit in full_fds_bits 
-represents 64 bits in open_fds, no matter fd >64 or not, full_fds_bits 
-should be loaded any way, maybe we can modify the condition to use 
-full_fds_bits ?
+<snip>
+diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+index 11fe5ea208aa..e1e63ffb9c57 100644
+--- a/mm/vmalloc.c
++++ b/mm/vmalloc.c
+@@ -1994,8 +1994,9 @@ static struct xarray *
+ addr_to_vb_xa(unsigned long addr)
+ {
+        int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
++       int cpu = cpumask_nth(index, cpu_possible_mask);
 
->>> +			goto fastreturn;
->>> +		}
->>>   		fd = find_next_fd(fdt, fd);
->>> +	}
->>> +
->>> +	if (unlikely(fd >= fdt->max_fds)) {
->>> +		error = expand_files(files, fd);
->>> +		if (error < 0)
->>> +			goto out;
->>> +		/*
->>> +		 * If we needed to expand the fs array we
->>> +		 * might have blocked - try again.
->>> +		 */
->>> +		if (error)
->>> +			goto repeat;
->>> +	}
->>>   
->>> +fastreturn:
->>>   	/*
->>>   	 * N.B. For clone tasks sharing a files structure, this test
->>>   	 * will limit the total number of files that can be opened.
->>>   	 */
->>> -	error = -EMFILE;
->>> -	if (fd >= end)
->>> +	if (unlikely(fd >= end))
->>>   		goto out;
->>>   
->>> -	error = expand_files(files, fd);
->>> -	if (error < 0)
->>> -		goto out;
->>> -
->>> -	/*
->>> -	 * If we needed to expand the fs array we
->>> -	 * might have blocked - try again.
->>> -	 */
->>> -	if (error)
->>> -		goto repeat;
->>> -
->>>   	if (start <= files->next_fd)
->>>   		files->next_fd = fd + 1;
->>>   
->>> -- 
->>> 2.43.0
->>>
->> -- 
->> Jan Kara <jack@suse.com>
->> SUSE Labs, CR
->>
+-       return &per_cpu(vmap_block_queue, index).vmap_blocks;
++       return &per_cpu(vmap_block_queue, cpu).vmap_blocks;
+<snip>
+
+which just takes a next CPU if an index is not set in the cpu_possible_mask.
+
+The only thing that can be updated in the patch is to replace num_possible_cpu()
+by the nr_cpu_ids.
+
+Any thoughts? I think we need to fix it by a minor change so it is
+easier to back-port on stable kernels.
+
+--
+Uladzislau Rezki
 
