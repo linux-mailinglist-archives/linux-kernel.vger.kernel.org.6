@@ -1,121 +1,201 @@
-Return-Path: <linux-kernel+bounces-229560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 804699170DD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:07:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 238B79170E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14002B222FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:07:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 459341C235D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCE8317C7B4;
-	Tue, 25 Jun 2024 19:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E812B17C7CD;
+	Tue, 25 Jun 2024 19:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/2ILEFH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Wpnm0PFx"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30FA017A932
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C5C17C7AE
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719342415; cv=none; b=GuvYc6D3YdsFiYCH7tBPATBgryV3Hfmw4yrVtHnCEtDgNGnv4ajERQfBZITURUzh3Ai+3S9In6Wy5C99Mdf9tt1exv16hQJsg0zR8KRotyb/ARz/dCJs5nQlM5gBIb2bQ1ZRcqbNzhFATfab5U/aV1qUP7xV6p/KxbLG2qGmim0=
+	t=1719342530; cv=none; b=pYkVyjMym2lkBFk/pLzlubA3rYXntPzEfpjolHoL9tAqSyzqGs3lBs9ysYZEK9DeLZW50yrSSvK8D7tUUv1QBSpHqnGV7ZiSkczj4hu5AEu9wtYNYbIrFCHjsgmsYRmbUih1c15gwH1lT0ThiDFzWqdytx0uZUuGnzej3nd8bbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719342415; c=relaxed/simple;
-	bh=AHWWfCYDmzndrVYLTTk4fV2I6SjAMHEoPf5mWM7OBIQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m9AijzmINihl7nz8mQIg3wVnTdlhyDRrfaVjUx7OrLFBCIwKd3SMdAL1wOwQEEIBEIQrJcOnNPIp6BgblIcQrk6/VQTksg/97ffC0+Bt9zesTS2FMTZqX81Sq3wXKCiKThNHgoqb2ZP7UbVyL7NdP4aWflda742EriJElWsLQKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/2ILEFH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A36F1C32781;
-	Tue, 25 Jun 2024 19:06:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719342414;
-	bh=AHWWfCYDmzndrVYLTTk4fV2I6SjAMHEoPf5mWM7OBIQ=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=T/2ILEFH7tH6DgSQK/lxQl9l1a90deB4Fl20fqA4eL7pLfiyn7ozDSQvrP8etwEky
-	 YUhf25LKYr3L/u/fetU3CQW3zM/7x4Pxeay5Ajro4CrlenTPWqiPhFfvLeiRcmABVx
-	 VR9sf9CPP4Djem5I49zdxtK8+kSe4ipRjXFMg7KSUsRk06f0JLOBk4lsONJWjL4Eqf
-	 dJvPKoJU2YeKNPne0FaP6fYfcLEmvM4kv4/juvtsNYNbsB7JvzDDGkR7P3mF2mpHFk
-	 GcSIxVnBh+HkrzS+Ck8zXt/Qn9SDjw/fsLlrbnGYz7grd7d7nBculFl21Pl8hIzMmE
-	 7lQZ7izR4W8/A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 01219CE0895; Tue, 25 Jun 2024 12:06:52 -0700 (PDT)
-Date: Tue, 25 Jun 2024 12:06:52 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Dave Hansen <dave.hansen@intel.com>,
-	Alexander Potapenko <glider@google.com>, elver@google.com,
-	dvyukov@google.com, dave.hansen@linux.intel.com,
-	peterz@infradead.org, akpm@linux-foundation.org, x86@kernel.org,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH 2/3] lib/Kconfig.debug: disable LOCK_DEBUGGING_SUPPORT
- under KMSAN
-Message-ID: <3748b5db-6f92-41f8-a86d-ed0e73221028@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240621094901.1360454-1-glider@google.com>
- <20240621094901.1360454-2-glider@google.com>
- <5a38bded-9723-4811-83b5-14e2312ee75d@intel.com>
- <ZnsRq7RNLMnZsr6S@boqun-archlinux>
+	s=arc-20240116; t=1719342530; c=relaxed/simple;
+	bh=iCXSqH+6UU4SulLsAIswpvWVe9yxkOACz3WYkB9p7XE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qb8D5KhoPjbVMS7xRn6X8ugIcJVZl8DTq8ZUhMr8+ahGhJ3UOnrEwZn1Ml2Pr2HR6rseq4EqFDRrFpsMSJfayFycgUFEHIu7LKTE6B0epC+dgAH3mE0suhE/uL3AGJPIXIlf+JvmC62lUeY13qC4cZ4zF2MI5mYBzpoD59uzwQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Wpnm0PFx; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a727d9dd367so103483966b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:08:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719342526; x=1719947326; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tL4EzYq6ilmDvWnIZB/4gWNot3CMWNGIIwPHhO9IRMw=;
+        b=Wpnm0PFxveZgvn24LtQia5WG1uGB+PXXmun2NmshpQORbBkAoX8yLfhRowLak7rWip
+         YKdbZY1DA2JUnZYQcFMRegE1DwvOcDWO79MuQoTYoiENPJumfwSOJ5LkIXWSVaqgfM3a
+         f/53OsYTpepQ7BqV8KE1QDWmLVZtRBP4YupLiJ75R7gDkmdYh3pwSdfjfY+4kWwnajYe
+         LMgoaYu40G6pI2y3rBjZ1eWmkyCBxcmjAB/DHWfCBBFWKrsHQQsVMelh/MZuN+waAF+O
+         mDVK0KWei+cK7l3WklaDBuWlRhZpFiAg8Ma6lQe8eY0lK9KliC/eFMXparqLGsKHNwku
+         lISA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719342526; x=1719947326;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=tL4EzYq6ilmDvWnIZB/4gWNot3CMWNGIIwPHhO9IRMw=;
+        b=q6mTJsZkh1q4BHi4/+mxigz6jnpEy7FCJoHTgdtgkQaevo+NQKa0ulqXb28TXqE3s9
+         HhaDKBOb2dSVSYUY70ixKv0RUkEe7HYhWINLh9pzuOxn8lNvEM1vo8kq77NY+N+Z/JuF
+         eKuJPu932M/RvkjHUEmv3KFeZWGkp4tUQQPo03R7FfMeSWGCC/HgDLVDZrRaFcmmXGYa
+         7p4oH7a62tZLxkPw3otj0Q+HKJFBAqTmU3EfmOlAUPWCy2hCUdKRqPM52hoK+/XdQqYa
+         Vfa3c7vr8GTOpO0IlL4dv2LwkxfteZhKVpp9+xUsjERAKE2lEGDJEJeNj5zG66s9MwVG
+         jf+g==
+X-Forwarded-Encrypted: i=1; AJvYcCUMo4XJdHlbriE9ajZLsBs1Jv2B7fDScny6d5pVFtbWv7iOXyHDb6KJDzqucuS+DuZydt5WdUDWxRPno2gx1aTO2EMCdirrwGsXFuJt
+X-Gm-Message-State: AOJu0YxTAnoU7KU6LrfNDR0c6UX5qaPgq8PHjWIxjRaB4XMfEQ+6HwPL
+	m9jule4eMyDdcPMZrjqXDbcH9Jveag1GM7PixK1Ta8zlFrIRTHXZUf73LDnb1xR4dLy1sr1ogPe
+	En8HydCxuRuyR2GgqFvUJSqvvr0l5q6k8VI0msQ==
+X-Google-Smtp-Source: AGHT+IFgoo2KQUyFKVYcNQsMHt+AG7QRnWDFexuYnSapnWtKPDeO3CINuVI7rn/8LCncVw+v2sU3PjVVf3mqW28I6Oc=
+X-Received: by 2002:a17:906:e52:b0:a6f:33d6:2d49 with SMTP id
+ a640c23a62f3a-a7242cdb3ffmr713502166b.52.1719342526431; Tue, 25 Jun 2024
+ 12:08:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnsRq7RNLMnZsr6S@boqun-archlinux>
+References: <20240625165121.2160354-1-evan@rivosinc.com> <20240625165121.2160354-3-evan@rivosinc.com>
+ <20240625-kindle-sanitizer-c52b48ed9b86@spud>
+In-Reply-To: <20240625-kindle-sanitizer-c52b48ed9b86@spud>
+From: Evan Green <evan@rivosinc.com>
+Date: Tue, 25 Jun 2024 12:08:09 -0700
+Message-ID: <CALs-HsuEc9ympGsQP3bvXaowiAj0bq3nvD=9CcX0NNMza+79OA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] RISC-V: hwprobe: Add SCALAR to misaligned perf defines
+To: Conor Dooley <conor@kernel.org>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Andy Chiu <andy.chiu@sifive.com>, 
+	Ben Dooks <ben.dooks@codethink.co.uk>, =?UTF-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>, 
+	Charlie Jenkins <charlie@rivosinc.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Costa Shulyupin <costa.shul@redhat.com>, 
+	Erick Archer <erick.archer@gmx.com>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Paul Walmsley <paul.walmsley@sifive.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 11:51:23AM -0700, Boqun Feng wrote:
-> On Fri, Jun 21, 2024 at 09:23:25AM -0700, Dave Hansen wrote:
-> > On 6/21/24 02:49, Alexander Potapenko wrote:
-> > >  config LOCK_DEBUGGING_SUPPORT
-> > >  	bool
-> > > -	depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-> > > +	depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT && !KMSAN
-> > >  	default y
-> > 
-> > This kinda stinks.  Practically, it'll mean that anyone turning on KMSAN
-> > will accidentally turn off lockdep.  That's really nasty, especially for
-> > folks who are turning on debug options left and right to track down
-> > nasty bugs.
-> > 
-> > I'd *MUCH* rather hide KMSAN:
-> > 
-> > config KMSAN
-> >         bool "KMSAN: detector of uninitialized values use"
-> >         depends on HAVE_ARCH_KMSAN && HAVE_KMSAN_COMPILER
-> >         depends on DEBUG_KERNEL && !KASAN && !KCSAN
-> >         depends on !PREEMPT_RT
-> > +	depends on !LOCKDEP
-> > 
-> > Because, frankly, lockdep is way more important than KMSAN.
-> > 
-> > But ideally, we'd allow them to coexist somehow.  Have we even discussed
-> > the problem with the lockdep folks?  For instance, I'd much rather have
-> > a relaxed lockdep with no checking in pfn_valid() than no lockdep at all.
-> 
-> The only locks used in pfn_valid() are rcu_read_lock_sched(), right? If
-> so, could you try (don't tell Paul ;-)) replace rcu_read_lock_sched()
-> with preempt_disable() and rcu_read_unlock_sched() with
-> preempt_enable()? That would avoid calling into lockdep. If that works
-> for KMSAN, we can either have a special rcu_read_lock_sched() or call
-> lockdep_recursion_inc() in instrumented pfn_valid() to disable lockdep
-> temporarily.
-> 
-> [Cc Paul]
+On Tue, Jun 25, 2024 at 11:35=E2=80=AFAM Conor Dooley <conor@kernel.org> wr=
+ote:
+>
+> On Tue, Jun 25, 2024 at 09:51:21AM -0700, Evan Green wrote:
+> > In preparation for misaligned vector performance hwprobe keys, rename
+> > the hwprobe key values associated with misaligned scalar accesses to
+> > include the term SCALAR.
+> >
+> > Signed-off-by: Evan Green <evan@rivosinc.com>
+> >
+> > ---
+> >
+> > Changes in v2:
+> >  - Added patch to rename misaligned perf key values (Palmer)
+> >
+> >  Documentation/arch/riscv/hwprobe.rst       | 20 ++++++++++----------
+> >  arch/riscv/include/uapi/asm/hwprobe.h      | 10 +++++-----
+> >  arch/riscv/kernel/sys_hwprobe.c            | 10 +++++-----
+> >  arch/riscv/kernel/traps_misaligned.c       |  6 +++---
+> >  arch/riscv/kernel/unaligned_access_speed.c | 12 ++++++------
+> >  5 files changed, 29 insertions(+), 29 deletions(-)
+> >
+> > diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arch/=
+riscv/hwprobe.rst
+> > index c9f570b1ab60..83f7f3c1347f 100644
+> > --- a/Documentation/arch/riscv/hwprobe.rst
+> > +++ b/Documentation/arch/riscv/hwprobe.rst
+> > @@ -215,22 +215,22 @@ The following keys are defined:
+> >    the performance of misaligned scalar word accesses on the selected s=
+et of
+> >    processors.
+> >
+> > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of mi=
+saligned
+> > -    accesses is unknown.
+> > +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN`: The performanc=
+e of
+> > +    misaligned accesses is unknown.
+> >
+> > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_EMULATED`: Misaligned accesses =
+are
+> > +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED`: Misaligned ac=
+cesses are
+> >      emulated via software, either in or below the kernel.  These acces=
+ses are
+> >      always extremely slow.
+> >
+> > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SLOW`: Misaligned word accesses=
+ are
+> > -    slower than equivalent byte accesses.  Misaligned accesses may be =
+supported
+> > -    directly in hardware, or trapped and emulated by software.
+> > +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_SLOW`: Misaligned word a=
+ccesses
+> > +    are slower than equivalent byte accesses.  Misaligned accesses may=
+ be
+> > +    supported directly in hardware, or trapped and emulated by softwar=
+e.
+> >
+> > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_FAST`: Misaligned word accesses=
+ are
+> > -    faster than equivalent byte accesses.
+> > +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_FAST`: Misaligned word a=
+ccesses
+> > +    are faster than equivalent byte accesses.
+> >
+> > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNSUPPORTED`: Misaligned access=
+es are
+> > -    not supported at all and will generate a misaligned address fault.
+> > +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_UNSUPPORTED`: Misaligned=
+ accesses
+> > +    are not supported at all and will generate a misaligned address fa=
+ult.
+> >
+> >  * :c:macro:`RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE`: An unsigned int whic=
+h
+> >    represents the size of the Zicboz block in bytes.
+> > diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/include=
+/uapi/asm/hwprobe.h
+> > index 22073533cea8..e11684d8ae1c 100644
+> > --- a/arch/riscv/include/uapi/asm/hwprobe.h
+> > +++ b/arch/riscv/include/uapi/asm/hwprobe.h
+> > @@ -66,11 +66,11 @@ struct riscv_hwprobe {
+> >  #define              RISCV_HWPROBE_EXT_ZVE64F        (1ULL << 40)
+> >  #define              RISCV_HWPROBE_EXT_ZVE64D        (1ULL << 41)
+> >  #define RISCV_HWPROBE_KEY_CPUPERF_0  5
+> > -#define              RISCV_HWPROBE_MISALIGNED_UNKNOWN        0
+> > -#define              RISCV_HWPROBE_MISALIGNED_EMULATED       1
+> > -#define              RISCV_HWPROBE_MISALIGNED_SLOW           2
+> > -#define              RISCV_HWPROBE_MISALIGNED_FAST           3
+> > -#define              RISCV_HWPROBE_MISALIGNED_UNSUPPORTED    4
+> > +#define              RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN         0
+> > +#define              RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED        1
+> > +#define              RISCV_HWPROBE_MISALIGNED_SCALAR_SLOW            2
+> > +#define              RISCV_HWPROBE_MISALIGNED_SCALAR_FAST            3
+> > +#define              RISCV_HWPROBE_MISALIGNED_SCALAR_UNSUPPORTED     4
+> >  #define              RISCV_HWPROBE_MISALIGNED_MASK           7
+>
+> How come the "old" names do not need to be preserved for userspace?
 
-Don't tell me what?  ;-)
+It depends on what exactly the big userspace compatibility rule is.
+This preserves binary compatibility, which I think is the big one, but
+breaks source compatibility, though with an easy translation to fix.
+We could keep the old names around, but then it seems sort of silly to
+introduce the new names. I introduced this patch upon request, so I
+don't personally have a horse in the race on this one.
 
-An alternative is to use rcu_read_lock_sched_notrace() and
-rcu_read_unlock_sched_notrace().  If you really want to use
-preempt_disable() and preempt_enable() instead, you will likely want
-the _notrace() variants.
-
-							Thanx, Paul
+-Evan
 
