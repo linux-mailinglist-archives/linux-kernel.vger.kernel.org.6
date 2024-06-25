@@ -1,143 +1,86 @@
-Return-Path: <linux-kernel+bounces-228445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2A7915FFE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:27:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6468D916008
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:30:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD224B222A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:27:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FD52282116
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:30:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1E2146A7D;
-	Tue, 25 Jun 2024 07:27:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0105146A99;
+	Tue, 25 Jun 2024 07:30:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="fiLdymO3"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="BXgsGVKv"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6362A47A62;
-	Tue, 25 Jun 2024 07:27:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABD061FD5;
+	Tue, 25 Jun 2024 07:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719300433; cv=none; b=TH8pBTWXc7f2NKJTWdFse7jvtc7WB9ei6wCF/HmCqi41Di+ovYCT7tkBDwck324qK5FPknerSdmmlJUKg+kCLfn6zj2FYn98e6i1RJHtJA8MQS8sTMV1KmBfEv3JTZ55VPtOcm49ruzrEl7MlV8tS9G8PjBNgmgBpmS9TkrkMYo=
+	t=1719300623; cv=none; b=C98uLVx5q2M7L9WCceqvDruim+lbjMftUkBBUtkTqM2yIMtzSsHnAPWuPA0k9zTyl2WTBEOws5rJIGv2f8G0aUs0R2e6DzZmJZqrOtmvue168uuflG/z5durcwJdy4iRM/YF/15kmc3xa6x81s/j9twV0cD5vkuls6XujWa9Rl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719300433; c=relaxed/simple;
-	bh=lJBO5Xr3y8UyNfpkut/1aUlPHZv+VPmTSnKltu0XKWA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kbvkK+8E8ZYxOevnrjsgD4v8Q5BnqbNkOtvQly2zRFbNryiOIW2eLxoztsNn113oIEnRxSNkB/D+n9fqEKGN/jQr4k0qUg/amqEH1j6QK0ghzpny5aiaNqdVY0j24KXwqr/4RK6hpWrHf5slkN8CpPsNDkElqyK66ngeda3JFzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=fiLdymO3; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2D46DFF807;
-	Tue, 25 Jun 2024 07:27:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719300422;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=eS1gGHdeDvor6v+HrepgkoNZKmKQm9q6TmuiRUXqTqY=;
-	b=fiLdymO3QmiNgwe9NzjQ7G53GTQCB41tLJlOcS+idNunSHoDtKsm+Ke/l2n1sABZfnNHE0
-	JXhoyhdbJ2A5rC9+Ai+0S1k5rNU4kfXATpWHXMdff6Xtjf4lGSXgDK3kVWV1lnu49ZJdmm
-	eIIISRFWUCkjmPamTCV+F8B5Klwu3mKzTmYcAqvXNP1OLUhfbJuKNXOi9dWwZeTP6JSlCu
-	vphOF0XTECfi8VSljR0YwTTkzDa8Vd9PWLG8cVIgei+JayyybaeBSbXWg1sLm5swHfXlHl
-	BxePu02gwMjKpUVGncM8LAjCYpaNrv8PXWrHzVpgZW4IIH94lSB6yD0phXx8qA==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Tue, 25 Jun 2024 09:26:52 +0200
-Subject: [PATCH] Revert "leds: led-core: Fix refcount leak in of_led_get()"
+	s=arc-20240116; t=1719300623; c=relaxed/simple;
+	bh=yB5Svsp9mNzKIuZnzXqjiK08dhoftGN+4t+vx+2N1vU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G7zrue2G6fNW5fnMOoc42wQe1owAOIqlAEssqLHtJ8NThMAUt3tVBP2MFYiKVuKQVgUycuQ9bA7KcSUPDq0q+XI0QuN/5MXwn5Rdv34SH7HrihMQc1jtMcSkV7PxUK9tcuNhuj9wuj/5zhToJoy/lkEF6UyaGS1InnmsKK6i71U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=BXgsGVKv; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=yB5Svsp9mNzKIuZnzXqjiK08dhoftGN+4t+vx+2N1vU=; b=BXgsGVKv1z6yJk6YgNCi2gSK8k
+	RHBxRV1FJbPzL3TgsWI85R2+Cwh5zy+tZWXlstECVPG6+aBkqTsIzZv1ixJ3DUKtoElLKDODDe/Ag
+	rs4JL43j78IG9vxVDMMJEdzuISeBfIJCuAwHzFqhgG5DiVGTF9RLo2i4j9HpAgJFwl66os2sGt3vf
+	0h4iqYU6IgAnqvQM6XEwkgLXpvM7CqrJZiK843AkkaO5UzSrlh+fAh6I8SAsAkjEaHkDTU33mpk+m
+	+S8etuRncziA6iEzbprfr5zn3KD1KWPSd2owROhf3QUJGn2ZIeRU3busQcqaWlPs/PnAspAOLLDsC
+	7YKnYROg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sM0cl-00000008Mlp-1BYZ;
+	Tue, 25 Jun 2024 07:29:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 65D53300754; Tue, 25 Jun 2024 09:29:54 +0200 (CEST)
+Date: Tue, 25 Jun 2024 09:29:54 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+	joshdon@google.com, brho@google.com, pjt@google.com,
+	derkling@google.com, haoluo@google.com, dvernet@meta.com,
+	dschatzberg@meta.com, dskarlat@cs.cmu.edu, riel@surriel.com,
+	changwoo@igalia.com, himadrics@inria.fr, memxor@gmail.com,
+	andrea.righi@canonical.com, joel@joelfernandes.org,
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH 04/39] sched: Add sched_class->reweight_task()
+Message-ID: <20240625072954.GQ31592@noisy.programming.kicks-ass.net>
+References: <20240501151312.635565-1-tj@kernel.org>
+ <20240501151312.635565-5-tj@kernel.org>
+ <20240624102331.GI31592@noisy.programming.kicks-ass.net>
+ <ZnoIRnCZaN_oHQ6N@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240625-led-class-device-leak-v1-1-9eb4436310c2@bootlin.com>
-X-B4-Tracking: v=1; b=H4sIADtxemYC/x2M0QpAQBBFf0XzbIrBkl+Rh213MBHaKSn5d5PHc
- zv3PKCchBX67IHEl6gcu0GZZxAWv8+MEo2BCqoLRw1uHDFsXhWj6YFt8Cs6V7WeOipd24F9z8S
- T3H93GN/3Azq7KRZnAAAA
-To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
- Miaoqian Lin <linmq006@gmail.com>
-Cc: Hans de Goede <hdegoede@redhat.com>, 
- =?utf-8?q?Herv=C3=A9_Codina?= <herve.codina@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-leds@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.13.0
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnoIRnCZaN_oHQ6N@slm.duckdns.org>
 
-This reverts commit da1afe8e6099980fe1e2fd7436dca284af9d3f29.
+On Mon, Jun 24, 2024 at 01:59:02PM -1000, Tejun Heo wrote:
 
-Commit 699a8c7c4bd3 ("leds: Add of_led_get() and led_put()"), introduced in
-5.5, added of_led_get() and led_put() but missed a put_device() in
-led_put(), thus creating a leak in case the consumer device is removed.
+> Were you trying to say that if the idle policy were to implement
+> ->reweight_task(), it wouldn't be called?
 
-Arguably device removal was not very popular, so this went apparently
-unnoticed until 2022. In January 2023 two different patches got merged to
-fix the same bug:
-
- - commit da1afe8e6099 ("leds: led-core: Fix refcount leak in of_led_get()")
- - commit 445110941eb9 ("leds: led-class: Add missing put_device() to led_put()")
-
-They fix the bug in two different ways, which creates no patch conflicts,
-and both were merged in v6.2. The result is that now there is one more
-put_device() than get_device()s, instead of one less.
-
-Arguably device removal is not very popular yet, so this apparently hasn't
-been noticed as well up to now. But it blew up here while I'm working with
-device tree overlay insertion and removal. The symptom is an apparently
-unrelated list of oopses on device removal, with reasons:
-
-  kernfs: can not remove 'uevent', no directory
-  kernfs: can not remove 'brightness', no directory
-  kernfs: can not remove 'max_brightness', no directory
-  ...
-
-Here sysfs fails removing attribute files, which is because the device name
-changed and so the sysfs path. This is because the device name string got
-corrupted, which is because it got freed too early and its memory reused.
-
-Different symptoms could appear in different use cases.
-
-Fix by removing one of the two fixes.
-
-The choice was to remove commit da1afe8e6099 because:
-
- * it is calling put_device() inside of_led_get() just after getting the
-   device, thus it is basically not refcounting the LED device at all
-   during its entire lifetime
- * it does not add a corresponding put_device() in led_get(), so it fixes
-   only the OF case
-
-The other fix (445110941eb9) is adding the put_device() in led_put() so it
-covers the entire lifetime, and it works even in the non-DT case.
-
-Fixes: da1afe8e6099 ("leds: led-core: Fix refcount leak in of_led_get()")
-Co-developed-by: Hervé Codina <herve.codina@bootlin.com>
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/leds/led-class.c | 1 -
- 1 file changed, 1 deletion(-)
-
-diff --git a/drivers/leds/led-class.c b/drivers/leds/led-class.c
-index 24fcff682b24..b23d2138cd83 100644
---- a/drivers/leds/led-class.c
-+++ b/drivers/leds/led-class.c
-@@ -258,7 +258,6 @@ struct led_classdev *of_led_get(struct device_node *np, int index)
- 
- 	led_dev = class_find_device_by_of_node(&leds_class, led_node);
- 	of_node_put(led_node);
--	put_device(led_dev);
- 
- 	return led_module_get(led_dev);
- }
-
----
-base-commit: 28ef3e64d0a22f6a29a1ea489293715a29623e52
-change-id: 20240625-led-class-device-leak-6637a2821678
-
-Best regards,
--- 
-Luca Ceresoli <luca.ceresoli@bootlin.com>
-
+This. IDLE really is FAIR but with a really small weight.
 
