@@ -1,72 +1,61 @@
-Return-Path: <linux-kernel+bounces-229321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A816916E46
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:42:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730BC916E4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ECEC1F25482
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:42:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2EE11F22A8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:43:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D618B17623D;
-	Tue, 25 Jun 2024 16:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1F617556F;
+	Tue, 25 Jun 2024 16:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5UODf9e"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="R8hRoBoj"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F83176225
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 16:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D9E174EC6;
+	Tue, 25 Jun 2024 16:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719333739; cv=none; b=Kb7K7tomQqKWd2v2+AHyC4gGRxtAkJlTgtEWXZMSAvgunEaRH6hvb9pDmmeB1NdFd5+N4znvKiyoHIHYfRJBoPMfxFEnUjgmK6StwU+boS2H23t8HMWcU1ABv7VkPUU7yNANMDqUOhKL54yU5MVMT1d65D0pqwu06EBDm36bnnY=
+	t=1719333801; cv=none; b=uglADRwp5UUfjuhPXl35SAKAc9EZ3aVQI4O/8QbNhtTApzBbLNEy1mHKqAeBPGh5lfStYJpwAmLJyi6v0cymi2MiPi+rfEIhFSwJ8UeFRdMdfB+YLLeD8HLAVe+zh4UfGNXK4rowxzRqUKUZQUpfPO/glm4Tven2HJfXJ+m6x5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719333739; c=relaxed/simple;
-	bh=FyiCzW6XIb2gfdf8H6OEDN9PU6g+1OS/36+lF7aFa08=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=J4eFCrqVxmmwczTwMLqGkNpHrAtVKsLrrhp0c1aGM6v6mgSIv3aacaPm+jRhCKgJPUkgR+JBgzuCi233kG/zyfPoMiR4Fa8dYh69rEGpK1vxp0GNmObyJa8Jxv+03NQxeOqOfcc2OYP2U479MkuEQrsAr3FH9UQz74FfCrjObVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L5UODf9e; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-645808a3294so20466367b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:42:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719333737; x=1719938537; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gJYda0ZTUkWw1q6d9Psi0GAgd/bxpCi7wNXv0O0kijw=;
-        b=L5UODf9eXIFbrhin7dk348zOlKMIvaN4b7VtK+ReSK+A4BstCJDhY9MorktKxl/O/O
-         u/ak2mXsx1rCjWn4bvJCLSqEzAB/81/xztzrLt/5zzsT2lGjq7jeYiBs6HziTpDq/RVa
-         fVIGSQK3HjKd5sd2ka0q9JGYkuz4FQLmtpvaNRi7V1zJDsiaPC/V+4mU+MuUHux/ej7R
-         CB9WmVuFsZnVaZVDXgeligWPKbqw78ltif4TeQOMThakCHnHSX7ckuwelsqP2CrS0ofr
-         Ixa7I9dYcloYKrnObuhhhEsJyeeBOtop2P/wo1p+eyJn5osKjOqYRZ9CqD7cxLxKJsY2
-         oQ9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719333737; x=1719938537;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gJYda0ZTUkWw1q6d9Psi0GAgd/bxpCi7wNXv0O0kijw=;
-        b=qrZIFkEJhBDNrISH36073LwSHCkTF3+Ni8Wexb8/0ToRE60TNcYw8rmgk6LJ2/NeMR
-         AT2UtQcrwJVJAKiAhXOf7vews5vtVQ3E+l6cVrHOfjR4ejRPXrn035jlOGOKQn3aPU0G
-         8beJH7ma4xirdCz6wHxqTxG3RhTbMDYvAR6E3n3LX25Ien88llv4ealqZUlaE4tMXEBS
-         IbD3+0pdDRTylOm/RgC7kz4UaWRW5ecP9qB4gcoFwUoOIyFXl42se/Fm46WiXjDxSjFM
-         PZ8CAb4H/TpsspOFncz4W7flpbUu3t3J6q8/W9e+oJujbuJyN3ZYgZOVb5bypnqClmwW
-         atjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXlKLUEBv8tyS3LGjIRme3GSxLonDIrBuA61zEKXp6Rik8/lCeg5LwnRNJkDZMgFEL0i/swqG1KNOgOOrpvjoIsolxQWMNGh1ThmxTq
-X-Gm-Message-State: AOJu0Yy7s+AShiwCQMoYslCr8VNStTcjMummh2eknd0nFy+IN+meTtMD
-	5VZl2VPo+YKVDFhys7iTSIk23S9DsvrXFatiXMbgq78k9FlD7TPF
-X-Google-Smtp-Source: AGHT+IHmv54640JtdzVgVBjNMW3oCfT6iQTauLr2MlR8ij38PaWAvmUXPYq6zM09d8NDYmlZcgoGLQ==
-X-Received: by 2002:a05:690c:ed2:b0:643:9333:9836 with SMTP id 00721157ae682-64393339b44mr102451277b3.38.1719333736635;
-        Tue, 25 Jun 2024 09:42:16 -0700 (PDT)
-Received: from [127.0.1.1] (107-197-105-120.lightspeed.sntcca.sbcglobal.net. [107.197.105.120])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f14c265f7sm35548717b3.81.2024.06.25.09.42.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 09:42:16 -0700 (PDT)
-From: Pei Li <peili.dev@gmail.com>
-Date: Tue, 25 Jun 2024 09:42:05 -0700
-Subject: [PATCH] jfs: Fix shift-out-of-bounds in dbDiscardAG
+	s=arc-20240116; t=1719333801; c=relaxed/simple;
+	bh=2L/weZesvpaS33GujX2m1IrTRFya4TVbCAXm5cfqiXM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=ILmRZI7sZrg8yDImhpDVdBzDUoFNIHkdQ8aVXu8FHCsDVrH6RKVQ4rC5CLiQ1t1E924yku/KMYyRrldBqSxxu1SoylvhF+PcRJ70vKCmocUcJGA1+WlYDrnZ3sjD1MGoEKRZ0mPOp2Jv5J2Ou59gaU6AN6DnWj0WCW0seO70xcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=R8hRoBoj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P8ZnhS017339;
+	Tue, 25 Jun 2024 16:42:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=fnTd3X2IcxnuPJrt8M3MaL
+	pgA/56i9asApZb/lKpIcg=; b=R8hRoBojD9z7h+MWYh4dC5FkLEI07p7yiwnPT9
+	lF1JM2NjlkDFxgBxgzKh64teLkCA9gmH24gKt5TwcbFYhaOnwlWUuW8f1jYpY+X7
+	O7ZGGvgzzFT35jBQy3KXnBX0jppG3xEAw4fVs6fzvugIO5NIYK/G+VVif5jiB6Q8
+	7Qok55XhHGOrxDr7AEYYbotyYNfxKVcg1LkMEstzNV8950YU+CzK8I7/fjISehex
+	ALRhaIzw3MAOoTRL75IXuq+6Fhy65UmTDowKi2EWcUDilY1fDDVjnWzJRZjOwMv5
+	lRQRSs8MzRkvQxW9qVc+PLtCUPhRzTxTMBm3f+kix6tO4emg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqw9eue7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 16:42:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45PGgolS009442
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 16:42:50 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Jun
+ 2024 09:42:50 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 25 Jun 2024 09:42:49 -0700
+Subject: [PATCH v2] fs: nfs: add missing MODULE_DESCRIPTION() macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,66 +64,137 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240625-bug0-v1-1-fcee34ac00a7@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAFzzemYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMyNT3aTSdANdQ8NUC0uDNBMTy8Q0JaDSgqLUtMwKsDHRsbW1AOG2xBt
- WAAAA
-To: Dave Kleikamp <shaggy@kernel.org>
-Cc: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
- linux-kernel-mentees@lists.linuxfoundation.org, 
- syzkaller-bugs@googlegroups.com, skhan@linuxfoundation.org, 
- peili.dev@gmail.com, syzbot+61be3359d2ee3467e7e4@syzkaller.appspotmail.com
-X-Mailer: b4 0.15-dev-13183
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719333735; l=1360;
- i=peili.dev@gmail.com; s=20240625; h=from:subject:message-id;
- bh=FyiCzW6XIb2gfdf8H6OEDN9PU6g+1OS/36+lF7aFa08=;
- b=RHhyssi0fbYov9jrA3a91QuJwBYuK5ttGQw7Q+tUA71JkjGPbQqu+8lbVfowuUcM9Av9AQw13
- NAh7gfVjZdTBfHeo1WTFpunsWiqiIUhGhod/tNPKklDpQROSelUGrG0
-X-Developer-Key: i=peili.dev@gmail.com; a=ed25519;
- pk=I6GWb2uGzELGH5iqJTSK9VwaErhEZ2z2abryRD6a+4Q=
+Message-ID: <20240625-md-fs-nfs-v2-1-2316b64ffaa5@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAInzemYC/22NwQ6CMBBEf4X07Jq2Ugye/A/DoS2LbCJFu0Awp
+ P9u4exhDi+ZmbcJxkjI4lZsIuJCTGPIoE+F8L0NTwRqMwstdSmNvsLQQscQckrdqRpdJZ2RIvf
+ fETtaj69Hk9lZRnDRBt/vDy8K8wqD5QnjXu+JpzF+D/Oi9tE/yaJAQVVaZbB25mKr+2cmT8Gf/
+ TiIJqX0A4T9RzPDAAAA
+To: Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker
+	<anna@kernel.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Jeff Layton
+	<jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
+        Olga Kornievskaia
+	<kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>,
+        Tom Talpey
+	<tom@talpey.com>, Trond Myklebust <trondmy@kernel.org>
+CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>,
+        Jeff Johnson <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.14.0
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 3ufymTWmd9CZcxEu6-Paw8LvycJvOxtq
+X-Proofpoint-GUID: 3ufymTWmd9CZcxEu6-Paw8LvycJvOxtq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_11,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ priorityscore=1501 clxscore=1011 impostorscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 mlxlogscore=999 phishscore=0 bulkscore=0
+ adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406250122
 
-When searching for the next smaller log2 block, BLKSTOL2() returned 0,
-causing shift exponent -1 to be negative.
+Fix the 'make W=1' warnings:
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs_common/nfs_acl.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs_common/grace.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfs.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv2.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv3.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
 
-This patch fixes the issue by exiting the loop directly when negative
-shift is found.
-
-Reported-by: syzbot+61be3359d2ee3467e7e4@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=61be3359d2ee3467e7e4
-Signed-off-by: Pei Li <peili.dev@gmail.com>
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 ---
-Syzbot reported the following error:
-UBSAN: shift-out-of-bounds in fs/jfs/jfs_dmap.c:1629:18
-shift exponent -1 is negative
-
-If BLKSTOL2() returned 0, the shift exponent will be -1.
-
-The solution is to check the exponent and if it is smaller than 0,
-exit the loop directly.
+Changes in v2:
+- Updated the description in grace.c per Jeff Layton
+- Link to v1: https://lore.kernel.org/r/20240527-md-fs-nfs-v1-1-64a15e9b53a6@quicinc.com
 ---
- fs/jfs/jfs_dmap.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/nfs/inode.c         | 1 +
+ fs/nfs/nfs2super.c     | 1 +
+ fs/nfs/nfs3super.c     | 1 +
+ fs/nfs/nfs4super.c     | 1 +
+ fs/nfs_common/grace.c  | 1 +
+ fs/nfs_common/nfsacl.c | 1 +
+ 6 files changed, 6 insertions(+)
 
-diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
-index cb3cda1390ad..5713994328cb 100644
---- a/fs/jfs/jfs_dmap.c
-+++ b/fs/jfs/jfs_dmap.c
-@@ -1626,6 +1626,8 @@ s64 dbDiscardAG(struct inode *ip, int agno, s64 minlen)
- 		} else if (rc == -ENOSPC) {
- 			/* search for next smaller log2 block */
- 			l2nb = BLKSTOL2(nblocks) - 1;
-+			if (unlikely(l2nb < 0))
-+				break;
- 			nblocks = 1LL << l2nb;
- 		} else {
- 			/* Trim any already allocated blocks */
+diff --git a/fs/nfs/inode.c b/fs/nfs/inode.c
+index acef52ecb1bb..57c473e9d00f 100644
+--- a/fs/nfs/inode.c
++++ b/fs/nfs/inode.c
+@@ -2538,6 +2538,7 @@ static void __exit exit_nfs_fs(void)
+ 
+ /* Not quite true; I just maintain it */
+ MODULE_AUTHOR("Olaf Kirch <okir@monad.swb.de>");
++MODULE_DESCRIPTION("NFS client support");
+ MODULE_LICENSE("GPL");
+ module_param(enable_ino64, bool, 0644);
+ 
+diff --git a/fs/nfs/nfs2super.c b/fs/nfs/nfs2super.c
+index 467f21ee6a35..b1badc70bd71 100644
+--- a/fs/nfs/nfs2super.c
++++ b/fs/nfs/nfs2super.c
+@@ -26,6 +26,7 @@ static void __exit exit_nfs_v2(void)
+ 	unregister_nfs_version(&nfs_v2);
+ }
+ 
++MODULE_DESCRIPTION("NFSv2 client support");
+ MODULE_LICENSE("GPL");
+ 
+ module_init(init_nfs_v2);
+diff --git a/fs/nfs/nfs3super.c b/fs/nfs/nfs3super.c
+index 8a9be9e47f76..20a80478449e 100644
+--- a/fs/nfs/nfs3super.c
++++ b/fs/nfs/nfs3super.c
+@@ -27,6 +27,7 @@ static void __exit exit_nfs_v3(void)
+ 	unregister_nfs_version(&nfs_v3);
+ }
+ 
++MODULE_DESCRIPTION("NFSv3 client support");
+ MODULE_LICENSE("GPL");
+ 
+ module_init(init_nfs_v3);
+diff --git a/fs/nfs/nfs4super.c b/fs/nfs/nfs4super.c
+index 8da5a9c000f4..b29a26923ce0 100644
+--- a/fs/nfs/nfs4super.c
++++ b/fs/nfs/nfs4super.c
+@@ -332,6 +332,7 @@ static void __exit exit_nfs_v4(void)
+ 	nfs_dns_resolver_destroy();
+ }
+ 
++MODULE_DESCRIPTION("NFSv4 client support");
+ MODULE_LICENSE("GPL");
+ 
+ module_init(init_nfs_v4);
+diff --git a/fs/nfs_common/grace.c b/fs/nfs_common/grace.c
+index 1479583fbb62..27cd0d13143b 100644
+--- a/fs/nfs_common/grace.c
++++ b/fs/nfs_common/grace.c
+@@ -139,6 +139,7 @@ exit_grace(void)
+ }
+ 
+ MODULE_AUTHOR("Jeff Layton <jlayton@primarydata.com>");
++MODULE_DESCRIPTION("NFS client and server infrastructure");
+ MODULE_LICENSE("GPL");
+ module_init(init_grace)
+ module_exit(exit_grace)
+diff --git a/fs/nfs_common/nfsacl.c b/fs/nfs_common/nfsacl.c
+index 5a5bd85d08f8..ea382b75b26c 100644
+--- a/fs/nfs_common/nfsacl.c
++++ b/fs/nfs_common/nfsacl.c
+@@ -29,6 +29,7 @@
+ #include <linux/nfs3.h>
+ #include <linux/sort.h>
+ 
++MODULE_DESCRIPTION("NFS ACL support");
+ MODULE_LICENSE("GPL");
+ 
+ struct nfsacl_encode_desc {
 
 ---
-base-commit: 2ccbdf43d5e758f8493a95252073cf9078a5fea5
-change-id: 20240625-bug0-11e890f449af
-
-Best regards,
--- 
-Pei Li <peili.dev@gmail.com>
+base-commit: 50736169ecc8387247fe6a00932852ce7b057083
+change-id: 20240527-md-fs-nfs-42f19eb60b50
 
 
