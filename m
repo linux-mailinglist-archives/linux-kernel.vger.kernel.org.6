@@ -1,163 +1,130 @@
-Return-Path: <linux-kernel+bounces-228628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD0BD9162B9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:39:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1558C9162ED
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:41:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D5A11C236C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:39:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C535528A4A3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CAF114A09F;
-	Tue, 25 Jun 2024 09:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D86314A0AE;
+	Tue, 25 Jun 2024 09:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jfNoElG9"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b="eO1NX8rI"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FDEC149E05
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B06FE1494D1
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719308329; cv=none; b=lrM6CES6nIq9eFidfzpQtEh2/k6Zo09ecMmIiPhskB4zk8d53gxtwcRMFb2D2CdZTr4NvgDT2nfUp6vTqUkCqK0Qlh3yC9OcV6p8UKDTzHbzjtJIz7SIF0y74ZTQm+1z4wAwjTZ20wy/TfSG011QFrk9n5Fq5E/95Ac4ydefwcQ=
+	t=1719308444; cv=none; b=KrlfaHSLnB5XRrc5PLyBWLVpPjE/Q537Hr/lUJ8ljWROBdEvi+ZIkhpOHglEuVS7OtzM3RVMSf4A3cDNwyJlfQP6GAB77+BEjiII6tk7uf4Ci9LMVGCh/1Gvk8hR2Cr8O/ORBQ/XgO27jtfMmRJoOXGs/1x0xqEqf0Gh8h88mU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719308329; c=relaxed/simple;
-	bh=K+IiaiLoJmLJyaFh/JrMHu+GjC39e9sUJDGWAwIpgO0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=LQejHP2mrHtfXSi3DOwE+Mx8GjQbX8kwr3+sDRHSl2CZgDDAyfolYQ3AolCidYAwIuutKjTyin7q/uAjJGZnpA/MBTdrfuKJFT/fraJ48KrbKCyY/detxT6/yDr1sb/OHUSZ4GEDdrLMiQl1KDs5lrxh912N3Gcc0cyPve3LtgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jfNoElG9; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-35f090093d8so3580864f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:38:47 -0700 (PDT)
+	s=arc-20240116; t=1719308444; c=relaxed/simple;
+	bh=WaYg5klofIWABaqWjZk2c9l4oFnzkHgFeG9BFvcvXAs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bT3gjVoUtMQc5luQbrgVbwxOUMv/ZqIl/awjpvPajVMQ7ZkQ5DBwm73v1basm59QaIEjgxDQzYNXXKaKv5HLC8P8oL7YA/1gFEKbp69uZJtcDrnSCcDjzx9pdCgQ18Fg0mr60/bISFi4z+WTTGeN4nYC4aQAmuEec9sHmONQRyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=cloud.com header.i=@cloud.com header.b=eO1NX8rI; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-70675977d0eso2101252b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:40:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719308326; x=1719913126; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RHsZCkoq8YrIBeg6L5civsW1RJ5veolYvQN+FJ9/Qb4=;
-        b=jfNoElG9yYDv43fcmSQneFsXASJ2aPNIhT/wGxfUmxqblR53DigwXfHob9HcyBhv0r
-         +CRXG06XkRQIyicz31OvJQIm4yDw3lPIAxXd9WTsPaHO0cFrLKQI1TqJ0AMUR8cukmox
-         rvgWUT5eqtJdYJDRp6TPduFkQTZYgCE9w7TuemZj/LZzGXYqqLwlZCB1nCe+J+SvYB38
-         YlRHyA3wr+9pDp47kTUGTpHWVCsVKWBhTnPJO4NE8nFrW7h5kv4CUMDH5nZHpq3YOTjT
-         Z9W9kJkc4ub9H7d7v/tU6TYQA0z8I2zUdPX+HexqTuwMLONY/BpgrmoyAtc4qqHsvN75
-         Mr6Q==
+        d=cloud.com; s=cloud; t=1719308442; x=1719913242; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=A4B1oeXyzx6eJDWzTUk9phcByQ/k/uCsNJ1COo/jc8Q=;
+        b=eO1NX8rIKcQu5EMkAJXgyBuyppkEZ9UYhlBdIvOuO50DIoEQD2XyqNoN70oJdKSll6
+         pOrH7wRviwJtD0kOGMn5glu6jE+Lsuwk+TXVdW67qetsTh74Lj9PbXnqnt5l2RKztMfk
+         BzIZVRxEOWBsgQqVuL8PJb8e0mF4h2gnLFgrc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719308326; x=1719913126;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RHsZCkoq8YrIBeg6L5civsW1RJ5veolYvQN+FJ9/Qb4=;
-        b=ph8BhgaUUYPSgzeOrtuPJ87y+eabwQKTwFp6x10lfAEKOHFW9kgooPmBSgCR8bvChr
-         RNA7QAmMMjb+QhXeAQLy9kUJ1am3jj6XqW1LRpBa42kvl2tCz0ItBR6D4gJXUFL9tIfQ
-         SggDqQ6z+zkyFPWMUKUCzOhlWqTUBXmBke5gfJ4WX/m9eP+LJU3fSMrTcHPi1W3SzKe2
-         uLW5V76+A259EVLjS9i2BI/mT7oA8czdKCueWO+gC9ykg0WLU9GaYQURvFOGQ4+TozVO
-         34uJoesqNHy0msSuFTylSURFBpEk4JDkE0akuYkj0kBIsrc84CX1ffYRZkQlpv9hKcQx
-         X3bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXfRcnbIDLXmJ54ijcaylWcb2NEjffO8gA50uirSN02F7b2kY2pdZ0I65oSfyU8bOfwbNLA1s+swp7GV4Ucsbg/7JFf3YiraJdA4Z2a
-X-Gm-Message-State: AOJu0YzzJb3zn1E+QN3lU1LBbGNHCrFwsaQFUWepxiU2xuR67Jaamxzg
-	H7PB/WSYOcZmLEfP1H34wS8EEEKmhIp+BtNJAGaMzJHt16AK8LvRS8im2Bz3qOs=
-X-Google-Smtp-Source: AGHT+IFA7K/K52topEkP/SOJgf7qzSnQq3MCtcizZ8ZhFQwdc4eqMFuNHG0MvgFRUfiOSwUtuolDeg==
-X-Received: by 2002:a05:6000:184f:b0:366:ee84:6a79 with SMTP id ffacd0b85a97d-366ee846c15mr6347407f8f.51.1719308325966;
-        Tue, 25 Jun 2024 02:38:45 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:bd71:2ff1:592d:f52a? ([2a01:e0a:982:cbb0:bd71:2ff1:592d:f52a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f6977sm12489752f8f.80.2024.06.25.02.38.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 02:38:45 -0700 (PDT)
-Message-ID: <52fab9b5-2b44-49c0-8b90-cb2a74eb6633@linaro.org>
-Date: Tue, 25 Jun 2024 11:38:44 +0200
+        d=1e100.net; s=20230601; t=1719308442; x=1719913242;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=A4B1oeXyzx6eJDWzTUk9phcByQ/k/uCsNJ1COo/jc8Q=;
+        b=UJs3s8oJ0YldOLeBCzBzySQcpAkMFp/i8yqwqXl7bFzaJIZlGisn3daA8wNB9cb6Jr
+         /QwjSzmdrLQE51uttPoFQibW57s1hwG9rWxBP///grltyfoC1b3dkdO0F/ASK4hHUyi/
+         w9WY0okfEhOg8lbZWHcOqDdKnhLTSVbnte3mp0WRhf0W3gO/CzKqvDHYv82U8ez6u8Yp
+         H/sxnZmGyJa5uvxdtwdaWCcIp4XR+q4yTK7iPuBeso686a9RzWQJqXYc5Oj++MLVDT1w
+         kTWWvLFoEvEwwav6zzSGGX9uCXZlNBxYK7X4F1Zh3gS57exExN/c0vDDHEjNBlavf/gq
+         z+6w==
+X-Forwarded-Encrypted: i=1; AJvYcCV1GP38ldOW4Ln7AhZC7Kl6pV0zEii9LoDuzeS8NoKErv1Zk1lc5rnnnZSwMWh38O0cLbElOIvwJJpRVc06LmAdXv7LyXmRV++CDXRN
+X-Gm-Message-State: AOJu0Yx5mGLCYv7xm1mrwT/bI+oCVb0cTV35niTsihlRhgB5vjyeG6Oj
+	aG5u/IGsQEKK/aNRItoNBXkf921uGgqKLn7NTb8xGhmfm6IrZ21q0k3XektGWlU=
+X-Google-Smtp-Source: AGHT+IFu172QjsdiL/zGnN/a5lVwXhLOTMqaW0Qcl895+4TiZn5leNklmHJ8SiddKN1zoAHC70XsTA==
+X-Received: by 2002:aa7:8ecb:0:b0:706:57ce:f042 with SMTP id d2e1a72fcca58-7067455bfd2mr6173153b3a.7.1719308441567;
+        Tue, 25 Jun 2024 02:40:41 -0700 (PDT)
+Received: from localhost.localdomain ([154.91.3.18])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7067e71fa78sm3847194b3a.125.2024.06.25.02.40.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 02:40:41 -0700 (PDT)
+From: Chunjie Zhu <chunjie.zhu@cloud.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Chunjie Zhu <chunjie.zhu@cloud.com>,
+	linux-xfs@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1 1/1] revert "iomap: add support for dma aligned direct-io"
+Date: Tue, 25 Jun 2024 09:38:51 +0000
+Message-Id: <20240625093851.73331-1-chunjie.zhu@cloud.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/2] iio: frequency: add iio support for Amlogic clock
- measure
-To: Jerome Brunet <jbrunet@baylibre.com>, Jonathan Cameron
- <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>
-Cc: Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org,
- linux-amlogic@lists.infradead.org, linux-iio@vger.kernel.org,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <20240624173105.909554-1-jbrunet@baylibre.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240624173105.909554-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi,
+This reverts commit bf8d08532bc19a14cfb54ae61099dccadefca446 as it
+causes applications unable to probe a consistent value for direct
+io buffer alignment, see an example,
 
-[+cc people from linux-msm]
+                                 buffer alignment: 512
+                                          |
+                                         ext3
+                                          |
+   buffer alignment: 4          lvm (dma_alignment: 511)
+           |                              |
+          xfs                       device mapper
+           |                              |
+         sda1                            sda2
+           |                              |
+           ---  sda (dma_alignment: 3)  ---
 
-On 24/06/2024 19:31, Jerome Brunet wrote:
-> Add support for the HW found in most Amlogic SoC dedicated to measure
-> system clocks.
-> 
-> This drivers aims to replace the one found in
-> drivers/soc/amlogic/meson-clk-measure.c with following improvements:
-> 
-> * Access to the measurements through the IIO API:
->    Easier re-use of the results in userspace and other drivers
-> * Controllable scale with raw measurements
-> * Higher precision with processed measurements
-> 
-> Jerome Brunet (2):
->    dt-bindings: iio: frequency: add clock measure support
->    iio: frequency: add amlogic clock measure support
-> 
->   .../iio/frequency/amlogic,clk-msr-io.yaml     |  50 ++
->   drivers/iio/frequency/Kconfig                 |  15 +
->   drivers/iio/frequency/Makefile                |   1 +
->   drivers/iio/frequency/amlogic-clk-msr-io.c    | 802 ++++++++++++++++++
->   4 files changed, 868 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/iio/frequency/amlogic,clk-msr-io.yaml
->   create mode 100644 drivers/iio/frequency/amlogic-clk-msr-io.c
-> 
+Signed-off-by: Chunjie Zhu <chunjie.zhu@cloud.com>
+---
+ fs/iomap/direct-io.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-While I really appreciate the effort, and the code looks cool, the clkmsr is really
-a debug tool, and I'm not sure IIO is the right place for such debug tool ?
+diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+index bcd3f8cf5ea4..448b563a634c 100644
+--- a/fs/iomap/direct-io.c
++++ b/fs/iomap/direct-io.c
+@@ -277,7 +277,9 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+ {
+ 	const struct iomap *iomap = &iter->iomap;
+ 	struct inode *inode = iter->inode;
++	unsigned int blkbits = blksize_bits(bdev_logical_block_size(iomap->bdev));
+ 	unsigned int fs_block_size = i_blocksize(inode), pad;
++	unsigned int align = iov_iter_alignment(dio->submit.iter);
+ 	loff_t length = iomap_length(iter);
+ 	loff_t pos = iter->pos;
+ 	blk_opf_t bio_opf;
+@@ -288,8 +290,7 @@ static loff_t iomap_dio_bio_iter(const struct iomap_iter *iter,
+ 	size_t copied = 0;
+ 	size_t orig_count;
+ 
+-	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+-	    !bdev_iter_is_aligned(iomap->bdev, dio->submit.iter))
++	if ((pos | length | align) & ((1 << blkbits) - 1))
+ 		return -EINVAL;
+ 
+ 	if (iomap->type == IOMAP_UNWRITTEN) {
+-- 
+2.34.1
 
-There's almost the same interface on qcom SoCs (https://github.com/linux-msm/debugcc) but
-they chose to keep it in userspace until we find an appropriate way to expose
-this from the kernel the right way.
-
-If it enabled us to monitor a frequency input for a product use-case, IIO would be
-the appropriate interface, but AFAIK it's only internal clocks and thus I'm worried
-it's not the best way to expose those clocks.
-
-Neil
 
