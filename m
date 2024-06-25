@@ -1,148 +1,116 @@
-Return-Path: <linux-kernel+bounces-228163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 629EC915BB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:30:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308F0915BB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF3D1F22147
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:30:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 904A0B2110F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD7E17BA7;
-	Tue, 25 Jun 2024 01:30:39 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0E61AAA5;
+	Tue, 25 Jun 2024 01:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="i3OBgSmW"
+Received: from out203-205-251-82.mail.qq.com (out203-205-251-82.mail.qq.com [203.205.251.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372AC11185
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C510918B04
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:36:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.251.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719279038; cv=none; b=KIGFAHOZ4s8bIHVygelXArA+YEH4s+DOi39Z58m2tIsksJ5rO+SzZkQ6vhwjQxDl+dd6kih23iecIVmFIgImd9HM+XUpO2Cz1l8ORAg51CKbOiMd5/3VkDKMJ2Sj2pOGSdIAv46Jfsd4oc9JF5quVD6qlHpeyCHRowd5ORDLTWc=
+	t=1719279418; cv=none; b=AKQvXpr0MJDE/ACmuQ8xCn7V8XAUdmjFLtO8WTob11I9iubnZhxoKjRsCPTT6+pjoGgFnInzskEqI7U3he2QEMK2Ks+1qRY/9RIsRReqT1q0FyU8xvCmKfEwaNmk25a/ZaHB3CYiQMF7WQDtFLxACQOqoz0MHVKDha3mNb/3JTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719279038; c=relaxed/simple;
-	bh=K0q2teqzFGqOIGAcyKGjd3uTxhqQ+KoA87o0CIuExXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CrniMqQNZYEfVY4wUKbltSIvtZCttWJ1AcxPkySJ0AJg9vXuDIFW3QKJKe5XbqGxc+V7BnWPc9OcM1gGmnREZ5hUdJu7f+VW/7O44yfvm8cD6ROEeXfPVSAGcowpIMas+zfKa0LB68uR8PSJQovUxZdLOktRWdDMLjXt766OF+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W7RxM3fwszxT3v;
-	Tue, 25 Jun 2024 09:26:15 +0800 (CST)
-Received: from kwepemf500003.china.huawei.com (unknown [7.202.181.241])
-	by mail.maildlp.com (Postfix) with ESMTPS id C194B14011B;
-	Tue, 25 Jun 2024 09:30:33 +0800 (CST)
-Received: from [10.174.176.82] (10.174.176.82) by
- kwepemf500003.china.huawei.com (7.202.181.241) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 25 Jun 2024 09:30:33 +0800
-Message-ID: <c6ae28eb-69b6-4508-a516-1d419e950b37@huawei.com>
-Date: Tue, 25 Jun 2024 09:29:58 +0800
+	s=arc-20240116; t=1719279418; c=relaxed/simple;
+	bh=8EjHr65PqUluLMIlelVxJBgfD9kXSwBVKfIOEhpRwzo=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ueYaQZBBLbddgFOwDVgKVyIQoYvOTRoOdHEHDrLsxWw53m/XAiRzRuNnGpZYT2pGQjwORldoDU8LHGwM1IMal3dOlIyRE6VGW3G/AY5LzoEmPstOpGjkxxS1cz3OMKyOVt5fWPDnmOzH181/avK6S2Yr3UIDwV85I7cVIN6Kyb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=i3OBgSmW; arc=none smtp.client-ip=203.205.251.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1719279402; bh=yG9CowTovmcKn8NWGo6ZF6s/KGjA+Y734rgmx1QzCA4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=i3OBgSmW7HmFyOhVsp29o4YWM48hYpEUPyo7XeGN9yjC+NyM6qJM15WTt830snO+z
+	 RglwID0VsWqalSLfTs4e4GH5RPIDlP+fvVqEAY8ph2vC5FqgE0Oj2kGnNC+61/Ih6n
+	 S85mn+eGPG7NntJbdRlVTJY1g7OP+WdbqptoIbT0=
+Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
+	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
+	id 7A735A42; Tue, 25 Jun 2024 09:30:39 +0800
+X-QQ-mid: xmsmtpt1719279039t9abxdiiu
+Message-ID: <tencent_76254CBA77BBB533DB9E261BD64BF01BF008@qq.com>
+X-QQ-XMAILINFO: NzOHSugmTg7Xb8RikqmNW57/7zEE9VYMG4ZH5GKELqjUgQV84pgKZXiyG2RKrN
+	 57nzPJIedbMPGLuaMXRYtGbA+TLFlC5U+4pbx9pMCTvKBTuYIIvgquAAoxfFl9OO2w3dvkr9RV3H
+	 Mz2nQmkOV9oJZ0P4UujlKM2kFCktbHQpi9zc6MMhNo7QyqMOGvhSJjgUqNXOIGC5CAJHRs6OW+6n
+	 fFWlpokewicuVqCzFoqUcdxOpi9bO/gw5U3NsbZdCajZdYvvhG8I+X7W22A4e4yWnoojmvBL/9a8
+	 AWdlVNBI6ABHksbVIhYcIFizfeYMFaRJTA5x9x1RAqbX+dmjJez486DK6D6xuO5EKVB+prAhXYTW
+	 Liu4NsxvUSmN/AJWLZsDGXDEx7BzaHIonncs4qoa0GUEV+P07woKVy//aSpmFa6tadk93MiEAn0r
+	 mrnqSCBLK2UVQ7g9bxA2rtzGCnhIZNLKmOhsgxoKaHJKEQQoPEB4QOBU8Mntc+/JGez/mjAqnnEp
+	 fA6K7SV5SbCKEMCkPczYySAePxWZGYDxFbj5LvIKnZ7ScivIgztpWbphO5zDV300xhjguUf/McNk
+	 UeL7PMs3gbiP4aOS6yBJG6eKbjIH8Ae/CvfBTHT3QfXBEJERQA2It6J24tFzAP+io0KWcADhq2S4
+	 B6QjPg3oCS0gTgFapC3dVS1psJuaFEMmViKNwnogxrmsoRt68iGUGDmA3mdkKS3XqMW76wmNDTiO
+	 IVqyMvPoV6WasNZZPoWTWW+JIltp4sUK+0qTZM/o7GEIMCiHnccejVzEirQl3HsLE+LJWtah2S0F
+	 fovI0W1NE8A+hEn5Aba0zc1InV89KGMnUsVrKCj/dkOpmjonSkopP70wM8r/CWu5hG1Czf4pHRlD
+	 9MHRmaSnwhF7l3y/S/2eniLLqxOTMMu7MfFQBPH4M3M3L2nvFxhi5Bd3Tf8RgpuC8g1O5ChiPK
+X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+f115fcf7e49b2ebc902d@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in sk_skb_reason_drop
+Date: Tue, 25 Jun 2024 09:30:40 +0800
+X-OQ-MSGID: <20240625013039.83412-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <000000000000387998061ba467ac@google.com>
+References: <000000000000387998061ba467ac@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iommu/iova: Bettering utilizing cpu_rcaches in no-strict
- mode
-To: Robin Murphy <robin.murphy@arm.com>
-CC: <iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>, "joro@8bytes.org"
-	<joro@8bytes.org>, <will@kernel.org>, John Garry <john.g.garry@oracle.com>
-References: <20240624083952.52612-1-zhangzekun11@huawei.com>
- <5149c162-cf38-4aa4-9e96-27c6897cad36@arm.com>
- <0322849d-dc1f-4e1c-a47a-463f3c301bdc@huawei.com>
- <c4c44f66-fb9c-4d71-ac35-f3fef75832bd@arm.com>
-From: "zhangzekun (A)" <zhangzekun11@huawei.com>
-In-Reply-To: <c4c44f66-fb9c-4d71-ac35-f3fef75832bd@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemf500003.china.huawei.com (7.202.181.241)
 
+please test uaf in sk_skb_reason_drop
 
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git 84562f9953ec
 
-在 2024/6/24 21:32, Robin Murphy 写道:
+diff --git a/net/bluetooth/hci_request.c b/net/bluetooth/hci_request.c
+index efea25eb56ce..6f3e2e6cd2f4 100644
+--- a/net/bluetooth/hci_request.c
++++ b/net/bluetooth/hci_request.c
+@@ -106,8 +106,10 @@ void hci_req_sync_complete(struct hci_dev *hdev, u8 result, u16 opcode,
+ 		hdev->req_result = result;
+ 		hdev->req_status = HCI_REQ_DONE;
+ 		if (skb) {
+-			kfree_skb(hdev->req_skb);
++			struct sk_buff	*old_skb;
++			old_skb = hdev->req_skb;
+ 			hdev->req_skb = skb_get(skb);
++			kfree_skb(old_skb);
+ 		}
+ 		wake_up_interruptible(&hdev->req_wait_q);
+ 	}
+@@ -120,6 +122,7 @@ int __hci_req_sync(struct hci_dev *hdev, int (*func)(struct hci_request *req,
+ {
+ 	struct hci_request req;
+ 	int err = 0;
++	struct sk_buff	*req_skb;
+ 
+ 	bt_dev_dbg(hdev, "start");
+ 
+@@ -181,8 +184,9 @@ int __hci_req_sync(struct hci_dev *hdev, int (*func)(struct hci_request *req,
+ 		break;
+ 	}
+ 
+-	kfree_skb(hdev->req_skb);
++	req_skb = hdev->req_skb;
+ 	hdev->req_skb = NULL;
++	kfree_skb(req_skb);
+ 	hdev->req_status = hdev->req_result = 0;
+ 
+ 	bt_dev_dbg(hdev, "end: err %d", err);
 
->> This patch is firstly intent to minimize the chance of softlock issue 
->> in fq_flush_timeout(), which is already dicribed erarlier in [1], 
->> which has beed applied in a commercial kernel[2] for years.
->>
->> However, the later tests show that this single patch is not enough to 
->> fix the softlockup issue, since the root cause of softlockup is the 
->> underlying iova_rbtree_lock. In our softlockup scenarios, the average
->> time cost to get this spinlock is about 6ms.
-> 
-> That should already be fixed, though. The only reason for 
-> fq_flush_timeout() to interact with the rbtree at all was due to the 
-> notion of a fixed-size depot which could become full. That no longer 
-> exists since 911aa1245da8 ("iommu/iova: Make the rcache depot scale 
-> better").
-> 
-> Thanks,
-> Robin.
-> 
-Hi, Robin,
-
-The commit 911aa1245da8 ("iommu/iova: Make the rcache depot scale 
-better") can reduce the risks of softlockup, but can not fix it 
-entirely. We do solve a softlockup issue[1] with that patch, and that is
-why it has aleady been backported in our branch. The softlockup issue 
-which we met recently is a 5.10-based kernel with that patch already 
-backported, which can be found in [2].
-
-In 6.7-rc4, which has already applied patch  911aa1245da8 ("iommu/iova: 
-Make the rcache depot scale better"). We can also get the following
-call trace. It seems still existing the issue, and we fix this issue 
-using the patch in [3], when the call trace first came up.
-
-rcu: INFO: rcu_preempt self-detected stall on CPU
-rcu: 	85-....: (5249 ticks this GP) idle=4d04/1/0x4000000000000000 
-softirq=428240/428240 fqs=1882
-rcu: 	(t=5253 jiffies g=2005741 q=19446136 ncpus=128)
-CPU: 85 PID: 2401130 Comm: kpktgend_85 Kdump: loaded Tainted: G 
-  O       6.7.0-rc4+ #1
-
-pc : _raw_spin_unlock_irqrestore+0x14/0x78
-lr : fq_flush_timeout+0x94/0x118
-sp : ffff8000802abdf0
-x29: ffff8000802abdf0 x28: ffff20201142e480 x27: 0000000000000002
-x26: ffffdeeb67e82b20 x25: 0000000000000000 x24: ffffdeeb67e87400
-x23: ffffdeeb67e82ba0 x22: ffff202009db1c00 x21: ffffdeeb67e82f40
-x20: 0000000000000000 x19: ffffdbe06f0140a8 x18: 0000000000040000
-x17: 0000000000000001 x16: 0000000000000040 x15: ffffffffffffffff
-x14: 0000000000001fff x13: 000000000003ffff x12: 0000000000000259
-x11: 000000000007ffff x10: 000000000000000d x9 : ffffdeeb6549ec84
-x8 : ffff0020886e0000 x7 : 000000000000964d x6 : 000001afa2986acb
-x5 : 01ffffffffffffff x4 : 0000000000000000 x3 : ffff202006b57d70
-x2 : 0000000000000015 x1 : 0000000000000000 x0 : ffffdbe06f0140a8
-Call trace:
-  _raw_spin_unlock_irqrestore+0x14/0x78
-  call_timer_fn+0x3c/0x1d0
-  expire_timers+0xcc/0x190
-  run_timer_softirq+0xfc/0x268
-  __do_softirq+0x128/0x3dc
-  ____do_softirq+0x18/0x30
-  call_on_irq_stack+0x24/0x30
-  do_softirq_own_stack+0x24/0x38
-  irq_exit_rcu+0xc0/0xe8
-  el1_interrupt+0x48/0xc0
-  el1h_64_irq_handler+0x18/0x28
-  el1h_64_irq+0x78/0x80
-  __schedule+0xf28/0x12a0
-  schedule+0x3c/0x108
-  schedule_timeout+0xa0/0x1d0
-  pktgen_thread_worker+0x1180/0x15d0
-  kthread+0x120/0x130
-  ret_from_fork+0x10/0x20
-
-[1] https://gitee.com/openeuler/kernel/issues/I8KS9A
-[2] https://gitee.com/openeuler/kernel/tree/OLK-5.10/
-[3] https://lkml.org/lkml/2023/2/16/124
-
-Thanks,
-Zekun
 
