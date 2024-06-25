@@ -1,144 +1,166 @@
-Return-Path: <linux-kernel+bounces-229251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736FD916D58
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:43:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C488F916D4D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:42:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC99D28DE28
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:43:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F03D91C21BB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:42:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D18716EC10;
-	Tue, 25 Jun 2024 15:42:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3858016F8ED;
+	Tue, 25 Jun 2024 15:42:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O+4WmIUk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="GHVM0hI4"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25864171E5D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:42:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28BCD16F29C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719330175; cv=none; b=UK+yTGVBlrjPl9im6xHohIsZsLocuVRQU4yYLo4199oRmED1FApLNxOaf1dzWQMKey0IyV9d+lZCqlKlh0LYK3PwZi4HiWMKk9BqdRvGVuiQVxNLeHV7ZaJgh646oNiB49shT+lRCw3PTTBUJvvEooUrdO680L1Yi/7ZKN8vxeY=
+	t=1719330126; cv=none; b=ZZyu6WYF4Hiu1xbplM5TJDU/aIPAAi5cLMWzx3CEiAhEJ2iU9leKc4rCBLwj4Shi56tQAsbY9NkcuPxmirBmUzb5anYpYZZ4zjQNKkH34f6mrGCtBp+7SvOvyxd4/up1hUiitmVEN2DF7lvQu4+WS5dPdPshXLYmi1hOm4+NXq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719330175; c=relaxed/simple;
-	bh=txNOGyRY53dlUad69BGVxtVaxoLEp4azdwC4bHVsxy4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kxs4itodfFuvano0o3n9qHsoVs5RlBA2qBMNToSuWODDVFRo5oVd9xK47axgPDL68yGyKdJs64sW8y9rdLFHiZq/E2Kab/F2q69RAtfCogoTvdJh3oKh26J4IkuFCvlpL3Pz4vvyeq+NRhBdPvTZZF11O7szpfziVmgA0yZPvU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O+4WmIUk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719330173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qHjDjQkkVV5MnIFI/wThRjGzfK8qMKOd15SXf1Vtg8o=;
-	b=O+4WmIUk56JC/YKnALEEClT+F+RcMjpQ7HmvFQS/T4HaGI8mBXJ4ynF67sejCYRwlO6drV
-	0yrd6vbAqAJctgyvSqockBNTbFQVDE6WHrZ1NgHPlw21hL0oKKAnFpNSqJDt1ApQ5fEzoD
-	Ku8EDDNPLW0BqerbeLutd1rzZBrBRng=
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
- [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-640-KMcXZk2lOcipIKTYemIOlQ-1; Tue, 25 Jun 2024 11:42:51 -0400
-X-MC-Unique: KMcXZk2lOcipIKTYemIOlQ-1
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-79557d418e0so1426380985a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:42:51 -0700 (PDT)
+	s=arc-20240116; t=1719330126; c=relaxed/simple;
+	bh=ywTSmI1rN04Q5ybrsMmQDMBK0EbrVLfbTfL/6R5ySSE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uBbejs1PJ+EDX9JL78yAXSY3TohHa/PEAMJ9e2Gsw0owUx41DMVUJJ+LpQ82pJdtY2ybyYLl7MDSJoK4k/estMDkjl1UzPIc77TdV5ABiYg7myy7r7aVNa0K+RUnSk58morEnd1A+r2A/dQyA+4ZQpDZv40rxxqhd3beDHZxMmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=GHVM0hI4; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-1f9ae0b12f3so63549875ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:42:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719330124; x=1719934924; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RxxKgmeDgVKqFMmEwgOuCwbtERgNHDGH29QFhnmfwTc=;
+        b=GHVM0hI4ZLp3CA0D07FNSOYxRPsDQ7buGwfJIv9pwI+tARTA6WM1i5INgOQsTNgeNf
+         kMOzQR/x9sI2IH9q/GAjXBpIjc4W+kn1cTXNR3U1eJQ7WgQks7lGla9RantWyizHbMqm
+         08UAJg6ZUTlIcE6QyzkFD5j0K+IC1NBkShzWU1DhZJqzqObrEnrVC8cJGwGnICmNNHUe
+         b5Si+BGPiE0n3bPKOYytsVhoPUVQeCPZMOnzGK9eN58/Wycm3pWuJcbRtw+H9ZR5A5iF
+         FA4IwbKCOBnC8omrLmFTYcfkbNU17IQJsvuqEi+752aRPJqQesdKJgKZgiOXdCc+f1M6
+         eSEw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719330171; x=1719934971;
-        h=content-transfer-encoding:mime-version:organization:references
-         :in-reply-to:message-id:subject:cc:to:from:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qHjDjQkkVV5MnIFI/wThRjGzfK8qMKOd15SXf1Vtg8o=;
-        b=nJy7oRsbggoruI//k8y63TGCqzefPPCPFKGeEjHcMtSccnEbqmFJCKaMwWzeQnXNXh
-         HzM7MPLCK9jHa+27wRof6O1y+HSSsCYVR5ZwtRzkcUsOFoEEWgRbtu/pVvapgHpVv+Rb
-         RZB3k+4ninpT6B4REA2kfRU/J/sKfbF1TaozAH70L1FBGxUdP6R7JbwCShyg0evZGiht
-         fNoHTI1DUCJoTali3dy4mIgVwC/lhUxZMPoRigcY1rbpvSC2adLCY2Ro7xO5Oye64tfd
-         pnYHLzuTU/NbFp9dxaVl0jTbBzbS68uD0l6ZWVV3lfKt+PksLg7CLHM3swlU4GqV3Qxl
-         +upg==
-X-Forwarded-Encrypted: i=1; AJvYcCVsPuzkEoyxZUgno5O56vU4G9Pwv9dcFNk5j77sLHzNZy4pok/rU2GVEU/oM0Ab5peol5aponnRxx2CbK5AHVpncRsxWVRI57mFb5nI
-X-Gm-Message-State: AOJu0YyfaIs9LxOjNGoQeslORGOrqsudPWnkI7vnaqE+yAkjg/+A/Nu2
-	LQEIpnKB4jeOSaPBtOcTSZjJCF8yzjg5L+2Mv7jrm3CIQPz6eRpr5i12dbt2R6XUmdLr0GsnvqB
-	6bixY83Yx+gCNFHErmPc3oFTznTh3j74Hwzwp9gw87dwsdKTw1Azaaudn3v8ZkA==
-X-Received: by 2002:a05:620a:17a0:b0:795:7abd:12e2 with SMTP id af79cd13be357-79bfd66d20amr693260785a.17.1719330171153;
-        Tue, 25 Jun 2024 08:42:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHva43U36s/7Ml2cOyugoxc0TbehJGQitemaODb2b3+TkL7l4BU91CFLUjdniODZSXocu0RnA==
-X-Received: by 2002:a05:620a:17a0:b0:795:7abd:12e2 with SMTP id af79cd13be357-79bfd66d20amr693243585a.17.1719330168725;
-        Tue, 25 Jun 2024 08:42:48 -0700 (PDT)
-Received: from maya.cloud.tilaa.com (maya.cloud.tilaa.com. [164.138.29.33])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce91f16esm415648285a.77.2024.06.25.08.42.48
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Jun 2024 08:42:48 -0700 (PDT)
-Date: Tue, 25 Jun 2024 17:41:49 +0200
-From: Stefano Brivio <sbrivio@redhat.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Aaron Conole <aconole@redhat.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, dev@openvswitch.org,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Pravin B
- Shelar <pshelar@ovn.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Shuah Khan <shuah@kernel.org>,
- =?UTF-8?B?QWRyacOhbg==?= Moreno <amorenoz@redhat.com>, Simon Horman
- <horms@kernel.org>, David Ahern <dsahern@gmail.com>
-Subject: Re: [PATCH v2 net-next 0/7] selftests: net: Switch pmtu.sh to use
- the internal ovs script.
-Message-ID: <20240625174149.3d37ed88@elisabeth>
-In-Reply-To: <20240625070654.6a00efef@kernel.org>
-References: <20240620125601.15755-1-aconole@redhat.com>
-	<20240621180126.3c40d245@kernel.org>
-	<f7ttthjh33w.fsf@redhat.com>
-	<f7tpls6gu3q.fsf@redhat.com>
-	<e4f69335f90aae3f1daa47ba8f69b24ea15ed3b7.camel@redhat.com>
-	<f7th6dhgnvm.fsf@redhat.com>
-	<20240625070654.6a00efef@kernel.org>
-Organization: Red Hat
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-pc-linux-gnu)
+        d=1e100.net; s=20230601; t=1719330124; x=1719934924;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RxxKgmeDgVKqFMmEwgOuCwbtERgNHDGH29QFhnmfwTc=;
+        b=PLm28oC+qbvLWwWjQAVzGUq7fbc1RkSJlY4w+7AknCwiCyWzLBV9GytdRMdDjAXB/V
+         5D8O0v4TAKjTL0a+JT2jOcN340OsYYn/G/QDhtZunzB+Q9yDU8Jz35xIN+S+PwPqTz7H
+         Q+c7a1ptguLAn/6CTopuGTeTYqKpZX8dKudGMHUhZLrlpDpcHSsfRnNr8nlXb5hAw0WF
+         UL1Zo6cOEhjcfDec98ssJ99TeFYec9U9yk6QMDqzP4UPxmJWCw3U4JMigj1h2EJFPjER
+         5+L1R/oItUxemCJjIl2sw97oUu2iqHL76wBcYP3L6VANZkvX4wWJFn+VCMKSwOzE4wAE
+         KvLQ==
+X-Gm-Message-State: AOJu0YzVQZijp1d0cP8WqEwyCr0unoOqyEnOzWo6+YGZKMFr2gYFvDwM
+	5CKbQt21l5QHeeiz3bbHU6xBzBHZEU2GK6VYfRdYysRXB8kDUvA7uqCGBYYNX/vigYeCXXnldmS
+	Dag==
+X-Google-Smtp-Source: AGHT+IFhgyKRWxYoop/sbDVEXMPn9+FnqK9mKH4shC/uBXK1i+8WbjRze/tcfgrhQ4mXRR9/220//c0nN/I=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a17:902:d492:b0:1f6:8033:f361 with SMTP id
+ d9443c01a7336-1fa158de75cmr11068635ad.6.1719330124301; Tue, 25 Jun 2024
+ 08:42:04 -0700 (PDT)
+Date: Tue, 25 Jun 2024 08:42:02 -0700
+In-Reply-To: <20240625112056.GDZnqoGDXgYuWBDUwu@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <171878639288.10875.12927337921927674667.tip-bot2@tip-bot2>
+ <20240620084853.GAZnPs9Q94aakywkUn@fat_crate.local> <20240625112056.GDZnqoGDXgYuWBDUwu@fat_crate.local>
+Message-ID: <ZnrlShoW12JqWmUl@google.com>
+Subject: Re: [PATCH -v2] x86/alternatives, kvm: Fix a couple of CALLs without
+ a frame pointer
+From: Sean Christopherson <seanjc@google.com>
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org, 
+	kernel test robot <lkp@intel.com>, x86@kernel.org, Michael Matz <matz@suse.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 25 Jun 2024 07:06:54 -0700
-Jakub Kicinski <kuba@kernel.org> wrote:
+On Tue, Jun 25, 2024, Borislav Petkov wrote:
+> ---
+> From: "Borislav Petkov (AMD)" <bp@alien8.de>
+> Date: Tue, 18 Jun 2024 21:57:27 +0200
+> Subject: [PATCH] x86/alternatives, kvm: Fix a couple of CALLs without a f=
+rame pointer
+>=20
+> objtool complains:
+>=20
+>   arch/x86/kvm/kvm.o: warning: objtool: .altinstr_replacement+0xc5: call =
+without frame pointer save/setup
+>   vmlinux.o: warning: objtool: .altinstr_replacement+0x2eb: call without =
+frame pointer save/setup
+>=20
+> Make sure %rSP is an output operand to the respective asm() statements.
+>=20
+> The test_cc() hunk and ALT_OUTPUT_SP() courtesy of peterz. Also from him
+> add some helpful debugging info to the documentation.
+>=20
+> Now on to the explanations:
+>=20
+> tl;dr: The alternatives macros are pretty fragile.
+>=20
+> If I do ALT_OUTPUT_SP(output) in order to be able to package in a %rsp
+> reference for objtool so that a stack frame gets properly generated, the
+> inline asm input operand with positional argument 0 in clear_page():
+>=20
+> 	"0" (page)
+>=20
+> gets "renumbered" due to the added
+>=20
+> 	: "+r" (current_stack_pointer), "=3DD" (page)
+>=20
+> and then gcc says:
+>=20
+>   ./arch/x86/include/asm/page_64.h:53:9: error: inconsistent operand cons=
+traints in an =E2=80=98asm=E2=80=99
+>=20
+> The fix is to use an explicit "D" constraint which points to a singleton
+> register class (gcc terminology) which ends up doing what is expected
+> here: the page pointer - input and output - should be in the same %rdi
+> register.
+>=20
+> Other register classes have more than one register in them - example:
+> "r" and "=3Dr" or "A":
+>=20
+>   =E2=80=98A=E2=80=99
+> 	The =E2=80=98a=E2=80=99 and =E2=80=98d=E2=80=99 registers.  This class i=
+s used for
+> 	instructions that return double word results in the =E2=80=98ax:dx=E2=80=
+=99
+> 	register pair.  Single word values will be allocated either in
+> 	=E2=80=98ax=E2=80=99 or =E2=80=98dx=E2=80=99.
+>=20
+> so using "D" and "=3DD" just works in this particular case.
+>=20
+> And yes, one would say, sure, why don't you do "+D" but then:
+>=20
+>         : "+r" (current_stack_pointer), "+D" (page)
+>         : [old] "i" (clear_page_orig), [new1] "i" (clear_page_rep), [new2=
+] "i" (clear_page_erms),
+>         : "cc", "memory", "rax", "rcx")
+>=20
+> now find the Waldo^Wcomma which throws a wrench into all this.
+>=20
+> Because that silly macro has an "input..." consume-all last macro arg
+> and in it, one is supposed to supply input *and* clobbers, leading to
+> silly syntax snafus.
+>=20
+> Yap, they need to be cleaned up, one fine day...
+>=20
+> Cc: Michael Matz <matz@suse.de>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202406141648.jO9qNGLa-lkp@i=
+ntel.com/
+> Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+> ---
 
-> On Tue, 25 Jun 2024 09:20:29 -0400 Aaron Conole wrote:
-> > > I'm still wondering if the issue is Kconfig-related (plus possibly bad
-> > > interaction with vng). I don't see the OVS knob enabled in the self-
-> > > tests config. If it's implied by some other knob, and ends-up being
-> > > selected as a module, vng could stumble upon loading the module at
-> > > runtime, especially on incremental build (at least I experience that
-> > > problem locally). I'm not even sure if the KCI is building
-> > > incrementally or not, so all the above could is quite a wild guess.
-> > >
-> > > In any case I think adding the explicit CONFIG_OPENVSWITCH=y the
-> > > selftest config would make the scenario more well defined.    
-> > 
-> > That is in 7/7 - but there was a collision with a netfilter knob getting
-> > turned on.  I can repost it as-is (just after rebasing) if you think
-> > that is the only issue.  
-> 
-> Sorry for not checking it earlier, looks like the runner was missing
-> pyroute:
-> 
-> # python3 ./tools/testing/selftests/net/openvswitch/ovs-dpctl.py
-> Need to install the python pyroute2 package >= 0.6.
-> 
-> I guess run_cmd counter-productively eats the stderr output ? :(
-
-Yes, otherwise it's rather noisy, but you can run the thing with
-VERBOSE=1, see also 56490b623aa0 ("selftests: Add debugging options to
-pmtu.sh").
-
-Before that change, we didn't eat standard error, but in the general
-case I guess it's quite an improvement.
-
--- 
-Stefano
-
+Acked-by: Sean Christopherson <seanjc@google.com>
 
