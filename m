@@ -1,53 +1,60 @@
-Return-Path: <linux-kernel+bounces-229010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39DC59169AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:59:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7487B916977
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C76A1C251A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:59:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A69EB1C2100F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:52:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFF9176FB0;
-	Tue, 25 Jun 2024 13:55:59 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DFF81607A7;
+	Tue, 25 Jun 2024 13:52:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nhR1tCYL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E4216B751;
-	Tue, 25 Jun 2024 13:55:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EE317C98
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719323758; cv=none; b=lWjkd09e9iDqG0Skz6MnHjQkn9sb35Vb6ldfqtVLo+/Q7nfw7u9T5iw+x+n74ub8xkKHEgigkBFHTdRA5GRrmr+YZuuai+CzZrfxvwX3cUZlFJ8UX30+VrkjgQsHCof9WWdgDYxD3crs+mlC5A+u0tZ8zSmbXWxW8LPvTjArEzE=
+	t=1719323569; cv=none; b=clMA8wSIVnnEKdymclPbsvUDMWYHbGfVbU659WZgTHAeSZD5p1d/T+5uaWHZOpR9a2FPCxBkedFXT7tw3ty7ZpCtLmKILgrJV5mXtPFyew6vXvBT1lfoUeyd/G50wmrNEl4ITzKhCfNpmk3D5uWlhJAdKLz+yhGIFef1oX0nMoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719323758; c=relaxed/simple;
-	bh=kk9aYP480v6tmdMVsxp3BoBk9pMZRvHhU+uZNhtkVE4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p6dUi8BrwJRYXfI1idFdrSCSdRv7tx2kirLM8rHv4LADQc1Q0Gj0MdTVX4w6J+wFkC978Fidbz8csmWDyaFl7R0cOxeEpAm3fJYk9tCvc+MkwZCpfbnrACAXOOqwz7skxbJzuv/c//uNwgNR5OqIMf9N5GIKxOxKHemdfRUstsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4W7mZG43KrznXYk;
-	Tue, 25 Jun 2024 21:55:50 +0800 (CST)
-Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
-	by mail.maildlp.com (Postfix) with ESMTPS id 7177118006C;
-	Tue, 25 Jun 2024 21:55:55 +0800 (CST)
-Received: from localhost.localdomain (10.69.192.56) by
- dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 25 Jun 2024 21:55:55 +0800
-From: Yunsheng Lin <linyunsheng@huawei.com>
-To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Yunsheng Lin
-	<linyunsheng@huawei.com>, Alexander Duyck <alexander.duyck@gmail.com>
-Subject: [PATCH net-next v9 13/13] mm: page_frag: add a entry in MAINTAINERS for page_frag
-Date: Tue, 25 Jun 2024 21:52:16 +0800
-Message-ID: <20240625135216.47007-14-linyunsheng@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20240625135216.47007-1-linyunsheng@huawei.com>
-References: <20240625135216.47007-1-linyunsheng@huawei.com>
+	s=arc-20240116; t=1719323569; c=relaxed/simple;
+	bh=BC4qK3DsBmqdIUaOmuZX01WAZfNyPQ9l9M1VKKaYk7M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iPmZpk/EMcVplpiQkzP3T0QuTiankYml3oD7isU+F6w7DADgxXeJuCA4c2jzcvrcqmmTJc2FOOrdwDvTprxdoesoBqeuyjzPl4loxsd1sYrzIao0TSe0O/DwXDXU5qSMDbqGurXC3Xgg8P/OzIfhLp45aPv0f9XyM4pUxR0HeX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nhR1tCYL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17EA8C32781;
+	Tue, 25 Jun 2024 13:52:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719323569;
+	bh=BC4qK3DsBmqdIUaOmuZX01WAZfNyPQ9l9M1VKKaYk7M=;
+	h=From:To:Cc:Subject:Date:From;
+	b=nhR1tCYLP6IVEu/BMnZ1CVjBZpweG+jQrNpUg+0BYCZ84XiysMrLdrR4BBq/E9UCe
+	 xw3xSrJOmIIKy8MmmOdARRRGTiYICa8h+Sr17PfL3ogV90gN2jaz6HgRCXdHFJi+L6
+	 e04L+izmRVDF1ldx68cbLLxvTG5B47kdWIww8JtX1SUxURRjEY5E6YrY5pN63/v5C+
+	 Pd9YQk5V9y0BZ7Q3raWzr5kLbpsy0abwDUcyae+ka5UkF3RzwB+WWa5h6JJ/IYhUOi
+	 UOFCocAdEeUnOyERJnxfvsQFmgf+1UjuM73NjSsMvBaB2M/aDw00vfc+aTX8LuFZuz
+	 RLIUcseCBBlaA==
+From: Frederic Weisbecker <frederic@kernel.org>
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Oleg Nesterov <oleg@redhat.com>
+Subject: [RFC PATCH 0/6] mm: LRU drain flush on nohz_full
+Date: Tue, 25 Jun 2024 15:52:38 +0200
+Message-ID: <20240625135244.20227-1-frederic@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,47 +62,35 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- dggpemf200006.china.huawei.com (7.185.36.61)
 
-After this patchset, page_frag is a small subsystem/library
-on its own, so add a entry in MAINTAINERS for to indicate
-the new subsystem/library's maintainer, maillist, status and
-file lists of page_frag.
+When LRUs are pending, the drain can be triggered remotely, whether the
+remote CPU is running in userspace in nohz_full mode or not. This kind
+of noise is expected to be caused by preparatory work before a task
+runs isolated in userspace. This patchset is a proposal to flush that
+before the task starts its critical work in userspace.
 
-Alexander is the orginal author of page_frag, add him in the
-MAINTAINERS too.
+Frederic Weisbecker (6):
+  task_work: Provide means to check if a work is queued
+  sched/fair: Use task_work_queued() on numa_work
+  sched: Use task_work_queued() on cid_work
+  tick/nohz: Move nohz_full related fields out of hot task struct's
+    places
+  sched/isolation: Introduce isolated task work
+  mm: Drain LRUs upon resume to userspace on nohz_full CPUs
 
-CC: Alexander Duyck <alexander.duyck@gmail.com>
-Signed-off-by: Yunsheng Lin <linyunsheng@huawei.com>
----
- MAINTAINERS | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ include/linux/sched.h           | 15 +++++++++------
+ include/linux/sched/isolation.h | 17 +++++++++++++++++
+ include/linux/swap.h            |  1 +
+ include/linux/task_work.h       | 12 ++++++++++++
+ kernel/sched/core.c             |  6 ++----
+ kernel/sched/fair.c             |  4 +---
+ kernel/sched/isolation.c        | 32 ++++++++++++++++++++++++++++++++
+ kernel/sched/sched.h            |  1 +
+ kernel/task_work.c              |  1 +
+ mm/swap.c                       |  5 ++++-
+ 10 files changed, 80 insertions(+), 14 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 9283dd04cc6e..dc9ebb279ef1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -16952,6 +16952,17 @@ F:	mm/page-writeback.c
- F:	mm/readahead.c
- F:	mm/truncate.c
- 
-+PAGE FRAG
-+M:	Alexander Duyck <alexander.duyck@gmail.com>
-+M:	Yunsheng Lin <linyunsheng@huawei.com>
-+L:	linux-mm@kvack.org
-+L:	netdev@vger.kernel.org
-+S:	Supported
-+F:	Documentation/mm/page_frags.rst
-+F:	include/linux/page_frag_cache.h
-+F:	mm/page_frag_cache.c
-+F:	mm/page_frag_test.c
-+
- PAGE POOL
- M:	Jesper Dangaard Brouer <hawk@kernel.org>
- M:	Ilias Apalodimas <ilias.apalodimas@linaro.org>
 -- 
-2.33.0
+2.45.2
 
 
