@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-228396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15CCC915F45
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:03:16 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DEC2915F4A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFC541F23BC7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:03:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A2E1F23341
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660AA1465A7;
-	Tue, 25 Jun 2024 07:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4B71465B3;
+	Tue, 25 Jun 2024 07:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FBm9gNPU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="obiyk+c5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99965802;
-	Tue, 25 Jun 2024 07:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DF1802;
+	Tue, 25 Jun 2024 07:04:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719298985; cv=none; b=awv/SWWU6V8wQ6Bd/XRTiP2NWuLEOSIkB66MjCYThoX+2n6NnOpU7JNBRWwy2HDNXfARKFxsIPM8KlukIeVNP/ayFGCNyvqSybSuKZfuTrTnktoyK4FvytSbyZatvBcIrK0042Q6hXqfOQownN0QlLaGD1Llyg1UAWhKwmziJ44=
+	t=1719299066; cv=none; b=CoKdcuwgvakg2NpliGPaL0lk6rqQp0oE6sCDthCF6NDenPsEuv74xJ+tgxjYr+sljAF6QrhDxaSERWccBUrikzryIDeDhiYi5fwvHSsNswEZby0Vx+R0z0+L9LRV5wVAsHg8bPXlnuXmZHE3StBvTZ0uzJgzv/3QaaNMOZecess=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719298985; c=relaxed/simple;
-	bh=dsN2YUIuE/Apf/nbQzc/ItIQDVlscvNLHKXP67LVE68=;
+	s=arc-20240116; t=1719299066; c=relaxed/simple;
+	bh=ubfvPzNUElJEyCaDrh0k25CUCZtKumf36GRRCofK7Ig=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fbOJjz3yWyCIxKZOQuOC40JFwEiFLHLvfS6fGfho01oS6S0lzBh6sCngeAab7HjY1piBPzFJsgiP8UoF2ANKqUbMr5jNpA6jiMBdDqxDELtscnXR9zNuG9J/zC6cQpFMuHVy8ZjqFO4zZz7teUHCEt31R1+euiPRIuhVo29gFPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FBm9gNPU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 240ABC32781;
-	Tue, 25 Jun 2024 07:03:01 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=OsL2x518sAkC+7uBACx82B/eJCiIUfyNHU2wPnFmsWPupYbCIX3VID1gB6lwx95DxppSu2Px5bqUzqRtFFzAu3jCK53tjGZoMWFkeuUivGd3VI+dEddBTB566kFbnlAqV9RDNH5A1EJr1R6CVDT+vhL6rGWklEZerOq3moQvAac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=obiyk+c5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60292C32781;
+	Tue, 25 Jun 2024 07:04:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719298985;
-	bh=dsN2YUIuE/Apf/nbQzc/ItIQDVlscvNLHKXP67LVE68=;
+	s=k20201202; t=1719299065;
+	bh=ubfvPzNUElJEyCaDrh0k25CUCZtKumf36GRRCofK7Ig=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FBm9gNPUBfrurgi3UqnZjOw5hPXQBWIr86QoVqMiLz4pFvRZvcabzGtDt3hhVbnu2
-	 xfR9KVV4dLgTgagcfpVszynIu0qHl5JnQvrAlMo6onGgyWUSegsYIlFVm2FwxIKSKU
-	 udPvY+CSxW3hPUwUIxyllah9wr2U+Wi2vIsSU3Lzglk740cONz9vIDj2Logmy2a8B0
-	 K//x7PHuOWEz/3gVPFnBEXoXvIkovj9puSbdzvs0iZaHxypwN+pYy/5jU3I3Y2+YUX
-	 HpTGy44XtquZR+4N4dj2aRTISFUi8WAfoOyCpySuUmr9IXxnqeFZk5BOKLylbh775N
-	 l7Ttw1S+3N3ow==
-Message-ID: <329ef10f-14d1-4346-8496-906aaf91ccfe@kernel.org>
-Date: Tue, 25 Jun 2024 09:02:59 +0200
+	b=obiyk+c5FQpmxsYAnEIjviQ60aS3G3E4HDe5yU4vksgdNRIOdBaHkXJ7oHLZ5sAFj
+	 WKU1zRn1gC00HsHHhHYj/euhPbRc0WFHBNhQjaGpApLYSsYh01pykO8O8jyfBtE79V
+	 yLFBAipm12rV5FntL7WXj7/y11IPmhJYLqE+nJbsy1f0Epn84c+N1LbXljDXvYZlCL
+	 oS4+5XLiuPTuM0CwuS4ZTUY50cLVhVPv5lOaFG83S3vI1P/GltI8mLffsQfYMet5FD
+	 XUmOGyxItDuB2bmZKsXt1QE1bQeb4PHUrUhLg5EEu4q3yaaf7XVb0rZUCpMr+QWlSW
+	 OMfRbStUSV5xw==
+Message-ID: <87353911-b108-4b87-aa40-862acfc95aca@kernel.org>
+Date: Tue, 25 Jun 2024 09:04:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,19 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] dt-bindings: i2c: nxp,lpc1788-i2c: convert to dt
- schema
-To: Kanak Shilledar <kanakshilledar@gmail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240625065939.6146-1-kanakshilledar@gmail.com>
- <03174142-a2c0-4f9f-81ca-2aeb7f57ab79@kernel.org>
-Content-Language: en-US
+Subject: Re: [PATCH v9 4/8] remoteproc: qcom: Add ssr subdevice identifier
+To: Gokul Sriram P <quic_gokulsri@quicinc.com>, sboyd@kernel.org,
+ andersson@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org,
+ devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
+ robh@kernel.org, sricharan@codeaurora.org
+Cc: gokulsri@codeaurora.org
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-5-quic_gokulsri@quicinc.com>
+ <d7923435-ba13-4aad-b3f1-67e3469ec7fc@kernel.org>
+ <8adae0a7-d496-4c9f-ab0c-f162c06e90c4@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -105,32 +107,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <03174142-a2c0-4f9f-81ca-2aeb7f57ab79@kernel.org>
+In-Reply-To: <8adae0a7-d496-4c9f-ab0c-f162c06e90c4@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/06/2024 09:02, Krzysztof Kozlowski wrote:
-> On 25/06/2024 08:59, Kanak Shilledar wrote:
->> Convert the NXP I2C controller for LPC2xxx/178x/18xx/43xx
->> to newer DT schema. Created DT schema based on the .txt file
->> which had `compatible`, `reg`, `interrupts`, `clocks`,
->> `#address-cells` and `#size-cells` as required properties.
->>
->> Additional changes to the original .txt binding
->> - added maintainer from the MAINTAINERS file.
->> - added resets property required by the corresponding DTS files.
->>
->> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->> Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
->> ---
->> Changes in v3:
->> - removed "address-cells" and "size-cells" as per feedback.
+On 25/06/2024 08:28, Gokul Sriram P wrote:
 > 
-> you already sent v3 so this is rather v4. What happened here? Why are
-> you resending this?
+> On 6/21/2024 8:40 PM, Krzysztof Kozlowski wrote:
+>> On 21/06/2024 13:46, Gokul Sriram Palanisamy wrote:
+>>> Add name for ssr subdevice on IPQ8074 SoC.
+>> Why?
+>    Oops! Missed the change. Will add and update.
+>>> Signed-off-by: Nikhil Prakash V<quic_nprakash@quicinc.com>
+>>> Signed-off-by: Sricharan R<quic_srichara@quicinc.com>
+>>> Signed-off-by: Gokul Sriram Palanisamy<quic_gokulsri@quicinc.com>
+>> Three people developed that single line?
+>>
+>> Something is really odd with your DCO chain.
+>   The change was originally authored by Nikhil and reviewed by 
+> Sricharan. I'm just submitting the change to upstream so retained their 
+> names.
+>>
 
-Ah, I see the changes - you dropped the incorrect tags. It's fine but it
-should have been v4. Not sure how b4 or other tools will handle this.
+Then your DCO chain is not correct. Please carefully read submitting
+patches, especially documents about authorship, DCO, reviewed tags.
 
 Best regards,
 Krzysztof
