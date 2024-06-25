@@ -1,103 +1,77 @@
-Return-Path: <linux-kernel+bounces-228741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B233091664A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:35:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9103291664C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24077B2648C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:35:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C31181C22199
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16116156862;
-	Tue, 25 Jun 2024 11:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613A014D6FB;
+	Tue, 25 Jun 2024 11:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RUX4QIWA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sJSzMm8F"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE7514BF98;
-	Tue, 25 Jun 2024 11:34:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E35D1494D7;
+	Tue, 25 Jun 2024 11:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315255; cv=none; b=brKp6jLPJoK1KouQegzWoZsltjLYjEzeYzpZGrNsq7qRIu6ijvevV3QBxXGv+EQrliQaamwEaWkcS83+G6wNe0/zUGlihaXxRk3xDoZqOCKPYmN1+di8LArn5cV1t917VGVODQ3w5pM9elO1vsmIBePLIB0qSkOwU9jdEMCtp5k=
+	t=1719315261; cv=none; b=j+gFeCswPCTGimsT3Jzbp0Tvuuxah7VJ8iZK6gVnqT0OTpaLavPhKkhxYzyHbQAAgU2MxP72qVHWaX54uPwb5ri3L4PUNaFa0qIOC1byiDUjArU6U6lZjAzA57vZ6cPzmthMscyBnW8kSUnSreLWDAehvjHG55RJyTAkdgL52Sk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315255; c=relaxed/simple;
-	bh=NouGFcuOua729I814AHnnARTJV2fpjUJpj0FtKSwIyU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Sl4wJ4k+McAF/CUB1oyDJ0qE3kv0L1UsAppxCcc7fqfOT/AHE9rSQW3aqukAR5K8BCKYxIdEwVbK0RoxOxKCdyYROqjQbwvmj026o35o17B8hLa3zyjGsi/QtEK50PWiKHYkX7sN89tFGD8z1AeYj7/b9m6A0oyK+ffQzax/YAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RUX4QIWA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B93DC32781;
-	Tue, 25 Jun 2024 11:34:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719315255;
-	bh=NouGFcuOua729I814AHnnARTJV2fpjUJpj0FtKSwIyU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=RUX4QIWA7XM42SPtOgUSUd1vh2zbIfP9Yr2V9lhNhtOXE7nMv0JY3YlQ7SiUaXkYZ
-	 YcITbpq5GIN3zEKf1STKt3Ah09aw+E1HHsAUrUjld7URaNubmO7rv3iWN3pYZSKQQl
-	 fetwEPtZNScl41atfCgVNernOtDEcisJ6aD0QDNWaH7uy6BczIhNDWtHSNmawYNywv
-	 L7AJB0KAMkiuODP6waJ0pJ+iI3TcuZeyWTRVSbnSDawsxYb3laECr+7yOPBDAXM9ez
-	 qDiclITwpXLrpzkcnv+5PRIq2L/M/LFNhq4WQac+nVGZ+w7qNxhe0PYaBUdUQC8X0X
-	 DwcrdZbxJ11Cw==
-From: Mark Brown <broonie@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, linux-spi@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240620-spi-axi-spi-engine-fix-sleep-time-v1-1-b20b527924a0@baylibre.com>
-References: <20240620-spi-axi-spi-engine-fix-sleep-time-v1-1-b20b527924a0@baylibre.com>
-Subject: Re: [PATCH] spi: axi-spi-engine: fix sleep calculation
-Message-Id: <171931525390.64438.17593023139078720275.b4-ty@kernel.org>
-Date: Tue, 25 Jun 2024 12:34:13 +0100
+	s=arc-20240116; t=1719315261; c=relaxed/simple;
+	bh=xEqPfyh9X6YuMifFgEaBh2xb//PTMQ+e5kd9VxjCj2Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e0xN7FSAxSjowr8724oPc+5z+c90net6EDL10FRJAZcUWgw9bPZFyU8s2LUok28o9nWTS+dplODlMP3tc/lOh7rK8BfLCAP9R5PEfNcF72Yc7sTuo0wipwTd7x2DhmuD8mU0umN2Tt8ser7sFhILt4SkvKYGhFGeFhpWug6jp2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sJSzMm8F; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=faux9V9iXqed8tIz+6pT8trL+2XAtII7wPG/Di7LJdE=; b=sJSzMm8FD5d9R+48pDS5r7+eD7
+	NJYbMFte26n8KE1pBgWTDys4Ib1tryeMYIU8XvvMWOU6VyEbgeU4n27btTBIV8Yy14UaE54GCTxX3
+	ovD9XP5n2HZJfy/JKjVt7dEf9zimuQV2t4Meq8DBqCmOS8w6pSYitaE1g/wUSy2ufbtetBTldyZqV
+	RNhCgMUcp2T8KN9cf/BVqroqwOpYDW5fZIlHzGDfKGTXp7GqzaUXlSIZr+d00jK+mQsmQt4kKWpN5
+	R0XO5gYGD2NXc+XAZhJVJ1Ci9siYWB7O/ckj78Z4DY/UDoaix+i1x7RvLIOgOzdGkEfnPW1Egk8gr
+	cc708vtw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sM4RC-00000002Yl5-4BGY;
+	Tue, 25 Jun 2024 11:34:15 +0000
+Date: Tue, 25 Jun 2024 04:34:14 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: alexjlzheng@gmail.com
+Cc: hch@infradead.org, alexjlzheng@tencent.com, chandan.babu@oracle.com,
+	david@fromorbit.com, djwong@kernel.org,
+	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
+Subject: Re: [PATCH] xfs: make xfs_log_iovec independent from xfs_log_vec and
+ release it early
+Message-ID: <ZnqrNi-cEjs92-b8@infradead.org>
+References: <Znqmr3Iki4Q8BkxJ@infradead.org>
+ <20240625112438.1925184-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14-dev-d4707
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625112438.1925184-1-alexjlzheng@tencent.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Thu, 20 Jun 2024 11:43:58 -0500, David Lechner wrote:
-> The sleep calculation was not taking into account increased delay when
-> the SPI device is not running at the maximum SCLK frequency.
-> 
-> Rounding down when one SCLK tick was the same as the instruction
-> execution time was fine, but it rounds down too much when SCLK is
-> slower. This changes the rounding to round up instead while still
-> taking into account the instruction execution time so that small
-> delays remain accurate.
-> 
-> [...]
+On Tue, Jun 25, 2024 at 07:24:38PM +0800, alexjlzheng@gmail.com wrote:
+> I am sorry, but I didn't get your point. May I ask if you could clarify your
+> viewpoint more clearly?
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
-
-Thanks!
-
-[1/1] spi: axi-spi-engine: fix sleep calculation
-      commit: 40b3d0838a1ff242e61f341e49226074bbdd319f
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
+The explanation you gave in reply to Darrick should be covered in
+the commit log for the patch.  The commit log should also contain
+measurement of how much memory this saves and explain why this is a
+good trafeoff vs the extra memory allocation.
 
 
