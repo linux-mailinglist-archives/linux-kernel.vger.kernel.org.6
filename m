@@ -1,101 +1,120 @@
-Return-Path: <linux-kernel+bounces-229299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4653916E0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:25:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8338916E11
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 998881F27FA2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:25:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19787B25BEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:26:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C8A174ECA;
-	Tue, 25 Jun 2024 16:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLbi8gAp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB3A217333B;
+	Tue, 25 Jun 2024 16:26:14 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202BB16F0E2;
-	Tue, 25 Jun 2024 16:25:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7500D171E41;
+	Tue, 25 Jun 2024 16:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719332737; cv=none; b=e3XCsMOXSoeF0TsP+1mqORaFao7YZ05MLclED3LCPQesuKMI2ifU+aOOAdFnFlIyGE4QUNzreW2YFxuWxKd6++6r0kmQzqiCpR4pB1XvZAdtcxatxiuwgpa0/o6EDZAWlUIMe6ZtaFrJ24xjzs4KhHyqtPwfQ0/al3iXOji/WJ8=
+	t=1719332774; cv=none; b=syeTg6VudffnTddHzTytfNO9P8F+F7bmcNNJR3mE3a15o9NrcaW14MtMyI2zwNF45q4mbEsfXXXQQtNWqzsaIgkyifRvjZvd1OMoTNF5/ehlo6GeYY1J0krw7xGVIE3P9xuYlqaPWf7ym7nxAc5skpGejWX2OiZsn49nZ2GZa4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719332737; c=relaxed/simple;
-	bh=11jynk5a/49/ElTJ9oo1LXDPA26BwDFO65Ty9CP0sI4=;
+	s=arc-20240116; t=1719332774; c=relaxed/simple;
+	bh=oy+bElgkbcQmzHj7fmn/6KbrN65wi3Xoq/EADV3ygto=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nl2bNOCawfbQkGVoZtwZoZq1C7HprdH47x/LiSSBjvCo2WAmy/yEU574ADEqtIsDmmfJ5onoOxh+pyafxdRCOPmVVCiKwB71fbgJFH+lTp/UBbs/c/zg5GB59B6YZscfnwr9jOJxON+Xq53F0Fl/sgVF+lCzj+lRxXfiPF3uhZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLbi8gAp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14DC4C32781;
-	Tue, 25 Jun 2024 16:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719332737;
-	bh=11jynk5a/49/ElTJ9oo1LXDPA26BwDFO65Ty9CP0sI4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eLbi8gApgYzOooqbHt3pXRvY/aqVqEuWUIGT0CsiZR3e9y+8WYghRJFNfRMK8jBMh
-	 /LGtBdrfjEGpPQgIylcsJZi+/luO8Z0LUb0fp4ZAMXrqNv0gVf9Hyk/gyG82eabeN8
-	 vM8gQIggsa4uvJ75C1+HVIROSOgZ2j5rdBVDhyWBTJgJwFbWBcxraSp+M4j8j0+OGF
-	 Tk/p7n3J+NhBOh/ShrnjhzoySQsmwsN+I1P5byXlzlKFdDATn3fpjkyAuW0DkafKM3
-	 0Djwr+gyV7iVX5jsJhHb7MomXSaSN+TIAgkmoCwbvKu9F6d8PcNRouVXpM8KGtUcfG
-	 muzOE8EiR0UJA==
-Date: Tue, 25 Jun 2024 17:25:31 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Gunnar Dibbern <gunnar.dibbern@lht.dlh.de>
-Subject: Re: [PATCH 1/2] dt-bindings: display: panel: add Ilitek ili9806e
- panel controller
-Message-ID: <20240625-rage-quarrel-a11f952c335b@spud>
-References: <20240625133317.2869038-1-mwalle@kernel.org>
- <20240625133317.2869038-2-mwalle@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CRIR/FKS7ZIEmi8KjXb0Uw+3EZFx1E7J27GR2jPL7G+0qvCaDUrV82mo1Ru0a59BmTi9E4gn+8tqfAjiTCvS8xg/Tnh8ikMigmrUMYL++Qp3dbRet1zpj0Fo/B1dD3wQ17AbfThLhmbyLXbtIK2LRhg50xQ5joLdvAolF0eK05c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id A73F830010DF5;
+	Tue, 25 Jun 2024 18:26:00 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 910484BC19; Tue, 25 Jun 2024 18:26:00 +0200 (CEST)
+Date: Tue, 25 Jun 2024 18:26:00 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Vidya Sagar <vidyas@nvidia.com>
+Cc: corbet@lwn.net, bhelgaas@google.com, galshalom@nvidia.com,
+	leonro@nvidia.com, jgg@nvidia.com, treding@nvidia.com,
+	jonathanh@nvidia.com, mmoshrefjava@nvidia.com, shahafs@nvidia.com,
+	vsethi@nvidia.com, sdonthineni@nvidia.com, jan@nvidia.com,
+	tdave@nvidia.com, linux-doc@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
+Subject: Re: [PATCH V4] PCI: Extend ACS configurability
+Message-ID: <ZnrvmGBw-Ss-oOO6@wunner.de>
+References: <20240523063528.199908-1-vidyas@nvidia.com>
+ <20240625153150.159310-1-vidyas@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wAaoyByR7rwocqHF"
-Content-Disposition: inline
-In-Reply-To: <20240625133317.2869038-2-mwalle@kernel.org>
-
-
---wAaoyByR7rwocqHF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240625153150.159310-1-vidyas@nvidia.com>
 
-On Tue, Jun 25, 2024 at 03:33:16PM +0200, Michael Walle wrote:
-> Add the device tree binding for the Ilitek ILI9806E controller which can
-> be found on the Ortustech COME35H3P70ULC DSI display panel.
->=20
-> There are no peculiarities except for two different power signals.
->=20
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
+On Tue, Jun 25, 2024 at 09:01:50PM +0530, Vidya Sagar wrote:
+> Add a kernel command-line option 'config_acs' to directly control all the
+> ACS bits for specific devices, which allows the operator to setup the
+> right level of isolation to achieve the desired P2P configuration.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+An example wouldn't hurt, here and in kernel-parameters.txt.
 
---wAaoyByR7rwocqHF
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+> ACS offers a range of security choices controlling how traffic is
+> allowed to go directly between two devices. Some popular choices:
+>   - Full prevention
+>   - Translated requests can be direct, with various options
+>   - Asymmetric direct traffic, A can reach B but not the reverse
+>   - All traffic can be direct
+> Along with some other less common ones for special topologies.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnrvewAKCRB4tDGHoIJi
-0g9nAQC2COqHdQsCfqnwo+sayhzov4sVoNF8rbDAdYwfX1Pf1AD/Rc5AvjVuPaED
-vu0KoJdqYy8bZZT59CZas5Y1in7tXwM=
-=MVgJ
------END PGP SIGNATURE-----
+I'm wondering whether it would make more sense to let users choose
+between those "higher-level" options, instead of giving direct access
+to bits (and thus risking users to choose an incorrect setting).
 
---wAaoyByR7rwocqHF--
+Also, would it be possible to automatically change ACS settings
+when enabling or disabling P2PDMA?
+
+The representation chosen here (as a command line option) seems
+questionable:
+
+We're going to add more user-controllable options going forward.
+E.g., when introducing IDE, we'll have to let user space choose
+whether encryption should be enabled for certain PCIe devices.
+That's because encryption isn't for free, so can't be enabled
+opportunistically.  (The number of crypto engines on a CPU is
+limited and enabling encryption consumes energy.)
+
+What about exposing such user configurable settings with sysctl?
+The networking subsystem has per-interface sysctl settings,
+we could have per-PCI-device settings.
+
+So just like this...
+
+net.ipv4.conf.default.arp_accept = 0
+net.ipv4.conf.eth0.arp_accept = 0
+net.ipv4.conf.eth1.arp_accept = 0
+
+... we could have...
+
+pci.0000:03:00.0.acs = full_prevention
+pci.0000:03:00.0.ide = 1
+pci.0000:03:01.0.acs = all_traffic
+pci.0000:03:01.0.ide = 0
+
+This isn't hard to do, just call register_sysctl() for each device
+on enumeration and unregister_sysctl_table() on pci_destroy_dev().
+
+Thanks,
+
+Lukas
 
