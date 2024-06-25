@@ -1,187 +1,121 @@
-Return-Path: <linux-kernel+bounces-228312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C2C915E06
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:12:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DD81915E08
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99588B21D82
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:12:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A0A21B22451
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:13:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9216143C72;
-	Tue, 25 Jun 2024 05:12:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3A331442F6;
+	Tue, 25 Jun 2024 05:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fM37+rzp"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TcMV9OND"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C4F143890;
-	Tue, 25 Jun 2024 05:12:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF72F143890;
+	Tue, 25 Jun 2024 05:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719292334; cv=none; b=UgwwQqtRtOk13QTVGW3jMuJRCrUu4DzPaOT/FgmzZz4jG9Ed7pQtQ6ZpEjv9TCqeJnjkmn32Wl33tQokIEHt2QQE22cjvK5lR9cSasPmz2w8sSm6/PMKiVXcTky9ARI3qbQFTnQZoQgE0WM1fYicRelyTse6YLaNB7YxxFZitUc=
+	t=1719292414; cv=none; b=RC/eLUfRoPvu3TssCns2Ul+oYjiPYvGJXuiRwG5eo0+xDHPEPOfr51Gt4xvIgpABBwQQw7N0xQknsDOdtuoJQsU87L+EGck8ILFsXzKl2zv2MECJ1OgTigE29oTJ7NpG9p7l8mqgsttEbGCN7zhyGBRKrIcBq18zGGw5ojFRoFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719292334; c=relaxed/simple;
-	bh=yN7B03ww6l4oUQ4hgTuqfvuuUwySdOP1eBJ2aUO1pAY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tyc4AaY/DcFaKI8rCbWOZltggulLpERM+KNT0yg1OJsRQGBp5dmFj0md6Os0VHx7/PiBHn/rQzqjmMjGCQqrmY4gVP5ZMwRC5PoBxr8NILpb8JamHBiKuToz0IBr/40oqBJXrk0rTKVonoa+mDNDbqWUq/Y6qnsVtgpYWYHS+SQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fM37+rzp; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719292333; x=1750828333;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yN7B03ww6l4oUQ4hgTuqfvuuUwySdOP1eBJ2aUO1pAY=;
-  b=fM37+rzpcCJ7YU+PCddhneBddEqlSqTxC5hgn8QUP0rWIAOjJYeqgYJd
-   i8n6hlyKOs6tOFRq9+FE26PD2qBJhVwvMZ89ZM5yIhyTq6EQ5eeHM5HZ0
-   0EUxRL34pNT9o+5lM8VWM9YcZ2ppKlkzQEPHtu++RDNNcXXQXu2Z1S0FD
-   2LmXj5R6JvigOkENBPIwXbPbC83e2CoqyDWOrANJG0PKooQf5i6C0O3X2
-   BrCxWEASffH2XHyZwyQrq2MO9+ZXhdZ0nl9CBfg4yljaurDB9bnwu9D7k
-   OtVRA6I+og1ymLNlASX91BnyDHrRJ0U4iZbuSym7yn/5QsZ+imG7nwUoA
-   w==;
-X-CSE-ConnectionGUID: 73pykXluRTG54h+SlXWS4Q==
-X-CSE-MsgGUID: 00Gtfzm/T4yk12+1apxleA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="16434017"
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="16434017"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 22:12:12 -0700
-X-CSE-ConnectionGUID: iSUXVXohR3eOK6BykvmqsQ==
-X-CSE-MsgGUID: RlnSrIcLTe2g6WCYE8S47Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="48694455"
-Received: from unknown (HELO tlindgre-MOBL1) ([10.245.247.67])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 22:12:08 -0700
-Date: Tue, 25 Jun 2024 08:12:03 +0300
-From: Tony Lindgren <tony.lindgren@linux.intel.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Petr Mladek <pmladek@suse.com>,
-	Linus Torvalds <torvalds@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] Fixes for console command line ordering
-Message-ID: <ZnpRozsdw6zbjqze@tlindgre-MOBL1>
-References: <20240620124541.164931-1-tony.lindgren@linux.intel.com>
- <ZnWRup3MvcVQ4MX8@pathway.suse.cz>
- <2024062403-skid-gotten-7585@gregkh>
+	s=arc-20240116; t=1719292414; c=relaxed/simple;
+	bh=Q9aGYIPCuMwlU4N9dfgFAvA2v0LYahldotocCyc3UJs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PDj03XM/lc40Ar9VYVwqDEANG/qvYrR/yzR/41q+7s9RgHVFcZ794vMOcES6N5KRnf0GBAaZs7wa835jdFjEcDnqvlr+bN4zJj/HtuqgP1+6VaEoFHce5ZSSvE3a3Xe5fXeH7pRQPCFbSUxL7mucnQUq2I1x//WMAObOBI0gkZo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TcMV9OND; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fa78306796so79845ad.3;
+        Mon, 24 Jun 2024 22:13:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719292412; x=1719897212; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=e3gUea5Aoffm179ncuYMoNOKtj3N5DPxd+0seKo+VGk=;
+        b=TcMV9ONDSgEMfCSoDF89EE0ExlmIOs5ySmh1j5Y1YbEICAneS8pHZcrcDUkFRpRn8U
+         owo0m3fnZlwTBpG3gvzqyy5/8UISkLWdvtARMHXsh5zhQ9X3/dRx8Tcfd1hCMBYffsAP
+         kARYYeAdjWEhPGxqOGVovF0/3ltNVtlJTE3AHU68r6cJQrOdVK0OMj0wnZByxIofOojg
+         iDXiQ/mqb9HrIIXdFiv1kOfQ+INUZyt3/IrqGHuJtQAQmb5fh0Mf6IngxXlwbWeZJJ2z
+         vn2X9h+n72MNi5+yM+14M9K1hS7Zrs0SU47siYZmYJy1K/kVMMWJsl9iDHEm6NLWgYQk
+         jTsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719292412; x=1719897212;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e3gUea5Aoffm179ncuYMoNOKtj3N5DPxd+0seKo+VGk=;
+        b=jLmUmrws1kz67plrS2uTHEXxgHroHP9cs2qjKaZXX3hxbc2qO06Yv6z42Tl2OMybt0
+         SkV4UsF2vc/mHQDaGfTtghnF5ZIxvJppka70NZju6H+ShGE1PWU8K0w+wipJVxISJKPC
+         MDE7DRZqrgXyFX8HsWj0B+o7eK8fa2PTXZzPBEq+a0TlzrRqque9bPcg+bE+EnIiKWUK
+         KSQAwLhxt+kdX2l5KH8W+CKFQfr1rWS5X7k7BoP2K2NWGrLjV3Kxv+itVQPmKSp+sWgV
+         0AHfLwjbUXX8RD0Thup/zHuCCDEKIPmYl3Ag62+oRV0I2CHX2A5LUk2mmjwhDZEovGar
+         X8eg==
+X-Forwarded-Encrypted: i=1; AJvYcCWUsKzAubpwIRJDqyuRcLc+bkoHYe92YR1t9eXDrd1Q9t/NY1vizeBlLllgFVXgnxCeBHdyeOYrsi94U/j9WDdsIyi2P6MMw6kF90EOdanCYSeBrbnZH+GAu/1/4d4NPCIXRpC7ZHCR
+X-Gm-Message-State: AOJu0Yx7un59UwRihqJ/RsMmOkJ7E0Yj4zTaQJ0Upr/adUr3eCFzPgHn
+	/Bb1L4JrArWs1ofCV4/4ouJjlHUjV+ZmH/mc6nHRxkNPYBNVss1A
+X-Google-Smtp-Source: AGHT+IEZbkIVg7DFlcKvBMX0AEM9rSF9hJOREpYypR14dVygVdoD2R0ctSMh2O3mMx7aivr08bajpA==
+X-Received: by 2002:a17:903:230f:b0:1f7:2135:ce6d with SMTP id d9443c01a7336-1fa1d4d9bdcmr82340015ad.18.1719292411829;
+        Mon, 24 Jun 2024 22:13:31 -0700 (PDT)
+Received: from localhost.localdomain (ec2-54-95-11-209.ap-northeast-1.compute.amazonaws.com. [54.95.11.209])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbc7003sm71531175ad.295.2024.06.24.22.13.28
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 24 Jun 2024 22:13:31 -0700 (PDT)
+From: Xiaobo Liu <cppcoffee@gmail.com>
+To: valentina.manea.m@gmail.com,
+	shuah@kernel.org,
+	i@zenithal.me
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Xiaobo Liu <cppcoffee@gmail.com>
+Subject: [PATCH] usb/usbip: remove unnecessary code
+Date: Tue, 25 Jun 2024 13:13:21 +0800
+Message-Id: <20240625051321.63761-1-cppcoffee@gmail.com>
+X-Mailer: git-send-email 2.39.3 (Apple Git-146)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024062403-skid-gotten-7585@gregkh>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 24, 2024 at 03:35:39PM +0200, Greg Kroah-Hartman wrote:
-> On Fri, Jun 21, 2024 at 04:44:10PM +0200, Petr Mladek wrote:
-> > Added Linus into Cc.
-> > 
-> > On Thu 2024-06-20 15:45:25, Tony Lindgren wrote:
-> > > Hi,
-> > > 
-> > > Recent changes to add support for DEVNAME:0.0 style consoles caused a
-> > > regression with the preferred console order where the last console on
-> > > the kernel command line is no longer the preferred console.
-> > > 
-> > > The following four changes fix the issue using Petr's suggestion that
-> > > does not involve calling __add_preferred_console() later on again, and
-> > > adds the deferred consoles to the console_cmdline[] directly to be
-> > > updated when the console is ready.
-> > > 
-> > > We revert the earlier printk related changes, and then add back the
-> > > DEVNAME:0.0 functionality based on Petr's code snippet. And we end up
-> > > reducing the code quite a bit too this way.
-> > > 
-> > > And we also revert all the unusable serial core console quirk handling,
-> > > it does not do anything for the legacy "ttyS" named consoles. And then
-> > > we add a minimal serial_base_match_and_update_preferred_console().
-> > > 
-> > > The reason we want DEVNAME:0.0 style consoles is it helps addressing the
-> > > console based on the connected serial port controller device rather than
-> > > using the hardcoded ttyS addressing. And that helps with issues related
-> > > to the console moving around after togging the HSUART option in the BIOS,
-> > > or when new ports are enabled in devicetree and aliases are not updated.
-> > > 
-> > > Tony Lindgren (4):
-> > >   printk: Revert add_preferred_console_match() related commits
-> > >   printk: Add match_devname_and_update_preferred_console()
-> > >   serial: core: Revert unusable console quirk handling
-> > >   serial: core: Add serial_base_match_and_update_preferred_console()
-> > > 
-> > >  drivers/tty/serial/8250/8250_core.c  |   5 -
-> > >  drivers/tty/serial/serial_base.h     |  22 +---
-> > >  drivers/tty/serial/serial_base_bus.c | 116 +++------------------
-> > >  drivers/tty/serial/serial_core.c     |   2 +-
-> > >  include/linux/printk.h               |   5 +-
-> > >  kernel/printk/Makefile               |   2 +-
-> > >  kernel/printk/conopt.c               | 146 ---------------------------
-> > >  kernel/printk/console_cmdline.h      |   7 +-
-> > >  kernel/printk/printk.c               | 122 ++++++++++++++++------
-> > >  9 files changed, 112 insertions(+), 315 deletions(-)
-> > >  delete mode 100644 kernel/printk/conopt.c
-> > 
-> > The patchset looks ready for linux-next. And I have pushed it
-> > into printk/linux.git, branch for-6.10-register-console-devname.
-> > 
-> > I am not sure about the mainline. We need to fix the regression in 6.10.
-> > The change is not trivial and rc5 is knocking on the doors.
-> > 
-> > Unfortunately, the patchset intermixes reverts and new code.
-> > So that it can't be used for simple revert as is.
-> > 
-> > I am quite confident that the new code works as expected.
-> > It changes tricky code but the logic of the change is quite
-> > straightforward.
-> > 
-> > 
-> > I see three solutions:
-> > 
-> > 1. Linus could merge the changes directly into rc5.
-> > 
-> > 2. I could send a pull request after it survives few days in
-> >    linux-next.
-> > 
-> > 3. Or we rework the patchset. And do pure revert for 6.10 and
-> >    add the feature a clean way for-6.11.
-> 
-> Pure revert for 6.10 might be good, as it's late in the cycle.  Let me
-> know the git ids and I can do that.
+Both if branches assign a value to the `cmd` variable.
+We can remove the cmd variable and use `pdu->base.command` directly.
 
-Here's the list of git ids to revert:
+Signed-off-by: Xiaobo Liu <cppcoffee@gmail.com>
+---
+ drivers/usb/usbip/usbip_common.c | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-$ git log --abbrev=12 --pretty=format:"%h (\"%s\")" v6.9..v6.10-rc5 \
---author="Tony Lindgren" kernel/printk drivers/tty/ Documentation/admin-guide/
-b20172ca6bf4 ("serial: core: Fix ifdef for serial base console functions")
-4547cd76f08a ("serial: 8250: Fix add preferred console for serial8250_isa_init_ports()")
-5c3a766e9f05 ("Documentation: kernel-parameters: Add DEVNAME:0.0 format for serial ports")
-a8b04cfe7dad ("serial: 8250: Add preferred console in serial8250_isa_init_ports()")
-a0f32e2dd998 ("serial: core: Handle serial console options")
-787a1cabac01 ("serial: core: Add support for DEVNAME:0.0 style naming for kernel console")
-b73c9cbe4f1f ("printk: Flag register_console() if console is set on command line")
-8a831c584e6e ("printk: Don't try to parse DEVNAME:0.0 console options")
-f03e8c1060f8 ("printk: Save console options for add_preferred_console_match()")
+diff --git a/drivers/usb/usbip/usbip_common.c b/drivers/usb/usbip/usbip_common.c
+index a2b2da125..74a01a265 100644
+--- a/drivers/usb/usbip/usbip_common.c
++++ b/drivers/usb/usbip/usbip_common.c
+@@ -568,17 +568,9 @@ static void correct_endian_ret_unlink(struct usbip_header_ret_unlink *pdu,
+ 
+ void usbip_header_correct_endian(struct usbip_header *pdu, int send)
+ {
+-	__u32 cmd = 0;
+-
+-	if (send)
+-		cmd = pdu->base.command;
+-
+ 	correct_endian_basic(&pdu->base, send);
+ 
+-	if (!send)
+-		cmd = pdu->base.command;
+-
+-	switch (cmd) {
++	switch (pdu->base.command) {
+ 	case USBIP_CMD_SUBMIT:
+ 		correct_endian_cmd_submit(&pdu->u.cmd_submit, send);
+ 		break;
+-- 
+2.34.1
 
-> > I personally prefer the 3rd solution. But I am super conservative.
-> > I guess that most other people would go with the other 2 solutions.
-> 
-> I'll be conservative here as well.
-
-Conservative is good.
-
-Regards,
-
-Tony
 
