@@ -1,163 +1,135 @@
-Return-Path: <linux-kernel+bounces-229650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36A5917257
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:16:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6110917261
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:18:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7651A282773
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:16:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21C291C22DBF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1488617D36F;
-	Tue, 25 Jun 2024 20:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631D217D37D;
+	Tue, 25 Jun 2024 20:18:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oHO3cal/"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p6mj5BRc"
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A936A178394
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 20:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E58A178394
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 20:18:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719346584; cv=none; b=VUrgP7hGXd+rAYbohfokOSdvWofUp+DSMu595SL8apZ9EHMTTOO9njJqESabnoY1GEJdJgQWDrshD3Lt+2+hhqXBZgfkX/X9zsZOayUAiylQn6RisOdwVIuFqTr2cfNZ/VF9n6pVXP+HTkVAwJSjUlGKWDx680tzkoTD6diGUUk=
+	t=1719346724; cv=none; b=R7CWpW8iWUt+ISR8+vVKJcvOAzlFTmLNf/wZKP/Aj/yxezP/xnN5S7sLBZ3DhPkkyuVdzevaRLlV1ThMJtv7wcNCMpCm5FNY2S3u98CqrXxl21JcWj+tDQ8wx/cMgXYz0WGtveo4UIcAe1cPReHZpgCJRscIuvbOHVqDKZaNlbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719346584; c=relaxed/simple;
-	bh=nWWwFYPj5hSxETQn+GjyApQgH8kPlMG7B9D7jQerNto=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Cb1QodEUlLMgOdomS/yb5PGY7BnT6wUGOTRuvmplgDSl8HK805bI92J4Gq0Ui5HDBCR+r72SLSQL2BidG6yQB9t2dJzFUFBngWKVpnal0S6q6Q9J6o2AIanw8nEI8FeXkf4tXx6UYxWwFeRyP0eXbENymD4Z2FiqwLCUqQCvH3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oHO3cal/; arc=none smtp.client-ip=209.85.167.47
+	s=arc-20240116; t=1719346724; c=relaxed/simple;
+	bh=oCFFyXpS9EO2My7WikIyEOWe4OKBnkUKSgmJOOWdWDU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Stl4mGw2YT7tK4QAvcFdZuFi2KkS240MZoOsmUC5dcwOMNmk8jbA+ivsp+x6bE4K0h9Ps0kriW5gDdgAdD56Af6TkHJmGYcL0nedPGdfLuBIP3xJZQiqnSQnntXKmB2D0MMF3l19NUeMn5nXqtql1oXZIl5sIcin6Gz+IVVcofM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p6mj5BRc; arc=none smtp.client-ip=209.85.128.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52db11b1d31so189916e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:16:22 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-63bd10df78dso55988467b3.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:18:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719346580; x=1719951380; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TkU0X6SUBRJEq9ZcCHQgWMpdIwIb4pG7UUUsMWhF69k=;
-        b=oHO3cal/X/Ww1LYxRquo5wfacNEnukB5iBvKse0Bolrmcw5Jg4TAGUbdH7FdVGnxMZ
-         OTtcQYSVuh7t0YneMkVK+6e8Y4peeSoiWrgOcnCTbTzD773qqMM2bGlCtruVOBfwLxpy
-         Tl2ym1KRY5QNZKU0JuCEu4fuTqh7jQLVrzxsojFXQfkDahGViaK6GZRxXRkW30+pAYop
-         C8mEcX3fZCnBgnzNGYSYpM4kUs7NZhuSX14DULiD2eXBT3QVGb566pNjQqWK14Cg5o2/
-         Fzr/PT8qJpXDWTEpXKWVcNEUKM0FSrYuAcUZYdbuypY9KS4TMmKLYZ+7M0W9TW5Rz802
-         EgHQ==
+        d=linaro.org; s=google; t=1719346722; x=1719951522; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hl0vn1IfpeicnMOwpEfyDxO5oFF0xIRhWfGVIKpdxKk=;
+        b=p6mj5BRcJLU8qmqAFv4cDljoNScjpFzFy41Mb2wMD4Dzav0fd8T8EyQzN1EvRFOGKZ
+         377P9QVpEj5g/pf3OgJwxXCyIC0T8kZW+QESEVLUKT1kbzb2v8yB4xX1WPNlJhpYQU04
+         gcAazYgmuFwsSPrpN8HdMD5bx7il276Y1K/zoJJhgYJjjOVrXtHQMj0D/R2Yvu8+1G27
+         PsogDGsLi3YjWWByhPU9ExrP5+GzmcDJhdGjyAEXSrIvq3nGt9vwOZGmR37qp30CqN4W
+         wX/VhyknH/hrK24awD85+rRfztp86Pm0byCuZjMmZKg90YmA5AtFLVX8jK6Q7K+N6Iyo
+         j7QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719346580; x=1719951380;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1719346722; x=1719951522;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TkU0X6SUBRJEq9ZcCHQgWMpdIwIb4pG7UUUsMWhF69k=;
-        b=Q0zaB4z+8EtqaP0Jl2NBxRNE3ksX/NeVQvpSdyjHndpLmEWh/WigIpL6ylbT4y9DDM
-         YV/4ZMmh78ArdCHCCNYcRTM+KZIiRMjUTznZf4XCdOnGLmfligV7Cwc0x22uvLjG3k8A
-         LcleJDCHNaYJhhrOO7a6lQFmK2/QcHDntmFyMbZNGiJZBEUPGNi/vwXtG/Jj9ItBradX
-         2Pf7chZUOY53ewHmTigK67ktQAVtp/dNexJfm2cMhm7xJNilANCvDhxzs0Hup2sww0Co
-         3SbQE2o8K4iyo/4GmzYvFdDX49YWpbEoigyJgMxNJvkCDnO8o/emfhrRJr2CuiPbnZdP
-         EojA==
-X-Forwarded-Encrypted: i=1; AJvYcCUetIPk5v9Z3q2PaMeZiznuUynhKkLHl/rxgLDeyLHbdKyW31ZNrY877ThTK+jzrFXUvirOk8CxbJoXXeaJ0DfcaMNXeSpSxsojT8ZJ
-X-Gm-Message-State: AOJu0YwkGU9hzNegedNXemKbzmdTKiKoCvxOqdYkV4le9PQ2X0Y9JyWY
-	lPp2fQMlRUpH3LhvT5p+Mv4skWH0e89R66xJBBJBMNZGX10HNsyoS5zg1BLhnvZ+kTqiNLwYCxU
-	KEnI=
-X-Google-Smtp-Source: AGHT+IHtuB4vKKiiL28FswxIZMiWkQFPyJNHVbIyD55OOgZqWimzmngAS1rELc4hJG+TxFn6BdcgKg==
-X-Received: by 2002:ac2:424b:0:b0:52c:ab2c:19c4 with SMTP id 2adb3069b0e04-52cdf7e7a41mr5756139e87.10.1719346579671;
-        Tue, 25 Jun 2024 13:16:19 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cec15c9f2sm360722e87.276.2024.06.25.13.16.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 13:16:18 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 25 Jun 2024 23:16:18 +0300
-Subject: [PATCH] arm64: dts: qcom: pm8916: add temp-alarm thermal zone
+        bh=Hl0vn1IfpeicnMOwpEfyDxO5oFF0xIRhWfGVIKpdxKk=;
+        b=k+iIQWwvgPSzDl1kSkStGKk4SDnFBcg6xtcFIjOc5m2rwtSk5390Nx/xh1XYR8yCj6
+         D69OJsIuithU3V4zHBmKVqIVGBBANoTOIcE/qV3lIqt1Bsl4eVDeqZ/vBV2xnfO4/v+4
+         ZCL4LX+aQL/YZGtjC1Yve1tnjkfZoJPXcnhrD37BMKqUOekWmRk8x2H/FdfGtyGq1lHp
+         SiYnFx+Cx9+SSAgz3BReI/T4N3PNupY7aZEmB0D3xBLcRXWZYd2dvrkz+pJ72/SCGCab
+         inEkHnsnzbkSMmV136iQ5I04L09HHFocWm1uCwA82o1Ic+zcfe5ge0all+75CZOxlU1I
+         YXZw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxFyIzItrA8vldCGbFo7Mg+E6eM82WolSNoQoxZJduh0IuTkEZrUfa6Q0Ymw0ibloE2FaeGgv54JYJ5yO5bp8KGIgMFNpoAU1nFfnq
+X-Gm-Message-State: AOJu0YzjvjMJ1hQic++7dsJ344Ql4b31rdduZX2Hs5QdNaARuPiN0qCA
+	MS2el6HsRorfRQlRdMb9r7+hWFvp1bL4SAF5kEH7TBise9c5Dij514PkFd+yYrLm1qVHqMCCXCC
+	o7eaWsJ7YT66+HkhMZciCKrVk/YlhJ3hUxaUnNQ==
+X-Google-Smtp-Source: AGHT+IGhh7cMGkaHnGaMvg5sqr7zzAMtsWcZCW0A35zu7AxPMIv8wJrJE/YBk35y+kSqxRG2SLUIsYgPhykOiRmUsIc=
+X-Received: by 2002:a81:8547:0:b0:631:8274:1611 with SMTP id
+ 00721157ae682-6433dd74338mr83572967b3.20.1719346722141; Tue, 25 Jun 2024
+ 13:18:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240625-pm8916-tz-v1-1-a4c1f61e92dd@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAJEle2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMyNT3YJcC0tDM92SKt1ki5QUMwMzSxODlGQloPqCotS0zAqwWdGxtbU
- A7MqbglsAAAA=
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1448;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=nWWwFYPj5hSxETQn+GjyApQgH8kPlMG7B9D7jQerNto=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmeyWSrj/UKGLjilr5dmMSckl505jL1GzwPO4+C
- E0kWatUjTKJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnslkgAKCRCLPIo+Aiko
- 1V8WB/sEvBuY7vTlEn6ie74fqpW1GrxDKUq3hybzlXwtR1DbCwD/zT5ZPWZ4Hx6RkxYUFD5gqVc
- vAmTELrvIEjU8bViyXFzMp/Zxv0f99mlGyfxo6/ropn6O2rLlgThRyIrK3AYtyJUp3Sf9CSOVYL
- aQTWE2IpzCp7aUDATZcxoalMQpi6//XshzLmJh3xOatORAabRSFy4fGr1yW9FcWVnInjB7TjQDb
- 9nrTpKtmq+vWTrSwMRNV0+4BrkuTHG/Wm8jdpHrHLoA9KR3oXpKPUJe1cWnZwZv4MpbmT/Ydngv
- h43OBN7A2sBoIteS5eYqiCsz+prvr+f/lmSGCMIUG+veLdeM
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+References: <20240625-adreno_barriers-v2-0-c01f2ef4b62a@linaro.org> <20240625-adreno_barriers-v2-2-c01f2ef4b62a@linaro.org>
+In-Reply-To: <20240625-adreno_barriers-v2-2-c01f2ef4b62a@linaro.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 25 Jun 2024 23:18:30 +0300
+Message-ID: <CAA8EJpqnFEkWx4hq_UDgQ9n5qNj=WjN-Td0+ELGh8hrDpBFjGQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] Revert "drm/msm/a6xx: Poll for GBIF unhalt status
+ in hw_init"
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Akhil P Oommen <quic_akhilpo@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Define the themal zones using the temperature values in stage1 for this
-platform so that the spmi-temp-alarm driver becomes active.
+On Tue, 25 Jun 2024 at 21:54, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>
+> Commit c9707bcbd0f3 ("drm/msm/adreno: De-spaghettify the use of memory
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/boot/dts/qcom/pm8916.dtsi | 31 ++++++++++++++++++++++++++++++-
- 1 file changed, 30 insertions(+), 1 deletion(-)
+ID is not present in next
 
-diff --git a/arch/arm64/boot/dts/qcom/pm8916.dtsi b/arch/arm64/boot/dts/qcom/pm8916.dtsi
-index 4b2e8fb47d2d..2def48f2d101 100644
---- a/arch/arm64/boot/dts/qcom/pm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/pm8916.dtsi
-@@ -4,8 +4,37 @@
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/spmi/spmi.h>
- 
--&spmi_bus {
-+/ {
-+	thermal-zones {
-+		pm8150-thermal {
-+			polling-delay-passive = <100>;
-+
-+			thermal-sensors = <&pm8916_temp>;
-+
-+			trips {
-+				trip0 {
-+					temperature = <105000>;
-+					hysteresis = <0>;
-+					type = "passive";
-+				};
-+
-+				trip1 {
-+					temperature = <125000>;
-+					hysteresis = <0>;
-+					type = "hot";
-+				};
-+
-+				trip2 {
-+					temperature = <145000>;
-+					hysteresis = <0>;
-+					type = "critical";
-+				};
-+			};
-+		};
-+	};
-+};
- 
-+&spmi_bus {
- 	pm8916_0: pmic@0 {
- 		compatible = "qcom,pm8916", "qcom,spmi-pmic";
- 		reg = <0x0 SPMI_USID>;
+> barriers") made some fixups relating to write arrival, ensuring that
+> the GPU's memory interface has *really really really* been told to come
+> out of reset. That in turn rendered the hacky commit being reverted no
+> longer necessary.
+>
+> Get rid of it.
+>
+> This reverts commit b77532803d11f2b03efab2ebfd8c0061cd7f8b30.
 
----
-base-commit: 62c97045b8f720c2eac807a5f38e26c9ed512371
-change-id: 20240625-pm8916-tz-c8dd606940dc
+b77532803d11 ("drm/msm/a6xx: Poll for GBIF unhalt status in hw_init")
 
-Best regards,
+>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 4 ----
+>  1 file changed, 4 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> index 4083d0cad782..03e23eef5126 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -867,10 +867,6 @@ static int hw_init(struct msm_gpu *gpu)
+>                 gpu_read(gpu, REG_A6XX_RBBM_GBIF_HALT);
+>         }
+>
+> -       /* Some GPUs are stubborn and take their sweet time to unhalt GBIF! */
+> -       if (adreno_is_a7xx(adreno_gpu) && a6xx_has_gbif(adreno_gpu))
+> -               spin_until(!gpu_read(gpu, REG_A6XX_GBIF_HALT_ACK));
+> -
+>         gpu_write(gpu, REG_A6XX_RBBM_SECVID_TSB_CNTL, 0);
+>
+>         if (adreno_is_a619_holi(adreno_gpu))
+>
+> --
+> 2.45.2
+>
+
+
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+With best wishes
+Dmitry
 
