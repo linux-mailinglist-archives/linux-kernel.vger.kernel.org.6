@@ -1,157 +1,188 @@
-Return-Path: <linux-kernel+bounces-228754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5BC5916668
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:44:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5A4C91666C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:44:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B9D287CA5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:44:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32AF9B26586
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E89414B973;
-	Tue, 25 Jun 2024 11:44:13 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DC8B14C5BD;
+	Tue, 25 Jun 2024 11:44:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="kySvDD/n"
+Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02761494A0
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4931494A0;
+	Tue, 25 Jun 2024 11:44:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315853; cv=none; b=qMnIvpkLq8bxBBYQuyKe3F9Plra0a0jdyt5aPhOTUOHqHIxzkJWDDlgwHCV8broyaJiZDDdzt6F4p2Wwh04l7WKjzJFlDn4kbP0Kf+85Ruzpu1v3eAddWXxKeJLoat3av6bPi2L5ONgI8bnqU4A43x7a+EA8eG8jqHuhUWG2G/0=
+	t=1719315877; cv=none; b=a5fcAc1nwlLUqnDZUohZ8AMC7v/8wqEMDnH29uOHkHZK+dIBK4Bwzni2pqwP06crRnutLo9nLAUW5Ko8VLzpuHP0QOd4BuINHaMYKG/7Qn/QBGH8cju0MVLwR7Osm4YfGgMgE2MqX3sfHR3V6PfArASjx/i0ck+lbs8nPi/JsWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315853; c=relaxed/simple;
-	bh=4OdVZANUBZdomjUgbpqvZtAztIJDon54DfzXWoNKkLA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BDnGTBVUKZRfJZ3R0ErIGLAsmseXlZuMF3JQAU/Bs7BYlTDOMM1U93U6e6LV9GIM5e1cord39eOj5qVD6UY7KcJyzfQX0Jwtg1SnHZu5lpmmCMWLQCRAP5GnRFuXgBaFsGkz9pVdeBBXPy/edC0UfjDtD0wD3TccQreTh9Ceayg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.105])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W7jYJ3z5XzxSv5;
-	Tue, 25 Jun 2024 19:39:48 +0800 (CST)
-Received: from dggpemd100004.china.huawei.com (unknown [7.185.36.20])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4F72E140415;
-	Tue, 25 Jun 2024 19:44:07 +0800 (CST)
-Received: from [10.67.109.211] (10.67.109.211) by
- dggpemd100004.china.huawei.com (7.185.36.20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 25 Jun 2024 19:44:07 +0800
-Message-ID: <8841edbc-dd65-452c-a459-b5ce42e289d9@huawei.com>
-Date: Tue, 25 Jun 2024 19:44:06 +0800
+	s=arc-20240116; t=1719315877; c=relaxed/simple;
+	bh=eeVUGRc/d2AhjYvp2iaZcYGrK1l23XGEMp6ntMJF5uQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=Djm7tVed9faKIuXL83PRLCglU4sV/Q98yQgs4TEtCaJOmwFqLEv4HFCBJZjCYG/h6XuI5zJrc3Styq5gK5K6uXFK7FTOEZK3WdkcGDK2re1Q4nYWY/ndVLD34exzgPXXziBTYDr+wpJLfZ1FqRF3Orc1sWh+Y99nPuaa3wSorck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=kySvDD/n; arc=none smtp.client-ip=80.241.56.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4W7jfd2YL4z9sWC;
+	Tue, 25 Jun 2024 13:44:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1719315865;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=MKFoJ3j4KB+I/qDQQrYOSbOqrOpG0UvaNnSzD6LfMBw=;
+	b=kySvDD/nXc/Hs9+I7BRh+UVlcdHThmgtpTwEvLXk5xkZmwR4voWwC7i/AoHPW7N8Qyz76C
+	w/GloDHjcxSc80CoscheghvDuGACxOpuxG/giKR9ACXpRnHGkylrWsiVSCwDZsSCRpdvmI
+	+HdzdxyF7SQ/6egiwEy9WGIinvnY9yQKWDNZgBZHRNaVOBXZIC5ysurjSeD//gFYn1/HUR
+	WL+KpqBXAPZZ341CRvrnc3LAanWaineXW4jOE2aSDS9lCg1X9zVJtGSx5gS3Kf7WLqxwp/
+	Ey7ZR4VtDu61rjCQoGAUvMA+FYVWvc+bIE33AhIc9nd4QbLaSUBGRzzvYCOBIQ==
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: david@fromorbit.com,
+	willy@infradead.org,
+	chandan.babu@oracle.com,
+	djwong@kernel.org,
+	brauner@kernel.org,
+	akpm@linux-foundation.org
+Cc: linux-kernel@vger.kernel.org,
+	yang@os.amperecomputing.com,
+	linux-mm@kvack.org,
+	john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org,
+	hare@suse.de,
+	p.raghav@samsung.com,
+	mcgrof@kernel.org,
+	gost.dev@samsung.com,
+	cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org,
+	kernel@pankajraghav.com,
+	hch@lst.de,
+	Zi Yan <zi.yan@sent.com>
+Subject: [PATCH v8 00/10] enable bs > ps in XFS
+Date: Tue, 25 Jun 2024 11:44:10 +0000
+Message-ID: <20240625114420.719014-1-kernel@pankajraghav.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] RISC-V: Dynamically allocate cpumasks and further
- increase range and default value of NR_CPUS
-Content-Language: en-US
-To: Andrew Jones <ajones@ventanamicro.com>
-CC: <linux-riscv@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<paul.walmsley@sifive.com>, <palmer@dabbelt.com>, <aou@eecs.berkeley.edu>
-References: <20240614075306.357861-1-liuyuntao12@huawei.com>
- <20240625-c1c3b9fcb6ee148294d4ceb4@orel>
-From: "liuyuntao (F)" <liuyuntao12@huawei.com>
-In-Reply-To: <20240625-c1c3b9fcb6ee148294d4ceb4@orel>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpemd100004.china.huawei.com (7.185.36.20)
+Content-Transfer-Encoding: 8bit
+
+From: Pankaj Raghav <p.raghav@samsung.com>
+
+This is the eight version of the series that enables block size > page size
+(Large Block Size) in XFS.
+The context and motivation can be seen in cover letter of the RFC v1 [0].
+We also recorded a talk about this effort at LPC [1], if someone would
+like more context on this effort.
+
+A lot of emphasis has been put on testing using kdevops, starting with an XFS
+baseline [3]. The testing has been split into regression and progression.
+
+Regression testing:
+In regression testing, we ran the whole test suite to check for regressions on
+existing profiles due to the page cache changes.
+
+I also ran split_huge_page_test selftest on XFS filesystem to check for
+huge page splits in min order chunks is done correctly.
+
+No regressions were found with these patches added on top.
+
+Progression testing:
+For progression testing, we tested for 8k, 16k, 32k and 64k block sizes.  To
+compare it with existing support, an ARM VM with 64k base page system (without
+our patches) was used as a reference to check for actual failures due to LBS
+support in a 4k base page size system.
+
+There are some tests that assumes block size < page size that needs to be fixed.
+We have a tree with fixes for xfstests [4], most of the changes have been posted
+already, and only a few minor changes need to be posted. Already part of these
+changes has been upstreamed to fstests, and new tests have also been written and
+are out for review, namely for mmap zeroing-around corner cases, compaction
+and fsstress races on mm, and stress testing folio truncation on file mapped
+folios.
+
+No new failures were found with the LBS support.
+
+We've done some preliminary performance tests with fio on XFS on 4k block size
+against pmem and NVMe with buffered IO and Direct IO on vanilla Vs + these
+patches applied, and detected no regressions.
+
+We also wrote an eBPF tool called blkalgn [5] to see if IO sent to the device
+is aligned and at least filesystem block size in length.
+
+For those who want this in a git tree we have this up on a kdevops
+large-block-minorder-for-next-v8 tag [6].
+
+[0] https://lore.kernel.org/lkml/20230915183848.1018717-1-kernel@pankajraghav.com/
+[1] https://www.youtube.com/watch?v=ar72r5Xf7x4
+[2] https://lkml.kernel.org/r/20240501153120.4094530-1-willy@infradead.org
+[3] https://github.com/linux-kdevops/kdevops/blob/master/docs/xfs-bugs.md
+489 non-critical issues and 55 critical issues. We've determined and reported
+that the 55 critical issues have all fall into 5 common  XFS asserts or hung
+tasks  and 2 memory management asserts.
+[4] https://github.com/linux-kdevops/fstests/tree/lbs-fixes
+[5] https://github.com/iovisor/bcc/pull/4813
+[6] https://github.com/linux-kdevops/linux/
+[7] https://lore.kernel.org/linux-kernel/Zl20pc-YlIWCSy6Z@casper.infradead.org/#t
+
+Changes since v7:
+- Move by min_nrpages in page_cache_ra_unbounded if we found a folio as
+  we don't have a stable reference.
+- Rename iomap_init to iomap_pagecache_init and add a new iomap_dio_init
+  and mark the zero_fs_64k memory as RO.
+- Simplified calculation in xfs_sb_validate_fsb_count().
+- Collected RVB from willy, Darrick and Hannes.
+
+Dave Chinner (1):
+  xfs: use kvmalloc for xattr buffers
+
+Luis Chamberlain (1):
+  mm: split a folio in minimum folio order chunks
+
+Matthew Wilcox (Oracle) (1):
+  fs: Allow fine-grained control of folio sizes
+
+Pankaj Raghav (7):
+  filemap: allocate mapping_min_order folios in the page cache
+  readahead: allocate folios with mapping_min_order in readahead
+  filemap: cap PTE range to be created to allowed zero fill in
+    folio_map_range()
+  iomap: fix iomap_dio_zero() for fs bs > system page size
+  xfs: expose block size in stat
+  xfs: make the calculation generic in xfs_sb_validate_fsb_count()
+  xfs: enable block size larger than page size support
+
+ fs/iomap/buffered-io.c        |   4 +-
+ fs/iomap/direct-io.c          |  30 +++++++++-
+ fs/xfs/libxfs/xfs_attr_leaf.c |  15 ++---
+ fs/xfs/libxfs/xfs_ialloc.c    |   5 ++
+ fs/xfs/libxfs/xfs_shared.h    |   3 +
+ fs/xfs/xfs_icache.c           |   6 +-
+ fs/xfs/xfs_iops.c             |   2 +-
+ fs/xfs/xfs_mount.c            |   8 ++-
+ fs/xfs/xfs_super.c            |  18 +++---
+ include/linux/huge_mm.h       |  14 +++--
+ include/linux/pagemap.h       | 109 +++++++++++++++++++++++++++++-----
+ mm/filemap.c                  |  36 +++++++----
+ mm/huge_memory.c              |  55 +++++++++++++++--
+ mm/readahead.c                |  85 +++++++++++++++++++-------
+ 14 files changed, 309 insertions(+), 81 deletions(-)
 
 
+base-commit: b992b79ca8bc336fa8e2c80990b5af80ed8f36fd
+-- 
+2.44.1
 
-On 2024/6/25 19:11, Andrew Jones wrote:
-> On Fri, Jun 14, 2024 at 07:53:06AM GMT, Yuntao Liu wrote:
->> Currently default NR_CPUS is 64 for riscv64, since the latest QEMU virt
->> machine supports up to 512 CPUS, so set default NR_CPUS 512 for riscv64.
->>
->> Under the promotion of RISC-V International and related chip
->> manufacturers, RISC-V has also begun to enter the server market, which
->> demands higher performance. Other major architectures (such as ARM64,
->> x86_64, MIPS, etc) already have a higher range, so further increase
->> this range up to 4096 for riscv64.
->>
->> Due to the fact that increasing NR_CPUS enlarges the size of cpumasks,
->> there is a concern that this could significantly impact stack usage,
->> especially for code that allocates cpumasks on the stack. To address
->> this, we have the option to enable CPUMASK_OFFSTACK, which prevents
->> cpumasks from being allocated on the stack. we choose to enable this
->> feature only when NR_CPUS is greater than 512, why 512, since then
->> the kernel size with offstack is smaller.
-> 
-> This isn't the reason why Arm decided to start at 512, afaict. The reason
-> for Arm was because hackbench did better with onstack for 256. What are
-> the hackbench results for riscv?
-
-Okay, I will add the test results of hacktest soon.
-
-> 
->>
->> vmlinux size comparison(difference to vmlinux_onstack_NR_CPUS baseline):
->>
->> NR_CPUS     256         512         1024        2048        4096
->> onstack     19814536    19840760    19880584    19969672    20141704
->> offstack    19819144    19840936    19880480    19968544    20135456
->> difference  +0.023%     +0.001%     -0.001%     -0.001      -0.031%
->> is_smaller  n           n           y           y           y
-> 
-> Since the savings are almost nothing we must not have too many global
-> cpumasks. But I'm in favor of ensuring stack depths stay under control,
-> so turning on CPUMASK_OFFSTACK sounds good to me in general.
-> 
->>
->> Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
->> ---
->>   arch/riscv/Kconfig | 5 +++--
->>   1 file changed, 3 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->> index 0525ee2d63c7..5960713b3bf9 100644
->> --- a/arch/riscv/Kconfig
->> +++ b/arch/riscv/Kconfig
->> @@ -77,6 +77,7 @@ config RISCV
->>   	select CLINT_TIMER if RISCV_M_MODE
->>   	select CLONE_BACKWARDS
->>   	select COMMON_CLK
->> +	select CPUMASK_OFFSTACK if NR_CPUS > 512
->>   	select CPU_PM if CPU_IDLE || HIBERNATION || SUSPEND
->>   	select EDAC_SUPPORT
->>   	select FRAME_POINTER if PERF_EVENTS || (FUNCTION_TRACER && !DYNAMIC_FTRACE)
->> @@ -428,11 +429,11 @@ config SCHED_MC
->>   config NR_CPUS
->>   	int "Maximum number of CPUs (2-512)"
->>   	depends on SMP
->> -	range 2 512 if !RISCV_SBI_V01
->> +	range 2 4096 if !RISCV_SBI_V01
->>   	range 2 32 if RISCV_SBI_V01 && 32BIT
->>   	range 2 64 if RISCV_SBI_V01 && 64BIT
->>   	default "32" if 32BIT
->> -	default "64" if 64BIT
->> +	default "512" if 64BIT
-> 
-> This is somewhat reasonable, even if nothing is going to use this for
-> quite a while, since it'll help avoid bugs popping up when NR_CPUS gets
-> bumped later, but it feels excessive right now for riscv, so I'm a bit
-> on the fence about it. Maybe if hackbench doesn't show any issues we
-> could turn CPUMASK_OFFSTACK on for a smaller NR_CPUS and also select
-> a smaller default?
-> 
-> Thanks,
-> drew
-> 
->>   
->>   config HOTPLUG_CPU
->>   	bool "Support for hot-pluggable CPUs"
->> -- 
->> 2.34.1
->>
->>
->> _______________________________________________
->> linux-riscv mailing list
->> linux-riscv@lists.infradead.org
->> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
