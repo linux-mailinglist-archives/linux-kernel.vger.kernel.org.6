@@ -1,162 +1,181 @@
-Return-Path: <linux-kernel+bounces-228361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16CE1915ED0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:20:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CCD8915ED3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95F0D2822C5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:20:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F18611F23061
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 416F4145FE6;
-	Tue, 25 Jun 2024 06:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80AF0145FE5;
+	Tue, 25 Jun 2024 06:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="CtxiYSjQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YAnLVk2l"
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE2D13A416;
-	Tue, 25 Jun 2024 06:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DB26143889
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719296420; cv=none; b=IVINpC9qxmoYwpiDB2OmAtNJZXX5MyrxjPoXOpD8Ug82QXUJ6qT/6JaTjpTFA65Sepaa8knfb7kGDiF1PGEc/5K1EEzwNQAyr3+rmmCgBdEb6wspIKVuVcyNBWNN+c6r4uHRQJY1u0/yp6LvrjC20ux4hA4tenTPzdy6qVKBiLY=
+	t=1719296500; cv=none; b=irjuOwo7vSL5JjRrIKRblOaT6a/ToLbstwWWwxygEs/eCPqtr2Ur64hQmChJjCXmqBVPme0LsdPPWxRLPMIb9aAfKmGcZ9gBwSkx+vEXwU4IR8nQQ5evbjneHvCM6FTXskeJuoGO12bxwGF5WXV5hoYAWRAsDSCJTMdu+ElPnSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719296420; c=relaxed/simple;
-	bh=V1K4/G+lu8I5KlDy4hOS2Sn0j0A0MQzyQoBb5221FTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nCALIOn967nx4XpTQLWZTPDe5JgcwGi0zs1KgTXvzzn9WWlU/Obxt8xrWVrQlwE7sIDvA72MImFrc0HFAeXG4gl0k5VkcsFDLyEUHLW08+uXnaaLxo4yDNYKOXGPmT5LErR8fJHRAsI/8OGpN6Z0Cj20LhE0ZvsZOnvFGkDam5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=CtxiYSjQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74AE5C32781;
-	Tue, 25 Jun 2024 06:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1719296419;
-	bh=V1K4/G+lu8I5KlDy4hOS2Sn0j0A0MQzyQoBb5221FTQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CtxiYSjQv8K6uwhULeWsR7uduFWLTbw9AZUCh644aC01WXB2ETu54Eb8BpjjPk0gh
-	 RvcM/LT0u06IcsRLmzKpE/Z57nT1PLvKC9QEyOxDdixwU6MCBWm1Wy8bUCTVX+isVV
-	 yRrqQSItP8Poq9B9f9nv+991vjIEJglTrlp6EW0o=
-Date: Tue, 25 Jun 2024 08:20:06 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Tony Lindgren <tony.lindgren@linux.intel.com>
-Cc: Petr Mladek <pmladek@suse.com>,
-	Linus Torvalds <torvalds@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] Fixes for console command line ordering
-Message-ID: <2024062551-hubcap-bauble-fae5@gregkh>
-References: <20240620124541.164931-1-tony.lindgren@linux.intel.com>
- <ZnWRup3MvcVQ4MX8@pathway.suse.cz>
- <2024062403-skid-gotten-7585@gregkh>
- <ZnpRozsdw6zbjqze@tlindgre-MOBL1>
+	s=arc-20240116; t=1719296500; c=relaxed/simple;
+	bh=kAfwh5gzgxt0EW6r8Fn9CS9SSFL4R/qfOsvvYvQ27Us=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FW5jCM6770S95Kc8n55yt7TrrfAGwD5bkHQYxIpXsR7yAQNOHtEqbqvnobGiolT2Hlcv6zbvFaV7ZNYiR9n9QBYavmP2OxzIZv1CTAAww+bHymrs0wTNwXBhRzQ3fDdHM/HYAOh8DV6q2km1YweZotLru+GufIA0FuZ5BFTA108=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YAnLVk2l; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-63bd10df78dso47941937b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 23:21:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719296498; x=1719901298; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=E8h+QAt+AnCIi8f4bWuVBQN+cusYRxI2Lf5DdexkiOQ=;
+        b=YAnLVk2lBEyA3IyFJcUcu5xhJjvYj2pGDdR/2JAHjMnAdlwjiRWGQh3vz7wnDN/xPa
+         kGFQOXlVjNefINWinXz1krF7LtLmJtXTAmMMjY7MqGWRNteTdCak6pK/29GLX4eEteXi
+         ebj/35kXz10ZSNQOkMVqhyUL6ANUVzmAtavHDExz3Lpag5z4fJidH5TfAG47u/qsyd0A
+         jZW5gn+9wyTYFr8SRp55r2lsybbhWnXZ5DmjW7uxF2UEW2DLBRVahoc0I/RBKt7UNhU8
+         FJp+EZx+v+y16ajsYPul4kMrVbOX+9OM/fmr1tvCFCE/2VeF0ieBCLaNQ1WoStOfWWZi
+         kU0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719296498; x=1719901298;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=E8h+QAt+AnCIi8f4bWuVBQN+cusYRxI2Lf5DdexkiOQ=;
+        b=gCpMqrILdDTP6g/wmewT/PgK4Xq53Dm5oZZlMgZJaL8xeWb6YkbVdTPKyDN0F9Q+KZ
+         8RoFRqVadx6cxJgGHuWvW8B31ieneS3TISzS4WTHzz1W/WNkc+dozrzS+jg1zcCOQNGG
+         r9rld7e9NXSxWA5Q/tvWMrEsUxTZezzpiLMN1oEmVrJoHgaHYyMwNkgkJtGdruchBCWl
+         29Q9+bX6fP0XZSQWi1Q11Zr081Ta/b4DJNDLMzQab1kraDPOA7hJZWbGJ6Xv2rged85D
+         1krMjoWnFB/rDNtwxDKRyWga3YJTqG/S2jQm899bySneUmHwOUmiA+l6JEUu0wqsgAXH
+         Il4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUg8HGrmp7CiWJijuWziKmcEFtUioG7ccdPaR8MmgteiMCIbGnXcYrAK22i+EV9gpPsREyetyp6eyNR+XQ8YtUekBMd7iuHu+pjJAAZ
+X-Gm-Message-State: AOJu0Yw6fDp4lM/gL1f/ocXkS8zdbEijfMxxv5t+nF0mF2CwPTxpzdJh
+	fQRHLsDqysChuxRhtJzxpQ4gd+wroMk4crNdVqnpSfnnu+/T+/H56BGn6x3nZRb+i02UdkujSNA
+	mW8+BOmpWQ1dzy84gXLM2uHDis9xpb6JoVr2P0A==
+X-Google-Smtp-Source: AGHT+IE+hPsnqRrxvUEK/lDnk62xZtQsZKqDpaowdgDDlT6ocbFhNfJnHF1nQyY0YgiVL/7XWxu0RPc4/5enaupC53s=
+X-Received: by 2002:a81:8547:0:b0:631:8274:1611 with SMTP id
+ 00721157ae682-6433dd74338mr64895967b3.20.1719296498073; Mon, 24 Jun 2024
+ 23:21:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnpRozsdw6zbjqze@tlindgre-MOBL1>
+References: <20240623-drm-bridge-connector-fix-hdmi-reset-v2-0-8590d44912ce@linaro.org>
+ <20240623-drm-bridge-connector-fix-hdmi-reset-v2-2-8590d44912ce@linaro.org>
+ <99ff549c-f5c4-dc9c-42f3-396dc3d29d6b@quicinc.com> <CAA8EJppcH-z275m6xDQaigsxmVhnfJkLVsq68GHLFoAq_p_2GA@mail.gmail.com>
+ <30fa4e53-5a03-4030-2be5-f383a1c60077@quicinc.com>
+In-Reply-To: <30fa4e53-5a03-4030-2be5-f383a1c60077@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 25 Jun 2024 09:21:27 +0300
+Message-ID: <CAA8EJpo_dBDqLUVH-SkufhFchu64rhC+vkhVBFdt++E4pdCrQg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] drm/connector: automatically set immutable flag
+ for max_bpc property
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
+	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	"igt-dev@lists.freedesktop.org" <igt-dev@lists.freedesktop.org>, Petri Latvala <adrinael@adrinael.net>, 
+	Kamil Konieczny <kamil.konieczny@linux.intel.com>, 
+	=?UTF-8?B?VmlsbGUgU3lyasOkbMOk?= <ville.syrjala@linux.intel.com>, 
+	Rob Clark <robdclark@gmail.com>, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 25, 2024 at 08:12:03AM +0300, Tony Lindgren wrote:
-> On Mon, Jun 24, 2024 at 03:35:39PM +0200, Greg Kroah-Hartman wrote:
-> > On Fri, Jun 21, 2024 at 04:44:10PM +0200, Petr Mladek wrote:
-> > > Added Linus into Cc.
-> > > 
-> > > On Thu 2024-06-20 15:45:25, Tony Lindgren wrote:
-> > > > Hi,
-> > > > 
-> > > > Recent changes to add support for DEVNAME:0.0 style consoles caused a
-> > > > regression with the preferred console order where the last console on
-> > > > the kernel command line is no longer the preferred console.
-> > > > 
-> > > > The following four changes fix the issue using Petr's suggestion that
-> > > > does not involve calling __add_preferred_console() later on again, and
-> > > > adds the deferred consoles to the console_cmdline[] directly to be
-> > > > updated when the console is ready.
-> > > > 
-> > > > We revert the earlier printk related changes, and then add back the
-> > > > DEVNAME:0.0 functionality based on Petr's code snippet. And we end up
-> > > > reducing the code quite a bit too this way.
-> > > > 
-> > > > And we also revert all the unusable serial core console quirk handling,
-> > > > it does not do anything for the legacy "ttyS" named consoles. And then
-> > > > we add a minimal serial_base_match_and_update_preferred_console().
-> > > > 
-> > > > The reason we want DEVNAME:0.0 style consoles is it helps addressing the
-> > > > console based on the connected serial port controller device rather than
-> > > > using the hardcoded ttyS addressing. And that helps with issues related
-> > > > to the console moving around after togging the HSUART option in the BIOS,
-> > > > or when new ports are enabled in devicetree and aliases are not updated.
-> > > > 
-> > > > Tony Lindgren (4):
-> > > >   printk: Revert add_preferred_console_match() related commits
-> > > >   printk: Add match_devname_and_update_preferred_console()
-> > > >   serial: core: Revert unusable console quirk handling
-> > > >   serial: core: Add serial_base_match_and_update_preferred_console()
-> > > > 
-> > > >  drivers/tty/serial/8250/8250_core.c  |   5 -
-> > > >  drivers/tty/serial/serial_base.h     |  22 +---
-> > > >  drivers/tty/serial/serial_base_bus.c | 116 +++------------------
-> > > >  drivers/tty/serial/serial_core.c     |   2 +-
-> > > >  include/linux/printk.h               |   5 +-
-> > > >  kernel/printk/Makefile               |   2 +-
-> > > >  kernel/printk/conopt.c               | 146 ---------------------------
-> > > >  kernel/printk/console_cmdline.h      |   7 +-
-> > > >  kernel/printk/printk.c               | 122 ++++++++++++++++------
-> > > >  9 files changed, 112 insertions(+), 315 deletions(-)
-> > > >  delete mode 100644 kernel/printk/conopt.c
-> > > 
-> > > The patchset looks ready for linux-next. And I have pushed it
-> > > into printk/linux.git, branch for-6.10-register-console-devname.
-> > > 
-> > > I am not sure about the mainline. We need to fix the regression in 6.10.
-> > > The change is not trivial and rc5 is knocking on the doors.
-> > > 
-> > > Unfortunately, the patchset intermixes reverts and new code.
-> > > So that it can't be used for simple revert as is.
-> > > 
-> > > I am quite confident that the new code works as expected.
-> > > It changes tricky code but the logic of the change is quite
-> > > straightforward.
-> > > 
-> > > 
-> > > I see three solutions:
-> > > 
-> > > 1. Linus could merge the changes directly into rc5.
-> > > 
-> > > 2. I could send a pull request after it survives few days in
-> > >    linux-next.
-> > > 
-> > > 3. Or we rework the patchset. And do pure revert for 6.10 and
-> > >    add the feature a clean way for-6.11.
-> > 
-> > Pure revert for 6.10 might be good, as it's late in the cycle.  Let me
-> > know the git ids and I can do that.
-> 
-> Here's the list of git ids to revert:
-> 
-> $ git log --abbrev=12 --pretty=format:"%h (\"%s\")" v6.9..v6.10-rc5 \
-> --author="Tony Lindgren" kernel/printk drivers/tty/ Documentation/admin-guide/
-> b20172ca6bf4 ("serial: core: Fix ifdef for serial base console functions")
-> 4547cd76f08a ("serial: 8250: Fix add preferred console for serial8250_isa_init_ports()")
-> 5c3a766e9f05 ("Documentation: kernel-parameters: Add DEVNAME:0.0 format for serial ports")
-> a8b04cfe7dad ("serial: 8250: Add preferred console in serial8250_isa_init_ports()")
-> a0f32e2dd998 ("serial: core: Handle serial console options")
-> 787a1cabac01 ("serial: core: Add support for DEVNAME:0.0 style naming for kernel console")
-> b73c9cbe4f1f ("printk: Flag register_console() if console is set on command line")
-> 8a831c584e6e ("printk: Don't try to parse DEVNAME:0.0 console options")
-> f03e8c1060f8 ("printk: Save console options for add_preferred_console_match()")
+On Tue, 25 Jun 2024 at 01:56, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>
+>
+>
+> On 6/24/2024 3:46 PM, Dmitry Baryshkov wrote:
+> > On Tue, 25 Jun 2024 at 01:39, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+> >>
+> >> + IGT dev
+> >>
+> >> On 6/22/2024 10:40 PM, Dmitry Baryshkov wrote:
+> >>> With the introduction of the HDMI Connector framework the driver might
+> >>> end up creating the max_bpc property with min = max = 8. IGT insists
+> >>> that such properties carry the 'immutable' flag. Automatically set the
+> >>> flag if the driver asks for the max_bpc property with min == max.
+> >>>
+> >>
+> >> This change does not look right to me.
+> >>
+> >> I wonder why we need this check because DRM_MODE_PROP_IMMUTABLE means
+> >> that as per the doc, userspace cannot change the property.
+> >>
+> >>            * DRM_MODE_PROP_IMMUTABLE
+> >>            *     Set for properties whose values cannot be changed by
+> >>            *     userspace. The kernel is allowed to update the value of
+> >> these
+> >>            *     properties. This is generally used to expose probe state to
+> >>            *     userspace, e.g. the EDID, or the connector path property
+> >> on DP
+> >>            *     MST sinks. Kernel can update the value of an immutable
+> >> property
+> >>            *     by calling drm_object_property_set_value().
+> >>            */
+> >>
+> >> Here we are allowing userspace to change max_bpc
+> >>
+> >>
+> >> drm_atomic_connector_set_property()
+> >> {
+> >>          **********
+> >>
+> >>           } else if (property == connector->max_bpc_property) {
+> >>                   state->max_requested_bpc = val;
+> >>
+> >>          **********
+> >> }
+> >>
+> >> I believe you are referring to this IGT check right?
+> >>
+> >> https://gitlab.freedesktop.org/drm/igt-gpu-tools/-/blob/master/tests/kms_properties.c#L428
+> >
+> > Yes
+> >
+> >>
+> >> I think we should fix IGT in this case unless there is some reason we
+> >> are missing. Because just because it has the same min and max does not
+> >> mean its immutable by the doc of the IMMUTABLE flag.
+> >
+> > Well, having the same min and max means that it is impossible to
+> > change the property. So the property is immutable, but doesn't have
+> > the flag.
+> >
+>
+> True, then does DRM_MODE_PROP_IMMUTABLE need a doc update too indicating
+> that even if the min and max is same, property will be interpreted as
+> immutable.
 
-All now reverted, thanks!
+Granted that I'm only doing it for max_bpc property I don't think so.
 
-greg k-h
+>
+> >>
+> >>
+> >>> Fixes: aadb3e16b8f3 ("drm/connector: hdmi: Add output BPC to the connector state")
+> >>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >>> ---
+> >>>    drivers/gpu/drm/drm_connector.c | 7 ++++++-
+> >>>    1 file changed, 6 insertions(+), 1 deletion(-)
+> >
+> > With best wishes
+> > Dmitry
+
+
+
+-- 
+With best wishes
+Dmitry
 
