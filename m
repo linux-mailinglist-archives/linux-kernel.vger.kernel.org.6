@@ -1,196 +1,257 @@
-Return-Path: <linux-kernel+bounces-228661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C10916510
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:17:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACAC0916516
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60494282D9F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62C2B2868F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0667914A0B9;
-	Tue, 25 Jun 2024 10:17:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A225F14AD19;
+	Tue, 25 Jun 2024 10:17:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="V6zxDNXL"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EetOLNzQ"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2055.outbound.protection.outlook.com [40.107.244.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93BFC11CA0
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719310653; cv=none; b=fIWN1NsauWVgyVqFVewkU1Kwx9/swDGOPaAgthL2R2QjhOQmQg+gxZ6u8YD+RT25vwmx94cAifp6Fv7cr+HB0JJJp9VVQcJSKPBmUTEhbCxGGkCmW2f0M0w8sjB8P+BfccKeNlTxLGc7YJorz5Qkvqw/2MEo47GWMfQyrZTigeU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719310653; c=relaxed/simple;
-	bh=HzFn6hlZX+xNjsfsGjJz3g1L8FVuTDoVuj7D16m47/Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=am5n8HNfeo/o3xg9I5IW5kP6WN5aulqHwfrMKAw/s9DrhrNJF5rGLdqk4hjGLFB1a3iAF3F7fyf4OB3D8tOmCUrA4lTGod6RwsqNo5fsKqUlvbf3VyqiJ3LosKEQOoM5Yoky9j03BSpTo7/q0YCaWncSHVvH6Su5AyJCJoBbks4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=V6zxDNXL; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d07464aa9so5143962a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:17:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1719310649; x=1719915449; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GDqEDuqIncS3i916UUmtAInZv3cnZ3dEG8y4UiZ8Edc=;
-        b=V6zxDNXLdKFZ3iu9XYxoLq24Yu8+xKrkE4iG0Umg5tEy5kj0P+H144FJZDNWy0M/4S
-         3EHmNUifzaJjGlqOtUjln5YvY7/VaZTEoFULAAeb0AC2SA6MI0NDagWI37lviRtU+10q
-         Lz8jxmH0eH+X52ZkM7EPFhCb7h5FWcIsIHri80DmfrlknjqZHThKuqrCxIB5llR0zvhB
-         NvsZAgWsBqCdWuXNCeeCq8C17CJBPQVN1SRwCtImfojgbJVbE0037NbDx8CsHcpaBCog
-         Qk9o7jbUz9n3/AAByoMETVXvD03M9EX1ivdoXrPlbO0sq3nAKTcfvOM2y2nYPRAaahpe
-         LlXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719310649; x=1719915449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GDqEDuqIncS3i916UUmtAInZv3cnZ3dEG8y4UiZ8Edc=;
-        b=fmV+o3B47OHZ/oYUwCmV6wSVxeFe7owCHYkTuGjp/TZWCPjpzLyuqueklAbL3c5n3u
-         0nzcDfOFP12F9A8Im4ruBCZ04gp2dDMj8+X7c2F7wk529J/Hi0QKIM+YP5TNaKuhftfr
-         HTFUIJX/JKWj4oLAWXJ5eANuUSsUZKOZsAbVCnm77w0lUQFztuSPA/xkpqw9vSaGM5YO
-         dY8ajekYJLQCyxt8xG3JGVFciFQvoADdrCFn5gCCln+KBcM/xHS+Y9shXT+pKkIrKP9O
-         alf3GswC3N2Hdnpr/iGVZh8zaguDUjlztoOlGTkhZcLqEiuWNzrGCad0MnYZFVsIVzgY
-         f7rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEPSRRoMW0uBxvTK4fN+o2odwxiS6X2KfZ72EctfajWyxNlCNF2QUnTYZEDx/2d9fgwDB5O3+uFkHV2GMnlk6lnUtFfC2k3MTEedLg
-X-Gm-Message-State: AOJu0Ywkv2PvM1CoFGp21QSq+dS7LE546zG1zHzV3FUOpShro0lsPseT
-	Eqxo9vBE2AZUkK5c4YCDV9FnPt/M1pA/Ti00vj7/MYJ9wZXKAQeivQhh5qASQ71l8nRjky6fdTM
-	DFsLpTexbF5Hqv1d7BcBxrkhu1NP3fvKIRu5YEg==
-X-Google-Smtp-Source: AGHT+IHnz+jiST2ObwGwpRhNGzS4fV2cd2JpTXgrhQgW5flC1P8gqI9c+i+tCJ6lqjrnPn65ZSzmomPtcHF6WLtuRP0=
-X-Received: by 2002:a50:c054:0:b0:57d:669:cafb with SMTP id
- 4fb4d7f45d1cf-57d70075c73mr1867346a12.40.1719310648918; Tue, 25 Jun 2024
- 03:17:28 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D02C911CA0;
+	Tue, 25 Jun 2024 10:17:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719310665; cv=fail; b=DXzQDLRwGlkkpCWQmTVIrtVs8lE4ZI9AuxfAoEW0pqPiVt+V/lt9xrDzMVqjM7a9BdbZlfwiwJ5f2oCmeZrSqWbwdvqvZF4Q5NghKdhjD8jNG5jgl75Un//7mla176vgJPM981G3l8zNoOgdnB0VxJKh/U6g+e1FcBm3FoW0z7Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719310665; c=relaxed/simple;
+	bh=k94I1gWz+j9bcppidOJz4yAfYzbmjTc1zhQVasYMTmQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=rDm6vwFkQpt4g1Z3x2WOu9MG/pXEEkjddW29Q6Mzsb41NZNYsyBjIu/iHgomvZQBFYrbJMthCsyWdMadmyPODZhpio19hPHN5mu9XBJb59l7OZ7qMohOGUNfIIbi6R7yB+ULHualrOVA5OB9PvNVvSBhBM/b7JV9EiWvzQsHFhg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EetOLNzQ; arc=fail smtp.client-ip=40.107.244.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Velp7aQpv6qkqxZGpewMBOimiz2IEgowemVdOiYX2MyRFTBb/DWGVRoFCUej+rqA3r2f4/fjmMoi+1CUErjp19E1P348mYdxYb3cBGFJY8gJFL944FE5Y58VhuzSkbydRC2E/wkURp0jn36Cx01x7yVtBBGLccj5TIGzR7cC/ZlBA/hxGn1P13M+vL9jcnp4oHej1BV2/STV1kJFcjkcStzgkE8luLTvl17ErDJeIC+LrB3R7UO7LBgFXffU33hcuAZRLq3AjOffny4wnquhUmwQ//91PHq8pw+NDyf3QCp7JwrftTiRfXfhOm+qVtJUz+uw0qKibJHHim8zuXihIQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QmH9vCMi8a31IKprLiY4EsvDq86RHo7WtjGnycjDj+Y=;
+ b=deiujtraHvEVlityyxJg0PSZFpDWdPkpjBdiifJy+Fnsmr5OdQgOpkMWMgjhZWKO33rJCB7oEoksh/nD9rDIKSS7wNNoxf6ubbIW2orXwP1Yf2QMifWy3660cmO8Nlwgjhykk7ATgRm+jd0YZeI23gPo98ulnZ8N4E+RK709lTbNOqmtaydgnQ7rT7n3Ui0OHu465zrCWRj2p9S6t/0mNNtL5gTiNwNC/81l26xCVbdHO/o9xjtnNtjKKZ02rmtYlO6V2q+739BBnZrSMe4MRErBSTNnDeDP0US/HgkCA4to8FWFb/3M8SE4hvX+PF2JXEsItdsMcwmCpgDrbKKAQQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QmH9vCMi8a31IKprLiY4EsvDq86RHo7WtjGnycjDj+Y=;
+ b=EetOLNzQ9xpW/2A9DdHwWRdjIIrYKfoa2Am+12tNZ+zIHtV84sDBsMJfm22oetbaCPUPF6CSqAA+5aU4rEqXszSd6P6CRFacXulATX9kAY6r2iwL0zvFKIGkpdI4bW+XUSNCnY3eKPFRuygx+J8pOkffUdAjnfH62iF8WBGGifT5h06NkDLpkiRzkr0ehoUP+aiR7B/QDuooYRQcFgZ70e0OMNRXaduvY/zgAzfJB7lYWZB+DGYDeoSesLXJcjuDmnXDIU6SmQ9IW9hfVtDfw2+nEDKF6MMcY7xOv+r5BvB6Akdy+7fLS5SB7lN+W4bcLLKeCrmyc9oBNK+xnWo/0A==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com (2603:10b6:5:35e::8) by
+ SN7PR12MB7812.namprd12.prod.outlook.com (2603:10b6:806:329::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Tue, 25 Jun
+ 2024 10:17:39 +0000
+Received: from CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ae68:3461:c09b:e6e3]) by CO6PR12MB5444.namprd12.prod.outlook.com
+ ([fe80::ae68:3461:c09b:e6e3%6]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
+ 10:17:39 +0000
+Message-ID: <ef376c13-2ca8-4f25-9cbd-fdca37351190@nvidia.com>
+Date: Tue, 25 Jun 2024 11:17:28 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH sched_ext/for-6.11] sched_ext: Drop tools_clean target
+ from the top-level Makefile
+To: Tejun Heo <tj@kernel.org>
+Cc: torvalds@linux-foundation.org, mingo@redhat.com, peterz@infradead.org,
+ juri.lelli@redhat.com, vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+ rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+ bristot@redhat.com, vschneid@redhat.com, ast@kernel.org,
+ daniel@iogearbox.net, andrii@kernel.org, martin.lau@kernel.org,
+ joshdon@google.com, brho@google.com, pjt@google.com, derkling@google.com,
+ haoluo@google.com, dvernet@meta.com, dschatzberg@meta.com,
+ dskarlat@cs.cmu.edu, riel@surriel.com, changwoo@igalia.com,
+ himadrics@inria.fr, memxor@gmail.com, andrea.righi@canonical.com,
+ joel@joelfernandes.org, linux-kernel@vger.kernel.org, bpf@vger.kernel.org,
+ kernel-team@meta.com,
+ "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+References: <20240618212056.2833381-1-tj@kernel.org>
+ <20240618212056.2833381-11-tj@kernel.org>
+ <ac065f1f-8754-4626-95db-2c9fcf02567b@nvidia.com>
+ <ZnokS4YL71S61g71@slm.duckdns.org>
+From: Jon Hunter <jonathanh@nvidia.com>
+Content-Language: en-US
+In-Reply-To: <ZnokS4YL71S61g71@slm.duckdns.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO6P123CA0008.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:338::16) To CO6PR12MB5444.namprd12.prod.outlook.com
+ (2603:10b6:5:35e::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605-atrium-neuron-c2512b34d3da@spud> <CAK9=C2XH7-RdVpojX8GNW-WFTyChW=sTOWs8_kHgsjiFYwzg+g@mail.gmail.com>
- <40a7d568-3855-48fb-a73c-339e1790f12f@ghiti.fr> <20240621-viewless-mural-f5992a247992@wendy>
- <edcd3957-0720-4ab4-bdda-58752304a53a@ghiti.fr> <20240621-9bf9365533a2f8f97cbf1f5e@orel>
- <20240621-glutton-platonic-2ec41021b81b@spud> <20240621-a56e848050ebbf1f7394e51f@orel>
- <20240621-surging-flounder-58a653747e1d@spud> <20240621-8422c24612ae40600f349f7c@orel>
- <20240622-stride-unworn-6e3270a326e5@spud>
-In-Reply-To: <20240622-stride-unworn-6e3270a326e5@spud>
-From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Date: Tue, 25 Jun 2024 18:17:16 +0800
-Message-ID: <CAMWQL2hDUp4+5W4nOM0R5J-uZtkm9hUTwD0BxPBFuzR7eMpHjQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/4] dt-bindings: riscv: Add Svade and Svadu Entries
-To: Conor Dooley <conor@kernel.org>
-Cc: Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Conor Dooley <conor.dooley@microchip.com>, Anup Patel <apatel@ventanamicro.com>, 
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	kvm-riscv@lists.infradead.org, kvm@vger.kernel.org, greentime.hu@sifive.com, 
-	vincent.chen@sifive.com, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO6PR12MB5444:EE_|SN7PR12MB7812:EE_
+X-MS-Office365-Filtering-Correlation-Id: a47cff92-47ac-4a24-f955-08dc95000ab2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|7416011|366013|1800799021;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aTJIaUkyMjFQOWh3YytybjJITG1aZFVVSFNKdEZBTjhST2NXVWRXYXFxakow?=
+ =?utf-8?B?dlplemZFUmlsV0lIN3N1VVcxWitjbVRGOE5RNGFFNU1QMW1EVFJxQ3l5UGhh?=
+ =?utf-8?B?aEh3cVZzRkN3L1NuNnNoSkFQWSsxNElTTG1aWm80ZnhrV3dZS0ZLRjFqWHQ2?=
+ =?utf-8?B?TWZ3Nlo5UWVvQVVFbEMzTEgxaDNqdEl1ZFNMbzBLdkFXdG1USXIwM2IyckNi?=
+ =?utf-8?B?ZldIZU83dldNamtEYmRSbHlnbmxKVnRoZFpWeXF5MlJQZk94NFNyM2diVmxn?=
+ =?utf-8?B?eUFBUHBhV3pjZGkzVi9wcTFOeC9aQ0ROV0M1R3p3ZkdlcGpqRjJVTnIvaUR5?=
+ =?utf-8?B?RU9ta3FMeWVQcVFITzlXSEpqYU52VExKU21QUmdLYUhncjMvaEdxelJNR2pE?=
+ =?utf-8?B?Rk9CaUVPZ3ZSVTRNMG9JdHM3VXBxamgydmNGRE5BNUlReTdZTWlvSWZ1UkYx?=
+ =?utf-8?B?T1pwbW9ndkxLUEExN0ptSEk1MjF5K0FoSVZoSHVzUXhwOS9wclJOK2Z6K0Jh?=
+ =?utf-8?B?amxzbjdFdHBGdzB6M1k4MUFZUTY3NmhVQStPOHNDQ3d3N1BvTy94M2ZYYUZQ?=
+ =?utf-8?B?dkV2ZkhLM1ZFM3FDb0RxcStQK0dIK0xlWHd1ZTVob2dXbHdVMFFML1ZXbE1S?=
+ =?utf-8?B?cU9EZXpvOENBSFNKN2VBNjBaMmlYdjRlYXBXTzhxVGdObFRqRTZCZk5JZFNL?=
+ =?utf-8?B?RUFSRHFqZm0ycTRSMWNFRWdJTktkaVU2OHRzN3o4NGNOUE9jQVlMVUhDOGxW?=
+ =?utf-8?B?SzU4SXdTV1ptcG5GbktWOU5wM1duRlNkRHRKZ3lZbXhOaEREVGhGSW9UOXF5?=
+ =?utf-8?B?azlULzcxY3M0SHllZ2pscU1hQVdLdHJ0N1NsLzVEOXh1MXhzU1pMLzNINDhm?=
+ =?utf-8?B?dnkrMDdNNnJEMm5qU0ZNTkM5UnhlSWFubW1OQTRBeGhabWRmK3o3UE5jNnNH?=
+ =?utf-8?B?VW93bE0zZmNjYW1SWHV3NVlNbDQyK2l0d1N2UzdiQ1dXbllraU9FcDNaZHh0?=
+ =?utf-8?B?dEJsV3NPVDFYa1BiMTZpMFpadU5mMkJJUDNXS05VOE43SUlpNmg0cFpWeHd2?=
+ =?utf-8?B?ZjRlQ2ZFbmtXbjgzcytOd0kyYjhkQ1U4bzNtZzNXMk1nVVJPTWpWL1Fudkpy?=
+ =?utf-8?B?SDFidTNKUlVveVk1Zjd0QlVKaE4wcTNUN0FMUWRLOGxWOXlsMFRyWUpvT0Fx?=
+ =?utf-8?B?Q3h5QVBja0gwR0NDcUpQV2tDRVpKSmR5WnBBSE9WNG9jZFQ2SWFENk1YQmwr?=
+ =?utf-8?B?dVY1NGpLRzlRWEphR09OUVFseHFneXhKRzE0Zk9OU0dCblJEQnFYYXU0V2RS?=
+ =?utf-8?B?U1NCQ1k0Z1pCOHdRZWs4a1JZRm9JNWxUcFlxVDVNN3VIcDRFVlBRQ2F2WnVh?=
+ =?utf-8?B?OW5BTjJkUEt2bkU4bWlpRHZWKzc0RjdkVFZTVFBod2JxNVVYYktPcHljdjBK?=
+ =?utf-8?B?ZzNpb2ltNlFuMWdMR0JpNHRNM1N3bU9Ra0UreUFQSjRlRU1WVU5UUS9XVWUv?=
+ =?utf-8?B?ZDgzVEZ0bVRPVWR5cDVGcko2bDU5S1hZZUxuMlFOdUU5Mk9WZW5POWFBSURJ?=
+ =?utf-8?B?Vm9FZThmQ0tWd1FGcU5rSU1EU1ZLMkpjeEpxS0Fva29xNURjWGlXbk81S21m?=
+ =?utf-8?B?UUlHQVRHNjIxZWYzWEl4bU9VeTZjTStUUDh6NVRyZEJpallOb25GVDE2MWRG?=
+ =?utf-8?B?L0xweWVsS2RnYnM0dkxLZ25RZDByWW9LcVhCZ3VOdVBwYXlBRnYyU2E0VS9Y?=
+ =?utf-8?B?L2RtUjF4TUVQdzEvTzIxZEQzRXVqckZiRERqbG1Kd005blJZaUdwMWZOa1l3?=
+ =?utf-8?B?QVFqaVEwY2FuZitGUmJDdz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO6PR12MB5444.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(7416011)(366013)(1800799021);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Znd3UVlNSENDSGdEc2JzUTl3NHhKS0FOMTVuVS9HZjlLeXFBR21wamppTS8v?=
+ =?utf-8?B?OUZXQnlQSmc2Q3k1UUlrdG5reGZ1dVRHWEF0ZjFpSXA2NmJIVEFwdTN5elVu?=
+ =?utf-8?B?MUlWYWFEMWhLR01KV1NvWVNKQk45eXFxQVhyVTdvdHJBVFpFdk9iOXhSVHJK?=
+ =?utf-8?B?d2ZhVGxKdUJGbVM2cVdtbE1QeGxZY2h0eG00TFg3b2pnaG53RnFXUlBxb3lw?=
+ =?utf-8?B?NkljS0ZIdWxSTkhIQnQ4RkdOd245TzJISGN0SHJoemV1S3UxS0M5djA3TWVT?=
+ =?utf-8?B?UVBqNHhtNU51Y3pSMEc5UXNwVUZEZ0R1QkJxYlVtTlU3elJ3b0lET3oxbkpB?=
+ =?utf-8?B?UG9ERnh2bG53TWJNQmZDcWlDcDJ3ay9WV3VNQ3hXekhGVXR1ckFjZnc1djFx?=
+ =?utf-8?B?dWFUZzFSWEdvMFZ4clREc2ZtREFDS1lVVlhtUmEveW9JSlJQeU93NFF5WmNH?=
+ =?utf-8?B?c3Izbit4ay9abVVMMUVlQXJwek9hSU9DdkVhU1ZyVTlaWUdCRHp4RGErNUZS?=
+ =?utf-8?B?UUJQTzV0V1hoZ2lhYkx1MjExUmwvTFJPU3AwSDBsOEwxSEtHVCtLNWRWcjRM?=
+ =?utf-8?B?VjhRN1BzTEZwWTBSSUh6ZUEzZDFOYjFydDI4V09lRk1Vb0t5NmVjeFJJM3pu?=
+ =?utf-8?B?Sjk1Z0t6S05ocGU3eW5tci9nS2hvd2YvdU5Zenl2eWR6MnllUytBc3VHd29r?=
+ =?utf-8?B?SzErT25OeU5NU0g3VmREL0s1M0dnOEQxOHd3Z0dXUWJRSlJydmhuem1IaW1u?=
+ =?utf-8?B?dnNzZGNiL3lBR0tKQzhOTThRZHBwRWFBSDd2RnJqVlNRRFpmUHJaUmpuUVJo?=
+ =?utf-8?B?N1JhTTIyaldteU5kRXFNTThiVzNubUw5QmV0NFdYdGlnc2xMYnNuRnBiMXNE?=
+ =?utf-8?B?N0dYZjMvMDUySGZnVVh5WVBkWVloYjBHUWFKcUhaRjhkVXdiZE5ESWU2NUxq?=
+ =?utf-8?B?ZFM2MmxYWVVLM1ZIWHBVRGtJSE5mS1VsMU13UE9wK0tBY2EvL0FMRENUY0Nn?=
+ =?utf-8?B?c0RQMlV0b2ZGRGR0WE9tRExYbVRtZ1NSOGxhT280SktFR3hnWWxsSHdSSXBw?=
+ =?utf-8?B?ZXd5NmxxZWs4L3NrQ0ZhQjdqVTVNL3B3Z1hoT2RleEtHUXdDdXBwZ24xT1NP?=
+ =?utf-8?B?dkVqdDZnR2MyYXlvZFAyMitqYmZxajZrVGwxeWlDcm04YlhVSm9mdzA4OUMr?=
+ =?utf-8?B?L2lFRkNCYkVOdFk2STFJQ3hoTlIxWldma25GY3VpR1c2ZHJUWGczZ2dSNlpm?=
+ =?utf-8?B?Z0dQMEE2NnNyVWYxZmRxSyt2TldKdEdIdFpvSmxZMHBTZnVjUHhXSHNMbndw?=
+ =?utf-8?B?OFI4MzV3V3UwT1duZFJnalZzcFpQWGlWRC9PVXprR0NjWGtURE4vb1pXQ3Iz?=
+ =?utf-8?B?Tjk2Z243elJ3bi82aEtFR2htV29IMDI4RHFtYzVnMktQWDZvdjBXcVg3aWNY?=
+ =?utf-8?B?QkdNUHpYQjlTYWJxZXhXNWlWSElGdlV0V3lreU1GRXg2WkFJTWc0dVF1dXU0?=
+ =?utf-8?B?NUpPRzg4Q2RqVU5SdFJQQTljd0ZVcW5xTHNZNDB1aHM4SDVFQzB4WG9pamk0?=
+ =?utf-8?B?WFVvNWtYQ0ZsMlN5MTQzdld4a3JWNlZ5aHhIZ09iNElhZlFoUFVPRnhlVVJo?=
+ =?utf-8?B?YjZjVnRJNWpiYWNVdzdyalBnVzVhdTRaektMaExINjh6T284KysrWWZNUWNt?=
+ =?utf-8?B?L1NEWXpRVWNiNklBUSsxWnBmNTRXRGxTK0hzMUV4UW85OE9FN1krc2Y0ZzdN?=
+ =?utf-8?B?SGsyTTVOUk5KTFBkdjd6aEN3U1hBTDNtdWh3U1RrSlFDb2wxUXhRNUdaUG1m?=
+ =?utf-8?B?NFY0TjNvcldnSGVwbmM4eUNNS0QyMG9WM2VCZzFCblhlMlIza0pKS3BMQStn?=
+ =?utf-8?B?WnlZMUVDNHRrUUhyS1JOekg4Y0IwQ1lOYm9uNTUvSmpuWU9EYnYvdUtXblgx?=
+ =?utf-8?B?bmpDb3RzS3hjb0ZCYnFiSEVyejFCWllVMDRweGZ4TWdHQmY2TG9yVCtrS2tQ?=
+ =?utf-8?B?UklzZ2RmZDVITncrMFZCR2lZY1RtY2QxczEvdnk4RmFkQUJzL3MrSlV2ZlQ4?=
+ =?utf-8?B?cWxSZ01IS2ZwWGJielE3WXdMUU5jRHp1T1VOQmE2T3Q3aFU1Nk00TnU1K2dS?=
+ =?utf-8?B?bUJXUS82T3JpVWZtZnBHaGM1NnZHUHhqUWJjRWF2ZnE2OFJIY1FwU0FDdmpF?=
+ =?utf-8?B?YmpqTllYcVpEaW9ONEJ6Y3FjUjRMbkd1VzA0WkM5VSsrbFc3YU40VVh6ZEZv?=
+ =?utf-8?B?TEhvWHp2K1VkejZ2WUluL0lEd3FnPT0=?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a47cff92-47ac-4a24-f955-08dc95000ab2
+X-MS-Exchange-CrossTenant-AuthSource: CO6PR12MB5444.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 10:17:39.4373
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: XpM2wCWpy0kLqzWqnQkiubXEID69T5TlZ52AAn8saa3R1xotZncwIBMjbmmgKWLHcxhY9BAQshHYpYJhsSxc8Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7812
 
-Hi Conor,
 
-On Sat, Jun 22, 2024 at 8:01=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Fri, Jun 21, 2024 at 05:08:01PM +0200, Andrew Jones wrote:
-> > On Fri, Jun 21, 2024 at 03:58:18PM GMT, Conor Dooley wrote:
-> > > On Fri, Jun 21, 2024 at 04:52:09PM +0200, Andrew Jones wrote:
-> > > > On Fri, Jun 21, 2024 at 03:04:47PM GMT, Conor Dooley wrote:
-> > > > > On Fri, Jun 21, 2024 at 03:15:10PM +0200, Andrew Jones wrote:
-> > > > > > On Fri, Jun 21, 2024 at 02:42:15PM GMT, Alexandre Ghiti wrote:
-> > >
-> > > > > > I understand the concern; old SBI implementations will leave sv=
-adu in the
-> > > > > > DT but not actually enable it. Then, since svade may not be in =
-the DT if
-> > > > > > the platform doesn't support it or it was left out on purpose, =
-Linux will
-> > > > > > only see svadu and get unexpected exceptions. This is something=
- we could
-> > > > > > force easily with QEMU and an SBI implementation which doesn't =
-do anything
-> > > > > > for svadu. I hope vendors of real platforms, which typically pr=
-ovide their
-> > > > > > own firmware and DTs, would get this right, though, especially =
-since Linux
-> > > > > > should fail fast in their testing when they get it wrong.
-> > > > >
-> > > > > I'll admit, I wasn't really thinking here about something like QE=
-MU that
-> > > > > puts extensions into the dtb before their exact meanings are deci=
-ded
-> > > > > upon. I almost only ever think about "real" systems, and in those=
- cases
-> > > > > I would expect that if you can update the representation of the h=
-ardware
-> > > > > provided to (or by the firmware to Linux) with new properties, th=
-en updating
-> > > > > the firmware itself should be possible.
-> > > > >
-> > > > > Does QEMU have the this exact problem at the moment? I know it pu=
-ts
-> > > > > Svadu in the max cpu, but does it enable the behaviour by default=
-, even
-> > > > > without the SBI implementation asking for it?
-> > > >
-> > > > Yes, because QEMU has done hardware A/D updating since it first sta=
-rted
-> > > > supporting riscv, which means it did svadu when neither svadu nor s=
-vade
-> > > > were in the DT. The "fix" for that was to ensure we have svadu and =
-!svade
-> > > > by default, which means we've perfectly realized Alexandre's concer=
-n...
-> > > > We should be able to change the named cpu types that don't support =
-svadu
-> > > > to only have svade in their DTs, since that would actually be fixin=
-g those
-> > > > cpu types, but we'll need to discuss how to proceed with the generi=
-c cpu
-> > > > types like 'max'.
-> > >
-> > > Correct me please, since I think I am misunderstanding: At the moment
-> > > QEMU does A/D updating whether or not the SBI implantation asks for i=
-t,
-> > > with the max CPU. The SBI implementation doesn't understand Svadu and
-> > > won't strip it. The kernel will get a DT with Svadu in it, but Svadu =
-will
-> > > be enabled, so it is not a problem.
-> >
-> > Oh, of course you're right! I managed to reverse things some odd number=
- of
-> > times (more than once!) in my head and ended up backwards...
->
-> I mean, I've been really confused about this whole thing the entire
-> time, so ye..
->
-> Speaking of QEMU, what happens if I try to turn on svade and svadu in
-> QEMU? It looks like there's some handling of it that does things
-> conditionally based !svade && svade, but I couldn't tell if it would do
-> what we are describing in this thread.
+On 25/06/2024 02:58, Tejun Heo wrote:
+> 2a52ca7c9896 ("sched_ext: Add scx_simple and scx_example_qmap example
+> schedulers") added the tools_clean target which is triggered by mrproper.
+> The tools_clean target triggers the sched_ext_clean target in tools/. This
+> unfortunately makes mrproper fail when no BTF enabled kernel image is found:
+> 
+>    Makefile:83: *** Cannot find a vmlinux for VMLINUX_BTF at any of "  ../../vmlinux /sys/kernel/btf/vmlinux/boot/vmlinux-4.15.0-136-generic".  Stop.
+>    Makefile:192: recipe for target 'sched_ext_clean' failed
+>    make[2]: *** [sched_ext_clean] Error 2
+>    Makefile:1361: recipe for target 'sched_ext' failed
+>    make[1]: *** [sched_ext] Error 2
+>    Makefile:240: recipe for target '__sub-make' failed
+>    make: *** [__sub-make] Error 2
+> 
+> Clean targets shouldn't fail like this but also it's really odd for mrproper
+> to single out and trigger the sched_ext_clean target when no other clean
+> targets under tools/ are triggered.
+> 
+> Fix builds by dropping the tools_clean target from the top-level Makefile.
+> The offending Makefile line is shared across BPF targets under tools/. Let's
+> revisit them later.
+> 
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Link: http://lkml.kernel.org/r/ac065f1f-8754-4626-95db-2c9fcf02567b@nvidia.com
+> Fixes: 2a52ca7c9896 ("sched_ext: Add scx_simple and scx_example_qmap example schedulers")
+> Cc: David Vernet <void@manifault.com>
+> ---
+> Jon, this should fix it. I'll route this through sched_ext/for-6.11.
+> 
+> Thanks.
+> 
+>   Makefile |    8 +-------
+>   1 file changed, 1 insertion(+), 7 deletions(-)
+> 
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1355,12 +1355,6 @@ ifneq ($(wildcard $(resolve_btfids_O)),)
+>   	$(Q)$(MAKE) -sC $(srctree)/tools/bpf/resolve_btfids O=$(resolve_btfids_O) clean
+>   endif
+>   
+> -tools-clean-targets := sched_ext
+> -PHONY += $(tools-clean-targets)
+> -$(tools-clean-targets):
+> -	$(Q)$(MAKE) -sC tools $@_clean
+> -tools_clean: $(tools-clean-targets)
+> -
+>   # Clear a bunch of variables before executing the submake
+>   ifeq ($(quiet),silent_)
+>   tools_silent=s
+> @@ -1533,7 +1527,7 @@ PHONY += $(mrproper-dirs) mrproper
+>   $(mrproper-dirs):
+>   	$(Q)$(MAKE) $(clean)=$(patsubst _mrproper_%,%,$@)
+>   
+> -mrproper: clean $(mrproper-dirs) tools_clean
+> +mrproper: clean $(mrproper-dirs)
+>   	$(call cmd,rmfiles)
+>   	@find . $(RCS_FIND_IGNORE) \
+>   		\( -name '*.rmeta' \) \
 
-When both Svadu and Svade are specified in QEMU, the reset value of
-menvcfg.ADUE is 0:
+Fix it for me!
 
-env->menvcfg =3D (cpu->cfg.ext_svpbmt ? MENVCFG_PBMTE : 0) |
-                (!cpu->cfg.ext_svade && cpu->cfg.ext_svadu ?
-                MENVCFG_ADUE : 0);
+Tested-by: Jon Hunter <jonathanh@nvidia.com>
 
-The runtime behavior depends on menvcfg.ADUE:
+Thanks!
+Jon
 
-    bool svade =3D riscv_cpu_cfg(env)->ext_svade;
-    bool svadu =3D riscv_cpu_cfg(env)->ext_svadu;
-    bool adue =3D svadu ? env->menvcfg & MENVCFG_ADUE : !svade;
-
-Regardless of whether OpenSBI supports the Svadu enablement,
-Supervisor can assume that QEMU uses Svade when it doesn't
-explicitly turn on Svadu.
-
-Regards,
-Yong-Xuan
+-- 
+nvpublic
 
