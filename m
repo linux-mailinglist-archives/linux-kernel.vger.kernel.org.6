@@ -1,309 +1,175 @@
-Return-Path: <linux-kernel+bounces-229671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A74E9172A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:43:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98A979172A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:44:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F64E1F22B4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:43:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE5141C22161
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3DD17D8A5;
-	Tue, 25 Jun 2024 20:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 724CC17D8B2;
+	Tue, 25 Jun 2024 20:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4LqxZHu"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZSoxOjae"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E634C6E;
-	Tue, 25 Jun 2024 20:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F9954C6E;
+	Tue, 25 Jun 2024 20:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719348188; cv=none; b=dyksV+MhIaMXBYQb7Lb02dRov7+DW7BCnhn22XsFT0K65XyeYtcB4d1AMMTyrOMjua4qPrxe9mKEHFiv8LNe3VxQ4A/kpGBUzHUbm9yX0v0aYav2I7IXuKxQY8yOCkVuaaSecWTrBz1J6wKObdieWd0Vby3miQxw0CnRClqwFVo=
+	t=1719348289; cv=none; b=mbD7RT6j7wek+4beT/irDv0TMjTLofA2uI4XI1wJkfUDmrdZMvFEuPL6lbkM91RptwB7dgoiQoRBi3rIyM+9WCwid5ptc2ta7g01qAB9TBBvAjLI+m3g/n6JZzXlqJZENwsvn8B92geZ3Iv+C7u64yz8TUTtB0ZgsvVxZxdejD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719348188; c=relaxed/simple;
-	bh=SgIQlISm+JEe6AUlgigrNQZ3UdBGCoJDsqf2k8CU3oQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oIxMx+BEuGhWxJ7bXSbvqsbj5WSaA1PlSKlseHuC6BvAvj4GlwzTrBTMCC5YBA8eQtDDQcc8RCkJXj/ti4p+eTmqRd2QrNMulbNn53MfcVBDK6jZicWqcXfiKKG3kFqLuPEg0HmgBhWEQtJcWSt/J+hh0uDONiJ+mAUbi0OuV3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4LqxZHu; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7066a3229f4so2635475b3a.2;
-        Tue, 25 Jun 2024 13:43:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719348186; x=1719952986; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=NLL8SJgPfMSPaG996+AhVZnvKnUS9gPFR9s/m8IMdSg=;
-        b=Q4LqxZHuHDeCTyrVQAaUlML6QCdZ0jVPQjTS/qxpPUrWvLdUIQEUxmbgojEiFkjHMR
-         R3XhWBOxK69RcPuHOCI9FKrgd3shHoFlhkxRHycankih3FmyQI8iiEZHljR7gtUt0Vo0
-         QtBLBdBP73AhFQuX5x/jyK9aJZdVcjTpH55EH2Fu/2GumdLQfr404otLlTUJLI44zcuC
-         Hmf22N1ZOYaZDJUGuHnpWdAR5VbiSn3VTOklG/9GrVqHZ+SJbOuO8Pc1xgNtqYkfwhLK
-         +OIXS1/dRv7khcjsk4thfHYQG+TRp4UUfXG4/qYB9cUIgsqgHyfIKaP4mL24tVgkNYfZ
-         R1dw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719348186; x=1719952986;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NLL8SJgPfMSPaG996+AhVZnvKnUS9gPFR9s/m8IMdSg=;
-        b=N0GwRMCJELS0J8C5huL2Krbd137AQnKomTg5vIaTYWXoW4dF9RXGee4vYwn8F6QM++
-         nEzGJNmliQ3A/nNK2byMlXwpgqEGzVqjsECsyEkdi1BzrhufJlmm31qj7AS6y+BDjEUD
-         xfQbA2CABsphYxoNf0gL2tTm48NA/BSafpxxSTqqvRWQXCTc2jiY/MEZuEidOwIS3pOx
-         Pk6SsF7VSJDGCoU/gBr8NRVJiKjlt8hq0GQE3tsd0YS8seepQu4B+GNG3TNcjVk/Urvr
-         Ih2tCoaLmxRojJUi/mg7PmgHNXDN9hnS1rPOlW2Mqv5PJN40Z6/K5ZYRzly3l8ORqwSU
-         d+sA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/+wwfm4F2q9r7eBQIaV0aV/BH9vZ7B10rkO4kZkCCtziFipxnvGrjDZkPKd4i+W0teyjGZjegZUua8oKyMK75kEhbN1RJ+djNbznuR24ieMctVR1QEfeJ0xsFsB1CsZHaTLDl
-X-Gm-Message-State: AOJu0YwMOXHRechRVFtSQ0ZZUy6jy4UDs+aEcC679EfMEo5MGXYxpx7W
-	TjCfOCh/CMUa1v3ckHtxltvbnx20K0wM4tStNaaqg2fv3MzkOYaV
-X-Google-Smtp-Source: AGHT+IHm878UI51B3Q/pdFetH5k9qCqWokx5uxXEiJr77XRqbYHp4Vq4OgbLI6n5DVlb0T1qGnEDhw==
-X-Received: by 2002:a05:6a20:a895:b0:1b8:831f:c684 with SMTP id adf61e73a8af0-1bcf8001361mr7386254637.53.1719348185828;
-        Tue, 25 Jun 2024 13:43:05 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f10fasm85825645ad.15.2024.06.25.13.43.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 13:43:04 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <61177a72-3fb5-43f6-9456-3980f60159dc@roeck-us.net>
-Date: Tue, 25 Jun 2024 13:43:03 -0700
+	s=arc-20240116; t=1719348289; c=relaxed/simple;
+	bh=7CM1uNcMRbL2WWi9t6emNIXATfxoTn5T2uQeAyRyOpc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BBK63Xi4Cgfj/vRhe1YEvtAR0iAJal3ObRYCYVTXbXQxWHVkZMZOw9CPum2uvz+/7juxYbL1u+uNBeCOUlAWfQjoEZE9hTTUfMXsl+7A7F+a/yoIIJVRH1QfkAC1n+3cfVszHxTp6MLJy05/LjiraFmS+93uospYLMlo5iwLj64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZSoxOjae; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E320EC32781;
+	Tue, 25 Jun 2024 20:44:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719348289;
+	bh=7CM1uNcMRbL2WWi9t6emNIXATfxoTn5T2uQeAyRyOpc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZSoxOjaePp0utIpAiGZ5HHrFRjLeJqUIrPR0INpfQh/LeNfsk6mNhLyjNM1Aa1QRS
+	 +42svbe0+KLxVrWW1yfZSWquZsAxDBl/HcOcj3uyJUiO+lYUrH6xoC57069D8+bpwO
+	 OKKpHr4Kh+MaL3cGvFwa6ob5+5dJWWGQPuoenCRbk7jO9JNoM0fkKIsUYuIhxl8yw7
+	 lF8+ZmWxv8e+/RVY1KwiMbE6x5m+Gueh4SGrte5YbTDFlI82pWR/LRk30MV1xhaMiV
+	 ep/DqQwzTkIRtRRdO63v0pB69Etk5nmYqRJoeYzWqBmRu0GghME9g+FaIrZ3KUqq1m
+	 w+OYi6H6Aff/Q==
+Date: Tue, 25 Jun 2024 21:44:39 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>
+Cc: ak@it-klinger.de, phil@raspberrypi.com, lars@metafoo.de,
+ andriy.shevchenko@linux.intel.com, ang.iglesiasg@gmail.com,
+ mazziesaccount@gmail.com, petre.rodan@subdimension.ro, 579lpy@gmail.com,
+ linus.walleij@linaro.org, semen.protsenko@linaro.org,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Adam Rizkalla
+ <ajarizzo@gmail.com>
+Subject: Re: [PATCH v8 1/3] iio: pressure: bmp280: Generalize read_*()
+ functions
+Message-ID: <20240625214439.245ae81a@jic23-huawei>
+In-Reply-To: <20240623171841.GA202685@vamoiridPC>
+References: <20240617230540.32325-1-vassilisamir@gmail.com>
+	<20240617230540.32325-2-vassilisamir@gmail.com>
+	<20240622102826.2ba446d9@jic23-huawei>
+	<20240622121918.GA123707@vamoiridPC>
+	<20240623172330.0f94cae9@jic23-huawei>
+	<20240623171841.GA202685@vamoiridPC>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5.10 000/770] 5.10.220-rc1 review
-To: Chuck Lever III <chuck.lever@oracle.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-stable <stable@vger.kernel.org>,
- "patches@lists.linux.dev" <patches@lists.linux.dev>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- "shuah@kernel.org" <shuah@kernel.org>,
- "patches@kernelci.org" <patches@kernelci.org>,
- "lkft-triage@lists.linaro.org" <lkft-triage@lists.linaro.org>,
- "pavel@denx.de" <pavel@denx.de>, "jonathanh@nvidia.com"
- <jonathanh@nvidia.com>, "f.fainelli@gmail.com" <f.fainelli@gmail.com>,
- "sudipm.mukherjee@gmail.com" <sudipm.mukherjee@gmail.com>,
- "srw@sladewatkins.net" <srw@sladewatkins.net>,
- "rwarsow@gmx.de" <rwarsow@gmx.de>, "conor@kernel.org" <conor@kernel.org>,
- "allen.lkml@gmail.com" <allen.lkml@gmail.com>,
- "broonie@kernel.org" <broonie@kernel.org>
-References: <20240618123407.280171066@linuxfoundation.org>
- <e8c38e1c-1f9a-47e2-bdf5-55a5c6a4d4ec@roeck-us.net>
- <2024062543-magnifier-licking-ab9e@gregkh>
- <EEE94730-C043-47D8-A50A-47332201B3BF@oracle.com>
- <cf232ba1-a3f3-4931-8775-254d42e261e5@roeck-us.net>
- <B5D1D979-253A-4339-AF15-5DB3B8503698@oracle.com>
- <88a0fdf5-ffc5-4398-88cd-220a3a996164@roeck-us.net>
- <7442B6FD-6EC6-4C4E-A5F7-CDA1174E6DE2@oracle.com>
- <04BEF7A2-EB38-475D-BFD9-2E6B1C2C0972@oracle.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <04BEF7A2-EB38-475D-BFD9-2E6B1C2C0972@oracle.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 6/25/24 12:49, Chuck Lever III wrote:
-> 
-> 
->> On Jun 25, 2024, at 3:40 PM, Chuck Lever III <chuck.lever@oracle.com> wrote:
->>
->>
->>
->>> On Jun 25, 2024, at 3:35 PM, Guenter Roeck <linux@roeck-us.net> wrote:
->>>
->>> On 6/25/24 12:08, Chuck Lever III wrote:
->>>>> On Jun 25, 2024, at 12:29 PM, Guenter Roeck <linux@roeck-us.net> wrote:
->>>>>
->>>>> On 6/25/24 08:13, Chuck Lever III wrote:
->>>>>> Hi -
->>>>>>> On Jun 25, 2024, at 11:04 AM, Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
->>>>>>>
->>>>>>> On Tue, Jun 25, 2024 at 07:48:00AM -0700, Guenter Roeck wrote:
->>>>>>>> On 6/18/24 05:27, Greg Kroah-Hartman wrote:
->>>>>>>>> This is the start of the stable review cycle for the 5.10.220 release.
->>>>>>>>> There are 770 patches in this series, all will be posted as a response
->>>>>>>>> to this one.  If anyone has any issues with these being applied, please
->>>>>>>>> let me know.
->>>>>>>>>
->>>>>>>>> Responses should be made by Thu, 20 Jun 2024 12:32:00 +0000.
->>>>>>>>> Anything received after that time might be too late.
->>>>>>>>>
->>>>>>>>
->>>>>>>> [ ... ]
->>>>>>>>> Chuck Lever <chuck.lever@oracle.com>
->>>>>>>>>     SUNRPC: Prepare for xdr_stream-style decoding on the server-side
->>>>>>>>>
->>>>>>>> The ChromeOS patches robot reports a number of fixes for the patches
->>>>>>>> applied in 5.5.220. This is one example, later fixed with commit
->>>>>>>> 90bfc37b5ab9 ("SUNRPC: Fix svcxdr_init_decode's end-of-buffer
->>>>>>>> calculation"), but there are more. Are those fixes going to be
->>>>>>>> applied in a subsequent release of v5.10.y, was there a reason to
->>>>>>>> not include them, or did they get lost ?
->>>>>>>
->>>>>>> I saw this as well, but when I tried to apply a few, they didn't, so I
->>>>>>> was guessing that Chuck had merged them together into the series.
->>>>>>>
->>>>>>> I'll defer to Chuck on this, this release was all his :)
->>>>>> I did this port months ago, I've been waiting for the dust to
->>>>>> settle on the 6.1 and 5.15 NFSD backports, so I've all but
->>>>>> forgotten the status of individual patches.
->>>>>> If you (Greg or Guenter) send me a list of what you believe is
->>>>>> missing, I can have a look at the individual cases and then
->>>>>> run the finished result through our NFSD CI gauntlet.
->>>>>
->>>>> This is what the robot reported so far:
->>>>>
->>>>> 1242a87da0d8 SUNRPC: Fix svcxdr_init_encode's buflen calculation
->>>>> Fixes: bddfdbcddbe2 ("NFSD: Extract the svcxdr_init_encode() helper")
->>>>> 90bfc37b5ab9 SUNRPC: Fix svcxdr_init_decode's end-of-buffer calculation
->>>>> Fixes: 5191955d6fc6 ("SUNRPC: Prepare for xdr_stream-style decoding on the server-side")
->>>>> 10396f4df8b7 nfsd: hold a lighter-weight client reference over CB_RECALL_ANY
->>>>> Fixes: 44df6f439a17 ("NFSD: add delegation reaper to react to low memory condition")
->>>> My naive search found:
->>>> Checking commit 44df6f439a17 ...
->>>>   upstream fix 10396f4df8b75ff6ab0aa2cd74296565466f2c8d not found
->>>> 10396f4df8b75ff6ab0aa2cd74296565466f2c8d nfsd: hold a lighter-weight client reference over CB_RECALL_ANY
->>>>   upstream fix f385f7d244134246f984975ed34cd75f77de479f is already applied
->>>> Checking commit a2071573d634 ...
->>>>   upstream fix f1aa2eb5ea05ccd1fd92d235346e60e90a1ed949 not found
->>>> f1aa2eb5ea05ccd1fd92d235346e60e90a1ed949 sysctl: fix proc_dobool() usability
->>>> Checking commit bddfdbcddbe2 ...
->>>>   upstream fix 1242a87da0d8cd2a428e96ca68e7ea899b0f4624 not found
->>>> 1242a87da0d8cd2a428e96ca68e7ea899b0f4624 SUNRPC: Fix svcxdr_init_encode's buflen calculation
->>>> Checking commit 9fe61450972d ...     upstream fix 2111c3c0124f7432fe908c036a50abe8733dbf38 not found
->>>> 2111c3c0124f7432fe908c036a50abe8733dbf38 namei: fix kernel-doc for struct renamedata and more
->>>> Checking commit 013c1667cf78 ...     upstream fix 2c0f0f3639562d6e38ee9705303c6457c4936eac not found
->>>> 2c0f0f3639562d6e38ee9705303c6457c4936eac module: correctly exit module_kallsyms_on_each_symbol when fn() != 0
->>>>   upstream fix 1e80d9cb579ed7edd121753eeccce82ff82521b4 not found
->>>> 1e80d9cb579ed7edd121753eeccce82ff82521b4 module: potential uninitialized return in module_kallsyms_on_each_symbol()
->>>> Checking commit 89ff87494c6e ...
->>>>   upstream fix 5c11720767f70d34357d00a15ba5a0ad052c40fe not found
->>>> 5c11720767f70d34357d00a15ba5a0ad052c40fe SUNRPC: Fix a NULL pointer deref in trace_svc_stats_latency()
->>>> Checking commit 5191955d6fc6 ...
->>>>   upstream fix 90bfc37b5ab91c1a6165e3e5cfc49bf04571b762 not found
->>>> 90bfc37b5ab91c1a6165e3e5cfc49bf04571b762 SUNRPC: Fix svcxdr_init_decode's end-of-buffer calculation
->>>>   upstream fix b9f83ffaa0c096b4c832a43964fe6bff3acffe10 not found
->>>> b9f83ffaa0c096b4c832a43964fe6bff3acffe10 SUNRPC: Fix null pointer dereference in svc_rqst_free()
->>>> I'll look into backporting the missing NFSD and SUNRPC patches.
->>>
->>> My list didn't include patches with conflicts. There are a lot of them. Our robot
->>> collects those, but doesn't focus on it. It also doesn't analyze just nfds/SUNRPC
->>> patches, but all of them. I started an analysis to list all the fixes with
->>> conflicts; so far I found about 100 of them. Three are tagged SUNRPC.
->>>
->>> Upstream commit 8e088a20dbe3 ("SUNRPC: add a missing rpc_stat for TCP TLS")
->>> upstream: v6.9-rc7
->>>    Fixes: 1548036ef120 ("nfs: make the rpc_stat per net namespace")
->>>      in linux-5.4.y: 19f51adc778f
->>>      in linux-5.10.y: afdbc21a92a0
->>>      in linux-5.15.y: 7ceb89f4016e
->>>      in linux-6.1.y: 2b7f2d663a96
->>>      in linux-6.6.y: 260333221cf0
->>>      upstream: v6.9-rc1
->>>    Affected branches:
->>>      linux-5.4.y (conflicts - backport needed)
->>>      linux-5.10.y (conflicts - backport needed)
->>>      linux-5.15.y (conflicts - backport needed)
->>>      linux-6.1.y (conflicts - backport needed)
->>>      linux-6.6.y (already applied)
->>>
->>> Upstream commit aed28b7a2d62 ("SUNRPC: Don't dereference xprt->snd_task if it's a cookie")
->>> upstream: v5.17-rc2
->>>    Fixes: e26d9972720e ("SUNRPC: Clean up scheduling of autoclose")
->>>      in linux-5.4.y: 2d6f096476e6
->>>      in linux-5.10.y: 2ab569edd883
->>>      upstream: v5.15-rc1
->>>    Affected branches:
->>>      linux-5.4.y (conflicts - backport needed)
->>>      linux-5.10.y (conflicts - backport needed)
->>>      linux-5.15.y (already applied)
->>>
->>> Upstream commit aad41a7d7cf6 ("SUNRPC: Don't leak sockets in xs_local_connect()")
->>> upstream: v5.18-rc6
->>>    Fixes: f00432063db1 ("SUNRPC: Ensure we flush any closed sockets before xs_xprt_free()")
->>>      in linux-5.4.y: 2f8f6c393b11
->>>      in linux-5.10.y: e68b60ae29de
->>>      in linux-5.15.y: 54f6834b283d
->>>      upstream: v5.18-rc2
->>>    Affected branches:
->>>      linux-5.4.y (conflicts - backport needed)
->>>      linux-5.10.y (conflicts - backport needed)
->>>      linux-5.15.y (conflicts - backport needed)
->>>
->>> I'll send a complete list after the analysis is done.
->>
->> The "NFSD file cache fixes" backports focused on NFSD, not on
->> SUNRPC, and only the NFS server side of affairs. The missing
->> fixes you found are outside of one or both of those areas, so
->> they can go through the usual stable backport process if the
->> NFS client folks care to do that.
-> 
-> Or, to cut this another way: I looked at only the patches that
-> I submitted for v5.10.220; I will take responsibility for
-> ensuring those all have the latest upstream fixes applied,
-> where that is feasible.
-> 
-> Anything else (other subsystems, other LTS kernels) gets the
-> normal stable backport treatment: those subsystem maintainers
-> or their designees have to step up to handle the code work
-> and testing if they view the fix as a priority.
-> 
+On Sun, 23 Jun 2024 19:18:41 +0200
+Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
 
-Sounds good to me.
+> On Sun, Jun 23, 2024 at 05:23:30PM +0100, Jonathan Cameron wrote:
+> > On Sat, 22 Jun 2024 14:19:18 +0200
+> > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> >   
+> > > On Sat, Jun 22, 2024 at 10:28:26AM +0100, Jonathan Cameron wrote:  
+> > > > On Tue, 18 Jun 2024 01:05:38 +0200
+> > > > Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> > > >     
+> > > > > Add the coefficients for the IIO standard units and the IIO value
+> > > > > inside the chip_info structure.
+> > > > > 
+> > > > > Move the calculations for the IIO unit compatibility from inside the
+> > > > > read_{temp,press,humid}() functions and move them to the general
+> > > > > read_raw() function.
+> > > > > 
+> > > > > In this way, all the data for the calculation of the value are
+> > > > > located in the chip_info structure of the respective sensor.
+> > > > > 
+> > > > > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>    
+> > > > Does this incorporate the fix?  I'm a little confused looking at
+> > > > what is visible here, so I'd like Adam to take a look.
+> > > > 
+> > > > Btw, you missed cc'ing Adam.
+> > > >     
+> > > 
+> > > Ah, I only used the output of get_maintainer...  
+> > 
+> > always be careful to sanity check that :)
+> >   
+> > > ...
+> > >     
+> > > > > @@ -518,11 +511,29 @@ static int bmp280_read_raw_impl(struct iio_dev *indio_dev,
+> > > > >  	case IIO_CHAN_INFO_PROCESSED:
+> > > > >  		switch (chan->type) {
+> > > > >  		case IIO_HUMIDITYRELATIVE:
+> > > > > -			return data->chip_info->read_humid(data, val, val2);
+> > > > > +			ret = data->chip_info->read_humid(data, &chan_value);
+> > > > > +			if (ret)
+> > > > > +				return ret;
+> > > > > +
+> > > > > +			*val = data->chip_info->humid_coeffs[0] * chan_value;
+> > > > > +			*val2 = data->chip_info->humid_coeffs[1];
+> > > > > +			return data->chip_info->humid_coeffs_type;
+> > > > >  		case IIO_PRESSURE:
+> > > > > -			return data->chip_info->read_press(data, val, val2);
+> > > > > +			ret = data->chip_info->read_press(data, &chan_value);
+> > > > > +			if (ret)
+> > > > > +				return ret;
+> > > > > +
+> > > > > +			*val = data->chip_info->press_coeffs[0] * chan_value;
+> > > > > +			*val2 = data->chip_info->press_coeffs[1];
+> > > > > +			return data->chip_info->press_coeffs_type;
+> > > > >  		case IIO_TEMP:
+> > > > > -			return data->chip_info->read_temp(data, val, val2);
+> > > > > +			ret = data->chip_info->read_temp(data, &chan_value);
+> > > > > +			if (ret)
+> > > > > +				return ret;
+> > > > > +
+> > > > > +			*val = data->chip_info->temp_coeffs[0] * (s64)chan_value;    
+> > > 
+> > > This is the first difference with the previous version where I incorporated
+> > > the typecasting to (s64).  
+> > 
+> > On a 32 bit platform that will then get pushed into a 32 bit int and overflow
+> > I think.  Back when IIO got started everything was 32 bit so it didn't make sense
+> > to make these 64 bit or indeed to worry about forcing the size.
+> > 
+> > Jonathan
+> >   
+> 
+> Well, I use a 32-bit platform, (BeagleBone Black) and the negative values are
+> handled gracefully with this code. Also, how is that different from the previous
+> code? Instead of doing the typecasting to (s64) in the bmp580_read_temp()
+> function, we do it here. I feel that it is the same piece of code, just in
+> different places.
 
-Thanks,
-Guenter
+The problem, I think, is the storage between those two places is too small.
+It's not about negatives, but rather use that in the extremely large value
+case it might not fit in the 32 bit int behind val so casting that back up
+to 64 bits later won't recover the lost most significant bits.
 
+> What I can do though, for your peace of mind is the following:
+> 
+> Since the problem with overflow comes when we multiply by 1000 in order to have
+> milli-Celsius, what I can do, is to "force" the division with 2^16 to happen
+> first. In this way, they divided value cannot be overflowed. The division will
+> happen inside the bmp580_read_temp() function and let the multiplication happen
+> later by the IIO code. Then we can drop the (s64) from here.
+
+See Adam's reply - that should avoid overflow and preserve accuracy which you
+tend to loose with divide then multiply.
+
+Jonathan
+
+> 
+> How does that sound to you?
+> 
+> Cheers,
+> Vasilis
 
 
