@@ -1,252 +1,282 @@
-Return-Path: <linux-kernel+bounces-229442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83328916FA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:59:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65A17916FAC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:59:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3C1DB23A10
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:59:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19ECB283D79
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E7717838E;
-	Tue, 25 Jun 2024 17:58:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1366417837A;
+	Tue, 25 Jun 2024 17:59:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPLviv+o"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C6mm9Wrf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF941448E0;
-	Tue, 25 Jun 2024 17:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D481448E0;
+	Tue, 25 Jun 2024 17:59:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719338339; cv=none; b=NE0cE5UxBI9FMoyjRgOKML5Ko65uhXUMfDCM2WbiG5fhYePcx2RSCVMgQJxR8Y5B/0sP0aqa3RyXS70LkQD9Nn+VmrjpmJWEKlsPNuFe0p1XbVWbExc8+7Pe05m1GBQUJCqAsGx2+SRpxKOGZ9Al9ctQJ/F/+y4aoOAhKZAQmeA=
+	t=1719338386; cv=none; b=O+5EvQ3UgQYOSL09sa/AafBXKl6MSE206rYeT0j+/fegc+pNlDNvLiu+Tyl6dfVGvDr7kwNCGu30CCoTMFHentXavxNj9ccMt1G5KMGXiMFS78v7xRYad1PpgIghsJUzTEnQFpQqXvbATc4fZUIBWoI+/AlarfSOgKStk3gJuaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719338339; c=relaxed/simple;
-	bh=dURwKATDLlehAHPXMuSR4pXYybdAuMDYGKElo4TfZhA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B2hG5U+kVD+O/zHmK8aLWET6OJcn9O4jnFVtwWYDfkvsJ5yGo5s5uX4dQ6qJj9AZsTq+Nyq04Qo5hFtC5TK0r6e+9zGYNgmmUFYqKSEsA1Opn3B6YNPG+AevM5espl64Yu0U49k0Rw5Tf7yqSL05utLfvWOxui3pEIF4eUjNYyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CPLviv+o; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57d1679ee6eso10008491a12.1;
-        Tue, 25 Jun 2024 10:58:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719338335; x=1719943135; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K/hUof0FwZxWaFMFdvkdkBcaExaL8TwdsNEmc0Yg5VU=;
-        b=CPLviv+o3w2z/812PbcIPCc2bAOgevhqi4seWV2XBnE/lfvTTg1Dz3kMgQwI5TiBQc
-         73RnYXIWYLkphZ1uW9Bfi4rhXfjES3twXFw4jEmdwEwNnB0KxpKp+0hA3CXgpqSAzNYM
-         8AANSe11d6+rUtPe8OlnUN4YPxpcMkN11m4QC4er/U+X3oLpWahMFwa/JeHj9P8Ehs6I
-         f9XnsNqFAWdkYrUZ0PqLfoJNv7XfkBAp3pBGjyn28l5bfVan5+z7uvIVFokj9UMSe8Um
-         GGOFFIqDCg1zd7GMbFCmZC32CjOwlzseIaszOrr/EllyNxAPSCiV5pXs4Bo4X/MJFj8Y
-         cOJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719338335; x=1719943135;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K/hUof0FwZxWaFMFdvkdkBcaExaL8TwdsNEmc0Yg5VU=;
-        b=GnZTTKVFODxieH3eDg1SVE+MVzAq92DSUc2epbeqtO7twAmbyuH68vIEIhYhpK2OUk
-         Nu0vwT77dx1RAxv383HGaLHt1Lr3DSt2/GCtSHKFeSlhKOX9xEz69Ys/DH1ddzYw2Frx
-         SN0lvx638ZA7HxtAPt4dKaz2FdXqHh3Ndvd7KVaRgLdAOlB/sY7YDyiLbGZqCIBfomBT
-         nn2EyvOaeI87MHU9nCNZrTuGy/nIZ1783ehe6MOxCNfKbrc7UnH4VMnJUkXeNCtES3z8
-         PXzKKu6yF5VlF4zfOUtZV7IKlP9uuq7/hoOIFJZsKFiB6Fo3yKsX8AhHVB8chxf9MAxr
-         vjgw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJE+7+6qFyoaqQxh00fmMK8o0KY6c2mlEpebpCb6urkiE1oBbQBf7hzbgeeusRhMbPO1KFkwGWQft7JIru7xitowIlgWMeNWeiquPWVz9kzrJSttCmjBBTy3+aTB0TokmDXAg1MnJLW3D1ItopKU9HfmgDlVmMAIy4iW3J9XvrsnLSuEqY
-X-Gm-Message-State: AOJu0Yw2iD0E7VVId085N40IPIm7r/EpcqVwcmwqMR/A+lzLAk+xcn3J
-	k0lMBv+VlsemrgGybFtsDzGLF+10yWLQw8FBfapAWZM+NfNzzedi
-X-Google-Smtp-Source: AGHT+IEAi1M0VgoPz+C0QjKaJyFdLmOIwZYOyn3re+rQ+6zP9uHd4uQ4Accd1s2F0IX3pMEUHIeSlQ==
-X-Received: by 2002:a17:906:7250:b0:a6f:935b:8777 with SMTP id a640c23a62f3a-a700e707009mr812238966b.25.1719338335215;
-        Tue, 25 Jun 2024 10:58:55 -0700 (PDT)
-Received: from f (cst-prg-81-171.cust.vodafone.cz. [46.135.81.171])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fe81449a4sm401557166b.72.2024.06.25.10.58.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 10:58:54 -0700 (PDT)
-Date: Tue, 25 Jun 2024 19:58:43 +0200
-From: Mateusz Guzik <mjguzik@gmail.com>
-To: "Isaac J. Manjarres" <isaacmanjarres@google.com>
-Cc: tglx@linutronix.de, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, saravanak@google.com, 
-	Manish Varma <varmam@google.com>, Kelly Rossmoyer <krossmo@google.com>, kernel-team@android.com, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5] fs: Improve eventpoll logging to stop indicting
- timerfd
-Message-ID: <4x5wsktkcwt7einzjowricl27pzusx6ggls43zionql7ixi5cz@icbegmuqqxcl>
-References: <20240606172813.2755930-1-isaacmanjarres@google.com>
+	s=arc-20240116; t=1719338386; c=relaxed/simple;
+	bh=sDQffB9oZyzDB8ATdhv1cVWtsRz1caHVEDRP7yqauwU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PZI7N3UAt2ZtFvf4rIKLw9ZuK8qInzTnekfrESQdFLPiMQOeO/p3NlZiTWZD5/cS/4ooveN+KrEFXNdF5nM7v5WrHToku+Rsl3Au0mCr4HsNymnNXkc4/JuJ6SPvoyPvdQuOHtP7NwMXWsLQ8qxlj/X673iBqf5fevUiLE4NRmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C6mm9Wrf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PGaA8q001878;
+	Tue, 25 Jun 2024 17:59:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	UTXlyPMimfPsdML5XnWhbzPWKtt05rNdQQcAZFX6ebk=; b=C6mm9WrfCP2fAyiN
+	uGJmkrE714XbvzqP4lHhTORx/H7Un+7wK4oWGEnUkkI0W+hToVZgQfTkjzDkgREs
+	qkDBuyYfzoemvvFN0b8ABNFUxnZVDf0FLuJ/29hZ5rmqizw7qVkiOHyYicbsy1OM
+	ndUSAq3Y7PhBP2nQhk/v1sFFAIN2VCkytV5Q0X6ThASWCWmG7/24tTt2ThEgve1O
+	5gDiTXp2U3xJSG5sN2zYoLdHyRbPjgD42AN1VegwFXSo34yOMY7wA/j42wBS5e6h
+	YWchrcP76Xk0AL0xnM2LAcajGgTN/LTJWYqsJ7nRMuQAv9slTtMZY7fA56qdXoo0
+	mVIwhg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywmaeyqjt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 17:59:35 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45PHxYDN006098
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 17:59:34 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 25 Jun 2024 10:59:29 -0700
+Date: Tue, 25 Jun 2024 23:29:26 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Rob Clark <robdclark@gmail.com>
+CC: Kiarash Hajian <kiarash8112hajian@gmail.com>,
+        Abhinav Kumar
+	<quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/msm/a6xx: request memory region
+Message-ID: <20240625175926.4xyzwjyx7oxcwnzx@hu-akhilpo-hyd.qualcomm.com>
+References: <20240608-adreno-v1-1-2e470480eee7@gmail.com>
+ <CAF6AEGsd6jfDqV-EOWr+oMjPpVr2S+71VYmp1JoY8xU51eeEEw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="utf-8"
 Content-Disposition: inline
-In-Reply-To: <20240606172813.2755930-1-isaacmanjarres@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAF6AEGsd6jfDqV-EOWr+oMjPpVr2S+71VYmp1JoY8xU51eeEEw@mail.gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 7nTEj92ALSLleOguYyx3PJoc7eZow3XW
+X-Proofpoint-GUID: 7nTEj92ALSLleOguYyx3PJoc7eZow3XW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_13,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ clxscore=1011 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406250132
 
-On Thu, Jun 06, 2024 at 10:28:11AM -0700, Isaac J. Manjarres wrote:
-> From: Manish Varma <varmam@google.com>
+On Fri, Jun 21, 2024 at 02:09:58PM -0700, Rob Clark wrote:
+> On Sat, Jun 8, 2024 at 8:44 AM Kiarash Hajian
+> <kiarash8112hajian@gmail.com> wrote:
+> >
+> > The driver's memory regions are currently just ioremap()ed, but not
+> > reserved through a request. That's not a bug, but having the request is
+> > a little more robust.
+> >
+> > Implement the region-request through the corresponding managed
+> > devres-function.
+> >
+> > Signed-off-by: Kiarash Hajian <kiarash8112hajian@gmail.com>
+> > ---
+> > Changes in v6:
+> >     -Fix compile error
+> >     -Link to v5: https://lore.kernel.org/all/20240607-memory-v1-1-8664f52fc2a1@gmail.com
+> >
+> > Changes in v5:
+> >     - Fix error hanlding problems.
+> >     - Link to v4: https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v4-1-3881a64088e6@gmail.com
+> >
+> > Changes in v4:
+> >     - Combine v3 commits into a singel commit
+> >     - Link to v3: https://lore.kernel.org/r/20240512-msm-adreno-memory-region-v3-0-0a728ad45010@gmail.com
+> >
+> > Changes in v3:
+> >     - Remove redundant devm_iounmap calls, relying on devres for automatic resource cleanup.
+> >
+> > Changes in v2:
+> >     - update the subject prefix to "drm/msm/a6xx:", to match the majority of other changes to this file.
+> > ---
+> >  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 33 +++++++++++----------------------
+> >  1 file changed, 11 insertions(+), 22 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > index 8bea8ef26f77..d26cc6254ef9 100644
+> > --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+> > @@ -525,7 +525,7 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu)
+> >         bool pdc_in_aop = false;
+> >
+> >         if (IS_ERR(pdcptr))
+> > -               goto err;
+> > +               return;
+> >
+> >         if (adreno_is_a650(adreno_gpu) ||
+> >             adreno_is_a660_family(adreno_gpu) ||
+> > @@ -541,7 +541,7 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu)
+> >         if (!pdc_in_aop) {
+> >                 seqptr = a6xx_gmu_get_mmio(pdev, "gmu_pdc_seq");
+> >                 if (IS_ERR(seqptr))
+> > -                       goto err;
+> > +                       return;
+> >         }
+> >
+> >         /* Disable SDE clock gating */
+> > @@ -633,12 +633,6 @@ static void a6xx_gmu_rpmh_init(struct a6xx_gmu *gmu)
+> >         wmb();
+> >
+> >         a6xx_rpmh_stop(gmu);
+> > -
+> > -err:
+> > -       if (!IS_ERR_OR_NULL(pdcptr))
+> > -               iounmap(pdcptr);
+> > -       if (!IS_ERR_OR_NULL(seqptr))
+> > -               iounmap(seqptr);
+> >  }
+> >
+> >  /*
+> > @@ -1503,7 +1497,7 @@ static void __iomem *a6xx_gmu_get_mmio(struct platform_device *pdev,
+> >                 return ERR_PTR(-EINVAL);
+> >         }
+> >
+> > -       ret = ioremap(res->start, resource_size(res));
+> > +       ret = devm_ioremap_resource(&pdev->dev, res);
 > 
-> timerfd doesn't create any wakelocks, but eventpoll can.  When it does,
-> it names them after the underlying file descriptor, and since all
-> timerfd file descriptors are named "[timerfd]" (which saves memory on
-> systems like desktops with potentially many timerfd instances), all
-> wakesources created as a result of using the eventpoll-on-timerfd idiom
-> are called... "[timerfd]".
-> 
-> However, it becomes impossible to tell which "[timerfd]" wakesource is
-> affliated with which process and hence troubleshooting is difficult.
-> 
-> This change addresses this problem by changing the way eventpoll
-> wakesources are named:
-> 
-> 1) the top-level per-process eventpoll wakesource is now named
-> "epollN:P" (instead of just "eventpoll"), where N is a unique ID token,
-> and P is the PID of the creating process.
-> 2) individual per-underlying-file descriptor eventpoll wakesources are
-> now named "epollitemN:P.F", where N is a unique ID token and P is PID
-> of the creating process and F is the name of the underlying file
-> descriptor.
-> 
-> Co-developed-by: Kelly Rossmoyer <krossmo@google.com>
-> Signed-off-by: Kelly Rossmoyer <krossmo@google.com>
-> Signed-off-by: Manish Varma <varmam@google.com>
-> Co-developed-by: Isaac J. Manjarres <isaacmanjarres@google.com>
-> Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
-> ---
->  drivers/base/power/wakeup.c | 12 +++++++++---
->  fs/eventpoll.c              | 11 +++++++++--
->  include/linux/pm_wakeup.h   |  8 ++++----
->  3 files changed, 22 insertions(+), 9 deletions(-)
-> 
->  v1 -> v2:
->  - Renamed instance count to wakesource_create_id to better describe
->    its purpose.
->  - Changed the wakeup source naming convention for wakeup sources
->    created by eventpoll to avoid changing the timerfd names.
->  - Used the PID of the process instead of the process name for the
->    sake of uniqueness when creating wakeup sources.
-> 
-> v2 -> v3:
->  - Changed wakeup_source_register() to take in a format string
->    and arguments to avoid duplicating code to construct wakeup
->    source names.
->  - Moved the definition of wakesource_create_id so that it is
->    always defined to fix an compilation error.
-> 
-> v3 -> v4:
->  - Changed the naming convention for the top-level epoll wakeup
->    sources to include an ID for uniqueness. This is needed in
->    cases where a process is using two epoll fds.
->  - Edited commit log to reflect new changes and add new tags.
-> 
-> v4 -> v5:
->  - Added the format attribute to the wakeup_source_register()
->    function to address a warning from the kernel test robot:
->    https://lore.kernel.org/all/202406050504.UvdlPAQ0-lkp@intel.com/
-> 
-> diff --git a/drivers/base/power/wakeup.c b/drivers/base/power/wakeup.c
-> index 752b417e8129..04a808607b62 100644
-> --- a/drivers/base/power/wakeup.c
-> +++ b/drivers/base/power/wakeup.c
-> @@ -209,13 +209,19 @@ EXPORT_SYMBOL_GPL(wakeup_source_remove);
->  /**
->   * wakeup_source_register - Create wakeup source and add it to the list.
->   * @dev: Device this wakeup source is associated with (or NULL if virtual).
-> - * @name: Name of the wakeup source to register.
-> + * @fmt: format string for the wakeup source name
->   */
-> -struct wakeup_source *wakeup_source_register(struct device *dev,
-> -					     const char *name)
-> +__printf(2, 3) struct wakeup_source *wakeup_source_register(struct device *dev,
-> +							    const char *fmt, ...)
->  {
->  	struct wakeup_source *ws;
->  	int ret;
-> +	char name[128];
-> +	va_list args;
-> +
-> +	va_start(args, fmt);
-> +	vsnprintf(name, sizeof(name), fmt, args);
-> +	va_end(args);
->  
->  	ws = wakeup_source_create(name);
->  	if (ws) {
-> diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-> index f53ca4f7fced..941df15208a4 100644
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -338,6 +338,7 @@ static void __init epoll_sysctls_init(void)
->  #define epoll_sysctls_init() do { } while (0)
->  #endif /* CONFIG_SYSCTL */
->  
-> +static atomic_t wakesource_create_id  = ATOMIC_INIT(0);
->  static const struct file_operations eventpoll_fops;
->  
->  static inline int is_file_epoll(struct file *f)
-> @@ -1545,15 +1546,21 @@ static int ep_create_wakeup_source(struct epitem *epi)
->  {
->  	struct name_snapshot n;
->  	struct wakeup_source *ws;
-> +	pid_t task_pid;
-> +	int id;
-> +
-> +	task_pid = task_pid_nr(current);
->  
->  	if (!epi->ep->ws) {
-> -		epi->ep->ws = wakeup_source_register(NULL, "eventpoll");
-> +		id = atomic_inc_return(&wakesource_create_id);
-> +		epi->ep->ws = wakeup_source_register(NULL, "epoll:%d:%d", id, task_pid);
+> So, this doesn't actually work, failing in __request_region_locked(),
+> because the gmu region partially overlaps with the gpucc region (which
+> is busy).  I think this is intentional, since gmu is controlling the
+> gpu clocks, etc.  In particular REG_A6XX_GPU_CC_GX_GDSCR is in this
+> overlapping region.  Maybe Akhil knows more about GMU.
 
-How often does this execute? Is it at most once per task lifespan?
+We don't really need to map gpucc region from driver on behalf of gmu.
+Since we don't access any gpucc register from drm-msm driver, we can
+update the range size to correct this. But due to backward compatibility
+requirement with older dt, can we still enable region locking? I prefer
+it if that is possible.
 
-The var probably wants to be annotated with ____cacheline_aligned_in_smp
-so that it does not accidentally mess with other stuff.
+FYI, kgsl accesses gpucc registers to ensure gdsc has collapsed. So
+gpucc region has to be mapped by kgsl and that is reflected in the kgsl
+device tree.
 
-I am assuming there is no constant traffic on it.
+-Akhil
 
->  		if (!epi->ep->ws)
->  			return -ENOMEM;
->  	}
->  
-> +	id = atomic_inc_return(&wakesource_create_id);
->  	take_dentry_name_snapshot(&n, epi->ffd.file->f_path.dentry);
-> -	ws = wakeup_source_register(NULL, n.name.name);
-> +	ws = wakeup_source_register(NULL, "epollitem%d:%d.%s", id, task_pid, n.name.name);
->  	release_dentry_name_snapshot(&n);
->  
->  	if (!ws)
-> diff --git a/include/linux/pm_wakeup.h b/include/linux/pm_wakeup.h
-> index 76cd1f9f1365..1fb6dca981c2 100644
-> --- a/include/linux/pm_wakeup.h
-> +++ b/include/linux/pm_wakeup.h
-> @@ -99,8 +99,8 @@ extern struct wakeup_source *wakeup_source_create(const char *name);
->  extern void wakeup_source_destroy(struct wakeup_source *ws);
->  extern void wakeup_source_add(struct wakeup_source *ws);
->  extern void wakeup_source_remove(struct wakeup_source *ws);
-> -extern struct wakeup_source *wakeup_source_register(struct device *dev,
-> -						    const char *name);
-> +extern __printf(2, 3) struct wakeup_source *wakeup_source_register(struct device *dev,
-> +								   const char *fmt, ...);
->  extern void wakeup_source_unregister(struct wakeup_source *ws);
->  extern int wakeup_sources_read_lock(void);
->  extern void wakeup_sources_read_unlock(int idx);
-> @@ -140,8 +140,8 @@ static inline void wakeup_source_add(struct wakeup_source *ws) {}
->  
->  static inline void wakeup_source_remove(struct wakeup_source *ws) {}
->  
-> -static inline struct wakeup_source *wakeup_source_register(struct device *dev,
-> -							   const char *name)
-> +static inline __printf(2, 3) struct wakeup_source *wakeup_source_register(struct device *dev,
-> +									  const char *fmt, ...)
->  {
->  	return NULL;
->  }
-> -- 
-> 2.45.2.505.gda0bf45e8d-goog
 > 
+> BR,
+> -R
+> 
+> >         if (!ret) {
+> >                 DRM_DEV_ERROR(&pdev->dev, "Unable to map the %s registers\n", name);
+> >                 return ERR_PTR(-EINVAL);
+> > @@ -1613,13 +1607,13 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+> >         gmu->mmio = a6xx_gmu_get_mmio(pdev, "gmu");
+> >         if (IS_ERR(gmu->mmio)) {
+> >                 ret = PTR_ERR(gmu->mmio);
+> > -               goto err_mmio;
+> > +               goto err_cleanup;
+> >         }
+> >
+> >         gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
+> >         if (IS_ERR(gmu->cxpd)) {
+> >                 ret = PTR_ERR(gmu->cxpd);
+> > -               goto err_mmio;
+> > +               goto err_cleanup;
+> >         }
+> >
+> >         if (!device_link_add(gmu->dev, gmu->cxpd, DL_FLAG_PM_RUNTIME)) {
+> > @@ -1635,7 +1629,7 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+> >         gmu->gxpd = dev_pm_domain_attach_by_name(gmu->dev, "gx");
+> >         if (IS_ERR(gmu->gxpd)) {
+> >                 ret = PTR_ERR(gmu->gxpd);
+> > -               goto err_mmio;
+> > +               goto err_cleanup;
+> >         }
+> >
+> >         gmu->initialized = true;
+> > @@ -1645,9 +1639,7 @@ int a6xx_gmu_wrapper_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+> >  detach_cxpd:
+> >         dev_pm_domain_detach(gmu->cxpd, false);
+> >
+> > -err_mmio:
+> > -       iounmap(gmu->mmio);
+> > -
+> > +err_cleanup:
+> >         /* Drop reference taken in of_find_device_by_node */
+> >         put_device(gmu->dev);
+> >
+> > @@ -1762,7 +1754,7 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+> >                 gmu->rscc = a6xx_gmu_get_mmio(pdev, "rscc");
+> >                 if (IS_ERR(gmu->rscc)) {
+> >                         ret = -ENODEV;
+> > -                       goto err_mmio;
+> > +                       goto err_cleanup;
+> >                 }
+> >         } else {
+> >                 gmu->rscc = gmu->mmio + 0x23000;
+> > @@ -1774,13 +1766,13 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+> >
+> >         if (gmu->hfi_irq < 0 || gmu->gmu_irq < 0) {
+> >                 ret = -ENODEV;
+> > -               goto err_mmio;
+> > +               goto err_cleanup;
+> >         }
+> >
+> >         gmu->cxpd = dev_pm_domain_attach_by_name(gmu->dev, "cx");
+> >         if (IS_ERR(gmu->cxpd)) {
+> >                 ret = PTR_ERR(gmu->cxpd);
+> > -               goto err_mmio;
+> > +               goto err_cleanup;
+> >         }
+> >
+> >         link = device_link_add(gmu->dev, gmu->cxpd, DL_FLAG_PM_RUNTIME);
+> > @@ -1824,10 +1816,7 @@ int a6xx_gmu_init(struct a6xx_gpu *a6xx_gpu, struct device_node *node)
+> >  detach_cxpd:
+> >         dev_pm_domain_detach(gmu->cxpd, false);
+> >
+> > -err_mmio:
+> > -       iounmap(gmu->mmio);
+> > -       if (platform_get_resource_byname(pdev, IORESOURCE_MEM, "rscc"))
+> > -               iounmap(gmu->rscc);
+> > +err_cleanup:
+> >         free_irq(gmu->gmu_irq, gmu);
+> >         free_irq(gmu->hfi_irq, gmu);
+> >
+> >
+> > ---
+> > base-commit: 1b294a1f35616977caddaddf3e9d28e576a1adbc
+> > change-id: 20240608-adreno-98c412bfdc03
+> >
+> > Best regards,
+> > --
+> > Kiarash Hajian <kiarash8112hajian@gmail.com>
+> >
 
