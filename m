@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-228725-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C209916613
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:21:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 261DC916611
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:21:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA95AB2635C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:21:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45E42810BD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6618114A619;
-	Tue, 25 Jun 2024 11:21:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CFA14AD2B;
+	Tue, 25 Jun 2024 11:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Kh+7Xgeh"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfmEArOl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBEA917BCC;
-	Tue, 25 Jun 2024 11:21:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1555817BCC;
+	Tue, 25 Jun 2024 11:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719314482; cv=none; b=sC7N0RhZID3fmkXI3w4yOZ51ajrr0vTHPBHP1ghIsfLUFVNhzi82z0yyPfkpzFB6MtBuUK6vy0wiyqTdeeIa90L8almF10HyaJ8BGn3TySQzXeA9hUX7wNSdmXxWbCoqQ/lxRRni/upJ4xcsxHFEVL9CL/WsznyrVgcWUullhaQ=
+	t=1719314465; cv=none; b=VJ2Zao6T6sQc2zF6qXTbWXCd2igsZPh1RdT0bK85y33kW8krug6tAYaiKmPbA2lijosRk4B0U022WSAHGHEEpo0OYldNXunaHrfVd2aeKMA0do2J3KA0cFNIVk8+UoyHlc3At2qCIy3k7Zvx56CTDhPoTy0xR+kA58uP4lp0FdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719314482; c=relaxed/simple;
-	bh=z4+/atTlWE3EjM0v4oAFbuOhJkdPNitONLVjJVlFSDo=;
+	s=arc-20240116; t=1719314465; c=relaxed/simple;
+	bh=qOGaxfsfM5iSyfa788L/8bzOZXv6TrPtFFQKAZc4E4A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TaG9CbIjUq4+xGMuvIQSXiQznDrgLCTj3gBL3AkYE7lJOfevOtWrtjH3kp6sb+zREoAexxaUcVnPp65XhDzr5dPjcEllLS8zOeSJh2BzRBKlgQdU/tgPM6h4RxPDanIdg3KPnRdWB3HYtLLTwmng514GATCcwKrC9Mjj/Ehxot0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Kh+7Xgeh reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 82E8840E0219;
-	Tue, 25 Jun 2024 11:21:15 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id eBTD0H7a6IY2; Tue, 25 Jun 2024 11:21:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719314469; bh=umeScDTtjX2Bk1U43cBEGE0OWaiYWb4i3OQhiqA7Kwo=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9DbiRgpRIXp/hAPFEC1adZaKBIo19YKskbPhq8y+zcQp8UfMlFMs6bZVvlMqjWAGOWZb9NL9EM6n0tvUGzJ3Hs3Ujl+3VUqLeK3jidEa6myyGLKBDRNyUJZ1VDAd19i1O95q/rWGdE0zdxjEA00dLgZ0W1TB6UHqFD0TuPNcVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfmEArOl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D13CC32781;
+	Tue, 25 Jun 2024 11:21:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719314464;
+	bh=qOGaxfsfM5iSyfa788L/8bzOZXv6TrPtFFQKAZc4E4A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Kh+7XgehQuHBnlcM0B64o+ERTYbwDYVskBiWJhCCk/xU94Dos7mgjoVB1BpCcLWJx
-	 3McIvzOdPf2oGUE0ufc2O5ZLLkEIPI8pupd36f8eUYm6UBpofuQYvDoKBL90QNmr1w
-	 TWUvH+xx6ehPrgAzDdgllkT580bZ8vb32Vq8Dd6pOIgq0rZ0oMhbo9fjPfp11zk4KM
-	 w1Fx4Ggl4lssSOtRJiKNZC/3YteBFlIHHPl1iKa4f/9P77ZBt4RDy8ugEFYHuf1XtK
-	 nqNu49xN8Xb8/k9ve01GK7C5yR5f5gBHgbOZdOa1fhz+pREmhz682wJg6teO36AILM
-	 Ri+Q26LXciQowhwe3fI6/Usbprm7rAEhqLdiffgvcF9iaR8S1yLRDolAoziJGd0D3v
-	 OeFq+ffupthZ+6ZU1nG5FA9DTn+E1ymofGFvYWXULUtscIIHyvJ/mGgPOYv5FNaElT
-	 /igZZ+qqaCbK+l0cyFPCJeT0mjvU+RqzpOOKSpZfTWnPhBVD6NSpZ0CMPmRJaf1+sC
-	 SWqkECV8w63Zdq0AI4lPmB8P7Y/J54VWL1diFJl+sVeqFitdT6iBFUzZMOFAvLwVCN
-	 5OkMPp5ra2L8FGleBWMcgvyEMtlL3Vpmdxo7a88VCZ4XWll4rrN7aIFTrvnY0F4u+c
-	 qouxNMhDRdRe3Ej3q2+2Olko=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0FB4A40E0185;
-	Tue, 25 Jun 2024 11:21:03 +0000 (UTC)
-Date: Tue, 25 Jun 2024 13:20:56 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: linux-kernel@vger.kernel.org
-Cc: linux-tip-commits@vger.kernel.org, kernel test robot <lkp@intel.com>,
-	Sean Christopherson <seanjc@google.com>, x86@kernel.org,
-	Michael Matz <matz@suse.de>
-Subject: [PATCH -v2] x86/alternatives, kvm: Fix a couple of CALLs without a
- frame pointer
-Message-ID: <20240625112056.GDZnqoGDXgYuWBDUwu@fat_crate.local>
-References: <171878639288.10875.12927337921927674667.tip-bot2@tip-bot2>
- <20240620084853.GAZnPs9Q94aakywkUn@fat_crate.local>
+	b=qfmEArOlYEgMbTlry56ebv1Pl5/Rz4cwO95FE0Q+i+xziu88qSGFhizZkAXQ0SV3X
+	 EvJiKaquyr6X5N1emlau22G9eOgsIx30bserkZ8EN9dVYjdBpLBs/2gZYNJS0t8LE+
+	 RQkDGSEwbHf/JwaD+4lLUCfsE2cRura+HaaQbnLB8lQ99NGgBYL0v7zNMw/gg5gVU3
+	 +EPbIFW2nzM4fsRza0qSdIOBSDIvKaDdu7N+ZdJHlMJenoucs81voATqBqfOxLRil4
+	 UI9SBmTEe7COieYPoLHIB6FiLDzabc5GUvm0mvGpHL0UMAJ7s3PWeIERXZbYsi/c/c
+	 yY+2VIafdUO+Q==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sM4Ea-000000002rA-0j0F;
+	Tue, 25 Jun 2024 13:21:12 +0200
+Date: Tue, 25 Jun 2024 13:21:12 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 8/8] serial: qcom-geni: Rework TX in FIFO mode to fix
+ hangs/lockups
+Message-ID: <ZnqoKDnUMxqf7QRy@hovoldconsulting.com>
+References: <20240610222515.3023730-1-dianders@chromium.org>
+ <20240610152420.v4.8.I1af05e555c42a9c98435bb7aee0ee60e3dcd015e@changeid>
+ <Znlp1_F1u-70D3QQ@hovoldconsulting.com>
+ <CAD=FV=XmuKUKvCq7gG+wM-jAAgHLHnYw4NteFEKz5Fmczd=U7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,309 +77,97 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240620084853.GAZnPs9Q94aakywkUn@fat_crate.local>
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=XmuKUKvCq7gG+wM-jAAgHLHnYw4NteFEKz5Fmczd=U7g@mail.gmail.com>
 
-On Thu, Jun 20, 2024 at 10:48:53AM +0200, Borislav Petkov wrote:
-> On Wed, Jun 19, 2024 at 08:39:52AM -0000, tip-bot2 for Borislav Petkov =
-(AMD) wrote:
-> > The following commit has been merged into the x86/alternatives branch=
- of tip:
-> >=20
-> > Commit-ID:     93f78dadee5e56ae48aff567583d503868aa3bf2
-> > Gitweb:        https://git.kernel.org/tip/93f78dadee5e56ae48aff567583=
-d503868aa3bf2
-> > Author:        Borislav Petkov (AMD) <bp@alien8.de>
-> > AuthorDate:    Tue, 18 Jun 2024 21:57:27 +02:00
-> > Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-> > CommitterDate: Wed, 19 Jun 2024 10:33:25 +02:00
-> >=20
-> > x86/alternatives, kvm: Fix a couple of CALLs without a frame pointer
-> >=20
-> > objtool complains:
-> >=20
-> >   arch/x86/kvm/kvm.o: warning: objtool: .altinstr_replacement+0xc5: c=
-all without frame pointer save/setup
-> >   vmlinux.o: warning: objtool: .altinstr_replacement+0x2eb: call with=
-out frame pointer save/setup
-> >=20
-> > Make sure rSP is an output operand to the respective asm() statements=
-.
-> >=20
-> > The test_cc() hunk courtesy of peterz. Also from him add some helpful
-> > debugging info to the documentation.
-> >=20
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202406141648.jO9qNGLa-l=
-kp@intel.com/
-> > Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-> > Acked-by: Sean Christopherson <seanjc@google.com>
-> > ---
-> >  arch/x86/include/asm/alternative.h      |  2 +-
-> >  arch/x86/kernel/alternative.c           |  2 +-
-> >  arch/x86/kvm/emulate.c                  |  2 +-
-> >  tools/objtool/Documentation/objtool.txt | 19 +++++++++++++++++++
-> >  4 files changed, 22 insertions(+), 3 deletions(-)
-> >=20
-> > diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/as=
-m/alternative.h
-> > index 89fa50d..8cff462 100644
-> > --- a/arch/x86/include/asm/alternative.h
-> > +++ b/arch/x86/include/asm/alternative.h
-> > @@ -248,7 +248,7 @@ static inline int alternatives_text_reserved(void=
- *start, void *end)
-> >   */
-> >  #define alternative_call(oldfunc, newfunc, ft_flags, output, input..=
-.)	\
-> >  	asm_inline volatile(ALTERNATIVE("call %c[old]", "call %c[new]", ft_=
-flags) \
-> > -		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
-> > +		: output, ASM_CALL_CONSTRAINT : [old] "i" (oldfunc), [new] "i" (ne=
-wfunc), ## input)
->=20
-> Yeah, this doesn't fly currently:
->=20
-> https://lore.kernel.org/r/202406200507.AXxJ6Bmw-lkp@intel.com
->=20
-> because those atomic64_32.h macros do
->=20
->         alternative_atomic64(set, /* no output */,
->                              "S" (v), "b" (low), "c" (high)
->=20
-> so without an output, it ends up becoming:
->=20
-> asm __inline volatile("# ALT: oldinstr\n" ... ".popsection\n" : , "+r" =
-(current_stack_pointer) : [old] "i" ...
->=20
-> note the preceding ",".
->=20
-> And I can't do "output..." macro argument with ellipsis and paste with =
-"##
-> output" because "input..." already does that. :-\
->=20
-> So I am not sure what to do here. Removing the ASM_CALL_CONSTRAINT work=
-s,
-> let's see whether it passes build tests.
->=20
-> Or add dummy output arguments to the three atomic macros which have no
-> output?
+On Mon, Jun 24, 2024 at 02:15:07PM -0700, Doug Anderson wrote:
+> On Mon, Jun 24, 2024 at 5:43 AM Johan Hovold <johan@kernel.org> wrote:
 
-Ok, after a lot of back'n'forth, here's v2:
+> > As I mentioned last week, the slowdown from this is quite noticeable
+> > (e.g. 25% slowdown at @115200), but this may be the price we need to pay
+> > for correctness, at least temporarily.
+> >
+> > An alternative might be to switch to using a 16 byte fifo. This should
+> > reduce console latency even further, and may be able avoid the idling
+> > UART penalty by continuing to use the watermark interrupt for refilling
+> > the FIFO.
+> 
+> I'm a bit confused. Right now we're using (effectively) a 64-byte
+> FIFO. The FIFO is 16-words deep and we have 4 bytes per word. ...so
+> I'm not sure what you mean by switching to a 16-byte FIFO. Do you mean
+> to make less use of the FIFO, or something else?
 
----
-From: "Borislav Petkov (AMD)" <bp@alien8.de>
-Date: Tue, 18 Jun 2024 21:57:27 +0200
-Subject: [PATCH] x86/alternatives, kvm: Fix a couple of CALLs without a f=
-rame pointer
+I meant switching to using one-byte words so that we end up with a
+16-byte FIFO where we don't have the issue of adding more data when the
+last word is not a full four-byte one.
 
-objtool complains:
+> Overall the big problem I found in all my testing was that I needed to
+> wait for a "command done" before kicking off a new command. When the
+> "command done" arrives then the UART has stopped transmitting and
+> you've got to suffer an interrupt latency before you can start
+> transferring again. Essentially:
+> 
+> 1. Pick a transfer size.
+> 2. You can keep sending bytes / using the FIFO efficiently as long as
+> there are still bytes left in the transfer.
+> 3. When you get to the end of the transfer, you have to wait for the
+> UART to stop, report that it's done, and then suffer an interrupt
+> latency to start a new transfer.
+> 
+> So to be efficient you want to pick a big transfer size but if there's
+> any chance that you might not need to transfer that many bytes then
+> you need to figure out what to do. If you can handle that properly
+> then that's great. If not then we have to make sure we never kick off
+> a transfer that we might not finish.
 
-  arch/x86/kvm/kvm.o: warning: objtool: .altinstr_replacement+0xc5: call =
-without frame pointer save/setup
-  vmlinux.o: warning: objtool: .altinstr_replacement+0x2eb: call without =
-frame pointer save/setup
+Right. But with a 16 1-byte word FIFO, we may be able to kick of a
+really long transfer and just keep it running until it needs to be
+kicked again (cf. enabling TX). The console code can easily insert
+characters in the FIFO while the transfer is running (and would only
+have to wait for 16 characters to drain in the worst case).
 
-Make sure %rSP is an output operand to the respective asm() statements.
+Effectively, most of the identified issues would just go away, as
+there's basically never any need to cancel anything except at port
+shutdown.
 
-The test_cc() hunk and ALT_OUTPUT_SP() courtesy of peterz. Also from him
-add some helpful debugging info to the documentation.
+> I'd also mention that, as talked about in my response to your other
+> patch [1], I'm not seeing a 25% slowdown. I tested both with my simple
+> proposal and with this whole series applied and my slowdown is less
+> than 2%. I guess there must be something different with your setup?
+> Trying to think about what kind of slowdown would be reasonable for my
+> patch series at 115200:
+> 
+> a) We send 64 bytes efficiently, which takes 5.6ms (64 * 1000 / 11520)
+> 
+> b) We stop transferring and wait for an interrupt.
+> 
+> c) We start transferring 64 bytes again.
+> 
+> Let's say that your interrupt latency is 1 ms, which would be really
+> terrible. In that case you'll essentially transfer 64 bytes in 6.6ms
+> instead of 5.6 ms, right? That would be an 18% hit. Let's imagine
+> something more sensible and say that most of the time you can handle
+> an interrupt in 100 ms. That would be about a 1.7% slowdown, which
+> actually matches what I was seeing. For reference, even an old arm32
+> rk3288-veyron device I worked with years ago could usually handle
+> interrupts in ~100-200 ms since dwc2 needs you to handle at least one
+> (sometimes more) interrupt per USB uFrame (250ms).
+> 
+> ...so I'm confused about where your 25% number is coming from...
 
-Now on to the explanations:
+I didn't do an in-depth analysis of the slowdown, but I did rerun the
+tests now and I'm still seeing a 22-24% slowdown on x1e80100 with rc5.
+This is a new platform so I compared with sc8280xp, which shows similar
+numbers even if it's slightly faster to begin with:
 
-tl;dr: The alternatives macros are pretty fragile.
+					sc8280xp	x1e80100
 
-If I do ALT_OUTPUT_SP(output) in order to be able to package in a %rsp
-reference for objtool so that a stack frame gets properly generated, the
-inline asm input operand with positional argument 0 in clear_page():
+	rc5 full series			61 s		67 s
+	rc5 last patch reverted		50 s		54 s
 
-	"0" (page)
+I have a getty running and cat a 10x dmesg file of 543950 bytes to
+/dev/ttyMSM0 from an ssh session (just catting in a serial console gives
+similar numbers). 
 
-gets "renumbered" due to the added
-
-	: "+r" (current_stack_pointer), "=3DD" (page)
-
-and then gcc says:
-
-  ./arch/x86/include/asm/page_64.h:53:9: error: inconsistent operand cons=
-traints in an =E2=80=98asm=E2=80=99
-
-The fix is to use an explicit "D" constraint which points to a singleton
-register class (gcc terminology) which ends up doing what is expected
-here: the page pointer - input and output - should be in the same %rdi
-register.
-
-Other register classes have more than one register in them - example:
-"r" and "=3Dr" or "A":
-
-  =E2=80=98A=E2=80=99
-	The =E2=80=98a=E2=80=99 and =E2=80=98d=E2=80=99 registers.  This class i=
-s used for
-	instructions that return double word results in the =E2=80=98ax:dx=E2=80=
-=99
-	register pair.  Single word values will be allocated either in
-	=E2=80=98ax=E2=80=99 or =E2=80=98dx=E2=80=99.
-
-so using "D" and "=3DD" just works in this particular case.
-
-And yes, one would say, sure, why don't you do "+D" but then:
-
-        : "+r" (current_stack_pointer), "+D" (page)
-        : [old] "i" (clear_page_orig), [new1] "i" (clear_page_rep), [new2=
-] "i" (clear_page_erms),
-        : "cc", "memory", "rax", "rcx")
-
-now find the Waldo^Wcomma which throws a wrench into all this.
-
-Because that silly macro has an "input..." consume-all last macro arg
-and in it, one is supposed to supply input *and* clobbers, leading to
-silly syntax snafus.
-
-Yap, they need to be cleaned up, one fine day...
-
-Cc: Michael Matz <matz@suse.de>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202406141648.jO9qNGLa-lkp@i=
-ntel.com/
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
----
- arch/x86/include/asm/alternative.h      | 11 +++++++----
- arch/x86/include/asm/page_64.h          |  2 +-
- arch/x86/kernel/alternative.c           |  2 +-
- arch/x86/kvm/emulate.c                  |  2 +-
- tools/objtool/Documentation/objtool.txt | 19 +++++++++++++++++++
- 5 files changed, 29 insertions(+), 7 deletions(-)
-
-diff --git a/arch/x86/include/asm/alternative.h b/arch/x86/include/asm/al=
-ternative.h
-index 89fa50d27a08..ca9ae606aab9 100644
---- a/arch/x86/include/asm/alternative.h
-+++ b/arch/x86/include/asm/alternative.h
-@@ -246,9 +246,10 @@ static inline int alternatives_text_reserved(void *s=
-tart, void *end)
-  * references: i.e., if used for a function, it would add the PLT
-  * suffix.
-  */
--#define alternative_call(oldfunc, newfunc, ft_flags, output, input...)	\
--	asm_inline volatile(ALTERNATIVE("call %c[old]", "call %c[new]", ft_flag=
-s) \
--		: output : [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
-+#define alternative_call(oldfunc, newfunc, ft_flags, output, input...)		=
-	\
-+	asm_inline volatile(ALTERNATIVE("call %c[old]", "call %c[new]", ft_flag=
-s)	\
-+		: ALT_OUTPUT_SP(output)							\
-+		: [old] "i" (oldfunc), [new] "i" (newfunc), ## input)
-=20
- /*
-  * Like alternative_call, but there are two features and respective func=
-tions.
-@@ -260,7 +261,7 @@ static inline int alternatives_text_reserved(void *st=
-art, void *end)
- 			   output, input...)						\
- 	asm_inline volatile(ALTERNATIVE_2("call %c[old]", "call %c[new1]", ft_f=
-lags1,	\
- 		"call %c[new2]", ft_flags2)						\
--		: output, ASM_CALL_CONSTRAINT						\
-+		: ALT_OUTPUT_SP(output)							\
- 		: [old] "i" (oldfunc), [new1] "i" (newfunc1),				\
- 		  [new2] "i" (newfunc2), ## input)
-=20
-@@ -276,6 +277,8 @@ static inline int alternatives_text_reserved(void *st=
-art, void *end)
-  */
- #define ASM_NO_INPUT_CLOBBER(clbr...) "i" (0) : clbr
-=20
-+#define ALT_OUTPUT_SP(...) ASM_CALL_CONSTRAINT, ## __VA_ARGS__
-+
- /* Macro for creating assembler functions avoiding any C magic. */
- #define DEFINE_ASM_FUNC(func, instr, sec)		\
- 	asm (".pushsection " #sec ", \"ax\"\n"		\
-diff --git a/arch/x86/include/asm/page_64.h b/arch/x86/include/asm/page_6=
-4.h
-index cc6b8e087192..af4302d79b59 100644
---- a/arch/x86/include/asm/page_64.h
-+++ b/arch/x86/include/asm/page_64.h
-@@ -54,7 +54,7 @@ static inline void clear_page(void *page)
- 			   clear_page_rep, X86_FEATURE_REP_GOOD,
- 			   clear_page_erms, X86_FEATURE_ERMS,
- 			   "=3DD" (page),
--			   "0" (page)
-+			   "D" (page)
- 			   : "cc", "memory", "rax", "rcx");
- }
-=20
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.=
-c
-index 37596a417094..333b16181357 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -1657,7 +1657,7 @@ static noinline void __init alt_reloc_selftest(void=
-)
- 	 */
- 	asm_inline volatile (
- 		ALTERNATIVE("", "lea %[mem], %%" _ASM_ARG1 "; call __alt_reloc_selftes=
-t;", X86_FEATURE_ALWAYS)
--		: /* output */
-+		: ASM_CALL_CONSTRAINT
- 		: [mem] "m" (__alt_reloc_selftest_addr)
- 		: _ASM_ARG1
- 	);
-diff --git a/arch/x86/kvm/emulate.c b/arch/x86/kvm/emulate.c
-index 5d4c86133453..c8cc578646d0 100644
---- a/arch/x86/kvm/emulate.c
-+++ b/arch/x86/kvm/emulate.c
-@@ -1069,7 +1069,7 @@ static __always_inline u8 test_cc(unsigned int cond=
-ition, unsigned long flags)
-=20
- 	flags =3D (flags & EFLAGS_MASK) | X86_EFLAGS_IF;
- 	asm("push %[flags]; popf; " CALL_NOSPEC
--	    : "=3Da"(rc) : [thunk_target]"r"(fop), [flags]"r"(flags));
-+	    : "=3Da"(rc), ASM_CALL_CONSTRAINT : [thunk_target]"r"(fop), [flags]=
-"r"(flags));
- 	return rc;
- }
-=20
-diff --git a/tools/objtool/Documentation/objtool.txt b/tools/objtool/Docu=
-mentation/objtool.txt
-index fe39c2a8ef0d..7c3ee959b63c 100644
---- a/tools/objtool/Documentation/objtool.txt
-+++ b/tools/objtool/Documentation/objtool.txt
-@@ -284,6 +284,25 @@ the objtool maintainers.
-=20
-    Otherwise the stack frame may not get created before the call.
-=20
-+   objtool can help with pinpointing the exact function where it happens=
-:
-+
-+   $ OBJTOOL_ARGS=3D"--verbose" make arch/x86/kvm/
-+
-+   arch/x86/kvm/kvm.o: warning: objtool: .altinstr_replacement+0xc5: cal=
-l without frame pointer save/setup
-+   arch/x86/kvm/kvm.o: warning: objtool:   em_loop.part.0+0x29: (alt)
-+   arch/x86/kvm/kvm.o: warning: objtool:   em_loop.part.0+0x0: <=3D=3D=3D=
- (sym)
-+    LD [M]  arch/x86/kvm/kvm-intel.o
-+   0000 0000000000028220 <em_loop.part.0>:
-+   0000    28220:  0f b6 47 61             movzbl 0x61(%rdi),%eax
-+   0004    28224:  3c e2                   cmp    $0xe2,%al
-+   0006    28226:  74 2c                   je     28254 <em_loop.part.0+=
-0x34>
-+   0008    28228:  48 8b 57 10             mov    0x10(%rdi),%rdx
-+   000c    2822c:  83 f0 05                xor    $0x5,%eax
-+   000f    2822f:  48 c1 e0 04             shl    $0x4,%rax
-+   0013    28233:  25 f0 00 00 00          and    $0xf0,%eax
-+   0018    28238:  81 e2 d5 08 00 00       and    $0x8d5,%edx
-+   001e    2823e:  80 ce 02                or     $0x2,%dh
-+   ...
-=20
- 2. file.o: warning: objtool: .text+0x53: unreachable instruction
-=20
---=20
-2.43.0
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Johan
 
