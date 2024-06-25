@@ -1,118 +1,153 @@
-Return-Path: <linux-kernel+bounces-229033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA5E79169FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:16:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2620916A1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 660671F21C14
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:16:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56E4F1F24021
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 279AE1662F1;
-	Tue, 25 Jun 2024 14:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467A7158861;
+	Tue, 25 Jun 2024 14:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6I4TT89"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D7jfrKHX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3FB39FD6;
-	Tue, 25 Jun 2024 14:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29FE16A382
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:18:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719324974; cv=none; b=lWyEl6q8VnhzU85YMGDt2+AEN2r45Sc9KHwM7Z4PGTgQVNvbaNQzkiFlywgLrCCKFecYUKtBRZ5xBKebgBnU/2Z3cyXwe3jr4tVTAiyAZFDqS3KelXpGmpyxDHEjqJ1f6M7+hVmf55oASuug/gneGwWiD+GKFGYOCUIf/AKGlWY=
+	t=1719325092; cv=none; b=DKQ2v6s5K+orVeX9D+Uk2k44hJdzCBno1fiFgCViY/fNqCI9SzMVHFVVzT47vMLEGjUbUWTwiIVKTyKS6SHOmN8psHHXFjRQb84XV9w7CRtLCtayFePy0VvJwcT46HYocXUA7rFcqP3cvSGQaUuJkzFnpOrgb2sxfHZNa9+cpio=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719324974; c=relaxed/simple;
-	bh=z1UzPtvslhBpVxo5WSG7nm/GYB6eBaY5tYPAElx7+jA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rSSLhwrCj28PFoktI/QkoJKLyMDGkeCJSZpH6vy5dwXmanVon1mIDNoVC+PvxerwWka9Mb/P3lzqWROy0ri4j4G1+ajgl85NFGt+8bT8FUssB7crp7qL5RQx2DPC0e9o4sDWgXLBAwz3fmEeBUceYSYWrU0s0kSDjtayAZWtV7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6I4TT89; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2c85ca2dc5cso1850558a91.0;
-        Tue, 25 Jun 2024 07:16:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719324972; x=1719929772; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=D36Db5Y4m8FIowfP6/u5lOf2LPz4KaZVqsBszQTJ+Qc=;
-        b=l6I4TT89NFVDT7j9CE3+CPkTX4nddvJ1bOEM9BOSwreXAOBdP07MGaHh+bHsHv3h1K
-         MVz2B2wydLLiV8029rIPKdikM7KkLASNJgOcsxbw9OZzdWx323fFOgRFsQVF9dDZvihA
-         5JvmtFOXwpS0eUelH3basidBWTDKtQwDyiQq9hIUc4QJ3JJQM6VFSEzvk5iElxRhCrVi
-         nFgy5Bkk7M4MBIBFZr+N7sz0W/N0Gq4m+KseNTxjJFy/LJTdiuQoudYzja+eT3j5zyv/
-         62c5IOcgeG/MMs76yoq3/chmCbz8SIOZevtEMU48yrxorIWYS/Phkocp28MWQCbSJCkL
-         M92g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719324972; x=1719929772;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D36Db5Y4m8FIowfP6/u5lOf2LPz4KaZVqsBszQTJ+Qc=;
-        b=u17mXGp0iiWgHLM5PDOnNW5IHYjXp2cH7OSt4ixZpZ1W2X9sJxBF29A//oKlDflwXo
-         i98cMEEI2vKCP7Uu4Hb6zi2Ip0fPsllPO39mzgiUoYq0BF+PsAdn5gimXdcBIHPbaTm7
-         HxrucHx5uqF0K5qxaLkEUvmZxNSxLq6tKuoq8sgsEgR5syY8hYjWJEQPOoA4WyipOrNo
-         Bv+2YKd2sf9n1iFRmD9AvwKMVCBbGjaowMcDzJ/0bb3V10jeoGAEpdrZfftmsTX5KSDs
-         41bQPR1qD4Rnew/jh0Cq4idkOwninHth5RyeyngsW7c9OKrqlc8DICdYz89Y6s6p1FyT
-         LmkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWsmPlyjvvXNnYdmWKLl7Qey9vEDf5qGs2vJmUxBVM+8dQNG837FfKYJbMx37Cj8LdEM6x73/OD+gfvq0B6JHcrT0VShaKMX+XrRYPN
-X-Gm-Message-State: AOJu0YzyIcJYK2ZxUIcNe0CW26lLTykTiFcLQJHm7GiiiBa6dl/gMmXo
-	2mUA0eEL6Mic61yI6CXR/hd1Ufk1BWr7w9wPuaEif3HhzoeCUK0my2KOGj6Wydnkaml+hsecpf3
-	Q1dRRNbtfXub99TvujTn/IJqLPlE=
-X-Google-Smtp-Source: AGHT+IH5DEVfJgmMc19bVNyOA8LEJHSKR4JLkDQJij/6Jbf/sVBB2fFjrm82j5ImwwK+HJLrJMJvEJaNb7Lr/hRz1ww=
-X-Received: by 2002:a17:90b:1288:b0:2c8:3c59:263 with SMTP id
- 98e67ed59e1d1-2c8a237a727mr5659409a91.12.1719324972423; Tue, 25 Jun 2024
- 07:16:12 -0700 (PDT)
+	s=arc-20240116; t=1719325092; c=relaxed/simple;
+	bh=258aHTwJ8PHNVShdBmlRwFk5MhWBCxeonA2f0yI3uGw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KMVFKiU0sw+ELMC5YUE+rZqvVhTfXfcU1S5+Dm9sUGnB5S9tG1frLXVdNDmK4sVB7LjHlgKDRkl0eUzFrptE0XijR5Jf0HTdBbl9yDVtTUBcooWTMdAxAK6+V0URHFyYRdNWu0nWqDM7ewVWoVAV7QD5M4SbR0vpmjcIuZ1ATLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D7jfrKHX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719325089;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JDJanHJKnbiJNPYotPkVO2c6RbIzDk3MVlTTgVCykxk=;
+	b=D7jfrKHXD7lofxEME6N+W0ZyxVBygWH0uJLyQeqWmno+xog0XlOonD+g/MpHYyGRMUNM4i
+	sxOeXXRSk+74MDB9V9KlHY5lzOMmVFZItwGQZ1U4fWMEGAGJ2yS0hGX6vn9yY7E7xXQ0Of
+	eKizPs8HYmYDIFambNwRWd6yqQoFKuo=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-458-KsnVk9qGMTCAI2eoQhCkRg-1; Tue,
+ 25 Jun 2024 10:18:04 -0400
+X-MC-Unique: KsnVk9qGMTCAI2eoQhCkRg-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F28E318DB6FA;
+	Tue, 25 Jun 2024 14:17:14 +0000 (UTC)
+Received: from [10.22.10.23] (unknown [10.22.10.23])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9BD18301BD32;
+	Tue, 25 Jun 2024 14:16:16 +0000 (UTC)
+Message-ID: <80e87513-aa48-4548-893e-ed339690c941@redhat.com>
+Date: Tue, 25 Jun 2024 10:16:15 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <TYCP286MB08958A751BD29BB5B04485D9BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
-In-Reply-To: <TYCP286MB08958A751BD29BB5B04485D9BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Tue, 25 Jun 2024 16:16:01 +0200
-Message-ID: <CAOiHx==oBMZiVaZ_ra0ren-sea+D4znXQA8wq-dA+5sC0dav5w@mail.gmail.com>
-Subject: Re: [PATCH] gpio: ath79: convert to dynamic GPIO base allocation
-To: Shiji Yang <yangshiji66@outlook.com>
-Cc: linux-gpio@vger.kernel.org, Alban Bedel <albeu@free.fr>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH -next] cgroup: fix uaf when proc_cpuset_show
+To: chenridong <chenridong@huawei.com>, =?UTF-8?Q?Michal_Koutn=C3=BD?=
+ <mkoutny@suse.com>
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org,
+ bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240622113814.120907-1-chenridong@huawei.com>
+ <19648b9c-6df7-45cd-a5ae-624a3e4d860f@redhat.com>
+ <52f72d1d-602e-4dca-85a3-adade925b056@huawei.com>
+ <71a9cc3a-1b58-4051-984b-dd4f18dabf84@redhat.com>
+ <8f83ecb3-4afa-4e0b-be37-35b168eb3c7c@huawei.com>
+ <ee30843f-2579-4dcf-9688-6541fd892678@redhat.com>
+ <3322ce46-78a1-45c5-ad07-a982dec21c8e@huawei.com>
+ <gke4hn67e2js2wcia4gopr6u26uy5epwpu7r6sepjwvp5eetql@nuwvwzg2k4dy>
+ <920bbfaa-bb76-4aa1-bd07-9a552e3bfdf2@huawei.com>
+Content-Language: en-US
+From: Waiman Long <longman@redhat.com>
+In-Reply-To: <920bbfaa-bb76-4aa1-bd07-9a552e3bfdf2@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi,
+On 6/25/24 10:11, chenridong wrote:
+>
+>
+> On 2024/6/25 18:10, Michal Koutný wrote:
+>> Hello.
+>>
+>> On Tue, Jun 25, 2024 at 11:12:20AM GMT, chenridong<chenridong@huawei.com>  wrote:
+>>> I am considering whether the cgroup framework has a method to fix this
+>>> issue, as other subsystems may also have the same underlying problem.
+>>> Since the root css will not be released, but the css->cgrp will be
+>>> released.
+>> <del>First part is already done in
+>> 	d23b5c5777158 ("cgroup: Make operations on the cgroup root_list RCU safe")
+>> second part is that</del>
+>> you need to take RCU read lock and check for NULL, similar to
+>> 	9067d90006df0 ("cgroup: Eliminate the need for cgroup_mutex in proc_cgroup_show()")
+>>
+>> Does that make sense to you?
+>>
+>> A Fixes: tag would be nice, it seems at least
+>> 	a79a908fd2b08 ("cgroup: introduce cgroup namespaces")
+>> played some role. (Here the RCU lock is not for cgroup_roots list but to
+>> preserve the root cgrp itself css_free_rwork_fn/cgroup_destroy_root.
+>>
+>> HTH,
+>> Michal
+>
+> Thank you, Michal, that is a good idea. Do you mean as below?
+>
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+>
+> index c12b9fdb22a4..2ce0542067f1 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -5051,10 +5051,17 @@ int proc_cpuset_show(struct seq_file *m, 
+> struct pid_namespace *ns,
+>         if (!buf)
+>                 goto out;
+>
+> +       rcu_read_lock();
+> +       spin_lock_irq(&css_set_lock);
+>         css = task_get_css(tsk, cpuset_cgrp_id);
+> -       retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
+> - current->nsproxy->cgroup_ns);
+> +
+> +       retval = cgroup_path_ns_locked(css->cgroup, buf, PATH_MAX,
+> +               current->nsproxy->cgroup_ns);
+>         css_put(css);
+> +
+> +       spin_unlock_irq(&css_set_lock);
+> +       cgroup_unlock();
+> +
+>         if (retval == -E2BIG)
+>                 retval = -ENAMETOOLONG;
+>
+>         if (retval < 0)
+>
+That should work. However, I would suggest that you take task_get_css() 
+and css_put() outside of the critical section. The task_get_css() is a 
+while loop that may take a while to execute and you don't want run it 
+with interrupt disabled.
 
-On Tue, 25 Jun 2024 at 03:09, Shiji Yang <yangshiji66@outlook.com> wrote:
->
-> ath79 target has already been converted to device tree based
-> platform. Using dynamic GPIO numberspace base to suppress the
-> warning:
->
-> gpio gpiochip0: Static allocation of GPIO base is deprecated, use dynamic allocation.
->
-> Tested on Atheros AR7241 and AR9344.
->
-> Signed-off-by: Shiji Yang <yangshiji66@outlook.com>
-> ---
->  drivers/gpio/gpio-ath79.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/gpio/gpio-ath79.c b/drivers/gpio/gpio-ath79.c
-> index f0c0c0f77eb0..d986424a661e 100644
-> --- a/drivers/gpio/gpio-ath79.c
-> +++ b/drivers/gpio/gpio-ath79.c
-> @@ -273,8 +273,8 @@ static int ath79_gpio_probe(struct platform_device *pdev)
->                 dev_err(dev, "bgpio_init failed\n");
->                 return err;
->         }
-> -       /* Use base 0 to stay compatible with legacy platforms */
-> -       ctrl->gc.base = 0;
-> +       /* Dynamic allocation */
-> +       ctrl->gc.base = -1;
+Cheers,
+Longman
 
-bgpip_init() will already have set gc.base to -1, so you can just drop
-the assignment.
-
-Best Regards,
-Jonas
 
