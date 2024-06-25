@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-228803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E67E891672D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:14:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB4D916731
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:15:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 759BC1F22489
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:14:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08BC1C20DAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75DB7154C04;
-	Tue, 25 Jun 2024 12:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E897A1591E8;
+	Tue, 25 Jun 2024 12:14:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="UMFUbKMX"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="CLOglOsj"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B044C1553A2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53DFE156C72
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:14:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719317667; cv=none; b=SF4SyrkNtlrKrngqw804d+kUmNxiCu9DYWq+z4jrwegbAdRrYnfIBzW5NZEeyAMl3XC8RQmJNNBOz/qRTY240F3VcrcOh+NFnVgb5Xp7IlK0p4Zwp/icXAiOsu+rmn0sd/KEmBS1g11x3ABo6PtXtLXgdMKVzMpo3Vh5Ox/JU2A=
+	t=1719317669; cv=none; b=BJM1P6KyktIMmFPjmaxg86ZEiw6UuFe/ohx0Dn3L78Rp932V47xUCXsIQ1gHu2Ehk7IkZqhyTp2ysWwJB9cnriljh/IO8HpoPbvwer3ouegPzu0WsbvML8jG8z8GqUr4/uVETM9sXq/CrAyHPsj/sEYJsM4R5AZgjraP6FvTbRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719317667; c=relaxed/simple;
-	bh=bR4Nt/dqr+OGkz7HRH6QPG335EHNGx1yj6lckvyqy/8=;
+	s=arc-20240116; t=1719317669; c=relaxed/simple;
+	bh=aVioSRzJqXlczjHmYmBjJBu7oq6xmwTohrZmb+gYSbU=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=PUYyLOsizNDBo4UXDBV9Tys/EAcTHDgz/fOMwEHdvCQ7HUAX1rjq8zD/BtySqL3rL/RsaVYp9dyIFO9GhwWuUQ1PRO/opbT56NNXcpl0KksPlfM4bWg00AlLpor0rJ/nhRvnBu4blKGrPPSX5qf+jdAy5mvIDW7sBO+KVLgInD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=UMFUbKMX; arc=none smtp.client-ip=209.85.167.52
+	 MIME-Version; b=CoXoKYJ6hn68Q+mFZDUIRiZ+/UPL8jca2qWQPAVKI1N+WIsJ/dhQkeptuP/mL4iTztae5pzWAiR9U1wxga2DqfJEjCMF1+D3tRf5qdJoKNYApery8ciK3ZX4woIdr17BmhNUcnsN4+WxrioInVX+fXn6U0t50QR6IQL711nNx2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=CLOglOsj; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52cdf579dd2so2890065e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 05:14:25 -0700 (PDT)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4217990f997so40662725e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 05:14:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1719317664; x=1719922464; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1719317666; x=1719922466; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xPJe111c35qT0vgsGi1skaghnu2sv9Jy0VK3xrLcV2k=;
-        b=UMFUbKMXlPDikHp8HuqBxftSadG7F5d80rgh43NuxEo8FlaFctPQV6uFYdQUnLScMF
-         D9P69mwDRf8uqBWlFjePqiogOLR6PTbnedjVO7fnWHlvLAC6gItUQMLEyhj0r7Ov8u5x
-         6WQ2dXuR/VDMEEe7AGveSvhVFY5oQhXyVQ/HfAcNJX4CggOZoaohP7sShFi6OoMKfHQq
-         7oCXTDdSAB5Rgt1t2vsHw/FB4rTUqzeMQhaBvMndwz9/dTWysXQKR0fxqTiDgTHweBK5
-         NLib8Yhj0DUfdqroQJbfq75dnxIZdDyR3Q/IXNsjs2NxTVPyKQxL5Sy6YvOeO9EARQvz
-         iOXA==
+        bh=j3mhaGF+KU5yeMisjPIARpLxwyj1AMM2/2N+WRoELhI=;
+        b=CLOglOsjSD93t2ALtumKBY822qS/ALq8kVsKTFR6+BgXCwDb7ucCy6wJwQRr/Prmus
+         5wnjEdfI/0MdBNRhHyeDP2fMmf20XGXLH4eHVFPU34A42Lv1emuW2WwdzlnOh4EBhjUb
+         2iP/zyev7mILSvTRaD1rF0H04o6k30C+6YFP2+Q29i1XRIv5okEP5brmKVnYo6vWpnDD
+         VloHNlOmLc5RnKf4x2J7wAqwc4YcQf3bIATdXt+VJ9JXgA+YzFzYK1UaFBjbQa1v3534
+         EAJL35whdUwQJp8EzFJEZtReX8Z7SKknUl54dhPwFIg1S/nIzEzHnaG4rhDAMtM3Etzm
+         iXFA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719317664; x=1719922464;
+        d=1e100.net; s=20230601; t=1719317666; x=1719922466;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xPJe111c35qT0vgsGi1skaghnu2sv9Jy0VK3xrLcV2k=;
-        b=Nc+tVyOWIrRPhMaupQymtjrmNDFPsTzqfO+vOM7a+Z9qp2lObCQuIGg17/t/yzdW8l
-         JidLnOgHpz5JozeohaIuy7Ki0vGEtcpJWPbwpvQEF3fk5UCjKk/tVTNWuEtWW6DfzbYx
-         Ubyhp7J4m65pT9DQsUW6C253RU/mTfzSlMd1/qrnUtUdaC7aywmU0iP832ywuCMADBg/
-         0ku3QW4VzAYQW3JreGCwM6vGILYIDW0L21C0dGACqeN8EvOiaHao7hf0cjMcllKImiCO
-         9ipgST7a/u0jhSo16UO2mHWhFiECgHuCKFtYHd6KqLAk0gZ9GaiUJ8l1jL/C6shPFU5S
-         HpYA==
-X-Forwarded-Encrypted: i=1; AJvYcCXIDe2PbwT+3EOh1wPVuOYUMTmAEhoifsdDqE5KYg230OL2xWFzA0cDdEWy/fkWQVHp++g0mPpKP/gN5ukpTXPAyqacJc8uCQYsunnt
-X-Gm-Message-State: AOJu0Ywu4BxQVFr85caOBwPLrLp6jMssEE61l+klW4HHpsnXEHo4fXF7
-	gUzX9XmNWMXYq0RVQmLWosun2//b+hgfDzhIY2/H79Tk2VCZh1fhykCLmRxREC8=
-X-Google-Smtp-Source: AGHT+IF8i0XtFegYVMkDlPScRz5RnYvbtVl15nutQRpgido0c97wQN5tzJwW/dwq0ey3xSW0IYWouw==
-X-Received: by 2002:a19:6a10:0:b0:52b:c089:4579 with SMTP id 2adb3069b0e04-52cdf8209c4mr5362782e87.49.1719317663816;
-        Tue, 25 Jun 2024 05:14:23 -0700 (PDT)
+        bh=j3mhaGF+KU5yeMisjPIARpLxwyj1AMM2/2N+WRoELhI=;
+        b=ajnnbEBJq9lbT29/8kVy4IB6kCJysyD+7ZppNcry3qEFJUlTWqxqwUnpUfQSMyGU6Y
+         8Xf3Tc8bU9ScDBuF8gr/rVxg0bSsoQhCrVO86QIWolhZxnlvnUEBiws/WPuYuUeFPwud
+         ac/jedX56LOqe52XBjvxr+VRgj3OqO1VfEUbKSRMsLo3L39AkVZPUee2CyzOn3f7Q28w
+         g1dnpa/kzTbJGARGbZ2n1U8sN0+7ptx2AaomTE2A/BEerwFE1Kv+EGeWdpWDGO2GRl0o
+         Cybc6ZYDt+fMz+CuPyNpSR/Rq/1MLVdpzRemPo3WKNDwfTxaTRarwnLpDwUbxg3GY5YS
+         h+fw==
+X-Forwarded-Encrypted: i=1; AJvYcCV91sE1Z1i5ngVfQBkcXjjqzXeIUs9SaxNUL8wOISaz4b8J5gu9WYe2j/Y6aQxFiVrwV6LM9+l/T/N7gxqIbJJtPAv5CfSDPYdwNmGH
+X-Gm-Message-State: AOJu0YyPm6bkP59CScAUJmypR+OR4YZxsMRyXNwTY6mYkQ/3wc67ZjNc
+	ZaQey4gHNFeWOwHjE+cqNMR7KbzaLzX0gqWYVWWJ43sQA9N4kquqSgScduCNu24=
+X-Google-Smtp-Source: AGHT+IFK5iuAO1YBTxjhIGSX7Q8KoOhjQXwLGyqLocsV4KY5Z057M7ZH3/y+fDPFPY63w1kZ1xsu8Q==
+X-Received: by 2002:a05:600c:4b1f:b0:424:a5d8:ac83 with SMTP id 5b1f17b1804b1-424a5d8acafmr6070375e9.41.1719317665539;
+        Tue, 25 Jun 2024 05:14:25 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8b32sm12798437f8f.92.2024.06.25.05.14.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8b32sm12798437f8f.92.2024.06.25.05.14.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 05:14:23 -0700 (PDT)
+        Tue, 25 Jun 2024 05:14:25 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: chris.brandt@renesas.com,
@@ -86,9 +86,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 02/12] i2c: riic: Use temporary variable for struct device
-Date: Tue, 25 Jun 2024 15:13:48 +0300
-Message-Id: <20240625121358.590547-3-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 03/12] i2c: riic: Call pm_runtime_get_sync() when need to access registers
+Date: Tue, 25 Jun 2024 15:13:49 +0300
+Message-Id: <20240625121358.590547-4-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
@@ -102,192 +102,74 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Use a temporary variable for the struct device pointers to avoid
-dereferencing. While at it, replace riic->adapter.dev argument of
-dev_err() from riic_init_hw() with the temporary variable (pointing to
-riic->adapter.dev.parent).
+There is no need to runtime resume the device as long as the IP registers
+are not accessed. Calling pm_runtime_get_sync() at the register access
+time leads to a simpler error path.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
-- updated commit description to reflect all the changes done
+- none
 
- drivers/i2c/busses/i2c-riic.c | 53 ++++++++++++++++++-----------------
- 1 file changed, 28 insertions(+), 25 deletions(-)
+ drivers/i2c/busses/i2c-riic.c | 14 +++++---------
+ 1 file changed, 5 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index f608b1838cad..c08c988f50c7 100644
+index c08c988f50c7..83e4d5e14ab6 100644
 --- a/drivers/i2c/busses/i2c-riic.c
 +++ b/drivers/i2c/busses/i2c-riic.c
-@@ -131,11 +131,12 @@ static inline void riic_clear_set_bit(struct riic_dev *riic, u8 clear, u8 set, u
- static int riic_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+@@ -301,19 +301,15 @@ static const struct i2c_algorithm riic_algo = {
+ 
+ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
  {
- 	struct riic_dev *riic = i2c_get_adapdata(adap);
-+	struct device *dev = adap->dev.parent;
- 	unsigned long time_left;
- 	int i;
- 	u8 start_bit;
- 
--	pm_runtime_get_sync(adap->dev.parent);
-+	pm_runtime_get_sync(dev);
- 
- 	if (riic_readb(riic, RIIC_ICCR2) & ICCR2_BBSY) {
- 		riic->err = -EBUSY;
-@@ -168,7 +169,7 @@ static int riic_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
- 	}
- 
-  out:
--	pm_runtime_put(adap->dev.parent);
-+	pm_runtime_put(dev);
- 
- 	return riic->err ?: num;
- }
-@@ -303,11 +304,12 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
- 	int ret = 0;
+-	int ret = 0;
  	unsigned long rate;
  	int total_ticks, cks, brl, brh;
-+	struct device *dev = riic->adapter.dev.parent;
+ 	struct device *dev = riic->adapter.dev.parent;
  
--	pm_runtime_get_sync(riic->adapter.dev.parent);
-+	pm_runtime_get_sync(dev);
- 
+-	pm_runtime_get_sync(dev);
+-
  	if (t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) {
--		dev_err(&riic->adapter.dev,
-+		dev_err(dev,
+ 		dev_err(dev,
  			"unsupported bus speed (%dHz). %d max\n",
  			t->bus_freq_hz, I2C_MAX_FAST_MODE_FREQ);
- 		ret = -EINVAL;
-@@ -347,7 +349,7 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+-		ret = -EINVAL;
+-		goto out;
++		return -EINVAL;
  	}
  
+ 	rate = clk_get_rate(riic->clk);
+@@ -351,8 +347,7 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
  	if (brl > (0x1F + 3)) {
--		dev_err(&riic->adapter.dev, "invalid speed (%lu). Too slow.\n",
-+		dev_err(dev, "invalid speed (%lu). Too slow.\n",
+ 		dev_err(dev, "invalid speed (%lu). Too slow.\n",
  			(unsigned long)t->bus_freq_hz);
- 		ret = -EINVAL;
- 		goto out;
-@@ -396,7 +398,7 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+-		ret = -EINVAL;
+-		goto out;
++		return -EINVAL;
+ 	}
+ 
+ 	brh = total_ticks - brl;
+@@ -384,6 +379,8 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+ 		 t->scl_fall_ns / (1000000000 / rate),
+ 		 t->scl_rise_ns / (1000000000 / rate), cks, brl, brh);
+ 
++	pm_runtime_get_sync(dev);
++
+ 	/* Changing the order of accessing IICRST and ICE may break things! */
+ 	riic_writeb(riic, ICCR1_IICRST | ICCR1_SOWP, RIIC_ICCR1);
+ 	riic_clear_set_bit(riic, 0, ICCR1_ICE, RIIC_ICCR1);
+@@ -397,9 +394,8 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+ 
  	riic_clear_set_bit(riic, ICCR1_IICRST, 0, RIIC_ICCR1);
  
- out:
--	pm_runtime_put(riic->adapter.dev.parent);
-+	pm_runtime_put(dev);
- 	return ret;
+-out:
+ 	pm_runtime_put(dev);
+-	return ret;
++	return 0;
  }
  
-@@ -415,13 +417,14 @@ static void riic_reset_control_assert(void *data)
- 
- static int riic_i2c_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	struct riic_dev *riic;
- 	struct i2c_adapter *adap;
- 	struct i2c_timings i2c_t;
- 	struct reset_control *rstc;
- 	int i, ret;
- 
--	riic = devm_kzalloc(&pdev->dev, sizeof(*riic), GFP_KERNEL);
-+	riic = devm_kzalloc(dev, sizeof(*riic), GFP_KERNEL);
- 	if (!riic)
- 		return -ENOMEM;
- 
-@@ -429,22 +432,22 @@ static int riic_i2c_probe(struct platform_device *pdev)
- 	if (IS_ERR(riic->base))
- 		return PTR_ERR(riic->base);
- 
--	riic->clk = devm_clk_get(&pdev->dev, NULL);
-+	riic->clk = devm_clk_get(dev, NULL);
- 	if (IS_ERR(riic->clk)) {
--		dev_err(&pdev->dev, "missing controller clock");
-+		dev_err(dev, "missing controller clock");
- 		return PTR_ERR(riic->clk);
- 	}
- 
--	rstc = devm_reset_control_get_optional_exclusive(&pdev->dev, NULL);
-+	rstc = devm_reset_control_get_optional_exclusive(dev, NULL);
- 	if (IS_ERR(rstc))
--		return dev_err_probe(&pdev->dev, PTR_ERR(rstc),
-+		return dev_err_probe(dev, PTR_ERR(rstc),
- 				     "Error: missing reset ctrl\n");
- 
- 	ret = reset_control_deassert(rstc);
- 	if (ret)
- 		return ret;
- 
--	ret = devm_add_action_or_reset(&pdev->dev, riic_reset_control_assert, rstc);
-+	ret = devm_add_action_or_reset(dev, riic_reset_control_assert, rstc);
- 	if (ret)
- 		return ret;
- 
-@@ -453,29 +456,29 @@ static int riic_i2c_probe(struct platform_device *pdev)
- 		if (ret < 0)
- 			return ret;
- 
--		ret = devm_request_irq(&pdev->dev, ret, riic_irqs[i].isr,
-+		ret = devm_request_irq(dev, ret, riic_irqs[i].isr,
- 				       0, riic_irqs[i].name, riic);
- 		if (ret) {
--			dev_err(&pdev->dev, "failed to request irq %s\n", riic_irqs[i].name);
-+			dev_err(dev, "failed to request irq %s\n", riic_irqs[i].name);
- 			return ret;
- 		}
- 	}
- 
--	riic->info = of_device_get_match_data(&pdev->dev);
-+	riic->info = of_device_get_match_data(dev);
- 
- 	adap = &riic->adapter;
- 	i2c_set_adapdata(adap, riic);
- 	strscpy(adap->name, "Renesas RIIC adapter", sizeof(adap->name));
- 	adap->owner = THIS_MODULE;
- 	adap->algo = &riic_algo;
--	adap->dev.parent = &pdev->dev;
--	adap->dev.of_node = pdev->dev.of_node;
-+	adap->dev.parent = dev;
-+	adap->dev.of_node = dev->of_node;
- 
- 	init_completion(&riic->msg_done);
- 
--	i2c_parse_fw_timings(&pdev->dev, &i2c_t, true);
-+	i2c_parse_fw_timings(dev, &i2c_t, true);
- 
--	pm_runtime_enable(&pdev->dev);
-+	pm_runtime_enable(dev);
- 
- 	ret = riic_init_hw(riic, &i2c_t);
- 	if (ret)
-@@ -487,24 +490,24 @@ static int riic_i2c_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, riic);
- 
--	dev_info(&pdev->dev, "registered with %dHz bus speed\n",
--		 i2c_t.bus_freq_hz);
-+	dev_info(dev, "registered with %dHz bus speed\n", i2c_t.bus_freq_hz);
- 	return 0;
- 
- out:
--	pm_runtime_disable(&pdev->dev);
-+	pm_runtime_disable(dev);
- 	return ret;
- }
- 
- static void riic_i2c_remove(struct platform_device *pdev)
- {
- 	struct riic_dev *riic = platform_get_drvdata(pdev);
-+	struct device *dev = &pdev->dev;
- 
--	pm_runtime_get_sync(&pdev->dev);
-+	pm_runtime_get_sync(dev);
- 	riic_writeb(riic, 0, RIIC_ICIER);
--	pm_runtime_put(&pdev->dev);
-+	pm_runtime_put(dev);
- 	i2c_del_adapter(&riic->adapter);
--	pm_runtime_disable(&pdev->dev);
-+	pm_runtime_disable(dev);
- }
- 
- static const struct riic_of_data riic_rz_a_info = {
+ static struct riic_irq_desc riic_irqs[] = {
 -- 
 2.39.2
 
