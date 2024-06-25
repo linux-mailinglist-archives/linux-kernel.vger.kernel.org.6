@@ -1,206 +1,179 @@
-Return-Path: <linux-kernel+bounces-229624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6919171FF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:01:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030CE9171FB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 017E328829B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:00:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFC31288342
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E6A117E905;
-	Tue, 25 Jun 2024 19:56:35 +0000 (UTC)
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BDE017D36E;
-	Tue, 25 Jun 2024 19:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69FB17D8AA;
+	Tue, 25 Jun 2024 19:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1hz8A6iX";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jTSQ652N"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DD517D890
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:56:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719345394; cv=none; b=L2HPVmXP4sVZtsRlA+s3YpCePzRm4pe1FuFvDEZVcj/bwcof64p90NxsWRar6ZRxpU5NxKAL8R1XjJ7nQL9/VUHe7JLUkvDW8RIYMXQOp2CYpxdYQ+hKUFYOTK0ZueLKLGuErNmpEnvpohNin/vxichCX3mZ1G8NV8X9v9cT4Ns=
+	t=1719345393; cv=none; b=AARdLDdTgCoOqNjVPJTpMlVkKAHMsC5KQ7GXaL+cqD4+ciIm5enk1k0DzkK026E5ujUA3ZFS+Z7cJXsLAKUSe/aKDWXyO855WlIXSbgPCAP1gnyChJn7sqpqvWatRgkkBD5zy4TfPIG9fHzS3nh8EqflBElLmZn67otTqq4wk+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719345394; c=relaxed/simple;
-	bh=smX6m7HAKisAxLtQ6dp7wGvI5qQ+GOuKsyb9gLdVrAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ScNkFDnqzbBUnYnaMj5LJSD/o7VheAcL7fv45FAsnGSSJAwDrJRGhIz6wZcdFmn4TCi3o/weK82P6hhfyi9UcYiqp15dhouX1APtgnKfw2MN9mcL0hhtSCmoNpHI0BjzRewY7+KW8ahGqMrgY6o56vEulCmPk039nL7Mnk/sv2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-X-IronPort-AV: E=Sophos;i="6.08,264,1712588400"; 
-   d="asc'?scan'208";a="213220019"
-Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
-  by relmlie6.idc.renesas.com with ESMTP; 26 Jun 2024 04:56:30 +0900
-Received: from [10.226.92.125] (unknown [10.226.92.125])
-	by relmlir5.idc.renesas.com (Postfix) with ESMTP id 73E4540078B4;
-	Wed, 26 Jun 2024 04:56:26 +0900 (JST)
-Message-ID: <6416f18e-f4cd-41da-9b46-b3b1f67d7170@bp.renesas.com>
-Date: Tue, 25 Jun 2024 20:56:24 +0100
+	s=arc-20240116; t=1719345393; c=relaxed/simple;
+	bh=KnEiOwAWRojsejXCxmgnhpxSmZ1SRiCKg/aXX+AJWRk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=cNd8Laq2HbovAa2RCiick2SWKB0yLxebQuj0lb5U55cFarzMprLebhP2ChKa3XrZ+Ji5wYKUqrK2WiRdcF16RcPKzbU9HLalsSeUCESs7c2Z/fll4Ksj0XTKrqkjJPV0g7t2cXMX1r6s3XdpJJZspiOf15oTnlIv328T5vBnUlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1hz8A6iX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jTSQ652N; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: John Ogness <john.ogness@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719345390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UcDM9ERFRPSMcyIl4N1wIJdu6qzGP3QrT+zHPuM7L98=;
+	b=1hz8A6iXDmuervTPokJEBH/jfMssFSWTWRWePHR2pKlr2KBGrAime15N97MB2CrHcfdOYn
+	5MOOnSJFftX2YCSeMgj9pH0iLAuBwjCYWsYRcyB36I6l8VcQGV9JEgeSrcTNFYIuLZaMRv
+	vurfxfeOIDmLmFaok1kIu6cs/34OqFs/JDlg57atP2RdcUlxQgUEjQ+wXzFXT8rJ14C8mX
+	rQkjzJ13846dM7Ji5TFXo1EXvmXEl/macZM0tZ9YhMBOi9uTCxHIuXiHIzw6SCw7VagjUZ
+	IcYjM9COA9uoqAORbALTr3gj/UhcFzOuhcvBkyo0CDfeD1smkqSeHm4nwIvpPA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719345390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UcDM9ERFRPSMcyIl4N1wIJdu6qzGP3QrT+zHPuM7L98=;
+	b=jTSQ652NJW9VKlqnwzUYHqzU1y4UltJNVgkwIahrgtrkL7KlvOvc1NqW5aZ3JQ5O5/T8Cf
+	PS0xD0NfQqRFB4CA==
+To: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
+ <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH printk v2 08/18] printk: nbcon: Stop threads on
+ shutdown/reboot
+In-Reply-To: <ZnBUe0ZJgjbZXlAL@pathway.suse.cz>
+References: <20240603232453.33992-1-john.ogness@linutronix.de>
+ <20240603232453.33992-9-john.ogness@linutronix.de>
+ <ZnBUe0ZJgjbZXlAL@pathway.suse.cz>
+Date: Tue, 25 Jun 2024 22:02:30 +0206
+Message-ID: <874j9gyexd.fsf@jogness.linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/9] pinctrl: renesas: rzg2l: Clean up and refactor OEN
- read/write functions
-Content-Language: en-GB
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240611113204.3004-1-paul.barker.ct@bp.renesas.com>
- <20240611113204.3004-3-paul.barker.ct@bp.renesas.com>
- <CAMuHMdXe8aaweQJ2=V7ksKTqcJCnqewKhSrrO4h7X924Vbk-_Q@mail.gmail.com>
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-Organization: Renesas Electronics Corporation
-In-Reply-To: <CAMuHMdXe8aaweQJ2=V7ksKTqcJCnqewKhSrrO4h7X924Vbk-_Q@mail.gmail.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------F7wY7wXzcTusmjM2nNZqYhCs"
+Content-Type: text/plain
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------F7wY7wXzcTusmjM2nNZqYhCs
-Content-Type: multipart/mixed; boundary="------------DelRo8wk2KDwhuZDY8jmYeHm";
- protected-headers="v1"
-From: Paul Barker <paul.barker.ct@bp.renesas.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-ID: <6416f18e-f4cd-41da-9b46-b3b1f67d7170@bp.renesas.com>
-Subject: Re: [PATCH v2 2/9] pinctrl: renesas: rzg2l: Clean up and refactor OEN
- read/write functions
-References: <20240611113204.3004-1-paul.barker.ct@bp.renesas.com>
- <20240611113204.3004-3-paul.barker.ct@bp.renesas.com>
- <CAMuHMdXe8aaweQJ2=V7ksKTqcJCnqewKhSrrO4h7X924Vbk-_Q@mail.gmail.com>
-In-Reply-To: <CAMuHMdXe8aaweQJ2=V7ksKTqcJCnqewKhSrrO4h7X924Vbk-_Q@mail.gmail.com>
+On 2024-06-17, Petr Mladek <pmladek@suse.com> wrote:
+> First ideas (how the waterfall of questions started):
+>
+>     + I though that we should do here:
+>
+> 	    printk_threads_enabled = false;
+>
+>       It would tell vprintk_emit() to call
+>       nbcon_atomic_flush_pending().  And it would be symetric with
+>       printk_setup_threads().
 
---------------DelRo8wk2KDwhuZDY8jmYeHm
-Content-Type: multipart/mixed; boundary="------------Ls8jdR8nbgg67zstJceFt6qs"
+This makes sense. I created @printk_threads_enabled to have a clean
+startup of the threads. I did not consider recycling it for shutdown
+purposes.
 
---------------Ls8jdR8nbgg67zstJceFt6qs
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+>     + Also I though whether to call it before or after stopping the
+>       kthreads.
+>
+>       If we set the variable before stopping kthreads then the
+>       kthreads might try to flush the messages in parallel with the
+>       flush from vprintk_emit(). It should be safe because it would be
+>       serialized via the nbcon console context. But it would be the
+>       first scenario where this happen => not much tested.
 
-On 17/06/2024 13:02, Geert Uytterhoeven wrote:
-> Hi Paul,
->=20
-> On Tue, Jun 11, 2024 at 1:33=E2=80=AFPM Paul Barker
-> <paul.barker.ct@bp.renesas.com> wrote:
->> -static u8 rzg3s_pin_to_oen_bit(u32 offset, u8 pin, u8 max_port)
->> +static u32 rzg3s_read_oen(struct rzg2l_pinctrl *pctrl, u32 caps, unsi=
-gned int _pin)
->>  {
->> -       if (pin)
->> -               pin *=3D 2;
->> +       u32 port =3D RZG2L_PIN_ID_TO_PORT(_pin);
->> +       u8 pin =3D RZG2L_PIN_ID_TO_PIN(_pin);
->=20
-> It's OK to use RZG2L_PIN_ID_TO_PIN() unconditionally, as RZ/G3S does
-> not have any dedicated pins with the OEN capability, right?
+It is safe. The scenario is not that unusual. Non-printing activities
+can contend with thread via the port_lock wrapper quite often.
 
-I thought about this a bit and came to the conclusion that no, it's not
-ok.
+>       Well, we should start the direct flush before stopping kthreads.
+>       So that we could see the messages when the stopping fails.
+>
+>
+> But then I realized:
+>
+> Ha, vprintk_emit() would call nbcon_atomic_flush_pending() anyway
+> because these notifiers are called with:
+>
+> 	system_state > SYSTEM_RUNNING
+>
+> This makes me wonder whether we need to stop the kthreads at all.
 
-For RZ/G2L, only mux'd pins have OEN capability (Ethernet TXC/TX_CLK
-only).
+Well, that overlap was not intentional. There probably should be a flag
+to signify the transition rather than just looking at @system_state.
 
-For RZ/G3S, OEN capability also exists on XSPI/OCTA pins which are
-dedicated pins. We don't currently support OEN for these pins in the
-driver, but we should put a check in place now to be safe. I've done
-this in v3 which I'm about to send...
+> How exactly does this make printk more robust during shutdown?
 
-Thanks,
+Because by stopping them, the printing threads are guaranteed to go
+silent before they suddenly freeze. Without the clean shutdown, I could
+create shutdown/reboot scenarios where the printing thread would stop
+mid-line. Then the atomic printing would never be able to finish because
+it is a non-panic situation and the thread was frozen while holding the
+context. The result: the user never sees the final printk messages.
 
---=20
-Paul Barker
---------------Ls8jdR8nbgg67zstJceFt6qs
-Content-Type: application/pgp-keys; name="OpenPGP_0x27F4B3459F002257.asc"
-Content-Disposition: attachment; filename="OpenPGP_0x27F4B3459F002257.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
+> Well, there is one differece. The kthreads could not interferre with
+> the direct flush when they are stopped.
+>
+> But we have the same problem also with suspend/resume. And we do not
+> stop the kthreads in this case.
 
------BEGIN PGP PUBLIC KEY BLOCK-----
+Suspend/resume is something different. Suspend needs to stop _all_
+printing. I do not think it makes sense to shutdown threads for
+this. The consoles becoming temporarily !usable() is enough.
 
-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3D
-=3DsIIN
------END PGP PUBLIC KEY BLOCK-----
+For shutdown, the consoles are usable() the entire time. I just want the
+threads to get out of the way before they freeze so that the user can
+see all the messages on shutdown/reboot.
 
---------------Ls8jdR8nbgg67zstJceFt6qs--
+> Maybe, we should just add a check of
+>
+>        system_state > SYSTEM_RUNNING
+>
+> also into the nbcon_kthread_func(). Maybe, the kthread should not try
+> to flush the messages when they are flushed directly by
+> vprintk_emit().
 
---------------DelRo8wk2KDwhuZDY8jmYeHm--
+It gets racy when we start relying on the contexts noticing some
+variables. By racy, I mean there are scenarios where there are unprinted
+records and no context is printing. I think it is easiest when the
+following steps occur within a notifier:
 
---------------F7wY7wXzcTusmjM2nNZqYhCs
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+1. notifier sets a flag to allow atomic printing from vprintk_emit()
 
------BEGIN PGP SIGNATURE-----
+2. notifier stops all threads (with the kthread_should_stop() moved
+   inside the printing loop of nbcon_kthread_func())
 
-wnsEABYIACMWIQSiu8gv1Xr0fIw/aoLbaV4Vf/JGvQUCZnsg6QUDAAAAAAAKCRDbaV4Vf/JGvQsp
-AP4mBC+NxUmd1+muaT31jvW2QFMzugEYAqQww+DqnGt80gEAy6UT5zCluNPY7Gc5zhkWptwkqTsT
-DKzbnQPZbhBz5go=
-=qHqH
------END PGP SIGNATURE-----
+3. notifier performs nbcon_atomic_flush_pending()
 
---------------F7wY7wXzcTusmjM2nNZqYhCs--
+This guarantees that no messages are lost and that all get flushed.
+
+>> +static int __init printk_init_ops(void)
+>> +{
+>> +	register_syscore_ops(&printk_syscore_ops);
+>> +	return 0;
+>> +}
+>> +device_initcall(printk_init_ops);
+>
+> I guess that "device_initcall" is cut&pasted ;-) IMHO, it does not
+> fit much. That said, I do not have strong opinion where
+> it belongs.
+>
+> IMHO, the best solution would be to register the notifier in
+> printk_setup_threads() before we actually allow creating them.
+
+OK.
+
+John Ogness
 
