@@ -1,120 +1,82 @@
-Return-Path: <linux-kernel+bounces-229718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48364917321
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:13:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF566917326
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E43841F23F54
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:13:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BBA71C22F5E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:17:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E518117F36A;
-	Tue, 25 Jun 2024 21:12:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1907617DE31;
+	Tue, 25 Jun 2024 21:17:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArcIuk0u"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CAm8iUuM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124C417DE2E;
-	Tue, 25 Jun 2024 21:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527421CABB;
+	Tue, 25 Jun 2024 21:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719349938; cv=none; b=Db5z4zAG5THtvBE8Sbjgpk7Buk8k5WivILb93bEMkP++nXYYkUQBjStuQLOqthCx9ZUCfXgapOgnLqK8GJfrbbUVyPJLlaHpDAyBdxJ+JxqwnoNWUqYRWl+MTV+bMSd9v9qaplIh3Ffm9yRv/akWd56wKgrFWFMkWcI+hegn0R8=
+	t=1719350224; cv=none; b=Tel3SpqpIIMaRpcLzSWiJ9iaCKmLor4ZiiuixdSY8xrJ9DEDNUA9LOBaarHaD5LaBI3LupJBLeOgMTTb+HcRmSYyT68AArg8Vkp2+atEETTyd/0DHLWeBNxl70IKrGWJksCQ9cANsW2yr8iB9vd5IQRwN1dRDTKxnBf/Ypv1lg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719349938; c=relaxed/simple;
-	bh=hyygwZzV0TA9MeTrczY+xfhnsSFmoluW/aMTxSPPF7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rrsx3retKRTBVJTyM3S6vHK838RUV5hvPFphP1Gqr17eYJujvjIR5J7JcFM4n8gLXFMoRx0C1486VoYYLUauWvvCdzhTwn0Vzjol8SD1c3voUq0ajDCYRNGEVswIgHSVXgjLtoduOxeHFKbD2qDAMDUgDiGsju6urXTRgJFEazY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArcIuk0u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F61C32781;
-	Tue, 25 Jun 2024 21:12:16 +0000 (UTC)
+	s=arc-20240116; t=1719350224; c=relaxed/simple;
+	bh=9z3yrzPaDTISgM86swa2fwCxrMwIr7mTjR4R/hfAcKs=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UoMxakjWh6wwwFFHuy5vEAqlnweBOB+HakEXduYPrnDLgr+6xgeZK8uce69EjRGyMx0rWY/cI1Mxzy0X1atqfa6eTpHMzmsxwC0+z1uQUSk9ZhvW9ZFYuWqeoPsX3H+1xPC2AgI6YMfWqvsVgXuylikihMOQH+uBQtmPzmVSeOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CAm8iUuM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41CF2C32781;
+	Tue, 25 Jun 2024 21:17:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719349937;
-	bh=hyygwZzV0TA9MeTrczY+xfhnsSFmoluW/aMTxSPPF7g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ArcIuk0uRfsESHfkGfkKUOWRPGGQRoYshDAKXgfL7RAidYC2yoPUOF4EOIWRth/zx
-	 ykHnbRshuPVKR4UsTmEqJpfbjR7Lxb1MgohaxTO7sN4G186OXUULYfjTSoMk/JACVy
-	 rDH4YFTTQFVhxEeWdIOOD5ronHyHYn5GlVnw+3JtZFiKhbLmGLU7w1aHq4GtR8VqXx
-	 zOrwlDLRr/Fxt5QON7ooh6qk8zgpeQFn4BGJ4f8p9B/da2ub1m3VU/0NxxHk78cBsC
-	 Ylf78UIPjF87TiTkhrpWjEAnrqweWrfQoiMdjHdFmTSchTgaZPSVi6dGjUTTadSf7V
-	 tnFI4Gu0p7ohg==
-Date: Tue, 25 Jun 2024 23:12:12 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"J.M.B. Downing" <jonathan.downing@nautel.com>, Vladimir Zapolskiy <vz@mleia.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Yangtao Li <frank.li@vivo.com>, Li Zetao <lizetao1@huawei.com>, 
-	Chancel Liu <chancel.liu@nxp.com>, Michael Ellerman <mpe@ellerman.id.au>, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [Patch v4 10/10] i2x: pnx: Use threaded irq to fix warning from
- del_timer_sync()
-Message-ID: <73yvglxha45d5ft74m3y5fdmkgatm2yftvhza2msg4ombjz42f@wz43pubhbpdz>
-References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
- <20240620175657.358273-11-piotr.wojtaszczyk@timesys.com>
- <jgqhlnysuwajlfxjwetas53jzdk6nnmewead2xzyt3xngwpcvl@xbooed6cwlq4>
- <CAG+cZ04suU53wR5f0PhudgNmkxTRtwEXTS1cWH1o9_rTNM94Cg@mail.gmail.com>
+	s=k20201202; t=1719350224;
+	bh=9z3yrzPaDTISgM86swa2fwCxrMwIr7mTjR4R/hfAcKs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=CAm8iUuMiDrwPlQpjwP/G6r1LY2QYr6WX9Km0Oz+JxbRGLnIMObQlVq3puWdrE/6t
+	 OUgOo/th9LeaF9Dzjw7+12SIYxN4O1yyfqTYGB2q86BHvHfWjSmduaofF+J1Jo1JWn
+	 HUg5FW6FsA8cUj5DsqKVMDBXSF0e9K/G/sC2Sl4c5Arh40kTrGB54oeqs6cQIo6w+l
+	 rEqdqK+QeZEjX9CsNfnQlouY3Ulh+YOhje1eHbzkeka5Dv1Kcwbu/mbqoLHh+WhHBc
+	 dkrAQFyXcVRrAHpl7N4s9TxJQWOV7NcAZXRooW+f9hB3ixF5KmyWqpPqcBEKnC93mm
+	 tWsc7vptapqXg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-qcp: add audio support
+Date: Tue, 25 Jun 2024 16:17:01 -0500
+Message-ID: <171935021854.34277.4762982422030513530.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240624-qcp-audio-v1-1-323a6b5e1fe5@linaro.org>
+References: <20240624-qcp-audio-v1-1-323a6b5e1fe5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG+cZ04suU53wR5f0PhudgNmkxTRtwEXTS1cWH1o9_rTNM94Cg@mail.gmail.com>
 
-Hi Piotr,
 
-On Fri, Jun 21, 2024 at 02:08:03PM GMT, Piotr Wojtaszczyk wrote:
-> On Fri, Jun 21, 2024 at 12:57 AM Andi Shyti <andi.shyti@kernel.org> wrote:
-> > On Thu, Jun 20, 2024 at 07:56:41PM GMT, Piotr Wojtaszczyk wrote:
-> > > When del_timer_sync() is called in an interrupt context it throws a warning
-> > > because of potential deadlock. Threaded irq handler fixes the potential
-> > > problem.
-> > >
-> > > Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-> >
-> > did you run into a lockdep splat?
-> >
-> > Anything against using del_timer(), instead? Have you tried?
+On Mon, 24 Jun 2024 17:33:41 +0100, Srinivas Kandagatla wrote:
+> Add audio support to QCP platform which includes 2 x Speakers
+> Headset Mic and Headset support.
 > 
-> I didn't get a lockdep splat but console was flooded with warnings from
-> https://github.com/torvalds/linux/blob/v6.10-rc4/kernel/time/timer.c#L1655
-> In the linux kernel v5.15 I didn't see these warnings.
 > 
-> I'm not a maintainer of the driver and I didn't do any research on
-> what kind of impact
-> would have using del_timer() instad. Maybe Vladimir Zapolskiy will know that.
 
-Your patch is definitely correct, no doubt about that.
+Applied, thanks!
 
-And I don't have anything aginast changing irq handlers to
-threaded handlers. But I would be careful at doing that depending
-on the use of the controller and for accepting such change I
-would need an ack from someone who knows the device. Vladimir,
-perhaps?
+[1/1] arm64: dts: qcom: x1e80100-qcp: add audio support
+      commit: a8cce1ad72caa8ed305b40dec7c075bbebd1c2f3
 
-There are cases where using threaded handlers are not totally
-right, for example when the controller is used at early boot for
-power management handling. I don't think it's the case for this
-driver, but I can't be 100% sure.
-
-If you were able to see the flood of WARN_ON's, would be
-interesting to know how it behaves with del_timer(). Mind
-giving it a test?
-
-Thanks,
-Andi
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
