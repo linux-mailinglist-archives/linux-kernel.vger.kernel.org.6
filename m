@@ -1,200 +1,115 @@
-Return-Path: <linux-kernel+bounces-229093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEF19916ADA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:43:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55250916AD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:43:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1E4A1C223C0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:43:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11CCC28CA0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:43:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60AAE16D9B5;
-	Tue, 25 Jun 2024 14:42:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AEB16D4C4;
+	Tue, 25 Jun 2024 14:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ioz9bs71"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Srf2/7i+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 909E616D335;
-	Tue, 25 Jun 2024 14:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212AD16B72D;
+	Tue, 25 Jun 2024 14:42:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719326547; cv=none; b=um0R0wKzBBJI7DVbn3N7irLJz7Ii87+f172CRokn7axInkw80Uwiuh1AcWJDNv06X7JB4BANzZqaF8zurigmGVn/jWjHdhxeuv8AFJqJBX2jqKS1aAG+7hxoP4RUuH+4LZGoPf53D2VXz6W7Nf+f2p6DWKb/kxrAmE53RoJGdSU=
+	t=1719326547; cv=none; b=rtZ52OS06eFF2Uoj84N6kD7OTz0RWYkuRMUmoTX+8PV1cMsXpL5SJdtgW/g+7qLE5FOqBPiQ1YUn3hQObSkaAzexHCOzsB+JZ8mdyrUnnwxu5hk0lL+WffXb0+SlTo9sVVGznjsU8CkLo3C6Szdtoc6buFgj8GDkfz0XxLFPV6k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719326547; c=relaxed/simple;
-	bh=oFhoRb8dHMqtN4BhADZtElPNMzCP/jvSv6/NFTI8rNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uEd77dvoo6fD3f62YeE4fOH6JcuHWZKJq6P1Yt+knIxmh5qOzOeUnhCd/TS4hCxHlCa/oSede0Au7svbaLHkaEpfMXI0Oz1EbR5I8P7CMxUqcQHUwycuhrexySc4gMb05mbOXh4EJoLSDg/bpk29+8QIDmnN/brIgeTIucEYWRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ioz9bs71; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE622C32781;
-	Tue, 25 Jun 2024 14:42:18 +0000 (UTC)
+	bh=h1k4bKkpwQQctZj7V3l1zm7QXHCRgZwknbyeo61u8bw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=bODTsXN9IpIdjhJP5fo03D/AcPOigZHmjoGjXaojMWjgo7iop3Tbg6YCCzt5kwfI4eeGyG8qUFZlH0b+me+yhikJe5uSe8wE+3PP5Tek3JuMUSAUpTcy9MjUDeZWIHVl+8ay01rD6+8lnYeFTdP80tJc/cUI/RWVc7UzokTdkQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Srf2/7i+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00057C32786;
+	Tue, 25 Jun 2024 14:42:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719326547;
-	bh=oFhoRb8dHMqtN4BhADZtElPNMzCP/jvSv6/NFTI8rNc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ioz9bs71qsaqECa12AgJiUinorz/UT/ACN8div31KGmR3f66EL5OeA4OataeJmcE9
-	 Rlw28Isv9Uu7TYneAfGaFIIOwGMlX5nFVF7jNhVMxCjHSzYBsWzG65/ZQJdHDFCwvP
-	 dxSoZBi3FM4FQNVOejphBz894XtTw5lvXmvN55q5AsSc4Sl4vxHN5adwwQPrvZXo3I
-	 7Q+sPsxdNjgOPovuE0z5f5nNc4yoQfmkH3eFtP63eHoVZoXh2I8R03OoYV87G4UZE5
-	 gvzeQcTt0XdJGmGOz2JFCamVjwcgOniky7gUrgVe1k5RvHGB8/ad4jJLKs1XYndPYX
-	 jK2KqckLIrvHw==
-Date: Tue, 25 Jun 2024 16:42:12 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>, guohanjun@huawei.com
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
-	maz@kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
-	rdunlap@infradead.org, vidyas@nvidia.com,
-	ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com,
-	kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp,
-	andrew@lunn.ch, gregory.clement@bootlin.com,
-	sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
-	rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
-	lorenzo.pieralisi@arm.com, jgg@mellanox.com,
-	ammarfaizi2@gnuweeb.org, robin.murphy@arm.com, nm@ti.com,
-	kristo@kernel.org, vkoul@kernel.org, okaya@kernel.org,
-	agross@kernel.org, andersson@kernel.org, mark.rutland@arm.com,
-	shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com,
-	shivamurthy.shastri@linutronix.de
-Subject: Re: [patch V4 10/21] irqchip/mbigen: Remove
- platform_msi_create_device_domain() fallback
-Message-ID: <ZnrXRLtqrlXhY8oz@lpieralisi>
-References: <20240623142137.448898081@linutronix.de>
- <20240623142235.333333826@linutronix.de>
+	s=k20201202; t=1719326543;
+	bh=h1k4bKkpwQQctZj7V3l1zm7QXHCRgZwknbyeo61u8bw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Srf2/7i+RlmkZ3IxuARiUF6MniKIcXmlgcWZZc5a8VQa2SDbX25bCcKNiXXzWmoUM
+	 delEmNZpOrT6RFaMS4Gd7vKtxWNJAbOyyD9HT360IC9V5icF1Qd3x+l6ko4yBelFv/
+	 7VUzjniSqeqNvSW1pmGXQjk163d2OIysbjC3OvGqcQ4bvT78Z47dwMsG+vXGL1YlUs
+	 WFQzaRNwrc2MZ9ZlhC1dhgCOwx8SP5kBd87Z4UcFThNutJGDcoXEOMKNfF535v2LFk
+	 8FdvOJ0GbO0A6IeQiMngzfiVPAxXPG49alXwsMvPqCGgMIwFok87jrVfPzxaUuH/qa
+	 dGZYW22Pv4d5A==
+Date: Tue, 25 Jun 2024 15:42:18 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Jisheng Zhang <jszhang@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the tip tree
+Message-ID: <ZnrXSitgAnCO0EG9@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="JTVGzSLxTT9nEpPz"
+Content-Disposition: inline
+
+
+--JTVGzSLxTT9nEpPz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240623142235.333333826@linutronix.de>
 
-On Sun, Jun 23, 2024 at 05:18:48PM +0200, Thomas Gleixner wrote:
+Hi all,
 
-[+Hanjun]
+After merging the tip tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-Hanjun, are you able to test this series (or find someone who can) and
-in particular mbigen changes on affected HW and report back here please ?
+/tmp/next/build/drivers/irqchip/irq-dw-apb-ictl.c:33:25: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'dw_apb_ictl_handle_irq'
+   33 | static void __irq_entry dw_apb_ictl_handle_irq(struct pt_regs *regs)
+      |                         ^~~~~~~~~~~~~~~~~~~~~~
+In file included from /tmp/next/build/drivers/irqchip/irq-dw-apb-ictl.c:15:
+/tmp/next/build/drivers/irqchip/irq-dw-apb-ictl.c: In function 'dw_apb_ictl_init':
+/tmp/next/build/drivers/irqchip/irq-dw-apb-ictl.c:206:32: error: 'dw_apb_ictl_handle_irq' undeclared (first use in this function); did you mean 'dw_apb_ictl_init'?
+  206 |                 set_handle_irq(dw_apb_ictl_handle_irq);
+      |                                ^~~~~~~~~~~~~~~~~~~~~~
+/tmp/next/build/include/linux/irq.h:1331:23: note: in definition of macro 'set_handle_irq'
+ 1331 |                 (void)handle_irq;               \
+      |                       ^~~~~~~~~~
+/tmp/next/build/drivers/irqchip/irq-dw-apb-ictl.c:206:32: note: each undeclared identifier is reported only once for each function it appears in
+  206 |                 set_handle_irq(dw_apb_ictl_handle_irq);
+      |                                ^~~~~~~~~~~~~~~~~~~~~~
+/tmp/next/build/include/linux/irq.h:1331:23: note: in definition of macro 'set_handle_irq'
+ 1331 |                 (void)handle_irq;               \
+      |                       ^~~~~~~~~~
 
-Thanks,
-Lorenzo
 
-> From: Thomas Gleixner <tglx@linutronix.de>
-> 
-> Now that ITS provides the MSI parent domain, remove the unused fallback
-> code.
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
-> Signed-off-by: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> 
-> 
-> ---
->  drivers/irqchip/irq-mbigen.c | 74 ++----------------------------------
->  1 file changed, 4 insertions(+), 70 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-mbigen.c b/drivers/irqchip/irq-mbigen.c
-> index db0fa80330d9..093fd42893a7 100644
-> --- a/drivers/irqchip/irq-mbigen.c
-> +++ b/drivers/irqchip/irq-mbigen.c
-> @@ -180,64 +180,6 @@ static int mbigen_domain_translate(struct irq_domain *d, struct irq_fwspec *fwsp
->  	return -EINVAL;
->  }
->  
-> -/* The following section will go away once ITS provides a MSI parent */
-> -
-> -static struct irq_chip mbigen_irq_chip = {
-> -	.name =			"mbigen-v2",
-> -	.irq_mask =		irq_chip_mask_parent,
-> -	.irq_unmask =		irq_chip_unmask_parent,
-> -	.irq_eoi =		mbigen_eoi_irq,
-> -	.irq_set_type =		mbigen_set_type,
-> -	.irq_set_affinity =	irq_chip_set_affinity_parent,
-> -};
-> -
-> -static int mbigen_irq_domain_alloc(struct irq_domain *domain,
-> -					unsigned int virq,
-> -					unsigned int nr_irqs,
-> -					void *args)
-> -{
-> -	struct irq_fwspec *fwspec = args;
-> -	irq_hw_number_t hwirq;
-> -	unsigned int type;
-> -	struct mbigen_device *mgn_chip;
-> -	int i, err;
-> -
-> -	err = mbigen_domain_translate(domain, fwspec, &hwirq, &type);
-> -	if (err)
-> -		return err;
-> -
-> -	err = platform_msi_device_domain_alloc(domain, virq, nr_irqs);
-> -	if (err)
-> -		return err;
-> -
-> -	mgn_chip = platform_msi_get_host_data(domain);
-> -
-> -	for (i = 0; i < nr_irqs; i++)
-> -		irq_domain_set_hwirq_and_chip(domain, virq + i, hwirq + i,
-> -				      &mbigen_irq_chip, mgn_chip->base);
-> -
-> -	return 0;
-> -}
-> -
-> -static void mbigen_irq_domain_free(struct irq_domain *domain, unsigned int virq,
-> -				   unsigned int nr_irqs)
-> -{
-> -	platform_msi_device_domain_free(domain, virq, nr_irqs);
-> -}
-> -
-> -static const struct irq_domain_ops mbigen_domain_ops = {
-> -	.translate	= mbigen_domain_translate,
-> -	.alloc		= mbigen_irq_domain_alloc,
-> -	.free		= mbigen_irq_domain_free,
-> -};
-> -
-> -static void mbigen_write_msg(struct msi_desc *desc, struct msi_msg *msg)
-> -{
-> -	mbigen_write_msi_msg(irq_get_irq_data(desc->irq), msg);
-> -}
-> -
-> -/* End of to be removed section */
-> -
->  static void mbigen_domain_set_desc(msi_alloc_info_t *arg, struct msi_desc *desc)
->  {
->  	arg->desc = desc;
-> @@ -268,20 +210,12 @@ static const struct msi_domain_template mbigen_msi_template = {
->  static bool mbigen_create_device_domain(struct device *dev, unsigned int size,
->  					struct mbigen_device *mgn_chip)
->  {
-> -	struct irq_domain *domain = dev->msi.domain;
-> -
-> -	if (WARN_ON_ONCE(!domain))
-> +	if (WARN_ON_ONCE(!dev->msi.domain))
->  		return false;
->  
-> -	if (irq_domain_is_msi_parent(domain)) {
-> -		return msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN,
-> -						    &mbigen_msi_template, size,
-> -						    NULL, mgn_chip->base);
-> -	}
-> -
-> -	/* Remove once ITS provides MSI parent */
-> -	return !!platform_msi_create_device_domain(dev, size, mbigen_write_msg,
-> -						   &mbigen_domain_ops, mgn_chip);
-> +	return msi_create_device_irq_domain(dev, MSI_DEFAULT_DOMAIN,
-> +					    &mbigen_msi_template, size,
-> +					    NULL, mgn_chip->base);
->  }
->  
->  static int mbigen_of_create_domain(struct platform_device *pdev,
-> -- 
-> 2.34.1
-> 
-> 
+Caused by commit
+
+  7cc4f309c933ec5d ("irqchip/dw-apb-ictl: Support building as module")
+
+(I think, I didn't specifically verify.)  I have used the tree from
+20240624 instead.
+
+--JTVGzSLxTT9nEpPz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ610kACgkQJNaLcl1U
+h9CCGwf+LYtQ2RGGwJPGLIUjsQTZfr3lXibDSFKGxnGijXitQww/AjsSc781a5dd
+IwmtPKxxma0gSKbzWTYMJ/SLt8MyQmWV79aEt8lB/cQLs0QnA9/niUe/CryhdCJu
+DFSPV3B3xEhfuJlVe+kpHv5FMJJtMxGScju9VLbmWEjaRe2A8i9Srb9ns6sJl9t1
+DVgyoiGAEA3KAyS5yZ+S9Y5r/14GGw4K7vhm2n0ymiwXm3GZzv1CfjoKq//S3/2v
+pFD036zgzYJY7RkfCmLMzuR6x5PNFzMapkynJfzVLOiUx4cNngnrxoFrF+vvey/a
+ZlRGW4dZwgCr33TFjCAax/7FY3sP/Q==
+=Kafz
+-----END PGP SIGNATURE-----
+
+--JTVGzSLxTT9nEpPz--
 
