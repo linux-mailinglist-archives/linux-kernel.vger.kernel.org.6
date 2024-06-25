@@ -1,260 +1,234 @@
-Return-Path: <linux-kernel+bounces-228231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78FA0915D18
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EE72915D1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0107A1F2676C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:58:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 055641F2691D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C2945BE3;
-	Tue, 25 Jun 2024 02:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531CE4652D;
+	Tue, 25 Jun 2024 03:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gcvCZzol"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aC3u/k0n"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2055.outbound.protection.outlook.com [40.107.244.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BF945978
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719284297; cv=none; b=n5hAyDBh/CQe2FRrTeIOwLNhtkLwnv/iwYGk6FiLc3DbR0t+MaeAJo1UMlN0VGWAzFy5lTrncJUHgz9b5U0TLBvnE6VLwX3R4Y51exVc3RRbcNCs749Uz/uHrrKe2oq4IDmWWbIF5Gowgq9suRDzz2VrSsE6qLTRtrnUPUvPWmg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719284297; c=relaxed/simple;
-	bh=CcLS3OTowtx3R9+9pzXuHh+HYKrUE882Dv3fEaCiOsk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Disposition; b=aDZ0Sz6TH4EP4u5ci95SKFaw/0H6Xhb+YQHcFvn1spy/aVELzjtZ+gAmK8hu9BIP+eZy1mHVfC9LJe+3M7X3bK7se6A0IiircFuGSqs2eP0iMAr2kS7nITtgd4yGJ03JfauowY00/6NvGQoC/y2ELiky3q4JhwpVvS2y1ZJpku8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gcvCZzol; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719284294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=syJjt5ixA/f0tjdi5WdyuW2MiVMWIPWhYOIIe9HkUzQ=;
-	b=gcvCZzoln7H+CTIwO4JxZhuFMF4rxdaaRsvChX4WbJms9Ka5ZL3B1P3SMgZ85idwBgdBow
-	EuoVizvSxkLT5x7CNl3IeOO2VDAGbu1/41d8EuRFPNVebpGpd0DtMq6WxoT+7Sfney2smn
-	9488DD/ZeRuxCevjLEoftqf6kO/T4lc=
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com
- [209.85.214.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-672-Q9khuMWIPmWQRexWt-6RgA-1; Mon, 24 Jun 2024 22:58:11 -0400
-X-MC-Unique: Q9khuMWIPmWQRexWt-6RgA-1
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-1f6174d0421so54776825ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 19:58:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719284290; x=1719889090;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=syJjt5ixA/f0tjdi5WdyuW2MiVMWIPWhYOIIe9HkUzQ=;
-        b=jHRbxmoZWEnEofXlPDWGd1lqH+M+1dtOlwWoOK15U1nKsi6IIgpUTJBO0vQEJKqtcZ
-         oOMwyMe1NJHcZznHby+EcR5iYFJmUSiMBaklMZKEHh7nLkRDCcK29sgBCnI2xeTyKJOA
-         Cm9DrM8mqih7Blesv4DMCuXmreZYAvdXSOPhaRBW43Ma2PpERlm3h6koP+E7OM54N44A
-         RkTElx2cFe99cOQfdNgzLwxauLWO9Ca6hSs+FJNTDVfnklbWg09HJj9sNFos578+HN6C
-         f8JM3VrWCu/j4Y+1B8vIpcNycZR+nS5t5cYjUgQ9+BvrSiUCL1FVAcyRZoFaoVyHhIL2
-         lxBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKBgqGj9owJRLcHthcWE3XA+7EIItoc5CXTvUmZvEgnzKS4/6xe3J1XgQMQwPjHcPlcjWSAgdNpeSG+Yg48nhVURbmxsu2PJZouJoW
-X-Gm-Message-State: AOJu0YxllGSLUBClQbOpGs7JI8O4uW89XsWw5GgnGRIKEN7XiazKB2kL
-	bFKdHv6hN0/KHXP3k5fyVU3/CSdhxRJcOba6m4mo1OD0x1T2VFbr7iQEwumTNOXQiVUgAzoq/gP
-	TK5zErMe6AHoiseOjekIeAumbMqTxtEsDvwF0vCKGVFoqoQ5Xm6VX+znOISv1CA==
-X-Received: by 2002:a17:902:e851:b0:1fa:cbf:c8b9 with SMTP id d9443c01a7336-1fa158f79b2mr91419525ad.38.1719284290576;
-        Mon, 24 Jun 2024 19:58:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF4BRlOcWHTc7rAkYWYrFoBO7157nBjNcPk/UZJfP6+36id69+6Snc9jGenlIdVCvXxJPkqSQ==
-X-Received: by 2002:a17:902:e851:b0:1fa:cbf:c8b9 with SMTP id d9443c01a7336-1fa158f79b2mr91419225ad.38.1719284290153;
-        Mon, 24 Jun 2024 19:58:10 -0700 (PDT)
-Received: from LeoBras.redhat.com ([2804:1b3:a801:fda9:d11e:3755:61da:97fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb32973asm69694765ad.113.2024.06.24.19.58.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 19:58:09 -0700 (PDT)
-From: Leonardo Bras <leobras@redhat.com>
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Leonardo Bras <leobras@redhat.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Hocko <mhocko@kernel.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Shakeel Butt <shakeel.butt@linux.dev>,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>,
-	Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	cgroups@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 0/4] Introduce QPW for per-cpu operations
-Date: Mon, 24 Jun 2024 23:57:57 -0300
-Message-ID: <ZnoyNQLQdyAcMxjP@LeoBras>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <Znn5FgqoCAUAfQhu@boqun-archlinux>
-References: <20240622035815.569665-1-leobras@redhat.com> <261612b9-e975-4c02-a493-7b83fa17c607@suse.cz> <Znn5FgqoCAUAfQhu@boqun-archlinux>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615E63D6B;
+	Tue, 25 Jun 2024 03:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719284460; cv=fail; b=Moe9vwQ+89lLAWifXbx4jz3gl8/CGEChODJv6jF9Yu4hPAI505rL+f0YuXAFi5bZBgoCVGec9bmETNxb7+jL//8+8Ay5F5UfB4mrgbhvcjjD51XKRp81ocxuWN84QmwvUWc36MGJyz5DZBAnOEZr3LnP1UYvMFFqc03Pv2Iyc3M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719284460; c=relaxed/simple;
+	bh=xb8Jz9aUNY5BVibay0i3NXLJaPYYx31p++rW2ejgblU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tH4CSFbfwtZdyFAot9SflMe1qMW/H/eZ9ZcXsSRJYl8/KG1lMIEpf4yxYa1NWZljPf0b5PuGHKGtrmGgNm5ZsexmaIzMz8KCbMR8unhPMvC5afzpGYDSXkEh7IUjEhxkkwoVBqyyukMMwCjYUo+WmqLsri/4KPE8DUrXZr6qlmw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aC3u/k0n; arc=fail smtp.client-ip=40.107.244.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ETVaRcT8jI0fp1mEDxkTHV96tJU30us590ujV5waz5lbk4NIik/32IQr6SK940poFCpSlv2pa2jSIq2MKXoQHhqzBIXGpBVwfslX4WFIAmqT3A3B3SVUuanjl+ZQap/XzEmLiSTxvdBQx6el8cMJj8f5e1vazEi8zQIxkuirEX1DyW44CJAdxIYFgTHrWBF56ImDIDVnSRXs6q9XIz9YBxNuA93O+ZWGxoA2RNNScQXeaIUJZ/wAC/RUQDWXAIp8iMYnSWVHujo/xamKHRSOrdn0zcfW80/Rn6ZtXLXEMCpv10SCtYcTuMxdj+LIC1XoedJxkYqUU2IaMMPlbCaZng==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BQMtvuOsLp4pqI8xBSkOfsEGTAFETsXfg3hr3WXxlvU=;
+ b=FIkJy0Y817gXp6w6xdIE8zLzKlsnLg7OkuIt2oW9BBHqBBAFDktKrGB4ZrW1VEemtsaUS5ZDYNZWgGNReN3Uwl5GXm4+qS9WhF3Zu+7os1BsoanPkz52LIan/mF7EoYNXyzs5YRilqKT06PIGY97DGrq+lNCsXnlMXrTxd41KpMBD7+kpXflAeF+L+AT/fHDVTgf2d3ZVSrmQwnGKHvV7elTVBpthHjm8QYgZkHXInnYERHJOr+I6hp16ZgG3GZt5BvOmc1f8iLQ/XH/JM1jW9nHwGDdAPVOOutknJnIz9SIpThMATi3VtXTmmDBAtV9ixVTrKa0cTlsRWaRjVl+wA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BQMtvuOsLp4pqI8xBSkOfsEGTAFETsXfg3hr3WXxlvU=;
+ b=aC3u/k0nUVaG8qwwvq0JOSJfGJyjoABEY++pKPCN2OLY1muVJ3bB/UYAi9sQakUrHy14ij+XNaJI92BpOcXhQoH4Bj8CgzJbYvgsAkNf8Y81u0+Srx1zjPLuai1+/LP6wVsySq6YNVXkJ/y3ceVF5rzLNCJpuwrzr3IzkLnJgu0=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DM4PR12MB5136.namprd12.prod.outlook.com (2603:10b6:5:393::23)
+ by SN7PR12MB6861.namprd12.prod.outlook.com (2603:10b6:806:266::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Tue, 25 Jun
+ 2024 03:00:54 +0000
+Received: from DM4PR12MB5136.namprd12.prod.outlook.com
+ ([fe80::bc87:6c1b:cadb:67a]) by DM4PR12MB5136.namprd12.prod.outlook.com
+ ([fe80::bc87:6c1b:cadb:67a%5]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
+ 03:00:53 +0000
+Message-ID: <db2165ae-2086-d60a-df31-dbf7711060ac@amd.com>
+Date: Tue, 25 Jun 2024 11:00:26 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.0
+Subject: Re: linux-next: manual merge of the tip tree with the pm tree
+Content-Language: en-US
+To: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Perry Yuan <perry.yuan@amd.com>, Xiaojian Du <Xiaojian.Du@amd.com>
+References: <ZnmnqjCZ_dx0xXjw@sirena.org.uk>
+From: Xiaojian Du <xiaojidu@amd.com>
+In-Reply-To: <ZnmnqjCZ_dx0xXjw@sirena.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SGAP274CA0011.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::23)
+ To DM4PR12MB5136.namprd12.prod.outlook.com (2603:10b6:5:393::23)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB5136:EE_|SN7PR12MB6861:EE_
+X-MS-Office365-Filtering-Correlation-Id: 84d3f119-ceba-4d70-22bb-08dc94c306f2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|366013|1800799021;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?aG96OFovNi9YQ1JCQjBLMlhObExYM1dlWFVhNERqZzU2NmpKWFN1Z0hDLzFO?=
+ =?utf-8?B?VW1ZVnBXNVQ0bVNLNmhPWnNFQ0JMbEJMWHltLzcrN0ZzbklDdXJ3dXVsRDFr?=
+ =?utf-8?B?a1VldUNXWm5DcWdLK1oyWlJ1TlJnbVJsNlhucm91RUJFZXdrc080MHl6S2xv?=
+ =?utf-8?B?d3VSUXlMTHJYSUxEMGczcm9TN0ZQUm9WcmFVSmxHdVkwZEQzeW01dVQ4U0x3?=
+ =?utf-8?B?L25ibGpUQjQzWVhuNEN0MEVlUUJLZ01HWnZZa0dqMTFDbWIyaXhqcTRKenlM?=
+ =?utf-8?B?ZytlRDBvaFdZZWZWSEdjQ1ZuMGJlWTBGOFB1cWpxUGNuV3hBcEVrNk5CenNW?=
+ =?utf-8?B?eGE0czllS2tsckJXem93RzFnNHZiM3orWmtXdWU1OGR0WTJ2Sk9XTGpjYU9z?=
+ =?utf-8?B?cDFpc2M1UkUxc1FFbXJTZXhGeXhOK2RDTU9mNmM2eTdyS0hDSUhnb09odllY?=
+ =?utf-8?B?bHRlamN2MlZmR1BBMUtEYlRFbEdiTjRTaW9VUkVGUkhpQ0tidnJVN0UrL0hN?=
+ =?utf-8?B?UTYvbDZRY2p4WHFmbTkyU0NGL0JTK1JaSncrcUJZU0VTTDVyUGhDTzZuaUth?=
+ =?utf-8?B?REJGSDNIWWJJK2hST1NIWWNLa2xyNzlMQTJnSEZPOHhHUmtocjNSdHl5YXk2?=
+ =?utf-8?B?YkZ3OW50clM4cTczUk80VlE1THhjTzhyNjl6djJaV3ZhcFF5VGx6ZzQwaG5l?=
+ =?utf-8?B?WFZwcmFYWGRNVTRXYWFxTEtNWnI5QTR0cXhnVk40aXArcHU2T1JycXE3QzAr?=
+ =?utf-8?B?SlhGSTg1Qkc1OW9aMTBpbU1BY3VaUU5sdmZ4Qm56U2ZQUXdhaW9CNFlMN1Zy?=
+ =?utf-8?B?YjU2NmFFbnVNNnRRdEM2RHBuRHR6bGFFVmhHdGJoUkpubitqZVg3RlIrbmNl?=
+ =?utf-8?B?aUE1UTZUVElackVBcnpLMmlFdW16VGtQajhCbWhhYnJEeXNCYlNTZGFPR1p0?=
+ =?utf-8?B?RkFhSnI0K3Vua0FIczBqOEJ5T3RSVElkdzluNW5UVVQzdnAyZzF3MGlpQWt2?=
+ =?utf-8?B?bC94ZFR0bEphZzZ3UzBYVDQrVlRFeWdKSVBSZ1l1SEpDNmtzZDY2M0kwdHNz?=
+ =?utf-8?B?WlZlT1NrMDFBS1VGbmtqdDBob0lpU29tNGJmbVlwWjRhSTZaMWNGdUo2U0Ja?=
+ =?utf-8?B?Y3FwUk9qRHZmaXJUSE5scTNIZ05UUzFTQnkzRUlQcVNjUS9Ib1BhcVJ0aTVw?=
+ =?utf-8?B?bkw4Ym9Zb1kwT2pCVitCZ1lhUVVyK3J1MTk0eTlEQzdkNnlKSlh2d21lQVMw?=
+ =?utf-8?B?eFVUS2MzWXlmaTlUZDRLbnZhWm84dFhmMnhlRzcreU9Kd2VubCtSSmxyRE9T?=
+ =?utf-8?B?UlcydnFFalE1aXg3dDNDcjFrNnpGN29lVkNnUUY1ZmZvVS80QlNJMDd1azBn?=
+ =?utf-8?B?aklhalJZK3ArMDR5VzI1NXlaRWx5Z2U4UkhkMFRhdVNhNHpYRWFPMk04bEMz?=
+ =?utf-8?B?djJ2Q1JhY2NxWHZSZUlwL0FnOWg4R0p6dGJ2N3hzWnJJR3R6QllYZTZJMzZy?=
+ =?utf-8?B?bFowVGtrSTJzTnN4QTFGQjJ4MktwM3pkTHUrQlo2d3A5NUtsd2ZBcDhwcTRj?=
+ =?utf-8?B?ano4Z1NxNVVpNHRHaVVqR2kyaEFmam5hUGNESVpJSmdQamJSSDV0L1QvVUsw?=
+ =?utf-8?B?M2NTaUMySlBLOVlRbEMrVTJSdWVSYlhodFRUNGVsUjdJWDlpaEpiaVpGVmRS?=
+ =?utf-8?B?L0p1WkV3NEluZFUzSnByb3RvUm5iNVRVdi9ud04xWGF2WG52ODFNTklqc2Rn?=
+ =?utf-8?Q?gFN1V02CLq94vWkuX8FWMqEK4Xs4392ekGUs/uW?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5136.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(366013)(1800799021);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ejdKY2RIRTdiRGw5cW5HY095S2pCWmtGbDBhSmVwWERicVA4SitQV3hTL3c5?=
+ =?utf-8?B?ZHJKNWhHTUE5aENjWTdjYmt3SmkyelloNll2SGFFb2JhcUhoeFV4L2lUakZp?=
+ =?utf-8?B?RTZPQ2o5NVlvOTRwZlhGbUcxSkN6ekRuVFk4YXhqbXg4VXNvTFliVk5DV1Js?=
+ =?utf-8?B?L2hTVnBaVmNBWG1yZ0NkOWprLzJkcEZTcDFXTkNCZUJMOHVTRXJnZzVTc05W?=
+ =?utf-8?B?VnRGZ1M3NGxTT1dBN0hGN3NsM1orNi83cXdWOWdNM1RNc3lRcjlxSmFWaU45?=
+ =?utf-8?B?QzhqSjQ5QWc4ME0vbzB3SnNZNmRNU1ZCVUlUZlcrams4azZSVGFreC92SjY5?=
+ =?utf-8?B?TzNVQVc1ZDFBRy9GSWVObEYrSTJEVDF3UnFtc3MxQWtjY2Q5eVV6YTVvaUxS?=
+ =?utf-8?B?dGhJenowaUtsTFhlem5jeitwMEtUQWxvR2VpZFV2V2JCTWtJNy9sbVMraVVP?=
+ =?utf-8?B?bjkvbURCQSsrcmVobnhEdFF6elhsMHRXMUsvOCtBcGNJVWRnTDdwQW9TRytP?=
+ =?utf-8?B?OUZqQjFWRDlLbGNkc09FZ3p2Kzh1NGltWlFtVVAwQVFwMTlVRGFpZ01mSC9r?=
+ =?utf-8?B?MWhxUkVyWVo1eFN4bmFxdkdsZjNaaUJ5dHlYZTRScGVqZ0x4Nm1wWUFmOVZ3?=
+ =?utf-8?B?Z1E3dFhpWkxOcGQ3NjZIdUlPRUVTakdtTTJydW96RkcyVVd3QTdlN3ZUNHVY?=
+ =?utf-8?B?NWtFRUUwVnJHSWVHV2xXampjRkM0THlHMzVhK2pybHdwenBnMVpYcVo4TnMy?=
+ =?utf-8?B?WVNCWFdZQ25mMHNqSStkNTZiT3dpcUg3NDlJMXhWRFA2K3BxdnNud2VYRnBP?=
+ =?utf-8?B?WVBVRDg1QjFQMGQyaVJkYXNVQmQ5NWlVckZoOFF0ODF2OGVIMkltanI3akpa?=
+ =?utf-8?B?ZjZiUHFTeFFzZ2FIaVFmanpBNGp6QUp5KzFqNnVoM3d2dnFWT2pVdEhIK0Ir?=
+ =?utf-8?B?YzJxeXBRM3RjZkhhSnVTZWdYMjFLM0xTNHUvczdCOElwazlOOERvT3QrN2dz?=
+ =?utf-8?B?MG9BMC81SUt5ZGhLTkx4cUJVb3RCOFZmVnJjTE5FN2tmaUdTRmtnWkRtZzhG?=
+ =?utf-8?B?NTZBWk91ZkdxSWtsZXJCUk8yQlpQN3IvQ3pWVHJPYUhES1cxUjF6aHBhRWNi?=
+ =?utf-8?B?eWZkaFlNK2t6TnhCdjcvTENhUnBBaU0vM0lqQkVOc0krY2c5WDFHYmliNU1U?=
+ =?utf-8?B?Qmc0V1lDazk1N2psQnFsK2JMRWlpRnJrZCs2VXBXaHVGLzZzUXZpTlFuWWFh?=
+ =?utf-8?B?T2E0WVNwV1BxTzB4VThlYmxycG1MaDRQOTZjVnN1R3B5ZENOUS9rcHpZdjJs?=
+ =?utf-8?B?empobzhSWXBid244QUswZFZ4MjVkTmVROFVYQnpncDBhTUdNVlhqcWFJVXdE?=
+ =?utf-8?B?TERjMGc5NktvV0kveDk5YjJxNzlVT1Z1UDZCd2tCSi9JNHBQVE8zRzdjMzYv?=
+ =?utf-8?B?dnJ4N2c3UTdpNDJQUXNDN2xXM29jNEtGcGU1SEFUcUErcW1WY202WnBBV0NL?=
+ =?utf-8?B?R003QXIwL1l6NFhPOFFJeXcyaHI2Y0VudkJHYUtac1pKQkFobU55bjBvQWNE?=
+ =?utf-8?B?Z2ZpaTFYMExRVUJHTWExTm1GWEZmUW1yb1dTUU45VVhQK20zdEtkcExNVG11?=
+ =?utf-8?B?VU1qS0ppWGZFanVpN2w2OG15cjFpd2tGbWg3RDZ4U1VMOFQ5eDR3eEdSVXVj?=
+ =?utf-8?B?a2sydzkyV01UOXExU1hkZldxbzBRYWFQSHdDdzJweTNoaGFWSkVqMU5iZ1ND?=
+ =?utf-8?B?blRueWpxaW4xY3V5d0FKVXhjaXkzYlNaTFNzdi82a3dreVlsTDNoa0hOQW9l?=
+ =?utf-8?B?UUNMdFlxcVlML2ZwUE5YcnBVbDlQeGJOR3BOS2FiUEFnYldSM2xkVEtZVjVU?=
+ =?utf-8?B?bjJYOU5FbXFvWW5CT3piNU5TaDdKZjY4WkQ0d0pYYy9YTzMrb3hLM0FFaGhw?=
+ =?utf-8?B?S3N6K2pZY0Q3SzRabzhtWEdqNS9TbDdsdTVXVEN6ZEFDOUpRQnpLNC9oQmNH?=
+ =?utf-8?B?ejV2bGNHVHVDSyttY3B0VDBVeW9LWEc5cHcxYlVmd0pRUTcrbGxYWDNpTE1R?=
+ =?utf-8?B?ZWV2ZitQc3NTQ1pKL0FrT3dRUk0yUm9JWlo0c212UzBicUptQ20vOFhJSTJi?=
+ =?utf-8?Q?kcGQFIjw9MciX42PH5jjdt63E?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 84d3f119-ceba-4d70-22bb-08dc94c306f2
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5136.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 03:00:53.9001
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tSqjWcbAMaMcSqt0v3XI1znK2yTd5erwdrHVe/D2BMIxMRJeMoG+DQfr2KUk+O+oZH4SVN6Lh/iPyTskrs5d2w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6861
 
-On Mon, Jun 24, 2024 at 03:54:14PM -0700, Boqun Feng wrote:
-> On Mon, Jun 24, 2024 at 09:31:51AM +0200, Vlastimil Babka wrote:
-> > Hi,
-> > 
-> > you've included tglx, which is great, but there's also LOCKING PRIMITIVES
-> > section in MAINTAINERS so I've added folks from there in my reply.
-> 
-> Thanks!
-> 
-> > Link to full series:
-> > https://lore.kernel.org/all/20240622035815.569665-1-leobras@redhat.com/
-> > 
-> 
-> And apologies to Leonardo... I think this is a follow-up of:
-> 
-> 	https://lpc.events/event/17/contributions/1484/
-> 
-> and I did remember we had a quick chat after that which I suggested it's
-> better to change to a different name, sorry that I never found time to
-> write a proper rely to your previous seriese [1] as promised.
-> 
-> [1]: https://lore.kernel.org/lkml/20230729083737.38699-2-leobras@redhat.com/
+Hi Mark,
 
-That's correct, I commented about this in the end of above presentation.
-Don't worry, and thanks for suggesting the per-cpu naming, it was very 
-helpful on designing this solution.
+Many thanks for your help.
 
-> 
-> > On 6/22/24 5:58 AM, Leonardo Bras wrote:
-> > > The problem:
-> > > Some places in the kernel implement a parallel programming strategy
-> > > consisting on local_locks() for most of the work, and some rare remote
-> > > operations are scheduled on target cpu. This keeps cache bouncing low since
-> > > cacheline tends to be mostly local, and avoids the cost of locks in non-RT
-> > > kernels, even though the very few remote operations will be expensive due
-> > > to scheduling overhead.
-> > > 
-> > > On the other hand, for RT workloads this can represent a problem: getting
-> > > an important workload scheduled out to deal with remote requests is
-> > > sure to introduce unexpected deadline misses.
-> > > 
-> > > The idea:
-> > > Currently with PREEMPT_RT=y, local_locks() become per-cpu spinlocks.
-> > > In this case, instead of scheduling work on a remote cpu, it should
-> > > be safe to grab that remote cpu's per-cpu spinlock and run the required
-> > > work locally. Tha major cost, which is un/locking in every local function,
-> > > already happens in PREEMPT_RT.
-> > 
-> > I've also noticed this a while ago (likely in the context of rewriting SLUB
-> > to use local_lock) and asked about it on IRC, and IIRC tglx wasn't fond of
-> > the idea. But I forgot the details about why, so I'll let the the locking
-> > experts reply...
-> > 
-> 
-> I think it's a good idea, especially the new name is less confusing ;-)
-> So I wonder Thomas' thoughts as well.
+On 2024/6/25 1:06, Mark Brown wrote:
+> Hi all,
+>
+> Today's linux-next merge of the tip tree got a conflict in:
+>
+>    arch/x86/include/asm/cpufeatures.h
+>
+> between commit:
+>
+>    c7107750b2ffa ("x86/cpufeatures: Add AMD FAST CPPC feature flag")
+>
+> from the pm tree and commit:
+>
+>    78ce84b9e0a54 ("x86/cpufeatures: Flip the /proc/cpuinfo appearance logic")
+>
+> from the tip tree.
+>
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>
+> diff --cc arch/x86/include/asm/cpufeatures.h
+> index 6c128d463a143,6007462e03d66..0000000000000
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@@ -465,12 -466,11 +466,12 @@@
+>     *
+>     * Reuse free bits when adding new feature flags!
+>     */
+> - #define X86_FEATURE_AMD_LBR_PMC_FREEZE	(21*32+ 0) /* AMD LBR and PMC Freeze */
+> - #define X86_FEATURE_CLEAR_BHB_LOOP	(21*32+ 1) /* "" Clear branch history at syscall entry using SW loop */
+> - #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* "" BHI_DIS_S HW control available */
+> - #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* "" BHI_DIS_S HW control enabled */
+> - #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* "" Clear branch history at vmexit using SW loop */
+> - #define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* "" AMD Fast CPPC */
+> + #define X86_FEATURE_AMD_LBR_PMC_FREEZE	(21*32+ 0) /* "amd_lbr_pmc_freeze" AMD LBR and PMC Freeze */
+> + #define X86_FEATURE_CLEAR_BHB_LOOP	(21*32+ 1) /* Clear branch history at syscall entry using SW loop */
+> + #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* BHI_DIS_S HW control available */
+> + #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* BHI_DIS_S HW control enabled */
+> + #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* Clear branch history at vmexit using SW loop */
+> ++#define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* AMD Fast CPPC */
+>    
 
-Thanks!
+But it is better to hide this new flag "Fast CPPC", prefer to use " /* 
+"" AMD Fast CPPC */ ".
+Not expected that "CPPC" and "Fast CPPC" are listed to user at the same 
+time, it will cause confusion.
 
-> 
-> And I think a few (micro-)benchmark numbers will help.
+Thanks,
+Xiaojian
 
-Last year I got some numbers on how replacing local_locks with 
-spinlocks would impact memcontrol.c cache operations:
-
-https://lore.kernel.org/all/20230125073502.743446-1-leobras@redhat.com/
-
-tl;dr: It increased clocks spent in the most common this_cpu operations, 
-while reducing clocks spent in remote operations (drain_all_stock).
-
-In RT case, since local locks are already spinlocks, this cost is 
-already paid, so we can get results like these:
-
-drain_all_stock
-cpus	Upstream 	Patched		Diff (cycles)	Diff(%)
-1	44331.10831	38978.03581	-5353.072507	-12.07520567
-8	43992.96512	39026.76654	-4966.198572	-11.2886198
-128	156274.6634	58053.87421	-98220.78915	-62.85138425
-
-Upstream: Clocks to schedule work on remote CPU (performing not accounted)
-Patched:  Clocks to grab remote cpu's spinlock and perform the needed work 
-	  locally.
-
-Do you have other suggestions to use as (micro-) benchmarking?
-
-Thanks!
-Leo
-
-
-> 
-> Regards,
-> Boqun
-> 
-> > > Also, there is no need to worry about extra cache bouncing:
-> > > The cacheline invalidation already happens due to schedule_work_on().
-> > > 
-> > > This will avoid schedule_work_on(), and thus avoid scheduling-out an 
-> > > RT workload. 
-> > > 
-> > > For patches 2, 3 & 4, I noticed just grabing the lock and executing
-> > > the function locally is much faster than just scheduling it on a
-> > > remote cpu.
-> > > 
-> > > Proposed solution:
-> > > A new interface called Queue PerCPU Work (QPW), which should replace
-> > > Work Queue in the above mentioned use case. 
-> > > 
-> > > If PREEMPT_RT=n, this interfaces just wraps the current 
-> > > local_locks + WorkQueue behavior, so no expected change in runtime.
-> > > 
-> > > If PREEMPT_RT=y, queue_percpu_work_on(cpu,...) will lock that cpu's
-> > > per-cpu structure and perform work on it locally. This is possible
-> > > because on functions that can be used for performing remote work on
-> > > remote per-cpu structures, the local_lock (which is already
-> > > a this_cpu spinlock()), will be replaced by a qpw_spinlock(), which
-> > > is able to get the per_cpu spinlock() for the cpu passed as parameter.
-> > > 
-> > > Patch 1 implements QPW interface, and patches 2, 3 & 4 replaces the
-> > > current local_lock + WorkQueue interface by the QPW interface in
-> > > swap, memcontrol & slub interface.
-> > > 
-> > > Please let me know what you think on that, and please suggest
-> > > improvements.
-> > > 
-> > > Thanks a lot!
-> > > Leo
-> > > 
-> > > Leonardo Bras (4):
-> > >   Introducing qpw_lock() and per-cpu queue & flush work
-> > >   swap: apply new queue_percpu_work_on() interface
-> > >   memcontrol: apply new queue_percpu_work_on() interface
-> > >   slub: apply new queue_percpu_work_on() interface
-> > > 
-> > >  include/linux/qpw.h | 88 +++++++++++++++++++++++++++++++++++++++++++++
-> > >  mm/memcontrol.c     | 20 ++++++-----
-> > >  mm/slub.c           | 26 ++++++++------
-> > >  mm/swap.c           | 26 +++++++-------
-> > >  4 files changed, 127 insertions(+), 33 deletions(-)
-> > >  create mode 100644 include/linux/qpw.h
-> > > 
-> > > 
-> > > base-commit: 50736169ecc8387247fe6a00932852ce7b057083
-> > 
-> 
-
+>    /*
+>     * BUG word(s)
 
