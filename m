@@ -1,526 +1,239 @@
-Return-Path: <linux-kernel+bounces-229528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5919917070
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:44:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 332B1917073
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58EEC28CBAC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:44:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567891C26827
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:45:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51B5E17C7CB;
-	Tue, 25 Jun 2024 18:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0264717C9E2;
+	Tue, 25 Jun 2024 18:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q8mGwibu"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H2DCIAGW"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EFB817DE0D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9C34204E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719340970; cv=none; b=epHcquNOZVYdJZB3zZ7oe7mhj09kUf+gom0jEAzSaVEC6a8c6no81OIOoLsMqaXv0P3c1bMqJd+idlvh0QEKuSwhHxatsY2HwLOgtGcyKS6nYouO9KNAzwfA7IGayeT3u75y7JKrqRDlPSCVrYedxGNK5V4azWJyidskVW30px8=
+	t=1719341001; cv=none; b=WrfP1/Cwimf2ZbG1im/y24VRSoN98rMLPDyuHV5W6765FqtspJqEK/Q0PU4meG2bvvOHK+ETRwyHG9I8ydkJpXs7fQx2RwrMYvWVDEx+S/nRaKn6eRoW/DAXakoP6BuMf7cgk/URbeD3px3uYN1H1rRVhh+jLYBm/sO7rIJSNEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719340970; c=relaxed/simple;
-	bh=3L4VCPu5Gi0E3loQZRfPWXHSalpI7X3sqJEW5i53YJ0=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=pxszntPmETtwDKT2jPnCTUdee7VhyBSRM2QTnso+RRCJmP6gzyfzHTHrN896PhE+IJJ6VwuXHqMq3qE/fDT6ZF08TkYOeLRuimaDjc1peqY/XCtkiUW7nH48gWqfGfD9f37VCRh4rXge07YmCFN6xRrninm6yP3BDKuArPJRNe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q8mGwibu; arc=none smtp.client-ip=209.85.219.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-dfa7a8147c3so12361125276.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:42:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719340967; x=1719945767; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z5WhEzrAKR6etY4+8+J3I2144onDLe33a/pW/pB3BVA=;
-        b=q8mGwibuW8iWsMKlvrXpfpjeM0MKVNYTH+6Se3SvqH0tC7qKEjcjbLXQyzMI8o/l4F
-         40NXPt9tb0djKakV6qxx2l8DNJ3tJlteKQxnKOJznXRKURkTil6S8+yFYENNVeC7Vly9
-         GYk535HU1t+M9tVh9qXahQbvTeIvsX57aA8CpauxqaEqVWoYFYrcVZ+z22KDpsA7+z3X
-         ndmG+fpYcI6df5JrK1CAP+LrEu20h6QB3PR7TtasLzuC3At6+G8dd5sGpWfQD0J61fj7
-         IKfVmqg916COVbHoAAjNtXHyKnOKr3umMIEj4v3DTVDnbqD7zMRe8CMPg5GEGkb6owuZ
-         y1fw==
+	s=arc-20240116; t=1719341001; c=relaxed/simple;
+	bh=4T8zplSVDGP/25a2/9dQBVYyzCn7VHheFPmanqVzF7s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dZB/vJ+3u6Zxrqg33A0QtyTCtTIdrXR0eROgr7LsQ7JaaAcIxv/gs2F83XP/kEZQ4GfoCKD+8qncfeLIVx9NLZdmBM3b1TUHDaPruamfcx9eVJPYSile8kgeiKd+xIe2NcLKxdRPJViqn5xVyv1ZBChep2fO/LrCScPgEniC7l4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H2DCIAGW; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719340998;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=BKlZK3pNZ+wzGcnEvjLqIaoCKeBTm9H3YzmiNb6G+3g=;
+	b=H2DCIAGWsk6tCq1I3t0mVdWudM2s6qnzRkoco37+pt8BXSptjdUsKPkvlI1K8h0fwBRDTl
+	C7y+llhoI0B/Hztf8ZHmAlflIbb6LTe3Jkf2b+WnI2LClhx2khiOBgdZXmrRsTJuu3ozhw
+	YKwTyXEGYV36f5DF2BD+iw6pfnfQB38=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-79-SXSB9sEONRqod2PkkyAbww-1; Tue, 25 Jun 2024 14:43:15 -0400
+X-MC-Unique: SXSB9sEONRqod2PkkyAbww-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-36536118656so3011255f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:43:14 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719340967; x=1719945767;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z5WhEzrAKR6etY4+8+J3I2144onDLe33a/pW/pB3BVA=;
-        b=k5/muibWY7bwG5nC/CVWtp4wt0MNUqcuPylNxzPPmYKcDjQroHsp+yVf2IadoUtXN4
-         qvGQLRnIfroyJy49FXl7yTw5rEEKj8PUF64pwzxaoUAApJCsbpkqL4TxCc4g/0MOIiWN
-         K3TbpOWxl7EDuh8yF+P75g16Y3Nt9A54qxxmh5ht3SGE94kwRUrcm0rNV08iAF7Lxf3C
-         iVutVc7qkSezPCzpvntGEf0rG46xVcBVWLzv64eCLyyHW3LVswWWpQ17VSuJZwyjbwt9
-         9dv/HgLgyAazlfQUmPQ0PFAUIsyOfqMHTFhw7V0SLBGJmQnclIT2ZZtc5+GA5cItVLBi
-         bRxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHUDHGsWyNpIMj9zRiMLwXpKysVM7K4Vh1rIftDlIqMmVLWWJ9NI3iEh7ZHzbMXAk00/nCNlYr+G0Ob+c4mRYJEDpmMA2L/Mcs4yhz
-X-Gm-Message-State: AOJu0YxHIVhIYiTDHbURDs75pf/ZYHMltLrw2HI9EBFGU6c2YFsrjBM8
-	Go5FCmwUQ5FkZsYMd1e8zSKsRmtw/jVUpeXmT5AUDZJXDb3kW3qI9McBLiju9olOB6qFfli7xd1
-	i0YKVcg==
-X-Google-Smtp-Source: AGHT+IHFfDudTcZpYBJ7DaBhhH5rSWVcGGVlqxAdq4qgt3qZon/zWZ6TMzj+Mka5n/0q6UdKITjOTlDeHHoG
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:b4cb:a52b:f9ea:8678])
- (user=irogers job=sendgmr) by 2002:a05:6902:188a:b0:e02:b7b3:94c4 with SMTP
- id 3f1490d57ef6-e0303ecc8f1mr355061276.3.1719340967268; Tue, 25 Jun 2024
- 11:42:47 -0700 (PDT)
-Date: Tue, 25 Jun 2024 11:42:24 -0700
-In-Reply-To: <20240625184224.929018-1-irogers@google.com>
-Message-Id: <20240625184224.929018-8-irogers@google.com>
+        d=1e100.net; s=20230601; t=1719340993; x=1719945793;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BKlZK3pNZ+wzGcnEvjLqIaoCKeBTm9H3YzmiNb6G+3g=;
+        b=OFUoq03dfdOIDNxUSkRXjxt6VLR8Nqd6CBJuSu40MXUzuW+zQWgNSHmamd7FXfuvrW
+         fVeu7ph/HeXhbvpZd6dEmETd600urFqgO53Bn7qwDqazQrXeK/LOk+2hBHThTc2L/7QW
+         M8Ji479TH0nUfsVAvZNvagq01XSBa9qrf447Qbic00hXvhOIsTxGbxGuTMQbiZTdss1Q
+         j6KnFG7hcvjy4nuhwiQCzLtYc7YdZ4vtSSpMDsRWFiUWNNP9YTVElgR0PGjIeFqdlemz
+         TiPnOGl8g6Z6xdDHBqBQGIOCvki/eu32qVCNCjUMsY14MQ1OLdnWqnSB1Qc/T4n0jMMY
+         JsgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/KijaQGtIIREsTcn+S+/xcVNKrDf+Fn9JD0MQvVuC7HUvz19QB2yST2mJ+vW+/ortBYhxPr4DPgTNZem6hrw7chdJuh4AB8BVDiGG
+X-Gm-Message-State: AOJu0YxUe7852vajjg7KpX+ky3RLruehkR6sDoHvwlOYtaAWhkf5KQTr
+	uBlJfT4Aliu4aXwy2UqR2UzxY3+wo5AoZVb+6nN3I11DOik7866jbPL4VdrewU+jlptu9nmu9lX
+	MOEliBkIN3L9scQll/PRRDHYRdjnA4gnXADKdoW8ATzj3hOnYp8AzbMQn0o6xvw==
+X-Received: by 2002:a05:6000:184d:b0:366:ebc4:2574 with SMTP id ffacd0b85a97d-366ebc425fdmr6053847f8f.33.1719340993705;
+        Tue, 25 Jun 2024 11:43:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE40JIDmew9s1ZPwIzg7JyzT8Oeg/+C7vF7SC0rIHkvt7fva8hqcnM0roa+VTY43CmqAbnaTA==
+X-Received: by 2002:a05:6000:184d:b0:366:ebc4:2574 with SMTP id ffacd0b85a97d-366ebc425fdmr6053826f8f.33.1719340993195;
+        Tue, 25 Jun 2024 11:43:13 -0700 (PDT)
+Received: from [192.168.1.34] (p548825e3.dip0.t-ipconnect.de. [84.136.37.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663ada00e7sm13679617f8f.112.2024.06.25.11.43.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 11:43:12 -0700 (PDT)
+Message-ID: <ca1d734c-e755-4730-bcaa-a439a9635c38@redhat.com>
+Date: Tue, 25 Jun 2024 20:43:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240625184224.929018-1-irogers@google.com>
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-Subject: [PATCH v4 7/7] perf python: Switch module to linking libraries from
- building source
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
-	Will Deacon <will@kernel.org>, James Clark <james.clark@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Yicong Yang <yangyicong@hisilicon.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
-	Nick Terrell <terrelln@fb.com>, Andrei Vagin <avagin@google.com>, Kees Cook <keescook@chromium.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Ze Gao <zegao2021@gmail.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] mm/filemap: Make MAX_PAGECACHE_ORDER acceptable to
+ xarray
+To: Gavin Shan <gshan@redhat.com>, linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ djwong@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
+ hughd@google.com, torvalds@linux-foundation.org, zhenyzha@redhat.com,
+ shan.gavin@gmail.com
+References: <20240625090646.1194644-1-gshan@redhat.com>
+ <20240625090646.1194644-2-gshan@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240625090646.1194644-2-gshan@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-setup.py was building most perf sources causing setup.py to mimic the
-Makefile logic as well as flex/bison code to be stubbed out, due to
-complexity building. By using libraries fewer functions are stubbed
-out, the build is faster and the Makefile logic is reused which should
-simplify updating. The libraries are passed through LDFLAGS to avoid
-complexity in python.
+On 25.06.24 11:06, Gavin Shan wrote:
+> The largest page cache order can be HPAGE_PMD_ORDER (13) on ARM64
+> with 64KB base page size. The xarray entry with this order can't
+> be split as the following error messages indicate.
+> 
+> ------------[ cut here ]------------
+> WARNING: CPU: 35 PID: 7484 at lib/xarray.c:1025 xas_split_alloc+0xf8/0x128
+> Modules linked in: nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib  \
+> nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct    \
+> nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4    \
+> ip_set rfkill nf_tables nfnetlink vfat fat virtio_balloon drm      \
+> fuse xfs libcrc32c crct10dif_ce ghash_ce sha2_ce sha256_arm64      \
+> sha1_ce virtio_net net_failover virtio_console virtio_blk failover \
+> dimlib virtio_mmio
+> CPU: 35 PID: 7484 Comm: test Kdump: loaded Tainted: G W 6.10.0-rc5-gavin+ #9
+> Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20240524-1.el9 05/24/2024
+> pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> pc : xas_split_alloc+0xf8/0x128
+> lr : split_huge_page_to_list_to_order+0x1c4/0x720
+> sp : ffff800087a4f6c0
+> x29: ffff800087a4f6c0 x28: ffff800087a4f720 x27: 000000001fffffff
+> x26: 0000000000000c40 x25: 000000000000000d x24: ffff00010625b858
+> x23: ffff800087a4f720 x22: ffffffdfc0780000 x21: 0000000000000000
+> x20: 0000000000000000 x19: ffffffdfc0780000 x18: 000000001ff40000
+> x17: 00000000ffffffff x16: 0000018000000000 x15: 51ec004000000000
+> x14: 0000e00000000000 x13: 0000000000002000 x12: 0000000000000020
+> x11: 51ec000000000000 x10: 51ece1c0ffff8000 x9 : ffffbeb961a44d28
+> x8 : 0000000000000003 x7 : ffffffdfc0456420 x6 : ffff0000e1aa6eb8
+> x5 : 20bf08b4fe778fca x4 : ffffffdfc0456420 x3 : 0000000000000c40
+> x2 : 000000000000000d x1 : 000000000000000c x0 : 0000000000000000
+> Call trace:
+>   xas_split_alloc+0xf8/0x128
+>   split_huge_page_to_list_to_order+0x1c4/0x720
+>   truncate_inode_partial_folio+0xdc/0x160
+>   truncate_inode_pages_range+0x1b4/0x4a8
+>   truncate_pagecache_range+0x84/0xa0
+>   xfs_flush_unmap_range+0x70/0x90 [xfs]
+>   xfs_file_fallocate+0xfc/0x4d8 [xfs]
+>   vfs_fallocate+0x124/0x2e8
+>   ksys_fallocate+0x4c/0xa0
+>   __arm64_sys_fallocate+0x24/0x38
+>   invoke_syscall.constprop.0+0x7c/0xd8
+>   do_el0_svc+0xb4/0xd0
+>   el0_svc+0x44/0x1d8
+>   el0t_64_sync_handler+0x134/0x150
+>   el0t_64_sync+0x17c/0x180
+> 
+> Fix it by decreasing MAX_PAGECACHE_ORDER to the largest supported order
+> by xarray. For this specific case, MAX_PAGECACHE_ORDER is dropped from
+> 13 to 11 when CONFIG_BASE_SMALL is disabled.
+> 
+> Fixes: 4f6617011910 ("filemap: Allow __filemap_get_folio to allocate large folios")
+> Cc: stable@kernel.org # v6.6+
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Gavin Shan <gshan@redhat.com>
+> ---
+>   include/linux/pagemap.h | 11 +++++++++--
+>   1 file changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
+> index 59f1df0cde5a..a0a026d2d244 100644
+> --- a/include/linux/pagemap.h
+> +++ b/include/linux/pagemap.h
+> @@ -354,11 +354,18 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
+>    * a good order (that's 1MB if you're using 4kB pages)
+>    */
+>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> -#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
+> +#define PREFERRED_MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
+>   #else
+> -#define MAX_PAGECACHE_ORDER	8
+> +#define PREFERRED_MAX_PAGECACHE_ORDER	8
+>   #endif
+>   
+> +/*
+> + * xas_split_alloc() does not support arbitrary orders. This implies no
+> + * 512MB THP on ARM64 with 64KB base page size.
+> + */
+> +#define MAX_XAS_ORDER		(XA_CHUNK_SHIFT * 2 - 1)
+> +#define MAX_PAGECACHE_ORDER	min(MAX_XAS_ORDER, PREFERRED_MAX_PAGECACHE_ORDER)
+> +
+>   /**
+>    * mapping_set_large_folios() - Indicate the file supports large folios.
+>    * @mapping: The file.
 
-Force the -fPIC flag for libbpf.a to ensure it is suitable for linking
-into the perf python module.
+Thanks!
 
-Signed-off-by: Ian Rogers <irogers@google.com>
-Reviewed-by: James Clark <james.clark@arm.com>
----
- tools/perf/Makefile.config |   5 +
- tools/perf/Makefile.perf   |   6 +-
- tools/perf/util/python.c   | 274 +++++++++++++------------------------
- tools/perf/util/setup.py   |  33 +----
- 4 files changed, 110 insertions(+), 208 deletions(-)
+Acked-by: David Hildenbrand <david@redhat.com>
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 81f73f68d256..5271a4c1d2b3 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -908,6 +908,11 @@ else
-          endif
-          CFLAGS += -DHAVE_LIBPYTHON_SUPPORT
-          $(call detected,CONFIG_LIBPYTHON)
-+         ifeq ($(filter -fPIC,$(CFLAGS)),)
-+           # Building a shared library requires position independent code.
-+           CFLAGS += -fPIC
-+           CXXFLAGS += -fPIC
-+         endif
-       endif
-     endif
-   endif
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index ff03f0431013..4a1a9f09fa09 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -715,9 +715,9 @@ all: shell_compatibility_test $(ALL_PROGRAMS) $(LANG_BINDINGS) $(OTHER_PROGRAMS)
- # Create python binding output directory if not already present
- $(shell [ -d '$(OUTPUT)python' ] || mkdir -p '$(OUTPUT)python')
- 
--$(OUTPUT)python/perf$(PYTHON_EXTENSION_SUFFIX): $(PYTHON_EXT_SRCS) $(PYTHON_EXT_DEPS) $(LIBPERF) $(LIBSUBCMD)
-+$(OUTPUT)python/perf$(PYTHON_EXTENSION_SUFFIX): $(PYTHON_EXT_SRCS) $(PYTHON_EXT_DEPS) $(PERFLIBS)
- 	$(QUIET_GEN)LDSHARED="$(CC) -pthread -shared" \
--        CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS)' \
-+        CFLAGS='$(CFLAGS)' LDFLAGS='$(LDFLAGS) $(LIBS)' \
- 	  $(PYTHON_WORD) util/setup.py \
- 	  --quiet build_ext; \
- 	cp $(PYTHON_EXTBUILD_LIB)perf*.so $(OUTPUT)python/
-@@ -933,7 +933,7 @@ $(LIBAPI)-clean:
- $(LIBBPF): FORCE | $(LIBBPF_OUTPUT)
- 	$(Q)$(MAKE) -C $(LIBBPF_DIR) FEATURES_DUMP=$(FEATURE_DUMP_EXPORT) \
- 		O= OUTPUT=$(LIBBPF_OUTPUT)/ DESTDIR=$(LIBBPF_DESTDIR) prefix= subdir= \
--		$@ install_headers
-+		EXTRA_CFLAGS="-fPIC" $@ install_headers
- 
- $(LIBBPF)-clean:
- 	$(call QUIET_CLEAN, libbpf)
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 88f98f2772fb..3be882b2e845 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -10,22 +10,19 @@
- #endif
- #include <perf/mmap.h>
- #include "evlist.h"
--#include "callchain.h"
- #include "evsel.h"
- #include "event.h"
- #include "print_binary.h"
- #include "thread_map.h"
- #include "trace-event.h"
- #include "mmap.h"
--#include "stat.h"
--#include "metricgroup.h"
- #include "util/bpf-filter.h"
- #include "util/env.h"
--#include "util/pmu.h"
--#include "util/pmus.h"
--#include "util/symbol_conf.h"
-+#include "util/kvm-stat.h"
-+#include "util/kwork.h"
-+#include "util/lock-contention.h"
- #include <internal/lib.h>
--#include "util.h"
-+#include "../builtin.h"
- 
- #if PY_MAJOR_VERSION < 3
- #define _PyUnicode_FromString(arg) \
-@@ -51,168 +48,6 @@
- #define Py_TYPE(ob) (((PyObject*)(ob))->ob_type)
- #endif
- 
--struct symbol_conf symbol_conf;
--
--/*
-- * Avoid bringing in event parsing.
-- */
--int parse_event(struct evlist *evlist __maybe_unused, const char *str __maybe_unused)
--{
--	return 0;
--}
--
--/*
-- * Provide these two so that we don't have to link against callchain.c and
-- * start dragging hist.c, etc.
-- */
--struct callchain_param callchain_param;
--
--int parse_callchain_record(const char *arg __maybe_unused,
--			   struct callchain_param *param __maybe_unused)
--{
--	return 0;
--}
--
--/*
-- * Add these not to drag util/env.c
-- */
--struct perf_env perf_env;
--
--const char *perf_env__cpuid(struct perf_env *env __maybe_unused)
--{
--	return NULL;
--}
--
--// This one is a bit easier, wouldn't drag too much, but leave it as a stub we need it here
--const char *perf_env__arch(struct perf_env *env __maybe_unused)
--{
--	return NULL;
--}
--
--/*
-- * These ones are needed not to drag the PMU bandwagon, jevents generated
-- * pmu_sys_event_tables, etc and evsel__find_pmu() is used so far just for
-- * doing per PMU perf_event_attr.exclude_guest handling, not really needed, so
-- * far, for the perf python binding known usecases, revisit if this become
-- * necessary.
-- */
--struct perf_pmu *evsel__find_pmu(const struct evsel *evsel __maybe_unused)
--{
--	return NULL;
--}
--
--int perf_pmu__scan_file(const struct perf_pmu *pmu, const char *name, const char *fmt, ...)
--{
--	return EOF;
--}
--
--const char *perf_pmu__name_from_config(struct perf_pmu *pmu __maybe_unused, u64 config __maybe_unused)
--{
--	return NULL;
--}
--
--struct perf_pmu *perf_pmus__find_by_type(unsigned int type __maybe_unused)
--{
--	return NULL;
--}
--
--int perf_pmus__num_core_pmus(void)
--{
--	return 1;
--}
--
--bool evsel__is_aux_event(const struct evsel *evsel __maybe_unused)
--{
--	return false;
--}
--
--bool perf_pmus__supports_extended_type(void)
--{
--	return false;
--}
--
--/*
-- * Add this one here not to drag util/metricgroup.c
-- */
--int metricgroup__copy_metric_events(struct evlist *evlist, struct cgroup *cgrp,
--				    struct rblist *new_metric_events,
--				    struct rblist *old_metric_events)
--{
--	return 0;
--}
--
--/*
-- * Add this one here not to drag util/trace-event-info.c
-- */
--char *tracepoint_id_to_name(u64 config)
--{
--	return NULL;
--}
--
--/*
-- * XXX: All these evsel destructors need some better mechanism, like a linked
-- * list of destructors registered when the relevant code indeed is used instead
-- * of having more and more calls in perf_evsel__delete(). -- acme
-- *
-- * For now, add some more:
-- *
-- * Not to drag the BPF bandwagon...
-- */
--void bpf_counter__destroy(struct evsel *evsel);
--int bpf_counter__install_pe(struct evsel *evsel, int cpu, int fd);
--int bpf_counter__disable(struct evsel *evsel);
--
--void bpf_counter__destroy(struct evsel *evsel __maybe_unused)
--{
--}
--
--int bpf_counter__install_pe(struct evsel *evsel __maybe_unused, int cpu __maybe_unused, int fd __maybe_unused)
--{
--	return 0;
--}
--
--int bpf_counter__disable(struct evsel *evsel __maybe_unused)
--{
--	return 0;
--}
--
--// not to drag util/bpf-filter.c
--#ifdef HAVE_BPF_SKEL
--int perf_bpf_filter__prepare(struct evsel *evsel __maybe_unused)
--{
--	return 0;
--}
--
--int perf_bpf_filter__destroy(struct evsel *evsel __maybe_unused)
--{
--	return 0;
--}
--#endif
--
--/*
-- * Support debug printing even though util/debug.c is not linked.  That means
-- * implementing 'verbose' and 'eprintf'.
-- */
--int verbose;
--int debug_kmaps;
--int debug_peo_args;
--
--int eprintf(int level, int var, const char *fmt, ...);
--
--int eprintf(int level, int var, const char *fmt, ...)
--{
--	va_list args;
--	int ret = 0;
--
--	if (var >= level) {
--		va_start(args, fmt);
--		ret = vfprintf(stderr, fmt, args);
--		va_end(args);
--	}
--
--	return ret;
--}
--
- /* Define PyVarObject_HEAD_INIT for python 2.5 */
- #ifndef PyVarObject_HEAD_INIT
- # define PyVarObject_HEAD_INIT(type, size) PyObject_HEAD_INIT(type) size,
-@@ -1513,15 +1348,102 @@ PyMODINIT_FUNC PyInit_perf(void)
- #endif
- }
- 
--/*
-- * Dummy, to avoid dragging all the test_attr infrastructure in the python
-- * binding.
-- */
--void test_attr__open(struct perf_event_attr *attr, pid_t pid, struct perf_cpu cpu,
--                     int fd, int group_fd, unsigned long flags)
-+
-+/* The following are stubs to avoid dragging in builtin-* objects. */
-+/* TODO: move the code out of the builtin-* file into util. */
-+
-+unsigned int scripting_max_stack = PERF_MAX_STACK_DEPTH;
-+
-+bool kvm_entry_event(struct evsel *evsel __maybe_unused)
- {
-+	return false;
-+}
-+
-+bool kvm_exit_event(struct evsel *evsel __maybe_unused)
-+{
-+	return false;
-+}
-+
-+bool exit_event_begin(struct evsel *evsel __maybe_unused,
-+		      struct perf_sample *sample  __maybe_unused,
-+		      struct event_key *key  __maybe_unused)
-+{
-+	return false;
-+}
-+
-+bool exit_event_end(struct evsel *evsel __maybe_unused,
-+		    struct perf_sample *sample __maybe_unused,
-+		    struct event_key *key __maybe_unused)
-+{
-+	return false;
-+}
-+
-+void exit_event_decode_key(struct perf_kvm_stat *kvm __maybe_unused,
-+			   struct event_key *key __maybe_unused,
-+			   char *decode __maybe_unused)
-+{
-+}
-+
-+int find_scripts(char **scripts_array  __maybe_unused, char **scripts_path_array  __maybe_unused,
-+		int num  __maybe_unused, int pathlen __maybe_unused)
-+{
-+	return -1;
-+}
-+
-+void perf_stat__set_no_csv_summary(int set __maybe_unused)
-+{
-+}
-+
-+void perf_stat__set_big_num(int set __maybe_unused)
-+{
-+}
-+
-+int script_spec_register(const char *spec __maybe_unused, struct scripting_ops *ops __maybe_unused)
-+{
-+	return -1;
-+}
-+
-+arch_syscalls__strerrno_t *arch_syscalls__strerrno_function(const char *arch __maybe_unused)
-+{
-+	return NULL;
-+}
-+
-+struct kwork_work *perf_kwork_add_work(struct perf_kwork *kwork __maybe_unused,
-+				       struct kwork_class *class __maybe_unused,
-+				       struct kwork_work *key  __maybe_unused)
-+{
-+	return NULL;
-+}
-+
-+void script_fetch_insn(struct perf_sample *sample __maybe_unused,
-+		struct thread *thread __maybe_unused,
-+		struct machine *machine __maybe_unused)
-+{
-+}
-+
-+int perf_sample__sprintf_flags(u32 flags __maybe_unused, char *str __maybe_unused,
-+			size_t sz __maybe_unused)
-+{
-+	return -1;
-+}
-+
-+bool match_callstack_filter(struct machine *machine __maybe_unused, u64 *callstack __maybe_unused)
-+{
-+	return false;
-+}
-+
-+struct lock_stat *lock_stat_find(u64 addr __maybe_unused)
-+{
-+	return NULL;
-+}
-+
-+struct lock_stat *lock_stat_findnew(u64 addr __maybe_unused, const char *name __maybe_unused,
-+				int flags __maybe_unused)
-+{
-+	return NULL;
- }
- 
--void evlist__free_stats(struct evlist *evlist)
-+int cmd_inject(int argc __maybe_unused, const char *argv[] __maybe_unused)
- {
-+	return -1;
- }
-diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-index 3107f5aa8c9a..142e9d447ce7 100644
---- a/tools/perf/util/setup.py
-+++ b/tools/perf/util/setup.py
-@@ -60,7 +60,7 @@ class install_lib(_install_lib):
- 
- cflags = getenv('CFLAGS', '').split()
- # switch off several checks (need to be at the end of cflags list)
--cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls', '-DPYTHON_PERF' ]
-+cflags += ['-fno-strict-aliasing', '-Wno-write-strings', '-Wno-unused-parameter', '-Wno-redundant-decls' ]
- if cc_is_clang:
-     cflags += ["-Wno-unused-command-line-argument" ]
- else:
-@@ -72,36 +72,11 @@ cflags += [ "-Wno-declaration-after-statement" ]
- src_perf  = getenv('srctree') + '/tools/perf'
- build_lib = getenv('PYTHON_EXTBUILD_LIB')
- build_tmp = getenv('PYTHON_EXTBUILD_TMP')
--libtraceevent = getenv('LIBTRACEEVENT')
--libapikfs = getenv('LIBAPI')
--libperf = getenv('LIBPERF')
--
--ext_sources = [f.strip() for f in open('util/python-ext-sources')
--				if len(f.strip()) > 0 and f[0] != '#']
--
--extra_libraries = []
--
--if '-DHAVE_LIBTRACEEVENT' in cflags:
--    extra_libraries += [ 'traceevent' ]
--else:
--    ext_sources.remove('util/trace-event.c')
--    ext_sources.remove('util/trace-event-parse.c')
--
--# use full paths with source files
--ext_sources = list(map(lambda x: '%s/%s' % (src_perf, x) , ext_sources))
--
--if '-DHAVE_LIBNUMA_SUPPORT' in cflags:
--    extra_libraries += [ 'numa' ]
--if '-DHAVE_LIBCAP_SUPPORT' in cflags:
--    extra_libraries += [ 'cap' ]
- 
- perf = Extension('perf',
--		  sources = ext_sources,
--		  include_dirs = ['util/include'],
--		  libraries = extra_libraries,
--		  extra_compile_args = cflags,
--		  extra_objects = [ x for x in [libtraceevent, libapikfs, libperf]
--                                    if x is not None],
-+                 sources = [ src_perf + '/util/python.c' ],
-+		         include_dirs = ['util/include'],
-+		         extra_compile_args = cflags,
-                  )
- 
- setup(name='perf',
 -- 
-2.45.2.741.gdbec12cfda-goog
+Cheers,
+
+David / dhildenb
 
 
