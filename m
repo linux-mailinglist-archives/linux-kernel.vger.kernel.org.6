@@ -1,164 +1,118 @@
-Return-Path: <linux-kernel+bounces-229266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC9A916D94
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:55:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B54A0916D99
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B45FB26588
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:55:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1DDCBB2447C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:58:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28881171E7D;
-	Tue, 25 Jun 2024 15:54:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7EA17082D;
+	Tue, 25 Jun 2024 15:58:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hYlGvi3+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZKkXy95T"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C6B445978;
-	Tue, 25 Jun 2024 15:54:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB39152780;
+	Tue, 25 Jun 2024 15:58:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719330893; cv=none; b=ckaLBNLbDGiTz/NOrEYwMBMOdUoOpI+utcJDVthGM+nanTkhtXbA/E2pcs0k80tcxIJ/fyIevVSxrtPuhCkPZcFapr47Shfg6u7ZysQstyWgSCUGPwmRXZ6SbYQLp3NLem5A1NWJD6fJz+ANz8+3WS2cfoo7XLncqxHyakzu5a4=
+	t=1719331115; cv=none; b=Qf69dgC8M1bS5s5p7OxzwgaFEb6EVTOhz8midYI9fP8N36vhCsc1bawW1gj08oZiaKHFNBrSFMbhzBKos0K+tTARi1HXb6S+xC80z5aHfvbkyR2k1CzTXpqxAUFWTCAibBFiwqa7nqcABFVVFHVV1gYgkQiHgLLxHKQU+Chq+78=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719330893; c=relaxed/simple;
-	bh=MYCOtf0uRzHZ3eR6TN/Xx66bhkBDqHJ8W0YBKOxdBTc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KqaiUXMqNR1YBIhqQSeOvfWPPaz9zFCRJclbZSwpDkVf2osacn6KEUg/tR0U4r7Km0VOH1IyXglOF3x5cmCwH8EDVSary5Gti7MAce+YtLtU/JkLItAPCvErscSv3YKMzfYAiGQb5Ds1kSvQxA/duO5N8mAn0oAXg9SqSj9GR/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hYlGvi3+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59E2BC32781;
-	Tue, 25 Jun 2024 15:54:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719330893;
-	bh=MYCOtf0uRzHZ3eR6TN/Xx66bhkBDqHJ8W0YBKOxdBTc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hYlGvi3+HVNY5dkhVgWnsMZ2RaXcZjFPqtc5GahEsGart9KlpH78TBIzGplLjoLcM
-	 9WjCDQCqHb3lQ9o/ux+RsrxEQh0Rx67fURh4N/D33LPip/NsVBc8j1nGV1aodlnWHS
-	 z0pf4UIdM27bkrsRQag2IPB/9rvdsxeMiKNEurO5YKM1Uc9fZHjmWiEjvCc734R5OC
-	 EDg4mYZmJSiD7wrUsk0niueZ7dD9Vx48V0elwYVQBv4y1yT9HZB5ZzSoZCnWR0QhaP
-	 n7//VCl5yEIon5+DHX5Ps5+j4m5JVpXxGN3FAbPH03vAuk6y2Rn9MiAbmOwKJQ+KvC
-	 WnFoKnxfBIaSw==
-Date: Tue, 25 Jun 2024 17:54:47 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Thinker Li <thinker.li@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, Networking <netdev@vger.kernel.org>, 
-	Jiri Kosina <jikos@kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>, 
-	linux-input@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the bpf-next tree
-Message-ID: <ud5j6hbozgg6em43volidpffykdtd2lpf32etmdiyksorl2cb4@whtseaibw2xw>
-References: <ZnB9X1Jj6c04ufC0@sirena.org.uk>
- <CAFVMQ6R8ZZE+9jWM1vhEuz2PsLyCgKhpaVD377TKEu4AfGO_iA@mail.gmail.com>
+	s=arc-20240116; t=1719331115; c=relaxed/simple;
+	bh=/Bfji0yHOA8njxxCTUdrMJ4uJI5atTxWVOiBNvZN/NA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O1GrBx8E5m4ns9i1xlO5JrZdzkOgsIKDWG6g+KxtIHELm1Be5Wk99eK0Zel4VUVdL17oYGQ6Xgc9UQsOJp/pDC7YbwgiC/EEtiBOLnzD8PeSuqwmGqlcv5GFf3uOHOKot5C6QfgIxAhnrEVJj2uP8jZJZD6l5jPE7axei6a9fjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZKkXy95T; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7066c799382so3133713b3a.3;
+        Tue, 25 Jun 2024 08:58:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719331112; x=1719935912; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yH1SDsCg1psfY+W0H6ncXncvNAWFOnKRkrHx7IAe3WE=;
+        b=ZKkXy95TxD4F3tbE9jpulLS0VNPxOzrh18ixMZVmphv0YZ7fSA8YR89Ubnes2QFPqT
+         QQVnX8ClEYYX6/F7jf0YYdTdEx0SdfmzBvVekpwAohcMcjGsEkzoNQDT+nZDHCyyhY35
+         GIEexUCy51E1TVP4PTU3WWifWOIIFVOixTpWvW3Cx0bhchguFMcN1IF7Tssd43LRxiX1
+         1cN5lSCPzQw1CX2ixyDXBeuS5G6Uxeu53wcl1YuRECLd8ehtS5DA+24xQePsygvnYfFd
+         dxEtlJbIq4cXjDKo57ZARSNjk/JIMYeR2kf7g8xoXlIrejL86i+vgWKiAICQczIrAbO1
+         NwOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719331112; x=1719935912;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yH1SDsCg1psfY+W0H6ncXncvNAWFOnKRkrHx7IAe3WE=;
+        b=rIdJhhcB6uK40eyM4aA3Xjcot0p2uzdUxvCv5sqwCWmEO+NGnRP8yfPGv+FLgh1TsO
+         zHKxzuqQBE9JhEbRkyy0BXt7Ansnm6uI1K1tv8Z+9znP7D35wQEUyMupI3z43iyS50lA
+         kXUluOmPVw9By/6E7spu1ZSixmF3zNYiyBkd6rv+04w2PRr9PQvBCAZOW0nYd/eE4B2I
+         ozu9DNIz9J0kMgORR/fOj//2F296K2Y+ephEpopdcpUbPrWOgBm2Oy4ynKxbpVH1982H
+         voSgFMuGD+9bs4TZVN7wCn6h7RE5WJTjsqDN0hasLZ11rIy8kA5HBxV6ypOmD82GGgLb
+         +Gaw==
+X-Forwarded-Encrypted: i=1; AJvYcCUxACcXQGmODbS+qRc/I7E59P9JslrPLmgGO9I2gfG/TyEB+yhlB5VQz8HkckPgUYXfqOXi13et2FQ27PZj45LaHajjD1t2M3YVnuAylk+C6cfeWeVQxF3AoGK+UPetJZE+hkOwaREj
+X-Gm-Message-State: AOJu0YzMYYXhmkvM2xW3+t2OVNI4+thCqghrv4ttnD6rEymUF7q3k8/C
+	SxghYAYdMZKonGcgepqfL3wBsrrZnmrRMnVrVhjKQ6WRpAlRG8mU
+X-Google-Smtp-Source: AGHT+IFY92BQm2/8LPYgNao0SuWV2SSZWQnXK45U4AdqDwkENeC0I4zcWtMLWiakpYKl/XZktO4vlw==
+X-Received: by 2002:a05:6a21:2712:b0:1b4:6f79:e146 with SMTP id adf61e73a8af0-1bcf7e7ee7cmr7827640637.17.1719331112239;
+        Tue, 25 Jun 2024 08:58:32 -0700 (PDT)
+Received: from localhost.localdomain ([113.30.217.222])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819dbb963sm8872368a91.41.2024.06.25.08.58.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 08:58:31 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Anand Moon <linux.amoon@gmail.com>,
+	linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH linu-next v1] PCI: dw-rockchip: Enable async probe by default
+Date: Tue, 25 Jun 2024 21:27:57 +0530
+Message-ID: <20240625155759.132878-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFVMQ6R8ZZE+9jWM1vhEuz2PsLyCgKhpaVD377TKEu4AfGO_iA@mail.gmail.com>
 
-On Jun 24 2024, Thinker Li wrote:
-> Hi Mark,
-> 
-> I'm sorry for not getting back to you sooner. I have been traveling
-> since my last message.
-> I guess this patch is for the HID tree. The changes in this patch are great.
+Rockchip PCIe driver lets waits for the combo PHY link like PCIe 3.0,
+PCIe 2.0 and SATA 3.0 controller to be up during the probe this
+consumes several milliseconds during boot.
 
-Ok, thanks for the review. However, the need appears because there is a
-conflicting update in the bpf tree.
+Establishing a PCIe link can take a while; allow asynchronous probing so
+that link establishment can happen in the background while other devices
+are being probed.
 
-May I ask the bpf maintainers (Daniel/Alexei/Andrii) for an immutable
-tag I could merge to so I can take this patch from Mark?
+Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+---
+ drivers/pci/controller/dwc/pcie-dw-rockchip.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> However, I suggest you implement ".update" if you think it is
-> reasonable for HID,
-> although it is not a MUST-BE. ".update" provides a good feature that
-> user space programs
-> can update an implementation on the flight.
+diff --git a/drivers/pci/controller/dwc/pcie-dw-rockchip.c b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+index 61b1acba7182..74a3e9d172a0 100644
+--- a/drivers/pci/controller/dwc/pcie-dw-rockchip.c
++++ b/drivers/pci/controller/dwc/pcie-dw-rockchip.c
+@@ -367,6 +367,7 @@ static struct platform_driver rockchip_pcie_driver = {
+ 		.name	= "rockchip-dw-pcie",
+ 		.of_match_table = rockchip_pcie_of_match,
+ 		.suppress_bind_attrs = true,
++		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
+ 	},
+ 	.probe = rockchip_pcie_probe,
+ };
+-- 
+2.44.0
 
-FWIW, Mark handles linux-next, so not sure he has deep knowledge of
-HID-BPF, and not sure he wants too :)
-
-Regarding .update, I'm not sure it's worth the effort for hid-bpf. Right
-now HID-BPF programs are just a one-shot: you load them, pin them and
-forget. This might be different when systemd starts implementing a HID
-firewall, but we can cross that bridge when we see fit.
-
-Cheers,
-Benjamin
-
-> 
-> On Mon, Jun 17, 2024 at 11:16 AM Mark Brown <broonie@kernel.org> wrote:
-> >
-> > Hi all,
-> >
-> > After merging the bpf-next tree, today's linux-next build (x86_64
-> > allmodconfig) failed like this:
-> >
-> > /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:280:16: error: initialization of 'int (*)(void *, struct bpf_link *)' from incompatible pointer type 'int (*)(void *)' [-Werror=incompatible-pointer-types]
-> >   280 |         .reg = hid_bpf_reg,
-> >       |                ^~~~~~~~~~~
-> > /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:280:16: note: (near initialization for 'bpf_hid_bpf_ops.reg')
-> > /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:281:18: error: initialization of 'void (*)(void *, struct bpf_link *)' from incompatible pointer type 'void (*)(void *)' [-Werror=incompatible-pointer-types]
-> >   281 |         .unreg = hid_bpf_unreg,
-> >       |                  ^~~~~~~~~~~~~
-> > /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:281:18: note: (near initialization for 'bpf_hid_bpf_ops.unreg')
-> >
-> > Caused by commit
-> >
-> >   73287fe228721b ("bpf: pass bpf_struct_ops_link to callbacks in bpf_struct_ops.")
-> >
-> > interacting with commit
-> >
-> >   ebc0d8093e8c97 ("HID: bpf: implement HID-BPF through bpf_struct_ops")
-> >
-> > from the HID tree.
-> >
-> > I've fixed it up as below:
-> >
-> > From e8aeaba00440845f9bd8d6183ca5d7383a678cd3 Mon Sep 17 00:00:00 2001
-> > From: Mark Brown <broonie@kernel.org>
-> > Date: Mon, 17 Jun 2024 19:02:27 +0100
-> > Subject: [PATCH] HID: bpf: Fix up build
-> >
-> > Fix up build error due to 73287fe228721b ("bpf: pass bpf_struct_ops_link to callbacks in bpf_struct_ops.")
-> >
-> > Signed-off-by: Mark Brown <broonie@kernel.org>
-> > ---
-> >  drivers/hid/bpf/hid_bpf_struct_ops.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/hid/bpf/hid_bpf_struct_ops.c b/drivers/hid/bpf/hid_bpf_struct_ops.c
-> > index 5f200557ff12b..744318e7d936b 100644
-> > --- a/drivers/hid/bpf/hid_bpf_struct_ops.c
-> > +++ b/drivers/hid/bpf/hid_bpf_struct_ops.c
-> > @@ -175,7 +175,7 @@ static int hid_bpf_ops_init_member(const struct btf_type *t,
-> >         return 0;
-> >  }
-> >
-> > -static int hid_bpf_reg(void *kdata)
-> > +static int hid_bpf_reg(void *kdata, struct bpf_link *link)
-> >  {
-> >         struct hid_bpf_ops *ops = kdata;
-> >         struct hid_device *hdev;
-> > @@ -229,7 +229,7 @@ static int hid_bpf_reg(void *kdata)
-> >         return err;
-> >  }
-> >
-> > -static void hid_bpf_unreg(void *kdata)
-> > +static void hid_bpf_unreg(void *kdata, struct bpf_link *link)
-> >  {
-> >         struct hid_bpf_ops *ops = kdata;
-> >         struct hid_device *hdev;
-> > --
-> > 2.39.2
-> >
 
