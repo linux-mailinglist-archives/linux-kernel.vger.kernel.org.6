@@ -1,209 +1,219 @@
-Return-Path: <linux-kernel+bounces-228676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31EAD916547
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:32:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66990916545
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D285B22CE4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:32:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D13F31F22BB0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F4A14A61B;
-	Tue, 25 Jun 2024 10:32:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5028114A4D2;
+	Tue, 25 Jun 2024 10:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="PXzkzbKK"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="grFgfqth"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 543D42E3E4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:32:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7F92572;
+	Tue, 25 Jun 2024 10:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719311553; cv=none; b=MITkiGqQF+ZPoPLgiR6qp4ESv/ZbfB4R4Yc7EgHvse9QmJo/6M41BwJZPspXUan490JK7cFv5hauwAT4Zn+CbEbuZ7nZHDnA1wsVrJtke+BwiFgj/d4NuSXhjkpVzmBjDGqAFXBdzqCKYZcZ0U8j/jbR7fVHlAgm4k75++b+ubo=
+	t=1719311551; cv=none; b=rEdeSLRRU7kW/O2D3MMcbkDhlt3Kc7cliwtCZpRIifrhTc44lNO6bJVYuLStTrPj8d9giCken4Oc1beuU2TMBEyjg1YLK5dnKfeemtxuOkxbQbIJhcq6tdfEgHZmKDufrTU+tmBnSzPAr95EHRmyY8faDppGjHSZtoLUM/ZlMXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719311553; c=relaxed/simple;
-	bh=yexphHRNlx1HBIakVGghbz9IQgLRz7EgKahrZP3O3Hs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=B8nJP2g0eu056J6Z3ub/TNiaOFoIoqZFImOEbIkw9Ghd233SWjQYFhrxEVJwKs2a9ATaIKafw7DmTgPf5ypk7gqT1Awo4FBa2wmkEmJwiuSfW3mt1toVEML8WV3KRlvQ08sgKYmvhzv30htMnlcboTSJVCvfmxLpULHqskjnvAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=PXzkzbKK; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dff0712ede2so5221961276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:32:31 -0700 (PDT)
+	s=arc-20240116; t=1719311551; c=relaxed/simple;
+	bh=eEMtiTydBzBXKAnhVEriEUdUqMmeKAHaJAPKsDPTb8c=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y6ruwYvE9Gr95LxgI1RJMweYzOTCP5SrConOYyjLIVrDv59OwSs7sBnZF/PAc8CpmGEWraJCg/MWefHTd8sffhHVYMTA4Oe27AUkpcDKmcUBjBKBrbOYSPXMJklFDPmx8YXMqGCz4V205SPFzPoaD26wZ6KuV6mFqaET6g+cKzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=grFgfqth; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52cdebf9f53so2713006e87.2;
+        Tue, 25 Jun 2024 03:32:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessos.org; s=google; t=1719311550; x=1719916350; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AeHhF7HwElqfhWVKAUpUcxv4NHbXbC1N1cEo/E0Fnrs=;
-        b=PXzkzbKKHqPZdbiGEA7NhzF+xqwu/aqw90JmvtW8A/Bl3xpLInrvlz6E2hfWTNuv7B
-         E2MpRizGbxzx+cF2LwBo44Ng6ApfC6fy0U+PtpDxgxHLtkYbnTzZEmAlUfCdw5e1WkOH
-         A36qheUArMp82t5Srd9/lRd0cNkXfvHNeFpwlIfW/Z5diDAj56K5XQTq8mH3cz8FmNUK
-         00DoPPx+1fgkjHlAcaqGg/wVEl5q9BNRER/r2AY7nsYQvG4IXsLnuRfkBrPcU7O1nEJP
-         VNV+yAOsV/c1KNyc6g+1dgkQqM9GyCs9AVoUQ7nLfWybSLOeP0NnxveBVn9sF5CPPwjU
-         j92g==
+        d=gmail.com; s=20230601; t=1719311547; x=1719916347; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=hwlILf/vswvcQXQNiD+f6wBVsZ6SMfSlkE3EALaPOOg=;
+        b=grFgfqth4Vy8zkFHNxwsDas/bJAdMQtZmHyQftO58gcU4PTDIvB0Rxb8LnZtYniJID
+         eBppj1OswlJ0B5zUZHA7nYUtk9JAuXcme6i/MIt6/59iWDa7eg1KVhqnsmFt+5NvSKn8
+         FuaiwLRPKQeeja7yMlg73hBPZz0fYrTMcP/IXpuPufiAplqXyAnlZvfkUmXQn73cLCd1
+         8wzwn2T3/ptsRiSHMmGuXeCezGbEDseieShNft2U9E4ECEKWq09m/+wH/jjTcLRul7Cj
+         fxVALUf8jQ1eMnsH+H+882coMpyGxAUhXs6hx7p8WV0H6EigjnwSpbKZAoZraYq68j4n
+         RITw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719311550; x=1719916350;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AeHhF7HwElqfhWVKAUpUcxv4NHbXbC1N1cEo/E0Fnrs=;
-        b=PVWcXbFAj2lNVMe0NLb43rvEQrFneOmKBqQaDwq7WerLesCqCU9PLVb6sB+vDqDald
-         cbWU4TXG1yUzTE+wkKqhC0siUOvc53imXmt6sNWLO1ZOFb2asFpkc70E0I9Ip5roz6CS
-         yzFQNbz/kxO9f+wgqtofspZ3dmjmlc0rDkMTGWpmje0f8QDl0tO/TIXynX41qjfxt4Sr
-         lahJr3z/nT566sneriMCwbMci15Buzcjmq2hE2qSY/PjI4qOcOoNdsNDZCO+ocAzAL74
-         TvXG1ur+sXYM/TCbwaNEfE8ry8pHcdUPpuXhc6CT9yVsGQfEDFYfkT89H/zNCc+7zI20
-         +qdg==
-X-Forwarded-Encrypted: i=1; AJvYcCU9Yd1rXANmzPOCS5RbizHuCHXp+GPAxPcJguYAUaqplX/4rvRtOLw41w3kbPr+RV1ZVc7X+Kz7YwcTQZ1FxKxMYPCwKZ8d9s7pwYos
-X-Gm-Message-State: AOJu0YzVxUiV8IStYEFVL7/L/RDE/DuErr+CB9QF183UKo1IfcPCqDWC
-	bQjUVRXN4xOVO7T5QAl/V/fhP5ee/naS/tMD7sPtwR5SyvB0IljLkU2ku/loiMCb7gR83eacXdc
-	abHtgugnTQSp/mQHGCUhhuQ3ii9Vox2e+F0sQZA==
-X-Google-Smtp-Source: AGHT+IET0vZmsrLZtS70AiPitaD9jDC/goMS3ehzZdEh8KQdRBnZS8rR4Rr5tG5J6ErER+1rbE0z36/BIhmk4qSGM7w=
-X-Received: by 2002:a5b:892:0:b0:e02:45d6:6a4f with SMTP id
- 3f1490d57ef6-e0303f6eacemr6088179276.36.1719311550054; Tue, 25 Jun 2024
- 03:32:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719311547; x=1719916347;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hwlILf/vswvcQXQNiD+f6wBVsZ6SMfSlkE3EALaPOOg=;
+        b=AdtqsLPSSBQyOalcBm5TfW/pc6Tq0lrPATGCUrRiGKmnghkkXRuEhz0/KfVVvDS1fD
+         q0a6yQ72bptQBz2bnrwxF+DZQOsAeOY6gvz275IZs3aKp67l+r8rmm5SKPRmsyUtiOhf
+         M827Gnh932QWRjd+lJEL5CklLKJPK/kU/5jSB7TEpQ+JBansx4PEjs0AsI8rY58GuVYJ
+         CSdEuY0h11XfS0zxS1YFq4EjU41xvbUKjHqK3ygzDsEInjNJ9JsejXUrvcxtVFUmXAgs
+         ZTXGPBDzh3JYaYmAycq01nw/qbVZlpA8xDwwEE88GM/+nrQFYfwdrimqIcbdWEsEPTRR
+         ON7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVB4QvntENiTLrU0XllXJk8/bVJGDBDZTtKHvg9049jJX45gV1jb4iUFawL8QJQGjBccdcUEVHr3bdSLJEExt4auFnyPY4k5I92bteUzvxgYVrkDE577z3RnA1OQzY5eC66bJ9iWT4HpQ==
+X-Gm-Message-State: AOJu0YyNpt1RdwzUWkY/TDll2FrTCixxS2ZYMMGA8olW8mQ4KkeERcvt
+	/1AqGN1+2KK8GqCfOrqDFnwI/jJitgxy0iCobRfxfrpf2jI8JIxp
+X-Google-Smtp-Source: AGHT+IHDpYG+hLWunvJBAtgghz7RU1rOfdf/y+G3mJ4Hofm9Q9LEuktQaJ5yAE3vHGX7WYR/sLdxZA==
+X-Received: by 2002:a05:6512:2083:b0:52c:e040:7d9 with SMTP id 2adb3069b0e04-52ce0680398mr4513835e87.59.1719311546840;
+        Tue, 25 Jun 2024 03:32:26 -0700 (PDT)
+Received: from pc636 (host-90-233-219-252.mobileonline.telia.com. [90.233.219.252])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdce71c86sm977460e87.142.2024.06.25.03.32.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 03:32:26 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 25 Jun 2024 12:32:24 +0200
+To: Baoquan He <bhe@redhat.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Nick Bowler <nbowler@draconx.ca>,
+	Hailong Liu <hailong.liu@oppo.com>, linux-kernel@vger.kernel.org,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	linux-mm@kvack.org, sparclinux@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
+Message-ID: <ZnqcuKt2qrR-wmH3@pc636>
+References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
+ <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
+ <20240621033005.6mccm7waduelb4m5@oppo.com>
+ <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
+ <ZnVLbCCkvhf5GaTf@pc636>
+ <ZnWICsPgYuBlrWlt@MiWiFi-R3L-srv>
+ <Znljtv5n-6EBgpsF@pc636>
+ <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624081108.10143-2-jhp@endlessos.org> <20240624082144.10265-2-jhp@endlessos.org>
- <20240624082458.00006da1@linux.intel.com> <897ead26-be10-4bb3-b085-1b8c97d93964@intel.com>
-In-Reply-To: <897ead26-be10-4bb3-b085-1b8c97d93964@intel.com>
-From: Jian-Hong Pan <jhp@endlessos.org>
-Date: Tue, 25 Jun 2024 18:31:54 +0800
-Message-ID: <CAPpJ_efs9nHrTx=N2NwtmN=py3CFg62izcgJrUkcMDd_ErR5VA@mail.gmail.com>
-Subject: Re: [PATCH v6 3/3] PCI: vmd: Drop resetting PCI bus action after scan
- mapped PCI child bus
-To: Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>
-Cc: Nirmal Patel <nirmal.patel@linux.intel.com>, Bjorn Helgaas <helgaas@kernel.org>, 
-	Francisco Munoz <francisco.munoz.ruiz@linux.intel.com>, Johan Hovold <johan@kernel.org>, 
-	David Box <david.e.box@linux.intel.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-	Mika Westerberg <mika.westerberg@linux.intel.com>, Damien Le Moal <dlemoal@kernel.org>, 
-	Jonathan Derrick <jonathan.derrick@linux.dev>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux@endlessos.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
 
-Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com> =E6=96=BC 2024=E5=B9=B4=
-6=E6=9C=8824=E6=97=A5 =E9=80=B1=E4=B8=80 =E4=B8=8B=E5=8D=8811:39=E5=AF=AB=
-=E9=81=93=EF=BC=9A
+On Tue, Jun 25, 2024 at 11:30:33AM +0800, Baoquan He wrote:
+> On 06/24/24 at 02:16pm, Uladzislau Rezki wrote:
+> > On Fri, Jun 21, 2024 at 10:02:50PM +0800, Baoquan He wrote:
+> > > On 06/21/24 at 11:44am, Uladzislau Rezki wrote:
+> > > > On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
+> > > > > On 06/21/24 at 11:30am, Hailong Liu wrote:
+> > > > > > On Thu, 20. Jun 14:02, Nick Bowler wrote:
+> > > > > > > On 2024-06-20 02:19, Nick Bowler wrote:
+> > > ......
+> > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > > index be2dd281ea76..18e87cafbaf2 100644
+> > > > > --- a/mm/vmalloc.c
+> > > > > +++ b/mm/vmalloc.c
+> > > > > @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> > > > >  static struct xarray *
+> > > > >  addr_to_vb_xa(unsigned long addr)
+> > > > >  {
+> > > > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > > > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> > > > >  
+> > > > >  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> > > > >  }
+> > > > > 
+> > > > The problem i see is about not-initializing of the:
+> > > > <snip>
+> > > > 	for_each_possible_cpu(i) {
+> > > > 		struct vmap_block_queue *vbq;
+> > > > 		struct vfree_deferred *p;
+> > > > 
+> > > > 		vbq = &per_cpu(vmap_block_queue, i);
+> > > > 		spin_lock_init(&vbq->lock);
+> > > > 		INIT_LIST_HEAD(&vbq->free);
+> > > > 		p = &per_cpu(vfree_deferred, i);
+> > > > 		init_llist_head(&p->list);
+> > > > 		INIT_WORK(&p->wq, delayed_vfree_work);
+> > > > 		xa_init(&vbq->vmap_blocks);
+> > > > 	}
+> > > > <snip>
+> > > > 
+> > > > correctly or fully. It is my bad i did not think that CPUs in a possible mask
+> > > > can be non sequential :-/
+> > > > 
+> > > > nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
+> > > > when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
+> > > 
+> > > I checked the generic version of setup_nr_cpu_ids(), from codes, they
+> > > are different with my understanding.
+> > > 
+> > > kernel/smp.c
+> > > void __init setup_nr_cpu_ids(void)
+> > > {
+> > >         set_nr_cpu_ids(find_last_bit(cpumask_bits(cpu_possible_mask), NR_CPUS) + 1);
+> > > }
+> > > 
+> > I see that it is not a weak function, so it is generic, thus the
+> > behavior can not be overwritten, which is great. This does what we
+> > need.
+> > 
+> > Thank you for checking this you are right!
+> 
+> Thanks for confirming this.
+> 
+> > 
+> > Then it is just a matter of proper initialization of the hash:
+> > 
+> > <snip>
+> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > index 5d3aa2dc88a8..1733946f7a12 100644
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -5087,7 +5087,13 @@ void __init vmalloc_init(void)
+> >          */
+> >         vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
+> >  
+> > -       for_each_possible_cpu(i) {
+> > +       /*
+> > +        * We use "nr_cpu_ids" here because some architectures
+> > +        * may have "gaps" in cpu-possible-mask. It is OK for
+> > +        * per-cpu approaches but is not OK for cases where it
+> > +        * can be used as hashes also.
+> > +        */
+> > +       for (i = 0; i < nr_cpu_ids; i++) {
+> 
+> I was wrong about earlier comments. Percpu variables are only available
+> on possible CPUs. For those nonexistent possible CPUs of static percpu
+> variable vmap_block_queue, there isn't memory allocated and mapped for
+> them. So accessing into them will cause problem.
+> 
+> In Nick's case, there are only CPU0, CPU2. If you access
+> &per_cpu(vmap_block_queue, 1), problem occurs. So I think we may need to
+> change to take other way for vbq. E.g:
+> 1) Storing the vb in the nearest neighbouring vbq on possible CPU as
+>    below draft patch;
+> 2) create an normal array to store vbq of size nr_cpu_ids, then we can
+>    store/fetch each vbq on non-possible CPU?
+> 
+A correct way, i think, is to create a normal array. A quick fix can be
+to stick to a next possible CPU.
+
+> The way 1) is simpler, the existing code can be adapted a little just as
+> below.
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 633363997dec..59a8951cc6c0 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+>  static struct xarray *
+>  addr_to_vb_xa(unsigned long addr)
+>  {
+> -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> +
+> +	if (!cpu_possible(idex))
+> +		index = cpumask_next(index, cpu_possible_mask);
 >
-> On 6/24/2024 8:24 AM, Nirmal Patel wrote:
-> > On Mon, 24 Jun 2024 16:21:45 +0800
-> > Jian-Hong Pan <jhp@endlessos.org> wrote:
-> >
-> >> According to "PCIe r6.0, sec 5.5.4", before enabling ASPM L1.2 on the
-> >> PCIe Root Port and the child device, they should be programmed with
-> >> the same LTR1.2_Threshold value. However, they have different values
-> >> on VMD mapped PCI child bus. For example, Asus B1400CEAE's VMD mapped
-> >> PCI bridge and NVMe SSD controller have different LTR1.2_Threshold
-> >> values:
-> >>
-> >> 10000:e0:06.0 PCI bridge: Intel Corporation 11th Gen Core Processor
-> >> PCIe Controller (rev 01) (prog-if 00 [Normal decode]) ...
-> >>      Capabilities: [200 v1] L1 PM Substates
-> >>          L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+
-> >> L1_PM_Substates+ PortCommonModeRestoreTime=3D45us PortTPowerOnTime=3D5=
-0us
-> >>          L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-> >>                 T_CommonMode=3D45us LTR1.2_Threshold=3D101376ns
-> >>          L1SubCtl2: T_PwrOn=3D50us
-> >>
-> >> 10000:e1:00.0 Non-Volatile memory controller: Sandisk Corp WD Blue
-> >> SN550 NVMe SSD (rev 01) (prog-if 02 [NVM Express]) ...
-> >>      Capabilities: [900 v1] L1 PM Substates
-> >>          L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-> >> L1_PM_Substates+ PortCommonModeRestoreTime=3D32us PortTPowerOnTime=3D1=
-0us
-> >>          L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-> >>                     T_CommonMode=3D0us LTR1.2_Threshold=3D0ns
-> >>          L1SubCtl2: T_PwrOn=3D10us
-> >>
-> >> After debug in detail, both of the VMD mapped PCI bridge and the NVMe
-> >> SSD controller have been configured properly with the same
-> >> LTR1.2_Threshold value. But, become misconfigured after reset the VMD
-> >> mapped PCI bus which is introduced from commit 0a584655ef89 ("PCI:
-> >> vmd: Fix secondary bus reset for Intel bridges") and commit
-> >> 6aab5622296b ("PCI: vmd: Clean up domain before enumeration"). So,
-> >> drop the resetting PCI bus action after scan VMD mapped PCI child bus.
-> >>
-> >> Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
-> >> ---
-> >> v6:
-> >> - Introduced based on the discussion
-> >> https://lore.kernel.org/linux-pci/CAPpJ_efYWWxGBopbSQHB=3DY2+1RrXFR2XW=
-eqEhGTgdiw3XX0Jmw@mail.gmail.com/
-> >>
-> >>   drivers/pci/controller/vmd.c | 20 --------------------
-> >>   1 file changed, 20 deletions(-)
-> >>
-> >> diff --git a/drivers/pci/controller/vmd.c
-> >> b/drivers/pci/controller/vmd.c index 5309afbe31f9..af413cdb4f4e 100644
-> >> --- a/drivers/pci/controller/vmd.c
-> >> +++ b/drivers/pci/controller/vmd.c
-> >> @@ -793,7 +793,6 @@ static int vmd_enable_domain(struct vmd_dev *vmd,
-> >> unsigned long features) resource_size_t offset[2] =3D {0};
-> >>      resource_size_t membar2_offset =3D 0x2000;
-> >>      struct pci_bus *child;
-> >> -    struct pci_dev *dev;
-> >>      int ret;
-> >>
-> >>      /*
-> >> @@ -935,25 +934,6 @@ static int vmd_enable_domain(struct vmd_dev
-> >> *vmd, unsigned long features) pci_scan_child_bus(vmd->bus);
-> >>      vmd_domain_reset(vmd);
-> >>
-> >> -    /* When Intel VMD is enabled, the OS does not discover the
-> >> Root Ports
-> >> -     * owned by Intel VMD within the MMCFG space.
-> >> pci_reset_bus() applies
-> >> -     * a reset to the parent of the PCI device supplied as
-> >> argument. This
-> >> -     * is why we pass a child device, so the reset can be
-> >> triggered at
-> >> -     * the Intel bridge level and propagated to all the children
-> >> in the
-> >> -     * hierarchy.
-> >> -     */
-> >> -    list_for_each_entry(child, &vmd->bus->children, node) {
-> >> -            if (!list_empty(&child->devices)) {
-> >> -                    dev =3D list_first_entry(&child->devices,
-> >> -                                           struct pci_dev,
-> >> bus_list);
-> >> -                    ret =3D pci_reset_bus(dev);
-> >> -                    if (ret)
-> >> -                            pci_warn(dev, "can't reset device:
-> >> %d\n", ret); -
-> >> -                    break;
-> >> -            }
-> >> -    }
-> >> -
-> >>      pci_assign_unassigned_bus_resources(vmd->bus);
-> >>
-> >>      pci_walk_bus(vmd->bus, vmd_pm_enable_quirk, &features);
-> >
-> > Thanks for the patch.
-> >
-> > pci_reset_bus is required to avoid failure in vmd domain creation
-> > during multiple soft reboots test. So I believe we can't just remove
-> > it without proper testing. vmd_pm_enable_quirk happens after
-> > pci_reset_bus, then how is it resetting LTR1.2_Threshold value?
-> >
-> > Thanks
-> > -nirmal
->
-> To follow up on what Nirmal said: why can't you set the threshold value
-> in vmd_pm_enable_quirk() since we look at LTR there?
+cpumask_next() can return nr_cpu_ids if no next bits set.
 
-Looks like setting the threshold value again in vmd_pm_enable_quirk()
-is the preferred direction?
-If so, I can prepare for that in the next version patch.
+Thanks!
 
-Jian-Hong Pan
+--
+Uladzislau Rezki
 
