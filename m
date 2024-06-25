@@ -1,200 +1,179 @@
-Return-Path: <linux-kernel+bounces-228281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228282-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D261F915D9D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:31:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2641915DA3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDCE41C21554
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:31:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C54931C21424
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2B213BACB;
-	Tue, 25 Jun 2024 04:31:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3699313C8E1;
+	Tue, 25 Jun 2024 04:33:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bRWEk8ny"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gr2RsUlT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE2121A0C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 04:31:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E755421A0C;
+	Tue, 25 Jun 2024 04:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719289885; cv=none; b=QFwRkm9a4xBQQ9YWjXFxzU1oH7tdlETlZnaZe32GkOo5+dIUergdjtaAkYA1Sz1OJU6tq1aJvzjAVUTYpcPSE+gXUoy8PmelD6VR7GOr5xVtr/q5ph6zzYJYNRj+Sn5G/NIUat70OquPtbzbjWydTmb97tsuzqwzEeKyA+aEwds=
+	t=1719290010; cv=none; b=bV0qMP/8yGPXGKFJB0VaQAidoTO8+ve33Fcd+JzrT3jp7AW+X86w3ZnIHsD/TJHOpHy0Fo/imcfUCEiQqim25A0Ri+AMb3h27cOK7zdrWtO7paxP1fETqLGeRPuQby+I5tNnVseXCy7z3ejig/Kz/YrptbETjkq+Iooq7uGa0Go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719289885; c=relaxed/simple;
-	bh=wXZZfsJLLaIY+OUuNRqqk/vx4cdx2ts4YaSdAuOJmUs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jGPdLvTeNdcG/g/Jx5Rj/RosmSzLFB/oPK/4HkGvuApovnPGx3DlHfnPDWwjMCTlTbXBvSYQuxbBaeRHm6b7NyKG+SmsDey52wFvm3ZucUyRnK8slacq7d1CkeDJZlkKWELfR6GCA2Dvd9Mwsbi+1zprWvt9p93VK4Vzv6hiDTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bRWEk8ny; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Envelope-To: yosryahmed@google.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1719289879;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=2+STWZO5CMAxCSj0NI0Jy02Uub6PHOuwZTkIl4GXzvo=;
-	b=bRWEk8ny/nPkkgTobgWE7Mu5yfIn4JCuCEnOfRALQCLQLRxJAhHWfPByga7LNU7KMfh81C
-	c4R/uTYvuge0v34MgjJB1OtD2ibgyylNfWCP5+VNdcMOaFtTNVVU0onc8/JynTp1tbkKks
-	1+Gmjx4d4dGEeyzUy7aKpiE5tMaWKV0=
-X-Envelope-To: minchan@kernel.org
-X-Envelope-To: senozhatsky@chromium.org
-X-Envelope-To: akpm@linux-foundation.org
-X-Envelope-To: hannes@cmpxchg.org
-X-Envelope-To: nphamcs@gmail.com
-X-Envelope-To: yuzhao@google.com
-X-Envelope-To: flintglass@gmail.com
-X-Envelope-To: zhouchengming@bytedance.com
-X-Envelope-To: dan.carpenter@linaro.org
-X-Envelope-To: linux-mm@kvack.org
-X-Envelope-To: linux-kernel@vger.kernel.org
-Message-ID: <f52f007c-5418-4e01-99ed-f34892059a7b@linux.dev>
-Date: Tue, 25 Jun 2024 12:31:11 +0800
+	s=arc-20240116; t=1719290010; c=relaxed/simple;
+	bh=ebjOht0y72+MXd4MAl1Qqj8PL3xwjNmflZ1aCQOD49w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=apNXPBmH5ucDhuPdfPHdYU/0eaq3hxsofymd8wQggNytBjJu5wZzHaXxvThB9mvZEwPZy5H4Y/1y/pwowzhAmIwDqCSHEp26Qla65JEXi5/6gVDcWARKwIQCFyxSy+RtW8shVkQwpcjTJOxZCVdjCFKlviScDP7+UjvU95Bc+bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gr2RsUlT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OK1GPK014014;
+	Tue, 25 Jun 2024 04:33:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=de8NdmI+UAnhaZkRTI4vgS
+	GgY3+j55GxwWNIUjBdzWI=; b=gr2RsUlTmuVOiWuG84ikM/lS+GnTwrPfKTDDyQ
+	WNk4DsaVVTSfVmTV4jKgBYQnNydx9xmru9aTb1b05zWWTg5EdNDofq8fjE7hhhq0
+	H29/ySSfyQhXAgsK0Zpw3/W8QVAuXpT7ogOrMI4TVqSMbejOZ4Q//Gl+1krjoCMs
+	PNvuWlpIOf7qDd03P3K5iQ6OCPCn5+pLRUM0TuhbWuGQgyi1D32/Nz1WNXlb3bN/
+	53kbZ/9+WQGFSlABHzZC9GEGFvUNol/WsClrtA6tDss9tfHYgRYwDho+ZRbkDy4t
+	0keBXQQAEj4UGFdn0pzDBgz7sQt3E0E7TUngymGM/ZgrNxUA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnxgwavy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 04:33:24 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45P4XN0o010354
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 04:33:23 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 24 Jun 2024 21:33:19 -0700
+From: Taniya Das <quic_tdas@quicinc.com>
+Date: Tue, 25 Jun 2024 10:03:11 +0530
+Subject: [PATCH v2] pmdomain: qcom: rpmhpd: Skip retention level for Power
+ Domains
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 2/2] mm/zswap: use only one pool in zswap
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Minchan Kim <minchan@kernel.org>,
- Sergey Senozhatsky <senozhatsky@chromium.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>,
- Yu Zhao <yuzhao@google.com>, Takero Funaki <flintglass@gmail.com>,
- Chengming Zhou <zhouchengming@bytedance.com>,
- Dan Carpenter <dan.carpenter@linaro.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20240621-zsmalloc-lock-mm-everything-v2-0-d30e9cd2b793@linux.dev>
- <20240621-zsmalloc-lock-mm-everything-v2-2-d30e9cd2b793@linux.dev>
- <CAJD7tkYUuAdwhSbq+m9KTtC2T8db7tiaKYjfS0M4LOA1yBtCkA@mail.gmail.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Chengming Zhou <chengming.zhou@linux.dev>
-In-Reply-To: <CAJD7tkYUuAdwhSbq+m9KTtC2T8db7tiaKYjfS0M4LOA1yBtCkA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240625-avoid_mxc_retention-v2-1-af9c2f549a5f@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAIZIemYC/0WMQQ6CMBBFr0JmbUmnUgRX3sMYUttBZkGrbSUkh
+ Ltb3bj7L/nvbZAoMiU4VxtEWjhx8AXUoQI7Gf8gwa4wKKka2SotzBLYDfNqh0iZfC5/cZe9Nqc
+ WXd8hFPMZaeT1V73eCo8xzCJPkcy/pY+I2GDT1Z3WUqB4vdkO2Zl0+S72trZhhn3/AFM8YhqjA
+ AAA
+To: Bjorn Andersson <andersson@kernel.org>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Andy
+ Gross" <agross@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_jkona@quicinc.com>,
+        <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+        <stable@vger.kernel.org>
+X-Mailer: b4 0.14-dev-f7c49
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: sWfFej0VuIXYZnYtPg_0cdcimAAS3uRY
+X-Proofpoint-ORIG-GUID: sWfFej0VuIXYZnYtPg_0cdcimAAS3uRY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_01,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
+ suspectscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
+ malwarescore=0 priorityscore=1501 mlxlogscore=999 impostorscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406250030
 
-On 2024/6/24 20:14, Yosry Ahmed wrote:
-> On Fri, Jun 21, 2024 at 12:15 AM Chengming Zhou
-> <chengming.zhou@linux.dev> wrote:
->>
->> Zswap uses 32 pools to workaround the locking scalability problem in
->> zswap backends (mainly zsmalloc nowadays), which brings its own problems
->> like memory waste and more memory fragmentation.
->>
->> Testing results show that we can have near performance with only one
->> pool in zswap after changing zsmalloc to use per-size_class lock instead
->> of pool spinlock.
->>
->> Testing kernel build (make bzImage -j32) on tmpfs with memory.max=1GB,
->> and zswap shrinker enabled with 10GB swapfile on ext4.
->>
->>                                  real    user    sys
->> 6.10.0-rc3                      138.18  1241.38 1452.73
->> 6.10.0-rc3-onepool              149.45  1240.45 1844.69
->> 6.10.0-rc3-onepool-perclass     138.23  1242.37 1469.71
->>
->> And do the same testing using zbud, which shows a little worse performance
->> as expected since we don't do any locking optimization for zbud. I think
->> it's acceptable since zsmalloc became a lot more popular than other
->> backends, and we may want to support only zsmalloc in the future.
->>
->>                                  real    user    sys
->> 6.10.0-rc3-zbud                 138.23  1239.58 1430.09
->> 6.10.0-rc3-onepool-zbud         139.64  1241.37 1516.59
->>
->> Reviewed-by: Nhat Pham <nphamcs@gmail.com>
->> Signed-off-by: Chengming Zhou <chengming.zhou@linux.dev>
->> ---
->>   mm/zswap.c | 60 +++++++++++++++++++-----------------------------------------
->>   1 file changed, 19 insertions(+), 41 deletions(-)
->>
->> diff --git a/mm/zswap.c b/mm/zswap.c
->> index e25a6808c2ed..7925a3d0903e 100644
->> --- a/mm/zswap.c
->> +++ b/mm/zswap.c
->> @@ -122,9 +122,6 @@ static unsigned int zswap_accept_thr_percent = 90; /* of max pool size */
->>   module_param_named(accept_threshold_percent, zswap_accept_thr_percent,
->>                     uint, 0644);
->>
->> -/* Number of zpools in zswap_pool (empirically determined for scalability) */
->> -#define ZSWAP_NR_ZPOOLS 32
->> -
->>   /* Enable/disable memory pressure-based shrinker. */
->>   static bool zswap_shrinker_enabled = IS_ENABLED(
->>                  CONFIG_ZSWAP_SHRINKER_DEFAULT_ON);
->> @@ -160,7 +157,7 @@ struct crypto_acomp_ctx {
->>    * needs to be verified that it's still valid in the tree.
->>    */
->>   struct zswap_pool {
->> -       struct zpool *zpools[ZSWAP_NR_ZPOOLS];
->> +       struct zpool *zpool;
->>          struct crypto_acomp_ctx __percpu *acomp_ctx;
->>          struct percpu_ref ref;
->>          struct list_head list;
->> @@ -237,7 +234,7 @@ static inline struct xarray *swap_zswap_tree(swp_entry_t swp)
->>
->>   #define zswap_pool_debug(msg, p)                               \
->>          pr_debug("%s pool %s/%s\n", msg, (p)->tfm_name,         \
->> -                zpool_get_type((p)->zpools[0]))
->> +                zpool_get_type((p)->zpool))
->>
->>   /*********************************
->>   * pool functions
->> @@ -246,7 +243,6 @@ static void __zswap_pool_empty(struct percpu_ref *ref);
->>
->>   static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
->>   {
->> -       int i;
->>          struct zswap_pool *pool;
->>          char name[38]; /* 'zswap' + 32 char (max) num + \0 */
->>          gfp_t gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
->> @@ -267,18 +263,14 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
->>          if (!pool)
->>                  return NULL;
->>
->> -       for (i = 0; i < ZSWAP_NR_ZPOOLS; i++) {
->> -               /* unique name for each pool specifically required by zsmalloc */
->> -               snprintf(name, 38, "zswap%x",
->> -                        atomic_inc_return(&zswap_pools_count));
->> -
->> -               pool->zpools[i] = zpool_create_pool(type, name, gfp);
->> -               if (!pool->zpools[i]) {
->> -                       pr_err("%s zpool not available\n", type);
->> -                       goto error;
->> -               }
->> +       /* unique name for each pool specifically required by zsmalloc */
->> +       snprintf(name, 38, "zswap%x", atomic_inc_return(&zswap_pools_count));
->> +       pool->zpool = zpool_create_pool(type, name, gfp);
->> +       if (!pool->zpool) {
->> +               pr_err("%s zpool not available\n", type);
->> +               return NULL;
-> 
-> We need to goto error here to free the pool.
-> 
->>          }
->> -       pr_debug("using %s zpool\n", zpool_get_type(pool->zpools[0]));
->> +       pr_debug("using %s zpool\n", zpool_get_type(pool->zpool));
->>
->>          strscpy(pool->tfm_name, compressor, sizeof(pool->tfm_name));
->>
->> @@ -311,8 +303,7 @@ static struct zswap_pool *zswap_pool_create(char *type, char *compressor)
->>   error:
->>          if (pool->acomp_ctx)
->>                  free_percpu(pool->acomp_ctx);
->> -       while (i--)
->> -               zpool_destroy_pool(pool->zpools[i]);
->> +       zpool_destroy_pool(pool->zpool);
-> 
-> .. and then we will need a NULL check needed here.
+In the cases where the power domain connected to logics is allowed to
+transition from a level(L)-->power collapse(0)-->retention(1) or
+vice versa retention(1)-->power collapse(0)-->level(L)  will cause the
+logic to lose the configurations. The ARC does not support retention
+to collapse transition on MxC rails.
 
-Oops, my bad, will fix in the next version.
+The targets from SM8450 onwards the PLL logics of clock controllers are
+connected to MxC rails and the recommended configurations are carried
+out during the clock controller probes. The MxC transition as mentioned
+above should be skipped to ensure the PLL settings are intact across
+clock controller power on & off.
 
-Thanks!
+On older targets that do not split MX into MxA and MxC does not collapse
+the logic and it is parked always at RETENTION, thus this issue is never
+observed on those targets.
+
+Cc: stable@vger.kernel.org # v5.17
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+---
+[Changes in v2]: Incorporate the comments in the commit text.
+---
+ drivers/pmdomain/qcom/rpmhpd.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/drivers/pmdomain/qcom/rpmhpd.c b/drivers/pmdomain/qcom/rpmhpd.c
+index de9121ef4216..d2cb4271a1ca 100644
+--- a/drivers/pmdomain/qcom/rpmhpd.c
++++ b/drivers/pmdomain/qcom/rpmhpd.c
+@@ -40,6 +40,7 @@
+  * @addr:		Resource address as looped up using resource name from
+  *			cmd-db
+  * @state_synced:	Indicator that sync_state has been invoked for the rpmhpd resource
++ * @skip_retention_level: Indicate that retention level should not be used for the power domain
+  */
+ struct rpmhpd {
+ 	struct device	*dev;
+@@ -56,6 +57,7 @@ struct rpmhpd {
+ 	const char	*res_name;
+ 	u32		addr;
+ 	bool		state_synced;
++	bool            skip_retention_level;
+ };
+ 
+ struct rpmhpd_desc {
+@@ -173,6 +175,7 @@ static struct rpmhpd mxc = {
+ 	.pd = { .name = "mxc", },
+ 	.peer = &mxc_ao,
+ 	.res_name = "mxc.lvl",
++	.skip_retention_level = true,
+ };
+ 
+ static struct rpmhpd mxc_ao = {
+@@ -180,6 +183,7 @@ static struct rpmhpd mxc_ao = {
+ 	.active_only = true,
+ 	.peer = &mxc,
+ 	.res_name = "mxc.lvl",
++	.skip_retention_level = true,
+ };
+ 
+ static struct rpmhpd nsp = {
+@@ -819,6 +823,9 @@ static int rpmhpd_update_level_mapping(struct rpmhpd *rpmhpd)
+ 		return -EINVAL;
+ 
+ 	for (i = 0; i < rpmhpd->level_count; i++) {
++		if (rpmhpd->skip_retention_level && buf[i] == RPMH_REGULATOR_LEVEL_RETENTION)
++			continue;
++
+ 		rpmhpd->level[i] = buf[i];
+ 
+ 		/* Remember the first corner with non-zero level */
+
+---
+base-commit: 62c97045b8f720c2eac807a5f38e26c9ed512371
+change-id: 20240625-avoid_mxc_retention-b095a761d981
+
+Best regards,
+-- 
+Taniya Das <quic_tdas@quicinc.com>
+
 
