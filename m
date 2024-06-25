@@ -1,148 +1,222 @@
-Return-Path: <linux-kernel+bounces-228544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80E091617D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:40:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C82791617C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:40:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF351F22C43
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:40:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D37091F21415
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:40:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E90148FF6;
-	Tue, 25 Jun 2024 08:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2208A148829;
+	Tue, 25 Jun 2024 08:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FrZURWZB"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="NWYItuT/"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA2018E1F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCEB51487D8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719304809; cv=none; b=lz1UuQxKPYVj6qA9OzvEGw2r95z5AdthLDg2dczIVbMEop/SnuR3EBJEY7cIagKLGEPJMY8c3jlhPHvvdpvIZodAQpqy9qblzbqv3Hbl7IWuGiVZvqpny7/vhMANNI0GhV4q2B7hQRGawWPXvlZLtk6VKLRlXm9xyFbeFvla2sA=
+	t=1719304807; cv=none; b=O8qRhdVVP9+kFTS449kQ+WeVXr/r4bO+al98Gp1EksJAakWt1p55a8uROSbqRbavA/fBBjAa1WKb4Naj5yWdjkoCxBg31Wcmr0I59YlWw5WWvtTMo0Rnvlib1/mOq6kAfxFNXz6rhaS3Nunz21zxCGL7zJqpEEUN8g5Bf2dL/g0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719304809; c=relaxed/simple;
-	bh=x0h6zK81zeMdC2nbxPC6G2Vyzce29720Fg37YW0c+8w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=Fdd17aQYdzFTRtOUQCZvxwiq2BCWO6FWqQ7Et0z+iIDkCqUc82BHEW6gYZAYfKF+ng5gSoRp7FLiTgVC9oxCSi5h1eMryCO7+oSvDBx04OCfil9VyAGsUVMCkqMuHXX594FPJ+XxIqluRSB9rdM/h/yNS0BChwaDTI7d2cupmKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FrZURWZB; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240625083958epoutp01f9b663d1357c5f6a8c4461af3d38bcb3~cMprp19qZ2164521645epoutp01i
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:39:58 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240625083958epoutp01f9b663d1357c5f6a8c4461af3d38bcb3~cMprp19qZ2164521645epoutp01i
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1719304798;
-	bh=x0h6zK81zeMdC2nbxPC6G2Vyzce29720Fg37YW0c+8w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FrZURWZB7LbaR0YShmrzOTq3mfL3yJOKJqS8TuatUcZ9PNVPq2QOxLVz8Kf1rhMiB
-	 oC4+1TsSxXfhff9wkzinqiJ3VYDM9H3bv1Hx4ISHHM40bFXNpjG+Fdn9I8OvNeyPr0
-	 b713V3mdcr1YpZZ77sYISqP4ee6Z04yKBEBGZjPA=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240625083958epcas5p4b061cfdc465701cf6ffe9f3ccef6b46b~cMprYgGAw2493924939epcas5p4q;
-	Tue, 25 Jun 2024 08:39:58 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.177]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4W7dYm2Wg9z4x9Q9; Tue, 25 Jun
-	2024 08:39:56 +0000 (GMT)
-Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	2C.02.06857.C528A766; Tue, 25 Jun 2024 17:39:56 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240625083927epcas5p4b9d4887854da457946504e98f104e3c2~cMpOecyHR1446514465epcas5p4o;
-	Tue, 25 Jun 2024 08:39:27 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240625083927epsmtrp13ed9e28a93148c9b2aed7be32fba41c1~cMpOd0HSQ1105111051epsmtrp1g;
-	Tue, 25 Jun 2024 08:39:27 +0000 (GMT)
-X-AuditID: b6c32a4b-88bff70000021ac9-13-667a825c0ead
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	46.26.29940.F328A766; Tue, 25 Jun 2024 17:39:27 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240625083926epsmtip2379fc54e913e25e0985f89d784b702c1~cMpN7tEfj1826118261epsmtip2H;
-	Tue, 25 Jun 2024 08:39:26 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: axboe@kernel.dk
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH v5] Subject: io_uring: releasing CPU resources when
- polling
-Date: Tue, 25 Jun 2024 16:39:21 +0800
-Message-Id: <20240625083921.2579716-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <5146c97b-912e-41e3-bea9-547b0881707a@kernel.dk>
+	s=arc-20240116; t=1719304807; c=relaxed/simple;
+	bh=aCU7F80QRCvZK9ERBs+1z/isxE3iEOP4UYkzLyOszNo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a9R4LbmJdITMW6uY2m6F7pOujhg6nh9WpdhwXMefpMiOXTVvQg7MrK+bjO38dBuIhYajXsOKFTxTjMZr14tDKcZ9NoRWgdAFSlnNBXhkZjwnEzbxJ7ez0gxgzcUZkeOrvcy9dW0evpYrtKJsLgOIdv8corlUpwfFpco60KdB7OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=NWYItuT/; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 82060bac32ce11ef8da6557f11777fc4-20240625
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=P6NGLArjM/jU5V8YJGX2B1WlLVZG4c754OTzUfKkh2M=;
+	b=NWYItuT/8PY92qGnJ8xdpDMBi5qhVJrOSKSGhCvE3RZHKe6AkJgopVetG4LnQZTM9v5fCeDr/Fj8K3x1C5K3VYNOLE+8ei+gzq7jOWFuiq5L9prbMqIP7jiJQOjfjgM6xpqYJRK3cuu7pxc+I7zkLJdibs1P//ncxs8H2CBi6uQ=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:cb501b69-c089-4d6c-a0fc-36401257f995,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:393d96e,CLOUDID:f00dff44-4544-4d06-b2b2-d7e12813c598,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 82060bac32ce11ef8da6557f11777fc4-20240625
+Received: from mtkmbs11n2.mediatek.inc [(172.21.101.187)] by mailgw01.mediatek.com
+	(envelope-from <jason-jh.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 51181535; Tue, 25 Jun 2024 16:39:59 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 25 Jun 2024 16:39:58 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 25 Jun 2024 16:39:58 +0800
+From: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Chun-Kuang Hu
+	<chunkuang.hu@kernel.org>
+CC: Matthias Brugger <matthias.bgg@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Jason-ch Chen <jason-ch.chen@mediatek.com>, "Jason-JH . Lin"
+	<jason-jh.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>, Nancy
+ Lin <nancy.lin@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Hsiao Chien Sung
+	<shawn.sung@mediatek.com>
+Subject: [PATCH] soc: mtk-cmdq: Add cmdq_pkt_logic_command to support math operation
+Date: Tue, 25 Jun 2024 16:39:57 +0800
+Message-ID: <20240625083957.3540-1-jason-jh.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKKsWRmVeSWpSXmKPExsWy7bCmhm5MU1WawbtJQhZzVm1jtFh9t5/N
-	4l3rORaLy7vmsDmweOycdZfd4/LZUo/Pm+QCmKOybTJSE1NSixRS85LzUzLz0m2VvIPjneNN
-	zQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOAlikplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVS
-	C1JyCkwK9IoTc4tL89L18lJLrAwNDIxMgQoTsjN+r9nBVPCDtWLLmQfMDYxPWLoYOTkkBEwk
-	+na+ZO1i5OIQEtjNKHF75hU2COcTo8Shs/PYIZxvjBJbd99hh2np/TSPBSKxl1Hi44aVUM4P
-	Rom7l+4wglSxCShJ7N/yAcwWERCW2N/RClTEwcEsECJx80wESFhYIFRi3f5usBIWAVWJpetv
-	MIHYvALWEis6+qCWyUvc7NrPDGJzCthKNB9bzwhRIyhxcibED8xANc1bZzOD3CAhsItdYt/y
-	N0wguyQEXCT+PxOGmCMs8er4FqiZUhIv+9ug7HyJyd8hZkoI1Eis2/wOGi7WEv+u7IE6WVNi
-	/S59iLCsxNRT65gg1vJJ9P5+wgQR55XYMQ/GVpJYcmQF1EgJid8TFrFC2B4SHx/fhwb1BEaJ
-	NVfeMk5gVJiF5J1ZSN6ZhbB6ASPzKkbJ1ILi3PTUYtMC47zUcngkJ+fnbmIEpz8t7x2Mjx58
-	0DvEyMTBeIhRgoNZSYQ3tKQqTYg3JbGyKrUoP76oNCe1+BCjKTC8JzJLiSbnAxNwXkm8oYml
-	gYmZmZmJpbGZoZI47+vWuSlCAumJJanZqakFqUUwfUwcnFINTCqv5BYc4kl8e12g69UKbp3f
-	+W2vV1bdW9/WG14jnl++Q2hl1WM3Vdve4rlOe95u+XTQWkzoSeSWGTfnBjjFFrh8PNdgarDc
-	Um/uE6u2hLYe8b3Tt7hWzj34tiN2FqPxKjU9xtqTTNtPPUt1E/y8Xlpx7t8rB9M80m6+/Pht
-	l1tHb48X/6p0w4NadX+kraf+6eKI2DnT5MSCe56Cv11F5Z7euvRzzp+TW1PULm7TlpOKnCpx
-	5XREzv4z8p7rTB9/Ofvi61MXTT7bP5Z2O8oTvl4xeFBgt3fJfrMLO2/0RFTdKlh2ouW756ct
-	8TGMM+WfcK3aey5u53s+16x3VY+zJfOKKnvvXSpwruS90muSw6DEUpyRaKjFXFScCAC222wN
-	CAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLLMWRmVeSWpSXmKPExsWy7bCSvK59U1WawdqtQhZzVm1jtFh9t5/N
-	4l3rORaLy7vmsDmweOycdZfd4/LZUo/Pm+QCmKO4bFJSczLLUov07RK4Mn6v2cFU8IO1YsuZ
-	B8wNjE9Yuhg5OSQETCR6P80Dsrk4hAR2M0qsnTGPGSIhIbHj0R9WCFtYYuW/5+wQRd8YJXp2
-	PWUDSbAJKEns3/KBEcQWASra39EKNpVZIEyia8cZsGZhgWCJnZumsoPYLAKqEkvX32ACsXkF
-	rCVWdPSxQyyQl7jZtR9sMaeArUTzsfVgM4UEbCRWzPgIVS8ocXLmE6j58hLNW2czT2AUmIUk
-	NQtJagEj0ypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjOAQ1dLcwbh91Qe9Q4xMHIyH
-	GCU4mJVEeENLqtKEeFMSK6tSi/Lji0pzUosPMUpzsCiJ84q/6E0REkhPLEnNTk0tSC2CyTJx
-	cEo1MGVtTHLor3j54bfijaCMvULb+ndmR4XN2fPf70S08fytZc94RPa8PtdnkX9VwNchUMXv
-	qeiOI4EB+eEBRx7psC+OF48TXPTy6DyN6bNmFc/LedgqVR6+fukq9jkJwiJiISa5cfqlK/od
-	n7f3+XNPEFbOyH71yc/C2qF14gW3hR5iXgznW1YfXK3+wn/Veoflj9Pn5kUcXT1z6oE5lwo3
-	ebAFP1gZuL9qDn+NSRu32ZkLez+V7nhl2dxms9auyMVuYlqUWlVfvODJTXp+s9/ers44d/v7
-	ZLbYEDvvnHsrhK8lXlnZ/znUV5h1/fSXpSuCpc27prO2xWisu938k6NVIvF/Zej7jCWFsjbL
-	su66K7EUZyQaajEXFScCAL//ZxrAAgAA
-X-CMS-MailID: 20240625083927epcas5p4b9d4887854da457946504e98f104e3c2
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240625083927epcas5p4b9d4887854da457946504e98f104e3c2
-References: <5146c97b-912e-41e3-bea9-547b0881707a@kernel.dk>
-	<CGME20240625083927epcas5p4b9d4887854da457946504e98f104e3c2@epcas5p4.samsung.com>
+Content-Type: text/plain
+X-MTK: N
 
-On 6/19/24 15:51, Jens Axboe wrote:
->On 6/19/24 08:18, hexue wrote:
->
->While I do suspect there are cases where hybrid polling will be more
->efficient, not sure there are many of them. And you're most likely
->better off just doing IRQ driven IO at that point? Particularly with the
->fairly substantial overhead of maintaining the data you need, and time
->querying.
+Add cmdq_pkt_logic_command to support math operation.
 
-I rebuilt the test cases based on your information, that is, each drive has
-only one thread with high pressure, there is a significant performance loss.
-I previously provided test data for a single drive with multi-threaded, which
-can achieve performance stable and CPU savings.
+cmdq_pkt_logic_command can append logic command to the CMDQ packet,
+ask GCE to execute a arithmetic calculate instruction,
+such as add, subtract, multiply, AND, OR and NOT, etc.
 
-Thanks for your data, I will reduce the cost of each IO and submit the next
-version.
+Note that all arithmetic instructions are unsigned calculations.
+If there are any overflows, GCE will sent the invalid IRQ to notify
+CMDQ driver.
 
---
-hexue
+Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
+---
+ drivers/soc/mediatek/mtk-cmdq-helper.c | 34 +++++++++++++++++++++
+ include/linux/soc/mediatek/mtk-cmdq.h  | 42 ++++++++++++++++++++++++++
+ 2 files changed, 76 insertions(+)
+
+diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
+index 046522664dc1..f3cd15387f2d 100644
+--- a/drivers/soc/mediatek/mtk-cmdq-helper.c
++++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
+@@ -15,6 +15,7 @@
+ /* dedicate the last GPR_R15 to assign the register address to be poll */
+ #define CMDQ_POLL_ADDR_GPR	(15)
+ #define CMDQ_EOC_IRQ_EN		BIT(0)
++#define CMDQ_IMMEDIATE_VALUE	0
+ #define CMDQ_REG_TYPE		1
+ #define CMDQ_JUMP_RELATIVE	0
+ #define CMDQ_JUMP_ABSOLUTE	1
+@@ -45,6 +46,16 @@ struct cmdq_instruction {
+ 	u8 op;
+ };
+ 
++static inline u8 cmdq_operand_get_type(struct cmdq_operand *op)
++{
++	return op->reg ? CMDQ_REG_TYPE : CMDQ_IMMEDIATE_VALUE;
++}
++
++static inline u16 cmdq_operand_get_idx_value(struct cmdq_operand *op)
++{
++	return op->reg ? op->idx : op->value;
++}
++
+ int cmdq_dev_get_client_reg(struct device *dev,
+ 			    struct cmdq_client_reg *client_reg, int idx)
+ {
+@@ -461,6 +472,29 @@ int cmdq_pkt_poll_addr(struct cmdq_pkt *pkt, dma_addr_t addr, u32 value, u32 mas
+ }
+ EXPORT_SYMBOL(cmdq_pkt_poll_addr);
+ 
++int cmdq_pkt_logic_command(struct cmdq_pkt *pkt, u16 result_reg_idx,
++			   struct cmdq_operand *left_operand,
++			   enum cmdq_logic_op s_op,
++			   struct cmdq_operand *right_operand)
++{
++	struct cmdq_instruction inst = { {0} };
++
++	if (!left_operand || !right_operand || s_op >= CMDQ_LOGIC_MAX)
++		return -EINVAL;
++
++	inst.op = CMDQ_CODE_LOGIC;
++	inst.dst_t = CMDQ_REG_TYPE;
++	inst.src_t = cmdq_operand_get_type(left_operand);
++	inst.arg_c_t = cmdq_operand_get_type(right_operand);
++	inst.sop = s_op;
++	inst.reg_dst = result_reg_idx;
++	inst.src_reg = cmdq_operand_get_idx_value(left_operand);
++	inst.arg_c = cmdq_operand_get_idx_value(right_operand);
++
++	return cmdq_pkt_append_command(pkt, inst);
++}
++EXPORT_SYMBOL(cmdq_pkt_logic_command);
++
+ int cmdq_pkt_assign(struct cmdq_pkt *pkt, u16 reg_idx, u32 value)
+ {
+ 	struct cmdq_instruction inst = {};
+diff --git a/include/linux/soc/mediatek/mtk-cmdq.h b/include/linux/soc/mediatek/mtk-cmdq.h
+index d4a8e34505e6..5bee6f7fc400 100644
+--- a/include/linux/soc/mediatek/mtk-cmdq.h
++++ b/include/linux/soc/mediatek/mtk-cmdq.h
+@@ -25,6 +25,31 @@
+ 
+ struct cmdq_pkt;
+ 
++enum cmdq_logic_op {
++	CMDQ_LOGIC_ASSIGN = 0,
++	CMDQ_LOGIC_ADD = 1,
++	CMDQ_LOGIC_SUBTRACT = 2,
++	CMDQ_LOGIC_MULTIPLY = 3,
++	CMDQ_LOGIC_XOR = 8,
++	CMDQ_LOGIC_NOT = 9,
++	CMDQ_LOGIC_OR = 10,
++	CMDQ_LOGIC_AND = 11,
++	CMDQ_LOGIC_LEFT_SHIFT = 12,
++	CMDQ_LOGIC_RIGHT_SHIFT = 13,
++	CMDQ_LOGIC_MAX,
++};
++
++struct cmdq_operand {
++	/* register type */
++	bool reg;
++	union {
++		/* index */
++		u16 idx;
++		/* value */
++		u16 value;
++	};
++};
++
+ struct cmdq_client_reg {
+ 	u8 subsys;
+ 	u16 offset;
+@@ -272,6 +297,23 @@ int cmdq_pkt_poll(struct cmdq_pkt *pkt, u8 subsys,
+ int cmdq_pkt_poll_mask(struct cmdq_pkt *pkt, u8 subsys,
+ 		       u16 offset, u32 value, u32 mask);
+ 
++/**
++ * cmdq_pkt_logic_command() - Append logic command to the CMDQ packet, ask GCE to
++ *		          execute an instruction that store the result of logic operation
++ *		          with left and right operand into result_reg_idx.
++ * @pkt:		the CMDQ packet
++ * @result_reg_idx:	SPR index that store operation result of left_operand and right_operand
++ * @left_operand:	left operand
++ * @s_op:		the logic operator enum
++ * @right_operand:	right operand
++ *
++ * Return: 0 for success; else the error code is returned
++ */
++int cmdq_pkt_logic_command(struct cmdq_pkt *pkt, u16 result_reg_idx,
++			   struct cmdq_operand *left_operand,
++			   enum cmdq_logic_op s_op,
++			   struct cmdq_operand *right_operand);
++
+ /**
+  * cmdq_pkt_assign() - Append logic assign command to the CMDQ packet, ask GCE
+  *		       to execute an instruction that set a constant value into
+-- 
+2.18.0
+
 
