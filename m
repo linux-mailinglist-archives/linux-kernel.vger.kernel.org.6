@@ -1,77 +1,99 @@
-Return-Path: <linux-kernel+bounces-228742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9103291664C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:35:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EF56916651
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:36:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C31181C22199
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:35:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8B15B20D91
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 613A014D6FB;
-	Tue, 25 Jun 2024 11:34:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5491414B965;
+	Tue, 25 Jun 2024 11:36:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sJSzMm8F"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CrA57u0v"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E35D1494D7;
-	Tue, 25 Jun 2024 11:34:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9848F47A64;
+	Tue, 25 Jun 2024 11:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315261; cv=none; b=j+gFeCswPCTGimsT3Jzbp0Tvuuxah7VJ8iZK6gVnqT0OTpaLavPhKkhxYzyHbQAAgU2MxP72qVHWaX54uPwb5ri3L4PUNaFa0qIOC1byiDUjArU6U6lZjAzA57vZ6cPzmthMscyBnW8kSUnSreLWDAehvjHG55RJyTAkdgL52Sk=
+	t=1719315408; cv=none; b=dHwfWv1griRaOf3l5sHNruorUzyzFSKMXN2sSTgxzWKWEtgL5IMCZQYeBPk7wmbvfIAqezFLdlc5qv3HaqUsY/KyGt4GuU1qBmAnxVx5VkQBY6SEucqltEFyIJ2zpVfPyhdkn0ctG4SimX8SkFCyR0nJfR/Fu1/zQBuWAE/Nu9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315261; c=relaxed/simple;
-	bh=xEqPfyh9X6YuMifFgEaBh2xb//PTMQ+e5kd9VxjCj2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e0xN7FSAxSjowr8724oPc+5z+c90net6EDL10FRJAZcUWgw9bPZFyU8s2LUok28o9nWTS+dplODlMP3tc/lOh7rK8BfLCAP9R5PEfNcF72Yc7sTuo0wipwTd7x2DhmuD8mU0umN2Tt8ser7sFhILt4SkvKYGhFGeFhpWug6jp2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sJSzMm8F; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=faux9V9iXqed8tIz+6pT8trL+2XAtII7wPG/Di7LJdE=; b=sJSzMm8FD5d9R+48pDS5r7+eD7
-	NJYbMFte26n8KE1pBgWTDys4Ib1tryeMYIU8XvvMWOU6VyEbgeU4n27btTBIV8Yy14UaE54GCTxX3
-	ovD9XP5n2HZJfy/JKjVt7dEf9zimuQV2t4Meq8DBqCmOS8w6pSYitaE1g/wUSy2ufbtetBTldyZqV
-	RNhCgMUcp2T8KN9cf/BVqroqwOpYDW5fZIlHzGDfKGTXp7GqzaUXlSIZr+d00jK+mQsmQt4kKWpN5
-	R0XO5gYGD2NXc+XAZhJVJ1Ci9siYWB7O/ckj78Z4DY/UDoaix+i1x7RvLIOgOzdGkEfnPW1Egk8gr
-	cc708vtw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sM4RC-00000002Yl5-4BGY;
-	Tue, 25 Jun 2024 11:34:15 +0000
-Date: Tue, 25 Jun 2024 04:34:14 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: alexjlzheng@gmail.com
-Cc: hch@infradead.org, alexjlzheng@tencent.com, chandan.babu@oracle.com,
-	david@fromorbit.com, djwong@kernel.org,
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org
-Subject: Re: [PATCH] xfs: make xfs_log_iovec independent from xfs_log_vec and
- release it early
-Message-ID: <ZnqrNi-cEjs92-b8@infradead.org>
-References: <Znqmr3Iki4Q8BkxJ@infradead.org>
- <20240625112438.1925184-1-alexjlzheng@tencent.com>
+	s=arc-20240116; t=1719315408; c=relaxed/simple;
+	bh=1vayWtGsXIHmbim6YmAINiLiTe7ksyVQW9xad6dS01k=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=XAnfJZ8SxRakHkXmUKRqX9T+UUcKpx9F3pg3xhGhuBEBv+z8E37O/j9bqQRbinN395iSCO8Hogj7ua6nAnMd0AetQ1zjn6QSntwhStBTnifU72401++4CQaIcjXQNfjpZKdFcKYdn6l4M9/Z9G+4abvzUCjAbf8iIeUgadWIzRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CrA57u0v; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 404AEC32781;
+	Tue, 25 Jun 2024 11:36:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719315408;
+	bh=1vayWtGsXIHmbim6YmAINiLiTe7ksyVQW9xad6dS01k=;
+	h=Date:From:To:Cc:Subject:From;
+	b=CrA57u0v4Y/kUKlUe1VEkVEUoFeaOhe0R8SQ4rmLolFt3CRADOoXvTVjFJL2S6xXI
+	 V7A0gatEmMvTAeFZkCt5exjMHN9dlFluURiokb2Fn5sXnM7ynNMkBW3E+I4PNmfM/1
+	 KLvBQSwAJ5g9GGFT6DWqC7XouO79eKF3tUzj/mkj8x8ynJZdWdu8ebdub9S2jn7qAn
+	 yXbP3rMLAEK+Z2UVviWeASSbfJZ8E2SHrJtHdSGVTmtspFu5nSTxGtK8Du+qFHhoJp
+	 +75gQ9DrKrQJ2nYrxa1zdIzstaLi5ZFIETRAtC9PPMzb3JFiLJndQl1TF44m6B0hjC
+	 i9aBbzu228bCw==
+Date: Tue, 25 Jun 2024 12:36:44 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Andy Gross <agross@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the qcom tree
+Message-ID: <ZnqrzC35XKH3XNVg@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="N7PPyFVAYBxZFVrB"
+Content-Disposition: inline
+
+
+--N7PPyFVAYBxZFVrB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240625112438.1925184-1-alexjlzheng@tencent.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Tue, Jun 25, 2024 at 07:24:38PM +0800, alexjlzheng@gmail.com wrote:
-> I am sorry, but I didn't get your point. May I ask if you could clarify your
-> viewpoint more clearly?
+Hi all,
 
-The explanation you gave in reply to Darrick should be covered in
-the commit log for the patch.  The commit log should also contain
-measurement of how much memory this saves and explain why this is a
-good trafeoff vs the extra memory allocation.
+After merging the qcom tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
+ERROR: modpost: "__auxiliary_driver_register" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
+ERROR: modpost: "servreg_loc_pfr_resp_ei" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
+ERROR: modpost: "auxiliary_driver_unregister" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
+ERROR: modpost: "servreg_get_domain_list_resp_ei" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
+ERROR: modpost: "servreg_get_domain_list_req_ei" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
+ERROR: modpost: "servreg_loc_pfr_req_ei" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
+
+Caused by commit
+
+  1ebcde047c547134e ("soc: qcom: add pd-mapper implementation")
+
+I have used the tree from 20240624 instead.
+
+--N7PPyFVAYBxZFVrB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ6q8sACgkQJNaLcl1U
+h9B2Lwf8CimZgqYQ8B1E4t+tkB1pWP/1x7+sBeCS3tumdwb5XCCbpC8wkZ8bU58+
+gkzL1clpaflsGFr2U1mPoptSGHrPoM46w+VjfJEZ/fw+XudkABVR6oymh4PCbTUj
+/8hUitY/OKUdB7gEidEdJmNG9eU/YBS+YwPW7G1ST+05LF+bDM/0Yfllq9xKcldK
+lDTTDdJsPZyDGI+ahkQ9qa6bt4pKXb4FpPGn2Q38osnn2dJnZl1Ym+MiXGDcrb7T
+1R8OBtkuj/68GDHn+V+yb/FhIgte5aUuratXspVj5KjzPsLjQInH8JLR8JAMRh1F
+LdG+yuITp84RbcgekGdurNymTujw0w==
+=7/LJ
+-----END PGP SIGNATURE-----
+
+--N7PPyFVAYBxZFVrB--
 
