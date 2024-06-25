@@ -1,81 +1,71 @@
-Return-Path: <linux-kernel+bounces-228906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B1C916878
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:59:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B210391686E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AB861C23321
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:59:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65DDD281685
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:57:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946C4158D86;
-	Tue, 25 Jun 2024 12:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F748158D76;
+	Tue, 25 Jun 2024 12:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="edeErynV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="HxcEN/13"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79ED51667D8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04C314AD2B;
+	Tue, 25 Jun 2024 12:56:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719320312; cv=none; b=PtEgx/pUe1lCgVoskgmxncNDGEXg50aosu7Y3RvJj4Y7AfqMsr114c9ByO/UuLBZoDv5F+nAKC3byQzT63gJf0xhpGLU34adhBArYD3ZIukjsUi5bRTKs2+KId0aKBK4DXpt0iUh6xLgYtnYZcQQHHz3VcdtkEmaDKmeGBS3NWo=
+	t=1719320223; cv=none; b=oHcghK6bfhtBrx8O2BtqBLvvegYRwBWEMwDNo0i3y61j8bznHSXPHfbqswe7HW1ooZP110XslzJX5v5X55b3wdGq/kC7o8P3pLb1N/MvC9H5MWV+3NqSGljll6GKzIVhMNF+I8w6pFoRZXR8GC8Mn+YXRnyY6/04BBtXz6wfq8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719320312; c=relaxed/simple;
-	bh=lLBI95b/xIjiHUrUedLhxc47SmekXuJZpctGOrGOIck=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=t9lobyCL8puNRl7QVXPHBlXU3AcK1K+iKbMSR0H0XZ1KzePzNlB7/b2Rkis0/nXJHjigIP/x5sZnfKfNvitdg4U/+Nfwd4h3M3UgLWqWy+c4Gd8WwcVLKcrNdmd1dTDgQfk1/Qx0pN2xpy5yE94j0393xvpAltRTac6zw6NsY2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=edeErynV; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719320310; x=1750856310;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=lLBI95b/xIjiHUrUedLhxc47SmekXuJZpctGOrGOIck=;
-  b=edeErynVyfj/Xm4/1FT0xX3y3hVOM7PlzhEApssYo5fYHdDWyNV/r4JP
-   xqHhXXWjfgwZPWkKz5pCXBG7wgmwwa6KN5gtQWXimiPUACbh9mBWzqgjP
-   ZuO+Hc2OTl0HqODDn8pEkhzZUKa9hhBLsbK/zFpH3sBh2gX4xFbaefM7s
-   DHC/RRELOBKuNBZjiK8+L3Q7qIqC3AMZLc7vRaac84lRS9FDuY/hyvAqh
-   oWPKVKvyNQedcCo72mUqLbqE+hW6qDoF5Ngv/GoGSqQEPdhqzOvX0m4Yf
-   1VR0I2ettObku9fivetB7kIaCUzBTinlhZJ1o0xMz1Hz5w4si9E54Oa08
-   g==;
-X-CSE-ConnectionGUID: lHx/vABST+GCYHvEOjGWEA==
-X-CSE-MsgGUID: QQckDzaQSLmJG1TMK+8kWQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="27740951"
-X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
-   d="scan'208";a="27740951"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 05:57:23 -0700
-X-CSE-ConnectionGUID: cHAiU3zlSF2FGKA1LyGN7Q==
-X-CSE-MsgGUID: YCEvZPAyQ5eXsMIhy/BhRw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
-   d="scan'208";a="74402237"
-Received: from chenyu-dev.sh.intel.com ([10.239.62.164])
-  by orviesa002.jf.intel.com with ESMTP; 25 Jun 2024 05:57:20 -0700
-From: Chen Yu <yu.c.chen@intel.com>
-To: Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	virtualization@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Juergen Gross <jgross@suse.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	Chen Yu <yu.chen.surf@gmail.com>,
-	Chen Yu <yu.c.chen@intel.com>,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Prem Nath Dey <prem.nath.dey@intel.com>,
-	Xiaoping Zhou <xiaoping.zhou@intel.com>
-Subject: [PATCH v3] x86/paravirt: Disable virt spinlock on bare metal
-Date: Tue, 25 Jun 2024 20:54:03 +0800
-Message-Id: <20240625125403.187110-1-yu.c.chen@intel.com>
+	s=arc-20240116; t=1719320223; c=relaxed/simple;
+	bh=loLC0h0Nmm1s8GTQUTCut/BEdjs8LaaG1ZAXmpoHSL8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fyK8UiLKFXxAoVni2KS9qUb9aU8769DxLIlV4SlML0edorCW8aqRmMlFKCL9y73MdDMdERynnPYq3y3MKqe11fqQ0WtrFn8wKqZ5CgOX2qejtNT0uNOjXEvSAv8nwfJvLpG7L78xtIJN7Ez3VWL8cTnj6MU+yaVYtN5cRWCEWe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=HxcEN/13; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 6566a76c32f211ef8da6557f11777fc4-20240625
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=YTwnvPfc2qiA2aOD18vpssniQ6NMlRbnadTENhxe/Hs=;
+	b=HxcEN/13dka5iA95D8ipWtB/bitMXcItLK0ud/1w0huRAdcuyvBEVtD5n71Dh88PAFEby+TDnwFQrOuP9kGBXdXsKZAhFysM9Z1unWLWKMAcskKth20Kdp3744kHP/8E6uJOjv4dl4jUP9PHrlCfw7fvkb+ffUxHq14ZTGcvB3M=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:a2a95750-41d9-42dd-86d9-96de60377325,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:393d96e,CLOUDID:def30389-8d4f-477b-89d2-1e3bdbef96d1,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 6566a76c32f211ef8da6557f11777fc4-20240625
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
+	(envelope-from <jianhua.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1618452944; Tue, 25 Jun 2024 20:56:53 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Tue, 25 Jun 2024 20:56:52 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Tue, 25 Jun 2024 20:56:51 +0800
+From: Jianhua Lin <jianhua.lin@mediatek.com>
+To: <daniel.almeida@collabora.com>, <mchehab@kernel.org>,
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Jianhua Lin
+	<jianhua.lin@mediatek.com>
+Subject: [PATCH v2 1/1] media: mediatek: jpeg: support 34bits
+Date: Tue, 25 Jun 2024 20:56:11 +0800
+Message-ID: <20240625125611.29145-1-jianhua.lin@mediatek.com>
 X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -84,100 +74,378 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-The kernel can change spinlock behavior when running as a guest. But
-this guest-friendly behavior causes performance problems on bare metal.
-So there's a 'virt_spin_lock_key' static key to switch between the two
-modes.
+the iommu HW supported 34bits iova space(16GB),
+but mediatek jpeg enc/dec driver still is 32bit,
+then need to set the bit32/bit33 iova to jpeg HW.
 
-The static key is always enabled by default (run in guest mode) and
-should be disabled for bare metal (and in some guests that want native
-behavior).
-
-Performance drop is reported when running encode/decode workload and
-BenchSEE cache sub-workload.
-Bisect points to commit ce0a1b608bfc ("x86/paravirt: Silence unused
-native_pv_lock_init() function warning"). When CONFIG_PARAVIRT_SPINLOCKS
-is disabled the virt_spin_lock_key is incorrectly set to true on bare
-metal. The qspinlock degenerates to test-and-set spinlock, which
-decrease the performance on bare metal.
-
-Set the default value of virt_spin_lock_key to false. If booting in a VM,
-enable this key. Later during the VM initialization, if other
-high-efficient spinlock is preferred(paravirt-spinlock eg), the
-virt_spin_lock_key is disabled accordingly. The relation is described as
-below:
-
-X86_FEATURE_HYPERVISOR         Y    Y    Y     N
-CONFIG_PARAVIRT_SPINLOCKS      Y    Y    N     Y/N
-PV spinlock                    Y    N    N     Y/N
-
-virt_spin_lock_key             N    N    Y     N
-
-Fixes: ce0a1b608bfc ("x86/paravirt: Silence unused native_pv_lock_init() function warning")
-Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-Suggested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Suggested-by: Nikolay Borisov <nik.borisov@suse.com>
-Reported-by: Prem Nath Dey <prem.nath.dey@intel.com>
-Reported-by: Xiaoping Zhou <xiaoping.zhou@intel.com>
-Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+Signed-off-by: Jianhua Lin <jianhua.lin@mediatek.com>
 ---
-v2._v3:
-  Change the default value of virt_spin_lock_key from true to false.
-  Enable this key when it is in the VM, and disable it when needed.
-  This makes the code more readable. (Nikolay Borisov)
-  Dropped Reviewed-by because the code has been changed.
-v1->v2:
-  Refine the commit log per Dave's suggestion.
-  Simplify the fix by directly disabling the virt_spin_lock_key on bare metal.
-  Collect Reviewed-by from Juergen.
----
- arch/x86/include/asm/qspinlock.h | 4 ++--
- arch/x86/kernel/paravirt.c       | 7 +++----
- 2 files changed, 5 insertions(+), 6 deletions(-)
+Changes compared with v1:
+- used of_property_read_bool instead.
+- used the ternary operator instead.
+- added comment to explain the multiplier.
+- cleaned up coding style warning max line length.
 
-diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
-index a053c1293975..a32bd2aabdf9 100644
---- a/arch/x86/include/asm/qspinlock.h
-+++ b/arch/x86/include/asm/qspinlock.h
-@@ -66,13 +66,13 @@ static inline bool vcpu_is_preempted(long cpu)
+ .../platform/mediatek/jpeg/mtk_jpeg_core.c    | 10 +++-
+ .../platform/mediatek/jpeg/mtk_jpeg_core.h    |  2 +
+ .../platform/mediatek/jpeg/mtk_jpeg_dec_hw.c  | 59 +++++++++++++++----
+ .../platform/mediatek/jpeg/mtk_jpeg_dec_hw.h  |  1 +
+ .../platform/mediatek/jpeg/mtk_jpeg_dec_reg.h |  8 +++
+ .../platform/mediatek/jpeg/mtk_jpeg_enc_hw.c  | 45 ++++++++++++--
+ .../platform/mediatek/jpeg/mtk_jpeg_enc_hw.h  | 11 +++-
+ 7 files changed, 117 insertions(+), 19 deletions(-)
+
+diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
+index ac48658e2de4..5e3053f99dda 100644
+--- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
++++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.c
+@@ -1030,6 +1030,7 @@ static void mtk_jpeg_dec_device_run(void *priv)
+ 	spin_lock_irqsave(&jpeg->hw_lock, flags);
+ 	mtk_jpeg_dec_reset(jpeg->reg_base);
+ 	mtk_jpeg_dec_set_config(jpeg->reg_base,
++				jpeg->support_34bit,
+ 				&jpeg_src_buf->dec_param,
+ 				jpeg_src_buf->bs_size,
+ 				&bs,
+@@ -1317,6 +1318,11 @@ static int mtk_jpeg_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
  
- #ifdef CONFIG_PARAVIRT
- /*
-- * virt_spin_lock_key - enables (by default) the virt_spin_lock() hijack.
-+ * virt_spin_lock_key - disables (by default) the virt_spin_lock() hijack.
-  *
-  * Native (and PV wanting native due to vCPU pinning) should disable this key.
-  * It is done in this backwards fashion to only have a single direction change,
-  * which removes ordering between native_pv_spin_init() and HV setup.
++	if (of_property_read_bool(pdev->dev.of_node, "mediatek,34bits"))
++		jpeg->support_34bit = true;
++
++	dev_info(&pdev->dev, "use 34bits: %d", jpeg->support_34bit);
++
+ 	if (!jpeg->variant->multi_core) {
+ 		ret = mtk_jpeg_single_core_init(pdev, jpeg);
+ 		if (ret) {
+@@ -1564,7 +1570,8 @@ static irqreturn_t mtk_jpeg_enc_done(struct mtk_jpeg_dev *jpeg)
+ 	src_buf = v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
+ 	dst_buf = v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
+ 
+-	result_size = mtk_jpeg_enc_get_file_size(jpeg->reg_base);
++	result_size = mtk_jpeg_enc_get_file_size(jpeg->reg_base,
++			ctx->jpeg->support_34bit);
+ 	vb2_set_plane_payload(&dst_buf->vb2_buf, 0, result_size);
+ 
+ 	buf_state = VB2_BUF_STATE_DONE;
+@@ -1764,6 +1771,7 @@ static void mtk_jpegdec_worker(struct work_struct *work)
+ 	ctx->total_frame_num++;
+ 	mtk_jpeg_dec_reset(comp_jpeg[hw_id]->reg_base);
+ 	mtk_jpeg_dec_set_config(comp_jpeg[hw_id]->reg_base,
++				jpeg->support_34bit,
+ 				&jpeg_src_buf->dec_param,
+ 				jpeg_src_buf->bs_size,
+ 				&bs,
+diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h
+index 8ba6e757e11a..42f9af8d2e2a 100644
+--- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h
++++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_core.h
+@@ -209,6 +209,7 @@ struct mtk_jpegdec_comp_dev {
+  * @reg_decbase:	jpg decode register base addr
+  * @dec_hw_dev:	jpg decode hardware device
+  * @hw_index:		jpg hw index
++ * @support_34bit:	flag to check if support dma_address 34bit
   */
--DECLARE_STATIC_KEY_TRUE(virt_spin_lock_key);
-+DECLARE_STATIC_KEY_FALSE(virt_spin_lock_key);
+ struct mtk_jpeg_dev {
+ 	struct mutex		lock;
+@@ -231,6 +232,7 @@ struct mtk_jpeg_dev {
+ 	void __iomem *reg_decbase[MTK_JPEGDEC_HW_MAX];
+ 	struct mtk_jpegdec_comp_dev *dec_hw_dev[MTK_JPEGDEC_HW_MAX];
+ 	atomic_t hw_index;
++	bool support_34bit;
+ };
  
- /*
-  * Shortcut for the queued_spin_lock_slowpath() function that allows
-diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-index 5358d43886ad..fec381533555 100644
---- a/arch/x86/kernel/paravirt.c
-+++ b/arch/x86/kernel/paravirt.c
-@@ -51,13 +51,12 @@ DEFINE_ASM_FUNC(pv_native_irq_enable, "sti", .noinstr.text);
- DEFINE_ASM_FUNC(pv_native_read_cr2, "mov %cr2, %rax", .noinstr.text);
- #endif
+ /**
+diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
+index 4a6ee211e18f..931eb99c44b7 100644
+--- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
++++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.c
+@@ -270,7 +270,7 @@ void mtk_jpeg_dec_reset(void __iomem *base)
+ EXPORT_SYMBOL_GPL(mtk_jpeg_dec_reset);
  
--DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
-+DEFINE_STATIC_KEY_FALSE(virt_spin_lock_key);
- 
- void __init native_pv_lock_init(void)
+ static void mtk_jpeg_dec_set_brz_factor(void __iomem *base, u8 yscale_w,
+-					u8 yscale_h, u8 uvscale_w, u8 uvscale_h)
++				u8 yscale_h, u8 uvscale_w, u8 uvscale_h)
  {
--	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) &&
--	    !boot_cpu_has(X86_FEATURE_HYPERVISOR))
--		static_branch_disable(&virt_spin_lock_key);
-+	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
-+		static_branch_enable(&virt_spin_lock_key);
+ 	u32 val;
+ 
+@@ -279,23 +279,43 @@ static void mtk_jpeg_dec_set_brz_factor(void __iomem *base, u8 yscale_w,
+ 	writel(val, base + JPGDEC_REG_BRZ_FACTOR);
  }
  
- static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
+-static void mtk_jpeg_dec_set_dst_bank0(void __iomem *base, u32 addr_y,
+-				       u32 addr_u, u32 addr_v)
++static void mtk_jpeg_dec_set_dst_bank0(void __iomem *base, bool support_34bit,
++		dma_addr_t addr_y, dma_addr_t addr_u, dma_addr_t addr_v)
+ {
++	u32 val;
++
+ 	mtk_jpeg_verify_align(addr_y, 16, JPGDEC_REG_DEST_ADDR0_Y);
+ 	writel(addr_y, base + JPGDEC_REG_DEST_ADDR0_Y);
+ 	mtk_jpeg_verify_align(addr_u, 16, JPGDEC_REG_DEST_ADDR0_U);
+ 	writel(addr_u, base + JPGDEC_REG_DEST_ADDR0_U);
+ 	mtk_jpeg_verify_align(addr_v, 16, JPGDEC_REG_DEST_ADDR0_V);
+ 	writel(addr_v, base + JPGDEC_REG_DEST_ADDR0_V);
++	if (support_34bit) {
++		val = upper_32_bits(addr_y) & 0x3;
++		writel(val, base + JPGDEC_REG_DEST_ADDR0_Y_EXT);
++		val = upper_32_bits(addr_u) & 0x3;
++		writel(val, base + JPGDEC_REG_DEST_ADDR0_U_EXT);
++		val = upper_32_bits(addr_v) & 0x3;
++		writel(val, base + JPGDEC_REG_DEST_ADDR0_V_EXT);
++	}
+ }
+ 
+-static void mtk_jpeg_dec_set_dst_bank1(void __iomem *base, u32 addr_y,
+-				       u32 addr_u, u32 addr_v)
++static void mtk_jpeg_dec_set_dst_bank1(void __iomem *base, bool support_34bit,
++		dma_addr_t addr_y, dma_addr_t addr_u, dma_addr_t addr_v)
+ {
++	u32 val;
++
+ 	writel(addr_y, base + JPGDEC_REG_DEST_ADDR1_Y);
+ 	writel(addr_u, base + JPGDEC_REG_DEST_ADDR1_U);
+ 	writel(addr_v, base + JPGDEC_REG_DEST_ADDR1_V);
++	if (support_34bit) {
++		val = upper_32_bits(addr_y) & 0x3;
++		writel(val, base + JPGDEC_REG_DEST_ADDR1_Y_EXT);
++		val = upper_32_bits(addr_u) & 0x3;
++		writel(val, base + JPGDEC_REG_DEST_ADDR1_U_EXT);
++		val = upper_32_bits(addr_v) & 0x3;
++		writel(val, base + JPGDEC_REG_DEST_ADDR1_V_EXT);
++	}
+ }
+ 
+ static void mtk_jpeg_dec_set_mem_stride(void __iomem *base, u32 stride_y,
+@@ -322,18 +342,31 @@ static void mtk_jpeg_dec_set_dec_mode(void __iomem *base, u32 mode)
+ 	writel(mode & 0x03, base + JPGDEC_REG_OPERATION_MODE);
+ }
+ 
+-static void mtk_jpeg_dec_set_bs_write_ptr(void __iomem *base, u32 ptr)
++static void mtk_jpeg_dec_set_bs_write_ptr(void __iomem *base,
++				bool support_34bit, dma_addr_t ptr)
+ {
++	u32 val;
++
+ 	mtk_jpeg_verify_align(ptr, 16, JPGDEC_REG_FILE_BRP);
+ 	writel(ptr, base + JPGDEC_REG_FILE_BRP);
++	if (support_34bit) {
++		val = upper_32_bits(ptr) & 0x3;
++		writel(val, base + JPGDEC_REG_FILE_BRP_EXT);
++	}
+ }
+ 
+-static void mtk_jpeg_dec_set_bs_info(void __iomem *base, u32 addr, u32 size,
+-				     u32 bitstream_size)
++static void mtk_jpeg_dec_set_bs_info(void __iomem *base, bool support_34bit,
++		dma_addr_t addr, u32 size, u32 bitstream_size)
+ {
++	u32 val;
++
+ 	mtk_jpeg_verify_align(addr, 16, JPGDEC_REG_FILE_ADDR);
+ 	mtk_jpeg_verify_align(size, 128, JPGDEC_REG_FILE_TOTAL_SIZE);
+ 	writel(addr, base + JPGDEC_REG_FILE_ADDR);
++	if (support_34bit) {
++		val = upper_32_bits(addr) & 0x3;
++		writel(val, base + JPGDEC_REG_FILE_ADDR_EXT);
++	}
+ 	writel(size, base + JPGDEC_REG_FILE_TOTAL_SIZE);
+ 	writel(bitstream_size, base + JPGDEC_REG_BIT_STREAM_SIZE);
+ }
+@@ -404,6 +437,7 @@ static void mtk_jpeg_dec_set_sampling_factor(void __iomem *base, u32 comp_num,
+ }
+ 
+ void mtk_jpeg_dec_set_config(void __iomem *base,
++			     bool support_34bits,
+ 			     struct mtk_jpeg_dec_param *cfg,
+ 			     u32 bitstream_size,
+ 			     struct mtk_jpeg_bs *bs,
+@@ -413,8 +447,9 @@ void mtk_jpeg_dec_set_config(void __iomem *base,
+ 	mtk_jpeg_dec_set_dec_mode(base, 0);
+ 	mtk_jpeg_dec_set_comp0_du(base, cfg->unit_num);
+ 	mtk_jpeg_dec_set_total_mcu(base, cfg->total_mcu);
+-	mtk_jpeg_dec_set_bs_info(base, bs->str_addr, bs->size, bitstream_size);
+-	mtk_jpeg_dec_set_bs_write_ptr(base, bs->end_addr);
++	mtk_jpeg_dec_set_bs_info(base, support_34bits, bs->str_addr,
++				       bs->size, bitstream_size);
++	mtk_jpeg_dec_set_bs_write_ptr(base, support_34bits, bs->end_addr);
+ 	mtk_jpeg_dec_set_du_membership(base, cfg->membership, 1,
+ 				       (cfg->comp_num == 1) ? 1 : 0);
+ 	mtk_jpeg_dec_set_comp_id(base, cfg->comp_id[0], cfg->comp_id[1],
+@@ -432,9 +467,9 @@ void mtk_jpeg_dec_set_config(void __iomem *base,
+ 				    cfg->mem_stride[1]);
+ 	mtk_jpeg_dec_set_img_stride(base, cfg->img_stride[0],
+ 				    cfg->img_stride[1]);
+-	mtk_jpeg_dec_set_dst_bank0(base, fb->plane_addr[0],
++	mtk_jpeg_dec_set_dst_bank0(base, support_34bits, fb->plane_addr[0],
+ 				   fb->plane_addr[1], fb->plane_addr[2]);
+-	mtk_jpeg_dec_set_dst_bank1(base, 0, 0, 0);
++	mtk_jpeg_dec_set_dst_bank1(base, support_34bits, 0, 0, 0);
+ 	mtk_jpeg_dec_set_dma_group(base, cfg->dma_mcu, cfg->dma_group,
+ 				   cfg->dma_last_mcu);
+ 	mtk_jpeg_dec_set_pause_mcu_idx(base, cfg->total_mcu);
+diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.h b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.h
+index 8c31c6b12417..2948c9c300a4 100644
+--- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.h
++++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_hw.h
+@@ -71,6 +71,7 @@ int mtk_jpeg_dec_fill_param(struct mtk_jpeg_dec_param *param);
+ u32 mtk_jpeg_dec_get_int_status(void __iomem *dec_reg_base);
+ u32 mtk_jpeg_dec_enum_result(u32 irq_result);
+ void mtk_jpeg_dec_set_config(void __iomem *base,
++			     bool support_34bits,
+ 			     struct mtk_jpeg_dec_param *cfg,
+ 			     u32 bitstream_size,
+ 			     struct mtk_jpeg_bs *bs,
+diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_reg.h b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_reg.h
+index 27b7711ca341..e94f52de7c69 100644
+--- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_reg.h
++++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_dec_reg.h
+@@ -46,5 +46,13 @@
+ #define JPGDEC_REG_INTERRUPT_STATUS	0x0274
+ #define JPGDEC_REG_STATUS		0x0278
+ #define JPGDEC_REG_BIT_STREAM_SIZE	0x0344
++#define JPGDEC_REG_DEST_ADDR0_Y_EXT	0x0360
++#define JPGDEC_REG_DEST_ADDR0_U_EXT	0x0364
++#define JPGDEC_REG_DEST_ADDR0_V_EXT	0x0368
++#define JPGDEC_REG_DEST_ADDR1_Y_EXT	0x036c
++#define JPGDEC_REG_DEST_ADDR1_U_EXT	0x0370
++#define JPGDEC_REG_DEST_ADDR1_V_EXT	0x0374
++#define JPGDEC_REG_FILE_ADDR_EXT	0x0378
++#define JPGDEC_REG_FILE_BRP_EXT		0x037c
+ 
+ #endif /* _MTK_JPEG_REG_H */
+diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
+index f8fa3b841ccf..0c654afd987e 100644
+--- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
++++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.c
+@@ -62,9 +62,15 @@ void mtk_jpeg_enc_reset(void __iomem *base)
+ }
+ EXPORT_SYMBOL_GPL(mtk_jpeg_enc_reset);
+ 
+-u32 mtk_jpeg_enc_get_file_size(void __iomem *base)
++u32 mtk_jpeg_enc_get_file_size(void __iomem *base, bool support_34bit)
+ {
+-	return readl(base + JPEG_ENC_DMA_ADDR0) -
++	/*
++	 * The dma addr0 to be shifted left by 2 bits
++	 * for support greater than 4G address.
++	 */
++	u32 value = (support_34bit) ? 4 : 1;
++
++	return readl(base + JPEG_ENC_DMA_ADDR0) * value -
+ 	       readl(base + JPEG_ENC_DST_ADDR0);
+ }
+ EXPORT_SYMBOL_GPL(mtk_jpeg_enc_get_file_size);
+@@ -75,6 +81,13 @@ void mtk_jpeg_enc_start(void __iomem *base)
+ 
+ 	value = readl(base + JPEG_ENC_CTRL);
+ 	value |= JPEG_ENC_CTRL_INT_EN_BIT | JPEG_ENC_CTRL_ENABLE_BIT;
++	/*
++	 * Enable hw auto padding for height is not 16 alignment,
++	 * to ensure decoder downscales is correct.
++	 */
++	value |= JPEG_ENC_CTRL_RDMA_PADDING_EN;
++	value |= JPEG_ENC_CTRL_RDMA_RIGHT_PADDING_EN;
++	value &= ~JPEG_ENC_CTRL_RDMA_PADDING_0_EN;
+ 	writel(value, base + JPEG_ENC_CTRL);
+ }
+ EXPORT_SYMBOL_GPL(mtk_jpeg_enc_start);
+@@ -84,14 +97,25 @@ void mtk_jpeg_set_enc_src(struct mtk_jpeg_ctx *ctx,  void __iomem *base,
+ {
+ 	int i;
+ 	dma_addr_t dma_addr;
++	u32 val;
++	bool support_34bit = ctx->jpeg->support_34bit;
+ 
+ 	for (i = 0; i < src_buf->num_planes; i++) {
+ 		dma_addr = vb2_dma_contig_plane_dma_addr(src_buf, i) +
+ 			   src_buf->planes[i].data_offset;
+-		if (!i)
++		if (!i) {
+ 			writel(dma_addr, base + JPEG_ENC_SRC_LUMA_ADDR);
+-		else
++			if (support_34bit) {
++				val = upper_32_bits(dma_addr) & 0x3;
++				writel(val, base + JPEG_ENC_SRC_LUMA_ADDR_EXT);
++			}
++		} else {
+ 			writel(dma_addr, base + JPEG_ENC_SRC_CHROMA_ADDR);
++			if (support_34bit) {
++				val = upper_32_bits(dma_addr) & 0x3;
++				writel(val, base + JPEG_ENC_SRC_CHRO_ADDR_EXT);
++			}
++		}
+ 	}
+ }
+ EXPORT_SYMBOL_GPL(mtk_jpeg_set_enc_src);
+@@ -103,6 +127,8 @@ void mtk_jpeg_set_enc_dst(struct mtk_jpeg_ctx *ctx, void __iomem *base,
+ 	size_t size;
+ 	u32 dma_addr_offset;
+ 	u32 dma_addr_offsetmask;
++	u32 val;
++	bool support_34bit = ctx->jpeg->support_34bit;
+ 
+ 	dma_addr = vb2_dma_contig_plane_dma_addr(dst_buf, 0);
+ 	dma_addr_offset = ctx->enable_exif ? MTK_JPEG_MAX_EXIF_SIZE : 0;
+@@ -112,7 +138,15 @@ void mtk_jpeg_set_enc_dst(struct mtk_jpeg_ctx *ctx, void __iomem *base,
+ 	writel(dma_addr_offset & ~0xf, base + JPEG_ENC_OFFSET_ADDR);
+ 	writel(dma_addr_offsetmask & 0xf, base + JPEG_ENC_BYTE_OFFSET_MASK);
+ 	writel(dma_addr & ~0xf, base + JPEG_ENC_DST_ADDR0);
++	if (support_34bit) {
++		val = upper_32_bits(dma_addr) & 0x3;
++		writel(val, base + JPEG_ENC_DEST_ADDR0_EXT);
++	}
+ 	writel((dma_addr + size) & ~0xf, base + JPEG_ENC_STALL_ADDR0);
++	if (support_34bit) {
++		val = upper_32_bits(dma_addr + size) & 0x3;
++		writel(val, base + JPEG_ENC_STALL_ADDR0_EXT);
++	}
+ }
+ EXPORT_SYMBOL_GPL(mtk_jpeg_set_enc_dst);
+ 
+@@ -278,7 +312,8 @@ static irqreturn_t mtk_jpegenc_hw_irq_handler(int irq, void *priv)
+ 	if (!(irq_status & JPEG_ENC_INT_STATUS_DONE))
+ 		dev_warn(jpeg->dev, "Jpg Enc occurs unknown Err.");
+ 
+-	result_size = mtk_jpeg_enc_get_file_size(jpeg->reg_base);
++	result_size = mtk_jpeg_enc_get_file_size(jpeg->reg_base,
++			ctx->jpeg->support_34bit);
+ 	vb2_set_plane_payload(&dst_buf->vb2_buf, 0, result_size);
+ 	buf_state = VB2_BUF_STATE_DONE;
+ 	v4l2_m2m_buf_done(src_buf, buf_state);
+diff --git a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.h b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.h
+index 61c60e4e58ea..cebc6c8fdecd 100644
+--- a/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.h
++++ b/drivers/media/platform/mediatek/jpeg/mtk_jpeg_enc_hw.h
+@@ -68,6 +68,15 @@
+ #define JPEG_ENC_DCM_CTRL		0x300
+ #define JPEG_ENC_CODEC_SEL		0x314
+ #define JPEG_ENC_ULTRA_THRES		0x318
++#define JPEG_ENC_SRC_LUMA_ADDR_EXT      0x584
++#define JPEG_ENC_SRC_CHRO_ADDR_EXT      0x588
++#define JPEG_ENC_Q_TBL_ADDR_EXT         0x58C
++#define JPEG_ENC_DEST_ADDR0_EXT         0x590
++#define JPEG_ENC_STALL_ADDR0_EXT        0x594
++
++#define JPEG_ENC_CTRL_RDMA_PADDING_EN           (1 << 20)
++#define JPEG_ENC_CTRL_RDMA_RIGHT_PADDING_EN     (1 << 29)
++#define JPEG_ENC_CTRL_RDMA_PADDING_0_EN         (1 << 30)
+ 
+ /**
+  * struct mtk_jpeg_enc_qlt - JPEG encoder quality data
+@@ -80,7 +89,7 @@ struct mtk_jpeg_enc_qlt {
+ };
+ 
+ void mtk_jpeg_enc_reset(void __iomem *base);
+-u32 mtk_jpeg_enc_get_file_size(void __iomem *base);
++u32 mtk_jpeg_enc_get_file_size(void __iomem *base, bool support_34bit);
+ void mtk_jpeg_enc_start(void __iomem *enc_reg_base);
+ void mtk_jpeg_set_enc_src(struct mtk_jpeg_ctx *ctx,  void __iomem *base,
+ 			  struct vb2_buffer *src_buf);
 -- 
-2.25.1
+2.18.0
 
 
