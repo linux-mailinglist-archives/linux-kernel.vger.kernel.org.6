@@ -1,65 +1,59 @@
-Return-Path: <linux-kernel+bounces-229112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 192C7916B13
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:54:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93CF5916B16
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E862B2151B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:53:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B07F1F2542F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B93E916E863;
-	Tue, 25 Jun 2024 14:53:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A583916F90F;
+	Tue, 25 Jun 2024 14:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JJSIav5s"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PrnOnP7n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AFE11CA0;
-	Tue, 25 Jun 2024 14:53:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0F016F8FC
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327228; cv=none; b=O7hpMAFp0oKtI2+NPryWDWYRUhLyc59vJYiivnbXoNCfQ9W++WU2iO8hx+kGFQxMyL3LjZjiocog+FuaXUZPrIZOsXEthHYVy1e2FKBrPJ52/6lQyMc50UVmYUtxG91T/8f0uuJyOE0Bq7x0Ok4oilMLtMWoGOyrzg3clcUq3vU=
+	t=1719327241; cv=none; b=P37/OqHreZdM3rZl05FqtmFDAbp+D7gApk5Y4ZryUmbdj73rV/2s+3jmuKDpApSK65iuzXPUz4WQMpZtSUosgSgx5y4CUhn8kzcjx6I2T8yAb6tOAr1z+kmIxzc19j0EU9qAc6SxzwaNNOgC45OlcFFe17W4R2EhsuY96JUEgpk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327228; c=relaxed/simple;
-	bh=qabJPWm+MHILu6/Jx4re8Ge4P7ZupVRoClKSGqQZNOo=;
+	s=arc-20240116; t=1719327241; c=relaxed/simple;
+	bh=niAnUsMIiZcwGbHf89s+zBEZQ68m+OKzAV5rf2+7qDw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EJYAx7EqD83uIUgvWb5TtcGQgVx0h5Ri4Q6fKWUx1zZG9XQwSE0eekon4oaDmf2o7oPloZ6Dc2cERJe12eiCOTQOZKdGjo3xsNcnWqewtPvZNxWA5/obcEQDxTIv+T3tpwqDMS45uAe7HjuXIdL9WamKnxrebNncaGig7EFpgjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JJSIav5s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68425C32781;
-	Tue, 25 Jun 2024 14:53:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=c0qRY5l96Ja35E5Bz5rTGpvXcKtXQV+t8HPLWMjFyG83iFqXj10vWWJ64+yhuw31SrBwVjeu/yKZCHxeONXNrEyH/Pxkx+vJ9Adf/x4r7Bo/ooX60T6wOzuX/MM+kyLNrterrS+SGkrXPf2p1x+tf8cJ8ZZ8MhJ7c4pqUE07v4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PrnOnP7n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58241C32781;
+	Tue, 25 Jun 2024 14:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719327227;
-	bh=qabJPWm+MHILu6/Jx4re8Ge4P7ZupVRoClKSGqQZNOo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JJSIav5slwoM68N/APnxXoRRPfo5AKq1jj/FSAYEKlQZttDWoqlyGtnQaPoSiCwvj
-	 2U3M2xzTmr2J7AwV8SrvtGwEJ3bm2QLdFUVaFdHM8U+6VutQ82+MSg+9IQvlmIA6i3
-	 W8mDvFReOyzQNIgqrsElTfxAf8Im+sSZhF3VG3qpWKSVh4vydJ3rXvG6yGsPY1Kx0v
-	 xzfsoW40qrZl2it/e5Ca8qltL7sIXGhpW3VSb7b94NN841sEOdfYqDVqD0nNkGFpSl
-	 f36bG72EyCFXYbW534uuCnXaakrnXw/KQ1xE4enULCHUi50IbVceBmj+USUwAN2lyt
-	 jBpPCW3Pr807A==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sM7YQ-000000005T2-42Tl;
-	Tue, 25 Jun 2024 16:53:55 +0200
-Date: Tue, 25 Jun 2024 16:53:54 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
+	s=k20201202; t=1719327240;
+	bh=niAnUsMIiZcwGbHf89s+zBEZQ68m+OKzAV5rf2+7qDw=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=PrnOnP7na4jwYqdxzkJua8AERGOhotbmfJK21YvLWAtEWALFGcgln7GU6idNNUDbg
+	 YQ4zt8/1jPE4l78AJ92Rp/cOMJ498DB905lunCx/VxBJm5vnp9ss+XVTtxUsVS8Jtw
+	 Z5hGa3dtQnW1do3UYV79RpT74djsNcm0V4mabK5h5RR1VGeGs56TGC6ecLSDVb4ZuJ
+	 w0nuRxERc4/qOQOV1ZBNOOuJAjjeQSrlb7FWl3o5kAnZa2TqHPYlz0Rugm5m2hRcVW
+	 XlNPgkDNGx+3EGr32kD6Zy3KU/ALEc57wLTWBQFZYYOjIfNVUllIEA+ogHNTxm8+Zq
+	 PiYiw+bWqB1uA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 3CFAECE0760; Tue, 25 Jun 2024 07:53:59 -0700 (PDT)
+Date: Tue, 25 Jun 2024 07:53:59 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Nicholas Piggin <npiggin@gmail.com>
+Cc: Tejun Heo <tj@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] serial: qcom-geni: fix hard lockup on buffer flush
-Message-ID: <ZnraAlR9QeYhd628@hovoldconsulting.com>
-References: <20240624133135.7445-1-johan+linaro@kernel.org>
- <20240624133135.7445-2-johan+linaro@kernel.org>
- <CAD=FV=VZXnnbwTNc6dSqZvyCUc0=Wjg9mvBYsA1FJK3xR6bDEg@mail.gmail.com>
- <CAD=FV=UwyzA614tDoq7BntW1DWmic=DOszr+iRJVafVEYrXhpw@mail.gmail.com>
+Subject: Re: [PATCH 0/4] Fix scalability problem in workqueue watchdog touch
+ caused by stop_machine
+Message-ID: <9d1d4a41-fcdb-448c-9a0f-bc9909193fa9@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20240625114249.289014-1-npiggin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,62 +62,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAD=FV=UwyzA614tDoq7BntW1DWmic=DOszr+iRJVafVEYrXhpw@mail.gmail.com>
+In-Reply-To: <20240625114249.289014-1-npiggin@gmail.com>
 
-On Mon, Jun 24, 2024 at 01:45:17PM -0700, Doug Anderson wrote:
+On Tue, Jun 25, 2024 at 09:42:43PM +1000, Nicholas Piggin wrote:
+> Here are a few patches to fix a lockup caused by very slow progress due
+> to a scalability problem in workqueue watchdog touch being hammered by
+> thousands of CPUs in multi_cpu_stop. Patch 2 is the fix.
+> 
+> I did notice when making a microbenchmark reproducer that the RCU call
+> was actually also causing slowdowns. Not nearly so bad as the workqueue
+> touch, but workqueue queueing of dummy jobs slowed down by a factor of
+> several times when lots of other CPUs were making
+> rcu_momentary_dyntick_idle() calls. So I did the stop_machine patches to
+> reduce that. So those patches 3,4 are independent of the first two and
+> can go in any order.
 
-> Also: if we're looking at quick/easy to land and just fix the hard
-> lockup, I'd vote for this (I can send a real patch, though I'm about
-> to go on vacation):
-> 
-> --
-> 
-> @@ -904,8 +904,8 @@ static void qcom_geni_serial_handle_tx_fifo(struct
-> uart_port *uport,
->                 goto out_write_wakeup;
-> 
->         if (!port->tx_remaining) {
-> -               qcom_geni_serial_setup_tx(uport, pending);
-> -               port->tx_remaining = pending;
-> +               port->tx_remaining = min(avail, pending);
-> +               qcom_geni_serial_setup_tx(uport, port->tx_remaining);
-> 
->                 irq_en = readl(uport->membase + SE_GENI_M_IRQ_EN);
->                 if (!(irq_en & M_TX_FIFO_WATERMARK_EN))
-> 
-> --
-> 
-> That will fix the hard lockup, is short and sweet, and also doesn't
-> end up outputting NUL bytes.
+For the series:
 
-Yeah, this might be a good stop gap even if performance suffers.
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
-> I measured time with that. I've been testing with a file I created
-> called "alphabet.txt" that just contains the letters A-Z repeated 3
-> times followed by a "\n", over and over again. I think gmail will kill
-> me with word wrapping, but basically:
-
-> head -200 /var/alphabet.txt  | wc
->     200     200   15800
+> Thanks,
+> Nick
 > 
-> Before my patch I ran `time head -200 /var/alphabet.txt` and I got:
+> Nicholas Piggin (4):
+>   workqueue: wq_watchdog_touch is always called with valid CPU
+>   workqueue: Improve scalability of workqueue watchdog touch
+>   stop_machine: Rearrange multi_cpu_stop state machine loop
+>   stop_machine: Add a delay between multi_cpu_stop touching watchdogs
 > 
-> real    0m1.386s
+>  kernel/stop_machine.c | 31 +++++++++++++++++++++++--------
+>  kernel/workqueue.c    | 12 ++++++++++--
+>  2 files changed, 33 insertions(+), 10 deletions(-)
 > 
-> After my patch I ran the same thing and got:
+> -- 
+> 2.45.1
 > 
-> real    0m1.409s
-> 
-> So it's slower, but that's not 25% slower. I get 1.7% slower:
-> 
-> In [6]: (1.409 - 1.386) / 1.386 * 100
-> Out[6]: 1.659451659451669
-> 
-> IMO that seems like a fine slowdown in order to avoid printing NUL bytes.
-
-With my 500K dmesg file test I see a similar performance drop as with
-your full series even if seems to behave slightly better (e.g. 20% drop
-instead of 24%). 
-
-Johan
 
