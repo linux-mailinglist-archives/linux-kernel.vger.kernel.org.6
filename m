@@ -1,270 +1,506 @@
-Return-Path: <linux-kernel+bounces-228170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2388D915BD4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:46:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC09915BD9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:48:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9822A1F22542
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:46:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1C81C21731
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:48:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B4AF1CFB6;
-	Tue, 25 Jun 2024 01:46:26 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C14537169;
+	Tue, 25 Jun 2024 01:48:10 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A812F56;
-	Tue, 25 Jun 2024 01:46:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 529702941B;
+	Tue, 25 Jun 2024 01:48:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719279985; cv=none; b=KshJEcW63QTeCiZEHo946qzQ6MuGmuljWGpKFoFjy43KkZO4fWxTyexYNzGzxaOgzFsAsggRmVF3e5ZbksOt8lyAPk7a6nHgCRcQZRvbcwlCGdCVhn06eONUmghYFRxBbEqLYs+IqPFqGb+KhGfz5jGgD3fhIcsT68lwQ2iBj5w=
+	t=1719280089; cv=none; b=Rg7b49OcmMVexJi2Xc3QdHObe3yS69DdelAuQZ/4Xjmgze8mkUmzOomm1PtsOn/Lya/KlEY+UI/Q/KtRWjOT1XAknXn7wr8eg3tGEPTBZQSqcgECEBhNPPIajwg41mlUOF24nBppLyucMkIjbrg8nqREva92mr0utwuDdGWibQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719279985; c=relaxed/simple;
-	bh=sW4ID1gSKwANlt9BeOnvShlDk3i7OYooNStI1JZsJSM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Q8htH2WiOa40MRFHIuFoRqHdEA4hWNlQUyzjvaFu4ies8VFn35vrq6OXCTBDbuAslPw0U1aU7zphL3K2JkD/f2P+mVLx6wLmOdk0qlN8t4hnzqCWMi9JqW8NuIG5ZDt/e5jZ301JGcBI8YRQmm09OSzJ/u8Uw1WjcbEMx+DSiJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+	s=arc-20240116; t=1719280089; c=relaxed/simple;
+	bh=jBupqcy5nQ4YQTGjbq4Sh8a/Gt3dITJHVieM9h8Y4tM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qQJbrtKeZk0IiQq2XjREyLrzbb/VguoohD2dwKx3S1GqLkfoDqpISxi2cveMVBnaUyS0EF2LrQBZll2P5tT/FycXog1LqYe0m29l52kp3XVima3hi9ewptalHwirrsgFFEjS6AIiq810PjHYDjO6SawyuOVikB444mvivzmdWrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4W7SHx4R0zz1j5mL;
-	Tue, 25 Jun 2024 09:42:21 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3312C1A016C;
-	Tue, 25 Jun 2024 09:46:20 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 25 Jun
- 2024 09:46:19 +0800
-Message-ID: <8f83ecb3-4afa-4e0b-be37-35b168eb3c7c@huawei.com>
-Date: Tue, 25 Jun 2024 09:46:18 +0800
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4W7SLK1Fh3z1ytkB;
+	Tue, 25 Jun 2024 09:44:25 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id A339D1400FD;
+	Tue, 25 Jun 2024 09:48:03 +0800 (CST)
+Received: from localhost.localdomain (10.175.104.67) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 25 Jun 2024 09:48:02 +0800
+From: Zizhi Wo <wozizhi@huawei.com>
+To: <chandan.babu@oracle.com>, <djwong@kernel.org>, <dchinner@redhat.com>,
+	<wozizhi@huawei.com>
+CC: <linux-xfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<yangerkun@huawei.com>
+Subject: [PATCH V3] xfs: Avoid races with cnt_btree lastrec updates
+Date: Tue, 25 Jun 2024 09:46:51 +0800
+Message-ID: <20240625014651.382485-1-wozizhi@huawei.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] cgroup: fix uaf when proc_cpuset_show
-To: Waiman Long <longman@redhat.com>, <tj@kernel.org>,
-	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>
-CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240622113814.120907-1-chenridong@huawei.com>
- <19648b9c-6df7-45cd-a5ae-624a3e4d860f@redhat.com>
- <52f72d1d-602e-4dca-85a3-adade925b056@huawei.com>
- <71a9cc3a-1b58-4051-984b-dd4f18dabf84@redhat.com>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <71a9cc3a-1b58-4051-984b-dd4f18dabf84@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd100013.china.huawei.com (7.221.188.163)
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
+A concurrent file creation and little writing could unexpectedly return
+-ENOSPC error since there is a race window that the allocator could get
+the wrong agf->agf_longest.
 
-On 2024/6/25 7:59, Waiman Long wrote:
-> On 6/23/24 22:59, chenridong wrote:
->>
->> On 2024/6/22 23:05, Waiman Long wrote:
->>>
->>> On 6/22/24 07:38, Chen Ridong wrote:
->>>> We found a refcount UAF bug as follows:
->>>>
->>>> BUG: KASAN: use-after-free in cgroup_path_ns+0x112/0x150
->>>> Read of size 8 at addr ffff8882a4b242b8 by task atop/19903
->>>>
->>>> CPU: 27 PID: 19903 Comm: atop Kdump: loaded Tainted: GF
->>>> Call Trace:
->>>>   dump_stack+0x7d/0xa7
->>>>   print_address_description.constprop.0+0x19/0x170
->>>>   ? cgroup_path_ns+0x112/0x150
->>>>   __kasan_report.cold+0x6c/0x84
->>>>   ? print_unreferenced+0x390/0x3b0
->>>>   ? cgroup_path_ns+0x112/0x150
->>>>   kasan_report+0x3a/0x50
->>>>   cgroup_path_ns+0x112/0x150
->>>>   proc_cpuset_show+0x164/0x530
->>>>   proc_single_show+0x10f/0x1c0
->>>>   seq_read_iter+0x405/0x1020
->>>>   ? aa_path_link+0x2e0/0x2e0
->>>>   seq_read+0x324/0x500
->>>>   ? seq_read_iter+0x1020/0x1020
->>>>   ? common_file_perm+0x2a1/0x4a0
->>>>   ? fsnotify_unmount_inodes+0x380/0x380
->>>>   ? bpf_lsm_file_permission_wrapper+0xa/0x30
->>>>   ? security_file_permission+0x53/0x460
->>>>   vfs_read+0x122/0x420
->>>>   ksys_read+0xed/0x1c0
->>>>   ? __ia32_sys_pwrite64+0x1e0/0x1e0
->>>>   ? __audit_syscall_exit+0x741/0xa70
->>>>   do_syscall_64+0x33/0x40
->>>>   entry_SYSCALL_64_after_hwframe+0x67/0xcc
->>>>
->>>> This is also reported by: 
->>>> https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd
->>>>
->>>> This can be reproduced by the following methods:
->>>> 1.add an mdelay(1000) before acquiring the cgroup_lock In the
->>>>   cgroup_path_ns function.
->>>> 2.$cat /proc/<pid>/cpuset   repeatly.
->>>> 3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
->>>> $umount /sys/fs/cgroup/cpuset/   repeatly.
->>>>
->>>> The race that cause this bug can be shown as below:
->>>>
->>>> (umount)        |    (cat /proc/<pid>/cpuset)
->>>> css_release        |    proc_cpuset_show
->>>> css_release_work_fn    |    css = task_get_css(tsk, cpuset_cgrp_id);
->>>> css_free_rwork_fn    |    cgroup_path_ns(css->cgroup, ...);
->>>> cgroup_destroy_root    |    mutex_lock(&cgroup_mutex);
->>>> rebind_subsystems    |
->>>> cgroup_free_root     |
->>>>             |    // cgrp was freed, UAF
->>>>             |    cgroup_path_ns_locked(cgrp,..);
->>>>
->>>> When the cpuset is initialized, the root node top_cpuset.css.cgrp
->>>> will point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount 
->>>> operation will
->>>> allocate cgroup_root, and top_cpuset.css.cgrp will point to the 
->>>> allocated
->>>> &cgroup_root.cgrp. When the umount operation is executed,
->>>> top_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.
->>>>
->>>> The problem is that when rebinding to cgrp_dfl_root, there are cases
->>>> where the cgroup_root allocated by setting up the root for cgroup v1
->>>> is cached. This could lead to a Use-After-Free (UAF) if it is
->>>> subsequently freed. The descendant cgroups of cgroup v1 can only be
->>>> freed after the css is released. However, the css of the root will 
->>>> never
->>>> be released, yet the cgroup_root should be freed when it is unmounted.
->>>> This means that obtaining a reference to the css of the root does
->>>> not guarantee that css.cgrp->root will not be freed.
->>>>
->>>> To solve this issue, we have added a cgroup reference count in
->>>> the proc_cpuset_show function to ensure that css.cgrp->root will not
->>>> be freed prematurely. This is a temporary solution. Let's see if 
->>>> anyone
->>>> has a better solution.
->>>>
->>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>>> ---
->>>>   kernel/cgroup/cpuset.c | 20 ++++++++++++++++++++
->>>>   1 file changed, 20 insertions(+)
->>>>
->>>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->>>> index c12b9fdb22a4..782eaf807173 100644
->>>> --- a/kernel/cgroup/cpuset.c
->>>> +++ b/kernel/cgroup/cpuset.c
->>>> @@ -5045,6 +5045,7 @@ int proc_cpuset_show(struct seq_file *m, 
->>>> struct pid_namespace *ns,
->>>>       char *buf;
->>>>       struct cgroup_subsys_state *css;
->>>>       int retval;
->>>> +    struct cgroup *root_cgroup = NULL;
->>>>         retval = -ENOMEM;
->>>>       buf = kmalloc(PATH_MAX, GFP_KERNEL);
->>>> @@ -5052,9 +5053,28 @@ int proc_cpuset_show(struct seq_file *m, 
->>>> struct pid_namespace *ns,
->>>>           goto out;
->>>>         css = task_get_css(tsk, cpuset_cgrp_id);
->>>> +    rcu_read_lock();
->>>> +    /*
->>>> +     * When the cpuset subsystem is mounted on the legacy hierarchy,
->>>> +     * the top_cpuset.css->cgroup does not hold a reference count of
->>>> +     * cgroup_root.cgroup. This makes accessing css->cgroup very
->>>> +     * dangerous because when the cpuset subsystem is remounted to 
->>>> the
->>>> +     * default hierarchy, the cgroup_root.cgroup that css->cgroup 
->>>> points
->>>> +     * to will be released, leading to a UAF issue. To avoid this 
->>>> problem,
->>>> +     * get the reference count of top_cpuset.css->cgroup first.
->>>> +     *
->>>> +     * This is ugly!!
->>>> +     */
->>>> +    if (css == &top_cpuset.css) {
->>>> +        cgroup_get(css->cgroup);
->>>> +        root_cgroup = css->cgroup;
->>>> +    }
->>>> +    rcu_read_unlock();
->>>>       retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
->>>>                   current->nsproxy->cgroup_ns);
->>>>       css_put(css);
->>>> +    if (root_cgroup)
->>>> +        cgroup_put(root_cgroup);
->>>>       if (retval == -E2BIG)
->>>>           retval = -ENAMETOOLONG;
->>>>       if (retval < 0)
->>>
->>> Thanks for reporting this UAF bug. Could you try the attached patch 
->>> to see if it can fix the issue?
->>>
->>
->> +/*
->> + * With a cgroup v1 mount, root_css.cgroup can be freed. We need to 
->> take a
->> + * reference to it to avoid UAF as proc_cpuset_show() may access the 
->> content
->> + * of this cgroup.
->> + */
->>  static void cpuset_bind(struct cgroup_subsys_state *root_css)
->>  {
->> +    static struct cgroup *v1_cgroup_root;
->> +
->>      mutex_lock(&cpuset_mutex);
->> +    if (v1_cgroup_root) {
->> +        cgroup_put(v1_cgroup_root);
->> +        v1_cgroup_root = NULL;
->> +    }
->>      spin_lock_irq(&callback_lock);
->>
->>      if (is_in_v2_mode()) {
->> @@ -4159,6 +4170,10 @@ static void cpuset_bind(struct 
->> cgroup_subsys_state *root_css)
->>      }
->>
->>      spin_unlock_irq(&callback_lock);
->> +    if (!cgroup_subsys_on_dfl(cpuset_cgrp_subsys)) {
->> +        v1_cgroup_root = root_css->cgroup;
->> +        cgroup_get(v1_cgroup_root);
->> +    }
->>      mutex_unlock(&cpuset_mutex);
->>  }
->>
->> Thanks for your suggestion. If we take a reference at rebind(call 
->> ->bind()) function, cgroup_root allocated when setting up root for 
->> cgroup v1 can never be released, because the reference count will 
->> never be reduced to zero.
->>
->> We have already tried similar methods to fix this issue, however 
->> doing so causes another issue as mentioned previously.
->
-> You are right. Taking the reference in cpuset_bind() will prevent 
-> cgroup_destroy_root() from being called. I had overlooked that.
->
-> Now I have an even simpler fix. Could you try the attached v2 patch to 
-> verify if that can fix the problem?
->
-> Thanks,
-> Longman
+Write file process steps:
+1) Find the entry that best meets the conditions, then calculate the start
+   address and length of the remaining part of the entry after allocation.
+2) Delete this entry and update the -current- agf->agf_longest.
+3) Insert the remaining unused parts of this entry based on the
+   calculations in 1), and update the agf->agf_longest again if necessary.
 
-Thanks you for your reply, v2 patch will lead to  ABBA deadlock.
+Create file process steps:
+1) Check whether there are free inodes in the inode chunk.
+2) If there is no free inode, check whether there has space for creating
+   inode chunks, perform the no-lock judgment first.
+3) If the judgment succeeds, the judgment is performed again with agf lock
+   held. Otherwire, an error is returned directly.
 
-(cat /proc/<pid>/cpuset)                  | (rebind_subsystems)
-                                                           | 
-lockdep_assert_held(&cgroup_mutex);
-mutex_lock(&cpuset_mutex);            |
-cgroup_path_ns                                 |    ->bind()
-                                                           | 
-mutex_lock(&cpuset_mutex);
-mutex_lock(&cgroup_mutex);           |
+If the write process is in step 2) but not go to 3) yet, the create file
+process goes to 2) at this time, it may be mistaken for no space,
+resulting in the file system still has space but the file creation fails.
 
+We have sent two different commits to the community in order to fix this
+problem[1][2]. Unfortunately, both solutions have flaws. In [2], I
+discussed with Dave and Darrick, realized that a better solution to this
+problem requires the "last cnt record tracking" to be ripped out of the
+generic btree code. And surprisingly, Dave directly provided his fix code.
+This patch includes appropriate modifications based on his tmp-code to
+address this issue.
 
-Regards,
-Ridong
+The entire fix can be roughly divided into two parts:
+1) Delete the code related to lastrec-update in the generic btree code.
+2) Place the process of updating longest freespace with cntbt separately
+   to the end of the cntbt modifications. Move the cursor to the rightmost
+   firstly, and update the longest free extent based on the record.
 
+Note that we can not update the longest with xfs_alloc_get_rec() after
+find the longest record, as xfs_verify_agbno() may not pass because
+pag->block_count is updated on the outside. Therefore, use
+xfs_btree_get_rec() as a replacement.
+
+[1] https://lore.kernel.org/all/20240419061848.1032366-2-yebin10@huawei.com
+[2] https://lore.kernel.org/all/20240604071121.3981686-1-wozizhi@huawei.com
+
+Reported by: Ye Bin <yebin10@huawei.com>
+Signed-off-by: Zizhi Wo <wozizhi@huawei.com>
+---
+ fs/xfs/libxfs/xfs_alloc.c       | 115 ++++++++++++++++++++++++++++++++
+ fs/xfs/libxfs/xfs_alloc_btree.c |  64 ------------------
+ fs/xfs/libxfs/xfs_btree.c       |  51 --------------
+ fs/xfs/libxfs/xfs_btree.h       |  16 +----
+ 4 files changed, 116 insertions(+), 130 deletions(-)
+
+diff --git a/fs/xfs/libxfs/xfs_alloc.c b/fs/xfs/libxfs/xfs_alloc.c
+index 6c55a6e88eba..ef8415af47f8 100644
+--- a/fs/xfs/libxfs/xfs_alloc.c
++++ b/fs/xfs/libxfs/xfs_alloc.c
+@@ -465,6 +465,98 @@ xfs_alloc_fix_len(
+ 	args->len = rlen;
+ }
+ 
++/*
++ * Determine if the cursor points to the block that contains the right-most
++ * block of records in the by-count btree. This block contains the largest
++ * contiguous free extent in the AG, so if we modify a record in this block we
++ * need to call xfs_alloc_fixup_longest() once the modifications are done to
++ * ensure the agf->agf_longest field is kept up to date with the longest free
++ * extent tracked by the by-count btree.
++ */
++static bool
++xfs_alloc_cursor_at_lastrec(
++	struct xfs_btree_cur	*cnt_cur)
++{
++	struct xfs_btree_block	*block;
++	union xfs_btree_ptr	ptr;
++	struct xfs_buf		*bp;
++
++	block = xfs_btree_get_block(cnt_cur, 0, &bp);
++
++	xfs_btree_get_sibling(cnt_cur, block, &ptr, XFS_BB_RIGHTSIB);
++	return xfs_btree_ptr_is_null(cnt_cur, &ptr);
++}
++
++/*
++ * Find the rightmost record of the cntbt, and return the longest free space
++ * recorded in it. Simply set both the block number and the length to their
++ * maximum values before searching.
++ */
++static int
++xfs_cntbt_longest(
++	struct xfs_btree_cur	*cnt_cur,
++	xfs_extlen_t		*longest)
++{
++	struct xfs_alloc_rec_incore irec;
++	union xfs_btree_rec	    *rec;
++	int			    stat = 0;
++	int			    error;
++
++	memset(&cnt_cur->bc_rec, 0xFF, sizeof(cnt_cur->bc_rec));
++	error = xfs_btree_lookup(cnt_cur, XFS_LOOKUP_LE, &stat);
++	if (error)
++		return error;
++	if (!stat) {
++		/* totally empty tree */
++		*longest = 0;
++		return 0;
++	}
++
++	error = xfs_btree_get_rec(cnt_cur, &rec, &stat);
++	if (error)
++		return error;
++	if (!stat) {
++		ASSERT(0);
++		*longest = 0;
++		return 0;
++	}
++
++	xfs_alloc_btrec_to_irec(rec, &irec);
++	*longest = irec.ar_blockcount;
++	return 0;
++}
++
++/*
++ * Update the longest contiguous free extent in the AG from the by-count cursor
++ * that is passed to us. This should be done at the end of any allocation or
++ * freeing operation that touches the longest extent in the btree.
++ *
++ * Needing to update the longest extent can be determined by calling
++ * xfs_alloc_cursor_at_lastrec() after the cursor is positioned for record
++ * modification but before the modification begins.
++ */
++static int
++xfs_alloc_fixup_longest(
++	struct xfs_btree_cur	*cnt_cur)
++{
++	struct xfs_perag	*pag = cnt_cur->bc_ag.pag;
++	struct xfs_buf		*bp = cnt_cur->bc_ag.agbp;
++	struct xfs_agf		*agf = bp->b_addr;
++	xfs_extlen_t		longest = 0;
++	int			error;
++
++	/* Lookup last rec in order to update AGF. */
++	error = xfs_cntbt_longest(cnt_cur, &longest);
++	if (error)
++		return error;
++
++	pag->pagf_longest = longest;
++	agf->agf_longest = cpu_to_be32(pag->pagf_longest);
++	xfs_alloc_log_agf(cnt_cur->bc_tp, bp, XFS_AGF_LONGEST);
++
++	return 0;
++}
++
+ /*
+  * Update the two btrees, logically removing from freespace the extent
+  * starting at rbno, rlen blocks.  The extent is contained within the
+@@ -489,6 +581,7 @@ xfs_alloc_fixup_trees(
+ 	xfs_extlen_t	nflen1=0;	/* first new free length */
+ 	xfs_extlen_t	nflen2=0;	/* second new free length */
+ 	struct xfs_mount *mp;
++	bool		fixup_longest = false;
+ 
+ 	mp = cnt_cur->bc_mp;
+ 
+@@ -577,6 +670,10 @@ xfs_alloc_fixup_trees(
+ 		nfbno2 = rbno + rlen;
+ 		nflen2 = (fbno + flen) - nfbno2;
+ 	}
++
++	if (xfs_alloc_cursor_at_lastrec(cnt_cur))
++		fixup_longest = true;
++
+ 	/*
+ 	 * Delete the entry from the by-size btree.
+ 	 */
+@@ -654,6 +751,10 @@ xfs_alloc_fixup_trees(
+ 			return -EFSCORRUPTED;
+ 		}
+ 	}
++
++	if (fixup_longest)
++		return xfs_alloc_fixup_longest(cnt_cur);
++
+ 	return 0;
+ }
+ 
+@@ -1956,6 +2057,7 @@ xfs_free_ag_extent(
+ 	int				i;
+ 	int				error;
+ 	struct xfs_perag		*pag = agbp->b_pag;
++	bool				fixup_longest = false;
+ 
+ 	bno_cur = cnt_cur = NULL;
+ 	mp = tp->t_mountp;
+@@ -2219,8 +2321,13 @@ xfs_free_ag_extent(
+ 	}
+ 	xfs_btree_del_cursor(bno_cur, XFS_BTREE_NOERROR);
+ 	bno_cur = NULL;
++
+ 	/*
+ 	 * In all cases we need to insert the new freespace in the by-size tree.
++	 *
++	 * If this new freespace is being inserted in the block that contains
++	 * the largest free space in the btree, make sure we also fix up the
++	 * agf->agf-longest tracker field.
+ 	 */
+ 	if ((error = xfs_alloc_lookup_eq(cnt_cur, nbno, nlen, &i)))
+ 		goto error0;
+@@ -2229,6 +2336,8 @@ xfs_free_ag_extent(
+ 		error = -EFSCORRUPTED;
+ 		goto error0;
+ 	}
++	if (xfs_alloc_cursor_at_lastrec(cnt_cur))
++		fixup_longest = true;
+ 	if ((error = xfs_btree_insert(cnt_cur, &i)))
+ 		goto error0;
+ 	if (XFS_IS_CORRUPT(mp, i != 1)) {
+@@ -2236,6 +2345,12 @@ xfs_free_ag_extent(
+ 		error = -EFSCORRUPTED;
+ 		goto error0;
+ 	}
++	if (fixup_longest) {
++		error = xfs_alloc_fixup_longest(cnt_cur);
++		if (error)
++			goto error0;
++	}
++
+ 	xfs_btree_del_cursor(cnt_cur, XFS_BTREE_NOERROR);
+ 	cnt_cur = NULL;
+ 
+diff --git a/fs/xfs/libxfs/xfs_alloc_btree.c b/fs/xfs/libxfs/xfs_alloc_btree.c
+index 6ef5ddd89600..585e98e87ef9 100644
+--- a/fs/xfs/libxfs/xfs_alloc_btree.c
++++ b/fs/xfs/libxfs/xfs_alloc_btree.c
+@@ -115,67 +115,6 @@ xfs_allocbt_free_block(
+ 	return 0;
+ }
+ 
+-/*
+- * Update the longest extent in the AGF
+- */
+-STATIC void
+-xfs_allocbt_update_lastrec(
+-	struct xfs_btree_cur		*cur,
+-	const struct xfs_btree_block	*block,
+-	const union xfs_btree_rec	*rec,
+-	int				ptr,
+-	int				reason)
+-{
+-	struct xfs_agf		*agf = cur->bc_ag.agbp->b_addr;
+-	struct xfs_perag	*pag;
+-	__be32			len;
+-	int			numrecs;
+-
+-	ASSERT(!xfs_btree_is_bno(cur->bc_ops));
+-
+-	switch (reason) {
+-	case LASTREC_UPDATE:
+-		/*
+-		 * If this is the last leaf block and it's the last record,
+-		 * then update the size of the longest extent in the AG.
+-		 */
+-		if (ptr != xfs_btree_get_numrecs(block))
+-			return;
+-		len = rec->alloc.ar_blockcount;
+-		break;
+-	case LASTREC_INSREC:
+-		if (be32_to_cpu(rec->alloc.ar_blockcount) <=
+-		    be32_to_cpu(agf->agf_longest))
+-			return;
+-		len = rec->alloc.ar_blockcount;
+-		break;
+-	case LASTREC_DELREC:
+-		numrecs = xfs_btree_get_numrecs(block);
+-		if (ptr <= numrecs)
+-			return;
+-		ASSERT(ptr == numrecs + 1);
+-
+-		if (numrecs) {
+-			xfs_alloc_rec_t *rrp;
+-
+-			rrp = XFS_ALLOC_REC_ADDR(cur->bc_mp, block, numrecs);
+-			len = rrp->ar_blockcount;
+-		} else {
+-			len = 0;
+-		}
+-
+-		break;
+-	default:
+-		ASSERT(0);
+-		return;
+-	}
+-
+-	agf->agf_longest = len;
+-	pag = cur->bc_ag.agbp->b_pag;
+-	pag->pagf_longest = be32_to_cpu(len);
+-	xfs_alloc_log_agf(cur->bc_tp, cur->bc_ag.agbp, XFS_AGF_LONGEST);
+-}
+-
+ STATIC int
+ xfs_allocbt_get_minrecs(
+ 	struct xfs_btree_cur	*cur,
+@@ -493,7 +432,6 @@ const struct xfs_btree_ops xfs_bnobt_ops = {
+ 	.set_root		= xfs_allocbt_set_root,
+ 	.alloc_block		= xfs_allocbt_alloc_block,
+ 	.free_block		= xfs_allocbt_free_block,
+-	.update_lastrec		= xfs_allocbt_update_lastrec,
+ 	.get_minrecs		= xfs_allocbt_get_minrecs,
+ 	.get_maxrecs		= xfs_allocbt_get_maxrecs,
+ 	.init_key_from_rec	= xfs_allocbt_init_key_from_rec,
+@@ -511,7 +449,6 @@ const struct xfs_btree_ops xfs_bnobt_ops = {
+ const struct xfs_btree_ops xfs_cntbt_ops = {
+ 	.name			= "cnt",
+ 	.type			= XFS_BTREE_TYPE_AG,
+-	.geom_flags		= XFS_BTGEO_LASTREC_UPDATE,
+ 
+ 	.rec_len		= sizeof(xfs_alloc_rec_t),
+ 	.key_len		= sizeof(xfs_alloc_key_t),
+@@ -525,7 +462,6 @@ const struct xfs_btree_ops xfs_cntbt_ops = {
+ 	.set_root		= xfs_allocbt_set_root,
+ 	.alloc_block		= xfs_allocbt_alloc_block,
+ 	.free_block		= xfs_allocbt_free_block,
+-	.update_lastrec		= xfs_allocbt_update_lastrec,
+ 	.get_minrecs		= xfs_allocbt_get_minrecs,
+ 	.get_maxrecs		= xfs_allocbt_get_maxrecs,
+ 	.init_key_from_rec	= xfs_allocbt_init_key_from_rec,
+diff --git a/fs/xfs/libxfs/xfs_btree.c b/fs/xfs/libxfs/xfs_btree.c
+index d29547572a68..a5c4af148853 100644
+--- a/fs/xfs/libxfs/xfs_btree.c
++++ b/fs/xfs/libxfs/xfs_btree.c
+@@ -1331,30 +1331,6 @@ xfs_btree_init_block_cur(
+ 			xfs_btree_owner(cur));
+ }
+ 
+-/*
+- * Return true if ptr is the last record in the btree and
+- * we need to track updates to this record.  The decision
+- * will be further refined in the update_lastrec method.
+- */
+-STATIC int
+-xfs_btree_is_lastrec(
+-	struct xfs_btree_cur	*cur,
+-	struct xfs_btree_block	*block,
+-	int			level)
+-{
+-	union xfs_btree_ptr	ptr;
+-
+-	if (level > 0)
+-		return 0;
+-	if (!(cur->bc_ops->geom_flags & XFS_BTGEO_LASTREC_UPDATE))
+-		return 0;
+-
+-	xfs_btree_get_sibling(cur, block, &ptr, XFS_BB_RIGHTSIB);
+-	if (!xfs_btree_ptr_is_null(cur, &ptr))
+-		return 0;
+-	return 1;
+-}
+-
+ STATIC void
+ xfs_btree_buf_to_ptr(
+ 	struct xfs_btree_cur	*cur,
+@@ -2420,15 +2396,6 @@ xfs_btree_update(
+ 	xfs_btree_copy_recs(cur, rp, rec, 1);
+ 	xfs_btree_log_recs(cur, bp, ptr, ptr);
+ 
+-	/*
+-	 * If we are tracking the last record in the tree and
+-	 * we are at the far right edge of the tree, update it.
+-	 */
+-	if (xfs_btree_is_lastrec(cur, block, 0)) {
+-		cur->bc_ops->update_lastrec(cur, block, rec,
+-					    ptr, LASTREC_UPDATE);
+-	}
+-
+ 	/* Pass new key value up to our parent. */
+ 	if (xfs_btree_needs_key_update(cur, ptr)) {
+ 		error = xfs_btree_update_keys(cur, 0);
+@@ -3617,15 +3584,6 @@ xfs_btree_insrec(
+ 			goto error0;
+ 	}
+ 
+-	/*
+-	 * If we are tracking the last record in the tree and
+-	 * we are at the far right edge of the tree, update it.
+-	 */
+-	if (xfs_btree_is_lastrec(cur, block, level)) {
+-		cur->bc_ops->update_lastrec(cur, block, rec,
+-					    ptr, LASTREC_INSREC);
+-	}
+-
+ 	/*
+ 	 * Return the new block number, if any.
+ 	 * If there is one, give back a record value and a cursor too.
+@@ -3983,15 +3941,6 @@ xfs_btree_delrec(
+ 	xfs_btree_set_numrecs(block, --numrecs);
+ 	xfs_btree_log_block(cur, bp, XFS_BB_NUMRECS);
+ 
+-	/*
+-	 * If we are tracking the last record in the tree and
+-	 * we are at the far right edge of the tree, update it.
+-	 */
+-	if (xfs_btree_is_lastrec(cur, block, level)) {
+-		cur->bc_ops->update_lastrec(cur, block, NULL,
+-					    ptr, LASTREC_DELREC);
+-	}
+-
+ 	/*
+ 	 * We're at the root level.  First, shrink the root block in-memory.
+ 	 * Try to get rid of the next level down.  If we can't then there's
+diff --git a/fs/xfs/libxfs/xfs_btree.h b/fs/xfs/libxfs/xfs_btree.h
+index f93374278aa1..10b7ddc3b2b3 100644
+--- a/fs/xfs/libxfs/xfs_btree.h
++++ b/fs/xfs/libxfs/xfs_btree.h
+@@ -154,12 +154,6 @@ struct xfs_btree_ops {
+ 			       int *stat);
+ 	int	(*free_block)(struct xfs_btree_cur *cur, struct xfs_buf *bp);
+ 
+-	/* update last record information */
+-	void	(*update_lastrec)(struct xfs_btree_cur *cur,
+-				  const struct xfs_btree_block *block,
+-				  const union xfs_btree_rec *rec,
+-				  int ptr, int reason);
+-
+ 	/* records in block/level */
+ 	int	(*get_minrecs)(struct xfs_btree_cur *cur, int level);
+ 	int	(*get_maxrecs)(struct xfs_btree_cur *cur, int level);
+@@ -222,15 +216,7 @@ struct xfs_btree_ops {
+ };
+ 
+ /* btree geometry flags */
+-#define XFS_BTGEO_LASTREC_UPDATE	(1U << 0) /* track last rec externally */
+-#define XFS_BTGEO_OVERLAPPING		(1U << 1) /* overlapping intervals */
+-
+-/*
+- * Reasons for the update_lastrec method to be called.
+- */
+-#define LASTREC_UPDATE	0
+-#define LASTREC_INSREC	1
+-#define LASTREC_DELREC	2
++#define XFS_BTGEO_OVERLAPPING		(1U << 0) /* overlapping intervals */
+ 
+ 
+ union xfs_btree_irec {
+-- 
+2.39.2
 
 
