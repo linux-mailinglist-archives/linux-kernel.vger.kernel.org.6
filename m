@@ -1,47 +1,46 @@
-Return-Path: <linux-kernel+bounces-228397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DEC2915F4A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:04:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4F03915F4C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33A2E1F23341
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5862A1F234DE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4B71465B3;
-	Tue, 25 Jun 2024 07:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EA61465A4;
+	Tue, 25 Jun 2024 07:05:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="obiyk+c5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="J8y0My6B"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DF1802;
-	Tue, 25 Jun 2024 07:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7204C802
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719299066; cv=none; b=CoKdcuwgvakg2NpliGPaL0lk6rqQp0oE6sCDthCF6NDenPsEuv74xJ+tgxjYr+sljAF6QrhDxaSERWccBUrikzryIDeDhiYi5fwvHSsNswEZby0Vx+R0z0+L9LRV5wVAsHg8bPXlnuXmZHE3StBvTZ0uzJgzv/3QaaNMOZecess=
+	t=1719299099; cv=none; b=qZ5wpI37DvuCZH9GBTmiQHTv183+xQGe6XoPRRXlczx0+Dv7QLPx6OgMVza555hOKwgTuokYm4+VV+Mn8eytQvRtYY+Pnar7rM96NEsaS19NAfWU3pY+tZvFZp0x+zFY61qXXxipNY8mRtBA46YmEHGnVSBo17H7f6p58FSzf94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719299066; c=relaxed/simple;
-	bh=ubfvPzNUElJEyCaDrh0k25CUCZtKumf36GRRCofK7Ig=;
+	s=arc-20240116; t=1719299099; c=relaxed/simple;
+	bh=mnKX0CK10jeL2AUmQJ/q/5xM6jCHBJ6hOtyIRt3jvms=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OsL2x518sAkC+7uBACx82B/eJCiIUfyNHU2wPnFmsWPupYbCIX3VID1gB6lwx95DxppSu2Px5bqUzqRtFFzAu3jCK53tjGZoMWFkeuUivGd3VI+dEddBTB566kFbnlAqV9RDNH5A1EJr1R6CVDT+vhL6rGWklEZerOq3moQvAac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=obiyk+c5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60292C32781;
-	Tue, 25 Jun 2024 07:04:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719299065;
-	bh=ubfvPzNUElJEyCaDrh0k25CUCZtKumf36GRRCofK7Ig=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=obiyk+c5FQpmxsYAnEIjviQ60aS3G3E4HDe5yU4vksgdNRIOdBaHkXJ7oHLZ5sAFj
-	 WKU1zRn1gC00HsHHhHYj/euhPbRc0WFHBNhQjaGpApLYSsYh01pykO8O8jyfBtE79V
-	 yLFBAipm12rV5FntL7WXj7/y11IPmhJYLqE+nJbsy1f0Epn84c+N1LbXljDXvYZlCL
-	 oS4+5XLiuPTuM0CwuS4ZTUY50cLVhVPv5lOaFG83S3vI1P/GltI8mLffsQfYMet5FD
-	 XUmOGyxItDuB2bmZKsXt1QE1bQeb4PHUrUhLg5EEu4q3yaaf7XVb0rZUCpMr+QWlSW
-	 OMfRbStUSV5xw==
-Message-ID: <87353911-b108-4b87-aa40-862acfc95aca@kernel.org>
-Date: Tue, 25 Jun 2024 09:04:17 +0200
+	 In-Reply-To:Content-Type; b=a53TeOdXvoON578YkT/8Mo0s/mBBcqsI/uSBbg6JxDrOwh4Zp/1WYJFMBHZO3yt1dVHV9c6uYqA798OzcDTz2kCDcl/Qyic+RsItQlyKxPLBFnKWXQp9iK41fGDYMyNXzQLAeJ/OGf33nCwpbEz3glT3QYz2Eejvkf6WDVIOn+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=J8y0My6B; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1719299094; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=TCyWfIxYZ617Lw6Wt/fo0of1TWM+Fz/03YPYZQgvzOo=;
+	b=J8y0My6B38xJPND5IOxc2M2+QxwzmDUjB0MZyXvziBB1KPYjMkBNFc5KDVqWfD6tX7FLt2ukdinKBRzsK7t0w85Ry4JmmaKD0Fc1NoNJUNLw3FEPUbHK12ts7ZhDENFWy4Gdod2G2NlQ8hzmb1/MUh5ZlEyeM6WO6zMEQN4Xt9c=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0W9Ekw83_1719299091;
+Received: from 30.97.56.75(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9Ekw83_1719299091)
+          by smtp.aliyun-inc.com;
+          Tue, 25 Jun 2024 15:04:52 +0800
+Message-ID: <0e66d3c8-5059-44e4-b015-40eaf2083e80@linux.alibaba.com>
+Date: Tue, 25 Jun 2024 15:04:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,90 +48,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 4/8] remoteproc: qcom: Add ssr subdevice identifier
-To: Gokul Sriram P <quic_gokulsri@quicinc.com>, sboyd@kernel.org,
- andersson@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org,
- devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
- robh@kernel.org, sricharan@codeaurora.org
-Cc: gokulsri@codeaurora.org
-References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
- <20240621114659.2958170-5-quic_gokulsri@quicinc.com>
- <d7923435-ba13-4aad-b3f1-67e3469ec7fc@kernel.org>
- <8adae0a7-d496-4c9f-ab0c-f162c06e90c4@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <8adae0a7-d496-4c9f-ab0c-f162c06e90c4@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH mm-unstable] mm: folio_add_new_anon_rmap() careful
+ __folio_set_swapbacked()
+To: Barry Song <21cnbao@gmail.com>, Hugh Dickins <hughd@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, chrisl@kernel.org,
+ david@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ mhocko@suse.com, ryan.roberts@arm.com, shy828301@gmail.com,
+ surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org,
+ ying.huang@intel.com, yosryahmed@google.com, yuanshuai@oppo.com,
+ yuzhao@google.com
+References: <f3599b1d-8323-0dc5-e9e0-fdb3cfc3dd5a@google.com>
+ <CAGsJ_4xABUi11ruC5obXvGi3R8zVQx2gzGAeqTGh22bj4xR9Dw@mail.gmail.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <CAGsJ_4xABUi11ruC5obXvGi3R8zVQx2gzGAeqTGh22bj4xR9Dw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 25/06/2024 08:28, Gokul Sriram P wrote:
+
+
+On 2024/6/25 13:55, Barry Song wrote:
+> On Tue, Jun 25, 2024 at 5:00 PM Hugh Dickins <hughd@google.com> wrote:
+>>
+>> Commit "mm: use folio_add_new_anon_rmap() if folio_test_anon(folio)==
+>> false" has extended folio_add_new_anon_rmap() to use on non-exclusive
+>> folios, already visible to others in swap cache and on LRU.
+>>
+>> That renders its non-atomic __folio_set_swapbacked() unsafe: it risks
+>> overwriting concurrent atomic operations on folio->flags, losing bits
+>> added or restoring bits cleared.  Since it's only used in this risky
+>> way when folio_test_locked and !folio_test_anon, many such races are
+>> excluded; but, for example, isolations by folio_test_clear_lru() are
+>> vulnerable, and setting or clearing active.
+>>
+>> It could just use the atomic folio_set_swapbacked(); but this function
+>> does try to avoid atomics where it can, so use a branch instead: just
+>> avoid setting swapbacked when it is already set, that is good enough.
+>> (Swapbacked is normally stable once set: lazyfree can undo it, but
+>> only later, when found anon in a page table.)
+>>
+>> This fixes a lot of instability under compaction and swapping loads:
+>> assorted "Bad page"s, VM_BUG_ON_FOLIO()s, apparently even page double
+>> frees - though I've not worked out what races could lead to the latter.
+>>
+>> Signed-off-by: Hugh Dickins <hughd@google.com>
 > 
-> On 6/21/2024 8:40 PM, Krzysztof Kozlowski wrote:
->> On 21/06/2024 13:46, Gokul Sriram Palanisamy wrote:
->>> Add name for ssr subdevice on IPQ8074 SoC.
->> Why?
->    Oops! Missed the change. Will add and update.
->>> Signed-off-by: Nikhil Prakash V<quic_nprakash@quicinc.com>
->>> Signed-off-by: Sricharan R<quic_srichara@quicinc.com>
->>> Signed-off-by: Gokul Sriram Palanisamy<quic_gokulsri@quicinc.com>
->> Three people developed that single line?
+> Thanks a lot, Hugh. Sorry for my mistake. I guess we should squash this into
+> patch 1/3 "mm: use folio_add_new_anon_rmap() if folio_test_anon(folio) ==
+> false"?
+> Andrew, could you please help to squash this one?
+
+Hope the commit message written by Hugh can also be squashed into the 
+original patch, as it is very helpful to me :)
+
+>> ---
+>>   mm/rmap.c | 4 +++-
+>>   1 file changed, 3 insertions(+), 1 deletion(-)
 >>
->> Something is really odd with your DCO chain.
->   The change was originally authored by Nikhil and reviewed by 
-> Sricharan. I'm just submitting the change to upstream so retained their 
-> names.
+>> diff --git a/mm/rmap.c b/mm/rmap.c
+>> index df1a43295c85..5394c1178bf1 100644
+>> --- a/mm/rmap.c
+>> +++ b/mm/rmap.c
+>> @@ -1408,7 +1408,9 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
+>>          VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
+>>          VM_BUG_ON_VMA(address < vma->vm_start ||
+>>                          address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
+>> -       __folio_set_swapbacked(folio);
+>> +
+>> +       if (!folio_test_swapbacked(folio))
+>> +               __folio_set_swapbacked(folio);
+>>          __folio_set_anon(folio, vma, address, exclusive);
 >>
-
-Then your DCO chain is not correct. Please carefully read submitting
-patches, especially documents about authorship, DCO, reviewed tags.
-
-Best regards,
-Krzysztof
-
+>>          if (likely(!folio_test_large(folio))) {
+>> --
+>> 2.35.3
+>>
+> 
+> Thanks
+> Barry
 
