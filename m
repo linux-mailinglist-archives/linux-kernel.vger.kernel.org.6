@@ -1,76 +1,84 @@
-Return-Path: <linux-kernel+bounces-229797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E0A917451
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:36:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33922917453
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:36:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 219AC1C22E92
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:36:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE1B91F24884
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE2717F4E3;
-	Tue, 25 Jun 2024 22:35:23 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B439017F51D;
+	Tue, 25 Jun 2024 22:35:30 +0000 (UTC)
+Received: from gentwo.org (gentwo.org [62.72.0.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AD5149DF8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 22:35:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10D617DE0D;
+	Tue, 25 Jun 2024 22:35:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719354922; cv=none; b=NJfudGptfqo1r0z66FnZk8SX1ncl9qdVxulg9k2iigMiIPzvu683Nq6heaIy0fVY6LgnReOPzyhKRXCAoAMI8Gta42GPAbIymaAPqk76x+0/W/FaGl5o3aarYDtmPsK8CwnlMIvBeQFlWxmCvBpuPlyxeHb1XXiWHxyvqH8OgmE=
+	t=1719354930; cv=none; b=ESZ9mJQb4wFHCfYvpQ7OyO5s7t8jfvgIRlr6EVXg8/uKwRlO2txQ1hNmmO+GDah8gpbQpKR5IdMAS+K35QNW0tcJ37Sa1+hCE6fXqkQXI0reTVVCUhDe1psmuvUr+vLD8mC/GJMDLerxoIs69PwS8n9iWexXoP9oHAi1bhVmIPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719354922; c=relaxed/simple;
-	bh=zVIZkJDsTU3GHO5hOysdPrHBDMWqSuJTptF9C5/Up7s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DoKvRo/yQEKfH1mNdTY5JiW0/GrCFpluUyNXP4W0x//6JYES7jYxseTznQA0Sx+pnfXKMiXTgRt3Gjy4/cPNDwMExJgWZuq6wmCT9zTK847/Xw5pzHOGdvvTG2QNHKuwCX154jLQGRn7vNYHL9ehOIX7tbKu68TbrSuwbdEWKXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-7f3c9764edbso94666839f.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:35:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719354920; x=1719959720;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zVIZkJDsTU3GHO5hOysdPrHBDMWqSuJTptF9C5/Up7s=;
-        b=lDEcojb+Y3rArwh76LthEaDvc0Jw6msjzJqcXs+dF7+MITy5HaVfxBAq8o66ej3NUo
-         8IdGeGyj/SOcW0ft30Rp0Ix0uwGtVzaT/vzcNRr026//MQ6pqGI5XLFiMmP5WnB13fTw
-         jG43SF5FxI3GcIA3/YjkojZHM9XCz5opH80yfpJI0UM90n3tZGhgQqF+3KPMt7CxuWvr
-         o26voAjsWfNcBHhymnvlrnC7GAX1CiyN0W09nzqJoiMlaXeLd71mToIKNpoDirUpaEy5
-         A7PfQrnd5wj2xKeARq/XBx5tMMMIF011E386QEd51UEiDqXxJ3lHsqVA9GFs1/PxETgR
-         6e4g==
-X-Gm-Message-State: AOJu0YxZCi8hKE1h3KvtgwRTzjtsfOSdOwR30ry9+s/QlOYPMagMJ2uh
-	W3N+kDbk/uFnX+roVvEg3Ihwi+kec1g/Y27VS7GhG8tPCjTE8WySbSod4UWZfllYpICPHPWtMFh
-	JoEMvkAYmG3qBjDSXWTbHdwNbo2KL+9SYXIBJYaF6XzYYZVB9JX0CJPg=
-X-Google-Smtp-Source: AGHT+IE6kpSZXO6rZa0v9glFBIWrGcR+raPOutHyJXw6hQsXs8jf7FHSlgboKLJqHwRPGxqFsU6FCf0aW5und8ToTNvWdHLroXBQ
+	s=arc-20240116; t=1719354930; c=relaxed/simple;
+	bh=Nbm7pFV+HLXwpWP091wSzYZrgGqniCkWpwFtwGQ/xMo=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=C3leFKaEsRkCDtcISv9Sy+1/RrtLSiQaEMqb5jlxgpF6biJ6Rnm8HAKizziBTqtI6vX84MZPppv1QPLMl/AC3ezZABy1GH/1zjEKC/JQwb8V6/V+fa08koEYKuQc6kBRj60iNVSX+tXkG/ne+wVGWZe+rOkdaeFHj9ArTI6fpHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=fail smtp.mailfrom=linux.com; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=linux.com
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 38F8D4093E; Tue, 25 Jun 2024 15:35:21 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 37E0E4022C;
+	Tue, 25 Jun 2024 15:35:21 -0700 (PDT)
+Date: Tue, 25 Jun 2024 15:35:21 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@linux.com>
+To: Yosry Ahmed <yosryahmed@google.com>
+cc: Shakeel Butt <shakeel.butt@linux.dev>, 
+    Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org, 
+    cgroups@vger.kernel.org, hannes@cmpxchg.org, lizefan.x@bytedance.com, 
+    longman@redhat.com, kernel-team@cloudflare.com, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2] cgroup/rstat: Avoid thundering herd problem by kswapd
+ across NUMA nodes
+In-Reply-To: <CAJD7tkYqF0pmnw+PqmzPGh7NLeM2KfCwKLMhkFw3sxBOZ3biAA@mail.gmail.com>
+Message-ID: <a1e847a6-749b-87e8-221f-f9beb6c2ab59@linux.com>
+References: <a45ggqu6jcve44y7ha6m6cr3pcjc3xgyomu4ml6jbsq3zv7tte@oeovgtwh6ytg> <CAJD7tkZT_2tyOFq5koK0djMXj4tY8BO3CtSamPb85p=iiXCgXQ@mail.gmail.com> <qolg56e7mjloynou6j7ar7xzefqojp4cagzkb3r6duoj5i54vu@jqhi2chs4ecj> <CAJD7tka0b52zm=SjqxO-gxc0XTib=81c7nMx9MFNttwVkCVmSg@mail.gmail.com>
+ <u3jrec5n42v35f3xiigfqabajjt4onh44eyfajewnzbfqxaekw@5x2daobkkbxh> <CAJD7tkaMeevj2TS_aRj_WXVi26CuuBrprYwUfQmszJnwqqJrHw@mail.gmail.com> <d3b5f10a-2649-446c-a6f9-9311f96e7569@kernel.org> <CAJD7tkZ0ReOjoioACyxQ848qNMh6a93hH616jNPgX3j72thrLg@mail.gmail.com>
+ <zo6shlmgicfgqdjlfbeylpdrckpaqle7gk6ksdik7kqq7axgl6@65q4m73tgnp3> <CAJD7tkZ_aba9N9Qe8WeaLcp_ON_jQvuP9dg4tW0919QbCLLTMA@mail.gmail.com> <ntpnm3kdpqexncc4hz4xmfliay3tmbasxl6zatmsauo3sruwf3@zcmgz7oq5huy>
+ <CAJD7tkYqF0pmnw+PqmzPGh7NLeM2KfCwKLMhkFw3sxBOZ3biAA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1543:b0:376:4a4f:2c7a with SMTP id
- e9e14a558f8ab-3764a4f2d38mr6731575ab.2.1719354920561; Tue, 25 Jun 2024
- 15:35:20 -0700 (PDT)
-Date: Tue, 25 Jun 2024 15:35:20 -0700
-In-Reply-To: <000000000000256ed406199cda69@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000487b60061bbe834c@google.com>
-Subject: Re: [syzbot] WARNING: kmalloc bug in __snapshot_t_mut
-From: syzbot <syzbot+770e99b65e26fa023ab1@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Tue, 25 Jun 2024, Yosry Ahmed wrote:
 
-***
+>> In my reply above, I am not arguing to go back to the older
+>> stats_flush_ongoing situation. Rather I am discussing what should be the
+>> best eventual solution. From the vmstats infra, we can learn that
+>> frequent async flushes along with no sync flush, users are fine with the
+>> 'non-determinism'. Of course cgroup stats are different from vmstats
+>> i.e. are hierarchical but I think we can try out this approach and see
+>> if this works or not.
+>
+> If we do not do sync flushing, then the same problem that happened
+> with stats_flush_ongoing could occur again, right? Userspace could
+> read the stats after an event, and get a snapshot of the system before
+> that event.
+>
+> Perhaps this is fine for vmstats if it has always been like that (I
+> have no idea), or if no users make assumptions about this. But for
+> cgroup stats, we have use cases that rely on this behavior.
 
-Subject: WARNING: kmalloc bug in __snapshot_t_mut
-Author: peili.dev@gmail.com
+vmstat updates are triggered initially as needed by the shepherd task and 
+there is no requirement that this is triggered simultaenously. We 
+could actually randomize the intervals in vmstat_update() a bit if this 
+will help.
 
-#syz test
 
