@@ -1,137 +1,353 @@
-Return-Path: <linux-kernel+bounces-229584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B767917110
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:25:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B74C4917114
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:26:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B26AEB227B0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:25:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 198B5B227C8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:26:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F46617C7DF;
-	Tue, 25 Jun 2024 19:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1254D17C7DE;
+	Tue, 25 Jun 2024 19:26:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UkRh1Tz8"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Movv5MX/"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 045CA1DDF8;
-	Tue, 25 Jun 2024 19:25:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214ED1DDF8;
+	Tue, 25 Jun 2024 19:26:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719343506; cv=none; b=mU+BJiMQOh0++d9P5JefN6Uj+O6BNM5ed5Pe+cveLpHWzjclataSLRn3MNWmq75nnkrB0oRrpJdKZrp+oOm1WlXsqjPyca2mXpsdBlR1oSs0ljhNBPe2x2wm9Xmqa1A84tOW7WGdYgz3xQY/35XCVMgheMumhcYyouq0hrS7edM=
+	t=1719343609; cv=none; b=ilk5nQWglAKUbW0lqjAdO30YveV5/HeuufiYrDRMN0mRWGNRc+q/Lewm7ntL+AdfuIzhTu6cLXaRlo5wGXKda1p4BnN1rhr3VPEfkc/sqSSJBxjFy3mdHGMF+Ju9/rloeNddmii8CnpNFcEtxwSyYo/KYU4SEsmC65JkQJ623rA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719343506; c=relaxed/simple;
-	bh=8aSqX9hkLIrrIDQR0JhCR5LNnUahZPNJR09HnPkpNP4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lh+Lo/NGwCq28ep9vbh7KpxQYk5KnD8dXjIiXzM/6mKFKOdasvHEi1IwVybzmGZWA6iaVhh2t30aCn4DmblD4QJnEjdhEthzAD6jdQu3/bRpjVMDU9Xu4CscQwEnni9Ss8DM2o/oNOKPLM4T+6/3N5kUhGm+KYnzhB05ApVhEqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UkRh1Tz8; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-424adaa6ceeso377505e9.1;
-        Tue, 25 Jun 2024 12:25:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719343503; x=1719948303; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QNSR6fYYnr7DHgDey2nQ/LSZryKgufbR+vce5mKG6qE=;
-        b=UkRh1Tz8dRb4//o2E/HJlGbEZk3QyOjX7PuwtAV4reFmlir275h+TGimAwtFN2cgnb
-         p4hzjCgEIab6HJgUF6Yh7Mg0T7KCtIFMjLyzOHVI8h9nSWhfA9742wACJoq5fOLBNNwU
-         ARRWIXf5huG76Wk0kB+X9kyIDe5g/BLhm3Gi3fg0aCmaqHt7N5HRWxCJdlC3DCjPRriE
-         pLjUrVCWUARCdj0v5718FZwwdWVf7rD8w+uxzs8srRww098vRg0+WJC3chKWUwE8FXVx
-         u9f5pfwcRx4io2rpzNAAVcr8brniT4CAG3N3S+xoQlWg/bfWIuLVxGZsPdhzVzRqFkT8
-         BgbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719343503; x=1719948303;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QNSR6fYYnr7DHgDey2nQ/LSZryKgufbR+vce5mKG6qE=;
-        b=IA1KeKgYQluuftE28GOXV8NgiiLLFbBwwrdwCgdcuBPEi+sC/y0iZt8M9GxaRnv+v9
-         8owBsQTrU4RAs7lDG8mQJNu8jHi48+nEvMn4SO4pvu+aBNYJK4VQpNwCgEnGm2/ipxGj
-         q/MgINAldcMYFYs6Gw/lGkoIISnj4xZvV95gUlSGR3ifaQiDOn3bEmbXzga9Ox/QbJkP
-         26faKfBXzO+zoggNzfuXKsIyvrsPLh3Rg5iUkXgZGv1LggsU3TL3loSahH0I5gSvevmN
-         da07igf1uVIfgeNRnsVZD/K90dXIyuVkSseNVA2dtEXuU6FgwMqFvs/mrEfWd2WKD/8P
-         FUnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXJ9f7vzMYCWNqHQR60uwEZ2MbNIdl6vi+H9DDwK8M2d0zI9i4phevLipeG6DfbT6xXSZ7DiNGjXAk4g7luW3TwwCbqxpBUxRtk2dbkOUC8xjYn8WcY5Vt01RXP0VdSCUIhQZZBwoOvSLIqmiFDwy1vpsT0mE28tbqm3FLpTFlbdBbQ3g==
-X-Gm-Message-State: AOJu0YyZDLsW03r1jMJk+fHCPhxY8IKBFSyJ7z2EiO7R3SbzPs2SNQuy
-	64d8HoUGKFP2txrvFwhpCwNbLNxI7+tGQ9y912zcZLc02ZKLFykgDLa+/HYZHOU=
-X-Google-Smtp-Source: AGHT+IHMQadZlsFWfZONY6s/5x001YloyrvPown+lI3fxg4zwP3n0okE1igXG9gd769w0YL9T98MEg==
-X-Received: by 2002:a05:600c:4f07:b0:422:97d:43d4 with SMTP id 5b1f17b1804b1-4248cc18c86mr60159585e9.6.1719343502684;
-        Tue, 25 Jun 2024 12:25:02 -0700 (PDT)
-Received: from ?IPV6:2a10:d582:37c5:0:a86b:b44f:15fa:ccf9? ([2a10:d582:37c5:0:a86b:b44f:15fa:ccf9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d212254sm221762825e9.45.2024.06.25.12.25.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 12:25:02 -0700 (PDT)
-Message-ID: <7fde0674-c20a-4455-bb78-3a6521ae99ed@gmail.com>
-Date: Tue, 25 Jun 2024 20:25:00 +0100
+	s=arc-20240116; t=1719343609; c=relaxed/simple;
+	bh=3tCqLnzLNjYxbdAnDTSilniGnypRE30pqx7j5uBPeRM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=m1SiEO8SuY4s0J7VO3TEgH0XdstHq8yfy3qt6domOfertJ2MC5y/OhFRgPSvGTTkHlo6kb5ujMNfL6xpcHrEEBrsbQwjs2lqweNObjRsJNHlSlh+yHAuaSOgckUVe/kaqZjQzqGjZpRDWZomfi1KI44CSnWx8GvDZBPMApxvXqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Movv5MX/; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PHUZDV024767;
+	Tue, 25 Jun 2024 19:26:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OgsPWTGcft6ulc5esQhacuFHgmBvlkGB4Ee1W5EKgq4=; b=Movv5MX/RP7QcztU
+	7C9lLMelbUtUAbgqR59hDNbuBmtbuKK+zbsmGJp5aGsXNMWWI/R4TtVlpo4MOMfq
+	ZGvJIjENf9/NGstrKpBtZCRNDtKIF7iaBh0MiWaMPXOSPX/wsfk6iyBI1sYqaAgI
+	mtKwm5HBGS/4fdHzmNh4xGcnupYfomtL0d2ribj1OzvwKH5c6EKX1+2iRmw2Lcgk
+	3kNqtmVt3/afn5oDXkJ8JMCFyDy3MxP7hZQC+Cpz4lZXoZRE3Z0LEZ5SsdY4IKvE
+	gUsypW6LYnTY4ZEuJLCN5aPjdYKy2Am7p4Rffr9SdpMT/rdhrP0yAZC0kchoRvFb
+	Cj1gNA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqshqkuf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 19:26:36 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45PJQZaC026868
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 19:26:35 GMT
+Received: from [10.71.110.249] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Jun
+ 2024 12:26:35 -0700
+Message-ID: <0ae0fddb-07f4-3eb9-5a62-0f7f15153452@quicinc.com>
+Date: Tue, 25 Jun 2024 12:26:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] iio: light: ROHM BH1745 colour sensor
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>, jic23@kernel.org,
- lars@metafoo.de, krzk+dt@kernel.org, conor+dt@kernel.org, robh@kernel.org
-Cc: ivan.orlov0322@gmail.com, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240624215543.459797-1-muditsharma.info@gmail.com>
- <20240624215543.459797-2-muditsharma.info@gmail.com>
- <cf06ea77-c8b0-4476-94d1-32171c96f22f@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH RFC v2] drm/msm/dpu: Configure DP INTF/PHY selector
 Content-Language: en-US
-From: Mudit Sharma <muditsharma.info@gmail.com>
-In-Reply-To: <cf06ea77-c8b0-4476-94d1-32171c96f22f@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>
+CC: Bjorn Andersson <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240613-dp-phy-sel-v2-1-99af348c9bae@linaro.org>
+ <bbdb8f56-4948-b0dd-55bd-ca59b78ed559@quicinc.com>
+In-Reply-To: <bbdb8f56-4948-b0dd-55bd-ca59b78ed559@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vHByID__uSM5YvJYSypZwtRfO9IHw7aV
+X-Proofpoint-GUID: vHByID__uSM5YvJYSypZwtRfO9IHw7aV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_14,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ mlxscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406250143
 
-On 24/06/2024 23:27, Javier Carrasco wrote:
+
+
+On 6/24/2024 6:39 PM, Abhinav Kumar wrote:
 > 
->> +static int bh1745_set_trigger_state(struct iio_trigger *trig, bool state)
+> 
+> On 6/13/2024 4:17 AM, Dmitry Baryshkov wrote:
+>> From: Bjorn Andersson <andersson@kernel.org>
+>>
+>> Some platforms provides a mechanism for configuring the mapping between
+>> (one or two) DisplayPort intfs and their PHYs.
+>>
+>> In particular SC8180X provides this functionality, without a default
+>> configuration, resulting in no connection between its two external
+>> DisplayPort controllers and any PHYs.
+>>
+> 
+> I have to cross-check internally about what makes it mandatory to 
+> program this only for sc8180xp. We were not programming this so far for 
+> any chipset and this register is present all the way from sm8150 till 
+> xe10100 and all the chipsets do not have a correct default value which 
+> makes me think whether this is required to be programmed.
+> 
+> Will update this thread once I do.
+> 
+
+Ok, I checked more. The reason this is mandatory for sc8180xp is the 
+number of controllers is greater than number of PHYs needing this to be 
+programmed. On all other chipsets its a 1:1 mapping.
+
+I am fine with the change once the genmap comment is addressed.
+
+>> The change implements the logic for optionally configuring which PHY
+>> each of the DP INTFs should be connected to and marks the SC8180X DPU to
+>> program 2 entries.
+>>
+>> For now the request is simply to program the mapping 1:1, any support
+>> for alternative mappings is left until the use case arrise.
+>>
+>> Note that e.g. msm-4.14 unconditionally maps INTF 0 to PHY 0 on all
+>> rlatforms, so perhaps this is needed in order to get DisplayPort working
+>> on some other platforms as well.
+>>
+>> Signed-off-by: Bjorn Andersson <andersson@kernel.org>
+>> Co-developed-by: Bjorn Andersson <andersson@kernel.org>
+>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>> ---
+>> Changes in v2:
+>> - Removed entry from the catalog.
+>> - Reworked the interface of dpu_hw_dp_phy_intf_sel(). Pass two entries
+>>    for the PHYs instead of three entries.
+>> - It seems the register isn't present on sdm845, enabled the callback
+>>    only for DPU >= 5.x
+>> - Added a comment regarding the data being platform-specific.
+>> - Link to v1: 
+>> https://lore.kernel.org/r/20230612221047.1886709-1-quic_bjorande@quicinc.com
+>> ---
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c | 39 
+>> +++++++++++++++++++++++++++---
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h | 18 ++++++++++++--
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h   |  7 ++++++
+>>   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c    | 11 ++++++++-
+>>   4 files changed, 69 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c 
+>> b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
+>> index 05e48cf4ec1d..a11fdbefc8d2 100644
+>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
+>> @@ -231,8 +231,38 @@ static void dpu_hw_intf_audio_select(struct 
+>> dpu_hw_mdp *mdp)
+>>       DPU_REG_WRITE(c, HDMI_DP_CORE_SELECT, 0x1);
+>>   }
+>> +static void dpu_hw_dp_phy_intf_sel(struct dpu_hw_mdp *mdp,
+>> +                   enum dpu_dp_phy_sel phys[2])
 >> +{
->> +	int ret;
-> 
-> Why is value initialized here? If regmap returns an error, you will not
-> use value anyway. I caught my eye because it is initialized here, and
-> not in the other functions where you use the same pattern.
-
-Hi Javier,
-
-Thank you for the review on this.
-
-'value' is initialized here for case when we un-set the trigger. In that 
-case, 'state' will be false and 'value' of 0 (default value for 
-BH1745_INTR register) will be written.
-
-Best regards,
-Mudit Sharma
-> 
->> +	int value = 0;
->> +	struct iio_dev *indio_dev = iio_trigger_get_drvdata(trig);
->> +	struct bh1745_data *data = iio_priv(indio_dev);
+>> +    struct dpu_hw_blk_reg_map *c = &mdp->hw;
+>> +    unsigned int intf;
+>> +    u32 sel = 0;
 >> +
->> +	guard(mutex)(&data->lock);
->> +	if (state) {
->> +		ret = regmap_read(data->regmap, BH1745_INTR, &value);
->> +		if (ret)
->> +			return ret;
->> +		// Latch is always set when enabling interrupt
->> +		value |= BH1745_INT_ENABLE |
->> +			FIELD_PREP(BH1745_INT_SIGNAL_LATCHED, 1) |
->> +			FIELD_PREP(BH1745_INT_SOURCE_MASK, data->int_src);
->> +		return regmap_write(data->regmap, BH1745_INTR, value);
->> +	}
+>> +    sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_INTF0, phys[0]);
+>> +    sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_INTF1, phys[1]);
 >> +
->> +	return regmap_write(data->regmap, BH1745_INTR, value);
+>> +    for (intf = 0; intf < 2; intf++) {
+> 
+> I wonder if ARRAY_SIZE(phys) is better here.
+> 
+>> +        switch (phys[intf]) {
+>> +        case DPU_DP_PHY_0:
+>> +            sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_PHY0, intf + 1);
+>> +            break;
+>> +        case DPU_DP_PHY_1:
+>> +            sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_PHY1, intf + 1);
+>> +            break;
+>> +        case DPU_DP_PHY_2:
+>> +            sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_PHY2, intf + 1);
+>> +            break;
+>> +        default:
+>> +            /* ignore */
+>> +            break;
+>> +        }
+>> +    }
+>> +
+>> +    DPU_REG_WRITE(c, MDP_DP_PHY_INTF_SEL, sel);
 >> +}
+>> +
+>>   static void _setup_mdp_ops(struct dpu_hw_mdp_ops *ops,
+>> -        unsigned long cap)
+>> +        unsigned long cap, const struct dpu_mdss_version *mdss_rev)
+>>   {
+>>       ops->setup_split_pipe = dpu_hw_setup_split_pipe;
+>>       ops->setup_clk_force_ctrl = dpu_hw_setup_clk_force_ctrl;
+>> @@ -245,6 +275,9 @@ static void _setup_mdp_ops(struct dpu_hw_mdp_ops 
+>> *ops,
+>>       ops->get_safe_status = dpu_hw_get_safe_status;
+>> +    if (mdss_rev->core_major_ver >= 5)
+>> +        ops->dp_phy_intf_sel = dpu_hw_dp_phy_intf_sel;
+>> +
+>>       if (cap & BIT(DPU_MDP_AUDIO_SELECT))
+>>           ops->intf_audio_select = dpu_hw_intf_audio_select;
+>>   }
+>> @@ -252,7 +285,7 @@ static void _setup_mdp_ops(struct dpu_hw_mdp_ops 
+>> *ops,
+>>   struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
+>>                         const struct dpu_mdp_cfg *cfg,
+>>                         void __iomem *addr,
+>> -                      const struct dpu_mdss_cfg *m)
+>> +                      const struct dpu_mdss_version *mdss_rev)
+>>   {
+>>       struct dpu_hw_mdp *mdp;
+>> @@ -270,7 +303,7 @@ struct dpu_hw_mdp *dpu_hw_mdptop_init(struct 
+>> drm_device *dev,
+>>        * Assign ops
+>>        */
+>>       mdp->caps = cfg;
+>> -    _setup_mdp_ops(&mdp->ops, mdp->caps->features);
+>> +    _setup_mdp_ops(&mdp->ops, mdp->caps->features, mdss_rev);
+>>       return mdp;
+>>   }
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h 
+>> b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h
+>> index 6f3dc98087df..3a17e63b851c 100644
+>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h
+>> @@ -67,6 +67,13 @@ struct dpu_vsync_source_cfg {
+>>       u32 vsync_source;
+>>   };
+>> +enum dpu_dp_phy_sel {
+>> +    DPU_DP_PHY_NONE,
+>> +    DPU_DP_PHY_0,
+>> +    DPU_DP_PHY_1,
+>> +    DPU_DP_PHY_2,
+>> +};
+>> +
+>>   /**
+>>    * struct dpu_hw_mdp_ops - interface to the MDP TOP Hw driver functions
+>>    * Assumption is these functions will be called after clocks are 
+>> enabled.
+>> @@ -125,6 +132,13 @@ struct dpu_hw_mdp_ops {
+>>       void (*get_safe_status)(struct dpu_hw_mdp *mdp,
+>>               struct dpu_danger_safe_status *status);
+>> +    /**
+>> +     * dp_phy_intf_sel - configure intf to phy mapping
+>> +     * @mdp: mdp top context driver
+>> +     * @phys: list of phys the DP interfaces should be connected to. 
+>> 0 disables the INTF.
+>> +     */
+>> +    void (*dp_phy_intf_sel)(struct dpu_hw_mdp *mdp, enum 
+>> dpu_dp_phy_sel phys[2]);
+>> +
+>>       /**
+>>        * intf_audio_select - select the external interface for audio
+>>        * @mdp: mdp top context driver
+>> @@ -148,12 +162,12 @@ struct dpu_hw_mdp {
+>>    * @dev:  Corresponding device for devres management
+>>    * @cfg:  MDP TOP configuration from catalog
+>>    * @addr: Mapped register io address of MDP
+>> - * @m:    Pointer to mdss catalog data
+>> + * @mdss_rev: dpu core's major and minor versions
+>>    */
+>>   struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
+>>                         const struct dpu_mdp_cfg *cfg,
+>>                         void __iomem *addr,
+>> -                      const struct dpu_mdss_cfg *m);
+>> +                      const struct dpu_mdss_version *mdss_rev);
+>>   void dpu_hw_mdp_destroy(struct dpu_hw_mdp *mdp);
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h 
+>> b/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h
+>> index 5acd5683d25a..f1acc04089af 100644
+>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h
+>> @@ -60,6 +60,13 @@
+>>   #define MDP_WD_TIMER_4_LOAD_VALUE       0x448
+>>   #define DCE_SEL                         0x450
+>> +#define MDP_DP_PHY_INTF_SEL             0x460
+>> +#define MDP_DP_PHY_INTF_SEL_INTF0        GENMASK(3, 0)
+>> +#define MDP_DP_PHY_INTF_SEL_INTF1        GENMASK(6, 3)
+>> +#define MDP_DP_PHY_INTF_SEL_PHY0        GENMASK(9, 6)
+>> +#define MDP_DP_PHY_INTF_SEL_PHY1        GENMASK(12, 9)
+>> +#define MDP_DP_PHY_INTF_SEL_PHY2        GENMASK(15, 12)
 > 
+> These masks do not match the docs, the below ones are what I see:
 > 
-> Best regards,
-> Javier Carrasco
+> #define MDP_DP_PHY_INTF_SEL_INTF0        GENMASK(2, 0)
+> #define MDP_DP_PHY_INTF_SEL_INTF1        GENMASK(5, 3)
+> #define MDP_DP_PHY_INTF_SEL_PHY0        GENMASK(8, 6)
+> #define MDP_DP_PHY_INTF_SEL_PHY1        GENMASK(11, 9)
+> #define MDP_DP_PHY_INTF_SEL_PHY2        GENMASK(14, 12)
 > 
-
+>> +
+>>   #define MDP_PERIPH_TOP0            MDP_WD_TIMER_0_CTL
+>>   #define MDP_PERIPH_TOP0_END        CLK_CTRL3
+>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c 
+>> b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+>> index 1955848b1b78..9db5a784c92f 100644
+>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+>> @@ -1102,7 +1102,7 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
+>>       dpu_kms->hw_mdp = dpu_hw_mdptop_init(dev,
+>>                            dpu_kms->catalog->mdp,
+>>                            dpu_kms->mmio,
+>> -                         dpu_kms->catalog);
+>> +                         dpu_kms->catalog->mdss_ver);
+>>       if (IS_ERR(dpu_kms->hw_mdp)) {
+>>           rc = PTR_ERR(dpu_kms->hw_mdp);
+>>           DPU_ERROR("failed to get hw_mdp: %d\n", rc);
+>> @@ -1137,6 +1137,15 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
+>>           goto err_pm_put;
+>>       }
+>> +    /*
+>> +     * We need to program DP <-> PHY relationship only for SC8180X.  
+>> If any
+>> +     * other platform requires the same kind of programming, or if 
+>> the INTF
+>> +     * <->DP relationship isn't static anymore, this needs to be 
+>> configured
+>> +     * through the DT.
+>> +     */
+>> +    if (of_device_is_compatible(dpu_kms->pdev->dev.of_node, 
+>> "qcom,sc8180x-dpu"))
+>> +        dpu_kms->hw_mdp->ops.dp_phy_intf_sel(dpu_kms->hw_mdp, 
+>> (unsigned int[]){ 1, 2, });
+>> +
+>>       dpu_kms->hw_intr = dpu_hw_intr_init(dev, dpu_kms->mmio, 
+>> dpu_kms->catalog);
+>>       if (IS_ERR(dpu_kms->hw_intr)) {
+>>           rc = PTR_ERR(dpu_kms->hw_intr);
+>>
+>> ---
+>> base-commit: 03d44168cbd7fc57d5de56a3730427db758fc7f6
+>> change-id: 20240613-dp-phy-sel-1b06dc48ed73
+>>
+>> Best regards,
 
