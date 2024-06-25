@@ -1,39 +1,70 @@
-Return-Path: <linux-kernel+bounces-229131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4F36916B81
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:01:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16357916BA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8BB11C2388A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:01:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B52501F28714
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A3D172BB5;
-	Tue, 25 Jun 2024 15:00:33 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7E9E16F902;
-	Tue, 25 Jun 2024 15:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BA4178361;
+	Tue, 25 Jun 2024 15:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="PZXYapLs"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206661779BD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327632; cv=none; b=Zvd6frk2XAxJJEIuwzWm9H49A5OvISZeUCEtJHB/H5T67yzjs33W2pUhoEGhqR1dVA2VBXVY2c2lkuY1qe4pOktph5RKGU0ILP2i+cX3m6Qu9Zna3utvaarWSi0jh/BgXOnEdhwCmvjFIp/RlYgKXgnqqSpD2IUhHFinCBepu54=
+	t=1719327673; cv=none; b=YwUHVkY804BBf0PPRm9ETfH7D+reH91NzmRFBNc+VHYFB+bmzQHhJ6f6zfft2Hb4+V5Vzv4tlGzfRlwo/66RMm5/SEEqRj9e50RTe8WexerV3x2o38XL2441H9eoSFvGGscEr+0pJIaSNwPXuUYjjZ1pFWBOkOO/1Kn+OFtwT60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327632; c=relaxed/simple;
-	bh=nEtb+g2Rq7X61OxETKCfKwTOWku4feoQj/E5VaA8RJg=;
+	s=arc-20240116; t=1719327673; c=relaxed/simple;
+	bh=8Mkc2dAeIVEx3R7G9p6Y+1c9o51iRv92j9rBtFVabHM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Swm1cNThux7GFgvzdgO3qt6jJ4Q1qNN245e91zn62bB+VTB4XsKfkZL4NVjvDy2enhFDNe78yUIw0EsUdIvdcQOU7/sEn9GRB9XqxcisWLc1nG6FkefCR4NW/RglVtoc6++H/Cwef5/ZJrKVl9DMlkGIZLuzreQd+8UIZxDNIcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AC0C339;
-	Tue, 25 Jun 2024 08:00:48 -0700 (PDT)
-Received: from [192.168.4.86] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7758D3F766;
-	Tue, 25 Jun 2024 08:00:20 -0700 (PDT)
-Message-ID: <36714d76-f978-4dca-8ada-0de902d23a29@arm.com>
-Date: Tue, 25 Jun 2024 16:00:19 +0100
+	 In-Reply-To:Content-Type; b=m87ElR/klDpoiRaQyQ5NYjnLl2lMNVHsKY2ex9dfGSyl/ntiD5wX3f0q8kvJTwu5+OtWg4uCOMeZS1e7O6MDpJ0nHjaYdxYj+K6PqQNw9mn6Ru6ECvtACYZeTZNaTEAnDTUFT2KCRc9A9I5vzqG82DUzdUWzcSnSFlWV+6iQgs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=PZXYapLs; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-444fd22b7e5so3137111cf.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:01:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1719327671; x=1719932471; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=wU0PYC0ZkNLbhTARB/13j0B2U4nC3MBHctLxER+tD4c=;
+        b=PZXYapLs7vFjjfjfZJok+F1RxRSP7v8EcJclSlLs4TGYIO+kDoNUG/Si8nd1uTKizx
+         wyr/jzX0IjS1yRU2M/S+P80tWtKu/Dr3ScO+jMj/RQy1jNmBNl23hNR7I7szbGqLXpBT
+         RWgGlPwnSkeQN2zmt1gNVfRCUgemqfYNN77Ao=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719327671; x=1719932471;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wU0PYC0ZkNLbhTARB/13j0B2U4nC3MBHctLxER+tD4c=;
+        b=tXdzp6bKwTPzk1STJhr8rF0jiGaNDope01aFrLFG5hfaLUQpNiEJ7M3MVltVTvjwps
+         Ee5VQgwEZ1Qr3SBgzgw0yuA/U44DPXqfMgWXP7x1C/0IQmsd8Ffyl6e/oOPpp+ohmmKu
+         vDaV65/ONTY0cD8CpmtTE/0H/fkWbspF2fMLCLTAhgqSfT0K1xW43Tf9BknE4GV/dXKB
+         /sIOE5gqeP4JHmQKZWvsscJIKI60ca4Mhe64yI+n8b8nABktWNhXuaHGw1dFezN3ty9G
+         Yi9nzCz9MvVqvkfRGmMQAzZfG/kkaBotNYjgQDVC1p1nEwpb/UerMDiTMBt/FLw7q69n
+         miGg==
+X-Gm-Message-State: AOJu0YxuOQ8Y2xU0SRfBuA5IaDHHVqXr/p4V03SfaJ+TxxX7VqwENoLB
+	9zdOEuPexMgfdVBlT/ST3uUVjqnndQx6sgN9TrStPijYA3aFNrLC7w9egsQpog==
+X-Google-Smtp-Source: AGHT+IHnSEvz1eYSAgsxVMAW3ADhvEI2ogcmyxjTyn9pVh+UkXUPLC1xrx6TzTqfMgC/8209I7UkCQ==
+X-Received: by 2002:a05:622a:4fcc:b0:444:f0b5:8a5e with SMTP id d75a77b69052e-444f0b58da0mr41753701cf.32.1719327670970;
+        Tue, 25 Jun 2024 08:01:10 -0700 (PDT)
+Received: from [192.168.1.26] ([98.97.116.235])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444c96b06a2sm48629061cf.15.2024.06.25.08.01.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 08:01:10 -0700 (PDT)
+Message-ID: <46fb037b-0ee7-4d30-b690-9bdfbb38aa00@broadcom.com>
+Date: Tue, 25 Jun 2024 08:01:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,274 +72,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 15/17] coresight: Remove pending trace ID release
- mechanism
-Content-Language: en-GB
-To: James Clark <james.clark@arm.com>, coresight@lists.linaro.org,
- gankulkarni@os.amperecomputing.com, mike.leach@linaro.org,
- leo.yan@linux.dev, anshuman.khandual@arm.com, jszu@nvidia.com,
- bwicaksono@nvidia.com
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com, linux-perf-users@vger.kernel.org
-References: <20240625133105.671245-1-james.clark@arm.com>
- <20240625133105.671245-16-james.clark@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20240625133105.671245-16-james.clark@arm.com>
+Subject: Re: [PATCH] x86/vmware: fix panic in vmware_hypercall_slow()
+To: Borislav Petkov <bp@alien8.de>
+Cc: linux-kernel@vger.kernel.org, virtualization@lists.linux.dev,
+ hpa@zytor.com, dave.hansen@linux.intel.com, mingo@redhat.com,
+ tglx@linutronix.de, x86@kernel.org, ajay.kaher@broadcom.com,
+ bcm-kernel-feedback-list@broadcom.com, Alex James <alex.james@broadcom.com>
+References: <20240625083348.2299-1-alexey.makhalov@broadcom.com>
+ <20240625084721.GCZnqEGbrkNNW6ZCfZ@fat_crate.local>
+ <8193d6d2-5322-4a9a-82ed-50ac24dd3525@broadcom.com>
+ <20240625145128.GGZnrZcEK4YWOJyEMq@fat_crate.local>
+Content-Language: en-US
+From: Alexey Makhalov <alexey.makhalov@broadcom.com>
+Autocrypt: addr=alexey.makhalov@broadcom.com; keydata=
+ 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 EuY0
+In-Reply-To: <20240625145128.GGZnrZcEK4YWOJyEMq@fat_crate.local>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 25/06/2024 14:30, James Clark wrote:
-> Pending the release of IDs was a way of managing concurrent sysfs and
-> Perf sessions in a single global ID map. Perf may have finished while
-> sysfs hadn't, and Perf shouldn't release the IDs in use by sysfs and
-> vice versa.
+
+
+On 6/25/24 7:51 AM, Borislav Petkov wrote:
+> On Tue, Jun 25, 2024 at 07:45:50AM -0700, Alexey Makhalov wrote:
+>> My test environment was screwed up during the last version of the patchset.
+>> I was using a kernel which was built previously and didn't pay attention to
+>> commit hash suffix in `uname -r`.
+>> Human mistake, apologize for that.
 > 
-> Now that Perf uses its own exclusive ID maps, pending release doesn't
-> result in any different behavior than just releasing all IDs when the
-> last Perf session finishes. As part of the per-sink trace ID change, we
-> would have still had to make the pending mechanism work on a per-sink
-> basis, due to the overlapping ID allocations, so instead of making that
-> more complicated, just remove it.
+> Ok, no worries, happens.
 > 
-> Signed-off-by: James Clark <james.clark@arm.com>
-> ---
->   .../hwtracing/coresight/coresight-etm-perf.c  | 11 ++--
->   .../hwtracing/coresight/coresight-trace-id.c  | 62 +++++--------------
->   .../hwtracing/coresight/coresight-trace-id.h  | 31 +++++-----
->   include/linux/coresight.h                     |  6 +-
->   4 files changed, 34 insertions(+), 76 deletions(-)
+>> Alex found it while doing TDX testing on x86/vmware on tip.
+>>
+>> Do you want me to resubmit the patchset to do not brake a git bisect?
 > 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> index 7fb55dafb639..17fa29969643 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
-> @@ -232,15 +232,14 @@ static void free_event_data(struct work_struct *work)
->   		if (!(IS_ERR_OR_NULL(*ppath))) {
->   			struct coresight_device *sink = coresight_get_sink(*ppath);
->   
-> -			coresight_trace_id_put_cpu_id_map(cpu, &sink->perf_sink_id_map);
-> +			/* mark perf event as done for trace id allocator */
-> +			coresight_trace_id_perf_stop(&sink->perf_sink_id_map);
+> Nah, I'll fold it into the broken patch and rebase.
 
-See my comment below. It may be a good idea to add/copyt comment here to
-explain why we don't "put_cpu_id" anymore.
+Thanks for your time.
 
+> 
+> Btw, pls do me a favor and do not top-post but put your reply underneath the
+> quoted text, like we all do.
+Noted.
 
-> +
->   			coresight_release_path(*ppath);
->   		}
->   		*ppath = NULL;
->   	}
->   
-> -	/* mark perf event as done for trace id allocator */
-> -	coresight_trace_id_perf_stop();
-> -
->   	free_percpu(event_data->path);
->   	kfree(event_data);
->   }
-> @@ -328,9 +327,6 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
->   		sink = user_sink = coresight_get_sink_by_id(id);
->   	}
->   
-> -	/* tell the trace ID allocator that a perf event is starting up */
-> -	coresight_trace_id_perf_start();
-> -
->   	/* check if user wants a coresight configuration selected */
->   	cfg_hash = (u32)((event->attr.config2 & GENMASK_ULL(63, 32)) >> 32);
->   	if (cfg_hash) {
-> @@ -411,6 +407,7 @@ static void *etm_setup_aux(struct perf_event *event, void **pages,
->   			continue;
->   		}
->   
-> +		coresight_trace_id_perf_start(&sink->perf_sink_id_map);
->   		*etm_event_cpu_path_ptr(event_data, cpu) = path;
->   	}
->   
-> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.c b/drivers/hwtracing/coresight/coresight-trace-id.c
-> index 8a777c0af6ea..1e70892f5beb 100644
-> --- a/drivers/hwtracing/coresight/coresight-trace-id.c
-> +++ b/drivers/hwtracing/coresight/coresight-trace-id.c
-> @@ -18,12 +18,6 @@ static struct coresight_trace_id_map id_map_default = {
->   	.cpu_map = &id_map_default_cpu_ids
->   };
->   
-> -/* maintain a record of the pending releases per cpu */
-> -static cpumask_t cpu_id_release_pending;
-> -
-> -/* perf session active counter */
-> -static atomic_t perf_cs_etm_session_active = ATOMIC_INIT(0);
-> -
->   /* lock to protect id_map and cpu data  */
->   static DEFINE_SPINLOCK(id_map_lock);
->   
-> @@ -122,34 +116,18 @@ static void coresight_trace_id_free(int id, struct coresight_trace_id_map *id_ma
->   	clear_bit(id, id_map->used_ids);
->   }
->   
-> -static void coresight_trace_id_set_pend_rel(int id, struct coresight_trace_id_map *id_map)
-> -{
-> -	if (WARN(!IS_VALID_CS_TRACE_ID(id), "Invalid Trace ID %d\n", id))
-> -		return;
-> -	set_bit(id, id_map->pend_rel_ids);
-> -}
-> -
->   /*
-> - * release all pending IDs for all current maps & clear CPU associations
-> - *
-> - * This currently operates on the default id map, but may be extended to
-> - * operate on all registered id maps if per sink id maps are used.
-> + * Release all IDs and clear CPU associations.
->    */
-> -static void coresight_trace_id_release_all_pending(void)
-> +static void coresight_trace_id_release_all(struct coresight_trace_id_map *id_map)
->   {
-> -	struct coresight_trace_id_map *id_map = &id_map_default;
->   	unsigned long flags;
-> -	int cpu, bit;
-> +	int cpu;
->   
->   	spin_lock_irqsave(&id_map_lock, flags);
-> -	for_each_set_bit(bit, id_map->pend_rel_ids, CORESIGHT_TRACE_ID_RES_TOP) {
-> -		clear_bit(bit, id_map->used_ids);
-> -		clear_bit(bit, id_map->pend_rel_ids);
-> -	}
-> -	for_each_cpu(cpu, &cpu_id_release_pending) {
-> -		atomic_set(per_cpu_ptr(id_map_default.cpu_map, cpu), 0);
-> -		cpumask_clear_cpu(cpu, &cpu_id_release_pending);
-> -	}
-> +	bitmap_zero(id_map->used_ids, CORESIGHT_TRACE_IDS_MAX);
-> +	for_each_possible_cpu(cpu)
-> +		atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
->   	spin_unlock_irqrestore(&id_map_lock, flags);
->   	DUMP_ID_MAP(id_map);
->   }
-> @@ -164,7 +142,7 @@ static int _coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map
->   	/* check for existing allocation for this CPU */
->   	id = _coresight_trace_id_read_cpu_id(cpu, id_map);
->   	if (id)
-> -		goto get_cpu_id_clr_pend;
-> +		goto get_cpu_id_out_unlock;
->   
->   	/*
->   	 * Find a new ID.
-> @@ -185,11 +163,6 @@ static int _coresight_trace_id_get_cpu_id(int cpu, struct coresight_trace_id_map
->   	/* allocate the new id to the cpu */
->   	atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), id);
->   
-> -get_cpu_id_clr_pend:
-> -	/* we are (re)using this ID - so ensure it is not marked for release */
-> -	cpumask_clear_cpu(cpu, &cpu_id_release_pending);
-> -	clear_bit(id, id_map->pend_rel_ids);
-> -
->   get_cpu_id_out_unlock:
->   	spin_unlock_irqrestore(&id_map_lock, flags);
->   
-> @@ -210,15 +183,8 @@ static void _coresight_trace_id_put_cpu_id(int cpu, struct coresight_trace_id_ma
->   
->   	spin_lock_irqsave(&id_map_lock, flags);
->   
-> -	if (atomic_read(&perf_cs_etm_session_active)) {
-> -		/* set release at pending if perf still active */
-> -		coresight_trace_id_set_pend_rel(id, id_map);
-> -		cpumask_set_cpu(cpu, &cpu_id_release_pending);
-> -	} else {
-> -		/* otherwise clear id */
-> -		coresight_trace_id_free(id, id_map);
-> -		atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
-> -	}
-> +	coresight_trace_id_free(id, id_map);
-> +	atomic_set(per_cpu_ptr(id_map->cpu_map, cpu), 0);
->   
->   	spin_unlock_irqrestore(&id_map_lock, flags);
->   	DUMP_ID_CPU(cpu, id);
-> @@ -302,17 +268,17 @@ void coresight_trace_id_put_system_id(int id)
->   }
->   EXPORT_SYMBOL_GPL(coresight_trace_id_put_system_id);
->   
-> -void coresight_trace_id_perf_start(void)
-> +void coresight_trace_id_perf_start(struct coresight_trace_id_map *id_map)
->   {
-> -	atomic_inc(&perf_cs_etm_session_active);
-> +	atomic_inc(&id_map->perf_cs_etm_session_active);
->   	PERF_SESSION(atomic_read(&perf_cs_etm_session_active));
->   }
->   EXPORT_SYMBOL_GPL(coresight_trace_id_perf_start);
->   
-> -void coresight_trace_id_perf_stop(void)
-> +void coresight_trace_id_perf_stop(struct coresight_trace_id_map *id_map)
->   {
-> -	if (!atomic_dec_return(&perf_cs_etm_session_active))
-> -		coresight_trace_id_release_all_pending();
-> +	if (!atomic_dec_return(&id_map->perf_cs_etm_session_active))
-> +		coresight_trace_id_release_all(id_map);
->   	PERF_SESSION(atomic_read(&perf_cs_etm_session_active));
-
-minor nit: The global variable perf_cs_etm_session_active is no longer 
-needed and must be updated to use the id_map variant. Same as above.
-
-
->   }
->   EXPORT_SYMBOL_GPL(coresight_trace_id_perf_stop);
-> diff --git a/drivers/hwtracing/coresight/coresight-trace-id.h b/drivers/hwtracing/coresight/coresight-trace-id.h
-> index 840babdd0794..9aae50a553ca 100644
-> --- a/drivers/hwtracing/coresight/coresight-trace-id.h
-> +++ b/drivers/hwtracing/coresight/coresight-trace-id.h
-> @@ -17,9 +17,10 @@
->    * released when done.
->    *
->    * In order to ensure that a consistent cpu / ID matching is maintained
-> - * throughout a perf cs_etm event session - a session in progress flag will
-> - * be maintained, and released IDs not cleared until the perf session is
-> - * complete. This allows the same CPU to be re-allocated its prior ID.
-> + * throughout a perf cs_etm event session - a session in progress flag will be
-> + * maintained for each sink, and IDs are cleared when all the perf sessions
-> + * complete. This allows the same CPU to be re-allocated its prior ID when
-> + * events are scheduled in and out.
->    *
->    *
->    * Trace ID maps will be created and initialised to prevent architecturally
-> @@ -66,11 +67,7 @@ int coresight_trace_id_get_cpu_id_map(int cpu, struct coresight_trace_id_map *id
->   /**
->    * Release an allocated trace ID associated with the CPU.
->    *
-> - * This will release the CoreSight trace ID associated with the CPU,
-> - * unless a perf session is in operation.
-> - *
-> - * If a perf session is in operation then the ID will be marked as pending
-> - * release.
-> + * This will release the CoreSight trace ID associated with the CPU.
->    *
->    * @cpu: The CPU index to release the associated trace ID.
->    */
-> @@ -133,21 +130,21 @@ void coresight_trace_id_put_system_id(int id);
->   /**
->    * Notify the Trace ID allocator that a perf session is starting.
->    *
-> - * Increase the perf session reference count - called by perf when setting up
-> - * a trace event.
-> + * Increase the perf session reference count - called by perf when setting up a
-> + * trace event.
->    *
-> - * This reference count is used by the ID allocator to ensure that trace IDs
-> - * associated with a CPU cannot change or be released during a perf session.
-> + * Perf sessions never free trace IDs to ensure that the ID associated with a
-> + * CPU cannot change during their and other's concurrent sessions. Instead,
-> + * this refcount is used so that the last event to finish always frees all IDs.
-
-minor nit: I think it better to keep/copy the above comment to the 
-etm_event_stop where we don't do "put_trace_id"
-
-Suzuki
-
-
+> 
+> Thx.
+> 
 
