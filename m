@@ -1,202 +1,148 @@
-Return-Path: <linux-kernel+bounces-228266-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28419915D6C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:44:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52FE7915D5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:34:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0501F22682
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:44:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4341C2166C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C4476033;
-	Tue, 25 Jun 2024 03:44:48 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06BB18287F;
+	Tue, 25 Jun 2024 03:34:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YG/symxG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECC12F56
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A389373449
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719287088; cv=none; b=JqGsszc0A3C7vafbJZiu/MYPhRoXIr8rQOT54SdFD7cMXqf1SFVbphw6pJmreaPtGTEZXPnXIByaBQRCY30jJy8Q+K3PJX4GR2iBg3XDlJE7i583CQi2LD4Qi/8BMJqIujAH6pO2es8kcKqzFwxlsC9lbVdQ5efm2QDpg0E/Ozc=
+	t=1719286485; cv=none; b=AFOcADLSJBYEZXBg1W9CiwkAv7z5yt94ugP8p9yK463My8+2/y5uCXQ5mHoaylPHPwYY9E6W7Fxz7/CYlarh1wQFBevKlCFTuV2zk+JlREtRvyKy+Nth1y110BY7SLlJVmxT1Uzo3CpCJDnSYCW8iUEKX6KSyl8NtaNRC8NMk9I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719287088; c=relaxed/simple;
-	bh=3Kvs+mYkE7tvzWw+1nCQmDF5YnLkFg9jBHqNnjazxRU=;
-	h=From:Subject:To:Cc:Date:Message-ID:References:MIME-Version:
-	 Content-Type; b=nOeiuyPnP55MX/fgcqVkrhCLNINnVojQWRycOQrJMvYj6S6JMdbnrRh+EeYixIJ3ALngFKzNLO8DVQWhZmlOh8W69cTny91I2r6BfGu0qaqzFXcCK6ElNfc/gQPrVhohGdZYnr2aE42iYrQL4QaAZmz+Wji10ytygfC8jeSRv8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: c0824e5c32a311ef9305a59a3cc225df-20240625
-X-QC-Scan-Result: 0
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:94f83f07-0be2-4b29-91c3-1c7648708e1b,IP:20,
-	URL:0,TC:11,Content:0,EDM:0,RT:0,SF:-15,FILE:5,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:21
-X-CID-INFO: VERSION:1.1.38,REQID:94f83f07-0be2-4b29-91c3-1c7648708e1b,IP:20,UR
-	L:0,TC:11,Content:0,EDM:0,RT:0,SF:-15,FILE:5,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:21
-X-CID-META: VersionHash:82c5f88,CLOUDID:cd9f31ea82404ef1671e978470a70f13,BulkI
-	D:240625113357MCBYHV85,BulkQuantity:0,Recheck:0,SF:44|66|24|17|19|102,TC:0
-	,Content:0,EDM:-3,IP:-2,URL:0,File:2,RT:nil,Bulk:nil,QS:0,BEC:nil,COL:0,OS
-	I:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: c0824e5c32a311ef9305a59a3cc225df-20240625
-Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
-	(envelope-from <lizhenneng@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1029634221; Tue, 25 Jun 2024 11:33:56 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id EC7A9B803C9B;
-	Tue, 25 Jun 2024 11:33:55 +0800 (CST)
-Received: by node2.com.cn (NSMail, from userid 0)
-	id E021DB803C9B; Tue, 25 Jun 2024 11:33:55 +0800 (CST)
-From: =?UTF-8?B?5p2O55yf6IO9?= <lizhenneng@kylinos.cn>
-Subject: =?UTF-8?B?5Zue5aSNOiBSZTogW1BBVENIXSBtaWdyYXRlX3BhZ2VzOiBtb2RpZnkgbWF4IG51bWJlciBvZiBwYWdlcyB0byBtaWdyYXRlIGluIGJhdGNo?=
-To: 	=?UTF-8?B?eWluZy5odWFuZw==?= <ying.huang@intel.com>,
-Cc: 	=?UTF-8?B?QW5kcmV3IE1vcnRvbg==?= <akpm@linux-foundation.org>,
-	=?UTF-8?B?bGludXgtbW0=?= <linux-mm@kvack.org>,
-	=?UTF-8?B?bGludXgta2VybmVs?= <linux-kernel@vger.kernel.org>,
-Date: Tue, 25 Jun 2024 11:33:54 +0800
-X-Mailer: NSMAIL 7.0.0
-Message-ID: <7ii375j23j-7ikn2sd5r4@nsmail7.0.0--kylin--1>
-References: 87o77pzuq3.fsf@yhuang6-desk2.ccr.corp.intel.com
-X-Israising: 0
-X-Seclevel-1: 0
-X-Seclevel: 0
-X-Delaysendtime: Tue, 25 Jun 2024 11:33:54 +0800
+	s=arc-20240116; t=1719286485; c=relaxed/simple;
+	bh=v+peBGIoF57BoaJXnu6mP9weEMJ3K6JCIJ4fIrLUef4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Jnd+47cwElKUBcLKhET83TLHOer7sUjkNmvINotzmgJYBAng5LPhNgeE6F+UXbRkI4ac5alHG9jsmmb6WA6lgQ05fNtiKVxxXIdOOheDX3QPA3VecL0SbpPbux3xxGDHHwek9HYuZDJi/H6icjQe9bKAz2FwfNS7DxjqiIFmY78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YG/symxG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719286482;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=SGswU3DecNZJwucDpQX2LopVweijkzu4ZQLZyP0kjsM=;
+	b=YG/symxGY5HTM2FfP/nVCFPtXjpHQb2wspSP9MP/0zuiJ0jMeFXOTixH6USW1t+WZw+ogr
+	13IRPe6kE2a4SSlPNI8yZEVD761q5a2rKgh0rLH5uwoMnQl4S7BfB6tdTmpCCXLiyRzlcs
+	zqji2PMwW2942Oc/22C1AlNC8KJgMsk=
+Received: from mail-ed1-f69.google.com (mail-ed1-f69.google.com
+ [209.85.208.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-679-Z6n5CrHnPmG8VEAB9kT9FA-1; Mon, 24 Jun 2024 23:34:38 -0400
+X-MC-Unique: Z6n5CrHnPmG8VEAB9kT9FA-1
+Received: by mail-ed1-f69.google.com with SMTP id 4fb4d7f45d1cf-57d1de50e8dso2314941a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:34:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719286477; x=1719891277;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SGswU3DecNZJwucDpQX2LopVweijkzu4ZQLZyP0kjsM=;
+        b=V+kLSJdr1KsZ+dI97w+RYmpg+5deHkqQz+9ok41zqnYagzn31FwritelnhmCsFSHze
+         ncLsWWZPZpAIxAc/MHklQ6oFZGxYNDlNV9/qTfE8v++C9INCrsbL/DYvNFwW2roERhnv
+         ah7CuVGk8l0JII/FqAl1Cgbt1xM720Ulk3oU3P8Si2PO8wgzvmwuGGehZ0yeyrTamQsC
+         XQP9UgynPnugalilxRpWPqWdNjm3byXOh9OB2c1heBysSomq0xL/K9B+Lef2EiCOEcU/
+         vd37g7Bq8fAqQ4Y6u0BD7HYun9x8dnyqm8F0MxniojUafkhVhcFdsfhsgWAfgW5vWcTr
+         1LQw==
+X-Forwarded-Encrypted: i=1; AJvYcCXx6Q3OcjAYxWO5hMu8+TTX0MQmxetediX2R67/fNApZTMOraJEbpYLuF50eQSdcJsg/W0YeYmpgpLyPLMTQZunTChNPVPWTrUs677F
+X-Gm-Message-State: AOJu0Yw5d+v0Kk1GSsrxFtfXBb/Mgmq8N9ZYVn1TolYL8ZxmatUDe48S
+	Sf9MdVCjhf4XFK5wfLG0mK+zfTfljMRiL2bliyNJVcgku9du4YJr+HLrSdDm3UCDD8a37iZ60eB
+	Vr1k38kD5whJJ0RF5xxWMv1mHE1IeLnzbiS/OzqiGg4O6gQJf8zHnrJGCyQeoMA==
+X-Received: by 2002:a50:f604:0:b0:57c:aac9:cd8 with SMTP id 4fb4d7f45d1cf-57d4bd5648amr4117229a12.8.1719286477673;
+        Mon, 24 Jun 2024 20:34:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF+5fJhMOObE/CLVn4hoZPAErdgQ6Q27QwDXYiJwCXvv/sOyyQAaUyJ2xoTNyaljeRrEUGIyA==
+X-Received: by 2002:a50:f604:0:b0:57c:aac9:cd8 with SMTP id 4fb4d7f45d1cf-57d4bd5648amr4117220a12.8.1719286477316;
+        Mon, 24 Jun 2024 20:34:37 -0700 (PDT)
+Received: from lbulwahn-thinkpadx1carbongen9.rmtde.csb ([2a02:810d:7e40:14b0:4ce1:e394:7ac0:6905])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30427f8fsm5449736a12.34.2024.06.24.20.34.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 20:34:36 -0700 (PDT)
+From: Lukas Bulwahn <lbulwahn@redhat.com>
+X-Google-Original-From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+To: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-sound@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: [PATCH] MAINTAINERS: adjust file entries after adding vendor prefix in sound dtbs
+Date: Tue, 25 Jun 2024 05:34:19 +0200
+Message-ID: <20240625033419.149775-1-lukas.bulwahn@redhat.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary=nsmail-ai4b42t5cy-ai5l1w876r
-X-ns-mid: webmail-667a3aa3-aaqvq3ul
-X-ope-from: <lizhenneng@kylinos.cn>
+Content-Transfer-Encoding: 8bit
 
-This message is in MIME format.
+From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 
---nsmail-ai4b42t5cy-ai5l1w876r
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: base64
+Commit ae8fc2948b48 ("ASoC: dt-bindings: add missing vender prefix on
+filename") renames a few files in Documentation/devicetree/bindings/sound/,
+but misses to adjust the file entries pointing to those files in
+MAINTAINERS.
 
-PHA+PGJyPjxicj48YnI+PGJyPjxicj48YnI+LS0tLTwvcD4KPGRpdiBpZD0i
-Y3MyY19tYWlsX3NpZ2F0dXJlIj48L2Rpdj4KPHA+Jm5ic3A7PC9wPgo8ZGl2
-IHN0eWxlPSJtYXJnaW4tbGVmdDogMC41ZW07IHBhZGRpbmctbGVmdDogMC41
-ZW07IGJvcmRlci1sZWZ0OiAxcHggc29saWQgZ3JlZW47Ij4mbmJzcDs8L2Rp
-dj4KPGRpdiBpZD0icmUiIHN0eWxlPSJtYXJnaW4tbGVmdDogMC41ZW07IHBh
-ZGRpbmctbGVmdDogMC41ZW07IGJvcmRlci1sZWZ0OiAxcHggc29saWQgZ3Jl
-ZW47Ij48YnI+PGJyPjxicj4KPGRpdiBzdHlsZT0iYmFja2dyb3VuZC1jb2xv
-cjogI2Y1ZjdmYTsiPjxzdHJvbmc+5Li744CA6aKY77yaPC9zdHJvbmc+PHNw
-YW4gaWQ9InN1YmplY3QiPlJlOiBbUEFUQ0hdIG1pZ3JhdGVfcGFnZXM6IG1v
-ZGlmeSBtYXggbnVtYmVyIG9mIHBhZ2VzIHRvIG1pZ3JhdGUgaW4gYmF0Y2g8
-L3NwYW4+IDxicj48c3Ryb25nPuaXpeOAgOacn++8mjwvc3Ryb25nPjxzcGFu
-IGlkPSJkYXRlIj4yMDI0LTA2LTI1IDA5OjE3PC9zcGFuPiA8YnI+PHN0cm9u
-Zz7lj5Hku7bkurrvvJo8L3N0cm9uZz48c3BhbiBpZD0iZnJvbSI+eWluZy5o
-dWFuZzwvc3Bhbj4gPGJyPjxzdHJvbmc+5pS25Lu25Lq677yaPC9zdHJvbmc+
-PHNwYW4gaWQ9InRvIiBzdHlsZT0id29yZC1icmVhazogYnJlYWstYWxsOyI+
-5p2O55yf6IO9Ozwvc3Bhbj48L2Rpdj4KPGJyPgo8ZGl2IGlkPSJjb250ZW50
-Ij4KPGRpdiBjbGFzcz0idmlld2VyX3BhcnQiIHN0eWxlPSJwb3NpdGlvbjog
-cmVsYXRpdmU7Ij4KPGRpdj5IaSwgWmhlbm5lbmcsPGJyPjxicj5aaGVubmVu
-ZyBMaSB3cml0ZXM6PGJyPjxicj4mZ3Q7IFdlIHJlc3RyaWN0IHRoZSBudW1i
-ZXIgb2YgcGFnZXMgdG8gYmUgbWlncmF0ZWQgdG8gbm8gbW9yZSB0aGFuPGJy
-PiZndDsgSFBBR0VfUE1EX05SIG9yIE5SX01BWF9CQVRDSEVEX01JR1JBVElP
-TiwgYnV0IGluIGZhY3QsIHRoZTxicj4mZ3Q7IG51bWJlciBvZiBwYWdlcyB0
-byBiZSBtaWdyYXRlZCBtYXkgcmVhY2ggMipIUEFHRV9QTURfTlItMSBvciAy
-PGJyPiZndDsgKk5SX01BWF9CQVRDSEVEX01JR1JBVElPTi0xLCBpdCdzIG5v
-dCBpbiBpbmNvbnNpc3RlbnQgd2l0aCB0aGUgY29udGV4dC48YnI+PGJyPlll
-cy4gSXQncyBub3QgSFBBR0VfUE1EX05SIGV4YWN0bHkuPGJyPjxicj4mZ3Q7
-IFBsZWFzZSByZWZlciB0byB0aGUgcGF0Y2g6IDQyMDEyZTA0MzZkNChtaWdy
-YXRlX3BhZ2VzOiByZXN0cmljdCBudW1iZXI8YnI+Jmd0OyBvZiBwYWdlcyB0
-byBtaWdyYXRlIGluIGJhdGNoKTxicj4mZ3Q7PGJyPiZndDsgU2lnbmVkLW9m
-Zi1ieTogWmhlbm5lbmcgTGkgPGJyPiZndDsgLS0tPGJyPiZndDsgbW0vbWln
-cmF0ZS5jIHwgMiArLTxicj4mZ3Q7IDEgZmlsZSBjaGFuZ2VkLCAxIGluc2Vy
-dGlvbigrKSwgMSBkZWxldGlvbigtKTxicj4mZ3Q7PGJyPiZndDsgZGlmZiAt
-LWdpdCBhL21tL21pZ3JhdGUuYyBiL21tL21pZ3JhdGUuYzxicj4mZ3Q7IGlu
-ZGV4IDc4MTk3OTU2N2Y2NC4uN2E0YjM3YWFjOWU4IDEwMDY0NDxicj4mZ3Q7
-IC0tLSBhL21tL21pZ3JhdGUuYzxicj4mZ3Q7ICsrKyBiL21tL21pZ3JhdGUu
-Yzxicj4mZ3Q7IEBAIC0xOTYxLDcgKzE5NjEsNyBAQCBpbnQgbWlncmF0ZV9w
-YWdlcyhzdHJ1Y3QgbGlzdF9oZWFkICpmcm9tLCBuZXdfZm9saW9fdCBnZXRf
-bmV3X2ZvbGlvLDxicj4mZ3Q7IGJyZWFrOzxicj4mZ3Q7IH08YnI+Jmd0OyBp
-ZiAobnJfcGFnZXMgJmd0Oz0gTlJfTUFYX0JBVENIRURfTUlHUkFUSU9OKTxi
-cj4mZ3Q7IC0gbGlzdF9jdXRfYmVmb3JlKCZhbXA7Zm9saW9zLCBmcm9tLCAm
-YW1wO2ZvbGlvMi0mZ3Q7bHJ1KTs8YnI+Jmd0OyArIGxpc3RfY3V0X2JlZm9y
-ZSgmYW1wO2ZvbGlvcywgZnJvbSwgJmFtcDtmb2xpby0mZ3Q7bHJ1KTs8YnI+
-PGJyPklmIHRoZSBmaXJzdCBlbnRyeSBvZiB0aGUgbGlzdCAiZnJvbSIgaXMg
-YSBUSFAgd2l0aCBzaXplIEhQQUdFX1BNRF9OUiw8YnI+ImZvbGlvIiB3aWxs
-IGJlIHRoZSBmaXJzdCBlbnRyeSBvZiBmcm9tLCBzbyB0aGF0ICJmb2xpb3Mi
-IHdpbGwgYmUgZW1wdHkuPGJyPlJpZ2h0PzwvZGl2Pgo8L2Rpdj4KPC9kaXY+
-CjwvZGl2Pgo8ZGl2PiZuYnNwOzwvZGl2Pgo8ZGl2PlllcywgSXQncyByaWdo
-dCwgc28gd2UgY2FuIGNoZWNrIHdoZXRoZXIgaXQgaXMgdGhlIGZpcnN0IGVu
-dHJ5IG9mIHRoZSBsaXN0ICJmcm9tIiwgbmV3IHBhdGNoIGFyZSBhcyBmb2xs
-b3dzKGF0dGFjaG1lbnQgaXMgcGF0Y2ggZmlsZSk6PC9kaXY+CjxkaXY+ZGlm
-ZiAtLWdpdCBhL21tL21pZ3JhdGUuYyBiL21tL21pZ3JhdGUuYzxicj5pbmRl
-eCA3ODE5Nzk1NjdmNjQuLmNjZThlMmI4NWU4OSAxMDA2NDQ8YnI+LS0tIGEv
-bW0vbWlncmF0ZS5jPGJyPisrKyBiL21tL21pZ3JhdGUuYzxicj5AQCAtMTk1
-NywxMSArMTk1NywxMiBAQCBpbnQgbWlncmF0ZV9wYWdlcyhzdHJ1Y3QgbGlz
-dF9oZWFkICpmcm9tLCBuZXdfZm9saW9fdCBnZXRfbmV3X2ZvbGlvLDxicj59
-PGJyPjxicj5ucl9wYWdlcyArPSBmb2xpb19ucl9wYWdlcyhmb2xpbyk7PGJy
-Pi0gaWYgKG5yX3BhZ2VzICZndDs9IE5SX01BWF9CQVRDSEVEX01JR1JBVElP
-Tik8YnI+KyBpZiAoKG5yX3BhZ2VzICZndDs9IE5SX01BWF9CQVRDSEVEX01J
-R1JBVElPTikgJmFtcDsmYW1wOzxicj4rICghbGlzdF9maXJzdF9lbnRyeShm
-cm9tLCBzdHJ1Y3QgZm9saW8sIGxydSkpKTxicj5icmVhazs8YnI+fTxicj5p
-ZiAobnJfcGFnZXMgJmd0Oz0gTlJfTUFYX0JBVENIRURfTUlHUkFUSU9OKTxi
-cj4tIGxpc3RfY3V0X2JlZm9yZSgmYW1wO2ZvbGlvcywgZnJvbSwgJmFtcDtm
-b2xpbzItJmd0O2xydSk7PGJyPisgbGlzdF9jdXRfYmVmb3JlKCZhbXA7Zm9s
-aW9zLCBmcm9tLCAmYW1wO2ZvbGlvLSZndDtscnUpOzxicj5lbHNlPGJyPmxp
-c3Rfc3BsaWNlX2luaXQoZnJvbSwgJmFtcDtmb2xpb3MpOzxicj5pZiAobW9k
-ZSA9PSBNSUdSQVRFX0FTWU5DKTwvZGl2Pgo8ZGl2PiZuYnNwOzwvZGl2Pgo8
-ZGl2IGlkPSJyZSIgc3R5bGU9Im1hcmdpbi1sZWZ0OiAwLjVlbTsgcGFkZGlu
-Zy1sZWZ0OiAwLjVlbTsgYm9yZGVyLWxlZnQ6IDFweCBzb2xpZCBncmVlbjsi
-Pgo8ZGl2IGlkPSJjb250ZW50Ij4KPGRpdiBjbGFzcz0idmlld2VyX3BhcnQi
-IHN0eWxlPSJwb3NpdGlvbjogcmVsYXRpdmU7Ij4KPGRpdj48YnI+Jmd0OyBl
-bHNlPGJyPiZndDsgbGlzdF9zcGxpY2VfaW5pdChmcm9tLCAmYW1wO2ZvbGlv
-cyk7PGJyPiZndDsgaWYgKG1vZGUgPT0gTUlHUkFURV9BU1lOQyk8YnI+PGJy
-Pi0tPGJyPkJlc3QgUmVnYXJkcyw8YnI+SHVhbmcsIFlpbmc8L2Rpdj4KPC9k
-aXY+CjwvZGl2Pgo8L2Rpdj4=
+Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+broken references.
 
---nsmail-ai4b42t5cy-ai5l1w876r
-Content-Type: application/octet-stream; name="=?UTF-8?B?bWlncmF0ZV9wYWdlcy1tb2RpZnktbWF4LW51bWJlci1vZi1wYWdlcy10by1taWdyYXRlLWluLWJhdGNoLnBhdGNo?="
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; size=1364; seclevel=0; filename="=?UTF-8?B?bWlncmF0ZV9wYWdlcy1tb2RpZnktbWF4LW51bWJlci1vZi1wYWdlcy10by1taWdyYXRlLWluLWJhdGNoLnBhdGNo?="
-X-Seclevel-1: 0
-X-Seclevel: 0
+Adjust the file entries in NXP SGTL5000 DRIVER and TEXAS INSTRUMENTS AUDIO
+(ASoC/HDA) DRIVERS.
 
-RnJvbSAyNWMzZDJkZjFkMzhiNDlmMzg5MjM0ZTA3NDk3OGQwNTk0NmEwYTYz
-IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBaaGVubmVuZyBMaSA8
-bGl6aGVubmVuZ0BreWxpbm9zLmNuPgpEYXRlOiBNb24sIDI0IEp1biAyMDI0
-IDEyOjE5OjA4ICswODAwClN1YmplY3Q6IFtQQVRDSF0gbWlncmF0ZV9wYWdl
-czogbW9kaWZ5IG1heCBudW1iZXIgb2YgcGFnZXMgdG8gbWlncmF0ZSBpbiBi
-YXRjaAoKV2UgcmVzdHJpY3QgdGhlIG51bWJlciBvZiBwYWdlcyB0byBiZSBt
-aWdyYXRlZCB0byBubyBtb3JlIHRoYW4KSFBBR0VfUE1EX05SIG9yIE5SX01B
-WF9CQVRDSEVEX01JR1JBVElPTiwgYnV0IGluIGZhY3QsIHRoZQpudW1iZXIg
-b2YgcGFnZXMgdG8gYmUgbWlncmF0ZWQgbWF5IHJlYWNoIDIqSFBBR0VfUE1E
-X05SLTEgb3IgMgoqTlJfTUFYX0JBVENIRURfTUlHUkFUSU9OLTEsIGl0J3Mg
-bm90IGluIGluY29uc2lzdGVudCB3aXRoIHRoZSBjb250ZXh0LgoKUGxlYXNl
-IHJlZmVyIHRvIHRoZSBwYXRjaDogNDIwMTJlMDQzNmQ0KG1pZ3JhdGVfcGFn
-ZXM6IHJlc3RyaWN0IG51bWJlcgpvZiBwYWdlcyB0byBtaWdyYXRlIGluIGJh
-dGNoKQoKU2lnbmVkLW9mZi1ieTogWmhlbm5lbmcgTGkgPGxpemhlbm5lbmdA
-a3lsaW5vcy5jbj4KLS0tCiBtbS9taWdyYXRlLmMgfCA1ICsrKy0tCiAxIGZp
-bGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQoK
-ZGlmZiAtLWdpdCBhL21tL21pZ3JhdGUuYyBiL21tL21pZ3JhdGUuYwppbmRl
-eCA3ODE5Nzk1NjdmNjQuLmNjZThlMmI4NWU4OSAxMDA2NDQKLS0tIGEvbW0v
-bWlncmF0ZS5jCisrKyBiL21tL21pZ3JhdGUuYwpAQCAtMTk1NywxMSArMTk1
-NywxMiBAQCBpbnQgbWlncmF0ZV9wYWdlcyhzdHJ1Y3QgbGlzdF9oZWFkICpm
-cm9tLCBuZXdfZm9saW9fdCBnZXRfbmV3X2ZvbGlvLAogCQl9CiAKIAkJbnJf
-cGFnZXMgKz0gZm9saW9fbnJfcGFnZXMoZm9saW8pOwotCQlpZiAobnJfcGFn
-ZXMgPj0gTlJfTUFYX0JBVENIRURfTUlHUkFUSU9OKQorCQlpZiAoKG5yX3Bh
-Z2VzID49IE5SX01BWF9CQVRDSEVEX01JR1JBVElPTikgJiYKKwkJICAgICgh
-bGlzdF9maXJzdF9lbnRyeShmcm9tLCBzdHJ1Y3QgZm9saW8sIGxydSkpKQog
-CQkJYnJlYWs7CiAJfQogCWlmIChucl9wYWdlcyA+PSBOUl9NQVhfQkFUQ0hF
-RF9NSUdSQVRJT04pCi0JCWxpc3RfY3V0X2JlZm9yZSgmZm9saW9zLCBmcm9t
-LCAmZm9saW8yLT5scnUpOworCQlsaXN0X2N1dF9iZWZvcmUoJmZvbGlvcywg
-ZnJvbSwgJmZvbGlvLT5scnUpOwogCWVsc2UKIAkJbGlzdF9zcGxpY2VfaW5p
-dChmcm9tLCAmZm9saW9zKTsKIAlpZiAobW9kZSA9PSBNSUdSQVRFX0FTWU5D
-KQotLSAKMi4yNS4xCgo=
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+---
+ MAINTAINERS | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
---nsmail-ai4b42t5cy-ai5l1w876r--
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 77008faf25ee..0ee7a337cfa9 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16334,7 +16334,7 @@ NXP SGTL5000 DRIVER
+ M:	Fabio Estevam <festevam@gmail.com>
+ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/sound/sgtl5000.yaml
++F:	Documentation/devicetree/bindings/sound/fsl,sgtl5000.yaml
+ F:	sound/soc/codecs/sgtl5000*
+ 
+ NXP SJA1105 ETHERNET SWITCH DRIVER
+@@ -22408,13 +22408,13 @@ M:	Baojun Xu <baojun.xu@ti.com>
+ L:	alsa-devel@alsa-project.org (moderated for non-subscribers)
+ S:	Maintained
+ F:	Documentation/devicetree/bindings/sound/tas2552.txt
+-F:	Documentation/devicetree/bindings/sound/tas2562.yaml
+-F:	Documentation/devicetree/bindings/sound/tas2770.yaml
+-F:	Documentation/devicetree/bindings/sound/tas27xx.yaml
++F:	Documentation/devicetree/bindings/sound/ti,tas2562.yaml
++F:	Documentation/devicetree/bindings/sound/ti,tas2770.yaml
++F:	Documentation/devicetree/bindings/sound/ti,tas27xx.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,pcm1681.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,pcm3168a.yaml
+ F:	Documentation/devicetree/bindings/sound/ti,tlv320*.yaml
+-F:	Documentation/devicetree/bindings/sound/tlv320adcx140.yaml
++F:	Documentation/devicetree/bindings/sound/ti,tlv320adcx140.yaml
+ F:	Documentation/devicetree/bindings/sound/tlv320aic31xx.txt
+ F:	Documentation/devicetree/bindings/sound/tpa6130a2.txt
+ F:	include/sound/tas2*.h
+-- 
+2.45.2
+
 
