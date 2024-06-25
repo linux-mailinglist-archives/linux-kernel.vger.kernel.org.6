@@ -1,80 +1,80 @@
-Return-Path: <linux-kernel+bounces-229537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229538-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D7E917092
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:50:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C59D0917095
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4FA0B270EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:50:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E86FE1C21FA1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E73417C22E;
-	Tue, 25 Jun 2024 18:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B03217A932;
+	Tue, 25 Jun 2024 18:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FCyS6JPz"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TvtD9A9u"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B423178CFD
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:50:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C621369B6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719341415; cv=none; b=BJmMHIbEo1yYAM6Wr8xxd1DJKcG9lKtvsLOwbTSkzCGbLHsjbxQpj4PJZy9m7CxqchPkVhIeih+IpZj/zFl2IXjzXAtxUkoBXMNEHRWa2OgfqlSaP4kiGLQn8YWkFgwUmcSip9gvNHIc2bF7sTIu5Uj5yYMJa9Zb4cevaP9kl68=
+	t=1719341480; cv=none; b=qVIyciNtFurYxrX01ZyIB5gZRry3IW48qZIxf9UAU6Hl1eWfAXLwpOdbaGh4obuLN31yzlx05geeUqoF8WpKlYfIyMycGnoyGmjlQgmrbVhesc11e7PMXlDNNwWhBvzNCFfvvc3BgGt0WbNkqr9amSrdefnZU6yJIHEZda1XM4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719341415; c=relaxed/simple;
-	bh=R9fUK/tto7a5gKjfGU+T7PmCRDvOJCmSH1TUOopW+fg=;
+	s=arc-20240116; t=1719341480; c=relaxed/simple;
+	bh=fQyVBTpP56B/bxJYVIP44I8vSQytFd8sCgsDDjT0vyY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=McdPxJAZ6jWHEmjf6ys0MqH6Nj8ZPZEylgX6zo4N8/EsrNzXKzJWuO8guXlldnHJ4hf7C+2FZgKhXw1aQnXLH0f3j/uI1eb4JMSLSfr91KQ3QmJ/6+iLlx6fQtOquWtUO9ls194WAT/e2H8NI+1dEqKEVL7Elx3KrNxjNybZmQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FCyS6JPz; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=IO6dI3WapyfXqNXpaCszeJHNTG7wFiVvkbBblSbmQl51nioUji0imGPPFp/6oprFyvMREG8nghQtz4CxjlPF9SXmKx+z4PHN1SIBrfy6TyaI3pPD2319qTZVmsRbrhZbldprXVJGtWb+ub0c70Wi01e9t1M5L8WI6qo76D9R3BY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TvtD9A9u; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719341412;
+	s=mimecast20190719; t=1719341477;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=odVIaSYrxaWpaSKjLzWweUG/JsyIz8UD/vDjoG8NHfs=;
-	b=FCyS6JPzZtsX4D8fJEzAS/L1IvxgvqIpMPYSLeJlttuTfrr3cEd0wrHc1NSb4+gQ2TU1uf
-	Zp6N4ajFeDhc6IjyAOG46RrBIwPUNYzF7BQg08X1ydVvgy4GQmfOH29tSq6+BR3CSevmzQ
-	w4IVyh4+mRlIbOHqacHq73AuB1IOJ88=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=JC695OXK/9mVgBUJtBiA47vPzO+xwrxN7c00IjPh0LY=;
+	b=TvtD9A9uNso8teClOBizNkF7LiglVBpjbkHZIRLgWVgrKb+VDKEAE5sthstazkivHLAbjO
+	oZN1f+8Ibmk8lp44Hs8kraiYdcjdItWcwlRw2uhX8SCyfalA9iqbcxbKfOFJx3QqzGY8IP
+	SGqVvuwuGC5vMsvQqT4zwTMVK7OkP7o=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-661-MUxN1qDTOvS8aLSnKyQDSA-1; Tue, 25 Jun 2024 14:50:10 -0400
-X-MC-Unique: MUxN1qDTOvS8aLSnKyQDSA-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ec617a3355so19015831fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:50:10 -0700 (PDT)
+ us-mta-22-pt3MC-k8MP6SQ_LjWShYiA-1; Tue, 25 Jun 2024 14:51:16 -0400
+X-MC-Unique: pt3MC-k8MP6SQ_LjWShYiA-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-421eed70e30so40686835e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:51:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719341409; x=1719946209;
+        d=1e100.net; s=20230601; t=1719341475; x=1719946275;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=odVIaSYrxaWpaSKjLzWweUG/JsyIz8UD/vDjoG8NHfs=;
-        b=MF7xjqaIjjArHKD57Y/sc1BUpqn6Gl1/VKNd+ohqTXBeRZus6DrFWd4IXb2IxuGFad
-         uUYEXfhlOe88XVNFsXknwjM+3SJjPQwZ58oT2mY0c1bdvI26SwQWkGt1fNGJY3/a504C
-         nfX75GPYjxhc7UVdO3udm220uCT3gxZZ2fRNVjPsDEup6OhJXjAVIu1RLnYwEIYThdPV
-         rVZlkvXBBBfXzCgrY+BQ8KkJDsoDmx1FB8W03RdvMDyI0dFESocSrLY+QtepO8bzDPf3
-         kLf8G6F5WCsONb/hG3yhS/pBQmtYiDAqxZkfGVhUIc8HtasNgt+JzQEti+E9BKTvoVoi
-         mI/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXS+wdJ3A8+cQ8RNs4ssdNipQQe7mb3Ioexo6OaSEMho9EcDqxJ/xmSqZuZRk+mBW+4bAmLXSM81pQ3LQldzy7tgJPzEloe332sLtyT
-X-Gm-Message-State: AOJu0YyHIGuC8lFnOejBS947nLmWqTO/hoVMafqFC5oLkjehds3Ho57q
-	R0hLy7tak6PXoN9qmAvjfI//m0il8Uq2fefFRrYS+ASFluHU5a7YKmkBnMY+SljTzfx3dKtmdiv
-	zEGJy7oC+kA9RWPguZXiHJ4sWChh3DVaLp9c3Mv1sJZhU7FEkT+STDq0XniyD0A==
-X-Received: by 2002:a05:6512:688:b0:52c:9d31:3f25 with SMTP id 2adb3069b0e04-52ce185f6edmr5855153e87.43.1719341409300;
-        Tue, 25 Jun 2024 11:50:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGY+AXPX5nUhOVeBUY4Ch3TU9HFqtaTpZftm0gRPBqeEs6D4qe0etswXP/nompbKVIwRlychA==
-X-Received: by 2002:a05:6512:688:b0:52c:9d31:3f25 with SMTP id 2adb3069b0e04-52ce185f6edmr5855137e87.43.1719341408799;
-        Tue, 25 Jun 2024 11:50:08 -0700 (PDT)
+        bh=JC695OXK/9mVgBUJtBiA47vPzO+xwrxN7c00IjPh0LY=;
+        b=pYL/JFnqpNqnh+uPxeXR9cdFPJW/5tG8rgVz8j+I5GDPK6fKKpSpwnxWNUp0+ohJr8
+         Dwz63R29m/K7FXICcPWSraAQOnW3RieRgmc9USYtdx/QC5AE3kPX8TFoQcu/23BWAGWo
+         HCruDJroUtY3NuuiZto8BlOdRs3keRBOb/5pgbJRRzvu/EAxHhszwwie2wzW0X3e3Vo0
+         61T2UEJuVGJ9jLCfkpSgfzQNfP/TbJXUadLbOBVQPyVqwjFtg6GDLb/VveNYwXrmjYY1
+         60EArFZIymuZXM0546oKQ+d/BTSJo10zuiOolq2y7U3E2T7FrxtMOewUh5h4Af1tNCbv
+         3qrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWUI7Yz7eFW6JHNyfU0F00Vhmb08UakuYf1+/ZVRWBzOPJ7WLhKRZyxl3ga5oaXuXezOaeFgs8u4d/g4RH/opkT69RoY98QoTWnEpG/
+X-Gm-Message-State: AOJu0YyIRFDEKnImqHjB7noS0MzGURY2qbvNL/MNM1C0KG8F81u4h32p
+	Y3wm1zJLXg8LX0Ul6ah5t40Dnozen22U8HJhmc6ATzGajEX/R0rtB41R7QPODCfEYj3PSLHmadK
+	fglbJZlKpD04lbBBKgXTckbGLFH5lHfq7dV6cNB3MdCVask1J+j8rZ/pkkMZ3Kw==
+X-Received: by 2002:a05:600c:35c8:b0:424:8cc1:3ed9 with SMTP id 5b1f17b1804b1-4248cc14016mr57025665e9.20.1719341475352;
+        Tue, 25 Jun 2024 11:51:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHyadGgMbjx/qt+WfMBGzph+16gWei0ATkYZgVfezqTKLTq/Kkdr6NKUliHgZmdsqv5LZMwjA==
+X-Received: by 2002:a05:600c:35c8:b0:424:8cc1:3ed9 with SMTP id 5b1f17b1804b1-4248cc14016mr57025515e9.20.1719341474989;
+        Tue, 25 Jun 2024 11:51:14 -0700 (PDT)
 Received: from [192.168.1.34] (p548825e3.dip0.t-ipconnect.de. [84.136.37.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0c5492sm224286325e9.24.2024.06.25.11.50.07
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424a5b1ed1csm25323815e9.0.2024.06.25.11.51.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 11:50:08 -0700 (PDT)
-Message-ID: <f14a1ff2-6c25-4cf7-abf7-1428e62272b0@redhat.com>
-Date: Tue, 25 Jun 2024 20:50:07 +0200
+        Tue, 25 Jun 2024 11:51:14 -0700 (PDT)
+Message-ID: <33d9e4b3-4455-4431-81dc-e621cf383c22@redhat.com>
+Date: Tue, 25 Jun 2024 20:51:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,14 +82,15 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] mm/shmem: Disable PMD-sized page cache if needed
-To: Gavin Shan <gshan@redhat.com>, linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- djwong@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
+Subject: Re: [PATCH 0/4] mm/filemap: Limit page cache size to that supported
+ by xarray
+To: Andrew Morton <akpm@linux-foundation.org>, Gavin Shan <gshan@redhat.com>
+Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, djwong@kernel.org, willy@infradead.org,
  hughd@google.com, torvalds@linux-foundation.org, zhenyzha@redhat.com,
- shan.gavin@gmail.com, Ryan Roberts <ryan.roberts@arm.com>
+ shan.gavin@gmail.com
 References: <20240625090646.1194644-1-gshan@redhat.com>
- <20240625090646.1194644-5-gshan@redhat.com>
+ <20240625113720.a2fa982b5cb220b1068e5177@linux-foundation.org>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -137,168 +138,44 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <20240625090646.1194644-5-gshan@redhat.com>
+In-Reply-To: <20240625113720.a2fa982b5cb220b1068e5177@linux-foundation.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 25.06.24 11:06, Gavin Shan wrote:
-> For shmem files, it's possible that PMD-sized page cache can't be
-> supported by xarray. For example, 512MB page cache on ARM64 when
-> the base page size is 64KB can't be supported by xarray. It leads
-> to errors as the following messages indicate when this sort of xarray
-> entry is split.
+On 25.06.24 20:37, Andrew Morton wrote:
+> On Tue, 25 Jun 2024 19:06:42 +1000 Gavin Shan <gshan@redhat.com> wrote:
 > 
-> WARNING: CPU: 34 PID: 7578 at lib/xarray.c:1025 xas_split_alloc+0xf8/0x128
-> Modules linked in: binfmt_misc nft_fib_inet nft_fib_ipv4 nft_fib_ipv6   \
-> nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject        \
-> nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4  \
-> ip_set rfkill nf_tables nfnetlink vfat fat virtio_balloon drm fuse xfs  \
-> libcrc32c crct10dif_ce ghash_ce sha2_ce sha256_arm64 sha1_ce virtio_net \
-> net_failover virtio_console virtio_blk failover dimlib virtio_mmio
-> CPU: 34 PID: 7578 Comm: test Kdump: loaded Tainted: G W 6.10.0-rc5-gavin+ #9
-> Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20240524-1.el9 05/24/2024
-> pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-> pc : xas_split_alloc+0xf8/0x128
-> lr : split_huge_page_to_list_to_order+0x1c4/0x720
-> sp : ffff8000882af5f0
-> x29: ffff8000882af5f0 x28: ffff8000882af650 x27: ffff8000882af768
-> x26: 0000000000000cc0 x25: 000000000000000d x24: ffff00010625b858
-> x23: ffff8000882af650 x22: ffffffdfc0900000 x21: 0000000000000000
-> x20: 0000000000000000 x19: ffffffdfc0900000 x18: 0000000000000000
-> x17: 0000000000000000 x16: 0000018000000000 x15: 52f8004000000000
-> x14: 0000e00000000000 x13: 0000000000002000 x12: 0000000000000020
-> x11: 52f8000000000000 x10: 52f8e1c0ffff6000 x9 : ffffbeb9619a681c
-> x8 : 0000000000000003 x7 : 0000000000000000 x6 : ffff00010b02ddb0
-> x5 : ffffbeb96395e378 x4 : 0000000000000000 x3 : 0000000000000cc0
-> x2 : 000000000000000d x1 : 000000000000000c x0 : 0000000000000000
-> Call trace:
->   xas_split_alloc+0xf8/0x128
->   split_huge_page_to_list_to_order+0x1c4/0x720
->   truncate_inode_partial_folio+0xdc/0x160
->   shmem_undo_range+0x2bc/0x6a8
->   shmem_fallocate+0x134/0x430
->   vfs_fallocate+0x124/0x2e8
->   ksys_fallocate+0x4c/0xa0
->   __arm64_sys_fallocate+0x24/0x38
->   invoke_syscall.constprop.0+0x7c/0xd8
->   do_el0_svc+0xb4/0xd0
->   el0_svc+0x44/0x1d8
->   el0t_64_sync_handler+0x134/0x150
->   el0t_64_sync+0x17c/0x180
+>> Currently, xarray can't support arbitrary page cache size. More details
+>> can be found from the WARN_ON() statement in xas_split_alloc(). In our
+>> test whose code is attached below, we hit the WARN_ON() on ARM64 system
+>> where the base page size is 64KB and huge page size is 512MB. The issue
+>> was reported long time ago and some discussions on it can be found here
+>> [1].
+>>
+>> [1] https://www.spinics.net/lists/linux-xfs/msg75404.html
+>>
+>> In order to fix the issue, we need to adjust MAX_PAGECACHE_ORDER to one
+>> supported by xarray and avoid PMD-sized page cache if needed. The code
+>> changes are suggested by David Hildenbrand.
+>>
+>> PATCH[1] adjusts MAX_PAGECACHE_ORDER to that supported by xarray
+>> PATCH[2-3] avoids PMD-sized page cache in the synchronous readahead path
+>> PATCH[4] avoids PMD-sized page cache for shmem files if needed
 > 
-> Fix it by disabling PMD-sized page cache when HPAGE_PMD_ORDER is
-> larger than MAX_PAGECACHE_ORDER.
+> Questions on the timing of these.
 > 
-> Suggested-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Gavin Shan <gshan@redhat.com>
-> ---
->   mm/shmem.c | 15 +++++++++++++--
->   1 file changed, 13 insertions(+), 2 deletions(-)
+> 1&2 are cc:stable whereas 3&4 are not.
 > 
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index a8b181a63402..5453875e3810 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -541,8 +541,9 @@ static bool shmem_confirm_swap(struct address_space *mapping,
->   
->   static int shmem_huge __read_mostly = SHMEM_HUGE_NEVER;
->   
-> -bool shmem_is_huge(struct inode *inode, pgoff_t index, bool shmem_huge_force,
-> -		   struct mm_struct *mm, unsigned long vm_flags)
-> +static bool __shmem_is_huge(struct inode *inode, pgoff_t index,
-> +			    bool shmem_huge_force, struct mm_struct *mm,
-> +			    unsigned long vm_flags)
->   {
->   	loff_t i_size;
->   
-> @@ -573,6 +574,16 @@ bool shmem_is_huge(struct inode *inode, pgoff_t index, bool shmem_huge_force,
->   	}
->   }
->   
-> +bool shmem_is_huge(struct inode *inode, pgoff_t index,
-> +		   bool shmem_huge_force, struct mm_struct *mm,
-> +		   unsigned long vm_flags)
-> +{
-> +	if (!__shmem_is_huge(inode, index, shmem_huge_force, mm, vm_flags))
-> +		return false;
-> +
-> +	return HPAGE_PMD_ORDER <= MAX_PAGECACHE_ORDER;
+> I could split them and feed 1&2 into 6.10-rcX and 3&4 into 6.11-rc1.  A
+> problem with this approach is that we're putting a basically untested
+> combination into -stable: 1&2 might have bugs which were accidentally
+> fixed in 3&4.  A way to avoid this is to add cc:stable to all four
+> patches.
+> 
+> What are your thoughts on this matter?
 
-Why not check for that upfront?
-
-> +}
-> +
->   #if defined(CONFIG_SYSFS)
->   static int shmem_parse_huge(const char *str)
->   {
-
-This should make __thp_vma_allowable_orders() happy for shmem, and consequently, also khugepaged IIRC.
-
-Acked-by: David Hildenbrand <david@redhat.com>
-
-
-@Ryan,
-
-should we do something like the following on top? The use of PUD_ORDER for ordinary pagecache is
-wrong. Really only DAX is special and can support that in its own weird ways.
-
-diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-index 2aa986a5cd1b..ac63233fed6c 100644
---- a/include/linux/huge_mm.h
-+++ b/include/linux/huge_mm.h
-@@ -72,14 +72,25 @@ extern struct kobj_attribute shmem_enabled_attr;
-  #define THP_ORDERS_ALL_ANON    ((BIT(PMD_ORDER + 1) - 1) & ~(BIT(0) | BIT(1)))
-  
-  /*
-- * Mask of all large folio orders supported for file THP.
-+ * Mask of all large folio orders supported for FSDAX THP.
-   */
--#define THP_ORDERS_ALL_FILE    (BIT(PMD_ORDER) | BIT(PUD_ORDER))
-+#define THP_ORDERS_ALL_DAX     (BIT(PMD_ORDER) | BIT(PUD_ORDER))
-+
-+
-+/*
-+ * Mask of all large folio orders supported for ordinary pagecache (file/shmem)
-+ * THP.
-+ */
-+#if PMD_ORDER <= MAX_PAGECACHE_ORDER
-+#define THP_ORDERS_ALL_FILE    0
-+#else
-+#define THP_ORDERS_ALL_FILE    (BIT(PMD_ORDER))
-+#endif
-  
-  /*
-   * Mask of all large folio orders supported for THP.
-   */
--#define THP_ORDERS_ALL         (THP_ORDERS_ALL_ANON | THP_ORDERS_ALL_FILE)
-+#define THP_ORDERS_ALL         (THP_ORDERS_ALL_ANON | THP_ORDERS_ALL_FILE )
-  
-  #define TVA_SMAPS              (1 << 0)        /* Will be used for procfs */
-  #define TVA_IN_PF              (1 << 1)        /* Page fault handler */
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 89932fd0f62e..95d4a2edae39 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -88,9 +88,15 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
-         bool smaps = tva_flags & TVA_SMAPS;
-         bool in_pf = tva_flags & TVA_IN_PF;
-         bool enforce_sysfs = tva_flags & TVA_ENFORCE_SYSFS;
-+
-         /* Check the intersection of requested and supported orders. */
--       orders &= vma_is_anonymous(vma) ?
--                       THP_ORDERS_ALL_ANON : THP_ORDERS_ALL_FILE;
-+       if (vma_is_anonymous(vma))
-+               orders &= THP_ORDERS_ALL_ANON;
-+       else if (vma_is_dax(vma))
-+               orders &= THP_ORDERS_ALL_DAX;
-+       else
-+               orders &= THP_ORDERS_ALL_FILE;
-+
-         if (!orders)
-                 return 0;
-  
-
-
+Especially 4 should also be CC stable, so likely we should just do it 
+for all of them.
 
 -- 
 Cheers,
