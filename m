@@ -1,102 +1,133 @@
-Return-Path: <linux-kernel+bounces-229130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E495B916B7F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:01:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29EBB916B4E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:59:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EB7B288DCA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:01:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBEAE2823C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:59:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B38F16EC08;
-	Tue, 25 Jun 2024 15:00:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584CD16E863;
+	Tue, 25 Jun 2024 14:59:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="Q2M8zyXZ"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eOBDizG8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17961BC57;
-	Tue, 25 Jun 2024 15:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAA41BC57;
+	Tue, 25 Jun 2024 14:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327631; cv=none; b=r1tWNRjod1x2tCLOif91GGVTYF5v+2tJZzGtzHk86UWAOygDZbM1O9ZjX3CUR+GmGkWV5xaSWTpcDPC5jCsFg6j3qz9dOGR7oTh/UwPpDggELVPkbU50nNLAPJHKu5P21zhlmu1DM1Z6oOLEBDKcAizu0XKNv40VpQlVsZyF/Nk=
+	t=1719327566; cv=none; b=HiOgh9xgH00h+p0FRPa45DJ84fQQxEsq67ZoOKUQS01jqV+RLCj6b8ravaoJxltvOe2l7TEBSa4FKlR5+HI2qFMnAIJRpilAojATMqm5kniNkCfDI9C35rpFm4+Euy3AmPy4U+IQRxr1i9cMJEHeoQuGdvVjXNiA4bKycGJjqp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327631; c=relaxed/simple;
-	bh=XWDQMCEnDjXZKc6n8OfFSE1SonScXjdA1fH3SFBXSpQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RmRRYLXDgBBvcX3wvF6OVfZvlhD8Hm8DlSluX5nEb4xyYGMrXAURJWYc2x0xtMF0yvO0uYBh9IGNbpzwQ/Kyl/07X2HlTuXBqEukdh2EqGCSjJLiQNfUckKqi2qkU+Aw5xxUj6LcyaVvPwH4QPRNtnuNDttk2wk/LQZMmMa3e8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=Q2M8zyXZ; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1719327621;
-	bh=XWDQMCEnDjXZKc6n8OfFSE1SonScXjdA1fH3SFBXSpQ=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=Q2M8zyXZaOR7M633GVVzlHYspg2HcutIH2WtwMysA4BiZ9rm9WUKNpV+M0KrbCmHo
-	 17ft5wRX+xpwGPdid+6sMNNpLmT3jzihcIwQTLG4+MTXC+CaWhJZHn8lNo+uZyBpiw
-	 +JkGDnQ5V13+QELwV6TEs5K9w9uI4Y3HT7kBUeNI=
-Received: from [IPv6:240e:358:1198:3d00:dc73:854d:832e:7] (unknown [IPv6:240e:358:1198:3d00:dc73:854d:832e:7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 6B3CF6720A;
-	Tue, 25 Jun 2024 11:00:06 -0400 (EDT)
-Message-ID: <e8db013bf06d2170dc48a8252c7049c6d1ee277a.camel@xry111.site>
-Subject: Re: [PATCH 2/2] vfs: support statx(..., NULL, AT_EMPTY_PATH, ...)
-From: Xi Ruoyao <xry111@xry111.site>
-To: Huacai Chen <chenhuacai@kernel.org>, Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	io-uring@vger.kernel.org, axboe@kernel.dk, torvalds@linux-foundation.org, 
-	loongarch@lists.linux.dev
-Date: Tue, 25 Jun 2024 22:58:35 +0800
-In-Reply-To: <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
-References: <20240625110029.606032-1-mjguzik@gmail.com>
-	 <20240625110029.606032-3-mjguzik@gmail.com>
-	 <CAAhV-H47NiQ2c+7NynVxduJK-yGkgoEnXuXGQvGFG59XOBAqeg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1719327566; c=relaxed/simple;
+	bh=Eg8R1iqjyRoMVehdH74J8U/eSf94ywvDPAMbnTZuP3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vy26Pry8rrZo5b22DmmtojBenUtIlV1t0FEgKpVp4jLU4Z1jGypMM2YvjqL56I6JIVvwaGJ0lDgCHPXvE3J9dM4RShSN2Yw7pl4IEuJtLxCU+6qCOzyUwZkoa8s9+1NjHCRr07OGrpq/8K6BStfOoDaZeLZD1YHZ0h4DCzT2sJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eOBDizG8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B61C32781;
+	Tue, 25 Jun 2024 14:59:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719327566;
+	bh=Eg8R1iqjyRoMVehdH74J8U/eSf94ywvDPAMbnTZuP3o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eOBDizG81d+D1I1nw6ssfxKCVm5e96l5A/218gfLvp9liGpAzupfPcUOhbq/kMBuy
+	 TcSgVYU8J0TXwW/OM32QfIbHvfeMDEIrRZwEYL5i1foRsuTB1QJWth9ApEwNm9fuOr
+	 Q5U36vPYEgP1stG3z3qeWIO443F8CtFlKYDpruodWcRzHTeTYLDm8/Ary0GEMUAmJC
+	 kTnR3OjCf9lM3AXEGNl9QZ21hmSMkhenzdZbAUge6yYqz0KWl0J6kh1kD/1KZJKfuP
+	 z6FTr7UJRZNfZgLMAYKSQmf+9dVmXo0YhA73/Kwckmfiz1g2Ece556F8bWWcESrlVT
+	 g6vG6/A+0ONzg==
+Date: Tue, 25 Jun 2024 16:59:22 +0200
+From: Benjamin Tissoires <bentiss@kernel.org>
+To: "Luke D. Jones" <luke@ljones.dev>
+Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	jikos@kernel.org
+Subject: Re: [PATCH] Fixes: bda38f9a41 ("HID: asus: use hid for brightness
+ control on keyboard")
+Message-ID: <zmmjwgujcmzyiv72rsi2urdvighrf6enj3c4qntaqgbxrae5xw@edypjvordcng>
+References: <20240624001450.969059-1-luke@ljones.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624001450.969059-1-luke@ljones.dev>
 
-On Tue, 2024-06-25 at 22:09 +0800, Huacai Chen wrote:
-> On Tue, Jun 25, 2024 at 7:01=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com>
-> wrote:
-> >=20
-> > The newly used helper also checks for 0-sized buffers.
-> >=20
-> > This avoids path lookup code, lockref management, memory allocation
-> > and
-> > in case of NULL path userspace memory access (which can be quite
-> > expensive with SMAP on x86_64).
-> >=20
-> > statx with AT_EMPTY_PATH paired with "" or NULL argument as
-> > appropriate
-> > issued on Sapphire Rapids (ops/s):
-> > stock:=C2=A0=C2=A0=C2=A0=C2=A0 4231237
-> > 0-check:=C2=A0=C2=A0 5944063 (+40%)
-> > NULL path: 6601619 (+11%/+56%)
-> >=20
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> Hi, Ruoyao,
->=20
-> I'm a bit confused. Ii this patch a replacement of your recent patch?
+Hi Luke,
 
-Yes, both Linus and Christian hates introducing a new AT_ flag for this.
+On Jun 24 2024, Luke D. Jones wrote:
+> - Fix missing braces around initializer
+> - Remove unused function declaration from asus-wmi.h
+> 
+> Signed-off-by: Luke D. Jones <luke@ljones.dev>
 
-This patch just makes statx(fd, NULL, AT_EMPTY_PATH, ...) behave like
-statx(fd, "", AT_EMPTY_PATH, ...) instead.  NULL avoids the performance
-issue and it's also audit-able by seccomp BPF.
+You are missing Reported-by: Mark Brown <broonie@kernel.org> to give
+credits where it's due and also a link to the report:
+Link: https://lore.kernel.org/all/ZnQ03jc-xEWam2cR@sirena.org.uk/
 
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+The subject formatting is also wrong.
+
+> ---
+>  include/linux/platform_data/x86/asus-wmi.h | 11 +----------
+
+That's weird. That file shouldn't be touched from us (on the HID side)
+without the ack from Hans or the platform x86 people.
+
+And bda38f9a41 ("HID: asus: use hid for brightness...) doesn't have such
+an ack.
+
+This got me realize that the initial patch was incorrectly taken through
+the hid tree:
+
+in [1] Hans explicitely asked to take the patch through his tree.
+
+So I'm going to drop your patch from the HID tree and ask you to
+resubmit the entire patch as a v3 to the platform guys.
+
+Cheers,
+Benjamin
+
+
+[1] https://lore.kernel.org/all/b0d8eebc-5abb-4ec0-898c-af7eedc730d9@redhat.com/
+
+>  1 file changed, 1 insertion(+), 10 deletions(-)
+> 
+> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
+> index 96c780efa0d7..74b32e1d6735 100644
+> --- a/include/linux/platform_data/x86/asus-wmi.h
+> +++ b/include/linux/platform_data/x86/asus-wmi.h
+> @@ -162,15 +162,6 @@ static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
+>  #endif
+>  
+>  /* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
+> -#if IS_ENABLED(CONFIG_ASUS_WMI)
+> -bool asus_use_hid_led(void);
+> -#else
+> -static inline bool asus_use_hid_led(void)
+> -{
+> -	return true;
+> -}
+> -#endif
+> -
+>  static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
+>  	{
+>  		.matches = {
+> @@ -202,7 +193,7 @@ static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
+>  			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
+>  		},
+>  	},
+> -	NULL,
+> +	{ },
+>  };
+>  
+>  #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
+> -- 
+> 2.45.2
+> 
 
