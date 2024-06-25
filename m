@@ -1,263 +1,135 @@
-Return-Path: <linux-kernel+bounces-228996-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D340C916983
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:54:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7CC09169B4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:00:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10366B224C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:54:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 042921C253B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DF9163A9B;
-	Tue, 25 Jun 2024 13:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="rdoeJrgL"
-Received: from smtp-fw-2101.amazon.com (smtp-fw-2101.amazon.com [72.21.196.25])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE17A179967;
+	Tue, 25 Jun 2024 13:56:05 +0000 (UTC)
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0957E17C98;
-	Tue, 25 Jun 2024 13:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=72.21.196.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CECD16C696;
+	Tue, 25 Jun 2024 13:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719323687; cv=none; b=aPBD5nf456HOfkORbNABT/6NsbyzHLqtdJCuRiBrc2an1XmJzlymyyo++tsyHnriekXpGDJgsU5bkENyl3ANdKUlU2i83zWaQkjBF2EuqQa8I9cpaY61K1OP4jLvoH6Z4LCMO6lbbPWA2KE2iAt2QeEQ5Qr3g2M7Es/X6fiC0dk=
+	t=1719323765; cv=none; b=Z6oem5aW1zUBzONxNvwqjhOz9NIiZFnFkei4lUfm7bMagUMfQawly3O56gKrdDGSuHjvSv20ca3HpJ9+Nt4Lf7d0ZAyQg4fajjkdnKtozbdCdZD/Dve6eRoVmgTZdivC+PusvOVYsS5aWN+AUVG7JvX6Y6p/FKeAmwoAypj2ltM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719323687; c=relaxed/simple;
-	bh=BZP7wIc5pf7C1Ls1gm5g1uqTHaYtrk/njLx/PYW/Qeg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OdxML4v3tm9rlq2rdpgZAqa5tX7ZhhMbEeGyRRMb/qR33W3rav17PUt6OVyE8uE3LUcxLSxSMkdifJpdepV8MbG0smoUcPxauQOjyLNlY8wAnZh2v84CRWtD046UnLLScQOQ9CP8lhi+8IVwpsZxHVXKQmLO5WdAn3gH0WFG0rA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de; spf=pass smtp.mailfrom=amazon.de; dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b=rdoeJrgL; arc=none smtp.client-ip=72.21.196.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1719323686; x=1750859686;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oGCfWHyy2ugxDFebpY3wrACjPmfk419vbwqJZjgreDg=;
-  b=rdoeJrgLexL9/Bd4mkxEcGKsAL9yG/+MCihdcfHgce8siK7beer/ZNHu
-   H6mimKYM+D+ZFcyUNzQXTTc+j7HGgyt2Io+uMPzxlKN9VfLBimV/FtHV1
-   onyypaJGA7x/XzQzkA7HTxkxz7PXFLwsNfA7fbfjz4PhYd1saUWYewsGq
-   s=;
-X-IronPort-AV: E=Sophos;i="6.08,264,1712620800"; 
-   d="scan'208";a="410016268"
-Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.43.8.6])
-  by smtp-border-fw-2101.iad2.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 13:54:42 +0000
-Received: from EX19MTAEUA001.ant.amazon.com [10.0.17.79:57826]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.41.15:2525] with esmtp (Farcaster)
- id 5e7838ba-3b35-4f22-af46-8afabcdb3ea2; Tue, 25 Jun 2024 13:54:40 +0000 (UTC)
-X-Farcaster-Flow-ID: 5e7838ba-3b35-4f22-af46-8afabcdb3ea2
-Received: from EX19D033EUC004.ant.amazon.com (10.252.61.133) by
- EX19MTAEUA001.ant.amazon.com (10.252.50.192) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 25 Jun 2024 13:54:37 +0000
-Received: from u40bc5e070a0153.ant.amazon.com (10.106.82.20) by
- EX19D033EUC004.ant.amazon.com (10.252.61.133) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Tue, 25 Jun 2024 13:54:34 +0000
-Date: Tue, 25 Jun 2024 15:54:28 +0200
-From: Roman Kagan <rkagan@amazon.de>
-To: Marc Zyngier <maz@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, Catalin Marinas
-	<catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
-	<nh-open-source@amazon.com>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH] irqchip/gicv3-its: Workaround for GIC-700 erratum 2195890
-Message-ID: <ZnrMFIEyr8SKLDKk@u40bc5e070a0153.ant.amazon.com>
-Mail-Followup-To: Roman Kagan <rkagan@amazon.de>,
-	Marc Zyngier <maz@kernel.org>, linux-arm-kernel@lists.infradead.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, nh-open-source@amazon.com,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>
-References: <20240624165541.1286227-1-rkagan@amazon.de>
- <86v81xif6l.wl-maz@kernel.org>
+	s=arc-20240116; t=1719323765; c=relaxed/simple;
+	bh=eKTUBbv9gbqWGRbmVrgDqF0oc8JpDCtIs0wE8qfhpxQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=uRfteLPhTLHFRJWKWtm8PaXxYtxhYOPAyhk3gx+Sh15d9MacYJIVLRILCUxdbYNCvCBgYPF5OvegoeSIXEANW9l3ZdM3EXjSKxuS9LlBx3MwM+kZ5nMg68fAuApvUM5Y5I5lEdVpJg6RpHaGbU4AkiLr/FAawl2uvZEpVNigR8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org; spf=pass smtp.mailfrom=ovn.org; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ovn.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ovn.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0280F1BF203;
+	Tue, 25 Jun 2024 13:55:57 +0000 (UTC)
+Message-ID: <82757f26-350a-4b5f-8751-f33d0668632a@ovn.org>
+Date: Tue, 25 Jun 2024 15:55:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <86v81xif6l.wl-maz@kernel.org>
-X-ClientProxiedBy: EX19D038UWB001.ant.amazon.com (10.13.139.148) To
- EX19D033EUC004.ant.amazon.com (10.252.61.133)
+User-Agent: Mozilla Thunderbird
+Cc: dev@openvswitch.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, davem@davemloft.net, i.maximets@ovn.org
+Subject: Re: [ovs-dev] [PATCH 1/2] Add GSO UDP Offloading feature to OVS
+ Internal Port
+To: Mike Pattrick <mkp@redhat.com>, echken <chengcheng.luo@smartx.com>
+References: <20240625082924.775877-1-chengcheng.luo@smartx.com>
+ <CAHcdBH4vM5hptpwNuwpan8t+g-nCekwnEeY-Emr4aPkZxR5DSw@mail.gmail.com>
+Content-Language: en-US
+From: Ilya Maximets <i.maximets@ovn.org>
+Autocrypt: addr=i.maximets@ovn.org; keydata=
+ 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
+In-Reply-To: <CAHcdBH4vM5hptpwNuwpan8t+g-nCekwnEeY-Emr4aPkZxR5DSw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: i.maximets@ovn.org
 
-On Tue, Jun 25, 2024 at 09:45:22AM +0100, Marc Zyngier wrote:
-> On Mon, 24 Jun 2024 17:55:41 +0100,
-> Roman Kagan <rkagan@amazon.de> wrote:
-> >
-> > According to Arm CoreLink GIC-700 erratum 2195890, on GIC revisions
-> > r0p0, r0p1, r1p0 under certain conditions LPIs may remain in the Pending
-> > Table until one of a number of external events occurs.
+On 6/25/24 15:27, Mike Pattrick wrote:
+> On Tue, Jun 25, 2024 at 4:30 AM echken <chengcheng.luo@smartx.com> wrote:
+>>
+>> The OVS internal port does not support UDP fragmentation offloading,
+>> resulting in large packets sent through the OVS internal port to OVS
+>> being prematurely fragmented. This increases the total number of packets
+>> processed in the path from the vport to the OVS bridge output port,
+>> affecting transmission efficiency.
+>>
+>> Signed-off-by: echken <chengcheng.luo@smartx.com>
+>> ---
+>>  net/openvswitch/vport-internal_dev.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/net/openvswitch/vport-internal_dev.c b/net/openvswitch/vport-internal_dev.c
+>> index 74c88a6baa43..c5a72c4dc6fd 100644
+>> --- a/net/openvswitch/vport-internal_dev.c
+>> +++ b/net/openvswitch/vport-internal_dev.c
+>> @@ -110,7 +110,8 @@ static void do_setup(struct net_device *netdev)
+>>
+>>         netdev->features = NETIF_F_LLTX | NETIF_F_SG | NETIF_F_FRAGLIST |
+>>                            NETIF_F_HIGHDMA | NETIF_F_HW_CSUM |
+>> -                          NETIF_F_GSO_SOFTWARE | NETIF_F_GSO_ENCAP_ALL;
+>> +                          NETIF_F_GSO_SOFTWARE | NETIF_F_GSO_ENCAP_ALL |
+>> +                          NETIF_F_GSO_UDP | NETIF_F_GSO_UDP_L4;
 > 
-> Please add a link to the errata document.
+> I'll try testing this out, but preliminarily, NETIF_F_GSO_SOFTWARE
+> already contains NETIF_F_GSO_UDP_L4.
 
-https://developer.arm.com/documentation/SDEN-1769194/
-Will include when respinning.
+And as far as my understanding goes, NETIF_F_GSO_UDP is
+deprecated for all use, except for tuntap.  So, we probably
+shouldn't add it.  UFO generally creates more issues than
+it solves.
 
-> >
-> > No LPIs are lost but they may not be delivered in a finite time.
-> >
-> > The workaround is to issue an INV using GICR_INVLPIR to an unused, in
-> > range LPI ID to retrigger the search.
-> >
-> > Add this workaround to the quirk table.  When the quirk is applicable,
-> > carve out one LPI ID from the available range and run periodic work to
-> > do INV to it, in order to prevent GIC from stalling.
-> 
-> The errata document says a lot more:
-> 
-> <quote>
-> For physical LPIs the workaround is to issue an INV using GICR_INVLPIR
-> to an unused, in range LPI ID to retrigger the search. This could be
-> done periodically, for example, in line with a residency change, or as
-> part of servicing LPIs.  If using LPIs as the event, then the
-> GICR_INVLPIR write could be issued after servicing every LPI.
-> 
-> However, it only needs to be issued if:
-> 
-> * At least 4 interrupts in the block of 32 are enabled and mapped to
->   the current PE or, if easier,
-> 
-> * At least 4 interrupts in the block of 32 are enabled and mapped to
->   any PE
-> </quote>
-
-It didn't feel like worth optimizing for.  I'll reconsider.
-
-> > TT: https://t.corp.amazon.com/D82032616
-> 
-> Gniii????
-
-Indeed Q-/
-
-> > Signed-off-by: Elad Rosner <eladros@amazon.com>
-> > Signed-off-by: Mohamed Mediouni <mediou@amazon.com>
-> > Signed-off-by: Roman Kagan <rkagan@amazon.de>
-> 
-> Who is the author?
-
-Joint effort aka inherited ownership.  Will fix according to the
-process doc.
-
-> > +static void __maybe_unused its_quirk_gic700_2195890_work_handler(struct work_struct *work)
-> > +{
-> > +     int cpu;
-> > +     void __iomem *rdbase;
-> > +     u64 gicr_invlpir_val;
-> > +
-> > +     for_each_online_cpu(cpu) {
-> 
-> The errata document doesn't say that this need to happen for *every*
-> RD. Can you please clarify this?
-
-(Digging out a year-old comms with ARM)
-> > In multi-chip GIC system, does this write have to happen in each
-> > chip or would a write to a single GICR trigger the search in all
-> > GICDs?
-> The write needs to occur for each physical PE - in other words, to
-> each individual GICR that the search needs to be re-triggered for.
-
-> > +             raw_spin_lock(&gic_data_rdist_cpu(cpu)->rd_lock);
-> > +             gic_write_lpir(gicr_invlpir_val, rdbase + GICR_INVLPIR);
-> > +             raw_spin_unlock(&gic_data_rdist_cpu(cpu)->rd_lock);
-> 
-> No synchronisation? How is that supposed to work?
-> 
-> Also, if you need to dig into the internals of the driver, extract a
-> helper from __direct_lpi_inv().
-
-ACK
-
-> > +     }
-> > +
-> > +     schedule_delayed_work(&its_quirk_gic700_2195890_data.work,
-> > +             msecs_to_jiffies(ITS_QUIRK_GIC700_2195890_PERIOD_MSEC));
-> 
-> It would be pretty easy to detect whether an LPI was ack'ed since the
-> last pass, and not issue the invalidate.
-
-Makes sense, will look into it.
-
-Overall, do you think this approach with a global work looping over cpus
-is the right one, or we should better try and implement something
-per-cpu?
-
-> > +}
-> > +
-> > +static bool __maybe_unused its_enable_quirk_gic700_2195890(void *data)
-> > +{
-> > +     struct its_node *its = data;
-> > +
-> > +     if (its_quirk_gic700_2195890_data.lpi)
-> > +             return true;
-> > +
-> > +     /*
-> > +      * Use one LPI INTID from the start of the LPI range for GIC prodding,
-> > +      * and make it unavailable for regular LPI use later.
-> > +      */
-> > +     its_quirk_gic700_2195890_data.lpi = lpi_id_base++;
-> > +
-> > +     INIT_DELAYED_WORK(&its_quirk_gic700_2195890_data.work,
-> > +                       its_quirk_gic700_2195890_work_handler);
-> > +     schedule_delayed_work(&its_quirk_gic700_2195890_data.work, 0);
-> > +
-> > +     return true;
-> > +}
-> 
-> It is a bit odd to hook this on an ITS being probed when the ITS isn't
-> really involved. Not a big deal, but a bit clumsy.
-
-True, but the LPI allocation lives in this file so it looked easier to
-wire it all up here.  Where do you think it's more appropriate?
-
-> >  static const struct gic_quirk its_quirks[] = {
-> >  #ifdef CONFIG_CAVIUM_ERRATUM_22375
-> >       {
-> > @@ -4822,6 +4879,17 @@ static const struct gic_quirk its_quirks[] = {
-> >               .property = "dma-noncoherent",
-> >               .init   = its_set_non_coherent,
-> >       },
-> > +#ifdef CONFIG_ARM64_ERRATUM_2195890
-> > +     {
-> > +             .desc   = "ITS: GIC-700 erratum 2195890",
-> > +             /*
-> > +              * Applies to r0p0, r0p1, r1p0: iidr_var(bits 16..19) == 0 or 1
-> > +              */
-> > +             .iidr   = 0x0400043b,
-> > +             .mask   = 0xfffeffff,
-> > +             .init   = its_enable_quirk_gic700_2195890,
-> 
-> This catches r0p0 and r1p0, but not r0p1 (you require that bits 15:12
-> are 0).
-
-Ouch, right.  Given the erratum exact wording
-
-> Fault Status: Present in: r0p0, r0p1, r1p0 Fixed in: r2p0
-
-I guess I should match everything below r2p0 and allow arbitrary bits
-15:12 (i.e. set the third nibble in the mask to 0).
-
-> Overall, this requires a bit of rework. Notably, this could be
-> significantly relaxed to match the requirements of the published
-> workaround.
-
-Thanks for the propmpt review!  Will rework and respin.
-Roman.
-
-
-
-Amazon Web Services Development Center Germany GmbH
-Krausenstr. 38
-10117 Berlin
-Geschaeftsfuehrung: Christian Schlaeger, Jonathan Weiss
-Eingetragen am Amtsgericht Charlottenburg unter HRB 257764 B
-Sitz: Berlin
-Ust-ID: DE 365 538 597
-
+Best regards, Ilya Maximets.
 
