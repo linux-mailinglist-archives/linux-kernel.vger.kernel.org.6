@@ -1,83 +1,79 @@
-Return-Path: <linux-kernel+bounces-229800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A0C917457
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:41:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9745591745B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3C232863ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:41:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CB911F2453F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5712717F39B;
-	Tue, 25 Jun 2024 22:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52F0A17F398;
+	Tue, 25 Jun 2024 22:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LalejVUM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4546149C6E;
-	Tue, 25 Jun 2024 22:41:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88FE2149C6E;
+	Tue, 25 Jun 2024 22:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719355280; cv=none; b=p14PpSv11aKeNEshAudOqOdBrH+v3pl5M5EPa7qqlRDgW7Zw+QDbwiUPgPet5qnF78cHVkuVqjvcAy0pu0YHZ9J8NEwTgTtwvUjjUcptkw1xa85WHRZSC6dXjVT04Qwn9CBrSYT1k77FdInXr4snNV7ghzNzlsQeiIodfd4yII8=
+	t=1719355426; cv=none; b=i5b10hyxLrEF6hMk+kgpvvOvpEXFFyQkfNj0egfc1gp9CJPPbkStVgHusouUWnt7H6J0QQfFEKSQtAISZw3us7j90/U6wY8Hg191eYiJrFqilkCOYvKm8uKMzPDJepb0CNk0+mh02Stv3bVRTLGCNGGCAMgKXyOzO62nwWigFAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719355280; c=relaxed/simple;
-	bh=P10SFpT0eNxOw5hUhPL1NK3ZPAbCn8W+gSCPpWkouHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EqQ2pFkrt96GqUc/PqIGCg1txflaeF5oAyljLV/r1sJ32Qm5gKQaA/h1j5ZaohtqrdwYpfwSNnwX6JxtKC0H4Gx88MzxDfKO1Iaw3fFiP8/7syTk/nYEHg6OJztO3ps/yBsXtL9mJntvf76RVnmLMU15WlAxG+95pSatJ6tQq/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B608FC32781;
-	Tue, 25 Jun 2024 22:41:17 +0000 (UTC)
-Date: Tue, 25 Jun 2024 18:41:16 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: yskelg@gmail.com
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Takashi Iwai <tiwai@suse.de>, "David S.
- Miller" <davem@davemloft.net>, Thomas =?UTF-8?B?SGVsbHN0csO2bQ==?=
- <thomas.hellstrom@linux.intel.com>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Jamal Hadi Salim <jhs@mojatatu.com>, Cong Wang
- <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Taehee Yoo <ap420073@gmail.com>, Austin Kim
- <austindh.kim@gmail.com>, shjy180909@gmail.com,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- netdev@vger.kernel.org, pbuk5246@gmail.com
-Subject: Re: [PATCH] qdisc: fix NULL pointer dereference in
- perf_trace_qdisc_reset()
-Message-ID: <20240625184116.6e05c529@rorschach.local.home>
-In-Reply-To: <20240621114551.2061-3-yskelg@gmail.com>
-References: <20240621114551.2061-3-yskelg@gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719355426; c=relaxed/simple;
+	bh=TXSHlymv2cQdW6Cq8S2aO79qhvv/iUOqt59Pv0/5CXU=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=FOfd5Wa79brQnhRfIDmA98LqQWqUH4g4Pf6dXQXZoDXyr6SvXSINKiAGhzsFVqT9W7BntakVPMtzODcX5Y0DGVNih3tsyJKtW/a92WdKVh5sBvycNHJKOrTWz9cklQba8P2V5TTV/df9MR7xENCxfMwZAGhjA6mp/tWemNqKNgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LalejVUM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3666BC32781;
+	Tue, 25 Jun 2024 22:43:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1719355426;
+	bh=TXSHlymv2cQdW6Cq8S2aO79qhvv/iUOqt59Pv0/5CXU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LalejVUMAXCZLbTrD760WCKxVsMt+y/H6z57ZUZWJ8bcVEpj19D2HYs0wTGwNfn50
+	 lWMnhSd6uPZeT602t95YLigRh7bMgkNVpbcXDY0b13d+wNFpIToVB/OIU9+bzKAotf
+	 ohw/Pr2e6FkpvNZtWPIghnTGjZ2Dym6GlV1UmDWg=
+Date: Tue, 25 Jun 2024 15:43:44 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-hyperv@vger.kernel.org, virtualization@lists.linux.dev,
+ xen-devel@lists.xenproject.org, kasan-dev@googlegroups.com, Mike Rapoport
+ <rppt@kernel.org>, Oscar Salvador <osalvador@suse.de>, "K. Y. Srinivasan"
+ <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu
+ <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?ISO-8859-1?Q?P=E9rez?=
+ <eperezma@redhat.com>, Juergen Gross <jgross@suse.com>, Stefano Stabellini
+ <sstabellini@kernel.org>, Oleksandr Tyshchenko
+ <oleksandr_tyshchenko@epam.com>, Alexander Potapenko <glider@google.com>,
+ Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>
+Subject: Re: [PATCH v1 0/3] mm/memory_hotplug: use PageOffline() instead of
+ PageReserved() for !ZONE_DEVICE
+Message-Id: <20240625154344.9f3db1ddfe2cb9cdd5583783@linux-foundation.org>
+In-Reply-To: <20240607090939.89524-1-david@redhat.com>
+References: <20240607090939.89524-1-david@redhat.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Fri, 21 Jun 2024 20:45:49 +0900
-yskelg@gmail.com wrote:
+afaict we're in decent state to move this series into mm-stable.  I've
+tagged the following issues:
 
-> diff --git a/include/trace/events/qdisc.h b/include/trace/events/qdisc.h
-> index f1b5e816e7e5..170b51fbe47a 100644
-> --- a/include/trace/events/qdisc.h
-> +++ b/include/trace/events/qdisc.h
-> @@ -81,7 +81,7 @@ TRACE_EVENT(qdisc_reset,
->  	TP_ARGS(q),
-> =20
->  	TP_STRUCT__entry(
-> -		__string(	dev,		qdisc_dev(q)->name	)
-> +		__string(dev, qdisc_dev(q) ? qdisc_dev(q)->name : "noop_queue")
+https://lkml.kernel.org/r/80532f73e52e2c21fdc9aac7bce24aefb76d11b0.camel@linux.intel.com
+https://lkml.kernel.org/r/30b5d493-b7c2-4e63-86c1-dcc73d21dc15@redhat.com
 
-=46rom a tracing point of view:
+Have these been addressed and are we ready to send this series into the world?
 
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
--- Steve
-
->  		__string(	kind,		q->ops->id		)
->  		__field(	u32,		parent			)
->  		__field(	u32,		handle			)
+Thanks.
 
