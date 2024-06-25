@@ -1,557 +1,174 @@
-Return-Path: <linux-kernel+bounces-228959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E66C591691A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:37:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77DFC9168F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B4DB1F29B6B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:37:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03763289237
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D015F170822;
-	Tue, 25 Jun 2024 13:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FEB16C866;
+	Tue, 25 Jun 2024 13:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tLx9rPYo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eaCCKF6/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849C71607A7;
-	Tue, 25 Jun 2024 13:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128D015FA8A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:33:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719322554; cv=none; b=gJP9XX029mK1wZYdD6jt52fxIeJZa7nu4QXMvbVycRQnk7lbsqzCHdIeWp6gedHTX1J3D6949FqZU8w01JpI7zJdi6OzIuGy9ZdAcAGz8s0cCknYNgKjVzdyzBR+R3jp63A/ye4m8Ri4lKffaZqMhGjr9tuxjaO5jhzyCvi96MQ=
+	t=1719322413; cv=none; b=ZGe19jwXxH81aKeLrpou1whXH9Fa+hTEluto0uBLQJj/+rbMwhqrue3CAmWPPG8WeNbILzA2zMS7K2q/oH9p2rmCnBEhwg/6s1NyFDL+CoEP5fK+TO8VfEa9Vga1Ln62qXRzeWAVu3IdIfq3fLs4Oj5ebVcofeebq/BcD2qYIDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719322554; c=relaxed/simple;
-	bh=ikjoj4kkEsfTQd+RZ/gm5BExL5HjXIOoLQCCAeGquTw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SP/KbWKv1Afu2NEvO5W4c7kKPXaA8CqyXB8KLsrgfcEibPvYe6jyi9GiDSnkMwK7LCUGT5eD3HQB6BVOfuqLU2ZeyH0O1PS9JLX+OaR/En3YjrhcKjUsLeaxlgWxvTSpuB6eCeowCo5xYHkNk8kH6SiB5eAoVRP4a+nEIdrzvNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tLx9rPYo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26BF6C4AF09;
-	Tue, 25 Jun 2024 13:35:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719322554;
-	bh=ikjoj4kkEsfTQd+RZ/gm5BExL5HjXIOoLQCCAeGquTw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tLx9rPYo0bX7jP4j/Q6l/qr3B9wyAKuoW4+D5u89f3VcI0JUyXsnvlzx2YlOYrqnV
-	 5ihqsC7Nd4sfCOlL9S8mj/i6rtUvK8aJGN2PFISgz2wmNAmAoHGfDfsD7LQZKkuxyP
-	 43s+97RrNQc9eh4LTIfHyHJGTdKMjIJCkhwyrO5td8Z8LeBvydQ8vj0jGRxVqANOpk
-	 9pQMHddxl2NPmzPECDkFz4A67Il3l3w8Xz4Nxrjofhu0lLmYIogEHFSgeQwkZrHYyh
-	 Ptay7LhvqzQvXQeo7AZTYv+v9lRXnelb5QBEeKbcN74S+zXjcKfpvcWCapsJG5HFsi
-	 dRuoRHEkPDy4A==
-From: Michael Walle <mwalle@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Walle <mwalle@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Gunnar Dibbern <gunnar.dibbern@lht.dlh.de>
-Subject: [PATCH 2/2] drm/panel: add Ilitek ILI9806E panel driver
-Date: Tue, 25 Jun 2024 15:33:17 +0200
-Message-Id: <20240625133317.2869038-3-mwalle@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240625133317.2869038-1-mwalle@kernel.org>
-References: <20240625133317.2869038-1-mwalle@kernel.org>
+	s=arc-20240116; t=1719322413; c=relaxed/simple;
+	bh=alSlDhdkiJyvmI6ifHWRuAZIRHQHoXNo6fYGRI5E4GA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tiNPwnwbUkkJdynM2Z8FYyZeCaEiE9qn2DeHl4ETsy4nw7lN4GIF8y8vsCvg6dLsMFxFwmQ0r7R0mE8rRNA5mIc+l5IYvWUyU4e2sv3g35Gl07NxHXvG7CXL1hyHYYazbLTl2iL13NCvrFM/zZEsRz/tIriSNkBfeG5E24PCRhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eaCCKF6/; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719322411;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=b084P8R3rbMy/BJbC4aMnxh/+d0pYKaHDsv3RMDiIlU=;
+	b=eaCCKF6/dS5aVc9kJDB9btDzhYmBxW7D2c9/VwtGjTUj1FPMtoPpr51vgT1ReisFaqgUHL
+	E+TOxZncUv6j4wj8hqdlcbt2JJCeZhplp7nULHZHLmH7m8D/ross/oAIPlNP06T3rsTjQl
+	z7KjRByQbVImBw4bDEq4sTHXDXt3VF8=
+Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
+ [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-595-k8AO3SgWMm2m2Rck5Pad4Q-1; Tue, 25 Jun 2024 09:33:29 -0400
+X-MC-Unique: k8AO3SgWMm2m2Rck5Pad4Q-1
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42196394b72so34008295e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:33:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719322408; x=1719927208;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b084P8R3rbMy/BJbC4aMnxh/+d0pYKaHDsv3RMDiIlU=;
+        b=Tty3jeA3UpLetHOeYamqxCi9Bo/CzEbSUJNOVi4oZn3/V1/c8jXfG+6UX/MbCJPhUa
+         LLeQ3VWvY54c2Gb/4bwyxhmiSsKXOw/arHmPFspxB4jjXEW60EEUUWD3SgZq2ZZDZILk
+         8oZawugynqGkrAb1P0j61TPfEzfB0iTQ6FcdxWPCw3lNWRVXZolW0TDkmY7kMusmBDdV
+         uleo72+ZUVT8iRIS1DFPvY3f2qcc8dAQ6JHo0d8UfE791bRpOyFNKQfxid+e23AVB0Fp
+         9ZB2Ajw46S/ojM1f49/4q86sGtxY4McWe6a+j3d+Ga3HNAmNmOSLxQHyh7zPZmTtBS6f
+         d2Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcN9StstzbmOLXqx08SJleZuNH53S4zb5z8EgfxmYY3F7kSc8fwT1DNsK7cJlVAb12342wXo3As83koJvhAOmZ5tOH+7bMh4GEnuiG
+X-Gm-Message-State: AOJu0YzLBtdJX3biiNQ0caB9JOzwc/GmO3KMBLlgF8boZ5Tiz7yH9fNv
+	h3idhCFZmqtYkVYy9ww1YAb4qGh1pMifRH0Ub3zJv5r5tw4SmSpASToN+IjmsbB5UojU9PVjMqz
+	se9VYbrw/4YwRryLfE1GcA5cJJdnPVmKrxYEJLhruq298wwHKobLkRHpjYhQoaA==
+X-Received: by 2002:a05:600c:1c02:b0:424:8dba:4a3b with SMTP id 5b1f17b1804b1-4248dba4ccemr47873215e9.5.1719322408620;
+        Tue, 25 Jun 2024 06:33:28 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFynXqRqFfvBY+TB6vjUjM72qSVhbQKQIMBidJG6T3yjQSVdckLFQEsGIPL+9KksRFnlnNCpA==
+X-Received: by 2002:a05:600c:1c02:b0:424:8dba:4a3b with SMTP id 5b1f17b1804b1-4248dba4ccemr47872975e9.5.1719322408175;
+        Tue, 25 Jun 2024 06:33:28 -0700 (PDT)
+Received: from cassiopeiae ([2a02:810d:4b3f:ee94:642:1aff:fe31:a19f])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f9924sm12980580f8f.72.2024.06.25.06.33.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 06:33:27 -0700 (PDT)
+Date: Tue, 25 Jun 2024 15:33:24 +0200
+From: Danilo Krummrich <dakr@redhat.com>
+To: Andreas Hindborg <nmi@metaspace.dk>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me, a.hindborg@samsung.com,
+	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
+	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com,
+	lyude@redhat.com, robh@kernel.org, daniel.almeida@collabora.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 09/10] rust: pci: add basic PCI device / driver
+ abstractions
+Message-ID: <ZnrHJKeHLGKqEgH6@cassiopeiae>
+References: <20240618234025.15036-1-dakr@redhat.com>
+ <20240618234025.15036-10-dakr@redhat.com>
+ <877cedi98j.fsf@metaspace.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <877cedi98j.fsf@metaspace.dk>
 
-The Ortustech COM35H3P70ULC panel is based on the ILI9806E DSI display
-controller.
+On Tue, Jun 25, 2024 at 12:53:48PM +0200, Andreas Hindborg wrote:
+> Hi Danilo,
+> 
+> Thanks for working on this. I just finished rebasing the Rust NVMe
+> driver on these patches, and I have just one observation for now.
+> 
+> Danilo Krummrich <dakr@redhat.com> writes:
+> 
+> [...]
+> 
+> > +pub trait Driver {
+> > +    /// Data stored on device by driver.
+> > +    ///
+> > +    /// Corresponds to the data set or retrieved via the kernel's
+> > +    /// `pci_{set,get}_drvdata()` functions.
+> > +    ///
+> > +    /// Require that `Data` implements `ForeignOwnable`. We guarantee to
+> > +    /// never move the underlying wrapped data structure.
+> > +    ///
+> > +    /// TODO: Use associated_type_defaults once stabilized:
+> > +    ///
+> > +    /// `type Data: ForeignOwnable = ();`
+> > +    type Data: ForeignOwnable;
+> > +
+> > +    /// The type holding information about each device id supported by the driver.
+> > +    ///
+> > +    /// TODO: Use associated_type_defaults once stabilized:
+> > +    ///
+> > +    /// type IdInfo: 'static = ();
+> > +    type IdInfo: 'static;
+> > +
+> > +    /// The table of device ids supported by the driver.
+> > +    const ID_TABLE: IdTable<'static, DeviceId, Self::IdInfo>;
+> > +
+> > +    /// PCI driver probe.
+> > +    ///
+> > +    /// Called when a new platform device is added or discovered.
+> > +    /// Implementers should attempt to initialize the device here.
+> > +    fn probe(dev: &mut Device, id: Option<&Self::IdInfo>) -> Result<Self::Data>;
+> 
+> Since you changed the `Device` representation to be basically an `ARef`,
+> the `&mut` makes no sense. I think we should either pass by value or
+> immutable reference.
 
-Co-developed-by: Gunnar Dibbern <gunnar.dibbern@lht.dlh.de>
-Signed-off-by: Gunnar Dibbern <gunnar.dibbern@lht.dlh.de>
-Signed-off-by: Michael Walle <mwalle@kernel.org>
----
- MAINTAINERS                                   |   5 +
- drivers/gpu/drm/panel/Kconfig                 |   9 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- drivers/gpu/drm/panel/panel-ilitek-ili9806e.c | 413 ++++++++++++++++++
- 4 files changed, 428 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-ilitek-ili9806e.c
+Agreed, I think we should just pass it by value.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 77008faf25ee..74b538c6b8bd 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7002,6 +7002,11 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/display/panel/ilitek,ili9805.yaml
- F:	drivers/gpu/drm/panel/panel-ilitek-ili9805.c
- 
-+DRM DRIVER FOR ILITEK ILI9806E PANELS
-+M:	Michael Walle <mwalle@kernel.org>
-+S:	Maintained
-+F:	drivers/gpu/drm/panel/panel-ilitek-ili9806e.c
-+
- DRM DRIVER FOR JADARD JD9365DA-H3 MIPI-DSI LCD PANELS
- M:	Jagan Teki <jagan@edgeble.ai>
- S:	Maintained
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index bf4eadfe21cb..904a928bc60e 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -205,6 +205,15 @@ config DRM_PANEL_ILITEK_ILI9805
- 	  Say Y if you want to enable support for panels based on the
- 	  Ilitek ILI9805 controller.
- 
-+config DRM_PANEL_ILITEK_ILI9806E
-+	tristate "Ilitek ILI9806E-based panels"
-+	depends on OF
-+	depends on DRM_MIPI_DSI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	help
-+	  Say Y if you want to enable support for panels based on the
-+	  Ilitek ILI9806E controller.
-+
- config DRM_PANEL_ILITEK_ILI9881C
- 	tristate "Ilitek ILI9881C-based panels"
- 	depends on OF
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 051b75b3df7b..12ce91416849 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -21,6 +21,7 @@ obj-$(CONFIG_DRM_PANEL_HIMAX_HX8394) += panel-himax-hx8394.o
- obj-$(CONFIG_DRM_PANEL_ILITEK_IL9322) += panel-ilitek-ili9322.o
- obj-$(CONFIG_DRM_PANEL_ILITEK_ILI9341) += panel-ilitek-ili9341.o
- obj-$(CONFIG_DRM_PANEL_ILITEK_ILI9805) += panel-ilitek-ili9805.o
-+obj-$(CONFIG_DRM_PANEL_ILITEK_ILI9806E) += panel-ilitek-ili9806e.o
- obj-$(CONFIG_DRM_PANEL_ILITEK_ILI9881C) += panel-ilitek-ili9881c.o
- obj-$(CONFIG_DRM_PANEL_ILITEK_ILI9882T) += panel-ilitek-ili9882t.o
- obj-$(CONFIG_DRM_PANEL_INNOLUX_EJ030NA) += panel-innolux-ej030na.o
-diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9806e.c b/drivers/gpu/drm/panel/panel-ilitek-ili9806e.c
-new file mode 100644
-index 000000000000..c3942eda668d
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-ilitek-ili9806e.c
-@@ -0,0 +1,413 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/errno.h>
-+#include <linux/fb.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/property.h>
-+
-+#include <linux/gpio/consumer.h>
-+#include <linux/regulator/consumer.h>
-+
-+#include <drm/drm_mipi_dsi.h>
-+#include <drm/drm_modes.h>
-+#include <drm/drm_panel.h>
-+
-+#include <video/mipi_display.h>
-+
-+struct panel_desc {
-+	const struct drm_display_mode *display_mode;
-+	unsigned long mode_flags;
-+	enum mipi_dsi_pixel_format format;
-+	unsigned int lanes;
-+	void (*init_sequence)(struct mipi_dsi_multi_context *ctx);
-+};
-+
-+struct ili9806e_panel {
-+	struct drm_panel panel;
-+	struct mipi_dsi_device *dsi;
-+	struct gpio_desc *reset_gpio;
-+	struct regulator_bulk_data supplies[2];
-+	const struct panel_desc *desc;
-+	enum drm_panel_orientation orientation;
-+};
-+
-+static const char * const regulator_names[] = {
-+	"vdd",
-+	"vccio",
-+};
-+
-+static inline struct ili9806e_panel *to_ili9806e_panel(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct ili9806e_panel, panel);
-+}
-+
-+static int ili9806e_power_on(struct ili9806e_panel *ctx)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	int ret;
-+
-+	gpiod_set_value(ctx->reset_gpio, 1);
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+	if (ret < 0) {
-+		dev_err(&dsi->dev, "regulator bulk enable failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	usleep_range(10000, 20000);
-+	gpiod_set_value(ctx->reset_gpio, 0);
-+	usleep_range(10000, 20000);
-+
-+	return 0;
-+}
-+
-+static int ili9806e_power_off(struct ili9806e_panel *ctx)
-+{
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	int ret;
-+
-+	gpiod_set_value(ctx->reset_gpio, 1);
-+
-+	ret = regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+	if (ret)
-+		dev_err(&dsi->dev, "regulator bulk disable failed: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static int ili9806e_on(struct ili9806e_panel *ili9806e)
-+{
-+	struct mipi_dsi_multi_context ctx = { .dsi = ili9806e->dsi };
-+
-+	if (ili9806e->desc->init_sequence)
-+		ili9806e->desc->init_sequence(&ctx);
-+
-+	mipi_dsi_dcs_exit_sleep_mode_multi(&ctx);
-+	mipi_dsi_msleep(&ctx, 120);
-+	mipi_dsi_dcs_set_display_on_multi(&ctx);
-+
-+	return ctx.accum_err;
-+}
-+
-+static int ili9806e_off(struct ili9806e_panel *panel)
-+{
-+	struct mipi_dsi_multi_context ctx = { .dsi = panel->dsi };
-+
-+	mipi_dsi_dcs_set_display_off_multi(&ctx);
-+	mipi_dsi_dcs_enter_sleep_mode_multi(&ctx);
-+	mipi_dsi_msleep(&ctx, 120);
-+
-+	return ctx.accum_err;
-+}
-+
-+static int ili9806e_prepare(struct drm_panel *panel)
-+{
-+	struct ili9806e_panel *ctx = to_ili9806e_panel(panel);
-+	int ret;
-+
-+	ret = ili9806e_power_on(ctx);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = ili9806e_on(ctx);
-+	if (ret < 0) {
-+		ili9806e_power_off(ctx);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ili9806e_unprepare(struct drm_panel *panel)
-+{
-+	struct ili9806e_panel *ctx = to_ili9806e_panel(panel);
-+	struct mipi_dsi_device *dsi = ctx->dsi;
-+	int ret;
-+
-+	ili9806e_off(ctx);
-+
-+	ret = ili9806e_power_off(ctx);
-+	if (ret < 0)
-+		dev_err(&dsi->dev, "power off failed: %d\n", ret);
-+
-+	return ret;
-+}
-+
-+static int ili9806e_get_modes(struct drm_panel *panel,
-+			      struct drm_connector *connector)
-+{
-+	struct ili9806e_panel *ctx = to_ili9806e_panel(panel);
-+	struct drm_display_mode *mode;
-+
-+	mode = drm_mode_duplicate(connector->dev, ctx->desc->display_mode);
-+	if (!mode)
-+		return -ENOMEM;
-+
-+	drm_mode_set_name(mode);
-+
-+	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-+	connector->display_info.width_mm = mode->width_mm;
-+	connector->display_info.height_mm = mode->height_mm;
-+	drm_mode_probed_add(connector, mode);
-+
-+	return 1;
-+}
-+
-+static enum drm_panel_orientation ili9806e_get_orientation(struct drm_panel *panel)
-+{
-+	struct ili9806e_panel *ctx = to_ili9806e_panel(panel);
-+
-+	return ctx->orientation;
-+}
-+
-+static const struct drm_panel_funcs ili9806e_funcs = {
-+	.prepare = ili9806e_prepare,
-+	.unprepare = ili9806e_unprepare,
-+	.get_modes = ili9806e_get_modes,
-+	.get_orientation = ili9806e_get_orientation,
-+};
-+
-+static int ili9806e_dsi_probe(struct mipi_dsi_device *dsi)
-+{
-+	struct device *dev = &dsi->dev;
-+	struct ili9806e_panel *ctx;
-+	int i, ret;
-+
-+	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	ctx->desc = device_get_match_data(dev);
-+
-+	for (i = 0; i < ARRAY_SIZE(ctx->supplies); i++)
-+		ctx->supplies[i].supply = regulator_names[i];
-+
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ctx->supplies),
-+				      ctx->supplies);
-+	if (ret < 0)
-+		return ret;
-+
-+	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(ctx->reset_gpio))
-+		return dev_err_probe(dev, PTR_ERR(ctx->reset_gpio),
-+				     "Failed to get reset-gpios\n");
-+
-+	mipi_dsi_set_drvdata(dsi, ctx);
-+	ctx->dsi = dsi;
-+
-+	dsi->mode_flags = ctx->desc->mode_flags;
-+	dsi->format = ctx->desc->format;
-+	dsi->lanes = ctx->desc->lanes;
-+
-+	drm_panel_init(&ctx->panel, dev, &ili9806e_funcs,
-+		       DRM_MODE_CONNECTOR_DSI);
-+
-+	ret = of_drm_get_panel_orientation(dev->of_node, &ctx->orientation);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to get orientation\n");
-+
-+	ret = drm_panel_of_backlight(&ctx->panel);
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to get backlight\n");
-+
-+	ctx->panel.prepare_prev_first = true;
-+	drm_panel_add(&ctx->panel);
-+
-+	ret = mipi_dsi_attach(dsi);
-+	if (ret < 0) {
-+		dev_err_probe(dev, ret, "Failed to attach to DSI host\n");
-+		drm_panel_remove(&ctx->panel);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static void ili9806e_dsi_remove(struct mipi_dsi_device *dsi)
-+{
-+	struct ili9806e_panel *ctx = mipi_dsi_get_drvdata(dsi);
-+
-+	mipi_dsi_detach(dsi);
-+	drm_panel_remove(&ctx->panel);
-+}
-+
-+static void com35h3p70ulc_init(struct mipi_dsi_multi_context *ctx)
-+{
-+	/* Switch to page 1 */
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xff, 0xff, 0x98, 0x06, 0x04, 0x01);
-+	/* Interface Settings */
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x08, 0x18);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x21, 0x01);
-+	/* Panel Settings */
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x30, 0x03);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x31, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x60, 0x0d);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x61, 0x08);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x62, 0x08);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x63, 0x09);
-+	/* Power Control */
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x40, 0x30);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x41, 0x44);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x42, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x43, 0x89);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x44, 0x8e);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x45, 0xd9);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x46, 0x33);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x47, 0x33);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x50, 0x90);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x51, 0x90);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x56, 0x00);
-+	/* Gamma Settings */
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xa0, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xa1, 0x0c);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xa2, 0x13);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xa3, 0x0f);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xa4, 0x0a);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xa5, 0x0d);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xa6, 0x0c);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xa7, 0x0b);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xa8, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xa9, 0x06);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xaa, 0x15);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xab, 0x07);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xac, 0x12);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xad, 0x28);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xae, 0x20);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xaf, 0x14);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xc0, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xc1, 0x0c);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xc2, 0x13);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xc3, 0x0f);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xc4, 0x09);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xc5, 0x0d);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xc6, 0x0c);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xc7, 0x0b);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xc8, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xc9, 0x06);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xca, 0x14);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xcb, 0x07);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xcc, 0x0f);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xcd, 0x21);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xce, 0x17);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xcf, 0x0a);
-+
-+	/* Switch to page 7 */
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xff, 0xff, 0x98, 0x06, 0x04, 0x07);
-+	/* Power Control */
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x06, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x18, 0x1d);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x17, 0x32);
-+
-+	/* Switch to page 6 */
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xff, 0xff, 0x98, 0x06, 0x04, 0x06);
-+	/* GIP settings */
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x00, 0x20);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x01, 0x02);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x02, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x03, 0x02);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x04, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x05, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x06, 0x88);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x07, 0x04);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x08, 0x03);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x09, 0x80);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x0a, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x0b, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x0c, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x0d, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x0e, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x0f, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x10, 0x55);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x11, 0x50);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x12, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x13, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x14, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x15, 0x43);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x16, 0x0b);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x17, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x18, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x19, 0x10);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x1a, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x1b, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x1c, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x1d, 0x00);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x20, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x21, 0x23);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x22, 0x45);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x23, 0x67);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x24, 0x01);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x25, 0x23);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x26, 0x45);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x27, 0x67);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x30, 0x02);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x31, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x32, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x33, 0x88);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x34, 0xaa);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x35, 0xbb);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x36, 0x66);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x37, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x38, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x39, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x3a, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x3b, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x3c, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x3d, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x3e, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x3f, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x40, 0x22);
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x53, 0x12);
-+
-+	/* Switch to page 0 */
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0xff, 0xff, 0x98, 0x06, 0x04, 0x00);
-+	/* Interface Pixel format */
-+	mipi_dsi_dcs_write_seq_multi(ctx, 0x3a, 0x60);
-+};
-+
-+static const struct drm_display_mode com35h3p70ulc_default_mode = {
-+	.clock = 22400,
-+	.hdisplay = 480,
-+	.hsync_start = 480 + 16,
-+	.hsync_end = 480 + 16 + 16,
-+	.htotal = 480 + 16 + 16 + 16,
-+	.vdisplay = 640,
-+	.vsync_start = 640 + 52,
-+	.vsync_end = 640 + 52 + 4,
-+	.vtotal = 640 + 52 + 4 + 16,
-+	.width_mm = 53,
-+	.height_mm = 71,
-+};
-+
-+static const struct panel_desc com35h3p70ulc_desc = {
-+	.init_sequence = com35h3p70ulc_init,
-+	.display_mode = &com35h3p70ulc_default_mode,
-+	.mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
-+		      MIPI_DSI_MODE_LPM,
-+	.format = MIPI_DSI_FMT_RGB888,
-+	.lanes = 2,
-+};
-+
-+static const struct of_device_id ili9806e_of_match[] = {
-+	{ .compatible = "ortustech,com35h3p70ulc", .data = &com35h3p70ulc_desc },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, ili9806e_of_match);
-+
-+static struct mipi_dsi_driver ili9806e_dsi_driver = {
-+	.driver = {
-+		.name = "ili9806e-dsi",
-+		.of_match_table = ili9806e_of_match,
-+	},
-+	.probe = ili9806e_dsi_probe,
-+	.remove = ili9806e_dsi_remove,
-+};
-+module_mipi_dsi_driver(ili9806e_dsi_driver);
-+
-+MODULE_AUTHOR("Gunnar Dibbern <gunnar.dibbern@lht.dlh.de>");
-+MODULE_AUTHOR("Michael Walle <mwalle@kernel.org>");
-+MODULE_DESCRIPTION("Ilitek ILI9806E Controller Driver");
-+MODULE_LICENSE("GPL");
--- 
-2.39.2
+I also noticed that I need to fix `set_master` and `enable_device_mem` to
+require a mutable reference.
+
+> 
+> 
+> Best regards,
+> Andreas
+> 
+> 
+> > +
+> > +    /// PCI driver remove.
+> > +    ///
+> > +    /// Called when a platform device is removed.
+> > +    /// Implementers should prepare the device for complete removal here.
+> > +    fn remove(data: &Self::Data);
+> > +}
+> > +
+> > +/// The PCI device representation.
+> > +///
+> > +/// A PCI device is based on an always reference counted `device:Device` instance. Cloning a PCI
+> > +/// device, hence, also increments the base device' reference count.
+> > +#[derive(Clone)]
+> > +pub struct Device(ARef<device::Device>);
+> > +
+> 
 
 
