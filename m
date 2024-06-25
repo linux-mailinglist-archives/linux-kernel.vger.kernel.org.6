@@ -1,113 +1,118 @@
-Return-Path: <linux-kernel+bounces-229691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 945669172D3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:57:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFF4B9172D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:57:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E49D1F221D7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:57:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 852A91F21F6D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5A2617E46D;
-	Tue, 25 Jun 2024 20:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3886D17E8EE;
+	Tue, 25 Jun 2024 20:56:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PY+9dGnl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iU2nVr7U"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2385017DE0D;
-	Tue, 25 Jun 2024 20:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AE017DE0D;
+	Tue, 25 Jun 2024 20:56:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719348892; cv=none; b=S6PJwAM4tX8/qBOuRIZI4TfCoL0kXu/Ll8SFKDApwBOjYOADAbgq9AJTHabs+vlzTx2F29eSSwhg40Eul8MhejMa7/lBk0StJXsAD7TB1S4ZJQbCCc3m0ZbxyIvG1DN7KS2hVvYxG4yfa3twfLNbSMe+2QKYYb1ld4IuLPJMnAQ=
+	t=1719348970; cv=none; b=SmrYd3EpLRYdEEHJ9wneF7uxGfIZSeGcltPlrbO1ACd1iGRYbVDVoaFdmbeAK9Sw6LHh9NabMbyKwHzQzafS4RBDVwOijgXN/PPOSXcwOKyjiQQSbbzX+TYRwzWTUlFE3ukc5+8btKv2YNekED40YYA6FaGZMIwfSNtqAohHTDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719348892; c=relaxed/simple;
-	bh=90JxXMwAQdEoqPTBZdjiAQkPsbYbs3lEK4ueZuV6rfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fX8LWiq7webCID3bswWlWRpp6AUUSfsEo089VY1MC5jOEwq1AbtbYJwnfWWQvnAZI7wq6eW/iBv1feIsfZ9SHTbYdvAr5nqokL+eKmdMGUvKDJH7maqrhxh1v8oh0w+zuzTnj7V26MAuvOnYNm/N4TP5ynoC3nooIbk8vWEmjVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PY+9dGnl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CB0AC32781;
-	Tue, 25 Jun 2024 20:54:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719348891;
-	bh=90JxXMwAQdEoqPTBZdjiAQkPsbYbs3lEK4ueZuV6rfM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PY+9dGnlpf02927QxtxB7T4yvM26377X0yz3E70G4INuslxnpUh9z0t/odCZPo/mX
-	 qHYaC+a18d6N/N5+xP+7ox3qC1/ZlBrN7IAtObI7LPUAvJ+jd8qJ4QVLT56N2mIyCl
-	 QmTzUxiMZttAJXz2kSmiTh2e62AoMk7r2y1D9KFjOSs9c2ddbujz/lpv4ku0b4SXZ6
-	 t1AheFnJbpI76SyRs4ZrnesPHu9irZSJHTkHGC6QuDktMbY6iU+fWTRs7N/wFY8hTh
-	 kY/1Exl+bEh2lBZ2NNX0/HpSjyF2ggF+pf0koPpwZtx1hkKaJSDRD6oX87tlO5JCTd
-	 reQTorBnqFVqQ==
-Date: Tue, 25 Jun 2024 22:54:45 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Kanak Shilledar <kanakshilledar@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vladimir Zapolskiy <vz@mleia.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3] dt-bindings: i2c: nxp,lpc1788-i2c: convert to dt
- schema
-Message-ID: <fkycdpk7wstgnkmdlp4upkzqpasc4xjcrgwj6zfckj6megg3om@qn2stul7fcxx>
-References: <20240625065939.6146-1-kanakshilledar@gmail.com>
- <03174142-a2c0-4f9f-81ca-2aeb7f57ab79@kernel.org>
- <329ef10f-14d1-4346-8496-906aaf91ccfe@kernel.org>
- <CAGLn_=vWxoHJivPgLHov8h7wHxmTH0y19twN=Xhyh_rZEmjbOg@mail.gmail.com>
+	s=arc-20240116; t=1719348970; c=relaxed/simple;
+	bh=4TZx/NfkObkpzkc/APTFna1AeS4OYt2PJPB+5fHGxJA=;
+	h=Message-ID:Date:From:To:Subject:MIME-Version:Content-Type:
+	 Content-Disposition; b=O7IoVaJ9I+cGsGM1lzriK5DK7gF1q4dbTAllu7Jgi2OpMbc0fVTMsUGQuYnDvTn8Jqbm3IyQJY2Vhm4vqwGNRVa3bzGcHyy3QrXEVMUQu7VvsnDtl+xqN2qyqk0/6OM5c2WIqGNa2TLzY8IlGqDBrHURx3MXtFNkPqzg0OguT7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iU2nVr7U; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4248ff53f04so19081775e9.0;
+        Tue, 25 Jun 2024 13:56:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719348967; x=1719953767; darn=vger.kernel.org;
+        h=content-disposition:mime-version:subject:to:from:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1+Ls/mue/yKH5kT6gkdnCfSWbjbKMTHc7IBMS9nMVyE=;
+        b=iU2nVr7UwlhmVIdfU4ZOlgkctUcBcOKDgNJiL36KxgL6HWohZkGdCoHkKc18akxJtc
+         Q8i4Rk11TzUJMjKPjGqvXSp1YofZZ0rwk/qruF8pDzRn1XyBmjKzk2z/zpkXdANgfh6f
+         +UKl5m4+BW3JvYker9cmb8iVENkF/ICIWloJARw3pzUPd+EN9ajCKZG41lIq55/I45yq
+         41pBkJnp+IUlMPZYOlbpSU3RW0o2HEeTk1OYW+2T5c7Xxg9eIIyEXDcdGLbOZKOR4UMf
+         NSOeuCfzqRUQ0LBlvPuE2dJAeybkGqku0wWmFsZoF+TKHQPtsm6RGx4Q/EOLmrKQkpX8
+         HA2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719348967; x=1719953767;
+        h=content-disposition:mime-version:subject:to:from:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1+Ls/mue/yKH5kT6gkdnCfSWbjbKMTHc7IBMS9nMVyE=;
+        b=XoTw7VedVBt7KGH/cAxrE4aSI00XUqY9oArhEWXOhlpVgdKDjIVi+Mf1cguoRKzX7J
+         qBbqCgpoEZwWEQkYQSy3WNAkmZ09m9AHblaxXLOvsUDNARXQ/uoPjpL6rha45mz2COwo
+         qtCcDv/J0ViFKbbOaWyUL2ODWF40vvpqAHjLXHGXi2JT+g0sHFJYmj6ak+E86kyrjqmZ
+         tvzlKecxauPmDuMuuFZyNUdoceuXRK2fKap1WfSuWFB/CcQ1Nguca/mBvYo4lj9c4Wqh
+         CONKRFwUC/A9JvPqX5Q3v5g25sb2hy4qCvbzAwDlqDM+7F4pfkkwT8w0iv3e3juR43Yv
+         KrEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdyUuIBL2Hv7vQHec5iLpPkPDu0Er5yOcvTGBEcRGFp76Yc1bLXTH5bfNhSh49soyCvFzwsHkCdIqGzlK2IHchxugfuhAJwFe+dfxSKIHkZxn8+bcdoW0JiJfpxeDeyP4a1o/7Gx7Qk7o=
+X-Gm-Message-State: AOJu0YzCDMCNHdcj/0KEyelwqCyoahjnr+O8mrdCkD5QZjsJkG4xVjnj
+	YXdB4FtsPIK6K2mZiR7sLXh/R3uo40/9nyQA+0FvIFgIhqwFPXn/lMX1dwtk
+X-Google-Smtp-Source: AGHT+IHw9TipA593kOXWiJMUeI5WtU1PYeHcpZuyczazsGbDyEnBHO3M4WOBMwEhgG/AgFK/9XRE6Q==
+X-Received: by 2002:a5d:5f48:0:b0:366:e90f:3758 with SMTP id ffacd0b85a97d-366e90f38b2mr7658299f8f.10.1719348967222;
+        Tue, 25 Jun 2024 13:56:07 -0700 (PDT)
+Received: from laptom (88-121-55-84.subs.proxad.net. [88.121.55.84])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366fa9f612fsm4334598f8f.106.2024.06.25.13.56.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 13:56:06 -0700 (PDT)
+Message-ID: <667b2ee6.050a0220.f9c1.5426@mx.google.com>
+X-Google-Original-Message-ID: <Znsu5ZeV539ZdT8x@laptom.>
+Date: Tue, 25 Jun 2024 22:56:05 +0200
+From: Tom Mounet <tommounet@gmail.com>
+To: Marc Dietrich <marvin24@gmx.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	ac100@lists.launchpad.net, linux-tegra@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org,
+	outreachy@lists.linux.dev
+Subject: [PATCH] staging: nvec: use x instead of x != NULL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGLn_=vWxoHJivPgLHov8h7wHxmTH0y19twN=Xhyh_rZEmjbOg@mail.gmail.com>
 
-On Tue, Jun 25, 2024 at 04:37:47PM GMT, Kanak Shilledar wrote:
-> On Tue, Jun 25, 2024 at 12:33 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > On 25/06/2024 09:02, Krzysztof Kozlowski wrote:
-> > > On 25/06/2024 08:59, Kanak Shilledar wrote:
-> > >> Convert the NXP I2C controller for LPC2xxx/178x/18xx/43xx
-> > >> to newer DT schema. Created DT schema based on the .txt file
-> > >> - added maintainer from the MAINTAINERS file.
-> > >> - added resets property required by the corresponding DTS files.
-> > >>
-> > >> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> > >> Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
-> > >> ---
-> > >> Changes in v3:
-> > > you already sent v3 so this is rather v4. What happened here? Why are
-> > > you resending this?
-> >
-> > Ah, I see the changes - you dropped the incorrect tags. It's fine but it
-> > should have been v4. Not sure how b4 or other tools will handle this.
+Comply with coding rules defined in checkpatch
 
-why should b4 complain? I fetch it from the mail-id. And even if
-b4 complains, good old git-am still works :-)
+Signed-off-by: Tom Mounet <tommounet@gmail.com>
+---
+ drivers/staging/nvec/nvec.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> I thought there is no need to bump up the version just for changing tags.
+diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+index e5ca78e57..814eb121c 100644
+--- a/drivers/staging/nvec/nvec.c
++++ b/drivers/staging/nvec/nvec.c
+@@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+ {
+ 	mutex_lock(&nvec->sync_write_mutex);
+ 
+-	if (msg != NULL)
++	if (msg)
+ 		*msg = NULL;
+ 
+ 	nvec->sync_write_pending = (data[1] << 8) + data[0];
+@@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+ 
+ 	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
+ 
+-	if (msg != NULL)
++	if (msg)
+ 		*msg = nvec->last_sync_msg;
+ 	else
+ 		nvec_msg_free(nvec, nvec->last_sync_msg);
+-- 
+2.39.2
 
-You should increase the version number for every single change,
-even trivial changes in the commit log. If you are sending again
-the same patch (which means that you are git-sending the same
-.patch file without any change), then you should tag it as [PATCH
-RESEND].
-
-> Shall I resend it as v4 and update the commit message with the change
-> log to include
-> the removal of kernel bot tags and addition of your review tag?
-
-No need, your patch has been added to i2c/i2c-host.
-
-Thanks,
-Andi
-
-> > Best regards,
-> > Krzysztof
-> 
-> Thanks and Regards,
-> Kanak Shilledar
 
