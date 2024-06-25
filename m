@@ -1,98 +1,160 @@
-Return-Path: <linux-kernel+bounces-228548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B04916184
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:45:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1920591618D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:46:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 743121C23475
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:45:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CFDEB203B3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C18B50A63;
-	Tue, 25 Jun 2024 08:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27440149DFD;
+	Tue, 25 Jun 2024 08:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Tc/NBH7M"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b="pdWtEZ3p"
+Received: from AUS01-SY4-obe.outbound.protection.outlook.com (mail-sy4aus01olkn2184.outbound.protection.outlook.com [40.92.62.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8B345038;
-	Tue, 25 Jun 2024 08:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719305123; cv=none; b=Itasc2rfBa4o59Kb/Wk+QekN4yMlqo94Ls3vXa0Ds6Hnosg0Qwu5i3p1ifJYCdfsPmDKy6dAeIoV4zaqsileOW3vTzeaIE8McbhHUzknYGMYCH7c/you0PyoS6+jXp4pO2WGhfTpxvQ7jP7WJXHHDS84z6bN8XHILy7rrMkaIBw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719305123; c=relaxed/simple;
-	bh=mj1NnDHMlm+CMxrJ5SMFcXe/X9knYSfeszcPN6HgYhY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QWPVHdoO/fEP0KJOX78Pb/zv0RkJwHf9pN6eJ7P6LPL1eFcpOZ74Fs1kOuly3Fxa4BdMsWJEUAxEKiLI9g1Z/cL+e1sWb9Etp8nakYQA3BfqjRBEb830hDrVHxW/bM2mJj2xk+4Kc4xV5Hr9Q3JZ1CVLC7aYo/E4UKm7QKEIm/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Tc/NBH7M; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719305122; x=1750841122;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mj1NnDHMlm+CMxrJ5SMFcXe/X9knYSfeszcPN6HgYhY=;
-  b=Tc/NBH7MZfEZLK8i+6+wdGr2/4u1NWw8c7IjhZB3CniFgsuWbzX3spQd
-   Z4nJ2cT/mYt17vIhGMclf4C9/2zHlMAMzu3Y1UcKrFzd+u+k3Mp9tuhbi
-   Rnw7GC3xCT886WnFB3YAn/qJm7NTVRWnHX/eC360BqAnldF1l0h0YkGNZ
-   iO9bR13FNRKIDW2CrQFuLYTWGo9GawczzdNRuyphVpfbGXDWF4uVCjChe
-   vf3mqOmTQV/AsfpeLqWQyXxZwfcU9+FbAFIZ9voRGL8Df+vxXURYl6XAQ
-   0RqzqyDC8taQ4w8ZGKJFBH3/XmQ8Ka6lnU9eQSCHr1qVCDFjvEaPzQ+Tv
-   g==;
-X-CSE-ConnectionGUID: KefOEmrWT02qV2dY3l+SHQ==
-X-CSE-MsgGUID: OBEj+FEFQiO9E/5qKt+ERw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="33764658"
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="33764658"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 01:45:21 -0700
-X-CSE-ConnectionGUID: Q9+y8qckTQeEaohFZcpPng==
-X-CSE-MsgGUID: PIFM/bOSTtW4gaN6GRZ+DQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="43561242"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 01:45:19 -0700
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id EC8AF11FA94;
-	Tue, 25 Jun 2024 11:45:16 +0300 (EEST)
-Date: Tue, 25 Jun 2024 08:45:16 +0000
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Wentong Wu <wentong.wu@intel.com>
-Cc: tomas.winkler@intel.com, gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Jason Chen <jason.z.chen@intel.com>
-Subject: Re: [PATCH v4 1/5] mei: vsc: Enhance IVSC chipset stability during
- warm reboot
-Message-ID: <ZnqDnDisvzc9FTyH@kekkonen.localdomain>
-References: <20240625081047.4178494-1-wentong.wu@intel.com>
- <20240625081047.4178494-2-wentong.wu@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63655149C6A;
+	Tue, 25 Jun 2024 08:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.62.184
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719305150; cv=fail; b=pSGXUnYdGIcDYU1lYSCTIPKnSfBqlKx1N96xhYS9vnlYOP9q9ukVdkLxedw+v6XTBE2KJ6MDzfO0td6IdK48kJReUU6ABf6brE3IOYfncUvpAOU5VVzjM0ik8E4N/BunfellhmkPzUuCLkfzUPlLdTFRgDVj2E2DOiAcQtRW/zA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719305150; c=relaxed/simple;
+	bh=fzKX4CuHYN0JPd4peO5nGGvUz0sGVYuorFav/iN8lJI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=iZ1MvhgHJwB6/wDQJN6XPaAfc3g/XVL+Dt2+9u4eYXGFZ+/XQce5nCm2Dd5j80GCY67yWZnSJUewGZDBNbKZYv0pvedlbO6K/vbZuWgy1bkg42fGF+j8Xf812eUtV+GwVbhjkH79cfupRtaTMmLvbx0RnGhrBvCygWJy88DliKo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com; spf=pass smtp.mailfrom=hotmail.com; dkim=pass (2048-bit key) header.d=hotmail.com header.i=@hotmail.com header.b=pdWtEZ3p; arc=fail smtp.client-ip=40.92.62.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=hotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hotmail.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JK/bqbzzmKgg5wmmSuoPU6wiisbUFz06IboauDwiMfcoM7gT9hAxdjmStNteAGqXs5kOYCQgxrcBLDoB3TN203JPCqZaK49RlN37ec0N0WHXcELpbu7rSW7hlFQxTujCxQRJ+mOWnuYOV6G+I1fWeFUUBECAQwkxq60wE0r2j2TMojXxAQMI/tFz/mPFNyv7JpKlpW9Th86jYYkJ+csuv/x9MlbMKf3nR4sAhSKhMyt4sJaw4NDk8oTm176JDX6he3creF8OIwpC766XJb0Cr1NQVDLQgIBbl1mwqfg8Pvy44GNoTV26EHXuClJxnwVI5ksbBEK+HBlDO7bx1tgUlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=iAWv36f0yK9ESFbHAyi0azGBJWZ2yTxKwk2cDS68RRg=;
+ b=OY8WuteqK32Ght9+WwozjXmsi5SGxRio+brs870vxe23xuu3kwUuIotCR9w7XU9RZZkMg3wkPd+7Oi6znZzWjk7fphjx9PSOBqc/9O+/RpzqOe19BzNr4qsYhnGgHb7/pw2Jz/Y+JxdkI/6zqFo4dyFFubp0hWCPe+/LPZ/RSblwNFwppART2rXXH+RgTEQX+5dUUvswCgjdFfknE10+84oeKgT12Gikn6kUmUWxENLtGM6/7/U4QbPVqgwWItUjRlho5nBlV+KRb5x9CerEj+ehu1F+pJUUcUv6gj9s9tH7rLEIP5W+chjE3qyjn5FmVznIIs6okDruSsMZWWMibQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hotmail.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=iAWv36f0yK9ESFbHAyi0azGBJWZ2yTxKwk2cDS68RRg=;
+ b=pdWtEZ3pX+vRtEB8cvE3bMqtOcjWG5/Yz5gHnc4vMgkrosoXjUsl0dECwUe6an54lJsTmeWlHxx4PA5moPk7ENdSlC5MsWdymflYvhIGdFzNffxi7vGbifU0Uxu+svCECCSrJDtS2iIfHMiAPznXZjFxO4+r3gZrf0z7XySpN6Ur25dw25ygbJDZ0B+9t80MehU+jYvIi8C/MrOXKAly161d3/tADoS89e+kgUv2lZS58/nHicLMDfDwQ7Ip3jF50zIVFIDYDtdv383Q4OyEQTaKcpOs37XCulguQtcJFUwmxV45idsOwpogY5I0XJpgLYnfKJu2H2RrP/KNbKwiuA==
+Received: from SYBP282MB3528.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:1b3::6) by
+ SY7P282MB4874.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:27c::17) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7698.28; Tue, 25 Jun 2024 08:45:42 +0000
+Received: from SYBP282MB3528.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::a8e8:3859:c279:c289]) by SYBP282MB3528.AUSP282.PROD.OUTLOOK.COM
+ ([fe80::a8e8:3859:c279:c289%5]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
+ 08:45:42 +0000
+From: Jinjian Song <songjinjian@hotmail.com>
+To: chandrashekar.devegowda@intel.com,
+	chiranjeevi.rapolu@linux.intel.com,
+	haijun.liu@mediatek.com,
+	m.chetan.kumar@linux.intel.com,
+	ricardo.martinez@linux.intel.com,
+	loic.poulain@linaro.org,
+	ryazanov.s.a@gmail.com,
+	johannes@sipsolutions.net,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Jinjian Song <songjinjian@hotmail.com>
+Subject: [net-next v2 0/2] net: wwan: t7xx: Add t7xx debug port
+Date: Tue, 25 Jun 2024 16:45:16 +0800
+Message-ID:
+ <SYBP282MB35285822CB2270DAC2533DF0BBD52@SYBP282MB3528.AUSP282.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [2j316tD8sXLtd/m6zyLY/PGLGQeKt++6]
+X-ClientProxiedBy: SG2P153CA0050.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c6::19)
+ To SYBP282MB3528.AUSP282.PROD.OUTLOOK.COM (2603:10c6:10:1b3::6)
+X-Microsoft-Original-Message-ID:
+ <20240625084518.10041-1-songjinjian@hotmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240625081047.4178494-2-wentong.wu@intel.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SYBP282MB3528:EE_|SY7P282MB4874:EE_
+X-MS-Office365-Filtering-Correlation-Id: 690827fc-21a2-4428-6ef7-08dc94f3326e
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199025|3412199022|440099025|1710799023;
+X-Microsoft-Antispam-Message-Info:
+	BwdFMIhcAD4xzcS79DzJnHd5PInuWeLXyygC5Ct/rD3q9BDFkhZ1XR97NblqXTmeRupDyfuQss4o2i8KicQ+h4ErtcBcL4gdJjA2x83L01DkdzPyUWUtxFWIrckpQP2iVGWM/8NUMim0wxGSGF43T+h61F2Gm09cCfoqO26ipyut+oxXi480UT185gCVrcni5QPU/WBwk9oCc/aAekleddid+loECaHWdC6ML6w5tMbKc5ECOhFtkl3wMfyGY9OomnrFAUNb5DW6jZxp4KoADPEqZbJPxUyizpY+e0yp7OrBDhWGrQcSFWh9kDiOco4b08jH/8n8zWpp/1675H1FYWm4u9+TEiwUh63x1vssHDonH7570/7Z/Clc14TqfMd2AQqiUO2sBuGr3b6doReDJADx2XBi1VVLbPzC8HbWJVaRZ67ZN03Q5FDd9JXb6QRTfeIrJrVgQKg7Gt6bVAVCRT2XkFEx1PMssYoEAs9mMN3lXe5qKQm5xEvwLArVAC8UtiQZ3d54ixeLyFreEy+ZCdwdH0MnRG2ASyG+ZU+jhcYbjnXQUM3Z5H76mG+utVzYt4fmaByxaLj0/lkF5co3bTJKjVT43gmCkMTLeloB1nKX9zYGhiPyLAquFPQ8r9eb
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?NCTv3bilCZunXPebwrfZNOzHRhfCJs1pLcksNc5Ryft0zx7dWKdfEsAXrv1w?=
+ =?us-ascii?Q?gD7QmoUu8SCRF9wT0SlfNhtVJx46VY/bLo2KMdYWrt63SR4vF6THCeM/gY/f?=
+ =?us-ascii?Q?92ow2GSjLmLtnkBNow89nA4ZFEQmOSqDINnwIfv0PTepNmF4zLrqUq4cLUwr?=
+ =?us-ascii?Q?z6uyx9xjvScs8CuG3wJqSrTOTa5OlbfeUdubTiTRtRSIPvehZbrvtm83z0qf?=
+ =?us-ascii?Q?ZPSaYnM8HdgIOcIr6fNFVu+i8rJ1SNq/t1yn7wLfdGA/gvKrdSDuNOHIopwQ?=
+ =?us-ascii?Q?WmmAyVoHS+20+8cpbCo2Htvpp9mBBE2dA/TYkdPQvcsJHCScflXEX0p6Bx7z?=
+ =?us-ascii?Q?UFiJwXOjRM3s8ho7L77IOLw+LYX21xJcmFRRO4NzuKdviysEuNnFLjC1sUy1?=
+ =?us-ascii?Q?WV2q1H2CVG/XRMMjFFA0U/4SXjJ3FLqMZX6EnRpJ8n9bMjdincSWG6k81A9P?=
+ =?us-ascii?Q?0AHyr4o/xDMdNEl6P8Bn8BzamRs1WkcFKpnu7lu882u6KC4dKyJMbFRq2GNf?=
+ =?us-ascii?Q?uraoKukwig0/Mt1s4z8TCtx1CcqqHXiF3UhxUejDX8LgMKDQ53hcCbLfxocs?=
+ =?us-ascii?Q?9ASemxl4pmFfpmYJ25TtypEQl8TzUH3kasfH7zDVmPRH69/TidMZBKPkUy/+?=
+ =?us-ascii?Q?iyjb0p81KuHwuXMe2AYGvaiaVNvkw+FxdGw+n1PL5z2T9wWELYrJg60Iswct?=
+ =?us-ascii?Q?n9ChHT/VucYcalXQYKIa294Q96JTKWaNdk/JQaYJFwysx8zWi5BFLWlUTaXR?=
+ =?us-ascii?Q?C0p/bV46Fc0ZsB5flh6I/O7EJ9tLuuCgO1dXy1etLPYtV4qq0yHYdNnZcsFu?=
+ =?us-ascii?Q?hjQlis+X7e4HwtjQzyQPGL7Txk0zLamWT7QEvZewewD8a3PA8D99I/hsyGr+?=
+ =?us-ascii?Q?i1dhlPneSA6u0j5+iqsHi+PZmMji41GlUZlEEJSbdBdP3SQjMXaBFopwPkzX?=
+ =?us-ascii?Q?FHcQp+be2OxQ+AWolM8jyfWMYDwr/FV98/nK7ZsoYgkBhCF0K6ZoXKM6mjZo?=
+ =?us-ascii?Q?mrddWVqlOGPZ9umBhTI4uS8m5C4O66bHkc9S03N6X9t9nF1o3cTiAR8KMFQ3?=
+ =?us-ascii?Q?6w103lvaHWossEIP3sAOxHv/+rkQIkRhVJzO1XafPBsQ2JpR8qdIy0iJ4Ut1?=
+ =?us-ascii?Q?A44e+kJUkmYJNfWzY2sNhZXIOJ0xdSjOBQNS/iC2HrzSiImGLe29qe0bjYs+?=
+ =?us-ascii?Q?dybbNXyHrXBhyj7drdJjQdmhQH8cT0qhHDCn32f6DhULC5XpvbY61fxs6Q3Z?=
+ =?us-ascii?Q?E8Xps62WGlcFXVTsVTJ4?=
+X-OriginatorOrg: sct-15-20-4755-11-msonline-outlook-746f3.templateTenant
+X-MS-Exchange-CrossTenant-Network-Message-Id: 690827fc-21a2-4428-6ef7-08dc94f3326e
+X-MS-Exchange-CrossTenant-AuthSource: SYBP282MB3528.AUSP282.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 08:45:42.8900
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SY7P282MB4874
 
-On Tue, Jun 25, 2024 at 04:10:43PM +0800, Wentong Wu wrote:
-> During system shutdown, incorporate reset logic to ensure the IVSC
-> chipset remains in a valid state. This adjustment guarantees that
-> the IVSC chipset operates in a known state following a warm reboot.
-> 
-> Fixes: 566f5ca97680 ("mei: Add transport driver for IVSC device")
-> Cc: stable@vger.kernel.org # for 6.8+
-> Signed-off-by: Wentong Wu <wentong.wu@intel.com>
-> Tested-by: Jason Chen <jason.z.chen@intel.com>
+Add support for t7xx WWAN device to debug by ADB (Android Debug Bridge)
+port and MTK MIPCi (Modem Information Process Center) port. 
 
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Application can use ADB (Android Debg Bridge) port to implement
+functions (shell, pull, push ...) by ADB protocol commands.
+
+Application can use MIPC (Modem Information Process Center) port
+to debug antenna tunner or noise profiling through this MTK modem
+diagnostic interface.
+
+Jinjian Song (2):
+  wwan: core: Add WWAN ADB and MIPC port type
+  net: wwan: t7xx: Add debug port
+
+ .../networking/device_drivers/wwan/t7xx.rst   | 29 ++++++++++++
+ drivers/net/wwan/t7xx/t7xx_pci.c              |  7 +++
+ drivers/net/wwan/t7xx/t7xx_pci.h              |  2 +
+ drivers/net/wwan/t7xx/t7xx_port.h             |  3 ++
+ drivers/net/wwan/t7xx/t7xx_port_proxy.c       | 45 ++++++++++++++++++-
+ drivers/net/wwan/t7xx/t7xx_port_proxy.h       |  1 +
+ drivers/net/wwan/t7xx/t7xx_port_wwan.c        |  8 +++-
+ drivers/net/wwan/wwan_core.c                  |  8 ++++
+ include/linux/wwan.h                          |  4 ++
+ 9 files changed, 103 insertions(+), 4 deletions(-)
 
 -- 
-Sakari Ailus
+2.34.1
+
 
