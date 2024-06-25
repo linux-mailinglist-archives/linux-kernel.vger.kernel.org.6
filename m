@@ -1,154 +1,115 @@
-Return-Path: <linux-kernel+bounces-228748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25F64916661
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:42:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE6E9916662
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:43:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CC481F22785
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:42:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 086CF1C211DB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2191314B973;
-	Tue, 25 Jun 2024 11:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D5F14B965;
+	Tue, 25 Jun 2024 11:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GOgNbGr+"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Anx5CphT"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3C91494D7;
-	Tue, 25 Jun 2024 11:42:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E5A1494A0
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315727; cv=none; b=VVcPJWfRppAqmNEzdua4pEfTQpbBwTsD7uDhsbgLGL4tMOYDIO6bsmJa544uPA5OCgfSm02rv4H3w6BOMeXg2E+3gaeQXbXeql+ry5Friyc2CsKQ/9ezGNe6XiUQ17NQNmSgADXRItRMtcSkkk0LvU9qd7ya+EaGLZd8ynOPlxs=
+	t=1719315781; cv=none; b=ZDdMauJReNEkLZIY/kinOopN5u4BQj4tELv+DHLD4gCCJQWUu8/iIjlZQKNiGDzEiv9jHGcvvxsZZH6VX1Whx0zbCzRlQ+ooe8MYtn2nteA2/jj0EuXqXV7ID1HQOYBjkYVyfrsgzjJppJOeEzIzMUIxaWcrVPM6OaGHDgLUGlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315727; c=relaxed/simple;
-	bh=KM5R6vxG9IkotT/jvRz9MrrZZqkP9/WRJhQLxDYlOaE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hiBxDRK9XXFGz6iq3/2wB7HV0Ys6YLotr+b9DVpBx08b0L3o8J0wbQ3gfSTASBiEao2nIAMuShkQdfbL5vxQwxB05WVIQmdLKXPb+1DBZGRSsE5GuKcSiguvuIlVeeLKY9SHS2jUQ9czhNOIjCPBWEuErqKHMWhvFPMngEksjlU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GOgNbGr+; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1719315781; c=relaxed/simple;
+	bh=VY0xOCSo/+8mFrHhC7vwEWaHNe61uAa+8U2Nxb2i2EY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gwckUpV0vhJjKapphGNlT88trcOAeekpGC4XZqxJk/+efHZMMUEG+PxbVKCRMkky7eYArTp4lfACZNDXK9AgFRIfCzzdArdDLGaZC2gs5sGAoRMR3j/bxDdMULUF7EgZXkPWl33UeDuWgyn0txjZtbocy6Uqe+ncl3lwLK0gHCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Anx5CphT; arc=none smtp.client-ip=209.85.214.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1f64ecb1766so41371345ad.1;
-        Tue, 25 Jun 2024 04:42:05 -0700 (PDT)
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-1fa0f143b85so21518765ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 04:42:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719315725; x=1719920525; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=SZPrIlvHyg4Kkj2C76RzU5FI7w53MmIOJJOb8sXvmRo=;
-        b=GOgNbGr+m0LzTHlvi1teemfZkClH8WZPq05SMmHYgSLfIzch3Rzz3/JTojs6zeELej
-         gXuUb/U/aWff/ByVNK5U5hUY402ZeDTK3ANTnwA3EcieN88Y5of37VjtrgtUbWNMiwMw
-         oVIeAQLgd+58f41i0vdiXMVmo/I+ZqRWgWMB/hYSw4OVGOEsNoh7fYX2KX17w72wUX2h
-         NcmJQ7DDt2Zw/6PG/waJS7CFPN2TDmxyRoLmOA3YTJgmVLQRI5KMpOufuzMqbmP8/uOd
-         yGSWF0gLf/sy/tzlDLsudVQ8g7Vt0AV1OixJcPI1kbq3ZE0A0pevdT9afqr2S3l+WGU6
-         zicg==
+        d=gmail.com; s=20230601; t=1719315779; x=1719920579; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Y8c0efz96cC1zCcHc+6MzHkLIN4hd25Mzk7x16AXwi8=;
+        b=Anx5CphT3I8RU7/Gn96l3KdePakJ/LsEXgozSA/GqPdpksu51vMHHxxqiyqFon30sA
+         ZhejVs4/jN0v0qxXSr6x1Z9TIwxHxzEmj8N3Hon5kEJKFzeYC0Chd49DmSG166bHMYgg
+         a2BfyOY9ufJywsxxqSAvvWEDi8tj8JOrLcGDxYfARjMUjy3kFrwQ+Agp6szD/0qexvsm
+         3Ejtgbi3w3P84XFySjh1beBfSeGU1R5tbTDxglWXPA50FVOQ80Rv6L6vy6euLXpG47Bf
+         lu9ukdmzLAxqidE+R0O1bz75fKh3uCTBP3VZIE/IDcCEjZ3j+GtWnHJyQ185A5LTh6i9
+         RNQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719315725; x=1719920525;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SZPrIlvHyg4Kkj2C76RzU5FI7w53MmIOJJOb8sXvmRo=;
-        b=P2zCppjjgciRP9YHYBUi2kjpd4Jh/fTcv1Cy0AT30PhiedfxzQwHZt0WC+L4GfSwrU
-         RMPftSCdUEmSbgMZ+Bui6+ZsBzVXk3bkNbW4m1YbPnjBS2wAx0Op2GIeR/9zYh9kJbx7
-         mio/rrQ3L3wamIZVHADtweGTv7LCJqr7aSLAa61HH4s1tSsxIw4GUvirME7MtpiFKw17
-         HaoFbV4CMHhtBNxefmcTYjhmNQ9RKrJGX/xxa+GYyjmc4cTCpVWNcRv/BVgdDxDdvPj3
-         g5LI7gw+hD0AoAxH5yqM/AnBY33aB0tx71b8rmPXwZm4sVUy3+hCajNsP3CIBgKMqQQM
-         oTPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUim75fzhJ7UMMW0lzxd5l3yX83MqTJdzG0U660xhbWK/70kuCUNe1HdHiL0tuj2Cw0MKPvnj0zPi1Kk0MJ4kMidrfT/TsdLBRTWm1yyx5qwDeAIivbYSMEh0PAF1uKGKmy/mpw
-X-Gm-Message-State: AOJu0Yy2AJ1g+X1YPsKfEJRGn52/i3tPuGQIZ7joSR/kVNciuJFPPzeN
-	tSMQfs8+xmEMwyEEhgHe96yhYc/WcBwksBQPdbT7ASUkmZJG1t5g
-X-Google-Smtp-Source: AGHT+IG2wm5LUSkcBAEY0tc5IUpyyCLrHPxjeyFvkX0j1maEaGcdKLBc2+KohXl34DLf69Ea/BQftw==
-X-Received: by 2002:a17:902:e5c2:b0:1f7:90e:6d47 with SMTP id d9443c01a7336-1fa1d51728dmr73774865ad.25.1719315725238;
-        Tue, 25 Jun 2024 04:42:05 -0700 (PDT)
-Received: from [10.178.66.211] ([192.19.176.219])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ee4482afsm78672665ad.88.2024.06.25.04.42.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 04:42:04 -0700 (PDT)
-Message-ID: <09826d00-57be-4525-8405-5a601987f227@gmail.com>
-Date: Tue, 25 Jun 2024 12:41:58 +0100
+        d=1e100.net; s=20230601; t=1719315779; x=1719920579;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Y8c0efz96cC1zCcHc+6MzHkLIN4hd25Mzk7x16AXwi8=;
+        b=cV0yupW6WDjKTblWs6xcMkj0IfMytsPtHKXMi21H+gYUG5+Rv48LEMS3GPHRSYSGqn
+         XK0q2pKYxnG8gp3Jza8xYiqBEIdUOM25ROrVmZi7IBL3k0PFSux5VufJAKWIcsn2n5I9
+         Mi/IHC5KwkLGqM53f9EAkmHChtbM2PvhdWbU3y121zz8ntw1Et3XbhBR6TK26w4ydajg
+         GU3/xPvGFWqazLKNKEk52ki7TQZaCZFdetkr01KTPIEjHDPwyPuXd62wCQM/VIhkwSw/
+         SY9XAF11DCViaQyvRExUDCdm/6PNx4c2E0iW+klz29gvloK2myJk4uH1+0H7LgryPs22
+         kAMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUo6UQGTM6wIBY8kpMqZj5Ea31md/wQIfnHhD1oDgVPKOTQ4zkugYqsRc4+z79RKJCAcG4eSd18nscPx+bqcCqLm9gtBYkmEy2LIiHT
+X-Gm-Message-State: AOJu0YyLT1Wf0jChTO5Z4dqujns1fEKXwMBxC9Oct4zf1aUgz+RwVNa0
+	PiUHvVZtOS7+xK6ToyBEYGfSBxQ993cEKf5Lx/w6B7iCSKmy0eIs
+X-Google-Smtp-Source: AGHT+IGdEosZwEgr9/N5++mzwwLZ7Qcna0OViFD+j2Se8BUb7cOhP3nMElOMpqXnmZpiC18fPlXDrQ==
+X-Received: by 2002:a17:902:b207:b0:1fa:4999:c920 with SMTP id d9443c01a7336-1fa4999cdf2mr36478445ad.55.1719315779260;
+        Tue, 25 Jun 2024 04:42:59 -0700 (PDT)
+Received: from wheely.local0.net (118-211-5-80.tpgi.com.au. [118.211.5.80])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb2f028asm79638525ad.3.2024.06.25.04.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 04:42:58 -0700 (PDT)
+From: Nicholas Piggin <npiggin@gmail.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: Nicholas Piggin <npiggin@gmail.com>,
+	"Paul E . McKenney" <paulmck@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Srikar Dronamraju <srikar@linux.vnet.ibm.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/4] Fix scalability problem in workqueue watchdog touch caused by stop_machine
+Date: Tue, 25 Jun 2024 21:42:43 +1000
+Message-ID: <20240625114249.289014-1-npiggin@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/192] 6.6.36-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20240625085537.150087723@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
- HGuUuzv+GKZ6nsysJw==
-In-Reply-To: <20240625085537.150087723@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Here are a few patches to fix a lockup caused by very slow progress due
+to a scalability problem in workqueue watchdog touch being hammered by
+thousands of CPUs in multi_cpu_stop. Patch 2 is the fix.
 
+I did notice when making a microbenchmark reproducer that the RCU call
+was actually also causing slowdowns. Not nearly so bad as the workqueue
+touch, but workqueue queueing of dummy jobs slowed down by a factor of
+several times when lots of other CPUs were making
+rcu_momentary_dyntick_idle() calls. So I did the stop_machine patches to
+reduce that. So those patches 3,4 are independent of the first two and
+can go in any order.
 
-On 25/06/2024 10:31, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.36 release.
-> There are 192 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Thu, 27 Jun 2024 08:54:55 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.36-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Thanks,
+Nick
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+Nicholas Piggin (4):
+  workqueue: wq_watchdog_touch is always called with valid CPU
+  workqueue: Improve scalability of workqueue watchdog touch
+  stop_machine: Rearrange multi_cpu_stop state machine loop
+  stop_machine: Add a delay between multi_cpu_stop touching watchdogs
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+ kernel/stop_machine.c | 31 +++++++++++++++++++++++--------
+ kernel/workqueue.c    | 12 ++++++++++--
+ 2 files changed, 33 insertions(+), 10 deletions(-)
+
 -- 
-Florian
+2.45.1
+
 
