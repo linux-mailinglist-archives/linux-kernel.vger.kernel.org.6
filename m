@@ -1,312 +1,255 @@
-Return-Path: <linux-kernel+bounces-228392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 307A5915F35
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:01:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07C5D915F41
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5237F1C2299D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:01:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 796C91F23B1C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F410146A6B;
-	Tue, 25 Jun 2024 07:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19E7802;
+	Tue, 25 Jun 2024 07:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nfEVRvUi"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEydQj02"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1ECC146593;
-	Tue, 25 Jun 2024 07:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA9A146593;
+	Tue, 25 Jun 2024 07:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719298867; cv=none; b=G0brDoqownTrtqod8I680E6RhhWvtkIII4ZOV/dR3bOWwoNVTMTLfF5OEW2eqIKb3PnoyBb6TsOUXzj4BTQTpMVp1YAHcPCNiMw+WhW6KFWSetQNYG6wWIasmHGDufaEhjqds6my6wIZgN6b8uHCD+cl/tMXr7wUfXP8BO1wn+E=
+	t=1719298946; cv=none; b=iiju8+f9rYZniEceh3qFFrWY7p4Qxp4EauMQsRQLFgP7bFMtvI74m7MUyPUf8cpMjjU1/9Daa2Sf9EHizCOFeLsAfcPQHaFWJiHoMYq9omMqUhPOmmak7/mQHpy6HKdNvVKCD23xO+28vEOMX64W2JZZ+7+SOCpF3AAVig4F9bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719298867; c=relaxed/simple;
-	bh=xeepw0436JvXkF7t5SqHEVBLg8MBJ44psADaGMG57fA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=otbDbUAq58YCXk2gbD8p+OFiB8o3tpkga+mhdIc/pBLgZPIoBR1TyeZDo0rxVZoChnKB67ag4AWgK2ZrrG5T9Dc9oqSBU2W8HFfaIaarS+C75HCgXhHUNrnpNfHLin28OITjNUOs9p0Q8mZameHZ2J3zzPLQBzLwIN/5GXB0nR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nfEVRvUi; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719298866; x=1750834866;
-  h=message-id:date:mime-version:subject:from:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=xeepw0436JvXkF7t5SqHEVBLg8MBJ44psADaGMG57fA=;
-  b=nfEVRvUiK9DOzEnBaZp54IwYnfRxCTZI/EtC5ryRAKN1gEwj37dce5Aj
-   RKlDggrBLuxNOWmJUKG5FMx9dZquRv9J9WwyJeRnjfTU+SudNHh4nuDWu
-   rP+jKphl12pUT98+hKEUy/WPgfbtV+BcjU8MfLe6YfK0BoK2Ssw5Emqzd
-   GV0r9SMMgo6nhXsNAFKh6qVAav2euQr58RbTycQlFDQslX44Mts3rqKCF
-   v3EbR4VxZQ0EzMZGYgyPtGxi04loS9VnU946+LGUP6Km+3R37NmrZaLLl
-   Njx7/LLeqQuMn/YIM58DHgxToGiopYqfSgX7btnhUzSH+ht+AZwnKeXaR
-   A==;
-X-CSE-ConnectionGUID: RsPtHC17R5ClF8dH9X8Sow==
-X-CSE-MsgGUID: MT3QWbYRSqSyuvlw+Q/wyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="26986978"
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="26986978"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 00:01:05 -0700
-X-CSE-ConnectionGUID: dcJs2ek7QNSojUybXKCtVg==
-X-CSE-MsgGUID: B/o0JsmDTmirdHG4WG967Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="43614242"
-Received: from qunyang-mobl1.ccr.corp.intel.com (HELO [10.238.2.59]) ([10.238.2.59])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 00:01:02 -0700
-Message-ID: <7fb2b31e-3c4b-4092-a60b-92aaa43821ae@linux.intel.com>
-Date: Tue, 25 Jun 2024 15:00:59 +0800
+	s=arc-20240116; t=1719298946; c=relaxed/simple;
+	bh=XlxkV5B5tKXN7agg1gK5hUup3+lJMnoQSSsBrRi9eFI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LPla5dWp5LPqJFgsE6yls2SRSRcwhIKyM60vmLX3mmNw5HSYdDeOf+IwN1KyBLowWUTnsh7JQbbnC3Nh1uq/dNCWn5GFnrG6zNA6GcieRy162hl6HQocjtmfCd3vBhOyY6HWXXETr8eJUqzFc70OzlfFH0CkYQePrSfFw6XDcZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UEydQj02; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70661cd46d2so2602687b3a.3;
+        Tue, 25 Jun 2024 00:02:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719298944; x=1719903744; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mvA5mzE/+nHLQ/xPEP+Y/yB74SbWB8VJOLGQGw2nUCg=;
+        b=UEydQj02v6kfcCHd/WXXvk8gDfvncyP1DctWs9xP+1wTDGObeAYeDpOAF6Lpq7FAbP
+         xa+MfKNCbI64vP5AYiNggqbI/ZLQDLqAMDBZ2UqJY34RqfHkPTHS5CQL5G20fWyr5GIm
+         gBJy3WBHk/+S2ZXsZbKuYbydQd7r9d2rqPon5QS1sUV1/1Z95UbSAkSxpHqWnkhUVZrO
+         jWkVbfqvr0dHKfYBJyWxdsl6VEv5Gp1y5k3g0yQcrLP9La0Pgy2OKLbeArRoe0NsIJ0d
+         1vOP6U1ov8iA7azBySL3O1ihQ/ECqt3oJvtLEnBjGxCZPdl/m711N8AvUtPlSK6ROqwT
+         FXLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719298944; x=1719903744;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mvA5mzE/+nHLQ/xPEP+Y/yB74SbWB8VJOLGQGw2nUCg=;
+        b=nO01ZjPxI7E5FVE4z2jMKmugW6zcdnOjNgqJgJVLjOsAQTqm7kiNgWNYB6Vx9/VTbm
+         /PuKrnp/5lQNaveD5inkBFVwpaJ4x3zaAjFv63/k8hAdjU++1ZMW1PaYBLLC/Yob0iTl
+         yQpOeao/bNJX5gJqcF+4HChQnxE5vSD13hwAJc9IcWzKGuLfChFudB40gGwcvB+7Op8h
+         f5KRp3mMp+LMhzm7Omfnkgy0fUnyXyi4Nk0XfT1qqPomOG7AEScFx8bgtIZkAicRgCe7
+         4iUaP4I5RurdEyw6zL+QBoN7Aezwp1AbNmGtEFKsOXtdF5caVVblFU9H5fxB/bhBWw3P
+         EArQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXGjMEl6EzJ34jlm32RjlZvnzc0y4lx+TZoxLEgD49YB9krhPPsG6XdhNqgaXvLsIvjKTGUtDc4Z0v8ALnQKwwoHoJ0e98lrIv9ly98zUwD3iodPrGWn1F6nMUP8NqeIXbOciez
+X-Gm-Message-State: AOJu0Yylyr8um7+9NyIHpGi0vl603HAXyoSMZ236zu4gP2t+wTA+S/uh
+	Dlc+wGeKSkwvqXdWo7IYioWc9Ze8Asmgd2xPd8UAUzCW28MkUDCx
+X-Google-Smtp-Source: AGHT+IHyXqn+MHBdaLTe/TgEpMINUt8YDQTQlDh9NmxJoiVz8r0KZYhpo1Sq3pmY2xVwKalIv08U+Q==
+X-Received: by 2002:a05:6a00:2b8:b0:6ec:da6c:fc2d with SMTP id d2e1a72fcca58-70670fd4341mr5360419b3a.23.1719298943562;
+        Tue, 25 Jun 2024 00:02:23 -0700 (PDT)
+Received: from twhmp6px (mxsmtp211.mxic.com.tw. [211.75.127.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7068a63c8bfsm2551976b3a.27.2024.06.25.00.02.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 00:02:23 -0700 (PDT)
+Received: from hqs-appsw-a2o.mp600.macronix.com (linux-patcher [172.17.236.67])
+	by twhmp6px (Postfix) with ESMTPS id 46A2B800F4;
+	Tue, 25 Jun 2024 15:04:44 +0800 (CST)
+From: Cheng Ming Lin <linchengming884@gmail.com>
+To: miquel.raynal@bootlin.com,
+	dwmw2@infradead.org,
+	computersforpeace@gmail.com,
+	marek.vasut@gmail.com,
+	vigneshr@ti.com,
+	linux-mtd@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: richard@nod.at,
+	alvinzhou@mxic.com.tw,
+	leoyu@mxic.com.tw,
+	Cheng Ming Lin <chengminglin@mxic.com.tw>,
+	stable@vger.kernel.org,
+	Jaime Liao <jaimeliao@mxic.com.tw>
+Subject: [PATCH v5.4.y v3] mtd: spinand: macronix: Add support for serial NAND flash
+Date: Tue, 25 Jun 2024 15:01:42 +0800
+Message-Id: <20240625070142.61782-1-linchengming884@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v19 110/130] KVM: TDX: Handle TDX PV MMIO hypercall
-From: Binbin Wu <binbin.wu@linux.intel.com>
-To: isaku.yamahata@intel.com, kvm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: isaku.yamahata@gmail.com, Paolo Bonzini <pbonzini@redhat.com>,
- erdemaktas@google.com, Sean Christopherson <seanjc@google.com>,
- Sagi Shahar <sagis@google.com>, Kai Huang <kai.huang@intel.com>,
- chen.bo@intel.com, hang.yuan@intel.com, tina.zhang@intel.com,
- Sean Christopherson <sean.j.christopherson@intel.com>,
- Rick Edgecombe <rick.p.edgecombe@intel.com>,
- Reinette Chatre <reinette.chatre@intel.com>
-References: <cover.1708933498.git.isaku.yamahata@intel.com>
- <a4421e0f2eafc17b4703c920936e32489d2382a3.1708933498.git.isaku.yamahata@intel.com>
- <560f3796-5a41-49fb-be6e-558bbe582996@linux.intel.com>
-Content-Language: en-US
-In-Reply-To: <560f3796-5a41-49fb-be6e-558bbe582996@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+From: Cheng Ming Lin <chengminglin@mxic.com.tw>
 
+Macronix NAND Flash devices are available in different configurations
+and densities.
 
-On 6/25/2024 2:54 PM, Binbin Wu wrote:
->
->
-> On 2/26/2024 4:26 PM, isaku.yamahata@intel.com wrote:
->> From: Sean Christopherson <sean.j.christopherson@intel.com>
->>
->> Export kvm_io_bus_read and kvm_mmio tracepoint and wire up TDX PV MMIO
->> hypercall to the KVM backend functions.
->>
->> kvm_io_bus_read/write() searches KVM device emulated in kernel of the 
->> given
->> MMIO address and emulates the MMIO.  As TDX PV MMIO also needs it, 
->> export
->> kvm_io_bus_read().  kvm_io_bus_write() is already exported.  TDX PV MMIO
->> emulates some of MMIO itself.  To add trace point consistently with x86
->> kvm, export kvm_mmio tracepoint.
->>
->> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
->> Signed-off-by: Isaku Yamahata <isaku.yamahata@intel.com>
->> Reviewed-by: Paolo Bonzini <pbonzini@redhat.com>
->> ---
->>   arch/x86/kvm/vmx/tdx.c | 114 +++++++++++++++++++++++++++++++++++++++++
->>   arch/x86/kvm/x86.c     |   1 +
->>   virt/kvm/kvm_main.c    |   2 +
->>   3 files changed, 117 insertions(+)
->>
->> diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
->> index 55fc6cc6c816..389bb95d2af0 100644
->> --- a/arch/x86/kvm/vmx/tdx.c
->> +++ b/arch/x86/kvm/vmx/tdx.c
->> @@ -1217,6 +1217,118 @@ static int tdx_emulate_io(struct kvm_vcpu *vcpu)
->>       return ret;
->>   }
->>   +static int tdx_complete_mmio(struct kvm_vcpu *vcpu)
->> +{
->> +    unsigned long val = 0;
->> +    gpa_t gpa;
->> +    int size;
->> +
->> +    KVM_BUG_ON(vcpu->mmio_needed != 1, vcpu->kvm);
->> +    vcpu->mmio_needed = 0;
-> mmio_needed is used by instruction emulator to setup the complete 
-> callback.
-> Since TDX handle MMIO in a PV way, mmio_needed is not needed here.
->
->> +
->> +    if (!vcpu->mmio_is_write) {
-> It's also needed by instruction emulator, we can use 
-> vcpu->run->mmio.is_write instead.
->
->> +        gpa = vcpu->mmio_fragments[0].gpa;
->> +        size = vcpu->mmio_fragments[0].len;
->
-> Since MMIO cross page boundary is not allowed according to the input 
-> checks from TDVMCALL, these mmio_fragments[] is not needed.
-> Just use vcpu->run->mmio.phys_addr and vcpu->run->mmio.len?
->
->> +
->> +        memcpy(&val, vcpu->run->mmio.data, size);
->> +        tdvmcall_set_return_val(vcpu, val);
->> +        trace_kvm_mmio(KVM_TRACE_MMIO_READ, size, gpa, &val);
->> +    }
->
-> Tracepoint for KVM_TRACE_MMIO_WRITE is missing when it is handled in 
-> userspace.
->
-> Also, the return code is only set when the emulation is done in 
-> kernel, but not set when it's handled in userspace.
->
->> +    return 1;
->> +}
->
-> How about the fixup as following:
->
-> @@ -1173,19 +1173,18 @@ static int tdx_emulate_io(struct kvm_vcpu 
-> *vcpu) static int tdx_complete_mmio(struct kvm_vcpu *vcpu) { unsigned 
-> long val = 0; - gpa_t gpa; - int size; - - vcpu->mmio_needed = 0; - - 
-> if (!vcpu->mmio_is_write) { - gpa = vcpu->mmio_fragments[0].gpa; - 
-> size = vcpu->mmio_fragments[0].len; + gpa_t gpa = 
-> vcpu->run->mmio.phys_addr; + int size = vcpu->run->mmio.len; + if 
-> (vcpu->run->mmio.is_write) { + trace_kvm_mmio(KVM_TRACE_MMIO_WRITE, 
-> size, gpa, &val); + } else { memcpy(&val, vcpu->run->mmio.data, size); 
-> tdvmcall_set_return_val(vcpu, val); 
-> trace_kvm_mmio(KVM_TRACE_MMIO_READ, size, gpa, &val); } + + 
-> tdvmcall_set_return_code(vcpu, TDVMCALL_SUCCESS); return 1; }
->
-Sorry for the mess.
+MX"35" means SPI NAND
+MX35"LF"/"UF" , LF means 3V and UF meands 1.8V
+MX35LF"2G" , 2G means 2Gbits
+MX35LF2G"E4"/"24"/"14",
+E4 means internal ECC and Quad I/O(x4)
+24 means 8-bit ecc requirement and Quad I/O(x4)
+14 means 4-bit ecc requirement and Quad I/O(x4)
 
-@@ -1173,19 +1173,18 @@ static int tdx_emulate_io(struct kvm_vcpu *vcpu)
-  static int tdx_complete_mmio(struct kvm_vcpu *vcpu)
-  {
-         unsigned long val = 0;
--       gpa_t gpa;
--       int size;
--
--       vcpu->mmio_needed = 0;
--
--       if (!vcpu->mmio_is_write) {
--               gpa = vcpu->mmio_fragments[0].gpa;
--               size = vcpu->mmio_fragments[0].len;
-+       gpa_t gpa = vcpu->run->mmio.phys_addr;
-+       int size = vcpu->run->mmio.len;
+MX35LF2G14AC is 3V 2Gbit serial NAND flash device
+(without on-die ECC)
+https://www.mxic.com.tw/Lists/Datasheet/Attachments/7926/MX35LF2G14AC,%203V,%202Gb,%20v1.1.pdf
 
-+       if (vcpu->run->mmio.is_write) {
-+               trace_kvm_mmio(KVM_TRACE_MMIO_WRITE, size, gpa, &val);
-+       } else {
-                 memcpy(&val, vcpu->run->mmio.data, size);
-                 tdvmcall_set_return_val(vcpu, val);
-                 trace_kvm_mmio(KVM_TRACE_MMIO_READ, size, gpa, &val);
-         }
-+
-+       tdvmcall_set_return_code(vcpu, TDVMCALL_SUCCESS);
-         return 1;
-  }
+MX35UF4G24AD/MX35UF2G24AD/MX35UF1G24AD is 1.8V 4Gbit serial NAND flash device
+(without on-die ECC)
+https://www.mxic.com.tw/Lists/Datasheet/Attachments/7980/MX35UF4G24AD,%201.8V,%204Gb,%20v0.00.pdf
 
->
->
->> +
->> +static inline int tdx_mmio_write(struct kvm_vcpu *vcpu, gpa_t gpa, 
->> int size,
->> +                 unsigned long val)
->> +{
->> +    if (kvm_iodevice_write(vcpu, &vcpu->arch.apic->dev, gpa, size, 
->> &val) &&
->> +        kvm_io_bus_write(vcpu, KVM_MMIO_BUS, gpa, size, &val))
->> +        return -EOPNOTSUPP;
->> +
->> +    trace_kvm_mmio(KVM_TRACE_MMIO_WRITE, size, gpa, &val);
->> +    return 0;
->> +}
->> +
->> +static inline int tdx_mmio_read(struct kvm_vcpu *vcpu, gpa_t gpa, 
->> int size)
->> +{
->> +    unsigned long val;
->> +
->> +    if (kvm_iodevice_read(vcpu, &vcpu->arch.apic->dev, gpa, size, 
->> &val) &&
->> +        kvm_io_bus_read(vcpu, KVM_MMIO_BUS, gpa, size, &val))
->> +        return -EOPNOTSUPP;
->> +
->> +    tdvmcall_set_return_val(vcpu, val);
->> +    trace_kvm_mmio(KVM_TRACE_MMIO_READ, size, gpa, &val);
->> +    return 0;
->> +}
->> +
->> +static int tdx_emulate_mmio(struct kvm_vcpu *vcpu)
->> +{
->> +    struct kvm_memory_slot *slot;
->> +    int size, write, r;
->> +    unsigned long val;
->> +    gpa_t gpa;
->> +
->> +    KVM_BUG_ON(vcpu->mmio_needed, vcpu->kvm);
->> +
-> [...]
->> +
->> +    /* Request the device emulation to userspace device model. */
->> +    vcpu->mmio_needed = 1;
->> +    vcpu->mmio_is_write = write;
-> Then they can be dropped.
->
->
->> +    vcpu->arch.complete_userspace_io = tdx_complete_mmio;
->> +
->> +    vcpu->run->mmio.phys_addr = gpa;
->> +    vcpu->run->mmio.len = size;
->> +    vcpu->run->mmio.is_write = write;
->> +    vcpu->run->exit_reason = KVM_EXIT_MMIO;
->> +
->> +    if (write) {
->> +        memcpy(vcpu->run->mmio.data, &val, size);
->> +    } else {
->> +        vcpu->mmio_fragments[0].gpa = gpa;
->> +        vcpu->mmio_fragments[0].len = size;
-> These two lines can be dropped as well.
->
->> + trace_kvm_mmio(KVM_TRACE_MMIO_READ_UNSATISFIED, size, gpa, NULL);
->> +    }
->> +    return 0;
->> +
->> +error:
->> +    tdvmcall_set_return_code(vcpu, TDVMCALL_INVALID_OPERAND);
->> +    return 1;
->> +}
->> +
->
-> - /* Request the device emulation to userspace device model. */ - 
-> vcpu->mmio_needed = 1; - vcpu->mmio_is_write = write; 
-> vcpu->arch.complete_userspace_io = tdx_complete_mmio; 
-> vcpu->run->mmio.phys_addr = gpa; @@ -1265,13 +1272,11 @@ static int 
-> tdx_emulate_mmio(struct kvm_vcpu *vcpu) vcpu->run->mmio.is_write = 
-> write; vcpu->run->exit_reason = KVM_EXIT_MMIO; - if (write) { + if 
-> (write) memcpy(vcpu->run->mmio.data, &val, size); - } else { - 
-> vcpu->mmio_fragments[0].gpa = gpa; - vcpu->mmio_fragments[0].len = 
-> size; + else trace_kvm_mmio(KVM_TRACE_MMIO_READ_UNSATISFIED, size, 
-> gpa, NULL); - } + return 0;
->
->
->
--       /* Request the device emulation to userspace device model. */
--       vcpu->mmio_needed = 1;
--       vcpu->mmio_is_write = write;
-         vcpu->arch.complete_userspace_io = tdx_complete_mmio;
+MX35UF4GE4AD/MX35UF2GE4AD/MX35UF1GE4AD are 1.8V 4G/2Gbit serial
+NAND flash device with 8-bit on-die ECC
+https://www.mxic.com.tw/Lists/Datasheet/Attachments/7983/MX35UF4GE4AD,%201.8V,%204Gb,%20v0.00.pdf
 
-         vcpu->run->mmio.phys_addr = gpa;
-@@ -1265,13 +1272,11 @@ static int tdx_emulate_mmio(struct kvm_vcpu *vcpu)
-         vcpu->run->mmio.is_write = write;
-         vcpu->run->exit_reason = KVM_EXIT_MMIO;
+MX35UF2GE4AC/MX35UF1GE4AC are 1.8V 2G/1Gbit serial
+NAND flash device with 8-bit on-die ECC
+https://www.mxic.com.tw/Lists/Datasheet/Attachments/7974/MX35UF2GE4AC,%201.8V,%202Gb,%20v1.0.pdf
 
--       if (write) {
-+       if (write)
-                 memcpy(vcpu->run->mmio.data, &val, size);
--       } else {
--               vcpu->mmio_fragments[0].gpa = gpa;
--               vcpu->mmio_fragments[0].len = size;
-+       else
-                 trace_kvm_mmio(KVM_TRACE_MMIO_READ_UNSATISFIED, size, 
-gpa, NULL);
--       }
-+
-         return 0;
+MX35UF2G14AC/MX35UF1G14AC are 1.8V 2G/1Gbit serial
+NAND flash device (without on-die ECC)
+https://www.mxic.com.tw/Lists/Datasheet/Attachments/7931/MX35UF2G14AC,%201.8V,%202Gb,%20v1.1.pdf
+
+Validated via normal(default) and QUAD mode by read, erase, read back,
+on Xilinx Zynq PicoZed FPGA board which included Macronix
+SPI Host(drivers/spi/spi-mxic.c).
+
+Cc: stable@vger.kernel.org # 5.4.y
+Signed-off-by: Cheng Ming Lin <chengminglin@mxic.com.tw>
+Signed-off-by: Jaime Liao <jaimeliao@mxic.com.tw>
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+Link: https://lore.kernel.org/linux-mtd/1621475108-22523-1-git-send-email-jaimeliao@mxic.com.tw
+---
+ drivers/mtd/nand/spi/macronix.c | 99 +++++++++++++++++++++++++++++++++
+ 1 file changed, 99 insertions(+)
+
+diff --git a/drivers/mtd/nand/spi/macronix.c b/drivers/mtd/nand/spi/macronix.c
+index f18c6cfe8ff5..a38d0de5f765 100644
+--- a/drivers/mtd/nand/spi/macronix.c
++++ b/drivers/mtd/nand/spi/macronix.c
+@@ -132,6 +132,105 @@ static const struct spinand_info macronix_spinand_table[] = {
+ 					      &update_cache_variants),
+ 		     SPINAND_HAS_QE_BIT,
+ 		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout, NULL)),
++	SPINAND_INFO("MX35LF2G14AC", 0x20,
++		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 2, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF4G24AD", 0xb5,
++		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 2, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF4GE4AD", 0xb7,
++		     NAND_MEMORG(1, 4096, 256, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF2G14AC", 0xa0,
++		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 2, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF2G24AD", 0xa4,
++		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 2, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF2GE4AD", 0xa6,
++		     NAND_MEMORG(1, 2048, 128, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF2GE4AC", 0xa2,
++		     NAND_MEMORG(1, 2048, 64, 64, 2048, 40, 1, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF1G14AC", 0x90,
++		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF1G24AD", 0x94,
++		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF1GE4AD", 0x96,
++		     NAND_MEMORG(1, 2048, 128, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(8, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
++	SPINAND_INFO("MX35UF1GE4AC", 0x92,
++		     NAND_MEMORG(1, 2048, 64, 64, 1024, 20, 1, 1, 1),
++		     NAND_ECCREQ(4, 512),
++		     SPINAND_INFO_OP_VARIANTS(&read_cache_variants,
++					      &write_cache_variants,
++					      &update_cache_variants),
++		     SPINAND_HAS_QE_BIT,
++		     SPINAND_ECCINFO(&mx35lfxge4ab_ooblayout,
++				     mx35lf1ge4ab_ecc_get_status)),
+ };
+ 
+ static int macronix_spinand_detect(struct spinand_device *spinand)
+-- 
+2.25.1
+
 
