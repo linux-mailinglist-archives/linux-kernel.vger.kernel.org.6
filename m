@@ -1,176 +1,165 @@
-Return-Path: <linux-kernel+bounces-229242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3E49916D39
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:36:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85391916D36
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1C0A11C20128
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:36:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A91CB1C2048D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B29E516F0E2;
-	Tue, 25 Jun 2024 15:36:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A5A16F0F6;
+	Tue, 25 Jun 2024 15:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PyiOTurf"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="jbUXl7GF"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A91D16FF3D;
-	Tue, 25 Jun 2024 15:36:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C64847A64
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719329785; cv=none; b=se4QK7XXctrTwSpIaJTTPlPlrxy3sIXOKAcOjPBa1+UZ8l0NRK5+sTMjxYnUY+lyQkTH/7D7d5IkMgO/EgyFq7jgOnL8bkrsltmGwH7mCs0+oD3K6osJq95LCUabvoYPEx3ae2T9dj2dM+qmlm+Dr+dnJrKKo2nP0BhtKIvd0w4=
+	t=1719329778; cv=none; b=K2VJBIOinvK7/OP9f58sLAHFpEL0kuDJR8FeFb9yyed7RnTn2bH85qt5jh/IubMJM2zv3/0rYGxkP3q7nd3W8DLb3pk+39UWx3jxhdp8rP/SduejOG4GhzSghDcBWHCJLINZf2tNCWAcUCA031yuSkl++sTHktDtmWdXbPmJ+O8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719329785; c=relaxed/simple;
-	bh=cRmziDwgNra4eake5aUYRKgsQh9E0oLGcu/fKvQHGsY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dIIt+rF0XIZHbtqvi6gL9hJhLy71Qq4n/vAdtquU+ClvZwTFc9ekdK1dbFv5anPn9/PAOpeFEMvpBOlKRqLbztzTm2mdTIrLuINESqOJHZQfGMGY6aNC4XipOicKMGJlAo+HJOyK5L1eXajBRuy9y7jGca171lgZcUfAEhjLdrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PyiOTurf; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6fe61793e2so211209966b.0;
-        Tue, 25 Jun 2024 08:36:22 -0700 (PDT)
+	s=arc-20240116; t=1719329778; c=relaxed/simple;
+	bh=68KI8uiF8gCj47gWXr2F0l40VS/7c/NxbsbaxrO9RnI=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=KxemSCBeQZXpNDrkq5eT58vQYOXcqEizLjwqM5StsBH688qlt5muPkCrWNzeiKpxIHdCV34HgAzz3KUoiCN0uFjn2AqTmoMzQGfs9JdKVLWCz4Butre42nkSX82OxGxI/38vYQY5eJyWgb4dt9JgZaLwxPylJwGlKGKr2eXvOWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=jbUXl7GF; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f9c6e59d34so47155545ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:36:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719329781; x=1719934581; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ox1lbjwU21POUzsTNWtq+35PHOWR0ci2ck/cLItWRLY=;
-        b=PyiOTurfKHTXuD+ri2C/5aBUQA8TDBK6EoxN5ko+DWZ4Q4INkvGESkaql1VhBBZ7ot
-         akiTC8cJZ2FfODqQxJQhg2kWxvI2SA4dpSK3rJlfsWy70kiaGrLVIuwRZBQSXl/aLROG
-         9AivxWYAXoOw2ng/uNVKcSx85z53id0wyAdSX0DYtO3wCSz51M0ZkN3+Pi8b8277Nyzz
-         bWsrdaNn5EeBDO78omqeJidMHLifNchyEa7sTwrXSk3V42gAZncWiSc+mmOujvYNGDs2
-         nLJDWRw1VoFsqcaegjcpJxcQmpi85RzkVjnFrMsB20g7ygM58vhb2Bhkd1CrkK6VlYnQ
-         qcZw==
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1719329776; x=1719934576; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cEraVljjtG6yZ3F7hZuYF2rXzKtHxlFX+R3/h/MRFAM=;
+        b=jbUXl7GFplh+UUbwt4unVjiPQmmNlYAVSqHpRJ7xb5gBKnOeEE09bv4BPBhwkAHTvD
+         riczW/yDtrW9D7mJVPVD8MgQlSYz41aY6rY6VRU3kLFIzgn4nifA/D4jC7tf8KBjMMe2
+         hqjMM0PgGG643PuDMjNtFbbJxowEYtXwvKcj+NXsU0TgSuSrTgpRrb2EpPdM9HniEgZJ
+         FlknX32mmYUzF80VXt6Pwi2pMDz0APyFit6ThNza5QJgIB3WmvSP1nSbqt7WppFY7tX0
+         dQzWxTeZDaSp7VS6aiWePSQaUgTqG2FW7Y0ZsDNrpRdzCvZ0lw7tC1MgwjkB9lMqq0fw
+         14AQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719329781; x=1719934581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ox1lbjwU21POUzsTNWtq+35PHOWR0ci2ck/cLItWRLY=;
-        b=TNU1AFvaswQh6rGQPPLVLBrTveLXcxc1WqmgdkOPRYFpEeM9jkOmudP57Ez/mbXyp1
-         dy/4HredoQP8k8nvJzugSj3LeCyRbFpwXkBdbxEviF2eJftOSlnGUmEr1GDF4/Bq2kaU
-         yAa+i7IBC2CwYRfQS4tNA7LIPYeIKq0q0LcFgte89PxpbaG2IBxD6Vod6QTikJ6bGwxY
-         NytaqMJBftv/5xoz70FO1hiUB8BulHhXaScKKwOicWsasWUEm+k1PncGYK2/V5dTBUtA
-         +oWCU2grHv/cRg5fcJhYOT2xgTEZEmtqC5iemE0C/6xO2/VgAlZnwrCz6XDKs7bU7rE3
-         cL+g==
-X-Forwarded-Encrypted: i=1; AJvYcCUjyOfaf7P6TVa/zO9l+yYNX85xRDTK5wWejqa+SC1JsIIHga7hofjzeueZeaYSTfZIEZdQx48vc0OKrva/sRd0j+yfdcVcgrHaMB14f2xNlo4PS4rJ2gxzGB5ZkiRhj+82ufo9eL3VIt8FxQ==
-X-Gm-Message-State: AOJu0YzegiwB5QaMd6Qr9bnd1i0BSGeOuCb2qjNBnm2pwLd1/vXNhZxI
-	g9Cl2dkNQLh3n1Xswnmm+vuQwaMIhzqIbNNNHqmVBCWpjl+MCUIlXskJWkwferHgaI9awJM94m7
-	PWnfvPItBsT7EvtVml2K9EzIVq6g=
-X-Google-Smtp-Source: AGHT+IHxpsEaiq7s8p8MnTUzi0PLbTnU1MrdrE7dFVtZiMWrVR2nmXkgwgR1pOTuRiNCFznIg23NJHs+fBN4vaKf6Qw=
-X-Received: by 2002:a50:cdd2:0:b0:57c:5f77:1136 with SMTP id
- 4fb4d7f45d1cf-57d4bd8fcf3mr6998806a12.24.1719329780722; Tue, 25 Jun 2024
- 08:36:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719329776; x=1719934576;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cEraVljjtG6yZ3F7hZuYF2rXzKtHxlFX+R3/h/MRFAM=;
+        b=YVG90/7cCj13B26+lYx8gH5lNPDlC4cUkmZfSedDeeJJICmVZCYVRmPsSHbXUvxNOc
+         /N5cU4Da1QDRlqvp7DpJfyCABVNAIDTk3ljFuRQz7fWpjqzambdV9sWBRHBi3X6pfHv7
+         eEQkkNNC5F86PLOhL/QR23T17QXPZk4HHniVql51scw4/Mhvc8cgJlv4g1SqXPnV6CEq
+         ++Ox0rOSAACDfy1NAnfKCfuqTixITyNARlaFR7ET026XiG9e4YYXgtxGNYYREiHBaVGL
+         oPVceyq7Xp9PKpK75/n623bvfDoaOP+FUxyzEfCFEnEcEQv5HzLEzH8UfwSqJdEO6FF+
+         CxJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVf7L+q5jxd4vM/k4KZdnjm/DOCYlEcebA4DcLkfqxanTndlUjSe/+M3Q8CUOrFmAYlcDxLOnBp7W0131rpN+8ucSLTCESswVpAvhh8
+X-Gm-Message-State: AOJu0YwpxLeQAIv6vJKUbwpfNTGxAjUJhnobKGzGk6X9QpLF5k6KmkZA
+	9DYOoSB7V6q5/PvNW5sC2q4NEG6mGcxD0ME4VyN0EVB0jjdhT9Ua5N1/N+QZnJMsFLk2b10t8gx
+	p
+X-Google-Smtp-Source: AGHT+IEVO2RloeRFS7aruFEhKi3Dam9+w8kNJr0NKAJEy2z+RvgfGkDPX/JEBDXkFZBWZxQs9gGhyA==
+X-Received: by 2002:a17:902:da81:b0:1fa:2b1f:6762 with SMTP id d9443c01a7336-1fa2b1f68eamr88102695ad.45.1719329775863;
+        Tue, 25 Jun 2024 08:36:15 -0700 (PDT)
+Received: from localhost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fa0bf76ca7sm63983305ad.277.2024.06.25.08.36.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 08:36:15 -0700 (PDT)
+Date: Tue, 25 Jun 2024 08:36:15 -0700 (PDT)
+X-Google-Original-Date: Tue, 25 Jun 2024 08:36:13 PDT (-0700)
+Subject:     Re: [-fixes] riscv: kexec: Avoid deadlock in kexec crash path
+In-Reply-To: <20240609141802.6976-1-takakura@valinux.co.jp>
+CC: alex@ghiti.fr, songshuaishuai@tinylab.org,
+  Paul Walmsley <paul.walmsley@sifive.com>, aou@eecs.berkeley.edu, guoren@kernel.org, xianting.tian@linux.alibaba.com,
+  takahiro.akashi@linaro.org, takakura@valinux.co.jp, linux-riscv@lists.infradead.org,
+  linux-kernel@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: takakura@valinux.co.jp
+Message-ID: <mhng-cd9af4c1-3eb8-4053-8d59-e59c12c14166@palmer-ri-x1c9a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240523175227.117984-1-robdclark@gmail.com> <20240523175227.117984-2-robdclark@gmail.com>
- <20240624151401.GB8706@willie-the-truck> <CAF6AEGttkHPOsO+NSHZeRXiZBxU_26HZyGMjOZ3-Y8NZUgz0gA@mail.gmail.com>
- <20240625112703.GA10175@willie-the-truck>
-In-Reply-To: <20240625112703.GA10175@willie-the-truck>
-From: Rob Clark <robdclark@gmail.com>
-Date: Tue, 25 Jun 2024 08:36:08 -0700
-Message-ID: <CAF6AEGu-NxM0HO_sKxu_bhAxMEwOZkisPmoouocvisk6ng_6Bg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] iommu/io-pgtable-arm: Add way to debug pgtable walk
-To: Will Deacon <will@kernel.org>
-Cc: dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org, 
-	freedreno@lists.freedesktop.org, Rob Clark <robdclark@chromium.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	Boris Brezillon <boris.brezillon@collabora.com>, Kevin Tian <kevin.tian@intel.com>, 
-	Joao Martins <joao.m.martins@oracle.com>, 
-	"moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>, 
-	"open list:IOMMU SUBSYSTEM" <iommu@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 25, 2024 at 4:27=E2=80=AFAM Will Deacon <will@kernel.org> wrote=
-:
+On Sun, 09 Jun 2024 07:18:02 PDT (-0700), takakura@valinux.co.jp wrote:
+> Hi Alex, Song,
 >
-> On Mon, Jun 24, 2024 at 08:37:26AM -0700, Rob Clark wrote:
-> > On Mon, Jun 24, 2024 at 8:14=E2=80=AFAM Will Deacon <will@kernel.org> w=
-rote:
-> > >
-> > > On Thu, May 23, 2024 at 10:52:21AM -0700, Rob Clark wrote:
-> > > > From: Rob Clark <robdclark@chromium.org>
-> > > >
-> > > > Add an io-pgtable method to walk the pgtable returning the raw PTEs=
- that
-> > > > would be traversed for a given iova access.
-> > > >
-> > > > Signed-off-by: Rob Clark <robdclark@chromium.org>
-> > > > ---
-> > > >  drivers/iommu/io-pgtable-arm.c | 51 ++++++++++++++++++++++++++++--=
-----
-> > > >  include/linux/io-pgtable.h     |  4 +++
-> > > >  2 files changed, 46 insertions(+), 9 deletions(-)
-> > > >
-> > > > diff --git a/drivers/iommu/io-pgtable-arm.c b/drivers/iommu/io-pgta=
-ble-arm.c
-> > > > index f7828a7aad41..f47a0e64bb35 100644
-> > > > --- a/drivers/iommu/io-pgtable-arm.c
-> > > > +++ b/drivers/iommu/io-pgtable-arm.c
-> > > > @@ -693,17 +693,19 @@ static size_t arm_lpae_unmap_pages(struct io_=
-pgtable_ops *ops, unsigned long iov
-> > > >                               data->start_level, ptep);
-> > > >  }
-> > > >
-> > > > -static phys_addr_t arm_lpae_iova_to_phys(struct io_pgtable_ops *op=
-s,
-> > > > -                                      unsigned long iova)
-> > > > +static int arm_lpae_pgtable_walk(struct io_pgtable_ops *ops, unsig=
-ned long iova,
-> > > > +                     int (*cb)(void *cb_data, void *pte, int level=
-),
-> > > > +                     void *cb_data)
-> > > >  {
-> > > >       struct arm_lpae_io_pgtable *data =3D io_pgtable_ops_to_data(o=
-ps);
-> > > >       arm_lpae_iopte pte, *ptep =3D data->pgd;
-> > > >       int lvl =3D data->start_level;
-> > > > +     int ret;
-> > > >
-> > > >       do {
-> > > >               /* Valid IOPTE pointer? */
-> > > >               if (!ptep)
-> > > > -                     return 0;
-> > > > +                     return -EFAULT;
-> > >
-> > > nit: -ENOENT might be a little better, as we're only checking against=
- a
-> > > NULL entry rather than strictly any faulting entry.
-> > >
-> > > >               /* Grab the IOPTE we're interested in */
-> > > >               ptep +=3D ARM_LPAE_LVL_IDX(iova, lvl, data);
-> > > > @@ -711,22 +713,52 @@ static phys_addr_t arm_lpae_iova_to_phys(stru=
-ct io_pgtable_ops *ops,
-> > > >
-> > > >               /* Valid entry? */
-> > > >               if (!pte)
-> > > > -                     return 0;
-> > > > +                     return -EFAULT;
-> > >
-> > > Same here (and at the end of the function).
-> > >
-> > > > +
-> > > > +             ret =3D cb(cb_data, &pte, lvl);
-> > >
-> > > Since pte is on the stack, rather than pointing into the actual pgtab=
-le,
-> > > I think it would be clearer to pass it by value to the callback.
-> >
-> > fwiw, I passed it as a void* to avoid the pte size.. although I guess
-> > it could be a union of all the possible pte types
+> On Fri, 24 May 2024, Alexandre Ghiti wrote:
+>>Hi Song, Ryo,
+>>
+>>On 06/05/2024 07:10, takakura@valinux.co.jp wrote:
+>>> Hi Song and Paul!
+>>>
+>>>>> To avoid the deadlock, this patch directly EOI the irq regardless of
+>>>>> the active status of irqchip.
+>>>> Taking a quick look at the other architectures, looks like no one else is
+>>>> doing this.  Is this addressing a RISC-V-only problem?
+>>>>
+>>>>> diff --git a/arch/riscv/kernel/machine_kexec.c b/arch/riscv/kernel/machine_kexec.c
+>>>>> index f6c7135b00d7..d7ddf4d2b243 100644
+>>>>> --- a/arch/riscv/kernel/machine_kexec.c
+>>>>> +++ b/arch/riscv/kernel/machine_kexec.c
+>>>>> @@ -149,20 +149,12 @@ static void machine_kexec_mask_interrupts(void)
+>>>>>
+>>>>>   	for_each_irq_desc(i, desc) {
+>>>>>   		struct irq_chip *chip;
+>>>>> -		int ret;
+>>>>>
+>>>>>   		chip = irq_desc_get_chip(desc);
+>>>>>   		if (!chip)
+>>>>>   			continue;
+>>>>>
+>>>>> -		/*
+>>>>> -		 * First try to remove the active state. If this
+>>>>> -		 * fails, try to EOI the interrupt.
+>>>>> -		 */
+>>>>> -		ret = irq_set_irqchip_state(i, IRQCHIP_STATE_ACTIVE, false);
+>>>>> -
+>>>>> -		if (ret && irqd_irq_inprogress(&desc->irq_data) &&
+>>>>> -		    chip->irq_eoi)
+>>>>> +		if (chip->irq_eoi && irqd_irq_inprogress(&desc->irq_data))
+>>>>>   			chip->irq_eoi(&desc->irq_data);
+>>> I think this deadlock is relevant to riscv and arm64 as they both
+>>> acquire irqdesc spinlock by calling irq_set_irqchip_state() during their
+>>> machine_kexec_mask_interrupts().
+>>>
+>>> However, I think calling irq_set_irqchip_state() during
+>>> machine_kexec_mask_interrupts() is arm64 specific way of handling EOI
+>>> which is not necessary for riscv.
+>>> For arm64, its interrupt controller(gic) seems to have two ways of EOIing
+>>> an interrupt depending on the mode which gic is configured. One of them
+>>> treats EOI as two step procedure, priority drop and deactivation. I think
+>>> irq_set_irqchip_state() is there to handle the deactivation part of
+>>> the procedure.
+>>> For riscv, EOI only requires irq_eoi handler to complete EOI and I think
+>>> keeping irq_set_irqchip_state() will only leave this possible deadlock
+>>> without any use.
+>>> So I think it's best we simply remove irq_set_irqchip_state() as Song did.
+>>
+>>
+>>I think this ^ is relevant and should be added to the commit log. @Song
+>>can you respin another version with the updated commit log? @Ryo can you
+>>add your Reviewed-by when it's done?
 >
-> Can you just get away with a u64?
+> Sure!
 
-yeah, that wfm if you're ok with it
+Just checking up on this one, I don't see a v2 on the lists.
 
-BR,
--R
+>
+>>This fix has been lagging behind for quite some time, it would be nice
+>>to merge this in 6.10 and backport to stable.
+>
+> Sincerely,
+>
+> Ryo Takakura
+>
+>>Thanks,
+>>
+>>Alex
 
