@@ -1,83 +1,114 @@
-Return-Path: <linux-kernel+bounces-228798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB41916707
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:11:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEBC91670C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:12:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B102833F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC5D62817C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD1D153506;
-	Tue, 25 Jun 2024 12:11:34 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E420B154C04;
+	Tue, 25 Jun 2024 12:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LcGY4sSj"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B5A14E2D6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FCBD14A092
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:12:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719317494; cv=none; b=btQi8qLGOydMobXSMq05vPaX6s9PEecNQOjSrVNxEfJlf9HJwHeU8vHyK/zNhRw0ZY4pq4yCXL1uzj+nymjlbNlyry6HD1f2Y5lxZcuzmOE7XNO9EmjNjgVD7qBd3VSTf8dzKAxBMk8uqQQM1/QQWy9vUQA6JoSOnHUMWzZtH3c=
+	t=1719317531; cv=none; b=D//FvvwSks/IP2YIliyWXsBoVAGz8xYbjOhRVJlJw9q2uCBQtL/FUwmor7Q5KG+XFm+XtitgMCC29EjFVBA0NdrBf9Glr60zz57g+1yn/DO5HFQUvgU6JuoUSIkhAwTwvauhv119Rpjp+vfauNcCVMyuNWxMEVAcQ/M/fyLpF4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719317494; c=relaxed/simple;
-	bh=dXPvzuAHdVyvfta2uzLyiKVYQS9Dreuhrq8dharWl5I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=AJHBZ3YppLRDh8Qx4Mcy9NemQ8CkrNJnKmDt95TnIus4vlgzxWkcVVdxLXcHakv/BqP5g6tU3SgLSA4DV+4pmCasOsQR0hQ0ZJXgWV6o7UFpWUumL6I8XdOhRUmvL8uAHv6iQ2fkJLSXjBwMTYrFMTIrQRwDEszRV2WbKgUhCMc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sM51F-0001L9-E8; Tue, 25 Jun 2024 14:11:29 +0200
-Received: from [2a0a:edc0:0:900:1d::4e] (helo=lupine)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sM51E-004szK-Mf; Tue, 25 Jun 2024 14:11:28 +0200
-Received: from pza by lupine with local (Exim 4.96)
-	(envelope-from <p.zabel@pengutronix.de>)
-	id 1sM51E-0007v7-22;
-	Tue, 25 Jun 2024 14:11:28 +0200
-Message-ID: <10ab78d4a293afb5bc67c3db0fcb00a7e2669348.camel@pengutronix.de>
-Subject: Re: [PATCH] reset: RESET_IMX8MP_AUDIOMIX should depend on ARCH_MXC
-From: Philipp Zabel <p.zabel@pengutronix.de>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Abel Vesa
- <abel.vesa@linaro.org>, Marco Felsch <m.felsch@pengutronix.de>, Shengjiu
- Wang <shengjiu.wang@nxp.com>
-Cc: imx@lists.linux.dev, linux-kernel@vger.kernel.org
-Date: Tue, 25 Jun 2024 14:11:28 +0200
-In-Reply-To: <6d8116a56186fbf468229e823c7c8dfcd9488959.1719316665.git.geert+renesas@glider.be>
-References: 
-	<6d8116a56186fbf468229e823c7c8dfcd9488959.1719316665.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1719317531; c=relaxed/simple;
+	bh=SMmj/s5tPsZBtI0Hp87P6WGLNK33TBlA+oPjMk8mzlg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YENBsKmq5BCk2P8YCmVvIqAlO1GTH1Xo9kHDE1PFmaUj1WzOAkYv0p+A0vs9EsQUE1mq7i1ZT/knUsxF0eALC3eBKjRI397MY1BMYJlS45D/5F/MzwCbABsqeITY5BGIVXiR4FZtDqzIWt/hFqe6m0IHMspw0TV7f/syV+kddUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LcGY4sSj; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ebe6495aedso57646921fa.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 05:12:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719317527; x=1719922327; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JUWxLKV9ZU1i1HqEH7t4Y8lzNFBtk5FDAR2lcVEnJ+o=;
+        b=LcGY4sSjx3QAi9vVhd0RZjXwJ1MoK7QR9sBbNqbuuJNcKnm4Dv5zR9o9lMkqact0SE
+         RxKCbgdfYyuC9WEekNvce8ecqGAgMpOz+yTYSGVbPxDG/R2HejR2gN36PaO+r4v1hQmK
+         PfYOCA8gGyYNR+zn0KYsVVKIkm7Jd2XLwZ8k1t0Zo5oSb2BIi+nMJrYDoPNmxdJFw9Du
+         UDm55jmt9rMNiLwNMolmeU7E/JKSUCYycFArQIalA0sdMdTHS9UPiioxxkE0skgJN4l6
+         hLhJeN/TDKIk62/MIXZqmx1FMt+CbfHNYgtb1+QyJM+IHQHmNaG1Dfb8uxy/NJ2wIzcf
+         4dmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719317527; x=1719922327;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JUWxLKV9ZU1i1HqEH7t4Y8lzNFBtk5FDAR2lcVEnJ+o=;
+        b=alqrdGWfyL22gVW/MvT33SV/sDHhqMgRfUBB2kERaUtLnPdMZiGEnthgFFZsEV9WNm
+         /ufOY3fu2n02QhQaAsME/8FJzcegBnGnD9JL3Cx4fr2xy3zDfCQdPn4eK0HfRVhdsg4M
+         EZx5ZFf9Ey8q5QetnZhAtO8szgbQx0ex5Vzt6vsaj6NRdY4EedwTTbUQjhLoh69VXufd
+         Ko9H9Y466lF9fDdC6iL1ETk3CFhJdMR8npU/YoAjFEiij5SgL8hdZTtfQWxyv35SvEiU
+         5MVeOloqwWijvau6kU/NM0gggZh5efuj0W138KM36WukybcMzowJ7BMHaIp6AW6ZOmC7
+         uNPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWTghSHfzIgJYcsFZSi/Ea2rweJvSh/jwxric/jXmxcCN030U7V6+HNMIxcLGQuI9JwCXmu1g+YQJmNjv81khBtnjNszqE5zmSFTR0x
+X-Gm-Message-State: AOJu0YzoECpEe3kIAfHKHzp5ThHpEuYO8Y9cVL51HRO5qiFAA9sGHJgs
+	Ym1yD4dB6accPF3S5ULmcrN9TcodYmN3IlfkQmMo7eYnJePYq63CKn2Ca46bd0k=
+X-Google-Smtp-Source: AGHT+IH80A0Q/I9cA3o4S8jLtTyDN052E3s8QDSrLmqKgOdam+ij6v1cwzCOFUinugK9U/0pYOmD/g==
+X-Received: by 2002:ac2:4838:0:b0:52b:c27c:ea1f with SMTP id 2adb3069b0e04-52ce185faa8mr3746809e87.55.1719317527555;
+        Tue, 25 Jun 2024 05:12:07 -0700 (PDT)
+Received: from eriador.lan (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd63bcef1sm1214808e87.72.2024.06.25.05.12.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 05:12:06 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH] drm/connector: hdmi: shorten too long function name
+Date: Tue, 25 Jun 2024 15:11:57 +0300
+Message-ID: <171931750561.3859266.10071770084943744269.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240624-hdmi-connector-shorten-name-v1-1-5bd3410138db@linaro.org>
+References: <20240624-hdmi-connector-shorten-name-v1-1-5bd3410138db@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Di, 2024-06-25 at 13:57 +0200, Geert Uytterhoeven wrote:
-> The i.MX8MP AudioMix reset controller is only present on Freescale i.MX8
-> SoCs.  Hence add a dependency on ARCH_MXC, to prevent asking the user
-> about this driver when configuring a kernel without i.MX SoC support.
->=20
-> Fixes: fe125601d17cc1ea ("reset: imx8mp-audiomix: Add AudioMix Block Cont=
-rol reset driver")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, 24 Jun 2024 20:39:58 +0300, Dmitry Baryshkov wrote:
+> If CONFIG_MODVERSIONS is enabled, then using the HDMI Connector
+> framework can result in build failures. Rename the function to make it
+> fit into the name requirements.
+> 
+> ERROR: modpost: too long symbol "drm_atomic_helper_connector_hdmi_disable_audio_infoframe" [drivers/gpu/drm/msm/msm.ko]
+> 
+> 
+> [...]
 
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Applied to drm-misc-next, thanks!
 
-regards
-Philipp
+[1/1] drm/connector: hdmi: shorten too long function name
+      commit: 06ec7893a4b48a1fad9e94cb670862ddd65b6eab
+
+Best regards,
+-- 
+With best wishes
+Dmitry
+
 
