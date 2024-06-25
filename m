@@ -1,216 +1,152 @@
-Return-Path: <linux-kernel+bounces-228608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 794CE916231
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:19:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE693916232
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F2C31C21846
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:19:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CD541C20965
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125A31494DC;
-	Tue, 25 Jun 2024 09:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93CA6149C50;
+	Tue, 25 Jun 2024 09:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XuyqlRbx"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="jSp47wwE"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7FF49656;
-	Tue, 25 Jun 2024 09:19:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 714D51494A3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:19:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719307173; cv=none; b=paCbu35EEDkIyE9rVduUS92YR8RnrCrgT3rzLQ0hdmQkYsysXuLdbHcxJunJAPeWIMe1wb+pWBzX7J4OFkzzzektQpVtm+0IZ30aXnsmnI3usqMew3PaUKhvgul9xOpiJ4m5bq4f5F07keOhFPLnJaz6eYBcwH2w4ZO/2oB3CVo=
+	t=1719307191; cv=none; b=W4cqhR9qpuED3dVycQ2jlOPWeOJ1TzE6I10ZrSD1SRL3LENKvAWfuJjzp22AWmc4M7iurB+Z/clH/fXQPh8BdqFMjbpVd4+hMWY88WnIh3aeh5In3/Ti2iFgSeN+s2ldvtPZCFV26M+6R96Rms17ymp7w4To1hGQvqv8kt480Bo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719307173; c=relaxed/simple;
-	bh=aGPVJbx0IRNRp7GfM3OyTXLbeNN3XX7hcCQatxJWnAw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qsrpg66lJlCcVAXMb9tIqyHoeSKl0LAD9xbVKk84NgijsbiMmBjQTO5VTggK9DF9aj0yJdL6jgc1r1QgGGWu+O4+YcId/fX9e2eAp7OOCPE1XUrBP3N+2p5SqA42/m14bpt34deXJHtivBeHBAOLc++Sk14OIqSxWkdvBMVfFwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XuyqlRbx; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4ef561f77eeso1183656e0c.0;
-        Tue, 25 Jun 2024 02:19:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719307170; x=1719911970; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MfMzg+YAUQEHpywJnHYxN8X4b8BgXjU2WPrlmq2wzO0=;
-        b=XuyqlRbxoA4ekbXntaR9+JS8805pC1QqJznytpuDKRS3ohZGGULxpHSF5IXqwrNiKe
-         YayiPLmhzwwfkYp6agfSdu93rwYHtoHQN0r5C6katBMo0dcYHIcb1/yii5dudP1AcJTI
-         cjYJUVzmMdcO9J2UgCgQbd6deMIwkbFa4zu5IzMrd+byVmrXDZHohzkbbEhf1dtYGWyl
-         fwl76pYo+v9mY04ho+q/9V+rEMI5K0aXmExqofpVkWE1ehDG6ehW2eGM7AtzBvhejwVP
-         gJwUoGWdOI2ZoCJhY01z5+buvZbtPgJT/5wKHu4Wq8GPjyVF6Xoq9Coq4rse2EtTG3TR
-         qsyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719307170; x=1719911970;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MfMzg+YAUQEHpywJnHYxN8X4b8BgXjU2WPrlmq2wzO0=;
-        b=E0O0kUqIZKg/+H0NDydT6wj30INWeylj7YB+eEgXVptix38Q/KvGy61jRQpaTGUaHL
-         3yrR6rhSJze2NRG7+uoXxPYekAaP44fQ4uPARycrj7Y2HOc8ujiywbG+onhU4109o1/F
-         6DUxdndYcDQXiqm4EXFu7FJuGZZ3oOYFSfVW0QZC2pfbAfSDIGwYNM2Jr/hOdCF7XdT9
-         zqQ9mxMzzdnq1BmcoLT/88qcj1+PKrLhAhu3aXPt83cy5+vzkTY6Xb0/X2FCjY8mohmX
-         Dq5zoiM4vbuXWu/ioLwt+ijmvQFCY2DoVVUkzBgvPTbwXTC4jK3JBzd/OWpQMhNcKrMD
-         ly1A==
-X-Forwarded-Encrypted: i=1; AJvYcCXDug1Qi9XWiEFNE2bydkLAGGH4zKk1Jmq2RTokv2RrUVZN50mDevw8CwgFXs4cnLr0gYMzxJ+5sEZ+KoQgQWYv1tcLGCGHJ0mFtdlg2AKgpN1NVBUi2MEMOh8ZNKfjV+HjlCmrrOE71Jf6YV4wATdBgE0y8u6jZJMVwRg2LJJ4Z9byMsU/gLNocMrmPCw7Ey7uNdyfWC2exK+kOblDYsGppbeqUTz+
-X-Gm-Message-State: AOJu0YwurnmdugX84TE5ScESGmXC+Xt2PlGiFC8RH/cpqui0YveTHQdv
-	7FWDGPNHaR0AZWN8Olac2HwY3w/GRqnU+uO3Mdv/n85soZDcm3jJiXEMFgH83qjkYnostWxBtTd
-	6E3Ll1yVQubMevQbt8NAe63anJPst3JRDAEQ=
-X-Google-Smtp-Source: AGHT+IEJHDWH1Fae3/yN6gXmKBcHgNkPk//e7Gf28ESAA4YG8kyfSJzXoCeg0TUAJyoB85KPPd4xVZtf8fHKcaYqi60=
-X-Received: by 2002:a05:6122:208a:b0:4ec:f7d0:e71c with SMTP id
- 71dfb90a1353d-4ef6a5dd33emr5390804e0c.4.1719307169681; Tue, 25 Jun 2024
- 02:19:29 -0700 (PDT)
+	s=arc-20240116; t=1719307191; c=relaxed/simple;
+	bh=n0mq1AMe2tgGpER4AnAC8ylRtUQ86ENmVUbmq46meXA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ajSRRD3KQ3jv/6at2L5UdQGFMAqW+UydSPkrdDfjuprH8+2YNsUT10AiaYozuc4kTYF0deso25OOHpMVFLdM+e29BiiTBfBWLxiRQ6LkxsLAf1JiZd57jaXppD2sK15O+S4RH3NnF76pSjdNnGVAsPJaj6wc4NCgrCRzbfMWq5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=jSp47wwE; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.205] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45P9JLXc1553799
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 25 Jun 2024 02:19:22 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45P9JLXc1553799
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024061501; t=1719307163;
+	bh=q08eB4/vIMzhtkNDI6dbK8CnZo5whQqreFQgvIucRko=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jSp47wwEwgxWzO/pVWWdxskxFOrDu4/M3xrJFcRucDUw6iP+2CA4JWXMYFpayZcqW
+	 m/sMrVGnOWvEABlJJH/Yf8YtyMFKGhQX1kyTO6940TWftM+3oxh3j4xP87FuJeUZ/K
+	 Tg+ILlDoAynFQ8g+ALq74k4lYcuoNgEm8wIpo6BCYGgTQ/tsfxAhqSqK59gwtdj9wz
+	 TsIbnkoeHAaTSScE+y3a6okxp1foz1ZnFdYKUc60xylGvPIsHpxDNXykP9rVE9Ir1l
+	 ZpuaBeIPe/EnSgSKhE8Ag7sbLxYNfatHZ9Zm2pYxK1aIdP4lIW3fDHcLaVSW4cDyrt
+	 3E06pyQGutGbg==
+Message-ID: <dca1635b-1e08-4dbb-9dbb-335cbdcf9b9d@zytor.com>
+Date: Tue, 25 Jun 2024 02:19:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624153229.68882-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240624153229.68882-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <TY3PR01MB11346BEEDB2125402E8A489E086D52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346BEEDB2125402E8A489E086D52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 25 Jun 2024 10:19:02 +0100
-Message-ID: <CA+V-a8vJdUCY4xBwm56C2A3w-gYOWo3MtoMMMfdcDwwsQWY4Gg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, 
-	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] x86/fred: Always install system interrupt handler
+ into IDT
+To: Hou Wenlong <houwenlong.hwl@antgroup.com>, linux-kernel@vger.kernel.org
+Cc: Lai Jiangshan <jiangshan.ljs@antgroup.com>,
+        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, Xin Li
+ <xin3.li@intel.com>,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>,
+        Rick Edgecombe <rick.p.edgecombe@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>
+References: <cover.1718972598.git.houwenlong.hwl@antgroup.com>
+ <2f632ef59c8c9cc27c3702bc2d286496ed298d65.1718972598.git.houwenlong.hwl@antgroup.com>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ xsDNBGUPz1cBDACS/9yOJGojBFPxFt0OfTWuMl0uSgpwk37uRrFPTTLw4BaxhlFL0bjs6q+0
+ 2OfG34R+a0ZCuj5c9vggUMoOLdDyA7yPVAJU0OX6lqpg6z/kyQg3t4jvajG6aCgwSDx5Kzg5
+ Rj3AXl8k2wb0jdqRB4RvaOPFiHNGgXCs5Pkux/qr0laeFIpzMKMootGa4kfURgPhRzUaM1vy
+ bsMsL8vpJtGUmitrSqe5dVNBH00whLtPFM7IbzKURPUOkRRiusFAsw0a1ztCgoFczq6VfAVu
+ raTye0L/VXwZd+aGi401V2tLsAHxxckRi9p3mc0jExPc60joK+aZPy6amwSCy5kAJ/AboYtY
+ VmKIGKx1yx8POy6m+1lZ8C0q9b8eJ8kWPAR78PgT37FQWKYS1uAroG2wLdK7FiIEpPhCD+zH
+ wlslo2ETbdKjrLIPNehQCOWrT32k8vFNEMLP5G/mmjfNj5sEf3IOKgMTMVl9AFjsINLHcxEQ
+ 6T8nGbX/n3msP6A36FDfdSEAEQEAAc0WWGluIExpIDx4aW5Aenl0b3IuY29tPsLBDQQTAQgA
+ NxYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89XBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
+ AQAACgkQa70OVx2uN1HUpgv/cM2fsFCQodLArMTX5nt9yqAWgA5t1srri6EgS8W3F+3Kitge
+ tYTBKu6j5BXuXaX3vyfCm+zajDJN77JHuYnpcKKr13VcZi1Swv6Jx1u0II8DOmoDYLb1Q2ZW
+ v83W55fOWJ2g72x/UjVJBQ0sVjAngazU3ckc0TeNQlkcpSVGa/qBIHLfZraWtdrNAQT4A1fa
+ sWGuJrChBFhtKbYXbUCu9AoYmmbQnsx2EWoJy3h7OjtfFapJbPZql+no5AJ3Mk9eE5oWyLH+
+ QWqtOeJM7kKvn/dBudokFSNhDUw06e7EoVPSJyUIMbYtUO7g2+Atu44G/EPP0yV0J4lRO6EA
+ wYRXff7+I1jIWEHpj5EFVYO6SmBg7zF2illHEW31JAPtdDLDHYcZDfS41caEKOQIPsdzQkaQ
+ oW2hchcjcMPAfyhhRzUpVHLPxLCetP8vrVhTvnaZUo0xaVYb3+wjP+D5j/3+hwblu2agPsaE
+ vgVbZ8Fx3TUxUPCAdr/p73DGg57oHjgezsDNBGUPz1gBDAD4Mg7hMFRQqlzotcNSxatlAQNL
+ MadLfUTFz8wUUa21LPLrHBkUwm8RujehJrzcVbPYwPXIO0uyL/F///CogMNx7Iwo6by43KOy
+ g89wVFhyy237EY76j1lVfLzcMYmjBoTH95fJC/lVb5Whxil6KjSN/R/y3jfG1dPXfwAuZ/4N
+ cMoOslWkfZKJeEut5aZTRepKKF54T5r49H9F7OFLyxrC/uI9UDttWqMxcWyCkHh0v1Di8176
+ jjYRNTrGEfYfGxSp+3jYL3PoNceIMkqM9haXjjGl0W1B4BidK1LVYBNov0rTEzyr0a1riUrp
+ Qk+6z/LHxCM9lFFXnqH7KWeToTOPQebD2B/Ah5CZlft41i8L6LOF/LCuDBuYlu/fI2nuCc8d
+ m4wwtkou1Y/kIwbEsE/6RQwRXUZhzO6llfoN96Fczr/RwvPIK5SVMixqWq4QGFAyK0m/1ap4
+ bhIRrdCLVQcgU4glo17vqfEaRcTW5SgX+pGs4KIPPBE5J/ABD6pBnUUAEQEAAcLA/AQYAQgA
+ JhYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89ZBQkFo5qAAhsMAAoJEGu9DlcdrjdR4C0L
+ /RcjolEjoZW8VsyxWtXazQPnaRvzZ4vhmGOsCPr2BPtMlSwDzTlri8BBG1/3t/DNK4JLuwEj
+ OAIE3fkkm+UG4Kjud6aNeraDI52DRVCSx6xff3bjmJsJJMb12mWglN6LjdF6K+PE+OTJUh2F
+ dOhslN5C2kgl0dvUuevwMgQF3IljLmi/6APKYJHjkJpu1E6luZec/lRbetHuNFtbh3xgFIJx
+ 2RpgVDP4xB3f8r0I+y6ua+p7fgOjDLyoFjubRGed0Be45JJQEn7A3CSb6Xu7NYobnxfkwAGZ
+ Q81a2XtvNS7Aj6NWVoOQB5KbM4yosO5+Me1V1SkX2jlnn26JPEvbV3KRFcwV5RnDxm4OQTSk
+ PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
+ gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
+ l75w1xInsg==
+In-Reply-To: <2f632ef59c8c9cc27c3702bc2d286496ed298d65.1718972598.git.houwenlong.hwl@antgroup.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Biju,
+On 6/21/2024 6:12 AM, Hou Wenlong wrote:
+> In sysvec_install(), the system interrupt handler is not installed into
+> the IDT when the FRED feature is present, but FRED can be disabled
+> in trap_init(). However, sysvec_install() can be used
+> before trap_init(), e.g., the HYPERVISOR_CALLBACK_VECTOR handler is
+> registered in kvm_guest_init(), which is called by setup_arch() before
+> trap_init(). If FRED is disabled later, then the spurious_interrupt()
+> handler will be used due to the handler not being installed into the
+> IDT. Therefore, always install system interrupt handler into IDT.
+> 
+> Fixes: 3810da12710a ("x86/fred: Add a fred= cmdline param")
+> Signed-off-by: Hou Wenlong <houwenlong.hwl@antgroup.com>
+> ---
+>   arch/x86/include/asm/idtentry.h | 3 +--
+>   1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/idtentry.h b/arch/x86/include/asm/idtentry.h
+> index d4f24499b256..daee9f7765bc 100644
+> --- a/arch/x86/include/asm/idtentry.h
+> +++ b/arch/x86/include/asm/idtentry.h
+> @@ -470,8 +470,7 @@ static inline void fred_install_sysvec(unsigned int vector, const idtentry_t fun
+>   #define sysvec_install(vector, function) {				\
+>   	if (cpu_feature_enabled(X86_FEATURE_FRED))			\
+>   		fred_install_sysvec(vector, function);			\
+> -	else								\
+> -		idt_install_sysvec(vector, asm_##function);		\
 
-On Tue, Jun 25, 2024 at 10:12=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.c=
-om> wrote:
->
-> Hi Prabhakar,
->
-> > -----Original Message-----
-> > From: Prabhakar <prabhakar.csengg@gmail.com>
-> > Sent: Monday, June 24, 2024 4:32 PM
-> > Subject: [PATCH v3 1/3] dt-bindings: mmc: renesas,sdhi: Document RZ/V2H=
-(P) support
-> >
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to that =
-of the R-Car Gen3, but it
-> > has some differences:
-> > - HS400 is not supported.
-> > - It supports the SD_IOVS bit to control the IO voltage level.
-> > - It supports fixed address mode.
-> >
-> > To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a09g05=
-7'
-> > compatible string is added.
-> >
-> > A 'vqmmc-regulator' object is introduced to handle the power enable (PW=
-EN) and voltage level
-> > switching for the SD/MMC.
-> >
-> > Additionally, the 'renesas,sdhi-use-internal-regulator' flag is introdu=
-ced to indicate that an
-> > internal regulator is used instead of a GPIO-controlled regulator. This=
- flag will help configure
-> > the internal regulator and avoid special handling when GPIO is used for=
- voltage regulation instead
-> > of the SD_(IOVS/PWEN) pins.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v2->v3
-> > - Renamed vqmmc-r9a09g057-regulator object to vqmmc-regulator
-> > - Added regulator-compatible property for vqmmc-regulator
-> > - Added 'renesas,sdhi-use-internal-regulator' property
-> >
-> > v1->v2
-> > - Moved vqmmc object in the if block
-> > - Updated commit message
-> > ---
-> >  .../devicetree/bindings/mmc/renesas,sdhi.yaml | 30 ++++++++++++++++++-
-> >  1 file changed, 29 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> > b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> > index 3d0e61e59856..20769434a422 100644
-> > --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> > +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
-> > @@ -18,6 +18,7 @@ properties:
-> >            - renesas,sdhi-r7s9210 # SH-Mobile AG5
-> >            - renesas,sdhi-r8a73a4 # R-Mobile APE6
-> >            - renesas,sdhi-r8a7740 # R-Mobile A1
-> > +          - renesas,sdhi-r9a09g057 # RZ/V2H(P)
-> >            - renesas,sdhi-sh73a0  # R-Mobile APE6
-> >        - items:
-> >            - enum:
-> > @@ -118,7 +119,9 @@ allOf:
-> >        properties:
-> >          compatible:
-> >            contains:
-> > -            const: renesas,rzg2l-sdhi
-> > +            enum:
-> > +              - renesas,sdhi-r9a09g057
-> > +              - renesas,rzg2l-sdhi
-> >      then:
-> >        properties:
-> >          clocks:
-> > @@ -204,6 +207,31 @@ allOf:
-> >          sectioned off to be run by a separate second clock source to a=
-llow
-> >          the main core clock to be turned off to save power.
-> >
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: renesas,sdhi-r9a09g057
-> > +    then:
-> > +      properties:
-> > +        renesas,sdhi-use-internal-regulator:
-> > +          $ref: /schemas/types.yaml#/definitions/flag
-> > +          description:
-> > +            Flag to indicate internal regulator is being used instead =
-of GPIO regulator.
-> > +
-> > +        vqmmc-regulator:
-> > +          type: object
-> > +          description: VQMMC SD regulator
-> > +          $ref: /schemas/regulator/regulator.yaml#
-> > +          unevaluatedProperties: false
-> > +
-> > +          properties:
-> > +            regulator-compatible:
-> > +              pattern: "^vqmmc-r9a09g057-regulator"
-> > +
-> > +      required:
-> > +        - vqmmc-regulator
->
-> Maybe we can drop required to make it optional, so that one has the
-> option to select between { vqmmc-regulator, gpio regulator}??
->
-I think making the regulator node optional isn't correct here as this
-internal regulator is always present in the SoC and this has to be
-described in the DT no matter if it's being used or not.
+empty line, it improves readability.
 
-Users can always switch between internal regulator and GPIO regulator.
-I have provided an example here [0] for both the cases.
+And please put a comment here to explain why this is unconditionally
+done for IDT.
 
-[0] https://patchwork.kernel.org/project/linux-renesas-soc/cover/2024062415=
-3229.68882-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+> +	idt_install_sysvec(vector, asm_##function);			\
+>   }
+>   
+>   #else /* !__ASSEMBLY__ */
 
-Cheers,
-Prabhakar
+Thanks!
+     Xin
+
 
