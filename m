@@ -1,245 +1,109 @@
-Return-Path: <linux-kernel+bounces-229775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D43B89173E5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:57:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DED5B91740C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28D80B214CB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:57:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E40281176
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F7F17E8F4;
-	Tue, 25 Jun 2024 21:56:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D41149E14;
+	Tue, 25 Jun 2024 22:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="m/2r1PS0"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGiNOjzS"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2A617D360;
-	Tue, 25 Jun 2024 21:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC68E8F48;
+	Tue, 25 Jun 2024 22:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719352591; cv=none; b=p8h4U4j4Q1YQansx2e6IUNAgHBOneex+/CUfokz72rOgeP26EhRc0SanUR1fd+lCWweHxegYO+LnUlvRtIHA51xuslfblohreL/1QQNNqQ6utDqPlNOeiJK/ScfFH0dw6KG01HoJI7e3efr/624XJqJ0yJSqbyvfwIpS2HXPGaI=
+	t=1719352883; cv=none; b=Pxerd++IrZYiDdV+DCjWjV0iTukVs06YHqrddaDCouKD1/PkxtIqetdVjoo/Al1p/y0fccT/GVVnxKxSJlgXWXBFMzCC/3cvGr6JnQi/r0kv0uNJgkYyuXxy7Y9CVs89BT4e0KYnGCvz7nFA7EmSe24XjDffIo6HKh+YZpl/aUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719352591; c=relaxed/simple;
-	bh=hkbRPr9eyUyc8TLpwKSS/o8S448gatXw3MGVmqVjO/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BWm0zj4nIYR9hbLfPEpIpgwSnaJZpKYvl2ShRZlyOVcbGWQHOEfd5G1tNWkP0zbWblfultYStIo8T8C+s4zy81RFHcNvhK0EXiw2ZxPT2R98Ayz59rORZPqIs7Ldps9WKDlcc/HaaDdCWc4Rya/zVqHNpCKNYdaMZIA6YaKzPxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=m/2r1PS0; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1719352578;
-	bh=hkbRPr9eyUyc8TLpwKSS/o8S448gatXw3MGVmqVjO/8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m/2r1PS0nsz0Z1m0TULDFaAqsus2d4gADFfrMbLJi89AoGisxUgqLUqxIwvBv+q9p
-	 O1achJBVWW4uVSwzBWphop3y5mJvAhlhJQqiF00aRpuX0LK4BOOVmt6WqVcDGMzb8T
-	 sazVAV2+BAOozEDAX00XBXb0juEJ9X7murWv/gcs=
-Date: Tue, 25 Jun 2024 23:56:18 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Mark Brown <broonie@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	acpica-devel@lists.linux.dev, Aishwarya.TCV@arm.com
-Subject: Re: [PATCH 2/5] ACPI: sysfs: use device lifecycle for _STR result
-Message-ID: <111f7a2c-403b-40b3-9e25-8c4a040d8dfb@t-8ch.de>
-References: <20240613-acpi-sysfs-groups-v1-0-665e0deb052a@weissschuh.net>
- <20240613-acpi-sysfs-groups-v1-2-665e0deb052a@weissschuh.net>
- <a72495c3-c996-4be7-bc64-ba10d5400971@sirena.org.uk>
+	s=arc-20240116; t=1719352883; c=relaxed/simple;
+	bh=iB8suN7K68nTSbpwQgUXTiEvdDxJdcdALkx1fqEMllU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uhMZr/CBSF1EcTxxngyd+L3r3vnb0TndtuGQIGDYy3c31dEpVME6kLvbYEQnLwaBVwJi3GUskL4jqKjVVg8hJmsZHybgSqx3KC6DOllXYYT/uNKA2mHUKJn+ldgnKMUSNNBPw4jj6fTLo6Gr9NfeUSfYm9IWzMVXw4Ac4yaY9hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JGiNOjzS; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3645e9839b3so4660239f8f.3;
+        Tue, 25 Jun 2024 15:01:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719352880; x=1719957680; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HHDXz1LUXU6ZlWHC70FR62Vj76MX7HfzlwWXqLyqg1s=;
+        b=JGiNOjzSoDJvtQp+S3QKLDZTfULPuxN9P+pL2Nxnop6UBozISGSp/i1TYHWCUDVHic
+         58UWMAiF9wDbVvYAAykWKdo92yCXRLmXpbsFJoSDvYY/rGnn4L3PF30rAeRCteWwaiVE
+         ZjBXnVDmlHzYqvgoWBXHho426O8O5OjPNRfSj2TSbg1hAerEgfolvR0liq9oQbQRCvAM
+         m31+aikEo+UqOYMwJa5wIz8qXxwewcr2HaSDehKHgBmXYhTNj3LCAgIAuyje0M2GzWbb
+         YSq5lBMuvPFecysm5VkzgNMQ5IY0+l4sgKuaQ9uiGpG4ilWWP92G4PNfgdHfivMINKOp
+         C2Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719352880; x=1719957680;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HHDXz1LUXU6ZlWHC70FR62Vj76MX7HfzlwWXqLyqg1s=;
+        b=AAlIEpQFj6VfcpmgLMZfg/tfHephFsRiYwXedGZ73tKkGf+mwupTRQ9JvBJiCxajgJ
+         Ck16RuzrZN5YxDqhx5laAgz/mNLSrN+eFb8ZvoOWpZxUyOY6uPco8D9kCt4HRvd2CiZ2
+         BfFeCi9SLUCy3935MLce0iJNsaL0+wgzuOlU1j/A8HhPLDDhUqEdxw8miLUeBtHjr3B1
+         frFItudsdQVVb+cXqk1To6BMNbVIW+R3Fd6N+9DklNzXXeiWY6EWaV6xHC4fIDyLVmPX
+         clau2mMuAWGPhDDyUUVD5bk3ZeJjt+xhNUd2n3afRjp+x12gALvbxnT9nFfaZuZLU1OO
+         PF3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVBU/Lvj0hM30ZiMU4NpYVh1KErSF9MkRcLdYLyBpIDzBToGWld8yxw+sehvJvoCjO/VatSi77PG13rN3bYS3lpBedzssXSnrYsYxcNcQtAir3ZmZfjb0Q0H8ZFBTq+7k6iRMw3hkU=
+X-Gm-Message-State: AOJu0Yy+iGhz+zOEi224vbbVBq6mpVP6jwI509DZYJ7zQzZ8jvI8EVkA
+	gEe7dmE2TPATW4weJjaZI2o41Wa4ghjcPhghIcoyD7lYU2O/O10D
+X-Google-Smtp-Source: AGHT+IHr6o4+7kZYcRqbVPgGro0ftP5uukV5qZS6qgoWQUcpugSg7FOw2CSarFn4/rTei1JNNf3zeg==
+X-Received: by 2002:a5d:694c:0:b0:366:f323:f59b with SMTP id ffacd0b85a97d-366f323f70fmr3993667f8f.1.1719352879642;
+        Tue, 25 Jun 2024 15:01:19 -0700 (PDT)
+Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c823c28asm2335045e9.5.2024.06.25.15.01.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 15:01:19 -0700 (PDT)
+From: Raphael Gallais-Pou <rgallaispou@gmail.com>
+To: Patrice Chotard <patrice.chotard@foss.st.com>,
+	"'Rafael J . Wysocki'" <rafael@kernel.org>,
+	Viresh Kumar <viresh.kumar@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] cpufreq: sti: add missing MODULE_DEVICE_TABLE entry for stih418
+Date: Wed, 26 Jun 2024 00:00:56 +0200
+Message-ID: <20240625220056.111913-1-rgallaispou@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a72495c3-c996-4be7-bc64-ba10d5400971@sirena.org.uk>
 
-On 2024-06-25 21:57:13+0000, Mark Brown wrote:
-> On Thu, Jun 13, 2024 at 10:15:33PM +0200, Thomas Weißschuh wrote:
-> > The string assigned to dev->pnp.str effectively shares the lifetime of
-> > the device. Use devm_-APIs to avoid a manual cleanup path.
-> > 
-> > This will be useful when the attributes themselves will be managed by
-> > the device core.
-> 
-> This is in -next since 20240624 and appears to be causing issues on
-> Cavium Thunder X2 in the Arm lab - with arm64 defconfig we see a bunch
-> of log messages like:
-> 
-> <6>[   50.120962] ACPI: button: Power Button [PWRB]
-> <6>[   50.120962] ACPI: button: Power Button [PWRB]
-> <2>[   50.138595] acpi LNXTHERM:00: Resources present before probing
-> <2>[   50.138595] acpi LNXTHERM:00: Resources present before probing
-> <2>[   50.150873] acpi LNXTHERM:01: Resources present before probing
-> <2>[   50.150873] acpi LNXTHERM:01: Resources present before probing
-> <2>[   50.163134] acpi LNXTHERM:02: Resources present before probing
-> <2>[   50.163134] acpi LNXTHERM:02: Resources present before probing
-> <2>[   50.175393] acpi LNXTHERM:03: Resources present before probing
-> <2>[   50.175393] acpi LNXTHERM:03: Resources present before probing
-> <2>[   50.187653] acpi LNXTHERM:04: Resources present before probing
-> <2>[   50.187653] acpi LNXTHERM:04: Resources present before probing
-> <2>[   50.199913] acpi LNXTHERM:05: Resources present before probing
-> <2>[   50.199913] acpi LNXTHERM:05: Resources present before probing
-> <2>[   50.212171] acpi LNXTHERM:06: Resources present before probing
-> <2>[   50.212171] acpi LNXTHERM:06: Resources present before probing
-> <2>[   50.224433] acpi LNXTHERM:07: Resources present before probing
-> <2>[   50.224433] acpi LNXTHERM:07: Resources present before probing
-> <2>[   50.236703] acpi LNXTHERM:08: Resources present before probing
+'st,stih418' is missing in the compatible list.
+Add it in order to use the driver with stih418 platform.
 
-This does make sense, the device is not yet bound to a driver.
-Which apparently precludes the usage of devres.
+Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+---
+ drivers/cpufreq/sti-cpufreq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Skipping this commit and doing the kfree() inside
-acpi_device_remove_file() also shouldn't work, as the attributes would
-live longer than the string.
-
-I'm wondering why dev->pnp.str does not share the lifecycle of the
-rest of dev->pnp, acpi_init_device_object()/acpi_device_release().
-
-Or we evaluate _STR during is_visible(), which keeps the single
-evaluation, or during description_show() which is the same as all the
-other attributes.
-
-I'm also wondering why the _STR attribute behaved differently in the
-first place.
-Does the patch below work better?
-
-> (some other bug seems to be doubling all the log lines.)  We also see
-> PCI getting upset:
-> 
-> <6>[   50.238119] pcieport 0000:00:03.0: Refused to change power state from D0 to D3hot
-> 
-> and the ethernet driver gets confused:
-> 
-> [ 71.592299] mlx5_core 0000:0b:00.1: Port module event: module 1, Cable unplugged
-> 
-> while the cable is most definitely connected, we're netbooting.  A
-> bisect pointed at this commit, full bisect log below:
-
-All these different kinds of errors are bisected to this commit?
-
-
-diff --git a/drivers/acpi/device_sysfs.c b/drivers/acpi/device_sysfs.c
-index c85ec754931c..350915b06472 100644
---- a/drivers/acpi/device_sysfs.c
-+++ b/drivers/acpi/device_sysfs.c
-@@ -510,6 +510,40 @@ static struct attribute *acpi_attrs[] = {
- 	NULL
+diff --git a/drivers/cpufreq/sti-cpufreq.c b/drivers/cpufreq/sti-cpufreq.c
+index 9c542e723a15..1ffa23dd8907 100644
+--- a/drivers/cpufreq/sti-cpufreq.c
++++ b/drivers/cpufreq/sti-cpufreq.c
+@@ -293,6 +293,7 @@ module_init(sti_cpufreq_init);
+ static const struct of_device_id __maybe_unused sti_cpufreq_of_match[] = {
+ 	{ .compatible = "st,stih407" },
+ 	{ .compatible = "st,stih410" },
++	{ .compatible = "st,stih418" },
+ 	{ },
  };
- 
-+static const char *acpi_device_str(struct acpi_device *dev)
-+{
-+	struct acpi_buffer buffer = {ACPI_ALLOCATE_BUFFER, NULL};
-+	union acpi_object *str_obj;
-+	acpi_status status;
-+	const char *ret;
-+	char buf[512];
-+	int result;
-+
-+	if (!acpi_has_method(dev->handle, "_STR"))
-+		return NULL;
-+
-+	status = acpi_evaluate_object(dev->handle, "_STR",
-+				      NULL, &buffer);
-+	if (ACPI_FAILURE(status))
-+		return NULL;
-+
-+	str_obj = buffer.pointer;
-+	/*
-+	 * The _STR object contains a Unicode identifier for a device.
-+	 * We need to convert to utf-8 so it can be displayed.
-+	 */
-+	result = utf16s_to_utf8s((wchar_t *)str_obj->buffer.pointer,
-+				 str_obj->buffer.length,
-+				 UTF16_LITTLE_ENDIAN,
-+				 buf, sizeof(buf) - 1);
-+	buf[result++] = '\0';
-+
-+	ret = kstrdup(buf, GFP_KERNEL);
-+	kfree(buffer.pointer);
-+
-+	return ret;
-+}
-+
- static bool acpi_show_attr(struct acpi_device *dev, const struct device_attribute *attr)
- {
- 	/*
-@@ -524,8 +558,11 @@ static bool acpi_show_attr(struct acpi_device *dev, const struct device_attribut
- 	/*
- 	 * If device has _STR, 'description' file is created
- 	 */
--	if (attr == &dev_attr_description)
-+	if (attr == &dev_attr_description) {
-+		kfree(dev->pnp.str);
-+		dev->pnp.str = acpi_device_str(dev);
- 		return dev->pnp.str;
-+	}
- 
- 	if (attr == &dev_attr_adr)
- 		return dev->pnp.type.bus_address;
-@@ -581,47 +618,12 @@ const struct attribute_group *acpi_groups[] = {
- 	NULL
- };
- 
--static const char *devm_acpi_device_str(struct acpi_device *dev)
--{
--	struct acpi_buffer buffer = {ACPI_ALLOCATE_BUFFER, NULL};
--	union acpi_object *str_obj;
--	acpi_status status;
--	const char *ret;
--	char buf[512];
--	int result;
--
--	if (!acpi_has_method(dev->handle, "_STR"))
--		return NULL;
--
--	status = acpi_evaluate_object(dev->handle, "_STR",
--				      NULL, &buffer);
--	if (ACPI_FAILURE(status))
--		return NULL;
--
--	str_obj = buffer.pointer;
--	/*
--	 * The _STR object contains a Unicode identifier for a device.
--	 * We need to convert to utf-8 so it can be displayed.
--	 */
--	result = utf16s_to_utf8s((wchar_t *)str_obj->buffer.pointer,
--				 str_obj->buffer.length,
--				 UTF16_LITTLE_ENDIAN,
--				 buf, sizeof(buf) - 1);
--	buf[result++] = '\0';
--
--	ret = devm_kstrdup(&dev->dev, buf, GFP_KERNEL);
--	kfree(buffer.pointer);
--
--	return ret;
--}
--
- /**
-  * acpi_device_setup_files - Create sysfs attributes of an ACPI device.
-  * @dev: ACPI device object.
-  */
- void acpi_device_setup_files(struct acpi_device *dev)
- {
--	dev->pnp.str = devm_acpi_device_str(dev);
- 	acpi_expose_nondev_subnodes(&dev->dev.kobj, &dev->data);
- }
- 
-diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
-index 49a8172fe0de..84c4190f03fb 100644
---- a/drivers/acpi/scan.c
-+++ b/drivers/acpi/scan.c
-@@ -1456,6 +1456,7 @@ void acpi_free_pnp_ids(struct acpi_device_pnp *pnp)
- 		kfree(id);
- 	}
- 	kfree(pnp->unique_id);
-+	kfree(pnp->str);
- }
- 
- /**
+ MODULE_DEVICE_TABLE(of, sti_cpufreq_of_match);
+-- 
+2.45.2
+
 
