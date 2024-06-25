@@ -1,230 +1,99 @@
-Return-Path: <linux-kernel+bounces-229767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81F0B9173C6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:54:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A25739173BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4549B245EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:54:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C142CB238BB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:54:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83B8317E8FA;
-	Tue, 25 Jun 2024 21:54:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 532A917E475;
+	Tue, 25 Jun 2024 21:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="FkVg5y42"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u9iOsSvA"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A40917E47C;
-	Tue, 25 Jun 2024 21:54:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E8417C9F5
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 21:53:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719352462; cv=none; b=HzqVJNDLKd19VmadWNTA0ibXKuRB+9+WKDIsqsbBZcGnueIYYaNdWMJuCdz5WTUahoA7D1iLsBX2oi3QIIV8wMcJPr84Gehpjo3tTIaK0CfRK+9bQMriFYKNYAMuA6DNVzL98Y+1q4sknLlj/txYUmXlGgjqTD03vdRonRB3FQI=
+	t=1719352436; cv=none; b=AV8lp3aKISRG134s3x0VmmFIJb4LbyYgYP/kNK50WCNSFpVentxhvEiG2HrjZLzDUBo/ytO+q/ovepWVD/qBBKAE7avdYjnOotARBnT++DF5PWtqij+tvu6n1RvQfreTCO+CtQ4f8m3ipYiY1vLeJjA0DFgIvebpnUTNfMi8MOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719352462; c=relaxed/simple;
-	bh=E0sPRQPXNtzkxzbOXNlwqNxDuZqt39oR9j6pBw9J1VM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ciks9sOgZcns6JkNCdSDOJL5iMzdh1ZCYLMGMs1s+7EZGmpe73PEEU89wXmtrDw+CylX4xmy7Y0nADtJO8kBWcgMIQByOTEuIzV1LI34Kz4du8KPKoJ3yLuWSA3PmNHUZ0qjQI8piiko3opmgIhcqAMqe9ckjLEf/KHk1sZ0SR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=FkVg5y42; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PL5cMr011726;
-	Tue, 25 Jun 2024 17:54:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=j3giX
-	IuN1pEHqX/58arefb4dOJNQT5mHyXJpGx+yV70=; b=FkVg5y42CtM0gvQbO0LFn
-	HfCe3Pg65gA4pjS0JFpWUGQ4fk2Amkehe9QF/ekzB+uQuYVPaBVaJykYM1/Y+M4R
-	8wY51z22b21iXPfgjumMLmFQF4YRLMkE2c3aWjMMJR2MRl1HcZr4wvKboXY0ZB5M
-	hNp/zDxMMyX7EQkqRwTzTZTrGqbHSt4s82iLWbMEsPs+9Jd+Ni9wknsnIpyCMpYU
-	CEy6X7GRMLrG+jTuVDgxq7+XK5sG5Yw2eCvtgQv2xJrXFnKVodsG1EuQ5aQkNxib
-	Nwa7oAbt+JdrOxYEo4OUNlmDgCT0l59xkIaEBsn0KUE0qJ0C+3W/bNG1bkMmSRdp
-	w==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3yyum1aa47-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 17:54:05 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 45PLs4Pc006994
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 25 Jun 2024 17:54:04 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Tue, 25 Jun
- 2024 17:54:03 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Tue, 25 Jun 2024 17:54:03 -0400
-Received: from work.ad.analog.com (HYB-hERzalRezfV.ad.analog.com [10.65.205.129])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 45PLrko9013809;
-	Tue, 25 Jun 2024 17:53:49 -0400
-From: Marcelo Schmitt <marcelo.schmitt@analog.com>
-To: <broonie@kernel.org>, <lars@metafoo.de>, <Michael.Hennerich@analog.com>,
-        <jic23@kernel.org>, <robh+dt@kernel.org>,
-        <krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-        <nuno.sa@analog.com>, <dlechner@baylibre.com>, <corbet@lwn.net>,
-        <marcelo.schmitt1@gmail.com>
-CC: <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-spi@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5 2/7] spi: bitbang: Implement support for MOSI idle state configuration
-Date: Tue, 25 Jun 2024 18:53:44 -0300
-Message-ID: <7e2231edf30e1769f12273032c04b8a951e28837.1719351923.git.marcelo.schmitt@analog.com>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <cover.1719351923.git.marcelo.schmitt@analog.com>
-References: <cover.1719351923.git.marcelo.schmitt@analog.com>
+	s=arc-20240116; t=1719352436; c=relaxed/simple;
+	bh=GYDmKApHl9XXboQMrXfcJU6dcBzjYZzyi2dTPKuG7BA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AdIgBhuABoH0Yng5t+xQtug9ftyz0ABP6D+o6mQqKgkL6rTjr/fuI1Oh8EIvbBqz79iL2ZV5X5ukzBr5M38lFDNUHZiN4bF+Fh9vAkb8TKlFSfi+FqjdL4CkdPQTSLt+ZhF5HsYTSdQHIHjcBimOzmldDJYlYJapk1nl/nueNMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u9iOsSvA; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: peili.dev@gmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719352432;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=265BkYEFixQ4+b8lDxdVq01LNWShrYh2S9wTmbzDUIM=;
+	b=u9iOsSvA2I0XovjUD+GnpMU7woMznbrSiYJ2VR4Gzr2/NCOBO1DsunAuz8ik+ywjHFbX/Q
+	5jvQonYvdPGof0cLLfun0AkpkDEO2e6n7cj6FERpqmcDmIlX3X+LyvauSFgzjeVVn6bIG+
+	ZTatj/4j/jOCZMFTMPxVCfYl/VnSdP4=
+X-Envelope-To: bfoster@redhat.com
+X-Envelope-To: linux-bcachefs@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: syzkaller-bugs@googlegroups.com
+X-Envelope-To: skhan@linuxfoundation.org
+X-Envelope-To: syzbot+835d255ad6bc7f29ee12@syzkaller.appspotmail.com
+Date: Tue, 25 Jun 2024 17:53:48 -0400
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Pei Li <peili.dev@gmail.com>
+Cc: Brian Foster <bfoster@redhat.com>, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, skhan@linuxfoundation.org, 
+	syzbot+835d255ad6bc7f29ee12@syzkaller.appspotmail.com
+Subject: Re: [PATCH] bcachefs: Fix shift-out-of-bounds in
+ bch2_blacklist_entries_gc
+Message-ID: <v25urlaqpqzemumntbqus3uhug2ohy55cu3jmjenelti4f4dtb@qo7ou6qsnbp3>
+References: <20240625-bug1-v1-1-9344c68582a7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: SJEkkaQjbbAK48DmwBOTPqcM4ruNMCvu
-X-Proofpoint-ORIG-GUID: SJEkkaQjbbAK48DmwBOTPqcM4ruNMCvu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_17,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
- mlxscore=0 impostorscore=0 lowpriorityscore=0 phishscore=0 adultscore=0
- malwarescore=0 bulkscore=0 suspectscore=0 spamscore=0 priorityscore=1501
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406250163
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625-bug1-v1-1-9344c68582a7@gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Some SPI peripherals may require strict MOSI line state when the controller
-is not clocking out data.
-Implement support for MOSI idle state configuration (low or high) by
-setting the data output line level on controller setup and after transfers.
-Bitbang operations now call controller specific set_mosi_idle() call back
-to set MOSI to its idle state.
-The MOSI line is kept at its idle state if no tx buffer is provided.
+On Tue, Jun 25, 2024 at 11:41:29AM -0700, Pei Li wrote:
+> This series fix the shift-out-of-bounds issue in
+> bch2_blacklist_entries_gc().
+> 
+> Instead of passing 0 to eytzinger0_first() when iterating the entries,
+> we explicitly check 0 and initialize i to be 0.
+> 
+> syzbot has tested the proposed patch and the reproducer did not trigger
+> any issue:
+> 
+> Reported-and-tested-by: syzbot+835d255ad6bc7f29ee12@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=835d255ad6bc7f29ee12
+> Signed-off-by: Pei Li <peili.dev@gmail.com>
+> ---
+> Syzbot reported the following issue:
+> UBSAN: shift-out-of-bounds in ./include/linux/log2.h:67:13
+> shift exponent 4294967295 is too large for 64-bit type 'long unsigned int'
+> 
+> This is because 0 is passed to __rounddown_pow_of_two(), and -1 is
+> returned as an unsigned integer. In 32 bit system, it will become
+> 4294967295.
+> 
+> This patch fixes the issue by adding check in
+> bch2_blacklist_entries_gc() to avoid passing 0 into eytzinger0_first().
+> If we found out t->nr equals to 0, we directly use 0 to access the root
+> of the list.
 
-Acked-by: Nuno Sa <nuno.sa@analog.com>
-Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
----
- drivers/spi/spi-bitbang.c       | 24 ++++++++++++++++++++++++
- include/linux/spi/spi_bitbang.h |  1 +
- 2 files changed, 25 insertions(+)
-
-diff --git a/drivers/spi/spi-bitbang.c b/drivers/spi/spi-bitbang.c
-index ca5cc67555c5..8cc522bf444c 100644
---- a/drivers/spi/spi-bitbang.c
-+++ b/drivers/spi/spi-bitbang.c
-@@ -63,21 +63,28 @@ static unsigned bitbang_txrx_8(
- 	unsigned flags
- )
- {
-+	struct spi_bitbang	*bitbang;
- 	unsigned		bits = t->bits_per_word;
- 	unsigned		count = t->len;
- 	const u8		*tx = t->tx_buf;
- 	u8			*rx = t->rx_buf;
- 
-+	bitbang = spi_controller_get_devdata(spi->controller);
- 	while (likely(count > 0)) {
- 		u8		word = 0;
- 
- 		if (tx)
- 			word = *tx++;
-+		else
-+			word = spi->mode & SPI_MOSI_IDLE_HIGH ? 0xFF : 0;
- 		word = txrx_word(spi, ns, word, bits, flags);
- 		if (rx)
- 			*rx++ = word;
- 		count -= 1;
- 	}
-+	if (bitbang->set_mosi_idle)
-+		bitbang->set_mosi_idle(spi);
-+
- 	return t->len - count;
- }
- 
-@@ -92,21 +99,28 @@ static unsigned bitbang_txrx_16(
- 	unsigned flags
- )
- {
-+	struct spi_bitbang	*bitbang;
- 	unsigned		bits = t->bits_per_word;
- 	unsigned		count = t->len;
- 	const u16		*tx = t->tx_buf;
- 	u16			*rx = t->rx_buf;
- 
-+	bitbang = spi_controller_get_devdata(spi->controller);
- 	while (likely(count > 1)) {
- 		u16		word = 0;
- 
- 		if (tx)
- 			word = *tx++;
-+		else
-+			word = spi->mode & SPI_MOSI_IDLE_HIGH ? 0xFFFF : 0;
- 		word = txrx_word(spi, ns, word, bits, flags);
- 		if (rx)
- 			*rx++ = word;
- 		count -= 2;
- 	}
-+	if (bitbang->set_mosi_idle)
-+		bitbang->set_mosi_idle(spi);
-+
- 	return t->len - count;
- }
- 
-@@ -121,21 +135,28 @@ static unsigned bitbang_txrx_32(
- 	unsigned flags
- )
- {
-+	struct spi_bitbang	*bitbang;
- 	unsigned		bits = t->bits_per_word;
- 	unsigned		count = t->len;
- 	const u32		*tx = t->tx_buf;
- 	u32			*rx = t->rx_buf;
- 
-+	bitbang = spi_controller_get_devdata(spi->controller);
- 	while (likely(count > 3)) {
- 		u32		word = 0;
- 
- 		if (tx)
- 			word = *tx++;
-+		else
-+			word = spi->mode & SPI_MOSI_IDLE_HIGH ? 0xFFFFFFFF : 0;
- 		word = txrx_word(spi, ns, word, bits, flags);
- 		if (rx)
- 			*rx++ = word;
- 		count -= 4;
- 	}
-+	if (bitbang->set_mosi_idle)
-+		bitbang->set_mosi_idle(spi);
-+
- 	return t->len - count;
- }
- 
-@@ -211,6 +232,9 @@ int spi_bitbang_setup(struct spi_device *spi)
- 			goto err_free;
- 	}
- 
-+	if (bitbang->set_mosi_idle)
-+		bitbang->set_mosi_idle(spi);
-+
- 	dev_dbg(&spi->dev, "%s, %u nsec/bit\n", __func__, 2 * cs->nsecs);
- 
- 	return 0;
-diff --git a/include/linux/spi/spi_bitbang.h b/include/linux/spi/spi_bitbang.h
-index b930eca2ef7b..1a54b593c691 100644
---- a/include/linux/spi/spi_bitbang.h
-+++ b/include/linux/spi/spi_bitbang.h
-@@ -22,6 +22,7 @@ struct spi_bitbang {
- #define	BITBANG_CS_ACTIVE	1	/* normally nCS, active low */
- #define	BITBANG_CS_INACTIVE	0
- 
-+	void	(*set_mosi_idle)(struct spi_device *spi);
- 	/* txrx_bufs() may handle dma mapping for transfers that don't
- 	 * already have one (transfer.{tx,rx}_dma is zero), or use PIO
- 	 */
--- 
-2.43.0
-
+Thanks! Applied
 
