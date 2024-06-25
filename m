@@ -1,110 +1,124 @@
-Return-Path: <linux-kernel+bounces-228670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56144916537
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:25:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C1B4916540
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07EC3283F4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:25:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E7028415C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AFA514A4C0;
-	Tue, 25 Jun 2024 10:25:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7ED014A4D0;
+	Tue, 25 Jun 2024 10:28:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sV06yI4F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79C6145FF4;
-	Tue, 25 Jun 2024 10:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="esiHAULv"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7474143883;
+	Tue, 25 Jun 2024 10:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719311132; cv=none; b=LbNWYaQK04y2fJCCp3IADKolsNE4KeWFcfdLVUIJbOqa48wfB/jxhJq14Wo/wLDbamEkXxI0HzYmpkdO+MTtruNaQjjkrnJRwS4QUpTZK+UO9QzJNa9WJdi+RhyXe6UMZylkynBFEMoPvl+zadQB4DWQ8NjsLu5UynUUDKZIphY=
+	t=1719311314; cv=none; b=WaLA1msL7DcGM7aRblycscFzlrHVUaKwhVuiuYtxDAjpWrbNWaqiMedlFavEKbQyI+cbazXXUSsMvuGMutAkspCTVD7JEMxaWnc/89/RzwlLvR02vOSmakMu0oQc2rE5yG1IDdzYBe31a2QG3TLWpaJ9eH3Ho0nCxsS59PW3sl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719311132; c=relaxed/simple;
-	bh=BtjWR+gEmc49VtSTIaCGRyr5H0C8Qccd3WQsIc/9xUo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jIzprul97qvN85gTVi+tqkVGo8Di2x2S/ZD5zy8Yl2AyyuM27t6e2Gtu78E2NsOd4LlqJJRoEoR4MqoTll/DRQrPnOhMb9/FKg6PZD28oDUXl5DMOQhSmCG+VRc3IijFKNeBW8ZK7ZmGsM48vpBazYVn8uulG0V4oF5zeU07f/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sV06yI4F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57878C32781;
-	Tue, 25 Jun 2024 10:25:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719311131;
-	bh=BtjWR+gEmc49VtSTIaCGRyr5H0C8Qccd3WQsIc/9xUo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sV06yI4F3RaAzDzqwrxh6gxUv8cK+xRlvTpZIbM/sOGaVNSuodtK/oe5ge9iVOteP
-	 GTxxIAgW8EbUGv0gXDsw/J+Jonpt/WC2Gy+OqWpIoKUl6Ua8WKkhdiXz9hPLxVMu+o
-	 cct/GUbgBihxs16kVJjebCJDMBRA8dUX2OAmhAgXmcNlhnvNci8GUmXJYcv0GDRPtg
-	 IxmQy1ZTFXDXXrFkj6sX1D0/TDABypZQx3CEY2aswzvo7d4y3BA/TsNKNv+/z4hFcs
-	 ILMG4ciMdK16vZWcBKjhQ/i865dSTNzInqL8/nap4BKNGfYmqhe3BqgQlozm5CZMLo
-	 ACJKjip0Nr1BQ==
-Date: Tue, 25 Jun 2024 11:25:24 +0100
-From: Mark Brown <broonie@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	matthias.bgg@gmail.com, lgirdwood@gmail.com, keescook@chromium.org,
-	gustavoars@kernel.org, henryc.chen@mediatek.com,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, kernel@collabora.com,
-	wenst@chromium.org, amergnat@baylibre.com, djakov@kernel.org
-Subject: Re: [PATCH v6 0/7] MediaTek DVFSRC Bus Bandwidth and Regulator knobs
-Message-ID: <57cf8f9f-4320-4c55-a9f8-a4c1facabfe8@sirena.org.uk>
-References: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
- <f7b4cd98-1acf-4f6b-a7e0-57419abadba1@collabora.com>
+	s=arc-20240116; t=1719311314; c=relaxed/simple;
+	bh=RI7qludrxXimz31r7XsiMrolnshXtD08wPXrkVtx1Y4=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=iztGP6056BWhGOB3gtMiyWBLz7hcz9UNpKnie95mO1aM7bagKgjuKRWGtBqFyAjMu1g55C5ayhDDbANwQkqU70jhL7YiQt3xQ++dW9iPusbWBJXFQVXzOnJCwEluSAkpebb3AAJCkwdERxYossq69/xkrmP7+o2kRLkenDysr0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=esiHAULv; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net (linux.microsoft.com [13.77.154.182])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 61CEB20B7001;
+	Tue, 25 Jun 2024 03:28:32 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 61CEB20B7001
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1719311312;
+	bh=Py1iB/Mm9WOY3l87ATzM0up6RXYOz/P+zv8MYkZ8b+o=;
+	h=From:To:Cc:Subject:Date:From;
+	b=esiHAULv7jB/xxgWWzwILpS6Cxho2bhw69fri3Di2ab3fQgVBvkDUuOM8qeuO5wMA
+	 9VP4P/wHNta7a0LX2ELdwWZrVCAUnfEp12nCoYOjCWG7LnuYvVA3D5Oh/2Q4zrnF5p
+	 IAM5eHUvOwHH1AvFKRXq3WQkUdg1mwlHjERLiP5k=
+From: Konstantin Taranov <kotaranov@linux.microsoft.com>
+To: kotaranov@microsoft.com,
+	weh@microsoft.com,
+	sharmaajay@microsoft.com,
+	longli@microsoft.com,
+	jgg@ziepe.ca,
+	leon@kernel.org
+Cc: linux-rdma@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH rdma-next 1/1] RDMA/mana_ib: Set correct device into ib
+Date: Tue, 25 Jun 2024 03:28:27 -0700
+Message-Id: <1719311307-7920-1-git-send-email-kotaranov@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="HtLS8F6gqzyPaPXW"
-Content-Disposition: inline
-In-Reply-To: <f7b4cd98-1acf-4f6b-a7e0-57419abadba1@collabora.com>
-X-Cookie: Results vary by individual.
 
+From: Konstantin Taranov <kotaranov@microsoft.com>
 
---HtLS8F6gqzyPaPXW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+When mc->ports[0] is not slave, use it in the set_netdev.
+When mana is used in netvsc, the stored net devices in mana
+are slaves and GIDs should be taken from their master devices.
+In the baremetal case, the mc->ports devices will not be slaves.
 
-On Tue, Jun 25, 2024 at 10:32:30AM +0200, AngeloGioacchino Del Regno wrote:
+Fixes: 8b184e4f1c32 ("RDMA/mana_ib: Enable RoCE on port 1")
+Signed-off-by: Konstantin Taranov <kotaranov@microsoft.com>
+---
+ drivers/infiniband/hw/mana/device.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-> Mark, I assume that this series is ok from your perspective, since this h=
-as got
-> your acks and r-b -- but in order to pick the soc/mediatek stuff I need a=
-ll of
-> the dependent bindings to be in as well .. and this includes the regulato=
-r one!
->=20
-> The main issue here is that the main soc/mediatek dvfsrc binding
-> dt-bindings: soc: mediatek: Add DVFSRC bindings for MT8183 and MT8195
-> does use the others, so I can't pick this one without the others being pr=
-esent
-> or the validation obviously fails.
->=20
-> So... gentle ping :-)
+diff --git a/drivers/infiniband/hw/mana/device.c b/drivers/infiniband/hw/mana/device.c
+index b07a8e2e838f..5395306a86e8 100644
+--- a/drivers/infiniband/hw/mana/device.c
++++ b/drivers/infiniband/hw/mana/device.c
+@@ -11,6 +11,8 @@ MODULE_DESCRIPTION("Microsoft Azure Network Adapter IB driver");
+ MODULE_LICENSE("GPL");
+ MODULE_IMPORT_NS(NET_MANA);
+ 
++#define mana_ndev_is_slave(dev)   (((dev)->flags & IFF_SLAVE) == IFF_SLAVE)
++
+ static const struct ib_device_ops mana_ib_dev_ops = {
+ 	.owner = THIS_MODULE,
+ 	.driver_id = RDMA_DRIVER_MANA,
+@@ -56,7 +58,7 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ {
+ 	struct mana_adev *madev = container_of(adev, struct mana_adev, adev);
+ 	struct gdma_dev *mdev = madev->mdev;
+-	struct net_device *upper_ndev;
++	struct net_device *ndev;
+ 	struct mana_context *mc;
+ 	struct mana_ib_dev *dev;
+ 	u8 mac_addr[ETH_ALEN];
+@@ -85,16 +87,19 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 	dev->ib_dev.dev.parent = mdev->gdma_context->dev;
+ 
+ 	rcu_read_lock(); /* required to get upper dev */
+-	upper_ndev = netdev_master_upper_dev_get_rcu(mc->ports[0]);
+-	if (!upper_ndev) {
++	if (mana_ndev_is_slave(mc->ports[0]))
++		ndev = netdev_master_upper_dev_get_rcu(mc->ports[0]);
++	else
++		ndev = mc->ports[0];
++	if (!ndev) {
+ 		rcu_read_unlock();
+ 		ret = -ENODEV;
+-		ibdev_err(&dev->ib_dev, "Failed to get master netdev");
++		ibdev_err(&dev->ib_dev, "Failed to get netdev for port 1");
+ 		goto free_ib_device;
+ 	}
+-	ether_addr_copy(mac_addr, upper_ndev->dev_addr);
+-	addrconf_addr_eui48((u8 *)&dev->ib_dev.node_guid, upper_ndev->dev_addr);
+-	ret = ib_device_set_netdev(&dev->ib_dev, upper_ndev, 1);
++	ether_addr_copy(mac_addr, ndev->dev_addr);
++	addrconf_addr_eui48((u8 *)&dev->ib_dev.node_guid, ndev->dev_addr);
++	ret = ib_device_set_netdev(&dev->ib_dev, ndev, 1);
+ 	rcu_read_unlock();
+ 	if (ret) {
+ 		ibdev_err(&dev->ib_dev, "Failed to set ib netdev, ret %d", ret);
+-- 
+2.43.0
 
-I can't tell what you want from me here.
-
---HtLS8F6gqzyPaPXW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ6mxMACgkQJNaLcl1U
-h9BI1Af7BjpHZjz2dcjVv0813GPAdnKjHAGhVhRvlIhqpTpKTUhV9kb4NaCW3WA8
-WcTOuGzqXUetqxmyeIWpMFtNVeqdieIIuUfdUlMGWpTFKs+B+TEDi62ErAUlWCNd
-3xQZMy9y9glGhigclS7EAFIcMF8eRSp/rNX0B9UD8fi9IAJMMeqBqojRam0XfAII
-UT4XL/p1HG9l16q8Oo3VMAaTCh3kkgVNp/uTWMkZzeccIGDAUS0paMDbGCWnCjiH
-A5hI1uZsXMJx6TtJf2Fkoxry7a4PleBULaXS0HM92gWwpYdqINQsFr0bn9/Lw1oc
-gPxF2FlxpRXTYEQn++SXScXX8tJVAw==
-=emPb
------END PGP SIGNATURE-----
-
---HtLS8F6gqzyPaPXW--
 
