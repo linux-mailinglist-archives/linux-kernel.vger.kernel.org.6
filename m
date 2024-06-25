@@ -1,131 +1,157 @@
-Return-Path: <linux-kernel+bounces-228377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C266915F06
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:41:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB15915F0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:47:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD6C91C21EB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:41:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FA01B22009
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04927146006;
-	Tue, 25 Jun 2024 06:41:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D19146597;
+	Tue, 25 Jun 2024 06:47:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mItU8yRL"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F7hE66ck"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE383611A;
-	Tue, 25 Jun 2024 06:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F95414600C;
+	Tue, 25 Jun 2024 06:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719297696; cv=none; b=W52WvXfX1O8cJSHMT5LBYKxye0WueqQtJQziyCN+mdNSa9WAxTPtiZ6WZeblvnjHDAJa1MJFdxlpcelfMQTBsH0IqRQBMNDasX/VH6GaEz+ZWsqivTYultXfPtDBa/Ut4NHnEInS56cJtXTm7XGuGwmKWkQwxApne6y6kjbUu9Q=
+	t=1719298043; cv=none; b=nNDSQrH1t67j0HkViH8fhzP9043bg2B7QLo0oA1ykt0qLMAx0tHDRa6nIxiU7RgPlkMrUcGw2i7mjJ2VkIRh2q0ZJCggOJ4OuInHoG+imDRRbxowyNy2mMyI7h+t6cIyDEowfgUEYLprFuZu0uvOsaF7FWxJDdbQAtlDTUyo9kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719297696; c=relaxed/simple;
-	bh=SS9OXazpq+Dbe9vH0PFJ2x3IjkLpsy3HIL/GYHKk8P8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JMkk7PKO51TQ793L526+AKWxcjeBP4nR8E2hOplvl+UHFB0asDpvFvaJDnCtYdqtAKF1idMR7FXAfmDc+CjknVx697B/qeeA4XdW9EN/x9VmNSUHSgANIWYI0dk6K1YDR7k80DWfaEl0X189mN0MgLv1Pd+NYyGbVSCWNlSvCjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mItU8yRL; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c9b94951cfso2959288b6e.3;
-        Mon, 24 Jun 2024 23:41:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719297694; x=1719902494; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FiSYpkCCJa2ynYPvssadIcTJSgGBXf+md4v4r1uNPxk=;
-        b=mItU8yRLn/7r5ShQF5soBqRHN3HGwIJQVuITnWHfbacQK02Dxj4PcFHt/sy8RJ7pwN
-         tFqNl8XGFoyJXtULCzZQIXycU/6BHCezb8ynLOhmBLTsUAMDyul44YMpD/cMcjI9dKnG
-         rKTKUiRQhem2sNwsWO9uuR5CAGjHqU4/u+ONN+H4arYVGyCg7N67jc8sNXq0Sr/DmbeE
-         jy66Sf70qwvOx968+m0oMbBTHgqFtkcigL3ffsTL4sBdtwfYENj6apCpPBTbsbt6hWIM
-         TKgaqDHID/JPqazDab4QcFTLQaRVLLehRJozrmX+yYtLNtHIL3ZlWC6cUABVVogUSRW2
-         Bmdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719297694; x=1719902494;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FiSYpkCCJa2ynYPvssadIcTJSgGBXf+md4v4r1uNPxk=;
-        b=QnNy12+jz8HYXnzaD1tpe4O8HMEQDq8bxmxK6aymgtfFNBRS7NTGIDxqOKG1t++IR2
-         3POePxz9zEU2xHWjnGhgLBjHI9KBxJrzVngJTKDXff7HvzPGC5Sj04XOvt3wUVS0eZ43
-         Hv5fA9Iagg+7kPaR169vKh5JZ1j+wI4wmbkLWWmixuxg1YhFp4ZgUhh/BatfgXS55rLK
-         nADLkm26ZN6K2iHjVghPvmAnsQt6j6WkF+y76IJ5RlWRnyZllpf093BmVup5zdw0l/nX
-         KbcuM/8+CroEVYZANkaHRvQ9mIMc080KAtRDBl4EzSn6LXX2jNUehYcVXAEH5GuWmWwA
-         uycw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCbZjOp5nSWCdCmqQte4sEZFdkPDCaQurJSG3ku0uRdN4BJYnRMroyHYUOD9HfPV16EdqVSIICUEiiTrDW2vEVQi0RnjNtatKildpt2Kak7pp8KZsHLtUvqfktHjRAynBOHqY2xgt5v+Hd
-X-Gm-Message-State: AOJu0YzodgMS3PZWeWMpkeyUemHl9DLDjp6nCv0V61+inoYcVhitCMYc
-	OuWur+JmiDBC4vkUuj4Z3LaxULsS4Cf4CFf5m65d2AoxU03SczfZ
-X-Google-Smtp-Source: AGHT+IGmIpEK4h/noSZzXdtXPUoa2gfvobkZ9aziSZjqfvV0nYXycfKGs8LIX1ntFV+Jz3PSf+QVjw==
-X-Received: by 2002:a05:6870:1654:b0:254:affe:5a05 with SMTP id 586e51a60fabf-25d06c1c1ddmr6826956fac.21.1719297693828;
-        Mon, 24 Jun 2024 23:41:33 -0700 (PDT)
-Received: from a28aa0606c51.. (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512e64afsm7317879b3a.189.2024.06.24.23.41.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 23:41:33 -0700 (PDT)
-From: Jacky Huang <ychuang570808@gmail.com>
-To: dan.carpenter@linaro.org,
-	gregkh@linuxfoundation.org,
-	jirislaby@kernel.org
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	Jacky Huang <ychuang3@nuvoton.com>
-Subject: [PATCH v4] tty: serial: ma35d1: Add a NULL check for of_node
-Date: Tue, 25 Jun 2024 06:41:28 +0000
-Message-Id: <20240625064128.127-1-ychuang570808@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719298043; c=relaxed/simple;
+	bh=pJJu5s9KBxupbvcL1lu1+U5fHpLZ++eVwWUD05uzpPs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I7NxSDMnCNxFAlDnKwv/UnXzs9Op90Qc5XQcTKQvTsu6+L35H5Dq4PjFc1qbIEMELNSjexxSP5cL4xLKuPoxzwD+UsL/ySIEEDX3z5A0VfYDLGhFlfFfKNeMnrQYAqWvqKSZdcgWU9t9zqk1uQEuQY2b/3FxyFM1yiovN8YdkZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F7hE66ck; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4FDAC32781;
+	Tue, 25 Jun 2024 06:47:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719298042;
+	bh=pJJu5s9KBxupbvcL1lu1+U5fHpLZ++eVwWUD05uzpPs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F7hE66ckoIiNZDCC/BKpdORZyZ1F8SNYkxPHAs62E7ZzqtjWc3vUgNK5qodSyTktz
+	 sF+vVkvwAs5vCg4puoKPidU8+M4B9A7cmR8a1d8Je/6fKZLew2cEA3BRTwP4v5ami0
+	 GHHk1ybDEUctvr8faom0P1IGGUwMBKulUeGeea/+hBD5fykd5KyEL2n2BzRWl7lXUT
+	 qkfYt+cOSuHTRaNFgRabcSyV6TgxMpkacyqQPUxgvcib/F825ihOkaWROgK8c3rBBQ
+	 8ltpBPkGZWHekBvobIfeUAMUKMzn2H4ul1JECtfBbxYL3WLy5bwDrYWxMhCuRjlJuq
+	 9AKgHzD8B8Nmw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sLzxh-000000008Oq-47Ci;
+	Tue, 25 Jun 2024 08:47:30 +0200
+Date: Tue, 25 Jun 2024 08:47:29 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	"vkoul@kernel.org" <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Lockdep broken on x1e80100 (was: Re: [PATCH v5 0/7] sm8550: Add
+ support for eUSB2 repeater)
+Message-ID: <ZnpoAVGJMG4Zu-Jw@hovoldconsulting.com>
+References: <20230208190200.2966723-1-abel.vesa@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20230208190200.2966723-1-abel.vesa@linaro.org>
 
-From: Jacky Huang <ychuang3@nuvoton.com>
+On Wed, Feb 08, 2023 at 09:01:53PM +0200, Abel Vesa wrote:
+> This patchset adds support for the eUSB2 repeater found in pmic PM8550B,
+> used along with SM8550. Since there is no dedicated generic framework
+> for eUSB2 repeaters, the most appropriate subsystem to model it is the
+> generic phy. This patchset also adds support for such repeater to the
+> eUSB2 PHY found in SM8550. Basically, the eUSB2 PHY will have its own
+> "phy" which is actually a repeater.
 
-The pdev->dev.of_node can be NULL if the "serial" node is absent.
-Add a NULL check to return an error in such cases.
+The decision to model the repeater as a PHY unfortunately breaks lockdep
+as you now have functions like phy_init() calling phy_init() for a
+second PHY (the repeater, see splat below).
 
-Fixes: 930cbf92db01 ("tty: serial: Add Nuvoton ma35d1 serial driver support")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/all/8df7ce45-fd58-4235-88f7-43fe7cd67e8f@moroto.mountain/
-Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
----
-  V3 -> V4: Move the version info lines to the correct position.
-  V2 -> V3: Added the "Reported-by:" line.
-  V1 -> V2: Added the "Fixes" line.
+As long as the locks are always taken in the same order there should be
+no risk for a deadlock, but can you please verify that and add the
+missing lockdep annotation so that lockdep can be used on platforms like
+x1e80100 (e.g. to prevent further locking issues from being introduced)?
 
- drivers/tty/serial/ma35d1_serial.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Johan
 
-diff --git a/drivers/tty/serial/ma35d1_serial.c b/drivers/tty/serial/ma35d1_serial.c
-index 19f0a305cc43..3b4206e815fe 100644
---- a/drivers/tty/serial/ma35d1_serial.c
-+++ b/drivers/tty/serial/ma35d1_serial.c
-@@ -688,12 +688,13 @@ static int ma35d1serial_probe(struct platform_device *pdev)
- 	struct uart_ma35d1_port *up;
- 	int ret = 0;
- 
--	if (pdev->dev.of_node) {
--		ret = of_alias_get_id(pdev->dev.of_node, "serial");
--		if (ret < 0) {
--			dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
--			return ret;
--		}
-+	if (!pdev->dev.of_node)
-+		return -ENODEV;
-+
-+	ret = of_alias_get_id(pdev->dev.of_node, "serial");
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
-+		return ret;
- 	}
- 	up = &ma35d1serial_ports[ret];
- 	up->port.line = ret;
--- 
-2.34.1
 
+[    8.613248] ============================================
+[    8.669073] WARNING: possible recursive locking detected
+[    8.669074] 6.10.0-rc5 #122 Not tainted
+[    8.669075] --------------------------------------------
+[    8.669075] kworker/u50:0/77 is trying to acquire lock:
+[    8.669076] ffff5cae8733ecf8 (&phy->mutex){+.+.}-{3:3}, at: phy_init+0x4c/0x12c
+[    8.669087]
+               but task is already holding lock:
+[    8.669088] ffff5cae8a056cf8 (&phy->mutex){+.+.}-{3:3}, at: phy_init+0x4c/0x12c
+[    8.669092]
+               other info that might help us debug this:
+[    8.669092]  Possible unsafe locking scenario:
+
+[    8.669093]        CPU0
+[    8.669093]        ----
+[    8.669094]   lock(&phy->mutex);
+[    8.669095]   lock(&phy->mutex);
+[    8.669097]
+                *** DEADLOCK ***
+
+[    8.669097]  May be due to missing lock nesting notation
+
+[    8.669097] 4 locks held by kworker/u50:0/77:
+[    8.669099]  #0: ffff5cae80010948 ((wq_completion)events_unbound){+.+.}-{0:0}, at: process_one_work+0x1a4/0x638
+[    8.669108]  #1: ffff800080333de0 (deferred_probe_work){+.+.}-{0:0}, at: process_one_work+0x1cc/0x638
+[    8.669112]  #2: ffff5cae854038f8 (&dev->mutex){....}-{3:3}, at: __device_attach+0x38/0x1d4
+[    8.669117]  #3: ffff5cae8a056cf8 (&phy->mutex){+.+.}-{3:3}, at: phy_init+0x4c/0x12c
+[    8.669121]
+               stack backtrace:
+[    8.669122] CPU: 9 PID: 77 Comm: kworker/u50:0 Not tainted 6.10.0-rc5 #122
+[    8.669124] Hardware name: Qualcomm CRD, BIOS 6.0.231221.BOOT.MXF.2.4-00348.1-HAMOA-1 12/21/2023
+[    8.669125] Workqueue: events_unbound deferred_probe_work_func
+[    8.669128] Call trace:
+[    8.669129]  dump_backtrace+0x9c/0x11c
+[    8.870384]  show_stack+0x18/0x24
+[    8.870386]  dump_stack_lvl+0x90/0xd0
+[    8.870391]  dump_stack+0x18/0x24
+[    8.870393]  print_deadlock_bug+0x25c/0x348
+[    8.870396]  __lock_acquire+0x10a4/0x2064
+[    8.870399]  lock_acquire.part.0+0xc8/0x20c
+[    8.870401]  lock_acquire+0x68/0x84
+[    8.870403]  __mutex_lock+0x98/0x428
+[    8.870407]  mutex_lock_nested+0x24/0x30
+[    8.870410]  phy_init+0x4c/0x12c
+[    8.870412]  qcom_snps_eusb2_hsphy_init+0x54/0x420 [phy_qcom_snps_eusb2]
+[    8.870416]  phy_init+0xe0/0x12c
+[    8.870418]  dwc3_core_init+0x484/0x1214
+[    8.870421]  dwc3_probe+0xe54/0x171c
+[    8.870424]  platform_probe+0x68/0xd8
+[    8.870426]  really_probe+0xc0/0x388
+[    8.870427]  __driver_probe_device+0x7c/0x160
+[    8.870429]  driver_probe_device+0x40/0x114
+[    8.870430]  __device_attach_driver+0xbc/0x158
+[    8.870432]  bus_for_each_drv+0x84/0xe0
+[    8.870433]  __device_attach+0xa8/0x1d4
+[    8.870435]  device_initial_probe+0x14/0x20
+[    8.870436]  bus_probe_device+0xb0/0xb4
+[    8.870437]  deferred_probe_work_func+0xa0/0xf4
+[    8.870439]  process_one_work+0x224/0x638
+[    8.870441]  worker_thread+0x268/0x3a8
+[    8.870442]  kthread+0x124/0x128
+[    8.870443]  ret_from_fork+0x10/0x20
 
