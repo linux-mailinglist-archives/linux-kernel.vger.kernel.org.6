@@ -1,94 +1,250 @@
-Return-Path: <linux-kernel+bounces-229349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8407A916EAA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:59:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6065D916EAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:00:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B62731C23091
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:59:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42F31F23A9C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:00:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BD6A17966E;
-	Tue, 25 Jun 2024 16:59:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8183E2F56;
+	Tue, 25 Jun 2024 17:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="q8Sqjgkm"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LododlXE"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C17D176231;
-	Tue, 25 Jun 2024 16:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5DB176241
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 17:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719334748; cv=none; b=WvBV/hJ/LhbASsc6BPiwFSed1A9n9ZqT65RNhP3Lr79uVlzTkBxs7Ekjfu/LrDzGBfET3liiCcyP52/G+R7fZYkHbETP+zJVHEJBmOxFLeHxKTO4UaV3tx2c1/ys0BIpQPk8phaDLDu2LZ+dL5SXqTJE5I9E5WXLz5nykVg9qKY=
+	t=1719334804; cv=none; b=UWpbOQr+p2HBh/wlwsZuuSJsmp1MUd3t9wJZyNTDJ213HrAYCb7GDajK5vmr8E+JEm3CJHeonigU3oxxxPPi+Rz5327hIYYSl/cIY6jRrLPjxyTH/c5nbSdWAEQgWVkE5i3vBUr5Kh3SIlVae/z+VSQXj6yXXWCkkU8THq8Cc6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719334748; c=relaxed/simple;
-	bh=5qIOOAHvfAeqOEqFJk5OafZk8hgaDep0cVZ3ujVYezs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VeQX0ayAtlGJPVlQvOPaKEW0A6WktGWa1/WcLfbdGazLZ1X5/gpyG2fNKCpwryxLRSpbJuJyBqNrRbfFtTo/Syx/aWK0v/tOW5h/xDi0g4LojLe34Ax3MHzSr3cqfDM6aZyR/L4Km6ZbKMoU6eEw4iQm5sKYxZ3bOGPWKYJyFPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=q8Sqjgkm; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id 71CF81F929;
-	Tue, 25 Jun 2024 18:58:55 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1719334735;
-	bh=IJrbabNzzBhzaeJkC2PMJ7DZ5x3aT19bK8M4kEef8AY=; h=From:To:Subject;
-	b=q8SqjgkmfCwcsM+l5Y5mU8tNqLXP3CDky56Zt4Qzae/FiY4ek98/49rK3XoM4wyu2
-	 r4HI/vWIRvOwkdrrZPQPtz9dXDKD5meMaDUGH/0kg6Z8JYrM5YCrPvi1B4JZhtFNf7
-	 Kq49EXwBz16C4CmWreSdQkh5OylYFhzV2wwTKWL6E3IDx94K9eF/ATQtDMI0/atluN
-	 g5VdXNLNZI+WYLmp8KdnxX+noVF8i4k+2JvcfvY7fqdXnUIN3q6nZJPoRyyHUlwHCN
-	 YBikm+/4Vx1/lUsg17go1VzmlNKkVC8+VAtvuetwy609/MJfElcYyj93501y/cRGUs
-	 MJCq+Tl2NiDfw==
-Date: Tue, 25 Jun 2024 18:58:51 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: Andrejs Cainikovs <andrejs.cainikovs@gmail.com>,
-	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrejs Cainikovs <andrejs.cainikovs@toradex.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] arm64: dts: k3-am625-verdin: enable nau8822 pll
-Message-ID: <20240625165851.GA26676@francesco-nb>
-References: <20240418105730.120913-1-andrejs.cainikovs@gmail.com>
- <20240425135610.6c6ysoejefuazm63@privatize>
+	s=arc-20240116; t=1719334804; c=relaxed/simple;
+	bh=c69UeNsbBXYB+FXw5XwrxO/smJEaHUULsm7ttMq/Tvs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=awGD5Niq6MY9zrU09fEXP1IbFuWUihUz1lmQszgNyRMHOBCupnVn3+vzn2U/n404t85y1V1Sw2XdZrJaKDNDA7ayQDjB8D+RTxdV+/w7J4aFv0z5be3uAko3nEi3JNjBSmA3FOfdjCAQqoSYcy0ACbowIiJAi8bF89JEzFJ8ETc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LododlXE; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4217c7eb6b4so47014615e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:00:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719334800; x=1719939600; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kKhLA/uuVpBLqDNuK6HoaxS7wD29CsICGUEF4cAMpms=;
+        b=LododlXE/V884i9p2+T+JsNxhMvgqXkBxIKhEzMS6Ii+c38fAt4eNu8h2U0hbyHSJF
+         fdEethm94nztDxUqa6uGzrMPsOBjdDLQptgyddmax0VD/i6nzOtVLKhhWGJ70hZ5kD1s
+         Nw9bNtpKF+cezIYyQgXqtF3BI1Ql7DW0QzQcVxjOkZ4nhVV476G/RwMWhiCvn7yYLKQF
+         oTilxvlgKVVWJX1WfQT6kDQ6uW2InXCgpwDdgAFELlOe5rfWWZenSug451S+VkIlonfC
+         PJ9YSddQ8P5USQ6tP2TQ/a366NUKrvBUoqvFbN2t2YlDRmW9ooln0JuLUG4LfD3beFBO
+         Y2Ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719334800; x=1719939600;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kKhLA/uuVpBLqDNuK6HoaxS7wD29CsICGUEF4cAMpms=;
+        b=OE8c7ilTMVhwn24W26bgxzCpkVXZrrbsbHJ/EcLlYd8f7z/dn70qnJv2gguVBxJGIN
+         cUOBC9xXZccuK6Sc3N0PoefSazla96rsz+hbc1XAJ2WfPikC2Q1Q5N7GP+6g95/JWmNI
+         h4L1R+6JSSZIZBanA0Bbf7olzeJALp4YlKARMVlhCgydSPuQDCViB3ak5RcR11BAG2es
+         petwxM2oUlgoxU2ePObvCowVojoYrCBD4QqG4PgZbM2phKCgMvfvNbekUiKiylR2Av19
+         HZ4OLEhmZ+o8HA7dkYj3FzXHdlxvFvBQ4cItg3WCHcBktWPyHUm7TvoF4F6WEtnViSnY
+         IEdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQAnSuHHyAWZniC0e4Ht74DbkHEoXWzbqTsa5G84SYuC0obN0QOf/ABQ5zpWIvps17Brkk9heK6c2b2hHDSJcwVW+XvoP53upAV4rW
+X-Gm-Message-State: AOJu0YzxxIUGlek/uB16aJ5bdSnkq3YGL2DWanAkBCU1h8Pu5ll6pW93
+	I2vcoLdaeJeLJW5+Zmuq98lXJZWWlFt6wO895LGFfEcAiPGRhecYbk/qjZen4oQ=
+X-Google-Smtp-Source: AGHT+IGuDftD/fHoijaVLzFccwmGUpMG5buqZhT6v/Ke1w4CDd5JIUPcSTNtgPBRlJeit4/74Hb6Nw==
+X-Received: by 2002:a05:6000:154d:b0:362:5816:f134 with SMTP id ffacd0b85a97d-366e9463da3mr7697083f8f.13.1719334800016;
+        Tue, 25 Jun 2024 10:00:00 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:b30c:4c5e:f49e:ab33])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638301cffsm13399466f8f.10.2024.06.25.09.59.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 09:59:59 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,  Lars-Peter Clausen
+ <lars@metafoo.de>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
+ Hilman <khilman@baylibre.com>,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-iio@vger.kernel.org,  Rob
+ Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH 2/2] iio: frequency: add amlogic clock measure support
+In-Reply-To: <190ccd62-0803-46fa-87ee-0f9cef5a784e@baylibre.com> (David
+	Lechner's message of "Tue, 25 Jun 2024 09:52:30 -0500")
+References: <20240624173105.909554-1-jbrunet@baylibre.com>
+	<20240624173105.909554-3-jbrunet@baylibre.com>
+	<04254d15-2f6e-435d-ba4c-8e2e87766b9b@baylibre.com>
+	<1j4j9hift4.fsf@starbuckisacylon.baylibre.com>
+	<190ccd62-0803-46fa-87ee-0f9cef5a784e@baylibre.com>
+Date: Tue, 25 Jun 2024 18:59:58 +0200
+Message-ID: <1jr0clgdpt.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240425135610.6c6ysoejefuazm63@privatize>
+Content-Type: text/plain
 
-Hello Nishanth, Vignesh,
+On Tue 25 Jun 2024 at 09:52, David Lechner <dlechner@baylibre.com> wrote:
 
-On Thu, Apr 25, 2024 at 08:56:10AM -0500, Nishanth Menon wrote:
-> On 12:57-20240418, Andrejs Cainikovs wrote:
-> [...]
-> 
-> > Signed-off-by: Andrejs Cainikovs <andrejs.cainikovs@toradex.com>
+> On 6/25/24 3:31 AM, Jerome Brunet wrote:
+>> On Mon 24 Jun 2024 at 17:51, David Lechner <dlechner@baylibre.com> wrote:
+>> 
+>>> On 6/24/24 12:31 PM, Jerome Brunet wrote:
+>>>> Add support for the HW found in most Amlogic SoC dedicated to measure
+>>>> system clocks.
+>>>>
+>>>
+>>>
+>>>
+>>>> +static int cmsr_read_raw(struct iio_dev *indio_dev,
+>>>> +			 struct iio_chan_spec const *chan,
+>>>> +			 int *val, int *val2, long mask)
+>>>> +{
+>>>> +	struct amlogic_cmsr *cm = iio_priv(indio_dev);
+>>>> +
+>>>> +	guard(mutex)(&cm->lock);
+>>>> +
+>>>> +	switch (mask) {
+>>>> +	case IIO_CHAN_INFO_RAW:
+>>>> +		*val = cmsr_measure_unlocked(cm, chan->channel);
+>>>
+>>> Is this actually returning an alternating voltage magnitutde?
+>>> Most frequency drivers don't have a raw value, only frequency.
+>> 
+>> No it is not the magnitude, it is the clock rate (frequency) indeed.
+>> Maybe altvoltage was not the right pick for that but nothing obvious
+>> stands out for Hz measurements
+>
+> I'm certainly not an expert on the subject, but looking at the other
+> frequency drivers, using altvoltage looks correct.
+>
+> But, we in those drivers, nearly all only have a "frequency" attribute
+> but don't have a "raw" attribute. The ones that do have a "raw" attribute
+> are frequency generators that use the raw attribute determine the output
+> voltage.
+>
+>> 
+>>>
+>>>> +		if (*val < 0)
+>>>> +			return *val;
+>>>> +		return IIO_VAL_INT;
+>>>> +
+>>>> +	case IIO_CHAN_INFO_PROCESSED: /* Result in Hz */
+>>>
+>>> Shouldn't this be IIO_CHAN_INFO_FREQUENCY?
+>> 
+>> How would I get raw / processed / scale with IIO_CHAN_INFO_FREQUENCY ?
+>> 
+>>>
+>>> Processed is just (raw + offset) * scale which would be a voltage
+>>> in this case since the channel type is IIO_ALTVOLTAGE.
+>> 
+>> This is was Processed does here, along with selecting the most
+>> appropriate scale to perform the measurement.
+>> 
+>>>
+>>>> +		*val = cmsr_measure_processed_unlocked(cm, chan->channel, val2);
+>>>> +		if (*val < 0)
+>>>> +			return *val;
+>>>> +		return IIO_VAL_INT_64;
+>>>> +
+>>>> +	case IIO_CHAN_INFO_SCALE:
+>>>
+>>> What is this attribute being used for?
+>> 
+>> Hz
+>> 
+>>>
+>>> (clearly not used to convert the raw value to millivolts :-) )
+>>>
+>>> Maybe IIO_CHAN_INFO_INT_TIME is the right one for this? Although
+>>> so far, that has only been used with light sensors.
+>> 
+>> I think you are mixing up channel info and type here.
+>> I do want the info
+>>  * IIO_CHAN_INFO_RAW
+>>  * IIO_CHAN_INFO_PROCESSED
+>>  * IIO_CHAN_INFO_SCALE
+>> 
+>> I want those info to represent an alternate voltage frequency in Hz.
+>> I thought type 'IIO_ALTVOLTAGE' was the right pick for that. Apparently
+>> it is not. What is the appropriate type then ? Should I add a new one ?
+>
+>
+> The documentation at Documentation/ABI/testing/sysfs-bus-iio explains
+> what the combination of a channel type and info means.
 
-Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+Oh missed that, Thx
 
-> > ---
-> > This patch requires https://lore.kernel.org/all/20240409121719.337709-1-andrejs.cainikovs@gmail.com/ to be applied,
-> > if not the audio will just stop working because no code will ever enable the required clock to the codec.
-> 
-> Thanks. lets wait for the dependency patch to be merged to master, and
-> once done, please resubmit this patch. I am going to guess for the next
-> cycle.
+>
+> For example, out_altvoltageY_raw is defined as it used for the frequency
+> generator case that I mentioned above. in_altvoltageY_raw is not defined
+> which means probably no one has needed it yet. But it would still be the
+> voltage value, not the frequency.
 
-Would you mind picking up this patch? The dependency is now merged and
-this should apply cleanly. I can also resend if needed, just let me
-know.
+Got it. So the type I picked is wrong for sure.
+So, maybe I need something new to measure a frequency ?
 
-Francesco
+>
+> There also isn't a in_altvoltageY_input defined ("_input" is the sysfs
+> name for IIO_CHAN_INFO_PROCESSED). But in general, "input" (processed) in
+> IIO just means the value in standard units instead of a raw value. It
+> doesn't mean that any extra signal processing was done. And "scale" is
+> just a way to convert "raw" to "input" (processed). So channels will either
+> have "raw" and "scale" or only have "input" (processed), but not both.
+>
+> Could you describe at a higher level what the use case for the various
+> values being exposed here are? I think that would be helpful in figuring
+> out where they actually fit in to the standard IIO attributes.
 
+So as discussed in the cover letter, This HW used to be driven by a driver
+living in drivers/soc/amlogic/meson-clk-measure.c .
+It provides debugfs entries to observe the rate of 128 system clocks.
+It was fine until now and mostly used for debug in userspace.
 
+To solve a problem with implementing eARC support in ASoC, I need
+another driver to access the measurements, as simply as possible.
+IIO provides an interface like this and the HW actually does
+measurements so I seems like a good fit. I've got it to work
+and happy with the result, both on the IIO and ASoC side.
+
+What is really important to me is the information provided with
+IIO_CHAN_INFO_PROCESSED, because the algorithm will adapt the scale (the
+duration the clock is observed for) to not overflow the output and get the
+best precision achievable. It is a compromise really. Consumer do not
+have to worry about it, they'll get Hz.
+
+I'd prefer to avoid having that algorithm (duplicated) in the consumers,
+especially if it is a driver.
+
+I've provided RAW and SCALE because it is cheap and easy to do TBH.
+I can live without it. It is meant for consumers (if any?) that would
+know better, like want to prioritize speed over precision.
+
+Eventually that driver could evolve and also provide duty cycle
+measurements, which is another reason why I think IIO is a good fit for
+it.
+
+>
+>> 
+>>>
+>>>> +		*val2 = cmsr_get_time_unlocked(cm);
+>>>> +		*val = 1000000;
+>>>> +		return IIO_VAL_FRACTIONAL;
+>>>> +
+>>>> +	default:
+>>>> +		return -EINVAL;
+>>>> +	}
+>>>> +}
+>>>> +
+>> 
+
+-- 
+Jerome
 
