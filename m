@@ -1,157 +1,193 @@
-Return-Path: <linux-kernel+bounces-228365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71DC3915EDB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:23:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0BC915EDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:24:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3027E282EA9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:23:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3BC8E282B28
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:24:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E984E145FEC;
-	Tue, 25 Jun 2024 06:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCF8145FF4;
+	Tue, 25 Jun 2024 06:24:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="L1M5t+Fo";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="/Yrck5sd";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vXVWaYOh";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="eqN7hnoE"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CN5gE+Eq"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3DE143889;
-	Tue, 25 Jun 2024 06:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8EB145FE4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719296615; cv=none; b=UQ9QniU9aOgmnZK5eGYa9Vr8IVn/T+04svH2/6mpCDHzQ/rR9V3us53xagLXEOpuRB8kjJuiDg0/Hj81a4DT+irV1/who77KdYTOl4Iz4LxSrKz4qY/nbXyYRJMxj9U7OC+MAavQPBncPh9wjOlfo70Dny4VD92JgRSeTlKjMEY=
+	t=1719296660; cv=none; b=JCBZLGyNAgV9+0IZOVIzUaPXnvZBUCSoRvx81bnHKb3W43le2GOU3mhP0/OBVFKjrNXySoe9RmJAn3vq4qi1S9Mk7VFcSv7c00GCusH7d6Mzk1AuMX1fnRrZhSQoNyXaTT3fZR37SdbpkT62uVTyGVfpzaCie5jYYPUxjlQ6v3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719296615; c=relaxed/simple;
-	bh=o36e1rWQnzMGs957wZNP+HYveOhcO3ZOgclxudoAsic=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AERKSMGRFEg+gfTGKfBxt0ZUWozGkYyYgfYkcJ+0YMzq1vGEOQ4H2MzGFmikXq92/d8p9abpApHQnp3cHf4VTA4FhUNjgKLJ40DmQdZrejTtU25DLWXj1grkakY/tX3EOGbyArWmNlPhV2uE6YvZfIBR4n/do5ho/vU4F1adNW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=L1M5t+Fo; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=/Yrck5sd; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vXVWaYOh; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=eqN7hnoE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id DF668211F8;
-	Tue, 25 Jun 2024 06:23:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719296612; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1719296660; c=relaxed/simple;
+	bh=fEXCEnroSXAYBbJBA50IuH7sIV8SQp85V0rc8smZn84=;
+	h=MIME-Version:Date:Content-Type:From:Message-ID:Subject:To:Cc:
+	 In-Reply-To:References; b=AdhYsnu+WQvWFdRjbx3KgvyEedBTTs7+QKEWdkE04vF6vADzUm/A1iMrIa+1LnE3B6pOwz6fg2qAMfkFVwdbNaSz9HT3PMoBvhcRo/kftJairGjXM/POd2asdLLiwx9blw1UvJjvywPEGcEJwucXxQ1TWn+jxn8YQuK4bXauBMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CN5gE+Eq; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Envelope-To: akpm@linux-foundation.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1719296654;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=95zJ1MzLYcur/dA25/Ui/CSFCezs8GPrvTaAE0Ax+WU=;
-	b=L1M5t+FoTN+8Np3BQ6fJX6c7200BfR97B+DLIu8Ikr1RI9kouwfxJiODguh9iJSiGlBNkx
-	+WVi3in84tu0rYNszq9Coa/yFvMt33yA56e2iZPPqw/g4QTzHBKuwMPGIFGupH6Hs9br1N
-	l1LQXgIe7sUjIoeRambV7zRmMpD+8Gg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719296612;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=95zJ1MzLYcur/dA25/Ui/CSFCezs8GPrvTaAE0Ax+WU=;
-	b=/Yrck5sdy0Ac6dZsQ8xmLI/8Xyp7X5XWKCiEIDUDuxRb/x120T4+RWchq6qKeyh+dT/d13
-	IAKKGT2h46XbwaCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719296610; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=95zJ1MzLYcur/dA25/Ui/CSFCezs8GPrvTaAE0Ax+WU=;
-	b=vXVWaYOhi5nunjXuiOgA489DrmsnehmdT5ErndFWwfPo+Zse21xIE8ohMDqo0XLbtmM3cS
-	xajPYiKuLjd4lqA9GUFVZt7mIvhOm8veA0PlC/rhPyUUk57pm5CbdH3c4JSER1YBP0Ohyc
-	DtU7laTvwvcAN3UhZ+ZtMjIg6+YoUC4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719296610;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=95zJ1MzLYcur/dA25/Ui/CSFCezs8GPrvTaAE0Ax+WU=;
-	b=eqN7hnoEBEceohQ3OY0x7pej/Qljs+ALJ678LfNdXzMWIW6OO1XiEmo5RcL4JB2/uQJQxs
-	XlL83+otc8E9ncBQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6A7291384C;
-	Tue, 25 Jun 2024 06:23:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id yJlQFmJiemZ5CwAAD6G6ig
-	(envelope-from <hare@suse.de>); Tue, 25 Jun 2024 06:23:30 +0000
-Message-ID: <5f62e67e-cef4-45dc-8503-8899b28048e6@suse.de>
-Date: Tue, 25 Jun 2024 08:23:30 +0200
+	bh=j4bxxUAJuq2rr3KPobPQOBQilwLNETOz0MjNzojnBtM=;
+	b=CN5gE+Eq2magNWdd8QrK1zOC3R8bf1KbPZ3NH9ELjsQfumrMQ5gnwKYAZAkzWgr2EYAqBM
+	2yVj5cKUrvfKzBc8H6TkGnWbAf8q9duzXXHPtXGf69fs6rCVGhRFZQqAgEZE11RZLM6GES
+	5MsvgxqkJjLjP90OPOw5Zo/n8pxt1uM=
+X-Envelope-To: jonathan.cameron@huawei.com
+X-Envelope-To: ying.huang@intel.com
+X-Envelope-To: gourry.memverge@gmail.com
+X-Envelope-To: aneesh.kumar@linux.ibm.com
+X-Envelope-To: mhocko@suse.com
+X-Envelope-To: tj@kernel.org
+X-Envelope-To: john@jagalactic.com
+X-Envelope-To: emirakhur@micron.com
+X-Envelope-To: vtavarespetr@micron.com
+X-Envelope-To: ravis.opensrc@micron.com
+X-Envelope-To: apopple@nvidia.com
+X-Envelope-To: sthanneeru@micron.com
+X-Envelope-To: sj@kernel.org
+X-Envelope-To: rafael@kernel.org
+X-Envelope-To: lenb@kernel.org
+X-Envelope-To: dave.jiang@intel.com
+X-Envelope-To: dan.j.williams@intel.com
+X-Envelope-To: linux-acpi@vger.kernel.org
+X-Envelope-To: linux-kernel@vger.kernel.org
+X-Envelope-To: linux-mm@kvack.org
+X-Envelope-To: horenc@vt.edu
+X-Envelope-To: horenchuang@bytedance.com
+X-Envelope-To: horenchuang@gmail.com
+X-Envelope-To: linux-cxl@vger.kernel.org
+X-Envelope-To: qemu-devel@nongnu.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/6] ata: libata-scsi: Do not pass ATA device id to
- ata_to_sense_error()
-Content-Language: en-US
-To: Igor Pylypiv <ipylypiv@google.com>, Damien Le Moal <dlemoal@kernel.org>,
- Niklas Cassel <cassel@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, "Martin K. Petersen"
- <martin.petersen@oracle.com>, Jason Yan <yanaijie@huawei.com>,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240624221211.2593736-1-ipylypiv@google.com>
- <20240624221211.2593736-5-ipylypiv@google.com>
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20240624221211.2593736-5-ipylypiv@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -4.29
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:email]
+Date: Tue, 25 Jun 2024 06:24:11 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: horen.chuang@linux.dev
+Message-ID: <acf41fe2246f3696a6fe267b8a23bdb4f855cb4e@linux.dev>
+TLS-Required: No
+Subject: Re: [PATCH v1] memory tier: consolidate the initialization of memory
+ tiers
+To: "Andrew Morton" <akpm@linux-foundation.org>
+Cc: "Jonathan Cameron" <Jonathan.Cameron@huawei.com>, "Huang, Ying"
+ <ying.huang@intel.com>, "Gregory Price" <gourry.memverge@gmail.com>,
+ aneesh.kumar@linux.ibm.com, mhocko@suse.com, tj@kernel.org,
+ john@jagalactic.com, "Eishan Mirakhur" <emirakhur@micron.com>, "Vinicius
+ Tavares Petrucci" <vtavarespetr@micron.com>, "Ravis OpenSrc"
+ <Ravis.OpenSrc@micron.com>, "Alistair Popple" <apopple@nvidia.com>,
+ "Srinivasulu Thanneeru" <sthanneeru@micron.com>, "SeongJae Park"
+ <sj@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Len Brown"
+ <lenb@kernel.org>, "Dave Jiang" <dave.jiang@intel.com>, "Dan Williams"
+ <dan.j.williams@intel.com>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, "Ho-Ren (Jack) Chuang"
+ <horenc@vt.edu>, "Ho-Ren (Jack) Chuang" <horenchuang@bytedance.com>,
+ "Ho-Ren (Jack) Chuang" <horenchuang@gmail.com>,
+ linux-cxl@vger.kernel.org, qemu-devel@nongnu.org
+In-Reply-To: <20240621183413.1638e7453a0bed2af5f44273@linux-foundation.org>
+References: <20240621044833.3953055-1-horen.chuang@linux.dev>
+ <20240621183413.1638e7453a0bed2af5f44273@linux-foundation.org>
+X-Migadu-Flow: FLOW_OUT
 
-On 6/25/24 00:12, Igor Pylypiv wrote:
-> ATA device id is not used in ata_to_sense_error().
-> 
-> Fixes: ff8072d589dc ("ata: libata: remove references to non-existing error_handler()")
-> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
-> ---
->   drivers/ata/libata-scsi.c | 9 ++++-----
->   1 file changed, 4 insertions(+), 5 deletions(-)
-> 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
+June 21, 2024 at 6:34 PM, "Andrew Morton" <akpm@linux-foundation.org> wro=
+te:
 
-Cheers,
+Hi Andrew,
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+Thanks for the feedback. I will send a v2 with the patch description
+written in a cover letter.
 
+>=20
+>=20On Fri, 21 Jun 2024 04:48:30 +0000 "Ho-Ren (Jack) Chuang" <horen.chua=
+ng@linux.dev> wrote:
+>=20
+>=20>=20
+>=20> If we simply move the set_node_memory_tier() from memory_tier_init(=
+) to
+> >=20
+>=20>  late_initcall(), it will result in HMAT not registering the
+> >=20
+>=20>  mt_adistance_algorithm callback function,
+> >=20
+>=20
+> Immediate reaction: then don't do that!
+>=20
+>=20>=20
+>=20> because set_node_memory_tier()
+> >=20
+>=20>  is not performed during the memory tiering initialization phase,
+> >=20
+>=20>  leading to a lack of correct default_dram information.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  Therefore, we introduced a nodemask to pass the information of the
+> >=20
+>=20>  default DRAM nodes. The reason for not choosing to reuse
+> >=20
+>=20>  default_dram_type->nodes is that it is not clean enough. So in the=
+ end,
+> >=20
+>=20>  we use a __initdata variable, which is a variable that is released=
+ once
+> >=20
+>=20>  initialization is complete, including both CPU and memory nodes fo=
+r HMAT
+> >=20
+>=20>  to iterate through.
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  Besides, since default_dram_type may be checked/used during the
+> >=20
+>=20>  initialization process of HMAT and drivers, it is better to keep t=
+he
+> >=20
+>=20>  allocation of default_dram_type in memory_tier_init().
+> >=20
+>=20
+> What is this patch actually aiming to do? Is it merely a code cleanup,
+>=20
+>=20or are there functional changes?
+>=20
+>=20>=20
+>=20> Signed-off-by: Ho-Ren (Jack) Chuang <horenchuang@bytedance.com>
+> >=20
+>=20>  ---
+> >=20
+>=20>  Hi all,
+> >=20
+>=20>=20=20
+>=20>=20
+>=20>  The current memory tier initialization process is distributed acro=
+ss two
+> >=20
+>=20>  different functions, memory_tier_init() and memory_tier_late_init(=
+). This
+> >=20
+>=20>  design is hard to maintain. Thus, this patch is proposed to reduce=
+ the
+> >=20
+>=20>  possible code paths by consolidating different initialization patc=
+hes into one.
+> >=20
+>=20
+> Ah, there it is. Please make this the opening paragraph, not an aside
+>=20
+>=20buried below the ^---$.
+>=20
+>=20I'll await review input before proceeding with this, thanks.
+>
 
