@@ -1,132 +1,97 @@
-Return-Path: <linux-kernel+bounces-229098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E251F916AE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:47:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA999916AEF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:48:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EADC1F287EC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:47:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2825C1C2332E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:48:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13731607A7;
-	Tue, 25 Jun 2024 14:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5ACCB16EC07;
+	Tue, 25 Jun 2024 14:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdM3o8Ze"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VxMeH8Ee"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199A816B720;
-	Tue, 25 Jun 2024 14:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D64416D31C;
+	Tue, 25 Jun 2024 14:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719326828; cv=none; b=kr+JRGMmemshqj7/3Zh12/2PQ0iNVLSFGJkQACLKm/pkAiy2YlWapd9c/o4uYPRHL+HPhXdmtp7ZV40WtHcyVroGd2i5fEnn9bSJyMNt63NCFhDG9mW0AxR28PzGRlXo5hwMjBwZesFs9Do6a9YwQ5Gxzzn2NRpZVqUTLEmkhVw=
+	t=1719326893; cv=none; b=PANcA9wiH3LzfgiaSBDbqNs0p2SVUWYjsPzJYtPgwXkVX2CE+qUxmnhoJLjFijwqirmw0TXA+b2hTy2xuQYx3/qWWhdmzjZNMVck8xXWMdx2ncmWRXNB3t5uNUPUSxU3chZJD/S03ZtigDapjgY9MbwGYM4bFyPopC/DQm6pEhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719326828; c=relaxed/simple;
-	bh=7INvdVScmw601ooabE8KK31RUvWRf0vcMmCdvEuMPpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h8tgOdten38JcSvTz+2a05L0cKB+78D3DRSM2bGX5e5en8R8eXP+KrmSg8rB99cnSViqqxXB4YSejJ9+CDSy8QhGFkfWLYm+CIFe4lBrY7LDAdnAamrb6pzgs2QF26Xz/3y1ux3oLPmpAC8AHCnY+EpoWJsiMpHfqDC+eGzL4d4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdM3o8Ze; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 951E6C32781;
-	Tue, 25 Jun 2024 14:47:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719326827;
-	bh=7INvdVScmw601ooabE8KK31RUvWRf0vcMmCdvEuMPpw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=gdM3o8ZeKJSxMUQapTfXcG2O1lUUSBXsiZsI/f20yD1h+gjQGW+IeOZ4eMt80fyuF
-	 MgTVrjG41Kx4Sq0vV6st6omHRZJXZhnrDH72WM7wiN9GsyGvFTGCxv26GkJZtL3Y5s
-	 UC4xZdkCr3XjcGk4FnV83FbpY+NxqMFSI8NVQKpwK4PnqLLd6Yol7084UA08jhJW2u
-	 hxYTk6nC58fcmSXBcgfYanHUzJ4FO+TSvxtKXleKARKUUgb8XklttGfzwZ+XsidtVf
-	 rgRE37n+TOAkg9diwmyjQi7SGVNgKEjaVl76EEpPhgN1fOYHKEwDmZo/wrZIUzP9iU
-	 OnbITka7pRdVg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 97385CE04A8; Tue, 25 Jun 2024 07:47:06 -0700 (PDT)
-Date: Tue, 25 Jun 2024 07:47:06 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Breno Leitao <leitao@debian.org>, sandipan.das@amd.com,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, leit@meta.com,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] perf/x86/amd: Warn only on new bits set
-Message-ID: <e17a924d-9699-465f-8bef-cde4411e2146@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20240524141021.3889002-1-leitao@debian.org>
- <20240625115734.GX31592@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1719326893; c=relaxed/simple;
+	bh=v3xu1DyFwNeeSa36sjEB5FbyVITtkfo92n3t1SkftD4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=blry0D/EJAccDFzaXI7KvaJmj+Uj627SX71lmltnQO60UFt/p6F9O0G6jFIOLmIqM58TqjRKphlTVvOoZJ5biu1xX40kM03i5oLZ+bptKsuGmNp0vfUL0UqpJyypGRQVhOyyUgoMQHznOVYrYRkbG6cZECQt15lZSj5syJvw4WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VxMeH8Ee; arc=none smtp.client-ip=209.85.216.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2c722e54db8so4336044a91.2;
+        Tue, 25 Jun 2024 07:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719326891; x=1719931691; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NOLeFvsL8kaSRtWwF8htq+fPtKSdafeifT9BbsLcc+c=;
+        b=VxMeH8EeYd+dHwN4o9Wkepbum4pB2/xHr/Xd10552ow2zNAjd9EnIRllF5co3x7G1F
+         Q1fLIobiIfftmHg+ICkFst+wVRBOPBWYFDKJsQt1Ja3mHwN0Tc4fGOoCSlLzAGqU3BuZ
+         34leKiCgQHTHR5TTRnuO4d9F4bzpygjWm9j7Hi475vlSRBFkA8ziHlRJf5+f9Ctt/nrk
+         8y1Nc+WCmlLecP1oKUw5drBpMEjvc2seok0Cfuu99CQ/vgosqV4G6JmCXx066nbhGkcQ
+         iVaoC64/FubwKDQKgxqGMoCGldDPq1EHcHDQIz8HpzxWkStshQQPsaqn5NDcec9ku5wc
+         3pLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719326891; x=1719931691;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NOLeFvsL8kaSRtWwF8htq+fPtKSdafeifT9BbsLcc+c=;
+        b=fHCAGANh2O3GUG3jwWF18KCSx7y8AghRFqBxoBQzPvud6gRB9lWqxrjzK4XHRnbpMx
+         WzmRFJzFmR2x68f1BIxh5aLgfaw5caj0/OFnXaGatIEz8FwsfSq+PV5gqFpW4qwu2AD1
+         1R2+3jjcHaHIvmM4LgX/wHklZhsJqmBayWb6+sBKms4htqhNglR3l1ecWNq2UjFQFJYI
+         8BqEcJPCygjLrpPjy/caIVyXswPJTO6pe5u1PIzCAkUuWeZvhk/a7eG3uJ0MdZDNYnEH
+         CRcVMvIcO/wtsxP+htzHF31khAmOaA88Hen04r22+LMhBKDUm4wNrtQM0B0/UH1afuHO
+         wtHA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTeUathw0p9qhAFwOUsDD+a/jfqx/1JVnIJKFKD2SpKQ8AL/2hk7saNIK3lIBYbW4a20ivKbYNd5IkaclkNXHgyGHse0OctWhtedlJ+cLOZCX2QfE28l3xViq7fiSvh3asxHCp6Dp4G/M=
+X-Gm-Message-State: AOJu0Yx5mkzLHpLVE/qKaSFVVXRjO3pwoV9uDVDm3UaJzbIY0egE/C39
+	h8+UyNtrDpA+UsZJ7sMrLloJsR2zBsfBAa3F/G2Lw+lpmBmuLg0Pa2+bKRZ9w/G1XvmjAzLIXze
+	6SLKvUl1jbcaf0kj7LwDVOzwc20c=
+X-Google-Smtp-Source: AGHT+IHax0feeXZDhhj1vgHv8F+uvxmxFaFY3EcB0Z+QwjASVPOeq3SNfifA3ETfuRKkRYInUfBM0vmfIqxQTzvpnUs=
+X-Received: by 2002:a17:90a:df08:b0:2c8:431e:4105 with SMTP id
+ 98e67ed59e1d1-2c86140975dmr6924152a91.26.1719326891318; Tue, 25 Jun 2024
+ 07:48:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240625115734.GX31592@noisy.programming.kicks-ass.net>
+References: <20240615125457.167844-1-rauty@altlinux.org> <2c9ba341bc95d4b9010bf5f8794c0d14b1c57dc9.camel@irl.hu>
+ <CAGpJQTHoBAixmxta2WuZfjHjiK9GXF=hkfPyV7PBD5rt9Z_0WA@mail.gmail.com>
+ <CAGpJQTGqxEkfp003QLsp-syUgzDFCmHSmNaoOaem0ZMVf7_=bg@mail.gmail.com>
+ <c0a9e15e7926e098bdea97a7d31c32427e0910c9.camel@irl.hu> <871q4lm9dp.wl-tiwai@suse.de>
+ <CAGpJQTFF=gKN2h105dGhBOEhN0Q1Tpj5hJWpSdQ_-nCoUTzj5A@mail.gmail.com>
+ <87tthhktdz.wl-tiwai@suse.de> <87sex1kt6t.wl-tiwai@suse.de>
+ <CAGpJQTGR5WKuHUFGFUC286TUkOXYgcqigZRDb4K5deyE9uuz8w@mail.gmail.com> <87msn9ksj6.wl-tiwai@suse.de>
+In-Reply-To: <87msn9ksj6.wl-tiwai@suse.de>
+From: Rauty <rautyrauty@gmail.com>
+Date: Tue, 25 Jun 2024 17:47:34 +0300
+Message-ID: <CAGpJQTHajQnOr7Tr8cmMyjBqGw1sg_-SwSuAhnz-yFHZdPukGw@mail.gmail.com>
+Subject: Re: [PATCH v2] ALSA: hda/realtek: Enable headset mic on IdeaPad
+ 330-17IKB 81DM
+To: Takashi Iwai <tiwai@suse.de>
+Cc: wzhd@ustc.edu, Gergo Koteles <soyer@irl.hu>, alsa-devel@alsa-project.org, 
+	tiwai@suse.com, perex@perex.cz, kailang@realtek.com, 
+	sbinding@opensource.cirrus.com, luke@ljones.dev, shenghao-ding@ti.com, 
+	simont@opensource.cirrus.com, foss@athaariq.my.id, rf@opensource.cirrus.com, 
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 25, 2024 at 01:57:34PM +0200, Peter Zijlstra wrote:
-> On Fri, May 24, 2024 at 07:10:20AM -0700, Breno Leitao wrote:
-> > Warning at every leaking bits can cause a flood of message, triggering
-> > vairous stall-warning mechanisms to fire, including CSD locks, which
-> > makes the machine to be unusable.
-> > 
-> > Track the bits that are being leaked, and only warn when a new bit is
-> > set.
-> > 
-> > Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
-> > ---
-> >  arch/x86/events/amd/core.c | 9 +++++++--
-> >  1 file changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/arch/x86/events/amd/core.c b/arch/x86/events/amd/core.c
-> > index 1fc4ce44e743..df0ba2382d13 100644
-> > --- a/arch/x86/events/amd/core.c
-> > +++ b/arch/x86/events/amd/core.c
-> > @@ -941,11 +941,12 @@ static int amd_pmu_v2_snapshot_branch_stack(struct perf_branch_entry *entries, u
-> >  static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
-> >  {
-> >  	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
-> > +	static atomic64_t status_warned = ATOMIC64_INIT(0);
-> > +	u64 reserved, status, mask, new_bits;
-> >  	struct perf_sample_data data;
-> >  	struct hw_perf_event *hwc;
-> >  	struct perf_event *event;
-> >  	int handled = 0, idx;
-> > -	u64 reserved, status, mask;
-> >  	bool pmu_enabled;
-> >  
-> >  	/*
-> > @@ -1010,7 +1011,11 @@ static int amd_pmu_v2_handle_irq(struct pt_regs *regs)
-> >  	 * the corresponding PMCs are expected to be inactive according to the
-> >  	 * active_mask
-> >  	 */
-> > -	WARN_ON(status > 0);
-> > +	if (status > 0) {
-> > +		new_bits = atomic64_fetch_or(status, &status_warned) ^ atomic64_read(&status_warned);
-> > +		// A new bit was set for the very first time.
-> > +		WARN(new_bits, "New overflows for inactive PMCs: %llx\n", new_bits);
-> > +	}
-> 
-> Why not just a WARN_ON_ONCE() instead? This really shouldn't be
-> happening in the first place.
+On Tue, 25 Jun 2024 at 17:25, Takashi Iwai <tiwai@suse.de> wrote:
+> Great.  Could you also give the one for IdeaPad 330?
 
-We did consider that, but seeing the full set of bits that shouldn't
-have been happening in the first place helps with debuggging.
-
-But is there a better way to accumulate and print the full set of
-unexpected bits?
-
-							Thanx, Paul
+http://alsa-project.org/db/?f=cb04b699a8aaa07e0bd992dfc92accb993dc0a97
 
