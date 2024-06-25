@@ -1,248 +1,163 @@
-Return-Path: <linux-kernel+bounces-228908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56AB091687D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:59:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D25916880
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:00:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C048280E5C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:59:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EDC81F214F9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 413E415ECC8;
-	Tue, 25 Jun 2024 12:58:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29291158A03;
-	Tue, 25 Jun 2024 12:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A728D1591F1;
+	Tue, 25 Jun 2024 12:59:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hnd497tm"
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 340E8157A6C
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:59:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719320327; cv=none; b=lLPRYiaLpKBWvgkkN2Vo8N/jWzpyHD9xVBRaCR/YojiliCHxcgzBiMs0bdrMbrvYjZQAEWfIOPv/q3M0HhYIlzzTA0DxPa98T8hKcB69uCHTyCX0vXhj1VMX3TEk5TQHKg/yJeTjNrSwFTOOvxZITlNsNAiJ6hz1ZgJfrErjZBw=
+	t=1719320382; cv=none; b=WOd4I1rnl7gbf5SWdjV8y8/bVe2y1CU9Ru63SRi9c1RmR9IFrcl4m/8YWotR6KqTMSm1a1N8bwuCKg6OgdJe7B5LHtbLTsng5JMpddHdVnqtHz5k000a/1Uqw7authT6e5nd99aDjOMnTAGeK1ThLdTRjCLOurxYMbV5RZST0bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719320327; c=relaxed/simple;
-	bh=Y/iduQbEcuoMn84TlKhRVzYgE9StZF5R4m4fm5jyoUE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P2rm/KXEppdpmFhHa9c2nce8IKHqWC89V9Fe+E3HnvcPtJZqUGqdsSMsHVFdc/zk1X78K9me2I8j99FyWBNcK/6TJJin3NlvMP5BHQABTz4gRtW8ap5TllGtfor7yOd1xVWPZwQE5FD9FByxmNenyUx02b0RnlgoWhp44At+uY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5C43A339;
-	Tue, 25 Jun 2024 05:59:09 -0700 (PDT)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D4C283F73B;
-	Tue, 25 Jun 2024 05:58:41 -0700 (PDT)
-Message-ID: <f281ba07-d54a-460a-8f78-f7eb6bd8ed88@arm.com>
-Date: Tue, 25 Jun 2024 14:58:30 +0200
+	s=arc-20240116; t=1719320382; c=relaxed/simple;
+	bh=Yp7I2FiVKh+KMKAdM9SGW2FFGeM+i7tZKjv8+TY0Guw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CGUMw0ImkJff8mvDOVWJ617FXdoHwb+iuesT/6pmtMvCCxHuf40Zdhbyvt3dU8dVdmpBnlBpEHFrk6+CwY7xVHUIqu3dhooJShPUGESUuRXJFPtjfopEzLHGyyH4IPys0foOxICWy7e+ebZTAq6RYQy3tPbyRVZJ0XZDuHtuZGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hnd497tm; arc=none smtp.client-ip=209.85.219.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e02da9b2db7so5065229276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 05:59:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719320380; x=1719925180; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=g3Ay60vtgcGfFCitsZDB5AKtYOW2UuaM+JMlbTIwmNo=;
+        b=hnd497tm62Sjajb32ByHXpkMM+x5XO7+EVaK3fauWuhzMHVlDm8KbxweHUtX31N52t
+         Ti036yskG51C9lUTC8Z2Iep8VmoUntU9B+ywPrEOAj0X1btU56jjcNVLW2eXkwr2zd8d
+         XHrqvLBKFeXa7nC3j2i6a4sa0Sznk8dB+KU/YpooQueNKlkx4TTzLUYyIbWjMhjm4xiV
+         zn5bxROJyxjPQpKWgPGp6zjdbfJO8t3zc9oeq3N+MYJARjJzioJ49gDoLvRtCSGvTdYF
+         pszo4XWMTC/JIa7L/m7uNZWn1r1K5R/a47/PnMUg7/DMjkLzpqKuApvrZ1oD8mlheplK
+         cPcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719320380; x=1719925180;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=g3Ay60vtgcGfFCitsZDB5AKtYOW2UuaM+JMlbTIwmNo=;
+        b=kkt2ti7BGYx/hLqKFDO7cX2DvKaC5lTWIykKBJWmvNvZWodpnbxv1zBLRQgDQviPkW
+         TbGfCopP82wrioFguCUHrc0Gc9bbmBWjXfnTjG3I1YHwUlqipPiDkVT/F9SsvBJYqoTL
+         tbxzdsAjtv6B9lhJs/NdL2qGss1dh/coTC5YDfEN/V+J4nDl5E0FlLfKrsJo9pbwPXHC
+         LCflDiScTXg4eFh/fzcCtxDAvcRhBwWYIUmsKBysefIg9IH3xZdDL+/DUef/Z9zcS4kh
+         oyADmk33jbPwOKUk0s8ORYafXj8StIAk2y6t7P8B3C4UTpyaI8L6NCDbFiNOTkO9dJXd
+         2p0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWxLRYpB/0NdiegqJs/KPdpbVxHak5rvPGjxTzhXP6vjqIFGxJSe62yDVZ0qjZA9q1sEVbZc816ZiDmwQ9tOM7kKD2hm3sR64wk0Kii
+X-Gm-Message-State: AOJu0Ywg0cPOoctKInEHiG1SG/FW4CHO0ZKgtunpa7kneyD9IWzVERNN
+	fAQ+yc4HqI8VKFAkbuZd9ylCWRfD1UMcjPM8jo1JpTV/iZTZWid56gFF874FfbQn40x37Z9beHN
+	WrIUU/2r7nARhlh7OUuVtvzaUA6k33SLanCoX7A==
+X-Google-Smtp-Source: AGHT+IG/uaVakkrgSD4WKuGcBcbaZo5fAtSTAyu0sxOZcikQA0BHcryR5jI9ISgR3vlev1QYzK5GUigCBoIhwmTN5Pk=
+X-Received: by 2002:a25:69c3:0:b0:e02:bde0:f2ce with SMTP id
+ 3f1490d57ef6-e0303f7f157mr6765502276.31.1719320380162; Tue, 25 Jun 2024
+ 05:59:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6] sched: Consolidate cpufreq updates
-To: Qais Yousef <qyousef@layalina.io>, "Rafael J. Wysocki"
- <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>,
- Ingo Molnar <mingo@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Juri Lelli <juri.lelli@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
- <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
- Christian Loehle <christian.loehle@arm.com>,
- Hongyan Xia <hongyan.xia2@arm.com>, John Stultz <jstultz@google.com>,
- linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240619201409.2071728-1-qyousef@layalina.io>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20240619201409.2071728-1-qyousef@layalina.io>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240417133731.2055383-1-quic_c_gdjako@quicinc.com>
+ <20240417133731.2055383-6-quic_c_gdjako@quicinc.com> <CAA8EJppcXVu72OSo+OiYEiC1HQjP3qCwKMumOsUhcn6Czj0URg@mail.gmail.com>
+ <CAA8EJpr3GYimirDz39f4n-3hDAxFWzo+9fdY6MAuxaNguouVFg@mail.gmail.com> <3e816509-a12b-4658-85f4-c0d0037c6a64@kernel.org>
+In-Reply-To: <3e816509-a12b-4658-85f4-c0d0037c6a64@kernel.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 25 Jun 2024 15:59:27 +0300
+Message-ID: <CAA8EJpr1G4eq5xJn0z2JQmpXY89UK13uk2BWJCgROsFP_-NkQw@mail.gmail.com>
+Subject: Re: [PATCH v8 5/7] arm64: dts: qcom: sdm845: Add DT nodes for the TBUs
+To: Georgi Djakov <djakov@kernel.org>
+Cc: Georgi Djakov <quic_c_gdjako@quicinc.com>, will@kernel.org, robin.murphy@arm.com, 
+	joro@8bytes.org, iommu@lists.linux.dev, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org, 
+	robdclark@gmail.com, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	quic_cgoldswo@quicinc.com, quic_sukadev@quicinc.com, quic_pdaly@quicinc.com, 
+	quic_sudaraja@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 19/06/2024 22:14, Qais Yousef wrote:
+On Tue, 25 Jun 2024 at 15:57, Georgi Djakov <djakov@kernel.org> wrote:
+>
+> On 25.06.24 10:50, Dmitry Baryshkov wrote:
+> > On Fri, 14 Jun 2024 at 21:05, Dmitry Baryshkov
+> > <dmitry.baryshkov@linaro.org> wrote:
+> >>
+> >> On Wed, 17 Apr 2024 at 16:39, Georgi Djakov <quic_c_gdjako@quicinc.com> wrote:
+> >>>
+> >>> Add the device-tree nodes for the TBUs (translation buffer units) that
+> >>> are present on the sdm845 platforms. The TBUs can be used debug the
+> >>> kernel and provide additional information when a context faults occur.
+> >>>
+> >>> Describe the all registers, clocks, interconnects and power-domain
+> >>> resources that are needed for each of the TBUs.
+> >>>
+> >>> Signed-off-by: Georgi Djakov <quic_c_gdjako@quicinc.com>
+> >>
+> >> This patch now prevents interconnect drivers from hitting the sync
+> >> state on SDM845.
+> >> The TBU driver is enabled only when the ARM_SMMU_QCOM_DEBUG is
+> >> enabled, which is not a typical case on a normal system:
+> >
+> > Georgi, before I start acting like a bull in a china shop and sending
+> > reverts, any update from your side?
+>
+> Hi Dmitry!
+> Thanks for the report! We can easily add status = "disabled" to the DT
+> nodes, but please give me some time to take a look what would be the best
+> way to handle this, as i was out last week and now i am still catching up.
 
-[...]
+I think the simplest thing would be to move the TBU driver to the
+arm-qcom-smmu.c instead of having it in the -debug.c
 
-> 1. context_switch()
-> 2. task_tick_fair()
-> 3. update_blocked_averages()
+>
+> BR,
+> Georgi
+>
+> >
+> >>
+> >> [   26.209151] qnoc-sdm845 1500000.interconnect: sync_state() pending
+> >> due to 150c5000.tbu
+> >> [   26.217228] qnoc-sdm845 1620000.interconnect: sync_state() pending
+> >> due to 150c5000.tbu
+> >> [   26.229926] qnoc-sdm845 1500000.interconnect: sync_state() pending
+> >> due to 150c9000.tbu
+> >> [   26.238008] qnoc-sdm845 1620000.interconnect: sync_state() pending
+> >> due to 150c9000.tbu
+> >> [   26.249068] qnoc-sdm845 1740000.interconnect: sync_state() pending
+> >> due to 150cd000.tbu
+> >> [   26.257127] qnoc-sdm845 1740000.interconnect: sync_state() pending
+> >> due to 150d1000.tbu
+> >> [   26.265159] qnoc-sdm845 1740000.interconnect: sync_state() pending
+> >> due to 150d5000.tbu
+> >> [   26.273189] qnoc-sdm845 1500000.interconnect: sync_state() pending
+> >> due to 150d9000.tbu
+> >> [   26.281206] qnoc-sdm845 1620000.interconnect: sync_state() pending
+> >> due to 150d9000.tbu
+> >> [   26.289203] qnoc-sdm845 1500000.interconnect: sync_state() pending
+> >> due to 150dd000.tbu
+> >> [   26.297196] qnoc-sdm845 1620000.interconnect: sync_state() pending
+> >> due to 150dd000.tbu
+> >> [   26.305201] qnoc-sdm845 1500000.interconnect: sync_state() pending
+> >> due to 150e1000.tbu
+> >> [   26.313207] qnoc-sdm845 1620000.interconnect: sync_state() pending
+> >> due to 150e1000.tbu
+> >
+>
 
-Nit: Got recently renamed to sched_balance_update_blocked_averages(). (*)
 
-> 4. on syscall that changes policy or uclamp values
-
-sched_setscheduler() ?
-
-> 5. on check_preempt_wakeup_fair() if wakeup preemption failed
-> 
-> The update at context switch should help guarantee that DL and RT get
-> the right frequency straightaway when they're RUNNING. As mentioned
-> though the update will happen slightly after enqueue_task(); though in
-> an ideal world these tasks should be RUNNING ASAP and this additional
-> delay should be negligible. For fair tasks we need to make sure we send
-> a single update for every decay for the root cfs_rq. Any changes to the
-> rq will be deferred until the next task is ready to run, or we hit TICK.
-> But we are guaranteed the task is running at a level that meets its
-> requirements after enqueue.
-> 
-> To guarantee RT and DL tasks updates are never missed, we add a new
-> SCHED_CPUFREQ_FORCE_UPDATE to ignore the rate_limit_us. If we are
-> already running at the right freq, the governor will end up doing
-> nothing, but we eliminate the risk of the task ending up accidentally
-> running at the wrong freq due to rate_limit_us.
-> 
-> Similarly for iowait boost, we ignore rate limits. We also handle a case
-> of a boost reset prematurely by adding a guard in sugov_iowait_apply()
-> to reduce the boost after 1ms which seems iowait boost mechanism relied
-> on rate_limit_us and cfs_rq.decay preventing any updates to happen soon
-
-s/cfs_rq.decay/cfs_rq.decayed
-
-> after iowait boost.
-> 
-> The new SCHED_CPUFREQ_FORCE_UPDATE should not impact the rate limit
-> time stamps otherwise we can end up delaying updates for normal
-> requests.
-> 
-> As a simple optimization, we avoid sending cpufreq updates when
-> switching from RT to another RT as RT tasks run at max freq by default.
-> If CONFIG_UCLAMP_TASK is enabled, we can do a simple check to see if
-> uclamp_min is different to avoid unnecessary cpufreq update as most RT
-> tasks are likely to be running at the same performance level, so we can
-> avoid unnecessary overhead of forced updates when there's nothing to do.
-> 
-> We also ensure to ignore cpufreq udpates for sugov workers at context
-> switch. It doesn't make sense for the kworker that applies the frequency
-> update (which is a DL task) to trigger a frequency update itself.
-> 
-> The update at task_tick_fair will guarantee that the governor will
-
-Nit: s/task_tick_fair/task_tick_fair()
-
-> follow any updates to load for tasks/CPU or due to new enqueues/dequeues
-> to the rq. Since DL and RT always run at constant frequencies and have
-> no load tracking, this is only required for fair tasks.
-> 
-> The update at update_blocked_averages() will ensure we decay frequency
-
-(*)
-
-> as the CPU becomes idle for long enough.
-> 
-> If the currently running task changes its policy or uclamp values, we
-> ensure we follow up with cpufreq update to ensure we follow up with any
-> potential new perf requirements based on the new change.
-> 
-> To handle systems with long TICK where tasks could end up enqueued but
-> no preemption happens until TICK, we add an update in
-> check_preempt_wakeup_fair() if wake up preemption fails. This will send
-> special SCHED_CPUFREQ_TASK_ENQUEUED cpufreq update to tell the governor
-> that the state of the CPU has changed and it can consider an update if
-> it deems worthwhile. In schedutil this will do an update if no update
-> was done since sysctl_sched_base_slice which is our ideal slice length
-> for context switch.
-> 
-> Since we now DL tasks always ignore rate limit, remove
-
-s/we//?
-
-[...]
-
-> @@ -4917,6 +4927,84 @@ static inline void __balance_callbacks(struct rq *rq)
->  
->  #endif
->  
-> +static __always_inline void
-> +__update_cpufreq_ctx_switch(struct rq *rq, struct task_struct *prev)
-> +{
-> +#ifdef CONFIG_CPU_FREQ
-> +	if (prev && prev->dl.flags & SCHED_FLAG_SUGOV) {
-> +		/* Sugov just did an update, don't be too aggressive */
-> +		return;
-> +	}
-> +
-> +	/*
-> +	 * RT and DL should always send a freq update. But we can do some
-> +	 * simple checks to avoid it when we know it's not necessary.
-> +	 *
-> +	 * iowait_boost will always trigger a freq update too.
-> +	 *
-> +	 * Fair tasks will only trigger an update if the root cfs_rq has
-> +	 * decayed.
-> +	 *
-> +	 * Everything else should do nothing.
-> +	 */
-> +	switch (current->policy) {
-> +	case SCHED_NORMAL:
-> +	case SCHED_BATCH:
-
-What about SCHED_IDLE tasks?
-
-> +		if (unlikely(current->in_iowait)) {
-> +			cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT | SCHED_CPUFREQ_FORCE_UPDATE);
-> +			return;
-> +		}
-> +
-> +#ifdef CONFIG_SMP
-> +		if (unlikely(rq->cfs.decayed)) {
-> +			rq->cfs.decayed = false;
-> +			cpufreq_update_util(rq, 0);
-> +			return;
-> +		}
-> +#else
-> +		cpufreq_update_util(rq, 0);
-> +#endif
-
-We can have !CONFIG_SMP and CONFIG_FAIR_GROUP_SCHED systems. Does this
-mean on those systems we call cpufreq_update_util() for each cfs_rq of
-the hierarchy where on CONFIG_SMP we only do this for the root cfs_rq?
-
-[...]
-
-> @@ -4744,8 +4716,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
->  	if (se->avg.last_update_time && !(flags & SKIP_AGE_LOAD))
->  		__update_load_avg_se(now, cfs_rq, se);
->  
-> -	decayed  = update_cfs_rq_load_avg(now, cfs_rq);
-> -	decayed |= propagate_entity_load_avg(se);
-> +	cfs_rq->decayed |= update_cfs_rq_load_avg(now, cfs_rq);
-> +	cfs_rq->decayed |= propagate_entity_load_avg(se);
->  
->  	if (!se->avg.last_update_time && (flags & DO_ATTACH)) {
->  
-> @@ -4766,11 +4738,8 @@ static inline void update_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *s
->  		 */
->  		detach_entity_load_avg(cfs_rq, se);
->  		update_tg_load_avg(cfs_rq);
-> -	} else if (decayed) {
-> -		cfs_rq_util_change(cfs_rq, 0);
-> -
-> -		if (flags & UPDATE_TG)
-> -			update_tg_load_avg(cfs_rq);
-> +	} else if (cfs_rq->decayed && (flags & UPDATE_TG)) {
-> +		update_tg_load_avg(cfs_rq);
->  	}
->  }
-
-You set cfs_rq->decayed for each taskgroup level but you only reset it
-for the root cfs_rq in __update_cpufreq_ctx_switch() and task_tick_fair()?
-
-[...]
-
-> @@ -8418,6 +8378,14 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
->  	if (pick_eevdf(cfs_rq) == pse)
->  		goto preempt;
->  
-> +nopreempt:
-> +#ifdef CONFIG_SMP
-> +	if (rq->cfs.decayed && rq->cfs.h_nr_running > 1)
-> +		cpufreq_update_util(rq, SCHED_CPUFREQ_TASK_ENQUEUED);
-
-Why don't you set rq->cfs.decayed to false here as well?
-
-Is it because the request might fail in sugov_should_update_freq() in
-case 'delta_ns < sysctl_sched_base_slice'?
-
-[...]
+-- 
+With best wishes
+Dmitry
 
