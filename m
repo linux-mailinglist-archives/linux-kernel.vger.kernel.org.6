@@ -1,190 +1,171 @@
-Return-Path: <linux-kernel+bounces-228527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ACAB916147
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:32:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5605916154
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A17C5B25170
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:32:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16EC5B253FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AD21494C9;
-	Tue, 25 Jun 2024 08:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB24149E1E;
+	Tue, 25 Jun 2024 08:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BjpjAbg5"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dGPJ2bkq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1322149015;
-	Tue, 25 Jun 2024 08:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D50148857
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719304306; cv=none; b=hbhOX3EHVmVNLilM3KMSzQrNZTssY/3eDF4yhN3Ssy5xV3yJ13U6K6hYdN38c6/8DB8lYzdVQXcLIKi20a8kLkced2mg8uADbm0XqULMueOdKkugKzkFn9DqkBfnzJGgowP/5m0rI7qHZj7+4La1JFUV/LBvd8VdymObyy2z6k8=
+	t=1719304317; cv=none; b=G9WemO8LsgDG/PDR1DBCN49D2kuDtfzHjD4VoC3TnSoEIbYmJ94ynl20GWvxkDeC2LBqpR3ipqDGWUhRy1uFyxXeZjF8RaLUM2/6hsYrwYawV6ftiNll7TJv30XWd+q3I8IJc6FE2flXuZdLqNB0c2AQoRJadvUH7VBJ/TZx22c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719304306; c=relaxed/simple;
-	bh=+D48S5Vq0swdQkscBySnwczFMRaxSpZ8KHXgGGRiwsY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=U+jnQLIUpwByW/L95fRkWBRajcsNdOFxAyTin7M2HEmDGiEB3ad5cFXF3OzCwR6JwnXbk50qnJWR1ldyTLOq0ftbSqWrCwAd5V9sfBPo7OQNg7JI0xrC5kx4qXwgwbEeZncDU81OFf42v+f6wwz98qVNLhBaHA4neTfska/BsFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BjpjAbg5; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45P8VaP4087438;
-	Tue, 25 Jun 2024 03:31:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719304296;
-	bh=LYGd2H7FTgR/FQpG/Ynu641/TDmOOv4Oh/6t57w2iwM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=BjpjAbg5lgCI6Y9Avm0J6xbXMN1SjzcDaMd6qI9qwAbsh2Uxs3C62snLXhep0PTxs
-	 jjMAw7zxLYZpPg+YL4XuuSD1lnUKGUzQHFiUSN+9jmaK1pdyBJ8c8aLLv2o8gPcftg
-	 Y8BXYQlZhBQ9GTZ2Ggo0iWrvL8u0Y9h6hHKK+h0g=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45P8VaCY073116
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 25 Jun 2024 03:31:36 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 25
- Jun 2024 03:31:36 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 25 Jun 2024 03:31:36 -0500
-Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45P8VVov086972;
-	Tue, 25 Jun 2024 03:31:32 -0500
-Message-ID: <f9f5178b-1e94-489b-8e71-43b814b7252a@ti.com>
-Date: Tue, 25 Jun 2024 14:01:30 +0530
+	s=arc-20240116; t=1719304317; c=relaxed/simple;
+	bh=4GQMcGauM1sM2qcIuTQSJ5+jNSGplBUnYe9YXxdjt0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Epfod/X6gjitZU3mgNg4mWa47sNbXIxoMOSdiv5ushLsEpjxmLyUNK+r9LVMse4gxL+yevCgYN9ekSGy06PyQAVSVvJWpTDEhqDxWGmviNcSVcgdPu8e5g8HfVmqvXU8TGry8Vmkd+CE8sFBsBiJijldysSQZa1YJ/BqZK+e/j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dGPJ2bkq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719304314;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FtBka9f6WX8BkCVj0JZCuT7A8nh0ozt1KTXqJ+SkZZk=;
+	b=dGPJ2bkqK5Kl+9s4LpHaQ7JZf4B/U6W79V26iAnUrA0DiMgHTWHUOZrHM11dIG6Zn+MYiS
+	4Ooc0FB6jQwtY5kU3xK6CahdtYOFsHK5xTYMlD4ef0w966i87RpnhcDAjB7JXkVReW9IKH
+	AVHK1l4bRbIWuJDZ7nybI4mbLJ7p0oM=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-212-pnTwvopxMGGbv6AZxRkupA-1; Tue, 25 Jun 2024 04:31:49 -0400
+X-MC-Unique: pnTwvopxMGGbv6AZxRkupA-1
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a6c70438d0cso196303366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:31:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719304308; x=1719909108;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FtBka9f6WX8BkCVj0JZCuT7A8nh0ozt1KTXqJ+SkZZk=;
+        b=ASHOrBEqzFGv9HAbSngRCAz2jDI/sFgG/JePz9anvbdbjOAF+/szK0HWMYmNU1UBXX
+         JSnoiUM1MIRj+Vv59aAVizDioURwcOmMtBC5b1ndDyqSPLdQE0gRjUpA/0JsBQOrJbxC
+         X1ckVWbkNNF7afN/HXdHbbQ216UudHPrYaeWzWLnfPVvdhobdGXVFA/FUFp2fBgUyEU/
+         cTQNN6YJAD1h1CNnu1CDy4WogEDerIzujegId4VxgmlWT/Og6Yoq//nhGSFkQIrNJuu+
+         tl+/YmYEtEmcwxk+Bcp8+iEKm6NV3sgTrzocIyHBSzCrNTaL2Ocemcb1MXwObuB+pWK5
+         31rQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6sbP5/SPTq8JodzsK+qR33beX7PvNYg6/XZR2A1eazRPSgmuOTH47loLnuDnPNCgEcIT0o2CxmbT4oueyrAoQHhLhoKW3ufm9wkoj
+X-Gm-Message-State: AOJu0YwqXkqfIe7Nj7Z/YuJwuEN+vaRwuS393+tzJbcSmJgJuAz9et99
+	KuJhy7xoclibPz/CjdEDs6tLz4d+IywYKT6Q9aoZFhddBfs4/oFB4SmhTTmwaSFIXprdqxMwXRR
+	fm2T9c+Rnlv7l0zOiPR3WU/Hbqm7FemB2g34Lh06ZDbQjTAn2aZoeiwnZjLDMIA==
+X-Received: by 2002:a50:baa5:0:b0:57c:a7fe:b155 with SMTP id 4fb4d7f45d1cf-57d4bd74074mr5403365a12.15.1719304308210;
+        Tue, 25 Jun 2024 01:31:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGxhsR1+izX70xNnvyhK6UwUVonlEeFQMV9kch7eEfTNcHpuqfZ/z/U8gcxRPMmp8lA3q60mQ==
+X-Received: by 2002:a50:baa5:0:b0:57c:a7fe:b155 with SMTP id 4fb4d7f45d1cf-57d4bd74074mr5403333a12.15.1719304307535;
+        Tue, 25 Jun 2024 01:31:47 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc7:342:f1b5:a48c:a59a:c1d6:8d0a])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30535232sm5638857a12.72.2024.06.25.01.31.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 01:31:47 -0700 (PDT)
+Date: Tue, 25 Jun 2024 04:31:42 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, venkat.x.venkatsubra@oracle.com,
+	gia-khanh.nguyen@oracle.com
+Subject: Re: [PATCH V2 1/3] virtio: allow nested disabling of the configure
+ interrupt
+Message-ID: <20240625043120-mutt-send-email-mst@kernel.org>
+References: <20240624024523.34272-1-jasowang@redhat.com>
+ <20240624024523.34272-2-jasowang@redhat.com>
+ <20240624054403-mutt-send-email-mst@kernel.org>
+ <CACGkMEv1U7N-RRgQ=jbhBK1SWJ3EJz84qYaxC2kk6keM6J6MaQ@mail.gmail.com>
+ <20240625030259-mutt-send-email-mst@kernel.org>
+ <CACGkMEuP5GJTwcSoG6UP0xO6V7zeJynYyTDVRtF8R=PJ5z8aLg@mail.gmail.com>
+ <20240625035746-mutt-send-email-mst@kernel.org>
+ <CACGkMEtA8_StbzicRA6aEST8e4SNHFutLmtPu-8zaOZH2zO3cA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] arm64: dts: ti: k3-j784s4-main: Add McASP nodes
-To: Jayesh Choudhary <j-choudhary@ti.com>, <linux-kernel@vger.kernel.org>,
-        <nm@ti.com>, <j-luthra@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <u-kumar1@ti.com>
-References: <20240619095253.290552-1-j-choudhary@ti.com>
- <20240619095253.290552-2-j-choudhary@ti.com>
-From: Vignesh Raghavendra <vigneshr@ti.com>
-Content-Language: en-US
-In-Reply-To: <20240619095253.290552-2-j-choudhary@ti.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACGkMEtA8_StbzicRA6aEST8e4SNHFutLmtPu-8zaOZH2zO3cA@mail.gmail.com>
 
-
-
-On 19/06/24 15:22, Jayesh Choudhary wrote:
-> Add McASP 0-4 instances and keep them disabled as several required
-> properties are missing as they are board specific.
+On Tue, Jun 25, 2024 at 04:18:00PM +0800, Jason Wang wrote:
+> > > >
+> > > >
+> > > >
+> > > > But in conclusion ;) if you don't like my suggestion do something else
+> > > > but make the APIs make sense,
+> > >
+> > > I don't say I don't like it:)
+> > >
+> > > Limiting it to virtio-net seems to be the most easy way. And if we
+> > > want to do it in the core, I just want to make nesting to be supported
+> > > which might not be necessary now.
+> >
+> > I feel limiting it to a single driver strikes the right balance ATM.
 > 
-> Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
-> ---
->  arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 80 ++++++++++++++++++++++
->  1 file changed, 80 insertions(+)
+> Just to make sure I understand here, should we go back to v1 or go
+> with the config_driver_disabled?
 > 
-> diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-> index fd3d3344efbe..96085dc7bc18 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-> @@ -2617,4 +2617,84 @@ dss_ports: ports {
->  			 */
->  		};
->  	};
-> +
-> +	mcasp0: mcasp@2b00000 {
-> +		compatible = "ti,am33xx-mcasp-audio";
-> +		reg = <0x0 0x02b00000 0x0 0x2000>,
-> +		      <0x0 0x02b08000 0x0 0x1000>;
-
-			^^ Should be 0x00 (elsewhere as well) to be inline with rest of the file
+> Thanks
 
 
-> +		reg-names = "mpu","dat";
-> +		interrupts = <GIC_SPI 544 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 545 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-names = "tx", "rx";
-> +		dmas = <&main_udmap 0xc400>, <&main_udmap 0x4400>;
-> +		dma-names = "tx", "rx";
-> +		clocks = <&k3_clks 265 1>;
-> +		clock-names = "fck";
-> +		power-domains = <&k3_pds 265 TI_SCI_PD_EXCLUSIVE>;
-> +		status = "disabled";
-> +	};
-> +
-> +	mcasp1: mcasp@2b10000 {
-> +		compatible = "ti,am33xx-mcasp-audio";
-> +		reg = <0x0 0x02b10000 0x0 0x2000>,
-> +		      <0x0 0x02b18000 0x0 0x1000>;
-> +		reg-names = "mpu","dat";
-> +		interrupts = <GIC_SPI 546 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 547 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-names = "tx", "rx";
-> +		dmas = <&main_udmap 0xc401>, <&main_udmap 0x4401>;
-> +		dma-names = "tx", "rx";
-> +		clocks = <&k3_clks 266 1>;
-> +		clock-names = "fck";
-> +		power-domains = <&k3_pds 266 TI_SCI_PD_EXCLUSIVE>;
-> +		status = "disabled";
-> +	};
-> +
-> +	mcasp2: mcasp@2b20000 {
-> +		compatible = "ti,am33xx-mcasp-audio";
-> +		reg = <0x0 0x02b20000 0x0 0x2000>,
-> +		      <0x0 0x02b28000 0x0 0x1000>;
-> +		reg-names = "mpu","dat";
-> +		interrupts = <GIC_SPI 548 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 549 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-names = "tx", "rx";
-> +		dmas = <&main_udmap 0xc402>, <&main_udmap 0x4402>;
-> +		dma-names = "tx", "rx";
-> +		clocks = <&k3_clks 267 1>;
-> +		clock-names = "fck";
-> +		power-domains = <&k3_pds 267 TI_SCI_PD_EXCLUSIVE>;
-> +		status = "disabled";
-> +	};
-> +
-> +	mcasp3: mcasp@2b30000 {
-> +		compatible = "ti,am33xx-mcasp-audio";
-> +		reg = <0x0 0x02b30000 0x0 0x2000>,
-> +		      <0x0 0x02b38000 0x0 0x1000>;
-> +		reg-names = "mpu","dat";
-> +		interrupts = <GIC_SPI 550 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 551 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-names = "tx", "rx";
-> +		dmas = <&main_udmap 0xc500>, <&main_udmap 0x4500>;
-> +		dma-names = "tx", "rx";
-> +		clocks = <&k3_clks 268 1>;
-> +		clock-names = "fck";
-> +		power-domains = <&k3_pds 268 TI_SCI_PD_EXCLUSIVE>;
-> +		status = "disabled";
-> +	};
-> +
-> +	mcasp4: mcasp@2b40000 {
-> +		compatible = "ti,am33xx-mcasp-audio";
-> +		reg = <0x0 0x02b40000 0x0 0x2000>,
-> +		      <0x0 0x02b48000 0x0 0x1000>;
-> +		reg-names = "mpu","dat";
-> +		interrupts = <GIC_SPI 552 IRQ_TYPE_LEVEL_HIGH>,
-> +			     <GIC_SPI 553 IRQ_TYPE_LEVEL_HIGH>;
-> +		interrupt-names = "tx", "rx";
-> +		dmas = <&main_udmap 0xc501>, <&main_udmap 0x4501>;
-> +		dma-names = "tx", "rx";
-> +		clocks = <&k3_clks 269 1>;
-> +		clock-names = "fck";
-> +		power-domains = <&k3_pds 269 TI_SCI_PD_EXCLUSIVE>;
-> +		status = "disabled";
-> +	};
->  };
+I still like config_driver_disabled.
 
--- 
-Regards
-Vignesh
+
+> >
+> > >
+> > > > at least do better than +5
+> > > > on Rusty's interface design scale.
+> > > >
+> > > > >
+> > >
+> > > Thanks
+> > >
+> > >
+> > > > >
+> > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > >
+> > > > > > > @@ -455,7 +461,7 @@ int register_virtio_device(struct virtio_device *dev)
+> > > > > > >               goto out_ida_remove;
+> > > > > > >
+> > > > > > >       spin_lock_init(&dev->config_lock);
+> > > > > > > -     dev->config_enabled = false;
+> > > > > > > +     dev->config_enabled = 0;
+> > > > > > >       dev->config_change_pending = false;
+> > > > > > >
+> > > > > > >       INIT_LIST_HEAD(&dev->vqs);
+> > > > > > > diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> > > > > > > index 96fea920873b..4496f9ba5d82 100644
+> > > > > > > --- a/include/linux/virtio.h
+> > > > > > > +++ b/include/linux/virtio.h
+> > > > > > > @@ -132,7 +132,7 @@ struct virtio_admin_cmd {
+> > > > > > >  struct virtio_device {
+> > > > > > >       int index;
+> > > > > > >       bool failed;
+> > > > > > > -     bool config_enabled;
+> > > > > > > +     int config_enabled;
+> > > > > > >       bool config_change_pending;
+> > > > > > >       spinlock_t config_lock;
+> > > > > > >       spinlock_t vqs_list_lock;
+> > > > > > > --
+> > > > > > > 2.31.1
+> > > > > >
+> > > >
+> >
+
 
