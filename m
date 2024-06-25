@@ -1,39 +1,80 @@
-Return-Path: <linux-kernel+bounces-229530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8027E91707A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:45:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3268F917080
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:46:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1A2C1C2294A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:45:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC76028CBD3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:46:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517B617D36B;
-	Tue, 25 Jun 2024 18:44:12 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4D7D17D353;
-	Tue, 25 Jun 2024 18:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7AD417C7D2;
+	Tue, 25 Jun 2024 18:44:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="R5+sqn5s"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2570717C7BB
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:44:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719341051; cv=none; b=mw9bNE1T8v5/dwvktoLJz7ashQQg1+xxHuDJc3IV/lfOKqNJTliRahbNijk/VKbWH3lbR0RPFda82bMw5K+Isb+Oy/E5m5CSHvw0wHP+aX1RUzh2Jp/KnRiIE1uXb/Z3VR2UORROqEPjmarXUUnpdk90Y9aL14tvWYuuqzn5FNM=
+	t=1719341098; cv=none; b=VQQolWaoKrF3wehtPSPngKPKTL9RFICA+6ke+bOhl+tnh78LyK11vT0/8yeGuZaNhsG7rPOumquoErE5CTrEj0TwbN8/NVjdi1yOSc49Cnc8UTVSVN9SybwhqpYGsCufPnFOa/eXBqnaxK2t2JDKmfdKv2WRsslkDrDOt4T/hW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719341051; c=relaxed/simple;
-	bh=hohhvTJMwbP+pwz9eCrw5mTIHit6f9kP1oYy87iud3I=;
+	s=arc-20240116; t=1719341098; c=relaxed/simple;
+	bh=HXCgRLTaZhs0CuuDEAA1FZlwgspo02JuhnLeqpKgQ8k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WXBD50Jk8MLbZbxjpiBEXVtNkWI3jnOH5mj8d61WLwQA2ckb/2WQLoJ/RMu1e+IvKHfx0WcimeoY4MLzNZxCYEYHf6bS+GRoqo1hvSIJyxRnsG7398r+nA5IGfgweTpWG3Qf/8j4c6+iyDA0iuoYaEUrlxD0yyuYk9VFK4SgkTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D1AF6339;
-	Tue, 25 Jun 2024 11:44:33 -0700 (PDT)
-Received: from [10.57.73.131] (unknown [10.57.73.131])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2B5193F73B;
-	Tue, 25 Jun 2024 11:44:06 -0700 (PDT)
-Message-ID: <4db1945e-ec8c-4e96-90fc-cd5386a9d6b4@arm.com>
-Date: Tue, 25 Jun 2024 19:44:04 +0100
+	 In-Reply-To:Content-Type; b=DIfKtVqsIG+z2iFZZD+8cZ0Xa7h/zMCfax2NUx6BEP4QjpPnJYb18iy4iFLJ4b5ArwTb9kVMvjGEvRa6kJh5Ah4B3ryR1U1HN/WGvULktiVJIJmVXD/IYIm8lxRG00VlHIIpfO70kJgxQ1X9pA2OfpdW0slK/5Hbbi0nc/0IxNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=R5+sqn5s; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719341095;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=QK1faKLibJEiJW14KCJjCzw7/lN5wcXNxBNe5e7d8Ss=;
+	b=R5+sqn5sFlmtnhX9CYI1XZabN0jSy6aFVz2WuU2cPIu0MYDj7ZEpwK906EofKQTtwlMuq/
+	HqMLKXJJDw+hqjS97Mw1gtA8f8rPnBSht/IfELCA4QP44iWF5Chrh8qsnA6h6eTxj0H6D7
+	ZDAfoqEdJ3tnuuu2YYjUueTi8KvTSxo=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-561-CayOiTbdODuLeqUCdmg9XQ-1; Tue, 25 Jun 2024 14:44:54 -0400
+X-MC-Unique: CayOiTbdODuLeqUCdmg9XQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-362763f8d2eso2889808f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:44:54 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719341093; x=1719945893;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=QK1faKLibJEiJW14KCJjCzw7/lN5wcXNxBNe5e7d8Ss=;
+        b=VRItMGKUhsJihft8zX84rXMyu0xF87rgCd5n0OzlwGIqFyPWW8h5+Hth+sFTEvZ1KQ
+         2gK32iVUBTufc601eaq7fCY8Xi5yaXXMORbAqbgLiCRA9PxA8HdLGhl1Cw/IGshDgui6
+         fcTTrEp2s7vo0Yt0PYqJjnqgFdmpSwYr+WXR5F69Es3PlbFaU1iD81C9tjX8Y7HXdPB2
+         A4rAFET5C+vhKSqc9cOn3giORavGQDXViFvvttQ7NAQvTiLSSnzI5lf4h6/2W+WDpZEh
+         /8VUfG47psgWTVGEnD94h4m2dO+nkjoMp6mioCjbDqYmvnrhO+1jL5Nc2bPUSv3q83hA
+         n/Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWq/OgBdYWaqdSNzACWqg/kiWmxfD1/Se7fcLtJSF82EXobTAVKgyLxqyOJYv6qpEgBzZkaWWobTidERnCx/ceDJn7xsaIL+AGDc2IY
+X-Gm-Message-State: AOJu0YyR6QvsMONO91Dgdv8TXF7QfrHJo3w39lLucrfeDeOPLuO3C3+j
+	Lln3xzNI+dd7yVxPmf5yPVlnWdU3o+DQ4EXQwml+4jIQsKMgnyt9fi7TIexgAwqI8AcnzLBdmni
+	95GGOrvvAKPB1Tm1lvIMvJO0MuvDlN+5601SwufOD7lPGdnPQES87WYEe2ByKlQ==
+X-Received: by 2002:adf:e912:0:b0:365:ebb6:35e4 with SMTP id ffacd0b85a97d-366e4ed3237mr5840099f8f.23.1719341093384;
+        Tue, 25 Jun 2024 11:44:53 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF8IbgAiXyWyfFB9aA2SFjDNPPr2ccyVQH3VOdtvxAzDCDfreb/NZK51bDZkXunfoebBpv32g==
+X-Received: by 2002:adf:e912:0:b0:365:ebb6:35e4 with SMTP id ffacd0b85a97d-366e4ed3237mr5840087f8f.23.1719341092949;
+        Tue, 25 Jun 2024 11:44:52 -0700 (PDT)
+Received: from [192.168.1.34] (p548825e3.dip0.t-ipconnect.de. [84.136.37.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638d9c1aasm13546599f8f.55.2024.06.25.11.44.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 11:44:52 -0700 (PDT)
+Message-ID: <dc1be69e-4598-4fdf-a46e-3b2756ae27de@redhat.com>
+Date: Tue, 25 Jun 2024 20:44:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,70 +82,151 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] OF: Simplify of_iommu_configure()
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
- linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
- Saravana Kannan <saravanak@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, Hanjun Guo
- <guohanjun@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>,
- Jean-Philippe Brucker <jean-philippe@linaro.org>
-References: <cover.1718994350.git.robin.murphy@arm.com>
- <0dc14431c8a495e1135fc1d9c4500d4cb96b4e39.1718994350.git.robin.murphy@arm.com>
- <CAHp75VdnoOyKYbaNtr_UKn9NMSzXR1Syn9W7u0qtLgGuwYX6-Q@mail.gmail.com>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <CAHp75VdnoOyKYbaNtr_UKn9NMSzXR1Syn9W7u0qtLgGuwYX6-Q@mail.gmail.com>
+Subject: Re: [PATCH 2/4] mm/filemap: Skip to allocate PMD-sized folios if
+ needed
+To: Gavin Shan <gshan@redhat.com>, linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ djwong@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
+ hughd@google.com, torvalds@linux-foundation.org, zhenyzha@redhat.com,
+ shan.gavin@gmail.com
+References: <20240625090646.1194644-1-gshan@redhat.com>
+ <20240625090646.1194644-3-gshan@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240625090646.1194644-3-gshan@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 2024-06-22 11:23 pm, Andy Shevchenko wrote:
-> On Fri, Jun 21, 2024 at 8:47 PM Robin Murphy <robin.murphy@arm.com> wrote:
->>
->> We no longer have a notion of partially-initialised fwspecs existing,
->> and we also no longer need to use an iommu_ops pointer to return status
->> to of_dma_configure(). Clean up the remains of those, which lends itself
->> to clarifying the logic around the dma_range_map allocation as well.
+On 25.06.24 11:06, Gavin Shan wrote:
+> On ARM64, HPAGE_PMD_ORDER is 13 when the base page size is 64KB. The
+> PMD-sized page cache can't be supported by xarray as the following
+> error messages indicate.
 > 
-> ...
+> ------------[ cut here ]------------
+> WARNING: CPU: 35 PID: 7484 at lib/xarray.c:1025 xas_split_alloc+0xf8/0x128
+> Modules linked in: nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib  \
+> nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct    \
+> nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4    \
+> ip_set rfkill nf_tables nfnetlink vfat fat virtio_balloon drm      \
+> fuse xfs libcrc32c crct10dif_ce ghash_ce sha2_ce sha256_arm64      \
+> sha1_ce virtio_net net_failover virtio_console virtio_blk failover \
+> dimlib virtio_mmio
+> CPU: 35 PID: 7484 Comm: test Kdump: loaded Tainted: G W 6.10.0-rc5-gavin+ #9
+> Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20240524-1.el9 05/24/2024
+> pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
+> pc : xas_split_alloc+0xf8/0x128
+> lr : split_huge_page_to_list_to_order+0x1c4/0x720
+> sp : ffff800087a4f6c0
+> x29: ffff800087a4f6c0 x28: ffff800087a4f720 x27: 000000001fffffff
+> x26: 0000000000000c40 x25: 000000000000000d x24: ffff00010625b858
+> x23: ffff800087a4f720 x22: ffffffdfc0780000 x21: 0000000000000000
+> x20: 0000000000000000 x19: ffffffdfc0780000 x18: 000000001ff40000
+> x17: 00000000ffffffff x16: 0000018000000000 x15: 51ec004000000000
+> x14: 0000e00000000000 x13: 0000000000002000 x12: 0000000000000020
+> x11: 51ec000000000000 x10: 51ece1c0ffff8000 x9 : ffffbeb961a44d28
+> x8 : 0000000000000003 x7 : ffffffdfc0456420 x6 : ffff0000e1aa6eb8
+> x5 : 20bf08b4fe778fca x4 : ffffffdfc0456420 x3 : 0000000000000c40
+> x2 : 000000000000000d x1 : 000000000000000c x0 : 0000000000000000
+> Call trace:
+>   xas_split_alloc+0xf8/0x128
+>   split_huge_page_to_list_to_order+0x1c4/0x720
+>   truncate_inode_partial_folio+0xdc/0x160
+>   truncate_inode_pages_range+0x1b4/0x4a8
+>   truncate_pagecache_range+0x84/0xa0
+>   xfs_flush_unmap_range+0x70/0x90 [xfs]
+>   xfs_file_fallocate+0xfc/0x4d8 [xfs]
+>   vfs_fallocate+0x124/0x2e8
+>   ksys_fallocate+0x4c/0xa0
+>   __arm64_sys_fallocate+0x24/0x38
+>   invoke_syscall.constprop.0+0x7c/0xd8
+>   do_el0_svc+0xb4/0xd0
+>   el0_svc+0x44/0x1d8
+>   el0t_64_sync_handler+0x134/0x150
+>   el0t_64_sync+0x17c/0x180
 > 
->> +       if (!err && dev->bus)
->> +               err = iommu_probe_device(dev);
->>
->> +       if (err && err != -EPROBE_DEFER)
->> +               dev_dbg(dev, "Adding to IOMMU failed: %d\n", err);
+> Fix it by skipping to allocate PMD-sized page cache when its size
+> is larger than MAX_PAGECACHE_ORDER. For this specific case, we will
+> fall to regular path where the readahead window is determined by BDI's
+> sysfs file (read_ahead_kb).
 > 
-> Hmm... I'm wondering if dev_err_probe() can be used here.
+> Fixes: 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
+> Cc: stable@kernel.org # v5.18+
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Gavin Shan <gshan@redhat.com>
+> ---
+>   mm/filemap.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 876cc64aadd7..b306861d9d36 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -3124,7 +3124,7 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
+>   
+>   #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+>   	/* Use the readahead code, even if readahead is disabled */
+> -	if (vm_flags & VM_HUGEPAGE) {
+> +	if ((vm_flags & VM_HUGEPAGE) && HPAGE_PMD_ORDER <= MAX_PAGECACHE_ORDER) {
+>   		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+>   		ractl._index &= ~((unsigned long)HPAGE_PMD_NR - 1);
+>   		ra->size = HPAGE_PMD_NR;
 
-It's still possible to have other errors here benignly [1] (however 
-questionable the underlying reason), and this has always been a 
-dev_dbg(), it's just getting shuffled around again. The aim here is to 
-carry on removing cruft to work towards getting rid of this 
-iommu_probe_device() call altogether since it's fundamentally wrong, so 
-I'm not inclined to add anything new or spend too much effort polishing 
-code I still want to delete.
+As discussed, one option is for using min(HPAGE_PMD_ORDER, 
+MAX_PAGECACHE_ORDER) here, but it also doesn't quite result in the 
+expected performance results on arm64 with 64k.
 
->>          return err;
-> 
-> ...
-> 
->> +       dev_dbg(dev, "device is%sbehind an iommu\n",
->> +               !ret ? " " : " not ");
-> 
-> Why not a positive test?
+This code dates back to PMD-THP times, so we'll leave it like that for now.
 
-Again, mostly because that's how it was written in 2014, same reason I'm 
-not deduplicating the redundant space despite it still being the tiniest 
-bit irritating. If you make me think about it, though, I suppose when 
-both outcomes are otherwise equally weighted it does seems natural to 
-consider "success" before "failure", thus the condition tests for success.
+Acked-by: David Hildenbrand <david@redhat.com>
 
-Thanks,
-Robin.
+-- 
+Cheers,
 
-[1] 
-https://lore.kernel.org/linux-iommu/bbmhcoghrprmbdibnjum6lefix2eoquxrde7wyqeulm4xabmlm@b6jy32saugqh/
+David / dhildenb
+
 
