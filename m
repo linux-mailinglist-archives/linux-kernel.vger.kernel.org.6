@@ -1,128 +1,99 @@
-Return-Path: <linux-kernel+bounces-229295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E0AC916DFF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:24:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6918916E01
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A221283C39
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:24:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4DCFDB24E83
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534F3173357;
-	Tue, 25 Jun 2024 16:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00903175558;
+	Tue, 25 Jun 2024 16:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QibZCrOJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QgrbfoR9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E62449629;
-	Tue, 25 Jun 2024 16:24:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427B9172BB5;
+	Tue, 25 Jun 2024 16:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719332664; cv=none; b=DMNsON4fGDqaeytyVpxwNecJf1M65dQJXPFzjX0dd/RfDnNeX/8rRSNBoJ4yFnL/fjgW19zyDwStdcGg6x7u6sc1cM5PPp/44PNOiWXLjvqyC5+4JMIlR2ASknMs7Shh2+F05XJkSR7M73qCAE9O41H+PYj079bDeWBJhbZOCe4=
+	t=1719332667; cv=none; b=Kg1o3tLLRXznkVgLonQ1KKuU++My9v3kEY2k1Q24B5IyksxQmy0ZFVCCVnybEyU+q54QEPLaqAC6amZ6snqGCOPhLubczpCfqIjopVkkivzE848gmPdPcLQMvGf0jtZj+CkPOu8Xb6t4nfC8+cWZmTTfTNbvgFHYJa14eua45vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719332664; c=relaxed/simple;
-	bh=7YZlz23yUHTKCjEJ0DtkNCpW8MKikV7v5efaQ6NoijI=;
+	s=arc-20240116; t=1719332667; c=relaxed/simple;
+	bh=0QVvKqcwgvS3lPG925rDyCTxG1L91/pvChBSPlVGGlk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AoctrbQ6TNO6Y+0kTE8mFFMUmdqcJcul1HyiwV5n4BCxHBQSdWodLA2p9lonkV/7EDRgYYs8z13jJQOSCvsyA9FWZLDzYB817AIQDQj277bPXUzGUPiTNGLdAgbjnB367G7nk/cQNnBBVoqWqAo6oG3j/vi4aljqqVIoqzk1tIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QibZCrOJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C237DC32781;
-	Tue, 25 Jun 2024 16:24:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=bY9aXPuqaGY6Oc7+m0XdSmiDIQmOnpQkgvkFPKSwP4wgltV/72ADJUd4qbAuIHb2//DGqdveDUCDfEHjv2SkHT/kzAdD+/HotiWgVV2JZCdKKuVn4svjqapkTldkzyrYYT4HLRMSA9VjLheipXr5LgnIaVe9+5M1nqd2sX6Ey84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QgrbfoR9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6CDCC32782;
+	Tue, 25 Jun 2024 16:24:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719332664;
-	bh=7YZlz23yUHTKCjEJ0DtkNCpW8MKikV7v5efaQ6NoijI=;
+	s=k20201202; t=1719332665;
+	bh=0QVvKqcwgvS3lPG925rDyCTxG1L91/pvChBSPlVGGlk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QibZCrOJE3TdSC/l6jubXU5aQ6D6tBlszjzyGCmfHCrWr8u7S16hKoB+8UhJWUfUU
-	 50AX+3jqnm/RPWUcMAg70zsj9HanIUY6o2ws4vYQNHYSouCjdZk/l4we7TyaTVQHo1
-	 2OWuHTxFXU4ySpoth1awIcoY8clXvBWP09YMU2wDSfIlmBkM8pZDEwYiLC4RRLFe+y
-	 COx3WQLjoPVPZ9FdS4CK/hkhup7ppglV2YzHb+3LB/XlmJAro1WIKIdqgtFiijQKJq
-	 +CXEX43uXCnT231WwnkoF6SC8WeRGAfKPFFaUkgNOFb8ir0WedmZM7BqzZGCVmWogS
-	 F7QPoBObm0DQg==
-Date: Tue, 25 Jun 2024 17:24:18 +0100
-From: Mark Brown <broonie@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Michael Hennerich <michael.hennerich@analog.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-iio@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] spi: add
- EXPORT_SYMBOL_GPL(devm_spi_optimize_message)
-Message-ID: <0bf8f28d-e8df-458e-aa23-f597ba009466@sirena.org.uk>
-References: <20240624-devm_spi_optimize_message-v2-0-58155c0180c2@baylibre.com>
- <20240624-devm_spi_optimize_message-v2-1-58155c0180c2@baylibre.com>
+	b=QgrbfoR9nl2pf3YsCEgrLtdYt03TOkClt+FHBwHFR27IogxDz+3H6bpqD2iTpit0H
+	 r8rAFweOKMdxn8aZsuL+PStcyMdasMLpNV/r99zDsMTymo3xfz/AYpu/J5aKUyp4MT
+	 VrZ4wORBzDUXVpLwH5yqjQamuBYnA+kuYQ90mmHD21V0sK0tq8LhHfFA4j9pal4umo
+	 eMawEEGfDCt55o1ZQuST4Q47ubrYnEmxar8PWtBtPALlGnvdcTCL8EwAG5Y8nd4Twv
+	 b54dKfaPzXX8CTcXIrFrakXDN4xjjW+7EwUtI1ilHxqzOSRDPv69JxFMJg/ucAoKEN
+	 R7xCWWCwiKKBg==
+Date: Tue, 25 Jun 2024 17:24:20 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org
+Subject: Re: [PATCH 1/3] dt-bindings: vendor-prefixes: add prefix for lincoln
+Message-ID: <20240625-almighty-bunkbed-b86cc81b6f7d@spud>
+References: <20240625142552.1000988-1-jbrunet@baylibre.com>
+ <20240625142552.1000988-2-jbrunet@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Ko8OmLQlxLrDF+hM"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="tCHnCQa5ruuYmpM7"
 Content-Disposition: inline
-In-Reply-To: <20240624-devm_spi_optimize_message-v2-1-58155c0180c2@baylibre.com>
-X-Cookie: Results vary by individual.
+In-Reply-To: <20240625142552.1000988-2-jbrunet@baylibre.com>
 
 
---Ko8OmLQlxLrDF+hM
+--tCHnCQa5ruuYmpM7
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 24, 2024 at 03:10:30PM -0500, David Lechner wrote:
-> devm_spi_optimize_message() is a public function and needs
-> EXPORT_SYMBOL_GPL.
+On Tue, Jun 25, 2024 at 04:25:48PM +0200, Jerome Brunet wrote:
+> Lincoln Technology Solutions is a design services and LCD integration
+> company
+>=20
+> Link: https://lincolntechsolutions.com/
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 
-The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-devm-optimize
-
-for you to fetch changes up to 7e74a45c7afdd8a9f82d14fd79ae0383bbaaed1e:
-
-  spi: add EXPORT_SYMBOL_GPL(devm_spi_optimize_message) (2024-06-24 21:25:57 +0100)
-
-----------------------------------------------------------------
-spi: add devm_spi_optimize_message() helper
-
-Helper from David Lechner <dlechner@baylibre.com>:
-
-    In the IIO subsystem, we are finding that it is common to call
-    spi_optimize_message() during driver probe since the SPI message
-    doesn't change for the lifetime of the driver. This patch adds a
-    devm_spi_optimize_message() helper to simplify this common pattern.
-
-----------------------------------------------------------------
-David Lechner (3):
-      Documentation: devres: add missing SPI helpers
-      spi: add devm_spi_optimize_message() helper
-      spi: add EXPORT_SYMBOL_GPL(devm_spi_optimize_message)
-
- Documentation/driver-api/driver-model/devres.rst |  3 +++
- drivers/spi/spi.c                                | 28 ++++++++++++++++++++++++
- include/linux/spi/spi.h                          |  2 ++
- 3 files changed, 33 insertions(+)
-
---Ko8OmLQlxLrDF+hM
+--tCHnCQa5ruuYmpM7
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ67zEACgkQJNaLcl1U
-h9AtDgf9G4HuXLXJ2ShPnYWdK55ZIitx+2RbwKOwcYn0s6zT4jUrMp8C2ggDu6Bk
-tEBWoHQq8LEjne7rvdJPe3bQgn1P/oX/uTyYrinnUCzACuv1D0HVmLOWescGu58K
-DFULjCinMjTDxTbTqIfmCyA00KzWbGdqPxyGuNAFUId+bRXVxR+DSJR4/4A9/A06
-39NlPhx41PePcsDgueEQActE2eZGWk3G/0wYybsgYIJx/sma5+oS+3+2fBr13xfq
-1Xaibgp2Vwf9qcANlaFVY3IVC4VyBBiQfAeSbzU7viDKAfcVGwYYajqg8XOIdnuR
-MjQFfz+1nXMQqqDPLK6Frx6hiwLUiQ==
-=YZv0
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnrvNAAKCRB4tDGHoIJi
+0g6/AP9AwuiZKpmnLuQ+xLr4pB+Cp+y6NaM5yxpKRxqmfPhOIwD+OzslrIUxoNK7
+obIe+hNh/+QUSpatoLxVBdcVucPlKAE=
+=my+1
 -----END PGP SIGNATURE-----
 
---Ko8OmLQlxLrDF+hM--
+--tCHnCQa5ruuYmpM7--
 
