@@ -1,108 +1,151 @@
-Return-Path: <linux-kernel+bounces-229841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 683B3917502
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:52:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B6D917510
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 245F228159D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:52:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DD0FB209E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:55:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C742017FAD2;
-	Tue, 25 Jun 2024 23:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D4617FAD2;
+	Tue, 25 Jun 2024 23:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JOXylZHd"
-Received: from mail-wm1-f67.google.com (mail-wm1-f67.google.com [209.85.128.67])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jhx0FuWv"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491EC143C6A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 23:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.67
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224161494DE
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 23:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719359546; cv=none; b=DRELY4/pNA0SZawrT3NM1YJrkMAMj61+ZqwVWVYdqOESXiDF5Tp50n2eJsyKUNd3NgBuWko4KlpP9ReWO9GRkwUEf2tJr4WgMYrLgYJj38Fbd5M84vf0iKYrl+g8m1n//E/ayIEIFrXWHB2NQEfEjXTlZsZzYEXR61vRftb9FeQ=
+	t=1719359722; cv=none; b=qh9p0hWw7KdLdBIkBzkUI1TzfDcEe1D2pqsUGdZsQFIm3qbFo6C8DQpuonDAEAXVgYy5FvgZp+udbb/sbQOsVuy3xNKPnGWEmaXHTpC/hp6jfeVv0BqGj/F38hdMUkXJcYrSr2ELIHboCNOr2CmzF1p3MJA3gPt5IQJGnFfbEpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719359546; c=relaxed/simple;
-	bh=zHhhiROlxafcBYib1elDqDsAtG/bzNiUKEKWELAx6GE=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=cd8m+1NiPizkvQqwuMgnPl3i+SEI24CvwK9tDnZ+xTkM9tjfdsM1D1GntJGKrsV8qE37pygXbtYk6YbYKcYBtRj8fYHF8ViL8LlUQYGYcGqXcTfub45tqxauJxSQ+Cjh9O8MM5e1+CB90QJY1zRlEN9goAgyCvJN/Hj9IF5BxkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JOXylZHd; arc=none smtp.client-ip=209.85.128.67
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f67.google.com with SMTP id 5b1f17b1804b1-421a1b834acso49613715e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 16:52:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719359542; x=1719964342; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=C9XacvKK+B+D8we4B7F3cYsUG/LcXq5D9R4PJejOJ+U=;
-        b=JOXylZHd+BLmyosOUFeuMODQL5fWRmOpj3NYOlfyinNQw8brRtVWH58eOfy6+DMV/u
-         /SmV6dh9LeGzYA/DpVA/BPrW9gSS9+RSsWpjUjsEKbEJbCE4Y+WxT81AZoCbpA+F/jq5
-         VlyzLt87tMgXonF4ApkQWfcCoTpjaTuVen204vh/CoBh7jL8tb+r9sicxDvOMjT49WcX
-         MqKXUv2js/TqxlRZlBixriB4wbMOwO0bT24zDz5tREth7YFBIYfXKRUiqE9kd6KyHaOS
-         LkW1VfP1QIPxru7HOuM+T8uHn1lwzsHeL0ZQ3YkrPFyAzv15vxCbgqjyQ2xlYUN8eeHm
-         tmUw==
+	s=arc-20240116; t=1719359722; c=relaxed/simple;
+	bh=krO4Bk2vIQHWJwLs8mW87UwC7KXFTsvPy0EbDIVPu3Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eZZhFM+w+orfKIDrVtduZ7ytNakt475q760gP134fQ+B5qoJFP1gmG4d1SYzYqWRv10tlWesBCGc+zZHBn6hjCGQ0rjykDx9IBc7oPykDtMDy7up7O4o1aY6tZN9QNB+gVAiMFX+gRfm3aEnNUQkJT05wxsLs6ZuqUEgg9GBmy4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jhx0FuWv; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719359720;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=30MprqR9jKeSlYWvSkx3JBbBoLzb8YQKJ6HRn0CFdGo=;
+	b=Jhx0FuWvWnprOTNyymSMjDslkQNyWk85/nA+twVGBCWbCdJQpUXp4fkIHzkZ/b6s5ZCd7h
+	6nSIFU+zG9Yx7EMAquzVZbMs3S2AnxTktv1s+r5eSNuvaI4ujsjqJitvx1fI+7nCQs9wV1
+	XhKQXcF9LcvsSvIEL+r+PlJZlLTyLZU=
+Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
+ [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-671-I4fqQOX-PMen0HzF2hN2jQ-1; Tue, 25 Jun 2024 19:55:18 -0400
+X-MC-Unique: I4fqQOX-PMen0HzF2hN2jQ-1
+Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d227940838so915366b6e.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 16:55:18 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719359542; x=1719964342;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C9XacvKK+B+D8we4B7F3cYsUG/LcXq5D9R4PJejOJ+U=;
-        b=tT3mhMcP/tywXYPXwHz+/KuiFD7dyAwzMMj9q25FixUjXx3DMt47lLSjXN6Z11RCH+
-         1BNr+9eULTO4E1X2TRf3jfb2F+r7n4sCnCOaSXMiUBeVcBVaytoe2xMsEav4BqEDTS5B
-         uuFFujHooFUigGBalXyGexWfWyq1bAlyJYS9fzshet43RinEixPqIM020r+dTytqJ9/A
-         gXf//U8QyY4X0teFb65AXCUqS+Cb0viXl+pBTVeb0+B7tCe3oTGcwcF84FYQ70BfDzqk
-         AlfPIoNGKI+PqCKzQlxz9TazYYnhTQSxGFEeaxcIzA/a0zgrKLZHc/fLJND9ErcH1y0y
-         vpvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFz6OE3AvzPDBk9+UkzaDG/XwIm4L0D73BHTkQql1UP2oVT+JUf8s+WH78CnOMq0ZP4KujOMvFkapNUX33o/I4vgwPxN5P47JxPViU
-X-Gm-Message-State: AOJu0Yz93AV+32uwfS8Ztf1yzyg/Z02znxGW99u4W3YnLM7P93gt9L1s
-	nLuYosaFV7h3z6vizzcwiPW9cJtLdFKN2sfTfMHvpel8Bfef0P5Hd9pDxcJlpkY=
-X-Google-Smtp-Source: AGHT+IFaWmOFwBRc8KAiQCaZWhB2Xj4wfGi1xUd7+7ImfR66T7TVH2G/qDaQa5ERdO/04WyKzO6HZg==
-X-Received: by 2002:a5d:4706:0:b0:361:2b2e:f6dd with SMTP id ffacd0b85a97d-366e94d81a9mr5535719f8f.11.1719359541778;
-        Tue, 25 Jun 2024 16:52:21 -0700 (PDT)
-Received: from [192.168.0.16] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366387cf44asm14069217f8f.26.2024.06.25.16.52.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 16:52:21 -0700 (PDT)
-Message-ID: <6a8b1bd1-8413-41f7-8889-7f4d42ce0d6d@linaro.org>
-Date: Wed, 26 Jun 2024 00:52:52 +0100
+        d=1e100.net; s=20230601; t=1719359718; x=1719964518;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=30MprqR9jKeSlYWvSkx3JBbBoLzb8YQKJ6HRn0CFdGo=;
+        b=UMY6Oz0vRLCuSspsVSLUsunO0ISlIezaxMBySs4OpgZbYobtoGPYJxvZSJh8aYpdsD
+         MweRgbI0djVYfxm2yiBiS5rGxmX6MEDWeVPI8Mu9jePtzXTyBHL1Rsr+zUFM4bPP2F6h
+         0H9gQpYQ9pEaceV/zd+5Qu/6DJlBEgAuUqTQP0I23Rw3rar8wHvCwZCBa+Vf866Z+XoC
+         +VjAmkUCs8V3MdayaBXQ0aof5viAAf587Mu5zqmekot7YEOJCeBhYOXL1NNkOeU4w8Ba
+         js2XlJvqm3GwiZQn3rKLBcSjAKVtn08YSEQZ9Vg+ywYXqV/uPLkpIJhHGxtyPehSXDjD
+         tUhA==
+X-Forwarded-Encrypted: i=1; AJvYcCUTSZYzLCfqQG3R4clA0KeV18eOWU7SNTryg6c8rkObNu5CbzXXdUP/3d0/iRtFshYRuzJKzbelBWQLQusnGf6ikhjBUIjHB/h4r65i
+X-Gm-Message-State: AOJu0YzOaExC4ccHbl5xXGO5OztZzWHeOlRbFkh3LYxPovGBF6q6eiI7
+	ASvONujfZy+c2ctoF4IWlzsl3PEeiWGkXggW0aqIwQMWIgN0DPSXokTYK9BmKoN5nIR16/Ffw9G
+	7pNOIUvx9YlhRRcCUS0PCoYlUTgi7DyzotkCKS5Tj2GHsZa9xygaogS5ZcjJovQ==
+X-Received: by 2002:a05:6808:10d0:b0:3d2:1b8a:be58 with SMTP id 5614622812f47-3d53ecf3880mr15046272b6e.3.1719359717813;
+        Tue, 25 Jun 2024 16:55:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHlf/FwRDBkisWWdxUhp5HLyrRnE/m8oDfhxzRCIqhtKcbQ1/6uO9ya2nFcAESOd4bBmfb1vg==
+X-Received: by 2002:a05:6808:10d0:b0:3d2:1b8a:be58 with SMTP id 5614622812f47-3d53ecf3880mr15046235b6e.3.1719359717110;
+        Tue, 25 Jun 2024 16:55:17 -0700 (PDT)
+Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce91f16esm452957085a.77.2024.06.25.16.55.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 16:55:16 -0700 (PDT)
+Date: Tue, 25 Jun 2024 19:55:14 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Audra Mitchell <audra@redhat.com>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, aarcange@redhat.com,
+	rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, raquini@redhat.com
+Subject: Re: [PATCH v2 3/3] Turn off test_uffdio_wp if
+ CONFIG_PTE_MARKER_UFFD_WP is not configured.
+Message-ID: <ZntY4jIojSrjoW1M@x1n>
+References: <20240621181224.3881179-1-audra@redhat.com>
+ <20240621181224.3881179-3-audra@redhat.com>
+ <ZnXwT_vkyVbIJefN@x1n>
+ <Znl6dfM_qbH3hIvH@fedora>
+ <ZnmFuAR7yNG_6zp6@x1n>
+ <20240625160558.e1650f874ab039e4d6c2b650@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFT v3 5/5] arm64: dts: qcom: sc7180: camss: Add CAMSS
- block definition
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To: gchan9527@gmail.com, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240624-b4-sc7180-camss-v3-0-89ece6471431@gmail.com>
- <20240624-b4-sc7180-camss-v3-5-89ece6471431@gmail.com>
- <47997e61-26e5-4643-ac69-17db09be9bb1@linaro.org>
-Content-Language: en-US
-In-Reply-To: <47997e61-26e5-4643-ac69-17db09be9bb1@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240625160558.e1650f874ab039e4d6c2b650@linux-foundation.org>
 
-On 26/06/2024 00:49, Bryan O'Donoghue wrote:
-> Where is the CCI and sensor stuff - could you post a link to your 
-> working kernel tree in your next cover letter ?
+On Tue, Jun 25, 2024 at 04:05:58PM -0700, Andrew Morton wrote:
+> On Mon, 24 Jun 2024 10:42:00 -0400 Peter Xu <peterx@redhat.com> wrote:
+> 
+> > >         uffdio_api.features &= ~UFFD_FEATURE_WP_HUGETLBFS_SHMEM;
+> > >         uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
+> > >         uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
+> > > #endif
+> > > 
+> > > If you run the userfaultfd selftests with the run_vmtests script we get
+> > > several failures stemming from trying to call uffdio_regsiter with the flag 
+> > > UFFDIO_REGISTER_MODE_WP. However, the kernel ensures in vma_can_userfault() 
+> > > that if CONFIG_PTE_MARKER_UFFD_WP is disabled, only allow the VM_UFFD_WP -
+> > > which is set when you pass the UFFDIO_REGISTER_MODE_WP flag - on 
+> > > anonymous vmas.
+> > > 
+> > > In parse_test_type_arg() I added the features check against 
+> > > UFFD_FEATURE_WP_UNPOPULATED as it seemed the most well know feature/flag. I'm 
+> > > more than happy to take any suggestions and adapt them if you have any! 
+> > 
+> > There're documents for these features in the headers:
+> > 
+> > 	 * UFFD_FEATURE_WP_HUGETLBFS_SHMEM indicates that userfaultfd
+> > 	 * write-protection mode is supported on both shmem and hugetlbfs.
+> > 	 *
+> > 	 * UFFD_FEATURE_WP_UNPOPULATED indicates that userfaultfd
+> > 	 * write-protection mode will always apply to unpopulated pages
+> > 	 * (i.e. empty ptes).  This will be the default behavior for shmem
+> > 	 * & hugetlbfs, so this flag only affects anonymous memory behavior
+> > 	 * when userfault write-protection mode is registered.
+> > 
+> > While in this context ("test_type != TEST_ANON") IIUC the accurate feature
+> > to check is UFFD_FEATURE_WP_HUGETLBFS_SHMEM.
+> > 
+> > In most kernels they should behave the same indeed, but note that since
+> > UNPOPULATED was introduced later than shmem/hugetlb support, it means on
+> > some kernel the result of checking these two features will be different.
+> 
+> I'm unsure what to do with this series.  Peter, your review comments
+> are unclear - do you request updates?
 
-Found it
+Yes, or some clarification from Audra would also work.
 
-https://github.com/torvalds/linux/commit/441ebc3a8948e03a1115dc6710e9519a2594d0ae#diff-4b55839d42d3ffb773ac6d1babc9aa66dc2b9b11b346caea5d2d3ffb6ee900e5
+What I was trying to say is here I think the code should check against
+UFFD_FEATURE_WP_HUGETLBFS_SHMEM instead.
 
----
-bod
+Thanks,
+
+-- 
+Peter Xu
+
 
