@@ -1,51 +1,64 @@
-Return-Path: <linux-kernel+bounces-228358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1846915EC4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:17:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09DA3915EC9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:19:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F7961C21678
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:17:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B36FC28256D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E243145FEB;
-	Tue, 25 Jun 2024 06:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8245145FED;
+	Tue, 25 Jun 2024 06:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="gottfuXy"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="AWoQjufD"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B0C143889;
-	Tue, 25 Jun 2024 06:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0876F145FE1;
+	Tue, 25 Jun 2024 06:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719296238; cv=none; b=BYct9S4yQEMe9nLni0m67lJborAiX6IEjBmcIbrZgXn6KIDnVikwubrNvbGSHjmctykLWe8GW0KhLNVvmRuNwYkcxBp3MdtI5G9+HHxAnTCxb/1bh+NLMGYOMIKu3uHqP7XkovBr3i/RzkepRkBXh2gRcCoN3QJNpL94TWO7h6k=
+	t=1719296368; cv=none; b=JZHY7+fA5/fD6R4J3/ARw04jTBp+NWWror/LC9pnTuMeDb7T8M68cvfYgwZHxr2Mjihu6oH2CN/nfi6jc1zrhL7gxpF4YCfz5Xb923OXzuGteby/iDYXS7PlxzDO9aETPOBFe72FwS4sUrnUqVCFfvFE+7lsE7ytMUea0Jsu1c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719296238; c=relaxed/simple;
-	bh=L8zEZGlYA7775lSVBXfsdb08FWIrc0UKVLyrg5iti+A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Prl2nI187GM7T0dxfU0TxtAFgxu3NCyKcb/JacU6Wk8JGFcniF0tUe+5TfQOqy+UsXZV+eU9tw+aN2ZKNmx0R2RVFXy43gk7uOOFIzUNCj/WH8tDqp3ONwfZlx4PuaZQmqDw7stShzMo827MntHzUIsE9SUzKyGuFyBkVv9Fi/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=gottfuXy; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1EFA3E0007;
-	Tue, 25 Jun 2024 06:17:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1719296234;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lUfaaGjmkEsv8TO+/zIvt/jIaH/4czGbfBiNdDpBPnU=;
-	b=gottfuXyiDMseBTnGspopuXIw9529/9Sg8tVXkB/CfX+qkFNzuNLD3y0yeBtuhKxNBAkNe
-	ZK5m650lLIhx+QPEZIDBbbwDMsqsxTiecOt3ksKVFyPts+2z8TiWsCmNQYVWFzymGIRTaX
-	ahbVGJDQ3Z0cpMZg7en5CRA6laI8pgztW5RsyUdeskY58RAjMeGiQiKEYyXhwLFPen/f7k
-	T6LiwaW6m4tAC7Xm2gazxlRsD3SV+CqggSC1Nt/R3OC2k1RNfvPbuPZtBUOY8WtllyfGri
-	7Zkj2qEE5eYrmT8yZ1HWrJwS53nlyKa5iXgjb9IGSyDoZrV83rr0CioXdd9y1A==
-Message-ID: <7a2ea06b-ae4e-4374-82c2-4de4184e06c3@arinc9.com>
-Date: Tue, 25 Jun 2024 09:17:09 +0300
+	s=arc-20240116; t=1719296368; c=relaxed/simple;
+	bh=EN/Kl52uPTOwTqtRqpZ4IO9jM1Vjjhms6ItkNCF6IxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RGf9NlMHdYb/Sr+zxUfXjs3opVsReUxERsMeXcW3QgM/IY4pzMoAwb/UtUIq71TSjdyYItpRDIDw1vRn+MUP7O1EQy8yNzlvI4XDLHrPsHkOVIaOx5XrwOPqg74EgbwPDmTYNXXzSjao1Efcaoywoa1Fpe3T5DM0Fhl0FYTLz4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=AWoQjufD; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P65KcM017611;
+	Tue, 25 Jun 2024 08:18:48 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	bFN0URSqTU+fG3mqAp5y9Iy1xpvvUu5x6itkRCIjl+o=; b=AWoQjufDebP4pUOY
+	3+j6W6pwzw1e+PfBUvYK9pp3uT0Z/Rf/C9h8ufbltLvjo2OtE3CnOa8vPDe0m4Yk
+	DH1FDROMgAlVC5K6InFmtY7ugiHgkHXK+al4bC6m7g0y9vKrZO1YuXV3yeGVpEop
+	W2KAVxRE0bKWQHRIOSfM1A51BQ6UM+GhVtvVJT8ryhVdGvOKlg5SbrSj8+0Nm8QR
+	nE059lnorab/QB3JVATI21NsckcwTDKxUvjfSx/kRvfz1x+yiXic6wz+g3yNB4u9
+	Z6CIQdK3wMzGVb3IST8t76bdD1BxUmbIXMZxB8WGmWW5m1581BTmaeq3LHZgMnmE
+	h3PN8A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ywnxxa0gb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 08:18:47 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 4FF9D4002D;
+	Tue, 25 Jun 2024 08:18:42 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 97B9521074D;
+	Tue, 25 Jun 2024 08:17:43 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 25 Jun
+ 2024 08:17:40 +0200
+Message-ID: <e5c0719a-d49f-4470-964a-c72973c975e7@foss.st.com>
+Date: Tue, 25 Jun 2024 08:17:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,94 +66,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
-To: Linux regressions mailing list <regressions@lists.linux.dev>,
- Paolo Abeni <pabeni@redhat.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>, frank-w@public-files.de,
- Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-References: <20240516204847.171029-1-linux@fw-web.de>
- <a29dd7d1-40a8-4c88-99aa-651a3305b640@arinc9.com>
- <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
- <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
- <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
- <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
- <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
- <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
- <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
- <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
- <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
- <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
- <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
- <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
- <4416ef22-78cc-4ce5-b61d-69ff0903811e@arinc9.com>
- <bd6b6929-d34d-4bd5-9cb0-bc8fe850ee46@leemhuis.info>
- <af561268-9793-4b5d-aa0f-d09698fd6fb0@arinc9.com>
- <750a60a6-4585-4bd2-97be-cf944e51fbdb@leemhuis.info>
+Subject: Re: [PATCH 1/3] thermal: st: switch from CONFIG_PM_SLEEP guards to
+ pm_sleep_ptr()
+To: Raphael Gallais-Pou <rgallaispou@gmail.com>,
+        "Rafael J. Wysocki"
+	<rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui
+	<rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+References: <20240518-thermal-v1-0-7dfca3ed454b@gmail.com>
+ <20240518-thermal-v1-1-7dfca3ed454b@gmail.com>
 Content-Language: en-US
-From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <750a60a6-4585-4bd2-97be-cf944e51fbdb@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20240518-thermal-v1-1-7dfca3ed454b@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_02,2024-06-24_01,2024-05-17_01
 
-On 25/06/2024 08.56, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 17.06.24 13:08, Arınç ÜNAL wrote:
->> On 17/06/2024 11:33, Linux regression tracking (Thorsten Leemhuis) wrote:
->> [...]
->> I've submitted a patch series that fixes the regression. Angelo argued
->> against the way the regression is fixed. I've very clearly argued back why
->> I find Angelo's approach wrong. There's been no response back. I don't
->> understand why reverting the patch is the likely outcome
+
+
+On 5/18/24 14:12, Raphael Gallais-Pou wrote:
+> Letting the compiler remove these functions when the kernel is built
+> without CONFIG_PM_SLEEP support is simpler and less error prone than the
+> use of #ifdef based kernel configuration guards.
 > 
-> Long story short: because that how things like that are handled in the
-> Linux kernel project, as Linus wants it like that. See some of the
-> quotes from https://docs.kernel.org/process/handling-regressions.html
-> for details.
+> Remove those guards on every ST thermal related drivers.
 > 
->> whilst the
->> standing argument points towards applying the said patch series. If a
->> revert happens before this discussion with Angelo finalises, this will set
->> a precedent that will tell maintainers that they can have their way by just
->> not replying to the ongoing discussions.
->>
->> That said, the decision of resolving the regression by either reverting the
->> patch or applying the patch series shall not depend on whether or not
->> Angelo is pleased but rather there're no counter-arguments left on the
->> points brought, meaning the decision shall be made depending on the
->> argument that stands.
->>
->> Therefore, I suggest that unless Angelo responds back with a
->> counter-argument in the window of a week or two, as you've described, my
->> patch series shall be applied.
+> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+> ---
+>  drivers/thermal/st/st_thermal.c        | 4 +---
+>  drivers/thermal/st/st_thermal_memmap.c | 2 +-
+>  drivers/thermal/st/stm_thermal.c       | 8 +++-----
+>  3 files changed, 5 insertions(+), 9 deletions(-)
 > 
-> It looks more and more like we are stuck here (or was there progress and
-> I just missed it?) while the 6.10 final is slowly getting closer. Hence:
-
-There hasn't been progress at all. I believe I have clearly described the
-way out of this issue.
-
+> diff --git a/drivers/thermal/st/st_thermal.c b/drivers/thermal/st/st_thermal.c
+> index 2a105409864e..5f33543a3a54 100644
+> --- a/drivers/thermal/st/st_thermal.c
+> +++ b/drivers/thermal/st/st_thermal.c
+> @@ -236,7 +236,6 @@ void st_thermal_unregister(struct platform_device *pdev)
+>  }
+>  EXPORT_SYMBOL_GPL(st_thermal_unregister);
+>  
+> -#ifdef CONFIG_PM_SLEEP
+>  static int st_thermal_suspend(struct device *dev)
+>  {
+>  	struct st_thermal_sensor *sensor = dev_get_drvdata(dev);
+> @@ -265,9 +264,8 @@ static int st_thermal_resume(struct device *dev)
+>  
+>  	return 0;
+>  }
+> -#endif
+>  
+> -SIMPLE_DEV_PM_OPS(st_thermal_pm_ops, st_thermal_suspend, st_thermal_resume);
+> +DEFINE_SIMPLE_DEV_PM_OPS(st_thermal_pm_ops, st_thermal_suspend, st_thermal_resume);
+>  EXPORT_SYMBOL_GPL(st_thermal_pm_ops);
+>  
+>  MODULE_AUTHOR("STMicroelectronics (R&D) Limited <ajitpal.singh@st.com>");
+> diff --git a/drivers/thermal/st/st_thermal_memmap.c b/drivers/thermal/st/st_thermal_memmap.c
+> index 29c2269b0fb3..28b380013956 100644
+> --- a/drivers/thermal/st/st_thermal_memmap.c
+> +++ b/drivers/thermal/st/st_thermal_memmap.c
+> @@ -180,7 +180,7 @@ static void st_mmap_remove(struct platform_device *pdev)
+>  static struct platform_driver st_mmap_thermal_driver = {
+>  	.driver = {
+>  		.name	= "st_thermal_mmap",
+> -		.pm     = &st_thermal_pm_ops,
+> +		.pm     = pm_sleep_ptr(&st_thermal_pm_ops),
+>  		.of_match_table = st_mmap_thermal_of_match,
+>  	},
+>  	.probe		= st_mmap_probe,
+> diff --git a/drivers/thermal/st/stm_thermal.c b/drivers/thermal/st/stm_thermal.c
+> index 34785b9276fc..ffd988600ed6 100644
+> --- a/drivers/thermal/st/stm_thermal.c
+> +++ b/drivers/thermal/st/stm_thermal.c
+> @@ -440,7 +440,6 @@ static int stm_thermal_prepare(struct stm_thermal_sensor *sensor)
+>  	return ret;
+>  }
+>  
+> -#ifdef CONFIG_PM_SLEEP
+>  static int stm_thermal_suspend(struct device *dev)
+>  {
+>  	struct stm_thermal_sensor *sensor = dev_get_drvdata(dev);
+> @@ -466,10 +465,9 @@ static int stm_thermal_resume(struct device *dev)
+>  
+>  	return 0;
+>  }
+> -#endif /* CONFIG_PM_SLEEP */
+>  
+> -static SIMPLE_DEV_PM_OPS(stm_thermal_pm_ops,
+> -			 stm_thermal_suspend, stm_thermal_resume);
+> +static DEFINE_SIMPLE_DEV_PM_OPS(stm_thermal_pm_ops,
+> +				stm_thermal_suspend, stm_thermal_resume);
+>  
+>  static const struct thermal_zone_device_ops stm_tz_ops = {
+>  	.get_temp	= stm_thermal_get_temp,
+> @@ -580,7 +578,7 @@ static void stm_thermal_remove(struct platform_device *pdev)
+>  static struct platform_driver stm_thermal_driver = {
+>  	.driver = {
+>  		.name	= "stm_thermal",
+> -		.pm     = &stm_thermal_pm_ops,
+> +		.pm     = pm_sleep_ptr(&stm_thermal_pm_ops),
+>  		.of_match_table = stm_thermal_of_match,
+>  	},
+>  	.probe		= stm_thermal_probe,
 > 
-> AngeloGioacchino, should we ask the net maintainers to revert
-> 868ff5f4944aa9 ("net: dsa: mt7530-mdio: read PHY address of switch from
-> device tree") for now to resolve this regression? Reminder, there is
-> nothing wrong with that commit per se afaik, it just exposes a problem
-> that needs to be fixed first before it can be reapplied.
+Hi Raphael
 
-Are you suggesting the patch shall be reverted first, then the DT patch
-applied, then the reverted patch applied back? If only one of the first two
-steps were done, it would fix the regression so I don't understand why go
-through this tedious process when we can quite simply apply the DT patch to
-resolve the regression.
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
 
-Keep in mind that I maintain the MT7530 DSA subdriver and the company I
-work with has got boards that uses the functionality the commit
-868ff5f4944aa9 ("net: dsa: mt7530-mdio: read PHY address of switch from
-device tree") brings.
-
-Arınç
+Thanks
+Patrice
 
