@@ -1,97 +1,233 @@
-Return-Path: <linux-kernel+bounces-228389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 887C3915F2F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:59:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01DE3915F32
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:00:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D67280A79
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:59:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 810F11F22CAF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:00:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA0014659F;
-	Tue, 25 Jun 2024 06:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A911465A3;
+	Tue, 25 Jun 2024 06:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NAXHIs+N"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="afJKxH+W"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D968114658A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BAC1459E5;
+	Tue, 25 Jun 2024 06:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719298766; cv=none; b=AgCZ+0KxS03HpXQlr+eWQlPMSQ+orN4v8GMtNwJgth5ITVEIo9QwR6tWU1MHxzf5cMo2NN+SmErTRpBtPs2ngG/cF5J6tLRe9LyvxOGUTqRGmdKFS95fICWs9q+I7Qj41MWs0T5EOzm+rFIYjooFOAtYRJKrIP1alfk40r+kZWs=
+	t=1719298794; cv=none; b=Z+8aPZp/Y1kZijQg9DqB/n3oLlRcyF9ofsI3tNC7dj9DXSBCk9r5dZoclwwpZF09G7AjC2zebpEEc2RDZQB2KBqJJ0bVBT0k/LafCXS1J2G9toisANXkiESD95/ibTbE4lYdihp2oRPNqNhJ5iJnv4m0mJceFTL+M2HxeqqP/vA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719298766; c=relaxed/simple;
-	bh=aDB98kbQuG4jMhc+5/YnSzAXedCDskwQrRRjdfeVksw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mmQO8YzHgW+rES9NmpiZFRO21C45AALbfQg0WahtHMGmxaKViwqs9Hf2TTB8zsuIrv4zk0xxP5kCLyDf5BL8THS8jcl+mx+C29lmECMLIeCrt/WhnVO4PD8FjYZFDYY954Fd74hEhwNqW5qjKzxe8IKOCdPKWoHxSA6E9PnzcGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NAXHIs+N; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-444fdaed647so20751cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 23:59:24 -0700 (PDT)
+	s=arc-20240116; t=1719298794; c=relaxed/simple;
+	bh=IGNTzHHHcO2fQKpOgRnMv9Qr0WY0XbCxh81+BADNmSI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aRDB3jg0+mu1vh9K2arM7J0VySlGZJ7Vmuv821Tukzk23eGe3+jdKGoqpgBom6zUlxgX9RVThtEnep58ymMWe8rEogXq9r7iYzMGMkf8Wcatz/G1DCrb7V4YkxgTqzJMULj3ldy7cJQSrALjMTLalUBiQI+Hoz0H+Ez0X+ygpRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=afJKxH+W; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fa2782a8ccso15005985ad.2;
+        Mon, 24 Jun 2024 23:59:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719298764; x=1719903564; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aDB98kbQuG4jMhc+5/YnSzAXedCDskwQrRRjdfeVksw=;
-        b=NAXHIs+N9y3WHT3Ctj4tI3OOaGIxg9dTxfSftusOHOxFWAlSCaCXb8P9iP3AH27cdS
-         EYdH6XipLN4A3TJu7aVmIPA5hIahPSS8MR/Lps4SGmjki1mBTTq3gAUsc1eeG+tkk7mj
-         bdP/ZlmOS0J1mMAUGtGHtnTVePJsExghI7Da9lh/0FMbAcjy1uKRRuE1aFD/+S36BVYX
-         kFYX08MgR+idtlptnTceYXdCIad4xTXzT5ojEshTU0lcv1PBUYINphoBvUvWnYHMXlmi
-         P5HrM+jI2roUG6DMQuxesyC1J3/Of2atkmnZtwewXE4xXGsypINIPWUwtkrvbRnU19qY
-         6soQ==
+        d=gmail.com; s=20230601; t=1719298792; x=1719903592; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bw+JuciPmVPvxL173XrvRPex6ZJzB6ISGkebILK54mY=;
+        b=afJKxH+WIObQG3tDsuwIJcNNFOR9pX5E6dokPGj7zf67u4lMJ4ykjMYI/uycGLHF8l
+         m0qBEU5yvwFbBVQns9h8MthFm1G7WCGDuxUZZ8PRZ3cgD0ACWUYQo7uKpochAf0jQIkK
+         t+0Kq4JMaLpU979trAIZFVfDuXk2CVhPAvbqRWS83k5gsNmNVLWdruYr00H96LP0v9mV
+         pDIzCHvW0Xh999H9HzNTlT2SU2DVfuK2e4cumIzMvJHQNgmlF8gD0geOv71ErG24UZqg
+         nxVF2qqZp/UtqJn3XHQ55HpXDFTEZQNIeMLcE5eZaaLnDxnw6mMas0NblWbp5VTyDfoq
+         lvbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719298764; x=1719903564;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1719298792; x=1719903592;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=aDB98kbQuG4jMhc+5/YnSzAXedCDskwQrRRjdfeVksw=;
-        b=QZ5kSuE/mrIzE7Fms1RPvHuMzkulLRNoe8H1qj1rIAUlHl4BtbmtpWOKZTIJKAZah7
-         cQ0AbNJvfXa+NjhQ0rKAz1BlhL2+7ss4Mxv62lkwyuFgY8JXSBGNE0CjVCck8DGwp8TL
-         jtAlELSfpwUICwuk5Hqx6ufx1wzXqrYwbXF9VLv7EcN6hd8+1aN4gkJvXsq54TyYsE+j
-         Zt7DzKbjN5yL3vr14qQQLEopTBCL+XRhZvwIwhY8tMoY+4f5TorhERqkj/GMzMdj0ejP
-         6FAcQ0zuxHrXqzdibO8MoLRS9MCh08UMKt68MxHTDqovo58QJ52AyX5dGtADVWHZwukH
-         vyuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWr/s+xAVj7aXJQyHW5pHoB4snOYzqAQDgCQk0YUL2eZTL4flok2wnlvqPnvAZidWS4+MJNMJll88FgFXoLxxMkgbHc3AZBDs4YW64w
-X-Gm-Message-State: AOJu0Yzi6ZihZz3uwuEnH1XOPS/Ok+L13haSny7PSlt8LtuzYeSjh2Pp
-	kAE5OXhNOuEiMzDHxG6N4mx5O5d7u25eioFOdJ/wFZZtxgUf+qny8bxwtbVCN3IKmUMX9MM6CNC
-	atPdyZlBMC+6ZkrY/eAVPoQhyos29cVLVSigT
-X-Google-Smtp-Source: AGHT+IGlJT0nqE32CrXN7HXAt7RK51Q1QHp5YX2obTfJeNPoOwE90ZsgUuMGJJ3b2P0/xpgtbmKWay4QfzyN+SXaZj4=
-X-Received: by 2002:a05:622a:1483:b0:444:bd5c:eb20 with SMTP id
- d75a77b69052e-444f36d473emr1441851cf.19.1719298763626; Mon, 24 Jun 2024
- 23:59:23 -0700 (PDT)
+        bh=bw+JuciPmVPvxL173XrvRPex6ZJzB6ISGkebILK54mY=;
+        b=McVDKHbx3E/1fI7K1sLailZYZuC/QyAeqMjDwh8jHfXkkSLWy6tQAMt81I74DLfRL0
+         qlZyF5/7ytHIOO5yT2gRo6aSwyOMndYMhyNl2XqqBzL0Cy5cvTHi8svaEAILAfGT63kj
+         lD76nGFbGUg5YowFmHO1RhFwWP6fVve6MTZQguKxQy9OcWThQe5YMhJrTVooRLdGQjNB
+         Ix2vuuW6OLGr+eVefH+Lw/GRlMaRaHXjjNHWtXK3ie/F2kxgkZ1LjIZEfyxDcn7XBpgj
+         Ia+9AnEyT2TV6KfjLoabICloKMYxkykiJ1pmzmP7Or/XnKs5RJvXucttQH3M93qvL5HD
+         oa2A==
+X-Forwarded-Encrypted: i=1; AJvYcCU/D6XS7mRVd9htU03dPbnB0QkH8n+rAtT3Nx4wR77N1QXF/WCyDMD86HDkWsjZ7GXb7p4r7FVDR0alDgBnnGtwMSJ8w04TUveGS2XAhSMe8fboHwUPKZBHLI11RmuvjtiwlHYItyl46w0Rg0vG5FQPtjDr6Y+9J2qZlalz74UizWny8w==
+X-Gm-Message-State: AOJu0Yy8o9HdErQiCsxCFOQY4v/JhWBNn1Y204sAGZdUYrZjmuCllpLN
+	JCVujX8S8iFcFHTIuX9pzOD3mvdfMkiz6R4xZ35tsVOw/y1Bhtge
+X-Google-Smtp-Source: AGHT+IG6L8tRjyFldqQM5owIqKHxJ6YI3PpEsCoaVkIWstg5l1QolFRdaUa+/mFWitIadxYiqj94TQ==
+X-Received: by 2002:a17:902:c943:b0:1f9:f6e6:5ace with SMTP id d9443c01a7336-1fa23f159cemr76844995ad.48.1719298791618;
+        Mon, 24 Jun 2024 23:59:51 -0700 (PDT)
+Received: from ga401ii.SRMIST.EDU.IN ([14.96.13.220])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1f9eb2f0318sm74041615ad.2.2024.06.24.23.59.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 23:59:51 -0700 (PDT)
+From: Kanak Shilledar <kanakshilledar@gmail.com>
+To: 
+Cc: Kanak Shilledar <kanakshilledar@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3] dt-bindings: i2c: nxp,lpc1788-i2c: convert to dt schema
+Date: Tue, 25 Jun 2024 12:29:32 +0530
+Message-ID: <20240625065939.6146-1-kanakshilledar@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240611171600.1105124-1-aniketmaurya@google.com>
- <20240624052851.1030799-1-aniketmaurya@google.com> <20240624052851.1030799-2-aniketmaurya@google.com>
- <e3160411-59e0-4806-a00d-b99564384180@linaro.org>
-In-Reply-To: <e3160411-59e0-4806-a00d-b99564384180@linaro.org>
-From: "Aniket ." <aniketmaurya@google.com>
-Date: Tue, 25 Jun 2024 12:29:12 +0530
-Message-ID: <CAMmmMt0Qd9tS3TQ0nvC_x=yskBbpTwL4o9tD5+6F8Yi1ueiG5g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: i3c: dw: Add apb clock binding
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jeremy Kerr <jk@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Billy Tsai <billy_tsai@aspeedtech.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-> Your email still suggests mismatch with name. Please confirm that above
-> this is you full name or known identity which you want to consistently
-> use across all contributions. In case of doubts: please consult
-> colleagues in Google (or your legal department, dunno).
+Convert the NXP I2C controller for LPC2xxx/178x/18xx/43xx
+to newer DT schema. Created DT schema based on the .txt file
+which had `compatible`, `reg`, `interrupts`, `clocks`,
+`#address-cells` and `#size-cells` as required properties.
 
-Hey, my full legal name is "Aniket". Please don't mind the text in the email-id.
+Additional changes to the original .txt binding
+- added maintainer from the MAINTAINERS file.
+- added resets property required by the corresponding DTS files.
 
-Thanks,
-Aniket.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+---
+Changes in v3:
+- removed "address-cells" and "size-cells" as per feedback.
+Changes in v2:
+- updated subject line to include device name.
+- changed removed description from properties except `clock-frequency`.
+- updated MAINTAINERS to track this file.
+---
+ .../devicetree/bindings/i2c/i2c-lpc2k.txt     | 33 ------------
+ .../bindings/i2c/nxp,lpc1788-i2c.yaml         | 54 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 55 insertions(+), 34 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
+ create mode 100644 Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt b/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
+deleted file mode 100644
+index 4101aa621ad4..000000000000
+--- a/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
++++ /dev/null
+@@ -1,33 +0,0 @@
+-NXP I2C controller for LPC2xxx/178x/18xx/43xx
+-
+-Required properties:
+- - compatible: must be "nxp,lpc1788-i2c"
+- - reg: physical address and length of the device registers
+- - interrupts: a single interrupt specifier
+- - clocks: clock for the device
+- - #address-cells: should be <1>
+- - #size-cells: should be <0>
+-
+-Optional properties:
+-- clock-frequency: the desired I2C bus clock frequency in Hz; in
+-  absence of this property the default value is used (100 kHz).
+-
+-Example:
+-i2c0: i2c@400a1000 {
+-	compatible = "nxp,lpc1788-i2c";
+-	reg = <0x400a1000 0x1000>;
+-	interrupts = <18>;
+-	clocks = <&ccu1 CLK_APB1_I2C0>;
+-	#address-cells = <1>;
+-	#size-cells = <0>;
+-};
+-
+-&i2c0 {
+-	clock-frequency = <400000>;
+-
+-	lm75@48 {
+-		compatible = "nxp,lm75";
+-		reg = <0x48>;
+-	};
+-};
+-
+diff --git a/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml b/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+new file mode 100644
+index 000000000000..9a1b95c2d03c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+@@ -0,0 +1,54 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/i2c/nxp,lpc1788-i2c.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP I2C controller for LPC2xxx/178x/18xx/43xx
++
++maintainers:
++  - Vladimir Zapolskiy <vz@mleia.com>
++
++allOf:
++  - $ref: /schemas/i2c/i2c-controller.yaml#
++
++properties:
++  compatible:
++    const: nxp,lpc1788-i2c
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-frequency:
++    description: the desired I2C bus clock frequency in Hz
++    default: 100000
++
++  resets:
++    maxItems: 1
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - clocks
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include "dt-bindings/clock/lpc18xx-ccu.h"
++
++    i2c@400a1000 {
++        compatible = "nxp,lpc1788-i2c";
++        reg = <0x400a1000 0x1000>;
++        interrupts = <18>;
++        clocks = <&ccu1 CLK_APB1_I2C0>;
++        #address-cells = <1>;
++        #size-cells = <0>;
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index cf9c9221c388..920e4f28b5ae 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2374,7 +2374,7 @@ ARM/LPC18XX ARCHITECTURE
+ M:	Vladimir Zapolskiy <vz@mleia.com>
+ L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
++F:	Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+ F:	arch/arm/boot/dts/nxp/lpc/lpc43*
+ F:	drivers/i2c/busses/i2c-lpc2k.c
+ F:	drivers/memory/pl172.c
+-- 
+2.45.2
+
 
