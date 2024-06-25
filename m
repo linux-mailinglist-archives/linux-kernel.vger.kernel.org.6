@@ -1,114 +1,103 @@
-Return-Path: <linux-kernel+bounces-229372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877DA916EF6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:15:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1844916EF1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:15:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE538B20FFD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:15:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A8D41F229B0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:15:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19863176FDF;
-	Tue, 25 Jun 2024 17:15:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D01176AC3;
+	Tue, 25 Jun 2024 17:15:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYCqYqdn"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LA6kihVL"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97E41779BA;
-	Tue, 25 Jun 2024 17:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5C616D9D5
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 17:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719335714; cv=none; b=gqrUdB0PkP/y7iDqrJ7tvfxaaj9CcsTFai7mxBZVbTvv6UTqdmoSLGRbO0xKyAoFyXVv0R48zbD9h94cuBd/E0YYmMfEGDCZHl/QRUEnTuLg2BlplZ2iANAS7XD6dzmx3yiDrokq/yXAibPS6lgfq7ABJYwHvfKsO/Kam5eOfC8=
+	t=1719335708; cv=none; b=n70CFkkco2Lf0zVMo8OGNsAIWQuTVAOIB4/PpqqCvuC0idceEnjCqYQGpza+gx6QPi7t3kPEWLHlRWsg6T41epd39/pJLX74hou3CQRzpBrO80nMYtnDE9rSLQyq4Yvydr3rYM8tJtNyltQlr4Qps3hjv1CNbfqK7faQysWr0jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719335714; c=relaxed/simple;
-	bh=jjtcuEA9sKtqwrfShdvUlPqsNArkCuWKWDP61e+bF2w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CBzrTHCptDEdypX6Taq7H8CButKC5rXhxAqP8OGbUllE8FeGKIRVw/OVnXirhgz0kEoH5JKp4EFUhKmDz9c5zLUlkUCFv06kGmWJ3KIi+CPiJ3hjK3L5ZxAsZG8k3lxkioAIPBEVSZRvl8aCB9s/x77j1ikA6yhdFEfpMASpRqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYCqYqdn; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1719335708; c=relaxed/simple;
+	bh=sdyuZuS3EAxhOTCnJs2tZdjIHedkG3Ym4GQBRUD6eCc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UnFRHLqqS3YGJPOL61CBJXAGsTpGTg7Ox4w04HbiiZG4eoe59lp6tV3MduQ+Ao2gh9ZSL0+qmhDbBhdnpy0l3OGLMeFBCfEV1JLguBX5vIZpthLCBIZGr3lXideYas2wd4nbUgWoW6CWNlkU+jabdZaQWih+dc6Ot0x/qJo97rU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LA6kihVL; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-3645e9839b3so4431627f8f.3;
-        Tue, 25 Jun 2024 10:15:12 -0700 (PDT)
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3760121ad45so24346485ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:15:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719335711; x=1719940511; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jjtcuEA9sKtqwrfShdvUlPqsNArkCuWKWDP61e+bF2w=;
-        b=GYCqYqdntBMnluW6qiqNvbQTF4M3Wf/7jQUcNvFQh0/c7MnymLqfB30MaVFF4J5LP7
-         0xPoA7PCN/11FaTSUsZRvxEp217dBwCCRW/Rxz+CxuSquk03z6OZcU9Xy7C9YoYwqd4j
-         U+fTKsgx4ounyvkyMqhUPEA4aIbVF1g/9seCMCC5zmX/3kfKSLYDpWmj1sc7RdxmkZ4W
-         VLTRg7cY8zppH7Jdna3N/KkoyYSU4MG18kGOgg8+xMBRpz9kekvfhgGe5KLpu39/gdgC
-         Y21f0cmoIZfNl+8XjhBV7RB2YuYfh0FLAdnEhsqFdNNJn7DePQNk5W4A90tYr0spsIsn
-         p0kw==
+        d=gmail.com; s=20230601; t=1719335706; x=1719940506; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LnNPXe/TZazPruENmXGVPw2PuozP162/oWmHbIuI8Hk=;
+        b=LA6kihVL3nr9aZGHPtmPjtOHrogL9yf6WDIU2nRaifaFHTk/xo0Q2CZfEVSoX+YJ7S
+         lt0zgxiDqfj1bdXyuLbxhF+yQ5ep15KdhN4+j3odDAnJbxtnUenUynb7Wvu1JZH/byT3
+         pc67u3S8WVxXiMdHgsWuoLtGkoPHUbqjchyFJ3A8UulXxbmfqjFToas0tCJq/Z5pSYzq
+         yS/Ye8r1r0AeXK/E2WNy/ADP5p5L+G9gDRSGLqSYpE9tHXkPrmQo/dAqlTn6c7VBOGgF
+         Gswguj4cYYc3Y4ZxAmhs9onxrOCcECjrzcVi1QiQzFjICu5mDvPSmIiCHjCrOj+Z4X5f
+         GZWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719335711; x=1719940511;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719335706; x=1719940506;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jjtcuEA9sKtqwrfShdvUlPqsNArkCuWKWDP61e+bF2w=;
-        b=cRiw76e7KbwZIAyNjraNoRFp0L7dVhonnHu4fK+DSfUeqHr5Yf+XU3dNzhoqIwv3ob
-         vV+2IvVAfYbY9epwKKuFziIxHtmeA7XzocqvtJNqaMtVU5V9Fq6RO0+tBoB2Wv5BGAf9
-         D2sbxDEijIvBxGZ2s391DfAQWAKokWGH00vPZBMrMxr/Od8O8sbiSb1mtXRCg7DNTzO1
-         FJhmZ9FEg3G3+7Ny3e71gH4st1dUX9ApQEFsTVPGpITckCkxn1EkfXBqQ3lyuamTIKjV
-         yIXgW56NUi0fsun1OL3GnkoHa+rzViXRIcpm2unKyDkPQNt+LQ1hz9yhpmVHxxWl5gan
-         9cUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaH4SQgKPIXtQXeG8S3AqNEjSqV5khV6tmi4DxVl3h1pfKwnT7fiU6iC4eSs3fJYkoFFp+ZIBZgCST4bSOVftpiOf1txuEVzimphvqmNnftfN3lSuBkKUAyGOdc6uBBeHG464ocJykbmvDORfi5k0HJX8J6PFak/z+gLK/PxgOq7NBtgtKcODJvBEpwl7QJMEkJ9p6KbH6xRjrel7H2kcWp91sj7yI42HHy+IcNnA0P57s
-X-Gm-Message-State: AOJu0YxI2Cj3arAukmN9e07VJ8JBHL60dxa14GbHE/rp9SapJ40UVcPJ
-	MpkwM9I5fb2BB2pF9wieVkZ9THOlE2mDGyDK/J109WAhGFgAJfMhLwDKWzNZpZYPCA0aIHuy+WS
-	LGuXKJI43izBwNpK3y9jvxMEY66U=
-X-Google-Smtp-Source: AGHT+IGqtcwJLjr+3MHilvLPVtfKoipe5kx4LBLA5mXRe+9hOE9htiLokRjYzn24SuFzozxc4yBuhK03IeWG4UE0GVg=
-X-Received: by 2002:a5d:598a:0:b0:366:ed80:d056 with SMTP id
- ffacd0b85a97d-366eef90065mr5423589f8f.14.1719335710842; Tue, 25 Jun 2024
- 10:15:10 -0700 (PDT)
+        bh=LnNPXe/TZazPruENmXGVPw2PuozP162/oWmHbIuI8Hk=;
+        b=Jl2+bfE2Rh0/t1CqtCiQLDs/2LAASw0WDIZv0JQYPgh5T3m+h/wIPGmERFItmOdsPA
+         skPbwj4XSW6KZO4SGlxBICEXtv6/pEpPxiR3j2n3jJMGWv8rLU+kjh6BfNWbY8wtjwnK
+         vFaJEsHyUQXKA1/odv3oZIgddn80ERulIjSgJGFit+ZRHUECHCXBvV1zEIMdc9LXCB15
+         qmTWacqI/vq6oS+LDM2jLsCVsA1qEybp+qtrMPDFjruglCbX2zVrmIv9N9Q5Cjpr2rd4
+         RO//QGjLykkVz89kgXcHdLoCllF0ynI8mRZB2Xy1RQu9R8sym7UVxBBv+HlXV79xOBlu
+         5ZSA==
+X-Gm-Message-State: AOJu0YxKo1YDEioGIQgwwnaok3XhpPIQQa/IutYlJ+pnTpNiiuG2cUka
+	bI4s/g1tGDbdQUaS4NNSHdhiCCC97Lhor0V8OStMhWPAffu2bOvOWJZ7XA==
+X-Google-Smtp-Source: AGHT+IHYZTXIkSCEqUy/U8krwtc7A3RgMwkIIMvWpE62nGXl2nrk1CqklNRlJtJdFtn0Fqo6rTmZPg==
+X-Received: by 2002:a05:6e02:1caa:b0:374:a44b:1186 with SMTP id e9e14a558f8ab-3763df8f71bmr120370755ab.12.1719335705953;
+        Tue, 25 Jun 2024 10:15:05 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716bb041180sm7400632a12.80.2024.06.25.10.15.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 10:15:04 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Tue, 25 Jun 2024 10:15:03 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Linux 6.10-rc5
+Message-ID: <59fc40ca-3ab2-4227-948d-e18a0c713bde@roeck-us.net>
+References: <CAHk-=wiMMT-2pfJZ8ckbnGTbSHy5mvvE=+-MyA_ARPUqiy_C1w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZnB9X1Jj6c04ufC0@sirena.org.uk> <CAFVMQ6R8ZZE+9jWM1vhEuz2PsLyCgKhpaVD377TKEu4AfGO_iA@mail.gmail.com>
- <ud5j6hbozgg6em43volidpffykdtd2lpf32etmdiyksorl2cb4@whtseaibw2xw>
-In-Reply-To: <ud5j6hbozgg6em43volidpffykdtd2lpf32etmdiyksorl2cb4@whtseaibw2xw>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 25 Jun 2024 10:14:59 -0700
-Message-ID: <CAADnVQ+cJ5bga7tX9BSTC150CgXM8KQT+Z21zYE-VY-8fts6kg@mail.gmail.com>
-Subject: Re: linux-next: build failure after merge of the bpf-next tree
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Thinker Li <thinker.li@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
-	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Networking <netdev@vger.kernel.org>, Jiri Kosina <jikos@kernel.org>, 
-	Martin KaFai Lau <martin.lau@kernel.org>, 
-	"open list:HID CORE LAYER" <linux-input@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wiMMT-2pfJZ8ckbnGTbSHy5mvvE=+-MyA_ARPUqiy_C1w@mail.gmail.com>
 
-On Tue, Jun 25, 2024 at 8:54=E2=80=AFAM Benjamin Tissoires <bentiss@kernel.=
-org> wrote:
->
-> On Jun 24 2024, Thinker Li wrote:
-> > Hi Mark,
-> >
-> > I'm sorry for not getting back to you sooner. I have been traveling
-> > since my last message.
-> > I guess this patch is for the HID tree. The changes in this patch are g=
-reat.
->
-> Ok, thanks for the review. However, the need appears because there is a
-> conflicting update in the bpf tree.
->
-> May I ask the bpf maintainers (Daniel/Alexei/Andrii) for an immutable
-> tag I could merge to so I can take this patch from Mark?
+On Sun, Jun 23, 2024 at 05:41:18PM -0400, Linus Torvalds wrote:
+> Another week, another release candidate.
+> 
+> So far, the 6.10 release cycle has been fairly calm, and rc5 continues
+> that trend. Let's hope things stay that way.
+> 
 
-I'm not sure how that would look like.
-imo conflict is minor enough.
-When net-next/bpf-next lands in the upcoming merge window
-just provide Mark's patch as a conflict resolution suggestion
-in the cover letter of hid PR ?
+Nothing to report from my testing.
+
+Build results:
+	total: 158 pass: 158 fail: 0
+Qemu test results:
+	total: 532 pass: 532 fail: 0
+Unit test results:
+	pass: 272785 fail: 0
+
+Guenter
 
