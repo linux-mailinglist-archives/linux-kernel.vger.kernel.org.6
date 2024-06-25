@@ -1,139 +1,113 @@
-Return-Path: <linux-kernel+bounces-229791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 319C691743E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:29:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C746F917441
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF4D51F23CB7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:29:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38AB5B22EA8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4790217F4E1;
-	Tue, 25 Jun 2024 22:29:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E3D17F37B;
+	Tue, 25 Jun 2024 22:30:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aHIBw3DB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZRgeRPF8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E27617E905;
-	Tue, 25 Jun 2024 22:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEEF148FF3;
+	Tue, 25 Jun 2024 22:30:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719354544; cv=none; b=lRLgrbZ/+i8ofiZ9DUYt0OSJt4GMsLPzhoHJ/X5TtTmLph2ype4Tm9MQ2aJwT6EaFRXz+vtjCfii9YLrpj6lwJeSP7FrpgCsj87ptZTjpeek2M913vcHz4Iwj7sLGFmh6ePznLIG7KFKfXLfM5bqBD4A/Wc/jqG/nny8T5fO23I=
+	t=1719354622; cv=none; b=tddgwyxbB4a/G+b0NQ2g3mEm6hfyqj6soc291Y0YXfdYJ3Yf8jkDo1RTjyIcOsQUFm/UDxW4O9wa/QzspT/D4IsSGvmZ4FL+209Fx2sAP2PGUQn71XmKu2WRkTvyRfVrk7JCk5c4Z6bxt5iL53eTDjuDIQd6189VwJp0AvfoefY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719354544; c=relaxed/simple;
-	bh=+L/emvVgtDd3ULOJoo20PaysUqptsWugNLJKhSGnCkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N9xY9Hpih9mjZ7Ip6VPGC7OL0QIgFTRkTY0NzRH7cbZi4NG0U46xFjs897PTGMpgaYRXl7TndyaaWMqKR+lj3t1vyAUAnQI52Cw8/a6cqnZ4ni62Gs0BzfpDM8EmAxfcYlfB0DWLUrtJEkz6PR/rlDns0h3XaS4Fy9Bbs+F4oJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aHIBw3DB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0F0AC32781;
-	Tue, 25 Jun 2024 22:29:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719354544;
-	bh=+L/emvVgtDd3ULOJoo20PaysUqptsWugNLJKhSGnCkg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aHIBw3DBgsgjmcpsG44SasdTK/47SLheszc2AagGPy/V7LIt+KIuH7AKrKN0mdQ4m
-	 v/86HnwE7/KWPAzxgOoR5hd/JrDeNRp9OvGbCb53WyGFL4HooYtZJcZIp7AkX2QJaT
-	 +vHjK7JhSOiOAkpK9K/Uyzwtlo1NR5gjQek9RAJpOZqYT6fUx1Eow01E9Q9ijR15CZ
-	 38Zdrwgb2Jm2MNu4wtYm/QCdZo2set9VEJc9HQaVddLzXwUicN4X+XaslvpbMn/EO5
-	 WLDZHpj95vw9bZc+CTbvXsK9O1YX/XaWex8fqU8mdI6PeHJvGwff4q5XmL1qsCihxt
-	 HbV5Mb4qb0ZXA==
-Date: Tue, 25 Jun 2024 16:29:02 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>,
-	linux-gpio@vger.kernel.org,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Guenter Roeck <linux@roeck-us.net>, linux-pwm@vger.kernel.org,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Jonathan Cameron <jic23@kernel.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	linux-watchdog@vger.kernel.org, linux-iio@vger.kernel.org,
-	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-spi@vger.kernel.org, linux-i2c@vger.kernel.org,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-clk@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Abel Vesa <abelvesa@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-	Zhang Rui <rui.zhang@intel.com>, Andi Shyti <andi.shyti@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH v2] dt-bindings: drop stale Anson Huang from maintainers
-Message-ID: <171935453992.325655.11101198917545671907.robh@kernel.org>
-References: <20240617065828.9531-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1719354622; c=relaxed/simple;
+	bh=qS9TTmlDjgipvMH5tjZeBfWS5KHkS6WYJPS068gWSE4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pvBeXI2EUoLSaka9wj5KFEkQihjuoBbOMLzg9b8xZISrLqPz4Xn/aozC8Gf3X/TDrsmjFGUoK4ody2/qAaben/YKmB37Gse9HFd1tTFKrp6XEwpeM50o5DgGUUxzWG82OSH7Rvj8DpRIbZcMWGTTpS1UcLPMRdiXdomHyY3DgJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZRgeRPF8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PI3gnA032231;
+	Tue, 25 Jun 2024 22:30:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vfUIF9UojzMOtwX6nE2K3rtBehrIGg9xx0Sst/8VS8A=; b=ZRgeRPF8kRUUlf0j
+	8g+XLMJZOYw8oEl7PaxrEIbk+nL2DurL8X1qvJ7qG5WIt6m5wyxHd46Bkz8WpI2f
+	1Wv9Nc/iUaPl8q41t+iX451ukQC68boJdH7GuBNjyHB8g+nu4xOg9RCssMizELYJ
+	1uoczBSHGmU19PpQ0fvhmAnIkTEJHrwlxKCUoULyQiVmVyTJBU6hjXQSaNHIFSsX
+	xcBmA1tVmpq2OP/NzwW+tDe7MCmbIK/Tml8QSHGdCNd9LGrvsiJi2T4GPQc8wGUS
+	+B+NQoeQLwx7y3uAPPTUqWDkGBLr/pPYgPHb6uj9XQxJc+UARNeQKy/XGflP8fGQ
+	5BZRUA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv7peu-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 22:30:15 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45PMUEKv032155
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 22:30:14 GMT
+Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Jun
+ 2024 15:30:13 -0700
+Message-ID: <38597076-e0f7-4266-bf85-3177ef249922@quicinc.com>
+Date: Tue, 25 Jun 2024 15:30:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240617065828.9531-1-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] hte: tegra-194: add missing MODULE_DESCRIPTION() macro
+Content-Language: en-US
+To: Dipen Patel <dipenp@nvidia.com>,
+        Thierry Reding
+	<thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+CC: <timestamp@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240603-md-hte-tegra194-test-v1-1-83c959a0afdd@quicinc.com>
+ <92059885-858c-4a07-9e2d-cda10c6c38bf@nvidia.com>
+ <d3f5890b-db18-4e56-9768-db0382717baa@quicinc.com>
+ <36113c8f-12de-4530-9727-67c75b0daf47@nvidia.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <36113c8f-12de-4530-9727-67c75b0daf47@nvidia.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: jJ5REi_-kCJf-QGvegUVic0gTiUVH_Tq
+X-Proofpoint-ORIG-GUID: jJ5REi_-kCJf-QGvegUVic0gTiUVH_Tq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_17,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=973 mlxscore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406250168
 
+On 6/25/2024 2:05 PM, Dipen Patel wrote:
+> On 6/23/24 10:53 AM, Jeff Johnson wrote:
+>> Following up to see if anything else is needed from me.
+>> Hoping to see this in linux-next :)
+> 
+> Its in linux-next[1].
+> 
+> [1].
+> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/hte/hte-tegra194-test.c?h=next-20240625&id=9e4259716f60c96c069a38e826884ad783dc4eb4
 
-On Mon, 17 Jun 2024 08:58:28 +0200, Krzysztof Kozlowski wrote:
-> Emails to Anson Huang bounce:
-> 
->   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access denied.
-> 
-> Add IMX platform maintainers for bindings which would become orphaned.
-> 
-> Acked-by: Uwe Kleine-König <ukleinek@kernel.org>
-> Reviewed-by: Fabio Estevam <festevam@gmail.com>
-> Acked-by: Peng Fan <peng.fan@nxp.com>
-> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com> # for I2C
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Changes in v2:
-> 1. Add acks/Rbs.
-> 2. Change clock maintainers to Abel Vesa and Peng Fan.
-> 3. Change iio/magnetometer maintainer to Jonathan.
-> ---
->  .../devicetree/bindings/arm/freescale/fsl,imx7ulp-sim.yaml    | 4 +++-
->  Documentation/devicetree/bindings/clock/imx6q-clock.yaml      | 3 ++-
->  Documentation/devicetree/bindings/clock/imx6sl-clock.yaml     | 3 ++-
->  Documentation/devicetree/bindings/clock/imx6sll-clock.yaml    | 3 ++-
->  Documentation/devicetree/bindings/clock/imx6sx-clock.yaml     | 3 ++-
->  Documentation/devicetree/bindings/clock/imx6ul-clock.yaml     | 3 ++-
->  Documentation/devicetree/bindings/clock/imx7d-clock.yaml      | 1 -
->  Documentation/devicetree/bindings/clock/imx8m-clock.yaml      | 3 ++-
->  Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml      | 4 +++-
->  Documentation/devicetree/bindings/gpio/gpio-mxs.yaml          | 1 -
->  Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml      | 4 +++-
->  .../devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml     | 2 +-
->  .../devicetree/bindings/memory-controllers/fsl/mmdc.yaml      | 4 +++-
->  Documentation/devicetree/bindings/nvmem/imx-iim.yaml          | 4 +++-
->  Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml        | 4 +++-
->  Documentation/devicetree/bindings/nvmem/mxs-ocotp.yaml        | 4 +++-
->  Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml        | 4 +++-
->  Documentation/devicetree/bindings/pwm/mxs-pwm.yaml            | 1 -
->  Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml      | 4 +++-
->  Documentation/devicetree/bindings/thermal/imx-thermal.yaml    | 1 -
->  Documentation/devicetree/bindings/thermal/imx8mm-thermal.yaml | 4 +++-
->  Documentation/devicetree/bindings/thermal/qoriq-thermal.yaml  | 4 +++-
->  Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml   | 4 +++-
->  .../devicetree/bindings/watchdog/fsl-imx7ulp-wdt.yaml         | 4 +++-
->  24 files changed, 52 insertions(+), 24 deletions(-)
-> 
+thanks,
+pulled it into my verification workflow :)
 
-Applied, thanks!
+/jeff
 
 
