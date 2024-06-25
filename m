@@ -1,121 +1,114 @@
-Return-Path: <linux-kernel+bounces-229063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EAC7916A57
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:30:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51F6B916A51
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:29:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 713631C2245D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:30:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFC211F21D05
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0C317A90F;
-	Tue, 25 Jun 2024 14:26:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 128D316C842;
+	Tue, 25 Jun 2024 14:26:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lACvOxu+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FRb4xkr0"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2573C178CC8;
-	Tue, 25 Jun 2024 14:26:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59FB316C445
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719325583; cv=none; b=OIU9+Iw042WXy8Ig9i7gRO6gQFyvakeaAw1TWhM4BSycgWtflQVrdks51rY3xdqkmcN0YklTpzlcdu7e5cJEGCMFkyLjVoumIXIzBsRLEVGRvxVxijnIh5PResmVsKadQO/jcA+tqKxwJUPYYMpaYSxlsoego2aVFya3PkE0fTY=
+	t=1719325580; cv=none; b=FjZG6nl5ZSvsMFLIPm6zdnfef0/50CEwqe8lDN2saakoo+XGsm7uL3y3TwIu/yCN8XVwC242QytB4K4ky5eX+D7lg4qkPJnOK/YuFSsmDJgildylE2Nd1hQ0oq3oGOTGw+YVa3YPADIjpJ9HBxaYqn7K7OwcvCrdOvurm59yiXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719325583; c=relaxed/simple;
-	bh=1UiCDGgHQ5ObpSvrlGcUdzZAlv2fF8O0u+CoSyWokOg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gaYqtASBDGKqaaw5+zbASt7DPzBSpvSPAXJHWZI9Km5eu0zHsI/orYEMWz42z/HXvrxhRqRJM7bhXndpmlAI5oK3tRSprmFCzhgyX6RRCrxtweac6xkr78n13zBb7GrbnSYSExmU8RS2KhC0RDCVc0OoGL0NsSUHYlgXTui1g1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lACvOxu+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 609D3C4AF18;
-	Tue, 25 Jun 2024 14:26:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719325582;
-	bh=1UiCDGgHQ5ObpSvrlGcUdzZAlv2fF8O0u+CoSyWokOg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lACvOxu+Ix+ixThSVmq6TSefFSYMz6Kt/oC9BnAl4CpmKUw/Rt2a72TyOU8fR2XnO
-	 f0OmgQxnSO0suAMc52SEEf8ieXux9bR8LYjaf8XQL8i6qP1RutXtA1DxHOcSjSGBzF
-	 uAEA98Ci/Um2y6XyCbOZBr2fhNW/MHfaR2VXfkuhIuZlIdvVISUAllh3oevbyqsk66
-	 qg8REQtnkCqEY5nI4IPIGqJKYqr/Vpjfs7SwAhjFweiSr5lpjCXsbu3Df0NYi2/aE2
-	 Ru37Ehkpue8HFC6+1qsflglDWtNPdUxaBO6GzNYN/4xHFrHzwULYGEfLujYRFtICUH
-	 rJySljONHG0UQ==
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec6635aa43so17204711fa.1;
-        Tue, 25 Jun 2024 07:26:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWB4quNA7aNlOYjD5BJVKUDGIwNpp+iuAgsHDeMZyExMngdosQSxHq4B6RFkXeydMA6buopW30m8hn5R4rFP7Rn6hz108CHG3txwvAuAE5pwfjzpqmwrexnbC6tyZKpf9mRqstXn+VgGyqqcTa4
-X-Gm-Message-State: AOJu0YzqAe+1/xEkgtweqB88ExgjCrmBK4rLXj5pVJ2qpUZ8zXhHUBl3
-	Fqa4wbQOXKc4GOtqcyyvVym9HznzNgRByV42oEPgXz4FtquDtHy8rZXNOSOwjciLzwh7PF2zymJ
-	euQVGwzDVZUYvB+Rr/VfNHrvIZiI=
-X-Google-Smtp-Source: AGHT+IHY6mqrg5q2k7Ksffy5lOKv3VtwyAeYeBWBMKfB1TdfPAKVU073l+OGh7egFuNslbR/DdOAGGYr0MKYiAiVHcw=
-X-Received: by 2002:a2e:3218:0:b0:2ec:5685:f06b with SMTP id
- 38308e7fff4ca-2ec579837bamr52831631fa.27.1719325580775; Tue, 25 Jun 2024
- 07:26:20 -0700 (PDT)
+	s=arc-20240116; t=1719325580; c=relaxed/simple;
+	bh=LCSdddfJ7Z4mnK+aitn1PNeqaIztUYavzKGIhHHipts=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Vf/514UqSedOAIPJOn6Z22V3YUewEc1PTl1hwOtlIY2LIW1aymt02CTmJ1RQu9oMsN/QpxEH2K5JHs2AiRqPWEQCOoPR24nEqhk4VoX5sHadqoMHx+aA0GPCCDmyxFxeCUXoweNyF4VE1a/B1rhvNnEX6ed5Bnuor937Mj0ISiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FRb4xkr0; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4217926991fso48579555e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:26:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719325577; x=1719930377; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nnbM/UqNU7kz2IjENEyTCA2M982ffhA9NZXJCqFpGNo=;
+        b=FRb4xkr0a0LWth+QZtZh+hhgoP++LkDP8dRqhbdSTF2XYvREVzCpzPQe8foWX78p6a
+         fx4Hui0/aK5If36o/KfaOjuaEkXUQyD1TgDC0kIklEVbgRt3Dnl2BoEqQnc/fvt7KM1R
+         2tdM22LF2/ZVElbYmLhGEbwdc2V/e03xuThftC1mOpCxQGqYU6LQUGEzYx/c9HiSJVVp
+         p5x5VjGEJhf2a29/EWkfaPQ4LU9WeiR94qpcoODnXLYEpl0wunPmsOhBu15ngKrG2TDP
+         nLW4qC5hqcJruZRZfyC2VMepI0/nUVnHJj3phNCK7uorGmssLR8SxjAKcbmUVDvO7yPe
+         drOg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719325577; x=1719930377;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nnbM/UqNU7kz2IjENEyTCA2M982ffhA9NZXJCqFpGNo=;
+        b=SSw9sAN2EUv09jOwfc7NVvxEYue7UbnrPn3LLYLx7rfdQXwVFa5EYUsXCsEfC9rBrq
+         GZ4gao3SKbTp+WwpSQkrlL0QgBpwKbq3HIr7DZpRnZEFzw+goHRUxDqbTa+njS4HVBiO
+         ADNF2p4lXI5bgUmlo/usAN6LAjkI5kGwMX/8yoEpGdPiwyj9oIDwsE9WaIbAVkFvnwa2
+         dwCjfZ0LbVUS1rbTe6m/cOlq6PHH/KbO1CnSFQgg0B38A1iBqSThOS8fMGR1PtszwvBe
+         3Df1Ym/d/of3G8ZD/dCX5rggK7nJZ8TRJpaN79yXyBagrNSMHMkM0Q8WK+lBomAdI+y9
+         wU1w==
+X-Forwarded-Encrypted: i=1; AJvYcCXkXK79Gwhfhai6g0vsWnUy1QSOfMXet2oHQUJOOZpc0c2GdvRtek1jKPqDl5ZwReRNsCrRCrshyikYSc6sbTwxW+BRDuoeKxZvt2t4
+X-Gm-Message-State: AOJu0Ywgxq5qCliKkLMvX9BrpEZct96jrcrnjx3neVRUq7tRr6B1JjeG
+	EePnc6KI+22OXAKq8/yZeBSyFa5PTtbbZX/zFz0n7attgzUAHLdBIKuAnuyosOw=
+X-Google-Smtp-Source: AGHT+IHBC8yMvfpBU0+onzKrlaDVCnHDVjQCoibye6hJmIGdRXQU3TAea+VE4GZP205tIEuuyYEmpg==
+X-Received: by 2002:a05:600c:4853:b0:422:6765:2726 with SMTP id 5b1f17b1804b1-4248b9cb18dmr53858545e9.30.1719325576775;
+        Tue, 25 Jun 2024 07:26:16 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:b30c:4c5e:f49e:ab33])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4247d211881sm213770685e9.46.2024.06.25.07.26.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 07:26:16 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	dri-devel@lists.freedesktop.org
+Subject: [PATCH 0/3] drm: panel: add support lincoln LCD197 panel
+Date: Tue, 25 Jun 2024 16:25:47 +0200
+Message-ID: <20240625142552.1000988-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240622-md-i386-lib-test_fpu_glue-v1-1-a4e40b7b1264@quicinc.com>
-In-Reply-To: <20240622-md-i386-lib-test_fpu_glue-v1-1-a4e40b7b1264@quicinc.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Tue, 25 Jun 2024 23:25:44 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATDbq=ai0EX0BeKQg8r_mtSJ_68fL1R_ORpynX+BLh_Rw@mail.gmail.com>
-Message-ID: <CAK7LNATDbq=ai0EX0BeKQg8r_mtSJ_68fL1R_ORpynX+BLh_Rw@mail.gmail.com>
-Subject: Re: [PATCH] selftests/fpu: add missing MODULE_DESCRIPTION() macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Samuel Holland <samuel.holland@sifive.com>, 
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Michael Ellerman <mpe@ellerman.id.au>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Palmer Dabbelt <palmer@rivosinc.com>, Russell King <linux@armlinux.org.uk>, 
-	Thomas Gleixner <tglx@linutronix.de>, WANG Xuerui <git@xen0n.name>, Will Deacon <will@kernel.org>, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 22, 2024 at 11:55=E2=80=AFPM Jeff Johnson <quic_jjohnson@quicin=
-c.com> wrote:
->
-> make allmodconfig && make W=3D1 C=3D1 now reports:
+This patchset adds support for the Lincoln LCD197 1080x1920 DSI panel.
 
+Jerome Brunet (3):
+  dt-bindings: vendor-prefixes: add prefix for lincoln
+  dt-bindings: panel-simple-dsi: add lincoln LCD197 panel bindings
+  drm/panel: add lincoln lcd197 support
 
-This is a boilerplate, but C=3D1 is unrelated.
+ .../display/panel/panel-simple-dsi.yaml       |   2 +
+ .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
+ drivers/gpu/drm/panel/Kconfig                 |  11 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ drivers/gpu/drm/panel/panel-lincoln-lcd197.c  | 333 ++++++++++++++++++
+ 5 files changed, 349 insertions(+)
+ create mode 100644 drivers/gpu/drm/panel/panel-lincoln-lcd197.c
 
+-- 
+2.43.0
 
-W=3D1 actually prints this warning.
-
-
-
-> WARNING: modpost: missing MODULE_DESCRIPTION() in lib/test_fpu.o
->
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->
-> Fixes: 9613736d852d ("selftests/fpu: move FP code to a separate translati=
-on unit")
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  lib/test_fpu_glue.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/lib/test_fpu_glue.c b/lib/test_fpu_glue.c
-> index eef282a2715f..074f30301f29 100644
-> --- a/lib/test_fpu_glue.c
-> +++ b/lib/test_fpu_glue.c
-> @@ -59,4 +59,5 @@ static void __exit test_fpu_exit(void)
->  module_init(test_fpu_init);
->  module_exit(test_fpu_exit);
->
-> +MODULE_DESCRIPTION("Test cases for floating point operations");
->  MODULE_LICENSE("GPL");
->
-> ---
-> base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
-> change-id: 20240622-md-i386-lib-test_fpu_glue-437927d4afe3
->
-
-
---=20
-Best Regards
-Masahiro Yamada
 
