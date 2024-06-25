@@ -1,88 +1,55 @@
-Return-Path: <linux-kernel+bounces-228188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66213915C15
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:13:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B443C915C39
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C2CF1B219BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:13:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D67701C21229
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:31:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991523B782;
-	Tue, 25 Jun 2024 02:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o9bhcA56"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6210C3D97F;
+	Tue, 25 Jun 2024 02:30:58 +0000 (UTC)
+Received: from mta21.hihonor.com (mta21.honor.com [81.70.160.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A4F1CA87;
-	Tue, 25 Jun 2024 02:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A517F17557
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.160.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719281573; cv=none; b=elZgZPkButgBb6Iekc4WW9GoXyTq7DplTrVuDP6Ft+3ihke2EkOFDpgzNvaoJxxJaw7OrUsUG2XNmLqT0tbSv/x76Qf886sU8dGCJNiOYynE0KDa+TbbDZoD3jMFRbdPoJKwo8rWY7SRjk+jlerEsTeH3EOX4dRPnZpobZvUdP4=
+	t=1719282657; cv=none; b=iAQq12BjX/Fob5Lk6NLZslZpwPnhNkekTdi0k2qyO3ZIl0YLN52+fQhliCyZQB46Rh5bJWu9sepdhmjnpwtRVj3jkUDtfhNf9aDgBxsCIkE8Gsx/+HLFj2eAFtzkiSpqUCSVjOF+xihzdw2MoKIXM2VLwg4OzQ6NolEQS1EsneI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719281573; c=relaxed/simple;
-	bh=zEb+7jUTnpPDgL8XOtInDEisCizA4EONVseNOeyk4jo=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kDLcgyWgqgMjPisOKBCS9rwDHKhdW4ncKalabgDxqJud8JJJEdxQnpiLFoUFwOV3BHIiyGgGy+1JnjndZ1ELPvAm8nMFK6iM1qsFquOb+sWof2g0SkM0tA8yLvnRZUOtvZPHiahesiYzlBAFkkehDQ0XJlu/qTFhqHT7FHBbSYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o9bhcA56; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OIfuTA031942;
-	Tue, 25 Jun 2024 02:12:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=dbZHrYJd/1iSj/Un5JYJPB
-	/0IbbBuVdpQP3hqoiLc4M=; b=o9bhcA56LZdCx2/9/oUH8mcDwC/dCpY6U7BWyS
-	NU12yebrNsEe6U75zbgSKdaHRNOF6HReKqInak/lk6a+gxKmQNc4vEphoXYqcfnm
-	9zn+tqzKxrRJCE+YBuOmE7gTT/KMaNnhdylCbXscKlF1EllMVYh79dkg7ylAgbGl
-	9upIO2ELMuvceTeRQcS4jzIzeG7idGGdkzhlLo+c4xmUagU966ytwt6+39O78bhO
-	QEWxLX93xFcVP0wExlSJf3XOtF9KLXqZ1iK5YwoSu+0C7XsxkX/lamcldnFj+CAN
-	aQM0YBnGU+CdhE/VB3ljmMy+x740jYIrBxkp93LVKAOvn9Kg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv53g2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 02:12:38 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45P2Ca9K016792
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 02:12:36 GMT
-Received: from jiegan-gv.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 24 Jun 2024 19:12:29 -0700
-From: Jie Gan <quic_jiegan@quicinc.com>
-To: Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Suzuki K Poulose
-	<suzuki.poulose@arm.com>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        Konrad Dybcio <konradybcio@gmail.com>,
-        Mike Leach <mike.leach@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-CC: Jinlong Mao <quic_jinlmao@quicinc.com>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>,
-        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Yuanfang Zhang <quic_yuanfang@quicinc.com>,
-        Tao Zhang
-	<quic_taozha@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>,
-        Song Chai
-	<quic_songchai@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <andersson@kernel.org>,
-        <quic_yijiyang@quicinc.com>, <quic_yuanjiey@quicinc.com>,
-        <quic_liuxin@quicinc.com>, <quic_yanzl@quicinc.com>,
-        <quic_xinlon@quicinc.com>, <quic_xueqnie@quicinc.com>,
-        <quic_sijiwu@quicinc.com>
-Subject: [PATCH] Coresight: Set correct cs_mode for TPDM to fix disable issue
-Date: Tue, 25 Jun 2024 10:12:12 +0800
-Message-ID: <20240625021212.1443304-1-quic_jiegan@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719282657; c=relaxed/simple;
+	bh=iomRm20Fv4lgGab7Lfuj+y8q0NxNuuphxj04PxDX7fw=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZvWtiyRj8lNlGiBrKxfPWQcac2vFzuo7j1A1N8WZfCLN5U5ZPYMmmo3TCAK2ObkMD7XMJeTvNEox2UW0AnJeNDPOUaK+yB1Phg+GuvpMn2LtzJ5UNIWsIDfoHzsbh3h0wiohXnKvGOZ7idcKy4XzNdGavAPA/FDpHqHio3qH8Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.160.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
+Received: from w003.hihonor.com (unknown [10.68.17.88])
+	by mta21.hihonor.com (SkyGuard) with ESMTPS id 4W7T012wlGzYkxx6;
+	Tue, 25 Jun 2024 10:13:37 +0800 (CST)
+Received: from a011.hihonor.com (10.68.31.243) by w003.hihonor.com
+ (10.68.17.88) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.25; Tue, 25 Jun
+ 2024 10:14:34 +0800
+Received: from localhost.localdomain (10.144.23.14) by a011.hihonor.com
+ (10.68.31.243) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.25; Tue, 25 Jun
+ 2024 10:14:33 +0800
+From: wangzijie <wangzijie1@honor.com>
+To: <chao@kernel.org>
+CC: <jaegeuk@kernel.org>, <linux-f2fs-devel@lists.sourceforge.net>,
+	<linux-kernel@vger.kernel.org>, <zhiguo.niu@unisoc.com>,
+	<bintian.wang@honor.com>
+Subject: Re: [f2fs-dev] [PATCH v3] f2fs: reduce expensive checkpoint trigger frequency
+Date: Tue, 25 Jun 2024 10:14:33 +0800
+Message-ID: <20240625021433.798568-1-wangzijie1@honor.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240111081743.2999210-1-chao@kernel.org>
+References: <20240111081743.2999210-1-chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,62 +58,143 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TWm0AB9-P3ksuzcce7YIaMuRuSK0qjc9
-X-Proofpoint-ORIG-GUID: TWm0AB9-P3ksuzcce7YIaMuRuSK0qjc9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-24_22,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406250016
+X-ClientProxiedBy: w010.hihonor.com (10.68.28.113) To a011.hihonor.com
+ (10.68.31.243)
 
-The coresight_disable_source_sysfs function should verify the
-mode of the coresight device before disabling the source.
-However, the mode for the TPDM device is always set to
-CS_MODE_DISABLED, resulting in the check consistently failing.
-As a result, TPDM cannot be properly disabled.
+> We may trigger high frequent checkpoint for below case:
+> 1. mkdir /mnt/dir1; set dir1 encrypted
+> 2. touch /mnt/file1; fsync /mnt/file1
+> 3. mkdir /mnt/dir2; set dir2 encrypted
+> 4. touch /mnt/file2; fsync /mnt/file2
+> ...
+> 
+> Although, newly created dir and file are not related, due to
+> commit bbf156f7afa7 ("f2fs: fix lost xattrs of directories"), we will
+> trigger checkpoint whenever fsync() comes after a new encrypted dir
+> created.
+> 
+> In order to avoid such condition, let's record an entry including
+> directory's ino into global cache when we initialize encryption policy
+> in a checkpointed directory, and then only trigger checkpoint() when
+> target file's parent has non-persisted encryption policy, for the case
+> its parent is not checkpointed, need_do_checkpoint() has cover that
+> by verifying it with f2fs_is_checkpointed_node().
+> 
+> Reported-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> Tested-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> Reported-by: Yunlei He <heyunlei@hihonor.com>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+> v3:
+> - Recently, Zhiguo Niu reported the same issue, so I repost this
+> patch for comments.
+>  fs/f2fs/f2fs.h              |  2 ++
+>  fs/f2fs/file.c              |  3 +++
+>  fs/f2fs/xattr.c             | 16 ++++++++++++++--
+>  include/trace/events/f2fs.h |  3 ++-
+>  4 files changed, 21 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index e2e0ca45f881..0094a8c85f4a 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -279,6 +279,7 @@ enum {
+>  	APPEND_INO,		/* for append ino list */
+>  	UPDATE_INO,		/* for update ino list */
+>  	TRANS_DIR_INO,		/* for transactions dir ino list */
+> +	ENC_DIR_INO,		/* for encrypted dir ino list */
+>  	FLUSH_INO,		/* for multiple device flushing */
+>  	MAX_INO_ENTRY,		/* max. list */
+>  };
+> @@ -1147,6 +1148,7 @@ enum cp_reason_type {
+>  	CP_FASTBOOT_MODE,
+>  	CP_SPEC_LOG_NUM,
+>  	CP_RECOVER_DIR,
+> +	CP_ENC_DIR,
+>  };
+>  
+>  enum iostat_type {
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 8198afb5fb9c..18b33b1f0c83 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -218,6 +218,9 @@ static inline enum cp_reason_type need_do_checkpoint(struct inode *inode)
+>  		f2fs_exist_written_data(sbi, F2FS_I(inode)->i_pino,
+>  							TRANS_DIR_INO))
+>  		cp_reason = CP_RECOVER_DIR;
+> +	else if (f2fs_exist_written_data(sbi, F2FS_I(inode)->i_pino,
+> +							ENC_DIR_INO))
+> +		cp_reason = CP_ENC_DIR;
+>  
+>  	return cp_reason;
+>  }
+> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+> index f290fe9327c4..cbd1b88297fe 100644
+> --- a/fs/f2fs/xattr.c
+> +++ b/fs/f2fs/xattr.c
+> @@ -629,6 +629,7 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+>  			const char *name, const void *value, size_t size,
+>  			struct page *ipage, int flags)
+>  {
+> +	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
+>  	struct f2fs_xattr_entry *here, *last;
+>  	void *base_addr, *last_base_addr;
+>  	int found, newsize;
+> @@ -772,8 +773,19 @@ static int __f2fs_setxattr(struct inode *inode, int index,
+>  	if (index == F2FS_XATTR_INDEX_ENCRYPTION &&
+>  			!strcmp(name, F2FS_XATTR_NAME_ENCRYPTION_CONTEXT))
+>  		f2fs_set_encrypted_inode(inode);
+> -	if (S_ISDIR(inode->i_mode))
+> -		set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
+> +
+> +	if (S_ISDIR(inode->i_mode)) {
+> +		/*
+> +		 * In restrict mode, fsync() always tries triggering checkpoint
+> +		 * for all metadata consistency, in other mode, it only triggers
+> +		 * checkpoint when parent's encryption metadata updates.
+> +		 */
+> +		if (F2FS_OPTION(sbi).fsync_mode == FSYNC_MODE_STRICT)
+> +			set_sbi_flag(F2FS_I_SB(inode), SBI_NEED_CP);
+> +		else if (IS_ENCRYPTED(inode) &&
+> +			f2fs_is_checkpointed_node(sbi, inode->i_ino))
+> +			f2fs_add_ino_entry(sbi, inode->i_ino, ENC_DIR_INO);
+> +	}
+>  
+>  same:
+>  	if (is_inode_flag_set(inode, FI_ACL_MODE)) {
+> diff --git a/include/trace/events/f2fs.h b/include/trace/events/f2fs.h
+> index 7ed0fc430dc6..48f2e399e184 100644
+> --- a/include/trace/events/f2fs.h
+> +++ b/include/trace/events/f2fs.h
+> @@ -139,7 +139,8 @@ TRACE_DEFINE_ENUM(EX_BLOCK_AGE);
+>  		{ CP_NODE_NEED_CP,	"node needs cp" },		\
+>  		{ CP_FASTBOOT_MODE,	"fastboot mode" },		\
+>  		{ CP_SPEC_LOG_NUM,	"log type is 2" },		\
+> -		{ CP_RECOVER_DIR,	"dir needs recovery" })
+> +		{ CP_RECOVER_DIR,	"dir needs recovery" },		\
+> +		{ CP_ENC_DIR,		"persist encryption policy" })
+>  
+>  #define show_shutdown_mode(type)					\
+>  	__print_symbolic(type,						\
+> -- 
+> 2.40.1
 
-To fix the issue:
-Configure CS_MODE_SYSFS/CS_MODE_PERF during the enablement of TPDM.
-Configure CS_MODE_DISABLED during the disablement of TPDM.
+Hi, Chao
+I noticed the discussion about patch v2, Jaegeuk mentioned no encryption case:
+1) parent is checkpointed
+2) set_xattr(dir) w/ new xnid
+3) create(file)
+4) fsync(file)
+We will not trigger checkpoint() after this change.
+So, how about adding a rule in need_do_checkpoint? We can judge if the parent has xnid 
+being checkpointed or not, if not we can still trigger checkpoint() and keep the same 
+behavior before this change.
 
-Fixes: 1f5149c7751c("coresight: Move all sysfs code to sysfs file")
-Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
----
- drivers/hwtracing/coresight/coresight-tpdm.c | 6 ++++++
- 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
-index a9708ab0d488..90a5105f6199 100644
---- a/drivers/hwtracing/coresight/coresight-tpdm.c
-+++ b/drivers/hwtracing/coresight/coresight-tpdm.c
-@@ -449,6 +449,11 @@ static int tpdm_enable(struct coresight_device *csdev, struct perf_event *event,
- 		return -EBUSY;
- 	}
- 
-+	if (!coresight_take_mode(csdev, mode)) {
-+		spin_unlock(&drvdata->spinlock);
-+		return -EBUSY;
-+	}
-+
- 	__tpdm_enable(drvdata);
- 	drvdata->enable = true;
- 	spin_unlock(&drvdata->spinlock);
-@@ -506,6 +511,7 @@ static void tpdm_disable(struct coresight_device *csdev,
- 	}
- 
- 	__tpdm_disable(drvdata);
-+	coresight_set_mode(csdev, CS_MODE_DISABLED);
- 	drvdata->enable = false;
- 	spin_unlock(&drvdata->spinlock);
- 
--- 
-2.34.1
+
+_______________________________________________
+Linux-f2fs-devel mailing list
+Linux-f2fs-devel@lists.sourceforge.net
+https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
 
