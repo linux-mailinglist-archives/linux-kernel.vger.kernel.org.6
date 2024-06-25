@@ -1,270 +1,335 @@
-Return-Path: <linux-kernel+bounces-228166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CF01915BBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:38:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 593D3915BC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:39:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A0BA1F225FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:38:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CB5D1C215C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:39:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 541071BC2F;
-	Tue, 25 Jun 2024 01:38:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89AC91AAD7;
+	Tue, 25 Jun 2024 01:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iibIp8TP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cNwEjtrG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F17619BA6;
-	Tue, 25 Jun 2024 01:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC65E1805A;
+	Tue, 25 Jun 2024 01:39:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719279480; cv=none; b=IOYdtLE+vTsydYojuDcwmVlNX0h+DLLv68WkTG+5iOlsO9OR6Lgz7KFJ3UncdYuK7CAA5zJEFgOMUST8Tz7iydWCKL6LBuqQduATT1qxZ5oqBy6six4EdGOq+VunC/hJNvRHmi8sfeCq/VJAEARPofMn2eyq2ZIfshbAKyiInx0=
+	t=1719279565; cv=none; b=bc631Wc5SaqQQG2XtbUr2qJdUGrb3nFSniASPRygL8wgjmWX13rtEt6G9bEVRGraKG9jT0AtBtcmsKpK0WASmWdzpHJe1PaVipP8H3S9HA/a7fRorAr8vVUEkmFwYr8U160iBjUCqFtXoOX2UUE4cIBogBIR2EsVN4S152mZ9F0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719279480; c=relaxed/simple;
-	bh=T2IKRMyiJU/ikBIc7GfMfGKcl29jbPUqP8MY5Vns/lA=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=FR2a/tymMmi1l2PTL2Z4HIfvpLCI5HFBMjMKYJZ7iY7/VYCuCDFSlWFK/z1R+uVSdXCKpjuR5L5ibpWN1gDNKEqW7GuegMdms6huD78kJeKr6j/+uxe2tSdnruciTBOwyfsWEQ0KFCBMHAR2IRCMWANmxr47yqtEyw6xqc2GcXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iibIp8TP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E558FC2BBFC;
-	Tue, 25 Jun 2024 01:37:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719279479;
-	bh=T2IKRMyiJU/ikBIc7GfMfGKcl29jbPUqP8MY5Vns/lA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iibIp8TP46s9ZfiehKlkWtJn2poV7mENZVjklt7JGfMwfo2nctb3xn1hOsR6e3ST7
-	 3MuR2f/22x9f2YYV6h7NW/9RXeZy4/8oK7PhAbugbRxtLPCstcrUiBsjI0jbDgeZBD
-	 ZDihHFKt9YSBxo84B+HtbRSSDqKymjQuIht2za0urcM0iMJaLG5Wf9QzItxLUxYrxy
-	 FvOrMRMSKMowqw5BCNSC2synjyUP54sGX43IINIb4Pi4DFhzt+vFAj1k+vhLQAzEwk
-	 hUFTk1U/K2tpE3yBy+0rfEHvg1cFspz0zsTj5KvAzCwbshYKN7qPcln2iM/TK+zutv
-	 hBxJLCdhIJuug==
-Date: Tue, 25 Jun 2024 10:37:53 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt
- <rostedt@goodmis.org>, Florent Revest <revest@chromium.org>,
- linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Sven
- Schnelle <svens@linux.ibm.com>, Alexei Starovoitov <ast@kernel.org>, Jiri
- Olsa <jolsa@kernel.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel
- Borkmann <daniel@iogearbox.net>, Alan Maguire <alan.maguire@oracle.com>,
- Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, Guo Ren <guoren@kernel.org>
-Subject: Re: [PATCH v11 00/18] tracing: fprobe: function_graph:
- Multi-function graph and fprobe on fgraph
-Message-Id: <20240625103753.600882dbd43831c043f2a050@kernel.org>
-In-Reply-To: <171858878797.288820.237119113242007537.stgit@devnote2>
-References: <171858878797.288820.237119113242007537.stgit@devnote2>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719279565; c=relaxed/simple;
+	bh=79qEk3704LHIIswmaBCVRUzAWY9W/iAD4N/6FIpXWHU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LkFzaVEyT3x5ppSSsAmgFdT83ncG66hfnAG8FvsBti/3/48rx13/b/VO5aL+WXCy1hMnH1BL6Uox/u8PeW0/jf/7tAEnS+EcX88oR/usRbx2BEyuxjgWgtHEmDPuPy043u6H2xvjkRB42W+RlVjJuYKR/WmzKp8R7pgbjw6FMiE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cNwEjtrG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OIflN1031388;
+	Tue, 25 Jun 2024 01:39:12 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	V64VIrn8zmRYN5m23RAwWQvDPO2+pSQOEmxV/BgwgkI=; b=cNwEjtrGhHacKhV3
+	C+l+p12yAwYE89TKGZVCrLxGqmoBeGsI9wBWCke5I/yyP1A6ufiJel/GRNpooDVu
+	UzTv3Oq8aNNoWUkzrGhJv6pbadZ8cLyUpkZTy21H9TXx7K9U0mxAm0OtFrMNZYrT
+	1tVr91ItLUR8kxa+7HVCf9acu9RkMykbWzS1AqzmDG86rySaJP04x13w16+N26JF
+	gGTsiOz/C5nlTbsJDFpliV0+JLpfT46kc6Bc1Fw2mZ6sYBHcyIdBhLWzfeWvHGe7
+	DPRaWGTZbJVrKnvW5nweh6ypF9ESpbpPS7z7AfZXTPeUmDDimVrKqC1Q8WEcRbST
+	gAFJKQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv51qh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 01:39:11 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45P1d9xt007813
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 01:39:09 GMT
+Received: from [10.110.106.13] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
+ 2024 18:39:08 -0700
+Message-ID: <bbdb8f56-4948-b0dd-55bd-ca59b78ed559@quicinc.com>
+Date: Mon, 24 Jun 2024 18:39:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-On Mon, 17 Jun 2024 10:46:28 +0900
-"Masami Hiramatsu (Google)" <mhiramat@kernel.org> wrote:
-
-> Hi,
-> 
-> Here is the 11th version of the series to re-implement the fprobe on
-> function-graph tracer. The previous version is;
-> 
-> https://lore.kernel.org/all/171509088006.162236.7227326999861366050.stgit@devnote2/
-> 
-> Most of the patches in the previous version (for multiple function graph
-> trace instance) are already merged via tracing/for-next. This version
-> is the remaining part, fprobe implement on fgraph. Basically just moves
-> on the updated fgraph implementation, and no major changes.
-> 
-
-BTW, I've measured the performance improvement with this series using
-bpf bench.
-
-Before:
-kprobe-multi   :    6.507 ± 0.065M/s 
-kretprobe-multi:    3.518 ± 0.002M/s 
-
-After:
-kprobe-multi   :    6.183 ± 0.094M/s 
-kretprobe-multi:    4.754 ± 0.004M/s 
-
-So kprobe-multi (fprobe fentry probe) is slightly down (-5%), and
-kretprobe-multi (fprobe fexit probe) is improved (35%).
-I think this fentry probe regression may come from pushing all data
-on shadow stack. So it can be solved by using ftrace but not fgraph
-if fprobe does not have any fexit handler.
-
-Thank you,
+MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH RFC v2] drm/msm/dpu: Configure DP INTF/PHY selector
+Content-Language: en-US
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Daniel
+ Vetter <daniel@ffwll.ch>
+CC: Bjorn Andersson <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240613-dp-phy-sel-v2-1-99af348c9bae@linaro.org>
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20240613-dp-phy-sel-v2-1-99af348c9bae@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: CHHwm6T6di2oIGbc70qwmJawoqFEfkBg
+X-Proofpoint-ORIG-GUID: CHHwm6T6di2oIGbc70qwmJawoqFEfkBg
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-24_22,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406250011
 
 
-> Overview
-> --------
-> This series rewrites the fprobe on this function-graph.
-> The purposes of this change are;
+
+On 6/13/2024 4:17 AM, Dmitry Baryshkov wrote:
+> From: Bjorn Andersson <andersson@kernel.org>
 > 
->  1) Remove dependency of the rethook from fprobe so that we can reduce
->    the return hook code and shadow stack.
+> Some platforms provides a mechanism for configuring the mapping between
+> (one or two) DisplayPort intfs and their PHYs.
 > 
->  2) Make 'ftrace_regs' the common trace interface for the function
->    boundary.
+> In particular SC8180X provides this functionality, without a default
+> configuration, resulting in no connection between its two external
+> DisplayPort controllers and any PHYs.
 > 
-> 1) Currently we have 2(or 3) different function return hook codes,
->  the function-graph tracer and rethook (and legacy kretprobe).
->  But since this  is redundant and needs double maintenance cost,
->  I would like to unify those. From the user's viewpoint, function-
->  graph tracer is very useful to grasp the execution path. For this
->  purpose, it is hard to use the rethook in the function-graph
->  tracer, but the opposite is possible. (Strictly speaking, kretprobe
->  can not use it because it requires 'pt_regs' for historical reasons.)
+
+I have to cross-check internally about what makes it mandatory to 
+program this only for sc8180xp. We were not programming this so far for 
+any chipset and this register is present all the way from sm8150 till 
+xe10100 and all the chipsets do not have a correct default value which 
+makes me think whether this is required to be programmed.
+
+Will update this thread once I do.
+
+> The change implements the logic for optionally configuring which PHY
+> each of the DP INTFs should be connected to and marks the SC8180X DPU to
+> program 2 entries.
 > 
-> 2) Now the fprobe provides the 'pt_regs' for its handler, but that is
->  wrong for the function entry and exit. Moreover, depending on the
->  architecture, there is no way to accurately reproduce 'pt_regs'
->  outside of interrupt or exception handlers. This means fprobe should
->  not use 'pt_regs' because it does not use such exceptions.
->  (Conversely, kprobe should use 'pt_regs' because it is an abstract
->   interface of the software breakpoint exception.)
+> For now the request is simply to program the mapping 1:1, any support
+> for alternative mappings is left until the use case arrise.
 > 
-> This series changes fprobe to use function-graph tracer for tracing
-> function entry and exit, instead of mixture of ftrace and rethook.
-> Unlike the rethook which is a per-task list of system-wide allocated
-> nodes, the function graph's ret_stack is a per-task shadow stack.
-> Thus it does not need to set 'nr_maxactive' (which is the number of
-> pre-allocated nodes).
-> Also the handlers will get the 'ftrace_regs' instead of 'pt_regs'.
-> Since eBPF mulit_kprobe/multi_kretprobe events still use 'pt_regs' as
-> their register interface, this changes it to convert 'ftrace_regs' to
-> 'pt_regs'. Of course this conversion makes an incomplete 'pt_regs',
-> so users must access only registers for function parameters or
-> return value. 
+> Note that e.g. msm-4.14 unconditionally maps INTF 0 to PHY 0 on all
+> rlatforms, so perhaps this is needed in order to get DisplayPort working
+> on some other platforms as well.
 > 
-> Design
-> ------
-> Instead of using ftrace's function entry hook directly, the new fprobe
-> is built on top of the function-graph's entry and return callbacks
-> with 'ftrace_regs'.
+> Signed-off-by: Bjorn Andersson <andersson@kernel.org>
+> Co-developed-by: Bjorn Andersson <andersson@kernel.org>
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+> Changes in v2:
+> - Removed entry from the catalog.
+> - Reworked the interface of dpu_hw_dp_phy_intf_sel(). Pass two entries
+>    for the PHYs instead of three entries.
+> - It seems the register isn't present on sdm845, enabled the callback
+>    only for DPU >= 5.x
+> - Added a comment regarding the data being platform-specific.
+> - Link to v1: https://lore.kernel.org/r/20230612221047.1886709-1-quic_bjorande@quicinc.com
+> ---
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c | 39 +++++++++++++++++++++++++++---
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h | 18 ++++++++++++--
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h   |  7 ++++++
+>   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c    | 11 ++++++++-
+>   4 files changed, 69 insertions(+), 6 deletions(-)
 > 
-> Since the fprobe requires access to 'ftrace_regs', the architecture
-> must support CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS and
-> CONFIG_HAVE_FTRACE_GRAPH_FUNC, which enables to call function-graph
-> entry callback with 'ftrace_regs', and also
-> CONFIG_HAVE_FUNCTION_GRAPH_FREGS, which passes the ftrace_regs to
-> return_to_handler.
-> 
-> All fprobes share a single function-graph ops (means shares a common
-> ftrace filter) similar to the kprobe-on-ftrace. This needs another
-> layer to find corresponding fprobe in the common function-graph
-> callbacks, but has much better scalability, since the number of
-> registered function-graph ops is limited.
-> 
-> In the entry callback, the fprobe runs its entry_handler and saves the
-> address of 'fprobe' on the function-graph's shadow stack as data. The
-> return callback decodes the data to get the 'fprobe' address, and runs
-> the exit_handler.
-> 
-> The fprobe introduces two hash-tables, one is for entry callback which
-> searches fprobes related to the given function address passed by entry
-> callback. The other is for a return callback which checks if the given
-> 'fprobe' data structure pointer is still valid. Note that it is
-> possible to unregister fprobe before the return callback runs. Thus
-> the address validation must be done before using it in the return
-> callback.
-> 
-> Download
-> --------
-> This series can be applied against the ftrace/for-next branch in
-> linux-trace tree.
-> 
-> This series can also be found below branch.
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/fprobe-on-fgraph
-> 
-> Thank you,
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
+> index 05e48cf4ec1d..a11fdbefc8d2 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c
+> @@ -231,8 +231,38 @@ static void dpu_hw_intf_audio_select(struct dpu_hw_mdp *mdp)
+>   	DPU_REG_WRITE(c, HDMI_DP_CORE_SELECT, 0x1);
+>   }
+>   
+> +static void dpu_hw_dp_phy_intf_sel(struct dpu_hw_mdp *mdp,
+> +				   enum dpu_dp_phy_sel phys[2])
+> +{
+> +	struct dpu_hw_blk_reg_map *c = &mdp->hw;
+> +	unsigned int intf;
+> +	u32 sel = 0;
+> +
+> +	sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_INTF0, phys[0]);
+> +	sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_INTF1, phys[1]);
+> +
+> +	for (intf = 0; intf < 2; intf++) {
+
+I wonder if ARRAY_SIZE(phys) is better here.
+
+> +		switch (phys[intf]) {
+> +		case DPU_DP_PHY_0:
+> +			sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_PHY0, intf + 1);
+> +			break;
+> +		case DPU_DP_PHY_1:
+> +			sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_PHY1, intf + 1);
+> +			break;
+> +		case DPU_DP_PHY_2:
+> +			sel |= FIELD_PREP(MDP_DP_PHY_INTF_SEL_PHY2, intf + 1);
+> +			break;
+> +		default:
+> +			/* ignore */
+> +			break;
+> +		}
+> +	}
+> +
+> +	DPU_REG_WRITE(c, MDP_DP_PHY_INTF_SEL, sel);
+> +}
+> +
+>   static void _setup_mdp_ops(struct dpu_hw_mdp_ops *ops,
+> -		unsigned long cap)
+> +		unsigned long cap, const struct dpu_mdss_version *mdss_rev)
+>   {
+>   	ops->setup_split_pipe = dpu_hw_setup_split_pipe;
+>   	ops->setup_clk_force_ctrl = dpu_hw_setup_clk_force_ctrl;
+> @@ -245,6 +275,9 @@ static void _setup_mdp_ops(struct dpu_hw_mdp_ops *ops,
+>   
+>   	ops->get_safe_status = dpu_hw_get_safe_status;
+>   
+> +	if (mdss_rev->core_major_ver >= 5)
+> +		ops->dp_phy_intf_sel = dpu_hw_dp_phy_intf_sel;
+> +
+>   	if (cap & BIT(DPU_MDP_AUDIO_SELECT))
+>   		ops->intf_audio_select = dpu_hw_intf_audio_select;
+>   }
+> @@ -252,7 +285,7 @@ static void _setup_mdp_ops(struct dpu_hw_mdp_ops *ops,
+>   struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
+>   				      const struct dpu_mdp_cfg *cfg,
+>   				      void __iomem *addr,
+> -				      const struct dpu_mdss_cfg *m)
+> +				      const struct dpu_mdss_version *mdss_rev)
+>   {
+>   	struct dpu_hw_mdp *mdp;
+>   
+> @@ -270,7 +303,7 @@ struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
+>   	 * Assign ops
+>   	 */
+>   	mdp->caps = cfg;
+> -	_setup_mdp_ops(&mdp->ops, mdp->caps->features);
+> +	_setup_mdp_ops(&mdp->ops, mdp->caps->features, mdss_rev);
+>   
+>   	return mdp;
+>   }
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h
+> index 6f3dc98087df..3a17e63b851c 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h
+> @@ -67,6 +67,13 @@ struct dpu_vsync_source_cfg {
+>   	u32 vsync_source;
+>   };
+>   
+> +enum dpu_dp_phy_sel {
+> +	DPU_DP_PHY_NONE,
+> +	DPU_DP_PHY_0,
+> +	DPU_DP_PHY_1,
+> +	DPU_DP_PHY_2,
+> +};
+> +
+>   /**
+>    * struct dpu_hw_mdp_ops - interface to the MDP TOP Hw driver functions
+>    * Assumption is these functions will be called after clocks are enabled.
+> @@ -125,6 +132,13 @@ struct dpu_hw_mdp_ops {
+>   	void (*get_safe_status)(struct dpu_hw_mdp *mdp,
+>   			struct dpu_danger_safe_status *status);
+>   
+> +	/**
+> +	 * dp_phy_intf_sel - configure intf to phy mapping
+> +	 * @mdp: mdp top context driver
+> +	 * @phys: list of phys the DP interfaces should be connected to. 0 disables the INTF.
+> +	 */
+> +	void (*dp_phy_intf_sel)(struct dpu_hw_mdp *mdp, enum dpu_dp_phy_sel phys[2]);
+> +
+>   	/**
+>   	 * intf_audio_select - select the external interface for audio
+>   	 * @mdp: mdp top context driver
+> @@ -148,12 +162,12 @@ struct dpu_hw_mdp {
+>    * @dev:  Corresponding device for devres management
+>    * @cfg:  MDP TOP configuration from catalog
+>    * @addr: Mapped register io address of MDP
+> - * @m:    Pointer to mdss catalog data
+> + * @mdss_rev: dpu core's major and minor versions
+>    */
+>   struct dpu_hw_mdp *dpu_hw_mdptop_init(struct drm_device *dev,
+>   				      const struct dpu_mdp_cfg *cfg,
+>   				      void __iomem *addr,
+> -				      const struct dpu_mdss_cfg *m);
+> +				      const struct dpu_mdss_version *mdss_rev);
+>   
+>   void dpu_hw_mdp_destroy(struct dpu_hw_mdp *mdp);
+>   
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h
+> index 5acd5683d25a..f1acc04089af 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h
+> @@ -60,6 +60,13 @@
+>   #define MDP_WD_TIMER_4_LOAD_VALUE       0x448
+>   #define DCE_SEL                         0x450
+>   
+> +#define MDP_DP_PHY_INTF_SEL             0x460
+> +#define MDP_DP_PHY_INTF_SEL_INTF0		GENMASK(3, 0)
+> +#define MDP_DP_PHY_INTF_SEL_INTF1		GENMASK(6, 3)
+> +#define MDP_DP_PHY_INTF_SEL_PHY0		GENMASK(9, 6)
+> +#define MDP_DP_PHY_INTF_SEL_PHY1		GENMASK(12, 9)
+> +#define MDP_DP_PHY_INTF_SEL_PHY2		GENMASK(15, 12)
+
+These masks do not match the docs, the below ones are what I see:
+
+#define MDP_DP_PHY_INTF_SEL_INTF0		GENMASK(2, 0)
+#define MDP_DP_PHY_INTF_SEL_INTF1		GENMASK(5, 3)
+#define MDP_DP_PHY_INTF_SEL_PHY0		GENMASK(8, 6)
+#define MDP_DP_PHY_INTF_SEL_PHY1		GENMASK(11, 9)
+#define MDP_DP_PHY_INTF_SEL_PHY2		GENMASK(14, 12)
+
+> +
+>   #define MDP_PERIPH_TOP0			MDP_WD_TIMER_0_CTL
+>   #define MDP_PERIPH_TOP0_END		CLK_CTRL3
+>   
+> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+> index 1955848b1b78..9db5a784c92f 100644
+> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+> @@ -1102,7 +1102,7 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
+>   	dpu_kms->hw_mdp = dpu_hw_mdptop_init(dev,
+>   					     dpu_kms->catalog->mdp,
+>   					     dpu_kms->mmio,
+> -					     dpu_kms->catalog);
+> +					     dpu_kms->catalog->mdss_ver);
+>   	if (IS_ERR(dpu_kms->hw_mdp)) {
+>   		rc = PTR_ERR(dpu_kms->hw_mdp);
+>   		DPU_ERROR("failed to get hw_mdp: %d\n", rc);
+> @@ -1137,6 +1137,15 @@ static int dpu_kms_hw_init(struct msm_kms *kms)
+>   		goto err_pm_put;
+>   	}
+>   
+> +	/*
+> +	 * We need to program DP <-> PHY relationship only for SC8180X.  If any
+> +	 * other platform requires the same kind of programming, or if the INTF
+> +	 * <->DP relationship isn't static anymore, this needs to be configured
+> +	 * through the DT.
+> +	 */
+> +	if (of_device_is_compatible(dpu_kms->pdev->dev.of_node, "qcom,sc8180x-dpu"))
+> +		dpu_kms->hw_mdp->ops.dp_phy_intf_sel(dpu_kms->hw_mdp, (unsigned int[]){ 1, 2, });
+> +
+>   	dpu_kms->hw_intr = dpu_hw_intr_init(dev, dpu_kms->mmio, dpu_kms->catalog);
+>   	if (IS_ERR(dpu_kms->hw_intr)) {
+>   		rc = PTR_ERR(dpu_kms->hw_intr);
 > 
 > ---
+> base-commit: 03d44168cbd7fc57d5de56a3730427db758fc7f6
+> change-id: 20240613-dp-phy-sel-1b06dc48ed73
 > 
-> Masami Hiramatsu (Google) (18):
->       tracing: Add a comment about ftrace_regs definition
->       tracing: Rename ftrace_regs_return_value to ftrace_regs_get_return_value
->       function_graph: Pass ftrace_regs to entryfunc
->       function_graph: Replace fgraph_ret_regs with ftrace_regs
->       function_graph: Pass ftrace_regs to retfunc
->       fprobe: Use ftrace_regs in fprobe entry handler
->       fprobe: Use ftrace_regs in fprobe exit handler
->       tracing: Add ftrace_partial_regs() for converting ftrace_regs to pt_regs
->       tracing: Add ftrace_fill_perf_regs() for perf event
->       tracing/fprobe: Enable fprobe events with CONFIG_DYNAMIC_FTRACE_WITH_ARGS
->       bpf: Enable kprobe_multi feature if CONFIG_FPROBE is enabled
->       ftrace: Add CONFIG_HAVE_FTRACE_GRAPH_FUNC
->       fprobe: Rewrite fprobe on function-graph tracer
->       tracing/fprobe: Remove nr_maxactive from fprobe
->       selftests: ftrace: Remove obsolate maxactive syntax check
->       selftests/ftrace: Add a test case for repeating register/unregister fprobe
->       Documentation: probes: Update fprobe on function-graph tracer
->       fgraph: Skip recording calltime/rettime if it is not nneeded
-> 
-> 
->  Documentation/trace/fprobe.rst                     |   42 +
->  arch/arm64/Kconfig                                 |    3 
->  arch/arm64/include/asm/ftrace.h                    |   47 +
->  arch/arm64/kernel/asm-offsets.c                    |   12 
->  arch/arm64/kernel/entry-ftrace.S                   |   32 +
->  arch/arm64/kernel/ftrace.c                         |   20 +
->  arch/loongarch/Kconfig                             |    4 
->  arch/loongarch/include/asm/ftrace.h                |   32 -
->  arch/loongarch/kernel/asm-offsets.c                |   12 
->  arch/loongarch/kernel/ftrace_dyn.c                 |   10 
->  arch/loongarch/kernel/mcount.S                     |   17 -
->  arch/loongarch/kernel/mcount_dyn.S                 |   14 
->  arch/powerpc/Kconfig                               |    1 
->  arch/powerpc/include/asm/ftrace.h                  |   15 
->  arch/powerpc/kernel/trace/ftrace.c                 |    2 
->  arch/powerpc/kernel/trace/ftrace_64_pg.c           |   10 
->  arch/riscv/Kconfig                                 |    3 
->  arch/riscv/include/asm/ftrace.h                    |   26 -
->  arch/riscv/kernel/ftrace.c                         |   17 +
->  arch/riscv/kernel/mcount.S                         |   24 -
->  arch/s390/Kconfig                                  |    3 
->  arch/s390/include/asm/ftrace.h                     |   39 +
->  arch/s390/kernel/asm-offsets.c                     |    6 
->  arch/s390/kernel/mcount.S                          |    9 
->  arch/x86/Kconfig                                   |    4 
->  arch/x86/include/asm/ftrace.h                      |   37 +
->  arch/x86/kernel/ftrace.c                           |   50 +-
->  arch/x86/kernel/ftrace_32.S                        |   15 
->  arch/x86/kernel/ftrace_64.S                        |   17 -
->  include/linux/fprobe.h                             |   57 +-
->  include/linux/ftrace.h                             |  136 ++++
->  kernel/trace/Kconfig                               |   23 +
->  kernel/trace/bpf_trace.c                           |   19 -
->  kernel/trace/fgraph.c                              |   96 ++-
->  kernel/trace/fprobe.c                              |  637 ++++++++++++++------
->  kernel/trace/ftrace.c                              |    6 
->  kernel/trace/trace.h                               |    6 
->  kernel/trace/trace_fprobe.c                        |  147 ++---
->  kernel/trace/trace_functions_graph.c               |   10 
->  kernel/trace/trace_irqsoff.c                       |    6 
->  kernel/trace/trace_probe_tmpl.h                    |    2 
->  kernel/trace/trace_sched_wakeup.c                  |    6 
->  kernel/trace/trace_selftest.c                      |   11 
->  lib/test_fprobe.c                                  |   51 --
->  samples/fprobe/fprobe_example.c                    |    4 
->  .../test.d/dynevent/add_remove_fprobe_repeat.tc    |   19 +
->  .../ftrace/test.d/dynevent/fprobe_syntax_errors.tc |    4 
->  47 files changed, 1145 insertions(+), 618 deletions(-)
->  create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe_repeat.tc
-> 
-> --
-> Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Best regards,
 
