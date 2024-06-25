@@ -1,113 +1,116 @@
-Return-Path: <linux-kernel+bounces-229735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FACC917360
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:26:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBD54917368
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91A992817BA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:26:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94E922822C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BC117DE2E;
-	Tue, 25 Jun 2024 21:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oEiDbm9y"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14CE217E465;
+	Tue, 25 Jun 2024 21:27:31 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00383B7A8;
-	Tue, 25 Jun 2024 21:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ACFF145FEB;
+	Tue, 25 Jun 2024 21:27:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719350754; cv=none; b=rHTpBOphwds47aAx/uJtLsN/LgvCmmnH+Xcfwuz3Hs+JaIRCmSuY/mH+V1hDTCHHapzvGxonzI01/n6R3ADLobQdg0qvo5eXVuOjIxA+x+gUpEBW/G7ibnbe/+SM3fmFPWd0MprbWC4+bUV+3PRWDCr1Y/zyBQDVegXMMIxnVy0=
+	t=1719350850; cv=none; b=ijtpYuIhXMJtT8GC38Mw8JoUO3uj/jFDqFeDULBAWHR0cRP81LUesdhkbkzITcnLsmOCLWMHqOZTy1OPp8viyjosaJ1mkm3sGi1bVRdTISk1nti1c0az9me+7jgZ2xQrLUEiWXwpeNgaBf44RGQpgULvydEklDpNdzNoDTvOdq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719350754; c=relaxed/simple;
-	bh=2fpgo7wWPpnHiHwgIsqvXf8aq+M/0Mjk/P4VKhmqk9g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fnqpxYJ5CFuQpp9s824ZaqPwZJcdFMvw0Zp7AuGIlLzngs3fVO+ZXFTchBVc/UeVlp1vy3hMtROWC21D/2+B6NPaBQiJ+XG4BR0wv7VBy4GyNQu0NUJQ6fnAL/OJzI8MSY9bCjBCxAduDTENLrdk2RBEABk/63OIwZv4IF7BUfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oEiDbm9y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF14EC32781;
-	Tue, 25 Jun 2024 21:25:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719350754;
-	bh=2fpgo7wWPpnHiHwgIsqvXf8aq+M/0Mjk/P4VKhmqk9g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oEiDbm9yxknpltYIgrfYLyaP7Bls6wfZZ1GnEI7Xx2/Yc4CpIhBhEiba25HOhokrh
-	 RZj9WDfLXKZFKgdxDjR37qg7Dgr0gmgFpImRkXOkZzU9C5ur/Ji9PZY8mnTlCLqFiQ
-	 KJ+SRXhUsSzeevRs8o4kVel1VKJ+xGOI1MPDSKN5grEsP2+bvodeveJ2SavHisb99P
-	 naEYdMJc+BrqDLJOBfGA9qoe+jTy6nBkWHKgJpq52BYK2d+KWM1ueokIhY3O7S1co0
-	 0l5kx/OkzOdb7vY7oEIFRSSJjNsXbyp70qdHwgOhp4NF4YP9ulhJeMY+OM0GyprFE/
-	 rGheLG9gLYjmg==
-Date: Tue, 25 Jun 2024 22:25:48 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Oreoluwa Babatunde <quic_obabatun@quicinc.com>, robh@kernel.org,
-	saravanak@google.com, hch@lst.de, m.szyprowski@samsung.com,
-	robin.murphy@arm.com, will@kernel.org, catalin.marinas@arm.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	iommu@lists.linux.dev, kernel@quicinc.com
-Subject: Re: [PATCH v6 1/4] of: reserved_mem: Restruture how the reserved
- memory regions are processed
-Message-ID: <abab36b4-e9ef-40ff-adbd-fde0f016f3b8@sirena.org.uk>
-References: <20240528223650.619532-1-quic_obabatun@quicinc.com>
- <20240528223650.619532-2-quic_obabatun@quicinc.com>
- <20240610213403.GA1697364@thelio-3990X>
- <Zmd0Zg7oMneJLyHd@finisterre.sirena.org.uk>
+	s=arc-20240116; t=1719350850; c=relaxed/simple;
+	bh=Mnk6eHE9OhQhHiuBtUICogEcEiSQ4Mx1OmMu4IAH1n4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dHU9HbBjSXGzqeai0RqFkGATp7B+seJmjcuK30lkVod7nc5GqzMlnvd+xCXmNBnXgvxdt4s12QtEeOEo5CmoDH/03JiBjm4p05dCONFMhK4vd65aW/Rx8xoRRuFhION+gfjm0SdK6eqDaiTO73ftB7qKDjFmwFAalf9V4ph8Aj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1074C32781;
+	Tue, 25 Jun 2024 21:27:28 +0000 (UTC)
+Date: Tue, 25 Jun 2024 17:27:27 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Carlos Bilbao
+ <carlos.bilbao.osdev@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, ksummit@lists.linux.dev
+Subject: Re: [PATCH 2/2] Documentation: best practices for using Link
+ trailers
+Message-ID: <20240625172727.3dd2ad67@rorschach.local.home>
+In-Reply-To: <20240618-docs-patch-msgid-link-v1-2-30555f3f5ad4@linuxfoundation.org>
+References: <20240618-docs-patch-msgid-link-v1-0-30555f3f5ad4@linuxfoundation.org>
+	<20240618-docs-patch-msgid-link-v1-2-30555f3f5ad4@linuxfoundation.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="laeNYeGrVdu/YCAl"
-Content-Disposition: inline
-In-Reply-To: <Zmd0Zg7oMneJLyHd@finisterre.sirena.org.uk>
-X-Cookie: Some equipment shown is optional.
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Tue, 18 Jun 2024 12:42:11 -0400
+Konstantin Ryabitsev <konstantin@linuxfoundation.org> wrote:
+
+> 
+> diff --git a/Documentation/process/maintainer-tip.rst b/Documentation/process/maintainer-tip.rst
+> index 64739968afa6..57ffa553c21e 100644
+> --- a/Documentation/process/maintainer-tip.rst
+> +++ b/Documentation/process/maintainer-tip.rst
+> @@ -375,14 +375,26 @@ following tag ordering scheme:
+>     For referring to an email on LKML or other kernel mailing lists,
+>     please use the lore.kernel.org redirector URL::
+>  
+> -     https://lore.kernel.org/r/email-message@id
+> +     Link: https://lore.kernel.org/email-message@id
+>  
+> -   The kernel.org redirector is considered a stable URL, unlike other email
+> -   archives.
+> +   This URL should be used when referring to relevant mailing list
+> +   resources, related patch sets, or other notable discussion threads.
+> +   A convenient way to associate Link trailers with the accompanying
+> +   message is to use markdown-like bracketed notation, for example::
+>  
+> -   Maintainers will add a Link tag referencing the email of the patch
+> -   submission when they apply a patch to the tip tree. This tag is useful
+> -   for later reference and is also used for commit notifications.
+> +     A similar approach was attempted before as part of a different
+> +     effort [1], but the initial implementation caused too many
+> +     regressions [2], so it was backed out and reimplemented.
+> +
+> +     Link: https://lore.kernel.org/some-msgid@here # [1]
+> +     Link: https://bugzilla.example.org/bug/12345  # [2]
+> +
+> +   When using the ``Link:`` trailer to indicate the provenance of the
+> +   patch, you should use the dedicated ``patch.msgid.link`` domain. This
+> +   makes it possible for automated tooling to establish which link leads
+> +   to the original patch submission. For example::
+> +
+> +     Link: https://patch.msgid.link/patch-source-msgid@here
+
+Hmm, I mentioned this in the other thread, but I also like the fact
+that my automated script uses the list that it was Cc'd to. That is, if
+it Cc'd linux-trace-kernel, if not, if it Cc'd linux-trace-devel, it
+adds that, otherwise it uses lkml. Now, I could just make the lkml use
+the patch-source-msgid instead.
+
+This does give me some information about what the focus of the patch
+was. Hmm, maybe I could just make it:
+
+  Link: https://patch.msgid.link/patch-source-msgid@here # linux-trace-devel
+
+Would anyone have an issue with that?
+
+-- Steve
 
 
---laeNYeGrVdu/YCAl
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>  
+>  Please do not use combined tags, e.g. ``Reported-and-tested-by``, as
+>  they just complicate automated extraction of tags.
+> 
 
-On Mon, Jun 10, 2024 at 10:47:18PM +0100, Mark Brown wrote:
-> On Mon, Jun 10, 2024 at 02:34:03PM -0700, Nathan Chancellor wrote:
-> > On Tue, May 28, 2024 at 03:36:47PM -0700, Oreoluwa Babatunde wrote:
->=20
-> > > fdt_init_reserved_mem() is also now called from within the
-> > > unflatten_device_tree() function so that this step happens after the
-> > > page tables have been setup.
->=20
-> > > Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
->=20
-> > I am seeing a warning when booting aspeed_g5_defconfig in QEMU that I
-> > bisected to this change in -next as commit a46cccb0ee2d ("of:
-> > reserved_mem: Restruture how the reserved memory regions are
-> > processed").
->=20
-> I'm also seeing issues in -next which I bisected to this commit, on the
-> original Raspberry Pi the cpufreq driver fails to come up and I see
-> (potentially separate?) backtraces:
-
-This is still in -next and breaking boot as reported above.
-
---laeNYeGrVdu/YCAl
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ7NdwACgkQJNaLcl1U
-h9CRmgf+MxWrqBIy6qcWxT4vhYq3B4GVJxOVx75T9RjVBoUn4kzuzulvobVPKw8Z
-+oSESmos/Ztwu54PdEcoJgz9sE9bdBEZloJQzNd7bTKrAoaiS0NlWRFNwUIr5veL
-W2VixUC7euUW3rInnaSRktlVGCdcmf9+7xYnfoMD18Ecqy++kSrTSPqCmMKJEvOG
-nRsx4hXrdLyj10h539snjBbuvIcjWC4jfEqaqB5P8H6u9HVQuRP4eMD9cTHK8Mf1
-djdK2W2ZzPa1U+P/6B0ORFloA3Vg4udYMOKP6WBAFFCVY1r1uBrg8nlKt1cnNyT3
-mK9860YyHJk9+HWIFb1skmm6XJ98/A==
-=N6M3
------END PGP SIGNATURE-----
-
---laeNYeGrVdu/YCAl--
 
