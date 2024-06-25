@@ -1,124 +1,74 @@
-Return-Path: <linux-kernel+bounces-228111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 703B3915B0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:30:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E44915B0F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:39:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8FB1F2272C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:30:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0789D1F227CA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 00:39:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DABCA64;
-	Tue, 25 Jun 2024 00:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7cpPRz6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F5BCA64;
+	Tue, 25 Jun 2024 00:39:40 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E75341FA4;
-	Tue, 25 Jun 2024 00:30:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBB9746E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719275436; cv=none; b=IFBXE2BW7M4RMGbc1nXoj65w+TScQJM0LPu5hKizWktd2rE67fXI95qiiOhE4NvRkLIKOMseCVpV1DNSFkxz6lY0/NbPLCZi7lmc2CMfTo7FPBQhwNLYbzYQ8r/3GrOgmHx6VvTzddKCJ3pKGlfRGrG6C+QMrG5pacamiCEH0WU=
+	t=1719275980; cv=none; b=ML/6PyGimTZB2J0iUoPwmFiET2tUiNWCpDYj4fu5xK8xw3WmANE+xbUO91yZ+uYROHlFELl2XyJpJd7ZUizSUKeYimdHUY77Di3oNDfwt4ll5+uqeHgRjgAlk+9a5NJS3uG07KLy8Aqd458844ujrG5aR26fxLTkgWEt/QGOSjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719275436; c=relaxed/simple;
-	bh=bX4r/u1tK3TWorg5EsKP/C4as8lEwve1Q/KksP2YT+8=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ISP4nLwx38cOea1NsLvD6DXrv8dutnIx+t4hZGdxk5buhhZp4BXfGc5RtbGAXttOkjAk90Zeae11hgvcKRZWCXBn6bsnXfsTT1Ek8QVzGviuwGZNg7ZzEy3CA23DXt69ZHaMj9oJiYstTlHZ7Cg3P3kQgyHJJvtUI6d3Uhb5wKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7cpPRz6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 53164C32786;
-	Tue, 25 Jun 2024 00:30:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719275435;
-	bh=bX4r/u1tK3TWorg5EsKP/C4as8lEwve1Q/KksP2YT+8=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=g7cpPRz6z3/2RG8v+7Zo5zM8d90mqjmRubLgbXEM5pLI5e5Bnd6FjmZkAXjV2R02b
-	 I/vTzlLkdQab14zc5VV2udpDhQ4ZSysJOWkw1/maluDwIwNrms7CGeicfAaLeiISg8
-	 sGFiWsiuwV19p8OELdq3NIJpovH+d9v8KNgkTsLnoS/axR/WRR1mj72XygZMyMWU2y
-	 AAYqP0+n+bFOCVCQEQ3bNfp3FDSnxFtmwOFCkKwZb1fsZQ69T1KKoXjywcTIXXowye
-	 kgfwVEdSDxJkvgdRi4fKNF4WhGBKAPWVI/dHh76dtz/b0Wv9dweOMbLfobNScofdIl
-	 8AffMqgLDaVrg==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 3710EE01F21;
-	Tue, 25 Jun 2024 00:30:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1719275980; c=relaxed/simple;
+	bh=Vn8kTjaiavDdyc8/wlZpxrXePEbx3gjEURKJpd8Gq8k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
+	 Content-Type; b=KH4YPXWaXzu0plTpptEBjiBZxhIqJy8subNYQFewnqEphpUmeF1orpiby27xhmInW8WKPf9Q83oOUhnvYR/N7TT96w+k0JBEhjVISEFtykqZNvWY9/1Fovh9N6zVXcEdp6emvJ0Hf/Y/qJrzB/XbaiLw6eBEFsu/yK5lT3BBcPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7f3b0bc9cf6so285656839f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 17:39:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719275978; x=1719880778;
+        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Vn8kTjaiavDdyc8/wlZpxrXePEbx3gjEURKJpd8Gq8k=;
+        b=KzvZd0SdKzZ2FzKH86r0Td9OgJHGLz8h0kkFqQdW1OVDJUVRoVn8uYTJN0OMaQGVd/
+         oC4xXZqGnIfUJWLVSflHguCh01WNIcH+ZcJGS5Wh0o9ANz7l5A6zlVU11M6pnRr2ZguI
+         ZZNZAR8GZyS8Bhr2q1KWUlboK4kizJyT/scpGboBlLN3NTaFWtL6dGlmQhtc5HM9Clik
+         CpQ2+3jOPO8sQp6M9fREnTTGhjPiLzUc6YCgM7XTvT9sRk/WVnzrxnbaf9UmZOFuPgbj
+         WoD0gOEUAYavn5ZTyusgpt3vji26eXVWXzcGhhZdNCu/Bcd9cm/LWth9Ww9Yi9Y85Ylg
+         TLjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFZQEHeBlpzRc0X8WQYqLUruW1nUzYfSBapj2F9Jqy+lzilFDeAVVLBGHahlk067qP706XJajIO65/cs3MuuauNZLfmytQK/FlwcW1
+X-Gm-Message-State: AOJu0Yzsff/QxKLBnLUArQcmhXO50jypig/iJRuxIz4+MahzzT3ygNv8
+	5t4ask8hJRU5MkPIORvhYDRlUa94m7clrs2uL+Upyx4RIoO9alpAOFi7XRfkD+5a0G19ocmIDSt
+	Vo39CpE2xgPNmvp47wZXUy8d/6pQvA2QNJvRRDzb4IWkzn2WEqtkgM7g=
+X-Google-Smtp-Source: AGHT+IHcGMjzHL2GyZkW6mCzWpb+X9SQH4MtHgNGsY6941zLDvGVuF2wbiAwAKoMrD24+Bx65a9Z52IMxELZ+sv2quVIo91z4Rrp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v9 net-next 00/15] locking: Introduce nested-BH locking.
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <171927543522.12295.9957726701377633700.git-patchwork-notify@kernel.org>
-Date: Tue, 25 Jun 2024 00:30:35 +0000
-References: <20240620132727.660738-1-bigeasy@linutronix.de>
-In-Reply-To: <20240620132727.660738-1-bigeasy@linutronix.de>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, davem@davemloft.net,
- bristot@kernel.org, boqun.feng@gmail.com, daniel@iogearbox.net,
- edumazet@google.com, frederic@kernel.org, mingo@redhat.com, kuba@kernel.org,
- pabeni@redhat.com, peterz@infradead.org, tglx@linutronix.de,
- longman@redhat.com, will@kernel.org
+X-Received: by 2002:a05:6638:871c:b0:4b7:ba5b:96af with SMTP id
+ 8926c6da1cb9f-4b9efb317a1mr213182173.1.1719275978124; Mon, 24 Jun 2024
+ 17:39:38 -0700 (PDT)
+Date: Mon, 24 Jun 2024 17:39:38 -0700
+In-Reply-To: <CAMc0M--t+gM4GVQdpHtbYN1HnVo53Z8-xLd4V65_yofzcKnEqQ@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000f280ea061bac21e3@google.com>
+Subject: Re: WARNING in __ext4_ioctl
+From: syzbot <syzbot+2cab87506a0e7885f4b9@syzkaller.appspotmail.com>
+To: peili.dev@gmail.com
+Cc: peili.dev@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hello:
+> #syz test
 
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 20 Jun 2024 15:21:50 +0200 you wrote:
-> Disabling bottoms halves acts as per-CPU BKL. On PREEMPT_RT code within
-> local_bh_disable() section remains preemtible. As a result high prior
-> tasks (or threaded interrupts) will be blocked by lower-prio task (or
-> threaded interrupts) which are long running which includes softirq
-> sections.
-> 
-> The proposed way out is to introduce explicit per-CPU locks for
-> resources which are protected by local_bh_disable() and use those only
-> on PREEMPT_RT so there is no additional overhead for !PREEMPT_RT builds.
-> 
-> [...]
-
-Here is the summary with links:
-  - [v9,net-next,01/15] locking/local_lock: Introduce guard definition for local_lock.
-    https://git.kernel.org/netdev/net-next/c/07e4fd4c0592
-  - [v9,net-next,02/15] locking/local_lock: Add local nested BH locking infrastructure.
-    https://git.kernel.org/netdev/net-next/c/c5bcab755822
-  - [v9,net-next,03/15] net: Use __napi_alloc_frag_align() instead of open coding it.
-    https://git.kernel.org/netdev/net-next/c/43d7ca2907cb
-  - [v9,net-next,04/15] net: Use nested-BH locking for napi_alloc_cache.
-    https://git.kernel.org/netdev/net-next/c/bdacf3e34945
-  - [v9,net-next,05/15] net/tcp_sigpool: Use nested-BH locking for sigpool_scratch.
-    https://git.kernel.org/netdev/net-next/c/585aa621af6c
-  - [v9,net-next,06/15] net/ipv4: Use nested-BH locking for ipv4_tcp_sk.
-    https://git.kernel.org/netdev/net-next/c/ebad6d033479
-  - [v9,net-next,07/15] netfilter: br_netfilter: Use nested-BH locking for brnf_frag_data_storage.
-    https://git.kernel.org/netdev/net-next/c/c67ef53a88db
-  - [v9,net-next,08/15] net: softnet_data: Make xmit per task.
-    https://git.kernel.org/netdev/net-next/c/ecefbc09e8ee
-  - [v9,net-next,09/15] dev: Remove PREEMPT_RT ifdefs from backlog_lock.*().
-    https://git.kernel.org/netdev/net-next/c/a8760d0d1497
-  - [v9,net-next,10/15] dev: Use nested-BH locking for softnet_data.process_queue.
-    https://git.kernel.org/netdev/net-next/c/b22800f9d3b1
-  - [v9,net-next,11/15] lwt: Don't disable migration prio invoking BPF.
-    https://git.kernel.org/netdev/net-next/c/3414adbd6a6a
-  - [v9,net-next,12/15] seg6: Use nested-BH locking for seg6_bpf_srh_states.
-    https://git.kernel.org/netdev/net-next/c/d1542d4ae4df
-  - [v9,net-next,13/15] net: Use nested-BH locking for bpf_scratchpad.
-    https://git.kernel.org/netdev/net-next/c/78f520b7bbe5
-  - [v9,net-next,14/15] net: Reference bpf_redirect_info via task_struct on PREEMPT_RT.
-    https://git.kernel.org/netdev/net-next/c/401cb7dae813
-  - [v9,net-next,15/15] net: Move per-CPU flush-lists to bpf_net_context on PREEMPT_RT.
-    https://git.kernel.org/netdev/net-next/c/3f9fe37d9e16
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
+This crash does not have a reproducer. I cannot test it.
 
 
