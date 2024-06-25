@@ -1,358 +1,325 @@
-Return-Path: <linux-kernel+bounces-228580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A05BE9161DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:05:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F82291609A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:04:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D7721F2148C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:05:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C87A328409F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:04:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91F0148FFB;
-	Tue, 25 Jun 2024 09:05:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 521161474BF;
+	Tue, 25 Jun 2024 08:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="Ljo5U/s3"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dC9EA9Lw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF9FA146587;
-	Tue, 25 Jun 2024 09:05:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FFA145A0B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719306327; cv=none; b=JTaXRLXmI7KYUdvy4CToRe40HQE1798C8tGAr1xi5RQ+DYKrAsKVob8FPkoKidWuP8Zl3JnRJGvDiJgqWKCIYO8O7hgi653TDrpGYzPhv+mYFQ80xNUvIPGbeP1zZxSUrxh5PNYi4ffbO653y0AF1qWs9NCvdpGPFTfBUmc8yg8=
+	t=1719302676; cv=none; b=F4xRxT8D7ATY0RWtWha2H9hLXn65M9vYsL/b8qNi7DehGfD5NR/jOVQoPvShVfwf8UYOXpQJ2LrGMqF1LupTJboTtEJaewy6O52fx28NQvv6zR8U7lOFb3vXjNNCISH/Jk3MEP+VIrAo/XlpRT06Sn9VCJvTkgEhfcoqZz69Flc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719306327; c=relaxed/simple;
-	bh=XwZBJXdq/BUwVd4MJLGWVm6JsYdz+0tLVi0tAqeyNXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=o6EMghm+8oTikkJIui3+GVnw7UaX76bQwpNH/rPpcTohhiaWt4jB+fLTRE3RGNsOxpQ5V1262q++PL2IeZrm9/8v/+nrldamjp0EBgNR2ZQ3n1hN7OHtnPRvXdCgCz69BxXl8E33lE09DQ4LtilL5+ule3dNC9cNX+ckck6f10o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=Ljo5U/s3; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45P6k05B1374749
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Mon, 24 Jun 2024 23:46:01 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45P6k05B1374749
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1719297964;
-	bh=HetFgPvHU6ekWyKyVj2mXFyt8OvP4/sGiBkOm7u/ams=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=Ljo5U/s3vqPnnFxPcdcYgpkvcGshT5UnG0o5ruRBSb36weA5y+WxowCvEFe4odcAU
-	 8+QnJLp48VIG+Mjm/udwR94+zpB6bVBU2gMEfxl8suIH7fA4zyQhWU6w1b+OBNHHYL
-	 x80CKAScK37wWsH/Q8whWxoU3UkpBLOk8wYM23GDyijj99AHPVJZ4ERtM6t+K0TUlH
-	 MurMRZKpc3nr8TR5g+BPUL3NvJ0GGTEXf2UaTXelkFltTTSkLgu+/a03UaDve93bVw
-	 wgRdEE0248QeTx+pDANtimGBRB9TlO7W5Z9+uYQxpIaPpcyrLd6DIDG/33XKhBxCS+
-	 o65U9TUVeBIYQ==
-Message-ID: <6713e17b-8030-401a-a26f-315b4d4c94ef@zytor.com>
-Date: Mon, 24 Jun 2024 23:45:58 -0700
+	s=arc-20240116; t=1719302676; c=relaxed/simple;
+	bh=jdAl9hgOe+lm4QJHggd51ixmWg6oswKRPQGrQWVujIM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jQ1jdtI2pE0i/bztBnrmxxc4ZmtMjJo85zqgM8UwCX7HlTAGp1TWmxWysYi65mo8DiHNj2zHYXO6GIMQ6bxirGXxI0JdITzP5DLSp6ffTpbhWVBAyo4fh73lolmXXjKvnmYFIibG11L0WDseUyLo4KY1deEzaghaEPm6QZ2oiX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dC9EA9Lw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719302673;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kSS73y9Kiy+O00pohzbPddbUXuAkYxpsCkdkEqZR1A8=;
+	b=dC9EA9LwTjOqWs4UHkf+PUWWPyEixclNhE30/oZlQ+vJUAa3zwu96l8ulgaWzmqF6zuf4l
+	h+9nspxYYIH90A9BAkHucCdSiBRecEva6Rn/NOGATYlS1Cqw4unQk4xy4UTllUBlHBOmoX
+	yPFDnZmNgkkQyxMF2OIU7pdhzZgjMU4=
+Received: from mail-ed1-f72.google.com (mail-ed1-f72.google.com
+ [209.85.208.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-251-0KBMekiYP9qlTIjnIVJ1kg-1; Tue, 25 Jun 2024 04:04:27 -0400
+X-MC-Unique: 0KBMekiYP9qlTIjnIVJ1kg-1
+Received: by mail-ed1-f72.google.com with SMTP id 4fb4d7f45d1cf-57d702721e8so388051a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:04:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719302666; x=1719907466;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kSS73y9Kiy+O00pohzbPddbUXuAkYxpsCkdkEqZR1A8=;
+        b=ZnwVDyy5ThGqVOxve+z8f/TpUT4c1ss5RvijMLnXOGP+N0eEGc/PHpXGxMuSVBXssS
+         2U4c/GzJvWjMBl6aj6QLC4VQMaPgXSj2sim1/DE3SyQAiHgtPw/e6F15U+uUBLgM5e36
+         RAoW5wvNaR/SZvf/h83+/F9SiNYMAEG1amHH49LhMzsXjJqLT23o4X6ut2vFVa/UpMlC
+         7yCjd6BZmvxx8p/SnrFzTUZPy20+p2a6VEqNXN5WK8c/jyuNsHj+JXPJfagQKVHR/CyL
+         bddeHPkHH0HX5htJoq+7ckcwsDFG3GvQPlGuDhNKwWhPws6B/wc7Y0tU5k/qfONFoqoO
+         jtaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWTldJmrOiVGyXjnGEGCZxx4vjvUDSpvfC9UjmouMX5fGbmxEsHfnnbSTNg61psSgXIFvmpsD7cuEP1gqkaNX03aVcVtYuQKCTnop09
+X-Gm-Message-State: AOJu0YxnzPi1zBCXE17Tu50IZGdm39OjKxWlnwQrdVBVS6kg/8qBN6bE
+	foOMfUGdujNHbEtjKGQ26vq/DeBQtSH9WXtwnM810fsM+A3SZFW3ZqwkT5H3VAq7aKMRJ4X+t+y
+	uilzPppxbLEwjhgZ39n4oDxeF0EAY4Gj2b1WEciU+mz+RMUTiB2zyniJwokn1zgy2U8B2QA==
+X-Received: by 2002:a50:aa9d:0:b0:57d:ef3:c3b7 with SMTP id 4fb4d7f45d1cf-57d4580ab11mr5326062a12.36.1719302665577;
+        Tue, 25 Jun 2024 01:04:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGoYzcue/Hrd6k4TsIo7q/NbJMBliNIcO2bdnok/sTeZ5hfgBoqKAK4z/dZ6sDP+eLnFv6wNA==
+X-Received: by 2002:a50:aa9d:0:b0:57d:ef3:c3b7 with SMTP id 4fb4d7f45d1cf-57d4580ab11mr5326012a12.36.1719302664647;
+        Tue, 25 Jun 2024 01:04:24 -0700 (PDT)
+Received: from redhat.com ([2a0d:6fc7:342:f1b5:a48c:a59a:c1d6:8d0a])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5827db501d9sm96342a12.7.2024.06.25.01.04.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 01:04:24 -0700 (PDT)
+Date: Tue, 25 Jun 2024 04:04:19 -0400
+From: "Michael S. Tsirkin" <mst@redhat.com>
+To: Jason Wang <jasowang@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	virtualization@lists.linux.dev, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, venkat.x.venkatsubra@oracle.com,
+	gia-khanh.nguyen@oracle.com
+Subject: Re: [PATCH V2 1/3] virtio: allow nested disabling of the configure
+ interrupt
+Message-ID: <20240625035746-mutt-send-email-mst@kernel.org>
+References: <20240624024523.34272-1-jasowang@redhat.com>
+ <20240624024523.34272-2-jasowang@redhat.com>
+ <20240624054403-mutt-send-email-mst@kernel.org>
+ <CACGkMEv1U7N-RRgQ=jbhBK1SWJ3EJz84qYaxC2kk6keM6J6MaQ@mail.gmail.com>
+ <20240625030259-mutt-send-email-mst@kernel.org>
+ <CACGkMEuP5GJTwcSoG6UP0xO6V7zeJynYyTDVRtF8R=PJ5z8aLg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] x86/traps: Enable UBSAN traps on x86
-To: Gatlin Newhouse <gatlin.newhouse@gmail.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>,
-        Marco Elver <elver@google.com>,
-        Andrey Konovalov <andreyknvl@gmail.com>,
-        Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-        Nathan Chancellor <nathan@kernel.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Bill Wendling
- <morbo@google.com>,
-        Justin Stitt <justinstitt@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Mike Rapoport (IBM)" <rppt@kernel.org>, Baoquan He <bhe@redhat.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Changbin Du <changbin.du@huawei.com>,
-        Pengfei Xu <pengfei.xu@intel.com>, Xin Li <xin3.li@intel.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>, Uros Bizjak <ubizjak@gmail.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-        linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-References: <20240625032509.4155839-1-gatlin.newhouse@gmail.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20240625032509.4155839-1-gatlin.newhouse@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACGkMEuP5GJTwcSoG6UP0xO6V7zeJynYyTDVRtF8R=PJ5z8aLg@mail.gmail.com>
 
-On 6/24/2024 8:24 PM, Gatlin Newhouse wrote:
-> Currently ARM architectures output which specific sanitizer caused
-> the trap, via the encoded data in the trap instruction. Clang on
-> x86 currently encodes the same data in ud1 instructions but the x86
-> handle_bug() and is_valid_bugaddr() functions currently only look
-> at ud2s.
+On Tue, Jun 25, 2024 at 03:50:30PM +0800, Jason Wang wrote:
+> On Tue, Jun 25, 2024 at 3:11 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> >
+> > On Tue, Jun 25, 2024 at 09:27:04AM +0800, Jason Wang wrote:
+> > > On Mon, Jun 24, 2024 at 5:59 PM Michael S. Tsirkin <mst@redhat.com> wrote:
+> > > >
+> > > > On Mon, Jun 24, 2024 at 10:45:21AM +0800, Jason Wang wrote:
+> > > > > Somtime driver may want to enable or disable the config callback. This
+> > > > > requires a synchronization with the core. So this patch change the
+> > > > > config_enabled to be a integer counter. This allows the toggling of
+> > > > > the config_enable to be synchronized between the virtio core and the
+> > > > > virtio driver.
+> > > > >
+> > > > > The counter is not allowed to be increased greater than one, this
+> > > > > simplifies the logic where the interrupt could be disabled immediately
+> > > > > without extra synchronization between driver and core.
+> > > > >
+> > > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
+> > > > > ---
+> > > > >  drivers/virtio/virtio.c | 20 +++++++++++++-------
+> > > > >  include/linux/virtio.h  |  2 +-
+> > > > >  2 files changed, 14 insertions(+), 8 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+> > > > > index b968b2aa5f4d..d3aa74b8ae5d 100644
+> > > > > --- a/drivers/virtio/virtio.c
+> > > > > +++ b/drivers/virtio/virtio.c
+> > > > > @@ -127,7 +127,7 @@ static void __virtio_config_changed(struct virtio_device *dev)
+> > > > >  {
+> > > > >       struct virtio_driver *drv = drv_to_virtio(dev->dev.driver);
+> > > > >
+> > > > > -     if (!dev->config_enabled)
+> > > > > +     if (dev->config_enabled < 1)
+> > > > >               dev->config_change_pending = true;
+> > > > >       else if (drv && drv->config_changed)
+> > > > >               drv->config_changed(dev);
+> > > > > @@ -146,17 +146,23 @@ EXPORT_SYMBOL_GPL(virtio_config_changed);
+> > > > >  static void virtio_config_disable(struct virtio_device *dev)
+> > > > >  {
+> > > > >       spin_lock_irq(&dev->config_lock);
+> > > > > -     dev->config_enabled = false;
+> > > > > +     --dev->config_enabled;
+> > > > >       spin_unlock_irq(&dev->config_lock);
+> > > > >  }
+> > > > >
+> > > > >  static void virtio_config_enable(struct virtio_device *dev)
+> > > > >  {
+> > > > >       spin_lock_irq(&dev->config_lock);
+> > > > > -     dev->config_enabled = true;
+> > > > > -     if (dev->config_change_pending)
+> > > > > -             __virtio_config_changed(dev);
+> > > > > -     dev->config_change_pending = false;
+> > > > > +
+> > > > > +     if (dev->config_enabled < 1) {
+> > > > > +             ++dev->config_enabled;
+> > > > > +             if (dev->config_enabled == 1 &&
+> > > > > +                 dev->config_change_pending) {
+> > > > > +                     __virtio_config_changed(dev);
+> > > > > +                     dev->config_change_pending = false;
+> > > > > +             }
+> > > > > +     }
+> > > > > +
+> > > > >       spin_unlock_irq(&dev->config_lock);
+> > > > >  }
+> > > > >
+> > > >
+> > > > So every disable decrements the counter. Enable only increments it up to 1.
+> > > > You seem to be making some very specific assumptions
+> > > > about how this API will be used. Any misuse will lead to under/overflow
+> > > > eventually ...
+> > > >
+> > >
+> > > Well, a counter gives us more information than a boolean. With
+> > > boolean, misuse is even harder to be noticed.
+> >
+> > With boolean we can prevent misuse easily because previous state
+> > is known exactly. E.g.:
+> >
+> > static void virtio_config_driver_disable(struct virtio_device *dev)
+> > {
+> >         BUG_ON(dev->config_driver_disabled);
+> >         dev->config_driver_disabled = true;
+> > }
+> >
+> >
+> >
+> > static void virtio_config_driver_enable(struct virtio_device *dev)
+> > {
+> >         BUG_ON(!dev->config_driver_disabled);
+> >         dev->config_driver_disabled = false;
+> > }
+> >
+> >
+> > Does not work with integer you simply have no idea what the value
+> > should be at point of call.
 > 
-> Bring x86 to parity with arm64, similar to commit 25b84002afb9
-> ("arm64: Support Clang UBSAN trap codes for better reporting").
-> Enable the output of UBSAN type information on x86 architectures
-> compiled with clang when CONFIG_UBSAN_TRAP=y.
+> Yes but I meant if we want the config could be disabled by different
+> parties (core, driver and others)
+
+For now, we don't have others ;)
+
+> >
+> >
+> > > >
+> > > >
+> > > > My suggestion would be to
+> > > > 1. rename config_enabled to config_core_enabled
+> > > > 2. rename virtio_config_enable/disable to virtio_config_core_enable/disable
+> > > > 3. add bool config_driver_disabled and make virtio_config_enable/disable
+> > > >    switch that.
+> > > > 4. Change logic from dev->config_enabled to
+> > > >    dev->config_core_enabled && !dev->config_driver_disabled
+> > >
+> > > If we make config_driver_disabled by default true,
+> >
+> > No, we make it false by default.
+> >
+> > > we need someone to
+> > > enable it explicitly. If it's core, it breaks the semantic that it is
+> > > under the control of the driver (or needs to synchronize with the
+> > > driver). If it's a driver, each driver needs to enable it at some time
+> > > which can be easily forgotten. And if we end up with workarounds like:
+> > >
+> > >         /* If probe didn't do it, mark device DRIVER_OK ourselves. */
+> > >         if (!(dev->config->get_status(dev) & VIRTIO_CONFIG_S_DRIVER_OK))
+> > >                 virtio_device_ready(dev);
+> > >
+> > > It's another break of the semantics. And actually the above is also racy.
+> > >
+> > > It seems the only choice is to make config_driver_disabled by default
+> > > false. But the driver needs to be aware of this and take extra care
+> > > when calling virtio_device_ready() which is also tricky.
+> >
+> >
+> > No, false by default simply means no change to semantics.
 > 
-> Signed-off-by: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-> ---
-> Changes in v3:
->    - Address Thomas's remarks about: change log structure,
->      get_ud_type() instead of is_valid_bugaddr(), handle_bug()
->      changes, and handle_ubsan_failure().
+> No change to current semantics, probably. But we need to document
 > 
-> Changes in v2:
->    - Name the new constants 'LEN_ASOP' and 'INSN_ASOP' instead of
->      'LEN_REX' and 'INSN_REX'
->    - Change handle_ubsan_failure() from enum bug_trap_type to void
->      function
+> 1) driver config is enabled by default
+> 2) no nested enabling and disabling
 > 
-> v1: https://lore.kernel.org/linux-hardening/20240529022043.3661757-1-gatlin.newhouse@gmail.com/
-> v2: https://lore.kernel.org/linux-hardening/20240601031019.3708758-1-gatlin.newhouse@gmail.com/
-> ---
->   MAINTAINERS                  |  2 ++
->   arch/x86/include/asm/bug.h   | 11 ++++++++++
->   arch/x86/include/asm/ubsan.h | 23 +++++++++++++++++++++
->   arch/x86/kernel/Makefile     |  1 +
->   arch/x86/kernel/traps.c      | 40 +++++++++++++++++++++++++++++++-----
->   arch/x86/kernel/ubsan.c      | 21 +++++++++++++++++++
->   6 files changed, 93 insertions(+), 5 deletions(-)
->   create mode 100644 arch/x86/include/asm/ubsan.h
->   create mode 100644 arch/x86/kernel/ubsan.c
+> If you think they are all fine, I can go with that way.
+
+yes, a good idea to document this.
+
+
+> >
+> >
+> > >
+> > > So in conclusion, two booleans seems sut-optimal than a counter. For
+> > > example we can use different bits for the counter as preempt_count
+> > > did. With counter(s), core and driver don't need any implicit/explicit
+> > > synchronization.
+> > >
+> > > Thanks
+> > >
+> >
+> > We have a simple problem, we can solve it simply. reference counting
+> > is tricky to get right and hard to debug, if we don't need it let us
+> > not go there.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 28e20975c26f..b8512887ffb1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22635,6 +22635,8 @@ L:	kasan-dev@googlegroups.com
->   L:	linux-hardening@vger.kernel.org
->   S:	Supported
->   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
-> +F:	arch/x86/include/asm/ubsan.h
-> +F:	arch/x86/kernel/ubsan.c
->   F:	Documentation/dev-tools/ubsan.rst
->   F:	include/linux/ubsan.h
->   F:	lib/Kconfig.ubsan
-> diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-> index a3ec87d198ac..a363d13c263b 100644
-> --- a/arch/x86/include/asm/bug.h
-> +++ b/arch/x86/include/asm/bug.h
-> @@ -13,6 +13,17 @@
->   #define INSN_UD2	0x0b0f
->   #define LEN_UD2		2
->   
-> +/*
-> + * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
-> + */
-> +#define INSN_UD1	0xb90f
-> +#define INSN_UD_MASK	0xFFFF
-> +#define LEN_UD1		2
-> +#define INSN_ASOP	0x67
-> +#define INSN_ASOP_MASK	0x00FF
-> +#define BUG_UD_NONE	0xFFFF
-> +#define BUG_UD2		0xFFFE
-> +
->   #ifdef CONFIG_GENERIC_BUG
->   
->   #ifdef CONFIG_X86_32
-> diff --git a/arch/x86/include/asm/ubsan.h b/arch/x86/include/asm/ubsan.h
-> new file mode 100644
-> index 000000000000..ac2080984e83
-> --- /dev/null
-> +++ b/arch/x86/include/asm/ubsan.h
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_X86_UBSAN_H
-> +#define _ASM_X86_UBSAN_H
-> +
-> +/*
-> + * Clang Undefined Behavior Sanitizer trap mode support.
-> + */
-> +#include <linux/bug.h>
-> +#include <linux/ubsan.h>
-> +#include <asm/ptrace.h>
-> +
-> +/*
-> + * UBSAN uses the EAX register to encode its type in the ModRM byte.
-> + */
-> +#define UBSAN_REG	0x40
-> +
-> +#ifdef CONFIG_UBSAN_TRAP
-> +void handle_ubsan_failure(struct pt_regs *regs, u16 insn);
-> +#else
-> +static inline void handle_ubsan_failure(struct pt_regs *regs, u16 insn) { return; }
-> +#endif /* CONFIG_UBSAN_TRAP */
-> +
-> +#endif /* _ASM_X86_UBSAN_H */
-> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-> index 74077694da7d..fe1d9db27500 100644
-> --- a/arch/x86/kernel/Makefile
-> +++ b/arch/x86/kernel/Makefile
-> @@ -145,6 +145,7 @@ obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
->   obj-$(CONFIG_AMD_MEM_ENCRYPT)		+= sev.o
->   
->   obj-$(CONFIG_CFI_CLANG)			+= cfi.o
-> +obj-$(CONFIG_UBSAN_TRAP)		+= ubsan.o
->   
->   obj-$(CONFIG_CALL_THUNKS)		+= callthunks.o
->   
-> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> index 4fa0b17e5043..aef21287e7ed 100644
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> @@ -67,6 +67,7 @@
->   #include <asm/vdso.h>
->   #include <asm/tdx.h>
->   #include <asm/cfi.h>
-> +#include <asm/ubsan.h>
->   
->   #ifdef CONFIG_X86_64
->   #include <asm/x86_init.h>
-> @@ -91,6 +92,29 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
->   	return *(unsigned short *)addr == INSN_UD2;
->   }
->   
-> +/*
-> + * Check for UD1, UD2, with or without Address Size Override Prefixes instructions.
-> + */
-> +__always_inline u16 get_ud_type(unsigned long addr)
-> +{
-> +	u16 insn;
-> +
-> +	if (addr < TASK_SIZE_MAX)
-> +		return BUG_UD_NONE;
+> I fully agree, and that's why I limit the change to virtio-net driver
+> in the first version.
 
-Add an empty line for better readability.
+I got that. I didn't like the code duplication though.
 
-> +	insn = *(u16 *)addr;
-> +	if ((insn & INSN_UD_MASK) == INSN_UD2)
-> +		return BUG_UD2;
+> >
+> >
+> >
+> > But in conclusion ;) if you don't like my suggestion do something else
+> > but make the APIs make sense,
+> 
+> I don't say I don't like it:)
+> 
+> Limiting it to virtio-net seems to be the most easy way. And if we
+> want to do it in the core, I just want to make nesting to be supported
+> which might not be necessary now.
 
-Ditto.
+I feel limiting it to a single driver strikes the right balance ATM.
 
-There are extra empty lines in tglx's suggestion.
-
-> +	if ((insn & INSN_ASOP_MASK) == INSN_ASOP)
-> +		insn = *(u16 *)(++addr);
-> +
-> +	// UBSAN encode the failure type in the two bytes after UD1
-> +	if ((insn & INSN_UD_MASK) == INSN_UD1)
-> +		return *(u16 *)(addr + LEN_UD1);
-> +
-> +	return BUG_UD_NONE;
-> +}
-> +
-> +
-
-Better to add only one empty line.
-
->   static nokprobe_inline int
->   do_trap_no_signal(struct task_struct *tsk, int trapnr, const char *str,
->   		  struct pt_regs *regs,	long error_code)
-> @@ -216,6 +240,7 @@ static inline void handle_invalid_op(struct pt_regs *regs)
->   static noinstr bool handle_bug(struct pt_regs *regs)
->   {
->   	bool handled = false;
-> +	int ud_type;
->   
->   	/*
->   	 * Normally @regs are unpoisoned by irqentry_enter(), but handle_bug()
-> @@ -223,7 +248,8 @@ static noinstr bool handle_bug(struct pt_regs *regs)
->   	 * irqentry_enter().
->   	 */
->   	kmsan_unpoison_entry_regs(regs);
-> -	if (!is_valid_bugaddr(regs->ip))
-> +	ud_type = get_ud_type(regs->ip);
-> +	if (ud_type == BUG_UD_NONE)
->   		return handled;
->   
->   	/*
-> @@ -236,10 +262,14 @@ static noinstr bool handle_bug(struct pt_regs *regs)
->   	 */
->   	if (regs->flags & X86_EFLAGS_IF)
->   		raw_local_irq_enable();
-> -	if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> -	    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> -		regs->ip += LEN_UD2;
-> -		handled = true;
-> +	if (ud_type == INSN_UD2) {
-> +		if (report_bug(regs->ip, regs) == BUG_TRAP_TYPE_WARN ||
-> +		    handle_cfi_failure(regs) == BUG_TRAP_TYPE_WARN) {
-> +			regs->ip += LEN_UD2;
-> +			handled = true;
-> +		}
-> +	} else {
-> +		handle_ubsan_failure(regs, ud_type);
->   	}
-
-Add one empty line.
-
->   	if (regs->flags & X86_EFLAGS_IF)
->   		raw_local_irq_disable();
-> diff --git a/arch/x86/kernel/ubsan.c b/arch/x86/kernel/ubsan.c
-> new file mode 100644
-> index 000000000000..c90e337a1b6a
-> --- /dev/null
-> +++ b/arch/x86/kernel/ubsan.c
-> @@ -0,0 +1,21 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Clang Undefined Behavior Sanitizer trap mode support.
-> + */
-> +#include <linux/bug.h>
-> +#include <linux/string.h>
-> +#include <linux/printk.h>
-> +#include <linux/ubsan.h>
-> +#include <asm/ptrace.h>
-> +#include <asm/ubsan.h>
-> +
-> +/*
-> + * Checks for the information embedded in the UD1 trap instruction
-> + * for the UB Sanitizer in order to pass along debugging output.
-> + */
-> +void handle_ubsan_failure(struct pt_regs *regs, u16 type)
-> +{
-> +	if ((type & 0xFF) == UBSAN_REG)
-> +		type >>= 8;
-> +	pr_crit("%s at %pS\n", report_ubsan_failure(regs, type), (void *)regs->ip);
-> +}
+> 
+> > at least do better than +5
+> > on Rusty's interface design scale.
+> >
+> > >
+> 
+> Thanks
+> 
+> 
+> > >
+> > >
+> > > >
+> > > >
+> > > >
+> > > >
+> > > > > @@ -455,7 +461,7 @@ int register_virtio_device(struct virtio_device *dev)
+> > > > >               goto out_ida_remove;
+> > > > >
+> > > > >       spin_lock_init(&dev->config_lock);
+> > > > > -     dev->config_enabled = false;
+> > > > > +     dev->config_enabled = 0;
+> > > > >       dev->config_change_pending = false;
+> > > > >
+> > > > >       INIT_LIST_HEAD(&dev->vqs);
+> > > > > diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> > > > > index 96fea920873b..4496f9ba5d82 100644
+> > > > > --- a/include/linux/virtio.h
+> > > > > +++ b/include/linux/virtio.h
+> > > > > @@ -132,7 +132,7 @@ struct virtio_admin_cmd {
+> > > > >  struct virtio_device {
+> > > > >       int index;
+> > > > >       bool failed;
+> > > > > -     bool config_enabled;
+> > > > > +     int config_enabled;
+> > > > >       bool config_change_pending;
+> > > > >       spinlock_t config_lock;
+> > > > >       spinlock_t vqs_list_lock;
+> > > > > --
+> > > > > 2.31.1
+> > > >
+> >
 
 
