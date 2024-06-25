@@ -1,221 +1,154 @@
-Return-Path: <linux-kernel+bounces-229664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 066B7917291
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:34:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3038917292
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:38:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2839B1C2244E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:34:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3966B28280C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:38:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EAB17D36A;
-	Tue, 25 Jun 2024 20:34:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF3517D37C;
+	Tue, 25 Jun 2024 20:38:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MP3alT38"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TX5YN5aY"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4D314C6E
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 20:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D36154C6E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 20:38:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719347677; cv=none; b=VtQlkKH7/Oq1sJSl2LbEDb/Q63Tg3/6teyBvfWnYAUWidhslTOjyq+nPd5UcHyL4OiWxsVwRh74cujBFeqCtMzkBKrCJXuFTDk6xWQm0G82fswJrkc8qXj+AMTlITfhJOGvdgBbrnDBrU5fq/OQn5PqG1/lr5bHBQQFTQ2WO2KM=
+	t=1719347890; cv=none; b=ErAWW51XwzEoN5+xsFHFfUq6E8XsepALt/WM1fzEOnQ2ZEiCmKacDfLWD6cOCEZl/McO+OMHB8cOewokBEHRhJ6C9HKy2RHKkS+7V1YF+D4H631/7VviLr07vuohaJEv9cXTzNguUZVdvapgLOQS0MAZvdGEGqN/eTvUooCgMh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719347677; c=relaxed/simple;
-	bh=1pebubHUIglmk7Jz/Qgb63bUDccEw0yy7iXakdQ0YQw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PsGl5CLCCC6H+IcfAFu7PzefbGqyanXUjqaBZ1FfXEngx8haSeGlFZSMPCT8YfmYAMrLMX49GuoXq80OBj9KWEWd3S0paF7v3f506s/n14sskWCGcT7nx28XD1J0r2VddtvmYyId1/DaX6STYSYKWnpH9rl3q83gI/P9Wpk9l44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MP3alT38; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57cbc66a0a6so981593a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:34:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719347674; x=1719952474; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dag1l+P4AHvt6y/RZEBB4jSeUQA1MVnCnAotCeIeMb8=;
-        b=MP3alT38E8U2msTF7M60y6FZyhYOnL/ZNVW6hrF40v6znRct2HzIwoBL/tY22tUitz
-         JNWtZBQZ+23DVyvxW7VpBpI6Ye9s/SEEwqR3I+34dK/DX0Z0nvas/poWln2zNVJQEFVy
-         zMlMgJq+RecY3pD5PGkZNCSbI7KbJEKkj6uiEYBN/ZUBvFBBWs65BOKGqA+ZvWd1Hr5R
-         Jnfn9tDZfXpOv7jCuo1xBmT30ZUXUmrb33IgPzKoAfdG2a2/N/+FDG3MxnyVut5X/gLP
-         RBuUjFNax0ceH8RGyQ6lT8jzoBDDDpVk5+EzHpDBPNbGnk6Zz5cYjNJq1G4um2IWLHXK
-         UxMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719347674; x=1719952474;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Dag1l+P4AHvt6y/RZEBB4jSeUQA1MVnCnAotCeIeMb8=;
-        b=QMp8pk8wtm7GTpKvhlO2B0/LaVDy6JOssK//SG2pGsvKhUCta2FMB4LNGST1SopIVX
-         Fx0beUCjrKeju5SiWc7Op7IzCFtiEaG0VXkB/wuR6vv0ZOBituBlv1ffevsXys8VUUl/
-         Hnu8ErSYVHyUnVs3clk69b7vlS1CC8WZAn0tPT184f3NAuQoFD3Itruej6YAgNHe/g4x
-         NXnThU3nuxFWe/oFBhzlFtPOdD0D/StCYXmIwAt5ZlfQnXfZfEViswaEJzLrENxtBcuU
-         g3mJC7QH4uhWzoXvtl/a8E3+RDJLnhgf1YkyFea4PIzQZXwgy808j6k2loGTmDIrjhqO
-         bZKg==
-X-Forwarded-Encrypted: i=1; AJvYcCU07ZAOaHS7G9EdXKG2j3u2TvMmQHPgl5nkGQ5ouqaHIDs+XbgTbPwBWHgXnoWryHJ3a5KWYBJ0qRFTwgggrSReKBN+uGBMlXCNsL8l
-X-Gm-Message-State: AOJu0YzKpPr5E/uKWLgCOKj3FfNQTSXOnVkemobaME1og3jShmEPxkm/
-	Ip//yAcBLGqSowKjkiya5Gtf4y/6yTueGxpMZHKOjful/d8YLZhnJvyrk3Qd6iMj1jXJ8v75kEq
-	fqCtdCjbyvk9dxrjfxKhwcjbrgMs=
-X-Google-Smtp-Source: AGHT+IGcPrR5rGeQLFy5hNRr/wqPc5YBbMiYo/9jo770rvfisIWgNgnaL/gSQEyki7GvGD0CaYuBONU2K2j/ryIQ3Fo=
-X-Received: by 2002:a05:6402:34c6:b0:57d:45af:112c with SMTP id
- 4fb4d7f45d1cf-57d45af127amr8896394a12.4.1719347673982; Tue, 25 Jun 2024
- 13:34:33 -0700 (PDT)
+	s=arc-20240116; t=1719347890; c=relaxed/simple;
+	bh=0Jqrl/qlVfq1gy0QWHy/E56JtqX6xRFcKBK8/J54FbY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=k7nhPU0SQhBTlISdcFXX3uJwtfQKuUBbFXKs4VC1U9aG69DWCsworof7Ul7WBTqReP2jc17ee0jZx0f1rqapVkgGQC7J8Ew1niukYgKJcfownSoe8Jqr7mjEMHvGgitntH2pETfYvyY3r1CvHhlE7T1XjG58aifxVlLXRe7iA+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TX5YN5aY; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719347887; x=1750883887;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=0Jqrl/qlVfq1gy0QWHy/E56JtqX6xRFcKBK8/J54FbY=;
+  b=TX5YN5aYmhQVjZyRv48l7VqcQ/lr5ywjEgXZRCemx+SuWhXZOdE/HDdF
+   JBkda6MbEtQeQIyYcSEMzREJpti8US+4HzP9wIzGWT/pvgHiTq9EtJl9y
+   vJfwn3SlRQe0N+tnIPu07efFqmGkfs7gf9H5l/HsV2ayHyxKN0CtLH9+T
+   nGOjmZN407F70OYDtsO1Jh4a8FhAvIrIbX1GzmNfGkwf71M1WmQjGWtxy
+   HPfUcIcPbBCq82FUfpIur694zj/voGek1I84a0y792azPj8hOWL3KO7Dw
+   8HlG8Nec2EuHRdxw9nREXh/PtUxzGANuXZcKiOW96rYe5f43dOAk837lz
+   w==;
+X-CSE-ConnectionGUID: OmFMo5gWSCmElUYPtUDQnQ==
+X-CSE-MsgGUID: 8+Xm4mVnRsasDuWC5ZkMSg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16073767"
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="16073767"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 13:38:06 -0700
+X-CSE-ConnectionGUID: A+WG40+ZRBKiJOXGn88kHw==
+X-CSE-MsgGUID: dLkWVpYzRl+4oT3dKRuWxw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="48216201"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 25 Jun 2024 13:38:04 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sMCvS-000EiE-1w;
+	Tue, 25 Jun 2024 20:38:02 +0000
+Date: Wed, 26 Jun 2024 04:37:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Sami Tolvanen <samitolvanen@google.com>
+Subject: arch/arm/mm/proc.c:82:6: error: conflicting types for
+ 'cpu_arm920_reset'
+Message-ID: <202406260432.6WGV2jCk-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <f4599bd2-72af-4e8d-a0fe-153b69816133@redhat.com>
- <CAHbLzkrOspjVuQw=BN2+RZmV_Ydpz_50yY7FEakJw8Zm14Y9-Q@mail.gmail.com>
- <a088b5cf-503e-4ed7-b427-f17a9ec5d1a8@redhat.com> <CAHbLzkpnDPYWq=HnaJcKhKnppdNikX4YG+1Ysu8Z+XJCoKK4SQ@mail.gmail.com>
- <CAHbLzkr5K=4Shiyb5KgPTQ20jE2Zo08wK=mT3Ez9ADEdJe0Z9A@mail.gmail.com>
- <Zl3M7iniPQaPFDrW@xsang-OptiPlex-9020> <CAHbLzkrOTAaYahG4JYMNrJDhQNZZxW9u+2n71J=v1XYJEVpUdw@mail.gmail.com>
- <CAHbLzkr16YZ80ES5U4BEWJ+ueL22nDJtgH=eOztdHfy080diPw@mail.gmail.com>
- <ZmEb2mdAbBQ/9PMP@xsang-OptiPlex-9020> <CAHbLzkqORuPjr3p7aZGPKSLfdptrg=z1624rcxjud_zs3+HnCA@mail.gmail.com>
- <Zmk5xAF+vHYLwzoG@xsang-OptiPlex-9020>
-In-Reply-To: <Zmk5xAF+vHYLwzoG@xsang-OptiPlex-9020>
-From: Yang Shi <shy828301@gmail.com>
-Date: Tue, 25 Jun 2024 13:34:20 -0700
-Message-ID: <CAHbLzkp3bEE50n1DKfXUYHoGivOzdhwQsLF=s64QVJUEaWCG8Q@mail.gmail.com>
-Subject: Re: [linus:master] [mm] efa7df3e3b: kernel_BUG_at_include/linux/page_ref.h
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Christopher Lameter <cl@linux.com>, 
-	David Hildenbrand <david@redhat.com>, Jason Gunthorpe <jgg@nvidia.com>, Matthew Wilcox <willy@infradead.org>, 
-	Peter Xu <peterx@redhat.com>, Rik van Riel <riel@surriel.com>, 
-	Vivek Kasireddy <vivek.kasireddy@intel.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, lkp@intel.com, oe-lkp@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Tue, Jun 11, 2024 at 11:01=E2=80=AFPM Oliver Sang <oliver.sang@intel.com=
-> wrote:
->
-> hi, Yang Shi,
->
-> On Wed, Jun 05, 2024 at 08:44:37PM -0700, Yang Shi wrote:
-> > Oliver Sang <oliver.sang@intel.com>=E4=BA=8E2024=E5=B9=B46=E6=9C=885=E6=
-=97=A5 =E5=91=A8=E4=B8=8919:16=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > > hi, Yang Shi,
-> > >
-> > > On Tue, Jun 04, 2024 at 04:53:56PM -0700, Yang Shi wrote:
-> > > > On Mon, Jun 3, 2024 at 9:54=E2=80=AFAM Yang Shi <shy828301@gmail.co=
-m> wrote:
-> > > > >
-> > > > > On Mon, Jun 3, 2024 at 7:02=E2=80=AFAM Oliver Sang <oliver.sang@i=
-ntel.com>
-> > > wrote:
-> > > > > >
-> > > > > > hi, Yang Shi,
-> > > > > >
-> > > > > > On Fri, May 31, 2024 at 01:57:06PM -0700, Yang Shi wrote:
-> > > > > > > Hi Oliver,
-> > > > > > >
-> > > > > > > I just came up with a quick patch (just build test) per the
-> > > discussion
-> > > > > > > and attached, can you please to give it a try? Once it is
-> > > verified, I
-> > > > > > > will refine the patch and submit for review.
-> > > > > >
-> > > > > > what's the base of this patch? I tried to apply it upon efa7df3=
-e3b or
-> > > > > > v6.10-rc2. both failed.
-> > > > >
-> > > > > Its base is mm-unstable. The head commit is 8e06d6b9274d ("mm: ad=
-d
-> > > > > swappiness=3D arg to memory.reclaim"). Sorry for the confusion, I=
- should
-> > > > > have mentioned this.
-> > > >
-> > > > I just figured out a bug in the patch. Anyway, we are going to take=
- a
-> > > > different approach to fix the issue per the discussion. I already s=
-ent
-> > > > the series to the mailing list. Please refer to
-> > > >
-> > > https://lore.kernel.org/linux-mm/20240604234858.948986-1-yang@os.ampe=
-recomputing.com/
-> > >
-> > > got it. seems you will submit v2? should we wait v2 to do the tests?
-> >
-> >
-> > The real fix is patch #1, that doesn=E2=80=99t need v2. So you just nee=
-d to test
-> > that.
->
-> we've finished tests and confirmed patch #1 fixed the issue.
-> we also tested upon patch #2, still clean.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   55027e689933ba2e64f3d245fb1ff185b3e7fc81
+commit: 1a4fec49efe5273eb2fcf575175a117745f76f97 ARM: 9392/2: Support CLANG CFI
+date:   8 weeks ago
+config: arm-randconfig-002-20240626 (https://download.01.org/0day-ci/archive/20240626/202406260432.6WGV2jCk-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad79a14c9e5ec4a369eed4adf567c22cc029863f)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406260432.6WGV2jCk-lkp@intel.com/reproduce)
 
-Thanks for testing. Sorry for the late reply, just came back from
-vacation. It seems like Andrew didn't take the fix yet. I will resend
-the patch with your tested-by tag. And I will drop the patch #2 since
-it is just a clean up and I didn't receive any review comments. In
-addition, the undergoing hugepd clean up may make this clean up
-easier, so I will put the clean up on the back burner for now.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406260432.6WGV2jCk-lkp@intel.com/
 
->
-> our bot applied your patch upon 306dde9ce5c951 as below
->
-> 5d45cc9b1beb57 mm: gup: do not call try_grab_folio() in slow path
-> fd3fc964468925 mm: page_ref: remove folio_try_get_rcu()
-> 306dde9ce5c951 foo
->
-> on 306dde9ce5c951, we still observed the issue we reported. clean on both=
- patch
-> #1 and #2
->
-> 306dde9ce5c9516d fd3fc96446892528af48d6271a3 5d45cc9b1beb57386992c005669
-> ---------------- --------------------------- ---------------------------
->        fail:runs  %reproduction    fail:runs  %reproduction    fail:runs
->            |             |             |             |             |
->          47:50         -94%            :50         -94%            :50   =
- dmesg.Kernel_panic-not_syncing:Fatal_exception
->          47:50         -94%            :50         -94%            :50   =
- dmesg.Oops:invalid_opcode:#[##]KASAN
->          47:50         -94%            :50         -94%            :50   =
- dmesg.RIP:try_get_folio
->          47:50         -94%            :50         -94%            :50   =
- dmesg.kernel_BUG_at_include/linux/page_ref.h
->
->
-> >
-> > For patch #2, I haven=E2=80=99t received any comment yet and I=E2=80=99=
-m going to travel so
-> > I=E2=80=99m not going to submit v2 soon .
-> >
-> > And I heard if hugepd is going to be gone soon, so I may wait for that =
-then
-> > rebase on top of it. Anyway it is just a clean up.
-> >
-> >
-> >
-> > >
-> > > sorry that due to resource constraint, we cannot respond test request=
- very
-> > > quickly now.
-> > >
-> > > >
-> > > > >
-> > > > > >
-> > > > > > >
-> > > > > > > Thanks,
-> > > > > > > Yang
-> > > > > > >
-> > > > > > > >
-> > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > --
-> > > > > > > > > Cheers,
-> > > > > > > > >
-> > > > > > > > > David / dhildenb
-> > > > > > > > >
-> > > > > >
-> > > > > >
-> > > >
-> > >
+All errors (new ones prefixed by >>):
+
+>> arch/arm/mm/proc.c:82:6: error: conflicting types for 'cpu_arm920_reset'
+      82 | void cpu_arm920_reset(void);
+         |      ^
+   arch/arm/include/asm/proc-fns.h:96:13: note: previous declaration is here
+      96 | extern void cpu_reset(unsigned long addr, bool hvc) __attribute__((noreturn));
+         |             ^
+   arch/arm/include/asm/glue-proc.h:251:21: note: expanded from macro 'cpu_reset'
+     251 | #define cpu_reset                       __glue(CPU_NAME,_reset)
+         |                                         ^
+   arch/arm/include/asm/glue.h:20:26: note: expanded from macro '__glue'
+      20 | #define __glue(name,fn)         ____glue(name,fn)
+         |                                 ^
+   arch/arm/include/asm/glue.h:16:27: note: expanded from macro '____glue'
+      16 | #define ____glue(name,fn)       name##fn
+         |                                 ^
+   <scratch space>:70:1: note: expanded from here
+      70 | cpu_arm920_reset
+         | ^
+   1 error generated.
+
+
+vim +/cpu_arm920_reset +82 arch/arm/mm/proc.c
+
+393999fa96273b Linus Walleij 2024-04-23  76  
+393999fa96273b Linus Walleij 2024-04-23  77  #ifdef CONFIG_CPU_ARM920T
+393999fa96273b Linus Walleij 2024-04-23  78  void cpu_arm920_proc_init(void);
+393999fa96273b Linus Walleij 2024-04-23  79  __ADDRESSABLE(cpu_arm920_proc_init);
+393999fa96273b Linus Walleij 2024-04-23  80  void cpu_arm920_proc_fin(void);
+393999fa96273b Linus Walleij 2024-04-23  81  __ADDRESSABLE(cpu_arm920_proc_fin);
+393999fa96273b Linus Walleij 2024-04-23 @82  void cpu_arm920_reset(void);
+393999fa96273b Linus Walleij 2024-04-23  83  __ADDRESSABLE(cpu_arm920_reset);
+393999fa96273b Linus Walleij 2024-04-23  84  int cpu_arm920_do_idle(void);
+393999fa96273b Linus Walleij 2024-04-23  85  __ADDRESSABLE(cpu_arm920_do_idle);
+393999fa96273b Linus Walleij 2024-04-23  86  void cpu_arm920_dcache_clean_area(void *addr, int size);
+393999fa96273b Linus Walleij 2024-04-23  87  __ADDRESSABLE(cpu_arm920_dcache_clean_area);
+393999fa96273b Linus Walleij 2024-04-23  88  void cpu_arm920_switch_mm(phys_addr_t pgd_phys, struct mm_struct *mm);
+393999fa96273b Linus Walleij 2024-04-23  89  __ADDRESSABLE(cpu_arm920_switch_mm);
+393999fa96273b Linus Walleij 2024-04-23  90  void cpu_arm920_set_pte_ext(pte_t *ptep, pte_t pte, unsigned int ext);
+393999fa96273b Linus Walleij 2024-04-23  91  __ADDRESSABLE(cpu_arm920_set_pte_ext);
+393999fa96273b Linus Walleij 2024-04-23  92  #ifdef CONFIG_ARM_CPU_SUSPEND
+393999fa96273b Linus Walleij 2024-04-23  93  void cpu_arm920_do_suspend(void *);
+393999fa96273b Linus Walleij 2024-04-23  94  __ADDRESSABLE(cpu_arm920_do_suspend);
+393999fa96273b Linus Walleij 2024-04-23  95  void cpu_arm920_do_resume(void *);
+393999fa96273b Linus Walleij 2024-04-23  96  __ADDRESSABLE(cpu_arm920_do_resume);
+393999fa96273b Linus Walleij 2024-04-23  97  #endif /* CONFIG_ARM_CPU_SUSPEND */
+393999fa96273b Linus Walleij 2024-04-23  98  #endif /* CONFIG_CPU_ARM920T */
+393999fa96273b Linus Walleij 2024-04-23  99  
+
+:::::: The code at line 82 was first introduced by commit
+:::::: 393999fa96273bab8d6efb2f4724030916afd61b ARM: 9389/2: mm: Define prototypes for all per-processor calls
+
+:::::: TO: Linus Walleij <linus.walleij@linaro.org>
+:::::: CC: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
