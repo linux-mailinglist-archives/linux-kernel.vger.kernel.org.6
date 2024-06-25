@@ -1,174 +1,97 @@
-Return-Path: <linux-kernel+bounces-229444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 138AB916FAE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:00:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68285916FB3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:01:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 939671F2308E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:00:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 999461C20C5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E64917837E;
-	Tue, 25 Jun 2024 17:59:58 +0000 (UTC)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6F4817966E;
+	Tue, 25 Jun 2024 18:01:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hycsrXJu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277CF1448E0;
-	Tue, 25 Jun 2024 17:59:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F2C17838A;
+	Tue, 25 Jun 2024 18:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719338397; cv=none; b=dmyu4wQlCEkbO12BJk6rOYVVsuXF+oJ8fTOgiap9dkfd/rocFHwCbhW/JaCivwNIFw7tyPrHrhHI2nISVh12BoodYpO19i7V90G4TleYV9LEvCn5WcuSqonuPK+OVjhGHkq/JkN+W4rS+K2vTRi0xvAv+lBtF3EXNmkl8oBqqEw=
+	t=1719338478; cv=none; b=oefJDADQ8y48rUc5zoK7tZhDi37c5I+4B9miO7JsUmRuU5IyMuApHG11tlGu13aywhqDN7k6UebXsyCZWQM7+0WRZjpmIh63BfC1uunG/M0ALungeSGhP5p24jSwrV2NDitJnWOhYwnE6nhqYc7rvliYT7BD4tOKNthys5xfVEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719338397; c=relaxed/simple;
-	bh=hpOYBpdg6gThR5b1N227DpI9cC6+qivPwLINqm+V7N0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ia7V9ZLNnY7y91AQCxXJf9OROUKZKOgjUnAuK3cpuLhRMekzIAvovUWcTIqxLj1uQ/7XLF6UIZYheDFTZ5/ddFwXEMK3XEc3Fq1aXp7jk5imS8kpkhRcKY9IhYSFLpjSJyh6uux0UaHhBoAXEKXVleIIuQGTNLJfbF4eXMcMvU0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-6e3741519d7so3984518a12.2;
-        Tue, 25 Jun 2024 10:59:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719338395; x=1719943195;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f5PoShk9ER6oKuETO3bdJUevSzjYujmcfx3i8qQ0MKo=;
-        b=WyGMrdA1r8KVw5KZriQ0MtWosR81TcjYDQKVJdCzqi38c88RvqtvuCFa2YQMJjImU0
-         NhdKzlm2TPFbGbQbjquq6rRAtwjnU6gtDKpG961FxsIyQxXSUa4ZqUDPDjLdRMsv6Fl5
-         qZx9F/JNL0SQi21uroe/TkDmF3MwX5Gw2CLbbkYkoZDa9x0biw/j2P3xlaXI1OIy4S21
-         mVNyNB/evfFj/je5B1ZdavAST+q+0XgHLN6oN3WIZDdShYvoEioL6QJATWvh8IhiMDao
-         wor879eeOQmUbu8/rNZxJGoaa3bqTns6o5gbus14vVenrjyg05sgkTIj9u8pCnfJS5Lo
-         MPnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV47idPos36259TTI4SPksLk/pFt1qiNN+bU9QbaV+Fs5w3qNRSS9m+8H8K2rfpG08hj3cHuccFv4YiXS3xOl5wQZuNYkEKU/rEtGEb44vH4kPSjskPqcdM7MfbHcF661Ed+ZmZBEl3Tz5QLPM8Yg==
-X-Gm-Message-State: AOJu0YwAr8lgeLJAwCYv7yPiUIqj/K6kHlni9jkDFRGVAO+HqIjJLkiD
-	zc3ITFOd3WgtUGDSeF4as0zxH5tmHHMg5MQ6mMEhBkNVVH/U6G0ycNfiHLOehOOXri40ajZkOmB
-	vCbnjWo29p94lEPtf7XYe2V/PAio=
-X-Google-Smtp-Source: AGHT+IGG+13e+IM6YaHCDjgHhxzZwK9iqPFhSJtEBdaJ14Pj4FVkbJjvKOBZjXrBtApOOtBEaVA2FM1ujUiSxA6mseE=
-X-Received: by 2002:a05:6a20:7b1b:b0:1b5:5ee0:378a with SMTP id
- adf61e73a8af0-1bcee771ca1mr7839615637.36.1719338395163; Tue, 25 Jun 2024
- 10:59:55 -0700 (PDT)
+	s=arc-20240116; t=1719338478; c=relaxed/simple;
+	bh=581TvUY3mJByA5XC+X/X7x4UvWa//Ogr4hW1i+//mBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YTYsvZZ6EZL+tZP/etbhd+UiEjPRJwadUX3sQo9xAfg2SAU6XRWDRpL1PvgAvRwsaQtQFi3xU+jwC69uoc4oBWPQ2xgYdoWyafsZ7gPNpPqsb1eTtUP5A1z6hpfJKxznbCUYP3TFlnKysoXLsfL6IfaZHfP+Vm98+9gOlGuPzK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hycsrXJu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B420BC32782;
+	Tue, 25 Jun 2024 18:01:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719338477;
+	bh=581TvUY3mJByA5XC+X/X7x4UvWa//Ogr4hW1i+//mBY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hycsrXJuR3fpC7t6jObMEVdd4cIYTc9mkuvIR5WJI6mBQ+ma975t7ujpFvW/foiUF
+	 AoWMLIELn6NKmF04CA3DRkHiB99atFyLf/zFgFbu/mILeWxuAYkOuiCoK3a63pPpHl
+	 onn2bGwGw/m0+o+4WD5V38wsZJ9CQ0dG+a5QYxiyB+roYixoTo9/7K1cwaAcVjEDiH
+	 wMoLmVYy5HONrjbx37PuZzo6kBVa5Ck/vPTw2JZjyqfFmymEQj5xBz1+ofTedXmR42
+	 euwaipYA5QlM6meqjpmzqXpalfJyYq7kwv5Tb33j1E4dPt8Q07SIr1p6LD3QIlsOib
+	 u5Be+P4raZnoA==
+Date: Tue, 25 Jun 2024 19:01:10 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, allen.lkml@gmail.com
+Subject: Re: [PATCH 6.9 000/250] 6.9.7-rc1 review
+Message-ID: <6b4bbcc9-a32f-417c-b021-3318df96f7c4@sirena.org.uk>
+References: <20240625085548.033507125@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240623064850.83720-1-atrajeev@linux.vnet.ibm.com>
- <722cb4bc-89d4-4e03-a80d-ffe05be52c05@intel.com> <f65ff3cf-1724-45a1-ad88-200d72251042@intel.com>
-In-Reply-To: <f65ff3cf-1724-45a1-ad88-200d72251042@intel.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Tue, 25 Jun 2024 10:59:44 -0700
-Message-ID: <CAM9d7ci2raJmUjb7X2m6O1mCJm5xYLEWS8g_gC7tTjvshm1XFQ@mail.gmail.com>
-Subject: Re: [PATCH V4 1/3] tools/perf: Fix the string match for
- "/tmp/perf-$PID.map" files in dso__load
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, acme@kernel.org, jolsa@kernel.org, 
-	irogers@google.com, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
-	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com, 
-	disgoel@linux.vnet.ibm.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="DzcjpOFCm2JhpXty"
+Content-Disposition: inline
+In-Reply-To: <20240625085548.033507125@linuxfoundation.org>
+X-Cookie: Results vary by individual.
 
-Hello,
 
-On Tue, Jun 25, 2024 at 5:02=E2=80=AFAM Adrian Hunter <adrian.hunter@intel.=
-com> wrote:
->
-> On 25/06/24 14:57, Adrian Hunter wrote:
-> > On 23/06/24 09:48, Athira Rajeev wrote:
-> >> Perf test for perf probe of function from different CU fails
-> >> as below:
-> >>
-> >>      ./perf test -vv "test perf probe of function from different CU"
-> >>      116: test perf probe of function from different CU:
-> >>      --- start ---
-> >>      test child forked, pid 2679
-> >>      Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.Msa=
-7iy89bx/testfile
-> >>        Error: Failed to add events.
-> >>      --- Cleaning up ---
-> >>      "foo" does not hit any event.
-> >>        Error: Failed to delete events.
-> >>      ---- end(-1) ----
-> >>      116: test perf probe of function from different CU               =
-    : FAILED!
-> >>
-> >> The test does below to probe function "foo" :
-> >>
-> >>      # gcc -g -Og -flto -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7=
-/testfile-foo.c
-> >>      -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
-> >>      # gcc -g -Og -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testf=
-ile-main.c
-> >>      -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
-> >>      # gcc -g -Og -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testf=
-ile
-> >>      /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
-> >>      /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
-> >>
-> >>      # ./perf probe -x /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/tes=
-tfile foo
-> >>      Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.Xni=
-NxNEVT7/testfile
-> >>         Error: Failed to add events.
-> >>
-> >> Perf probe fails to find symbol foo in the executable placed in
-> >> /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7
-> >>
-> >> Simple reproduce:
-> >>
-> >>  # mktemp -d /tmp/perf-checkXXXXXXXXXX
-> >>    /tmp/perf-checkcWpuLRQI8j
-> >>
-> >>  # gcc -g -o test test.c
-> >>  # cp test /tmp/perf-checkcWpuLRQI8j/
-> >>  # nm /tmp/perf-checkcWpuLRQI8j/test | grep foo
-> >>    00000000100006bc T foo
-> >>
-> >>  # ./perf probe -x /tmp/perf-checkcWpuLRQI8j/test foo
-> >>    Failed to find symbol foo in /tmp/perf-checkcWpuLRQI8j/test
-> >>       Error: Failed to add events.
-> >>
-> >> But it works with any files like /tmp/perf/test. Only for
-> >> patterns with "/tmp/perf-", this fails.
-> >>
-> >> Further debugging, commit 80d496be89ed ("perf report: Add support
-> >> for profiling JIT generated code") added support for profiling JIT
-> >> generated code. This patch handles dso's of form
-> >> "/tmp/perf-$PID.map" .
-> >>
-> >> The check used "if (strncmp(self->name, "/tmp/perf-", 10) =3D=3D 0)"
-> >> to match "/tmp/perf-$PID.map". With this commit, any dso in
-> >> /tmp/perf- folder will be considered separately for processing
-> >> (not only JIT created map files ). Fix this by changing the
-> >> string pattern to check for "/tmp/perf-%d.map". Add a helper
-> >> function is_perf_pid_map_name to do this check. In "struct dso",
-> >> dso->long_name holds the long name of the dso file. Since the
-> >> /tmp/perf-$PID.map check uses the complete name, use dso___long_name f=
-or
-> >> the string name.
-> >>
-> >> With the fix,
-> >>      # ./perf test "test perf probe of function from different CU"
-> >>      117: test perf probe of function from different CU               =
-    : Ok
-> >>
-> >> Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
-> >
-> > Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
-> >
->
-> Although it could use a Fixes tag
->
+--DzcjpOFCm2JhpXty
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Thanks, I will add
+On Tue, Jun 25, 2024 at 11:29:18AM +0200, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.9.7 release.
+> There are 250 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-Fixes: 56cbeacf1435 ("perf probe: Add test for regression introduced
-by switch to die_get_decl_file()")
+Tested-by: Mark Brown <broonie@kernel.org>
 
-Namhyung
+--DzcjpOFCm2JhpXty
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ7BeUACgkQJNaLcl1U
+h9BLGwf8CnfbF3ybaO81WqCAktqF3oBvuuPznajTkeDJiq6l4Z6Ruz6LBZImk+4x
+kpJD/1y2MrmndbvW9+ZazEnL7zsBXaPwjnZkCj3OMk0VjC3VdouU+5+g4umI4RYu
+c2CYq823d+G+e9UHoIVPYBf4/I3zBDMvS4pTZdF54A/GQHzJugttSiZvA8EP37VP
+R8lu64RqOzc68q0OJB5FPL4LuWG8mNgg41bwXcdKNXwnHZyr2SHM8auCn2czRkAx
+KFgwEAHvLSq5bbcb9PQOTED2dyBaG4wMmtfbmM2sElb7P8Nu/xFeoziJcxUDox5V
+yIwuXuynq5ehhpA+wrhUhrtEejyfGw==
+=Arpb
+-----END PGP SIGNATURE-----
+
+--DzcjpOFCm2JhpXty--
 
