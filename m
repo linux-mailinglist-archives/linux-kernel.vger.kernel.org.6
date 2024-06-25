@@ -1,171 +1,178 @@
-Return-Path: <linux-kernel+bounces-228530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5605916154
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:33:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F2B6916150
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:32:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16EC5B253FC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:33:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B0E1F2444F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEB24149E1E;
-	Tue, 25 Jun 2024 08:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55E8149C6F;
+	Tue, 25 Jun 2024 08:31:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dGPJ2bkq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vOqFRB9/"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89D50148857
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:31:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032DC148848
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719304317; cv=none; b=G9WemO8LsgDG/PDR1DBCN49D2kuDtfzHjD4VoC3TnSoEIbYmJ94ynl20GWvxkDeC2LBqpR3ipqDGWUhRy1uFyxXeZjF8RaLUM2/6hsYrwYawV6ftiNll7TJv30XWd+q3I8IJc6FE2flXuZdLqNB0c2AQoRJadvUH7VBJ/TZx22c=
+	t=1719304315; cv=none; b=JegfAdsvwyOjPH0c8hCwccypd/TG6C3MYKdPYONWNwOeIcHkArkHJEIX7+LP3CDuV6B2jrcaPmqyE90FRDuP87IB2M0JSFgrQZJFHg2Sab8o4AyhGL8I60AScALaOxcCHXk51mp9T/TBal6YaDaPhnYQI0cI70H7dYnlbxlYkBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719304317; c=relaxed/simple;
-	bh=4GQMcGauM1sM2qcIuTQSJ5+jNSGplBUnYe9YXxdjt0A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Epfod/X6gjitZU3mgNg4mWa47sNbXIxoMOSdiv5ushLsEpjxmLyUNK+r9LVMse4gxL+yevCgYN9ekSGy06PyQAVSVvJWpTDEhqDxWGmviNcSVcgdPu8e5g8HfVmqvXU8TGry8Vmkd+CE8sFBsBiJijldysSQZa1YJ/BqZK+e/j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dGPJ2bkq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719304314;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=FtBka9f6WX8BkCVj0JZCuT7A8nh0ozt1KTXqJ+SkZZk=;
-	b=dGPJ2bkqK5Kl+9s4LpHaQ7JZf4B/U6W79V26iAnUrA0DiMgHTWHUOZrHM11dIG6Zn+MYiS
-	4Ooc0FB6jQwtY5kU3xK6CahdtYOFsHK5xTYMlD4ef0w966i87RpnhcDAjB7JXkVReW9IKH
-	AVHK1l4bRbIWuJDZ7nybI4mbLJ7p0oM=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-212-pnTwvopxMGGbv6AZxRkupA-1; Tue, 25 Jun 2024 04:31:49 -0400
-X-MC-Unique: pnTwvopxMGGbv6AZxRkupA-1
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a6c70438d0cso196303366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:31:49 -0700 (PDT)
+	s=arc-20240116; t=1719304315; c=relaxed/simple;
+	bh=1bUJ/s7vvwTZ73NCTa5DTXqVHc8wDMkrvmx1x4B0xZ0=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JQpDknQHUbqGiN0pxkXnvsZwnGfVO/cclohn22VYlX66hnsK56DCvccjU3ZHP9FewcnmQNdaXrjbmJWR6i6f+Xc0ezY57gKKTz/Fczi9+a4mJCw4s47vTMjhCi3DkEPwiWXq9vXJVTtdbQ/14D/SNStBG5DQ6GJ200rFOiKo4Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vOqFRB9/; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-35f2c9e23d3so3840259f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:31:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719304312; x=1719909112; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6MGiV5QhyBIwfF0R22KIxg/x70JWWD4uGuZLiiLVcCo=;
+        b=vOqFRB9/PzYL1IM+qLYv8QSghjaflpCLS8cZ/b9f2KeY4t3MlQyadUCTHIfi3vAeoU
+         FttaeIDeDJ4fYLPJtNO5RhZJ2XxF+6NMjKvocB3DrvFyRfI/uM+qKQd7psHrJvowEvai
+         /o/YdjYgI/BNLTt4oWTnwHfiP6E6whKLf6+Ju0+r2ceFRMBPQRwXreeoDuNm7gKbhAXX
+         gSyCZmcoivNFnHnDU59eyTh9xfktjEX7tkAjsh86mTIctlu8OKdSVpFGJj+n8ZYTLH0P
+         UDKr9DKDj10fn2hMtbrKuvdAvIwIdMkcp2XlOkWwQorM/77y7sBMQKIMO4SoE58qDNnU
+         gZMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719304308; x=1719909108;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FtBka9f6WX8BkCVj0JZCuT7A8nh0ozt1KTXqJ+SkZZk=;
-        b=ASHOrBEqzFGv9HAbSngRCAz2jDI/sFgG/JePz9anvbdbjOAF+/szK0HWMYmNU1UBXX
-         JSnoiUM1MIRj+Vv59aAVizDioURwcOmMtBC5b1ndDyqSPLdQE0gRjUpA/0JsBQOrJbxC
-         X1ckVWbkNNF7afN/HXdHbbQ216UudHPrYaeWzWLnfPVvdhobdGXVFA/FUFp2fBgUyEU/
-         cTQNN6YJAD1h1CNnu1CDy4WogEDerIzujegId4VxgmlWT/Og6Yoq//nhGSFkQIrNJuu+
-         tl+/YmYEtEmcwxk+Bcp8+iEKm6NV3sgTrzocIyHBSzCrNTaL2Ocemcb1MXwObuB+pWK5
-         31rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX6sbP5/SPTq8JodzsK+qR33beX7PvNYg6/XZR2A1eazRPSgmuOTH47loLnuDnPNCgEcIT0o2CxmbT4oueyrAoQHhLhoKW3ufm9wkoj
-X-Gm-Message-State: AOJu0YwqXkqfIe7Nj7Z/YuJwuEN+vaRwuS393+tzJbcSmJgJuAz9et99
-	KuJhy7xoclibPz/CjdEDs6tLz4d+IywYKT6Q9aoZFhddBfs4/oFB4SmhTTmwaSFIXprdqxMwXRR
-	fm2T9c+Rnlv7l0zOiPR3WU/Hbqm7FemB2g34Lh06ZDbQjTAn2aZoeiwnZjLDMIA==
-X-Received: by 2002:a50:baa5:0:b0:57c:a7fe:b155 with SMTP id 4fb4d7f45d1cf-57d4bd74074mr5403365a12.15.1719304308210;
-        Tue, 25 Jun 2024 01:31:48 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGxhsR1+izX70xNnvyhK6UwUVonlEeFQMV9kch7eEfTNcHpuqfZ/z/U8gcxRPMmp8lA3q60mQ==
-X-Received: by 2002:a50:baa5:0:b0:57c:a7fe:b155 with SMTP id 4fb4d7f45d1cf-57d4bd74074mr5403333a12.15.1719304307535;
-        Tue, 25 Jun 2024 01:31:47 -0700 (PDT)
-Received: from redhat.com ([2a0d:6fc7:342:f1b5:a48c:a59a:c1d6:8d0a])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30535232sm5638857a12.72.2024.06.25.01.31.44
+        d=1e100.net; s=20230601; t=1719304312; x=1719909112;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6MGiV5QhyBIwfF0R22KIxg/x70JWWD4uGuZLiiLVcCo=;
+        b=vjnXMRL2UrooIr7eUNJFgeoRLMS3f+KQ+PnKVwdnsKD1f8Ic4slIznw+xL4FjU1OBW
+         +QzxYDXB2cxk+qFzjVqTi3ZnMttjgLu73DqB5RK0TROZzKUw1l1qUu8jiCPh1kRQh/jx
+         NX6t9lnKiM93BvQzYdPpvV8FnRgSQktf2QoVu7C4tFQSuhLSZiWNwZLAqreYJhvikss5
+         8KdSOez/WJz0JmAupOdpxDIfk+lqSA5yj8+5DOq0wdMdhwjO1t3/Xji3iCUQ7H6g+V95
+         4epOTOWKGj9OrTpmfNguU3bQQGwPbOho3Si4VKZWXOGsGOfWlqY51Pa4wAmUeR/QYp24
+         RoiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtVAaPeogievbSwBi6hrG5r9936TidUReD0JP+Jlw3ecfHvKfGyaHnGLKk4d32DvySaV9vQsvH0405LCZR6y3qnZplEuUx+uJna2v5
+X-Gm-Message-State: AOJu0YwQrQIxWKnnwzzihKRzHGtkBhg/2GYnDfpRX2nXrBdZ7yGaJN4B
+	mlB1FSLw8Zi8jRQxWubAPXPoXMv6RguFEDWq2AQIQXebSy57J8KIi/3S9PRUzNc=
+X-Google-Smtp-Source: AGHT+IHXVO0K6EtgWIdnjCpVKEK7FGGlTzFiwp9mjcV6PfHRnKrDwThJVhKUFKQBIxHO02PjXcqiXg==
+X-Received: by 2002:a05:6000:1241:b0:366:e09c:56be with SMTP id ffacd0b85a97d-366e325c00amr6885391f8f.6.1719304312228;
+        Tue, 25 Jun 2024 01:31:52 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:1b57:b4a1:3d50:32a2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366388c401asm12286172f8f.45.2024.06.25.01.31.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 01:31:47 -0700 (PDT)
-Date: Tue, 25 Jun 2024 04:31:42 -0400
-From: "Michael S. Tsirkin" <mst@redhat.com>
-To: Jason Wang <jasowang@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	virtualization@lists.linux.dev, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, venkat.x.venkatsubra@oracle.com,
-	gia-khanh.nguyen@oracle.com
-Subject: Re: [PATCH V2 1/3] virtio: allow nested disabling of the configure
- interrupt
-Message-ID: <20240625043120-mutt-send-email-mst@kernel.org>
-References: <20240624024523.34272-1-jasowang@redhat.com>
- <20240624024523.34272-2-jasowang@redhat.com>
- <20240624054403-mutt-send-email-mst@kernel.org>
- <CACGkMEv1U7N-RRgQ=jbhBK1SWJ3EJz84qYaxC2kk6keM6J6MaQ@mail.gmail.com>
- <20240625030259-mutt-send-email-mst@kernel.org>
- <CACGkMEuP5GJTwcSoG6UP0xO6V7zeJynYyTDVRtF8R=PJ5z8aLg@mail.gmail.com>
- <20240625035746-mutt-send-email-mst@kernel.org>
- <CACGkMEtA8_StbzicRA6aEST8e4SNHFutLmtPu-8zaOZH2zO3cA@mail.gmail.com>
+        Tue, 25 Jun 2024 01:31:51 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,  Lars-Peter Clausen
+ <lars@metafoo.de>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
+ Hilman <khilman@baylibre.com>,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-iio@vger.kernel.org,  Rob
+ Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH 2/2] iio: frequency: add amlogic clock measure support
+In-Reply-To: <04254d15-2f6e-435d-ba4c-8e2e87766b9b@baylibre.com> (David
+	Lechner's message of "Mon, 24 Jun 2024 17:51:05 -0500")
+References: <20240624173105.909554-1-jbrunet@baylibre.com>
+	<20240624173105.909554-3-jbrunet@baylibre.com>
+	<04254d15-2f6e-435d-ba4c-8e2e87766b9b@baylibre.com>
+Date: Tue, 25 Jun 2024 10:31:51 +0200
+Message-ID: <1j4j9hift4.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACGkMEtA8_StbzicRA6aEST8e4SNHFutLmtPu-8zaOZH2zO3cA@mail.gmail.com>
+Content-Type: text/plain
 
-On Tue, Jun 25, 2024 at 04:18:00PM +0800, Jason Wang wrote:
-> > > >
-> > > >
-> > > >
-> > > > But in conclusion ;) if you don't like my suggestion do something else
-> > > > but make the APIs make sense,
-> > >
-> > > I don't say I don't like it:)
-> > >
-> > > Limiting it to virtio-net seems to be the most easy way. And if we
-> > > want to do it in the core, I just want to make nesting to be supported
-> > > which might not be necessary now.
-> >
-> > I feel limiting it to a single driver strikes the right balance ATM.
-> 
-> Just to make sure I understand here, should we go back to v1 or go
-> with the config_driver_disabled?
-> 
-> Thanks
+On Mon 24 Jun 2024 at 17:51, David Lechner <dlechner@baylibre.com> wrote:
 
+> On 6/24/24 12:31 PM, Jerome Brunet wrote:
+>> Add support for the HW found in most Amlogic SoC dedicated to measure
+>> system clocks.
+>> 
+>
+>
+>
+>> +static int cmsr_read_raw(struct iio_dev *indio_dev,
+>> +			 struct iio_chan_spec const *chan,
+>> +			 int *val, int *val2, long mask)
+>> +{
+>> +	struct amlogic_cmsr *cm = iio_priv(indio_dev);
+>> +
+>> +	guard(mutex)(&cm->lock);
+>> +
+>> +	switch (mask) {
+>> +	case IIO_CHAN_INFO_RAW:
+>> +		*val = cmsr_measure_unlocked(cm, chan->channel);
+>
+> Is this actually returning an alternating voltage magnitutde?
+> Most frequency drivers don't have a raw value, only frequency.
 
-I still like config_driver_disabled.
+No it is not the magnitude, it is the clock rate (frequency) indeed.
+Maybe altvoltage was not the right pick for that but nothing obvious
+stands out for Hz measurements
 
+>
+>> +		if (*val < 0)
+>> +			return *val;
+>> +		return IIO_VAL_INT;
+>> +
+>> +	case IIO_CHAN_INFO_PROCESSED: /* Result in Hz */
+>
+> Shouldn't this be IIO_CHAN_INFO_FREQUENCY?
 
-> >
-> > >
-> > > > at least do better than +5
-> > > > on Rusty's interface design scale.
-> > > >
-> > > > >
-> > >
-> > > Thanks
-> > >
-> > >
-> > > > >
-> > > > >
-> > > > > >
-> > > > > >
-> > > > > >
-> > > > > >
-> > > > > > > @@ -455,7 +461,7 @@ int register_virtio_device(struct virtio_device *dev)
-> > > > > > >               goto out_ida_remove;
-> > > > > > >
-> > > > > > >       spin_lock_init(&dev->config_lock);
-> > > > > > > -     dev->config_enabled = false;
-> > > > > > > +     dev->config_enabled = 0;
-> > > > > > >       dev->config_change_pending = false;
-> > > > > > >
-> > > > > > >       INIT_LIST_HEAD(&dev->vqs);
-> > > > > > > diff --git a/include/linux/virtio.h b/include/linux/virtio.h
-> > > > > > > index 96fea920873b..4496f9ba5d82 100644
-> > > > > > > --- a/include/linux/virtio.h
-> > > > > > > +++ b/include/linux/virtio.h
-> > > > > > > @@ -132,7 +132,7 @@ struct virtio_admin_cmd {
-> > > > > > >  struct virtio_device {
-> > > > > > >       int index;
-> > > > > > >       bool failed;
-> > > > > > > -     bool config_enabled;
-> > > > > > > +     int config_enabled;
-> > > > > > >       bool config_change_pending;
-> > > > > > >       spinlock_t config_lock;
-> > > > > > >       spinlock_t vqs_list_lock;
-> > > > > > > --
-> > > > > > > 2.31.1
-> > > > > >
-> > > >
-> >
+How would I get raw / processed / scale with IIO_CHAN_INFO_FREQUENCY ?
 
+>
+> Processed is just (raw + offset) * scale which would be a voltage
+> in this case since the channel type is IIO_ALTVOLTAGE.
+
+This is was Processed does here, along with selecting the most
+appropriate scale to perform the measurement.
+
+>
+>> +		*val = cmsr_measure_processed_unlocked(cm, chan->channel, val2);
+>> +		if (*val < 0)
+>> +			return *val;
+>> +		return IIO_VAL_INT_64;
+>> +
+>> +	case IIO_CHAN_INFO_SCALE:
+>
+> What is this attribute being used for?
+
+Hz
+
+>
+> (clearly not used to convert the raw value to millivolts :-) )
+>
+> Maybe IIO_CHAN_INFO_INT_TIME is the right one for this? Although
+> so far, that has only been used with light sensors.
+
+I think you are mixing up channel info and type here.
+I do want the info
+ * IIO_CHAN_INFO_RAW
+ * IIO_CHAN_INFO_PROCESSED
+ * IIO_CHAN_INFO_SCALE
+
+I want those info to represent an alternate voltage frequency in Hz.
+I thought type 'IIO_ALTVOLTAGE' was the right pick for that. Apparently
+it is not. What is the appropriate type then ? Should I add a new one ?
+
+>
+>> +		*val2 = cmsr_get_time_unlocked(cm);
+>> +		*val = 1000000;
+>> +		return IIO_VAL_FRACTIONAL;
+>> +
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +}
+>> +
+
+-- 
+Jerome
 
