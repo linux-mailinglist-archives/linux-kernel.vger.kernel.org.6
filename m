@@ -1,320 +1,109 @@
-Return-Path: <linux-kernel+bounces-228471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13D01916060
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:50:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8158F916088
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:59:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC3062824CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:50:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0F8D1C220AE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:59:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0F7146D7E;
-	Tue, 25 Jun 2024 07:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91C91474A6;
+	Tue, 25 Jun 2024 07:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BeyBD/Q3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b="tBSpwwVs"
+Received: from mx.kolabnow.com (mx.kolabnow.com [212.103.80.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA58146A77
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B8F47A62;
+	Tue, 25 Jun 2024 07:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.103.80.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719301850; cv=none; b=sUCxuiEG75HQlLWv3PBh0+MvrYZFKwj1q9rU+7d2b3BreDYFnBY5r7r8CWKC07PwD+FI92PH+q0k5k56F0/i98pPL4RUF8JRPGh2z7fUV856vE4oKaXaufvkkOQ6AjLRoSXK+kVBARI5MlNNOcbvcNTc7fwuh+bQ7IWy0MJdF6U=
+	t=1719302347; cv=none; b=f33CMx9ZmUssKb/9CUx6dAvTiu8Kyqa8Fw6/Nm14qncyp2Tn2p/K7r7MV0TF/7vkfh7J59mjFzZSpMH8P67HpRbWklM8LjUCKdd9A7GfMOosIFVtqUJWIpNhOOBSw08PFPKFvL6rkBvsHNXYu4MVbaoh3W415YEHHy5Oz3VP95w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719301850; c=relaxed/simple;
-	bh=JjdjWqURBMBCsWWwm+UL3g6cP0BmawROoiA0yuQm/Is=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EgEfHXNCF3ZLEodYEHma8sj/mposrYbrX5H75Hqc2x+0CHTKxVyvXFvvOoqWK25GQQbz2hbJPmCWv6lRfiB5v2aVOcGSYGe1AnX378qbgAP4a7uuhqBa20GPIZXE0aTqtMi2ONvWDWmR5axlgvHR307xSVTFLGtoCkGke/AA9Sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BeyBD/Q3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719301847;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HoV58GQTGopluOa7fyIGB0MekMiGHFN0FrVZ1SzK5K8=;
-	b=BeyBD/Q3+SW9p61oRQQSX36DJykndoGnQpMMGjDfy1kyX4HynMQSYY4eao/5gfn2wJJANg
-	nDgCXtl6wdZaMZUde3vZcribcXGi4fmXH/PGlnRCMpSpTa7nAGkUt5PWQR1GG5UEFsfhB/
-	S0SZ46VoCKHZFu2lAJ2y9tPjxQaOdVE=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-618-QvlW37qXPmaXeTjOwbpqQQ-1; Tue, 25 Jun 2024 03:50:45 -0400
-X-MC-Unique: QvlW37qXPmaXeTjOwbpqQQ-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2c7a6c639bfso6780323a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:50:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719301845; x=1719906645;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HoV58GQTGopluOa7fyIGB0MekMiGHFN0FrVZ1SzK5K8=;
-        b=QEiZq+sKDXtJbk/O54x/4sMTNlU+Lxv7IyU0xkBunDXRW2Z6ytMJXf2/dn8paxPgnj
-         4MVasu+DmlDseI3Z4I3me5BhX/G42kUGrr80WTjFcu2NDw+yqJkgUPnK3IdCEfJvd9Hg
-         5Ard0j516KvhIN4Lh0QQVR7uz6yJnFQuHE3+aJWq+ApmOKl/WN1HNgnaVNG/NhFudnDb
-         aNgZsNl9zzZO+rWD/TW0+7WAkNl9GlmWmlNl5vXeY6PvZ/f6tQriI/VHT12fSZxZ0UuH
-         mPl7k1EfHuhQTN1PpyYzRepUv1dU4uunpB25XFFekhKq+ijuUmlbMt+FzYAszuFaCnBv
-         i4eA==
-X-Forwarded-Encrypted: i=1; AJvYcCVdsNLGor6cGR9y8RcOiT/fuuzfHQ6+nNRdIH6VsN9elKreKT9bVYsKpJhj1oYRzkh6Ct97AYMHH6+CHwSAIJXo/SV1j2YWOaCeLRsC
-X-Gm-Message-State: AOJu0YydSfWUM7hpjoFSQhgaElrn7KSiXZDKBpKok2fguo+yWhmwudWP
-	USYpqewy0UQLYnjhSSY9+0hS2/eBw6tHbQHl0KrRFfeQaBVup+O2PdGuJYIde9S6Q2kIQqPq25P
-	fKnPIrw3ipt/Fy0IyQL1YECcC2/oah15GPgxRxRfd39yaBl6d9IzTEkjlu8e/8VEB/Tdmjtf2J0
-	joQT2ghYNgBAAGZltLz8AkrgxOKbTEx/Ctbi/3
-X-Received: by 2002:a17:90b:1b0f:b0:2c8:3f5:3937 with SMTP id 98e67ed59e1d1-2c858208ff4mr6160157a91.28.1719301844635;
-        Tue, 25 Jun 2024 00:50:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHQvK5qdA1FBZvQp+q0PyDx7LTJheMl0fDu9wT7HwKGADSTVmOhaGiqvO3JmLgFDN7M9IsUtfzcJiIp79OJvNg=
-X-Received: by 2002:a17:90b:1b0f:b0:2c8:3f5:3937 with SMTP id
- 98e67ed59e1d1-2c858208ff4mr6160134a91.28.1719301844061; Tue, 25 Jun 2024
- 00:50:44 -0700 (PDT)
+	s=arc-20240116; t=1719302347; c=relaxed/simple;
+	bh=BCVpcE/ahVIpBAMsyzDcvDdPwtpeId8iQRj4WuE9x90=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=D/tB2R/xlJXp/BYhn8zuW/NpTISCHEbBbuuCOXQWocsF66yrp3RxCuEt8uFbefI7vdNwm0GGKRhlCcync4mV+8vF252TIbZjYAAD/p9MyvS/zP6TZVAwzfZg6t1sfFDURt0the5lQTXf9oTDR5cIlhYmPb62OorZKNamU+TLCZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it; spf=pass smtp.mailfrom=vaga.pv.it; dkim=pass (2048-bit key) header.d=kolabnow.com header.i=@kolabnow.com header.b=tBSpwwVs; arc=none smtp.client-ip=212.103.80.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vaga.pv.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vaga.pv.it
+Received: from localhost (unknown [127.0.0.1])
+	by mx.kolabnow.com (Postfix) with ESMTP id 99C6D20D136E;
+	Tue, 25 Jun 2024 09:50:49 +0200 (CEST)
+Authentication-Results: ext-mx-out011.mykolab.com (amavis);
+ dkim=pass (2048-bit key) reason="pass (just generated, assumed good)"
+ header.d=kolabnow.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kolabnow.com; h=
+	content-transfer-encoding:content-type:content-type:message-id
+	:references:in-reply-to:subject:subject:from:from:date:date
+	:mime-version:received:received:received; s=dkim20240523; t=
+	1719301849; x=1721116250; bh=a4X7157x40dfgORFmmF9asFVj5FOglGHLaK
+	X/TTxxH8=; b=tBSpwwVs+htGGyFsioAcxrCCT73GA9T8IWd0W8Ay92D0sJ7ppXd
+	eDNlzxRBzOr6cxxhJlklZCVvAeOor7lHJCaVAs4sIORQMgyChkuMM4ztMnIbI3b9
+	cF3aigXZgbYpVpChPfoKb2i/ziLoTcvvhRyG6NVsP6gmvNLsQ4mu4q6KF0INM8yK
+	UL1NTiuxZehT4JfYyzPli4UqucomeAGV+rTWzghBiRjRGeDKCYvmvv2wumBLtR5E
+	z5vzDlXwAfo8j4LmKjEWrsstsjz/B3n2RM2uXx5nXcSHAfZNJxKxQhYZ1tsaaeiM
+	806NJ8QpcbJhXZowpUfZdRo0H/uUKcuYnew==
+X-Virus-Scanned: amavis at mykolab.com
+X-Spam-Flag: NO
+X-Spam-Score: -1
+X-Spam-Level:
+Received: from mx.kolabnow.com ([127.0.0.1])
+ by localhost (ext-mx-out011.mykolab.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id TphZTiPlnIDd; Tue, 25 Jun 2024 09:50:49 +0200 (CEST)
+Received: from int-mx009.mykolab.com (unknown [10.9.13.9])
+	by mx.kolabnow.com (Postfix) with ESMTPS id 5D2D020D1348;
+	Tue, 25 Jun 2024 09:50:35 +0200 (CEST)
+Received: from int-subm015.mykolab.com (unknown [10.9.37.15])
+	by int-mx009.mykolab.com (Postfix) with ESMTPS id 9F86721F0909;
+	Tue, 25 Jun 2024 09:50:35 +0200 (CEST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624024523.34272-1-jasowang@redhat.com> <20240624024523.34272-2-jasowang@redhat.com>
- <20240624054403-mutt-send-email-mst@kernel.org> <CACGkMEv1U7N-RRgQ=jbhBK1SWJ3EJz84qYaxC2kk6keM6J6MaQ@mail.gmail.com>
- <20240625030259-mutt-send-email-mst@kernel.org>
-In-Reply-To: <20240625030259-mutt-send-email-mst@kernel.org>
-From: Jason Wang <jasowang@redhat.com>
-Date: Tue, 25 Jun 2024 15:50:30 +0800
-Message-ID: <CACGkMEuP5GJTwcSoG6UP0xO6V7zeJynYyTDVRtF8R=PJ5z8aLg@mail.gmail.com>
-Subject: Re: [PATCH V2 1/3] virtio: allow nested disabling of the configure interrupt
-To: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	virtualization@lists.linux.dev, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, venkat.x.venkatsubra@oracle.com, 
-	gia-khanh.nguyen@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Tue, 25 Jun 2024 09:50:35 +0200
+From: Federico Vaga <federico.vaga@vaga.pv.it>
+To: SeongJae Park <sj@kernel.org>
+Cc: Jonathan Corbet <corbet@lwn.net>, Carlos Bilbao
+ <carlos.bilbao.osdev@gmail.com>, Avadhut Naik <avadhut.naik@amd.com>, Alex
+ Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>, Hu Haowen
+ <2023002089@link.tyut.edu.cn>, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] Docs: Move magic-number from process to staging
+In-Reply-To: <20240624185312.94537-4-sj@kernel.org>
+References: <20240624185312.94537-1-sj@kernel.org>
+ <20240624185312.94537-4-sj@kernel.org>
+Message-ID: <d7e4a36e27d0d6b8325875f740b94dfa@vaga.pv.it>
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 25, 2024 at 3:11=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
- wrote:
->
-> On Tue, Jun 25, 2024 at 09:27:04AM +0800, Jason Wang wrote:
-> > On Mon, Jun 24, 2024 at 5:59=E2=80=AFPM Michael S. Tsirkin <mst@redhat.=
-com> wrote:
-> > >
-> > > On Mon, Jun 24, 2024 at 10:45:21AM +0800, Jason Wang wrote:
-> > > > Somtime driver may want to enable or disable the config callback. T=
-his
-> > > > requires a synchronization with the core. So this patch change the
-> > > > config_enabled to be a integer counter. This allows the toggling of
-> > > > the config_enable to be synchronized between the virtio core and th=
-e
-> > > > virtio driver.
-> > > >
-> > > > The counter is not allowed to be increased greater than one, this
-> > > > simplifies the logic where the interrupt could be disabled immediat=
-ely
-> > > > without extra synchronization between driver and core.
-> > > >
-> > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
-> > > > ---
-> > > >  drivers/virtio/virtio.c | 20 +++++++++++++-------
-> > > >  include/linux/virtio.h  |  2 +-
-> > > >  2 files changed, 14 insertions(+), 8 deletions(-)
-> > > >
-> > > > diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
-> > > > index b968b2aa5f4d..d3aa74b8ae5d 100644
-> > > > --- a/drivers/virtio/virtio.c
-> > > > +++ b/drivers/virtio/virtio.c
-> > > > @@ -127,7 +127,7 @@ static void __virtio_config_changed(struct virt=
-io_device *dev)
-> > > >  {
-> > > >       struct virtio_driver *drv =3D drv_to_virtio(dev->dev.driver);
-> > > >
-> > > > -     if (!dev->config_enabled)
-> > > > +     if (dev->config_enabled < 1)
-> > > >               dev->config_change_pending =3D true;
-> > > >       else if (drv && drv->config_changed)
-> > > >               drv->config_changed(dev);
-> > > > @@ -146,17 +146,23 @@ EXPORT_SYMBOL_GPL(virtio_config_changed);
-> > > >  static void virtio_config_disable(struct virtio_device *dev)
-> > > >  {
-> > > >       spin_lock_irq(&dev->config_lock);
-> > > > -     dev->config_enabled =3D false;
-> > > > +     --dev->config_enabled;
-> > > >       spin_unlock_irq(&dev->config_lock);
-> > > >  }
-> > > >
-> > > >  static void virtio_config_enable(struct virtio_device *dev)
-> > > >  {
-> > > >       spin_lock_irq(&dev->config_lock);
-> > > > -     dev->config_enabled =3D true;
-> > > > -     if (dev->config_change_pending)
-> > > > -             __virtio_config_changed(dev);
-> > > > -     dev->config_change_pending =3D false;
-> > > > +
-> > > > +     if (dev->config_enabled < 1) {
-> > > > +             ++dev->config_enabled;
-> > > > +             if (dev->config_enabled =3D=3D 1 &&
-> > > > +                 dev->config_change_pending) {
-> > > > +                     __virtio_config_changed(dev);
-> > > > +                     dev->config_change_pending =3D false;
-> > > > +             }
-> > > > +     }
-> > > > +
-> > > >       spin_unlock_irq(&dev->config_lock);
-> > > >  }
-> > > >
-> > >
-> > > So every disable decrements the counter. Enable only increments it up=
- to 1.
-> > > You seem to be making some very specific assumptions
-> > > about how this API will be used. Any misuse will lead to under/overfl=
-ow
-> > > eventually ...
-> > >
-> >
-> > Well, a counter gives us more information than a boolean. With
-> > boolean, misuse is even harder to be noticed.
->
-> With boolean we can prevent misuse easily because previous state
-> is known exactly. E.g.:
->
-> static void virtio_config_driver_disable(struct virtio_device *dev)
-> {
->         BUG_ON(dev->config_driver_disabled);
->         dev->config_driver_disabled =3D true;
-> }
->
->
->
-> static void virtio_config_driver_enable(struct virtio_device *dev)
-> {
->         BUG_ON(!dev->config_driver_disabled);
->         dev->config_driver_disabled =3D false;
-> }
->
->
-> Does not work with integer you simply have no idea what the value
-> should be at point of call.
+On 2024-06-24 20:53, SeongJae Park wrote:
+> 'Other material' section on 'process/index' is for unsorted documents.
+> However we also have a dedicated place for the purpose, 'staging/'.
+> Move 'magic-number' from the section to 'staging/' directory.
+> 
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  Documentation/process/index.rst                           | 1 -
+>  Documentation/staging/index.rst                           | 1 +
+>  Documentation/{process => staging}/magic-number.rst       | 0
+>  Documentation/translations/it_IT/process/magic-number.rst | 2 +-
+>  Documentation/translations/sp_SP/process/magic-number.rst | 2 +-
+>  Documentation/translations/zh_CN/process/magic-number.rst | 2 +-
+>  Documentation/translations/zh_TW/process/magic-number.rst | 2 +-
+>  7 files changed, 5 insertions(+), 5 deletions(-)
+>  rename Documentation/{process => staging}/magic-number.rst (100%)
 
-Yes but I meant if we want the config could be disabled by different
-parties (core, driver and others)
+Good for me
 
->
->
-> > >
-> > >
-> > > My suggestion would be to
-> > > 1. rename config_enabled to config_core_enabled
-> > > 2. rename virtio_config_enable/disable to virtio_config_core_enable/d=
-isable
-> > > 3. add bool config_driver_disabled and make virtio_config_enable/disa=
-ble
-> > >    switch that.
-> > > 4. Change logic from dev->config_enabled to
-> > >    dev->config_core_enabled && !dev->config_driver_disabled
-> >
-> > If we make config_driver_disabled by default true,
->
-> No, we make it false by default.
->
-> > we need someone to
-> > enable it explicitly. If it's core, it breaks the semantic that it is
-> > under the control of the driver (or needs to synchronize with the
-> > driver). If it's a driver, each driver needs to enable it at some time
-> > which can be easily forgotten. And if we end up with workarounds like:
-> >
-> >         /* If probe didn't do it, mark device DRIVER_OK ourselves. */
-> >         if (!(dev->config->get_status(dev) & VIRTIO_CONFIG_S_DRIVER_OK)=
-)
-> >                 virtio_device_ready(dev);
-> >
-> > It's another break of the semantics. And actually the above is also rac=
-y.
-> >
-> > It seems the only choice is to make config_driver_disabled by default
-> > false. But the driver needs to be aware of this and take extra care
-> > when calling virtio_device_ready() which is also tricky.
->
->
-> No, false by default simply means no change to semantics.
+Acked-by: Federico Vaga <federico.vaga@vaga.pv.it>
 
-No change to current semantics, probably. But we need to document
-
-1) driver config is enabled by default
-2) no nested enabling and disabling
-
-If you think they are all fine, I can go with that way.
-
->
->
-> >
-> > So in conclusion, two booleans seems sut-optimal than a counter. For
-> > example we can use different bits for the counter as preempt_count
-> > did. With counter(s), core and driver don't need any implicit/explicit
-> > synchronization.
-> >
-> > Thanks
-> >
->
-> We have a simple problem, we can solve it simply. reference counting
-> is tricky to get right and hard to debug, if we don't need it let us
-> not go there.
-
-I fully agree, and that's why I limit the change to virtio-net driver
-in the first version.
-
->
->
->
-> But in conclusion ;) if you don't like my suggestion do something else
-> but make the APIs make sense,
-
-I don't say I don't like it:)
-
-Limiting it to virtio-net seems to be the most easy way. And if we
-want to do it in the core, I just want to make nesting to be supported
-which might not be necessary now.
-
-> at least do better than +5
-> on Rusty's interface design scale.
->
-> >
-
-Thanks
-
-
-> >
-> >
-> > >
-> > >
-> > >
-> > >
-> > > > @@ -455,7 +461,7 @@ int register_virtio_device(struct virtio_device=
- *dev)
-> > > >               goto out_ida_remove;
-> > > >
-> > > >       spin_lock_init(&dev->config_lock);
-> > > > -     dev->config_enabled =3D false;
-> > > > +     dev->config_enabled =3D 0;
-> > > >       dev->config_change_pending =3D false;
-> > > >
-> > > >       INIT_LIST_HEAD(&dev->vqs);
-> > > > diff --git a/include/linux/virtio.h b/include/linux/virtio.h
-> > > > index 96fea920873b..4496f9ba5d82 100644
-> > > > --- a/include/linux/virtio.h
-> > > > +++ b/include/linux/virtio.h
-> > > > @@ -132,7 +132,7 @@ struct virtio_admin_cmd {
-> > > >  struct virtio_device {
-> > > >       int index;
-> > > >       bool failed;
-> > > > -     bool config_enabled;
-> > > > +     int config_enabled;
-> > > >       bool config_change_pending;
-> > > >       spinlock_t config_lock;
-> > > >       spinlock_t vqs_list_lock;
-> > > > --
-> > > > 2.31.1
-> > >
->
-
+-- 
+Federico Vaga
 
