@@ -1,110 +1,220 @@
-Return-Path: <linux-kernel+bounces-228788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A80D9166C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:01:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE8D9166CC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:01:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9D91C237FA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:01:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2ACE1C236AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:01:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A48614D2BD;
-	Tue, 25 Jun 2024 12:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="sFBk7ez+"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB28F14D6FB;
+	Tue, 25 Jun 2024 12:01:21 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C530F44C9E;
-	Tue, 25 Jun 2024 12:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A3414D296
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:01:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719316858; cv=none; b=Nkv5oSsqeT853cYjUuKRVogrLL6lQGH2I2aNYBIWG3EopJDqXFren28fFtNvnTDIIUAkGYn1V4QHIAFo7MRCR5N0g52xbYm0jHY8m983j8kcvaYQIMt9A4nQP9pTd2iVOMzElPQ+ktiIMqEVS+DtR8nqdQgY1PshxaZsjUPpOtY=
+	t=1719316881; cv=none; b=YHAAUGwgy4/XldDyn4tOMLhzRybeWfCOxkm840D/jgC5Y89txnEio4iS1tBUL2v3fp5TIhs3AL3RuDMRLWmP4DkFB0gjw9Hj7PDMZlHxLvMTn7BPOmYmJZYOU5DR798u7AY6Pit236GO7bEWdOfHDIyciVXjo89AAmIRqi05MgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719316858; c=relaxed/simple;
-	bh=nV8EQhdVfjwA7JCFBgocPJknEFZBPmI8Rb4r1ePjiDE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=GBXZzS/xD8iCDATs8blApcNMdZXWzByFLPSLwA6ukUUnjA7+w0+zB/NKWTpaoYPyhJyvpHnXcf3V09K0MVjQWovRjhQlqoz3P0Ts/SgGw2iMFKHgNg4L1ODvsCqH9MOon21zIcaT7GNdyAVlyCzLB/OyytpMUnl7pYJgMepE/ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=sFBk7ez+; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719316820; x=1719921620; i=markus.elfring@web.de;
-	bh=nV8EQhdVfjwA7JCFBgocPJknEFZBPmI8Rb4r1ePjiDE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=sFBk7ez+UH1rLu5gwotCV36zUpmzQDQm/amBjsErRIlbuQQVbxmAXUU7PXVb2xKf
-	 Ofj+x/BYAo2gNc0Y2r3HqgfdbgbzkLQ1NtIFnwtL0LR1T2gK/saI5Wv0vaxJZ8AEu
-	 IX7P+lOQtr+4ECDgR1p7/Advch3l8qEcIs03Gf6AVCSEeTdIxRmJHp9DR9u9QDFFN
-	 gwctNoIo/eBngu3ioKjwretwW8tFJ4IMUbhKcutb1z2RfNcMY4yAh6vMH2+h3ndbR
-	 P8VAexRePjAH2G+MsqHT8SxgAOE31rnXKakFgKnObWhmcqznwvPdE7cPjA7/6Ud5Q
-	 /G7TKXS0hCw0tJrNMA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MYLmo-1rqkSH3yJ0-00OW46; Tue, 25
- Jun 2024 14:00:20 +0200
-Message-ID: <edeaa699-7cfe-44ed-abde-7cf3d3efe3bf@web.de>
-Date: Tue, 25 Jun 2024 14:00:15 +0200
+	s=arc-20240116; t=1719316881; c=relaxed/simple;
+	bh=eedyaU0OboN1irU4L/5Dq2bMj3pSX2ZdN2eZAdvJsWA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tWj+Rc6oQb0MhoBAzGjk9T0RcDiT7yVQVa91TqkNrO9owf0pqoXDowy52RV2DaUqIZt+Cy3dVxWvksU4LWjCaAqX3Lrp1aAAV0ktMCK5mDmJoFArtggcbISfOQBakNP1Rw8U9sNE7CWDXGYyMh4bmGek+BYdOc2KM5nxwaM0SrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1sM4rA-00087x-AW; Tue, 25 Jun 2024 14:01:04 +0200
+Message-ID: <2e7a6d8defc84073a204a2071d834d87012a0f7d.camel@pengutronix.de>
+Subject: Re: [etnaviv-next v14 0/8] drm/etnaviv: Add driver wrapper for
+ vivante GPUs attached on PCI(e) device
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Icenowy Zheng <uwu@icenowy.me>, Sui Jingfeng <sui.jingfeng@linux.dev>
+Cc: Russell King <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
+	 <christian.gmeiner@gmail.com>, linux-kernel@vger.kernel.org, 
+	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org
+Date: Tue, 25 Jun 2024 14:01:02 +0200
+In-Reply-To: <19acb7b11ed22a0a87694b2e74807b82e3b5450e.camel@icenowy.me>
+References: <20240519165321.2123356-1-sui.jingfeng@linux.dev>
+	 <19acb7b11ed22a0a87694b2e74807b82e3b5450e.camel@icenowy.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ma Ke <make24@iscas.ac.cn>, linux-aspeed@lists.ozlabs.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Andrew Jeffery <andrew@codeconstruct.com.au>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Joel Stanley <joel@jms.id.au>, Neal Liu <neal_liu@aspeedtech.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240625022306.2568122-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH v4] usb: gadget: aspeed_udc: validate endpoint index for
- ast udc
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240625022306.2568122-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:WVa6AenrwtXGDQwCcWoxbgw+LKV4V+A6XRWd/cms6/7gM3UruC2
- W55cgmEsHf7rJ1egtv/DYzxyxmf+mpE8zVssjVA8cWkJFSGeJ3PJn6wgm3LE7L2TtykeJ0V
- qXFcrr192CZEI7PseoDPhr7Bb0KI4eo7LboXxYefkvv8YJyHngnLmFnxdDdKMk5uHoSesPx
- f87llrL1qknVoUE5h52FA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:d0DxsRFHnpM=;39WEZlnVUSXcpVzJf2TNAjcfdTC
- qneCOiATJ2Eo+K8g5pM0CXNFoJlCvei3fCDXmuQdnaw8nZo+SToG5+j2wm7ZBApJ/V0QX64j0
- InGaZZVLjL85xlguXXTMxenwE3fs8mGQLbRaZLqHG1OxAhODpY1mTSUaiOFLEapoL94Xhj20l
- T+ngoClCO3fKRCxHuDKmVJfgvll+Cd62pdwsZdtqpbZ7pv5Qz2b1gWgJWaUJOaOFgoL5ESBkV
- NCC5o5NWSBcFJDzmMuY2MY1SR7Sr+xQpFcdNNj5Jyh/sd64NFPB9kOfscGPr5E7OFG3XVW2My
- /9LWVu5IxyB3Mh0aWAeB8ZXHxVHfl15pHXrbQOrqSw7MLsrgL5q3WqgO6mnI+1cL5EGLQ1nyf
- jMv5aFHf6YDc5N4bZS6h4Azl4i3Fzj+dWisc2adb7tHkNjYtM/EbsxQ56+NeSJsZVypqb7MhA
- Ad1nPkUhiHV0OVwGm0s6ZlDsFwNB0ImN6Jr9VrPWFfbIOu3Jdb6sLA+RxAD+kCCH3AW9vVfEp
- dAr8B+ciUWVn5/tfSCO19EBQYzcEdQr3RtntscSmW6ZEjn6r71H+udqcMLTXr+4Fw9Wx/PWrf
- ezvN8Crzo4DPMd0ZPqmIIadSMd98mFokyZk2u1ORjcdyUA5uK1tWGX7YsGvnbuq5KBkSfusUr
- qKHrwelFrpRFqXzJYA3KrhMguT8trK4/nc3LsiaDjqxjj6MdwfOXAyQ8HLz1xJ5r5OgNa/svI
- WzsnjC2cFnWxnK+tQ2y+nhJaQA9eICw56MTmjgK7fze611FTkBd+qm7G9K3gvT4RypL2K4LRP
- S3KMvS6na6fjJlVDncunwRs+UsWouhnyEImat1RWXmayc=
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-> We should verify the bound of the array to assure that host
-> may not manipulate the index to point past endpoint array.
-
-Why did you not choose an imperative wording for your change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc5#n94
-
-
-> Found by static analysis.
-
-Were any special tools involved?
-
-
-How do you think about to add any tags (like =E2=80=9CFixes=E2=80=9D and =
-=E2=80=9CCc=E2=80=9D) accordingly?
+Am Dienstag, dem 25.06.2024 um 11:18 +0800 schrieb Icenowy Zheng:
+> =E5=9C=A8 2024-05-20=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 00:53 +0800=EF=
+=BC=8CSui Jingfeng=E5=86=99=E9=81=93=EF=BC=9A
+> > drm/etnaviv use the component framework to bind multiple GPU cores to
+> > a
+> > virtual master, the virtual master is manually create during driver
+> > load
+> > time. This works well for various SoCs, yet there are some PCIe card
+> > has
+> > the vivante GPU cores integrated. The driver lacks the support for
+> > PCIe
+> > devices currently.
+> >=20
+> > Adds PCIe driver wrapper on the top of what drm/etnaviv already has,
+> > the
+> > component framework is still being used to bind subdevices, even
+> > though
+> > there is only one GPU core. But the process is going to be reversed,
+> > we
+> > create virtual platform device for each of the vivante GPU IP core
+> > shipped
+> > by the PCIe master. The PCIe master is real, bind all the virtual
+> > child
+> > to the master with component framework.
+> >=20
+> >=20
+> > v6:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Fix build issue on sy=
+stem without CONFIG_PCI enabled
+> > v7:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Add a separate patch =
+for the platform driver rearrangement
+> > (Bjorn)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Switch to runtime che=
+ck if the GPU is dma coherent or not
+> > (Lucas)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Add ETNAVIV_PARAM_GPU=
+_COHERENT to allow userspace to query
+> > (Lucas)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Remove etnaviv_gpu.no=
+_clk member (Lucas)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Fix Various typos and=
+ coding style fixed (Bjorn)
+> > v8:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Fix typos and remove =
+unnecessary header included (Bjorn).
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Add a dedicated funct=
+ion to create the virtual master
+> > platform
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device.
+> > v9:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Use PCI_VDEVICE() mac=
+ro (Bjorn)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Add trivial stubs for=
+ the PCI driver (Bjorn)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Remove a redundant de=
+v_err() usage (Bjorn)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Clean up etnaviv_pdev=
+_probe() with
+> > etnaviv_of_first_available_node()
+> > v10:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Add one more cleanup =
+patch
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Resolve the conflict =
+with a patch from Rob
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Make the dummy PCI st=
+ub inlined
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Print only if the pla=
+tform is dma-coherrent
+> > V11:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Drop unnecessary chan=
+ges (Lucas)
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Tweak according to ot=
+her reviews of v10.
+> >=20
+> > V12:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Create a virtual plat=
+form device for the subcomponent GPU
+> > cores
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Bind all subordinate =
+GPU cores to the real PCI master via
+> > component.
+> >=20
+> > V13:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Drop the non-componen=
+t code path, always use the component
+> > framework
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to bind subcompo=
+nent GPU core. Even though there is only
+> > one core.
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Defer the irq handler=
+ register.
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Rebase and improve th=
+e commit message
+> >=20
+> > V14:
+> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Rebase onto etnaviv-n=
+ext and improve commit message.
+> >=20
+> > Tested with JD9230P GPU and LingJiu GP102 GPU.
+>=20
+> BTW how should VRAM and displayed related parts be handled on these
+> dGPUs?
+>=20
+The only way to handle VRAM properly would be to rewrite our GEM
+internals using TTM.
 
 Regards,
-Markus
+Lucas
+
+> >=20
+> > Sui Jingfeng (8):
+> > =C2=A0 drm/etnaviv: Add a dedicated helper function to get various cloc=
+ks
+> > =C2=A0 drm/etnaviv: Add constructor and destructor for the
+> > =C2=A0=C2=A0=C2=A0 etnaviv_drm_private structure
+> > =C2=A0 drm/etnaviv: Embed struct drm_device into struct
+> > etnaviv_drm_private
+> > =C2=A0 drm/etnaviv: Fix wrong cache property being used for vmap()
+> > =C2=A0 drm/etnaviv: Add support for cached coherent caching mode
+> > =C2=A0 drm/etnaviv: Replace the '&pdev->dev' with 'dev'
+> > =C2=A0 drm/etnaviv: Allow creating subdevices and pass platform specifi=
+c
+> > data
+> > =C2=A0 drm/etnaviv: Add support for vivante GPU cores attached via PCIe
+> > =C2=A0=C2=A0=C2=A0 device
+> >=20
+> > =C2=A0drivers/gpu/drm/etnaviv/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 8 +
+> > =C2=A0drivers/gpu/drm/etnaviv/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
+> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 159 ++++++++++------
+> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_drv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 27 +++
+> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 22 ++-
+> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c |=C2=A0=C2=A0 2 +-
+> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_gpu.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 | 144 +++++++++-----
+> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_gpu.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +
+> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_mmu.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +-
+> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_pci_drv.c=C2=A0=C2=A0=C2=A0 | 187
+> > +++++++++++++++++++
+> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_pci_drv.h=C2=A0=C2=A0=C2=A0 |=C2=
+=A0 18 ++
+> > =C2=A0include/uapi/drm/etnaviv_drm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> > =C2=A012 files changed, 468 insertions(+), 110 deletions(-)
+> > =C2=A0create mode 100644 drivers/gpu/drm/etnaviv/etnaviv_pci_drv.c
+> > =C2=A0create mode 100644 drivers/gpu/drm/etnaviv/etnaviv_pci_drv.h
+> >=20
+> >=20
+> > base-commit: 52272bfff15ee70c7bd5be9368f175948fb8ecfd
+>=20
+
 
