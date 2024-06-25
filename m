@@ -1,342 +1,164 @@
-Return-Path: <linux-kernel+bounces-228774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA0C29166A3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:51:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D37916692
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1932B1C20CF3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:51:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3873B1F2429A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25F47158D83;
-	Tue, 25 Jun 2024 11:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01BCA154C12;
+	Tue, 25 Jun 2024 11:45:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mZNNNmao"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="QWIe5at1"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55F32157E7D;
-	Tue, 25 Jun 2024 11:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88F4154C03
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719316214; cv=none; b=RepJ2rsx5cRkhrW4X0h4pk6d75+s+cP6Th8JJcEgjuxVpxOmcDxOkua8QDakaQTh+S3DQQnjpn13KdcbQUgDFvkJDcVz70kyWYP6ZR0tfnAM3WLrsPMkzwqWbqRzcDCIOl/LzbZjHur2hhj18vuaym6hzGnxEElxdJjtFBD5/+k=
+	t=1719315926; cv=none; b=EoPliFbHrJkkRMhdICcs5yzOx0suZHURIavTgaOVbksX7OWmLfGHhHgVKaI243XAvhWtYJg+KTYs8zLH68wwxTWdSt4lTME83kRJDHLnwuNRSGxFDWcT/uKT4HHihL4UkWdXQgObPzNZKNClS7LnarRmPJpKYOQ7No0AnRyvKTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719316214; c=relaxed/simple;
-	bh=I3UgxGRUX+rp+SreM/zBgH2I+leyAKQYwgavI7aZEyc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KLLqzy7P3Clxc9CEO6Uebd3oTb7sZUmda1CHuX0O1WLfWaEFJWQvK/C6F8xEtBH3nMG5PJmpoY5cPmg//W+Z26LkD/3cVYHXTkEXI/EMYDI+zBZuANHFwLu8b9ZnqNzbuvnINJX1SfDAMp96+zocAzrHiCVhdDrbXrv/MKHM16E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mZNNNmao; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719316213; x=1750852213;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=I3UgxGRUX+rp+SreM/zBgH2I+leyAKQYwgavI7aZEyc=;
-  b=mZNNNmaoYjiAfWgOTc22Ar/oVJtz1CAcpwrcDJbbEsOECftlYHT7wrL+
-   NPFWQrA9QPWIkS6hS5nIy+h6yjABvAMvZoJZL6daz4Zf2Q4BHKocmvtHC
-   3IFvjN01ey04IBivkXp8hYVmI0QWTe5kHrUHOJnPgdVXdhQHmZShhSjVQ
-   i5xoF+LsdnCRqdQNF5BOOmhKG1xcF3rxYft0oPAEUndAqttrCoEXQ1fF8
-   5fqwv59ZwlHs2G9DtnrkqNgpDOFJ/Tlu8BfwZs0XZJjM57bgZK0hlGGSj
-   JyFkdKlhYdWQaWrqXXZK9fcl2C6D+s2bcvde8dYXKboaoBVBGNUSuXkQx
-   w==;
-X-CSE-ConnectionGUID: 5pSruTNHSPK/HVPR1gOllQ==
-X-CSE-MsgGUID: mIKDQvvCSU6TOGAmrjkWGg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="20104427"
-X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
-   d="scan'208";a="20104427"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 04:50:13 -0700
-X-CSE-ConnectionGUID: mFcpOqK+R/qgpnFNpmUahQ==
-X-CSE-MsgGUID: ZE1BeHF7RbqKOjDywCmM5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
-   d="scan'208";a="43724742"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by orviesa009.jf.intel.com with ESMTP; 25 Jun 2024 04:50:09 -0700
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	David Ahern <dsahern@kernel.org>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 5/5] netdev_features: convert NETIF_F_FCOE_MTU to dev->fcoe_mtu
-Date: Tue, 25 Jun 2024 13:44:32 +0200
-Message-ID: <20240625114432.1398320-6-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240625114432.1398320-1-aleksander.lobakin@intel.com>
-References: <20240625114432.1398320-1-aleksander.lobakin@intel.com>
+	s=arc-20240116; t=1719315926; c=relaxed/simple;
+	bh=wu4prykytf2AM+/fQHl+GXpgJchAjyAXSdSuKMRSYNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eiiIXGbQ1a8xik8eL6IGyVq6GqR0yNE477tVd1142hbIEsBv/dd9TA4aIybTwubLtdnY3m5V+NBUN8KhuhQk80TsH6pXBy1Ql1jUOZ9mBDwjcCKNSWiJSXsQgIxsXcV7coizxklipE2hA0vxNMOppI9xeYAS7hbNf9lJUKhvrcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=QWIe5at1; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57d20d89748so5193560a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 04:45:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1719315922; x=1719920722; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DMUhzznUZed7QosruqCaiTofY87z0Rh5ZDjCpva9+sA=;
+        b=QWIe5at1o8RJK6o12ZQL8QWh5uGvNNWilbN+mHYodhQ0tFORZ4eZUkAGjkj5aQxSLW
+         SNgkKtlVfO9Gwj0hCOeSS1JXD34daCopjRpjM5FpF3SfMWwK7rvqAv+YitRXqc99xbR0
+         HWen3yWXn0/N/iNsftpRdAR84n/7emcALeaNu4cn+Z25i/nLFBWfKlwaqqlIy1/lAUf6
+         YuV5f8wrbZhG8wSRh+oqxi8fQCupQSkqiUmB2W60nObFUejpCWlm4Njd69iQegCvzPga
+         lFCpZSmfydofwgBo99BcJWOCpxnF1kxncJOzvvCYlVgOKfBpMS34h3CurmFGxbG+X6oV
+         h5NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719315922; x=1719920722;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DMUhzznUZed7QosruqCaiTofY87z0Rh5ZDjCpva9+sA=;
+        b=RnbhjZJyt/fy75+Z6LGGk/nWmjLjgcMP3h8/izMqTgWJBW3rD6j6chlvjjl+WnobOf
+         fHLghUjXiEzA8oiUViiwQu0pRb7dv/ksW7sFqQW83S5oaILkTtbyRqceVn1dA5r1Y7Ts
+         P0TEossWJxOd68FQlcqrvwRgFGuVOL1V0UHfTmvHZOqmZTBn2u+hVGPdWm5O1gXj2dmH
+         nr/TVasz40Zun9SX9IdttKt5SIoVy39CtX6cnoR/HB4u/f8pAZ0H4Ualyw4pB7WzhG6j
+         rOSR48F3HD7iWMbnGwIYizaGNJdVomO18ilMlj/A2bw4Wnk7UMBtFh76IiR3r4eeCYEU
+         PKzw==
+X-Forwarded-Encrypted: i=1; AJvYcCVmGCvypTNOsXYcv0qpVf9wPDLCR6/lOEv4b1E+bUTgV/chGgQLIii1jVKcFHFcOi7QBj817gU2Ek6/XCdmnSqVzkYPb0OlMJlttcKd
+X-Gm-Message-State: AOJu0YxqU5cAU6DOaphXmD2043NW1j26n8Wa0nVEojhreqjJhQ42YS3A
+	peYe4TR0PBpvnrd6skHKU61mbqdVwG/g6HyKZVGg47hAs1wMvQzm3DBgjb2lOyHYBfUF9V6NmqU
+	X5O0fXGBkjamGvBqaDc3pM9SuDwa+1OdalTz68g==
+X-Google-Smtp-Source: AGHT+IH9oE5avAcWE1dPfuPWXIMdR/bUBTzCledqBKIgAA1sscmeeXwl9hobU0kHO9Oj+2sOIr59kjUvaPz1Cy6Hh38=
+X-Received: by 2002:a17:907:c78e:b0:a6f:bc02:a008 with SMTP id
+ a640c23a62f3a-a7242c4de49mr533457666b.4.1719315921872; Tue, 25 Jun 2024
+ 04:45:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <tencent_7721F6B72F58AA6154DFBDFF@qq.com>
+In-Reply-To: <tencent_7721F6B72F58AA6154DFBDFF@qq.com>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Tue, 25 Jun 2024 13:45:10 +0200
+Message-ID: <CAHVXubhkrDv3Fx1KH-jjjWjo-LGKBMabvafAPsDZeSpGMEt-gg@mail.gmail.com>
+Subject: Re: [PATCH] riscv: Only flush the mm icache when setting an exec pte
+To: =?UTF-8?B?5qGC5YW1?= <guibing@nucleisys.com>
+Cc: aou <aou@eecs.berkeley.edu>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-riscv <linux-riscv@lists.infradead.org>, palmer <palmer@dabbelt.com>, 
+	"paul.walmsley" <paul.walmsley@sifive.com>, =?UTF-8?B?5pa55Y2O5ZCv?= <hqfang@nucleisys.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ability to handle maximum FCoE frames of 2158 bytes can never be changed
-and thus more of an attribute, not a toggleable feature.
-Move it from netdev_features_t to netdev_priv_flags and free yet another
-feature bit.
+Hi Guibing,
 
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- include/linux/netdev_features.h                 |  5 +----
- include/linux/netdevice.h                       |  2 ++
- drivers/net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c |  6 ++----
- drivers/net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c |  2 +-
- drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c   |  4 ++--
- drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c    |  2 +-
- drivers/net/ethernet/intel/ixgbe/ixgbe_main.c   | 11 ++++-------
- drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c  |  4 ++--
- drivers/scsi/fcoe/fcoe.c                        |  4 ++--
- net/8021q/vlan_dev.c                            |  1 +
- net/ethtool/common.c                            |  1 -
- 11 files changed, 18 insertions(+), 24 deletions(-)
+You sent your email in html, so it got rejected by the ML, make sure
+you reply in plain text mode :)
 
-diff --git a/include/linux/netdev_features.h b/include/linux/netdev_features.h
-index 3bacd4b1adc9..1e9c4da181af 100644
---- a/include/linux/netdev_features.h
-+++ b/include/linux/netdev_features.h
-@@ -55,7 +55,6 @@ enum {
- 
- 	NETIF_F_FCOE_CRC_BIT,		/* FCoE CRC32 */
- 	NETIF_F_SCTP_CRC_BIT,		/* SCTP checksum offload */
--	NETIF_F_FCOE_MTU_BIT,		/* Supports max FCoE MTU, 2158 bytes*/
- 	NETIF_F_NTUPLE_BIT,		/* N-tuple filters supported */
- 	NETIF_F_RXHASH_BIT,		/* Receive hashing offload */
- 	NETIF_F_RXCSUM_BIT,		/* Receive checksumming offload */
-@@ -102,7 +101,6 @@ enum {
- #define __NETIF_F(name)		__NETIF_F_BIT(NETIF_F_##name##_BIT)
- 
- #define NETIF_F_FCOE_CRC	__NETIF_F(FCOE_CRC)
--#define NETIF_F_FCOE_MTU	__NETIF_F(FCOE_MTU)
- #define NETIF_F_FRAGLIST	__NETIF_F(FRAGLIST)
- #define NETIF_F_FSO		__NETIF_F(FSO)
- #define NETIF_F_GRO		__NETIF_F(GRO)
-@@ -207,8 +205,7 @@ static inline int find_next_netdev_feature(u64 feature, unsigned long start)
- #define NETIF_F_ALL_TSO 	(NETIF_F_TSO | NETIF_F_TSO6 | \
- 				 NETIF_F_TSO_ECN | NETIF_F_TSO_MANGLEID)
- 
--#define NETIF_F_ALL_FCOE	(NETIF_F_FCOE_CRC | NETIF_F_FCOE_MTU | \
--				 NETIF_F_FSO)
-+#define NETIF_F_ALL_FCOE	(NETIF_F_FCOE_CRC | NETIF_F_FSO)
- 
- /* List of features with software fallbacks. */
- #define NETIF_F_GSO_SOFTWARE	(NETIF_F_ALL_TSO | NETIF_F_GSO_SCTP |	     \
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index f79276453b03..cb631e006ea3 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -1756,6 +1756,7 @@ enum netdev_reg_state {
-  *	@lltx:		device supports lockless Tx. Mainly used by logical
-  *			interfaces, such as tunnels
-  *	@netns_local: interface can't change network namespaces
-+ *	@fcoe_mtu:	device supports maximum FCoE MTU, 2158 bytes
-  *
-  *	@name:	This is the first field of the "visible" part of this structure
-  *		(i.e. as seen by users in the "Space.c" file).  It is the name
-@@ -2051,6 +2052,7 @@ struct net_device {
- 		unsigned long		change_proto_down:1;
- 		unsigned long		lltx:1;
- 		unsigned long		netns_local:1;
-+		unsigned long		fcoe_mtu:1;
- 	);
- 	const struct net_device_ops *netdev_ops;
- 	const struct header_ops *header_ops;
-diff --git a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c
-index 33b2c0c45509..f6f745f5c022 100644
---- a/drivers/net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c
-+++ b/drivers/net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c
-@@ -81,8 +81,7 @@ int cxgb_fcoe_enable(struct net_device *netdev)
- 
- 	netdev->features |= NETIF_F_FCOE_CRC;
- 	netdev->vlan_features |= NETIF_F_FCOE_CRC;
--	netdev->features |= NETIF_F_FCOE_MTU;
--	netdev->vlan_features |= NETIF_F_FCOE_MTU;
-+	netdev->fcoe_mtu = true;
- 
- 	netdev_features_change(netdev);
- 
-@@ -112,8 +111,7 @@ int cxgb_fcoe_disable(struct net_device *netdev)
- 
- 	netdev->features &= ~NETIF_F_FCOE_CRC;
- 	netdev->vlan_features &= ~NETIF_F_FCOE_CRC;
--	netdev->features &= ~NETIF_F_FCOE_MTU;
--	netdev->vlan_features &= ~NETIF_F_FCOE_MTU;
-+	netdev->fcoe_mtu = false;
- 
- 	netdev_features_change(netdev);
- 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c
-index e85f7d2e8810..f2709b10c2e5 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c
-@@ -317,7 +317,7 @@ static u8 ixgbe_dcbnl_set_all(struct net_device *netdev)
- 		int max_frame = adapter->netdev->mtu + ETH_HLEN + ETH_FCS_LEN;
- 
- #ifdef IXGBE_FCOE
--		if (adapter->netdev->features & NETIF_F_FCOE_MTU)
-+		if (adapter->netdev->fcoe_mtu)
- 			max_frame = max(max_frame, IXGBE_FCOE_JUMBO_FRAME_SIZE);
- #endif
- 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
-index 18d63c8c2ff4..955dced844a9 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c
-@@ -858,7 +858,7 @@ int ixgbe_fcoe_enable(struct net_device *netdev)
- 
- 	/* enable FCoE and notify stack */
- 	adapter->flags |= IXGBE_FLAG_FCOE_ENABLED;
--	netdev->features |= NETIF_F_FCOE_MTU;
-+	netdev->fcoe_mtu = true;
- 	netdev_features_change(netdev);
- 
- 	/* release existing queues and reallocate them */
-@@ -898,7 +898,7 @@ int ixgbe_fcoe_disable(struct net_device *netdev)
- 
- 	/* disable FCoE and notify stack */
- 	adapter->flags &= ~IXGBE_FLAG_FCOE_ENABLED;
--	netdev->features &= ~NETIF_F_FCOE_MTU;
-+	netdev->fcoe_mtu = false;
- 
- 	netdev_features_change(netdev);
- 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
-index 0ee943db3dc9..16fa621ce0ff 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c
-@@ -981,7 +981,7 @@ static int ixgbe_alloc_q_vector(struct ixgbe_adapter *adapter,
- 			set_bit(__IXGBE_RX_CSUM_UDP_ZERO_ERR, &ring->state);
- 
- #ifdef IXGBE_FCOE
--		if (adapter->netdev->features & NETIF_F_FCOE_MTU) {
-+		if (adapter->netdev->fcoe_mtu) {
- 			struct ixgbe_ring_feature *f;
- 			f = &adapter->ring_feature[RING_F_FCOE];
- 			if ((rxr_idx >= f->offset) &&
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-index 094653e81b97..6c96f8e5f904 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
-@@ -5080,7 +5080,7 @@ static void ixgbe_configure_dcb(struct ixgbe_adapter *adapter)
- 		netif_set_tso_max_size(adapter->netdev, 32768);
- 
- #ifdef IXGBE_FCOE
--	if (adapter->netdev->features & NETIF_F_FCOE_MTU)
-+	if (adapter->netdev->fcoe_mtu)
- 		max_frame = max(max_frame, IXGBE_FCOE_JUMBO_FRAME_SIZE);
- #endif
- 
-@@ -5137,8 +5137,7 @@ static int ixgbe_hpbthresh(struct ixgbe_adapter *adapter, int pb)
- 
- #ifdef IXGBE_FCOE
- 	/* FCoE traffic class uses FCOE jumbo frames */
--	if ((dev->features & NETIF_F_FCOE_MTU) &&
--	    (tc < IXGBE_FCOE_JUMBO_FRAME_SIZE) &&
-+	if (dev->fcoe_mtu && tc < IXGBE_FCOE_JUMBO_FRAME_SIZE &&
- 	    (pb == ixgbe_fcoe_get_tc(adapter)))
- 		tc = IXGBE_FCOE_JUMBO_FRAME_SIZE;
- #endif
-@@ -5198,8 +5197,7 @@ static int ixgbe_lpbthresh(struct ixgbe_adapter *adapter, int pb)
- 
- #ifdef IXGBE_FCOE
- 	/* FCoE traffic class uses FCOE jumbo frames */
--	if ((dev->features & NETIF_F_FCOE_MTU) &&
--	    (tc < IXGBE_FCOE_JUMBO_FRAME_SIZE) &&
-+	if (dev->fcoe_mtu && tc < IXGBE_FCOE_JUMBO_FRAME_SIZE &&
- 	    (pb == netdev_get_prio_tc_map(dev, adapter->fcoe.up)))
- 		tc = IXGBE_FCOE_JUMBO_FRAME_SIZE;
- #endif
-@@ -11097,8 +11095,7 @@ static int ixgbe_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 				    NETIF_F_FCOE_CRC;
- 
- 		netdev->vlan_features |= NETIF_F_FSO |
--					 NETIF_F_FCOE_CRC |
--					 NETIF_F_FCOE_MTU;
-+					 NETIF_F_FCOE_CRC;
- 	}
- #endif /* IXGBE_FCOE */
- 	if (adapter->flags2 & IXGBE_FLAG2_RSC_CAPABLE)
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
-index fcfd0a075eee..e71715f5da22 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
-@@ -495,7 +495,7 @@ static int ixgbe_set_vf_lpe(struct ixgbe_adapter *adapter, u32 max_frame, u32 vf
- 		int err = 0;
- 
- #ifdef CONFIG_FCOE
--		if (dev->features & NETIF_F_FCOE_MTU)
-+		if (dev->fcoe_mtu)
- 			pf_max_frame = max_t(int, pf_max_frame,
- 					     IXGBE_FCOE_JUMBO_FRAME_SIZE);
- 
-@@ -857,7 +857,7 @@ static void ixgbe_set_vf_rx_tx(struct ixgbe_adapter *adapter, int vf)
- 		int pf_max_frame = dev->mtu + ETH_HLEN;
- 
- #if IS_ENABLED(CONFIG_FCOE)
--		if (dev->features & NETIF_F_FCOE_MTU)
-+		if (dev->fcoe_mtu)
- 			pf_max_frame = max_t(int, pf_max_frame,
- 					     IXGBE_FCOE_JUMBO_FRAME_SIZE);
- #endif /* CONFIG_FCOE */
-diff --git a/drivers/scsi/fcoe/fcoe.c b/drivers/scsi/fcoe/fcoe.c
-index f1429f270170..39aec710660c 100644
---- a/drivers/scsi/fcoe/fcoe.c
-+++ b/drivers/scsi/fcoe/fcoe.c
-@@ -722,7 +722,7 @@ static int fcoe_netdev_config(struct fc_lport *lport, struct net_device *netdev)
- 	 * will return 0, so do this first.
- 	 */
- 	mfs = netdev->mtu;
--	if (netdev->features & NETIF_F_FCOE_MTU) {
-+	if (netdev->fcoe_mtu) {
- 		mfs = FCOE_MTU;
- 		FCOE_NETDEV_DBG(netdev, "Supports FCOE_MTU of %d bytes\n", mfs);
- 	}
-@@ -1863,7 +1863,7 @@ static int fcoe_device_notification(struct notifier_block *notifier,
- 	case NETDEV_CHANGE:
- 		break;
- 	case NETDEV_CHANGEMTU:
--		if (netdev->features & NETIF_F_FCOE_MTU)
-+		if (netdev->fcoe_mtu)
- 			break;
- 		mfs = netdev->mtu - (sizeof(struct fcoe_hdr) +
- 				     sizeof(struct fcoe_crc_eof));
-diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
-index eb9e13e8b983..5ea427d44433 100644
---- a/net/8021q/vlan_dev.c
-+++ b/net/8021q/vlan_dev.c
-@@ -571,6 +571,7 @@ static int vlan_dev_init(struct net_device *dev)
- 
- 	dev->features |= dev->hw_features;
- 	dev->lltx = true;
-+	dev->fcoe_mtu = true;
- 	netif_inherit_tso_max(dev, real_dev);
- 	if (dev->features & NETIF_F_VLAN_FEATURES)
- 		netdev_warn(real_dev, "VLAN features are set incorrectly.  Q-in-Q configurations may not work correctly.\n");
-diff --git a/net/ethtool/common.c b/net/ethtool/common.c
-index 66c8b6739260..eb65e3d5c26f 100644
---- a/net/ethtool/common.c
-+++ b/net/ethtool/common.c
-@@ -49,7 +49,6 @@ const char netdev_features_strings[NETDEV_FEATURE_COUNT][ETH_GSTRING_LEN] = {
- 
- 	[NETIF_F_FCOE_CRC_BIT] =         "tx-checksum-fcoe-crc",
- 	[NETIF_F_SCTP_CRC_BIT] =        "tx-checksum-sctp",
--	[NETIF_F_FCOE_MTU_BIT] =         "fcoe-mtu",
- 	[NETIF_F_NTUPLE_BIT] =           "rx-ntuple-filter",
- 	[NETIF_F_RXHASH_BIT] =           "rx-hashing",
- 	[NETIF_F_RXCSUM_BIT] =           "rx-checksum",
--- 
-2.45.2
+On Tue, Jun 25, 2024 at 10:45=E2=80=AFAM =E6=A1=82=E5=85=B5 <guibing@nuclei=
+sys.com> wrote:
+>
+> Hi alex=EF=BC=8C
+>
+> We have encountered a problem related to this patch and would like to ask=
+ for your advice, thank you in advance!
+>
+> Problem description:
+> When we use the v6.9 kernel, there is an illegal instruction problem when=
+ executing a statically linked application on an SD card, and this problem =
+is not reproduced in v6.6/v6.1 kernel.
+> SD card driver uses PIO mode, and the SD card interrupt is bound to core0=
+. If the system schedule the apllication to execute on core1, core2, or cor=
+e3, it will report an illegal instruction, and if scheduled to execute on c=
+ore0, it will be executed successfully.
 
+Is it a multithreaded application? You mean that if the application
+always runs on core1/2/3, you get an illegal instruction, but that
+does not happen when run on core0?
+
+>
+> We track the source code, flush_icache_pte function patch leads to this i=
+ssue on our riscv hardware.
+> If you merge this patch into the v6.1 kernel, the same problem can be rep=
+roduced in v6.1 kernel.
+> If using flush_icache_all() not flush_icache_mm in v6.9 kernel ; this iss=
+ue can not be reproduced in v6.9 kernel.
+>
+> +void flush_icache_pte(struct mm_struct *mm, pte_t pte)
+>  {
+>  struct folio *folio =3D page_folio(pte_page(pte));
+>
+>  if (!test_bit(PG_dcache_clean, &folio->flags)) {
+> -=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=
+=E2=80=82=E2=80=82=E2=80=82flush_icache_all();
+> +=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=E2=80=82=
+=E2=80=82=E2=80=82=E2=80=82flush_icache_mm(mm, false);
+>  set_bit(PG_dcache_clean, &folio->flags);
+>  }
+>  }
+
+Did you check if the instruction in badaddr is different from the
+expected instruction? The image you provided is not available here,
+but it indicated 0xf486 which corresponds to "c.sdsp  ra, 104(sp)", is
+that correct?
+
+>
+>
+> Our riscv cpu IP supports multi-core L1 dcache synchronization, but does =
+not support multi-core L1 icache synchronization. iCache synchronization re=
+quires software maintenance.
+> Does the RISCV architecture kernel in future have mandatory requirements =
+for multi-core iCache hardware consistency?
+
+No no, we try to introduce icache flushes whenever it is needed for such ua=
+rch.
+
+>
+> Thank you for your reply!
+>
+>
+> Link=EF=BC=9A[PATCH] riscv: Only flush the mm icache when setting an exec=
+ pte - Alexandre Ghiti (kernel.org)
+>
+> ________________________________
+> =E5=8F=91=E8=87=AA=E6=88=91=E7=9A=84=E4=BC=81=E4=B8=9A=E5=BE=AE=E4=BF=A1
+>
+>
+
+Thanks for the report,
+
+Alex
 
