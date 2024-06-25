@@ -1,178 +1,167 @@
-Return-Path: <linux-kernel+bounces-229121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2738A916B32
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:56:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C61D2916B3C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:57:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D004B289712
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 718AD1F2850F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:57:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273EE17335B;
-	Tue, 25 Jun 2024 14:54:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7134176ABD;
+	Tue, 25 Jun 2024 14:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="taXzIsgv"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gJDWR5Eh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65330170825
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:54:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E4F170825;
+	Tue, 25 Jun 2024 14:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327279; cv=none; b=PoxQeRoch716wxDqZhbklt4HX2s1tdVqFu9t/loCL9iXZJLqw4VvI6zSVmITheyjOHLsaAg4XkNjj3RAvYLKfL4cdIsI9qD3oC4SV3OmX1tW4YZW8XCc1lEMwttvD4bsvRNdrslQkXODFFcMXe39htMbcRBJOZ8w4iywDaH0Tgw=
+	t=1719327283; cv=none; b=e/R95Rw71x/UgLQgepjqh/hPEOkfaxLg/XrLhJpC0puLUnrSYGd9K/9lEukC92SfouFyi2e6cnX7w2Umc8sN2Yp7U+QFQwXsp7hQByhAj5pXiRO2FfkzPBWZ3lZWPHP62AmcEb0nJ2U9ciGBBJUoyq9IzReYpcDNuSPNH9qWAbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327279; c=relaxed/simple;
-	bh=c1mFXRw/1F7jX+PLOZli37YidJtYzYIZwD0eERkZXpg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p4c4h81nLCbnjrk8lM9ed9sT4L/90X8itK0Qy9MMHRT+a3aSA3jlMhI3tqgZondYmiYoaM5G8SsbeTiQ85t9tdUggMJ3BatRQaE9NEpv3e+3gzkTbJCDHhPeoH5T+qM1CWw+GFtzqCcTyxAg49I7gnMVrrokPdot7xKzK7LxCLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=taXzIsgv; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52cf4ca8904so428180e87.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:54:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719327275; x=1719932075; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g2gxtQIN+xKJeYZrrZg4eTx3pd8ql0F1T/zN9SBRQsY=;
-        b=taXzIsgvpysuGi9cEp+t84xI8DTRmvYy+7KRZHNOqNUe8RfBM7kMRi0dg+9QaDO1Dh
-         vu35FRL0SVHMz1ncI1n8/HlmNufUbOdA7kdzb2QJd5GMTxM/HIIujG7PJZCkMvw+Z4TC
-         C5maMj9MPgFD49JHA+Nm4edre5AcML2X/waqsrG1kWG+gQONLajC71ZN74ZgVnCdqGyJ
-         z7DN3vKAyf49SDLZTlNYdw1KFtUPpeHNmU+MqqGPkvqJ6WLjc+6tHmr1ihoqWHbHdAQt
-         DdmdvmC+48ANffjhduprSFRcbH8g12rDqXVlIwrzAQsYI40nDTOr4q6oQ3NHaFY7XAR9
-         oWjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719327275; x=1719932075;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=g2gxtQIN+xKJeYZrrZg4eTx3pd8ql0F1T/zN9SBRQsY=;
-        b=RawlhkaRW7QaopyXIqZCyIUkayM6sz/iOWgYmJK/bMBKTxpR6huxNYwvON7kA0ZDER
-         9eb5SPyPCUPZwD6wAYRhDTRoITvgbYJV+5BEILytVNsg5QmHkXwLq52xpKDSAol8ACQL
-         2/jUN5uGXZ7KNV6bUn/P03ijshpL1vqqk+TevUl0sfgTPx2pBjF53n5whq0kb2DZwb8R
-         Rb4uPZkhPCuxrfIgTdCkfoZ2AV+4Qjs9bnmnDT+UF2YQz0MVznLANUqMI9o/f1Hh5esD
-         O2riGt91qvANEllvlOd+KuwcF1JF4oiPao+K1kyyi8MIagk1O6qBI6GR1jglppZ6nL3y
-         sAaw==
-X-Forwarded-Encrypted: i=1; AJvYcCWLa+cCUt+wUva9a+0GTcaWWcKL8bsGib8pvl4Ha3Wx3J09oZNdhsiaKrl2Y+lrEUPivNJCOeKKtlEv6uaoDlWDNjJEih1yFwK6TnEc
-X-Gm-Message-State: AOJu0YyJgRHfIlscr4UjaJpPD7FrGZBsskAkiZ/XukCfgvhCLvKXHqp6
-	B1qVnXzA0VPj4q3kJdrZ0B2hRdW3q8OKHv79ZKy3i1PItzWl3+qNamlCyvi4Y5w=
-X-Google-Smtp-Source: AGHT+IFgTfwsx7ElY5vsvTSzReP2HLuqQHHg6f+F1C3RO23ndtkGTJu8+wBSZAIAD6eWetNxoUG4Kg==
-X-Received: by 2002:a05:6512:46f:b0:52c:9f9e:d8e3 with SMTP id 2adb3069b0e04-52ce064e3d8mr4973783e87.31.1719327275739;
-        Tue, 25 Jun 2024 07:54:35 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd64328b7sm1251877e87.221.2024.06.25.07.54.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 07:54:35 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 25 Jun 2024 17:54:32 +0300
-Subject: [PATCH v3 7/7] usb: typec: ucsi: reorder operations in
- ucsi_run_command()
+	s=arc-20240116; t=1719327283; c=relaxed/simple;
+	bh=OnlecF0L+WuiOOe//vNstn8JovvMxwxc6c0feuDVQJs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YKTIXEZbV+E7TUeRoX/Tcr/FBLzwMJob+2GfIfShuSvOE91W2juIUA7uicOFPMBywyc32tLIUAephVO00T7spF90THHLYUFrktIJsR1c1isfY8lJcodm3DzMAPlYwU4C3YxyIPRVDHzErVZ05Bc3niktjgd+ctY2kqHR64KSsMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gJDWR5Eh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21CDBC32786;
+	Tue, 25 Jun 2024 14:54:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719327283;
+	bh=OnlecF0L+WuiOOe//vNstn8JovvMxwxc6c0feuDVQJs=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=gJDWR5EhbVC6GZbZadZAFf7L+GhlVlKDhry5FwnN+wa0K8mmi1Qcuvtz6zbKkZK3i
+	 bF0f/9w9yGTBMz0ii0BiyL6eM9eDIS6sH+eSeN2Zjx65DPLW9qKCKhz0an3vvLkQNq
+	 QTumE9xPp4cAh26FRje2V0IX4r4J6GLzDHYdfs2u5FFR+/AEiTEijIs5nSrFvMgGTs
+	 Jer9upuIHAseZVGwnXJ7rEuwCrs2CH33/dGvrlSm9257uirjGJ634gsSAYSQXU+Kwt
+	 WQJRSGrctibMhPZ0Xlkh6EWDc5PMNIyWx6p0/cyJF8zw9yycJdQWW7craS0UrNhAOC
+	 MhEppcMevufFg==
+Message-ID: <2545edf023b2a364672f73d3ae6d90c702310b3f.camel@kernel.org>
+Subject: Re: [PATCH v2] netfs: Fix netfs_page_mkwrite() to check
+ folio->mapping is valid
+From: Jeff Layton <jlayton@kernel.org>
+To: David Howells <dhowells@redhat.com>
+Cc: Christian Brauner <christian@brauner.io>, Matthew Wilcox
+ <willy@infradead.org>, netfs@lists.linux.dev, v9fs@lists.linux.dev, 
+ linux-afs@lists.infradead.org, linux-cifs@vger.kernel.org,
+ linux-mm@kvack.org,  linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Tue, 25 Jun 2024 10:54:40 -0400
+In-Reply-To: <780211.1719318546@warthog.procyon.org.uk>
+References: <614257.1719228181@warthog.procyon.org.uk>
+	 <780211.1719318546@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240625-ucsi-rework-interface-v3-7-7a6c8e17be3a@linaro.org>
-References: <20240625-ucsi-rework-interface-v3-0-7a6c8e17be3a@linaro.org>
-In-Reply-To: <20240625-ucsi-rework-interface-v3-0-7a6c8e17be3a@linaro.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
- Alexandre Torgue <alexandre.torgue@foss.st.com>
-Cc: Nikita Travkin <nikita@trvn.ru>, 
- Neil Armstrong <neil.armstrong@linaro.org>, linux-usb@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- linux-arm-kernel@lists.infradead.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2070;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=c1mFXRw/1F7jX+PLOZli37YidJtYzYIZwD0eERkZXpg=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmetokKTBUAvA860F4TZ7LaGT2vn3//h0eO5fRP
- eXnVpE4f++JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnraJAAKCRCLPIo+Aiko
- 1Y7VCACNYuSM7sEYoqQvGqND2MRdAoZLFky1iBiqT6oimIP7qis1KVCv3F+gBFz/bdKtij+cztp
- Z5awCnGfW7Httm4zKIIT7NjJpuUDn4ia7oZOW3FAe99Zdq92p1EKUvXKnXApxNz6eom/iOY7qGH
- ZuClKE5VA15dUN4sl0zW6TTatSGt7zTfkToJ2jq8u83k9ID/maCxlb5V8FISVxuKEqgOJwLGGoE
- OvAeeooTh9x2NFAt/eeMWZ2D8kgVxeDZw+j5aVfO6x8v8emzAdbZuHaM+qRTH+T7uUXJOiJNXkB
- 9HVHfVpFVz76fdbmU925vbf0ul+6bFBUI9SNsbusDr5OPJul
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Streamline control stream of ucsi_run_command(). Reorder operations so
-that there is only one call to ucsi_acknowledge(), making sure that all
-complete commands are acknowledged. This also makes sure that the
-command is acknowledged even if reading MESSAGE_IN data returns an
-error.
+On Tue, 2024-06-25 at 13:29 +0100, David Howells wrote:
+> =C2=A0=C2=A0=C2=A0=20
+> Fix netfs_page_mkwrite() to check that folio->mapping is valid once
+> it has
+> taken the folio lock (as filemap_page_mkwrite() does).=C2=A0 Without this=
+,
+> generic/247 occasionally oopses with something like the following:
+>=20
+> =C2=A0=C2=A0=C2=A0 BUG: kernel NULL pointer dereference, address: 0000000=
+000000000
+> =C2=A0=C2=A0=C2=A0 #PF: supervisor read access in kernel mode
+> =C2=A0=C2=A0=C2=A0 #PF: error_code(0x0000) - not-present page
+>=20
+> =C2=A0=C2=A0=C2=A0 RIP: 0010:trace_event_raw_event_netfs_folio+0x61/0xc0
+> =C2=A0=C2=A0=C2=A0 ...
+> =C2=A0=C2=A0=C2=A0 Call Trace:
+> =C2=A0=C2=A0=C2=A0=C2=A0 <TASK>
+> =C2=A0=C2=A0=C2=A0=C2=A0 ? __die_body+0x1a/0x60
+> =C2=A0=C2=A0=C2=A0=C2=A0 ? page_fault_oops+0x6e/0xa0
+> =C2=A0=C2=A0=C2=A0=C2=A0 ? exc_page_fault+0xc2/0xe0
+> =C2=A0=C2=A0=C2=A0=C2=A0 ? asm_exc_page_fault+0x22/0x30
+> =C2=A0=C2=A0=C2=A0=C2=A0 ? trace_event_raw_event_netfs_folio+0x61/0xc0
+> =C2=A0=C2=A0=C2=A0=C2=A0 trace_netfs_folio+0x39/0x40
+> =C2=A0=C2=A0=C2=A0=C2=A0 netfs_page_mkwrite+0x14c/0x1d0
+> =C2=A0=C2=A0=C2=A0=C2=A0 do_page_mkwrite+0x50/0x90
+> =C2=A0=C2=A0=C2=A0=C2=A0 do_pte_missing+0x184/0x200
+> =C2=A0=C2=A0=C2=A0=C2=A0 __handle_mm_fault+0x42d/0x500
+> =C2=A0=C2=A0=C2=A0=C2=A0 handle_mm_fault+0x121/0x1f0
+> =C2=A0=C2=A0=C2=A0=C2=A0 do_user_addr_fault+0x23e/0x3c0
+> =C2=A0=C2=A0=C2=A0=C2=A0 exc_page_fault+0xc2/0xe0
+> =C2=A0=C2=A0=C2=A0=C2=A0 asm_exc_page_fault+0x22/0x30
+>=20
+> This is due to the invalidate_inode_pages2_range() issued at the end
+> of the
+> DIO write interfering with the mmap'd writes.
+>=20
+> Fixes: 102a7e2c598c ("netfs: Allow buffered shared-writeable mmap
+> through netfs_page_mkwrite()")
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Matthew Wilcox <willy@infradead.org>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: netfs@lists.linux.dev
+> cc: v9fs@lists.linux.dev
+> cc: linux-afs@lists.infradead.org
+> cc: linux-cifs@vger.kernel.org
+> cc: linux-mm@kvack.org
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+> Changes
+> =3D=3D=3D=3D=3D=3D=3D
+> ver #2)
+> =C2=A0- Actually unlock the folio rather than returning VM_FAULT_LOCKED
+> with
+> =C2=A0=C2=A0 VM_FAULT_NOPAGE.
+>=20
+> =C2=A0fs/netfs/buffered_write.c |=C2=A0=C2=A0=C2=A0 8 +++++++-
+> =C2=A01 file changed, 7 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/fs/netfs/buffered_write.c b/fs/netfs/buffered_write.c
+> index 07bc1fd43530..270f8ebf8328 100644
+> --- a/fs/netfs/buffered_write.c
+> +++ b/fs/netfs/buffered_write.c
+> @@ -523,6 +523,7 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault
+> *vmf, struct netfs_group *netfs_gr
+> =C2=A0	struct netfs_group *group;
+> =C2=A0	struct folio *folio =3D page_folio(vmf->page);
+> =C2=A0	struct file *file =3D vmf->vma->vm_file;
+> +	struct address_space *mapping =3D file->f_mapping;
+> =C2=A0	struct inode *inode =3D file_inode(file);
+> =C2=A0	struct netfs_inode *ictx =3D netfs_inode(inode);
+> =C2=A0	vm_fault_t ret =3D VM_FAULT_RETRY;
+> @@ -534,6 +535,11 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault
+> *vmf, struct netfs_group *netfs_gr
+> =C2=A0
+> =C2=A0	if (folio_lock_killable(folio) < 0)
+> =C2=A0		goto out;
+> +	if (folio->mapping !=3D mapping) {
+> +		folio_unlock(folio);
+> +		ret =3D VM_FAULT_NOPAGE;
+> +		goto out;
+> +	}
+> =C2=A0
+> =C2=A0	if (folio_wait_writeback_killable(folio)) {
+> =C2=A0		ret =3D VM_FAULT_LOCKED;
+> @@ -549,7 +555,7 @@ vm_fault_t netfs_page_mkwrite(struct vm_fault
+> *vmf, struct netfs_group *netfs_gr
+> =C2=A0	group =3D netfs_folio_group(folio);
+> =C2=A0	if (group !=3D netfs_group && group !=3D
+> NETFS_FOLIO_COPY_TO_CACHE) {
+> =C2=A0		folio_unlock(folio);
+> -		err =3D filemap_fdatawait_range(inode->i_mapping,
+> +		err =3D filemap_fdatawait_range(mapping,
+> =C2=A0					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 folio_pos(folio),
+> =C2=A0					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 folio_pos(folio) +
+> folio_size(folio));
+> =C2=A0		switch (err) {
+>=20
+>=20
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/usb/typec/ucsi/ucsi.c | 34 ++++++++++++++--------------------
- 1 file changed, 14 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
-index 3fb5d3a52b80..0d091f06abd3 100644
---- a/drivers/usb/typec/ucsi/ucsi.c
-+++ b/drivers/usb/typec/ucsi/ucsi.c
-@@ -95,7 +95,7 @@ static int ucsi_acknowledge(struct ucsi *ucsi, bool conn_ack)
- static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
- 			    void *data, size_t size, bool conn_ack)
- {
--	int ret;
-+	int ret, err;
- 
- 	*cci = 0;
- 
-@@ -120,30 +120,24 @@ static int ucsi_run_command(struct ucsi *ucsi, u64 command, u32 *cci,
- 	if (!(*cci & UCSI_CCI_COMMAND_COMPLETE))
- 		return -EIO;
- 
--	if (*cci & UCSI_CCI_NOT_SUPPORTED) {
--		if (ucsi_acknowledge(ucsi, false) < 0)
--			dev_err(ucsi->dev,
--				"ACK of unsupported command failed\n");
--		return -EOPNOTSUPP;
--	}
--
--	if (*cci & UCSI_CCI_ERROR) {
--		/* Acknowledge the command that failed */
--		ret = ucsi_acknowledge(ucsi, false);
--		return ret ? ret : -EIO;
--	}
-+	if (*cci & UCSI_CCI_NOT_SUPPORTED)
-+		err = -EOPNOTSUPP;
-+	else if (*cci & UCSI_CCI_ERROR)
-+		err = -EIO;
-+	else
-+		err = 0;
- 
--	if (data) {
--		ret = ucsi->ops->read_message_in(ucsi, data, size);
--		if (ret)
--			return ret;
--	}
-+	if (!err && data && UCSI_CCI_LENGTH(*cci))
-+		err = ucsi->ops->read_message_in(ucsi, data, size);
- 
--	ret = ucsi_acknowledge(ucsi, conn_ack);
-+	/*
-+	 * Don't ACK connection change if there was an error.
-+	 */
-+	ret = ucsi_acknowledge(ucsi, err ? false : conn_ack);
- 	if (ret)
- 		return ret;
- 
--	return 0;
-+	return err;
- }
- 
- static int ucsi_read_error(struct ucsi *ucsi)
-
--- 
-2.39.2
-
+Reviewed-by: Jeff Layton <jlayton@kernel.org>
 
