@@ -1,62 +1,51 @@
-Return-Path: <linux-kernel+bounces-229792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C746F917441
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:30:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE557917444
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38AB5B22EA8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:30:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFFF41C22BCD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E3D17F37B;
-	Tue, 25 Jun 2024 22:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 335A017F378;
+	Tue, 25 Jun 2024 22:31:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZRgeRPF8"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="A970dsMG"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEEF148FF3;
-	Tue, 25 Jun 2024 22:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F635149C6E;
+	Tue, 25 Jun 2024 22:31:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719354622; cv=none; b=tddgwyxbB4a/G+b0NQ2g3mEm6hfyqj6soc291Y0YXfdYJ3Yf8jkDo1RTjyIcOsQUFm/UDxW4O9wa/QzspT/D4IsSGvmZ4FL+209Fx2sAP2PGUQn71XmKu2WRkTvyRfVrk7JCk5c4Z6bxt5iL53eTDjuDIQd6189VwJp0AvfoefY=
+	t=1719354688; cv=none; b=nHVVfPDoxKf+7Yc5Hhk2OUYzzLElOgSeIIpajNWRmTl0T9RBLNk/g0lDdab3iU4AQtSWwwQb9Q483vMw+fb0P63j5mGgv2s1N1CJWfLHoG8KgAHR+GAo5UPi4CkyjNleUo2xD7ZZ4jHlYnz0WPNojAkwdXFy5Wc2QUNNYHpQj08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719354622; c=relaxed/simple;
-	bh=qS9TTmlDjgipvMH5tjZeBfWS5KHkS6WYJPS068gWSE4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pvBeXI2EUoLSaka9wj5KFEkQihjuoBbOMLzg9b8xZISrLqPz4Xn/aozC8Gf3X/TDrsmjFGUoK4ody2/qAaben/YKmB37Gse9HFd1tTFKrp6XEwpeM50o5DgGUUxzWG82OSH7Rvj8DpRIbZcMWGTTpS1UcLPMRdiXdomHyY3DgJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZRgeRPF8; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PI3gnA032231;
-	Tue, 25 Jun 2024 22:30:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vfUIF9UojzMOtwX6nE2K3rtBehrIGg9xx0Sst/8VS8A=; b=ZRgeRPF8kRUUlf0j
-	8g+XLMJZOYw8oEl7PaxrEIbk+nL2DurL8X1qvJ7qG5WIt6m5wyxHd46Bkz8WpI2f
-	1Wv9Nc/iUaPl8q41t+iX451ukQC68boJdH7GuBNjyHB8g+nu4xOg9RCssMizELYJ
-	1uoczBSHGmU19PpQ0fvhmAnIkTEJHrwlxKCUoULyQiVmVyTJBU6hjXQSaNHIFSsX
-	xcBmA1tVmpq2OP/NzwW+tDe7MCmbIK/Tml8QSHGdCNd9LGrvsiJi2T4GPQc8wGUS
-	+B+NQoeQLwx7y3uAPPTUqWDkGBLr/pPYgPHb6uj9XQxJc+UARNeQKy/XGflP8fGQ
-	5BZRUA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv7peu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 22:30:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45PMUEKv032155
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 22:30:14 GMT
-Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Jun
- 2024 15:30:13 -0700
-Message-ID: <38597076-e0f7-4266-bf85-3177ef249922@quicinc.com>
-Date: Tue, 25 Jun 2024 15:30:12 -0700
+	s=arc-20240116; t=1719354688; c=relaxed/simple;
+	bh=NNHWeZcyyS4P5K0t1W/YqG4GhaBLe/fDc32RMTJakEc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rTsqhVdBgWid+LNL/ZYYHOw6EbEYX0ar3YkbImrcYgmRzkSuLmHXPnAQgUZdaggZnjWn9Bq2D3T1rSyLT4nV+b39YqBfpWBBy/7F+XzLdSXtSj3nXY6xMbxomKykiKFz4J2WdZXUz1MYx/qqghC+f/3tH/7Dxc32h54AqxuZ+ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=A970dsMG; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
+	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
+	bh=gBGJpt/3ReVlJkwGEJYBKb36lu8imtdr3lQE4kDPaL8=; b=A970dsMGTdJ4wDpvciuf0s05a+
+	SgpFHcVFFi89sw6juxMHz1f9m09GSU9WMzTxxqqZ6FkGPAzoU31ynfjqzhHjYvjAjNtxhXBNwKRnB
+	uhBla1pjIR2aJffXePgeTh0o7ekivLAHDDbDRlnuH6iqjJOlKyXwKjIR09E55CZ/CWzwNkS1zBBh/
+	wIFQTaXTaXGq3LIha1ZVopP8vFDFvSKDCnbR4E37CByy2VdIcICuk2aFaoXVetrp+K3s+ygF7m2kT
+	oLyrKlBiNfqMqqhi9tH8OOJMGyEuToh+o2XS+6gua+w8AGc080/JbdJw9AcP6HkhOBMejJZj6BKju
+	lGM1B+fQ==;
+Received: from [50.53.4.147] (helo=[192.168.254.15])
+	by bombadil.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sMEgw-00000004hHz-017F;
+	Tue, 25 Jun 2024 22:31:10 +0000
+Message-ID: <d935fe05-9e52-487b-8873-3a35cd6b037e@infradead.org>
+Date: Tue, 25 Jun 2024 15:31:08 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,50 +53,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] hte: tegra-194: add missing MODULE_DESCRIPTION() macro
+Subject: Re: [PATCH RFT v6 1/9] Documentation: userspace-api: Add shadow stack
+ API documentation
+To: Mark Brown <broonie@kernel.org>,
+ "Rick P. Edgecombe" <rick.p.edgecombe@intel.com>,
+ Deepak Gupta <debug@rivosinc.com>, Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+ "H.J. Lu" <hjl.tools@gmail.com>, Florian Weimer <fweimer@redhat.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Daniel Bristot de Oliveira
+ <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>,
+ Christian Brauner <brauner@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, jannh@google.com,
+ linux-kselftest@vger.kernel.org, linux-api@vger.kernel.org,
+ Kees Cook <kees@kernel.org>
+References: <20240623-clone3-shadow-stack-v6-0-9ee7783b1fb9@kernel.org>
+ <20240623-clone3-shadow-stack-v6-1-9ee7783b1fb9@kernel.org>
 Content-Language: en-US
-To: Dipen Patel <dipenp@nvidia.com>,
-        Thierry Reding
-	<thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-CC: <timestamp@lists.linux.dev>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240603-md-hte-tegra194-test-v1-1-83c959a0afdd@quicinc.com>
- <92059885-858c-4a07-9e2d-cda10c6c38bf@nvidia.com>
- <d3f5890b-db18-4e56-9768-db0382717baa@quicinc.com>
- <36113c8f-12de-4530-9727-67c75b0daf47@nvidia.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <36113c8f-12de-4530-9727-67c75b0daf47@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20240623-clone3-shadow-stack-v6-1-9ee7783b1fb9@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: jJ5REi_-kCJf-QGvegUVic0gTiUVH_Tq
-X-Proofpoint-ORIG-GUID: jJ5REi_-kCJf-QGvegUVic0gTiUVH_Tq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_17,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 mlxlogscore=973 mlxscore=0 adultscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406250168
 
-On 6/25/2024 2:05 PM, Dipen Patel wrote:
-> On 6/23/24 10:53 AM, Jeff Johnson wrote:
->> Following up to see if anything else is needed from me.
->> Hoping to see this in linux-next :)
+Hi,
+
+On 6/23/24 4:23 AM, Mark Brown wrote:
+> There are a number of architectures with shadow stack features which we are
+> presenting to userspace with as consistent an API as we can (though there
+> are some architecture specifics). Especially given that there are some
+> important considerations for userspace code interacting directly with the
+> feature let's provide some documentation covering the common aspects.
 > 
-> Its in linux-next[1].
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  Documentation/userspace-api/index.rst        |  1 +
+>  Documentation/userspace-api/shadow_stack.rst | 41 ++++++++++++++++++++++++++++
+>  2 files changed, 42 insertions(+)
 > 
-> [1].
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/drivers/hte/hte-tegra194-test.c?h=next-20240625&id=9e4259716f60c96c069a38e826884ad783dc4eb4
 
-thanks,
-pulled it into my verification workflow :)
+Fix run-on sentences...
 
-/jeff
+> diff --git a/Documentation/userspace-api/shadow_stack.rst b/Documentation/userspace-api/shadow_stack.rst
+> new file mode 100644
+> index 000000000000..c576ad3d7ec1
+> --- /dev/null
+> +++ b/Documentation/userspace-api/shadow_stack.rst
+> @@ -0,0 +1,41 @@
+> +=============
+> +Shadow Stacks
+> +=============
+> +
+> +Introduction
+> +============
+> +
+> +Several architectures have features which provide backward edge
+> +control flow protection through a hardware maintained stack, only
+> +writeable by userspace through very limited operations.  This feature
+> +is referred to as shadow stacks on Linux, on x86 it is part of Intel
 
+                                      Linux. On x86
+
+> +Control Enforcement Technology (CET), on arm64 it is Guarded Control
+
+                                  (CET); on arm64
+
+> +Stacks feature (FEAT_GCS) and for RISC-V it is the Zicfiss extension.
+
+                  (FEAT_GCS); and for
+
+> +It is expected that this feature will normally be managed by the
+> +system dynamic linker and libc in ways broadly transparent to
+> +application code, this document covers interfaces and considerations.
+
+               code. This document
+
+> +
+> +
+> +Enabling
+> +========
+> +
+> +Shadow stacks default to disabled when a userspace process is
+> +executed, they can be enabled for the current thread with a syscall:
+
+   executed. They
+
+> +
+> + - For x86 the ARCH_SHSTK_ENABLE arch_prctl()
+> +
+> +It is expected that this will normally be done by the dynamic linker.
+> +Any new threads created by a thread with shadow stacks enabled will
+> +themselves have shadow stacks enabled.
+> +
+> +
+> +Enablement considerations
+> +=========================
+> +
+> +- Returning from the function that enables shadow stacks without first
+> +  disabling them will cause a shadow stack exception.  This includes
+> +  any syscall wrapper or other library functions, the syscall will need
+
+                                          functions. The syscall
+
+> +  to be inlined.
+> +- A lock feature allows userspace to prevent disabling of shadow stacks.
+> +- Those that change the stack context like longjmp() or use of ucontext
+> +  changes on signal return will need support from libc.
+> 
+
+-- 
+~Randy
 
