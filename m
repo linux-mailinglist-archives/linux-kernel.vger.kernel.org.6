@@ -1,192 +1,135 @@
-Return-Path: <linux-kernel+bounces-228705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F73A9165A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:59:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 754D49165A5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72EC31C21DA1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:59:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1472A28428E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:59:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1676814A60F;
-	Tue, 25 Jun 2024 10:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E93114B94C;
+	Tue, 25 Jun 2024 10:59:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jaI1ZqjW"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="bkLoWZUo"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5518A1095B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1446414A60D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719313152; cv=none; b=FB44oXWgaLdMzn0SmUxP0h0VLn6SZH2ikbtBSPM/uzSdWoNpmz84bz5zXihinxVq8NUFhd+j3CjhzoFsmZ6LujfA8PP07ByD/NrrMfNknkBdU840NwD7txDwyO6YM1ipFeNQSm+EoccLMQiHADNSswC16mZDejkTcUmpJ3PUxZc=
+	t=1719313177; cv=none; b=sLyrsHl4KdwFMcqOgMHFLVbLQx4x8SB07twwDlcjC3CCalRvHAQmaODuWa4Xt2PQErZ9ZBh/3e0j7dXpdog//jIlK57bDBs920l0dP8cOjIQAsJscRNKjNfSK59DH0Z8dcRKOqsGhpPX2RCQR5lPsNKfPFkghzV25vLEhjzPks8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719313152; c=relaxed/simple;
-	bh=AvGbWbfCQolqEB3Qeoz2io8fr9DpeiYOoxZvrBezFoQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ddx+r3XBu1BMcueVfCANF4ebz/ofYNsAYuF3IRjxTrq+9FwcrqZoSU1kMtngt4c357T9bUD/0fjTt8tUyi0UCKszVe6yZdI+yNG4sMZ5LwTfAobFO+xW5foUzBqq/dcI8UjYHpe5qZw69zd5lSo/R7g0jEUMzn4tAJSgBEZT/Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jaI1ZqjW; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52cdf4bc083so4345353e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:59:10 -0700 (PDT)
+	s=arc-20240116; t=1719313177; c=relaxed/simple;
+	bh=lS6ZzIyA3oNbhwFhi747Z/Q7sqPWYutQ9EFInl96aPE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ODpDu9vagywwUC+oBcrgz+/Apj54QZbxBp+YsrERFYD8OCGrBdLq9iWyw1802SI5blBNG571CpBAJFFFWZYt6rcXIWEvr5TcIOSLi/j8EtpAcb1vSft3+7vzyNf/Og696pGSMdKSLoa9kMsSx4dXA6SqIDv/T9t/T39bILPix5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=bkLoWZUo; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a6f8ebbd268so1052768666b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:59:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719313148; x=1719917948; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Ap+EbCgWJ+AJvWKstiQPgmG/qtQmcsmJ/Rrhaee2O1k=;
-        b=jaI1ZqjWNmRu4xI63SxCUGxyHU/QBYjF0Ymnt8L6b5xk7QuEUWi3AqhNhCBZmvkgOA
-         qqR8/79C8hQlluIq3usk8Shr/rLKd+a9LaYbOrCyvraNAZ6z9RJn8D9DYdkQzGIjvQ3u
-         UINmYFIVszsbEH1aiFBbN1sdb7xdcwfetY1N1dPNP/PHgNaV6u46UJHMkYz6Bbn63Ggn
-         abBgxM1n05m/9ycrFYxQJtyZXQcwPw9IVncq7bfSqwHyJIJ/QZo10RwMUXdOiYlCHoh7
-         5v7ReYSRGHMLf8Wx2X3Jv3prcCS1qYdhJMHvcvEhK2Z9+GYPjfOTlFkNJmuDz6ppUkCV
-         0xtA==
+        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1719313174; x=1719917974; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GIKlAQmoOg25cYHG9vFy5f/Rq74IjJJuVh/PhSpJzXI=;
+        b=bkLoWZUoOKQ9UHVdVRpkMWfMT0phpxClzjG0HYDY5qgS37X+sQxblfk/FwBzIk+RX2
+         2DpJqjhMTY08jEOqYI9gVgpofiAy48u4+x2k90QwazIv4XdJbT7V1V3otblLRvxfXbth
+         kKGColXPgL6Y6rKIiPElfdCVswKQldDPwUVGydusv+fDYr9B/AejqxqKHE1IbHDmP9hu
+         S5huPKIuxUR3fzJ0a/qx7YglEpWvxVxWbRyqHyOWwGV0cEWxdx6oSAaN1eG7laa89OCi
+         /foFoM6vP07smrAltj12OCV98EpnzkpHEo0KxrKESO6lTjeqTKhDV1YxL+IHOpOH5iUV
+         4Ddg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719313148; x=1719917948;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ap+EbCgWJ+AJvWKstiQPgmG/qtQmcsmJ/Rrhaee2O1k=;
-        b=L2VN6lbGwxOcYpR9VuTOwDl1TZ7FAIHK42hGo3InGwt/a9N2aRYcnfdES1IMLZoMjS
-         evxh3gTVdvVCOv8teKxJzWsoBNIduE6zz10g6G8forqIqgn4iHMi4543fmMc9+lCCCx5
-         kailN5rbBmES7QiKiTh1MDVcuNgkOiJc8t0YPrMeabi41kdWuRCGe3dKu9IWm1XzlpCH
-         Gd17Lsk2mMzJHvUmta8Ssb2ro9xooANqXkeEbbODcgNavi4q4hQTZaKfnZH8ACwsbEC3
-         eyBn4hmkCrizhQRU/QYsV6hC7wUo+pfsqB6LaiYQ/j8ir29uFWQsYp4ZVjg5HSnSIA0U
-         SqWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCO8q5BIgrLh/MszrMS/CgQ3SXs35aP1ZBALjQ7yjpslwYXFjlj719yReGWCEXW2qko58BEDQr308jB+R3PYFRhQMFwteHeU8wLIKG
-X-Gm-Message-State: AOJu0Yx0+k4wUzogkF9OXjZTAEhMVQ8VB3gy2Jo6gINW+aeonCJs5IDn
-	Ljm2T6CoZ9neD5C1dgQcV9R8HalC/elKyuwu0drOdtS15W70B/y7yIKPR1IC6is=
-X-Google-Smtp-Source: AGHT+IELfo9Wd11H6BpCcjeN9tYgLU03zzvea5ZVbA5djNJEU8H0AMfA61zaxu1gPBk2a1ekKNglcQ==
-X-Received: by 2002:ac2:4c39:0:b0:52c:8c85:cb46 with SMTP id 2adb3069b0e04-52ce064697bmr5438180e87.64.1719313148440;
-        Tue, 25 Jun 2024 03:59:08 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cec5923a3sm211365e87.96.2024.06.25.03.59.07
+        d=1e100.net; s=20230601; t=1719313174; x=1719917974;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GIKlAQmoOg25cYHG9vFy5f/Rq74IjJJuVh/PhSpJzXI=;
+        b=vGpINYQjp+3a7ZAu39qIFprpkEwN2CVWQmJYKHaj5CXwbgTVDPLeILhQqH/SmSDN4+
+         vCxLEN+xxGBqeXEcDEHQTvA+6EnUYDkn2IH936vl6mSwR1DIBKkOnF2rL3dipfVF0qyH
+         M+se3c6O3CGO2g49GT4P/YzAY97E3rbjrgl5k8P0krIUj+b1loBSp9ZVs/vLZ5+lBUa6
+         sPS/UIQ8LyI6xj2s6YM0ZRYjJzL4mXZhCWsmHk6mcS3Hy8rTC85fTkAHtwu6McibCTtW
+         ktXMsGGbRYoehpPVv23WHTUHMA5QFIVWxn6ICkaey43+eDYcvI/msfRB6B+u9n8kU5bQ
+         26dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVwrhXiVHyML26Y+G7+schliY5l+W/pdI6DpwqszCTmV9Oowm3hp8u+sIlR2bUr9bQJVFC8SqyOAdwQ487Drp73l+XZWs6LHpbBf6TM
+X-Gm-Message-State: AOJu0YwJw0otCV1F+5QaYimneEsP1Jtp76i6+Jv2Q4qxCxjs5kI7CQ/V
+	lvMpXPLkOFao0mQ4CFfa9pkPwHYh2/gCpdqcAk74ZgqfJHx9o1nTL4Q8eX450sA=
+X-Google-Smtp-Source: AGHT+IEE2Iu1qYKOZCpHug50kXCaLoAfzlnzKDJxNZSjGlNOc+Pt6AUUN+WtSi84pdVmVnNB8Rjk1g==
+X-Received: by 2002:a17:906:57cb:b0:a6f:e3e4:e0b6 with SMTP id a640c23a62f3a-a700e70884emr689926266b.27.1719313174154;
+        Tue, 25 Jun 2024 03:59:34 -0700 (PDT)
+Received: from localhost ([79.142.230.34])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d303da3edsm5812269a12.2.2024.06.25.03.59.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 03:59:07 -0700 (PDT)
-Date: Tue, 25 Jun 2024 13:59:06 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Keith Zhao <keith.zhao@starfivetech.com>
-Cc: "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org" <rfoss@kernel.org>, 
-	"Laurent.pinchart@ideasonboard.com" <Laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se" <jonas@kwiboo.se>, 
-	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, 
-	"tzimmermann@suse.de" <tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"daniel@ffwll.ch" <daniel@ffwll.ch>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"hjc@rock-chips.com" <hjc@rock-chips.com>, "heiko@sntech.de" <heiko@sntech.de>, 
-	"andy.yan@rock-chips.com" <andy.yan@rock-chips.com>, Xingyu Wu <xingyu.wu@starfivetech.com>, 
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, Jack Zhu <jack.zhu@starfivetech.com>, 
-	Shengyang Chen <shengyang.chen@starfivetech.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 10/10] drm/vs: add simple dsi encoder
-Message-ID: <u7zx25g7zwf56unal4qwgh65hmjydfa7d2vnbgwxnulygtcj3w@uicmayewp4r4>
-References: <20240521105817.3301-1-keith.zhao@starfivetech.com>
- <20240521105817.3301-11-keith.zhao@starfivetech.com>
- <cej2d72e6bacbjabyjecoqhjlhz4sxx4bgn2w43rgl3cfyyuwt@jq5kq4egj2wo>
- <NTZPR01MB1050AA3ABA20F736B1756E04EECB2@NTZPR01MB1050.CHNPR01.prod.partner.outlook.cn>
- <b7cgvgh3uphpa3byf3bdl5i4fr64zzuagxg5txuwx7woy56dkt@uhclfjtzejfc>
- <NTZPR01MB1050B4B8FA6F36267A1DBB01EED52@NTZPR01MB1050.CHNPR01.prod.partner.outlook.cn>
+        Tue, 25 Jun 2024 03:59:33 -0700 (PDT)
+From: Andreas Hindborg <nmi@metaspace.dk>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: gregkh@linuxfoundation.org,  rafael@kernel.org,  bhelgaas@google.com,
+  ojeda@kernel.org,  alex.gaynor@gmail.com,  wedsonaf@gmail.com,
+  boqun.feng@gmail.com,  gary@garyguo.net,  bjorn3_gh@protonmail.com,
+  benno.lossin@proton.me,  a.hindborg@samsung.com,  aliceryhl@google.com,
+  airlied@gmail.com,  fujita.tomonori@gmail.com,  lina@asahilina.net,
+  pstanner@redhat.com,  ajanulgu@redhat.com,  lyude@redhat.com,
+  robh@kernel.org,  daniel.almeida@collabora.com,
+  rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 07/10] rust: add `io::Io` base type
+In-Reply-To: <20240618234025.15036-8-dakr@redhat.com> (Danilo Krummrich's
+	message of "Wed, 19 Jun 2024 01:39:53 +0200")
+References: <20240618234025.15036-1-dakr@redhat.com>
+	<20240618234025.15036-8-dakr@redhat.com>
+Date: Tue, 25 Jun 2024 12:59:24 +0200
+Message-ID: <87zfr9guer.fsf@metaspace.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <NTZPR01MB1050B4B8FA6F36267A1DBB01EED52@NTZPR01MB1050.CHNPR01.prod.partner.outlook.cn>
+Content-Type: text/plain
 
-On Tue, Jun 25, 2024 at 08:33:48AM GMT, Keith Zhao wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Sent: 2024年6月24日 5:11
-> > To: Keith Zhao <keith.zhao@starfivetech.com>
-> > Cc: andrzej.hajda@intel.com; neil.armstrong@linaro.org; rfoss@kernel.org;
-> > Laurent.pinchart@ideasonboard.com; jonas@kwiboo.se;
-> > jernej.skrabec@gmail.com; maarten.lankhorst@linux.intel.com;
-> > mripard@kernel.org; tzimmermann@suse.de; airlied@gmail.com;
-> > daniel@ffwll.ch; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> > hjc@rock-chips.com; heiko@sntech.de; andy.yan@rock-chips.com; Xingyu Wu
-> > <xingyu.wu@starfivetech.com>; p.zabel@pengutronix.de; Jack Zhu
-> > <jack.zhu@starfivetech.com>; Shengyang Chen
-> > <shengyang.chen@starfivetech.com>; dri-devel@lists.freedesktop.org;
-> > devicetree@vger.kernel.org; linux-kernel@vger.kernel.org;
-> > linux-arm-kernel@lists.infradead.org
-> > Subject: Re: [PATCH v4 10/10] drm/vs: add simple dsi encoder
-> > 
-> > On Sun, Jun 23, 2024 at 07:17:09AM GMT, Keith Zhao wrote:
-> > > Hi Dmitry:
-> > >
-> > > > On Tue, May 21, 2024 at 06:58:17PM +0800, keith wrote:
-> > 
-> > > > > +								  "starfive,syscon",
-> > > > > +								  2, args);
-> > > > > +
-> > > > > +	if (IS_ERR(simple->dss_regmap)) {
-> > > > > +		return dev_err_probe(dev, PTR_ERR(simple->dss_regmap),
-> > > > > +				     "getting the regmap failed\n");
-> > > > > +	}
-> > > > > +
-> > > > > +	simple->offset = args[0];
-> > > > > +	simple->mask = args[1];
-> > > >
-> > > > Is the value that you've read platform dependent or use case dependent?
-> > > > What is the actual value being written? Why are you using syscon for it?
-> > >
-> > > The syscon is used to select crtcs binded with encoder, If this
-> > > encoder binds to crtc0 , set the syscon reg bit0 = 1 If this encoder
-> > > binds to crtc1 , set the syscon reg bit1 = 1 (0x2) Maybe I can do this
-> > > by the possible_crtc instead of using args from dts
-> > 
-> > If this is a constant between your platforms, it should not be a part of DT.
-> > 
-> > >
-> > >
-> > > >
-> > > > > +
-> > > > > +	return 0;
-> > > > > +}
-> > > > > +
-> > > > > +static void vs_encoder_atomic_enable(struct drm_encoder *encoder,
-> > > > > +struct drm_atomic_state *state) {
-> > > > > +	struct vs_simple_encoder *simple = to_simple_encoder(encoder);
-> > > > > +
-> > > > > +	regmap_update_bits(simple->dss_regmap, simple->offset,
-> > > > > +simple->mask,
-> > > > > +simple->mask);
-> > > >
-> > > >
-> > > > A purist in me would ask to have separate mask and value to write.
-> > > Understand , will avoid this action
-> > > >
-> > > > > +}
-> > > >
-> > > > Is it necessary to clear those bits when stopping the stream?
-> > > No need to do this , if clear those bits , the encoder will point to a
-> > > unknown crtc
-> > 
-> > what are the consequences? Is it desirable or not?
-> There are two crtcs.
-> Each display terminal encoder can combine any crtc, depending on the value of possible crtc.
-> When the bit is 0, it means that the encoder matches crtc0.
-> When the bit is 1, it means that the encoder matches crtc1.
-> The possible crtc of this encoder is 2 , the reg bit is 1.    
-> When the video stream is stopped, if the bit is cleared, the result is that the encoder hardware points to crtc0, 
-> and the encoder points to crtc1 based on the drm framework(because the possible crtc no change).
+Hi Danilo,
 
-I'm not sure if I understood you correctly. If it doesn't disable or
-disconnect the encoder, I'd skip that in the .disable path.
+Danilo Krummrich <dakr@redhat.com> writes:
 
--- 
-With best wishes
-Dmitry
+[...]
+
+> +
+> +macro_rules! define_write {
+> +    ($(#[$attr:meta])* $name:ident, $try_name:ident, $type_name:ty) => {
+> +        /// Write IO data from a given offset known at compile time.
+> +        ///
+> +        /// Bound checks are performed on compile time, hence if the offset is not known at compile
+> +        /// time, the build will fail.
+> +        $(#[$attr])*
+> +        #[inline]
+> +        pub fn $name(&self, value: $type_name, offset: usize) {
+> +            let addr = self.io_addr_assert::<$type_name>(offset);
+> +
+> +            unsafe { bindings::$name(value, addr as _, ) }
+> +        }
+> +
+> +        /// Write IO data from a given offset.
+> +        ///
+> +        /// Bound checks are performed on runtime, it fails if the offset (plus the type size) is
+> +        /// out of bounds.
+> +        $(#[$attr])*
+> +        pub fn $try_name(&self, value: $type_name, offset: usize) -> Result {
+> +            let addr = self.io_addr::<$type_name>(offset)?;
+> +
+> +            unsafe { bindings::$name(value, addr as _) }
+> +            Ok(())
+> +        }
+> +    };
+> +}
+> +
+
+I am curious why we do not need `&mut self` to write to this memory? Is
+it OK to race on these writes?
+
+
+Best regards,
+Andreas
 
