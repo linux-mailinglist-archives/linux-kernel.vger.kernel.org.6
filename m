@@ -1,265 +1,199 @@
-Return-Path: <linux-kernel+bounces-229046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C33D916A2E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:25:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8064916A32
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5419B281614
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:25:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 435F61F211D6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:25:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2928E16C68B;
-	Tue, 25 Jun 2024 14:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1009416D30D;
+	Tue, 25 Jun 2024 14:25:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s29fdSkT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wr7OZJAl";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="s29fdSkT";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Wr7OZJAl"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="PPgjtYU3"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9212247A64;
-	Tue, 25 Jun 2024 14:24:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B7447A64;
+	Tue, 25 Jun 2024 14:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719325492; cv=none; b=DD5/YHyfYFbRpIKIWRTE8cG0LmGVGiKIfCUZs2WItj2/anuRG1jfDB+4f6qRmr19Ci0Ndp2ZzKX64u1rUPn+UJa2jcN0YmUS9VloHNhz71VENc/pP37G1uLBrWTPHWUg02PVZ4t94A6KGIdl9uBkPELJQpa0bgyTBco+meEcykc=
+	t=1719325521; cv=none; b=HuCXVrgFqg9bozDrdNlfhXxgTFIycjtZw16HzqyJEwj4Sas7fxip82xKkbe9Ski7Vczm4fNWwnCf6WZkn9d8HGFVuTZO1MSpG+eMONWHNY6wGjTz/eWab+Mk5lIwDTPs4jU3Cr8CIjxPEAqwp1NKWNa44vskrEwiAznrh5X85P4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719325492; c=relaxed/simple;
-	bh=Ut9on25SCqJI9MCJT7n6rkIK9q2DZMKn0vIatI+tcYc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nZUjGSBJAh/bcC6Ww+whGdc6Qg4UyIRYAhGSOLmJihC2X7U6O0VHLmPGurk9JgUvMXbhHPbO1fZ4HZOcTLaeDI9dZH8jXtVMVLCOfEMR7w/HJgp+Yic8V+cf+zFfdpw2R9lI862SXNnQ9LGhk0NNK0lumTMMQ1T2HwhvMhLusOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=s29fdSkT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wr7OZJAl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=s29fdSkT; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Wr7OZJAl; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id C75211F889;
-	Tue, 25 Jun 2024 14:24:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719325488; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yuEJ34JVFFiDDuu65qHBfAWBmRhDid8UKlEwTuuVx8A=;
-	b=s29fdSkTlsRdgf37UqsEcd8ui21AXmEBqS5RSDlmuZ6rbUu+/50o4fbmtHe19UAkEcuPSG
-	n1ALlXdgXFWHp2YSo3BajTcGwPsn3hH/aFJQGhpah7W0W5TaWvzgTgOJuV92NgmNAzYHV0
-	0kbMgPcYedfDkEIBIPjcuVY3I4dhBak=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719325488;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yuEJ34JVFFiDDuu65qHBfAWBmRhDid8UKlEwTuuVx8A=;
-	b=Wr7OZJAlcY/mTO9S5s+V9PPtP9a53neExu8myhnt1ms5bC+kXdbEOWwqQda3hSRaF4kiY9
-	1TzvqBjqTBbzvkDg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719325488; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yuEJ34JVFFiDDuu65qHBfAWBmRhDid8UKlEwTuuVx8A=;
-	b=s29fdSkTlsRdgf37UqsEcd8ui21AXmEBqS5RSDlmuZ6rbUu+/50o4fbmtHe19UAkEcuPSG
-	n1ALlXdgXFWHp2YSo3BajTcGwPsn3hH/aFJQGhpah7W0W5TaWvzgTgOJuV92NgmNAzYHV0
-	0kbMgPcYedfDkEIBIPjcuVY3I4dhBak=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719325488;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=yuEJ34JVFFiDDuu65qHBfAWBmRhDid8UKlEwTuuVx8A=;
-	b=Wr7OZJAlcY/mTO9S5s+V9PPtP9a53neExu8myhnt1ms5bC+kXdbEOWwqQda3hSRaF4kiY9
-	1TzvqBjqTBbzvkDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9E85013A9A;
-	Tue, 25 Jun 2024 14:24:48 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id QJVZJjDTemaMKwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Tue, 25 Jun 2024 14:24:48 +0000
-Message-ID: <78177ff2-e140-4e81-9b2a-be5bece34cfc@suse.cz>
-Date: Tue, 25 Jun 2024 16:24:48 +0200
+	s=arc-20240116; t=1719325521; c=relaxed/simple;
+	bh=7Ql6wzXgWyF8NGgbsyHVYC6MbpONUfRdsw2Uj20CiL8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JFdTt9qS8IGj97/uZDWlG9SSRf7zQ/8OczeUlkVSrFOqFOfEkRR6NTTGg8ZNKq9qd4A2bSFscroxcdiqP3iScr35c9U7yDUQ8d4lLnjtjim8yvjnj+UrijLw1qta6FQFbfQ9c+8DNzOR2cO242v9guLORUfnRqdtHjc8fXq3nkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=PPgjtYU3; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P8sUD2006261;
+	Tue, 25 Jun 2024 07:25:09 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	pfpt0220; bh=ZQtXd3zR0ULIEP+2DYE8NxObpcJoH0Cc7M/A5JF2bOI=; b=PPg
+	jtYU3zYbg8sQiJg17WPT/6ALd69ItAyp2C+2jHtveqQrbTojAbb87D19zfBLMUsb
+	Xi4FFT8cExHZp/N+5PzTXMRWm+3iJ12aUi5xeir9od/AoCHrn+SGQudk2jVyzWgH
+	NdS3qSc+0Rh71A8gBjSO0dHU4uOrSD/GbuC0hnGPNL++P7FHjHkWiAQm7HlD1zlX
+	JkTRa4oxDnGN46p4C+KztJ9HSR22tD5fFrueNIt17m3Oc7C9SswcG5Uk574XGQ0j
+	CtrugOGPHRZPpkk7RLBh/wT9k3voljFZ/0VKyReiC+JO2QKZ1bttEiBF60uzEDXH
+	fBPcbAz7d2dBhv6UDkg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 3yytt097sm-2
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 07:25:09 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Tue, 25 Jun 2024 07:25:07 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Tue, 25 Jun 2024 07:25:07 -0700
+Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
+	by maili.marvell.com (Postfix) with ESMTP id 847723F7045;
+	Tue, 25 Jun 2024 07:25:04 -0700 (PDT)
+From: Geetha sowjanya <gakula@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
+        <edumazet@google.com>, <sgoutham@marvell.com>, <gakula@marvell.com>,
+        <sbhatta@marvell.com>, <hkelam@marvell.com>
+Subject: [net-next PATCH v6 00/10] Introduce RVU representors  
+Date: Tue, 25 Jun 2024 19:54:53 +0530
+Message-ID: <20240625142503.3293-1-gakula@marvell.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] mm, slab: add static key for should_failslab()
-Content-Language: en-US
-To: Akinobu Mita <akinobu.mita@gmail.com>, Christoph Lameter <cl@linux.com>,
- David Rientjes <rientjes@google.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
- Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
- "David S. Miller" <davem@davemloft.net>,
- Masami Hiramatsu <mhiramat@kernel.org>, Steven Rostedt
- <rostedt@goodmis.org>, Mark Rutland <mark.rutland@arm.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>,
- Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, bpf@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20240620-fault-injection-statickeys-v2-0-e23947d3d84b@suse.cz>
- <20240620-fault-injection-statickeys-v2-6-e23947d3d84b@suse.cz>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20240620-fault-injection-statickeys-v2-6-e23947d3d84b@suse.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -2.79
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-2.79 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_TO(0.00)[gmail.com,linux.com,google.com,kernel.org,iogearbox.net,linux.ibm.com,intel.com,davemloft.net,goodmis.org,arm.com];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCPT_COUNT_TWELVE(0.00)[19];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FREEMAIL_CC(0.00)[kernel.org,linux.dev,gmail.com,vger.kernel.org,kvack.org];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TAGGED_RCPT(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: JRSSdviNOIbVCf9qIl8MxYf9hD7A4QUY
+X-Proofpoint-GUID: JRSSdviNOIbVCf9qIl8MxYf9hD7A4QUY
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_09,2024-06-25_01,2024-05-17_01
 
-On 6/20/24 12:49 AM, Vlastimil Babka wrote:
-> --- a/mm/slub.c
-> +++ b/mm/slub.c
-> @@ -3874,13 +3874,37 @@ static __always_inline void maybe_wipe_obj_freeptr(struct kmem_cache *s,
->  			0, sizeof(void *));
->  }
->  
-> -noinline int should_failslab(struct kmem_cache *s, gfp_t gfpflags)
-> +#if defined(CONFIG_FUNCTION_ERROR_INJECTION) || defined(CONFIG_FAILSLAB)
-> +DEFINE_STATIC_KEY_FALSE(should_failslab_active);
-> +
-> +#ifdef CONFIG_FUNCTION_ERROR_INJECTION
-> +noinline
-> +#else
-> +static inline
-> +#endif
-> +int should_failslab(struct kmem_cache *s, gfp_t gfpflags)
+This series adds representor support for each rvu devices.
+When switchdev mode is enabled, representor netdev is registered
+for each rvu device. In implementation of representor model, 
+one NIX HW LF with multiple SQ and RQ is reserved, where each
+RQ and SQ of the LF are mapped to a representor. A loopback channel
+is reserved to support packet path between representors and VFs.
+CN10K silicon supports 2 types of MACs, RPM and SDP. This
+patch set adds representor support for both RPM and SDP MAC
+interfaces.
 
-Note that it has been found that (regardless of this series) gcc may clone
-this to a should_failslab.constprop.0 in case the function is empty because
-__should_failslab is compiled out (CONFIG_FAILSLAB=n). The "noinline"
-doesn't help - the original function stays but only the clone is actually
-being called, thus overriding the original function achieves nothing, see:
-https://github.com/bpftrace/bpftrace/issues/3258
+- Patch 1: Refactors and exports the shared service functions.
+- Patch 2: Implements basic representor driver.
+- Patch 3: Add devlink support to create representor netdevs that
+  can be used to manage VFs.
+- Patch 4: Implements basec netdev_ndo_ops.
+- Patch 5: Installs tcam rules to route packets between representor and
+	   VFs.
+- Patch 6: Enables fetching VF stats via representor interface
+- Patch 7: Adds support to sync link state between representors and VFs .
+- Patch 8: Enables configuring VF MTU via representor netdevs.
+- Patch 9: Add representors for sdp MAC.
+- Patch 10: Add devlink port support.
 
-So we could use __noclone to prevent that, and I was thinking by adding
-something this to error-injection.h:
+Command to create VF representor
+#devlink dev eswitch set pci/0002:1c:00.0 mode switchdev
+VF representors are created for each VF when switch mode is set switchdev on representor PCI device
+# devlink dev eswitch set pci/0002:1c:00.0  mode switchdev 
+# ip link show
+25: r0p1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether 32:0f:0f:f0:60:f1 brd ff:ff:ff:ff:ff:ff
+26: r1p1: <BROADCAST,MULTICAST> mtu 1500 qdisc noop state DOWN mode DEFAULT group default qlen 1000
+    link/ether 3e:5d:9a:4d:e7:7b brd ff:ff:ff:ff:ff:ff
 
-#ifdef CONFIG_FUNCTION_ERROR_INJECTION
-#define __error_injectable(alternative)		noinline __noclone
-#else
-#define __error_injectable(alternative)		alternative
-#endif
+#devlink dev
+pci/0002:01:00.0
+pci/0002:02:00.0
+pci/0002:03:00.0
+pci/0002:04:00.0
+pci/0002:05:00.0
+pci/0002:06:00.0
+pci/0002:07:00.0
 
-and the usage here would be:
+~# devlink port
+pci/0002:1c:00.0/0: type eth netdev r0p1v0 flavour pcipf controller 0 pfnum 1 vfnum 0 external false splittable false
+pci/0002:1c:00.0/1: type eth netdev r1p1v1 flavour pcivf controller 0 pfnum 1 vfnum 1 external false splittable false
+pci/0002:1c:00.0/2: type eth netdev r2p1v2 flavour pcivf controller 0 pfnum 1 vfnum 2 external false splittable false
+pci/0002:1c:00.0/3: type eth netdev r3p1v3 flavour pcivf controller 0 pfnum 1 vfnum 3 external false splittable false
 
-__error_injectable(static inline) int should_failslab(...)
+-----------
+v1-v2:
+ -Fixed build warnings.
+ -Address review comments provided by "Kalesh Anakkur Purayil".
 
-Does that look acceptable, or is it too confusing that "static inline" is
-specified there as the storage class to use when error injection is actually
-disabled?
+v2-v3:
+ - Used extack for error messages.
+ - As suggested reworked commit messages.
+ - Fixed sparse warning.
 
->  {
->  	if (__should_failslab(s, gfpflags))
->  		return -ENOMEM;
->  	return 0;
->  }
-> -ALLOW_ERROR_INJECTION(should_failslab, ERRNO);
-> +ALLOW_ERROR_INJECTION_KEY(should_failslab, ERRNO, &should_failslab_active);
-> +
-> +static __always_inline int should_failslab_wrapped(struct kmem_cache *s,
-> +						   gfp_t gfp)
-> +{
-> +	if (static_branch_unlikely(&should_failslab_active))
-> +		return should_failslab(s, gfp);
-> +	else
-> +		return 0;
-> +}
-> +#else
-> +static __always_inline int should_failslab_wrapped(struct kmem_cache *s,
-> +						   gfp_t gfp)
-> +{
-> +	return false;
-> +}
-> +#endif
->  
->  static __fastpath_inline
->  struct kmem_cache *slab_pre_alloc_hook(struct kmem_cache *s, gfp_t flags)
-> @@ -3889,7 +3913,7 @@ struct kmem_cache *slab_pre_alloc_hook(struct kmem_cache *s, gfp_t flags)
->  
->  	might_alloc(flags);
->  
-> -	if (unlikely(should_failslab(s, flags)))
-> +	if (should_failslab_wrapped(s, flags))
->  		return NULL;
->  
->  	return s;
-> 
+v3-v4: 
+ - Patch 2 & 3: Fixed coccinelle reported warnings.
+ - Patch 10: Added devlink port support.
+
+v4-v5:
+  - Patch 3: Removed devm_* usage in rvu_rep_create()
+  - Patch 3: Fixed build warnings.
+
+v5-v6:
+  - Addressed review comments provided by "Simon Horman".
+  - Added review tag. 
+
+Geetha sowjanya (10):
+  octeontx2-pf: Refactoring RVU driver
+  octeontx2-pf: RVU representor driver
+  octeontx2-pf: Create representor netdev
+  octeontx2-pf: Add basic net_device_ops
+  octeontx2-af: Add packet path between representor and VF
+  octeontx2-pf: Get VF stats via representor
+  octeontx2-pf: Add support to sync link state between representor and
+    VFs
+  octeontx2-pf: Configure VF mtu via representor
+  octeontx2-pf: Add representors for sdp MAC
+  octeontx2-pf: Add devlink port support
+
+ .../net/ethernet/marvell/octeontx2/Kconfig    |   8 +
+ .../ethernet/marvell/octeontx2/af/Makefile    |   3 +-
+ .../ethernet/marvell/octeontx2/af/common.h    |   2 +
+ .../net/ethernet/marvell/octeontx2/af/mbox.h  |  74 ++
+ .../net/ethernet/marvell/octeontx2/af/npc.h   |   1 +
+ .../net/ethernet/marvell/octeontx2/af/rvu.c   |  11 +
+ .../net/ethernet/marvell/octeontx2/af/rvu.h   |  30 +-
+ .../marvell/octeontx2/af/rvu_debugfs.c        |  27 -
+ .../marvell/octeontx2/af/rvu_devlink.c        |   6 +
+ .../ethernet/marvell/octeontx2/af/rvu_nix.c   |  81 ++-
+ .../marvell/octeontx2/af/rvu_npc_fs.c         |   5 +
+ .../ethernet/marvell/octeontx2/af/rvu_reg.h   |   4 +
+ .../ethernet/marvell/octeontx2/af/rvu_rep.c   | 464 ++++++++++++
+ .../marvell/octeontx2/af/rvu_struct.h         |  26 +
+ .../marvell/octeontx2/af/rvu_switch.c         |  20 +-
+ .../ethernet/marvell/octeontx2/nic/Makefile   |   2 +
+ .../ethernet/marvell/octeontx2/nic/cn10k.c    |   4 +-
+ .../ethernet/marvell/octeontx2/nic/cn10k.h    |   2 +-
+ .../marvell/octeontx2/nic/otx2_common.c       |  56 +-
+ .../marvell/octeontx2/nic/otx2_common.h       |  84 ++-
+ .../marvell/octeontx2/nic/otx2_devlink.c      |  49 ++
+ .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 305 +++++---
+ .../ethernet/marvell/octeontx2/nic/otx2_reg.h |   1 +
+ .../marvell/octeontx2/nic/otx2_txrx.c         |  38 +-
+ .../marvell/octeontx2/nic/otx2_txrx.h         |   3 +-
+ .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |  19 +-
+ .../net/ethernet/marvell/octeontx2/nic/rep.c  | 684 ++++++++++++++++++
+ .../net/ethernet/marvell/octeontx2/nic/rep.h  |  53 ++
+ 28 files changed, 1835 insertions(+), 227 deletions(-)
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/af/rvu_rep.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/rep.c
+ create mode 100644 drivers/net/ethernet/marvell/octeontx2/nic/rep.h
+
+-- 
+2.25.1
 
 
