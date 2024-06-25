@@ -1,166 +1,164 @@
-Return-Path: <linux-kernel+bounces-228307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57B8B915DE2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:01:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9112C915DEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:07:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28A21F2297A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:01:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238A3281E13
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:07:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C19851448E8;
-	Tue, 25 Jun 2024 05:00:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0D39143882;
+	Tue, 25 Jun 2024 05:07:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TgNk1yAF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qrP3uHEz"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050E5748F;
-	Tue, 25 Jun 2024 05:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1696014375D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 05:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719291637; cv=none; b=loidJqjGdY2Vt0+yYlAO72Fh24vpO9e8Kx6b/6/FoptMVybibdTrVx13iCter7ZH0jZS1Kv2qxlRSDxFwddhZVfcbX5lfmvSrx9cDilCHmtk1qZgtm4EcbfrvMJMG41cZBrsZuePVtouM8Zk9rCUPtRuOo+CJnfoxQDS5astxGw=
+	t=1719292027; cv=none; b=N5ZECXJuXC5ydKNIL0TiaREGtb+e/bFZd/swnA06lv4jB4sPinVyN740HTAWXNrDrrsi8NiiNhwwM8NTautHVbhmkzZR89F1l5CUbcnPVTG+b34By7ULbkodMXXZGWAZtSiptZF+oFxqxdiLkyx+z65fTmGHSxbDIWAcBpN2fpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719291637; c=relaxed/simple;
-	bh=yBjVJClVmj1rBvrYWpgp9Sl3xy6jwZewpiuopf01o1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=boUeAemDzLxzla9+xRphilXVqjeHDTU6vOgkm2tldh55yG+8LgPPs1+03b7XTlcG/V7vvv6FGdxJTah1DXWWBhiO8/DbO5u3pL1ojQljeOGzoVAh2O98OpaGMauQyjUbdu1iOFmceUG0m/Oiq/oD1tn767bfUggK83fx1NEPF4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TgNk1yAF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E5CCC4AF07;
-	Tue, 25 Jun 2024 05:00:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719291636;
-	bh=yBjVJClVmj1rBvrYWpgp9Sl3xy6jwZewpiuopf01o1c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TgNk1yAFtOAq0DDV59Hs+tlR0MkMJcc1Qmfemo1xBTlv9EYYm1CYuLFevsXffyH7K
-	 I7BPAd6Lo+eQMOOGZTwS58o4Ofjh4W8kzFBqTO3UYj7HuzmcP4UgC5wLWx/BbPfCQW
-	 rYy4NN7Q99oINc+1keb+JXRNiK8DXUtTIeJZmfET7R1+/Ku0Eg9kHVC3Ra4lSD7LJ6
-	 5IyX/k/JJ/iZMVa1DpiEYQUCtCgyBIcqYq0P5QSltZHllSSq+5ll7mUT0EUnufo2RB
-	 AxQYqieDJ47MeVtVFTjHwuthCGYn+kFp9iUiLVGlMGHLsN7ELOEABMfOQe3aP4xuHg
-	 mglGiOqrr8/Nw==
-Date: Mon, 24 Jun 2024 22:00:33 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Yunseong Kim <yskelg@gmail.com>
-Cc: Ian Rogers <irogers@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Yang Jihong <yangjihong1@huawei.com>, Ze Gao <zegao2021@gmail.com>,
-	Leo Yan <leo.yan@linux.dev>, Ravi Bangoria <ravi.bangoria@amd.com>,
-	Austin Kim <austindh.kim@gmail.com>, shjy180909@gmail.com,
-	linux-perf-users <linux-perf-users@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] util: constant -1 with expression of type char and
- allocation failure handling
-Message-ID: <ZnpO8TKWSiterMwC@google.com>
-References: <20240619183857.4819-2-yskelg@gmail.com>
- <CAP-5=fWm-Tij+vjqOa-18RsiO+1_ytWnKkDvp3vz5hv1O9aMCw@mail.gmail.com>
- <5c1f3b54-da71-47b7-a30c-0011a23195c8@gmail.com>
+	s=arc-20240116; t=1719292027; c=relaxed/simple;
+	bh=XFnA16kYW5gGBpSDrWeOV5VEpEAexRRRucWlNmOgnjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Bvzwv2WAfo0JG80dx4GvX/ns0j6BgFCF8Wbx/CXiFItYhgcfOOy5VqhL0RuZ9fTxqM5/QfrGvmvLsFCFafRrmpJSbti4nK9YFXrmLGdGhuQSenCcIR5+zazLovj8yUrjj2OdCW4vjou/ZvWrzGMiEOjBwew3a6BMh8FuUvW/918=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qrP3uHEz; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52ce01403f6so2372539e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:07:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1719292024; x=1719896824; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iMTfoPJSp/wlWQYq7ramEp8kDhcvFWSvsJvWkHGYsCg=;
+        b=qrP3uHEzfNLNzM2yRBsn4IrZUYI+bNIFcB1A+Wn0rAhuZDg0ulZv2VOB58bK0QGkjW
+         19LtbjxRhflLujofe+2Bu4+kflhzVXoOidNHWTcQWu1FF6o2A0xmSR20YGk/84lPEkb3
+         X/IdGBbEuvbQULId5SojIBaw4ifrx6p2A5SXw3KJQMLcONfKB8aotKL1TK1/DjhIQl+i
+         b7OeJrceaUb2fn825ntM+I6bZ9Lm22zfETIZrS5DN1ukIBHXYA4YQv84e4nKaveJPJAM
+         cWxSMYwlb0CmG5YBLpi5KLgJ4KkSttGgClXktgbfq822xCHOoqDyiOg6hLNSuOHi1tre
+         2/+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719292024; x=1719896824;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iMTfoPJSp/wlWQYq7ramEp8kDhcvFWSvsJvWkHGYsCg=;
+        b=q+lmwBDS89tWmvU21J9cvekf7C9lz77JqvaXiLpRfuQdkMAumyJHOD5BTKD++l2BR8
+         H3JLItbrP37Hdt+/RMjD31ds6woJHWMnBMfh8JPQhg/PoCMrdgUeWii2KsbD4iwng7tL
+         bRIdMsHqHsTClR65CVMj2rQ4KI/u6rS20+d/vqD2umD1SsvCfBKz9lkkrwjRyiRPD6IJ
+         wJmgKIo8CjPcrhrb4BREDaEoSmRLR8oTW9UiS2giv/LJi9lDB2ahD2B00RY2ZRV55Gre
+         oA90w1Ol02abUhl2KjZ5nutE6ICdUXfk1Hj2Vd+qcNQwnx/2emeUoNHNFblIaNGmefZo
+         kw3g==
+X-Forwarded-Encrypted: i=1; AJvYcCX1hSmYJFkqQL41CzHcSEGe9mQbfYqDLd7Y8xzHQ69Tz3msPKV2rJIBVVuuPSbLY3yg9GRRsFjVD/yvs62ESQdvv4VcaFiqudFdf8ZE
+X-Gm-Message-State: AOJu0YypZkSKX1kHYwrBzRspsuvOtoyCpng0o2BwmDWYY/M61oqShzwJ
+	8P9OLZT/iwtTR/xZ0emT8HF95t1X6CJiA0yzygJg665xgwqxC12PxXczG5l7/v0=
+X-Google-Smtp-Source: AGHT+IG7HDx2+AdxqahzNH7iyEFC9rGrJpKDudbwOlrJIC/1s7QOXQZz7eUKgfpp4ZPXuAssY8mYtA==
+X-Received: by 2002:a05:6512:2355:b0:52c:9468:c991 with SMTP id 2adb3069b0e04-52ce1832bffmr3986238e87.14.1719292024114;
+        Mon, 24 Jun 2024 22:07:04 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4249b4232f9sm6119065e9.0.2024.06.24.22.07.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 22:07:03 -0700 (PDT)
+Message-ID: <908ff65d-e9f0-47c2-94ab-47cac3aa58ce@tuxon.dev>
+Date: Tue, 25 Jun 2024 08:07:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the
+ R9A08G045 support
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240621112303.1607621-9-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdULaO2dH_wrcM5P6=rDYzRXcMSGfVsBz3okWPGjOsMN4A@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdULaO2dH_wrcM5P6=rDYzRXcMSGfVsBz3okWPGjOsMN4A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5c1f3b54-da71-47b7-a30c-0011a23195c8@gmail.com>
 
-Hello,
+Hi, Geert,
 
-On Thu, Jun 20, 2024 at 04:10:53AM +0900, Yunseong Kim wrote:
-> Hi Ian,
+On 24.06.2024 18:40, Geert Uytterhoeven wrote:
+> Hi Claudiu,
 > 
-> On 6/20/24 4:03 오전, Ian Rogers wrote:
-> > 
-> > 
-> > On Wed, Jun 19, 2024, 11:39 AM <yskelg@gmail.com
-> > <mailto:yskelg@gmail.com>> wrote:
-> > 
-> >     From: Yunseong Kim <yskelg@gmail.com <mailto:yskelg@gmail.com>>
-> > 
-> >     This patch resolve this warning.
-> > 
-> >     tools/perf/util/evsel.c:1620:9: error: result of comparison of constant
-> >     -1 with expression of type 'char' is always false
-> >      -Werror,-Wtautological-constant-out-of-range-compare
-> >      1620 |                 if (c == -1)
-> >           |                     ~ ^  ~~
-> > 
-> >     Add handling on unread_unwind_spec_debug_frame().
-> >     This make caller find_proc_info() works well when the allocation
-> >     failure.
-> > 
-> >     Signed-off-by: Yunseong Kim <yskelg@gmail.com <mailto:yskelg@gmail.com>>
-> > 
-> > 
-> > 
-> > Both changes look good. Could you make them 2 commits? If so add my: 
+> On Fri, Jun 21, 2024 at 1:23 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is compatible with
+>> the version available on Renesas RZ/V2H (R9A09G075). Most of the IP
+>> variants that the RIIC driver is working with supports fast mode plus.
+>> However, it happens that on the same SoC to have IP instatiations that
+>> support fast mode plus as well as IP instantiation that doesn't support
+>> it. For this, introduced the renesas,riic-no-fast-mode-plus property.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> No problem! I'll send it right away.
+> Thanks for your patch!
 > 
-> Thank you for the code review.
+>> --- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+>> +++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+>> @@ -25,6 +25,10 @@ properties:
+>>                - renesas,riic-r9a07g054  # RZ/V2L
+>>            - const: renesas,riic-rz      # RZ/A or RZ/G2L
+>>
+>> +      - items:
+>> +          - const: renesas,riic-r9a08g045   # RZ/G3S
+>> +          - const: renesas,riic-r9a09g057
+>> +
 > 
-> > Reviewed-by: Ian Rogers <irogers@google.com <mailto:irogers@google.com>>
+> LGTM.
+> 
+>>        - const: renesas,riic-r9a09g057   # RZ/V2H(P)
+>>
+>>    reg:
+>> @@ -66,6 +70,10 @@ properties:
+>>    resets:
+>>      maxItems: 1
+>>
+>> +  renesas,riic-no-fast-mode-plus:
+>> +    description: specifies if fast mode plus is not supported
+>> +    type: boolean
+>> +
+> 
+> Do you really need this?
+> The bus' clock-frequency property should take into account the combined
+> capabilities of all of controller, target, and wiring.  It is up to the
+> DTS writer to validate that all timing conditions are met.
 
-You forgot to add Ian's Reviewed-by in the next patches.
-I can add it to them this time, but please do so next time.
+On a second thought, I tend to agree with you on this.
 
-Thanks,
-Namhyung
+I added it to comply with "chapter 47.5.15 I2C Bus Interface Access
+Timing, note 7, Tfmin cannot meet the specification in fast-mode plus for
+the RIIC ch2 and ch3" statement from hw manual.
 
-> > 
-> > Thanks, 
-> > Ian
-> > 
-> >     ---
-> >      tools/perf/util/evsel.c                  | 2 +-
-> >      tools/perf/util/unwind-libunwind-local.c | 5 +++++
-> >      2 files changed, 6 insertions(+), 1 deletion(-)
-> > 
-> >     diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-> >     index 25857894c047..bc603193c477 100644
-> >     --- a/tools/perf/util/evsel.c
-> >     +++ b/tools/perf/util/evsel.c
-> >     @@ -1620,7 +1620,7 @@ static int evsel__read_group(struct evsel
-> >     *leader, int cpu_map_idx, int thread)
-> > 
-> >      static bool read_until_char(struct io *io, char e)
-> >      {
-> >     -       char c;
-> >     +       int c;
-> > 
-> >             do {
-> >                     c = io__get_char(io);
-> >     diff --git a/tools/perf/util/unwind-libunwind-local.c
-> >     b/tools/perf/util/unwind-libunwind-local.c
-> >     index cde267ea3e99..a424eae6d308 100644
-> >     --- a/tools/perf/util/unwind-libunwind-local.c
-> >     +++ b/tools/perf/util/unwind-libunwind-local.c
-> >     @@ -390,6 +390,11 @@ static int read_unwind_spec_debug_frame(struct
-> >     dso *dso,
-> >                             char *debuglink = malloc(PATH_MAX);
-> >                             int ret = 0;
-> > 
-> >     +                       if (debuglink == NULL) {
-> >     +                               pr_err("unwind: Can't read unwind
-> >     spec debug frame.\n");
-> >     +                               return -ENOMEM;
-> >     +                       }
-> >     +
-> >                             ret = dso__read_binary_type_filename(
-> >                                     dso, DSO_BINARY_TYPE__DEBUGLINK,
-> >                                     machine->root_dir, debuglink, PATH_MAX);
-> >     -- 
-> >     2.44.0
-> > 
+Thank you,
+Claudiu Beznea
+
 > 
-> Warm Regards,
-> Yunseong Kim
+>>  required:
+>>    - compatible
+>>    - reg
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
