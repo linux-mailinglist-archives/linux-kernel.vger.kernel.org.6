@@ -1,113 +1,135 @@
-Return-Path: <linux-kernel+bounces-228902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 978F0916874
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:58:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67C1A916873
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:58:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21D37B23351
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:58:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06E36B2261A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDCF158A23;
-	Tue, 25 Jun 2024 12:58:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFCB158D85;
+	Tue, 25 Jun 2024 12:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IwDFT0Nm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vr3uC17Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23BA157A6C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2581157A6C;
+	Tue, 25 Jun 2024 12:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719320300; cv=none; b=i64nxC7iCMyV5ggw3vwyUaoS76/AtiO6x//grsGOBJexzh1umKrwlRDQLpzW3wKQ+5CcsgyueCtnojKLbc9KyEURHnQk9pxc6DjGPMVUZ0ZXxloqCm5PZy8dYhLW/7opbpLSGQKE0TowV+XH1IOoJ4FJvIlZMixP4S7S5moMkbA=
+	t=1719320267; cv=none; b=Bhrl37u3XJh7z8iRXJERiUoaIMocUYhqBoCNz02fv3xKp8fXhE9zIUZiWZfT91EOg9xSHzwGixJpJjj5uS0kOyCHC88vok+YFfUenqsbUlazDS7qGRRTDFTTd0O5bYLiJOqShsj2vdsd4Fdk9kIm8HE/TbRAlu5mEmYdBmvU+Aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719320300; c=relaxed/simple;
-	bh=r/tlR21NffIMt5ZDgvV1d7RlpuCNpsFKrOnjZOwLb0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KJOW9UIpKdcITfojHe9UDU3cfmA+PrDB03MJt49OPGQfkAfD2zcNcqzlzBN74OMFhCCsOuUyrTD+XfKqAWyrIfWylPB2IqUZoji4S2AqbCejzIQHN3r4tLIFbhgbW8UcK/xlUNANQK3MJQzSy/wio678mx9sSie8K3CLvBLiM7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IwDFT0Nm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719320297;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JW2KMY7G2NYtXMPV0l1YlXRPUeGBL3/eBLAs9PUnfhs=;
-	b=IwDFT0Nm2s30dZvtCyhNsHMdt3uinZoXCQHWK0+FQsHQevCzbDo25FU3hCZFpJQQI5OZ8v
-	3x9QFmy8ELhxicyCnuw6ybUCHfRwAwGynhejj420A/NmOWjXB/a2YWxfVJ6f2BgqbWBUOq
-	gQBUjoiZU+q8o6GhiSHLWiMBFM3etZg=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-644-2t0IgI5xNyud8bgogOpjDw-1; Tue,
- 25 Jun 2024 08:58:16 -0400
-X-MC-Unique: 2t0IgI5xNyud8bgogOpjDw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0C48419560B2;
-	Tue, 25 Jun 2024 12:58:15 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.198])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 0A6C03000225;
-	Tue, 25 Jun 2024 12:58:12 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 25 Jun 2024 14:56:41 +0200 (CEST)
-Date: Tue, 25 Jun 2024 14:56:38 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 05/17] signal: Bring down all threads when handling a
- non-coredump fatal signal
-Message-ID: <20240625125638.GA17193@redhat.com>
-References: <20240609142342.GA11165@redhat.com>
- <87r0d5t2nt.fsf@email.froward.int.ebiederm.org>
- <20240610152902.GC20640@redhat.com>
- <20240613154541.GD18218@redhat.com>
- <87ikyamf4u.fsf@email.froward.int.ebiederm.org>
- <20240617183758.GB10753@redhat.com>
- <87iky5k2yi.fsf@email.froward.int.ebiederm.org>
- <87o77xinmt.fsf_-_@email.froward.int.ebiederm.org>
- <87v825h8yi.fsf_-_@email.froward.int.ebiederm.org>
+	s=arc-20240116; t=1719320267; c=relaxed/simple;
+	bh=8FjEfbKwtHs29b/F3+jeLz+Oj9YY9vwp9uEARtWGWBI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tmhdcwtLXj1REDS/CXi6bQIzCIcrlM5wQjcW+p+uKrHOK/mdghqoFx4BlXRN91YxMOVtcxgQbVweLcV8IJ60uRRE6dLMqtt0woqFqLhzNOJguiF0zFMAg5z4xKs2R50J+O/9+HkJyyoCTx3vI8UiQoL2urGwkKINUV+pdONxxqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vr3uC17Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C2FBC32786;
+	Tue, 25 Jun 2024 12:57:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719320266;
+	bh=8FjEfbKwtHs29b/F3+jeLz+Oj9YY9vwp9uEARtWGWBI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vr3uC17ZhkpqcSWJvNiJUWFK+rkc3Ko8id7GdLGQyMRMifjJre45H4J7BNjV/UF2s
+	 RJYK8WL5Negda5G3rEkBkHskbRA4uhXgeeRLYgdxWcpQTa1vZG3wn2tmUSR8lxMpeQ
+	 ZHRW1mVxSed4Kng6/WhTZZAZEh6aKo/NH/X9GaG4VjMKZnXL1yfQ0Mj3Z5iDi4dfgk
+	 vH0o1XAyCAd/kpiU7aXKFqzVG/PkteoUOHAX8GM+BnA3XcbKOgSXHSdcsXZVQNdL8K
+	 CcKfJSyQiPjhOcBn3+uThqn6U9odPMvYtXtgI2UV2B0kuKhWJgce31qQUHtfHmmY/4
+	 rRUcx7skwABkA==
+Message-ID: <3e816509-a12b-4658-85f4-c0d0037c6a64@kernel.org>
+Date: Tue, 25 Jun 2024 15:57:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87v825h8yi.fsf_-_@email.froward.int.ebiederm.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 5/7] arm64: dts: qcom: sdm845: Add DT nodes for the
+ TBUs
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Georgi Djakov <quic_c_gdjako@quicinc.com>
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+ iommu@lists.linux.dev, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+ robdclark@gmail.com, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ quic_cgoldswo@quicinc.com, quic_sukadev@quicinc.com, quic_pdaly@quicinc.com,
+ quic_sudaraja@quicinc.com
+References: <20240417133731.2055383-1-quic_c_gdjako@quicinc.com>
+ <20240417133731.2055383-6-quic_c_gdjako@quicinc.com>
+ <CAA8EJppcXVu72OSo+OiYEiC1HQjP3qCwKMumOsUhcn6Czj0URg@mail.gmail.com>
+ <CAA8EJpr3GYimirDz39f4n-3hDAxFWzo+9fdY6MAuxaNguouVFg@mail.gmail.com>
+Content-Language: en-US
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <CAA8EJpr3GYimirDz39f4n-3hDAxFWzo+9fdY6MAuxaNguouVFg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 06/18, Eric W. Biederman wrote:
->
-> --- a/kernel/signal.c
-> +++ b/kernel/signal.c
-> @@ -2882,7 +2882,13 @@ bool get_signal(struct ksignal *ksig)
->  		 * Anything else is fatal, maybe with a core dump.
->  		 */
->  		exit_code = signr;
-> -		group_exit_needed = true;
-> +		if (sig_kernel_coredump(signr))
-> +			group_exit_needed = true;
+On 25.06.24 10:50, Dmitry Baryshkov wrote:
+> On Fri, 14 Jun 2024 at 21:05, Dmitry Baryshkov
+> <dmitry.baryshkov@linaro.org> wrote:
+>>
+>> On Wed, 17 Apr 2024 at 16:39, Georgi Djakov <quic_c_gdjako@quicinc.com> wrote:
+>>>
+>>> Add the device-tree nodes for the TBUs (translation buffer units) that
+>>> are present on the sdm845 platforms. The TBUs can be used debug the
+>>> kernel and provide additional information when a context faults occur.
+>>>
+>>> Describe the all registers, clocks, interconnects and power-domain
+>>> resources that are needed for each of the TBUs.
+>>>
+>>> Signed-off-by: Georgi Djakov <quic_c_gdjako@quicinc.com>
+>>
+>> This patch now prevents interconnect drivers from hitting the sync
+>> state on SDM845.
+>> The TBU driver is enabled only when the ARM_SMMU_QCOM_DEBUG is
+>> enabled, which is not a typical case on a normal system:
+> 
+> Georgi, before I start acting like a bull in a china shop and sending
+> reverts, any update from your side?
 
-OK... do_coredump() can fail before coredump_wait() even if CONFIG_COREDUMP
+Hi Dmitry!
+Thanks for the report! We can easily add status = "disabled" to the DT
+nodes, but please give me some time to take a look what would be the best
+way to handle this, as i was out last week and now i am still catching up.
 
-> +		else {
-> +			signal->group_exit_code = exit_code;
-> +			signal->flags = SIGNAL_GROUP_EXIT;
-> +			zap_other_threads(current);
-> +		}
+BR,
+Georgi
 
-dequeue_signal() and/or ptrace_signal() can drop siglock, I think
-the else branch should re-check SIGNAL_GROUP_EXIT/group_exec_task.
-
-Oleg.
+> 
+>>
+>> [   26.209151] qnoc-sdm845 1500000.interconnect: sync_state() pending
+>> due to 150c5000.tbu
+>> [   26.217228] qnoc-sdm845 1620000.interconnect: sync_state() pending
+>> due to 150c5000.tbu
+>> [   26.229926] qnoc-sdm845 1500000.interconnect: sync_state() pending
+>> due to 150c9000.tbu
+>> [   26.238008] qnoc-sdm845 1620000.interconnect: sync_state() pending
+>> due to 150c9000.tbu
+>> [   26.249068] qnoc-sdm845 1740000.interconnect: sync_state() pending
+>> due to 150cd000.tbu
+>> [   26.257127] qnoc-sdm845 1740000.interconnect: sync_state() pending
+>> due to 150d1000.tbu
+>> [   26.265159] qnoc-sdm845 1740000.interconnect: sync_state() pending
+>> due to 150d5000.tbu
+>> [   26.273189] qnoc-sdm845 1500000.interconnect: sync_state() pending
+>> due to 150d9000.tbu
+>> [   26.281206] qnoc-sdm845 1620000.interconnect: sync_state() pending
+>> due to 150d9000.tbu
+>> [   26.289203] qnoc-sdm845 1500000.interconnect: sync_state() pending
+>> due to 150dd000.tbu
+>> [   26.297196] qnoc-sdm845 1620000.interconnect: sync_state() pending
+>> due to 150dd000.tbu
+>> [   26.305201] qnoc-sdm845 1500000.interconnect: sync_state() pending
+>> due to 150e1000.tbu
+>> [   26.313207] qnoc-sdm845 1620000.interconnect: sync_state() pending
+>> due to 150e1000.tbu
+> 
 
 
