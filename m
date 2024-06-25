@@ -1,215 +1,202 @@
-Return-Path: <linux-kernel+bounces-228256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31128915D59
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:30:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28419915D6C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:44:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B00D11F22044
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:30:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF0501F22682
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3C2471B4C;
-	Tue, 25 Jun 2024 03:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="emnUOOtn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C4476033;
+	Tue, 25 Jun 2024 03:44:48 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375036EB4D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECC12F56
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:44:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719286249; cv=none; b=AfdqwLqH+ov99VbgVmGxpcrnA0I1282qpcT9E+6c148y8wkwkSD6GOW7jBknFlkEbRVZ7iGTlr8ILSEX2zgET472tKXLJY4/VFsJVfbjuvKme/VmN9yt2tqpM+aBCDxlcmX9ZDsIBl9kC4+TN/PUYW7jttor8U4F/iykNKIDlV4=
+	t=1719287088; cv=none; b=JqGsszc0A3C7vafbJZiu/MYPhRoXIr8rQOT54SdFD7cMXqf1SFVbphw6pJmreaPtGTEZXPnXIByaBQRCY30jJy8Q+K3PJX4GR2iBg3XDlJE7i583CQi2LD4Qi/8BMJqIujAH6pO2es8kcKqzFwxlsC9lbVdQ5efm2QDpg0E/Ozc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719286249; c=relaxed/simple;
-	bh=obtN4FIZCGHWBgEuYxhVZcQaprmAm9UaJ5RFq/VLNBs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ejidvl/fOo89MUuq1DcGYVKdSmNePwxPcZQZGE7nT8JeuZIoPwEKmgKXdGq2Z1vjhVw5doB9aDR5skcSRw4PdRj5PGD+FK0SdMhLn27BGxYYVA8osjVAv38sDjOdOHw+ukq1YdyMqWhEzR28O4u4jkabN8Vr5kz/YDvZ3ZdOX1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=emnUOOtn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719286246;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/m8GXm0K69AMAk67ZrMEf4R6vclpB6T2QuYU2G6K8jY=;
-	b=emnUOOtnRLEKYASzOd9OOLTjuk4mTKd8sH6kIzUFQD8WacsCw9MB6TsB+QB4ZRNJD1sloy
-	DaqXBxtg7ga6OzkhwU4Z0pyy4dBiahI8sadxQ8yhYFlu1JT5KXs3zGRdnJW6GSa57WxDft
-	iDr9HYqUbM+UVxGy0kxZ7QW9lehp5Po=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-256-WvBvJypYP3eb65TvXjMe_g-1; Mon,
- 24 Jun 2024 23:30:41 -0400
-X-MC-Unique: WvBvJypYP3eb65TvXjMe_g-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4A4E819560B1;
-	Tue, 25 Jun 2024 03:30:39 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.8])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CB24F19560BF;
-	Tue, 25 Jun 2024 03:30:37 +0000 (UTC)
-Date: Tue, 25 Jun 2024 11:30:33 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Nick Bowler <nbowler@draconx.ca>, Hailong Liu <hailong.liu@oppo.com>,
-	linux-kernel@vger.kernel.org,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	linux-mm@kvack.org, sparclinux@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
-Message-ID: <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
-References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
- <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
- <20240621033005.6mccm7waduelb4m5@oppo.com>
- <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
- <ZnVLbCCkvhf5GaTf@pc636>
- <ZnWICsPgYuBlrWlt@MiWiFi-R3L-srv>
- <Znljtv5n-6EBgpsF@pc636>
+	s=arc-20240116; t=1719287088; c=relaxed/simple;
+	bh=3Kvs+mYkE7tvzWw+1nCQmDF5YnLkFg9jBHqNnjazxRU=;
+	h=From:Subject:To:Cc:Date:Message-ID:References:MIME-Version:
+	 Content-Type; b=nOeiuyPnP55MX/fgcqVkrhCLNINnVojQWRycOQrJMvYj6S6JMdbnrRh+EeYixIJ3ALngFKzNLO8DVQWhZmlOh8W69cTny91I2r6BfGu0qaqzFXcCK6ElNfc/gQPrVhohGdZYnr2aE42iYrQL4QaAZmz+Wji10ytygfC8jeSRv8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: c0824e5c32a311ef9305a59a3cc225df-20240625
+X-QC-Scan-Result: 0
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:94f83f07-0be2-4b29-91c3-1c7648708e1b,IP:20,
+	URL:0,TC:11,Content:0,EDM:0,RT:0,SF:-15,FILE:5,BULK:0,RULE:Release_Ham,ACT
+	ION:release,TS:21
+X-CID-INFO: VERSION:1.1.38,REQID:94f83f07-0be2-4b29-91c3-1c7648708e1b,IP:20,UR
+	L:0,TC:11,Content:0,EDM:0,RT:0,SF:-15,FILE:5,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:21
+X-CID-META: VersionHash:82c5f88,CLOUDID:cd9f31ea82404ef1671e978470a70f13,BulkI
+	D:240625113357MCBYHV85,BulkQuantity:0,Recheck:0,SF:44|66|24|17|19|102,TC:0
+	,Content:0,EDM:-3,IP:-2,URL:0,File:2,RT:nil,Bulk:nil,QS:0,BEC:nil,COL:0,OS
+	I:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
+X-UUID: c0824e5c32a311ef9305a59a3cc225df-20240625
+Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
+	(envelope-from <lizhenneng@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1029634221; Tue, 25 Jun 2024 11:33:56 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id EC7A9B803C9B;
+	Tue, 25 Jun 2024 11:33:55 +0800 (CST)
+Received: by node2.com.cn (NSMail, from userid 0)
+	id E021DB803C9B; Tue, 25 Jun 2024 11:33:55 +0800 (CST)
+From: =?UTF-8?B?5p2O55yf6IO9?= <lizhenneng@kylinos.cn>
+Subject: =?UTF-8?B?5Zue5aSNOiBSZTogW1BBVENIXSBtaWdyYXRlX3BhZ2VzOiBtb2RpZnkgbWF4IG51bWJlciBvZiBwYWdlcyB0byBtaWdyYXRlIGluIGJhdGNo?=
+To: 	=?UTF-8?B?eWluZy5odWFuZw==?= <ying.huang@intel.com>,
+Cc: 	=?UTF-8?B?QW5kcmV3IE1vcnRvbg==?= <akpm@linux-foundation.org>,
+	=?UTF-8?B?bGludXgtbW0=?= <linux-mm@kvack.org>,
+	=?UTF-8?B?bGludXgta2VybmVs?= <linux-kernel@vger.kernel.org>,
+Date: Tue, 25 Jun 2024 11:33:54 +0800
+X-Mailer: NSMAIL 7.0.0
+Message-ID: <7ii375j23j-7ikn2sd5r4@nsmail7.0.0--kylin--1>
+References: 87o77pzuq3.fsf@yhuang6-desk2.ccr.corp.intel.com
+X-Israising: 0
+X-Seclevel-1: 0
+X-Seclevel: 0
+X-Delaysendtime: Tue, 25 Jun 2024 11:33:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Znljtv5n-6EBgpsF@pc636>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: multipart/mixed; boundary=nsmail-ai4b42t5cy-ai5l1w876r
+X-ns-mid: webmail-667a3aa3-aaqvq3ul
+X-ope-from: <lizhenneng@kylinos.cn>
 
-On 06/24/24 at 02:16pm, Uladzislau Rezki wrote:
-> On Fri, Jun 21, 2024 at 10:02:50PM +0800, Baoquan He wrote:
-> > On 06/21/24 at 11:44am, Uladzislau Rezki wrote:
-> > > On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
-> > > > On 06/21/24 at 11:30am, Hailong Liu wrote:
-> > > > > On Thu, 20. Jun 14:02, Nick Bowler wrote:
-> > > > > > On 2024-06-20 02:19, Nick Bowler wrote:
-> > ......
-> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > index be2dd281ea76..18e87cafbaf2 100644
-> > > > --- a/mm/vmalloc.c
-> > > > +++ b/mm/vmalloc.c
-> > > > @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
-> > > >  static struct xarray *
-> > > >  addr_to_vb_xa(unsigned long addr)
-> > > >  {
-> > > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-> > > >  
-> > > >  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
-> > > >  }
-> > > > 
-> > > The problem i see is about not-initializing of the:
-> > > <snip>
-> > > 	for_each_possible_cpu(i) {
-> > > 		struct vmap_block_queue *vbq;
-> > > 		struct vfree_deferred *p;
-> > > 
-> > > 		vbq = &per_cpu(vmap_block_queue, i);
-> > > 		spin_lock_init(&vbq->lock);
-> > > 		INIT_LIST_HEAD(&vbq->free);
-> > > 		p = &per_cpu(vfree_deferred, i);
-> > > 		init_llist_head(&p->list);
-> > > 		INIT_WORK(&p->wq, delayed_vfree_work);
-> > > 		xa_init(&vbq->vmap_blocks);
-> > > 	}
-> > > <snip>
-> > > 
-> > > correctly or fully. It is my bad i did not think that CPUs in a possible mask
-> > > can be non sequential :-/
-> > > 
-> > > nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
-> > > when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
-> > 
-> > I checked the generic version of setup_nr_cpu_ids(), from codes, they
-> > are different with my understanding.
-> > 
-> > kernel/smp.c
-> > void __init setup_nr_cpu_ids(void)
-> > {
-> >         set_nr_cpu_ids(find_last_bit(cpumask_bits(cpu_possible_mask), NR_CPUS) + 1);
-> > }
-> > 
-> I see that it is not a weak function, so it is generic, thus the
-> behavior can not be overwritten, which is great. This does what we
-> need.
-> 
-> Thank you for checking this you are right!
+This message is in MIME format.
 
-Thanks for confirming this.
+--nsmail-ai4b42t5cy-ai5l1w876r
+Content-Type: text/html; charset="UTF-8"
+Content-Transfer-Encoding: base64
 
-> 
-> Then it is just a matter of proper initialization of the hash:
-> 
-> <snip>
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 5d3aa2dc88a8..1733946f7a12 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -5087,7 +5087,13 @@ void __init vmalloc_init(void)
->          */
->         vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
->  
-> -       for_each_possible_cpu(i) {
-> +       /*
-> +        * We use "nr_cpu_ids" here because some architectures
-> +        * may have "gaps" in cpu-possible-mask. It is OK for
-> +        * per-cpu approaches but is not OK for cases where it
-> +        * can be used as hashes also.
-> +        */
-> +       for (i = 0; i < nr_cpu_ids; i++) {
+PHA+PGJyPjxicj48YnI+PGJyPjxicj48YnI+LS0tLTwvcD4KPGRpdiBpZD0i
+Y3MyY19tYWlsX3NpZ2F0dXJlIj48L2Rpdj4KPHA+Jm5ic3A7PC9wPgo8ZGl2
+IHN0eWxlPSJtYXJnaW4tbGVmdDogMC41ZW07IHBhZGRpbmctbGVmdDogMC41
+ZW07IGJvcmRlci1sZWZ0OiAxcHggc29saWQgZ3JlZW47Ij4mbmJzcDs8L2Rp
+dj4KPGRpdiBpZD0icmUiIHN0eWxlPSJtYXJnaW4tbGVmdDogMC41ZW07IHBh
+ZGRpbmctbGVmdDogMC41ZW07IGJvcmRlci1sZWZ0OiAxcHggc29saWQgZ3Jl
+ZW47Ij48YnI+PGJyPjxicj4KPGRpdiBzdHlsZT0iYmFja2dyb3VuZC1jb2xv
+cjogI2Y1ZjdmYTsiPjxzdHJvbmc+5Li744CA6aKY77yaPC9zdHJvbmc+PHNw
+YW4gaWQ9InN1YmplY3QiPlJlOiBbUEFUQ0hdIG1pZ3JhdGVfcGFnZXM6IG1v
+ZGlmeSBtYXggbnVtYmVyIG9mIHBhZ2VzIHRvIG1pZ3JhdGUgaW4gYmF0Y2g8
+L3NwYW4+IDxicj48c3Ryb25nPuaXpeOAgOacn++8mjwvc3Ryb25nPjxzcGFu
+IGlkPSJkYXRlIj4yMDI0LTA2LTI1IDA5OjE3PC9zcGFuPiA8YnI+PHN0cm9u
+Zz7lj5Hku7bkurrvvJo8L3N0cm9uZz48c3BhbiBpZD0iZnJvbSI+eWluZy5o
+dWFuZzwvc3Bhbj4gPGJyPjxzdHJvbmc+5pS25Lu25Lq677yaPC9zdHJvbmc+
+PHNwYW4gaWQ9InRvIiBzdHlsZT0id29yZC1icmVhazogYnJlYWstYWxsOyI+
+5p2O55yf6IO9Ozwvc3Bhbj48L2Rpdj4KPGJyPgo8ZGl2IGlkPSJjb250ZW50
+Ij4KPGRpdiBjbGFzcz0idmlld2VyX3BhcnQiIHN0eWxlPSJwb3NpdGlvbjog
+cmVsYXRpdmU7Ij4KPGRpdj5IaSwgWmhlbm5lbmcsPGJyPjxicj5aaGVubmVu
+ZyBMaSB3cml0ZXM6PGJyPjxicj4mZ3Q7IFdlIHJlc3RyaWN0IHRoZSBudW1i
+ZXIgb2YgcGFnZXMgdG8gYmUgbWlncmF0ZWQgdG8gbm8gbW9yZSB0aGFuPGJy
+PiZndDsgSFBBR0VfUE1EX05SIG9yIE5SX01BWF9CQVRDSEVEX01JR1JBVElP
+TiwgYnV0IGluIGZhY3QsIHRoZTxicj4mZ3Q7IG51bWJlciBvZiBwYWdlcyB0
+byBiZSBtaWdyYXRlZCBtYXkgcmVhY2ggMipIUEFHRV9QTURfTlItMSBvciAy
+PGJyPiZndDsgKk5SX01BWF9CQVRDSEVEX01JR1JBVElPTi0xLCBpdCdzIG5v
+dCBpbiBpbmNvbnNpc3RlbnQgd2l0aCB0aGUgY29udGV4dC48YnI+PGJyPlll
+cy4gSXQncyBub3QgSFBBR0VfUE1EX05SIGV4YWN0bHkuPGJyPjxicj4mZ3Q7
+IFBsZWFzZSByZWZlciB0byB0aGUgcGF0Y2g6IDQyMDEyZTA0MzZkNChtaWdy
+YXRlX3BhZ2VzOiByZXN0cmljdCBudW1iZXI8YnI+Jmd0OyBvZiBwYWdlcyB0
+byBtaWdyYXRlIGluIGJhdGNoKTxicj4mZ3Q7PGJyPiZndDsgU2lnbmVkLW9m
+Zi1ieTogWmhlbm5lbmcgTGkgPGJyPiZndDsgLS0tPGJyPiZndDsgbW0vbWln
+cmF0ZS5jIHwgMiArLTxicj4mZ3Q7IDEgZmlsZSBjaGFuZ2VkLCAxIGluc2Vy
+dGlvbigrKSwgMSBkZWxldGlvbigtKTxicj4mZ3Q7PGJyPiZndDsgZGlmZiAt
+LWdpdCBhL21tL21pZ3JhdGUuYyBiL21tL21pZ3JhdGUuYzxicj4mZ3Q7IGlu
+ZGV4IDc4MTk3OTU2N2Y2NC4uN2E0YjM3YWFjOWU4IDEwMDY0NDxicj4mZ3Q7
+IC0tLSBhL21tL21pZ3JhdGUuYzxicj4mZ3Q7ICsrKyBiL21tL21pZ3JhdGUu
+Yzxicj4mZ3Q7IEBAIC0xOTYxLDcgKzE5NjEsNyBAQCBpbnQgbWlncmF0ZV9w
+YWdlcyhzdHJ1Y3QgbGlzdF9oZWFkICpmcm9tLCBuZXdfZm9saW9fdCBnZXRf
+bmV3X2ZvbGlvLDxicj4mZ3Q7IGJyZWFrOzxicj4mZ3Q7IH08YnI+Jmd0OyBp
+ZiAobnJfcGFnZXMgJmd0Oz0gTlJfTUFYX0JBVENIRURfTUlHUkFUSU9OKTxi
+cj4mZ3Q7IC0gbGlzdF9jdXRfYmVmb3JlKCZhbXA7Zm9saW9zLCBmcm9tLCAm
+YW1wO2ZvbGlvMi0mZ3Q7bHJ1KTs8YnI+Jmd0OyArIGxpc3RfY3V0X2JlZm9y
+ZSgmYW1wO2ZvbGlvcywgZnJvbSwgJmFtcDtmb2xpby0mZ3Q7bHJ1KTs8YnI+
+PGJyPklmIHRoZSBmaXJzdCBlbnRyeSBvZiB0aGUgbGlzdCAiZnJvbSIgaXMg
+YSBUSFAgd2l0aCBzaXplIEhQQUdFX1BNRF9OUiw8YnI+ImZvbGlvIiB3aWxs
+IGJlIHRoZSBmaXJzdCBlbnRyeSBvZiBmcm9tLCBzbyB0aGF0ICJmb2xpb3Mi
+IHdpbGwgYmUgZW1wdHkuPGJyPlJpZ2h0PzwvZGl2Pgo8L2Rpdj4KPC9kaXY+
+CjwvZGl2Pgo8ZGl2PiZuYnNwOzwvZGl2Pgo8ZGl2PlllcywgSXQncyByaWdo
+dCwgc28gd2UgY2FuIGNoZWNrIHdoZXRoZXIgaXQgaXMgdGhlIGZpcnN0IGVu
+dHJ5IG9mIHRoZSBsaXN0ICJmcm9tIiwgbmV3IHBhdGNoIGFyZSBhcyBmb2xs
+b3dzKGF0dGFjaG1lbnQgaXMgcGF0Y2ggZmlsZSk6PC9kaXY+CjxkaXY+ZGlm
+ZiAtLWdpdCBhL21tL21pZ3JhdGUuYyBiL21tL21pZ3JhdGUuYzxicj5pbmRl
+eCA3ODE5Nzk1NjdmNjQuLmNjZThlMmI4NWU4OSAxMDA2NDQ8YnI+LS0tIGEv
+bW0vbWlncmF0ZS5jPGJyPisrKyBiL21tL21pZ3JhdGUuYzxicj5AQCAtMTk1
+NywxMSArMTk1NywxMiBAQCBpbnQgbWlncmF0ZV9wYWdlcyhzdHJ1Y3QgbGlz
+dF9oZWFkICpmcm9tLCBuZXdfZm9saW9fdCBnZXRfbmV3X2ZvbGlvLDxicj59
+PGJyPjxicj5ucl9wYWdlcyArPSBmb2xpb19ucl9wYWdlcyhmb2xpbyk7PGJy
+Pi0gaWYgKG5yX3BhZ2VzICZndDs9IE5SX01BWF9CQVRDSEVEX01JR1JBVElP
+Tik8YnI+KyBpZiAoKG5yX3BhZ2VzICZndDs9IE5SX01BWF9CQVRDSEVEX01J
+R1JBVElPTikgJmFtcDsmYW1wOzxicj4rICghbGlzdF9maXJzdF9lbnRyeShm
+cm9tLCBzdHJ1Y3QgZm9saW8sIGxydSkpKTxicj5icmVhazs8YnI+fTxicj5p
+ZiAobnJfcGFnZXMgJmd0Oz0gTlJfTUFYX0JBVENIRURfTUlHUkFUSU9OKTxi
+cj4tIGxpc3RfY3V0X2JlZm9yZSgmYW1wO2ZvbGlvcywgZnJvbSwgJmFtcDtm
+b2xpbzItJmd0O2xydSk7PGJyPisgbGlzdF9jdXRfYmVmb3JlKCZhbXA7Zm9s
+aW9zLCBmcm9tLCAmYW1wO2ZvbGlvLSZndDtscnUpOzxicj5lbHNlPGJyPmxp
+c3Rfc3BsaWNlX2luaXQoZnJvbSwgJmFtcDtmb2xpb3MpOzxicj5pZiAobW9k
+ZSA9PSBNSUdSQVRFX0FTWU5DKTwvZGl2Pgo8ZGl2PiZuYnNwOzwvZGl2Pgo8
+ZGl2IGlkPSJyZSIgc3R5bGU9Im1hcmdpbi1sZWZ0OiAwLjVlbTsgcGFkZGlu
+Zy1sZWZ0OiAwLjVlbTsgYm9yZGVyLWxlZnQ6IDFweCBzb2xpZCBncmVlbjsi
+Pgo8ZGl2IGlkPSJjb250ZW50Ij4KPGRpdiBjbGFzcz0idmlld2VyX3BhcnQi
+IHN0eWxlPSJwb3NpdGlvbjogcmVsYXRpdmU7Ij4KPGRpdj48YnI+Jmd0OyBl
+bHNlPGJyPiZndDsgbGlzdF9zcGxpY2VfaW5pdChmcm9tLCAmYW1wO2ZvbGlv
+cyk7PGJyPiZndDsgaWYgKG1vZGUgPT0gTUlHUkFURV9BU1lOQyk8YnI+PGJy
+Pi0tPGJyPkJlc3QgUmVnYXJkcyw8YnI+SHVhbmcsIFlpbmc8L2Rpdj4KPC9k
+aXY+CjwvZGl2Pgo8L2Rpdj4=
 
-I was wrong about earlier comments. Percpu variables are only available
-on possible CPUs. For those nonexistent possible CPUs of static percpu
-variable vmap_block_queue, there isn't memory allocated and mapped for
-them. So accessing into them will cause problem.
+--nsmail-ai4b42t5cy-ai5l1w876r
+Content-Type: application/octet-stream; name="=?UTF-8?B?bWlncmF0ZV9wYWdlcy1tb2RpZnktbWF4LW51bWJlci1vZi1wYWdlcy10by1taWdyYXRlLWluLWJhdGNoLnBhdGNo?="
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; size=1364; seclevel=0; filename="=?UTF-8?B?bWlncmF0ZV9wYWdlcy1tb2RpZnktbWF4LW51bWJlci1vZi1wYWdlcy10by1taWdyYXRlLWluLWJhdGNoLnBhdGNo?="
+X-Seclevel-1: 0
+X-Seclevel: 0
 
-In Nick's case, there are only CPU0, CPU2. If you access
-&per_cpu(vmap_block_queue, 1), problem occurs. So I think we may need to
-change to take other way for vbq. E.g:
-1) Storing the vb in the nearest neighbouring vbq on possible CPU as
-   below draft patch;
-2) create an normal array to store vbq of size nr_cpu_ids, then we can
-   store/fetch each vbq on non-possible CPU?
+RnJvbSAyNWMzZDJkZjFkMzhiNDlmMzg5MjM0ZTA3NDk3OGQwNTk0NmEwYTYz
+IE1vbiBTZXAgMTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBaaGVubmVuZyBMaSA8
+bGl6aGVubmVuZ0BreWxpbm9zLmNuPgpEYXRlOiBNb24sIDI0IEp1biAyMDI0
+IDEyOjE5OjA4ICswODAwClN1YmplY3Q6IFtQQVRDSF0gbWlncmF0ZV9wYWdl
+czogbW9kaWZ5IG1heCBudW1iZXIgb2YgcGFnZXMgdG8gbWlncmF0ZSBpbiBi
+YXRjaAoKV2UgcmVzdHJpY3QgdGhlIG51bWJlciBvZiBwYWdlcyB0byBiZSBt
+aWdyYXRlZCB0byBubyBtb3JlIHRoYW4KSFBBR0VfUE1EX05SIG9yIE5SX01B
+WF9CQVRDSEVEX01JR1JBVElPTiwgYnV0IGluIGZhY3QsIHRoZQpudW1iZXIg
+b2YgcGFnZXMgdG8gYmUgbWlncmF0ZWQgbWF5IHJlYWNoIDIqSFBBR0VfUE1E
+X05SLTEgb3IgMgoqTlJfTUFYX0JBVENIRURfTUlHUkFUSU9OLTEsIGl0J3Mg
+bm90IGluIGluY29uc2lzdGVudCB3aXRoIHRoZSBjb250ZXh0LgoKUGxlYXNl
+IHJlZmVyIHRvIHRoZSBwYXRjaDogNDIwMTJlMDQzNmQ0KG1pZ3JhdGVfcGFn
+ZXM6IHJlc3RyaWN0IG51bWJlcgpvZiBwYWdlcyB0byBtaWdyYXRlIGluIGJh
+dGNoKQoKU2lnbmVkLW9mZi1ieTogWmhlbm5lbmcgTGkgPGxpemhlbm5lbmdA
+a3lsaW5vcy5jbj4KLS0tCiBtbS9taWdyYXRlLmMgfCA1ICsrKy0tCiAxIGZp
+bGUgY2hhbmdlZCwgMyBpbnNlcnRpb25zKCspLCAyIGRlbGV0aW9ucygtKQoK
+ZGlmZiAtLWdpdCBhL21tL21pZ3JhdGUuYyBiL21tL21pZ3JhdGUuYwppbmRl
+eCA3ODE5Nzk1NjdmNjQuLmNjZThlMmI4NWU4OSAxMDA2NDQKLS0tIGEvbW0v
+bWlncmF0ZS5jCisrKyBiL21tL21pZ3JhdGUuYwpAQCAtMTk1NywxMSArMTk1
+NywxMiBAQCBpbnQgbWlncmF0ZV9wYWdlcyhzdHJ1Y3QgbGlzdF9oZWFkICpm
+cm9tLCBuZXdfZm9saW9fdCBnZXRfbmV3X2ZvbGlvLAogCQl9CiAKIAkJbnJf
+cGFnZXMgKz0gZm9saW9fbnJfcGFnZXMoZm9saW8pOwotCQlpZiAobnJfcGFn
+ZXMgPj0gTlJfTUFYX0JBVENIRURfTUlHUkFUSU9OKQorCQlpZiAoKG5yX3Bh
+Z2VzID49IE5SX01BWF9CQVRDSEVEX01JR1JBVElPTikgJiYKKwkJICAgICgh
+bGlzdF9maXJzdF9lbnRyeShmcm9tLCBzdHJ1Y3QgZm9saW8sIGxydSkpKQog
+CQkJYnJlYWs7CiAJfQogCWlmIChucl9wYWdlcyA+PSBOUl9NQVhfQkFUQ0hF
+RF9NSUdSQVRJT04pCi0JCWxpc3RfY3V0X2JlZm9yZSgmZm9saW9zLCBmcm9t
+LCAmZm9saW8yLT5scnUpOworCQlsaXN0X2N1dF9iZWZvcmUoJmZvbGlvcywg
+ZnJvbSwgJmZvbGlvLT5scnUpOwogCWVsc2UKIAkJbGlzdF9zcGxpY2VfaW5p
+dChmcm9tLCAmZm9saW9zKTsKIAlpZiAobW9kZSA9PSBNSUdSQVRFX0FTWU5D
+KQotLSAKMi4yNS4xCgo=
 
-The way 1) is simpler, the existing code can be adapted a little just as
-below.
-
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 633363997dec..59a8951cc6c0 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
- static struct xarray *
- addr_to_vb_xa(unsigned long addr)
- {
--	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-+	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-+
-+	if (!cpu_possible(idex))
-+		index = cpumask_next(index, cpu_possible_mask);
- 
- 	return &per_cpu(vmap_block_queue, index).vmap_blocks;
- }
-@@ -2556,9 +2559,15 @@ addr_to_vb_xa(unsigned long addr)
- 
- static unsigned long addr_to_vb_idx(unsigned long addr)
- {
-+	int id = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-+	int id_dest = id; 
-+
-+	if (!cpu_possible(id))
-+		id_dest = cpumask_next(id, cpu_possible_mask);
-+
- 	addr -= VMALLOC_START & ~(VMAP_BLOCK_SIZE-1);
- 	addr /= VMAP_BLOCK_SIZE;
--	return addr;
-+	return addr + (id_dest - id);
- }
-
+--nsmail-ai4b42t5cy-ai5l1w876r--
 
