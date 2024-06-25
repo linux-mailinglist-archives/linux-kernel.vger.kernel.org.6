@@ -1,90 +1,67 @@
-Return-Path: <linux-kernel+bounces-228539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBFC5916171
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:36:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E059916173
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:37:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4F832B20E11
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:36:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CBED7B242C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4FB1487C3;
-	Tue, 25 Jun 2024 08:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2F2F1487D8;
+	Tue, 25 Jun 2024 08:37:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gieiIzEd"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="GA0roNg8"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930DF146D7C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D060618E1F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:37:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719304592; cv=none; b=XvtlyDa8e9HBazni+1M/2XLvh5kre/6+p4R/B72tInAM1twxKfqkPO2AYHyP/0/aEq3REoeYif88EoSpMwzPY0dKNbzjcYEFJnCP9v6fTqRCa/RQlKAWmkd/QUWLJ2ElO+ZdGhkuuBmdeTQNOfyGLirWS8dzOjtDUFHhBDUkzuE=
+	t=1719304659; cv=none; b=YSKccvJ2zCOtI0CvKIxpM5gVuDu316fEJacXD2WEeNZNY1F+b8JsSBqPaLVIBefEXahuJlC6mzY4FmBR4OObs+MBJzvIVT0roBtgxN05ih+UNoTmqzDONWzeaHHhxX4aH1vQgpp1bRMgnCiuMUWf1cCtKn+7ZZP2woXUM2joY2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719304592; c=relaxed/simple;
-	bh=dRHpzmSsFYDlsse5ShwVsot0eEz8ENEC+BQ1G/fIUGg=;
+	s=arc-20240116; t=1719304659; c=relaxed/simple;
+	bh=tV2GT3QDzK9iB0iwAs0T8zVD8UI7meEYdTZfJJg0dq0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L0HirorzfrxBsbfKo0n9Pnqpd1/03z3hH1XdQ4O02XD7wRQTgyRQUUTrudEmW6qdtDb+40L7QhGOIVHLRYF6+evT8haGbGMban4BOaxQVJRP6niEtGMRkMhLbDQcJqeb2xpPYASAZLSq9VsgSDWoSNPfehaMBMY4AZugkTXynFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gieiIzEd; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ec408c6d94so60208901fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:36:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719304588; x=1719909388; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FuS5DPpmOhroPWtajZKPoCKp87zKc8dy5+EvwOudsqM=;
-        b=gieiIzEdJhnf3NlEFttCHc7pU32Gk2tZltm1/mD9HYrFdBr+KslMu6UZ0Y4M/3PUVK
-         OYESWzM/B78r/6SdcLYueBxdJenM3wirP/aiynfjSRr8N43xacw8Fxe4L+vOIeDz+a1S
-         sTcXZnyYwoMpqfb76HHkoWYMpSTyoNFjp9i7xJ1Ouecd0Ys5DVxc2zVhxbkKELzygDZT
-         3rRq4cph3NPXi6C6TE7RQ9YQKOPolvCUgzV/Ak0S+lL6jWmu2O7eOCqZU2BcAzKnw5m/
-         fIU9GORWAwCjxkhlgnKnuM9jHdE6YHKvGz/u9dooFMz0Qmcg9NuCZqLZfssJRxte2v6l
-         9zqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719304588; x=1719909388;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FuS5DPpmOhroPWtajZKPoCKp87zKc8dy5+EvwOudsqM=;
-        b=xSYvZZjOwnb7Yi8VNajTAP5qqpQ9+62cR5Z83idAOBBz5jojCbHc9muE1TjjkAobZa
-         xibMZ/C4mKGV5HKJvc4BR/Oay3H8MgCjE8nMK5SuT5DGTM+0C70ZF8mQu4NOU7uM0RDu
-         MqOZMC3UxOdS/SbCNTbSbhnzHoqGeScuaSqbnaCrRw2E3wouxl7o9GBs6nDd+d9aYUu8
-         JTanCgMbfL/p8xw/oSHOb83mphhaCRysPxak14/vvHdkwwmyM4e6ylK8DKafPfiVvNOu
-         WjJ5BsqDH3l/8OgCNWhgGZltSpaLlUwKjA40ByE4Hly8VBeuMHSgPP2qHnfHEixbo0c9
-         d5Zg==
-X-Forwarded-Encrypted: i=1; AJvYcCWVnEtKnd5RsWvnEdmMSEpjcZ2p5RJU+p7zldj2pdliYdIV2Plj1gRPMtPMcFbsO1Z8Nggcun0ewpgv2CxheCy9XOGDJsdrind/8kgU
-X-Gm-Message-State: AOJu0YzGY+NVHN9SBVAZ0yN7dqUVeYkr0F0G+E7EMpoupMWUEF+tzaSE
-	ODFFNfy6r7gUY1hJ15mvnaR4Owxk2ol5RI0BKVgje5mNsyU2EuOgWp0VgGuluG0=
-X-Google-Smtp-Source: AGHT+IFJSQeKryvBLg7sTeJHjYSYhVOrI7eqMtkBjerN8ltNdjpw3ldSHWOmIRgJjXl3sI6jC2Lb0Q==
-X-Received: by 2002:a2e:9bc7:0:b0:2ec:30ee:6972 with SMTP id 38308e7fff4ca-2ec59328425mr50534431fa.24.1719304587672;
-        Tue, 25 Jun 2024 01:36:27 -0700 (PDT)
-Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb5e2e46sm75625205ad.223.2024.06.25.01.36.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 01:36:27 -0700 (PDT)
-Date: Tue, 25 Jun 2024 10:36:17 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Tony Lindgren <tony.lindgren@linux.intel.com>,
-	Linus Torvalds <torvalds@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=qxCgAIzPAADdaJvEYGqmW624BXTFkYm77xtHixNXCr5pEyINOhWxH3BJfiJ0SUt33U9tpCtvSPHRQV6sayLXJw8E2FIsjULaNwKK3H7Xc9nE03YbAxe0Ncg2Udp5pdhk2plx/D5/Go1frzWuwUNR0PMlcu+98wxNjqy0W0fKTKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=GA0roNg8; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=uaG3IOWePuJDC7yf32wm42/NJiatG2JbdBrcl9nYUns=; b=GA0roNg8TsLnzlPz9c/QTwYv3O
+	OQ/jfAQDn39ZaAfOwnscovZUuG8L2+6HtYzSkNmQFOplOddvqqPlzAZLfXz8kMoNYoIui2m1w7dZI
+	DFAHdT1ZvWBRaQmvrJRwraflnohKiBfHrzMoSgidr5H0m+oUa/LJVrAhPuW3pGuX51NV+nDwz1JZ+
+	RlbxyjBbjo2wHqugGCrt9W7k1O5hnqAJqsMfM3gQ1UVb0W0dFi7nw2tkzvk48sjNoCYVClQr4Q2IY
+	3PYqekhhcZGjT1xkOO6KahNzwaEkPvAWMCCsaA/FHHuRP0uureeDNHNdhoqrtNzueJYaCdRwUvv7Z
+	VvJ9rQuw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sM1gA-0000000AxSt-3IYW;
+	Tue, 25 Jun 2024 08:37:31 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 4C896300754; Tue, 25 Jun 2024 10:37:30 +0200 (CEST)
+Date: Tue, 25 Jun 2024 10:37:30 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
 	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/4] Fixes for console command line ordering
-Message-ID: <ZnqBYAV7iplmeh1R@pathway.suse.cz>
-References: <20240620124541.164931-1-tony.lindgren@linux.intel.com>
- <ZnWRup3MvcVQ4MX8@pathway.suse.cz>
- <2024062403-skid-gotten-7585@gregkh>
- <ZnpRozsdw6zbjqze@tlindgre-MOBL1>
- <2024062551-hubcap-bauble-fae5@gregkh>
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Daniel Bristot de Oliveira <bristot@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "sched/fair: Make sure to try to detach at least
+ one movable task"
+Message-ID: <20240625083730.GU31592@noisy.programming.kicks-ass.net>
+References: <20240620214450.316280-1-joshdon@google.com>
+ <CAKfTPtDDSzLi7PEJkBqepx9cRgmbBKy2ZXJuT0h62e3RkQBoYw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,107 +70,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <2024062551-hubcap-bauble-fae5@gregkh>
+In-Reply-To: <CAKfTPtDDSzLi7PEJkBqepx9cRgmbBKy2ZXJuT0h62e3RkQBoYw@mail.gmail.com>
 
-On Tue 2024-06-25 08:20:06, Greg Kroah-Hartman wrote:
-> On Tue, Jun 25, 2024 at 08:12:03AM +0300, Tony Lindgren wrote:
-> > On Mon, Jun 24, 2024 at 03:35:39PM +0200, Greg Kroah-Hartman wrote:
-> > > On Fri, Jun 21, 2024 at 04:44:10PM +0200, Petr Mladek wrote:
-> > > > Added Linus into Cc.
-> > > > 
-> > > > On Thu 2024-06-20 15:45:25, Tony Lindgren wrote:
-> > > > > Hi,
-> > > > > 
-> > > > > Recent changes to add support for DEVNAME:0.0 style consoles caused a
-> > > > > regression with the preferred console order where the last console on
-> > > > > the kernel command line is no longer the preferred console.
-> > > > > 
-> > > > > The following four changes fix the issue using Petr's suggestion that
-> > > > > does not involve calling __add_preferred_console() later on again, and
-> > > > > adds the deferred consoles to the console_cmdline[] directly to be
-> > > > > updated when the console is ready.
-> > > > > 
-> > > > > We revert the earlier printk related changes, and then add back the
-> > > > > DEVNAME:0.0 functionality based on Petr's code snippet. And we end up
-> > > > > reducing the code quite a bit too this way.
-> > > > > 
-> > > > > And we also revert all the unusable serial core console quirk handling,
-> > > > > it does not do anything for the legacy "ttyS" named consoles. And then
-> > > > > we add a minimal serial_base_match_and_update_preferred_console().
-> > > > > 
-> > > > > The reason we want DEVNAME:0.0 style consoles is it helps addressing the
-> > > > > console based on the connected serial port controller device rather than
-> > > > > using the hardcoded ttyS addressing. And that helps with issues related
-> > > > > to the console moving around after togging the HSUART option in the BIOS,
-> > > > > or when new ports are enabled in devicetree and aliases are not updated.
-> > > > > 
-> > > > > Tony Lindgren (4):
-> > > > >   printk: Revert add_preferred_console_match() related commits
-> > > > >   printk: Add match_devname_and_update_preferred_console()
-> > > > >   serial: core: Revert unusable console quirk handling
-> > > > >   serial: core: Add serial_base_match_and_update_preferred_console()
-> > > > > 
-> > > > >  drivers/tty/serial/8250/8250_core.c  |   5 -
-> > > > >  drivers/tty/serial/serial_base.h     |  22 +---
-> > > > >  drivers/tty/serial/serial_base_bus.c | 116 +++------------------
-> > > > >  drivers/tty/serial/serial_core.c     |   2 +-
-> > > > >  include/linux/printk.h               |   5 +-
-> > > > >  kernel/printk/Makefile               |   2 +-
-> > > > >  kernel/printk/conopt.c               | 146 ---------------------------
-> > > > >  kernel/printk/console_cmdline.h      |   7 +-
-> > > > >  kernel/printk/printk.c               | 122 ++++++++++++++++------
-> > > > >  9 files changed, 112 insertions(+), 315 deletions(-)
-> > > > >  delete mode 100644 kernel/printk/conopt.c
-> > > > 
-> > > > The patchset looks ready for linux-next. And I have pushed it
-> > > > into printk/linux.git, branch for-6.10-register-console-devname.
-> > > > 
-> > > > I am not sure about the mainline. We need to fix the regression in 6.10.
-> > > > The change is not trivial and rc5 is knocking on the doors.
-> > > > 
-> > > > Unfortunately, the patchset intermixes reverts and new code.
-> > > > So that it can't be used for simple revert as is.
-> > > > 
-> > > > I am quite confident that the new code works as expected.
-> > > > It changes tricky code but the logic of the change is quite
-> > > > straightforward.
-> > > > 
-> > > > 
-> > > > I see three solutions:
-> > > > 
-> > > > 1. Linus could merge the changes directly into rc5.
-> > > > 
-> > > > 2. I could send a pull request after it survives few days in
-> > > >    linux-next.
-> > > > 
-> > > > 3. Or we rework the patchset. And do pure revert for 6.10 and
-> > > >    add the feature a clean way for-6.11.
-> > > 
-> > > Pure revert for 6.10 might be good, as it's late in the cycle.  Let me
-> > > know the git ids and I can do that.
-> > 
-> > Here's the list of git ids to revert:
-> > 
-> > $ git log --abbrev=12 --pretty=format:"%h (\"%s\")" v6.9..v6.10-rc5 \
-> > --author="Tony Lindgren" kernel/printk drivers/tty/ Documentation/admin-guide/
-> > b20172ca6bf4 ("serial: core: Fix ifdef for serial base console functions")
-> > 4547cd76f08a ("serial: 8250: Fix add preferred console for serial8250_isa_init_ports()")
-> > 5c3a766e9f05 ("Documentation: kernel-parameters: Add DEVNAME:0.0 format for serial ports")
-> > a8b04cfe7dad ("serial: 8250: Add preferred console in serial8250_isa_init_ports()")
-> > a0f32e2dd998 ("serial: core: Handle serial console options")
-> > 787a1cabac01 ("serial: core: Add support for DEVNAME:0.0 style naming for kernel console")
-> > b73c9cbe4f1f ("printk: Flag register_console() if console is set on command line")
-> > 8a831c584e6e ("printk: Don't try to parse DEVNAME:0.0 console options")
-> > f03e8c1060f8 ("printk: Save console options for add_preferred_console_match()")
+On Mon, Jun 24, 2024 at 11:18:59AM +0200, Vincent Guittot wrote:
+> On Thu, 20 Jun 2024 at 23:45, Josh Don <joshdon@google.com> wrote:
+> >
+> > This reverts commit b0defa7ae03ecf91b8bfd10ede430cff12fcbd06.
+> >
+> > b0defa7ae03ec changed the load balancing logic to ignore env.max_loop if
+> > all tasks examined to that point were pinned. The goal of the patch was
+> > to make it more likely to be able to detach a task buried in a long list
+> > of pinned tasks. However, this has the unfortunate side effect of
+> > creating an O(n) iteration in detach_tasks(), as we now must fully
+> > iterate every task on a cpu if all or most are pinned. Since this load
+> > balance code is done with rq lock held, and often in softirq context, it
+> > is very easy to trigger hard lockups. We observed such hard lockups with
+> > a user who affined O(10k) threads to a single cpu.
+> >
+> > When I discussed this with Vincent he initially suggested that we keep
+> > the limit on the number of tasks to detach, but increase the number of
+> > tasks we can search. However, after some back and forth on the mailing
+> > list, he recommended we instead revert the original patch, as it seems
+> > likely no one was actually getting hit by the original issue.
+> >
 > 
-> All now reverted, thanks!
+> Maybe add a
+> Fixes: b0defa7ae03e ("sched/fair: Make sure to try to detach at least
+> one movable task")
+> 
+> > Signed-off-by: Josh Don <joshdon@google.com>
+> 
+> Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
 
-Great, thanks Greg!
-
-Tony, could you please send a new patchset which would provide
-the new solution on top of this revert? It might make sense
-to wait until the revert reaches mainline.
-
-Best Regards,
-Petr
+Thanks guys, queued it for sched/urgent
 
