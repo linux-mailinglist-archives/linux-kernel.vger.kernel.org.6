@@ -1,109 +1,123 @@
-Return-Path: <linux-kernel+bounces-228424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B721915FBD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:14:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E00915FC4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77119280E0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:14:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D10491F22442
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D0F1474A6;
-	Tue, 25 Jun 2024 07:13:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00D4D1465BF;
+	Tue, 25 Jun 2024 07:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ecunNsoc"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vXmifm8q"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E54146A9A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF1F91465B3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719299586; cv=none; b=BSljGY7PFaD66mnWwclzE0DxhWGbbL92/sM8kLKjTIW/YPo1dK9m8QOYWK/egMqc5rCStkr2B3kFKP0OLsJk0Wcrr0LYQQbkUKpwqXLw30KByoIiO32lHvQHF4odFlO8tNwBNMTjjwkFXQ/Q0FU48UMupZmP8u5EpC0hvvEs0NA=
+	t=1719299638; cv=none; b=fKz0oxbPlb/32WxOmjwmCPXZ5fO1l1hlGId1B7TDUQ5DICntmB/zXF3C3/+Jtek1PwPOfLMbmh9OyyGhMepTsaiYpGjMvE5Sq6aeYXZRBzswzU2k5bGg3fZ623JTL534RgEMojpDEqpjuDgYHUTfpjB0fzjpPdHLAbJ4Qvi1C4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719299586; c=relaxed/simple;
-	bh=Qdy8JgnGU81YmB17wZu3mSBStqS5FA1Q5HKjhu15RTQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jK2DSu0nd8s7z+TBiHcZe2XkdP7xMiSB1620ugYG4h0lTggEh5ODG16RLLg9gyC9r5RxiMqKaEv6hER4N0zhrKA2wj/aPKlPotodnjysfvuVSMN8FK3HYQu0letAhg9zMr8r1Ym+Nmt32u20bg+aA2qmBJf+itn8/ZfE2r4aDn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ecunNsoc; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3621ac606e1so3647800f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:13:04 -0700 (PDT)
+	s=arc-20240116; t=1719299638; c=relaxed/simple;
+	bh=M0PusBwUOnvIKi4gdlLdWjip9P0B6wyISd2JaNhue0E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sxSEcYkBZ8MTv61HNvjbCH/4uNvqje2Otlk4mwzSpP7EzuX/XOy/I2iy2D5W/DRVHK4IGDJWowsc9/uDCVWKHBTTSnZT1Y7S3ejmNhWsn2qphM4djxhRzYvYKYGKEbGubI4eAa1iPUXHJFeoiaI/VqLLpDv7YKDsvLM41onBfR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vXmifm8q; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52cd80e55efso6158666e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:13:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719299583; x=1719904383; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jiqfK75Bp/qrGJcp9xZSVsWz9JIfgUEAJ/gXBVvf1Vs=;
-        b=ecunNsocp4gOS2Q2SB7E3tsalCVSmrsWiEcwpsXhPhEsHPUvNBymlIKpcMIBuMU9GU
-         Nw8H32cAylzFXv1/kXQr7w7laravxlVbH6l5HmcEr8laJwUadzslJNaT/XhwNKvCj1gs
-         nTmFC+3Oi7mY6OyV3MkEn2IDq2RwUkd9IYpdkJMKuWVsOFTUMZjjuVox0MtWKMD4R/sB
-         K47KYDgq7Ivb3sFJHmbzxUGWP0gWqYzry2IjvfgFY8X2T6ZqGbjz9XxvLWQ1yX5ngX3p
-         TLb41e9nTYK41Vm7YO4Uy6hX/2oHLDZtKAxUosnCF2ikObQTtlKLadwsoS/guf7cp0FV
-         4xOA==
+        d=linaro.org; s=google; t=1719299635; x=1719904435; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=dzKPriaP/94IulqToxJJrPFAwt2XeR1A21mNIKltOqQ=;
+        b=vXmifm8q/8E5agcvZoJRFXS/zmOUa5QSFcvCZpOm3ZkFXx2PCkHMiAyn2BFChQP5Pu
+         BKSM3cUytxBEtk0/eMNWWvh20Yp8vEEBqVbXiAW2DZNTyneXlG5PBoUDZS6fdfUqylkR
+         aUwnPjqLNcPaN9Sva7E5zEpbGaoJTTXspyhdNedhwpjnE0Ag7i76kvLoP+7OYsU04IgA
+         qP9eaIYz0MslDR4eQhHs+Jmlg4TyBNm52LPYVyFBu+Eo2x1B9VU/yCsFIg1P5zCELiIC
+         eEK9ocgXWDclrGO/QAu1biEYJ0Fe3q+MFa8y8tEVlctxqzD59LFXGICjn5vOZfujkMr0
+         zHgA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719299583; x=1719904383;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jiqfK75Bp/qrGJcp9xZSVsWz9JIfgUEAJ/gXBVvf1Vs=;
-        b=GrmSYyjnRIld9cLhRRqhSJ20dBuYeRZp+Bp4KVmuacLCsyrAwSu13alOkKFds7Z0SV
-         5rj6bblODvM+SJ0mzkQsQ3qh63ZyX0gDx4Qm/jxUVYe9I10veths3qR1pthVMgDEcZ/q
-         1LIo7+iymwxS6EsXWtI+kLMNDViuUdkjRm39dPpTQ+z/FxwIhDuHZhg1Af3ledUt7Qrq
-         kuyl01zUBAKNJ2Ddet1D4uc9NS3bUo605+fDXiG16ia1v1jbH2s2qDWHCLlWPOCnKLul
-         18yQIB7XkNn+0LZLJBWD5ajt4sNFR6KJpqZD5vP/lOepFG7kgkj4ngSRd/UmOF/7zwen
-         +U/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXxAxm4jRXKqrzzchoQ489PfW8RbeeAcx4hjoQW9uoNi0TyE1UknBllvOAk1MjChTcwwtQPDlMtsYNR2Y/7E95hAK/CKT5Bpjx70VGn
-X-Gm-Message-State: AOJu0YwnmFI9Yt63w0d9kZVnGJYIHjavOuiE5/tDEJ41dE2TwW6BX1+v
-	M9AsSZIxZRQOsyI+638DpqyduwKquMtyMbdB0G3GmdHDg0cURmOOJjaH16qq4WI=
-X-Google-Smtp-Source: AGHT+IFkJP307iRceFscJf8nbUOaivnGN6WYme9itcYMjW40VFTx5xPfWKXkQozV3rAkdytXaodNPQ==
-X-Received: by 2002:a05:6000:4e5:b0:35f:fd7:6102 with SMTP id ffacd0b85a97d-366e36ebe9emr4412480f8f.35.1719299583435;
-        Tue, 25 Jun 2024 00:13:03 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2b2c:4971:1887:588b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8aa6sm12107253f8f.105.2024.06.25.00.13.02
+        d=1e100.net; s=20230601; t=1719299635; x=1719904435;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dzKPriaP/94IulqToxJJrPFAwt2XeR1A21mNIKltOqQ=;
+        b=Bhq+t/JpoYk/0wKCUk5J0fAOVHh/I/PP7/UI42R+wFMte6pxybVo8a583VZBEuRbte
+         t6BtWlR6xSKYX74fCPB7MGq85DY+dt2y51TmbnCyXvE0Vauv3x8wCjGChvRQ6/OFyHnb
+         I6e73w8meqg1kp9hNHBqhDoGY51Lcyk3tny6zMjFPv2SkBvaaijCmRaIlU0HZ1YW4ZDh
+         Mw7Wk3+Ss5lggpNqOQRnbkNw4q1ppasBeIP2oRlglIgw7s3xcYkDWniz1ypvTScdMGQL
+         Bt0OKRyTjSl1s/f7y2WkA7Mt5F8X0kcdBU1YPQzQeXkmlffDv0H87tfxOGGaSR3HBXHc
+         SNuA==
+X-Forwarded-Encrypted: i=1; AJvYcCWeOUdeVIYL1Zol3eTpVxMjk56rUERJDzVteW50veECPaIqT4HSs9Oqngqw+SO0EjIz/xRd6q4+QXpVZvgnWw6TxAfEdBEXUZ10AbS3
+X-Gm-Message-State: AOJu0YwkOPQJ9GYHhvXecaXTZgprA4PRjEKaNyQGkUwrEvbCzt1muCV8
+	sBgFilBb/h4rISf5/ShkHaRr9yt/AFjheXOrH/rUWGFZnIXhpxMaTLtY6I7H7zA=
+X-Google-Smtp-Source: AGHT+IG64J5RDl5yaNGvIky6EGoSsPTbRPhzUi9sDW1lxe4MxCOfYS/ESUmKFf0+XtJh628T1VqfDg==
+X-Received: by 2002:a05:6512:308c:b0:52c:c9e4:3291 with SMTP id 2adb3069b0e04-52ce185ce9amr6238633e87.60.1719299634940;
+        Tue, 25 Jun 2024 00:13:54 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdeafa562sm820431e87.154.2024.06.25.00.13.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 00:13:03 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Support Opensource <support.opensource@diasemi.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFT] pinctrl: da9062: replace gpiochip_get_desc() with gpio_device_get_desc()
-Date: Tue, 25 Jun 2024 09:13:01 +0200
-Message-ID: <171929957893.5997.4621922816766021380.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240618111824.15593-1-brgl@bgdev.pl>
-References: <20240618111824.15593-1-brgl@bgdev.pl>
+        Tue, 25 Jun 2024 00:13:54 -0700 (PDT)
+Date: Tue, 25 Jun 2024 10:13:52 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Gokul Sriram P <quic_gokulsri@quicinc.com>, sboyd@kernel.org, 
+	andersson@kernel.org, bjorn.andersson@linaro.org, david.brown@linaro.org, 
+	devicetree@vger.kernel.org, jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+	mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, robh@kernel.org, 
+	sricharan@codeaurora.org, gokulsri@codeaurora.org
+Subject: Re: [PATCH v9 4/8] remoteproc: qcom: Add ssr subdevice identifier
+Message-ID: <76mrajqeteocstj2akjtyk7rhfnqvksqw3fqsntlm6n3mqqaff@z343xmmunnzj>
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-5-quic_gokulsri@quicinc.com>
+ <d7923435-ba13-4aad-b3f1-67e3469ec7fc@kernel.org>
+ <8adae0a7-d496-4c9f-ab0c-f162c06e90c4@quicinc.com>
+ <87353911-b108-4b87-aa40-862acfc95aca@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <87353911-b108-4b87-aa40-862acfc95aca@kernel.org>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-
-On Tue, 18 Jun 2024 13:18:24 +0200, Bartosz Golaszewski wrote:
-> In order to finally confine the unsafe gpiochip_get_desc() to
-> drivers/gpio/, let's convert this driver to using the safer alternative
-> that takes the gpio_device as argument.
+On Tue, Jun 25, 2024 at 09:04:17AM GMT, Krzysztof Kozlowski wrote:
+> On 25/06/2024 08:28, Gokul Sriram P wrote:
+> > 
+> > On 6/21/2024 8:40 PM, Krzysztof Kozlowski wrote:
+> >> On 21/06/2024 13:46, Gokul Sriram Palanisamy wrote:
+> >>> Add name for ssr subdevice on IPQ8074 SoC.
+> >> Why?
+> >    Oops! Missed the change. Will add and update.
+> >>> Signed-off-by: Nikhil Prakash V<quic_nprakash@quicinc.com>
+> >>> Signed-off-by: Sricharan R<quic_srichara@quicinc.com>
+> >>> Signed-off-by: Gokul Sriram Palanisamy<quic_gokulsri@quicinc.com>
+> >> Three people developed that single line?
+> >>
+> >> Something is really odd with your DCO chain.
+> >   The change was originally authored by Nikhil and reviewed by 
+> > Sricharan. I'm just submitting the change to upstream so retained their 
+> > names.
+> >>
 > 
-> 
+> Then your DCO chain is not correct. Please carefully read submitting
+> patches, especially documents about authorship, DCO, reviewed tags.
 
-Applied, thanks!
+Also there should be From: Nikhil header before the patch.
 
-[1/1] pinctrl: da9062: replace gpiochip_get_desc() with gpio_device_get_desc()
-      commit: 8657af6c0a9afaa11947b7476119834898823b52
-
-Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+With best wishes
+Dmitry
 
