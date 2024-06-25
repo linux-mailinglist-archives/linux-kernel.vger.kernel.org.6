@@ -1,178 +1,147 @@
-Return-Path: <linux-kernel+bounces-228528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F2B6916150
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:32:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4002991615A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:33:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9B0E1F2444F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:32:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C063B22239
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:33:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55E8149C6F;
-	Tue, 25 Jun 2024 08:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C272148FF6;
+	Tue, 25 Jun 2024 08:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vOqFRB9/"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JQgg1H47"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 032DC148848
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:31:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA7214831E;
+	Tue, 25 Jun 2024 08:32:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719304315; cv=none; b=JegfAdsvwyOjPH0c8hCwccypd/TG6C3MYKdPYONWNwOeIcHkArkHJEIX7+LP3CDuV6B2jrcaPmqyE90FRDuP87IB2M0JSFgrQZJFHg2Sab8o4AyhGL8I60AScALaOxcCHXk51mp9T/TBal6YaDaPhnYQI0cI70H7dYnlbxlYkBw=
+	t=1719304355; cv=none; b=WtzEX5FITpNJkxbwvYAQ7se1uGb+/eQxc9KfpACV2yKsQzLM/nJ7VPzPHQ48cM8+GBL5b/AKF7M5RS1e4fqI8R+SCxlthxh9z8uK35cTYeOJ58d47wcvF8bH5jm0qkZZE9EmoCAMHbXNsT8Z8usH/rQez3F5VHu9sQHKhyZ/9tA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719304315; c=relaxed/simple;
-	bh=1bUJ/s7vvwTZ73NCTa5DTXqVHc8wDMkrvmx1x4B0xZ0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JQpDknQHUbqGiN0pxkXnvsZwnGfVO/cclohn22VYlX66hnsK56DCvccjU3ZHP9FewcnmQNdaXrjbmJWR6i6f+Xc0ezY57gKKTz/Fczi9+a4mJCw4s47vTMjhCi3DkEPwiWXq9vXJVTtdbQ/14D/SNStBG5DQ6GJ200rFOiKo4Do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vOqFRB9/; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-35f2c9e23d3so3840259f8f.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:31:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719304312; x=1719909112; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6MGiV5QhyBIwfF0R22KIxg/x70JWWD4uGuZLiiLVcCo=;
-        b=vOqFRB9/PzYL1IM+qLYv8QSghjaflpCLS8cZ/b9f2KeY4t3MlQyadUCTHIfi3vAeoU
-         FttaeIDeDJ4fYLPJtNO5RhZJ2XxF+6NMjKvocB3DrvFyRfI/uM+qKQd7psHrJvowEvai
-         /o/YdjYgI/BNLTt4oWTnwHfiP6E6whKLf6+Ju0+r2ceFRMBPQRwXreeoDuNm7gKbhAXX
-         gSyCZmcoivNFnHnDU59eyTh9xfktjEX7tkAjsh86mTIctlu8OKdSVpFGJj+n8ZYTLH0P
-         UDKr9DKDj10fn2hMtbrKuvdAvIwIdMkcp2XlOkWwQorM/77y7sBMQKIMO4SoE58qDNnU
-         gZMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719304312; x=1719909112;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6MGiV5QhyBIwfF0R22KIxg/x70JWWD4uGuZLiiLVcCo=;
-        b=vjnXMRL2UrooIr7eUNJFgeoRLMS3f+KQ+PnKVwdnsKD1f8Ic4slIznw+xL4FjU1OBW
-         +QzxYDXB2cxk+qFzjVqTi3ZnMttjgLu73DqB5RK0TROZzKUw1l1qUu8jiCPh1kRQh/jx
-         NX6t9lnKiM93BvQzYdPpvV8FnRgSQktf2QoVu7C4tFQSuhLSZiWNwZLAqreYJhvikss5
-         8KdSOez/WJz0JmAupOdpxDIfk+lqSA5yj8+5DOq0wdMdhwjO1t3/Xji3iCUQ7H6g+V95
-         4epOTOWKGj9OrTpmfNguU3bQQGwPbOho3Si4VKZWXOGsGOfWlqY51Pa4wAmUeR/QYp24
-         RoiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtVAaPeogievbSwBi6hrG5r9936TidUReD0JP+Jlw3ecfHvKfGyaHnGLKk4d32DvySaV9vQsvH0405LCZR6y3qnZplEuUx+uJna2v5
-X-Gm-Message-State: AOJu0YwQrQIxWKnnwzzihKRzHGtkBhg/2GYnDfpRX2nXrBdZ7yGaJN4B
-	mlB1FSLw8Zi8jRQxWubAPXPoXMv6RguFEDWq2AQIQXebSy57J8KIi/3S9PRUzNc=
-X-Google-Smtp-Source: AGHT+IHXVO0K6EtgWIdnjCpVKEK7FGGlTzFiwp9mjcV6PfHRnKrDwThJVhKUFKQBIxHO02PjXcqiXg==
-X-Received: by 2002:a05:6000:1241:b0:366:e09c:56be with SMTP id ffacd0b85a97d-366e325c00amr6885391f8f.6.1719304312228;
-        Tue, 25 Jun 2024 01:31:52 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:1b57:b4a1:3d50:32a2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366388c401asm12286172f8f.45.2024.06.25.01.31.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 01:31:51 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>,  Lars-Peter Clausen
- <lars@metafoo.de>,  Neil Armstrong <neil.armstrong@linaro.org>,  Kevin
- Hilman <khilman@baylibre.com>,  linux-kernel@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-iio@vger.kernel.org,  Rob
- Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
-  Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH 2/2] iio: frequency: add amlogic clock measure support
-In-Reply-To: <04254d15-2f6e-435d-ba4c-8e2e87766b9b@baylibre.com> (David
-	Lechner's message of "Mon, 24 Jun 2024 17:51:05 -0500")
-References: <20240624173105.909554-1-jbrunet@baylibre.com>
-	<20240624173105.909554-3-jbrunet@baylibre.com>
-	<04254d15-2f6e-435d-ba4c-8e2e87766b9b@baylibre.com>
-Date: Tue, 25 Jun 2024 10:31:51 +0200
-Message-ID: <1j4j9hift4.fsf@starbuckisacylon.baylibre.com>
+	s=arc-20240116; t=1719304355; c=relaxed/simple;
+	bh=hi3MSzsE8nwxCxFsphtLi2390SmR1eVJsA70Ej66c/E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=or7uStE8nEazMnayfYURmtHac3QzXu3nK8ZvLCxTuc0mNSeEvloGl3k3K7sRCiUHittFAo0DMJ9JEumsX2FKBAZQIeg2GzqZRrH91HCaf5oYcU/Qgj+ambY/OuG+8zZDp1MiJk5eTj4cmbK306XtrKNu5ud2c+NIGMwN137lAkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JQgg1H47; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719304352;
+	bh=hi3MSzsE8nwxCxFsphtLi2390SmR1eVJsA70Ej66c/E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JQgg1H471/eyWzk12iOuyhV+nOj3YKnA13h9EuESkv8cHr1d88Xp6y3NI+CoBrnqB
+	 zIGXMh+ADemAqOCuZeMjhc7hd22M87WllhIGQnITdrmUlf+X1p5e+BES1t4WUeSBNg
+	 MuseE456LrBeSN/rrQJhymIAYXLOYdsZLnX8bKcmEBpoUkDYhAyFOJMr+WGNtXz6l3
+	 gFCrHntDw317dKhswm9wnlsKQFYLOFpkRlGshtabuY/+Qs61o54itTx3D+r1PAmlf4
+	 X3LhJfMYQqLXY3acCgVqPxBsXl3IkkMGHaAhJMpDLRMQ5NrKj87owcX7b3j2G9YOSc
+	 ixID8iBYdOYDg==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 31E95378045F;
+	Tue, 25 Jun 2024 08:32:31 +0000 (UTC)
+Message-ID: <f7b4cd98-1acf-4f6b-a7e0-57419abadba1@collabora.com>
+Date: Tue, 25 Jun 2024 10:32:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/7] MediaTek DVFSRC Bus Bandwidth and Regulator knobs
+To: broonie@kernel.org
+Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, lgirdwood@gmail.com, keescook@chromium.org,
+ gustavoars@kernel.org, henryc.chen@mediatek.com, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com, wenst@chromium.org, amergnat@baylibre.com,
+ djakov@kernel.org
+References: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon 24 Jun 2024 at 17:51, David Lechner <dlechner@baylibre.com> wrote:
+Il 10/06/24 10:57, AngeloGioacchino Del Regno ha scritto:
+> Changes in v6:
+>   - Fixed build with clang (thanks Nathan!)
+>   - Removed unused mtk_rmw() macro in mtk-dvfsrc.c
+>   - Added MODULE_DESCRIPTION() to mtk-dvfsrc-regulator.c
+> 
 
-> On 6/24/24 12:31 PM, Jerome Brunet wrote:
->> Add support for the HW found in most Amlogic SoC dedicated to measure
->> system clocks.
->> 
->
->
->
->> +static int cmsr_read_raw(struct iio_dev *indio_dev,
->> +			 struct iio_chan_spec const *chan,
->> +			 int *val, int *val2, long mask)
->> +{
->> +	struct amlogic_cmsr *cm = iio_priv(indio_dev);
->> +
->> +	guard(mutex)(&cm->lock);
->> +
->> +	switch (mask) {
->> +	case IIO_CHAN_INFO_RAW:
->> +		*val = cmsr_measure_unlocked(cm, chan->channel);
->
-> Is this actually returning an alternating voltage magnitutde?
-> Most frequency drivers don't have a raw value, only frequency.
+...
 
-No it is not the magnitude, it is the clock rate (frequency) indeed.
-Maybe altvoltage was not the right pick for that but nothing obvious
-stands out for Hz measurements
+> 
+> AngeloGioacchino Del Regno (7):
+>    dt-bindings: regulator: Add bindings for MediaTek DVFSRC Regulators
 
->
->> +		if (*val < 0)
->> +			return *val;
->> +		return IIO_VAL_INT;
->> +
->> +	case IIO_CHAN_INFO_PROCESSED: /* Result in Hz */
->
-> Shouldn't this be IIO_CHAN_INFO_FREQUENCY?
+Mark, I assume that this series is ok from your perspective, since this has got
+your acks and r-b -- but in order to pick the soc/mediatek stuff I need all of
+the dependent bindings to be in as well .. and this includes the regulator one!
 
-How would I get raw / processed / scale with IIO_CHAN_INFO_FREQUENCY ?
+The main issue here is that the main soc/mediatek dvfsrc binding
+dt-bindings: soc: mediatek: Add DVFSRC bindings for MT8183 and MT8195
+does use the others, so I can't pick this one without the others being present
+or the validation obviously fails.
 
->
-> Processed is just (raw + offset) * scale which would be a voltage
-> in this case since the channel type is IIO_ALTVOLTAGE.
+So... gentle ping :-)
 
-This is was Processed does here, along with selecting the most
-appropriate scale to perform the measurement.
+Thanks,
+Angelo
 
->
->> +		*val = cmsr_measure_processed_unlocked(cm, chan->channel, val2);
->> +		if (*val < 0)
->> +			return *val;
->> +		return IIO_VAL_INT_64;
->> +
->> +	case IIO_CHAN_INFO_SCALE:
->
-> What is this attribute being used for?
+>    dt-bindings: interconnect: Add MediaTek EMI Interconnect bindings
+>    dt-bindings: soc: mediatek: Add DVFSRC bindings for MT8183 and MT8195
+>    soc: mediatek: Add MediaTek DVFS Resource Collector (DVFSRC) driver
+>    regulator: Remove mtk-dvfsrc-regulator.c
+>    regulator: Add refactored mtk-dvfsrc-regulator driver
+>    interconnect: mediatek: Add MediaTek MT8183/8195 EMI Interconnect
+>      driver
+> 
+>   .../interconnect/mediatek,mt8183-emi.yaml     |  51 ++
+>   .../mediatek,mt6873-dvfsrc-regulator.yaml     |  43 ++
+>   .../soc/mediatek/mediatek,mt8183-dvfsrc.yaml  |  83 +++
+>   drivers/interconnect/Kconfig                  |   1 +
+>   drivers/interconnect/Makefile                 |   1 +
+>   drivers/interconnect/mediatek/Kconfig         |  29 +
+>   drivers/interconnect/mediatek/Makefile        |   5 +
+>   drivers/interconnect/mediatek/icc-emi.c       | 153 +++++
+>   drivers/interconnect/mediatek/icc-emi.h       |  40 ++
+>   drivers/interconnect/mediatek/mt8183.c        | 143 +++++
+>   drivers/interconnect/mediatek/mt8195.c        | 339 +++++++++++
+>   drivers/regulator/mtk-dvfsrc-regulator.c      | 248 ++++----
+>   drivers/soc/mediatek/Kconfig                  |  11 +
+>   drivers/soc/mediatek/Makefile                 |   1 +
+>   drivers/soc/mediatek/mtk-dvfsrc.c             | 545 ++++++++++++++++++
+>   .../interconnect/mediatek,mt8183.h            |  23 +
+>   .../interconnect/mediatek,mt8195.h            |  44 ++
+>   include/linux/soc/mediatek/dvfsrc.h           |  36 ++
+>   include/linux/soc/mediatek/mtk_sip_svc.h      |   3 +
+>   19 files changed, 1666 insertions(+), 133 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/interconnect/mediatek,mt8183-emi.yaml
+>   create mode 100644 Documentation/devicetree/bindings/regulator/mediatek,mt6873-dvfsrc-regulator.yaml
+>   create mode 100644 Documentation/devicetree/bindings/soc/mediatek/mediatek,mt8183-dvfsrc.yaml
+>   create mode 100644 drivers/interconnect/mediatek/Kconfig
+>   create mode 100644 drivers/interconnect/mediatek/Makefile
+>   create mode 100644 drivers/interconnect/mediatek/icc-emi.c
+>   create mode 100644 drivers/interconnect/mediatek/icc-emi.h
+>   create mode 100644 drivers/interconnect/mediatek/mt8183.c
+>   create mode 100644 drivers/interconnect/mediatek/mt8195.c
+>   create mode 100644 drivers/soc/mediatek/mtk-dvfsrc.c
+>   create mode 100644 include/dt-bindings/interconnect/mediatek,mt8183.h
+>   create mode 100644 include/dt-bindings/interconnect/mediatek,mt8195.h
+>   create mode 100644 include/linux/soc/mediatek/dvfsrc.h
+> 
 
-Hz
 
->
-> (clearly not used to convert the raw value to millivolts :-) )
->
-> Maybe IIO_CHAN_INFO_INT_TIME is the right one for this? Although
-> so far, that has only been used with light sensors.
 
-I think you are mixing up channel info and type here.
-I do want the info
- * IIO_CHAN_INFO_RAW
- * IIO_CHAN_INFO_PROCESSED
- * IIO_CHAN_INFO_SCALE
-
-I want those info to represent an alternate voltage frequency in Hz.
-I thought type 'IIO_ALTVOLTAGE' was the right pick for that. Apparently
-it is not. What is the appropriate type then ? Should I add a new one ?
-
->
->> +		*val2 = cmsr_get_time_unlocked(cm);
->> +		*val = 1000000;
->> +		return IIO_VAL_FRACTIONAL;
->> +
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +}
->> +
-
--- 
-Jerome
 
