@@ -1,182 +1,197 @@
-Return-Path: <linux-kernel+bounces-228618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C211991624D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:26:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B614916251
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:28:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43A941F24D4F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:26:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC4F01F25FFA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:28:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B491494DB;
-	Tue, 25 Jun 2024 09:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D096D149C62;
+	Tue, 25 Jun 2024 09:28:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b="ZRk8uGMo"
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2059.outbound.protection.outlook.com [40.107.117.59])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="t3zAvB77"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51A2B1487D4;
-	Tue, 25 Jun 2024 09:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719307572; cv=fail; b=GQIsNlDJyy4n7V1ejD6v9s5sXCP8GcTEyKl0rulvrH2CfaqxBfnE+rASDKSSjSKgHnxNhDS3VivX6iuYH3hfwnk7fsmbolj8nmvHDkD2PC21xRplm5DCpGIQgFsgx8dPosVKpgREq6YYsu6pSKsuX1EBy0Je0V0LMMaFW8Wbbyc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719307572; c=relaxed/simple;
-	bh=RSDL5hBt8Fi1ZXPvWH9y8ycn+n8iYssGwdzzMyL6Mnw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X9AL9QJWXW8uF59EdnNDBrjrS9gDWEeNQUa+Y0Lv0Z2umSNGsrOr8/fH0i8ljZifti/TAJ0l487AgF+Rs7rbJyEsr5qGCs/ODjmZSodwPtX9h/lM0PCuCucUat/49tRZUXoOi3CQ3/XFXqw81jBNC4GVMDGVQbgbE8xFPctCb3A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com; spf=pass smtp.mailfrom=oppo.com; dkim=pass (1024-bit key) header.d=oppo.com header.i=@oppo.com header.b=ZRk8uGMo; arc=fail smtp.client-ip=40.107.117.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=oppo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oppo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=PAUW/QUBCwqLz+Tv0DfSLnsd/ZqztK94Q6P8i5HQbp/A33W/5ULJO8yK6FPZ+EHYsiaNR2EYzaQx9LGrlbEMmZw8TlR1bkTe7MyoffRwQJkapd6yXR8js1bZc1UNG8pAMIUAeWo4BgELVYr+YRIAX4oP/jawUpA/v5hodQuAC80pTcPLnNwfQ3v6iZEkC+13il6hThgOZZkz4U2MhiU9eVzKaYF21HO+6Vht9h0oCfuLD3rO7h2qyGZq4WgkwL8JzFp+41lx0xbbWAZpjobB2wSVWZp85EZrZ6b5Kh1hhDW6CnKSrVg5+MWvgHirtG42GV+TAWUU9rO93Ncn4Torbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Nn5OfTdMtMQMGlKkSRIaWerEI8y0XVnBuW5ZQDzKdNo=;
- b=L6oMeJUUfuUniR7hTdOMgYEJ1ckgsJKNgaVxaTlaYXgqTuTdLS0MCUesrBDDxTbnrDsGe9bS7yNLiu9SzGXZgyas1r8s8k/ZCIKCG8s4qCMs0ZzWn2lS6DXQu+nuNM5AkpHUvvM8ITYMr7zypG07zdXA2kUXYVqT53M2XP+UKx7pZeqaFcjzaoz5VclkO/GGDsVEiYvFjTwUYyim6Ga4XTcaw/ILKiN9chUqaHzjAqYb+/iMNBr5hf9Qr0vQ8QGeykz+jVGUAZKs15gXzndUeglCN2unBi8OrNYO54QJ7JY3oc5RjlX5wLuw8Lmj1YfZeO9NLqsl0IwVyv3wsQ96/Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 58.252.5.68) smtp.rcpttodomain=gmail.com smtp.mailfrom=oppo.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=oppo.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oppo.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Nn5OfTdMtMQMGlKkSRIaWerEI8y0XVnBuW5ZQDzKdNo=;
- b=ZRk8uGMo4PdePwNswH6p4UBq8+BfMF2z1IZBzSpw6+B7nMhxVmegHMNVJn6vpxwdiROyee0FnCFqYAr4HfOkfx8riaLO800HBy5GSBOicGwQL68Jw+oBp8lqbghKSGKe6DJIhNCsrXrYyvQwsjD4/QZM2E9dASVvOkFrRrPVBE4=
-Received: from SI2PR02CA0040.apcprd02.prod.outlook.com (2603:1096:4:196::6) by
- SEYPR02MB5509.apcprd02.prod.outlook.com (2603:1096:101:3e::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7698.28; Tue, 25 Jun 2024 09:26:03 +0000
-Received: from SG1PEPF000082E5.apcprd02.prod.outlook.com
- (2603:1096:4:196:cafe::e) by SI2PR02CA0040.outlook.office365.com
- (2603:1096:4:196::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.38 via Frontend
- Transport; Tue, 25 Jun 2024 09:26:03 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 58.252.5.68)
- smtp.mailfrom=oppo.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=oppo.com;
-Received-SPF: Pass (protection.outlook.com: domain of oppo.com designates
- 58.252.5.68 as permitted sender) receiver=protection.outlook.com;
- client-ip=58.252.5.68; helo=mail.oppo.com; pr=C
-Received: from mail.oppo.com (58.252.5.68) by
- SG1PEPF000082E5.mail.protection.outlook.com (10.167.240.8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Tue, 25 Jun 2024 09:26:02 +0000
-Received: from oppo.com (172.16.40.118) by mailappw31.adc.com (172.16.56.198)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Jun
- 2024 17:26:02 +0800
-Date: Tue, 25 Jun 2024 17:26:01 +0800
-From: Hailong Liu <hailong.liu@oppo.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-CC: Baoquan He <bhe@redhat.com>, Nick Bowler <nbowler@draconx.ca>,
-	<linux-kernel@vger.kernel.org>, Linux regressions mailing list
-	<regressions@lists.linux.dev>, <linux-mm@kvack.org>,
-	<sparclinux@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
-Message-ID: <20240625092601.uo7266gp5joluyg5@oppo.com>
-References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
- <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
- <20240621033005.6mccm7waduelb4m5@oppo.com>
- <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
- <ZnVLbCCkvhf5GaTf@pc636>
- <20240621111545.awvgrap2nscgehxv@oppo.com>
- <ZnlkIy4XuzGBKinQ@pc636>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029A949656;
+	Tue, 25 Jun 2024 09:28:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719307683; cv=none; b=U5D2pOY64P+E7UphTUNJGEO9VPsYefuzkqWaxomF2Ub93CPtsTAbsHK5csqGs+1O5/PgVgzGfDiAm0H+zLg/3GvSivU7p9iYTOKNBuRagiH0YeWSA7+IT/fvLWKwMfFyqvPHGGTfPKYIGJxzxpzF5o8F7tkoTn9Uii9FAFaxb4A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719307683; c=relaxed/simple;
+	bh=UxNhAgYPGNNHkfJvLdarPdJp5UdmbQ5FuNS5+JKoVFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TvbmSOs3VPSUi8SuxD6xlTEjNoy/xdYyaHsMGWQPSFyJuKIYGxOGLTUCymCSau5LWFJUso4h3ShFyxEZszyQj5jLXSc93MwpEcWTKaymuZv1LraNM3KxNUEh5vse1+BDT9ita8V11kWnxxrywvyOC0tbRFV93T8NqOlfbN/8b4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=t3zAvB77; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P7Z1mW023451;
+	Tue, 25 Jun 2024 11:27:42 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	ZL9O4jKbisSwEWT31AVHc7rzLyQfQSAky6Cmq885AcE=; b=t3zAvB77Xc6Rx1Xj
+	GOkBEEY1c1hLcvMraq9m1SbiZ8WyB5aSKn7UZXTQ9CNhr4eO+ToZXK2OgJJU8XEq
+	f9qEpBpz+LpMUNvzpej8jIFg2mSvLStgQR2xejOMdGW6hooIXHI/ZspWrdflPg7V
+	F6slXxMa2qkc/UfjHBdKvP+fOX5nPpzfl8qwixhB2vdb8WIjUHLpGOZdu2e+B010
+	UExnxUzdfcppolhWSvYbaemFJR4YdZ53xoyT8f6XgmSNc+kFrEQFFXkTeRnDD8JT
+	efvvH7TcjTgYIso8+kIvDQao4hghalRfk1JX29L56mBjzUvIO9GX23OyMp9/7X9o
+	h0mg7Q==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yx9jj8hk4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 11:27:41 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E508E40045;
+	Tue, 25 Jun 2024 11:27:36 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0B946215135;
+	Tue, 25 Jun 2024 11:26:58 +0200 (CEST)
+Received: from [10.252.26.63] (10.252.26.63) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 25 Jun
+ 2024 11:26:57 +0200
+Message-ID: <0e1f7676-65c3-49b6-a3d0-ebac8dda50a7@foss.st.com>
+Date: Tue, 25 Jun 2024 11:26:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZnlkIy4XuzGBKinQ@pc636>
-X-ClientProxiedBy: mailappw31.adc.com (172.16.56.198) To mailappw31.adc.com
- (172.16.56.198)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SG1PEPF000082E5:EE_|SEYPR02MB5509:EE_
-X-MS-Office365-Filtering-Correlation-Id: 8910929c-80ac-4a12-e3ab-08dc94f8d52f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|36860700010|1800799021|376011|82310400023;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?S5gLv4t29S/h6LGpJ1YDFkcIZcIHbCKUxOYKOlVQ2TQsEhdTYx81spJTZcqp?=
- =?us-ascii?Q?jHMJERHDk0o4cMycBzAnngILrJ8i8crFzPnkfM7Xo1GOQhhcTp4GllB5JUXD?=
- =?us-ascii?Q?vLYgxK/Pb2fNCMTE1SHpsTKk+xrrV1owbCeovvwyC9EDsPfgKoZ+/M1GKuWM?=
- =?us-ascii?Q?G6pPhn5n6JjaiGy866TN6H0KN0+BTplIiOBJYpsjSIyNIGmT5uARhO61vcGs?=
- =?us-ascii?Q?ZtW0VGJJkzReeY+O9CAFMFfzushdUIZQPyZW7QOKRMF2ted1aKyIE9pLS/m4?=
- =?us-ascii?Q?TMbpudD2RqtjCzb6OUWkjp5vAez7LHN3Z7xodEvPSKDDDF1Q1eQi+M0Fp4hS?=
- =?us-ascii?Q?jIni++6e/YTmRCB5S4gPVn0yLAW4EGl6IO/Ha2R2njf8NCoG+AO18MI97F5o?=
- =?us-ascii?Q?A1cVFFbCR1OYJosIP5WA5MBvoF0EzdMZ8RKOR3tu4bko+I/pyoaohJJbS616?=
- =?us-ascii?Q?pdo5Y0YxxlboRSzel5pgyjfGpaeD4jnOUEKHW5dESUMYkiEeERznbATVFZAm?=
- =?us-ascii?Q?rIoi33hEyo8GyN2kbUwtDy+oxqubt3GFsk9A0O+jM0D0xczHUvdT/EmaLFVK?=
- =?us-ascii?Q?vWVpjvI23K0QpAzGzv+PVuTkn6t2lPAYCPo9knaeR8j5i7MMfT7teWcHbJDp?=
- =?us-ascii?Q?wsIDP//bx6dd2lfHcEhRH8kt1hxMVKrnK6ZhyRzWD4RC7eRpCmbEU8tYfL+l?=
- =?us-ascii?Q?zsfiGXb6cuN7fjyT6UUstkKO5OCU7QMHjA9gKclsFN2CPDRBVRWOU+QGrK/v?=
- =?us-ascii?Q?+Rlhu4+89fWkZosVwFgl2zV6PDJDObUH1VQqUx2/seqvj+ugzXkm28RC8GIa?=
- =?us-ascii?Q?pYi7Wg3VgcZDFnWJaaBni8ZlhjS3lAih8gAxaDFbVzbYOV+ceYD0SzqEoMAa?=
- =?us-ascii?Q?51pwi/SWYgEQdQHa/MiNPnblLbahzl5Cnmhey0L2mnx7rmVvM81OpRJc9HhF?=
- =?us-ascii?Q?PMM2swqZ0ogTKk1C52EtBZ8szyRXa9gzywIbADEW0N73Q11dQiWX5c2eOyrg?=
- =?us-ascii?Q?JWlox4eblk/CddEZ9w7hG+x+QPNw1p1lM/dbm0crhWND0Xgsq+5k+2Yo7Wgj?=
- =?us-ascii?Q?QNC5TlVEIPf84w9UQwGASG2nshBFlJZNK6ErFvdurD2zMcSsk96TSGJ0HFkU?=
- =?us-ascii?Q?8SljcKzUnLH8Gx4KCIDX8CihdQuENmsx2Sf3eIRtlFasMzGnmQefxIo5EIZX?=
- =?us-ascii?Q?+9zkC5mO1k6HU5a/asStMXPZR46prDCAj1J5E146Ep2Ulk0fKP33FeWi6wZb?=
- =?us-ascii?Q?SsYS6a/nIPRk4CNo9+V2wffp4r7qIiW9CUZ5ZoBT33J403v3FPhhfjpHPdoX?=
- =?us-ascii?Q?kNypBvRhvkRL0CExshDUxY2XFZnAeWNUzDql5nzuvelxl1rUkZiPDkW5FGNx?=
- =?us-ascii?Q?NOH23Q9DPB0GdVAG9MkvWzQ9TU5ICAUswjPc5G1liopSfxCiOQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:58.252.5.68;CTRY:CN;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.oppo.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(36860700010)(1800799021)(376011)(82310400023);DIR:OUT;SFP:1101;
-X-OriginatorOrg: oppo.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 09:26:02.8316
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8910929c-80ac-4a12-e3ab-08dc94f8d52f
-X-MS-Exchange-CrossTenant-Id: f1905eb1-c353-41c5-9516-62b4a54b5ee6
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f1905eb1-c353-41c5-9516-62b4a54b5ee6;Ip=[58.252.5.68];Helo=[mail.oppo.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SG1PEPF000082E5.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR02MB5509
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/8] dt-bindings: iio: add sigma delta modulator backend
+To: Conor Dooley <conor@kernel.org>
+CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20240618160836.945242-1-olivier.moysan@foss.st.com>
+ <20240618160836.945242-6-olivier.moysan@foss.st.com>
+ <20240618-spearmint-traverse-5981a548c158@spud>
+Content-Language: en-US
+From: Olivier MOYSAN <olivier.moysan@foss.st.com>
+In-Reply-To: <20240618-spearmint-traverse-5981a548c158@spud>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_06,2024-06-24_01,2024-05-17_01
 
-On Mon, 24. Jun 14:18, Uladzislau Rezki wrote:
-> >
-> > IMO, I thought we can fix this by following.
-> > It doesn't initialize unused variables and utilize the percpu xarray. If I said
-> > anything wrong, please do let me know. I can learn a lot from you all :).
-> >
-> >
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index 11fe5ea208aa..f9f981674b2d 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -4480,17 +4480,21 @@ void __init vmalloc_init(void)
-> >          */
-> >         vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
-> >
-> > -       for_each_possible_cpu(i) {
-> > +       for (i = 0; i < nr_cpu_ids; i++) {
-> >                 struct vmap_block_queue *vbq;
-> >                 struct vfree_deferred *p;
-> >
-> >                 vbq = &per_cpu(vmap_block_queue, i);
-> > +               xa_init(&vbq->vmap_blocks);
-> > +
-> > +               if (!cpu_possible(i))
-> Why do you need such check?
-IIUC, take this issue as example, cpumask is b101 and nr_cpu_id is
-3, if i = 1, There is no need to initialize unused variables here;
-initializing the xarray for the hash index is sufficient.
->
-> Thanks!
->
-> --
-> Uladzislau Rezki
+Hi Conor,
 
---
-help you, help me,
-Hailong.
+On 6/18/24 20:13, Conor Dooley wrote:
+> On Tue, Jun 18, 2024 at 06:08:31PM +0200, Olivier Moysan wrote:
+>> Add documentation of device tree bindings to support
+>> sigma delta modulator backend in IIO framework.
+>>
+>> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+>> ---
+>>   .../iio/adc/sd-modulator-backend.yaml         | 43 +++++++++++++++++++
+>>   1 file changed, 43 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/iio/adc/sd-modulator-backend.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/iio/adc/sd-modulator-backend.yaml b/Documentation/devicetree/bindings/iio/adc/sd-modulator-backend.yaml
+>> new file mode 100644
+>> index 000000000000..b0fa71b75cd0
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/iio/adc/sd-modulator-backend.yaml
+>> @@ -0,0 +1,43 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/iio/adc/sd-modulator-backend.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Sigma delta modulator backend
+>> +
+>> +maintainers:
+>> +  - Olivier Moysan <olivier.moysan@foss.st.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    description: |
+>> +      "sd-backend" can be used as a generic SD modulator backend,
+>> +      if the modulator is not specified in the compatible list.
+>> +    enum:
+>> +      - sd-backend
+> 
+> I'd rather not have a generic compatible like this. Something generic as
+> a fallback for the driver to binding against I would be fine with, but
+> not something that avoids people documenting their devices.
+> 
+
+This binding was modeled on the following binding
+Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
+But, I understand that we need to encourage people to use a real 
+compatible. So, I will remove this generic compatible from the binding 
+in v2.
+
+> Also, I think "backend" should be dropped from the
+> filename/title/descriptions, the ads1201 is "just" an delta-sigma
+> modulator.:wq
+> 
+
+There is already a generic sigma delta modulator driver: 
+"sd_adc_modulator.c"
+This driver follows a different approach, as it registers an IIO device. 
+It has to be kept for backward compatibility.
+The current patch introduces a new sigma delta modulator generic driver
+based on the new IIO backend framework.
+So, we have two drivers dedicated to the same type of hardware, but 
+intented to be used with different topologies in IIO.
+I used "backend" suffix as a differentiator here.
+I did not find a better alternative to manage this diversity.
+If, you have another suggestion please let me know.
+
+>> +      - ads1201
+> 
+> Missing vendor prefix.
+> 
+
+Ack
+
+BRs
+Olivier
+
+> Thanks,
+> Conor.
+> 
+> 
+>> +
+>> +  '#io-backend-cells':
+>> +    const: 0
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  vref-supply:
+>> +    description: Phandle to the vref input analog reference voltage.
+>> +
+>> +required:
+>> +  - compatible
+>> +  - '#io-backend-cells'
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    ads1201: adc {
+>> +      compatible = "sd-backend";
+>> +      #io-backend-cells = <0>;
+>> +    };
+>> +
+>> +...
+>> -- 
+>> 2.25.1
+>>
 
