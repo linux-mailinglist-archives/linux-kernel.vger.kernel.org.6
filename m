@@ -1,184 +1,195 @@
-Return-Path: <linux-kernel+bounces-228978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EBD091694B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:47:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E82D4916932
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:42:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8024A1C209CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:47:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B55D280F38
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:42:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA061607AF;
-	Tue, 25 Jun 2024 13:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC1715FA8F;
+	Tue, 25 Jun 2024 13:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="lag31CxH"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2051.outbound.protection.outlook.com [40.107.220.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Xfc12/bV"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03ED01E494;
-	Tue, 25 Jun 2024 13:46:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719323209; cv=fail; b=qB3uagCNjYH4Edh0mhMvUyksOxcUg1yL1Wz1PrQB7Wcfzx+UfEO6KVsIMz3pGUzDZ8C3/gPbaxSkTYxP11d4yV04PVdbUAj93vGaTeMEovxo28YuYOcPpmo7/ZlBYS0LBaxxrkAJ73bjmrQTgtzahrb5fgw4n6ZC8QYGguGxQt0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719323209; c=relaxed/simple;
-	bh=Qq7d09J/b+DDoAFofk/vsMwU3bWbyXrI87WsVsGmF3w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ae9a15/hNzehyTeHWbPA7ItW01Nuh+ln4JuaeRv0T7y3J7UIhJBwBjJaZLTrj4lymDLylQSojgFILRq74MVZ616WLvSy4OtaOOuhhE7P2nos4hhz+aEovPIiiMoHKU7w1t+OOlDwRxTrpedInaho72+2xmAKjQ0L6PKSlsmUcVE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=lag31CxH; arc=fail smtp.client-ip=40.107.220.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=D73Zve4lBzFaP/oOdnEa+7R9HS1tBN2j3Up4ss3ZTlHjePkmkPiPTBC3pitI3ePVqu/mZUHQCBksUA1/I+z1o6+FATvEAJS/ZwmtgFqbutmB9Tg9LGITRxKYCynOB2HanFpwvKB8ERITQWooExNDnO7pwMRhOhM8tnlpsHEtt+KCZDE4SxFT/03K77RP64CGFHeALEwON3k59XQzo1jpJXgV2HeQZMF9kdSjcBVfeFaAQYGcoB6Si407c7urW0GX6TW8xzKm131kDHaUxyo+GQ7LBRlmdWwyV6jfwLShKaDi7TsVucG2MHa67PT8UwfnwJdfRxltBji2Zt5HPq1omg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YZ7mF9AKNAfuEOouVns+sC4bViFPyA93qjge5lXmRLM=;
- b=h6V1DgV974kBPnH1kAT3jFJUdCczv3OtIn0J1uNN/LfHBAk2N8iZnu1/9O/Y9a9UdeQIYUcG2RAK8OM83W6tQIL/srsxY7Q5jPitXAQc8JHvzcMNJZbMnHpFmly/EbZ6pKdBd93FGDTfEOd8kpW5LW3QCESguM5gwHUs58PKvMUoPZCdmR0CWkgHxQhP5UUQ3ZaCGHsuZlCk0h66MGIe0+JDb8bskxFGUSKqaTIVR6KvVekiWOrFTH+4lUJZMwMqv2RYsYcscq26Ef7icdNNNEnJEGk54nFrkZf8qHbAAzW8An/ifXFAc+WSKwY5err8oANorZcCuAPzp3rF/7bAUQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=YZ7mF9AKNAfuEOouVns+sC4bViFPyA93qjge5lXmRLM=;
- b=lag31CxHNcovYE07LnGrxOlOREoL4JnBXXuqX3MLIviS/X1StLKPNRcwxbD7DdW191Y3FyTMlcwOTAiJOmAnc1TNzZAfO4DDwh69USNJV+ztkYisSv6kOX+ES+MhA0rktdY/fkaj/KQtXSrLmn96v0TqdXjvdyF124n/u201+5o=
-Received: from BLAPR03CA0158.namprd03.prod.outlook.com (2603:10b6:208:32f::24)
- by PH7PR12MB6812.namprd12.prod.outlook.com (2603:10b6:510:1b6::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Tue, 25 Jun
- 2024 13:46:43 +0000
-Received: from BL6PEPF0001AB4D.namprd04.prod.outlook.com
- (2603:10b6:208:32f:cafe::a8) by BLAPR03CA0158.outlook.office365.com
- (2603:10b6:208:32f::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.22 via Frontend
- Transport; Tue, 25 Jun 2024 13:46:43 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- BL6PEPF0001AB4D.mail.protection.outlook.com (10.167.242.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Tue, 25 Jun 2024 13:46:42 +0000
-Received: from shatadru.amd.com (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 25 Jun
- 2024 08:46:39 -0500
-From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-To: <rafael@kernel.org>, <viresh.kumar@linaro.org>, <gautham.shenoy@amd.com>,
-	<mario.limonciello@amd.com>, <perry.yuan@amd.com>,
-	<skhan@linuxfoundation.org>, <li.meng@amd.com>, <ray.huang@amd.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dhananjay
- Ugwekar" <Dhananjay.Ugwekar@amd.com>
-Subject: [PATCH 2/2] cpufreq/amd-pstate: Fix the scaling_min/max_freq setting on shared memory CPPC systems
-Date: Tue, 25 Jun 2024 13:41:29 +0000
-Message-ID: <20240625134127.4464-3-Dhananjay.Ugwekar@amd.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240625134127.4464-1-Dhananjay.Ugwekar@amd.com>
-References: <20240625134127.4464-1-Dhananjay.Ugwekar@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B71815ECE5
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719322938; cv=none; b=lPRSziKHDMhMgEXKHWjQZigeN6ff35J2lYjH++YeTi96VPWSi3iq0gJxBRT+wU10iHJ3K0TIpYAZ/cnbM5oLfWGBEBGgmtCR5lXEt9IDzQI3b2zQxiSztV4th4Vf1nyTZhbQes/F0zQ6lbQbsD9zYD0DkFZFgfpwooJYXE3v9To=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719322938; c=relaxed/simple;
+	bh=kCWUIGs9OZe3ZSPUsdL0AZKlZk6a6lOvSF+HkD/n7YU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JFTQFJdOh0Srrel8t/t6GGNr8MEJvRABneFh7hYDNs3i/aMjPc/vGvfLWjiE+pcAZ0jP6rj+OheiZ1VoIDmxJrHOnHZcDI8ex49hQjuXs7V+zX4aoeFPVPyGgAyx8MhjLLRPP0Guz7Tfnq5GSIguEnl6N7VEUF6v2p72rV95hXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Xfc12/bV; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-36701e6c6e8so309671f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:42:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719322933; x=1719927733; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=rrBw1ViXI8PKGjD0P3Qbt3rk/F/dAyXw362A2nW4GkE=;
+        b=Xfc12/bVU3Gvc3mIPA+RiLJoycWvQlFicTKaWhjOv7MYOwKoa0FYSLEmtZY2SGI4bM
+         55I9qGy0BlX/q+0Y5+VpJp7q0XehSuiNpbReILF+o3EKzrcNxD+DyJl/fnjgxG3yCAN9
+         RjwALHPF5hfVcLZNUdyxlgMGPjqy9/B1D28FiV6sFR0tyP6pOjitz+DkNvcaZCDuOoJl
+         gYKMFPlIXNp5jVCjEKyWoIUnPnmKOdjX18W85lXlT8nyXAhMXZLBqHqomiTtk1jLSXea
+         Oy7LYO75bVCruobFzNlTP7e4eTiaNbi1lE7ii7J2a7eEAO1Xn9FLOSiybJjb5CRx474y
+         Y4KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719322933; x=1719927733;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rrBw1ViXI8PKGjD0P3Qbt3rk/F/dAyXw362A2nW4GkE=;
+        b=TLjUMw0pcaSRv2E7eYPYx+icU22YkC2a5OjOtn19Y7veUC1xGyM1Z779/j35DsRcSu
+         ErIimSvZPHbXvrIzbxSUEPyvcR9sDHPejvOvknsvkkAefOEJG7V/bZiE3LSr9oVmcNEi
+         y+GkKLP58s4ke49mtBMHPglBrueLooki4PCfuZW4I6pHZBUcFLls3ilkQ3crC788SsMM
+         Ih2WzxUeTBJNpxKY/0IewCrBwXs8Aagj9fvltjv6TV/t1YPwpCm5tuzKYncE3G2L3F7L
+         WX1hay5u4JWqdSzTG0uMXSNk0Sn12T+ZvCFS+uOfR0trtoaOHdN6zE+6YtLnj3LNY0bI
+         +WAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXNyTVMBug/I6fhulQ8e6SI/YbWnJIXlAB3EUT/p2O830U3POMYVpQdyexpHTwI3SxSfBmobR+1PMz2rxvOSZkthjrLpEcOHj2bjy60
+X-Gm-Message-State: AOJu0Yxt6TDsXWyNG/Ar99RrF9xX+fDhmRTAVMucm8bNFnNFnqbWCMhd
+	wwF1fO1D80EuRYDE0fCMa7Svi8e887QtadoUwBa3u/+wreazxDRzGNi0lVVf4xI=
+X-Google-Smtp-Source: AGHT+IGfxVH8cZhLOCvXgvPNcvNOE8ex439nMaaAuCPU2WaO9XCX6Uc4t/p/Ojo8lUWJHTo7ui6OzA==
+X-Received: by 2002:adf:f6d0:0:b0:35f:231e:ef87 with SMTP id ffacd0b85a97d-366e7a3634fmr6303452f8f.29.1719322933410;
+        Tue, 25 Jun 2024 06:42:13 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663ada0f8csm12930687f8f.115.2024.06.25.06.42.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 06:42:12 -0700 (PDT)
+Message-ID: <224793a4-da57-4621-ac29-7eac35c2da08@suse.com>
+Date: Tue, 25 Jun 2024 16:42:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] x86/paravirt: Disable virt spinlock on bare metal
+To: Chen Yu <yu.c.chen@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>
+Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Arnd Bergmann <arnd@arndb.de>, virtualization@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
+ Chen Yu <yu.chen.surf@gmail.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+ Prem Nath Dey <prem.nath.dey@intel.com>,
+ Xiaoping Zhou <xiaoping.zhou@intel.com>
+References: <20240625125403.187110-1-yu.c.chen@intel.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20240625125403.187110-1-yu.c.chen@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BL6PEPF0001AB4D:EE_|PH7PR12MB6812:EE_
-X-MS-Office365-Filtering-Correlation-Id: c5461196-f628-432d-68d3-08dc951d3f6e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230037|1800799021|376011|36860700010|82310400023;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?O4AgdWcMd4sQqkkLtsXEgUGxL0w+SbvXmMsIR3wc1DxwHXEwSgCGOB++Bhqr?=
- =?us-ascii?Q?yzHX0HofJbozI/MJRcJ4a6WNRStooJyf8+2Cj6L0ecZR+Ue0Vxi47fhznpHO?=
- =?us-ascii?Q?QDiWW+q26rFALmDVIacr69HsDJ1bRYeo1CgiCHlHSBgqQvzBb7kQSolw5k7j?=
- =?us-ascii?Q?RqNqUUyc01DmVH4r75nVlEvW2vLRVLEqARU7NzNVqQaNgknIp7mphQHc3Cid?=
- =?us-ascii?Q?LCG6NPg/Hfz71Fu5Rpp98+6l4Skp+yPRIFnnuh2VV3JuPnkOqTkso5gtzS6g?=
- =?us-ascii?Q?39Y/fNJAL5Tivy84WgbR0FGHyV1pkGyEdWtcOxKnnCkcJ4KMTY/ksmazZTQ2?=
- =?us-ascii?Q?YQXoa6o7iYqq6uEdOQWXrwMBSyut8qrlWZR2azVqayjzPPt4T1oDFVyLV6E2?=
- =?us-ascii?Q?thN/IEsG9UnWb5UH9DApZzucMamWZTDrlOXjlP/j6y8IDhx6DEjkMod1ydJx?=
- =?us-ascii?Q?5IBwn2vv/aaw+AbEA4T6gue7R4fDthPH3UCOvWVog2cra8QUEkzCkg0PnMWt?=
- =?us-ascii?Q?fejuDI9ktrUa5QGu/OBibEVZUPZXTpeXLr18q7qxBRl7WYwIZsekK1DEHNHY?=
- =?us-ascii?Q?aVo4wXtL5pGydD2QVYmFo/Gc0HUrVjifQQg07qyXm8YaHfrULZuDWUxPwZch?=
- =?us-ascii?Q?Q+rLStoR9SEoWsYG5f7pSlqiH2bgaen1M3SnLnovp7pcYm4pZIVmKTFwYsmY?=
- =?us-ascii?Q?BymdOZlRDenGs8BHxz7dTluCigmgql1uVLnpne4JXPSWHw1nwN17+9X2m1SL?=
- =?us-ascii?Q?GyAY7T2y0qbG/XY4vPkD4DOy0fHdVsNONNxaMJAwNOXulGXAPKfIBR1NOUhb?=
- =?us-ascii?Q?2IPmMakJgCyWr+Xuzz3Y7uyMkUH7qL9L/FJP/ABs2jwUiz7/q7bDy3tP+OTx?=
- =?us-ascii?Q?EojkXWsCCyf1QH3bn57nE9xETbFL8cUJf/5m3y0F5pT6PXy+WM5IqeGky1hE?=
- =?us-ascii?Q?Xt6RopDmRyRygqlB1Gyr368/Q6DodcoRSLhL8+ECj1lIC5oP2rBNWBg2QKgQ?=
- =?us-ascii?Q?RhGYFpFrlJrh8wnhXfxv/SQkv60dVj3uEbNEJJNfetX75bAe6XpDD4n7BlAh?=
- =?us-ascii?Q?qK07IOP47nebPwA86Lyoy3mo9zuik5e3qy+FJOUGXjmM6EzTYCO8d21my7yD?=
- =?us-ascii?Q?rLUu1TjCutsu1qMS6OaM67kJKjucxdrqWgyXaPkeyRbIFKb7OqwyqFRZ3/bo?=
- =?us-ascii?Q?I8/lh5fCwibtX0B2kHqOHkGLDWvHwecVIkso7uiCyE43rTDObPwjTWLkj6d8?=
- =?us-ascii?Q?hBni3xDKNZPeYMYf+h5LWxIPWK7FtxXCxa4YVQeBrEcZFxNGKeixU3T8qvua?=
- =?us-ascii?Q?KhKakSXUIOdAFxbP0GymCWDGE9gwbCBZSlT6EJKZZyYXvx7cz5nBC1pird61?=
- =?us-ascii?Q?KDVW1dK9zPz0S9ewceCB8woaZ+MHS7NxuNfJ9J0/PyhubAnZLA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230037)(1800799021)(376011)(36860700010)(82310400023);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 13:46:42.9933
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: c5461196-f628-432d-68d3-08dc951d3f6e
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BL6PEPF0001AB4D.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6812
 
-On shared memory CPPC systems, with amd_pstate=active mode, the change
-in scaling_min/max_freq doesn't get written to the shared memory
-region. Due to this, the writes to the scaling_min/max_freq sysfs file
-don't take effect. Fix this by propagating the scaling_min/max_freq
-changes to the shared memory region.
 
-Fixes: ffa5096a7c33 ("cpufreq: amd-pstate: implement Pstate EPP support for the AMD processors")
-Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
----
- drivers/cpufreq/amd-pstate.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-index 9ad62dbe8bfb..7c1c96abe5bd 100644
---- a/drivers/cpufreq/amd-pstate.c
-+++ b/drivers/cpufreq/amd-pstate.c
-@@ -264,6 +264,15 @@ static int amd_pstate_set_epp(struct amd_cpudata *cpudata, u32 epp)
- 			cpudata->epp_cached = epp;
- 	} else {
- 		perf_ctrls.energy_perf = epp;
-+		perf_ctrls.max_perf = cpudata->max_limit_perf;
-+		perf_ctrls.min_perf = cpudata->min_limit_perf;
-+		perf_ctrls.desired_perf = 0U;
-+
-+		ret = cppc_set_perf(cpudata->cpu, &perf_ctrls);
-+		if (ret) {
-+			pr_debug("failed to set min max limits (%d)\n", ret);
-+			return ret;
-+		}
- 		ret = cppc_set_epp_perf(cpudata->cpu, &perf_ctrls, 1);
- 		if (ret) {
- 			pr_debug("failed to set energy perf value (%d)\n", ret);
-@@ -1547,6 +1556,7 @@ static void amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
- 	}
- 
- 	WRITE_ONCE(cpudata->cppc_req_cached, value);
-+
- 	amd_pstate_set_epp(cpudata, epp);
- }
- 
--- 
-2.34.1
+On 25.06.24 г. 15:54 ч., Chen Yu wrote:
+> The kernel can change spinlock behavior when running as a guest. But
+> this guest-friendly behavior causes performance problems on bare metal.
+> So there's a 'virt_spin_lock_key' static key to switch between the two
+> modes.
+> 
+> The static key is always enabled by default (run in guest mode) and
+> should be disabled for bare metal (and in some guests that want native
+> behavior).
+> 
+> Performance drop is reported when running encode/decode workload and
+> BenchSEE cache sub-workload.
+> Bisect points to commit ce0a1b608bfc ("x86/paravirt: Silence unused
+> native_pv_lock_init() function warning"). When CONFIG_PARAVIRT_SPINLOCKS
+> is disabled the virt_spin_lock_key is incorrectly set to true on bare
+> metal. The qspinlock degenerates to test-and-set spinlock, which
+> decrease the performance on bare metal.
+> 
+> Set the default value of virt_spin_lock_key to false. If booting in a VM,
+> enable this key. Later during the VM initialization, if other
+> high-efficient spinlock is preferred(paravirt-spinlock eg), the
+> virt_spin_lock_key is disabled accordingly. The relation is described as
+> below:
+> 
+> X86_FEATURE_HYPERVISOR         Y    Y    Y     N
+> CONFIG_PARAVIRT_SPINLOCKS      Y    Y    N     Y/N
+> PV spinlock                    Y    N    N     Y/N
+> 
+> virt_spin_lock_key             N    N    Y     N
+> 
+> Fixes: ce0a1b608bfc ("x86/paravirt: Silence unused native_pv_lock_init() function warning")
+> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Suggested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> Suggested-by: Nikolay Borisov <nik.borisov@suse.com>
+> Reported-by: Prem Nath Dey <prem.nath.dey@intel.com>
+> Reported-by: Xiaoping Zhou <xiaoping.zhou@intel.com>
+> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
+> ---
+> v2._v3:
+>    Change the default value of virt_spin_lock_key from true to false.
+>    Enable this key when it is in the VM, and disable it when needed.
+>    This makes the code more readable. (Nikolay Borisov)
+>    Dropped Reviewed-by because the code has been changed.
+> v1->v2:
+>    Refine the commit log per Dave's suggestion.
+>    Simplify the fix by directly disabling the virt_spin_lock_key on bare metal.
+>    Collect Reviewed-by from Juergen.
+> ---
+>   arch/x86/include/asm/qspinlock.h | 4 ++--
+>   arch/x86/kernel/paravirt.c       | 7 +++----
+>   2 files changed, 5 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
+> index a053c1293975..a32bd2aabdf9 100644
+> --- a/arch/x86/include/asm/qspinlock.h
+> +++ b/arch/x86/include/asm/qspinlock.h
+> @@ -66,13 +66,13 @@ static inline bool vcpu_is_preempted(long cpu)
+>   
+>   #ifdef CONFIG_PARAVIRT
+>   /*
+> - * virt_spin_lock_key - enables (by default) the virt_spin_lock() hijack.
+> + * virt_spin_lock_key - disables (by default) the virt_spin_lock() hijack.
+>    *
+>    * Native (and PV wanting native due to vCPU pinning) should disable this key.
+>    * It is done in this backwards fashion to only have a single direction change,
+>    * which removes ordering between native_pv_spin_init() and HV setup.
+>    */
+> -DECLARE_STATIC_KEY_TRUE(virt_spin_lock_key);
+> +DECLARE_STATIC_KEY_FALSE(virt_spin_lock_key);
+>   
+>   /*
+>    * Shortcut for the queued_spin_lock_slowpath() function that allows
+> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
+> index 5358d43886ad..fec381533555 100644
+> --- a/arch/x86/kernel/paravirt.c
+> +++ b/arch/x86/kernel/paravirt.c
+> @@ -51,13 +51,12 @@ DEFINE_ASM_FUNC(pv_native_irq_enable, "sti", .noinstr.text);
+>   DEFINE_ASM_FUNC(pv_native_read_cr2, "mov %cr2, %rax", .noinstr.text);
+>   #endif
+>   
+> -DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
+> +DEFINE_STATIC_KEY_FALSE(virt_spin_lock_key);
+>   
+>   void __init native_pv_lock_init(void)
+>   {
+> -	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) &&
 
+Actually now shouldn't the CONFIG_PARAVIRT_SPINLOCKS check be retained? 
+Otherwise we'll have the virtspinlock enabled even if we are a guest but 
+CONFIG_PARAVIRT_SPINLOCKS is disabled, no ?
+
+> -	    !boot_cpu_has(X86_FEATURE_HYPERVISOR))
+> -		static_branch_disable(&virt_spin_lock_key);
+> +	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
+> +		static_branch_enable(&virt_spin_lock_key);
+>   }
+>   
+>   static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
 
