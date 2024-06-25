@@ -1,152 +1,236 @@
-Return-Path: <linux-kernel+bounces-228460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8D4F91603A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:45:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5770591603D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:45:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DB621F22421
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:45:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70A861C219C0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 046301474D0;
-	Tue, 25 Jun 2024 07:44:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8547C14830A;
+	Tue, 25 Jun 2024 07:45:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oq5q9jCL"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WmF5d0L1"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C5A146D6A;
-	Tue, 25 Jun 2024 07:44:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6871482F2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719301494; cv=none; b=uYY+dfbF4/T2pL9yLCeZJzPnotJFEo1l0mke8W70/hQbDinj1Gva3dEssz6k9NKNnWh76sXO48Z0BWheyI4vCvcF2ToCajH5FlgRaog80OBOWuNeJv5a/sTRbBFai/e5aLBm1XSBqgsR42D9OZSQjFCSFHYVUNV71LLd+pB+NIE=
+	t=1719301499; cv=none; b=r2kZ332J60XbLiEm2iCorkOFgsBE2ehIWKm7OpS6S8hMthZBRhzxKrn0mhgmEPRoVOY2xNAUNZq706gPrVTUuPhH5vxxEiOVQciuB/qIxThEX9Pwtd0Z0PyjZfN5gIS+ztSc8wUz3G/87ZjugYCieb5atVgQRPZOt/fcPpKl+Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719301494; c=relaxed/simple;
-	bh=CKj7StaaLWAYcShEgfK6am7EVw0Wcv13Sy9/IIP10GE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TmVqLbWsPyctQfWSIh/POmxhboJoaQZqX3IIXKheZeMwE7FHpImqGrF2l6QKYBuuNPh3fdjm2htTd9ezUZDdD3l0ylYzvD5jB78ZypLhO4CsWnR5v65ZTmA5Z00UvUgzqjUlxEi6+1jRpPBMOxCZCRHO99Vp4BgZWoDNOQDZWfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Oq5q9jCL; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7065a2f4573so2557613b3a.2;
-        Tue, 25 Jun 2024 00:44:52 -0700 (PDT)
+	s=arc-20240116; t=1719301499; c=relaxed/simple;
+	bh=BrE/avNcFCb2c2ZQ1R91zUzHnGcGEXFHrlren9ImfBY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=U/5hAEY1kGiPiQUfI3G9Hg8l0Noj5XH6Ox74OywECV7fN37ZmtgRuwIqC1X4KfC2NMAKBXqAQwtgHfvDqHCIxaspDGH/AgeKgf01KwBlo7nBEx1PkyevYx428CgPwInTRgw1hzvrpoMGEOOmB3y/YHKs4RSbGvkZRUnxoVIN1N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WmF5d0L1; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1f9fb3ca81bso20769755ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:44:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719301492; x=1719906292; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x9bNpnMQr1sigVGkEQxdpjCoaEnDXLkw0+fGFzW6LiY=;
-        b=Oq5q9jCLXWJWJCDfPQ5esPWWPFBhOrHv9tMh/FYR+1iGuQfz3yP3GTG674yx4a2S2l
-         qSe3KRJ6W+gjKBTck5MQrS94G5ukChUE0D6RqfiJvZ79jDRFu0W7g/nGuE/sXHeT1Xj4
-         02DAsu1MyVNU401+gzlKo/OPRWYZ+R1cnDDg3JpNdiUAj3IatlX/SjO0LOjW2NZjtAW7
-         56nSgD+dMWW2PlJ+1s6zVb5+ym/QIDw/xw38DxcDx219dpHJ+ZZkdhKgBkxJiKMKzrxa
-         VqPolGi6tAumAatNrR0bG8dp/b5Xd6gZsqCk9lLzLzxGWyPhcvEH0hLhHTqeBFHs1OND
-         t6RQ==
+        d=linaro.org; s=google; t=1719301497; x=1719906297; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=At0Xj8xgcIEkjWgNW//ghCMG7rYUOwOX+xhLiCV7+BQ=;
+        b=WmF5d0L1a4TdGGNaj553/xx+lV3LByw/CLr0izWG4Etrraw3XDT38JUuH9Gg4kftVu
+         9n4JtbEKRdgOl0Ucs/Dwgm1JB4Td3xq7pEeMAjiV5CCLhd9wn1+z/s5SjNXpn2Onzfcu
+         FvihjoNUykqUswpReDG2DqUAzX58XnyyQgn/AfGDN2D3f08UhSNJ8iIpteoPZgn6S6Lz
+         FdQzkvy0akZ7pVeZjyiu1G3j3AWlEyYscW+q5ZI1Kf6sWocdKSOf8Vsf/d9zU8x0etRs
+         9v/04EY+Q282tsvEz+O1YDVYrPG1C7kdiZehex1MSZ2Vy2E6j7YuzTtXC3g5qZAF1nPS
+         Oy0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719301492; x=1719906292;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1719301497; x=1719906297;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x9bNpnMQr1sigVGkEQxdpjCoaEnDXLkw0+fGFzW6LiY=;
-        b=l3/99pUHevL0N40hiDWUJumpCgMoYkB8Hbt7McRw7vbkUMFu13E6UqwTYwYJJsHow3
-         xwrdVLHnz/Yz2LgUpOz/tYf5B6VSeH2VofcI92a6p8C3wOMi+e/FWa+tYaqR+rxXOXEk
-         128KNndHQ66w0JUCifgaxVlwiYF50OWsFQycgGiviH1M1gBF3KTJGsEtOTx/d6DLX2Lb
-         fAMk3bZZRxi3a4n/fBkHYWPrjOxh5woIwiVyPl1ZOHed50C7oEgCg+N5PTShCy7DgUje
-         lzTqkdNbHfU6C/QHySjwy+koovG1cFaZca/ZEebpV1lnP77Sf42RKKKyTZuK7cghjGT2
-         m6tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHhTxitu3qzGUL9uB6zAd4MFArZ/zkuWticjw8uBLqokHxc9QAkN1jlo2S6D4HsbP0FLAIKxXemVUUIwsbcofbhzQ/JdA7RqvEtGq25eEj3Me/qU33QTxMPLG9SioPOjvrBkW+DtLEeg==
-X-Gm-Message-State: AOJu0YzoalHZtqJtc3IJ8NVx4v6/bS8HMAydMZn6K/Acjyvtrf6k98uJ
-	NYmzXcK6MgCp3VpHGklbqQBSEsBZXx8miuwACUDgB3ZyU9WxUmOD
-X-Google-Smtp-Source: AGHT+IE3vocBU23Qt4Sm//8nQYn6iEX/8//N53fmeBeJrlpHpfGfA0XguMcQ2Ic/tX661WahnJ9QsQ==
-X-Received: by 2002:a05:6a00:3c94:b0:705:9ddb:db6b with SMTP id d2e1a72fcca58-706745aaf1fmr7816795b3a.13.1719301492086;
-        Tue, 25 Jun 2024 00:44:52 -0700 (PDT)
-Received: from [192.168.50.95] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70691b08199sm1525805b3a.104.2024.06.25.00.44.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 00:44:51 -0700 (PDT)
-Message-ID: <c88ce35f-eca1-421a-a75b-e56fb6abfa06@gmail.com>
-Date: Tue, 25 Jun 2024 16:44:47 +0900
+        bh=At0Xj8xgcIEkjWgNW//ghCMG7rYUOwOX+xhLiCV7+BQ=;
+        b=Kd7+xWGywVzxamTkKSJPo565fGCU4jQrbeRFYohQCADcZaqVTPablpjHSbc/MkplsI
+         PoHrd59YIhA3hU6q9oMiC5K5x/wpHXmrY55i0xsVSPksrGUHmMDGTSbrCorkSZo11ZSU
+         3gAef4owsEfle4N3fdSj2gOmpV4Ta880P2sOplGZXoE0Qb6SFady7qPuvZV1MAIkGkzk
+         NcBXq9Tj073P/LYteLt1cBm7M14vfZ4QFqyfR9vsVnkMLbZfDgazEdjEFUVVUit1kFLK
+         +vIz7lH7iq8oBxbwtdljkN8XrWh00rognvKvytmwVS18SGhGM9zrOkPMW5dfm5V/qqed
+         FLLA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeJQZT6MjrhSkaz+E5+OzHONVZinugQ2Tb9uqsqoPepk8xjNzLg36RzM+GhuQRHgD2nHBR1/qY6lkrpygpIwN1CIpERRiEOPwPquxZ
+X-Gm-Message-State: AOJu0YwMYSbEjbIK24j6IHh1URx/kh+YQRLE1aetv+7DohuK3HGG4UWZ
+	MKW5PTS0O+sC35Xp0FogmGxdP+KCcNhgDmCVmeg7yiT4YvLbMuGlLbPnNALz+FTLQrcsohOH5Cg
+	=
+X-Google-Smtp-Source: AGHT+IFY7szsQuaT9s//WTBj2OWQzMRGSJ0i3bT9pBac299YWlDXDVeWQlC+gbq6bn7v8RBl0LeVWA==
+X-Received: by 2002:a17:902:d501:b0:1f9:c6e8:2797 with SMTP id d9443c01a7336-1fa2401bdf6mr62806515ad.37.1719301497113;
+        Tue, 25 Jun 2024 00:44:57 -0700 (PDT)
+Received: from thinkpad ([117.193.213.113])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbb2909sm74615435ad.257.2024.06.25.00.44.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 00:44:56 -0700 (PDT)
+Date: Tue, 25 Jun 2024 13:14:49 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Slark Xiao <slark_xiao@163.com>
+Cc: Jeffrey Hugo <quic_jhugo@quicinc.com>,
+	Loic Poulain <loic.poulain@linaro.org>, ryazanov.s.a@gmail.com,
+	johannes@sipsolutions.net, netdev@vger.kernel.org,
+	mhi@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Re: Re: [PATCH v2 1/2] bus: mhi: host: Import mux_id item
+Message-ID: <20240625074449.GB2642@thinkpad>
+References: <20240612093842.359805-1-slark_xiao@163.com>
+ <20240612094609.GA58302@thinkpad>
+ <87aecf24-cdbb-70d2-a3d1-8d1cacf18401@quicinc.com>
+ <20240612145147.GB58302@thinkpad>
+ <CAMZdPi-6GPWkj-wu4_mRucRBWXR03eYXu4vgbjtcns6mr0Yk9A@mail.gmail.com>
+ <c275ee49-ac59-058c-7482-c8a92338e7a2@quicinc.com>
+ <5055db15.37d8.19038cc602c.Coremail.slark_xiao@163.com>
+ <20240623134430.GD58184@thinkpad>
+ <6365d9b8.265a.1904d287cfa.Coremail.slark_xiao@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] s390/raw3270: Handle memory allocation failures in
- raw3270_setup_console()
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: Harald Freudenberger <freude@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Markus Elfring <Markus.Elfring@web.de>,
- MichelleJin <shjy180909@gmail.com>, linux-s390@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240625013225.17076-2-yskelg@gmail.com>
- <20240625063139.9210-B-hca@linux.ibm.com>
-Content-Language: en-US
-From: Yunseong Kim <yskelg@gmail.com>
-In-Reply-To: <20240625063139.9210-B-hca@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <6365d9b8.265a.1904d287cfa.Coremail.slark_xiao@163.com>
 
-Hi Heiko,
-
-On 6/25/24 3:31 오후, Heiko Carstens wrote:
-> On Tue, Jun 25, 2024 at 10:32:26AM +0900, yskelg@gmail.com wrote:
->> From: Yunseong Kim <yskelg@gmail.com>
->>
->> A null pointer is stored in a local variable after a call of the function
->> "kzalloc" failed. This pointer was passed to a subsequent call of the
->> function "raw3270_setup_device" where an undesirable dereference will be
->> performed then. Thus add corresponding return value checks.
->> The allocated each memory areas are immediately overwritten by the called
->> function zero-initialisation be omitted by calling the "kmalloc" instead.
->> After "ccw_device_enable_console" succeeds, set the bit raw3270 flag to
->> RAW3270_FLAGS_CONSOLE.
->>
->> Fixes: 33403dcfcdfd ("[S390] 3270 console: convert from bootmem to slab")
->> Cc: linux-s390@vger.kernel.org
->> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
->> ---
->>  drivers/s390/char/raw3270.c | 20 +++++++++++++++-----
->>  1 file changed, 15 insertions(+), 5 deletions(-)
-> ...
->>  	rc = raw3270_setup_device(cdev, rp, ascebc);
->> -	if (rc)
->> +	if (rc) {
->> +		kfree(ascebc);
->> +		kfree(rp);
->>  		return ERR_PTR(rc);
->> -	set_bit(RAW3270_FLAGS_CONSOLE, &rp->flags);
->> -
->> +	}
->>  	rc = ccw_device_enable_console(cdev);
->>  	if (rc) {
->>  		ccw_device_destroy_console(cdev);
->> +		kfree(ascebc);
->> +		kfree(rp);
->>  		return ERR_PTR(rc);
->>  	}
->> +	set_bit(RAW3270_FLAGS_CONSOLE, &rp->flags);
+On Tue, Jun 25, 2024 at 10:10:17AM +0800, Slark Xiao wrote:
+> At 2024-06-23 21:44:30, "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org> wrote:
+> >On Fri, Jun 21, 2024 at 11:17:16AM +0800, Slark Xiao wrote:
+> >> 
+> >> At 2024-06-14 22:31:03, "Jeffrey Hugo" <quic_jhugo@quicinc.com> wrote:
+> >> >On 6/14/2024 4:17 AM, Loic Poulain wrote:
+> >> >> On Wed, 12 Jun 2024 at 16:51, Manivannan Sadhasivam
+> >> >> <manivannan.sadhasivam@linaro.org> wrote:
+> >> >>>
+> >> >>> On Wed, Jun 12, 2024 at 08:19:13AM -0600, Jeffrey Hugo wrote:
+> >> >>>> On 6/12/2024 3:46 AM, Manivannan Sadhasivam wrote:
+> >> >>>>> On Wed, Jun 12, 2024 at 05:38:42PM +0800, Slark Xiao wrote:
+> >> >>>>>
+> >> >>>>> Subject could be improved:
+> >> >>>>>
+> >> >>>>> bus: mhi: host: Add configurable mux_id for MBIM mode
+> >> >>>>>
+> >> >>>>>> For SDX72 MBIM mode, it starts data mux id from 112 instead of 0.
+> >> >>>>>> This would lead to device can't ping outside successfully.
+> >> >>>>>> Also MBIM side would report "bad packet session (112)".
+> >> >>>>>> So we add a default mux_id value for SDX72. And this value
+> >> >>>>>> would be transferred to wwan mbim side.
+> >> >>>>>>
+> >> >>>>>> Signed-off-by: Slark Xiao <slark_xiao@163.com>
+> >> >>>>>> ---
+> >> >>>>>>    drivers/bus/mhi/host/pci_generic.c | 3 +++
+> >> >>>>>>    include/linux/mhi.h                | 2 ++
+> >> >>>>>>    2 files changed, 5 insertions(+)
+> >> >>>>>>
+> >> >>>>>> diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
+> >> >>>>>> index 0b483c7c76a1..9e9adf8320d2 100644
+> >> >>>>>> --- a/drivers/bus/mhi/host/pci_generic.c
+> >> >>>>>> +++ b/drivers/bus/mhi/host/pci_generic.c
+> >> >>>>>> @@ -53,6 +53,7 @@ struct mhi_pci_dev_info {
+> >> >>>>>>            unsigned int dma_data_width;
+> >> >>>>>>            unsigned int mru_default;
+> >> >>>>>>            bool sideband_wake;
+> >> >>>>>> + unsigned int mux_id;
+> >> >>>>>>    };
+> >> >>>>>>    #define MHI_CHANNEL_CONFIG_UL(ch_num, ch_name, el_count, ev_ring) \
+> >> >>>>>> @@ -469,6 +470,7 @@ static const struct mhi_pci_dev_info mhi_foxconn_sdx72_info = {
+> >> >>>>>>            .dma_data_width = 32,
+> >> >>>>>>            .mru_default = 32768,
+> >> >>>>>>            .sideband_wake = false,
+> >> >>>>>> + .mux_id = 112,
+> >> >>>>>>    };
+> >> >>>>>>    static const struct mhi_channel_config mhi_mv3x_channels[] = {
+> >> >>>>>> @@ -1035,6 +1037,7 @@ static int mhi_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
+> >> >>>>>>            mhi_cntrl->runtime_get = mhi_pci_runtime_get;
+> >> >>>>>>            mhi_cntrl->runtime_put = mhi_pci_runtime_put;
+> >> >>>>>>            mhi_cntrl->mru = info->mru_default;
+> >> >>>>>> + mhi_cntrl->link_id = info->mux_id;
+> >> >>>>>
+> >> >>>>> Again, 'link_id' is just a WWAN term. Use 'mux_id' here also.
+> >> >>>>
+> >> >>>> Does this really belong in MHI?  If this was DT, I don't think we would put
+> >> >>>> this value in DT, but rather have the driver (MBIM) detect the device and
+> >> >>>> code in the required value.
+> >> >>>>
+> >> >>>
+> >> >>> I believe this is a modem value rather than MHI. But I was OK with keeping it in
+> >> >>> MHI driver since we kind of keep modem specific config.
+> >> >>>
+> >> >>> But if WWAN can detect the device and apply the config, I'm all over it.
+> >> >> 
+> >> >> That would require at least some information from the MHI bus for the
+> >> >> MBIM driver
+> >> >> to make a decision, such as a generic device ID, or quirk flags...
+> >> >
+> >> >I don't see why.
+> >> >
+> >> >The "simple" way to do it would be to have the controller define a 
+> >> >different channel name, and then have the MBIM driver probe on that. 
+> >> >The MBIM driver could attach driver data saying that it needs to have a 
+> >> >specific mux_id.
+> >> >
+> >> >Or, with zero MHI/Controller changes, the MBIM driver could parse the 
+> >> >mhi_device struct, get to the struct device, for the underlying device, 
+> >> >and extract the PCIe Device ID and match that to a white list of known 
+> >> >devices that need this property.
+> >> >
+> >> >I guess if the controller could attach a private void * to the 
+> >> >mhi_device that is opaque to MHI, but allows MBIM to make a decision, 
+> >> >that would be ok.  Such a mechanism would be generic, and extensible to 
+> >> >other usecases of the same "class".
+> >> >
+> >> >-Jeff
+> >> 
+> >> Hi guys,
+> >> This patch mainly refer to the feature of mru setting between mhi and wwan side.
+> >> We ransfer this value to wwan side if we define it in mhi side, otherwise a default
+> >> value would be used in wwan side. Why don't we just align with that?
+> >> 
+> >
+> >Well, the problem is that MRU has nothing to do with MHI. I initially thought
+> >that it could fit inside the controller config, but thinking more I agree with
+> >Jeff that this doesn't belong to MHI at all.
+> >
+> >At the same time, I also do not want to extract the PCI info from the client
+> >drivers since the underlying transport could change with MHI. So the best
+> >solution I can think of is exposing the modem name in 'mhi_controller_config' so
+> >that the client drivers can do a match.
+> >
+> >Please try to implement that.
+> >
+> >- Mani
+> >
+> >-- 
+> >மணிவண்ணன் சதாசிவம்
+> Hi Mani,
+> Currently there are many products share a same mhi_controller_config
+> settings. For example, all foxconn device use modem_foxconn_sdx55_config.
+> But my device may be a SDX24, or SDX72, or even SDX65.  Any other idea?
 > 
-> Why did you move the set_bit() call?
 
-Thank you for the code review Heiko.
+Hmm, sadly we shouldn't have used the same controller config for all these
+devices across different product families. I didn't really paid attention to the
+device name which is supposed to be unique (that's my bad).
 
-While writing patch version 2, I spent a lot of time thinking about this
-part. Previously, even if function "ccw_device_enable_console" failed,
-the flag was set to RAW3270_FLAGS_CONSOLE and returned.
+For instance, because of the controller config reuse, your SDX62 modem would
+print:
 
-I think it would be more appropriate to set the bit after everything
-succeeded, so I included and submitted this code in v2 patch.
+"MHI PCI device found: foxconn-sdx65"
 
-I’d appreciate hearing your thoughts on this!
+which clearly is misleading the users...
 
+I've submitted a patch that uses unique product name across the product families
+[1]. Please take a look. After this patch, you can use the modem name to
+differentiate in client drivers.
 
-Warm regards,
+- Mani
 
-Yunseong Kim
+[1] https://lore.kernel.org/mhi/20240625074148.7412-1-manivannan.sadhasivam@linaro.org/
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
