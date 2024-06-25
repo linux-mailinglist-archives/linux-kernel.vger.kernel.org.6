@@ -1,167 +1,190 @@
-Return-Path: <linux-kernel+bounces-228270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC90F915D82
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:55:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CDDB915D84
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75448282847
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:55:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F0AF2838F6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:56:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6A7135A69;
-	Tue, 25 Jun 2024 03:55:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D25913C672;
+	Tue, 25 Jun 2024 03:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CtN0VewR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="LB+uHG0c"
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2067.outbound.protection.outlook.com [40.107.113.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B4538F9A;
-	Tue, 25 Jun 2024 03:55:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719287747; cv=none; b=FQfN3ZwAmYRHmN113f16gcnNU5rZRbE2TxWx/kcKjRhFC1bLa/QrfUWkcSFvGoxdt5T9F/69HARoCZVwrwqjPxDmiesHFM3M6n6S4Zp1RZvxtbjEhDLYp8Lk8TeAsCTNEhoxlzEzbrJ5UdCZ/P7JBdtBiw0YeQYlRZzoo6FxXc4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719287747; c=relaxed/simple;
-	bh=cQaTKnbbQKLHRvFAP0Ke1Gk/g4E7YkyDRfUGaWmHRtE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oijSYpHdvkeMT79VsTCC43Ke45rdKrONP5RZ6ERA3Lrudbg0mDTKIAwAzbJx9MhXE0iz81TVG/TdsshN/KgJ7BZzg3eE6qvNMabv8uq+Z6KmR3InzGtb9+sUpNz/6gQiyL8UdiRCOPj6a6G1WUrLD1cbS/I8uIA704DRpzlrqis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CtN0VewR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E2F8C4AF0A;
-	Tue, 25 Jun 2024 03:55:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719287747;
-	bh=cQaTKnbbQKLHRvFAP0Ke1Gk/g4E7YkyDRfUGaWmHRtE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CtN0VewRu6rSd7ETBhqeZb9oIsW9ianhZG2gpxnYGznwuXP6NtkFzCg5rxnrb2g/B
-	 pJrKZLJD/VQ0nTodyJ9MpaCAh0W4ks3FJH8NXNvWMcTaN9btIhwfGA1UUR3cPYZcMp
-	 g3c2CcGNzpHMqNc7Vgdu83ca8t4kcXR6xn1Va9kde3fhATTwrJcAAWrrSGJmWayEdk
-	 NBw58IY6QicXI3wst7P/9PdWdNa7Za8w9sq1yXGWxgxTSwTYdZn3rERWGDB2XYrcRq
-	 HiOmCArbD1ig07LK8oX6/wOd7p9wvNX+NtNQslosF0Odp95WOaJOwAlK4NxjqoYDrn
-	 dC4OyGwAjuLnA==
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7241b2fe79so277218866b.1;
-        Mon, 24 Jun 2024 20:55:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVELi1U2ZzYHaIaeu40DE0bOdnicn5jxmVjPjF8FaEnopWIa/HHwn+ETBZmOjT3qaxnjlFU/9rf+LnEaZRE6eJVtX5wgburaGMQVia+YDFvdtDAiUbFBeN2oZx6Wu279ssadk0J3pBwjA==
-X-Gm-Message-State: AOJu0Yy/J3vP4oC/mYrcY4wF1xXHQS5w4HUsHVoyfw2j/VuHklsWOWq2
-	IM0rMWZMMGeNaS7QSDrQtruptawdMaNwUiZVH58uZetvD8JTvxT1gLybaRAPnrplqoAlKi6Bu3T
-	ApFmlsPuqy41t4rSC6PgVBpzURio=
-X-Google-Smtp-Source: AGHT+IFpMrmDvhxYYpFAqoCj+v/ziYjdVaIIAkZShbx9udkdSPZQ9vpFAE6n7C6kUJa0fixtVlDWWvqsRB4url4vpsw=
-X-Received: by 2002:a17:906:bcf3:b0:a6e:fb9b:6769 with SMTP id
- a640c23a62f3a-a7242d2ac25mr496698666b.75.1719287745662; Mon, 24 Jun 2024
- 20:55:45 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F27B13A89C;
+	Tue, 25 Jun 2024 03:55:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.113.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719287754; cv=fail; b=hlOkBL/KNQi3nXHBNxgHKXq6fRtODI7tE3Z4iAJqDANhlEnAusoLC8XdhylH+o2EtQBmaxeesdYwisFZvL5UC8cni9ou8+vxxcz5ATp8TnPCTAtvRhiLbBgJa4Cv1oQS/MEirXZT/1o/AYBgwu4Glym1fHmlbtnuDmgeKs+B+Tw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719287754; c=relaxed/simple;
+	bh=10IWYxxT0C76Hu2fzE+TTvgcvMRgV2N07xpEp09iwxQ=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=hlGH7GvIOedWbMHKN+c/R/otDrw/BKmwlaBPWln02M3/zqgA7WOJ8mXfNBlFTCj5FTvb5sjKDbzoreIxLbhev0IsscaxIn4T/fip2C9LbqLlLRnmC46ldabls/seEDChmKCt5w41GVMCZgbqKquCptIdlef/zp/kfqxjZdaPoM4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=LB+uHG0c; arc=fail smtp.client-ip=40.107.113.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=POfz7y7Dhik+rhuc/RWp3xPIgqAxyoyjV6v/akSqXAgUNXDRwCEqlq1w2a7SyQeQWRAjG+77847jyg+l4Qw0xw+A+U3wrLOd9Jk0awNwlr3bpPUw0g2u+kPa9vlTWVT/RYbRAiSP7BOZssXQBw7oooOJrToM7PrC2y9cZyzN0SF0xaU1185ND5COktkHGtYqMWuVIeDaVBxL5++hEmYOh2wfn/YH04pPMXqXqdSpumfXnubRnSew6cymFrbsJXE/NrgsifY2A+Gm8BQoxoaoQ7O4v7BvhCdTlSMxW2hJ++YOvBBkhp7/9mpnwNbw7nwAhygOlW5nfmeS63MQkgJTQA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fKmULAhXtqVL6XzYT5ciHw3zud/ibIhTlsHlXZvzQ8U=;
+ b=SR6K4hx5gAfcW5Px0b3qMkG6Q0RSFhgdy8M7l9h3J0VBx06/Porj5mo3gC+7RR9B/+rKaA/1IJwz+ftIZiAOXmJr+ZpBe/XETChERtJMuaajbqWolST3CrhxYc2b2pQn3IYC8tegq5eqixKBb8Iir9/t0woB+Tk4h1XwstNlwVrDNQ92U2XEXIi/HszrezryXmbrim3u+5S9izPANdit4CM3M2i0zu7TcNECl0IjV5brnjDx7Y/2Du8SQC+W3w52xMXHHb4yBFA1H6e4xKDH4xru4J+wKtF7XwznUikWElr7eeBQ1672s2YD4VUaax4yX/ihRS/blTxIHOrRaFICqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fKmULAhXtqVL6XzYT5ciHw3zud/ibIhTlsHlXZvzQ8U=;
+ b=LB+uHG0c+v3FA2ymys8/V4O4pZ8uMx6s30DIolIrGgtkDRaKKZWbcu7kkheRhXCDh1Bfn+2g4RB50twpAPjOIdIEdvCQx+vte6V0Elyqo2MdwXHoznlTXK/mx8ySmxboPGQwiB42fSI3ZSHXXsvxUCpZ82TOrxAhUROBqmX9Q1M=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by OS7PR01MB11602.jpnprd01.prod.outlook.com
+ (2603:1096:604:246::8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Tue, 25 Jun
+ 2024 03:55:48 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11%4]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
+ 03:55:48 +0000
+Message-ID: <87pls5k75o.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	linux-sound@vger.kernel.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] MAINTAINERS: adjust file entries after adding vendor prefix in sound dtbs
+In-Reply-To: <20240625033419.149775-1-lukas.bulwahn@redhat.com>
+References: <20240625033419.149775-1-lukas.bulwahn@redhat.com>
+User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Tue, 25 Jun 2024 03:55:48 +0000
+X-ClientProxiedBy: TYAPR04CA0004.apcprd04.prod.outlook.com
+ (2603:1096:404:15::16) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <tencent_22BA0425B4DF1CA1713B62E4423C1BFBF809@qq.com>
- <20240410-unwoven-march-299a9499f5f4@spud> <20240619-hammock-drum-04bfc16a8ef6@spud>
- <CAJF2gTRYpDLij1aQoftz6ZqEgXDrfhNA39KiFVrwm7qc4WH6Fg@mail.gmail.com> <20240623-graveyard-consonant-97eff0f11808@spud>
-In-Reply-To: <20240623-graveyard-consonant-97eff0f11808@spud>
-From: Guo Ren <guoren@kernel.org>
-Date: Tue, 25 Jun 2024 11:55:32 +0800
-X-Gmail-Original-Message-ID: <CAJF2gTS_KkQjyQPubc2+naYiammLjN8jJyptGtCe8Z56MAmT2A@mail.gmail.com>
-Message-ID: <CAJF2gTS_KkQjyQPubc2+naYiammLjN8jJyptGtCe8Z56MAmT2A@mail.gmail.com>
-Subject: Re: (subset) [PATCH RESEND v8 0/6] riscv: add initial support for
- Canaan Kendryte K230
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-riscv@lists.infradead.org, Yangyu Chen <cyy@cyyself.name>, 
-	Conor Dooley <conor.dooley@microchip.com>, Damien Le Moal <dlemoal@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jun 24, 2024 at 1:32=E2=80=AFAM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Mon, Jun 24, 2024 at 01:07:55AM +0800, Guo Ren wrote:
-> > On Wed, Jun 19, 2024 at 6:45=E2=80=AFPM Conor Dooley <conor@kernel.org>=
- wrote:
-> > >
-> > > On Wed, Apr 10, 2024 at 11:30:25AM +0100, Conor Dooley wrote:
-> > > > From: Conor Dooley <conor.dooley@microchip.com>
-> > > >
-> > > > On Mon, 08 Apr 2024 00:26:58 +0800, Yangyu Chen wrote:
-> > > > > K230 is an ideal chip for RISC-V Vector 1.0 evaluation now. Add i=
-nitial
-> > > > > support for it to allow more people to participate in building dr=
-ivers
-> > > > > to mainline for it.
-> > > > >
-> > > > > This kernel has been tested upon factory SDK [1] with
-> > > > > k230_evb_only_linux_defconfig and patched mainline opensbi [2] to=
- skip
-> > > > > locked pmp and successfully booted to busybox on initrd with this=
- log [3].
-> > > > >
-> > > > > [...]
-> > > >
-> > > > Applied to riscv-dt-for-next, thanks!
-> > > >
-> > > > [1/6] dt-bindings: riscv: Add T-HEAD C908 compatible
-> > > >       https://git.kernel.org/conor/c/64cbc46bb854
-> > > > [2/6] dt-bindings: add Canaan K230 boards compatible strings
-> > > >       https://git.kernel.org/conor/c/b065da13ea9c
-> > > > [3/6] dt-bindings: timer: Add Canaan K230 CLINT
-> > > >       https://git.kernel.org/conor/c/b3ae796d0a4f
-> > > > [4/6] dt-bindings: interrupt-controller: Add Canaan K230 PLIC
-> > > >       https://git.kernel.org/conor/c/db54fda11b13
-> > > > [5/6] riscv: dts: add initial canmv-k230 and k230-evb dts
-> > > >       https://git.kernel.org/conor/c/5db2c4dc413e
-> > >
-> > > After some discussion on the k1 thread
-> > > (https://lore.kernel.org/all/ZnEOU7D00J8Jzy-1@xhacker/, https://lore.=
-kernel.org/all/ZnA6pZLkI2StP8Hh@xhacker/)
-> > > I am going to drop this series. It's not very useful in the current
-> > > state and there's not really been any interest from people in getting
-> > > the platform to a more complete state. Jisheng made some good points =
-in
-> > > the k1 thread about the missing clock controller stuff, and I think I=
-'m
-> > > going to make having basic things like clocks and where applicable
-> > > resets and pinctrl the minimum requirement for the platforms I'm look=
-ing
-> > > after.
-> > Here is the k230 clock driver based on Linux-6.6:
-> > https://github.com/ruyisdk/linux-xuantie-kernel/commit/196242fd9b9b4a19=
-1dab0c7c3c5bf851ed857d8d
-> >
-> > pinctrl:
-> > https://github.com/ruyisdk/linux-xuantie-kernel/commit/baf26b6622c9de2f=
-f64a6ed58eeeb98c8b2c828b
-> >
-> > No reset driver.
-> >
-> > Most of the k230 drivers are under Linux-5.10, and we are porting them
-> > into the newest version of Linux, which takes time.
-> >
-> > So, if the clock & punctual drivers mentioned above could satisfy the
-> > minimum requirements for the platforms, we will update the version of
-> > this series as a supplement.
-> >
-> > Is that okay?
->
-> I don't understand how that changes anything, these are all out of tree
-> drivers based on an old kernel. I know that there are drivers for a lot
-> of the peripherals that are in-use in the vendor tree etc. What I am
-> looking to happen, before I apply patches for the k230, is that the clock
-> dt-bindings will have landed in linux-next - and ideally the pinctrl ones
-> too.
-Okay, clock & pinctrl, the reply is clear to me. Thx.
-
->
-> Thanks,
-> Conor.
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|OS7PR01MB11602:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5a08e7a8-8be3-4947-b978-08dc94cab2a5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|366013|376011|1800799021|52116011|38350700011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?7sX8K9WHOILaClVlhHfeuC+Ls2x3+8Puv7h5+F/0212xO8xbOmoAfe49hjEX?=
+ =?us-ascii?Q?suirsj8CnY535yDK0PozYJdsLMzvOfiFj52//OvBGjXkb6FEB3Y/0bPfTJHC?=
+ =?us-ascii?Q?86jyb9lXTqcPS3/Oe2AZtjB/L0riaV6KYQChALZEIq+lDxDwPG+JfPkG3ae6?=
+ =?us-ascii?Q?+Db2/jT28RXeLiuB86Zu8UWTlQtmA2vBLyx7joprwtr9iNcBXXHB1PiCTpSE?=
+ =?us-ascii?Q?AjBV8wRFgy8fyvi4el9bWjg7JOF/IQulgrNgpoZspTnZaPN3gpx/1ZZfuCsp?=
+ =?us-ascii?Q?xuaBQhWsesacTK8kt9gQTRqGKN9Iqd1R5eX1IS/vRuvoHn9nf3Db+RiFw2+r?=
+ =?us-ascii?Q?qZPLICPHtBNTH7ymTW6IZYsHkDWLMQEMT4a1nacqH9+8oBZi9zn2iuzf11Vz?=
+ =?us-ascii?Q?kVbc6lk9iG7CUQGrx1maUtekvaBBF7R6fZEXJRKEnzjcMPDBQRPTKxAuoJUe?=
+ =?us-ascii?Q?K9do5ZAyTlOsn3ucw03W0tETxf5fJT9IfDN9w9QyPy1Hwy7wWtozgY8Q4Usi?=
+ =?us-ascii?Q?pr9rn1ImL4ydzGS10oAeyIT5Ytm3O30DDmn9pKaBznuFoWv5NYe3+K7tWF4b?=
+ =?us-ascii?Q?INwjaCYQkFss/BeanwFZZYC7poLkz6xToG7qEld8HKTChX8xkvqLAYSmaK/O?=
+ =?us-ascii?Q?3gs/cM2LQt/SvsnUQEVLQyYjgVtF3idDjMKehXRS/4HdG8w++yd1fKBKzB67?=
+ =?us-ascii?Q?iJTHMb3YF85Uvhcw873I3ALTqlvsXLrW8ZhNZaQylrCrx8XgTFD9mRL9nyHL?=
+ =?us-ascii?Q?iXo05BPhlx906HFxKZee6YqsiVusyfO3dfPJNihywgIzbR+lIMa2gmxefXPE?=
+ =?us-ascii?Q?2ROeOVxTZQ6Zqj/9zfAadAimI2G1qq7FazJge0uQC0txw9JVOOlJKjW7FVxm?=
+ =?us-ascii?Q?CKPhTlPRHYKfMvRV/cV6fx8TVp94EzfK5JQw6nILSLFh6S0CpVROzgGlp37P?=
+ =?us-ascii?Q?n3LOXgJTE+mw8BTH4jRjDbj3JBllhq3vnC8hJddgSMt+l5/y7iLYHE2tAYGW?=
+ =?us-ascii?Q?CVzo3hjeCAuCIFN2pgJaYeeuPmzeSdKdBCAVioRcpodK2qT5DpuzTy1/vX7O?=
+ =?us-ascii?Q?pf1C89SlIdSkVHz4OFkxN+2rUaUMkvPqAakE4Co6+Rr188ca6BtcE2LTT9PV?=
+ =?us-ascii?Q?/p+bvCirjtxIoERfK+6+KyGSoSUFAjzYEWa+lOb1FVCMKiyppe97TF7nZBOb?=
+ =?us-ascii?Q?DbN9tdFaIF1YmVJ3LEKdb3kET3Jor6NYva3nRR/dMDAk8xPjLqParMU6/0KU?=
+ =?us-ascii?Q?+7EE+DylgS/EZiIOr4XFLUO/c3WPjIUf1F63RDTh1ZRdB+JdiFh+DlxIf3Ky?=
+ =?us-ascii?Q?VeYH6LcpopWvle5HhglxO2lCq9JDRB//7D3n/QlrWmbk42g9+A+hxz4UIHSV?=
+ =?us-ascii?Q?D+hIOXE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(1800799021)(52116011)(38350700011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?ry4PzerITTklRQpRxDP8k7BNxMYgi9vGh6bBngLMhSKymbPsFuCuz3qPqGhd?=
+ =?us-ascii?Q?fsN2hyVrTu9+WfV9QLGzQnQZjlnMOr2SHChxZ2O5crZIldxKAAmY/PCsxnOR?=
+ =?us-ascii?Q?LoOhh95EJaNNkDx8q95NIwd0I5HdR4T6y3pkb8s8gXW5gwtYwl7weRMmcP7t?=
+ =?us-ascii?Q?oS+IHpWsY7pT7uENFI/akcPNU3UirLkWxtP+3+VKeEV28TiFQRRO7lEIB7wp?=
+ =?us-ascii?Q?xZE98kQtAQu+ybgXNcxaeolDu5/ZpGExG47yrofjw1B3W5gfj4cMFF7KGuVi?=
+ =?us-ascii?Q?e4jvwNo7hLFv98kXzzXVksysQSHpGEP5GVYjN2a4y2OB+WJzayZZ2WL62vOI?=
+ =?us-ascii?Q?CJree6Vh6tT0H1LDhOwxrtUAjfip6EQjT8nUz2ThhFmcCumGYRb1HTFJ8fRm?=
+ =?us-ascii?Q?bBhmullQood3/qrw/EiOeBuSE4+EAfsCHEQhdVHDivGcw3thGfPxJrzAP698?=
+ =?us-ascii?Q?efjSzmie2z7+n/kXEK6bMSgb8bCoC3URpuLXfHwS/ugTOVzohkOiHLg/YtQR?=
+ =?us-ascii?Q?Cd0+6zl9WTTfYdTJ5YTLnEhT3q8aW2hJpMcfJ2nwiTujFXePiXdLJ9zirq61?=
+ =?us-ascii?Q?MwacVRl7d7/VNZGARR2c1SjS2+hN1+LSlqZKHLk11T4DZum0S+NSaGXYZHvH?=
+ =?us-ascii?Q?6vo/UicBTeBHe1BgnvqOCpw4uPWilQfH0w70NHpE/Sn0ISrJ0Qk7Sn+U0tnF?=
+ =?us-ascii?Q?s1hUPBH2Ba0D6wbNbzP7P+xMGa9fqFGdOR/kiJCO1/FoKkeMe39ugn2ymEwD?=
+ =?us-ascii?Q?7O8BgmE1Na3y6IONlRbWXiJoSowwgHBgl9bKqRYg7uWs8c5fjEZo9ARPF4cv?=
+ =?us-ascii?Q?7Wqp97itCPlYHqj/dYvZp5kXVWsS+rlFkCKRhbak542UXnf/Yl3cHw6tB46Y?=
+ =?us-ascii?Q?6Y2O0zVJma2WYJdpK0o9THsPNRtn/x8SqZ/5i/XA7ifB7v6bUTDdAMqO0bvc?=
+ =?us-ascii?Q?2xWS8bNUrPfGDVn5dbXjhAmgPW3D/G70I45dxQe+0CvAIFZ1GnZ6IZliZ0jo?=
+ =?us-ascii?Q?gRECv6Gx/xNH64os80Zx4E1cSc2elxIdiOSTh4WmSTaAXuD60saWI7BSpSgi?=
+ =?us-ascii?Q?NZQpCcaMGdlcgR9ZPzjwTOcpf+sMZFrOxJM3wrhiBYFNtX/vT0vGLdfLyQyZ?=
+ =?us-ascii?Q?pSaCt81Et95sqEvblUQUEj+M4+Y3qs2z+IIv6XIf0HuL011PfshxyK3BttLP?=
+ =?us-ascii?Q?gE+dPcnyhlIKFcy63qlyVE7z4RXI0eHeGy8AmoUgU+Gohdxn2DUs/XBbbG9P?=
+ =?us-ascii?Q?Dp9F4aw1G2iL5se1zV4824R4mlXOFR2WLjYxjvHqw+2L+x9gTEz3DUSppVI7?=
+ =?us-ascii?Q?RlJE5sqAi7bmyKWSagoFUKbwN1R6ksJx95ofM/Qxpw0K9boqjN4g9MrNsYGf?=
+ =?us-ascii?Q?vIMteNm9O8YyiLqcH9JwtByeH4PQ+ViEkxK7O8AFqPsuYKEnT+mYTchYosK9?=
+ =?us-ascii?Q?s4NIbZS4YAC5tFI8ES0FiWrLBq606RMVcG1KKTHbWWUJH5XLRNnJLwiWYv9r?=
+ =?us-ascii?Q?PRHXTJYjomMVxr9/wTr+YZUKLmLSwiu2o1euhZSAv7PBOpdTzQlmHrz8nTPe?=
+ =?us-ascii?Q?li7yTnOvqM7UBLzKeHlSbCf1ToD4uKS0vGMe4X5lEWJwFvxCAJw6p8wPbmeF?=
+ =?us-ascii?Q?7nEo75312QhHYgshhI3Jd4M=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5a08e7a8-8be3-4947-b978-08dc94cab2a5
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 03:55:48.2064
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JCJ8iXJgcueyb6XLUIfZBJwOZvPJ4w6lGC8+cihUCOcZTN5atku4SHQLHvK+T/0BWC7ttgOobjh7KyP0WMirKcytj1hQTRpzmlwc8QK4ToLa/P7W1+ieH0CXczeavS2n
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: OS7PR01MB11602
 
 
+Hi Lukas
 
---=20
-Best Regards
- Guo Ren
+> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> 
+> Commit ae8fc2948b48 ("ASoC: dt-bindings: add missing vender prefix on
+> filename") renames a few files in Documentation/devicetree/bindings/sound/,
+> but misses to adjust the file entries pointing to those files in
+> MAINTAINERS.
+> 
+> Hence, ./scripts/get_maintainer.pl --self-test=patterns complains about
+> broken references.
+> 
+> Adjust the file entries in NXP SGTL5000 DRIVER and TEXAS INSTRUMENTS AUDIO
+> (ASoC/HDA) DRIVERS.
+> 
+> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> ---
+
+Yes, indeed. Thank you for the fixup
+
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+
+Thank you for your help !!
+
+Best regards
+---
+Kuninori Morimoto
 
