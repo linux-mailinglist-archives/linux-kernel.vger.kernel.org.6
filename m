@@ -1,149 +1,113 @@
-Return-Path: <linux-kernel+bounces-228895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 659C491684D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:46:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A366391685D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:50:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1898B213B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:46:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3F591C21FAB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA23215699D;
-	Tue, 25 Jun 2024 12:46:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68095158875;
+	Tue, 25 Jun 2024 12:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b="Lb1eXWNr"
-Received: from mail.avm.de (mail.avm.de [212.42.244.120])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QcXmLz0F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787D31474D9;
-	Tue, 25 Jun 2024 12:46:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.42.244.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4DED149DF4;
+	Tue, 25 Jun 2024 12:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719319573; cv=none; b=F/78UyMViPBd0LwIWn72YugUSQjL30zZtt89zxYxq0E4kSxUXG7b5kN9zjp4toxxYbxE4Zgl6SymG7mlE77kXZrRhROL/vpc+iSieaOQw3rrwnAmXgu23FIF+AGlkwETWh+Yhpq86Gh1q8sSRJBFGgO6smv45UzezkwCaHrFK4U=
+	t=1719319824; cv=none; b=NHvUb4mvDeByxDz22lJPkETrClTjm6QZpr4cksBurKv2yDY1H+DTDKlYrOpfqBBYra5REM1XJrfmZ3Re79QcSD7GT0CJDAUSyAF/jgo8ulBY8YXv9sktWyRU05uIzWJw9Yg6Ad5zI1YIARo4kcbdK/C9mhPkXBn/6NHUprJFzB0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719319573; c=relaxed/simple;
-	bh=UgG6zuDj3mUNroT4Pq2RquviOSsBcsYsmr8LcPCX3w0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LJ08i49+KPS0W6NNv3U29Yv1A27cG+oNogdq+qaS9zj7AmGCsUeCLcOFRgps9qI2SqBgibnLE36hIxAdMB9QEZgjySdHUNvzYumsyUZKGrtkuHdfH5cnpfTURrRXv2E/1/qyRP4dlZJD11WmDydaATaAlOybFO/vqqVlVt6/+lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de; spf=pass smtp.mailfrom=avm.de; dkim=pass (1024-bit key) header.d=avm.de header.i=@avm.de header.b=Lb1eXWNr; arc=none smtp.client-ip=212.42.244.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=avm.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=avm.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=avm.de; s=mail;
-	t=1719319560; bh=UgG6zuDj3mUNroT4Pq2RquviOSsBcsYsmr8LcPCX3w0=;
-	h=From:Date:Subject:To:Cc:From;
-	b=Lb1eXWNrC5nlBPB+FrSOYuEmAITnVcywyMkDrfQ7Fzfn6j9K6I1gDE90CrOwJzxUV
-	 +S0gJ1F/B2+SEWpOFmwXp5CIy3Fuk+Y6UXqBtzpKHm/YHCfsEFK1hrrGqT68WjXUZ/
-	 Vy3NL16vvYXI06n0QsK8AQwtrViC3ZxAArITK/uw=
-Received: from mail-auth.avm.de (unknown [IPv6:2001:bf0:244:244::71])
-	by mail.avm.de (Postfix) with ESMTPS;
-	Tue, 25 Jun 2024 14:46:00 +0200 (CEST)
-Received: from buildd.core.avm.de (buildd-sv-01.avm.de [172.16.0.225])
-	by mail-auth.avm.de (Postfix) with ESMTPA id C7196806FE;
-	Tue, 25 Jun 2024 14:46:01 +0200 (CEST)
-Received: from l-nschier-z2.ads.avm.de (unknown [IPv6:fde4:4c1b:acd5:7792::1])
-	by buildd.core.avm.de (Postfix) with ESMTP id BAE41182BC8;
-	Tue, 25 Jun 2024 14:46:01 +0200 (CEST)
-From: Nicolas Schier <n.schier@avm.de>
-Date: Tue, 25 Jun 2024 14:45:56 +0200
-Subject: [PATCH] kbuild: deb-dpkg: Check optional env variables before use
+	s=arc-20240116; t=1719319824; c=relaxed/simple;
+	bh=s/7FiJi0GYLkjQ80S4lqlm3cUD3LaT7XZxvXN7svSLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EH/YESIL9BHJVhBAHyTBn3qvrA6VPLtIF1SF0bFdK3Uvz0utkMfX2mo+8xjaMs9sfmPpUGFrQKR8dfP7g0oU9EXUjYtorxfZW+og7NNXF96Jlxiqfc0mo1jykEYIqDloxy+ax40WWbavuM4A+cJUzhL8cxXts7LWB/Q+S1jY9iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QcXmLz0F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86EB7C32786;
+	Tue, 25 Jun 2024 12:50:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719319824;
+	bh=s/7FiJi0GYLkjQ80S4lqlm3cUD3LaT7XZxvXN7svSLM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QcXmLz0F9HMBbpD9AlMywFuHfaXoGktzYxKA5zWvJfhikRVK4r5RSpODDuwq8Jqqd
+	 s0ZYKfQ/d5Zwz5QPhc+wSZ8NVnoe5f2dFSJcLx+wiqTGZ3N8hkqOwkQIUqqV9NaE41
+	 z53ioDhHQrjZTxcpBoYmlNeR7b+lMGdngquXFLn0zbFenVtlot61kstgtroVyfQWHW
+	 b9s/NBtENC7InhSWB1lroKiu6mdgvQ8bryusPh0Rxuex8nc0mPRf7Yp3AvdEE3MpC2
+	 rAki5Y/LiVngw9G/PXuQn4Ut6tQXZhKzo1Nb8UWXq9c/jfF77xhKb1IWO1sR4o8eKa
+	 pFQTO7Pg8ggfA==
+Date: Tue, 25 Jun 2024 13:50:17 +0100
+From: Mark Brown <broonie@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	matthias.bgg@gmail.com, lgirdwood@gmail.com, keescook@chromium.org,
+	gustavoars@kernel.org, henryc.chen@mediatek.com,
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel@collabora.com,
+	wenst@chromium.org, amergnat@baylibre.com, djakov@kernel.org
+Subject: Re: [PATCH v6 0/7] MediaTek DVFSRC Bus Bandwidth and Regulator knobs
+Message-ID: <2e8a9cf2-2bc0-45d8-b6c1-e3a9441d5641@sirena.org.uk>
+References: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
+ <f7b4cd98-1acf-4f6b-a7e0-57419abadba1@collabora.com>
+ <57cf8f9f-4320-4c55-a9f8-a4c1facabfe8@sirena.org.uk>
+ <39ed7b8c-b19a-40de-9b30-a731ac83ad20@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240625-mkdebian-check-if-optional-vars-are-defined-v1-1-53f196b9f83a@avm.de>
-X-B4-Tracking: v=1; b=H4sIAAS8emYC/x2NQQqDMBBFryKz7kAaoguvUrqYJj862EaZFBHEu
- zd0+fi8/06qMEWlsTvJsGvVtTS43zqKs5QJrKkxeeeDG3zPnyXhpVI4zogLa+Z1+zZJ3ryLVRY
- DJ2QtSCxhiNn1PiCA2uNmbTj+tcfzun4tOKtOfQAAAA==
-To: Masahiro Yamada <masahiroy@kernel.org>, 
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Nicolas Schier <n.schier@avm.de>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2109; i=n.schier@avm.de;
- h=from:subject:message-id; bh=UgG6zuDj3mUNroT4Pq2RquviOSsBcsYsmr8LcPCX3w0=;
- b=owEBbQKS/ZANAwAIAYjGvJyImm24AcsmYgBmerwJO7xJurk4fkB+K10WVnzGKfGgRf6yPL2gQ
- gEjiGsp2J6JAjMEAAEIAB0WIQQO/4WJ63TpgecLpGmIxryciJptuAUCZnq8CQAKCRCIxryciJpt
- uK2lD/4jow1qnRsjeB/9Ju8ZFzp8i8M0vJzrLCrYugXTOoVmaBrtxZnJyhWJcbxokz7ZDko8mgu
- zTYY9pnHjro+G84Qk5BZf3s3rf6X1ItSYVora3Z9TbP6H/BeGt5LSv6LFKVRHXuPN8SKxW85ApS
- i3Ppv45wkiPQRnL+jcvKX0pqcssdPZZ9DjL/1EYq+AV0fy3/Z3VgHZtKPOAjqNigEhj3+Ng+t2m
- KWvJAfWFPi8u/zXnBRJL+J4QBKXH4qmAPL1Y05kWgF03n3iP7MJbOiwxC5hicemSU50w0T5Tepx
- uktzPZcEPDGCfRctWj5bcfsVWxczRmQ12lT8KiTAOdclm43YqW/jyQCsxgPdJDJ2xcfy6CkJlES
- BioFVWsZHIEAbGzKh75XA7tTPRs/x8YoGVaHxGpcsLOlItEte12ZziZFU3+Np/kV6XnFNqVDw7K
- 75AfUF+OXtY5zwaa3wapDtnRDPKifFWLOt4atctwX95COKit9qyX6XEBw+JVAMbFD+Zr4fHv2G+
- hZw9q8t0vaw0is7TFt0/l3OLRYXq+2S4HFkW/C2D4ypSUd6XyuZ96ZkIpzd/UpJCzilZkqud89O
- GD8XrooXTNfbHqfjDntZ4YQvrVtuJrFxA5ynqbUez5to4tbyueldoEWwtJAXtsxoSEtlFqJISrz
- AZWv8qv4XlBzGmA==
-X-Developer-Key: i=n.schier@avm.de; a=openpgp;
- fpr=7CF67EF8868721AFE53D73FDBDE3A6CC4E333CC8
-X-purgate-ID: 149429::1719319560-40F0C4F2-F9180F22/0/0
-X-purgate-type: clean
-X-purgate-size: 2111
-X-purgate-Ad: Categorized by eleven eXpurgate (R) http://www.eleven.de
-X-purgate: This mail is considered clean (visit http://www.eleven.de for further information)
-X-purgate: clean
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Ck+ggcwV/Ot1gS3W"
+Content-Disposition: inline
+In-Reply-To: <39ed7b8c-b19a-40de-9b30-a731ac83ad20@collabora.com>
+X-Cookie: Results vary by individual.
 
-Add checks to mkdebian for undefined optional environment variables
-before evaluating them.
 
-Some variables used by scripts/package/mkdebian are fully optional and
-not set by kbuild.  In order to allow enabling 'set -u' (shell script
-exits on dereference of undefined variables), introduce the explicit
-checking.
+--Ck+ggcwV/Ot1gS3W
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Suggested-by: Masahiro Yamada <masahiroy@kernel.org>
-Signed-off-by: Nicolas Schier <n.schier@avm.de>
----
-This allows application of the original patch
-   [PATCH 1/2] kconfig: add -e and -u options to *conf-cfg.sh scripts
-   [PATCH 2/2] kbuild: package: add -e and -u options to shell scripts
-as sent https://lore.kernel.org/linux-kbuild/20240611160938.3511096-1-masahiroy@kernel.org/
----
- scripts/package/mkdebian | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+On Tue, Jun 25, 2024 at 01:58:57PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 25/06/24 12:25, Mark Brown ha scritto:
+> > On Tue, Jun 25, 2024 at 10:32:30AM +0200, AngeloGioacchino Del Regno wrote:
 
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index b9a5b789c655..2a7bb05c7f60 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -19,7 +19,7 @@ if_enabled_echo() {
- }
- 
- set_debarch() {
--	if [ -n "$KBUILD_DEBARCH" ] ; then
-+	if [ "${KBUILD_DEBARCH:+set}" ] ; then
- 		debarch="$KBUILD_DEBARCH"
- 		return
- 	fi
-@@ -147,7 +147,7 @@ fi
- 
- # Some variables and settings used throughout the script
- version=$KERNELRELEASE
--if [ -n "$KDEB_PKGVERSION" ]; then
-+if [ "${KDEB_PKGVERSION:+set}" ]; then
- 	packageversion=$KDEB_PKGVERSION
- else
- 	packageversion=$(${srctree}/scripts/setlocalversion --no-local ${srctree})-$($srctree/scripts/build-version)
-@@ -164,7 +164,7 @@ debarch=
- set_debarch
- 
- # Try to determine distribution
--if [ -n "$KDEB_CHANGELOG_DIST" ]; then
-+if [ "${KDEB_CHANGELOG_DIST:+set}" ]; then
-         distribution=$KDEB_CHANGELOG_DIST
- # In some cases lsb_release returns the codename as n/a, which breaks dpkg-parsechangelog
- elif distribution=$(lsb_release -cs 2>/dev/null) && [ -n "$distribution" ] && [ "$distribution" != "n/a" ]; then
+> > > The main issue here is that the main soc/mediatek dvfsrc binding
+> > > dt-bindings: soc: mediatek: Add DVFSRC bindings for MT8183 and MT8195
+> > > does use the others, so I can't pick this one without the others being present
+> > > or the validation obviously fails.
 
----
-base-commit: 3893a22a160edd1c15b483deb3dee36b36ee4226
-change-id: 20240625-mkdebian-check-if-optional-vars-are-defined-a46cf0524e4e
+> > I can't tell what you want from me here.
 
-Best regards,
--- 
-Nicolas Schier
+> I'm asking you to pick the regulator patches :-)
 
+>    dt-bindings: regulator: Add bindings for MediaTek DVFSRC Regulators
+>    regulator: Remove mtk-dvfsrc-regulator.c
+>    regulator: Add refactored mtk-dvfsrc-regulator driver
+
+Is there no interdependency with the rest of the series?  There was in
+some earlier version at least I think.  If I reviewed the patches it's
+because I wasn't expecting to apply them.
+
+--Ck+ggcwV/Ot1gS3W
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ6vQgACgkQJNaLcl1U
+h9AbYgf/URHedtcxPh/nFTezG0aVe4h2eu4bJNpWaI0S7OfNW4LJT4EhtiuCuSPh
+BdAb2NA7AisSvcgOgZrIjD3COYnanTj/6j3pDfiV/YC3lCJoz+mv1TptT2kQxujQ
+nPJbzRAtsIl24RsI8sSC2B1MWsddf44E6RAfcYnlV8YDWQua9BxfLyCdEuG+gjmb
++y5YK9glKhbAzHsaUjMkzn+BjHE147scOlb7u00uD61WrN94O2Q83guy2+sybO0y
+Km6bYffp60vo0ebFLyJCTIfYEqeUAEvWw4v13TAZU7uBlHgr231EptnRd2gXLMLg
++WFplgSdJIzqSEsoZostEfIqw0bfgA==
+=t/8Q
+-----END PGP SIGNATURE-----
+
+--Ck+ggcwV/Ot1gS3W--
 
