@@ -1,185 +1,131 @@
-Return-Path: <linux-kernel+bounces-228376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF1B4915F02
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:40:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C266915F06
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:41:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08303B21F20
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:40:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD6C91C21EB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:41:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D07C714600C;
-	Tue, 25 Jun 2024 06:40:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04927146006;
+	Tue, 25 Jun 2024 06:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="WuXZAjJW"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mItU8yRL"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE3B1CFB6;
-	Tue, 25 Jun 2024 06:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE383611A;
+	Tue, 25 Jun 2024 06:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719297633; cv=none; b=oootKGmmNTh/6PNmaD7ooBlI5joCaLxA8NsZx1B3YJcV1irg9Lw6TytFCTBHD3nzZG+4KW0Jgq1fYeJf6/0Sl69AqYHDaEbUpiFqqiBbAUs3m4kd14RWHkqGgfRuhHz4yW8qEVoXxt+mB27qPo7DtKPoe7HdHRVD/Aaobun+xvM=
+	t=1719297696; cv=none; b=W52WvXfX1O8cJSHMT5LBYKxye0WueqQtJQziyCN+mdNSa9WAxTPtiZ6WZeblvnjHDAJa1MJFdxlpcelfMQTBsH0IqRQBMNDasX/VH6GaEz+ZWsqivTYultXfPtDBa/Ut4NHnEInS56cJtXTm7XGuGwmKWkQwxApne6y6kjbUu9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719297633; c=relaxed/simple;
-	bh=r4CQcAV3+IU4nR1tHr4k/9Dp2FCfCEstfh4ql451SvY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VgDGF+72H7ef8sLpKWZsRv+WKkw0jZeYl57jiaAOMocAOwPLpbEfkPHUhy5NHa0sMl3AHjylCvZZDYOcnJbf6mSUrMONycFo9paC/Myu6YfrxgbON6V93R1u35Rwr9VqLTtRJT/+plYddSYIQIh4k5Iue1a1tVItYxc1GWytEyc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=WuXZAjJW; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0241204.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P63AAd000769;
-	Tue, 25 Jun 2024 08:40:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	PVmaRvuRdNjcyteecKUb2n20H04bvA0NxajNSqThrBc=; b=WuXZAjJWJxiw/5JB
-	8g+TupB2fQEKu0nYqJIl6+DNZ7yne3Du8rjDqX84u4oufLs+TVu0wzfjNtg+j63M
-	mBuYq1yz2w1Iqkxut2fll/64T0OZ0QQEiOqUhI8j6cv3/PJMtGQex46C45PJJSMu
-	3R/bUW2oOFx6OVWmZQvTxOD/W6KHHuN1CkW6pSqHJ6bu/tcViTrlxs3IyrjKux7W
-	wXevFl3oFJW5+9Xl/gecmH5lKWQW13n7ZjYbfVi2Zsg+7U1wsWxHIXWaTWbEc6vp
-	qQnUzaLczg/Cq+FiT+SCLxht1fsbNHnKvhSKKxh9R+unrVO8jhVft45HHGo8EmfD
-	67R7dw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ywnxxa3ea-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 08:40:11 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A479A40047;
-	Tue, 25 Jun 2024 08:40:06 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 680402115FB;
-	Tue, 25 Jun 2024 08:39:11 +0200 (CEST)
-Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 25 Jun
- 2024 08:39:10 +0200
-Message-ID: <604bfb55-f30d-47c5-80a0-c0ba889b2542@foss.st.com>
-Date: Tue, 25 Jun 2024 08:39:09 +0200
+	s=arc-20240116; t=1719297696; c=relaxed/simple;
+	bh=SS9OXazpq+Dbe9vH0PFJ2x3IjkLpsy3HIL/GYHKk8P8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=JMkk7PKO51TQ793L526+AKWxcjeBP4nR8E2hOplvl+UHFB0asDpvFvaJDnCtYdqtAKF1idMR7FXAfmDc+CjknVx697B/qeeA4XdW9EN/x9VmNSUHSgANIWYI0dk6K1YDR7k80DWfaEl0X189mN0MgLv1Pd+NYyGbVSCWNlSvCjs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mItU8yRL; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3c9b94951cfso2959288b6e.3;
+        Mon, 24 Jun 2024 23:41:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719297694; x=1719902494; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FiSYpkCCJa2ynYPvssadIcTJSgGBXf+md4v4r1uNPxk=;
+        b=mItU8yRLn/7r5ShQF5soBqRHN3HGwIJQVuITnWHfbacQK02Dxj4PcFHt/sy8RJ7pwN
+         tFqNl8XGFoyJXtULCzZQIXycU/6BHCezb8ynLOhmBLTsUAMDyul44YMpD/cMcjI9dKnG
+         rKTKUiRQhem2sNwsWO9uuR5CAGjHqU4/u+ONN+H4arYVGyCg7N67jc8sNXq0Sr/DmbeE
+         jy66Sf70qwvOx968+m0oMbBTHgqFtkcigL3ffsTL4sBdtwfYENj6apCpPBTbsbt6hWIM
+         TKgaqDHID/JPqazDab4QcFTLQaRVLLehRJozrmX+yYtLNtHIL3ZlWC6cUABVVogUSRW2
+         Bmdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719297694; x=1719902494;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FiSYpkCCJa2ynYPvssadIcTJSgGBXf+md4v4r1uNPxk=;
+        b=QnNy12+jz8HYXnzaD1tpe4O8HMEQDq8bxmxK6aymgtfFNBRS7NTGIDxqOKG1t++IR2
+         3POePxz9zEU2xHWjnGhgLBjHI9KBxJrzVngJTKDXff7HvzPGC5Sj04XOvt3wUVS0eZ43
+         Hv5fA9Iagg+7kPaR169vKh5JZ1j+wI4wmbkLWWmixuxg1YhFp4ZgUhh/BatfgXS55rLK
+         nADLkm26ZN6K2iHjVghPvmAnsQt6j6WkF+y76IJ5RlWRnyZllpf093BmVup5zdw0l/nX
+         KbcuM/8+CroEVYZANkaHRvQ9mIMc080KAtRDBl4EzSn6LXX2jNUehYcVXAEH5GuWmWwA
+         uycw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCbZjOp5nSWCdCmqQte4sEZFdkPDCaQurJSG3ku0uRdN4BJYnRMroyHYUOD9HfPV16EdqVSIICUEiiTrDW2vEVQi0RnjNtatKildpt2Kak7pp8KZsHLtUvqfktHjRAynBOHqY2xgt5v+Hd
+X-Gm-Message-State: AOJu0YzodgMS3PZWeWMpkeyUemHl9DLDjp6nCv0V61+inoYcVhitCMYc
+	OuWur+JmiDBC4vkUuj4Z3LaxULsS4Cf4CFf5m65d2AoxU03SczfZ
+X-Google-Smtp-Source: AGHT+IGmIpEK4h/noSZzXdtXPUoa2gfvobkZ9aziSZjqfvV0nYXycfKGs8LIX1ntFV+Jz3PSf+QVjw==
+X-Received: by 2002:a05:6870:1654:b0:254:affe:5a05 with SMTP id 586e51a60fabf-25d06c1c1ddmr6826956fac.21.1719297693828;
+        Mon, 24 Jun 2024 23:41:33 -0700 (PDT)
+Received: from a28aa0606c51.. (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-706512e64afsm7317879b3a.189.2024.06.24.23.41.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 23:41:33 -0700 (PDT)
+From: Jacky Huang <ychuang570808@gmail.com>
+To: dan.carpenter@linaro.org,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Jacky Huang <ychuang3@nuvoton.com>
+Subject: [PATCH v4] tty: serial: ma35d1: Add a NULL check for of_node
+Date: Tue, 25 Jun 2024 06:41:28 +0000
+Message-Id: <20240625064128.127-1-ychuang570808@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] thermal: sti: depend on THERMAL_OF subsystem
-To: Raphael Gallais-Pou <rgallaispou@gmail.com>,
-        "Rafael J. Wysocki"
-	<rafael@kernel.org>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui
-	<rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
-References: <20240518-thermal-v1-0-7dfca3ed454b@gmail.com>
- <20240518-thermal-v1-2-7dfca3ed454b@gmail.com>
-Content-Language: en-US
-From: Patrice CHOTARD <patrice.chotard@foss.st.com>
-In-Reply-To: <20240518-thermal-v1-2-7dfca3ed454b@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_03,2024-06-24_01,2024-05-17_01
+Content-Transfer-Encoding: 8bit
 
+From: Jacky Huang <ychuang3@nuvoton.com>
 
+The pdev->dev.of_node can be NULL if the "serial" node is absent.
+Add a NULL check to return an error in such cases.
 
-On 5/18/24 14:12, Raphael Gallais-Pou wrote:
-> Switch to thermal_of_zone to handle thermal-zones. Replace
-> thermal_zone_device_register() by devm_thermal_of_zone_register() and
-> remove ops st_thermal_get_trip_type, st_thermal_get_trip_temp.
-> 
-> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
-> ---
->  drivers/thermal/st/Kconfig      |  1 +
->  drivers/thermal/st/st_thermal.c | 20 ++++++++++----------
->  2 files changed, 11 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/thermal/st/Kconfig b/drivers/thermal/st/Kconfig
-> index ecbdf4ef00f4..2d08147876ee 100644
-> --- a/drivers/thermal/st/Kconfig
-> +++ b/drivers/thermal/st/Kconfig
-> @@ -5,6 +5,7 @@
->  
->  config ST_THERMAL
->  	tristate "Thermal sensors on STMicroelectronics STi series of SoCs"
-> +	depends on THERMAL_OF
->  	help
->  	  Support for thermal sensors on STMicroelectronics STi series of SoCs.
->  
-> diff --git a/drivers/thermal/st/st_thermal.c b/drivers/thermal/st/st_thermal.c
-> index 5f33543a3a54..60e70de724d4 100644
-> --- a/drivers/thermal/st/st_thermal.c
-> +++ b/drivers/thermal/st/st_thermal.c
-> @@ -12,6 +12,7 @@
->  #include <linux/of_device.h>
->  
->  #include "st_thermal.h"
-> +#include "../thermal_hwmon.h"
->  
->  /* The Thermal Framework expects millidegrees */
->  #define mcelsius(temp)			((temp) * 1000)
-> @@ -203,23 +204,21 @@ int st_thermal_register(struct platform_device *pdev,
->  	trip.type = THERMAL_TRIP_CRITICAL;
->  
->  	sensor->thermal_dev =
-> -		thermal_zone_device_register_with_trips(dev_name(dev), &trip, 1, sensor,
-> -							&st_tz_ops, NULL, 0, polling_delay);
-> +		devm_thermal_of_zone_register(dev, 0, sensor, &st_tz_ops);
+Fixes: 930cbf92db01 ("tty: serial: Add Nuvoton ma35d1 serial driver support")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/8df7ce45-fd58-4235-88f7-43fe7cd67e8f@moroto.mountain/
+Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+---
+  V3 -> V4: Move the version info lines to the correct position.
+  V2 -> V3: Added the "Reported-by:" line.
+  V1 -> V2: Added the "Fixes" line.
 
-The struct trip becomes no more used, it can be removed.
+ drivers/tty/serial/ma35d1_serial.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-
-
->  	if (IS_ERR(sensor->thermal_dev)) {
-> -		dev_err(dev, "failed to register thermal zone device\n");
-> +		dev_err(dev, "failed to register thermal of zone\n");
->  		ret = PTR_ERR(sensor->thermal_dev);
->  		goto sensor_off;
->  	}
-> -	ret = thermal_zone_device_enable(sensor->thermal_dev);
-> -	if (ret)
-> -		goto tzd_unregister;
->  
->  	platform_set_drvdata(pdev, sensor);
->  
-> -	return 0;
-> +	/*
-> +	 * devm_thermal_of_zone_register() doesn't enable hwmon by default
-> +	 * Enable it here
-> +	 */
-> +	return devm_thermal_add_hwmon_sysfs(dev, sensor->thermal_dev);
->  
-> -tzd_unregister:
-> -	thermal_zone_device_unregister(sensor->thermal_dev);
->  sensor_off:
->  	st_thermal_sensor_off(sensor);
->  
-> @@ -232,7 +231,8 @@ void st_thermal_unregister(struct platform_device *pdev)
->  	struct st_thermal_sensor *sensor = platform_get_drvdata(pdev);
->  
->  	st_thermal_sensor_off(sensor);
-> -	thermal_zone_device_unregister(sensor->thermal_dev);
-> +	thermal_remove_hwmon_sysfs(sensor->thermal_dev);
-> +	devm_thermal_of_zone_unregister(sensor->dev, sensor->thermal_dev);
->  }
->  EXPORT_SYMBOL_GPL(st_thermal_unregister);
->  
-> 
-
-
+diff --git a/drivers/tty/serial/ma35d1_serial.c b/drivers/tty/serial/ma35d1_serial.c
+index 19f0a305cc43..3b4206e815fe 100644
+--- a/drivers/tty/serial/ma35d1_serial.c
++++ b/drivers/tty/serial/ma35d1_serial.c
+@@ -688,12 +688,13 @@ static int ma35d1serial_probe(struct platform_device *pdev)
+ 	struct uart_ma35d1_port *up;
+ 	int ret = 0;
+ 
+-	if (pdev->dev.of_node) {
+-		ret = of_alias_get_id(pdev->dev.of_node, "serial");
+-		if (ret < 0) {
+-			dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
+-			return ret;
+-		}
++	if (!pdev->dev.of_node)
++		return -ENODEV;
++
++	ret = of_alias_get_id(pdev->dev.of_node, "serial");
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
++		return ret;
+ 	}
+ 	up = &ma35d1serial_ports[ret];
+ 	up->port.line = ret;
+-- 
+2.34.1
 
 
