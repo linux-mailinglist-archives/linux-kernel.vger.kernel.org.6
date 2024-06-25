@@ -1,195 +1,158 @@
-Return-Path: <linux-kernel+bounces-228968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E82D4916932
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:42:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 452A9916937
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:43:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B55D280F38
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:42:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B87681F22AC1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:43:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC1715FA8F;
-	Tue, 25 Jun 2024 13:42:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FC4F15FCE9;
+	Tue, 25 Jun 2024 13:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Xfc12/bV"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="I+A5AlIg"
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B71815ECE5
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E8215ECD4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:43:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719322938; cv=none; b=lPRSziKHDMhMgEXKHWjQZigeN6ff35J2lYjH++YeTi96VPWSi3iq0gJxBRT+wU10iHJ3K0TIpYAZ/cnbM5oLfWGBEBGgmtCR5lXEt9IDzQI3b2zQxiSztV4th4Vf1nyTZhbQes/F0zQ6lbQbsD9zYD0DkFZFgfpwooJYXE3v9To=
+	t=1719323017; cv=none; b=qY7yLXMUj82fLGetjk5sQ8hsCZYe0wYmN59i/XtAkgqFlVnWhu0en3RxJTCtsbpBRl25ytlfCLsQNHyiYiNCE3bNxyke77Ie7kQZBK3PAjgDFpV5NgLtRL0wy/Z1WfqCVVEHPq2KzZp/CyIp3INLrMAoYovCjgJiDI71MdrVqQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719322938; c=relaxed/simple;
-	bh=kCWUIGs9OZe3ZSPUsdL0AZKlZk6a6lOvSF+HkD/n7YU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JFTQFJdOh0Srrel8t/t6GGNr8MEJvRABneFh7hYDNs3i/aMjPc/vGvfLWjiE+pcAZ0jP6rj+OheiZ1VoIDmxJrHOnHZcDI8ex49hQjuXs7V+zX4aoeFPVPyGgAyx8MhjLLRPP0Guz7Tfnq5GSIguEnl6N7VEUF6v2p72rV95hXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Xfc12/bV; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-36701e6c6e8so309671f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:42:14 -0700 (PDT)
+	s=arc-20240116; t=1719323017; c=relaxed/simple;
+	bh=8kGTS4HVT8KpR/eO601IHXpA2FvItFD8t5X6wz4AxBk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sXtpjI2vCTEx6pqGCfszcu+vohoc/g6o5fPPyhFTRTVk09su56xl4Pc8J9hjBsn3fNeBYVKvrs3iHqnfQtszqZGPnbP4hCNinjNYi5nX9qB78g5B3zMywIAZe31smYzUzgMz1CFgEhujuFT+1am5sj8d3l3DBY7x0WCTeo5xr+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=I+A5AlIg; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-48f4b637d9eso1069061137.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:43:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719322933; x=1719927733; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rrBw1ViXI8PKGjD0P3Qbt3rk/F/dAyXw362A2nW4GkE=;
-        b=Xfc12/bVU3Gvc3mIPA+RiLJoycWvQlFicTKaWhjOv7MYOwKoa0FYSLEmtZY2SGI4bM
-         55I9qGy0BlX/q+0Y5+VpJp7q0XehSuiNpbReILF+o3EKzrcNxD+DyJl/fnjgxG3yCAN9
-         RjwALHPF5hfVcLZNUdyxlgMGPjqy9/B1D28FiV6sFR0tyP6pOjitz+DkNvcaZCDuOoJl
-         gYKMFPlIXNp5jVCjEKyWoIUnPnmKOdjX18W85lXlT8nyXAhMXZLBqHqomiTtk1jLSXea
-         Oy7LYO75bVCruobFzNlTP7e4eTiaNbi1lE7ii7J2a7eEAO1Xn9FLOSiybJjb5CRx474y
-         Y4KA==
+        d=google.com; s=20230601; t=1719323015; x=1719927815; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e+WevDy/zbmH6/gNWgICGHdme8Bw7y7CeAZkS+a1N+I=;
+        b=I+A5AlIg4QMe89zjakL4DoBKOISR/3jE9FolHRi+GYQHGx8xOG2pQ3Vgv8RfBs6iVe
+         Vw/Xw3ejgqXfTf7+naiqo3ir/C2zod34q2FR9w3JIMfbHj/GkPrKb40zllvQt4ClYhJ/
+         DU1aDJxBxK90KdHVwbKYOCndkSOobs0GGwuy0stPLnuVVAiZPkBgMPAO2twspEmVCJFC
+         UsGhd03zk+u35GUd9oI+mYP3a1yy7bD9fui3M2PNmqsDifhljB33Gk4VjAKdrG4qKvn2
+         IMS7LwIrZH5EjKR21f6ABFGORUK/B7q+2nXXxlcC6NWTSGandIcUotlO7GeRVaew4kbc
+         6ppw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719322933; x=1719927733;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rrBw1ViXI8PKGjD0P3Qbt3rk/F/dAyXw362A2nW4GkE=;
-        b=TLjUMw0pcaSRv2E7eYPYx+icU22YkC2a5OjOtn19Y7veUC1xGyM1Z779/j35DsRcSu
-         ErIimSvZPHbXvrIzbxSUEPyvcR9sDHPejvOvknsvkkAefOEJG7V/bZiE3LSr9oVmcNEi
-         y+GkKLP58s4ke49mtBMHPglBrueLooki4PCfuZW4I6pHZBUcFLls3ilkQ3crC788SsMM
-         Ih2WzxUeTBJNpxKY/0IewCrBwXs8Aagj9fvltjv6TV/t1YPwpCm5tuzKYncE3G2L3F7L
-         WX1hay5u4JWqdSzTG0uMXSNk0Sn12T+ZvCFS+uOfR0trtoaOHdN6zE+6YtLnj3LNY0bI
-         +WAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXNyTVMBug/I6fhulQ8e6SI/YbWnJIXlAB3EUT/p2O830U3POMYVpQdyexpHTwI3SxSfBmobR+1PMz2rxvOSZkthjrLpEcOHj2bjy60
-X-Gm-Message-State: AOJu0Yxt6TDsXWyNG/Ar99RrF9xX+fDhmRTAVMucm8bNFnNFnqbWCMhd
-	wwF1fO1D80EuRYDE0fCMa7Svi8e887QtadoUwBa3u/+wreazxDRzGNi0lVVf4xI=
-X-Google-Smtp-Source: AGHT+IGfxVH8cZhLOCvXgvPNcvNOE8ex439nMaaAuCPU2WaO9XCX6Uc4t/p/Ojo8lUWJHTo7ui6OzA==
-X-Received: by 2002:adf:f6d0:0:b0:35f:231e:ef87 with SMTP id ffacd0b85a97d-366e7a3634fmr6303452f8f.29.1719322933410;
-        Tue, 25 Jun 2024 06:42:13 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663ada0f8csm12930687f8f.115.2024.06.25.06.42.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 06:42:12 -0700 (PDT)
-Message-ID: <224793a4-da57-4621-ac29-7eac35c2da08@suse.com>
-Date: Tue, 25 Jun 2024 16:42:11 +0300
+        d=1e100.net; s=20230601; t=1719323015; x=1719927815;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e+WevDy/zbmH6/gNWgICGHdme8Bw7y7CeAZkS+a1N+I=;
+        b=ioraWZjTT/Onja/8SCtcehI9ve0c7GAgwNDxIRScR2r7q2pKkKuG+q1Oe54Jr1n+Ho
+         UQ0DllC8z+2zXOR4i2uPuiguC2STnmvFThpDT7oPoEi2AuZB3/x3tiB7XxE8WeljFjaq
+         wRGkN5xpk3RJlv19owQjzGeME9teh+P+t8jBrxHMh0xB0HP4Ez2mv8EtOxJ1NQPUL3m5
+         dc84WeVRO1YyNqtUgLowqcpwdt4fTxujt9DcMwxpoB93WvebHTOlbBKOmy9zqwY0GKNE
+         nVCa8+2DZ55jABHUiCPNwZ466mVqaJvFjYVNbPf//mNpxohLwIKaXDzq7e+iMS3p/Z8x
+         jkqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUe8JMgPeI8DHCFjCSiM8g9DWBMSflVqPbjkJ3ygj1rvSBEz54v5jkUT/ngjr2/po4Bb8oU9sxeEkupI7MElBxglgk2OYS+gAK+M47d
+X-Gm-Message-State: AOJu0Yw4S3hsTPvkZ4rbfk+7KDVBiE6WqxIGef+4sJNWvx+JSSXwDhM8
+	D59ze15FcqVf9qMEu20ibkbOXIYdEp6vczvrPO2qjru8nBk6Yj1U+kgoUIO4GKPJJOibwhcxmSF
+	cYzUws4szs7Ud2Jlm2iYqiagb4iYi4PcL0YGK
+X-Google-Smtp-Source: AGHT+IFWEAS2SBcf9yuEn3swxZTPFQNVF8VlquVOGiWY6zTmxPMkkM+98oeIg2tZ2xQ3whJci6IkmR9GFjctp8UESzQ=
+X-Received: by 2002:a05:6102:5fc:b0:48f:147f:c022 with SMTP id
+ ada2fe7eead31-48f4ef4c9a6mr7045582137.4.1719323014575; Tue, 25 Jun 2024
+ 06:43:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] x86/paravirt: Disable virt spinlock on bare metal
-To: Chen Yu <yu.c.chen@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Arnd Bergmann <arnd@arndb.de>, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
- Chen Yu <yu.chen.surf@gmail.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
- Prem Nath Dey <prem.nath.dey@intel.com>,
- Xiaoping Zhou <xiaoping.zhou@intel.com>
-References: <20240625125403.187110-1-yu.c.chen@intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <20240625125403.187110-1-yu.c.chen@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240624152732.1231678-1-bigeasy@linutronix.de>
+In-Reply-To: <20240624152732.1231678-1-bigeasy@linutronix.de>
+From: Marco Elver <elver@google.com>
+Date: Tue, 25 Jun 2024 15:42:56 +0200
+Message-ID: <CANpmjNOGpeogkZrGoF82MVEK4NYHFqn7V_kTU_1z3jQhaq5iWw@mail.gmail.com>
+Subject: Re: [PATCH v4 0/6] perf: Make SIGTRAP and __perf_pending_irq() work
+ on RT.
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Adrian Hunter <adrian.hunter@intel.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Daniel Bristot de Oliveira <bristot@kernel.org>, 
+	Frederic Weisbecker <frederic@kernel.org>, Ian Rogers <irogers@google.com>, Ingo Molnar <mingo@redhat.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, 24 Jun 2024 at 17:27, Sebastian Andrzej Siewior
+<bigeasy@linutronix.de> wrote:
+>
+> Hi,
+>
+> Arnaldo reported that "perf test sigtrap" fails on PREEMPT_RT. Sending
+> the signal gets delayed until event_sched_out() which then uses
+> task_work_add() for its delivery. This breaks on PREEMPT_RT because the
+> signal is delivered with disabled preemption.
+>
+> While looking at this, I also stumbled upon __perf_pending_irq() which
+> requires disabled interrupts but this is not the case on PREEMPT_RT.
+>
+> This series aim to address both issues while not introducing a new issue
+> at the same time ;)
+> Any testing is appreciated.
+
+Tested-by: Marco Elver <elver@google.com>
+
+Ran lots of concurrent copies of the "sigtrap_threads" and
+"remove_on_exec" tests (with lockdep on), and it all survived. Fuzzer
+is still running but hasn't found anything relevant yet.
 
 
-
-On 25.06.24 г. 15:54 ч., Chen Yu wrote:
-> The kernel can change spinlock behavior when running as a guest. But
-> this guest-friendly behavior causes performance problems on bare metal.
-> So there's a 'virt_spin_lock_key' static key to switch between the two
-> modes.
-> 
-> The static key is always enabled by default (run in guest mode) and
-> should be disabled for bare metal (and in some guests that want native
-> behavior).
-> 
-> Performance drop is reported when running encode/decode workload and
-> BenchSEE cache sub-workload.
-> Bisect points to commit ce0a1b608bfc ("x86/paravirt: Silence unused
-> native_pv_lock_init() function warning"). When CONFIG_PARAVIRT_SPINLOCKS
-> is disabled the virt_spin_lock_key is incorrectly set to true on bare
-> metal. The qspinlock degenerates to test-and-set spinlock, which
-> decrease the performance on bare metal.
-> 
-> Set the default value of virt_spin_lock_key to false. If booting in a VM,
-> enable this key. Later during the VM initialization, if other
-> high-efficient spinlock is preferred(paravirt-spinlock eg), the
-> virt_spin_lock_key is disabled accordingly. The relation is described as
-> below:
-> 
-> X86_FEATURE_HYPERVISOR         Y    Y    Y     N
-> CONFIG_PARAVIRT_SPINLOCKS      Y    Y    N     Y/N
-> PV spinlock                    Y    N    N     Y/N
-> 
-> virt_spin_lock_key             N    N    Y     N
-> 
-> Fixes: ce0a1b608bfc ("x86/paravirt: Silence unused native_pv_lock_init() function warning")
-> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Suggested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-> Suggested-by: Nikolay Borisov <nik.borisov@suse.com>
-> Reported-by: Prem Nath Dey <prem.nath.dey@intel.com>
-> Reported-by: Xiaoping Zhou <xiaoping.zhou@intel.com>
-> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-> ---
-> v2._v3:
->    Change the default value of virt_spin_lock_key from true to false.
->    Enable this key when it is in the VM, and disable it when needed.
->    This makes the code more readable. (Nikolay Borisov)
->    Dropped Reviewed-by because the code has been changed.
-> v1->v2:
->    Refine the commit log per Dave's suggestion.
->    Simplify the fix by directly disabling the virt_spin_lock_key on bare metal.
->    Collect Reviewed-by from Juergen.
-> ---
->   arch/x86/include/asm/qspinlock.h | 4 ++--
->   arch/x86/kernel/paravirt.c       | 7 +++----
->   2 files changed, 5 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/qspinlock.h b/arch/x86/include/asm/qspinlock.h
-> index a053c1293975..a32bd2aabdf9 100644
-> --- a/arch/x86/include/asm/qspinlock.h
-> +++ b/arch/x86/include/asm/qspinlock.h
-> @@ -66,13 +66,13 @@ static inline bool vcpu_is_preempted(long cpu)
->   
->   #ifdef CONFIG_PARAVIRT
->   /*
-> - * virt_spin_lock_key - enables (by default) the virt_spin_lock() hijack.
-> + * virt_spin_lock_key - disables (by default) the virt_spin_lock() hijack.
->    *
->    * Native (and PV wanting native due to vCPU pinning) should disable this key.
->    * It is done in this backwards fashion to only have a single direction change,
->    * which removes ordering between native_pv_spin_init() and HV setup.
->    */
-> -DECLARE_STATIC_KEY_TRUE(virt_spin_lock_key);
-> +DECLARE_STATIC_KEY_FALSE(virt_spin_lock_key);
->   
->   /*
->    * Shortcut for the queued_spin_lock_slowpath() function that allows
-> diff --git a/arch/x86/kernel/paravirt.c b/arch/x86/kernel/paravirt.c
-> index 5358d43886ad..fec381533555 100644
-> --- a/arch/x86/kernel/paravirt.c
-> +++ b/arch/x86/kernel/paravirt.c
-> @@ -51,13 +51,12 @@ DEFINE_ASM_FUNC(pv_native_irq_enable, "sti", .noinstr.text);
->   DEFINE_ASM_FUNC(pv_native_read_cr2, "mov %cr2, %rax", .noinstr.text);
->   #endif
->   
-> -DEFINE_STATIC_KEY_TRUE(virt_spin_lock_key);
-> +DEFINE_STATIC_KEY_FALSE(virt_spin_lock_key);
->   
->   void __init native_pv_lock_init(void)
->   {
-> -	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) &&
-
-Actually now shouldn't the CONFIG_PARAVIRT_SPINLOCKS check be retained? 
-Otherwise we'll have the virtspinlock enabled even if we are a guest but 
-CONFIG_PARAVIRT_SPINLOCKS is disabled, no ?
-
-> -	    !boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> -		static_branch_disable(&virt_spin_lock_key);
-> +	if (boot_cpu_has(X86_FEATURE_HYPERVISOR))
-> +		static_branch_enable(&virt_spin_lock_key);
->   }
->   
->   static void native_tlb_remove_table(struct mmu_gather *tlb, void *table)
+> v3=E2=80=A6v4: https://lore.kernel.org/all/20240322065208.60456-1-bigeasy=
+@linutronix.de/
+>    - Rebased on top of Frederic's series
+>       (https://lore.kernel.org/all/20240621091601.18227-1-frederic@kernel=
+.org)
+>    - Frederick pointed out that perf_pending_task() needs to
+>      perf_swevent_get_recursion_context() in order not to recurse if
+>      something within perf_swevent_.*_recursion_context() triggers a
+>      software event. To address this, the counters have been moved to
+>      the task_struct (#3 + #4) and preemt_disable() has been replaced
+>      with a RCU-read lock (#5).
+>    - The remaning logic same that means the event is pushed to task-work
+>      instead of delivering from IRQ-work. The series was tested with
+>      remove_on_exec as suggested by Marco Elver: On PREEMPT_RT a single
+>      invocation passes, 100 parallel invocations report (for some)
+>      unexpected SIGTRAPs and timeouts. This also observed on !RT
+>      (without the series) with a higher task-count.
+>
+> v2=E2=80=A6v3: https://lore.kernel.org/all/20240312180814.3373778-1-bigea=
+sy@linutronix.de/
+>     - Marco suggested to add a few comments
+>       - Added a comment to __perf_event_overflow() to explain why irq_wor=
+k
+>         is raised in the in_nmi() case.
+>       - Added a comment to perf_event_exit_event() to explain why the
+>         pending event is deleted.
+>
+> v1=E2=80=A6v2: https://lore.kernel.org/all/20240308175810.2894694-1-bigea=
+sy@linutronix.de/
+>     - Marco pointed me to the testsuite that showed two problems:
+>       - Delayed task_work from NMI / missing events.
+>         Fixed by triggering dummy irq_work to enforce an interrupt for
+>         the exit-to-userland path which checks task_work
+>       - Increased ref-count on clean up/ during exec.
+>         Mostly addressed by the former change. There is still a window
+>         if the NMI occurs during execve(). This is addressed by removing
+>         the task_work before free_event().
+>       The testsuite (remove_on_exec) fails sometimes if the event/
+>       SIGTRAP is sent before the sighandler is installed.
+>
+> Sebastian
+>
 
