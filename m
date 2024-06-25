@@ -1,86 +1,110 @@
-Return-Path: <linux-kernel+bounces-228778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00F2B9166AF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:55:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E8999166B2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1CEC28C123
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:55:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2711F221F7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AE5155CBD;
-	Tue, 25 Jun 2024 11:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="OoW+Ap8q"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17D114C58A;
+	Tue, 25 Jun 2024 11:56:37 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E7514D29B;
-	Tue, 25 Jun 2024 11:54:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3057F1494A0;
+	Tue, 25 Jun 2024 11:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719316495; cv=none; b=ni/aYbn7WcELZ2cJ5TY+dTmFAXTQvr20CxXYZ4FnRMm1dYbegUu4CVjAZnzDwY8unOaCrp9Yp4JCGzMt6ZxAKqtukfQKKdjGMbL5sjgik3IW6bRlaggJ3IpXEdsvG9g7Z01nedCToqiBBQJwfMwn35p5EAM+YBx8ghdb3o0Twkw=
+	t=1719316597; cv=none; b=VyOxnpSzO5ATu/E99jpI8sFg3q1UvYRpG9GXBYK7kQ4CcPxMu0AsgusYebdqW7Idtan7mEb/Nsb67IM1Gr/8YroRj+hyRF98m2nZ4AHgawIIdNuitnIt1c+sge1CXpeQPn2870WYaibNg6x6nieOzKSNYGk2Oukh+EMe/DzFdXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719316495; c=relaxed/simple;
-	bh=tdiZzho1yxP3FP7HmO5wX6bXsbOVDiUXTcDyk6knbu0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=MYRkdfvYOHxN0tiGTwrNCLNgkO4+rYm+A2A9teKhRKByLyWgG/X9FEqsDoCn3iYQQa5/q8tQ86+rzGQOblhP2jERNsckdo0Edi+r/iItx1W33Xfl6jVr+nKRJ2L5D0MNr9kqFcBd9oFJ+xz5nAVAkRebx0xuY3ZiypRvdHpHwm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=OoW+Ap8q; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=tdiZzho1yxP3FP7HmO5wX6bXsbOVDiUXTcDyk6knbu0=;
-	t=1719316491; x=1720526091; b=OoW+Ap8qpRtY3MflXFDwprnVke6ylfjINu8FyRkKvXM8SN1
-	E/lU2lRDQB7OqAV/KMwSq1jlG23EAGoyizGKG/J14m4uOX65cqxBIRyPMfS8NWGbNY6w8IN4vHgou
-	Qs0ob2HwdgnAXLS/l3jQCcRfRh35eET9l7yOAqfUG22HmjtzPV9Lwk5u2ZE9nK8SHdLWGUoqUMgxE
-	JaEsoZwgXMUmBT7FxFuFyAHzcxOJ9Vb5/Cyk7dYUBZrPaW/PqrHzrmEbCcldPRy+87JsgSLKX2nCS
-	K2DlguSLCUWHnb4roCcx9571sqjb4SDFtmZeKWWi8KQVV5+0upCkkN+Bpxrssbpw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.97)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1sM4l6-00000000fQc-2WYs;
-	Tue, 25 Jun 2024 13:54:48 +0200
-Message-ID: <2fc4b98c0899b0bbbfbfb0c7a60eb0264ce97894.camel@sipsolutions.net>
-Subject: Re: [PATCH net] wifi: cfg80211: Fix out-of-bounds in
- cfg80211_wext_siwscan
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Jeongjun Park <aha310510@gmail.com>
-Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Date: Tue, 25 Jun 2024 13:54:47 +0200
-In-Reply-To: <20240623084939.6889-1-aha310510@gmail.com>
-References: <20240623084939.6889-1-aha310510@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
+	s=arc-20240116; t=1719316597; c=relaxed/simple;
+	bh=f8WF5zjNVgsVkKEc6ibnTirDFsPTFIcp6L9plG4rb3Q=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Cd0u1eBVA55tkwlsCCYQa/JaDG96pias5x9g5wZCOcv7090ijaxb7W4xdgxwTOXMbGk3YXUgZ1h8zev6cXKVr4pzmgP2DL5YldDSAoyxM0JvWo0ILxFNsX/ppvg1cZ/6bDZkkmNpUOuRZMkIS02u9bOntuvfKrNojuEAG9L99zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W7jwS2MSjz4f3jkc;
+	Tue, 25 Jun 2024 19:56:24 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id 651EF1A0199;
+	Tue, 25 Jun 2024 19:56:31 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP2 (Coremail) with SMTP id Syh0CgCnD4VtsHpmFiU2AQ--.8225S4;
+	Tue, 25 Jun 2024 19:56:31 +0800 (CST)
+From: linan666@huaweicloud.com
+To: axboe@kernel.dk
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	hch@lst.de,
+	linan666@huaweicloud.com,
+	yukuai3@huawei.com,
+	yi.zhang@huawei.com,
+	houtao1@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] block: clean up the check in blkdev_iomap_begin()
+Date: Tue, 25 Jun 2024 19:55:17 +0800
+Message-Id: <20240625115517.1472120-1-linan666@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgCnD4VtsHpmFiU2AQ--.8225S4
+X-Coremail-Antispam: 1UD129KBjvdXoW7JrW3Xw45Zr1xXw4fAr1UWrg_yoWDJrg_Z3
+	4DZryvgF4rZF4fCFs0q3y3ZrZFkw1kKF4aqr97ur98ZFsrJF1kAFZavF9Iqrs8tF47Gry5
+	Gwn8JFySqF4xKjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbskFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7M4kE6xkIj40Ew7xC0wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8Jw
+	C20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAF
+	wI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjx
+	v20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2
+	z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73Uj
+	IFyTuYvjfUYuc_UUUUU
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
-On Sun, 2024-06-23 at 17:49 +0900, Jeongjun Park wrote:
-> In the process of searching for matching hardware channels, wreq and=20
-> wreq->num_channels are checked to see if they are NULL. However,=20
-> if the value of wreq->num_channels is greater than IW_MAX_FREQUENCIES,
-> an out-of-bounds vulnerability occurs.
->=20
-> Therefore, you must also add code to check whether the value of=20
-> wreq->num_channels is within the range.
->=20
+From: Li Nan <linan122@huawei.com>
 
-This is the same more or less as=20
+It is odd to check the offset amidst a series of assignments. Moving this
+check to the beginning of the function makes the code look better.
 
-https://msgid.link/20240531032010.451295-1-dmantipov@yandex.ru
+Signed-off-by: Li Nan <linan122@huawei.com>
+---
+ block/fops.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-no?
+diff --git a/block/fops.c b/block/fops.c
+index 376265935714..bc5ad3e6197f 100644
+--- a/block/fops.c
++++ b/block/fops.c
+@@ -383,10 +383,11 @@ static int blkdev_iomap_begin(struct inode *inode, loff_t offset, loff_t length,
+ 	struct block_device *bdev = I_BDEV(inode);
+ 	loff_t isize = i_size_read(inode);
+ 
+-	iomap->bdev = bdev;
+-	iomap->offset = ALIGN_DOWN(offset, bdev_logical_block_size(bdev));
+ 	if (offset >= isize)
+ 		return -EIO;
++
++	iomap->bdev = bdev;
++	iomap->offset = ALIGN_DOWN(offset, bdev_logical_block_size(bdev));
+ 	iomap->type = IOMAP_MAPPED;
+ 	iomap->addr = iomap->offset;
+ 	iomap->length = isize - iomap->offset;
+-- 
+2.39.2
 
-johannes
 
