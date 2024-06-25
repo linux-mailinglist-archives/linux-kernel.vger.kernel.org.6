@@ -1,187 +1,277 @@
-Return-Path: <linux-kernel+bounces-228598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5308491620D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:11:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D4A916214
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F0ECB275A9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:11:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0032281685
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8C01494DC;
-	Tue, 25 Jun 2024 09:10:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0DD41494A2;
+	Tue, 25 Jun 2024 09:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="dQwTZPOd"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="Adp+O99o"
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2063.outbound.protection.outlook.com [40.107.113.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 057F424B34
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719306605; cv=none; b=cijkN3n/60MbzW2RHZ4O93B1jBT/UM7uk+6YREwgTf/j/LRxkXUbmOGq3b5j4TI2MK2nL99l0owqzYt1Rdc/pisRoEsZbDYwESuPbLfkpgKRcOvf2WQpCU04Q0zCP6hRWa20uK3cCRxwH2iHxw+G+2P5k8RZK1wR2GlWzamJioI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719306605; c=relaxed/simple;
-	bh=PgmweWsgyjunXwL2K/VjA1gLM34Omcb+xcKaqJqZuIA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mF62EC5euLX7MM8VomUC4hyfqbWs71MRdKZYM6PpUEo7POAxhfo33/fu8DQthwWFMg93jc9MC1AokjVxl2m0OkSMkzxgAt69Ria9WdDuZaL49JPAaWgU6ceX++UBT+sc1MwfHUFy6PUAdI9iOLoGiYwg/9ZTF8IGLYXQbGM3UaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=dQwTZPOd; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.205] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.17.2/8.17.1) with ESMTPSA id 45P99UfG1551074
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Tue, 25 Jun 2024 02:09:31 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 45P99UfG1551074
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024061501; t=1719306572;
-	bh=iCQ21Qo+mXw3zg+knnXoD23BPWOHBWTkZu2Jd89OruQ=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=dQwTZPOdqm3H9e4BT0bHkN1GekWXtznPothFfWe7/0qWIwxNpEs9Ybi2LaXLXE/EE
-	 2LWlbxIuwxggxad0+QHQa+E9RITysnCImoE/ueJIogbQTWAF97N+HZrqncKx+eP4T2
-	 Wic2tNRighW9s5eF4Sj9O0WqaEPBbvFi2RjmvBh8rQI/tlxikaPaiv+VK5tFfSc38r
-	 SYskrjHYAhLeFIjoE3E3znuuQ7o1UyfksL+UIBAK+aLOHSyEspj7J3PJKZP9IKbIDa
-	 z4lze9LueMC2cFh2XCvGwrCcDw4aA3HVCc7j/WJpSwAPwv1ewGcWH9v8g3BwjtFA/o
-	 snMCzctWhvSBg==
-Message-ID: <f8ab27ff-d6cf-41c7-a033-9e578b1e51fb@zytor.com>
-Date: Tue, 25 Jun 2024 02:09:29 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B966E614;
+	Tue, 25 Jun 2024 09:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.113.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719306772; cv=fail; b=FV6mIwaMu5H83UYQ/SrGWXyJ0wgwyQg/iBkpn5uEYo2ZJiDJbrBmZoyZxmYIjF/FhkZH2Ie9NfqVQUwUfesIMXal8ygjtR7d5A0JmDk1F9c5hvm9w5def/oHdYGBqm9iu3Py+y4ySOi6GbxafM/Qm+JTjGAbsHxJnKw028qQ4LQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719306772; c=relaxed/simple;
+	bh=Sdivrx7+CatYgYc3nJ5hr69C7Xm9L4Ev8bUyLV3fkNY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jD0BW2GEAqx4Nt4tOymQSlfA0SpmvR1aTJLf3dh5YBBFf5kmePvoUkEQorF6azV58JasUnPXYcz0y8hjZ3pU1EBABcRR4nrkmR41/KUSI4S24dVbwVm94ynzNR+zrwpUFszaBWEbnYpU6TUXqWvL4PZVD7gTix2N1z7TYOEWm2E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=Adp+O99o; arc=fail smtp.client-ip=40.107.113.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=blAFcrN85rI+3RhLYpsuTbDIlOmrmkpJuAkJ8lfFKpZ1sDFvY+zgeLS9FNMetHIJ4neIVaten6qWtwFgGWArs7iSk5gXg8mWsCHoBKIdHrvpW5zLeUSm+cwTDfbZqeQspI8Gw/SCsPG05R2AFcSLkP4g/fnCNBE230B9tpc9nBcNHtDkl8+Vm/+1Obxwl4ZdH5Tw5+c3F+mdqixUTGJJConVDfhFU3buhHTboUA7YbjahFGmykPSMF/dzFSQmESe2kHEr6Wbkbjyuy2xRa2K4FHfz+DfvhkZUidYAXuhbpNLgTGnDgdYy23o47vTMposz16F7nZYcOgePdJTnqxADg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bbuYH0eV4QlUvfn+RgyAM5zEN2knnQvNZlaKOrzpfEE=;
+ b=MsYiGwXSW6y1kaiQKBHmBjAyMLjf+AjlM2O9YXZFYk/TDlrnkYY++gTgeaU4dfRfzLEzxINv0rDchqf16s1lxXIKBLWKy6CfPBW+lBp6Olyxum9XV3UIsMN+28GVcLYVKc5BQ4FhSY9qVhUjymXNxJuLRZcdjlEJ2fjm4k6uO+1W9Ovgaw28IryAwZPxKlpHThG4Q65Kj81P5EKjXVJ5fqxSmzgwtkVSBrwVd51i2DSMDcekcK8U8HTOfSVUesNJXOP2veHt+jW/3ULAB/ZlLX2RFBCTYUk/ZWXYPJH+7jKdBbtZ+iLThqfP3xAMT93I9+LSitAB7MyONF3W3EE5JA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bbuYH0eV4QlUvfn+RgyAM5zEN2knnQvNZlaKOrzpfEE=;
+ b=Adp+O99oNbDlcVF3rlzWgs7Ux1e7dfiacO1DAVx0yqOs/pA3aGxyhdqMlHDV0VAxsp3kn8e+poLfGYmIEvM3XISua/fTzDazeCGrff6YFhKcVGjINNgTnFLGhhAV6+rSmOdSLTaCbpypkzEEcirWl7GZZsw2QuAX9hEn15s/VM8=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TYWPR01MB9390.jpnprd01.prod.outlook.com (2603:1096:400:1a3::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.28; Tue, 25 Jun
+ 2024 09:12:45 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
+ 09:12:38 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Prabhakar <prabhakar.csengg@gmail.com>, Ulf Hansson
+	<ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>, "linux-mmc@vger.kernel.org"
+	<linux-mmc@vger.kernel.org>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
+	<prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: RE: [PATCH v3 1/3] dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P)
+ support
+Thread-Topic: [PATCH v3 1/3] dt-bindings: mmc: renesas,sdhi: Document
+ RZ/V2H(P) support
+Thread-Index: AQHaxkvO0A4lnvx4zE2BuJf82/SVDbHYMlww
+Date: Tue, 25 Jun 2024 09:12:38 +0000
+Message-ID:
+ <TY3PR01MB11346BEEDB2125402E8A489E086D52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20240624153229.68882-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240624153229.68882-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240624153229.68882-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYWPR01MB9390:EE_
+x-ms-office365-filtering-correlation-id: 42753baf-c035-47d8-fea0-08dc94f6f5a8
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230037|366013|7416011|376011|1800799021|38070700015;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?uK7VS2welW2qzX47mgUYREK/xmOKdIQbmjDci08PeeBT61mf+IvHMxishohi?=
+ =?us-ascii?Q?sDC27bgkAo+Vo2o2Y9iKoMmQ1Wmw72qVQ135aIuutGAEzTVteb81/IZeKCuE?=
+ =?us-ascii?Q?Qd3GtfcDTf3+g4znA8FPDH4vLH3D9iGvxrh0RfKNqT+yqP1CgvGqwz9H24T5?=
+ =?us-ascii?Q?2thF6WmxF6RgIkPU/P6XeXtWI/gcWO+Pb4hd/AnCcTEuqu7IO1C+Js/oe6bL?=
+ =?us-ascii?Q?uqsz+o9ZlDkbQuvTqIXog2P3sRHNNlaC+Po8PxCeoRXwow3MfoAoU/CjVydm?=
+ =?us-ascii?Q?9r1uDIkyYkeCssc3UR5PwY1piUA3UyZ/PrhthwohiN9pC0D0egqxrQJySC5A?=
+ =?us-ascii?Q?iqHEYzijKvrECR/7tEK0foZZko5QDSaTos8tWsLBNAlNpHlCZ6wm0+UBYt/g?=
+ =?us-ascii?Q?1ru0sS8hCfDcZ+wj/FrMfdhXf1yLYfDPevbmkxNb4/xnBrs2LvUJ/UfzMN3/?=
+ =?us-ascii?Q?aa8RMuNOHLeFVVt2IA3PjVFXbVXsW+prhjIPP1zXX5J1FuBGAcj3XGkHXray?=
+ =?us-ascii?Q?wGlnBQlDll96OLfPyIILXxRT2F1RQjCl4RoCTRZLjwwG5+OK6tERL8B9wT4S?=
+ =?us-ascii?Q?FI1QkHOpSRwxy4AsMLRyJ8nSuFwGAmLcb0y4vGKEXHrqEY3h7W+SZcH9cr2+?=
+ =?us-ascii?Q?2Q8js/LUJSqyssyfF282r/csDiWay3PVaQh3fVLF75cs3drqRkTLaCSIyo8u?=
+ =?us-ascii?Q?HcH8nsTkZHCVto/EirxDfEFbu9JYlpx6nO5VJkCSAeXQi3bG6yeTwznlL0uD?=
+ =?us-ascii?Q?5458bAgsr7fF2FXLM7UlCtTKQDjxgetUk1xLL9/Y4TbGnxlZBHE0E+4CZaqS?=
+ =?us-ascii?Q?38fs75jJ1LaqNHjqnpSFVuuMJKY3J0Y6lvDOwzzgeTmbBdhP2Zne1VvMPMpt?=
+ =?us-ascii?Q?Pa9+Kkp4uCgzqM7sHt2hmTgYwqdN0w58iVXDfZUacyBM3MmBuzGOeBdPLo1b?=
+ =?us-ascii?Q?GQ8U6lkQcrN78WHvuuufG3gNfbrksHZgpzw+GsZaf15PYfVSzeZhVWLhHuBv?=
+ =?us-ascii?Q?KaZ5Gk+tnrej6dQBnRzVtSj2r5hWRsz9GY+NXxaiMitXVoozzOcWJ+DNUKrl?=
+ =?us-ascii?Q?u/lOm8tPr4iAhMDu3V4sDIS5hFQ4k0epiIBtZraomQbD3msiKr3BUeyju8+W?=
+ =?us-ascii?Q?UxYMuGQHm/M+hx7nRWp2ClgwqNgkl7r46np3X416hiwoP1Y8rvMnHzuUYhzp?=
+ =?us-ascii?Q?V3YU3Akjgo2VnDZfhhj+x/fd2XYHLR9KgQq1BuZcssXvVse9rMw2DrZc81KA?=
+ =?us-ascii?Q?q0nvdDOey0AOu8E7pC1KNNfA0Ru0Kdi9U4qFp/djLD/QVjdPFffhWBHPRoQD?=
+ =?us-ascii?Q?TJgx/Q82WrG2McLJF6Nnu56leihYRgL3pSnHU0wkFd0Q5QkP04dCx4R9CxW2?=
+ =?us-ascii?Q?eTEskY0bja1VJTisnEKvSyKb4wtbcl+o5Heyn+EGCr0LWa992A=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(7416011)(376011)(1800799021)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?/GDx2eiG1lDJbp+SwycQD1TKw/fsIOTplxo7VPe0L8nA3PNEBAGPu56nrory?=
+ =?us-ascii?Q?hMhxnjYCJP5n+R4pKE4meRpgCDO+/zSthYveckVWtL215N+PC8k8l3lG6y+o?=
+ =?us-ascii?Q?iKfRmoOWQXAa9XtKhvlvAZ1v7soN4F5yvdVtvSUDCizlumc9mJMIrxkekP+f?=
+ =?us-ascii?Q?DulLDFQp+eAcIDCXJkD948ZiY2lJho6TDRulkDiFP8qNVpQx5IO2icJkC7HH?=
+ =?us-ascii?Q?rzPwfmfCGqMcuZlGHeQugZmhWJ5nBR/CSrpmTN1jc1OTZeg65gghf+NNYGy1?=
+ =?us-ascii?Q?ZftcWskSkjkq+LX9lAJc1BdeMfSqFO/oL0Jb7Sb4PA3SbqvMMq8nSgOrSdxO?=
+ =?us-ascii?Q?q3bEvs+0fMEQzMmiZvjQuk5lXujuPUxgkWvw+eFlC7h5/IDlP8fAFG6Zm7oA?=
+ =?us-ascii?Q?Srmkb7gG8b17gV7Vb8F6QbvEn09CvTWoM0riQnV7ncRYgSnsjgApwCUpxEvR?=
+ =?us-ascii?Q?Su6/EY+yfWMDRf+gXK5M29xe/Efe2HYCDSnUzuazJHYUMtFtUOaB35zlAhgA?=
+ =?us-ascii?Q?RTEAVL4vYgJdlV4CcUkColHbRFY34tfSxVDskmyKg24MOy/Obcui05UABqbF?=
+ =?us-ascii?Q?f86JoYh/6J3J5wTf6oqgOLFCO6ano1gGYqo1+yMqovP/J4AGjSmcFgZn2vhV?=
+ =?us-ascii?Q?H9UmWvhAQ1Kd+pzowBFiyXihDbMcRVJ+87WAeQJOeStH466exOiInnMP+Puw?=
+ =?us-ascii?Q?Wy37YmWKju4qm+n5dbAeWgbPM1zco5DQF4yexMp9Qjxsgjqh0YO76RfK1FIh?=
+ =?us-ascii?Q?1gsKtjy60cI2MDYA+l9Ff6CrK7nMXVwln70pyy2/2Vtt1o8XMRrKika+mYBL?=
+ =?us-ascii?Q?/c8ZU4X7Aei5U3cF1X+o+Ylf8ehYP27VXYSh2pwP/ow4yD/xxr1Gl+bEDf56?=
+ =?us-ascii?Q?WizAwGWbTPYq65qu2WItSOSvBAAq6csXLKOUZGPLnS9Vp6Rjpu9pojv10Vld?=
+ =?us-ascii?Q?rqRNJdnB5/icn1xbkNMVs7IgBrBD+a8Q7nbiLp/Cuj6e9phTNLLmv442alYP?=
+ =?us-ascii?Q?9boUYM7FMU0QbpyXvJLrCxe7BGsT0csupb1zUNWEkuZloNVDIxHnbVQVkPs2?=
+ =?us-ascii?Q?NcH2t5rCPw0ZL6wP6yrD33lhfyGqmnyFcqXWWHr9LeuYsZjV0tKoE7CTaZ2f?=
+ =?us-ascii?Q?fM7yZylaoKwBLZf6jXHm14zh9QB+ZSsEqhQf+jLBMQJH3q1I4KTOTJrFE6DF?=
+ =?us-ascii?Q?LrPBMbhNX3V8nw7pVPENeFAKHclMYuwFnnZJyha8p73E29WQbiLiK7ilxGpF?=
+ =?us-ascii?Q?8nASYZTdNOOBHqL3bvD69A9mcAqR8+UNS1IKO3Zn0M9SmAlYzjx1R7tezuan?=
+ =?us-ascii?Q?ogPVRYbVLkeqzXgF91euwbLIypWyEtI4mTTtRucqG2LqsWc3bRo9rSCPQTTS?=
+ =?us-ascii?Q?NMx1GStlxV5QNS8wWMCrryomXMPVv8Q1Jp1UahskczOvUX7Z0wCeEhoOjFwG?=
+ =?us-ascii?Q?uKdr+U30PGaU4KNoiNSa2ylDOPZgnmbQhWRq6yXTsf6GOYxYvlLarNjPU/o5?=
+ =?us-ascii?Q?kJgb7AaT5pgVRXYX+q5tW6MO9plR2K+31p5CKT1yPmAQt0mllPaEHZEejTUX?=
+ =?us-ascii?Q?2zWWaTYGisWhseq4ma3FjVqB+sk3MwVoHuUJiZIp?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Xin Li <xin@zytor.com>
-Subject: Re: [PATCH 0/2] x86/fred: Fix two problems during the FRED
- initialization
-To: Hou Wenlong <houwenlong.hwl@antgroup.com>
-Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshan.ljs@antgroup.com>,
-        Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, Xin Li
- <xin3.li@intel.com>,
-        Jacob Pan <jacob.jun.pan@linux.intel.com>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>
-References: <cover.1718972598.git.houwenlong.hwl@antgroup.com>
- <58ec98bf-b66c-4249-8a10-ff254cd405c2@zytor.com>
- <20240624062143.GA59245@k08j02272.eu95sqa>
-Content-Language: en-US
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20240624062143.GA59245@k08j02272.eu95sqa>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 42753baf-c035-47d8-fea0-08dc94f6f5a8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2024 09:12:38.3884
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +g83CXYn2JfeI6htMpiezq5TYIxcNukhqQc9UXWKNOtsS5YI59hB0rKLFdSJiKci0Zjz368fQJfoFdJIQNDeK8GX0uIWuoG9htDGvdDcJZs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB9390
 
-On 6/23/2024 11:21 PM, Hou Wenlong wrote:
-> On Sat, Jun 22, 2024 at 08:31:26AM +0800, Xin Li wrote:
->> On 6/21/2024 6:12 AM, Hou Wenlong wrote:
->>> One issue is that FRED can be disabled in trap_init(), but
->>> sysvec_install() can be called before trap_init(), thus the system
->>> interrupt handler is not installed into the IDT if FRED is disabled
->>> later. Initially, I attempted to parse the cmdline and decide whether to
->>> enable or disable FRED after parse_early_param(). However, I ultimately
->>> chose to always install the system handler into the IDT in
->>> sysvec_install(), which is simple and should be sufficient.
->>
->> Which module with a system vector gets initialized before trap_init() is
->> called?
->>
-> Sorry, I didn't mention the case here. I see sysvec_install() is used
-> only in the guest part (KVM, HYPERV) currently. For example, the KVM
-> guest will register the HYPERVISOR_CALLBACK_VECTOR APF handler in
-> kvm_guest_init(), which is called before trap_init(). So if only the FRED
-> handler is registered and FRED is disabled in trap_init() later, then the
-> IDT handler of the APF handler is missing.
+Hi Prabhakar,
 
-This is a bug!  Your fix looks good to me.
+> -----Original Message-----
+> From: Prabhakar <prabhakar.csengg@gmail.com>
+> Sent: Monday, June 24, 2024 4:32 PM
+> Subject: [PATCH v3 1/3] dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P=
+) support
+>=20
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>=20
+> The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to that of=
+ the R-Car Gen3, but it
+> has some differences:
+> - HS400 is not supported.
+> - It supports the SD_IOVS bit to control the IO voltage level.
+> - It supports fixed address mode.
+>=20
+> To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a09g057'
+> compatible string is added.
+>=20
+> A 'vqmmc-regulator' object is introduced to handle the power enable (PWEN=
+) and voltage level
+> switching for the SD/MMC.
+>=20
+> Additionally, the 'renesas,sdhi-use-internal-regulator' flag is introduce=
+d to indicate that an
+> internal regulator is used instead of a GPIO-controlled regulator. This f=
+lag will help configure
+> the internal regulator and avoid special handling when GPIO is used for v=
+oltage regulation instead
+> of the SD_(IOVS/PWEN) pins.
+>=20
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3
+> - Renamed vqmmc-r9a09g057-regulator object to vqmmc-regulator
+> - Added regulator-compatible property for vqmmc-regulator
+> - Added 'renesas,sdhi-use-internal-regulator' property
+>=20
+> v1->v2
+> - Moved vqmmc object in the if block
+> - Updated commit message
+> ---
+>  .../devicetree/bindings/mmc/renesas,sdhi.yaml | 30 ++++++++++++++++++-
+>  1 file changed, 29 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> index 3d0e61e59856..20769434a422 100644
+> --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> @@ -18,6 +18,7 @@ properties:
+>            - renesas,sdhi-r7s9210 # SH-Mobile AG5
+>            - renesas,sdhi-r8a73a4 # R-Mobile APE6
+>            - renesas,sdhi-r8a7740 # R-Mobile A1
+> +          - renesas,sdhi-r9a09g057 # RZ/V2H(P)
+>            - renesas,sdhi-sh73a0  # R-Mobile APE6
+>        - items:
+>            - enum:
+> @@ -118,7 +119,9 @@ allOf:
+>        properties:
+>          compatible:
+>            contains:
+> -            const: renesas,rzg2l-sdhi
+> +            enum:
+> +              - renesas,sdhi-r9a09g057
+> +              - renesas,rzg2l-sdhi
+>      then:
+>        properties:
+>          clocks:
+> @@ -204,6 +207,31 @@ allOf:
+>          sectioned off to be run by a separate second clock source to all=
+ow
+>          the main core clock to be turned off to save power.
+>=20
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,sdhi-r9a09g057
+> +    then:
+> +      properties:
+> +        renesas,sdhi-use-internal-regulator:
+> +          $ref: /schemas/types.yaml#/definitions/flag
+> +          description:
+> +            Flag to indicate internal regulator is being used instead of=
+ GPIO regulator.
+> +
+> +        vqmmc-regulator:
+> +          type: object
+> +          description: VQMMC SD regulator
+> +          $ref: /schemas/regulator/regulator.yaml#
+> +          unevaluatedProperties: false
+> +
+> +          properties:
+> +            regulator-compatible:
+> +              pattern: "^vqmmc-r9a09g057-regulator"
+> +
+> +      required:
+> +        - vqmmc-regulator
 
->>> Another problem is that the page fault handler (exc_page_fault()) is
->>> installed into the IDT before FRED is enabled. Consequently, if a #PF is
->>> triggered in this gap, the handler would receive the wrong CR2 from the
->>> stack if FRED feature is present. To address this, I added a page fault
->>> entry stub for FRED similar to the debug entry. However, I'm uncertain
->>> whether this is enough reason to add a new entry. Perhaps a static key
->>> may suffice to indicate whether FRED setup is completed and the handler
->>> can use it.
->>
->> How could a #PF get triggered during that gap?
->>
->> Initialization time funnies are really unpleasant.
->>
-> I'm not sure if there will be a #PF during that gap; I just received the
-> wrong fault address when I made a mistake in that gap and a #PF
-> occurred. Before idt_setup_early_pf(), the registered page fault handler
-> is do_early_exception(), which uses native_read_cr2(). However, after
-> that, the page fault handler had been changed to exc_page_fault(), so if
-> something bad happened and an unexpected #PF occurred, the fault address
-> in the error output will be wrong, although the CR2 in __show_regs() is
-> correct. I'm not sure if this matters or not since the kernel will panic
-> at that time.
+Maybe we can drop required to make it optional, so that one has the
+option to select between { vqmmc-regulator, gpio regulator}??
 
-So this doesn't sound a real problem, right?
-
-We could simply do:
-
-diff --git a/arch/x86/mm/fault.c b/arch/x86/mm/fault.c
-index e6c469b323cc..e500777ed2b4 100644
---- a/arch/x86/mm/fault.c
-+++ b/arch/x86/mm/fault.c
-@@ -1495,7 +1495,7 @@ DEFINE_IDTENTRY_RAW_ERRORCODE(exc_page_fault)
-            irqentry_state_t state;
-            unsigned long address;
-
--       address = cpu_feature_enabled(X86_FEATURE_FRED) ? 
-fred_event_data(regs) : read_cr2();
-+       address = native_read_cr4() & X86_CR4_FRED ? 
-fred_event_data(regs) : read_cr2();
-
-            prefetchw(&current->mm->mmap_lock);
-
-
-But the page fault handler is an extreme hot path, it's not worth it.
-
-Thanks!
-        Xin
-
-
+Cheers,
+Biju
 
 
 
