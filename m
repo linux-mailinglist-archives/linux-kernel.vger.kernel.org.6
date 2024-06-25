@@ -1,133 +1,104 @@
-Return-Path: <linux-kernel+bounces-229128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29EBB916B4E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:59:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 582C9916B5A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:59:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBEAE2823C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:59:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7019B1C22485
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 584CD16E863;
-	Tue, 25 Jun 2024 14:59:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE10E16FF23;
+	Tue, 25 Jun 2024 14:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eOBDizG8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7NAS6q/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BAA41BC57;
-	Tue, 25 Jun 2024 14:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8D61BC57;
+	Tue, 25 Jun 2024 14:59:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327566; cv=none; b=HiOgh9xgH00h+p0FRPa45DJ84fQQxEsq67ZoOKUQS01jqV+RLCj6b8ravaoJxltvOe2l7TEBSa4FKlR5+HI2qFMnAIJRpilAojATMqm5kniNkCfDI9C35rpFm4+Euy3AmPy4U+IQRxr1i9cMJEHeoQuGdvVjXNiA4bKycGJjqp8=
+	t=1719327572; cv=none; b=f5XEEPdgcvQn4JMomJkS6dgZY6PiiumwDUoP41stimO2bN0BCxQWLGVmsb7fuKpRjp04ugoIkwehALYWzsJsZnieSMIvaAegdcYfXYjtkyiFpG6esN65jKrI/Xyex6hD7gkkjajRyOyEtuQGusW+ESH5h22a2lexGc4iF6N/hMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327566; c=relaxed/simple;
-	bh=Eg8R1iqjyRoMVehdH74J8U/eSf94ywvDPAMbnTZuP3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vy26Pry8rrZo5b22DmmtojBenUtIlV1t0FEgKpVp4jLU4Z1jGypMM2YvjqL56I6JIVvwaGJ0lDgCHPXvE3J9dM4RShSN2Yw7pl4IEuJtLxCU+6qCOzyUwZkoa8s9+1NjHCRr07OGrpq/8K6BStfOoDaZeLZD1YHZ0h4DCzT2sJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eOBDizG8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9B61C32781;
-	Tue, 25 Jun 2024 14:59:24 +0000 (UTC)
+	s=arc-20240116; t=1719327572; c=relaxed/simple;
+	bh=4wYjB3JY0AnTw9nAvS+x7fjoQVoS9QzpjpY/mNtLggw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O1C4q1C9iNAOUTWx9/emcEHSap2TPW/SFp/PQ4mgGEJgfw1k4yZL56uP29swrDjkPg+82F5QIoQuMhL0nIUhMYRQg0nPTi0Fv41PLr4yR9CDviJEzUOqGIeKBPOE+NwzAOaYWxdK/G1HSNldeIkcVHBWEUuHzcjp8onPHXPftJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7NAS6q/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7AA9C4AF0B;
+	Tue, 25 Jun 2024 14:59:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719327566;
-	bh=Eg8R1iqjyRoMVehdH74J8U/eSf94ywvDPAMbnTZuP3o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eOBDizG81d+D1I1nw6ssfxKCVm5e96l5A/218gfLvp9liGpAzupfPcUOhbq/kMBuy
-	 TcSgVYU8J0TXwW/OM32QfIbHvfeMDEIrRZwEYL5i1foRsuTB1QJWth9ApEwNm9fuOr
-	 Q5U36vPYEgP1stG3z3qeWIO443F8CtFlKYDpruodWcRzHTeTYLDm8/Ary0GEMUAmJC
-	 kTnR3OjCf9lM3AXEGNl9QZ21hmSMkhenzdZbAUge6yYqz0KWl0J6kh1kD/1KZJKfuP
-	 z6FTr7UJRZNfZgLMAYKSQmf+9dVmXo0YhA73/Kwckmfiz1g2Ece556F8bWWcESrlVT
-	 g6vG6/A+0ONzg==
-Date: Tue, 25 Jun 2024 16:59:22 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: "Luke D. Jones" <luke@ljones.dev>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jikos@kernel.org
-Subject: Re: [PATCH] Fixes: bda38f9a41 ("HID: asus: use hid for brightness
- control on keyboard")
-Message-ID: <zmmjwgujcmzyiv72rsi2urdvighrf6enj3c4qntaqgbxrae5xw@edypjvordcng>
-References: <20240624001450.969059-1-luke@ljones.dev>
+	s=k20201202; t=1719327570;
+	bh=4wYjB3JY0AnTw9nAvS+x7fjoQVoS9QzpjpY/mNtLggw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=h7NAS6q/C2ZzBIAYKai5whZiBum489XS/J7zffMQOVU0xDBrGbji0HlKyZbV0brVY
+	 jwHILNhtgojEmdiUQ3GnAfMPUSaUya0+D0cFcjQ9dhbvTuMsGJh4W2x+J7X/9HXZ9V
+	 srBl3VFTN1Ly99vlBTFzJFJzSgq138zPAzzOL2os8e1W4DzrZI1H0QEVZ5ZJR09krK
+	 /Bmyi4o96W3ViZ6cus20bYwYlLEzMNrqNFN4DiYRoFZwN6N3pBDHKz/uOmL4YFYFQX
+	 m3FOmbQnP7K8OC0mOv3dwo1NOo8qb7etGTDcG2HlC0EOZ1X1ih7qXwRSXhT5bSXbyY
+	 CFeH6MEdGgYfg==
+Date: Tue, 25 Jun 2024 07:59:26 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-alpha@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-parisc@vger.kernel.org,
+ sparclinux@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arch@vger.kernel.org, bpf@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, linux-media@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Donald
+ Hunter <donald.hunter@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Richard
+ Henderson <richard.henderson@linaro.org>, Ivan Kokshaysky
+ <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, "James E.J. Bottomley"
+ <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>,
+ Andreas Larsson <andreas@gaisler.com>, Jesper Dangaard Brouer
+ <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, Steven
+ Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnd Bergmann
+ <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Martin KaFai
+ Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu
+ <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, John Fastabend
+ <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Steffen Klassert <steffen.klassert@secunet.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, David Ahern <dsahern@kernel.org>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Shuah Khan
+ <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>, Christian
+ =?UTF-8?B?S8O2bmln?= <christian.koenig@amd.com>, Bagas Sanjaya
+ <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>, Nikolay
+ Aleksandrov <razor@blackwall.org>, Pavel Begunkov <asml.silence@gmail.com>,
+ David Wei <dw@davidwei.uk>, Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin
+ <linyunsheng@huawei.com>, Shailend Chand <shailend@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Shakeel Butt <shakeel.butt@linux.dev>,
+ Jeroen de Borst <jeroendb@google.com>, Praveen Kaligineedi
+ <pkaligineedi@google.com>
+Subject: Re: [PATCH net-next v13 00/13] Device Memory TCP
+Message-ID: <20240625075926.146d769d@kernel.org>
+In-Reply-To: <CAHS8izO1g5vZodyvKBNyE-Fx7A4EoD70RuDLwXtzE3yvfRw_2g@mail.gmail.com>
+References: <20240625024721.2140656-1-almasrymina@google.com>
+	<CAHS8izO1g5vZodyvKBNyE-Fx7A4EoD70RuDLwXtzE3yvfRw_2g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624001450.969059-1-luke@ljones.dev>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Luke,
+On Tue, 25 Jun 2024 07:16:00 -0700 Mina Almasry wrote:
+> What happened here is that I sync'd to net-next, ran all the tests
+> including the allmodconfig build which took a few hours, then posted
+> the series. In the meantime 34 patches got merged to net-next, and one
+> of those patches seems to generate a git am failure when I try to use
+> b4 to apply:
 
-On Jun 24 2024, Luke D. Jones wrote:
-> - Fix missing braces around initializer
-> - Remove unused function declaration from asus-wmi.h
-> 
-> Signed-off-by: Luke D. Jones <luke@ljones.dev>
-
-You are missing Reported-by: Mark Brown <broonie@kernel.org> to give
-credits where it's due and also a link to the report:
-Link: https://lore.kernel.org/all/ZnQ03jc-xEWam2cR@sirena.org.uk/
-
-The subject formatting is also wrong.
-
-> ---
->  include/linux/platform_data/x86/asus-wmi.h | 11 +----------
-
-That's weird. That file shouldn't be touched from us (on the HID side)
-without the ack from Hans or the platform x86 people.
-
-And bda38f9a41 ("HID: asus: use hid for brightness...) doesn't have such
-an ack.
-
-This got me realize that the initial patch was incorrectly taken through
-the hid tree:
-
-in [1] Hans explicitely asked to take the patch through his tree.
-
-So I'm going to drop your patch from the HID tree and ask you to
-resubmit the entire patch as a v3 to the platform guys.
-
-Cheers,
-Benjamin
-
-
-[1] https://lore.kernel.org/all/b0d8eebc-5abb-4ec0-898c-af7eedc730d9@redhat.com/
-
->  1 file changed, 1 insertion(+), 10 deletions(-)
-> 
-> diff --git a/include/linux/platform_data/x86/asus-wmi.h b/include/linux/platform_data/x86/asus-wmi.h
-> index 96c780efa0d7..74b32e1d6735 100644
-> --- a/include/linux/platform_data/x86/asus-wmi.h
-> +++ b/include/linux/platform_data/x86/asus-wmi.h
-> @@ -162,15 +162,6 @@ static inline int asus_wmi_evaluate_method(u32 method_id, u32 arg0, u32 arg1,
->  #endif
->  
->  /* To be used by both hid-asus and asus-wmi to determine which controls kbd_brightness */
-> -#if IS_ENABLED(CONFIG_ASUS_WMI)
-> -bool asus_use_hid_led(void);
-> -#else
-> -static inline bool asus_use_hid_led(void)
-> -{
-> -	return true;
-> -}
-> -#endif
-> -
->  static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
->  	{
->  		.matches = {
-> @@ -202,7 +193,7 @@ static const struct dmi_system_id asus_use_hid_led_dmi_ids[] = {
->  			DMI_MATCH(DMI_BOARD_NAME, "RC71L"),
->  		},
->  	},
-> -	NULL,
-> +	{ },
->  };
->  
->  #endif	/* __PLATFORM_DATA_X86_ASUS_WMI_H */
-> -- 
-> 2.45.2
-> 
+Got it, feel free to repost as soon as you can build test the rebased
+version.
 
