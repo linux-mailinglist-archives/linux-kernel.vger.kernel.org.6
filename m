@@ -1,275 +1,175 @@
-Return-Path: <linux-kernel+bounces-229508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA79991704F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:30:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9F0C917051
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ACB21C263D6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC7AC1C23472
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8C317D8B4;
-	Tue, 25 Jun 2024 18:29:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30F8D179206;
+	Tue, 25 Jun 2024 18:31:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AE07WouT"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IIuOevkE"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C0E17D8A7;
-	Tue, 25 Jun 2024 18:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4928D1E485
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:31:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719340139; cv=none; b=tZImAM8RFzb9FccDLdNBeWgA2j4sqv8gOhzpk3QURQt5sX7nZN0y8J5dqcn2WLadxPoKq8B0m1bGlwB3bxM71uGy+SfaAKT028pFelgHpp3YgYeKTq8w+X0olWjhjv8HkBKaDW3cX0zgncK+h8cw7oELJPjkfjA5WPXOlzLbSTY=
+	t=1719340286; cv=none; b=W5jG7B2VDBqcr+MGPrIHF5jNJ/LLS6l+4x+M0YrzY1O2wNTJDqHwept8p7SMHmCBX/HTDe/8+EIdyMQvz4GXkmhNs01PY/bhuw5Vo8VWVhIwQ2S6b4bHBT/5fn6oDl6gJdrvfo2c0pkwINjT/bt+X+o0SM25kRuEIdKBHe0gMRU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719340139; c=relaxed/simple;
-	bh=C8y82fOMeodkebb5Q/oa65GJnn2jX/fvLuZPBh4C8DQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Wvcqd7xYSqaFwhkY4QEbKBsBShZHQqD3wYP/s9ggg0s5TF88Z6lsIr3qaGUXrSWqXhEp7PTXV5l7F6POnRJAX98mY6Ip22Wm5qCufxxzsSDmWGJSka4usutPp8/ujQo5RQ2RJlTCZX/3ymFi6MxUStafLbEzjlrdCuwnNGqmK8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AE07WouT; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7067108f2cdso2561050b3a.1;
-        Tue, 25 Jun 2024 11:28:57 -0700 (PDT)
+	s=arc-20240116; t=1719340286; c=relaxed/simple;
+	bh=01n+iA2XY/JcHtXGIz7V72LJ4/6ZPTLG8Jbz/Pa3XM0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jH9FoCtBobMhR6SOf0dmMnnctSwlCkF/lbfdIgfQbA8qxOrk9yNQes1QvHD+flbXl8dr8L7KoSg7onVrCY3kSPgzclz0tQEayuXS4NxBC0uNOofpVJDLwbtxPrNYH2MGXVnnR3WQy9KKKp5tlLk7lLwlTw0Wpad+muw+E2hG7n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IIuOevkE; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso7404390a12.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:31:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719340137; x=1719944937; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LY9j5G3fdq5ypXEAkvCyErpGrL2adF9ZVg+3QvAwK7M=;
-        b=AE07WouTY3zaVUh47VKJfFNYbJinOOgqe3jJ01HGdYFj/sFHVFq+9ti3WcSZ0CTJ/b
-         c5jv8zPqm38LBxN37SkCF/lCCW5QaxzV+t9jWcckFsGaacldwSmFGGi6cQv+xm1XBWdH
-         fx1BtKeO1AIvFQ9PdvlWhvzm3wS48cL9LiJt8Z9tchwA/AM/UoxYgBUr+iVopUnoCrg3
-         LNzxZh2pOb7Nwvierv7A+4iq55+BI2nbhrvJpfopMxLi1C5pr36kkF6GmUs6CtpQUkDW
-         xp/d7JttIQI5PDJPEOdWC0oZ63/kD+28UdvOC9Ag3Z8rjSsQK+F8JuQRAtUmIa19QCXN
-         +iaw==
+        d=linux-foundation.org; s=google; t=1719340282; x=1719945082; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=i9EZeqDS86Jj/CFHQ+IhN1q/yBvceksX0X7aiOh86ro=;
+        b=IIuOevkEZWJV+BDEseejBoiIvzSmrrvL+qtnm5MlrV9cF07OU5TXSNdFr1qLTYWGAG
+         6ehg8T61K5wEP4yNsBdUPM8q4WMtNA2kkJsIL2eebtoYNAyR1yLEVn4fCzqdY1TBbf0z
+         t9NpYdd1EgrTF6Omj/gaFb4rhR/caKysRKcII=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719340137; x=1719944937;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LY9j5G3fdq5ypXEAkvCyErpGrL2adF9ZVg+3QvAwK7M=;
-        b=UMPOEloHrri1o99K3/8HfQCLMmJLtWhc+jW10CxtstWlm0eyInx8yBmR9lyeS14oyL
-         iUp5bphXpowXTkrMy3lPM6uNvOviOtTERNjb4Sai4nXecOuNjxGvUs/ugIjCjJlRusy/
-         0T/QbY8RKr1hkCLFi51HtV1NisgioAekg6Y4ZzOuLIdARP/0n0L9+GANWjtdFAp4BaW5
-         hSXVUvjr3Lx5+qvcXFYP7+RIfbLFFGBRbGPQnr5xcKDFQU67gRjSZ46ES4e8GBXgVxdr
-         +LxafU5dwNngQUktOJqGMbf6xYytkf27O9dFRivJfSdaRTSmbczGxm/YH9L+qKJEfnMb
-         KQcg==
-X-Forwarded-Encrypted: i=1; AJvYcCVwAZwcAlRJ69pdXqK0W9/KGg9+etPq8Si5yB0emv5I6DwtpoyVx92jAZ8AXFtHuMFFoyY/NfhDl8MeTruJ3D/Q3BqtZYKE/gqBYCFKlO0fOdnSlR8qsiil8P/g9J6o2WeQE8xihyjs
-X-Gm-Message-State: AOJu0Yw4Icozo+PWGRoMov6ZttdrFdzC+6VxpsGRJrLASBtpaVLUjGox
-	9iYMixmJmR4GRWTyhR74hA6T0BzaIj6PHLDjA5YZQ6GBkrh4gZ6J
-X-Google-Smtp-Source: AGHT+IH+U0eGKB3cCWWMo974S+/lA7WfcUT133b1Kt3yAVeScqse5Q9wrlKa4xYQmVnewo2ePxaWbg==
-X-Received: by 2002:a05:6a20:551f:b0:1bd:24f6:576 with SMTP id adf61e73a8af0-1bd24f60623mr1754005637.48.1719340136800;
-        Tue, 25 Jun 2024 11:28:56 -0700 (PDT)
-Received: from localhost.localdomain ([43.135.72.207])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb320917sm84690555ad.75.2024.06.25.11.28.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 11:28:56 -0700 (PDT)
-From: alexjlzheng@gmail.com
-X-Google-Original-From: alexjlzheng@tencent.com
-To: chandan.babu@oracle.com,
-	djwong@kernel.org
-Cc: david@fromorbit.com,
-	hch@infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	alexjlzheng@tencent.com
-Subject: [PATCH xfs v2 2/2] xfs: make xfs_log_iovec independent from xfs_log_vec and free it early
-Date: Wed, 26 Jun 2024 02:28:42 +0800
-Message-ID: <20240625182842.1038809-3-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.41.1
-In-Reply-To: <20240625182842.1038809-1-alexjlzheng@tencent.com>
-References: <20240625182842.1038809-1-alexjlzheng@tencent.com>
+        d=1e100.net; s=20230601; t=1719340282; x=1719945082;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i9EZeqDS86Jj/CFHQ+IhN1q/yBvceksX0X7aiOh86ro=;
+        b=q/HSLovuEleYwh9A2yee+ogIeKw1FLH+ZW/NsiehHQxyj/6DpzTrt63nZyq4wwpqsb
+         BxLhm0dg+yIyUtjqZV36wDKO18MofeeomZK6kHkMYLu/nWoR2/f7lbRg/BbsDJWWc2y2
+         Euonm2hg3YZjw7+IVS6A/zE40CFL4moxumvl0OG5P/69URO8dkevBc5FgrJkMqxK6kbq
+         0gbGzoYeSM/Si7wMeXHhUQXjOttRRvp/QePUbeQeuvowakHVImglSl+dtVU9v/zvrV0W
+         2bKCshcNEt/cmAgTq+CxB7lrlC5RlyF17PSAENGxekhMrpNsTMEOasW7rN3cAt8V6oV/
+         qJyw==
+X-Forwarded-Encrypted: i=1; AJvYcCXY6TDtfMwocV6WaL+n3IjI1dkO7Kb/6PblOib4pWtbITOcTJDnz3XJH9v6xBqI2hoK3jmAJzIX2gB/yDS3o7/rQ44mHs5FgQQ6BN6M
+X-Gm-Message-State: AOJu0YxvRRbr26t7bPJJKxNY0Vo02XZMszaIJuyIusa03qt3jgwM4oQo
+	R2Lnmw0wI3yshmNEkZO02Oux5Z1VAtrLYpVTgNMezoAXK+H9gEz2rBRWxvLXnObnVgXJpQOt4HY
+	b642tig==
+X-Google-Smtp-Source: AGHT+IHWt5mHR8p92lCjT+DUYVytWtD5O2XQ9p2vdJtODyIJJdaAAKfZ7MvRgsIZrdqHP4+6eAvzAQ==
+X-Received: by 2002:a50:aa96:0:b0:57d:f84:11a9 with SMTP id 4fb4d7f45d1cf-57d4a28e2e3mr8331836a12.22.1719340282440;
+        Tue, 25 Jun 2024 11:31:22 -0700 (PDT)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3058287fsm6178185a12.95.2024.06.25.11.31.21
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 11:31:21 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a727d9dd367so98518566b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:31:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUpM+z+k0BgfYUiaJJwS6SGorDYJxtp5D0WP3gfLPvrromJH7azHbTqAHdXsDq0wuom8bVtp0Xyzbc3Z2nmaeKPOv1BpFLZITtr96U0
+X-Received: by 2002:a17:907:cb20:b0:a6f:489a:3a28 with SMTP id
+ a640c23a62f3a-a7242cdb40amr569907066b.61.1719340281233; Tue, 25 Jun 2024
+ 11:31:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <202406230912.F6XFIyA6-lkp@intel.com> <CAFULd4YVOwxQ4JDaOdscX_vtJsqJBJ5zhd0RtXXutW=Eqh29Qw@mail.gmail.com>
+ <CAHk-=wg1h4w_m=Op1U4JsyDjsvqG0Kw1EOVMQ+=5GX_XytdorQ@mail.gmail.com>
+ <CAFULd4YR-VkAOKiS5yxSUYi0YMzY1p=pkYe4dOkgFs+A=9AFFA@mail.gmail.com>
+ <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
+ <CAHk-=whPqqZVSeJiQsMvsAxtAmtR9iAuB4gg_1sUK2D-uBPpLw@mail.gmail.com>
+ <CAFULd4YAeF7=q7DYUh016kabxS8b32qRbFqDBJQrvLq6RjwEVg@mail.gmail.com>
+ <CAHk-=wiHo2YeA=TOUf8vxFLOc0+BoH8USaiT25fnX2ynXbrZkg@mail.gmail.com>
+ <CAHk-=wgdCs0883dpvZpyna76q9eVcTMvvUVAaBuJMPyrgOhNig@mail.gmail.com> <CAFULd4ZW23_RNye6YGbsT0Uo-vOQBM_tBbSJRhh=0HZzXuC_8Q@mail.gmail.com>
+In-Reply-To: <CAFULd4ZW23_RNye6YGbsT0Uo-vOQBM_tBbSJRhh=0HZzXuC_8Q@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 25 Jun 2024 11:31:05 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wiWEgSo2Tb_bih7mnS27zAPL+RGg_7yX4qK1f710-j-Ng@mail.gmail.com>
+Message-ID: <CAHk-=wiWEgSo2Tb_bih7mnS27zAPL+RGg_7yX4qK1f710-j-Ng@mail.gmail.com>
+Subject: Re: arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly
+ requires more registers than available
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
+	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Jinliang Zheng <alexjlzheng@tencent.com>
+[ Sorry for not being hugely responsive the last few days - I was on
+the road for a family get-together on the east coast, so I spent time
+on airplanes and hotels and I don't particularly enjoy working with a
+laptop ]
 
-When the contents of the xfs_log_vec/xfs_log_iovec combination are
-written to iclog, xfs_log_iovec loses its meaning in continuing to exist
-in memory, because iclog already has a copy of its contents. We only
-need to keep xfs_log_vec that takes up very little memory to find the
-xfs_log_item that needs to be added to AIL after we flush the iclog into
-the disk log space.
+On Mon, 24 Jun 2024 at 08:42, Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> >
+> > I'm sending the patch out in the hope that another set of eyes will
+> > make it actually better.
+>
+> + _lock "cmpxchg8b 0(%[ptr])", X86_FEATURE_CX8) \
+>
+> This can be just:
+>
+> + _lock "cmpxchg8b %a[ptr]", X86_FEATURE_CX8) \
 
-Because xfs_log_iovec dominates most of the memory usage of the
-xfs_log_vec/xfs_log_iovec combination, retaining xfs_log_iovec until
-iclog is flushed into the disk log space and releasing together with
-xfs_log_vec is a significant waste of memory.
+Thanks, yup, will fix.
 
-This patch separates the memory of xfs_log_iovec from that of
-xfs_log_vec, and releases the memory of xfs_log_iovec in advance to save
-memory.
+> - if (unlikely(!ret)) \
+> - *(_oldp) = o.full; \
+> + *(_oldp) = o; \
+>
+> This one should really update only when cmpxchg fails.
 
-Signed-off-by: Jinliang Zheng <alexjlzheng@tencent.com>
----
- fs/xfs/xfs_log.c     |  2 ++
- fs/xfs/xfs_log.h     |  8 ++++++--
- fs/xfs/xfs_log_cil.c | 33 ++++++++++++++++++++-------------
- 3 files changed, 28 insertions(+), 15 deletions(-)
+The thing is, when cmpxchg doesn't fail, then oldp should already be "old", no?
 
-diff --git a/fs/xfs/xfs_log.c b/fs/xfs/xfs_log.c
-index 49e676061f2f..84a01ce61c96 100644
---- a/fs/xfs/xfs_log.c
-+++ b/fs/xfs/xfs_log.c
-@@ -2527,6 +2527,8 @@ xlog_write(
- 			xlog_write_full(lv, ticket, iclog, &log_offset,
- 					 &len, &record_cnt, &data_cnt);
- 		}
-+		if (lv->lv_flags & XFS_LOG_VEC_DYNAMIC)
-+			kvfree(lv->lv_iovecp);
- 	}
- 	ASSERT(len == 0);
- 
-diff --git a/fs/xfs/xfs_log.h b/fs/xfs/xfs_log.h
-index 9cc10acf7bcd..035fda96bfcc 100644
---- a/fs/xfs/xfs_log.h
-+++ b/fs/xfs/xfs_log.h
-@@ -6,6 +6,8 @@
- #ifndef	__XFS_LOG_H__
- #define __XFS_LOG_H__
- 
-+#define XFS_LOG_VEC_DYNAMIC	(1 << 0)
-+
- struct xfs_cil_ctx;
- 
- struct xfs_log_vec {
-@@ -17,7 +19,8 @@ struct xfs_log_vec {
- 	char			*lv_buf;	/* formatted buffer */
- 	int			lv_bytes;	/* accounted space in buffer */
- 	int			lv_buf_len;	/* aligned size of buffer */
--	int			lv_size;	/* size of allocated lv */
-+	int			lv_size;	/* size of allocated iovecp + buf */
-+	int			lv_flags;	/* lv flags */
- };
- 
- extern struct kmem_cache *xfs_log_vec_cache;
-@@ -42,6 +45,7 @@ static inline void
- xlog_finish_iovec(struct xfs_log_vec *lv, struct xfs_log_iovec *vec,
- 		int data_len)
- {
-+	struct xfs_log_iovec	*lvec = lv->lv_iovecp;
- 	struct xlog_op_header	*oph = vec->i_addr;
- 	int			len;
- 
-@@ -71,7 +75,7 @@ xlog_finish_iovec(struct xfs_log_vec *lv, struct xfs_log_iovec *vec,
- 	vec->i_len = len;
- 
- 	/* Catch buffer overruns */
--	ASSERT((void *)lv->lv_buf + lv->lv_bytes <= (void *)lv + lv->lv_size);
-+	ASSERT((void *)lv->lv_buf + lv->lv_bytes <= (void *)lvec + lv->lv_size);
- }
- 
- /*
-diff --git a/fs/xfs/xfs_log_cil.c b/fs/xfs/xfs_log_cil.c
-index f51cbc6405c1..7cc9ed0aa14a 100644
---- a/fs/xfs/xfs_log_cil.c
-+++ b/fs/xfs/xfs_log_cil.c
-@@ -219,8 +219,7 @@ static inline int
- xlog_cil_iovec_space(
- 	uint	niovecs)
- {
--	return round_up((sizeof(struct xfs_log_vec) +
--					niovecs * sizeof(struct xfs_log_iovec)),
-+	return round_up(niovecs * sizeof(struct xfs_log_iovec),
- 			sizeof(uint64_t));
- }
- 
-@@ -279,6 +278,7 @@ xlog_cil_alloc_shadow_bufs(
- 
- 	list_for_each_entry(lip, &tp->t_items, li_trans) {
- 		struct xfs_log_vec *lv;
-+		struct xfs_log_iovec *lvec;
- 		int	niovecs = 0;
- 		int	nbytes = 0;
- 		int	buf_size;
-@@ -330,8 +330,8 @@ xlog_cil_alloc_shadow_bufs(
- 		 * if we have no shadow buffer, or it is too small, we need to
- 		 * reallocate it.
- 		 */
--		if (!lip->li_lv_shadow ||
--		    buf_size > lip->li_lv_shadow->lv_size) {
-+		lv = lip->li_lv_shadow;
-+		if (!lv || buf_size > lv->lv_size) {
- 			/*
- 			 * We free and allocate here as a realloc would copy
- 			 * unnecessary data. We don't use kvzalloc() for the
-@@ -339,18 +339,24 @@ xlog_cil_alloc_shadow_bufs(
- 			 * the buffer, only the log vector header and the iovec
- 			 * storage.
- 			 */
--			kvfree(lip->li_lv_shadow);
--			lv = xlog_kvmalloc(buf_size);
-+			if (lv)
-+				kvfree(lv->lv_iovecp);
-+			else
-+				lv = kmem_cache_alloc(xfs_log_vec_cache,
-+						GFP_KERNEL | __GFP_NOFAIL);
- 
--			memset(lv, 0, xlog_cil_iovec_space(niovecs));
-+			memset(lv, 0, sizeof(struct xfs_log_vec));
-+			lvec = xlog_kvmalloc(buf_size);
-+			memset(lvec, 0, xlog_cil_iovec_space(niovecs));
- 
-+			lv->lv_flags |= XFS_LOG_VEC_DYNAMIC;
- 			INIT_LIST_HEAD(&lv->lv_list);
- 			lv->lv_item = lip;
- 			lv->lv_size = buf_size;
- 			if (ordered)
- 				lv->lv_buf_len = XFS_LOG_VEC_ORDERED;
- 			else
--				lv->lv_iovecp = (struct xfs_log_iovec *)&lv[1];
-+				lv->lv_iovecp = lvec;
- 			lip->li_lv_shadow = lv;
- 		} else {
- 			/* same or smaller, optimise common overwrite case */
-@@ -366,9 +372,9 @@ xlog_cil_alloc_shadow_bufs(
- 		lv->lv_niovecs = niovecs;
- 
- 		/* The allocated data region lies beyond the iovec region */
--		lv->lv_buf = (char *)lv + xlog_cil_iovec_space(niovecs);
-+		lv->lv_buf = (char *)lv->lv_iovecp +
-+				xlog_cil_iovec_space(niovecs);
- 	}
--
- }
- 
- /*
-@@ -502,7 +508,7 @@ xlog_cil_insert_format_items(
- 			/* reset the lv buffer information for new formatting */
- 			lv->lv_buf_len = 0;
- 			lv->lv_bytes = 0;
--			lv->lv_buf = (char *)lv +
-+			lv->lv_buf = (char *)lv->lv_iovecp +
- 					xlog_cil_iovec_space(lv->lv_niovecs);
- 		} else {
- 			/* switch to shadow buffer! */
-@@ -703,7 +709,7 @@ xlog_cil_free_logvec(
- 	while (!list_empty(lv_chain)) {
- 		lv = list_first_entry(lv_chain, struct xfs_log_vec, lv_list);
- 		list_del_init(&lv->lv_list);
--		kvfree(lv);
-+		kmem_cache_free(xfs_log_vec_cache, lv);
- 	}
- }
- 
-@@ -1544,7 +1550,8 @@ xlog_cil_process_intents(
- 		set_bit(XFS_LI_WHITEOUT, &ilip->li_flags);
- 		trace_xfs_cil_whiteout_mark(ilip);
- 		len += ilip->li_lv->lv_bytes;
--		kvfree(ilip->li_lv);
-+		kvfree(ilip->li_lv->lv_iovecp);
-+		kmem_cache_free(xfs_log_vec_cache, ilip->li_lv);
- 		ilip->li_lv = NULL;
- 
- 		xfs_trans_del_item(lip);
--- 
-2.39.3
+I mean, by the very definition, atomic_try_cmpxchg() can *not* be
+successful if the new value didn't match the old one.
 
+I mean, just look at the very doc you point to - the "definition" is
+
+  bool atomic_try_cmpxchg(atomic_t *ptr, int *oldp, int new)
+  {
+    int ret, old = *oldp;
+    ret = atomic_cmpxchg(ptr, old, new);
+    if (ret != old)
+      *oldp = ret;
+    return ret == old;
+  }
+
+iow, it only returns success of "ret == old", and "old" by definition
+is "the contents of oldp".
+
+(Here "oldp" is a local variable, not something that can be changing).
+
+So I *think* the whole
+
+    if (ret != old)
+      *oldp = ret;
+
+is actually counter-productive, and could/should be just that simpler
+unconditional *oldp = ret, because you have two cases:
+
+ - ret == old: the assignment doesn't change anything and is a no-op
+
+ - ret !=- old: the assignment needs to be done
+
+but doing it *unconditionally* means that now as fat as the compiler
+is concerned, the original *oldp value is unconditionally dead, which
+sounds to me like it should be good for register allocation (the
+context here being that it _looks_ like a pointer access, but it's
+really meant to be a "in-out argument in a register").
+
+Now, in practice, I suspect that everybody checks the return value and
+"old" is never used afterwards in the success case, so in that sense
+this doesn't matter and it's all dead regardless.
+
+But it seems to be a complication in the docs and the implementation.
+
+Of course, I may be missing something completely obvious, and/or you
+have some subtle code generation reason why you prefer the conditional
+there. Feel free to explain,
+
+             Linus
 
