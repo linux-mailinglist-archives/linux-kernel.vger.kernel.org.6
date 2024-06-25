@@ -1,147 +1,326 @@
-Return-Path: <linux-kernel+bounces-228702-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B69A3916596
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:54:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E24916694
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:48:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3DF7B23043
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:54:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FD4F1F2194C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C040714A60F;
-	Tue, 25 Jun 2024 10:54:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3AB714B964;
+	Tue, 25 Jun 2024 11:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DFuY1y9T"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LfQ9I13T"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77F7814A4D4
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:54:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B581494A0;
+	Tue, 25 Jun 2024 11:48:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719312871; cv=none; b=P7v8o7AUxYc5z3xZGmV6uJcO/4IPdhY5Md6w49PUCPxr0IMRGah7e3oEDsBm5HSZG8dllEO72fT27RbNvix/RdUQ8PEnL9fh3ploz5/2vsJ5wzBJiDsvz/Hwk8A3yqHcCSdS9QcpBf2YLXcSrbfJugVvDolxTez0byA4I/GvNeI=
+	t=1719316129; cv=none; b=pCE6J6FeAOsjYsSozNfsX27lKtAiKbIANlHy0MfqSQsMyuNC++vKRaEc02EpeC/uHfqbJjqlGE46SLOp3Ic+im3InG27c0hqboBg5HGrM0NT2ZdcCl08LZ2kzgQr4Jk2WHmz3rUv6O8Kpxo6A/G/NimJ4cF87HDnCK6HnUnwEfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719312871; c=relaxed/simple;
-	bh=iqAJT77/5nQtnfkRkQeaCSfi25BV9kRWodYrzB/wJ/8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l+VgKkaV2Oy+3KiSqQBMOS4gekCbFu5U80x/u9oeyirIwq9TmxEfDrz2xjOw3HkT9FD4Jf9pDQoBP8fEqp+u09aiEgfa5XoEtaPLVkYyE1gxl1PyE3jSe2vAuiq2fmw47r3i6Lc5/v0o+IlbBejqoIfA6VhQqfLWs8RpSIF82Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DFuY1y9T; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d55cfebcc5so87209b6e.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:54:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719312868; x=1719917668; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S+cZWGB+2jcFhszdKI8ASmXDRJENXojOKhli/2LXpnM=;
-        b=DFuY1y9Tq8fED3wRUMOGD4eTRf1o0jrMFlwtxpiL2iMmHy8CKOUbe8Qnvt/FVzdOuC
-         /UY4vRozN64fI3hpRBVU6OpbIGVayayzwICgA0p8Sl92dN0NQ85D1gbzz3tj44dP31hv
-         Gmq/u3ms+w+bEaTzeKMmnz//UExcYTEUYCi7TKEGv9wLOqD60ci18GQ7QVqcyr6HUNFs
-         eufgq46+NswKdfCJyTUdnM/8Rdihk+AhrONHkuCVDtm1V6e86YLvf+L0nBEVr33g+3Fw
-         RrZ2ztisfaRy6xnbCXE/aN1d24ACInoAtEWCljK11GYepZo8MtttV4XbhoVfeFBw98+8
-         PtfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719312868; x=1719917668;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S+cZWGB+2jcFhszdKI8ASmXDRJENXojOKhli/2LXpnM=;
-        b=NdMm0Thh/Rzlm3tUp2YRDs+Z/fMJ/Rqr3fBazXRT2pDcwqmMIznRhOQRf4YnQoyMPm
-         CvohBRDx3CUlaBKCr9TRdHvERCo8J+hMNCp3oUcSJXw9XLMZN6fk1oogITbLsh1KoJzO
-         UxPa177BXVGrmT3lI/F0pkx9LRr+O2iIldgMFN3ifHjcA7OaRXs8Rw3x65DIQObOxUwn
-         VoSzInloRPcuOLEWw+BBo855D+cdi+TVBlKJbZbvk/cImS3beY6+Ag1OwKvySO5m0YCc
-         uXFjjcH1obLAPFTzQXu/aUyNAXNUN7XyQdXMZEFOb/InzYuPWSYLmCZ4e6Lty6G6C2ED
-         H1nw==
-X-Forwarded-Encrypted: i=1; AJvYcCV//F7zve5bmPRDb8d7+BZiRfXVx07ulCjL4EaYlRODzBUiINbC2vF8pu91St1u0m2/NVMozIaPVmkM6bswH5oeQUo0dVr9twwekA2N
-X-Gm-Message-State: AOJu0YxuPmihTA0UyvxjejfOd8zSS+MxrCejwDXdKG/hhMkSj43q6h6M
-	KhQOP/y8hkKEB0t7J4ZkmtWgG104w2tQe6Qv+aWTHaqB3kZ5yiFoMPpiOIhs2OI=
-X-Google-Smtp-Source: AGHT+IHkmTwzgMVZ85oOIGg7bkGQn9jD0qlRj9ZqyfrOw1uen/yda4dypNC/fa/tx1p5pHhoPulz0A==
-X-Received: by 2002:a05:6870:9720:b0:24c:afec:f1c with SMTP id 586e51a60fabf-25d06eb4fddmr6882648fac.48.1719312868320;
-        Tue, 25 Jun 2024 03:54:28 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7067f2b97dcsm3924658b3a.129.2024.06.25.03.54.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 03:54:27 -0700 (PDT)
-Date: Tue, 25 Jun 2024 16:24:25 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>, Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-tegra@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] OPP: Fix support for required OPPs for multiple PM
- domains
-Message-ID: <20240625105425.pkociumt4biv4j36@vireshk-i7>
-References: <20240618155013.323322-1-ulf.hansson@linaro.org>
+	s=arc-20240116; t=1719316129; c=relaxed/simple;
+	bh=Q69OCz7ZRS/rC3enEzWLPTObmcriBlwPCJJnLNGLq/w=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=gFluu81NWM5D9fX2PAmp6xLYD8Gf6qhRtnS4NszyEbtfD9fhyQSURQr2gBa26ewvie613zfn9TSXpKyCWxPPNqpBc4t57cHInJNVPJ9WO9vO3BSQWHdEFlx/ziqsiT+uhpB9WrmJryJgIveMliyINvcXBf26XDB2HgAhrnuhfZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LfQ9I13T; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PBaHn4000691;
+	Tue, 25 Jun 2024 11:48:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-type:mime-version:subject:from:in-reply-to:date:cc
+	:content-transfer-encoding:message-id:references:to; s=pp1; bh=W
+	ICUOPn6G8vaIEnI5sjdZgE7qeNqV5Cn8Hfz1bsE0NU=; b=LfQ9I13T3l0ZpsRrX
+	3Yf13itfYwyPr0MwnJK+JFnWz7iQ2C1HbZkNlMpGBoN9WmarIqrGPboQddClUyFE
+	tpoJEg8ShxUB1V5VoBKO109UOKMVbp4e2V1rnH9aAWnTSHDGLIpuuLTvDdtbor6I
+	akEtRToF5iROjzj9dxzKAjGFm5d8Y03Sm7yMit2JwwfOu8lKlnGcGFDFiXxb7E2q
+	2kSbF+udQD3pscvaebgjxNXaKMsMR+bnAgnn9okjrbduGurKF3KlBb0+0/C5zSd4
+	xuCOZZBXnXOqDExekPmHefJCc9KmbbyBTZ1WmfYao0zYDhAhW9X78kJDOomIvCYL
+	4cXvA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyw22016v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 11:48:32 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45PBmVj3017340;
+	Tue, 25 Jun 2024 11:48:31 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyw22016r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 11:48:31 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45PAWAdv018093;
+	Tue, 25 Jun 2024 11:48:31 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yx8xu6c73-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 11:48:30 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45PBmP2M46465520
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Jun 2024 11:48:27 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 68B1B2004B;
+	Tue, 25 Jun 2024 11:48:25 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id CA48420040;
+	Tue, 25 Jun 2024 11:48:22 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.43.30.249])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 25 Jun 2024 11:48:22 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240618155013.323322-1-ulf.hansson@linaro.org>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [V4 01/16] tools/perf: Move the data structures related to
+ register type to header file
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <ZnpShR7zd9cVdxSj@google.com>
+Date: Tue, 25 Jun 2024 16:24:58 +0530
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ian Rogers <irogers@google.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com,
+        maddy@linux.ibm.com, kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <0AF30B3F-AD13-4398-AC0F-AA6B5425D4AA@linux.vnet.ibm.com>
+References: <20240614172631.56803-1-atrajeev@linux.vnet.ibm.com>
+ <20240614172631.56803-2-atrajeev@linux.vnet.ibm.com>
+ <ZnpShR7zd9cVdxSj@google.com>
+To: Namhyung Kim <namhyung@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: Wx4xQ1HC-ykBn5uzAbPblL6G-qjztymv
+X-Proofpoint-ORIG-GUID: JwmN6Qul-YFYonxRwifTiBMGpHnaCfmb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_06,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 spamscore=0 adultscore=0 mlxscore=0 clxscore=1015 phishscore=0
+ mlxlogscore=999 impostorscore=0 suspectscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406250084
 
-On 18-06-24, 17:50, Ulf Hansson wrote:
-> In _set_opp() we are normally bailing out when trying to set an OPP that is
-> the current one. This make perfect sense, but becomes a problem when
-> _set_required_opps() calls it recursively.
-> 
-> More precisely, when a required OPP is being shared by multiple PM domains,
-> we end up skipping to request the corresponding performance-state for all
-> of the PM domains, but the first one. Let's fix the problem, by calling
-> _set_opp_level() from _set_required_opps() instead.
-> 
-> Fixes: e37440e7e2c2 ("OPP: Call dev_pm_opp_set_opp() for required OPPs")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/opp/core.c | 47 +++++++++++++++++++++++-----------------------
->  1 file changed, 24 insertions(+), 23 deletions(-)
- 
->  /* This is only called for PM domain for now */
->  static int _set_required_opps(struct device *dev, struct opp_table *opp_table,
->  			      struct dev_pm_opp *opp, bool up)
-> @@ -1091,7 +1113,8 @@ static int _set_required_opps(struct device *dev, struct opp_table *opp_table,
->  		if (devs[index]) {
->  			required_opp = opp ? opp->required_opps[index] : NULL;
->  
-> -			ret = dev_pm_opp_set_opp(devs[index], required_opp);
-> +			ret = _set_opp_level(devs[index], opp_table,
-> +					     required_opp);
 
-No, we won't be doing this I guess. Its like going back instead of
-moving forward :)
 
-The required OPPs is not just a performance domain thing, but
-specially with devs[] here, it can be used to set OPP for any device
-type and so dev_pm_opp_set_opp() is the right call here.
+> On 25 Jun 2024, at 10:45=E2=80=AFAM, Namhyung Kim =
+<namhyung@kernel.org> wrote:
+>=20
+> Hello,
+>=20
+> On Fri, Jun 14, 2024 at 10:56:16PM +0530, Athira Rajeev wrote:
+>> Data type profiling uses instruction tracking by checking each
+>> instruction and updating the register type state in some data
+>> structures. This is useful to find the data type in cases when the
+>> register state gets transferred from one reg to another. Example, in
+>> x86, "mov" instruction and in powerpc, "mr" instruction. Currently =
+these
+>> structures are defined in annotate-data.c and instruction tracking is
+>> implemented only for x86. Move these data structures to
+>> "annotate-data.h" header file so that other arch implementations can =
+use
+>> it in arch specific files as well.
+>>=20
+>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+>> ---
+>> tools/perf/util/annotate-data.c | 53 +------------------------------
+>> tools/perf/util/annotate-data.h | 55 =
++++++++++++++++++++++++++++++++++
+>> 2 files changed, 56 insertions(+), 52 deletions(-)
+>>=20
+>> diff --git a/tools/perf/util/annotate-data.c =
+b/tools/perf/util/annotate-data.c
+>> index 965da6c0b542..a4c7f98a75e3 100644
+>> --- a/tools/perf/util/annotate-data.c
+>> +++ b/tools/perf/util/annotate-data.c
+>> @@ -31,15 +31,6 @@
+>>=20
+>> static void delete_var_types(struct die_var_type *var_types);
+>>=20
+>> -enum type_state_kind {
+>> - TSR_KIND_INVALID =3D 0,
+>> - TSR_KIND_TYPE,
+>> - TSR_KIND_PERCPU_BASE,
+>> - TSR_KIND_CONST,
+>> - TSR_KIND_POINTER,
+>> - TSR_KIND_CANARY,
+>> -};
+>> -
+>> #define pr_debug_dtp(fmt, ...) \
+>> do { \
+>> if (debug_type_profile) \
+>> @@ -140,49 +131,7 @@ static void pr_debug_location(Dwarf_Die *die, =
+u64 pc, int reg)
+>> }
+>> }
+>>=20
+>> -/*
+>> - * Type information in a register, valid when @ok is true.
+>> - * The @caller_saved registers are invalidated after a function =
+call.
+>> - */
+>> -struct type_state_reg {
+>> - Dwarf_Die type;
+>> - u32 imm_value;
+>> - bool ok;
+>> - bool caller_saved;
+>> - u8 kind;
+>> -};
+>> -
+>> -/* Type information in a stack location, dynamically allocated */
+>> -struct type_state_stack {
+>> - struct list_head list;
+>> - Dwarf_Die type;
+>> - int offset;
+>> - int size;
+>> - bool compound;
+>> - u8 kind;
+>> -};
+>> -
+>> -/* FIXME: This should be arch-dependent */
+>> -#define TYPE_STATE_MAX_REGS  16
+>> -
+>> -/*
+>> - * State table to maintain type info in each register and stack =
+location.
+>> - * It'll be updated when new variable is allocated or type info is =
+moved
+>> - * to a new location (register or stack).  As it'd be used with the
+>> - * shortest path of basic blocks, it only maintains a single table.
+>> - */
+>> -struct type_state {
+>> - /* state of general purpose registers */
+>> - struct type_state_reg regs[TYPE_STATE_MAX_REGS];
+>> - /* state of stack location */
+>> - struct list_head stack_vars;
+>> - /* return value register */
+>> - int ret_reg;
+>> - /* stack pointer register */
+>> - int stack_reg;
+>> -};
+>> -
+>> -static bool has_reg_type(struct type_state *state, int reg)
+>> +bool has_reg_type(struct type_state *state, int reg)
+>> {
+>> return (unsigned)reg < ARRAY_SIZE(state->regs);
+>> }
+>> diff --git a/tools/perf/util/annotate-data.h =
+b/tools/perf/util/annotate-data.h
+>> index 0a57d9f5ee78..ef235b1b15e1 100644
+>> --- a/tools/perf/util/annotate-data.h
+>> +++ b/tools/perf/util/annotate-data.h
+>> @@ -6,6 +6,9 @@
+>> #include <linux/compiler.h>
+>> #include <linux/rbtree.h>
+>> #include <linux/types.h>
+>> +#include "dwarf-aux.h"
+>> +#include "annotate.h"
+>> +#include "debuginfo.h"
+>>=20
+>> struct annotated_op_loc;
+>> struct debuginfo;
+>> @@ -15,6 +18,15 @@ struct hist_entry;
+>> struct map_symbol;
+>> struct thread;
+>>=20
+>> +enum type_state_kind {
+>> + TSR_KIND_INVALID =3D 0,
+>> + TSR_KIND_TYPE,
+>> + TSR_KIND_PERCPU_BASE,
+>> + TSR_KIND_CONST,
+>> + TSR_KIND_POINTER,
+>> + TSR_KIND_CANARY,
+>> +};
+>> +
+>> /**
+>> * struct annotated_member - Type of member field
+>> * @node: List entry in the parent list
+>> @@ -142,6 +154,48 @@ struct annotated_data_stat {
+>> };
+>> extern struct annotated_data_stat ann_data_stat;
+>>=20
+>> +/*
+>> + * Type information in a register, valid when @ok is true.
+>> + * The @caller_saved registers are invalidated after a function =
+call.
+>> + */
+>> +struct type_state_reg {
+>> + Dwarf_Die type;
+>> + u32 imm_value;
+>> + bool ok;
+>> + bool caller_saved;
+>> + u8 kind;
+>> +};
+>> +
+>> +/* Type information in a stack location, dynamically allocated */
+>> +struct type_state_stack {
+>> + struct list_head list;
+>> + Dwarf_Die type;
+>> + int offset;
+>> + int size;
+>> + bool compound;
+>> + u8 kind;
+>> +};
+>> +
+>> +/* FIXME: This should be arch-dependent */
+>> +#define TYPE_STATE_MAX_REGS  32
+>=20
+> Can you please define this for powerpc separately?  I think x86 should
+> remain in 16.
+>=20
+> Thanks,
+> Namhyung
 
-Coming back to the problem you are pointing to, I am not very clear of
-the whole picture here. Can you please help me get some details on
-that ?
+Sure, I will have this change in V5
+>=20
+>> +
+>> +/*
+>> + * State table to maintain type info in each register and stack =
+location.
+>> + * It'll be updated when new variable is allocated or type info is =
+moved
+>> + * to a new location (register or stack).  As it'd be used with the
+>> + * shortest path of basic blocks, it only maintains a single table.
+>> + */
+>> +struct type_state {
+>> + /* state of general purpose registers */
+>> + struct type_state_reg regs[TYPE_STATE_MAX_REGS];
+>> + /* state of stack location */
+>> + struct list_head stack_vars;
+>> + /* return value register */
+>> + int ret_reg;
+>> + /* stack pointer register */
+>> + int stack_reg;
+>> +};
+>> +
+>> #ifdef HAVE_DWARF_SUPPORT
+>>=20
+>> /* Returns data type at the location (ip, reg, offset) */
+>> @@ -160,6 +214,7 @@ void global_var_type__tree_delete(struct rb_root =
+*root);
+>>=20
+>> int hist_entry__annotate_data_tty(struct hist_entry *he, struct evsel =
+*evsel);
+>>=20
+>> +bool has_reg_type(struct type_state *state, int reg);
+>> #else /* HAVE_DWARF_SUPPORT */
+>>=20
+>> static inline struct annotated_data_type *
+>> --=20
+>> 2.43.0
 
-From what I understand, you have a device which has multiple power
-domains. Now all these power domains share the same OPP table in the
-device tree (i.e. to avoid duplication of tables only). Is that right
-?
 
-Even if in DT we have the same OPP table for all the domains, the OPP
-core will have separate OPP tables structures (as the domains aren't
-connected). And these OPP tables will have their own `current_opp`
-fields and so we shouldn't really bail out earlier.
-
-Maybe there is a bug somewhere that is causing it. Maybe I can look at
-the DT to find the issue ? (Hint: The OPP table shouldn't have the
-`shared` flag set).
-
-Maybe I completely misunderstood the whole thing :)
-
--- 
-viresh
 
