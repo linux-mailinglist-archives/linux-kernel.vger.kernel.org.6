@@ -1,126 +1,111 @@
-Return-Path: <linux-kernel+bounces-229285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45768916DD3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:13:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E454A916DD5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:14:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF75F1F21853
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:13:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B5291F21B62
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29978171084;
-	Tue, 25 Jun 2024 16:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D92F17106D;
+	Tue, 25 Jun 2024 16:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="wRSj1gHh"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qw/aowst"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBAE14A627;
-	Tue, 25 Jun 2024 16:13:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812711BC23;
+	Tue, 25 Jun 2024 16:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719332019; cv=none; b=uNTwCDJJbsrVF5icbuPs7vJehm10sM8ozaTtf9u6ynZ5DT8N0TEU0bVIKiNMSx1NzGOPYkLS1T12yPp6YifOoBnm4OBuyc1v9h6CVvlDrP4Fpn7Hkan8fKyNlFVmWsEinDyO5xkYqd1c4BR114K0nDl4audZJSfG1rHVBkDWtEc=
+	t=1719332075; cv=none; b=aG0QYIi00HAIQ+7lD96FNwE1BldF+Ad8voYnYim3vf8ciqlD1gDXHZqoDH30kiK2x3jigj9m+D8ctMk0N3Scs4nhYhQ4oI2DBaxdZaBbkjUuO2BVJ2/kE/fROzhGARb3UkMmXdYm7FMq1iZq40x6ne9op3CtoSdbFA9VFt94U2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719332019; c=relaxed/simple;
-	bh=msYZhZCxWZBxDmvizCkJHvdjfdVF2a0TW+w8bbNgRJc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L/90TP/W9y78CV22X7zQ2242WaKcOy2pjeZ4AiDtd2UvDo/mg0G3zjVBbXJutpOLfVvYAGvArZdq8/QbWyjqLtkAj0rr99TvzS+g5MftU81SBZpIsRxKQpjCkyMAUb2jHizVuuS3VsY+QjkVN2NtAgE8AP1sR1mgj5OrGjzzRX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=wRSj1gHh; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4W7qdF1TcYz6Cnk9F;
-	Tue, 25 Jun 2024 16:13:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1719332009; x=1721924010; bh=msYZhZCxWZBxDmvizCkJHvdj
-	fdVF2a0TW+w8bbNgRJc=; b=wRSj1gHh+zHK3ryUK5RrBNkuEQOK9GR4zWSFP+YO
-	d8CdsOS82ib7JS+e816UQqzvYLZCUjCbn8royEG93wtBpdMdCFueIN2lxnh/scmI
-	Yk6U96wqxAFO0qXeD0XNFJLhoWJIsw0d1mhhEmM88QO00BFIRhC7JNui70TPUt2d
-	OfWmQcj3PHJtj4XMPc+QwK3zWZNvNNJBH12sJ+l2lhc9YU4viW/fmbPdMvBpiKDX
-	pXk1m0s36VHWX/LDkqzlYxJ1kgrIE5X8YLg80R5uHkdTuUdvfeIZ1A3IwK9XFn2T
-	O64WIxuzm5nqfAks7wvwIEmmf4/eEoYWSmZggP6iWLkSmw==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id I4FFymU7LBn7; Tue, 25 Jun 2024 16:13:29 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4W7qd24L9qz6Cnk97;
-	Tue, 25 Jun 2024 16:13:26 +0000 (UTC)
-Message-ID: <3c7e776e-df2e-4718-995f-5e5dfa3cc916@acm.org>
-Date: Tue, 25 Jun 2024 09:13:23 -0700
+	s=arc-20240116; t=1719332075; c=relaxed/simple;
+	bh=0cepQ8DTy2dd7hDBl1FBxJREPoxG0e83dtyZ38Xz36I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r8ArW2GsjBpVQWWL+fYaV0yfm7sHrOxbzqsOR6FEcAyFWoupYJD0JiFR9LBeJFq5FHmjzOl5Za55/jlvx0QHTu3BcTItN52TySrPIQMSK7x37hN0FHjY2KI61om+vmaVF36RzZvITVbOhl0dqlZWQLbXXPpDVAdlNuhhTAYppew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qw/aowst; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c81fe42e53so3319871a91.3;
+        Tue, 25 Jun 2024 09:14:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719332073; x=1719936873; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=r7lvyqQ/bh+Zu96Z19nUVf4NW7qOys3muVGUV5WCLYg=;
+        b=Qw/aowstLlytzT7lI0ixP3URo749A4E4C0Nz/Cn0Hz6MdKrXEzjIk4rMN8V1MktGlV
+         utuxnerjs70YaqSEg35zfMpeKQ2s1mZFBLN7sy9P+qKZ2Y/4cmElVMk85iDzIjvV9RXW
+         TEG6Uskocl2HEUj90WsoHI+tyY5YFj2GRi+/8V2/8Qn+5NS1wqiiOd7zkL4YSF2JSCsS
+         d4/YIERTBaJClnf+X2Qb2NF86Bn9wuwMjW83IcJ2Oy+bO02XQCXjBolxDSrfmtvtiuJ/
+         syIQ7KJ04Fg9NeGODHh70LBnlhumkNMl1eyF6WJ6ADMLRkhApzVRbn5BRHwXi7iBtkiu
+         /uzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719332073; x=1719936873;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r7lvyqQ/bh+Zu96Z19nUVf4NW7qOys3muVGUV5WCLYg=;
+        b=qEdVGXOhIPj2SD7JclgyDKvbVmmwVqeyp90Mal/GGBgimUT3Z/6GZOFqzDZvZXMhbw
+         f3Sa4x7ITwozASa3PE/qdYkGYyT7VJrtlGUvztbzgrR5qaTb85mxKaX5cfHSFo8zeZku
+         m2gmDJ8snz9aiLnNDgIBwp4keUOvJ+2jLoTY7xRBSevpqjlItSRqel2/zU9xyyU63sY7
+         izPoieNy3jcjqR7pn/5Md6bvkz73RyFLPT6psdjrDM67qgSENLiF2/I/Pc/h2oYKNagl
+         cCxqZNEi6+jjIeuNXrSG75h9k3xWq1NSRLt3OM5mwtfzEdphvs2DU54chkMxcDpSlU/+
+         R+cg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+ZiZsPXRQSsg2BN6ZcHMquostXZuELOevpT4M9CGk3E16Si2i0e2cJYK57v7d9mmyb411qAk9/s463DB3xvzy45FNO2vIo9slPuBzAiqzrs4FBwmZ+LX2R+Im5PdVydNjC69/BCv7Kkc=
+X-Gm-Message-State: AOJu0YzeCfc4n1CXsWG78z7kGCWOAFRFc4ULYLZEJ7/860qeIoK7SSzS
+	CZnQvyDapB0NZZIo3QuXZol7kPiE1oGY56rnkD2od/Q3wmRoJWSW
+X-Google-Smtp-Source: AGHT+IGOj7PYUzqYXS7lK06vRPtKJ6R8Xd9yzfHf170bY0pHwHK6TYk2DBv7+efjA2IM3JLNItk1Eg==
+X-Received: by 2002:a17:90b:4c41:b0:2c3:213b:d0b1 with SMTP id 98e67ed59e1d1-2c86127e2a8mr6883282a91.5.1719332072587;
+        Tue, 25 Jun 2024 09:14:32 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:ff4:b46e:2948:c244])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819dbcd88sm8951847a91.37.2024.06.25.09.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 09:14:32 -0700 (PDT)
+Date: Tue, 25 Jun 2024 09:14:29 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Andrei Lalaev <andrey.lalaev@gmail.com>
+Cc: robh@kernel.org, m.felsch@pengutronix.de, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Andrei Lalaev <andrei.lalaev@anton-paar.com>
+Subject: Re: [PATCH] Input: qt1050 - handle CHIP_ID reading error
+Message-ID: <Znrs5QVAuSjH5sCT@google.com>
+References: <20240617183018.916234-1-andrey.lalaev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: core: quiesce request queues before check
- pending cmds
-To: =?UTF-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>,
- "quic_rampraka@quicinc.com" <quic_rampraka@quicinc.com>,
- "quic_nguyenb@quicinc.com" <quic_nguyenb@quicinc.com>,
- "quic_ziqichen@quicinc.com" <quic_ziqichen@quicinc.com>,
- "quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>,
- "beanhuo@micron.com" <beanhuo@micron.com>,
- "avri.altman@wdc.com" <avri.altman@wdc.com>,
- "martin.petersen@oracle.com" <martin.petersen@oracle.com>,
- "junwoo80.lee@samsung.com" <junwoo80.lee@samsung.com>,
- "mani@kernel.org" <mani@kernel.org>,
- "quic_cang@quicinc.com" <quic_cang@quicinc.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
- "jejb@linux.ibm.com" <jejb@linux.ibm.com>,
- "quic_asutoshd@quicinc.com" <quic_asutoshd@quicinc.com>,
- "quic_mnaresh@quicinc.com" <quic_mnaresh@quicinc.com>,
- "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1717754818-39863-1-git-send-email-quic_ziqichen@quicinc.com>
- <d3fc4d2b-81b0-4ab2-9606-5f4a5fb8b867@acm.org>
- <efc80348-46c0-4307-a363-a242a7b44d94@quicinc.com>
- <b1173b6f-445c-4d6d-9c78-b0351da2893a@acm.org>
- <ee45ce9429b1f69147c1a01e07b050275b4009bf.camel@mediatek.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <ee45ce9429b1f69147c1a01e07b050275b4009bf.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240617183018.916234-1-andrey.lalaev@gmail.com>
 
-On 6/24/24 8:38 PM, Peter Wang (=E7=8E=8B=E4=BF=A1=E5=8F=8B) wrote:
-> But ufshcd_scsi_block_requests usage is correct in SDR mode.
+On Mon, Jun 17, 2024 at 08:30:18PM +0200, Andrei Lalaev wrote:
+> From: Andrei Lalaev <andrei.lalaev@anton-paar.com>
+> 
+> If the device is missing, we get the following error:
+> 
+>   qt1050 3-0041: ID -1340767592 not supported
+> 
+> Let's handle this situation and print more informative error
+> when reading of CHIP_ID fails:
+> 
+>   qt1050 3-0041: Failed to read chip ID: -6
+> 
+> Fixes: cbebf5addec1 ("Input: qt1050 - add Microchip AT42QT1050 support")
+> Signed-off-by: Andrei Lalaev <andrei.lalaev@anton-paar.com>
 
-ufshcd_scsi_block_requests() uses scsi_block_requests(). It is almost
-never correct to use scsi_block_requests() in a blk-mq driver because
-scsi_block_requests() does not wait for ongoing request submission
-calls to complete. scsi_block_requests() is a legacy from the time when
-all request dispatching and queueing was protected by the SCSI host
-lock, a change that was made in 2010 or about 14 years ago. See also
-https://lore.kernel.org/linux-scsi/20101105002409.GA21714@havoc.gtf.org/
+Applied, thank you.
 
-> So, I think ufshcd_wait_for_doorbell_clr should be revise.
-> Check tr_doorbell in SDR mode. (before 8d077ede48c1 do)
-> Check each HWQ's are all empty in MCQ mode. (need think how to do)
-> Make sure all requests is complete, and finish this function' job
-> correctly.
-> Or there still have a gap in ufshcd_wait_for_doorbell_clr.
+But how did we get into the situation with the chip being missing?
+Incorrect DTB for the board?
 
-ufshcd_wait_for_doorbell_clr() should be removed and=20
-ufshcd_clock_scaling_prepare() should use blk_mq_freeze_*().
-See also my patch "ufs: Simplify the clock scaling mechanism
-implementation" from 5 years ago=20
-(https://lore.kernel.org/linux-scsi/20191112173743.141503-5-bvanassche@ac=
-m.org/).
+Thanks.
 
-Best regards,
-
-Bart.
+-- 
+Dmitry
 
