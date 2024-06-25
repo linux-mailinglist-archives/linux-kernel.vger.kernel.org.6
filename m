@@ -1,101 +1,113 @@
-Return-Path: <linux-kernel+bounces-229555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B8759170C8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:01:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 559F89170CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:02:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8ACB285ABD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:01:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D79CA281E5B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:02:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612AA17C234;
-	Tue, 25 Jun 2024 19:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D2217C23C;
+	Tue, 25 Jun 2024 19:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="M3rbxX2n"
-Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GmKGWSMS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337701DDF8;
-	Tue, 25 Jun 2024 19:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E431DDF8;
+	Tue, 25 Jun 2024 19:02:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719342062; cv=none; b=ao60Rjl9oa4d+r+IHGMgzHcWHIuCbjGne9Xs3KKi9jzN5w5ugJfYBM5N01uE41Rqd4wwaMLrFJc8h/FCiY7+6tN5Wt66zgejSrIjV7ELZ2Rrv2ErI1KJZPYLB1SL0cdrlDBYLCUZtnpCrvDQU1FRHRr3fwAz1adLJzxBg3GVG2E=
+	t=1719342122; cv=none; b=czFkyJhxlaTjEISaXrO7lmcL82ScykFan2XfPcbEvIeQiMGJ5WURlzErI9kkhL94l+8/J98BL9H5vomGDyxRojlCT5AvftILFZHKEFeExj/07xM7liYA6JqgCeeypw8/lQioyTwTtdkKLlkYEwYznXZf0fnTjsvSHVYgNyR8lUw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719342062; c=relaxed/simple;
-	bh=JwHUKbMcRpahmyUhbH6RiR9M6mR8udrEXrGHmlJqHjc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gwkl3pEgBuIFZtxrYc4/EEWF8hMicP1rIdRaT+JA0XTyrSWpkgllqJh4sXRO+VqLHr1QRXu5SaRzQaOoYNbhxfDue11ENoyr/0utYbbW91qnZx1FnLmgbGYz34+Ooe0QcX/FtLW3TzQT2MyLPIQAIWNiNWS5jdi0T44nWTPtabU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=M3rbxX2n; arc=none smtp.client-ip=49.12.72.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
-From: Finn Behrens <me@kloenk.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
-	t=1719342055; bh=H43X7bDThMZ+yf/2+EGK7hfjogg/5KQsBFDhAK77OeY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=M3rbxX2nyJmUCAX/Y8LmbjZUTjpyNMO8I5U0YIAY8NIHuwaha7Di8k7k0plmsm2kz
-	 3hjg187Z+CP9g+U2GLC6tJzShnrASg8CRyDpTlt5txQ8FqBszmUMSlvBHgoCqkLBEP
-	 JU/K4TG3zesf0s7joupP3ZbN7qWS7N9tAmW5LElY=
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>,
- Masahiro Yamada <masahiroy@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
- linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] Makefile: improve comment documentation for the
- rust-analyzer target
-Date: Tue, 25 Jun 2024 21:00:54 +0200
-Message-ID: <699F1B9B-3240-46F9-8D0A-F400D5DB9D1D@kloenk.dev>
-In-Reply-To: <20240620205453.81799-3-jhubbard@nvidia.com>
-References: <20240620205453.81799-1-jhubbard@nvidia.com>
- <20240620205453.81799-3-jhubbard@nvidia.com>
+	s=arc-20240116; t=1719342122; c=relaxed/simple;
+	bh=3Ye0bDhzpbz3fUGe0nhYFgBrWutlYxe1oAkJY20AiRc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K8Y34rVCzOdtzd9+ipLa0JGUGXta++m+261Zs3D8Wj27iH7sRrUt/9RCF/0Xo1Dd9j5czy6AAMmjU/BbFifiohQprf8EqYGWl1gydBb9Q1ZPUdebJFhO+ZH+0uYXv98vVLFnzIsK/s9Q4/8pSY+As/GLbtLqrK8/CBoNz5KYFHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GmKGWSMS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 838D7C32782;
+	Tue, 25 Jun 2024 19:02:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719342121;
+	bh=3Ye0bDhzpbz3fUGe0nhYFgBrWutlYxe1oAkJY20AiRc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GmKGWSMS8TON7V//u6ypke7Pk+ece/B4PQZRUub/Jl0/I+F7IN/W39KHCv4EiCG7t
+	 ZV0DPZPsL1DQw1ClMXpItWEuoVAH+iobnCzucYn61mAJahPc6LMA8HnGtyBnVbvHdh
+	 qlxruxhzXaXyuznu6d6+0W87CSUtJDPfPyFH8HqctloHckocpjYKgjmmS+EpdiGH7F
+	 S+bSB6yF/TTMVOqErExCu9ki/hJ/Deyq4H4OL/g7bp6FYLRhsYZKIaGW/2YdF2+X/9
+	 igXxIhqN7ZzDhbD0d2gh/hnXTQ+iWvrfE/l8b7kmcFCTrmTqbqFjcrYV/HOUzjFKcF
+	 e4FmbTH4DCLpw==
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-700cdb488c1so32655a34.1;
+        Tue, 25 Jun 2024 12:02:01 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWzorqJHvsmDnEapKYj+xjH4W+J4dhrGJ32deGx8PG/k7975CYZsBt5qH5LYzOjelXh1i/PzLeEaWJHT0V007j+GrVoOP584O4kOGOt/qa+jFtU1exbQNkVCgTrB3HG2iNCmJ9ILj8=
+X-Gm-Message-State: AOJu0YwmXxwWV7n0SuT1uGV7zDqQ0hNUXQSvbU8cEJxHvWtyTxLJqcyk
+	U0bfS9jx+PNpktNWKEzro9NhE811DJ6if0k3dKVbeowbjtFHLyJOu/YGtt1yMX3jFiF7l/qsWkS
+	sCHoLd09dDrRHedOoBqyY8iLAFOk=
+X-Google-Smtp-Source: AGHT+IHCJ/pErcYH4WdPB1HUPAHiliMLDNwpZnRcwtFcRi0Q+z6PWySKDN9DNi2+6DtVxqdls+/09WQyn+UsRYSYfXk=
+X-Received: by 2002:a05:6870:17a8:b0:254:7dbe:1b89 with SMTP id
+ 586e51a60fabf-25cf3c23288mr10734924fac.1.1719342120768; Tue, 25 Jun 2024
+ 12:02:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20240624162714.1431182-1-srinivas.pandruvada@linux.intel.com>
+In-Reply-To: <20240624162714.1431182-1-srinivas.pandruvada@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 25 Jun 2024 21:01:49 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gEu+t+BqM8NxjrwUFu01TEYAaaB_Ca5HJHXYNUnXMOfg@mail.gmail.com>
+Message-ID: <CAJZ5v0gEu+t+BqM8NxjrwUFu01TEYAaaB_Ca5HJHXYNUnXMOfg@mail.gmail.com>
+Subject: Re: [PATCH] cpufreq: intel_pstate: Replace boot_cpu_has()
+To: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 20 Jun 2024, at 22:54, John Hubbard wrote:
-
-> Replace the cryptic phrase ("IDE support targets") that initially
-> appears to be about how to support old hard drives, with a few sentences
-> that explain what "make rust-analyzer" provides.
+On Mon, Jun 24, 2024 at 6:27=E2=80=AFPM Srinivas Pandruvada
+<srinivas.pandruvada@linux.intel.com> wrote:
 >
-> Cc: Alice Ryhl <aliceryhl@google.com>
-> Cc: Miguel Ojeda <ojeda@kernel.org>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> Replace boot_cpu_has() with cpu_feature_enabled().
+>
+> Signed-off-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 > ---
->  Makefile | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> This is based on comment from Borislov for the change to suppot HWP
+> highest interrupt.
 >
-> diff --git a/Makefile b/Makefile
-> index 07308277a6f5..d22491184af6 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1967,7 +1967,9 @@ quiet_cmd_tags = GEN     $@
->  tags TAGS cscope gtags: FORCE
->  	$(call cmd,tags)
+>  drivers/cpufreq/intel_pstate.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 >
-> -# IDE support targets
-> +# Generate rust-project.json, which does for Rust what clangd's
-> +# compile_commands.json does for C/C++: provides a symbol browsing database for
-> +# code editors and IDEs (Integrated Development Environments).
->  PHONY += rust-analyzer
->  rust-analyzer:
->  	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/rust_is_available.sh
-> -- 
-> 2.45.2
+> diff --git a/drivers/cpufreq/intel_pstate.c b/drivers/cpufreq/intel_pstat=
+e.c
+> index d53b99bab687..4ee244f59f54 100644
+> --- a/drivers/cpufreq/intel_pstate.c
+> +++ b/drivers/cpufreq/intel_pstate.c
+> @@ -1635,7 +1635,7 @@ void notify_hwp_interrupt(void)
+>         u64 value, status_mask;
+>         unsigned long flags;
+>
+> -       if (!hwp_active || !boot_cpu_has(X86_FEATURE_HWP_NOTIFY))
+> +       if (!hwp_active || !cpu_feature_enabled(X86_FEATURE_HWP_NOTIFY))
+>                 return;
+>
+>         status_mask =3D HWP_GUARANTEED_PERF_CHANGE_STATUS;
+> @@ -1667,7 +1667,7 @@ static void intel_pstate_disable_hwp_interrupt(stru=
+ct cpudata *cpudata)
+>  {
+>         bool cancel_work;
+>
+> -       if (!boot_cpu_has(X86_FEATURE_HWP_NOTIFY))
+> +       if (!cpu_feature_enabled(X86_FEATURE_HWP_NOTIFY))
+>                 return;
+>
+>         /* wrmsrl_on_cpu has to be outside spinlock as this can result in=
+ IPC */
+> --
 
-Reviewed-by: Finn Behrens <me@kloenk.dev>
+Applied as 6.11 material, thanks!
 
