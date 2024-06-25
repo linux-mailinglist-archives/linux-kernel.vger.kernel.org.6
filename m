@@ -1,189 +1,86 @@
-Return-Path: <linux-kernel+bounces-228776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E82639166AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:55:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00F2B9166AF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:55:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E1A7B21480
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:55:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1CEC28C123
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:55:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C14614C5A9;
-	Tue, 25 Jun 2024 11:54:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AE5155CBD;
+	Tue, 25 Jun 2024 11:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="edHRB77Z";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qIF2rEDA";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="edHRB77Z";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="qIF2rEDA"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="OoW+Ap8q"
+Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1C2A149DF4;
-	Tue, 25 Jun 2024 11:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E7514D29B;
+	Tue, 25 Jun 2024 11:54:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719316490; cv=none; b=BBCx6BkmuIVB9lWvI3Dakb3lOilQ5qyDxj7sc5V0bIYH2xFxeXzUEzXRRzJ/ODPMqje0OwXJF4pr5UjXFOOkwg7cba/TLCcVvY3MNKMtxjjKqHa/9bUINroYBu7Ymez3sAlZFt3cE88laOIyllGuV4qTXoe8p9umBaItNVoe4XU=
+	t=1719316495; cv=none; b=ni/aYbn7WcELZ2cJ5TY+dTmFAXTQvr20CxXYZ4FnRMm1dYbegUu4CVjAZnzDwY8unOaCrp9Yp4JCGzMt6ZxAKqtukfQKKdjGMbL5sjgik3IW6bRlaggJ3IpXEdsvG9g7Z01nedCToqiBBQJwfMwn35p5EAM+YBx8ghdb3o0Twkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719316490; c=relaxed/simple;
-	bh=PJ7ErXWG500saiAxVcKKjlwKKVYdVfoy1Ml+rQGLJQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=O0qHsNZr3fGgkJlsO3WwnyOtjxCL8ymHYDTWyLXr9xTnCNisIy6rmDL/AlT/bAppjppYFKk56YkGuYHjx2T45lP1j23cV87h3sRNv28ThZ4Kn/7WWykc3YgkzDEMfPYENLazqhZ1YC6g2xWSh9Stc4Mvp9sxwvjNpm9MD/EsL5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=edHRB77Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qIF2rEDA; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=edHRB77Z; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=qIF2rEDA; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0DB1A21A62;
-	Tue, 25 Jun 2024 11:54:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719316487; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MOBP0/BgNiXJStCQytdDfMso+Ko+QG94c4ckyvD1P74=;
-	b=edHRB77Z+ojnXoKkCZz2zHEplzVQfBL6t7VpXlP4PFo7dRBkZ12S/B3pSe1tQVCJA9C0eN
-	hb697MfuwGpKw2ugk2FkIkVuAZ9MpFELBjo3gRjKt95JAIM4v4ktORyHlM/XN+Poao6Ofo
-	LmHPSyv2HkhT/1gYeUkfxp8j15NU3k0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719316487;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MOBP0/BgNiXJStCQytdDfMso+Ko+QG94c4ckyvD1P74=;
-	b=qIF2rEDAFMZsmF4NGa63rtch6yoi2HoDylwniyiNFG3vYvQwTpbrI/Hs7wL3h4+Vq9D1rK
-	VZ43cNCEy3V8YFAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=edHRB77Z;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=qIF2rEDA
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719316487; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MOBP0/BgNiXJStCQytdDfMso+Ko+QG94c4ckyvD1P74=;
-	b=edHRB77Z+ojnXoKkCZz2zHEplzVQfBL6t7VpXlP4PFo7dRBkZ12S/B3pSe1tQVCJA9C0eN
-	hb697MfuwGpKw2ugk2FkIkVuAZ9MpFELBjo3gRjKt95JAIM4v4ktORyHlM/XN+Poao6Ofo
-	LmHPSyv2HkhT/1gYeUkfxp8j15NU3k0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719316487;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MOBP0/BgNiXJStCQytdDfMso+Ko+QG94c4ckyvD1P74=;
-	b=qIF2rEDAFMZsmF4NGa63rtch6yoi2HoDylwniyiNFG3vYvQwTpbrI/Hs7wL3h4+Vq9D1rK
-	VZ43cNCEy3V8YFAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 01AD413A9A;
-	Tue, 25 Jun 2024 11:54:47 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id EyVnAAewemaleAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 25 Jun 2024 11:54:47 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id ABFB6A087B; Tue, 25 Jun 2024 13:54:42 +0200 (CEST)
-Date: Tue, 25 Jun 2024 13:54:42 +0200
-From: Jan Kara <jack@suse.cz>
-To: Yu Ma <yu.ma@intel.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	mjguzik@gmail.com, edumazet@google.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com
-Subject: Re: [PATCH v2 2/3] fs/file.c: conditionally clear full_fds
-Message-ID: <20240625115442.kkrqy6yvy6qpct4y@quack3>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240622154904.3774273-1-yu.ma@intel.com>
- <20240622154904.3774273-3-yu.ma@intel.com>
+	s=arc-20240116; t=1719316495; c=relaxed/simple;
+	bh=tdiZzho1yxP3FP7HmO5wX6bXsbOVDiUXTcDyk6knbu0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=MYRkdfvYOHxN0tiGTwrNCLNgkO4+rYm+A2A9teKhRKByLyWgG/X9FEqsDoCn3iYQQa5/q8tQ86+rzGQOblhP2jERNsckdo0Edi+r/iItx1W33Xfl6jVr+nKRJ2L5D0MNr9kqFcBd9oFJ+xz5nAVAkRebx0xuY3ZiypRvdHpHwm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=OoW+Ap8q; arc=none smtp.client-ip=168.119.38.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
+	Resent-Cc:Resent-Message-ID; bh=tdiZzho1yxP3FP7HmO5wX6bXsbOVDiUXTcDyk6knbu0=;
+	t=1719316491; x=1720526091; b=OoW+Ap8qpRtY3MflXFDwprnVke6ylfjINu8FyRkKvXM8SN1
+	E/lU2lRDQB7OqAV/KMwSq1jlG23EAGoyizGKG/J14m4uOX65cqxBIRyPMfS8NWGbNY6w8IN4vHgou
+	Qs0ob2HwdgnAXLS/l3jQCcRfRh35eET9l7yOAqfUG22HmjtzPV9Lwk5u2ZE9nK8SHdLWGUoqUMgxE
+	JaEsoZwgXMUmBT7FxFuFyAHzcxOJ9Vb5/Cyk7dYUBZrPaW/PqrHzrmEbCcldPRy+87JsgSLKX2nCS
+	K2DlguSLCUWHnb4roCcx9571sqjb4SDFtmZeKWWi8KQVV5+0upCkkN+Bpxrssbpw==;
+Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.97)
+	(envelope-from <johannes@sipsolutions.net>)
+	id 1sM4l6-00000000fQc-2WYs;
+	Tue, 25 Jun 2024 13:54:48 +0200
+Message-ID: <2fc4b98c0899b0bbbfbfb0c7a60eb0264ce97894.camel@sipsolutions.net>
+Subject: Re: [PATCH net] wifi: cfg80211: Fix out-of-bounds in
+ cfg80211_wext_siwscan
+From: Johannes Berg <johannes@sipsolutions.net>
+To: Jeongjun Park <aha310510@gmail.com>
+Cc: linux-wireless@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Date: Tue, 25 Jun 2024 13:54:47 +0200
+In-Reply-To: <20240623084939.6889-1-aha310510@gmail.com>
+References: <20240623084939.6889-1-aha310510@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240622154904.3774273-3-yu.ma@intel.com>
-X-Rspamd-Queue-Id: 0DB1A21A62
-X-Spam-Score: -4.01
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,gmail.com,google.com,vger.kernel.org,intel.com,linux.intel.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-malware-bazaar: not-scanned
 
-On Sat 22-06-24 11:49:03, Yu Ma wrote:
-> 64 bits in open_fds are mapped to a common bit in full_fds_bits. It is very
-> likely that a bit in full_fds_bits has been cleared before in
-> __clear_open_fds()'s operation. Check the clear bit in full_fds_bits before
-> clearing to avoid unnecessary write and cache bouncing. See commit fc90888d07b8
-> ("vfs: conditionally clear close-on-exec flag") for a similar optimization.
-> Together with patch 1, they improves pts/blogbench-1.1.0 read for 27%, and write
-> for 14% on Intel ICX 160 cores configuration with v6.10-rc4.
-> 
-> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Yu Ma <yu.ma@intel.com>
+On Sun, 2024-06-23 at 17:49 +0900, Jeongjun Park wrote:
+> In the process of searching for matching hardware channels, wreq and=20
+> wreq->num_channels are checked to see if they are NULL. However,=20
+> if the value of wreq->num_channels is greater than IW_MAX_FREQUENCIES,
+> an out-of-bounds vulnerability occurs.
+>=20
+> Therefore, you must also add code to check whether the value of=20
+> wreq->num_channels is within the range.
+>=20
 
-Nice. Feel free to add:
+This is the same more or less as=20
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+https://msgid.link/20240531032010.451295-1-dmantipov@yandex.ru
 
-								Honza
+no?
 
-> ---
->  fs/file.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/fs/file.c b/fs/file.c
-> index 50e900a47107..b4d25f6d4c19 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -268,7 +268,9 @@ static inline void __set_open_fd(unsigned int fd, struct fdtable *fdt)
->  static inline void __clear_open_fd(unsigned int fd, struct fdtable *fdt)
->  {
->  	__clear_bit(fd, fdt->open_fds);
-> -	__clear_bit(fd / BITS_PER_LONG, fdt->full_fds_bits);
-> +	fd /= BITS_PER_LONG;
-> +	if (test_bit(fd, fdt->full_fds_bits))
-> +	    __clear_bit(fd, fdt->full_fds_bits);
->  }
->  
->  static inline bool fd_is_open(unsigned int fd, const struct fdtable *fdt)
-> -- 
-> 2.43.0
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+johannes
 
