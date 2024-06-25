@@ -1,78 +1,95 @@
-Return-Path: <linux-kernel+bounces-229089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02040916ACD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:42:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EB5A916AD4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:42:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC5C91F2840A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:42:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A6965B24A63
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:42:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8718116EBF4;
-	Tue, 25 Jun 2024 14:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0025516FF5E;
+	Tue, 25 Jun 2024 14:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kl0mNoxN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 145D63A8CB;
-	Tue, 25 Jun 2024 14:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3821B16FF31;
+	Tue, 25 Jun 2024 14:41:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719326501; cv=none; b=kIt7HEyys7eLqFXLjurzso2HyVBCwYdhsWx9ebddnj4K8pkhhxkv5LafS1i2Xw97P7jAFPuk6HMSBtk7sqZU1eSNw8HZp9LnEn1qbaidzGYHfTJacn+1vpI1cI/AhKmZmRwqwc/c99NL9l+ss15w6a//TIdB8PYLsBAOUYI6FwM=
+	t=1719326507; cv=none; b=DUzHy2qAp/Ar6da/qslb7BKGvtoCa1URkz2GJCKHaPJWbKRy3alYqnCNSwKeFJ1HaU9sUIewDq76zvMibnCws3pFIGRPhxp5UgBankUU1srbPJWPZuFsUMLkPWLhBYk5wdc0jLB7V0EbhIOMTmwnQcWLip4cNFLeIiO7+skm14M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719326501; c=relaxed/simple;
-	bh=VosDvf0qt3pU/Covzt7D0pO5vvASRfaUya6aWxUxI8k=;
+	s=arc-20240116; t=1719326507; c=relaxed/simple;
+	bh=7Xoqa/8SM4/teyTc5YVyyz/aN2GVZH2+fbzkHrtRClc=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pOTk62BSlcO7/hGXB8Fbw254TOXayt0jbF+CWAcC80jXfy9jklFmBU97Xg3aZfI8e+uaCAaQNGYHhogdPU+T61hRgNV+HkTaptVIwHXU4FS7Pmtzo+lJK+Fk8TjC06xGMWYkz0ivgiki415n7ZXpLaZIrbma0lxBJ47zaD7aMm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EDA7C4AF07;
-	Tue, 25 Jun 2024 14:41:38 +0000 (UTC)
-Date: Tue, 25 Jun 2024 10:41:37 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, Christoph Lameter <cl@linux.com>,
- David Rientjes <rientjes@google.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
- <andrii@kernel.org>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Anil S
- Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S. Miller"
- <davem@davemloft.net>, Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Jiri Olsa <jolsa@kernel.org>, Roman Gushchin
- <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] error-injection: support static keys around
- injectable functions
-Message-ID: <20240625104137.7fbe294d@rorschach.local.home>
-In-Reply-To: <20240620-fault-injection-statickeys-v2-2-e23947d3d84b@suse.cz>
-References: <20240620-fault-injection-statickeys-v2-0-e23947d3d84b@suse.cz>
-	<20240620-fault-injection-statickeys-v2-2-e23947d3d84b@suse.cz>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	 MIME-Version:Content-Type; b=sBhvIYbqzKRv3jEIPteWqV1W1We9hjGBjWqUNBxMlKqCBWMXAJhYSmv5+89ukKuewOWfCWlP3yS8fBh8m4qjYILcX4iGGYApbdbbGoQB/2ywQ/XefEaFfeaXs2lsU8KVGRbVN0CGFujYoTG7kWZcwTbZLXXswrdQU5H+wXcas50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kl0mNoxN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31C7CC32786;
+	Tue, 25 Jun 2024 14:41:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719326506;
+	bh=7Xoqa/8SM4/teyTc5YVyyz/aN2GVZH2+fbzkHrtRClc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kl0mNoxN/PcCwlqXY6XVVhDiKjRsivVxEBgCN5Wt06JThBYPf9EN05TzDJE8AV0W8
+	 +h6qlKhJCJZ3ZL/aMcxIE841wgMP3Hkm+reT3vl0Ivw5ir9Dhe/nulXdu0gBTdT9pl
+	 3k2PbH4g+FI8s42V9hIiatJMk3tb4HnaSYF3jWYbjYOwKA94pjBW1ZjTcnfAKWawNt
+	 pdGo2OM7YrVXnreO9yEdUgj5474Clp9VqFrtqIZ1WLtyZlfJZ8SqnG0lRBttK3NqQk
+	 C61DFIL2qme0jd4ThkSt9psSznSPHi9tlQYeAW0Q3MxCZOpBjTXPLFnmIerpw/Cc91
+	 lH7a4uWEEnmsQ==
+Date: Tue, 25 Jun 2024 07:41:45 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Aaron Conole <aconole@redhat.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, netdev@vger.kernel.org,
+ dev@openvswitch.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Pravin B Shelar <pshelar@ovn.org>, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Shuah
+ Khan <shuah@kernel.org>, Stefano Brivio <sbrivio@redhat.com>,
+ =?UTF-8?B?QWRyacOhbg==?= Moreno <amorenoz@redhat.com>, Simon Horman
+ <horms@kernel.org>
+Subject: Re: [PATCH v2 net-next 0/7] selftests: net: Switch pmtu.sh to use
+ the internal ovs script.
+Message-ID: <20240625074145.69fc9d9f@kernel.org>
+In-Reply-To: <f7t1q4lgldr.fsf@redhat.com>
+References: <20240620125601.15755-1-aconole@redhat.com>
+	<20240621180126.3c40d245@kernel.org>
+	<f7ttthjh33w.fsf@redhat.com>
+	<f7tpls6gu3q.fsf@redhat.com>
+	<e4f69335f90aae3f1daa47ba8f69b24ea15ed3b7.camel@redhat.com>
+	<f7th6dhgnvm.fsf@redhat.com>
+	<20240625070654.6a00efef@kernel.org>
+	<f7t1q4lgldr.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 20 Jun 2024 00:48:56 +0200
-Vlastimil Babka <vbabka@suse.cz> wrote:
+On Tue, 25 Jun 2024 10:14:24 -0400 Aaron Conole wrote:
+> > Sorry for not checking it earlier, looks like the runner was missing
+> > pyroute:
+> >
+> > # python3 ./tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> > Need to install the python pyroute2 package >=3D 0.6.
+> >
+> > I guess run_cmd counter-productively eats the stderr output ? :( =20
+>=20
+> Awesome :)  I will add a patch to ovs-dpctl that will turn the
+> sys.exit(0) into sys.exit(1) - that way it should do the skip.
+>=20
+> When I previously tested, I put an error in the `try` without reading
+> the except being specifically for a ModuleNotFound error.
+>=20
+> I'll make sure pyroute2 isn't installed when I run it again.
+>=20
+> Thanks for your help Jakub and Paolo!
 
-> @@ -86,6 +104,7 @@ static void populate_error_injection_list(struct error_injection_entry *start,
->  		ent->start_addr = entry;
->  		ent->end_addr = entry + size;
->  		ent->etype = iter->etype;
-> +		ent->key = (struct static_key *) iter->static_key_addr;
-
-Nit, should there be a space between the typecast and the "iter"?
-
->  		ent->priv = priv;
->  		INIT_LIST_HEAD(&ent->list);
->  		list_add_tail(&ent->list, &error_injection_list);
-
-Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
--- Steve
+BTW I popped the v2 back into the queue, so the next run (in 20min)
+will tell us if that's the only thing we were missing =F0=9F=A4=9E=EF=B8=8F
 
