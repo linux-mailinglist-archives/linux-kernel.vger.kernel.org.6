@@ -1,86 +1,88 @@
-Return-Path: <linux-kernel+bounces-228815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416BA916766
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:17:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D9A6916769
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0BD028847A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECC842889A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:18:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D6B155310;
-	Tue, 25 Jun 2024 12:16:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A563415F3E1;
+	Tue, 25 Jun 2024 12:16:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="cussvILI"
-Received: from m15.mail.163.com (m15.mail.163.com [45.254.50.220])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7E5154457
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.50.220
+	dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b="DTD4S1ZQ"
+Received: from mail.8bytes.org (mail.8bytes.org [85.214.250.239])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338B415624B;
+	Tue, 25 Jun 2024 12:16:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.250.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719317778; cv=none; b=ILmRwowDgkStaL83AcawDy93FDTURIGCd09ZAfXzA3F3EIQyRKuVNweWO8b6JZV/2AynwiF9PvEYjp6HbOJCONbxBMS7tXhp77pWW6ml7PB58SS+XLd+ZwuxU/59JPmmE6QNxJIN/QTnjDndw2l7MBAzcxuv7xitPaxEedD69eM=
+	t=1719317806; cv=none; b=XouKIPIUekwlFrhBiPAyiriGpoCHym+oWmc+9Q9vKI2QPKI93Zwx6mXYZWEcay24yDNUugfp8t7ni9XTFYjl/+uw9leuOVspsEPiAlL6oQtamJzKwtv5zKIwujMHKII059lLQPQqjdDxmKEP/81nC3Pe4rISQyfsJ1k5KopPqqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719317778; c=relaxed/simple;
-	bh=rqU0JnrkA2PxmOMtg8EY7zPtZ+6K4IQ/py9YVTmJrf4=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=eVe0mSoV58ihAHsSwDZlPhHHKY/JhyFJnwDz89bGSqjYS//aYnbDKoTMeOPcorQ7PE0dgxJqJZdnwgIMfcBIN8pQEJ1WAqXUNgjXkOTnPEzk710qxcyeeEnSEPQK57h0LWDhsfkwNOrdfcYT2Syk78UVvCKxn5wuThaTjZKhqZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=cussvILI; arc=none smtp.client-ip=45.254.50.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id; bh=dtFb+RElWjmSMz3lQ9
-	EUTC4/2x3gzy4Tx1TLPXdoBk0=; b=cussvILIDI/hq+oIHS8Mu3/9+n+QE4mgsm
-	DcLuCukv5pRHqMo75VA1p6EWPyHlADm6LKcNgj2RzpF1mFzZtNxOkpKr9yL0W+y0
-	GkhVccjnu5iSS7uysI9k7c+G3T3jI27eYBT2SfxwmVJrNGD6LnirTt87g6v9SM7l
-	u2cgX+CKI=
-Received: from localhost.localdomain (unknown [120.229.10.157])
-	by gzga-smtp-mta-g0-4 (Coremail) with SMTP id _____wC3H3T9tHpmFDe5AQ--.6623S2;
-	Tue, 25 Jun 2024 20:15:58 +0800 (CST)
-From: "yongfa.hu" <hushange@163.com>
-To: akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	hushange@163.com
-Subject: [PATCH] mm: remove partial comments of kswapd_shrink_node head
-Date: Tue, 25 Jun 2024 20:15:47 +0800
-Message-Id: <20240625121547.23613-1-hushange@163.com>
-X-Mailer: git-send-email 2.17.1
-X-CM-TRANSID:_____wC3H3T9tHpmFDe5AQ--.6623S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7Gw4kKF4kWr17Zw17ZF43ZFb_yoWftrcE93
-	W0krn7tryUJF97tFW3CF4rXFW3Ga4kZFyjyr1F9FW7tFyUCr43Wrn7KryxZry7Xa17CF9x
-	KFZrZrWfK34UujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7sR_dgA5UUUUU==
-X-CM-SenderInfo: xkxvxtxqjhqiywtou0bp/1tbiYAMJnmV4Ha0KwwAAsQ
+	s=arc-20240116; t=1719317806; c=relaxed/simple;
+	bh=G6sovJflMDTKWxn4hh3X1N6o0wXZGNeV/k2fmXD3ZVI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MlYXQOTrogLA3nogWCN4PFZwGKfPx24/PbH0Z6e4g3/rAvEdUydN88/vyymX1D/YSo6ANL443upMXOGrgWrHe4xcTcqF6dKjcGdPfCzjYMJC4yAOvAC5uYIgCs+hGlB527KzyPzuzcW73wFVYVXW6SDUwnjixIWm0cTJC+Rx5H8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org; spf=pass smtp.mailfrom=8bytes.org; dkim=pass (2048-bit key) header.d=8bytes.org header.i=@8bytes.org header.b=DTD4S1ZQ; arc=none smtp.client-ip=85.214.250.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=8bytes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=8bytes.org
+Received: from 8bytes.org (p200300f6af01e500c6341f51fa179db0.dip0.t-ipconnect.de [IPv6:2003:f6:af01:e500:c634:1f51:fa17:9db0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.8bytes.org (Postfix) with ESMTPSA id 1200A1C7B21;
+	Tue, 25 Jun 2024 14:16:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=8bytes.org;
+	s=default; t=1719317804;
+	bh=G6sovJflMDTKWxn4hh3X1N6o0wXZGNeV/k2fmXD3ZVI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DTD4S1ZQ29jQ+2QQeVRCPt1WzfLQd2krEIhM103aaB/H0ST0N4aNUWA3TBMtkM6Il
+	 W2AxYKV43U4teTNS58JosB+wp1Sw6Eg2Ao2CGSRtJhesgALga6Dfy+nlPvZyfVh3kS
+	 jOHsuwtpOiHIYRlv/KXRdA/F/s5anXhQcaXS0OZ+gglrhh8LD9I54qWuLlCJMLiuer
+	 usKh9FAkSX0TkaI4qIxL8hr+A8TJeaY8QrSrarz+VTd9z3iKC53/krZExtsDIzU71b
+	 5ApYC0gmxMdqfL68BF4RoRydx5n9lGsDYVR+Bn4/Zj1YBVrWGUi8tM8Upd3uuEfv+E
+	 SCasKE/jC0bKg==
+Date: Tue, 25 Jun 2024 14:16:42 +0200
+From: Joerg Roedel <joro@8bytes.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-arm-msm@vger.kernel.org,
+	Alexey Klimov <alexey.klimov@linaro.org>,
+	Bart Van Assche <bvanassche@acm.org>, Jan Kara <jack@suse.cz>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Mirsad Todorovac <mirsad.todorovac@alu.unizg.hr>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>
+Subject: Re: [PATCH v4 19/40] iommu: optimize subsystem by using atomic
+ find_bit() API
+Message-ID: <Znq1KkMOdjfHp6Rm@8bytes.org>
+References: <20240620175703.605111-1-yury.norov@gmail.com>
+ <20240620175703.605111-20-yury.norov@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620175703.605111-20-yury.norov@gmail.com>
 
-when function kswapd_shrink_node return, it will not check the condition
-mentioned in the removed comments: "if the lack of progress was
-due to pages under writeback", so remove it.
+On Thu, Jun 20, 2024 at 10:56:42AM -0700, Yury Norov wrote:
+>  drivers/iommu/arm/arm-smmu/arm-smmu.h | 11 +++--------
+>  drivers/iommu/msm_iommu.c             | 19 +++++--------------
 
-Signed-off-by: yongfa.hu <hushange@163.com>
----
- mm/vmscan.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Please split that up into an arm-smmu and msm part, so that these can be
+reviewed and merged via separate branches.
 
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 900bad16e..a2369a3b1 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -6747,8 +6747,7 @@ static bool prepare_kswapd_sleep(pg_data_t *pgdat, int order,
-  * zone that is currently unbalanced.
-  *
-  * Returns true if kswapd scanned at least the requested number of pages to
-- * reclaim or if the lack of progress was due to pages under writeback.
-- * This is used to determine if the scanning priority needs to be raised.
-+ * reclaim. This is used to determine if the scanning priority needs to be raised.
-  */
- static bool kswapd_shrink_node(pg_data_t *pgdat,
- 			       struct scan_control *sc)
--- 
-2.17.1
+Thanks,
 
+	Joerg
 
