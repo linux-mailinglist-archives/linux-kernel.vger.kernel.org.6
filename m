@@ -1,162 +1,245 @@
-Return-Path: <linux-kernel+bounces-229774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229775-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ABA49173E4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:57:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D43B89173E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB5031C208F8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:57:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28D80B214CB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3906817F367;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F7F17E8F4;
 	Tue, 25 Jun 2024 21:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="euGDFgYI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="m/2r1PS0"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6CC17E44D;
-	Tue, 25 Jun 2024 21:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A2A617D360;
+	Tue, 25 Jun 2024 21:56:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719352591; cv=none; b=gI9AT+N3D8dcD9P1msoAAPs9FEK5BPNn9IIABBbfht8hJq6Q4Ci5Bcf95svf8w/KunaOCtt7TncbLV6so5NKXBIYGIKUwFtqwT0xDNlr3yL3Vg/SnN1SN6G5AO5ZdB6Dczcj+lnt0vy1KioDFHiPOorrB7mbkyHkOAxJNRzxr44=
+	t=1719352591; cv=none; b=p8h4U4j4Q1YQansx2e6IUNAgHBOneex+/CUfokz72rOgeP26EhRc0SanUR1fd+lCWweHxegYO+LnUlvRtIHA51xuslfblohreL/1QQNNqQ6utDqPlNOeiJK/ScfFH0dw6KG01HoJI7e3efr/624XJqJ0yJSqbyvfwIpS2HXPGaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719352591; c=relaxed/simple;
-	bh=GuWNAbs7bjOaL4xc/BCWazvANohjlV1xZcqX4cb6aYc=;
+	bh=hkbRPr9eyUyc8TLpwKSS/o8S448gatXw3MGVmqVjO/8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G9eM1yYliBGIKFCwUYCPID/QfIoyt9uZFmHBe4BIDpmOEM0stjn9eQ3SCEBSylHAauEyUvAGplIwnDlTgeH1EDtTZD0VSWZHq9+lRWA/o4iUw+1+qQgnkLHLn2LhKsi0Uo5/DWtbFzDWWQxwMyEWIO4170PJld52Wmvj9SBX1jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=euGDFgYI; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719352589; x=1750888589;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GuWNAbs7bjOaL4xc/BCWazvANohjlV1xZcqX4cb6aYc=;
-  b=euGDFgYIni1RyIWe6inr+QYYSCoTHoHj3mODwBPmUO4By/paVGRnqYPs
-   Kr26F6zuAonUUBr9+6XuL4aPXC2Sj3IRAKFNekJCbzSEPL9Xyr15iiYXq
-   Gl3a21u/6fWstoblxC7jlf4nZmo/Wk3+G+rWI2ZP/BHlHmKPj4bNQXkf0
-   UoOGI48xTHNofgy6HmbtjiehwrZe6u85Mg14fH3rg9pCC6kjQS3S9kej1
-   3sTUnsbSuADyXE+lhF0rlPuNeysK9g81Xs7fFrE4J5Azp23DUhZphLcuW
-   K+yjbqvda/ZwfRKu39hLgFeHeVCDtx+RzE9PrPeki9B10Zun/V0iLcM+a
-   Q==;
-X-CSE-ConnectionGUID: QykL6JPHTQaslLOykv7vxQ==
-X-CSE-MsgGUID: cJQu5yDbS2+Xv64TXNFAwg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="20280751"
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="20280751"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 14:56:29 -0700
-X-CSE-ConnectionGUID: pELEltEYQ9isSrYY+jItRw==
-X-CSE-MsgGUID: hQBpxJTqSCmHvPdzCK8TVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="43856013"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 25 Jun 2024 14:56:27 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sME9J-000Ekc-0Q;
-	Tue, 25 Jun 2024 21:56:25 +0000
-Date: Wed, 26 Jun 2024 05:56:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: alexjlzheng@gmail.com, chandan.babu@oracle.com, djwong@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, alexjlzheng@tencent.com
-Subject: Re: [PATCH] xfs: make xfs_log_iovec independent from xfs_log_vec and
- release it early
-Message-ID: <202406260523.tGxY7QOx-lkp@intel.com>
-References: <20240623123119.3562031-1-alexjlzheng@tencent.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BWm0zj4nIYR9hbLfPEpIpgwSnaJZpKYvl2ShRZlyOVcbGWQHOEfd5G1tNWkP0zbWblfultYStIo8T8C+s4zy81RFHcNvhK0EXiw2ZxPT2R98Ayz59rORZPqIs7Ldps9WKDlcc/HaaDdCWc4Rya/zVqHNpCKNYdaMZIA6YaKzPxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=m/2r1PS0; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1719352578;
+	bh=hkbRPr9eyUyc8TLpwKSS/o8S448gatXw3MGVmqVjO/8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m/2r1PS0nsz0Z1m0TULDFaAqsus2d4gADFfrMbLJi89AoGisxUgqLUqxIwvBv+q9p
+	 O1achJBVWW4uVSwzBWphop3y5mJvAhlhJQqiF00aRpuX0LK4BOOVmt6WqVcDGMzb8T
+	 sazVAV2+BAOozEDAX00XBXb0juEJ9X7murWv/gcs=
+Date: Tue, 25 Jun 2024 23:56:18 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Mark Brown <broonie@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Robert Moore <robert.moore@intel.com>, linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	acpica-devel@lists.linux.dev, Aishwarya.TCV@arm.com
+Subject: Re: [PATCH 2/5] ACPI: sysfs: use device lifecycle for _STR result
+Message-ID: <111f7a2c-403b-40b3-9e25-8c4a040d8dfb@t-8ch.de>
+References: <20240613-acpi-sysfs-groups-v1-0-665e0deb052a@weissschuh.net>
+ <20240613-acpi-sysfs-groups-v1-2-665e0deb052a@weissschuh.net>
+ <a72495c3-c996-4be7-bc64-ba10d5400971@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240623123119.3562031-1-alexjlzheng@tencent.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a72495c3-c996-4be7-bc64-ba10d5400971@sirena.org.uk>
 
-Hi,
+On 2024-06-25 21:57:13+0000, Mark Brown wrote:
+> On Thu, Jun 13, 2024 at 10:15:33PM +0200, Thomas Weißschuh wrote:
+> > The string assigned to dev->pnp.str effectively shares the lifetime of
+> > the device. Use devm_-APIs to avoid a manual cleanup path.
+> > 
+> > This will be useful when the attributes themselves will be managed by
+> > the device core.
+> 
+> This is in -next since 20240624 and appears to be causing issues on
+> Cavium Thunder X2 in the Arm lab - with arm64 defconfig we see a bunch
+> of log messages like:
+> 
+> <6>[   50.120962] ACPI: button: Power Button [PWRB]
+> <6>[   50.120962] ACPI: button: Power Button [PWRB]
+> <2>[   50.138595] acpi LNXTHERM:00: Resources present before probing
+> <2>[   50.138595] acpi LNXTHERM:00: Resources present before probing
+> <2>[   50.150873] acpi LNXTHERM:01: Resources present before probing
+> <2>[   50.150873] acpi LNXTHERM:01: Resources present before probing
+> <2>[   50.163134] acpi LNXTHERM:02: Resources present before probing
+> <2>[   50.163134] acpi LNXTHERM:02: Resources present before probing
+> <2>[   50.175393] acpi LNXTHERM:03: Resources present before probing
+> <2>[   50.175393] acpi LNXTHERM:03: Resources present before probing
+> <2>[   50.187653] acpi LNXTHERM:04: Resources present before probing
+> <2>[   50.187653] acpi LNXTHERM:04: Resources present before probing
+> <2>[   50.199913] acpi LNXTHERM:05: Resources present before probing
+> <2>[   50.199913] acpi LNXTHERM:05: Resources present before probing
+> <2>[   50.212171] acpi LNXTHERM:06: Resources present before probing
+> <2>[   50.212171] acpi LNXTHERM:06: Resources present before probing
+> <2>[   50.224433] acpi LNXTHERM:07: Resources present before probing
+> <2>[   50.224433] acpi LNXTHERM:07: Resources present before probing
+> <2>[   50.236703] acpi LNXTHERM:08: Resources present before probing
 
-kernel test robot noticed the following build warnings:
+This does make sense, the device is not yet bound to a driver.
+Which apparently precludes the usage of devres.
 
-[auto build test WARNING on xfs-linux/for-next]
-[also build test WARNING on linus/master v6.10-rc5 next-20240625]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Skipping this commit and doing the kfree() inside
+acpi_device_remove_file() also shouldn't work, as the attributes would
+live longer than the string.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/alexjlzheng-gmail-com/xfs-make-xfs_log_iovec-independent-from-xfs_log_vec-and-release-it-early/20240625-192710
-base:   https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git for-next
-patch link:    https://lore.kernel.org/r/20240623123119.3562031-1-alexjlzheng%40tencent.com
-patch subject: [PATCH] xfs: make xfs_log_iovec independent from xfs_log_vec and release it early
-config: i386-buildonly-randconfig-004-20240626 (https://download.01.org/0day-ci/archive/20240626/202406260523.tGxY7QOx-lkp@intel.com/config)
-compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406260523.tGxY7QOx-lkp@intel.com/reproduce)
+I'm wondering why dev->pnp.str does not share the lifecycle of the
+rest of dev->pnp, acpi_init_device_object()/acpi_device_release().
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406260523.tGxY7QOx-lkp@intel.com/
+Or we evaluate _STR during is_visible(), which keeps the single
+evaluation, or during description_show() which is the same as all the
+other attributes.
 
-All warnings (new ones prefixed by >>):
+I'm also wondering why the _STR attribute behaved differently in the
+first place.
+Does the patch below work better?
 
-   In file included from fs/xfs/libxfs/xfs_da_btree.c:24:
-   fs/xfs/xfs_log.h: In function 'xlog_finish_iovec':
->> fs/xfs/xfs_log.h:46:34: warning: unused variable 'lvec' [-Wunused-variable]
-      46 |         struct xfs_log_iovec    *lvec = lv->lv_iovecp;
-         |                                  ^~~~
+> (some other bug seems to be doubling all the log lines.)  We also see
+> PCI getting upset:
+> 
+> <6>[   50.238119] pcieport 0000:00:03.0: Refused to change power state from D0 to D3hot
+> 
+> and the ethernet driver gets confused:
+> 
+> [ 71.592299] mlx5_core 0000:0b:00.1: Port module event: module 1, Cable unplugged
+> 
+> while the cable is most definitely connected, we're netbooting.  A
+> bisect pointed at this commit, full bisect log below:
+
+All these different kinds of errors are bisected to this commit?
 
 
-vim +/lvec +46 fs/xfs/xfs_log.h
-
-    38	
-    39	void *xlog_prepare_iovec(struct xfs_log_vec *lv, struct xfs_log_iovec **vecp,
-    40			uint type);
-    41	
-    42	static inline void
-    43	xlog_finish_iovec(struct xfs_log_vec *lv, struct xfs_log_iovec *vec,
-    44			int data_len)
-    45	{
-  > 46		struct xfs_log_iovec	*lvec = lv->lv_iovecp;
-    47		struct xlog_op_header	*oph = vec->i_addr;
-    48		int			len;
-    49	
-    50		/*
-    51		 * Always round up the length to the correct alignment so callers don't
-    52		 * need to know anything about this log vec layout requirement. This
-    53		 * means we have to zero the area the data to be written does not cover.
-    54		 * This is complicated by fact the payload region is offset into the
-    55		 * logvec region by the opheader that tracks the payload.
-    56		 */
-    57		len = xlog_calc_iovec_len(data_len);
-    58		if (len - data_len != 0) {
-    59			char	*buf = vec->i_addr + sizeof(struct xlog_op_header);
-    60	
-    61			memset(buf + data_len, 0, len - data_len);
-    62		}
-    63	
-    64		/*
-    65		 * The opheader tracks aligned payload length, whilst the logvec tracks
-    66		 * the overall region length.
-    67		 */
-    68		oph->oh_len = cpu_to_be32(len);
-    69	
-    70		len += sizeof(struct xlog_op_header);
-    71		lv->lv_buf_len += len;
-    72		lv->lv_bytes += len;
-    73		vec->i_len = len;
-    74	
-    75		/* Catch buffer overruns */
-    76		ASSERT((void *)lv->lv_buf + lv->lv_bytes <= (void *)lvec + lv->lv_size);
-    77	}
-    78	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/drivers/acpi/device_sysfs.c b/drivers/acpi/device_sysfs.c
+index c85ec754931c..350915b06472 100644
+--- a/drivers/acpi/device_sysfs.c
++++ b/drivers/acpi/device_sysfs.c
+@@ -510,6 +510,40 @@ static struct attribute *acpi_attrs[] = {
+ 	NULL
+ };
+ 
++static const char *acpi_device_str(struct acpi_device *dev)
++{
++	struct acpi_buffer buffer = {ACPI_ALLOCATE_BUFFER, NULL};
++	union acpi_object *str_obj;
++	acpi_status status;
++	const char *ret;
++	char buf[512];
++	int result;
++
++	if (!acpi_has_method(dev->handle, "_STR"))
++		return NULL;
++
++	status = acpi_evaluate_object(dev->handle, "_STR",
++				      NULL, &buffer);
++	if (ACPI_FAILURE(status))
++		return NULL;
++
++	str_obj = buffer.pointer;
++	/*
++	 * The _STR object contains a Unicode identifier for a device.
++	 * We need to convert to utf-8 so it can be displayed.
++	 */
++	result = utf16s_to_utf8s((wchar_t *)str_obj->buffer.pointer,
++				 str_obj->buffer.length,
++				 UTF16_LITTLE_ENDIAN,
++				 buf, sizeof(buf) - 1);
++	buf[result++] = '\0';
++
++	ret = kstrdup(buf, GFP_KERNEL);
++	kfree(buffer.pointer);
++
++	return ret;
++}
++
+ static bool acpi_show_attr(struct acpi_device *dev, const struct device_attribute *attr)
+ {
+ 	/*
+@@ -524,8 +558,11 @@ static bool acpi_show_attr(struct acpi_device *dev, const struct device_attribut
+ 	/*
+ 	 * If device has _STR, 'description' file is created
+ 	 */
+-	if (attr == &dev_attr_description)
++	if (attr == &dev_attr_description) {
++		kfree(dev->pnp.str);
++		dev->pnp.str = acpi_device_str(dev);
+ 		return dev->pnp.str;
++	}
+ 
+ 	if (attr == &dev_attr_adr)
+ 		return dev->pnp.type.bus_address;
+@@ -581,47 +618,12 @@ const struct attribute_group *acpi_groups[] = {
+ 	NULL
+ };
+ 
+-static const char *devm_acpi_device_str(struct acpi_device *dev)
+-{
+-	struct acpi_buffer buffer = {ACPI_ALLOCATE_BUFFER, NULL};
+-	union acpi_object *str_obj;
+-	acpi_status status;
+-	const char *ret;
+-	char buf[512];
+-	int result;
+-
+-	if (!acpi_has_method(dev->handle, "_STR"))
+-		return NULL;
+-
+-	status = acpi_evaluate_object(dev->handle, "_STR",
+-				      NULL, &buffer);
+-	if (ACPI_FAILURE(status))
+-		return NULL;
+-
+-	str_obj = buffer.pointer;
+-	/*
+-	 * The _STR object contains a Unicode identifier for a device.
+-	 * We need to convert to utf-8 so it can be displayed.
+-	 */
+-	result = utf16s_to_utf8s((wchar_t *)str_obj->buffer.pointer,
+-				 str_obj->buffer.length,
+-				 UTF16_LITTLE_ENDIAN,
+-				 buf, sizeof(buf) - 1);
+-	buf[result++] = '\0';
+-
+-	ret = devm_kstrdup(&dev->dev, buf, GFP_KERNEL);
+-	kfree(buffer.pointer);
+-
+-	return ret;
+-}
+-
+ /**
+  * acpi_device_setup_files - Create sysfs attributes of an ACPI device.
+  * @dev: ACPI device object.
+  */
+ void acpi_device_setup_files(struct acpi_device *dev)
+ {
+-	dev->pnp.str = devm_acpi_device_str(dev);
+ 	acpi_expose_nondev_subnodes(&dev->dev.kobj, &dev->data);
+ }
+ 
+diff --git a/drivers/acpi/scan.c b/drivers/acpi/scan.c
+index 49a8172fe0de..84c4190f03fb 100644
+--- a/drivers/acpi/scan.c
++++ b/drivers/acpi/scan.c
+@@ -1456,6 +1456,7 @@ void acpi_free_pnp_ids(struct acpi_device_pnp *pnp)
+ 		kfree(id);
+ 	}
+ 	kfree(pnp->unique_id);
++	kfree(pnp->str);
+ }
+ 
+ /**
 
