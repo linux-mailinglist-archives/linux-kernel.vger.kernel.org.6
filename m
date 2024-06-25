@@ -1,164 +1,209 @@
-Return-Path: <linux-kernel+bounces-228656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EAA99164FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:05:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F24809164FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A2222834D0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:05:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E1111F21C8C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:08:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21EAC14A08B;
-	Tue, 25 Jun 2024 10:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4EA814A089;
+	Tue, 25 Jun 2024 10:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p37bItN1"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kZG0NZvH"
+Received: from mail-pj1-f67.google.com (mail-pj1-f67.google.com [209.85.216.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E8613C90B
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:05:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22E713C90B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:08:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719309932; cv=none; b=iKeOdb0qLOWiIH6x3RJ5DvuQvf4G3rKSIk2BvcSNbFYOmtgR/pl5Fkc2prCKn8VWiryIH/ZRtyhn4YGoszylTvSXWYre5MJV2WW6CD6disio3AYsXn+9S71KGLhP4TeqFUSW2WLdhCMUXF7OKJ+zjsKSAzDuU/S2DB2cT7HDynA=
+	t=1719310106; cv=none; b=nFPi3PbynT3SWOj99C3CqXqSDarOaiQN7COXwQ1jeQ2DQws0eDHbIUlkALMtIGRDzSIKbUJ+KJ9P1kOTH6tX5L4VFydFWxIM/5Z3CO76DdMv2t/cBWtAja9aShHRz/S+Fg/XZBfP/GcMaO0DPZ9PrXaz60MiqZfViSB5bCjiqKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719309932; c=relaxed/simple;
-	bh=deHdQhGznFT9aF6hYlSiGKg0Yl20Y/u0JHKvCPZG/Vo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M2ft9+DxtvN2tRJirw7deaCPpJ+PJruL6+pKtToJzap8p+ZrR7YJuBGW3/jl5HQ/tgTrjLuldKY5vg2AdwZQUz1DHsROYqv2KFbY+DaNEXNMYS4xuE9SX3sLBYWa+x7qebd30P1YhqmAPNfpqan+D6vSpxRjL56sdmQCtRgBsW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p37bItN1; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-718354c17e4so2326554a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:05:30 -0700 (PDT)
+	s=arc-20240116; t=1719310106; c=relaxed/simple;
+	bh=lPN1OjBWX/LKJ4yBO7CP8Nq5sjBDJHpLdacouSjVFWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SM3MZK1QGr0r8ry+sEuyqTrGbmuAY+ksga5kuBgMB1RuFA/Z/A6/2zo3Qsy7DDYMccAkVtyp15zgZwGhQ65I9SZTu1ZcU7pW/hOmmhx7axGx6gfd+oolLMw1LBmH2UojqU5pgjt431sKZyeMLNgTHXGw51rWTfhT7czAWiOQgWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kZG0NZvH; arc=none smtp.client-ip=209.85.216.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f67.google.com with SMTP id 98e67ed59e1d1-2c72becd4fdso4150107a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:08:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719309930; x=1719914730; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HZF3vQrTyioliznoWyRBeH+6GBupISmZQ6zBtmnyWKY=;
-        b=p37bItN1aPu6USR2F40Oh2EBz/JmTPjStRneQDAav5oMwZDYbIcuDgIbgN7pNjXKHk
-         Htt3LLqXCHciakHR6QVhiH6YFGJsDAX74f2bP8k9liE19qOtTy9hG4BsaijYjCYpABQA
-         3Qglp3OW2Olf3VlW15O1w1OV3gOBIThc7aXYHJJ1KAW+4owGGUMUNKyluzoE8SY+Mg7K
-         WzCAIHWpi82NFp4vF85Eo9aMXjLvulvMLwz2uUvG0hjqYkMawgABfjCX78jugbDF8IfK
-         5j1BcOJEoarCo3HMSAuRfrAWYIUzahJeeguDEYWGVGi3MjRWj7C76ISZ+QzsKr2BvCTl
-         AW3g==
+        d=chromium.org; s=google; t=1719310104; x=1719914904; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=P0VI4tQBTmZ5EZUuvascNs7IsaJGTBT4lhzcT7XH/+M=;
+        b=kZG0NZvHm/0MxqQb/E2Gagg2G0yGJXKcvV2TkAHQ1fq44Nl6PrxU05SdJnxXOX4MWL
+         jWmB1HcELDtrHG60jTiyKCE0IhqQm0H6K1V6kCdTxY/C3lrAzV60AJQ8uw/WDYHGjsl5
+         ss+S/2HCDCjM67gKykyYFG/aTi0NIk0tCL6EY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719309930; x=1719914730;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HZF3vQrTyioliznoWyRBeH+6GBupISmZQ6zBtmnyWKY=;
-        b=rpnCKxOUdaSrLOdHl/Bb2qFuJoVh5viK5HuUicZb5Fsig05hfd8WG9HO/2Biwcz78Q
-         gFmNKCh091ADYtuAJJpVsSabORmIYXr+NUS2mUdIKJj+RbDZKbhDrCcN/O1p9UsxR/0/
-         rCmZgRSJobQykyxOPnXz4LsE8j0GR52CxkNGlRUSpWg/5WFEBxjjgPPVGKoxtlzRhKye
-         xD+04POI979JbvOdjvo7fkm5NciKLdoJHr4zM+kSxSRcJdBOQkgEI6/ojQ3O6EqRdojr
-         FzdXx/T7mhqBJMyoxD4d62JQ1S1ZBlRvDxhSGSROB/wlGYgKlLWSb0SZ7Ov5zfPkvxYq
-         30JA==
-X-Forwarded-Encrypted: i=1; AJvYcCW7Rzflx8NBhm/Ozg557xqf9bcH7pG4rblQwGwS+ymCITHZ25expD67+Lf1beol+OyUwOyghAlVLib31HaIUo087KmyIPbt67F5JB6l
-X-Gm-Message-State: AOJu0YysT5gqBAOd1TNiUw8h8uNgzZnmK95Gy+RDdMnYodK8p0ViMdfP
-	osox0fYuR0hhDImFEzPqRF6PsJsUrq3pGNenNYjF90mKwLXCQsas+BPdEm9tp9hhfjuudCoP14h
-	G
-X-Google-Smtp-Source: AGHT+IGXXj6DR2cMaEROxwusRXtJYBeV0zTXJVstUhfxjV/+UE4LVIwOqAwTOF2ISwX7nwpr9TDx1g==
-X-Received: by 2002:a05:6a20:7a96:b0:1b6:a7c5:4fbe with SMTP id adf61e73a8af0-1bcf7ead34amr5467925637.14.1719309929728;
-        Tue, 25 Jun 2024 03:05:29 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c5c18sm77349345ad.173.2024.06.25.03.05.28
+        d=1e100.net; s=20230601; t=1719310104; x=1719914904;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=P0VI4tQBTmZ5EZUuvascNs7IsaJGTBT4lhzcT7XH/+M=;
+        b=C6hmY/sE78UTOjy8Va77x/HhM3IvaXe0soq5RRPTVuRRtDpl3tGo0l7A2Dq09Hhlht
+         irpnNd0oIpWFhr51yE5D6EYRdgWywVOL9SdXUUCixfoFGIcM1nDF77/ROC2on7ml1mXP
+         sldVJqWfsqcmMYDxwh8QPxMMMORFeYd7KmaOlAPstOwzK3elQIpdrAudP22IWfqWaaqL
+         CJto7Lk46svrkUUQ0G5llydb4+yloSfoNIR4dxz0SeOgZAB1ARuXaesKeBblw5Dm2ue0
+         Uq6rWnlCiXTT90t1TNlO9NuLP2W11hkNcBfJhFq5BucVq5fRCJCNhCVovUPzJDrj1r51
+         0Kcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUamaut20xu4TCIIIYLUfpR2LZvvhzkN7EE07V9keS/UPeJU4xSgfCp6f5qJ/zTJQL2G4Ax+0KntsoyeOP6oN3UGFafudohWy9zVqP6
+X-Gm-Message-State: AOJu0Yzqa7XlBOHhb+EWsUtGBRNVUM7saBgVd+uf4SwV/e1QiVr4vMGl
+	b4MzZmjvWuNAHQacnCiJoR5pDejyWQys7C5ZD/HZ/Pzx85F5rJ4n/2M255JiKw==
+X-Google-Smtp-Source: AGHT+IH5OdAV9csYNq1eqW1UaiZqOfB6WW6Pq0nAQiIUqAEOfTwBZ1zBKWpXAJ+WtCc4g8XzMAVHfQ==
+X-Received: by 2002:a17:90a:398f:b0:2c7:c703:ef26 with SMTP id 98e67ed59e1d1-2c8613d5b2emr5468261a91.24.1719310103953;
+        Tue, 25 Jun 2024 03:08:23 -0700 (PDT)
+Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:ea5a:67dd:bd1e:edef])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819dbb979sm8313305a91.46.2024.06.25.03.08.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 03:05:29 -0700 (PDT)
-Date: Tue, 25 Jun 2024 15:35:27 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: PoShao Chen <poshao.chen@mediatek.com>
-Cc: ccj.yeh@mediatek.com, ching-hao.hsu@mediatek.com,
-	clive.lin@mediatek.com, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org, rafael@kernel.org
-Subject: Re: [PATCH v2] cpufreq: Fix per-policy boost behavior after CPU
- hotplug
-Message-ID: <20240625100527.cdy6gaajemlplmxu@vireshk-i7>
-References: <20240613092054.f6obecbvf45frcqw@vireshk-i7>
- <20240617054838.9224-1-poshao.chen@mediatek.com>
+        Tue, 25 Jun 2024 03:08:23 -0700 (PDT)
+From: Chen-Yu Tsai <wenst@chromium.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: Chen-Yu Tsai <wenst@chromium.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: [PATCH] drm/mipi-dsi: Add OF notifier handler
+Date: Tue, 25 Jun 2024 18:08:17 +0800
+Message-ID: <20240625100818.3478242-1-wenst@chromium.org>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240617054838.9224-1-poshao.chen@mediatek.com>
+Content-Transfer-Encoding: 8bit
 
-On 17-06-24, 13:48, PoShao Chen wrote:
-> On Thu, 2024-06-13 at 14:50 +0530, Viresh Kumar wrote: 	 
-> > Please try this instead:
-> > 
-> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-> > index 7c6879efe9ef..bd9fe2b0f032 100644
-> > --- a/drivers/cpufreq/cpufreq.c
-> > +++ b/drivers/cpufreq/cpufreq.c
-> > @@ -43,6 +43,9 @@ static LIST_HEAD(cpufreq_policy_list);
-> >  #define for_each_inactive_policy(__policy)             \
-> >         for_each_suitable_policy(__policy, false)
-> > 
-> > +#define for_each_policy(__policy)                       \
-> > +       list_for_each_entry(__policy, &cpufreq_policy_list,
-> > policy_list)
-> > +
-> >  /* Iterate over governors */
-> >  static LIST_HEAD(cpufreq_governor_list);
-> >  #define for_each_governor(__governor)                          \
-> > @@ -2815,7 +2818,7 @@ int cpufreq_boost_trigger_state(int state)
-> >         write_unlock_irqrestore(&cpufreq_driver_lock, flags);
-> > 
-> >         cpus_read_lock();
-> > -       for_each_active_policy(policy) {
-> > +       for_each_policy(policy) {
-> >                 policy->boost_enabled = state;
-> >                 ret = cpufreq_driver->set_boost(policy, state);
-> >                 if (ret) {
-> 
-> Thank you for the suggestion. However, calling ->set_boost when
-> the policy is inactive will fail in two ways:
-> 
-> 1. policy->freq_table will be NULL.
-> 2. freq_qos_update_request will fail to refresh the frequency limit.
+Add OF notifier handler needed for creating/destroying MIPI DSI devices
+according to dynamic runtime changes in the DT live tree. This code is
+enabled when CONFIG_OF_DYNAMIC is selected.
 
-What about just this then ?
+This is based on existing code for I2C and SPI subsystems.
 
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index a45aac17c20f..8e92ba7dda4b 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -1430,9 +1430,6 @@ static int cpufreq_online(unsigned int cpu)
-                        goto out_free_policy;
-                }
+Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+---
+This is a patch I wrote for the ChromeOS SKU component prober [1]. That
+series is still being worked on, but in the meantime I thought this
+patch might be useful to Luca. Luca talked about a hot-pluggable
+connector that has DSI at ELC earlier this year. If DT live tree
+patching is used in this case, this patch could be needed.
 
--               /* Let the per-policy boost flag mirror the cpufreq_driver boost during init */
--               policy->boost_enabled = cpufreq_boost_enabled() && policy_has_boost_freq(policy);
--
-                /*
-                 * The initialization has succeeded and the policy is online.
-                 * If there is a problem with its frequency table, take it
-@@ -1446,6 +1443,9 @@ static int cpufreq_online(unsigned int cpu)
-                cpumask_copy(policy->related_cpus, policy->cpus);
-        }
+[1] https://lore.kernel.org/linux-arm-kernel/20231109100606.1245545-1-wenst@chromium.org/
 
-+       /* Let the per-policy boost flag mirror the cpufreq_driver boost during init */
-+       policy->boost_enabled = cpufreq_boost_enabled() && policy_has_boost_freq(policy);
+ drivers/gpu/drm/drm_mipi_dsi.c | 67 +++++++++++++++++++++++++++++++++-
+ 1 file changed, 66 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+index a471c46f5ca6..a47e8928db53 100644
+--- a/drivers/gpu/drm/drm_mipi_dsi.c
++++ b/drivers/gpu/drm/drm_mipi_dsi.c
+@@ -118,6 +118,7 @@ static void mipi_dsi_dev_release(struct device *dev)
+ {
+ 	struct mipi_dsi_device *dsi = to_mipi_dsi_device(dev);
+ 
++	of_node_clear_flag(dev->of_node, OF_POPULATED);
+ 	of_node_put(dev->of_node);
+ 	kfree(dsi);
+ }
+@@ -158,6 +159,7 @@ static struct mipi_dsi_device *
+ of_mipi_dsi_device_add(struct mipi_dsi_host *host, struct device_node *node)
+ {
+ 	struct mipi_dsi_device_info info = { };
++	struct mipi_dsi_device *device;
+ 	int ret;
+ 	u32 reg;
+ 
+@@ -175,9 +177,70 @@ of_mipi_dsi_device_add(struct mipi_dsi_host *host, struct device_node *node)
+ 
+ 	info.channel = reg;
+ 	info.node = of_node_get(node);
++	of_node_set_flag(node, OF_POPULATED);
+ 
+-	return mipi_dsi_device_register_full(host, &info);
++	device = mipi_dsi_device_register_full(host, &info);
++	if (IS_ERR(device))
++		of_node_clear_flag(node, OF_POPULATED);
 +
-        /*
-         * affected cpus must always be the one, which are online. We aren't
-         * managing offline cpus here.
-
-
-
-So the cpufreq core sets the policy boost to whatever the global boost
-is at the time CPU comes online.
-
-This won't call cppc_cpufreq_set_boost() (I think that's the driver
-you are using ?) though. The freq_qos_update_request() thing we do
-there is driver specific and the driver itself needs to take care of
-this, perhaps in the online() callback.
-
++	return device;
+ }
++
++#if IS_ENABLED(CONFIG_OF_DYNAMIC)
++static int of_mipi_dsi_notify(struct notifier_block *nb, unsigned long action, void *arg)
++{
++	struct of_reconfig_data *rd = arg;
++	struct mipi_dsi_host *host;
++	struct mipi_dsi_device *device;
++
++	switch (of_reconfig_get_state_change(action, rd)) {
++	case OF_RECONFIG_CHANGE_ADD:
++		host = of_find_mipi_dsi_host_by_node(rd->dn->parent);
++		if (!host)
++			return NOTIFY_OK;	/* not for us */
++
++		if (of_node_test_and_set_flag(rd->dn, OF_POPULATED))
++			return NOTIFY_OK;
++
++		/*
++		 * Clear the flag before adding the device so that fw_devlink
++		 * doesn't skip adding consumers to this device.
++		 */
++		rd->dn->fwnode.flags &= ~FWNODE_FLAG_NOT_DEVICE;
++		device = of_mipi_dsi_device_add(host, rd->dn);
++		if (IS_ERR(device)) {
++			dev_err(host->dev, "failed to create device for '%pOF'\n", rd->dn);
++			of_node_clear_flag(rd->dn, OF_POPULATED);
++			return notifier_from_errno(PTR_ERR(device));
++		}
++		break;
++	case OF_RECONFIG_CHANGE_REMOVE:
++		/* already depopulated? */
++		if (!of_node_check_flag(rd->dn, OF_POPULATED))
++			return NOTIFY_OK;
++
++		/* find our device by node */
++		device = of_find_mipi_dsi_device_by_node(rd->dn);
++		if (!device)
++			return NOTIFY_OK;	/* no? not meant for us */
++
++		/* unregister takes one ref away */
++		mipi_dsi_device_unregister(device);
++
++		/* and put the reference of the find */
++		put_device(&device->dev);
++		break;
++	}
++
++	return NOTIFY_OK;
++}
++
++static struct notifier_block mipi_dsi_of_notifier = {
++	.notifier_call = of_mipi_dsi_notify,
++};
++#else
++static struct notifier_block mipi_dsi_of_notifier __always_unused;
++#endif
+ #else
+ static struct mipi_dsi_device *
+ of_mipi_dsi_device_add(struct mipi_dsi_host *host, struct device_node *node)
+@@ -1703,6 +1766,8 @@ EXPORT_SYMBOL(mipi_dsi_driver_unregister);
+ 
+ static int __init mipi_dsi_bus_init(void)
+ {
++	if (IS_ENABLED(CONFIG_OF_DYNAMIC))
++		WARN_ON(of_reconfig_notifier_register(&mipi_dsi_of_notifier));
+ 	return bus_register(&mipi_dsi_bus_type);
+ }
+ postcore_initcall(mipi_dsi_bus_init);
 -- 
-viresh
+2.45.2.741.gdbec12cfda-goog
+
 
