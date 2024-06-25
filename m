@@ -1,96 +1,115 @@
-Return-Path: <linux-kernel+bounces-229319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC765916E44
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:40:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EF6D916E5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 659051F2373E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:40:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B75E284826
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:45:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88AF174EC7;
-	Tue, 25 Jun 2024 16:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 135FD17556F;
+	Tue, 25 Jun 2024 16:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0i01YGN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="kP4EZ1PI"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E93713B2B0;
-	Tue, 25 Jun 2024 16:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB1713B59B;
+	Tue, 25 Jun 2024 16:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719333604; cv=none; b=UtBVHL8p3fvGWuFtSK1NBY4PTrTnVLsSwm2FDZb5hPOotaHVwSUF9vZunj2HYxTvgJq135zlSsiT+a//WaEQ0M/KC9/ExB4d2dFeskhvI2yKWD55OWpHQp3OJGH67iv/5Bk6TA9q5/N5F9C7E1w234wgL+pWsgjdGSTZIpaW8wA=
+	t=1719333942; cv=none; b=AK1NfC2ebsJN9yh8iK3ft2t0XEWhGbY6e6arJofq/Ottb2RjksRBapt+O1AzG1BAYNy7iFVIgjGdJZCq7OgrQMLJx8kM6pEmjHBH0AyVXrNUM710i0Sjbjlg7ccyRabYjMzJ8pODMP+8WbOlWg7iJcRebzNaDqDryAY253Fe1+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719333604; c=relaxed/simple;
-	bh=zs0R/nUMW9F+9o//+MVNBbmIzx9PAPVGu5kurOrvf3I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YFYOMFYz1EIYYmAA0yq2G7ieYptSTUCvXJablZ7c3INJ2v/CRvelbR3hv9s8H9vz1kKEphGw6lgGlZKhuldG4ZhKC9u0iApF9vVwHZGDA7gnGk9icRwqlNhokDHxFcOKTn52nlDjY1q1OuogMDX5YkXJm1DAIO54dVqf1Ns9BqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0i01YGN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 944F4C32781;
-	Tue, 25 Jun 2024 16:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719333603;
-	bh=zs0R/nUMW9F+9o//+MVNBbmIzx9PAPVGu5kurOrvf3I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q0i01YGNhy/WDsdDsPUax/XbA6NHWKsM8HjwWXbtPBfI2rQhGzYptx6Usd4LMzGdK
-	 XInOGbVJ/59S9x0mGss+0A/b685BUwM22rPzl3wekboi3vcTEo7H9Bsr5rLbfwlBNI
-	 dFLwrG6He0DW2MBQp605m0JafM9LgHZfELzrbCrOQ1k8JgM8rhKlkqaqWNKW+np1Wi
-	 Udxhr5croQ+Fdp+dcUAZofVhZccJFiGlodo72KM1nnfdXTqta5Y6aF7KgNKbq9ZJMi
-	 VJ5Wh1KcBR7W1HlkcOaai7WCaE12+agyDOWmfTqWygLXoqFLnOKBk1cXtpfL1+ipP5
-	 ix8BCT/GxDKjA==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Xilin Wu <wuxilin123@gmail.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Steev Klimaszewski <steev@kali.org>,
-	Alexey Minnekhanov <alexeymin@postmarketos.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Chris Lew <quic_clew@quicinc.com>
-Subject: Re: (subset) [PATCH v9 0/5] soc: qcom: add in-kernel pd-mapper implementation
-Date: Tue, 25 Jun 2024 09:45:13 -0700
-Message-ID: <171933390698.2418820.597257098896589015.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240622-qcom-pd-mapper-v9-0-a84ee3591c8e@linaro.org>
-References: <20240622-qcom-pd-mapper-v9-0-a84ee3591c8e@linaro.org>
+	s=arc-20240116; t=1719333942; c=relaxed/simple;
+	bh=6xljIZVHX1BWtoBG5iQPsPX4Li/SNa63XpA04Jo8ZK0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=O+HtBAbIaVd6UBpAbWXc6E1nENCcYpto6agvOyl7Pi5pzMDFbHI41VX9ds2En/dbOVB1usSdWuaI7xdgUoF1fCF6iUTsvKR2Yz/9Y5Dsi6oBWdBHvbxDWlDEcf9YLRp9cJpM9Nx3MsoJnhYMNQlx58M7OnYvXYZeovKoCu309mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=kP4EZ1PI; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45PGjTot100162;
+	Tue, 25 Jun 2024 11:45:29 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719333929;
+	bh=yTxW68HnNWXZew965gTSI2ywCz1BFSCBddJxDmISOTg=;
+	h=From:To:CC:Subject:Date;
+	b=kP4EZ1PIl1pdNWUlWIH3XDITElopUAfU3eRtmxiYQZqDZM1leFaLSUmhf/3n468i4
+	 0Hu6OvfpZnxPLR5mVpdpjvvEMbusLWlMON5ynPbyNZnRiU6JaNgqM1JlOhQpXuRexA
+	 qed8Wi+U6TAgwYpaq1b1JNteo67aDHi67PJGXjo4=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45PGjTid099417
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 25 Jun 2024 11:45:29 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 25
+ Jun 2024 11:45:29 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 25 Jun 2024 11:45:29 -0500
+Received: from lelvsmtp5.itg.ti.com ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45PGjTcO048951;
+	Tue, 25 Jun 2024 11:45:29 -0500
+From: Andrew Davis <afd@ti.com>
+To: Rob Herring <robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Jan
+ Kiszka <jan.kiszka@siemens.com>, Tony Lindgren <tony@atomide.com>,
+        Nishanth
+ Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Andrew Davis
+	<afd@ti.com>
+Subject: [PATCH 1/2] dt-bindings: soc: ti: am654-serdes-ctrl: Add simple-mfd to compatible items
+Date: Tue, 25 Jun 2024 11:45:27 -0500
+Message-ID: <20240625164528.183107-1-afd@ti.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
+This node contains a child which is only probed if simple-mfd is in the
+compatible list. Add this here.
 
-On Sat, 22 Jun 2024 01:03:39 +0300, Dmitry Baryshkov wrote:
-> Protection domain mapper is a QMI service providing mapping between
-> 'protection domains' and services supported / allowed in these domains.
-> For example such mapping is required for loading of the WiFi firmware or
-> for properly starting up the UCSI / altmode / battery manager support.
-> 
-> The existing userspace implementation has several issue. It doesn't play
-> well with CONFIG_EXTRA_FIRMWARE, it doesn't reread the JSON files if the
-> firmware location is changed (or if the firmware was not available at
-> the time pd-mapper was started but the corresponding directory is
-> mounted later), etc.
-> 
-> [...]
+Signed-off-by: Andrew Davis <afd@ti.com>
+---
+ .../devicetree/bindings/soc/ti/ti,am654-serdes-ctrl.yaml       | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Applied, thanks!
-
-[5/5] remoteproc: qcom: enable in-kernel PD mapper
-      commit: 5b9f51b200dcb2c3924ecbff324fa52f1faa84d3
-
-Best regards,
+diff --git a/Documentation/devicetree/bindings/soc/ti/ti,am654-serdes-ctrl.yaml b/Documentation/devicetree/bindings/soc/ti/ti,am654-serdes-ctrl.yaml
+index a10a3b89ae05e..94b36943a50ff 100644
+--- a/Documentation/devicetree/bindings/soc/ti/ti,am654-serdes-ctrl.yaml
++++ b/Documentation/devicetree/bindings/soc/ti/ti,am654-serdes-ctrl.yaml
+@@ -14,6 +14,7 @@ properties:
+     items:
+       - const: ti,am654-serdes-ctrl
+       - const: syscon
++      - const: simple-mfd
+ 
+   reg:
+     maxItems: 1
+@@ -31,7 +32,7 @@ additionalProperties: false
+ examples:
+   - |
+     clock@4080 {
+-        compatible = "ti,am654-serdes-ctrl", "syscon";
++        compatible = "ti,am654-serdes-ctrl", "syscon", "simple-mfd";
+         reg = <0x4080 0x4>;
+ 
+         mux-controller {
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.39.2
+
 
