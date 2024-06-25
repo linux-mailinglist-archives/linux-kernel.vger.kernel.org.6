@@ -1,87 +1,67 @@
-Return-Path: <linux-kernel+bounces-228226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 363EF915D0A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:54:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F83915D0C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E248B214C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:54:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2C21C21843
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA7D84963A;
-	Tue, 25 Jun 2024 02:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kqSJJ+1J"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83ED45023;
-	Tue, 25 Jun 2024 02:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063F061FF4;
+	Tue, 25 Jun 2024 02:50:14 +0000 (UTC)
+Received: from smtp.cecloud.com (unknown [1.203.97.246])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DA545023
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:50:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719283765; cv=none; b=hE4TVGt8A7GFTeCXnly+tUG34YZUBwFzUyjTAOhzAUeNjALOQyNRNlgHgQUhjSkse0WN4PNgS482+AmVMMwbDeqIGSqwMuBvVjvsqST4pONoOd1S2I1dmN5RSMrmSRQt7TEvd05ZUs9OrACSX+8363VQdCCDuwWLSjDVoewHoHw=
+	t=1719283813; cv=none; b=mwrtnNa6Xn/35q1SQGMU3bmoga3fo8yzN3L+b20kaelhmGi7jDJYGRgaENw89XRTg+RiO749zszMCOLyDc1TtUvHk13GGoTvjE2pC8IuVoFtJcPc9IDtuS1AxMLoa0S6Qeo6NNe1eSbVDPsbZxTXnrqqMlitSEnRYWoaKwXxqgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719283765; c=relaxed/simple;
-	bh=509+GNhEQ8YYX6xv0bIGyfDHnSczn/7YDklov7MbtAo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lMUu41mKjIEuo4kPLuV3LoXIhEcXI4A2qG5A0WZ7lUQmKhdX8TjHFoHdn2XMHPetB4A6zPnoVlTgDADwk6NvL7/OQ8xrajz10hPKw/hBhCa+zgGHhpR3T5h485zi1ZHGtI9MRDDu2NhWRLHhwWSLX5q+FyBfKW8wHMv2XkLAT4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kqSJJ+1J; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f9b364faddso40753705ad.3;
-        Mon, 24 Jun 2024 19:49:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719283763; x=1719888563; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BAD7ABuZm4GDesGzFzNGFjb/h37/nr5QSGkLHEsIEPM=;
-        b=kqSJJ+1J87zG64WxmzcTdE+x29CREDbCeqyr8MU++D15XDwiiRvpuJxpNzQQPgLrcL
-         YAuidpje8lxRNvkJ4H38Prn1BJn/FZfe53425ZIOB1i10eobEdnZfHwO/3G0Jwb3o6en
-         w/k7Yx7/8N83NmuqVLhE2nvXOrfv/FbpHWHl9bkHtbrXWgZMXTtOVYYPMhH62HFX9wOq
-         wg2ztEbuXF3DmJZZQmg9WYw+FJpuiNbBtvIecCH2b2ojDxomgYdcYs5IkFMO5h9mOJJv
-         4WN4v5g0IKuKwWaGxN01+bkovraWGE3sBArEUjKnb/vdj20dzhpy1b3JmlHh+XdADXcF
-         WqAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719283763; x=1719888563;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=BAD7ABuZm4GDesGzFzNGFjb/h37/nr5QSGkLHEsIEPM=;
-        b=lPFYp3fPdFXEb9Rj5AMGy4XG2eOASZmI+Rg7sDyt1UJoN+E55fwwNkGibfrbYjt9eM
-         YV5nipQ6olgsT98v0+XFMte5l2IJ8sY8ZbkL8Tjexp95dHGKT+yI5nE54ORKay2LfHnI
-         4mIs5yBGN8bJANGgbKSO1b2jIg8QtRdzeqc4Neund50j83lkIPBIBiSIJU0B1ckNWBoe
-         eL6TYsWvv0ki9Q/U5SpltIE1K+BlqQvhgkLTUrYYMxz11OdJqJTY/8+8rMOk7F/wppI1
-         3zrDHaKKQqQVFiIOkAYqk6gfEst1QIPFLrZhxGRj8d5IkcZeIXHdz0Ym2gcSIfSO741q
-         ykDg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/2AeiHju7ZIp+AOJc6NzySXZKrGsXT7/yWfVsBLMWjlf4cFmPsnMuSZXcc8hYx3ke2E3x5XzMUzapUUAaW3ianNQjB9boa6p17Ru/ItHBCCB7D1IgurbWBlgLjOhsyEkLTHH9xoCoYXSSoOANySELjaTBWWNY9RsbTLQ7dBy26w==
-X-Gm-Message-State: AOJu0YzrglC7BSJauvl0cZvim8RcKuJLQZM/SeRgV353FDqwDtJaYjGU
-	ialEB+rRlO2FmWrnF6QJYTkmMUh8w0eAdaAb/U7+qydFuNnvoKYOKiNpRA==
-X-Google-Smtp-Source: AGHT+IGyuUUN36z2RVQBhdHFHsXdwrm9JSIjRNl3p9e5eVYYZ0rAGd/YA/uXkn7bzLsHnfLPF9hanw==
-X-Received: by 2002:a17:902:e5c1:b0:1f9:df83:8ab2 with SMTP id d9443c01a7336-1fa240c518bmr80858935ad.58.1719283763029;
-        Mon, 24 Jun 2024 19:49:23 -0700 (PDT)
-Received: from localhost.localdomain ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9f1c27db0sm67393615ad.100.2024.06.24.19.49.19
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 24 Jun 2024 19:49:22 -0700 (PDT)
-From: yskelg@gmail.com
-To: Alexandra Winter <wintera@linux.ibm.com>,
-	Thorsten Winkler <twinkler@linux.ibm.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Markus Elfring <Markus.Elfring@web.de>
-Cc: MichelleJin <shjy180909@gmail.com>,
-	linux-s390@vger.kernel.org,
-	netdev@vger.kernel.org,
+	s=arc-20240116; t=1719283813; c=relaxed/simple;
+	bh=hphWL4LNHPleLs22s2Z+DEu9G6barzrzdD4CUOhkxHw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FVgBeBeEkd26F1EOTgvqvoV6CfOGh610vRbQ2qBI6upnV4qh6aB9CwhMOxbKsw70Nnx3sVhGaC45xxUOTT8qk2JmKVIrdTMMZN6L9bHaIuAwKIuUwo0P9U4BTtN8F14EyewzmjTXHppeG65yZ9ltpab9cTDpM/C31VSOAQpB1Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.cecloud.com (Postfix) with ESMTP id D97437C0112;
+	Tue, 25 Jun 2024 10:50:01 +0800 (CST)
+X-MAIL-GRAY:0
+X-MAIL-DELIVERY:1
+X-SKE-CHECKED:1
+X-ANTISPAM-LEVEL:2
+Received: from localhost.localdomain (unknown [111.48.69.245])
+	by smtp.cecloud.com (postfix) whith ESMTP id P2702681T281466040545648S1719283800599769_;
+	Tue, 25 Jun 2024 10:50:01 +0800 (CST)
+X-IP-DOMAINF:1
+X-RL-SENDER:liuwei09@cestc.cn
+X-SENDER:liuwei09@cestc.cn
+X-LOGIN-NAME:liuwei09@cestc.cn
+X-FST-TO:andrew@lunn.ch
+X-RCPT-COUNT:7
+X-LOCAL-RCPT-COUNT:1
+X-MUTI-DOMAIN-COUNT:0
+X-SENDER-IP:111.48.69.245
+X-ATTACHMENT-NUM:0
+X-UNIQUE-TAG:<a1f9b6a1f1069daf027d5f7b2f293e68>
+X-System-Flag:0
+From: Liu Wei <liuwei09@cestc.cn>
+To: andrew@lunn.ch,
+	Liu Wei <liuwei09@cestc.cn>
+Cc: catalin.marinas@arm.com,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Yunseong Kim <yskelg@gmail.com>
-Subject: [PATCH v2] s390/netiucv: handle memory allocation failure in conn_action_start()
-Date: Tue, 25 Jun 2024 11:48:20 +0900
-Message-ID: <20240625024819.26299-2-yskelg@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	prarit@redhat.com,
+	will@kernel.org
+Subject: Re: [PATCH V3] ACPI: Add acpi=nospcr to disable ACPI SPCR as default console on arm64
+Date: Tue, 25 Jun 2024 10:48:48 +0800
+Message-ID: <20240625024848.56950-1-liuwei09@cestc.cn>
+X-Mailer: git-send-email 2.42.1
+In-Reply-To: <5741452f-2a54-4239-a5c3-f13286726780@lunn.ch> (raw)
+References: <5741452f-2a54-4239-a5c3-f13286726780@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,38 +70,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Yunseong Kim <yskelg@gmail.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
-A null pointer is stored in the data structure member "path" after a call
-of the function "iucv_path_alloc" failed. This pointer was passed to
-a subsequent call of the function "iucv_path_connect" where an undesirable
-dereference will be performed then. Thus add a corresponding return value
-check. This prevent null pointer dereferenced kernel panic when memory
-exhausted situation with the netiucv driver operating as an FSM state
-in "conn_action_start".
+> On Mon, Jun 24, 2024 at 01:04:04PM +0800, Liu Wei wrote:
+> > From: Andrew Lunn <andrew@lunn.ch>
+> > 
+> > > On Sat, Jun 22, 2024 at 05:35:21PM +0800, Liu Wei wrote:
+> > > > For varying privacy and security reasons, sometimes we would like to
+> > > > completely silence the serial console, and only enable it when needed.
+> > > > 
+> > > > But there are many existing systems that depend on this console,
+> > > > so add acpi=nospcr for this situation.
+> > > 
+> > > Maybe it is just me, but i see nospcr and my brain expands it to "no
+> > > speaker". Adding to that, your commit message says "completely
+> > > silence"...
+> > > 
+> > > > +			nospcr -- disable ACPI SPCR as default console on ARM64
+> > > > +			For ARM64, ONLY "acpi=off", "acpi=on", "acpi=force" or
+> > > > +			"acpi=nospcr" are available
+> > > > +			For RISCV64, ONLY "acpi=off", "acpi=on" or "acpi=force"
+> > > > +			are available
+> > > 
+> > > How about putting the word 'serial' in here somewhere, just to give
+> > > users an additional clue you are not talking about a speaker, CTRL-G
+> > > etc.
+> > 
+> > Thank you for your suggestion. 
+> > 
+> > You mean acpi=nospcr_serial or acpi=no_spcrserial? However, it appears 
+> > somewhat unconventional compared to the original acpi=* parameter.
+> 
+> How about:
+> 
+> nospcr -- disable ACPI SPCR as default _serial_ console on ARM64
+> 
+> Please as Will suggested, add a definition somewhere.
+>
 
-Fixes: eebce3856737 ("[S390]: Adapt netiucv driver to new IUCV API")
-Cc: linux-s390@vger.kernel.org
-Signed-off-by: Yunseong Kim <yskelg@gmail.com>
----
- drivers/s390/net/netiucv.c | 3 +++
- 1 file changed, 3 insertions(+)
+Ok, I will send the v4 version later.
 
-diff --git a/drivers/s390/net/netiucv.c b/drivers/s390/net/netiucv.c
-index 039e18d46f76..d3ae78c0240f 100644
---- a/drivers/s390/net/netiucv.c
-+++ b/drivers/s390/net/netiucv.c
-@@ -855,6 +855,9 @@ static void conn_action_start(fsm_instance *fi, int event, void *arg)
+Thanks for all suggestion.
+
+Liu Wei
  
- 	fsm_newstate(fi, CONN_STATE_SETUPWAIT);
- 	conn->path = iucv_path_alloc(NETIUCV_QUEUELEN_DEFAULT, 0, GFP_KERNEL);
-+	if (!conn->path)
-+		return;
-+
- 	IUCV_DBF_TEXT_(setup, 2, "%s: connecting to %s ...\n",
- 		netdev->name, netiucv_printuser(conn));
- 
--- 
-2.45.2
+>        Andrew
+
 
 
