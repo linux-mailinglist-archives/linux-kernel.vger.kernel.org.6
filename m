@@ -1,80 +1,84 @@
-Return-Path: <linux-kernel+bounces-229777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DED5B91740C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:01:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBEF191740F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:03:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98E40281176
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:01:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D1A7B21219
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D41149E14;
-	Tue, 25 Jun 2024 22:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A76A17D8B4;
+	Tue, 25 Jun 2024 22:03:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JGiNOjzS"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ROdjBxp5"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC68E8F48;
-	Tue, 25 Jun 2024 22:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA9E8F48;
+	Tue, 25 Jun 2024 22:03:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719352883; cv=none; b=Pxerd++IrZYiDdV+DCjWjV0iTukVs06YHqrddaDCouKD1/PkxtIqetdVjoo/Al1p/y0fccT/GVVnxKxSJlgXWXBFMzCC/3cvGr6JnQi/r0kv0uNJgkYyuXxy7Y9CVs89BT4e0KYnGCvz7nFA7EmSe24XjDffIo6HKh+YZpl/aUg=
+	t=1719353026; cv=none; b=qaDJwl0vO77N5wgjFlmVe2rbQp57F0FZ4XCf4ve77yscOO4Z4IoajUysFChGHlPxJIctuLK9+9zS3iEOfQvr7I6EcTuZ3mBRQRY8Do5OXbBnVwsACB486Kf1lKON1dxmecHX/4H26x8FuQJ1Sb+0ghtQX9W08DZt6dLTNBY3p20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719352883; c=relaxed/simple;
-	bh=iB8suN7K68nTSbpwQgUXTiEvdDxJdcdALkx1fqEMllU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uhMZr/CBSF1EcTxxngyd+L3r3vnb0TndtuGQIGDYy3c31dEpVME6kLvbYEQnLwaBVwJi3GUskL4jqKjVVg8hJmsZHybgSqx3KC6DOllXYYT/uNKA2mHUKJn+ldgnKMUSNNBPw4jj6fTLo6Gr9NfeUSfYm9IWzMVXw4Ac4yaY9hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JGiNOjzS; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1719353026; c=relaxed/simple;
+	bh=QkOxhTrH0i1RsTB3PxVtQSLNoC6QZXmPEeY35XpGx8A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DQ+jeHjoJ+hDXLZB225y9kDgpiMkS+JNqle0JshmTDthIwKm6HwkLvnpl1LlwTJEuPoPrljxPuQTjZGM93nunW4HTagiF3+VCT1m4vaq4UFm7c9a7EYJpS5Nic3ByvQ3Lt5knq1uS9wopFWBfeTpblwu31WK+gfxNWCdnnuadV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ROdjBxp5; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3645e9839b3so4660239f8f.3;
-        Tue, 25 Jun 2024 15:01:21 -0700 (PDT)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52cd717ec07so5193134e87.0;
+        Tue, 25 Jun 2024 15:03:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719352880; x=1719957680; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719353023; x=1719957823; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HHDXz1LUXU6ZlWHC70FR62Vj76MX7HfzlwWXqLyqg1s=;
-        b=JGiNOjzSoDJvtQp+S3QKLDZTfULPuxN9P+pL2Nxnop6UBozISGSp/i1TYHWCUDVHic
-         58UWMAiF9wDbVvYAAykWKdo92yCXRLmXpbsFJoSDvYY/rGnn4L3PF30rAeRCteWwaiVE
-         ZjBXnVDmlHzYqvgoWBXHho426O8O5OjPNRfSj2TSbg1hAerEgfolvR0liq9oQbQRCvAM
-         m31+aikEo+UqOYMwJa5wIz8qXxwewcr2HaSDehKHgBmXYhTNj3LCAgIAuyje0M2GzWbb
-         YSq5lBMuvPFecysm5VkzgNMQ5IY0+l4sgKuaQ9uiGpG4ilWWP92G4PNfgdHfivMINKOp
-         C2Jw==
+        bh=so4pkPseZc+1L10dmvmn3CAtUkLyXo31V8uQ7StjmkA=;
+        b=ROdjBxp5sqJs2qQ8KQnKOa86MDId/V3at0yNykXDD01uDXnmmJTrYjuSSH1soCyRzR
+         fBM8INMyKqAtNrpD2PRxCxK5hKA2PI7KELGs4HaKum8793yCAfO6Bfx92wVl5r5zskQB
+         TbC0pohEp9d4narEIqN/0tT0SgnF29sxSuIgw8gh4lhm4P4SYuMGOevduP+tfKZ4tNXM
+         i1rATnBNCFgbem0g396Ubvxgg04nNneJqgcb/h0tk80OS7RfXCWZCA+4YvEfQ7tDGJHN
+         vIIslBBultXkQeWQnFRgkLsjfbOZ0FF2rZQ0Ar0vJ7rm1YTQiPL0iH4FAumPBwrw8o9v
+         juQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719352880; x=1719957680;
+        d=1e100.net; s=20230601; t=1719353023; x=1719957823;
         h=content-transfer-encoding:mime-version:message-id:date:subject:cc
          :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HHDXz1LUXU6ZlWHC70FR62Vj76MX7HfzlwWXqLyqg1s=;
-        b=AAlIEpQFj6VfcpmgLMZfg/tfHephFsRiYwXedGZ73tKkGf+mwupTRQ9JvBJiCxajgJ
-         Ck16RuzrZN5YxDqhx5laAgz/mNLSrN+eFb8ZvoOWpZxUyOY6uPco8D9kCt4HRvd2CiZ2
-         BfFeCi9SLUCy3935MLce0iJNsaL0+wgzuOlU1j/A8HhPLDDhUqEdxw8miLUeBtHjr3B1
-         frFItudsdQVVb+cXqk1To6BMNbVIW+R3Fd6N+9DklNzXXeiWY6EWaV6xHC4fIDyLVmPX
-         clau2mMuAWGPhDDyUUVD5bk3ZeJjt+xhNUd2n3afRjp+x12gALvbxnT9nFfaZuZLU1OO
-         PF3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVBU/Lvj0hM30ZiMU4NpYVh1KErSF9MkRcLdYLyBpIDzBToGWld8yxw+sehvJvoCjO/VatSi77PG13rN3bYS3lpBedzssXSnrYsYxcNcQtAir3ZmZfjb0Q0H8ZFBTq+7k6iRMw3hkU=
-X-Gm-Message-State: AOJu0Yy+iGhz+zOEi224vbbVBq6mpVP6jwI509DZYJ7zQzZ8jvI8EVkA
-	gEe7dmE2TPATW4weJjaZI2o41Wa4ghjcPhghIcoyD7lYU2O/O10D
-X-Google-Smtp-Source: AGHT+IHr6o4+7kZYcRqbVPgGro0ftP5uukV5qZS6qgoWQUcpugSg7FOw2CSarFn4/rTei1JNNf3zeg==
-X-Received: by 2002:a5d:694c:0:b0:366:f323:f59b with SMTP id ffacd0b85a97d-366f323f70fmr3993667f8f.1.1719352879642;
-        Tue, 25 Jun 2024 15:01:19 -0700 (PDT)
-Received: from localhost ([2001:861:3385:e20:6384:4cf:52c5:3194])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c823c28asm2335045e9.5.2024.06.25.15.01.19
+        bh=so4pkPseZc+1L10dmvmn3CAtUkLyXo31V8uQ7StjmkA=;
+        b=n8O1b4ejcK6qHSC2lFLogMVmB8qlLLZht2jGoCM+2cIOitsoe+sWCBWF7jCCO2TZ8J
+         GNxdYmblwPgGCc4Dmr6b8qlce7tQteXXucsE/sgPynvVddRT4OJchBEb9ftE1drXrYJJ
+         ewbzLUW2UPrd4mq0zUeSEsme1vpUuyXvACAs4yT7fTyUvj1yT3Q6PH6ACxrXOj+uoIxk
+         J8HNcVxMneumepHAbNUMHy1rftfyKMTrMducuiNjF5A6X9LvlZaE3qWt6GRGbOrDRhvd
+         fWwSpojHiTLPJm8c0Rk5XB3lMEarYR5aMNsuvpaf7vRpvxW4Ss72Lq8tgOI2iX1VQ2eT
+         6ZXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlZHm+CZRmT5xZejgl9DjsB0jQge8sZCcsajtGptxPAcNvYI7YS/CR45FbqJowc+ijcMG7uMMmaxFlh3ek3ELLx79xEyMlvZviuR8RbCrdG4dy9lebDTRSGL2ZkZt/2Dou6NiOFUTulAdadBZi3mzcTK1xLDDJX8TL5NgmhMXAfH9VfQ==
+X-Gm-Message-State: AOJu0YwgxLacnIz2bkyiS4cy4/BLw8JtzX9bvVF/Ksd+2PvMKkBj1SxW
+	Amtn9g0vP2NcRFYF6ixF33S9vzGkdAOXpG3y9t8gHiD6Oq7espeYYc6mSDj0ze0=
+X-Google-Smtp-Source: AGHT+IGA41boEzk5lnOvJt1ESJdPvG2Qfe4DARVFgcuCZcvkAg74Weiy4tvuMgFP6cxTu8/dWt1uZQ==
+X-Received: by 2002:ac2:4244:0:b0:52b:81de:1125 with SMTP id 2adb3069b0e04-52ce186142dmr5480005e87.61.1719353022577;
+        Tue, 25 Jun 2024 15:03:42 -0700 (PDT)
+Received: from localhost.localdomain ([2a10:d582:37c5:0:a86b:b44f:15fa:ccf9])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638e90ccbsm14031999f8f.59.2024.06.25.15.03.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 15:01:19 -0700 (PDT)
-From: Raphael Gallais-Pou <rgallaispou@gmail.com>
-To: Patrice Chotard <patrice.chotard@foss.st.com>,
-	"'Rafael J . Wysocki'" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] cpufreq: sti: add missing MODULE_DEVICE_TABLE entry for stih418
-Date: Wed, 26 Jun 2024 00:00:56 +0200
-Message-ID: <20240625220056.111913-1-rgallaispou@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        Tue, 25 Jun 2024 15:03:41 -0700 (PDT)
+From: Mudit Sharma <muditsharma.info@gmail.com>
+To: jic23@kernel.org,
+	lars@metafoo.de,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	robh@kernel.org
+Cc: Mudit Sharma <muditsharma.info@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH v6 1/2] dt-bindings: iio: light: ROHM BH1745
+Date: Tue, 25 Jun 2024 23:03:25 +0100
+Message-ID: <20240625220328.558809-1-muditsharma.info@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,27 +87,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-'st,stih418' is missing in the compatible list.
-Add it in order to use the driver with stih418 platform.
+Add ROHM BH1745 - 4 channel I2C colour sensor's dt-bindings.
 
-Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+Signed-off-by: Mudit Sharma <muditsharma.info@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/cpufreq/sti-cpufreq.c | 1 +
- 1 file changed, 1 insertion(+)
+v5->v6:
+- No change
+v4->v5:
+- Add power supply info
+v3->v4:
+- No changes
+v2->v3:
+- Move 'additionalProperties' after 'required' block
+- Remove block style indicator '|' from description
+v1->v2:
+- Fix yaml issue: Make `maintainers` a list
 
-diff --git a/drivers/cpufreq/sti-cpufreq.c b/drivers/cpufreq/sti-cpufreq.c
-index 9c542e723a15..1ffa23dd8907 100644
---- a/drivers/cpufreq/sti-cpufreq.c
-+++ b/drivers/cpufreq/sti-cpufreq.c
-@@ -293,6 +293,7 @@ module_init(sti_cpufreq_init);
- static const struct of_device_id __maybe_unused sti_cpufreq_of_match[] = {
- 	{ .compatible = "st,stih407" },
- 	{ .compatible = "st,stih410" },
-+	{ .compatible = "st,stih418" },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, sti_cpufreq_of_match);
+ .../bindings/iio/light/rohm,bh1745.yaml       | 53 +++++++++++++++++++
+ 1 file changed, 53 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
+
+diff --git a/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml b/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
+new file mode 100644
+index 000000000000..44896795c67e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/iio/light/rohm,bh1745.yaml
+@@ -0,0 +1,53 @@
++# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/iio/light/rohm,bh1745.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: ROHM BH1745 colour sensor
++
++maintainers:
++  - Mudit Sharma <muditsharma.info@gmail.com>
++
++description:
++  BH1745 is an I2C colour sensor with red, green, blue and clear
++  channels. It has a programmable active low interrupt pin.
++  Interrupt occurs when the signal from the selected interrupt
++  source channel crosses set interrupt threshold high/low level.
++
++properties:
++  compatible:
++    const: rohm,bh1745
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  vdd-supply: true
++
++required:
++  - compatible
++  - reg
++  - vdd-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++    i2c {
++        #address-cells = <1>;
++        #size-cells = <0>;
++
++        colour-sensor@38 {
++            compatible = "rohm,bh1745";
++            reg = <0x38>;
++            interrupt-parent = <&gpio>;
++            interrupts = <19 IRQ_TYPE_LEVEL_LOW>;
++            vdd-supply = <&vdd>;
++        };
++    };
++
++...
 -- 
-2.45.2
+2.43.0
 
 
