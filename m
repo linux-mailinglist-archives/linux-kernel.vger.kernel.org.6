@@ -1,115 +1,157 @@
-Return-Path: <linux-kernel+bounces-228701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC853916591
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79EA29165A4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13E11B2288D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:53:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D53A0B229C5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:59:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E6A14A611;
-	Tue, 25 Jun 2024 10:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F73614AD24;
+	Tue, 25 Jun 2024 10:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JJqFxLvo"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b="ILQLJ/3l"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7747453370;
-	Tue, 25 Jun 2024 10:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A90714A4E9
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719312776; cv=none; b=XEPuIQfrFrU/CXXxOu2bjeTp+FvuSYkKD/E3RUzXTOJcbYvtnGBKeUB3hJO06s+msXEoUwx63p5n+C1pg2vKRTBDiaHcF1UrR4JRv2/yi3L+VoqVW2KCRhc8eCNlUlKcHUkUJ7BfyMg9qjwESSluwfjt9hYbmF82z15wvjur4so=
+	t=1719313176; cv=none; b=R5tFfsvcipJB3u/qJVKDmy1SgUM8bi1mYdyrEVQQB+iOzsZHz84iqQRTkoksq2Gm6DLw6+L15F+cfydzWigKytMCZxk5zmA7424ogCyOMydB++P814ghyv6f1SqDC70GT9Wt7xN36fqm+um2Dx3ltUdHFf7R/1oEIQNgWZI7zCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719312776; c=relaxed/simple;
-	bh=vFD+rd/N0ZO2xUJ+4r9RQ68ijp1ed6+yEhJXQ52MV+s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dy9fYsp7PZh7OEtqNSuRo2jk1dDVpKPwxUTxXxsW73lK83oZXipjxbXhHd4ewzxHNwhN1mH5uvfXypY78YY/8xEgIbza1/fOvQYFJr4daGhY11BZJfKrQsrqdtSN1/iSOBd9b4vQszVRMQpCtD1Z77QD8xzbNpLW2FHG/RxyLUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JJqFxLvo; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57d2fc03740so3964019a12.0;
-        Tue, 25 Jun 2024 03:52:54 -0700 (PDT)
+	s=arc-20240116; t=1719313176; c=relaxed/simple;
+	bh=fVPF6QJF7rG/F5OUgasWuukloGcuPijewbPTH7NCyZs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Q2XcEWt3F3XACNzCrk7UH1gEJQDoQ/5nKqrvDoVVxlnCVCkQ/0gUuumb6RLku1KroyPKMnxaEW0iTo1kYyGZmAmvLNG3QIirj3P2FRCbicnUJx5pwh0nLmuhBBDwOrzz1cCw6y6iLj/aJOe5BxfbLoPto6EO2lJ/1XRE2jEXHvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk; spf=none smtp.mailfrom=metaspace.dk; dkim=pass (2048-bit key) header.d=metaspace-dk.20230601.gappssmtp.com header.i=@metaspace-dk.20230601.gappssmtp.com header.b=ILQLJ/3l; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=metaspace.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=metaspace.dk
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ec52fbb50bso32585871fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:59:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719312773; x=1719917573; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vFD+rd/N0ZO2xUJ+4r9RQ68ijp1ed6+yEhJXQ52MV+s=;
-        b=JJqFxLvoKlMYdq8pVMpqudRhAmpGddWaJYBeGUaslDHMARpXs08qA/e9zVHGVrveh1
-         RfG7PI+OHPQ46kNc7HbrdVUWIUVcqCgJy41WLPm09uxkr7/ePQ09EjyGV+Ek5M1zPXqp
-         Mt2QEScbshMqKi1xVltg+9pStqcDdU4yB9Z4jLr5rbjAnGu9E6Dn8HtqRHoMR7eSRq+t
-         ASMCtZXK2uWcahcgzKJsLjW6XrlUZIKxUQCLgiT8QijwNgCjfU/2pfW5l5YK8WTNbgLw
-         7yXOEE+j5G9aTjjVKn6wH2Y69GVdyLiQYFYoY4s/iuGh4GDBiTC+ucJoW/EDlpCXVUcO
-         6nYA==
+        d=metaspace-dk.20230601.gappssmtp.com; s=20230601; t=1719313172; x=1719917972; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7HK8CBgC+NsQrNpK+KFLlGL2gTcxTEEhi40E3k/R3Wk=;
+        b=ILQLJ/3lR1YkL/m7S7M7lLKD8EF+7VQkMHMXKO1OBpqJ5nw2M44saogXfx0XENEa8u
+         Rt7W9cQ0PoEWnDwgwE7UYQRQnD2elF1Z6spLrBsaUFUoHbBM78wYmX9N1cvtpKpmdz5O
+         sTkSq/a2sOXOjtIeN0P7WymgLpqhje3vnmq+eb76aLeM3KBvZ4PlFvnAsZWLhmhZO9SS
+         mftTeJRFxmPo6A+MPjJ5uBf7aXr+wrrnEB7+8gpTPYQuHdf9UGl+WTnqazfBmE1dL/n+
+         f+MsHN8BVw6zaZ1wlITCtCdjHPAsK4e5nA19UZECaCSTMHZY/w5HbG81Ue48Uf16j/Ys
+         bM7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719312773; x=1719917573;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vFD+rd/N0ZO2xUJ+4r9RQ68ijp1ed6+yEhJXQ52MV+s=;
-        b=DWs5Pg9+mM+0wQGX8cV5TX8s2OZrAixivAUDH3Y/mg2LLIKPJ+uD4eMoubqzniungh
-         Y100cTZGMP8zqNsqBYzjrHo1l92f+S5fFzE/dBVL66E9TKvAgQUu/oHmlrEFwI9zEiiH
-         KZMSmu7SxrSHHL1aPHH3BaqIIrosXziC/MS+6u7GldXlAXUpjWaTGnpgwkM3goggEphC
-         w1Fqc2M0YS4x/UuI1z2pCef5lvySDqW3X16T2ZHrAiNVHpu4FsRicrQi9U+peK3Ek1zD
-         yu2rxPrel6RJpjLSd+fOUE+dzceUN9FB84l+y/POlmLlFz/dfcLGtIOCZonMQ62//tpk
-         AnYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVQJXsmI0YblOqJQ3F08NWRGUI6MSVNd7uWNutBTLSu+Ev8etVI+DRcO16fOHpI/5AWMmvhXuDur7OpANAvjNeS8y/hpIR0ghmMwPmm4ms9rBZI/xRq6KmZGENwjqxbVzzNTLaRfCaVZlyh5rFt6+Sxff1Pg/bdwZM8opJDe/LovFqSGOpbfcA=
-X-Gm-Message-State: AOJu0Yy11jQD8vPzxl8mX1pxP6U3gms5V0Ows4KomTgxYz+0EXN+t4vv
-	tDuYBjEwzQQ2SltYtYPVo4O7Wm7sooRqaGxQX4pXdF0HhtawcJmzbA2wICJ/dryGpHKA8tCvUU2
-	IX5N6BwTz2kavxkzL0JxS/lZNy4w=
-X-Google-Smtp-Source: AGHT+IGTa887v3D8eziyl3LcY5wiXy2Tj8wU0X39RaxGrXENpYI5ac4WWgcS5FyLRWZK5g48wFj25j5Eqcu4vUAoCQg=
-X-Received: by 2002:a50:bac5:0:b0:57d:c8:d295 with SMTP id 4fb4d7f45d1cf-57d4bd566e6mr3835656a12.4.1719312772630;
- Tue, 25 Jun 2024 03:52:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719313172; x=1719917972;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7HK8CBgC+NsQrNpK+KFLlGL2gTcxTEEhi40E3k/R3Wk=;
+        b=TN9eYJIDkhM/p0i4APh27nyH5fLpQEvUVUN+jTXZOWEVdlS0U98Yo/l323rnjcqb0o
+         s6UamGlWc1yDArAp47Y+cKIcWkStfu7k2JSgl/C0Q6DJidJWKAv6ShOsS+RprVHm0aGc
+         cNi8wfat8zG5hFsgARFBbDf39qAFxeInIxpSqWOiA6ugql7/muVtnPeFMRhgMYqZea9o
+         mAqu5efAdJi45uE4FU+rL6bnL3/mRvZ6pKRkxcsxq/w/mD4UkoAhRWgLKmZ5u1yA9qUH
+         lg+U6jXn4smLlwJEgqLHe/kYB7+haUf92j1woTbQGG0xxbTTY4AW1rAcOxGWh2ynPDs/
+         7F1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWbmM2T/RUpL731tJpi7RqqqJEOkseVro/TgBSgU/dpZJ5X1aM6y1u5ryYRxfI+DCfsM0IeQ/4VQ0kJceipcokao9MGhwfw1zt5tA7m
+X-Gm-Message-State: AOJu0Yx8MqljJehap2yvLc0ZjKy2ZHjHnOsY6Uj6pdR3mdNNHVvCs5Fp
+	5A9Z1f4iMsLf8/vL+U8YGr8yhb7epaT4iitg7SdcDINHm2P6cbRq8+BkbEVFzzc=
+X-Google-Smtp-Source: AGHT+IE53M3V8Uidqoa3yk8+4qXuwt/bTpN6kGnKnf/lTZX0PwppewDi+ZCmXMrjqzvhU+9ZupI4Sw==
+X-Received: by 2002:a2e:9684:0:b0:2ec:403e:631a with SMTP id 38308e7fff4ca-2ec5b36b135mr44323041fa.8.1719313171978;
+        Tue, 25 Jun 2024 03:59:31 -0700 (PDT)
+Received: from localhost ([79.142.230.34])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3040ee6bsm5730751a12.28.2024.06.25.03.59.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 03:59:30 -0700 (PDT)
+From: Andreas Hindborg <nmi@metaspace.dk>
+To: Danilo Krummrich <dakr@redhat.com>
+Cc: gregkh@linuxfoundation.org,  rafael@kernel.org,  bhelgaas@google.com,
+  ojeda@kernel.org,  alex.gaynor@gmail.com,  wedsonaf@gmail.com,
+  boqun.feng@gmail.com,  gary@garyguo.net,  bjorn3_gh@protonmail.com,
+  benno.lossin@proton.me,  a.hindborg@samsung.com,  aliceryhl@google.com,
+  airlied@gmail.com,  fujita.tomonori@gmail.com,  lina@asahilina.net,
+  pstanner@redhat.com,  ajanulgu@redhat.com,  lyude@redhat.com,
+  robh@kernel.org,  daniel.almeida@collabora.com,
+  rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org,
+  linux-pci@vger.kernel.org
+Subject: Re: [PATCH v2 09/10] rust: pci: add basic PCI device / driver
+ abstractions
+In-Reply-To: <20240618234025.15036-10-dakr@redhat.com> (Danilo Krummrich's
+	message of "Wed, 19 Jun 2024 01:39:55 +0200")
+References: <20240618234025.15036-1-dakr@redhat.com>
+	<20240618234025.15036-10-dakr@redhat.com>
+Date: Tue, 25 Jun 2024 12:53:48 +0200
+Message-ID: <877cedi98j.fsf@metaspace.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624085037.33442-2-xry111@xry111.site> <e2lv3qamggymdjqzujvyhsd2q34jy5tryniac7d446tlaebqwy@5x4zn7z4d3xz>
- <20240625-kindisch-ausgibt-b4feede36bab@brauner> <30a5fe67500c40a4d5f9516e9b549ec796faac74.camel@xry111.site>
-In-Reply-To: <30a5fe67500c40a4d5f9516e9b549ec796faac74.camel@xry111.site>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 25 Jun 2024 12:52:39 +0200
-Message-ID: <CAGudoHEDKvP926Q6tX1Te_WW9_OTLUoDRTO3nCO3LHo6HJyLpQ@mail.gmail.com>
-Subject: Re: [PATCH v2] vfs: Shortcut AT_EMPTY_PATH early for statx, and add
- AT_NO_PATH for statx and fstatat
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Christian Brauner <brauner@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Alejandro Colomar <alx@kernel.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Huacai Chen <chenhuacai@loongson.cn>, Xuerui Wang <kernel@xen0n.name>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, Icenowy Zheng <uwu@icenowy.me>, linux-fsdevel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Jun 25, 2024 at 12:51=E2=80=AFPM Xi Ruoyao <xry111@xry111.site> wro=
-te:
->
-> On Tue, 2024-06-25 at 10:50 +0200, Christian Brauner wrote:
-> > No, let's not waste AT_* flag space in fear of some hypothetical
-> > breakage. Let's try it cleanly first and make AT_EMPTY_PATH work with
-> > NULL paths.
-> >
-> > Note, I started working on this (checks ...) 30th April but then some
-> > other work came up and I never got back to it (Sorry, Linus). I pushed
-> > the branch to #vfs.empty.path now. The top three commits was what I had
-> > started doing.
-> >
-> > It was based on a new vfs_empty_path() helper so we could reuse it for
-> > other system calls as well.
->
-> If I understand correctly, I should submit a patch against
-> vfs.empty.path making statx(fd, NULL, AT_EMPTY_PATH) work then?
->
+Hi Danilo,
 
-I just sorted this out, will be sending a patchset shortly.
+Thanks for working on this. I just finished rebasing the Rust NVMe
+driver on these patches, and I have just one observation for now.
+
+Danilo Krummrich <dakr@redhat.com> writes:
+
+[...]
+
+> +pub trait Driver {
+> +    /// Data stored on device by driver.
+> +    ///
+> +    /// Corresponds to the data set or retrieved via the kernel's
+> +    /// `pci_{set,get}_drvdata()` functions.
+> +    ///
+> +    /// Require that `Data` implements `ForeignOwnable`. We guarantee to
+> +    /// never move the underlying wrapped data structure.
+> +    ///
+> +    /// TODO: Use associated_type_defaults once stabilized:
+> +    ///
+> +    /// `type Data: ForeignOwnable = ();`
+> +    type Data: ForeignOwnable;
+> +
+> +    /// The type holding information about each device id supported by the driver.
+> +    ///
+> +    /// TODO: Use associated_type_defaults once stabilized:
+> +    ///
+> +    /// type IdInfo: 'static = ();
+> +    type IdInfo: 'static;
+> +
+> +    /// The table of device ids supported by the driver.
+> +    const ID_TABLE: IdTable<'static, DeviceId, Self::IdInfo>;
+> +
+> +    /// PCI driver probe.
+> +    ///
+> +    /// Called when a new platform device is added or discovered.
+> +    /// Implementers should attempt to initialize the device here.
+> +    fn probe(dev: &mut Device, id: Option<&Self::IdInfo>) -> Result<Self::Data>;
+
+Since you changed the `Device` representation to be basically an `ARef`,
+the `&mut` makes no sense. I think we should either pass by value or
+immutable reference.
 
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Best regards,
+Andreas
+
+
+> +
+> +    /// PCI driver remove.
+> +    ///
+> +    /// Called when a platform device is removed.
+> +    /// Implementers should prepare the device for complete removal here.
+> +    fn remove(data: &Self::Data);
+> +}
+> +
+> +/// The PCI device representation.
+> +///
+> +/// A PCI device is based on an always reference counted `device:Device` instance. Cloning a PCI
+> +/// device, hence, also increments the base device' reference count.
+> +#[derive(Clone)]
+> +pub struct Device(ARef<device::Device>);
+> +
 
