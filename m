@@ -1,115 +1,254 @@
-Return-Path: <linux-kernel+bounces-228314-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE7D3915E0B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:14:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E614915E14
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A86DC28415E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:14:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 854851C2262C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7301442FD;
-	Tue, 25 Jun 2024 05:14:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 477EF1442E8;
+	Tue, 25 Jun 2024 05:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="m2FTDB2f"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SyJ7bffH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8CAB143C5A;
-	Tue, 25 Jun 2024 05:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBD333C0;
+	Tue, 25 Jun 2024 05:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719292449; cv=none; b=o3CQvikM5NHX31TgTmg8sj3T4R/L4evk4Eyn1nCj3dcyajBIvrZNobbtIVJtTZ1nAJ12ZwcENDKHMSqw1SFJXn+3rA1CFu6SbiZ0Bv4DT5mPdX73u1CcK26biDyHjyWmlLVOxhRzQt9XG5Hi1QAO2X5VKps9FcDtzMUJFtKtObo=
+	t=1719292551; cv=none; b=IIgmNrT5e1czqrv4ck0MjOeAT22YVbeVFqlvtRbwCcCjCGn2F86WSM4X5kFI6GnE6WPS85fp3esXnIZWks8IUfOsL6fK45Exf3Rx2nGn1i7LntzwrivO1ZWwhN9y2eLomasHLSUyXwbfVa3xwD9/KhQMu9ppguA0zs8znnuDzfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719292449; c=relaxed/simple;
-	bh=BBjidLX4wCJ4bJu2ERUDqOPmnH03v0e8Y5wWJjYUxYE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gkbAOBD3/UGD+mjcLyEw0ZHIcP+g0hN18mdfpP9r/9AMva5R6+LJk9kUuRmRaBfr9nbIyEVUaOBiJ1/EY7m2JFewfCZRua4eQw9wG8vrCPqjJp+yxCmNrZxc4oHS9/4h4S7OLJvXRc145vDE9T0NByILyG/OYB8DvsT0XjDFOaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=m2FTDB2f; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45P5Dmct022509;
-	Tue, 25 Jun 2024 00:13:48 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719292428;
-	bh=fBU2x+vbwdBiGXkNVPBk+/aEoIBCo6MAZ+TjymLS+k4=;
-	h=From:To:CC:Subject:Date;
-	b=m2FTDB2fZKp8ZSJ02RWTjAa72p/vf4hefYht21EQCVgQbCyjGc8H12bx3w1oYhtLZ
-	 8BoXhoHi1+mjXsDARClnfZtSyus8+Kk32QHoIZiqu7xPaIuvecQ65/YSmTiN5Q6RPj
-	 dC3vPlmnExxRKtBWwjDnVDYOqh3JEYZ+VKpDDBI4=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45P5DmT0092945
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 25 Jun 2024 00:13:48 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 25
- Jun 2024 00:13:48 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 25 Jun 2024 00:13:48 -0500
-Received: from udit-HP-Z2-Tower-G9-Workstation-Desktop-PC.dhcp.ti.com (udit-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.18])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45P5Dig5042615;
-	Tue, 25 Jun 2024 00:13:44 -0500
-From: Udit Kumar <u-kumar1@ti.com>
-To: <vigneshr@ti.com>, <nm@ti.com>, <tony@atomide.com>
-CC: <gregkh@linuxfoundation.org>, <jirislaby@kernel.org>,
-        <ronald.wahl@raritan.com>, <thomas.richard@bootlin.com>,
-        <tglx@linutronix.de>, <linux-kernel@vger.kernel.org>,
-        <linux-serial@vger.kernel.org>, <ilpo.jarvinen@linux.intel.com>,
-        Udit Kumar
-	<u-kumar1@ti.com>, <stable@vger.kernel.org>
-Subject: [PATCH] serial: 8250_omap: Implementation of Errata i2310 adding fifo level check
-Date: Tue, 25 Jun 2024 10:43:38 +0530
-Message-ID: <20240625051338.2761599-1-u-kumar1@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719292551; c=relaxed/simple;
+	bh=OsYRJd0mzx38fP7IO/+BLKZK+fyo5KZ7vxvkr6QdFYQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q3Rsshhs8P72bhlmRoDQTmPocWB8lmYY1MZur6np4OJTBZSZIHsgDS/Vqf0qOMpAaj8n0LKTnntC+wgn2jsGqEPQgGjkfZcCVhfR5NmZo1Hz6OP+eh/MRodjK4SuY1V1hdf2URRhms/W7uZGIhq6o4RVzKD50ygGuyomOHQ5f/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SyJ7bffH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 972B7C32782;
+	Tue, 25 Jun 2024 05:15:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719292551;
+	bh=OsYRJd0mzx38fP7IO/+BLKZK+fyo5KZ7vxvkr6QdFYQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SyJ7bffHFjF0pg7enO0XmALW6yes20XyqJ5tG/IAr8Fo091xIFVqhX5RYFm56xXj3
+	 OF0Ed4lAIw5jHYSMkJ177gcGQzt0xGLhR9OGUAHp0EnDBkUQcMqMVrLbc1k50qhkeB
+	 3VrEW+hOFOq8KzswEdXWGWaqeA59OZOcWYCjQIP3JPtMktRv5D6DF3rmTDAhniKG53
+	 +M6T7AWvrZGApb7YCDGght9Q4+6o+GtPlYnercTYnq6NmqCTtQU5mfhunhXvxo1dBW
+	 lvQLIT5ANbfV5hj0XRjPAxL9qFNAtKomb0M0F2w8TkajwbLYcwa6mfyI2519rV2smS
+	 hK0fB1F1xnIpQ==
+Date: Mon, 24 Jun 2024 22:15:49 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+	irogers@google.com, segher@kernel.crashing.org,
+	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com,
+	disgoel@linux.vnet.ibm.com
+Subject: Re: [V4 01/16] tools/perf: Move the data structures related to
+ register type to header file
+Message-ID: <ZnpShR7zd9cVdxSj@google.com>
+References: <20240614172631.56803-1-atrajeev@linux.vnet.ibm.com>
+ <20240614172631.56803-2-atrajeev@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240614172631.56803-2-atrajeev@linux.vnet.ibm.com>
 
-As per Errata i2310[0], Erroneous timeout can be triggered,
-if this Erroneous interrupt is not cleared then it may leads
-to storm of interrupts.
+Hello,
 
-This patch adding fifo empty check before applying errata.
+On Fri, Jun 14, 2024 at 10:56:16PM +0530, Athira Rajeev wrote:
+> Data type profiling uses instruction tracking by checking each
+> instruction and updating the register type state in some data
+> structures. This is useful to find the data type in cases when the
+> register state gets transferred from one reg to another. Example, in
+> x86, "mov" instruction and in powerpc, "mr" instruction. Currently these
+> structures are defined in annotate-data.c and instruction tracking is
+> implemented only for x86. Move these data structures to
+> "annotate-data.h" header file so that other arch implementations can use
+> it in arch specific files as well.
+> 
+> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> ---
+>  tools/perf/util/annotate-data.c | 53 +------------------------------
+>  tools/perf/util/annotate-data.h | 55 +++++++++++++++++++++++++++++++++
+>  2 files changed, 56 insertions(+), 52 deletions(-)
+> 
+> diff --git a/tools/perf/util/annotate-data.c b/tools/perf/util/annotate-data.c
+> index 965da6c0b542..a4c7f98a75e3 100644
+> --- a/tools/perf/util/annotate-data.c
+> +++ b/tools/perf/util/annotate-data.c
+> @@ -31,15 +31,6 @@
+>  
+>  static void delete_var_types(struct die_var_type *var_types);
+>  
+> -enum type_state_kind {
+> -	TSR_KIND_INVALID = 0,
+> -	TSR_KIND_TYPE,
+> -	TSR_KIND_PERCPU_BASE,
+> -	TSR_KIND_CONST,
+> -	TSR_KIND_POINTER,
+> -	TSR_KIND_CANARY,
+> -};
+> -
+>  #define pr_debug_dtp(fmt, ...)					\
+>  do {								\
+>  	if (debug_type_profile)					\
+> @@ -140,49 +131,7 @@ static void pr_debug_location(Dwarf_Die *die, u64 pc, int reg)
+>  	}
+>  }
+>  
+> -/*
+> - * Type information in a register, valid when @ok is true.
+> - * The @caller_saved registers are invalidated after a function call.
+> - */
+> -struct type_state_reg {
+> -	Dwarf_Die type;
+> -	u32 imm_value;
+> -	bool ok;
+> -	bool caller_saved;
+> -	u8 kind;
+> -};
+> -
+> -/* Type information in a stack location, dynamically allocated */
+> -struct type_state_stack {
+> -	struct list_head list;
+> -	Dwarf_Die type;
+> -	int offset;
+> -	int size;
+> -	bool compound;
+> -	u8 kind;
+> -};
+> -
+> -/* FIXME: This should be arch-dependent */
+> -#define TYPE_STATE_MAX_REGS  16
+> -
+> -/*
+> - * State table to maintain type info in each register and stack location.
+> - * It'll be updated when new variable is allocated or type info is moved
+> - * to a new location (register or stack).  As it'd be used with the
+> - * shortest path of basic blocks, it only maintains a single table.
+> - */
+> -struct type_state {
+> -	/* state of general purpose registers */
+> -	struct type_state_reg regs[TYPE_STATE_MAX_REGS];
+> -	/* state of stack location */
+> -	struct list_head stack_vars;
+> -	/* return value register */
+> -	int ret_reg;
+> -	/* stack pointer register */
+> -	int stack_reg;
+> -};
+> -
+> -static bool has_reg_type(struct type_state *state, int reg)
+> +bool has_reg_type(struct type_state *state, int reg)
+>  {
+>  	return (unsigned)reg < ARRAY_SIZE(state->regs);
+>  }
+> diff --git a/tools/perf/util/annotate-data.h b/tools/perf/util/annotate-data.h
+> index 0a57d9f5ee78..ef235b1b15e1 100644
+> --- a/tools/perf/util/annotate-data.h
+> +++ b/tools/perf/util/annotate-data.h
+> @@ -6,6 +6,9 @@
+>  #include <linux/compiler.h>
+>  #include <linux/rbtree.h>
+>  #include <linux/types.h>
+> +#include "dwarf-aux.h"
+> +#include "annotate.h"
+> +#include "debuginfo.h"
+>  
+>  struct annotated_op_loc;
+>  struct debuginfo;
+> @@ -15,6 +18,15 @@ struct hist_entry;
+>  struct map_symbol;
+>  struct thread;
+>  
+> +enum type_state_kind {
+> +	TSR_KIND_INVALID = 0,
+> +	TSR_KIND_TYPE,
+> +	TSR_KIND_PERCPU_BASE,
+> +	TSR_KIND_CONST,
+> +	TSR_KIND_POINTER,
+> +	TSR_KIND_CANARY,
+> +};
+> +
+>  /**
+>   * struct annotated_member - Type of member field
+>   * @node: List entry in the parent list
+> @@ -142,6 +154,48 @@ struct annotated_data_stat {
+>  };
+>  extern struct annotated_data_stat ann_data_stat;
+>  
+> +/*
+> + * Type information in a register, valid when @ok is true.
+> + * The @caller_saved registers are invalidated after a function call.
+> + */
+> +struct type_state_reg {
+> +	Dwarf_Die type;
+> +	u32 imm_value;
+> +	bool ok;
+> +	bool caller_saved;
+> +	u8 kind;
+> +};
+> +
+> +/* Type information in a stack location, dynamically allocated */
+> +struct type_state_stack {
+> +	struct list_head list;
+> +	Dwarf_Die type;
+> +	int offset;
+> +	int size;
+> +	bool compound;
+> +	u8 kind;
+> +};
+> +
+> +/* FIXME: This should be arch-dependent */
+> +#define TYPE_STATE_MAX_REGS  32
 
-[0] https://www.ti.com/lit/pdf/sprz536 page 23
+Can you please define this for powerpc separately?  I think x86 should
+remain in 16.
 
-Fixes: b67e830d38fa ("serial: 8250: 8250_omap: Fix possible interrupt storm on K3 SoCs")
-Cc: stable@vger.kernel.org
-Signed-off-by: Udit Kumar <u-kumar1@ti.com>
----
-This is check is added on top of errata implementation v3 patch 
-https://lore.kernel.org/all/20240619105903.165434-1-u-kumar1@ti.com/
+Thanks,
+Namhyung
 
-
- drivers/tty/serial/8250/8250_omap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index ddac0a13cf84..1af9aed99c65 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -672,7 +672,8 @@ static irqreturn_t omap8250_irq(int irq, void *dev_id)
- 	 * https://www.ti.com/lit/pdf/sprz536
- 	 */
- 	if (priv->habit & UART_RX_TIMEOUT_QUIRK &&
--		(iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT) {
-+	    (iir & UART_IIR_RX_TIMEOUT) == UART_IIR_RX_TIMEOUT &&
-+	    serial_port_in(port, UART_OMAP_RX_LVL) == 0) {
- 		unsigned char efr2, timeout_h, timeout_l;
- 
- 		efr2 = serial_in(up, UART_OMAP_EFR2);
--- 
-2.34.1
-
+> +
+> +/*
+> + * State table to maintain type info in each register and stack location.
+> + * It'll be updated when new variable is allocated or type info is moved
+> + * to a new location (register or stack).  As it'd be used with the
+> + * shortest path of basic blocks, it only maintains a single table.
+> + */
+> +struct type_state {
+> +	/* state of general purpose registers */
+> +	struct type_state_reg regs[TYPE_STATE_MAX_REGS];
+> +	/* state of stack location */
+> +	struct list_head stack_vars;
+> +	/* return value register */
+> +	int ret_reg;
+> +	/* stack pointer register */
+> +	int stack_reg;
+> +};
+> +
+>  #ifdef HAVE_DWARF_SUPPORT
+>  
+>  /* Returns data type at the location (ip, reg, offset) */
+> @@ -160,6 +214,7 @@ void global_var_type__tree_delete(struct rb_root *root);
+>  
+>  int hist_entry__annotate_data_tty(struct hist_entry *he, struct evsel *evsel);
+>  
+> +bool has_reg_type(struct type_state *state, int reg);
+>  #else /* HAVE_DWARF_SUPPORT */
+>  
+>  static inline struct annotated_data_type *
+> -- 
+> 2.43.0
+> 
 
