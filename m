@@ -1,220 +1,163 @@
-Return-Path: <linux-kernel+bounces-228789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEE8D9166CC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:01:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EAE79166CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:02:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2ACE1C236AB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:01:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F38A1C236C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB28F14D6FB;
-	Tue, 25 Jun 2024 12:01:21 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D81A714D2A0;
+	Tue, 25 Jun 2024 12:02:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="F5lfA1qV"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A3414D296
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70D91137764;
+	Tue, 25 Jun 2024 12:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719316881; cv=none; b=YHAAUGwgy4/XldDyn4tOMLhzRybeWfCOxkm840D/jgC5Y89txnEio4iS1tBUL2v3fp5TIhs3AL3RuDMRLWmP4DkFB0gjw9Hj7PDMZlHxLvMTn7BPOmYmJZYOU5DR798u7AY6Pit236GO7bEWdOfHDIyciVXjo89AAmIRqi05MgQ=
+	t=1719316950; cv=none; b=euEiQ8zmpm5jm9Gxz8yb8AmjD5F2E4CqeucuZPRh8yHLUrWLl6ldXvw81Akj+6ssVIIDgd6X8pIgqUc7llrqiYCrae895QDtB9CQ4dDV96gHJxKrCeNfYJ+oa5kdQQPby//xtzWUU/MCC9eEZBGho6CHSRKOzsGWLwDy/cDTFdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719316881; c=relaxed/simple;
-	bh=eedyaU0OboN1irU4L/5Dq2bMj3pSX2ZdN2eZAdvJsWA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tWj+Rc6oQb0MhoBAzGjk9T0RcDiT7yVQVa91TqkNrO9owf0pqoXDowy52RV2DaUqIZt+Cy3dVxWvksU4LWjCaAqX3Lrp1aAAV0ktMCK5mDmJoFArtggcbISfOQBakNP1Rw8U9sNE7CWDXGYyMh4bmGek+BYdOc2KM5nxwaM0SrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <l.stach@pengutronix.de>)
-	id 1sM4rA-00087x-AW; Tue, 25 Jun 2024 14:01:04 +0200
-Message-ID: <2e7a6d8defc84073a204a2071d834d87012a0f7d.camel@pengutronix.de>
-Subject: Re: [etnaviv-next v14 0/8] drm/etnaviv: Add driver wrapper for
- vivante GPUs attached on PCI(e) device
-From: Lucas Stach <l.stach@pengutronix.de>
-To: Icenowy Zheng <uwu@icenowy.me>, Sui Jingfeng <sui.jingfeng@linux.dev>
-Cc: Russell King <linux+etnaviv@armlinux.org.uk>, Christian Gmeiner
-	 <christian.gmeiner@gmail.com>, linux-kernel@vger.kernel.org, 
-	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Date: Tue, 25 Jun 2024 14:01:02 +0200
-In-Reply-To: <19acb7b11ed22a0a87694b2e74807b82e3b5450e.camel@icenowy.me>
-References: <20240519165321.2123356-1-sui.jingfeng@linux.dev>
-	 <19acb7b11ed22a0a87694b2e74807b82e3b5450e.camel@icenowy.me>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
+	s=arc-20240116; t=1719316950; c=relaxed/simple;
+	bh=B9l0BIayFtO54fFICK7mPu8xZAkJYHVx2FObwn9vcM8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=b1l6z1h+zshGkheJZznzUfQNZ2jUCb3K3scmVTXx7KqAp/EWxwsOSB2RJWd5dgPEeFT/9Tr1mB0+5gyTt4ES6b96F5S9IbSHp9ABW0Y/725r3yBYCgli0P5Dx1uRmtUgNVQQlbmpHEOFDc/OJmX3tW1QWWXhVGaXWmThbHaU3MY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=F5lfA1qV; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719316949; x=1750852949;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=B9l0BIayFtO54fFICK7mPu8xZAkJYHVx2FObwn9vcM8=;
+  b=F5lfA1qV3RG0hxb99/oW/4Lu1KmgPGz+qEPMxSOiK7kdTYwEkSo94yVF
+   u+N5dynhXrcoY7gJkz+BiNporo/SlmsY8HAHQhby/M5VPqYjA+NjNypuk
+   dxkheHHsabD1JGF5121fnjQL1XDj6G6Ta70SZKXHq/Kc6dzDrxzQZxtXq
+   wK09migvQaX19awpybVWn1yUFSVRlk7ZYyPRxwdw8yrAfm2dO2Yy9m/1E
+   mJ4iEOsCeQwKzaZtPB1E5d4aXwvLHjiokkwD+f487HHgCziGKVm/8uApQ
+   UMm55qZ4yBiEEkdXnL48g2SnI9k4ofIVtOu9+/1IJk8C4X710sCoHUS4G
+   A==;
+X-CSE-ConnectionGUID: Sl/2r9CDS7G7wU/xhFNf+Q==
+X-CSE-MsgGUID: Ilo0QdrdTw2ZLozOlomrDg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="33784979"
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="33784979"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 05:02:19 -0700
+X-CSE-ConnectionGUID: 63BfM6SNScqsG5vTAhBsww==
+X-CSE-MsgGUID: yh+tJ62YRA2xCkNXkbfKtg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="43734681"
+Received: from gcivario-mobl.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.48.191])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 05:02:15 -0700
+Message-ID: <f65ff3cf-1724-45a1-ad88-200d72251042@intel.com>
+Date: Tue, 25 Jun 2024 15:02:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: l.stach@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 1/3] tools/perf: Fix the string match for
+ "/tmp/perf-$PID.map" files in dso__load
+From: Adrian Hunter <adrian.hunter@intel.com>
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, acme@kernel.org,
+ jolsa@kernel.org, irogers@google.com, namhyung@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org, akanksha@linux.ibm.com, maddy@linux.ibm.com,
+ kjain@linux.ibm.com, disgoel@linux.vnet.ibm.com
+References: <20240623064850.83720-1-atrajeev@linux.vnet.ibm.com>
+ <722cb4bc-89d4-4e03-a80d-ffe05be52c05@intel.com>
+Content-Language: en-US
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <722cb4bc-89d4-4e03-a80d-ffe05be52c05@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am Dienstag, dem 25.06.2024 um 11:18 +0800 schrieb Icenowy Zheng:
-> =E5=9C=A8 2024-05-20=E6=98=9F=E6=9C=9F=E4=B8=80=E7=9A=84 00:53 +0800=EF=
-=BC=8CSui Jingfeng=E5=86=99=E9=81=93=EF=BC=9A
-> > drm/etnaviv use the component framework to bind multiple GPU cores to
-> > a
-> > virtual master, the virtual master is manually create during driver
-> > load
-> > time. This works well for various SoCs, yet there are some PCIe card
-> > has
-> > the vivante GPU cores integrated. The driver lacks the support for
-> > PCIe
-> > devices currently.
-> >=20
-> > Adds PCIe driver wrapper on the top of what drm/etnaviv already has,
-> > the
-> > component framework is still being used to bind subdevices, even
-> > though
-> > there is only one GPU core. But the process is going to be reversed,
-> > we
-> > create virtual platform device for each of the vivante GPU IP core
-> > shipped
-> > by the PCIe master. The PCIe master is real, bind all the virtual
-> > child
-> > to the master with component framework.
-> >=20
-> >=20
-> > v6:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Fix build issue on sy=
-stem without CONFIG_PCI enabled
-> > v7:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Add a separate patch =
-for the platform driver rearrangement
-> > (Bjorn)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Switch to runtime che=
-ck if the GPU is dma coherent or not
-> > (Lucas)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Add ETNAVIV_PARAM_GPU=
-_COHERENT to allow userspace to query
-> > (Lucas)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Remove etnaviv_gpu.no=
-_clk member (Lucas)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Fix Various typos and=
- coding style fixed (Bjorn)
-> > v8:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Fix typos and remove =
-unnecessary header included (Bjorn).
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Add a dedicated funct=
-ion to create the virtual master
-> > platform
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 device.
-> > v9:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Use PCI_VDEVICE() mac=
-ro (Bjorn)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Add trivial stubs for=
- the PCI driver (Bjorn)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Remove a redundant de=
-v_err() usage (Bjorn)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Clean up etnaviv_pdev=
-_probe() with
-> > etnaviv_of_first_available_node()
-> > v10:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Add one more cleanup =
-patch
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Resolve the conflict =
-with a patch from Rob
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Make the dummy PCI st=
-ub inlined
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Print only if the pla=
-tform is dma-coherrent
-> > V11:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Drop unnecessary chan=
-ges (Lucas)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Tweak according to ot=
-her reviews of v10.
-> >=20
-> > V12:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Create a virtual plat=
-form device for the subcomponent GPU
-> > cores
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Bind all subordinate =
-GPU cores to the real PCI master via
-> > component.
-> >=20
-> > V13:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Drop the non-componen=
-t code path, always use the component
-> > framework
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 to bind subcompo=
-nent GPU core. Even though there is only
-> > one core.
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Defer the irq handler=
- register.
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Rebase and improve th=
-e commit message
-> >=20
-> > V14:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0* Rebase onto etnaviv-n=
-ext and improve commit message.
-> >=20
-> > Tested with JD9230P GPU and LingJiu GP102 GPU.
->=20
-> BTW how should VRAM and displayed related parts be handled on these
-> dGPUs?
->=20
-The only way to handle VRAM properly would be to rewrite our GEM
-internals using TTM.
+On 25/06/24 14:57, Adrian Hunter wrote:
+> On 23/06/24 09:48, Athira Rajeev wrote:
+>> Perf test for perf probe of function from different CU fails
+>> as below:
+>>
+>> 	./perf test -vv "test perf probe of function from different CU"
+>> 	116: test perf probe of function from different CU:
+>> 	--- start ---
+>> 	test child forked, pid 2679
+>> 	Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.Msa7iy89bx/testfile
+>> 	  Error: Failed to add events.
+>> 	--- Cleaning up ---
+>> 	"foo" does not hit any event.
+>> 	  Error: Failed to delete events.
+>> 	---- end(-1) ----
+>> 	116: test perf probe of function from different CU                   : FAILED!
+>>
+>> The test does below to probe function "foo" :
+>>
+>> 	# gcc -g -Og -flto -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.c
+>> 	-o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+>> 	# gcc -g -Og -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.c
+>> 	-o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+>> 	# gcc -g -Og -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
+>> 	/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+>> 	/tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+>>
+>> 	# ./perf probe -x /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile foo
+>> 	Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
+>> 	   Error: Failed to add events.
+>>
+>> Perf probe fails to find symbol foo in the executable placed in
+>> /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7
+>>
+>> Simple reproduce:
+>>
+>>  # mktemp -d /tmp/perf-checkXXXXXXXXXX
+>>    /tmp/perf-checkcWpuLRQI8j
+>>
+>>  # gcc -g -o test test.c
+>>  # cp test /tmp/perf-checkcWpuLRQI8j/
+>>  # nm /tmp/perf-checkcWpuLRQI8j/test | grep foo
+>>    00000000100006bc T foo
+>>
+>>  # ./perf probe -x /tmp/perf-checkcWpuLRQI8j/test foo
+>>    Failed to find symbol foo in /tmp/perf-checkcWpuLRQI8j/test
+>>       Error: Failed to add events.
+>>
+>> But it works with any files like /tmp/perf/test. Only for
+>> patterns with "/tmp/perf-", this fails.
+>>
+>> Further debugging, commit 80d496be89ed ("perf report: Add support
+>> for profiling JIT generated code") added support for profiling JIT
+>> generated code. This patch handles dso's of form
+>> "/tmp/perf-$PID.map" .
+>>
+>> The check used "if (strncmp(self->name, "/tmp/perf-", 10) == 0)"
+>> to match "/tmp/perf-$PID.map". With this commit, any dso in
+>> /tmp/perf- folder will be considered separately for processing
+>> (not only JIT created map files ). Fix this by changing the
+>> string pattern to check for "/tmp/perf-%d.map". Add a helper
+>> function is_perf_pid_map_name to do this check. In "struct dso",
+>> dso->long_name holds the long name of the dso file. Since the
+>> /tmp/perf-$PID.map check uses the complete name, use dso___long_name for
+>> the string name.
+>>
+>> With the fix,
+>> 	# ./perf test "test perf probe of function from different CU"
+>> 	117: test perf probe of function from different CU                   : Ok
+>>
+>> Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
+> 
+> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
+> 
 
-Regards,
-Lucas
-
-> >=20
-> > Sui Jingfeng (8):
-> > =C2=A0 drm/etnaviv: Add a dedicated helper function to get various cloc=
-ks
-> > =C2=A0 drm/etnaviv: Add constructor and destructor for the
-> > =C2=A0=C2=A0=C2=A0 etnaviv_drm_private structure
-> > =C2=A0 drm/etnaviv: Embed struct drm_device into struct
-> > etnaviv_drm_private
-> > =C2=A0 drm/etnaviv: Fix wrong cache property being used for vmap()
-> > =C2=A0 drm/etnaviv: Add support for cached coherent caching mode
-> > =C2=A0 drm/etnaviv: Replace the '&pdev->dev' with 'dev'
-> > =C2=A0 drm/etnaviv: Allow creating subdevices and pass platform specifi=
-c
-> > data
-> > =C2=A0 drm/etnaviv: Add support for vivante GPU cores attached via PCIe
-> > =C2=A0=C2=A0=C2=A0 device
-> >=20
-> > =C2=A0drivers/gpu/drm/etnaviv/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 8 +
-> > =C2=A0drivers/gpu/drm/etnaviv/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
-> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_drv.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 159 ++++++++++------
-> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_drv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 27 +++
-> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_gem.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 22 ++-
-> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_gem_submit.c |=C2=A0=C2=A0 2 +-
-> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_gpu.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 144 +++++++++-----
-> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_gpu.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +
-> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_mmu.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 4 +-
-> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_pci_drv.c=C2=A0=C2=A0=C2=A0 | 187
-> > +++++++++++++++++++
-> > =C2=A0drivers/gpu/drm/etnaviv/etnaviv_pci_drv.h=C2=A0=C2=A0=C2=A0 |=C2=
-=A0 18 ++
-> > =C2=A0include/uapi/drm/etnaviv_drm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
-> > =C2=A012 files changed, 468 insertions(+), 110 deletions(-)
-> > =C2=A0create mode 100644 drivers/gpu/drm/etnaviv/etnaviv_pci_drv.c
-> > =C2=A0create mode 100644 drivers/gpu/drm/etnaviv/etnaviv_pci_drv.h
-> >=20
-> >=20
-> > base-commit: 52272bfff15ee70c7bd5be9368f175948fb8ecfd
->=20
+Although it could use a Fixes tag
 
 
