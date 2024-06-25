@@ -1,120 +1,93 @@
-Return-Path: <linux-kernel+bounces-228227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09F83915D0C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:54:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BA68915D0E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:55:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B2C21C21843
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:54:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6721C21767
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:54:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 063F061FF4;
-	Tue, 25 Jun 2024 02:50:14 +0000 (UTC)
-Received: from smtp.cecloud.com (unknown [1.203.97.246])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57DA545023
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:50:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85A96F08A;
+	Tue, 25 Jun 2024 02:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="VLlndhrN";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="VLlndhrN"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0887745018;
+	Tue, 25 Jun 2024 02:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719283813; cv=none; b=mwrtnNa6Xn/35q1SQGMU3bmoga3fo8yzN3L+b20kaelhmGi7jDJYGRgaENw89XRTg+RiO749zszMCOLyDc1TtUvHk13GGoTvjE2pC8IuVoFtJcPc9IDtuS1AxMLoa0S6Qeo6NNe1eSbVDPsbZxTXnrqqMlitSEnRYWoaKwXxqgc=
+	t=1719283837; cv=none; b=Yrn81m+fEI8Z71CCqk/Auvmu0oUsnJZpeJlGPceUTB1i+L2lKtro7F3lyz5QSu9a5Luyx+bQIlTRSSJxgkJi/yc6PXoyiKzXuXX6EwHVxJwY7QL5hH4YZi/hI0P+ZtdFOc02KFmdXZBlo0zGo0SdNEz3dyVPKW07zHpHBoBB4Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719283813; c=relaxed/simple;
-	bh=hphWL4LNHPleLs22s2Z+DEu9G6barzrzdD4CUOhkxHw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=FVgBeBeEkd26F1EOTgvqvoV6CfOGh610vRbQ2qBI6upnV4qh6aB9CwhMOxbKsw70Nnx3sVhGaC45xxUOTT8qk2JmKVIrdTMMZN6L9bHaIuAwKIuUwo0P9U4BTtN8F14EyewzmjTXHppeG65yZ9ltpab9cTDpM/C31VSOAQpB1Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
+	s=arc-20240116; t=1719283837; c=relaxed/simple;
+	bh=olk5qCDKotJRX59pkazCBRw6sKMlzkoth15iji93iYM=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=PlVyKMaGAFZ88QiOra6mqfYUPu7sdmSvGOrgQeFp0cL2wulyPxHl0RcpBt9w+aoDxxdg3VmBTsD/vTSD/I5BgI3GsSa/OkfzN+mJ0XFiXGi8AEHNQrWJTjXxAN+rFd0htwaEEOTzyJvQdU2QSD4k+Gs2PpSNH9f+pa0iQWc7iAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=VLlndhrN; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=VLlndhrN; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1719283833;
+	bh=olk5qCDKotJRX59pkazCBRw6sKMlzkoth15iji93iYM=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=VLlndhrNnPukg3SsOn5SgRbahzucm+gWt1toMpNaZ+8WMvGLGRMFPLCDOGdHNcxf0
+	 WumDPY/re+7pML8FGBjxL43S7FsvxtnJzT/6A7Mn5fl1QHm4TujsYbuFFYtN/SeMjv
+	 E6FwA4NtVlo6Ly5ugxyfmBS92+XyxddecC7DR4CU=
 Received: from localhost (localhost [127.0.0.1])
-	by smtp.cecloud.com (Postfix) with ESMTP id D97437C0112;
-	Tue, 25 Jun 2024 10:50:01 +0800 (CST)
-X-MAIL-GRAY:0
-X-MAIL-DELIVERY:1
-X-SKE-CHECKED:1
-X-ANTISPAM-LEVEL:2
-Received: from localhost.localdomain (unknown [111.48.69.245])
-	by smtp.cecloud.com (postfix) whith ESMTP id P2702681T281466040545648S1719283800599769_;
-	Tue, 25 Jun 2024 10:50:01 +0800 (CST)
-X-IP-DOMAINF:1
-X-RL-SENDER:liuwei09@cestc.cn
-X-SENDER:liuwei09@cestc.cn
-X-LOGIN-NAME:liuwei09@cestc.cn
-X-FST-TO:andrew@lunn.ch
-X-RCPT-COUNT:7
-X-LOCAL-RCPT-COUNT:1
-X-MUTI-DOMAIN-COUNT:0
-X-SENDER-IP:111.48.69.245
-X-ATTACHMENT-NUM:0
-X-UNIQUE-TAG:<a1f9b6a1f1069daf027d5f7b2f293e68>
-X-System-Flag:0
-From: Liu Wei <liuwei09@cestc.cn>
-To: andrew@lunn.ch,
-	Liu Wei <liuwei09@cestc.cn>
-Cc: catalin.marinas@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	prarit@redhat.com,
-	will@kernel.org
-Subject: Re: [PATCH V3] ACPI: Add acpi=nospcr to disable ACPI SPCR as default console on arm64
-Date: Tue, 25 Jun 2024 10:48:48 +0800
-Message-ID: <20240625024848.56950-1-liuwei09@cestc.cn>
-X-Mailer: git-send-email 2.42.1
-In-Reply-To: <5741452f-2a54-4239-a5c3-f13286726780@lunn.ch> (raw)
-References: <5741452f-2a54-4239-a5c3-f13286726780@lunn.ch>
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 993C31286300;
+	Mon, 24 Jun 2024 22:50:33 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id BHYxdbBEdiSZ; Mon, 24 Jun 2024 22:50:33 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1719283833;
+	bh=olk5qCDKotJRX59pkazCBRw6sKMlzkoth15iji93iYM=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=VLlndhrNnPukg3SsOn5SgRbahzucm+gWt1toMpNaZ+8WMvGLGRMFPLCDOGdHNcxf0
+	 WumDPY/re+7pML8FGBjxL43S7FsvxtnJzT/6A7Mn5fl1QHm4TujsYbuFFYtN/SeMjv
+	 E6FwA4NtVlo6Ly5ugxyfmBS92+XyxddecC7DR4CU=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id C7B891280728;
+	Mon, 24 Jun 2024 22:50:32 -0400 (EDT)
+Message-ID: <9c7de7b8536b56a2bc118044f5f547b94c087321.camel@HansenPartnership.com>
+Subject: Re: [PATCH] scsi:Replace printk and WARN_ON with WARN macro
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Prabhakar Pujeri <prabhakar.pujeri@gmail.com>,
+ linux-scsi@vger.kernel.org,  linux-kernel@vger.kernel.org
+Date: Mon, 24 Jun 2024 22:50:31 -0400
+In-Reply-To: <20240624173205.1227297-1-prabhakar.pujeri@gmail.com>
+References: <20240624173205.1227297-1-prabhakar.pujeri@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-From: Andrew Lunn <andrew@lunn.ch>
+On Mon, 2024-06-24 at 13:32 -0400, Prabhakar Pujeri wrote:
+> This patch modifies the error handling in the SCSI library and Initio
+> SCSI driver by replacing the combination of printk and WARN_ON macros
+> with the WARN macro for better consistency and readability.
 
-> On Mon, Jun 24, 2024 at 01:04:04PM +0800, Liu Wei wrote:
-> > From: Andrew Lunn <andrew@lunn.ch>
-> > 
-> > > On Sat, Jun 22, 2024 at 05:35:21PM +0800, Liu Wei wrote:
-> > > > For varying privacy and security reasons, sometimes we would like to
-> > > > completely silence the serial console, and only enable it when needed.
-> > > > 
-> > > > But there are many existing systems that depend on this console,
-> > > > so add acpi=nospcr for this situation.
-> > > 
-> > > Maybe it is just me, but i see nospcr and my brain expands it to "no
-> > > speaker". Adding to that, your commit message says "completely
-> > > silence"...
-> > > 
-> > > > +			nospcr -- disable ACPI SPCR as default console on ARM64
-> > > > +			For ARM64, ONLY "acpi=off", "acpi=on", "acpi=force" or
-> > > > +			"acpi=nospcr" are available
-> > > > +			For RISCV64, ONLY "acpi=off", "acpi=on" or "acpi=force"
-> > > > +			are available
-> > > 
-> > > How about putting the word 'serial' in here somewhere, just to give
-> > > users an additional clue you are not talking about a speaker, CTRL-G
-> > > etc.
-> > 
-> > Thank you for your suggestion. 
-> > 
-> > You mean acpi=nospcr_serial or acpi=no_spcrserial? However, it appears 
-> > somewhat unconventional compared to the original acpi=* parameter.
-> 
-> How about:
-> 
-> nospcr -- disable ACPI SPCR as default _serial_ console on ARM64
-> 
-> Please as Will suggested, add a definition somewhere.
->
+Although this patch does exactly what it says, we have a problem
+applying it in that the initio driver is now so old that almost no-one
+has hardware for it.  As a result we're very reluctant to touch this
+driver for anything other than critical fixes in case we accidentally
+break it and no-one notices for months.
 
-Ok, I will send the v4 version later.
+Regards,
 
-Thanks for all suggestion.
-
-Liu Wei
- 
->        Andrew
-
+James Bottomley
 
 
