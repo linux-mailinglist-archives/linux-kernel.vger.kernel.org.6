@@ -1,85 +1,67 @@
-Return-Path: <linux-kernel+bounces-228234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8DA915D1F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:05:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96B51915D20
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:05:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2558A1C212DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:05:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB1171C217D5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:05:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC3543ACC;
-	Tue, 25 Jun 2024 03:05:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="KHafoOKd"
-Received: from mail-oa1-f49.google.com (mail-oa1-f49.google.com [209.85.160.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD15212B93
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EB54E1D2;
+	Tue, 25 Jun 2024 03:05:23 +0000 (UTC)
+Received: from smtp.cecloud.com (unknown [1.203.97.240])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198814AEFA
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:05:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719284713; cv=none; b=QUPXjkddGoQ4rKL1Bs9BTDR26aoEyXX2wdev801DfwaGvimwTz1lGPT4LkL2/EeN4OvBBWkG2Q7wHRdt54BmA2JSJQc25JE6IH/xodsLeG/x4RdBYaB1IgxD+Hee2a3bWLn8RPgH2sxQYXw+4SqNskgeSOQKJ5K/Foi0CTjmioI=
+	t=1719284723; cv=none; b=ZQ9SCxkaoQ655mLXr2ln/RuDjnikuUrjlJFysUOsA3EGrNSDCZru2KHz1oKO5ibYdCN37GEwx1LoU+92dSy4QQ2d425syQ8K8JS7RSh1mvyzdSmrdkzeWGu7AwtYdL761m4WyznjSpI1Gxm0ixBuaMaYvys44VJvxhuNZs0HQkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719284713; c=relaxed/simple;
-	bh=XfOFKdE9hUufZU8y6Sa2ZLlLi2R6XOvdzIp9gvD7yAE=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=nAh0RCCCKZjgcDKgwX5hSC3PM9M4jkax2PwXztk7H7TUPFBzfJ/kehS82yj4JVTkK4tU1Hy/AL9O3oLqhmU7utQlr/jaWO6YGLyHoRc0EDXwVoNlfRGvWLXwmS3b0ZAZsdit17rIEFrdx+YHxOYscEZfOc6dfKwlgTtXg5GecNU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=KHafoOKd; arc=none smtp.client-ip=209.85.160.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-25cba5eea69so2414677fac.2
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:05:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1719284711; x=1719889511; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zyv67PSeQklNr28uKAOt2rKwosz6YdgLMWHbFyWOHQA=;
-        b=KHafoOKdd7nkNIFE5qellh5ppry8477rsUTkKgE4zMpFIbZtKyVHMscKvOAb0qc4S8
-         gYqoQlb22wFq9/uatWAoXvJy9e46XaCm/XdJcvma/hY8w5KDl2epmn2006VrRxIQa1vN
-         r1P2E4CMr/VeY8fxLXb/8murB+Wl7okUzfjVAhs0qFOSkVFfXvW44P1KLA4nYOBfjdXf
-         sVqPGntCYxW/dKnQPH/pZ6Tbhc1FUvXOycf63RaXvCksoQ3FuZI+hELJe+tyopZwvkvO
-         Qw6XQj2wpvHYDhyD9AEKJSiEraR/jG3XgVYKYhX5Aar/shvr0cQUZ8XCvbh+L2j+NSDQ
-         3y5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719284711; x=1719889511;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zyv67PSeQklNr28uKAOt2rKwosz6YdgLMWHbFyWOHQA=;
-        b=HFHnSN8Ov18ITJctLlRjYzPTSuhUztKB/2HIeEczq0IHvLurrz1oRa6B0GpMYcySfD
-         EGmyjQltW+hdz5Ry4ht/0q/gQhFNhuDmt/81JV5qPArrPbU1yvOK8ZOv+RK1IvS4aH1B
-         KdQm+ciCEgrf6olcA4zaTUc+GZp3FLcEbYi3coJA3e5FgJy/dqpn1gD+gxFZvoeLvDvd
-         EJMIzyHsOnrMcBtupKdIrWhH+5jyYDQXo1uujB+XpRnuyJfMx+lVAbOgkLoqF3DxbwrF
-         zwTsQBphhVyP9eflymJrIYjIR3pH93Az+JjuXIEU/6xsWsLdkzPo3odXjBZWK7uC1j+X
-         46tw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAU6KMdq2gbcErQqEA2rHlfhD20+EOPV/dkhCr5JROxNxiibm4wb7c4xYz++6LzIoh8PkxRO6LDxuOyvZ9z3P/X5SqP0+ncaexs9ZV
-X-Gm-Message-State: AOJu0YxgDa5t4CLfRWqOqy7z3meyeFdyHvK1e7E5iemf9828Qb6xb7iO
-	nxJHYaVEPUT4ORm3NE+MxRuMxP+g23lfMc1HLEVlCt3/gGJnIsPORw6S1BDyOTE=
-X-Google-Smtp-Source: AGHT+IF/DCn5jWj92MzkN0yS/LWMwk7ZFFRCntu0ONoViUjMQuwNY8dwceKK1l9FQfJHBePotKTjNQ==
-X-Received: by 2002:a05:6870:524c:b0:254:9c46:8877 with SMTP id 586e51a60fabf-25d0168c516mr6589661fac.16.1719284710706;
-        Mon, 24 Jun 2024 20:05:10 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([61.213.176.5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7065129acc6sm6953329b3a.157.2024.06.24.20.05.07
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 24 Jun 2024 20:05:10 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	cuiyunhui@bytedance.com,
-	andy.chiu@sifive.com,
-	alexghiti@rivosinc.com,
-	conor.dooley@microchip.com,
-	bjorn@rivosinc.com,
-	sorear@fastmail.com,
-	cleger@rivosinc.com,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] riscv: Randomize lower bits of stack address
-Date: Tue, 25 Jun 2024 11:05:02 +0800
-Message-Id: <20240625030502.68988-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1719284723; c=relaxed/simple;
+	bh=QMK1XmhKnmgYUTUZ9V/V43jdFuZ3zPgdogMXw3AYJiU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rtNY6Z/lt+2yZRU+8mM5mpAOSb45q4NZ9Adf6Au1y6jh4HToqn0rtQ4acumK4NhUGuzqk8Davpyv5Ws8Njd2MXkGjMF07gtV3LCBaXiUyH90tpoNWvgFBzr7h3ba7cg1NIfvxc+ycIvv4rdMizwQZABhP702m4xMvwIA4sWKP3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.240
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
+Received: from localhost (localhost [127.0.0.1])
+	by smtp.cecloud.com (Postfix) with ESMTP id 568A9900114;
+	Tue, 25 Jun 2024 11:05:17 +0800 (CST)
+X-MAIL-GRAY:0
+X-MAIL-DELIVERY:1
+X-SKE-CHECKED:1
+X-ANTISPAM-LEVEL:2
+Received: from localhost.localdomain (unknown [111.48.69.245])
+	by smtp.cecloud.com (postfix) whith ESMTP id P1340310T281473223422320S1719284716218537_;
+	Tue, 25 Jun 2024 11:05:17 +0800 (CST)
+X-IP-DOMAINF:1
+X-RL-SENDER:liuwei09@cestc.cn
+X-SENDER:liuwei09@cestc.cn
+X-LOGIN-NAME:liuwei09@cestc.cn
+X-FST-TO:liuwei09@cestc.cn
+X-RCPT-COUNT:7
+X-LOCAL-RCPT-COUNT:1
+X-MUTI-DOMAIN-COUNT:0
+X-SENDER-IP:111.48.69.245
+X-ATTACHMENT-NUM:0
+X-UNIQUE-TAG:<bed57cd35782c123b2e918a31b672f68>
+X-System-Flag:0
+From: Liu Wei <liuwei09@cestc.cn>
+To: liuwei09@cestc.cn,
+	will@kernel.org
+Cc: catalin.marinas@arm.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	prarit@redhat.com,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH v4] ACPI: Add acpi=nospcr to disable ACPI SPCR as default console on ARM64
+Date: Tue, 25 Jun 2024 11:05:04 +0800
+Message-ID: <20240625030504.58025-1-liuwei09@cestc.cn>
+X-Mailer: git-send-email 2.42.1
+In-Reply-To: <20240530015332.7305-1-liuwei09@cestc.cn>
+References: <20240530015332.7305-1-liuwei09@cestc.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,65 +70,103 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement arch_align_stack() to randomize the lower bits
-of the stack address.
+For varying privacy and security reasons, sometimes we would like to
+completely silence the _serial_ console, and only enable it when needed.
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+But there are many existing systems that depend on this _serial_ console,
+so add acpi=nospcr to disable console in ACPI SPCR table as default
+_serial_ console.
+
+Signed-off-by: Liu Wei <liuwei09@cestc.cn>
+Suggested-by: Prarit Bhargava <prarit@redhat.com>
+Suggested-by: Will Deacon <will@kernel.org>
+Suggested-by: Andrew Lunn <andrew@lunn.ch>
 ---
- arch/riscv/include/asm/exec.h | 8 ++++++++
- arch/riscv/kernel/process.c   | 9 +++++++++
- 2 files changed, 17 insertions(+)
- create mode 100644 arch/riscv/include/asm/exec.h
 
-diff --git a/arch/riscv/include/asm/exec.h b/arch/riscv/include/asm/exec.h
-new file mode 100644
-index 000000000000..07d9942682e0
---- /dev/null
-+++ b/arch/riscv/include/asm/exec.h
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+
-+#ifndef __ASM_EXEC_H
-+#define __ASM_EXEC_H
-+
-+extern unsigned long arch_align_stack(unsigned long sp);
-+
-+#endif	/* __ASM_EXEC_H */
-diff --git a/arch/riscv/kernel/process.c b/arch/riscv/kernel/process.c
-index e4bc61c4e58a..e3142d8a6e28 100644
---- a/arch/riscv/kernel/process.c
-+++ b/arch/riscv/kernel/process.c
-@@ -15,6 +15,7 @@
- #include <linux/tick.h>
- #include <linux/ptrace.h>
- #include <linux/uaccess.h>
-+#include <linux/personality.h>
+v2: Add a config option suggested by Prarit
+
+v3: Use cmdline acpi=nospcr instead of config
+
+v4: Some description in comment or document
+---
+ .../admin-guide/kernel-parameters.txt          | 10 +++++++---
+ arch/arm64/kernel/acpi.c                       | 18 +++++++++++++++++-
+ 2 files changed, 24 insertions(+), 4 deletions(-)
+
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 11e57ba2985c..6814ff7ae446 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -12,7 +12,7 @@
+ 	acpi=		[HW,ACPI,X86,ARM64,RISCV64,EARLY]
+ 			Advanced Configuration and Power Interface
+ 			Format: { force | on | off | strict | noirq | rsdt |
+-				  copy_dsdt }
++				  copy_dsdt | nospcr }
+ 			force -- enable ACPI if default was off
+ 			on -- enable ACPI but allow fallback to DT [arm64,riscv64]
+ 			off -- disable ACPI if default was on
+@@ -21,8 +21,12 @@
+ 				strictly ACPI specification compliant.
+ 			rsdt -- prefer RSDT over (default) XSDT
+ 			copy_dsdt -- copy DSDT to memory
+-			For ARM64 and RISCV64, ONLY "acpi=off", "acpi=on" or
+-			"acpi=force" are available
++			nospcr -- disable console in ACPI SPCR table as
++				default _serial_ console on ARM64
++			For ARM64, ONLY "acpi=off", "acpi=on", "acpi=force" or
++			"acpi=nospcr" are available
++			For RISCV64, ONLY "acpi=off", "acpi=on" or "acpi=force"
++			are available
  
- #include <asm/unistd.h>
- #include <asm/processor.h>
-@@ -26,6 +27,7 @@
- #include <asm/cpuidle.h>
- #include <asm/vector.h>
- #include <asm/cpufeature.h>
-+#include <asm/exec.h>
+ 			See also Documentation/power/runtime_pm.rst, pci=noacpi
  
- #if defined(CONFIG_STACKPROTECTOR) && !defined(CONFIG_STACKPROTECTOR_PER_TASK)
- #include <linux/stackprotector.h>
-@@ -99,6 +101,13 @@ void show_regs(struct pt_regs *regs)
- 		dump_backtrace(regs, NULL, KERN_DEFAULT);
- }
+diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
+index e0e7b93c16cc..55757d8884d4 100644
+--- a/arch/arm64/kernel/acpi.c
++++ b/arch/arm64/kernel/acpi.c
+@@ -45,6 +45,7 @@ EXPORT_SYMBOL(acpi_pci_disabled);
+ static bool param_acpi_off __initdata;
+ static bool param_acpi_on __initdata;
+ static bool param_acpi_force __initdata;
++static bool param_acpi_nospcr __initdata;
  
-+unsigned long arch_align_stack(unsigned long sp)
-+{
-+	if (!(current->personality & ADDR_NO_RANDOMIZE) && randomize_va_space)
-+		sp -= get_random_u32_below(PAGE_SIZE);
-+	return sp & ~0xf;
-+}
+ static int __init parse_acpi(char *arg)
+ {
+@@ -58,6 +59,8 @@ static int __init parse_acpi(char *arg)
+ 		param_acpi_on = true;
+ 	else if (strcmp(arg, "force") == 0) /* force ACPI to be enabled */
+ 		param_acpi_force = true;
++	else if (strcmp(arg, "nospcr") == 0) /* disable SPCR as default console */
++		param_acpi_nospcr = true;
+ 	else
+ 		return -EINVAL;	/* Core will print when we return error */
+ 
+@@ -237,7 +240,20 @@ void __init acpi_boot_table_init(void)
+ 			acpi_put_table(facs);
+ 		}
+ #endif
+-		acpi_parse_spcr(earlycon_acpi_spcr_enable, true);
 +
- #ifdef CONFIG_COMPAT
- static bool compat_mode_supported __read_mostly;
- 
++		/*
++		 * For varying privacy and security reasons, sometimes need
++		 * to completely silence the serial console output, and only
++		 * enable it when needed.
++		 * But there are many existing systems that depend on this
++		 * behavior, use acpi=nospcr to disable console in ACPI SPCR
++		 * table as default serial console.
++		 */
++		acpi_parse_spcr(earlycon_acpi_spcr_enable,
++			!param_acpi_nospcr);
++		pr_info("Use ACPI SPCR as default console: %s\n",
++				param_acpi_nospcr ? "No" : "Yes");
++
+ 		if (IS_ENABLED(CONFIG_ACPI_BGRT))
+ 			acpi_table_parse(ACPI_SIG_BGRT, acpi_parse_bgrt);
+ 	}
 -- 
-2.20.1
+2.42.1
+
+
 
 
