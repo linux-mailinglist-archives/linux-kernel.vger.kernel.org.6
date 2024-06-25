@@ -1,86 +1,77 @@
-Return-Path: <linux-kernel+bounces-228874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41B4B91680C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:36:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 083DA91680D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:36:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E6E1B20DC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:36:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3733C1C24D5D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:36:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19A216F834;
-	Tue, 25 Jun 2024 12:34:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3EE714D294;
+	Tue, 25 Jun 2024 12:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EG0TOPWK"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EOLKDiNd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63A29156879;
-	Tue, 25 Jun 2024 12:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0AF14BFBF
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719318860; cv=none; b=RrzQdtMguADKD9svb/AzeOhngW2bcp/cUgvTB1ZH3f2ExGtxWzqBtzTKXXNknGhTzvFPjJXGtNGbDfJjPRBcYkzfqViEOqFuvFDl4Vz0jahS/qx9BTs0Q7yKlrVgcW448GAbJjtsFHYRYwm85dBcdRDMaOSkSnix1lIgvyLEbtM=
+	t=1719318957; cv=none; b=tpENqk3t/OCnlWk2Tp1f+S95hyIMamRTWLrtXbfrSN5v5ZSN5NsZ6EO6iaKPwrlY3WgPSlMBQrKMItRxqdgPqC2QB1U5zNiT2biT2/U3nSnKPpnOhAoF9zeI+LRPOS5NQ+vIOMNaycUaMOjUCXmtVZN4U/EIwAT1pjrS60mVXOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719318860; c=relaxed/simple;
-	bh=MmNcMBBJtVyzgiafwqkLrHq6NRCQRYl4dPawbnLh1E4=;
+	s=arc-20240116; t=1719318957; c=relaxed/simple;
+	bh=BP08sTdTTNHRTt+6KipTmcAxEw1ocEmLhTr+kBQbVtk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JrmuFQtQAlRZKhxNcXdHRKQfmJbBS1LMJth/2NRiLoVKcdtiDHRfxbWOs9pPzUBEgoid99iCZrpO9QIAOtBSHtjkWGd0XbjXEduWqYJTpk1gAKjXRBxXyGKQPuJzzAyS6XPds/5u7Coi5xjHRz1Bd3Y12rsB91aCoHbop5CVYfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EG0TOPWK; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52ccc40e72eso3680370e87.3;
-        Tue, 25 Jun 2024 05:34:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719318856; x=1719923656; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oN2/K84i9zl3GaHFtyuViU5S2IN/66gi6BYv+zbirms=;
-        b=EG0TOPWKURaI5NU3kxqfBn5rpkPqZ+7RfgoYxlLN+kjd0fAFbVpQnrjBcxHQNgDNPU
-         j3ZlRfaEICRGOlIGbJc8wpy6RHbms+9oxawavgruXcX46Okpfi0BQ3FtFmgzwpGhBLHz
-         oxbd23Pv15+FdYN7lcHdPzIO/O/7f6NP+W+xn/AWOOWnWki+H8r4oT/NSQJIct5L6ytk
-         RlkyGloh0IN0iNKOHyLyjag2kZ0pO3Qt8WFMy8nHy5SOKdS1m0J1yEzL0p+Cj1PsTZzt
-         B7q2+FBddpggcp3esH0UMj0utogG1kCWbTxfw4OJzbIRhx2RygZ/hzzvCKnZUZoJAU9s
-         1U9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719318856; x=1719923656;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oN2/K84i9zl3GaHFtyuViU5S2IN/66gi6BYv+zbirms=;
-        b=cdJyQ39yeEoSjgDCq5QalU3tzoTK8cCAZ2HkeyftH3Xvvowbwr40YJmyVw778IF5+Z
-         YEIpMutVAC/l/0BzCiUmdnJstd3Y0Lezp5qFxl5c0Mwcncqy2DLsvPbyYaR8SPEQTJXO
-         H0iA7HTMspZBvvLd77VHB+J+AFsTqXsXUR702fXpg7Gjr7ZQglS4ey+I+svAfcxGJnV2
-         +ondI4hBoRiasjsq2HeiFJa8es0sA0Rk9Ozv6e5jdyuCm/q9jA0UOxLnL+IK1PZ3k6AO
-         H5T/Wuin/HSurD3pfuq2/3Ed0/6vZEkLRQF7PXttEDm6y8VbB9PLMSI0drJOlMIvBLLr
-         n5SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWE7P5p1Q3H0oKubE4lg40k5MFHxv9gH8HcDJKUJtc8CBYhBUcyYYSrPBz3rv7iXRTe4SfZWfbhgkc58r08dTe8ye/GVdwmVyR7KmwbFYH78cv6wcUUYbtM5thdZMa6j58nFN+QYWHY3C6KyoKyR7svMJfRE6RsE0/qs6k+MHvpfKLceQ==
-X-Gm-Message-State: AOJu0Yxg8pxD/jMfTgEeelSZJZOCZ7+/Wun7g1wyKEsP8oND29HeXiyx
-	9fjXo64PWDGG0pYTupkymxNdK/aOxbWMC8JXX3cco0ua7uys/beEOTMRpotO
-X-Google-Smtp-Source: AGHT+IEugLyqoJPVUeJAwzI9eTjBQERaf1IqQnBaVqPFo7vfcEFHGeoEL5luenucOLlOBIKM4l/LLQ==
-X-Received: by 2002:ac2:420a:0:b0:52c:e00c:21cb with SMTP id 2adb3069b0e04-52ce1861722mr5540533e87.62.1719318856164;
-        Tue, 25 Jun 2024 05:34:16 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0b6355sm208725045e9.2.2024.06.25.05.34.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 05:34:15 -0700 (PDT)
-Date: Tue, 25 Jun 2024 15:34:13 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v4 3/3] arm64: dts: fsl-ls1043a-rdb: use common
- spi-cs-setup(hold)-delay-ns
-Message-ID: <20240625123413.kksqh4zbi5bzfaan@skbuf>
-References: <20240624-ls_qspi-v4-0-3d1c6f5005bf@nxp.com>
- <20240624-ls_qspi-v4-0-3d1c6f5005bf@nxp.com>
- <20240624-ls_qspi-v4-3-3d1c6f5005bf@nxp.com>
- <20240624-ls_qspi-v4-3-3d1c6f5005bf@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YhuVwQHDvFULSKRRWYLOucsVioBrRiE8HSNAj3+aSAGcNDhf1FkjNWCf2S/KiYqHDz81Nm1Lgye5DTO1mxJoEK4XrD9+i3hNUSGt1Ha/tPNc97xFUBWxRF7Fjm6Ryr29qNjSR369VZkE22ZTXaRMs7i1b/ZXeMMn/F9HX+8GxlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EOLKDiNd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719318954;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5Rx4ljDasquwUrnCO7d0BB6VQoqF3qIWWRtfu74Fd0Q=;
+	b=EOLKDiNddPxMrogCe02BmxHB82Cj/F7dwFg4JQ8SMoNiCNsbJiilGBQGzKhVAO4/VP4uck
+	gvC3UVwl65fdcxcCgxmjw5blPJmxhn5w0Ecg9YKwbvTcj6OLKqVjiflcwkhVTZ4J+QFOoi
+	v5i1LokdbA1QAFIWk4SJfyUJP8NkUgE=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-558-_mufoMiEOEufhfhljYYGJw-1; Tue,
+ 25 Jun 2024 08:35:53 -0400
+X-MC-Unique: _mufoMiEOEufhfhljYYGJw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D618D19560AA;
+	Tue, 25 Jun 2024 12:35:51 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.198])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id EC82B19560AB;
+	Tue, 25 Jun 2024 12:35:49 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 25 Jun 2024 14:34:18 +0200 (CEST)
+Date: Tue, 25 Jun 2024 14:34:15 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: "Eric W. Biederman" <ebiederm@xmission.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 02/17] signal: Compute the process exit_code in get_signal
+Message-ID: <20240625123415.GA16836@redhat.com>
+References: <20240609142342.GA11165@redhat.com>
+ <87r0d5t2nt.fsf@email.froward.int.ebiederm.org>
+ <20240610152902.GC20640@redhat.com>
+ <20240613154541.GD18218@redhat.com>
+ <87ikyamf4u.fsf@email.froward.int.ebiederm.org>
+ <20240617183758.GB10753@redhat.com>
+ <87iky5k2yi.fsf@email.froward.int.ebiederm.org>
+ <87o77xinmt.fsf_-_@email.froward.int.ebiederm.org>
+ <87cyodinl5.fsf_-_@email.froward.int.ebiederm.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,22 +80,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240624-ls_qspi-v4-3-3d1c6f5005bf@nxp.com>
- <20240624-ls_qspi-v4-3-3d1c6f5005bf@nxp.com>
+In-Reply-To: <87cyodinl5.fsf_-_@email.froward.int.ebiederm.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, Jun 24, 2024 at 02:55:29PM -0400, Frank Li wrote:
-> Use SPI common properties 'spi-cs-setup-delay-ns' and
-> 'spi-cs-hold-delay-ns', mark private properties 'fsl,spi-cs-sck-delay'
-> and 'fsl,spi-sck-cs-delay' as deprecated.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Chang from v3 to v4
-> - fix typo at commit message
-> - use comments:
-> Standard CS timing
-> properties replace the deprecated vendor variants below
-> ---
+On 06/18, Eric W. Biederman wrote:
+>
+> In prepartion for moving the work of sys_exit and sys_group_exit into
+> get_signal compute exit_code in get_signal,
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+So far I don't understand the purpose of this preparation, but
+
+> make PF_SIGNALED depend on the exit_code
+
+> -		current->flags |= PF_SIGNALED;
+> +		if (exit_code & 0x7f)
+> +			current->flags |= PF_SIGNALED;
+
+This is another user-visible change...
+
+PF_SIGNALED means that the task didn't exit on its own but have gone
+through get_signal().
+
+This should not affect coredump_task_exit(), but what about
+acct_collect/bacct_add_tsk ?
+
+Confused...
+
+Oleg.
+
 
