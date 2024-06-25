@@ -1,145 +1,162 @@
-Return-Path: <linux-kernel+bounces-229773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36B9D9173E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:56:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7ABA49173E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:57:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABC59B20C7B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB5031C208F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:57:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A430717F506;
-	Tue, 25 Jun 2024 21:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3906817F367;
+	Tue, 25 Jun 2024 21:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qa1EKwMJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="euGDFgYI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE37217E8EC;
-	Tue, 25 Jun 2024 21:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6CC17E44D;
+	Tue, 25 Jun 2024 21:56:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719352572; cv=none; b=EDVlxe6apCZK+T7xrlTN7RytsOa3NqXMA3xGsHa1rSdg7mNCGeMZRwHdCd22uG5GrL4+kBesG43RNLxdPmPZ3OIWLB/MqOEHX3cBBr5313ADN10dNJliy5UfWAxvL+hrU/2x3T15P9R9oxIC8KWqZHYrJVA+/+IEN0xHrMlsDN8=
+	t=1719352591; cv=none; b=gI9AT+N3D8dcD9P1msoAAPs9FEK5BPNn9IIABBbfht8hJq6Q4Ci5Bcf95svf8w/KunaOCtt7TncbLV6so5NKXBIYGIKUwFtqwT0xDNlr3yL3Vg/SnN1SN6G5AO5ZdB6Dczcj+lnt0vy1KioDFHiPOorrB7mbkyHkOAxJNRzxr44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719352572; c=relaxed/simple;
-	bh=K11oj0mpuiJIpnSwm951vDCz0rxmDAGitZS/Kht8+BI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=S701NPLOgKRXX2TgwGqPps4VBar4xnO51JMeSrdgtve/PledlzyrkgH2ut91YJ/n6/Gox12wUZFVRksoygwCbJytzAvsKDeEKnCl1caIn2QXWD3f67oWXzzMUZK6yoqEBiIL6rQCeJT1uKVx42fllG52Q45mtyb791L1LVZbk/M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qa1EKwMJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C2FEC32781;
-	Tue, 25 Jun 2024 21:56:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719352571;
-	bh=K11oj0mpuiJIpnSwm951vDCz0rxmDAGitZS/Kht8+BI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=qa1EKwMJcV/aUJojPxmYqAbh2FsUSFrsVTAGePBLcNRsVgU6LOmgyD4/sUPB0nXX/
-	 kSVZAQTdoZlRL7O0SOSayMt+FYQXENyZABcqPkkX05YJRsYBVPxZVme7CGcSisP0zI
-	 oiaZHsGiztbVzbbtEF4eN/uGl//4QJjUgJiahuNDCKVg8mez7WBudax3owXTUtOlSw
-	 F8AB/TtNqQMqY/XzZzkM0MRUI6zUCbHR/ma+HbkkkLzc1yhu4y5OvC06cwuVeedDJP
-	 jLzIIFhR8lFrmIvR/1bcXrl8tOvgglPIeh+ZiAjWpleMny0ipv/77yds55NlH9ka5s
-	 HpfFk8QvXbX8Q==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-mtd@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: mtd: qcom,nandc: Define properties at top-level
-Date: Tue, 25 Jun 2024 15:56:05 -0600
-Message-ID: <20240625215605.192260-1-robh@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1719352591; c=relaxed/simple;
+	bh=GuWNAbs7bjOaL4xc/BCWazvANohjlV1xZcqX4cb6aYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G9eM1yYliBGIKFCwUYCPID/QfIoyt9uZFmHBe4BIDpmOEM0stjn9eQ3SCEBSylHAauEyUvAGplIwnDlTgeH1EDtTZD0VSWZHq9+lRWA/o4iUw+1+qQgnkLHLn2LhKsi0Uo5/DWtbFzDWWQxwMyEWIO4170PJld52Wmvj9SBX1jI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=euGDFgYI; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719352589; x=1750888589;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GuWNAbs7bjOaL4xc/BCWazvANohjlV1xZcqX4cb6aYc=;
+  b=euGDFgYIni1RyIWe6inr+QYYSCoTHoHj3mODwBPmUO4By/paVGRnqYPs
+   Kr26F6zuAonUUBr9+6XuL4aPXC2Sj3IRAKFNekJCbzSEPL9Xyr15iiYXq
+   Gl3a21u/6fWstoblxC7jlf4nZmo/Wk3+G+rWI2ZP/BHlHmKPj4bNQXkf0
+   UoOGI48xTHNofgy6HmbtjiehwrZe6u85Mg14fH3rg9pCC6kjQS3S9kej1
+   3sTUnsbSuADyXE+lhF0rlPuNeysK9g81Xs7fFrE4J5Azp23DUhZphLcuW
+   K+yjbqvda/ZwfRKu39hLgFeHeVCDtx+RzE9PrPeki9B10Zun/V0iLcM+a
+   Q==;
+X-CSE-ConnectionGUID: QykL6JPHTQaslLOykv7vxQ==
+X-CSE-MsgGUID: cJQu5yDbS2+Xv64TXNFAwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="20280751"
+X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
+   d="scan'208";a="20280751"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 14:56:29 -0700
+X-CSE-ConnectionGUID: pELEltEYQ9isSrYY+jItRw==
+X-CSE-MsgGUID: hQBpxJTqSCmHvPdzCK8TVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
+   d="scan'208";a="43856013"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 25 Jun 2024 14:56:27 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sME9J-000Ekc-0Q;
+	Tue, 25 Jun 2024 21:56:25 +0000
+Date: Wed, 26 Jun 2024 05:56:06 +0800
+From: kernel test robot <lkp@intel.com>
+To: alexjlzheng@gmail.com, chandan.babu@oracle.com, djwong@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org, alexjlzheng@tencent.com
+Subject: Re: [PATCH] xfs: make xfs_log_iovec independent from xfs_log_vec and
+ release it early
+Message-ID: <202406260523.tGxY7QOx-lkp@intel.com>
+References: <20240623123119.3562031-1-alexjlzheng@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240623123119.3562031-1-alexjlzheng@tencent.com>
 
-Convention is DT schemas should define all properties at the top-level
-and not inside of if/then schemas. That minimizes the if/then schemas
-and is more future proof.
+Hi,
 
-There were 2 "if" schemas for "qcom,ipq806x-nand" and the
-"qcom,boot-partitions: true" unnecessary, so the conditional schemas
-can be simplified a bit.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../devicetree/bindings/mtd/qcom,nandc.yaml   | 38 +++++++------------
- 1 file changed, 14 insertions(+), 24 deletions(-)
+[auto build test WARNING on xfs-linux/for-next]
+[also build test WARNING on linus/master v6.10-rc5 next-20240625]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/Documentation/devicetree/bindings/mtd/qcom,nandc.yaml b/Documentation/devicetree/bindings/mtd/qcom,nandc.yaml
-index 4ada60fbf81d..35b4206ea918 100644
---- a/Documentation/devicetree/bindings/mtd/qcom,nandc.yaml
-+++ b/Documentation/devicetree/bindings/mtd/qcom,nandc.yaml
-@@ -31,6 +31,18 @@ properties:
-       - const: core
-       - const: aon
- 
-+  qcom,cmd-crci:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Must contain the ADM command type CRCI block instance number specified for
-+      the NAND controller on the given platform
-+
-+  qcom,data-crci:
-+    $ref: /schemas/types.yaml#/definitions/uint32
-+    description:
-+      Must contain the ADM data type CRCI block instance number specified for
-+      the NAND controller on the given platform
-+
- patternProperties:
-   "^nand@[a-f0-9]$":
-     type: object
-@@ -83,18 +95,6 @@ allOf:
-           items:
-             - const: rxtx
- 
--        qcom,cmd-crci:
--          $ref: /schemas/types.yaml#/definitions/uint32
--          description:
--            Must contain the ADM command type CRCI block instance number
--            specified for the NAND controller on the given platform
--
--        qcom,data-crci:
--          $ref: /schemas/types.yaml#/definitions/uint32
--          description:
--            Must contain the ADM data type CRCI block instance number
--            specified for the NAND controller on the given platform
--
-   - if:
-       properties:
-         compatible:
-@@ -119,19 +119,9 @@ allOf:
-             - const: rx
-             - const: cmd
- 
--  - if:
--      properties:
--        compatible:
--          contains:
--            enum:
--              - qcom,ipq806x-nand
-+        qcom,cmd-crci: false
-+        qcom,data-crci: false
- 
--    then:
--      patternProperties:
--        "^nand@[a-f0-9]$":
--          properties:
--            qcom,boot-partitions: true
--    else:
-       patternProperties:
-         "^nand@[a-f0-9]$":
-           properties:
+url:    https://github.com/intel-lab-lkp/linux/commits/alexjlzheng-gmail-com/xfs-make-xfs_log_iovec-independent-from-xfs_log_vec-and-release-it-early/20240625-192710
+base:   https://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git for-next
+patch link:    https://lore.kernel.org/r/20240623123119.3562031-1-alexjlzheng%40tencent.com
+patch subject: [PATCH] xfs: make xfs_log_iovec independent from xfs_log_vec and release it early
+config: i386-buildonly-randconfig-004-20240626 (https://download.01.org/0day-ci/archive/20240626/202406260523.tGxY7QOx-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406260523.tGxY7QOx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406260523.tGxY7QOx-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from fs/xfs/libxfs/xfs_da_btree.c:24:
+   fs/xfs/xfs_log.h: In function 'xlog_finish_iovec':
+>> fs/xfs/xfs_log.h:46:34: warning: unused variable 'lvec' [-Wunused-variable]
+      46 |         struct xfs_log_iovec    *lvec = lv->lv_iovecp;
+         |                                  ^~~~
+
+
+vim +/lvec +46 fs/xfs/xfs_log.h
+
+    38	
+    39	void *xlog_prepare_iovec(struct xfs_log_vec *lv, struct xfs_log_iovec **vecp,
+    40			uint type);
+    41	
+    42	static inline void
+    43	xlog_finish_iovec(struct xfs_log_vec *lv, struct xfs_log_iovec *vec,
+    44			int data_len)
+    45	{
+  > 46		struct xfs_log_iovec	*lvec = lv->lv_iovecp;
+    47		struct xlog_op_header	*oph = vec->i_addr;
+    48		int			len;
+    49	
+    50		/*
+    51		 * Always round up the length to the correct alignment so callers don't
+    52		 * need to know anything about this log vec layout requirement. This
+    53		 * means we have to zero the area the data to be written does not cover.
+    54		 * This is complicated by fact the payload region is offset into the
+    55		 * logvec region by the opheader that tracks the payload.
+    56		 */
+    57		len = xlog_calc_iovec_len(data_len);
+    58		if (len - data_len != 0) {
+    59			char	*buf = vec->i_addr + sizeof(struct xlog_op_header);
+    60	
+    61			memset(buf + data_len, 0, len - data_len);
+    62		}
+    63	
+    64		/*
+    65		 * The opheader tracks aligned payload length, whilst the logvec tracks
+    66		 * the overall region length.
+    67		 */
+    68		oph->oh_len = cpu_to_be32(len);
+    69	
+    70		len += sizeof(struct xlog_op_header);
+    71		lv->lv_buf_len += len;
+    72		lv->lv_bytes += len;
+    73		vec->i_len = len;
+    74	
+    75		/* Catch buffer overruns */
+    76		ASSERT((void *)lv->lv_buf + lv->lv_bytes <= (void *)lvec + lv->lv_size);
+    77	}
+    78	
+
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
