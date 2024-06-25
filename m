@@ -1,85 +1,155 @@
-Return-Path: <linux-kernel+bounces-229483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DD991700C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:20:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04094917011
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59D871C23524
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:20:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2009282448
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2BA17995A;
-	Tue, 25 Jun 2024 18:20:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A653317920C;
+	Tue, 25 Jun 2024 18:22:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XZFqtsyv"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EB53176AA9
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD36177991
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:22:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719339606; cv=none; b=jTPay+Q1QDzniAsou4y7qg+uph09yvj5nxF40nGLcruypjLSYWtlRnX4e+20XwuYNFM0zgxjPq5IcXlsKWoxLiOJdZ93ERjjBN4WpOubARnCpyJsvVyo9OgzyHvSqaQyVxXX1fdG+EHDBFcOPs8EyhbTghGmhX5Kqx62oD/8lkc=
+	t=1719339744; cv=none; b=LNloypdGWQ5nGCESGiX411sAZRKN/ghbCNOvhH5zxr63dLDXUCvj4Sik0pONSI3qbSfFAyyhn3qlUmD3NjtMiO/nxjn4vwA3QTHS3+SfFj7qPnFZt/XVxGdKczR6odK5GxblFXlgSH/TMD42YdT8F/RPpPrXOZk7edTV/9/DbA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719339606; c=relaxed/simple;
-	bh=Zy0SUc/FqK8HRRoHQFtRx6CgZfCUC+9vm9uCAbBWu/I=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=NoKcFs/RMkzpFbK+t9vWMXlqP9zSM7JGCRKa0Flu51i8lNTJgz8mt5WAvOO2mClOgQ6/egmT9HeyAXyF+AUbSvyXEPr1qONx1NpandFZOUZdXjLscHv3X1CCGqFWqxeFJkOsmlY3FsLMa7KqVNVdlmN4V14I6oLEgsYkJfAm0zQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-375d2ddeffbso81728795ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:20:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719339604; x=1719944404;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+kdH/6y25DZ/0V0/R1qzEPryoXtPS/0kyTCGhdVjZJU=;
-        b=eLBi+J/L20kEwVjpDv7iS2IRFoM/nEUXKKixaO6ylYX2nF8QvFtoyrWxF1EFH1ET0T
-         qbu7v7JbJLzhhJVHsMOvwbOs6hJCDPl/IqUE1E5/5qeYkkkRiPtlje2/iyF8oQXOTYSl
-         MQxeaFZjtZ2/4RAKCEb5WVTDAenpBTLM1YAiYL45JAAv9TWdgrcqbUbXkQBgYpT9zFNu
-         uCNJf2DpYCDW7QQFv4+FruaAGPb95PppiFY9hjVpLZ86hBf27jTdjWlq00Lo8HlDW1Q9
-         bID3DU/YV/PNsJ7gDrAubWNOEul11Y5HtLdkbn9Qf3wT8vcvh2H4YvyaAktUKcnwcANE
-         Y5oQ==
-X-Gm-Message-State: AOJu0YzJP1LQShElGvXNtUqOWUA2XYXgLgkCd8BvSUdISb2ukVJAGNVz
-	bkpLVXkytqp6y8PGHWCpK0JIMLjeKFKB3JJmgbYJUhem2H2VfyaJ04gWW1hoHKNaLvaIQCeumsA
-	2FAdodUT8TiCUqmN/6dsr7Kc/KP60hVEUsTPh2F+tZzNv/aAK4f04dzo=
-X-Google-Smtp-Source: AGHT+IHXkQDa+uoiKr+dUt5n73UBrqK2ae5yUrT7xIyNvDj3dksPa/S4mYlhLOlk7beUAE95i97zrmLlQAQzNiyeLuNjEX3G0E1p
+	s=arc-20240116; t=1719339744; c=relaxed/simple;
+	bh=NDsKJjM1+/sb4dcr6+emp79NbvKrO+USMDDr9jVi1XY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=B+rJu9Dg+tn98ReSIDAlhI9JuJMP5caK+5g9oav2DQAiMXTYVvMula4nEjG6DfhbjgYPb/XxZbQAy6lBhuJRZ4PYumuOG//tQagZxHalBMS8mxp0UeJ3O9vR7DptJXnVKtFID1oDmUqNPqgdu18nnnLmD2EPfrv0vt0eFjRieKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XZFqtsyv; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719339743; x=1750875743;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=NDsKJjM1+/sb4dcr6+emp79NbvKrO+USMDDr9jVi1XY=;
+  b=XZFqtsyv7Hh9dMagfRUV/cdn7vCbz5N++RXR/Z6SdLN3pSQukAXz1nUd
+   hmlZ0o7F82Eqivro/raKmZeU9wjHtqIW1a0m07cNU7Kr304cEOPmGQigA
+   bhlZ3UdAYk0c8H9qNLgc4nXfWntEZBTRacIOgBSjFZ2XyhrGsTmm9ptES
+   pHjgNabsLbRyZDx2Wsj0cMAjLDv4LHCtObtMJl1vYaKh7oBDlAVC9bKNR
+   VDrgvvCM1N4YpDckqNXzhQolYzB2j23AyJOmCijWEy5II3qVjIHYrckeZ
+   BIV3mKxKlq9LozOcVqwEjbhaK9rAkoCvc58rDP7v+K/zZ+I0DLP3xwMSO
+   Q==;
+X-CSE-ConnectionGUID: w3TMLU0PSFuFJGCuMw4Pmg==
+X-CSE-MsgGUID: gAHQ6Dj4Q6yyaS78nt0UyQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16203981"
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="16203981"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 11:22:21 -0700
+X-CSE-ConnectionGUID: YF3Emd0ETeuFVmsvOpreeQ==
+X-CSE-MsgGUID: /7aVxB55St22KdnfsKBJ2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="48913338"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa004.jf.intel.com with ESMTP; 25 Jun 2024 11:22:06 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@kernel.org,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com,
+	linux-kernel@vger.kernel.org
+Cc: ak@linux.intel.com,
+	eranian@google.com,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V2 00/13] Support Lunar Lake and Arrow Lake core PMU
+Date: Tue, 25 Jun 2024 11:22:43 -0700
+Message-Id: <20240625182256.291914-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2197:b0:376:417e:c2ab with SMTP id
- e9e14a558f8ab-376417ec6bcmr5299235ab.5.1719339604636; Tue, 25 Jun 2024
- 11:20:04 -0700 (PDT)
-Date: Tue, 25 Jun 2024 11:20:04 -0700
-In-Reply-To: <CAMc0M--YCvkcNwLx+2pFcB_0m55xh=YVz1REdO0j6EM8szv5Nw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000621855061bbaf202@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_blacklist_entries_gc
-From: syzbot <syzbot+835d255ad6bc7f29ee12@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, peili.dev@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+From: Kan Liang <kan.liang@linux.intel.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Changes since V1:
+- Add x86/intel_pmu_max_num_pebs/counters/counters_fixed()
+- Rename model-specific pebs_latency_data functions
+- Rename V6 counter MSRs
 
-Reported-and-tested-by: syzbot+835d255ad6bc7f29ee12@syzkaller.appspotmail.com
+From the core PMU' perspective, the Lunar Lake and Arrow Lake are the
+same, which are similar to the previous generation Meteor Lake. Both are
+hybrid platforms, with e-core and p-core.
 
-Tested on:
+The key differences include:
+- The e-core supports 3 new fixed counters
+- The p-core supports an updated PEBS Data Source format
+- More GP counters (Updated event constraint table)
+- New Architectural performance monitoring V6
+  (New Perfmon MSRs aliasing, umask2, eq).
+- New PEBS format V6 (Counters Snapshotting group)
+- New RDPMC metrics clear mode
 
-commit:         55027e68 Merge tag 'input-for-v6.10-rc5' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1191153e980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d6b9ee98d841760c
-dashboard link: https://syzkaller.appspot.com/bug?extid=835d255ad6bc7f29ee12
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=15ca4301980000
+The details for the above new features can be found in the Intel
+Architecture Instruction Set Extensions and Future Features (052).
+https://cdrdv2.intel.com/v1/dl/getContent/671368
 
-Note: testing is done by a robot and is best-effort only.
+The counters may not be continuous anymore. Patch 1-2 converts the max
+number of counters to a mask of counters. The change is a generic change
+which impacts all X86 platforms.
+
+Patch 3-4 supports all the legacy features on LNL and ARL.
+
+Patch 5-7 supports the new Architectural performance monitoring V6.
+
+Patch 8-11 supports the new PEBS format V6.
+
+Patch 12 supports the new RDPMC metrics clear mode.
+
+Kan Liang (13):
+  perf/x86/intel: Support the PEBS event mask
+  perf/x86: Support counter mask
+  perf/x86: Add Lunar Lake and Arrow Lake support
+  perf/x86/intel: Rename model-specific pebs_latency_data functions
+  perf/x86/intel: Support new data source for Lunar Lake
+  perf/x86: Add config_mask to represent EVENTSEL bitmask
+  perf/x86/intel: Support PERFEVTSEL extension
+  perf/x86/intel: Support Perfmon MSRs aliasing
+  perf/x86: Extend event update interface
+  perf: Extend perf_output_read
+  perf/x86/intel: Move PEBS event update after the sample output
+  perf/x86/intel: Support PEBS counters snapshotting
+  perf/x86/intel: Support RDPMC metrics clear mode
+
+ arch/x86/events/amd/core.c           |  26 +-
+ arch/x86/events/core.c               | 123 +++----
+ arch/x86/events/intel/core.c         | 471 ++++++++++++++++++++-------
+ arch/x86/events/intel/ds.c           | 288 +++++++++++++---
+ arch/x86/events/intel/knc.c          |   2 +-
+ arch/x86/events/intel/p4.c           |  12 +-
+ arch/x86/events/intel/p6.c           |   2 +-
+ arch/x86/events/perf_event.h         | 105 +++++-
+ arch/x86/events/perf_event_flags.h   |   2 +-
+ arch/x86/events/zhaoxin/core.c       |  14 +-
+ arch/x86/include/asm/intel_ds.h      |   1 +
+ arch/x86/include/asm/msr-index.h     |   6 +
+ arch/x86/include/asm/perf_event.h    |  27 ++
+ include/uapi/linux/perf_event.h      |   6 +-
+ kernel/events/core.c                 |  15 +-
+ tools/perf/Documentation/topdown.txt |   9 +-
+ 16 files changed, 839 insertions(+), 270 deletions(-)
+
+-- 
+2.35.1
+
 
