@@ -1,252 +1,237 @@
-Return-Path: <linux-kernel+bounces-228326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F16BF915E23
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:29:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 163E5915E29
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:31:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79382829F1
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:29:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D86B1F22C01
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:31:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAE4145A0D;
-	Tue, 25 Jun 2024 05:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97FB014375C;
+	Tue, 25 Jun 2024 05:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFOh9e1U"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LDVdHOge"
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA28C1CABB;
-	Tue, 25 Jun 2024 05:29:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C751313D244
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 05:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719293345; cv=none; b=Ig5y5h9gvjzS83C9ufMsYc14UihpL2ZYlwLLjpYk7nHEoAzcEvhUeogtfT8HEZJygztvU/sIN/kZq13wvPYYt8EeAq7uF5d9zVluhS+AW9uQSvvDvHn0dY3+hRRh87hdbMXKFeg0z/Q6LhKljZ1XzXgdj/BPMprwzfSheaejHr8=
+	t=1719293462; cv=none; b=n0Jl8caM324sykaRVo/xMipp3KT6GEW9jDc2b1SVjHCvGeTTPz+ji0qvdSvOsg5AryNAPCnFk4306QimVOWtfTz+HQKZFgmLDT0KHMT7cCWmbhl1FlyDwVXjVzKCEIgbm+egV6mpIX+fcZNaUIxV5ZzwPqHf9A01TfCr9xqrliw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719293345; c=relaxed/simple;
-	bh=LFjHwemcdLE3RjWfSMOIzmFSkp1A8AtvyedlXK7t8pw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QflbRNvDdvuszMavZwaVykpS3BgOKj8/y8MDgIbW3v16lyFQfAz2GPn7kzXPnRAM04J3byMp4NUPVgh+Pi2ZeKVbFHiIOYDjk6VFl1ds6BmRb/IxemT7mJWuoAcYSknUcVfWzPRGyo9/slXp0wsbNF2rXF3xquX69PqmXc6H5tQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFOh9e1U; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF01C32782;
-	Tue, 25 Jun 2024 05:29:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719293345;
-	bh=LFjHwemcdLE3RjWfSMOIzmFSkp1A8AtvyedlXK7t8pw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WFOh9e1UamzVzR7qSL/yChRjYlxaBXB6f8W5q8tw8hoYeS29+3rL/a+apGHJSHDzE
-	 2OcUL8Dw0boWrZUGYX9s9lEg5VMWD0Z6BAqUgqiKhAn9h+lBo2DiGjZXdxjs9phJIm
-	 A9llAwF0m0nErvkjo60MNHszvFkkuY45WeJ+GER84SvY3fUgmsxIp+KUU5+PuR6wwt
-	 28lcLCCZh/9Grkq4O5iCvQFv5RDTuVSDDKP3rbYVOklJblkCrxLON5Otcrvbv54c5+
-	 NlkSixGGSqRWzZT7NkT7rfljL2hABX5T/V0EYe4qhukBYW8XpViUQKR5C9Ym+FV4NM
-	 WDV/GSEdzo+gg==
-Date: Mon, 24 Jun 2024 22:29:03 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
-	irogers@google.com, segher@kernel.crashing.org,
-	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com,
-	disgoel@linux.vnet.ibm.com
-Subject: Re: [V4 03/16] tools/perf: Add support to capture and parse raw
- instruction in powerpc using dso__data_read_offset utility
-Message-ID: <ZnpVn1yLtDnRnTBh@google.com>
-References: <20240614172631.56803-1-atrajeev@linux.vnet.ibm.com>
- <20240614172631.56803-4-atrajeev@linux.vnet.ibm.com>
+	s=arc-20240116; t=1719293462; c=relaxed/simple;
+	bh=EWg0LszmD2FWUuf5dzncr0aHObfLW2WZLpSUkktkRp4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=im9A1e96j4KtpXj3a7GXVbvOLNh4wTcAJEm+NMLzeEBP9m2aSjF5PpUx8YD9004TZpVDPhi3QzuFUZ3kJ77vpp5Z9BsALKoa2NzjWFShVJ4rd87R7elJlmuJf2ivQ65ipulXVkadpRuYl/8q/J3zcPYUHD8/Mqbmn8vMy041fxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LDVdHOge; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4ef7c2e6bcbso70164e0c.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:30:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719293458; x=1719898258; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fH4xT6oKyRDlJ/9SAo1hScjTVdx2cvP+qkd1fBGGz6Q=;
+        b=LDVdHOge/K728smVwmsifzsiRrOkTbjXd1DB6kBdx4QW5YRADu11ckkMxLN+8QEmes
+         CI0FR61oRK15ab/lpi2FZoxhwHVMgVkgx+Ly6IQE2BIfipkO0vHDPMu+dAdhGo6MhA5f
+         VWvWyIeUcMoMu8lZMkdgPco1DsAosm4uBHfPqYvm7nRNEHaTY4qhFOVUKOUSzePOrpEM
+         sfxUxqg8pSKRk9ZDr45UMNfpBF3502UuJSq52ci87zezGuskXV3juiSt62HCgo01KClH
+         YxDwGzlEJ4Pbj8mUmcyys9izuvoBHEWhkPO2/yGdX74pwYRc0C7wE/wlpuyxD1bt8gp2
+         7K1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719293458; x=1719898258;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fH4xT6oKyRDlJ/9SAo1hScjTVdx2cvP+qkd1fBGGz6Q=;
+        b=TFU42wdcn3xYwH7kg+rX9l4v9WBb4s6ipAj7iFtkhleZr78hKUIMyEzNLo4W357N53
+         pzbHma7jDKNAe4DmLelS0yrGC1H6IOMdWX0Ve5RircskiSn2RkOHOtXmDi6RFwgwKZ7L
+         YBs1yeq+fPgKuCRmSu/Y1nu0HbeRZlU0kYYQNOuye0SZFoT88WpvXxI+uvhn9HuIe+KI
+         aXXn17fH+uOHOJVQJEvyE10XmFa3NuLGFYp/Ge8UWVB/y9NMn6HR8mfxDSnnLAPErQt2
+         2o/Yhuh/2zcT1zaevnvehivGJ8L77oyikXeYPMbh62Bz9TbjZIHAdWyrvF8UleBItDYT
+         /Cpg==
+X-Forwarded-Encrypted: i=1; AJvYcCV31SpGZHTJj/WYC9K8V+3R3LEFjPtXD3mYwWU96/8oAUbtFT1prbsdj6CUc1uN8Ol71q7sHa/q+HpW9q8d5l6RK6EBrv6r11VNwl6s
+X-Gm-Message-State: AOJu0Yz7Izjmcr0xEnhubzphJP4DWdLhfy+n932dN1b+UdaMbpOJMxnt
+	gb58pt2T6awVMxT5qTkaM0SrjcBIqUp9MuN84rX80P6GcaYfYfQLH/SvzshfJNBcdMBO3q72fl+
+	Dx9n0aRt/zLrqVhQmhrDsi0VyvZicP8Pa2TcYBw==
+X-Google-Smtp-Source: AGHT+IF1mvfwo/UQmf3qvzPkzrgA++cDgEF4wvUt2ZNU0MSeSH5sybGDUJbRd4oF+QdtPNEJrw7NC382zZONIdEp1yg=
+X-Received: by 2002:a05:6122:4f85:b0:4eb:2012:f5ed with SMTP id
+ 71dfb90a1353d-4ef612cdf88mr6901984e0c.1.1719293458411; Mon, 24 Jun 2024
+ 22:30:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240614172631.56803-4-atrajeev@linux.vnet.ibm.com>
+References: <20240624124941.113010-1-alisa.roman@analog.com> <20240624124941.113010-4-alisa.roman@analog.com>
+In-Reply-To: <20240624124941.113010-4-alisa.roman@analog.com>
+From: Alexandru Ardelean <aardelean@baylibre.com>
+Date: Tue, 25 Jun 2024 08:30:47 +0300
+Message-ID: <CA+GgBR9V=SqeA2fbeBDUO=Cr1s6GTbq6_779uQmiKCF2EjkHBg@mail.gmail.com>
+Subject: Re: [PATCH v6 3/6] iio: adc: ad7192: Update clock config
+To: Alisa-Dariana Roman <alisadariana@gmail.com>
+Cc: Alisa-Dariana Roman <alisa.roman@analog.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Michael Hennerich <michael.hennerich@analog.com>, linux-iio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Lars-Peter Clausen <lars@metafoo.de>, Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Jun 14, 2024 at 10:56:18PM +0530, Athira Rajeev wrote:
-> Add support to capture and parse raw instruction in powerpc.
-> Currently, the perf tool infrastructure uses two ways to disassemble
-> and understand the instruction. One is objdump and other option is
-> via libcapstone.
-> 
-> Currently, the perf tool infrastructure uses "--no-show-raw-insn" option
-> with "objdump" while disassemble. Example from powerpc with this option
-> for an instruction address is:
-> 
-> Snippet from:
-> objdump  --start-address=<address> --stop-address=<address>  -d --no-show-raw-insn -C <vmlinux>
-> 
-> c0000000010224b4:	lwz     r10,0(r9)
+On Mon, Jun 24, 2024 at 3:50=E2=80=AFPM Alisa-Dariana Roman
+<alisadariana@gmail.com> wrote:
+>
 
-What about removing --no-show-raw-insn and parse the raw byte code in
-the output for powerpc?  I think it's better to support normal
-annotation together.
+Hello,
 
-> 
-> This line "lwz r10,0(r9)" is parsed to extract instruction name,
-> registers names and offset. Also to find whether there is a memory
-> reference in the operands, "memory_ref_char" field of objdump is used.
-> For x86, "(" is used as memory_ref_char to tackle instructions of the
-> form "mov  (%rax), %rcx".
-> 
-> In case of powerpc, not all instructions using "(" are the only memory
-> instructions. Example, above instruction can also be of extended form (X
-> form) "lwzx r10,0,r19". Inorder to easy identify the instruction category
-> and extract the source/target registers, patch adds support to use raw
-> instruction for powerpc. Approach used is to read the raw instruction
-> directly from the DSO file using "dso__data_read_offset" utility which
-> is already implemented in perf infrastructure in "util/dso.c".
-> 
-> Example:
-> 
-> 38 01 81 e8     ld      r4,312(r1)
-> 
-> Here "38 01 81 e8" is the raw instruction representation. In powerpc,
-> this translates to instruction form: "ld RT,DS(RA)" and binary code
-> as:
-> 
->    | 58 |  RT  |  RA |      DS       | |
->    -------------------------------------
->    0    6     11    16              30 31
-> 
-> Function "symbol__disassemble_dso" is updated to read raw instruction
-> directly from DSO using dso__data_read_offset utility. In case of
-> above example, this captures:
-> line:    38 01 81 e8
-> 
-> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+A few comments inline.
+
+> There are actually 4 configuration modes of clock source for AD719X
+> devices. Either a crystal can be attached externally between MCLK1 and
+> MCLK2 pins, or an external CMOS-compatible clock can drive the MCLK2
+> pin. The other 2 modes make use of the 4.92MHz internal clock.
+>
+> Removed properties adi,int-clock-output-enable and adi,clock-xtal were
+> undocumented. Use cleaner alternative of configuring external clock by
+> using clock names mclk and xtal.
+
+Should we keep the old properties for backwards compatibility?
+While I like the new approach, the downside is that someone upgrades
+the kernel and may run into issues with their board, because one of
+these properties went away.
+
+>
+> Removed functionality of AD7192_CLK_INT_CO restored in complementary
+> patch.
+>
+> Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>
 > ---
->  tools/perf/util/disasm.c | 98 ++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 98 insertions(+)
-> 
-> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-> index b5fe3a7508bb..f19496133bf0 100644
-> --- a/tools/perf/util/disasm.c
-> +++ b/tools/perf/util/disasm.c
-> @@ -1586,6 +1586,91 @@ static int symbol__disassemble_capstone(char *filename, struct symbol *sym,
+>  drivers/iio/adc/ad7192.c | 56 ++++++++++++++++++++--------------------
+>  1 file changed, 28 insertions(+), 28 deletions(-)
+>
+> diff --git a/drivers/iio/adc/ad7192.c b/drivers/iio/adc/ad7192.c
+> index 334ab90991d4..940517df5429 100644
+> --- a/drivers/iio/adc/ad7192.c
+> +++ b/drivers/iio/adc/ad7192.c
+> @@ -396,25 +396,37 @@ static inline bool ad7192_valid_external_frequency(=
+u32 freq)
+>                 freq <=3D AD7192_EXT_FREQ_MHZ_MAX);
 >  }
->  #endif
->  
-> +static int symbol__disassemble_dso(char *filename, struct symbol *sym,
+>
+> -static int ad7192_clock_select(struct ad7192_state *st)
+> +static const char *const ad7192_clock_names[] =3D {
+> +       "xtal",
+> +       "mclk"
 
-Maybe rename to symbol__disassemble_raw() ?
+Just a thought; no strong opinion.
+Maybe add a short comment about these being "clock_sel" values
+AD7192_CLK_EXT_MCLK1_2 & AD7192_CLK_EXT_MCLK2 ?
+This is mostly due to the "st->clock_sel =3D AD7192_CLK_EXT_MCLK1_2 +
+ret;" logic (which is fine)
+Before, this change, it would
 
-> +					struct annotate_args *args)
-> +{
-> +	struct annotation *notes = symbol__annotation(sym);
-> +	struct map *map = args->ms.map;
-> +	struct dso *dso = map__dso(map);
-> +	u64 start = map__rip_2objdump(map, sym->start);
-> +	u64 end = map__rip_2objdump(map, sym->end);
-> +	u64 len = end - start;
-> +	u64 offset;
-> +	int i, count;
-> +	u8 *buf = NULL;
-> +	char disasm_buf[512];
-> +	struct disasm_line *dl;
-> +	u32 *line;
+> +};
 > +
-> +	/* Return if objdump is specified explicitly */
-> +	if (args->options->objdump_path)
-> +		return -1;
-> +
-> +	pr_debug("Reading raw instruction from : %s using dso__data_read_offset\n", filename);
+> +static int ad7192_clock_setup(struct ad7192_state *st)
+>  {
+>         struct device *dev =3D &st->sd.spi->dev;
+> -       unsigned int clock_sel;
+> -
+> -       clock_sel =3D AD7192_CLK_INT;
+> +       int ret;
+>
+> -       /* use internal clock */
+> -       if (!st->mclk) {
+> -               if (device_property_read_bool(dev, "adi,int-clock-output-=
+enable"))
+> -                       clock_sel =3D AD7192_CLK_INT_CO;
+> +       ret =3D device_property_match_property_string(dev, "clock-names",
+> +                                                   ad7192_clock_names,
+> +                                                   ARRAY_SIZE(ad7192_clo=
+ck_names));
+> +       if (ret < 0) {
+> +               st->clock_sel =3D AD7192_CLK_INT;
+> +               st->fclk =3D AD7192_INT_FREQ_MHZ;
 
-You may want to print the actual offset and remove the "using
-dso__data_read_offset" part.
+Since this is a new function, an early return can be added here.
+This would make the else statement redundant, and the function would
+have less indentation.
 
-Thanks,
-Namhyung
+So, something like:
+if (ret < 0) {
+         st->clock_sel =3D AD7192_CLK_INT;
+         st->fclk =3D AD7192_INT_FREQ_MHZ;
+         return 0;
+}
 
+st->clock_sel =3D AD7192_CLK_EXT_MCLK1_2 + ret;
+
+st->mclk =3D devm_clk_get_enabled(dev, ad7192_clock_names[ret]);
+if (IS_ERR(st->mclk))
+...................
+
+
+>         } else {
+> -               if (device_property_read_bool(dev, "adi,clock-xtal"))
+> -                       clock_sel =3D AD7192_CLK_EXT_MCLK1_2;
+> -               else
+> -                       clock_sel =3D AD7192_CLK_EXT_MCLK2;
+> +               st->clock_sel =3D AD7192_CLK_EXT_MCLK1_2 + ret;
 > +
-> +	buf = malloc(len);
-> +	if (buf == NULL)
-> +		goto err;
+> +               st->mclk =3D devm_clk_get_enabled(dev, ad7192_clock_names=
+[ret]);
+> +               if (IS_ERR(st->mclk))
+> +                       return dev_err_probe(dev, PTR_ERR(st->mclk),
+> +                                            "Failed to get mclk\n");
 > +
-> +	count = dso__data_read_offset(dso, NULL, sym->start, buf, len);
-> +
-> +	line = (u32 *)buf;
-> +
-> +	if ((u64)count != len)
-> +		goto err;
-> +
-> +	/* add the function address and name */
-> +	scnprintf(disasm_buf, sizeof(disasm_buf), "%#"PRIx64" <%s>:",
-> +		  start, sym->name);
-> +
-> +	args->offset = -1;
-> +	args->line = disasm_buf;
-> +	args->line_nr = 0;
-> +	args->fileloc = NULL;
-> +	args->ms.sym = sym;
-> +
-> +	dl = disasm_line__new(args);
-> +	if (dl == NULL)
-> +		goto err;
-> +
-> +	annotation_line__add(&dl->al, &notes->src->source);
-> +
-> +	/* Each raw instruction is 4 byte */
-> +	count = len/4;
-> +
-> +	for (i = 0, offset = 0; i < count; i++) {
-> +		args->offset = offset;
-> +		sprintf(args->line, "%x", line[i]);
-> +		dl = disasm_line__new(args);
-> +		if (dl == NULL)
-> +			goto err;
-> +
-> +		annotation_line__add(&dl->al, &notes->src->source);
-> +		offset += 4;
-> +	}
-> +
-> +	/* It failed in the middle */
-> +	if (offset != len) {
-> +		struct list_head *list = &notes->src->source;
-> +
-> +		/* Discard all lines and fallback to objdump */
-> +		while (!list_empty(list)) {
-> +			dl = list_first_entry(list, struct disasm_line, al.node);
-> +
-> +			list_del_init(&dl->al.node);
-> +			disasm_line__free(dl);
-> +		}
-> +		count = -1;
-> +	}
-> +
-> +out:
-> +	free(buf);
-> +	return count < 0 ? count : 0;
-> +
-> +err:
-> +	count = -1;
-> +	goto out;
-> +}
->  /*
->   * Possibly create a new version of line with tabs expanded. Returns the
->   * existing or new line, storage is updated if a new line is allocated. If
-> @@ -1710,6 +1795,19 @@ int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
->  		strcpy(symfs_filename, tmp);
->  	}
->  
-> +	/*
-> +	 * For powerpc data type profiling, use the dso__data_read_offset
-> +	 * to read raw instruction directly and interpret the binary code
-> +	 * to understand instructions and register fields. For sort keys as
-> +	 * type and typeoff, disassemble to mnemonic notation is
-> +	 * not required in case of powerpc.
-> +	 */
-> +	if (arch__is(args->arch, "powerpc")) {
-> +		err = symbol__disassemble_dso(symfs_filename, sym, args);
-> +		if (err == 0)
-> +			goto out_remove_tmp;
-> +	}
-> +
->  #ifdef HAVE_LIBCAPSTONE_SUPPORT
->  	err = symbol__disassemble_capstone(symfs_filename, sym, args);
->  	if (err == 0)
-> -- 
-> 2.43.0
-> 
+> +               st->fclk =3D clk_get_rate(st->mclk);
+> +               if (!ad7192_valid_external_frequency(st->fclk))
+> +                       return dev_err_probe(dev, -EINVAL,
+> +                                            "External clock frequency ou=
+t of bounds\n");
+>         }
+>
+> -       return clock_sel;
+> +       return 0;
+>  }
+>
+>  static int ad7192_setup(struct iio_dev *indio_dev, struct device *dev)
+> @@ -1275,21 +1287,9 @@ static int ad7192_probe(struct spi_device *spi)
+>         if (ret)
+>                 return ret;
+>
+> -       st->fclk =3D AD7192_INT_FREQ_MHZ;
+> -
+> -       st->mclk =3D devm_clk_get_optional_enabled(dev, "mclk");
+> -       if (IS_ERR(st->mclk))
+> -               return PTR_ERR(st->mclk);
+> -
+> -       st->clock_sel =3D ad7192_clock_select(st);
+> -
+> -       if (st->clock_sel =3D=3D AD7192_CLK_EXT_MCLK1_2 ||
+> -           st->clock_sel =3D=3D AD7192_CLK_EXT_MCLK2) {
+> -               st->fclk =3D clk_get_rate(st->mclk);
+> -               if (!ad7192_valid_external_frequency(st->fclk))
+> -                       return dev_err_probe(dev, -EINVAL,
+> -                                            "External clock frequency ou=
+t of bounds\n");
+> -       }
+> +       ret =3D ad7192_clock_setup(st);
+> +       if (ret)
+> +               return ret;
+>
+>         ret =3D ad7192_setup(indio_dev, dev);
+>         if (ret)
+> --
+> 2.34.1
+>
+>
 
