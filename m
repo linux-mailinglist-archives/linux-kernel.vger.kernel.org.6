@@ -1,182 +1,154 @@
-Return-Path: <linux-kernel+bounces-229596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BFAC91712F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:38:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC86991712D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:38:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D53B1C22688
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:38:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E711F1C225C4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29F2817C9F7;
-	Tue, 25 Jun 2024 19:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A93117C9F7;
+	Tue, 25 Jun 2024 19:37:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICaY5V/A"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bwNYU9rG"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01EA916D4C8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB04913C9A2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719344300; cv=none; b=WxyGkbPYnBF5XWFUSeIK6KRK0hyOiZtH8yl9d6nGiuoP9ODSYCetvPv3wlr2ktQB4RWPCXODDCA0I+XZbcqjHIP+Ipqdj3W9BRLgnTWydcmIeZw672zgTx4P1YuhL6vT6GxNOizH/J+8dW4kDN6+s39b3hb73kUypelfjR7X0FY=
+	t=1719344278; cv=none; b=VvT2ILuV5S+HYIHORnol3LJrMv+aW4YervRNB1LqT84Zs9CZ7/1pa4FBuozM1D+pzEfWvpGMmIkPFMdvKnYsuGnnL78ZxpDnMzoisNRsXLUz7tgFtSstBzBoadPks3Z/td2IsLpSjRy6iARLZf2YhbYe95oonR7o52WZdDjLuh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719344300; c=relaxed/simple;
-	bh=5OoNLBK/a2S4/Z4kU9kjLu5JvVNL+ahDJ+eUyExuxGg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rw/Bwv3/ulX4YIGrH3Pm7AkiG/9bB2RxDJ0Nt9IBnEi/7KJI37+74625fnt3VAMCQt0JA3sjZZVflMPzqI6+djZ8JHQ2il+d+/s5iKj6UvKiY34bjASUNVkFS+6vFZl2qxPDq2UyRyrkrE84kAVQTPzttFPndZogneh3p9OZZMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ICaY5V/A; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-444af5c09e8so39766421cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:38:18 -0700 (PDT)
+	s=arc-20240116; t=1719344278; c=relaxed/simple;
+	bh=IPpSDnv0Otuph5TmIXknyBcqkkHgzod1VBBj40XXcUQ=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=el4Zni8JLvvCaU+A8I+qrgUA7chpDuYgSDhzoEbL5tyeOmilKJYLWWl2iVKBg8C7EPb9/8n9B2AsaZ7JB/9pNQ38dXod9zuZ3GrDzdU74oJ1/UoRwZIa6fZgQ+P3nDml7cjHIn/pYNFk2SJCJCGCHoqGbqetqEJrf/sjO5Lwn+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bwNYU9rG; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e02da9b2db7so5573554276.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:37:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719344298; x=1719949098; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i+5LEc+OBSMgdXBP2ouh0qVEc/wr3Xl6YlFgRK9NbOk=;
-        b=ICaY5V/AH45KLwaKr4Gw3S7ebr2lOeuLcaAqsxKTfy2EQQwG2BonlFDaWS+/FLv78O
-         2YTPCPPsmv3wcnKMZT8KVOKQYhV/eMSFn8IroQLYdje4Feyn8iRLQaN+MzOouaBa7eve
-         Mo9D7rvjG5YR0m9Lwq1kAI+ShbgWp+1HJgsiE45MPCXEX/JE/NhptFYqKHy0DOLrhYbh
-         v8ctqIfjEJEEnBof4B8+yRBfJyHRTKSpw6Fzgjh+wkUsxTD4srjaKAtGsvXR1a+WR7Z7
-         /DHF2ZOPRqaSdA0PQjI/e/00wwjbdGPZYOyX8zbS6ltrNJxdE/OiUNwZCNI78XOpGOzd
-         LCYw==
+        d=google.com; s=20230601; t=1719344275; x=1719949075; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=YJMwDI5sIIM5SROlRDuokl000wjQ1EBy0CMyjOqTGuU=;
+        b=bwNYU9rGJSk/YFvlrDv/jgVEzDfuK9S9UwVc35G7OX9aWP03z5x7Ns8BuoIT51dti9
+         j6F5vA3bPGvrluFlg+j5c5G2liXsMNPItKKAH1nvcRPnXlyoV9LNeHCoCWWePePWg/PD
+         QsdaoKMqINycvEJeMKBgtY7QnCYI7lOAsVyPacxQqlD43pUIG2PJohksvh09CmQx0p2T
+         rgthVBnCMWjX/RScD7YGCNpcq5K2dNPXebDHh+Qn2libXhPbi/xHMV39pLxK8g7LJMZn
+         JlxT1AiRkZGcZbqIn9ey3wUXuG7cM3aumGFtaJbi836vl0tLZjMNGCU7ep0vm3MYlYSE
+         6+3A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719344298; x=1719949098;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i+5LEc+OBSMgdXBP2ouh0qVEc/wr3Xl6YlFgRK9NbOk=;
-        b=MNInXCS3BKgZtkN2MdLyI7e5jluwoybrE4N38xh+RSOKs8C4Xb9sfD3AmHUBey4yiR
-         gNTsY79GsLQpd6W0gdcMW5LmpIndWEZOBKtm1gSB0EZVx491TtWPYQ46S/UkXIDNKKij
-         /wsGfCY93Uu04x6AQTS447M8rRtiXIC2LctbuLCpfCNupRXuyxP0wTG/joNmmcjtOeJf
-         1+pW0pIev2yKKTfJyFf41T9WyO8HuejnnLX/EvUydHv90WCIohhIMgrpjbc+S6KspMbh
-         aztE0hYrJbW9wTcfmMxqTU4nduftI+GIYwFhwgt43MsVeV6oQSiMtux9wDpvypVhNo9T
-         KTPw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOPXgSGqq+6XuNSavwUy8bhp5rERREoGeXIkiDh25zIbBExohgu/zLIcHStJghIqkSPeMmWVWXyOw0lkxgVf662xF4Mp8n1MrcWXST
-X-Gm-Message-State: AOJu0YzNWkqHQQLrmP8SU3A30ckcKPdvlTPQ5VgsWBe8OEaJ2VtqUfbw
-	3OfSBssTm9Rzo6hM98ky2OdHZu7Mi99EPnWa0U+5+FJOp/8iFWHn
-X-Google-Smtp-Source: AGHT+IFbCi7Uf/6gdBEP8f6CjQFm5n1RFQWfULXraKEpnOztYBZSwJjT0NVDXU7RWJm10T8t8xhBsA==
-X-Received: by 2002:ac8:5dd4:0:b0:440:1c16:547f with SMTP id d75a77b69052e-444d3c0aed9mr122255401cf.41.1719344297880;
-        Tue, 25 Jun 2024 12:38:17 -0700 (PDT)
-Received: from fauth2-smtp.messagingengine.com (fauth2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-444c2c3e5b5sm58778321cf.75.2024.06.25.12.38.16
+        d=1e100.net; s=20230601; t=1719344275; x=1719949075;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YJMwDI5sIIM5SROlRDuokl000wjQ1EBy0CMyjOqTGuU=;
+        b=Y8fb7G9lX2d8bnTvUORWmL7AIdP/yOuhqfOlLZ8pCAKk0m137pcicaQthHXQnbGwVC
+         yNHzUBy4qStYrwPqZrciDIA+4ynUlXa5RaAp+iNY6KyyQr4M8YI3tdo4HcOikLhdawmI
+         b2nn/BzYNMWD4pCXHD68qrmNyi7yIdXd+wA363EIHYAuu/HD0dSJoRDKE1MwhEGuKz+q
+         vQc5EShsWgOlYLzn89Tg7H4vQoEhgoK3CpaNT2s84CE8cBfcWdQGStBuljHQzU3/jc51
+         lgT2ADamoJ6B3EXJ+SsUK9VLH+fxXUcmc8jNVQqwBnao9KaGpECrai514G4iyG0CPmmW
+         c7qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVWoUghtdQBf2U0G/y47dWs8oS9KnnoI5Mo9TQsgknE6t6CRZrsjiMFgyDhLUTGf4gXAW+Gqe83UqnuBtyJx/2p/MiT1ARP99gQbBkZ
+X-Gm-Message-State: AOJu0YzS0B0B+MWwdbKraL0iFHu50lGrnw+xATqFvfmbWfX/3NhirVbu
+	qbIv8XjS/7CP+4yobTQqc1WDLxXFZMLqPhabvmJTd5AHnpDecYXeUIeRIIfE/iW6+XF0L5AA/qV
+	E1A==
+X-Google-Smtp-Source: AGHT+IFxm9yualsjwylRAQRma05qLWD/BuSSgSFXHa94JcuXlHJdYS6kJjvdKSG92faY67NQAEVpDQ==
+X-Received: by 2002:a5b:852:0:b0:e02:b82c:f1ce with SMTP id 3f1490d57ef6-e0303f2ae69mr8583867276.8.1719344273713;
+        Tue, 25 Jun 2024 12:37:53 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e032327f82csm591570276.32.2024.06.25.12.37.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 12:38:17 -0700 (PDT)
-Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
-	by mailfauth.nyi.internal (Postfix) with ESMTP id CEAD91200069;
-	Tue, 25 Jun 2024 15:38:16 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute2.internal (MEProxy); Tue, 25 Jun 2024 15:38:16 -0400
-X-ME-Sender: <xms:qBx7ZmyTkk67Ybc-mSynYuPRafaBlYzIiXJxfzwE7nF7PPVCdj_ylg>
-    <xme:qBx7ZiTpYfyPcuAFK-R_tMwgZdP2BdaQibXg1Xs_iFr3apdM2RHCtwiWh0P7YrQgM
-    lAu4JODeRqLygB0hA>
-X-ME-Received: <xmr:qBx7ZoX0tom6ICw_nxCdLafA-mSLBl1GPhuLdxgTGP65nBZlAX4a6WiW-QlDOg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtddtgddutdejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepuehoqhhu
-    nhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrdgtohhmqeenucggtffrrg
-    htthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleeivedtgeeuhfegueeviedu
-    ffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
-    gsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdei
-    gedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfih
-    igmhgvrdhnrghmvg
-X-ME-Proxy: <xmx:qBx7ZsgGFQjaQ_uS7IvnQfBSOMBV1bTbl2UcMlzij-JIDaYF6Wk_hA>
-    <xmx:qBx7ZoBXr0HfsyRoPj6ULAHE78TcxIkW3rXl4TyM8oFtDtz3HNwlDA>
-    <xmx:qBx7ZtLdK6sK_1NQL89itZCYgN0x5CPLUv7H2Oso_WU2cSUPK7ywoQ>
-    <xmx:qBx7ZvCvLVeWtU_Et0OSkqB3S4p-2IWVzblvlYjZc3OAmgtmzyp9uA>
-    <xmx:qBx7ZgxWdoTdHTHPNc3qnI-U0B2ElqEa1H16-A1UZoboanNBZlU6KeVj>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Jun 2024 15:38:16 -0400 (EDT)
-Date: Tue, 25 Jun 2024 12:37:39 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>,
-	Alexander Potapenko <glider@google.com>, elver@google.com,
-	dvyukov@google.com, dave.hansen@linux.intel.com,
-	peterz@infradead.org, akpm@linux-foundation.org, x86@kernel.org,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>
-Subject: Re: [PATCH 2/3] lib/Kconfig.debug: disable LOCK_DEBUGGING_SUPPORT
- under KMSAN
-Message-ID: <Znscgx8ssMlYUF5R@boqun-archlinux>
-References: <20240621094901.1360454-1-glider@google.com>
- <20240621094901.1360454-2-glider@google.com>
- <5a38bded-9723-4811-83b5-14e2312ee75d@intel.com>
- <ZnsRq7RNLMnZsr6S@boqun-archlinux>
- <3748b5db-6f92-41f8-a86d-ed0e73221028@paulmck-laptop>
+        Tue, 25 Jun 2024 12:37:52 -0700 (PDT)
+Date: Tue, 25 Jun 2024 12:37:41 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: David Hildenbrand <david@redhat.com>
+cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+    Barry Song <21cnbao@gmail.com>, baolin.wang@linux.alibaba.com, 
+    chrisl@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+    mhocko@suse.com, ryan.roberts@arm.com, shy828301@gmail.com, 
+    surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org, 
+    ying.huang@intel.com, yosryahmed@google.com, yuanshuai@oppo.com, 
+    yuzhao@google.com
+Subject: Re: [PATCH mm-unstable] mm: folio_add_new_anon_rmap() careful
+ __folio_set_swapbacked()
+In-Reply-To: <0a41d5fc-d1a1-4b1b-873e-a701b20bbcb3@redhat.com>
+Message-ID: <f7c74073-f19a-0f59-3801-a20d319bc0ea@google.com>
+References: <f3599b1d-8323-0dc5-e9e0-fdb3cfc3dd5a@google.com> <0a41d5fc-d1a1-4b1b-873e-a701b20bbcb3@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3748b5db-6f92-41f8-a86d-ed0e73221028@paulmck-laptop>
+Content-Type: text/plain; charset=US-ASCII
 
-On Tue, Jun 25, 2024 at 12:06:52PM -0700, Paul E. McKenney wrote:
-> On Tue, Jun 25, 2024 at 11:51:23AM -0700, Boqun Feng wrote:
-> > On Fri, Jun 21, 2024 at 09:23:25AM -0700, Dave Hansen wrote:
-> > > On 6/21/24 02:49, Alexander Potapenko wrote:
-> > > >  config LOCK_DEBUGGING_SUPPORT
-> > > >  	bool
-> > > > -	depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT
-> > > > +	depends on TRACE_IRQFLAGS_SUPPORT && STACKTRACE_SUPPORT && LOCKDEP_SUPPORT && !KMSAN
-> > > >  	default y
-> > > 
-> > > This kinda stinks.  Practically, it'll mean that anyone turning on KMSAN
-> > > will accidentally turn off lockdep.  That's really nasty, especially for
-> > > folks who are turning on debug options left and right to track down
-> > > nasty bugs.
-> > > 
-> > > I'd *MUCH* rather hide KMSAN:
-> > > 
-> > > config KMSAN
-> > >         bool "KMSAN: detector of uninitialized values use"
-> > >         depends on HAVE_ARCH_KMSAN && HAVE_KMSAN_COMPILER
-> > >         depends on DEBUG_KERNEL && !KASAN && !KCSAN
-> > >         depends on !PREEMPT_RT
-> > > +	depends on !LOCKDEP
-> > > 
-> > > Because, frankly, lockdep is way more important than KMSAN.
-> > > 
-> > > But ideally, we'd allow them to coexist somehow.  Have we even discussed
-> > > the problem with the lockdep folks?  For instance, I'd much rather have
-> > > a relaxed lockdep with no checking in pfn_valid() than no lockdep at all.
+On Tue, 25 Jun 2024, David Hildenbrand wrote:
+> On 25.06.24 07:00, Hugh Dickins wrote:
+> > Commit "mm: use folio_add_new_anon_rmap() if folio_test_anon(folio)==
+> > false" has extended folio_add_new_anon_rmap() to use on non-exclusive
+> > folios, already visible to others in swap cache and on LRU.
 > > 
-> > The only locks used in pfn_valid() are rcu_read_lock_sched(), right? If
-> > so, could you try (don't tell Paul ;-)) replace rcu_read_lock_sched()
-> > with preempt_disable() and rcu_read_unlock_sched() with
-> > preempt_enable()? That would avoid calling into lockdep. If that works
-> > for KMSAN, we can either have a special rcu_read_lock_sched() or call
-> > lockdep_recursion_inc() in instrumented pfn_valid() to disable lockdep
-> > temporarily.
+> > That renders its non-atomic __folio_set_swapbacked() unsafe: it risks
+> > overwriting concurrent atomic operations on folio->flags, losing bits
+> > added or restoring bits cleared.  Since it's only used in this risky
+> > way when folio_test_locked and !folio_test_anon, many such races are
+> > excluded; but, for example, isolations by folio_test_clear_lru() are
+> > vulnerable, and setting or clearing active.
 > > 
-> > [Cc Paul]
+> > It could just use the atomic folio_set_swapbacked(); but this function
+> > does try to avoid atomics where it can, so use a branch instead: just
+> > avoid setting swapbacked when it is already set, that is good enough.
+> > (Swapbacked is normally stable once set: lazyfree can undo it, but
+> > only later, when found anon in a page table.)
+> > 
+> > This fixes a lot of instability under compaction and swapping loads:
+> > assorted "Bad page"s, VM_BUG_ON_FOLIO()s, apparently even page double
+> > frees - though I've not worked out what races could lead to the latter.
+> > 
+> > Signed-off-by: Hugh Dickins <hughd@google.com>
+> > ---
+> >   mm/rmap.c | 4 +++-
+> >   1 file changed, 3 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/mm/rmap.c b/mm/rmap.c
+> > index df1a43295c85..5394c1178bf1 100644
+> > --- a/mm/rmap.c
+> > +++ b/mm/rmap.c
+> > @@ -1408,7 +1408,9 @@ void folio_add_new_anon_rmap(struct folio *folio,
+> > struct vm_area_struct *vma,
+> >    VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
+> >    VM_BUG_ON_VMA(address < vma->vm_start ||
+> >   			address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
+> > -	__folio_set_swapbacked(folio);
+> > +
+> > +	if (!folio_test_swapbacked(folio))
+> > +		__folio_set_swapbacked(folio);
+> >    __folio_set_anon(folio, vma, address, exclusive);
+> >   
+> >    if (likely(!folio_test_large(folio))) {
 > 
-> Don't tell me what?  ;-)
+> LGTM.
 > 
+> I'll point out that it's sufficient for a PFN walker to do a tryget + trylock
+> to cause trouble.
 
-Turn out that telling you is a good idea ;-)
+That surprises me.  I thought a racer's tryget was irrelevant (touching
+a different field) and its trylock not a problem, since "we" hold the
+folio lock throughout.  If my mental model is too naive there, please
+explain in more detail: we all need to understand this better.
 
-> An alternative is to use rcu_read_lock_sched_notrace() and
-> rcu_read_unlock_sched_notrace().  If you really want to use
-
-Yes, I think this is better than what I proposed.
-
-Regards,
-Boqun
-
-> preempt_disable() and preempt_enable() instead, you will likely want
-> the _notrace() variants.
 > 
-> 							Thanx, Paul
+> Fortunately isolate_movable_page() will check __folio_test_movable() before
+> doing the trylock.
+> 
+> Reviewed-by: David Hildenbrand <david@redhat.com>
+
+Thanks,
+Hugh
 
