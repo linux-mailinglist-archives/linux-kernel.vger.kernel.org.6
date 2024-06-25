@@ -1,76 +1,252 @@
-Return-Path: <linux-kernel+bounces-228324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886FE915E20
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:27:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16BF915E23
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:29:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C37C81C22593
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:27:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A79382829F1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73295145A05;
-	Tue, 25 Jun 2024 05:27:31 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAE4145A0D;
+	Tue, 25 Jun 2024 05:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WFOh9e1U"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B84A4143C67
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 05:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA28C1CABB;
+	Tue, 25 Jun 2024 05:29:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719293251; cv=none; b=WThzNRf+u3qhbDVSjczq8aR8gmQ5/NkC8HAif6c6kFYVAum3tNXM2BYorAxgn0pqk5D5ItOEDTM8St84JqKCKItbtzj7R9Rgpk2cUPIK9QI1LS0i9vcaMcV9IQcF7/nvkFkl3Fy8aN54bGvA02+KoJxLbld4aDdFOIhCVUqQDpQ=
+	t=1719293345; cv=none; b=Ig5y5h9gvjzS83C9ufMsYc14UihpL2ZYlwLLjpYk7nHEoAzcEvhUeogtfT8HEZJygztvU/sIN/kZq13wvPYYt8EeAq7uF5d9zVluhS+AW9uQSvvDvHn0dY3+hRRh87hdbMXKFeg0z/Q6LhKljZ1XzXgdj/BPMprwzfSheaejHr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719293251; c=relaxed/simple;
-	bh=RJaoHogdW2Mu9NHiautEPTgzcoZh6vSn0WgabcVsHn4=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Y59+TLs0TxiuwFkPMpDz2of0XS4+CFS4N8EZeCZ4n44El29t+oNRjJLgygFM01qg0flSzZwy11tkK1qJETK6WZnQTzubAGJbKv1O7WyJsrMrbfeIAZgGGDTVWGQ46s4RB+1sLIBqX8+lSRfomnvgA3oQTCchrINuZ1ma5exZcaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3738732f988so62341135ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 22:27:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719293249; x=1719898049;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RJaoHogdW2Mu9NHiautEPTgzcoZh6vSn0WgabcVsHn4=;
-        b=O3tSzK7u5YY/8j9jbZZn2rnMsAnAD5hz5zaef7i3yLFjVlgyjP3E1BBBU9S584+J7P
-         ktchfiDaGKoRtRyHuej609pXiUvqdF+qjISiiSWXN9IZw4Qkeofe0fEgSIUuYNL5Kqpp
-         ihxVfyWbLF/Z0omQ3ff5hkpn7qcVap7P8Yytrg7ybSCg9e41QvoTPBvbYSmpBsshdxNc
-         gMGwU+aYvS2tMwtDMgvi2wDDDOrsoh1ILtXTTzU9rP70aVECa91VerbQLjW7FXQ3/Hq7
-         XXqayuEu8lgTD8jzH2tlC4FN2zTDRR/iJ8muwuOh9bOZOKUgYjZQP/y4nt2G/4/d++aq
-         mAKg==
-X-Gm-Message-State: AOJu0Yye1VpH8qbRudd5YM0I95/sr/VMFdpSpSbexQKVBgMfTo7VOBB5
-	/wHrhqtLRwMarSGFRlF1KFLiNwxf+tX5dtf2fKRUR0k3uGcSFzMGvPm+iJezVpYySElh2pPaRyQ
-	si4IM3g/Px79pPrsUV1GfVb2kpPOscWjuMH3wMQ/ulcLCd0fpwO2jgI0=
-X-Google-Smtp-Source: AGHT+IGHMSIs5CUbiYdOyw4Al9iGlMaInzXeMOvaxh3VeZg25JmgdkbjkhGqwlmio8Il0H9xvqljXxgsHx4fbXBBUz8Ywwm3oycv
+	s=arc-20240116; t=1719293345; c=relaxed/simple;
+	bh=LFjHwemcdLE3RjWfSMOIzmFSkp1A8AtvyedlXK7t8pw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QflbRNvDdvuszMavZwaVykpS3BgOKj8/y8MDgIbW3v16lyFQfAz2GPn7kzXPnRAM04J3byMp4NUPVgh+Pi2ZeKVbFHiIOYDjk6VFl1ds6BmRb/IxemT7mJWuoAcYSknUcVfWzPRGyo9/slXp0wsbNF2rXF3xquX69PqmXc6H5tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WFOh9e1U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDF01C32782;
+	Tue, 25 Jun 2024 05:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719293345;
+	bh=LFjHwemcdLE3RjWfSMOIzmFSkp1A8AtvyedlXK7t8pw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WFOh9e1UamzVzR7qSL/yChRjYlxaBXB6f8W5q8tw8hoYeS29+3rL/a+apGHJSHDzE
+	 2OcUL8Dw0boWrZUGYX9s9lEg5VMWD0Z6BAqUgqiKhAn9h+lBo2DiGjZXdxjs9phJIm
+	 A9llAwF0m0nErvkjo60MNHszvFkkuY45WeJ+GER84SvY3fUgmsxIp+KUU5+PuR6wwt
+	 28lcLCCZh/9Grkq4O5iCvQFv5RDTuVSDDKP3rbYVOklJblkCrxLON5Otcrvbv54c5+
+	 NlkSixGGSqRWzZT7NkT7rfljL2hABX5T/V0EYe4qhukBYW8XpViUQKR5C9Ym+FV4NM
+	 WDV/GSEdzo+gg==
+Date: Mon, 24 Jun 2024 22:29:03 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+Cc: acme@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+	irogers@google.com, segher@kernel.crashing.org,
+	christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com,
+	disgoel@linux.vnet.ibm.com
+Subject: Re: [V4 03/16] tools/perf: Add support to capture and parse raw
+ instruction in powerpc using dso__data_read_offset utility
+Message-ID: <ZnpVn1yLtDnRnTBh@google.com>
+References: <20240614172631.56803-1-atrajeev@linux.vnet.ibm.com>
+ <20240614172631.56803-4-atrajeev@linux.vnet.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b21:b0:376:40c9:d61 with SMTP id
- e9e14a558f8ab-37640c90f26mr4814035ab.3.1719293248901; Mon, 24 Jun 2024
- 22:27:28 -0700 (PDT)
-Date: Mon, 24 Jun 2024 22:27:28 -0700
-In-Reply-To: <0000000000008c85d9061b67d833@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005da2bf061bb027ca@google.com>
-Subject: Re: [syzbot] UBSAN: shift-out-of-bounds in dbDiscardAG
-From: syzbot <syzbot+61be3359d2ee3467e7e4@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240614172631.56803-4-atrajeev@linux.vnet.ibm.com>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, Jun 14, 2024 at 10:56:18PM +0530, Athira Rajeev wrote:
+> Add support to capture and parse raw instruction in powerpc.
+> Currently, the perf tool infrastructure uses two ways to disassemble
+> and understand the instruction. One is objdump and other option is
+> via libcapstone.
+> 
+> Currently, the perf tool infrastructure uses "--no-show-raw-insn" option
+> with "objdump" while disassemble. Example from powerpc with this option
+> for an instruction address is:
+> 
+> Snippet from:
+> objdump  --start-address=<address> --stop-address=<address>  -d --no-show-raw-insn -C <vmlinux>
+> 
+> c0000000010224b4:	lwz     r10,0(r9)
 
-***
+What about removing --no-show-raw-insn and parse the raw byte code in
+the output for powerpc?  I think it's better to support normal
+annotation together.
 
-Subject: UBSAN: shift-out-of-bounds in dbDiscardAG
-Author: peili.dev@gmail.com
+> 
+> This line "lwz r10,0(r9)" is parsed to extract instruction name,
+> registers names and offset. Also to find whether there is a memory
+> reference in the operands, "memory_ref_char" field of objdump is used.
+> For x86, "(" is used as memory_ref_char to tackle instructions of the
+> form "mov  (%rax), %rcx".
+> 
+> In case of powerpc, not all instructions using "(" are the only memory
+> instructions. Example, above instruction can also be of extended form (X
+> form) "lwzx r10,0,r19". Inorder to easy identify the instruction category
+> and extract the source/target registers, patch adds support to use raw
+> instruction for powerpc. Approach used is to read the raw instruction
+> directly from the DSO file using "dso__data_read_offset" utility which
+> is already implemented in perf infrastructure in "util/dso.c".
+> 
+> Example:
+> 
+> 38 01 81 e8     ld      r4,312(r1)
+> 
+> Here "38 01 81 e8" is the raw instruction representation. In powerpc,
+> this translates to instruction form: "ld RT,DS(RA)" and binary code
+> as:
+> 
+>    | 58 |  RT  |  RA |      DS       | |
+>    -------------------------------------
+>    0    6     11    16              30 31
+> 
+> Function "symbol__disassemble_dso" is updated to read raw instruction
+> directly from DSO using dso__data_read_offset utility. In case of
+> above example, this captures:
+> line:    38 01 81 e8
+> 
+> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+> ---
+>  tools/perf/util/disasm.c | 98 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 98 insertions(+)
+> 
+> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+> index b5fe3a7508bb..f19496133bf0 100644
+> --- a/tools/perf/util/disasm.c
+> +++ b/tools/perf/util/disasm.c
+> @@ -1586,6 +1586,91 @@ static int symbol__disassemble_capstone(char *filename, struct symbol *sym,
+>  }
+>  #endif
+>  
+> +static int symbol__disassemble_dso(char *filename, struct symbol *sym,
 
-#syz test
+Maybe rename to symbol__disassemble_raw() ?
+
+> +					struct annotate_args *args)
+> +{
+> +	struct annotation *notes = symbol__annotation(sym);
+> +	struct map *map = args->ms.map;
+> +	struct dso *dso = map__dso(map);
+> +	u64 start = map__rip_2objdump(map, sym->start);
+> +	u64 end = map__rip_2objdump(map, sym->end);
+> +	u64 len = end - start;
+> +	u64 offset;
+> +	int i, count;
+> +	u8 *buf = NULL;
+> +	char disasm_buf[512];
+> +	struct disasm_line *dl;
+> +	u32 *line;
+> +
+> +	/* Return if objdump is specified explicitly */
+> +	if (args->options->objdump_path)
+> +		return -1;
+> +
+> +	pr_debug("Reading raw instruction from : %s using dso__data_read_offset\n", filename);
+
+You may want to print the actual offset and remove the "using
+dso__data_read_offset" part.
+
+Thanks,
+Namhyung
+
+> +
+> +	buf = malloc(len);
+> +	if (buf == NULL)
+> +		goto err;
+> +
+> +	count = dso__data_read_offset(dso, NULL, sym->start, buf, len);
+> +
+> +	line = (u32 *)buf;
+> +
+> +	if ((u64)count != len)
+> +		goto err;
+> +
+> +	/* add the function address and name */
+> +	scnprintf(disasm_buf, sizeof(disasm_buf), "%#"PRIx64" <%s>:",
+> +		  start, sym->name);
+> +
+> +	args->offset = -1;
+> +	args->line = disasm_buf;
+> +	args->line_nr = 0;
+> +	args->fileloc = NULL;
+> +	args->ms.sym = sym;
+> +
+> +	dl = disasm_line__new(args);
+> +	if (dl == NULL)
+> +		goto err;
+> +
+> +	annotation_line__add(&dl->al, &notes->src->source);
+> +
+> +	/* Each raw instruction is 4 byte */
+> +	count = len/4;
+> +
+> +	for (i = 0, offset = 0; i < count; i++) {
+> +		args->offset = offset;
+> +		sprintf(args->line, "%x", line[i]);
+> +		dl = disasm_line__new(args);
+> +		if (dl == NULL)
+> +			goto err;
+> +
+> +		annotation_line__add(&dl->al, &notes->src->source);
+> +		offset += 4;
+> +	}
+> +
+> +	/* It failed in the middle */
+> +	if (offset != len) {
+> +		struct list_head *list = &notes->src->source;
+> +
+> +		/* Discard all lines and fallback to objdump */
+> +		while (!list_empty(list)) {
+> +			dl = list_first_entry(list, struct disasm_line, al.node);
+> +
+> +			list_del_init(&dl->al.node);
+> +			disasm_line__free(dl);
+> +		}
+> +		count = -1;
+> +	}
+> +
+> +out:
+> +	free(buf);
+> +	return count < 0 ? count : 0;
+> +
+> +err:
+> +	count = -1;
+> +	goto out;
+> +}
+>  /*
+>   * Possibly create a new version of line with tabs expanded. Returns the
+>   * existing or new line, storage is updated if a new line is allocated. If
+> @@ -1710,6 +1795,19 @@ int symbol__disassemble(struct symbol *sym, struct annotate_args *args)
+>  		strcpy(symfs_filename, tmp);
+>  	}
+>  
+> +	/*
+> +	 * For powerpc data type profiling, use the dso__data_read_offset
+> +	 * to read raw instruction directly and interpret the binary code
+> +	 * to understand instructions and register fields. For sort keys as
+> +	 * type and typeoff, disassemble to mnemonic notation is
+> +	 * not required in case of powerpc.
+> +	 */
+> +	if (arch__is(args->arch, "powerpc")) {
+> +		err = symbol__disassemble_dso(symfs_filename, sym, args);
+> +		if (err == 0)
+> +			goto out_remove_tmp;
+> +	}
+> +
+>  #ifdef HAVE_LIBCAPSTONE_SUPPORT
+>  	err = symbol__disassemble_capstone(symfs_filename, sym, args);
+>  	if (err == 0)
+> -- 
+> 2.43.0
+> 
 
