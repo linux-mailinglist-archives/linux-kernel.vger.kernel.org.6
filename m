@@ -1,126 +1,108 @@
-Return-Path: <linux-kernel+bounces-228534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 423DD916163
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:34:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7057C916165
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F29F9281477
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:34:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C11E2850FE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58D4614A091;
-	Tue, 25 Jun 2024 08:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0400014883F;
+	Tue, 25 Jun 2024 08:33:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b="J0h5vpYR"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YcpttwyY"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3C22148848
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86991487D8;
+	Tue, 25 Jun 2024 08:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719304420; cv=none; b=EzP8VO8ks5OvxgELg5ZgGFKugyoo/f+5lUNmwfVvP557beP877c4l335Mah+G5xJ3SM6+v2SjexkLgmIZte3r1gQvQ0teh490lfYMtw6Tdc9Yl9wM6FuzZeEqCY8mJq7974QVihelrns9ZfUFyLEaCYxSgw6QjQnna78K9aLH0g=
+	t=1719304433; cv=none; b=XdFAAI3kmGl4R9tegP+pka5O8lc4ne2huVim6X0uiBqU1vY/rj719ySliDQJaQZMg4HzRzVEtjZDxfheC31q1wMClLthIXvpxQduCxMb5phX0wM7Ku7TJK8Mil7f85JIAU5Gep37nqXjfMm5tkn0lEuzKNS8AfsA2dT1IhK/h8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719304420; c=relaxed/simple;
-	bh=6zLeUxGI/6eJmXDQirmzJApQvIPtWQsC1uEMVIgt2tU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ic1spMHILf7wiurJjFBg8r+I+gixoEwvSTHyoKM8qEbVJabXoBp3P7oNPAxpth8UhfZzuPwJe1KxzIn3bKCTHmvww6ysZQYN+8YyDPYvbAcbXLhyG5Y+BDumOHD7AHo5A7QAHE0FLligU1UcMG11r6YSjzbtD/B+shoJyTOR7ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com; spf=none smtp.mailfrom=smartx.com; dkim=pass (2048-bit key) header.d=smartx-com.20230601.gappssmtp.com header.i=@smartx-com.20230601.gappssmtp.com header.b=J0h5vpYR; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=smartx.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=smartx.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70671ecd334so1956258b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:33:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=smartx-com.20230601.gappssmtp.com; s=20230601; t=1719304418; x=1719909218; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mm6ddIKDyA7yDOVacp77GbndxO6yjA2PPWGRWlNTN1Q=;
-        b=J0h5vpYRiqosRaYwTeDSWa7DdrN8EDN7B+B+WXEl5ZdQNBBj2dXfguSQ64usrxddoF
-         08W+b6rndt8CJIb4vwjNotO9W16+mwHfJkl1lo97bOxzzJ0hM1xdwy1xJHMkyEWEG1NS
-         QgU3cwpMweam3XpfM82MDJQUAqrSjQOTKUAglSz7JWG8AgPV6+RukprNwU5/49tFndDr
-         guVtEhi20WzM3JirI4GZxb1YHybwf7vCenGSqFZCj0ttpWQwRMXs7fEo6KfhWmukj1a8
-         Ibl1oIqwIuXyCjQMwTxWMCx/n7XfoDJYf8Vls/OOlqnPvQX86oIdo0JEiLBsePsoOFuy
-         Rhtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719304418; x=1719909218;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mm6ddIKDyA7yDOVacp77GbndxO6yjA2PPWGRWlNTN1Q=;
-        b=mIGf8YH44tH9hPTDuA455/hRzVxznPDvoJ5S/uNC9mkzJrXTnRHVNGnB3P+kyWozen
-         FPVeo7X6LCsIUAavf9xzblApmJp+hw2uE3CARwYlmX9GLZbhMdhrZTfQPhUuU93WRfrs
-         LSlWctxETdTfFRsLhVbD/PkKMdHpD34Du6j4yJvf3sE/6I6AwJ49wuHsy9th/4gvIqeG
-         GnRvluGwo3BfnEnSB6mJF+yx0jxo8ZQhh5Q7BWWf1gPR03ARm842tc12/6GK4I9JXufN
-         adQFjf6ZCqkZz4XQRAAvf49FsA/8Ou+5lU20wOzayMCvbzgWt/M3dvpWR/Pn809veecv
-         Cjkw==
-X-Forwarded-Encrypted: i=1; AJvYcCVv1UccapMSjmwNbi/w1dWW7aD0MNcsgNveKHdBx0KfnwUpfs+CXUkPbDfSRaIySKObKH91N8BVjQEoFxo2E33svZOEvo7dkeKoS8e0
-X-Gm-Message-State: AOJu0YxjedbPJvzuIgyNaMwmBafPLMRHSyZa+KeeQcQtRtE7NW04l8BO
-	KWPyCNUhfDMpIH+MPeBFa1OcqvC99AVfEKWV6i026+MOJedSDYmW1k4fPoGbs9UBD2gK7Fh9MSN
-	o3QEK6yyRLSw=
-X-Google-Smtp-Source: AGHT+IELm3Ttvtx5YR4G1Z8+z+DN1lPcg5UI0/UEjh9cx2tvPjDsjig+TPYlFTxJUKTZbgzOn8F1Kg==
-X-Received: by 2002:a05:6a20:6720:b0:1b4:b4af:6045 with SMTP id adf61e73a8af0-1bcf4479e5cmr7378240637.18.1719304417403;
-        Tue, 25 Jun 2024 01:33:37 -0700 (PDT)
-Received: from echken.smartx.com (vps-bd302c4a.vps.ovh.ca. [15.235.142.94])
-        by smtp.googlemail.com with ESMTPSA id d2e1a72fcca58-70662ee117asm6035587b3a.211.2024.06.25.01.33.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 01:33:37 -0700 (PDT)
-From: echken <chengcheng.luo@smartx.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	echken <chengcheng.luo@smartx.com>
-Subject: [PATCH 2/2] Add UDP fragmentation features to Geneve devices
-Date: Tue, 25 Jun 2024 08:33:24 +0000
-Message-Id: <20240625083324.776057-1-chengcheng.luo@smartx.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719304433; c=relaxed/simple;
+	bh=qUiCiqC9GjOXjpDqJDzGglq2DQBYlmLGvM+DwbLoGT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GZIeVO2lZNrtzb8/V/DY8AuUEkPxvn22SSJtxUet9ijimJXAhuMHRPQUynqDbsc9V/P/Z72SRKzX0LLnzuECXXe+IsOfEb1xMnM5crhZEsX6d5Wg79xhnxC1v1tT3QsfHsovMSmbeE4V2Q2OMa9RlRvG3yOfFFSVIrTfXPJjYts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YcpttwyY; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id ADE2B40007;
+	Tue, 25 Jun 2024 08:33:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719304423;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ovx21pLRuAxb+/yjFvgIIMXLhzJEwVSptulPdjJOChs=;
+	b=YcpttwyYgg8o5uYYocK+zDh8jLoTp65dpfZrAHrUXPJA3nyuaBf5hl27yE1Xm36eKrp8tp
+	QEHdwom5Ns6lBXK704n+4vJsdGowEsiJlCKQpCTyAkMqZjAdnTC78HyeS7cDrza+2FPTc6
+	natEKoDPm9Kmsz9TQHpADVk019qvq5ZQ2BoNz766xC53BDTcjVvJZKZ4fQGwi7nQ+w2kwN
+	7bzTyWfkKU+uwVhcxKt3J+Ig+t7gsXqBPGhDRHQSjdzb8AKC+jIvtt2s69K2PpjAb056tR
+	ZabGnEIFVoveOUSkzWenl4tmrBT6PA+chYIo85tdXEFk23QLIAHDzftNhh5hnw==
+Date: Tue, 25 Jun 2024 10:33:41 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, Miaoqian Lin
+ <linmq006@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-leds@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "leds: led-core: Fix refcount leak in
+ of_led_get()"
+Message-ID: <20240625103341.0c53c052@booty>
+In-Reply-To: <20240625100709.307568fd@bootlin.com>
+References: <20240625-led-class-device-leak-v1-1-9eb4436310c2@bootlin.com>
+	<20240625100709.307568fd@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Since Geneve devices do not support any offloading features for UDP
-fragmentation, large UDP packets sent through Geneve devices to the
-kernel protocol stack are preemptively fragmented in the TX direction of
-the Geneve device. The more computationally intensive encapsulation and
-routing processes occur after fragmentation, which leads to a
-significant increase in performance overhead in this scenario. By adding
-GSO_UDP and GSO_UDP_L4 to Geneve devices, we can ensure a significant
-reduction in the number of packets that undergo the computationally
-expensive Geneve encapsulation and routing processes in this scenario,
-thereby improving throughput performance.
+Hi Herv=C3=A9,
 
-Signed-off-by: echken <chengcheng.luo@smartx.com>
----
- drivers/net/geneve.c | 4 ++++
- 1 file changed, 4 insertions(+)
+On Tue, 25 Jun 2024 10:07:09 +0200
+Herve Codina <herve.codina@bootlin.com> wrote:
 
-diff --git a/drivers/net/geneve.c b/drivers/net/geneve.c
-index 838e85ddec67..dc0f5846b415 100644
---- a/drivers/net/geneve.c
-+++ b/drivers/net/geneve.c
-@@ -1198,10 +1198,14 @@ static void geneve_setup(struct net_device *dev)
- 	dev->features    |= NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_FRAGLIST;
- 	dev->features    |= NETIF_F_RXCSUM;
- 	dev->features    |= NETIF_F_GSO_SOFTWARE;
-+	dev->features    |= NETIF_F_GSO_UDP;
-+	dev->features    |= NETIF_F_GSO_UDP_L4;
- 
- 	dev->hw_features |= NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_FRAGLIST;
- 	dev->hw_features |= NETIF_F_RXCSUM;
- 	dev->hw_features |= NETIF_F_GSO_SOFTWARE;
-+	dev->features    |= NETIF_F_GSO_UDP;
-+	dev->features    |= NETIF_F_GSO_UDP_L4;
- 
- 	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
- 	/* MTU range: 68 - (something less than 65535) */
--- 
-2.34.1
+...
 
+> > Fixes: da1afe8e6099 ("leds: led-core: Fix refcount leak in of_led_get()=
+")
+> > Co-developed-by: Herv=C3=A9 Codina <herve.codina@bootlin.com>
+> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com> =20
+>=20
+> As there is a Co-developer, you have to add his/her Signed-off-by:
+> https://elixir.bootlin.com/linux/v6.10-rc5/source/Documentation/process/s=
+ubmitting-patches.rst#L494
+>=20
+> So feel free to:
+>   a) Add Signed-off-by: Herv=C3=A9 Codina <herve.codina@bootlin.com>
+> or
+>   b) Remove Co-developed-by: Herv=C3=A9 Codina <herve.codina@bootlin.com>
+>=20
+> Even if I participate in that fix, I will not be upset if you remove the
+> Co-developed-by :)
+
+Dammit, I forgot to run checkpatch... :-(
+
+Sorry about that!
+
+Sending v2 with the SoB line added.
+
+Luca
+
+--=20
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
