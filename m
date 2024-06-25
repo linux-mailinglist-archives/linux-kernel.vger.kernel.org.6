@@ -1,113 +1,225 @@
-Return-Path: <linux-kernel+bounces-229012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 786969169B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:00:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F11D9169B6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:00:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3488F289761
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:00:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8ED0B258FD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31E217B513;
-	Tue, 25 Jun 2024 13:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UJtbz/HE"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483FF16C848;
+	Tue, 25 Jun 2024 13:56:52 +0000 (UTC)
+Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581DC16C848
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4871649C6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719323770; cv=none; b=Ub1IskWLF0rJ1b8/MGTcJTWSrw4CsKnNTRR0F9kb4AImJsr5hdkzMJZXIINgmX0Zwwemi/NtnL50wrkMbIK0nAhamVV2CVN0dhVdkfEeUZa8rR6Ikv8hGmtUL0PY/MNP9DUUQS97QzmE1t4+Uj5CztWTp/p2vdU8jqlpmnyIbuI=
+	t=1719323811; cv=none; b=lYPvU8hvhOIY+zoh7JsuNoEt1nxgyM/s6SF9ZYEfawdpDRQqsK7S7sGIicfDzUTFWA7pACAZKFDe3ZdmMa9aN+1zkWlOiwJ4qD7e3gXETZaldLK10WFAkq8s/2/Qtxjdgzgzd4Nc1EFA5PfFjhPMxvQJW/O174X723oUTRZUw9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719323770; c=relaxed/simple;
-	bh=N/GcuY4Cw8pw/Sd4Waa1G9Xsbo2qSz5pa7LKIs8nARU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nbyt0GKFWEx07CxLky9hzoOxDfC44qSVr1wI/0Sqdp/CS+S0Pb3DFXud4cdI7oPUeBzdE4NsbcxWk/2khS1Mf8aeazYjFnWTs1UPq4VK3xvKDjgX92wBO9IhwX3BdFVfK7fkE1hO98zVPJ9vHvd5HhLQ8nEL+ijSTjIwvycJTDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UJtbz/HE; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719323767;
-	bh=N/GcuY4Cw8pw/Sd4Waa1G9Xsbo2qSz5pa7LKIs8nARU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UJtbz/HEdA3B5CDzeUTSkagFj7Zlvori9d5RW/voFWgy1TKTnpQW2iNARo+9GTN1R
-	 byK6am13gsZ1gJpJcIle6jkCHRTUpKwJ8kjzFHXpYgm2jPN354bGkdkAcZYRlfkP4E
-	 kPOndyBgTP8/mmiqHD90wQIPhtbFScAOiXcwSiQqG/E7gW9AT1E8xvQTlavG1KYOsp
-	 lBJKnoAcgiNh7mYC7JGhL0EnFPNLVDzYxfpK7pBibcX8QXObnKd9bsySV5MNsDaCfe
-	 9DsiK51liYMhv79vaS4YSgBGJKzTVP91IrJG1fzeAbKFui5XJf3goz9xrCFJwk8LVJ
-	 LNCLCybZjlLKw==
-Received: from notapiano (zone.collabora.co.uk [167.235.23.81])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0D759378000A;
-	Tue, 25 Jun 2024 13:56:05 +0000 (UTC)
-Date: Tue, 25 Jun 2024 09:55:56 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Saravana Kannan <saravanak@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>, kernel@collabora.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] driver core: Don't log intentional skip of device link
- creation as error
-Message-ID: <7b995947-4540-4b17-872e-e107adca4598@notapiano>
-References: <20240624-fwdevlink-probed-no-err-v1-1-d1213cd354e2@collabora.com>
- <CAGETcx-sAu-wMDKT9zCeCzLzZ=ZdvK+CSoX34YxMLd5z0YeVZQ@mail.gmail.com>
+	s=arc-20240116; t=1719323811; c=relaxed/simple;
+	bh=/AP6gEorBpwDQnG344uS3Wlw5D6CjbrUi1vHojLfLBw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=OwtDwVUtk4MTOf0W8GFRF/K/y21i8CkVghUuwhNncgE10q7S0IoG6lJdQ/Bf9M1ux81IkHAM7Hr8DfWq8OFyvCUNGp62yHQNapv57s/s8DdzWXAmXFdDhk5Mv36rODrcrhMI+fipwC3/DnjTxTrn5EjYfbmh7Vf69zJjzOBl/a0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
+Received: from fsav119.sakura.ne.jp (fsav119.sakura.ne.jp [27.133.134.246])
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 45PDuk1Z048237;
+	Tue, 25 Jun 2024 22:56:46 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav119.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp);
+ Tue, 25 Jun 2024 22:56:46 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav119.sakura.ne.jp)
+Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
+	(authenticated bits=0)
+	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 45PDukUu048233
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
+	Tue, 25 Jun 2024 22:56:46 +0900 (JST)
+	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
+Message-ID: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
+Date: Tue, 25 Jun 2024 22:56:46 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGETcx-sAu-wMDKT9zCeCzLzZ=ZdvK+CSoX34YxMLd5z0YeVZQ@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Martin KaFai Lau <martin.lau@linux.dev>,
+        Eduard Zingerman
+ <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+        Yonghong Song <yonghong.song@linux.dev>,
+        John Fastabend <john.fastabend@gmail.com>,
+        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+        Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
+        John Ogness
+ <john.ogness@linutronix.de>,
+        Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Subject: [PATCH] bpf: defer printk() inside __bpf_prog_run()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 24, 2024 at 04:53:30PM -0700, Saravana Kannan wrote:
-> On Mon, Jun 24, 2024 at 8:21 AM Nícolas F. R. A. Prado
-> <nfraprado@collabora.com> wrote:
-> >
-> > Commit ac66c5bbb437 ("driver core: Allow only unprobed consumers for
-> > SYNC_STATE_ONLY device links") introduced an early return in
-> > device_link_add() to prevent useless links from being created. However
-> > the calling function fw_devlink_create_devlink() unconditionally prints
-> > an error if device_link_add() didn't create a link, even in this case
-> > where it is intentionally skipping the link creation.
-> >
-> > Add a check to detect if the link wasn't created intentionally and in
-> > that case don't log an error.
-> 
-> Your point is somewhat valid, and I might Ack this. But this really
-> shouldn't be happening a lot. Can you give more context on how you are
-> hitting this?
+syzbot is reporting circular locking dependency inside __bpf_prog_run(),
+for fault injection calls printk() despite rq lock is already held.
 
-Of course. I'm seeing this on the mt8195-cherry-tomato-r2 platform.
+Guard __bpf_prog_run() using printk_deferred_{enter,exit}() (and
+preempt_{disable,enable}() if CONFIG_PREEMPT_RT=n) in order to defer any
+printk() messages. (migrate_{disable,enable}() is not needed if
+CONFIG_PREEMPT_RT=y because cant_migrate() asserts that caller already
+disabled migration.)
 
-The following error is printed during boot:
+======================================================
+WARNING: possible circular locking dependency detected
+6.10.0-rc4-syzkaller-00874-g84562f9953ec #0 Not tainted
+------------------------------------------------------
+syz-executor.1/25480 is trying to acquire lock:
+ffffffff8e328140 (console_owner){..-.}-{0:0}, at: rcu_try_lock_acquire include/linux/rcupdate.h:334 [inline]
+ffffffff8e328140 (console_owner){..-.}-{0:0}, at: srcu_read_lock_nmisafe include/linux/srcu.h:232 [inline]
+ffffffff8e328140 (console_owner){..-.}-{0:0}, at: console_srcu_read_lock kernel/printk/printk.c:286 [inline]
+ffffffff8e328140 (console_owner){..-.}-{0:0}, at: console_flush_all+0x152/0xfd0 kernel/printk/printk.c:2986
 
-  mediatek-drm-dp 1c500000.edp-tx: Failed to create device link (0x180) with backlight-lcd0
+but task is already holding lock:
+ffff8880b943e798 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
 
-It doesn't happen with the upstream defconfig, but with the following config
-change it does:
+which lock already depends on the new lock.
 
-  -CONFIG_PWM_MTK_DISP=m
-  +CONFIG_PWM_MTK_DISP=y
+(...snipped...)
 
-That probably changes the order in which the MTK DP and the backlight drivers
-probe, resulting in the error.
+Chain exists of:
+  console_owner --> &p->pi_lock --> &rq->__lock
 
-One peculiarity that comes to mind is that the DP driver calls
-devm_of_dp_aux_populate_bus() to run a callback once the panel has finished
-probing. I'm not sure if this could have something to do with the error.
+ Possible unsafe locking scenario:
 
-Full log at https://lava.collabora.dev/scheduler/job/14573149
+       CPU0                    CPU1
+       ----                    ----
+  lock(&rq->__lock);
+                               lock(&p->pi_lock);
+                               lock(&rq->__lock);
+  lock(console_owner);
 
-Thanks,
-Nícolas
+ *** DEADLOCK ***
+
+6 locks held by syz-executor.1/25480:
+ #0: ffffffff8f5e6f48 (rtnl_mutex){+.+.}-{3:3}, at: dev_ioctl+0x706/0x1340 net/core/dev_ioctl.c:785
+ #1: ffffffff8f67dd68 (flowtable_lock){+.+.}-{3:3}, at: nf_flow_table_cleanup+0x23/0xb0 net/netfilter/nf_flow_table_core.c:593
+ #2: ffff8880b943e798 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:559
+ #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2402 [inline]
+ #3: ffffffff8e333fa0 (rcu_read_lock){....}-{1:2}, at: bpf_trace_run4+0x244/0x590 kernel/trace/bpf_trace.c:2446
+ #4: ffffffff8e20fa60 (console_lock){+.+.}-{0:0}, at: _printk+0xd5/0x120 kernel/printk/printk.c:2370
+ #5: ffffffff8e20f690 (console_srcu){....}-{0:0}, at: rcu_try_lock_acquire include/linux/rcupdate.h:334 [inline]
+ #5: ffffffff8e20f690 (console_srcu){....}-{0:0}, at: srcu_read_lock_nmisafe include/linux/srcu.h:232 [inline]
+ #5: ffffffff8e20f690 (console_srcu){....}-{0:0}, at: console_srcu_read_lock kernel/printk/printk.c:286 [inline]
+ #5: ffffffff8e20f690 (console_srcu){....}-{0:0}, at: console_flush_all+0x152/0xfd0 kernel/printk/printk.c:2986
+
+stack backtrace:
+CPU: 0 PID: 25480 Comm: syz-executor.1 Not tainted 6.10.0-rc4-syzkaller-00874-g84562f9953ec #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:88 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:114
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2187
+ check_prev_add kernel/locking/lockdep.c:3134 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3253 [inline]
+ validate_chain+0x18e0/0x5900 kernel/locking/lockdep.c:3869
+ __lock_acquire+0x1346/0x1fd0 kernel/locking/lockdep.c:5137
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5754
+ console_lock_spinning_enable kernel/printk/printk.c:1870 [inline]
+ console_emit_next_record kernel/printk/printk.c:2922 [inline]
+ console_flush_all+0x810/0xfd0 kernel/printk/printk.c:2994
+ console_unlock+0x13b/0x4d0 kernel/printk/printk.c:3063
+ vprintk_emit+0x5a6/0x770 kernel/printk/printk.c:2345
+ _printk+0xd5/0x120 kernel/printk/printk.c:2370
+ fail_dump lib/fault-inject.c:45 [inline]
+ should_fail_ex+0x391/0x4e0 lib/fault-inject.c:153
+ __copy_to_user_inatomic include/linux/uaccess.h:123 [inline]
+ copy_to_user_nofault+0x86/0x140 mm/maccess.c:149
+ bpf_prog_b0a3dac844962ed2+0x47/0x4d
+ bpf_dispatcher_nop_func include/linux/bpf.h:1243 [inline]
+ __bpf_prog_run include/linux/filter.h:691 [inline]
+ bpf_prog_run include/linux/filter.h:698 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2403 [inline]
+ bpf_trace_run4+0x334/0x590 kernel/trace/bpf_trace.c:2446
+ __traceiter_sched_switch+0x98/0xd0 include/trace/events/sched.h:222
+ trace_sched_switch include/trace/events/sched.h:222 [inline]
+ __schedule+0x2587/0x4a20 kernel/sched/core.c:6742
+ preempt_schedule_notrace+0x100/0x140 kernel/sched/core.c:7017
+ preempt_schedule_notrace_thunk+0x1a/0x30 arch/x86/entry/thunk.S:13
+ rcu_is_watching+0x7e/0xb0 kernel/rcu/tree.c:725
+ trace_lock_acquire include/trace/events/lock.h:24 [inline]
+ lock_acquire+0xe3/0x550 kernel/locking/lockdep.c:5725
+ rcu_lock_acquire include/linux/rcupdate.h:329 [inline]
+ rcu_read_lock include/linux/rcupdate.h:781 [inline]
+ start_flush_work kernel/workqueue.c:4122 [inline]
+ __flush_work+0x107/0xd00 kernel/workqueue.c:4181
+ flush_work kernel/workqueue.c:4232 [inline]
+ flush_delayed_work+0x169/0x1c0 kernel/workqueue.c:4254
+ nf_flow_table_gc_cleanup net/netfilter/nf_flow_table_core.c:585 [inline]
+ nf_flow_table_cleanup+0x62/0xb0 net/netfilter/nf_flow_table_core.c:595
+ flow_offload_netdev_event+0x51/0x70 net/netfilter/nft_flow_offload.c:492
+ notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
+ __dev_notify_flags+0x207/0x400
+ dev_change_flags+0xf0/0x1a0 net/core/dev.c:8858
+ dev_ifsioc+0x7c8/0xe70 net/core/dev_ioctl.c:529
+ dev_ioctl+0x719/0x1340 net/core/dev_ioctl.c:786
+ sock_do_ioctl+0x240/0x460 net/socket.c:1236
+ sock_ioctl+0x629/0x8e0 net/socket.c:1341
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Reported-by: syzbot <syzbot+f78380e4eae53c64125c@syzkaller.appspotmail.com>
+Closes: https://syzkaller.appspot.com/bug?extid=f78380e4eae53c64125c
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+Only compile tested.
+
+ include/linux/filter.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/include/linux/filter.h b/include/linux/filter.h
+index dd41a93f06b2e..977ae5b486164 100644
+--- a/include/linux/filter.h
++++ b/include/linux/filter.h
+@@ -674,6 +674,10 @@ static __always_inline u32 __bpf_prog_run(const struct bpf_prog *prog,
+ 	u32 ret;
+ 
+ 	cant_migrate();
++#ifndef CONFIG_PREEMPT_RT
++	preempt_disable();
++#endif
++	printk_deferred_enter();
+ 	if (static_branch_unlikely(&bpf_stats_enabled_key)) {
+ 		struct bpf_prog_stats *stats;
+ 		u64 duration, start = sched_clock();
+@@ -690,6 +694,10 @@ static __always_inline u32 __bpf_prog_run(const struct bpf_prog *prog,
+ 	} else {
+ 		ret = dfunc(ctx, prog->insnsi, prog->bpf_func);
+ 	}
++	printk_deferred_exit();
++#ifndef CONFIG_PREEMPT_RT
++	preempt_enable();
++#endif
+ 	return ret;
+ }
+ 
+-- 
+2.43.0
 
