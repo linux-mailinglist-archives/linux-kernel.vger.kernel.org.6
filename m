@@ -1,206 +1,188 @@
-Return-Path: <linux-kernel+bounces-229520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A833917069
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:42:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5409E91706A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB841B219AA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:42:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C877B1F21F2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498AD17C22E;
-	Tue, 25 Jun 2024 18:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC24817C9F4;
+	Tue, 25 Jun 2024 18:42:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="bN3vJuoE"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UYwFQfrY"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29BF17B513
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:42:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E94417C7D3
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:42:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719340949; cv=none; b=mVZjWblReI+i+F6849R6G/yEjsjkgIimfqPL9bE1HpdoAoi3AH3v+wAvHctcltKjYx74dvSaC7qkUXLcRxiJ3Q1LrzgA7kI0e7sb2JcR3KSYeMSZPN8UyuSZd5wuZjtzCSxevYcsrM/qrB9j7Oo8KhzqOtejHdG0oFoFWacnel4=
+	t=1719340953; cv=none; b=QcrS/+EQAvmw6D6TXyJ5WTdjTg9qDuhVya9Xohv45zKdaeErWHax8qGwGzVjGu5qH0dZVSVOg7vU8nd5yODrC5PY4zd18AErQoYlx04fb4w8rIOs4okBOm1EgTybYjflsKwK6bUoJnJMLMAiaCc4B8gKP3SReuksukcVZmFtYJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719340949; c=relaxed/simple;
-	bh=bFf47hFEVUuKOmXsiB4H2YqzJawoxVMdG5DGlAtPhD4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KkL/aw7Uof7Y2bCrEEPqBqLB8wXQ+TZ8gReB4EZFmihDkKRaAKDaIJgaCugyp+5CJ0lbQ/6bYrzj9HzYP2VFncSXXtM5df6dNy3SNDd+u7aLdBVg2LmdTa3KO7XJ7lfBEMyBf5RFnrTLyO+aTABZmmFsY4sjPDsE6CKmv2NnNr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk; spf=pass smtp.mailfrom=rasmusvillemoes.dk; dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b=bN3vJuoE; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rasmusvillemoes.dk
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ce9ba0cedso2924091e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:42:27 -0700 (PDT)
+	s=arc-20240116; t=1719340953; c=relaxed/simple;
+	bh=uRakYP9YwtSrkRypd0sus0mo63iXTbShYivQP4vojDY=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=XPi0y6whIrR+Zhfui3XpddF9kwYd/xbuuisjLFRWPCuUK1wYEM9muXczFBUBi+yC3XVeuZUrGiDVfDkVJU+mSiKjifOm9wknoBAbjuXE3by4Dm1mQkXE5xwhtEoOA5ITmulceGhGZcFsC91p36TQ6sArh+4WlRt1IRhJkOlJS8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UYwFQfrY; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e02b7adfb95so13151197276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:42:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google; t=1719340946; x=1719945746; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fTRHmcetGLaYy17XrKZXgDqE5GMBbK+wOczjMxAfiWo=;
-        b=bN3vJuoENHZov+rE9nFpJ6n6P4T2gJ9iYrl6nfrosotzqqNG6XisYxCrbnmSf5O4Br
-         sSZc/HshQjU5yVEBr/JlK9DJ13D2u2kSt64XfjQBGzflPcNY6YSnyBSVAicuW+QokAjA
-         Rlz7tR/O/FmEWJIR3mdFm9Jut7fPqftrtJg7Q=
+        d=google.com; s=20230601; t=1719340951; x=1719945751; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=eTeAroXO/wxI5kEA8VbI1l6499SWylVFeT71mGO4Lpo=;
+        b=UYwFQfrYws0+D2MvOckrNyr3sHMZwDDUw25Og0reG7qDZRKstQd+k4Vt/v1XLE5bBp
+         X/BcHdmwqVF7ya9rh/9o3OTgvdm8M+db1G48MGi80DJaDLS7XVvfzSWRCjkW4Yp6NtrZ
+         z8jRI6jBda9iA2Fu7CasOMWMLXBL6lqRxbG+G9LyaIjkcgSSiruyd1kb/BWGnY0FF0Dr
+         933ZYALLub86KlGmYQASH1QoXkTGgk2mbDghvDlPkimTt7Rj9DGX4qmozdc0uwl8o4j+
+         +t6Q5StjkeMf9UluSapnLmJIPBNwg7OHgl9nyxJd+eSrfLj+f4e/Uw79ltvLwQN/BA8i
+         0GTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719340946; x=1719945746;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fTRHmcetGLaYy17XrKZXgDqE5GMBbK+wOczjMxAfiWo=;
-        b=aX4wGp0Ky7mjOURAXF3tF4MiX8eI82ZqIVEi3cwAih55psjhNEO6uPV/R/rnXoj6wO
-         4vx5YXFpBizrsZuGOtJxK2Art5FaB+T+JKNy787xrFkvSIkWUNPeAeTuiQ08NX3Mo+sl
-         dc8HUox+UM5Cy+/wrzB2Quh6hde1Iovuhu7Mkj8HNNJN5A10lhJiW01olhxClQ4lL5Uy
-         sFnP/qTOh0Lkk0OWcV3LWXxvM48VNyMh36Tota2y2K96QJIxpr/kjpkxgN5MWQv3iu4B
-         xhyzvvhgZmV+lDE/fWBLpbH46T2vkNX6/kq2RndZbrXS3pvFAF8TZgOukI0OmR6ArRKq
-         uKwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/ia2Ul59bKbLA7SZjRK0dSQn4QxCffBorHkWXv0UvQHgjGgBjGTcbW6K3doLs2pP0W1rwWuphlhkADcOOvvx1LF59PA/QQ1ucBmmq
-X-Gm-Message-State: AOJu0YzGW/J2rsopeJvIQqOXNFM0Hn0GPzijWKSVicHpCWISfpvd6jdR
-	wbzbLljIETxBf3kQTc4Laj7UFd2g4mkU9uQU1V+Ci09vzPeLsXNEBcukzn5rnTeinPNAH1HONOB
-	o+XVcIQ==
-X-Google-Smtp-Source: AGHT+IHzd9Y3KJ+ekIIDdL14O7HCRFyG0RNRJ50heb9Bv7+zAcEg6cULMA2lGBbpiJbMQj4at+FLzg==
-X-Received: by 2002:ac2:4c41:0:b0:52c:e1cd:39bd with SMTP id 2adb3069b0e04-52ce1cd3a79mr8123147e87.13.1719340944752;
-        Tue, 25 Jun 2024 11:42:24 -0700 (PDT)
-Received: from localhost (77.33.185.10.dhcp.fibianet.dk. [77.33.185.10])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7261795c58sm154993866b.118.2024.06.25.11.42.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 11:42:23 -0700 (PDT)
-From: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>
-Cc: Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2] serial: imx: ensure RTS signal is not left active after shutdown
-Date: Tue, 25 Jun 2024 20:42:05 +0200
-Message-ID: <20240625184206.508837-1-linux@rasmusvillemoes.dk>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1719340951; x=1719945751;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=eTeAroXO/wxI5kEA8VbI1l6499SWylVFeT71mGO4Lpo=;
+        b=Yo4zz3c36c2i0g2KVOA5qFMetJJGmkAXnyl7I36iACnq4VtgQj5m+27gfE/OiygvK8
+         RUZGvH1Hz8XfVJbOsLh6Tm4WLdtgBDmFnykFqqKbZ6ioDgd90RmHy60RDVFJdKpBvbtU
+         gsp+dRjPwQDpahnMzOB53aDnaDV1xMEF71KOGIeVLJs8fwkvCn+4Qc/nYUuB0BzZw2DU
+         P9tA3m5Afbsbtd2xws1CpNXqA/qRQD8fgsNY4LBYEsJZ5BwdHSQBNgvdggCSxJQUGVAi
+         22izCj1n3gkDR0SDmUoRJk1Bk+D6ur1nBSMPMiAMcHWXXVIJnfcrcdDdTb8l5hgsmlFf
+         mkBA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9qNwkv2RS2jcd+0xH6NOgbqZhyZGz99qHx4DHKmI2mDu+92+Xy3mUBx4lrXSPrMFPuOzLOJRxuZmvzqkMdgo1/0CeN8KKSSK4dcjU
+X-Gm-Message-State: AOJu0Yw71SvSMfkuHAuIbQWo/vcFpiSubq7/aMuEqv2rXR2yaLTTdF21
+	Ma63PnMJIx48lbPJUB/hNBkPrzw3wTvti6z294Ap07d8hmjDS9jcLIWSu1+qQlvlcqfz0VdT2o1
+	9ZN3gcg==
+X-Google-Smtp-Source: AGHT+IFyZ7kXRo1fobxWOpR60+105e2CUJB1svUXS6WY+BeDAegQYQ5D1PdonDyHNqGhZMEWQteOMSmoioOM
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:b4cb:a52b:f9ea:8678])
+ (user=irogers job=sendgmr) by 2002:a05:6902:1208:b0:dfa:59bc:8857 with SMTP
+ id 3f1490d57ef6-e03040ff7bamr193288276.9.1719340951339; Tue, 25 Jun 2024
+ 11:42:31 -0700 (PDT)
+Date: Tue, 25 Jun 2024 11:42:17 -0700
+Message-Id: <20240625184224.929018-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+Subject: [PATCH v4 0/7] Refactor perf python module build
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>, 
+	Will Deacon <will@kernel.org>, James Clark <james.clark@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>, 
+	Nick Terrell <terrelln@fb.com>, Andrei Vagin <avagin@google.com>, Kees Cook <keescook@chromium.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Ze Gao <zegao2021@gmail.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-If a process is killed while writing to a /dev/ttymxc* device in RS485
-mode, we observe that the RTS signal is left high, thus making it
-impossible for other devices to transmit anything.
+Refactor the perf python module build to instead of building C files
+it links libraries. To support this make static libraries for tests,
+ui, util and pmu-events. Doing this allows fewer functions to be
+stubbed out, importantly parse_events is no longer stubbed out which
+will improve the ability to work with heterogeneous cores.
 
-Moreover, the ->tx_state variable is left in state SEND, which means
-that when one next opens the device and configures baud rate etc., the
-initialization code in imx_uart_set_termios dutifully ensures the RTS
-pin is pulled down, but since ->tx_state is already SEND, the logic in
-imx_uart_start_tx() does not in fact pull the pin high before
-transmitting, so nothing actually gets on the wire on the other side
-of the transceiver. Only when that transmission is allowed to complete
-is the state machine then back in a consistent state.
+By not building .c files for the python module and for the build of
+perf, this should also help build times.
 
-This is completely reproducible by doing something as simple as
+Patch 1 adds '*.a' cleanup to the clean target.
 
-  seq 10000 > /dev/ttymxc0
+Patches 2 to 6 add static libraries for existing parts of the perf
+build.
 
-and hitting ctrl-C, and watching with a logic analyzer.
+Patch 7 adds the python build using libraries rather than C source
+files.
 
-Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
----
-v2: Use dev_warn() instead of dev_WARN_ONCE().
+Patch 8 cleans up the python dependencies and removes the no longer
+needed python-ext-sources.
 
-v1: https://lore.kernel.org/lkml/20240524121246.1896651-1-linux@rasmusvillemoes.dk/
+v4: Rebase past conflict with commit eae7044b67a6 ("perf hist: Honor
+    symbol_conf.skip_empty") - fixes like this commit won't be
+    necessary after these changes. Swap a tab for spaces for better
+    consistency.
+v3: Add missed xtensa directory for the util build. Remove adding the
+    arch directory to perf-y as it creates an empty object file that
+    breaks with GCC and LTO.
+v2: Add '*.a' cleanup to clean target. Add reviewed-by James Clark.
 
-A screen dump from a logic analyzer can be seen at:
+Ian Rogers (7):
+  perf build: Add '*.a' to clean targets
+  perf ui: Make ui its own library
+  perf pmu-events: Make pmu-events a library
+  perf test: Make tests its own library
+  perf bench: Make bench its own library
+  perf util: Make util its own library
+  perf python: Switch module to linking libraries from building source
 
-  https://ibb.co/xCcP7Jy
+ tools/perf/Build                              |  14 +-
+ tools/perf/Makefile.config                    |   5 +
+ tools/perf/Makefile.perf                      |  75 +++-
+ tools/perf/arch/Build                         |   5 +-
+ tools/perf/arch/arm/Build                     |   4 +-
+ tools/perf/arch/arm/tests/Build               |   8 +-
+ tools/perf/arch/arm/util/Build                |  10 +-
+ tools/perf/arch/arm64/Build                   |   4 +-
+ tools/perf/arch/arm64/tests/Build             |   8 +-
+ tools/perf/arch/arm64/util/Build              |  20 +-
+ tools/perf/arch/csky/Build                    |   2 +-
+ tools/perf/arch/csky/util/Build               |   6 +-
+ tools/perf/arch/loongarch/Build               |   2 +-
+ tools/perf/arch/loongarch/util/Build          |   8 +-
+ tools/perf/arch/mips/Build                    |   2 +-
+ tools/perf/arch/mips/util/Build               |   6 +-
+ tools/perf/arch/powerpc/Build                 |   4 +-
+ tools/perf/arch/powerpc/tests/Build           |   6 +-
+ tools/perf/arch/powerpc/util/Build            |  24 +-
+ tools/perf/arch/riscv/Build                   |   2 +-
+ tools/perf/arch/riscv/util/Build              |   8 +-
+ tools/perf/arch/s390/Build                    |   2 +-
+ tools/perf/arch/s390/util/Build               |  16 +-
+ tools/perf/arch/sh/Build                      |   2 +-
+ tools/perf/arch/sh/util/Build                 |   2 +-
+ tools/perf/arch/sparc/Build                   |   2 +-
+ tools/perf/arch/sparc/util/Build              |   2 +-
+ tools/perf/arch/x86/Build                     |   6 +-
+ tools/perf/arch/x86/tests/Build               |  20 +-
+ tools/perf/arch/x86/util/Build                |  42 +-
+ tools/perf/arch/xtensa/Build                  |   2 +-
+ tools/perf/bench/Build                        |  46 +-
+ tools/perf/scripts/Build                      |   4 +-
+ tools/perf/scripts/perl/Perf-Trace-Util/Build |   2 +-
+ .../perf/scripts/python/Perf-Trace-Util/Build |   2 +-
+ tools/perf/tests/Build                        | 140 +++----
+ tools/perf/tests/workloads/Build              |  12 +-
+ tools/perf/ui/Build                           |  18 +-
+ tools/perf/ui/browsers/Build                  |  14 +-
+ tools/perf/ui/tui/Build                       |   8 +-
+ tools/perf/util/Build                         | 394 +++++++++---------
+ tools/perf/util/arm-spe-decoder/Build         |   2 +-
+ tools/perf/util/cs-etm-decoder/Build          |   2 +-
+ tools/perf/util/hisi-ptt-decoder/Build        |   2 +-
+ tools/perf/util/intel-pt-decoder/Build        |   2 +-
+ tools/perf/util/perf-regs-arch/Build          |  18 +-
+ tools/perf/util/python.c                      | 274 +++++-------
+ tools/perf/util/scripting-engines/Build       |   4 +-
+ tools/perf/util/setup.py                      |  33 +-
+ 49 files changed, 625 insertions(+), 671 deletions(-)
 
-This is on an imx8mp board, with /dev/ttymxc0 and /dev/ttymxc2 both
-configured for rs485 and connected to each other. I'm writing to
-/dev/ttymxc2. This demonstrates both bugs; that RTS is left high when
-a write is interrupted, and that a subsequent write actually fails to
-have RTS high while TX'ing.
-
-I'm not sure what commit to name as a Fixes:. This certainly happens
-on 6.6 and onwards, but I assume the problem exists since the tx_state
-machine was introduced in cb1a60923609 (serial: imx: implement rts
-delaying for rs485), and possibly even before that.
-
-
- drivers/tty/serial/imx.c | 51 ++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 51 insertions(+)
-
-diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index 2eb22594960f..85c240e8c24e 100644
---- a/drivers/tty/serial/imx.c
-+++ b/drivers/tty/serial/imx.c
-@@ -1551,6 +1551,7 @@ static void imx_uart_shutdown(struct uart_port *port)
- 	struct imx_port *sport = (struct imx_port *)port;
- 	unsigned long flags;
- 	u32 ucr1, ucr2, ucr4, uts;
-+	int loops;
- 
- 	if (sport->dma_is_enabled) {
- 		dmaengine_terminate_sync(sport->dma_chan_tx);
-@@ -1613,6 +1614,56 @@ static void imx_uart_shutdown(struct uart_port *port)
- 	ucr4 &= ~UCR4_TCEN;
- 	imx_uart_writel(sport, ucr4, UCR4);
- 
-+	/*
-+	 * We have to ensure the tx state machine ends up in OFF. This
-+	 * is especially important for rs485 where we must not leave
-+	 * the RTS signal high, blocking the bus indefinitely.
-+	 *
-+	 * All interrupts are now disabled, so imx_uart_stop_tx() will
-+	 * no longer be called from imx_uart_transmit_buffer(). It may
-+	 * still be called via the hrtimers, and if those are in play,
-+	 * we have to honour the delays.
-+	 */
-+	if (sport->tx_state == WAIT_AFTER_RTS || sport->tx_state == SEND)
-+		imx_uart_stop_tx(port);
-+
-+	/*
-+	 * In many cases (rs232 mode, or if tx_state was
-+	 * WAIT_AFTER_RTS, or if tx_state was SEND and there is no
-+	 * delay_rts_after_send), this will have moved directly to
-+	 * OFF. In rs485 mode, tx_state might already have been
-+	 * WAIT_AFTER_SEND and the hrtimer thus already started, or
-+	 * the above imx_uart_stop_tx() call could have started it. In
-+	 * those cases, we have to wait for the hrtimer to fire and
-+	 * complete the transition to OFF.
-+	 */
-+	loops = port->rs485.flags & SER_RS485_ENABLED ?
-+		port->rs485.delay_rts_after_send : 0;
-+	while (sport->tx_state != OFF && loops--) {
-+		uart_port_unlock_irqrestore(&sport->port, flags);
-+		msleep(1);
-+		uart_port_lock_irqsave(&sport->port, &flags);
-+	}
-+
-+	if (sport->tx_state != OFF) {
-+		dev_warn(sport->port.dev, "unexpected tx_state %d\n",
-+			 sport->tx_state);
-+		/*
-+		 * This machine may be busted, but ensure the RTS
-+		 * signal is inactive in order not to block other
-+		 * devices.
-+		 */
-+		if (port->rs485.flags & SER_RS485_ENABLED) {
-+			ucr2 = imx_uart_readl(sport, UCR2);
-+			if (port->rs485.flags & SER_RS485_RTS_AFTER_SEND)
-+				imx_uart_rts_active(sport, &ucr2);
-+			else
-+				imx_uart_rts_inactive(sport, &ucr2);
-+			imx_uart_writel(sport, ucr2, UCR2);
-+		}
-+		sport->tx_state = OFF;
-+	}
-+
- 	uart_port_unlock_irqrestore(&sport->port, flags);
- 
- 	clk_disable_unprepare(sport->clk_per);
 -- 
-2.45.2
+2.45.2.741.gdbec12cfda-goog
 
 
