@@ -1,471 +1,240 @@
-Return-Path: <linux-kernel+bounces-229313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22AA7916E37
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:36:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57074916E38
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CED0528359C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:36:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 944DDB26668
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E011741F6;
-	Tue, 25 Jun 2024 16:35:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b="OrF45WPG"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4DD14A0B8
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 16:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 009D2173342;
+	Tue, 25 Jun 2024 16:37:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760F713B2B0
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 16:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719333358; cv=none; b=fu6qakFywiO+Wsxij/IUKMZITBLbg3B3xK/1DzfTQYqMFYaOeAeYQYqjq+1nbPb3wnMKJ/BQEBZyb26Wo3WrwyeyKSd3sZ88cM6KJFaZ0svzGPsECKG0O90xJxDyBcBO1JftFL7K/scMf4Ms785iDV9czoHWa0SkOtCy8G57QRY=
+	t=1719333426; cv=none; b=cRYygCWCwMoJp23OIX8GVQte4IugdSOtW17h47qTylgZEoxE5dvaCUJ++wDTgoEO1Dt9XKaTpt3njWaw+OocLJV2+//Ghkmh5C0MpANeb81502iE3CiI7L6f592m0j4iUkIr2pzbxncD6zsz0kVeSDCpLVsTpPhWLZNOAYfCbeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719333358; c=relaxed/simple;
-	bh=26Jqu1qSab8jyYnwz/wq2RhRJcLfM1SyldEi8wpoXG8=;
-	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=fYzFevUFhNcET0BwgMmZ/knxqH75fHOJoQouaamdcOYNkBsz5KV9iIi0xclZGDV6OW80LFRjlQqyH1EGYhzOQAYluNCyteRANG06VekaloK9Tov5bIEH+RrX8bT10szPxvIYvJ8eHpQNyV+3PA28YK4OY3C72DdiPUtX6tlrVSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=telus.net; spf=pass smtp.mailfrom=telus.net; dkim=pass (2048-bit key) header.d=telus.net header.i=@telus.net header.b=OrF45WPG; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=telus.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=telus.net
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c7dff0f4e4so4521607a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:35:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=telus.net; s=google; t=1719333355; x=1719938155; darn=vger.kernel.org;
-        h=thread-index:content-language:content-transfer-encoding
-         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nsu+2sfkZBNRWNQerlRnOkDrtkR1xSgZD7JJpgzpUv4=;
-        b=OrF45WPGGeO7sDsWApgg9qdKvECDWjaTHqKt07MWlfdy9F4sc11VQ/ORy2BCwjtR0/
-         zF88CTyj5afaC5y8U9z863ORC7Wlrvg+wEzxeP0Vbrr9Z+W/QVIjkY0L+tu+kt22KgN+
-         wZfze8WJP8N7391hn2pc1AFeK7S3gMlR0bvb2zhEJdRnAKhimHnCn1eCDjNqOdMwfkhH
-         d9srJlsUpli1g6y2VfO0bzYDQz9G+8iTkYxcWoal+30H8v9E/WO5nBUw9MESSLjcd63y
-         yyLFBLRuXmKuUdf3zomwbgccGmHmRQmMUc8d8dEeLe3ls8z8A+uT2sv4FBSAm1/Q/6Hf
-         HozQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719333355; x=1719938155;
-        h=thread-index:content-language:content-transfer-encoding
-         :mime-version:message-id:date:subject:in-reply-to:references:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nsu+2sfkZBNRWNQerlRnOkDrtkR1xSgZD7JJpgzpUv4=;
-        b=qFrbg2/t54sJpehP3hBSOng8SAP3CLFWDmOGWUE7LvEShn5Zz9VBeL5eK515x7PtSv
-         /g0AervvQ1ICLvDqSBhEdiVSShWqbxKXA/7Zx3+AgBW6Y9m1uX5xsMjXbWDKBezMSTYW
-         DebGhDMUY+48Xoa77P2Jm7jTt4PGXZS8htBAa7G38DBCMoxa276KXaNvLkxM+dAd2S1E
-         jqNOBRCU93b58Tl6kNZHuojzsO/SRtkgFdnxXt/FaiRknkwT0W8dYkMrmsUPayUfSLNz
-         dnyS3hzBLhT/uuXm0nBvQvBQuVDahiEycGyiIJGoiVHQhDLUi0GKTlHdXPJUFEgoqLHj
-         6yjg==
-X-Forwarded-Encrypted: i=1; AJvYcCV0vl4F/RuIP7rF2gpKMQ8BH+bEF0BaEL/NZzzY2t9qI4TYu5zzlqgM38oeN8V4Rv0G8lnq3ObQ9tjtNKg7Xvzgrz/PmagoPLe2GcqX
-X-Gm-Message-State: AOJu0YwWVPGOPhnG74U/PZcElNDtAqQtOXuRRhg72uno78GJ/wE0bXrT
-	o3p505Ur0DGgkyf792sSJ4RJDdJ4ITlsyPTzkupR5JtcSQA4dwqFMp6agS0g+vE=
-X-Google-Smtp-Source: AGHT+IHnluzcaeBF3nMOZ5KFbTEitbdI6AXHu+ZqqrKEMInvjyA6+tOp0IpAW4c2gO0WEtoFcduTfw==
-X-Received: by 2002:a17:90b:1bcc:b0:2c7:af63:9581 with SMTP id 98e67ed59e1d1-2c8611324e4mr7171943a91.0.1719333355223;
-        Tue, 25 Jun 2024 09:35:55 -0700 (PDT)
-Received: from DougS18 (s66-183-142-209.bc.hsia.telus.net. [66.183.142.209])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819a7a985sm9101613a91.19.2024.06.25.09.35.53
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 25 Jun 2024 09:35:54 -0700 (PDT)
-From: "Doug Smythies" <dsmythies@telus.net>
-To: "'Christian Loehle'" <christian.loehle@arm.com>
-Cc: <rafael@kernel.org>,
-	<vincent.guittot@linaro.org>,
-	<qyousef@layalina.io>,
-	<peterz@infradead.org>,
-	<daniel.lezcano@linaro.org>,
-	<ulf.hansson@linaro.org>,
-	<anna-maria@linutronix.de>,
-	<kajetan.puchalski@arm.com>,
-	<lukasz.luba@arm.com>,
-	<dietmar.eggemann@arm.com>,
-	<linux-pm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	"Doug Smythies" <dsmythies@telus.net>
-References: <20240611112413.1241352-1-christian.loehle@arm.com> <004a01dac04c$314c4360$93e4ca20$@telus.net> <20240618111729.hqywobxh3gm7rfgq@e127648.arm.com> <005701dac1a4$6ae1c830$40a55890$@telus.net> <20240620111923.wmse37qqtxi6ffzx@e127648.arm.com>
-In-Reply-To: <20240620111923.wmse37qqtxi6ffzx@e127648.arm.com>
-Subject: RE: [PATCHv2 0/3] cpuidle: teo: Fixing utilization and intercept logic
-Date: Tue, 25 Jun 2024 09:35:55 -0700
-Message-ID: <002d01dac71d$c0ebd170$42c37450$@telus.net>
+	s=arc-20240116; t=1719333426; c=relaxed/simple;
+	bh=Y1dqCGIz5xerw9PBkurDkELOjQn0JSvxFlpNIxR0Obs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dpnNFwxpjxha6etGaBunJpPutc+S704XYKb/eZIeoaXraFhBKGGeCBTJtrFN17tEiIMD61OHqIsnoAUI0oOGc/O8XrZzlXRked1SVuwOM0omm9i1n0M18NKMEJ8xHUl9TgzVF9wKK8D+9Gb5MIRKgCP2UNmOMlyHaNi89oNcKu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 56F27339;
+	Tue, 25 Jun 2024 09:37:27 -0700 (PDT)
+Received: from [10.1.39.170] (XHFQ2J9959.cambridge.arm.com [10.1.39.170])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F336E3F766;
+	Tue, 25 Jun 2024 09:37:00 -0700 (PDT)
+Message-ID: <7bf7437a-b0a5-4522-88ce-11e6db79a527@arm.com>
+Date: Tue, 25 Jun 2024 17:36:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-ca
-Thread-Index: AQHzep4n7RUpOXZFjs7PHwMj2t6TVAGNHIhrAY/VzMwB5e213AMG5FLYsWb1XjA=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 0/5] Alternative mTHP swap allocator improvements
+Content-Language: en-GB
+To: Chris Li <chrisl@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+ Kairui Song <kasong@tencent.com>, "Huang, Ying" <ying.huang@intel.com>,
+ Kalesh Singh <kaleshsingh@google.com>, Barry Song <baohua@kernel.org>,
+ Hugh Dickins <hughd@google.com>, David Hildenbrand <david@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20240618232648.4090299-1-ryan.roberts@arm.com>
+ <1cb60685-3c34-4441-81e1-a60adc70d1f2@arm.com>
+ <CANeU7Qnmh6+7CSO3pTvTiJ6_4jA=+h2_KDtYz-Yx3pfT5-snyg@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CANeU7Qnmh6+7CSO3pTvTiJ6_4jA=+h2_KDtYz-Yx3pfT5-snyg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Christian,
-
-It took awhile.
-
-On 2024.06.20 04:19 Christian Loehle wrote:
-> On Tue, Jun 18, 2024 at 10:24:46AM -0700, Doug Smythies wrote:
->> Hi Christian,
+On 25/06/2024 17:06, Chris Li wrote:
+> On Tue, Jun 25, 2024 at 1:02 AM Ryan Roberts <ryan.roberts@arm.com> wrote:
 >>
->> Thank you for your reply.
-> 
-> Thank you for taking the time!
-> 
->>
->> On 2024.06.18 03:54 Christian Loehle wrote:
->>> On Sun, Jun 16, 2024 at 05:20:43PM -0700, Doug Smythies wrote:
->>>> On 2024.06.11 04:24 Christian Loehle wrote:
->>>>
->>>> ...
->>>> > Happy for anyone to take a look and test as well.
->>>> ...
->>>>
->>>> I tested the patch set.
->>>> I do a set of tests adopted over some years now.
->>>> Readers may recall that some of the tests search over a wide range of operating conditions looking for areas to focus on in
-more
->> detail.
->>>> One interesting observation is that everything seems to run much slower than the last time I did this, last August, Kernel
->> 6.5-rc4.
->>>>
+>> On 19/06/2024 00:26, Ryan Roberts wrote:
+>>> Hi All,
 >>>
->>> Thank you very much Doug, that is helpful indeed!
+>>> Chris has been doing great work at [1] to clean up my mess in the mTHP swap
+>>> entry allocator. But Barry posted a test program and results at [2] showing that
+>>> even with Chris's changes, there are still some fallbacks (around 5% - 25% in
+>>> some cases). I was interested in why that might be and ended up putting this PoC
+>>> patch set together to try to get a better understanding. This series ends up
+>>> achieving 0% fallback, even with small folios ("-s") enabled. I haven't done
+>>> much testing beyond that (yet) but thought it was worth posting on the strength
+>>> of that result alone.
 >>>
->>>> Test system:
->>>> Processor: Intel(R) Core(TM) i5-10600K CPU @ 4.10GHz (6 cores, 2 thread per core, 12 CPUs)
->>>> CPU Frequency scaling driver: intel_pstate
->>>> HWP (HardWare Pstate) control: Disabled
->>>> CPU frequency scaling governor: Performance
->>>> Idle states: 4: name : description:
->>>>    state0/name:POLL		desc:CPUIDLE CORE POLL IDLE
->>>>    state1/name:C1_ACPI		desc:ACPI FFH MWAIT 0x0
->>>>    state2/name:C2_ACPI		desc:ACPI FFH MWAIT 0x30
->>>>    state3/name:C3_ACPI		desc:ACPI FFH MWAIT 0x60
+>>> At a high level this works in a similar way to Chris's series; it marks a
+>>> cluster as being for a particular order and if a new cluster cannot be allocated
+>>> then it scans through the existing non-full clusters. But it does it by scanning
+>>> through the clusters rather than assembling them into a list. Cluster flags are
+>>> used to mark clusters that have been scanned and are known not to have enough
+>>> contiguous space, so the efficiency should be similar in practice.
 >>>
->>> What are target residencies and exit latencies?
+>>> Because its not based around a linked list, there is less churn and I'm
+>>> wondering if this is perhaps easier to review and potentially even get into
+>>> v6.10-rcX to fix up what's already there, rather than having to wait until v6.11
+>>> for Chris's series? I know Chris has a larger roadmap of improvements, so at
+>>> best I see this as a tactical fix that will ultimately be superseeded by Chris's
+>>> work.
+>>>
+>>> There are a few differences to note vs Chris's series:
+>>>
+>>> - order-0 fallback scanning is still allowed in any cluster; the argument in the
+>>>   past was that swap should always use all the swap space, so I've left this
+>>>   mechanism in. It is only a fallback though; first the the new per-order
+>>>   scanner is invoked, even for order-0, so if there are free slots in clusters
+>>>   already assigned for order-0, then the allocation will go there.
+>>>
+>>> - CPUs can steal slots from other CPU's current clusters; those clusters remain
+>>>   scannable while they are current for a CPU and are only made unscannable when
+>>>   no more CPUs are scanning that particular cluster.
+>>>
+>>> - I'm preferring to allocate a free cluster ahead of per-order scanning, since,
+>>>   as I understand it, the original intent of a per-cpu current cluster was to
+>>>   get pages for an application adjacent in the swap to speed up IO.
 >>
->> Of course. Here:
+>> [...]
 >>
->> /sys/devices/system/cpu/cpu1/cpuidle/state0/residency:0
->> /sys/devices/system/cpu/cpu1/cpuidle/state1/residency:1
->> /sys/devices/system/cpu/cpu1/cpuidle/state2/residency:360
->> /sys/devices/system/cpu/cpu1/cpuidle/state3/residency:3102
+>> I've been having a play, trying to extend this to actively free swap entries to make sufficient space for a new allcoation if the entries are already in swap cache. (To be clear, I'm not pursuing this series for inclusion, but was just trying to put some numbers to the idea, which could later be added to Chris's series if it makes sense).
 >>
->> /sys/devices/system/cpu/cpu1/cpuidle/state0/latency:0
->> /sys/devices/system/cpu/cpu1/cpuidle/state1/latency:1
->> /sys/devices/system/cpu/cpu1/cpuidle/state2/latency:120
->> /sys/devices/system/cpu/cpu1/cpuidle/state3/latency:1034
+>> However, I'm running into an unexpected issue; It was my previous understanding that if the swap map for an entry is SWAP_HAS_CACHE, then there is a folio in the swap cache and nothing is referencing the swap entry, so the entry can be freed with __try_to_reclaim_swap() - that's the pattern that the existing oder-0 scanner uses.
+>>
+>> But I'm finding that __try_to_reclaim_swap() always returns 0, indicating that no folio was associated with the swap entry. How can that be, if swap_map[offset] == SWAP_HAS_CACHE ?
 > 
-> Thanks,
-> what am I missing here that these are two different sets of states?
-
-I don't know what you are missing. Those are not two different sets of states.
-Maybe I am missing something?
-
->>>> Ilde driver: intel_idle
->>>> Idle governor: as per individual test
->>>> Kernel: 6.10-rc2 and with V1 and V2 patch sets (1000 Hz tick rate)
->>>> Legend:
->>>>    teo: unmodified 6.10-rc2
->>>>    menu:
->>>>    ladder:
->>>>    cl: Kernel 6.10-rc2 + Christian Loehle patch set V1
->>>>    clv2: Kernel 6.10-rc2 + Christian Loehle patch set V2
-             no-util: Kernel 6.10-rc2 + Christian Loehle [PATCHv2 1/3] Revert: "cpuidle: teo: Introduce util-awareness"
->>>> System is extremely idle, other than the test work.
->>>
->>> If you don't mind spinning up another one, I'd be very curious about
->>> results from just the Util-awareness revert (i.e. v2 1/3).
->>> If not I'll try to reproduce your tests.
->>
->> I will, but not today.
-
-Most, if not all, links have been replaced adding "no-util" data.
-Summary: there is negligible difference between "teo" and "no-util".
-Isn't that what is expected for a system with 4 idle states?
-
-Note 1: I forgot to change the date on several of the graphs.
- 
-> Thank you.
+> I saw that in my test too. Some swap entries remain as SWAP_HAS_CACHE
+> which contribute to the swap allocation failure rate.
 > 
->> I have never been a fan of Util-awareness.
-> 
-> Well if you want to elaborate on that I guess now is the time and
-> here is the place. ;)
+> One possibility is that the zram is hitting the synchronous IO case
+> for swap in, it does not put the folio in swap cache when serving the
+> swap in. In commit 13ddaf26be324a7f951891ecd9ccd04466d27458 from
+> Kairui, the SWAP_HAS_CACHE flag was added for synchronous IO, in order
+> to address a race in the swap in. But the SWAP_HAS_CACHE should be
+> cleaned up after swap in fault though. I did not have a chance to dig
+> deeper into the root cause of those SWAP_HAS_CACHE entries yet.
 
-Most of my concerns with the original versions were fixed,
-which is why it now has little to no effect on a system with 4 idle states.
-Beyond that, I haven't had the time to review all of my old tests and findings.
-
->>>> Test 1: 2 core ping pong sweep:
->>>>
->>>> Pass a token between 2 CPUs on 2 different cores.
->>>> Do a variable amount of work at each stop.
->>>
->>> Hard to interpret the results here, as state residencies would be the
->>> most useful one, but from the results I assume that residencies are
->>> calculated over all possible CPUs, so 4/6 CPUs are pretty much idle
->>> the entire time, resulting in >75% state3 residency overall.
->>
->> It would be 10 of 12 CPUs are idle and 4 of 6 cores.
-> 
-> Of course, my bad.
-> 
->> But fair enough, the residency stats are being dominated by the idle CPUs.
->> I usually look at the usage in conjunction with the residency percentages.
->> At 10 minutes (20 second sample period):
->> teo entered idle state 3 517 times ; clv2 was 1,979,541 times
->> At 20 minutes:
->> teo entered idle state 3 525 times ; clv2 was 3,011,263 times
->> Anyway, I could hack something to just use data from the 2 CPUs involved.
-> 
-> Your method works, just a bit awkward, I guess I'm spoiled in that
-> regard :)
-> (Shameless plug:
-> https://tooling.sites.arm.com/lisa/latest/trace_analysis.html#lisa.analysis.idle.IdleAnalysis.plot_cpu_idle_state_residency
-> )
-
-Very interesting. If I ever get more time, I'll try it.
-
->>>> Purpose: To utilize the shallowest idle states
->>>> and observe the transition from using more of 1
->>>> idle state to another.
->>>>
->>>> Results relative to teo (negative is better):
-	menu		ladder		clv2		cl		no-util
-ave	-2.09%		11.11%		2.88%		1.81%		0.32%
-max	10.63%		33.83%		9.45%		10.13%		8.00%
-min	-11.58%	6.25%		-3.61%		-3.34%		-1.06%
-
-Note 1: Old data re-stated with all the ">>>" stuff removed.
-Note 2: The max +8.00% for no-util is misleading, as it was just a slight difference in a transition point.
-
->>>> While there are a few operating conditions where clv2 performs better than teo, overall it is worse.
->>>>
->>>> Further details:
->>>> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/2-1/2-core-pp-relative.png
->>>> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/2-1/2-core-pp-data.png
->>>> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/2-1/perf/
->>>>
->>>> Test 2: 6 core ping pong sweep:
->>>>
->>>> Pass a token between 6 CPUs on 6 different cores.
->>>> Do a variable amount of work at each stop.
->>>>
->>>
->>> My first guess would've been that this is the perfect workload for the
->>> very low utilization threshold, but even teo has >40% state3 residency
->>> consistently here.
->>
->> There are still 6 idle CPUs.
->> I'll try a 12 CPUs using each core twice type sweep test,
->> but I think I settled on 6 because it focused on what I wanted for results.
-> 
-> I see, again, my bad.
-
-I had a 12 CPU type test script already and have used it in the past. Anyway:
-
-Results relative to teo (negative is better):
-	no-util	menu	clv2
-ave	0.07%	0.77%	1.41%
-max	0.85%	2.78%	11.45%
-min	-1.30%	-0.62%	0.00%
-
-Note 1:	only test runs 1 to 120 are included, eliminating the bi-stable uncertainty region
-	of the higher test runs.
-Note 2: This test does show differences between teo and no-util in idle state usage in
-	the bi-stable region. I do not know if it is repeatable.
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/12-1/12-cpu-pp-data.png
-http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/12-1/12-cpu-pp-data-detail-a.png
-http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/12-1/12-cpu-pp-relative.png
-http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/12-1/perf/
- 
->>>> Purpose: To utilize the midrange idle states
->>>> and observe the transitions between use of
->>>> idle states.
->>>>
->>>> Note: This test has uncertainty in an area where the performance is bi-stable for all idle governors,
->>>> transitioning between much less power and slower performance and much more power and higher performance.
->>>> On either side of this area, the differences between all idle governors are negligible.
->>>> Only data from before this area (from results 1 t0 95) was included in the below results.
->>>
->>> I see and agree with your interpretation. Difference in power between
->>> all tested seems to be negligible during that window. Interestingly
->>> the residencies of idle states seem to be very different, like ladder
->>> being mostly in deepest state3. Maybe total package power is too coarse
->>> to show the differences for this test.
->>>
->>>> Results relative to teo (negative is better):
-	menu	ladder	cl	clv2	no-util
-ave	0.16%	4.32%	2.54%	2.64%	0.25%
-max	0.92%	14.32%	8.78%	8.50%	14.96%
-min	-0.44%	0.27%	0.09%	0.05%	-0.54%
-
-Note 1: Old data re-stated with all the ">>>" stuff removed.
-Note 2: The max 14.96% for no-util was the during test start.
-	It is not always repeatable. See the dwell test results way further down below.
-
->>>> One large clv2 difference seems to be excessive use of the deepest idle state,
->>>> with corresponding 100% hit rate on the "Idle State 3 was to deep" metric.
->>>> Example (20 second sample time):
->>>>
->>>> teo: Idle state 3 entries: 600, 74.33% were to deep or 451. Processor power was 38.0 watts.
->>>> clv2: Idle state 3 entries: 4,375,243, 100.00% were to deep or 4,375,243. Processor power was 40.6 watts.
->>>> clv2 loop times were about 8% worse than teo.
->>>
->>> Some of the idle state 3 residencies seem to be >100% at the end here,
->>> not sure what's up with that.
->>
->> The test is over and the system is completely idle.
->> And yes, there are 4 calculations that come out > 100%, the worst being 100.71%,
->> with a total sum over all idle states of 100.79%.
->> I can look into it if you want but have never expected the numbers to be that accurate.
-> 
-> Hopefully it's just some weird rounding thing, it just looks strange.
-> 
->>
->>>> Further details:
->>>> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/6-1/6-core-pp-data-detail-a.png
->>>> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/6-1/6-core-pp-data-detail-b.png
->>>> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/6-1/6-core-pp-data.png
->>>> http://smythies.com/~doug/linux/idle/teo-util3/ping-sweep/6-1/perf/
->>>>
->>>> Test 3: sleeping ebizzy - 128 threads.
->>>>
->>>> Purpose: This test has given interesting results in the past.
->>>> The test varies the sleep interval between record lookups.
->>>> The result is varying usage of idle states.
->>>>
->>>> Results: relative to teo (negative is better):
-	menu	clv2	ladder	cl	no-util
-ave	0.06%	0.38%	0.81%	0.35%	-0.03%
-max	2.53%	3.20%	5.00%	2.87%	0.79%
-min	-2.13%	-1.66%	-3.30%	-2.13%	-1.19%
-
-Note 1: Old data re-stated with all the ">>>" stuff removed.
-
->>>> No strong conclusion here, from just the data.
->>>> However, clv2 seems to use a bit more processor power, on average.
->>>
->>> Not sure about that, from the residencies ladder and teo should be
->>> decisive losers in terms of power. While later in the test teo seems
->>> to be getting worse in power it doesn't quite reflect the difference
->>> in states.
->>> E.g. clv2 finishing with 65% state2 residency while teo has 40%, but
->>> I'll try to get per-CPU power measurements on this one.
->>> Interestingly ladder is a clear winner if anything, if that is reliable
->>> as a result that could indicate a too aggressive tick stop from the
->>> other governors, but cl isn't that much better than clv2 here, even
->>> though it stops the tick less aggressively.
->>
->> I agree with what you are saying.
->> It is a shorter test at only 25 minutes.
->> It might be worth trying the test again with more strict attention to
->> stabilizing the system thermally before each test.
->> The processor power will vary by a few watts for the exact same load
->> as a function of processor package temperature and coolant (my system is
->> water cooled) temperature and can take 20 to 30 minutes to settle.
->>
->> Reference:
->> http://smythies.com/~doug/linux/idle/teo-util3/temperature/thermal-stabalization-time.png
->>
->>>>
->>>> Further details:
->>>
->>> Link is missing, but I found
->>> http://smythies.com/~doug/linux/idle/teo-util3/ebizzy/
->>> from browsing your page.
->>
->> Yes, I accidently hit "Send" on my original email before it was actually finished.
->> But, then I was tired and thought "close enough".
->>
->>>> Test4: adrestia wakeup latency tests. 500 threads.
->>>>
->>>> Purpose: The test was reported in 2023.09 by the kernel test robot and looked
->>>> both interesting and gave interesting results, so I added it to the tests I run.
->>>
->>> http://smythies.com/~doug/linux/idle/teo-util3/adrestia/periodic/perf/
->>> So interestingly we can see, what I would call, the misbehavior of teo
->>> here, with teo skipping state2 and state3 entirely. You would expect
->>> a power regression here, but it doesn't translate into package power
->>> anyway.
->>>
->>>>
->>>> Results:
-teo:wakeup cost (periodic, 20us): 3130nSec reference
-clv2:wakeup cost (periodic, 20us): 3179nSec +1.57%
-cl:wakeup cost (periodic, 20us): 3206nSec +2.43%
-menu:wakeup cost (periodic, 20us): 2933nSec -6.29%
-ladder:wakeup cost (periodic, 20us): 3530nSec +12.78%
-no-util: wakeup cost (periodic, 20us): 3062nSec -2.17%
-
-The really informative graph is this one:
-http://smythies.com/~doug/linux/idle/teo-util3/adrestia/periodic/histogram-detail-a.png
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-util3/adrestia/periodic/histogram-detail-b.png
-http://smythies.com/~doug/linux/idle/teo-util3/adrestia/periodic/perf/
-
->>>
->>> Is this measured as wakeup latency?
->>> I can't find much info about the test setup here, do you mind sharing
->>> something on it?
->>
->> I admit to being vague on this one, and I'll need some time to review.
->> The notes I left for myself last September are here:
->> http://smythies.com/~doug/linux/idle/teo-util2/adrestia/README.txt
-
-Those notes have been updated but are still not very good.
-There is bunch of system overhead in the "wakeup cost".
+Oh wait, I think they are probably in the swap slot cache waiting to be freed.
+Once the count goes to 0 (inc SWAP_HAS_CACHE), __swap_entry_free_locked
+temporarily adds SWAP_HAS_CACHE back in, and free_swap_slot() is called. The
+entry is buffered in that layer until the buffer is full and they are all
+flushed together. So should be able to trigger that flush to free some slots.
 
 > 
-> Thanks!
+> Chris
 > 
 >>
->>>> No strong conclusion here, from just the data.
->>>> However, clv2 seems to use a bit more processor power, on average.
->>>> teo: 69.72 watts
->>>> clv2: 72.91 watts +4.6%
->>>> Note 1: The first 5 minutes of the test powers were discarded to allow for thermal stabilization.
+>> Here is my code, for reference. Note that "evict" is always set true to be very agressive for now, but the eventual idea is that it would only be set to true when certain criteria are met (e.g. last attempt to allocate for order either failed or had to evict to succeed).
 >>
->> which might not have been long enough, see the thermal notes above.
+>> With logging added, every single call to __try_to_reclaim_swap() returns 0. (well it also live locks due to that with code as shown, but I hacked around that in experiments). Any ideas, before I dig deeper?
 >>
->>>> Note 2: More work is required for this test, because the teo one actually took longer to execute, due to more outlier results
->> than the other tests.
 >>
->>>> There were several other tests run but are not written up herein.
->>>>
->>> Because results are on par for all? Or inconclusive / not reproducible?
+>> diff --git a/mm/swapfile.c b/mm/swapfile.c
+>> index f6d78723f0fd..928d61e1d9d5 100644
+>> --- a/mm/swapfile.c
+>> +++ b/mm/swapfile.c
+>> @@ -641,13 +641,25 @@ scan_swap_map_ssd_cluster_conflict(struct swap_info_struct *si,
+>>  }
 >>
->> Yes, because nothing of significance was observed or the test was more or less a repeat of an already covered test.
->> Initially, I had a mistake in my baseline teo tests, and a couple of the not written up tests have still not been re-run with the
->> proper baseline.
-> 
-> Thank you for testing, that's what I hoped.
-> 
-> Kind Regards,
-> Christian
-
-Results from a 6 core ping pong dwell test:
-
-Note:	This is the same spot as the first data point from the above 6 core sweep test.
-	It is important to note that the no-util results was not about +15% as above.
-
-averages:
-
-teo: 11.91786092 reference.
-clv2: 12.94927586 +8.65%
-cl: 12.89657797 +8.22%
-menu: 11.85430331 -0.54%
-ladder: 13.93532619 +17.08%
-no-util: 11.93479453 +0.14%
-
-Further details:
-http://smythies.com/~doug/linux/idle/teo-util3/6-5000000-0/perf/
-
-... Doug
-
+>>  static inline bool swap_range_empty(char *swap_map, unsigned int start,
+>> -                                   unsigned int nr_pages)
+>> +                                   unsigned int nr_pages, bool *inc_cached)
+>>  {
+>>         unsigned int i;
+>> -
+>> -       for (i = 0; i < nr_pages; i++) {
+>> -               if (swap_map[start + i])
+>> -                       return false;
+>> +       bool hit_cache = false;
+>> +
+>> +       if (*inc_cached) {
+>> +               for (i = 0; i < nr_pages; i++) {
+>> +                       if (swap_map[start + i]) {
+>> +                               if (swap_map[start + i] != SWAP_HAS_CACHE)
+>> +                                       return false;
+>> +                               hit_cache = true;
+>> +                       }
+>> +               }
+>> +               *inc_cached = hit_cache;
+>> +       } else {
+>> +               for (i = 0; i < nr_pages; i++) {
+>> +                       if (swap_map[start + i])
+>> +                               return false;
+>> +               }
+>>         }
+>>
+>>         return true;
+>> @@ -760,6 +772,7 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
+>>         struct swap_cluster_info *ci;
+>>         unsigned int tmp, max;
+>>         unsigned int stop = SWAP_NEXT_INVALID;
+>> +       bool evict = true;
+>>
+>>  new_cluster:
+>>         cluster = this_cpu_ptr(si->percpu_cluster);
+>> @@ -799,18 +812,48 @@ static bool scan_swap_map_try_ssd_cluster(struct swap_info_struct *si,
+>>          * natural alignment.
+>>          */
+>>         max = ALIGN(tmp + 1, SWAPFILE_CLUSTER);
+>> -       ci = lock_cluster(si, tmp);
+>> -       while (tmp < max) {
+>> -               if (swap_range_empty(si->swap_map, tmp, nr_pages))
+>> -                       break;
+>> -               tmp += nr_pages;
+>> +scan_cluster:
+>> +       if (tmp < max) {
+>> +               ci = lock_cluster(si, tmp);
+>> +               while (tmp < max) {
+>> +                       if (swap_range_empty(si->swap_map, tmp, nr_pages, &evict))
+>> +                               break;
+>> +                       tmp += nr_pages;
+>> +               }
+>> +               unlock_cluster(ci);
+>>         }
+>> -       unlock_cluster(ci);
+>>         if (tmp >= max) {
+>>                 cluster_dec_scanners(ci);
+>>                 cluster->next[order] = SWAP_NEXT_INVALID;
+>>                 goto new_cluster;
+>>         }
+>> +       if (evict) {
+>> +               unsigned int off;
+>> +               int nr;
+>> +
+>> +               spin_unlock(&si->lock);
+>> +
+>> +               for (off = tmp; off < tmp + nr_pages; off += nr) {
+>> +                       nr = 1;
+>> +                       if (READ_ONCE(si->swap_map[off]) == SWAP_HAS_CACHE) {
+>> +                               nr = __try_to_reclaim_swap(si, off, TTRS_ANYWAY);
+>> +                               if (nr < 0)
+>> +                                       break;
+>> +                               else if (nr == 0)
+>> +                                       nr = 1;
+>> +                               nr = ALIGN(off + 1, nr) - off;
+>> +                       }
+>> +               }
+>> +
+>> +               spin_lock(&si->lock);
+>> +               *scan_base = this_cpu_read(*si->cluster_next_cpu);
+>> +               *offset = *scan_base;
+>> +
+>> +               if (nr < 0)
+>> +                       tmp += nr_pages;
+>> +
+>> +               goto scan_cluster;
+>> +       }
+>>         *offset = tmp;
+>>         *scan_base = tmp;
+>>         tmp += nr_pages;
+>>
+>>
 
 
