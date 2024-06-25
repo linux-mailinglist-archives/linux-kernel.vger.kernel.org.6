@@ -1,167 +1,185 @@
-Return-Path: <linux-kernel+bounces-228678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DC0B91654E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:34:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BED6C916552
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:36:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D5B9B1F233EF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:34:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49B2AB20B52
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:36:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E2A145B32;
-	Tue, 25 Jun 2024 10:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C82314A4E9;
+	Tue, 25 Jun 2024 10:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="c2VrqUPI";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="c2VrqUPI"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cfZ9pfGl"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C098D149C61;
-	Tue, 25 Jun 2024 10:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CC0145B32;
+	Tue, 25 Jun 2024 10:36:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719311673; cv=none; b=rV+cjICwgrNzo8Uod3QxWwfyCmS/eMvn4CL0wwkV9GK9FksKuzYTzu7OmHRdGxgyUAmfMBpFy4atDOWBZZfJ1bIuKEerronHjp2KRCawcl3jwwsg1vbkTNt2is8ALzGeX/Evk31Yv3uD97x81NLMNPEdkK5Y5mtCuIhk6DBXRJE=
+	t=1719311789; cv=none; b=tkdSwxGoLujWh/DdnwTDAn2szlfQf3e6T37U0+bP/c66KvIDlgeZl8oiYWskpHPTFiAuAVaC7dEFw9n2FW7ACC1myt+t2jWo4r8EWiIkXT/bIX+G9r4+pM6bowVkw/mFzqrx4uPzGFBqF572/vC4h6dCnwJzUQriODgexhazNm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719311673; c=relaxed/simple;
-	bh=7h2iGnNs0bYKsRaat5k6tNv0NDc9bOwiploDSqabJgc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CK09qE/I4nVihV7wUo9PE2R4iwdvp5D0SIwHTnWBf+yy0iNR4tGgP2hvYdMOGUgbe295q8TiC+xpppvicR+KvXOLbf6h7H0dnAPdK86n2Fy0ec6oTpihCg+q60GQDDcGnTuuatzoZLZulvf0xbO6Y8d6/p3A/vVAw56apdcec4s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=c2VrqUPI; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=c2VrqUPI; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id BD5C41F84E;
-	Tue, 25 Jun 2024 10:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1719311669; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7h2iGnNs0bYKsRaat5k6tNv0NDc9bOwiploDSqabJgc=;
-	b=c2VrqUPISoPbvbp0PtnEHPAjzy4Q5ua65IWk42loyaDEQweYTdg7fXsYvKhCedGAjY7DYq
-	DdQWKzRU3mtWjMKf81uRA7FY3QJIph5USLG87lnHM5kp/eclHpPv+HRUQi7nHon4S5+f8c
-	+9buScuxfHfDQyKN7F9phLOz25JdHwM=
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.com header.s=susede1 header.b=c2VrqUPI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1719311669; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7h2iGnNs0bYKsRaat5k6tNv0NDc9bOwiploDSqabJgc=;
-	b=c2VrqUPISoPbvbp0PtnEHPAjzy4Q5ua65IWk42loyaDEQweYTdg7fXsYvKhCedGAjY7DYq
-	DdQWKzRU3mtWjMKf81uRA7FY3QJIph5USLG87lnHM5kp/eclHpPv+HRUQi7nHon4S5+f8c
-	+9buScuxfHfDQyKN7F9phLOz25JdHwM=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AE9861384C;
-	Tue, 25 Jun 2024 10:34:29 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cgB7KjWdemZpXgAAD6G6ig
-	(envelope-from <mkoutny@suse.com>); Tue, 25 Jun 2024 10:34:29 +0000
-Date: Tue, 25 Jun 2024 12:34:28 +0200
-From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
-To: Li Lingfeng <lilingfeng@huaweicloud.com>
-Cc: tj@kernel.org, josef@toxicpanda.com, hch@lst.de, axboe@kernel.dk, 
-	cgroups@vger.kernel.org, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	yangerkun@huawei.com, yukuai1@huaweicloud.com, houtao1@huawei.com, yi.zhang@huawei.com, 
-	lilingfeng3@huawei.com
-Subject: Re: [PATCH] block: cancel all throttled bios when deleting the cgroup
-Message-ID: <5emugcorjnrcgczkmi7njfzwbotpqn6heu7acfho2zfkdsajpv@yrztl7hoa6ky>
-References: <20240624130940.3751791-1-lilingfeng@huaweicloud.com>
+	s=arc-20240116; t=1719311789; c=relaxed/simple;
+	bh=A/edzAV8z7PtvkLVb9kCB6aEa856/w8hAsMT9u3UynQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Z83z2b2Khtyf9geKoxAq9D5s15NpjADdC6OVHf4krkKhRJxVnaOCLFF/5kzUp8shlYDuPgOYjVT9lsP2pRVeGLqIYXa9cjH+F3MDATu8tahP8oxfsdZ+jdO6eVnp/i273jhv+hT9vSNdugf80xswi9HsKmlHNXnc3nPS6jeblss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cfZ9pfGl; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-80f6efd265bso944079241.2;
+        Tue, 25 Jun 2024 03:36:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719311786; x=1719916586; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PHPTw9ntFDNicGigUncwPH4l9g4mTeT4H7F6L6/ZEeA=;
+        b=cfZ9pfGlDr9vsaoCFL6o3M6YWETaGUX7/c6s3UDRvsx9YTNSedMFgB27NAYM7qRija
+         2qmi7Px5CXhzhFhx+PzKSXJwkazs2WcysL48WibPVT4vgmECzqqzgAE7eLBQaT86AzAc
+         wLw4omy9g15D6Tp7o1H24PqhRvem+9+fiIh8FiYqPmkxd/g121WAn/viPpddYtVi3oys
+         TB/V9/IeV8v3xj+a59sKqTI3/QkEbK2ygu6mmY6cljsu2943o93q1vs42MkCFJMdGMRd
+         KTbFraPI6Vltx7yMFyamG94ZgvjDK0m3eJlZN/w7dwZnQN15EN2M/OJWjPRdmqisxkzu
+         M12A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719311786; x=1719916586;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PHPTw9ntFDNicGigUncwPH4l9g4mTeT4H7F6L6/ZEeA=;
+        b=CjSt5XjMPbsCbLaLGsiw4EG7IQJC7Obt4C1btwi5+5kzliZE4tZw8MAzrTf/zw8ULz
+         wp9Y64LSE63jtmOL/XzRUTTEFwYv5INFZ1TdGpbymoJt9fNd0bWXYJEiB9kuqzxHTfsh
+         p4z+jRksfR32XVY7+pqk42bA6FeXMwV6cXZBIGTrLV07NO56dB/+jotAZBcK5wW0vUk5
+         l0kesybIPy9KvINuDtIXa2zLj1pjmK8pefMoFxoK7FZH0dRo+F4i+XHBfnfWL9uP/qLi
+         2otuL8GZ2RcPXUQI4tFSGGRt8J0pwphCxBWqt9lcqUoKsA/KlMGAaqnp9eEhB8Fn5aOL
+         EJFA==
+X-Forwarded-Encrypted: i=1; AJvYcCV1EhLon2BwXEXfYUJikMBQ0gN370T+Tt4qV1bRArAMAZf46WAyiFNHtjrktjFwBm0qa2hTzd2T+nEL1X82q+dsmcloG9Jpp9cJSzhmvCh4e0SbH1Nz3KiaCbG7wihd22Em/XfHk763YngCiSfr/c1w19gpmawHbDlpeF0G9NNrvNtVE9diUtFwIs6sUlACmG/vj0tDBr+msbrLg8d/OLYBm4QQ1njN
+X-Gm-Message-State: AOJu0YwSwIx/KTVeG492zY2P+KYH6ANi1SP7AlVgPfue3eIXXyQxR1d8
+	JGLLLcAuAVZFSulat52JgM96bqrshNn3I42Bp5OLO6krDoycJwsnBpbprnozBhSVhCVvJblqv2J
+	sRpY4TU5tfExfnCyCx0fMwx3sZbE=
+X-Google-Smtp-Source: AGHT+IEbU4uGKPcscOaEgU5n3/a0WJA02x2y+Y2tyC0y4agy80W3P+J0OCnJh27GVo3ZSgA4QWaR9HlRydgQucVJ1rQ=
+X-Received: by 2002:a05:6122:4a1b:b0:4ec:f018:ee1e with SMTP id
+ 71dfb90a1353d-4ef6a7394ebmr4839786e0c.12.1719311786574; Tue, 25 Jun 2024
+ 03:36:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cpnrwrpuh4qaakga"
-Content-Disposition: inline
-In-Reply-To: <20240624130940.3751791-1-lilingfeng@huaweicloud.com>
-X-Spamd-Result: default: False [-6.11 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SIGNED_PGP(-2.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
-	MIME_GOOD(-0.20)[multipart/signed,text/plain];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MX_GOOD(-0.01)[];
-	MIME_TRACE(0.00)[0:+,1:+,2:~];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	MISSING_XM_UA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:dkim];
-	DKIM_TRACE(0.00)[suse.com:+]
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Queue-Id: BD5C41F84E
-X-Spam-Flag: NO
-X-Spam-Score: -6.11
-X-Spam-Level: 
-
-
---cpnrwrpuh4qaakga
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240624153229.68882-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240624153229.68882-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <TY3PR01MB11346BEEDB2125402E8A489E086D52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <CA+V-a8vJdUCY4xBwm56C2A3w-gYOWo3MtoMMMfdcDwwsQWY4Gg@mail.gmail.com> <TY3PR01MB11346179D6B17BE023E6C33E886D52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB11346179D6B17BE023E6C33E886D52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 25 Jun 2024 11:35:59 +0100
+Message-ID: <CA+V-a8uEz3ub7xbYW6hYpPUaMFV_D6x4tWwMrY-MKhXFi1if9g@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, 
+	"linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hello.
+On Tue, Jun 25, 2024 at 10:47=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.c=
+om> wrote:
+>
+<snip>
+> > > > v1->v2
+> > > > - Moved vqmmc object in the if block
+> > > > - Updated commit message
+> > > > ---
+> > > >  .../devicetree/bindings/mmc/renesas,sdhi.yaml | 30
+> > > > ++++++++++++++++++-
+> > > >  1 file changed, 29 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yam=
+l
+> > > > b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > > > index 3d0e61e59856..20769434a422 100644
+> > > > --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > > > +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > > > @@ -18,6 +18,7 @@ properties:
+> > > >            - renesas,sdhi-r7s9210 # SH-Mobile AG5
+> > > >            - renesas,sdhi-r8a73a4 # R-Mobile APE6
+> > > >            - renesas,sdhi-r8a7740 # R-Mobile A1
+> > > > +          - renesas,sdhi-r9a09g057 # RZ/V2H(P)
+> > > >            - renesas,sdhi-sh73a0  # R-Mobile APE6
+> > > >        - items:
+> > > >            - enum:
+> > > > @@ -118,7 +119,9 @@ allOf:
+> > > >        properties:
+> > > >          compatible:
+> > > >            contains:
+> > > > -            const: renesas,rzg2l-sdhi
+> > > > +            enum:
+> > > > +              - renesas,sdhi-r9a09g057
+> > > > +              - renesas,rzg2l-sdhi
+> > > >      then:
+> > > >        properties:
+> > > >          clocks:
+> > > > @@ -204,6 +207,31 @@ allOf:
+> > > >          sectioned off to be run by a separate second clock source =
+to allow
+> > > >          the main core clock to be turned off to save power.
+> > > >
+> > > > +  - if:
+> > > > +      properties:
+> > > > +        compatible:
+> > > > +          contains:
+> > > > +            const: renesas,sdhi-r9a09g057
+> > > > +    then:
+> > > > +      properties:
+> > > > +        renesas,sdhi-use-internal-regulator:
+> > > > +          $ref: /schemas/types.yaml#/definitions/flag
+> > > > +          description:
+> > > > +            Flag to indicate internal regulator is being used inst=
+ead of GPIO regulator.
+> > > > +
+> > > > +        vqmmc-regulator:
+> > > > +          type: object
+> > > > +          description: VQMMC SD regulator
+> > > > +          $ref: /schemas/regulator/regulator.yaml#
+> > > > +          unevaluatedProperties: false
+> > > > +
+> > > > +          properties:
+> > > > +            regulator-compatible:
+> > > > +              pattern: "^vqmmc-r9a09g057-regulator"
+> > > > +
+> > > > +      required:
+> > > > +        - vqmmc-regulator
+> > >
+> > > Maybe we can drop required to make it optional, so that one has the
+> > > option to select between { vqmmc-regulator, gpio regulator}??
+> > >
+> > I think making the regulator node optional isn't correct here as this i=
+nternal regulator is always
+> > present in the SoC and this has to be described in the DT no matter if =
+it's being used or not.
+>
+> Agreed, but user can make it optional by setting pinmux as gpio and
+> the internal regulator is valid only if we make it as a function.
+>
+> From, SoC point vqmmc-regulator is always available. So, it needs to be d=
+escribed
+> as above. But required property and disabled in the node somewhat confusi=
+ng??
+>
+'required' here is mainly to enforce validation for the checkers.
+Maybe the DT maintainers can better explain here...
 
-On Mon, Jun 24, 2024 at 09:09:40PM GMT, Li Lingfeng <lilingfeng@huaweicloud=
-=2Ecom> wrote:
-> From: Li Lingfeng <lilingfeng3@huawei.com>
->=20
-> When a process migrates to another cgroup and the original cgroup is dele=
-ted,
-> the restrictions of throttled bios cannot be removed. If the restrictions
-> are set too low, it will take a long time to complete these bios.
-
-When pd_offline_fn is called because of disk going away, it makes sense
-to cancel the bios. However, when pd_offline_fn is called due to cgroup
-removal (with possibly surviving originating process), wouldn't bio
-cancelling lead to loss of data?
-Aha, it wouldn't -- the purpose of the function is to "flush" throttled
-bios (in the original patch they'd immediately fail, here they the IO
-operation may succeed).
-Is that correct? (Wouldn't there be a more descriptive name than
-tg_cancel_bios then?)
-
-And if a user is allowed to remove cgroup and use this to bypass the
-throttling, they also must have permissions to migrate away from the
-cgroup (and consistent config would thus allow them to change the limit
-too), therefore this doesn't allow bypassing the throttling limit. If
-you agree, could you please add the explanation to commit message too?
-
-Thanks,
-Michal
-
---cpnrwrpuh4qaakga
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZnqdMgAKCRAt3Wney77B
-SSnoAQCyPsjfbI6gXXW4WhHfulYy/fr4WrXplUFlX4XDxgVglQD/berfS1nRJ/Kh
-4jSU8Xn4I4WUEd+YUcjDdBzafItdRgw=
-=JIso
------END PGP SIGNATURE-----
-
---cpnrwrpuh4qaakga--
+Cheers,
+Prabhakar
 
