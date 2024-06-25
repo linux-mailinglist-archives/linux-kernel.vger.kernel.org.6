@@ -1,100 +1,124 @@
-Return-Path: <linux-kernel+bounces-228784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 426259166BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:59:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 818F99166C2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F282928CB67
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:59:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F70F28CD19
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB4914D2A0;
-	Tue, 25 Jun 2024 11:59:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196E814D6F7;
+	Tue, 25 Jun 2024 11:59:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="c2REllb/"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VR7qrcUR"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B83149DF4;
-	Tue, 25 Jun 2024 11:59:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705F614A0BD;
+	Tue, 25 Jun 2024 11:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719316743; cv=none; b=H6ZxmtKoVI2wzzy0Spj56F4E2H1UO5c17DIgyVZ0xMms+fz6/W4Dfb0rpEMX8IQ0RYfW6jdZSduMvoJ/XWhdmKkzkPkGEmooINphSMj8+O1AHBp3B/rIbhDfxSCu9jBxluV/pJIByv8mMj73dthgQi5s72XsITrl/k1Q9ydN/6k=
+	t=1719316771; cv=none; b=oOv6sT3zUajGsTCZl465lgl/BZzxNNs/7or/ua/69z4ppFBPYsvffKrUC/lLd2/ijgKD5kCLlZiW1hIzbP9ilazkbf7rRAOk/F5IMP4QmQeX6lmfwdBgDMu/BRV4Hf7jVblrqYpaaAohF9NgFtp6O+k+eDCqchpu5gdaU7YJ4NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719316743; c=relaxed/simple;
-	bh=v0YC4IeTECyIp/iC9IzRXR1jeJv45OgY1qqRU0qP1lU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HcsPnAELSBrxlXNLk/ykaJBwr8zYQoZGqGCq9QO1WNzIzPq+cBSsCmkfLp2TkDL/7EV/PR10cAKNFG9Zq4fCmOeUHxQ8g8V9515QXLACCEVkxZiDj0xGE0DQN2fUqce4bYdXdzxzw4Lf+wGDV0LS561L6+ocpL98xJeGZrIjIeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=c2REllb/; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719316739;
-	bh=v0YC4IeTECyIp/iC9IzRXR1jeJv45OgY1qqRU0qP1lU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=c2REllb//m9B0CzKO4teapGYlRuuC5wdlwTQVUxOVNywTkT+Rol6OF9qXOfWt7r7X
-	 rK4PSMunCHcnd6aZX+6NV6NG7CZzyJ+oKi3RzRfnGrKCcNGbozfyvopYqfcFZUI2Ds
-	 GvhWkJ6XnIOx3wkQGKvTpNZVJOpyqKLRnPuhJlt2VZ97Rrf1eR3wRvWNqs1uqGxaCV
-	 srDtzAGvRYORyX4IhYtxICKfBtlU9WG55L24LV0QwAaiycFMr/eiaDDHfwP0zfUkOe
-	 4iVX01DULKVcsHp5gJBhMg9bLF3k+l3SAh+GJKjv4cd2MAZW0PRTVoU0jiz/vnSjwL
-	 9iI0oH9RLrqhw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5B790378216A;
-	Tue, 25 Jun 2024 11:58:58 +0000 (UTC)
-Message-ID: <39ed7b8c-b19a-40de-9b30-a731ac83ad20@collabora.com>
-Date: Tue, 25 Jun 2024 13:58:57 +0200
+	s=arc-20240116; t=1719316771; c=relaxed/simple;
+	bh=QahEkLu9TC7Ijt9CJgc7loymkbNQEbP54b1wEkKu14k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IHwvmCTMIKiB2MY3V/Ovli2eEgK7C7+jSyQnSh9r9p5jL0YODU0FhyZ0ZpmbTMSpAX/yox4bh80+TaZLdO5AklOEoCrAkYmgxcqonff6PW1M2DIHMeQ6lhg1xOhW1wUYC6k2/nOcusc/ywbv9rKJBSAPJCct9UH7ZVC69Axewkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VR7qrcUR; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E78CF240008;
+	Tue, 25 Jun 2024 11:59:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719316760;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bymOF6q/GmNuK/4tr2qlAhNMY7OYSXYN+52K4/jUKz4=;
+	b=VR7qrcUREdOYnveWozg5HRW4txUj8aV6OxBVLDVv5zFe34TYSp7r91HfgwVWFAQoWjHctd
+	ybQ31jFGiro1WO3mNfSDxUscZ6IDXJGElPOSkeSMJgn/phaZsuEc2alKGgER5b6XtZQXZA
+	wCrcAx5KVzYTujOxFY4y8el4n5OswhpNiTG8/jgJWe3GiEVuOVLqJch/NOFTzYcfzpzpWQ
+	DMU4T+hMxyS6U36FbtzZ+VIBhIrbKXcSWlYqyGAbUzUyM5lzk6B5hAFwEMYZ2B8niQLk75
+	czn68yC2CgoPRNn+SPL1lboPIsod8ZdEDFBYTBypQ5hIor5fbgwLRHdKk34EbQ==
+Date: Tue, 25 Jun 2024 13:59:18 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+ <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dent Project
+ <dentproject@linuxfoundation.org>, kernel@pengutronix.de,
+ UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH net-next v3 1/7] net: ethtool: pse-pd: Expand C33 PSE
+ status with class, power and extended state
+Message-ID: <20240625135918.65f71c1e@kmaincent-XPS-13-7390>
+In-Reply-To: <ZnqdDmvy0YLqk6Ih@pengutronix.de>
+References: <20240614-feature_poe_power_cap-v3-0-a26784e78311@bootlin.com>
+	<20240614-feature_poe_power_cap-v3-1-a26784e78311@bootlin.com>
+	<Zm15fP1Sudot33H5@pengutronix.de>
+	<20240617154712.76fa490a@kmaincent-XPS-13-7390>
+	<ZnCUrUm69gmbGWQq@pengutronix.de>
+	<20240625111835.5ed3dff2@kmaincent-XPS-13-7390>
+	<ZnqdDmvy0YLqk6Ih@pengutronix.de>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/7] MediaTek DVFSRC Bus Bandwidth and Regulator knobs
-To: Mark Brown <broonie@kernel.org>
-Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, lgirdwood@gmail.com, keescook@chromium.org,
- gustavoars@kernel.org, henryc.chen@mediatek.com, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- kernel@collabora.com, wenst@chromium.org, amergnat@baylibre.com,
- djakov@kernel.org
-References: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
- <f7b4cd98-1acf-4f6b-a7e0-57419abadba1@collabora.com>
- <57cf8f9f-4320-4c55-a9f8-a4c1facabfe8@sirena.org.uk>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <57cf8f9f-4320-4c55-a9f8-a4c1facabfe8@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Il 25/06/24 12:25, Mark Brown ha scritto:
-> On Tue, Jun 25, 2024 at 10:32:30AM +0200, AngeloGioacchino Del Regno wrote:
-> 
->> Mark, I assume that this series is ok from your perspective, since this has got
->> your acks and r-b -- but in order to pick the soc/mediatek stuff I need all of
->> the dependent bindings to be in as well .. and this includes the regulator one!
->>
->> The main issue here is that the main soc/mediatek dvfsrc binding
->> dt-bindings: soc: mediatek: Add DVFSRC bindings for MT8183 and MT8195
->> does use the others, so I can't pick this one without the others being present
->> or the validation obviously fails.
->>
->> So... gentle ping :-)
-> 
-> I can't tell what you want from me here.
+On Tue, 25 Jun 2024 12:33:50 +0200
+Oleksij Rempel <o.rempel@pengutronix.de> wrote:
 
-I'm asking you to pick the regulator patches :-)
+> Hi K=C3=B6ry,
+>=20
+> On Tue, Jun 25, 2024 at 11:18:35AM +0200, Kory Maincent wrote:
+>  [...] =20
+>  [...] =20
+>  [...] =20
+>  [...] =20
+>  [...] =20
+> >=20
+> > In fact I can't test it, I have a splitter and an adjustable load, not a
+> > splitter that can adjust it's own load. So I can't decrease the load of=
+ the
+> > splitter itself and reach this error condition. =20
+>=20
+> Hm.. how about this setup:
+> ------>>-----x--------->>---- =20
+> PSE          |-load      splitter
+> ------>>-----x--------->>---- =20
+>=20
+> Attach the load directly to the ethernet line after PSE did
+> classification with splitter. Then remove splitter. As long as load is
+> high enough, PSE will not turn the port off. Then reduce load until it dr=
+ops
+> below the threshold.
 
-    dt-bindings: regulator: Add bindings for MediaTek DVFSRC Regulators
-    regulator: Remove mtk-dvfsrc-regulator.c
-    regulator: Add refactored mtk-dvfsrc-regulator driver
+That was a good idea but I can't managed do test it.
+This is what I try:=20
+                       /---ethernet cable---PD
+PSE=3D=3D=3Dpassive splitter=3D+
+                       \---barrel cable---load
 
-^^^ These ones.
+The active PD is well powered with PoE negotiation but there is no voltage =
+at
+the barrel cable of the passive splitter so the load is useless. :/ Maybe
+passive splitter works only with passive injector.
+
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
