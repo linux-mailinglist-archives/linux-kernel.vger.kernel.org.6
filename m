@@ -1,216 +1,268 @@
-Return-Path: <linux-kernel+bounces-229318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D25F4916E41
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:39:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18484916E45
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F7C9B2156C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:39:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34A351C21AF8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F0D7174ECA;
-	Tue, 25 Jun 2024 16:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB24175544;
+	Tue, 25 Jun 2024 16:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Ag6vMw7B"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2086.outbound.protection.outlook.com [40.107.94.86])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EK8w1ZsM"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784A313B2B0;
-	Tue, 25 Jun 2024 16:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719333564; cv=fail; b=FV6DZZgAQqfv6mqJnYz6tsuwTpd006wGXowtzyuyT90/Bae83LgxldSB9foFigxUVVgYklB7DEyYNS0VErdALdtvJhpJPBESphmfdzYAFoSX9929v8qRSaj8Nd+sHnCc8nwDIgD8zSUlZsUxe8I7IImpaSXpD3G1cm4452XAat8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719333564; c=relaxed/simple;
-	bh=/ua6GlBeh7cJJwmA7mKFml3ORbnQe4FAKeJAuceBPl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HfQMFMVZyXXkWQrRy/a2i0apW9LJcMA1Ooo9eKu5lw8cZjw2ezTWhhjky9OzDjANaKUVQMGu7bE0TaqIiAoMxqxsOy53g9/F15bNuNDKKP7mH9L3kOd8jKJpfkgit0cc8RSUNhpS5gL9lAlUARAKJAkab3Y3mbMkCTmbPb+FUi4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Ag6vMw7B; arc=fail smtp.client-ip=40.107.94.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U388pTKTglJ0IowEJ2Y0qinvmU6+N2e7UV8s9V6+grq6DSdoLtzWryK6gZAqRTErzTlJ35DQYCLWrECAH5FeEYNhyJGbaFqy833wFxNhykZxTap5WkXZz+7WMU66+PujHgHWz3MqFSMUUv7Ch3AOMlnEHo8NCN8nR7izPIRRjbbFhT2gfOUaYde6/BrUN9/KM0NOVZD+x3J0re34J3gOyGeJT6BuKCP1rSBWHs5rZeKxa5+D8Cx/4ulf9GW7kLi7RjdS7BWDY7j+OHOxBCT20v5i+YJkruljjcvGy5Q3vveeNTj8irnjQUva4ocw7LQ9tlTlOoWV6zCRJugl5xOpBw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MGEyb3ZfFRE8y5lfwQKLinwpimNtoPx5CR8/W+y8Mo4=;
- b=K6RbhuhOThEQK5lFg7vMn/Yv69uUSO8e6D7AaGLqlGnA7pQKs+3nQRgQIdFPOavDevL19k49B01YwIl8C46E+aV02Ic5eJsjkH69W7qF/Y4ZYf9q9o9+SKZSLrvulrTHqZHR+55m6WDFTuaHtTKfZAZQ2BuKt//TCbYQ5jznCfM4K1bD4sNQjH0nmGJeCTOlHXwrBAr5lH+VhSL0l+KlX/rV1ZJ/jR0Y2T0rJf08VzaPP116F37dzfZG5Kqx3feU1LTCBsf4i3/cl7MuqUFp4FIWpj3PAe16LnJGAmKvvsspSoDmzkQZVd0cQWJAeywIttd2rk/f4vo8Vl1sljWrzA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MGEyb3ZfFRE8y5lfwQKLinwpimNtoPx5CR8/W+y8Mo4=;
- b=Ag6vMw7BW+9th6EL5D36MlXUbuadzVAZu1wiQkYIJTEmRyjf56nb2k8xqnKSo9XuUrPPWIZV7eMFF9b9HX8OK0YjJh4tQ5Nu66Q7PE1pvIT8mKj5tjDyZz2i3kQJySHEd8hNj1k+HKdxiDroCxCMquOHyoSCVxulRCA9tvWCyATG4LZOgegFRYF0UWFcDzKfM9pDWPQarJ2lZM9iEHPKyFh1VDAS7HK7KdgHXL20kqdzW+3iip8rJ0m4cZ1cDWGxH5O/RqSJp8AE7x7WJ3JzCJFDI4vJ0HPjykNwCmoAcan42+N7emkxdWXQgfWwapEexOGYdxV0kAGF7Feqt/3snw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com (2603:10b6:5:1c7::26)
- by CY5PR12MB6228.namprd12.prod.outlook.com (2603:10b6:930:20::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Tue, 25 Jun
- 2024 16:39:20 +0000
-Received: from DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e]) by DM6PR12MB3849.namprd12.prod.outlook.com
- ([fe80::c296:774b:a5fc:965e%6]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
- 16:39:19 +0000
-Date: Tue, 25 Jun 2024 13:39:18 -0300
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Vidya Sagar <vidyas@nvidia.com>, corbet@lwn.net, bhelgaas@google.com,
-	galshalom@nvidia.com, leonro@nvidia.com, treding@nvidia.com,
-	jonathanh@nvidia.com, mmoshrefjava@nvidia.com, shahafs@nvidia.com,
-	vsethi@nvidia.com, sdonthineni@nvidia.com, jan@nvidia.com,
-	tdave@nvidia.com, linux-doc@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V4] PCI: Extend ACS configurability
-Message-ID: <20240625163918.GC2494510@nvidia.com>
-References: <20240523063528.199908-1-vidyas@nvidia.com>
- <20240625153150.159310-1-vidyas@nvidia.com>
- <ZnrvmGBw-Ss-oOO6@wunner.de>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnrvmGBw-Ss-oOO6@wunner.de>
-X-ClientProxiedBy: BLAPR03CA0163.namprd03.prod.outlook.com
- (2603:10b6:208:32f::7) To DM6PR12MB3849.namprd12.prod.outlook.com
- (2603:10b6:5:1c7::26)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A186174EC6;
+	Tue, 25 Jun 2024 16:42:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719333734; cv=none; b=mBFyi0+8rYZ8Wvbx51PWfWZpdIU2vylN7yi0jxAH49Obi+scTVvrUsmzzda5TByKjOutHVbcIrLe43aGTylMe9OlnBND+lPACMq9MXTMeDto04En5mxX3oxU5MdhbLKpaKpH9Uh4yYoQn60h9t/A2Txv1ZNUUV9cRcj6uEi3JuI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719333734; c=relaxed/simple;
+	bh=Wf5d1cAbraKNNLLsxaDY7HIAmqmsnAVAz5zc31fMG9g=;
+	h=Content-Type:Subject:From:In-Reply-To:Date:Cc:Message-Id:
+	 References:To:MIME-Version; b=bcnYpjh1Cd0/XqgDEun6/wRs5JTQ1qMQAxjjXS+mGanXMsrQtZvm10oBBUtouQGt8bv8RgGjZDyvo6bJy2xeHPZ2WVgfyDoev5pJIMHpVSrJEq+7iCbqb9bTwlx7O1qqdtgz0jh8eURS5raqvjVKzsDP0lS8XOGPyWxZTLmUCa8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EK8w1ZsM; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PFT00u016014;
+	Tue, 25 Jun 2024 16:42:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-type:subject:from:in-reply-to:date:cc:message-id
+	:references:to:content-transfer-encoding:mime-version; s=pp1;
+	 bh=ZARhP07FHH8u9nngY6BsvG1uJZmY+u9zga9ydRnpEXE=; b=EK8w1ZsMyz2B
+	P3BMLqfzuE/aZpn0SjoZMjGSfizBkEUCLYDeyPJiLjZGUWmQEw8kYZ/lZYY0nJ3A
+	RDahhEXcKOkdYmhgxU/HCxieDwnqqq1SR6XzxiFGTqas6GT2e2pP67QDfWzfDaVw
+	LXx50x5OvBwqCPYg8Q1+d/x9hLsVYg+o4f3L4YRJbU7gpp9NN65kcSH5rLHj48nZ
+	3W2d5K1JL60NHwvaBQ/JMHXsku17VAgUBgTOfkE5rwga1yY39N3GMYMHSnH69Gct
+	Rj9aId4Rry26veXCIVLtkQIpGi9PbgJ/91HahgKxY+lgcQUApO8SFujoBKgBFHBK
+	F5fVGG3lnw==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4000jj85ve-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 16:42:10 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45PEUI0j008184;
+	Tue, 25 Jun 2024 16:42:10 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yx9b0qj5f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 16:42:09 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45PGg6qN19464448
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Jun 2024 16:42:08 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E46E420043;
+	Tue, 25 Jun 2024 16:42:05 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 84D452005A;
+	Tue, 25 Jun 2024 16:42:03 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.43.74.23])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 25 Jun 2024 16:42:03 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
+Subject: Re: [PATCH V3 1/3] tools/perf: Fix the string match for
+ "/tmp/perf-$PID.map" files in dso__load
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <adc971c5-f2a7-4f2d-97d8-40ed0cfe03c0@arm.com>
+Date: Tue, 25 Jun 2024 22:11:51 +0530
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        Disha Goel <disgoel@linux.vnet.ibm.com>
+Message-Id: <D86EB354-77A9-494B-BE89-61FD6EC269A8@linux.vnet.ibm.com>
+References: <20240618140354.5765-1-atrajeev@linux.vnet.ibm.com>
+ <adc971c5-f2a7-4f2d-97d8-40ed0cfe03c0@arm.com>
+To: Chaitanya S Prakash <chaitanyas.prakash@arm.com>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: R4zC742nlgAmM6T5Q2NbKRczbjMC9Iaw
+X-Proofpoint-ORIG-GUID: R4zC742nlgAmM6T5Q2NbKRczbjMC9Iaw
+Content-Transfer-Encoding: quoted-printable
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM6PR12MB3849:EE_|CY5PR12MB6228:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6ab8375b-b05a-4c54-c228-08dc95355c76
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230038|1800799022|366014|376012;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?6umosI30ZwcXJLvJmrFEtS7oPSHt48MH8NCKFFyUhCbLf+f6on5/JLx/X16+?=
- =?us-ascii?Q?Xy5SiB+8UlQLTiT93wCn+OQyp3UuuEIiP2KvhfGbwQOk1cgC6UqBR6wxc2Dq?=
- =?us-ascii?Q?fp7+hTyKC8led5VjlYmZyamvCcFNZNJBUeknKG/3P6wjU17+nt2gC/6MVW3+?=
- =?us-ascii?Q?mLID0oyj1j5GG/kBESq6NznY8cuvgsATLZPGn6LsCzpTW/iRYMfe1xvNx34y?=
- =?us-ascii?Q?LbeY0fwuNUMCGo14Wm2I/XXz+eiBeADMugPWQi+2Ht6aAhyClB5B+YIlwXIG?=
- =?us-ascii?Q?xapb8R9AZODvlZIZFfofWaMMst1XAiud7HyR4Q1nlcEZpJSryAYd6TTmANg5?=
- =?us-ascii?Q?Uc/4IrDoaoFOUnh2PwUl3hr5eaOGLxn2wYlzwcEh9Vh0ojpffSwog6JT6Imz?=
- =?us-ascii?Q?mjgBAc7uB6kB2ZBKNOqbt8it/rjva1CK5arHXpLQrzVd/xStcsU950de4QoI?=
- =?us-ascii?Q?tuxwGAKxbu6Y278ysKG4wTV6d/BipRIuPFzUTMtYi3EN6yyQ8qI6rzuuLm92?=
- =?us-ascii?Q?fc+eotL4TnhvYOlnXG/l4sLJo4ALTdtsTd832S1oOqbMZyH1FwV1aYyS5H0w?=
- =?us-ascii?Q?nDLA0ajQ5zpcM4hWKaK6D17i0wlJcl0fCAsZEfiK8xrcHwZVo2cZz4rTxGyN?=
- =?us-ascii?Q?O3jghrWfYX5bcQ95pzPIknbYosBvb4/xtzTj32IoZhfKLK3qT1xCbXwQMxkc?=
- =?us-ascii?Q?adUthI/7ryqKl2eE/5wxb2w/nATgw80BnApaCuxMyhSSdDvVdgJ80cLStkyK?=
- =?us-ascii?Q?eKwF6Bu5tXXkv/pUHOF0PCkznFfOY/vkXmhNr1M1qYD2oA/nMrGdD4l4Wpvr?=
- =?us-ascii?Q?oo4ciCNbD87ZQ9tYs/5WixW/Dj7kyuJDa5RtDCAatlAAtQCJcYhy4exHFCUF?=
- =?us-ascii?Q?fBKwHAmMZ/gh4AIYbwAi3lplyoOvRM8JmOM9p76mA/VtdF8nL9gt2PWVrMsd?=
- =?us-ascii?Q?XH5vseUVdaeByOaIapkN4sm5TaRn4hDqsPnYw38luZfkRuyjlR/3zekVp1fS?=
- =?us-ascii?Q?/Vk0oveteT6bldB4fXMfkNKuzEf7ivQEvJZCiqS+ByqyhiAV4SX2eZZbjEX5?=
- =?us-ascii?Q?mG2Ov216kAXiHq+HmpSa7MwTfTqNTbdhxFqAjiPrdiG55/nRZxbihcGdlH25?=
- =?us-ascii?Q?G3UzUqRn9iHS0Kdq24eMizbVZYZ97jU/4/J1e4q99IxAz4CDqKq2aFsK5E/6?=
- =?us-ascii?Q?wJI+ffbtnt2LVn0OJ7Vp5CEvIlXcSGNkNgtLblxuFuUfsWUpiRD8AXYdeMpY?=
- =?us-ascii?Q?jVkrdPmzUkj/NeVFGlIL1C0/EKMsANf58HEt7aeDD9esMYW/bwe3mkPr9FZN?=
- =?us-ascii?Q?pOAgl2qpLwVWT0U4rdSuBmCU?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR12MB3849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(1800799022)(366014)(376012);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?86O+4LRMZUwhDvGOfhHg40RmVPY5hQObxHp54qG3095q+9SfJJ4JYz1WPfcu?=
- =?us-ascii?Q?r3Fo/MLLvHQBmo5+Zo7pUyvy7F0XAhUfy3l80jHBByOGwDCLNvhFnHtuOURJ?=
- =?us-ascii?Q?doSrXW6mCJJM38U2+XAIyP5tMXxPARBGX7dOHvfhKTk7J8R1OB16Xua9pLCE?=
- =?us-ascii?Q?Fer6mJuMUKdgslFoy8Z4DClD1M5XfQY9k/ysYGJzY0f+DlgW46a70y4EjUma?=
- =?us-ascii?Q?K+B7++njmB+7kF+LIR9d3ChqeNgkhd0h3gFX34I8O/0MoUvLRKOnzSXumNVh?=
- =?us-ascii?Q?ZST+HGsxNFgyKd6+t5T9Cz8kI1ce235cSHH+9sgdWGZmuovlSkkYRxsvXTsz?=
- =?us-ascii?Q?IIfrc8smmZEhpa6eU9L1a1vxfjbHRAQA/w0cnajeYDyqV2sYrlQ2cEKZyWSL?=
- =?us-ascii?Q?9YL7li2gWbll0YCsp2ZS+xQ2jFHRaO0oevJtiR6GVTXWM6sY209qrCJj4bf8?=
- =?us-ascii?Q?6q/qxGS+dyPZSEiG9oxRppIdIq8zAgEj017WGTkY9VK+g1sGdoBpKExwKKIK?=
- =?us-ascii?Q?zWPiVcBJ2WJ0UQ/z8dwvZlo04hVsUP/qTtTVzPPcsraPorttd/sbqDyzxpmE?=
- =?us-ascii?Q?wOgT9GnO+pa67CQWh/DKnvyRCwMAxT7FUSaEASUqNQgsRIvRjVGKS1NSvmkE?=
- =?us-ascii?Q?r14WiDY1E5khLxQYz1BCaTHxT1ygMVES47QOO48PU7MoUMb8BydY64Bd1OFe?=
- =?us-ascii?Q?NkjVx6zX+vzGOxgF2wwlDXg1y/3g6Jzq/cYTgWcH17XAenhQMOB2aDzke8YG?=
- =?us-ascii?Q?LMfUNPaKvVIMvDsZ0tmkc7Eeop6v/wgPjuUIufjftoRll0bNawnrpsE5E9HX?=
- =?us-ascii?Q?lLudU9G5uSf2/MhYKpqb9dh7Tm7iuxSfYU2MNBgjsvAxjt8791TLUS+Y7TAK?=
- =?us-ascii?Q?xkxL8q1Mu/j8aMpGEGvwLXupracg7XUKLioF820ijwWYsi32GgtFxcz56mFV?=
- =?us-ascii?Q?xWvi+T/1sv0DYNXshYe/lK0XhLUmFTV9eFvDxB3yOHlva+G71qmgkoGE+D2b?=
- =?us-ascii?Q?qHUwj1KCUHDbxjU8mjwZWx7thXzPMJGpctyl6L/zOhCBVZuBP2t8+6D//nNC?=
- =?us-ascii?Q?H8HljEyQkVIajtyEdnW1QlxPOC0Qzqh3OOor450fK9j+r02ZkOLxU5A2GSXh?=
- =?us-ascii?Q?ohVjP6nPpNBHMZt47x1Lp0Lr/VFvekiHwdFkrOu8irFxbBc8fMeYsbGBDLhY?=
- =?us-ascii?Q?OfiaWynhuJJ3sohNitOvvJkHG4jJ0d3eCx8P9aA3drgiaLUdWv35DR2lbIdf?=
- =?us-ascii?Q?bDT0UswSHEK3c++r0PqM/vaHddRQGKsYsiY/WaysqBwhxLc5YBdzwiQftAMo?=
- =?us-ascii?Q?x0xaWYGArqRbg9ETtRZzOXstfPozG7KdnRex7fbj0ZaepOATbqSEy4p6eimg?=
- =?us-ascii?Q?2zhlLxzCAp9dLJJBCnIC/t2+35aDsuhV4c3e+yWOXdsiPKBESWedgD1jaRhV?=
- =?us-ascii?Q?F0fYpfF1QF+NCzlppWD2V1Vzg9koAMsp4ZXsJRNW/Rem+EkrQ7uwjDdxAKHv?=
- =?us-ascii?Q?4HtM2gUMRerHQBvTmmup1d59848MduusZS9i9SoXI0v1kdrst6IZodlvl4Sj?=
- =?us-ascii?Q?GArlvkus8rMixFq+NlHHfc+ZCIQx+WHr+4+Y89Ar?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6ab8375b-b05a-4c54-c228-08dc95355c76
-X-MS-Exchange-CrossTenant-AuthSource: DM6PR12MB3849.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 16:39:19.8383
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UTguniJi7/ru9DyKpX9Us45fMVA+xyqusEbF9fwthQcjieBpSQqRpdBv8VicPg9P
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR12MB6228
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_11,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0
+ clxscore=1015 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406250118
 
-On Tue, Jun 25, 2024 at 06:26:00PM +0200, Lukas Wunner wrote:
-> On Tue, Jun 25, 2024 at 09:01:50PM +0530, Vidya Sagar wrote:
-> > Add a kernel command-line option 'config_acs' to directly control all the
-> > ACS bits for specific devices, which allows the operator to setup the
-> > right level of isolation to achieve the desired P2P configuration.
-> 
-> An example wouldn't hurt, here and in kernel-parameters.txt.
-> 
-> 
-> > ACS offers a range of security choices controlling how traffic is
-> > allowed to go directly between two devices. Some popular choices:
-> >   - Full prevention
-> >   - Translated requests can be direct, with various options
-> >   - Asymmetric direct traffic, A can reach B but not the reverse
-> >   - All traffic can be direct
-> > Along with some other less common ones for special topologies.
-> 
-> I'm wondering whether it would make more sense to let users choose
-> between those "higher-level" options, instead of giving direct access
-> to bits (and thus risking users to choose an incorrect setting).
 
-It doesn't seem like the kernel has enough information to do that, or
-at least describing enough information in the command line would be
-more complex than this.
 
-> Also, would it be possible to automatically change ACS settings
-> when enabling or disabling P2PDMA?
+> On 23 Jun 2024, at 8:56=E2=80=AFPM, Chaitanya S Prakash <chaitanyas.praka=
+sh@arm.com> wrote:
+>=20
+>=20
+> On 6/18/24 19:33, Athira Rajeev wrote:
+>> Perf test for perf probe of function from different CU fails
+>> as below:
+>>=20
+>> ./perf test -vv "test perf probe of function from different CU"
+>> 116: test perf probe of function from different CU:
+>> --- start ---
+>> test child forked, pid 2679
+>> Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.Msa7iy89bx=
+/testfile
+>>  Error: Failed to add events.
+>> --- Cleaning up ---
+>> "foo" does not hit any event.
+>>  Error: Failed to delete events.
+>> ---- end(-1) ----
+>> 116: test perf probe of function from different CU                   : F=
+AILED!
+>>=20
+>> The test does below to probe function "foo" :
+>>=20
+>> # gcc -g -Og -flto -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfi=
+le-foo.c
+>> -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+>> # gcc -g -Og -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-mai=
+n.c
+>> -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+>> # gcc -g -Og -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
+>> /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
+>> /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
+>>=20
+>> # ./perf probe -x /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile f=
+oo
+>> Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7=
+/testfile
+>>   Error: Failed to add events.
+>>=20
+>> Perf probe fails to find symbol foo in the executable placed in
+>> /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7
+>>=20
+>> Simple reproduce:
+>>=20
+>>  # mktemp -d /tmp/perf-checkXXXXXXXXXX
+>>    /tmp/perf-checkcWpuLRQI8j
+>>=20
+>>  # gcc -g -o test test.c
+>>  # cp test /tmp/perf-checkcWpuLRQI8j/
+>>  # nm /tmp/perf-checkcWpuLRQI8j/test | grep foo
+>>    00000000100006bc T foo
+>>=20
+>>  # ./perf probe -x /tmp/perf-checkcWpuLRQI8j/test foo
+>>    Failed to find symbol foo in /tmp/perf-checkcWpuLRQI8j/test
+>>       Error: Failed to add events.
+>>=20
+>> But it works with any files like /tmp/perf/test. Only for
+>> patterns with "/tmp/perf-", this fails.
+>>=20
+>> Further debugging, commit 80d496be89ed ("perf report: Add support
+>> for profiling JIT generated code") added support for profiling JIT
+>> generated code. This patch handles dso's of form
+>> "/tmp/perf-$PID.map" .
+>>=20
+>> The check used "if (strncmp(self->name, "/tmp/perf-", 10) =3D=3D 0)"
+>> to match "/tmp/perf-$PID.map". With this commit, any dso in
+>> /tmp/perf- folder will be considered separately for processing
+>> (not only JIT created map files ). Fix this by changing the
+>> string pattern to check for "/tmp/perf-%d.map". Add a helper
+>> function is_perf_pid_map_name to do this check.
+>>=20
+>> With the fix,
+>> # ./perf test "test perf probe of function from different CU"
+>> 117: test perf probe of function from different CU                   : Ok
+>>=20
+>> Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
+>> ---
+>> Changelog:
+>> v2 -> v3:
+>> Addressed review comment from Adrian and James.
+>> Added perf_pid_map_tid to save the tid and modified
+>> is_perf_pid_map_name to use this internally.
+>>=20
+>> v1 -> v2:
+>> Addressed review comments from Adrian.
+>> Added helper function is_perf_pid_map_name to check
+>> dso name of form "/tmp/perf-%d.map". Used sscanf
+>> instead of regex comparison.
+>>=20
+>>  tools/perf/util/dso.c    | 12 ++++++++++++
+>>  tools/perf/util/dso.h    |  4 ++++
+>>  tools/perf/util/symbol.c |  3 ++-
+>>  3 files changed, 18 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+>> index dde706b71da7..2340c4f6d0c2 100644
+>> --- a/tools/perf/util/dso.c
+>> +++ b/tools/perf/util/dso.c
+>> @@ -1652,3 +1652,15 @@ int dso__strerror_load(struct dso *dso, char *buf=
+, size_t buflen)
+>>   scnprintf(buf, buflen, "%s", dso_load__error_str[idx]);
+>>   return 0;
+>>  }
+>> +
+>> +bool perf_pid_map_tid(const char *dso_name, int *tid)
+>> +{
+>> + return sscanf(dso_name, "/tmp/perf-%d.map", tid) =3D=3D 1;
+>> +}
+>> +
+>> +bool is_perf_pid_map_name(const char *dso_name)
+>> +{
+>> + int tid;
+>> +
+>> + return perf_pid_map_tid(dso_name, &tid);
+>> +}
+>> diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+>> index df2c98402af3..d72f3b8c37f6 100644
+>> --- a/tools/perf/util/dso.h
+>> +++ b/tools/perf/util/dso.h
+>> @@ -809,4 +809,8 @@ void reset_fd_limit(void);
+>>  u64 dso__find_global_type(struct dso *dso, u64 addr);
+>>  u64 dso__findnew_global_type(struct dso *dso, u64 addr, u64 offset);
+>>  +/* Check if dso name is of format "/tmp/perf-%d.map" */
+>> +bool perf_pid_map_tid(const char *dso_name, int *tid);
+>> +bool is_perf_pid_map_name(const char *dso_name);
+>> +
+>>  #endif /* __PERF_DSO */
+>> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
+>> index 9e5940b5bc59..aee0a4cfb383 100644
+>> --- a/tools/perf/util/symbol.c
+>> +++ b/tools/perf/util/symbol.c
+>> @@ -1799,7 +1799,8 @@ int dso__load(struct dso *dso, struct map *map)
+>>   const char *map_path =3D dso__long_name(dso);
+>>     mutex_lock(dso__lock(dso));
+>> - perfmap =3D strncmp(dso__name(dso), "/tmp/perf-", 10) =3D=3D 0;
+>> + perfmap =3D is_perf_pid_map_name(map_path);
+>> +
+>>   if (perfmap) {
+>>   if (dso__nsinfo(dso) &&
+>>      (dso__find_perf_map(newmapname, sizeof(newmapname),
+>=20
+> Reviewed-by: Chaitanya S Prakash<chaitanyas.prakash@arm.com>
 
-No, as the commit said the ACS settings are required at early boot
-before iommu_groups are formed. They cannot be changed dynamically
-with today's kernel.
+Thanks Chaitanya for the reviewed-by
 
-> The representation chosen here (as a command line option) seems
-> questionable:
-> 
-> We're going to add more user-controllable options going forward.
-> E.g., when introducing IDE, we'll have to let user space choose
-> whether encryption should be enabled for certain PCIe devices.
-> That's because encryption isn't for free, so can't be enabled
-> opportunistically.  (The number of crypto engines on a CPU is
-> limited and enabling encryption consumes energy.)
+Athira
+>=20
+> I will drop my fix for the same.
+> https://lore.kernel.org/all/20240601125946.1741414-10-ChaitanyaS.Prakash@=
+arm.com/
+>=20
+> The rest of my series can be reviewed as a string function tidy up.
+>=20
 
-But that isn't part of ACS, so what is wrong with having ACS its own
-configurable and other PCI functions can do what is appropriate for
-them?
-
-I do encourage people to avoid using the kernel command line. ACS is
-forced into that because of the iommu_group issue.
-
-> What about exposing such user configurable settings with sysctl?
-
-I think sysctl is mostly deprecated in favour of sysfs.
-
-An ide file in the sysfs to control the IDE stuff makes alot of sense
-to me.
-
-Jason
 
