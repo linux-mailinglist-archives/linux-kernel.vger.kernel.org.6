@@ -1,70 +1,85 @@
-Return-Path: <linux-kernel+bounces-228165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308F0915BB8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:37:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4087E915BB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 904A0B2110F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:37:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64F0F1C21683
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0E61AAA5;
-	Tue, 25 Jun 2024 01:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D74A218049;
+	Tue, 25 Jun 2024 01:34:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="i3OBgSmW"
-Received: from out203-205-251-82.mail.qq.com (out203-205-251-82.mail.qq.com [203.205.251.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RDScxk4y"
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C510918B04
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.251.82
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCDF717727;
+	Tue, 25 Jun 2024 01:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719279418; cv=none; b=AKQvXpr0MJDE/ACmuQ8xCn7V8XAUdmjFLtO8WTob11I9iubnZhxoKjRsCPTT6+pjoGgFnInzskEqI7U3he2QEMK2Ks+1qRY/9RIsRReqT1q0FyU8xvCmKfEwaNmk25a/ZaHB3CYiQMF7WQDtFLxACQOqoz0MHVKDha3mNb/3JTA=
+	t=1719279287; cv=none; b=FrickQ+fMpAQ7E4BRLETv1HqkUcuiBm19upwITl8kj8J85/ExcXulK2Q4xQih+zGvLItQ/x/b5uqwZMRJT/ZOMLIgEkH4GfDndhnhMuOZvUIicMospoXSRqE55BrRd4QLLPVAsGJFU7ihUcA0keJgwOZFuuq7fLoxdryT4mNMNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719279418; c=relaxed/simple;
-	bh=8EjHr65PqUluLMIlelVxJBgfD9kXSwBVKfIOEhpRwzo=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=ueYaQZBBLbddgFOwDVgKVyIQoYvOTRoOdHEHDrLsxWw53m/XAiRzRuNnGpZYT2pGQjwORldoDU8LHGwM1IMal3dOlIyRE6VGW3G/AY5LzoEmPstOpGjkxxS1cz3OMKyOVt5fWPDnmOzH181/avK6S2Yr3UIDwV85I7cVIN6Kyb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=i3OBgSmW; arc=none smtp.client-ip=203.205.251.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1719279402; bh=yG9CowTovmcKn8NWGo6ZF6s/KGjA+Y734rgmx1QzCA4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=i3OBgSmW7HmFyOhVsp29o4YWM48hYpEUPyo7XeGN9yjC+NyM6qJM15WTt830snO+z
-	 RglwID0VsWqalSLfTs4e4GH5RPIDlP+fvVqEAY8ph2vC5FqgE0Oj2kGnNC+61/Ih6n
-	 S85mn+eGPG7NntJbdRlVTJY1g7OP+WdbqptoIbT0=
-Received: from pek-lxu-l1.wrs.com ([111.198.228.103])
-	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
-	id 7A735A42; Tue, 25 Jun 2024 09:30:39 +0800
-X-QQ-mid: xmsmtpt1719279039t9abxdiiu
-Message-ID: <tencent_76254CBA77BBB533DB9E261BD64BF01BF008@qq.com>
-X-QQ-XMAILINFO: NzOHSugmTg7Xb8RikqmNW57/7zEE9VYMG4ZH5GKELqjUgQV84pgKZXiyG2RKrN
-	 57nzPJIedbMPGLuaMXRYtGbA+TLFlC5U+4pbx9pMCTvKBTuYIIvgquAAoxfFl9OO2w3dvkr9RV3H
-	 Mz2nQmkOV9oJZ0P4UujlKM2kFCktbHQpi9zc6MMhNo7QyqMOGvhSJjgUqNXOIGC5CAJHRs6OW+6n
-	 fFWlpokewicuVqCzFoqUcdxOpi9bO/gw5U3NsbZdCajZdYvvhG8I+X7W22A4e4yWnoojmvBL/9a8
-	 AWdlVNBI6ABHksbVIhYcIFizfeYMFaRJTA5x9x1RAqbX+dmjJez486DK6D6xuO5EKVB+prAhXYTW
-	 Liu4NsxvUSmN/AJWLZsDGXDEx7BzaHIonncs4qoa0GUEV+P07woKVy//aSpmFa6tadk93MiEAn0r
-	 mrnqSCBLK2UVQ7g9bxA2rtzGCnhIZNLKmOhsgxoKaHJKEQQoPEB4QOBU8Mntc+/JGez/mjAqnnEp
-	 fA6K7SV5SbCKEMCkPczYySAePxWZGYDxFbj5LvIKnZ7ScivIgztpWbphO5zDV300xhjguUf/McNk
-	 UeL7PMs3gbiP4aOS6yBJG6eKbjIH8Ae/CvfBTHT3QfXBEJERQA2It6J24tFzAP+io0KWcADhq2S4
-	 B6QjPg3oCS0gTgFapC3dVS1psJuaFEMmViKNwnogxrmsoRt68iGUGDmA3mdkKS3XqMW76wmNDTiO
-	 IVqyMvPoV6WasNZZPoWTWW+JIltp4sUK+0qTZM/o7GEIMCiHnccejVzEirQl3HsLE+LJWtah2S0F
-	 fovI0W1NE8A+hEn5Aba0zc1InV89KGMnUsVrKCj/dkOpmjonSkopP70wM8r/CWu5hG1Czf4pHRlD
-	 9MHRmaSnwhF7l3y/S/2eniLLqxOTMMu7MfFQBPH4M3M3L2nvFxhi5Bd3Tf8RgpuC8g1O5ChiPK
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+f115fcf7e49b2ebc902d@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in sk_skb_reason_drop
-Date: Tue, 25 Jun 2024 09:30:40 +0800
-X-OQ-MSGID: <20240625013039.83412-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <000000000000387998061ba467ac@google.com>
-References: <000000000000387998061ba467ac@google.com>
+	s=arc-20240116; t=1719279287; c=relaxed/simple;
+	bh=yYo8k4kUrpGzhRjzls2WGueKu0PGvyYBs46uyLt6T4M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=In1ZpzjisNdajANvoJG4wk5IEV1J/MRQszzFtcmbrLUh3zA0MxbfXgICtdfywXuqNPbgDGa20ytKDXRkQ/wdbWrrKByjzJj4uH1+qDzbPcV5R7QtjK8gL4ykan9fOXRpc3MjX29RD4vmX/cdeY4M6+CEYzZi8zQPnwFxlNZC7Ag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RDScxk4y; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5c1ef5ac47eso1012730eaf.2;
+        Mon, 24 Jun 2024 18:34:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719279285; x=1719884085; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2O2TW7XbF5ae+IR/yu9jsK1asKpGRJzGj2qHQztnGWg=;
+        b=RDScxk4yjblGXPRl8Ttp3M2Gvpo/mnfDCdfjKF/b4lyByhG9weHlZtQqiBrpljiJ3M
+         Z5VD5OQWFqW+nqg20Shp3y6CLPPTO1CXnWemnlBGhprwD3cd8rRF55HQFE4GoxQ6ZxwL
+         xROXZe1RFHpc7g5A5DwOdbxNIdJNimO33mzZ53LSgqo2g0lHBbMKSxjGXyaHfbixFiFM
+         kEew2RoMwoQkceOqnULctsDMGiUrzAu1O4dk9o0jdeyZBOxs4exkjRsIRlm55Xm8p6cA
+         /qNQoeflwifVutk/vCV9wd20ukycA0x0KPY+TpaJCvLVpOMI7LoyOZHZnSVfqXAanyJ+
+         Ebww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719279285; x=1719884085;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2O2TW7XbF5ae+IR/yu9jsK1asKpGRJzGj2qHQztnGWg=;
+        b=cIcCsNVIt0Si6it15WopbcWsw1W3m61yYqRRPY8lv9NmY58e88dP0MWwKt7dBRiYze
+         EE+3KNn9+EYjeb1GTzmFhp9Ygug40eyPRwz85fJqYoR6MtwVbj8NJqwksK9H30MVXt5T
+         uYOb8vhypqy5zy/S3WrZdZuERJrOHW+b34dnkqKxHg05vAIO4+ADEsi6jXUfbiBPFtLN
+         XZZLPvCpQcMF/MSvZF43OXCCm2ikTIhvLN1uSELnjRS/9fuVXP2NDfVHX9Tq1QFC166d
+         xudbF5g8lw+cJvSt0uCM4tQd0C7aq9yNChlIaBju7uCHF+qA+8ySBUYdKKZkCm1AlvGd
+         adQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUoSuID6Oqd74iHQqW145gqeZKd6xGk7m7jGWlt4wEnUYCsmdvo6r+0Mb+SkI98RYzkytX0QCL7WfuEL8ymzBzrM0wexiAs8qtQRZZExRl1ssUjWAKbfN+YrhrzQQpIfTOKkmX/ydIkig==
+X-Gm-Message-State: AOJu0YxgXrKHZw1RNgkaicaPCDnn/m7yB+AFLCSeRYxxjjsh45A4QEB6
+	UAnb4jEkGPegJZBv/XniKQtK3wDUiBFDTFYayUaqd4tH+NbHCQOEaj8z9g==
+X-Google-Smtp-Source: AGHT+IGnmlhtAxgHfbyK08Mi8n5iC280q7zCZibuChaVXzMxvwHYN1zHlPlI2uxOgZmF9W/Oj4TFYA==
+X-Received: by 2002:a05:6358:340f:b0:1a2:3a1b:58b with SMTP id e5c5f4694b2df-1a23a1b065cmr694725155d.30.1719279284702;
+        Mon, 24 Jun 2024 18:34:44 -0700 (PDT)
+Received: from localhost.localdomain ([118.32.98.101])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-718d5e33106sm4041921a12.59.2024.06.24.18.34.41
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 24 Jun 2024 18:34:44 -0700 (PDT)
+From: yskelg@gmail.com
+To: Harald Freudenberger <freude@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>,
+	Markus Elfring <Markus.Elfring@web.de>
+Cc: MichelleJin <shjy180909@gmail.com>,
+	linux-s390@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Yunseong Kim <yskelg@gmail.com>
+Subject: [PATCH v2] s390/raw3270: Handle memory allocation failures in raw3270_setup_console()
+Date: Tue, 25 Jun 2024 10:32:26 +0900
+Message-ID: <20240625013225.17076-2-yskelg@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,44 +88,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-please test uaf in sk_skb_reason_drop
+From: Yunseong Kim <yskelg@gmail.com>
 
-#syz test https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git 84562f9953ec
+A null pointer is stored in a local variable after a call of the function
+"kzalloc" failed. This pointer was passed to a subsequent call of the
+function "raw3270_setup_device" where an undesirable dereference will be
+performed then. Thus add corresponding return value checks.
+The allocated each memory areas are immediately overwritten by the called
+function zero-initialisation be omitted by calling the "kmalloc" instead.
+After "ccw_device_enable_console" succeeds, set the bit raw3270 flag to
+RAW3270_FLAGS_CONSOLE.
 
-diff --git a/net/bluetooth/hci_request.c b/net/bluetooth/hci_request.c
-index efea25eb56ce..6f3e2e6cd2f4 100644
---- a/net/bluetooth/hci_request.c
-+++ b/net/bluetooth/hci_request.c
-@@ -106,8 +106,10 @@ void hci_req_sync_complete(struct hci_dev *hdev, u8 result, u16 opcode,
- 		hdev->req_result = result;
- 		hdev->req_status = HCI_REQ_DONE;
- 		if (skb) {
--			kfree_skb(hdev->req_skb);
-+			struct sk_buff	*old_skb;
-+			old_skb = hdev->req_skb;
- 			hdev->req_skb = skb_get(skb);
-+			kfree_skb(old_skb);
- 		}
- 		wake_up_interruptible(&hdev->req_wait_q);
+Fixes: 33403dcfcdfd ("[S390] 3270 console: convert from bootmem to slab")
+Cc: linux-s390@vger.kernel.org
+Signed-off-by: Yunseong Kim <yskelg@gmail.com>
+---
+ drivers/s390/char/raw3270.c | 20 +++++++++++++++-----
+ 1 file changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/s390/char/raw3270.c b/drivers/s390/char/raw3270.c
+index c57694be9bd3..4f3f98bcbc83 100644
+--- a/drivers/s390/char/raw3270.c
++++ b/drivers/s390/char/raw3270.c
+@@ -811,18 +811,28 @@ struct raw3270 __init *raw3270_setup_console(void)
+ 	if (IS_ERR(cdev))
+ 		return ERR_CAST(cdev);
+ 
+-	rp = kzalloc(sizeof(*rp), GFP_KERNEL | GFP_DMA);
+-	ascebc = kzalloc(256, GFP_KERNEL);
++	rp = kmalloc(sizeof(*rp), GFP_KERNEL | GFP_DMA);
++	if (!rp)
++		return ERR_PTR(-ENOMEM);
++	ascebc = kmalloc(256, GFP_KERNEL);
++	if (!ascebc) {
++		kfree(rp);
++		return ERR_PTR(-ENOMEM);
++	}
+ 	rc = raw3270_setup_device(cdev, rp, ascebc);
+-	if (rc)
++	if (rc) {
++		kfree(ascebc);
++		kfree(rp);
+ 		return ERR_PTR(rc);
+-	set_bit(RAW3270_FLAGS_CONSOLE, &rp->flags);
+-
++	}
+ 	rc = ccw_device_enable_console(cdev);
+ 	if (rc) {
+ 		ccw_device_destroy_console(cdev);
++		kfree(ascebc);
++		kfree(rp);
+ 		return ERR_PTR(rc);
  	}
-@@ -120,6 +122,7 @@ int __hci_req_sync(struct hci_dev *hdev, int (*func)(struct hci_request *req,
- {
- 	struct hci_request req;
- 	int err = 0;
-+	struct sk_buff	*req_skb;
++	set_bit(RAW3270_FLAGS_CONSOLE, &rp->flags);
  
- 	bt_dev_dbg(hdev, "start");
- 
-@@ -181,8 +184,9 @@ int __hci_req_sync(struct hci_dev *hdev, int (*func)(struct hci_request *req,
- 		break;
- 	}
- 
--	kfree_skb(hdev->req_skb);
-+	req_skb = hdev->req_skb;
- 	hdev->req_skb = NULL;
-+	kfree_skb(req_skb);
- 	hdev->req_status = hdev->req_result = 0;
- 
- 	bt_dev_dbg(hdev, "end: err %d", err);
+ 	spin_lock_irqsave(get_ccwdev_lock(rp->cdev), flags);
+ 	do {
+-- 
+2.45.2
 
 
