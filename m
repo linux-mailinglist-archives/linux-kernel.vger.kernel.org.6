@@ -1,170 +1,180 @@
-Return-Path: <linux-kernel+bounces-228386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69833915F25
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:57:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B28FA915F2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:57:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28F9328454B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:57:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E7561F2365A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:57:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A8581465A5;
-	Tue, 25 Jun 2024 06:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ppy5c9v3"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92791146A64;
+	Tue, 25 Jun 2024 06:57:41 +0000 (UTC)
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D521459E5
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACE6614658D;
+	Tue, 25 Jun 2024 06:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719298647; cv=none; b=qozZ7CqzUL2kgbXKBcr55aLDX+oy27AiL5b86EsyCmTR0mVLDlJVXL4uOMZHyxiRrwnOMxz0k4U1otEut7//5HFmFuwUAs5Futlke39VMQxvlIKq8WE/oUjMay0MDgVFlu//gXhiLz0FkOE8EpxJsltFH2wHulRoqUt9txpuJqo=
+	t=1719298661; cv=none; b=j2BX9DgtNFdHwa6bwtC4xyQzRbg+O10KO+MVK8EpKLZlj3D06Z4T2ajvSKaOR8cY2odsbzd3TTm6JiA5/3/MSFpcV1DBQUqV7DYNXgqVK7zhlkAkgjl048BzfB8oYmc+NDn+mrkXqsLfaixbUBms4EV4UC/c6bG616O53tlS6RU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719298647; c=relaxed/simple;
-	bh=9bwQGGR/wyIdfMAsvGQ9dzDTbZwlGTht+mu4n+QPefg=;
+	s=arc-20240116; t=1719298661; c=relaxed/simple;
+	bh=7PQ9Ld3PigpkI7t5BiNna4fflu7OG1uZIn6VEDnEgUQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H2MMr2fmnToMmcakzZjzbBSy3eLOeVGMrrr0JU3pEZGKOIQ07pQuOjlKgv/ceHIJ/YtgaJ2Rhgk/aGCtSk2DMjMOYsRbOlDGEV/npluEkzUnUxAiQ98D3aG1SegfRbAHF4HV/QRSTqKWejGos3RnLk+mdKIECMWz7L+TxwYQGsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ppy5c9v3; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dff02b8a956so4593080276.1
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 23:57:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719298644; x=1719903444; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rDmIfuJcogCN48ne3+t+LsUj7I8L6ToirSOH5B1KCCI=;
-        b=Ppy5c9v3UDf7dNKdkMc5NtogPQkRL5tKCY+76M0n48wyds0x41+35aG5s6QgbjEGwk
-         9CA2qdHLx7tEXmwHFORWItwR5boD7bbtuFpXFrBxJs0R3rVUAK208zCpzxNd7HVpKetn
-         Mn9gvw5NOuCUDMxyKbBfr0vHIWLB238YTy0Rn2ZcUn9LeO2IVWaCfWYNAUKYMbWfqqx7
-         l1jpSgeSQ/ym191DPmz+P5CdcmN6o+dUwljB4YixrVI5QKjebsvPzOD2uwVvlDbs0c0A
-         EiX6MqWlSfpxR0pADmnStBVXFm3dEVuhxp0JtOFEkAa9tjyynJ4KuaTOrlo3O7fQMjzi
-         Afww==
+	 To:Cc:Content-Type; b=dqYNTT+tTkbaHg76GqnIJXq/eCJadRiCqB8cFgj1VuFKd3aJ75rlTcmPH1SWjWepY35mF4PDEmMydf/8kdq4Lx0IlntNK4xSrmPcgH6l6tv8J6HZuqPen47vkShuWgBpabTS1cnhc9IjxzkFux7jLrk1nVMK6Yxbu5h2618B6Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-64361817e78so25270627b3.1;
+        Mon, 24 Jun 2024 23:57:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719298644; x=1719903444;
+        d=1e100.net; s=20230601; t=1719298657; x=1719903457;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rDmIfuJcogCN48ne3+t+LsUj7I8L6ToirSOH5B1KCCI=;
-        b=GSUzpvvsTqDbtt6DybpXSP6lej2ubhzQY50og0yKMBGCUvoGvRjK4IKzhiQrBn9PUy
-         eD8GLkaDBk/K+IWZY6hvX/koKc5AKCtHukkPeevUYclIgaB37Bj+VF/rX1qapLwhIZiO
-         4wG+d8+HY5ij7JrqsqQlKxWAuiaamZ2G+sBtAs0bzW/eSJbGmQ2gu8awgEZfMOXrhhRL
-         uQosKfl7BeB6YDAH+zm2S+FRP7bUUe18LKTmtNvfFffrUek9/cxsV9YMDB8HODxu2RbF
-         fq+NKgF9UAS+Kdiqf6lAbaC493WdpSxr+O531FCs9v2XIa44UZZLaLU/BtqW0NOeOOXY
-         VbwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVS9IxOvtT8kP7ACzRCEhSPfbqQyFOfHexK+1LfdP9nEpAgtlM44QVYNwcQv2cnn1lqDoSpG5092GmLTx2xWHNj0WTDdhfYAfMXgcRF
-X-Gm-Message-State: AOJu0YwPLMMRQTLQc32/ZFj7X4t43icX8PWOg8tJdcHxzRokGfrcrW+y
-	+m9+9eJuUEOTVizHhhk4zLwJcKqmq0MI51Hl9JB0yYBf1s9gOKktQHg2m6InMjj2We1SVv3qk0r
-	UP5SBgKp78uVtC8B4YKix1iVQ32d0DDkxmKtTn54osVqwuuWzzF0=
-X-Google-Smtp-Source: AGHT+IGripGlc3e99ZcQ7A/cB5i8DPUq0WPOuQjyoddclsAtiju4Lk8yaZqQa5u8RSMpSSF6OCkcO3tGgbtiw1qoIu8=
-X-Received: by 2002:a25:a029:0:b0:dfb:812:af06 with SMTP id
- 3f1490d57ef6-e0300eef36bmr6622618276.10.1719298644096; Mon, 24 Jun 2024
- 23:57:24 -0700 (PDT)
+        bh=zNbYMFbhgmOSSwF5RGasbPwl9K7tYI8aYy87FC0FKAw=;
+        b=YMD1xsJjicz7/7UP9/OL/OatMBFoy4ck0TXy8cUkcWNaMuitG+KjHpk2d4Hrkhys1v
+         8PRSYp+fG6ku2Tl6ffqnLpcnou4Mp8Z1VyqUsisS+J+HKMEfhMjYwkCTXnz6xr1MUHa4
+         lMQEeXpAfomWlZ0QXOZf1tEChBKWzoQVJStNpEn8cUtGl17QJ7hM55MQysN2lbYrD7kC
+         WG4/jcRJp8PIqsq5CYNRVL2HU/qqw6RtGFcFKxz2NhIUdwpUjBt/JuUmQzkNJGc0vCSH
+         VrVnOzi1drbw2OGsE5Tb8I2BD1Zjm7XSl0EzlxL0n4ID9x7KEziwyELN4WAfwWoqdYza
+         wmmw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSxHmM0e/hM1kcdE8kmOEPWM8A0BkniK6cUDgqQAiIQiRpz2nQ7Gww/R2eHRD0Uy7585RDIQ3YnHYtT0phBRfSzJZv51Pef73d+4ZD+eK+m5/V3EdqLWvl0dxgvTF+/ZPdAx9iM4JxjM6dYD46JyyarH7toBiPDKr+6rrNfwY86DrU75pzrlLoGvJmnBOTAo616cPLxCh3h6NZm6QMHOm+kLoFxpgq
+X-Gm-Message-State: AOJu0YwzphaHsiY3Er4CM8byCXmHWtY16esLRNHq1020gKMWAmWrjjbj
+	DXj2EgL6ZZcejK3XV/AnkaNWClBGiFbiIjS8KYi52Gvlsg/JVgoD3oWFcD/t
+X-Google-Smtp-Source: AGHT+IHWmQxqhcZcwE4sPvQn0p6Wr9FMO+8wNhst8PvMzBNiYKD5Fq+B2YR5eLIc85yO5Z4TvdP3nA==
+X-Received: by 2002:a05:690c:845:b0:61a:d846:9858 with SMTP id 00721157ae682-643aa1c15ddmr60099197b3.20.1719298656843;
+        Mon, 24 Jun 2024 23:57:36 -0700 (PDT)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f154d5f8csm33570257b3.111.2024.06.24.23.57.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 23:57:36 -0700 (PDT)
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dfdff9771f8so4776583276.1;
+        Mon, 24 Jun 2024 23:57:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCULI3LaolOrc/SVFBkaCa1z18le1a0/xuKtVfLSZLwZV8LOR600ORtWaUrdmgcAIaQ78clxBhQ/THp7YA1SaCZp8gitVcLmnJJl+tJay1A6RNXORlEFfsRdF7/IGrmJ9mredPGPXHZxdkjG0SB2gm91MpfP7A/eYkSD9LHmVi3LzoQB9w9Zw+vbHDZ+CJqWevfRcxe/0Xlrmc0gMAjr5Nqkb3JAa4oL
+X-Received: by 2002:a25:97c5:0:b0:df7:7065:24cc with SMTP id
+ 3f1490d57ef6-e0304045133mr6134526276.61.1719298656102; Mon, 24 Jun 2024
+ 23:57:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624194518.37458-1-brgl@bgdev.pl> <CAA8EJppMPeYrPH+ssDMnf6UwHRdKQetpY3PotGvR-cc2vE68AQ@mail.gmail.com>
- <CAMRc=MeYy8MgBVbwmrR1Rd9oQMz1tUb+uL4eFJWTL7EOsRXxjg@mail.gmail.com>
- <CAA8EJpqz7wPSyn0ybDWKwBKkp+rWVPbTgjbKuG6VHWm24MCusA@mail.gmail.com> <CAMRc=MeX6crenUhC1dqp08W+ss5YksUaaemr4PFFM95SHeED2g@mail.gmail.com>
-In-Reply-To: <CAMRc=MeX6crenUhC1dqp08W+ss5YksUaaemr4PFFM95SHeED2g@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 25 Jun 2024 09:57:11 +0300
-Message-ID: <CAA8EJpr3OPi=EhpfXWghFoF0rgYwuZ8Xw-EzybOzqzftq-GhaA@mail.gmail.com>
-Subject: Re: [PATCH] Bluetooth: qca: don't disable power management for QCA6390
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20240624153229.68882-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240624153229.68882-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240624153229.68882-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 25 Jun 2024 08:57:24 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdU0r+B_Jmh7E6sopRbfzzX7DtZKpY=Xte2vLDC-ORwdVA@mail.gmail.com>
+Message-ID: <CAMuHMdU0r+B_Jmh7E6sopRbfzzX7DtZKpY=Xte2vLDC-ORwdVA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, 25 Jun 2024 at 09:50, Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+Hi Prabhakar,
+
+On Mon, Jun 24, 2024 at 5:33=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 >
-> On Mon, 24 Jun 2024 23:19:55 +0200, Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> said:
-> > On Mon, 24 Jun 2024 at 23:47, Bartosz Golaszewski <brgl@bgdev.pl> wrote=
-:
-> >>
-> >> On Mon, Jun 24, 2024 at 10:17=E2=80=AFPM Dmitry Baryshkov
-> >> <dmitry.baryshkov@linaro.org> wrote:
-> >> >
-> >> > On Mon, 24 Jun 2024 at 22:45, Bartosz Golaszewski <brgl@bgdev.pl> wr=
-ote:
-> >> > >
-> >> > > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >> > >
-> >> > > We unnecessarily fallthrough the case for QCA6390 when initializin=
-g the
-> >> > > device and hit the condition where - due to the lack of the enable=
--gpio
-> >> > > - we disable power management despite using the power sequencer. W=
-e don't
-> >> > > need to look for clocks on this model so it makes more sense to ju=
-st
-> >> > > register the hci device and break the switch.
-> >> > >
-> >> > > Reported-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >> > > Fixes: 4029dba6b6f1 ("Bluetooth: qca: use the power sequencer for =
-QCA6390")
-> >> > > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org=
+> The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to that
+> of the R-Car Gen3, but it has some differences:
+> - HS400 is not supported.
+> - It supports the SD_IOVS bit to control the IO voltage level.
+> - It supports fixed address mode.
 >
-> >> >
-> >> > Is this going to break the QCA6390 as present on M.2 / PCIe cards? O=
-r
-> >> > the older DT which didn't have pwrseq entries?
-> >> >
-> >>
-> >> Neither of these has clocks that need to be driven by linux. The only
-> >> user of QCA6390 Bluetooth in mainline is RB5. Bindings didn't exist
-> >> before so no commitment was ever made.
-> >
-> > This might make some laptop users unhappy. But anyway, restarting the
-> > hci0 now gives:
-> >
-> > [   24.387344] Bluetooth: hci0: setting up ROME/QCA6390
-> > [   24.387439] qcom_geni_serial 998000.serial: serial engine reports 0
-> > RX bytes in!
-> > [   24.554349] qcom_geni_serial 998000.serial: serial engine reports 0
-> > RX bytes in!
-> > [   24.562056] arm-smmu 15000000.iommu: Unhandled context fault:
-> > fsr=3D0x402, iova=3D0xfffd1080, fsynr=3D0x750013, cbfrsynra=3D0x5a3, cb=
-=3D3
-> > [   26.914225] Bluetooth: hci0: command 0xfc00 tx timeout
-> > [   35.042619] Bluetooth: hci0: Reading QCA version information failed =
-(-110)
-> > [   35.049721] Bluetooth: hci0: Retry BT power ON:0
-> > [   37.539492] Bluetooth: hci0: command 0xfc00 tx timeout
-> > [   45.539519] Bluetooth: hci0: Reading QCA version information failed =
-(-110)
-> > [   45.546667] Bluetooth: hci0: Retry BT power ON:1
-> > [   48.035863] Bluetooth: hci0: command 0xfc00 tx timeout
-> > [   56.034783] Bluetooth: hci0: Reading QCA version information failed =
-(-110)
-> > [   56.041901] Bluetooth: hci0: Retry BT power ON:2
-> > [   58.532174] Bluetooth: hci0: command 0xfc00 tx timeout
-> > [   66.531928] Bluetooth: hci0: Reading QCA version information failed =
-(-110)
-> >
-> >
+> To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a09g057'
+> compatible string is added.
 >
-> How do you reproduce it because it works fine for me:
+> A 'vqmmc-regulator' object is introduced to handle the power enable (PWEN=
+)
+> and voltage level switching for the SD/MMC.
+>
+> Additionally, the 'renesas,sdhi-use-internal-regulator' flag is introduce=
+d
+> to indicate that an internal regulator is used instead of a
+> GPIO-controlled regulator. This flag will help configure the internal
+> regulator and avoid special handling when GPIO is used for voltage
+> regulation instead of the SD_(IOVS/PWEN) pins.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3
+> - Renamed vqmmc-r9a09g057-regulator object to vqmmc-regulator
+> - Added regulator-compatible property for vqmmc-regulator
+> - Added 'renesas,sdhi-use-internal-regulator' property
 
-Hmm, most likely I had a dirty kernel version somewhere. With the
-current linux-next it works for me too.
+Thanks for the update!
 
-Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Tested-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org> # RB5
+> --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> @@ -204,6 +207,31 @@ allOf:
+>          sectioned off to be run by a separate second clock source to all=
+ow
+>          the main core clock to be turned off to save power.
+>
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: renesas,sdhi-r9a09g057
+> +    then:
+> +      properties:
+> +        renesas,sdhi-use-internal-regulator:
+> +          $ref: /schemas/types.yaml#/definitions/flag
+> +          description:
+> +            Flag to indicate internal regulator is being used instead of=
+ GPIO regulator.
 
-Thank you!
+Do you really need this?
+The status of the regulator subnode already indicates this.
 
---=20
-With best wishes
-Dmitry
+> +
+> +        vqmmc-regulator:
+> +          type: object
+> +          description: VQMMC SD regulator
+> +          $ref: /schemas/regulator/regulator.yaml#
+> +          unevaluatedProperties: false
+> +
+> +          properties:
+> +            regulator-compatible:
+> +              pattern: "^vqmmc-r9a09g057-regulator"
+> +
+> +      required:
+> +        - vqmmc-regulator
+
+I'm not 100% sure this works correctly: does the checker complain if
+a required subnode is disabled? Note that I haven't checked that.
+
+> +
+>  required:
+>    - compatible
+>    - reg
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
