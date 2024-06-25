@@ -1,108 +1,139 @@
-Return-Path: <linux-kernel+bounces-229790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18A39917432
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:23:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 319C691743E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:29:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A6F21C22C74
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:23:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF4D51F23CB7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D93D17F375;
-	Tue, 25 Jun 2024 22:23:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4790217F4E1;
+	Tue, 25 Jun 2024 22:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Ri7RUWAZ"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aHIBw3DB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A494D1465A8;
-	Tue, 25 Jun 2024 22:23:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E27617E905;
+	Tue, 25 Jun 2024 22:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719354218; cv=none; b=BoHDpP2swAoji8Rn/8mdnX1mqQfXjD1GQNJSWLChzX3l5sN1j6uVcoThtxbMhkRggYnO86gP0AO9EdNGcZBPuoljQGvHaaitgmGvkqwYHGbX4Yhx+v5Xk62Jyb5b0xaY/RaACUtXFbwNjdsHPnm4ZO06U12cyobXKRcuFZhL/LU=
+	t=1719354544; cv=none; b=lRLgrbZ/+i8ofiZ9DUYt0OSJt4GMsLPzhoHJ/X5TtTmLph2ype4Tm9MQ2aJwT6EaFRXz+vtjCfii9YLrpj6lwJeSP7FrpgCsj87ptZTjpeek2M913vcHz4Iwj7sLGFmh6ePznLIG7KFKfXLfM5bqBD4A/Wc/jqG/nny8T5fO23I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719354218; c=relaxed/simple;
-	bh=xOBhoQwilOC6RKK8cibFbpZQ6aSPbs5hgW2z6bmpcTk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QJg7Cj/6H+N7VBM9Ue5BWwPQ6QeERXHutmk/iN+2y5Pk+Q+vj8UL7CDaFHHl6S7U1W3W1RHYhYx6aR5KxJ8YO7B0PhxVGbDeBiueCgBahp3mQCYTm8tLKCdyGD24ZuPeSpY5dyIcod5436A5CWkHk2XOxkLBZNkRy5aTl2iI2DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Ri7RUWAZ; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45PMNNvG047458;
-	Tue, 25 Jun 2024 17:23:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719354203;
-	bh=EX4bniwi4WwAftSjs3/qB5CdYkqk9BcigpRAE9JoEOg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=Ri7RUWAZMT7mjsY7HmZU+fCkcIpnQQ5K0cMF8YYJMQ1cO1tpK64lGwIPHjkJqYzII
-	 Yv9wSmnP68dZTy/L1W/DW6dssmoU2uyZQOH3VDOfWDYDmmhdQ6mT8dXRMAYg8yHRve
-	 f3dKAsqpyrK0MBDmxHdNuem5bmrmxSFqnZ/XCLx4=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45PMNN66008530
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 25 Jun 2024 17:23:23 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 25
- Jun 2024 17:23:23 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 25 Jun 2024 17:23:23 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45PMNMKI069659;
-	Tue, 25 Jun 2024 17:23:22 -0500
-Message-ID: <c3f4a289-03b1-48a5-a3dd-7cb7ca594055@ti.com>
-Date: Tue, 25 Jun 2024 17:23:22 -0500
+	s=arc-20240116; t=1719354544; c=relaxed/simple;
+	bh=+L/emvVgtDd3ULOJoo20PaysUqptsWugNLJKhSGnCkg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N9xY9Hpih9mjZ7Ip6VPGC7OL0QIgFTRkTY0NzRH7cbZi4NG0U46xFjs897PTGMpgaYRXl7TndyaaWMqKR+lj3t1vyAUAnQI52Cw8/a6cqnZ4ni62Gs0BzfpDM8EmAxfcYlfB0DWLUrtJEkz6PR/rlDns0h3XaS4Fy9Bbs+F4oJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aHIBw3DB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0F0AC32781;
+	Tue, 25 Jun 2024 22:29:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719354544;
+	bh=+L/emvVgtDd3ULOJoo20PaysUqptsWugNLJKhSGnCkg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aHIBw3DBgsgjmcpsG44SasdTK/47SLheszc2AagGPy/V7LIt+KIuH7AKrKN0mdQ4m
+	 v/86HnwE7/KWPAzxgOoR5hd/JrDeNRp9OvGbCb53WyGFL4HooYtZJcZIp7AkX2QJaT
+	 +vHjK7JhSOiOAkpK9K/Uyzwtlo1NR5gjQek9RAJpOZqYT6fUx1Eow01E9Q9ijR15CZ
+	 38Zdrwgb2Jm2MNu4wtYm/QCdZo2set9VEJc9HQaVddLzXwUicN4X+XaslvpbMn/EO5
+	 WLDZHpj95vw9bZc+CTbvXsK9O1YX/XaWex8fqU8mdI6PeHJvGwff4q5XmL1qsCihxt
+	 HbV5Mb4qb0ZXA==
+Date: Tue, 25 Jun 2024 16:29:02 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>,
+	linux-gpio@vger.kernel.org,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-pwm@vger.kernel.org,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jonathan Cameron <jic23@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	linux-watchdog@vger.kernel.org, linux-iio@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-i2c@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	linux-clk@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
+	Zhang Rui <rui.zhang@intel.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] dt-bindings: drop stale Anson Huang from maintainers
+Message-ID: <171935453992.325655.11101198917545671907.robh@kernel.org>
+References: <20240617065828.9531-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: soc: ti: am654-serdes-ctrl: Add
- simple-mfd to compatible items
-To: Jan Kiszka <jan.kiszka@siemens.com>, Rob Herring <robh+dt@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>,
-        Nishanth Menon
-	<nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240625164528.183107-1-afd@ti.com>
- <6ebc89dc-fbb3-4073-8b1b-cd413907ebf8@ti.com>
- <7fbb62b3-cc71-4fa8-a0c4-fca558292c75@siemens.com>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <7fbb62b3-cc71-4fa8-a0c4-fca558292c75@siemens.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240617065828.9531-1-krzysztof.kozlowski@linaro.org>
 
-On 6/25/24 2:46 PM, Jan Kiszka wrote:
-> On 25.06.24 18:49, Andrew Davis wrote:
->> On 6/25/24 11:45 AM, Andrew Davis wrote:
->>> This node contains a child which is only probed if simple-mfd is in the
->>> compatible list. Add this here.
->>>
->>> Signed-off-by: Andrew Davis <afd@ti.com>
->>> ---
->>
->> This patch depends on https://www.spinics.net/lists/kernel/msg5253666.html
->>
+
+On Mon, 17 Jun 2024 08:58:28 +0200, Krzysztof Kozlowski wrote:
+> Emails to Anson Huang bounce:
 > 
-> But is that patch already scheduled for 6.10 as well?
-
-I don't think so.. But only [patch 2/2] from this series needs applied
-back to 6.10 to fix the issue. This one [Patch 1/2] just removes a dts warning.
-
-Andrew
-
+>   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access denied.
 > 
-> Jan
+> Add IMX platform maintainers for bindings which would become orphaned.
 > 
+> Acked-by: Uwe Kleine-König <ukleinek@kernel.org>
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+> Acked-by: Peng Fan <peng.fan@nxp.com>
+> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com> # for I2C
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Changes in v2:
+> 1. Add acks/Rbs.
+> 2. Change clock maintainers to Abel Vesa and Peng Fan.
+> 3. Change iio/magnetometer maintainer to Jonathan.
+> ---
+>  .../devicetree/bindings/arm/freescale/fsl,imx7ulp-sim.yaml    | 4 +++-
+>  Documentation/devicetree/bindings/clock/imx6q-clock.yaml      | 3 ++-
+>  Documentation/devicetree/bindings/clock/imx6sl-clock.yaml     | 3 ++-
+>  Documentation/devicetree/bindings/clock/imx6sll-clock.yaml    | 3 ++-
+>  Documentation/devicetree/bindings/clock/imx6sx-clock.yaml     | 3 ++-
+>  Documentation/devicetree/bindings/clock/imx6ul-clock.yaml     | 3 ++-
+>  Documentation/devicetree/bindings/clock/imx7d-clock.yaml      | 1 -
+>  Documentation/devicetree/bindings/clock/imx8m-clock.yaml      | 3 ++-
+>  Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml      | 4 +++-
+>  Documentation/devicetree/bindings/gpio/gpio-mxs.yaml          | 1 -
+>  Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml      | 4 +++-
+>  .../devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml     | 2 +-
+>  .../devicetree/bindings/memory-controllers/fsl/mmdc.yaml      | 4 +++-
+>  Documentation/devicetree/bindings/nvmem/imx-iim.yaml          | 4 +++-
+>  Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml        | 4 +++-
+>  Documentation/devicetree/bindings/nvmem/mxs-ocotp.yaml        | 4 +++-
+>  Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml        | 4 +++-
+>  Documentation/devicetree/bindings/pwm/mxs-pwm.yaml            | 1 -
+>  Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml      | 4 +++-
+>  Documentation/devicetree/bindings/thermal/imx-thermal.yaml    | 1 -
+>  Documentation/devicetree/bindings/thermal/imx8mm-thermal.yaml | 4 +++-
+>  Documentation/devicetree/bindings/thermal/qoriq-thermal.yaml  | 4 +++-
+>  Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml   | 4 +++-
+>  .../devicetree/bindings/watchdog/fsl-imx7ulp-wdt.yaml         | 4 +++-
+>  24 files changed, 52 insertions(+), 24 deletions(-)
+> 
+
+Applied, thanks!
+
 
