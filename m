@@ -1,174 +1,172 @@
-Return-Path: <linux-kernel+bounces-228947-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77DFC9168F7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:34:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9452591691E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:38:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03763289237
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:34:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C28F28B2EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:38:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FEB16C866;
-	Tue, 25 Jun 2024 13:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6339116D4FB;
+	Tue, 25 Jun 2024 13:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eaCCKF6/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TWyt2F4R"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 128D015FA8A
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E3EB16B72B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719322413; cv=none; b=ZGe19jwXxH81aKeLrpou1whXH9Fa+hTEluto0uBLQJj/+rbMwhqrue3CAmWPPG8WeNbILzA2zMS7K2q/oH9p2rmCnBEhwg/6s1NyFDL+CoEP5fK+TO8VfEa9Vga1Ln62qXRzeWAVu3IdIfq3fLs4Oj5ebVcofeebq/BcD2qYIDU=
+	t=1719322629; cv=none; b=KcyEAq8Fum0oDD657oEWhFcW9QVals8C1AhJf4XVfmxb0YFRtTjc2BUmmX2G/zyVHplBhpDLnCmjmd6PWoB9KlLuaTdTWf2LBEiw6mO2teI5JyLTKGZnjwX7OZe8M/NG9g1ebfxDqVJBvVGIBX5r0WFcJCrfbNXJo9IKQWESJdg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719322413; c=relaxed/simple;
-	bh=alSlDhdkiJyvmI6ifHWRuAZIRHQHoXNo6fYGRI5E4GA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tiNPwnwbUkkJdynM2Z8FYyZeCaEiE9qn2DeHl4ETsy4nw7lN4GIF8y8vsCvg6dLsMFxFwmQ0r7R0mE8rRNA5mIc+l5IYvWUyU4e2sv3g35Gl07NxHXvG7CXL1hyHYYazbLTl2iL13NCvrFM/zZEsRz/tIriSNkBfeG5E24PCRhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eaCCKF6/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719322411;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=b084P8R3rbMy/BJbC4aMnxh/+d0pYKaHDsv3RMDiIlU=;
-	b=eaCCKF6/dS5aVc9kJDB9btDzhYmBxW7D2c9/VwtGjTUj1FPMtoPpr51vgT1ReisFaqgUHL
-	E+TOxZncUv6j4wj8hqdlcbt2JJCeZhplp7nULHZHLmH7m8D/ross/oAIPlNP06T3rsTjQl
-	z7KjRByQbVImBw4bDEq4sTHXDXt3VF8=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-595-k8AO3SgWMm2m2Rck5Pad4Q-1; Tue, 25 Jun 2024 09:33:29 -0400
-X-MC-Unique: k8AO3SgWMm2m2Rck5Pad4Q-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-42196394b72so34008295e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:33:29 -0700 (PDT)
+	s=arc-20240116; t=1719322629; c=relaxed/simple;
+	bh=N5IkBiZ8upF4s8YnrzmFzpvwQYID8FWiPCKApwP/lcA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QMYzmtgeafOf+7PKN1IaqloZ+8NwT6l7B+GrvRN1L9r4f6tSNKS1L2NdIipIzFEPQU03x2KWBjCiMxv6j4iCaMbRWsNkiyhCxrPiPSqcp+2vE3sJuNLRgpAmQfoMVUtnzmrSWxoX4r/EvSd16p0FmFAciQrd19RizESryYviWLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TWyt2F4R; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7180e5f735bso2346195a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:37:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719322627; x=1719927427; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C2OvKfLbKYQ9emw7rPHyp0WrT4SoqNKMGYvkZT0N8Fk=;
+        b=TWyt2F4RdGYWYVt6Bccfq58uF+KRzTiK5k7vFpGOiSxH/65dXhxxPepx5lb13SLy24
+         9dolvqZmAOeJ34zI/pp+dAKqQ5gVdPJ4uuzzjIzT0Kbvo25HX26M2NX9ffrF98P2GMjI
+         +VDyt+y/jl/t8rvEOYVxGXL5+JjiSwwJENWacUy7XenX00rROYlIGaj3FTtg1ULp/Sok
+         pKYKnRfl8E4QlmtBL1wlGH0+LmxDTOPGt9FUJDzx78+e5/fpwDKYbyifozxJQCALNxpR
+         Zxcft9DCFbppJqailGhAC7wP/UORHX78peR+sN3otIw8EQ52lTdzNq7K3GJeHxlqbBb+
+         JzMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719322408; x=1719927208;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b084P8R3rbMy/BJbC4aMnxh/+d0pYKaHDsv3RMDiIlU=;
-        b=Tty3jeA3UpLetHOeYamqxCi9Bo/CzEbSUJNOVi4oZn3/V1/c8jXfG+6UX/MbCJPhUa
-         LLeQ3VWvY54c2Gb/4bwyxhmiSsKXOw/arHmPFspxB4jjXEW60EEUUWD3SgZq2ZZDZILk
-         8oZawugynqGkrAb1P0j61TPfEzfB0iTQ6FcdxWPCw3lNWRVXZolW0TDkmY7kMusmBDdV
-         uleo72+ZUVT8iRIS1DFPvY3f2qcc8dAQ6JHo0d8UfE791bRpOyFNKQfxid+e23AVB0Fp
-         9ZB2Ajw46S/ojM1f49/4q86sGtxY4McWe6a+j3d+Ga3HNAmNmOSLxQHyh7zPZmTtBS6f
-         d2Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCWcN9StstzbmOLXqx08SJleZuNH53S4zb5z8EgfxmYY3F7kSc8fwT1DNsK7cJlVAb12342wXo3As83koJvhAOmZ5tOH+7bMh4GEnuiG
-X-Gm-Message-State: AOJu0YzLBtdJX3biiNQ0caB9JOzwc/GmO3KMBLlgF8boZ5Tiz7yH9fNv
-	h3idhCFZmqtYkVYy9ww1YAb4qGh1pMifRH0Ub3zJv5r5tw4SmSpASToN+IjmsbB5UojU9PVjMqz
-	se9VYbrw/4YwRryLfE1GcA5cJJdnPVmKrxYEJLhruq298wwHKobLkRHpjYhQoaA==
-X-Received: by 2002:a05:600c:1c02:b0:424:8dba:4a3b with SMTP id 5b1f17b1804b1-4248dba4ccemr47873215e9.5.1719322408620;
-        Tue, 25 Jun 2024 06:33:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFynXqRqFfvBY+TB6vjUjM72qSVhbQKQIMBidJG6T3yjQSVdckLFQEsGIPL+9KksRFnlnNCpA==
-X-Received: by 2002:a05:600c:1c02:b0:424:8dba:4a3b with SMTP id 5b1f17b1804b1-4248dba4ccemr47872975e9.5.1719322408175;
-        Tue, 25 Jun 2024 06:33:28 -0700 (PDT)
-Received: from cassiopeiae ([2a02:810d:4b3f:ee94:642:1aff:fe31:a19f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f9924sm12980580f8f.72.2024.06.25.06.33.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 06:33:27 -0700 (PDT)
-Date: Tue, 25 Jun 2024 15:33:24 +0200
-From: Danilo Krummrich <dakr@redhat.com>
-To: Andreas Hindborg <nmi@metaspace.dk>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, wedsonaf@gmail.com,
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com,
-	benno.lossin@proton.me, a.hindborg@samsung.com,
-	aliceryhl@google.com, airlied@gmail.com, fujita.tomonori@gmail.com,
-	lina@asahilina.net, pstanner@redhat.com, ajanulgu@redhat.com,
-	lyude@redhat.com, robh@kernel.org, daniel.almeida@collabora.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 09/10] rust: pci: add basic PCI device / driver
- abstractions
-Message-ID: <ZnrHJKeHLGKqEgH6@cassiopeiae>
-References: <20240618234025.15036-1-dakr@redhat.com>
- <20240618234025.15036-10-dakr@redhat.com>
- <877cedi98j.fsf@metaspace.dk>
+        d=1e100.net; s=20230601; t=1719322627; x=1719927427;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C2OvKfLbKYQ9emw7rPHyp0WrT4SoqNKMGYvkZT0N8Fk=;
+        b=TfmH1c4UDBAzy7sq3BT8zpbOPP7a9RLLSFPC7TX+ivX8j5lPJi4SNBhU98TTK+R/9g
+         PbIczD4xq0meJrmSt0VYXO4l21tWpdHJx2UKRdXh5tUjl98Wzc3t8iisDfEioLff4pp2
+         /LljvoiX7np2CfAhkEubzn3IjXnj6CBxwc7OFbfJduYMZ9lJuxOZZzsScHDqEhH1XAfG
+         nKI4vuKrOR4tlVdlw/v7QKA9doNedNGZUHDXC2OCZnffHUaA8d40+SkZjib3nzWHJR1e
+         7taJ55Pp4fIG0aU/FkWgYxGbSnuU0yR2XEbMIIVwcltcEmDvxgHvpv+DtXD9Zb90/+PN
+         +8EA==
+X-Gm-Message-State: AOJu0Yw1qTAw1YLnQswGkejh55VNtZA2vyVhnL7XmEEwTzllVfErOBiS
+	XpREeCyf62qxE7qO3U3r6yAmrdiB6M6WUSayAYEHC02jqZl7+GXO6iufb6CWWye5IW11a5RWmhX
+	143iEe/49e4aCy2t/EB5kuKmoyjM3NPHAMz9juA==
+X-Google-Smtp-Source: AGHT+IFUpRFmFsAyDpAP+biiz8JjSzqMdh8Vc8qJysZjLKWNiTk9Mn/qnf6OmxG719zI8vqX0loMQN5Zsh4IGbXO+mg=
+X-Received: by 2002:a17:90a:e643:b0:2c4:e033:5187 with SMTP id
+ 98e67ed59e1d1-2c8a23c8bd0mr4889944a91.24.1719322626431; Tue, 25 Jun 2024
+ 06:37:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <877cedi98j.fsf@metaspace.dk>
+References: <20240624073900.10343-1-dtcccc@linux.alibaba.com>
+In-Reply-To: <20240624073900.10343-1-dtcccc@linux.alibaba.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Tue, 25 Jun 2024 15:36:55 +0200
+Message-ID: <CAKfTPtB4vDgKmgLvgi2uo+6TwSeUzPFfmtGxZJ2_ec+jR=bynw@mail.gmail.com>
+Subject: Re: [PATCH] sched/fair: Make SCHED_IDLE se be preempted in strict hierarchy
+To: Tianchen Ding <dtcccc@linux.alibaba.com>
+Cc: linux-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Daniel Bristot de Oliveira <bristot@redhat.com>, Valentin Schneider <vschneid@redhat.com>, Josh Don <joshdon@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jun 25, 2024 at 12:53:48PM +0200, Andreas Hindborg wrote:
-> Hi Danilo,
-> 
-> Thanks for working on this. I just finished rebasing the Rust NVMe
-> driver on these patches, and I have just one observation for now.
-> 
-> Danilo Krummrich <dakr@redhat.com> writes:
-> 
-> [...]
-> 
-> > +pub trait Driver {
-> > +    /// Data stored on device by driver.
-> > +    ///
-> > +    /// Corresponds to the data set or retrieved via the kernel's
-> > +    /// `pci_{set,get}_drvdata()` functions.
-> > +    ///
-> > +    /// Require that `Data` implements `ForeignOwnable`. We guarantee to
-> > +    /// never move the underlying wrapped data structure.
-> > +    ///
-> > +    /// TODO: Use associated_type_defaults once stabilized:
-> > +    ///
-> > +    /// `type Data: ForeignOwnable = ();`
-> > +    type Data: ForeignOwnable;
-> > +
-> > +    /// The type holding information about each device id supported by the driver.
-> > +    ///
-> > +    /// TODO: Use associated_type_defaults once stabilized:
-> > +    ///
-> > +    /// type IdInfo: 'static = ();
-> > +    type IdInfo: 'static;
-> > +
-> > +    /// The table of device ids supported by the driver.
-> > +    const ID_TABLE: IdTable<'static, DeviceId, Self::IdInfo>;
-> > +
-> > +    /// PCI driver probe.
-> > +    ///
-> > +    /// Called when a new platform device is added or discovered.
-> > +    /// Implementers should attempt to initialize the device here.
-> > +    fn probe(dev: &mut Device, id: Option<&Self::IdInfo>) -> Result<Self::Data>;
-> 
-> Since you changed the `Device` representation to be basically an `ARef`,
-> the `&mut` makes no sense. I think we should either pass by value or
-> immutable reference.
+On Mon, 24 Jun 2024 at 09:39, Tianchen Ding <dtcccc@linux.alibaba.com> wrote:
+>
+> Consider the following cgroup:
+>                        root
+>                         |
+>              ------------------------
+>              |                      |
+>        normal_cgroup            idle_cgroup
+>              |                      |
+>    SCHED_IDLE task_A           SCHED_NORMAL task_B
+>
+> According to the cgroup hierarchy, A should preempt B. But current
+> check_preempt_wakeup_fair() treats cgroup se and task separately, so B
+> will preempt A unexpectedly.
+> Unify the wakeup logic by {p}se_is_idle only.
+>
+> Also fix a bug about se_is_idle() definition when
+> !CONFIG_FAIR_GROUP_SCHED.
+>
+> Fixes: 304000390f88 ("sched: Cgroup SCHED_IDLE support")
+> Signed-off-by: Tianchen Ding <dtcccc@linux.alibaba.com>
+> ---
+>  kernel/sched/fair.c | 19 ++++++++-----------
+>  1 file changed, 8 insertions(+), 11 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 41b58387023d..c91cfaa7d9ee 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -511,7 +511,7 @@ static int cfs_rq_is_idle(struct cfs_rq *cfs_rq)
+>
+>  static int se_is_idle(struct sched_entity *se)
+>  {
+> -       return 0;
+> +       return task_has_idle_policy(task_of(se));
+>  }
+>
+>  #endif /* CONFIG_FAIR_GROUP_SCHED */
+> @@ -8382,16 +8382,7 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
+>         if (test_tsk_need_resched(curr))
+>                 return;
+>
+> -       /* Idle tasks are by definition preempted by non-idle tasks. */
+> -       if (unlikely(task_has_idle_policy(curr)) &&
+> -           likely(!task_has_idle_policy(p)))
+> -               goto preempt;
+> -
+> -       /*
+> -        * Batch and idle tasks do not preempt non-idle tasks (their preemption
+> -        * is driven by the tick):
+> -        */
+> -       if (unlikely(p->policy != SCHED_NORMAL) || !sched_feat(WAKEUP_PREEMPTION))
+> +       if (!sched_feat(WAKEUP_PREEMPTION))
+>                 return;
+>
+>         find_matching_se(&se, &pse);
+> @@ -8408,6 +8399,12 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
 
-Agreed, I think we should just pass it by value.
+Replace "group" by "entity" in the comment above as it is not only
+group but also entity
 
-I also noticed that I need to fix `set_master` and `enable_device_mem` to
-require a mutable reference.
+>                 goto preempt;
+>         if (cse_is_idle != pse_is_idle)
+>                 return;
+> +       /*
+> +        * Batch tasks do not preempt non-idle tasks (their preemption
+> +        * is driven by the tick):
+> +        */
+> +       if (unlikely(pse == &p->se && p->policy == SCHED_BATCH))
 
-> 
-> 
-> Best regards,
-> Andreas
-> 
-> 
-> > +
-> > +    /// PCI driver remove.
-> > +    ///
-> > +    /// Called when a platform device is removed.
-> > +    /// Implementers should prepare the device for complete removal here.
-> > +    fn remove(data: &Self::Data);
-> > +}
-> > +
-> > +/// The PCI device representation.
-> > +///
-> > +/// A PCI device is based on an always reference counted `device:Device` instance. Cloning a PCI
-> > +/// device, hence, also increments the base device' reference count.
-> > +#[derive(Clone)]
-> > +pub struct Device(ARef<device::Device>);
-> > +
-> 
+I think I would prefer entity_is_task() which makes easier to
+understand that the condition is about task
 
++       if (unlikely(entity_is_task(pse) &&  p->policy == SCHED_BATCH))
+
+other than the 2 comments above
+
+Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
+
+
+> +               return;
+>
+>         cfs_rq = cfs_rq_of(se);
+>         update_curr(cfs_rq);
+> --
+> 2.39.3
+>
 
