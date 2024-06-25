@@ -1,268 +1,140 @@
-Return-Path: <linux-kernel+bounces-229320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18484916E45
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:42:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A816916E46
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:42:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34A351C21AF8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:42:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ECEC1F25482
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB24175544;
-	Tue, 25 Jun 2024 16:42:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D618B17623D;
+	Tue, 25 Jun 2024 16:42:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="EK8w1ZsM"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5UODf9e"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A186174EC6;
-	Tue, 25 Jun 2024 16:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F83176225
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 16:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719333734; cv=none; b=mBFyi0+8rYZ8Wvbx51PWfWZpdIU2vylN7yi0jxAH49Obi+scTVvrUsmzzda5TByKjOutHVbcIrLe43aGTylMe9OlnBND+lPACMq9MXTMeDto04En5mxX3oxU5MdhbLKpaKpH9Uh4yYoQn60h9t/A2Txv1ZNUUV9cRcj6uEi3JuI=
+	t=1719333739; cv=none; b=Kb7K7tomQqKWd2v2+AHyC4gGRxtAkJlTgtEWXZMSAvgunEaRH6hvb9pDmmeB1NdFd5+N4znvKiyoHIHYfRJBoPMfxFEnUjgmK6StwU+boS2H23t8HMWcU1ABv7VkPUU7yNANMDqUOhKL54yU5MVMT1d65D0pqwu06EBDm36bnnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719333734; c=relaxed/simple;
-	bh=Wf5d1cAbraKNNLLsxaDY7HIAmqmsnAVAz5zc31fMG9g=;
-	h=Content-Type:Subject:From:In-Reply-To:Date:Cc:Message-Id:
-	 References:To:MIME-Version; b=bcnYpjh1Cd0/XqgDEun6/wRs5JTQ1qMQAxjjXS+mGanXMsrQtZvm10oBBUtouQGt8bv8RgGjZDyvo6bJy2xeHPZ2WVgfyDoev5pJIMHpVSrJEq+7iCbqb9bTwlx7O1qqdtgz0jh8eURS5raqvjVKzsDP0lS8XOGPyWxZTLmUCa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=EK8w1ZsM; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PFT00u016014;
-	Tue, 25 Jun 2024 16:42:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-type:subject:from:in-reply-to:date:cc:message-id
-	:references:to:content-transfer-encoding:mime-version; s=pp1;
-	 bh=ZARhP07FHH8u9nngY6BsvG1uJZmY+u9zga9ydRnpEXE=; b=EK8w1ZsMyz2B
-	P3BMLqfzuE/aZpn0SjoZMjGSfizBkEUCLYDeyPJiLjZGUWmQEw8kYZ/lZYY0nJ3A
-	RDahhEXcKOkdYmhgxU/HCxieDwnqqq1SR6XzxiFGTqas6GT2e2pP67QDfWzfDaVw
-	LXx50x5OvBwqCPYg8Q1+d/x9hLsVYg+o4f3L4YRJbU7gpp9NN65kcSH5rLHj48nZ
-	3W2d5K1JL60NHwvaBQ/JMHXsku17VAgUBgTOfkE5rwga1yY39N3GMYMHSnH69Gct
-	Rj9aId4Rry26veXCIVLtkQIpGi9PbgJ/91HahgKxY+lgcQUApO8SFujoBKgBFHBK
-	F5fVGG3lnw==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4000jj85ve-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 16:42:10 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45PEUI0j008184;
-	Tue, 25 Jun 2024 16:42:10 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 3yx9b0qj5f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 16:42:09 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45PGg6qN19464448
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Jun 2024 16:42:08 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E46E420043;
-	Tue, 25 Jun 2024 16:42:05 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 84D452005A;
-	Tue, 25 Jun 2024 16:42:03 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.43.74.23])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 25 Jun 2024 16:42:03 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
-Subject: Re: [PATCH V3 1/3] tools/perf: Fix the string match for
- "/tmp/perf-$PID.map" files in dso__load
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <adc971c5-f2a7-4f2d-97d8-40ed0cfe03c0@arm.com>
-Date: Tue, 25 Jun 2024 22:11:51 +0530
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Ian Rogers <irogers@google.com>, Namhyung Kim <namhyung@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-perf-users <linux-perf-users@vger.kernel.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Kajol Jain <kjain@linux.ibm.com>,
-        Disha Goel <disgoel@linux.vnet.ibm.com>
-Message-Id: <D86EB354-77A9-494B-BE89-61FD6EC269A8@linux.vnet.ibm.com>
-References: <20240618140354.5765-1-atrajeev@linux.vnet.ibm.com>
- <adc971c5-f2a7-4f2d-97d8-40ed0cfe03c0@arm.com>
-To: Chaitanya S Prakash <chaitanyas.prakash@arm.com>
-X-Mailer: Apple Mail (2.3774.600.62)
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: R4zC742nlgAmM6T5Q2NbKRczbjMC9Iaw
-X-Proofpoint-ORIG-GUID: R4zC742nlgAmM6T5Q2NbKRczbjMC9Iaw
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1719333739; c=relaxed/simple;
+	bh=FyiCzW6XIb2gfdf8H6OEDN9PU6g+1OS/36+lF7aFa08=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=J4eFCrqVxmmwczTwMLqGkNpHrAtVKsLrrhp0c1aGM6v6mgSIv3aacaPm+jRhCKgJPUkgR+JBgzuCi233kG/zyfPoMiR4Fa8dYh69rEGpK1vxp0GNmObyJa8Jxv+03NQxeOqOfcc2OYP2U479MkuEQrsAr3FH9UQz74FfCrjObVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L5UODf9e; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-645808a3294so20466367b3.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:42:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719333737; x=1719938537; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=gJYda0ZTUkWw1q6d9Psi0GAgd/bxpCi7wNXv0O0kijw=;
+        b=L5UODf9eXIFbrhin7dk348zOlKMIvaN4b7VtK+ReSK+A4BstCJDhY9MorktKxl/O/O
+         u/ak2mXsx1rCjWn4bvJCLSqEzAB/81/xztzrLt/5zzsT2lGjq7jeYiBs6HziTpDq/RVa
+         fVIGSQK3HjKd5sd2ka0q9JGYkuz4FQLmtpvaNRi7V1zJDsiaPC/V+4mU+MuUHux/ej7R
+         CB9WmVuFsZnVaZVDXgeligWPKbqw78ltif4TeQOMThakCHnHSX7ckuwelsqP2CrS0ofr
+         Ixa7I9dYcloYKrnObuhhhEsJyeeBOtop2P/wo1p+eyJn5osKjOqYRZ9CqD7cxLxKJsY2
+         oQ9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719333737; x=1719938537;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gJYda0ZTUkWw1q6d9Psi0GAgd/bxpCi7wNXv0O0kijw=;
+        b=qrZIFkEJhBDNrISH36073LwSHCkTF3+Ni8Wexb8/0ToRE60TNcYw8rmgk6LJ2/NeMR
+         AT2UtQcrwJVJAKiAhXOf7vews5vtVQ3E+l6cVrHOfjR4ejRPXrn035jlOGOKQn3aPU0G
+         8beJH7ma4xirdCz6wHxqTxG3RhTbMDYvAR6E3n3LX25Ien88llv4ealqZUlaE4tMXEBS
+         IbD3+0pdDRTylOm/RgC7kz4UaWRW5ecP9qB4gcoFwUoOIyFXl42se/Fm46WiXjDxSjFM
+         PZ8CAb4H/TpsspOFncz4W7flpbUu3t3J6q8/W9e+oJujbuJyN3ZYgZOVb5bypnqClmwW
+         atjA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlKLUEBv8tyS3LGjIRme3GSxLonDIrBuA61zEKXp6Rik8/lCeg5LwnRNJkDZMgFEL0i/swqG1KNOgOOrpvjoIsolxQWMNGh1ThmxTq
+X-Gm-Message-State: AOJu0Yy7s+AShiwCQMoYslCr8VNStTcjMummh2eknd0nFy+IN+meTtMD
+	5VZl2VPo+YKVDFhys7iTSIk23S9DsvrXFatiXMbgq78k9FlD7TPF
+X-Google-Smtp-Source: AGHT+IHmv54640JtdzVgVBjNMW3oCfT6iQTauLr2MlR8ij38PaWAvmUXPYq6zM09d8NDYmlZcgoGLQ==
+X-Received: by 2002:a05:690c:ed2:b0:643:9333:9836 with SMTP id 00721157ae682-64393339b44mr102451277b3.38.1719333736635;
+        Tue, 25 Jun 2024 09:42:16 -0700 (PDT)
+Received: from [127.0.1.1] (107-197-105-120.lightspeed.sntcca.sbcglobal.net. [107.197.105.120])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f14c265f7sm35548717b3.81.2024.06.25.09.42.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 09:42:16 -0700 (PDT)
+From: Pei Li <peili.dev@gmail.com>
+Date: Tue, 25 Jun 2024 09:42:05 -0700
+Subject: [PATCH] jfs: Fix shift-out-of-bounds in dbDiscardAG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_11,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0
- clxscore=1015 phishscore=0 mlxscore=0 spamscore=0 mlxlogscore=999
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406250118
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240625-bug0-v1-1-fcee34ac00a7@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAFzzemYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMyNT3aTSdANdQ8NUC0uDNBMTy8Q0JaDSgqLUtMwKsDHRsbW1AOG2xBt
+ WAAAA
+To: Dave Kleikamp <shaggy@kernel.org>
+Cc: jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+ linux-kernel-mentees@lists.linuxfoundation.org, 
+ syzkaller-bugs@googlegroups.com, skhan@linuxfoundation.org, 
+ peili.dev@gmail.com, syzbot+61be3359d2ee3467e7e4@syzkaller.appspotmail.com
+X-Mailer: b4 0.15-dev-13183
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719333735; l=1360;
+ i=peili.dev@gmail.com; s=20240625; h=from:subject:message-id;
+ bh=FyiCzW6XIb2gfdf8H6OEDN9PU6g+1OS/36+lF7aFa08=;
+ b=RHhyssi0fbYov9jrA3a91QuJwBYuK5ttGQw7Q+tUA71JkjGPbQqu+8lbVfowuUcM9Av9AQw13
+ NAh7gfVjZdTBfHeo1WTFpunsWiqiIUhGhod/tNPKklDpQROSelUGrG0
+X-Developer-Key: i=peili.dev@gmail.com; a=ed25519;
+ pk=I6GWb2uGzELGH5iqJTSK9VwaErhEZ2z2abryRD6a+4Q=
 
+When searching for the next smaller log2 block, BLKSTOL2() returned 0,
+causing shift exponent -1 to be negative.
 
+This patch fixes the issue by exiting the loop directly when negative
+shift is found.
 
-> On 23 Jun 2024, at 8:56=E2=80=AFPM, Chaitanya S Prakash <chaitanyas.praka=
-sh@arm.com> wrote:
->=20
->=20
-> On 6/18/24 19:33, Athira Rajeev wrote:
->> Perf test for perf probe of function from different CU fails
->> as below:
->>=20
->> ./perf test -vv "test perf probe of function from different CU"
->> 116: test perf probe of function from different CU:
->> --- start ---
->> test child forked, pid 2679
->> Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.Msa7iy89bx=
-/testfile
->>  Error: Failed to add events.
->> --- Cleaning up ---
->> "foo" does not hit any event.
->>  Error: Failed to delete events.
->> ---- end(-1) ----
->> 116: test perf probe of function from different CU                   : F=
-AILED!
->>=20
->> The test does below to probe function "foo" :
->>=20
->> # gcc -g -Og -flto -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfi=
-le-foo.c
->> -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
->> # gcc -g -Og -c /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-mai=
-n.c
->> -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
->> # gcc -g -Og -o /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile
->> /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-foo.o
->> /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile-main.o
->>=20
->> # ./perf probe -x /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7/testfile f=
-oo
->> Failed to find symbol foo in /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7=
-/testfile
->>   Error: Failed to add events.
->>=20
->> Perf probe fails to find symbol foo in the executable placed in
->> /tmp/perf-uprobe-different-cu-sh.XniNxNEVT7
->>=20
->> Simple reproduce:
->>=20
->>  # mktemp -d /tmp/perf-checkXXXXXXXXXX
->>    /tmp/perf-checkcWpuLRQI8j
->>=20
->>  # gcc -g -o test test.c
->>  # cp test /tmp/perf-checkcWpuLRQI8j/
->>  # nm /tmp/perf-checkcWpuLRQI8j/test | grep foo
->>    00000000100006bc T foo
->>=20
->>  # ./perf probe -x /tmp/perf-checkcWpuLRQI8j/test foo
->>    Failed to find symbol foo in /tmp/perf-checkcWpuLRQI8j/test
->>       Error: Failed to add events.
->>=20
->> But it works with any files like /tmp/perf/test. Only for
->> patterns with "/tmp/perf-", this fails.
->>=20
->> Further debugging, commit 80d496be89ed ("perf report: Add support
->> for profiling JIT generated code") added support for profiling JIT
->> generated code. This patch handles dso's of form
->> "/tmp/perf-$PID.map" .
->>=20
->> The check used "if (strncmp(self->name, "/tmp/perf-", 10) =3D=3D 0)"
->> to match "/tmp/perf-$PID.map". With this commit, any dso in
->> /tmp/perf- folder will be considered separately for processing
->> (not only JIT created map files ). Fix this by changing the
->> string pattern to check for "/tmp/perf-%d.map". Add a helper
->> function is_perf_pid_map_name to do this check.
->>=20
->> With the fix,
->> # ./perf test "test perf probe of function from different CU"
->> 117: test perf probe of function from different CU                   : Ok
->>=20
->> Signed-off-by: Athira Rajeev<atrajeev@linux.vnet.ibm.com>
->> ---
->> Changelog:
->> v2 -> v3:
->> Addressed review comment from Adrian and James.
->> Added perf_pid_map_tid to save the tid and modified
->> is_perf_pid_map_name to use this internally.
->>=20
->> v1 -> v2:
->> Addressed review comments from Adrian.
->> Added helper function is_perf_pid_map_name to check
->> dso name of form "/tmp/perf-%d.map". Used sscanf
->> instead of regex comparison.
->>=20
->>  tools/perf/util/dso.c    | 12 ++++++++++++
->>  tools/perf/util/dso.h    |  4 ++++
->>  tools/perf/util/symbol.c |  3 ++-
->>  3 files changed, 18 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
->> index dde706b71da7..2340c4f6d0c2 100644
->> --- a/tools/perf/util/dso.c
->> +++ b/tools/perf/util/dso.c
->> @@ -1652,3 +1652,15 @@ int dso__strerror_load(struct dso *dso, char *buf=
-, size_t buflen)
->>   scnprintf(buf, buflen, "%s", dso_load__error_str[idx]);
->>   return 0;
->>  }
->> +
->> +bool perf_pid_map_tid(const char *dso_name, int *tid)
->> +{
->> + return sscanf(dso_name, "/tmp/perf-%d.map", tid) =3D=3D 1;
->> +}
->> +
->> +bool is_perf_pid_map_name(const char *dso_name)
->> +{
->> + int tid;
->> +
->> + return perf_pid_map_tid(dso_name, &tid);
->> +}
->> diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
->> index df2c98402af3..d72f3b8c37f6 100644
->> --- a/tools/perf/util/dso.h
->> +++ b/tools/perf/util/dso.h
->> @@ -809,4 +809,8 @@ void reset_fd_limit(void);
->>  u64 dso__find_global_type(struct dso *dso, u64 addr);
->>  u64 dso__findnew_global_type(struct dso *dso, u64 addr, u64 offset);
->>  +/* Check if dso name is of format "/tmp/perf-%d.map" */
->> +bool perf_pid_map_tid(const char *dso_name, int *tid);
->> +bool is_perf_pid_map_name(const char *dso_name);
->> +
->>  #endif /* __PERF_DSO */
->> diff --git a/tools/perf/util/symbol.c b/tools/perf/util/symbol.c
->> index 9e5940b5bc59..aee0a4cfb383 100644
->> --- a/tools/perf/util/symbol.c
->> +++ b/tools/perf/util/symbol.c
->> @@ -1799,7 +1799,8 @@ int dso__load(struct dso *dso, struct map *map)
->>   const char *map_path =3D dso__long_name(dso);
->>     mutex_lock(dso__lock(dso));
->> - perfmap =3D strncmp(dso__name(dso), "/tmp/perf-", 10) =3D=3D 0;
->> + perfmap =3D is_perf_pid_map_name(map_path);
->> +
->>   if (perfmap) {
->>   if (dso__nsinfo(dso) &&
->>      (dso__find_perf_map(newmapname, sizeof(newmapname),
->=20
-> Reviewed-by: Chaitanya S Prakash<chaitanyas.prakash@arm.com>
+Reported-by: syzbot+61be3359d2ee3467e7e4@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=61be3359d2ee3467e7e4
+Signed-off-by: Pei Li <peili.dev@gmail.com>
+---
+Syzbot reported the following error:
+UBSAN: shift-out-of-bounds in fs/jfs/jfs_dmap.c:1629:18
+shift exponent -1 is negative
 
-Thanks Chaitanya for the reviewed-by
+If BLKSTOL2() returned 0, the shift exponent will be -1.
 
-Athira
->=20
-> I will drop my fix for the same.
-> https://lore.kernel.org/all/20240601125946.1741414-10-ChaitanyaS.Prakash@=
-arm.com/
->=20
-> The rest of my series can be reviewed as a string function tidy up.
->=20
+The solution is to check the exponent and if it is smaller than 0,
+exit the loop directly.
+---
+ fs/jfs/jfs_dmap.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/fs/jfs/jfs_dmap.c b/fs/jfs/jfs_dmap.c
+index cb3cda1390ad..5713994328cb 100644
+--- a/fs/jfs/jfs_dmap.c
++++ b/fs/jfs/jfs_dmap.c
+@@ -1626,6 +1626,8 @@ s64 dbDiscardAG(struct inode *ip, int agno, s64 minlen)
+ 		} else if (rc == -ENOSPC) {
+ 			/* search for next smaller log2 block */
+ 			l2nb = BLKSTOL2(nblocks) - 1;
++			if (unlikely(l2nb < 0))
++				break;
+ 			nblocks = 1LL << l2nb;
+ 		} else {
+ 			/* Trim any already allocated blocks */
+
+---
+base-commit: 2ccbdf43d5e758f8493a95252073cf9078a5fea5
+change-id: 20240625-bug0-11e890f449af
+
+Best regards,
+-- 
+Pei Li <peili.dev@gmail.com>
 
 
