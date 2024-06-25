@@ -1,126 +1,124 @@
-Return-Path: <linux-kernel+bounces-228721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B0D59165F4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:17:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78335916603
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CC06FB2287D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:17:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CA4C281270
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A25351494DB;
-	Tue, 25 Jun 2024 11:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 848A814A604;
+	Tue, 25 Jun 2024 11:19:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f1xuxTzd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dCwmKPgp"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A87317BCC
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6134C1465B4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:19:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719314247; cv=none; b=ZVGLH0TErq6emHrP5pv0cIhMDJ/hIWYyiY1UwNIic/0As7s/fQTQoirbDm9T7TxEZY+nmMZLwvraBZV/yij9FBUdRJYRdcmtfPxX8Ux8mOYCJmDO5SsY5nmsYjKJlzBHxn8hfvqCEbK9El9+9+YAT4FvzZvVuF9O3x9hirz+wF8=
+	t=1719314372; cv=none; b=YUHg5WToap5P7cUimjxJtHMU834qDh1fcx+Ybf+3uuBTklctLP259NCtJzw8d3d+0/uD49D65pmeVNQob35Ckbpef04A01O3Fo/q8yy4g0DGTkylBsRUEqRRtsu5/Y3XPc3PQYPAg+CIf41Q4zOvFBTHCW2/jN68KgwU0ZRshCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719314247; c=relaxed/simple;
-	bh=y490bPhOlcUj6oMcNqbEbIHKwi+qcAu1wSEKHBpcp+A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tI+/r72LB8LvXUeEZxyeKoauO0CUQWPC3OFC0tYngh/9KVZTBi8yHwKo/OT4bdZxkfhPiuuq5uEgKXWDKlJA9PcSeA36VqeXeVu0li6wFMz1PO/WFSKf+pXpxfdu15rpn4QC3ZdXbpymg2X0a0qBOYHpumbuH82CgHzQzL+Fp2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f1xuxTzd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719314245;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=2aLXgwLy3k7Kem/gMkVxdLW2kTd5Zk6l4rzy7cvLwKo=;
-	b=f1xuxTzdIfxfDK5/cWKTmlF5+bLrBGpNXxOVw0VO27ekd93Xy8UgJW0ujxC6aKV3DFexmT
-	tqrh8WM+8sADLzYr553wjq2I+aSkCxG6OTFUIwridsrqOJbgVEmkrSQEYzs3/sTvTBS8Bm
-	6sS7by2DVWMbd9v5GyF59Wu+tDGECzI=
-Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
- [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-644-Lmqyq6PwMPeE1KvavGpyTw-1; Tue, 25 Jun 2024 07:17:23 -0400
-X-MC-Unique: Lmqyq6PwMPeE1KvavGpyTw-1
-Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-2ec4f662672so3022081fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 04:17:23 -0700 (PDT)
+	s=arc-20240116; t=1719314372; c=relaxed/simple;
+	bh=CDpmOqCWIRbeJ9b9NDvzccvmHkf6wYuoSpWeEPBE9D0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EKdklxp8sk1dlqvUk1N1LZENcg9ujBo9GQi67UznGen8Q8lflx4e3/HflrHlM+rJiKDxA/42TzVUUEzNeBBcqtMIP6/gMa/7FGKWSizfLPNzQSI56NR2UBpgzH03DpJsfrv4AAz2AGdjn8xXl84o1+ogm/Ua8hKYG9hv60kl9P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dCwmKPgp; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-363bbd51050so4269430f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 04:19:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719314369; x=1719919169; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xo/YdeJtYas2lqY2ggRIqkSo6l044/lTXCgw0Xo9+1Y=;
+        b=dCwmKPgpZxTmlZvcfJuw0fXB5JFcb5eIR5648CU/nBeBoDKe8Ebpcqj5Td96eYDv0q
+         u80rt1ypzIVnaLs+ma4xZB930xF+z+NKCQNMKrrXd5vOE0dBoANb8GGhYHmL1bgKzEte
+         HZUrmkntXqkOCM3U4nyeTgbAl43iSpF9fvdN/06YtRjLPod5fqE4VY4BcRoLm0ysNt0W
+         ExLCFBMT0CgB5nxmqBrxfsLnO+mucXhNwBsmBwryrtfAmPbnNgzxQhUB0BHgJo3CZDWt
+         JOLfFG7eeGHaFzlr+8/8Ru5dpMawvMuxFiHdctuyvfJRdQmx1+Ajl0p5JoXOOEMCbBCl
+         Qzxw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719314242; x=1719919042;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2aLXgwLy3k7Kem/gMkVxdLW2kTd5Zk6l4rzy7cvLwKo=;
-        b=GWgUS3M27HIcBxHkIVexA79ETxieRtCaKOh9gP7o5lr3GYehKbbxXjsAQ4E60cC65q
-         IMChjsVz6uLTzC2ahsz1CAGGpaVrx2j/7jVquCO9zVwXwqWMXiLmb1mCtNw8+US+zsPI
-         ANi8lrw2QpQBnBOC+AOq/SoQIaXjnKSJMc2K25zLc4rNahOQIxEBHxdSBlvnmyESEalO
-         q1cXE2sZZtX9AM6g0FY6cm4Jffu3ldQe4esKO7jhF5r7bbiwRtXVxFDW+ucivHDFVu9M
-         L3heP27IjhqhIC0ARlJua1DbZveCeEySPhOaBwhDiohZi2nUY/8wZBExM4X+dkk/Okz4
-         KEnA==
-X-Forwarded-Encrypted: i=1; AJvYcCUR7fBJRlaUplYlmYyzRaVgSMtW48LnUcUeaCixR0AgokiFNMcYv5y4Sys9taxhC9t6x9UDrvG7GOuT0u3RFzsnISB3ZVjTay9wU2mW
-X-Gm-Message-State: AOJu0YyaxWAA1QLJ3V3tYrcpY//hdAyo0wnxV9RM1VGlJ31l1RmvdLnA
-	Lh9sFGOc4MEpnRWfuya/JssRijqhu8lAEIDuhTdDZYEFtaT+e21nvqfpVFagWA+tBIUZ7wh4Rf7
-	I/gpIGj29mkBfDBFp0q0w2dlfgEnL3bX/hBcEDIqxBoa77LQzWCqEibBOVA4vvw==
-X-Received: by 2002:a05:6512:3d0a:b0:52c:dac6:107 with SMTP id 2adb3069b0e04-52cdea9994fmr5745046e87.3.1719314242194;
-        Tue, 25 Jun 2024 04:17:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFEl47EgU2487K6uzY/mUSiz9yUIgDQlD0gWBbrtXxnvHFHTHoBrINXJMvqf+y9sKohrsRwPA==
-X-Received: by 2002:a05:6512:3d0a:b0:52c:dac6:107 with SMTP id 2adb3069b0e04-52cdea9994fmr5745039e87.3.1719314241787;
-        Tue, 25 Jun 2024 04:17:21 -0700 (PDT)
-Received: from gerbillo.redhat.com ([2a0d:3341:b0ae:da10::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42481922774sm173756155e9.47.2024.06.25.04.17.20
+        d=1e100.net; s=20230601; t=1719314369; x=1719919169;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Xo/YdeJtYas2lqY2ggRIqkSo6l044/lTXCgw0Xo9+1Y=;
+        b=HgFmoFpBMYYHIkPh7Ii9Y/F4THjev7PyXgSzkO0PFfEfHv391yiR/VeRDPUOOo+0x1
+         gBOBdNFpm0+63yfrXL8JQFuO2vggt1ppKoUAi41OSMh66gvNTP+ZrgDQuZTrfNoN2GAS
+         UZiE0tHSkNDtUADeUpihXVvZul9Dztp55rb2QyGYw0b/+nV08wDasg6/PukFfi0/ksna
+         MLATkv8/4Z0F/gIDJtybL4MlG34PcPcQg0cj4vK55Jcv12ZQ2W+J9sjTQ11Ove4hgwOK
+         A/xyVQkkXjg+5pVy0nJVrwbOO2Wtz3abfxZU1ucLKvQk6ueyc60mDttMfkKXea9iD0PP
+         IaOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUhQ2mgUoDPcCME9aermgtl4p/L4Fz7zhARD6Rh++R3c5jnrqZ8NyvU4Jy4oXEGDEXqvloKpr9xI6EpELnEPCtcg4CLMRpORpfVmyRS
+X-Gm-Message-State: AOJu0YxhC0tewgx90FVcqpYHjn7weCWid3v/CUtSf9cDGIPQRW4H/lfp
+	s0B/GFjKk4IuyGPzylp2vS1vAhzIvD5TIMVSz4QxEQgkc3o/M6O+s34/UcWLOys=
+X-Google-Smtp-Source: AGHT+IHia/dXcMfF56czcOAxmNTQqh1jTWwgjJHeOv+ujGlppvG6UAN+tlaLOohOVx9yKWBwzhmzOQ==
+X-Received: by 2002:a5d:610c:0:b0:35f:261a:dd8f with SMTP id ffacd0b85a97d-366e4ed2eaamr5110021f8f.20.1719314368678;
+        Tue, 25 Jun 2024 04:19:28 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:1b57:b4a1:3d50:32a2])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-366383f6717sm12807366f8f.9.2024.06.25.04.19.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 04:17:21 -0700 (PDT)
-Message-ID: <7f6aa18e38ff3c161805b19780c6265d05b4a235.camel@redhat.com>
-Subject: Re: [PATCH net-next v4 04/10] net: psample: allow using rate as
- probability
-From: Paolo Abeni <pabeni@redhat.com>
-To: Adrian Moreno <amorenoz@redhat.com>, netdev@vger.kernel.org
-Cc: aconole@redhat.com, echaudro@redhat.com, horms@kernel.org,
- i.maximets@ovn.org,  dev@openvswitch.org, Yotam Gigi <yotam.gi@gmail.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Jamal Hadi Salim
- <jhs@mojatatu.com>, Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko
- <jiri@resnulli.us>,  linux-kernel@vger.kernel.org
-Date: Tue, 25 Jun 2024 13:17:19 +0200
-In-Reply-To: <20240621101113.2185308-5-amorenoz@redhat.com>
-References: <20240621101113.2185308-1-amorenoz@redhat.com>
-	 <20240621101113.2185308-5-amorenoz@redhat.com>
-Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
+        Tue, 25 Jun 2024 04:19:28 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH] arm64: dts: amlogic: sm1: fix spdif compatibles
+Date: Tue, 25 Jun 2024 13:18:43 +0200
+Message-ID: <20240625111845.928192-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2024-06-21 at 12:10 +0200, Adrian Moreno wrote:
-> diff --git a/include/uapi/linux/tc_act/tc_sample.h b/include/uapi/linux/t=
-c_act/tc_sample.h
-> index fee1bcc20793..7ee0735e7b38 100644
-> --- a/include/uapi/linux/tc_act/tc_sample.h
-> +++ b/include/uapi/linux/tc_act/tc_sample.h
-> @@ -18,6 +18,7 @@ enum {
->  	TCA_SAMPLE_TRUNC_SIZE,
->  	TCA_SAMPLE_PSAMPLE_GROUP,
->  	TCA_SAMPLE_PAD,
-> +	TCA_SAMPLE_PROBABILITY,
->  	__TCA_SAMPLE_MAX
->  };
->  #define TCA_SAMPLE_MAX (__TCA_SAMPLE_MAX - 1)
+The spdif input and output of g12 and sm1 are compatible but
+sm1 should use the related compatible since it exists.
 
-I believe Ilya's comment on v3 is correct, this chunk looks unrelated
-and unneeded. I guess you can drop it? Or am I missing something?
+Fixes: 86f2159468d5 ("arm64: dts: meson-sm1: add spdifin and pdifout nodes")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Thanks,
-
-Paolo
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+index d13cf5b4aac7..75c8aa815eff 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+@@ -335,7 +335,7 @@ tdmin_lb: audio-controller@3c0 {
+ 		};
+ 
+ 		spdifin: audio-controller@400 {
+-			compatible = "amlogic,g12a-spdifin",
++			compatible = "amlogic,sm1-spdifin",
+ 				     "amlogic,axg-spdifin";
+ 			reg = <0x0 0x400 0x0 0x30>;
+ 			#sound-dai-cells = <0>;
+@@ -349,7 +349,7 @@ spdifin: audio-controller@400 {
+ 		};
+ 
+ 		spdifout_a: audio-controller@480 {
+-			compatible = "amlogic,g12a-spdifout",
++			compatible = "amlogic,sm1-spdifout",
+ 				     "amlogic,axg-spdifout";
+ 			reg = <0x0 0x480 0x0 0x50>;
+ 			#sound-dai-cells = <0>;
+-- 
+2.43.0
 
 
