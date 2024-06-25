@@ -1,128 +1,158 @@
-Return-Path: <linux-kernel+bounces-228398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F03915F4C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:05:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5475915F82
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:08:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5862A1F234DE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:05:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AA352848E7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46EA61465A4;
-	Tue, 25 Jun 2024 07:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D924D1494CF;
+	Tue, 25 Jun 2024 07:06:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="J8y0My6B"
-Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="nOSLUaVI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7204C802
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A11C21494A5;
+	Tue, 25 Jun 2024 07:06:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719299099; cv=none; b=qZ5wpI37DvuCZH9GBTmiQHTv183+xQGe6XoPRRXlczx0+Dv7QLPx6OgMVza555hOKwgTuokYm4+VV+Mn8eytQvRtYY+Pnar7rM96NEsaS19NAfWU3pY+tZvFZp0x+zFY61qXXxipNY8mRtBA46YmEHGnVSBo17H7f6p58FSzf94=
+	t=1719299186; cv=none; b=kL+AHRUqpi/9ciWp8qo++o6uYss0O/zBbu6lGnFY1REwhS1QN3n2VKA/uvvoMw/dSeGIHFYrSYD8nDjmB0HB1ufS9sWnfUgOJxwDaAowefe0+AM2GkuOovh8m+EuXKumvcPDZy+09tPRwpkRI1RUAx1wk9YMc2XzfZ2rbY5aiME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719299099; c=relaxed/simple;
-	bh=mnKX0CK10jeL2AUmQJ/q/5xM6jCHBJ6hOtyIRt3jvms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=a53TeOdXvoON578YkT/8Mo0s/mBBcqsI/uSBbg6JxDrOwh4Zp/1WYJFMBHZO3yt1dVHV9c6uYqA798OzcDTz2kCDcl/Qyic+RsItQlyKxPLBFnKWXQp9iK41fGDYMyNXzQLAeJ/OGf33nCwpbEz3glT3QYz2Eejvkf6WDVIOn+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=J8y0My6B; arc=none smtp.client-ip=115.124.30.99
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1719299094; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=TCyWfIxYZ617Lw6Wt/fo0of1TWM+Fz/03YPYZQgvzOo=;
-	b=J8y0My6B38xJPND5IOxc2M2+QxwzmDUjB0MZyXvziBB1KPYjMkBNFc5KDVqWfD6tX7FLt2ukdinKBRzsK7t0w85Ry4JmmaKD0Fc1NoNJUNLw3FEPUbHK12ts7ZhDENFWy4Gdod2G2NlQ8hzmb1/MUh5ZlEyeM6WO6zMEQN4Xt9c=
-X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R181e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067112;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=17;SR=0;TI=SMTPD_---0W9Ekw83_1719299091;
-Received: from 30.97.56.75(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9Ekw83_1719299091)
-          by smtp.aliyun-inc.com;
-          Tue, 25 Jun 2024 15:04:52 +0800
-Message-ID: <0e66d3c8-5059-44e4-b015-40eaf2083e80@linux.alibaba.com>
-Date: Tue, 25 Jun 2024 15:04:51 +0800
+	s=arc-20240116; t=1719299186; c=relaxed/simple;
+	bh=D3T1Ju1uox+OtXxYZj55RKLp9LVaFjcpEGHNMfKx49o=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jGVD42EzEaeDQk5nTLE003iRU/p7oMJL4WyWBAZ566TuvaUK9GWHs+wO0a/D15p6rV1rdDFSpE01dzqgIzLBFijxNbnr36R53eM+dzgEEPkU7xXvaYV5icD0JPRqpeI+Q2F8NpOc0hHbGu4+q2hMma01UEvnV/w70pIFGHQvaXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=nOSLUaVI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OIfjVT023768;
+	Tue, 25 Jun 2024 07:05:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=CatA/4J9f8ryCj6cYRp+TW409iRIo+6ke1I
+	zXJbJBzw=; b=nOSLUaVIUr6mVcJy/hUdQQyFuUMM7FViYavEo5CBHeB50opQqur
+	/mGBmXKuVwApExIlel+LhUo9e+gATuBv3fxOMDSvkuW/ALEZVwAC6nswgIyeRIab
+	Py7VqciabRtIPlxad2pkD1RbESgV1180rRld5EIwECifBMoCV5f4bujliTDmXocr
+	Yxx1yfPlvvBvI7a4TyNporIsN1/objtdo1oDDWxqg94nQzW95a2o1dG/RnhKhbxL
+	9VScimWsEVaBH0LlCCpcpTezIMFg9YzCs2KT8UQx6U+6ikUBIEpfXRYA2INsfKry
+	24dvOEMmSUR6vbTweGFx4ZfdgLlABSphRuw==
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqshnqct-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 07:05:57 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTP id 45P75cps013324;
+	Tue, 25 Jun 2024 07:05:38 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 3ywqpky2uf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 07:05:38 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 45P75cuw013297;
+	Tue, 25 Jun 2024 07:05:38 GMT
+Received: from hu-devc-blr-u22-a.qualcomm.com (hu-devipriy-blr.qualcomm.com [10.131.37.37])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 45P75cRu013295
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 07:05:38 +0000
+Received: by hu-devc-blr-u22-a.qualcomm.com (Postfix, from userid 4059087)
+	id D1C5341060; Tue, 25 Jun 2024 12:35:36 +0530 (+0530)
+From: Devi Priya <quic_devipriy@quicinc.com>
+To: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+        konrad.dybcio@linaro.org, catalin.marinas@arm.com, will@kernel.org,
+        p.zabel@pengutronix.de, richardcochran@gmail.com,
+        geert+renesas@glider.be, dmitry.baryshkov@linaro.org,
+        neil.armstrong@linaro.org, arnd@arndb.de, m.szyprowski@samsung.com,
+        nfraprado@collabora.com, u-kumar1@ti.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
+Cc: quic_devipriy@quicinc.com
+Subject: [PATCH V4 0/7] Add NSS clock controller support for IPQ9574
+Date: Tue, 25 Jun 2024 12:35:29 +0530
+Message-Id: <20240625070536.3043630-1-quic_devipriy@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-unstable] mm: folio_add_new_anon_rmap() careful
- __folio_set_swapbacked()
-To: Barry Song <21cnbao@gmail.com>, Hugh Dickins <hughd@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, chrisl@kernel.org,
- david@redhat.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- mhocko@suse.com, ryan.roberts@arm.com, shy828301@gmail.com,
- surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org,
- ying.huang@intel.com, yosryahmed@google.com, yuanshuai@oppo.com,
- yuzhao@google.com
-References: <f3599b1d-8323-0dc5-e9e0-fdb3cfc3dd5a@google.com>
- <CAGsJ_4xABUi11ruC5obXvGi3R8zVQx2gzGAeqTGh22bj4xR9Dw@mail.gmail.com>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <CAGsJ_4xABUi11ruC5obXvGi3R8zVQx2gzGAeqTGh22bj4xR9Dw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: bpbKYdGfdpDRFMrM4VKkj8sDjUJXP3fc
+X-Proofpoint-GUID: bpbKYdGfdpDRFMrM4VKkj8sDjUJXP3fc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_04,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ mlxscore=0 impostorscore=0 mlxlogscore=917 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406250053
+
+Add bindings, driver and devicetree node for networking sub system clock 
+controller on IPQ9574. Also add support for NSS Huayra type alpha PLL and
+add support for gpll0_out_aux clock which serves as the parent for 
+some nss clocks.
+
+This series depends on the below patch series which adds support for
+Interconnect driver
+https://lore.kernel.org/linux-arm-msm/20240430064214.2030013-1-quic_varada@quicinc.com/
+
+Changes in V4:
+	- Detailed change logs are added to the respective patches.
+
+V3 can be found at:
+https://lore.kernel.org/linux-arm-msm/20240129051104.1855487-1-quic_devipriy@quicinc.com/
+
+V2 can be found at:
+https://lore.kernel.org/linux-arm-msm/20230825091234.32713-1-quic_devipriy@quicinc.com/
+
+Devi Priya (7):
+  clk: qcom: clk-alpha-pll: Add NSS HUAYRA ALPHA PLL support for ipq9574
+  dt-bindings: clock: gcc-ipq9574: Add definition for GPLL0_OUT_AUX
+  clk: qcom: gcc-ipq9574: Add support for gpll0_out_aux clock
+  dt-bindings: clock: Add ipq9574 NSSCC clock and reset definitions
+  clk: qcom: Add NSS clock Controller driver for IPQ9574
+  arm64: dts: qcom: ipq9574: Add support for nsscc node
+  arm64: defconfig: Build NSS Clock Controller driver for IPQ9574
+
+ .../bindings/clock/qcom,ipq9574-nsscc.yaml    |   75 +
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         |   44 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/qcom/Kconfig                      |    7 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/clk-alpha-pll.c              |   11 +
+ drivers/clk/qcom/clk-alpha-pll.h              |    1 +
+ drivers/clk/qcom/gcc-ipq9574.c                |   15 +
+ drivers/clk/qcom/nsscc-ipq9574.c              | 3082 +++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |    1 +
+ .../dt-bindings/clock/qcom,ipq9574-nsscc.h    |  152 +
+ .../dt-bindings/reset/qcom,ipq9574-nsscc.h    |  134 +
+ 12 files changed, 3524 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+ create mode 100644 drivers/clk/qcom/nsscc-ipq9574.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+ create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
 
 
+base-commit: 62c97045b8f720c2eac807a5f38e26c9ed512371
+prerequisite-patch-id: 513cb089a74b49996b46345595d1aacf60dcda64
+prerequisite-patch-id: 480a3d98ed862604edd8b6375b96f3b452471668
+prerequisite-patch-id: c26478e61e583eb879385598f26b42b8271036f5
+prerequisite-patch-id: 0f009298418d78a45a208f043f86c4ce500f2390
+prerequisite-patch-id: 353eb53cd192489d5b0c4654a0b922f23e1f7217
+prerequisite-patch-id: 8c6142689c760536e3dd8fb569545cf751cb714c
+-- 
+2.34.1
 
-On 2024/6/25 13:55, Barry Song wrote:
-> On Tue, Jun 25, 2024 at 5:00 PM Hugh Dickins <hughd@google.com> wrote:
->>
->> Commit "mm: use folio_add_new_anon_rmap() if folio_test_anon(folio)==
->> false" has extended folio_add_new_anon_rmap() to use on non-exclusive
->> folios, already visible to others in swap cache and on LRU.
->>
->> That renders its non-atomic __folio_set_swapbacked() unsafe: it risks
->> overwriting concurrent atomic operations on folio->flags, losing bits
->> added or restoring bits cleared.  Since it's only used in this risky
->> way when folio_test_locked and !folio_test_anon, many such races are
->> excluded; but, for example, isolations by folio_test_clear_lru() are
->> vulnerable, and setting or clearing active.
->>
->> It could just use the atomic folio_set_swapbacked(); but this function
->> does try to avoid atomics where it can, so use a branch instead: just
->> avoid setting swapbacked when it is already set, that is good enough.
->> (Swapbacked is normally stable once set: lazyfree can undo it, but
->> only later, when found anon in a page table.)
->>
->> This fixes a lot of instability under compaction and swapping loads:
->> assorted "Bad page"s, VM_BUG_ON_FOLIO()s, apparently even page double
->> frees - though I've not worked out what races could lead to the latter.
->>
->> Signed-off-by: Hugh Dickins <hughd@google.com>
-> 
-> Thanks a lot, Hugh. Sorry for my mistake. I guess we should squash this into
-> patch 1/3 "mm: use folio_add_new_anon_rmap() if folio_test_anon(folio) ==
-> false"?
-> Andrew, could you please help to squash this one?
-
-Hope the commit message written by Hugh can also be squashed into the 
-original patch, as it is very helpful to me :)
-
->> ---
->>   mm/rmap.c | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/mm/rmap.c b/mm/rmap.c
->> index df1a43295c85..5394c1178bf1 100644
->> --- a/mm/rmap.c
->> +++ b/mm/rmap.c
->> @@ -1408,7 +1408,9 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
->>          VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
->>          VM_BUG_ON_VMA(address < vma->vm_start ||
->>                          address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
->> -       __folio_set_swapbacked(folio);
->> +
->> +       if (!folio_test_swapbacked(folio))
->> +               __folio_set_swapbacked(folio);
->>          __folio_set_anon(folio, vma, address, exclusive);
->>
->>          if (likely(!folio_test_large(folio))) {
->> --
->> 2.35.3
->>
-> 
-> Thanks
-> Barry
 
