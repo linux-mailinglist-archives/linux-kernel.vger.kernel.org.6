@@ -1,57 +1,82 @@
-Return-Path: <linux-kernel+bounces-228542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B582916179
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:38:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80E091617D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:40:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27EB628565A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:38:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AF351F22C43
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 789EA148832;
-	Tue, 25 Jun 2024 08:38:50 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72E90148FF6;
+	Tue, 25 Jun 2024 08:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="FrZURWZB"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08E118E1F;
-	Tue, 25 Jun 2024 08:38:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BA2018E1F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719304730; cv=none; b=ORUvl1grSTDz27gXRpIE1Hj8QAoLsRChDEt52yN7GyR4KHagRfM1q1Acp/7IPPQri5l3Ec2bL07XuvpnCNVqy5/8C8UxlmkWNEdSnXDINg7hzUK6zhgv4WV6Ps4Bob1ug1B7Sfegv5l0bSo0IG/bNgr/YG+UMqycirT3TLb5oKc=
+	t=1719304809; cv=none; b=lz1UuQxKPYVj6qA9OzvEGw2r95z5AdthLDg2dczIVbMEop/SnuR3EBJEY7cIagKLGEPJMY8c3jlhPHvvdpvIZodAQpqy9qblzbqv3Hbl7IWuGiVZvqpny7/vhMANNI0GhV4q2B7hQRGawWPXvlZLtk6VKLRlXm9xyFbeFvla2sA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719304730; c=relaxed/simple;
-	bh=HHYyyCwOqTRvQoRZ0xSQ2/wl+Sm1u4EXKzPTkMqM9EI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=a47kmpX8/qUPMaiSatL+RUX+l0+cwKd6GLrQWflo/3vQ+GN03MUV21vSUNKGB+r+fGXPwFKoVK10sT/T9QRtQT7hEvcLLDlhjiOlWRQK/WtEfbY5u4c9syb+hh6CKDN+vo9JEbR7kKMxjY66xIwPxWSZmsqdkgQps/h22OdZ1i4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-01 (Coremail) with SMTP id qwCowAAXCJn5gXpmc5SiDA--.29808S2;
-	Tue, 25 Jun 2024 16:38:25 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	shradhagupta@linux.microsoft.com,
-	horms@kernel.org,
-	kotaranov@microsoft.com,
-	schakrabarti@linux.microsoft.com,
-	erick.archer@outlook.com
-Cc: linux-hyperv@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH v2] net: mana: Fix possible double free in error handling path
-Date: Tue, 25 Jun 2024 16:38:16 +0800
-Message-Id: <20240625083816.2623936-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719304809; c=relaxed/simple;
+	bh=x0h6zK81zeMdC2nbxPC6G2Vyzce29720Fg37YW0c+8w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=Fdd17aQYdzFTRtOUQCZvxwiq2BCWO6FWqQ7Et0z+iIDkCqUc82BHEW6gYZAYfKF+ng5gSoRp7FLiTgVC9oxCSi5h1eMryCO7+oSvDBx04OCfil9VyAGsUVMCkqMuHXX594FPJ+XxIqluRSB9rdM/h/yNS0BChwaDTI7d2cupmKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=FrZURWZB; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240625083958epoutp01f9b663d1357c5f6a8c4461af3d38bcb3~cMprp19qZ2164521645epoutp01i
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:39:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240625083958epoutp01f9b663d1357c5f6a8c4461af3d38bcb3~cMprp19qZ2164521645epoutp01i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1719304798;
+	bh=x0h6zK81zeMdC2nbxPC6G2Vyzce29720Fg37YW0c+8w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=FrZURWZB7LbaR0YShmrzOTq3mfL3yJOKJqS8TuatUcZ9PNVPq2QOxLVz8Kf1rhMiB
+	 oC4+1TsSxXfhff9wkzinqiJ3VYDM9H3bv1Hx4ISHHM40bFXNpjG+Fdn9I8OvNeyPr0
+	 b713V3mdcr1YpZZ77sYISqP4ee6Z04yKBEBGZjPA=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
+	20240625083958epcas5p4b061cfdc465701cf6ffe9f3ccef6b46b~cMprYgGAw2493924939epcas5p4q;
+	Tue, 25 Jun 2024 08:39:58 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.177]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4W7dYm2Wg9z4x9Q9; Tue, 25 Jun
+	2024 08:39:56 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	2C.02.06857.C528A766; Tue, 25 Jun 2024 17:39:56 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240625083927epcas5p4b9d4887854da457946504e98f104e3c2~cMpOecyHR1446514465epcas5p4o;
+	Tue, 25 Jun 2024 08:39:27 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240625083927epsmtrp13ed9e28a93148c9b2aed7be32fba41c1~cMpOd0HSQ1105111051epsmtrp1g;
+	Tue, 25 Jun 2024 08:39:27 +0000 (GMT)
+X-AuditID: b6c32a4b-88bff70000021ac9-13-667a825c0ead
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	46.26.29940.F328A766; Tue, 25 Jun 2024 17:39:27 +0900 (KST)
+Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240625083926epsmtip2379fc54e913e25e0985f89d784b702c1~cMpN7tEfj1826118261epsmtip2H;
+	Tue, 25 Jun 2024 08:39:26 +0000 (GMT)
+From: hexue <xue01.he@samsung.com>
+To: axboe@kernel.dk
+Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: Re: [PATCH v5] Subject: io_uring: releasing CPU resources when
+ polling
+Date: Tue, 25 Jun 2024 16:39:21 +0800
+Message-Id: <20240625083921.2579716-1-xue01.he@samsung.com>
+X-Mailer: git-send-email 2.40.1
+In-Reply-To: <5146c97b-912e-41e3-bea9-547b0881707a@kernel.dk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,53 +84,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAAXCJn5gXpmc5SiDA--.29808S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7JF4rAFyrCF45uFy7GF15Jwb_yoWDGrX_AF
-	yj9rn5Jr4vkF1Skr13KrWrZry0k3yqq3s5Xr1xtFyfK34Uuay5WrZrur48XrWkWrW8Aanr
-	u3sIkr17A3s7KjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb3AFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
-	6F4UJwA2z4x0Y4vEx4A2jsIE14v26F4UJVW0owA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1lFIxGxcIEc7CjxVA2Y2ka0xkIwI1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x
-	0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2
-	zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF
-	4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWU
-	CwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCT
-	nIWIevJa73UjIFyTuYvjfUOrcfUUUUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKKsWRmVeSWpSXmKPExsWy7bCmhm5MU1WawbtJQhZzVm1jtFh9t5/N
+	4l3rORaLy7vmsDmweOycdZfd4/LZUo/Pm+QCmKOybTJSE1NSixRS85LzUzLz0m2VvIPjneNN
+	zQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOAlikplCXmlAKFAhKLi5X07WyK8ktLUhUy8otLbJVS
+	C1JyCkwK9IoTc4tL89L18lJLrAwNDIxMgQoTsjN+r9nBVPCDtWLLmQfMDYxPWLoYOTkkBEwk
+	+na+ZO1i5OIQEtjNKHF75hU2COcTo8Shs/PYIZxvjBJbd99hh2np/TSPBSKxl1Hi44aVUM4P
+	Rom7l+4wglSxCShJ7N/yAcwWERCW2N/RClTEwcEsECJx80wESFhYIFRi3f5usBIWAVWJpetv
+	MIHYvALWEis6+qCWyUvc7NrPDGJzCthKNB9bzwhRIyhxcibED8xANc1bZzOD3CAhsItdYt/y
+	N0wguyQEXCT+PxOGmCMs8er4FqiZUhIv+9ug7HyJyd8hZkoI1Eis2/wOGi7WEv+u7IE6WVNi
+	/S59iLCsxNRT65gg1vJJ9P5+wgQR55XYMQ/GVpJYcmQF1EgJid8TFrFC2B4SHx/fhwb1BEaJ
+	NVfeMk5gVJiF5J1ZSN6ZhbB6ASPzKkbJ1ILi3PTUYtMC47zUcngkJ+fnbmIEpz8t7x2Mjx58
+	0DvEyMTBeIhRgoNZSYQ3tKQqTYg3JbGyKrUoP76oNCe1+BCjKTC8JzJLiSbnAxNwXkm8oYml
+	gYmZmZmJpbGZoZI47+vWuSlCAumJJanZqakFqUUwfUwcnFINTCqv5BYc4kl8e12g69UKbp3f
+	+W2vV1bdW9/WG14jnl++Q2hl1WM3Vdve4rlOe95u+XTQWkzoSeSWGTfnBjjFFrh8PNdgarDc
+	Um/uE6u2hLYe8b3Tt7hWzj34tiN2FqPxKjU9xtqTTNtPPUt1E/y8Xlpx7t8rB9M80m6+/Pht
+	l1tHb48X/6p0w4NadX+kraf+6eKI2DnT5MSCe56Cv11F5Z7euvRzzp+TW1PULm7TlpOKnCpx
+	5XREzv4z8p7rTB9/Ofvi61MXTT7bP5Z2O8oTvl4xeFBgt3fJfrMLO2/0RFTdKlh2ouW756ct
+	8TGMM+WfcK3aey5u53s+16x3VY+zJfOKKnvvXSpwruS90muSw6DEUpyRaKjFXFScCAC222wN
+	CAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLLMWRmVeSWpSXmKPExsWy7bCSvK59U1WawdqtQhZzVm1jtFh9t5/N
+	4l3rORaLy7vmsDmweOycdZfd4/LZUo/Pm+QCmKO4bFJSczLLUov07RK4Mn6v2cFU8IO1YsuZ
+	B8wNjE9Yuhg5OSQETCR6P80Dsrk4hAR2M0qsnTGPGSIhIbHj0R9WCFtYYuW/5+wQRd8YJXp2
+	PWUDSbAJKEns3/KBEcQWASra39EKNpVZIEyia8cZsGZhgWCJnZumsoPYLAKqEkvX32ACsXkF
+	rCVWdPSxQyyQl7jZtR9sMaeArUTzsfVgM4UEbCRWzPgIVS8ocXLmE6j58hLNW2czT2AUmIUk
+	NQtJagEj0ypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k/NxNjOAQ1dLcwbh91Qe9Q4xMHIyH
+	GCU4mJVEeENLqtKEeFMSK6tSi/Lji0pzUosPMUpzsCiJ84q/6E0REkhPLEnNTk0tSC2CyTJx
+	cEo1MGVtTHLor3j54bfijaCMvULb+ndmR4XN2fPf70S08fytZc94RPa8PtdnkX9VwNchUMXv
+	qeiOI4EB+eEBRx7psC+OF48TXPTy6DyN6bNmFc/LedgqVR6+fukq9jkJwiJiISa5cfqlK/od
+	n7f3+XNPEFbOyH71yc/C2qF14gW3hR5iXgznW1YfXK3+wn/Veoflj9Pn5kUcXT1z6oE5lwo3
+	ebAFP1gZuL9qDn+NSRu32ZkLez+V7nhl2dxms9auyMVuYlqUWlVfvODJTXp+s9/ers44d/v7
+	ZLbYEDvvnHsrhK8lXlnZ/znUV5h1/fSXpSuCpc27prO2xWisu938k6NVIvF/Zej7jCWFsjbL
+	su66K7EUZyQaajEXFScCAL//ZxrAAgAA
+X-CMS-MailID: 20240625083927epcas5p4b9d4887854da457946504e98f104e3c2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240625083927epcas5p4b9d4887854da457946504e98f104e3c2
+References: <5146c97b-912e-41e3-bea9-547b0881707a@kernel.dk>
+	<CGME20240625083927epcas5p4b9d4887854da457946504e98f104e3c2@epcas5p4.samsung.com>
 
-When auxiliary_device_add() returns error and then calls
-auxiliary_device_uninit(), callback function adev_release
-calls kfree(madev). We shouldn't call kfree(madev) again
-in the error handling path. Set 'madev' to NULL.
+On 6/19/24 15:51, Jens Axboe wrote:
+>On 6/19/24 08:18, hexue wrote:
+>
+>While I do suspect there are cases where hybrid polling will be more
+>efficient, not sure there are many of them. And you're most likely
+>better off just doing IRQ driven IO at that point? Particularly with the
+>fairly substantial overhead of maintaining the data you need, and time
+>querying.
 
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
-Changes in v2:
-- streamlined the patch according suggestions;
-- revised the description.
----
- drivers/net/ethernet/microsoft/mana/mana_en.c | 2 ++
- 1 file changed, 2 insertions(+)
+I rebuilt the test cases based on your information, that is, each drive has
+only one thread with high pressure, there is a significant performance loss.
+I previously provided test data for a single drive with multi-threaded, which
+can achieve performance stable and CPU savings.
 
-diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
-index d087cf954f75..608ad31a9702 100644
---- a/drivers/net/ethernet/microsoft/mana/mana_en.c
-+++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
-@@ -2798,6 +2798,8 @@ static int add_adev(struct gdma_dev *gd)
- 	if (ret)
- 		goto init_fail;
- 
-+	/* madev is owned by the auxiliary device */
-+	madev = NULL;
- 	ret = auxiliary_device_add(adev);
- 	if (ret)
- 		goto add_fail;
--- 
-2.25.1
+Thanks for your data, I will reduce the cost of each IO and submit the next
+version.
 
+--
+hexue
 
