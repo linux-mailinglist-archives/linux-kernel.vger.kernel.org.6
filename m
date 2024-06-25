@@ -1,103 +1,128 @@
-Return-Path: <linux-kernel+bounces-229294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D1F916DF9
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:23:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E0AC916DFF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:24:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26F6F1C22324
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:23:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A221283C39
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:24:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A54DC172BC2;
-	Tue, 25 Jun 2024 16:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534F3173357;
+	Tue, 25 Jun 2024 16:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JCe+ijNM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QibZCrOJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E843C49629;
-	Tue, 25 Jun 2024 16:23:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E62449629;
+	Tue, 25 Jun 2024 16:24:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719332623; cv=none; b=byowBXlahRJRbdaMzjIUwbWum0FbVqga76gcLzgtdxtlRrwoTrxXDAutgB6QDAQTwDb1rtxwCWtzH+PqAfTX8WRohKaOe/nNePZf58xMt+eGCvf0B5WwdfF89CWb202WOqmyrTMdCn8+EwoLrShikkMN37SNFlBTmUlamrRMed0=
+	t=1719332664; cv=none; b=DMNsON4fGDqaeytyVpxwNecJf1M65dQJXPFzjX0dd/RfDnNeX/8rRSNBoJ4yFnL/fjgW19zyDwStdcGg6x7u6sc1cM5PPp/44PNOiWXLjvqyC5+4JMIlR2ASknMs7Shh2+F05XJkSR7M73qCAE9O41H+PYj079bDeWBJhbZOCe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719332623; c=relaxed/simple;
-	bh=T6WcmYyrG4RDnVy0C9I1xyHe/lqPeAD4ypoU12fA2sY=;
+	s=arc-20240116; t=1719332664; c=relaxed/simple;
+	bh=7YZlz23yUHTKCjEJ0DtkNCpW8MKikV7v5efaQ6NoijI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gh5ATZeA/HmOz7Dl4z1HMDeMbDRo3lLlPndwoCdLhhUUWJ9uJWH+GNzzAC6BAzZUERrxMNfIUf1vILOLHMfpV3EdARisLu204stZMGNOcsyd7c8BZpMdqFW1aoDfXtVqdXAE31Q+UKqyEv7F9K23xrxbyPCe4lN4KaiBAIUvb7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JCe+ijNM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1BE2C32781;
-	Tue, 25 Jun 2024 16:23:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AoctrbQ6TNO6Y+0kTE8mFFMUmdqcJcul1HyiwV5n4BCxHBQSdWodLA2p9lonkV/7EDRgYYs8z13jJQOSCvsyA9FWZLDzYB817AIQDQj277bPXUzGUPiTNGLdAgbjnB367G7nk/cQNnBBVoqWqAo6oG3j/vi4aljqqVIoqzk1tIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QibZCrOJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C237DC32781;
+	Tue, 25 Jun 2024 16:24:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719332620;
-	bh=T6WcmYyrG4RDnVy0C9I1xyHe/lqPeAD4ypoU12fA2sY=;
+	s=k20201202; t=1719332664;
+	bh=7YZlz23yUHTKCjEJ0DtkNCpW8MKikV7v5efaQ6NoijI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JCe+ijNMzfgTJ8otc6zD+pzRapbGk8sJQ8A41JfbOlO4wTgmQSH4RH3QrTP8eyzmo
-	 M0KTLmYsBNKMlM8tNqcpHQJR7XmMgT7RM+CMlPWTuCgI4yB3hJzwPZGlsUVwcXMzlJ
-	 +4GwL1Up06l+dkuzxzIW2wZ6GxHU1Evns7R5+bcZNaM4NZpPmXOn7SgwdfcVUBxkHZ
-	 PaEeDjt3vxoNe8KGCyj7AS1PrxRkUobtWC/xfnQyljoK5Ds0iffqi+J0juuviWEZ4y
-	 LJB3UegpXQESQu+qTblA0t/hv1+IMomRPs/evTRhpSOZPlTBqG0HYLpv5RCRc0U4hM
-	 46HFiD2YDSQZA==
-Date: Tue, 25 Jun 2024 17:23:33 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org
-Subject: Re: [PATCH 1/2] dt-bindings: display: meson-dw-hdmi: add missing
- power-domain
-Message-ID: <20240625-growl-unseated-e612193d93bd@spud>
-References: <20240625145017.1003346-1-jbrunet@baylibre.com>
- <20240625145017.1003346-2-jbrunet@baylibre.com>
+	b=QibZCrOJE3TdSC/l6jubXU5aQ6D6tBlszjzyGCmfHCrWr8u7S16hKoB+8UhJWUfUU
+	 50AX+3jqnm/RPWUcMAg70zsj9HanIUY6o2ws4vYQNHYSouCjdZk/l4we7TyaTVQHo1
+	 2OWuHTxFXU4ySpoth1awIcoY8clXvBWP09YMU2wDSfIlmBkM8pZDEwYiLC4RRLFe+y
+	 COx3WQLjoPVPZ9FdS4CK/hkhup7ppglV2YzHb+3LB/XlmJAro1WIKIdqgtFiijQKJq
+	 +CXEX43uXCnT231WwnkoF6SC8WeRGAfKPFFaUkgNOFb8ir0WedmZM7BqzZGCVmWogS
+	 F7QPoBObm0DQg==
+Date: Tue, 25 Jun 2024 17:24:18 +0100
+From: Mark Brown <broonie@kernel.org>
+To: David Lechner <dlechner@baylibre.com>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] spi: add
+ EXPORT_SYMBOL_GPL(devm_spi_optimize_message)
+Message-ID: <0bf8f28d-e8df-458e-aa23-f597ba009466@sirena.org.uk>
+References: <20240624-devm_spi_optimize_message-v2-0-58155c0180c2@baylibre.com>
+ <20240624-devm_spi_optimize_message-v2-1-58155c0180c2@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ryZ1T0F0MK8qog8O"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Ko8OmLQlxLrDF+hM"
 Content-Disposition: inline
-In-Reply-To: <20240625145017.1003346-2-jbrunet@baylibre.com>
+In-Reply-To: <20240624-devm_spi_optimize_message-v2-1-58155c0180c2@baylibre.com>
+X-Cookie: Results vary by individual.
 
 
---ryZ1T0F0MK8qog8O
+--Ko8OmLQlxLrDF+hM
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 04:50:14PM +0200, Jerome Brunet wrote:
-> All Amlogic instances of the Synopsys HDMI controller need a power domain
-> enabled. This is currently missing because the Amlogic HDMI driver direct=
-ly
-> pokes the power domain controller registers, which it should not do.
->=20
-> Instead The HDMI controller should use the power controller.
-> Fix the bindings accordingly.
->=20
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+On Mon, Jun 24, 2024 at 03:10:30PM -0500, David Lechner wrote:
+> devm_spi_optimize_message() is a public function and needs
+> EXPORT_SYMBOL_GPL.
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+The following changes since commit 6ba59ff4227927d3a8530fc2973b80e94b54d58f:
 
---ryZ1T0F0MK8qog8O
+  Linux 6.10-rc4 (2024-06-16 13:40:16 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git tags/spi-devm-optimize
+
+for you to fetch changes up to 7e74a45c7afdd8a9f82d14fd79ae0383bbaaed1e:
+
+  spi: add EXPORT_SYMBOL_GPL(devm_spi_optimize_message) (2024-06-24 21:25:57 +0100)
+
+----------------------------------------------------------------
+spi: add devm_spi_optimize_message() helper
+
+Helper from David Lechner <dlechner@baylibre.com>:
+
+    In the IIO subsystem, we are finding that it is common to call
+    spi_optimize_message() during driver probe since the SPI message
+    doesn't change for the lifetime of the driver. This patch adds a
+    devm_spi_optimize_message() helper to simplify this common pattern.
+
+----------------------------------------------------------------
+David Lechner (3):
+      Documentation: devres: add missing SPI helpers
+      spi: add devm_spi_optimize_message() helper
+      spi: add EXPORT_SYMBOL_GPL(devm_spi_optimize_message)
+
+ Documentation/driver-api/driver-model/devres.rst |  3 +++
+ drivers/spi/spi.c                                | 28 ++++++++++++++++++++++++
+ include/linux/spi/spi.h                          |  2 ++
+ 3 files changed, 33 insertions(+)
+
+--Ko8OmLQlxLrDF+hM
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnrvBQAKCRB4tDGHoIJi
-0j6wAQCWm7LMe5lduj3W/J09vudOmNS2YYempj7Y7+BPJ0R2gQEA1WXqC9XZoQ97
-I4MAXT7SsMcT9W2RDG9SUfFvkITeNwU=
-=UL7b
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ67zEACgkQJNaLcl1U
+h9AtDgf9G4HuXLXJ2ShPnYWdK55ZIitx+2RbwKOwcYn0s6zT4jUrMp8C2ggDu6Bk
+tEBWoHQq8LEjne7rvdJPe3bQgn1P/oX/uTyYrinnUCzACuv1D0HVmLOWescGu58K
+DFULjCinMjTDxTbTqIfmCyA00KzWbGdqPxyGuNAFUId+bRXVxR+DSJR4/4A9/A06
+39NlPhx41PePcsDgueEQActE2eZGWk3G/0wYybsgYIJx/sma5+oS+3+2fBr13xfq
+1Xaibgp2Vwf9qcANlaFVY3IVC4VyBBiQfAeSbzU7viDKAfcVGwYYajqg8XOIdnuR
+MjQFfz+1nXMQqqDPLK6Frx6hiwLUiQ==
+=YZv0
 -----END PGP SIGNATURE-----
 
---ryZ1T0F0MK8qog8O--
+--Ko8OmLQlxLrDF+hM--
 
