@@ -1,63 +1,63 @@
-Return-Path: <linux-kernel+bounces-229233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15600916D25
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:33:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 729C6916D49
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:41:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2A451F28949
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:33:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1DB71C20859
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:41:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD3E170830;
-	Tue, 25 Jun 2024 15:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CD717624B;
+	Tue, 25 Jun 2024 15:33:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eX+cEiFI"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DFmQ6Ejg"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDF6C16F8E7;
-	Tue, 25 Jun 2024 15:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A6B174EC5;
+	Tue, 25 Jun 2024 15:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719329614; cv=none; b=F6LEoE5p2iRucCbBLkpSnXjpM/n8b5MO0wv/XKFQKd/y9ZeRr/58lnyx+5tnWrY4U4BNTrYg11XpxpazmXvtonCT7EH3uV8KhtMOHbMRbZKa7dValizih20vGEdoLDxH+50Eyt08GkDSgiHvc1RN0s/3rTuSo5F1u2+mEmtYVzs=
+	t=1719329623; cv=none; b=ng8F1drhh3dRlEFM9k7Va44ht8yKQb/6N3monWWoOkf0ewq2d99htuy0ZQbbxsAc1pD0DestenQVlq5a1WYfS5NuMBmgaYm93Uik2eEf2syFm4ymM5PXSQJMqZwiqDkZI2Jt2UGinsNJ8Gm5MjlXYECVL0bjLg+ekKZRFQbt3jM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719329614; c=relaxed/simple;
-	bh=C/eJ2oldCk7CM6mmg1mVPEzlNezqURJcD7otGNJc+Yk=;
+	s=arc-20240116; t=1719329623; c=relaxed/simple;
+	bh=QvNvFEHoBwEH1VIOqHQAmQ3EV4Rb4HeDRHpL5s+dJTY=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qt4giYI8XDgvLIUbfBLgLSs5yUmE/OLq4VjRkecR3PmuNpjJHc86uBYREAd9k7JU8qDqPuuxHTKsJFk+yhHbqMDklgvcTaBrp2N3FMU+fv5oBn0JnbsqztxDjcMXeHPnaCFuhflYtl3N1EWCUdDphNrBy7a4fbwPHZcPYvUEbF0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eX+cEiFI; arc=none smtp.client-ip=198.47.23.248
+	 MIME-Version:Content-Type; b=qZXwIS+pD56br10wRDdbmu4wx0nnNvCp7HJZJuEShJb1v+UXjstIDB2IBpfgsOg8edl0bz4QFnTtPh47euFYJzQNFQvf0PhqR9TmerK599FUjjltAtXFcCLer5vwntGULkBlGT3CLby/usSuiakd/14swvBY2770r4TfCpGgP3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DFmQ6Ejg; arc=none smtp.client-ip=198.47.19.141
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45PFXQRl076632;
-	Tue, 25 Jun 2024 10:33:26 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45PFXSeS082459;
+	Tue, 25 Jun 2024 10:33:28 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719329606;
-	bh=3tH31x9G6ABuIo6tdJFVlBKDn1OeVXxNSanUJ9qJ7BI=;
+	s=ti-com-17Q1; t=1719329608;
+	bh=k4HXMomJZKq9jOBnN7r4GjioLYvEZzxX1ikda9RKXHY=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=eX+cEiFIgwVJVN2gR0ygEGjIjui4iMPvkhm2z9n8ogZm0tH6izgnNnRK2cEY4b9U/
-	 SFCnwxYqBwF88nnhwKI34PaTWVxioZND0Xhf5GUzX9vVxPF+Q6mhJHD/8BfhzBvDbp
-	 L1biRWLQK/HHHFqDJY9Y6vtmTIMsckDuGnXqQDuw=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45PFXQPv011738
+	b=DFmQ6EjgCepNXfF3Rch8aNiYzwH/tdi2tvtjStbFfRsGLZ3o33vxUidqYWAdpQtin
+	 kAsojxgfK8/bA8IX1h6HQcRjws2haN5BYzt9u/XEw7h8tLOXdK/28P3020u4cozVBQ
+	 1g1/yxPm5eLqvg07ZtX9zc3CCQV+VK1GbnUBKHO0=
+Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45PFXSGM049931
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 25 Jun 2024 10:33:26 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+	Tue, 25 Jun 2024 10:33:28 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 25
- Jun 2024 10:33:26 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2024 10:33:28 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 25 Jun 2024 10:33:26 -0500
+ Frontend Transport; Tue, 25 Jun 2024 10:33:28 -0500
 Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45PFXQlO113884;
-	Tue, 25 Jun 2024 10:33:26 -0500
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45PFXSFj113908;
+	Tue, 25 Jun 2024 10:33:28 -0500
 Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 45PFXPDg017365;
-	Tue, 25 Jun 2024 10:33:26 -0500
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 45PFXR4k017371;
+	Tue, 25 Jun 2024 10:33:28 -0500
 From: MD Danish Anwar <danishanwar@ti.com>
 To: Suman Anna <s-anna@ti.com>, Conor Dooley <conor+dt@kernel.org>,
         Krzysztof
@@ -71,11 +71,10 @@ CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<vigneshr@ti.com>,
         Roger Quadros <rogerq@kernel.org>,
         MD Danish Anwar
-	<danishanwar@ti.com>,
-        Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 2/2] dt-bindings: soc: ti: pruss: Add documentation for PA_STATS support
-Date: Tue, 25 Jun 2024 21:03:16 +0530
-Message-ID: <20240625153319.795665-3-danishanwar@ti.com>
+	<danishanwar@ti.com>
+Subject: [PATCH v3 0/2] Add documentation for PA_STATS and MAINTAINERS entry for ti,pruss.yaml
+Date: Tue, 25 Jun 2024 21:03:17 +0530
+Message-ID: <20240625153319.795665-4-danishanwar@ti.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240625153319.795665-1-danishanwar@ti.com>
 References: <20240625153319.795665-1-danishanwar@ti.com>
@@ -89,47 +88,30 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Add documentation for pa-stats node which is syscon regmap for
-PA_STATS registers. This will be used to dump statistics maintained by
-ICSSG firmware.
+Hi,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
+This series adds documentation for PA_STATS in dt-bindings file ti,pruss.yaml.
+This bindings file doesn't have a MAINTAINERS entry. This series add the
+MAINTAINERS entry for this file as well.
+
+Changes since v2:
+*) Added RB tag of Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> to
+   patch 2/2
+*) Added patch 1/2 to the series as the binding file is orphan.
+
+v2 https://lore.kernel.org/all/20240529115149.630273-1-danishanwar@ti.com/
+
+MD Danish Anwar (2):
+  MAINTAINERS: Add entry for ti,pruss.yaml to TI KEYSTONE MULTICORE
+    NAVIGATOR DRIVERS
+  dt-bindings: soc: ti: pruss: Add documentation for PA_STATS support
+
  .../devicetree/bindings/soc/ti/ti,pruss.yaml  | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 21 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-index c402cb2928e8..3cb1471cc6b6 100644
---- a/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-+++ b/Documentation/devicetree/bindings/soc/ti/ti,pruss.yaml
-@@ -278,6 +278,26 @@ patternProperties:
- 
-     additionalProperties: false
- 
-+  ^pa-stats@[a-f0-9]+$:
-+    description: |
-+      PA-STATS sub-module represented as a SysCon. PA_STATS is a set of
-+      registers where different statistics related to ICSSG, are dumped by
-+      ICSSG firmware. This syscon sub-module will help the device to
-+      access/read/write those statistics.
-+
-+    type: object
-+
-+    additionalProperties: false
-+
-+    properties:
-+      compatible:
-+        items:
-+          - const: ti,pruss-pa-st
-+          - const: syscon
-+
-+      reg:
-+        maxItems: 1
-+
-   interrupt-controller@[a-f0-9]+$:
-     description: |
-       PRUSS INTC Node. Each PRUSS has a single interrupt controller instance
+
+base-commit: 62c97045b8f720c2eac807a5f38e26c9ed512371
 -- 
 2.34.1
 
