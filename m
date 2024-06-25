@@ -1,283 +1,243 @@
-Return-Path: <linux-kernel+bounces-228884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06102916827
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:40:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B29691682A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:40:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A4821C2511D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:40:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E6728804F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:40:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C6316726E;
-	Tue, 25 Jun 2024 12:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76766156F4A;
+	Tue, 25 Jun 2024 12:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="FuHTTNzW"
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01on2052.outbound.protection.outlook.com [40.107.113.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVplCggM"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9706A158D7C;
-	Tue, 25 Jun 2024 12:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.113.52
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719319178; cv=fail; b=YhjZ3e2T1rgF1o1sIuC8DxjFmNsjWDuGODCSjyMeXv/AokseAlMIL303VxnIaaPmsa2z4RSrgMhPrXy/5UAKXMp/wz6XFXxrG1l1o/FjmURcT/7YPQGaXW+j15ppxfcrDL+xZ1/HCHxILvgyvfI9eDooPl+6cmP2EWj28N04Rhk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719319178; c=relaxed/simple;
-	bh=vEHhA5DFBOmEi3t5TeKT8KsTDYlT7rYUcm2ld+lB4bU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=Rc3G03/0zJtsJIo7cyLgVszh/CM3jledcJ7v/gbBWtXlkZXpO8UhoH2ktalWBIC6ilXrdwKTMsGeGIZ4EToJRQ18Hq+sY0a98JB82nufXA3Ahgd6nu4xAj8QBa8JPW9K3FsQQKvb8M35N6oARRFHSmYONP6lmyKf/MLvrz51XLQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=FuHTTNzW; arc=fail smtp.client-ip=40.107.113.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fwQaLE2gaN80iqpeLhWVMJRP/acN5ULBZPE20udq3RoiFOQr3xX2jc+TbXpXb3ajvFgfxj2fjP6zmM41Gv8wetisfX1U369r0Te2tmHVtu/iJcfUg66o8/8XXBIYCV3AFgosoiPbKlRWtkejB8WxG0cnmyVGGWHMp/wdYVpngWsokRRAK2oa7YxPvn4kZWz7LnpqPSyOlXrgOc9fH92SFAjGtVygGQaFKFwKEfOu9wbZQ8299cVNIgr/4JvPBxAMz+lyI28dMtx52/O4TRT5t1Lh2Hzgu4O3f9hGnv4O9wA0wg9dmJfoevNVO0BJbX0N8sxxck0wetcAilfQ0LX1rA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ypUPVq0fmbInMysEF8fF9meeqCnqRTdCiW7yE3ZxH4E=;
- b=iBGoa5lEnKmuRUCFlpVgXOv77VY5FskIqatWsZRB4KNkc+1jJ6Chqisp6/y4KuabDEoKXuZLzHV14/XKMfa29N3LXJR8iSqHb3ucIl7g5zPrvA0YF2ZHBVURbrkclLRJNlMMTx5PXQpKocEoczV/Zxl4xVA7sC33fX6bksJRzYrwfjMnX4MqZU8KCQ6aBDTrmDnCOCY2x0i4mRRv4+ceFgRCLXLHaOCSnP+x0qggeil9XJtiKhaYQtymJm7EZLNsG3Z7U7vRLLwzaxEgJRBfygsYHBMt5eREf0i7GuVt7H2mrVNSY38qIgrtjmdpX77Fe0kXQzYDEeSnhhnr6qxjWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
- header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ypUPVq0fmbInMysEF8fF9meeqCnqRTdCiW7yE3ZxH4E=;
- b=FuHTTNzWUTjKHxiLjkiahkOOopuKo01OMzVh/qY3poNTSMMStORrObCgREwtNsQ37h/qSHTV+IiUzMopjUA0tU3c1uRYsTAPhnH83W62w2Yh2vIbWur7fSwM0B4xZeAPTm7v1XK7AqHhu4o1191jkFjRCaM3iGm6ekZcH7wtRGo=
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
- by TYCPR01MB7364.jpnprd01.prod.outlook.com (2603:1096:400:f4::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Tue, 25 Jun
- 2024 12:39:31 +0000
-Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
- ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
- 12:39:31 +0000
-From: Biju Das <biju.das.jz@bp.renesas.com>
-To: Prabhakar <prabhakar.csengg@gmail.com>, Laurent Pinchart
-	<laurent.pinchart@ideasonboard.com>, Kieran Bingham
-	<kieran.bingham+renesas@ideasonboard.com>, David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, Geert Uytterhoeven
-	<geert+renesas@glider.be>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>
-CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Fabrizio
- Castro <fabrizio.castro.jz@renesas.com>, Prabhakar Mahadev Lad
-	<prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: RE: [PATCH] drm: renesas: Move RZ/G2L MIPI DSI driver to rz-du
-Thread-Topic: [PATCH] drm: renesas: Move RZ/G2L MIPI DSI driver to rz-du
-Thread-Index: AQHaxvvrCVUVLwgOH0e6KnciNkV+R7HYayTg
-Date: Tue, 25 Jun 2024 12:39:31 +0000
-Message-ID:
- <TY3PR01MB113468719006B031B20997B0B86D52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-References: <20240625123244.200533-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240625123244.200533-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=bp.renesas.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYCPR01MB7364:EE_
-x-ms-office365-filtering-correlation-id: 8c89d83d-e6b8-4253-6fe8-08dc9513dca2
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230037|1800799021|366013|7416011|376011|38070700015|921017;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?3+/tX6/M2ZAqp/bpInGn9vC/bt30+ttBSijPZryrfrplgH17hFBeGC66yUF/?=
- =?us-ascii?Q?/gl8GSnO5NIG9vEcV6w+EuDIwsiBM/sEBrdMl2/VdKXGX3TuNNkUD6lu894Y?=
- =?us-ascii?Q?NqLeQZ39vg0rQIfXDwvzF3vPlp5SYh6JjV05LDWkZjnx+PlIsl2VMlJ7REsf?=
- =?us-ascii?Q?Eo4229xNkEFC6Zqqth7w4Y4saOzP3mjtKq6GwDvShMp4xRf/FYFYo7SWuF5T?=
- =?us-ascii?Q?0SqZiE55aD11+eImE9P+aDnISuKVuRjs+bErny1JmehxW/8AY+8AFdoASmMu?=
- =?us-ascii?Q?H/17r86x4mgdTwRQCxBIR3Bf1g6eZCEld/nkpuNAO1aekrV/sK0mLRvWtC/n?=
- =?us-ascii?Q?LaemDVG7dN1hoKh9JuvRjDoUS8mLTaLt2LFlmVCxTbQtvikLaLiQ10pxuCWi?=
- =?us-ascii?Q?THHAulY7Vu3nxhnCSdYYKgO5dUV3WQOdbr7YsAZY9LdjHLIQAZemhkHOcvh7?=
- =?us-ascii?Q?jgxhTZ9tG2YR7uksR/x5oT7XBvpuz0ubHl4UgOmQvz0U0cyBZ2pQDgVrVsmR?=
- =?us-ascii?Q?2vIlh4RVcPyCr0PG7j6Wu60MWascqEa3m5hgclGBUmAVDvqfY+QtKxFNjJ1Y?=
- =?us-ascii?Q?E+ot2a+sLBSdU+XVkrYnr1YJZavgM/zgsHAZ8hQUgdWGWVF/QyAJK9O5DyR/?=
- =?us-ascii?Q?5RV6FOyPwjyHGCTHEo4iVmobKm7A1F9eVJWAIiZIs+hLpTjvYdbeFvqF/e/I?=
- =?us-ascii?Q?PvRcZqPWwfLl0ApWPSWkk9F1ejLzvle36tYru1n6oB6f2KaP8Oc74iZ3bWFp?=
- =?us-ascii?Q?uPxSUAS1OIxMnHInsgsaTvz5X8NrFVtVjNO9dkM7ac4f+pNNxd4OY9rZxNAA?=
- =?us-ascii?Q?Cu0+AvuDmRL0tDJkDeOeN130W7zd8Wzk1DCCw9qSMhrB4DuTvIDRw4a/mz5g?=
- =?us-ascii?Q?gtsGp2UgyRGQiNqmkzaNY9t86Zehdde0KbSY1ZQiMARdAasA9T3lzzDN0/bn?=
- =?us-ascii?Q?te8cfnp9STIoMLINNzb1jVG2PRkxRPEyTFynS5uS26fIhicSO/ncR1Jds3gm?=
- =?us-ascii?Q?n9eYYtVoIw5zK/7FZ5WWL3VG6n0lgs+prkFA6KVq7vG90k/xpv6x89i2ysxt?=
- =?us-ascii?Q?5H1tmcBtAemMD9Q7J2I6WLpJUenB+9M1qfMMxdQV7n/6sA+nLX9G1L5zegJL?=
- =?us-ascii?Q?mE6CMrxqDungHVTvmzzUoD+5/saA7DHBKPp3URblx+871qWbrPHc95XX1SQY?=
- =?us-ascii?Q?hdcCBfCzv/xM59D2+WX0YqzOVYPsZ6r9NLasRFWT9ok5YlAqfmn/TO2S3/K5?=
- =?us-ascii?Q?dOVDdJBPv/KEs71hnsVjwf3OwARWqh8oLH+YFx2sRgEmtTYxYLupM4Ih8R+D?=
- =?us-ascii?Q?sOLXa7AOqcOQtxB5d/1TYHMbeD0tUyXXK3wkKaHbcJpUxc6oXWSmuXEAuMO1?=
- =?us-ascii?Q?Dca8E36irj6cxK0jWpVBJ/zis2Gb?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(7416011)(376011)(38070700015)(921017);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?VXoYOHAKaCB92rk0n/UPw+BJcojnCOcYe4CC3R/OTjH544zimdb0kDwdnfGY?=
- =?us-ascii?Q?BpsROIuWOMOqzT0dZIc3thuujkZ+I0Ds8ks+GGyOoX5rPEq71UL/G4kZPdwz?=
- =?us-ascii?Q?bkSZqLZzyuaGZN92JQLx4bVx35xPLKNHcQT9+HXIGQL9+Rn5P9dcpCpTut2f?=
- =?us-ascii?Q?1TNVTt+cSK20GVN8nEkO8tfJG/F3KIGI2P1gBJ227Z7ikpF4t7pRXH2uS6gX?=
- =?us-ascii?Q?6Y/aaJJn7vMUE5FAYUxZTPEjoyzKaBsNwpXo6dk2Aa9izG+JaWBGiCr169Di?=
- =?us-ascii?Q?VVqV9LfEcIfT+ZeOOOL8EHhdNkYB1gKSS3Cdc8NGIk2q3rDLIen0Y1mMjyjU?=
- =?us-ascii?Q?yeYX5mJ/WdmK2sxeXQZsRCiO79M4D4o0gU+oiXqxXvFJAYkQOz2dCiyq0/f8?=
- =?us-ascii?Q?yUDBDwprCnOdqddLDLsYKOAU6ZQu72Zgwi9ePD5jnYGfQWgqejqo2GID5DS7?=
- =?us-ascii?Q?apX5fQ1Vf/TD1RX+ORHBy0B8qUKo3kkNSQeMp8h6t76ga/zfmwbF/+Vm8f+7?=
- =?us-ascii?Q?YOXSZs8bsl5vOlvNT/XyugXPwORucqXfKWtfBScWlQ0LkcgMZUMnSZ+xVOph?=
- =?us-ascii?Q?aRkLATdNzbZ+qVwG7Qbl5d04Lp6ttn9q66kII013K7EKBFeqcIgszCT5eOYe?=
- =?us-ascii?Q?/5ij1o5HHswFlSQ6yoiUCiRZAnGacveTCzGlboYB06YAMttl5VBfEqLC2NHm?=
- =?us-ascii?Q?ym4dZMaj7fq+ypmvhKLn8GHArqWHUcOiPTOoAymDagafVdArhFB4W/05hk4s?=
- =?us-ascii?Q?n55VGrq4Mx4e56dfxr7NVuYM52E1dkek1SL+WGUB9k1Fk/hMdmUCRQzcqScP?=
- =?us-ascii?Q?u/MTTBbTe6G0wU5+aPNaDV5UjeetPZI/Az0RmTgB0bp1xwDW6ECz1TCP2XgP?=
- =?us-ascii?Q?1k6u8l87Kz5GNk3R03LsCQF05Q8CAOVhCDcZY/rGSCjt9z9eobdqYkszQcDM?=
- =?us-ascii?Q?cZMH1RK2+9tHC+UCHTKvQC5/x0vR5xZCr4uRnoIyawFQwej4w4DwjQCLzAtQ?=
- =?us-ascii?Q?AHRo7J1px9sxIurclP2fH4Zu7AuvssRZ9LHPC6gn9tVI3i5YvAow4YSewQhE?=
- =?us-ascii?Q?MJvAD19T51I3UDuWjaukrPi7FOS3vFYvh38GUqcvQ9nhSehVJ7brywotCS9w?=
- =?us-ascii?Q?9hgyzy6iBlWpHKCv+9NMyRfTk1uTIs9/8+pGbuCGMs//aSZfsXuVLzqtT30o?=
- =?us-ascii?Q?tUejPxjY9gTKFWEq67nXFuwtl1ajlGr49ZIepaBDLoU3YRENXJ+RG+wFpDXB?=
- =?us-ascii?Q?mbfTBireQRIxtIVz4fIFHU69MxidVqd6EcKvByHzsPm1sL1khxKiuCi9fK2U?=
- =?us-ascii?Q?VqFyY/yIFv+jWtH31J54/EMVkp3uE/+iI8ODAbqvTLRpv4UYFiUGYH4FeIWf?=
- =?us-ascii?Q?Vcvh8Pla9h5/TV7lkq2ZAd3F+Dg9ZoqfnnbFo7ngxK69ECP0u8wIwm2wYdHy?=
- =?us-ascii?Q?sNOQMDM2f5SviPz5+sQeryGqlSGBuaKheGSYSQEHteQtztxKFoL0X7XQhZCv?=
- =?us-ascii?Q?55xoX0H174Kl3a/AAYHaqlWV9d54hlYpE2P+4TSJM3XtDpB9RXi+g7QNhIb2?=
- =?us-ascii?Q?bAcH4o9XQBWASHo21JKVUON1ujJ41NeSYxOzrt9KawnXS5B2tia2NDVchqyG?=
- =?us-ascii?Q?uw=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C969514B965;
+	Tue, 25 Jun 2024 12:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719319226; cv=none; b=YMAZ/LXv8jjHGu/PUZv3z30/nB3kCCDKMA/xFZhtYas4lbG7zEcORI6vKX14H6LVtELVd+RSdQS0X9xl21F/cpy0QKlOgtetON+EEnE+0RnOkQoecsCXxTApQpF2Fqm56KzirUoWLWePneIoIStQhNq739JFfhYl2qDek1sfC8s=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719319226; c=relaxed/simple;
+	bh=xJZC0ZWdKW7k5RvmuvvgEZNEvkDgI1taC7UFj87I6eg=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PpMwWaH/9+85UWO7sKLVnkDoQlIY0ptVVXdIKyJsxpWXlH4OBjmR7HPKoutxF1/O4vuteKn24arMcjMMQnLrueCanxTotmAtF0Vj/7rKBr3YksF4N59Gfybb1D1IsfleTTXl0DgvA9DTdtzhccvSSXaypl/4Dg0xnclh9RC0yrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PVplCggM; arc=none smtp.client-ip=209.85.208.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d1d614049so6049441a12.1;
+        Tue, 25 Jun 2024 05:40:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719319223; x=1719924023; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WoVkX+/SqvLNF+tl9I//nQP7hSOM7jd83RwihftTHdk=;
+        b=PVplCggMWP11VIUJkj5kBHIRJ0XYO3nKTzC5kdDsHuF/wzf0RgpOgTJ7v5FcGT7ZF6
+         F4NK7bBQ9/0Jc4bPu2SSSwgp16Wys4Hhnkb9WiOa+pAmTwEy0QC/S7DMon+zYx+Arx2l
+         HtBBO0RCFe6aViX5duv813o72G6CyAngr28YSrVx5b+u1qVkkALswuCKF4UynLovyHZ7
+         eMkOS72aCVuiDN4WH73OcNj+1eyZRtkQ3G/y+umBF+eddyzU5laEwwuCLXup0CI227xv
+         npcxTUBUv/HVrbCPV6N0t9nq2UeeYZWPAnCBMfiwFRiUiOwfau/sFYgvsa4opk3qk18U
+         8+NQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719319223; x=1719924023;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WoVkX+/SqvLNF+tl9I//nQP7hSOM7jd83RwihftTHdk=;
+        b=Naj7eNWVTla435jnNuXg48EaJuxnNg5oGH/jB8b6ivcTpzHcM0PO1cWMtg4agvtOnJ
+         1RHhBXr/xUXIP+qLU36ap6VJKKuVIhcdQpLSSGAJ/r9zB6/sdO0Hy0nF9VglAEc8o+PV
+         IJTGGyrmjZtQNxFM1ocdDxe86O4aVe13EU6fiRC6lkSDzX8q7UKDNqcZE9eZnXDS2U5m
+         ERTYQidqkAyPFJRZJrUizNUoecwCZiHexfRjURqlqsOKnsaGcIFnBhpTeXdVGDWIFO2k
+         zcX1fD/scDxCtM+ub0Kd1cJ/ZXKKZ5Yict62FB7PvrhPqs4UM1d89GoP1NZ4GeR+hzkH
+         JNKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyB4QpwwOWOYH/NQtP+8TWvfGDN0dlb0fluNoHK6MeKHkiHyGu+4tnljVTmqTRmMkoKlJQav0Hxlw+fiT+sf0RYPKAwEkmUqjb56Z1bJs19TkhAOgpqfGFFz9lf53eIXN+tEhA3gubmw==
+X-Gm-Message-State: AOJu0Yx0mgDtpvKLWcvyrtgL8ss2HaGvqZxq1cE/f5q8O69TTmom3pBl
+	+c6aN0gw+yyG5QMWep1Mnkmz1siz6ZRkKAh61z8g59AcXtFulNmlFXkG2w==
+X-Google-Smtp-Source: AGHT+IFxTLa8c3S5ivxUnXxBLRu48xXYi/65NyP5o9yS4QN739SX8vgF3IZu8OCLLzy1iVUqusy0fA==
+X-Received: by 2002:aa7:cb59:0:b0:57d:4fd8:db59 with SMTP id 4fb4d7f45d1cf-57d4fd8dc94mr6295848a12.0.1719319222848;
+        Tue, 25 Jun 2024 05:40:22 -0700 (PDT)
+Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30563440sm5853522a12.84.2024.06.25.05.40.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 05:40:22 -0700 (PDT)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
+Date: Tue, 25 Jun 2024 14:40:20 +0200
+To: Baoquan He <bhe@redhat.com>
+Cc: Uladzislau Rezki <urezki@gmail.com>, Nick Bowler <nbowler@draconx.ca>,
+	Hailong Liu <hailong.liu@oppo.com>, linux-kernel@vger.kernel.org,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	linux-mm@kvack.org, sparclinux@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
+Message-ID: <Znq6tEtCgB6QnnJH@pc638.lan>
+References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
+ <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
+ <20240621033005.6mccm7waduelb4m5@oppo.com>
+ <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
+ <ZnVLbCCkvhf5GaTf@pc636>
+ <ZnWICsPgYuBlrWlt@MiWiFi-R3L-srv>
+ <Znljtv5n-6EBgpsF@pc636>
+ <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
+ <ZnqcuKt2qrR-wmH3@pc636>
+ <ZnqspTVl/76jM9WD@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: bp.renesas.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8c89d83d-e6b8-4253-6fe8-08dc9513dca2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2024 12:39:31.8095
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: ZGoOkmR7lnMSPnnUQC9rX7xfYTlh8+Rvv6MQ85mTkoZmt2IJu0JHpYMt/yz0qMmpKxeLLJXfOn/x+09Vehmstbx5SNOkjNzXkKNt0Wjrnt0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB7364
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnqspTVl/76jM9WD@MiWiFi-R3L-srv>
 
-Hi Prabhakar,
+On Tue, Jun 25, 2024 at 07:40:21PM +0800, Baoquan He wrote:
+> On 06/25/24 at 12:32pm, Uladzislau Rezki wrote:
+> > On Tue, Jun 25, 2024 at 11:30:33AM +0800, Baoquan He wrote:
+> > > On 06/24/24 at 02:16pm, Uladzislau Rezki wrote:
+> > > > On Fri, Jun 21, 2024 at 10:02:50PM +0800, Baoquan He wrote:
+> > > > > On 06/21/24 at 11:44am, Uladzislau Rezki wrote:
+> > > > > > On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
+> > > > > > > On 06/21/24 at 11:30am, Hailong Liu wrote:
+> > > > > > > > On Thu, 20. Jun 14:02, Nick Bowler wrote:
+> > > > > > > > > On 2024-06-20 02:19, Nick Bowler wrote:
+> > > > > ......
+> > > > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > > > > index be2dd281ea76..18e87cafbaf2 100644
+> > > > > > > --- a/mm/vmalloc.c
+> > > > > > > +++ b/mm/vmalloc.c
+> > > > > > > @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> > > > > > >  static struct xarray *
+> > > > > > >  addr_to_vb_xa(unsigned long addr)
+> > > > > > >  {
+> > > > > > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > > > > > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> > > > > > >  
+> > > > > > >  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> > > > > > >  }
+> > > > > > > 
+> > > > > > The problem i see is about not-initializing of the:
+> > > > > > <snip>
+> > > > > > 	for_each_possible_cpu(i) {
+> > > > > > 		struct vmap_block_queue *vbq;
+> > > > > > 		struct vfree_deferred *p;
+> > > > > > 
+> > > > > > 		vbq = &per_cpu(vmap_block_queue, i);
+> > > > > > 		spin_lock_init(&vbq->lock);
+> > > > > > 		INIT_LIST_HEAD(&vbq->free);
+> > > > > > 		p = &per_cpu(vfree_deferred, i);
+> > > > > > 		init_llist_head(&p->list);
+> > > > > > 		INIT_WORK(&p->wq, delayed_vfree_work);
+> > > > > > 		xa_init(&vbq->vmap_blocks);
+> > > > > > 	}
+> > > > > > <snip>
+> > > > > > 
+> > > > > > correctly or fully. It is my bad i did not think that CPUs in a possible mask
+> > > > > > can be non sequential :-/
+> > > > > > 
+> > > > > > nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
+> > > > > > when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
+> > > > > 
+> > > > > I checked the generic version of setup_nr_cpu_ids(), from codes, they
+> > > > > are different with my understanding.
+> > > > > 
+> > > > > kernel/smp.c
+> > > > > void __init setup_nr_cpu_ids(void)
+> > > > > {
+> > > > >         set_nr_cpu_ids(find_last_bit(cpumask_bits(cpu_possible_mask), NR_CPUS) + 1);
+> > > > > }
+> > > > > 
+> > > > I see that it is not a weak function, so it is generic, thus the
+> > > > behavior can not be overwritten, which is great. This does what we
+> > > > need.
+> > > > 
+> > > > Thank you for checking this you are right!
+> > > 
+> > > Thanks for confirming this.
+> > > 
+> > > > 
+> > > > Then it is just a matter of proper initialization of the hash:
+> > > > 
+> > > > <snip>
+> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > index 5d3aa2dc88a8..1733946f7a12 100644
+> > > > --- a/mm/vmalloc.c
+> > > > +++ b/mm/vmalloc.c
+> > > > @@ -5087,7 +5087,13 @@ void __init vmalloc_init(void)
+> > > >          */
+> > > >         vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
+> > > >  
+> > > > -       for_each_possible_cpu(i) {
+> > > > +       /*
+> > > > +        * We use "nr_cpu_ids" here because some architectures
+> > > > +        * may have "gaps" in cpu-possible-mask. It is OK for
+> > > > +        * per-cpu approaches but is not OK for cases where it
+> > > > +        * can be used as hashes also.
+> > > > +        */
+> > > > +       for (i = 0; i < nr_cpu_ids; i++) {
+> > > 
+> > > I was wrong about earlier comments. Percpu variables are only available
+> > > on possible CPUs. For those nonexistent possible CPUs of static percpu
+> > > variable vmap_block_queue, there isn't memory allocated and mapped for
+> > > them. So accessing into them will cause problem.
+> > > 
+> > > In Nick's case, there are only CPU0, CPU2. If you access
+> > > &per_cpu(vmap_block_queue, 1), problem occurs. So I think we may need to
+> > > change to take other way for vbq. E.g:
+> > > 1) Storing the vb in the nearest neighbouring vbq on possible CPU as
+> > >    below draft patch;
+> > > 2) create an normal array to store vbq of size nr_cpu_ids, then we can
+> > >    store/fetch each vbq on non-possible CPU?
+> > > 
+> > A correct way, i think, is to create a normal array. A quick fix can be
+> > to stick to a next possible CPU.
+> > 
+> > > The way 1) is simpler, the existing code can be adapted a little just as
+> > > below.
+> > > 
+> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > index 633363997dec..59a8951cc6c0 100644
+> > > --- a/mm/vmalloc.c
+> > > +++ b/mm/vmalloc.c
+> > > @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> > >  static struct xarray *
+> > >  addr_to_vb_xa(unsigned long addr)
+> > >  {
+> > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> > > +
+> > > +	if (!cpu_possible(idex))
+> > > +		index = cpumask_next(index, cpu_possible_mask);
+> > >
+> > cpumask_next() can return nr_cpu_ids if no next bits set.
+> 
+> It won't. nr_cpu_ids is the largest index + 1, the hashed index will
+> be:  0 =<  index  <= (nr_cpu_ids - 1) e.g cpu_possible_mask is
+> b10001111, the nr_cpu_ids is 8, the largest bit is cpu7.
+> cpu_possible(index) will check that. So the largest bit of cpumask_next()
+> returns is (nr_cpu_ids - 1).
+> 
+/**
+ * cpumask_next - get the next cpu in a cpumask
+ * @n: the cpu prior to the place to search (i.e. return will be > @n)
+ * @srcp: the cpumask pointer
+ *
+ * Return: >= nr_cpu_ids if no further cpus set.
+ */
+static inline
+unsigned int cpumask_next(int n, const struct cpumask *srcp)
+{
+	/* -1 is a legal arg here. */
+	if (n != -1)
+		cpumask_check(n);
+	return find_next_bit(cpumask_bits(srcp), small_cpumask_bits, n + 1);
+}
 
-Thanks for the patch.
-
-> -----Original Message-----
-> From: Prabhakar <prabhakar.csengg@gmail.com>
-> Sent: Tuesday, June 25, 2024 1:33 PM
-> Subject: [PATCH] drm: renesas: Move RZ/G2L MIPI DSI driver to rz-du
->=20
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->=20
-> All the RZ/G2L DU specific components are located under the rz-du folder,=
- so it makes sense to move
-> the RZ/G2L MIPI DSI driver there instead of keeping it in the rcar-du fol=
-der. This change improves
-> the organization and modularity of the driver configuration by grouping r=
-elated settings together.
->=20
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-
-Acked-by: Biju Das <biju.das.jz@bp.renesas.com>
-
-Cheers,
-Biju
-
-> ---
->  drivers/gpu/drm/renesas/rcar-du/Kconfig                   | 8 --------
->  drivers/gpu/drm/renesas/rcar-du/Makefile                  | 2 --
->  drivers/gpu/drm/renesas/rz-du/Kconfig                     | 8 ++++++++
->  drivers/gpu/drm/renesas/rz-du/Makefile                    | 2 ++
->  .../gpu/drm/renesas/{rcar-du =3D> rz-du}/rzg2l_mipi_dsi.c   | 0
->  .../drm/renesas/{rcar-du =3D> rz-du}/rzg2l_mipi_dsi_regs.h  | 0
->  6 files changed, 10 insertions(+), 10 deletions(-)  rename drivers/gpu/d=
-rm/renesas/{rcar-du =3D> rz-
-> du}/rzg2l_mipi_dsi.c (100%)  rename drivers/gpu/drm/renesas/{rcar-du =3D>=
- rz-
-> du}/rzg2l_mipi_dsi_regs.h (100%)
->=20
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/Kconfig b/drivers/gpu/drm/re=
-nesas/rcar-du/Kconfig
-> index 53c356aed5d5..39af73cf2092 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/Kconfig
-> +++ b/drivers/gpu/drm/renesas/rcar-du/Kconfig
-> @@ -60,14 +60,6 @@ config DRM_RCAR_MIPI_DSI
->  	select DRM_MIPI_DSI
->  	select RESET_CONTROLLER
->=20
-> -config DRM_RZG2L_MIPI_DSI
-> -	tristate "RZ/G2L MIPI DSI Encoder Support"
-> -	depends on DRM && DRM_BRIDGE && OF
-> -	depends on ARCH_RENESAS || COMPILE_TEST
-> -	select DRM_MIPI_DSI
-> -	help
-> -	  Enable support for the RZ/G2L Display Unit embedded MIPI DSI encoders=
-.
-> -
->  config DRM_RCAR_VSP
->  	bool "R-Car DU VSP Compositor Support" if ARM
->  	default y if ARM64
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/Makefile b/drivers/gpu/drm/r=
-enesas/rcar-du/Makefile
-> index b8f2c82651d9..6f132325c8b7 100644
-> --- a/drivers/gpu/drm/renesas/rcar-du/Makefile
-> +++ b/drivers/gpu/drm/renesas/rcar-du/Makefile
-> @@ -14,5 +14,3 @@ obj-$(CONFIG_DRM_RCAR_DU)		+=3D rcar-du-drm.o
->  obj-$(CONFIG_DRM_RCAR_DW_HDMI)		+=3D rcar_dw_hdmi.o
->  obj-$(CONFIG_DRM_RCAR_LVDS)		+=3D rcar_lvds.o
->  obj-$(CONFIG_DRM_RCAR_MIPI_DSI)		+=3D rcar_mipi_dsi.o
-> -
-> -obj-$(CONFIG_DRM_RZG2L_MIPI_DSI)	+=3D rzg2l_mipi_dsi.o
-> diff --git a/drivers/gpu/drm/renesas/rz-du/Kconfig b/drivers/gpu/drm/rene=
-sas/rz-du/Kconfig
-> index 5f0db2c5fee6..8ec14271ebba 100644
-> --- a/drivers/gpu/drm/renesas/rz-du/Kconfig
-> +++ b/drivers/gpu/drm/renesas/rz-du/Kconfig
-> @@ -10,3 +10,11 @@ config DRM_RZG2L_DU
->  	help
->  	  Choose this option if you have an RZ/G2L alike chipset.
->  	  If M is selected the module will be called rzg2l-du-drm.
-> +
-> +config DRM_RZG2L_MIPI_DSI
-> +	tristate "RZ/G2L MIPI DSI Encoder Support"
-> +	depends on DRM && DRM_BRIDGE && OF
-> +	depends on ARCH_RENESAS || COMPILE_TEST
-> +	select DRM_MIPI_DSI
-> +	help
-> +	  Enable support for the RZ/G2L Display Unit embedded MIPI DSI encoders=
-.
-> diff --git a/drivers/gpu/drm/renesas/rz-du/Makefile b/drivers/gpu/drm/ren=
-esas/rz-du/Makefile
-> index 663b82a2577f..2987900ea6b6 100644
-> --- a/drivers/gpu/drm/renesas/rz-du/Makefile
-> +++ b/drivers/gpu/drm/renesas/rz-du/Makefile
-> @@ -6,3 +6,5 @@ rzg2l-du-drm-y :=3D rzg2l_du_crtc.o \
->=20
->  rzg2l-du-drm-$(CONFIG_VIDEO_RENESAS_VSP1)	+=3D rzg2l_du_vsp.o
->  obj-$(CONFIG_DRM_RZG2L_DU)		+=3D rzg2l-du-drm.o
-> +
-> +obj-$(CONFIG_DRM_RZG2L_MIPI_DSI)	+=3D rzg2l_mipi_dsi.o
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c b/drivers/g=
-pu/drm/renesas/rz-
-> du/rzg2l_mipi_dsi.c
-> similarity index 100%
-> rename from drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi.c
-> rename to drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi.c
-> diff --git a/drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi_regs.h b/driv=
-ers/gpu/drm/renesas/rz-
-> du/rzg2l_mipi_dsi_regs.h
-> similarity index 100%
-> rename from drivers/gpu/drm/renesas/rcar-du/rzg2l_mipi_dsi_regs.h
-> rename to drivers/gpu/drm/renesas/rz-du/rzg2l_mipi_dsi_regs.h
-> --
-> 2.34.1
-
+--
+Uladzislau Rezki
 
