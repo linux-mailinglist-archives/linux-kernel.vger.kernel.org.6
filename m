@@ -1,290 +1,212 @@
-Return-Path: <linux-kernel+bounces-228237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57C46915D2A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:13:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FC3D915D2D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4E421F213EE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:13:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 711661C2133C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7FEF49639;
-	Tue, 25 Jun 2024 03:12:57 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8D5B47A6B;
+	Tue, 25 Jun 2024 03:14:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JLcrhK/N"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF4803D6B;
-	Tue, 25 Jun 2024 03:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A7E43AB2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719285177; cv=none; b=rFouKr+VHAidqmbWFW865WXRgq1xHlO+E4NBtbzED1M1SaiWwhSkG6OmBOHDjREUqw2mIzr8w7J2suBuPoBDvVJ4AFUPgTu5aJvSBXOpQvSqeOhMbo4rZSd9JXUg9xbkQ+yiIF/xESuFOlVUD6rCrX6MopP+/i3SzPs44jh5Ulc=
+	t=1719285241; cv=none; b=LlRkCwHOCGNdPWsa2C1DRkhKNUsVcjYQ8x+Qul4cC9VdLoNpvrvX8Iqcdh8kqoO1JvRBBVe82aKnqpQMMqZ/8CDkPQKSxDUdc1WzChSCr7hFjJQNP3k4+j9zZqWN3P1gZn3h1cJdvWCnRiOPDZ/nURSTdowBNF2olofzZrX3RoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719285177; c=relaxed/simple;
-	bh=5GSxJ2fhHvwJOerdIQO0/q/cWtl2sjH55RB3enR5lbc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MBnVQ1Rq9rf2xl6w9x8YR/A+xO3DDZLn/l73a7Ij1jLeuQfgFirXF23FoCt2rE8Wk8/aWXS3BDFAloNh6PPLjL7wRcRNdwPCOLZ4JM/D/yjrIWRsJGG5yJuksxGACa3yu7WAoKdjvQDsS6gfB9K+MuLgAHO6gT29PxSIj2TTnH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4W7VCC224dz1SDlT;
-	Tue, 25 Jun 2024 11:08:23 +0800 (CST)
-Received: from kwepemd100013.china.huawei.com (unknown [7.221.188.163])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9F791180085;
-	Tue, 25 Jun 2024 11:12:30 +0800 (CST)
-Received: from [10.67.109.79] (10.67.109.79) by kwepemd100013.china.huawei.com
- (7.221.188.163) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Tue, 25 Jun
- 2024 11:12:21 +0800
-Message-ID: <3322ce46-78a1-45c5-ad07-a982dec21c8e@huawei.com>
-Date: Tue, 25 Jun 2024 11:12:20 +0800
+	s=arc-20240116; t=1719285241; c=relaxed/simple;
+	bh=wxT7s6VN+/GloyB+qWgTcBkk6+rCXosFyOxrCWFGLqE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Kvz2P2C7FwERqREYuV4oBbRBp5H3tAlXldJ9b6S08AkRswjLSyThiakbn48+r1ATVhObiQDLoe0KWpfpiIMYEMvtYY7W+yhH8ZI8kDlJCRHNPPlavyN72GwBY7PS7Jame0EUB5X2qQdsMWvmE1+kdLDJQ03Hd8AbN2LeYLVnz54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JLcrhK/N; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC10DC32782;
+	Tue, 25 Jun 2024 03:13:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719285240;
+	bh=wxT7s6VN+/GloyB+qWgTcBkk6+rCXosFyOxrCWFGLqE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JLcrhK/NZP0TSviBtUvn/pqtj0qNrgHRPVTfJ0xlkU/9RLka7tuoH7s7BBdGPqp7S
+	 hEiSMx7h8/u5Ym8VFSfqzxxBtFHT6xSD6rnzWMvr//X+S1poxSBiVGqYHXeChjCmab
+	 axAxe2pXw6gtE2MWC6Z87/5u7BqgkJXCqxUF+sjHHl2sR4D37ekCtk2DCHQRb3O5f9
+	 EKapz6lWE58bLkdWlX+bewronwIWIlZvRPyz9OXarj+nR2vKa9Z28ZB5gbiXLqGBPX
+	 KNqpLxCIrkUa8TaohxTs9Vo/ENLf5coXFMQMymdt7vIMGJdU/Q5WaQobvonwVCqElQ
+	 Nquq0HDRwBU/g==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH 1/4] f2fs: atomic: fix to avoid racing w/ GC
+Date: Tue, 25 Jun 2024 11:13:48 +0800
+Message-Id: <20240625031351.3586955-1-chao@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] cgroup: fix uaf when proc_cpuset_show
-To: Waiman Long <longman@redhat.com>, <tj@kernel.org>,
-	<lizefan.x@bytedance.com>, <hannes@cmpxchg.org>
-CC: <bpf@vger.kernel.org>, <cgroups@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240622113814.120907-1-chenridong@huawei.com>
- <19648b9c-6df7-45cd-a5ae-624a3e4d860f@redhat.com>
- <52f72d1d-602e-4dca-85a3-adade925b056@huawei.com>
- <71a9cc3a-1b58-4051-984b-dd4f18dabf84@redhat.com>
- <8f83ecb3-4afa-4e0b-be37-35b168eb3c7c@huawei.com>
- <ee30843f-2579-4dcf-9688-6541fd892678@redhat.com>
-Content-Language: en-US
-From: chenridong <chenridong@huawei.com>
-In-Reply-To: <ee30843f-2579-4dcf-9688-6541fd892678@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemd100013.china.huawei.com (7.221.188.163)
 
+Case #1:
+SQLite App		GC Thread		Kworker		Shrinker
+- f2fs_ioc_start_atomic_write
 
-On 2024/6/25 10:40, Waiman Long wrote:
-> On 6/24/24 21:46, chenridong wrote:
->>
->> On 2024/6/25 7:59, Waiman Long wrote:
->>> On 6/23/24 22:59, chenridong wrote:
->>>>
->>>> On 2024/6/22 23:05, Waiman Long wrote:
->>>>>
->>>>> On 6/22/24 07:38, Chen Ridong wrote:
->>>>>> We found a refcount UAF bug as follows:
->>>>>>
->>>>>> BUG: KASAN: use-after-free in cgroup_path_ns+0x112/0x150
->>>>>> Read of size 8 at addr ffff8882a4b242b8 by task atop/19903
->>>>>>
->>>>>> CPU: 27 PID: 19903 Comm: atop Kdump: loaded Tainted: GF
->>>>>> Call Trace:
->>>>>>   dump_stack+0x7d/0xa7
->>>>>>   print_address_description.constprop.0+0x19/0x170
->>>>>>   ? cgroup_path_ns+0x112/0x150
->>>>>>   __kasan_report.cold+0x6c/0x84
->>>>>>   ? print_unreferenced+0x390/0x3b0
->>>>>>   ? cgroup_path_ns+0x112/0x150
->>>>>>   kasan_report+0x3a/0x50
->>>>>>   cgroup_path_ns+0x112/0x150
->>>>>>   proc_cpuset_show+0x164/0x530
->>>>>>   proc_single_show+0x10f/0x1c0
->>>>>>   seq_read_iter+0x405/0x1020
->>>>>>   ? aa_path_link+0x2e0/0x2e0
->>>>>>   seq_read+0x324/0x500
->>>>>>   ? seq_read_iter+0x1020/0x1020
->>>>>>   ? common_file_perm+0x2a1/0x4a0
->>>>>>   ? fsnotify_unmount_inodes+0x380/0x380
->>>>>>   ? bpf_lsm_file_permission_wrapper+0xa/0x30
->>>>>>   ? security_file_permission+0x53/0x460
->>>>>>   vfs_read+0x122/0x420
->>>>>>   ksys_read+0xed/0x1c0
->>>>>>   ? __ia32_sys_pwrite64+0x1e0/0x1e0
->>>>>>   ? __audit_syscall_exit+0x741/0xa70
->>>>>>   do_syscall_64+0x33/0x40
->>>>>>   entry_SYSCALL_64_after_hwframe+0x67/0xcc
->>>>>>
->>>>>> This is also reported by: 
->>>>>> https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd
->>>>>>
->>>>>> This can be reproduced by the following methods:
->>>>>> 1.add an mdelay(1000) before acquiring the cgroup_lock In the
->>>>>>   cgroup_path_ns function.
->>>>>> 2.$cat /proc/<pid>/cpuset   repeatly.
->>>>>> 3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
->>>>>> $umount /sys/fs/cgroup/cpuset/   repeatly.
->>>>>>
->>>>>> The race that cause this bug can be shown as below:
->>>>>>
->>>>>> (umount)        |    (cat /proc/<pid>/cpuset)
->>>>>> css_release        |    proc_cpuset_show
->>>>>> css_release_work_fn    |    css = task_get_css(tsk, cpuset_cgrp_id);
->>>>>> css_free_rwork_fn    |    cgroup_path_ns(css->cgroup, ...);
->>>>>> cgroup_destroy_root    | mutex_lock(&cgroup_mutex);
->>>>>> rebind_subsystems    |
->>>>>> cgroup_free_root     |
->>>>>>             |    // cgrp was freed, UAF
->>>>>>             |    cgroup_path_ns_locked(cgrp,..);
->>>>>>
->>>>>> When the cpuset is initialized, the root node top_cpuset.css.cgrp
->>>>>> will point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount 
->>>>>> operation will
->>>>>> allocate cgroup_root, and top_cpuset.css.cgrp will point to the 
->>>>>> allocated
->>>>>> &cgroup_root.cgrp. When the umount operation is executed,
->>>>>> top_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.
->>>>>>
->>>>>> The problem is that when rebinding to cgrp_dfl_root, there are cases
->>>>>> where the cgroup_root allocated by setting up the root for cgroup v1
->>>>>> is cached. This could lead to a Use-After-Free (UAF) if it is
->>>>>> subsequently freed. The descendant cgroups of cgroup v1 can only be
->>>>>> freed after the css is released. However, the css of the root 
->>>>>> will never
->>>>>> be released, yet the cgroup_root should be freed when it is 
->>>>>> unmounted.
->>>>>> This means that obtaining a reference to the css of the root does
->>>>>> not guarantee that css.cgrp->root will not be freed.
->>>>>>
->>>>>> To solve this issue, we have added a cgroup reference count in
->>>>>> the proc_cpuset_show function to ensure that css.cgrp->root will not
->>>>>> be freed prematurely. This is a temporary solution. Let's see if 
->>>>>> anyone
->>>>>> has a better solution.
->>>>>>
->>>>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>>>>> ---
->>>>>>   kernel/cgroup/cpuset.c | 20 ++++++++++++++++++++
->>>>>>   1 file changed, 20 insertions(+)
->>>>>>
->>>>>> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
->>>>>> index c12b9fdb22a4..782eaf807173 100644
->>>>>> --- a/kernel/cgroup/cpuset.c
->>>>>> +++ b/kernel/cgroup/cpuset.c
->>>>>> @@ -5045,6 +5045,7 @@ int proc_cpuset_show(struct seq_file *m, 
->>>>>> struct pid_namespace *ns,
->>>>>>       char *buf;
->>>>>>       struct cgroup_subsys_state *css;
->>>>>>       int retval;
->>>>>> +    struct cgroup *root_cgroup = NULL;
->>>>>>         retval = -ENOMEM;
->>>>>>       buf = kmalloc(PATH_MAX, GFP_KERNEL);
->>>>>> @@ -5052,9 +5053,28 @@ int proc_cpuset_show(struct seq_file *m, 
->>>>>> struct pid_namespace *ns,
->>>>>>           goto out;
->>>>>>         css = task_get_css(tsk, cpuset_cgrp_id);
->>>>>> +    rcu_read_lock();
->>>>>> +    /*
->>>>>> +     * When the cpuset subsystem is mounted on the legacy 
->>>>>> hierarchy,
->>>>>> +     * the top_cpuset.css->cgroup does not hold a reference 
->>>>>> count of
->>>>>> +     * cgroup_root.cgroup. This makes accessing css->cgroup very
->>>>>> +     * dangerous because when the cpuset subsystem is remounted 
->>>>>> to the
->>>>>> +     * default hierarchy, the cgroup_root.cgroup that 
->>>>>> css->cgroup points
->>>>>> +     * to will be released, leading to a UAF issue. To avoid 
->>>>>> this problem,
->>>>>> +     * get the reference count of top_cpuset.css->cgroup first.
->>>>>> +     *
->>>>>> +     * This is ugly!!
->>>>>> +     */
->>>>>> +    if (css == &top_cpuset.css) {
->>>>>> +        cgroup_get(css->cgroup);
->>>>>> +        root_cgroup = css->cgroup;
->>>>>> +    }
->>>>>> +    rcu_read_unlock();
->>>>>>       retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
->>>>>>                   current->nsproxy->cgroup_ns);
->>>>>>       css_put(css);
->>>>>> +    if (root_cgroup)
->>>>>> +        cgroup_put(root_cgroup);
->>>>>>       if (retval == -E2BIG)
->>>>>>           retval = -ENAMETOOLONG;
->>>>>>       if (retval < 0)
->>>>>
->>>>> Thanks for reporting this UAF bug. Could you try the attached 
->>>>> patch to see if it can fix the issue?
->>>>>
->>>>
->>>> +/*
->>>> + * With a cgroup v1 mount, root_css.cgroup can be freed. We need 
->>>> to take a
->>>> + * reference to it to avoid UAF as proc_cpuset_show() may access 
->>>> the content
->>>> + * of this cgroup.
->>>> + */
->>>>  static void cpuset_bind(struct cgroup_subsys_state *root_css)
->>>>  {
->>>> +    static struct cgroup *v1_cgroup_root;
->>>> +
->>>>      mutex_lock(&cpuset_mutex);
->>>> +    if (v1_cgroup_root) {
->>>> +        cgroup_put(v1_cgroup_root);
->>>> +        v1_cgroup_root = NULL;
->>>> +    }
->>>>      spin_lock_irq(&callback_lock);
->>>>
->>>>      if (is_in_v2_mode()) {
->>>> @@ -4159,6 +4170,10 @@ static void cpuset_bind(struct 
->>>> cgroup_subsys_state *root_css)
->>>>      }
->>>>
->>>>      spin_unlock_irq(&callback_lock);
->>>> +    if (!cgroup_subsys_on_dfl(cpuset_cgrp_subsys)) {
->>>> +        v1_cgroup_root = root_css->cgroup;
->>>> +        cgroup_get(v1_cgroup_root);
->>>> +    }
->>>>      mutex_unlock(&cpuset_mutex);
->>>>  }
->>>>
->>>> Thanks for your suggestion. If we take a reference at rebind(call 
->>>> ->bind()) function, cgroup_root allocated when setting up root for 
->>>> cgroup v1 can never be released, because the reference count will 
->>>> never be reduced to zero.
->>>>
->>>> We have already tried similar methods to fix this issue, however 
->>>> doing so causes another issue as mentioned previously.
->>>
->>> You are right. Taking the reference in cpuset_bind() will prevent 
->>> cgroup_destroy_root() from being called. I had overlooked that.
->>>
->>> Now I have an even simpler fix. Could you try the attached v2 patch 
->>> to verify if that can fix the problem?
->>>
->>> Thanks,
->>> Longman
->>
->> Thanks you for your reply, v2 patch will lead to  ABBA deadlock.
->>
->> (cat /proc/<pid>/cpuset)                  | (rebind_subsystems)
->>                                                           | 
->> lockdep_assert_held(&cgroup_mutex);
->> mutex_lock(&cpuset_mutex);            |
->> cgroup_path_ns                                 |    ->bind()
->>                                                           | 
->> mutex_lock(&cpuset_mutex);
->> mutex_lock(&cgroup_mutex);           |
->
-> Bummer.
->
-> Another alternative is to create a cgroup_path_ns() variant that 
-> accepts a "struct cgroup **pcgrp" and retrieve the actual cgroup 
-> pointer inside its critical section. That should also fix the UAF.
->
-> Cheers,
-> Longman
->
->
-I am considering whether the cgroup framework has a method to fix this 
-issue, as other subsystems may also have the same underlying problem. 
-Since the root css will not be released, but the css->cgrp will be released.
+- f2fs_ioc_commit_atomic_write
+ - f2fs_commit_atomic_write
+  - filemap_write_and_wait_range
+  : write atomic_file's data to cow_inode
+								echo 3 > drop_caches
+								to drop atomic_file's
+								cache.
+			- f2fs_gc
+			 - gc_data_segment
+			  - move_data_page
+			   - set_page_dirty
 
-Regards,
-Ridong
+						- writepages
+						 - f2fs_do_write_data_page
+						 : overwrite atomic_file's data
+						   to cow_inode
+  - f2fs_down_write(&fi->i_gc_rwsem[WRITE])
+  - __f2fs_commit_atomic_write
+  - f2fs_up_write(&fi->i_gc_rwsem[WRITE])
+
+Case #2:
+SQLite App		GC Thread		Kworker
+- f2fs_ioc_start_atomic_write
+
+						- __writeback_single_inode
+						 - do_writepages
+						  - f2fs_write_cache_pages
+						   - f2fs_write_single_data_page
+						    - f2fs_do_write_data_page
+						    : write atomic_file's data to cow_inode
+			- f2fs_gc
+			 - gc_data_segment
+			  - move_data_page
+			   - set_page_dirty
+
+						- writepages
+						 - f2fs_do_write_data_page
+						 : overwrite atomic_file's data to cow_inode
+- f2fs_ioc_commit_atomic_write
+
+In above cases racing in between atomic_write and GC, previous
+data in atomic_file may be overwrited to cow_file, result in
+data corruption.
+
+This patch introduces PAGE_PRIVATE_ATOMIC_WRITE bit flag in page.private,
+and use it to indicate that there is last dirty data in atomic file,
+and the data should be writebacked into cow_file, if the flag is not
+tagged in page, we should never write data across files.
+
+Fixes: 3db1de0e582c ("f2fs: change the current atomic write way")
+Cc: Daeho Jeong <daehojeong@google.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+v1:
+- this patch can fix on-disk data consistency issue caused by f2fs/003
+ fs/f2fs/data.c | 10 +++++++++-
+ fs/f2fs/f2fs.h |  8 +++++++-
+ 2 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 0b4f563f2361..22031b9b507c 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -2647,10 +2647,13 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 	struct dnode_of_data dn;
+ 	struct node_info ni;
+ 	bool ipu_force = false;
++	bool atomic_commit;
+ 	int err = 0;
+ 
+ 	/* Use COW inode to make dnode_of_data for atomic write */
+-	if (f2fs_is_atomic_file(inode))
++	atomic_commit = f2fs_is_atomic_file(inode) &&
++				page_private_atomic(fio->page);
++	if (atomic_commit)
+ 		set_new_dnode(&dn, F2FS_I(inode)->cow_inode, NULL, NULL, 0);
+ 	else
+ 		set_new_dnode(&dn, inode, NULL, NULL, 0);
+@@ -2749,6 +2752,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
+ 	f2fs_outplace_write_data(&dn, fio);
+ 	trace_f2fs_do_write_data_page(page_folio(page), OPU);
+ 	set_inode_flag(inode, FI_APPEND_WRITE);
++	if (atomic_commit)
++		clear_page_private_atomic(page);
+ out_writepage:
+ 	f2fs_put_dnode(&dn);
+ out:
+@@ -3718,6 +3723,9 @@ static int f2fs_write_end(struct file *file,
+ 
+ 	set_page_dirty(page);
+ 
++	if (f2fs_is_atomic_file(inode))
++		set_page_private_atomic(page);
++
+ 	if (pos + copied > i_size_read(inode) &&
+ 	    !f2fs_verity_in_progress(inode)) {
+ 		f2fs_i_size_write(inode, pos + copied);
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index eacf0b0e6b2e..f1d65ee3addf 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -1413,7 +1413,8 @@ static inline void f2fs_clear_bit(unsigned int nr, char *addr);
+  * bit 1	PAGE_PRIVATE_ONGOING_MIGRATION
+  * bit 2	PAGE_PRIVATE_INLINE_INODE
+  * bit 3	PAGE_PRIVATE_REF_RESOURCE
+- * bit 4-	f2fs private data
++ * bit 4	PAGE_PRIVATE_ATOMIC_WRITE
++ * bit 5-	f2fs private data
+  *
+  * Layout B: lowest bit should be 0
+  * page.private is a wrapped pointer.
+@@ -1423,6 +1424,7 @@ enum {
+ 	PAGE_PRIVATE_ONGOING_MIGRATION,		/* data page which is on-going migrating */
+ 	PAGE_PRIVATE_INLINE_INODE,		/* inode page contains inline data */
+ 	PAGE_PRIVATE_REF_RESOURCE,		/* dirty page has referenced resources */
++	PAGE_PRIVATE_ATOMIC_WRITE,		/* data page from atomic write path */
+ 	PAGE_PRIVATE_MAX
+ };
+ 
+@@ -2401,14 +2403,17 @@ static inline void clear_page_private_##name(struct page *page) \
+ PAGE_PRIVATE_GET_FUNC(nonpointer, NOT_POINTER);
+ PAGE_PRIVATE_GET_FUNC(inline, INLINE_INODE);
+ PAGE_PRIVATE_GET_FUNC(gcing, ONGOING_MIGRATION);
++PAGE_PRIVATE_GET_FUNC(atomic, ATOMIC_WRITE);
+ 
+ PAGE_PRIVATE_SET_FUNC(reference, REF_RESOURCE);
+ PAGE_PRIVATE_SET_FUNC(inline, INLINE_INODE);
+ PAGE_PRIVATE_SET_FUNC(gcing, ONGOING_MIGRATION);
++PAGE_PRIVATE_SET_FUNC(atomic, ATOMIC_WRITE);
+ 
+ PAGE_PRIVATE_CLEAR_FUNC(reference, REF_RESOURCE);
+ PAGE_PRIVATE_CLEAR_FUNC(inline, INLINE_INODE);
+ PAGE_PRIVATE_CLEAR_FUNC(gcing, ONGOING_MIGRATION);
++PAGE_PRIVATE_CLEAR_FUNC(atomic, ATOMIC_WRITE);
+ 
+ static inline unsigned long get_page_private_data(struct page *page)
+ {
+@@ -2440,6 +2445,7 @@ static inline void clear_page_private_all(struct page *page)
+ 	clear_page_private_reference(page);
+ 	clear_page_private_gcing(page);
+ 	clear_page_private_inline(page);
++	clear_page_private_atomic(page);
+ 
+ 	f2fs_bug_on(F2FS_P_SB(page), page_private(page));
+ }
+-- 
+2.40.1
 
 
