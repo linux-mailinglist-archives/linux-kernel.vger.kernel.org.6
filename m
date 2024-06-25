@@ -1,125 +1,130 @@
-Return-Path: <linux-kernel+bounces-228863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A3B59167ED
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:33:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D2C79167F2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B957B28853D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:33:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082FB284354
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:34:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7640A15624B;
-	Tue, 25 Jun 2024 12:33:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BCFE157460;
+	Tue, 25 Jun 2024 12:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEN+gIzJ"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LiThNMBf"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF8914A619;
-	Tue, 25 Jun 2024 12:33:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FFC14831F;
+	Tue, 25 Jun 2024 12:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719318822; cv=none; b=PcaqJdTRCwi7VW+Rd2HFcfIPFyH3FLkAEcGmsCrjyiCxy/Bp07aeTZr/lqCkv0LK7ea1Z2XFwad/YsjUNU+/AETT1/bmfbRzFUmroMrnAkPRZIVheLxxN9m4VUgQz5G5TWc2iffWm32IcT92UAHI9iUeLiodU/DKerVDQXD4PNA=
+	t=1719318843; cv=none; b=IVvu/js4A/4MURAsnUKNcRZhBl8kQM2DtVawqJ7xuot9uvrm/C2wqbyj/qtCfmbH1/ovQspS6qzlpws9E613W2a551sKw3TAMZRjhOdxYDxEBHCrpNVUPi3nzjvO9l2FYegDijo4dm2Wdi2w0fppq9Nk07SufZYrfsCEBCnHnH8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719318822; c=relaxed/simple;
-	bh=ouDgNAhiOJABtZd0VRBjqm8wBra3HObZGuom3w81Y08=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EJnPyS4p5t/OH3RMwZyqluvRiuNCEnDiqt9A+nLlW/eHIp53+JuQfXjaEiDFG7ZgRDz/f6gV42YmEviy0cJ9alFpnOsmHOuzcIx4BAvecwa8G9UPnL/fJeF4NF81Pw/jZwNWAYlDvI9NwnSP7J1Oz9SzFG+q2KG5+T8eppHvNzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KEN+gIzJ; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4217926991fso47537515e9.3;
-        Tue, 25 Jun 2024 05:33:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719318819; x=1719923619; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=S/11/hyoYBdDR9OuAjcDpX5M0LFu3VP2tezkbOpybB0=;
-        b=KEN+gIzJNA9A6P28+xIsN1GxzYwCYrAJAsauejOpEED3Cns2JzoJXVzBNtWELb5b8B
-         ku2V12fltV77OQlnRikNlutvVP+1tEMYNM1QPAuOmXyUbxVOAHJPFNeo2Cb7+iA9BIPH
-         PQm/VBNaxQsVJq6TuYVMnhBKUg7o3t3oSNmnWH86RQPinh+LiD8i4Atz04qOhpax4rfK
-         NQWsxNbw0WoEaN9emt5wMI0LEEU8kYb9TlON2+Acs2aQmjUZKNoAqJOd9LDmBCgkuTPe
-         o6AEJ6NBQml+Ip0oyllXjH9Vc672R/jyNAuA8WozxIfM6a/MM1WryUKr15SvPtRCfFZS
-         oIAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719318819; x=1719923619;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S/11/hyoYBdDR9OuAjcDpX5M0LFu3VP2tezkbOpybB0=;
-        b=MuDjlWO+wKf71hYHkFlcK8vCX3Qm4L1GMidIM526mmSTMZCVb7BZIYtoCAdBtMdzxq
-         dzdixy2uFhN6qUbBQeP36Bm2TMZV8RbFdjrn7i42/xzTsyiQbLiThCgujVsB5E7URyQX
-         a9tlD2fgX2IpQDk5eKg7zkYINgAEOAIPvNc86e9CDnIKdWecCfET1CSCWHYd9lKOpoVD
-         /OFnF6jsSxgjfpM1dXNXwVweS1+VHWMYKugqhE1SHQhzRxb6tsZRJYceQblHSaril3B/
-         rT2aDL2OzocXj95mzfoZZqIXi1ClTdCH6yc5GVNNVrDc5O21yBMK6DL5KGv3xoFOz6Pr
-         NxcA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNMOgyY30NkEiq5JTXF8ZwoNpmF3gZU31c6aM79bdB7bw90mJXZuzwS3QEb07msV0AKtM0TgiewoDXUieubIyhaNCbtCJAuyRKJwBGJ3MVEoEpc8rjgoy002vRiblPlJonaAwBNNY3KEqNhugMV0I2YmWJH+iXAi4EqvNh0q8UVbDk/A==
-X-Gm-Message-State: AOJu0Yy1LYfaNwAclm6ObAIkzWZO8Pd6wzc49vMLGU00ICVeZyW7rVH/
-	2+x07BlzNA/nDeKQaGiHiu2PThJe5yb6wBIjEqvIO0M6AMTfTStL
-X-Google-Smtp-Source: AGHT+IHhnOnIodnFCxeYBhMXVK0if3VnPi/+2mhZS3e9FrCXnLgJcv5hamzattUDgvVdgPK7NBoyEw==
-X-Received: by 2002:a05:600c:6dd3:b0:421:ad42:c4c2 with SMTP id 5b1f17b1804b1-4248b9575famr56722695e9.10.1719318819162;
-        Tue, 25 Jun 2024 05:33:39 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d21243esm213969425e9.43.2024.06.25.05.33.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 05:33:38 -0700 (PDT)
-Date: Tue, 25 Jun 2024 15:33:36 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, Kuldeep Singh <kuldeep.singh@nxp.com>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>
-Subject: Re: [PATCH v4 2/3] spi: dt-bindings: fsl-dspi: Convert to yaml format
-Message-ID: <20240625123336.7ofgzasbwczdaask@skbuf>
-References: <20240624-ls_qspi-v4-0-3d1c6f5005bf@nxp.com>
- <20240624-ls_qspi-v4-0-3d1c6f5005bf@nxp.com>
- <20240624-ls_qspi-v4-2-3d1c6f5005bf@nxp.com>
- <20240624-ls_qspi-v4-2-3d1c6f5005bf@nxp.com>
+	s=arc-20240116; t=1719318843; c=relaxed/simple;
+	bh=0vTeA1bjmNtGwXezcaqYRAXYF1NLqC2a3D2GgKkavV0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eDIlOyswpzer4MaMoz2tz1VZEnPsKGFiAd2WB+6u2NM7Kdyhi2E/o0FbAMO4e20NKSyJPazcKfAgr3w+HjTDtzP16V2KfXo4/5rNDHNpcuwPrf6WCTHq1zERszvnKn1nVjiFVJPBkdzEsRdO4ncAk4XiTv8yoTiI3bh7QHMutuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LiThNMBf; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0CA676000B;
+	Tue, 25 Jun 2024 12:33:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719318839;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5T/QIU/cETq1tlbuFPd7ryLw8O87C9B+H47qdJAHXJw=;
+	b=LiThNMBfzuMK6mm3vhRR/TdofVz4kMZM/w9/xsV3jU7O1+dZpRRX7eKHBE0aAwIxns+uWG
+	N1fw63F40/enhl4UuSYsZ3NwQDvQz0zo0XqsjGOgTHKpQ2XfrTXWBRvXcp5SBaURYDcxIV
+	mwwe4yMIl0nXyYZ1RXKNqCiRktcCR+yHVDO3xOi42FDSiQ2Muwn8rAeSLhziG4KF9c9pSl
+	1F9XYuQu+nYV+TyNKyNFOMKkRsKtP2AyGqjF2sU8ZxqxcnXLR+aUqqvRva5A6M/Tke+p8F
+	INpEOppFM1NU613Pve+uOHLSW8wK+j8uwkyvYqmi+Ujo6H80bqTm23x/pnIw8A==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH net-next v4 0/7] net: pse-pd: Add new PSE c33 features
+Date: Tue, 25 Jun 2024 14:33:45 +0200
+Message-Id: <20240625-feature_poe_power_cap-v4-0-b0813aad57d5@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624-ls_qspi-v4-2-3d1c6f5005bf@nxp.com>
- <20240624-ls_qspi-v4-2-3d1c6f5005bf@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACm5emYC/3XNQQ7CIBAF0KsY1mJgoJa68h7GNEBHJVFoKFaN6
+ d1FNmpMF7P4+flvnmTA6HAgm8WTRBzd4ILPQS4XxJ60PyJ1Xc4EGEgmoaIH1Okase3D+24YW6t
+ 7yhU2zOgaGmlI3vYRD+5e3B3xmKjHeyL73JzckEJ8lIcjL32xK2hm7JFTRpmVhndVUwmjtiaEd
+ HZ+ZcOlmCN8nDWr5xzIjmXCQodGCW3+HfHlcDnniOxoWNdKYq0E57/ONE0vpk9+0VYBAAA=
+To: "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Donald Hunter <donald.hunter@gmail.com>, 
+ Oleksij Rempel <o.rempel@pengutronix.de>, Jonathan Corbet <corbet@lwn.net>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Dent Project <dentproject@linuxfoundation.org>, kernel@pengutronix.de, 
+ linux-doc@vger.kernel.org, Kory Maincent <kory.maincent@bootlin.com>
+X-Mailer: b4 0.15-dev-8cb71
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Mon, Jun 24, 2024 at 02:55:28PM -0400, Frank Li wrote:
-> Convert dt-binding spi-fsl-dspi.txt to yaml format.
-> Use part Vladimir Oltean's work at of
-> https://lore.kernel.org/linux-spi/20221111224651.577729-1-vladimir.oltean@nxp.com/
-> 
-> Additional changes during convert:
-> - compatible string "fsl,ls1028a-dspi" can be followed by
-> fsl,ls1021a-v1.0-dspi.
-> - Change "dspi0@4002c000" to "spi@4002c000" in example.
-> - Reorder properties in example.
-> - Use GIC include in example.
-> - Deprecated fsl,spi-cs-sck-delay and fsl,spi-sck-cs-delay by use common SPI
-> property.
-> - Use compatible string 'jedec,spi-nor' in example.
-> - Split peripheral part to fsl,dspi-peripheral-props.yaml.
-> - Remove 'interrupts' and 'pinctrl' from required list.
-> - Update 'bus-num' description.
-> - Update 'spi-num-chipselects' description by add "cs-gpios don't count
-> against this number".
-> - Remove 'big-endian' description.
-> 
-> Co-developed-by: Kuldeep Singh <kuldeep.singh@nxp.com>
-> Signed-off-by: Kuldeep Singh <kuldeep.singh@nxp.com>
-> Co-developed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> 
-> ---
+From: Kory Maincent (Dent Project) <kory.maincent@bootlin.com>
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+This patch series adds new c33 features to the PSE API.
+- Expand the PSE PI informations status with power, class and failure
+  reason
+- Add the possibility to get and set the PSE PIs power limit
+
+Changes in v4:
+- Made few update in PSE extended state an substate.
+- Add support for c33 pse power limit ranges.
+- Few changes in the specs and the documentation.
+- Link to v3: https://lore.kernel.org/r/20240614-feature_poe_power_cap-v3-0-a26784e78311@bootlin.com
+
+Changes in v3:
+- Use u32 instead of u8 size for c33 pse extended state and substate.
+- Reformat the state and substate enumeration to follow Oleksij proposal which
+  is more IEEE 802.3 standard compliant
+- Sent the first patch standalone in net.
+- Link to v2: https://lore.kernel.org/r/20240607-feature_poe_power_cap-v2-0-c03c2deb83ab@bootlin.com
+
+Changes in v2:
+- Use uA and uV instead of mA and mV to have more precision in the power
+  calculation. Need to use 64bit variables for the calculation.
+- Modify the pd-92x0behavior in case of setting the current out of the
+  available ranges. Report an error now.
+- Link to v1: https://lore.kernel.org/r/20240529-feature_poe_power_cap-v1-0-0c4b1d5953b8@bootlin.com
+
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+Kory Maincent (7):
+      net: ethtool: pse-pd: Expand C33 PSE status with class, power and extended state
+      netlink: specs: Expand the PSE netlink command with C33 new features
+      net: pse-pd: pd692x0: Expand ethtool status message
+      net: pse-pd: Add new power limit get and set c33 features
+      net: ethtool: Add new power limit get and set features
+      netlink: specs: Expand the PSE netlink command with C33 pw-limit attributes
+      net: pse-pd: pd692x0: Enhance with new current limit and voltage read callbacks
+
+ Documentation/netlink/specs/ethtool.yaml     |  58 +++++
+ Documentation/networking/ethtool-netlink.rst |  87 +++++++-
+ drivers/net/pse-pd/pd692x0.c                 | 317 ++++++++++++++++++++++++++-
+ drivers/net/pse-pd/pse_core.c                | 172 ++++++++++++++-
+ include/linux/ethtool.h                      |  20 ++
+ include/linux/pse-pd/pse.h                   |  51 +++++
+ include/uapi/linux/ethtool.h                 | 191 ++++++++++++++++
+ include/uapi/linux/ethtool_netlink.h         |  12 +
+ net/ethtool/pse-pd.c                         | 119 +++++++++-
+ 9 files changed, 997 insertions(+), 30 deletions(-)
+---
+base-commit: b98d89947d124c8ca9150b32fdc0c5fb099243cf
+change-id: 20240425-feature_poe_power_cap-18e90ba7294b
+
+Best regards,
+-- 
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
 
