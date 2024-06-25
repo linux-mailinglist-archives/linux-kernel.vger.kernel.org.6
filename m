@@ -1,419 +1,678 @@
-Return-Path: <linux-kernel+bounces-228480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50F2791607B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:54:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6F0691607F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:57:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9861828259D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:54:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38D4EB221DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:57:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD1E1474B8;
-	Tue, 25 Jun 2024 07:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DF561474A0;
+	Tue, 25 Jun 2024 07:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="XUjkRK7O"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ihFDOdlD"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E95514658B;
-	Tue, 25 Jun 2024 07:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A51B146A65
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719302063; cv=none; b=KmAV2oh7iaSzyxbnYyI3Uu/t3bqAtn8+bpYIwSRs94Jx9iRSd9qtz0r6JbPiEe/CJ41HS64RZ2xMR0bDw/6LhCtn+dssVZNS/Vd1a/V2tMiJoNaHZ5x7facljVgQ+DS0tahlmaGE8BRBDd+SVsu/9YQbAhWxfrHl0JYXWIiw1+k=
+	t=1719302211; cv=none; b=MAVlo06IcS0njOVxo4ppK807gkX0C2DWUd8z/VMb3xhn/aptxBUO1yZTRrrOTK232IQu/IxVuTQmlvcsNTJW8AxYjiLXNp0/QO15W0FqRwiOtgxFU9hbSAvLiWiTzojSqxKZPHYkU0xsJVmrEK5YHUGdGK6iebBKL8IBYEBOYz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719302063; c=relaxed/simple;
-	bh=aEWUyBiIms/R2ZqZcS3Y9so+FK0oU689ticcF05QkBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N9fSuhscAxdvWKSmkPVcXRPCe6ugJ+OdguEjOdVM792lKOSr8nTAC6ud3yuGowo6/GElPbRfEg/pi1/jKnqUGAxjA0ezWdnt1fy9E1kJjl+NVdQ7gOtuMTxmxrRjC2IfpqdEb4a3SLLnSTEyLXo2J9Hp7hev7Zk9nIEINl+piJc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=XUjkRK7O; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719302059;
-	bh=aEWUyBiIms/R2ZqZcS3Y9so+FK0oU689ticcF05QkBU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=XUjkRK7OKxM5lDxCS5a25HILVjwu/HwdZI0/fkaGQxoA2L8YT7cjw7XBKaNI+hiTx
-	 UFdhTYEUBkDNwdSvDze+mN7QxGyUxBn8bqd4OJ/o1KjjHOjghL3RfX58z5ANgtB04o
-	 C0J7v54Sy3nLy2U/5TFup1kezthSUJGRd9/J6ayzoYmi2pGRG6CjfM1SICrtNZilDs
-	 uVFSLS6JRfVI8wM40mCRC6Y0UzbDn7wgW2s5oL90ch8xNe6bTD9HHdIHz1Yz74LIQn
-	 2KX0RKcBTHod9nFKlByYg4CAeUXgIFou+SXYBKJCpVXPh+EEfBn4KBY70a7AAdQfFn
-	 jWA14Gr1q0hwQ==
-Received: from [100.74.67.65] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 27C943782180;
-	Tue, 25 Jun 2024 07:54:19 +0000 (UTC)
-Message-ID: <94d58f00-ef6a-4454-b028-bc3b7dcd927d@collabora.com>
-Date: Tue, 25 Jun 2024 09:54:18 +0200
+	s=arc-20240116; t=1719302211; c=relaxed/simple;
+	bh=Er54hzoJL/uBqscVhrnJB4RPDvTokiz2zlLnOKZuEeQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ny/L6qHECx7tb79Tl+AJtIooTraJESrDfvj3pEQnV7Z1POuRiOk9R+7xWJChmKp7SbbXXs7r/sh869/9h+JXWi/aYKOhHeQjCe/k+VQmfxknky2upFGI8nNgazb8G8f9Dn4m8ux7E2fXFq17ICkVm+vetbmIk4rlbQY8XxV7MAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ihFDOdlD; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f9e2affc8cso30493705ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:56:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719302208; x=1719907008; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IEOsHLG09FJ166d3yJqKGK3joSXVHY47hFt5h8JjELw=;
+        b=ihFDOdlD24gpdN5Fv8teF4iq8uMQgrqBnWrzdNZTyhA5bFySlSSD4UK5Q3oGhAczKb
+         AMG95q68Nb4/5+x57nDMD4LGKk8oK53SIhJ5tL1papflRZGqU8j18QokNahEuEu6UY1n
+         DFrEbxnQBAw7fh+BeqTSrJy4SzpDoIIhIVAoEJdan3POQVIeOvgCFRrBWa7nKZfjHWAY
+         PU94lpH0XleurKTL5kOf/MhROEf4K7FHSMy0ivm8iZObakLsHrMyRpGkYbLKHMbD5SD2
+         fvHt7CaXsgxd+nossTv4pDu3Acihg49yjcRIY6JUuQom28WSY9Sup4I+/+oQ5RBn5GTh
+         2nNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719302208; x=1719907008;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IEOsHLG09FJ166d3yJqKGK3joSXVHY47hFt5h8JjELw=;
+        b=AP5iwbqDwGzI2xKKk7UGwh1mESZphNx8H5uKunqEiNb8WeMaJGq/BI4E7JwEx6XHGA
+         jJVtwGDrDfOto9haczVkDh/ImX31cuDWGm4SFwICKPe6MvCdGOg2sXS9pUnwU/C2i7Ow
+         0u7ZKLVchxOh0eb6oGYRLRZYCAb5GkHCqyZaFxwtKBsFa/LL5On7kKoToI8k7VuL7gR9
+         qXm3DXKZ6aUPRFnBLAoHVX2TcoQfn8Z1b0HkW7a6ap5Hdl1ABVS9ZQoChb/28jk3Pcii
+         wwF0rvXU0CBDuTdyrpwGyzNtYVDrc2F4c6PFigDp+ZDYw6IiSFRLA5KM3HyVcFu8BN4W
+         BvUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUy6Tfn5UsaB5jlGyOwJ2DUALSjDD+vkD77fQ3MkEaHbvObRC9qhGx22zWlSAQkzAT+fmvP2N5qKsP5sEs/bkjvEKjNn2Pa+2rGv3YA
+X-Gm-Message-State: AOJu0YyEFq8qDCYwLsgW0aPuj1a7NUSYsxsq8bK5KaAUSN6nf/+bExbL
+	hHzRYimtmOqOutob2fB4gl5ugEIdcVsxo96gLK7/+wlADb5RJG4td/DbgJ3SUfM=
+X-Google-Smtp-Source: AGHT+IGEp15Jfy3REpH/U6UeTo/Wcw4MB9bvqxwK9Qh1Za/yONGMRp85aZ2O5Nx+Mef6DjIyKoOjXw==
+X-Received: by 2002:a17:902:f54c:b0:1f7:3763:5ffb with SMTP id d9443c01a7336-1fa23f2696dmr78289395ad.59.1719302208164;
+        Tue, 25 Jun 2024 00:56:48 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9ebbc7ccasm74462435ad.299.2024.06.25.00.56.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 00:56:47 -0700 (PDT)
+Date: Tue, 25 Jun 2024 13:26:45 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Huacai Chen <chenhuacai@loongson.cn>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>,
+	Huacai Chen <chenhuacai@kernel.org>, loongarch@lists.linux.dev,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Binbin Zhou <zhoubinbin@loongson.cn>
+Subject: Re: [PATCH 2/2] cpufreq: Add Loongson-3 CPUFreq driver support
+Message-ID: <20240625075645.m372bpbe7m2dozil@vireshk-i7>
+References: <20240612064205.2041548-1-chenhuacai@loongson.cn>
+ <20240612064205.2041548-3-chenhuacai@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] media: i2c: max96717: add test pattern ctrl
-To: Tommaso Merciai <tomm.merciai@gmail.com>,
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: linuxfancy@googlegroups.com, sakari.ailus@linux.intel.com,
- laurent.pinchart@ideasonboard.com, Mauro Carvalho Chehab
- <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240617145958.1819069-1-tomm.merciai@gmail.com>
- <20240617145958.1819069-2-tomm.merciai@gmail.com>
-Content-Language: en-US
-From: Julien Massot <julien.massot@collabora.com>
-In-Reply-To: <20240617145958.1819069-2-tomm.merciai@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612064205.2041548-3-chenhuacai@loongson.cn>
 
-Hi Tommaso,
-
-Thanks for your patch.
-
-I tested it on my setup and can capture frames. Here's a link to an 
-example: https://pasteboard.co/j8yHuE4YdYDV.jpg.
-
-I had some trouble with link validation because my sensor doesn't 
-support the RGB format. Once we have internal pad support, we won't need 
-to worry about the serializer creating an incompatible video stream for 
-the sensor.
-
-In the future, it would be great if we could support the serializer 
-without needing a connected sensor. This way, we can use it as a pattern 
-generator with this patch. However, not all GMSL2 serializers work this 
-way. For example, the MAX9295A can't generate an internal PCLK and 
-relies on the sensor to provide the video stream.
-
-Overall, this patch is very useful as it lets us receive a pattern from 
-the serializer, which helps validate the GMSL2 connection.
-
-It also handles issues related to generator timing, bits per pixel 
-(bpp), and tunnel mode that users might encounter.
-
-On 6/17/24 4:59 PM, Tommaso Merciai wrote:
-> Add v4l2 test pattern control.
+On 12-06-24, 14:42, Huacai Chen wrote:
+> Some of LoongArch processors (Loongson-3 series) support DVFS, their
+> IOCSR.FEATURES has IOCSRF_FREQSCALE set. And they has a micro-core in
+> the package called SMC (System Management Controller), which can be
+> used to detect temperature, control fans, scale frequency and voltage,
+> etc.
 > 
-> Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> The Loongson-3 CPUFreq driver is very simple now, it communicate with
+> SMC, get DVFS info, set target frequency from CPUFreq core, and so on.
+> 
+> There is a command list to interact with SMC, widely-used commands in
+> the CPUFreq driver include:
+> 
+> CMD_GET_VERSION: Get SMC firmware version.
+> 
+> CMD_GET_FEATURE: Get enabled SMC features.
+> 
+> CMD_SET_FEATURE: Enable SMC features, such as basic DVFS, BOOST.
+> 
+> CMD_GET_FREQ_LEVEL_NUM: Get the number of normal frequency levels.
+> 
+> CMD_GET_FREQ_BOOST_NUM: Get the number of boost frequency levels.
+> 
+> CMD_GET_FREQ_LEVEL_INFO: Get the detail info of a frequency level.
+> 
+> CMD_GET_FREQ_INFO: Get the current frequency.
+> 
+> CMD_SET_FREQ_INFO: Set the target frequency.
+> 
+> In future we will add automatic frequency scaling, which is similar to
+> Intel's HWP (HardWare P-State).
+> 
+> Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
+> Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
 > ---
->   drivers/media/i2c/max96717.c | 210 ++++++++++++++++++++++++++++++++---
->   1 file changed, 194 insertions(+), 16 deletions(-)
+>  drivers/cpufreq/Kconfig             |  12 +
+>  drivers/cpufreq/Makefile            |   1 +
+>  drivers/cpufreq/loongson3_cpufreq.c | 442 ++++++++++++++++++++++++++++
+>  3 files changed, 455 insertions(+)
+>  create mode 100644 drivers/cpufreq/loongson3_cpufreq.c
 > 
-> diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
-> index 949306485873..c263bbca7318 100644
-> --- a/drivers/media/i2c/max96717.c
-> +++ b/drivers/media/i2c/max96717.c
-> @@ -16,6 +16,7 @@
->   #include <linux/regmap.h>
->   
->   #include <media/v4l2-cci.h>
-> +#include <media/v4l2-ctrls.h>
->   #include <media/v4l2-fwnode.h>
->   #include <media/v4l2-subdev.h>
->   
-> @@ -36,11 +37,37 @@
->   #define MAX96717_DEV_ID  CCI_REG8(0xd)
->   #define MAX96717_DEV_REV CCI_REG8(0xe)
->   #define MAX96717_DEV_REV_MASK GENMASK(3, 0)
-> +#define MAX96717_IO_CHK0 CCI_REG8(0x24f)
-In MAX96717 datasheet this register is named VTX1.
-Can you also move these definitions to the VTX section?
-> +#define MAX96717_PATTERN_CLK_FREQ GENMASK(3, 1)
->   
->   /* VID_TX Z */
-> +#define MAX96717_VIDEO_TX0 CCI_REG8(0x110)
-> +#define MAX96717_VIDEO_AUTO_BPP BIT(3)
->   #define MAX96717_VIDEO_TX2 CCI_REG8(0x112)
->   #define MAX96717_VIDEO_PCLKDET BIT(7)
->   
-> +/* VRX_PATGEN_0 */
-For serializer these registers are named VTX_Z instead of VRX.
-
-> +#define MAX96717_PATGEN_0              CCI_REG8(0x24e)
-#define MAX96717_VTX_0              CCI_REG8(0x24e)
-> +#define MAX96717_PATGEN_1              CCI_REG8(0x26b)
-Can you keep this define ordered by address?
-> +#define MAX96717_PATGEN_MODE           GENMASK(1, 0)
-> +#define MAX96717_PATGEN_VS_DLY         CCI_REG24(0x250)
-#define MAX96717_VTX_VS_DLY
-> +#define MAX96717_PATGEN_VS_HIGH        CCI_REG24(0x253)
-> +#define MAX96717_PATGEN_VS_LOW         CCI_REG24(0x256)
-> +#define MAX96717_PATGEN_V2H            CCI_REG24(0x259)
-> +#define MAX96717_PATGEN_HS_HIGH        CCI_REG16(0x25c)
-> +#define MAX96717_PATGEN_HS_LOW         CCI_REG16(0x25e)
-> +#define MAX96717_PATGEN_HS_CNT         CCI_REG16(0x260)
-> +#define MAX96717_PATGEN_V2D            CCI_REG24(0x262)
-> +#define MAX96717_PATGEN_DE_HIGH        CCI_REG16(0x265)
-> +#define MAX96717_PATGEN_DE_LOW         CCI_REG16(0x267)
-> +#define MAX96717_PATGEN_DE_CNT         CCI_REG16(0x269)
-> +#define MAX96717_PATGEN_GRAD_INC       CCI_REG8(0x26c)
-> +#define MAX96717_PATGEN_CHKB_COLOR_A   CCI_REG24(0x26d)
-> +#define MAX96717_PATGEN_CHKB_COLOR_B   CCI_REG24(0x270)
-> +#define MAX96717_PATGEN_CHKB_RPT_CNT_A CCI_REG8(0x273)
-> +#define MAX96717_PATGEN_CHKB_RPT_CNT_B CCI_REG8(0x274)
-> +#define MAX96717_PATGEN_CHKB_ALT       CCI_REG8(0x275)
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index aacccb376c28..f2e47ec28d77 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -12968,6 +12968,7 @@ F:	Documentation/arch/loongarch/
+>  F:	Documentation/translations/zh_CN/arch/loongarch/
+>  F:	arch/loongarch/
+>  F:	drivers/*/*loongarch*
+> +F:	drivers/cpufreq/loongson3_cpufreq.c
+>  
+>  LOONGSON GPIO DRIVER
+>  M:	Yinbo Zhu <zhuyinbo@loongson.cn>
+> diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
+> index 94e55c40970a..10cda6f2fe1d 100644
+> --- a/drivers/cpufreq/Kconfig
+> +++ b/drivers/cpufreq/Kconfig
+> @@ -262,6 +262,18 @@ config LOONGSON2_CPUFREQ
+>  	  If in doubt, say N.
+>  endif
+>  
+> +if LOONGARCH
+> +config LOONGSON3_CPUFREQ
+> +	tristate "Loongson3 CPUFreq Driver"
+> +	help
+> +	  This option adds a CPUFreq driver for Loongson processors which
+> +	  support software configurable cpu frequency.
 > +
->   /* GPIO */
->   #define MAX96717_NUM_GPIO         11
->   #define MAX96717_GPIO_REG_A(gpio) CCI_REG8(0x2be + (gpio) * 3)
-> @@ -82,6 +109,12 @@
->   /* MISC */
->   #define PIO_SLEW_1 CCI_REG8(0x570)
->   
-> +enum max96717_vpg_mode {
-> +	MAX96717_VPG_DISABLED = 0,
-> +	MAX96717_VPG_CHECKERBOARD = 1,
-> +	MAX96717_VPG_GRADIENT = 2,
+> +	  Loongson-3 family processors support this feature.
+> +
+> +	  If in doubt, say N.
+> +endif
+> +
+>  if SPARC64
+>  config SPARC_US3_CPUFREQ
+>  	tristate "UltraSPARC-III CPU Frequency driver"
+> diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
+> index 8d141c71b016..0f184031dd12 100644
+> --- a/drivers/cpufreq/Makefile
+> +++ b/drivers/cpufreq/Makefile
+> @@ -103,6 +103,7 @@ obj-$(CONFIG_POWERNV_CPUFREQ)		+= powernv-cpufreq.o
+>  # Other platform drivers
+>  obj-$(CONFIG_BMIPS_CPUFREQ)		+= bmips-cpufreq.o
+>  obj-$(CONFIG_LOONGSON2_CPUFREQ)		+= loongson2_cpufreq.o
+> +obj-$(CONFIG_LOONGSON3_CPUFREQ)		+= loongson3_cpufreq.o
+>  obj-$(CONFIG_SH_CPU_FREQ)		+= sh-cpufreq.o
+>  obj-$(CONFIG_SPARC_US2E_CPUFREQ)	+= sparc-us2e-cpufreq.o
+>  obj-$(CONFIG_SPARC_US3_CPUFREQ)		+= sparc-us3-cpufreq.o
+> diff --git a/drivers/cpufreq/loongson3_cpufreq.c b/drivers/cpufreq/loongson3_cpufreq.c
+> new file mode 100644
+> index 000000000000..5dbac0d55a32
+> --- /dev/null
+> +++ b/drivers/cpufreq/loongson3_cpufreq.c
+> @@ -0,0 +1,442 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * CPUFreq driver for the loongson-3 processors
+> + *
+> + * All revisions of Loongson-3 processor support this feature.
+> + *
+> + * Author: Huacai Chen <chenhuacai@loongson.cn>
+> + * Copyright (C) 2020-2024 Loongson Technology Corporation Limited
+> + */
+> +#include <linux/delay.h>
+> +#include <linux/module.h>
+> +#include <linux/cpufreq.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/units.h>
+> +
+> +#include <asm/idle.h>
+> +#include <asm/loongarch.h>
+> +#include <asm/loongson.h>
+> +
+> +/* Message */
+> +union smc_message {
+> +	u32 value;
+> +	struct {
+> +		u32 id		: 4;
+> +		u32 info	: 4;
+> +		u32 val		: 16;
+> +		u32 cmd		: 6;
+> +		u32 extra	: 1;
+> +		u32 complete	: 1;
+> +	};
 > +};
 > +
->   struct max96717_priv {
->   	struct i2c_client		  *client;
->   	struct regmap			  *regmap;
-> @@ -89,6 +122,7 @@ struct max96717_priv {
->   	struct v4l2_mbus_config_mipi_csi2 mipi_csi2;
->   	struct v4l2_subdev                sd;
->   	struct media_pad                  pads[MAX96717_PORTS];
-> +	struct v4l2_ctrl_handler          ctrl_handler;
->   	struct v4l2_async_notifier        notifier;
->   	struct v4l2_subdev                *source_sd;
->   	u16                               source_sd_pad;
-> @@ -96,6 +130,7 @@ struct max96717_priv {
->   	u8                                pll_predef_index;
->   	struct clk_hw                     clk_hw;
->   	struct gpio_chip                  gpio_chip;
-> +	enum max96717_vpg_mode            pattern;
->   };
->   
->   static inline struct max96717_priv *sd_to_max96717(struct v4l2_subdev *sd)
-> @@ -131,6 +166,115 @@ static inline int max96717_start_csi(struct max96717_priv *priv, bool start)
->   			       start ? MAX96717_START_PORT_B : 0, NULL);
->   }
->   
-> +static int max96717_apply_patgen_timing(struct max96717_priv *priv,
-> +					struct v4l2_subdev_state *state)
+> +/* Command return values */
+> +#define CMD_OK				0  /* No error */
+> +#define CMD_ERROR			1  /* Regular error */
+> +#define CMD_NOCMD			2  /* Command does not support */
+> +#define CMD_INVAL			3  /* Invalid Parameter */
+> +
+> +/* Version commands */
+> +/*
+> + * CMD_GET_VERSION - Get interface version
+> + * Input: none
+> + * Output: version
+> + */
+> +#define CMD_GET_VERSION			0x1
+> +
+> +/* Feature commands */
+> +/*
+> + * CMD_GET_FEATURE - Get feature state
+> + * Input: feature ID
+> + * Output: feature flag
+> + */
+> +#define CMD_GET_FEATURE			0x2
+> +
+> +/*
+> + * CMD_SET_FEATURE - Set feature state
+> + * Input: feature ID, feature flag
+> + * output: none
+> + */
+> +#define CMD_SET_FEATURE			0x3
+> +
+> +/* Feature IDs */
+> +#define FEATURE_SENSOR			0
+> +#define FEATURE_FAN			1
+> +#define FEATURE_DVFS			2
+> +
+> +/* Sensor feature flags */
+> +#define FEATURE_SENSOR_ENABLE		BIT(0)
+> +#define FEATURE_SENSOR_SAMPLE		BIT(1)
+> +
+> +/* Fan feature flags */
+> +#define FEATURE_FAN_ENABLE		BIT(0)
+> +#define FEATURE_FAN_AUTO		BIT(1)
+> +
+> +/* DVFS feature flags */
+> +#define FEATURE_DVFS_ENABLE		BIT(0)
+> +#define FEATURE_DVFS_BOOST		BIT(1)
+> +#define FEATURE_DVFS_AUTO		BIT(2)
+> +#define FEATURE_DVFS_SINGLE_BOOST	BIT(3)
+> +
+> +/* Sensor commands */
+> +/*
+> + * CMD_GET_SENSOR_NUM - Get number of sensors
+> + * Input: none
+> + * Output: number
+> + */
+> +#define CMD_GET_SENSOR_NUM		0x4
+> +
+> +/*
+> + * CMD_GET_SENSOR_STATUS - Get sensor status
+> + * Input: sensor ID, type
+> + * Output: sensor status
+> + */
+> +#define CMD_GET_SENSOR_STATUS		0x5
+> +
+> +/* Sensor types */
+> +#define SENSOR_INFO_TYPE		0
+> +#define SENSOR_INFO_TYPE_TEMP		1
+> +
+> +/* Fan commands */
+> +/*
+> + * CMD_GET_FAN_NUM - Get number of fans
+> + * Input: none
+> + * Output: number
+> + */
+> +#define CMD_GET_FAN_NUM			0x6
+> +
+> +/*
+> + * CMD_GET_FAN_INFO - Get fan status
+> + * Input: fan ID, type
+> + * Output: fan info
+> + */
+> +#define CMD_GET_FAN_INFO		0x7
+> +
+> +/*
+> + * CMD_SET_FAN_INFO - Set fan status
+> + * Input: fan ID, type, value
+> + * Output: none
+> + */
+> +#define CMD_SET_FAN_INFO		0x8
+> +
+> +/* Fan types */
+> +#define FAN_INFO_TYPE_LEVEL		0
+> +
+> +/* DVFS commands */
+> +/*
+> + * CMD_GET_FREQ_LEVEL_NUM - Get number of freq levels
+> + * Input: CPU ID
+> + * Output: number
+> + */
+> +#define CMD_GET_FREQ_LEVEL_NUM		0x9
+> +
+> +/*
+> + * CMD_GET_FREQ_BOOST_LEVEL - Get number of boost levels
+> + * Input: CPU ID
+> + * Output: number
+> + */
+> +#define CMD_GET_FREQ_BOOST_LEVEL	0x10
+> +
+> +/*
+> + * CMD_GET_FREQ_LEVEL_INFO - Get freq level info
+> + * Input: CPU ID, level ID
+> + * Output: level info
+> + */
+> +#define CMD_GET_FREQ_LEVEL_INFO		0x11
+> +
+> +/*
+> + * CMD_GET_FREQ_INFO - Get freq info
+> + * Input: CPU ID, type
+> + * Output: freq info
+> + */
+> +#define CMD_GET_FREQ_INFO		0x12
+> +
+> +/*
+> + * CMD_SET_FREQ_INFO - Set freq info
+> + * Input: CPU ID, type, value
+> + * Output: none
+> + */
+> +#define CMD_SET_FREQ_INFO		0x13
+> +
+> +/* Freq types */
+> +#define FREQ_INFO_TYPE_FREQ		0
+> +#define FREQ_INFO_TYPE_LEVEL		1
+> +
+> +#define FREQ_MAX_LEVEL			(16 + 1)
+> +
+> +enum freq {
+> +	FREQ_LEV0, /* Reserved */
+> +	FREQ_LEV1, FREQ_LEV2, FREQ_LEV3, FREQ_LEV4,
+> +	FREQ_LEV5, FREQ_LEV6, FREQ_LEV7, FREQ_LEV8,
+> +	FREQ_LEV9, FREQ_LEV10, FREQ_LEV11, FREQ_LEV12,
+> +	FREQ_LEV13, FREQ_LEV14, FREQ_LEV15, FREQ_LEV16,
+> +	FREQ_RESV
+> +};
+> +
+> +struct loongson3_freq_data {
+> +	unsigned int cur_cpu_freq;
+
+You never use it. Remove it.
+
+> +	struct cpufreq_frequency_table table[];
+> +};
+> +
+> +static struct mutex cpufreq_mutex[MAX_PACKAGES];
+> +static struct cpufreq_driver loongson3_cpufreq_driver;
+> +static DEFINE_PER_CPU(struct loongson3_freq_data *, freq_data);
+> +
+> +static inline int do_service_request(union smc_message *msg)
 > +{
-> +	struct v4l2_mbus_framefmt *fmt =
-> +		v4l2_subdev_state_get_format(state, MAX96717_PAD_SOURCE);
-> +	const u32 h_active = fmt->width;
-> +	const u32 h_fp = 88;
-> +	const u32 h_sw = 44;
-> +	const u32 h_bp = 148;
-> +	u32 h_tot;
-> +	const u32 v_active = fmt->height;
-> +	const u32 v_fp = 4;
-> +	const u32 v_sw = 5;
-> +	const u32 v_bp = 36;
-> +	u32 v_tot;
-> +	int ret = 0;
+> +	int retries;
+> +	union smc_message last;
 > +
-> +	h_tot = h_active + h_fp + h_sw + h_bp;
-> +	v_tot = v_active + v_fp + v_sw + v_bp;
+> +	last.value = iocsr_read32(LOONGARCH_IOCSR_SMCMBX);
+> +	if (!last.complete)
+> +		return -EPERM;
 > +
-> +	/* 75 Mhz pixel clock */
-> +	cci_update_bits(priv->regmap, MAX96717_IO_CHK0,
-> +			MAX96717_PATTERN_CLK_FREQ, 0xa, &ret);
+> +	iocsr_write32(msg->value, LOONGARCH_IOCSR_SMCMBX);
+> +	iocsr_write32(iocsr_read32(LOONGARCH_IOCSR_MISC_FUNC) | IOCSR_MISC_FUNC_SOFT_INT,
+> +		      LOONGARCH_IOCSR_MISC_FUNC);
 > +
-> +	dev_info(&priv->client->dev, "height: %d width: %d\n", fmt->height,
-> +		 fmt->width);
+> +	for (retries = 0; retries < 10000; retries++) {
+> +		msg->value = iocsr_read32(LOONGARCH_IOCSR_SMCMBX);
+> +		if (msg->complete)
+> +			break;
 > +
-> +	cci_write(priv->regmap, MAX96717_PATGEN_VS_DLY, 0, &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_VS_HIGH, v_sw * h_tot, &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_VS_LOW,
-> +		  (v_active + v_fp + v_bp) * h_tot, &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_HS_HIGH, h_sw, &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_HS_LOW, h_active + h_fp + h_bp,
-> +		  &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_V2D,
-> +		  h_tot * (v_sw + v_bp) + (h_sw + h_bp), &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_HS_CNT, v_tot, &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_DE_HIGH, h_active, &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_DE_LOW, h_fp + h_sw + h_bp,
-> +		  &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_DE_CNT, v_active, &ret);
-> +	/* B G R */
-> +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_COLOR_A, 0xfecc00, &ret);
-> +	/* B G R */
-> +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_COLOR_B, 0x006aa7, &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_RPT_CNT_A, 0x3c, &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_RPT_CNT_B, 0x3c, &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_ALT, 0x3c, &ret);
-> +	cci_write(priv->regmap, MAX96717_PATGEN_GRAD_INC, 0x10, &ret);
-> +
-> +	return ret;
-> +}
-> +
-> +static int max96717_apply_patgen(struct max96717_priv *priv,
-> +				 struct v4l2_subdev_state *state)
-> +{
-> +	unsigned int val;
-> +	int ret = 0;
-> +
-> +	if (priv->pattern)
-> +		ret = max96717_apply_patgen_timing(priv, state);
-> +
-> +	cci_write(priv->regmap, MAX96717_PATGEN_0, priv->pattern ? 0xfb : 0,
-> +		  &ret);
-> +
-> +	val = FIELD_PREP(MAX96717_PATGEN_MODE, priv->pattern);
-> +	cci_update_bits(priv->regmap, MAX96717_PATGEN_1, MAX96717_PATGEN_MODE,
-> +			val, &ret);
-> +	return ret;
-> +}
-> +
-> +static int max96717_s_ctrl(struct v4l2_ctrl *ctrl)
-> +{
-> +	struct max96717_priv *priv =
-> +		container_of(ctrl->handler, struct max96717_priv, ctrl_handler);
-> +	int ret;
-> +
-> +	switch (ctrl->id) {
-> +	case V4L2_CID_TEST_PATTERN:
-> +		if (priv->enabled_source_streams)
-> +			return -EBUSY;
-> +		priv->pattern = ctrl->val;
-> +		break;
-> +	default:
-> +		return -EINVAL;
+> +		usleep_range(8, 12);
 > +	}
 > +
-> +	/* Use bpp from bpp register */
-> +	ret = cci_update_bits(priv->regmap, MAX96717_VIDEO_TX0,
-> +			      MAX96717_VIDEO_AUTO_BPP,
-> +			      priv->pattern ? 0 : MAX96717_VIDEO_AUTO_BPP,
-> +			      NULL);
+> +	if (!msg->complete || msg->cmd != CMD_OK)
+> +		return -EPERM;
 > +
-> +	/* Pattern generator doesn't work with tunnel mode */
-Can you add a comment saying that the deserializer should manage the link in
-pixel mode as well.
-> +	return cci_update_bits(priv->regmap, MAX96717_MIPI_RX_EXT11,
-> +			       MAX96717_TUN_MODE,
-> +			       priv->pattern ? 0 : MAX96717_TUN_MODE, &ret);
+> +	return 0;
 > +}
 > +
-> +static const char * const max96717_test_pattern[] = {
-> +	"Disabled",
-> +	"Checkerboard",
-> +	"Gradient"
-> +};
+> +static unsigned int loongson3_cpufreq_get(unsigned int cpu)
+> +{
+> +	union smc_message msg;
 > +
-> +static const struct v4l2_ctrl_ops max96717_ctrl_ops = {
-> +	.s_ctrl = max96717_s_ctrl,
-> +};
+> +	msg.id		= cpu;
+> +	msg.info	= FREQ_INFO_TYPE_FREQ;
+> +	msg.cmd		= CMD_GET_FREQ_INFO;
+> +	msg.extra	= 0;
+> +	msg.complete	= 0;
+> +	do_service_request(&msg);
 > +
->   static int max96717_gpiochip_get(struct gpio_chip *gpiochip,
->   				 unsigned int offset)
->   {
-> @@ -352,20 +496,28 @@ static int max96717_enable_streams(struct v4l2_subdev *sd,
->   	u64 sink_streams;
->   	int ret;
->   
-> -	sink_streams = v4l2_subdev_state_xlate_streams(state,
-> -						       MAX96717_PAD_SOURCE,
-> -						       MAX96717_PAD_SINK,
-> -						       &streams_mask);
-> -
->   	if (!priv->enabled_source_streams)
->   		max96717_start_csi(priv, true);
->   
-> -	ret = v4l2_subdev_enable_streams(priv->source_sd, priv->source_sd_pad,
-> -					 sink_streams);
-> -	if (ret) {
-> -		dev_err(dev, "Fail to start streams:%llu on remote subdev\n",
-> -			sink_streams);
-> +	ret = max96717_apply_patgen(priv, state);
-> +	if (ret)
->   		goto stop_csi;
+> +	per_cpu(freq_data, cpu)->cur_cpu_freq = msg.val * KILO;
 > +
-> +	if (!priv->pattern) {
-> +		sink_streams =
-> +			v4l2_subdev_state_xlate_streams(state,
-> +							MAX96717_PAD_SOURCE,
-> +							MAX96717_PAD_SINK,
-> +							&streams_mask);
+> +	return per_cpu(freq_data, cpu)->cur_cpu_freq;
+> +}
 > +
-> +		ret = v4l2_subdev_enable_streams(priv->source_sd,
-> +						 priv->source_sd_pad,
-> +						 sink_streams);
-> +		if (ret) {
-> +			dev_err(dev, "Fail to start streams:%llu on remote subdev\n",
-> +				sink_streams);
-> +			goto stop_csi;
-> +		}
->   	}
->   
->   	priv->enabled_source_streams |= streams_mask;
-> @@ -394,13 +546,23 @@ static int max96717_disable_streams(struct v4l2_subdev *sd,
->   	if (!priv->enabled_source_streams)
->   		max96717_start_csi(priv, false);
->   
-> -	sink_streams = v4l2_subdev_state_xlate_streams(state,
-> -						       MAX96717_PAD_SOURCE,
-> -						       MAX96717_PAD_SINK,
-> -						       &streams_mask);
-> +	if (!priv->pattern) {
-> +		int ret;
+> +static int loongson3_cpufreq_set(struct cpufreq_policy *policy, int freq_level)
+> +{
+> +	union smc_message msg;
 > +
-> +		sink_streams =
-> +			v4l2_subdev_state_xlate_streams(state,
-> +							MAX96717_PAD_SOURCE,
-> +							MAX96717_PAD_SINK,
-> +							&streams_mask);
->   
-> -	return v4l2_subdev_disable_streams(priv->source_sd, priv->source_sd_pad,
-> -					   sink_streams);
-> +		ret = v4l2_subdev_disable_streams(priv->source_sd,
-> +						  priv->source_sd_pad,
-> +						  sink_streams);
-> +		if (ret)
+> +	msg.id		= cpu_data[policy->cpu].core;
+> +	msg.info	= FREQ_INFO_TYPE_LEVEL;
+> +	msg.val		= freq_level;
+> +	msg.cmd		= CMD_SET_FREQ_INFO;
+> +	msg.extra	= 0;
+> +	msg.complete	= 0;
+> +	do_service_request(&msg);
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Here we notify other drivers of the proposed change and the final change.
+> + */
+> +static int loongson3_cpufreq_target(struct cpufreq_policy *policy, unsigned int index)
+> +{
+> +	unsigned int cpu = policy->cpu;
+> +	unsigned int package = cpu_data[cpu].package;
+> +
+> +	if (!cpu_online(cpu))
+
+No need to check this.
+
+> +		return -ENODEV;
+> +
+> +	/* setting the cpu frequency */
+> +	mutex_lock(&cpufreq_mutex[package]);
+
+No locking required here. Core doesn't call them in parallel.
+
+> +	loongson3_cpufreq_set(policy, index);
+> +	mutex_unlock(&cpufreq_mutex[package]);
+> +
+> +	return 0;
+> +}
+> +
+> +static int loongson3_cpufreq_get_freq_table(int cpu)
+> +{
+> +	union smc_message msg;
+> +	int i, ret, boost_level, max_level, freq_level;
+> +	struct loongson3_freq_data *data;
+> +
+> +	if (per_cpu(freq_data, cpu))
+> +		return 0;
+
+Will this ever be true ?
+
+> +
+> +	msg.id		= cpu;
+> +	msg.cmd		= CMD_GET_FREQ_LEVEL_NUM;
+> +	msg.extra	= 0;
+> +	msg.complete	= 0;
+> +	ret = do_service_request(&msg);
+> +	if (ret < 0)
+> +		return ret;
+> +	max_level = msg.val;
+> +
+
+
+> +	msg.id		= cpu;
+> +	msg.cmd		= CMD_GET_FREQ_BOOST_LEVEL;
+> +	msg.extra	= 0;
+> +	msg.complete	= 0;
+> +	ret = do_service_request(&msg);
+> +	if (ret < 0)
+> +		return ret;
+> +	boost_level = msg.val;
+
+This stuff is repeated a lot, maybe create a generic function for this
+?
+
+> +
+> +	freq_level = min(max_level, FREQ_MAX_LEVEL);
+> +	data = kzalloc(struct_size(data, table, freq_level + 1), GFP_KERNEL);
+
+devm_kzalloc(pdev, ...) ?
+
+> +	if (!data)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < freq_level; i++) {
+> +		msg.id		= cpu;
+> +		msg.info	= FREQ_INFO_TYPE_FREQ;
+> +		msg.cmd		= CMD_GET_FREQ_LEVEL_INFO;
+> +		msg.val		= i;
+> +		msg.complete	= 0;
+> +
+> +		ret = do_service_request(&msg);
+> +		if (ret < 0) {
+> +			kfree(data);
 > +			return ret;
+> +		}
+> +
+> +		data->table[i].frequency = msg.val * KILO;
+> +		data->table[i].driver_data = FREQ_LEV0 + i;
+> +		data->table[i].flags = (i >= boost_level) ? CPUFREQ_BOOST_FREQ : 0;
+> +	}
+> +
+> +	data->table[freq_level].frequency = CPUFREQ_TABLE_END;
+> +	data->table[freq_level].driver_data = FREQ_RESV;
+> +	data->table[freq_level].flags = 0;
+> +
+> +	per_cpu(freq_data, cpu) = data;
+> +
+> +	return 0;
+> +}
+> +
+> +static int loongson3_cpufreq_cpu_init(struct cpufreq_policy *policy)
+> +{
+> +	int ret;
+> +
+> +	if (!cpu_online(policy->cpu))
+
+No need to check this. Core takes care of this already.
+
+> +		return -ENODEV;
+> +
+> +	ret = loongson3_cpufreq_get_freq_table(policy->cpu);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	policy->cur = loongson3_cpufreq_get(policy->cpu);
+> +	policy->cpuinfo.transition_latency = 10000;
+> +	policy->freq_table = per_cpu(freq_data, policy->cpu)->table;
+> +	cpumask_copy(policy->cpus, topology_sibling_cpumask(policy->cpu));
+> +
+> +	if (policy_has_boost_freq(policy)) {
+> +		ret = cpufreq_enable_boost_support();
+> +		if (ret < 0) {
+> +			pr_warn("cpufreq: Failed to enable boost: %d\n", ret);
+> +			return ret;
+> +		}
+> +		loongson3_cpufreq_driver.boost_enabled = true;
 > +	}
 > +
 > +	return 0;
->   }
->   
->   static const struct v4l2_subdev_pad_ops max96717_pad_ops = {
-> @@ -513,6 +675,19 @@ static int max96717_subdev_init(struct max96717_priv *priv)
->   	v4l2_i2c_subdev_init(&priv->sd, priv->client, &max96717_subdev_ops);
->   	priv->sd.internal_ops = &max96717_internal_ops;
->   
-> +	v4l2_ctrl_handler_init(&priv->ctrl_handler, 1);
-> +	priv->sd.ctrl_handler = &priv->ctrl_handler;
+> +}
 > +
-> +	v4l2_ctrl_new_std_menu_items(&priv->ctrl_handler,
-> +				     &max96717_ctrl_ops,
-> +				     V4L2_CID_TEST_PATTERN,
-> +				     ARRAY_SIZE(max96717_test_pattern) - 1,
-> +				     0, 0, max96717_test_pattern);
-> +	if (priv->ctrl_handler.error) {
-> +		ret = priv->ctrl_handler.error;
-> +		goto err_free_ctrl;
-> +	}
-> +
->   	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_STREAMS;
->   	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
->   	priv->sd.entity.ops = &max96717_entity_ops;
-> @@ -552,6 +727,8 @@ static int max96717_subdev_init(struct max96717_priv *priv)
->   	v4l2_subdev_cleanup(&priv->sd);
->   err_entity_cleanup:
->   	media_entity_cleanup(&priv->sd.entity);
-> +err_free_ctrl:
-> +	v4l2_ctrl_handler_free(&priv->ctrl_handler);
->   
->   	return ret;
->   }
-> @@ -563,6 +740,7 @@ static void max96717_subdev_uninit(struct max96717_priv *priv)
->   	v4l2_async_nf_cleanup(&priv->notifier);
->   	v4l2_subdev_cleanup(&priv->sd);
->   	media_entity_cleanup(&priv->sd.entity);
-> +	v4l2_ctrl_handler_free(&priv->ctrl_handler);
->   }
->   
->   struct max96717_pll_predef_freq {
+> +static int loongson3_cpufreq_cpu_exit(struct cpufreq_policy *policy)
+> +{
+> +	return 0;
+> +}
 
-Regards,
-Julien
+Just drop the routine, it is optional.
+
+> +
+> +static struct cpufreq_driver loongson3_cpufreq_driver = {
+> +	.name = "loongson3",
+> +	.flags = CPUFREQ_CONST_LOOPS,
+> +	.init = loongson3_cpufreq_cpu_init,
+> +	.exit = loongson3_cpufreq_cpu_exit,
+> +	.verify = cpufreq_generic_frequency_table_verify,
+> +	.target_index = loongson3_cpufreq_target,
+> +	.get = loongson3_cpufreq_get,
+> +	.attr = cpufreq_generic_attr,
+> +};
+> +
+> +static struct platform_device_id cpufreq_id_table[] = {
+> +	{ "loongson3_cpufreq", },
+> +	{ /* sentinel */ }
+> +};
+> +
+
+Remove this blank line please.
+
+> +MODULE_DEVICE_TABLE(platform, cpufreq_id_table);
+> +
+> +static struct platform_driver loongson3_platform_driver = {
+> +	.driver = {
+> +		.name = "loongson3_cpufreq",
+> +	},
+> +	.id_table = cpufreq_id_table,
+> +};
+> +
+> +static int configure_cpufreq_info(void)
+> +{
+> +	int ret;
+> +	union smc_message msg;
+> +
+> +	msg.cmd		= CMD_GET_VERSION;
+> +	msg.extra	= 0;
+> +	msg.complete	= 0;
+> +	ret = do_service_request(&msg);
+> +	if (ret < 0 || msg.val < 0x1)
+> +		return -EPERM;
+> +
+> +	msg.id		= FEATURE_DVFS;
+> +	msg.cmd		= CMD_SET_FEATURE;
+> +	msg.val		= FEATURE_DVFS_ENABLE | FEATURE_DVFS_BOOST;
+> +	msg.extra	= 0;
+> +	msg.complete	= 0;
+> +	ret = do_service_request(&msg);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	return 0;
+> +}
+> +
+> +static int __init cpufreq_init(void)
+> +{
+> +	int i, ret;
+> +
+> +	ret = platform_driver_register(&loongson3_platform_driver);
+> +	if (ret)
+> +		return ret;
+
+What is the use of this platform driver ? I thought the whole purpose
+of the platform device/driver in your case was to probe this driver.
+In that case cpufreq_init() should only be doing above and not the
+below part. The rest should be handled in the probe() function of the
+driver.
+
+> +
+> +	ret = configure_cpufreq_info();
+> +	if (ret)
+> +		goto err;
+> +
+> +	for (i = 0; i < MAX_PACKAGES; i++)
+> +		mutex_init(&cpufreq_mutex[i]);
+
+You don't need this at all.
+
+> +
+> +	ret = cpufreq_register_driver(&loongson3_cpufreq_driver);
+> +	if (ret)
+> +		goto err;
+> +
+> +	pr_info("cpufreq: Loongson-3 CPU frequency driver.\n");
+
+Make this pr_debug if you want.. There is not much use of this for the
+user.
+
+> +
+> +	return 0;
+> +
+> +err:
+> +	platform_driver_unregister(&loongson3_platform_driver);
+> +	return ret;
+> +}
+> +
+> +static void __exit cpufreq_exit(void)
+> +{
+> +	cpufreq_unregister_driver(&loongson3_cpufreq_driver);
+> +	platform_driver_unregister(&loongson3_platform_driver);
+> +}
+> +
+> +module_init(cpufreq_init);
+> +module_exit(cpufreq_exit);
+
+You can just use: module_platform_driver() instead of above functions
+and declarations.
+
+> +
+> +MODULE_AUTHOR("Huacai Chen <chenhuacai@loongson.cn>");
+> +MODULE_DESCRIPTION("CPUFreq driver for Loongson-3 processors");
+> +MODULE_LICENSE("GPL");
+
+-- 
+viresh
 
