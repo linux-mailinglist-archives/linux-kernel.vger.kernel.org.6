@@ -1,182 +1,115 @@
-Return-Path: <linux-kernel+bounces-229230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D85E916D1E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:33:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14799916D21
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:33:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37D4928C284
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:33:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4739F1C22630
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:33:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD62D2F5;
-	Tue, 25 Jun 2024 15:32:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A84516F0FD;
+	Tue, 25 Jun 2024 15:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OVpVooIv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="olCwcuEj"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C31543ADE;
-	Tue, 25 Jun 2024 15:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E279D2F5;
+	Tue, 25 Jun 2024 15:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719329577; cv=none; b=WmYmLKaVbn53W5fXz3brYcDeqy4lKev6sFJZ2sPa/pnqX7HxU3TLukarGEwUZYwMuBfwG181g7p1XrHl7SGwYKf/h+uPul8WHzD9C3EjLCdiMxjQbr2cgoTSu8lx12ojk+rebXL070w6PP9kx9Gihr7wdUtkLjDoH+ijdnRIq1c=
+	t=1719329611; cv=none; b=ROxLNIIf9ZpW5aqmxQwhyo82OLKDM2JlfeI707SMGyHglcBQ2x76zPhxsb2/Usgr9/NuREWdVHBdvoJimS8ZnSbJIxzutC+cj6rL1xaIwfgIMQF+xQHTLP+O8jbWDQEST2R6NUyKDqZd0CogJexdwnXrRw6PJ+ENPTfxDCgAXtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719329577; c=relaxed/simple;
-	bh=uZ8BwQJ/Kdq0iyp8vn3LgQFFUO/XtKzGirgwze/0unA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DAzJ34pY8m09UE8lv3L+F/s8m2sajOhMEcHTTkGJY0pbgYS4UOWGk6eBzc+Zhzy6lF3IVMKYzVaPqTub2Q+Ee6T4w7uCIt9XunRvSSWsUSbelye49RQvZRIehtdXuDSvDk7sbllWYmUjDSdm0aiRGzp2IQ1jsJnNbDrop0nQ9xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OVpVooIv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C83A3C32781;
-	Tue, 25 Jun 2024 15:32:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719329576;
-	bh=uZ8BwQJ/Kdq0iyp8vn3LgQFFUO/XtKzGirgwze/0unA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OVpVooIv/ne2KJwP31QW0B8pvv2CFLfRpajLqK33jScWmGhBOKtLs50n/Q8riekVo
-	 b2XhWqcmUwnFziccfC3QkrJWgfndsFYXnzayD2Lq+7A+hBtQ0xrIeGVk+dhrT/mWxM
-	 LtkWadLfKMF7otN1jwMyjn9nhEP8StXTvJhEAJWpfqsU40ku5jS1KSS7yv5pvZOi/P
-	 mUkKdbQX7Psjkoiwk+d9AMsRA21zryclmEdt5367GSPa7BO64Hak7ukKTaKaqYd/zu
-	 X10vIZYeLxtkcADsaeihFWqZB5i7HDnXFNxkK7/m+TUb8XYZOPug30piF3O7u/J1Ob
-	 DT60ahSF/KEbQ==
-Message-ID: <d3b5f10a-2649-446c-a6f9-9311f96e7569@kernel.org>
-Date: Tue, 25 Jun 2024 17:32:53 +0200
+	s=arc-20240116; t=1719329611; c=relaxed/simple;
+	bh=QvNvFEHoBwEH1VIOqHQAmQ3EV4Rb4HeDRHpL5s+dJTY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gZjz/Pf1mwhaNhLTTS9DEwBUFpqRQ6FySDjnT1QmUotbb9mOuR8fxyrqFrc4YqM/aPCDp7QCuIfOLxzPIrUnZrXEwhhup8KU6reDN0bF2yuyCdfl181hKtK+t+JJqcrRGUoFYbJEs3ymP2+r0BxMbeHjVD/pjDvtEcbK7iN8nYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=olCwcuEj; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45PFXMX1056299;
+	Tue, 25 Jun 2024 10:33:22 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719329602;
+	bh=k4HXMomJZKq9jOBnN7r4GjioLYvEZzxX1ikda9RKXHY=;
+	h=From:To:CC:Subject:Date;
+	b=olCwcuEjs63v0XImKFLQN0NUXapMLxqgQ5mTB+fYD/+p91xkVUJm0EHnzMcP0Sxn+
+	 ViN5YfwZwA48HbH/PNdxKJ9R2PTzEn92yVUx4NzBt0POZKpn1xOE5m3LCB9GZGfnR4
+	 kKvIef0ZwGbFL8IL1UxCgc2ed0eMJ2oCjomKTAas=
+Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45PFXM2b011722
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 25 Jun 2024 10:33:22 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE108.ent.ti.com
+ (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 25
+ Jun 2024 10:33:22 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 25 Jun 2024 10:33:22 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45PFXMMm113821;
+	Tue, 25 Jun 2024 10:33:22 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 45PFXLmm017355;
+	Tue, 25 Jun 2024 10:33:22 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: Suman Anna <s-anna@ti.com>, Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Santosh
+ Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>
+CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Roger Quadros <rogerq@kernel.org>,
+        MD Danish Anwar
+	<danishanwar@ti.com>
+Subject: [PATCH v3 0/2] Add documentation for PA_STATS and MAINTAINERS entry for ti,pruss.yaml
+Date: Tue, 25 Jun 2024 21:03:14 +0530
+Message-ID: <20240625153319.795665-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] cgroup/rstat: Avoid thundering herd problem by kswapd
- across NUMA nodes
-To: Yosry Ahmed <yosryahmed@google.com>, Shakeel Butt <shakeel.butt@linux.dev>
-Cc: tj@kernel.org, cgroups@vger.kernel.org, hannes@cmpxchg.org,
- lizefan.x@bytedance.com, longman@redhat.com, kernel-team@cloudflare.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <171923011608.1500238.3591002573732683639.stgit@firesoul>
- <CAJD7tkbHNvQoPO=8Nubrd5an7_9kSWM=5Wh5H1ZV22WD=oFVMg@mail.gmail.com>
- <tl25itxuzvjxlzliqsvghaa3auzzze6ap26pjdxt6spvhf5oqz@fvc36ntdeg4r>
- <CAJD7tkaKDcG+W+C6Po=_j4HLOYN23rtVnM0jmC077_kkrrq9xA@mail.gmail.com>
- <exnxkjyaslel2jlvvwxlmebtav4m7fszn2qouiciwhuxpomhky@ljkycu67efbx>
- <CAJD7tkaJXNfWQtoURyf-YWS7WGPMGEc5qDmZrxhH2+RE-LeEEg@mail.gmail.com>
- <a45ggqu6jcve44y7ha6m6cr3pcjc3xgyomu4ml6jbsq3zv7tte@oeovgtwh6ytg>
- <CAJD7tkZT_2tyOFq5koK0djMXj4tY8BO3CtSamPb85p=iiXCgXQ@mail.gmail.com>
- <qolg56e7mjloynou6j7ar7xzefqojp4cagzkb3r6duoj5i54vu@jqhi2chs4ecj>
- <CAJD7tka0b52zm=SjqxO-gxc0XTib=81c7nMx9MFNttwVkCVmSg@mail.gmail.com>
- <u3jrec5n42v35f3xiigfqabajjt4onh44eyfajewnzbfqxaekw@5x2daobkkbxh>
- <CAJD7tkaMeevj2TS_aRj_WXVi26CuuBrprYwUfQmszJnwqqJrHw@mail.gmail.com>
-Content-Language: en-US
-From: Jesper Dangaard Brouer <hawk@kernel.org>
-In-Reply-To: <CAJD7tkaMeevj2TS_aRj_WXVi26CuuBrprYwUfQmszJnwqqJrHw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+
+Hi,
+
+This series adds documentation for PA_STATS in dt-bindings file ti,pruss.yaml.
+This bindings file doesn't have a MAINTAINERS entry. This series add the
+MAINTAINERS entry for this file as well.
+
+Changes since v2:
+*) Added RB tag of Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> to
+   patch 2/2
+*) Added patch 1/2 to the series as the binding file is orphan.
+
+v2 https://lore.kernel.org/all/20240529115149.630273-1-danishanwar@ti.com/
+
+MD Danish Anwar (2):
+  MAINTAINERS: Add entry for ti,pruss.yaml to TI KEYSTONE MULTICORE
+    NAVIGATOR DRIVERS
+  dt-bindings: soc: ti: pruss: Add documentation for PA_STATS support
+
+ .../devicetree/bindings/soc/ti/ti,pruss.yaml  | 20 +++++++++++++++++++
+ MAINTAINERS                                   |  1 +
+ 2 files changed, 21 insertions(+)
 
 
+base-commit: 62c97045b8f720c2eac807a5f38e26c9ed512371
+-- 
+2.34.1
 
-On 25/06/2024 11.28, Yosry Ahmed wrote:
-> On Mon, Jun 24, 2024 at 5:24 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
->>
->> On Mon, Jun 24, 2024 at 03:21:22PM GMT, Yosry Ahmed wrote:
->>> On Mon, Jun 24, 2024 at 3:17 PM Shakeel Butt <shakeel.butt@linux.dev> wrote:
->>>>
->>>> On Mon, Jun 24, 2024 at 02:43:02PM GMT, Yosry Ahmed wrote:
->>>> [...]
->>>>>>
->>>>>>> There is also
->>>>>>> a heuristic in zswap that may writeback more (or less) pages that it
->>>>>>> should to the swap device if the stats are significantly stale.
->>>>>>>
->>>>>>
->>>>>> Is this the ratio of MEMCG_ZSWAP_B and MEMCG_ZSWAPPED in
->>>>>> zswap_shrinker_count()? There is already a target memcg flush in that
->>>>>> function and I don't expect root memcg flush from there.
->>>>>
->>>>> I was thinking of the generic approach I suggested, where we can avoid
->>>>> contending on the lock if the cgroup is a descendant of the cgroup
->>>>> being flushed, regardless of whether or not it's the root memcg. I
->>>>> think this would be more beneficial than just focusing on root
->>>>> flushes.
->>>>
->>>> Yes I agree with this but what about skipping the flush in this case?
->>>> Are you ok with that?
->>>
->>> Sorry if I am confused, but IIUC this patch affects all root flushes,
->>> even for userspace reads, right? In this case I think it's not okay to
->>> skip the flush without waiting for the ongoing flush.
->>
->> So, we differentiate between userspace and in-kernel users. For
->> userspace, we should not skip flush and for in-kernel users, we can skip
->> if flushing memcg is the ancestor of the given memcg. Is that what you
->> are saying?
-> 
-> Basically, I prefer that we don't skip flushing at all and keep
-> userspace and in-kernel users the same. We can use completions to make
-> other overlapping flushers sleep instead of spin on the lock.
-> 
-
-I think there are good reasons for skipping flushes for userspace when 
-reading these stats. More below.
-
-I'm looking at kernel code to spot cases where the flush MUST to be
-completed before returning.  There are clearly cases where we don't need
-100% accurate stats, evident by mem_cgroup_flush_stats_ratelimited() and
-mem_cgroup_flush_stats() that use memcg_vmstats_needs_flush().
-
-The cgroup_rstat_exit() call seems to depend on cgroup_rstat_flush() 
-being strict/accurate, because need to free the percpu resources.
-
-The obj_cgroup_may_zswap() have a comments that says it needs to get 
-accurate stats for charging.
-
-These were the two cases, I found, do you know of others?
-
-
-> A proof of concept is basically something like:
-> 
-> void cgroup_rstat_flush(cgroup)
-> {
->      if (cgroup_is_descendant(cgroup, READ_ONCE(cgroup_under_flush))) {
->          wait_for_completion_interruptible(&cgroup_under_flush->completion);
->          return;
->      }
-
-This feels like what we would achieve by changing this to a mutex.
-
-> 
->      __cgroup_rstat_lock(cgrp, -1);
->      reinit_completion(&cgroup->completion);
->      /* Any overlapping flush requests after this write will not spin
-> on the lock */
->      WRITE_ONCE(cgroup_under_flush, cgroup);
-> 
->      cgroup_rstat_flush_locked(cgrp);
->      complete_all(&cgroup->completion);
->      __cgroup_rstat_unlock(cgrp, -1);
-> }
-> 
-> There may be missing barriers or chances to reduce the window between
-> __cgroup_rstat_lock and WRITE_ONCE(), but that's what I have in mind.
-> I think it's not too complicated, but we need to check if it fixes the
-> problem.
-> 
-> If this is not preferable, then yeah, let's at least keep the
-> userspace behavior intact. This makes sure we don't affect userspace
-> negatively, and we can change it later as we please.
-
-I don't think userspace reading these stats need to be 100% accurate.
-We are only reading the io.stat, memory.stat and cpu.stat every 53 
-seconds. Reading cpu.stat print stats divided by NSEC_PER_USEC (1000).
-
-If userspace is reading these very often, then they will be killing the 
-system as it disables IRQs.
-
-On my prod system the flush of root cgroup can take 35 ms, which is not 
-good, but this inaccuracy should not matter for userspace.
-
-Please educate me on why we need accurate userspace stats?
-
-
---Jesper
 
