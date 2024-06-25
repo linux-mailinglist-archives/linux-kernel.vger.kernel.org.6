@@ -1,136 +1,123 @@
-Return-Path: <linux-kernel+bounces-229211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3C04916CED
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:25:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A36C0916CF3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:26:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80B7C28B006
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:25:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4E9A1C21087
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A870178383;
-	Tue, 25 Jun 2024 15:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01E1179949;
+	Tue, 25 Jun 2024 15:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MVECx75F"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TdoHwJ4/"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05DCE16EBF5;
-	Tue, 25 Jun 2024 15:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E026C16EC08;
+	Tue, 25 Jun 2024 15:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719328856; cv=none; b=ljyzOIuXi7j5fkZuqM09eNTTAllyusQ21FoH6ZdtIF7rGp1g3StMm8bHdMzFC6Uc+OosQhqSgZlmXMFPhqHb+UpNDxYDJi0kTFsg0kQ/uls1wToc0iRPWT6t3MqmlWeD4XlOLNCXKvM46RS1zcFQjdrrf4/WAK/4+W2XvYZpmBs=
+	t=1719328914; cv=none; b=tRO7zx+iW4cxuziXU2RDT/Q/IaRLZzL30DdAeqqXG0LuxukJjRCyk40EwGzSrnutNUsRrGumReDk2o2bWmjTFkW+kTm64CuEtyLbHM+jpPdXoME28c7sP1nD0n+qKJxFli/yEwPT/h6LEcJyegu9KRZmAAHoyyrCVLEPt/JTxcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719328856; c=relaxed/simple;
-	bh=GaqeeluCDzxgG97kwSNBxAr1a962XBnV49RFQmhG90I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NjW4QGiHxO0yWi5Na6KDReaLLfnsk/ou+zv1EbvhLDGGtBof/k2UUC+5gG889DNdyRGAidmGmQjd/AdjkYe8oilXjnZjguBy3HlLlAVOOx8DT7Zur964+GX7DyZjHLHSqODM7HPBHYubKjVsvVvAZ3/uof8UMrpezC51j1nECJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MVECx75F; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719328812; x=1719933612; i=markus.elfring@web.de;
-	bh=YVD/tJNvGbYivDfpDiivk2bEEs6GBmCeIdOyyXsf5u8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=MVECx75F0X3d1N8GDmuYHco2iBYYP25lTijAqHV+rQHmWrwwvl+AtuYPc+ao1yKm
-	 qT7uHx5CW3svQ5Na82hwZzx/iqTpdoYJ40q0WAUWM5z7b6r4m4GwbsG2aRLIolUdo
-	 JLP7CW1HXY6sm7FsL9EHwxDKO9W3Q7YWH7ljWeMYT7VUym/JVZFeeK4TNsJSe7t95
-	 bSGcdx++g9gYhkL+t2uS5+Rfv6TYLc0zKtFqJYgLSIcxE4VRIA32K9KHnMBWzoCcv
-	 8OgUYlmH4oUwweRhnt7V/iKq7WUx1QCXWfRI6d+r6tsCDQKCdoxhWlZ5pfJjOierE
-	 Ci5rnrDu4aYNR6Csaw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mpl0p-1shA252rWv-00eio5; Tue, 25
- Jun 2024 17:20:12 +0200
-Message-ID: <5fa430f5-3e18-4c20-93d4-6733afd6bdcf@web.de>
-Date: Tue, 25 Jun 2024 17:20:07 +0200
+	s=arc-20240116; t=1719328914; c=relaxed/simple;
+	bh=7113lzuAwhu5YW/fvVxHMqH6c7oZq1285w6QOgZ+v7g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=KhjHJZQFb16xlMng4GyLDnotUe41ZGQJ6edJXm354YGLAo+Gf4voIuo6r8CW3Y6hsoQbk4qnnZkO88MR2N9/s70LH3hE1/6HOaC7AyIPYjSoCyFRNW6/gW1DyzXbaY68U+D9X7seOG6hcYyBBgqkHeA9140y1jDRbjO7qg27rLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TdoHwJ4/; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-70699b6afddso648809b3a.1;
+        Tue, 25 Jun 2024 08:21:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719328912; x=1719933712; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=udsj8F3Gmu1nPkmB0pulDBxb9TSeq9nck/kC3senj6E=;
+        b=TdoHwJ4/FBz3yo2khF/lQ3dX020WEJ6wAw9EG4s/Ve8iVAsiNWFgru2bRF1PaTx1c+
+         qyk66Dfa2iSoQK3y/hnB4Q79zXD1tsz35cDT2qShQMojPpj3bTPAVNWBYVh0BhGi53Wn
+         1eQ5MFQD8fej094K5uAjXs4Ueq1w6pWGTYfgnenywiajqnQIxfl7olTNeGzhzLp7mHFX
+         M5lIwa38yJziCps0LpZ4yAwK3Eul2gg6tuSpVYqZxUwxw/3AhlYRD9EdR6+vNYirrtU9
+         Ia+xtEWUTmSXGIOnusz38mBtwSwykuzVmXipv7h2JYC/8Dro1tr5c+zZwzyYjJOE5mxX
+         MPdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719328912; x=1719933712;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=udsj8F3Gmu1nPkmB0pulDBxb9TSeq9nck/kC3senj6E=;
+        b=B2afylGNQYNbXZ3w9s7iIrlgU9p4LZJmH2xbDAJ1mXqbTVw0J2a7jcEUcoZ5I0Fqex
+         MJD1po98sNavQbW3OhcXqFWUSgycZqSML0eVL3a1gn6ypI4Has/jsusaSmn6F2enLM4e
+         k/LdPWjha5RsdjQI2S/pPooqOaygywInHtciz62ByoHWwJ9OXDTk2pE5r2aB6k6UG149
+         YAsxwznFqompAVq9DRIJwYT7Iw2Oc/l9iP7yDWEpYfiKWEtkAImrWMEpyG2tVvDMCdYL
+         VmEDKS1lfKYlc73ek09mxgiag2sKlq8z8bqvkGepSUXMeXgHlNqjHUpWY2p1T4yKFVUm
+         4/Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCjYYNVXETAk0egRjEYGCoqvmwcWC89T1s7iUWdnLH0bnzt8cFKxOXhCdkfQppYxv0FULiIPwpgbK1crzOKWRhMmKyuqIETQK3E+gRuuHP1+y39iEfI1jMixqsz7C2uQU3+xt34KK7+bW1w+By1jvdAb+3PTkG06glGJDP7J1p3huuHD5ezuz7MiXfbQ==
+X-Gm-Message-State: AOJu0Yxw7BMR7NicMZpB/AC/QV20cCZTktPrb53HkX7IDZ5AMwe2rL3U
+	QZYcgmY0qC3s/52XW20T+JL6KuUgc1HQROCSn586lZqVafPu1suc2efebMUl
+X-Google-Smtp-Source: AGHT+IHq8aYqHC0HMA/+3VF56wT+YmOaj05hwTBl2KQCTVeVodMKv7yIknzEAGprV2NlXt7lE59YVw==
+X-Received: by 2002:a05:6a20:1aa5:b0:1bd:1d0e:90fc with SMTP id adf61e73a8af0-1bd1d0e95d8mr2030571637.1.1719328912110;
+        Tue, 25 Jun 2024 08:21:52 -0700 (PDT)
+Received: from dev0.. ([49.43.162.199])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7068c719371sm3324620b3a.102.2024.06.25.08.21.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 08:21:51 -0700 (PDT)
+From: Abhinav Jain <jain.abhinav177@gmail.com>
+To: shuah@kernel.org,
+	akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Cc: skhan@linuxfoundation.org,
+	jain.abhinav177@gmail.com,
+	javier.carrasco.cruz@gmail.com
+Subject: [PATCH] selftests/proc: fix unused result warning during test compilation
+Date: Tue, 25 Jun 2024 15:21:39 +0000
+Message-Id: <20240625152139.16412-1-jain.abhinav177@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] usb: gadget: aspeed_udc: validate endpoint index for
- ast udc
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org,
- kernel-janitors@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Cc: Ma Ke <make24@iscas.ac.cn>, Andrew Jeffery <andrew@codeconstruct.com.au>,
- Joel Stanley <joel@jms.id.au>, Julia Lawall <julia.lawall@inria.fr>,
- Neal Liu <neal_liu@aspeedtech.com>, LKML <linux-kernel@vger.kernel.org>
-References: <20240625022306.2568122-1-make24@iscas.ac.cn>
- <edeaa699-7cfe-44ed-abde-7cf3d3efe3bf@web.de>
- <2024062556-ladder-canister-1ab1@gregkh>
- <ff2aaf0d-5456-43d1-af52-78986b3401f9@web.de>
- <2024062532-strep-president-44d7@gregkh>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <2024062532-strep-president-44d7@gregkh>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:n7N8SoQuEumAxkKN67/A45ARqVyO0jTW3y4tbOJ0enxIUT/JB4Z
- jwc527Jhth5DLaABBIzU1LevsZcydRwgmMCp2WAH6SLBe/wRgO3S4+pBGx/IXkus3J39PrZ
- lYX4/DkzpmLPK2X5k/RWPu53aTPmDKKrmBqtV++d+fWmJKH+KwfYXEz9G8XH9yQmn1rLAMD
- dLrVgGrfxVyUt7lTcM6Cw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:OqfYbzbqvxk=;5Z3b8yRWNTSCO8osebXlPRAScJk
- a6d2G9e3ovbjDa6NlBzZytC5inZUrWz8TFvm8ExHuZOmV9k/Qo9KDt3t/N4C4Y1dLP3WKJTN3
- lQLRoJc4g8GiU/RvhJ9wKqsudHr42nS1H4t02s9ILLfRby0tKZk7n1a9lDIvxx8xUqBM4cSgk
- L9MY4vVxXvy4UOmEOjkAWpetIfj8MA7iIDhzGfzMScq8vW4EZRaKqrzzVvStkY9w+xG43fJMu
- a1TEQcT2JlfLhEsepHPafSB9NRQgttA0lYJ/Yr4ycJo5L/xT23MFGChhZ1jR9MQDQeYT25/NJ
- LJF9A1pJFbw5EwBYV1PMc8si9EUqWe6yu1Jf7F6NcwRfhWaBUq2OlHS1Wra7A/8q+j5R+qugN
- z2yDA7VSEG06fxvrUvxpyxxT2gaYtun6oEzY58o7a1nwoXArSJ8d2KyVN2htOFFnWDtKO9uef
- BE28Z6PXSCqMBZGbXA70O4LPHSTbtzclAmBAKFxAe4IwPveyOoyn+rVsuR+Z6C6i3+7viI4pA
- EYP3HyUHHJlwfImnv4oSYuEMGj0oImE24zXZVJDRvihVTx8GJY6QbMJYQ4LMpItlSQBrRao0C
- UtyYjBVlH2578wHM/jpVq1LWG8IuokpBx8X1ZbpjcIH4n/Y+jTfj3QAfgP+PQSsq+8r1ZS67k
- xW1pKBBZNj9vbIP8B/npY484BIaLzluT01bKzY/uDIsbwk6xaXHPexs/ioLrNvvHIg/03itTZ
- uILgTfV7KnjfSFxqPfJCnwwnb2xz+MH09Bgfjnb9cE6MoAKs8KbL3xkrsa5FMCufDmbKgdGK1
- zoFl7KDoEuK1bo78nDTuK2k3BdP9s0ekGCutzcNk004so=
+Content-Transfer-Encoding: 8bit
 
->>>>> We should verify the bound of the array to assure that host
->>>>> may not manipulate the index to point past endpoint array.
->>>>
->>>> Why did you not choose an imperative wording for your change descript=
-ion?
->>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
-ee/Documentation/process/submitting-patches.rst?h=3Dv6.10-rc5#n94
->>>
->>> Markus, please stop reviewing USB patches.  This is not helpful at all=
-,
->>> and causes new developers extra work for no reason at all.
->>
->> How does this feedback fit to the linked information source?
->
-> That is not what I wrote.
+Check the return value from write function to get rid of the warning
+during test compilation, shared below.
+Tested by compiling after the change, the warning disappears.
 
-You indicated concerns according to patch review processes,
-didn't you?
+proc-empty-vm.c:385:17: warning: ignoring return value of ‘write’
+declared with attribute ‘warn_unused_result’ [-Wunused-result]
+  385 |                 write(1, buf, rv);
 
-See also:
-* Patch submission notes
-  https://elixir.bootlin.com/linux/v6.10-rc5/source/Documentation/process/=
-maintainer-tip.rst#L100
+Signed-off-by: Abhinav Jain <jain.abhinav177@gmail.com>
+---
+ tools/testing/selftests/proc/proc-empty-vm.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-* Contributor Covenant Code of Conduct
-  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/=
-Documentation/process/code-of-conduct.rst?h=3Dv6.10-rc5#n3
+diff --git a/tools/testing/selftests/proc/proc-empty-vm.c b/tools/testing/selftests/proc/proc-empty-vm.c
+index 56198d4ca2bf..510ab4a5330a 100644
+--- a/tools/testing/selftests/proc/proc-empty-vm.c
++++ b/tools/testing/selftests/proc/proc-empty-vm.c
+@@ -382,7 +382,12 @@ static int test_proc_pid_statm(pid_t pid)
+ 	assert(rv >= 0);
+ 	assert(rv <= sizeof(buf));
+ 	if (0) {
+-		write(1, buf, rv);
++		ssize_t bytes_written = write(1, buf, rv);
++
++		if (bytes_written != rv) {
++			perror("write");
++			return EXIT_FAILURE;
++		}
+ 	}
+ 
+ 	const char *p = buf;
+-- 
+2.34.1
 
-
-> I wrote, "Please stop reviewing USB patches."
->
-> Please stop now.
-
-I might be going to influence evolution of this software area in other way=
-s
-under other circumstances.
-
-Regards,
-Markus
 
