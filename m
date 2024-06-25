@@ -1,150 +1,198 @@
-Return-Path: <linux-kernel+bounces-228370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49414915EEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:31:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EAAE1915EF4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:35:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02DA1283736
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:31:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A325283B82
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF9F145FF6;
-	Tue, 25 Jun 2024 06:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D771145FFC;
+	Tue, 25 Jun 2024 06:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="eahOxSKQ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="IGdf4U6d"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5771CFB6;
-	Tue, 25 Jun 2024 06:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069B71CFB6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:35:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719297111; cv=none; b=MxE0hNeq/5L1n66SZeThJYjEnItBuRF2LlA5v0zjAjvH1WMiWIOe7YSZ4wrvPYfoo8V6Fe6qm/n2mK/YqjD72qFWG/c/QMYWYexuMmuA8sU0E4XYxj5T5bFw88wsTYYGScyzNOHTZOav0ltXlKR/QFOSM1ZECrt3o6KWqVCL9N4=
+	t=1719297317; cv=none; b=rCq9jNEquAgIdaVRG/CshiggB947+8/z9LYPAVQs5Gpsbfv3HLUfOX19pJNgW47uvkgYDdlpCFwWancU45mlIce/GvNzP6rAmynH8Yn2p6T4ss50RaLgSRIyZoxEc4rW6r2QwKqv9Vb6pgn3JJLwIb6a9x23rzJ7ynQrmwQZZYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719297111; c=relaxed/simple;
-	bh=Y98yBLsgvVZrd/sJjCAS+Gny4ygYqA77IF4+MwesoLQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kUmzm5xdZyH6hCrLRd5Xd94q5mHvw0AxIizPd5qStZ5xNXvEJhyjsINFf5uYgHBt8xKQ8mNgxl/ElOppG3M6bGacrbH9lttxoH/rSMnW7rSikt9bLBi8RyPK8xSei5dLJJRKyNW2yA4XDwKR9HmFJAKBE3pa76smM9rcsozdNvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=eahOxSKQ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P5vKiL013107;
-	Tue, 25 Jun 2024 06:31:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=Nm6kpPM5VG7M+pDy2FlSGdBZz7G
-	osN2DwveDxNeXzho=; b=eahOxSKQaPcCNIhjOEOkUaBdcZY/707TNfFmCYOfm/J
-	VA7E3sRBk4ahNn2MJQmW5bFbzgbnPRaDBF4sNofN/TUJ+s+mNLcrk+qTt5mjh1az
-	jGaVs3EjJ7HhuNKRgKkqRvsZQme80hXC9rB+qqzMWx5KRBYqPu6P0AwHVOSrHx6M
-	wiko+AMgybLkw2xvZqluusekbiOpEYPn5sSVi3iKirQWyb8ibUEIaRyXfTxSbcww
-	A5GmD8kIYDIelZgavwQ0HWeR63qAvmDnd6smNVrMvrqWROBVo1RiN6MZoLQIFiBR
-	58WuLIYlnJDu5h3jZ5OPmZYyW/jfVlZBWBhPMq3hQng==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyqsnr3q6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 06:31:47 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45P6Vkos003041;
-	Tue, 25 Jun 2024 06:31:46 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yyqsnr3q4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 06:31:46 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45P6TZh3018131;
-	Tue, 25 Jun 2024 06:31:46 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yx8xu55ee-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 06:31:46 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45P6VeUl51184074
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 25 Jun 2024 06:31:42 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ABEB62004B;
-	Tue, 25 Jun 2024 06:31:40 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8486920040;
-	Tue, 25 Jun 2024 06:31:40 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Tue, 25 Jun 2024 06:31:40 +0000 (GMT)
-Date: Tue, 25 Jun 2024 08:31:39 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: yskelg@gmail.com
-Cc: Harald Freudenberger <freude@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>,
-        Markus Elfring <Markus.Elfring@web.de>,
-        MichelleJin <shjy180909@gmail.com>, linux-s390@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] s390/raw3270: Handle memory allocation failures in
- raw3270_setup_console()
-Message-ID: <20240625063139.9210-B-hca@linux.ibm.com>
-References: <20240625013225.17076-2-yskelg@gmail.com>
+	s=arc-20240116; t=1719297317; c=relaxed/simple;
+	bh=lBnjct36G3drG+mcavFyer2tgBg1G6s60znH1k4d4gc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rmV2znu0yBYtfcRW+XMGriy5TGZBKJLassUbmpP0FQV2l0BNZxtvFgS7SttO4SCn4pwPyqjak2Ijbujvyy6tZK6ks6hdll2hLCFTJkIMxgGSjXmnkQpA6fIswzktzKBtQMzu7Mf4x8P6d0LGVYKL6Zj7k7U8zpKFQ/l5Bi4VWPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=IGdf4U6d; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1719297308; x=1719902108; i=w_armin@gmx.de;
+	bh=RWKwv8Fsdu7u66NKAUfD+Vv47kvE3VWa8/QOTZn+UfQ=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=IGdf4U6dMe6CGc9Br60OiEb1JCr2TPLa5L8BnJp8bBEY8gCQ+WcgQ5F0/TeKmieY
+	 9cRXUR75LtN5FHuX4QLsbr1qQDNxgQW/vMnHx968O9zgYhbAaivEu4IoswR3U/VQ1
+	 XKg3lpd7N7YTuSXKvRDT1C22rfTxQdZ4tK5XgbpQ/mjJ7u+c4DCEslzgYOFQD4WCd
+	 VBnFFDO3jVOSEM94VitBCscRVFppt/OCLGtIN3HGWhHF8fIZukZKyeXgt4vGaDA6t
+	 UZGi11cK65aonCYaMH/SXg71FCVDIiC6D5zf8ZFLeAz8k1lhM1Jsf/x69hYiNWfRo
+	 76XyGaRnzfG8qoXYDQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
+ (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MhlGk-1sqwrk0mie-00fKJW; Tue, 25 Jun 2024 08:35:08 +0200
+From: Armin Wolf <W_Armin@gmx.de>
+To: arnd@arndb.de,
+	gregkh@linuxfoundation.org
+Cc: hkallweit1@gmail.com,
+	u.kleine-koenig@pengutronix.de,
+	srinivas.kandagatla@linaro.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] eeprom: ee1004: Use devres for bus data cleanup
+Date: Tue, 25 Jun 2024 08:34:58 +0200
+Message-Id: <20240625063459.429953-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240625013225.17076-2-yskelg@gmail.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 1tFG4w8kGn2bL5xQAM8Ikhxpa4RaOz0T
-X-Proofpoint-ORIG-GUID: bAapJyAjG5NKleySZGV69WFyE2ZNJWpw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_03,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=93 clxscore=1015
- priorityscore=1501 suspectscore=0 malwarescore=0 impostorscore=0
- mlxscore=93 lowpriorityscore=0 bulkscore=0 phishscore=0 adultscore=0
- spamscore=93 mlxlogscore=-111 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406250048
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:81gye1G+5KbvLxoRWo+uL6PLNcfePD85+thiMMJdOsoLTPp3eMA
+ V3hghlilKvj9prmcOzcHNOCW8I6vaT8o2lVjaAVJ5Bjpm1hgtAQpviRqC4TXt9taWgFfidz
+ lMyG6TbUIpSuorfjF/e6yIAjVDEXLmljP3NPGGpWXIdGBV8BhXdkwc+G/1/q8cEPlrsw5V5
+ v6BgHVejfFk+VTEK1ZpYw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:b1Uhuz72N6c=;chcBcbpe431CYFxF9rc51WR7qk8
+ qc7hS7vOM9GmN+rGNX0p0+IqhKqZcYfUBWC44soP0/PJ3JauoMh5Y/YMqX4eSXaNvlG85tLNx
+ au3AiTbeHQqFnQ8pfV6J2IJaswxkUtMCV/18qtC5qNJTJOhvZNzLXfje40+Gc9mI2IIcqEYjc
+ y67mVLhQBzWFxduu2xFgCvYLbWJcnHvyQsW9sM4ZnThw5Fo6iFLasyGlwHLAPWiqsGEnwhLtV
+ oPn/d5d2U5v+BFsVCxYBf9BMll2Am8HtxiIQwPD9orwMH6x5DsHTKL7Gf1squu8m8oCw1q5Vv
+ 82AwDOOegqG5g1X6SNJby9JsWchVoIn60tGMd/AZ3XvYbhCahDM8KmXF4eANrMfYoKXchWFjK
+ xrBpznsu179SIz74BfzkxPQftTcXHVn8Qfx72C/hBKMajx5ecjF7Nj3eLHH/4yiYNKbXIVy3/
+ 7eKuYUbJ2wx/4giQxtSUZuNqhNzNHos8pj0YTN1BKaekiFrRzkiDAU8XYBXUMIkIJkOlR+I3v
+ 6zeE5HRznImH72l+GmHYvncvRaWvEj+lofMCdzR2FQFHLmZE34JU95DobFh77LjEDoRoEaAy5
+ za54NwoLBaXaCSkVj0shZXwf2g4S1Rkl6AW31u8j7+CvhcBNySF35R7LQopWK3nxNb5S3Dcee
+ KRPb8B5fvJnCL9DA8bM/251OqEijoGmIs4oAXg8b9l64dxCk7reLGCizhK44MLmLdhWSRcfKN
+ PsJP0IlR6RiX0H8k0DWY5DHOmiJOW31NeIn/y8MKGPMsD/6InmdcJHJYr+booUoAR+o+ZP7G/
+ GcWpwyaxQkAu3Sz0TQxsuZvsRKLfyNd7nfldY9c0m9u1U=
 
-On Tue, Jun 25, 2024 at 10:32:26AM +0900, yskelg@gmail.com wrote:
-> From: Yunseong Kim <yskelg@gmail.com>
-> 
-> A null pointer is stored in a local variable after a call of the function
-> "kzalloc" failed. This pointer was passed to a subsequent call of the
-> function "raw3270_setup_device" where an undesirable dereference will be
-> performed then. Thus add corresponding return value checks.
-> The allocated each memory areas are immediately overwritten by the called
-> function zero-initialisation be omitted by calling the "kmalloc" instead.
-> After "ccw_device_enable_console" succeeds, set the bit raw3270 flag to
-> RAW3270_FLAGS_CONSOLE.
-> 
-> Fixes: 33403dcfcdfd ("[S390] 3270 console: convert from bootmem to slab")
-> Cc: linux-s390@vger.kernel.org
-> Signed-off-by: Yunseong Kim <yskelg@gmail.com>
-> ---
->  drivers/s390/char/raw3270.c | 20 +++++++++++++++-----
->  1 file changed, 15 insertions(+), 5 deletions(-)
-...
->  	rc = raw3270_setup_device(cdev, rp, ascebc);
-> -	if (rc)
-> +	if (rc) {
-> +		kfree(ascebc);
-> +		kfree(rp);
->  		return ERR_PTR(rc);
-> -	set_bit(RAW3270_FLAGS_CONSOLE, &rp->flags);
-> -
-> +	}
->  	rc = ccw_device_enable_console(cdev);
->  	if (rc) {
->  		ccw_device_destroy_console(cdev);
-> +		kfree(ascebc);
-> +		kfree(rp);
->  		return ERR_PTR(rc);
->  	}
-> +	set_bit(RAW3270_FLAGS_CONSOLE, &rp->flags);
+Use devm_add_action_or_reset() to clean up the bus data at
+driver removal or when an error occurs during probe.
+This will allow us to use other devres-based APIs later.
 
-Why did you move the set_bit() call?
+Tested on a Dell Inspiron 3505.
+
+Signed-off-by: Armin Wolf <W_Armin@gmx.de>
+=2D--
+ drivers/misc/eeprom/ee1004.c | 42 ++++++++++++++++++------------------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
+
+diff --git a/drivers/misc/eeprom/ee1004.c b/drivers/misc/eeprom/ee1004.c
+index bf4f65dc6d9a..b1f760cc3be0 100644
+=2D-- a/drivers/misc/eeprom/ee1004.c
++++ b/drivers/misc/eeprom/ee1004.c
+@@ -9,6 +9,7 @@
+  * Copyright (C) 2008 Wolfram Sang, Pengutronix
+  */
+
++#include <linux/device.h>
+ #include <linux/i2c.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
+@@ -207,6 +208,16 @@ static void ee1004_cleanup(int idx, struct ee1004_bus=
+_data *bd)
+ 	}
+ }
+
++static void ee1004_cleanup_bus_data(void *data)
++{
++	struct ee1004_bus_data *bd =3D data;
++
++	/* Remove page select clients if this is the last device */
++	mutex_lock(&ee1004_bus_lock);
++	ee1004_cleanup(EE1004_NUM_PAGES, bd);
++	mutex_unlock(&ee1004_bus_lock);
++}
++
+ static int ee1004_probe(struct i2c_client *client)
+ {
+ 	struct ee1004_bus_data *bd;
+@@ -228,6 +239,10 @@ static int ee1004_probe(struct i2c_client *client)
+ 				     "Only %d busses supported", EE1004_MAX_BUSSES);
+ 	}
+
++	err =3D devm_add_action_or_reset(&client->dev, ee1004_cleanup_bus_data, =
+bd);
++	if (err < 0)
++		return err;
++
+ 	i2c_set_clientdata(client, bd);
+
+ 	if (++bd->dev_count =3D=3D 1) {
+@@ -237,16 +252,18 @@ static int ee1004_probe(struct i2c_client *client)
+
+ 			cl =3D i2c_new_dummy_device(client->adapter, EE1004_ADDR_SET_PAGE + cn=
+r);
+ 			if (IS_ERR(cl)) {
+-				err =3D PTR_ERR(cl);
+-				goto err_clients;
++				mutex_unlock(&ee1004_bus_lock);
++				return PTR_ERR(cl);
+ 			}
+ 			bd->set_page[cnr] =3D cl;
+ 		}
+
+ 		/* Remember current page to avoid unneeded page select */
+ 		err =3D ee1004_get_current_page(bd);
+-		if (err < 0)
+-			goto err_clients;
++		if (err < 0) {
++			mutex_unlock(&ee1004_bus_lock);
++			return err;
++		}
+ 		dev_dbg(&client->dev, "Currently selected page: %d\n", err);
+ 		bd->current_page =3D err;
+ 	}
+@@ -260,22 +277,6 @@ static int ee1004_probe(struct i2c_client *client)
+ 		 EE1004_EEPROM_SIZE);
+
+ 	return 0;
+-
+- err_clients:
+-	ee1004_cleanup(cnr, bd);
+-	mutex_unlock(&ee1004_bus_lock);
+-
+-	return err;
+-}
+-
+-static void ee1004_remove(struct i2c_client *client)
+-{
+-	struct ee1004_bus_data *bd =3D i2c_get_clientdata(client);
+-
+-	/* Remove page select clients if this is the last device */
+-	mutex_lock(&ee1004_bus_lock);
+-	ee1004_cleanup(EE1004_NUM_PAGES, bd);
+-	mutex_unlock(&ee1004_bus_lock);
+ }
+
+ /*-----------------------------------------------------------------------=
+--*/
+@@ -286,7 +287,6 @@ static struct i2c_driver ee1004_driver =3D {
+ 		.dev_groups =3D ee1004_groups,
+ 	},
+ 	.probe =3D ee1004_probe,
+-	.remove =3D ee1004_remove,
+ 	.id_table =3D ee1004_ids,
+ };
+ module_i2c_driver(ee1004_driver);
+=2D-
+2.39.2
+
 
