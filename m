@@ -1,233 +1,241 @@
-Return-Path: <linux-kernel+bounces-228390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01DE3915F32
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:00:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2C52915F3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:02:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 810F11F22CAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:00:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E52B71C22C70
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:02:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A911465A3;
-	Tue, 25 Jun 2024 06:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612591465A7;
+	Tue, 25 Jun 2024 07:01:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="afJKxH+W"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="csmc6Pyn"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5BAC1459E5;
-	Tue, 25 Jun 2024 06:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF127146595;
+	Tue, 25 Jun 2024 07:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719298794; cv=none; b=Z+8aPZp/Y1kZijQg9DqB/n3oLlRcyF9ofsI3tNC7dj9DXSBCk9r5dZoclwwpZF09G7AjC2zebpEEc2RDZQB2KBqJJ0bVBT0k/LafCXS1J2G9toisANXkiESD95/ibTbE4lYdihp2oRPNqNhJ5iJnv4m0mJceFTL+M2HxeqqP/vA=
+	t=1719298914; cv=none; b=AqONTYVlsEU+jA6zL9s4zEKrLpXnNNDd4lHnHYx/pn4QAcuA8/zeJ04pIgFzQf6RmhwI9Bcl2hJvP01QlInC7JL+RnJhshk9YNCTA3+pE23Lw7zk9FpEb9piPE3WQpJHwdPVQ3mrk/P7ajPkFLX1+HvKRJOSBFZwKxs/pNTo/t4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719298794; c=relaxed/simple;
-	bh=IGNTzHHHcO2fQKpOgRnMv9Qr0WY0XbCxh81+BADNmSI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aRDB3jg0+mu1vh9K2arM7J0VySlGZJ7Vmuv821Tukzk23eGe3+jdKGoqpgBom6zUlxgX9RVThtEnep58ymMWe8rEogXq9r7iYzMGMkf8Wcatz/G1DCrb7V4YkxgTqzJMULj3ldy7cJQSrALjMTLalUBiQI+Hoz0H+Ez0X+ygpRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=afJKxH+W; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-1fa2782a8ccso15005985ad.2;
-        Mon, 24 Jun 2024 23:59:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719298792; x=1719903592; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=bw+JuciPmVPvxL173XrvRPex6ZJzB6ISGkebILK54mY=;
-        b=afJKxH+WIObQG3tDsuwIJcNNFOR9pX5E6dokPGj7zf67u4lMJ4ykjMYI/uycGLHF8l
-         m0qBEU5yvwFbBVQns9h8MthFm1G7WCGDuxUZZ8PRZ3cgD0ACWUYQo7uKpochAf0jQIkK
-         t+0Kq4JMaLpU979trAIZFVfDuXk2CVhPAvbqRWS83k5gsNmNVLWdruYr00H96LP0v9mV
-         pDIzCHvW0Xh999H9HzNTlT2SU2DVfuK2e4cumIzMvJHQNgmlF8gD0geOv71ErG24UZqg
-         nxVF2qqZp/UtqJn3XHQ55HpXDFTEZQNIeMLcE5eZaaLnDxnw6mMas0NblWbp5VTyDfoq
-         lvbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719298792; x=1719903592;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bw+JuciPmVPvxL173XrvRPex6ZJzB6ISGkebILK54mY=;
-        b=McVDKHbx3E/1fI7K1sLailZYZuC/QyAeqMjDwh8jHfXkkSLWy6tQAMt81I74DLfRL0
-         qlZyF5/7ytHIOO5yT2gRo6aSwyOMndYMhyNl2XqqBzL0Cy5cvTHi8svaEAILAfGT63kj
-         lD76nGFbGUg5YowFmHO1RhFwWP6fVve6MTZQguKxQy9OcWThQe5YMhJrTVooRLdGQjNB
-         Ix2vuuW6OLGr+eVefH+Lw/GRlMaRaHXjjNHWtXK3ie/F2kxgkZ1LjIZEfyxDcn7XBpgj
-         Ia+9AnEyT2TV6KfjLoabICloKMYxkykiJ1pmzmP7Or/XnKs5RJvXucttQH3M93qvL5HD
-         oa2A==
-X-Forwarded-Encrypted: i=1; AJvYcCU/D6XS7mRVd9htU03dPbnB0QkH8n+rAtT3Nx4wR77N1QXF/WCyDMD86HDkWsjZ7GXb7p4r7FVDR0alDgBnnGtwMSJ8w04TUveGS2XAhSMe8fboHwUPKZBHLI11RmuvjtiwlHYItyl46w0Rg0vG5FQPtjDr6Y+9J2qZlalz74UizWny8w==
-X-Gm-Message-State: AOJu0Yy8o9HdErQiCsxCFOQY4v/JhWBNn1Y204sAGZdUYrZjmuCllpLN
-	JCVujX8S8iFcFHTIuX9pzOD3mvdfMkiz6R4xZ35tsVOw/y1Bhtge
-X-Google-Smtp-Source: AGHT+IG6L8tRjyFldqQM5owIqKHxJ6YI3PpEsCoaVkIWstg5l1QolFRdaUa+/mFWitIadxYiqj94TQ==
-X-Received: by 2002:a17:902:c943:b0:1f9:f6e6:5ace with SMTP id d9443c01a7336-1fa23f159cemr76844995ad.48.1719298791618;
-        Mon, 24 Jun 2024 23:59:51 -0700 (PDT)
-Received: from ga401ii.SRMIST.EDU.IN ([14.96.13.220])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1f9eb2f0318sm74041615ad.2.2024.06.24.23.59.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 23:59:51 -0700 (PDT)
-From: Kanak Shilledar <kanakshilledar@gmail.com>
-To: 
-Cc: Kanak Shilledar <kanakshilledar@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vladimir Zapolskiy <vz@mleia.com>,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3] dt-bindings: i2c: nxp,lpc1788-i2c: convert to dt schema
-Date: Tue, 25 Jun 2024 12:29:32 +0530
-Message-ID: <20240625065939.6146-1-kanakshilledar@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1719298914; c=relaxed/simple;
+	bh=5MLzzDi5Q9FaJLoUReTOr7nbEQlLpk8cNTp0kv6oISU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PtR1DtOo143AQ2eWOBkNIUqT3PpirlV73bMatRbnRts46qIeznhlVUqA8VuwDPIDi59Ol6pF7zQo0ad/sFsJku02KFZ5gKIk8uf3+kKgGyVj0yfJkH/M9QBokmKqnRn4OEIAHN0IgFGDbt0iwawlookDQFuzhJR4uiGlhiQXwBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=csmc6Pyn; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P44M30023858;
+	Tue, 25 Jun 2024 09:01:28 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	swPpw1QOcNX9w/XaFnBy25Y/Ds/3wOvbOXxqoDBW0Fo=; b=csmc6Pynvmeimvnd
+	B6wYwX6ETR/ZGO6a1IdcJCgdMYweEFXq7TCYg/tysmTJWmdvArpQq/YofnzFF/g1
+	9quA53U2quQ7GugqmF/gxJf60PTCUNpI3M0Lz6vBlES72LK+LhzhjaKDEO6sqvsn
+	PJphCufTiMTt8Ff3x89ey177O18GxmQnTRL61ra6Tm2b7f2bL3/Z6tgV91+Yfl0H
+	9qXDeDIgC+K/nvgu8kxITOUaXPBnD0PGoMpTQJOuTVp4davFclR4bM6u6x+f1i/N
+	d+8eeIJxcZ4EoG9i9J8ZQ2M22AVbKvPoa19bRw/wLMWmLso6vQbRTzYTXk500xcf
+	hAz5rQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3ywm1gafpw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 09:01:28 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 9566240045;
+	Tue, 25 Jun 2024 09:01:23 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 58BE1211941;
+	Tue, 25 Jun 2024 09:00:26 +0200 (CEST)
+Received: from [10.48.87.62] (10.48.87.62) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 25 Jun
+ 2024 09:00:25 +0200
+Message-ID: <0d15dd5c-c03e-4a54-a151-c109836f1b4c@foss.st.com>
+Date: Tue, 25 Jun 2024 09:00:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] ARM: dts: sti: add thermal-zones support on stih418
+To: Raphael Gallais-Pou <rgallaispou@gmail.com>,
+        "Rafael J. Wysocki"
+	<rafael@kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Zhang Rui
+	<rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>
+References: <20240518-thermal-v1-0-7dfca3ed454b@gmail.com>
+ <20240518-thermal-v1-3-7dfca3ed454b@gmail.com>
+Content-Language: en-US
+From: Patrice CHOTARD <patrice.chotard@foss.st.com>
+In-Reply-To: <20240518-thermal-v1-3-7dfca3ed454b@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_03,2024-06-24_01,2024-05-17_01
 
-Convert the NXP I2C controller for LPC2xxx/178x/18xx/43xx
-to newer DT schema. Created DT schema based on the .txt file
-which had `compatible`, `reg`, `interrupts`, `clocks`,
-`#address-cells` and `#size-cells` as required properties.
 
-Additional changes to the original .txt binding
-- added maintainer from the MAINTAINERS file.
-- added resets property required by the corresponding DTS files.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
----
-Changes in v3:
-- removed "address-cells" and "size-cells" as per feedback.
-Changes in v2:
-- updated subject line to include device name.
-- changed removed description from properties except `clock-frequency`.
-- updated MAINTAINERS to track this file.
----
- .../devicetree/bindings/i2c/i2c-lpc2k.txt     | 33 ------------
- .../bindings/i2c/nxp,lpc1788-i2c.yaml         | 54 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 55 insertions(+), 34 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
- create mode 100644 Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
+On 5/18/24 14:12, Raphael Gallais-Pou wrote:
+> Add a 'thermal-zones' node for stih418.
+> 
+> A thermal-zone needs three components:
+>   - thermal sensors, described in an earlier commit[1]
+>   - cooling devices, specified for each CPU
+>   - a thermal zone, describing the overall behavior.
+> 
+> The thermal zone needs references to both CPUs and thermal sensors,
+> which phandle are also added. The thermal management will then be
+> achieved on CPUs using the cpufreq framework.
+> 
+> [1] https://lore.kernel.org/lkml/20240320-thermal-v3-2-700296694c4a@gmail.com/
+> 
+> Signed-off-by: Raphael Gallais-Pou <rgallaispou@gmail.com>
+> ---
+>  arch/arm/boot/dts/st/stih407-family.dtsi |  6 +++--
+>  arch/arm/boot/dts/st/stih418.dtsi        | 41 +++++++++++++++++++++++++++++---
+>  2 files changed, 42 insertions(+), 5 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/st/stih407-family.dtsi b/arch/arm/boot/dts/st/stih407-family.dtsi
+> index 29302e74aa1d..35a55aef7f4b 100644
+> --- a/arch/arm/boot/dts/st/stih407-family.dtsi
+> +++ b/arch/arm/boot/dts/st/stih407-family.dtsi
+> @@ -33,7 +33,7 @@ delta_reserved: rproc@44000000 {
+>  	cpus {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> -		cpu@0 {
+> +		cpu0: cpu@0 {
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a9";
+>  			reg = <0>;
+> @@ -52,8 +52,9 @@ cpu@0 {
+>  			clock-latency = <100000>;
+>  			cpu0-supply = <&pwm_regulator>;
+>  			st,syscfg = <&syscfg_core 0x8e0>;
+> +			#cooling-cells = <2>;
+>  		};
+> -		cpu@1 {
+> +		cpu1: cpu@1 {
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a9";
+>  			reg = <1>;
+> @@ -66,6 +67,7 @@ cpu@1 {
+>  					    1200000 0
+>  					    800000  0
+>  					    500000  0>;
+> +			#cooling-cells = <2>;
+>  		};
+>  	};
+>  
+> diff --git a/arch/arm/boot/dts/st/stih418.dtsi b/arch/arm/boot/dts/st/stih418.dtsi
+> index b35b9b7a7ccc..6622ffa8ecfa 100644
+> --- a/arch/arm/boot/dts/st/stih418.dtsi
+> +++ b/arch/arm/boot/dts/st/stih418.dtsi
+> @@ -6,23 +6,26 @@
+>  #include "stih418-clock.dtsi"
+>  #include "stih407-family.dtsi"
+>  #include "stih410-pinctrl.dtsi"
+> +#include <dt-bindings/thermal/thermal.h>
+>  / {
+>  	cpus {
+>  		#address-cells = <1>;
+>  		#size-cells = <0>;
+> -		cpu@2 {
+> +		cpu2: cpu@2 {
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a9";
+>  			reg = <2>;
+>  			/* u-boot puts hpen in SBC dmem at 0xa4 offset */
+>  			cpu-release-addr = <0x94100A4>;
+> +			#cooling-cells = <2>;
+>  		};
+> -		cpu@3 {
+> +		cpu3: cpu@3 {
+>  			device_type = "cpu";
+>  			compatible = "arm,cortex-a9";
+>  			reg = <3>;
+>  			/* u-boot puts hpen in SBC dmem at 0xa4 offset */
+>  			cpu-release-addr = <0x94100A4>;
+> +			#cooling-cells = <2>;
+>  		};
+>  	};
+>  
+> @@ -44,6 +47,38 @@ usb2_picophy2: phy3 {
+>  		reset-names = "global", "port";
+>  	};
+>  
+> +	thermal-zones {
+> +		cpu_thermal: cpu-thermal {
+> +			polling-delay-passive = <250>;  /* 250ms */
+> +			polling-delay = <1000>;         /* 1000ms */
+> +
+> +			thermal-sensors = <&thermal>;
+> +
+> +			trips {
+> +				cpu_crit: cpu-crit {
+> +					temperature = <95000>;  /* 95C */
+> +					hysteresis = <2000>;
+> +					type = "critical";
+> +				};
+> +				cpu_alert: cpu-alert {
+> +					temperature = <85000>;  /* 85C */
+> +					hysteresis = <2000>;
+> +					type = "passive";
+> +				};
+> +			};
+> +
+> +			cooling-maps {
+> +				map {
+> +					trip = <&cpu_alert>;
+> +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
+> +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+> +				};
+> +			};
+> +		};
+> +	};
+> +
+>  	soc {
+>  		rng11: rng@8a8a000 {
+>  			status = "disabled";
+> @@ -107,7 +142,7 @@ mmc0: sdhci@9060000 {
+>  			assigned-clock-rates = <200000000>;
+>  		};
+>  
+> -		thermal@91a0000 {
+> +		thermal: thermal@91a0000 {
+>  			compatible = "st,stih407-thermal";
+>  			reg = <0x91a0000 0x28>;
+>  			clock-names = "thermal";
+> 
 
-diff --git a/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt b/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
-deleted file mode 100644
-index 4101aa621ad4..000000000000
---- a/Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
-+++ /dev/null
-@@ -1,33 +0,0 @@
--NXP I2C controller for LPC2xxx/178x/18xx/43xx
--
--Required properties:
-- - compatible: must be "nxp,lpc1788-i2c"
-- - reg: physical address and length of the device registers
-- - interrupts: a single interrupt specifier
-- - clocks: clock for the device
-- - #address-cells: should be <1>
-- - #size-cells: should be <0>
--
--Optional properties:
--- clock-frequency: the desired I2C bus clock frequency in Hz; in
--  absence of this property the default value is used (100 kHz).
--
--Example:
--i2c0: i2c@400a1000 {
--	compatible = "nxp,lpc1788-i2c";
--	reg = <0x400a1000 0x1000>;
--	interrupts = <18>;
--	clocks = <&ccu1 CLK_APB1_I2C0>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--};
--
--&i2c0 {
--	clock-frequency = <400000>;
--
--	lm75@48 {
--		compatible = "nxp,lm75";
--		reg = <0x48>;
--	};
--};
--
-diff --git a/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml b/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
-new file mode 100644
-index 000000000000..9a1b95c2d03c
---- /dev/null
-+++ b/Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
-@@ -0,0 +1,54 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/i2c/nxp,lpc1788-i2c.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP I2C controller for LPC2xxx/178x/18xx/43xx
-+
-+maintainers:
-+  - Vladimir Zapolskiy <vz@mleia.com>
-+
-+allOf:
-+  - $ref: /schemas/i2c/i2c-controller.yaml#
-+
-+properties:
-+  compatible:
-+    const: nxp,lpc1788-i2c
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-frequency:
-+    description: the desired I2C bus clock frequency in Hz
-+    default: 100000
-+
-+  resets:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include "dt-bindings/clock/lpc18xx-ccu.h"
-+
-+    i2c@400a1000 {
-+        compatible = "nxp,lpc1788-i2c";
-+        reg = <0x400a1000 0x1000>;
-+        interrupts = <18>;
-+        clocks = <&ccu1 CLK_APB1_I2C0>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index cf9c9221c388..920e4f28b5ae 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2374,7 +2374,7 @@ ARM/LPC18XX ARCHITECTURE
- M:	Vladimir Zapolskiy <vz@mleia.com>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
--F:	Documentation/devicetree/bindings/i2c/i2c-lpc2k.txt
-+F:	Documentation/devicetree/bindings/i2c/nxp,lpc1788-i2c.yaml
- F:	arch/arm/boot/dts/nxp/lpc/lpc43*
- F:	drivers/i2c/busses/i2c-lpc2k.c
- F:	drivers/memory/pl172.c
--- 
-2.45.2
+Hi Raphael
 
+Reviewed-by: Patrice Chotard <patrice.chotard@foss.st.com>
+
+Thanks
+Patrice
 
