@@ -1,109 +1,425 @@
-Return-Path: <linux-kernel+bounces-229806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64012917472
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:06:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822D9917473
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 899D81C231BE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:06:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10A191F21770
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 723B017F4F0;
-	Tue, 25 Jun 2024 23:06:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62A7417F4F0;
+	Tue, 25 Jun 2024 23:08:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IavJxZQm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PrPGxb2T"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E3A5149C53;
-	Tue, 25 Jun 2024 23:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A152A17966E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 23:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719356760; cv=none; b=j1e097+q2WA0vMONZhpzI5YRHPE3+wMRJoy8XPa92URJpKJVFtinGbC66ghdOH+KHzUYPDqA4s0qWyPxXXIFnBCQtK+EHY6TmgnkmkjzR3i9BiVWcoX1XNo9jNfgqo2uq4q4XbYclktmDQlyE6iwZYnxhpt2gYYh1UhHTJzt2ZE=
+	t=1719356883; cv=none; b=pvesfX0CZKaeKZnvIOSKqnGVVIuYJALvSbmRQ66ikVZ7E+ClsejrksBopWNB24fy5wijo6300JLWjmsI1TP57Xi2keUYdidP3hMcDp4Bx0aPnoryyZa60ZF6BazGfbkCCgHeBy/vojv0J4RukSV56woM7gfpL/2yr3lSC+Hqpoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719356760; c=relaxed/simple;
-	bh=uxeySYLRDffPc/EywyRRw/8U5tDd11mMRbyqbqAVGpI=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=GW5hBv6muVaEw09XwDkrURnNGHJX1/VR1HhD6Pjpd68yiC+XH6PIUymOVa7T6p3Wh16Vbgo9R1mE2r0jK+dfdIK4Ko/O076KxQf04MldeCtgDa4cP22xwkPt8ofsa1XcXnBdbBZeD8Qg80Uo0t2qKV7OrmXo2FWncgF2gnLe2rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IavJxZQm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E70BC32781;
-	Tue, 25 Jun 2024 23:05:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1719356759;
-	bh=uxeySYLRDffPc/EywyRRw/8U5tDd11mMRbyqbqAVGpI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IavJxZQm8Wju17rZ7wwFagCnuImOAf/nsTOkUFCmFIf3b9yjxnT1t9eSmW2ccOuNF
-	 XLRqGMLKENp7Xe0Avs8CXc8sEs6aUgKADDOSPUp3B0LszQsjoO3Ct52V433OXuZ+5i
-	 x8+Zz6xN9vIrcxpecRBb6CEpCIx4fzFvJVTifCHk=
-Date: Tue, 25 Jun 2024 16:05:58 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Peter Xu <peterx@redhat.com>
-Cc: Audra Mitchell <audra@redhat.com>, viro@zeniv.linux.org.uk,
- brauner@kernel.org, jack@suse.cz, aarcange@redhat.com,
- rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, shuah@kernel.org,
- linux-kselftest@vger.kernel.org, raquini@redhat.com
-Subject: Re: [PATCH v2 3/3] Turn off test_uffdio_wp if
- CONFIG_PTE_MARKER_UFFD_WP is not configured.
-Message-Id: <20240625160558.e1650f874ab039e4d6c2b650@linux-foundation.org>
-In-Reply-To: <ZnmFuAR7yNG_6zp6@x1n>
-References: <20240621181224.3881179-1-audra@redhat.com>
-	<20240621181224.3881179-3-audra@redhat.com>
-	<ZnXwT_vkyVbIJefN@x1n>
-	<Znl6dfM_qbH3hIvH@fedora>
-	<ZnmFuAR7yNG_6zp6@x1n>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719356883; c=relaxed/simple;
+	bh=dSH0kV5AN3FCN4yGwborHs3g9uoxj5kMS3DilVBzxXg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KOetVJQUIPAQtXyYLex9t40JbcGeREWfWMjAJG02efof5xdgxAuBGmU5F0dKAGU8+1V23Jll5zkojmkj8wMyiCC+5W5J0vEJguy+yBRBzIDZ794VIPPgQb4e+F4ul97U4JOH7wpxEsBH2BT1E57k9/6wL1pw8qwmWeG1REIKEl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PrPGxb2T; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-706627ff48dso3037492b3a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 16:08:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1719356881; x=1719961681; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i+O2QBsMWjgEyrfD/XN6wSL85FpHr2KSp+eXJQFXgjU=;
+        b=PrPGxb2TwuuDLwgJLKMObYmc4u8Fr/Prgzq4pfGXk8z6tAHvvStVadraBb4aAYhVF/
+         4bFwIJpy8bQeP/9e4o1JjhWWLDYjJD8RXg1OtgibbgNO8ClijIynHuvyeDqvor80DI7G
+         /uK5y5fXofhrm3fL7MXvHRV7vtAYMJ4iKgjOM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719356881; x=1719961681;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i+O2QBsMWjgEyrfD/XN6wSL85FpHr2KSp+eXJQFXgjU=;
+        b=og1gsrSe31HTrWyWAaDiS+Fuz9fAtO87OFNgzreNhG9ZokuoCL6bT2aTRiTC9tv3wx
+         zVrNLJKm4kCVQb4TEq7s4ck1Y9ebpCGr42X/dQK7n9+nBdgQ5FNgHLtrWbyX+tdnY+0o
+         5iO9oA+IErtbYHu8FxJqpNOJNnUmGu8Wa05x2KAnfzzCIegPqVTagWCSK1CvaoTBIN9d
+         ftVd61arlLAP0AgWZo1yvcZTqpFeDu2qLqoKF6A+RKQIiPFQFOiy9iLvfXW/+/dv88mE
+         dELObUL47OnCNxPdyw472mWnlJahmWCt3KZiefmldisUdIp3rc5t7VweQZCyBN4bzOrf
+         FvAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJMle8+h5rofRAQcjlOnexUiAV/qxsAryhFjgezay7IGwz1Th+B/FKSbG/b5cAvdevvUooooz7g9U+Gi+SDe70BdTXzAGe+NKwA62E
+X-Gm-Message-State: AOJu0YwGoxe7cH4T3L3x/jAL2YXBVWO4UKuXp0lG8rP26aMJY9+WfRbD
+	CR45aMOfHnfhMk2RnHCLDFKsu/BO7If5ItrZl7ug9kM+V4EaUtCy8vpsTlWywg==
+X-Google-Smtp-Source: AGHT+IELON/D6RooatSQeRoEVcou7miObMbewbBYE7MHPBkdN609dnMCSDq80ofsBQHLp2uX0/EALw==
+X-Received: by 2002:a05:6a20:2a20:b0:1bd:2ad8:a221 with SMTP id adf61e73a8af0-1bd2ad8a24bmr898406637.46.1719356880776;
+        Tue, 25 Jun 2024 16:08:00 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:245e:381b:154e:30bd])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c6bb2sm86655315ad.142.2024.06.25.16.07.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 16:08:00 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Sumit Garg <sumit.garg@linaro.org>,
+	Yu Zhao <yuzhao@google.com>,
+	Misono Tomohiro <misono.tomohiro@fujitsu.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Marc Zyngier <maz@kernel.org>,
+	Daniel Thompson <daniel.thompson@linaro.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	D Scott Phillips <scott@os.amperecomputing.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	James Morse <james.morse@arm.com>,
+	Kees Cook <kees@kernel.org>,
+	Tony Luck <tony.luck@intel.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-hardening@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] arm64: smp: smp_send_stop() and crash_smp_send_stop() should try non-NMI first
+Date: Tue, 25 Jun 2024 16:07:22 -0700
+Message-ID: <20240625160718.v2.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 24 Jun 2024 10:42:00 -0400 Peter Xu <peterx@redhat.com> wrote:
+When testing hard lockup handling on my sc7180-trogdor-lazor device
+with pseudo-NMI enabled, with serial console enabled and with kgdb
+disabled, I found that the stack crawls printed to the serial console
+ended up as a jumbled mess. After rebooting, the pstore-based console
+looked fine though. Also, enabling kgdb to trap the panic made the
+console look fine and avoided the mess.
 
-> >         uffdio_api.features &= ~UFFD_FEATURE_WP_HUGETLBFS_SHMEM;
-> >         uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
-> >         uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
-> > #endif
-> > 
-> > If you run the userfaultfd selftests with the run_vmtests script we get
-> > several failures stemming from trying to call uffdio_regsiter with the flag 
-> > UFFDIO_REGISTER_MODE_WP. However, the kernel ensures in vma_can_userfault() 
-> > that if CONFIG_PTE_MARKER_UFFD_WP is disabled, only allow the VM_UFFD_WP -
-> > which is set when you pass the UFFDIO_REGISTER_MODE_WP flag - on 
-> > anonymous vmas.
-> > 
-> > In parse_test_type_arg() I added the features check against 
-> > UFFD_FEATURE_WP_UNPOPULATED as it seemed the most well know feature/flag. I'm 
-> > more than happy to take any suggestions and adapt them if you have any! 
-> 
-> There're documents for these features in the headers:
-> 
-> 	 * UFFD_FEATURE_WP_HUGETLBFS_SHMEM indicates that userfaultfd
-> 	 * write-protection mode is supported on both shmem and hugetlbfs.
-> 	 *
-> 	 * UFFD_FEATURE_WP_UNPOPULATED indicates that userfaultfd
-> 	 * write-protection mode will always apply to unpopulated pages
-> 	 * (i.e. empty ptes).  This will be the default behavior for shmem
-> 	 * & hugetlbfs, so this flag only affects anonymous memory behavior
-> 	 * when userfault write-protection mode is registered.
-> 
-> While in this context ("test_type != TEST_ANON") IIUC the accurate feature
-> to check is UFFD_FEATURE_WP_HUGETLBFS_SHMEM.
-> 
-> In most kernels they should behave the same indeed, but note that since
-> UNPOPULATED was introduced later than shmem/hugetlb support, it means on
-> some kernel the result of checking these two features will be different.
+After a bit of tracking down, I came to the conclusion that this was
+what was happening:
+1. The panic path was stopping all other CPUs with
+   panic_other_cpus_shutdown().
+2. At least one of those other CPUs was in the middle of printing to
+   the serial console and holding the console port's lock, which is
+   grabbed with "irqsave". ...but since we were stopping with an NMI
+   we didn't care about the "irqsave" and interrupted anyway.
+3. Since we stopped the CPU while it was holding the lock it would
+   never release it.
+4. All future calls to output to the console would end up failing to
+   get the lock in qcom_geni_serial_console_write(). This isn't
+   _totally_ unexpected at panic time but it's a code path that's not
+   well tested, hard to get right, and apparently doesn't work
+   terribly well on the Qualcomm geni serial driver.
 
-I'm unsure what to do with this series.  Peter, your review comments
-are unclear - do you request updates?
+The Qualcomm geni serial driver was fixed to be a bit better in commit
+9e957a155005 ("serial: qcom-geni: Don't cancel/abort if we can't get
+the port lock") but it's nice not to get into this situation in the
+first place.
 
-Also, the patches weren't cc:linux-mm which limits the audience.  I'll
-drop this version.  Audra, please continue to move this forward.
+Taking a page from what x86 appears to do in native_stop_other_cpus(),
+do this:
+1. First, try to stop other CPUs with a normal IPI and wait a second.
+   This gives them a chance to leave critical sections.
+2. If CPUs fail to stop then retry with an NMI, but give a much lower
+   timeout since there's no good reason for a CPU not to react quickly
+   to a NMI.
+
+This works well and avoids the corrupted console and (presumably)
+could help avoid other similar issues.
+
+In order to do this, we need to do a little re-organization of our
+IPIs since we don't have any more free IDs. Do what was suggested in
+previous conversations and combine "stop" and "crash stop". That frees
+up an IPI so now we can have a "stop" and "stop NMI".
+
+In order to do this we also need a slight change in the way we keep
+track of which CPUs still need to be stopped. We need to know
+specifically which CPUs haven't stopped yet when we fall back to NMI
+but in the "crash stop" case the "cpu_online_mask" isn't updated as
+CPUs go down. This is why that code path had an atomic of the number
+of CPUs left. Solve this by also updating the "cpu_online_mask" for
+crash stops.
+
+All of the above lets us combine the logic for "stop" and "crash stop"
+code, which appeared to have a bunch of arbitrary implementation
+differences.
+
+Aside from the above change where we try a normal IPI and then an NMI,
+the combined function has a few subtle differences:
+* In the normal smp_send_stop(), if we fail to stop one or more CPUs
+  then we won't include the current CPU (the one running
+  smp_send_stop()) in the error message.
+* In crash_smp_send_stop(), if we fail to stop some CPUs we'll print
+  the CPUs that we failed to stop instead of printing all _but_ the
+  current running CPU.
+* In crash_smp_send_stop(), we will now only print "SMP: stopping
+  secondary CPUs" if (system_state <= SYSTEM_RUNNING).
+
+Fixes: d7402513c935 ("arm64: smp: IPI_CPU_STOP and IPI_CPU_CRASH_STOP should try for NMI")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
+I'm not setup to test the crash_smp_send_stop(). I made sure it
+compiled and hacked the panic() method to call it, but I haven't
+actually run kexec. Hopefully others can confirm that it's working for
+them.
+
+v1: https://lore.kernel.org/r/20231207170251.1.Id4817adef610302554b8aa42b090d57270dc119c@changeid
+
+Changes in v2:
+- Update commit message to point to Qualcomm serial driver fix.
+- Use a test-and-set to prevent stop code from running twice.
+- Move mask clearing until after crash_save_cpu().
+- Use local_daif_mask() in ipi_cpu_crash_stop().
+- Don't use a new mask, just have crash case update online CPUs.
+
+ arch/arm64/kernel/smp.c | 138 ++++++++++++++++++++++------------------
+ 1 file changed, 75 insertions(+), 63 deletions(-)
+
+diff --git a/arch/arm64/kernel/smp.c b/arch/arm64/kernel/smp.c
+index 31c8b3094dd7..254619245f97 100644
+--- a/arch/arm64/kernel/smp.c
++++ b/arch/arm64/kernel/smp.c
+@@ -71,7 +71,7 @@ enum ipi_msg_type {
+ 	IPI_RESCHEDULE,
+ 	IPI_CALL_FUNC,
+ 	IPI_CPU_STOP,
+-	IPI_CPU_CRASH_STOP,
++	IPI_CPU_STOP_NMI,
+ 	IPI_TIMER,
+ 	IPI_IRQ_WORK,
+ 	NR_IPI,
+@@ -88,6 +88,8 @@ static int ipi_irq_base __ro_after_init;
+ static int nr_ipi __ro_after_init = NR_IPI;
+ static struct irq_desc *ipi_desc[MAX_IPI] __ro_after_init;
+ 
++static bool crash_stop;
++
+ static void ipi_setup(int cpu);
+ 
+ #ifdef CONFIG_HOTPLUG_CPU
+@@ -771,7 +773,7 @@ static const char *ipi_types[NR_IPI] __tracepoint_string = {
+ 	[IPI_RESCHEDULE]	= "Rescheduling interrupts",
+ 	[IPI_CALL_FUNC]		= "Function call interrupts",
+ 	[IPI_CPU_STOP]		= "CPU stop interrupts",
+-	[IPI_CPU_CRASH_STOP]	= "CPU stop (for crash dump) interrupts",
++	[IPI_CPU_STOP_NMI]	= "CPU stop NMIs",
+ 	[IPI_TIMER]		= "Timer broadcast interrupts",
+ 	[IPI_IRQ_WORK]		= "IRQ work interrupts",
+ };
+@@ -813,9 +815,9 @@ void arch_irq_work_raise(void)
+ }
+ #endif
+ 
+-static void __noreturn local_cpu_stop(void)
++static void __noreturn local_cpu_stop(unsigned int cpu)
+ {
+-	set_cpu_online(smp_processor_id(), false);
++	set_cpu_online(cpu, false);
+ 
+ 	local_daif_mask();
+ 	sdei_mask_local_cpu();
+@@ -829,21 +831,26 @@ static void __noreturn local_cpu_stop(void)
+  */
+ void __noreturn panic_smp_self_stop(void)
+ {
+-	local_cpu_stop();
++	local_cpu_stop(smp_processor_id());
+ }
+ 
+-#ifdef CONFIG_KEXEC_CORE
+-static atomic_t waiting_for_crash_ipi = ATOMIC_INIT(0);
+-#endif
+-
+ static void __noreturn ipi_cpu_crash_stop(unsigned int cpu, struct pt_regs *regs)
+ {
+ #ifdef CONFIG_KEXEC_CORE
++	/*
++	 * Use local_daif_mask() instead of local_irq_disable() to make sure
++	 * that pseudo-NMIs are disabled. The "crash stop" code starts with
++	 * an IRQ and falls back to NMI (which might be pseudo). If the IRQ
++	 * finally goes through right as we're timing out then the NMI could
++	 * interrupt us. It's better to prevent the NMI and let the IRQ
++	 * finish since the pt_regs will be better.
++	 */
++	local_daif_mask();
++
+ 	crash_save_cpu(regs, cpu);
+ 
+-	atomic_dec(&waiting_for_crash_ipi);
++	set_cpu_online(cpu, false);
+ 
+-	local_irq_disable();
+ 	sdei_mask_local_cpu();
+ 
+ 	if (IS_ENABLED(CONFIG_HOTPLUG_CPU))
+@@ -908,14 +915,12 @@ static void do_handle_IPI(int ipinr)
+ 		break;
+ 
+ 	case IPI_CPU_STOP:
+-		local_cpu_stop();
+-		break;
+-
+-	case IPI_CPU_CRASH_STOP:
+-		if (IS_ENABLED(CONFIG_KEXEC_CORE)) {
++	case IPI_CPU_STOP_NMI:
++		if (IS_ENABLED(CONFIG_KEXEC_CORE) && crash_stop) {
+ 			ipi_cpu_crash_stop(cpu, get_irq_regs());
+-
+ 			unreachable();
++		} else {
++			local_cpu_stop(cpu);
+ 		}
+ 		break;
+ 
+@@ -970,8 +975,7 @@ static bool ipi_should_be_nmi(enum ipi_msg_type ipi)
+ 		return false;
+ 
+ 	switch (ipi) {
+-	case IPI_CPU_STOP:
+-	case IPI_CPU_CRASH_STOP:
++	case IPI_CPU_STOP_NMI:
+ 	case IPI_CPU_BACKTRACE:
+ 	case IPI_KGDB_ROUNDUP:
+ 		return true;
+@@ -1084,79 +1088,87 @@ static inline unsigned int num_other_online_cpus(void)
+ 
+ void smp_send_stop(void)
+ {
++	static unsigned long stop_in_progress;
++	cpumask_t mask;
+ 	unsigned long timeout;
+ 
+-	if (num_other_online_cpus()) {
+-		cpumask_t mask;
++	/*
++	 * If this cpu is the only one alive at this point in time, online or
++	 * not, there are no stop messages to be sent around, so just back out.
++	 */
++	if (num_other_online_cpus() == 0)
++		goto skip_ipi;
+ 
+-		cpumask_copy(&mask, cpu_online_mask);
+-		cpumask_clear_cpu(smp_processor_id(), &mask);
++	/* Only proceed if this is the first CPU to reach this code */
++	if (test_and_set_bit(0, &stop_in_progress))
++		return;
+ 
+-		if (system_state <= SYSTEM_RUNNING)
+-			pr_crit("SMP: stopping secondary CPUs\n");
+-		smp_cross_call(&mask, IPI_CPU_STOP);
+-	}
++	cpumask_copy(&mask, cpu_online_mask);
++	cpumask_clear_cpu(smp_processor_id(), &mask);
+ 
+-	/* Wait up to one second for other CPUs to stop */
++	if (system_state <= SYSTEM_RUNNING)
++		pr_crit("SMP: stopping secondary CPUs\n");
++
++	/*
++	 * Start with a normal IPI and wait up to one second for other CPUs to
++	 * stop. We do this first because it gives other processors a chance
++	 * to exit critical sections / drop locks and makes the rest of the
++	 * stop process (especially console flush) more robust.
++	 */
++	smp_cross_call(&mask, IPI_CPU_STOP);
+ 	timeout = USEC_PER_SEC;
+ 	while (num_other_online_cpus() && timeout--)
+ 		udelay(1);
+ 
+-	if (num_other_online_cpus())
++	/*
++	 * If CPUs are still online, try an NMI. There's no excuse for this to
++	 * be slow, so we only give them an extra 10 ms to respond.
++	 */
++	if (num_other_online_cpus() && ipi_should_be_nmi(IPI_CPU_STOP_NMI)) {
++		cpumask_and(&mask, &mask, cpu_online_mask);
++
++		pr_info("SMP: retry stop with NMI for CPUs %*pbl\n",
++			cpumask_pr_args(&mask));
++
++		smp_cross_call(&mask, IPI_CPU_STOP_NMI);
++		timeout = USEC_PER_MSEC * 10;
++		while (num_other_online_cpus() && timeout--)
++			udelay(1);
++	}
++
++	if (num_other_online_cpus()) {
++		cpumask_and(&mask, &mask, cpu_online_mask);
++
+ 		pr_warn("SMP: failed to stop secondary CPUs %*pbl\n",
+-			cpumask_pr_args(cpu_online_mask));
++			cpumask_pr_args(&mask));
++	}
+ 
++skip_ipi:
+ 	sdei_mask_local_cpu();
+ }
+ 
+ #ifdef CONFIG_KEXEC_CORE
+ void crash_smp_send_stop(void)
+ {
+-	static int cpus_stopped;
+-	cpumask_t mask;
+-	unsigned long timeout;
+-
+ 	/*
+ 	 * This function can be called twice in panic path, but obviously
+ 	 * we execute this only once.
++	 *
++	 * We use this same boolean to tell whether the IPI we send was a
++	 * stop or a "crash stop".
+ 	 */
+-	if (cpus_stopped)
++	if (crash_stop)
+ 		return;
++	crash_stop = 1;
+ 
+-	cpus_stopped = 1;
++	smp_send_stop();
+ 
+-	/*
+-	 * If this cpu is the only one alive at this point in time, online or
+-	 * not, there are no stop messages to be sent around, so just back out.
+-	 */
+-	if (num_other_online_cpus() == 0)
+-		goto skip_ipi;
+-
+-	cpumask_copy(&mask, cpu_online_mask);
+-	cpumask_clear_cpu(smp_processor_id(), &mask);
+-
+-	atomic_set(&waiting_for_crash_ipi, num_other_online_cpus());
+-
+-	pr_crit("SMP: stopping secondary CPUs\n");
+-	smp_cross_call(&mask, IPI_CPU_CRASH_STOP);
+-
+-	/* Wait up to one second for other CPUs to stop */
+-	timeout = USEC_PER_SEC;
+-	while ((atomic_read(&waiting_for_crash_ipi) > 0) && timeout--)
+-		udelay(1);
+-
+-	if (atomic_read(&waiting_for_crash_ipi) > 0)
+-		pr_warn("SMP: failed to stop secondary CPUs %*pbl\n",
+-			cpumask_pr_args(&mask));
+-
+-skip_ipi:
+-	sdei_mask_local_cpu();
+ 	sdei_handler_abort();
+ }
+ 
+ bool smp_crash_stop_failed(void)
+ {
+-	return (atomic_read(&waiting_for_crash_ipi) > 0);
++	return num_other_online_cpus() != 0;
+ }
+ #endif
+ 
+-- 
+2.45.2.741.gdbec12cfda-goog
 
 
