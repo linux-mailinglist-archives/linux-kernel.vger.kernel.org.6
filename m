@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-228462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41864916040
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:45:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDDA7916043
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:46:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B341EB22B46
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:45:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF2FC1C219A8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35EF414831C;
-	Tue, 25 Jun 2024 07:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F6D6146D60;
+	Tue, 25 Jun 2024 07:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBMwiR5F"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nHNFKhcL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B8B1487D8;
-	Tue, 25 Jun 2024 07:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694181459F1;
+	Tue, 25 Jun 2024 07:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719301502; cv=none; b=Pq9Aaro828/sZQLRs08H7nPtPgUWTcxWDDFCQJOpDduHIVsZTw8vk5pk/1VgUXgXHuO8ltWfdHxQaVyK0p5IxemPxFbHnJqFPhOJQ6rUMsmmVIcJ8ekHJ8ThVim9uHFxLSsVuRooYVW9qkmtNpBzwRGLbe/JGX4bmuo5f/HqhI8=
+	t=1719301554; cv=none; b=YySkqXVjiGJQMGX9062XoEBhYLAKHjA6m5fYhwl29Y+JVnP3DaIBWUP2CHaOY35KnLq+7IKdlwi+PmYav3sm5SZrUopn1FYRg/e2i7ZRL8bVtE6V+CjF1GppWAoHN2aloanIWXYVy1QXsLc72XnvogLxOG4URHY1tm5E2Agx7kc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719301502; c=relaxed/simple;
-	bh=KU6fSNsJjAtSPmi+6Ho8IJyU5WKJaSyGyZI6IlGsOr4=;
+	s=arc-20240116; t=1719301554; c=relaxed/simple;
+	bh=ZysN/lE3QgWd3A4iJxRZ4LlQNhq7akRfYjskD7YJu3U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j6hKLoTgta7CuVUm7ALPZeNhv/g9EGMfddZFLGw1as57YOicN3hSjILyZ9G6tx6ZxBYJrh5KGk35ZqQQBlCD0bwHAj5VFkD+P6GO/8jX8ORwJW4+xhRnZTkRXjJtZx+spr0ANWTWOjpCqvmHMkHWMCWXWTSeS9QD5tRrAwm5TbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBMwiR5F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C9A0C32782;
-	Tue, 25 Jun 2024 07:44:55 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=D3hmIOuRhyVaoVmS5T4HwldN0PbiGrTqTA7H7T6acszwh6T9WEEwKwG9ne9vEZBsbzvfJ/qItLtE2qa4iWGEzBA2WcEPV+ThgZO4bywBx0NVlfYaeraoiqmBiCvdh5fSwlvCHrEc6wMg4i0kgSdTtizDIYTe5gkIhVfnuHBtUpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nHNFKhcL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7373BC32781;
+	Tue, 25 Jun 2024 07:45:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719301502;
-	bh=KU6fSNsJjAtSPmi+6Ho8IJyU5WKJaSyGyZI6IlGsOr4=;
+	s=k20201202; t=1719301554;
+	bh=ZysN/lE3QgWd3A4iJxRZ4LlQNhq7akRfYjskD7YJu3U=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jBMwiR5FkypsC/i5Rbv65VuI/aEbbQ9qFi/yf9dxDETVyfLi24fld0WHew/xEb9+W
-	 qhyf05C2Hn5y3Jl/cpr2N1IHC+Av30bR5+S6diZj2o9u/mKXhlhh+aPUKjpvE/ffhO
-	 sf1QoLCjChIXuXJKfFZpH2DTvprBweFi61r9ljn0yFij80jQa+WNfFj2yE6pJfzjrT
-	 PQU9GYbLGIZPk0Xy1AsFGBhunvRbanuGMhFSajNf1+GOfo1xRDqOvVZU2lWsJttygw
-	 iSmA5czEYV1s1qgTFeINIAwAbZpTX8YDJHqPDa3Zu0jgS/TDzqtXGL1hre9ZF22q3g
-	 p74iCFysXRogQ==
-Message-ID: <09ccab44-fbbd-4195-99b3-6d74e9dabebb@kernel.org>
-Date: Tue, 25 Jun 2024 09:44:54 +0200
+	b=nHNFKhcLzd1nGO09rS4oFC17V0HwUpmhRXXI1MvbNuwxn2SCUIJXwp9TTFziEsa64
+	 NmWbTcLwzGo6WrreXVOqMaj9hYhe/vPxMYnwjTXUWiXdCIVkskSkv1+i9eAi7C6Ccw
+	 EMtEArFKvwn+F65SRj8VKNsXae4th3AKjsGV7NbcZLpzH1eunDG92oB7I1q+PNJEDF
+	 m2vpqt3gNdaHgFIh77grgR7e8o1uh2h4ZQjyG1u1CsuVH7Qsf6BS3efqrG0NVARdcZ
+	 brqgeDd0HdXUGaopGM3rNUVWEO9gLhoQ1iMhBQV1oCNGRD+7hbhAt4UqOmEVQDjKLP
+	 gkuPKRpQGbwwA==
+Message-ID: <9f5b5055-1b95-44f0-bf32-120b1ad7d217@kernel.org>
+Date: Tue, 25 Jun 2024 09:45:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] dt-bindings: clock: imx93: Drop IMX93_CLK_END macro
- definition
+Subject: Re: [PATCH 0/2] clk: imx93: Drop macro IMX93_CLK_END
 To: Pengfei Li <pengfei.li_1@nxp.com>, krzk+dt@kernel.org, robh@kernel.org,
  abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
  conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
@@ -60,7 +59,6 @@ Cc: kernel@pengutronix.de, festevam@gmail.com, linux-clk@vger.kernel.org,
  imx@lists.linux.dev, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20240625175147.94985-1-pengfei.li_1@nxp.com>
- <20240625175147.94985-3-pengfei.li_1@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -106,17 +104,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240625175147.94985-3-pengfei.li_1@nxp.com>
+In-Reply-To: <20240625175147.94985-1-pengfei.li_1@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 25/06/2024 19:51, Pengfei Li wrote:
-> IMX93_CLK_END should be dropped as it is not part of the ABI.
-> 
-> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
-> ---
+> 'IMX93_CLK_END' macro was previously defined in imx93-clock.h to
+> indicate the number of clocks, but it is not part of the ABI, so
+> it should be dropped.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Fix your clock, so this will not appear in 10 hours ahead, on top of
+mailbox pretending to be the newest patch to review. Trying to get ahead
+of the queue is a straight way to get grumpy reviews or just being ignored.
 
 Best regards,
 Krzysztof
