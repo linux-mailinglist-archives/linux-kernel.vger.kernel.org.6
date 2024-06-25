@@ -1,151 +1,159 @@
-Return-Path: <linux-kernel+bounces-229843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16B6D917510
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:55:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F370F917515
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:56:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DD0FB209E0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:55:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22DC71C213AB
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D4617FAD2;
-	Tue, 25 Jun 2024 23:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3265B17FAC4;
+	Tue, 25 Jun 2024 23:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Jhx0FuWv"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ndy0CAaA"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224161494DE
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 23:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C451494DE;
+	Tue, 25 Jun 2024 23:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719359722; cv=none; b=qh9p0hWw7KdLdBIkBzkUI1TzfDcEe1D2pqsUGdZsQFIm3qbFo6C8DQpuonDAEAXVgYy5FvgZp+udbb/sbQOsVuy3xNKPnGWEmaXHTpC/hp6jfeVv0BqGj/F38hdMUkXJcYrSr2ELIHboCNOr2CmzF1p3MJA3gPt5IQJGnFfbEpY=
+	t=1719359808; cv=none; b=hPKKUK6Xv0C/vh5PqhuEz2OxnjWsrnJwuKbu9epl0V9FDGmEb6X/RqXrYolLYTdnMpWclDb37khqQvGZ5T7AlHfiA6fPkkP8SALAMpFU59X7FbkWUr3ZWiNp27PGyla0v5IFRw9Q2dIU9b8v3yEw1oPuGUISl0HtB/YYy6CMKjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719359722; c=relaxed/simple;
-	bh=krO4Bk2vIQHWJwLs8mW87UwC7KXFTsvPy0EbDIVPu3Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eZZhFM+w+orfKIDrVtduZ7ytNakt475q760gP134fQ+B5qoJFP1gmG4d1SYzYqWRv10tlWesBCGc+zZHBn6hjCGQ0rjykDx9IBc7oPykDtMDy7up7O4o1aY6tZN9QNB+gVAiMFX+gRfm3aEnNUQkJT05wxsLs6ZuqUEgg9GBmy4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Jhx0FuWv; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719359720;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=30MprqR9jKeSlYWvSkx3JBbBoLzb8YQKJ6HRn0CFdGo=;
-	b=Jhx0FuWvWnprOTNyymSMjDslkQNyWk85/nA+twVGBCWbCdJQpUXp4fkIHzkZ/b6s5ZCd7h
-	6nSIFU+zG9Yx7EMAquzVZbMs3S2AnxTktv1s+r5eSNuvaI4ujsjqJitvx1fI+7nCQs9wV1
-	XhKQXcF9LcvsSvIEL+r+PlJZlLTyLZU=
-Received: from mail-oi1-f200.google.com (mail-oi1-f200.google.com
- [209.85.167.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-671-I4fqQOX-PMen0HzF2hN2jQ-1; Tue, 25 Jun 2024 19:55:18 -0400
-X-MC-Unique: I4fqQOX-PMen0HzF2hN2jQ-1
-Received: by mail-oi1-f200.google.com with SMTP id 5614622812f47-3d227940838so915366b6e.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 16:55:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719359718; x=1719964518;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1719359808; c=relaxed/simple;
+	bh=3kmG5XSJ5hljnFChnWgChhUNht6ShHJLQN7hrL7fUB4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O8GXgjIn6sicC0PBeco4wmYW7DV4gNk2yDgzyRy2TWPvzc1Ew2JFRqoS1zUXielCTzTBIgwnNzaWA48RZTsjBrlEINslfdXRfERZEQNrsrkLfy3wHO5CLtMG0vU6oxa/4LAuajuvMzEBsgFuulFCznFgV4q2x6FE0Aeyyx1FLNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ndy0CAaA; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-366edce6493so2243106f8f.3;
+        Tue, 25 Jun 2024 16:56:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719359805; x=1719964605; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=30MprqR9jKeSlYWvSkx3JBbBoLzb8YQKJ6HRn0CFdGo=;
-        b=UMY6Oz0vRLCuSspsVSLUsunO0ISlIezaxMBySs4OpgZbYobtoGPYJxvZSJh8aYpdsD
-         MweRgbI0djVYfxm2yiBiS5rGxmX6MEDWeVPI8Mu9jePtzXTyBHL1Rsr+zUFM4bPP2F6h
-         0H9gQpYQ9pEaceV/zd+5Qu/6DJlBEgAuUqTQP0I23Rw3rar8wHvCwZCBa+Vf866Z+XoC
-         +VjAmkUCs8V3MdayaBXQ0aof5viAAf587Mu5zqmekot7YEOJCeBhYOXL1NNkOeU4w8Ba
-         js2XlJvqm3GwiZQn3rKLBcSjAKVtn08YSEQZ9Vg+ywYXqV/uPLkpIJhHGxtyPehSXDjD
-         tUhA==
-X-Forwarded-Encrypted: i=1; AJvYcCUTSZYzLCfqQG3R4clA0KeV18eOWU7SNTryg6c8rkObNu5CbzXXdUP/3d0/iRtFshYRuzJKzbelBWQLQusnGf6ikhjBUIjHB/h4r65i
-X-Gm-Message-State: AOJu0YzOaExC4ccHbl5xXGO5OztZzWHeOlRbFkh3LYxPovGBF6q6eiI7
-	ASvONujfZy+c2ctoF4IWlzsl3PEeiWGkXggW0aqIwQMWIgN0DPSXokTYK9BmKoN5nIR16/Ffw9G
-	7pNOIUvx9YlhRRcCUS0PCoYlUTgi7DyzotkCKS5Tj2GHsZa9xygaogS5ZcjJovQ==
-X-Received: by 2002:a05:6808:10d0:b0:3d2:1b8a:be58 with SMTP id 5614622812f47-3d53ecf3880mr15046272b6e.3.1719359717813;
-        Tue, 25 Jun 2024 16:55:17 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHlf/FwRDBkisWWdxUhp5HLyrRnE/m8oDfhxzRCIqhtKcbQ1/6uO9ya2nFcAESOd4bBmfb1vg==
-X-Received: by 2002:a05:6808:10d0:b0:3d2:1b8a:be58 with SMTP id 5614622812f47-3d53ecf3880mr15046235b6e.3.1719359717110;
-        Tue, 25 Jun 2024 16:55:17 -0700 (PDT)
-Received: from x1n (pool-99-254-121-117.cpe.net.cable.rogers.com. [99.254.121.117])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce91f16esm452957085a.77.2024.06.25.16.55.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 16:55:16 -0700 (PDT)
-Date: Tue, 25 Jun 2024 19:55:14 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Audra Mitchell <audra@redhat.com>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, aarcange@redhat.com,
-	rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, shuah@kernel.org,
-	linux-kselftest@vger.kernel.org, raquini@redhat.com
-Subject: Re: [PATCH v2 3/3] Turn off test_uffdio_wp if
- CONFIG_PTE_MARKER_UFFD_WP is not configured.
-Message-ID: <ZntY4jIojSrjoW1M@x1n>
-References: <20240621181224.3881179-1-audra@redhat.com>
- <20240621181224.3881179-3-audra@redhat.com>
- <ZnXwT_vkyVbIJefN@x1n>
- <Znl6dfM_qbH3hIvH@fedora>
- <ZnmFuAR7yNG_6zp6@x1n>
- <20240625160558.e1650f874ab039e4d6c2b650@linux-foundation.org>
+        bh=3kmG5XSJ5hljnFChnWgChhUNht6ShHJLQN7hrL7fUB4=;
+        b=Ndy0CAaA9OPxPTUR8HfQ2YDqkGW/hE+2Mln1kPMsSW3CpgTpCrIcEHHNmRptXC/vt+
+         uEzZ7foDEaNNDGsMOk8zLn8yvSrRqHiQt3fjfd8HKx8v5nBI8LIqkRistsQ47yALgNKQ
+         qC8MdBxmfTxbXGiSErmMuA/1Qn3EJz+dlFgkbgwMKxk9UArpAB52bNF4aeaKkXLtcEtY
+         82vqUsVgpxV1BOr4yhToDALIjxI/FDbvrgWJQeWIm9D05iD1KnwaJfNyOnI2aEHS2jRp
+         0GXTsEfKLkte0CnvMM8o1sG19bsq4KfuQCQMCFV1hSLa+r3KE3Du+O6fC2GbL/EiYe0H
+         XiGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719359805; x=1719964605;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3kmG5XSJ5hljnFChnWgChhUNht6ShHJLQN7hrL7fUB4=;
+        b=fbw51t6F0NRQhkUfuf0q0gX1DJRZtCtTgFs8kc4efWLE5m01Chs1b09Aeg4pZwZw2q
+         R7K9Iwoc7JxxKuPjEluYRr2m8jfJOAuTRNJU8PnfwYLjCdeBRUyzkKTnrRv5ejbjYZiG
+         AbUI7+lWWl10J4IMUFzr7I8sLA59jjsG347mW+PhgEuSdWCw3pBPMAKGi+JPF8cW+piE
+         Vv2cKVYtSu7wUPEqEaC+nIonVGa6b/y7sTxsEHKzQIdgYche6cc5trW+lbpRLAgWswfv
+         DRTenA4eQOky1O8oMnUJ/oab1FyO88QPv+JlkN81GgvtVI/bH65SqV9IHfTPqLTFXRwk
+         Qjmg==
+X-Forwarded-Encrypted: i=1; AJvYcCVd2io5qOapFKNmaab/ctEdRyoP6AtZAxspPUBqfEagezYs1xzW1Cvaq8won71mDAak5MeUSkZU1do7gMfedqudWxCLlqONm6tkg3SZZP/gnaFIZFbnvMHDQqJsCLf5lXqp
+X-Gm-Message-State: AOJu0YzPrmdIbiA0ll1AM48y9brTqjH0xUc6CY0BNdLJJ1GUsW6MiYmr
+	pylyl4224aTz/PB9u4ahGrjdPyAyn/w/W+Hk0eZTdW0Bq20NWBlIjuHduspL5I6XkYdLMdd8DwW
+	39Cp8sV+nAhJppN2Vy6kgi/RRMXM=
+X-Google-Smtp-Source: AGHT+IGdtAtaha7dzZVZxOBoUqaxo1MNQ1P24x6wp+VwE5kFQDbxK5Gn+a00McK0tI3tzXEjhLhvhO6QhVqB8D6TAVA=
+X-Received: by 2002:a05:6000:b44:b0:35f:11c5:5c74 with SMTP id
+ ffacd0b85a97d-366e94cc54amr5128737f8f.36.1719359804898; Tue, 25 Jun 2024
+ 16:56:44 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240625160558.e1650f874ab039e4d6c2b650@linux-foundation.org>
+References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
+ <87ed8lxg1c.fsf@jogness.linutronix.de> <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
+ <87ikxxxbwd.fsf@jogness.linutronix.de> <ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
+ <CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com> <7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
+In-Reply-To: <7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 25 Jun 2024 16:56:33 -0700
+Message-ID: <CAADnVQKoHk5FTN=jywBjgdTdLwv-c76nCzyH90Js-41WxPK_Tw@mail.gmail.com>
+Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: John Ogness <john.ogness@linutronix.de>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Petr Mladek <pmladek@suse.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 04:05:58PM -0700, Andrew Morton wrote:
-> On Mon, 24 Jun 2024 10:42:00 -0400 Peter Xu <peterx@redhat.com> wrote:
-> 
-> > >         uffdio_api.features &= ~UFFD_FEATURE_WP_HUGETLBFS_SHMEM;
-> > >         uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
-> > >         uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
-> > > #endif
-> > > 
-> > > If you run the userfaultfd selftests with the run_vmtests script we get
-> > > several failures stemming from trying to call uffdio_regsiter with the flag 
-> > > UFFDIO_REGISTER_MODE_WP. However, the kernel ensures in vma_can_userfault() 
-> > > that if CONFIG_PTE_MARKER_UFFD_WP is disabled, only allow the VM_UFFD_WP -
-> > > which is set when you pass the UFFDIO_REGISTER_MODE_WP flag - on 
-> > > anonymous vmas.
-> > > 
-> > > In parse_test_type_arg() I added the features check against 
-> > > UFFD_FEATURE_WP_UNPOPULATED as it seemed the most well know feature/flag. I'm 
-> > > more than happy to take any suggestions and adapt them if you have any! 
-> > 
-> > There're documents for these features in the headers:
-> > 
-> > 	 * UFFD_FEATURE_WP_HUGETLBFS_SHMEM indicates that userfaultfd
-> > 	 * write-protection mode is supported on both shmem and hugetlbfs.
-> > 	 *
-> > 	 * UFFD_FEATURE_WP_UNPOPULATED indicates that userfaultfd
-> > 	 * write-protection mode will always apply to unpopulated pages
-> > 	 * (i.e. empty ptes).  This will be the default behavior for shmem
-> > 	 * & hugetlbfs, so this flag only affects anonymous memory behavior
-> > 	 * when userfault write-protection mode is registered.
-> > 
-> > While in this context ("test_type != TEST_ANON") IIUC the accurate feature
-> > to check is UFFD_FEATURE_WP_HUGETLBFS_SHMEM.
-> > 
-> > In most kernels they should behave the same indeed, but note that since
-> > UNPOPULATED was introduced later than shmem/hugetlb support, it means on
-> > some kernel the result of checking these two features will be different.
-> 
-> I'm unsure what to do with this series.  Peter, your review comments
-> are unclear - do you request updates?
+On Tue, Jun 25, 2024 at 4:52=E2=80=AFPM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2024/06/26 4:32, Alexei Starovoitov wrote:
+> >>>>> On 2024-06-25, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wr=
+ote:
+> >>>>>> syzbot is reporting circular locking dependency inside __bpf_prog_=
+run(),
+> >>>>>> for fault injection calls printk() despite rq lock is already held=
+.
+> >
+> > If you want to add printk_deferred_enter() it
+> > probably should be in should_fail_ex(). Not here.
+> > We will not be wrapping all bpf progs this way.
+>
+> should_fail_ex() is just an instance.
+> Three months ago you said "bpf never calls printk()" at
+> https://lkml.kernel.org/r/CAADnVQLmLMt2bF9aAB26dtBCvy2oUFt+AAKDRgTTrc7Xk_=
+zxJQ@mail.gmail.com ,
+> but bpf does indirectly call printk() due to debug functionality.
+>
+> We will be able to stop wrapping with printk_deferred_enter() after the p=
+rintk
+> rework completes ( https://lkml.kernel.org/r/ZXBCB2Gv1O-1-T6f@alley ). Bu=
+t we
+> can't predict how long we need to wait for all console drivers to get con=
+verted.
+>
+> Until the printk rework completes, it is responsibility of the caller to =
+guard
+> whatever possible printk() with rq lock already held. If you think that o=
+nly
+> individual function that may call printk() (e.g. should_fail_ex()) should=
+ be
+> wrapped, just saying "We will not be wrapping all bpf progs this way" doe=
+s not
+> help, for we need to scatter migrate_{disable,enable}() overhead as well =
+as
+> printk_deferred_{enter,exit}() to individual function despite majority of=
+ callers
+> do not call e.g. should_fail_ex() with rq lock already held. Only who nee=
+ds to
+> call e.g. should_fail_ex() with rq lock already held should pay the cost.=
+ In this
+> case, the one who should pay the cost is tracing hooks that are called wi=
+th rq
+> lock already held. I don't think that it is reasonable to add overhead to=
+ all
+> users because tracing hooks might not be enabled or bpf program might not=
+ call
+> e.g. should_fail_ex().
+>
+> If you have a method that we can predict whether e.g. should_fail_ex() is=
+ called,
+> you can wrap only bpf progs that call e.g. should_fail_ex(). But it is yo=
+ur role
+> to maintain list of functions that might trigger printk(). I think that y=
+ou don't
+> want such burden (as well as all users don't want burden/overhead of addi=
+ng
+> migrate_{disable,enable}() only for the sake of bpf subsystem).
 
-Yes, or some clarification from Audra would also work.
-
-What I was trying to say is here I think the code should check against
-UFFD_FEATURE_WP_HUGETLBFS_SHMEM instead.
-
-Thanks,
-
--- 
-Peter Xu
-
+You are missing the point. The bug has nothing to do with bpf.
+It can happen without any bpf loaded. Exactly the same way.
+should_fail_usercopy() is called on all user accesses.
 
