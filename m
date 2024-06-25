@@ -1,249 +1,302 @@
-Return-Path: <linux-kernel+bounces-229069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8C3916A6D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:32:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC779916A6A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED48B1C22B07
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:32:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E97B1F2469D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:31:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB802170833;
-	Tue, 25 Jun 2024 14:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5392416FF3F;
+	Tue, 25 Jun 2024 14:29:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mVFPbuQo"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="oD/JAdJt"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2059.outbound.protection.outlook.com [40.107.212.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E426617082C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719325802; cv=none; b=f1e1JQvdfUodK08YAJ/vcsfPt6SdOwMpTmqve+YLUek6vjUZlgDjXIqD4QJIGJeoe2R/PasN0xbJiMRDo6csWy7Z08Fn6lukWz3eRUZKmDxTLXToApTfDx8FEM4zg1viQYYD94bs88oVLG0b3pZjh9QaiLvql8A1EFfO98CrVek=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719325802; c=relaxed/simple;
-	bh=3EIzMljfAaU3wCaMbC7Pba/i+sfkfKx7n6Gz4/CnmUY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sRc2bZsZ1XoDxxOwG8i4uSO85mzscipHMR1iWx7KC6cwwX62jEirYemT79+FiIxROlWVk+E8fC4wJXicOW9Nl3K4PSMlYipsHR0qG6xhJ3NrU/I7ubYqiDN6CJ1Uxmib+hXxJwRie4dkqnURSYJXl5qAtpoh/cNyqQZvl2rslmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mVFPbuQo; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-79c054b65d4so42830285a.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:30:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719325797; x=1719930597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rE7xcwL4aw1Y8733YCjFqr/6uCmUd8iYLZuXHEHpnO4=;
-        b=mVFPbuQoHRH71lXnb9IAVmFah9JriWC8Nr8Ghb4iP2XyVPguQ8Ij3y5BGEITsbd/+4
-         MRPtcSeWTnTnonZ//YJSGydn3Op4vmqpptJfYg2bdK5FFtdLpikCSLbPTZyaDTlz4qlS
-         +tBQG5jOW2mg7CRHN2vtBnhIxZXY7p/ig1feg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719325797; x=1719930597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rE7xcwL4aw1Y8733YCjFqr/6uCmUd8iYLZuXHEHpnO4=;
-        b=kySEhj0ww0YBHnIe2taxLliwXD94/TowxN8ksFT1RQSW5JnYoJWZ9imemWlA/qxr3E
-         8TNCqOKO818H9S8VeYK+wB/0qPKXA1jBtee9FZevJx5mDY7itIj4Ei+wbJ+ET+0aYGBg
-         cJ/XHaLlAM9qrPYk5mw81M2bAyxk+btG2J7c+9nVPRhqjJ/KXWifQaRiDuuJoM5VR5xp
-         bCI2cCSKLSC9pGuV/zSR8OHvgU7E2cToBUmBe3NiSdIrk8z0naPiC5JfbqP2+bx0LNS3
-         P8y/car1OwDVchY+Kh11nUOopuAW9NzUJShENwO77WXaOKRCdWohUVhf483JTsdEQ3wW
-         Wcrg==
-X-Forwarded-Encrypted: i=1; AJvYcCX1+V1E+5/DiDyMxPEufohdZHY7jZV2g0Zq7FHjliO9mZDQ6spUVl0X/ISMDcicceOD+gG2r1cA84IxViUHTWpiCeR7EjphLqR4sflH
-X-Gm-Message-State: AOJu0YzeZ1JOeYUqEyTxMgWfbDqgVVB6CdAcwNmnq35yA1N4JyrYN8eg
-	FUfYxIDDXmjFAmCMHCTyBS6/vab6/HKmbFMBcwBNKj1iqicMMEGLETbP538FDjcdvIdwfWH9dXQ
-	=
-X-Google-Smtp-Source: AGHT+IGCIwl8tXouGEETuCoFYKVXF0S+XKO+e04zch5E5c4sBfkQlO9X5LQJqYcVkE9m1QVBbtEwoQ==
-X-Received: by 2002:a05:620a:2942:b0:795:5a3f:3741 with SMTP id af79cd13be357-79be0dc0dfdmr1126904785a.68.1719325796744;
-        Tue, 25 Jun 2024 07:29:56 -0700 (PDT)
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com. [209.85.160.170])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-79bce89be37sm409403685a.17.2024.06.25.07.29.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 07:29:55 -0700 (PDT)
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-444fe7e9f11so153701cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:29:55 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWwPKEl74GeGk9laQ+MWtN75C5Gvq7K/354P81qs5j2dcZdpUKFeXySk9jWyd3FlUt/E46ZrsIIW4H3IufVTjeAQBxeYxVnBHl+2phL
-X-Received: by 2002:a05:622a:18a9:b0:444:ee24:8dc8 with SMTP id
- d75a77b69052e-444f2566c83mr3834021cf.22.1719325794420; Tue, 25 Jun 2024
- 07:29:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB7116C685;
+	Tue, 25 Jun 2024 14:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719325794; cv=fail; b=Zg7Hg5LpLg56A/mjGf8Cec+9bs9OElhB4MIPijgd7MuUbVW0pJNqeu6fjODTErlPeev8tuBC11hw6CsWlkZm02rSmdQplIFECU5TEo0HVTEz+GAeBumb/nqCmg6N4A0Aaf1OPjxucU37kh6zlAyxep+ehnJmd5h8fOKMUBOQHZU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719325794; c=relaxed/simple;
+	bh=LWXA1APFcyPBArOra51jATN4mjZNpuDrnHi2lMFkw7U=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Rs6wXwydxZM8hRKQ5ZS7YrLYa5l11nJvRTLb+Rvavv8Een7FXaBA0bAkKld0smU8FvGv5VvkZgUyAhzA8l+mhUlRx+AdrssYZQ+zcFJrctpCu2VpFdCIQiOe5x2CDZ4RY3V/ORwWW/BtJh6D24/XCaufBMRsZ7oTPK6Wa0ZxN0g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=oD/JAdJt; arc=fail smtp.client-ip=40.107.212.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=KGCYmHdqkNytggSAqD2HQzCKnSaQ4OsylMGY425jINDrrFkJxDw0Wv+osoNNlhH384oHGiU81AshMHqYo6gzRr2e3m9X5ZKgqFF32ghqMZK9sYi5GbtIUJJC19KA2SMXm6DbL/Pv769LGvs0fHiQy1+reR7WxMmhyZ46dHJBnTKUU35w8Qr1lOmkvACvlkZsssnuAlTHaX2FxsLaB8YaPbEwjmlMBBAqMIfpDzd3HTg7OLLj+s4mpvmaDrqoPzpXCLhgnScWv5wmCb6MTqgJGb8uzrYuP8eocsa2YTGYmA3Pfus6LsiFtZXN6bFslMkaM13NoOAsVJItIdhaRszmYg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=W5iYGxqP1d/S+XDkkT9GdX+KvZFEX8+ZZ8Xb2jSND6s=;
+ b=B/zoQGsG0MeEd8YXfsvxjhoxN3YI6zr9TCPolW9jppY4J2BgLrHmcIjMH7jW4gH13MubSwVVn6/LjjytYXiE0ox3oDsiNurGSlleSkyWaDEMH7x6zo+fn0w6JuJCkTu1pkg7sfW0/fMnrfMgn1Di9wj9pu7QvhOrO5J8l2pVDU916p04o3NT7pe2rzfavoBKt+DOCcv9vXVh8Ympm2EYPuGSpKKzTKkAdWnhSuIUl/xbDTkVrR3JGfMOfj7LZ0PkmsmFlpxvZS+mx/88wDUUI+GjAzhefVFMnYBHgZJryc3fkljk47VAMM5E+/EjCKg1oraJSeC2KXosDGXIVN7i5A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=W5iYGxqP1d/S+XDkkT9GdX+KvZFEX8+ZZ8Xb2jSND6s=;
+ b=oD/JAdJtVBDHcpwD6YWTA0YpQ0O4hfRrrOmhSyn1RsP8KimtqI5Gji0x2QJXd3hVd8YxBFK9t4vDeHvoMki0NgJjSzn8yA/1zJcdJaHD/mNp1BIg2JPFjhAeFEVjWx4L5D0cE8lxWk6ApJ10qxzVuIR9cOdaGUbQnyNpyG4e7uA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com (2603:10b6:8:ce::7) by
+ CY8PR12MB7145.namprd12.prod.outlook.com (2603:10b6:930:5f::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7698.32; Tue, 25 Jun 2024 14:29:48 +0000
+Received: from DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f]) by DS0PR12MB6390.namprd12.prod.outlook.com
+ ([fe80::38ec:7496:1a35:599f%7]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
+ 14:29:48 +0000
+Message-ID: <6ef2bf5d-b78b-490f-b64f-30dec3197df5@amd.com>
+Date: Tue, 25 Jun 2024 09:29:45 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/9] Add RAS support for CXL root ports, CXL
+ downstream switch ports, and CXL upstream switch ports
+Content-Language: en-US
+To: Dan Williams <dan.j.williams@intel.com>, ira.weiny@intel.com,
+ dave@stgolabs.net, dave.jiang@intel.com, alison.schofield@intel.com,
+ ming4.li@intel.com, vishal.l.verma@intel.com, jim.harris@samsung.com,
+ ilpo.jarvinen@linux.intel.com, ardb@kernel.org,
+ sathyanarayanan.kuppuswamy@linux.intel.com, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yazen.Ghannam@amd.com, Robert.Richter@amd.com
+References: <20240617200411.1426554-1-terry.bowman@amd.com>
+ <6675cece52eaf_57ac294ea@dwillia2-xfh.jf.intel.com.notmuch>
+ <f4dffe22-b383-4118-bd3b-a3afb2df835e@amd.com>
+ <6679dc345fd4c_5639294a5@dwillia2-xfh.jf.intel.com.notmuch>
+From: Terry Bowman <Terry.Bowman@amd.com>
+In-Reply-To: <6679dc345fd4c_5639294a5@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SN6PR04CA0108.namprd04.prod.outlook.com
+ (2603:10b6:805:f2::49) To DS0PR12MB6390.namprd12.prod.outlook.com
+ (2603:10b6:8:ce::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610222515.3023730-1-dianders@chromium.org>
- <20240610152420.v4.8.I1af05e555c42a9c98435bb7aee0ee60e3dcd015e@changeid>
- <Znlp1_F1u-70D3QQ@hovoldconsulting.com> <CAD=FV=XmuKUKvCq7gG+wM-jAAgHLHnYw4NteFEKz5Fmczd=U7g@mail.gmail.com>
- <ZnqoKDnUMxqf7QRy@hovoldconsulting.com>
-In-Reply-To: <ZnqoKDnUMxqf7QRy@hovoldconsulting.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Tue, 25 Jun 2024 07:29:38 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=Ux+ro90xnEEnALiwtjnOk+LT_qaHmE8jS7adWgBPSDbg@mail.gmail.com>
-Message-ID: <CAD=FV=Ux+ro90xnEEnALiwtjnOk+LT_qaHmE8jS7adWgBPSDbg@mail.gmail.com>
-Subject: Re: [PATCH v4 8/8] serial: qcom-geni: Rework TX in FIFO mode to fix hangs/lockups
-To: Johan Hovold <johan@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Yicong Yang <yangyicong@hisilicon.com>, Tony Lindgren <tony@atomide.com>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Johan Hovold <johan+linaro@kernel.org>, 
-	John Ogness <john.ogness@linutronix.de>, linux-arm-msm@vger.kernel.org, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi,
-
-On Tue, Jun 25, 2024 at 4:21=E2=80=AFAM Johan Hovold <johan@kernel.org> wro=
-te:
->
-> On Mon, Jun 24, 2024 at 02:15:07PM -0700, Doug Anderson wrote:
-> > On Mon, Jun 24, 2024 at 5:43=E2=80=AFAM Johan Hovold <johan@kernel.org>=
- wrote:
->
-> > > As I mentioned last week, the slowdown from this is quite noticeable
-> > > (e.g. 25% slowdown at @115200), but this may be the price we need to =
-pay
-> > > for correctness, at least temporarily.
-> > >
-> > > An alternative might be to switch to using a 16 byte fifo. This shoul=
-d
-> > > reduce console latency even further, and may be able avoid the idling
-> > > UART penalty by continuing to use the watermark interrupt for refilli=
-ng
-> > > the FIFO.
-> >
-> > I'm a bit confused. Right now we're using (effectively) a 64-byte
-> > FIFO. The FIFO is 16-words deep and we have 4 bytes per word. ...so
-> > I'm not sure what you mean by switching to a 16-byte FIFO. Do you mean
-> > to make less use of the FIFO, or something else?
->
-> I meant switching to using one-byte words so that we end up with a
-> 16-byte FIFO where we don't have the issue of adding more data when the
-> last word is not a full four-byte one.
-
-Ah, I get it! I guess I would have described it as 1-byte per FIFO word.
-
-Certainly that seems like something that's worth trying but, at least
-in the past, I remember getting noticeably worse performance with it.
-We used to be in that mode when kdb was enabled which I run with most
-of the time. Depending on what you set the watermark level to you may
-either end up spending a lot more resources servicing interrupts or
-you might end up back in the case where you're stalling the transfer
-because you couldn't service the interrupt fast enough. At 115.2, each
-byte is about 87 microseconds, and draining a 16-byte FIFO is about
-1.4ms. If you set the watermark at halfway then you'll get an
-interrupt every 8 bytes or ~8x as many interrupts as with my patch
-series. You'll also stall any time your interrupt latency is worse
-than 694 microseconds. Hopefully that's not too often, though the
-slowdowns you measured below make me worried.
-
-
-> > Overall the big problem I found in all my testing was that I needed to
-> > wait for a "command done" before kicking off a new command. When the
-> > "command done" arrives then the UART has stopped transmitting and
-> > you've got to suffer an interrupt latency before you can start
-> > transferring again. Essentially:
-> >
-> > 1. Pick a transfer size.
-> > 2. You can keep sending bytes / using the FIFO efficiently as long as
-> > there are still bytes left in the transfer.
-> > 3. When you get to the end of the transfer, you have to wait for the
-> > UART to stop, report that it's done, and then suffer an interrupt
-> > latency to start a new transfer.
-> >
-> > So to be efficient you want to pick a big transfer size but if there's
-> > any chance that you might not need to transfer that many bytes then
-> > you need to figure out what to do. If you can handle that properly
-> > then that's great. If not then we have to make sure we never kick off
-> > a transfer that we might not finish.
->
-> Right. But with a 16 1-byte word FIFO, we may be able to kick of a
-> really long transfer and just keep it running until it needs to be
-> kicked again (cf. enabling TX). The console code can easily insert
-> characters in the FIFO while the transfer is running (and would only
-> have to wait for 16 characters to drain in the worst case).
->
-> Effectively, most of the identified issues would just go away, as
-> there's basically never any need to cancel anything except at port
-> shutdown.
-
-Yeah, though you'd still have to make sure that the corner cases
-worked OK. You'll have to pick _some_ sort of fixed transfer size and
-make sure that all the special cases / console / kdb work if they show
-up right at the end of the transfer.
-
-I was also a bit curious if there could be power implications with
-leaving an active TX command always in place. Perhaps geni wouldn't be
-able to drop some resources? Do you happen to know?
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6390:EE_|CY8PR12MB7145:EE_
+X-MS-Office365-Filtering-Correlation-Id: 268ab72d-0738-4501-1e73-08dc95234443
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|366013|1800799021|376011|7416011|921017;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?V2lSSzNhaHVwS1dtVVBvanZNdVFDcXhydUl0dG5TbWc3VkphcWFwLzMrODU3?=
+ =?utf-8?B?YmdqVXZiK1R6cG5kaFkrNDNWaXhHNWY0T2pTRk9RZDJuNElwZXhvY3ZXelE0?=
+ =?utf-8?B?eHJFNXE0US8zZGthTzI3Vi9XQzdnTmp0bm4zdkkvdzNsNC9VcC81U0tWSU5S?=
+ =?utf-8?B?TWJKMDVjbEkybm82ZGgvakRLcERuNDRJTEtlSFFwRzFtblBaSmhjaHpEdmk5?=
+ =?utf-8?B?bmoyTXFBLzJHQTM1OW5KTWU0dHp0NlV1L0RPL1BKYUlSYVIrbnRMTjVCV2Vh?=
+ =?utf-8?B?S2s5T0VteklDc2gvYzMzby9WbjJwM3Qvcm8vQlVvOWxsWWRDVXZyMVZTUTEv?=
+ =?utf-8?B?aDhtaGoyTVJ5TEJ2ZWkvQWdJaFZBUFhPT3hWVWxYS0xxNEg0R3BiaHBZRmVD?=
+ =?utf-8?B?QzNFRHltQndGb0dHMEVhSHYvMm9JOG5DVFNQUjJreEZmY3B0eTBtS3VpUmVQ?=
+ =?utf-8?B?bGo1dFlhVk9rVjdWMFhvNmlxeGxsTHVTeGp0RnV0d1ZGdWhkR0hZaEIzOFpQ?=
+ =?utf-8?B?cjFKUzFPRFpRRjVVK2V5QlBsSUcxYmpGZFMybEZSYXNZckczU21VcERRR2FV?=
+ =?utf-8?B?Mm8yMEp2MUM5VEttN1AzRFlMaEk2aHpZa1AwQXRhNGd6ZXplRWtIcFBWL284?=
+ =?utf-8?B?K1J0T2ROaVVraWlZbmNpTnVUbVJvcDNIYlp0UVUwN1ljWm1KMGNIbWJucnBT?=
+ =?utf-8?B?RWV5T1FBYXJFK29HUXdjQkJhSVZBbUhsYmJRb3JkL1RHN0NOSTZCN05Sb3Yz?=
+ =?utf-8?B?bVhudGNxU1NxS21mM0pJTFc5STBYMy9GbW5WQU9mWGdlUDRHNVgvdnN1Ly81?=
+ =?utf-8?B?L1dnSCsxQVJIQnFYTFl2RURFMHJYWHFzZ2tRZU1yYXlPejBYeWRKS1FWWHM5?=
+ =?utf-8?B?VHdBVDdiaDdHMHQxakgyVWRyVGx4aStXajdnZVA0V0FjblMwQno5RnhYcEdF?=
+ =?utf-8?B?QlBkeFpLY2VYWDQycFNPZ2hSSDJJeVIwVzdVTXBRb2c0MWFmZDNsa0xGTFpX?=
+ =?utf-8?B?eUh3ajZFQVg5c1VlV2NkZW1KTS9pa2JqZ2k4L2k3OHRhRjEzcXhlR3Q3Z3dq?=
+ =?utf-8?B?Y0JqUkZvckw4WjVUdm5RL0JBd2lhcjZpd3NBTnZlU1BmMWxVK2lHcjJWOGRy?=
+ =?utf-8?B?VklpZllmYnoxbkhQamR5My9NS0dLM0JYMjJsbWo0MGVwUmhLaHNidUt6clZk?=
+ =?utf-8?B?bkVFczJCd2daNWZZWmZaL3pBb3diNVF2cDlLSVltU09pVHFkdlRhdWRFMGNk?=
+ =?utf-8?B?VzJUSFBJOW5ybXI2YnU4dUpMQ1dnQ3BWVC9uZzk4U0JiLzFHYnFRd1NjUjZC?=
+ =?utf-8?B?Tjdpdmc5NTl4blBLaW1DUEZOTmZ1ZkgrNG9FVEs2Q1RjRENJZzNueDM3dSs1?=
+ =?utf-8?B?OXdQZnNONmUvTk1vK1BVVnVYZ3NRYmhBS2k2Vk4wVVJGcFhqUDN2cjhMc2xt?=
+ =?utf-8?B?VTQ4dFNYZUlLclVBTkZzRHlTeGpxSGh6YWpPWll3R2x4N3RrR3BxbExoSzkx?=
+ =?utf-8?B?Vkk1MG5yQUJBV2wxL0dLaHdwVlZFbkRGaUQ0SGJzb0hlVG1IWTNWUmNRWWNu?=
+ =?utf-8?B?bkZKM2hjcGZjZ0QrWURoUUFYMmFWVjk5UTlmampqYVVEWUIyOHhkVFNSVExm?=
+ =?utf-8?B?M2FYOTJXZWJuN0lOUytITEcrbmVkUFUxdndoRmE1Sy9LemFPU3g5Z3Jhckw0?=
+ =?utf-8?B?V0RxSlFndWF3QzNCbmk3SzlpZEVCdjV1d01oQ2xJcG9YazVNY25kcHN0TkN3?=
+ =?utf-8?B?QjB4OC85SHMwWmFWSm16R0ptU2hwN2l1dHkvaG1tZzI2ZjBJLzZPdE40ZzN3?=
+ =?utf-8?Q?y+0za5P+qtWvImJJNljXcfj4rtLRbNk20jXT8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6390.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(1800799021)(376011)(7416011)(921017);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?bEhNanpwTVhWVzdReU9Ic0pmekszNlVhZW1IckVkWWk1cUsrcWEyQW1BdmFV?=
+ =?utf-8?B?UzVpYjcwYXVWNUNFdmU0WWFqRTdJT1RzcXluWERjZHZWc2xxNFlaVGFtMUtO?=
+ =?utf-8?B?d3hsdk4xUXZkcUtCUHZSRHM4aEhsNDMvb0pEVHpJVHpRUlc1dHdydTVYYnlG?=
+ =?utf-8?B?QkU0RVpsNk8wemh0aVY4UDBpMlNSNThscTFiVkEwYk1IQnl1UFE0TFAyVDA0?=
+ =?utf-8?B?OGM1ZnVSd0kzemJVTWR0SXpGRkM0Z0JIZ0IwakRkdnZlNFEvOFZTUk9HaWx4?=
+ =?utf-8?B?TDVHMnRQYzBMT2RLNkRJc2F3UkU1SHI4dDJlbXZBbDBRTkNFSEdDb0Fqb1dE?=
+ =?utf-8?B?cUo1TGU2d2FZc1RXNDg3Y2dIdlV5NkN3Skdra1pGL2o4SVNlQk1oSFFlRlpt?=
+ =?utf-8?B?TUtmOERUYjNzampPbFkrdllINEpnMTBlUHMxWVRJc1JOTEJ4ekhhTmxTRWs3?=
+ =?utf-8?B?dzhPQy9BaDFGc2VBTzZ2bGtQZmo5R2RqMWhXZ0JUOWsrSnlCWFhsbVp6TTRy?=
+ =?utf-8?B?dmFpRmpPUUxqemZxb3ZJQ1htc1hTRkkwU0tQdjBQbTFBbU55bklwdU0wMmdY?=
+ =?utf-8?B?dDc5emlPRjVCUHlEQzRsUkV1elBna2hHMjNJTUlneFVlVnVyZkg3YjBHS0kr?=
+ =?utf-8?B?OGlobURiNVpiS21Xc2RhWjVtWStwUlBkb2k5T2FHK0Q0YUgxTXJnU3dZRHk3?=
+ =?utf-8?B?Mko0bnFXWHMrOUZyWHR6Q3RVS1M3SzhEN0RrcDNydlM3QVR5YXQ0Sm43UjJu?=
+ =?utf-8?B?UlJTb3VtRWxIM01kZ1FRSXVjcXB6UEV5V1NWeTFFaTRtdTYwUkpLUlBIdW05?=
+ =?utf-8?B?c3dZQkJ0N1RaRkdCV2dXU0VwWGJQdUswdDdJWUVRdzRYbTU2aHpINnhiS1I4?=
+ =?utf-8?B?MTYrSnVXZkRvQmg1eStXMFJ5eE04TWM0NkhjYndlb2tVVVBQSWtnNmxISTJU?=
+ =?utf-8?B?clF0YlR4dE01aklLU3ovdVk1SnI2MXpKbUlyblZPbUIwSnM3MDJCN1dicWxR?=
+ =?utf-8?B?M2NWNUx4WXZHZms5ZFlabzRLWVBwVlBndjZOcFdkc2xXaDQvR29Cak4xd1M4?=
+ =?utf-8?B?RHVvblhvR05icm01cERyQkkybmxOb21ENUJaMlZXSUVEbEpkdUtKVjdMeVQ4?=
+ =?utf-8?B?QjhLM1lscldUcTZ3OHVYa2NUTXhyL3FFVWRDYU51S2NQdUpCekVrRTBZUXIv?=
+ =?utf-8?B?Mm5ERW5IMWZRRFNOOStRUFZuM2tlSWtpWGIrSjVxL2NienZCbUMwT2VFWG12?=
+ =?utf-8?B?NEFwMjE0M0MrWG5MbWhPYnhZS0RMK3p4OGF5VGxkZUZzWHp3TVovQll2WWlI?=
+ =?utf-8?B?SDBOS3pZTUxwWHlsdmRqeVVydmh2U0hDK0R5SjBGR3VWRnBkNHdMZVpkdUF5?=
+ =?utf-8?B?MEdvN1gyTDNkRWdZN1p5TG5IQ2RXUmdUR3c5TEdQanhDSnZ3M000bkM0Snp2?=
+ =?utf-8?B?Qmp5cUVoUm02bWhNMDY3TkN3RmhSdE5TM29UZnJUS0VuNEJDSXVDcjlhUDV3?=
+ =?utf-8?B?NGpUdW5HOUs5VzhiNVg0T0FDL2lqRHRNN0wycUVtaVA1WXhlL2wraG5JSjlR?=
+ =?utf-8?B?WlRoKzZlUDRHTktLNzVnUW1mM2txSmk2OEV6UFhCem5RNnpsMFpKbGtSQTMx?=
+ =?utf-8?B?ZHJIK1FXb0RYKzNHZ3VYcXZsVjRNalE4SDlCN09OWkRIVXRiVnp6bG9WWTY2?=
+ =?utf-8?B?dDJxQ2Nnck5OTjRLQ2gwb2UyTFRiUyttQzJhWXE0QTAzOGY5ZFVaYkwxcEN0?=
+ =?utf-8?B?SktweVIxZzlVR3dwWk03ZUtaVmtQMDVrWkhNN2VXMGlXRVRZYmtxUFQ2RnF0?=
+ =?utf-8?B?dnZoMUR0OTdlY2VrSVIwbjZsaVY3cjExbUc1bVdqWU5SU3pLZlgxblAvVkxo?=
+ =?utf-8?B?YjBHTGx2dWQzR2lsTWUxVVdJUFhYYUZPNGZySjAwTnFvcjUraFBBVkUzV3Ro?=
+ =?utf-8?B?UmVSb3FuM0lsQVpWN2ZDV1VkWERicWJ6dHJFN2NNOTkzbzJJQ2tmVmNqelVn?=
+ =?utf-8?B?Y3h2VU0rMTdVb0ttc0owQk9ZRWlOelVJdzZWdTNZV05VWi94ZVVLc3ZXR2hM?=
+ =?utf-8?B?REo0Z3FJbHV5eWRXakhyM1JYNk9hWHBmMW0wVy9BUkNoUGhaTXZLa3FtWVlX?=
+ =?utf-8?Q?XErmobqGDy48ZrIVuDGNUGlmD?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 268ab72d-0738-4501-1e73-08dc95234443
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6390.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 14:29:48.2863
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: CtaufGVTEaJt36/HN862fJLLKByqXHPF671JO0KrGu7n6gtqiOtVYQ6Y8LGu5j3pnvzFpyTyuQb8489EyIyTsg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7145
 
 
-> > I'd also mention that, as talked about in my response to your other
-> > patch [1], I'm not seeing a 25% slowdown. I tested both with my simple
-> > proposal and with this whole series applied and my slowdown is less
-> > than 2%. I guess there must be something different with your setup?
-> > Trying to think about what kind of slowdown would be reasonable for my
-> > patch series at 115200:
-> >
-> > a) We send 64 bytes efficiently, which takes 5.6ms (64 * 1000 / 11520)
-> >
-> > b) We stop transferring and wait for an interrupt.
-> >
-> > c) We start transferring 64 bytes again.
-> >
-> > Let's say that your interrupt latency is 1 ms, which would be really
-> > terrible. In that case you'll essentially transfer 64 bytes in 6.6ms
-> > instead of 5.6 ms, right? That would be an 18% hit. Let's imagine
-> > something more sensible and say that most of the time you can handle
-> > an interrupt in 100 ms. That would be about a 1.7% slowdown, which
-> > actually matches what I was seeing. For reference, even an old arm32
-> > rk3288-veyron device I worked with years ago could usually handle
-> > interrupts in ~100-200 ms since dwc2 needs you to handle at least one
-> > (sometimes more) interrupt per USB uFrame (250ms).
-> >
-> > ...so I'm confused about where your 25% number is coming from...
->
-> I didn't do an in-depth analysis of the slowdown, but I did rerun the
-> tests now and I'm still seeing a 22-24% slowdown on x1e80100 with rc5.
-> This is a new platform so I compared with sc8280xp, which shows similar
-> numbers even if it's slightly faster to begin with:
->
->                                         sc8280xp        x1e80100
->
->         rc5 full series                 61 s            67 s
->         rc5 last patch reverted         50 s            54 s
->
-> I have a getty running and cat a 10x dmesg file of 543950 bytes to
-> /dev/ttyMSM0 from an ssh session (just catting in a serial console gives
-> similar numbers).
 
-That's really weird / unexpected. Your hardware should be fancier than
-mine so, if anything, I'd expect it to be faster. Is there something
-causing you really bad interrupt latency or something? ...or is some
-clock misconfigured and "geni" is behaving sub-optimally?
+On 6/24/24 15:51, Dan Williams wrote:
+> Terry Bowman wrote:
+>> Hi Dan,
+>>
+>> I added responses below.
+>>
+>> On 6/21/24 14:04, Dan Williams wrote:
+>>> Terry Bowman wrote:
+>>>> This patchset provides RAS logging for CXL root ports, CXL downstream
+>>>> switch ports, and CXL upstream switch ports. This includes changes to
+>>>> use a portdrv notifier chain to communicate CXL AER/RAS errors to a
+>>>> cxl_pci callback.
+>>>>
+>>>> The first 3 patches prepare for and add an atomic notifier chain to the
+>>>> portdrv driver. The portdrv's notifier chain reports the port device's
+>>>> AER internal errors to the registered callback(s). The preparation changes
+>>>> include a portdrv update to call the uncorrectable handler for PCIe root
+>>>> ports and PCIe downstream switch ports. Also, the AER correctable error
+>>>> (CE) status is made available to the AER CE handler.
+>>>>
+>>>> The next 4 patches are in preparation for adding an atomic notification
+>>>> callback in the cxl_pci driver. This is for receiving AER internal error
+>>>> events from the portdrv notifier chain. Preparation includes adding RAS
+>>>> register block mapping, adding trace functions for logging, and
+>>>> refactoring cxl_pci RAS functions for reuse.
+>>>>
+>>>> The final 2 patches enable the AER internal error interrupts.
+>>> [..] 
+>>>>
+>>>> Solutions Considered (1-4):
+>>>>   Below are solutions that were considered. Solution #4 is
+>>>>   implemented in this patchset. 
+>>> [..]
+>>>>  2.) Update the AER driver to call cxl_pci driver's error handler before
+>>>>  calling pci_aer_handle_error()
+>>>>
+>>>>  This is similar to the existing RCH port error approach in aer.c.
+>>>>  In this solution the AER driver searches for a downstream CXL endpoint
+>>>>  to 'handle' detected CXL port protocol errors.
+>>>>
+>>>>  This is a good solution to consider if the one presented in this patchset
+>>>>  is not acceptable. I was initially reluctant to this approach because it
+>>>>  adds more CXL coupling to the AER driver. But, I think this solution
+>>>>  would technically work. I believe Ming was working towards this
+>>>>  solution.
+>>>
+>>> I feel like the coupling is warranted because these things *are* PCIe
+>>> and CXL ports, but it means solving the interrupt distribution problem.
+>>>
+>>
+>> I understand the service driver interrupt issue but it is not clear how it 
+>> applies to the CXL port error handling. Can you help me understand how the 
+>> interrupt issue affects CXL port AER UIE/CIE handling in the AER driver.
+> 
+> Just the case of the AER MSI/-X vector being multiplexed with other CXL
+> functionality on the same device. If the CXL interrupt vector is to be
+> enabled later then it means MSI/-X vector enabling needs to be dynamic.
+> 
+> ...but yeah, not a problem now as we are only talking about PCIe AER
+> events and not multiplexing yet. I.e. that problem can be solved later.
+> 
+>>
+>>
+>>>>   3.) Refactor portdrv
+>>>>   The portdrv refactoring solution is to change the portdrv service drivers
+>>>>   into PCIe auxiliary drivers. With this change the facility drivers can be
+>>>>   associated with a PCIe driver instead fixed bound to the portdrv driver.
+>>>>
+>>>>   In this case the CXL port functionality would be added either as a CXL
+>>>>   auxiliary driver or as a CXL specific port driver
+>>>>   (PCI_CLASS_BRIDGE_PCI_NORMAL).
+>>>>
+>>>>   This solution has challenges in the interrupt allocation by separate
+>>>>   auxiliary drivers and in binding of a specific driver. Binding is
+>>>>   currently based on PCIe class and would require extending the binding
+>>>>   logic to support multiple drivers for the same class.
+>>>>
+>>>>   Jonathan Cameron is working towards this solution by initially solving
+>>>>   for the PMU service driver.[1] It is using the auxiliary bus to associate
+>>>>   what were service drivers with the portdrv driver. Using a CXL auxiliary
+>>>>   for handling CXL port RAS errors would result in RAS logic called from
+>>>>   the cxl_pci and CXL auxiliary drivers. This may need a library driver.
+>>>
+>>> I don't think auxiliary bus is a fundamental step forward from pcie
+>>> portdrv, it's just a s/pcie_port_bus_type/auxiliary_bus_type/ rename,
+>>> but with all the same problems around how to distribute interrupt
+>>> services to different interested parties.
+>>>
+>>> So I think notifiers are interesting from the perspective of a software
+>>> hack to enable interrupt distribution. However, given that dynamic MSI-X
+>>> support is within reach I am interested in exploring that path and
+>>> mandating that archs that want to handle CXL protocol errors natively
+>>> need to enable dynamic MSI-X. Otherwise, those platforms should disclaim
+>>> native protocol error handling support via CXL _OSC.
+>>>
+>>> In other words, I expect native dynamic MSI-X support is more
+>>> maintainable in the sense of keeping all the code in one notification
+>>> domain.
+>>>
+>>>>   4.) Using a portdrv notifier chain/callback for CIE/UIE
+>>>>   (Implemented in this patchset)
+>>>>
+>>>>   This solution uses a portdrv atomic chain notifier and a cxl_pci
+>>>>   callback to handle and log CXL port RAS errors.
+>>>
+>>> Oh, I will need to look that the cxl_pci tie in for this, I was
+>>> expecting cxl_pci only gets involved in the RCH case because the port
+>>> and the endpoint are one in the same object. in the VH case I would only
+>>> expect cxl_pci to get involved for its own observed protocol errors, not
+>>> those reported upstream from that endpoint.
+>>>
+>>
+>> The CXL port error handling needs a place to live with few options at the moment.
+>> Where do you want the CXL port error handlers to reside? 
+> 
+> I need to go understand exactly why cxl_pci is involved in this current
+> proposal, but I was thinking it is probably more natural for cxl_port to
+> have error handlers.
 
-...although it wouldn't explain the slowness, I'd at least be a little
-curious if you've confirmed that you're running with a 16-word FIFO
-depth. See the function geni_se_get_tx_fifo_depth() where newer
-hardware can actually have larger FIFO depths.
+Ok. I agree, cxl_port is a better location for the handlers.
 
-Just in case it matters, I'd be curious if you have
-`CONFIG_IRQ_TIME_ACCOUNTING=3Dy`
-
-Oh: one last thing to confirm: do you have kernel console output
-disabled for your tests? I've been doing tests with the kernel console
-_not_ enabled over the serial port and just an agetty there. I could
-believe things might be different if the kernel console was sending
-messages over the same port.
-
--Doug
+Regards,
+Terry
 
