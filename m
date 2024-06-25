@@ -1,175 +1,123 @@
-Return-Path: <linux-kernel+bounces-229200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24F8916CCE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:22:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75C07916CE1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 833EC282B61
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:22:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33EAA28A1F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:24:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD880180A9E;
-	Tue, 25 Jun 2024 15:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F1C317624B;
+	Tue, 25 Jun 2024 15:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="ndD+UOKG"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Cv9vTLGw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B4717FAA0
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62E5116FF4A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719328489; cv=none; b=dM3tdjeq7k6Y+8+jtVaaxAd1VqYcwyOgq4Vh9zM5q0m0qCmbzzfou77eCbitilk1GFQNNGrUhFzMNUAmkBE4/b8o6rSYgOpOQKbCNSMrH+bIETrvuwZpKO5H9W22H4PHtaRGZ6R8anUhbMK31rFUQWH+z0hC+hshkOpQC5GUq2I=
+	t=1719328694; cv=none; b=KOmwu1xvicclodxfOCQujZJG677QGswPmg1rczjJzhYaY+fYuH8dOn9KKFlvSE2OTRMvVzpZSVET+v2TJsuSWrk2CBotrHqjN25Rrv+oMl3rQjQnYVFjVWWxA0xCRL9SBgcNtLYxDSo9m3OOZjUXVeq+sKXgVSaYPmbTXWYBJaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719328489; c=relaxed/simple;
-	bh=k1iHtedjV9QVkielOiNOemjYbP3g9sxxZNa/dBLY7fI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XUYdRhggZrUdrk1MmvUnCe25P65/Gd4Liouw5mwYguiukMuEdAgh6sTTYJXat44KsHrwPoD8fymbeMYkdPgZw13/F50tAZP+14LWWuB19j90hWt5O0XCKsMWlPwqdoOEPqSS+u0VVvBvUEy69r5+o9DFUCsvtonUGuaJG7Ra3qs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=ndD+UOKG; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-362b32fbb3bso3726021f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:14:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719328486; x=1719933286; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eaxQjkO+ga+J3aoKVTPSLO6QhoxA4KxcQLOxXe5fbzI=;
-        b=ndD+UOKGYVfJC5KLRP/RfSHy3cyDj8TdZcOomeuEwW//Qx/1ruYaad91Nd3t5ojJk6
-         BIzprTE6ooGLWnXs3hHZX7Ug9ZFlXKN5YNDfC52km0FXP41fHo8sxcJv9eBrmwN5AOFs
-         B+bX6H7LzZPiFdG+yRVkPQJfAxIDOemThLVkNZ0SIGr5LkIFe/alIzRj0NJh3d9686G6
-         8LuJQqNnSFLc9+ZJYic5m8vWf2PkonLYmfdPAiPc2EBOBgQP+jaUIqaci9EUStWHYoLy
-         T1TfSHXklrYA8C84EJkq0dVjubooPUzoG+AZboPX3yPe9llJEPYiNEoPB5Xe8EOtxACo
-         n6eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719328486; x=1719933286;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eaxQjkO+ga+J3aoKVTPSLO6QhoxA4KxcQLOxXe5fbzI=;
-        b=jHGXmwA/Wvt3Rz7BTXsCbJb7el37IVIVwjilDo6rdX+t3cbNWClxaMPPTSPvDUpY3v
-         6KerzqfNQ6JGVLaiK3hrGOT+TzLE6v1y5J/exp0Im/hjmGnaNU/ji8j/quWCZEMFC59k
-         oDaHRCgEZvmjSsZgwEIgWe+bS9WCG4cpJuqGzDbxirYTlspjrkHnxxbj6NOa6/2PCZHv
-         3YbDpViIhj2DD+bR4ffy02GtI7gfMvLJcSGcYJSTgtI0HMa3RZapE1T3BX86qDkTRLIK
-         C6y3hou3ti8fEknM6drhmMfHNCiP8JdHweVLSVp9g9AQv5jGD4+XIRbf4asllvACFSi8
-         VH/w==
-X-Forwarded-Encrypted: i=1; AJvYcCUmij+vEBLiLkEoZnYAlWUZc0qOK6nnVl+l9s7xdUCwC+F4ZCPvp2AlHsNqb/LGfEZscN+X08liTYS2cw6A7X5tFg4zfUcnYLuIdlc3
-X-Gm-Message-State: AOJu0YyFkgsS+f2Hd4C7SilVCqFXxawxKZYn7rrSXqdPBSwTf9XrpZpy
-	zHhfhPL6k2oAgEjO/ZbVTejUIoCsVz+X9WfAsbS7aiGW3OMFH1zkv58cYJHME2Y=
-X-Google-Smtp-Source: AGHT+IFdH348oNNdczelRSKUmSIbTq236WncTciAk1DA7zjg7Vx/B5Ddu1ouzt/SV1V9cTkxVdQMlg==
-X-Received: by 2002:a5d:68d2:0:b0:362:41a4:974d with SMTP id ffacd0b85a97d-366e7a56ecfmr5620684f8f.46.1719328485762;
-        Tue, 25 Jun 2024 08:14:45 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:2b2c:4971:1887:588b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a2f694asm13215884f8f.77.2024.06.25.08.14.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 08:14:45 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH v2 3/3] arm64: dts: qcom: sa8775p-ride-r3: add new board file
-Date: Tue, 25 Jun 2024 17:14:30 +0200
-Message-ID: <20240625151430.34024-4-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240625151430.34024-1-brgl@bgdev.pl>
-References: <20240625151430.34024-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1719328694; c=relaxed/simple;
+	bh=oygoiBETUJQZnnh6fyNH/YRB5pNrhYh31+kfEH0vXPY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VoO58s26d9uxRCUTmr0re2MZVZvJqnt6A5Jf2t3SilPHNiiVsGDwla+ZMwqnXrp1/TtKIT1mJPiCXhrM17UHjudul3Bw/SLLV3QEoVpRmwZfvL52GrQnlnkAUe4SwP05c59a6nQbNLu+vKLgVJfTegtIzWMBBFdOVWDLqRkMql8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Cv9vTLGw; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719328692;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DDDqIqqywCpZgnVzJ2LCa0AlAYA9C7CGtoimbDUxqB8=;
+	b=Cv9vTLGwXOWDFURXU0As4WO/6faW5g66a+etXHoU7lu7mw+C9be0gkoDi4qTYwzYhWCrF9
+	0bhea0kQ7vJwv5uN6CnkBkRd2BvddEDJ/OFVHnEvW3716z2LrZRTQymH270ogfdiJ70SCf
+	/1883tjEBdqc7X3jt1yTmShqfYmM5Ug=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-311-YwrBamZ8Nsa68HAOAtqung-1; Tue,
+ 25 Jun 2024 11:18:08 -0400
+X-MC-Unique: YwrBamZ8Nsa68HAOAtqung-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9156B1954238;
+	Tue, 25 Jun 2024 15:18:03 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.198])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id AD3F3300021A;
+	Tue, 25 Jun 2024 15:17:59 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue, 25 Jun 2024 17:16:29 +0200 (CEST)
+Date: Tue, 25 Jun 2024 17:16:25 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 1/6] task_work: Provide means to check if a work is
+ queued
+Message-ID: <20240625151624.GB14254@redhat.com>
+References: <20240625135244.20227-1-frederic@kernel.org>
+ <20240625135244.20227-2-frederic@kernel.org>
+ <20240625141539.GA14254@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625141539.GA14254@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+And probably task_work_add() should do the same when it returns -ESRCH.
 
-Revision 3 of the sa8775p-ride board uses a different PHY for the two
-ethernet ports and supports 2.5G speed. Create a new file for the board
-reflecting the changes.
-
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- arch/arm64/boot/dts/qcom/Makefile            |  1 +
- arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts | 47 ++++++++++++++++++++
- 2 files changed, 48 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index 5576c7d6ea06..8b7a81b82213 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -113,6 +113,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sa8155p-adp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sa8295p-adp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sa8540p-ride.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sa8775p-ride.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= sa8775p-ride-r3.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-acer-aspire1.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-idp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= sc7180-trogdor-coachz-r1.dtb
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts b/arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts
-new file mode 100644
-index 000000000000..d214a87d69b2
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts
-@@ -0,0 +1,47 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2023, Linaro Limited
-+ */
-+
-+/dts-v1/;
-+
-+#include "sa8775p-ride.dtsi"
-+
-+/ {
-+	model = "Qualcomm SA8775P Ride Rev3";
-+	compatible = "qcom,sa8775p-ride-r3", "qcom,sa8775p";
-+};
-+
-+&ethernet0 {
-+	phy-mode = "ocsgmii";
-+};
-+
-+&ethernet1 {
-+	phy-mode = "ocsgmii";
-+};
-+
-+&mdio {
-+	compatible = "snps,dwmac-mdio";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	sgmii_phy0: phy@8 {
-+		compatible = "ethernet-phy-id31c3.1c33";
-+		reg = <0x8>;
-+		device_type = "ethernet-phy";
-+		interrupts-extended = <&tlmm 7 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&pmm8654au_2_gpios 8 GPIO_ACTIVE_LOW>;
-+		reset-assert-us = <11000>;
-+		reset-deassert-us = <70000>;
-+	};
-+
-+	sgmii_phy1: phy@0 {
-+		compatible = "ethernet-phy-id31c3.1c33";
-+		reg = <0x0>;
-+		device_type = "ethernet-phy";
-+		interrupts-extended = <&tlmm 26 IRQ_TYPE_EDGE_FALLING>;
-+		reset-gpios = <&pmm8654au_2_gpios 9 GPIO_ACTIVE_LOW>;
-+		reset-assert-us = <11000>;
-+		reset-deassert-us = <70000>;
-+	};
-+};
--- 
-2.43.0
+On 06/25, Oleg Nesterov wrote:
+>
+> On 06/25, Frederic Weisbecker wrote:
+> >
+> > --- a/kernel/task_work.c
+> > +++ b/kernel/task_work.c
+> > @@ -177,6 +177,7 @@ void task_work_run(void)
+> >
+> >  		do {
+> >  			next = work->next;
+> > +			work->next = TASK_WORK_DEQUEUED;
+>
+> OK, but then the additional change below makes sense too?
+>
+> Oleg.
+> ---
+>
+> --- x/kernel/task_work.c
+> +++ x/kernel/task_work.c
+> @@ -106,8 +106,10 @@ task_work_cancel_match(struct task_struc
+>  		if (!match(work, data)) {
+>  			pprev = &work->next;
+>  			work = READ_ONCE(*pprev);
+> -		} else if (try_cmpxchg(pprev, &work, work->next))
+> +		} else if (try_cmpxchg(pprev, &work, work->next)) {
+> +			work->next = TASK_WORK_DEQUEUED;
+>  			break;
+> +		}
+>  	}
+>  	raw_spin_unlock_irqrestore(&task->pi_lock, flags);
+>
 
 
