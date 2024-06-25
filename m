@@ -1,290 +1,209 @@
-Return-Path: <linux-kernel+bounces-228626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5CB9162A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:38:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BB19162AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F211F22F18
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:38:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89AB7B213C6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46107149C6D;
-	Tue, 25 Jun 2024 09:38:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8998C14A088;
+	Tue, 25 Jun 2024 09:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Xj13taHy"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="WiVa+xlO"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2096.outbound.protection.outlook.com [40.107.20.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A51FA12EBEA;
-	Tue, 25 Jun 2024 09:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719308296; cv=none; b=dMDTa/vESuTPeEweXllQ/2AKYYaNkv+J+V6I34GOSBhouMJj1dykZ2S8HAqooFrRVKWhsYquep8mWrjdKETrbdqfyP/wetfsZPlx0bGdDdx/6blMG0JcAVxU/ivCtJZFaqJrVaSYzSEhjBqz30+j/C9gZdFiOyRUwu6xFKl5vi8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719308296; c=relaxed/simple;
-	bh=JHBg/Hqu7jDucGLJh8PXWrcGEzA3WPJnZuttQx/ap4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tioamJd+XYUbVpmYXej/4kkny+MY7xBNe8NrDbnqBtonPVpJJqcfe3idSmL/jnTO7HzzJQKoEvQ1yHEdxiTxq+n9DOSV4LbRAhl4vvmHVd2c7gX0xnWsWc7XOKg/61H03UOyKx/5WQmMFg0+7xv9Bd8VnmF6fwm/4jnOPdDgHak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Xj13taHy; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=p81muDELRMtjx8hyqZALP7SKcIRl8MDp2vLMju2Ho8E=; b=Xj13taHya5HkEoqUPsGFqMXHJ6
-	NzCzD6zqCeviLJEzSNTX732uamV96/kCoG4N49ZpaEM5ELZuyNjO5fcLmYiNSYvE+IoMQextvoGMA
-	42eZUiN+rON8xClJiFvWQp8+2oWtriG1BUMVIfrU7TPlVKFlsazxR7yaMUWpVG/6Vip3k8/FbqIqR
-	QIHj7ugnY9D2Uvpu/VN9B3o6SozZXayb0XRgc9yvCKqXpGgYcCJTlI+AR+xdS/3DooYMNppoWrisG
-	x13f+gC2IkxLXLTskwLibafo3V0Z1CcB7NKUZ2kFSz1kvt2SoXNecNOOfXdkC8JORSHN7781hXnDA
-	zmikDRBg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sM2c3-00000008Njg-3inE;
-	Tue, 25 Jun 2024 09:37:39 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7378B300754; Tue, 25 Jun 2024 11:37:19 +0200 (CEST)
-Date: Tue, 25 Jun 2024 11:37:19 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, Kees Cook <keescook@chromium.org>,
-	Marco Elver <elver@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Baoquan He <bhe@redhat.com>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Changbin Du <changbin.du@huawei.com>,
-	Pengfei Xu <pengfei.xu@intel.com>, Xin Li <xin3.li@intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>, Uros Bizjak <ubizjak@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com,
-	linux-hardening@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v3] x86/traps: Enable UBSAN traps on x86
-Message-ID: <20240625093719.GW31592@noisy.programming.kicks-ass.net>
-References: <20240625032509.4155839-1-gatlin.newhouse@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C04A412EBEA;
+	Tue, 25 Jun 2024 09:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.96
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719308302; cv=fail; b=pOmy1CoGSJYFD8nbVMlpyVR2dtPtt7xgTxtRd50pHrb3GYi2sU2j83Ic9URBfh5bEm1kTCp2NFXPzlYjWANZMRKl2NrNZfkeaz8p8cFIr0W7bBNvO+DAi5dQyshG8SDGHd1AG2qD0Yh76naUPH4Exw52zBF2KbJjQNPLqJRcoow=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719308302; c=relaxed/simple;
+	bh=ABV1tYfnY1Gm9xMT5xj/KKvr4myE7RB+N2/bEEkNvEs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Inz+24Sl3k0pAktPAjbSHz8nuhe8aQ4jAyzxYh6Yqb4TomxUiRn7QgDK2+gcrz9ig4CpmDaOOjTM6ERwG9TcZhLk6KzqpIc/SP+9XTflMqVUvii4OIB98/0GuFcRl47MwJbDpWoofyN7tteiYd5dVo9y6Xdw1TzusUjP2p4QswU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=WiVa+xlO; arc=fail smtp.client-ip=40.107.20.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UCyOKmxR+0fYLkII/3KgALE8PQHATmqYkQM9UV1PgUOtNYQ+LiSBAD1TX3geJXfDiJfIk3dC6zzV/l/y7QAlt1quRph7Ww4jgBtv0tfBDAqX/3h6NyXf3xvHh6w8zKxHYnS0ss9HT86sZLc74FWFYl1JUBgKNijmTygWFnOXnQ0uAKIEsacndBVM4q4y9heAh8dRq3eUpVqOhAJssQOpYht7JHvEhBCN3q4ClGs7HuNQ0iHBsHzOG4jKu9GH6i1gaeeH/qmj8nUkvABbqM78JQs4bRCN/2j6fCh3LnRnB4lOA/ur/HEkVKW4/EfwrV8qoSHEs2S7yuZrthuT8vffJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ABV1tYfnY1Gm9xMT5xj/KKvr4myE7RB+N2/bEEkNvEs=;
+ b=ZuIQZ7aWQ02WH+ixLz0UPly2pjmNcF3Ds5xe6xESH0JXg0SJ0RKZjMg+ww6ndbU6doMEi/FkMm1Ol8OjCLMYdc5YGrqwERu7AOfvd/slX1vxLgLUpjvTlklKLjAzESByNlr8bQbR5YP3l3XMQPiJtwPEuf35XFzbMKSR6KuiXMGdLCRfQqaBPqD7QSAUZ4mSIuOzYuUImqHfNw7bHZSqpamWHUOza4NEJpb7Z5KT4GlDNfThnkiX0AJ1RnlyugQ6e6zZaesS3FbgFg5tW//R3CZIFbLo7JKgPP69rufe2Q40zPIrCL7PcPV160L2013f+GV4aU6aSF0nqtw1jTl03g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ABV1tYfnY1Gm9xMT5xj/KKvr4myE7RB+N2/bEEkNvEs=;
+ b=WiVa+xlOCYpY22l2w22yYFCfj1RPZ4j6C9phacPl7dNKygSqn7N6v3OADkS5qIgytiU4FEw/IxbHRwHMZZOiqozjT4rRYRZI8YtO8gLzwiLB0/rr6k9CTydqbx9zbEGTtiLZxcR4Fsts7U8ffK9+f4ws7/ANVO/XFsLf/wE4pCs=
+Received: from PAXPR83MB0559.EURPRD83.prod.outlook.com (2603:10a6:102:246::15)
+ by GV1PR83MB0803.EURPRD83.prod.outlook.com (2603:10a6:150:206::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.8; Tue, 25 Jun
+ 2024 09:38:16 +0000
+Received: from PAXPR83MB0559.EURPRD83.prod.outlook.com
+ ([fe80::3706:393d:dc70:11b1]) by PAXPR83MB0559.EURPRD83.prod.outlook.com
+ ([fe80::3706:393d:dc70:11b1%4]) with mapi id 15.20.7741.001; Tue, 25 Jun 2024
+ 09:38:16 +0000
+From: Konstantin Taranov <kotaranov@microsoft.com>
+To: Ma Ke <make24@iscas.ac.cn>, KY Srinivasan <kys@microsoft.com>, Haiyang
+ Zhang <haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	Dexuan Cui <decui@microsoft.com>, "davem@davemloft.net"
+	<davem@davemloft.net>, "edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>,
+	"shradhagupta@linux.microsoft.com" <shradhagupta@linux.microsoft.com>,
+	"horms@kernel.org" <horms@kernel.org>, "schakrabarti@linux.microsoft.com"
+	<schakrabarti@linux.microsoft.com>, "erick.archer@outlook.com"
+	<erick.archer@outlook.com>
+CC: "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2] net: mana: Fix possible double free in error handling
+ path
+Thread-Topic: [PATCH v2] net: mana: Fix possible double free in error handling
+ path
+Thread-Index: AQHaxuNnszH/xcr7vUm28rJvLxKC8w==
+Date: Tue, 25 Jun 2024 09:38:16 +0000
+Message-ID:
+ <PAXPR83MB05592AAA14AD8A95125BD5EEB4D52@PAXPR83MB0559.EURPRD83.prod.outlook.com>
+References: <20240625083816.2623936-1-make24@iscas.ac.cn>
+In-Reply-To: <20240625083816.2623936-1-make24@iscas.ac.cn>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=316d650d-8498-4d0b-98d0-bd77f54d80ab;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2024-06-25T09:37:18Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR83MB0559:EE_|GV1PR83MB0803:EE_
+x-ms-office365-filtering-correlation-id: d9023b35-fb89-4f20-0e61-08dc94fa8a75
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230037|376011|1800799021|7416011|366013|921017|38070700015;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?am5ET1kxQ3pDS1Q0M0YvQ3FOQ1JjQjlEN3IvSTNLdytNOHBZSk5LaHA1VzN1?=
+ =?utf-8?B?dmZybUxHMjcwRU1MS0VUZURpck4yanpyWnhCb0Y0NU1nNFY0QnhBWGptMEhM?=
+ =?utf-8?B?OWpTOFJvNkxycFNCZjBLWnIzSisxc0JlRTRDci9PZEl4dDJQRS9jOTNMUmhh?=
+ =?utf-8?B?YXJwVjcwS2U2WER4SVI1SmdTcm1KOUlnbDEzUmNXS1N4OXhPVTdDVW51ajNS?=
+ =?utf-8?B?MGRsSXJOTWxZcHM0dzRyYUtxaitvb2VFOXpKVHlEYmhzVEh4QzBkSjZmSmtZ?=
+ =?utf-8?B?UTkzOXIxL2VQMm9YN0JJMTNxRW9RUWR3cWhVYm9ZSkJEUHUyS3k3OEFTbGhm?=
+ =?utf-8?B?MmhaYXZGWC9wMUN3QnBObXo2Ym13eU5Lcmh4T0F2c2t5OUVsYkJBSGVMc3pu?=
+ =?utf-8?B?b3hiN0hmMGc3R3RrSlhXK0M3OHRUVzdManBjY2U0L0JOMFdUVnh6Y1VlTkFY?=
+ =?utf-8?B?aU91NHJlMG82STJxakxmajRZbEZiUk1ra3BJekN6bDFQTW1JeUJ2dmRKTW4w?=
+ =?utf-8?B?K3N3SFkveXNsUTJyVUdqaWI5VVN5NTFqbW5kZmkwRWRBRmNNVzluVzJRYUx6?=
+ =?utf-8?B?U2Mya1dQdzlhdDRUNmkxVG1FRUgrVi9sR2RST0g3RkZHRmN2VTJKOGtIRGly?=
+ =?utf-8?B?WWdMWngvN0xYWjZtcHN2d3JmbVc1UmxBY2ZVT0VneGh2Q01YcVhyK1ZBcFVU?=
+ =?utf-8?B?MithWjVLUWtzM2NaaUU2R1AzZTNTOTkzN3RaZU5IQ3puZW5CQTZOVUZTT3hF?=
+ =?utf-8?B?VFFvakRXVU1tZi9RU3c2bjBSYlhVZER3WXZtb3NMbm9INHg1cnQ5WU9aWkox?=
+ =?utf-8?B?M3E2eGw4ZG80bkd6c1ZwY2RwN0ozbW9Rb3VoUEhMbllvSDE2RkhnY3JNYm5j?=
+ =?utf-8?B?K1ZCT29Xa2IydXFIQUJHeDdqYzdVS3UxbjJZYUNBS3pVTXVFT0Zqbit2MEV5?=
+ =?utf-8?B?Rkd4K3ZvU2k0NTQwRVlPczFwSndPQy9ScXhsWFArRzIyYkFReDcwclNlTHZa?=
+ =?utf-8?B?RmZSZ0E2U0VnS2hoWEpWcU9mM1lteXpyTGo2NVNxUFNzUndTNFpmL1cvd1JU?=
+ =?utf-8?B?U2JaeFdjMWRBcHJKYXZ0d3lnZmFsOEZpdmxGNDUxa1pDNGVhQ2MrWGFxUWFw?=
+ =?utf-8?B?cDQ2Tk1tUjZodzkzY0RwK1dLOHR4ZXk2VWFadGVZcmhQWFJYd2xGaGk0THF3?=
+ =?utf-8?B?aSsydkhuMnYrTUMveHU4RUc5ZGNYM0xrTm5RS00xTktPNzJEUDdvZWEweFBK?=
+ =?utf-8?B?U2ZRSnE2K0l1UGlnZVMyczlYZWczdnFpNUZmanZzQVA3NmhBSU1tRSt3QVI4?=
+ =?utf-8?B?MDUxUjVoZ3RBMGNTWWo1MUVVb0NScjRyUndGUnBsNHJ3eVh0ZWNUN0ZlM0w3?=
+ =?utf-8?B?cDArSFF2M0RuNjk1K3V2TDJIUXRZZHBUdXU1R0NGSUhla3VJVndGd2pDVCtX?=
+ =?utf-8?B?bWtkSHgrQTd0akpqemMrZnVzbjlpT2NPZXVrYURQV3VIY0NmMjdBSGo1OVMw?=
+ =?utf-8?B?TCthZTdtdEN2cHR1TFdpaStrakxQNEx1M1h0Q2tJS045RWxTcEw1S2ZBZk83?=
+ =?utf-8?B?QklycFcwNlE1ZitUSTNQTmJ5NGYreGVvUEJicDV2V3dHOGx5VG1sUUF3OGhx?=
+ =?utf-8?B?UDBSaTdKc2R0NU1OOHNFYkNycnYrakd1TmZyOVRRQjVqMXhuUEdLbkplRzF0?=
+ =?utf-8?B?T2w3VUl5TWhmVFp2cEhtUHo4U0NEdkFuaGdYMjFKNnczM0NiODRURjlhc3VW?=
+ =?utf-8?B?ZlRvK3BYUGFLKzhaSDZBY1RqdTFLY05pbTdHbktTaWk2aXFmRklmdTlBQVc4?=
+ =?utf-8?B?N2p6MU9LV2tCTlJtVE1NZU13K0tpV2NSdFF0bDR2TkYvM3owTE1IeVh4SGNH?=
+ =?utf-8?B?em9ibS8xa2gwM21ZYitCcXo0c0NmK0NzbDJNdy9wdUlXVGg5bXRZc0I1L0lu?=
+ =?utf-8?Q?miTMKPn2ShM=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR83MB0559.EURPRD83.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(7416011)(366013)(921017)(38070700015);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?b1RsVUx0bmVVSGRsOEFDbkFQRHlzU3VGNy9BKzlNQzJ2V1VDbU1USWZuWkpF?=
+ =?utf-8?B?d0xUZksyUlI5ZHhaNERsTG9UZ1dHZTltUkY3ZW51cXZ2anFpUXdGTUJSOEdw?=
+ =?utf-8?B?K29xTjc2UmNUYXdoSEcwMC9XdjczWVYvYmIwTlR6RDhUV0REbzl3aklxaWNY?=
+ =?utf-8?B?bWlnTExveHRPQXErNkVCVG5vMXpRR1p5NXA3Vy9namlmS3I3YmxBb1ZidVlB?=
+ =?utf-8?B?V0NYeFJ4dDFZeGxFeGc1ZDVBVDZheEI1MWVuM2lnZG9hakN3UFBHR21uVGI0?=
+ =?utf-8?B?NjRBakdyT3FjcHN2a29ZZVgrOXVBT3haZ2RiZ29Xc3REamJwak5HNmpSN2Zu?=
+ =?utf-8?B?SndUK2YweithWWZncHJBaXlhSDVMSnY5M1hJTW1MQUg2cGhNRjA1SklEWXl4?=
+ =?utf-8?B?UUlmRW4wWEJZVXE0WnZnTjVxVnJIMURSYW5xaS9VSnJWT1UwbFV5dktzdFJr?=
+ =?utf-8?B?eXhGK05MWjVBZWYwYTRBWUNENDlMSVNBSjFmb0xBdFZGK1QrRElVVWNpemp3?=
+ =?utf-8?B?SVIwY0dFVU8wN0oxZ1ZiWkthN3d3ZFBqcWVKMXVSRjg4cHVnSHdpRmhTU3hI?=
+ =?utf-8?B?RzhDSkxHeno3ZmNOdGxzdDJoMjlucWtIeEpRZlBZY3RDTWd2Ym42Q1JWWHRO?=
+ =?utf-8?B?YitpUm9CRElkVW9LM21pWDl2LzhEWFFESWdGY2pIdkVhT3FBckcwUDFMTk02?=
+ =?utf-8?B?Y09qOURIby9HWkpCRW9qWG81c1krM2NVbndTZCt6cml3WGZMRTVtT3V0Mjht?=
+ =?utf-8?B?U2tWVXZSQ2E3NHNkajIrUDNXWUVJQVpNK29lNmZ0S0pTMEZldlp0WnhiUUo5?=
+ =?utf-8?B?cTdTOC9WUmFTQ093ZFNKRWJkZ2RvZ2IwZTVlbkhtclFPZFF3S3NwY0NXaTUy?=
+ =?utf-8?B?bXhveFArWkozbGhWRjgwRHNQMzdzL29UTUdlN25XZzNFZnBVR1JwcjZHd1V2?=
+ =?utf-8?B?RXd5bEtxWUVqcGU3anlHNDAxMHVYY2llZmFxZlQ4bXUwb1MvZkpyN2JENkIv?=
+ =?utf-8?B?eTRYVnZ1M0tveWZ4d2E0a2UweUFOVnlsd3QxOTJxTyt0cEZBSXk1d0FwLzZr?=
+ =?utf-8?B?VVk0UkxhOGNYSkpLdXZYZ2kyL3VVV1F1Zkh6RkRZUjlFeW51VGdyQkMyWE5G?=
+ =?utf-8?B?aHp4cW9WVEhlRUk3YWFDN2FZTHF0UWNPZjlucy9ZWTlKdnkrYjZnNE9HUXVo?=
+ =?utf-8?B?bVJ4ZlFqYURKekNiRktOM2NMNFBweWc3WU1rbzJPVmFabXdjTlhRZWpjYXhC?=
+ =?utf-8?B?WWM3S0RWcVZqcWp3bEgyaVRlK3ZJcXJNUTlRZHNkZkh5b3RXVmRnTjlDNXVQ?=
+ =?utf-8?B?TzI5QXArT05TUFFoMy9MNkhWcVNibEpTS2w0d3M2Rk9NaGFFUU5KcXl0S0tp?=
+ =?utf-8?B?aFZDdlZmNEZuOWVYeU40RThWS3JncmJuY1N1cHZhTGJqakU3b2REWndqd29u?=
+ =?utf-8?B?b1NiN0g5ckgwR2xlK1hqc1RGNjlrZjhKZUp1NDlQRXAwd25rTUVFZ2hRRmF5?=
+ =?utf-8?B?ZTNhb3Q0UmVPVGFqNUpqL0M2SkJoZ3grelRZUFEzZmpWM0ZXKzBCSms4OENa?=
+ =?utf-8?B?OHhCc3UzMjhyaFBVZjFndzZNUE5KUEthVjR5SS91cDdBQ2VSOFBVZUNDRE9Z?=
+ =?utf-8?B?a2hXZ3ZwRGlaeUJ3cHk4ZkFWaUhwSy9zejcvRDhYOHZhaTg4NTNWcEh6WTZJ?=
+ =?utf-8?B?TmUvY2dsTVk5dTBVMk1jUTFSMkt6Mm80SlgrVHc2MzlVVVZFeDdaWDhkcERS?=
+ =?utf-8?B?RzJ2dWExcDh1T3h3UVRsdlR1K3NtM1pEUW1uMTFJWmF0OGg1YnFFYmc5MlU5?=
+ =?utf-8?B?MjZZdmRiVUIxMG1rZFhhK2t1UlZ2STlicTNYUDZ1WG1rSVJmcTNaQ0M2dmhM?=
+ =?utf-8?B?akhHYWQwRUFENlp1bTRob2pmdUZzWmxvVnFYalpoNmlHd0o4QjB1WkFTZGZJ?=
+ =?utf-8?B?VTR2YjZoWkdWUENOM0tqMWUzRVZrYXJZeEh0UElnbmtjbHZiT2pHTlRRcjVj?=
+ =?utf-8?B?ejdscnJueGN3ZVRzUWZUVWNWTmI4Ykhjb2FlRlJ1SXczb3dzVUlEaWpGczlQ?=
+ =?utf-8?Q?QpQdh6?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240625032509.4155839-1-gatlin.newhouse@gmail.com>
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR83MB0559.EURPRD83.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d9023b35-fb89-4f20-0e61-08dc94fa8a75
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2024 09:38:16.5076
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: iESP37MZaRF669oK+IRepHXr+GLtRLdlbZKvmUI+zZNtZAuo2uRSBJZoWD820MvMK9oBIQhMw8m0qBshkcHYew==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR83MB0803
 
-On Tue, Jun 25, 2024 at 03:24:55AM +0000, Gatlin Newhouse wrote:
-> Currently ARM architectures output which specific sanitizer caused
-> the trap, via the encoded data in the trap instruction. Clang on
-> x86 currently encodes the same data in ud1 instructions but the x86
-> handle_bug() and is_valid_bugaddr() functions currently only look
-> at ud2s.
-> 
-> Bring x86 to parity with arm64, similar to commit 25b84002afb9
-> ("arm64: Support Clang UBSAN trap codes for better reporting").
-> Enable the output of UBSAN type information on x86 architectures
-> compiled with clang when CONFIG_UBSAN_TRAP=y.
-> 
-> Signed-off-by: Gatlin Newhouse <gatlin.newhouse@gmail.com>
-> ---
-> Changes in v3:
->   - Address Thomas's remarks about: change log structure,
->     get_ud_type() instead of is_valid_bugaddr(), handle_bug()
->     changes, and handle_ubsan_failure().
-> 
-> Changes in v2:
->   - Name the new constants 'LEN_ASOP' and 'INSN_ASOP' instead of
->     'LEN_REX' and 'INSN_REX'
->   - Change handle_ubsan_failure() from enum bug_trap_type to void
->     function
-> 
-> v1: https://lore.kernel.org/linux-hardening/20240529022043.3661757-1-gatlin.newhouse@gmail.com/
-> v2: https://lore.kernel.org/linux-hardening/20240601031019.3708758-1-gatlin.newhouse@gmail.com/
-> ---
->  MAINTAINERS                  |  2 ++
->  arch/x86/include/asm/bug.h   | 11 ++++++++++
->  arch/x86/include/asm/ubsan.h | 23 +++++++++++++++++++++
->  arch/x86/kernel/Makefile     |  1 +
->  arch/x86/kernel/traps.c      | 40 +++++++++++++++++++++++++++++++-----
->  arch/x86/kernel/ubsan.c      | 21 +++++++++++++++++++
->  6 files changed, 93 insertions(+), 5 deletions(-)
->  create mode 100644 arch/x86/include/asm/ubsan.h
->  create mode 100644 arch/x86/kernel/ubsan.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 28e20975c26f..b8512887ffb1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22635,6 +22635,8 @@ L:	kasan-dev@googlegroups.com
->  L:	linux-hardening@vger.kernel.org
->  S:	Supported
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/kees/linux.git for-next/hardening
-> +F:	arch/x86/include/asm/ubsan.h
-> +F:	arch/x86/kernel/ubsan.c
->  F:	Documentation/dev-tools/ubsan.rst
->  F:	include/linux/ubsan.h
->  F:	lib/Kconfig.ubsan
-> diff --git a/arch/x86/include/asm/bug.h b/arch/x86/include/asm/bug.h
-> index a3ec87d198ac..a363d13c263b 100644
-> --- a/arch/x86/include/asm/bug.h
-> +++ b/arch/x86/include/asm/bug.h
-> @@ -13,6 +13,17 @@
->  #define INSN_UD2	0x0b0f
->  #define LEN_UD2		2
->  
-> +/*
-> + * In clang we have UD1s reporting UBSAN failures on X86, 64 and 32bit.
-> + */
-> +#define INSN_UD1	0xb90f
-> +#define INSN_UD_MASK	0xFFFF
-> +#define LEN_UD1		2
-> +#define INSN_ASOP	0x67
-> +#define INSN_ASOP_MASK	0x00FF
-> +#define BUG_UD_NONE	0xFFFF
-> +#define BUG_UD2		0xFFFE
-> +
-
-Please look at 790d1ce71de. Also your style above is inconsistent,
-please use lower case consistently for the hex values.
-
-
->  #ifdef CONFIG_GENERIC_BUG
->  
->  #ifdef CONFIG_X86_32
-> diff --git a/arch/x86/include/asm/ubsan.h b/arch/x86/include/asm/ubsan.h
-> new file mode 100644
-> index 000000000000..ac2080984e83
-> --- /dev/null
-> +++ b/arch/x86/include/asm/ubsan.h
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _ASM_X86_UBSAN_H
-> +#define _ASM_X86_UBSAN_H
-> +
-> +/*
-> + * Clang Undefined Behavior Sanitizer trap mode support.
-> + */
-> +#include <linux/bug.h>
-> +#include <linux/ubsan.h>
-> +#include <asm/ptrace.h>
-> +
-> +/*
-> + * UBSAN uses the EAX register to encode its type in the ModRM byte.
-> + */
-> +#define UBSAN_REG	0x40
-> +
-> +#ifdef CONFIG_UBSAN_TRAP
-> +void handle_ubsan_failure(struct pt_regs *regs, u16 insn);
-> +#else
-> +static inline void handle_ubsan_failure(struct pt_regs *regs, u16 insn) { return; }
-> +#endif /* CONFIG_UBSAN_TRAP */
-> +
-> +#endif /* _ASM_X86_UBSAN_H */
-> diff --git a/arch/x86/kernel/Makefile b/arch/x86/kernel/Makefile
-> index 74077694da7d..fe1d9db27500 100644
-> --- a/arch/x86/kernel/Makefile
-> +++ b/arch/x86/kernel/Makefile
-> @@ -145,6 +145,7 @@ obj-$(CONFIG_UNWINDER_GUESS)		+= unwind_guess.o
->  obj-$(CONFIG_AMD_MEM_ENCRYPT)		+= sev.o
->  
->  obj-$(CONFIG_CFI_CLANG)			+= cfi.o
-> +obj-$(CONFIG_UBSAN_TRAP)		+= ubsan.o
->  
->  obj-$(CONFIG_CALL_THUNKS)		+= callthunks.o
->  
-> diff --git a/arch/x86/kernel/traps.c b/arch/x86/kernel/traps.c
-> index 4fa0b17e5043..aef21287e7ed 100644
-> --- a/arch/x86/kernel/traps.c
-> +++ b/arch/x86/kernel/traps.c
-> @@ -67,6 +67,7 @@
->  #include <asm/vdso.h>
->  #include <asm/tdx.h>
->  #include <asm/cfi.h>
-> +#include <asm/ubsan.h>
->  
->  #ifdef CONFIG_X86_64
->  #include <asm/x86_init.h>
-> @@ -91,6 +92,29 @@ __always_inline int is_valid_bugaddr(unsigned long addr)
->  	return *(unsigned short *)addr == INSN_UD2;
->  }
->  
-> +/*
-> + * Check for UD1, UD2, with or without Address Size Override Prefixes instructions.
-> + */
-> +__always_inline u16 get_ud_type(unsigned long addr)
-> +{
-> +	u16 insn;
-> +
-> +	if (addr < TASK_SIZE_MAX)
-> +		return BUG_UD_NONE;
-> +	insn = *(u16 *)addr;
-> +	if ((insn & INSN_UD_MASK) == INSN_UD2)
-> +		return BUG_UD2;
-> +	if ((insn & INSN_ASOP_MASK) == INSN_ASOP)
-> +		insn = *(u16 *)(++addr);
-> +
-> +	// UBSAN encode the failure type in the two bytes after UD1
-> +	if ((insn & INSN_UD_MASK) == INSN_UD1)
-> +		return *(u16 *)(addr + LEN_UD1);
-> +
-> +	return BUG_UD_NONE;
-> +}
-
-Given that insn is u16, this INSN_UD_MASK seems eminently pointless.
-
-Are the bytes after UD1 a proper ModRM such that the whole forms a
-decodable instruction? You seem to not mention this anywhere. It is
-paramount that the instruction stream is still correctly decodable.
-
-Also, wouldn't it be saner to write this something like:
-
-__always_inline int decode_bug(unsigned long addr, u32 *imm)
-{
-	u8 v;
-
-	if (addr < TASK_SIZE)
-		return BUG_NONE;
-
-	v = *(u8 *)(addr++);
-	if (v == 0x67)
-		v = *(u8 *)(addr++);
-	if (v != 0x0f)
-		return BUG_NONE;
-	v = *(u8 *)(addr++);
-	if (v == 0x0b)
-		return BUG_UD2;
-	if (v != 0xb9)
-		return BUG_NONE;
-
-	if (X86_MODRM_RM(v) == 4)
-		addr++; /* consume SiB */
-
-	*imm = 0;
-	if (X86_MODRM_MOD(v) == 1)
-		*imm = *(u8 *)addr;
-	if (X86_MORRM_MOD(v) == 2)
-		*imm = *(u32 *)addr;
-
-	// WARN on MOD(v)==3 ??
-
-	return BUG_UD1;
-}
-
-Why does the thing emit the asop prefix at all through? afaict it
-doesn't affect the immediate you want to get at. And if it does this
-prefix, should we worry about other prefixes? Ideally we'd not accept
-any prefixes.
-
-
+PiBXaGVuIGF1eGlsaWFyeV9kZXZpY2VfYWRkKCkgcmV0dXJucyBlcnJvciBhbmQgdGhlbiBjYWxs
+cw0KPiBhdXhpbGlhcnlfZGV2aWNlX3VuaW5pdCgpLCBjYWxsYmFjayBmdW5jdGlvbiBhZGV2X3Jl
+bGVhc2UgY2FsbHMga2ZyZWUobWFkZXYpLg0KPiBXZSBzaG91bGRuJ3QgY2FsbCBrZnJlZShtYWRl
+dikgYWdhaW4gaW4gdGhlIGVycm9yIGhhbmRsaW5nIHBhdGguIFNldCAnbWFkZXYnDQo+IHRvIE5V
+TEwuDQo+IA0KPiBTaWduZWQtb2ZmLWJ5OiBNYSBLZSA8bWFrZTI0QGlzY2FzLmFjLmNuPg0KPiAt
+LS0NCj4gQ2hhbmdlcyBpbiB2MjoNCj4gLSBzdHJlYW1saW5lZCB0aGUgcGF0Y2ggYWNjb3JkaW5n
+IHN1Z2dlc3Rpb25zOw0KPiAtIHJldmlzZWQgdGhlIGRlc2NyaXB0aW9uLg0KPiAtLS0NCj4gIGRy
+aXZlcnMvbmV0L2V0aGVybmV0L21pY3Jvc29mdC9tYW5hL21hbmFfZW4uYyB8IDIgKysNCj4gIDEg
+ZmlsZSBjaGFuZ2VkLCAyIGluc2VydGlvbnMoKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
+L25ldC9ldGhlcm5ldC9taWNyb3NvZnQvbWFuYS9tYW5hX2VuLmMNCj4gYi9kcml2ZXJzL25ldC9l
+dGhlcm5ldC9taWNyb3NvZnQvbWFuYS9tYW5hX2VuLmMNCj4gaW5kZXggZDA4N2NmOTU0Zjc1Li42
+MDhhZDMxYTk3MDIgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvbmV0L2V0aGVybmV0L21pY3Jvc29m
+dC9tYW5hL21hbmFfZW4uYw0KPiArKysgYi9kcml2ZXJzL25ldC9ldGhlcm5ldC9taWNyb3NvZnQv
+bWFuYS9tYW5hX2VuLmMNCj4gQEAgLTI3OTgsNiArMjc5OCw4IEBAIHN0YXRpYyBpbnQgYWRkX2Fk
+ZXYoc3RydWN0IGdkbWFfZGV2ICpnZCkNCj4gICAgICAgICBpZiAocmV0KQ0KPiAgICAgICAgICAg
+ICAgICAgZ290byBpbml0X2ZhaWw7DQo+IA0KPiArICAgICAgIC8qIG1hZGV2IGlzIG93bmVkIGJ5
+IHRoZSBhdXhpbGlhcnkgZGV2aWNlICovDQo+ICsgICAgICAgbWFkZXYgPSBOVUxMOw0KPiAgICAg
+ICAgIHJldCA9IGF1eGlsaWFyeV9kZXZpY2VfYWRkKGFkZXYpOw0KPiAgICAgICAgIGlmIChyZXQp
+DQo+ICAgICAgICAgICAgICAgICBnb3RvIGFkZF9mYWlsOw0KPiAtLQ0KPiAyLjI1LjENCg0KUmV2
+aWV3ZWQtYnk6IEtvbnN0YW50aW4gVGFyYW5vdiA8a290YXJhbm92QG1pY3Jvc29mdC5jb20+DQoN
+Cg==
 
