@@ -1,140 +1,180 @@
-Return-Path: <linux-kernel+bounces-228697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228698-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C533791657B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:46:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5B9191657D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:47:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 037E11C21ECD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:46:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 094F01C2115E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F61214B964;
-	Tue, 25 Jun 2024 10:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QCd8uB++"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4E4E14A4E1;
+	Tue, 25 Jun 2024 10:47:03 +0000 (UTC)
+Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C77E214B064;
-	Tue, 25 Jun 2024 10:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BD641CD37
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719312353; cv=none; b=oMRaOwTT4GEHPxLFOX5YtVtJ3u7h3RVP8hhSjPuaGApyc8EEp4AhMr6nCLahziG5LruwQjj3/dwhvWCAGA98AVU+2rzMV1n0l34amFG6SamyNqC3JO7HrQGNoPUDHupUg8v50ZtRtHFcLhtk3EIxAHL+C0B4BpjM378HzdPNrrY=
+	t=1719312423; cv=none; b=a5iLCegn7WR6Dxv2POaJ0n1kwj333qO+dkaMyanZIJ7rLckMH1vEHokOIoHYi8Z/WJvOA0mM820kMXjhY25C71KSgjanvTFRF+K7q3FaVpGooW5sgBQgjQuyO6sQgZsPoaY/IHexkxsm2oNU7WevoyOg1R9TVEhp12tK76v86bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719312353; c=relaxed/simple;
-	bh=VJPVCROmtOiH6sjFGzeDB78N5WlBrQkj9XvlsKi//L4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=alD6t0BJw8lJ1Fj2cBW8oaUQ+vaAgfjVoy8LTJEW4uUPfejhHa5VknCgkd1uxFZ+4NuBrKFYHK3BFCyL20mfBTLKqhCm661DaxOk9kyDR6OCu5xohLHWcLTnhkOQFofOeomv9HsKfOiDsvBsAThGVTYSPUQzBJXAHOaTCyFLLbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QCd8uB++; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719312351; x=1750848351;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=VJPVCROmtOiH6sjFGzeDB78N5WlBrQkj9XvlsKi//L4=;
-  b=QCd8uB++E70lTaUs28UfHkJPOodC5Qb+17i3UdukvH8E6bADB4BnpMHL
-   dAzKegjPpVtRJHV7keXyHLFDCoyWDpZi197oanYvDUxP8+bVQFlbr+ZQq
-   uE6l0xKTLhhhXZvFGRvYjKCoaNHnQZiv+QKCzyS7gxVWJnceyNM1cUbgO
-   rW3bs1+mqJ8kR6F7RuWVa4awB+6SrwKkNLW3eipZefPQJffbAF0u+hz8R
-   3UivFdt0HW2Ug3ZJKlzeDnAoUKbfJcU2ZfpEQi999YY3hsvrgCLjO5/Sa
-   jlCBkNhX+++/TGS4f+hvg60JaFsBbl3w1783n5XF0L0dHJjC+7IBN/v2C
-   Q==;
-X-CSE-ConnectionGUID: 8If3fibVTgCZExxgCYrKcg==
-X-CSE-MsgGUID: OCs1vZCZRuK8iWhS77Twrg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="26944152"
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="26944152"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 03:45:51 -0700
-X-CSE-ConnectionGUID: t6mhsIm6TlirH7izwFEGMQ==
-X-CSE-MsgGUID: h6zD50IlRFGH+gPHSEUuCA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="43676519"
-Received: from gcivario-mobl.ger.corp.intel.com (HELO localhost.localdomain) ([10.246.48.191])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 03:45:48 -0700
-From: Adrian Hunter <adrian.hunter@intel.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH 2/2] perf intel-pt: Fix exclude_guest setting
-Date: Tue, 25 Jun 2024 13:45:32 +0300
-Message-Id: <20240625104532.11990-3-adrian.hunter@intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240625104532.11990-1-adrian.hunter@intel.com>
-References: <20240625104532.11990-1-adrian.hunter@intel.com>
+	s=arc-20240116; t=1719312423; c=relaxed/simple;
+	bh=Gws9Yyiaiqmrq1E8aExJybewGObcu5HH/sCBZ3vRlmA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=BccxSpWCaeSC7MN6drRQrzy6zcy48vwKe05mN0HJhM1pb+F4Ydkyvd2KnULxlXx3sLqp9+65K3bnnBlSV1Rk/fVfKcEeYnNPQIkv3qn574t4+PSOWX+UeDrYPXEHPyaZguGG76mWTcHaMYFjNC07WCBFuJ/nfnriTG4A0O+zOdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:4e71:737f:f905:c457])
+	by albert.telenet-ops.be with bizsmtp
+	id fmmo2C00F5EKelT06mmo3C; Tue, 25 Jun 2024 12:46:58 +0200
+Received: from geert (helo=localhost)
+	by ramsan.of.borg with local-esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sM3hI-000Kn6-Js;
+	Tue, 25 Jun 2024 12:46:48 +0200
+Date: Tue, 25 Jun 2024 12:46:48 +0200 (CEST)
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+To: Tony Ambardar <tony.ambardar@gmail.com>
+cc: bpf@vger.kernel.org, Alexei Starovoitov <ast@kernel.org>, 
+    Daniel Borkmann <daniel@iogearbox.net>, 
+    Andrii Nakryiko <andrii@kernel.org>, 
+    Martin KaFai Lau <martin.lau@linux.dev>, 
+    Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+    Yonghong Song <yonghong.song@linux.dev>, 
+    John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+    Stanislav Fomichev <sdf@google.com>, Hao Luo <haoluo@google.com>, 
+    Jiri Olsa <jolsa@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+    kernel test robot <lkp@intel.com>, stable@vger.kernel.org, 
+    Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH bpf v2 2/2] bpf: Harden __bpf_kfunc tag against linker
+ kfunc removal
+In-Reply-To: <e9c64e9b5c073dabd457ff45128aabcab7630098.1717477560.git.Tony.Ambardar@gmail.com>
+Message-ID: <51bc27e-f073-f6f7-df63-f9bbf96e2024@linux-m68k.org>
+References: <cover.1717413886.git.Tony.Ambardar@gmail.com> <cover.1717477560.git.Tony.Ambardar@gmail.com> <e9c64e9b5c073dabd457ff45128aabcab7630098.1717477560.git.Tony.Ambardar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki, Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/mixed; boundary="8323329-1492989470-1719312408=:79904"
 
-In the past, the exclude_guest setting has had no effect on Intel PT
-tracing, but that may not be the case in the future.
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Set the flag correctly based upon whether KVM is using Intel PT
-"Host/Guest" mode, which is determined by the kvm_intel module
-parameter pt_mode:
+--8323329-1492989470-1719312408=:79904
+Content-Type: text/plain; charset=ISO-8859-7; format=flowed
+Content-Transfer-Encoding: 8BIT
 
- pt_mode=0	System-wide mode : host and guest output to host buffer
- pt_mode=1	Host/Guest mode : host/guest output to host/guest
-                buffers respectively
+ 	Hi Tony,
 
-Fixes: 6e86bfdc4a60 ("perf intel-pt: Support decoding of guest kernel")
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
----
- tools/perf/arch/x86/util/intel-pt.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+On Mon, 3 Jun 2024, Tony Ambardar wrote:
+> BPF kfuncs are often not directly referenced and may be inadvertently
+> removed by optimization steps during kernel builds, thus the __bpf_kfunc
+> tag mitigates against this removal by including the __used macro. However,
+> this macro alone does not prevent removal during linking, and may still
+> yield build warnings (e.g. on mips64el):
+>
+>    LD      vmlinux
+>    BTFIDS  vmlinux
+>  WARN: resolve_btfids: unresolved symbol bpf_verify_pkcs7_signature
+>  WARN: resolve_btfids: unresolved symbol bpf_lookup_user_key
+>  WARN: resolve_btfids: unresolved symbol bpf_lookup_system_key
+>  WARN: resolve_btfids: unresolved symbol bpf_key_put
+>  WARN: resolve_btfids: unresolved symbol bpf_iter_task_next
+>  WARN: resolve_btfids: unresolved symbol bpf_iter_css_task_new
+>  WARN: resolve_btfids: unresolved symbol bpf_get_file_xattr
+>  WARN: resolve_btfids: unresolved symbol bpf_ct_insert_entry
+>  WARN: resolve_btfids: unresolved symbol bpf_cgroup_release
+>  WARN: resolve_btfids: unresolved symbol bpf_cgroup_from_id
+>  WARN: resolve_btfids: unresolved symbol bpf_cgroup_acquire
+>  WARN: resolve_btfids: unresolved symbol bpf_arena_free_pages
+>    NM      System.map
+>    SORTTAB vmlinux
+>    OBJCOPY vmlinux.32
+>
+> Update the __bpf_kfunc tag to better guard against linker optimization by
+> including the new __retain compiler macro, which fixes the warnings above.
+>
+> Verify the __retain macro with readelf by checking object flags for 'R':
+>
+>  $ readelf -Wa kernel/trace/bpf_trace.o
+>  Section Headers:
+>    [Nr]  Name              Type     Address  Off  Size ES Flg Lk Inf Al
+>  ...
+>    [178] .text.bpf_key_put PROGBITS 00000000 6420 0050 00 AXR  0   0  8
+>  ...
+>  Key to Flags:
+>  ...
+>    R (retain), D (mbind), p (processor specific)
+>
+> Link: https://lore.kernel.org/bpf/ZlmGoT9KiYLZd91S@krava/T/
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/r/202401211357.OCX9yllM-lkp@intel.com/
+> Fixes: 57e7c169cd6a ("bpf: Add __bpf_kfunc tag for marking kernel functions as kfuncs")
+> Cc: stable@vger.kernel.org # v6.6+
+> Signed-off-by: Tony Ambardar <Tony.Ambardar@gmail.com>
 
-diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index c8fa15f280d2..4b710e875953 100644
---- a/tools/perf/arch/x86/util/intel-pt.c
-+++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -32,6 +32,7 @@
- #include "../../../util/tsc.h"
- #include <internal/lib.h> // page_size
- #include "../../../util/intel-pt.h"
-+#include <api/fs/fs.h>
- 
- #define KiB(x) ((x) * 1024)
- #define MiB(x) ((x) * 1024 * 1024)
-@@ -428,6 +429,16 @@ static int intel_pt_track_switches(struct evlist *evlist)
- }
- #endif
- 
-+static bool intel_pt_exclude_guest(void)
-+{
-+	int pt_mode;
-+
-+	if (sysfs__read_int("module/kvm_intel/parameters/pt_mode", &pt_mode))
-+		pt_mode = 0;
-+
-+	return pt_mode == 1;
-+}
-+
- static void intel_pt_valid_str(char *str, size_t len, u64 valid)
- {
- 	unsigned int val, last = 0, state = 1;
-@@ -620,6 +631,7 @@ static int intel_pt_recording_options(struct auxtrace_record *itr,
- 			}
- 			evsel->core.attr.freq = 0;
- 			evsel->core.attr.sample_period = 1;
-+			evsel->core.attr.exclude_guest = intel_pt_exclude_guest();
- 			evsel->no_aux_samples = true;
- 			evsel->needs_auxtrace_mmap = true;
- 			intel_pt_evsel = evsel;
--- 
-2.34.1
+Thanks for your patch, which is now commit 7bdcedd5c8fb88e7
+("bpf: Harden __bpf_kfunc tag against linker kfunc removal") in
+v6.10-rc5.
 
+This is causing build failures on ARM with
+CONFIG_LD_DEAD_CODE_DATA_ELIMINATION=y:
+
+     net/core/filter.c:11859:1: error: ¡retain¢ attribute ignored [-Werror=attributes]
+     11859 | {
+           | ^
+     net/core/filter.c:11872:1: error: ¡retain¢ attribute ignored [-Werror=attributes]
+     11872 | {
+           | ^
+     net/core/filter.c:11885:1: error: ¡retain¢ attribute ignored [-Werror=attributes]
+     11885 | {
+           | ^
+     net/core/filter.c:11906:1: error: ¡retain¢ attribute ignored [-Werror=attributes]
+     11906 | {
+           | ^
+     net/core/filter.c:12092:1: error: ¡retain¢ attribute ignored [-Werror=attributes]
+     12092 | {
+           | ^
+     net/core/xdp.c:713:1: error: ¡retain¢ attribute ignored [-Werror=attributes]
+       713 | {
+           | ^
+     net/core/xdp.c:736:1: error: ¡retain¢ attribute ignored [-Werror=attributes]
+       736 | {
+           | ^
+     net/core/xdp.c:769:1: error: ¡retain¢ attribute ignored [-Werror=attributes]
+       769 | {
+           | ^
+     [...]
+
+My compiler is arm-linux-gnueabihf-gcc version 11.4.0 (Ubuntu 11.4.0-1ubuntu1~22.04).
+
+> --- a/include/linux/btf.h
+> +++ b/include/linux/btf.h
+> @@ -82,7 +82,7 @@
+>  * as to avoid issues such as the compiler inlining or eliding either a static
+>  * kfunc, or a global kfunc in an LTO build.
+>  */
+> -#define __bpf_kfunc __used noinline
+> +#define __bpf_kfunc __used __retain noinline
+>
+> #define __bpf_kfunc_start_defs()					       \
+> 	__diag_push();							       \
+
+Gr{oetje,eeting}s,
+
+ 						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+ 							    -- Linus Torvalds
+--8323329-1492989470-1719312408=:79904--
 
