@@ -1,126 +1,231 @@
-Return-Path: <linux-kernel+bounces-228877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8938E916810
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:37:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183E7916811
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:38:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14752281C5D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:37:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3134283DAE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A24D01552EE;
-	Tue, 25 Jun 2024 12:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32351553B3;
+	Tue, 25 Jun 2024 12:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fdHjklqw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Yw/Vi+Ox"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E86E149C7F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:37:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1865E14D2BD
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:37:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719319062; cv=none; b=u//9NQR7ShorTLUMYm0ZAE1gzpGVxr6l3rasskuRf9C/TeF38uQuO85IGmUiE7wQ0ODPPGgOabIzA6vVeWQoLKrzvZWrXF+8fE6NMsLNoupushuYFs+YHrKgUo60ZZCCox8dSlbjRDoTyFccSWg68YWWjd56E6ZWOxPvkoVdxdc=
+	t=1719319073; cv=none; b=bMB02lfFO84iol+HKdFcxgnkcJPr9eusbTg7va6Jk5ONZtw1cEpPiB0m14TBgpROsPVPr7IwsMdw0D/lhBBHHgeYSpQDgUxy7d1Hi6k7G5pmaAsFcmWrCQeJdlTxUKWxz5s36eTK8Xe4dhb9zAGAK2Opu3PfnKbuj4B8k3MmYuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719319062; c=relaxed/simple;
-	bh=V2Koeg4s8w1gx/ttFDPvC6e07EmHfpCsysnLkTyaFt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hMQ8+alYD73nv3pL4gN8rJ6C07LmcsVI1GgvUp76sOcRSsrhj52Pr08Hs7zAxUoC7gYR/hk7610F6ZhTZKVAG6A+DTqbepNbV1BfBLhpT7jpnRbM5/divzTQnr4T51Z+OLDT9l65LMe4+fc+IQmqC7pi1yz51f4Q8qBOP2e4qik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fdHjklqw; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719319059;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8y2n/ywazXiZ6X53dWXL/wMmY8kmaGnmAtAjUyCngTA=;
-	b=fdHjklqwXLCqvZ9sLs0RVAZ1EgAshJSkigQCMAuOgRZGVT8yeTrNCcT1JAbk5JFwcJ2Y3S
-	jMgLTlt8WetOs1suiMlx3MTwOa7j7ylblTvuZw+GPptdkH/RdVX9xrmCmm52KB/NWHjIbA
-	Jv5DLKEJVapmNGk9mnyAOD/7+LkMwvg=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-437-rFah1ZV_Om2ekDZmb-dj5w-1; Tue,
- 25 Jun 2024 08:37:37 -0400
-X-MC-Unique: rFah1ZV_Om2ekDZmb-dj5w-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 723EA19560BF;
-	Tue, 25 Jun 2024 12:37:35 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.198])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8F017300021A;
-	Tue, 25 Jun 2024 12:37:33 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue, 25 Jun 2024 14:36:02 +0200 (CEST)
-Date: Tue, 25 Jun 2024 14:35:58 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Eric W. Biederman" <ebiederm@xmission.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Tejun Heo <tj@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/17] signal: In get_signal call do_exit when it is
- unnecessary to shoot down threads
-Message-ID: <20240625123558.GC16836@redhat.com>
-References: <20240609142342.GA11165@redhat.com>
- <87r0d5t2nt.fsf@email.froward.int.ebiederm.org>
- <20240610152902.GC20640@redhat.com>
- <20240613154541.GD18218@redhat.com>
- <87ikyamf4u.fsf@email.froward.int.ebiederm.org>
- <20240617183758.GB10753@redhat.com>
- <87iky5k2yi.fsf@email.froward.int.ebiederm.org>
- <87o77xinmt.fsf_-_@email.froward.int.ebiederm.org>
- <871q4tinjq.fsf_-_@email.froward.int.ebiederm.org>
+	s=arc-20240116; t=1719319073; c=relaxed/simple;
+	bh=/Xfp8edqkjj8hGQJckb13xAE7nHpXhBNXLK6lu/C9EE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LxKNCmVHGBtWqZrqaRBbclP4FKMKnZ74mzIfewSDadEtlU90U+MLvuNq/ZX0ykI4dQ5nFxUyk1YnEoZhq8AGWgT7ZZbqY+705tldB/9Zc4RYo9Oun3Ko9Pme/mUAax9piz0LgkNaVFMgLu3Nkp2WOAwvNXXigSGt1bfG93xS5Ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Yw/Vi+Ox; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1719319063; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=bJn97TumoRX3Pu50ftatVSkCYSiOnpy7WcOfg1YpSwM=;
+	b=Yw/Vi+OxHe7tNONf65DwI2WsY8EO9T222ofvXJacppRYAtLGOUXYvT1mpIlNbt8tPqd5MUFeb2leeozZ1MwUvbyZEy+ECHpxeZA77iwLZoJwAXj8vHh5jxnFWeOBInYbRdNxtlvS6rRV7fRSJY64gB1k6kKMzRmTN50vP1ffRyM=
+X-Alimail-AntiSpam:AC=PASS;BC=-1|-1;BR=01201311R151e4;CH=green;DM=||false|;DS=||;FP=0|-1|-1|-1|0|-1|-1|-1;HT=maildocker-contentspam033037067110;MF=baolin.wang@linux.alibaba.com;NM=1;PH=DS;RN=28;SR=0;TI=SMTPD_---0W9Fpw2x_1719319059;
+Received: from 30.97.56.75(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0W9Fpw2x_1719319059)
+          by smtp.aliyun-inc.com;
+          Tue, 25 Jun 2024 20:37:40 +0800
+Message-ID: <43a5986a-52ea-4090-9333-90af137a4735@linux.alibaba.com>
+Date: Tue, 25 Jun 2024 20:37:39 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871q4tinjq.fsf_-_@email.froward.int.ebiederm.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 18/18] arm64/mm: Automatically fold contpte mappings
+To: Ryan Roberts <ryan.roberts@arm.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
+ James Morse <james.morse@arm.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Mark Rutland <mark.rutland@arm.com>,
+ David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>,
+ Zi Yan <ziy@nvidia.com>, Barry Song <21cnbao@gmail.com>,
+ Alistair Popple <apopple@nvidia.com>, Yang Shi <shy828301@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Yin, Fengwei" <fengwei.yin@intel.com>
+Cc: linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240215103205.2607016-1-ryan.roberts@arm.com>
+ <20240215103205.2607016-19-ryan.roberts@arm.com>
+ <1285eb59-fcc3-4db8-9dd9-e7c4d82b1be0@huawei.com>
+ <8d57ed0d-fdd0-4fc6-b9f1-a6ac11ce93ce@arm.com>
+ <018b5e83-789e-480f-82c8-a64515cdd14a@huawei.com>
+ <b75aa60d-e058-4b5c-877a-9c0cd295e96f@linux.alibaba.com>
+ <b6b485ee-7af0-42b8-b0ca-5a75f76a69e2@arm.com>
+From: Baolin Wang <baolin.wang@linux.alibaba.com>
+In-Reply-To: <b6b485ee-7af0-42b8-b0ca-5a75f76a69e2@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 06/18, Eric W. Biederman wrote:
->
-> --- a/kernel/exit.c
-> +++ b/kernel/exit.c
-> @@ -1001,8 +1001,6 @@ do_group_exit(int exit_code)
->
->  	if (sig->flags & SIGNAL_GROUP_EXIT)
->  		exit_code = sig->group_exit_code;
-> -	else if (sig->group_exec_task)
-> -		exit_code = 0;
 
-OK...
 
-> @@ -1010,8 +1008,6 @@ do_group_exit(int exit_code)
->  		if (sig->flags & SIGNAL_GROUP_EXIT)
->  			/* Another thread got here before we took the lock.  */
->  			exit_code = sig->group_exit_code;
-> -		else if (sig->group_exec_task)
-> -			exit_code = 0;
+On 2024/6/25 19:40, Ryan Roberts wrote:
+> On 25/06/2024 08:23, Baolin Wang wrote:
+>>
+>>
+>> On 2024/6/25 11:16, Kefeng Wang wrote:
+>>>
+>>>
+>>> On 2024/6/24 23:56, Ryan Roberts wrote:
+>>>> + Baolin Wang and Yin Fengwei, who maybe able to help with this.
+>>>>
+>>>>
+>>>> Hi Kefeng,
+>>>>
+>>>> Thanks for the report!
+>>>>
+>>>>
+>>>> On 24/06/2024 15:30, Kefeng Wang wrote:
+>>>>> Hi Ryan,
+>>>>>
+>>>>> A big regression on page-fault3("Separate file shared mapping page
+>>>>> fault") testcase from will-it-scale on arm64, no issue on x86,
+>>>>>
+>>>>> ./page_fault3_processes -t 128 -s 5
+>>>>
+>>>> I see that this program is mkstmp'ing a file at "/tmp/willitscale.XXXXXX". Based
+>>>> on your description, I'm inferring that /tmp is backed by ext4 with your large
+>>>> folio patches enabled?
+>>>
+>>> Yes, mount /tmp by ext4, sorry to forget to mention that.
+>>>
+>>>>
+>>>>>
+>>>>> 1) large folio disabled on ext4:
+>>>>>      92378735
+>>>>> 2) large folio  enabled on ext4 +  CONTPTE enabled
+>>>>>      16164943
+>>>>> 3) large folio  enabled on ext4 +  CONTPTE disabled
+>>>>>      80364074
+>>>>> 4) large folio  enabled on ext4 +  CONTPTE enabled + large folio mapping
+>>>>> enabled
+>>>>> in finish_fault()[2]
+>>>>>      299656874
+>>>>>
+>>>>> We found *contpte_convert* consume lots of CPU(76%) in case 2),
+>>>>
+>>>> contpte_convert() is expensive and to be avoided; In this case I expect it is
+>>>> repainting the PTEs with the PTE_CONT bit added in, and to do that it needs to
+>>>> invalidate the tlb for the virtual range. The code is there to mop up user space
+>>>> patterns where each page in a range is temporarily made RO, then later changed
+>>>> back. In this case, we want to re-fold the contpte range once all pages have
+>>>> been serviced in RO mode.
+>>>>
+>>>> Of course this path is only intended as a fallback, and the more optimium
+>>>> approach is to set_ptes() the whole folio in one go where possible - kind of
+>>>> what you are doing below.
+>>>>
+>>>>> and disappeared
+>>>>> by following change[2], it is easy to understood the different between case 2)
+>>>>> and case 4) since case 2) always map one page
+>>>>> size, but always try to fold contpte mappings, which spend a lot of
+>>>>> time. Case 4) is a workaround, any other better suggestion?
+>>>>
+>>>> See below.
+>>>>
+>>>>>
+>>>>> Thanks.
+>>>>>
+>>>>> [1] https://github.com/antonblanchard/will-it-scale
+>>>>> [2] enable large folio mapping in finish_fault()
+>>>>>
+>>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>>> index 00728ea95583..5623a8ce3a1e 100644
+>>>>> --- a/mm/memory.c
+>>>>> +++ b/mm/memory.c
+>>>>> @@ -4880,7 +4880,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>>>>>            * approach also applies to non-anonymous-shmem faults to avoid
+>>>>>            * inflating the RSS of the process.
+>>>>>            */
+>>>>> -       if (!vma_is_anon_shmem(vma) || unlikely(userfaultfd_armed(vma))) {
+>>>>> +       if (unlikely(userfaultfd_armed(vma))) {
+>>>>
+>>>> The change to make finish_fault() handle multiple pages in one go are new; added
+>>>> by Baolin Wang at [1]. That extra conditional that you have removed is there to
+>>>> prevent RSS reporting bloat. See discussion that starts at [2].
+>>>>
+>>>> Anyway, it was my vague understanding that the fault around mechanism
+>>>> (do_fault_around()) would ensure that (by default) 64K worth of pages get mapped
+>>>> together in a single set_ptes() call, via filemap_map_pages() ->
+>>>> filemap_map_folio_range(). Looking at the code, I guess fault around only
+>>>> applies to read faults. This test is doing a write fault.
+>>>>
+>>>> I guess we need to do a change a bit like what you have done, but also taking
+>>>> into account fault_around configuration?
+>>
+>> For the writable mmap() of tmpfs, we will use mTHP interface to control the size
+>> of folio to allocate, as discussed in previous meeting [1], so I don't think
+>> fault_around configuration will be helpful for tmpfs.
+> 
+> Yes agreed. But we are talking about ext4 here.
+> 
+>>
+>> For other filesystems, like ext4, I did not found the logic to determin what
+>> size of folio to allocate in writable mmap() path
+> 
+> Yes I'd be keen to understand this to. When I was doing contpte, page cache
+> would only allocate large folios for readahead. So that's why I wouldn't have
 
-Well... So with this change do_group_exit() always "wins" the race if it is
-called when another thread has already started de_thread().
+You mean non-large folios, right?
 
-But de_thread() won't necessarily notice SIGKILL. Sure, the execing thread
-can't return to user-space, but it can do a lot of things after de_thread().
+> seen this.
+> 
+>> (Kefeng, please correct me if
+>> I missed something). If there is a control like mTHP, we can rely on that
+>> instead of 'fault_around'?
+> 
+> Page cache doesn't currently expose any controls for folio allocation size.
+> Personally, I'd like to see some in future becaudse I suspect it will be
+> neccessary to limit physical fragmentation. But that is another conversation...
 
-Just for example, can it reach trace_sched_process_exec() ? If yes, then it
-will look as if it exits with the exit_code provided by do_group_exit()
-_after_ exec.
+Yes, agree. If writable mmap() path wants to allocate large folios, we 
+should rely on some controls or hints (maybe mTHP?).
 
-This differs from case when the execing thread is killed after de_thread(),
-in this case exit_code = SIGKILL...
+>> [1] https://lore.kernel.org/all/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com/
+>>
+>>> Yes, the current changes is not enough, I hint some issue and still debugging,
+>>> so our direction is trying to map large folio for do_shared_fault(), right?
+> 
+> We just need to make sure that if finish_fault() has a (non-shmem) large folio,
+> it never maps more than fault_around_pages, and it does it in a way that is
+> naturally aligned in virtual space (like do_fault_around() does).
+> do_fault_around() actually tries to get other folios from the page cache to map.
+> We don't want to do that; we just want to make sure that we don't inflate a
+> process's RSS by mapping unbounded large folios.
+> 
+> Another (orthogonal, longer term) strategy would be to optimize
+> contpte_convert(). arm64 has a feature called "BBM level 2"; we could
+> potentially elide the TLBIs for systems that support this. But ultimately its
+> best to avoid the need for folding in the first place.
+> 
+> Thanks,
+> Ryan
+> 
+>>
+>> I think this is the right direction to do. I add this '!vma_is_anon_shmem(vma)'
+>> conditon to gradually implement support for large folio mapping buidling,
+>> especially for writable mmap() support in tmpfs.
+>>
 
-I do not see anything really wrong, just trying to understand the impact of
-this change, it looks a bit subtle...
-
-Oleg.
-
+[snip]
 
