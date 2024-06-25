@@ -1,135 +1,118 @@
-Return-Path: <linux-kernel+bounces-228901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C1A916873
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:58:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FA3D916877
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:58:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06E36B2261A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:57:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD7F11C223CE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FFCB158D85;
-	Tue, 25 Jun 2024 12:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE55D15F3E8;
+	Tue, 25 Jun 2024 12:58:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vr3uC17Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="FJPC5nkK"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2581157A6C;
-	Tue, 25 Jun 2024 12:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD0015AD8B
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719320267; cv=none; b=Bhrl37u3XJh7z8iRXJERiUoaIMocUYhqBoCNz02fv3xKp8fXhE9zIUZiWZfT91EOg9xSHzwGixJpJjj5uS0kOyCHC88vok+YFfUenqsbUlazDS7qGRRTDFTTd0O5bYLiJOqShsj2vdsd4Fdk9kIm8HE/TbRAlu5mEmYdBmvU+Aw=
+	t=1719320307; cv=none; b=cQXy4wdENKHFzXqEfXcEUEowLSeUD9RqpsMfSoePLO9TrgjbLVLFqJm+ifDQ/MFXyvYQv2FO3dZS8WRLufIP4vNbeKqTK4kSH5j/oPGq0SlTogsygxtEqwB3bAR49XbA0PB4qduZK3GWzyyftrqwoW3jJG+ajoLS74r/3TsXpeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719320267; c=relaxed/simple;
-	bh=8FjEfbKwtHs29b/F3+jeLz+Oj9YY9vwp9uEARtWGWBI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tmhdcwtLXj1REDS/CXi6bQIzCIcrlM5wQjcW+p+uKrHOK/mdghqoFx4BlXRN91YxMOVtcxgQbVweLcV8IJ60uRRE6dLMqtt0woqFqLhzNOJguiF0zFMAg5z4xKs2R50J+O/9+HkJyyoCTx3vI8UiQoL2urGwkKINUV+pdONxxqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vr3uC17Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C2FBC32786;
-	Tue, 25 Jun 2024 12:57:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719320266;
-	bh=8FjEfbKwtHs29b/F3+jeLz+Oj9YY9vwp9uEARtWGWBI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Vr3uC17ZhkpqcSWJvNiJUWFK+rkc3Ko8id7GdLGQyMRMifjJre45H4J7BNjV/UF2s
-	 RJYK8WL5Negda5G3rEkBkHskbRA4uhXgeeRLYgdxWcpQTa1vZG3wn2tmUSR8lxMpeQ
-	 ZHRW1mVxSed4Kng6/WhTZZAZEh6aKo/NH/X9GaG4VjMKZnXL1yfQ0Mj3Z5iDi4dfgk
-	 vH0o1XAyCAd/kpiU7aXKFqzVG/PkteoUOHAX8GM+BnA3XcbKOgSXHSdcsXZVQNdL8K
-	 CcKfJSyQiPjhOcBn3+uThqn6U9odPMvYtXtgI2UV2B0kuKhWJgce31qQUHtfHmmY/4
-	 rRUcx7skwABkA==
-Message-ID: <3e816509-a12b-4658-85f4-c0d0037c6a64@kernel.org>
-Date: Tue, 25 Jun 2024 15:57:38 +0300
+	s=arc-20240116; t=1719320307; c=relaxed/simple;
+	bh=4WNNOZ1PBF66p8DHjDwxj6Y68GUxyJtWNwbC3thPxlg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ixZFP4VF57PEQbAYzfYllddvQtAKq/h6gkxFRWfiobdzzH+RTkaAoJs58ge1pTOmmBuwcW5A2/qAy3St1MgJsJis0tNgWWDQrjzxQuQBfQlcISdlWLY7+5WLHzRH6sHMuITz8+F3DFDN2htkEYFnLRmHRCAuy+ut7jGczdCgfIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=FJPC5nkK; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=rCw/f2WreuFLhN721myDy+YkLeZoRUij06skazpEo+Y=; b=FJPC5nkK+Ifqc4zRavopnnbJn+
+	eScvPYOBnvnASKdHTYEE8QbZSWv62nc7QqRQsw5t7tVIVknCMP2qVhGZjHPK6Juvf3qYmpzJTNU+n
+	hxstIrap+5ErXqvXMxpD2jjn+oXNA2kvcTbpgD3ztuVuOHSGPXiSqsKx9BIfoDsJkLntTYBHKJA7N
+	lWcIQP1eKBT4DocVhVDBs6LEGmA48Xv8wMAjSIRuGw9UtKibQctQj+n1GTXlB/YYAJfg2jJ5Uox/Z
+	N8BSD/ItkoJMZLV1hoDl3rD8ADY4z0jIvz57Upg5naYSkxMr9EZ1lMr5Y8XIr3vRU33qlxX4Uwogb
+	P2617/xg==;
+Received: from [84.69.19.168] (helo=localhost)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1sM5kU-007J4W-Vj; Tue, 25 Jun 2024 14:58:15 +0200
+From: Tvrtko Ursulin <tursulin@igalia.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: [PATCH 0/2] NUMA emulation for arm64
+Date: Tue, 25 Jun 2024 13:58:01 +0100
+Message-ID: <20240625125803.38038-1-tursulin@igalia.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 5/7] arm64: dts: qcom: sdm845: Add DT nodes for the
- TBUs
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Georgi Djakov <quic_c_gdjako@quicinc.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
- iommu@lists.linux.dev, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
- robdclark@gmail.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- quic_cgoldswo@quicinc.com, quic_sukadev@quicinc.com, quic_pdaly@quicinc.com,
- quic_sudaraja@quicinc.com
-References: <20240417133731.2055383-1-quic_c_gdjako@quicinc.com>
- <20240417133731.2055383-6-quic_c_gdjako@quicinc.com>
- <CAA8EJppcXVu72OSo+OiYEiC1HQjP3qCwKMumOsUhcn6Czj0URg@mail.gmail.com>
- <CAA8EJpr3GYimirDz39f4n-3hDAxFWzo+9fdY6MAuxaNguouVFg@mail.gmail.com>
-Content-Language: en-US
-From: Georgi Djakov <djakov@kernel.org>
-In-Reply-To: <CAA8EJpr3GYimirDz39f4n-3hDAxFWzo+9fdY6MAuxaNguouVFg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 25.06.24 10:50, Dmitry Baryshkov wrote:
-> On Fri, 14 Jun 2024 at 21:05, Dmitry Baryshkov
-> <dmitry.baryshkov@linaro.org> wrote:
->>
->> On Wed, 17 Apr 2024 at 16:39, Georgi Djakov <quic_c_gdjako@quicinc.com> wrote:
->>>
->>> Add the device-tree nodes for the TBUs (translation buffer units) that
->>> are present on the sdm845 platforms. The TBUs can be used debug the
->>> kernel and provide additional information when a context faults occur.
->>>
->>> Describe the all registers, clocks, interconnects and power-domain
->>> resources that are needed for each of the TBUs.
->>>
->>> Signed-off-by: Georgi Djakov <quic_c_gdjako@quicinc.com>
->>
->> This patch now prevents interconnect drivers from hitting the sync
->> state on SDM845.
->> The TBU driver is enabled only when the ARM_SMMU_QCOM_DEBUG is
->> enabled, which is not a typical case on a normal system:
-> 
-> Georgi, before I start acting like a bull in a china shop and sending
-> reverts, any update from your side?
+From: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
 
-Hi Dmitry!
-Thanks for the report! We can easily add status = "disabled" to the DT
-nodes, but please give me some time to take a look what would be the best
-way to handle this, as i was out last week and now i am still catching up.
+This series adds a very simple NUMA emulation implementation and enables
+selecting it on arm64 platforms.
 
-BR,
-Georgi
+Obvious question is why? Short answer - it can bring a significant performance
+uplift on Raspberry Pi 5.
 
-> 
->>
->> [   26.209151] qnoc-sdm845 1500000.interconnect: sync_state() pending
->> due to 150c5000.tbu
->> [   26.217228] qnoc-sdm845 1620000.interconnect: sync_state() pending
->> due to 150c5000.tbu
->> [   26.229926] qnoc-sdm845 1500000.interconnect: sync_state() pending
->> due to 150c9000.tbu
->> [   26.238008] qnoc-sdm845 1620000.interconnect: sync_state() pending
->> due to 150c9000.tbu
->> [   26.249068] qnoc-sdm845 1740000.interconnect: sync_state() pending
->> due to 150cd000.tbu
->> [   26.257127] qnoc-sdm845 1740000.interconnect: sync_state() pending
->> due to 150d1000.tbu
->> [   26.265159] qnoc-sdm845 1740000.interconnect: sync_state() pending
->> due to 150d5000.tbu
->> [   26.273189] qnoc-sdm845 1500000.interconnect: sync_state() pending
->> due to 150d9000.tbu
->> [   26.281206] qnoc-sdm845 1620000.interconnect: sync_state() pending
->> due to 150d9000.tbu
->> [   26.289203] qnoc-sdm845 1500000.interconnect: sync_state() pending
->> due to 150dd000.tbu
->> [   26.297196] qnoc-sdm845 1620000.interconnect: sync_state() pending
->> due to 150dd000.tbu
->> [   26.305201] qnoc-sdm845 1500000.interconnect: sync_state() pending
->> due to 150e1000.tbu
->> [   26.313207] qnoc-sdm845 1620000.interconnect: sync_state() pending
->> due to 150e1000.tbu
-> 
+Longer answer is that splitting the physical RAM into chunks, and utilising an
+allocation policy such as interleaving, can enable the BCM2721 memory controller
+to better utilise parallelism in physical memory chip organisation.
+
+In more conrete numbers, testing with Geekbench 6 shows that splitting into four
+emulated NUMA nodes can uplift the single core score of the benchmark by around
+6%, and the multi-core by around 18%.
+
+Code is quite simple and new functionality can be enabled using the new
+NUMA_EMULATION Kconfig option and then at runtime using the existing (shared
+with other platforms) numa=fake=<N> kernel boot argument.
+
+Note however that the default allocation policy is not interleaving and further
+steps are required to "unlock" the performance uplift.
+
+Simplest method is probably to launch test programs via the
+"numactl --interleave=all COMMAND" wrapper, but it is also possible to change
+the system wide policy via systemd configuration.
+
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: “Rafael J. Wysocki" <rafael@kernel.org>
+
+Maíra Canal (2):
+  numa: Add simple generic NUMA emulation
+  arm64/numa: Add NUMA emulation for ARM64
+
+ arch/arm64/Kconfig            | 10 ++++++
+ drivers/base/Kconfig          |  7 ++++
+ drivers/base/Makefile         |  1 +
+ drivers/base/arch_numa.c      |  6 ++++
+ drivers/base/numa_emulation.c | 67 +++++++++++++++++++++++++++++++++++
+ drivers/base/numa_emulation.h | 21 +++++++++++
+ 6 files changed, 112 insertions(+)
+ create mode 100644 drivers/base/numa_emulation.c
+ create mode 100644 drivers/base/numa_emulation.h
+
+-- 
+2.44.0
 
 
