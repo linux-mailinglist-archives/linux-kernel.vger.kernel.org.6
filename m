@@ -1,132 +1,68 @@
-Return-Path: <linux-kernel+bounces-229315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76583916E3A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:37:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C6C916E3B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:37:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C5B21F22A03
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:37:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ACC21F22C97
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:37:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D5317335E;
-	Tue, 25 Jun 2024 16:37:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6135117334B;
+	Tue, 25 Jun 2024 16:37:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="xDiSTt7t"
-Received: from mail-0301.mail-europe.com (mail-0301.mail-europe.com [188.165.51.139])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TQfthsjd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78CE814A0B8;
-	Tue, 25 Jun 2024 16:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=188.165.51.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E8513B2B0
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 16:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719333443; cv=none; b=U8MRJih7E0MOx7E7gW2Lcz/fsndIIN5LK9/jKboBQvSQ6AAAQWuFdJI6o2KME1+ufrCwCfkgR4zLKsBuJMF36f+v6v01fMR7l35t4Mya311pJTSFcAacvUgPMGBh9nvumlwiELeqRpr+9iZCyddGzmu27YPq4M48m+tabMBUvrs=
+	t=1719333456; cv=none; b=bBFIzzY+IWgW2DI/Qj0AjcDjASEbkIs9AUXtJ4trAccIHnmwHhrK9rNAtHXrVKVlcNRrIF5TGGofVaEJI3T9blE9KDy46F84yhcXaOtZil4hsdoKMhBxkKwmUEPKl7KfMmFVDjvlV0q2+R29I8wX0xn58UruzVnczClHqAImU7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719333443; c=relaxed/simple;
-	bh=fnPzckJzBpwtTvvkEfm3K3Gv3jko4xHw6k7B6ll5zXc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mk5Qc4ZFniXQABqkhJDeM6ooUu3p4vS4wi9Kz+sff3Di7kn+Eoff3MmB1leZog1kPHDChUzWSsTBdsalIWr7alLnNoacszr9ngxKtptfHDR5/puxJwFlG4dTOsuUK/7hVFtspYSE2L8Z+YdEVRMX5nuG5cxOnXizpekyNdsKuas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=xDiSTt7t; arc=none smtp.client-ip=188.165.51.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1719333431; x=1719592631;
-	bh=fnPzckJzBpwtTvvkEfm3K3Gv3jko4xHw6k7B6ll5zXc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=xDiSTt7tz+4vsmZSrWjaFL63uTKGBV2BWBe5l7IioUo9YKRQ28uXYf5jyaKpErlh6
-	 78UjmOal/QfRHOzVWF0fG0Z3yzEhl9Lm9vcPs/0jfQu1XqXAv5BT4wtbHF6SohTflJ
-	 Tg6y5HqjycK/2g7ScNRenhuRLA4k7hwzt6LB/AckGZ4xyA7mOfG+JyjaNcSS9WlZp7
-	 BVEWNFNVtMa2fxohYYxI7pHB+CuCEVPsSifs/KkFbWw4VVFyRzCCzAmBEntjbmE9W3
-	 9jmFW+p4Reg9oej3/rh6rg72OJZ9Kq+FSWO9mYmcKQCrXAIRI/crtH9YbGN+w3TVy2
-	 xgt74pjbJWbuA==
-Date: Tue, 25 Jun 2024 16:37:08 +0000
-To: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-From: Koakuma <koachan@protonmail.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] sparc/build: Make all compiler flags also clang-compatible
-Message-ID: <Wcr4bsqUbuLm7J7tfuNMYZZ1cvYyh4CfBDt-siTQySe6jReMpHb7-AXX_Mao7uEh8exzhq6_Tyg9YoRzKCE77KfqFoc6L7_TEE5CuWg5Pp0=@protonmail.com>
-In-Reply-To: <e359b140839606b1856c5625669e5b6bd7ebc7eb.camel@physik.fu-berlin.de>
-References: <20240620-sparc-cflags-v1-1-bba7d0ff7d42@protonmail.com> <9449319ebbcd59719614ee786f1abe18256d0331.camel@physik.fu-berlin.de> <Mz-kWneLsFvKbBcTaGnC2xMA2U55fINzOJqmMRMumrtTaeHW40WfS5rYUjF_71aoXG56jSHo0vJ0oRPNoCrxpE_oIr7mmnK6fg9dFC_J9hk=@protonmail.com> <e359b140839606b1856c5625669e5b6bd7ebc7eb.camel@physik.fu-berlin.de>
-Feedback-ID: 6608610:user:proton
-X-Pm-Message-ID: 2dda54422a63525ab282c15bd0175fdcac607147
+	s=arc-20240116; t=1719333456; c=relaxed/simple;
+	bh=8PtmWZFEhdO5oFL3PM6WujyngC0aarxAvSZebgwjOKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a5uUSEImVMczBblhlceHilkItNtWkLB3PS4sRDiX2J3BN/C+VDaBbj85T0aiGyqcevMlDEJmHbpFyStoD1bMhgdrASNCOPQ8BgMbzrIBrACBV9zrrDp2HnSVLD/4nREcDNFfFm1FtwzRicBTKmuOUQKYJwQfb0rRsFO331k4kJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TQfthsjd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74D51C32781;
+	Tue, 25 Jun 2024 16:37:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719333456;
+	bh=8PtmWZFEhdO5oFL3PM6WujyngC0aarxAvSZebgwjOKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TQfthsjd1lxzW7BWvWz2HsTLM/9w6xXKcOgxhp/N5RlgkiZQOpJe98ArJbS5PNqpN
+	 2KmAHkSsRTFt1wyR+hivHTLUUN8fh/mcgWliLI18fdLrq4v6MmEtjK6aEk/kkvlVzo
+	 HRKDmO6mizwDOi7Qw/1EOlWirOE/uHQoJIoakMBq8YfTog3rEDWL3F8oizB9bVCUoM
+	 2eBf0qN/iRN/xeUrwH+/wsQ27OAt4p7xacJC+hUe/zqHEDyP9CgeqPGsi997zXmEHv
+	 omQvuuWqkeFqQYZS/YHeA/Dn/wAqJGgqZVHeY1qsEVb8z+Fo4nBON3TBxIZfWb/O3y
+	 LN4XDII3yTMeg==
+Date: Tue, 25 Jun 2024 10:37:33 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: John Meneghini <jmeneghi@redhat.com>
+Cc: hch@lst.de, sagi@grimberg.me, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org, emilne@redhat.com,
+	jrani@purestorage.com, randyj@purestorage.com,
+	chaitanyak@nvidia.com, hare@kernel.org
+Subject: Re: [PATCH v8 0/2] nvme: queue-depth multipath iopolicy
+Message-ID: <ZnryTZqwlz61s0D4@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240625122605.857462-1-jmeneghi@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625122605.857462-1-jmeneghi@redhat.com>
 
-Hi Adrian~
+On Tue, Jun 25, 2024 at 08:26:03AM -0400, John Meneghini wrote:
+> Please add this to nvme-6.11.
 
-John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de> wrote:
-> Would be interesting to find out what Sun's own C/C++ compiler (Sun Studi=
-o)
-> does in this case. I can try to run some tests on Solaris or you can chec=
-k
-> out the Solaris machines in the GCC compile farm [1].
-
-I am using the version included in Oracle Studio 12.6, and it seems
-that it always emit a EM_SPARC32PLUS type for 32-bit objects.
-
-The documentation for the -xarch also states that even when using
-the most generic target (`sparc`), it only supports emitting for V9 ISA
-(that is, EM_SPARC32PLUS for 32-bit target):
-
-> sparc
-> Compile for the SPARC-V9 ISA.
-> Compile for the V9 ISA, but without the Visual Instruction Set (VIS),
-> and without other implementation-specific ISA extensions. This option
-> enables the compiler to generate code for good performance on
-> the V9 ISA.
-
-From https://docs.oracle.com/cd/E77782_01/html/E77803/cc-1.html
-
-Other versions of the compiler might act differently, but sadly I have
-no access to them.
-
-> I just had a brief look - will do the proper review later - and I think
-> it's the right approach for the time being. However, I am wondering wheth=
-er
-> we should add "-mv8plus" to clang as well.
->=20
-> I wondering though whether "-mcpu=3Dv9 -m32" is truly identical to "-mv8p=
-lus"
-> or not.
-
-Hmm, so I just found out after some digging that while `-m32 -mv8plus`
-and `-m32 -mcpu=3Dv9` can differ a little, I am not sure if supporting
-the full behavior in clang would be worth the effort? I think I can
-add `-mv8plus`/`-mno-v8plus` as an alias for `-mcpu=3Dv9`/`-mcpu=3Dv8`, but
-any more would probably be too much effort for too little gain?
-
-`-mv8plus` basically allows the compiler to treat the G and O registers
-as being 64-bit wide, allowing the compiler to use any of the new
-64-bit V9 instructions (e.g. `casx`) as it sees fit. From GCC's docs:
-
-> With `-mv8plus`, GCC generates code for the SPARC-V8+ ABI.
-> The difference from the V8 ABI is that the global and out registers
-> are considered 64 bits wide.=20
-
-https://gcc.gnu.org/onlinedocs/gcc/SPARC-Options.html#index-mv8plus
-
-Note that it does not change value passing in parameters or returns
-(outgoing parameters still need to be trimmed to 32-bit even though
-they are placed in the O registers, for example) so EM_SPARC32PLUS
-objects can be freely mixed with EM_SPARC ones.
-
-Also, this seems to be undocumented, but at least from my testing,
-`-mv8plus` implies `-mcpu=3Dv9` unless it gets overridden by a later
-`-mcpu` flag. So, in theory, it is totally permissible to have
-flags like `-m32 -mno-v8plus -mcpu=3Dv9` or `-m32 -mv8plus -mcpu=3Dv8`,
-however this will be useless in practice since the combination will
-end up disallowing the compiler from using any V9 instructions...
-
-And so far, looking around at kernel sources at least, there seem
-to be no need for such kind of flag combinations... though probably
-you or others who are more familar could comment on this?
+This looks good to me! I'll give another day for potential
+comments/reviews, but I think this okay for 6.11.
 
