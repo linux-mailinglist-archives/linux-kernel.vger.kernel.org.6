@@ -1,242 +1,147 @@
-Return-Path: <linux-kernel+bounces-228775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80EBA9166A8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:53:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A74B9166AC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:55:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F12A6B24A19
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:53:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C7AC1C23449
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:55:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271DE14C59C;
-	Tue, 25 Jun 2024 11:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B22B152504;
+	Tue, 25 Jun 2024 11:54:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qFfTLU/f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8IiHEfLD";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qFfTLU/f";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="8IiHEfLD"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ME/rWC9F"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A701494A0;
-	Tue, 25 Jun 2024 11:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E543F1494A0
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:54:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719316381; cv=none; b=rM9qGqhAJFbJd6rJiQMbhCG15ahim0Z7ZzYK0LO2ZxuZhq1pSi4Oo9io1x7VPYdGMFVD8b1SW7fcpgzZlfTh5JgFdYJKOzm5VDNfOMUX6pdv2/hwSpj823peeBjlNxqVcBMaUGTUC3ONe2lcfy0lT8CGP8NlsAvRunfzyNWIvYA=
+	t=1719316492; cv=none; b=pO2XR4Hipqqod37qcczbJjjkRTqqZIA0kGm1TrmVYcg4zFBbrxkCIZo7QPmIOux9b5eJ3wijkuISm2dhm2ifqXoVCCRPrZ2Vie7oUPo6r2BaMzbuqk2RsO04BiXAgx/jfRkxqeSno42KvDOItNMKiaZZYrDzENQd5SzELKbhobU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719316381; c=relaxed/simple;
-	bh=yEXI9upsTGwmng1fzr/TmblhbgESfn49eFsRtzhxKMg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M8MtgZQEYpfWFlu/+jPapf/oKDO2FJtXlsbIEZhoDRyIMuYJigjsLBEOMex8+6YeGOZLECZnXJRXqNxGKyhM1hV5qP3Pz2oO0+hld6PMUfq381M2/eBrimg040JvnQ9TeZE67bwzym1NNQTXiOvhcboUKGd98DE6FDP7QoURqks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qFfTLU/f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8IiHEfLD; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qFfTLU/f; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=8IiHEfLD; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 8FDD121A74;
-	Tue, 25 Jun 2024 11:52:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719316377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g6QReXCptVvvnhWONvHMOQ9mYHpbTZJLv+/buDH78sM=;
-	b=qFfTLU/feSIY+EL+6nPRavFzspOM/dJdK3v5F2BlmPNoOiENE4myYURQSXCFpXm/5KmZA2
-	of63qoq/wSVl4Xj29vqXOrjxOyLWDMTPy/HWtwOXNbhg3ZwkZHLI2jV/Im5/OkHDqa2fui
-	ShIYL2MqqIxGAEOYURuLn4h/doAiALs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719316377;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g6QReXCptVvvnhWONvHMOQ9mYHpbTZJLv+/buDH78sM=;
-	b=8IiHEfLD271bS+UYd+Tfo//IJ4Em+a6JhIiifj/ICepXl2IwZnhQjxk4/5KzEFitcuBVK1
-	iUJ0sZXiSIQeOwCw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1719316377; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g6QReXCptVvvnhWONvHMOQ9mYHpbTZJLv+/buDH78sM=;
-	b=qFfTLU/feSIY+EL+6nPRavFzspOM/dJdK3v5F2BlmPNoOiENE4myYURQSXCFpXm/5KmZA2
-	of63qoq/wSVl4Xj29vqXOrjxOyLWDMTPy/HWtwOXNbhg3ZwkZHLI2jV/Im5/OkHDqa2fui
-	ShIYL2MqqIxGAEOYURuLn4h/doAiALs=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1719316377;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=g6QReXCptVvvnhWONvHMOQ9mYHpbTZJLv+/buDH78sM=;
-	b=8IiHEfLD271bS+UYd+Tfo//IJ4Em+a6JhIiifj/ICepXl2IwZnhQjxk4/5KzEFitcuBVK1
-	iUJ0sZXiSIQeOwCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7770C13A9A;
-	Tue, 25 Jun 2024 11:52:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0/0jHZmvemYWeAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 25 Jun 2024 11:52:57 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 3054BA083E; Tue, 25 Jun 2024 13:52:57 +0200 (CEST)
-Date: Tue, 25 Jun 2024 13:52:57 +0200
-From: Jan Kara <jack@suse.cz>
-To: Yu Ma <yu.ma@intel.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	mjguzik@gmail.com, edumazet@google.com,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com,
-	tim.c.chen@linux.intel.com
-Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
-Message-ID: <20240625115257.piu47hzjyw5qnsa6@quack3>
-References: <20240614163416.728752-1-yu.ma@intel.com>
- <20240622154904.3774273-1-yu.ma@intel.com>
- <20240622154904.3774273-2-yu.ma@intel.com>
+	s=arc-20240116; t=1719316492; c=relaxed/simple;
+	bh=QEhjfjjl3Gs/schsMwIRhpSaPScpnfCjXKY3ZDk6E70=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aKJvCdgWEQPKZLguwkWNYTJAXuuflH3WF1U7kymxIPjOqoQmurmy0AygAju9n2oA1BE8b5H1l0FfjPiMDZZxpJ/cZIyofDMioz3nkLjSj6LlLMXm3HnPplrvNedUJFS7KgI5uPZ0xNwRgZB79RuoFJOH6yRQCp7nHrOo2ScUOkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ME/rWC9F; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4217136a74dso44333975e9.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 04:54:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719316488; x=1719921288; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zo/JwLek1zoDmguFxrFNc+yd8tiMt4oeP8zyhyzsa9U=;
+        b=ME/rWC9FLCaQhX7AG8caxTh2LlK7C/CbsndJrS41TFFXm87bgB0fsv26m4hxqSL1bF
+         cYEzAJYdVYNXk8wVO3RfzxYHlyxQlcsEVPFAGL4cWzxs/VzTttfTco7+4VlqEH286bsH
+         y85B1dyYJvMWF7OCvHvb4Opl5l40f8osZK+eU1Kfv8cRtui8q+FqfUC/Zh2S/eoTVPaj
+         qONrnNHopdqH7D3skBRUObrGQvcJx8Jnf92G+qRtS6LX3fWHBv1M72eMeNo9ttpQkGIe
+         QgaXMsdjwxIruNx9ENawml/joLz1YsVXBvE0oTVNJQdNyphQF43/dLgT4jTchU9g4BZD
+         Wf7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719316488; x=1719921288;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zo/JwLek1zoDmguFxrFNc+yd8tiMt4oeP8zyhyzsa9U=;
+        b=Ar/AG6ayrdRlLHTUb89iUAnS33OmTHA65qbcmrlYf5uN6vNpqx1ZilZo1h2r+PWy61
+         3zg8HsaMEGlWdwgWaIhn6fM80DM+iDF1N/kWBXA9wBxHDSU7n+R/fhNHlaiTTv9xCnHu
+         xHtvqBXZUgfzArJU95kaUHC26Us3IRxp6VlehM1mEn2i5daRBTfu7ATFI0bZaePslDeG
+         P1jSLsT/br9JwI/2/jh6qZIGh5CL+8OXMm1CWAEYHZ6XK+E6A0/RPXy9qs8OaI3fkDtc
+         zqRP8NvNOY36Hw0NlQbGFrKQD85mf6kAMKem+/8n0ksS4V73PxOLbu1Jl+ggjJIRWgyJ
+         K95Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWwIQFXCoMqwt8LMl+w7ktKEq9gTcibaOEo6CmP67mS9GT/EC7wbne/0q3mVC+Ewl5y4KIamazAI8b6pmKb1rxJGgWh2zafitUNSGOp
+X-Gm-Message-State: AOJu0YwEw56tCZILlwgw+Wq3mkt3Ydt5QJqrgLBJjbDzU9a5P+/JMWWN
+	5DMUCXwaJIsRMisKy/UrlW7lqf7XDeyettABA4CZobaL2R3oNuHbXnbTvR6xXkc=
+X-Google-Smtp-Source: AGHT+IFIZVwSrEzsurp736JXh70kVDQzuz2SL8RzFG/oZ2827PEdmqkw9RLl/8WeuoJ60IR9y3yTwQ==
+X-Received: by 2002:a05:600c:4c14:b0:424:a5a5:a4a4 with SMTP id 5b1f17b1804b1-424a5a5a83cmr7239865e9.32.1719316487864;
+        Tue, 25 Jun 2024 04:54:47 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:1b57:b4a1:3d50:32a2])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-366389b88easm12747240f8f.39.2024.06.25.04.54.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 04:54:47 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Kevin Hilman <khilman@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH] arm64: dts: amlogic: g12: bump spdif output drive strength
+Date: Tue, 25 Jun 2024 13:54:41 +0200
+Message-ID: <20240625115443.934763-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240622154904.3774273-2-yu.ma@intel.com>
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_COUNT_THREE(0.00)[3];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_CC(0.00)[zeniv.linux.org.uk,kernel.org,suse.cz,gmail.com,google.com,vger.kernel.org,intel.com,linux.intel.com];
-	MISSING_XM_UA(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Score: -3.80
-X-Spam-Level: 
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 
-On Sat 22-06-24 11:49:02, Yu Ma wrote:
-> There is available fd in the lower 64 bits of open_fds bitmap for most cases
-> when we look for an available fd slot. Skip 2-levels searching via
-> find_next_zero_bit() for this common fast path.
-> 
-> Look directly for an open bit in the lower 64 bits of open_fds bitmap when a
-> free slot is available there, as:
-> (1) The fd allocation algorithm would always allocate fd from small to large.
-> Lower bits in open_fds bitmap would be used much more frequently than higher
-> bits.
-> (2) After fdt is expanded (the bitmap size doubled for each time of expansion),
-> it would never be shrunk. The search size increases but there are few open fds
-> available here.
-> (3) find_next_zero_bit() itself has a fast path inside to speed up searching
-> when size<=64.
-> 
-> Besides, "!start" is added to fast path condition to ensure the allocated fd is
-> greater than start (i.e. >=0), given alloc_fd() is only called in two scenarios:
-> (1) Allocating a new fd (the most common usage scenario) via
-> get_unused_fd_flags() to find fd start from bit 0 in fdt (i.e. start==0).
-> (2) Duplicating a fd (less common usage) via dup_fd() to find a fd start from
-> old_fd's index in fdt, which is only called by syscall fcntl.
-> 
-> With the fast path added in alloc_fd(), pts/blogbench-1.1.0 read is improved
-> by 17% and write by 9% on Intel ICX 160 cores configuration with v6.10-rc4.
-> 
-> Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
-> Signed-off-by: Yu Ma <yu.ma@intel.com>
-> ---
->  fs/file.c | 35 +++++++++++++++++++++--------------
->  1 file changed, 21 insertions(+), 14 deletions(-)
-> 
-> diff --git a/fs/file.c b/fs/file.c
-> index a3b72aa64f11..50e900a47107 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -515,28 +515,35 @@ static int alloc_fd(unsigned start, unsigned end, unsigned flags)
->  	if (fd < files->next_fd)
->  		fd = files->next_fd;
->  
-> -	if (fd < fdt->max_fds)
-> +	error = -EMFILE;
-> +	if (likely(fd < fdt->max_fds)) {
-> +		if (~fdt->open_fds[0] && !start) {
-> +			fd = find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, fd);
+Spdif output currently uses a 0.5mA drive strength by default.
+While the result depends on how the spdif output is hooked to
+rest of the system, this is a bit weak and signal quality
+may be poor. This was reported on the vim3l for example.
 
-So I don't think this is quite correct. If files->next_fd is set, we could
-end up calling find_next_zero_bit() starting from quite high offset causing
-a regression? Also because we don't expand in this case, we could cause access
-beyond end of fdtable?
+Increase the drive strength to 3mA, as used for TDM, to be on the
+safe side.
 
-Finally, AFAIU this speeds up the lookup for cases where fd < 64 is
-available at the cost of cases where the first long is full (there we
-unnecessarily load open_fds[0] into cache). Did you check if the cost is
-visible (e.g. by making blogbench occupy first 64 fds before starting its
-load)?
+Fixes: 649675db939d ("arm64: dts: meson: g12a: add spdifouts")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-								Honza
-
-> +			goto fastreturn;
-> +		}
->  		fd = find_next_fd(fdt, fd);
-> +	}
-> +
-> +	if (unlikely(fd >= fdt->max_fds)) {
-> +		error = expand_files(files, fd);
-> +		if (error < 0)
-> +			goto out;
-> +		/*
-> +		 * If we needed to expand the fs array we
-> +		 * might have blocked - try again.
-> +		 */
-> +		if (error)
-> +			goto repeat;
-> +	}
->  
-> +fastreturn:
->  	/*
->  	 * N.B. For clone tasks sharing a files structure, this test
->  	 * will limit the total number of files that can be opened.
->  	 */
-> -	error = -EMFILE;
-> -	if (fd >= end)
-> +	if (unlikely(fd >= end))
->  		goto out;
->  
-> -	error = expand_files(files, fd);
-> -	if (error < 0)
-> -		goto out;
-> -
-> -	/*
-> -	 * If we needed to expand the fs array we
-> -	 * might have blocked - try again.
-> -	 */
-> -	if (error)
-> -		goto repeat;
-> -
->  	if (start <= files->next_fd)
->  		files->next_fd = fd + 1;
->  
-> -- 
-> 2.43.0
-> 
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+index 138fb18c6480..4057ee808a58 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12-common.dtsi
+@@ -987,7 +987,7 @@ spdif_out_h_pins: spdif-out-h {
+ 						mux {
+ 							groups = "spdif_out_h";
+ 							function = "spdif_out";
+-							drive-strength-microamp = <500>;
++							drive-strength-microamp = <3000>;
+ 							bias-disable;
+ 						};
+ 					};
+@@ -996,7 +996,7 @@ spdif_out_a11_pins: spdif-out-a11 {
+ 						mux {
+ 							groups = "spdif_out_a11";
+ 							function = "spdif_out";
+-							drive-strength-microamp = <500>;
++							drive-strength-microamp = <3000>;
+ 							bias-disable;
+ 						};
+ 					};
+@@ -1005,7 +1005,7 @@ spdif_out_a13_pins: spdif-out-a13 {
+ 						mux {
+ 							groups = "spdif_out_a13";
+ 							function = "spdif_out";
+-							drive-strength-microamp = <500>;
++							drive-strength-microamp = <3000>;
+ 							bias-disable;
+ 						};
+ 					};
+@@ -1826,7 +1826,7 @@ spdif_ao_out_pins: spdif-ao-out {
+ 					mux {
+ 						groups = "spdif_ao_out";
+ 						function = "spdif_ao_out";
+-						drive-strength-microamp = <500>;
++						drive-strength-microamp = <3000>;
+ 						bias-disable;
+ 					};
+ 				};
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
 
