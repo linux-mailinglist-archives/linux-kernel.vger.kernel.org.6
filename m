@@ -1,60 +1,61 @@
-Return-Path: <linux-kernel+bounces-229534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD7B3917087
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:47:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5396391708A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:47:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 68586B2692C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EFB841F21726
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:47:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6EC17CA14;
-	Tue, 25 Jun 2024 18:46:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 442B317A931;
+	Tue, 25 Jun 2024 18:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V131dyNB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KLXfD3xd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C2B415F3E8;
-	Tue, 25 Jun 2024 18:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828D3A41;
+	Tue, 25 Jun 2024 18:47:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719341170; cv=none; b=bTtQe3M2K0Zy7eZVGFykRqdxHm3P8Mj7L+Wusrl9A5C9CSjt7mwIHPHUnjX+e1VPdKvsVgcMRgDiwVvIJcrBmtVYEBhzOnhRUXE4mj83Sgj6wAcv+tkyqI+e1EZDrmm/7mKdzlz/eMFzhlk3LdLMFRmBSXIjRqhgsvj1yZWI4J8=
+	t=1719341249; cv=none; b=lKARl7hIJwUv1+vJprnIgtnCmKWsFCIEOYP/gQOmyXgDQEnuiz4j96lYDEw9486qkVhPVCCTmnlXx7OjZNqvJyHpgORJ+6hgOr2Nr7BQGd5j08ygz2TAVU/F3MXNNSzCOyY22oYFwiwqiNHNoGTf86nzmAil7J0ljM6JnKykyso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719341170; c=relaxed/simple;
-	bh=qRohjESyEqWBF0O0TsINhdM2T84vGe2VszXjL5sNRyA=;
+	s=arc-20240116; t=1719341249; c=relaxed/simple;
+	bh=bhr8nFnDL7/6wv7wSLgjf2kIbx/heqwxBGqRTTkrtqg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=pVGavYuYPMdt4sCvSWbkeOLXH+WDlv5yVXUf11AtHtm6JyQo5LYImF5fC9czlfwiD2sm9yhQkYGl2Ued54uPmp22KFsDUCf1LrgH3YB0Q+F/NPUcaKXzsPX78/2T87kjW/ew061ZIwj/HCMIt+zORQhqWrI8P+WRz8O5LPoHluk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V131dyNB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC705C32782;
-	Tue, 25 Jun 2024 18:46:07 +0000 (UTC)
+	 MIME-Version:Content-Type; b=CsGFfkRLWZFGQbPxGIxWomuod1bQbuOWKiZkJ6Fgc714x7dXzv0t4YWSNHbin30bOJK4FdoQblyc/JLrdEgKCjCTtoW09OlH9Fx9XvIQR9Ko7O1cWnsaCJVgX6470puBlfKL/SoQMdON27mPAr73zmXeF/RUUQJt27N1uDxBaqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KLXfD3xd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDAE5C32789;
+	Tue, 25 Jun 2024 18:47:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719341169;
-	bh=qRohjESyEqWBF0O0TsINhdM2T84vGe2VszXjL5sNRyA=;
+	s=k20201202; t=1719341249;
+	bh=bhr8nFnDL7/6wv7wSLgjf2kIbx/heqwxBGqRTTkrtqg=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=V131dyNBVJ2hCYVBgxf31jbxmFKVBFx+td0hUGv2o0rTQx58NhQvEF2ZICo3wQHvH
-	 2S7GA+pNwWEMcH42+CLVhuSiN699BF2gPXbFlwa09SuLVOeAlqQSiUeHYuwLJ0oYlu
-	 086FTOyMmtu6TMwsjJ64Dll8/GDpvmhT8igoirkudxx6VeOYL6FYn+2Sq5mFB7LkpG
-	 5Dl6pQeg3canos9i4uewnEux5v+j15zGRwv9ZFZSzaAGi9nCDyWTojEQSErGU3BvWg
-	 bHOWMziYFYv7Z+1ukqWwXpX32Z/sd4Dvjj79OYO0qL+bkSBIoZEjYJQWkS4OG7e71C
-	 aFBkA6IMlO7hQ==
+	b=KLXfD3xd6uJZwws+dSetGUwBCfzNfuucKdITXlxBeyaD2HCrIC4ZOGFEfbd4206z8
+	 Lzqy8T8vlQY6Cls/b7CS3aajnGLSBgvUWUsou8b1OkmIT6KiyRRmSsnzyRhbkdcLrR
+	 5rth+FbTad5uuWBp811dQhihLAT+gA1A11qD1jA/MtzQFyJ2zFtAsr54VAtaWSIRds
+	 jvEfBEwfFmBUJhajF+qY+E2RzrrInzbJPHgL9H73p1f0MyJZgTc0a7jvlm42aiUsEu
+	 MJx73xiozDPEBVNioSJL8+QsvC6lnInoPM0P61F2rgFHeXQGLKyYJzeWNCmIsxx2C/
+	 zb7i2hgzq8X6Q==
 From: Mark Brown <broonie@kernel.org>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>
-Cc: Michael Hennerich <michael.hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Marcelo Schmitt <marcelo.schmitt@analog.com>, 
- Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org, 
- linux-iio@vger.kernel.org
-In-Reply-To: <20240624-devm_spi_optimize_message-v2-0-58155c0180c2@baylibre.com>
-References: <20240624-devm_spi_optimize_message-v2-0-58155c0180c2@baylibre.com>
-Subject: Re: (subset) [PATCH v2 0/2] spi: add devm_spi_optimize_message()
- helper
-Message-Id: <171934116763.1172279.176434160030643292.b4-ty@kernel.org>
-Date: Tue, 25 Jun 2024 19:46:07 +0100
+To: djakov@kernel.org, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+ matthias.bgg@gmail.com, lgirdwood@gmail.com, gustavoars@kernel.org, 
+ henryc.chen@mediatek.com, linux-pm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ kernel@collabora.com, wenst@chromium.org, amergnat@baylibre.com, 
+ Kees Cook <kees@kernel.org>
+In-Reply-To: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
+References: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
+Subject: Re: (subset) [PATCH v6 0/7] MediaTek DVFSRC Bus Bandwidth and
+ Regulator knobs
+Message-Id: <171934124556.1173981.12014605377517424760.b4-ty@kernel.org>
+Date: Tue, 25 Jun 2024 19:47:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,21 +66,30 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Mon, 24 Jun 2024 15:10:29 -0500, David Lechner wrote:
-> In the IIO subsystem, we are finding that it is common to call
-> spi_optimize_message() during driver probe since the SPI message
-> doesn't change for the lifetime of the driver. This patch adds a
-> devm_spi_optimize_message() helper to simplify this common pattern.
+On Mon, 10 Jun 2024 10:57:28 +0200, AngeloGioacchino Del Regno wrote:
+> Changes in v6:
+>  - Fixed build with clang (thanks Nathan!)
+>  - Removed unused mtk_rmw() macro in mtk-dvfsrc.c
+>  - Added MODULE_DESCRIPTION() to mtk-dvfsrc-regulator.c
 > 
+> Changes in v5:
+>  - Fixed Kconfig dependencies in interconnect
+>  - Fixed module build for dvfsrc and interconnect
+> 
+> [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
 
 Thanks!
 
-[1/2] spi: add EXPORT_SYMBOL_GPL(devm_spi_optimize_message)
-      commit: 7e74a45c7afdd8a9f82d14fd79ae0383bbaaed1e
+[1/7] dt-bindings: regulator: Add bindings for MediaTek DVFSRC Regulators
+      commit: b147ae7ae5141cb10c520d372ecabb2c520210c4
+[5/7] regulator: Remove mtk-dvfsrc-regulator.c
+      commit: cd102850e32c145661c6a0640dc6c5feba11af72
+[6/7] regulator: Add refactored mtk-dvfsrc-regulator driver
+      commit: d2ea920a4092b3c0a6a004b93ce198ca37455d90
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
