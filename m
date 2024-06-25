@@ -1,108 +1,165 @@
-Return-Path: <linux-kernel+bounces-228310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D022F915DEE
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:07:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D3AB915E04
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:11:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 936BA283F00
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:07:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4E11B2156D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:11:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2D6143C6A;
-	Tue, 25 Jun 2024 05:07:49 +0000 (UTC)
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A9E143C72;
+	Tue, 25 Jun 2024 05:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="QPREX/zI";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nRYWjbf3"
+Received: from wfhigh2-smtp.messagingengine.com (wfhigh2-smtp.messagingengine.com [64.147.123.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A7C13C9B8;
-	Tue, 25 Jun 2024 05:07:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2499C13C9B8;
+	Tue, 25 Jun 2024 05:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719292068; cv=none; b=g8iFwLu5KfYLeyzFIOgbCDY4EJzrpkpoEGSl96qi3kwUhcjcViGbT/HYVnCr4OrI//fvOySMjcdpWnaBv8Bxv2HY5wXltpfKywbW9exdWqJEr9nsQrTtvXtR5gPInhbg4Ke3IP4Nz5ayvMOIY/Orwa2IAdYs4GzJFKpZ7DBaIfw=
+	t=1719292297; cv=none; b=pL1n3YgXe2Pono7yk6RVkKk9v4UTphmM8e+/+Q3KPInBUqgOGiLz6t0Z9is9LSSoJ6VgGLkSpGLHqFTEESH/YohlPVRndsGpSljMx9K1pE3S7L2S2EI+uW2U3lOkcIwMy1BjwrOlhCZqk5fw1hMWyb+mr2LrD7uPdzo+kNvLavM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719292068; c=relaxed/simple;
-	bh=4Fqo5ZsXA00Syt4IyDqmkrXtJhhEceAEBc2ZwO2zK1Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ctLK5kiPDCbkulNm9UuC6/SHy3hUAigEmMMnhHbmeN+L5XedmPB9uGn/EAq5uWr13hXlWex8xDoluWkxk5T1Aqw401pPVwQvWdNUl8wk4WBFoIYY89k6XGj3ApQfuV2yMW/OXiM5enEzZTEzXAJIcx3THSGtKeXswn5hRB31Az0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c7dd4586afso4007727a91.2;
-        Mon, 24 Jun 2024 22:07:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719292067; x=1719896867;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=n2nX4sSDQopBWz6aRvHp/UTHI+KNMfdJyvaF/IGRrxM=;
-        b=sbLuciriUVBnCNYQFmBL0W5y/O6QdjDI7x3mF0GsTcNGfdRPrcjbXSZc6SeO5ILhbe
-         3ls8pSlqk0mjdlSFlmjhJzWCy+zX6IQ2ZYyHZ867usDrZPaEvSTDztKafd6cmbVgpYys
-         5t0SdCGPJYYoTK41AAPUaAGGcuavNz/C2s6YxBK6FSmEeIxM6+Ey0BFJagSl1/B+TXkt
-         0a6PHo3aSpRBJkbQUj4URjCYUsFRbjT3zG5q7V6msxQPoQa+R0hbgA+h48n12/Bhfr5p
-         M84o9wmtOuPxAFIIrWTq0VARtSleOPP2qJ2rHbWOhudIjQijLgW92wgV9f2V3rBMMp3j
-         nM/A==
-X-Forwarded-Encrypted: i=1; AJvYcCWWvCMkGALZF5380cZzxwTy3zIdbUIwD7JxeD7sQU6QTmmKWDTMVUpO9NX0GW8EYMPGXKr6rpK8l7zk+ZWjCoiwJ1mliTlGs5p8I9b9x+vp5mS7rV0rUrEADNG0C1beCvbN4+OucRICC8b47GF79Q==
-X-Gm-Message-State: AOJu0Yynf1plgSoZr29AopnJoMsyMvKyaU/KFT7boazPlraaOoktgw2K
-	7cycFvFvjNfFKfuhtXX9U83qF+PHcSFiykicp6X1MP4AylGkHTGOxlwpAlH9zn64V0kNOxfYOwm
-	IF3PRLWQMmXDtfOxsA7NzHaYUWZU=
-X-Google-Smtp-Source: AGHT+IGFm7mfUBTFlBMD7JE8yMoXvMg9hBaeeZcqDS38d6qRn29qY54mjLRlh7VYVRE+6X+QjFF8mjr9yH1YrAGOu84=
-X-Received: by 2002:a17:90b:3907:b0:2c7:ab33:e01 with SMTP id
- 98e67ed59e1d1-2c8582090e6mr5388744a91.27.1719292066454; Mon, 24 Jun 2024
- 22:07:46 -0700 (PDT)
+	s=arc-20240116; t=1719292297; c=relaxed/simple;
+	bh=DOy/19zdjDeiV5mrvzvx+sa05n7UM/Te9jvjMfqZJGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gGIY7MBKvKmhPYimZ4G3a3P6Dr+Vbklk0rQjzA0ncmizcbFf6Ox2D0ZAhnPmr+CpyMQlLshLB50hFq9/3Bztb6kB+3BSLEJSiCLOR5RMlxJAW7SPpR9aix9EQa9FfIq+lEHXJhOo6cJs13vwKcew6129hjIhTQcGZgQBMgIU0QQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=QPREX/zI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nRYWjbf3; arc=none smtp.client-ip=64.147.123.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
+	by mailfhigh.west.internal (Postfix) with ESMTP id 785E3180007D;
+	Tue, 25 Jun 2024 01:11:33 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute1.internal (MEProxy); Tue, 25 Jun 2024 01:11:34 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1719292293; x=1719378693; bh=5sNiZBdV5R
+	x00kTy0wL5E5z7iGsVeBKdADwPXeyoaYE=; b=QPREX/zIYgwKUgXI5ubNuULqla
+	oTRzz1tMsDz8FmvIbJlraVuY+6WeBmnn2B6pDZ+OIpceYnwff1LdnYOTLB5GAAU/
+	6D9TeIWfs7HjBeQEVRdPZBwJR9EfRi1Hnt0/bKDjIOmT9RS8Xk77+osL8xFLBmC4
+	bFMcCE0CkhpC1HcL5VYTVjxxkwu2Y0ehpkJUOzH1lbBraTUST6qoH6fm+BUGbGWh
+	LG/7ZwPfGZvkJrP1jg6Dc4TMFe3QzxB1VDrEWzHdKp8smHpFhZpOZvmQibervhYG
+	dhyQkUK2Opvgm+4XNubTwuzMLPFJBwiDsi8sE5WBDNKoJUQYrlcSCLbcDTCQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1719292293; x=1719378693; bh=5sNiZBdV5Rx00kTy0wL5E5z7iGsV
+	eBKdADwPXeyoaYE=; b=nRYWjbf3Bt6jOKbmRHu7CGVd77tbZ/IsNXVdIXOY1Hrr
+	kFIee0dAR+C7sQmZ7G6RfIyQ6G5OH/P7GzWFWqarn2FiLeeujf7BtGhC/4IehpRD
+	Jil3KahXcgEYM1J22RzGxfMk9ij9WIGTrFksuTFjQ4UYnXLJn2SmHMbTIqHvgNBA
+	dCNkldj8RHRY9IBU3BFKQv46imTDSeRRNY9XzPHRPA1N51H8ou5p64EeAPimjJgj
+	lpKuhmxL3QP22y/22AqGC4QkxQ1Q/imt5O4gbCI1hM+rnf0G8HwePllxc1GB8guc
+	oaGElnt0sB2ZXpNUJO0aiJlUJy+1yJoOo7Tn3u20gQ==
+X-ME-Sender: <xms:hFF6ZkOnUf64f57lttcJsobyPLmhuPsI92XHdjG_EsT5g8g4yBLSZA>
+    <xme:hFF6Zq-FxDiihB0QBLsCi2Do-Pligq82PsHXjv7WiTke84QQtFH7d9ZGctaiM71ZI
+    SptFXbPfke5Dw>
+X-ME-Received: <xmr:hFF6ZrR9fLIAX2Ztf-SO7f_NFCs7RDG8xK2bjHNcLCkpqxEMGbISGlfRr38PMDEgN0OfRj--5Gpy2cazffsimV2GC1bSMGX_sYUBsg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeegvddgleefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
+    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvd
+    evvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhs
+    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorg
+    hhrdgtohhm
+X-ME-Proxy: <xmx:hFF6ZsupxBZ2Ubg_ubmWfHFMT5tBuAxg3TNf7cS4w0JhW5-y3JB8Vg>
+    <xmx:hFF6ZsdxsC8RJmTfS-shQaHp4D98SrAzEMKk502dpkw8Fte5dAIr_Q>
+    <xmx:hFF6Zg3Ys8px2Q5eYnBf1Dxu7mlrCiX5e56FNn_Wu1bn9QnGp5DozA>
+    <xmx:hFF6Zg89SMd_IheXbrLUDuxD529GB5oTg2LVjel1hmn8TpvNCzX1Ow>
+    <xmx:hVF6Zn3vrVPG0SzDBT-PhbiG2MsWofqGLjnkYFiPIK-FuS43FCQfFIMa>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 25 Jun 2024 01:11:32 -0400 (EDT)
+Date: Tue, 25 Jun 2024 07:11:30 +0200
+From: Greg KH <greg@kroah.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the driver-core tree
+Message-ID: <2024062524-numbing-winking-dde5@gregkh>
+References: <Znm5qDrsqIY8VNTc@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240621170528.608772-1-namhyung@kernel.org> <20240621170528.608772-5-namhyung@kernel.org>
- <d4c5086a-908e-4246-a6ed-6a2223fe7813@linux.intel.com>
-In-Reply-To: <d4c5086a-908e-4246-a6ed-6a2223fe7813@linux.intel.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Mon, 24 Jun 2024 22:07:35 -0700
-Message-ID: <CAM9d7ciVF=36BaxzKmddvekimYar+X3ZSWKkk5Tu+vJRRxCx0w@mail.gmail.com>
-Subject: Re: [PATCH 4/4] perf mem: Fix a segfault with NULL event->name
-To: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org, Guilherme Amadio <amadio@cern.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Znm5qDrsqIY8VNTc@sirena.org.uk>
 
-Hi Kan,
+On Mon, Jun 24, 2024 at 07:23:36PM +0100, Mark Brown wrote:
+> Hi all,
+> 
+> After merging the driver-core tree, today's linux-next build
+> (x86_64 allmodconfig) failed like this:
+> 
+> /tmp/next/build/drivers/net/ethernet/renesas/rtsn.c:1381:27: error: initialization of 'void (*)(struct platform_device *)' from incompatible pointer type 'int (*)(struct platform_device *)' [-Werror=incompatible-pointer-types]
+>  1381 |         .remove         = rtsn_remove,
+>       |                           ^~~~~~~~~~~
+> /tmp/next/build/drivers/net/ethernet/renesas/rtsn.c:1381:27: note: (near initialization for 'rtsn_driver.<anonymous>.remove')
+> 
+> Caused by commit
+> 
+>   0edb555a65d1e ("platform: Make platform_driver::remove() return void")
+> 
+> interacting with
+> 
+>   b0d3969d2b4db ("net: ethernet: rtsn: Add support for Renesas Ethernet-TSN")
+> 
+> I have applied the below patch.
+> 
+> From 8f276c3b5b1be09214cbd5643dd4fe4b2e6c692f Mon Sep 17 00:00:00 2001
+> From: Mark Brown <broonie@kernel.org>
+> Date: Mon, 24 Jun 2024 19:02:24 +0100
+> Subject: [PATCH] net: ethernet: rtsn: Fix up for remove() coversion to return
+>  void
+> 
+> Fixes: 0edb555a65d1e ("platform: Make platform_driver::remove() return void")
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  drivers/net/ethernet/renesas/rtsn.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/renesas/rtsn.c b/drivers/net/ethernet/renesas/rtsn.c
+> index ad69d47463cbd..5a6cc99e6b35a 100644
+> --- a/drivers/net/ethernet/renesas/rtsn.c
+> +++ b/drivers/net/ethernet/renesas/rtsn.c
+> @@ -1358,7 +1358,7 @@ static int rtsn_probe(struct platform_device *pdev)
+>  	return ret;
+>  }
+>  
+> -static int rtsn_remove(struct platform_device *pdev)
+> +static void rtsn_remove(struct platform_device *pdev)
+>  {
+>  	struct rtsn_private *priv = platform_get_drvdata(pdev);
+>  
+> @@ -1372,8 +1372,6 @@ static int rtsn_remove(struct platform_device *pdev)
+>  	pm_runtime_disable(&pdev->dev);
+>  
+>  	free_netdev(priv->ndev);
+> -
+> -	return 0;
+>  }
+>  
+>  static struct platform_driver rtsn_driver = {
+> -- 
+> 2.39.2
+> 
 
-On Fri, Jun 21, 2024 at 1:11=E2=80=AFPM Liang, Kan <kan.liang@linux.intel.c=
-om> wrote:
->
->
->
-> On 2024-06-21 1:05 p.m., Namhyung Kim wrote:
-> > Guilherme reported a crash in perf mem record.  It's because the
-> > perf_mem_event->name was NULL on his machine.  It should just return
-> > a NULL string when it has no format string in the name.
-> >
-> > But I'm not sure why it returns TRUE if it doesn't have event_name in
-> > perf_pmu__mem_events_supported().
->
-> AMD doesn't have the event_name.
->
-> struct perf_mem_event perf_mem_events_amd[PERF_MEM_EVENTS__MAX] =3D {
->         E(NULL,         NULL,           NULL,   false,  0),
->         E(NULL,         NULL,           NULL,   false,  0),
->         E("mem-ldst",   "%s//",         NULL,   false,  0),
-> };
->
-> It looks like as long as it's a "ibs_op" PMU, the mem event is always
-> available. The "ibs_op" check has been moved into perf_pmu__arch_init().
-> So the event_name is empty.
->
-> The "e->tag" in the perf_pmu__mem_events_init() can help to skip the
-> case  E(NULL,           NULL,           NULL,   false,  0).
-> So the perf_pmu__mem_events_supported() returns TRUE for the !event_name.
+Looks good, thanks!
 
-Ok, thanks for the explanation!
-
-Namhyung
+greg k-h
 
