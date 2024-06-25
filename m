@@ -1,174 +1,180 @@
-Return-Path: <linux-kernel+bounces-228590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C16B99161F0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:09:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B58289161F5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B9E51F25EC2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:09:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA341C23AB2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B886514AD02;
-	Tue, 25 Jun 2024 09:07:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C7B149C68;
+	Tue, 25 Jun 2024 09:08:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d4YTLErE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CWfaSLo1"
+Received: from mail-ua1-f53.google.com (mail-ua1-f53.google.com [209.85.222.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4092914AD0C
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8381494A4;
+	Tue, 25 Jun 2024 09:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719306465; cv=none; b=uuRg7f2gLBRarkW+F3ferxf8IrIW6/hZaHYuNHsC8lk9xAa1RUu8MF+OCxz2u6uChstUVXHT16qnPRIl2paDnZkkVPk+Z0PaMT/oQIq9t7TKbSy8Qt46YTPHCq73skBbFiDDStBb6pQT8e+JO0wYOGHhQqKl2Wd1KmcK6C3T8I4=
+	t=1719306491; cv=none; b=k+TiUvcp9ytIJ8sPwzVxQWdvf9ju9tIyQGL4nZZuIKWgD9TmfELsZTrWNDe9BJh8uIZZfS0yE33MTrOU7qjlosHmuVadDqOhPnGRjRPZtPyEj635lEU3IS+NxY3DArOGspzJoyR5QQIOQzVIbvwLgV+ihVXOXL5IfCBztE5/G2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719306465; c=relaxed/simple;
-	bh=Reb8FXWE1bNKYcROb75ET4K21cBg7dj9GL79z7/FvFU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BhLAvx/lv4V+rOAUyylEHgJ+qfIO54aOSwtEw61YFNUCszxHB5ImUb+uHLRXG4qfrF3UxR3C/0/jdC8PM0/cq1K60KgxLwdi5dyyimDG+D9e4JfXedpJn1A9Mbkvvu6lJDd0AeWkgEyDEGT6iaID7RTgPlrnMIhWmyY7T5KaxxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d4YTLErE; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719306463;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CGvYW01hrriXIF+o1pxrfngY25C2k8nRiGAXWHuPddk=;
-	b=d4YTLErE4M8eh0vO/IRyc55pqLqKiv+CpfQLoC2JuKlg7wlfWXGbhWT/nuKlJ1cWz+pAhL
-	EHuStZ9tXhvwSjak4AtCPpOLnZCHNoO9S6+r9fH1LkuS14T8umHfXLFnKXt6h5tfsNn2LX
-	k79qbG0OEDNDrk8llr5vNIDyD5S5470=
-Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-647-6AGImXKrPlyqhXgDXD6VTQ-1; Tue,
- 25 Jun 2024 05:07:41 -0400
-X-MC-Unique: 6AGImXKrPlyqhXgDXD6VTQ-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 36A681955DCE;
-	Tue, 25 Jun 2024 09:07:40 +0000 (UTC)
-Received: from gshan-thinkpadx1nanogen2.remote.csb (unknown [10.67.24.180])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 282E41956087;
-	Tue, 25 Jun 2024 09:07:33 +0000 (UTC)
-From: Gavin Shan <gshan@redhat.com>
-To: linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	david@redhat.com,
-	djwong@kernel.org,
-	willy@infradead.org,
-	akpm@linux-foundation.org,
-	hughd@google.com,
-	torvalds@linux-foundation.org,
-	zhenyzha@redhat.com,
-	shan.gavin@gmail.com
-Subject: [PATCH 4/4] mm/shmem: Disable PMD-sized page cache if needed
-Date: Tue, 25 Jun 2024 19:06:46 +1000
-Message-ID: <20240625090646.1194644-5-gshan@redhat.com>
-In-Reply-To: <20240625090646.1194644-1-gshan@redhat.com>
-References: <20240625090646.1194644-1-gshan@redhat.com>
+	s=arc-20240116; t=1719306491; c=relaxed/simple;
+	bh=SEWBQUoZ7P8jkFskPK7Gv4C8r4RGvfOAgyM1UkPx54g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UNWsMrQIm5qp2GhhH2iOocwouKj9Y689mM9GXwr2XkIXSC80BwBr6zUd6gX1ZFwSvaWuOvy2/aDPoRMqtD/YS1AJQxpdfgRP6elAijRbCxSMDR85I/aqj12WbUzCdNWgRU/FWPd0PBalzLMLh+CIctmerlJ//nqBfNJ0Mb9z5Hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CWfaSLo1; arc=none smtp.client-ip=209.85.222.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f53.google.com with SMTP id a1e0cc1a2514c-80f551808e0so1391055241.1;
+        Tue, 25 Jun 2024 02:08:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719306488; x=1719911288; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0vB6dv/uw7lUtFFyv1iClQz2bRsrGe4g7MjZsks8EP0=;
+        b=CWfaSLo19GjERcSCA49sRECTfGd7bG9/Wqkgj/RrbyLN+LWAy2OEuIoIBfqTn09iCh
+         TnsfgAvP4QOiP6qgoGk/OO8Ak0j0xKpLT8gQisCHHAqfMpl0/WDmWcOcgtVU7xfac7k/
+         hT9bajVG5r9ZWTXNCPFAq7KotcsrdpeAgRSbYx6Qc8XbHoga+ys61j97EIAqXqwPHHBQ
+         +Rbl4frhzXssfFkvqaMmEKtZq+eW3C1bW2fQp2CtfS8aEO69Do8oJcn/+Wes9895WZhk
+         JDs6rDrPcKj243I9q+IKRMen4pJKLUYCVCM6ql/0UR231HFKcqVewWdQ7pnOZwDc5ovn
+         uLhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719306488; x=1719911288;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0vB6dv/uw7lUtFFyv1iClQz2bRsrGe4g7MjZsks8EP0=;
+        b=EZ4scuOd/IZPDXwuBj2qZiqs+k7Wce9W33Ev9/4hnEp429fpQPEQr0tJW2gUrUGYE0
+         DfCQd2vwRj6KeOAkywGduDt+zg5PZIWcCHuxDumLXMtCnpVxNiZ7FkxG+QQHWcKkLf5V
+         kanZEYWvltv/G2ucWZcLUW7OTj6MkjmpExaA3BRvrTkZQKwYqnRgQLgEfcb4LeSCtNZn
+         tejK8vPTFQVcWXp9iOfMfqQtsuDh8GDqkU7z9jWcws7Z8DXYxbioZ3+bi1rEelnOlO0j
+         vJUo+b0TZKoWDssN42kPNeh+XFGmsHbeOGavuKu8bX/A57EYW2dXVJifvcth9QE+k1Aj
+         zZ5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWEt4K6yqBXqid6UFfr+thIzktPqJk24/pS4INTosgC/2NrEGCJVnT5SVtw8oIpr+8GxvDTNi5ZmlMxnp36Wc6thhjbsqHtHpED9K+rbSEjMgZwTlTFseetGw4/8Z2Vv809PuwV+xt7n/Ju9mdFSu9Qiicv0FcbzHwGtSkMSy1EJLsa17dZzwL6QkBq3bs0C64ly1KLlRHPvaeTlViLFHDcSulpWgXi
+X-Gm-Message-State: AOJu0YzZcHQ75dhDW31Mu73J+MkyKCWqXrJnC/vTAtGwz508rdEjgTGy
+	Xp+BYW3vyGro3ADHkhqK2uKk/bZtw2bKUV8mkDrjQUW6c9KjvyrQ+gWZHtY0iPLNFn1Fgwwy0zh
+	p4mQYHb38zhmt4AqyBO+AuFR5Rzo=
+X-Google-Smtp-Source: AGHT+IEPkvu7Ma8dMRJoojx4z4jjbeIyB9PnWNm5uMVryrc0YvBpEpJ9eNGjDXhSynwmmXdXhSgkvNiJZIzG1Vd4uyQ=
+X-Received: by 2002:a05:6122:7ce:b0:4ef:5db8:fe15 with SMTP id
+ 71dfb90a1353d-4ef6d829d18mr5835586e0c.9.1719306488344; Tue, 25 Jun 2024
+ 02:08:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+References: <20240624153229.68882-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240624153229.68882-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdU0r+B_Jmh7E6sopRbfzzX7DtZKpY=Xte2vLDC-ORwdVA@mail.gmail.com>
+ <CA+V-a8uhb1Visg9jUV-Te3ZHkfdRonM08s823RYa6k=KAHYgQw@mail.gmail.com> <CAMuHMdUkcJFv3JRUSpgEd4_zTd9dxD9e96JjxSco4tNU-rv6wA@mail.gmail.com>
+In-Reply-To: <CAMuHMdUkcJFv3JRUSpgEd4_zTd9dxD9e96JjxSco4tNU-rv6wA@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Tue, 25 Jun 2024 10:07:13 +0100
+Message-ID: <CA+V-a8vZyU+hpeaxWLUbZ5VA0K4S0wZV+XA8vhsebkSHDuzyZw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/3] dt-bindings: mmc: renesas,sdhi: Document RZ/V2H(P) support
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-mmc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For shmem files, it's possible that PMD-sized page cache can't be
-supported by xarray. For example, 512MB page cache on ARM64 when
-the base page size is 64KB can't be supported by xarray. It leads
-to errors as the following messages indicate when this sort of xarray
-entry is split.
+Hi Geert,
 
-WARNING: CPU: 34 PID: 7578 at lib/xarray.c:1025 xas_split_alloc+0xf8/0x128
-Modules linked in: binfmt_misc nft_fib_inet nft_fib_ipv4 nft_fib_ipv6   \
-nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject        \
-nft_ct nft_chain_nat nf_nat nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4  \
-ip_set rfkill nf_tables nfnetlink vfat fat virtio_balloon drm fuse xfs  \
-libcrc32c crct10dif_ce ghash_ce sha2_ce sha256_arm64 sha1_ce virtio_net \
-net_failover virtio_console virtio_blk failover dimlib virtio_mmio
-CPU: 34 PID: 7578 Comm: test Kdump: loaded Tainted: G W 6.10.0-rc5-gavin+ #9
-Hardware name: QEMU KVM Virtual Machine, BIOS edk2-20240524-1.el9 05/24/2024
-pstate: 83400005 (Nzcv daif +PAN -UAO +TCO +DIT -SSBS BTYPE=--)
-pc : xas_split_alloc+0xf8/0x128
-lr : split_huge_page_to_list_to_order+0x1c4/0x720
-sp : ffff8000882af5f0
-x29: ffff8000882af5f0 x28: ffff8000882af650 x27: ffff8000882af768
-x26: 0000000000000cc0 x25: 000000000000000d x24: ffff00010625b858
-x23: ffff8000882af650 x22: ffffffdfc0900000 x21: 0000000000000000
-x20: 0000000000000000 x19: ffffffdfc0900000 x18: 0000000000000000
-x17: 0000000000000000 x16: 0000018000000000 x15: 52f8004000000000
-x14: 0000e00000000000 x13: 0000000000002000 x12: 0000000000000020
-x11: 52f8000000000000 x10: 52f8e1c0ffff6000 x9 : ffffbeb9619a681c
-x8 : 0000000000000003 x7 : 0000000000000000 x6 : ffff00010b02ddb0
-x5 : ffffbeb96395e378 x4 : 0000000000000000 x3 : 0000000000000cc0
-x2 : 000000000000000d x1 : 000000000000000c x0 : 0000000000000000
-Call trace:
- xas_split_alloc+0xf8/0x128
- split_huge_page_to_list_to_order+0x1c4/0x720
- truncate_inode_partial_folio+0xdc/0x160
- shmem_undo_range+0x2bc/0x6a8
- shmem_fallocate+0x134/0x430
- vfs_fallocate+0x124/0x2e8
- ksys_fallocate+0x4c/0xa0
- __arm64_sys_fallocate+0x24/0x38
- invoke_syscall.constprop.0+0x7c/0xd8
- do_el0_svc+0xb4/0xd0
- el0_svc+0x44/0x1d8
- el0t_64_sync_handler+0x134/0x150
- el0t_64_sync+0x17c/0x180
+On Tue, Jun 25, 2024 at 10:02=E2=80=AFAM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Tue, Jun 25, 2024 at 10:47=E2=80=AFAM Lad, Prabhakar
+> <prabhakar.csengg@gmail.com> wrote:
+> > On Tue, Jun 25, 2024 at 7:57=E2=80=AFAM Geert Uytterhoeven <geert@linux=
+-m68k.org> wrote:
+> > > On Mon, Jun 24, 2024 at 5:33=E2=80=AFPM Prabhakar <prabhakar.csengg@g=
+mail.com> wrote:
+> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > >
+> > > > The SD/MMC block on the RZ/V2H(P) ("R9A09G057") SoC is similar to t=
+hat
+> > > > of the R-Car Gen3, but it has some differences:
+> > > > - HS400 is not supported.
+> > > > - It supports the SD_IOVS bit to control the IO voltage level.
+> > > > - It supports fixed address mode.
+> > > >
+> > > > To accommodate these differences, a SoC-specific 'renesas,sdhi-r9a0=
+9g057'
+> > > > compatible string is added.
+> > > >
+> > > > A 'vqmmc-regulator' object is introduced to handle the power enable=
+ (PWEN)
+> > > > and voltage level switching for the SD/MMC.
+> > > >
+> > > > Additionally, the 'renesas,sdhi-use-internal-regulator' flag is int=
+roduced
+> > > > to indicate that an internal regulator is used instead of a
+> > > > GPIO-controlled regulator. This flag will help configure the intern=
+al
+> > > > regulator and avoid special handling when GPIO is used for voltage
+> > > > regulation instead of the SD_(IOVS/PWEN) pins.
+> > > >
+> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
+om>
+> > > > ---
+> > > > v2->v3
+> > > > - Renamed vqmmc-r9a09g057-regulator object to vqmmc-regulator
+> > > > - Added regulator-compatible property for vqmmc-regulator
+> > > > - Added 'renesas,sdhi-use-internal-regulator' property
+> > >
+> > > Thanks for the update!
+> > >
+> > > > --- a/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > > > +++ b/Documentation/devicetree/bindings/mmc/renesas,sdhi.yaml
+> > > > @@ -204,6 +207,31 @@ allOf:
+> > > >          sectioned off to be run by a separate second clock source =
+to allow
+> > > >          the main core clock to be turned off to save power.
+> > > >
+> > > > +  - if:
+> > > > +      properties:
+> > > > +        compatible:
+> > > > +          contains:
+> > > > +            const: renesas,sdhi-r9a09g057
+> > > > +    then:
+> > > > +      properties:
+> > > > +        renesas,sdhi-use-internal-regulator:
+> > > > +          $ref: /schemas/types.yaml#/definitions/flag
+> > > > +          description:
+> > > > +            Flag to indicate internal regulator is being used inst=
+ead of GPIO regulator.
+> > >
+> > > Do you really need this?
+> > For cases where the status is okay for the regulator but still the
+> > user has phandle for the GPIO regulator or shall I drop this case?
+>
+> I think that case can be ignored.
+> The regulator subnode would be disabled by default in the .dtsi, right?
+>
+Yes, agreed.
 
-Fix it by disabling PMD-sized page cache when HPAGE_PMD_ORDER is
-larger than MAX_PAGECACHE_ORDER.
+> > > The status of the regulator subnode already indicates this.
+> > You mean to use of_device_is_available() ?
+>
+> Exactly. I.e. only register the regulator when it is enabled.
+>
+Okay I'll use of_device_is_available() and drop the
+'renesas,sdhi-use-internal-regulator' property.
 
-Suggested-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Gavin Shan <gshan@redhat.com>
----
- mm/shmem.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
-
-diff --git a/mm/shmem.c b/mm/shmem.c
-index a8b181a63402..5453875e3810 100644
---- a/mm/shmem.c
-+++ b/mm/shmem.c
-@@ -541,8 +541,9 @@ static bool shmem_confirm_swap(struct address_space *mapping,
- 
- static int shmem_huge __read_mostly = SHMEM_HUGE_NEVER;
- 
--bool shmem_is_huge(struct inode *inode, pgoff_t index, bool shmem_huge_force,
--		   struct mm_struct *mm, unsigned long vm_flags)
-+static bool __shmem_is_huge(struct inode *inode, pgoff_t index,
-+			    bool shmem_huge_force, struct mm_struct *mm,
-+			    unsigned long vm_flags)
- {
- 	loff_t i_size;
- 
-@@ -573,6 +574,16 @@ bool shmem_is_huge(struct inode *inode, pgoff_t index, bool shmem_huge_force,
- 	}
- }
- 
-+bool shmem_is_huge(struct inode *inode, pgoff_t index,
-+		   bool shmem_huge_force, struct mm_struct *mm,
-+		   unsigned long vm_flags)
-+{
-+	if (!__shmem_is_huge(inode, index, shmem_huge_force, mm, vm_flags))
-+		return false;
-+
-+	return HPAGE_PMD_ORDER <= MAX_PAGECACHE_ORDER;
-+}
-+
- #if defined(CONFIG_SYSFS)
- static int shmem_parse_huge(const char *str)
- {
--- 
-2.45.1
-
+Cheers,
+Prabhakar
 
