@@ -1,174 +1,178 @@
-Return-Path: <linux-kernel+bounces-228156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1CEE915B97
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:22:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83C5A915B9A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19C701C21682
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:22:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B106283220
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 01:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4755A179BF;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1FA1946B;
 	Tue, 25 Jun 2024 01:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="PRP04t0r"
-Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01olkn2057.outbound.protection.outlook.com [40.92.98.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkkTDP2X"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61A73125C0;
-	Tue, 25 Jun 2024 01:22:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.98.57
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719278564; cv=fail; b=aWzKQ/XVEvCKRNdM4p7xcE1xwfrciD/lxcv8hBJ0aO0XA2kTGKMktmrIYJWnOuYcxFWp2UDoY/Z0newpuXzwOB7IXD3udi+ORm7xhGytT7VJggctZmc1/CzhqAYReNmZuLVUQNL/GkV79JHAkbvdLOvLr3H1I7UhWP1o7/iBAiQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719278564; c=relaxed/simple;
-	bh=Qasblls7Wx1EPc1Bn+f2i+1jmtYxvgZZV7CNjivZlKA=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=t0e8iCTkaqopC5PRoqjeVm8vTSensIu68TNrkaBTxI2P4rK6PcEN3EG2KKJ/EiLQfMxjhJ9v5p/O6u2kMgkoEKlqHIMVH3PJ6SDYuavvnpfk7OajkLA9acG0a5CkiAHQXcs0fRrJ7UOt13plmgnWgFdFgxqz4n2UDOhZ1mjHlYk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=PRP04t0r; arc=fail smtp.client-ip=40.92.98.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RrMI8LPct+XnVnxOa1Hhb1UaQh+3dyCkABNi53SD1VEtIm4UvvscQ5UcRs1Dh127GmYP2Zux7LXAKe4X19ypV2SdK/Dp/PB0LAhEwKw0gpKu7cIjn3BxaDTu/PvaiSgehsbneKPnjn0R13JffR+jQyvlwqCuWgrks/Pb/sWT0y4VrQxsN1N2P4FMsTlz13Z1/yNTQVFkatTcs/jWcxkUZH+7E1+f8WnMbK/I/bio4INuP+Pdr1//Df9RvTyRxP1lJ+pDMP2PJS24zqFnkGPpXK226ORp4eb7yLW9UFClVV5D9dgvDT8ysiVqmej7OklJCBwOYLeeLZxtdwSlPDTQ9Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lmVDfoWHIWQ1HAmojW4Xd+B30iohYxP0oR4kXaedYso=;
- b=BdrUtuCwh6a5db1Jv05BsMgjmDbMCe1e5tYxcQTtPRqCedQu1GzSptjan3quEAUz7eQqY1ouWlW9QByWETiiJ5vvSt4ACoNt6mdgu+WNDnSJxm1rWqkiqlhfJquN2bwsGIarQEV4my62x0xPzB6L5fLgS7ZlKJqYSQhIEX55tcg6NtzYrtWoVjED2Upqu2mrwqXAJR3VmH/G0hxou0Yg4D2Tktl9trVPp1aNwPXU87owiq9p1lJgCg4e8iaI9D1RQzN59B6XvOrkj3jnxAmhvKyLlahqxF8TGSKNlEbfRT5/dKV+7R1TRwq+esTckd220GIFeeXqkUrltLDyQL60tA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lmVDfoWHIWQ1HAmojW4Xd+B30iohYxP0oR4kXaedYso=;
- b=PRP04t0ra28ab+8+03frHUIRLFfv9W+Abr/+9gwjsnF0aw/UCtqqa1TCNcTygHVmNJ6h0vl2lYJaOstt3GZ16m6SgrBy1QfePHf9nKcbwcy/JT1r/sauMpDRIrS71R4rN6LyPwFGmlF7t6EfX09k89tEgS6YW+4EsspZSXNNZbjTv57P0NM6QBlfHy2g6SVnHX7O9D2f259nkM2E9X1RATIqMnK7m/2XbEMajduyBulJ36s767Ll8sSvTxXEE8eA023c11z3IKiH3RBK5a+jLaltVX04igmFO0SiWfxP6aVtg2bGoxxDqgtqJ5FWg1mCPOWRlXIQr2CXigqkxDUJ4A==
-Received: from TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:77::8) by
- TY1P286MB3391.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:2ea::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7698.29; Tue, 25 Jun 2024 01:22:38 +0000
-Received: from TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
- ([fe80::ad5c:3146:bd0d:f17c]) by TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
- ([fe80::ad5c:3146:bd0d:f17c%4]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
- 01:22:38 +0000
-From: Shiji Yang <yangshiji66@outlook.com>
-To: linux-gpio@vger.kernel.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Asmaa Mnebhi <asmaa@nvidia.com>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Shiji Yang <yangshiji66@outlook.com>,
-	Mark Mentovai <mark@mentovai.com>,
-	Jonas Gorski <jonas.gorski@gmail.com>,
-	=?UTF-8?q?L=C3=B3r=C3=A1nd=20Horv=C3=A1th?= <lorand.horvath82@gmail.com>
-Subject: [PATCH] gpio: mmio: do not calculate bgpio_bits via "ngpios"
-Date: Tue, 25 Jun 2024 09:19:49 +0800
-Message-ID:
- <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
-X-Mailer: git-send-email 2.39.2
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TMN: [1xm748C15vxX+HJp7UMLJHAa7XOeRZOf]
-X-ClientProxiedBy: JH0PR01CA0159.apcprd01.prod.exchangelabs.com
- (2603:1096:990:7::8) To TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:77::8)
-X-Microsoft-Original-Message-ID:
- <20240625011949.7865-1-yangshiji66@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDC1D2F5;
+	Tue, 25 Jun 2024 01:22:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719278565; cv=none; b=ReGm3RT5a9GeiTSc5QhLTtIpjozdRpWvgioNbxHYCJ3rCi4UBDsEtPcik12JCqQwrLTOu+BpgL2PQWe+g8qWE1i/f9vHDCcRY8QdraunjGHxPv1l8sKCGA+52w6X0qUfdjcSfcYJfQlAeI5vzsEmWjKhI+lEhpq5d7Y9ZAxsWIw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719278565; c=relaxed/simple;
+	bh=ZGwtin6IkFydRDXhg3G6A7e5bT2gMU7/bqPl3Ei9A5I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ULIeyipmwgiX6OXMrVpZl9exUZ8VGqiPgX9KzmXLV4QhB+uPGP5UAmcIwS879WKpUszxj0paNrKoKnhIPNR4+zS6yQdXupF9QjQa/6jiBfYEFNlL1aOGDRK9Wq/15m5ROVc/8cA/v+YqA6RgeZXlsjf6L55MvmVFtm7cueYJbfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkkTDP2X; arc=none smtp.client-ip=209.85.215.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-6e7e23b42c3so2967337a12.1;
+        Mon, 24 Jun 2024 18:22:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719278563; x=1719883363; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ocP+7GWOt5qm8uAfbxuKZILjuZbqgqb/oS35llmMlfI=;
+        b=dkkTDP2Xr7Nq/TEjekeGvcVlYVSPHbm75OftPmTEPce45exCZBJqE7zk+rwnYUZq3r
+         0PupnnYI3baUIr+FlDp5SsyeDSOZi3EQ88gSNvzK1hSUsxwZ2iq+wQQSVxAudksOdinE
+         nEkaDfwUceoXq+oMqJsWOWCJ8MnhIQjJLEz4hwTD4ISqryMxHzH863UpK9PIxwJ2klFs
+         SqYf2XYEkiAJ/TtMj+aD5aZEd9o4PAbZXtaQhz8V8bp+0/BXikzO5eu60qSVEo/fHVov
+         7Nq7/fNvjcrq7VhNg+Dh33+mwcXkZgjIp46ioj33wL/WibsYD//OasmMPDxcK0PF4ivF
+         whFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719278563; x=1719883363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ocP+7GWOt5qm8uAfbxuKZILjuZbqgqb/oS35llmMlfI=;
+        b=EhxFHaIlQ4Xr1UgW0BWU8ZtlwQA6loVmykU6xAeBUP6G429wg3TlSPujnSI8uc2HES
+         xwyhyk1M9fAjE2YSNEwgRttPZOwWhU+mDiPQxn2est8IG3d36PLj3OhecGV1J06klX5d
+         Koi4HxLUBs3bdUD9+cUPXyocFqLTB1/LSM41bopnJp/j2PXYMFVeS+79S3ksIcc/q56i
+         sZm7SXIXT7A4Z7jURKzre17UnKi6amaGWh3vyuqQB/U9BK0uMA2r6jJzX3/oM//LPSJx
+         sE9LcPrhORKINYoVPRbPmmq4EHJCMTJulwxDMAUKE+GMmIiiMsIR7VZnGEU2EFJB0Kx9
+         GH3g==
+X-Forwarded-Encrypted: i=1; AJvYcCU7QSXsRfnVkTYdzO+BN7mDCtxG67HPIQ5d9mORWgDAeFsIpqBfEMoaDdOQoYHSY1fVBm/xubLknQ2LARyhOKqgvhAOz+ODe/hpovmXpTq+vl7ztyH96QiShK+iWMF7K19fhS4Wr+KQigSSJ09147Eiba8vdKQoLRONwYlSKm0R7ZjS+/3IG/WsHu6gwzFb3CIgVKBQCRl5CdnF+msQIclLXhhaYQW9t3pLSrobcm7lwtrG
+X-Gm-Message-State: AOJu0Yzm6pk7Z+Mp19eFC1A3aIDAxREkkNgWGoKFtJaka9Hw0gjrXn1r
+	N7foL94lf8zGtK7SpnkYgHfGb1jjMW83bN4xjQhOqLUHWPWggbz75O43cO8SEm+HpSpbct6EBGp
+	jZVk1fn5/QoLewctAQaG27KEr/F0=
+X-Google-Smtp-Source: AGHT+IFOCCklcLOPy6WOiPuVU/fqKEtVmpGsdjPKTD+WPo8kIPQbu2yjkuypxUjWSU3hHx43L4MQeDRy9lY4WHhpjvY=
+X-Received: by 2002:a17:90b:1bc8:b0:2c8:59f1:366f with SMTP id
+ 98e67ed59e1d1-2c859f13802mr4966999a91.4.1719278562794; Mon, 24 Jun 2024
+ 18:22:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYCP286MB0895:EE_|TY1P286MB3391:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6e9d6ca8-adaf-42f3-297f-08dc94b54d29
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199025|4302099010|440099025|3412199022|1602099009|1710799023;
-X-Microsoft-Antispam-Message-Info:
-	ZcWu98LG7sI8FtKn+R3SMStLmc3dyOXb8pyKFrx4lTsCGFXY7igu1BS3Fnyo4kJH9cui60AFzEV9K8SaA1hV/dwngHvsr3pJZ2lTMKoyxlfNJrYdeXVUvvOHQUXJbwrEhYeuJHKvkalVmeEXvT+ERZoMqBzzGV4FmsTi9szpzGtCMBIYAZLDDn9eGCeWpPSABF/u8+AHMQgU7XJfxsfwLV40WfFY1PKEB89I/zfBiibCouWtFMo9B0rX2mCIpdKtuRT1GwwF/Mq7sfSQzxfhR9PaYvduqEo6lxa5hn9qQfAQx3qQde5emBdMlWlREsKm37Z+0WulJz0VkF4nlbby6dBPea8ZNYTXn5DOOXclPuZmZZI2Y9MhvHdeZqFXJAV3ksu518PYNMe0+h0NjgOxGLJGgOuSfaIlG5bJILgiBcVuwFqMJtajp9IFK052QfpgXwzeJo/cYMEj49x35lTmzGQzumlVuqOeIDQpL9Y14GEeZSALiZQCTqlu6peTnYME5VCaRg1cjSulkVC5w00zDuoO436rQxyu198T/koWkO0qorjxSF9Ynkmvt5NAlB2mj4+joUOoHV3dem7nDQAjJkJvkkaFn0v5xGnSbaSka/VbKJ0kawPZElV02BbMmypMAghrrvKz8Scadvy4DbG8ttKf55xIlQGSluMEtQfvsXB4S3ECvSMbfuKr+EruLcqlfx5QGGfwFo6TAljr5BjRjQ==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?UmpvcExwbWMwbWplcG5lSkFQbXBSQmZ6UHZ0NHJjS2V2Tk1HOFRERlZvWlJ0?=
- =?utf-8?B?NmdWUkpiRWswQXR4eHc0Y3RCeUxhbyt3YVh0V2pseE5BTUUrc1JxeFg4Uk9n?=
- =?utf-8?B?NTVzNjd6d1VKejdneTFVMittRmpVVGxMN1d6SVNLYWhOd2t4eXpmVkRDeUhj?=
- =?utf-8?B?aGxBWXlsZm1jS0JwYUNsdSsxRURjUVR6dmNsdk5ER2lJWTl3cWx0dkREQ2FN?=
- =?utf-8?B?c0t4VkpjRlVJZ2ZWK3ZWQTFxNEUzYXZSaW1JVXhXMDgzc0E2dGNTSVlNbWt3?=
- =?utf-8?B?aVpqcDVMK1NFSHZXRlUxRGc3bjZ4Ry9YMGNYbmJhS1FuRkQ0NFRzR1NWc2pW?=
- =?utf-8?B?SVVBNkI1Yk9qWjVJT1o5ZFBNMUNRUm5YY1lCWFNLSW0wZkVGR2JRUU4xQ05o?=
- =?utf-8?B?MktHQ2JRNXk5NElDYWVMcWx3S1VCYXF3Y3ZhU0FCOXMyYlVVSzE3QkNYNnVh?=
- =?utf-8?B?ME5DUGNkdngrRHdwUmtiSDA3dFNqbGthOS9zTkhiaXJYVWZwRmhQcnFrNFRk?=
- =?utf-8?B?N25JOHludGRob2QwM0ZuNmNFU2tHSnZ6U1daaEhPZGdHWU1YTlU5MUtMb3ZF?=
- =?utf-8?B?K1FBL0lkRFQ1WWZHejZlbU9YTWJkUUYvMHVyc0JaeDFGcVpJaDlqeXBnQytH?=
- =?utf-8?B?UWNjOGo0QVdBelNSY2x1SHRxTlNkeE1HeTc2eUk0UlVyS2VPdkJKZ3RTWVBo?=
- =?utf-8?B?OCs2bEViY21hditGakxEY3dRekpLcXluWDU3d09sb0lPSTN4T3hud284a3J2?=
- =?utf-8?B?aGtIZXFCYkhhWWx6QlNwSjFhTWFJejZoSXg0UnVSUE5EYTlBS240ZThSTWkz?=
- =?utf-8?B?OHVrMk9ycGhmNTkvODBiVzhUbU4vUkxsS2xaRzBQeUltVkhEcjVzbTNHUlJY?=
- =?utf-8?B?TEFYd2Jic1RtU3hTTWFjazJtYW5UK05jSXdrTU14YTQraSs0ak15cFdrR21Z?=
- =?utf-8?B?UGxPWEs1N2xsNWpYWFM5TUV4S3Z5QXc5UGRtNkZVTG1HZWo2aC9OZkNIV1U2?=
- =?utf-8?B?elUvUllFV1BmaVFHVUxhVXZMQnZid3hldVF2UzY0NVNzbHRvaElVcEwrSmJW?=
- =?utf-8?B?LzI1amRMc00ybXZ1UUtxeTcvcDRJM1ZSYTNUMjJHN1FkVmJJZ1R4R2Z2d1N2?=
- =?utf-8?B?RXU0aVBld29ucCswMm1IUkpLcHBvckxraHJaMXBTVHpPcy9qMlpodGlkU0pv?=
- =?utf-8?B?QlVCSU16YkFLU0R2aWdXRUI2elFtNWFIS0MrZDFralo4SGw1QjRLVUVvYTVl?=
- =?utf-8?B?aDhGazdCVnVOUHRjaDNjK0tSUUh0a05xR21jQmMrbmk3Yk1TSURIemlPWHNm?=
- =?utf-8?B?ZElBRWJSMnRYa2R4U0tsUUpIK3JYd2tBbk16OTg2NEFWenNSYjdXYjRST1NS?=
- =?utf-8?B?MmtmZFpNN0JYZHlPWFZBbW94RDQ2U3o4Z0JIeUVMWEVQRDJad2xZaEhxTUVL?=
- =?utf-8?B?SnZLOWZSR0N2VmRRMUhGSU9ac2FjSTUxWERZdElPYmFDdWJzYkw2dlJ3N29s?=
- =?utf-8?B?d0o1aklKSXRMK25MdEhBM01lS1N6eE5MeTBlNDRzUm9JL1B6YXVOemZHbDdR?=
- =?utf-8?B?ajE0U2daQmxoVXdYRTZRdVd1eG5BSlAxZk03M0ZCaE1jOEN5SGVNZTA5QkFs?=
- =?utf-8?B?NVhnWmw2KzhNbDJLZmZPWjczMlQ1TkRwWnIxSytXelB0cE5VcTZRQkJTS3Bj?=
- =?utf-8?Q?dWfzuepd4AZWmtwuz++A?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e9d6ca8-adaf-42f3-297f-08dc94b54d29
-X-MS-Exchange-CrossTenant-AuthSource: TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 01:22:38.7403
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1P286MB3391
+References: <ZnB9X1Jj6c04ufC0@sirena.org.uk>
+In-Reply-To: <ZnB9X1Jj6c04ufC0@sirena.org.uk>
+From: Thinker Li <thinker.li@gmail.com>
+Date: Mon, 24 Jun 2024 18:22:30 -0700
+Message-ID: <CAFVMQ6R8ZZE+9jWM1vhEuz2PsLyCgKhpaVD377TKEu4AfGO_iA@mail.gmail.com>
+Subject: Re: linux-next: build failure after merge of the bpf-next tree
+To: Mark Brown <broonie@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>, Alexei Starovoitov <ast@kernel.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Networking <netdev@vger.kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+	Jiri Kosina <jikos@kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>, linux-input@vger.kernel.org, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-bgpio_bits must be aligned with the data bus width. For example, on a
-32 bit big endian system and we only have 16 GPIOs. If we only assume
-bgpio_bits=16 we can never control the GPIO because the base address
-is the lowest address.
+Hi Mark,
 
-low address                          high address
--------------------------------------------------
-|   byte3   |   byte2   |   byte1   |   byte0   |
--------------------------------------------------
-|    NaN    |    NaN    |  gpio8-15 |  gpio0-7  |
--------------------------------------------------
+I'm sorry for not getting back to you sooner. I have been traveling
+since my last message.
+I guess this patch is for the HID tree. The changes in this patch are great=
+.
 
-Fixes: 55b2395e4e92 ("gpio: mmio: handle "ngpios" properly in bgpio_init()")
-Fixes: https://github.com/openwrt/openwrt/issues/15739
-Reported-by: Mark Mentovai <mark@mentovai.com>
-Signed-off-by: Shiji Yang <yangshiji66@outlook.com>
-Suggested-By: Mark Mentovai <mark@mentovai.com>
-Reviewed-by: Jonas Gorski <jonas.gorski@gmail.com>
-Tested-by: Lóránd Horváth <lorand.horvath82@gmail.com>
----
- drivers/gpio/gpio-mmio.c | 2 --
- 1 file changed, 2 deletions(-)
+However, I suggest you implement ".update" if you think it is
+reasonable for HID,
+although it is not a MUST-BE. ".update" provides a good feature that
+user space programs
+can update an implementation on the flight.
 
-diff --git a/drivers/gpio/gpio-mmio.c b/drivers/gpio/gpio-mmio.c
-index 71e1af7c2184..d89e78f0ead3 100644
---- a/drivers/gpio/gpio-mmio.c
-+++ b/drivers/gpio/gpio-mmio.c
-@@ -619,8 +619,6 @@ int bgpio_init(struct gpio_chip *gc, struct device *dev,
- 	ret = gpiochip_get_ngpios(gc, dev);
- 	if (ret)
- 		gc->ngpio = gc->bgpio_bits;
--	else
--		gc->bgpio_bits = roundup_pow_of_two(round_up(gc->ngpio, 8));
- 
- 	ret = bgpio_setup_io(gc, dat, set, clr, flags);
- 	if (ret)
--- 
-2.45.1
-
+On Mon, Jun 17, 2024 at 11:16=E2=80=AFAM Mark Brown <broonie@kernel.org> wr=
+ote:
+>
+> Hi all,
+>
+> After merging the bpf-next tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+>
+> /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:280:16: error: initi=
+alization of 'int (*)(void *, struct bpf_link *)' from incompatible pointer=
+ type 'int (*)(void *)' [-Werror=3Dincompatible-pointer-types]
+>   280 |         .reg =3D hid_bpf_reg,
+>       |                ^~~~~~~~~~~
+> /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:280:16: note: (near =
+initialization for 'bpf_hid_bpf_ops.reg')
+> /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:281:18: error: initi=
+alization of 'void (*)(void *, struct bpf_link *)' from incompatible pointe=
+r type 'void (*)(void *)' [-Werror=3Dincompatible-pointer-types]
+>   281 |         .unreg =3D hid_bpf_unreg,
+>       |                  ^~~~~~~~~~~~~
+> /tmp/next/build/drivers/hid/bpf/hid_bpf_struct_ops.c:281:18: note: (near =
+initialization for 'bpf_hid_bpf_ops.unreg')
+>
+> Caused by commit
+>
+>   73287fe228721b ("bpf: pass bpf_struct_ops_link to callbacks in bpf_stru=
+ct_ops.")
+>
+> interacting with commit
+>
+>   ebc0d8093e8c97 ("HID: bpf: implement HID-BPF through bpf_struct_ops")
+>
+> from the HID tree.
+>
+> I've fixed it up as below:
+>
+> From e8aeaba00440845f9bd8d6183ca5d7383a678cd3 Mon Sep 17 00:00:00 2001
+> From: Mark Brown <broonie@kernel.org>
+> Date: Mon, 17 Jun 2024 19:02:27 +0100
+> Subject: [PATCH] HID: bpf: Fix up build
+>
+> Fix up build error due to 73287fe228721b ("bpf: pass bpf_struct_ops_link =
+to callbacks in bpf_struct_ops.")
+>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> ---
+>  drivers/hid/bpf/hid_bpf_struct_ops.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/hid/bpf/hid_bpf_struct_ops.c b/drivers/hid/bpf/hid_b=
+pf_struct_ops.c
+> index 5f200557ff12b..744318e7d936b 100644
+> --- a/drivers/hid/bpf/hid_bpf_struct_ops.c
+> +++ b/drivers/hid/bpf/hid_bpf_struct_ops.c
+> @@ -175,7 +175,7 @@ static int hid_bpf_ops_init_member(const struct btf_t=
+ype *t,
+>         return 0;
+>  }
+>
+> -static int hid_bpf_reg(void *kdata)
+> +static int hid_bpf_reg(void *kdata, struct bpf_link *link)
+>  {
+>         struct hid_bpf_ops *ops =3D kdata;
+>         struct hid_device *hdev;
+> @@ -229,7 +229,7 @@ static int hid_bpf_reg(void *kdata)
+>         return err;
+>  }
+>
+> -static void hid_bpf_unreg(void *kdata)
+> +static void hid_bpf_unreg(void *kdata, struct bpf_link *link)
+>  {
+>         struct hid_bpf_ops *ops =3D kdata;
+>         struct hid_device *hdev;
+> --
+> 2.39.2
+>
 
