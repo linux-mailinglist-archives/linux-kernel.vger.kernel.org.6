@@ -1,212 +1,377 @@
-Return-Path: <linux-kernel+bounces-228747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26712916659
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:40:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D7B916658
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2261F2287A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:40:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B7A41C21424
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CBD14D6FB;
-	Tue, 25 Jun 2024 11:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BrncHMOL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840F114B96D
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE9714B965;
+	Tue, 25 Jun 2024 11:40:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39885149C6A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315636; cv=none; b=AriT9GS6UlenPW5sfeQd1rQ5WzTsMFbv7IIuijniFP41jtJK/GhV2ew9HNTmVgaXDMHoNDOiGgKKTsmvYbJL4MQKDA7dx0oqpEqbcgos/KN7zxortUpuTtfp4CFsn/bDo3/5AlbF2kKUvyAKGuO3IKfjh3WLvrL2oztlXy32OJ8=
+	t=1719315633; cv=none; b=NBvX711DKywxU7g1UwBoB/BeB2HzyN8ZqmVHBuxTkFnlmt7W7ChkGrVTfn98KHzF1l74xyhv29yrtwULpoh0lS0XL+gwqePr7cqal3kEKJkNKNM+m8XM2K22rcdyHPN0sOuj+UZX03H3ZY9vCQE9WaPMr6J3qLctyG/9INHTQXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315636; c=relaxed/simple;
-	bh=j4+FtAz7A1XGlggeq9YYIF3ghGJAY1gk6gpZdeZV06Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kqAZj2mmTZ8g9EfA3sdbk9YwEn9HLLysCNRBNIkoWk9+dNlm2P+zQPnc1eOyXDr6QRezA9Rb9eTl9v1EdAQHx19yt+jJln+uPBY3ydVHyffrct27MNUSgRT7aXWcE7OStse1dqLUYHfVr/81/+CHNq6XIIBPkV66ePVHAHVvFfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BrncHMOL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719315633;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fLhiA6yXg8SHe4EE9R6LUrpP5Cqd2K678aVRIe9RTGU=;
-	b=BrncHMOLv7fD3bioLG4LRCIVpVV7V/IADJL1J/eX4frDA9OFrc/aKnowbeKSReWRQcLaYs
-	UALK05gqvp0XFqvKe3TBYJpH+FkSMcB6lBOKWKoltcjSja6WJ9riOBxwSksKWWIaIgvfbx
-	PYG4sbDIDa9HSCrst914clyG7YFlf2I=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-462-fjZEbnlpO5SGi523fYhWDw-1; Tue,
- 25 Jun 2024 07:40:29 -0400
-X-MC-Unique: fjZEbnlpO5SGi523fYhWDw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 65DA51956068;
-	Tue, 25 Jun 2024 11:40:27 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.8])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B9A981956051;
-	Tue, 25 Jun 2024 11:40:25 +0000 (UTC)
-Date: Tue, 25 Jun 2024 19:40:21 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Nick Bowler <nbowler@draconx.ca>, Hailong Liu <hailong.liu@oppo.com>,
-	linux-kernel@vger.kernel.org,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	linux-mm@kvack.org, sparclinux@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
-Message-ID: <ZnqspTVl/76jM9WD@MiWiFi-R3L-srv>
-References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
- <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
- <20240621033005.6mccm7waduelb4m5@oppo.com>
- <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
- <ZnVLbCCkvhf5GaTf@pc636>
- <ZnWICsPgYuBlrWlt@MiWiFi-R3L-srv>
- <Znljtv5n-6EBgpsF@pc636>
- <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
- <ZnqcuKt2qrR-wmH3@pc636>
+	s=arc-20240116; t=1719315633; c=relaxed/simple;
+	bh=ZxVyvtYxARtDrAp6vLKjEw2lpXi8DX8ni4IcJdc5Moo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sMH3XtiwyCnJYep3M496m/5WqzwNNzCA8OQ++/Cd0ogroJkkFAt/G3TPKygL7aiy8DQ3sOZxCJaY6Gri3Z5XjNWZK4/EHf1x34M9MTQmX6IlI+COL2JBfZxuLXhSK7vH8KAAxZfgROSi18MPQkyJD2KcmkH4pjT4+tK/cjSIwmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0FB97339;
+	Tue, 25 Jun 2024 04:40:54 -0700 (PDT)
+Received: from [10.1.39.170] (XHFQ2J9959.cambridge.arm.com [10.1.39.170])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB9883F73B;
+	Tue, 25 Jun 2024 04:40:25 -0700 (PDT)
+Message-ID: <b6b485ee-7af0-42b8-b0ca-5a75f76a69e2@arm.com>
+Date: Tue, 25 Jun 2024 12:40:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnqcuKt2qrR-wmH3@pc636>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 18/18] arm64/mm: Automatically fold contpte mappings
+Content-Language: en-GB
+To: Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Ard Biesheuvel <ardb@kernel.org>, Marc Zyngier <maz@kernel.org>,
+ James Morse <james.morse@arm.com>, Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Mark Rutland <mark.rutland@arm.com>,
+ David Hildenbrand <david@redhat.com>, John Hubbard <jhubbard@nvidia.com>,
+ Zi Yan <ziy@nvidia.com>, Barry Song <21cnbao@gmail.com>,
+ Alistair Popple <apopple@nvidia.com>, Yang Shi <shy828301@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, "Yin, Fengwei" <fengwei.yin@intel.com>
+Cc: linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+ linuxppc-dev@lists.ozlabs.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20240215103205.2607016-1-ryan.roberts@arm.com>
+ <20240215103205.2607016-19-ryan.roberts@arm.com>
+ <1285eb59-fcc3-4db8-9dd9-e7c4d82b1be0@huawei.com>
+ <8d57ed0d-fdd0-4fc6-b9f1-a6ac11ce93ce@arm.com>
+ <018b5e83-789e-480f-82c8-a64515cdd14a@huawei.com>
+ <b75aa60d-e058-4b5c-877a-9c0cd295e96f@linux.alibaba.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <b75aa60d-e058-4b5c-877a-9c0cd295e96f@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 06/25/24 at 12:32pm, Uladzislau Rezki wrote:
-> On Tue, Jun 25, 2024 at 11:30:33AM +0800, Baoquan He wrote:
-> > On 06/24/24 at 02:16pm, Uladzislau Rezki wrote:
-> > > On Fri, Jun 21, 2024 at 10:02:50PM +0800, Baoquan He wrote:
-> > > > On 06/21/24 at 11:44am, Uladzislau Rezki wrote:
-> > > > > On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
-> > > > > > On 06/21/24 at 11:30am, Hailong Liu wrote:
-> > > > > > > On Thu, 20. Jun 14:02, Nick Bowler wrote:
-> > > > > > > > On 2024-06-20 02:19, Nick Bowler wrote:
-> > > > ......
-> > > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > > > index be2dd281ea76..18e87cafbaf2 100644
-> > > > > > --- a/mm/vmalloc.c
-> > > > > > +++ b/mm/vmalloc.c
-> > > > > > @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
-> > > > > >  static struct xarray *
-> > > > > >  addr_to_vb_xa(unsigned long addr)
-> > > > > >  {
-> > > > > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > > > > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-> > > > > >  
-> > > > > >  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
-> > > > > >  }
-> > > > > > 
-> > > > > The problem i see is about not-initializing of the:
-> > > > > <snip>
-> > > > > 	for_each_possible_cpu(i) {
-> > > > > 		struct vmap_block_queue *vbq;
-> > > > > 		struct vfree_deferred *p;
-> > > > > 
-> > > > > 		vbq = &per_cpu(vmap_block_queue, i);
-> > > > > 		spin_lock_init(&vbq->lock);
-> > > > > 		INIT_LIST_HEAD(&vbq->free);
-> > > > > 		p = &per_cpu(vfree_deferred, i);
-> > > > > 		init_llist_head(&p->list);
-> > > > > 		INIT_WORK(&p->wq, delayed_vfree_work);
-> > > > > 		xa_init(&vbq->vmap_blocks);
-> > > > > 	}
-> > > > > <snip>
-> > > > > 
-> > > > > correctly or fully. It is my bad i did not think that CPUs in a possible mask
-> > > > > can be non sequential :-/
-> > > > > 
-> > > > > nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
-> > > > > when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
-> > > > 
-> > > > I checked the generic version of setup_nr_cpu_ids(), from codes, they
-> > > > are different with my understanding.
-> > > > 
-> > > > kernel/smp.c
-> > > > void __init setup_nr_cpu_ids(void)
-> > > > {
-> > > >         set_nr_cpu_ids(find_last_bit(cpumask_bits(cpu_possible_mask), NR_CPUS) + 1);
-> > > > }
-> > > > 
-> > > I see that it is not a weak function, so it is generic, thus the
-> > > behavior can not be overwritten, which is great. This does what we
-> > > need.
-> > > 
-> > > Thank you for checking this you are right!
-> > 
-> > Thanks for confirming this.
-> > 
-> > > 
-> > > Then it is just a matter of proper initialization of the hash:
-> > > 
-> > > <snip>
-> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > index 5d3aa2dc88a8..1733946f7a12 100644
-> > > --- a/mm/vmalloc.c
-> > > +++ b/mm/vmalloc.c
-> > > @@ -5087,7 +5087,13 @@ void __init vmalloc_init(void)
-> > >          */
-> > >         vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
-> > >  
-> > > -       for_each_possible_cpu(i) {
-> > > +       /*
-> > > +        * We use "nr_cpu_ids" here because some architectures
-> > > +        * may have "gaps" in cpu-possible-mask. It is OK for
-> > > +        * per-cpu approaches but is not OK for cases where it
-> > > +        * can be used as hashes also.
-> > > +        */
-> > > +       for (i = 0; i < nr_cpu_ids; i++) {
-> > 
-> > I was wrong about earlier comments. Percpu variables are only available
-> > on possible CPUs. For those nonexistent possible CPUs of static percpu
-> > variable vmap_block_queue, there isn't memory allocated and mapped for
-> > them. So accessing into them will cause problem.
-> > 
-> > In Nick's case, there are only CPU0, CPU2. If you access
-> > &per_cpu(vmap_block_queue, 1), problem occurs. So I think we may need to
-> > change to take other way for vbq. E.g:
-> > 1) Storing the vb in the nearest neighbouring vbq on possible CPU as
-> >    below draft patch;
-> > 2) create an normal array to store vbq of size nr_cpu_ids, then we can
-> >    store/fetch each vbq on non-possible CPU?
-> > 
-> A correct way, i think, is to create a normal array. A quick fix can be
-> to stick to a next possible CPU.
+On 25/06/2024 08:23, Baolin Wang wrote:
 > 
-> > The way 1) is simpler, the existing code can be adapted a little just as
-> > below.
-> > 
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index 633363997dec..59a8951cc6c0 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
-> >  static struct xarray *
-> >  addr_to_vb_xa(unsigned long addr)
-> >  {
-> > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-> > +
-> > +	if (!cpu_possible(idex))
-> > +		index = cpumask_next(index, cpu_possible_mask);
-> >
-> cpumask_next() can return nr_cpu_ids if no next bits set.
+> 
+> On 2024/6/25 11:16, Kefeng Wang wrote:
+>>
+>>
+>> On 2024/6/24 23:56, Ryan Roberts wrote:
+>>> + Baolin Wang and Yin Fengwei, who maybe able to help with this.
+>>>
+>>>
+>>> Hi Kefeng,
+>>>
+>>> Thanks for the report!
+>>>
+>>>
+>>> On 24/06/2024 15:30, Kefeng Wang wrote:
+>>>> Hi Ryan,
+>>>>
+>>>> A big regression on page-fault3("Separate file shared mapping page
+>>>> fault") testcase from will-it-scale on arm64, no issue on x86,
+>>>>
+>>>> ./page_fault3_processes -t 128 -s 5
+>>>
+>>> I see that this program is mkstmp'ing a file at "/tmp/willitscale.XXXXXX". Based
+>>> on your description, I'm inferring that /tmp is backed by ext4 with your large
+>>> folio patches enabled?
+>>
+>> Yes, mount /tmp by ext4, sorry to forget to mention that.
+>>
+>>>
+>>>>
+>>>> 1) large folio disabled on ext4:
+>>>>     92378735
+>>>> 2) large folio  enabled on ext4 +  CONTPTE enabled
+>>>>     16164943
+>>>> 3) large folio  enabled on ext4 +  CONTPTE disabled
+>>>>     80364074
+>>>> 4) large folio  enabled on ext4 +  CONTPTE enabled + large folio mapping
+>>>> enabled
+>>>> in finish_fault()[2]
+>>>>     299656874
+>>>>
+>>>> We found *contpte_convert* consume lots of CPU(76%) in case 2),
+>>>
+>>> contpte_convert() is expensive and to be avoided; In this case I expect it is
+>>> repainting the PTEs with the PTE_CONT bit added in, and to do that it needs to
+>>> invalidate the tlb for the virtual range. The code is there to mop up user space
+>>> patterns where each page in a range is temporarily made RO, then later changed
+>>> back. In this case, we want to re-fold the contpte range once all pages have
+>>> been serviced in RO mode.
+>>>
+>>> Of course this path is only intended as a fallback, and the more optimium
+>>> approach is to set_ptes() the whole folio in one go where possible - kind of
+>>> what you are doing below.
+>>>
+>>>> and disappeared
+>>>> by following change[2], it is easy to understood the different between case 2)
+>>>> and case 4) since case 2) always map one page
+>>>> size, but always try to fold contpte mappings, which spend a lot of
+>>>> time. Case 4) is a workaround, any other better suggestion?
+>>>
+>>> See below.
+>>>
+>>>>
+>>>> Thanks.
+>>>>
+>>>> [1] https://github.com/antonblanchard/will-it-scale
+>>>> [2] enable large folio mapping in finish_fault()
+>>>>
+>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>> index 00728ea95583..5623a8ce3a1e 100644
+>>>> --- a/mm/memory.c
+>>>> +++ b/mm/memory.c
+>>>> @@ -4880,7 +4880,7 @@ vm_fault_t finish_fault(struct vm_fault *vmf)
+>>>>           * approach also applies to non-anonymous-shmem faults to avoid
+>>>>           * inflating the RSS of the process.
+>>>>           */
+>>>> -       if (!vma_is_anon_shmem(vma) || unlikely(userfaultfd_armed(vma))) {
+>>>> +       if (unlikely(userfaultfd_armed(vma))) {
+>>>
+>>> The change to make finish_fault() handle multiple pages in one go are new; added
+>>> by Baolin Wang at [1]. That extra conditional that you have removed is there to
+>>> prevent RSS reporting bloat. See discussion that starts at [2].
+>>>
+>>> Anyway, it was my vague understanding that the fault around mechanism
+>>> (do_fault_around()) would ensure that (by default) 64K worth of pages get mapped
+>>> together in a single set_ptes() call, via filemap_map_pages() ->
+>>> filemap_map_folio_range(). Looking at the code, I guess fault around only
+>>> applies to read faults. This test is doing a write fault.
+>>>
+>>> I guess we need to do a change a bit like what you have done, but also taking
+>>> into account fault_around configuration?
+> 
+> For the writable mmap() of tmpfs, we will use mTHP interface to control the size
+> of folio to allocate, as discussed in previous meeting [1], so I don't think
+> fault_around configuration will be helpful for tmpfs.
 
-It won't. nr_cpu_ids is the largest index + 1, the hashed index will
-be:  0 =<  index  <= (nr_cpu_ids - 1) e.g cpu_possible_mask is
-b10001111, the nr_cpu_ids is 8, the largest bit is cpu7.
-cpu_possible(index) will check that. So the largest bit of cpumask_next()
-returns is (nr_cpu_ids - 1).
+Yes agreed. But we are talking about ext4 here.
+
+> 
+> For other filesystems, like ext4, I did not found the logic to determin what
+> size of folio to allocate in writable mmap() path 
+
+Yes I'd be keen to understand this to. When I was doing contpte, page cache
+would only allocate large folios for readahead. So that's why I wouldn't have
+seen this.
+
+> (Kefeng, please correct me if
+> I missed something). If there is a control like mTHP, we can rely on that
+> instead of 'fault_around'?
+
+Page cache doesn't currently expose any controls for folio allocation size.
+Personally, I'd like to see some in future becaudse I suspect it will be
+neccessary to limit physical fragmentation. But that is another conversation...
+
+> 
+> [1] https://lore.kernel.org/all/f1783ff0-65bd-4b2b-8952-52b6822a0835@redhat.com/
+> 
+>> Yes, the current changes is not enough, I hint some issue and still debugging,
+>> so our direction is trying to map large folio for do_shared_fault(), right?
+
+We just need to make sure that if finish_fault() has a (non-shmem) large folio,
+it never maps more than fault_around_pages, and it does it in a way that is
+naturally aligned in virtual space (like do_fault_around() does).
+do_fault_around() actually tries to get other folios from the page cache to map.
+We don't want to do that; we just want to make sure that we don't inflate a
+process's RSS by mapping unbounded large folios.
+
+Another (orthogonal, longer term) strategy would be to optimize
+contpte_convert(). arm64 has a feature called "BBM level 2"; we could
+potentially elide the TLBIs for systems that support this. But ultimately its
+best to avoid the need for folding in the first place.
+
+Thanks,
+Ryan
+
+> 
+> I think this is the right direction to do. I add this '!vma_is_anon_shmem(vma)'
+> conditon to gradually implement support for large folio mapping buidling,
+> especially for writable mmap() support in tmpfs.
+> 
+>>> [1]
+>>> https://lore.kernel.org/all/3a190892355989d42f59cf9f2f98b94694b0d24d.1718090413.git.baolin.wang@linux.alibaba.com/
+>>> [2]
+>>> https://lore.kernel.org/linux-mm/13939ade-a99a-4075-8a26-9be7576b7e03@arm.com/
+>>>
+>>>
+>>>>                  nr_pages = 1;
+>>>>          } else if (nr_pages > 1) {
+>>>>                  pgoff_t idx = folio_page_idx(folio, page);
+>>>>
+>>>>
+>>>> On 2024/2/15 18:32, Ryan Roberts wrote:
+>>>>> There are situations where a change to a single PTE could cause the
+>>>>> contpte block in which it resides to become foldable (i.e. could be
+>>>>> repainted with the contiguous bit). Such situations arise, for example,
+>>>>> when user space temporarily changes protections, via mprotect, for
+>>>>> individual pages, such can be the case for certain garbage collectors.
+>>>>>
+>>>>> We would like to detect when such a PTE change occurs. However this can
+>>>>> be expensive due to the amount of checking required. Therefore only
+>>>>> perform the checks when an indiviual PTE is modified via mprotect
+>>>>> (ptep_modify_prot_commit() -> set_pte_at() -> set_ptes(nr=1)) and only
+>>>>> when we are setting the final PTE in a contpte-aligned block.
+>>>>>
+>>>>> Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
+>>>>> ---
+>>>>>    arch/arm64/include/asm/pgtable.h | 26 +++++++++++++
+>>>>>    arch/arm64/mm/contpte.c          | 64 ++++++++++++++++++++++++++++++++
+>>>>>    2 files changed, 90 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/include/asm/pgtable.h
+>>>>> b/arch/arm64/include/asm/pgtable.h
+>>>>> index 8310875133ff..401087e8a43d 100644
+>>>>> --- a/arch/arm64/include/asm/pgtable.h
+>>>>> +++ b/arch/arm64/include/asm/pgtable.h
+>>>>> @@ -1185,6 +1185,8 @@ extern void ptep_modify_prot_commit(struct
+>>>>> vm_area_struct *vma,
+>>>>>     * where it is possible and makes sense to do so. The PTE_CONT bit is
+>>>>> considered
+>>>>>     * a private implementation detail of the public ptep API (see below).
+>>>>>     */
+>>>>> +extern void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
+>>>>> +                pte_t *ptep, pte_t pte);
+>>>>>    extern void __contpte_try_unfold(struct mm_struct *mm, unsigned long addr,
+>>>>>                    pte_t *ptep, pte_t pte);
+>>>>>    extern pte_t contpte_ptep_get(pte_t *ptep, pte_t orig_pte);
+>>>>> @@ -1206,6 +1208,29 @@ extern int contpte_ptep_set_access_flags(struct
+>>>>> vm_area_struct *vma,
+>>>>>                    unsigned long addr, pte_t *ptep,
+>>>>>                    pte_t entry, int dirty);
+>>>>>    +static __always_inline void contpte_try_fold(struct mm_struct *mm,
+>>>>> +                unsigned long addr, pte_t *ptep, pte_t pte)
+>>>>> +{
+>>>>> +    /*
+>>>>> +     * Only bother trying if both the virtual and physical addresses are
+>>>>> +     * aligned and correspond to the last entry in a contig range. The core
+>>>>> +     * code mostly modifies ranges from low to high, so this is the likely
+>>>>> +     * the last modification in the contig range, so a good time to fold.
+>>>>> +     * We can't fold special mappings, because there is no associated folio.
+>>>>> +     */
+>>>>> +
+>>>>> +    const unsigned long contmask = CONT_PTES - 1;
+>>>>> +    bool valign = ((addr >> PAGE_SHIFT) & contmask) == contmask;
+>>>>> +
+>>>>> +    if (unlikely(valign)) {
+>>>>> +        bool palign = (pte_pfn(pte) & contmask) == contmask;
+>>>>> +
+>>>>> +        if (unlikely(palign &&
+>>>>> +            pte_valid(pte) && !pte_cont(pte) && !pte_special(pte)))
+>>>>> +            __contpte_try_fold(mm, addr, ptep, pte);
+>>>>> +    }
+>>>>> +}
+>>>>> +
+>>>>>    static __always_inline void contpte_try_unfold(struct mm_struct *mm,
+>>>>>                    unsigned long addr, pte_t *ptep, pte_t pte)
+>>>>>    {
+>>>>> @@ -1286,6 +1311,7 @@ static __always_inline void set_ptes(struct mm_struct
+>>>>> *mm, unsigned long addr,
+>>>>>        if (likely(nr == 1)) {
+>>>>>            contpte_try_unfold(mm, addr, ptep, __ptep_get(ptep));
+>>>>>            __set_ptes(mm, addr, ptep, pte, 1);
+>>>>> +        contpte_try_fold(mm, addr, ptep, pte);
+>>>>>        } else {
+>>>>>            contpte_set_ptes(mm, addr, ptep, pte, nr);
+>>>>>        }
+>>>>> diff --git a/arch/arm64/mm/contpte.c b/arch/arm64/mm/contpte.c
+>>>>> index 50e0173dc5ee..16788f07716d 100644
+>>>>> --- a/arch/arm64/mm/contpte.c
+>>>>> +++ b/arch/arm64/mm/contpte.c
+>>>>> @@ -73,6 +73,70 @@ static void contpte_convert(struct mm_struct *mm, unsigned
+>>>>> long addr,
+>>>>>        __set_ptes(mm, start_addr, start_ptep, pte, CONT_PTES);
+>>>>>    }
+>>>>>    +void __contpte_try_fold(struct mm_struct *mm, unsigned long addr,
+>>>>> +            pte_t *ptep, pte_t pte)
+>>>>> +{
+>>>>> +    /*
+>>>>> +     * We have already checked that the virtual and pysical addresses are
+>>>>> +     * correctly aligned for a contpte mapping in contpte_try_fold() so the
+>>>>> +     * remaining checks are to ensure that the contpte range is fully
+>>>>> +     * covered by a single folio, and ensure that all the ptes are valid
+>>>>> +     * with contiguous PFNs and matching prots. We ignore the state of the
+>>>>> +     * access and dirty bits for the purpose of deciding if its a contiguous
+>>>>> +     * range; the folding process will generate a single contpte entry which
+>>>>> +     * has a single access and dirty bit. Those 2 bits are the logical OR of
+>>>>> +     * their respective bits in the constituent pte entries. In order to
+>>>>> +     * ensure the contpte range is covered by a single folio, we must
+>>>>> +     * recover the folio from the pfn, but special mappings don't have a
+>>>>> +     * folio backing them. Fortunately contpte_try_fold() already checked
+>>>>> +     * that the pte is not special - we never try to fold special mappings.
+>>>>> +     * Note we can't use vm_normal_page() for this since we don't have the
+>>>>> +     * vma.
+>>>>> +     */
+>>>>> +
+>>>>> +    unsigned long folio_start, folio_end;
+>>>>> +    unsigned long cont_start, cont_end;
+>>>>> +    pte_t expected_pte, subpte;
+>>>>> +    struct folio *folio;
+>>>>> +    struct page *page;
+>>>>> +    unsigned long pfn;
+>>>>> +    pte_t *orig_ptep;
+>>>>> +    pgprot_t prot;
+>>>>> +
+>>>>> +    int i;
+>>>>> +
+>>>>> +    if (!mm_is_user(mm))
+>>>>> +        return;
+>>>>> +
+>>>>> +    page = pte_page(pte);
+>>>>> +    folio = page_folio(page);
+>>>>> +    folio_start = addr - (page - &folio->page) * PAGE_SIZE;
+>>>>> +    folio_end = folio_start + folio_nr_pages(folio) * PAGE_SIZE;
+>>>>> +    cont_start = ALIGN_DOWN(addr, CONT_PTE_SIZE);
+>>>>> +    cont_end = cont_start + CONT_PTE_SIZE;
+>>>>> +
+>>>>> +    if (folio_start > cont_start || folio_end < cont_end)
+>>>>> +        return;
+>>>>> +
+>>>>> +    pfn = ALIGN_DOWN(pte_pfn(pte), CONT_PTES);
+>>>>> +    prot = pte_pgprot(pte_mkold(pte_mkclean(pte)));
+>>>>> +    expected_pte = pfn_pte(pfn, prot);
+>>>>> +    orig_ptep = ptep;
+>>>>> +    ptep = contpte_align_down(ptep);
+>>>>> +
+>>>>> +    for (i = 0; i < CONT_PTES; i++) {
+>>>>> +        subpte = pte_mkold(pte_mkclean(__ptep_get(ptep)));
+>>>>> +        if (!pte_same(subpte, expected_pte))
+>>>>> +            return;
+>>>>> +        expected_pte = pte_advance_pfn(expected_pte, 1);
+>>>>> +        ptep++;
+>>>>> +    }
+>>>>> +
+>>>>> +    pte = pte_mkcont(pte);
+>>>>> +    contpte_convert(mm, addr, orig_ptep, pte);
+>>>>> +}
+>>>>> +EXPORT_SYMBOL(__contpte_try_fold);
+>>>>> +
+>>>>>    void __contpte_try_unfold(struct mm_struct *mm, unsigned long addr,
+>>>>>                pte_t *ptep, pte_t pte)
+>>>>>    {
+>>>
+>>>
 
 
