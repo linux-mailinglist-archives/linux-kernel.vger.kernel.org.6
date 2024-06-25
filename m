@@ -1,119 +1,140 @@
-Return-Path: <linux-kernel+bounces-229373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E31A916EFB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:19:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77C1D916EFE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:20:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 921F9B21FB2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:19:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03E55B21F18
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:20:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 645DB176ACC;
-	Tue, 25 Jun 2024 17:19:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089E8176AD9;
+	Tue, 25 Jun 2024 17:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IIHj/BTC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="NbFLQKnc"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7ECE1487E9;
-	Tue, 25 Jun 2024 17:19:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EFAE1487E9;
+	Tue, 25 Jun 2024 17:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719335966; cv=none; b=qOOmMe0zxQjMhRRG+BJD3BTJ7iYEDHx1thPLEeoybIbLJbSpdEjLWuDqFL+prX5vS6oO/Kq4tHumEHLH7JPhfdJIoiHrB1vwIlIlK8NbuyuETTqpcYs92I/IkBHB8A2PEhClmQEjfXeuPH+KCXUwrAUq9jewcRY1xqSg3RZsD6Q=
+	t=1719336043; cv=none; b=e6UuLcInAeLXvUnEjef3AZmo8UrPIbDcYgP4+E8+3nZE9brf3ijlYWlvUszk+mZmJ0hst87VwjFA0H5iBHIO/zs/ESYPYhdZTaosaJylEyKmBhainRtMhw/eJ9qlfM/mFI23x+Y6rao3xEL+zis0dd6dEjQLN0l0wzaMmzvlkwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719335966; c=relaxed/simple;
-	bh=h/AKdpG7oZDTaW9GmHMwq1B9ya/BDafXlMiQN5HZ9rE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SGLLCZ3DgELjsiqcc2OO1V0UvnQ7scLVu6RRCOxnq1I/VpWXtyJXFoOkI1gPhy94alAcU2qM8n/RQAcLyyIL+SFAGQjGZ/1fAiaTakI1pn3LckWh4usOox7dciTmV/Vgbm1Ymswt0ZkA7DX3AVG9aeLmPWUNfSHbISVfGYH1H9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IIHj/BTC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 765C1C32781;
-	Tue, 25 Jun 2024 17:19:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719335966;
-	bh=h/AKdpG7oZDTaW9GmHMwq1B9ya/BDafXlMiQN5HZ9rE=;
-	h=From:Date:Subject:To:Cc:From;
-	b=IIHj/BTCqShy/I1ee7z7XGRgn+1KkhA2PCid5pcmHysKjopizvuCSU/T5FpII5ucC
-	 Onnl3/jjJKVVuYFOT4uklv78ntgiyOg6Q8GP5YQ99zqWk8M/nLqurdwnnuk/1l6ODq
-	 cD6M6c0b6zCBrpwHrTqe56Vcgfv53Bj0t5K0A46rgt0H5uc7LQmP4n0KH8v1fn+4Xu
-	 IO4HWb8E+mT897+SaXjpf9R6bTHSGJRJSwAgM0aP895piOGx+FIL+KGmjvn07yPwbG
-	 jUD5kIdmvb48p2GsRXAsqbyGDpldRHDA41pukZHhKh2uLYFX911ox54gWZLnnr1bed
-	 MY16Brww6V1hw==
-From: Jeff Layton <jlayton@kernel.org>
-Date: Tue, 25 Jun 2024 13:19:12 -0400
-Subject: [PATCH] nfsd: fix a regression in threads procfile interface
+	s=arc-20240116; t=1719336043; c=relaxed/simple;
+	bh=TLiCDBlNhJeY858vWS6sfaY2ITG/SSXEtUs2hIiC62w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SdMKEzcXUEWRvvYmY6N3Pyyns4nhrTMXX/BQ3OY2YSl0/vw3fJfZQizx0XP7rDOfzpSgg/DEhbeqPpNEDAHBRV9diwXHnFV70z6w5aoq6naKCl83LVQepogpEiN82RIU/pmndlHdB/kS8VHWKpA9jZVcp3iGo58yF5MJaky0scE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=NbFLQKnc; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
+Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4W7s6Y0nJ7z9shY;
+	Tue, 25 Jun 2024 19:20:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
+	s=MBO0001; t=1719336037;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5sRWgIsDN9rxxK/fFSv124QkLdHj/Xm1vNPLxyytvHg=;
+	b=NbFLQKncW0PDy/nuxq7Qj2mWHIOZmfmzKWUYbHxAcG3KETJdt8sa33BCfGHmXSfOVFQvrM
+	1qnBIvI0tOS8yRKFcipEMRuyw0/KogZXNqLFqc6sfg9vopGxoci7uTq/CJrAQ9JVv94qiM
+	+LtspHT+K83wtDVVyPr1lNFdnPtRD5+JAXMHK3C3tBdD0iXynEpTbKlXxUWE4mBcVHNlIV
+	4W/FqcDOHE0GDo4ISYViERy9biN5rKmRS+4mUMu52duVNFbvqHjheOPBlgbxzug6RQYg6B
+	I3ezacJV7fsESDZtPNmZ+YHrFifPplxNiTu309eyBx8Vpr9i+iA/oX4nb0i1Kw==
+Date: Tue, 25 Jun 2024 17:20:31 +0000
+From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: david@fromorbit.com, willy@infradead.org, chandan.babu@oracle.com,
+	djwong@kernel.org, brauner@kernel.org, akpm@linux-foundation.org,
+	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
+	linux-mm@kvack.org, john.g.garry@oracle.com,
+	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
+	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
+	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
+Subject: Re: [PATCH v8 04/10] mm: split a folio in minimum folio order chunks
+Message-ID: <20240625172031.y5yyukeudinescxk@quentin>
+References: <20240625114420.719014-1-kernel@pankajraghav.com>
+ <20240625114420.719014-5-kernel@pankajraghav.com>
+ <D296GAEAQVJB.3FXBQ0WEUJ384@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240625-nfsd-testing-v1-1-89c4782c5a2e@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAA/8emYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDMyNT3by04hTdktTiksy8dF0Lk5Q0S0sjI/PUpEQloJaCotS0zAqwcdG
- xtbUASJ5oGF4AAAA=
-To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
- Olga Kornievskaia <kolga@netapp.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
- Tom Talpey <tom@talpey.com>
-Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jeff Layton <jlayton@kernel.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1189; i=jlayton@kernel.org;
- h=from:subject:message-id; bh=h/AKdpG7oZDTaW9GmHMwq1B9ya/BDafXlMiQN5HZ9rE=;
- b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBmevwZ3jgyTPkHKWGTqRNfT5yOkOwmdwsl5eTas
- m9F/FjznDCJAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZnr8GQAKCRAADmhBGVaC
- FW3LEACQzwD9w+gmkQyj6E+E6kpGz5bYF0Rf5QKeU/6OvJPOvGnTj188nZ6BaMbE2JLNmKcTwIj
- y1oS8OY1eMHOeLnfJ/A/613LUIvSQE1nmNoHB3RIXfApzGk9IJ5kSEt7807AfIOy4K0+GFDo2dH
- rrkBxn7CGBy+ZLGr0/DrYyrxi5+ggiHeVyK5t+N+9tM9fC7l3oPTJXvLl9TtHx1gIhRe8BQHjEB
- J2bQFeP7TyNHR/CXW2XV5hAbYPByJe7TnY89bwUGEmd7aaXO7LiowZp1NGYD9CO49tiySVtgK4k
- k9CMGkROzBjSzC5ZRe8Ok5ZTnfwfXs90jRdagxQqm6UpvQTfC4UOx+fBxXA84w0kffo7HJO9SDI
- 5bcf9ERRW0R3050PJRfwHK28t9ExgRbnLPaYYm+oc+0T+CXs4NqCLrLaWQei/9jauYy12QCg2M4
- KCQ90lJapl7ohYwthZ8RW4YqGUUYJ5HFsjJY4m73GLuX8gAHmm0fn1kuC1k1vXbaQjNe6e8/Iez
- Il1fDsRPCuwuT3Aee/vRjOxyJJ/TnomRq/D3qjfELdx84kBRewRQaaXRJB2ZkyRl+yinmyLEIFX
- oDJwwjIHFcHsiij6eulvQTbl/hKTib5lKL950fJZHl189DruTHA/SVu6ONnDZnH69Ox+rAktwJX
- 9PD091Bi7yTqg0A==
-X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
- fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D296GAEAQVJB.3FXBQ0WEUJ384@nvidia.com>
 
-The old threads interface passed in NULL for the pool here which tells
-svc_set_num_threads to distribute the count over all the available
-pools. Fix the logic to handle this case correctly.
+On Tue, Jun 25, 2024 at 10:45:09AM -0400, Zi Yan wrote:
+> On Tue Jun 25, 2024 at 7:44 AM EDT, Pankaj Raghav (Samsung) wrote:
+> > From: Luis Chamberlain <mcgrof@kernel.org>
+> >
+> > split_folio() and split_folio_to_list() assume order 0, to support
+> > minorder for non-anonymous folios, we must expand these to check the
+> > folio mapping order and use that.
+> >
+> > Set new_order to be at least minimum folio order if it is set in
+> > split_huge_page_to_list() so that we can maintain minimum folio order
+> > requirement in the page cache.
+> >
+> > Update the debugfs write files used for testing to ensure the order
+> > is respected as well. We simply enforce the min order when a file
+> > mapping is used.
+> >
+> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
+> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> > Reviewed-by: Hannes Reinecke <hare@suse.de>
+> > ---
+> > There was a discussion about whether we need to consider truncation of
+> > folio to be considered a split failure or not [1]. The new code has
+> > retained the existing behaviour of returning a failure if the folio was
+> > truncated. I think we need to have a separate discussion whethere or not
+> > to consider it as a failure.
+> 
+> <snip>
+> 
+> >
+> > +int split_folio_to_list(struct folio *folio, struct list_head *list)
+> > +{
+> > +	unsigned int min_order = 0;
+> > +
+> > +	if (!folio_test_anon(folio)) {
+> > +		if (!folio->mapping) {
+> > +			count_vm_event(THP_SPLIT_PAGE_FAILED);
+> 
+> Regardless this folio split is from a truncation or not, you should not
+> count every folio split as a THP_SPLIT_PAGE_FAILED. Since not every
+> folio is a THP. You need to do:
+> 
+> if (folio_test_pmd_mappable(folio))
+> 	count_vm_event(THP_SPLIT_PAGE_FAILED);
+> 
+> See commit 835c3a25aa37 ("mm: huge_memory: add the missing
+> folio_test_pmd_mappable() for THP split statistics")
 
-Fixes: bbb07968d5e2 ("nfsd: make nfsd_svc take an array of thread counts")
-Signed-off-by: Jeff Layton <jlayton@kernel.org>
----
-It's probably best to squash this into bbb07968d5e2.
----
- fs/nfsd/nfssvc.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+You are right, I will change that. I didn't notice this commit. 
 
-diff --git a/fs/nfsd/nfssvc.c b/fs/nfsd/nfssvc.c
-index 9edb4f7c4cc2..23e73190687f 100644
---- a/fs/nfsd/nfssvc.c
-+++ b/fs/nfsd/nfssvc.c
-@@ -735,6 +735,13 @@ int nfsd_set_nrthreads(int n, int *nthreads, struct net *net)
- 	if (nn->nfsd_serv == NULL || n <= 0)
- 		return 0;
- 
-+	/*
-+	 * Special case: When n == 1, pass in NULL for the pool, so that the
-+	 * change is distributed equally among them.
-+	 */
-+	if (n == 1)
-+		return svc_set_num_threads(nn->nfsd_serv, NULL, nthreads[0]);
-+
- 	if (n > nn->nfsd_serv->sv_nrpools)
- 		n = nn->nfsd_serv->sv_nrpools;
- 
+> 	
+> > +			return -EBUSY;
+> > +		}
+> > +		min_order = mapping_min_folio_order(folio->mapping);
+> > +	}
+> > +
+> > +	return split_huge_page_to_list_to_order(&folio->page, list, min_order);
+> > +}
+> > +
+> 
+> -- 
+> Best Regards,
+> Yan, Zi
+> 
 
----
-base-commit: 26086b8c567f3f758cdf3e1fc2ae205095751cb8
-change-id: 20240625-nfsd-testing-84df99227eba
-
-Best regards,
--- 
-Jeff Layton <jlayton@kernel.org>
 
 
