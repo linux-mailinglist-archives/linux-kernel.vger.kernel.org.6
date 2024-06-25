@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-228371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAE1915EF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:35:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8214915EF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:35:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A325283B82
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:35:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DBEB283DBD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:35:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D771145FFC;
-	Tue, 25 Jun 2024 06:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA41146015;
+	Tue, 25 Jun 2024 06:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="IGdf4U6d"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="dscUMdYJ"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 069B71CFB6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:35:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72BC9145FED
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:35:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719297317; cv=none; b=rCq9jNEquAgIdaVRG/CshiggB947+8/z9LYPAVQs5Gpsbfv3HLUfOX19pJNgW47uvkgYDdlpCFwWancU45mlIce/GvNzP6rAmynH8Yn2p6T4ss50RaLgSRIyZoxEc4rW6r2QwKqv9Vb6pgn3JJLwIb6a9x23rzJ7ynQrmwQZZYo=
+	t=1719297319; cv=none; b=ix/H+hFzqPwG2IOFIU7FIljD5Kv3H97944HT366sRtepqEkVPESm4kJDQpC15cDg9tK6UQmEUd1s119yxZ70GWCJxfmcN2pp/v75/FrHKOUeCpZNkiME94mdklwxemVZ9IezguO50b2o+TFSEr6DG920H2Aw2vPKn5XwRSmCKL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719297317; c=relaxed/simple;
-	bh=lBnjct36G3drG+mcavFyer2tgBg1G6s60znH1k4d4gc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rmV2znu0yBYtfcRW+XMGriy5TGZBKJLassUbmpP0FQV2l0BNZxtvFgS7SttO4SCn4pwPyqjak2Ijbujvyy6tZK6ks6hdll2hLCFTJkIMxgGSjXmnkQpA6fIswzktzKBtQMzu7Mf4x8P6d0LGVYKL6Zj7k7U8zpKFQ/l5Bi4VWPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=IGdf4U6d; arc=none smtp.client-ip=212.227.15.15
+	s=arc-20240116; t=1719297319; c=relaxed/simple;
+	bh=pCo8XIlw9Gd9qvjFrGaZ1lxsXsD9xew1R7axNzBukVo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PJytrFd5FRcIK9DMeV7yRg3URiz56zDkpyn7JJuZQhWDmKtyr7afqRmMxV4nQVOwXBScDoL+ER96eG+0qWfndHMtssLTJK18nBTQPJk5DacbNMIbWB8RzkYKHhZITK9yrmdyUNzfizwngj7F5kZgEFscDFtVzfFcR7jlHJWwLEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=dscUMdYJ; arc=none smtp.client-ip=212.227.15.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1719297308; x=1719902108; i=w_armin@gmx.de;
-	bh=RWKwv8Fsdu7u66NKAUfD+Vv47kvE3VWa8/QOTZn+UfQ=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
-	 MIME-Version:Content-Transfer-Encoding:cc:
+	s=s31663417; t=1719297309; x=1719902109; i=w_armin@gmx.de;
+	bh=WhufMxP7Ijq4qlmWwyf+Gifp5LR3u3L77rJHIX6mfqc=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=IGdf4U6dMe6CGc9Br60OiEb1JCr2TPLa5L8BnJp8bBEY8gCQ+WcgQ5F0/TeKmieY
-	 9cRXUR75LtN5FHuX4QLsbr1qQDNxgQW/vMnHx968O9zgYhbAaivEu4IoswR3U/VQ1
-	 XKg3lpd7N7YTuSXKvRDT1C22rfTxQdZ4tK5XgbpQ/mjJ7u+c4DCEslzgYOFQD4WCd
-	 VBnFFDO3jVOSEM94VitBCscRVFppt/OCLGtIN3HGWhHF8fIZukZKyeXgt4vGaDA6t
-	 UZGi11cK65aonCYaMH/SXg71FCVDIiC6D5zf8ZFLeAz8k1lhM1Jsf/x69hYiNWfRo
-	 76XyGaRnzfG8qoXYDQ==
+	b=dscUMdYJot1rVI01J3Q7/wVr0NxjuD1C+NF5s0YFeWB2k8OTV0mS9K6qnQ/D76x5
+	 9gcxIq4L3/b+gyyvOb3d4mGb6m7smg7Q3cB1Yso+ghcWns1h6JS0zNqBi6OE1elGU
+	 339EmA8VopMSlxD+565Jnlrcjq4EUXwn36KUlUCEqozK014IF/FP6XHfGp9i9uXSt
+	 m9bs3g10fmHWXfSZ5zRJMMVO8/q5lQn49ITDJ4P+/2fA4QwnEN1P9m2R8A41LLk2n
+	 1kQaDLdCVsPohqNqCpJb4EkDHOcbLSCi6VRs16Yb0/PZu24P9wFYqmyzMt2SsRaQH
+	 SKuLQ/FA4tN0OOyMUQ==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from mx-amd-b650.users.agdsn.de ([141.30.226.129]) by mail.gmx.net
- (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MhlGk-1sqwrk0mie-00fKJW; Tue, 25 Jun 2024 08:35:08 +0200
+ (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1Mv31W-1sdfDB3BuS-016zAD; Tue, 25 Jun 2024 08:35:09 +0200
 From: Armin Wolf <W_Armin@gmx.de>
 To: arnd@arndb.de,
 	gregkh@linuxfoundation.org
@@ -53,10 +54,12 @@ Cc: hkallweit1@gmail.com,
 	u.kleine-koenig@pengutronix.de,
 	srinivas.kandagatla@linaro.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] eeprom: ee1004: Use devres for bus data cleanup
-Date: Tue, 25 Jun 2024 08:34:58 +0200
-Message-Id: <20240625063459.429953-1-W_Armin@gmx.de>
+Subject: [PATCH 2/2] eeprom: ee1004: Add nvmem support
+Date: Tue, 25 Jun 2024 08:34:59 +0200
+Message-Id: <20240625063459.429953-2-W_Armin@gmx.de>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240625063459.429953-1-W_Armin@gmx.de>
+References: <20240625063459.429953-1-W_Armin@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,134 +67,171 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:81gye1G+5KbvLxoRWo+uL6PLNcfePD85+thiMMJdOsoLTPp3eMA
- V3hghlilKvj9prmcOzcHNOCW8I6vaT8o2lVjaAVJ5Bjpm1hgtAQpviRqC4TXt9taWgFfidz
- lMyG6TbUIpSuorfjF/e6yIAjVDEXLmljP3NPGGpWXIdGBV8BhXdkwc+G/1/q8cEPlrsw5V5
- v6BgHVejfFk+VTEK1ZpYw==
+X-Provags-ID: V03:K1:EnL2eJS46vWOV07mo9qOC3y8GMF4IShL45SFnqImzBv0JWeKNw+
+ jzAbRm5/uuGMKFZXqAbT9lxA3v2ZImKEhMDxmKfDxQUY0ZmhOK93DEvNQnKSflCKH2pjJ1i
+ k3Oiw54IjHowmYIJTrrW0UgdXD2+nCZxemsnwQm9cZN5Lcdf1eUlDiSFs/iu0GkRw1fq4ll
+ 60S9SCcqnAv9bDdOt7B2g==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:b1Uhuz72N6c=;chcBcbpe431CYFxF9rc51WR7qk8
- qc7hS7vOM9GmN+rGNX0p0+IqhKqZcYfUBWC44soP0/PJ3JauoMh5Y/YMqX4eSXaNvlG85tLNx
- au3AiTbeHQqFnQ8pfV6J2IJaswxkUtMCV/18qtC5qNJTJOhvZNzLXfje40+Gc9mI2IIcqEYjc
- y67mVLhQBzWFxduu2xFgCvYLbWJcnHvyQsW9sM4ZnThw5Fo6iFLasyGlwHLAPWiqsGEnwhLtV
- oPn/d5d2U5v+BFsVCxYBf9BMll2Am8HtxiIQwPD9orwMH6x5DsHTKL7Gf1squu8m8oCw1q5Vv
- 82AwDOOegqG5g1X6SNJby9JsWchVoIn60tGMd/AZ3XvYbhCahDM8KmXF4eANrMfYoKXchWFjK
- xrBpznsu179SIz74BfzkxPQftTcXHVn8Qfx72C/hBKMajx5ecjF7Nj3eLHH/4yiYNKbXIVy3/
- 7eKuYUbJ2wx/4giQxtSUZuNqhNzNHos8pj0YTN1BKaekiFrRzkiDAU8XYBXUMIkIJkOlR+I3v
- 6zeE5HRznImH72l+GmHYvncvRaWvEj+lofMCdzR2FQFHLmZE34JU95DobFh77LjEDoRoEaAy5
- za54NwoLBaXaCSkVj0shZXwf2g4S1Rkl6AW31u8j7+CvhcBNySF35R7LQopWK3nxNb5S3Dcee
- KRPb8B5fvJnCL9DA8bM/251OqEijoGmIs4oAXg8b9l64dxCk7reLGCizhK44MLmLdhWSRcfKN
- PsJP0IlR6RiX0H8k0DWY5DHOmiJOW31NeIn/y8MKGPMsD/6InmdcJHJYr+booUoAR+o+ZP7G/
- GcWpwyaxQkAu3Sz0TQxsuZvsRKLfyNd7nfldY9c0m9u1U=
+UI-OutboundReport: notjunk:1;M01:P0:y/SgBsmhZew=;XCFS2uhy+20lRR625R/F8ObEcPS
+ BhaByOtn+8x7uUiOb0dlslsL9pnZrfo3NfgAo5gINPKsSL+XQOAvhYAL7j7YOgne9kMAybswf
+ pRa7R5kETdvSCHyOI2rJGABC0OemGcFYu0c8b1IzE5k6GGPmd8xY831hoIlQR7ZqXI3PWyejA
+ zoYtQdgvtR5GzK8INe+BzE9PHKl19xjUUuO4TcAUkkootMLizMO1AMrsi25AZQw9goX9U7kAD
+ XBksT8vBg79Nwa3YvdyZ7x7a8ops9YKNsR4uNGH1b5mfXfFfEJ2gCUUnKjjbFXgbO+6Lf3tj9
+ /mBZekkzJ9+Sq9QDA3l9AKi02g+xNCUURc4rnykSbiyad5b2ETUmAbSpvvfiyVxZdzwiApZUT
+ zXTYSf1rOtJ6mSNtTfqTyhhKs+E8QysR548DHFR/Ghfuv6pLzWhmJGUp6w6dzgz/ePslmoAoF
+ KyRhiV9W97CS0aqrWO9j/+7JLFo5Z5VvrwnDfpF8StFWZ+BlvFcfQAqSoBp7HNS4oWhCZyaLV
+ WYMF76GAhaCdaudhuTMTHDR++1RijV9azDSZG0z/c/rqM+MqCzv8Rnhsw0SgHy6jEGTJTw+85
+ ktcmOkcOnE5+otBzfqYu4n4jPA4FY5eSJDoTaBN3Jkn0Va08uQrohebM3sY7J1vcKSkxf6ZXx
+ QsJPBV4F4vxBwHXWirJUj/c7zcxMOMxnR1INVzhACKBk+dXOCRYub0zCirYoKA1+z9aZa8/ZU
+ wBPgxNPqRRs4wC4q3pDlAgoPbhZ9y3nHhqFPFET0kGZJlp+fJ0d4gnAHym+WqzXrl0dL6NTMB
+ UO25OwrHRmTNwedxCShdM38tcvT8t7i1tCNaTfO00hciU=
 
-Use devm_add_action_or_reset() to clean up the bus data at
-driver removal or when an error occurs during probe.
-This will allow us to use other devres-based APIs later.
+Currently the driver does not register a nvmem provider, which means
+that userspace programs cannot access the ee1004 EEPROM through the
+standard nvmem sysfs API.
+Fix this by replacing the custom sysfs attribute with a standard nvmem
+interface, which also takes care of backwards compatibility.
 
 Tested on a Dell Inspiron 3505.
 
 Signed-off-by: Armin Wolf <W_Armin@gmx.de>
 =2D--
- drivers/misc/eeprom/ee1004.c | 42 ++++++++++++++++++------------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ drivers/misc/eeprom/Kconfig  |  2 ++
+ drivers/misc/eeprom/ee1004.c | 58 +++++++++++++++++++++++-------------
+ 2 files changed, 40 insertions(+), 20 deletions(-)
 
+diff --git a/drivers/misc/eeprom/Kconfig b/drivers/misc/eeprom/Kconfig
+index 4e61ac18cc96..9df12399bda3 100644
+=2D-- a/drivers/misc/eeprom/Kconfig
++++ b/drivers/misc/eeprom/Kconfig
+@@ -109,6 +109,8 @@ config EEPROM_IDT_89HPESX
+ config EEPROM_EE1004
+ 	tristate "SPD EEPROMs on DDR4 memory modules"
+ 	depends on I2C && SYSFS
++	select NVMEM
++	select NVMEM_SYSFS
+ 	help
+ 	  Enable this driver to get read support to SPD EEPROMs following
+ 	  the JEDEC EE1004 standard. These are typically found on DDR4
 diff --git a/drivers/misc/eeprom/ee1004.c b/drivers/misc/eeprom/ee1004.c
-index bf4f65dc6d9a..b1f760cc3be0 100644
+index b1f760cc3be0..2e69024380b6 100644
 =2D-- a/drivers/misc/eeprom/ee1004.c
 +++ b/drivers/misc/eeprom/ee1004.c
-@@ -9,6 +9,7 @@
-  * Copyright (C) 2008 Wolfram Sang, Pengutronix
-  */
+@@ -16,6 +16,7 @@
+ #include <linux/mod_devicetable.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
++#include <linux/nvmem-provider.h>
 
-+#include <linux/device.h>
- #include <linux/i2c.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-@@ -207,6 +208,16 @@ static void ee1004_cleanup(int idx, struct ee1004_bus=
-_data *bd)
- 	}
+ /*
+  * DDR4 memory modules use special EEPROMs following the Jedec EE1004
+@@ -145,13 +146,17 @@ static ssize_t ee1004_eeprom_read(struct i2c_client =
+*client, char *buf,
+ 	return i2c_smbus_read_i2c_block_data_or_emulated(client, offset, count, =
+buf);
  }
 
-+static void ee1004_cleanup_bus_data(void *data)
-+{
-+	struct ee1004_bus_data *bd =3D data;
+-static ssize_t eeprom_read(struct file *filp, struct kobject *kobj,
+-			   struct bin_attribute *bin_attr,
+-			   char *buf, loff_t off, size_t count)
++static int ee1004_read(void *priv, unsigned int off, void *val, size_t co=
+unt)
+ {
+-	struct i2c_client *client =3D kobj_to_i2c_client(kobj);
+-	size_t requested =3D count;
+-	int ret =3D 0;
++	struct i2c_client *client =3D priv;
++	char *buf =3D val;
++	int ret;
 +
-+	/* Remove page select clients if this is the last device */
-+	mutex_lock(&ee1004_bus_lock);
-+	ee1004_cleanup(EE1004_NUM_PAGES, bd);
-+	mutex_unlock(&ee1004_bus_lock);
-+}
++	if (unlikely(!count))
++		return count;
 +
++	if (off + count > EE1004_EEPROM_SIZE)
++		return -EINVAL;
+
+ 	/*
+ 	 * Read data from chip, protecting against concurrent access to
+@@ -161,28 +166,21 @@ static ssize_t eeprom_read(struct file *filp, struct=
+ kobject *kobj,
+
+ 	while (count) {
+ 		ret =3D ee1004_eeprom_read(client, buf, off, count);
+-		if (ret < 0)
+-			goto out;
++		if (ret < 0) {
++			mutex_unlock(&ee1004_bus_lock);
++			return ret;
++		}
+
+ 		buf +=3D ret;
+ 		off +=3D ret;
+ 		count -=3D ret;
+ 	}
+-out:
++
+ 	mutex_unlock(&ee1004_bus_lock);
+
+-	return ret < 0 ? ret : requested;
++	return 0;
+ }
+
+-static BIN_ATTR_RO(eeprom, EE1004_EEPROM_SIZE);
+-
+-static struct bin_attribute *ee1004_attrs[] =3D {
+-	&bin_attr_eeprom,
+-	NULL
+-};
+-
+-BIN_ATTRIBUTE_GROUPS(ee1004);
+-
+ static void ee1004_probe_temp_sensor(struct i2c_client *client)
+ {
+ 	struct i2c_board_info info =3D { .type =3D "jc42" };
+@@ -220,7 +218,24 @@ static void ee1004_cleanup_bus_data(void *data)
+
  static int ee1004_probe(struct i2c_client *client)
  {
++	struct nvmem_config config =3D {
++		.dev =3D &client->dev,
++		.name =3D dev_name(&client->dev),
++		.id =3D NVMEM_DEVID_NONE,
++		.owner =3D THIS_MODULE,
++		.type =3D NVMEM_TYPE_EEPROM,
++		.read_only =3D true,
++		.root_only =3D false,
++		.reg_read =3D ee1004_read,
++		.size =3D EE1004_EEPROM_SIZE,
++		.word_size =3D 1,
++		.stride =3D 1,
++		.priv =3D client,
++		.compat =3D true,
++		.base_dev =3D &client->dev,
++	};
  	struct ee1004_bus_data *bd;
-@@ -228,6 +239,10 @@ static int ee1004_probe(struct i2c_client *client)
- 				     "Only %d busses supported", EE1004_MAX_BUSSES);
- 	}
++	struct nvmem_device *ndev;
+ 	int err, cnr =3D 0;
 
-+	err =3D devm_add_action_or_reset(&client->dev, ee1004_cleanup_bus_data, =
-bd);
-+	if (err < 0)
-+		return err;
+ 	/* Make sure we can operate on this adapter */
+@@ -272,6 +287,10 @@ static int ee1004_probe(struct i2c_client *client)
+
+ 	mutex_unlock(&ee1004_bus_lock);
+
++	ndev =3D devm_nvmem_register(&client->dev, &config);
++	if (IS_ERR(ndev))
++		return PTR_ERR(ndev);
 +
- 	i2c_set_clientdata(client, bd);
-
- 	if (++bd->dev_count =3D=3D 1) {
-@@ -237,16 +252,18 @@ static int ee1004_probe(struct i2c_client *client)
-
- 			cl =3D i2c_new_dummy_device(client->adapter, EE1004_ADDR_SET_PAGE + cn=
-r);
- 			if (IS_ERR(cl)) {
--				err =3D PTR_ERR(cl);
--				goto err_clients;
-+				mutex_unlock(&ee1004_bus_lock);
-+				return PTR_ERR(cl);
- 			}
- 			bd->set_page[cnr] =3D cl;
- 		}
-
- 		/* Remember current page to avoid unneeded page select */
- 		err =3D ee1004_get_current_page(bd);
--		if (err < 0)
--			goto err_clients;
-+		if (err < 0) {
-+			mutex_unlock(&ee1004_bus_lock);
-+			return err;
-+		}
- 		dev_dbg(&client->dev, "Currently selected page: %d\n", err);
- 		bd->current_page =3D err;
- 	}
-@@ -260,22 +277,6 @@ static int ee1004_probe(struct i2c_client *client)
+ 	dev_info(&client->dev,
+ 		 "%u byte EE1004-compliant SPD EEPROM, read-only\n",
  		 EE1004_EEPROM_SIZE);
-
- 	return 0;
--
-- err_clients:
--	ee1004_cleanup(cnr, bd);
--	mutex_unlock(&ee1004_bus_lock);
--
--	return err;
--}
--
--static void ee1004_remove(struct i2c_client *client)
--{
--	struct ee1004_bus_data *bd =3D i2c_get_clientdata(client);
--
--	/* Remove page select clients if this is the last device */
--	mutex_lock(&ee1004_bus_lock);
--	ee1004_cleanup(EE1004_NUM_PAGES, bd);
--	mutex_unlock(&ee1004_bus_lock);
- }
-
- /*-----------------------------------------------------------------------=
---*/
-@@ -286,7 +287,6 @@ static struct i2c_driver ee1004_driver =3D {
- 		.dev_groups =3D ee1004_groups,
+@@ -284,7 +303,6 @@ static int ee1004_probe(struct i2c_client *client)
+ static struct i2c_driver ee1004_driver =3D {
+ 	.driver =3D {
+ 		.name =3D "ee1004",
+-		.dev_groups =3D ee1004_groups,
  	},
  	.probe =3D ee1004_probe,
--	.remove =3D ee1004_remove,
  	.id_table =3D ee1004_ids,
- };
- module_i2c_driver(ee1004_driver);
 =2D-
 2.39.2
 
