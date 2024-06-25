@@ -1,97 +1,76 @@
-Return-Path: <linux-kernel+bounces-229590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20197917121
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:32:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A568491711E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:31:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9F1F280FB5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:32:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D84841C217DC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AA017C9F7;
-	Tue, 25 Jun 2024 19:32:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i79RYAVT"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8A917C7DB;
+	Tue, 25 Jun 2024 19:31:32 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD07E1870;
-	Tue, 25 Jun 2024 19:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A5A1870
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719343935; cv=none; b=b2RXtPyGWowkg+D8LuJ2eme3adm/nrvTW/wvPaY39ztvBWhF4fw+wz5ODsTuu9bQMTDq+Isnn5T5/zId/dY/rQUCpjRlP/1eDmgZzLtmTwMm0De2U7IO4APxmOjtJD3fOaiafx4w2YawGLl1WkGnYaFfLCq+HaZL2aSJGJlVrZA=
+	t=1719343892; cv=none; b=dNK4zaldANAPpjgYdNhmkxntwYqqY/JIhOVx9guGC4Sn0E9Gcf5GL3xVFowvGkxw1J2V9fJ3eEHC7CfNsNAW0i6Wf0FQ6m4qJ1/Y3fDVJUnFi8yvvQrqdyk7ozUmCTC0y3XnOjnNbZfMI6aAXmwx3LDovHJIwduq1gCbTp+47hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719343935; c=relaxed/simple;
-	bh=4mNSmv653uohj1lwCml1cJVTD/0L/0f3oF5MPgOIdtY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LIHkVwwM5+5bftxLUz1yVVVc2k+he6yKcu5iPBaUzVgN/4XUR1NyEfJMxgBPHf2eRoBSYwchSQM0KBbNm79H8mD6Eu5Y49vnc8CnhDQHfojQO2lLAdDdT4D9h9NErkDKKQIWcPiFDBpXVOiHsB19mDfDh57Vn9w9oxcOjiu4Y3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i79RYAVT; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-366df217347so3134144f8f.0;
-        Tue, 25 Jun 2024 12:32:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719343932; x=1719948732; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4mNSmv653uohj1lwCml1cJVTD/0L/0f3oF5MPgOIdtY=;
-        b=i79RYAVT0F6WeVXKGQF4B/Snlus42HrJD6a44/3nXyV9VJxlsqEFRCfIgTpYnBbkpW
-         llURXxWzzdcMaUOKXG9mDz2mYXvZSbxSeBEhWFNpp5YQD/ecXBWxN6Ndq800W6mQSJLX
-         GGzR1xgbAT0+UCIP47wNIJ8tuNW990RbKvNCT/OpK7L1bQTyXUaFXkw/kb9jM2qGW8xD
-         ptNwL2loaP+yjEjMP2EL/l25rrs+QIVBDHBE5gSJZzxlZprDap4KyNSzQOd0CaTDxvzb
-         ysEl1+2H6ikUPvjABHcgVSxnZ9aHGBU1xxNw5+oJJ2qxe8AfgSsCcnciMg9L8R0giJek
-         YTsA==
+	s=arc-20240116; t=1719343892; c=relaxed/simple;
+	bh=Xg3dM9TrPV/JvIttR8XcOQKI9Q0JfbjJOvYDcS+KHbI=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=jDyeOu9QHskufrGT7sIxcvI2KX5wo+p1v9RadKAzJ2fodZrCLvF2A7wxl5tjcYqEVxBgDNT4cp2EKA6FX5XShbYF4bYW2IlCyagWVc5VKEQpGtf17Uf9hu3eNYS4CeGdWFWy71xZEr9qstc0FJZRuwuBXDjFVmSSOTNSRFYt3gY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eee4ffd19eso828522939f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:31:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719343932; x=1719948732;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4mNSmv653uohj1lwCml1cJVTD/0L/0f3oF5MPgOIdtY=;
-        b=VAopyvU8FUW6ce7/DF7dCbTNijxO6XUjFCYIYHEZpWj7guxBE5WJUD5mglJ66NEzBk
-         iiBVUWgeFzZXzA1d0ZmZPzEbHqPdY3aSPoRiNdbY7rl/C6a3eZNF3NaHTm0r1Y/oqY7e
-         XURfJuY1KVXHbEi/+XbzF/akiT1K9btrW74EgkWr8d01/6BGYziAa8QW+Imy+JpN8U/m
-         yKCoBwk1LLJHacRnsXjKzmjLF9t+weBLA6ijE2wPVNMRJGJ5oqc7WoWLFRy2r9e+R61W
-         5h43Z09z8N/k1Vf+1vf4rTmKi0XQQLKcR6c2LZ9oM013+Qu8eIM76iRLnuJa2SGG6hUW
-         ozDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUILtJ6hxqPdkt6RSsQbyIBTQPOsu+MvxLPQ2cqWy0FBokYbvs34LGiouTUkD4U27OWJCT1dsTgBkoUIkQcHD2p1GvRH1bxdP2LHp19Yjp3CkygY6Vav2y9HM3hoN3iFUbjaFH0+JJuOt4=
-X-Gm-Message-State: AOJu0YxisfEgKwYUMrg6PJNiEeHnC0V1o5ryqe/H+3edhfyQnW9TdSBa
-	rNmCBfmP22ctXDYw0RLQ2sZC5esrfCZKNwMNQZg11PSFAR3j7qBdJxjTrCIZ0b4=
-X-Google-Smtp-Source: AGHT+IEBjuhHU/XRd2UFE1UMNIEe2DMqIcnsHPp2AGMbS49xgvbFRYLiw8Ci8UZYcghgIovGtsbTzQ==
-X-Received: by 2002:a5d:518c:0:b0:362:3b56:dbda with SMTP id ffacd0b85a97d-366e9463e46mr4924341f8f.9.1719343931910;
-        Tue, 25 Jun 2024 12:32:11 -0700 (PDT)
-Received: from thinkpad-p52.telekom.ip (2a02-8388-e100-e800-c687-22dd-17e6-d8eb.cable.dynamic.v6.surfer.at. [2a02:8388:e100:e800:c687:22dd:17e6:d8eb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0be818sm222084295e9.15.2024.06.25.12.32.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 12:32:11 -0700 (PDT)
-From: Andrei Lalaev <andrey.lalaev@gmail.com>
-To: dmitry.torokhov@gmail.com
-Cc: andrey.lalaev@gmail.com,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	robh@kernel.org,
-	m.felsch@pengutronix.de
-Subject: Re: [PATCH] Input: qt1050 - handle CHIP_ID reading error
-Date: Tue, 25 Jun 2024 21:30:33 +0200
-Message-ID: <20240625193047.35564-1-andrey.lalaev@gmail.com>
-X-Mailer: git-send-email 2.45.2
-Reply-To: Znrs5QVAuSjH5sCT@google.com
+        d=1e100.net; s=20230601; t=1719343890; x=1719948690;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xg3dM9TrPV/JvIttR8XcOQKI9Q0JfbjJOvYDcS+KHbI=;
+        b=xGP6NRnbCFa14j522I0mqHO1IKnTI9xjmdtpxAoBLUZJVPcBL6i1yv0TgoHKuS24QU
+         6KB0cpfWhZQoGi2I62k0F9mUAAwHX0k/sE8ZW+JY2TBtNK6R5ZgQtgcGr9PQal3c1mrR
+         wp+kwM0aWcCuMnRnSknK8yC9nWZU2E+fR9HpO2M+vgCLz2v8moI8fdKyYshSxdh80RuD
+         WxYT7FT4lFceefWAoIqcum5AHcuvastPGEFTQazNiJ7dH6cB5oTspmkuGWbHygzoVimP
+         fK8Jf2br9jztorNcLfEF/6VS/CBeDGzJ4QYbM6V/i9reoI/5hrFCBGJnB55+D5Z16dFO
+         mNzg==
+X-Gm-Message-State: AOJu0YyaKF0wbtMQa3aU6f4vJUlyqrqSN8RkXxsdIjzVIamfh9OnjXw0
+	mJU2bGnEOmgecp4QDhIv/SuyWlChNZQjkjF5LbPRlE6IjBjyoeijcK8uMoZ1bFcO1KZrijsGoBj
+	mrJ94qBLwsnhjxbUv9I+VebBdrJgFGHgmpq5c5n6LMExFXo/cJcjU8yo=
+X-Google-Smtp-Source: AGHT+IG/5a8ghplbXL1xiR/RLhFIExs4mofv+abN+ajqQYxzDwNtrdTdxs1USytgulRdLMW48Of661CdpiqsEekuOFjWxvXHLv8D
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:2190:b0:375:e04f:55d0 with SMTP id
+ e9e14a558f8ab-3763b0b6d82mr7931185ab.2.1719343890214; Tue, 25 Jun 2024
+ 12:31:30 -0700 (PDT)
+Date: Tue, 25 Jun 2024 12:31:30 -0700
+In-Reply-To: <000000000000b5c648061bba03cd@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000d2c5f6061bbbf1f7@google.com>
+Subject: Re: [syzbot] KASAN: slab-use-after-free Read in bch2_sb_errors_from_cpu
+From: syzbot <syzbot+a2bc0e838efd7663f4d9@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-> But how did we get into the situation with the chip being missing?
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-In my case, this chip is a part of an external board.
-So, for example, I see this message in the case of a bad cable connection.
+***
 
-Also, I prefer to see messages with error codes instead of random values from a stack :)
+Subject: KASAN: slab-use-after-free Read in bch2_sb_errors_from_cpu
+Author: peili.dev@gmail.com
 
-Best regards,
-Andrei Lalaev
+#syz test
 
