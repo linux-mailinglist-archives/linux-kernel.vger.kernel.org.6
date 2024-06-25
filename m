@@ -1,234 +1,131 @@
-Return-Path: <linux-kernel+bounces-228232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE72915D1C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:01:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 127EB915D1E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 055641F2691D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:01:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF5562832DA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 531CE4652D;
-	Tue, 25 Jun 2024 03:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DED0048781;
+	Tue, 25 Jun 2024 03:01:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="aC3u/k0n"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2055.outbound.protection.outlook.com [40.107.244.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rSn1R8Jf"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615E63D6B;
-	Tue, 25 Jun 2024 03:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719284460; cv=fail; b=Moe9vwQ+89lLAWifXbx4jz3gl8/CGEChODJv6jF9Yu4hPAI505rL+f0YuXAFi5bZBgoCVGec9bmETNxb7+jL//8+8Ay5F5UfB4mrgbhvcjjD51XKRp81ocxuWN84QmwvUWc36MGJyz5DZBAnOEZr3LnP1UYvMFFqc03Pv2Iyc3M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719284460; c=relaxed/simple;
-	bh=xb8Jz9aUNY5BVibay0i3NXLJaPYYx31p++rW2ejgblU=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=tH4CSFbfwtZdyFAot9SflMe1qMW/H/eZ9ZcXsSRJYl8/KG1lMIEpf4yxYa1NWZljPf0b5PuGHKGtrmGgNm5ZsexmaIzMz8KCbMR8unhPMvC5afzpGYDSXkEh7IUjEhxkkwoVBqyyukMMwCjYUo+WmqLsri/4KPE8DUrXZr6qlmw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=aC3u/k0n; arc=fail smtp.client-ip=40.107.244.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ETVaRcT8jI0fp1mEDxkTHV96tJU30us590ujV5waz5lbk4NIik/32IQr6SK940poFCpSlv2pa2jSIq2MKXoQHhqzBIXGpBVwfslX4WFIAmqT3A3B3SVUuanjl+ZQap/XzEmLiSTxvdBQx6el8cMJj8f5e1vazEi8zQIxkuirEX1DyW44CJAdxIYFgTHrWBF56ImDIDVnSRXs6q9XIz9YBxNuA93O+ZWGxoA2RNNScQXeaIUJZ/wAC/RUQDWXAIp8iMYnSWVHujo/xamKHRSOrdn0zcfW80/Rn6ZtXLXEMCpv10SCtYcTuMxdj+LIC1XoedJxkYqUU2IaMMPlbCaZng==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=BQMtvuOsLp4pqI8xBSkOfsEGTAFETsXfg3hr3WXxlvU=;
- b=FIkJy0Y817gXp6w6xdIE8zLzKlsnLg7OkuIt2oW9BBHqBBAFDktKrGB4ZrW1VEemtsaUS5ZDYNZWgGNReN3Uwl5GXm4+qS9WhF3Zu+7os1BsoanPkz52LIan/mF7EoYNXyzs5YRilqKT06PIGY97DGrq+lNCsXnlMXrTxd41KpMBD7+kpXflAeF+L+AT/fHDVTgf2d3ZVSrmQwnGKHvV7elTVBpthHjm8QYgZkHXInnYERHJOr+I6hp16ZgG3GZt5BvOmc1f8iLQ/XH/JM1jW9nHwGDdAPVOOutknJnIz9SIpThMATi3VtXTmmDBAtV9ixVTrKa0cTlsRWaRjVl+wA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BQMtvuOsLp4pqI8xBSkOfsEGTAFETsXfg3hr3WXxlvU=;
- b=aC3u/k0nUVaG8qwwvq0JOSJfGJyjoABEY++pKPCN2OLY1muVJ3bB/UYAi9sQakUrHy14ij+XNaJI92BpOcXhQoH4Bj8CgzJbYvgsAkNf8Y81u0+Srx1zjPLuai1+/LP6wVsySq6YNVXkJ/y3ceVF5rzLNCJpuwrzr3IzkLnJgu0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DM4PR12MB5136.namprd12.prod.outlook.com (2603:10b6:5:393::23)
- by SN7PR12MB6861.namprd12.prod.outlook.com (2603:10b6:806:266::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.29; Tue, 25 Jun
- 2024 03:00:54 +0000
-Received: from DM4PR12MB5136.namprd12.prod.outlook.com
- ([fe80::bc87:6c1b:cadb:67a]) by DM4PR12MB5136.namprd12.prod.outlook.com
- ([fe80::bc87:6c1b:cadb:67a%5]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
- 03:00:53 +0000
-Message-ID: <db2165ae-2086-d60a-df31-dbf7711060ac@amd.com>
-Date: Tue, 25 Jun 2024 11:00:26 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.0
-Subject: Re: linux-next: manual merge of the tip tree with the pm tree
-Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, "H. Peter Anvin" <hpa@zytor.com>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: Borislav Petkov <bp@alien8.de>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Mario Limonciello <mario.limonciello@amd.com>,
- Perry Yuan <perry.yuan@amd.com>, Xiaojian Du <Xiaojian.Du@amd.com>
-References: <ZnmnqjCZ_dx0xXjw@sirena.org.uk>
-From: Xiaojian Du <xiaojidu@amd.com>
-In-Reply-To: <ZnmnqjCZ_dx0xXjw@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SGAP274CA0011.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b6::23)
- To DM4PR12MB5136.namprd12.prod.outlook.com (2603:10b6:5:393::23)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D981943AB2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719284476; cv=none; b=ObYq6q2ZsHfLFjKPdrX1doJ1Cjx0FnVqV+XqYBRgRZvRaWQoEcR2gbu7O1ATqbo9FAjEXUda5rKC35khdInZ1qwG+hJC3g5L2k+c+1d3duq2PLULE17R0auj69eCD5Z+tbLEnU8mUJ/qZU/9frNtL6Fx0fsHTS+/MJoVaC6cjzg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719284476; c=relaxed/simple;
+	bh=bnnC/dqrjS4foui7kpRH2jpknYshPmEp6/ETawt0H+0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PVUseI+1hgdqrKNpWuMhRJnirRiMs7+gOcf3fhfarmGfok1iMge7VrucF6tRyb+EAy9mc0JneVb68HU7ORoUCWjPTH8Rqe/e6ivdPsYpMLo6Ts2gEzhiBdcsTUVfPUxVC/YzdhzGIpIQ5heuhG+BmNs2J73W++mT7h4Jqx5sT8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rSn1R8Jf; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fa4b332645so61845ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 20:01:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719284474; x=1719889274; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aTjGlVJ1RY73P+Mt+ZETqoUU/1f9b8tlU+jZHRFte7U=;
+        b=rSn1R8JfEYRy8OF18qFxAw/9BdC3wJv6crU7u/eNj2GhhrWHS4NFHfWBz3p+IKguoJ
+         yMk/FfPNmPYoryaMJVWEcmnsLhTTRKmkQj4dUN/mskCg4/ZaNuBZB7gHgrjQE7AdLM60
+         R2TLHodM/1xhDC8H5xmSZiRlwCcuWYj7Cr6+gcxV5eCVHLBBLZxtgi1cvm8DYDMWDmpE
+         ys1deGFvNW5i1Fmqn1w2aZ/q2pM5hAzNzZRqsAhHGV+Nc1+ZtqhcZj9hyz1RfGzaao0+
+         kuWdy5fEAl57H8XJvAmfPAjDmIf9uiFlQUR7TaAjEwNEu88JHtfmYcbqW5dcQe1O662f
+         o1NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719284474; x=1719889274;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aTjGlVJ1RY73P+Mt+ZETqoUU/1f9b8tlU+jZHRFte7U=;
+        b=qdYXu9sVhmsWjEm5SSfJ7bYZao1jFuzH+OFmweQb+11eeAYn0RdE+0dxIPJeaMRLB+
+         Jase3qTvvfMkIJr7gyBOl1cCemlxNZ1VZSdf1TMlqN6PVUBVFZ05t3/l1DO53cKUMdjK
+         zMW1dCEIW3D22YBt7JaBrck7DKf1NDTfw/VLWBD5WEMEYAXWNU3aIs0LNnN7zGoemcC4
+         ox7Lb0V7DtmYt7Xh0OfFaMzMZQSIDN/oGXVR+NvnAI4pykcTj399zACD/e/2qvvHKtsi
+         U9RRDIHuXS65EyPOKmmCQssFxmv6ORmuG/2YGjjN8nL7NUb6XXQzYjbwV+bfS0BBrfzc
+         t45Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWWXVFrzUAjDF46GeLUlfPFuVVlsojTZQbvI3ypNq1xmO1CPSrxqaJ5caH+wK276VN3wmNTGis+Aq8pJXQ5iazBzF6QOaCuq+xr3DvA
+X-Gm-Message-State: AOJu0Yz8z2+GfWGuGIsSBDHvYtZERbODmqowNRJtRmWYcUEynuG0F568
+	ap4hjt/AkM3yz46RSs9UfKeG0n9nnHDwtrw8ea9LHfz533O5edLDccuw1i5/YhLl1nKvH/SQjl8
+	UFqCAFc+HQvXt1xymASBlMZqQywJ26HpZ2DgA
+X-Google-Smtp-Source: AGHT+IG9m9BVMYcaMNGS7ztr/o3XHCakZCxiZueHNFuAs779MmAohr1PJ1QYoaUOEda25/VUT+0mAhvoVK0sF9xn49Y=
+X-Received: by 2002:a17:902:8bc8:b0:1f3:2b46:47ce with SMTP id
+ d9443c01a7336-1fa6ca7467dmr1134555ad.15.1719284473733; Mon, 24 Jun 2024
+ 20:01:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB5136:EE_|SN7PR12MB6861:EE_
-X-MS-Office365-Filtering-Correlation-Id: 84d3f119-ceba-4d70-22bb-08dc94c306f2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230037|376011|366013|1800799021;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aG96OFovNi9YQ1JCQjBLMlhObExYM1dlWFVhNERqZzU2NmpKWFN1Z0hDLzFO?=
- =?utf-8?B?VW1ZVnBXNVQ0bVNLNmhPWnNFQ0JMbEJMWHltLzcrN0ZzbklDdXJ3dXVsRDFr?=
- =?utf-8?B?a1VldUNXWm5DcWdLK1oyWlJ1TlJnbVJsNlhucm91RUJFZXdrc080MHl6S2xv?=
- =?utf-8?B?d3VSUXlMTHJYSUxEMGczcm9TN0ZQUm9WcmFVSmxHdVkwZEQzeW01dVQ4U0x3?=
- =?utf-8?B?L25ibGpUQjQzWVhuNEN0MEVlUUJLZ01HWnZZa0dqMTFDbWIyaXhqcTRKenlM?=
- =?utf-8?B?ZytlRDBvaFdZZWZWSEdjQ1ZuMGJlWTBGOFB1cWpxUGNuV3hBcEVrNk5CenNW?=
- =?utf-8?B?eGE0czllS2tsckJXem93RzFnNHZiM3orWmtXdWU1OGR0WTJ2Sk9XTGpjYU9z?=
- =?utf-8?B?cDFpc2M1UkUxc1FFbXJTZXhGeXhOK2RDTU9mNmM2eTdyS0hDSUhnb09odllY?=
- =?utf-8?B?bHRlamN2MlZmR1BBMUtEYlRFbEdiTjRTaW9VUkVGUkhpQ0tidnJVN0UrL0hN?=
- =?utf-8?B?UTYvbDZRY2p4WHFmbTkyU0NGL0JTK1JaSncrcUJZU0VTTDVyUGhDTzZuaUth?=
- =?utf-8?B?REJGSDNIWWJJK2hST1NIWWNLa2xyNzlMQTJnSEZPOHhHUmtocjNSdHl5YXk2?=
- =?utf-8?B?YkZ3OW50clM4cTczUk80VlE1THhjTzhyNjl6djJaV3ZhcFF5VGx6ZzQwaG5l?=
- =?utf-8?B?WFZwcmFYWGRNVTRXYWFxTEtNWnI5QTR0cXhnVk40aXArcHU2T1JycXE3QzAr?=
- =?utf-8?B?SlhGSTg1Qkc1OW9aMTBpbU1BY3VaUU5sdmZ4Qm56U2ZQUXdhaW9CNFlMN1Zy?=
- =?utf-8?B?YjU2NmFFbnVNNnRRdEM2RHBuRHR6bGFFVmhHdGJoUkpubitqZVg3RlIrbmNl?=
- =?utf-8?B?aUE1UTZUVElackVBcnpLMmlFdW16VGtQajhCbWhhYnJEeXNCYlNTZGFPR1p0?=
- =?utf-8?B?RkFhSnI0K3Vua0FIczBqOEJ5T3RSVElkdzluNW5UVVQzdnAyZzF3MGlpQWt2?=
- =?utf-8?B?bC94ZFR0bEphZzZ3UzBYVDQrVlRFeWdKSVBSZ1l1SEpDNmtzZDY2M0kwdHNz?=
- =?utf-8?B?WlZlT1NrMDFBS1VGbmtqdDBob0lpU29tNGJmbVlwWjRhSTZaMWNGdUo2U0Ja?=
- =?utf-8?B?Y3FwUk9qRHZmaXJUSE5scTNIZ05UUzFTQnkzRUlQcVNjUS9Ib1BhcVJ0aTVw?=
- =?utf-8?B?bkw4Ym9Zb1kwT2pCVitCZ1lhUVVyK3J1MTk0eTlEQzdkNnlKSlh2d21lQVMw?=
- =?utf-8?B?eFVUS2MzWXlmaTlUZDRLbnZhWm84dFhmMnhlRzcreU9Kd2VubCtSSmxyRE9T?=
- =?utf-8?B?UlcydnFFalE1aXg3dDNDcjFrNnpGN29lVkNnUUY1ZmZvVS80QlNJMDd1azBn?=
- =?utf-8?B?aklhalJZK3ArMDR5VzI1NXlaRWx5Z2U4UkhkMFRhdVNhNHpYRWFPMk04bEMz?=
- =?utf-8?B?djJ2Q1JhY2NxWHZSZUlwL0FnOWg4R0p6dGJ2N3hzWnJJR3R6QllYZTZJMzZy?=
- =?utf-8?B?bFowVGtrSTJzTnN4QTFGQjJ4MktwM3pkTHUrQlo2d3A5NUtsd2ZBcDhwcTRj?=
- =?utf-8?B?ano4Z1NxNVVpNHRHaVVqR2kyaEFmam5hUGNESVpJSmdQamJSSDV0L1QvVUsw?=
- =?utf-8?B?M2NTaUMySlBLOVlRbEMrVTJSdWVSYlhodFRUNGVsUjdJWDlpaEpiaVpGVmRS?=
- =?utf-8?B?L0p1WkV3NEluZFUzSnByb3RvUm5iNVRVdi9ud04xWGF2WG52ODFNTklqc2Rn?=
- =?utf-8?Q?gFN1V02CLq94vWkuX8FWMqEK4Xs4392ekGUs/uW?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB5136.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(366013)(1800799021);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ejdKY2RIRTdiRGw5cW5HY095S2pCWmtGbDBhSmVwWERicVA4SitQV3hTL3c5?=
- =?utf-8?B?ZHJKNWhHTUE5aENjWTdjYmt3SmkyelloNll2SGFFb2JhcUhoeFV4L2lUakZp?=
- =?utf-8?B?RTZPQ2o5NVlvOTRwZlhGbUcxSkN6ekRuVFk4YXhqbXg4VXNvTFliVk5DV1Js?=
- =?utf-8?B?L2hTVnBaVmNBWG1yZ0NkOWprLzJkcEZTcDFXTkNCZUJMOHVTRXJnZzVTc05W?=
- =?utf-8?B?VnRGZ1M3NGxTT1dBN0hGN3NsM1orNi83cXdWOWdNM1RNc3lRcjlxSmFWaU45?=
- =?utf-8?B?QzhqSjQ5QWc4ME0vbzB3SnNZNmRNU1ZCVUlUZlcrams4azZSVGFreC92SjY5?=
- =?utf-8?B?TzNVQVc1ZDFBRy9GSWVObEYrSTJEVDF3UnFtc3MxQWtjY2Q5eVV6YTVvaUxS?=
- =?utf-8?B?dGhJenowaUtsTFhlem5jeitwMEtUQWxvR2VpZFV2V2JCTWtJNy9sbVMraVVP?=
- =?utf-8?B?bjkvbURCQSsrcmVobnhEdFF6elhsMHRXMUsvOCtBcGNJVWRnTDdwQW9TRytP?=
- =?utf-8?B?OUZqQjFWRDlLbGNkc09FZ3p2Kzh1NGltWlFtVVAwQVFwMTlVRGFpZ01mSC9r?=
- =?utf-8?B?MWhxUkVyWVo1eFN4bmFxdkdsZjNaaUJ5dHlYZTRScGVqZ0x4Nm1wWUFmOVZ3?=
- =?utf-8?B?Z1E3dFhpWkxOcGQ3NjZIdUlPRUVTakdtTTJydW96RkcyVVd3QTdlN3ZUNHVY?=
- =?utf-8?B?NWtFRUUwVnJHSWVHV2xXampjRkM0THlHMzVhK2pybHdwenBnMVpYcVo4TnMy?=
- =?utf-8?B?WVNCWFdZQ25mMHNqSStkNTZiT3dpcUg3NDlJMXhWRFA2K3BxdnNud2VYRnBP?=
- =?utf-8?B?WVBVRDg1QjFQMGQyaVJkYXNVQmQ5NWlVckZoOFF0ODF2OGVIMkltanI3akpa?=
- =?utf-8?B?ZjZiUHFTeFFzZ2FIaVFmanpBNGp6QUp5KzFqNnVoM3d2dnFWT2pVdEhIK0Ir?=
- =?utf-8?B?YzJxeXBRM3RjZkhhSnVTZWdYMjFLM0xTNHUvczdCOElwazlOOERvT3QrN2dz?=
- =?utf-8?B?MG9BMC81SUt5ZGhLTkx4cUJVb3RCOFZmVnJjTE5FN2tmaUdTRmtnWkRtZzhG?=
- =?utf-8?B?NTZBWk91ZkdxSWtsZXJCUk8yQlpQN3IvQ3pWVHJPYUhES1cxUjF6aHBhRWNi?=
- =?utf-8?B?eWZkaFlNK2t6TnhCdjcvTENhUnBBaU0vM0lqQkVOc0krY2c5WDFHYmliNU1U?=
- =?utf-8?B?Qmc0V1lDazk1N2psQnFsK2JMRWlpRnJrZCs2VXBXaHVGLzZzUXZpTlFuWWFh?=
- =?utf-8?B?T2E0WVNwV1BxTzB4VThlYmxycG1MaDRQOTZjVnN1R3B5ZENOUS9rcHpZdjJs?=
- =?utf-8?B?empobzhSWXBid244QUswZFZ4MjVkTmVROFVYQnpncDBhTUdNVlhqcWFJVXdE?=
- =?utf-8?B?TERjMGc5NktvV0kveDk5YjJxNzlVT1Z1UDZCd2tCSi9JNHBQVE8zRzdjMzYv?=
- =?utf-8?B?dnJ4N2c3UTdpNDJQUXNDN2xXM29jNEtGcGU1SEFUcUErcW1WY202WnBBV0NL?=
- =?utf-8?B?R003QXIwL1l6NFhPOFFJeXcyaHI2Y0VudkJHYUtac1pKQkFobU55bjBvQWNE?=
- =?utf-8?B?Z2ZpaTFYMExRVUJHTWExTm1GWEZmUW1yb1dTUU45VVhQK20zdEtkcExNVG11?=
- =?utf-8?B?VU1qS0ppWGZFanVpN2w2OG15cjFpd2tGbWg3RDZ4U1VMOFQ5eDR3eEdSVXVj?=
- =?utf-8?B?a2sydzkyV01UOXExU1hkZldxbzBRYWFQSHdDdzJweTNoaGFWSkVqMU5iZ1ND?=
- =?utf-8?B?blRueWpxaW4xY3V5d0FKVXhjaXkzYlNaTFNzdi82a3dreVlsTDNoa0hOQW9l?=
- =?utf-8?B?UUNMdFlxcVlML2ZwUE5YcnBVbDlQeGJOR3BOS2FiUEFnYldSM2xkVEtZVjVU?=
- =?utf-8?B?bjJYOU5FbXFvWW5CT3piNU5TaDdKZjY4WkQ0d0pYYy9YTzMrb3hLM0FFaGhw?=
- =?utf-8?B?S3N6K2pZY0Q3SzRabzhtWEdqNS9TbDdsdTVXVEN6ZEFDOUpRQnpLNC9oQmNH?=
- =?utf-8?B?ejV2bGNHVHVDSyttY3B0VDBVeW9LWEc5cHcxYlVmd0pRUTcrbGxYWDNpTE1R?=
- =?utf-8?B?ZWV2ZitQc3NTQ1pKL0FrT3dRUk0yUm9JWlo0c212UzBicUptQ20vOFhJSTJi?=
- =?utf-8?Q?kcGQFIjw9MciX42PH5jjdt63E?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 84d3f119-ceba-4d70-22bb-08dc94c306f2
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB5136.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 03:00:53.9001
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: tSqjWcbAMaMcSqt0v3XI1znK2yTd5erwdrHVe/D2BMIxMRJeMoG+DQfr2KUk+O+oZH4SVN6Lh/iPyTskrs5d2w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6861
+References: <CAN5Drs06fbditeSaVLc6i6wEY+A47HHzQmhCS1rzJgacNs1Tjw@mail.gmail.com>
+ <20240624172031.407921-3-yutingtseng@google.com>
+In-Reply-To: <20240624172031.407921-3-yutingtseng@google.com>
+From: Yu-Ting Tseng <yutingtseng@google.com>
+Date: Mon, 24 Jun 2024 20:01:02 -0700
+Message-ID: <CAN5Drs0i7KZHXnrhHRT-KrLs5ZAYGOpixHk-CU=Ah+ycqxkwOQ@mail.gmail.com>
+Subject: Re: [PATCH v3] binder: frozen notification
+To: cmllamas@google.com, tkjos@google.com, gregkh@linuxfoundation.org
+Cc: arve@android.com, maco@android.com, joel@joelfernandes.org, 
+	brauner@kernel.org, surenb@google.com, aliceryhl@google.com, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mark,
-
-Many thanks for your help.
-
-On 2024/6/25 1:06, Mark Brown wrote:
-> Hi all,
+On Mon, Jun 24, 2024 at 10:22=E2=80=AFAM Yu-Ting Tseng <yutingtseng@google.=
+com> wrote:
 >
-> Today's linux-next merge of the tip tree got a conflict in:
+> Yu-Ting Tseng (1):
+>   binder: frozen notification
 >
->    arch/x86/include/asm/cpufeatures.h
+>  drivers/android/binder.c            | 300 +++++++++++++++++++++++++++-
+>  drivers/android/binder_internal.h   |  23 ++-
+>  include/uapi/linux/android/binder.h |  35 ++++
+>  3 files changed, 354 insertions(+), 4 deletions(-)
 >
-> between commit:
+> > freeze was allocated with kzalloc(), you could drop the "=3D false".
+> Done.
 >
->    c7107750b2ffa ("x86/cpufeatures: Add AMD FAST CPPC feature flag")
+> > If !node->proc then process is dead. Do we really need to continue?
+> Update the code to return an error early if the process is already dead.
 >
-> from the pm tree and commit:
+> > This access to node->proc->* doesn't seem safe
+> Added locking.
 >
->    78ce84b9e0a54 ("x86/cpufeatures: Flip the /proc/cpuinfo appearance logic")
+> > Why do we queue this notification?
+> Yes, this is to get the current state back to userspace. The userspace AP=
+I delivers an initial event for the current state upon a listener registrat=
+ion, which makes it easier to track what the latest state is.
 >
-> from the tip tree.
+> > I'm looking at the death notification code and it seems it only queues =
+a
+> BR_ERROR after failing to allocate a "death" and that other errors are
+> silently ignored?
+> Sure. Please let me know if you think we need a change here.
 >
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
+> > these could be just bitfields.
+> Done
 >
-> diff --cc arch/x86/include/asm/cpufeatures.h
-> index 6c128d463a143,6007462e03d66..0000000000000
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@@ -465,12 -466,11 +466,12 @@@
->     *
->     * Reuse free bits when adding new feature flags!
->     */
-> - #define X86_FEATURE_AMD_LBR_PMC_FREEZE	(21*32+ 0) /* AMD LBR and PMC Freeze */
-> - #define X86_FEATURE_CLEAR_BHB_LOOP	(21*32+ 1) /* "" Clear branch history at syscall entry using SW loop */
-> - #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* "" BHI_DIS_S HW control available */
-> - #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* "" BHI_DIS_S HW control enabled */
-> - #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* "" Clear branch history at vmexit using SW loop */
-> - #define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* "" AMD Fast CPPC */
-> + #define X86_FEATURE_AMD_LBR_PMC_FREEZE	(21*32+ 0) /* "amd_lbr_pmc_freeze" AMD LBR and PMC Freeze */
-> + #define X86_FEATURE_CLEAR_BHB_LOOP	(21*32+ 1) /* Clear branch history at syscall entry using SW loop */
-> + #define X86_FEATURE_BHI_CTRL		(21*32+ 2) /* BHI_DIS_S HW control available */
-> + #define X86_FEATURE_CLEAR_BHB_HW	(21*32+ 3) /* BHI_DIS_S HW control enabled */
-> + #define X86_FEATURE_CLEAR_BHB_LOOP_ON_VMEXIT (21*32+ 4) /* Clear branch history at vmexit using SW loop */
-> ++#define X86_FEATURE_FAST_CPPC		(21*32 + 5) /* AMD Fast CPPC */
->    
-
-But it is better to hide this new flag "Fast CPPC", prefer to use " /* 
-"" AMD Fast CPPC */ ".
-Not expected that "CPPC" and "Fast CPPC" are listed to user at the same 
-time, it will cause confusion.
-
-Thanks,
-Xiaojian
-
->    /*
->     * BUG word(s)
+> > freeze->work.type =3D BINDER_WORK_CLEAR_DEATH_NOTIFICATION
+> Fixed. Working on a userspace test. Will post a link when it's ready.
+New test now included in the aosp patch:
+https://android-review.googlesource.com/c/platform/frameworks/native/+/3070=
+045/6/libs/binder/tests/binderDriverInterfaceTest.cpp
+>
+> base-commit: 14d7c92f8df9c0964ae6f8b813c1b3ac38120825
+> --
+> 2.45.2.741.gdbec12cfda-goog
+>
 
