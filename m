@@ -1,137 +1,173 @@
-Return-Path: <linux-kernel+bounces-228921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C7249168B2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:18:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 376E59168B7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC45C2826E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B9F001F220D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9EC15A86D;
-	Tue, 25 Jun 2024 13:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5288515A86A;
+	Tue, 25 Jun 2024 13:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BUmOSfIj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BeXRLSau"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 797EA14B954
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:18:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D2652E3F7
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719321527; cv=none; b=FI2teqBU6oGa0/9OPr9PwUBfW2tfZdgO2UbwkfQj/qt+an86Q4hqm9MUdPj8vHFQiAJP5jAA3n4SazGwvpnJverMbgc0sadhZX1xcldtvk+Wz2YX3kECGcWi1AlHWnpGdTFu389AWrSh9MsjCOev5FpxmXXt+ypZCsUZG61hni0=
+	t=1719321585; cv=none; b=p9IXbnRhdy20UoRxqpB+8CafUfwxrzHbz8ySDRgXQN1Hm3py+r110lNzvLhLkaHwP8I60KmHU51WskkgQ/AcKwz0JDV/DxVJRfu5bm81o0NmSJY82Ec2XFdQIGaNxVJvujwpnRXmPNktJ6yZyMj4xM4J6BNfBvo/fmzs5c5BHJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719321527; c=relaxed/simple;
-	bh=hyBB6vBrNihLA68lQ1HJE9hCNJBLHhKrl6tOhM7ZdMA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=KuQx/R87sabumgB1p8pVVPWXc+CY16MUMDLUDAdEpkUAnAdYgKFUBGEEueEVKxZsCytXdgmtronnfdo7cTSDmuNHdN7/SMU/7ynR578022QH3tkx7wDlq527y4cYv0WAU9ABTSNFyCjiqkpwhlp7X2iqxnLrBuhSv9LFAj4itn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BUmOSfIj; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719321524;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DvYqY+fCd4ATNyzlRN/MbCN6GKhU5kwtb/V7+EMg3zg=;
-	b=BUmOSfIjuEEKlfSxTYCcU2ZB/MJRwwz0oywCPKjGXgNDgHJb9jn/9AgQnTH78jlYxS2GQl
-	9TXIPjEAb8CpVR6Jlj4/wQfnuBGeTkOy1drBv0r+gfF65ArOiTQ9252T4hH+R7mmCemXUf
-	NhEh7UVaA3f06R1DNsypylep+SQoZfk=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-659-E6boga1yNS-2FUioIakVlA-1; Tue,
- 25 Jun 2024 09:18:42 -0400
-X-MC-Unique: E6boga1yNS-2FUioIakVlA-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 42D411956059;
-	Tue, 25 Jun 2024 13:18:40 +0000 (UTC)
-Received: from RHTRH0061144 (dhcp-17-72.bos.redhat.com [10.18.17.72])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F253A3000225;
-	Tue, 25 Jun 2024 13:18:37 +0000 (UTC)
-From: Aaron Conole <aconole@redhat.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org,  dev@openvswitch.org,
-  linux-kselftest@vger.kernel.org,  linux-kernel@vger.kernel.org,  Pravin B
- Shelar <pshelar@ovn.org>,  "David S. Miller" <davem@davemloft.net>,  Eric
- Dumazet <edumazet@google.com>,  Paolo Abeni <pabeni@redhat.com>,  Shuah
- Khan <shuah@kernel.org>,  Stefano Brivio <sbrivio@redhat.com>,
-  =?utf-8?Q?Adri=C3=A1n?=
- Moreno <amorenoz@redhat.com>,  Simon Horman <horms@kernel.org>
-Subject: Re: [PATCH v2 net-next 0/7] selftests: net: Switch pmtu.sh to use
- the internal ovs script.
-In-Reply-To: <20240624153023.6fabd9f1@kernel.org> (Jakub Kicinski's message of
-	"Mon, 24 Jun 2024 15:30:23 -0700")
-References: <20240620125601.15755-1-aconole@redhat.com>
-	<20240621180126.3c40d245@kernel.org> <f7ttthjh33w.fsf@redhat.com>
-	<f7tpls6gu3q.fsf@redhat.com> <20240624153023.6fabd9f1@kernel.org>
-Date: Tue, 25 Jun 2024 09:18:36 -0400
-Message-ID: <f7tle2tgnyr.fsf@redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1719321585; c=relaxed/simple;
+	bh=Yyf/auCc31bC0oQe5Meh++bNvU4qDPsE/3v9n7a+Q2M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bbxXCwozGahJOIiPi3fszaQvAfxABeXuOUrJ8+9W+/BRHhcgwHeKENn9Vw2NGsgiX0QSTxg90W4cy9BOmyHpKItCWzSzv3cvgyQ0G5cr33Zi0JjyBTgIAfc9rwJb8jjvkCxQZrD05oej+yM9yrXDZJ7ozr15SrhOmQxjCOPw+Gw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BeXRLSau; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-362f62ae4c5so3186693f8f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 06:19:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719321582; x=1719926382; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=48yte4gKSqaQnEHN3UMFhPgzd1yTJsSvbj40aM201ew=;
+        b=BeXRLSauvvLFAp2orPzkTjMTZnKK5atj4qQ5ljciOVwSK2iDyIL2+oak2clIrmDZtZ
+         3uZ2UPTbzxrmfezCxb3nDiMKgwalFQMmAz1LZ7G5rHr6Nc6/Z/VwCK3xwqci44/NcQh5
+         w/4qhMMGmisuKmHatW4J51sDB8zXPsAIKH3feEUTW4KGgBqvJh+SsecMexgqtxgp/xvQ
+         TDNvrYAU+aE4wNRUwiggKYaTaqzdvhaSJ9YT/D87YcXZue0ksi8FNAvZph1RH6F5wEev
+         W2q4RhVBWZhUkpbDAUOsGXe/lQjy1mXCtdVnLfsiuzdkQHAwz/cXoOmeBV2Ksd6jXTzv
+         vKdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719321582; x=1719926382;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=48yte4gKSqaQnEHN3UMFhPgzd1yTJsSvbj40aM201ew=;
+        b=A7IFe159ibdMCv8Aj/r0Vz3Suj+1r/UXdqsklv/Yi+IxIqScNqxStMBNM29Y5joMRP
+         9lCAs+aEBbKKZoef2KCAhI46Lpz0kwurjTN3AfVxgVlkgq/0z+F/quxTMKq/0cSc+1sg
+         n5FPP1PDy5L1ySjXxAPTai/AzleT4Fc9vsFMVRDHtYWDKd7k5eiUL2b6UTuRKZeMpnsT
+         wuprAZger+e2R9IELQ+ODYfEOZqFLEuz1++Yn5a14qsT5SZUPYR9PiaibSFKIIPNSHDh
+         WuxxgB22CFxjRHCpuI2tt9JWI5zAAd/5MSK6zGa9FnvyORz9rzj86Q88O5ax40mRN58Y
+         SqgA==
+X-Gm-Message-State: AOJu0Yz31vkyJG4gjpHQN5JfpnCgltqXx44jfrh6SPfeFACbqKqmPqhD
+	Se4HM6O8PkrHggAb74vPKS74Lb+74OQpBsx6S/+VsiRK3o6KT50AqhyhawBxWBE=
+X-Google-Smtp-Source: AGHT+IH0CMWNndifpo43wA5FkYclBGPAQbOql8DRY/i6lVJ+tERFRrZJIyogey7lkuy76vWAHz99qA==
+X-Received: by 2002:a5d:688c:0:b0:361:94d9:1e9f with SMTP id ffacd0b85a97d-366e325bc07mr6692790f8f.7.1719321581772;
+        Tue, 25 Jun 2024 06:19:41 -0700 (PDT)
+Received: from ?IPV6:2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d0c54d9sm217268865e9.28.2024.06.25.06.19.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 06:19:41 -0700 (PDT)
+Message-ID: <bbdf9caa-7c0f-44d1-a69d-a5cecc7cd4fa@suse.com>
+Date: Tue, 25 Jun 2024 16:19:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 4/5] x86/mce: Define mce_prep_record() helpers for
+ common and per-CPU fields
+To: Yazen Ghannam <yazen.ghannam@amd.com>, linux-edac@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, tony.luck@intel.com, x86@kernel.org,
+ avadhut.naik@amd.com, john.allen@amd.com
+References: <20240624212008.663832-1-yazen.ghannam@amd.com>
+ <20240624212008.663832-5-yazen.ghannam@amd.com>
+From: Nikolay Borisov <nik.borisov@suse.com>
+Content-Language: en-US
+In-Reply-To: <20240624212008.663832-5-yazen.ghannam@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Jakub Kicinski <kuba@kernel.org> writes:
 
-> On Mon, 24 Jun 2024 12:53:45 -0400 Aaron Conole wrote:
->> Additionally, the "Cannot find device ..." text comes from an iproute2
->> utility output.  The only place we actually interact with that is via
->> the call at pmtu.sh:973:
->> 
->> 	run_cmd ip link set ovs_br0 up
->> 
->> Maybe it is possible that the link isn't up (could some port memory
->> allocation or message be delaying it?) yet in the virtual environment.
->
-> Depends on how the creation is implemented, normally device creation
-> over netlink is synchronous. Just to be sure have you tried to repro
-> with vng:
->
-> https://github.com/linux-netdev/nipa/wiki/How-to-run-netdev-selftests-CI-style
->
-> ? It could be the base OS difference, too, but that's harder to confirm.
 
-Yes - that's the way I run it.  But I didn't try to use any of the
-stress inducing options.  I'll work on it with that.
+On 25.06.24 г. 0:20 ч., Yazen Ghannam wrote:
+> Generally, MCA information for an error is gathered on the CPU that
+> reported the error. In this case, CPU-specific information from the
+> running CPU will be correct.
+> 
+> However, this will be incorrect if the MCA information is gathered while
+> running on a CPU that didn't report the error. One example is creating
+> an MCA record using mce_prep_record() for errors reported from ACPI.
+> 
+> Split mce_prep_record() so that there is a helper function to gather
+> common, i.e. not CPU-specific, information and another helper for
+> CPU-specific information.
+> 
+> Leave mce_prep_record() defined as-is for the common case when running
+> on the reporting CPU.
+> 
+> Get MCG_CAP in the global helper even though the register is per-CPU.
+> This value is not already cached per-CPU like other values. And it does
+> not assist with any per-CPU decoding or handling.
+> 
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+> Link:
+> https://lkml.kernel.org/r/20240521125434.1555845-3-yazen.ghannam@amd.com
+> 
+> v1->v2:
+> * No change.
+> 
+>   arch/x86/kernel/cpu/mce/core.c     | 34 ++++++++++++++++++++----------
+>   arch/x86/kernel/cpu/mce/internal.h |  2 ++
+>   2 files changed, 25 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+> index dd5192ef52e0..0133f88dfffb 100644
+> --- a/arch/x86/kernel/cpu/mce/core.c
+> +++ b/arch/x86/kernel/cpu/mce/core.c
+> @@ -117,20 +117,32 @@ static struct irq_work mce_irq_work;
+>    */
+>   BLOCKING_NOTIFIER_HEAD(x86_mce_decoder_chain);
+>   
+> -/* Do initial initialization of a struct mce */
+> -void mce_prep_record(struct mce *m)
+> +void mce_prep_record_common(struct mce *m)
+>   {
+>   	memset(m, 0, sizeof(struct mce));
+> -	m->cpu = m->extcpu = smp_processor_id();
+> +
+> +	m->cpuid	= cpuid_eax(1);
+> +	m->cpuvendor	= boot_cpu_data.x86_vendor;
+> +	m->mcgcap	= __rdmsr(MSR_IA32_MCG_CAP);
+>   	/* need the internal __ version to avoid deadlocks */
+> -	m->time = __ktime_get_real_seconds();
+> -	m->cpuvendor = boot_cpu_data.x86_vendor;
+> -	m->cpuid = cpuid_eax(1);
+> -	m->socketid = cpu_data(m->extcpu).topo.pkg_id;
+> -	m->apicid = cpu_data(m->extcpu).topo.initial_apicid;
+> -	m->mcgcap = __rdmsr(MSR_IA32_MCG_CAP);
+> -	m->ppin = cpu_data(m->extcpu).ppin;
+> -	m->microcode = boot_cpu_data.microcode;
+> +	m->time		= __ktime_get_real_seconds();
+> +}
+> +
+> +void mce_prep_record_per_cpu(unsigned int cpu, struct mce *m)
+> +{
+> +	m->cpu		= cpu;
+> +	m->extcpu	= cpu;
+> +	m->apicid	= cpu_data(m->extcpu).topo.initial_apicid;
+> +	m->microcode	= cpu_data(m->extcpu).microcode;
+> +	m->ppin		= cpu_data(m->extcpu).ppin;
 
->> To confirm, is it possible to run in the constrained environment, but
->> put a 5s sleep or something?  I will add the following either as a
->> separate patch (ie 7/8), or I can fold it into 6/7 (and drop Stefano's
->> ACK waiting for another review):
->> 
->> 
->> wait_for_if() {
->>    if ip link show "$2" >/dev/null 2>&1; then return 0; fi
->> 
->>    for d in `seq 1 30`; do
->>       sleep 1
->>       if ip link show "$2" >/dev/null 2>&1; then return 0; fi
->>    done
->>    return 1
->> }
->> 
->> ....
->>  	setup_ovs_br_internal || setup_ovs_br_vswitchd || return $ksft_skip
->> +	wait_for_if "ovs_br0"
->>  	run_cmd ip link set ovs_br0 up
->> ....
->> 
->> Does it make sense or does it seem like I am way off base?
->
-> sleep 1 is a bit high (sleep does accept fractional numbers!)
-> but otherwise worth trying, if you can't repro locally.
+nit: Similar to tglx's feedback for patch 2 you could use topology_ppin()
 
-Ack.
+> +	m->socketid	= cpu_data(m->extcpu).topo.pkg_id;
+nit: topology_physical_package_id()
 
+
+> +}
+> +
+
+
+<snip>
 
