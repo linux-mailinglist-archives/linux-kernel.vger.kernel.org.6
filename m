@@ -1,98 +1,126 @@
-Return-Path: <linux-kernel+bounces-228381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9343E915F15
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:51:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D740915F1B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:54:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC789B22899
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:51:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC2FA2847AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:54:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88E3D146A60;
-	Tue, 25 Jun 2024 06:50:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AACE1465BB;
+	Tue, 25 Jun 2024 06:54:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sj0CWA9k";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JoXxl9yf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="WD8d0zBn"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD2C1465B0;
-	Tue, 25 Jun 2024 06:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50AE0146583;
+	Tue, 25 Jun 2024 06:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719298250; cv=none; b=JoIR41tRSv+15cHaaDaVT0Vmcmp6/ZQt5dJ8WEJKPa7W6iOZDdWmT+3Babv7+NxBykLjZIgTSB3RRrCFSEh2BEG/T3Uhj7Hb0VTya+pjJEcG4TIy/f3rUdAz0Xp4dpCqY4VR8umLeIiwUxsySt90kjm6UyrPVDQopBshpw8kwjk=
+	t=1719298458; cv=none; b=jjyQRNnqqUC0XP7e7iV715KXvVtrpjASgSlvKz0Uth0zUE1DFW6MXEAbhIgWxrSrZMPLdow58RUHiTa6PqK127oWQrjShD4AjP7SKOqFIz3JteZ9xju1P49tnNcJRfpsoIZJZe0DQ6XJoKdo7s09mqBWbir5H7YyYdOh3HcEa9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719298250; c=relaxed/simple;
-	bh=fikHTFWKbzZzSb/FoOn8hq16I7pD34RL1CC8W8j3AeY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QJSwD9GN1Dr6C1/50o3eZSasu3KKpm4MofbeWn/ij5TfTf4cSO/2F67VWblvyjNTl1n01pRgGS+K9Fh+a8hTJWyulvJabMrgmfUDyZzGD9QH96b13HEEx+RDSqclcDLD2HHJP6bBA/TYFRxXtpWRCjXLVUafN48KjZ7MoeMSEqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sj0CWA9k; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JoXxl9yf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719298247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TLMYTeh+AVC62umqv+l1zIOiewS40E/iV4WtzskHxs4=;
-	b=sj0CWA9kgz1So/43Nh/aBvNwbdzvk3QJdmpaEbr+OEbGwcDtkp/z+nPi3VKsVoYdvczFzP
-	irIAjSaoeyfINqU2l/1QXfpV5L9nFfHY0h761OWVrKB+tEqIOemcU9d2irj6hT9G1pIQ7e
-	1YkreWj0Qj7gIpqkiAVCbT72XSFeLwU+NtpDMbHxTUFMgspI+Wx/rxjn+QmrI7bl+VnV29
-	lrj7ZdsZDCjUzr3y3q10xOjrdQGZ3GgyLmJH+NgHIG3DTfsMvEhdPgn2B7GLfDH/E8Xm5N
-	kgbGGwcdds5e1MskRRTqDACx+vDR2rDxO+llH3PZvwVUBMYIpyT2ZtdUVKwjpg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719298247;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TLMYTeh+AVC62umqv+l1zIOiewS40E/iV4WtzskHxs4=;
-	b=JoXxl9yfWewOtzlKQQCh2BeItUsNVUB5rTJeJ7NGx27X0/qkc1EynU8pzYMqamBbD7Vd+T
-	PbnbBoIN7YtnqpAw==
-To: Yazen Ghannam <yazen.ghannam@amd.com>, linux-edac@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, tony.luck@intel.com, x86@kernel.org,
- avadhut.naik@amd.com, john.allen@amd.com, Yazen Ghannam
- <yazen.ghannam@amd.com>
-Subject: Re: [PATCH v2 2/5] x86/mce: Fixup APIC ID search for x86 CPER decoding
-In-Reply-To: <20240624212008.663832-3-yazen.ghannam@amd.com>
-References: <20240624212008.663832-1-yazen.ghannam@amd.com>
- <20240624212008.663832-3-yazen.ghannam@amd.com>
-Date: Tue, 25 Jun 2024 08:50:47 +0200
-Message-ID: <87bk3p7by0.ffs@tglx>
+	s=arc-20240116; t=1719298458; c=relaxed/simple;
+	bh=GLy9r6s4JKJPpiiGmmqfmYHHn2czjjzX19kmNfcD+c8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iO1kcNvNrDHiQJBw86lOyhll/YkSetikmdoSs2ZGqeyT1oY8mCbYsGT28fD/2eUpyEUAVYLltPGzTISYGcLaDo3TNLyS8ievpNrVYch6r0zlAYg05PeuxIKksHeHMeq7w2GdqmopOl9BhMu0HKVW3Zun1yaNAqLJtAUVf965GUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=WD8d0zBn; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1719298455; x=1750834455;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GLy9r6s4JKJPpiiGmmqfmYHHn2czjjzX19kmNfcD+c8=;
+  b=WD8d0zBntm5tISZ0ENQRj5NrCMiEuTAtCvMxD5GuRdXfUII0BfBHM4oE
+   QwP4Vjdcxdf2goPhJZ27dyYWxNadUD0f+PiZ1E03L5nejjY8Aqmj+it4M
+   f3nWJLlVTNjBu3irXVsRd4GWqq6e+9fMgfd3/sbXSXPEdUt9miZ38Ask3
+   iSeWi2HF6v2QHQ6afyPlM38IOqp/GzwobKaI6+gdDOKaIfBI7Ao62St/a
+   P+2xWeWKFfSQnLhBFsPPt8SdpV9b/OcUyMfDFLNbeVzdnM65p+EtPMR58
+   HnH9Y2p/9GQoimx1q9dk5r0JNAbBxPMrd7oAgGOXoaiJ9v9EY/hh0teXz
+   A==;
+X-CSE-ConnectionGUID: KXhBoKx+S7moHFrVMENI0g==
+X-CSE-MsgGUID: /nUaxC2FQSKFDYiv18kmpg==
+X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
+   d="asc'?scan'208";a="259332112"
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2024 23:54:14 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 24 Jun 2024 23:53:34 -0700
+Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
+ Transport; Mon, 24 Jun 2024 23:53:32 -0700
+Date: Tue, 25 Jun 2024 07:53:23 +0100
+From: Conor Dooley <conor.dooley@microchip.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Yasin Lee <yasin.lee.x@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	<yasin.lee.x@outlook.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-iio@vger.kernel.org>, Conor Dooley
+	<conor@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v7 2/3] dt-bindings: iio: proximity: Add TYHX HX9023S
+Message-ID: <20240625-basis-greedily-483c1518026a@wendy>
+References: <20240625-add-tyhx-hx9023s-sensor-driver-v7-0-b1d65b221811@gmail.com>
+ <20240625-add-tyhx-hx9023s-sensor-driver-v7-2-b1d65b221811@gmail.com>
+ <d77a4777-d282-4004-895a-7809abf68130@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="fgvME+BqevhmvgA1"
+Content-Disposition: inline
+In-Reply-To: <d77a4777-d282-4004-895a-7809abf68130@kernel.org>
 
-On Mon, Jun 24 2024 at 16:20, Yazen Ghannam wrote:
->  	/*
->  	 * The starting address of the register array extracted from BERT must
->  	 * match with the first expected register in the register layout of
-> @@ -99,16 +103,8 @@ int apei_smca_report_x86_error(struct cper_ia_proc_ctx *ctx_info, u64 lapic_id)
->  
->  	mce_setup(&m);
->  
-> -	m.extcpu = -1;
-> -	m.socketid = -1;
-> -
-> -	for_each_possible_cpu(cpu) {
-> -		if (cpu_data(cpu).topo.initial_apicid == lapic_id) {
-> -			m.extcpu = cpu;
-> -			m.socketid = cpu_data(m.extcpu).topo.pkg_id;
-> -			break;
-> -		}
-> -	}
-> +	m.extcpu   = cpu;
-> +	m.socketid = cpu_data(cpu).topo.pkg_id;
+--fgvME+BqevhmvgA1
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-topology_physical_package_id() ?
+On Tue, Jun 25, 2024 at 07:48:52AM +0200, Krzysztof Kozlowski wrote:
+> On 25/06/2024 04:15, Yasin Lee wrote:
+> > A capacitive proximity sensor
+> >=20
+> > Acked-by: Conor Dooley <conor@kernel.org>
 
-Thanks,
+And I _never_ provide tags with my kernel.org address in them, so this
+didn't happen either :)
 
-        tglx
+> > Acked-by: Jonathan Cameron <jic23@kernel.org>
+> > Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>=20
+> What? How did this happen? Where - provide lore links to prove it?
+>=20
+> NAK
+>=20
+> > Reported-by=EF=BC=9A "Rob Herring (Arm)" <robh@kernel.org>
+>=20
+> No, drop.
+>=20
+> > Signed-off-by: Yasin Lee <yasin.lee.x@gmail.com>
+
+--fgvME+BqevhmvgA1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnppVgAKCRB4tDGHoIJi
+0rwlAQDc2qSV0UY7uzZfVUDuRlAFNt1Sz25uc4OoBh7Dr1XagQEA/AVHBJbsfot4
+xaq7sqPUXc3M51vzcFyUStEEyZMCgAw=
+=V3J8
+-----END PGP SIGNATURE-----
+
+--fgvME+BqevhmvgA1--
 
