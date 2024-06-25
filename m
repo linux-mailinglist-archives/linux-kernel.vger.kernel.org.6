@@ -1,102 +1,273 @@
-Return-Path: <linux-kernel+bounces-229254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E57A5916D64
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:47:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C12F0916D6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:49:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90B071F21783
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:47:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79CD728EE8A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE9016F91E;
-	Tue, 25 Jun 2024 15:47:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8121E16FF53;
+	Tue, 25 Jun 2024 15:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SXBBXu9s";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ls3DiFrg"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="c/IYLOFh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8954E153506;
-	Tue, 25 Jun 2024 15:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD39E169AE4
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719330438; cv=none; b=Q9pOW+hE2QP4I5BqNoLj0pQoLw3sEMUtzDn4ugSQ0H8scOEK1NUWi22oMBRej/bUCy/EfXoKig8yY3R0ICMJUNYcuYddFV5b2KsQAgnsgCL13lbGfcNnZUI6Jyw4QUvzWVL/uPRQ1mK23K7hizotCk5Oa/37jnGkuwLusvX5DHg=
+	t=1719330576; cv=none; b=qiDW+AcUVkS2fuT/+nFhikX44hsR3f5Qn49my2nrweNA55tY73rP2MIOextYOvJVIfSZdJvB4yhUCV41Xi2AJvH4u9rz1A9Ho65H26t6n97uwWTcMLn7ArekpVWgFAySy3nEdwen7NEmKoJWMmC/g+QhT2VqxxRQcCp8R/pywew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719330438; c=relaxed/simple;
-	bh=hfBquKQniv9noN02gtpMGU8burun9BThFhklk1tfuNU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=l65MsGGYnJ+VAjUMnuD6joHZJ0wPC+c/fLTVMomgs7S1gZKdafBWgKfh+qvsowHiEtSveGz7n06YaxS2Zb64DTWK6jXaCV7neVeW3dG3dKiGsc+8dzEkVOME1mWFwEbo0NE3I0Pu/xJajTkykb4FM28lFZemvLmh2UAW8nDO17I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SXBBXu9s; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ls3DiFrg; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719330435;
+	s=arc-20240116; t=1719330576; c=relaxed/simple;
+	bh=d+QWziGpgL0Ca/Wfgs+UUMxW9qcDrjZRRIe7JK15vkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HPdzuC7tUKWBhtFlw1t3h56aPUI8SEpuLitzM2OOz488ScWuOZvESMYfHTYqVVvDEpWucM64pHVNDStYziHlfrIez4OLASIobCKAOOOX7lAMjg8EgJ2Vh14dFfCC6jWsRaSkmsEry5f9AZeKfJLfpPtbjFIvcqnZYIr6pt73aSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=c/IYLOFh; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719330573;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=mgoZS8cRFnMTN3N+2tTfMzAEhQwWUBVYpDta13n2FZs=;
-	b=SXBBXu9sgDiCJWI98b9gPhyEynjeYdoWNeEK2+C5pCEDKFuyAo1ZH+sMTtoLFdejApS7Ty
-	CN3XxOpmQDuprLWn1rOlc3ynKFuUQsMoQfjmQGuEw/7T+/RohEhhZSv3tpRMN3rxAmT+Ji
-	oge7wi2zV/sx2hR07PeWL7xosOe/2WZO8CzlhKBaDaGGA9llHFY44GDSYPFd/r3CUZdigz
-	qhL2PTUawuWWwJIYC+3ZevhmLBCFrdHCCTqJ1Z9DgO/J8Bl0rrKLhVm/RN2Lf54YX72cIg
-	MBEiSmI/UEQ57hhqODGMZ+ngtv2CPooVeGR3WlQdeOb5lUtKmVOwhxf+zRDFcA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719330435;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mgoZS8cRFnMTN3N+2tTfMzAEhQwWUBVYpDta13n2FZs=;
-	b=Ls3DiFrgC56nrOQjTn4ehzlGNFI8Iela0MhcRPfdj2DaWC8iCC1xsxo67bVSCLE/uYr7vR
-	YhIinKlTJ1cPEtAA==
-To: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
- <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
- Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Petr Mladek
- <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>, Sergey
- Senozhatsky <senozhatsky@chromium.org>
-Cc: bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
-In-Reply-To: <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
-References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
- <87ed8lxg1c.fsf@jogness.linutronix.de>
- <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
-Date: Tue, 25 Jun 2024 17:53:14 +0206
-Message-ID: <87ikxxxbwd.fsf@jogness.linutronix.de>
+	bh=0wsnVV8wpGfGOkMUutdfBkeh8eoVPXf9ThGK/9X9dRk=;
+	b=c/IYLOFhUspizBAsxm1Jz4fLuAR9DQnYp982IkcEEjBlXFx79yBvtw5IKdWVTv2bzcnAXk
+	8TVisz/dOM0tfGGn7g6pC3ZnDNlQuF5E92znB/7p4WFyGdpD2mN1HbZyJAFs0QhCJcacQQ
+	fIE9y8ffde85lJb8HMguIE4suC+SsY0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-648-JgzeuAsjP0qiKJuutWbxvQ-1; Tue,
+ 25 Jun 2024 11:49:29 -0400
+X-MC-Unique: JgzeuAsjP0qiKJuutWbxvQ-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8163E195608C;
+	Tue, 25 Jun 2024 15:49:27 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.8])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4F977300021A;
+	Tue, 25 Jun 2024 15:49:24 +0000 (UTC)
+Date: Tue, 25 Jun 2024 23:49:20 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Uladzislau Rezki <urezki@gmail.com>, Hailong Liu <hailong.liu@oppo.com>
+Cc: Nick Bowler <nbowler@draconx.ca>, linux-kernel@vger.kernel.org,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	linux-mm@kvack.org, sparclinux@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
+Message-ID: <ZnrnADHvOiNcZv9t@MiWiFi-R3L-srv>
+References: <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
+ <ZnVLbCCkvhf5GaTf@pc636>
+ <ZnWICsPgYuBlrWlt@MiWiFi-R3L-srv>
+ <Znljtv5n-6EBgpsF@pc636>
+ <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
+ <ZnqcuKt2qrR-wmH3@pc636>
+ <ZnqspTVl/76jM9WD@MiWiFi-R3L-srv>
+ <Znq6tEtCgB6QnnJH@pc638.lan>
+ <Znq/8/HAc/0p6Ja0@MiWiFi-R3L-srv>
+ <ZnrjZRq5-_hemrbD@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnrjZRq5-_hemrbD@pc636>
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 2024-06-26, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
-> On 2024/06/25 23:17, John Ogness wrote:
->> On 2024-06-25, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
->>> syzbot is reporting circular locking dependency inside __bpf_prog_run(),
->>> for fault injection calls printk() despite rq lock is already held.
->>>
->>> Guard __bpf_prog_run() using printk_deferred_{enter,exit}() (and
->>> preempt_{disable,enable}() if CONFIG_PREEMPT_RT=n) in order to defer any
->>> printk() messages.
->> 
->> Why is the reason for disabling preemption?
->
-> Because since kernel/printk/printk_safe.c uses a percpu counter for deferring
-> printk(), printk_safe_enter() and printk_safe_exit() have to be called from
-> the same CPU. preempt_disable() before printk_safe_enter() and preempt_enable()
-> after printk_safe_exit() guarantees that printk_safe_enter() and
-> printk_safe_exit() are called from the same CPU.
+On 06/25/24 at 05:33pm, Uladzislau Rezki wrote:
+> On Tue, Jun 25, 2024 at 09:02:43PM +0800, Baoquan He wrote:
+> > On 06/25/24 at 02:40pm, Uladzislau Rezki wrote:
+> > > On Tue, Jun 25, 2024 at 07:40:21PM +0800, Baoquan He wrote:
+> > > > On 06/25/24 at 12:32pm, Uladzislau Rezki wrote:
+> > > > > On Tue, Jun 25, 2024 at 11:30:33AM +0800, Baoquan He wrote:
+> > > > > > On 06/24/24 at 02:16pm, Uladzislau Rezki wrote:
+> > > > > > > On Fri, Jun 21, 2024 at 10:02:50PM +0800, Baoquan He wrote:
+> > > > > > > > On 06/21/24 at 11:44am, Uladzislau Rezki wrote:
+> > > > > > > > > On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
+> > > > > > > > > > On 06/21/24 at 11:30am, Hailong Liu wrote:
+> > > > > > > > > > > On Thu, 20. Jun 14:02, Nick Bowler wrote:
+> > > > > > > > > > > > On 2024-06-20 02:19, Nick Bowler wrote:
+> > > > > > > > ......
+> > > > > > > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > > > > > > > index be2dd281ea76..18e87cafbaf2 100644
+> > > > > > > > > > --- a/mm/vmalloc.c
+> > > > > > > > > > +++ b/mm/vmalloc.c
+> > > > > > > > > > @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> > > > > > > > > >  static struct xarray *
+> > > > > > > > > >  addr_to_vb_xa(unsigned long addr)
+> > > > > > > > > >  {
+> > > > > > > > > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > > > > > > > > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> > > > > > > > > >  
+> > > > > > > > > >  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> > > > > > > > > >  }
+> > > > > > > > > > 
+> > > > > > > > > The problem i see is about not-initializing of the:
+> > > > > > > > > <snip>
+> > > > > > > > > 	for_each_possible_cpu(i) {
+> > > > > > > > > 		struct vmap_block_queue *vbq;
+> > > > > > > > > 		struct vfree_deferred *p;
+> > > > > > > > > 
+> > > > > > > > > 		vbq = &per_cpu(vmap_block_queue, i);
+> > > > > > > > > 		spin_lock_init(&vbq->lock);
+> > > > > > > > > 		INIT_LIST_HEAD(&vbq->free);
+> > > > > > > > > 		p = &per_cpu(vfree_deferred, i);
+> > > > > > > > > 		init_llist_head(&p->list);
+> > > > > > > > > 		INIT_WORK(&p->wq, delayed_vfree_work);
+> > > > > > > > > 		xa_init(&vbq->vmap_blocks);
+> > > > > > > > > 	}
+> > > > > > > > > <snip>
+> > > > > > > > > 
+> > > > > > > > > correctly or fully. It is my bad i did not think that CPUs in a possible mask
+> > > > > > > > > can be non sequential :-/
+> > > > > > > > > 
+> > > > > > > > > nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
+> > > > > > > > > when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
+> > > > > > > > 
+> > > > > > > > I checked the generic version of setup_nr_cpu_ids(), from codes, they
+> > > > > > > > are different with my understanding.
+> > > > > > > > 
+> > > > > > > > kernel/smp.c
+> > > > > > > > void __init setup_nr_cpu_ids(void)
+> > > > > > > > {
+> > > > > > > >         set_nr_cpu_ids(find_last_bit(cpumask_bits(cpu_possible_mask), NR_CPUS) + 1);
+> > > > > > > > }
+> > > > > > > > 
+> > > > > > > I see that it is not a weak function, so it is generic, thus the
+> > > > > > > behavior can not be overwritten, which is great. This does what we
+> > > > > > > need.
+> > > > > > > 
+> > > > > > > Thank you for checking this you are right!
+> > > > > > 
+> > > > > > Thanks for confirming this.
+> > > > > > 
+> > > > > > > 
+> > > > > > > Then it is just a matter of proper initialization of the hash:
+> > > > > > > 
+> > > > > > > <snip>
+> > > > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > > > > index 5d3aa2dc88a8..1733946f7a12 100644
+> > > > > > > --- a/mm/vmalloc.c
+> > > > > > > +++ b/mm/vmalloc.c
+> > > > > > > @@ -5087,7 +5087,13 @@ void __init vmalloc_init(void)
+> > > > > > >          */
+> > > > > > >         vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
+> > > > > > >  
+> > > > > > > -       for_each_possible_cpu(i) {
+> > > > > > > +       /*
+> > > > > > > +        * We use "nr_cpu_ids" here because some architectures
+> > > > > > > +        * may have "gaps" in cpu-possible-mask. It is OK for
+> > > > > > > +        * per-cpu approaches but is not OK for cases where it
+> > > > > > > +        * can be used as hashes also.
+> > > > > > > +        */
+> > > > > > > +       for (i = 0; i < nr_cpu_ids; i++) {
+> > > > > > 
+> > > > > > I was wrong about earlier comments. Percpu variables are only available
+> > > > > > on possible CPUs. For those nonexistent possible CPUs of static percpu
+> > > > > > variable vmap_block_queue, there isn't memory allocated and mapped for
+> > > > > > them. So accessing into them will cause problem.
+> > > > > > 
+> > > > > > In Nick's case, there are only CPU0, CPU2. If you access
+> > > > > > &per_cpu(vmap_block_queue, 1), problem occurs. So I think we may need to
+> > > > > > change to take other way for vbq. E.g:
+> > > > > > 1) Storing the vb in the nearest neighbouring vbq on possible CPU as
+> > > > > >    below draft patch;
+> > > > > > 2) create an normal array to store vbq of size nr_cpu_ids, then we can
+> > > > > >    store/fetch each vbq on non-possible CPU?
+> > > > > > 
+> > > > > A correct way, i think, is to create a normal array. A quick fix can be
+> > > > > to stick to a next possible CPU.
+> > > > > 
+> > > > > > The way 1) is simpler, the existing code can be adapted a little just as
+> > > > > > below.
+> > > > > > 
+> > > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > > > index 633363997dec..59a8951cc6c0 100644
+> > > > > > --- a/mm/vmalloc.c
+> > > > > > +++ b/mm/vmalloc.c
+> > > > > > @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> > > > > >  static struct xarray *
+> > > > > >  addr_to_vb_xa(unsigned long addr)
+> > > > > >  {
+> > > > > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > > > > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> > > > > > +
+> > > > > > +	if (!cpu_possible(idex))
+> > > > > > +		index = cpumask_next(index, cpu_possible_mask);
+> > > > > >
+> > > > > cpumask_next() can return nr_cpu_ids if no next bits set.
+> > > > 
+> > > > It won't. nr_cpu_ids is the largest index + 1, the hashed index will
+> > > > be:  0 =<  index  <= (nr_cpu_ids - 1) e.g cpu_possible_mask is
+> > > > b10001111, the nr_cpu_ids is 8, the largest bit is cpu7.
+> > > > cpu_possible(index) will check that. So the largest bit of cpumask_next()
+> > > > returns is (nr_cpu_ids - 1).
+> > > > 
+> > > /**
+> > >  * cpumask_next - get the next cpu in a cpumask
+> > >  * @n: the cpu prior to the place to search (i.e. return will be > @n)
+> > >  * @srcp: the cpumask pointer
+> > >  *
+> > >  * Return: >= nr_cpu_ids if no further cpus set.
+> > 
+> > Ah, I got what you mean. In the vbq case, it may not have chance to get
+> > a return number as nr_cpu_ids. Becuase the hashed index limits the
+> > range to [0, nr_cpu_ids-1], and cpu_possible(index) will guarantee it
+> > won't be the highest cpu number [nr_cpu_ids-1] since CPU[nr_cpu_ids-1] must
+> > be possible CPU.
+> > 
+> > Do I miss some corner cases?
+> > 
+> Right. We guarantee that a highest CPU is available by doing: % nr_cpu_ids.
+> So we do not need to use *next_wrap() variant. You do not miss anything :)
+> 
+> Hailong Liu has proposed more simpler version:
+> 
+> <snip>
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index 11fe5ea208aa..e1e63ffb9c57 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -1994,8 +1994,9 @@ static struct xarray *
+>  addr_to_vb_xa(unsigned long addr)
+>  {
+>         int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> +       int cpu = cpumask_nth(index, cpu_possible_mask);
+> 
+> -       return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> +       return &per_cpu(vmap_block_queue, cpu).vmap_blocks;
+> <snip>
+> 
+> which just takes a next CPU if an index is not set in the cpu_possible_mask.
+> 
+> The only thing that can be updated in the patch is to replace num_possible_cpu()
+> by the nr_cpu_ids.
+> 
+> Any thoughts? I think we need to fix it by a minor change so it is
+> easier to back-port on stable kernels.
 
-Yes, but we already have cant_migrate(). Are you suggesting there are
-configurations where cant_migrate() is true but the context can be
-migrated anyway?
+Yeah, sounds good since the regresson commit is merged in v6.3.
+Please feel free to post this and the hash array patch separately for
+formal reviewing.
 
-John
+By the way, when I am replying this mail, I check the cpumask_nth()
+again. I doubt it may take more checking then cpu_possible(), given most
+of systems don't have gaps in cpu_possible_mask. I could be dizzy at
+this moment.
+
+static inline unsigned int cpumask_nth(unsigned int cpu, const struct cpumask *srcp)
+{
+        return find_nth_bit(cpumask_bits(srcp), small_cpumask_bits, cpumask_check(cpu));
+}
+
 
