@@ -1,146 +1,163 @@
-Return-Path: <linux-kernel+bounces-228515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBADF91611C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:26:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA47791612D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4CF99B22394
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:26:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7222B1F22DCE
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9D981487C8;
-	Tue, 25 Jun 2024 08:26:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DC91487C8;
+	Tue, 25 Jun 2024 08:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="TuS6PQe0"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="a63ZOu+G"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41511148312;
-	Tue, 25 Jun 2024 08:26:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61D11474AE;
+	Tue, 25 Jun 2024 08:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719304002; cv=none; b=XPzM6fuKCf8wLP9jiyFBJfQmbwe4naIxRqWDxxXwVQUk7/f5+jdsfW3BSpVaeNvYoNIVbq7nhC0P08EJsV+HU+gtpCIzlSKfZaUCJLOJRmCo54XnKPZGm3dvX8L270Q5Ho70tju/uiahPRbqrWAsnaqUMfWVs9fG6+u3qE+rbXw=
+	t=1719304153; cv=none; b=aIvApRTV/wabj2R0cxMjcECYUTuIxJyeNoZHrT+adAg8j8QQW6LSyUmrzdtrSy45KbwE6xt+v/M6p5vAeLhx0MAGaTuurdmr8j0s9UzKPvo3l2cKZXWysgyVx9p12kY9org45r7/Z1jcWxBTqgJxKBVRXOuO/MVKfo565wwM7dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719304002; c=relaxed/simple;
-	bh=BQ9kNbrPpzeImFo00g4KBYC1c+0nqfw8+UuDMbnQzNk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KnCGu5/zNwVBqJLPmpLVGCBakmJ8//LA8xz6StEQtpxIo/h+FmHCmzqD03IdOXiRsl+HJNSc2DSp781zjDJXbqJFVgpyVvAWu9WsP6x6kTKBFG2BI4Yvv+QyMdzknasW17FAoSxAxeYit/iBD4Hic/0WFPvANVDmw+FNrOMzArI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=TuS6PQe0; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [10.0.0.100] (pool-99-255-30-7.cpe.net.cable.rogers.com [99.255.30.7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 36B4640FAD;
-	Tue, 25 Jun 2024 08:26:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1719303997;
-	bh=wTzLXfd9yMtwyHiYV3uWIdxvkfzRaQy0R5/+H6GPJP8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=TuS6PQe0qCUba1eR9ABvOCchB2FAAhHX3KYPi+v/87L4Ujgmgz+JC97g0k1a0oawC
-	 r1j7eMZmxNuOoesqEY00PA/BvUtwYe5G1C45m6nscLwQCvp/cuDsGQehSIw003MB1N
-	 C0AbpY9elHVrSfLgA+VKxkIEbGy2ixK61wcV2BZGlUX35QsMxYscM9TIbzUPLnExgP
-	 un3RQm6lKcfjleFpjUHpstqisn+TSOfXxlrUwuQfYcknQM3k7tSqg/MzPgIE4LHLgs
-	 PbjY+5OlgSGz+C41n42UrCBsop5vVMhgN76m4rvRjDk6Tx1kSoMI0vaogaKgI+v7dJ
-	 JgpXzWYu6Lmlg==
-Message-ID: <640381ed-4db2-43e1-b742-2e7d2c7c1adf@canonical.com>
-Date: Tue, 25 Jun 2024 01:26:34 -0700
+	s=arc-20240116; t=1719304153; c=relaxed/simple;
+	bh=wXaPYhIxd9lGgS507DARPEtzy5YeJ1pxnrulWrIPLyI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pnpXPaGJnV4/3QcUVpguLj9w5yx89y4mPB1/5Wf6q6x6oxl7zlLiFEEO2ZQFKqFywAibso2dS7TVw4z7FMsYx34Tp170RIrd0r4P+L/t06r6WXjcEGzRf1KckTP5hGT7csygwWMD/GfvDOSI8HQiB/GF/9pagpFvBUGqwhTPoTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=a63ZOu+G; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719304152; x=1750840152;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=wXaPYhIxd9lGgS507DARPEtzy5YeJ1pxnrulWrIPLyI=;
+  b=a63ZOu+GkBLydxIcjWMTaXuYWQILWJNPArE9uGgMuf/5i5kjBRrRJ/Qd
+   FJ9bznCoY0vdpsB4H+1DivhmFZ72za+Rh/0QAbKtGRqE8wtPJNQhH2vcm
+   m7Zv+Ss0ZOp0/Ox6R6bv6n+7aTxyC+mwBAZruOt2rfk78O+Xatd3QZCvn
+   LnT/Q+OagO+54AUViHqKFjC1C3we2H/Y3jvpnayQjPjfHqpzxxQkHeE7w
+   t3x5hVrsZRK8+Kw8sd/1b6g9D1HTfrADfswRZ7nyk+0VkEBN3QxJiOdQC
+   EMgYu7gftLSi28ZojuXTKPpmU96/taubBEflp4rRj189TVUz+VktrEMNh
+   g==;
+X-CSE-ConnectionGUID: RVRhEI9LReiJCJf68LqMEA==
+X-CSE-MsgGUID: BIGmw9z/Snei87hY4K2KEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="20185439"
+X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
+   d="scan'208";a="20185439"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 01:29:11 -0700
+X-CSE-ConnectionGUID: q0t9HT/HTlih3tIIeLeHlg==
+X-CSE-MsgGUID: wkDqR0oAS0ucwoQnSdWLJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
+   d="scan'208";a="74336770"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 01:29:11 -0700
+Received: from mohdfai2-iLBPG12-1.png.intel.com (mohdfai2-iLBPG12-1.png.intel.com [10.88.227.73])
+	by linux.intel.com (Postfix) with ESMTP id 07B1020B5705;
+	Tue, 25 Jun 2024 01:29:07 -0700 (PDT)
+From: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+To: "David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+Subject: [PATCH net 1/1] igc: Fix double reset adapter triggered from a single taprio cmd
+Date: Tue, 25 Jun 2024 04:26:56 -0400
+Message-Id: <20240625082656.2702440-1-faizal.abdul.rahim@linux.intel.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] apparmor: test: add MODULE_DESCRIPTION()
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Paul Moore
- <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>
-Cc: apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-References: <20240529-md-apparmor_policy_unpack_test-v1-1-9efc582078c4@quicinc.com>
- <66425403-66fc-4250-9642-5b29dc821b39@quicinc.com>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <66425403-66fc-4250-9642-5b29dc821b39@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 6/20/24 09:21, Jeff Johnson wrote:
-> On 5/29/2024 6:21 PM, Jeff Johnson wrote:
->> Fix the 'make W=1' warning:
->> WARNING: modpost: missing MODULE_DESCRIPTION() in security/apparmor/apparmor_policy_unpack_test.o
->>
->> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
->> ---
->>   security/apparmor/policy_unpack_test.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/security/apparmor/policy_unpack_test.c b/security/apparmor/policy_unpack_test.c
->> index 5c9bde25e56d..874fcf97794e 100644
->> --- a/security/apparmor/policy_unpack_test.c
->> +++ b/security/apparmor/policy_unpack_test.c
->> @@ -604,4 +604,5 @@ static struct kunit_suite apparmor_policy_unpack_test_module = {
->>   
->>   kunit_test_suite(apparmor_policy_unpack_test_module);
->>   
->> +MODULE_DESCRIPTION("KUnit tests for AppArmor's policy unpack");
->>   MODULE_LICENSE("GPL");
->>
->> ---
->> base-commit: 4a4be1ad3a6efea16c56615f31117590fd881358
->> change-id: 20240529-md-apparmor_policy_unpack_test-7657c4f11591
->>
-> 
-> Following up to see if anything else is needed to get this merged.
+Following the implementation of "igc: Add TransmissionOverrun counter"
+patch, when a taprio command is triggered by user, igc processes two
+commands: TAPRIO_CMD_REPLACE followed by TAPRIO_CMD_STATS. However, both
+commands unconditionally pass through igc_tsn_offload_apply() which
+evaluates and triggers reset adapter. The double reset causes issues in
+the calculation of adapter->qbv_count in igc.
 
-sorry, just me catching up on my backlog
+TAPRIO_CMD_REPLACE command is expected to reset the adapter since it
+activates qbv. It's unexpected for TAPRIO_CMD_STATS to do the same
+because it doesn't configure any driver-specific TSN settings. So, the
+evaluation in igc_tsn_offload_apply() isn't needed for TAPRIO_CMD_STATS.
+
+To address this, commands parsing are relocated to
+igc_tsn_enable_qbv_scheduling(). Commands that don't require an adapter
+reset will exit after processing, thus avoiding igc_tsn_offload_apply().
+
+Fixes: d3750076d464 ("igc: Add TransmissionOverrun counter")
+Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+---
+ drivers/net/ethernet/intel/igc/igc_main.c | 33 ++++++++++++-----------
+ 1 file changed, 17 insertions(+), 16 deletions(-)
+
+diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+index 87b655b839c1..33069880c86c 100644
+--- a/drivers/net/ethernet/intel/igc/igc_main.c
++++ b/drivers/net/ethernet/intel/igc/igc_main.c
+@@ -6310,21 +6310,6 @@ static int igc_save_qbv_schedule(struct igc_adapter *adapter,
+ 	size_t n;
+ 	int i;
+
+-	switch (qopt->cmd) {
+-	case TAPRIO_CMD_REPLACE:
+-		break;
+-	case TAPRIO_CMD_DESTROY:
+-		return igc_tsn_clear_schedule(adapter);
+-	case TAPRIO_CMD_STATS:
+-		igc_taprio_stats(adapter->netdev, &qopt->stats);
+-		return 0;
+-	case TAPRIO_CMD_QUEUE_STATS:
+-		igc_taprio_queue_stats(adapter->netdev, &qopt->queue_stats);
+-		return 0;
+-	default:
+-		return -EOPNOTSUPP;
+-	}
+-
+ 	if (qopt->base_time < 0)
+ 		return -ERANGE;
+
+@@ -6433,7 +6418,23 @@ static int igc_tsn_enable_qbv_scheduling(struct igc_adapter *adapter,
+ 	if (hw->mac.type != igc_i225)
+ 		return -EOPNOTSUPP;
+
+-	err = igc_save_qbv_schedule(adapter, qopt);
++	switch (qopt->cmd) {
++	case TAPRIO_CMD_REPLACE:
++		err = igc_save_qbv_schedule(adapter, qopt);
++		break;
++	case TAPRIO_CMD_DESTROY:
++		err = igc_tsn_clear_schedule(adapter);
++		break;
++	case TAPRIO_CMD_STATS:
++		igc_taprio_stats(adapter->netdev, &qopt->stats);
++		return 0;
++	case TAPRIO_CMD_QUEUE_STATS:
++		igc_taprio_queue_stats(adapter->netdev, &qopt->queue_stats);
++		return 0;
++	default:
++		return -EOPNOTSUPP;
++	}
++
+ 	if (err)
+ 		return err;
+
+--
+2.25.1
 
 
