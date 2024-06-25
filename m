@@ -1,361 +1,387 @@
-Return-Path: <linux-kernel+bounces-228890-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D1D04916839
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:42:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0BC9691683F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:43:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48FF31F24569
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:42:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC522282B95
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:43:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FD9156C68;
-	Tue, 25 Jun 2024 12:42:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22590156F4A;
+	Tue, 25 Jun 2024 12:43:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X88Z/qfN"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TLZWbw3r"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88CB014D712;
-	Tue, 25 Jun 2024 12:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDF9D1482F8;
+	Tue, 25 Jun 2024 12:43:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719319321; cv=none; b=oz8k5LgZ4fKEmcwCYrULmsmGETEfkmgzsfNmUFCgA+50fGxBHbJk+AywZ98Zuo/pDVA81F/UFhi4tPPRbHRe/j3lMSLr+YBi0TmqBfCG3BbAHFl/wvSS5wn6Y/2mVLgF8oWjNQlcIp7wsuI5n83HMUVnZAAAJmuweaT63ajedN0=
+	t=1719319405; cv=none; b=Q4clF7Zro8KRIXbRet79VWVVm5Y87R0jpvyO742LttgvGL65oO301mZGHfQOWbqMUAzEn48M+tcgY/9ZGwYO28x4Be14ZmbvQoXAKB2t6LGHhwDBVxBuAX9vA31WZISnyW47s0SnQSlHqIyhlVu4TWrwfawxoKSZhSmBx9apmYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719319321; c=relaxed/simple;
-	bh=wo5JZVa8axtbZPu/P+YlNFKLSNSVsD1rl5F4Kiopv7A=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GjGOVWT8k4ZVmFo84q3lUUycR/KpK0PoxTB6qAlQIKXHh5P9NmU8sBZOi7bhx8svSU8reQLOLfDBL2DmDTudZbGB7F5LXifstnnVipegm8YDAPGuhWVHUa/HWCmEXGsuqtrcW9fJ4JpNdwStM7ewuiEhWV2NF7tfSHWsjD9OAgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X88Z/qfN; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a725ea1a385so210016066b.3;
-        Tue, 25 Jun 2024 05:41:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719319317; x=1719924117; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yBzuofG6T7lvGEuAx25osRPS6h4Ox6IqcEZGgGnza9Y=;
-        b=X88Z/qfNWUCmq9gJvrCWUV6d/m7+yh09YPLjoQc8JQU8ENxPUvdjFrWQU27T5nRUEK
-         aPcxis+USOp0qDFdNUkaS/7D0Vk2lBfHvQZXnLT3pdCLt8xPXRAOWPwWD7ZDNFAeYZaI
-         Uiv6i1+KWgcsN065WOJCE8In/E2Vj5wXDIiRqCTOnobHyv/Pyu8+KoAgWwQMIqRGFU+Z
-         J+6KZQX4hCqv6Pcr8ZHpcrytNiqRaNJCm4eMMCerYSoqPclFtw4Lkubp3Kz1U6h7jm8t
-         XXJH4O1JlCux9Aktz9/ViiwSx9wTrqqBE0/64kfF5B6SBhgK5XgIk6yr7CzzLmtqQKy+
-         R/Lw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719319317; x=1719924117;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yBzuofG6T7lvGEuAx25osRPS6h4Ox6IqcEZGgGnza9Y=;
-        b=vZgRHDeT6KexV4jNcCrSo1DrxANC8nrF3hkoBnsTPnnqh7vlh/tkbB4m2WStPeJ/JE
-         mBn+qJp7j6y3vgY+9/R5mjq0ASI4qL9oTUFmBp6SDtkVSGCEGkMoBB4J4CsQz8VUdzmJ
-         6Kr30dz8B0bG3B0W9ZWMmAPSQoh9ciyd5bU7Sk5eVrH2USQrrIrK3eUJ7O83WhK1f7CZ
-         bigfTK08wSdKuUxLn7OwYnfyxEcRsFvYVZocVzvTTV2hibjGxrGE21OvwhtJo9+w86+A
-         j+oH76LHVblf8VavTnEdZCYypMbkuwdwC+/0o39rs51mxEogUd27Hg139RueHN9bWPLv
-         AKtg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7QNBUZZE9v37Yw4wxdBeBfJJuMUuoGcgIB3l2VFvDaMQEUgbYrLb+1cKx/+GIpTKDttVyAycqPOlPiFzlrt0wHNzVFivNpuft8LeifF56eafwdErTv9BWGT/a4HzDcZqM9VsMger3yA==
-X-Gm-Message-State: AOJu0YxhkPpxU+4e7YMsrYlAKwOxkc4WAGP7BoJkqv2uSeUz/Diq1tx5
-	0/s7yGJ8ht0wYNcIS8gOAUYNy5CMot1tVZ/2GxHWyQY34PbJTY7k
-X-Google-Smtp-Source: AGHT+IHBTTZyGAjFLKKGRDnrtRxXSLYDLYujtC0zC79VRvwIGx29Betppcd4H0MdIE0BeqapvW25yQ==
-X-Received: by 2002:a17:906:52d2:b0:a6e:f7ee:b1fa with SMTP id a640c23a62f3a-a7242e13207mr406032166b.72.1719319316725;
-        Tue, 25 Jun 2024 05:41:56 -0700 (PDT)
-Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7251ace5besm234139266b.179.2024.06.25.05.41.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 05:41:56 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
-Date: Tue, 25 Jun 2024 14:41:54 +0200
-To: Baoquan He <bhe@redhat.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Nick Bowler <nbowler@draconx.ca>,
-	Hailong Liu <hailong.liu@oppo.com>, linux-kernel@vger.kernel.org,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	linux-mm@kvack.org, sparclinux@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
-Message-ID: <Znq7EtiOnV8YLHDK@pc638.lan>
-References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
- <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
- <20240621033005.6mccm7waduelb4m5@oppo.com>
- <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
- <ZnVLbCCkvhf5GaTf@pc636>
- <ZnWICsPgYuBlrWlt@MiWiFi-R3L-srv>
- <Znljtv5n-6EBgpsF@pc636>
- <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
+	s=arc-20240116; t=1719319405; c=relaxed/simple;
+	bh=BytIXqEwQC1JIkV5nus82zZgBpx8sKpOUW74s1/WyBs=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=k+z9KV+n7B0T5MP7YGree0EyQsDKz3dmeLfVgBJbx0Pjgjd4WdxXLGKtsZ4x1x00cfHFBvmOmmIehkPzBIShrlYvrNDzbQPCkUnNyPFtorvgzmSBGr1l0vxW6XRL2p+S1ChdDxgBt057BRPJnuyHHZPuf42Hyvs+WnVvYatQ+k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TLZWbw3r; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
+Received: from pps.filterd (m0353726.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PBvhYu030315;
+	Tue, 25 Jun 2024 12:43:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-type:mime-version:subject:from:in-reply-to:date:cc
+	:content-transfer-encoding:message-id:references:to; s=pp1; bh=l
+	MCw3Zr8bTjh4mqMUsvWrONi+bcQl/JDNBQHOpwyAWI=; b=TLZWbw3r3CuJnzbwy
+	ktpIBK4DkTve8oaKl5tYfM5ovUZIqf4Vpc5/rqDUGMICa87AgCu4atNNlmPRjGqq
+	E4hIs4k2X9rLitd/S0X0Q0W68dnLsGCWJnxeUBHhDm2sdLjHjJlGGE3MOzLoWYRd
+	nI8Bhbk42B+wh/7nxeV3MqLbiZiZc5SzhggSOJGGlOnVSMTz0c+0kZL8NFKRDIef
+	AaOvhzhc5gGlSjLAweSI1M261AFYMixMvNQeE+aqM/vQ1qWmEG669t5wt2Xn9+mE
+	pZzvdM7/ucJbI8to3f3HGxTaYmpZiuIxFlafZ/Tkbplncv7vs5T9yYxdzxqapnLF
+	DXO2Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yytuqrknh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 12:43:13 +0000 (GMT)
+Received: from m0353726.ppops.net (m0353726.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45PChChE014052;
+	Tue, 25 Jun 2024 12:43:12 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 3yytuqrknc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 12:43:12 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45P9awP2000397;
+	Tue, 25 Jun 2024 12:43:11 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxbn35yhe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 12:43:11 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45PCh6kJ53084574
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 25 Jun 2024 12:43:08 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 18DF420043;
+	Tue, 25 Jun 2024 12:43:06 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9D0C020040;
+	Tue, 25 Jun 2024 12:43:03 +0000 (GMT)
+Received: from smtpclient.apple (unknown [9.43.30.249])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue, 25 Jun 2024 12:43:03 +0000 (GMT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.600.62\))
+Subject: Re: [V4 05/16] tools/perf: Add disasm_line__parse to parse raw
+ instruction for powerpc
+From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+In-Reply-To: <ZnpYBvXLhyAqZzvh@google.com>
+Date: Tue, 25 Jun 2024 18:12:51 +0530
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Ian Rogers <irogers@google.com>,
+        Segher Boessenkool <segher@kernel.crashing.org>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-perf-users <linux-perf-users@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>, akanksha@linux.ibm.com,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Kajol Jain <kjain@linux.ibm.com>,
+        Disha Goel <disgoel@linux.vnet.ibm.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <E2A1A4AA-E344-4B42-86CE-E0EDD82A398F@linux.vnet.ibm.com>
+References: <20240614172631.56803-1-atrajeev@linux.vnet.ibm.com>
+ <20240614172631.56803-6-atrajeev@linux.vnet.ibm.com>
+ <ZnpYBvXLhyAqZzvh@google.com>
+To: Namhyung Kim <namhyung@kernel.org>
+X-Mailer: Apple Mail (2.3774.600.62)
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: w71VKuhSdEP9tjFrizwxxvtPffvOcCSa
+X-Proofpoint-ORIG-GUID: RYBoERuCe6STEsWk4xJCtKCgQ2AwCZan
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_07,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 spamscore=0
+ bulkscore=0 priorityscore=1501 impostorscore=0 mlxlogscore=999
+ phishscore=0 clxscore=1015 mlxscore=0 suspectscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406250091
 
-On Tue, Jun 25, 2024 at 11:30:33AM +0800, Baoquan He wrote:
-> On 06/24/24 at 02:16pm, Uladzislau Rezki wrote:
-> > On Fri, Jun 21, 2024 at 10:02:50PM +0800, Baoquan He wrote:
-> > > On 06/21/24 at 11:44am, Uladzislau Rezki wrote:
-> > > > On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
-> > > > > On 06/21/24 at 11:30am, Hailong Liu wrote:
-> > > > > > On Thu, 20. Jun 14:02, Nick Bowler wrote:
-> > > > > > > On 2024-06-20 02:19, Nick Bowler wrote:
-> > > ......
-> > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > > index be2dd281ea76..18e87cafbaf2 100644
-> > > > > --- a/mm/vmalloc.c
-> > > > > +++ b/mm/vmalloc.c
-> > > > > @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
-> > > > >  static struct xarray *
-> > > > >  addr_to_vb_xa(unsigned long addr)
-> > > > >  {
-> > > > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > > > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-> > > > >  
-> > > > >  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
-> > > > >  }
-> > > > > 
-> > > > The problem i see is about not-initializing of the:
-> > > > <snip>
-> > > > 	for_each_possible_cpu(i) {
-> > > > 		struct vmap_block_queue *vbq;
-> > > > 		struct vfree_deferred *p;
-> > > > 
-> > > > 		vbq = &per_cpu(vmap_block_queue, i);
-> > > > 		spin_lock_init(&vbq->lock);
-> > > > 		INIT_LIST_HEAD(&vbq->free);
-> > > > 		p = &per_cpu(vfree_deferred, i);
-> > > > 		init_llist_head(&p->list);
-> > > > 		INIT_WORK(&p->wq, delayed_vfree_work);
-> > > > 		xa_init(&vbq->vmap_blocks);
-> > > > 	}
-> > > > <snip>
-> > > > 
-> > > > correctly or fully. It is my bad i did not think that CPUs in a possible mask
-> > > > can be non sequential :-/
-> > > > 
-> > > > nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
-> > > > when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
-> > > 
-> > > I checked the generic version of setup_nr_cpu_ids(), from codes, they
-> > > are different with my understanding.
-> > > 
-> > > kernel/smp.c
-> > > void __init setup_nr_cpu_ids(void)
-> > > {
-> > >         set_nr_cpu_ids(find_last_bit(cpumask_bits(cpu_possible_mask), NR_CPUS) + 1);
-> > > }
-> > > 
-> > I see that it is not a weak function, so it is generic, thus the
-> > behavior can not be overwritten, which is great. This does what we
-> > need.
-> > 
-> > Thank you for checking this you are right!
-> 
-> Thanks for confirming this.
-> 
-> > 
-> > Then it is just a matter of proper initialization of the hash:
-> > 
-> > <snip>
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index 5d3aa2dc88a8..1733946f7a12 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -5087,7 +5087,13 @@ void __init vmalloc_init(void)
-> >          */
-> >         vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
-> >  
-> > -       for_each_possible_cpu(i) {
-> > +       /*
-> > +        * We use "nr_cpu_ids" here because some architectures
-> > +        * may have "gaps" in cpu-possible-mask. It is OK for
-> > +        * per-cpu approaches but is not OK for cases where it
-> > +        * can be used as hashes also.
-> > +        */
-> > +       for (i = 0; i < nr_cpu_ids; i++) {
-> 
-> I was wrong about earlier comments. Percpu variables are only available
-> on possible CPUs. For those nonexistent possible CPUs of static percpu
-> variable vmap_block_queue, there isn't memory allocated and mapped for
-> them. So accessing into them will cause problem.
-> 
-> In Nick's case, there are only CPU0, CPU2. If you access
-> &per_cpu(vmap_block_queue, 1), problem occurs. So I think we may need to
-> change to take other way for vbq. E.g:
-> 1) Storing the vb in the nearest neighbouring vbq on possible CPU as
->    below draft patch;
-> 2) create an normal array to store vbq of size nr_cpu_ids, then we can
->    store/fetch each vbq on non-possible CPU?
-> 
-See below how the patch look like if we switch to hash array:
 
-<snip>
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 45e1506d58c3..a8bcd9ceec2d 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -2501,7 +2501,8 @@ struct vmap_block {
- };
- 
- /* Queue of free and dirty vmap blocks, for allocation and flushing purposes */
--static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
-+static struct vmap_block_queue *vmap_block_queue;
-+static bool vmap_block_queue_initialized;
- 
- /*
-  * In order to fast access to any "vmap_block" associated with a
-@@ -2542,9 +2543,9 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
- static struct xarray *
- addr_to_vb_xa(unsigned long addr)
- {
--	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-+	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
- 
--	return &per_cpu(vmap_block_queue, index).vmap_blocks;
-+	return &vmap_block_queue[index].vmap_blocks;
- }
- 
- /*
-@@ -2626,7 +2627,7 @@ static void *new_vmap_block(unsigned int order, gfp_t gfp_mask)
- 		return ERR_PTR(err);
- 	}
- 
--	vbq = raw_cpu_ptr(&vmap_block_queue);
-+	vbq = &vmap_block_queue[raw_smp_processor_id()];
- 	spin_lock(&vbq->lock);
- 	list_add_tail_rcu(&vb->free_list, &vbq->free);
- 	spin_unlock(&vbq->lock);
-@@ -2657,6 +2658,9 @@ static bool purge_fragmented_block(struct vmap_block *vb,
- 		struct vmap_block_queue *vbq, struct list_head *purge_list,
- 		bool force_purge)
- {
-+	if (!vmap_block_queue_initialized)
-+		return false;
-+
- 	if (vb->free + vb->dirty != VMAP_BBMAP_BITS ||
- 	    vb->dirty == VMAP_BBMAP_BITS)
- 		return false;
-@@ -2692,7 +2696,12 @@ static void purge_fragmented_blocks(int cpu)
- {
- 	LIST_HEAD(purge);
- 	struct vmap_block *vb;
--	struct vmap_block_queue *vbq = &per_cpu(vmap_block_queue, cpu);
-+	struct vmap_block_queue *vbq;
-+
-+	if (!vmap_block_queue_initialized)
-+		return;
-+
-+	vbq = &vmap_block_queue[cpu];
- 
- 	rcu_read_lock();
- 	list_for_each_entry_rcu(vb, &vbq->free, free_list) {
-@@ -2715,7 +2724,7 @@ static void purge_fragmented_blocks_allcpus(void)
- {
- 	int cpu;
- 
--	for_each_possible_cpu(cpu)
-+	for (cpu = 0; cpu < nr_cpu_ids; cpu++)
- 		purge_fragmented_blocks(cpu);
- }
- 
-@@ -2739,7 +2748,7 @@ static void *vb_alloc(unsigned long size, gfp_t gfp_mask)
- 	order = get_order(size);
- 
- 	rcu_read_lock();
--	vbq = raw_cpu_ptr(&vmap_block_queue);
-+	vbq = &vmap_block_queue[raw_smp_processor_id()];
- 	list_for_each_entry_rcu(vb, &vbq->free, free_list) {
- 		unsigned long pages_off;
- 
-@@ -2822,13 +2831,13 @@ static void _vm_unmap_aliases(unsigned long start, unsigned long end, int flush)
- 	LIST_HEAD(purge_list);
- 	int cpu;
- 
--	if (unlikely(!vmap_initialized))
-+	if (unlikely(!vmap_initialized || !vmap_block_queue_initialized))
- 		return;
- 
- 	mutex_lock(&vmap_purge_lock);
- 
--	for_each_possible_cpu(cpu) {
--		struct vmap_block_queue *vbq = &per_cpu(vmap_block_queue, cpu);
-+	for (cpu = 0; cpu < nr_cpu_ids; cpu++) {
-+		struct vmap_block_queue *vbq = &vmap_block_queue[cpu];
- 		struct vmap_block *vb;
- 		unsigned long idx;
- 
-@@ -2910,7 +2919,7 @@ void vm_unmap_ram(const void *mem, unsigned int count)
- 
- 	kasan_poison_vmalloc(mem, size);
- 
--	if (likely(count <= VMAP_MAX_ALLOC)) {
-+	if (likely(count <= VMAP_MAX_ALLOC) && vmap_block_queue_initialized) {
- 		debug_check_no_locks_freed(mem, size);
- 		vb_free(addr, size);
- 		return;
-@@ -2946,7 +2955,7 @@ void *vm_map_ram(struct page **pages, unsigned int count, int node)
- 	unsigned long addr;
- 	void *mem;
- 
--	if (likely(count <= VMAP_MAX_ALLOC)) {
-+	if (likely(count <= VMAP_MAX_ALLOC && vmap_block_queue_initialized)) {
- 		mem = vb_alloc(size, GFP_KERNEL);
- 		if (IS_ERR(mem))
- 			return NULL;
-@@ -5087,17 +5096,28 @@ void __init vmalloc_init(void)
- 	 */
- 	vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
- 
-+	vmap_block_queue = kmalloc_array(
-+		nr_cpu_ids, sizeof(struct vmap_block_queue), GFP_NOWAIT);
-+
-+	if (vmap_block_queue) {
-+		for (i = 0; i < nr_cpu_ids; i++) {
-+			struct vmap_block_queue *vbq =
-+				&vmap_block_queue[i];
-+
-+			spin_lock_init(&vbq->lock);
-+			INIT_LIST_HEAD(&vbq->free);
-+			xa_init(&vbq->vmap_blocks);
-+		}
-+	} else {
-+		pr_err("Failed to allocate vmap_block_queue array, use fallback path!\n");
-+	}
-+
- 	for_each_possible_cpu(i) {
--		struct vmap_block_queue *vbq;
--		struct vfree_deferred *p;
-+		struct vfree_deferred *p =
-+			&per_cpu(vfree_deferred, i);
- 
--		vbq = &per_cpu(vmap_block_queue, i);
--		spin_lock_init(&vbq->lock);
--		INIT_LIST_HEAD(&vbq->free);
--		p = &per_cpu(vfree_deferred, i);
- 		init_llist_head(&p->list);
- 		INIT_WORK(&p->wq, delayed_vfree_work);
--		xa_init(&vbq->vmap_blocks);
- 	}
- 
- 	/*
-@@ -5125,6 +5145,9 @@ void __init vmalloc_init(void)
- 	vmap_init_free_space();
- 	vmap_initialized = true;
- 
-+	if (vmap_block_queue)
-+		vmap_block_queue_initialized = true;
-+
- 	vmap_node_shrinker = shrinker_alloc(0, "vmap-node");
- 	if (!vmap_node_shrinker) {
- 		pr_err("Failed to allocate vmap-node shrinker!\n");
-<snip>
 
-Any thoughts?
+> On 25 Jun 2024, at 11:09=E2=80=AFAM, Namhyung Kim =
+<namhyung@kernel.org> wrote:
+>=20
+> On Fri, Jun 14, 2024 at 10:56:20PM +0530, Athira Rajeev wrote:
+>> Currently, the perf tool infrastructure disasm_line__parse function =
+to
+>> parse disassembled line.
+>>=20
+>> Example snippet from objdump:
+>> objdump  --start-address=3D<address> --stop-address=3D<address>  -d =
+--no-show-raw-insn -C <vmlinux>
+>>=20
+>> c0000000010224b4: lwz     r10,0(r9)
+>>=20
+>> This line "lwz r10,0(r9)" is parsed to extract instruction name,
+>> registers names and offset. In powerpc, the approach for data type
+>> profiling uses raw instruction instead of result from objdump to =
+identify
+>> the instruction category and extract the source/target registers.
+>>=20
+>> Example: 38 01 81 e8     ld      r4,312(r1)
+>>=20
+>> Here "38 01 81 e8" is the raw instruction representation. Add =
+function
+>> "disasm_line__parse_powerpc" to handle parsing of raw instruction.
+>> Also update "struct disasm_line" to save the binary code/
+>> With the change, function captures:
+>>=20
+>> line -> "38 01 81 e8     ld      r4,312(r1)"
+>> raw instruction "38 01 81 e8"
+>>=20
+>> Raw instruction is used later to extract the reg/offset fields. =
+Macros
+>> are added to extract opcode and register fields. "struct disasm_line"
+>> is updated to carry union of "bytes" and "raw_insn" of 32 bit to =
+carry raw
+>> code (raw). Function "disasm_line__parse_powerpc fills the raw
+>> instruction hex value and can use macros to get opcode. There is no
+>> changes in existing code paths, which parses the disassembled code.
+>> The architecture using the instruction name and present approach is
+>> not altered. Since this approach targets powerpc, the macro
+>> implementation is added for powerpc as of now.
+>>=20
+>> Since the disasm_line__parse is used in other cases (perf annotate) =
+and
+>> not only data tye profiling, the powerpc callback includes changes to
+>> work with binary code as well as mneumonic representation. Also in =
+case
+>> if the DSO read fails and libcapstone is not supported, the approach
+>> fallback to use objdump as option. Hence as option, patch has changes =
+to
+>> ensure objdump option also works well.
+>>=20
+>> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+>> ---
+>> tools/include/linux/string.h                  |  2 +
+>> tools/lib/string.c                            | 13 ++++
+>> .../perf/arch/powerpc/annotate/instructions.c |  1 +
+>> tools/perf/arch/powerpc/util/dwarf-regs.c     |  9 +++
+>> tools/perf/util/annotate.h                    |  5 +-
+>> tools/perf/util/disasm.c                      | 59 =
+++++++++++++++++++-
+>> 6 files changed, 87 insertions(+), 2 deletions(-)
+>>=20
+>> diff --git a/tools/include/linux/string.h =
+b/tools/include/linux/string.h
+>> index db5c99318c79..0acb1fc14e19 100644
+>> --- a/tools/include/linux/string.h
+>> +++ b/tools/include/linux/string.h
+>> @@ -46,5 +46,7 @@ extern char * __must_check skip_spaces(const char =
+*);
+>>=20
+>> extern char *strim(char *);
+>>=20
+>> +extern void remove_spaces(char *s);
+>> +
+>> extern void *memchr_inv(const void *start, int c, size_t bytes);
+>> #endif /* _TOOLS_LINUX_STRING_H_ */
+>> diff --git a/tools/lib/string.c b/tools/lib/string.c
+>> index 8b6892f959ab..3126d2cff716 100644
+>> --- a/tools/lib/string.c
+>> +++ b/tools/lib/string.c
+>> @@ -153,6 +153,19 @@ char *strim(char *s)
+>> return skip_spaces(s);
+>> }
+>>=20
+>> +/*
+>> + * remove_spaces - Removes whitespaces from @s
+>> + */
+>> +void remove_spaces(char *s)
+>> +{
+>> + char *d =3D s;
+>> +
+>> + do {
+>> + while (*d =3D=3D ' ')
+>> + ++d;
+>> + } while ((*s++ =3D *d++));
+>> +}
+>> +
+>> /**
+>>  * strreplace - Replace all occurrences of character in string.
+>>  * @s: The string to operate on.
+>> diff --git a/tools/perf/arch/powerpc/annotate/instructions.c =
+b/tools/perf/arch/powerpc/annotate/instructions.c
+>> index a3f423c27cae..d57fd023ef9c 100644
+>> --- a/tools/perf/arch/powerpc/annotate/instructions.c
+>> +++ b/tools/perf/arch/powerpc/annotate/instructions.c
+>> @@ -55,6 +55,7 @@ static int powerpc__annotate_init(struct arch =
+*arch, char *cpuid __maybe_unused)
+>> arch->initialized =3D true;
+>> arch->associate_instruction_ops =3D =
+powerpc__associate_instruction_ops;
+>> arch->objdump.comment_char      =3D '#';
+>> + annotate_opts.show_asm_raw =3D true;
+>=20
+> Right, I think this will add the raw insn in the output of objdump, =
+no?
+> Why not using the information?
 
---
-Uladzislau Rezki
+Shared response in previous patch
+>=20
+>> }
+>>=20
+>> return 0;
+>> diff --git a/tools/perf/arch/powerpc/util/dwarf-regs.c =
+b/tools/perf/arch/powerpc/util/dwarf-regs.c
+>> index 0c4f4caf53ac..430623ca5612 100644
+>> --- a/tools/perf/arch/powerpc/util/dwarf-regs.c
+>> +++ b/tools/perf/arch/powerpc/util/dwarf-regs.c
+>> @@ -98,3 +98,12 @@ int regs_query_register_offset(const char *name)
+>> return roff->ptregs_offset;
+>> return -EINVAL;
+>> }
+>> +
+>> +#define PPC_OP(op) (((op) >> 26) & 0x3F)
+>> +#define PPC_RA(a) (((a) >> 16) & 0x1f)
+>> +#define PPC_RT(t) (((t) >> 21) & 0x1f)
+>> +#define PPC_RB(b) (((b) >> 11) & 0x1f)
+>> +#define PPC_D(D) ((D) & 0xfffe)
+>> +#define PPC_DS(DS) ((DS) & 0xfffc)
+>> +#define OP_LD 58
+>> +#define OP_STD 62
+>> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
+>> index d5c821c22f79..9ba772f46270 100644
+>> --- a/tools/perf/util/annotate.h
+>> +++ b/tools/perf/util/annotate.h
+>> @@ -113,7 +113,10 @@ struct annotation_line {
+>> struct disasm_line {
+>> struct ins  ins;
+>> struct ins_operands  ops;
+>> -
+>> + union {
+>> + u8 bytes[4];
+>> + u32 raw_insn;
+>> + } raw;
+>> /* This needs to be at the end. */
+>> struct annotation_line  al;
+>> };
+>> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+>> index b81cdcf4d6b4..1e8568738b38 100644
+>> --- a/tools/perf/util/disasm.c
+>> +++ b/tools/perf/util/disasm.c
+>> @@ -45,6 +45,7 @@ static int call__scnprintf(struct ins *ins, char =
+*bf, size_t size,
+>>=20
+>> static void ins__sort(struct arch *arch);
+>> static int disasm_line__parse(char *line, const char **namep, char =
+**rawp);
+>> +static int disasm_line__parse_powerpc(struct disasm_line *dl);
+>>=20
+>> static __attribute__((constructor)) void symbol__init_regexpr(void)
+>> {
+>> @@ -844,6 +845,59 @@ static int disasm_line__parse(char *line, const =
+char **namep, char **rawp)
+>> return -1;
+>> }
+>>=20
+>> +/*
+>> + * Parses the result captured from symbol__disassemble_*
+>> + * Example, line read from DSO file in powerpc:
+>> + * line:    38 01 81 e8
+>> + * opcode: fetched from arch specific get_opcode_insn
+>> + * rawp_insn: e8810138
+>> + *
+>> + * rawp_insn is used later to extract the reg/offset fields
+>> + */
+>> +#define PPC_OP(op) (((op) >> 26) & 0x3F)
+>> +
+>> +static int disasm_line__parse_powerpc(struct disasm_line *dl)
+>> +{
+>> + char *line =3D dl->al.line;
+>> + const char **namep =3D &dl->ins.name;
+>> + char **rawp =3D &dl->ops.raw;
+>> + char tmp, *tmp_raw_insn, *name_raw_insn =3D skip_spaces(line);
+>> + char *name =3D skip_spaces(name_raw_insn + 11);
+>> + int objdump =3D 0;
+>> +
+>> + if (strlen(line) > 11)
+>> + objdump =3D 1;
+>> +
+>> + if (name_raw_insn[0] =3D=3D '\0')
+>> + return -1;
+>> +
+>> + if (objdump) {
+>> + *rawp =3D name + 1;
+>> + while ((*rawp)[0] !=3D '\0' && !isspace((*rawp)[0]))
+>> + ++*rawp;
+>> + tmp =3D (*rawp)[0];
+>> + (*rawp)[0] =3D '\0';
+>> +
+>> + *namep =3D strdup(name);
+>> + if (*namep =3D=3D NULL)
+>> + return -1;
+>> +
+>> + (*rawp)[0] =3D tmp;
+>> + *rawp =3D strim(*rawp);
+>> + } else
+>> + *namep =3D "";
+>> +
+>> + tmp_raw_insn =3D strdup(name_raw_insn);
+>> + tmp_raw_insn[11] =3D '\0';
+>> + remove_spaces(tmp_raw_insn);
+>> +
+>> + dl->raw.raw_insn =3D strtol(tmp_raw_insn, NULL, 16);
+>> + if (objdump)
+>> + dl->raw.raw_insn =3D be32_to_cpu(strtol(tmp_raw_insn, NULL, 16));
+>=20
+> Hmm.. can you use a sscanf() instead?
+>=20
+>  sscanf(line, "%x %x %x %x", &dl->raw.bytes[0], &dl->raw.bytes[1], =
+...)
+>=20
+> Thanks,
+> Namhyung
+>=20
+Sure will address in V5
+
+Thanks
+Athira
+>> +
+>> + return 0;
+>> +}
+>> +
+>> static void annotation_line__init(struct annotation_line *al,
+>>   struct annotate_args *args,
+>>   int nr)
+>> @@ -897,7 +951,10 @@ struct disasm_line *disasm_line__new(struct =
+annotate_args *args)
+>> goto out_delete;
+>>=20
+>> if (args->offset !=3D -1) {
+>> - if (disasm_line__parse(dl->al.line, &dl->ins.name, &dl->ops.raw) < =
+0)
+>> + if (arch__is(args->arch, "powerpc")) {
+>> + if (disasm_line__parse_powerpc(dl) < 0)
+>> + goto out_free_line;
+>> + } else if (disasm_line__parse(dl->al.line, &dl->ins.name, =
+&dl->ops.raw) < 0)
+>> goto out_free_line;
+>>=20
+>> disasm_line__init_ins(dl, args->arch, &args->ms);
+>> --=20
+>> 2.43.0
+
 
 
