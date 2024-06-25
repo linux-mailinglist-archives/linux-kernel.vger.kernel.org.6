@@ -1,58 +1,56 @@
-Return-Path: <linux-kernel+bounces-229151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AA67916BE6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:07:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9668916C47
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:13:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17C602809CA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:07:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F640B210F3
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:13:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B628C17E8EA;
-	Tue, 25 Jun 2024 15:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0CAE1850BE;
+	Tue, 25 Jun 2024 15:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/FAZIg5"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EC7JKyaV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02BEB17E45F;
-	Tue, 25 Jun 2024 15:02:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BA7171668;
+	Tue, 25 Jun 2024 15:04:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719327749; cv=none; b=kRIK1UyOQgBuAaxoa+L+HVpi6uOoKIDn98wWr7KNZ/fAlT0kfpDCbgNT/xfRTaoS8OEhl7I81q/tTj05tCWppSUXmdMKA927CLLiU/vTdytAg+P+AJd59NyW4qNyfn+IzdTfP38p81NdUkgswJCkpbs0gFhWNO9tTaQE12IygHI=
+	t=1719327853; cv=none; b=VO/n4UG6X7I64IbaLd0Zba9ykmkaoBpbx1Q8E372+kk0QHkDHG1xWtCjDA/Q+ve65VU/mP+G/cSBdxLJTP5C48+El9IEY7JRSwHyN71D7Wzpo4gVuVl0sDkTDr7k+Sdkf2OC4wsEKYuQPRMmwhAlOfKHemUj0o48wzw/UA+vVIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719327749; c=relaxed/simple;
-	bh=cQwiOqtjV6/LzwjVLbeFZMGFz4XLbTBs1wQo2HzADdc=;
+	s=arc-20240116; t=1719327853; c=relaxed/simple;
+	bh=JCvd4rZMOaaN102kR77kI64aSz22B2UiXs5usMz1fmM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZA5QymXGU/kPiERDPkrey4xYyiYCXHDJn+nWbFWTUN6F9uYnn/b25YzzFPZQ2zsmTnAtwET5mEUXwTe7wxLiU8LgtTXEcv1A+fTvHc0yyZEFzDFMnCyq1OWlnOkOufJ7mjeQpvzyEROyulqy6NXM0oEr7HxHVMCIZZwEAZnTRHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/FAZIg5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1F0FC4AF09;
-	Tue, 25 Jun 2024 15:02:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719327748;
-	bh=cQwiOqtjV6/LzwjVLbeFZMGFz4XLbTBs1wQo2HzADdc=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=cpKzEXBDKlHGSBlHalmXbcJZBT1uvbMmfncchHT49CCJriKup+iu0BmvZ+RQirZqphSJ2nn+SIwiSZSehrUctdxZ5P+ldJ2DOnGLGFGoOlj8DdN7BKTrpMeq//ZQeel8HaDWhr8+4WTavofRxgvXtZAu2GLpVogiHtsR5hB8FkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EC7JKyaV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2ECECC32781;
+	Tue, 25 Jun 2024 15:04:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1719327852;
+	bh=JCvd4rZMOaaN102kR77kI64aSz22B2UiXs5usMz1fmM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=g/FAZIg5g9GspsRS1oZEUx1XMb7JnV6OPKtwjj7pzqlVVTB1YRhHRxjcWtSMN9o7Y
-	 cxRrgpPomRRAopypxPfFIGKcXfiaUB6xmCM3j0WDYtCQsN5QKB2ISGDa5JFrbfKpjj
-	 GvwNiLfqWihb+V3LHzIknd7QAMIXwU0KP/blfj3kogEzfR8tmV/gXL5sS0w8G9hUNV
-	 car9avFTq71nw51eIbox7DSAU9X+SiyW+fqDAwpaftpWSxmUhY2PQBOwOhOcgVUqVc
-	 1Yh01wHIcKzraKAbm9DqLSdA9q96hiVWbzR+VEvJdANSF8KcHuUHpnUdJgMxxJ30vo
-	 8pP5iKqEvd3lw==
-Date: Tue, 25 Jun 2024 17:02:25 +0200
-From: Benjamin Tissoires <bentiss@kernel.org>
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Luke Jones <luke@ljones.dev>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] hid-asus: use hid for brightness control on
- keyboard
-Message-ID: <efd7izqwobohv644j63oeruf5suwo4gcw7r5wvvh5koqn7lwgu@3m3aczbbwhrg>
-References: <20240607040532.1074379-1-luke@ljones.dev>
- <20240607040532.1074379-2-luke@ljones.dev>
- <dd0a211a-bef1-4eb2-8d1f-2d63799af94c@app.fastmail.com>
- <9e4ee526-2b94-45f3-9fe9-0f1d0918916b@app.fastmail.com>
- <nycvar.YFH.7.76.2406191639360.24940@cbobk.fhfr.pm>
+	b=EC7JKyaV6zPO+6SOr+lxepS4w7pdtnBhuh4K7zl3YEa3Ni+Tbyu5JPN8BWCvf0CGg
+	 lCFDESG71WlabGvggULEKmMZl0tjSRejyMg0WquPCyn+BfwMGYggClqLLE0D4gqTTJ
+	 tyzMDr8xxE8DU8vH6R/PWy/HToCQTFhmN94XIHZI=
+Date: Tue, 25 Jun 2024 17:04:10 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Guenter Roeck <linux@roeck-us.net>, chuck.lever@oracle.com
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+	lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+	f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+	allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 5.10 000/770] 5.10.220-rc1 review
+Message-ID: <2024062543-magnifier-licking-ab9e@gregkh>
+References: <20240618123407.280171066@linuxfoundation.org>
+ <e8c38e1c-1f9a-47e2-bdf5-55a5c6a4d4ec@roeck-us.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,32 +59,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.2406191639360.24940@cbobk.fhfr.pm>
+In-Reply-To: <e8c38e1c-1f9a-47e2-bdf5-55a5c6a4d4ec@roeck-us.net>
 
-On Jun 19 2024, Jiri Kosina wrote:
-> On Sun, 16 Jun 2024, Luke Jones wrote:
-> 
-> > > I thought this was finalised but I'm still getting conflicting 
-> > > reports. Please don't merge until I confirm the fix.
+On Tue, Jun 25, 2024 at 07:48:00AM -0700, Guenter Roeck wrote:
+> On 6/18/24 05:27, Greg Kroah-Hartman wrote:
+> > This is the start of the stable review cycle for the 5.10.220 release.
+> > There are 770 patches in this series, all will be posted as a response
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
 > > 
-> > This is ready for merge now. I have more confirmation that the single 
-> > patch with no adjustment to report_id works well.
+> > Responses should be made by Thu, 20 Jun 2024 12:32:00 +0000.
+> > Anything received after that time might be too late.
+> > 
 > 
-> Applied, thanks.
+> [ ... ]
+> > Chuck Lever <chuck.lever@oracle.com>
+> >      SUNRPC: Prepare for xdr_stream-style decoding on the server-side
+> > 
+> The ChromeOS patches robot reports a number of fixes for the patches
+> applied in 5.5.220. This is one example, later fixed with commit
+> 90bfc37b5ab9 ("SUNRPC: Fix svcxdr_init_decode's end-of-buffer
+> calculation"), but there are more. Are those fixes going to be
+> applied in a subsequent release of v5.10.y, was there a reason to
+> not include them, or did they get lost ?
 
-This patch should have been taken through the platform x86 tree [0].
+I saw this as well, but when I tried to apply a few, they didn't, so I
+was guessing that Chuck had merged them together into the series.
 
-I have now reverted it (and it was buggy, it failed to compile on
-linux-next).
+I'll defer to Chuck on this, this release was all his :)
 
-Cheers,
-Benjamin
+thanks,
 
-[0] https://lore.kernel.org/all/b0d8eebc-5abb-4ec0-898c-af7eedc730d9@redhat.com/
-
-> 
-> -- 
-> Jiri Kosina
-> SUSE Labs
-> 
+greg k-h
 
