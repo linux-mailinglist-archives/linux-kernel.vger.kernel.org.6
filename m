@@ -1,172 +1,152 @@
-Return-Path: <linux-kernel+bounces-228503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E63609160BF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:13:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 180F79160C1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 891A21F2232B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:13:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A2361C21F14
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:13:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A321474D4;
-	Tue, 25 Jun 2024 08:12:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC7A1465A5;
+	Tue, 25 Jun 2024 08:13:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="nmf1iQAk"
-Received: from mout.web.de (mout.web.de [212.227.15.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="XMtOsr/h"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96DA1474B8;
-	Tue, 25 Jun 2024 08:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D05A146A9D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719303177; cv=none; b=Pe/XKc7WE6Dr6C5hthJDn8+Sv/9Tnk/YI6gcU740uWMBJBmatXRZsMOsj/dVXNbxTR5JKv8GkKaOHAm+3fBoegPhkzQLIULubetwGEEfuWmskgXMRpOiehKY4ZaXKwfZ/AwcPnUTFtODkT0TPf9Zx23/ArhkD4BF544BZrfWR0U=
+	t=1719303222; cv=none; b=B/XaQI+n8LA4NqL0mc+snjOnqiD8RQOki4bimZlp1ZQdSTyScmF98biInhO9I0xW3y9f8IEwtyoI8BKj1bkOMSNyrLw7vSQ2Y2IdFWPxur5zoQPLCpIwrSfP8UIPMRlTQc4OA5XLIW7NwIzt+X0dyTDASSycZsLHedcx95blVMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719303177; c=relaxed/simple;
-	bh=HY90n2rA/wsU3QJAr+EqQ9x58uvEWF+QC5zUmnvnZkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E6dNQlDbn+oRKDdmxHkmCs0FfAI3STecH1shydrscGQ1h6H36VVbYyDXrtmJ91AX90bYlnGuW2XZ33vrGrgE2wHCIlai7MHZG518zkQFF8rcK7MLuFB+Umei7faAXa7ZxRZ8xM4mCa1t13uP5CQmh+85Tl0KsH6FMzjuRpasvBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=nmf1iQAk; arc=none smtp.client-ip=212.227.15.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719303164; x=1719907964; i=markus.elfring@web.de;
-	bh=YNj4CkeeBkR72sAAMLPDwBxJf6xr+bB5YaKr3Nb1xIg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=nmf1iQAk4wNrIHThdrqOradqCZkqe0cFbythnTtfTIUcw8hnXA9EOaGbaHsxuzpD
-	 XSevyl5+u8A3qP/NfnIIwl9C4jIKbIdf6kdiXL/WULQjBsKUb+h33a/HdzSu3v/7N
-	 FdVRUf4owDcZdeK828J6y5fby9zs+ImWZyx9XD7o0vu2cu5up6BDrEU10lKzaQZyz
-	 Oyta0ppMoppHPNtsvGGo+qiLfTtmy/OKTCNE4ob21Mrd7/CTibtcqLgp47suhBxYD
-	 ymgLZ46H6I9cNkn0L/W4IUsbXwSgGxdFPSmrDm2ya0iX9lolbJTBtjZRbBorWCHFb
-	 jgoGlXB+t2EqAKUxcw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1N45xt-1sV7uf2Ge1-00tkIk; Tue, 25
- Jun 2024 10:12:44 +0200
-Message-ID: <70139e84-478f-42cf-a94c-61266399b37f@web.de>
-Date: Tue, 25 Jun 2024 10:12:43 +0200
+	s=arc-20240116; t=1719303222; c=relaxed/simple;
+	bh=9SAmHOa8woEJd6bqs522/etuBIdKY9+ff5OOOKpu8MA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZYZYBGpdnZk1cLMhEdHUY9e98YGe9tMPPCmLw4Q4UBwHKIpX+N2ZzZTPqoNjfhHkhNBTNyewNgbHqOi2kt1Pfg7HvyrgvBXicYt0C6iKdMjlHOKDUhtzhVvIMUBtgoeA/z2aOo29aFXbDM3AYvbTlNME3esZxbDi2jw0sORbeSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=XMtOsr/h; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a16f4b8bfso7633a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:13:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719303218; x=1719908018; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bgl3I6j8ycb51DN1ZgmUcsw+f0o5GR0xCy3Wc2F1UOc=;
+        b=XMtOsr/h3TP4zTs7beumD/ufoCdZ6NaoT2XI3hFafrFgaNnpL/rkY531Q3uro/iA9i
+         9VKF9dbfd8JD9iVtHR0xCoPxxk43UjYKaq2ckk9B8cRAK42/DM566U+o7+/GRFxvezDl
+         P6xKMQLLMJeXEqk72zRspj2X9VFTvSNJhDwliYQVQF+XuYfuV8aIhhNBApVv7wPvOtlK
+         BGFNLsRugV002E9K63pnIahRmW9hqZea0hLP3ZWjyEmmg1mgOAV2+iBEPRBYXf/tl4Ni
+         Gp8mPio89xX/L3440U+uMaXWkNouZ+mX/YF4qcXNLvBZx59JakAmbwERH0WFWQmyRMc+
+         Axsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719303218; x=1719908018;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bgl3I6j8ycb51DN1ZgmUcsw+f0o5GR0xCy3Wc2F1UOc=;
+        b=XYq1PgVyRBelRkqfIz66dTgj2tvSVB6b6uJgaBGAoMxeKswfcuRnVIUtGrUWpQ7Sqd
+         CT0qs8gNytHCI2ZsNpf/oQwbahRHOMqhnqjXCorj5bw7LlZkh6k58tE2/caucSEhBysB
+         kHtOM0Wzt/GhrhguhwbMGgeCrSO9MFRrKPezbUe/VPfhJlO24qUzsUnuwFTrRq0VhGgs
+         sAi6fIOiE8vVwgnbu2MArzxA5tOcnhfoMIDNrfiBl+ImxB1X3TknoM7e5/T1/XQ1UKxZ
+         bYSeZSymjnNWecU25mz9u587kJWMl4pGuKNMmak4A2kvWoSPq2FXs5Pe198mkYHLkSv9
+         tN9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVzi1SMopDrySPGtfDuP6SklKmqFIRJg+0nXaLw1FktOno3ny3Z2aVyokkKC51bDYtAWoVYcMLM6dMn/bb9UbeNC+qcBZSgtNrsZveS
+X-Gm-Message-State: AOJu0YwWsSyX+2j5FEf2Uet57IG1jwo3Vz5tvF9J4bKQEOpg0v00NuBF
+	5tG7T24polspDWc/KOY1+00mc4zLLV+gaTZUp9uEubxoRUHts6Go1Wl8aQT+ZQhOLGAKdCos0Ku
+	YbBdXJzKbeXNK38dXu6p9eZUcy7kL0A0gwvBq
+X-Google-Smtp-Source: AGHT+IEkgrSzs5pEjpbU3XNhuj+CaLrt3Bh8A38qKaFpT4fJ0le4SSmJ0KHHI0P+QX1n1lLVDdVfOcMnd3jNUizszYw=
+X-Received: by 2002:a05:6402:524b:b0:57d:3d3b:f62f with SMTP id
+ 4fb4d7f45d1cf-57e97d18cecmr105989a12.1.1719303218017; Tue, 25 Jun 2024
+ 01:13:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] s390/raw3270: Handle memory allocation failures in
- raw3270_setup_console()
-To: Yunseong Kim <yskelg@gmail.com>, linux-s390@vger.kernel.org,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- =?UTF-8?Q?Christian_Borntr=C3=A4ger?= <borntraeger@linux.ibm.com>,
- Harald Freudenberger <freude@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, MichelleJin <shjy180909@gmail.com>
-References: <20240625013225.17076-2-yskelg@gmail.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240625013225.17076-2-yskelg@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+References: <20240625075214.462363-1-qq810974084@gmail.com>
+In-Reply-To: <20240625075214.462363-1-qq810974084@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Tue, 25 Jun 2024 10:13:24 +0200
+Message-ID: <CANn89iJPFY3Mv4tHbaoqjLGqHQ01t-3ZYwfgzu7x72i92QvrHQ@mail.gmail.com>
+Subject: Re: [PATCH] hippi: fix possible buffer overflow caused by bad DMA
+ value in rr_start_xmit()
+To: Huai-Yuan Liu <qq810974084@gmail.com>
+Cc: jes@trained-monkey.org, davem@davemloft.net, kuba@kernel.org, 
+	pabeni@redhat.com, linux-hippi@sunsite.dk, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:MuuM+gyeE9zulDfkpPbp8aj1hLSmPkNj2rvDUuiQ63kKVhTWvTW
- 1oDGtTdsWGkrlPA5XljeBJqIvKNs99URQkLg5PpsEO6JtliUYEtbWvcsj6LorqV+98O4oKq
- VIfcCVEbG7ZSClNaUcOQ84ZohKit33AroxSGGkXrITYI46Kep/+zRblZKGtlUuW38SXQfMa
- uymqHfmWxXhxX4/Io8Mww==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:SdUk+5bHDK0=;c6joiXyHBH6BAB+0PIDbZWEIcVp
- tQsYFxg5dO2PA7SrnPQtkwZowDtk+Ed2HkuHLttwWdJAqYF+VitrwH/64pSzuA9rH4F2ObXwu
- J5Lk+Yjou6YOW5Zc9ACSABxGcdUCR9/gUTgNWrQ92v4HOpLZd1kY6twBhSdK+3AIDomM/5yVf
- tjB6+6DuIsgfuevwX0sHbIuspS7x+uTkR1fLzWl027fzxlCKA7Jg/me9gzN3ktoQFkU7JJnG5
- fcU8SCtVNCaLYTPxmmrvVOeBQ+HhhfBXvQlJ/MvLfqvICLDmjmDoJjjfdBpHiF0LDCqgnNZ/L
- 4+QgeSSlwgjzH363xYfAbD/aUu08G+3Se5m4Ey+ztIMXbfz0rXyh/l9EBSK+14VPmm/q1ING7
- j8buo3FO6kO5dYotbFc/BpJ9cXmOTqrr6ccc/raNEl2EavpGQuLkuV9JWFzgUTiZoiKG+nMmX
- AWOi+0JPvpqU51yzZmRfjUauHZETFzztUasJunrREtL/5FMmZz4VCRwpdo4kWJyYSg+sMcJb0
- Q1qYbNA/I/6gliCgg/eyzrQidCOueikceih0cwJ96xsAqknuiyh636Qyzz5QXFTgpOTKhDo3a
- RTKhDYqqIop8E5O1DTnveGGfDH9cUSfE+ug/W21gX2oaRIk/OXJtqbwEvsSCcUaOrJad1+M8A
- SP7VeI5KOPIXIOrTq0zmW86UKb9jW9Q7Ye5t0r9rQ0Y02w23lsYEpQiJJHN2tM+1mqYGnuu+z
- /1bvLYe1r1py1++0bZWemYWmFXn6uDK7m6DSNrpT3Ob+yfgCk9LwmOZVHacoBuViEhdDYmBFf
- w429rpCeM1Ljb7XPigpww06GisuWoujEvvPBp9Z8Hp4SQ=
 
->               =E2=80=A6 Thus add corresponding return value checks.
-
-I suggest to move this sentence into a subsequent text line.
-
-
-> The allocated each memory areas are immediately overwritten by the calle=
-d
-> function zero-initialisation be omitted by calling the "kmalloc" instead=
-.
-
-It seems that you stumbled on wording difficulties according to my previou=
-s
-patch review suggestion.
-I find the intended change more appropriate for another update step.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc5#n168
-
-
-> After "ccw_device_enable_console" succeeds, set the bit raw3270 flag to
-> RAW3270_FLAGS_CONSOLE.
-
-Why do you find such an adjustment relevant here?
-
-
-> Fixes: 33403dcfcdfd ("[S390] 3270 console: convert from bootmem to slab"=
-)
-> Cc: linux-s390@vger.kernel.org
-
-Would you like to specify a =E2=80=9Cstable tag=E2=80=9D?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/stable-kernel-rules.rst?h=3Dv6.10-rc5#n34
-
-
-> ---
-
-I would appreciate a version description behind the marker line.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.10-rc5#n713
-
-
-=E2=80=A6
-> +++ b/drivers/s390/char/raw3270.c
-> @@ -811,18 +811,28 @@ struct raw3270 __init *raw3270_setup_console(void)
->  	if (IS_ERR(cdev))
->  		return ERR_CAST(cdev);
+On Tue, Jun 25, 2024 at 9:52=E2=80=AFAM Huai-Yuan Liu <qq810974084@gmail.co=
+m> wrote:
 >
-> -	rp =3D kzalloc(sizeof(*rp), GFP_KERNEL | GFP_DMA);
-> -	ascebc =3D kzalloc(256, GFP_KERNEL);
-> +	rp =3D kmalloc(sizeof(*rp), GFP_KERNEL | GFP_DMA);
-> +	if (!rp)
-> +		return ERR_PTR(-ENOMEM);
-> +	ascebc =3D kmalloc(256, GFP_KERNEL);
-> +	if (!ascebc) {
-> +		kfree(rp);
-> +		return ERR_PTR(-ENOMEM);
-> +	}
->  	rc =3D raw3270_setup_device(cdev, rp, ascebc);
-> -	if (rc)
-> +	if (rc) {
-> +		kfree(ascebc);
-> +		kfree(rp);
->  		return ERR_PTR(rc);
-=E2=80=A6
+> The value rrpriv->info->tx_ctrl is stored in DMA memory, and assigned to
+> txctrl. However, txctrl->pi can be modified by malicious hardware at any
+> time. Because txctrl->pi is assigned to index, buffer overflow may
+> occur when the code "rrpriv->tx_skbuff[index]" is executed.
 
-Please take further software design options better into account.
-
-A) goto chain
-   https://wiki.sei.cmu.edu/confluence/display/c/MEM12-C.+Consider+using+a=
-+goto+chain+when+leaving+a+function+on+error+when+using+and+releasing+reso=
-urces
-
-B) scope-based resource management
-   https://elixir.bootlin.com/linux/v6.10-rc5/source/include/linux/slab.h#=
-L282
+How txctrl->pi can be modified by malicious hardware ? This is host
+memory, not mapped to the device.
 
 
-Regards,
-Markus
+>
+> To address this issue, ensure index is checked.
+>
+> Fixes: f33a7251c825 ("hippi: switch from 'pci_' to 'dma_' API")
+
+Is it just me or this Fixes: tag is not relevant ?
+
+> Signed-off-by: Huai-Yuan Liu <qq810974084@gmail.com>
+> ---
+> V2:
+> * In patch V2, we remove the first condition in if statement and use
+>   netdev_err() instead of printk().
+>   Thanks Paolo Abeni for helpful advice.
+> V3:
+> * In patch V3, we stop the queue before return BUSY.
+>   Thanks to Jakub Kicinski for his advice.
+> V4:
+> * In patch V4, we revise the wording in the description.
+>   Thanks to Markus Elfring for pointing this out.
+> ---
+>  drivers/net/hippi/rrunner.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/net/hippi/rrunner.c b/drivers/net/hippi/rrunner.c
+> index aa8f828a0ae7..f4da342dd5cc 100644
+> --- a/drivers/net/hippi/rrunner.c
+> +++ b/drivers/net/hippi/rrunner.c
+> @@ -1440,6 +1440,12 @@ static netdev_tx_t rr_start_xmit(struct sk_buff *s=
+kb,
+>         txctrl =3D &rrpriv->info->tx_ctrl;
+>
+>         index =3D txctrl->pi;
+> +       if (index >=3D TX_RING_ENTRIES) {
+> +               netdev_err(dev, "invalid index value %02x\n", index);
+> +               netif_stop_queue(dev);
+> +               spin_unlock_irqrestore(&rrpriv->lock, flags);
+> +               return NETDEV_TX_BUSY;
+> +       }
+
+When seeing this patch, my initial reaction was : array_index_nospec()
+is missing.
+
+But then :
+
+If a malicious hardware can control txctl->pi, then it will cause
+multiple UAF or skb leaks if txctrl->pi
+is kept below TX_RING_ENTRIES.
+
+This driver should keep a trusted copy of txctrl->pi field, only seen by it=
+self,
+and not read it from the untrusted device.
+
+Otherwise, this patch is only adding a lot of confusion.
 
