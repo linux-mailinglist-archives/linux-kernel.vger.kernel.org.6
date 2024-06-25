@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-228827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7806916791
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:21:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33B75916796
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:22:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 051061C20BE7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:21:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E305E289672
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:22:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02644160860;
-	Tue, 25 Jun 2024 12:20:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C7E169AD0;
+	Tue, 25 Jun 2024 12:20:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QbE1c2mR"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kmBvHMwd"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1464215FA7C;
-	Tue, 25 Jun 2024 12:20:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A633161939;
+	Tue, 25 Jun 2024 12:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719318054; cv=none; b=K0XNGnbLEjxhKenCpyHJSXi+WjyfaSVkGfD0rKxhEo2VOz7UaybCTij/AlCRGlPJZPu4ZNAC5SPazTPyQrVYdGzoer4xK1wo8NZxAO/CmxJvEQZiVAXl3r1FvO2LWM5dB8L3JUUiB0g67/HBycTGnRS3XrcY0voOZBD4Jv9M7JY=
+	t=1719318056; cv=none; b=dlMHS2C5cYHQl6ONHniMQA8k/ss5Mcwis0AlNpZR3PzhbfcesB3zGj6QRFia0I+3Y/jQ3fDZmwLuGnBohvbhknM+loRDkeICUHUsdLsGci/EDZYdpFicQaZHVN2KJYwrcWKxm8eA9ePjv7U3nQb6aTEDVY5NPJ0LKDOTkD8WTOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719318054; c=relaxed/simple;
-	bh=J2toIYfZjWVGhCcUDQMoYDAtZSlmegm6/lShkywG0jw=;
+	s=arc-20240116; t=1719318056; c=relaxed/simple;
+	bh=P73M8VpHWi6rWtNMNmB91WVVJyjeCDL6mZ5Ab6UtVh4=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KjDkxTsDiCjWqDSau8LQ/koYy1C/eos83MsSk89rmU4sRy5s21NcnktBpDkTG4am0rL+oibuTAkbQ8pQW3OMK5cB+Rs/uZRj3a3w5gp9bEG5xe8Ar+tq4BxyTEWJLknN+fxF93HNhxBjVOCXFm/AyBSEs3IHFC27ySQIhVQoHow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QbE1c2mR; arc=none smtp.client-ip=209.85.210.179
+	 MIME-Version; b=LLFEgIMd8C8xrjXF7Iq+NgthxPOeIjaBk+y/KKGgtRe8ABvg9aE+ov8glTNLLarn+rn1LjmjZCDeqwY5lF//mnQVBmIX/VGv/3rRgxEIbsys2runyzL7OlXoiZ+f1273fFZ6hgN7PO/9Lv/DLjS083w108luEL9xIhcnqfzW8Qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kmBvHMwd; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-70673c32118so1881833b3a.3;
-        Tue, 25 Jun 2024 05:20:52 -0700 (PDT)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7067435d376so1703801b3a.0;
+        Tue, 25 Jun 2024 05:20:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719318052; x=1719922852; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719318055; x=1719922855; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=wGiKCgocnymn+yHqK126jXlfsSgcwH3iwTb3bF9H5Lg=;
-        b=QbE1c2mRzw6k1BvyIe2zHOXvOz8ieXo8wgVXC9zIrL2EajyQrjJ5Ci+N7783GsSLsk
-         VTh/g8Ej/PTJHg+Ni3DUARJDkDILfS+WMJwXhs+eSYNr9D9iuwOH+FluqrZgzGQvtA5V
-         LeDCPqvcv70oePdzpp+bEhXllsv6/eCt4tJ6s/z+OOQs3CFaO8n40T332bxjIlBE+zyN
-         mXliW76cw4J4fQnE6dh5aNk+ICIU++KZElA6KdFvpD7jA4WruygOdjLwD0cTemJL1FPX
-         oazef7Ms1KkebpMOwt6l/E16jtxID6uLOdIURhDPHZWqw5CHq9Hiz6Py9xJa1xrN7ZWv
-         +NJA==
+        bh=hnsLFvvKnkuLIEYBYSGcmnnHIoHb+QjNTsPSZ0S+a3o=;
+        b=kmBvHMwdTlzGd/F9FtBQs7gedK0hvLifeK8PvLc5hs6oo+4MXR8KeYB9uDvk1d/CCP
+         6ZA8kvi8gkzrMN1xp4Doct9xnmlX7fUufgX9IrrUwxGez25o74a4feXZH1L2h3wrxlPZ
+         BuGOFYskYTK3Zxf5/Ec07I+GfUWxpCcRFVgsRfEfaySwMyB0xtfjK80rQZw1VOLiycW2
+         7CeV2jQR3Y8xJQm8L+sQpldMyS95xTvD7HrYPy3H5ANDej8Ib1it4UnTPd5fE9pIQBQ3
+         pP+UPl4uICArHUIU9o2BVgHI6rh+mYcNBB1T2zeQ4AtIFEWVokEZtFF/DkzVOqnwaG2t
+         dcxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719318052; x=1719922852;
+        d=1e100.net; s=20230601; t=1719318055; x=1719922855;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=wGiKCgocnymn+yHqK126jXlfsSgcwH3iwTb3bF9H5Lg=;
-        b=Qs6nPi7CdZ36Q1X5JStMqT5DJKtSDf7cCo5mRfDv7Y1CqjG6giVygyxa4kKldg5B4k
-         SK0MHMUE8K081Isu2Fr+u22RAa9muorYRpfqN7UUOg7Kdo1xRZia7H23F6/5ScrT7Nue
-         w1gxXch18CkgzO0MGSRYkFDE7MH6bHj+J88h+UQe3dcbnR0a/YhMLH8YKJ+PXTCNz2Ml
-         tu+/DBDqKfh9gLOK4R2CpSnrXuVKnkMtN7D462EoLEa3jJPPzi9Iqla1OqtbTAZYXJk1
-         70I4SK1xwoDekTrUIMs2Iov3tmxp6BL3PrWia0iuwehMYvlSRUnyBa6APUnL550Dd1j6
-         UIJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUttLSMs7Kfj1SKBx0JDww211XDIY4vnNt5CU95bAZM0PRmS3epsc7FTffBjCN+7gHcHoS6O6TVpXPG3Y5HoCPZDzDa4TfUFC70EMnsPhjjtPsBqu54D4aL4pWcsvqYXsw7R8qGf9y6lg==
-X-Gm-Message-State: AOJu0YzcdsxRjel9Cct8F2LFpQU4FktxNd5LTQZz1uZeST+bEthTMQlw
-	o487wsVoLFQ25KlFZ4XJUZWYD6rcKmDpOU/Y69I3rcZVE0o7O3a3
-X-Google-Smtp-Source: AGHT+IEEPEHbmFKpDEhIVhgQPNqT88rVvqOmw5tPlFHrVpuX5vXa32ZKy/X+/Jzigl5dadnhr78QSA==
-X-Received: by 2002:a05:6a20:9695:b0:1bd:126e:b4c1 with SMTP id adf61e73a8af0-1bd126eb6c4mr3358782637.7.1719318052386;
-        Tue, 25 Jun 2024 05:20:52 -0700 (PDT)
+        bh=hnsLFvvKnkuLIEYBYSGcmnnHIoHb+QjNTsPSZ0S+a3o=;
+        b=vL3Cor0WBiH1E0KEK82aeKyebZSOdosf0+ifuS5u+W76VnpaE/73XOaXgWnn/XfykN
+         8ImBlPl8zQAmVenwZET51wQwWn6ETAVICdzwf7gmNaacjKEmQJTtr2aXHa23Dwj5LPnq
+         FXXjII4CTlMkfQ/WpDihprLW3Kc1WxaqoOJlMoFL3dFQUm15R3LBuKaoM8KE6HuuM+yv
+         ZlUjybprzb0E3VJ3acpiXz+31Hx4H3ZAjQdzhP9U13fhMT0G+J8gpMwm+d/guqADyOH0
+         0XlhnjP7+gF9818A0CNXQpMihdXFetBp4zw0eYq42n47J3WKNMrObC5n0E38mm1UhEeC
+         dppQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvNncvAxM2cwOqSJ/VyFQfR7avMry11qXjCiNXCsYBguZoNeH9O4ACqNIHRoqSYIlSXtk9A3nVgW9hobVEKCvOk1kc43IgAQvqfyGB2Rnd3jyyykV8HolsN/OvU+20FJ5CV5py6Q5cEQ==
+X-Gm-Message-State: AOJu0YwpN8F8QRxCVUdzd7jQe1+cGO6w9ZsVnzu6iQrn4PX1+nk9sEIa
+	7+2le4YPIIToIM6UU8e3CtqaXfiYMzduSE0p6Kd8gFsELfa4xAdU
+X-Google-Smtp-Source: AGHT+IFG02b15F29ywDsOysrQbOuQkofJIJGxS0Uwd9bSBE8/lC5gO/YXSe8CYc3kdE6bpQiugt1hQ==
+X-Received: by 2002:a05:6a00:1d8d:b0:706:79fa:37d1 with SMTP id d2e1a72fcca58-7069145a734mr4696954b3a.17.1719318054585;
+        Tue, 25 Jun 2024 05:20:54 -0700 (PDT)
 Received: from obliging-System-Product-Name.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70650e312e4sm7978146b3a.0.2024.06.25.05.20.50
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70650e312e4sm7978146b3a.0.2024.06.25.05.20.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 05:20:52 -0700 (PDT)
+        Tue, 25 Jun 2024 05:20:54 -0700 (PDT)
 From: Yang Chen <yangchen.openbmc@gmail.com>
 To: joel@jms.id.au,
 	andrew@codeconstruct.com.au,
@@ -76,9 +76,9 @@ To: joel@jms.id.au,
 	devicetree@vger.kernel.org
 Cc: Jerry.Lin@quantatw.com,
 	yangchen.openbmc@gmail.com
-Subject: [PATCH 06/17] ARM: dts: aspeed: minerva: enable mdio3
-Date: Tue, 25 Jun 2024 20:18:24 +0800
-Message-Id: <20240625121835.751013-7-yangchen.openbmc@gmail.com>
+Subject: [PATCH 07/17] ARM: dts: aspeed: minerva: remove unused bus and device
+Date: Tue, 25 Jun 2024 20:18:25 +0800
+Message-Id: <20240625121835.751013-8-yangchen.openbmc@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240625121835.751013-1-yangchen.openbmc@gmail.com>
 References: <20240625121835.751013-1-yangchen.openbmc@gmail.com>
@@ -92,33 +92,22 @@ Content-Transfer-Encoding: 8bit
 
 From: Yang Chen <yang.chen@quantatw.com>
 
-Change usage of I2C bus 11 to mdio3.
+Remove unused bus and device.
 
 Signed-off-by: Yang Chen <yang.chen@quantatw.com>
 ---
- arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts | 4 ----
+ 1 file changed, 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts
-index 32400284479e..4d67ef29023c 100644
+index 4d67ef29023c..a80c46c1962d 100644
 --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts
 +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts
-@@ -99,6 +99,10 @@ fixed-link {
+@@ -336,10 +336,6 @@ rtc@51 {
  	};
  };
  
-+&mdio3 {
-+	status = "okay";
-+};
-+
- &fmc {
- 	status = "okay";
- 	flash@0 {
-@@ -336,10 +340,6 @@ &i2c10 {
- 	status = "okay";
- };
- 
--&i2c11 {
+-&i2c10 {
 -	status = "okay";
 -};
 -
