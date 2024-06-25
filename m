@@ -1,139 +1,185 @@
-Return-Path: <linux-kernel+bounces-228491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E439160A2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:07:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 036269160AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6784F1C2199D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:07:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3390C1C20A65
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D1CB1474A3;
-	Tue, 25 Jun 2024 08:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="KlsJRfHj"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B19C1474A0;
+	Tue, 25 Jun 2024 08:10:02 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C577344F;
-	Tue, 25 Jun 2024 08:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496637344F
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:09:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719302835; cv=none; b=olvpI3EGwpWZ4t/noO/pywt7bssjSTCF2E9IdiM6ARCY8bQqCWwEAvc2ShglHNXaEponUC8GG+j8cd5wzrqT1FuMrNM2GcQ28wmM+9o0sRYfi6tgVznnMCa8uOgMzZY+dlpxmh6GlN0GpRyNwIHZuGx4SO67/0Ty48HjpIAOCGc=
+	t=1719303001; cv=none; b=WsXFSyc0iUsRHw+c7iifWf2vfqeNO5WDzpmj6dLy/lVqD6+VslLJougKHZSio7C8XHq7qIE0BQbd127ygwEtyZq8OeJApHc04B1o5wzCZ5h6VBFpVVOIhybnpfqybNoptx+UCDrZUG+9H7HBSqfMpym/HYPoY/CSMSedvXFP7DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719302835; c=relaxed/simple;
-	bh=EWcHZHxdczRKkpLlxO28cite0TBupjdNg5fYLFMJKdQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rKliv0jUh3xI8GvTW+zG0ZO4rJtQ0uO9xjt5H/k01bPK+nx5W2wdIx236v8CAp9bHp/6+V0HS2OaoCzedcNaIJ1/2NS6LKJaiZVyDuTOhm5H2Z2cuyCoFTAFAi2RkCbgVVhk2WvPPMgol+7FuNRuBenCOMTfwM166uwfSWJr5r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=KlsJRfHj; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 10938FF817;
-	Tue, 25 Jun 2024 08:07:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719302831;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=n6rqwF5Fh2k8cSQWI4fb28hAkzw4LZpZEQHuVtdSso8=;
-	b=KlsJRfHjSeiNm8tb2S4Irrhi0KAR6zXIu/gf5LI7hgn271V9R0yBIi67nMR9f1Li+zPsxQ
-	KgeCryjoRpMbWo18EsuehglWCd0Y84T3r4nqsV/Fn/iFkcGFJqfFLu8GDIMxPMHoWOWAPC
-	PNohWETcmuMEmeU+087LMCz+SObI17uaAwzK4Qv6LvFdriizDaJxCCLJBbh+WmuhKH196t
-	WSO3DniXwQAkUOEOIoIocL05yXunXmgOE9xn/TQMh6EcN7PLuOSuNjjSnKondPEi/44nmb
-	GMG2yr/ztFPXjNtJuSIxjiizw8jPAhS3eGIiTLhfAksHNgh7v9FVrScMg8VqRw==
-Date: Tue, 25 Jun 2024 10:07:09 +0200
-From: Herve Codina <herve.codina@bootlin.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, Miaoqian Lin
- <linmq006@gmail.com>, Hans de Goede <hdegoede@redhat.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, linux-leds@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Revert "leds: led-core: Fix refcount leak in
- of_led_get()"
-Message-ID: <20240625100709.307568fd@bootlin.com>
-In-Reply-To: <20240625-led-class-device-leak-v1-1-9eb4436310c2@bootlin.com>
-References: <20240625-led-class-device-leak-v1-1-9eb4436310c2@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.41; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1719303001; c=relaxed/simple;
+	bh=TFe37Lm2kh+1TC1JA7q8jV7ydRwDp1EsP+Y+byFXD4U=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FGuiYxUDWOH5TSWfgqdUleRRiDqI5wNnojAlBXlebahkxUa0KWgGJnlICaYxBBcaIfBig4vrFDSu1tdHLQNr0+v0dLSin5XLY7V2Du4vO3BfxcmjX1/rCawRy6flgP0EbxMInzNZF05iJX466L1TRQY2FUFHcofYKbJjwViDxVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 45P89In1041528;
+	Tue, 25 Jun 2024 16:09:18 +0800 (+08)
+	(envelope-from Zhiguo.Niu@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4W7cn20YQWz2RR8CR;
+	Tue, 25 Jun 2024 16:04:38 +0800 (CST)
+Received: from BJMBX02.spreadtrum.com (10.0.64.8) by BJMBX01.spreadtrum.com
+ (10.0.64.7) with Microsoft SMTP Server (TLS) id 15.0.1497.23; Tue, 25 Jun
+ 2024 16:09:16 +0800
+Received: from BJMBX02.spreadtrum.com ([fe80::c8c3:f3a0:9c9f:b0fb]) by
+ BJMBX02.spreadtrum.com ([fe80::c8c3:f3a0:9c9f:b0fb%19]) with mapi id
+ 15.00.1497.023; Tue, 25 Jun 2024 16:09:16 +0800
+From: =?utf-8?B?54mb5b+X5Zu9IChaaGlndW8gTml1KQ==?= <Zhiguo.Niu@unisoc.com>
+To: Chao Yu <chao@kernel.org>, "jaegeuk@kernel.org" <jaegeuk@kernel.org>
+CC: "linux-f2fs-devel@lists.sourceforge.net"
+	<linux-f2fs-devel@lists.sourceforge.net>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        wangzijie <wangzijie1@honor.com>, Yunlei He
+	<heyunlei@hihonor.com>,
+        =?utf-8?B?546L55qTIChIYW9faGFvIFdhbmcp?=
+	<Hao_hao.Wang@unisoc.com>
+Subject: =?utf-8?B?562U5aSNOiBbUEFUQ0ggdjRdIGYyZnM6IHJlZHVjZSBleHBlbnNpdmUgY2hl?=
+ =?utf-8?Q?ckpoint_trigger_frequency?=
+Thread-Topic: [PATCH v4] f2fs: reduce expensive checkpoint trigger frequency
+Thread-Index: AQHaxsyvfbyyiC9cGUGrinilm9Ljg7HYIB4A
+Date: Tue, 25 Jun 2024 08:09:16 +0000
+Message-ID: <a861d9aaf9394aa6bc77548735629f87@BJMBX02.spreadtrum.com>
+References: <20240625065459.3665791-1-chao@kernel.org>
+In-Reply-To: <20240625065459.3665791-1-chao@kernel.org>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-transport-fromentityheader: Hosted
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
+X-MAIL:SHSQR01.spreadtrum.com 45P89In1041528
 
-Hi Luca,
-
-On Tue, 25 Jun 2024 09:26:52 +0200
-Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
-
-> This reverts commit da1afe8e6099980fe1e2fd7436dca284af9d3f29.
-> 
-> Commit 699a8c7c4bd3 ("leds: Add of_led_get() and led_put()"), introduced in
-> 5.5, added of_led_get() and led_put() but missed a put_device() in
-> led_put(), thus creating a leak in case the consumer device is removed.
-> 
-> Arguably device removal was not very popular, so this went apparently
-> unnoticed until 2022. In January 2023 two different patches got merged to
-> fix the same bug:
-> 
->  - commit da1afe8e6099 ("leds: led-core: Fix refcount leak in of_led_get()")
->  - commit 445110941eb9 ("leds: led-class: Add missing put_device() to led_put()")
-> 
-> They fix the bug in two different ways, which creates no patch conflicts,
-> and both were merged in v6.2. The result is that now there is one more
-> put_device() than get_device()s, instead of one less.
-> 
-> Arguably device removal is not very popular yet, so this apparently hasn't
-> been noticed as well up to now. But it blew up here while I'm working with
-> device tree overlay insertion and removal. The symptom is an apparently
-> unrelated list of oopses on device removal, with reasons:
-> 
->   kernfs: can not remove 'uevent', no directory
->   kernfs: can not remove 'brightness', no directory
->   kernfs: can not remove 'max_brightness', no directory
->   ...
-> 
-> Here sysfs fails removing attribute files, which is because the device name
-> changed and so the sysfs path. This is because the device name string got
-> corrupted, which is because it got freed too early and its memory reused.
-> 
-> Different symptoms could appear in different use cases.
-> 
-> Fix by removing one of the two fixes.
-> 
-> The choice was to remove commit da1afe8e6099 because:
-> 
->  * it is calling put_device() inside of_led_get() just after getting the
->    device, thus it is basically not refcounting the LED device at all
->    during its entire lifetime
->  * it does not add a corresponding put_device() in led_get(), so it fixes
->    only the OF case
-> 
-> The other fix (445110941eb9) is adding the put_device() in led_put() so it
-> covers the entire lifetime, and it works even in the non-DT case.
-> 
-> Fixes: da1afe8e6099 ("leds: led-core: Fix refcount leak in of_led_get()")
-> Co-developed-by: Hervé Codina <herve.codina@bootlin.com>
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-
-As there is a Co-developer, you have to add his/her Signed-off-by:
-https://elixir.bootlin.com/linux/v6.10-rc5/source/Documentation/process/submitting-patches.rst#L494
-
-So feel free to:
-  a) Add Signed-off-by: Hervé Codina <herve.codina@bootlin.com>
-or
-  b) Remove Co-developed-by: Hervé Codina <herve.codina@bootlin.com>
-
-Even if I participate in that fix, I will not be upset if you remove the
-Co-developed-by :)
-
-Best regards,
-Hervé
+DQoNCi0tLS0t6YKu5Lu25Y6f5Lu2LS0tLS0NCuWPkeS7tuS6ujogQ2hhbyBZdSA8Y2hhb0BrZXJu
+ZWwub3JnPiANCuWPkemAgeaXtumXtDogMjAyNOW5tDbmnIgyNeaXpSAxNDo1NQ0K5pS25Lu25Lq6
+OiBqYWVnZXVrQGtlcm5lbC5vcmcNCuaKhOmAgTogbGludXgtZjJmcy1kZXZlbEBsaXN0cy5zb3Vy
+Y2Vmb3JnZS5uZXQ7IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IENoYW8gWXUgPGNoYW9A
+a2VybmVsLm9yZz47IHdhbmd6aWppZSA8d2FuZ3ppamllMUBob25vci5jb20+OyDniZvlv5flm70g
+KFpoaWd1byBOaXUpIDxaaGlndW8uTml1QHVuaXNvYy5jb20+OyBZdW5sZWkgSGUgPGhleXVubGVp
+QGhpaG9ub3IuY29tPg0K5Li76aKYOiBbUEFUQ0ggdjRdIGYyZnM6IHJlZHVjZSBleHBlbnNpdmUg
+Y2hlY2twb2ludCB0cmlnZ2VyIGZyZXF1ZW5jeQ0KDQoNCuazqOaEjzog6L+Z5bCB6YKu5Lu25p2l
+6Ieq5LqO5aSW6YOo44CC6Zmk6Z2e5L2g56Gu5a6a6YKu5Lu25YaF5a655a6J5YWo77yM5ZCm5YiZ
+5LiN6KaB54K55Ye75Lu75L2V6ZO+5o6l5ZKM6ZmE5Lu244CCDQpDQVVUSU9OOiBUaGlzIGVtYWls
+IG9yaWdpbmF0ZWQgZnJvbSBvdXRzaWRlIG9mIHRoZSBvcmdhbml6YXRpb24uIERvIG5vdCBjbGlj
+ayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3UgcmVjb2duaXplIHRoZSBzZW5k
+ZXIgYW5kIGtub3cgdGhlIGNvbnRlbnQgaXMgc2FmZS4NCg0KDQoNCldlIG1heSB0cmlnZ2VyIGhp
+Z2ggZnJlcXVlbnQgY2hlY2twb2ludCBmb3IgYmVsb3cgY2FzZToNCjEuIG1rZGlyIC9tbnQvZGly
+MTsgc2V0IGRpcjEgZW5jcnlwdGVkDQoyLiB0b3VjaCAvbW50L2ZpbGUxOyBmc3luYyAvbW50L2Zp
+bGUxDQozLiBta2RpciAvbW50L2RpcjI7IHNldCBkaXIyIGVuY3J5cHRlZA0KNC4gdG91Y2ggL21u
+dC9maWxlMjsgZnN5bmMgL21udC9maWxlMg0KLi4uDQoNCkFsdGhvdWdoLCBuZXdseSBjcmVhdGVk
+IGRpciBhbmQgZmlsZSBhcmUgbm90IHJlbGF0ZWQsIGR1ZSB0byBjb21taXQgYmJmMTU2ZjdhZmE3
+ICgiZjJmczogZml4IGxvc3QgeGF0dHJzIG9mIGRpcmVjdG9yaWVzIiksIHdlIHdpbGwgdHJpZ2dl
+ciBjaGVja3BvaW50IHdoZW5ldmVyIGZzeW5jKCkgY29tZXMgYWZ0ZXIgYSBuZXcgZW5jcnlwdGVk
+IGRpciBjcmVhdGVkLg0KDQpJbiBvcmRlciB0byBhdm9pZCBzdWNoIHBlcmZvcm1hbmNlIHJlZ3Jl
+c3Npb24gaXNzdWUsIGxldCdzIHJlY29yZCBhbiBlbnRyeSBpbmNsdWRpbmcgZGlyZWN0b3J5J3Mg
+aW5vIGluIGdsb2JhbCBjYWNoZSB3aGVuZXZlciB3ZSB1cGRhdGUgZGlyZWN0b3J5J3MgeGF0dHIg
+ZGF0YSwgYW5kIHRoZW4gdHJpZ2dlcnJpbmcgY2hlY2twb2ludCgpIG9ubHkgaWYgeGF0dHIgbWV0
+YWRhdGEgb2YgdGFyZ2V0IGZpbGUncyBwYXJlbnQgd2FzIHVwZGF0ZWQuDQoNClRoaXMgcGF0Y2gg
+dXBkYXRlcyB0byBjb3ZlciBiZWxvdyBubyBlbmNyeXB0aW9uIGNhc2UgYXMgd2VsbDoNCjEpIHBh
+cmVudCBpcyBjaGVja3BvaW50ZWQNCjIpIHNldF94YXR0cihkaXIpIHcvIG5ldyB4bmlkDQozKSBj
+cmVhdGUoZmlsZSkNCjQpIGZzeW5jKGZpbGUpDQoNCkZpeGVzOiBiYmYxNTZmN2FmYTcgKCJmMmZz
+OiBmaXggbG9zdCB4YXR0cnMgb2YgZGlyZWN0b3JpZXMiKQ0KUmVwb3J0ZWQtYnk6IHdhbmd6aWpp
+ZSA8d2FuZ3ppamllMUBob25vci5jb20+DQpSZXBvcnRlZC1ieTogWmhpZ3VvIE5pdSA8emhpZ3Vv
+Lm5pdUB1bmlzb2MuY29tPg0KVGVzdGVkLWJ5OiBaaGlndW8gTml1IDx6aGlndW8ubml1QHVuaXNv
+Yy5jb20+DQpSZXBvcnRlZC1ieTogWXVubGVpIEhlIDxoZXl1bmxlaUBoaWhvbm9yLmNvbT4NClNp
+Z25lZC1vZmYtYnk6IENoYW8gWXUgPGNoYW9Aa2VybmVsLm9yZz4NCi0tLQ0KIGZzL2YyZnMvZjJm
+cy5oICAgICAgICAgICAgICB8ICAyICsrDQogZnMvZjJmcy9maWxlLmMgICAgICAgICAgICAgIHwg
+IDMgKysrDQogZnMvZjJmcy94YXR0ci5jICAgICAgICAgICAgIHwgMTQgKysrKysrKysrKysrLS0N
+CiBpbmNsdWRlL3RyYWNlL2V2ZW50cy9mMmZzLmggfCAgMyArKy0NCiA0IGZpbGVzIGNoYW5nZWQs
+IDE5IGluc2VydGlvbnMoKyksIDMgZGVsZXRpb25zKC0pDQoNCmRpZmYgLS1naXQgYS9mcy9mMmZz
+L2YyZnMuaCBiL2ZzL2YyZnMvZjJmcy5oIGluZGV4IGYxZDY1ZWUzYWRkZi4uZjNjOTEwYjg5ODNi
+IDEwMDY0NA0KLS0tIGEvZnMvZjJmcy9mMmZzLmgNCisrKyBiL2ZzL2YyZnMvZjJmcy5oDQpAQCAt
+Mjg0LDYgKzI4NCw3IEBAIGVudW0gew0KICAgICAgICBBUFBFTkRfSU5PLCAgICAgICAgICAgICAv
+KiBmb3IgYXBwZW5kIGlubyBsaXN0ICovDQogICAgICAgIFVQREFURV9JTk8sICAgICAgICAgICAg
+IC8qIGZvciB1cGRhdGUgaW5vIGxpc3QgKi8NCiAgICAgICAgVFJBTlNfRElSX0lOTywgICAgICAg
+ICAgLyogZm9yIHRyYW5zYWN0aW9ucyBkaXIgaW5vIGxpc3QgKi8NCisgICAgICAgRU5DX0RJUl9J
+Tk8sICAgICAgICAgICAgLyogZm9yIGVuY3J5cHRlZCBkaXIgaW5vIGxpc3QgKi8NCiAgICAgICAg
+RkxVU0hfSU5PLCAgICAgICAgICAgICAgLyogZm9yIG11bHRpcGxlIGRldmljZSBmbHVzaGluZyAq
+Lw0KICAgICAgICBNQVhfSU5PX0VOVFJZLCAgICAgICAgICAvKiBtYXguIGxpc3QgKi8NCiB9Ow0K
+QEAgLTExNTAsNiArMTE1MSw3IEBAIGVudW0gY3BfcmVhc29uX3R5cGUgew0KICAgICAgICBDUF9G
+QVNUQk9PVF9NT0RFLA0KICAgICAgICBDUF9TUEVDX0xPR19OVU0sDQogICAgICAgIENQX1JFQ09W
+RVJfRElSLA0KKyAgICAgICBDUF9FTkNfRElSLA0KIH07DQoNCiBlbnVtIGlvc3RhdF90eXBlIHsN
+CmRpZmYgLS1naXQgYS9mcy9mMmZzL2ZpbGUuYyBiL2ZzL2YyZnMvZmlsZS5jIGluZGV4IGE1Mjdk
+ZTFlN2EyZi4uMjc4NTczOTc0ZGI0IDEwMDY0NA0KLS0tIGEvZnMvZjJmcy9maWxlLmMNCisrKyBi
+L2ZzL2YyZnMvZmlsZS5jDQpAQCAtMjE3LDYgKzIxNyw5IEBAIHN0YXRpYyBpbmxpbmUgZW51bSBj
+cF9yZWFzb25fdHlwZSBuZWVkX2RvX2NoZWNrcG9pbnQoc3RydWN0IGlub2RlICppbm9kZSkNCiAg
+ICAgICAgICAgICAgICBmMmZzX2V4aXN0X3dyaXR0ZW5fZGF0YShzYmksIEYyRlNfSShpbm9kZSkt
+PmlfcGlubywNCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgVFJBTlNfRElSX0lOTykpDQogICAgICAgICAgICAgICAgY3BfcmVhc29uID0gQ1Bf
+UkVDT1ZFUl9ESVI7DQorICAgICAgIGVsc2UgaWYgKGYyZnNfZXhpc3Rfd3JpdHRlbl9kYXRhKHNi
+aSwgRjJGU19JKGlub2RlKS0+aV9waW5vLA0KKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICBFTkNfRElSX0lOTykpDQorICAgICAgICAgICAgICAg
+Y3BfcmVhc29uID0gQ1BfRU5DX0RJUjsNCg0KICAgICAgICByZXR1cm4gY3BfcmVhc29uOw0KIH0N
+CmRpZmYgLS1naXQgYS9mcy9mMmZzL3hhdHRyLmMgYi9mcy9mMmZzL3hhdHRyLmMgaW5kZXggZjI5
+MGZlOTMyN2M0Li5kMDRjMGI0N2E0ZTQgMTAwNjQ0DQotLS0gYS9mcy9mMmZzL3hhdHRyLmMNCisr
+KyBiL2ZzL2YyZnMveGF0dHIuYw0KQEAgLTYyOSw2ICs2MjksNyBAQCBzdGF0aWMgaW50IF9fZjJm
+c19zZXR4YXR0cihzdHJ1Y3QgaW5vZGUgKmlub2RlLCBpbnQgaW5kZXgsDQogICAgICAgICAgICAg
+ICAgICAgICAgICBjb25zdCBjaGFyICpuYW1lLCBjb25zdCB2b2lkICp2YWx1ZSwgc2l6ZV90IHNp
+emUsDQogICAgICAgICAgICAgICAgICAgICAgICBzdHJ1Y3QgcGFnZSAqaXBhZ2UsIGludCBmbGFn
+cykgIHsNCisgICAgICAgc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpID0gRjJGU19JX1NCKGlub2Rl
+KTsNCiAgICAgICAgc3RydWN0IGYyZnNfeGF0dHJfZW50cnkgKmhlcmUsICpsYXN0Ow0KICAgICAg
+ICB2b2lkICpiYXNlX2FkZHIsICpsYXN0X2Jhc2VfYWRkcjsNCiAgICAgICAgaW50IGZvdW5kLCBu
+ZXdzaXplOw0KQEAgLTc3Miw5ICs3NzMsMTggQEAgc3RhdGljIGludCBfX2YyZnNfc2V0eGF0dHIo
+c3RydWN0IGlub2RlICppbm9kZSwgaW50IGluZGV4LA0KICAgICAgICBpZiAoaW5kZXggPT0gRjJG
+U19YQVRUUl9JTkRFWF9FTkNSWVBUSU9OICYmDQogICAgICAgICAgICAgICAgICAgICAgICAhc3Ry
+Y21wKG5hbWUsIEYyRlNfWEFUVFJfTkFNRV9FTkNSWVBUSU9OX0NPTlRFWFQpKQ0KICAgICAgICAg
+ICAgICAgIGYyZnNfc2V0X2VuY3J5cHRlZF9pbm9kZShpbm9kZSk7DQotICAgICAgIGlmIChTX0lT
+RElSKGlub2RlLT5pX21vZGUpKQ0KLSAgICAgICAgICAgICAgIHNldF9zYmlfZmxhZyhGMkZTX0lf
+U0IoaW5vZGUpLCBTQklfTkVFRF9DUCk7DQoNCisgICAgICAgaWYgKCFTX0lTRElSKGlub2RlLT5p
+X21vZGUpKQ0KKyAgICAgICAgICAgICAgIGdvdG8gc2FtZTsNCisgICAgICAgLyoNCisgICAgICAg
+ICogSW4gcmVzdHJpY3QgbW9kZSwgZnN5bmMoKSBhbHdheXMgdHJ5IHRvIHRyaWdnZXIgY2hlY2tw
+b2ludCBmb3IgYWxsDQorICAgICAgICAqIG1ldGFkYXRhIGNvbnNpc3RlbmN5LCBpbiBvdGhlciBt
+b2RlLCBpdCB0cmlnZ2VycyBjaGVja3BvaW50IHdoZW4NCisgICAgICAgICogcGFyZW50J3MgeGF0
+dHIgbWV0YWRhdGEgd2FzIHVwZGF0ZWQuDQorICAgICAgICAqLw0KKyAgICAgICBpZiAoRjJGU19P
+UFRJT04oc2JpKS5mc3luY19tb2RlID09IEZTWU5DX01PREVfU1RSSUNUKQ0KKyAgICAgICAgICAg
+ICAgIHNldF9zYmlfZmxhZyhzYmksIFNCSV9ORUVEX0NQKTsNCkhpIENoYW8sIA0KRm9yIHRoaXMg
+Y2FzZSwgd2lsbCBpdCBhbHNvIGNhdXNlIHRoZSBzYW1lIGlzc3VlIHdpdGggb3JpZ2luYWwgaXNz
+dWUgd2hlbiBmc3luY19tb2RlID09IEZTWU5DX01PREVfU1RSSUNUID8NCmlmIGNrcHQgdGhyZWFk
+IGlzIGJsb2NrZWQgYnkgc29tZSByZWFzb25zIGFuZCBTQklfTkVFRF9DUCBpcyBub3QgY2xlYXJl
+ZCBpbiB0aW1lLCBTdWJzZXF1ZW50IGZzeW5jIHdpbGwgdHJpZ2dlciBjcD8NCisgICAgICAgZWxz
+ZQ0KKyAgICAgICAgICAgICAgIGYyZnNfYWRkX2lub19lbnRyeShzYmksIGlub2RlLT5pX2lubywg
+RU5DX0RJUl9JTk8pOw0KVGhpcyBwYXRjaCB2ZXJzaW9uIHJlZ2FyZGxlc3Mgb2Ygd2hldGhlciBk
+aXIgaXMgZW5jcnlwdGVkIG9yIG5vdCwgc28gdGhpcyBuYW1lKEVOQ19ESVJfSU5PKSBjYW4gYmUg
+cmVuYW1lIG90aGVyIGZvciBtb3JlIGFjY3VyYXRlPw0KVGhhbmtz77yBDQogc2FtZToNCiAgICAg
+ICAgaWYgKGlzX2lub2RlX2ZsYWdfc2V0KGlub2RlLCBGSV9BQ0xfTU9ERSkpIHsNCiAgICAgICAg
+ICAgICAgICBpbm9kZS0+aV9tb2RlID0gRjJGU19JKGlub2RlKS0+aV9hY2xfbW9kZTsgZGlmZiAt
+LWdpdCBhL2luY2x1ZGUvdHJhY2UvZXZlbnRzL2YyZnMuaCBiL2luY2x1ZGUvdHJhY2UvZXZlbnRz
+L2YyZnMuaCBpbmRleCBlZDc5NGI1ZmVmYmUuLmU0YTk0OTk1ZTlhOCAxMDA2NDQNCi0tLSBhL2lu
+Y2x1ZGUvdHJhY2UvZXZlbnRzL2YyZnMuaA0KKysrIGIvaW5jbHVkZS90cmFjZS9ldmVudHMvZjJm
+cy5oDQpAQCAtMTM5LDcgKzEzOSw4IEBAIFRSQUNFX0RFRklORV9FTlVNKEVYX0JMT0NLX0FHRSk7
+DQogICAgICAgICAgICAgICAgeyBDUF9OT0RFX05FRURfQ1AsICAgICAgIm5vZGUgbmVlZHMgY3Ai
+IH0sICAgICAgICAgICAgICBcDQogICAgICAgICAgICAgICAgeyBDUF9GQVNUQk9PVF9NT0RFLCAg
+ICAgImZhc3Rib290IG1vZGUiIH0sICAgICAgICAgICAgICBcDQogICAgICAgICAgICAgICAgeyBD
+UF9TUEVDX0xPR19OVU0sICAgICAgImxvZyB0eXBlIGlzIDIiIH0sICAgICAgICAgICAgICBcDQot
+ICAgICAgICAgICAgICAgeyBDUF9SRUNPVkVSX0RJUiwgICAgICAgImRpciBuZWVkcyByZWNvdmVy
+eSIgfSkNCisgICAgICAgICAgICAgICB7IENQX1JFQ09WRVJfRElSLCAgICAgICAiZGlyIG5lZWRz
+IHJlY292ZXJ5IiB9LCAgICAgICAgIFwNCisgICAgICAgICAgICAgICB7IENQX0VOQ19ESVIsICAg
+ICAgICAgICAicGVyc2lzdCBlbmNyeXB0aW9uIHBvbGljeSIgfSkNCg0KICNkZWZpbmUgc2hvd19z
+aHV0ZG93bl9tb2RlKHR5cGUpICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+XA0KICAgICAgICBfX3ByaW50X3N5bWJvbGljKHR5cGUsICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgXA0KLS0NCjIuNDAuMQ0KDQo=
 
