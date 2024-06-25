@@ -1,249 +1,131 @@
-Return-Path: <linux-kernel+bounces-229819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED50E9174B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:31:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00D29174B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:32:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 261981C20E58
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:31:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5AAA4281D0D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 23:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C28A61487C0;
-	Tue, 25 Jun 2024 23:31:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B8F17F4FC;
+	Tue, 25 Jun 2024 23:32:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YqPPJGnh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="z78FBswI"
+Received: from mail-wr1-f68.google.com (mail-wr1-f68.google.com [209.85.221.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627CF13212F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 23:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719358306; cv=fail; b=u5g6wIYFgyeIhzFgs8+9Xp0XqIWNbDqJEMRGLfw8nRhZ5cM+ZHipxW9UrYLxep+FsbyON7JuYn9Qjq1XzrVRKgwjxiigdTHrYTIB/W7uePKHCAVndopSkajnjQFACHAe+bwpl2Y1/iG1Oa1vd1u0jIgAr4Gx4nKZY8aFBomNmPk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719358306; c=relaxed/simple;
-	bh=us5iPBOIandWEaSGkm8vowbIwqE+TlW3Gxhz5xu29FQ=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=pjja5EKiDkpmVHxiba++WJ9bSbjIcRVWvuu3fJHwElkCAQzuyZsE48phGscv/E3IdPO+C9zDwfDc/Qc6ogH48fgnASbrXkUoEvqoUasoiQJl37KbLffxpkQLQGrzvLVmCKSCoLxB/cA+X9zOSv6GxkRBqiIEYFCIiKAmjRjcGLc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YqPPJGnh; arc=fail smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719358305; x=1750894305;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=us5iPBOIandWEaSGkm8vowbIwqE+TlW3Gxhz5xu29FQ=;
-  b=YqPPJGnhM6DwaJDCbIku9hcQ/0CgJgU5kzuHJtAWOZRqyide4OLpApJp
-   3srFuJeTx3gNeMq06tJenhCiFPHiXSfLMkt1Ty03iFYKx6DwFs3TFBYC+
-   D5c83d9pC6WXp4wxxZYu/0THCsOzNZkgsaYGyvwsbJmNsebTJN1a8tGJ9
-   RRHeC8Ab9fMRHUl1pw/Yye2+MDPthtd7y2Ri59DbJitzv4pFoD7qWI6wu
-   8xy5obGitGnXADUpmhmXJwvjo7qF6HjlTBEwFyrgtarBhiW3HCP6svC1C
-   FnvCkGrkllK5am4mRIlY4v+QnHNpBqPx9dx/SfVXY7Dn/K6rXvEAZF8PV
-   w==;
-X-CSE-ConnectionGUID: TSGuQPPeR5GrUiWYoZdXtA==
-X-CSE-MsgGUID: Tlpx2vgFSV6mDhL0HHSnsg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="20287461"
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="20287461"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 16:31:45 -0700
-X-CSE-ConnectionGUID: eYVP3MUWShuN7Ws/c0NqxQ==
-X-CSE-MsgGUID: tig42uGuTHO6W3v+fLlMlg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="43780402"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Jun 2024 16:31:44 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 25 Jun 2024 16:31:44 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 25 Jun 2024 16:31:43 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 25 Jun 2024 16:31:43 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 25 Jun 2024 16:31:43 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oJ2EU90BMOebhesplp2UEvY0zyqC1K47Dhbo70oy/sN0Yk7rKsS9/cNDoklLvsExIc9sLMVB6tGNlS5Nw9bwzRC3W0dFrNwD41pYRuvlUINbQ2q/yg6RrnXSBc5UWDnrLctCvA8dex3/MAOFYbYhnb8Cb9ei5Bei3xU+h2mouNwiOMD8yUOLQ5FoXAfRMUvY3o7veImcRZYBmEjvasucmnQI2GXbMmAX4/qRo6NPdTL4elnIgO8o1oCi3xZZBK4i5r1D/tCdwjr5HxJnRN+ZbNqmLpMtCXsjwBcAqLqZBwvoBKEjAMTP49BmoYTLqQjBqauQ5zHEbw6fOAX8hWuHqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ydAA8aUf+aQ2N6hxKsjQpP7xLx/ZPszT3Akt1mfh0xo=;
- b=D7QPIRB73RaM/5ylCUII/Rc5NU2l0OFWfAk9DwwWBlkpsDxLVQ1ZboVJSEBoK0FG3jGXwesBUn6Qia6K7G9/NnYzUv6QaH1X3jgcekc4qXHoAbsuZj4ycDPnNyJTMiGsJ25WT2mFTzAUsWbjW7F8w8VRjfLguNnl20P5TDVIje1W91IV0kMFYUFE3NjyDztX6HlA3tNOiHdoP70t4+Du36QLxRrV98hIkUZkyJtbh9NJY4GNhC/UPk7hDW+VaMzhSS2suCEAjvIAP+49HrqA7RlzTVuOozNzka/hBnAIeE9OildIvA1MXw+3jchmuxW5zB27C0beUHNG+ieS6XCGuw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by CY8PR11MB7170.namprd11.prod.outlook.com (2603:10b6:930:91::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Tue, 25 Jun
- 2024 23:31:41 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%3]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
- 23:31:41 +0000
-Message-ID: <c3596297-0728-4933-8d13-b988c2bc4175@intel.com>
-Date: Tue, 25 Jun 2024 16:31:38 -0700
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v21 13/18] x86/resctrl: Handle removing directories in
- Sub-NUMA Cluster (SNC) mode
-To: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>, Maciej
- Wieczor-Retman <maciej.wieczor-retman@intel.com>, Peter Newman
-	<peternewman@google.com>, James Morse <james.morse@arm.com>, Babu Moger
-	<babu.moger@amd.com>, Drew Fustini <dfustini@baylibre.com>, Dave Martin
-	<Dave.Martin@arm.com>
-CC: <x86@kernel.org>, <linux-kernel@vger.kernel.org>,
-	<patches@lists.linux.dev>
-References: <20240621223859.43471-1-tony.luck@intel.com>
- <20240621223859.43471-14-tony.luck@intel.com>
-From: Reinette Chatre <reinette.chatre@intel.com>
-Content-Language: en-US
-In-Reply-To: <20240621223859.43471-14-tony.luck@intel.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR03CA0250.namprd03.prod.outlook.com
- (2603:10b6:303:b4::15) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95E6149C6E
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 23:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.68
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719358335; cv=none; b=ChWWZnd/E6O3Jq+Cg5vcs/CEWSTf5yeGfUWS4XnZo+ukA/Wg/1f2w5MVEd9+5micobFeVzsnvfBcPIzpwXqEdY/2UBXBm5XLdmgHJ8Cngw1W224lHYT49xWP5yLyOoedsDWbWksmN+Ui4B9l1Wgd04uw/qS5A2cOHk9UaL1h39M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719358335; c=relaxed/simple;
+	bh=Jl+AYBC6QROVejlC4xoA8yOgyqVkmVO3/fE4Rt05vPc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F2NZ24FYNmuMGJ7FoR+6yzmsgnNRVi9j5ONYcvYAAvPeTw3cGm9Tsu5Lt7xgM8Tb/jX8guVgWCGyW/fW32pCKfX9COvHSuIQxfiZo5LnXnkYI2GXKi8nUVHaN8480AEAsp++3L2mJ5ZCdqmXEKai4fomeU/tmCuDPxuOi5/ClVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=z78FBswI; arc=none smtp.client-ip=209.85.221.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f68.google.com with SMTP id ffacd0b85a97d-354b722fe81so4055391f8f.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 16:32:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719358332; x=1719963132; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lbrH75vzXbeWZnJxQfr9eSE4laznv43BbrI6ljKq96w=;
+        b=z78FBswIShba4B7nlwBTgKgXkqb5Sp/fmpkU9Nkma/yI459LOxtVZA8NA7KdvV9j/B
+         e8iMq9uK9wPvO7GBdGC5gG7hAcC5gAE919gNTv5Gl0yWpV6d+LwiLDywwOD4lP9ZvQb1
+         OlCbQjpOFHtL0wU0UyjSBmXHAo5CWm8zZuSYXxJBapK+20AECStNz6zmlusHhJU3GJL1
+         DE+DpFdJ5nDOX/0wzUttvBjjeu6BwkNqoeg04T3VWhBI5CABKciBDnT3dH+JxLpGA4Ze
+         2LGXpt5/Dv5heIL9SF5x2sZxttxCrNWuMQCgLnlqz3i34hR9gH3YGS9uiz4EHMjvdIJd
+         BWjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719358332; x=1719963132;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lbrH75vzXbeWZnJxQfr9eSE4laznv43BbrI6ljKq96w=;
+        b=SQapOY3fyxPlrbNL3oRaHqBcel4wigYBpEG2kdqmmgbLWuf5C9oppP0um6klPeW1Ln
+         K7jQGUUdyXyCmWYnvX63GLlHr5kVj2gNzNI9QeRIubUs11SGeF0wzNgfh0yttXBosga+
+         dSg0ECwNnAD8XBsrftgOHChMGtPRfbdXqVZjgcVp8JIQkbX/3U89/UsKhRXiQKF2w7UK
+         K+CmYEEDR0zqZaomNDsIY0SsNOJnP4WvQG1k3agfi+fFlxKi8Y6SyE6OIBKrZ727Ca/n
+         g5rxYoU+30bN28dveuAa08qg154AMiEGps66Axbrgc3lF+TMS3DIzEPqdnXREcwQ3ryf
+         2v1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXIk9of0H6jDXsz5XS8HzuiGS5wQ2iBtm/89aF27HUBcJa4xNoMLikxn1nZeqzWIRirTQYXNHGvpF1o7EId+xssOjRWjeNw8pVTFNmE
+X-Gm-Message-State: AOJu0Yyj0U3LfR4+VDQXOB0EHjE0C0EiwsyBPTzAiFBUP71Rxslr4dLl
+	HbDkj2XTfZzKd9TTFdxvVgfNzkyVLsgRB166M2wpU/7M9E2S/13nh15D63m5o2Y=
+X-Google-Smtp-Source: AGHT+IFfrVFH4dS5PTYGfls490EP0Nu3bFddns6indKs0gUPwj1+1d3DDgayra4rO4Gwf6H0Dvau8A==
+X-Received: by 2002:a5d:6487:0:b0:366:e64f:b787 with SMTP id ffacd0b85a97d-366e64fb8a9mr9522455f8f.8.1719358332136;
+        Tue, 25 Jun 2024 16:32:12 -0700 (PDT)
+Received: from [192.168.0.16] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36647e7eb4fsm14143043f8f.18.2024.06.25.16.32.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 16:32:11 -0700 (PDT)
+Message-ID: <3e55d482-2732-46cb-906f-62f0e722b7a5@linaro.org>
+Date: Wed, 26 Jun 2024 00:32:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CY8PR11MB7170:EE_
-X-MS-Office365-Filtering-Correlation-Id: 34fad308-7378-404f-86a2-08dc956ef7a5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230038|366014|376012|1800799022;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?L1d1cFpqWXI1UG1ocDRFZ0kzSWllM2tKdXh6ZmVlWGZxcTErdVpCdEVzZHhF?=
- =?utf-8?B?ZjJMQUdTVjd6dE81bXNXajRCcHkrSzBtMFd6WDJaVmdwZGFFU3lWSUhqWjhD?=
- =?utf-8?B?NnVKVFd4eXh6SHFvNlBmTm5McjFOVHgySnBrbGZnRTRaTWR3Uk5ScXFmNllF?=
- =?utf-8?B?OUxFK3BnQnVsRDJXWjdiR201UGpPcFVhK041Q2IwM3BPeEM3aTdXNUk1bkx1?=
- =?utf-8?B?NndLMG1meXdCeVNkOHMxR2JVMEFqbUw5NlVMamc1TUVDOUZicitOaThFaytE?=
- =?utf-8?B?dmRyTEl5d1Bpa2F5NFZjbTdoZlpuNnVxM2MyNG1qbk1XV3hQS1Y2cTFMblRv?=
- =?utf-8?B?ZlUyYVFGMGtYWXAza0plbVFtcFpZVEt4anhuOVVmeUhIcGtndXNrZ0RtOXUx?=
- =?utf-8?B?b3VkZ0pITDlTZ3NEQTNET0lRWGR2dnJJSC93S1FCT05ObXNyRUNoN2psS3FW?=
- =?utf-8?B?SmkrRHhiMU4rTGpTR0VOblZTWlUxa3ZmZ2plZHhsb3l0SnVoai9PeHpyVzFp?=
- =?utf-8?B?cURjUkdacFgxUWRjajAzcThFL1h5WkViNG1BMnlocE5xWXhUSVVra0hmWHVD?=
- =?utf-8?B?bWRBY3hmTFVQVmo5c1h5Z1VmRUVsWW5PSy9uZVlUWnRtMWN4NnV6L2loL1RU?=
- =?utf-8?B?aHluamtkalgyMitVZ214RVkrVzUvRFlIS2lORDFwY1d5K1Rzb0Jya3V4eHJx?=
- =?utf-8?B?V3dOMlQ5N2xGTzZNSHBHcHBaczk3YjZRUjhNVmNmN0pLV1hOMHo3YVdLWGJx?=
- =?utf-8?B?aG5DR0JLVjVEckJuNFZvbk9hREpkcWtCM3NoYkJuZTVZVmY3UVVnbnRvS3Yw?=
- =?utf-8?B?aU9hS3pvZVh6bHpiODI3dnNyeDJzV2RFdG9VZ1BaM0dmOFhZd2t4enZOZTJF?=
- =?utf-8?B?MkduMW1MRWVFaFpYQmNqVUh2RTZuZ0VxNVFiUHZ0S0ZmUHd1bTFoWVJxMktL?=
- =?utf-8?B?cFBpZVpCNjQraDZVcVNRMlNCZUMwdmJsQUtiVmdscS9xWkswZXhxYTc1Rlor?=
- =?utf-8?B?U05RQ2hwSXV3WC9rbEt5aXRDUGR4QzhoNXhpMFVxdU1MTEZrYTVKNzlIWGVr?=
- =?utf-8?B?UFVrVlFtUWxGdGczZmtNYktITmMwS05DY2VGVHZXcFBSUW41Wmx0b0VPck9I?=
- =?utf-8?B?V0JUSUpvT3lET0xwSkNRbis0alpTVWh2bEU4eVNnOWNpU1NlQUdHdjhMOE9o?=
- =?utf-8?B?R01IK1pLem9lVFlhLzB5TUpjWVVLQW1SZTl4cWh2QmZzVzk2YUN5aks5U3NX?=
- =?utf-8?B?TG1JVmljUlhGZTVwUCtqckRYb0tXSEZ6b3BRMU01OGdsYUtmUzBJQlN0Tjhh?=
- =?utf-8?B?TG1TcEJxcGQ2WnJ6NjJHem9zRW94M21ubDQ0UXdCMUdCL2QrZGxWODhrUDA3?=
- =?utf-8?B?c0NsbVA5dDdNOW5rc2NkZmcxWW0wVHM2cldQWmEyZEdOSDRZUUVIWWora3RP?=
- =?utf-8?B?WjJUMUp5eGtvS2MwUXVGakpTYVZ3NFhNVVZkQmdUcE04VE5oNWpDMEQxR0hh?=
- =?utf-8?B?ZjRXWUZaczdzV0tCaVN0K0k2WDdCLzRqem83WU53eGhuY1htZXdWbmUxYVAx?=
- =?utf-8?B?eHArZEtKTnE3ZzhQS0JYRHhzQ3d3N2I0WVdraHpZTVQ2NlFCa0ZvQkJJaEdR?=
- =?utf-8?B?eWtNUy9EMU85Y083d0dZN0dIbXp4d01kbmJGaE94QUxKL1ozeTBaOUdKaVIr?=
- =?utf-8?B?aUZld0dTZTRkUGdhS3dlQTIxbTlneGQzRnVKS21pTXZNWDNld3BrT2FBZlVX?=
- =?utf-8?B?dkxoMnk4algyZjd1WHRFQ2piUkhqVHo5WEIwQVN3ekZxWkttaXl5NzBQU29H?=
- =?utf-8?B?RFZoMnR0MzVETXcraTFkdz09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(376012)(1800799022);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?Yit6Y3R0aW1nU1RvVU1ISjQyemxJZTJvVjRvcDN2alFySUtvdGpzZzMxSDlH?=
- =?utf-8?B?bGN3NG0wZVJ6aGRZNkFRU2lTRWtKUGxvaElNRW1tRFlMRkdKU2haWnZ0OXhV?=
- =?utf-8?B?VFBDQ0NIdm5LT2daSGVnWk5OVUFPRVR3WWkvRFNHVit4b294ZGQ0dDJ2YmZx?=
- =?utf-8?B?SnhYbFdsY2dVbFRQTG94TDN0ZGxIRXd4UnZVU3Y3Ujhqa2VTcFNML1o5TWp0?=
- =?utf-8?B?Y0tUSUpPWWovWlMwam1CVnNudmtnV0FKVm1CUUdtOUlWbXNjUDY5YkdBZlNa?=
- =?utf-8?B?ZGIvVDBNMk01aWNRYUxOcFpsUVM4ak9PSkRDQjk5cWQ2b0ljMi9yWlVRVkEr?=
- =?utf-8?B?SFd6TmcwT1pSTzFNbk93S25KMUZBVEZQUXVSbU1Wdm9vcWFzQUlxV1FiK3FN?=
- =?utf-8?B?SE9zWDFFYU5GTmlPMkNhcjNrU2orTlQ5QVRCaXlmWi9IM3hjVEVBRm9LNzAr?=
- =?utf-8?B?TnNacllnSzY1eXBwQ3RHMlBFdUdHa0tDa1hSRFIvUTcyeVRxWFlneG5GVDRP?=
- =?utf-8?B?bDF0TVRMbkJhUERKS0FmR0pCSEN3OUd6MFo0OXlwL3BhaGJ1eThHamd1eDE3?=
- =?utf-8?B?RE15WGpmMlVXSDJlNncyUTUrYnBHQ2FLNE1jeVNCZEVNWUR4MUdNaXM4ak9N?=
- =?utf-8?B?TXVsOElNdUJPaE1ya3pHM3JzZzdZTm5rTFJvYmdlSEZZbDlaZTVwQmMwa2ZF?=
- =?utf-8?B?R2hLWHBIajV0OVhRQlFxK0d1Z2J5cFprWHNyMWxhU1dSQVVxMS9uZE9wd3Fq?=
- =?utf-8?B?am1WU09SU012SXk3dE1yS2d6RkFjU1lVSDM3dG1jTGVUTVZ3N3duTUV6MkN1?=
- =?utf-8?B?bGZvSGIzYkxLS2pUbisrODh0Nk5GckF4c250SkJ6d0hwQ0wyckw5a2NibERT?=
- =?utf-8?B?L3g4eWd3eldGMG9HbGZnQkVEU3VEckNtdXV3UzNPU1BjWWc5U2s0MlRwRkk4?=
- =?utf-8?B?QWVzQVJLeG0zQ2xVNnV0ZnI2NTV0S1BIbW1jZ1VoZExSZVV5NGlUMEhHZGYv?=
- =?utf-8?B?dDh5bE9NK0JncEJ6djl1N2hLLytjcW02WHcxdUZITnpuczMwbjl1SFZzMXdv?=
- =?utf-8?B?WU9xemFsMFJuSjl6WlorUGZPK0xyaitFc2JEckdmam4vTGc5MEFESzMrMGdp?=
- =?utf-8?B?bTNIeEVnRUZCaXc3NkV6ODFDMWd5aG5kcFkvd3RoTUNkTVU2U2Y1UTRLOW9t?=
- =?utf-8?B?b2hjV0gvcUZNTW1vejc1ODBMQVhybTk3TEZRWDI5QWhHbldnSEt5Q2x2RVJw?=
- =?utf-8?B?V2JmSDZCRzRKL2duT2dlM1lqRTNhK0tNU3Q0Wnk2anpNRGFjLzNHOFRTRXh3?=
- =?utf-8?B?MlVyeFdQRkJJWFFzSnRNNkVYOW0ycEUyWGJOcmRoT2FyOGN2ZUpEamlFSito?=
- =?utf-8?B?SEY0S3hFTWFzOWJvQk1nZ3MyRk9yWEdpZVpHRmZPSEIrMjFDZGZ5aG9HLzFz?=
- =?utf-8?B?YUxyZG5VNmU3T3lxM2dMUnlqM05xenV5MWdPb3ZqVkkxY2laN1pjT2tqcnc4?=
- =?utf-8?B?SGs3ckUvRXAwY1diVlZ2Umsvbm43T2QrYlFQaUxPeFBtOHhpWTExTGlsR2E5?=
- =?utf-8?B?dHdLazBCZ1VQd3VLdnJTanUxTzR3WEhPRnlieVEwYXdkZTZCc05aNnBYYlpV?=
- =?utf-8?B?eGpCWUZrNkVmZFFBQTltZUpNTjQ4U2ZCZmxOSHA1Z0lNMUxyVVllbnB3a21P?=
- =?utf-8?B?L3NZZzBKNGN3VVVuSkM2VHBqVzJMUktyYzRCS2JjQ0x0cm44VWdMdWNhc0dF?=
- =?utf-8?B?NE4rajFDcW9sNEVZWEhUUExUNUVPRVFuTzRud3orQ1ErZWpCeXN6VkNRd1c2?=
- =?utf-8?B?aWoyVkpGZ1hiY1lHdWZaK0g1QjlsZHF5dmlBc3d4VitSOWUzbTFKOGg5NnJE?=
- =?utf-8?B?bGljbkdiVG9BVkY0WWVMYkpkN1I4Snh3eUFyNUd5ajZuQkhVL1lKL2JlT1hQ?=
- =?utf-8?B?MUFlOVFhKzkzcUs5WnVSdmFGQ01OQ2pjZmx1NlRmdDJBQ2krQzF6bFZFTkFt?=
- =?utf-8?B?THhxcFRuenArZUkyM3VCYkJ5VGZPTUdpQjFqTG5nRHhOTTg3WHR6NU1uWGFN?=
- =?utf-8?B?b2luOS9iUDVlRHhxMUJHcXNJWXB5ZzQvci9FZElCbFVZU3ZIckF5QUQzeTF4?=
- =?utf-8?B?OUNzNm8wQS9yeERrYWJKQmFOa0ZQOGVRTTYzLzltQmtUVGt1TWEwajVPZUJQ?=
- =?utf-8?B?RHc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34fad308-7378-404f-86a2-08dc956ef7a5
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 23:31:41.4816
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jNEU9AA4dy+PCd0feK2k8lPrnZzrg2Xkjmdof1c/mskLnaXptsb566e9y4DGm7vsUjYjcu72UVHvgb0kZglAzu5MwbtvMYNyU597OtgVZNU=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR11MB7170
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFT v3 1/5] dt-bindings: media: camss: Add
+ qcom,sc7180-camss
+To: gchan9527@gmail.com, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240624-b4-sc7180-camss-v3-0-89ece6471431@gmail.com>
+ <20240624-b4-sc7180-camss-v3-1-89ece6471431@gmail.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20240624-b4-sc7180-camss-v3-1-89ece6471431@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Tony,
-
-On 6/21/24 3:38 PM, Tony Luck wrote:
-> In SNC mode there are multiple subdirectories in each L3 level monitor
-> directory (one for each SNC node). If all the CPUs in an SNC node are
-> taken offline, just remove the SNC directory for that node. In
-> non-SNC mode, or when the last SNC node directory is removed,
-> remove the L3 monitor directory.
+On 24/06/2024 13:13, George Chan via B4 Relay wrote:
+> From: George Chan <gchan9527@gmail.com>
 > 
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
+> Add bindings for qcom,sc7180-camss in order to support the camera
+> subsystem for sm7125 as found in the Xiaomi Redmi 9 Pro cellphone.
+> 
+> Signed-off-by: George Chan <gchan9527@gmail.com>
 > ---
->   arch/x86/kernel/cpu/resctrl/rdtgroup.c | 39 +++++++++++++++++++++-----
->   1 file changed, 32 insertions(+), 7 deletions(-)
+>   .../bindings/media/qcom,sc7180-camss.yaml          | 328 +++++++++++++++++++++
+>   1 file changed, 328 insertions(+)
 > 
-> diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> index 2591a6876232..14482d88b68c 100644
-> --- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> +++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-> @@ -3008,20 +3008,45 @@ static int mon_addfile(struct kernfs_node *parent_kn, const char *name,
->   
->   /*
->    * Remove all subdirectories of mon_data of ctrl_mon groups
-> - * and monitor groups with given domain id.
-> + * and monitor groups for the given domain. In SNC mode just
+> diff --git a/Documentation/devicetree/bindings/media/qcom,sc7180-camss.yaml b/Documentation/devicetree/bindings/media/qcom,sc7180-camss.yaml
+> new file mode 100644
+> index 000000000000..58ffa4944857
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/qcom,sc7180-camss.yaml
+> @@ -0,0 +1,328 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/media/qcom,sc7180-camss.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Camera SubSystem
+> +
+> +maintainers:
+> +  - Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
-I do not think we want the Intel architecture specific "SNC" to be
-a "mode" of resctrl fs. That means all architectures need a "SNC mode".
-How about something like (please feel free to improve):
-	Remove files and directories containing "sum" of domain data
-	when last domain being summed is removed.
+Please add yourself here.
 
+Other than that
 
-With mention of "SNC mode" removed:
-| Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
-
-Reinette
+Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
