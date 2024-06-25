@@ -1,137 +1,230 @@
-Return-Path: <linux-kernel+bounces-228842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21EEE9167B5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:25:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF07A9167C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:27:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E581F21E39
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:25:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB3928411F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8266915FD04;
-	Tue, 25 Jun 2024 12:24:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CCA16EC0D;
+	Tue, 25 Jun 2024 12:25:12 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A307B158A23;
-	Tue, 25 Jun 2024 12:24:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD97A15A85B;
+	Tue, 25 Jun 2024 12:25:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719318255; cv=none; b=mKOiYqug7vbTW5ETDRHhYg5+XGH+Q04OPwsnRatWBTdE7uyV2g5TqTL8HoAM5RWNXTPvuHW2s1RmUr+LQQ50dZPoHjjdMn7QDSVOPL8aXwjl9ii/TiwB/x1KBkMW+TIUPwgE/9Xc54K6bPgFtnCGSvhE+YfV7EPTAJBMknRnuyo=
+	t=1719318312; cv=none; b=Nve7xP/2iAvoVXwZssi78WLpzP2A1zzE1hIQ9eunSlkshDqrOdwQ2k2Ua9mCGY74WlRjjNspKxlEVbWup0irDzl3GI8/lPZX1NthrtxtZY7gkpusT/RN3oyjRtp2WNubBjMczLAod3b3a0zvAa89hg+iSJaP2rXWTjtQoua3DbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719318255; c=relaxed/simple;
-	bh=xWkRfjXbcQV976odVJL6jnfAgd/Ex17HQpOdk8g38nQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LhAv6+IWGHvJfyOzEvFBC2QWqK0wJukAfzbH3Wb4rzLh4tNm007cqWSgw67HjpHuoJbFGFMWFtnsgeTOQEEkeK9M3587koEDrnewdqXOorciD0fgbA7R5D2mMOeQi7LbUisZV8GVIidYpUylVqIDXJqhOAPncoU86Yinkn+ZA/s=
+	s=arc-20240116; t=1719318312; c=relaxed/simple;
+	bh=OS+oG8hagHM3ro0Lo1ETW7m/q1ZvXOye43hTaulyPk0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=V82L7hZdy3C54BVy7KFDxszXIjTebKTda6M1VjOCXUU8E6KIpHWHAIcNJwQ6ILgC9+o5Nl0gHXveQ3zE4NoHSYy/qPJVtaPqFlrNKF4Gdr9OWsDw9WSPid6QmCmsbuGpGNMfVhFt4CaPM0SjvdDK1lc1t1X6I0mOUMICphHUeUc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7923C339;
-	Tue, 25 Jun 2024 05:24:36 -0700 (PDT)
-Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CD783F766;
-	Tue, 25 Jun 2024 05:24:05 -0700 (PDT)
-Message-ID: <1fdf637d-3571-4145-8008-f2b5f8fc8bca@arm.com>
-Date: Tue, 25 Jun 2024 13:24:06 +0100
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 40833339;
+	Tue, 25 Jun 2024 05:25:35 -0700 (PDT)
+Received: from e116581.blr.arm.com (e116581.arm.com [10.162.41.12])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 898A83F766;
+	Tue, 25 Jun 2024 05:25:05 -0700 (PDT)
+From: Dev Jain <dev.jain@arm.com>
+To: shuah@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org,
+	Catalin.Marinas@arm.com,
+	will@kernel.org
+Cc: broonie@kernel.org,
+	ryan.roberts@arm.com,
+	rob.herring@arm.com,
+	mark.rutland@arm.com,
+	linux@armlinux.org.uk,
+	suzuki.poulose@arm.com,
+	Anshuman.Khandual@arm.com,
+	aneesh.kumar@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dev Jain <dev.jain@arm.com>
+Subject: [PATCH v3 7/9] selftests/arm: Add ptrace test
+Date: Tue, 25 Jun 2024 17:54:06 +0530
+Message-Id: <20240625122408.1439097-8-dev.jain@arm.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240625122408.1439097-1-dev.jain@arm.com>
+References: <20240625122408.1439097-1-dev.jain@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/8] perf python: Switch module to linking libraries
- from building source
-To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>,
- Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
- Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Suzuki K Poulose <suzuki.poulose@arm.com>,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
- <aliceryhl@google.com>, Nick Terrell <terrelln@fb.com>,
- Ravi Bangoria <ravi.bangoria@amd.com>, Kees Cook <keescook@chromium.org>,
- Andrei Vagin <avagin@google.com>, Athira Jajeev
- <atrajeev@linux.vnet.ibm.com>, Oliver Upton <oliver.upton@linux.dev>,
- Ze Gao <zegao2021@gmail.com>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org,
- coresight@lists.linaro.org, rust-for-linux@vger.kernel.org,
- bpf@vger.kernel.org
-References: <20240613233122.3564730-1-irogers@google.com>
- <20240613233122.3564730-8-irogers@google.com> <Znnyi2IPC79jMd9y@google.com>
-Content-Language: en-US
-From: James Clark <james.clark@arm.com>
-In-Reply-To: <Znnyi2IPC79jMd9y@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+For a 32-bit parent debugging a 32-bit child, add tests for reading the
+TLS registers, and mangling with the mode bits in CPSR.
+ 
+Signed-off-by: Dev Jain <dev.jain@arm.com>
+---
+ tools/testing/selftests/arm/abi/ptrace.c | 82 ++++++++++++++++++++++++
+ tools/testing/selftests/arm/abi/ptrace.h | 57 ++++++++++++++++
+ 2 files changed, 139 insertions(+)
+ create mode 100644 tools/testing/selftests/arm/abi/ptrace.c
+ create mode 100644 tools/testing/selftests/arm/abi/ptrace.h
 
+diff --git a/tools/testing/selftests/arm/abi/ptrace.c b/tools/testing/selftests/arm/abi/ptrace.c
+new file mode 100644
+index 000000000000..2079065c48fd
+--- /dev/null
++++ b/tools/testing/selftests/arm/abi/ptrace.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2024 ARM Limited.
++ */
++#include <errno.h>
++#include <stdbool.h>
++#include <stddef.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <unistd.h>
++#include <sys/auxv.h>
++#include <sys/prctl.h>
++#include <sys/ptrace.h>
++#include <sys/types.h>
++#include <sys/uio.h>
++#include <sys/wait.h>
++#include <asm/sigcontext.h>
++#include <asm/ptrace.h>
++
++#include "ptrace.h"
++#include "../../kselftest.h"
++
++#define EXPECTED_TESTS	6
++#define NUM_TLS_REGS	2
++
++static void test_tpidr(pid_t child)
++{
++	unsigned long read_val[NUM_TLS_REGS];
++	struct iovec read_iov;
++	int ret;
++
++	read_iov.iov_base = read_val;
++
++	/* TLS registers must not be accessible */
++	read_iov.iov_len = 2 * sizeof(unsigned long);
++	ret = ptrace(PTRACE_GETREGSET, child, NT_ARM_TLS, &read_iov);
++	ksft_test_result(ret != 0, "cannot read TLS\n");
++}
++
++static void run_tests(pid_t child)
++{
++	test_tpidr(child);
++	test_user_regs(child);
++}
++
++static int do_child(void)
++{
++	if (ptrace(PTRACE_TRACEME, -1, NULL, NULL))
++		ksft_exit_fail_perror("PTRACE_TRACEME");
++
++	if (raise(SIGSTOP))
++		ksft_exit_fail_perror("raise(SIGSTOP)");
++
++	if (raise(SIGSTOP))
++		ksft_exit_fail_perror("raise(SIGSTOP)");
++
++	return EXIT_SUCCESS;
++}
++
++int main(void)
++{
++	int ret = EXIT_SUCCESS;
++	pid_t child;
++
++	srandom(getpid());
++
++	ksft_print_header();
++
++	ksft_set_plan(EXPECTED_TESTS);
++
++	child = fork();
++	if (!child)
++		return do_child();
++
++	if (do_parent(child))
++		ret = EXIT_FAILURE;
++
++	ksft_print_cnts();
++
++	return ret;
++}
+diff --git a/tools/testing/selftests/arm/abi/ptrace.h b/tools/testing/selftests/arm/abi/ptrace.h
+new file mode 100644
+index 000000000000..17ba8aa32726
+--- /dev/null
++++ b/tools/testing/selftests/arm/abi/ptrace.h
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: GPL-2.0-only
++#include "../../arm64/abi/ptrace.h"
++
++/* Do not pull from asm/ptrace.h since the macro names change for 32-bit */
++#define PSR_MODE32_BIT	0x00000010
++#define PSR_MODE_EL1t	0x00000004
++
++static void test_user_regs(pid_t child)
++{
++	unsigned int read_val[18];
++	struct iovec read_iov;
++	int status;
++	int ret;
++
++	read_iov.iov_base = read_val;
++	read_iov.iov_len = 18 * sizeof(unsigned int);
++
++	ret = ptrace(PTRACE_GETREGSET, child, NT_PRSTATUS, &read_iov);
++	ksft_test_result(!ret, "read general-purpose registers\n");
++
++	/* Change a random user register */
++	read_val[2] = read_val[2] + 1;
++	ret = ptrace(PTRACE_SETREGSET, child, NT_PRSTATUS, &read_iov);
++	ksft_test_result(!ret, "set user register\n");
++
++	/* 16th register is the CPSR */
++	read_val[16] &= (~PSR_MODE32_BIT);
++
++	ret = ptrace(PTRACE_SETREGSET, child, NT_PRSTATUS,  &read_iov);
++	ksft_test_result(ret, "cannot toggle MODE32 bit\n");
++
++	ret = ptrace(PTRACE_CONT, child, NULL, 0);
++	if (ret) {
++		perror("ptrace");
++		goto error;
++	}
++
++	if (wait(&status) == -1) {
++		perror("wait");
++		goto error;
++	}
++
++	read_val[16] = 0;
++
++	ret = ptrace(PTRACE_GETREGSET, child, NT_PRSTATUS, &read_iov);
++	ksft_test_result(!ret, "read general-purpose registers again\n");
++
++	read_val[16] |= PSR_MODE_EL1t;
++	ret = ptrace(PTRACE_SETREGSET, child, NT_PRSTATUS, &read_iov);
++	ksft_test_result(ret, "cannot escalate privilege\n");
++	return;
++
++error:
++	kill(child, SIGKILL);
++}
++
++
+-- 
+2.39.2
 
-On 24/06/2024 23:26, Namhyung Kim wrote:
-> On Thu, Jun 13, 2024 at 04:31:21PM -0700, Ian Rogers wrote:
->> setup.py was building most perf sources causing setup.py to mimic the
->> Makefile logic as well as flex/bison code to be stubbed out, due to
->> complexity building. By using libraries fewer functions are stubbed
->> out, the build is faster and the Makefile logic is reused which should
->> simplify updating. The libraries are passed through LDFLAGS to avoid
->> complexity in python.
->>
->> Force the -fPIC flag for libbpf.a to ensure it is suitable for linking
->> into the perf python module.
->>
->> Signed-off-by: Ian Rogers <irogers@google.com>
->> Reviewed-by: James Clark <james.clark@arm.com>
->> ---
->>  tools/perf/Makefile.config |   5 +
->>  tools/perf/Makefile.perf   |   6 +-
->>  tools/perf/util/python.c   | 271 ++++++++++++++-----------------------
->>  tools/perf/util/setup.py   |  33 +----
->>  4 files changed, 110 insertions(+), 205 deletions(-)
->>
->> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
->> index 7f1e016a9253..639be696f597 100644
->> --- a/tools/perf/Makefile.config
->> +++ b/tools/perf/Makefile.config
->> @@ -910,6 +910,11 @@ else
->>           endif
->>           CFLAGS += -DHAVE_LIBPYTHON_SUPPORT
->>           $(call detected,CONFIG_LIBPYTHON)
->> +	 ifeq ($(filter -fPIC,$(CFLAGS)),)
-> 
-> Nitpick: mixed TAB and SPACEs.
-> 
-> 
->> +           # Building a shared library requires position independent code.
->> +           CFLAGS += -fPIC
->> +           CXXFLAGS += -fPIC
->> +         endif
-> 
-> 
-> I'm curious if it's ok for static libraries too..
-> 
-> Thanks,
-> Namhyung
-> 
-
-I think I tested the whole set with a static build so it should be ok.
-
-> 
->>        endif
->>      endif
->>    endif
 
