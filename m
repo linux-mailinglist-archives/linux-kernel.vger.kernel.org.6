@@ -1,79 +1,77 @@
-Return-Path: <linux-kernel+bounces-228763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5307D916686
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:47:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1743916699
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:50:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8037DB25AA0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:47:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C12B28BD6F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:50:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ADEC16729D;
-	Tue, 25 Jun 2024 11:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0F114BF9B;
+	Tue, 25 Jun 2024 11:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="JUEjC0St"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hFueCOhe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9927114AD38;
-	Tue, 25 Jun 2024 11:45:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AB2B149C6A;
+	Tue, 25 Jun 2024 11:49:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315910; cv=none; b=gZ3p5a3+P3mIkaxiDlr1MTn2xu5w5o1OhdUc6fzeKtCTrFHP3R6RzVtIxnMj7sRnCVLAUTfH8mF5EzemMrenjkdJ72tX3kfjepFMCLjVuTHN/YSgWcSSRlRgawDqZXWhqS5TORLhoTNhUjDhdowN8Q/MgsTwMtzxoEplR/cwWN0=
+	t=1719316198; cv=none; b=HKqCxaMAvKKb77m7H/kC/0J1T7Wp2w+tYf6ydBRVEXm625m6z36FAMcZLUNmG7iTiTKTTnEGgvMDLXuH4Le1bbE9HOtMjr98IRQfQ7GXwcolfoMqSQAnR//Icj6xt2X1e4LXMPbQLrrIldkz/vVTKRr13zrJaUV4/rYmdjD7V6s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315910; c=relaxed/simple;
-	bh=O0/2LUKfYiFUblD3u9m7Y13StU5ozfkcPwrLPBl3W0s=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AGHYDSeqPaFwelrIymKB42ReuVOIhoAsxHTc/eMLV7ve7QiuuF5T5p2S73pq6gqFVd+cJ70coLeDK7iakaSIThlzope4t2Vvec3uXdpP/1CUWhy8RLj+lSNd2wusgvuaJHj0QVnw4zLFP92xW2tslLCUk2P6tXrzBldcRDBOfVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=JUEjC0St; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W7jgN6pNYz9spK;
-	Tue, 25 Jun 2024 13:45:04 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1719315905;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fyS4GVf4PvByyE0IUbrr3l1s3P7v70XANt/sXrYXYDk=;
-	b=JUEjC0StwOgXBgGlDaXdgJYKqaINIckvwir1VzS6vaPsaIuGOoRoH4bIEBnAPSiFaBTsij
-	Wg2CeEeSf29wU8MOtLW7DEWlkJx7/q2myVSyUGY5xc9IZvT+AKXe2l99KwhqW1jGBua1DY
-	PO4ofn3aJAnp4NBPB0RiKD2wMATzgAVn0gOz1gYoxGohcI4Odo85hvIEI/JYspGsH/3XKh
-	bgJrG01RH+pzSMq8l41ho4jHg0lItICn8DvmfnmldRRQAMKy7e/U573JD1xzBsoh4GFzkh
-	Pii6SUSGTYeX37Tx0bkk7i3xlrnBQ5+9hkU5tj7xhJ8HJ/fGXAPpPx5/7kqEzA==
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: david@fromorbit.com,
-	willy@infradead.org,
-	chandan.babu@oracle.com,
-	djwong@kernel.org,
-	brauner@kernel.org,
-	akpm@linux-foundation.org
-Cc: linux-kernel@vger.kernel.org,
-	yang@os.amperecomputing.com,
-	linux-mm@kvack.org,
-	john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org,
-	hare@suse.de,
-	p.raghav@samsung.com,
-	mcgrof@kernel.org,
-	gost.dev@samsung.com,
-	cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org,
-	kernel@pankajraghav.com,
-	hch@lst.de,
-	Zi Yan <zi.yan@sent.com>
-Subject: [PATCH v8 10/10] xfs: enable block size larger than page size support
-Date: Tue, 25 Jun 2024 11:44:20 +0000
-Message-ID: <20240625114420.719014-11-kernel@pankajraghav.com>
-In-Reply-To: <20240625114420.719014-1-kernel@pankajraghav.com>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
+	s=arc-20240116; t=1719316198; c=relaxed/simple;
+	bh=PyVHnjG73tg3bQgcCMZI90Xk84ZDk5HCikIcnPu7wuM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p2l7GBYRGtiyufW1lO7Y/dxLQP8YSlKnhfdcrbDnvdIdBbiFVrgrB5za4Jm+EOyQjy3v0Oa9fCwi/CCpf0j8LEhdutTC3tiuBz3t4bv5MEaKEUPqUm8vDPglhWEXqZDCRW/Rxdz9h7iJoIaYAudmkNRrJjPFRnsD1qbAE/3kxjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hFueCOhe; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719316197; x=1750852197;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=PyVHnjG73tg3bQgcCMZI90Xk84ZDk5HCikIcnPu7wuM=;
+  b=hFueCOheeUj5F0Dcg6Cue+Fwi9Z0khY4doawxtnq2OOon5utCuxztWjJ
+   YYs8Y8dRZIOiho6C7dnHJvroORhTYpnwzCCjNBMb2Y38GioIRrhSWD5ay
+   UNjdRn4RXUux1NymUvpWWxThQT5b++LC2bp3Eb8NUq2vJ98Km7wUlQ6LA
+   Ami+Sbd39jSpfZggF9iWb466JL64BRYqDTUQRYuElXbUH0VgxVV45LHm0
+   hEWGel8Lf6RZ0nr+zIs0sh6SmH22LT6rLhu4EMUexhff6yDuaPOZLZrSx
+   hbF+9JlcghI5/2X1KqKD20Q/WCPRX2WRNUE/UwUXH2NbxyBdYUcwz1Yyr
+   w==;
+X-CSE-ConnectionGUID: m+0HabCASXa4Bg+eF5Ixgg==
+X-CSE-MsgGUID: gkW3bNkjQ5i8L9toUJzLsA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="20104375"
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="20104375"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 04:49:56 -0700
+X-CSE-ConnectionGUID: r02oWnKNSWuW+PAgD0UwPg==
+X-CSE-MsgGUID: nvvfCh2PTZ2pGXg5JsnOLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="43724716"
+Received: from newjersey.igk.intel.com ([10.102.20.203])
+  by orviesa009.jf.intel.com with ESMTP; 25 Jun 2024 04:49:53 -0700
+From: Alexander Lobakin <aleksander.lobakin@intel.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
+	David Ahern <dsahern@kernel.org>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/5] netdev_features: start cleaning netdev_features_t up
+Date: Tue, 25 Jun 2024 13:44:27 +0200
+Message-ID: <20240625114432.1398320-1-aleksander.lobakin@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,124 +80,134 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Pankaj Raghav <p.raghav@samsung.com>
+NETDEV_FEATURE_COUNT is currently 64, which means we can't add any new
+features as netdev_features_t is u64.
+As per several discussions, instead of converting netdev_features_t to
+a bitmap, which would mean A LOT of changes, we can try cleaning up
+netdev feature bits.
+There's a bunch of bits which don't really mean features, rather device
+attributes/properties that can't be changed via Ethtool in any of the
+drivers. Such attributes can be moved to netdev private flags without
+losing any functionality.
 
-Page cache now has the ability to have a minimum order when allocating
-a folio which is a prerequisite to add support for block size > page
-size.
+Start converting some read-only netdev features to private flags from
+the ones that are most obvious, like lockless Tx, inability to change
+network namespace etc. I was able to reduce NETDEV_FEATURE_COUNT from
+64 to 60, which mean 4 free slots for new features. There are obviously
+more read-only features to convert, such as highDMA, "challenged VLAN",
+HSR (4 bits) - this will be done in subsequent series.
+Please note that netdev features are not uAPI/ABI by any means. Ethtool
+passes their names and bits to the userspace separately and there are no
+hardcoded names/bits in the userspace, so that new Ethtool could work
+on older kernels and vice versa. Even shell scripts won't most likely
+break since the removed bits were always read-only, meaning nobody would
+try touching them from a script.
 
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+Alexander Lobakin (5):
+  netdevice: convert private flags > BIT(31) to bitfields
+  netdev_features: remove unused __UNUSED_NETIF_F_1
+  netdev_features: convert NETIF_F_LLTX to dev->lltx
+  netdev_features: convert NETIF_F_NETNS_LOCAL to dev->netns_local
+  netdev_features: convert NETIF_F_FCOE_MTU to dev->fcoe_mtu
+
+ Documentation/networking/netdev-features.rst  | 15 -------
+ Documentation/networking/netdevices.rst       |  4 +-
+ Documentation/networking/switchdev.rst        |  4 +-
+ drivers/net/ethernet/tehuti/tehuti.h          |  2 +-
+ include/linux/netdev_features.h               | 14 +------
+ include/linux/netdevice.h                     | 40 +++++++++++++------
+ drivers/net/amt.c                             |  4 +-
+ drivers/net/bareudp.c                         |  2 +-
+ drivers/net/bonding/bond_main.c               |  8 ++--
+ drivers/net/dummy.c                           |  3 +-
+ drivers/net/ethernet/adi/adin1110.c           |  2 +-
+ drivers/net/ethernet/chelsio/cxgb/cxgb2.c     |  3 +-
+ .../net/ethernet/chelsio/cxgb4/cxgb4_fcoe.c   |  6 +--
+ .../net/ethernet/freescale/dpaa/dpaa_eth.c    |  3 +-
+ .../net/ethernet/freescale/dpaa2/dpaa2-eth.c  |  3 +-
+ .../net/ethernet/intel/ixgbe/ixgbe_dcb_nl.c   |  2 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_fcoe.c |  4 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_lib.c  |  2 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 11 ++---
+ .../net/ethernet/intel/ixgbe/ixgbe_sriov.c    |  4 +-
+ .../ethernet/marvell/prestera/prestera_main.c |  3 +-
+ .../net/ethernet/mellanox/mlx5/core/en_main.c |  4 +-
+ .../net/ethernet/mellanox/mlx5/core/en_rep.c  |  3 +-
+ .../net/ethernet/mellanox/mlxsw/spectrum.c    |  6 ++-
+ .../ethernet/microchip/lan966x/lan966x_main.c |  2 +-
+ .../net/ethernet/netronome/nfp/nfp_net_repr.c |  3 +-
+ drivers/net/ethernet/pasemi/pasemi_mac.c      |  5 ++-
+ .../net/ethernet/qualcomm/rmnet/rmnet_vnd.c   |  2 +-
+ drivers/net/ethernet/rocker/rocker_main.c     |  3 +-
+ drivers/net/ethernet/sfc/ef100_rep.c          |  4 +-
+ drivers/net/ethernet/tehuti/tehuti.c          |  4 +-
+ drivers/net/ethernet/ti/cpsw_new.c            |  3 +-
+ drivers/net/ethernet/toshiba/spider_net.c     |  3 +-
+ drivers/net/geneve.c                          |  2 +-
+ drivers/net/gtp.c                             |  2 +-
+ drivers/net/hamradio/bpqether.c               |  2 +-
+ drivers/net/ipvlan/ipvlan_main.c              |  3 +-
+ drivers/net/loopback.c                        |  4 +-
+ drivers/net/macsec.c                          |  4 +-
+ drivers/net/macvlan.c                         |  6 ++-
+ drivers/net/net_failover.c                    |  4 +-
+ drivers/net/netkit.c                          |  3 +-
+ drivers/net/nlmon.c                           |  4 +-
+ drivers/net/ppp/ppp_generic.c                 |  2 +-
+ drivers/net/rionet.c                          |  2 +-
+ drivers/net/team/team_core.c                  |  8 ++--
+ drivers/net/tun.c                             |  5 ++-
+ drivers/net/veth.c                            |  2 +-
+ drivers/net/vrf.c                             |  4 +-
+ drivers/net/vsockmon.c                        |  4 +-
+ drivers/net/vxlan/vxlan_core.c                |  5 ++-
+ drivers/net/wireguard/device.c                |  2 +-
+ drivers/scsi/fcoe/fcoe.c                      |  4 +-
+ drivers/staging/octeon/ethernet.c             |  2 +-
+ lib/test_bpf.c                                |  3 +-
+ net/8021q/vlan_dev.c                          |  5 ++-
+ net/8021q/vlanproc.c                          |  2 +-
+ net/batman-adv/soft-interface.c               |  5 ++-
+ net/bridge/br_device.c                        |  6 ++-
+ net/core/dev.c                                |  8 ++--
+ net/core/dev_ioctl.c                          |  9 ++---
+ net/core/net-sysfs.c                          |  3 +-
+ net/core/rtnetlink.c                          |  2 +-
+ net/dsa/user.c                                |  3 +-
+ net/ethtool/common.c                          |  3 --
+ net/hsr/hsr_device.c                          | 12 +++---
+ net/ieee802154/6lowpan/core.c                 |  2 +-
+ net/ieee802154/core.c                         | 10 ++---
+ net/ipv4/ip_gre.c                             |  4 +-
+ net/ipv4/ip_tunnel.c                          |  2 +-
+ net/ipv4/ip_vti.c                             |  2 +-
+ net/ipv4/ipip.c                               |  2 +-
+ net/ipv4/ipmr.c                               |  2 +-
+ net/ipv6/ip6_gre.c                            |  7 ++--
+ net/ipv6/ip6_tunnel.c                         |  4 +-
+ net/ipv6/ip6mr.c                              |  2 +-
+ net/ipv6/sit.c                                |  4 +-
+ net/l2tp/l2tp_eth.c                           |  2 +-
+ net/openvswitch/vport-internal_dev.c          | 11 ++---
+ net/wireless/core.c                           | 10 ++---
+ net/xfrm/xfrm_interface_core.c                |  2 +-
+ tools/testing/selftests/net/forwarding/README |  2 +-
+ 82 files changed, 194 insertions(+), 190 deletions(-)
+
 ---
-@hch and @Dave I have retained the min_folio_order to be in the inode
-struct as the discussion about moving this to xfs_mount is still open.
+From RFC[0]:
+* drop:
+  * IFF_LOGICAL (as (LLTX | IFF_NO_QUEUE)) - will be discussed later;
+  * NETIF_F_HIGHDMA conversion - requires priv flags inheriting etc.,
+    maybe later;
+  * NETIF_F_VLAN_CHALLENGED conversion - same as above;
+* convert existing priv_flags > BIT(31) to bitfield booleans and define
+  new flags the same way (Jakub);
+* mention a couple times that netdev features are not uAPI/ABI by any
+  means (Andrew).
 
- fs/xfs/libxfs/xfs_ialloc.c |  5 +++++
- fs/xfs/libxfs/xfs_shared.h |  3 +++
- fs/xfs/xfs_icache.c        |  6 ++++--
- fs/xfs/xfs_mount.c         |  1 -
- fs/xfs/xfs_super.c         | 18 ++++++++++--------
- 5 files changed, 22 insertions(+), 11 deletions(-)
-
-diff --git a/fs/xfs/libxfs/xfs_ialloc.c b/fs/xfs/libxfs/xfs_ialloc.c
-index 14c81f227c5b..1e76431d75a4 100644
---- a/fs/xfs/libxfs/xfs_ialloc.c
-+++ b/fs/xfs/libxfs/xfs_ialloc.c
-@@ -3019,6 +3019,11 @@ xfs_ialloc_setup_geometry(
- 		igeo->ialloc_align = mp->m_dalign;
- 	else
- 		igeo->ialloc_align = 0;
-+
-+	if (mp->m_sb.sb_blocksize > PAGE_SIZE)
-+		igeo->min_folio_order = mp->m_sb.sb_blocklog - PAGE_SHIFT;
-+	else
-+		igeo->min_folio_order = 0;
- }
- 
- /* Compute the location of the root directory inode that is laid out by mkfs. */
-diff --git a/fs/xfs/libxfs/xfs_shared.h b/fs/xfs/libxfs/xfs_shared.h
-index 34f104ed372c..e67a1c7cc0b0 100644
---- a/fs/xfs/libxfs/xfs_shared.h
-+++ b/fs/xfs/libxfs/xfs_shared.h
-@@ -231,6 +231,9 @@ struct xfs_ino_geometry {
- 	/* precomputed value for di_flags2 */
- 	uint64_t	new_diflags2;
- 
-+	/* minimum folio order of a page cache allocation */
-+	unsigned int	min_folio_order;
-+
- };
- 
- #endif /* __XFS_SHARED_H__ */
-diff --git a/fs/xfs/xfs_icache.c b/fs/xfs/xfs_icache.c
-index 088ac200b026..e0f911f326e6 100644
---- a/fs/xfs/xfs_icache.c
-+++ b/fs/xfs/xfs_icache.c
-@@ -88,7 +88,8 @@ xfs_inode_alloc(
- 
- 	/* VFS doesn't initialise i_mode! */
- 	VFS_I(ip)->i_mode = 0;
--	mapping_set_large_folios(VFS_I(ip)->i_mapping);
-+	mapping_set_folio_min_order(VFS_I(ip)->i_mapping,
-+				    M_IGEO(mp)->min_folio_order);
- 
- 	XFS_STATS_INC(mp, vn_active);
- 	ASSERT(atomic_read(&ip->i_pincount) == 0);
-@@ -325,7 +326,8 @@ xfs_reinit_inode(
- 	inode->i_uid = uid;
- 	inode->i_gid = gid;
- 	inode->i_state = state;
--	mapping_set_large_folios(inode->i_mapping);
-+	mapping_set_folio_min_order(inode->i_mapping,
-+				    M_IGEO(mp)->min_folio_order);
- 	return error;
- }
- 
-diff --git a/fs/xfs/xfs_mount.c b/fs/xfs/xfs_mount.c
-index 3949f720b535..c6933440f806 100644
---- a/fs/xfs/xfs_mount.c
-+++ b/fs/xfs/xfs_mount.c
-@@ -134,7 +134,6 @@ xfs_sb_validate_fsb_count(
- {
- 	uint64_t		max_bytes;
- 
--	ASSERT(PAGE_SHIFT >= sbp->sb_blocklog);
- 	ASSERT(sbp->sb_blocklog >= BBSHIFT);
- 
- 	if (check_shl_overflow(nblocks, sbp->sb_blocklog, &max_bytes))
-diff --git a/fs/xfs/xfs_super.c b/fs/xfs/xfs_super.c
-index 27e9f749c4c7..b8a93a8f35ca 100644
---- a/fs/xfs/xfs_super.c
-+++ b/fs/xfs/xfs_super.c
-@@ -1638,16 +1638,18 @@ xfs_fs_fill_super(
- 		goto out_free_sb;
- 	}
- 
--	/*
--	 * Until this is fixed only page-sized or smaller data blocks work.
--	 */
- 	if (mp->m_sb.sb_blocksize > PAGE_SIZE) {
--		xfs_warn(mp,
--		"File system with blocksize %d bytes. "
--		"Only pagesize (%ld) or less will currently work.",
-+		if (!xfs_has_crc(mp)) {
-+			xfs_warn(mp,
-+"V4 Filesystem with blocksize %d bytes. Only pagesize (%ld) or less is supported.",
- 				mp->m_sb.sb_blocksize, PAGE_SIZE);
--		error = -ENOSYS;
--		goto out_free_sb;
-+			error = -ENOSYS;
-+			goto out_free_sb;
-+		}
-+
-+		xfs_warn(mp,
-+"EXPERIMENTAL: V5 Filesystem with Large Block Size (%d bytes) enabled.",
-+			mp->m_sb.sb_blocksize);
- 	}
- 
- 	/* Ensure this filesystem fits in the page cache limits */
+[0] https://lore.kernel.org/netdev/20240405133731.1010128-1-aleksander.lobakin@intel.com
 -- 
-2.44.1
+2.45.2
 
 
