@@ -1,188 +1,345 @@
-Return-Path: <linux-kernel+bounces-228506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B509B9160EA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:17:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09F9D9160EF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D82AF1C22F09
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:17:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B288428421C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE5822313;
-	Tue, 25 Jun 2024 08:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C54271482FC;
+	Tue, 25 Jun 2024 08:18:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="n7r9Qbig"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fvpd8jv7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FBC145FFE;
-	Tue, 25 Jun 2024 08:17:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21276145FFE
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719303444; cv=none; b=DnsNFPI5R1I5ZCUwTmCIxp0L7U44wVcDCE8P/+E9+gEIRog3LHwa69/lhFodfgGNJkRRIhfYUYT7w6ti4PysZS20wNbgY7iApYQRwXqfgZQ+JR729hEkEfu6ZJArGauSIaXxIiHsDgH9tgsvRUqHF6uSM2+2IbR6xHv9TDZL49c=
+	t=1719303501; cv=none; b=rkJ7EXMtOTPwPD4LqrUJkeZGfaKSuM1kuafZRUMjply7GTuQKK8qpkezuLpnrk5SwHrJFjkqnuagS7U2Y2kqL2lgzOs5Ky9ragbNIkicAvGsVChh5kDgPHzZ2uaCRZWgMaUAaETU8AsgboCU/lqmn+6Pns423Dotlcznx+dpZ8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719303444; c=relaxed/simple;
-	bh=ahZ1IlNJOXPgTay/HQbIBcXi0SqZxQBnKXQRaaKDpsk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pjvpCc+DYjHRPl1hSUGKiXJMJ6ek76d17hij5bMHH/z8gWDl1gFpSqMtRQEnIVQgcBGXnOxL+ntnY9eSyFrYHn3U2THRp3iCUkrzv0bDNy9CWFNQ8Gm4d5S8dcwrtjDcvYW8YyhLX+gUg/g2tHH6D0FwW58I0k66fttjqGB8WtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=n7r9Qbig; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 62B741BF207;
-	Tue, 25 Jun 2024 08:17:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com; s=gm1;
-	t=1719303440;
+	s=arc-20240116; t=1719303501; c=relaxed/simple;
+	bh=mp25LbNH529boIqokRGeLXeQI0lUfBXs5y+8uNYS5oo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WU9j+5+BF2+6i2yeSbAGWD8N2ED85CtCK2A+cCozs1wVT3/qI08YH0KZv8yXJUBqYFIgF1meszD1SoQvl0n4g6SL60db3wV4NT5lIw/Pc9pDUizgA8Fa0A19cYXMxvTVgi2xQhp+Sx7fe+5nHp7Qh6dKYJuRWxpGtmeQrFG3+kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fvpd8jv7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719303499;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=hE2xd4QxwpEy7QXL+lAVyTmTgN2X6yquzmQ2NM2E7EA=;
-	b=n7r9QbigIrXH9yhC12MrdNMh8FOIviHrg/M7D7taN3J5qjffT7qhqfSij2fkEgaElePZR3
-	71r0Xk6IOOK/8CuoSmrK9Y0yFTUowXl+b7Tqr4SSN+6AQbdIbEt+yYwYm8XLoSDLXuabgU
-	zCmZWv7tPmeulD7/jT+hf+EUBp3Cf50uJA+kiihV4JVCf1o9oWkbQdFYTTk9AGQOSexuRg
-	/4D9UWAVsbh8dgpmU2hwJWTcTzikN6MHMFN3khnQjmuNiw44LY1dox1njbN3L/vNXNyiwQ
-	FLizrA4peUFyyotRF62XAfZDBigiWXY8HHecPFHSrAq1iLllTQU70zEiIJ5b4g==
-Message-ID: <bb7e9cae-d627-4f38-9da2-b40fb3c349fe@arinc9.com>
-Date: Tue, 25 Jun 2024 11:17:09 +0300
+	bh=RNEkDiogTjMA3sbpKjhWJrByDlROYZM+6wl2gluyWtI=;
+	b=fvpd8jv7jRaF6ZTDMnSkgzZojLgm6vM/8rApeZ4X1lHcxq+/C97pSBRW+/ldSKOuqpfLw8
+	OGSidutCGs6Q+xh+IC6RioTjmLGQPDiYVD8LwU0Wn0ib4qtg4G4gTkKCdBfvXRCpCUlXL3
+	2JzdwK+mqji4NoB1X1EEsnR6Vjb0S6E=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-274-B52yjt-6Mom-_cM8HqsRbQ-1; Tue, 25 Jun 2024 04:18:17 -0400
+X-MC-Unique: B52yjt-6Mom-_cM8HqsRbQ-1
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2c30144b103so4404996a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 01:18:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719303496; x=1719908296;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RNEkDiogTjMA3sbpKjhWJrByDlROYZM+6wl2gluyWtI=;
+        b=CFiK8svIqeT5FCPLT8u3PdiZNghVBarNjeApMAwGKCBkfVCsU75xFtH1SYNWdvey+k
+         y2rnCWqEkalHERTMFuKM1u7NRw5HGCYANdnzriJU16ovw2o6Kz1UapKCDwJfUqmvJBB6
+         dUiHgCwl2VsF03POH14QxRufVyeASHMZ7QntbZQPCluXQ0xHTeYRkzd57+aX0O80SCbK
+         3ISHt1HUIRxnAv7FBS2gA+zULLMMcNOmjtBM+Dpp1ZQd3AwAPMhWPRMq94KasJscO7ef
+         leKSocJVtYtINAqBXn1aOb7ZXuE7BrivHo9bjm3ltknmizRhxErJXtuVuWI76PcU1Xrb
+         Ui2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUKo2k/GngVnLD1gVUZmxwi37Y5S89tRKB1Mjvnd+PoO1hQV6JksfD3hG9PRhUhswMbddtPRjJk4rei5ThbeMfTQs6xvDpzwYjEJI75
+X-Gm-Message-State: AOJu0Yz9q44oO9ZzC5o5KA2MSNdPm8wJuyHBxf8tXuh8/QIhxrOv2Q2w
+	HdXTzSAl1bkPXIfsYwXqT2nDo3qpWfeK9l5jCH/AvAwX4tIjpg9sDivzlV2hLoRVDZGTsYWwt1J
+	lPOZbt+LHCsX4sCwhY/atrf8RxM2GXrDhS2gVcwYZNRZXiSE6CPoOgd+D86tgV7Rbdkcprot6iE
+	3ZduWlI2x30wQHVMns1DUyi1WHw+2mBbk7C27YveaZoy5FZyA=
+X-Received: by 2002:a17:90a:ce01:b0:2c8:5e4d:8db2 with SMTP id 98e67ed59e1d1-2c85e4d8f8bmr8786444a91.5.1719303492150;
+        Tue, 25 Jun 2024 01:18:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEmclppzqVeu2FHkBTM4CnY178ioASO1IozlB1/rkrD7DD9ywC+6haNOKojp/iJ2YpBJV0iPvdxkEpLAjJo9Xw=
+X-Received: by 2002:a17:90a:ce01:b0:2c8:5e4d:8db2 with SMTP id
+ 98e67ed59e1d1-2c85e4d8f8bmr8786394a91.5.1719303491498; Tue, 25 Jun 2024
+ 01:18:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: mt7622: fix switch probe on bananapi-r64
-To: Linux regressions mailing list <regressions@lists.linux.dev>,
- Paolo Abeni <pabeni@redhat.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Daniel Golle <daniel@makrotopia.org>, frank-w@public-files.de,
- Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-References: <20240516204847.171029-1-linux@fw-web.de>
- <5AEE5668-0C8E-4EE4-A398-66CB99DF5650@public-files.de>
- <43aacd9d-b851-4100-8ccc-878ac6ae10f8@leemhuis.info>
- <698cf562-1ca9-4aa3-be7e-a1474b612c5b@leemhuis.info>
- <0cba095c-3d55-416a-a7ad-b359129731cf@arinc9.com>
- <714da201-654b-4183-8e5e-8ff0b64fe621@leemhuis.info>
- <2cac4cf68304e81abffbd9ff0387ee100323c2b7.camel@redhat.com>
- <b49c801c-6628-40a6-8294-0876d8871ba7@leemhuis.info>
- <e92c3ca0-c9be-44ac-a4fc-57ca5ebedbc5@leemhuis.info>
- <1807a142-1534-4fa4-ad4b-d1c03af014c2@arinc9.com>
- <58d8ddea-71cc-427a-94cc-a95f6bce61d2@collabora.com>
- <16e9c06e-9908-455d-a387-614fefe5bcf8@arinc9.com>
- <5e87d31c-b059-4f9a-93f7-dc87465ed14a@collabora.com>
- <4416ef22-78cc-4ce5-b61d-69ff0903811e@arinc9.com>
- <bd6b6929-d34d-4bd5-9cb0-bc8fe850ee46@leemhuis.info>
- <af561268-9793-4b5d-aa0f-d09698fd6fb0@arinc9.com>
- <750a60a6-4585-4bd2-97be-cf944e51fbdb@leemhuis.info>
- <7a2ea06b-ae4e-4374-82c2-4de4184e06c3@arinc9.com>
- <40035548-c76b-4b0d-915f-c513eaadbc5d@leemhuis.info>
-Content-Language: en-US
-From: =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>
-In-Reply-To: <40035548-c76b-4b0d-915f-c513eaadbc5d@leemhuis.info>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: arinc.unal@arinc9.com
+References: <20240624024523.34272-1-jasowang@redhat.com> <20240624024523.34272-2-jasowang@redhat.com>
+ <20240624054403-mutt-send-email-mst@kernel.org> <CACGkMEv1U7N-RRgQ=jbhBK1SWJ3EJz84qYaxC2kk6keM6J6MaQ@mail.gmail.com>
+ <20240625030259-mutt-send-email-mst@kernel.org> <CACGkMEuP5GJTwcSoG6UP0xO6V7zeJynYyTDVRtF8R=PJ5z8aLg@mail.gmail.com>
+ <20240625035746-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20240625035746-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Tue, 25 Jun 2024 16:18:00 +0800
+Message-ID: <CACGkMEtA8_StbzicRA6aEST8e4SNHFutLmtPu-8zaOZH2zO3cA@mail.gmail.com>
+Subject: Re: [PATCH V2 1/3] virtio: allow nested disabling of the configure interrupt
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: xuanzhuo@linux.alibaba.com, eperezma@redhat.com, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
+	virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, venkat.x.venkatsubra@oracle.com, 
+	gia-khanh.nguyen@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/06/2024 09.57, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 25.06.24 08:17, Arınç ÜNAL wrote:
->> On 25/06/2024 08.56, Linux regression tracking (Thorsten Leemhuis) wrote:
->>> On 17.06.24 13:08, Arınç ÜNAL wrote:
->>>> On 17/06/2024 11:33, Linux regression tracking (Thorsten Leemhuis)
->>>> wrote:
->>>> [...]
->>>> I've submitted a patch series that fixes the regression. Angelo argued
->>>> against the way the regression is fixed. I've very clearly argued
->>>> back why
->>>> I find Angelo's approach wrong. There's been no response back. I don't
->>>> understand why reverting the patch is the likely outcome
->>>
->>> Long story short: because that how things like that are handled in the
->>> Linux kernel project, as Linus wants it like that. See some of the
->>> quotes from https://docs.kernel.org/process/handling-regressions.html
->>> for details.
->>>
->>>> whilst the
->>>> standing argument points towards applying the said patch series. If a
->>>> revert happens before this discussion with Angelo finalises, this
->>>> will set
->>>> a precedent that will tell maintainers that they can have their way
->>>> by just
->>>> not replying to the ongoing discussions.
->>>>
->>>> That said, the decision of resolving the regression by either
->>>> reverting the
->>>> patch or applying the patch series shall not depend on whether or not
->>>> Angelo is pleased but rather there're no counter-arguments left on the
->>>> points brought, meaning the decision shall be made depending on the
->>>> argument that stands.
->>>>
->>>> Therefore, I suggest that unless Angelo responds back with a
->>>> counter-argument in the window of a week or two, as you've described, my
->>>> patch series shall be applied.
->>>
->>> It looks more and more like we are stuck here (or was there progress and
->>> I just missed it?) while the 6.10 final is slowly getting closer. Hence:
->>
->> There hasn't been progress at all. I believe I have clearly described the
->> way out of this issue.
->>
->>> AngeloGioacchino, should we ask the net maintainers to revert
->>> 868ff5f4944aa9 ("net: dsa: mt7530-mdio: read PHY address of switch from
->>> device tree") for now to resolve this regression? Reminder, there is
->>> nothing wrong with that commit per se afaik, it just exposes a problem
->>> that needs to be fixed first before it can be reapplied.
->>
->> Are you suggesting the patch shall be reverted first, then the DT patch
->> applied, then the reverted patch applied back?
-> 
-> Yeah.
-> 
->> If only one of the first two
->> steps were done, it would fix the regression so I don't understand why go
->> through this tedious process when we can quite simply apply the DT patch to
->> resolve the regression.
-> 
-> Which DT patch do you mean here? Your series or the one from Frank at
-> the start of the thread (the one you seems to be unhappy about iirc, but
-> I might be wrong there)?
+On Tue, Jun 25, 2024 at 4:04=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
+>
+> On Tue, Jun 25, 2024 at 03:50:30PM +0800, Jason Wang wrote:
+> > On Tue, Jun 25, 2024 at 3:11=E2=80=AFPM Michael S. Tsirkin <mst@redhat.=
+com> wrote:
+> > >
+> > > On Tue, Jun 25, 2024 at 09:27:04AM +0800, Jason Wang wrote:
+> > > > On Mon, Jun 24, 2024 at 5:59=E2=80=AFPM Michael S. Tsirkin <mst@red=
+hat.com> wrote:
+> > > > >
+> > > > > On Mon, Jun 24, 2024 at 10:45:21AM +0800, Jason Wang wrote:
+> > > > > > Somtime driver may want to enable or disable the config callbac=
+k. This
+> > > > > > requires a synchronization with the core. So this patch change =
+the
+> > > > > > config_enabled to be a integer counter. This allows the togglin=
+g of
+> > > > > > the config_enable to be synchronized between the virtio core an=
+d the
+> > > > > > virtio driver.
+> > > > > >
+> > > > > > The counter is not allowed to be increased greater than one, th=
+is
+> > > > > > simplifies the logic where the interrupt could be disabled imme=
+diately
+> > > > > > without extra synchronization between driver and core.
+> > > > > >
+> > > > > > Signed-off-by: Jason Wang <jasowang@redhat.com>
+> > > > > > ---
+> > > > > >  drivers/virtio/virtio.c | 20 +++++++++++++-------
+> > > > > >  include/linux/virtio.h  |  2 +-
+> > > > > >  2 files changed, 14 insertions(+), 8 deletions(-)
+> > > > > >
+> > > > > > diff --git a/drivers/virtio/virtio.c b/drivers/virtio/virtio.c
+> > > > > > index b968b2aa5f4d..d3aa74b8ae5d 100644
+> > > > > > --- a/drivers/virtio/virtio.c
+> > > > > > +++ b/drivers/virtio/virtio.c
+> > > > > > @@ -127,7 +127,7 @@ static void __virtio_config_changed(struct =
+virtio_device *dev)
+> > > > > >  {
+> > > > > >       struct virtio_driver *drv =3D drv_to_virtio(dev->dev.driv=
+er);
+> > > > > >
+> > > > > > -     if (!dev->config_enabled)
+> > > > > > +     if (dev->config_enabled < 1)
+> > > > > >               dev->config_change_pending =3D true;
+> > > > > >       else if (drv && drv->config_changed)
+> > > > > >               drv->config_changed(dev);
+> > > > > > @@ -146,17 +146,23 @@ EXPORT_SYMBOL_GPL(virtio_config_changed);
+> > > > > >  static void virtio_config_disable(struct virtio_device *dev)
+> > > > > >  {
+> > > > > >       spin_lock_irq(&dev->config_lock);
+> > > > > > -     dev->config_enabled =3D false;
+> > > > > > +     --dev->config_enabled;
+> > > > > >       spin_unlock_irq(&dev->config_lock);
+> > > > > >  }
+> > > > > >
+> > > > > >  static void virtio_config_enable(struct virtio_device *dev)
+> > > > > >  {
+> > > > > >       spin_lock_irq(&dev->config_lock);
+> > > > > > -     dev->config_enabled =3D true;
+> > > > > > -     if (dev->config_change_pending)
+> > > > > > -             __virtio_config_changed(dev);
+> > > > > > -     dev->config_change_pending =3D false;
+> > > > > > +
+> > > > > > +     if (dev->config_enabled < 1) {
+> > > > > > +             ++dev->config_enabled;
+> > > > > > +             if (dev->config_enabled =3D=3D 1 &&
+> > > > > > +                 dev->config_change_pending) {
+> > > > > > +                     __virtio_config_changed(dev);
+> > > > > > +                     dev->config_change_pending =3D false;
+> > > > > > +             }
+> > > > > > +     }
+> > > > > > +
+> > > > > >       spin_unlock_irq(&dev->config_lock);
+> > > > > >  }
+> > > > > >
+> > > > >
+> > > > > So every disable decrements the counter. Enable only increments i=
+t up to 1.
+> > > > > You seem to be making some very specific assumptions
+> > > > > about how this API will be used. Any misuse will lead to under/ov=
+erflow
+> > > > > eventually ...
+> > > > >
+> > > >
+> > > > Well, a counter gives us more information than a boolean. With
+> > > > boolean, misuse is even harder to be noticed.
+> > >
+> > > With boolean we can prevent misuse easily because previous state
+> > > is known exactly. E.g.:
+> > >
+> > > static void virtio_config_driver_disable(struct virtio_device *dev)
+> > > {
+> > >         BUG_ON(dev->config_driver_disabled);
+> > >         dev->config_driver_disabled =3D true;
+> > > }
+> > >
+> > >
+> > >
+> > > static void virtio_config_driver_enable(struct virtio_device *dev)
+> > > {
+> > >         BUG_ON(!dev->config_driver_disabled);
+> > >         dev->config_driver_disabled =3D false;
+> > > }
+> > >
+> > >
+> > > Does not work with integer you simply have no idea what the value
+> > > should be at point of call.
+> >
+> > Yes but I meant if we want the config could be disabled by different
+> > parties (core, driver and others)
+>
+> For now, we don't have others ;)
+>
+> > >
+> > >
+> > > > >
+> > > > >
+> > > > > My suggestion would be to
+> > > > > 1. rename config_enabled to config_core_enabled
+> > > > > 2. rename virtio_config_enable/disable to virtio_config_core_enab=
+le/disable
+> > > > > 3. add bool config_driver_disabled and make virtio_config_enable/=
+disable
+> > > > >    switch that.
+> > > > > 4. Change logic from dev->config_enabled to
+> > > > >    dev->config_core_enabled && !dev->config_driver_disabled
+> > > >
+> > > > If we make config_driver_disabled by default true,
+> > >
+> > > No, we make it false by default.
+> > >
+> > > > we need someone to
+> > > > enable it explicitly. If it's core, it breaks the semantic that it =
+is
+> > > > under the control of the driver (or needs to synchronize with the
+> > > > driver). If it's a driver, each driver needs to enable it at some t=
+ime
+> > > > which can be easily forgotten. And if we end up with workarounds li=
+ke:
+> > > >
+> > > >         /* If probe didn't do it, mark device DRIVER_OK ourselves. =
+*/
+> > > >         if (!(dev->config->get_status(dev) & VIRTIO_CONFIG_S_DRIVER=
+_OK))
+> > > >                 virtio_device_ready(dev);
+> > > >
+> > > > It's another break of the semantics. And actually the above is also=
+ racy.
+> > > >
+> > > > It seems the only choice is to make config_driver_disabled by defau=
+lt
+> > > > false. But the driver needs to be aware of this and take extra care
+> > > > when calling virtio_device_ready() which is also tricky.
+> > >
+> > >
+> > > No, false by default simply means no change to semantics.
+> >
+> > No change to current semantics, probably. But we need to document
+> >
+> > 1) driver config is enabled by default
+> > 2) no nested enabling and disabling
+> >
+> > If you think they are all fine, I can go with that way.
+>
+> yes, a good idea to document this.
+>
+>
 
-My series, as arch/arm64/boot/dts/mediatek/mt7622-rfb1.dts needs to be
-addressed too to resolve the regression.
+[...]
 
-> 
-> Anyway, to answer the statement: because the maintainers that would have
-> to accept the DT patch to resolve the problem apparently are not happy
-> with it -- and nobody seems to be working on providing patches that make
-> them happy which are also acceptable at this point of the devel cycle;
-> so as it looks like currently to prevent the regression from entering
-> 6.10 reverting the net change is the only option left.
+> > >
+> > > We have a simple problem, we can solve it simply. reference counting
+> > > is tricky to get right and hard to debug, if we don't need it let us
+> > > not go there.
+> >
+> > I fully agree, and that's why I limit the change to virtio-net driver
+> > in the first version.
+>
+> I got that. I didn't like the code duplication though.
+>
+> > >
+> > >
+> > >
+> > > But in conclusion ;) if you don't like my suggestion do something els=
+e
+> > > but make the APIs make sense,
+> >
+> > I don't say I don't like it:)
+> >
+> > Limiting it to virtio-net seems to be the most easy way. And if we
+> > want to do it in the core, I just want to make nesting to be supported
+> > which might not be necessary now.
+>
+> I feel limiting it to a single driver strikes the right balance ATM.
 
-I've already made my case regarding the situation with the DT patch. I
-can't provide new patches because Angelo did not acknowledge my points yet.
-I maintain the net driver and I too won't be happy with a revert on the
-driver.
+Just to make sure I understand here, should we go back to v1 or go
+with the config_driver_disabled?
 
-> 
->> Keep in mind that I maintain the MT7530 DSA subdriver and the company I
->> work with has got boards that uses the functionality the commit
->> 868ff5f4944aa9 ("net: dsa: mt7530-mdio: read PHY address of switch from
->> device tree") brings.
-> 
-> Don't see a revert as setback at all, that's just normal for the kernel.
-> I'm not the one that will decide about this anyway. And everyone
-> involved afaics would like to prevent a revert. But it seems more and
-> more likely that we are not getting there in time for the 6.10 release
-> (or ideally -rc6 or -rc7 to allow some testing, as last-minute reverts
-> can cause new problems).
+Thanks
 
-I am still calling for the simple procedure of applying the DT patch to
-resolve the regression.
+>
+> >
+> > > at least do better than +5
+> > > on Rusty's interface design scale.
+> > >
+> > > >
+> >
+> > Thanks
+> >
+> >
+> > > >
+> > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > >
+> > > > > > @@ -455,7 +461,7 @@ int register_virtio_device(struct virtio_de=
+vice *dev)
+> > > > > >               goto out_ida_remove;
+> > > > > >
+> > > > > >       spin_lock_init(&dev->config_lock);
+> > > > > > -     dev->config_enabled =3D false;
+> > > > > > +     dev->config_enabled =3D 0;
+> > > > > >       dev->config_change_pending =3D false;
+> > > > > >
+> > > > > >       INIT_LIST_HEAD(&dev->vqs);
+> > > > > > diff --git a/include/linux/virtio.h b/include/linux/virtio.h
+> > > > > > index 96fea920873b..4496f9ba5d82 100644
+> > > > > > --- a/include/linux/virtio.h
+> > > > > > +++ b/include/linux/virtio.h
+> > > > > > @@ -132,7 +132,7 @@ struct virtio_admin_cmd {
+> > > > > >  struct virtio_device {
+> > > > > >       int index;
+> > > > > >       bool failed;
+> > > > > > -     bool config_enabled;
+> > > > > > +     int config_enabled;
+> > > > > >       bool config_change_pending;
+> > > > > >       spinlock_t config_lock;
+> > > > > >       spinlock_t vqs_list_lock;
+> > > > > > --
+> > > > > > 2.31.1
+> > > > >
+> > >
+>
 
-Arınç
 
