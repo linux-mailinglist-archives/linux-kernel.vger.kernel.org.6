@@ -1,111 +1,158 @@
-Return-Path: <linux-kernel+bounces-229286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E454A916DD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:14:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4D06916DD8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:15:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B5291F21B62
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:14:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D899B235C9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:15:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D92F17106D;
-	Tue, 25 Jun 2024 16:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC904171E77;
+	Tue, 25 Jun 2024 16:15:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qw/aowst"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnfgTCyr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812711BC23;
-	Tue, 25 Jun 2024 16:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BD3170827;
+	Tue, 25 Jun 2024 16:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719332075; cv=none; b=aG0QYIi00HAIQ+7lD96FNwE1BldF+Ad8voYnYim3vf8ciqlD1gDXHZqoDH30kiK2x3jigj9m+D8ctMk0N3Scs4nhYhQ4oI2DBaxdZaBbkjUuO2BVJ2/kE/fROzhGARb3UkMmXdYm7FMq1iZq40x6ne9op3CtoSdbFA9VFt94U2Q=
+	t=1719332107; cv=none; b=bJsoB9idfv/oAIa+tSn/J0CWictgk9FXjEXlzbPOMmTJCYE8zCEuo6Gq/k4rvWIow9gmZfkJLsdif+QTOZF422hwoeV/yEz1IUZCOEurZCG33RT3FudoTr7wAAYRxPr8j7FFecKOWoU8Rm7Oa2rRLYf1aB56TWRxS5wCrq2apiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719332075; c=relaxed/simple;
-	bh=0cepQ8DTy2dd7hDBl1FBxJREPoxG0e83dtyZ38Xz36I=;
+	s=arc-20240116; t=1719332107; c=relaxed/simple;
+	bh=XQohTkrMk3w4JsHXkU/yJh/3BOrnzSPrBLO6SVzxBHU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r8ArW2GsjBpVQWWL+fYaV0yfm7sHrOxbzqsOR6FEcAyFWoupYJD0JiFR9LBeJFq5FHmjzOl5Za55/jlvx0QHTu3BcTItN52TySrPIQMSK7x37hN0FHjY2KI61om+vmaVF36RzZvITVbOhl0dqlZWQLbXXPpDVAdlNuhhTAYppew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qw/aowst; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2c81fe42e53so3319871a91.3;
-        Tue, 25 Jun 2024 09:14:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719332073; x=1719936873; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r7lvyqQ/bh+Zu96Z19nUVf4NW7qOys3muVGUV5WCLYg=;
-        b=Qw/aowstLlytzT7lI0ixP3URo749A4E4C0Nz/Cn0Hz6MdKrXEzjIk4rMN8V1MktGlV
-         utuxnerjs70YaqSEg35zfMpeKQ2s1mZFBLN7sy9P+qKZ2Y/4cmElVMk85iDzIjvV9RXW
-         TEG6Uskocl2HEUj90WsoHI+tyY5YFj2GRi+/8V2/8Qn+5NS1wqiiOd7zkL4YSF2JSCsS
-         d4/YIERTBaJClnf+X2Qb2NF86Bn9wuwMjW83IcJ2Oy+bO02XQCXjBolxDSrfmtvtiuJ/
-         syIQ7KJ04Fg9NeGODHh70LBnlhumkNMl1eyF6WJ6ADMLRkhApzVRbn5BRHwXi7iBtkiu
-         /uzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719332073; x=1719936873;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r7lvyqQ/bh+Zu96Z19nUVf4NW7qOys3muVGUV5WCLYg=;
-        b=qEdVGXOhIPj2SD7JclgyDKvbVmmwVqeyp90Mal/GGBgimUT3Z/6GZOFqzDZvZXMhbw
-         f3Sa4x7ITwozASa3PE/qdYkGYyT7VJrtlGUvztbzgrR5qaTb85mxKaX5cfHSFo8zeZku
-         m2gmDJ8snz9aiLnNDgIBwp4keUOvJ+2jLoTY7xRBSevpqjlItSRqel2/zU9xyyU63sY7
-         izPoieNy3jcjqR7pn/5Md6bvkz73RyFLPT6psdjrDM67qgSENLiF2/I/Pc/h2oYKNagl
-         cCxqZNEi6+jjIeuNXrSG75h9k3xWq1NSRLt3OM5mwtfzEdphvs2DU54chkMxcDpSlU/+
-         R+cg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+ZiZsPXRQSsg2BN6ZcHMquostXZuELOevpT4M9CGk3E16Si2i0e2cJYK57v7d9mmyb411qAk9/s463DB3xvzy45FNO2vIo9slPuBzAiqzrs4FBwmZ+LX2R+Im5PdVydNjC69/BCv7Kkc=
-X-Gm-Message-State: AOJu0YzeCfc4n1CXsWG78z7kGCWOAFRFc4ULYLZEJ7/860qeIoK7SSzS
-	CZnQvyDapB0NZZIo3QuXZol7kPiE1oGY56rnkD2od/Q3wmRoJWSW
-X-Google-Smtp-Source: AGHT+IGOj7PYUzqYXS7lK06vRPtKJ6R8Xd9yzfHf170bY0pHwHK6TYk2DBv7+efjA2IM3JLNItk1Eg==
-X-Received: by 2002:a17:90b:4c41:b0:2c3:213b:d0b1 with SMTP id 98e67ed59e1d1-2c86127e2a8mr6883282a91.5.1719332072587;
-        Tue, 25 Jun 2024 09:14:32 -0700 (PDT)
-Received: from google.com ([2620:15c:9d:2:ff4:b46e:2948:c244])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819dbcd88sm8951847a91.37.2024.06.25.09.14.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 09:14:32 -0700 (PDT)
-Date: Tue, 25 Jun 2024 09:14:29 -0700
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andrei Lalaev <andrey.lalaev@gmail.com>
-Cc: robh@kernel.org, m.felsch@pengutronix.de, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Andrei Lalaev <andrei.lalaev@anton-paar.com>
-Subject: Re: [PATCH] Input: qt1050 - handle CHIP_ID reading error
-Message-ID: <Znrs5QVAuSjH5sCT@google.com>
-References: <20240617183018.916234-1-andrey.lalaev@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sixheB1FlidzIdV9b4RaXAe78fmQaFVD2g15qFTjokaCdTKGuV6bqLvH50X9CIMCtRkB6FgKl45a/2OdQsr7VDHn6cNMNjIAm0uZtP8YAZRiYVl3ijTN3nOql1XQqfaYZz8EES3jLRoaKkAp+duAeaojOL7NlkpPyHVHotgh0Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnfgTCyr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D24F1C32781;
+	Tue, 25 Jun 2024 16:15:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719332106;
+	bh=XQohTkrMk3w4JsHXkU/yJh/3BOrnzSPrBLO6SVzxBHU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZnfgTCyrXOezzPIysx6VazlMHDnu5Ix5DQFtaxQyv0kSoO2aOKkA7wyWg0usE1Zrb
+	 pzNFQ6/NTB7nnE/Am9/EmLnqQyb8IudDMSa4efPW0u+TeR3zlbZbSXpd2pJZ43uYic
+	 zGYhumaBwhuFNTezi85P4c1E6pRAbuXDoJmkzpmq+iDcrr5SOOXrFCIBEHLx2yF1yu
+	 O8jmrupZ0xmmLYzp8HgNk7DM4ob42SWGxCbZTHtVwnWmi5vbjpbxcTJ2gL9Xu7FPt5
+	 /pxG+hxNCJ6r2GwmHJWbSFwP23aUstQ8jwsh9x9/bws+b+EoO5x/PA1humux+m6Xq0
+	 9iuME81K3Orhw==
+Date: Tue, 25 Jun 2024 17:15:01 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Andrei.Simion@microchip.com
+Cc: robh@kernel.org, brgl@bgdev.pl, krzk+dt@kernel.org, conor+dt@kernel.org,
+	Nicolas.Ferre@microchip.com, alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev, arnd@arndb.de, gregkh@linuxfoundation.org,
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 3/3] dt-bindings: eeprom: at24: Add at24,mac02e4 and
+ at24,mac02e6
+Message-ID: <20240625-satisfy-froth-decbe11ba388@spud>
+References: <20240621121340.114486-1-andrei.simion@microchip.com>
+ <20240621121340.114486-4-andrei.simion@microchip.com>
+ <20240624194913.GA267989-robh@kernel.org>
+ <53820e28-f512-4129-9a17-a549ef664755@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="AJI6S4BF4a0FtQ1K"
+Content-Disposition: inline
+In-Reply-To: <53820e28-f512-4129-9a17-a549ef664755@microchip.com>
+
+
+--AJI6S4BF4a0FtQ1K
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240617183018.916234-1-andrey.lalaev@gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 08:30:18PM +0200, Andrei Lalaev wrote:
-> From: Andrei Lalaev <andrei.lalaev@anton-paar.com>
-> 
-> If the device is missing, we get the following error:
-> 
->   qt1050 3-0041: ID -1340767592 not supported
-> 
-> Let's handle this situation and print more informative error
-> when reading of CHIP_ID fails:
-> 
->   qt1050 3-0041: Failed to read chip ID: -6
-> 
-> Fixes: cbebf5addec1 ("Input: qt1050 - add Microchip AT42QT1050 support")
-> Signed-off-by: Andrei Lalaev <andrei.lalaev@anton-paar.com>
+On Tue, Jun 25, 2024 at 07:33:18AM +0000, Andrei.Simion@microchip.com wrote:
+> On 24.06.2024 22:49, Rob Herring wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know =
+the content is safe
+> >=20
+> > On Fri, Jun 21, 2024 at 03:13:40PM +0300, Andrei Simion wrote:
+> >> Update regex check and add pattern to match both EEPROMs.
+> >=20
+> > The subject is wrong as 'at24' is not the vendor.
+> >
+>=20
+> My mistake. It needs to be atmel,24mac02e4 and atmel,24mac02e6.
+>=20
+> >>
+> >> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
+> >> ---
+> >> v1 -> v2:
+> >> - change patter into "^atmel,(24(c|cs|mac)[a-z0-9]+|spd)$" to keep sim=
+pler
+> >> ---
+> >>  Documentation/devicetree/bindings/eeprom/at24.yaml | 10 +++++++---
+> >>  1 file changed, 7 insertions(+), 3 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/eeprom/at24.yaml b/Docu=
+mentation/devicetree/bindings/eeprom/at24.yaml
+> >> index 3c36cd0510de..f914ca37ceea 100644
+> >> --- a/Documentation/devicetree/bindings/eeprom/at24.yaml
+> >> +++ b/Documentation/devicetree/bindings/eeprom/at24.yaml
+> >> @@ -18,7 +18,7 @@ select:
+> >>    properties:
+> >>      compatible:
+> >>        contains:
+> >> -        pattern: "^atmel,(24(c|cs|mac)[0-9]+|spd)$"
+> >> +        pattern: "^atmel,(24(c|cs|mac)[a-z0-9]+|spd)$"
+> >>    required:
+> >>      - compatible
+> >>
+> >> @@ -37,8 +37,8 @@ properties:
+> >>        - allOf:
+> >>            - minItems: 1
+> >>              items:
+> >> -              - pattern: "^(atmel|catalyst|microchip|nxp|ramtron|rene=
+sas|rohm|st),(24(c|cs|lc|mac)[0-9]+|spd)$"
+> >> -              - pattern: "^atmel,(24(c|cs|mac)[0-9]+|spd)$"
+> >> +              - pattern: "^(atmel|catalyst|microchip|nxp|ramtron|rene=
+sas|rohm|st),(24(c|cs|lc|mac)[a-z0-9]+|spd)$"
+> >> +              - pattern: "^atmel,(24(c|cs|mac)[a-z0-9]+|spd)$"
+> >=20
+> > Are these devices available from multiple vendors? If not, I think I'd
+> > add specific compatible strings with the right vendor rather than adding
+> > to this pattern. It's rather loosely defined because that's what was in
+> > use already.
+> >
+>=20
+> So, would you like me to keep how it was before:  "^atmel,(24(c|cs|mac)[0=
+-9]+|spd)$" and  "^(atmel|catalyst|microchip|nxp|ramtron|renesas|rohm|st),(=
+24(c|cs|lc|mac)[0-9]+|spd)$"
+> and to add only:=20
+> - items:
+>  pattern: mac02e4$
+> - items:
+>  pattern: mac02e6$
+> ?
+>=20
+> Or would you like me to add to "the special cases that don't conform to t=
+he above pattern. Each requires a standard at24 model as fallback."  area?
 
-Applied, thank you.
+I think the suggestion is to explicitly add these two devices down at the
+bottom instead of adding to the regex. The first hunk I think in this
+patch needs to remain a regex.
 
-But how did we get into the situation with the chip being missing?
-Incorrect DTB for the board?
+--AJI6S4BF4a0FtQ1K
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Thanks.
+-----BEGIN PGP SIGNATURE-----
 
--- 
-Dmitry
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnrtBQAKCRB4tDGHoIJi
+0nAGAP9c9ahF3KKPYkzc54SeH548SMqi21zBcYKc6rYUGCosVAEAnUfWuzDnMMEq
+cxqJ7Z/xgXL8YmgJR7ul3OSa490w/gY=
+=lw1j
+-----END PGP SIGNATURE-----
+
+--AJI6S4BF4a0FtQ1K--
 
