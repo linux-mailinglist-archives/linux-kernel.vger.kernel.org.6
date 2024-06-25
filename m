@@ -1,179 +1,95 @@
-Return-Path: <linux-kernel+bounces-229623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 030CE9171FB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:00:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35EF917211
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFC31288342
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:00:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DC4E1F216FC
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A69FB17D8AA;
-	Tue, 25 Jun 2024 19:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1521717F393;
+	Tue, 25 Jun 2024 19:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1hz8A6iX";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jTSQ652N"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="n3Wtluo9"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DD517D890
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4339117D8BE;
+	Tue, 25 Jun 2024 19:57:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719345393; cv=none; b=AARdLDdTgCoOqNjVPJTpMlVkKAHMsC5KQ7GXaL+cqD4+ciIm5enk1k0DzkK026E5ujUA3ZFS+Z7cJXsLAKUSe/aKDWXyO855WlIXSbgPCAP1gnyChJn7sqpqvWatRgkkBD5zy4TfPIG9fHzS3nh8EqflBElLmZn67otTqq4wk+Y=
+	t=1719345479; cv=none; b=J/BLgAbjZSaWnHpIpy85qSzgaElTo7ulwT7Tbt47Ogmfe+BPyWbNLexpq31kwR/RgBqBXkJYYZkNGuWavI/xnNcov/9GszvdlAYVG/1uOaMObD3eNwn4wTnY4zimW7HfEk8KlFvbPH/8E9aXzgxxxqY7EJcYf+WU1oHPJMWqci8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719345393; c=relaxed/simple;
-	bh=KnEiOwAWRojsejXCxmgnhpxSmZ1SRiCKg/aXX+AJWRk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=cNd8Laq2HbovAa2RCiick2SWKB0yLxebQuj0lb5U55cFarzMprLebhP2ChKa3XrZ+Ji5wYKUqrK2WiRdcF16RcPKzbU9HLalsSeUCESs7c2Z/fll4Ksj0XTKrqkjJPV0g7t2cXMX1r6s3XdpJJZspiOf15oTnlIv328T5vBnUlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1hz8A6iX; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jTSQ652N; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: John Ogness <john.ogness@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1719345390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UcDM9ERFRPSMcyIl4N1wIJdu6qzGP3QrT+zHPuM7L98=;
-	b=1hz8A6iXDmuervTPokJEBH/jfMssFSWTWRWePHR2pKlr2KBGrAime15N97MB2CrHcfdOYn
-	5MOOnSJFftX2YCSeMgj9pH0iLAuBwjCYWsYRcyB36I6l8VcQGV9JEgeSrcTNFYIuLZaMRv
-	vurfxfeOIDmLmFaok1kIu6cs/34OqFs/JDlg57atP2RdcUlxQgUEjQ+wXzFXT8rJ14C8mX
-	rQkjzJ13846dM7Ji5TFXo1EXvmXEl/macZM0tZ9YhMBOi9uTCxHIuXiHIzw6SCw7VagjUZ
-	IcYjM9COA9uoqAORbALTr3gj/UhcFzOuhcvBkyo0CDfeD1smkqSeHm4nwIvpPA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1719345390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UcDM9ERFRPSMcyIl4N1wIJdu6qzGP3QrT+zHPuM7L98=;
-	b=jTSQ652NJW9VKlqnwzUYHqzU1y4UltJNVgkwIahrgtrkL7KlvOvc1NqW5aZ3JQ5O5/T8Cf
-	PS0xD0NfQqRFB4CA==
-To: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, Steven Rostedt
- <rostedt@goodmis.org>, Thomas Gleixner <tglx@linutronix.de>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH printk v2 08/18] printk: nbcon: Stop threads on
- shutdown/reboot
-In-Reply-To: <ZnBUe0ZJgjbZXlAL@pathway.suse.cz>
-References: <20240603232453.33992-1-john.ogness@linutronix.de>
- <20240603232453.33992-9-john.ogness@linutronix.de>
- <ZnBUe0ZJgjbZXlAL@pathway.suse.cz>
-Date: Tue, 25 Jun 2024 22:02:30 +0206
-Message-ID: <874j9gyexd.fsf@jogness.linutronix.de>
+	s=arc-20240116; t=1719345479; c=relaxed/simple;
+	bh=5WXuGLJgM+QtAIwqwDjoNKPak65DDHF2eYjfAS6luTg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=trdKc/wcx9WuQiHNyRmllnAKxlkTkWI5k6KzeQ8KpJe2ezDjfA9Hul+8PY+m42NcwtpNxxqxVqiMRfuOKSHzDN/9OiQJ8D8lTka9csum5gimfu8gDFF6fdB37yTwehOfJYZ5iTs63e6m4l1VuIB68sPo8f5CjPygvCU5JO/8xJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=n3Wtluo9; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb.pivistrello.it (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id A053B1FACA;
+	Tue, 25 Jun 2024 21:57:52 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1719345472;
+	bh=mTXmTyJB6Z16tkKRKJPTeo4y+EeQ33t7StEL4G7pefM=; h=From:To:Subject;
+	b=n3Wtluo9CY/ZpmDsBaRaLJGIdRIlFtqyG8HeR+smMxSV4SlPj0P+LjDIYhrwdLzWw
+	 6fazspF2nXAI2Zv15SnmQqnoleC3a3yhzDeh86uF9FVfW3OJjCSSuexlvGVMR7hx3t
+	 GtCy9CfuTHTd4B8eIA0j/NMHk0GNe3bCzpx+sCfeoSIuGFI7+qA4wa6CQoabuE+JZn
+	 DZiDXBcLRGvr411TY4HVOVejjRPmCzXOe/HvGgXG8h7f2B+Lvr1bob8C9+DLbD4Zio
+	 p+f+kJjbBoqDv8sGNtE3/s8SSKnZp06CmXXdavn/fWb3bJVkD1iWCR3oDGUcRjACoq
+	 C8RASSzdAC6Ww==
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Olivia Mackall <olivia@selenic.com>,
+	Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Francesco Dolcini <francesco.dolcini@toradex.com>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] hwrng: Kconfig - Do not enable by default CN10K driver
+Date: Tue, 25 Jun 2024 21:57:46 +0200
+Message-Id: <20240625195746.48905-1-francesco@dolcini.it>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On 2024-06-17, Petr Mladek <pmladek@suse.com> wrote:
-> First ideas (how the waterfall of questions started):
->
->     + I though that we should do here:
->
-> 	    printk_threads_enabled = false;
->
->       It would tell vprintk_emit() to call
->       nbcon_atomic_flush_pending().  And it would be symetric with
->       printk_setup_threads().
+From: Francesco Dolcini <francesco.dolcini@toradex.com>
 
-This makes sense. I created @printk_threads_enabled to have a clean
-startup of the threads. I did not consider recycling it for shutdown
-purposes.
+Do not enable by default the CN10K HW random generator driver.
 
->     + Also I though whether to call it before or after stopping the
->       kthreads.
->
->       If we set the variable before stopping kthreads then the
->       kthreads might try to flush the messages in parallel with the
->       flush from vprintk_emit(). It should be safe because it would be
->       serialized via the nbcon console context. But it would be the
->       first scenario where this happen => not much tested.
+CN10K Random Number Generator is available only on some specific
+Marvell SoCs, however the driver is in practice enabled by default on
+all arm64 configs.
 
-It is safe. The scenario is not that unusual. Non-printing activities
-can contend with thread via the port_lock wrapper quite often.
+Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+---
+as an alternative I could propose
 
->       Well, we should start the direct flush before stopping kthreads.
->       So that we could see the messages when the stopping fails.
->
->
-> But then I realized:
->
-> Ha, vprintk_emit() would call nbcon_atomic_flush_pending() anyway
-> because these notifiers are called with:
->
-> 	system_state > SYSTEM_RUNNING
->
-> This makes me wonder whether we need to stop the kthreads at all.
+default HW_RANDOM if ARCH_THUNDER=y
 
-Well, that overlap was not intentional. There probably should be a flag
-to signify the transition rather than just looking at @system_state.
+---
+ drivers/char/hw_random/Kconfig | 1 -
+ 1 file changed, 1 deletion(-)
 
-> How exactly does this make printk more robust during shutdown?
+diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+index 442c40efb200..01e2e1ef82cf 100644
+--- a/drivers/char/hw_random/Kconfig
++++ b/drivers/char/hw_random/Kconfig
+@@ -555,7 +555,6 @@ config HW_RANDOM_ARM_SMCCC_TRNG
+ config HW_RANDOM_CN10K
+        tristate "Marvell CN10K Random Number Generator support"
+        depends on HW_RANDOM && PCI && (ARM64 || (64BIT && COMPILE_TEST))
+-       default HW_RANDOM
+        help
+ 	 This driver provides support for the True Random Number
+ 	 generator available in Marvell CN10K SoCs.
+-- 
+2.39.2
 
-Because by stopping them, the printing threads are guaranteed to go
-silent before they suddenly freeze. Without the clean shutdown, I could
-create shutdown/reboot scenarios where the printing thread would stop
-mid-line. Then the atomic printing would never be able to finish because
-it is a non-panic situation and the thread was frozen while holding the
-context. The result: the user never sees the final printk messages.
-
-> Well, there is one differece. The kthreads could not interferre with
-> the direct flush when they are stopped.
->
-> But we have the same problem also with suspend/resume. And we do not
-> stop the kthreads in this case.
-
-Suspend/resume is something different. Suspend needs to stop _all_
-printing. I do not think it makes sense to shutdown threads for
-this. The consoles becoming temporarily !usable() is enough.
-
-For shutdown, the consoles are usable() the entire time. I just want the
-threads to get out of the way before they freeze so that the user can
-see all the messages on shutdown/reboot.
-
-> Maybe, we should just add a check of
->
->        system_state > SYSTEM_RUNNING
->
-> also into the nbcon_kthread_func(). Maybe, the kthread should not try
-> to flush the messages when they are flushed directly by
-> vprintk_emit().
-
-It gets racy when we start relying on the contexts noticing some
-variables. By racy, I mean there are scenarios where there are unprinted
-records and no context is printing. I think it is easiest when the
-following steps occur within a notifier:
-
-1. notifier sets a flag to allow atomic printing from vprintk_emit()
-
-2. notifier stops all threads (with the kthread_should_stop() moved
-   inside the printing loop of nbcon_kthread_func())
-
-3. notifier performs nbcon_atomic_flush_pending()
-
-This guarantees that no messages are lost and that all get flushed.
-
->> +static int __init printk_init_ops(void)
->> +{
->> +	register_syscore_ops(&printk_syscore_ops);
->> +	return 0;
->> +}
->> +device_initcall(printk_init_ops);
->
-> I guess that "device_initcall" is cut&pasted ;-) IMHO, it does not
-> fit much. That said, I do not have strong opinion where
-> it belongs.
->
-> IMHO, the best solution would be to register the notifier in
-> printk_setup_threads() before we actually allow creating them.
-
-OK.
-
-John Ogness
 
