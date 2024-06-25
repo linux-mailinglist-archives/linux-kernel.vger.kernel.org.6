@@ -1,76 +1,142 @@
-Return-Path: <linux-kernel+bounces-229589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A568491711E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:31:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94928917124
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:32:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D84841C217DC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:31:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0B96B237BF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD8A917C7DB;
-	Tue, 25 Jun 2024 19:31:32 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D84B917CA08;
+	Tue, 25 Jun 2024 19:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJyAer/p"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A5A1870
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA591870;
+	Tue, 25 Jun 2024 19:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719343892; cv=none; b=dNK4zaldANAPpjgYdNhmkxntwYqqY/JIhOVx9guGC4Sn0E9Gcf5GL3xVFowvGkxw1J2V9fJ3eEHC7CfNsNAW0i6Wf0FQ6m4qJ1/Y3fDVJUnFi8yvvQrqdyk7ozUmCTC0y3XnOjnNbZfMI6aAXmwx3LDovHJIwduq1gCbTp+47hI=
+	t=1719343967; cv=none; b=SkPknsgRd1EtKCjWmwewXPnQc7xQAPSgHBqZz/NFDGrpw/PuwbKSqor6M96LjpWArubHB314xZDLS2PykyddXiOANGI/nEia7f+3skvRc8V3hGUr7yisl8G1kjM/4UqT4Bw/fHg04YHmN2sdfCj1xCZdI5Y6VMjOrelHXfcHNr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719343892; c=relaxed/simple;
-	bh=Xg3dM9TrPV/JvIttR8XcOQKI9Q0JfbjJOvYDcS+KHbI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jDyeOu9QHskufrGT7sIxcvI2KX5wo+p1v9RadKAzJ2fodZrCLvF2A7wxl5tjcYqEVxBgDNT4cp2EKA6FX5XShbYF4bYW2IlCyagWVc5VKEQpGtf17Uf9hu3eNYS4CeGdWFWy71xZEr9qstc0FJZRuwuBXDjFVmSSOTNSRFYt3gY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-7eee4ffd19eso828522939f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:31:30 -0700 (PDT)
+	s=arc-20240116; t=1719343967; c=relaxed/simple;
+	bh=DnQRoEdyrthluBz9ZjrBw/F5UHcR54p5iM+G1c/J+Pk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dmM6mZqgEHKRWyz/a/CK9vqaOKKHrD4v6pV8NpUYBzDIwVBVHPrKK4rzkkKRE2z7OPGtrDmQT04pX0EEH0DVKDTeF5vgqptOcHlTYo5Rmvlz+0z6ri4R789EO7+xExMgOAKybam7MnOzhT1T7HUnCjpqnVtWpk59vvGlDfx8cNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJyAer/p; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3626c29d3f0so3249864f8f.1;
+        Tue, 25 Jun 2024 12:32:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719343964; x=1719948764; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DnQRoEdyrthluBz9ZjrBw/F5UHcR54p5iM+G1c/J+Pk=;
+        b=fJyAer/pDY5fGKu9YNewC+lK2waQjdxgJIiHT6PASwWVnWSnBjvS7fU7RKSdpZ+/ul
+         aiXgrLnC06UBuWtely/iAAiNBin67uwU8WBxI0jZ32wNTQfFhgJ100rmkMxWiPYoRCDg
+         602afHeV9kvWBhEpPZJYieI57+9+ar+lmFPelGL8PL4N470F+MRHLUThuM0mJCcpG+f/
+         ROVyigqav9gttk75ddcL89w9+TFRPgAosUpErAKbOdh2rYIZQIltqmFNC+OMofvQ/QRl
+         m3LHeufbNLXAFnMKHN1cyAvd2951fk/XVxsGq7hwcNKUHBdiLdC35Rg9tsL3zkLus5nA
+         OZCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719343890; x=1719948690;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Xg3dM9TrPV/JvIttR8XcOQKI9Q0JfbjJOvYDcS+KHbI=;
-        b=xGP6NRnbCFa14j522I0mqHO1IKnTI9xjmdtpxAoBLUZJVPcBL6i1yv0TgoHKuS24QU
-         6KB0cpfWhZQoGi2I62k0F9mUAAwHX0k/sE8ZW+JY2TBtNK6R5ZgQtgcGr9PQal3c1mrR
-         wp+kwM0aWcCuMnRnSknK8yC9nWZU2E+fR9HpO2M+vgCLz2v8moI8fdKyYshSxdh80RuD
-         WxYT7FT4lFceefWAoIqcum5AHcuvastPGEFTQazNiJ7dH6cB5oTspmkuGWbHygzoVimP
-         fK8Jf2br9jztorNcLfEF/6VS/CBeDGzJ4QYbM6V/i9reoI/5hrFCBGJnB55+D5Z16dFO
-         mNzg==
-X-Gm-Message-State: AOJu0YyaKF0wbtMQa3aU6f4vJUlyqrqSN8RkXxsdIjzVIamfh9OnjXw0
-	mJU2bGnEOmgecp4QDhIv/SuyWlChNZQjkjF5LbPRlE6IjBjyoeijcK8uMoZ1bFcO1KZrijsGoBj
-	mrJ94qBLwsnhjxbUv9I+VebBdrJgFGHgmpq5c5n6LMExFXo/cJcjU8yo=
-X-Google-Smtp-Source: AGHT+IG/5a8ghplbXL1xiR/RLhFIExs4mofv+abN+ajqQYxzDwNtrdTdxs1USytgulRdLMW48Of661CdpiqsEekuOFjWxvXHLv8D
+        d=1e100.net; s=20230601; t=1719343964; x=1719948764;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DnQRoEdyrthluBz9ZjrBw/F5UHcR54p5iM+G1c/J+Pk=;
+        b=F/RMJPMPRU7Jnr0GZjTFl0qmxLxS0GRorOkS1nFc8itr784lNm2kwFP/BgwfpMTETn
+         fCz0O9PQ8AGBVHEWQLZBG5kWj1mO1HhmhjA29UXbCS1mFSO26xgGidZgSNMPiuOba8Fq
+         vtAC9xCtcgiB4KAHoTV8n10rnXWScCfhE03e8Kcxg61R3Bw4CJHvTpljpq2EE4woz7p8
+         fnRoaacdbHNxJ6C2DMv5zS7K4sJPiBDr28mkcGYqfQiVlGZW8wOJtbVoGGBsZuORtmD8
+         bj/jio8RiezEhoOrUoqdKpAo2X1lSUi0kJfjNlMqty0Auf9DtiQz7lBZ3/EfSlNdN3IN
+         2yNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWD5OfBu7kBgwXImIj+8t8gP55rBs1oambeh65oPFVSKcj9quXTYpv9Woe2SI9LUaabe3mbtrPzinvO2EP0rlu8hEiSxj+8cpBQDXIaLkm9rvqh8nUW3o9obMZ3Yi+xZdNS
+X-Gm-Message-State: AOJu0YwFY5WETS8x9p7UtCj/HLANVGyavCAxzShE0ykhopZTrRFFihug
+	Q2fQWxrRB0KvFBRwpcYOiHvA5FUjYYjG1bP6JkCVdbb+oZWn8OpS8DiZNIumf2vJK0roUKir/Q4
+	RK6w7RxePqbHDArarVHY+DA6k24MAM44T
+X-Google-Smtp-Source: AGHT+IGA86k5Aqfzg1le+Qv8IuoHTByGOF845ffJiYzXEtp4V2fWk+JkfntcfCyGbuVvdTK0J+kUAuM7H96JAi68ttc=
+X-Received: by 2002:adf:e7c9:0:b0:367:62a:edb0 with SMTP id
+ ffacd0b85a97d-367062af25emr1484375f8f.44.1719343963702; Tue, 25 Jun 2024
+ 12:32:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2190:b0:375:e04f:55d0 with SMTP id
- e9e14a558f8ab-3763b0b6d82mr7931185ab.2.1719343890214; Tue, 25 Jun 2024
- 12:31:30 -0700 (PDT)
-Date: Tue, 25 Jun 2024 12:31:30 -0700
-In-Reply-To: <000000000000b5c648061bba03cd@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000d2c5f6061bbbf1f7@google.com>
-Subject: Re: [syzbot] KASAN: slab-use-after-free Read in bch2_sb_errors_from_cpu
-From: syzbot <syzbot+a2bc0e838efd7663f4d9@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
+ <87ed8lxg1c.fsf@jogness.linutronix.de> <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
+ <87ikxxxbwd.fsf@jogness.linutronix.de> <ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
+In-Reply-To: <ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 25 Jun 2024 12:32:32 -0700
+Message-ID: <CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com>
+Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: John Ogness <john.ogness@linutronix.de>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Petr Mladek <pmladek@suse.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Tue, Jun 25, 2024 at 9:05=E2=80=AFAM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2024/06/26 0:47, John Ogness wrote:
+> > On 2024-06-26, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+> >> On 2024/06/25 23:17, John Ogness wrote:
+> >>> On 2024-06-25, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrot=
+e:
+> >>>> syzbot is reporting circular locking dependency inside __bpf_prog_ru=
+n(),
+> >>>> for fault injection calls printk() despite rq lock is already held.
+> >>>>
+> >>>> Guard __bpf_prog_run() using printk_deferred_{enter,exit}() (and
+> >>>> preempt_{disable,enable}() if CONFIG_PREEMPT_RT=3Dn) in order to def=
+er any
+> >>>> printk() messages.
+> >>>
+> >>> Why is the reason for disabling preemption?
+> >>
+> >> Because since kernel/printk/printk_safe.c uses a percpu counter for de=
+ferring
+> >> printk(), printk_safe_enter() and printk_safe_exit() have to be called=
+ from
+> >> the same CPU. preempt_disable() before printk_safe_enter() and preempt=
+_enable()
+> >> after printk_safe_exit() guarantees that printk_safe_enter() and
+> >> printk_safe_exit() are called from the same CPU.
+> >
+> > Yes, but we already have cant_migrate(). Are you suggesting there are
+> > configurations where cant_migrate() is true but the context can be
+> > migrated anyway?
+>
+> No, I'm not aware of such configuration.
+>
+> Does migrate_disable() imply preempt_disable() ?
+> If yes, we don't need to also call preempt_disable().
+> My understanding is that migration is about "on which CPU a process runs"
+> and preemption is about "whether a different process runs on this CPU".
+> That is, disabling migration and disabling preemption are independent.
+>
+> Is migrate_disable() alone sufficient for managing a percpu counter?
+> If yes, we don't need to also call preempt_disable() in order to manage
+> a percpu counter.
 
-***
+If you want to add printk_deferred_enter() it
+probably should be in should_fail_ex(). Not here.
+We will not be wrapping all bpf progs this way.
 
-Subject: KASAN: slab-use-after-free Read in bch2_sb_errors_from_cpu
-Author: peili.dev@gmail.com
-
-#syz test
+pw-bot: cr
 
