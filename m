@@ -1,127 +1,287 @@
-Return-Path: <linux-kernel+bounces-229339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A683916E90
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:54:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34154916E93
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:57:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4CCCE1C2240D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F6DA1C227CF
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFC417625A;
-	Tue, 25 Jun 2024 16:53:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC933176252;
+	Tue, 25 Jun 2024 16:57:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Kq8sKJQ0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PaEjRFyx"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922B416C696;
-	Tue, 25 Jun 2024 16:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDFAF16C696;
+	Tue, 25 Jun 2024 16:56:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719334437; cv=none; b=M0FgmcvDDdb3D5WH+esgaDg/4qu0B0EI9+C+JQdIh3a1XaGbsdEWPntbwvNcNbtV3F4kJs1qy2Ms9HZ4gPVRyFEQdnoyT4U2nWJejU3h1qF4wKS/rmilOeZ4TyMmcBCE/faXu+1C56RPzjzW37eIMJCMkpar/xXWOfhqXk6VQYE=
+	t=1719334619; cv=none; b=SGXOqmRQGgGMEpk9a1UxfbH3ejfG+r+25oD8be/BdHwti2ixVUOI4tQnSbWnHLEfuE/hS9V1S/QYOFMY+NkpIK03FrZJZSpBtXJ9R7WDREIYx+Frq54w7g9/l7h+QiY5sB0wn5uc3PlzmGIGX9HI+zi3jXFNZhtN7m0TyYYOGTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719334437; c=relaxed/simple;
-	bh=DwpWLBHt1XJLYjaG/1fFg0b5XgL2jy/41pZOj0cmR+Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=UrDCaeANMryMRFzShGjHGtgwUc18RZtPz+b6ux8UKHI+hQootNoG8kUYv7KNTO4K8blfeQAJBg8A/5SJyI+D4FSwDMdAgBHIjPk1ZWvkR2RMvVS2rnuP+bzPq42U5Dksb1g+jTQyP1j6O+uRMGDxmDMAAj4IHN0RWxlxVNcL++I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Kq8sKJQ0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P8P6jg008959;
-	Tue, 25 Jun 2024 16:53:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=++wbgQplAJePZM1ke3wMP8
-	45KHLDRhZef8Xj8nHEiTg=; b=Kq8sKJQ0D/dNYtnnpmCm+NZNk5BzzxYqysqpRS
-	jCy1kKV128PNSXoZsRFxCsKBSEPNFdovwnqpnisdyz99fRxaXUw3Xp0YqDPeQgdO
-	bNgDvZAeZXESWt2kVAjeBwwAyTuNejKctw/FPKvEyIX0uMhmdPRUlxjU9jsmTOKm
-	5ZRjTCeeVxuYK5t1AAZGZeks2dp39EDUf6t5ACd4C4amtsM5DkpEqb7qmDArxOp6
-	5N6gowT2LdkZf5hL0BjZj4D9m9h+TmZGdoNQe+viT45W0Z1ATw0kQt/yg3i+OiFG
-	NDr15zFAmem9su14jTfQDVVyu0vHpJcZbgmkZLDxiHoY7AXw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqcef8fd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 16:53:48 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45PGrkLT007460
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 16:53:46 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Jun
- 2024 09:53:45 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Tue, 25 Jun 2024 09:53:45 -0700
-Subject: [PATCH v2] scsi: ufs: qcom: add missing MODULE_DESCRIPTION() macro
+	s=arc-20240116; t=1719334619; c=relaxed/simple;
+	bh=J7aUssdG+d+SSneJjCzjAIvna71yISDKfeg2F6cDG5I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=g0E0QBVnUjJS6dPk9iw4tRBN5GakjIKocqg1pvxYzGJetROgNTIdJSXzGVAJivtp+mwYiigGs7GHsOMqhWL82PEQ8ff3jU07cU9TSN2W0en22uOKXWgb+T8VIdFQTY7AQ3dJCqE8XX7ZbfQK1IyLolJa5i9WdoQtBKilb3LkjM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PaEjRFyx; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719334615;
+	bh=J7aUssdG+d+SSneJjCzjAIvna71yISDKfeg2F6cDG5I=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PaEjRFyx/ENwXiPBxuhCmUBAQvT4N1kdNZ/T3YWSGawBczsJTgGOkpHNIgYvPdEMQ
+	 u7Q6yqTFzUSrhoJ+guzDr/SF8P6RnwAqSfuADoTh8inpNRJNcfcRr7jT47tnCHo9ln
+	 V641SbYDnkuWIJq1TpqPzmKiZAW+poAS+CFo6a+9XuDNAYewwb/uLFZU/Gvy4d3eoT
+	 RNAnMZ55eEspJedCuPCGRwVV/roTSL7ZA6SydLffUn9fR1fhwmBo57oQVK9+167SKV
+	 fXNxpRFLhzECX7Z8GtSaOEP3e1YxQRfbXTitapA4QW+mWhgTWJXqpDf4koFABmO+d8
+	 Kp5pJvS2wuDGw==
+Received: from arisu.localnet (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E299B378107C;
+	Tue, 25 Jun 2024 16:56:51 +0000 (UTC)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org, Alex Bee <knaerzche@gmail.com>
+Cc: Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Dragan Simic <dsimic@manjaro.org>, Diederik de Haas <didi.debian@cknow.org>,
+ Andy Yan <andy.yan@rock-chips.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+ Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+ Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+ Jonas Karlman <jonas@kwiboo.se>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH v3 2/4] media: rockchip: Introduce the rkvdec2 driver
+Date: Tue, 25 Jun 2024 12:56:24 -0400
+Message-ID: <3815203.kQq0lBPeGt@arisu>
+Organization: Collabora
+In-Reply-To: <c7882f94-e2cb-4023-a53e-87ebc8fa3460@gmail.com>
+References:
+ <20240620142532.406564-1-detlev.casanova@collabora.com>
+ <20240620142532.406564-3-detlev.casanova@collabora.com>
+ <c7882f94-e2cb-4023-a53e-87ebc8fa3460@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240625-md-drivers-ufs-host-v2-1-59a56974b05a@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIABj2emYC/32OSw6CMBRFt0I69plSPgFH7sMwKP3Yl0irfdBgC
- Hu3sACHJ7n33LsxMhENsVuxsWgSEgafQVwKppz0TwOoMzPBRc3bUsCkQUdMJhIslsAFmkF2kku
- pm6q3nOXmOxqL62l9DJlHSQbGKL1yh+uFfllhkjSbeMQd0hzi9/yQyqP0fy6VUIK2VdOLuu2as
- bt/FlTo1VWFiQ37vv8AurvH4tcAAAA=
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        "James E.J.
- Bottomley" <James.Bottomley@HansenPartnership.com>,
-        "Martin K. Petersen"
-	<martin.petersen@oracle.com>,
-        Bart Van Assche <bvanassche@acm.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
-        "Jeff
- Johnson" <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.14.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: --qJxBrSpJ1iy7VdyhUHWRYogLSiiCFb
-X-Proofpoint-ORIG-GUID: --qJxBrSpJ1iy7VdyhUHWRYogLSiiCFb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_12,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 clxscore=1015
- mlxscore=0 lowpriorityscore=0 bulkscore=0 phishscore=0 spamscore=0
- suspectscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=962
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406250124
+Content-Type: multipart/signed; boundary="nextPart3570016.iIbC2pHGDl";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
 
-With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/ufs/host/ufs-qcom.o
+--nextPart3570016.iIbC2pHGDl
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org, Alex Bee <knaerzche@gmail.com>
+Date: Tue, 25 Jun 2024 12:56:24 -0400
+Message-ID: <3815203.kQq0lBPeGt@arisu>
+Organization: Collabora
+In-Reply-To: <c7882f94-e2cb-4023-a53e-87ebc8fa3460@gmail.com>
+MIME-Version: 1.0
 
-Add the missing invocation of the MODULE_DESCRIPTION() macro.
+Hi Alex,
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
-Changes in v2:
-- Updated the description per Bart Van Assche
-- Link to v1: https://lore.kernel.org/r/20240612-md-drivers-ufs-host-v1-1-df35924685b8@quicinc.com
----
- drivers/ufs/host/ufs-qcom.c | 1 +
- 1 file changed, 1 insertion(+)
+On Sunday, June 23, 2024 5:33:28 A.M. EDT you wrote:
+> Hi Detlev,
+> 
+> Am 20.06.24 um 16:19 schrieb Detlev Casanova:
+> > This driver supports the second generation of the Rockchip Video
+> > decoder, also known as vdpu34x.
+> > It is currently only used on the RK3588(s) SoC.
+> > 
+> > There are 2 decoders on the RK3588 SoC that can work in pair to decode
+> > 8K video at 30 FPS but currently, only using one core at a time is
+> > supported.
+> > 
+> > Scheduling requests between the two cores will be implemented later.
+> > 
+> > The core supports H264, HEVC, VP9 and AVS2 decoding but this driver
+> > currently only supports H264.
+> > 
+> > The driver is based on rkvdec and they may share some code in the
+> > future.
+> > The decision to make a different driver is mainly because rkvdec2 has
+> > more features and can work with multiple cores.
+> > 
+> > The registers are mapped in a struct in RAM using bitfields. It is IO
+> > copied to the HW when all values are configured.
+> > The decision to use such a struct instead of writing buffers one by one
+> > 
+> > is based on the following reasons:
+> >   - Rockchip cores are known to misbehave when registers are not written
+> >   
+> >     in address order,
+> >   
+> >   - Those cores also need the software to write all registers, even if
+> >   
+> >     they are written their default values or are not related to the task
+> >     (this core will not start decoding some H264 frames if some VP9
+> >     registers are not written to 0)
+> >   
+> >   - In the future, to support multiple cores, the scheduler could be
+> >   
+> >     optimized by storing the precomputed registers values and copy them
+> >     to the HW as soos as a core becomes available.
+> > 
+> > This makes the code more readable and may bring performance improvements
+> > in future features.
+> > 
+> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > ---
+> > 
+> >   drivers/staging/media/Kconfig                |    1 +
+> >   drivers/staging/media/Makefile               |    1 +
+> >   drivers/staging/media/rkvdec2/Kconfig        |   15 +
+> >   drivers/staging/media/rkvdec2/Makefile       |    3 +
+> >   drivers/staging/media/rkvdec2/TODO           |    9 +
+> >   drivers/staging/media/rkvdec2/rkvdec2-h264.c |  739 +++++++++++
+> >   drivers/staging/media/rkvdec2/rkvdec2-regs.h |  345 +++++
+> >   drivers/staging/media/rkvdec2/rkvdec2.c      | 1253 ++++++++++++++++++
+> >   drivers/staging/media/rkvdec2/rkvdec2.h      |  130 ++
+> >   9 files changed, 2496 insertions(+)
+> >   create mode 100644 drivers/staging/media/rkvdec2/Kconfig
+> >   create mode 100644 drivers/staging/media/rkvdec2/Makefile
+> >   create mode 100644 drivers/staging/media/rkvdec2/TODO
+> >   create mode 100644 drivers/staging/media/rkvdec2/rkvdec2-h264.c
+> >   create mode 100644 drivers/staging/media/rkvdec2/rkvdec2-regs.h
+> >   create mode 100644 drivers/staging/media/rkvdec2/rkvdec2.c
+> >   create mode 100644 drivers/staging/media/rkvdec2/rkvdec2.h
+> 
+> ...
+> 
+> > +static inline void rkvdec2_memcpy_toio(void __iomem *dst, void *src,
+> > size_t len) +{
+> > +#ifdef CONFIG_ARM64
+> > +	__iowrite32_copy(dst, src, len);
+> > +#elif defined(CONFIG_ARM)
+> 
+> I guess that can get an "#else" since memcpy_toio exists for all archs.
+> 
+> > +	memcpy_toio(dst, src, len);
+> > +#endif
+> > +}
+> > +
+> 
+> ...
+> 
+> > +	/* Set timeout threshold */
+> > +	if (pixels < RKVDEC2_1080P_PIXELS)
+> > +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_1080p;
+> > +	else if (pixels < RKVDEC2_4K_PIXELS)
+> > +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_4K;
+> > +	else if (pixels < RKVDEC2_8K_PIXELS)
+> > +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_8K;
+> > +
+> 
+> Did you test if it works with anything > 8K? If so, you propably want to
+> make the check above
+> 
+> +	else
+> +		regs->common.timeout_threshold = RKVDEC2_TIMEOUT_8K;
+> 
+> Otherwise the timeout may not be set/contain invalid values from any former
+> stream.
 
-diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-index cca190d1c577..c12004030b50 100644
---- a/drivers/ufs/host/ufs-qcom.c
-+++ b/drivers/ufs/host/ufs-qcom.c
-@@ -1883,4 +1883,5 @@ static struct platform_driver ufs_qcom_pltform = {
- };
- module_platform_driver(ufs_qcom_pltform);
- 
-+MODULE_DESCRIPTION("Qualcomm UFS host controller driver");
- MODULE_LICENSE("GPL v2");
+That's right, but it would be set to 0 because of the memset. 
+RKVDEC2_TIMEOUT_8K might not be enough for bigger frame sizes, so I'll set it 
+to the maximum value (0xffffffff) when frames are bigger than 8K and also adapt 
+the watchdog time: RKVDEC2_TIMEOUT_8K is around 100 ms, but 0xffffffff is arnoud 
+5.3 seconds (reg032/axi_clock_freq)
 
----
-base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
-change-id: 20240612-md-drivers-ufs-host-a8a0aad539f0
+I'll do more tests with this as well.
+
+> ...
+> 
+> > +
+> > +static const struct rkvdec2_coded_fmt_desc rkvdec2_coded_fmts[] = {
+> > +	{
+> > +		.fourcc = V4L2_PIX_FMT_H264_SLICE,
+> > +		.frmsize = {
+> > +			.min_width = 16,
+> > +			.max_width =  65520,
+> > +			.step_width = 16,
+> > +			.min_height = 16,
+> > +			.max_height =  65520,
+> > +			.step_height = 16,
+> > +		},
+> > +		.ctrls = &rkvdec2_h264_ctrls,
+> > +		.ops = &rkvdec2_h264_fmt_ops,
+> > +		.num_decoded_fmts = 
+ARRAY_SIZE(rkvdec2_h264_decoded_fmts),
+> > +		.decoded_fmts = rkvdec2_h264_decoded_fmts,
+> > +		.subsystem_flags = 
+VB2_V4L2_FL_SUPPORTS_M2M_HOLD_CAPTURE_BUF,
+> > +	},
+> > +};
+> > +
+> 
+> Note, that this is also given to userspace (VIDIOC_ENUM_FRAMESIZES) and
+> this is already incorrect in the old rkvdec driver (and hantro): From
+> userspace perspective we do not have a restriction in
+> step_width/step_width, as we are aligning any given width/height to HW
+> requirements in the driver - what we should give to userspace is
+> fsize->type = V4L2_FRMSIZE_TYPE_CONTINUOUS; fsize->stepwise.min_height =
+> 1; fsize->stepwise.min_width = 1; fsize->stepwise.max_height = 65520;
+> fsize->stepwise.max_width = 65520; 
+
+Is fsize->stepwise.min_height = 1; and fsize->stepwise.min_width = 1 correct ?
+Or do you mean fsize->stepwise.step_height = 1; and fsize->stepwise.setp_width 
+= 1 ? 
+
+It would give this instead:
+
+.frmsize = {
+	.min_width = 16,
+	.max_width =  65520,
+	.step_width = 1,
+	.min_height = 16,
+	.max_height =  65520,
+	.step_height = 1,
+},
+
+and .vidioc_enum_framesizes sets fsize->type = V4L2_FRMSIZE_TYPE_CONTINUOUS;
+
+> I guess this new driver should be an
+> opportunity to fix that and distinguish between internal and external
+> frame size requirements and the .vidioc_enum_framesizes callback should
+> adapted accordingly. Regards, Alex
+
+Detlev.
+--nextPart3570016.iIbC2pHGDl
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEonF9IvGrXNkDg+CX5EFKUk4x7bYFAmZ69rgACgkQ5EFKUk4x
+7bajeggAmSBRiILCUDDpGbIjXBxb00RYdK6MgtbGJuQfBDgf3F0t1eYIpRNodLjn
+HLcauJWna1LSOjVdzemEWqrbzXMNaT2w1YyN3emSxO4IRZ7SLlM9ZvoNoELtE9Bu
+Lww+nu1qxDwuieFRQLIRRoySMHWfN2b+mjDTJEFmfSrXis+izpqthQsAt1Pqm8FV
+kugdGZNqtqx5fUPuYXkn2zorpPcSXFL58vqUZ9yhYRKoVvdz+X+bkfNvg6vMIW91
+kq0isaB9YHSX5+P1mAn8fU2utGNrv15F4ZgQChLnKVVCjfT0IO++t12dh7ff19hl
+1br0WjEsuhJ/UwmcVWhqp3S1NG5MoA==
+=4M84
+-----END PGP SIGNATURE-----
+
+--nextPart3570016.iIbC2pHGDl--
+
+
 
 
