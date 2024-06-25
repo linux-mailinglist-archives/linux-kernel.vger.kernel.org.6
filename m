@@ -1,179 +1,125 @@
-Return-Path: <linux-kernel+bounces-228282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2641915DA3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:33:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94224915DA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 06:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C54931C21424
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:33:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DAA5283709
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3699313C8E1;
-	Tue, 25 Jun 2024 04:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C166413C8E1;
+	Tue, 25 Jun 2024 04:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gr2RsUlT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="RoZjOQrC"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E755421A0C;
-	Tue, 25 Jun 2024 04:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6155D21A0C;
+	Tue, 25 Jun 2024 04:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719290010; cv=none; b=bV0qMP/8yGPXGKFJB0VaQAidoTO8+ve33Fcd+JzrT3jp7AW+X86w3ZnIHsD/TJHOpHy0Fo/imcfUCEiQqim25A0Ri+AMb3h27cOK7zdrWtO7paxP1fETqLGeRPuQby+I5tNnVseXCy7z3ejig/Kz/YrptbETjkq+Iooq7uGa0Go=
+	t=1719290144; cv=none; b=f2IkXrNYWh7qtBb6UeQ1UoSusZ/JD8YuPc9RxeCIcpRkuCtnIBAm9XhpkW2fUIPQRaI1H+nn1y2zgjaMD9jOxhS8MsyW6G1kQUBmprqB+3xEe/StsTmyNnDj5tNqI+slybtHHmwfsCGcoqJABkzvtAWznMdy2tlR2DLvDiq+/H0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719290010; c=relaxed/simple;
-	bh=ebjOht0y72+MXd4MAl1Qqj8PL3xwjNmflZ1aCQOD49w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=apNXPBmH5ucDhuPdfPHdYU/0eaq3hxsofymd8wQggNytBjJu5wZzHaXxvThB9mvZEwPZy5H4Y/1y/pwowzhAmIwDqCSHEp26Qla65JEXi5/6gVDcWARKwIQCFyxSy+RtW8shVkQwpcjTJOxZCVdjCFKlviScDP7+UjvU95Bc+bk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gr2RsUlT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OK1GPK014014;
-	Tue, 25 Jun 2024 04:33:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=de8NdmI+UAnhaZkRTI4vgS
-	GgY3+j55GxwWNIUjBdzWI=; b=gr2RsUlTmuVOiWuG84ikM/lS+GnTwrPfKTDDyQ
-	WNk4DsaVVTSfVmTV4jKgBYQnNydx9xmru9aTb1b05zWWTg5EdNDofq8fjE7hhhq0
-	H29/ySSfyQhXAgsK0Zpw3/W8QVAuXpT7ogOrMI4TVqSMbejOZ4Q//Gl+1krjoCMs
-	PNvuWlpIOf7qDd03P3K5iQ6OCPCn5+pLRUM0TuhbWuGQgyi1D32/Nz1WNXlb3bN/
-	53kbZ/9+WQGFSlABHzZC9GEGFvUNol/WsClrtA6tDss9tfHYgRYwDho+ZRbkDy4t
-	0keBXQQAEj4UGFdn0pzDBgz7sQt3E0E7TUngymGM/ZgrNxUA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnxgwavy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 04:33:24 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45P4XN0o010354
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 04:33:23 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 24 Jun 2024 21:33:19 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-Date: Tue, 25 Jun 2024 10:03:11 +0530
-Subject: [PATCH v2] pmdomain: qcom: rpmhpd: Skip retention level for Power
- Domains
+	s=arc-20240116; t=1719290144; c=relaxed/simple;
+	bh=8Y7d6sHBbzxwKJt+k76Jh4Ttm28v+pz4136Pz8yErI8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cp/WvDXnm20eK9xO9CEw2eLdnCEVDr3KzoBLzRe2vhzRwGCRTIspHdujGGB4bXKN3MWZV0erB6eziCrL5F16YTa2NttG4eRSZKTqzCzXd05/eqdMpOkmuHuysl9F7X7pvyenEDv3H9NaTp6SVhxo23wM/raAKh3+tO6ukciRX/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=RoZjOQrC; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1719290142; x=1750826142;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=8Y7d6sHBbzxwKJt+k76Jh4Ttm28v+pz4136Pz8yErI8=;
+  b=RoZjOQrCKdhSrXZgbHQYjPvvDmosvvaVkE4MMhLpedd4RqIRBEobhVt7
+   nJIW7fZQH3n0/O5JuwJeEwcIifp9dRXMv74+YUj2nxxT5YiK8kMz8djbl
+   tSMBpLMGwhrWBx5ArulnrUBMi/nFnRc6A/323TqG05Yb5c3YstAV+Ja1l
+   VBPLPKzprQZRTMx9RZ6K87t5Utd2ImurVeb87F9Ia/gX2bGkWblSHLGvU
+   S6KYdpzX6kU48uMH9hQ5AjuPukfmGnCNSqBNYy8YTtyhRkJphf/zup16X
+   tEFNvAMVim40F03XaWFGDC1LJ3RBB3IEQ2v7RvUIS4qfAts65c7MMLjV2
+   A==;
+X-CSE-ConnectionGUID: ycDQqlNeQn6TW5mMuCU+LA==
+X-CSE-MsgGUID: zOt8NC73Rfq9wcfBunbWrQ==
+X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
+   d="scan'208";a="259328199"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Jun 2024 21:35:41 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 24 Jun 2024 21:35:29 -0700
+Received: from che-lt-i67131.microchip.com (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 24 Jun 2024 21:35:22 -0700
+From: Manikandan Muralidharan <manikandan.m@microchip.com>
+To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>, <arnd@arndb.de>,
+	<durai.manickamkr@microchip.com>, <linux-gpio@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <manikandan.m@microchip.com>
+Subject: [PATCH v2 0/5] Convert Atmel PIO3 Pinctrl and GPIO bindings to yaml
+Date: Tue, 25 Jun 2024 10:05:20 +0530
+Message-ID: <20240625043525.279711-1-manikandan.m@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240625-avoid_mxc_retention-v2-1-af9c2f549a5f@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAIZIemYC/0WMQQ6CMBBFr0JmbUmnUgRX3sMYUttBZkGrbSUkh
- Ltb3bj7L/nvbZAoMiU4VxtEWjhx8AXUoQI7Gf8gwa4wKKka2SotzBLYDfNqh0iZfC5/cZe9Nqc
- WXd8hFPMZaeT1V73eCo8xzCJPkcy/pY+I2GDT1Z3WUqB4vdkO2Zl0+S72trZhhn3/AFM8YhqjA
- AAA
-To: Bjorn Andersson <andersson@kernel.org>,
-        Ulf Hansson
-	<ulf.hansson@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Andy
- Gross" <agross@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_jkona@quicinc.com>,
-        <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
-        <stable@vger.kernel.org>
-X-Mailer: b4 0.14-dev-f7c49
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: sWfFej0VuIXYZnYtPg_0cdcimAAS3uRY
-X-Proofpoint-ORIG-GUID: sWfFej0VuIXYZnYtPg_0cdcimAAS3uRY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_01,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- suspectscore=0 spamscore=0 lowpriorityscore=0 adultscore=0 mlxscore=0
- malwarescore=0 priorityscore=1501 mlxlogscore=999 impostorscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406250030
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-In the cases where the power domain connected to logics is allowed to
-transition from a level(L)-->power collapse(0)-->retention(1) or
-vice versa retention(1)-->power collapse(0)-->level(L)  will cause the
-logic to lose the configurations. The ARC does not support retention
-to collapse transition on MxC rails.
+This patch series cleans-up the compatible property of PIO3 Pinctrl
+and GPIO bank nodes in DT and includes the text to yaml conversion of
+Atmel PIO3 Pinctrl and GPIO bindings.
 
-The targets from SM8450 onwards the PLL logics of clock controllers are
-connected to MxC rails and the recommended configurations are carried
-out during the clock controller probes. The MxC transition as mentioned
-above should be skipped to ensure the PLL settings are intact across
-clock controller power on & off.
+yaml files are validated using the following commands
 
-On older targets that do not split MX into MxA and MxC does not collapse
-the logic and it is parked always at RETENTION, thus this issue is never
-observed on those targets.
+make dt_binding_check DT_SCHEMA_FILES=<converted_yaml_file>
+make CHECK_DTBS=y DT_SCHEMA_FILES=<converted_yaml_file>
 
-Cc: stable@vger.kernel.org # v5.17
-Reviewed-by: Bjorn Andersson <andersson@kernel.org>
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
----
-[Changes in v2]: Incorporate the comments in the commit text.
----
- drivers/pmdomain/qcom/rpmhpd.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+changelogs are available in respective patches.
 
-diff --git a/drivers/pmdomain/qcom/rpmhpd.c b/drivers/pmdomain/qcom/rpmhpd.c
-index de9121ef4216..d2cb4271a1ca 100644
---- a/drivers/pmdomain/qcom/rpmhpd.c
-+++ b/drivers/pmdomain/qcom/rpmhpd.c
-@@ -40,6 +40,7 @@
-  * @addr:		Resource address as looped up using resource name from
-  *			cmd-db
-  * @state_synced:	Indicator that sync_state has been invoked for the rpmhpd resource
-+ * @skip_retention_level: Indicate that retention level should not be used for the power domain
-  */
- struct rpmhpd {
- 	struct device	*dev;
-@@ -56,6 +57,7 @@ struct rpmhpd {
- 	const char	*res_name;
- 	u32		addr;
- 	bool		state_synced;
-+	bool            skip_retention_level;
- };
- 
- struct rpmhpd_desc {
-@@ -173,6 +175,7 @@ static struct rpmhpd mxc = {
- 	.pd = { .name = "mxc", },
- 	.peer = &mxc_ao,
- 	.res_name = "mxc.lvl",
-+	.skip_retention_level = true,
- };
- 
- static struct rpmhpd mxc_ao = {
-@@ -180,6 +183,7 @@ static struct rpmhpd mxc_ao = {
- 	.active_only = true,
- 	.peer = &mxc,
- 	.res_name = "mxc.lvl",
-+	.skip_retention_level = true,
- };
- 
- static struct rpmhpd nsp = {
-@@ -819,6 +823,9 @@ static int rpmhpd_update_level_mapping(struct rpmhpd *rpmhpd)
- 		return -EINVAL;
- 
- 	for (i = 0; i < rpmhpd->level_count; i++) {
-+		if (rpmhpd->skip_retention_level && buf[i] == RPMH_REGULATOR_LEVEL_RETENTION)
-+			continue;
-+
- 		rpmhpd->level[i] = buf[i];
- 
- 		/* Remember the first corner with non-zero level */
+Manikandan Muralidharan (5):
+  ARM: dts: microchip: change to simple-mfd from simple-bus for PIO3
+    pinumux controller
+  ARM: dts: microchip: Remove additional compatible string from PIO3
+    pinctrl nodes
+  ARM: dts: microchip: sam9x60: Remove additional compatible string from
+    GPIO node
+  dt-bindings: gpio: convert Atmel GPIO to json-schema
+  dt-bindings: pinctrl: Convert Atmel PIO3 pinctrl to json-schema
 
----
-base-commit: 62c97045b8f720c2eac807a5f38e26c9ed512371
-change-id: 20240625-avoid_mxc_retention-b095a761d981
+ .../bindings/gpio/atmel,at91rm9200-gpio.yaml  |  81 ++++++++
+ .../devicetree/bindings/gpio/gpio_atmel.txt   |  31 ---
+ .../bindings/pinctrl/atmel,at91-pinctrl.txt   | 178 ----------------
+ .../pinctrl/atmel,at91rm9200-pinctrl.yaml     | 194 ++++++++++++++++++
+ arch/arm/boot/dts/microchip/at91rm9200.dtsi   |   2 +-
+ arch/arm/boot/dts/microchip/at91sam9260.dtsi  |   2 +-
+ arch/arm/boot/dts/microchip/at91sam9261.dtsi  |   2 +-
+ arch/arm/boot/dts/microchip/at91sam9263.dtsi  |   2 +-
+ arch/arm/boot/dts/microchip/at91sam9g45.dtsi  |   2 +-
+ arch/arm/boot/dts/microchip/at91sam9n12.dtsi  |   2 +-
+ arch/arm/boot/dts/microchip/at91sam9rl.dtsi   |   2 +-
+ arch/arm/boot/dts/microchip/at91sam9x5.dtsi   |   2 +-
+ arch/arm/boot/dts/microchip/sam9x60.dtsi      |  10 +-
+ arch/arm/boot/dts/microchip/sama5d3.dtsi      |   2 +-
+ arch/arm/boot/dts/microchip/sama5d4.dtsi      |   2 +-
+ 15 files changed, 290 insertions(+), 224 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/gpio/atmel,at91rm9200-gpio.yaml
+ delete mode 100644 Documentation/devicetree/bindings/gpio/gpio_atmel.txt
+ delete mode 100644 Documentation/devicetree/bindings/pinctrl/atmel,at91-pinctrl.txt
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/atmel,at91rm9200-pinctrl.yaml
 
-Best regards,
 -- 
-Taniya Das <quic_tdas@quicinc.com>
+2.25.1
 
 
