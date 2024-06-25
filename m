@@ -1,225 +1,182 @@
-Return-Path: <linux-kernel+bounces-229472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57ABA916FF2
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:13:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CA9C916FF5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:15:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B6AE281F82
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:13:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF0AC1F2214D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:15:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48A017920C;
-	Tue, 25 Jun 2024 18:13:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2A017B41C;
+	Tue, 25 Jun 2024 18:14:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gOF23g9A"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ilfeOTiW"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FD86143882;
-	Tue, 25 Jun 2024 18:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A222A178CE2
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719339223; cv=none; b=fcNbWuIWarWv+xaD4ckEvdWgvvfDFRS9u2i3jK7iw/V/FyF5EuBHhpX84iVOVbKzm5zscOE6MP7y/ZPJbbuZHgxI/mE/BS18ITUZyHBPeh3Ss5oTBnnhboYB9UonzJROlGZVfga6bJTITCepSJPagIy/FqT/50NsbknSzqHO9PY=
+	t=1719339296; cv=none; b=skWeMeto37O14Wrc1IkyLsdPSf5jYZSq/fmOQGGPNugq7NI5iUyiZf46gcYb3MFZb8aOfUi77zU52FuRB/l2L7coePs4rMqOzm+Of53k1Gd4QprG1T2S8BbD68LaglGsqpE0m1dryjHrgbEA0EgLHMPKd+BNDsnzVkUtMLSoK50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719339223; c=relaxed/simple;
-	bh=jUjWLcpQRnu/rEeeBv5nOxk8R/BU7l4PVA+gs/H5+2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RxELwUajPONZByMbuDn5o8AHCOKfjiWQMLl7b1mA/KgCGyQLjS3PRTjPVRHodDPgkY2DLtnwPHlrMGJn5bt1kzWiWBN8PN6HnsmSsMC2KDLv4OrrRi1GaDPx2YYuFk9mJ8U/TDMGcjpNR405mlQCqYaot2vUL+y8HGpricBQKhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gOF23g9A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8062C32781;
-	Tue, 25 Jun 2024 18:13:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719339222;
-	bh=jUjWLcpQRnu/rEeeBv5nOxk8R/BU7l4PVA+gs/H5+2I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gOF23g9AEBeSeSoCtouTpbBbC+umwkf3EEetWOrnWCMU56KxqTH0lDQxINcjvt86U
-	 zfCxp3VRotXIjvNQ9exhR6ihvixuFAk8OKZJ/5UP5zawD9WT6ke9fTo3TpqTAvGtmQ
-	 PrJnEOrOnsKYTKBv6ENkArtZQVJpvFRiv8OjH3EEF+/o6XkNWMNpjkkP9aJ0TEG0Nk
-	 sSTtQF/CSJdHW2+MXvxy/e38B64aLEHMkJ8PDBwsY9zNmgv4f5c7E3ESrxy5f16urz
-	 3EfcYxFtjfIAkZSRbudBsUmNi7jK/bc9akSfQh5/Lk0+FO5//JhL3761Mpykqo7k4w
-	 /jUalUrQbo8jQ==
-Date: Tue, 25 Jun 2024 19:13:37 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dev Jain <dev.jain@arm.com>
-Cc: shuah@kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, Catalin.Marinas@arm.com,
-	will@kernel.org, ryan.roberts@arm.com, rob.herring@arm.com,
-	mark.rutland@arm.com, linux@armlinux.org.uk, suzuki.poulose@arm.com,
-	Anshuman.Khandual@arm.com, aneesh.kumar@kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 6/9] selftests/arm64: Split ptrace, use ifdeffery
-Message-ID: <56dab3f3-7963-4e08-82b8-5b864c0322f7@sirena.org.uk>
-References: <20240625122408.1439097-1-dev.jain@arm.com>
- <20240625122408.1439097-7-dev.jain@arm.com>
+	s=arc-20240116; t=1719339296; c=relaxed/simple;
+	bh=cdQG2QH6nCCll3rEP3ihKpXMBl8SgxnP/VREmcfD5Ao=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e928lYVsSCdKuumUZMOUklFN66QIeUWWw5ugdiKO+QxBaaWLWD+/AFSjTN0gZ1KVox/niv8/ewLpASA3l/u0i+FPPL6XDMcQccXZlS4RsW3CHhCuRBsEZYGSMh3hvSLkr4Al+r+vkpJfPoBhg5RboV6r2UGex/u1QGq5d8vw+J0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ilfeOTiW; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-1fa3086cf25so17515ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:14:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719339294; x=1719944094; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pHQujU8w2HsPdHSeJ+eNtyrJA2jnQulGAF+h4XWMpkg=;
+        b=ilfeOTiWWiDCkMojlYgXzyqB+pgSXFWG0HocVT5g04vZ4yrJq0EA5qjbmKSEKSnu+q
+         5s359fkGoLtsanHQSSR5jp5chQv3/LGsFN3Ek3u9+NlvN8IfYtvdMfiYQwaZToZ5sLs0
+         2LUNchm10K1JoitnEcmKkK1mDo22zJE3VsM+sl+DeI1jxT2xD6fJoyT7/6bgGNCKyrzy
+         rrp3RimpRH+scvHiNkGoYGZbUHo9tz7cx7O8xcUpMecsT39cAQXHPnKz9isg0Utt4xye
+         8PS+K/h5H10mwg+Zk5+LhUZvJ81KI3HfRU4H3dVg4dNWcAtkaAUlnedLWxM/6HLvYFLt
+         kNKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719339294; x=1719944094;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pHQujU8w2HsPdHSeJ+eNtyrJA2jnQulGAF+h4XWMpkg=;
+        b=fAf78FHYopOBQgfYKJ4V1hon65ofIGlrP9z8iTuuDpR3k889/3g4Q3iNj6Rz68eC/w
+         mgC2JHA0Asc0Dj6Vwk2bYY5KULH1edpUxXa37EBKdTEyj5+oY5Q28B6Q9Ua4BImLrWa0
+         2/DvcLDoZRtMZHFnbRaB3avfjnJ7dDCs9sGfQ9Q9o2vfRV7BOvyWQGIBHhb1kaFTdQD1
+         EeAYSLtTFsMIqpxPwtra6jpsBhqqnafyuAEoG7+5StOZIdpL5blxZn+5Nw5FfkUODq35
+         seC+hoqy9y3zU4tI8xEDLXLxtJt0ogPgDkdqcjZYfRI9Ie1K85KmmFCNDlcJRgKEfxPI
+         JL4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXoH/Vyq0LYu/5kHfPGi9syQwI7LASIdtH10MhKpKGQK01SRUgUwmXTX5/LUiIXY+Kw9SpveptTNANQx1eSNfo0bmNSM3R40INMCxN6
+X-Gm-Message-State: AOJu0Yzhy6ehwNNIW53QySbmnIdUWENspxfOSNKki1oS0z1ud7XPaeK3
+	4DGZwFakZp9CsKrOzWTfb2u+WBxlEncNaf4zOOMRT4E/Eo6U6QyMMhTIVK7oQRSI11tcuZ++nt9
+	bJJdXKVbU5muqg0BTraFFUbACn5HRGYtatX52
+X-Google-Smtp-Source: AGHT+IHUWVP8jMWtzNNtwGhAuozDrDLNiGYVxTa6bvSAKS2s/Xp4TEwNkFy5eyfDDb3O7LxCBZEQyj5jnib9lTc8oa8=
+X-Received: by 2002:a17:903:603:b0:1f7:3764:1e19 with SMTP id
+ d9443c01a7336-1fa8886e8d6mr213265ad.20.1719339293473; Tue, 25 Jun 2024
+ 11:14:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="oIvGawDpN3XdR/+9"
-Content-Disposition: inline
-In-Reply-To: <20240625122408.1439097-7-dev.jain@arm.com>
-X-Cookie: Results vary by individual.
-
-
---oIvGawDpN3XdR/+9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240613233122.3564730-1-irogers@google.com> <20240613233122.3564730-8-irogers@google.com>
+ <Znnyi2IPC79jMd9y@google.com> <1fdf637d-3571-4145-8008-f2b5f8fc8bca@arm.com> <CAM9d7cjy8+Ys-Y_35V7O=KGQL0v3+B9z6hhytmAiKKN9pO9yow@mail.gmail.com>
+In-Reply-To: <CAM9d7cjy8+Ys-Y_35V7O=KGQL0v3+B9z6hhytmAiKKN9pO9yow@mail.gmail.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 25 Jun 2024 11:14:42 -0700
+Message-ID: <CAP-5=fXKLxo9VufpsvjNJ-Z+oA+6k7zYOz6qH69xSAiRA2K8zg@mail.gmail.com>
+Subject: Re: [PATCH v3 7/8] perf python: Switch module to linking libraries
+ from building source
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: James Clark <james.clark@arm.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Yicong Yang <yangyicong@hisilicon.com>, Jonathan Cameron <jonathan.cameron@huawei.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Nick Terrell <terrelln@fb.com>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, Kees Cook <keescook@chromium.org>, 
+	Andrei Vagin <avagin@google.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
+	Oliver Upton <oliver.upton@linux.dev>, Ze Gao <zegao2021@gmail.com>, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org, 
+	linux-riscv@lists.infradead.org, coresight@lists.linaro.org, 
+	rust-for-linux@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 05:54:05PM +0530, Dev Jain wrote:
+On Tue, Jun 25, 2024 at 10:48=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
+>
+> Hello,
+>
+> On Tue, Jun 25, 2024 at 5:24=E2=80=AFAM James Clark <james.clark@arm.com>=
+ wrote:
+> >
+> >
+> >
+> > On 24/06/2024 23:26, Namhyung Kim wrote:
+> > > On Thu, Jun 13, 2024 at 04:31:21PM -0700, Ian Rogers wrote:
+> > >> setup.py was building most perf sources causing setup.py to mimic th=
+e
+> > >> Makefile logic as well as flex/bison code to be stubbed out, due to
+> > >> complexity building. By using libraries fewer functions are stubbed
+> > >> out, the build is faster and the Makefile logic is reused which shou=
+ld
+> > >> simplify updating. The libraries are passed through LDFLAGS to avoid
+> > >> complexity in python.
+> > >>
+> > >> Force the -fPIC flag for libbpf.a to ensure it is suitable for linki=
+ng
+> > >> into the perf python module.
+> > >>
+> > >> Signed-off-by: Ian Rogers <irogers@google.com>
+> > >> Reviewed-by: James Clark <james.clark@arm.com>
+> > >> ---
+> > >>  tools/perf/Makefile.config |   5 +
+> > >>  tools/perf/Makefile.perf   |   6 +-
+> > >>  tools/perf/util/python.c   | 271 ++++++++++++++--------------------=
+---
+> > >>  tools/perf/util/setup.py   |  33 +----
+> > >>  4 files changed, 110 insertions(+), 205 deletions(-)
+> > >>
+> > >> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+> > >> index 7f1e016a9253..639be696f597 100644
+> > >> --- a/tools/perf/Makefile.config
+> > >> +++ b/tools/perf/Makefile.config
+> > >> @@ -910,6 +910,11 @@ else
+> > >>           endif
+> > >>           CFLAGS +=3D -DHAVE_LIBPYTHON_SUPPORT
+> > >>           $(call detected,CONFIG_LIBPYTHON)
+> > >> +     ifeq ($(filter -fPIC,$(CFLAGS)),)
+> > >
+> > > Nitpick: mixed TAB and SPACEs.
 
-> --- /dev/null
-> +++ b/tools/testing/selftests/arm64/abi/ptrace.h
-> @@ -0,0 +1,135 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (C) 2024 ARM Limited.
-> + */
+Will fix it in v2.
 
-> +#include "../../kselftest.h"
-> +
-> +static void run_tests(pid_t child);
-> +
-> +static int do_child(void);
-> +
-> +#ifdef __aarch64__
-> +static bool have_sme(void)
-> +{
-> +	return getauxval(AT_HWCAP2) & HWCAP2_SME;
-> +}
+> > >
+> > >
+> > >> +           # Building a shared library requires position independen=
+t code.
+> > >> +           CFLAGS +=3D -fPIC
+> > >> +           CXXFLAGS +=3D -fPIC
+> > >> +         endif
+> > >
+> > >
+> > > I'm curious if it's ok for static libraries too..
+> > >
+> > > Thanks,
+> > > Namhyung
+> > >
+> >
+> > I think I tested the whole set with a static build so it should be ok.
+>
+> Ok, thanks for checking that!
 
-> +static void test_hw_debug(pid_t child, int type, const char *type_name)
-> +{
-> +	struct user_hwdebug_state state;
-> +	struct iovec iov;
-> +	int slots, arch, ret;
-> +
-> +	iov.iov_len =3D sizeof(state);
-> +	iov.iov_base =3D &state;
-> +
-> +	/* Should be able to read the values */
-> +	ret =3D ptrace(PTRACE_GETREGSET, child, type, &iov);
-> +	ksft_test_result(ret =3D=3D 0, "read_%s\n", type_name);
+Even with a static build it is often the case that the executable is
+position independent (-fPIE, and related compiler options) and so
+would need this too.
 
-This feels like it's pulling way too much stuff out into the header.  I
-think some of this needs to be a C file that gets built for both
-architectures with some mechanism they can use to run tests, and a
-library of any shared tests.
+Thanks,
+Ian
 
-> +
-> +	if (ret =3D=3D 0) {
-> +		/* Low 8 bits is the number of slots, next 4 bits the arch */
-> +		slots =3D state.dbg_info & 0xff;
-> +		arch =3D (state.dbg_info >> 8) & 0xf;
-> +
-> +		ksft_print_msg("%s version %d with %d slots\n", type_name,
-> +			       arch, slots);
-> +
-> +		/* Zero is not currently architecturally valid */
-> +		ksft_test_result(arch, "%s_arch_set\n", type_name);
-> +	} else {
-> +		ksft_test_result_skip("%s_arch_set\n", type_name);
-> +	}
-> +}
-> +#endif
-> +
-> +static int do_parent(pid_t child)
-> +{
-> +	int ret =3D EXIT_FAILURE;
-> +	pid_t pid;
-> +	int status;
-> +	siginfo_t si;
-> +
-> +	/* Attach to the child */
-> +	while (1) {
-> +		int sig;
-> +
-> +		pid =3D wait(&status);
-> +		if (pid =3D=3D -1) {
-> +			perror("wait");
-> +			goto error;
-> +		}
-> +
-> +		/*
-> +		 * This should never happen but it's hard to flag in
-> +		 * the framework.
-> +		 */
-> +		if (pid !=3D child)
-> +			continue;
-> +
-> +		if (WIFEXITED(status) || WIFSIGNALED(status))
-> +			ksft_exit_fail_msg("Child died unexpectedly\n");
-> +
-> +		if (!WIFSTOPPED(status))
-> +			goto error;
-> +
-> +		sig =3D WSTOPSIG(status);
-> +
-> +		if (sig =3D=3D SIGTRAP)
-> +			ksft_print_msg("Child received SIGTRAP\n");
-> +
-> +		if (ptrace(PTRACE_GETSIGINFO, pid, NULL, &si)) {
-> +			if (errno =3D=3D ESRCH)
-> +				goto disappeared;
-> +
-> +			if (errno =3D=3D EINVAL)
-> +				goto cont;
-> +
-> +			ksft_test_result_fail("PTRACE_GETSIGINFO: %s\n",
-> +					      strerror(errno));
-> +			goto error;
-> +		}
-> +
-> +		if (sig =3D=3D SIGSTOP && si.si_code =3D=3D SI_TKILL &&
-> +		    si.si_pid =3D=3D pid)
-> +			break;
-> +
-> +cont:
-> +		/* bust group-stop */
-> +		if (ptrace(PTRACE_CONT, pid, NULL, 0)) {
-> +			if (errno =3D=3D ESRCH)
-> +				goto disappeared;
-> +
-> +			ksft_test_result_fail("PTRACE_CONT: %s\n",
-> +					      strerror(errno));
-> +			goto error;
-> +		}
-> +	}
-> +
-> +	ksft_print_msg("Parent is %d, child is %d\n", getpid(), child);
-> +
-> +	ret =3D EXIT_SUCCESS;
-> +	run_tests(child);
-> +
-> +error:
-> +	kill(child, SIGKILL);
-> +
-> +disappeared:
-> +	return ret;
-> +}
-> --=20
-> 2.39.2
->=20
-
---oIvGawDpN3XdR/+9
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ7CNAACgkQJNaLcl1U
-h9CSaAf+OzmjUwIL1j7RqpRlpwHktvPS7B66IUE4BdU+ZsyrGJEVhtF9M4Ab+pWd
-Q4MHBu2dWWEpcqI+i4Hy8BFhUbwTvWkUB8wqzpvWEiyN6q8z2sCD4/Wigz5e9ZiJ
-9j8uzlvewWggK0QBtCI9mFkoU2i7OgusjxYood921Npux7SpROvx9wrAh1flbRsH
-AcKnNvwkvjDlWn9EZw34++icUN4b/Ez+wbpza+37/HNkWQMIT/YgptPWyqO6/lXX
-pzohRH3EKJRrXT7o2FTg06T+80Ekn4zuVmvH/3cBhEyRrCfuaiDBVhJPswoPjAR7
-0tfS7MhoGCBDKvQHVzEWtN43JwQO1Q==
-=mTos
------END PGP SIGNATURE-----
-
---oIvGawDpN3XdR/+9--
+> Namhyung
 
