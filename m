@@ -1,209 +1,365 @@
-Return-Path: <linux-kernel+bounces-228193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FBA915C27
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:24:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 377CB915C2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:26:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 283891F2253A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:24:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD6F21F2259B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E313AC0F;
-	Tue, 25 Jun 2024 02:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE53433B1;
+	Tue, 25 Jun 2024 02:26:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WzTQwgCF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OAgTQanT"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2045.outbound.protection.outlook.com [40.107.20.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD8939FC1
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E6A39FC1;
+	Tue, 25 Jun 2024 02:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.45
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719282290; cv=fail; b=oKyJWEVymLxpx1K3/Hcbg4XFnDN2suQ6n1dFMMtURDncpf97Aq86EpSUNUHy4x/w107aDSTYh0BK5peGX4s8ttE6fcxNYSbIs395ViGyDZFQRyQt8z5R5p8MStStt9i8VGaRXyYww/AXR9he4P8vInBhmhcLdWvl7d/duwxcfWc=
+	t=1719282370; cv=fail; b=GLpR/CkyPvNnGgnPCmbw672w1RQvtIvbep/nTtBQV/fyA+iElsx72nEXFdtT4XkZ8MEABbIHKJl3PetXEfOWxZuJKAs3VuOplSofNHSm55v8XANmt0WPKGGSthuSfOicmrt9i5iYgETQdgnbZlnQKI181AvxFROeisxxYRCPn90=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719282290; c=relaxed/simple;
-	bh=YDW7meI0BQqqB3Tqh+s9vNTDNe8hIjuRzoDUWoih+uc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=dDYfgPkupzq/wNiugsEgHSuCj+OlYC7qEJQow0j7AjAWkZ8jG+EnV5jkCHP1oJ0R1H21XRqVhgC97mixaGfbxDsE8t7Yo6TaIddP9NPtPwarpId+uGGKuOk+/p13A37tWqpxnWaXd30e5jPUOQNuJjIJ8552of2vmIZbOf+5RUg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WzTQwgCF; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719282288; x=1750818288;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=YDW7meI0BQqqB3Tqh+s9vNTDNe8hIjuRzoDUWoih+uc=;
-  b=WzTQwgCFNHivNr1StgZwxGZUo4stOwmfsMj3xOF2FIQMbSzIQNLAtbEa
-   Ry9ILL2xdSOfVQo/awfN7Tsf/Fsds/heZVyDn61MxkYT+XZuaPok++O21
-   sgiEtSYsKTRoT6hzzooPvRYW19uMufD/jMiiVlQYugNeWcMmQrG2wsU+8
-   NuFI5YNRTsmTYgcw2DK4fhj9LtuocA0a9T3qfddmGhwX3RJbDu8FhpT4/
-   bAws7k776DVkxZShiO0TjpJTWE/0f/Nc5uRPK3A2rjbf0+j7lfyclr04T
-   C4OtFZ15bIKyElptUdcfg8ivbeEuZhj2DGsmeU6xQj6o9g018NVx0MZbk
-   g==;
-X-CSE-ConnectionGUID: oWR34fp2SSinsx+zsPpKrA==
-X-CSE-MsgGUID: 4QLuTJINRTqqI0FaCkRaNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="41697372"
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="41697372"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 19:24:48 -0700
-X-CSE-ConnectionGUID: ZxrF3CYFTE2XXnEAw3MCdQ==
-X-CSE-MsgGUID: fT5KXISPTTSZMbtJY7D7dQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="48662229"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Jun 2024 19:24:48 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 24 Jun 2024 19:24:47 -0700
-Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 24 Jun 2024 19:24:47 -0700
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 24 Jun 2024 19:24:47 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.169)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 24 Jun 2024 19:24:46 -0700
+	s=arc-20240116; t=1719282370; c=relaxed/simple;
+	bh=L897ZvKAQEhXZN/XqikrJkhP0gjX975OoIV8WBqPX5A=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=mpBXwlL5DaMbVUrTg2TSxfpcejMoHTUdobT+6l9CTIl3Of3uSv+IdkYgNJPvxWsZEPvjoW9Qh+RuRZ3kKjGHP5YwLg2aRQ7xR+pUs5CFJXS+IH6Y00W0awakQNLEe+6JEHOBca8FeUu9bJXT014OraGvWh3rV+HymfG/EZUbcg0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=OAgTQanT; arc=fail smtp.client-ip=40.107.20.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kbpQz0jcICRYBXiIr6cHYhx6VVdGrivmCkpnPBDB2Ga5PU/OqLooui+2FJJSTlDhz2lYV04S5WBWAH3xPdBs/F5nXsutzlhbsZCRKudgbafey6QVK2CczWywz2oklGVdt+UuacEMVdwxtwwOHG+npax3bWphjPHGXO6NhwNzNBw8VlH6FQnFEkoXrmKzFNUqAETJivX9Ff3KwzYptBhK86q67+TSXu7xqSCet5lqtfceQ62YHOAscZHd5Oes8N37Gggwf/fxn2vMKn1xd8BuHIVGcSIEDNv2/bM8hZDtqmwfZgUTFSI4+D/KWB/zwTgtyRT7q7Os+zI5RARK7nuY+A==
+ b=GkCMEVBKZw3u37Ni3OxGhqMeN+fov5eI61wU6+wlUOWJPMqwEoSrW6nntC+4PIA3cHMJsBjGPXRjpzZkBgYI//XAwohPpUitQRfSYr50osJMzY3b+Gmpw64qxXZiXZnmS9bfVl0ATb6NhmhmJj++8IPa05IUV2E6nNxBb9gyRH/94rIvUh2kJahyJAiPdlcrfuDiGNo7PEqn6xLCmKvDLSzeKD8dmVaonFmEHPbfArQ/2dXvRjrJUosV/e47FY+3o31liJ//QJcVLPNA/7Uap1D9As9PooiCAbo4KjyMqXEJTY1rhPKfsyoTp3fC0Af1rpBLtu0m5K5idxBPNbT0Yg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=YDW7meI0BQqqB3Tqh+s9vNTDNe8hIjuRzoDUWoih+uc=;
- b=nkYqqgZ4Dt/NLXAqRHBrLOWczkeZ6Z41goGh+fPBd7G3E+4p3YbMmFILeJNzsBKKvv2/4lKTf6FeExM4u3/uIkd8NY1uqcrOTIPoQOLb9Y8hRQwQzSt1d85SfqQHF7wUnxzpLNEF1PREO6JSFuFjfl0EiVTgA+zzdBNhhoyWZSVwZTbBPGJeKheMW4i/IZ4Q0BvJGa2mM0lj63q8V25Q8qVxCZLDi0ytGrIwyyu1N33QvQIqZWrE58OYocIFlP5E+ifDgGfPc1hUElHH/RtJ7D5aIXW5/D2IpEgz9nP+ZnOHLylp4sA0uFIDFrg3drs3M4bd8LZO1/b1o3i7KudFhQ==
+ bh=RAzpkgGDOm9c31UpOE+1B1xI9cO5SVEk4Vz6l/wsaBk=;
+ b=mNNULWN0BSEBzPmhJzICygTM5jkXWz9QGXW7KtXpzrHbfQ1i/0Z3wX6pjb8KmMTPfNfOA5CSDG0VngvH97KHwBV6uZrPGcSRBkKaZjePvFpOR+jX8k1W5fdwHE1YwGJk4P25yQBPXAVbdGvwn8FOh98V7IOQyJpTL9uHpuH9mUvBL7A9wzIm1zm4gp4nlXgJ/Q1G6ku9BQaMmLcoryMTAh93IdtrAZT2rGeP/E6ZM5X98ZVgx1JkUjIJt1BB8wml3YHLVXtFGHR896qpc4lU0O1ZAwrDHPvGmJ1RNImbNrxmC1M8us9NCyI75SbboQxpbMwvsEDCWd6jNyQh6FQX/Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by IA0PR11MB7354.namprd11.prod.outlook.com (2603:10b6:208:434::17) with
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RAzpkgGDOm9c31UpOE+1B1xI9cO5SVEk4Vz6l/wsaBk=;
+ b=OAgTQanTRamGjBHCgAaYMTWPrt2WlL/Kd7KW0eFoy2JPC3QA/0/y6OABW9dKS1AHCoHkUb8HDANe4LiDoOy+X9lFOmt0KXqrBXxWMH4Edlms3+WcvBlyuyUmkJ/1X57pYj+vJFAfTB3Ey5uVKeKOgU8AndWVRuKGmXfreCnEf/g=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by GVXPR04MB10705.eurprd04.prod.outlook.com (2603:10a6:150:223::15) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Tue, 25 Jun
- 2024 02:24:43 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
- 02:24:43 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Liu,
- Yi L" <yi.l.liu@intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>
-CC: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/1] iommu/vt-d: Remove control over Execute-Requested
- requests
-Thread-Topic: [PATCH 1/1] iommu/vt-d: Remove control over Execute-Requested
- requests
-Thread-Index: AQHaxeZQaw8RgNlA1U2OixIxXggz1rHXwcag
-Date: Tue, 25 Jun 2024 02:24:43 +0000
-Message-ID: <BN9PR11MB5276E2EA3F2E7691127C369A8CD52@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240624032351.249858-1-baolu.lu@linux.intel.com>
-In-Reply-To: <20240624032351.249858-1-baolu.lu@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|IA0PR11MB7354:EE_
-x-ms-office365-filtering-correlation-id: 46932cdc-d414-49bc-8e8d-08dc94bdf990
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230037|376011|1800799021|366013|38070700015;
-x-microsoft-antispam-message-info: =?us-ascii?Q?EWXSk50YNNtDyJeKGBaOLSH8EGD7d6m9xPmHoeqlMEkQ2RNGJtKG3I9XHJM6?=
- =?us-ascii?Q?Gma0ycUgwwLIFpAiXlAv2tN5WdU9vOLp5hFrpUQgPPNk6V0J9C7m3qlGvzef?=
- =?us-ascii?Q?scMbmwYXwsISG+9OL31iu0MnRfMVq3vAUl4XEFTp2CtWJwxKXvZALxsfaUU1?=
- =?us-ascii?Q?YL/hfo1U0eDkoubjk65K/5uU/a4n4EJt1xKRdVcrNdMzzfTYtPSQOd26ExEK?=
- =?us-ascii?Q?1d7siW+cztg20RBVhO7W+AQrWmswE4U20hRZrQVwOI47KsT8iMRYh4Y4j0+G?=
- =?us-ascii?Q?R3Krb6sMPPVoqLe68YE/ur2sx5zEFVOwarIt6voz6TQGkrsI4b2qNsloSReY?=
- =?us-ascii?Q?SSDYd92IFsrKcuWRLqKYctNxbAhSvm9PdxZXGxtsMWgXXSH1JkEM875FHUT7?=
- =?us-ascii?Q?5L8nuAdJfYIfbClZj1ENdSV00HA2SuOLQTkHa9AQizTj5ddG28BYzZJ36olv?=
- =?us-ascii?Q?HL7IclTZxv771YQEtZi9nTQ2Bwyqo0tOJD1HaU+FJpZJpVPRnxtdHqfV3Kn1?=
- =?us-ascii?Q?aM8kUUPaoCNNlZTaVgMvlF6IqJPDvlYDEv7rvCi4ugq3hHvOQEjC8gcuGHr5?=
- =?us-ascii?Q?eNds9brfl7OtgtNKno+1HVEJfTW3i3gYDqLBA+012qXqB2uu4wsNCOLAk+38?=
- =?us-ascii?Q?ppQO4qhVGCcmQAC+63OtXkfJh6PVgCoNljs6a+Km9/ULikq+Ij5wruKK5q4X?=
- =?us-ascii?Q?MUHydZB+IOz3ITddncYozaz3wB6NDYMMhjKJv6IIuF+LYutDXuWi3BQD7TYn?=
- =?us-ascii?Q?V+qINgKQiu+JTkiV+3HcO+DiieabYEYq9QN8B1cAVFkruW9DYJb7z8B9KGoY?=
- =?us-ascii?Q?sEKTDjYeJviQnsVfu3jfxZnqm9k6BkVmjPTwslwbDj1CNNId5LpiDO66NVhh?=
- =?us-ascii?Q?/lvukqhdAgdFmQq4+AQZpRVyCIwMIfLBqrwOWfmwybEyR7JuQg71E85e7yEx?=
- =?us-ascii?Q?wELNels26AsSbV9r8eoRFSo/x1xe/CYhz7PNamd2MnqUV47GOUqdSXmqpM85?=
- =?us-ascii?Q?h4hbQwA8nNQidotkFH7v1zFk9komVZiT9iIXEVf2MGLFGDiQWuGH6C8Bid1Z?=
- =?us-ascii?Q?qHPCU9K13c181Q6WurSVgJrsbQIXQfUR6p9doOGY/fMgX3LrxtRoOwZWU4yh?=
- =?us-ascii?Q?ndcBYjpxaxGkNG/IXmIuZoSUFQ9ttixal6CbyO9FDuBvWcMfdHxTN7Koc2qB?=
- =?us-ascii?Q?1Bq2+gtZOcJN0FQ6ka26lUspcIbOSWOabdQdV8p7QVxeKVGFqXK0s2O3jtd9?=
- =?us-ascii?Q?PNnQwpKUsla9QGk+hA9+MDTd3vSRbd7eMKCVAVyR7opQ5N2VBY2Qyqwsza2T?=
- =?us-ascii?Q?mX+VlBIJmlGMsaoy4jN0Lj1PICSiP9OcJcRjs4TZOANOuNPdLAy5Aq2W3s7F?=
- =?us-ascii?Q?eCs4x1Q=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(376011)(1800799021)(366013)(38070700015);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ohor1Obha19hN3laYl2d10Gx+6ctDJzNTQXX/MykyM8btX6tncWzXIkCnjav?=
- =?us-ascii?Q?ipIj9FR8Ug8TOXdovI8hrjPJunU6EbMK1cqqtkCOrdd4cS7qFf1tuKm3Y8Dv?=
- =?us-ascii?Q?nZKBr0S4vMMkCMXQbXDO7lZjYEG6YUIB0hy2CWM43AcbuTzETthzQLQjKM2X?=
- =?us-ascii?Q?u3tR4W+fvms803/ZA3O0NGvIG0bGLKNUspk926gqNm0aOdIcPTbWLZRLix1d?=
- =?us-ascii?Q?TtCWZYGvBy/uTcJcBROiEaI6Uv4nfrD61A9BvBo/8+SjPFO9ZofGzBJ4CO5l?=
- =?us-ascii?Q?E3DVQaCjhZIYyZ0qv+y8QoQJkp9HKX33T5UYjJ13B3smsv57oFb+CnpP/lsb?=
- =?us-ascii?Q?vQwmBHsJcL02xd5WlzrgrjOG3ry7uhBTrejm6olXcgVXlywkqLYmvnK/Fxna?=
- =?us-ascii?Q?f2vJ2G7C1JjWGnqkdrrPQHnqt+wQXzOGtS/5rSgc3ullNvUnJgY/KXx1NxJz?=
- =?us-ascii?Q?YGpllGeM03xJgRhJP1UKV3H8dheSLThSDDlFblqPX0F8mnkHhhY/yJUEDCB4?=
- =?us-ascii?Q?jd72d4QheX6kBvSiqqD3tsN4uwXDq0dTlo/7j9uEga9DI6Z8wd/80zj+7zb5?=
- =?us-ascii?Q?JB0SHuTKkhBzp3qC21ie5rbRrWixHy70m0QfICjN1sG1I8lRgV+XI6NhQnNY?=
- =?us-ascii?Q?LQ5I1AmNVR/WpnOzTQdG45GIcxxj0RLVLrqjpIDUOJvNQ2Oapni3rP4kXLTR?=
- =?us-ascii?Q?005h0HQAj6Tco9Q5rCwJkDSfUMssN0xmd1HWGy3Mf3siCvnGJ8WsIyDJ3D3p?=
- =?us-ascii?Q?HnAcKnUtZEKtVHY7nV2c/dwzBEJgu2b03PRL5+gisABwNXvLc8na+yK7ZGYf?=
- =?us-ascii?Q?80LX+sc2h2VyqhO5MJIxZ+DRBPVw+xdyuIGtJax8UzwVPvD1J9NugF1KUQ4I?=
- =?us-ascii?Q?PGJybF/hCZO4lKGz3plmCw6wqlMGcxvqQMVpjWdIz33RiFeJ5KtEPoaBq2yH?=
- =?us-ascii?Q?AeUx5+SS6qMYMdpAQaf6yUNkVRB5boZk3AH8EdfE2+6Tvz53n7izrM5BcYyt?=
- =?us-ascii?Q?gITsBXj6QjGdb6m61+FLyi78NQbKqoxkp9mgN3F/FPuS+9By3PkuFtO2s7yY?=
- =?us-ascii?Q?v+DXpqwGUApVhvyQePHabblEti/TthVDVnIopQo/m5zmXfyi59oVpWVywcnP?=
- =?us-ascii?Q?tVsFcNIhYTzioKj5WYPSHL2ddHMoNCqOWpTt373w0bg1IX9TE6uX8ApHU0Th?=
- =?us-ascii?Q?3reANtuGSc2mBP7gq0HzzrPJ0WEvGVTZpq3dh2wjMQ2RjTVIAciDozPtj1ws?=
- =?us-ascii?Q?EfqIl/KTSv2JYaOBUjSfYhFNwRIIjMw+7DWscgPlO6Q6eJgCYIOi66QpM05j?=
- =?us-ascii?Q?PtXHah0shxiHbDbgSCvbwsGV74I8Bt0KAw1wFzojDR0r29YnL8W60rYQJXzm?=
- =?us-ascii?Q?YOqrFgmj4DYuCR624cPGjVdmhTe0FOue+hpzUAByGEN67VOJhd2N5tUFvbFv?=
- =?us-ascii?Q?CVGepPOhStb8b2aHaYGp5LLfsb8qWhzSOo0TOiAZ/16bH7LkdeWfGN7opwxS?=
- =?us-ascii?Q?WFBiNlVLNSKvFDD6qkk1THSqPwVFRk/C600m0eaIR1czFVFPZMVBf7Z2OKSF?=
- =?us-ascii?Q?GMQ5kY7g6XHMdRMHcYD//TKVjMSgj0LJJeepZHoW?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+ 2024 02:26:04 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
+ 02:26:04 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-usb@vger.kernel.org (open list:USB SUBSYSTEM),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH 1/1] dt-bindings: usb: Convert fsl-usb to yaml
+Date: Mon, 24 Jun 2024 22:25:40 -0400
+Message-Id: <20240625022541.2007010-1-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0355.namprd03.prod.outlook.com
+ (2603:10b6:a03:39c::30) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GVXPR04MB10705:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9afc4db9-93c1-4f07-40f3-08dc94be29a3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230037|366013|52116011|376011|1800799021|38350700011;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?T89RuMxea7qr+D2/sSsKaUh1S7wTleePNnXYUFyhdMQg7YbvrMmXNENeD3hL?=
+ =?us-ascii?Q?qhCg9D0Dgjf2ytFyhKAWNC6Mh4sDwdBid6PKZ7XrbJFlftFQ1jsF6Eltrxw9?=
+ =?us-ascii?Q?81nFbVdP4reNyUsGtXe2ESyjzD1/1eN3bjtysGw+25CdLY24XWZ97O4Oz6eC?=
+ =?us-ascii?Q?o3EVz/lOSAw6DycSgUD4U9RDp2XyhjoBuJzbLzojGPYyet5FXGh5Yc7fp0fl?=
+ =?us-ascii?Q?inK0/kyGUb5UdeB+yvsKe8euajABj+TucI/hpsP9+j8zFNiTR+GC7NdhNYSC?=
+ =?us-ascii?Q?H0X8CmniSlfu/KGax60hpliR8eZfoBIv4OCihOcwdwLyZeZQLivDDxThhH92?=
+ =?us-ascii?Q?n90jAbMpf8/WernmS3iNBqXdqUHS2nj1LBphub7tTBl+P9EfCGc8YzwCh4h2?=
+ =?us-ascii?Q?bplJhfnomhALymhel35/we5bI+L+QVp9Fb8Gv58dHOzhG8hzfwCoNLBs/aAG?=
+ =?us-ascii?Q?DpqaOZuXRqEHAb+8sPJdLbu6hjbgvOOsJjlcomV9XwVazCxuMDtvw9fPmnWm?=
+ =?us-ascii?Q?9M195/9es7yYRPq1foT0mNQNYEqezrE5Xgl9S+VpqcPKy48JM3BAOWznCLQt?=
+ =?us-ascii?Q?bdRJ8GY7RWJXA1ODbIILZcHW16ptnpQdeaZzRJTw/lPMaU8FdxDZ2J8iUwOi?=
+ =?us-ascii?Q?MJ7l2O4hgbiOH/gttLWDyWnKWHSYp1WrCDfrsOCt0+t9FhUrKfk16RVrujZs?=
+ =?us-ascii?Q?yWGnJ3feJO5V92T2045Ltxk3gJsXokInnFsDY9ExQ/0uk4TpNBjheY9FOOwO?=
+ =?us-ascii?Q?gV8+DW+Y5Elq/m0zwgHMZTxn1zZNxCiBbDtqFV9gvUt0YZWrbPGazwmWcbQt?=
+ =?us-ascii?Q?ovz95+6O/Wj6W41BDG4ZZk92wX3HygNr9SgD+rHeRugIK+EkGVzhrlYtuMR2?=
+ =?us-ascii?Q?bdcj0r4Z9i4IUiMI9V4hac6iHByLl3xp02RG1vLZAZW30O9ChERVAiKsIcB6?=
+ =?us-ascii?Q?bgvNXgMZa+xnEEz+bKPhKLB3efe5XKeFROyuqHm4UtyEX8CiBLUAZHc2FEtC?=
+ =?us-ascii?Q?CPvgIaGCfb0LhiQAUesTLJdQRPrMF71YQESD50npdCBx4mqTyN4IdRJtnhN5?=
+ =?us-ascii?Q?9/8EMYxpCE0aAa4gJF1ryj9s8sc+CBn66MiCKjEL2PDpHhIk2wXFVQ3vZoqV?=
+ =?us-ascii?Q?2lq2LRs/A7Q1kLL2GaPBNdSuIYBeHxX9EkwWjwGDNZNMyP2Gy3XqrZMTfZ+B?=
+ =?us-ascii?Q?ZNiJioPKD2vqpRAN0GvDedcBmH+4ZLf5Brqnge0KYYxoTqA6uUfRKPlBK6x4?=
+ =?us-ascii?Q?rEWFQdHDt+OYQGHsGPaLOSbHIQZKr9M+SVztTdnplKXjvF0Czt4YSb2scScq?=
+ =?us-ascii?Q?888dVvBwX9rQSzyQ1fJ2y+YS?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(52116011)(376011)(1800799021)(38350700011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?h6RDvSveLODiNIWVdGmmNdHViISLc803ktS0wgj1CfAXgRWaooe8sNS/QhxF?=
+ =?us-ascii?Q?r3mSPCzCjuzrHAHggoMqE3S8isNYo+4DINeYN/bmfr4Eih2U7u9OUl77GpsD?=
+ =?us-ascii?Q?KQdPPqBtOYMTzIhZeRGOH+lCjBg70sV7sD1rPsfqfldG3dNXhkzlWhA7ZI5E?=
+ =?us-ascii?Q?QoD07Iu6WA5clTT/3G/1PNxqp/FaeFFr0j99umeCf7/yNvVCxhLqgz5Rwvd2?=
+ =?us-ascii?Q?MmWfipFJg9ajgt1lwaoO3PUK6LhryG6P5AUXE0TKzPTI4rcbdUYsk36VQklF?=
+ =?us-ascii?Q?e770ShoxvuO/XmrfZqeshGBfW5ifQFGZxbGCuJnJclXvSWDFLx0aHTtxj1Gs?=
+ =?us-ascii?Q?uElBYhWIXWmg8jcnOUnXawYcc/BoJFXdCeOcqZL58+KeXXuFozXuWoTyjFqc?=
+ =?us-ascii?Q?oQ1dzpN+06yC8CW35F5xjTicsS4GfboP9MZ6Ah6BmRZrtfKISJFubFT7fovC?=
+ =?us-ascii?Q?F/K8aNZQk5nIj0i/0kM8HolmkVv5uBarEfkLVj6fuCzyOATopju2kTDc1beP?=
+ =?us-ascii?Q?e2CMba6LWRsWYojqs2YNX/3eOmg4SZe7smZ3ddamG4oToNwAwvQzu6Yey51H?=
+ =?us-ascii?Q?RRgMqMskHzJs98c2mNmIB+s6XMmfE/LPmcHIzDqbqiWtOGObb0/rMnr2Ds94?=
+ =?us-ascii?Q?4/IMGkGsfGd2mGv6IQ7pkWvTple0RoHaF3D3EXezu4ITZOz3X76oK3Rjuv11?=
+ =?us-ascii?Q?qgI0ooYMzQj1H6cwYRNmgWOGjWAZ4QAhdYbCy2tYbzJa/vSyw6Ak41LUZdYI?=
+ =?us-ascii?Q?JDg9M4td/jcH02JrtOKThE/Gw1c3Mz06531bnBD2/Y9Q0c004LuRYNpsXwvD?=
+ =?us-ascii?Q?3Uv9FbPlAEMy3NVmxlzm3YgZS+ZpEsaJ1q12lNCfX2/JmB9oGoinN2rwpQ93?=
+ =?us-ascii?Q?SmfZw5eDcreivAgCah4nghZgZJv6cGaRFhktEdLFjCcPn9mWLuvToUq4P+H/?=
+ =?us-ascii?Q?/2/nNcZuqDlcNlw4kAeuSG9DWCbkSaUo6Myq62sLrQeZ73KwCX3/H4XIKJJz?=
+ =?us-ascii?Q?5DdBNbnevY8YRBaaYymFI88c56fA3xDjyA2246dshBGrnC81cbgLmQmih13X?=
+ =?us-ascii?Q?2CLeV7qy5E2R7GjRulKNgMqJj+P44oReP3eSl7wbop+7f52UQcZ3oWxyEXlu?=
+ =?us-ascii?Q?2fD5c+pFeiRO60VobA7BE9cI9WtsLJ/ziy/Rm/eXP0uuXEoaN576YOs3koKX?=
+ =?us-ascii?Q?fmoRO25T3h4eKIaIqmhDWil+Ncde1wS85ZBxDc+QIVTX1J0ntY7EddOkoyyg?=
+ =?us-ascii?Q?1Peir+N21V0aoWQ4T/fhW8neQIT8qkK9wLfmZuYwgOTPzajiy23kkuY6NhxS?=
+ =?us-ascii?Q?szxHzyjTkyX6O8JkPkZSmYqyAs7lumJiYgTSp+nL22mqYurLX5HHKKqcrd84?=
+ =?us-ascii?Q?WFvRjOFdcLecaIjV7ys5U/kiKArIgR6Ms0MLTSC1F37cwjeOPWYljhg3cxww?=
+ =?us-ascii?Q?BZpYrmDfygopC4J1/57I1BKr4VgDMttu8BgGtwVvCRCjC4JMtJMv3RCbM4Vk?=
+ =?us-ascii?Q?DSUYwulLMw9UBGJE3BHAhbGRhb4XwrXQ1Htaitf79OaHbLJQ7ZWcRysQ3h3z?=
+ =?us-ascii?Q?B08pCoLNyC82j5tKgbM=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9afc4db9-93c1-4f07-40f3-08dc94be29a3
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 46932cdc-d414-49bc-8e8d-08dc94bdf990
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2024 02:24:43.6378
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 25 Jun 2024 02:26:04.4589
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: BrYtax4iAHaZ9LtdcJFi/0jBQUT1U5CqIzYKb2Bi7JLXa+IZB+7GkdvrrMwrJjhhotRkch+XA+c05DhdiJLCiA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB7354
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: AOfbRLo3SQKbrDMoxUuMtgjg9kQxe44VJy41nSPd2UlzcVjIEIq46RIUEb5iL/tl7pj/8MFYcD713YsXCu45ug==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10705
 
-> From: Lu Baolu <baolu.lu@linux.intel.com>
-> Sent: Monday, June 24, 2024 11:24 AM
->=20
-> The VT-d specification has removed architectural support of the requests
-> with pasid with a value of 1 for Execute-Requested (ER). And the NXE bit
-> in the pasid table entry and XD bit in the first-stage paging Entries are
-> deprecated accordingly.
->=20
-> Remove the programming of these bits to make it consistent with the spec.
->=20
-> Suggested-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
-> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+Convert fsl-usb binding doc to yaml format.
 
-Reviewed-by: Kevin Tian <kevin.tian@intel.com>
+Additional change:
+- Remove port0 and port1 from required list.
+- Use common usb-drd.yaml for dr_mode property
+- Keep two difference examples.
+- Add interrupts to required property list.
+- Remove #address-cells and #size-cells in example.
+- Use predefined irq type macro.
+
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+ .../devicetree/bindings/usb/fsl-usb.txt       | 81 ----------------
+ .../devicetree/bindings/usb/fsl-usb.yaml      | 96 +++++++++++++++++++
+ 2 files changed, 96 insertions(+), 81 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/usb/fsl-usb.txt
+ create mode 100644 Documentation/devicetree/bindings/usb/fsl-usb.yaml
+
+diff --git a/Documentation/devicetree/bindings/usb/fsl-usb.txt b/Documentation/devicetree/bindings/usb/fsl-usb.txt
+deleted file mode 100644
+index 0b08b006c5ead..0000000000000
+--- a/Documentation/devicetree/bindings/usb/fsl-usb.txt
++++ /dev/null
+@@ -1,81 +0,0 @@
+-Freescale SOC USB controllers
+-
+-The device node for a USB controller that is part of a Freescale
+-SOC is as described in the document "Open Firmware Recommended
+-Practice : Universal Serial Bus" with the following modifications
+-and additions :
+-
+-Required properties :
+- - compatible : Should be "fsl-usb2-mph" for multi port host USB
+-   controllers, or "fsl-usb2-dr" for dual role USB controllers
+-   or "fsl,mpc5121-usb2-dr" for dual role USB controllers of MPC5121.
+-   Wherever applicable, the IP version of the USB controller should
+-   also be mentioned (for eg. fsl-usb2-dr-v2.2 for bsc9132).
+- - phy_type : For multi port host USB controllers, should be one of
+-   "ulpi", or "serial". For dual role USB controllers, should be
+-   one of "ulpi", "utmi", "utmi_wide", or "serial".
+- - reg : Offset and length of the register set for the device
+- - port0 : boolean; if defined, indicates port0 is connected for
+-   fsl-usb2-mph compatible controllers.  Either this property or
+-   "port1" (or both) must be defined for "fsl-usb2-mph" compatible
+-   controllers.
+- - port1 : boolean; if defined, indicates port1 is connected for
+-   fsl-usb2-mph compatible controllers.  Either this property or
+-   "port0" (or both) must be defined for "fsl-usb2-mph" compatible
+-   controllers.
+- - dr_mode : indicates the working mode for "fsl-usb2-dr" compatible
+-   controllers.  Can be "host", "peripheral", or "otg".  Default to
+-   "host" if not defined for backward compatibility.
+-
+-Recommended properties :
+- - interrupts : <a b> where a is the interrupt number and b is a
+-   field that represents an encoding of the sense and level
+-   information for the interrupt.  This should be encoded based on
+-   the information in section 2) depending on the type of interrupt
+-   controller you have.
+-
+-Optional properties :
+- - fsl,invert-drvvbus : boolean; for MPC5121 USB0 only. Indicates the
+-   port power polarity of internal PHY signal DRVVBUS is inverted.
+- - fsl,invert-pwr-fault : boolean; for MPC5121 USB0 only. Indicates
+-   the PWR_FAULT signal polarity is inverted.
+-
+-Example multi port host USB controller device node :
+-	usb@22000 {
+-		compatible = "fsl-usb2-mph";
+-		reg = <22000 1000>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		interrupt-parent = <700>;
+-		interrupts = <27 1>;
+-		phy_type = "ulpi";
+-		port0;
+-		port1;
+-	};
+-
+-Example dual role USB controller device node :
+-	usb@23000 {
+-		compatible = "fsl-usb2-dr";
+-		reg = <23000 1000>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		interrupt-parent = <700>;
+-		interrupts = <26 1>;
+-		dr_mode = "otg";
+-		phy = "ulpi";
+-	};
+-
+-Example dual role USB controller device node for MPC5121ADS:
+-
+-	usb@4000 {
+-		compatible = "fsl,mpc5121-usb2-dr";
+-		reg = <0x4000 0x1000>;
+-		#address-cells = <1>;
+-		#size-cells = <0>;
+-		interrupt-parent = < &ipic >;
+-		interrupts = <44 0x8>;
+-		dr_mode = "otg";
+-		phy_type = "utmi_wide";
+-		fsl,invert-drvvbus;
+-		fsl,invert-pwr-fault;
+-	};
+diff --git a/Documentation/devicetree/bindings/usb/fsl-usb.yaml b/Documentation/devicetree/bindings/usb/fsl-usb.yaml
+new file mode 100644
+index 0000000000000..8b5724e213f09
+--- /dev/null
++++ b/Documentation/devicetree/bindings/usb/fsl-usb.yaml
+@@ -0,0 +1,96 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/usb/fsl-usb.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Freescale SOC USB controllers
++
++maintainers:
++  - Frank Li <Frank.Li@nxp.com>
++
++description: |
++  The device node for a USB controller that is part of a Freescale
++  SOC is as described in the document "Open Firmware Recommended
++  Practice: Universal Serial Bus" with the following modifications
++  and additions.
++
++properties:
++  compatible:
++    oneOf:
++      - enum:
++          - fsl-usb2-mph
++          - fsl-usb2-dr
++          - fsl-usb2-dr-v2.2
++      - items:
++          - enum:
++              - fsl-usb2-dr-v2.2
++              - fsl-usb2-dr-v2.5
++          - const: fsl-usb2-dr
++
++  phy_type:
++    $ref: /schemas/types.yaml#/definitions/string
++    enum: [ulpi, serial, utmi, utmi_wide]
++
++  reg:
++    maxItems: 1
++
++  interrupts:
++    maxItems: 1
++
++  port0:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      Indicates port0 is connected for fsl-usb2-mph compatible controllers.
++
++  port1:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      Indicates port1 is connected for "fsl-usb2-mph" compatible controllers.
++
++  fsl,invert-drvvbus:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      for MPC5121 USB0 only. Indicates the
++      port power polarity of internal PHY signal DRVVBUS is inverted.
++
++  fsl,invert-pwr-fault:
++    $ref: /schemas/types.yaml#/definitions/flag
++    description:
++      for MPC5121 USB0 only. Indicates
++      the PWR_FAULT signal polarity is inverted.
++
++required:
++  - compatible
++  - reg
++  - interrupts
++  - phy_type
++
++allOf:
++  - $ref: usb-drd.yaml#
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    usb@22000 {
++        compatible = "fsl-usb2-mph";
++        reg = <22000 1000>;
++        interrupts = <27 IRQ_TYPE_EDGE_RISING>;
++        phy_type = "ulpi";
++        port0;
++        port1;
++    };
++
++  - |
++    #include <dt-bindings/interrupt-controller/irq.h>
++
++    usb@23000 {
++        compatible = "fsl-usb2-dr";
++        reg = <23000 1000>;
++        interrupts = <26 IRQ_TYPE_EDGE_RISING>;
++        dr_mode = "otg";
++        phy_type = "ulpi";
++    };
+-- 
+2.34.1
+
 
