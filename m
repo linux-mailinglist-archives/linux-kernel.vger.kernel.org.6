@@ -1,124 +1,147 @@
-Return-Path: <linux-kernel+bounces-228441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7075915FF4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:25:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB7A8915FE7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6FE21C2090D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:25:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 301B1B23408
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:22:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E88A146A83;
-	Tue, 25 Jun 2024 07:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8752146A7D;
+	Tue, 25 Jun 2024 07:22:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mEKZBC4P"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="JI2NnhbD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nii1oWgI"
+Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC73347A62
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C9273463;
+	Tue, 25 Jun 2024 07:22:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719300302; cv=none; b=RxQKFTRxxHe4X3XzjIwChvHm8YkCSBd1UdhsGxQi70siOfcbUKXY7UbtRBYrWX7hYCTzXtqzWEWBCiANesCYVLtqOZI1feWLsuwQCJwH4INOl6odseCz+I54cLLvU7mQEJM6oGtXVUQ/sYcOPRaS9zVy/30zgZv40L4LMFR4ScI=
+	t=1719300140; cv=none; b=D0QFeLo1woMP8D+s5IH/CHYFyB17pqZ+vfgzDzL/TycGVVXlFVimxVHhYJFKJgMxMF8L9xZUrcBeBd5EchzvO8Siaiz7fm19Awv8zsjjBe12h2E/VrgfJqFIMcPFAvjOhtUl4tiOEUNcd7EhyQnU1JoLJJvGGTdFr4RteLsfrCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719300302; c=relaxed/simple;
-	bh=05UkyNvzxPOHuB+H1sIZnJVrMIWtz2bLdebzpFOnY+Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CDPRscc52tnk15eEQAAyc8EmV3D6RyP77iqw2z7teps7LvfyH9y+8t8hC9rrHs9N8XD0+QJyjqLJxTx1ss6bN/Lv93eHcX03drP157GJaxV61uqhRP0nLD7YLkItlA5nxhvjB0A+6IMmeUg0Lfl6jW0bIP+z4tADib+N/kPcmxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mEKZBC4P; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719300301; x=1750836301;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=05UkyNvzxPOHuB+H1sIZnJVrMIWtz2bLdebzpFOnY+Q=;
-  b=mEKZBC4PcEj+U+wOzfA1H3LOeoqKezSvxcuCY1bLdKrNPz1KXVkYMvbJ
-   eaBD4LzbAqj2RYLbQC153YYF18D0LXAS1FlJd6epZyQNeUNnPVAzN+BRx
-   yJX2lCi5XEiROm8hlQtjvmrqc/n7YnZaaY8oKclNcW2sqXCY6VM8RpHcq
-   SZLRFeXfpwMO23GXgrbAkTFgawOnpfpyCbxR5kYBIoMkMxKqBp7YO7wnM
-   VjHRMz/VpTwG0BGcMhc4/XlBD9PJAkRGIER+KscE6M1G2yHZbWZgH+qrZ
-   X8U3Q9fl5zkwWNqE2O2upN1lApoKOuefNQ0/nOpcf73r/ZASzD5qWhK7i
-   w==;
-X-CSE-ConnectionGUID: /+AyIFCPRoOv4x/shvvG/g==
-X-CSE-MsgGUID: EHFrAh9bRsWHkcKULM8Adw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="20075517"
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="20075517"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 00:25:00 -0700
-X-CSE-ConnectionGUID: l3gYqzlOSC+llV1ydiVV6Q==
-X-CSE-MsgGUID: obcw5HxvQ5CfagXj+4yM2A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
-   d="scan'208";a="48523240"
-Received: from chenyu-dev.sh.intel.com ([10.239.62.164])
-  by orviesa005.jf.intel.com with ESMTP; 25 Jun 2024 00:24:57 -0700
-From: Chen Yu <yu.c.chen@intel.com>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Mike Galbraith <efault@gmx.de>,
-	Tim Chen <tim.c.chen@intel.com>,
-	Yujie Liu <yujie.liu@intel.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Chen Yu <yu.chen.surf@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Chen Yu <yu.c.chen@intel.com>
-Subject: [PATCH 0/2] sched/fair: Enhance sync wakeup for short duration tasks
-Date: Tue, 25 Jun 2024 15:21:49 +0800
-Message-Id: <cover.1719295669.git.yu.c.chen@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719300140; c=relaxed/simple;
+	bh=ZtgKERiIsUNX97rsswWKHrxmyaCsSAXuWBBDrtHwtnA=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=pwTZiGycCp529NS/m9Or1h85LLJhwiCjOvHL9AoAeDgrM65ONgs6t2JluKXoXk9UBUSbkMvAR3I6lcAmL6CzBB09+/LUHrLgqwlJY60Psn9dTSpyc21AfMQ70XMD+qLb37TQISrGUvySGzoLlR3bk2BvmWDQeJbgJZs0QZnVRA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=JI2NnhbD; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nii1oWgI; arc=none smtp.client-ip=103.168.172.149
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id B2AAC1380260;
+	Tue, 25 Jun 2024 03:22:17 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 25 Jun 2024 03:22:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm1; t=1719300137; x=1719386537; bh=kqD1JVVmb6
+	5kM+8TRypaMtMSw95vRHKsvANGjybyrPs=; b=JI2NnhbDiRz+XtaZOE/bmBmcC9
+	y0EyY2llyKi6gdvjKx1r1hA/Sp+YxYTsh5R4n17kBIqknSQAROV1too416xz/ax7
+	DnnBJG1hO25/CV60G8SSL08IsslBBeMnfT9net4th4Zh9mhvhU/DJsMRuhBNgS3E
+	0VPlxU/h2WIqd5/h+xqpcLNb3FylkO5VgnBAm9vqbLiTkbPF6CfJ5etKz1Kdlz6g
+	XsaFDZtzr86kr8O4geYi5FetIADdYnaQpvDBu55+vHHcrV8TKcnZhnAv95+sSFqZ
+	lVTTKSD6ezB96+es6B2qbjQ1P3PHFwXreqGZJng2oKC/W4s7uWUK5KrDjiQw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1719300137; x=1719386537; bh=kqD1JVVmb65kM+8TRypaMtMSw95v
+	RHKsvANGjybyrPs=; b=nii1oWgI7WMslQkPVOju+ij36Es5RtXqNHA9yKqnjG8A
+	/6sHxHue9WXJ+9DOxwSzTPko23n5KXsoa6MuswLmoNWzrkp/0wwWs+HckTmyWvnS
+	vFd+qTvwAua8fFc1olEPYCCyGr7lvmWs7tgKITHfwgjPqGBDu3kq+6GaGAcfil+N
+	LRpbttIg9XP1FXvMTRN2LfjT0zLxGzwXnUv8OSFvGh//b/sWkrmRAPEmhfciYZHu
+	OISRx6Ws2r+o/pMUq1MEsjtRh0KiuVyyZCKVUE51CtS/Shyj+r2yibWJVJFKZA/0
+	2X2NzkLianjEFBwYul+W+025Fgof0A5Fm0c5c6mwnQ==
+X-ME-Sender: <xms:KHB6ZgBifU8qyh7Hen9xqhrQWMmo0RsmL9eotuAMGFs1onD0HXFfEA>
+    <xme:KHB6ZijWZB5iEGbnIvaynzSW5-TMdpen-UsUCXR4BLvZG7I2RjTuG-0dTnY3Vz_wd
+    ErlBUsr4Fx9T_EaFcE>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeegvddguddvudcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedt
+    keetffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    grrhhnugesrghrnhgusgdruggv
+X-ME-Proxy: <xmx:KXB6Zjl3l50wSTwqFG8ioukc-g61PgCzgX01VcseaGpdWq4vmYO7FA>
+    <xmx:KXB6ZmxlCsqMlCZDJLqUVWfn8MZ7ECDbrhSeaDpY3p-VHvVyycCVaw>
+    <xmx:KXB6ZlT7X8HJgRHGH0q78K3BWOn3L8jDW0VFQpTffwcl_djQXWLfew>
+    <xmx:KXB6ZhYXApxt0XgYZhF8A9lmJpDbOUWPdh0naveFocTcpqd6K7sm1Q>
+    <xmx:KXB6ZmQ60H2urzdeAAEbeBLfc362BpSQsmD9KzkcaS9n3A-vmDQqIAh3>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id DADC6B60092; Tue, 25 Jun 2024 03:22:16 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-538-g1508afaa2-fm-20240616.001-g1508afaa
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-Id: <4d8e0883-6a8c-4eb5-bf61-604e2b98356a@app.fastmail.com>
+In-Reply-To: <20240625040500.1788-1-jszhang@kernel.org>
+References: <20240625040500.1788-1-jszhang@kernel.org>
+Date: Tue, 25 Jun 2024 09:21:50 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Jisheng Zhang" <jszhang@kernel.org>,
+ "Paul Walmsley" <paul.walmsley@sifive.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>, "Albert Ou" <aou@eecs.berkeley.edu>,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/4] riscv: uaccess: optimizations
+Content-Type: text/plain
 
-Hi,
+On Tue, Jun 25, 2024, at 06:04, Jisheng Zhang wrote:
+> This series tries to optimize riscv uaccess in the following way:
+>
+> patch1 implement the user_access_begin and families, I.E the unsafe
+> accessors. when a function like strncpy_from_user() is called,
+> the userspace access protection is disabled and enabled for every
+> word read. After patch1, the protection is disabled at the beginning
+> of the copy and enabled at the end.
+>
+> patch2 is a simple clean up
+>
+> patch3 uses 'asm goto' for put_user()
+> patch4 uses 'asm goto output' for get_user()
+>
+> Both patch3 and patch4 are based on the fact -- 'asm goto' and
+> 'asm goto output'generates noticeably better code since we don't need
+> to test the error etc, the exception just jumps to the error handling
+> directly.
 
-This is a respin of the previous work to inhit task migration[1].
- 
-Many workloads suffer from high Cache-to-Cache latency on large system. Especially
-when different tasks access the same cache line, which brings false sharing.
+Nice!
 
-This patch set leverages the WF_SYNC flag, and inhits task wakeup migration
-for short duration ones. This can help reduce the chance to trigger the
-cache false sharing.
+I hope that we can one day make this more straightforward
+and share more of the implementation across architectures,
+in particular the bits that are just wrappers around
+the low-level asm.
 
-The main concern of this proposal in the last discussion is that, it could
-break idle-cpu-first task wakeup strategy. Usually an idle CPU can beat other
-non-idle CPU in terms of latency. Based on this, the new proposal takes the
-CPU number into consideration, if it is a low-core-count system, the bar to
-inhit the task migration is much higher or even impossible. Vice versa. Meanwhile,
-only when there is no idle Core in the system, this inhiting task migration will take
-effect.
+We have something like this already on powerpc and x86,
+and Linus just did the version for arm64, which I assume
+you are using as a template for this. Four architectures
+is probably the point at which we should try to consolidate
+the code again and move as much as we can into asm-generic.
 
-According to the test on 4 different platforms, it has shown good improvement for
-Client/Server workloads, like netperf, tbench. And not saw any performance regression
-on my 8 CPUs laptop. Please refer to PATCH 2/2 for detail.
+I think the only bets we really need from an architecture
+here are:
 
-Comments and tests would be appreciated.
+- __enable_user_access()/__disable_user_access() in
+   the label version
+- __raw_get_mem_{1,2,4,8}() and __raw_put_mem_{1,2,4,8}()
 
-[1] https://lore.kernel.org/lkml/cover.1682661027.git.yu.c.chen@intel.com/
+and then we can build all the normal interface functions
+on those in a way that assumes we have as goto available,
+with the appropriate fallback in __raw_get_mem_*() as
+long as we need to support gcc-10 and older.
 
-Chen Yu (2):
-  sched/fair: Record the average duration of a task
-  sched/fair: Enhance sync wakeup for short duration tasks
-
- include/linux/sched.h   |  3 ++
- kernel/sched/core.c     |  2 ++
- kernel/sched/fair.c     | 74 ++++++++++++++++++++++++++++++++++++++---
- kernel/sched/features.h |  1 +
- 4 files changed, 75 insertions(+), 5 deletions(-)
-
--- 
-2.25.1
-
+      Arnd
 
