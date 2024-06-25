@@ -1,142 +1,181 @@
-Return-Path: <linux-kernel+bounces-229447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FE4E916FB4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:02:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC9C2916FB8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1507F1F230E3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:02:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71268287DA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:02:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110F7175567;
-	Tue, 25 Jun 2024 18:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAE141779BA;
+	Tue, 25 Jun 2024 18:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ieTC1yBl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BEoG71qU"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206F37F6
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:01:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53689144D2D;
+	Tue, 25 Jun 2024 18:02:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719338520; cv=none; b=YS6nh9LySwFOicv0+Dxesi6n+wW266M7qORnFJZahYwnakanPivwdHad9MzzujNnh7QZAfUOgQeDgYtwme9fvDpLZ0+XPOfKDdEIXB7dKmyw1Nnn45vbpuP284lHZ4BSL2FukCbmF28MwPCrFiBa6HGhB2+TJZsTkG/EcpEX0g0=
+	t=1719338564; cv=none; b=blJ2qYnVE/jevAMDI2z/fPVPMp1MxleAZTSelj5LoKk+RyPfLWdc/ytTj8EsGDd4klZKhCNjsiVQg2h8cEKCZ/Nyrhh0JY98HtTXWWMSQBil8A+uMm1cZYRB7er/Bkvshkny2a9yEryRFbQZVOI7SqFR4vd3Tj86LzDTm5yvxIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719338520; c=relaxed/simple;
-	bh=yIrGqZsoXWjyCqtML+uDvdM/jwBAs2FsGlClg8xbN9E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cYhdWOyFf3Ejtah93/HSiabgfTh2cmdC2F4Eb+mAzQmUt8KwBDm/aBBGjUee/kUJHdCQ0G6AJSpU4vQl+x4STzFzt194c+7aN5TYK1ijDo5ToQ3Q5FPuslTsVTn9GQ5eya7V3tlY/Cnt6esdUDWw3AcADP0cubRCEtT+T00sG6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ieTC1yBl; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719338518; x=1750874518;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=yIrGqZsoXWjyCqtML+uDvdM/jwBAs2FsGlClg8xbN9E=;
-  b=ieTC1yBlr+Q3FJXfLqslko4KHqmz/FcFY40TEjbGGipek2a1r0bP6ZuS
-   ZM/qF0t7ZhjIng+PdkNCkKrykBHRGgz8vqZeYnVILNuSB6MUUtmW3jFiL
-   YEaIFW+qxKROXmIHL2GK0Yfie9MJEAXy0Ec4PY5efKeZFvTHU9c21fVPV
-   j8D7MSpo2eErbVgyc0PCpr5LS9WI8puj++JUnWOzxk3R2zOgpjIf++m+A
-   194VZy0EW/MOsdbpwMCDUhbQQAf6+SOpPhNVPluMiG+edwkV4+qlawWTe
-   3w9UPdEEPeqpVlWbkoECWA6VVIbW/ljf70UkknDVqMi61g/ZqTURHx7nn
-   g==;
-X-CSE-ConnectionGUID: KqxrOf5sSBW0rw3vGADbnQ==
-X-CSE-MsgGUID: bvKQdFA6Qy2SmsyJDpyRGQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16525175"
-X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
-   d="scan'208";a="16525175"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 11:01:57 -0700
-X-CSE-ConnectionGUID: uw8vkD8eRvypVi40aCAc4Q==
-X-CSE-MsgGUID: v7rWvoZ3SES7/wLKyKTjAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
-   d="scan'208";a="43843811"
-Received: from rprzybyl-mobl.amr.corp.intel.com (HELO desk) ([10.209.8.143])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 11:01:57 -0700
-Date: Tue, 25 Jun 2024 11:01:50 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Jari Ruusu <jariruusu@protonmail.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: Stable linux-5.10.x regression triggered by MDS mitigation
-Message-ID: <20240625180150.7awxiyvmztcuu4pw@desk>
-References: <IdYcxU6x6xuUqUg8cliJUnucfwfTO29TrKIlLGCCYbbIr1EQnP0ZAtTxdAM2hp5e5Gny_acIN3OFDS6v0sazocnZZ1UBaINEJ0HoDnbasSI=@protonmail.com>
- <20240624170921.mep2x6pg4aiui4wh@desk>
- <yVXwe8gvgmPADpRB6lXlicS2fcHoV5OHHxyuFbB_MEleRPD7-KhGe5VtORejtPe-KCkT8Uhcg5d7-IBw4Ojb4H7z5LQxoZylSmJ8KNL3A8o=@protonmail.com>
+	s=arc-20240116; t=1719338564; c=relaxed/simple;
+	bh=T6+v41gWS5oq7/6CrgXpyFIGDlb8js0/a6DLDjVa6E8=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S5Ql+auF3UICjB2eCUWLbSCIbZOkc1DniQAvouUrGHITqHJWzmHSR2eNKcn8WFIk83Dw6F8E184H5JiBwOF1XL237ECppzh3FLTXCWE5AZCEM9PJcxnuRx6HUxFQHzRrRIyxJ3Nn27XqheKKDuA0VeaOkn81yfpS2rRZxjn4UWI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BEoG71qU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P8Y91o029121;
+	Tue, 25 Jun 2024 18:02:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=/RGL8NHTH4b3pQ/JYRu7flha
+	7u7/6/xKUKZWPQ+3m4M=; b=BEoG71qUjvpyRoZd0w7HjKyJ1LHWBjBUdEjIASpR
+	/4GPse2pp7gXQzkj+r8opQOr7dblYFwQZHxUILhooZirupGEunwrtvFcrFKR3mRn
+	kfTVEMfk92gZHjBPHMXLYTvC68/J0qYJjQ3Ynw73wsf2YYT1+MobOjjtuEkzV6UL
+	+urLU+n9lMzZU5wi/r1iqM305jiuVDTmd8qzTg3MjTxmjCWkOByPD7IWbhc0LunJ
+	aMfX7Ww/MxPDq/BWgKgTG+nY5MQtm+Cveo7fHUX7VGH3DkZ2LyOnycosPKhwwzF3
+	/2tWEV/ZInsPLIpZO8WI0q242W3xm4rIntsTKzGoqlXrTA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywq077bqa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 18:02:31 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45PI2UGc005996
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 18:02:30 GMT
+Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 25 Jun 2024 11:02:25 -0700
+Date: Tue, 25 Jun 2024 23:32:21 +0530
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+To: Will Deacon <will@kernel.org>
+CC: Andrew Halaney <ahalaney@redhat.com>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Rob Clark <robdclark@gmail.com>, Sean Paul
+	<sean@poorly.run>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Daniel
+ Vetter" <daniel@ffwll.ch>,
+        Rob Clark <robdclark@chromium.org>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/msm/adreno: De-spaghettify the use of memory barriers
+Message-ID: <20240625180221.irtao4s6i7xurzsx@hu-akhilpo-hyd.qualcomm.com>
+References: <20240508-topic-adreno-v1-1-1babd05c119d@linaro.org>
+ <20240514183849.6lpyplifero5u35r@hu-akhilpo-hyd.qualcomm.com>
+ <ae4a77wt3kc73ejshptldqx6ugzrqguyq7etbbu54y4avhbdlt@qyt4r6gma7ev>
+ <20240516145005.gdksmvxp35m45ifh@hu-akhilpo-hyd.qualcomm.com>
+ <5vyrmxvkurdstqfiatxfqcqljwyiswda2vpkea27ighb2eqbav@n24yzdykbc23>
+ <20240604144055.GE20384@willie-the-truck>
+ <20240618161158.qpqbv77tqveo5g6l@hu-akhilpo-hyd.qualcomm.com>
+ <20240620130400.GA4750@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <yVXwe8gvgmPADpRB6lXlicS2fcHoV5OHHxyuFbB_MEleRPD7-KhGe5VtORejtPe-KCkT8Uhcg5d7-IBw4Ojb4H7z5LQxoZylSmJ8KNL3A8o=@protonmail.com>
+In-Reply-To: <20240620130400.GA4750@willie-the-truck>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2BZn3DZ19cIqEV4hBiPANomJNl1XlAs1
+X-Proofpoint-GUID: 2BZn3DZ19cIqEV4hBiPANomJNl1XlAs1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_13,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ priorityscore=1501 impostorscore=0 lowpriorityscore=0 phishscore=0
+ mlxscore=0 spamscore=0 mlxlogscore=999 adultscore=0 bulkscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406250132
 
-On Tue, Jun 25, 2024 at 01:49:17PM +0000, Jari Ruusu wrote:
-> On Monday, June 24th, 2024 at 20:09, Pawan Gupta <pawan.kumar.gupta@linux.intel.com> wrote:
-> > Below patch (for v6.10-rc5) should fix this. I didn't send this patch
-> > earlier because I havn't got a chance to make sure if it will work for
-> > other cases like modify_ldt().
+On Thu, Jun 20, 2024 at 02:04:01PM +0100, Will Deacon wrote:
+> On Tue, Jun 18, 2024 at 09:41:58PM +0530, Akhil P Oommen wrote:
+> > On Tue, Jun 04, 2024 at 03:40:56PM +0100, Will Deacon wrote:
+> > > On Thu, May 16, 2024 at 01:55:26PM -0500, Andrew Halaney wrote:
+> > > > On Thu, May 16, 2024 at 08:20:05PM GMT, Akhil P Oommen wrote:
+> > > > > On Thu, May 16, 2024 at 08:15:34AM -0500, Andrew Halaney wrote:
+> > > > > > If I understand correctly, you don't need any memory barrier.
+> > > > > > writel()/readl()'s are ordered to the same endpoint. That goes for all
+> > > > > > the reordering/barrier comments mentioned below too.
+> > > > > > 
+> > > > > > device-io.rst:
+> > > > > > 
+> > > > > >     The read and write functions are defined to be ordered. That is the
+> > > > > >     compiler is not permitted to reorder the I/O sequence. When the ordering
+> > > > > >     can be compiler optimised, you can use __readb() and friends to
+> > > > > >     indicate the relaxed ordering. Use this with care.
+> > > > > > 
+> > > > > > memory-barriers.txt:
+> > > > > > 
+> > > > > >      (*) readX(), writeX():
+> > > > > > 
+> > > > > > 	    The readX() and writeX() MMIO accessors take a pointer to the
+> > > > > > 	    peripheral being accessed as an __iomem * parameter. For pointers
+> > > > > > 	    mapped with the default I/O attributes (e.g. those returned by
+> > > > > > 	    ioremap()), the ordering guarantees are as follows:
+> > > > > > 
+> > > > > > 	    1. All readX() and writeX() accesses to the same peripheral are ordered
+> > > > > > 	       with respect to each other. This ensures that MMIO register accesses
+> > > > > > 	       by the same CPU thread to a particular device will arrive in program
+> > > > > > 	       order.
+> > > > > > 
+> > > > > 
+> > > > > In arm64, a writel followed by readl translates to roughly the following
+> > > > > sequence: dmb_wmb(), __raw_writel(), __raw_readl(), dmb_rmb(). I am not
+> > > > > sure what is stopping compiler from reordering  __raw_writel() and __raw_readl()
+> > > > > above? I am assuming iomem cookie is ignored during compilation.
+> > > > 
+> > > > It seems to me that is due to some usage of volatile there in
+> > > > __raw_writel() etc, but to be honest after reading about volatile and
+> > > > some threads from gcc mailing lists, I don't have a confident answer :)
+> > > > 
+> > > > > 
+> > > > > Added Will to this thread if he can throw some light on this.
+> > > > 
+> > > > Hopefully Will can school us.
+> > > 
+> > > The ordering in this case is ensured by the memory attributes used for
+> > > ioremap(). When an MMIO region is mapped using Device-nGnRE attributes
+> > > (as it the case for ioremap()), the "nR" part means "no reordering", so
+> > > readX() and writeX() to that region are ordered wrt each other.
+> > 
+> > But that avoids only HW reordering, doesn't it? What about *compiler reordering* in the
+> > case of a writel following by a readl which translates to:
+> > 	1: dmb_wmb()
+> > 	2: __raw_writel() -> roughly "asm volatile('str')
+> > 	3: __raw_readl() -> roughly "asm volatile('ldr')
+> > 	4: dmb_rmb()
+> > 
+> > Is the 'volatile' keyword sufficient to avoid reordering between (2) and (3)? Or
+> > do we need a "memory" clobber to inhibit reordering?
+> > 
+> > This is still not clear to me even after going through some compiler documentions.
 > 
-> Thank you for fixing this regression.
+> I don't think the compiler should reorder volatile asm blocks wrt each
+> other.
 > 
-> I tested your patch on 32-bit linux-5.10.220 inside VM, and now
-> dosemu seems to work OK.
-> 
-> I do have a related question:
-> In SYSENTER code path (that is not used by virtual-8086 mode),
-> there is CLEAR_CPU_BUFFERS just before STI and SYSEXIT, but that
-> CLEAR_CPU_BUFFERS happens after flags are restored with POPFL.
-> VERW opcode inside that CLEAR_CPU_BUFFERS modifies ZF flag.
 
-Thanks for pointing this out, CLEAR_CPU_BUFFERS should happen before POPFL.
-Below patch moves it before POPFL and also adds a safer version that
-switches to KERNEL_DS before executing VERW. This should ensure VERW works
-in all cases:
+Thanks Will for confirmation.
 
----
-diff --git a/arch/x86/entry/entry_32.S b/arch/x86/entry/entry_32.S
-index c963abc17a96..2680be38e5cb 100644
---- a/arch/x86/entry/entry_32.S
-+++ b/arch/x86/entry/entry_32.S
-@@ -253,6 +253,17 @@
- .Lend_\@:
- .endm
- 
-+/* Make sure ds has a safe value so that VERW does not #GP */
-+.macro CLEAR_CPU_BUFFERS_SAFE
-+	ALTERNATIVE "jmp .Lskip_verw\@", "", X86_FEATURE_CLEAR_CPU_BUF
-+	pushl	%ds
-+	pushl	$(__KERNEL_DS)
-+	popl	%ds
-+	verw	_ASM_RIP(mds_verw_sel)
-+	popl	%ds
-+.Lskip_verw\@:
-+.endm
-+
- .macro RESTORE_INT_REGS
- 	popl	%ebx
- 	popl	%ecx
-@@ -878,6 +889,7 @@ SYM_FUNC_START(entry_SYSENTER_32)
- 
- 	/* Now ready to switch the cr3 */
- 	SWITCH_TO_USER_CR3 scratch_reg=%eax
-+	CLEAR_CPU_BUFFERS_SAFE
- 
- 	/*
- 	 * Restore all flags except IF. (We restore IF separately because
-@@ -888,7 +900,6 @@ SYM_FUNC_START(entry_SYSENTER_32)
- 	BUG_IF_WRONG_CR3 no_user_check=1
- 	popfl
- 	popl	%eax
--	CLEAR_CPU_BUFFERS
- 
- 	/*
- 	 * Return back to the vDSO, which will pop ecx and edx.
+-Akhil.
+
+> Will
 
