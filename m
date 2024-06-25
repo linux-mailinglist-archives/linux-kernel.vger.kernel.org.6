@@ -1,75 +1,69 @@
-Return-Path: <linux-kernel+bounces-229600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AB55917136
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:46:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B15DD917139
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 21:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 553B81C2264D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:46:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DACB01C22EA2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAB417C9FC;
-	Tue, 25 Jun 2024 19:46:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556EE17CA06;
+	Tue, 25 Jun 2024 19:46:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SOHBC1fr"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tEhSIAiT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EA753D3B3
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C0671750;
+	Tue, 25 Jun 2024 19:46:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719344766; cv=none; b=DePPIxC7rIttrGYa4WeyXdoALaiGWkr9Y5BwquhGlXrPQmP/d7jjDnd86Ow291s1+5IIoZ0wfFmOM9xSOAherW98sRRYw1Ox+6YZW+/w6BUK7EavI9JDKRUat1DJ3PjRubraf1hJob72jbPT6wzfPig4eLgkTztXPM8zEzhWh3k=
+	t=1719344776; cv=none; b=AwodFMKWKh/gILHL2izBwKW5gaBADzeR59CnudyOXHJlK8mzF0Cn+5Ly4pKYnsw5EdF9FV3GROSDqAq9L+y7qOUQ5BVbUpbDxmu3lVejMLrzdlGaMpoXBt7olu7W5zchkHYYNIjoo9PXYfNm7opHMl5gKHsaI9sh6OsFwDoSCII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719344766; c=relaxed/simple;
-	bh=VwBrEZVFp25N9X9nSaPoLwiMlNl+UokOPiDvV1Ha+xE=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=K3pLazd46HLcnJtz8DaiaTsdZRwIsfH5aQCSLWMLrrBDtDvnGP9nD3ybWExjvJSluBw8fa5/SI7ei89fwOZi145/gmRV7P3FT0k0Lh3NhhLh/7Wwa19miWzeLWB91vpn76ACX7je6osIzfW+/UvF7Lt80UOre7LE7CK0aQ71IGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SOHBC1fr; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-424ab8c2d95so551705e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 12:46:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719344763; x=1719949563; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Uj592VFsfsXigJjlHKa8dxpsEP+lDZMRz5sitwN8a0k=;
-        b=SOHBC1fr81Ij8Hs+oYDv4FRQpQ6JKT619Hb94DOPIOJJgM3GuKQiT92k4H0NxDk0XZ
-         o8wmr/6tBAMghvuTbGgyT9mOc8KTUTmu2TE3fdEpBx9qJ08yLtnFH+PrTpXsSEsfF86J
-         e7RrD4btaXCMdSn0tC+FhLbVXg3TaX7K1moO1RxkWn7EuHqRHyJleLuU6zMPnwXTXzEb
-         qgBnhJ6dk/cyC2JpgMye+yMftJzfaptAcFRjJcGDTnbAUv/VX3QE9otEtoy6mLE4QeFf
-         c9L6vUOMmCR+JqrqNNsSu8/a2CPNRKZ2Y8ZYeahg24BVrT3vGK3s0BS2PzFZNFiEeATy
-         ARjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719344763; x=1719949563;
-        h=content-disposition:mime-version:message-id:subject:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Uj592VFsfsXigJjlHKa8dxpsEP+lDZMRz5sitwN8a0k=;
-        b=V4xSX5lwf7vOJ3ByBHflgS8R4mh1KELCthUB0jsxq5EBGwh07M2vUiTJ4OY6e/PwZN
-         TD/9QFsIACXdR6ovrtZNn7XuImevM+Npo6OBzO+8D31A5fD6TzPek7OVIiEuWpJzBTiz
-         gv2oTI7jiDdLiQlJocEFWf1B06fAK8eaeTv0RpZxvZixCi5MHsG0SlED45iP4icBa0BB
-         FrWa9SJkiw4TCvVwjHCLN/c5I1A54xDNgxEMzglXpXsgKH6NxWUdLR6Wy0yH4cyAFOPR
-         Oqxey/vMjLsPk4w2dYhzHbiwJ2Ve+XXVamKOMdkf/LkH9Rp7hom2dEPKZdxPeqivL3hA
-         kIBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVULMna217znjapUFFyuaL27eOuaAsa2DKUwU8l4q/x3I8I+Kbof5IXpReJG9sfYqkeFUa/E3sC0f3NRYBilQR1PQOghjfitwL1ga62
-X-Gm-Message-State: AOJu0Yw11DxNQ2c7f451U4F8dQ1+c62g6BOXj14vICPmvOl7q/eLoivJ
-	uS34rhfzB0dfy8kVdGjRzilZ11njpEMk5HeoY4jrEr/pNfAbY0NUNEv8XQ==
-X-Google-Smtp-Source: AGHT+IFdeQrMKSiBuQQY+9Ba/MjPwOWVh6dSr+tITWeZVHuGdXgj2KK5Q67gqOADz3/VQb9LzbTAZA==
-X-Received: by 2002:a5d:59a4:0:b0:366:f743:7f92 with SMTP id ffacd0b85a97d-366f7438017mr4163387f8f.1.1719344763315;
-        Tue, 25 Jun 2024 12:46:03 -0700 (PDT)
-Received: from matrix-ESPRIMO-P710 (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8aa6sm13833708f8f.105.2024.06.25.12.46.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 12:46:03 -0700 (PDT)
-Date: Tue, 25 Jun 2024 21:46:01 +0200
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: [PATCH] staging: rtl8723bs: Remove unused variable pwdev_priv
-Message-ID: <20240625194601.GA16828@matrix-ESPRIMO-P710>
+	s=arc-20240116; t=1719344776; c=relaxed/simple;
+	bh=1ycjCg0/j3hmb5tsZ6Wa+p05u6moZZySGUMCKxo8Jwk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EQQy3+DU1MTsH5P9nw5FcwVXumsCw2Ggwtf1rLvuF7LenFzv7Rllg77Sr2mCtK7pJet8Y0ceb8/F8wqzkHfJ2zJLvid0IA4dugWhMb3Cu+7vp5Oi8xi7oJ+2ffuZ7XNSzZggPmR1NbKEneCmiFsFamRtJNNwCiZkmn9Nvjgx4d4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tEhSIAiT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEE61C32781;
+	Tue, 25 Jun 2024 19:46:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719344776;
+	bh=1ycjCg0/j3hmb5tsZ6Wa+p05u6moZZySGUMCKxo8Jwk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tEhSIAiTM54DiZ+5V4HxaV0h4l6Bm2invotfjU1uBgfevRZjD+PrIHTVQJmszi9W+
+	 IKz2PPIPZmymqyiqyIUxjxXriL8hcAh5jB4X1bcZ3ugE4AjtY8zx07Wo5xlmhP35Yh
+	 xbe2nrdMdfO/8HVtqMWf1Q/3m0qVDJa8YnL9Q/MKT9TtXHhQzsBXrZS16t6q+6r2Uv
+	 sVEGIgJvXDcDFIfvjxQKWTMyLj6Lzp46L+z1I9flw3kb+SKtk9S0CDTSRTyBfopO/R
+	 2W5rCDHmqoeNPi/OSj7ApTSWqHU0ggOnlC8kU/nXTf2n9AiRPBQUIc1caGkzK9dbs5
+	 gRpu8F43bt/ZA==
+Date: Tue, 25 Jun 2024 13:46:14 -0600
+From: Rob Herring <robh@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	maz@kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
+	rdunlap@infradead.org, vidyas@nvidia.com,
+	ilpo.jarvinen@linux.intel.com, apatel@ventanamicro.com,
+	kevin.tian@intel.com, nipun.gupta@amd.com, den@valinux.co.jp,
+	andrew@lunn.ch, gregory.clement@bootlin.com,
+	sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
+	rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
+	lorenzo.pieralisi@arm.com, jgg@mellanox.com,
+	ammarfaizi2@gnuweeb.org, robin.murphy@arm.com,
+	lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
+	vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
+	andersson@kernel.org, mark.rutland@arm.com,
+	shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com,
+	shivamurthy.shastri@linutronix.de
+Subject: Re: [patch V4 00/21] genirq, irqchip: Convert ARM MSI handling to
+ per device MSI domains
+Message-ID: <20240625194614.GA4013374-robh@kernel.org>
+References: <20240623142137.448898081@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,40 +72,108 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240623142137.448898081@linutronix.de>
 
-Remove unused variable pwdev_priv.
+On Sun, Jun 23, 2024 at 05:18:31PM +0200, Thomas Gleixner wrote:
+> This is version 4 of the series to convert ARM MSI handling over to
+> per device MSI domains. Version 3 can be found here:
+> 
+>   https://lore.kernel.org/lkml/20240614102403.13610-1-shivamurthy.shastri@linutronix.de
+> 
+> The conversion aims to replace the existing platform MSI mechanism and
+> enables ARM to support the future PCI/IMS mechanism.
+> 
+> The infrastructure to replace the platform MSI mechanism is already
+> upstream and in use by RISC-V and has been tested on various ARM platforms
+> during the V2 development.
+> 
+> Changes vs. V3:
+> 
+>     - Fix the conversion of the GIC V3 MBI driver - Marc
+> 
+>     - Dropped a few stray MSI_FLAG_PCI_MSI_MASK_PARENT flags
+> 
+>     - Dropped the trivial cleanup patches as they have been merged
+> 
+>     - Picked up tags
+> 
+> The series is only lightly tested due to lack of hardware, so we rely on
+> the people who have access to affected machines to help with testing.
+> 
+> If there are no major objections raised or testing fallout reported, I'm
+> aiming this series for the next merge window.
+> 
+> The series is also available from git:
+> 
+>   git://git.kernel.org/pub/scm/linux/kernel/git/tglx/devel.git devmsi-arm-v4
 
-Fixes: bdee203cd80c ("staging: rtl8723bs: Remove switch(type) as type is constant")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202406250759.FnxzD3PK-lkp@intel.com/
-Signed-off-by: Philipp Hortmann <philipp.g.hortmann@gmail.com>
----
-Tested with rtl8723bs in ODYS Trendbook Next 14
----
- drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c | 2 --
- 1 file changed, 2 deletions(-)
+Running this thru kernelCI has some failures on x86 QEMU boots[1]. 
+Here's the backtrace:
 
-diff --git a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
-index 2bd8b1447698..eb3c73cc2662 100644
---- a/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
-+++ b/drivers/staging/rtl8723bs/os_dep/ioctl_cfg80211.c
-@@ -2550,7 +2550,6 @@ static int cfg80211_rtw_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
- 	u8 tx_ch = (u8)ieee80211_frequency_to_channel(chan->center_freq);
- 	u8 category, action;
- 	struct adapter *padapter;
--	struct rtw_wdev_priv *pwdev_priv;
- 
- 	if (!ndev) {
- 		ret = -EINVAL;
-@@ -2558,7 +2557,6 @@ static int cfg80211_rtw_mgmt_tx(struct wiphy *wiphy, struct wireless_dev *wdev,
- 	}
- 
- 	padapter = rtw_netdev_priv(ndev);
--	pwdev_priv = adapter_wdev_data(padapter);
- 
- 	/* cookie generation */
- 	*cookie = (unsigned long)buf;
--- 
-2.45.2
+<1>[    2.199948] BUG: kernel NULL pointer dereference, address: 0000000000000000
+<1>[    2.199948] #PF: supervisor instruction fetch in kernel mode
+<1>[    2.199948] #PF: error_code(0x0010) - not-present page
+<6>[    2.199948] PGD 0 P4D 0 
+<4>[    2.199948] Oops: Oops: 0010 [#1] PREEMPT SMP NOPTI
+<4>[    2.199948] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.10.0-rc3 #1
+<4>[    2.199948] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.14.0-2 04/01/2014
+<4>[    2.199948] RIP: 0010:0x0
+<4>[    2.199948] Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+<4>[    2.199948] RSP: 0018:ffffa7ac80013a90 EFLAGS: 00000002
+<4>[    2.199948] RAX: 0000000000000000 RBX: ffffa4050333d600 RCX: 0000000000000000
+<4>[    2.199948] RDX: ffffa4050333d430 RSI: 0000000000000001 RDI: ffffa40502ff3100
+<4>[    2.199948] RBP: ffffa4050333d600 R08: ffffa405032f1c00 R09: 0000000000000000
+<4>[    2.199948] R10: 0000000000000246 R11: ffffa405032f1d80 R12: ffffa405032f1d80
+<4>[    2.199948] R13: 0000000000000001 R14: 0000000000000000 R15: ffffa4050333d760
+<4>[    2.199948] FS:  0000000000000000(0000) GS:ffffa4053e400000(0000) knlGS:0000000000000000
+<4>[    2.199948] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4>[    2.199948] CR2: ffffffffffffffd6 CR3: 000000002a22e000 CR4: 00000000000006f0
+<4>[    2.199948] Call Trace:
+<4>[    2.199948]  <TASK>
+<4>[    2.199948]  ? __die+0x1f/0x70
+<4>[    2.199948]  ? page_fault_oops+0x155/0x440
+<4>[    2.199948]  ? ondemand_readahead+0x2c0/0x370
+<4>[    2.199948]  ? bitmap_find_next_zero_area_off+0x7b/0x90
+<4>[    2.199948]  ? exc_page_fault+0x69/0x150
+<4>[    2.199948]  ? asm_exc_page_fault+0x26/0x30
+<4>[    2.199948]  pci_irq_unmask_msix+0x53/0x60
+<4>[    2.199948]  irq_enable+0x32/0x80
+<4>[    2.199948]  __irq_startup+0x51/0x70
+<4>[    2.199948]  irq_startup+0x62/0x120
+<4>[    2.199948]  __setup_irq+0x326/0x730
+<4>[    2.199948]  ? __pfx_vp_config_changed+0x10/0x10
+<4>[    2.199948]  request_threaded_irq+0x10b/0x180
+<4>[    2.199948]  vp_find_vqs_msix+0x16b/0x470
+<4>[    2.199948]  vp_find_vqs+0x34/0x1a0
+<4>[    2.199948]  vp_modern_find_vqs+0x16/0x60
+<4>[    2.199948]  init_vqs+0x3ee/0x690
+<4>[    2.199948]  virtnet_probe+0x50c/0xd10
+<4>[    2.199948]  virtio_dev_probe+0x1dd/0x2b0
+<4>[    2.199948]  really_probe+0xbc/0x2b0
+<4>[    2.199948]  __driver_probe_device+0x6e/0x120
+<4>[    2.199948]  driver_probe_device+0x19/0xe0
+<4>[    2.199948]  __driver_attach+0x85/0x180
+<4>[    2.199948]  ? __pfx___driver_attach+0x10/0x10
+<4>[    2.199948]  bus_for_each_dev+0x76/0xd0
+<4>[    2.199948]  bus_add_driver+0xe3/0x210
+<4>[    2.199948]  driver_register+0x5b/0x110
+<4>[    2.199948]  ? __pfx_virtio_net_driver_init+0x10/0x10
+<4>[    2.199948]  virtio_net_driver_init+0x8b/0xb0
+<4>[    2.199948]  ? __pfx_virtio_net_driver_init+0x10/0x10
+<4>[    2.199948]  do_one_initcall+0x43/0x210
+<4>[    2.199948]  kernel_init_freeable+0x19b/0x2d0
+<4>[    2.199948]  ? __pfx_kernel_init+0x10/0x10
+<4>[    2.199948]  kernel_init+0x15/0x1c0
+<4>[    2.199948]  ret_from_fork+0x2f/0x50
+<4>[    2.199948]  ? __pfx_kernel_init+0x10/0x10
+<4>[    2.199948]  ret_from_fork_asm+0x1a/0x30
+<4>[    2.199948]  </TASK>
+<4>[    2.199948] Modules linked in:
+<4>[    2.199948] CR2: 0000000000000000
+<4>[    2.199948] ---[ end trace 0000000000000000 ]---
 
+
+Rob
+
+[1] https://linux.kernelci.org/test/job/robh/branch/for-kernelci/kernel/v6.10-rc3-21-gd27f9f4a2dd80/plan/baseline/
 
