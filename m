@@ -1,330 +1,249 @@
-Return-Path: <linux-kernel+bounces-228203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C341F915C49
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:32:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF507915C47
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 04:32:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79664285B0D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:32:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3010D2858B1
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 02:32:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D1E93FBAD;
-	Tue, 25 Jun 2024 02:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10C061FC6;
+	Tue, 25 Jun 2024 02:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HBd6u4/Q"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="S2JA6lD6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FAB55774
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719282730; cv=none; b=IYk3oP/jMAzjkxeJATZios8kxCuohklnudy1rUIi3KfI1TvIP7Y0o2xfhUsdc2hstE/asRL1kaJdHG+EPV/NVm9Jie2CyE1s2FZ8mNOMVGAmpXUeAPnhEFl5/EE2mEBdI9ZO1crKgpyJMgU4kgu1xkN7m4LMzdbdp6ZCRt6W0bA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719282730; c=relaxed/simple;
-	bh=nKKJdses0mVEjtpPX+qZjXN+KqZPmH1hXRYWkh36Mb8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type:Content-Disposition; b=O//EcwaxOUcyKvS76oMfRAlW2R8+N4tSDM6XmKhLERFCRnkX20bq6JiwQSSZGYb9+xmYgumE9jQKJ3P0NZKZu4bJLkNkc7yU/KKTWyzRnvvkcZDOTZJFdHY49KXC0+G4uFUpqCVy1yNBdVaKDAVmEgm4Yl5YOG+29Ou7Nd3W+7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HBd6u4/Q; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719282727;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JdOYHmVbQfzrXIDUS0kTztOftl6vBGAX5ErXYmTt9bU=;
-	b=HBd6u4/QTzbZ4/NIGPf4JOuANcx4ElE+/sry3VyXLxGHG+Pst/hP8KFC0hF0Zh4jrEYdpB
-	UlNqkHVkwgjvl3VlzveQtzBq5msisfbvMCTuFmQW7abRKtjcL5kMPSIGyKX8x877yq5RPk
-	u/Hz446UV/oz73/j2We1Nj3yhhvSK7o=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-343-R5juO4UfNbm9rEG-hr7ykQ-1; Mon, 24 Jun 2024 22:32:04 -0400
-X-MC-Unique: R5juO4UfNbm9rEG-hr7ykQ-1
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-6c9b5e3dd67so6189572a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 24 Jun 2024 19:32:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719282723; x=1719887523;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JdOYHmVbQfzrXIDUS0kTztOftl6vBGAX5ErXYmTt9bU=;
-        b=PgtHqIdKYzrMiuZtH2fPc0dsshHaCrHBDNshAZ1uDU7/jLYGEjVGOpVdpK4ITu6haB
-         mNCbv4/mLo6OXa/6yYTHv41kVl9+Uku2+2/rOZZQwbTOH3XDwe3dNwYUHB6Qd6LMFQul
-         NHeX2eszwg2kmeXRLr8H/sqkec1q4tISXDjnRS7cl5TU8Q6o/Nag3MsW/XOxWNwRbN1U
-         6SMlDCj380lxOMDBXxnJpOFpLP/eM1w6atUyirTxACI/9HppQcPJPsidVhpuGGJrSw2P
-         ihcqfjOpVw+wtHVRXz/45r6I0tfz3eITtwi30FtzJ/uXA6AclQ4xoDYSi8TF4wiME6sl
-         pZiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWjuc4myqx/UqwK91dXMqXPVtZRQmwl22u8o+JKpc3cEpRfrHCFcsyQLs2DU+SkAYisbUK/d+7022sRhz1qB38VeuhnWQuPQZhHRptc
-X-Gm-Message-State: AOJu0YwmrURkV9rrdZw14NMHwgRAA4lRNXvohlOcmRaopiUaTAeod0jp
-	oYB9Vzu1Bfq2OTFjc4k7pbL9s9xao3Ua0nLX1uLEMAKGXjAwXBNc2s3tK6Jwsue8vzMKc0nLON0
-	8eIVPlRAHMizLY8Js+bj6bVXl7nyRXYCMnPwVyAczwAI6zZ6xbBJx3/+k5MX+/g==
-X-Received: by 2002:a17:902:d4d2:b0:1f9:ddb9:3ee5 with SMTP id d9443c01a7336-1fa23fbf4b4mr69506215ad.26.1719282722908;
-        Mon, 24 Jun 2024 19:32:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEiacLUWBWrz/2FgWyHDRKykXY3k2b72x44Eh/pEo/7jqkypyTOWmT8OBzcY49DgsEXbUG8+w==
-X-Received: by 2002:a17:902:d4d2:b0:1f9:ddb9:3ee5 with SMTP id d9443c01a7336-1fa23fbf4b4mr69506005ad.26.1719282722442;
-        Mon, 24 Jun 2024 19:32:02 -0700 (PDT)
-Received: from LeoBras.redhat.com ([2804:1b3:a801:fda9:d11e:3755:61da:97fd])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c6bb2sm69371235ad.142.2024.06.24.19.31.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 19:32:01 -0700 (PDT)
-From: Leonardo Bras <leobras@redhat.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Leonardo Bras <leobras@redhat.com>,
-	Leonardo Bras <leobras.c@gmail.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Marcelo Tosatti <mtosatti@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [RFC PATCH 1/1] kvm: Note an RCU quiescent state on guest exit
-Date: Mon, 24 Jun 2024 23:31:51 -0300
-Message-ID: <ZnosF0tqZF72XARQ@LeoBras>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <ec8088fa-0312-4e98-9e0e-ba9a60106d58@paulmck-laptop>
-References: <20240511020557.1198200-1-leobras@redhat.com> <ZkJsvTH3Nye-TGVa@google.com> <CAJ6HWG7pgMu7sAUPykFPtsDfq5Kfh1WecRcgN5wpKQj_EyrbJA@mail.gmail.com> <68c39823-6b1d-4368-bd1e-a521ade8889b@paulmck-laptop> <ZkQ97QcEw34aYOB1@LeoBras> <17ebd54d-a058-4bc8-bd65-a175d73b6d1a@paulmck-laptop> <ZnPUTGSdF7t0DCwR@LeoBras> <ec8088fa-0312-4e98-9e0e-ba9a60106d58@paulmck-laptop>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4638954669
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719282728; cv=fail; b=SYpmc/FXmigVToDTpqMJT7oTPZ/uRxRJHt/A+IGGHCHgd3g0delD8Si578gqvXqKnkUskbho8nfdqLNCjK4CYiS5ZkSkeYaTQ5Qia61o9GYewGvFmvlv1Fao0WQJudsivkTbci5uGhLHdPHbmYlzLkBrkvYiK4CMr6ybCRAo0j8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719282728; c=relaxed/simple;
+	bh=QXFFs6OQZfcQ5ciCZuH49jtheeNtyUz7XzyHpU0KTHo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=KTUrFkJocZTHpKxaHDZz83kwPy5JkLRcpa7iFe7HY/lEWthHOeNdWypUzPL2OUlvr6EHN799QCQNHrfDbs0JTiwo35Klj9Kl75g/HKFWOmnyZdWi4WVakm6bjAZktJkII32qrxJTlZJgpYkypFeex2SyTYZJbKKCRn45qK1fmQw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=S2JA6lD6; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719282727; x=1750818727;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=QXFFs6OQZfcQ5ciCZuH49jtheeNtyUz7XzyHpU0KTHo=;
+  b=S2JA6lD6IU195W3YUfTnjMk0tRsWhHwhXpoMCoyH8138F3HXzCiSCv3+
+   UKejT2flRbBNQFaL0lenUCjNa4D0pLZ2vZNqg0vuyCpPWWfp9IcvwZjaO
+   ap8c8rNc2LG85NKB2XNnWeIOMSflaxWn4hnMfbTp0XnWV3OVvKj+eNpT5
+   q/iFKWcfAAb5Em2xTXUGCMeUFdA9I4vB2A7QDLRkMQ7iBK9yEZo7Bcr7r
+   xs6+jlXvNF+mhwKZFe8gJbfUm//SmmN+eN+64O7xnH3qkzSUP0sRNSbd6
+   z2HKEuwgO/eVjUFvnqjNj8rzZRRzI6n6qWBC7k1xqI/ukbS89QCdWf7dt
+   Q==;
+X-CSE-ConnectionGUID: GS4RP6xXSQCtAPH61SO+Gw==
+X-CSE-MsgGUID: cPkOyKY3S+WOR2/PVc+ZHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="16243905"
+X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
+   d="scan'208";a="16243905"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 19:32:07 -0700
+X-CSE-ConnectionGUID: nnGycUqKTYS3bsqLMx8Ipg==
+X-CSE-MsgGUID: LMTSx43PQn+HJQn39n3RLg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
+   d="scan'208";a="43477269"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Jun 2024 19:32:07 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 24 Jun 2024 19:32:06 -0700
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 24 Jun 2024 19:32:05 -0700
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Mon, 24 Jun 2024 19:32:05 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.46) by
+ edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 24 Jun 2024 19:32:05 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=C9QGwVwBNDDULU5gr2YZdN/K0RTnN+iWD/9F/t6nILSw2HhUhBHb63oOco8hfq6AI374+bXtcf+GiXwDpTX5IeCImfqeyBNxyNhb+LFtKsi5iKP30VNm5f4MlflQ2b7oTb7fCVjw6uxb8NEn0HdtQpSp5RzcuA3wcCznPpmdDwLM6fK3vFFXxKYlvFQxyPejkE3tXSAgWZYpJ3xfzfZEXlBVzGUz+nNU5ZlLv6DMslWTophspXxzIdRZf/8bwsu3BasyOiP0EHr/vd+FKWf8935jO0MpVw9AjD9KKkVK6GbQ/xk7oOpntU4hj7cYDDYJPB9dT8yTmFidfKOK95CpXw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vJOUZqogqvO09VluEPYvj/faDsgIrEZKPJ6cAeAlMIA=;
+ b=fHEFJsu4IhBiGAvVC1HVbP89F23SUrsRumZW/Y3yozXnk+aEJJDkq1a71I2uSFvkaS/UEUWG/69WwPjgU0g9lSsb7Kk6/+t6dhbtQKrIOiMCVVOeKZ2FpQEZTj0wDWMMYocMgm4VnyhisawUrBYsNtkIUG53Q9jZvAtRqdB/zm3xk28Ui+KDNZiCQ66IC0m68zbtENg/09hgxlARoPrOEKAR2ToY34Du/o/8nksgSsSbMGORwYbEzb0oFnq2pY1FU8tBJpdKub4X27QSYo74qoXtp1h5iiw1jTLFRFfuRR/fjDUItauAq9UTeW2laXLOYjqCswCzy3cjejKJ9u3sVA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
+ by CO1PR11MB5057.namprd11.prod.outlook.com (2603:10b6:303:6c::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.26; Tue, 25 Jun
+ 2024 02:32:00 +0000
+Received: from BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
+ ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
+ 02:32:00 +0000
+From: "Tian, Kevin" <kevin.tian@intel.com>
+To: Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, "Liu,
+ Yi L" <yi.l.liu@intel.com>, Jacob Pan <jacob.jun.pan@linux.intel.com>
+CC: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/2] iommu/vt-d: Remove hardware automatic ATS dependency
+Thread-Topic: [PATCH 2/2] iommu/vt-d: Remove hardware automatic ATS dependency
+Thread-Index: AQHaxfdH2gEXDMHztk6a3sIg9ZSSarHXwtEQ
+Date: Tue, 25 Jun 2024 02:32:00 +0000
+Message-ID: <BN9PR11MB5276C8112DEF56C11CFC6F198CD52@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20240624052501.253405-1-baolu.lu@linux.intel.com>
+ <20240624052501.253405-2-baolu.lu@linux.intel.com>
+In-Reply-To: <20240624052501.253405-2-baolu.lu@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|CO1PR11MB5057:EE_
+x-ms-office365-filtering-correlation-id: dc99a493-4e45-4ba4-fe9f-08dc94befe1a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|1800799021|376011|366013|38070700015;
+x-microsoft-antispam-message-info: =?us-ascii?Q?rrsVKVhp1vkVNUpsq2YlhW1/HI4N6l9WxUFi88KYCu6wBI6g3W5cpBbc8p0x?=
+ =?us-ascii?Q?KUTd/G0Ju7crgMuUDAyKczAiBgsApRY35gD4rGxG7PefKKWw2JUFovpsMYci?=
+ =?us-ascii?Q?2M0gl1klXrp3rbu1HP3/5CMCZiXCMrKYK1cdymGi+BfCu6CJjKoROyp8+lo1?=
+ =?us-ascii?Q?l2zICwK9ZD32B+pF5hPmB0tVGb0vDQ33w4If/JgGpTrP3O7vl+cFFG0ycRo2?=
+ =?us-ascii?Q?eBMMRoqmYK+c449Zsmupe+dgRdWlvJ1lCEAYKpnt3gRZZFJPCnabyVp/22v3?=
+ =?us-ascii?Q?5hcCdfkgjuV3caPdDZjuLMFVq4Jyl1wL+zNx85t0eel0tQBfimzWKWrtUazI?=
+ =?us-ascii?Q?DGr7sXm/acjNPsQfSDP7TrwMDitHP7iiWhBaogheSCv3x+wuoy1BTtMF5oky?=
+ =?us-ascii?Q?4VcRHgNRmR5OJeU3G92Gyo0XJZ41xTCfnr3EB9wZgsgzmdBDeTD5VKRK8GJB?=
+ =?us-ascii?Q?4txDEl3caaZRIW6EIKL9/oFXhiHUZsEEwdFhDIM7/kJx4KzMxtdGrRcHxg4I?=
+ =?us-ascii?Q?lBdfBpXLmgKoWFF3/FAjGn2Pk75yebBijkSBG/YY3nXoOUeakVosCS0vKAI+?=
+ =?us-ascii?Q?267QbFEbYvXctLoZjCyIGEGYC5Iro8GVNiyKJXpjQ/ylJBBQ7NKovgSvx/SQ?=
+ =?us-ascii?Q?+ECL6eGKUDlRbVP45rEogo73MFof3vMo96kR0yd7EzsPj/6oHVt/CTviZAkE?=
+ =?us-ascii?Q?2h9y/0aToKjPhubGJtCDZ+eqeXn+RsJDt9+Pk7ji9Pcu+e9BY+xt8To+O0VZ?=
+ =?us-ascii?Q?z6lUGl022Tpzwm91M+E0o1F1HqVQPZYgZ1nH4RDq0182HZ0Vp2+BZKol2ZSb?=
+ =?us-ascii?Q?1A85zzr7BmJvtB6Tqi5qyab5ZeKFaVEHAmtVIagU7b1Zm2Xy1C1Ly5fmevVe?=
+ =?us-ascii?Q?v925rjm8iZSermusK4Bt0MO3o89Qo4/nOdraWy83j9eFTcY4WGwXK07sX1vC?=
+ =?us-ascii?Q?kVlzOSiWQzPKTEgt02OF9uLkc4sGgwML/gRjV8Zw6dBT24Gxa42gDcftx1Yq?=
+ =?us-ascii?Q?clbsWo/vGkI3d0Iad+wBXO2JiWuccGfmQ1Aj1ZLQ0QMidnGDcMthdxBb3jFj?=
+ =?us-ascii?Q?HPqt1jXDQqXMMdg8q0nzLszz/rqQJhMV4NVGQz5+osvOyTzedlWO0MDyAzrO?=
+ =?us-ascii?Q?1OGFFO5BQu4IGh6E79j1Nv1F5zdjaq8BlTuI8lkGm/ESd9BnOvS42Pmn2UDY?=
+ =?us-ascii?Q?1Si4SZRqIq5Mi3HoQy5BLpPSnuVXtORfeb6/4Xn3F1cKiTWZU0Xfs7p+q1lX?=
+ =?us-ascii?Q?NqF2cWw1P2fj2bWZWbGBMfJ/3gKq+jPlT5PlKoqoyk0AEGl9/daoOIEQtfLi?=
+ =?us-ascii?Q?kZjReA2SupWR7mMMHQij33atbPrlGpGJXEOw+UUlMXXumO+X7RF2elT0lNIt?=
+ =?us-ascii?Q?TnhFjys=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(376011)(366013)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?3LnNzhYp/J3polDmjpKQ2GbzjDHTp1VT9atbOqyuICpmWx47nTd7hpXciqtq?=
+ =?us-ascii?Q?rDU8GRqGT50wd5DcR8meYXL8KTOTwomR6C2jomjFHoDIT1hNggRlI3oE5Dmr?=
+ =?us-ascii?Q?xfEKyPxiglfGREauNt+4Y5KMm5Yc6QzdH2tTVbj/scYk3CpsHFOwkyNqBBjJ?=
+ =?us-ascii?Q?jl9aD+BnjCfDSu2m73SNTcv53Bfcziary0xB+9dWoRnt30w5B7FWIjuvVH/Q?=
+ =?us-ascii?Q?xA4OsXTgEFO9cV/MNg0ZwEod9YC2kH1PvZt7fkubNoH9M4SDNa/OjZXu/vYO?=
+ =?us-ascii?Q?E/bUHmD9uR5thJm68MzfHGvCBNKjP9OiBOsD7OjM8RtVyO+obU9E2Fe1eOlR?=
+ =?us-ascii?Q?UQVVQVMfrZo6muRLqMCHtEz/708B/L0xfObLfN2H9CCgJUXEHECyKPwJxTqn?=
+ =?us-ascii?Q?cWdcQF2zNG9YePXEcsN4KN/6e0D/iIeyb9gY9/bdt8+Sil0RcSF3oqjjFitL?=
+ =?us-ascii?Q?bHM9FKZRmQQ2jHmno9q8TbPlQE2zng0jsvaNUxKze6KSoimFlfZpp9KjOX2L?=
+ =?us-ascii?Q?8LPWRS9cC2EjojNi+ZHwL+6whRhQdcKpxpvWHbMkjlZfa1PCFivGad3mS8ix?=
+ =?us-ascii?Q?3NmsoXlI1CYMKc6dmkMSbiDDicJemC6/IVUqkkpwp/4L5MIIhnodQU2AydDD?=
+ =?us-ascii?Q?apkUCo6R/MQd/J91D/uKgx+6ZdyyqkUQVxB4Hs875GvIgnQP+2YrBjxMpnOg?=
+ =?us-ascii?Q?1SwCXm6AUEjA8EtIjT6czp1Rpu9S3Avg3ITMeYYBmoE/lK4q5CvvXr9PlOzg?=
+ =?us-ascii?Q?rJT4sCxo8SzuledH3rJ49e6PPLjCzcAdyNxgnX3NHUqmjGWbU/ovWpxfcGEt?=
+ =?us-ascii?Q?RVus7n/NPkuaeglxaux5BIwUcOxWL5W47his2I1USdeooNeX3jp33Uh3iN1B?=
+ =?us-ascii?Q?8vdLjKouhK3nKzB5ACromOmEJNB5wmtJaqVqQB2OxX7OTyYFSKHZNPq85svI?=
+ =?us-ascii?Q?biYSdXjHtb8KAIU0EByslDlYM2kYz3qJjSpfI7I8FNhHVjWPNXrjrq+XXMGJ?=
+ =?us-ascii?Q?UXpqy8U5nf0rVh9U9YZB65GXL18h14EFb+KuUQrv72LJ09cncXEo8XdfYItT?=
+ =?us-ascii?Q?rX/BSjQOsVsowmBaA+xNUpVqCernN0lbcze81hr4zOlw7H+qEG1Cl82dypCS?=
+ =?us-ascii?Q?83bZFkpx1f7yWyxrznlEYUNgRZEbpLsMkum/cRI7zotInxs2iYiB8pofvaBX?=
+ =?us-ascii?Q?imjdV2/n1Q/w2RRnhUwFG0zjVkcNdejtB+4lLGlWBcJoj2XMPQ2Y9Glm8x2i?=
+ =?us-ascii?Q?oPYPIPs0B4Lpo3HxYklIam84VYXvSBvlXyT5oOYoU/K/mkNx3dFZx/FZvaQt?=
+ =?us-ascii?Q?pW9XSvWx0hCj4YdngNb36I3VAxXP+ScPhYLM1Jksc2115DmltLbDOiIL0+zZ?=
+ =?us-ascii?Q?Z2SVb+AC+IOohOCQhxZcKuCzVqp29hBqXJ9204NegfM0RdE5i0yFYSbSGxCz?=
+ =?us-ascii?Q?3pkatjpLl47jbd0P3w4VsAKtMkmeOKwBdT3V/YJ7PP+iEtjkWVM/oBcyPQfH?=
+ =?us-ascii?Q?fUFy9/mNAtZRaeyznrMKqvJHAefsJUL3kMfwAEhvNqsBKusjjhlxo2R4pTP5?=
+ =?us-ascii?Q?FvCDIMyUs1MHDaE4ITpx5CmyzET8ltjQdidjZQsf?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: dc99a493-4e45-4ba4-fe9f-08dc94befe1a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2024 02:32:00.7601
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: p5JM9tpZub+PfuScoaIYqN1T0iGQZ2UX7vo25bXVAa5Zn0q81s54TRPc+xPGxBd2A8RVOuNShmhdm4BvhwxLmw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO1PR11MB5057
+X-OriginatorOrg: intel.com
 
-On Thu, Jun 20, 2024 at 10:26:38AM -0700, Paul E. McKenney wrote:
-> On Thu, Jun 20, 2024 at 04:03:41AM -0300, Leonardo Bras wrote:
-> > On Wed, May 15, 2024 at 07:57:41AM -0700, Paul E. McKenney wrote:
-> > > On Wed, May 15, 2024 at 01:45:33AM -0300, Leonardo Bras wrote:
-> > > > On Tue, May 14, 2024 at 03:54:16PM -0700, Paul E. McKenney wrote:
-> > > > > On Mon, May 13, 2024 at 06:47:13PM -0300, Leonardo Bras Soares Passos wrote:
-> > > > > > On Mon, May 13, 2024 at 4:40 PM Sean Christopherson <seanjc@google.com> wrote:
-> > > > > > >
-> > > > > > > On Fri, May 10, 2024, Leonardo Bras wrote:
-> > > > > > > > As of today, KVM notes a quiescent state only in guest entry, which is good
-> > > > > > > > as it avoids the guest being interrupted for current RCU operations.
-> > > > > > > >
-> > > > > > > > While the guest vcpu runs, it can be interrupted by a timer IRQ that will
-> > > > > > > > check for any RCU operations waiting for this CPU. In case there are any of
-> > > > > > > > such, it invokes rcu_core() in order to sched-out the current thread and
-> > > > > > > > note a quiescent state.
-> > > > > > > >
-> > > > > > > > This occasional schedule work will introduce tens of microsseconds of
-> > > > > > > > latency, which is really bad for vcpus running latency-sensitive
-> > > > > > > > applications, such as real-time workloads.
-> > > > > > > >
-> > > > > > > > So, note a quiescent state in guest exit, so the interrupted guests is able
-> > > > > > > > to deal with any pending RCU operations before being required to invoke
-> > > > > > > > rcu_core(), and thus avoid the overhead of related scheduler work.
-> > > > > > >
-> > > > > > > Are there any downsides to this?  E.g. extra latency or anything?  KVM will note
-> > > > > > > a context switch on the next VM-Enter, so even if there is extra latency or
-> > > > > > > something, KVM will eventually take the hit in the common case no matter what.
-> > > > > > > But I know some setups are sensitive to handling select VM-Exits as soon as possible.
-> > > > > > >
-> > > > > > > I ask mainly because it seems like a no brainer to me to have both VM-Entry and
-> > > > > > > VM-Exit note the context switch, which begs the question of why KVM isn't already
-> > > > > > > doing that.  I assume it was just oversight when commit 126a6a542446 ("kvm,rcu,nohz:
-> > > > > > > use RCU extended quiescent state when running KVM guest") handled the VM-Entry
-> > > > > > > case?
-> > > > > > 
-> > > > > > I don't know, by the lore I see it happening in guest entry since the
-> > > > > > first time it was introduced at
-> > > > > > https://lore.kernel.org/all/1423167832-17609-5-git-send-email-riel@redhat.com/
-> > > > > > 
-> > > > > > Noting a quiescent state is cheap, but it may cost a few accesses to
-> > > > > > possibly non-local cachelines. (Not an expert in this, Paul please let
-> > > > > > me know if I got it wrong).
-> > > > > 
-> > > > > Yes, it is cheap, especially if interrupts are already disabled.
-> > > > > (As in the scheduler asks RCU to do the same amount of work on its
-> > > > > context-switch fastpath.)
-> > > > 
-> > > > Thanks!
-> > > > 
-> > > > > 
-> > > > > > I don't have a historic context on why it was just implemented on
-> > > > > > guest_entry, but it would make sense when we don't worry about latency
-> > > > > > to take the entry-only approach:
-> > > > > > - It saves the overhead of calling rcu_virt_note_context_switch()
-> > > > > > twice per guest entry in the loop
-> > > > > > - KVM will probably run guest entry soon after guest exit (in loop),
-> > > > > > so there is no need to run it twice
-> > > > > > - Eventually running rcu_core() may be cheaper than noting quiescent
-> > > > > > state every guest entry/exit cycle
-> > > > > > 
-> > > > > > Upsides of the new strategy:
-> > > > > > - Noting a quiescent state in guest exit avoids calling rcu_core() if
-> > > > > > there was a grace period request while guest was running, and timer
-> > > > > > interrupt hits the cpu.
-> > > > > > - If the loop re-enter quickly there is a high chance that guest
-> > > > > > entry's rcu_virt_note_context_switch() will be fast (local cacheline)
-> > > > > > as there is low probability of a grace period request happening
-> > > > > > between exit & re-entry.
-> > > > > > - It allows us to use the rcu patience strategy to avoid rcu_core()
-> > > > > > running if any grace period request happens between guest exit and
-> > > > > > guest re-entry, which is very important for low latency workloads
-> > > > > > running on guests as it reduces maximum latency in long runs.
-> > > > > > 
-> > > > > > What do you think?
-> > > > > 
-> > > > > Try both on the workload of interest with appropriate tracing and
-> > > > > see what happens?  The hardware's opinion overrides mine.  ;-)
-> > > > 
-> > > > That's a great approach!
-> > > > 
-> > > > But in this case I think noting a quiescent state in guest exit is 
-> > > > necessary to avoid a scenario in which a VM takes longer than RCU 
-> > > > patience, and it ends up running rcuc in a nohz_full cpu, even if guest 
-> > > > exit was quite brief. 
-> > > > 
-> > > > IIUC Sean's question is more on the tone of "Why KVM does not note a 
-> > > > quiescent state in guest exit already, if it does in guest entry", and I 
-> > > > just came with a few arguments to try finding a possible rationale, since 
-> > > > I could find no discussion on that topic in the lore for the original 
-> > > > commit.
-> > > 
-> > > Understood, and maybe trying it would answer that question quickly.
-> > > Don't get me wrong, just because it appears to work in a few tests doesn't
-> > > mean that it really works, but if it visibly blows up, that answers the
-> > > question quite quickly and easily.  ;-)
-> > > 
-> > > But yes, if it appears to work, there must be a full investigation into
-> > > whether or not the change really is safe.
-> > > 
-> > > 							Thanx, Paul
-> > 
-> > Hello Paul, Sean, sorry for the delay on this.
-> > 
-> > I tested x86 by counting cycles (using rdtsc_ordered()).
-> > 
-> > Cycles were counted upon function entry/exit on 
-> > {svm,vmx}_vcpu_enter_exit(), and right before / after 
-> > __{svm,vmx}_vcpu_run() in the same function.
-> > 
-> > The main idea was to get cycles spend in the procedures before entering 
-> > guest (such as reporting RCU quiescent state in entry / exit) and the 
-> > cycles actually used by the VM. 
-> > 
-> > Those cycles were summed-up and stored in per-cpu structures, with a 
-> > counter to get the average value. I then created a debug file to read the 
-> > results and reset the counters.
-> > 
-> > As for the VM, it got 20 vcpus, 8GB memory, and was booted with idle=poll.
-> > 
-> > The workload inside the VM consisted in cyclictest in 16 vcpus 
-> > (SCHED_FIFO,p95), while maintaining it's main routine in 4 other cpus 
-> > (SCHED_OTHER). This was made to somehow simulate busy and idle-er cpus. 
-> > 
-> >  $cyclictest -m -q -p95 --policy=fifo -D 1h -h60 -t 16 -a 4-19 -i 200 
-> >   --mainaffinity 0-3
-> > 
-> > All tests were run for exaclty 1 hour, and the clock counter was reset at 
-> > the same moment cyclictest stared. After that VM was poweroff from guest.
-> > Results show the average for all CPUs in the same category, in cycles.
-> > 
-> > With above setup, I tested 2 use cases:
-> > 1 - Non-RT host, no CPU Isolation, no RCU patience (regular use-case)
-> > 2 - PREEMPT_RT host, with CPU Isolation for all vcpus (pinned), and 
-> >     RCU patience = 1000ms (best case for RT)
-> > 
-> > Results are:
-> > # Test case 1:
-> > Vanilla: (average on all vcpus)
-> > VM Cycles / RT vcpu:		123287.75 
-> > VM Cycles / non-RT vcpu:	709847.25
-> > Setup Cycles:			186.00
-> > VM entries / RT vcpu:		58737094.81
-> > VM entries / non-RT vcpu:	10527869.25
-> > Total cycles in RT VM:		7241564260969.80
-> > Total cycles in non-RT VM:	7473179035472.06
-> > 
-> > Patched: (average on all vcpus)
-> > VM Cycles / RT vcpu:		124695.31        (+ 1.14%)
-> > VM Cycles / non-RT vcpu:	710479.00        (+ 0.09%)
-> > Setup Cycles:			218.65           (+17.55%)
-> > VM entries / RT vcpu:		60654285.44      (+ 3.26%) 
-> > VM entries / non-RT vcpu:	11003516.75      (+ 4.52%)
-> > Total cycles in RT VM:		7563305077093.26 (+ 4.44%)
-> > Total cycles in non-RT VM:	7817767577023.25 (+ 4.61%)
-> > 
-> > Discussion:
-> > Setup cycles raised in ~33 cycles, increasing overhead.
-> > It proves that noting a quiescent state in guest entry introduces setup 
-> > routine costs, which is expected.
-> > 
-> > On the other hand, both the average time spend inside the VM and the number 
-> > of VM entries raised, causing the VM to have ~4.5% more cpu cycles 
-> > available to run, which is positive. Extra cycles probably came from not 
-> > having invoke_rcu_core() getting ran after VM exit.
-> > 
-> > 
-> > # Test case 2:
-> > Vanilla: (average on all vcpus)
-> > VM Cycles / RT vcpu:		123785.63
-> > VM Cycles / non-RT vcpu:	698758.25
-> > Setup Cycles:			187.20
-> > VM entries / RT vcpu:		61096820.75
-> > VM entries / non-RT vcpu:	11191873.00
-> > Total cycles in RT VM:		7562908142051.72
-> > Total cycles in non-RT VM:	7820413591702.25
-> > 
-> > Patched: (average on all vcpus)
-> > VM Cycles / RT vcpu:		123137.13        (- 0.52%)
-> > VM Cycles / non-RT vcpu:	696824.25        (- 0.28%)
-> > Setup Cycles:			229.35           (+22.52%)
-> > VM entries / RT vcpu:		61424897.13      (+ 0.54%) 
-> > VM entries / non-RT vcpu:	11237660.50      (+ 0.41%)
-> > Total cycles in RT VM:		7563685235393.27 (+ 0.01%)
-> > Total cycles in non-RT VM:	7830674349667.13 (+ 0.13%)
-> > 
-> > Discussion:
-> > Setup cycles raised in ~42 cycles, increasing overhead.
-> > It proves that noting a quiescent state in guest entry introduces setup 
-> > routine costs, which is expected.
-> > 
-> > The average time spend inside the VM was reduced, but the number of VM  
-> > entries raised, causing the VM to have around the same number of cpu cycles 
-> > available to run, meaning that the overhead caused by reporting RCU 
-> > quiescent state in VM exit got absorbed, and it may have to do with those 
-> > rare invoke_rcu_core()s that were bothering latency.
-> > 
-> > The difference is much smaller compared to case 1, and this is probably 
-> > because there is a clause in rcu_pending() for isolated (nohz_full) cpus 
-> > which may be already inhibiting a lot of invoke_rcu_core()s.
-> > 
-> > Sean, Paul, what do you think?
-> 
-> First, thank you for doing this work!
+> From: Lu Baolu <baolu.lu@linux.intel.com>
+> Sent: Monday, June 24, 2024 1:25 PM
+>=20
+> If a device is listed in the SATC table with ATC_REQUIRED flag set, it
+> indicates that the device has a functional requirement to enable its ATC
+> (via the ATS capability) for device operation. However, when IOMMU is
+> running in the legacy mode, ATS could be automatically supported by the
+> hardware so that the OS has no need to support the ATS functionality.
 
-Thanks you!
+hmm I don't think "has no need to support" matches...
 
-> 
-> I must defer to Sean on how to handle this tradeoff.  My kneejerk reaction
-> would be to add yet another knob, but knobs are not free.
+>=20
+> This is a backward compatibility feature which enables older OSs. Since
+> Linux VT-d implementation has already supported ATS features for a long
+> time, there is no need to rely on this compatibility hardware. Remove it
+> to make the driver future-proof.
+>=20
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+> ---
+>  drivers/iommu/intel/iommu.c | 9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
+>=20
+> diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
+> index 07e394dfccc1..b63347c8bf5d 100644
+> --- a/drivers/iommu/intel/iommu.c
+> +++ b/drivers/iommu/intel/iommu.c
+> @@ -3056,14 +3056,7 @@ static bool dmar_ats_supported(struct pci_dev
+> *dev, struct intel_iommu *iommu)
+>  	dev =3D pci_physfn(dev);
+>  	satcu =3D dmar_find_matched_satc_unit(dev);
+>  	if (satcu)
+> -		/*
+> -		 * This device supports ATS as it is in SATC table.
+> -		 * When IOMMU is in legacy mode, enabling ATS is done
+> -		 * automatically by HW for the device that requires
+> -		 * ATS, hence OS should not enable this device ATS
+> -		 * to avoid duplicated TLB invalidation.
+> -		 */
 
-Sure, let's wait for Sean's feedback. But I am very positive with the 
-results, as we have lantecy improvements for RT, and IIUC performance 
-improvements for non-RT.
+...what above comment tries to convey.
 
-While we wait, I ran stress-ng in a VM with non-RT kernel (rcu.patience=0), 
-and could see instruction count raising in around 1.5% after applying the patch.
+If this comment is valid, it's not about whether the OS itself supports
+ATS. instead it's a requirement for the OS to not manage ATS when
+it's already managed by HW.
 
-Maybe I am missing something, but I thought we could get the ~4.5% 
-improvement as seen above.
+Unless there is a way to disable hw management with this change...
 
-Thanks!
-Leo
-
-
-> 
-> 							Thanx, Paul
-> 
+> -		return !(satcu->atc_required && !sm_supported(iommu));
+> +		return true;
+>=20
+>  	for (bus =3D dev->bus; bus; bus =3D bus->parent) {
+>  		bridge =3D bus->self;
+> --
+> 2.34.1
 
 
