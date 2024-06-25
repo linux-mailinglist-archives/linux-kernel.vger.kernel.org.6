@@ -1,330 +1,192 @@
-Return-Path: <linux-kernel+bounces-229532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC639917081
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:46:36 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D12A0917083
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:46:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0CC828CBE3
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:46:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31C1CB2268E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:46:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56A017BB1A;
-	Tue, 25 Jun 2024 18:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7871417B516;
+	Tue, 25 Jun 2024 18:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3H0cwxB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T+OmEB3r"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92BEC1369B6;
-	Tue, 25 Jun 2024 18:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0815017C7AC
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719341114; cv=none; b=lDWy5AkI5IpbNFtMVWJJM53g4g1ho4OdeUcHYYs2z9rwiLia90Uxe4jUnjbB1vRn9Ad/17hw3/L+K2GAOPVeJYsvIaHnrRetn3BVbDX773mLWe8gPa+xNDwxkyPYv2m5ssuqq/r7J/Yr5ElfgvQTdvB84bMWvfHz2vEGp7WA7iA=
+	t=1719341134; cv=none; b=cWprs6t2QiI72qsbUv9Y7UMc+kSY3eqw3xF8DhaLpqFm6jO6dRYez3IsK6LxmagzcsDoGP4DLGoS+57sgcW/LgWASPGyxCKeH4kL9BTlvM9ywCg+Qkjh8OP8DLO9L1yqzjxxC9SnAajv7ixmmNH8fAs+1ck9i3uuPS26Mgik8Wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719341114; c=relaxed/simple;
-	bh=ls1xBJfcDVgd5ISX3BpuHHrzrDMD41ZZn9MNlv/YzYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ma+w3PcAFde5t2nCKWGUcvm7zgiLec3C5+t71w0tQySG0XRSON6OWoA6WsADZDwOtllrrJyqTG22HL3n8axOB6RnhvpUJ4KETHqQeiF1jKK0zXab0zLJMXpX0EAMYMhV1IocVyZMlQspkX6NowF6rqYnsa+Bx0eXk/Bbd0FkXbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3H0cwxB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92B7EC32781;
-	Tue, 25 Jun 2024 18:45:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719341114;
-	bh=ls1xBJfcDVgd5ISX3BpuHHrzrDMD41ZZn9MNlv/YzYc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U3H0cwxBlzZtci8ZSnTO2Itkyv++pbeNQRaUu0ZLzGQE4JkDqUKXSUJAjjsI6DcLH
-	 Eims4gCOmTQPyzXYzcXzzNEkgnmR7AuLwfqNF2J1M11I49DOUF3FzH8BYYVX6zZrps
-	 vKKo6Ca+SA8Y3zeWGPAVFsd32SjNYqfIoIVW3uA/6CWzeGZo9KprQl4V0lPcRVWl8o
-	 whehrG/Ik6okPGL3JSzJd3L56+iM3F5hCnyP3f961Lh6s6xAjgfw35qrcyyXv9mKg9
-	 MQW5xpvbeoecP5xhrPTNZBx17zD5up4v9hrdiy/39XrvTA+YBVhhEwvVvhRiNMUWc/
-	 UhXHplo11xr3Q==
-Date: Tue, 25 Jun 2024 11:45:12 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>,
-	Segher Boessenkool <segher@kernel.crashing.org>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users <linux-perf-users@vger.kernel.org>,
-	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-	akanksha@linux.ibm.com, Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Kajol Jain <kjain@linux.ibm.com>,
-	Disha Goel <disgoel@linux.vnet.ibm.com>
-Subject: Re: [V4 05/16] tools/perf: Add disasm_line__parse to parse raw
- instruction for powerpc
-Message-ID: <ZnsQOD3arkR0qoPJ@google.com>
-References: <20240614172631.56803-1-atrajeev@linux.vnet.ibm.com>
- <20240614172631.56803-6-atrajeev@linux.vnet.ibm.com>
- <ZnpYBvXLhyAqZzvh@google.com>
- <E2A1A4AA-E344-4B42-86CE-E0EDD82A398F@linux.vnet.ibm.com>
+	s=arc-20240116; t=1719341134; c=relaxed/simple;
+	bh=f6wEjdMroIWa2KudBybywiojNtD/TF3hmz+cZhCHmmA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Y840AyyQcF6Fu1MKcjK3IbXAclcdoEKXAiy+Ip/jygEF0corFbpnMWg4y6PRnZslWXcDq7ndJaTYflet0rW7GDhrD7n0N0VmykoOaOIXBMZ6/nExr8LMWfkJIyeZMxiw8gBmQAYyLwHTPdJPQt2nbJ+GQcsrFbA3YVKdaFpvtw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T+OmEB3r; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719341131;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=zA1sfCnwaI00JLsryL4EWJ4v/kiLawL4YnZiavHAE0w=;
+	b=T+OmEB3rlt66caZbaYUOBSH3D52MagMDrvif8aS8HI/6vi18ffI58cAxuTnIUl4pBFtXz3
+	brIDwFzbpxl8uDE5Gi7WmsHms+L7IA13g0Rdc+CClxta59vcgs9yGwXbDeTPC2xxpzeXp/
+	v0/9cDkc9wPoOXaYvDKxpAEWizbfecY=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-106-xKHoWdaMMhK1bvskoyIaOQ-1; Tue, 25 Jun 2024 14:45:30 -0400
+X-MC-Unique: xKHoWdaMMhK1bvskoyIaOQ-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-366fb7d007aso1120800f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:45:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719341128; x=1719945928;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zA1sfCnwaI00JLsryL4EWJ4v/kiLawL4YnZiavHAE0w=;
+        b=gFWsjN1TE9k9k1B1JcVgeWGrTouSIbQB2fMbVKoQ19c2/13DmqMQjhVxIsBly+UAMb
+         bg/lcCvtsiQMA3kl6aWW19MjIUUwFIDv87njfwpx6yUHaAvrlJg+irlX/W3eSnjDtl5/
+         D0G+SX0xV+5zbnCCv1CQsSHxlQeGkwLky4t25zQ2bLCosXcTyjMnrnVuZaX9jv63gCwl
+         Agv+8dF17uB98xsRNh1KcuD+vCIT3w6uWo473NS2divbMC5j7AdUsMdnOW9dkTfFbiCK
+         mMGr77/qD651Xevk7sfq2Qz7g14TdW+94Z8b4ppKjLpCgOwr1AMhQKxheOPMHg/g1uul
+         5eLA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3jHfK4pwCVP6RlvTXGSOzVKFe2vg/qyzUw+pDzSFU6eNbpOPeB9GE7NJVrBhRsuGioJjuCQUru++4tUPl+M8nUB4l0KA/lazzPjge
+X-Gm-Message-State: AOJu0YyxnBRfDVe4leAsl8mbMF3wc4P9z9issIu4G6kWX1W+emZguzbT
+	GVFxUFstk/YN26zqkFgChNt85sfFKZuJFJQDCYuZ33fxxAtfyNd7noV8xHx3WjZT1tKWzIG1p/s
+	zKJGW2Boio5u7YPdOtFeAQI+E5rZEf1x2VHors2YUbidSTitpV27V8Y7TA3rwcUhCsx8L+A==
+X-Received: by 2002:a05:6000:1f82:b0:366:ef00:2b9e with SMTP id ffacd0b85a97d-366ef002c27mr7101976f8f.6.1719341127858;
+        Tue, 25 Jun 2024 11:45:27 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHfdpJoLVZJdorlDSVeSg4JxRw4gw+nAELC2PBUzZAhFg0tnRx6/7grD3rrau3obFYrS/TqAg==
+X-Received: by 2002:a05:6000:1f82:b0:366:ef00:2b9e with SMTP id ffacd0b85a97d-366ef002c27mr7101954f8f.6.1719341127423;
+        Tue, 25 Jun 2024 11:45:27 -0700 (PDT)
+Received: from [192.168.1.34] (p548825e3.dip0.t-ipconnect.de. [84.136.37.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638f858fbsm13642539f8f.65.2024.06.25.11.45.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 11:45:27 -0700 (PDT)
+Message-ID: <6a8fa8aa-fb6f-485b-92b6-868a522bd7fc@redhat.com>
+Date: Tue, 25 Jun 2024 20:45:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <E2A1A4AA-E344-4B42-86CE-E0EDD82A398F@linux.vnet.ibm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] mm/readahead: Limit page cache size in
+ page_cache_ra_order()
+To: Gavin Shan <gshan@redhat.com>, linux-mm@kvack.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ djwong@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
+ hughd@google.com, torvalds@linux-foundation.org, zhenyzha@redhat.com,
+ shan.gavin@gmail.com
+References: <20240625090646.1194644-1-gshan@redhat.com>
+ <20240625090646.1194644-4-gshan@redhat.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20240625090646.1194644-4-gshan@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 25, 2024 at 06:12:51PM +0530, Athira Rajeev wrote:
+On 25.06.24 11:06, Gavin Shan wrote:
+> In page_cache_ra_order(), the maximal order of the page cache to be
+> allocated shouldn't be larger than MAX_PAGECACHE_ORDER. Otherwise,
+> it's possible the large page cache can't be supported by xarray when
+> the corresponding xarray entry is split.
 > 
+> For example, HPAGE_PMD_ORDER is 13 on ARM64 when the base page size
+> is 64KB. The PMD-sized page cache can't be supported by xarray.
 > 
-> > On 25 Jun 2024, at 11:09 AM, Namhyung Kim <namhyung@kernel.org> wrote:
-> > 
-> > On Fri, Jun 14, 2024 at 10:56:20PM +0530, Athira Rajeev wrote:
-> >> Currently, the perf tool infrastructure disasm_line__parse function to
-> >> parse disassembled line.
-> >> 
-> >> Example snippet from objdump:
-> >> objdump  --start-address=<address> --stop-address=<address>  -d --no-show-raw-insn -C <vmlinux>
-> >> 
-> >> c0000000010224b4: lwz     r10,0(r9)
-> >> 
-> >> This line "lwz r10,0(r9)" is parsed to extract instruction name,
-> >> registers names and offset. In powerpc, the approach for data type
-> >> profiling uses raw instruction instead of result from objdump to identify
-> >> the instruction category and extract the source/target registers.
-> >> 
-> >> Example: 38 01 81 e8     ld      r4,312(r1)
-> >> 
-> >> Here "38 01 81 e8" is the raw instruction representation. Add function
-> >> "disasm_line__parse_powerpc" to handle parsing of raw instruction.
-> >> Also update "struct disasm_line" to save the binary code/
-> >> With the change, function captures:
-> >> 
-> >> line -> "38 01 81 e8     ld      r4,312(r1)"
-> >> raw instruction "38 01 81 e8"
-> >> 
-> >> Raw instruction is used later to extract the reg/offset fields. Macros
-> >> are added to extract opcode and register fields. "struct disasm_line"
-> >> is updated to carry union of "bytes" and "raw_insn" of 32 bit to carry raw
-> >> code (raw). Function "disasm_line__parse_powerpc fills the raw
-> >> instruction hex value and can use macros to get opcode. There is no
-> >> changes in existing code paths, which parses the disassembled code.
-> >> The architecture using the instruction name and present approach is
-> >> not altered. Since this approach targets powerpc, the macro
-> >> implementation is added for powerpc as of now.
-> >> 
-> >> Since the disasm_line__parse is used in other cases (perf annotate) and
-> >> not only data tye profiling, the powerpc callback includes changes to
-> >> work with binary code as well as mneumonic representation. Also in case
-> >> if the DSO read fails and libcapstone is not supported, the approach
-> >> fallback to use objdump as option. Hence as option, patch has changes to
-> >> ensure objdump option also works well.
-> >> 
-> >> Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-> >> ---
-> >> tools/include/linux/string.h                  |  2 +
-> >> tools/lib/string.c                            | 13 ++++
-> >> .../perf/arch/powerpc/annotate/instructions.c |  1 +
-> >> tools/perf/arch/powerpc/util/dwarf-regs.c     |  9 +++
-> >> tools/perf/util/annotate.h                    |  5 +-
-> >> tools/perf/util/disasm.c                      | 59 ++++++++++++++++++-
-> >> 6 files changed, 87 insertions(+), 2 deletions(-)
-> >> 
-> >> diff --git a/tools/include/linux/string.h b/tools/include/linux/string.h
-> >> index db5c99318c79..0acb1fc14e19 100644
-> >> --- a/tools/include/linux/string.h
-> >> +++ b/tools/include/linux/string.h
-> >> @@ -46,5 +46,7 @@ extern char * __must_check skip_spaces(const char *);
-> >> 
-> >> extern char *strim(char *);
-> >> 
-> >> +extern void remove_spaces(char *s);
-> >> +
-> >> extern void *memchr_inv(const void *start, int c, size_t bytes);
-> >> #endif /* _TOOLS_LINUX_STRING_H_ */
-> >> diff --git a/tools/lib/string.c b/tools/lib/string.c
-> >> index 8b6892f959ab..3126d2cff716 100644
-> >> --- a/tools/lib/string.c
-> >> +++ b/tools/lib/string.c
-> >> @@ -153,6 +153,19 @@ char *strim(char *s)
-> >> return skip_spaces(s);
-> >> }
-> >> 
-> >> +/*
-> >> + * remove_spaces - Removes whitespaces from @s
-> >> + */
-> >> +void remove_spaces(char *s)
-> >> +{
-> >> + char *d = s;
-> >> +
-> >> + do {
-> >> + while (*d == ' ')
-> >> + ++d;
-> >> + } while ((*s++ = *d++));
-> >> +}
-> >> +
-> >> /**
-> >>  * strreplace - Replace all occurrences of character in string.
-> >>  * @s: The string to operate on.
-> >> diff --git a/tools/perf/arch/powerpc/annotate/instructions.c b/tools/perf/arch/powerpc/annotate/instructions.c
-> >> index a3f423c27cae..d57fd023ef9c 100644
-> >> --- a/tools/perf/arch/powerpc/annotate/instructions.c
-> >> +++ b/tools/perf/arch/powerpc/annotate/instructions.c
-> >> @@ -55,6 +55,7 @@ static int powerpc__annotate_init(struct arch *arch, char *cpuid __maybe_unused)
-> >> arch->initialized = true;
-> >> arch->associate_instruction_ops = powerpc__associate_instruction_ops;
-> >> arch->objdump.comment_char      = '#';
-> >> + annotate_opts.show_asm_raw = true;
-> > 
-> > Right, I think this will add the raw insn in the output of objdump, no?
-> > Why not using the information?
+> Suggested-by: David Hildenbrand <david@redhat.com>
+
+Heh, you came up with this yourself concurrently :) so feel free to drop 
+that.
+
+Acked-by: David Hildenbrand <david@redhat.com>
+
+> Signed-off-by: Gavin Shan <gshan@redhat.com>
+> ---
+>   mm/readahead.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
 > 
-> Shared response in previous patch
+> diff --git a/mm/readahead.c b/mm/readahead.c
+> index c1b23989d9ca..817b2a352d78 100644
+> --- a/mm/readahead.c
+> +++ b/mm/readahead.c
+> @@ -503,11 +503,11 @@ void page_cache_ra_order(struct readahead_control *ractl,
+>   
+>   	limit = min(limit, index + ra->size - 1);
+>   
+> -	if (new_order < MAX_PAGECACHE_ORDER) {
+> +	if (new_order < MAX_PAGECACHE_ORDER)
+>   		new_order += 2;
+> -		new_order = min_t(unsigned int, MAX_PAGECACHE_ORDER, new_order);
+> -		new_order = min_t(unsigned int, new_order, ilog2(ra->size));
+> -	}
+> +
+> +	new_order = min_t(unsigned int, MAX_PAGECACHE_ORDER, new_order);
+> +	new_order = min_t(unsigned int, new_order, ilog2(ra->size));
+>   
+>   	/* See comment in page_cache_ra_unbounded() */
+>   	nofs = memalloc_nofs_save();
 
-Ok, now I understand it's a fallback. :)
+-- 
+Cheers,
 
-> > 
-> >> }
-> >> 
-> >> return 0;
-> >> diff --git a/tools/perf/arch/powerpc/util/dwarf-regs.c b/tools/perf/arch/powerpc/util/dwarf-regs.c
-> >> index 0c4f4caf53ac..430623ca5612 100644
-> >> --- a/tools/perf/arch/powerpc/util/dwarf-regs.c
-> >> +++ b/tools/perf/arch/powerpc/util/dwarf-regs.c
-> >> @@ -98,3 +98,12 @@ int regs_query_register_offset(const char *name)
-> >> return roff->ptregs_offset;
-> >> return -EINVAL;
-> >> }
-> >> +
-> >> +#define PPC_OP(op) (((op) >> 26) & 0x3F)
-> >> +#define PPC_RA(a) (((a) >> 16) & 0x1f)
-> >> +#define PPC_RT(t) (((t) >> 21) & 0x1f)
-> >> +#define PPC_RB(b) (((b) >> 11) & 0x1f)
-> >> +#define PPC_D(D) ((D) & 0xfffe)
-> >> +#define PPC_DS(DS) ((DS) & 0xfffc)
-> >> +#define OP_LD 58
-> >> +#define OP_STD 62
-> >> diff --git a/tools/perf/util/annotate.h b/tools/perf/util/annotate.h
-> >> index d5c821c22f79..9ba772f46270 100644
-> >> --- a/tools/perf/util/annotate.h
-> >> +++ b/tools/perf/util/annotate.h
-> >> @@ -113,7 +113,10 @@ struct annotation_line {
-> >> struct disasm_line {
-> >> struct ins  ins;
-> >> struct ins_operands  ops;
-> >> -
-> >> + union {
-> >> + u8 bytes[4];
-> >> + u32 raw_insn;
-> >> + } raw;
-> >> /* This needs to be at the end. */
-> >> struct annotation_line  al;
-> >> };
-> >> diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
-> >> index b81cdcf4d6b4..1e8568738b38 100644
-> >> --- a/tools/perf/util/disasm.c
-> >> +++ b/tools/perf/util/disasm.c
-> >> @@ -45,6 +45,7 @@ static int call__scnprintf(struct ins *ins, char *bf, size_t size,
-> >> 
-> >> static void ins__sort(struct arch *arch);
-> >> static int disasm_line__parse(char *line, const char **namep, char **rawp);
-> >> +static int disasm_line__parse_powerpc(struct disasm_line *dl);
-> >> 
-> >> static __attribute__((constructor)) void symbol__init_regexpr(void)
-> >> {
-> >> @@ -844,6 +845,59 @@ static int disasm_line__parse(char *line, const char **namep, char **rawp)
-> >> return -1;
-> >> }
-> >> 
-> >> +/*
-> >> + * Parses the result captured from symbol__disassemble_*
-> >> + * Example, line read from DSO file in powerpc:
-> >> + * line:    38 01 81 e8
-> >> + * opcode: fetched from arch specific get_opcode_insn
-> >> + * rawp_insn: e8810138
-> >> + *
-> >> + * rawp_insn is used later to extract the reg/offset fields
-> >> + */
-> >> +#define PPC_OP(op) (((op) >> 26) & 0x3F)
-> >> +
-> >> +static int disasm_line__parse_powerpc(struct disasm_line *dl)
-> >> +{
-> >> + char *line = dl->al.line;
-> >> + const char **namep = &dl->ins.name;
-> >> + char **rawp = &dl->ops.raw;
-> >> + char tmp, *tmp_raw_insn, *name_raw_insn = skip_spaces(line);
-> >> + char *name = skip_spaces(name_raw_insn + 11);
-> >> + int objdump = 0;
-> >> +
-> >> + if (strlen(line) > 11)
-> >> + objdump = 1;
-> >> +
-> >> + if (name_raw_insn[0] == '\0')
-> >> + return -1;
-> >> +
-> >> + if (objdump) {
-> >> + *rawp = name + 1;
-> >> + while ((*rawp)[0] != '\0' && !isspace((*rawp)[0]))
-> >> + ++*rawp;
-> >> + tmp = (*rawp)[0];
-> >> + (*rawp)[0] = '\0';
-> >> +
-> >> + *namep = strdup(name);
-> >> + if (*namep == NULL)
-> >> + return -1;
-> >> +
-> >> + (*rawp)[0] = tmp;
-> >> + *rawp = strim(*rawp);
-> >> + } else
-> >> + *namep = "";
+David / dhildenb
 
-Then can you handle this logic under if (annotate_opts.show_raw_insn)
-in disasm_line__parse() instead of adding a new function?
-
-Thanks,
-Namhyung
-
-
-> >> +
-> >> + tmp_raw_insn = strdup(name_raw_insn);
-> >> + tmp_raw_insn[11] = '\0';
-> >> + remove_spaces(tmp_raw_insn);
-> >> +
-> >> + dl->raw.raw_insn = strtol(tmp_raw_insn, NULL, 16);
-> >> + if (objdump)
-> >> + dl->raw.raw_insn = be32_to_cpu(strtol(tmp_raw_insn, NULL, 16));
-> > 
-> > Hmm.. can you use a sscanf() instead?
-> > 
-> >  sscanf(line, "%x %x %x %x", &dl->raw.bytes[0], &dl->raw.bytes[1], ...)
-> > 
-> > Thanks,
-> > Namhyung
-> > 
-> Sure will address in V5
-> 
-> Thanks
-> Athira
-> >> +
-> >> + return 0;
-> >> +}
-> >> +
-> >> static void annotation_line__init(struct annotation_line *al,
-> >>   struct annotate_args *args,
-> >>   int nr)
-> >> @@ -897,7 +951,10 @@ struct disasm_line *disasm_line__new(struct annotate_args *args)
-> >> goto out_delete;
-> >> 
-> >> if (args->offset != -1) {
-> >> - if (disasm_line__parse(dl->al.line, &dl->ins.name, &dl->ops.raw) < 0)
-> >> + if (arch__is(args->arch, "powerpc")) {
-> >> + if (disasm_line__parse_powerpc(dl) < 0)
-> >> + goto out_free_line;
-> >> + } else if (disasm_line__parse(dl->al.line, &dl->ins.name, &dl->ops.raw) < 0)
-> >> goto out_free_line;
-> >> 
-> >> disasm_line__init_ins(dl, args->arch, &args->ms);
-> >> -- 
-> >> 2.43.0
-> 
-> 
 
