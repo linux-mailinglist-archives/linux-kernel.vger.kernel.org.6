@@ -1,172 +1,179 @@
-Return-Path: <linux-kernel+bounces-228235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96B51915D20
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:05:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0090915D22
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:08:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB1171C217D5
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:05:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5F21F2248C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:08:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95EB54E1D2;
-	Tue, 25 Jun 2024 03:05:23 +0000 (UTC)
-Received: from smtp.cecloud.com (unknown [1.203.97.240])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198814AEFA
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:05:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.203.97.240
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1D7481DD;
+	Tue, 25 Jun 2024 03:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NR7Arvtv"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BEA12B93;
+	Tue, 25 Jun 2024 03:08:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719284723; cv=none; b=ZQ9SCxkaoQ655mLXr2ln/RuDjnikuUrjlJFysUOsA3EGrNSDCZru2KHz1oKO5ibYdCN37GEwx1LoU+92dSy4QQ2d425syQ8K8JS7RSh1mvyzdSmrdkzeWGu7AwtYdL761m4WyznjSpI1Gxm0ixBuaMaYvys44VJvxhuNZs0HQkU=
+	t=1719284916; cv=none; b=TFdgAisL9OM0QQL8zEAT4g7FKR37cG2aTUcQ/TPNxvDONOO6LVFvnnYjeJnu2Q3iAW+l9VmkvLGSUB0/Od1RBbbkjW4eMhRcihvDf83CS9x0FHOOvUwT33v4FwA0MWrTz60O34g4sdWfTDJyRF7aAxuafrNaCUllkFbRvdq6ff8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719284723; c=relaxed/simple;
-	bh=QMK1XmhKnmgYUTUZ9V/V43jdFuZ3zPgdogMXw3AYJiU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rtNY6Z/lt+2yZRU+8mM5mpAOSb45q4NZ9Adf6Au1y6jh4HToqn0rtQ4acumK4NhUGuzqk8Davpyv5Ws8Njd2MXkGjMF07gtV3LCBaXiUyH90tpoNWvgFBzr7h3ba7cg1NIfvxc+ycIvv4rdMizwQZABhP702m4xMvwIA4sWKP3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn; spf=pass smtp.mailfrom=cestc.cn; arc=none smtp.client-ip=1.203.97.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cestc.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cestc.cn
-Received: from localhost (localhost [127.0.0.1])
-	by smtp.cecloud.com (Postfix) with ESMTP id 568A9900114;
-	Tue, 25 Jun 2024 11:05:17 +0800 (CST)
-X-MAIL-GRAY:0
-X-MAIL-DELIVERY:1
-X-SKE-CHECKED:1
-X-ANTISPAM-LEVEL:2
-Received: from localhost.localdomain (unknown [111.48.69.245])
-	by smtp.cecloud.com (postfix) whith ESMTP id P1340310T281473223422320S1719284716218537_;
-	Tue, 25 Jun 2024 11:05:17 +0800 (CST)
-X-IP-DOMAINF:1
-X-RL-SENDER:liuwei09@cestc.cn
-X-SENDER:liuwei09@cestc.cn
-X-LOGIN-NAME:liuwei09@cestc.cn
-X-FST-TO:liuwei09@cestc.cn
-X-RCPT-COUNT:7
-X-LOCAL-RCPT-COUNT:1
-X-MUTI-DOMAIN-COUNT:0
-X-SENDER-IP:111.48.69.245
-X-ATTACHMENT-NUM:0
-X-UNIQUE-TAG:<bed57cd35782c123b2e918a31b672f68>
-X-System-Flag:0
-From: Liu Wei <liuwei09@cestc.cn>
-To: liuwei09@cestc.cn,
-	will@kernel.org
-Cc: catalin.marinas@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	prarit@redhat.com,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: [PATCH v4] ACPI: Add acpi=nospcr to disable ACPI SPCR as default console on ARM64
-Date: Tue, 25 Jun 2024 11:05:04 +0800
-Message-ID: <20240625030504.58025-1-liuwei09@cestc.cn>
-X-Mailer: git-send-email 2.42.1
-In-Reply-To: <20240530015332.7305-1-liuwei09@cestc.cn>
-References: <20240530015332.7305-1-liuwei09@cestc.cn>
+	s=arc-20240116; t=1719284916; c=relaxed/simple;
+	bh=wvXvpOpHcg9fE84BGcPt5U7WDSHWhdr37tQDAIuFOGg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=d2eMh2R2BwGS3vCbeffUmfcIgCcN3ETJcEZakM6m5PPwp3AAYmiTsQ00nJFxUsWvO08ZNoAMInPyGHIMRGeaOYevAij8T4m638aS+2hwY0YdHiYum/yvNzjPrX3gW15UTTyCkLJeDSjWfeGMw2eOANFx+dKhEFxiLLv21zget78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NR7Arvtv; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ec408c6d94so57806411fa.3;
+        Mon, 24 Jun 2024 20:08:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719284912; x=1719889712; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q8NST6f3dVKUFTt2czVMzr91bl3NANiLvrjnar+fBwY=;
+        b=NR7ArvtvA9iVDG1cHOkMJytoUcyVjkYIj05mIv0+335iAVgFaH0vJ5yie/9VmPDBZx
+         SGCiXnx7tfGgePaV6gCtEMmFXLsyx84thXduyZkrZ5SL8r4niS+xOA7kfJcUO5X4aa7t
+         EXwXAOWlY6n0kiGs887fgaAvHbNBSt3yEH2D6rOL1jAZ51x+bqezI+cu54Kovz2WcH5V
+         QXzhKPxmuxktj9Vou/cEX+1UZJf2Qc5I+BYDCQg4e3V2bO+fXd2dYK3Cy5fEJEgG1lE5
+         uIWr9u0iOvSr/hh4pyW2a40dV/TiFXTsK7ZUF5E+z/7WuNAE+2QCKV+vcBfhrXzQ/v6R
+         ToBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719284912; x=1719889712;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q8NST6f3dVKUFTt2czVMzr91bl3NANiLvrjnar+fBwY=;
+        b=i0H8KsEt/IPUnmz8MQcgSfj3elz4xgDKCbmQGenee5f34h7LCPLsLoNaIj3VkHMK6W
+         7V90oc8yVew/9EZBshSvLwp7pXrMsiDshuytTUJiEtc18mSWzZFJ5u2VIuEci6j3fpFQ
+         bL1NENCArMj+AUyJh2AaY914KdZ0ThX5c2W0jOi8x77fi0W9uBThT+TH9YWtzs7TTe9C
+         7r0NOKNjGuOTtU8sLz5u87Qq/YWk7APD0IQD0+PfeqCLpiDWvlLFSw7M8JoQrEI2I6lJ
+         6UTjALFB65AauhyBh7ZgMR6UTkXjYMKiwkg9RxFUMbPGIGbatfv42pra5X0P4FS2TNYz
+         PzuA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1BGH3vz3e4mXwI+8vbeYHL9HZwPtmAZ6pKXE9ARTYi5Yf4IeEprQmI+Xnx442rjKHnOGQnLYjJnMnGNzgyz8WI3VO5387k0MmwWIAEcjanNIZxSH/IWMHaRqCCXpCUwegABBaze6wC6apxH0Y
+X-Gm-Message-State: AOJu0YxZUPA21CAJQ1UufM2cP6V/oT3aUUo7YOB2tMdPIS3sTgl2LiNr
+	ugz1/nuFWQ5L6PIuiq7UFtT/gAM5fcFM/8sOjPwGM0fOgmJgQcOt4pjY49SPUpSCRDzMLimprXp
+	09Ez62L5cquOQZRec/bzwBJ8RsZ6Jb2hyU98=
+X-Google-Smtp-Source: AGHT+IG4UyEfoPioa1SHoxAlLqqbAmIjy011k5qtlhT6BlnPPcis06ZPGfY0ixG3VV3fCYw6Equed6vnH0Ic6RO75dQ=
+X-Received: by 2002:a05:651c:209:b0:2ec:5777:aa61 with SMTP id
+ 38308e7fff4ca-2ec5931002amr48440521fa.3.1719284912234; Mon, 24 Jun 2024
+ 20:08:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CABBYNZ+_sEiu-4790zY7pH7-AOi7L2Da0AFeD8W+_bSjTrXENQ@mail.gmail.com>
+ <tencent_A9AED2AEE28CA4E7D206D152E6464DC9B206@qq.com>
+In-Reply-To: <tencent_A9AED2AEE28CA4E7D206D152E6464DC9B206@qq.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Mon, 24 Jun 2024 23:08:18 -0400
+Message-ID: <CABBYNZL5xiNDzDa3JJiwx2D-qpmA8Y3RBVWLetZ0fd4jURpN7g@mail.gmail.com>
+Subject: Re: [PATCH] bluetooth/l2cap: sync sock recv cb and release
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: johan.hedberg@gmail.com, linux-bluetooth@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, marcel@holtmann.org, 
+	syzbot+b7f6f8c9303466e16c8a@syzkaller.appspotmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-For varying privacy and security reasons, sometimes we would like to
-completely silence the _serial_ console, and only enable it when needed.
+Hi Edward,
 
-But there are many existing systems that depend on this _serial_ console,
-so add acpi=nospcr to disable console in ACPI SPCR table as default
-_serial_ console.
+On Mon, Jun 24, 2024 at 8:53=E2=80=AFPM Edward Adam Davis <eadavis@qq.com> =
+wrote:
+>
+> Hi Luiz Augusto von Dentz,
+>
+> On Mon, 24 Jun 2024 09:36:14 -0400, Luiz Augusto von Dentz wrote:
+> > > > Looks like this was never really tested properly:
+> > > >
+> > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > WARNING: possible recursive locking detected
+> > > > 6.10.0-rc3-g4029dba6b6f1 #6823 Not tainted
+> > > > --------------------------------------------
+> > > > kworker/u5:0/35 is trying to acquire lock:
+> > > > ffff888002ec2510 (&chan->lock#2/1){+.+.}-{3:3}, at:
+> > > > l2cap_sock_recv_cb+0x44/0x1e0
+> > > >
+> > > > but task is already holding lock:
+> > > > ffff888002ec2510 (&chan->lock#2/1){+.+.}-{3:3}, at:
+> > > > l2cap_get_chan_by_scid+0xaf/0xd0
+> > > >
+> > > > other info that might help us debug this:
+> > > >  Possible unsafe locking scenario:
+> > > >
+> > > >        CPU0
+> > > >        ----
+> > > >   lock(&chan->lock#2/1);
+> > > >   lock(&chan->lock#2/1);
+> > > >
+> > > >  *** DEADLOCK ***
+> > > >
+> > > >  May be due to missing lock nesting notation
+> > > >
+> > > > 3 locks held by kworker/u5:0/35:
+> > > >  #0: ffff888002b8a940 ((wq_completion)hci0#2){+.+.}-{0:0}, at:
+> > > > process_one_work+0x750/0x930
+> > > >  #1: ffff888002c67dd0 ((work_completion)(&hdev->rx_work)){+.+.}-{0:=
+0},
+> > > > at: process_one_work+0x44e/0x930
+> > > >  #2: ffff888002ec2510 (&chan->lock#2/1){+.+.}-{3:3}, at:
+> > > > l2cap_get_chan_by_scid+0xaf/0xd0
+> > > >
+> > > > l2cap_sock_recv_cb is assumed to be called with the chan_lock held =
+so
+> > > > perhaps we can just do:
+> > > >
+> > > >        sk =3D chan->data;
+> > > >        if (!sk)
+> > > >                return -ENXIO;
+> > >
+> > > If the release occurs after this judgment, the same problem will stil=
+l occur.
+> > > Recv and release must be synchronized using locks, which can be solve=
+d by
+> > > adding new lock.
+> > >
+> > > Please use the new patch https://syzkaller.appspot.com/text?tag=3DPat=
+ch&x=3D15d2c48e980000, I have tested in
+> > > https://syzkaller.appspot.com/bug?extid=3Db7f6f8c9303466e16c8a
+> >
+> > Hmm, why don't we just fix l2cap_conless_channel? Btw,
+> > l2cap_conless_channel is normally not used by any profiles thus why
+> > there isn't any CI covering it, on the other hand l2cap_data_channel
+> > is used by 99% of the profiles.
+> Yes, we can fix l2cap_conless_channel, but key point is that "chan->lock"
+> cannot be used to synchronize l2cap_conless_channel and l2cap_sock_releas=
+e,
+> otherwise it will form an AA lock with l2cap_data_channel.
 
-Signed-off-by: Liu Wei <liuwei09@cestc.cn>
-Suggested-by: Prarit Bhargava <prarit@redhat.com>
-Suggested-by: Will Deacon <will@kernel.org>
-Suggested-by: Andrew Lunn <andrew@lunn.ch>
----
+Don't follow, what l2cap_conless_channel has to do with
+l2cap_data_channel? You can't have the same channel calling both, it
+is either connectionless or it is not.
 
-v2: Add a config option suggested by Prarit
+> Why not fix it in l2cap_conless_channel but in l2cap_sock_recv_cb, becaus=
+e
+> l2cap_sock_recv_cb is on the same layer as l2cap_sock_kill, using a new
+> lock for synchronization is more appropriate.
 
-v3: Use cmdline acpi=nospcr instead of config
+There are dedicated locks for both layers and now that we are doing
+chan->lock for before chan->recv the locking sequence should be the
+same in all instances.
 
-v4: Some description in comment or document
----
- .../admin-guide/kernel-parameters.txt          | 10 +++++++---
- arch/arm64/kernel/acpi.c                       | 18 +++++++++++++++++-
- 2 files changed, 24 insertions(+), 4 deletions(-)
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 11e57ba2985c..6814ff7ae446 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -12,7 +12,7 @@
- 	acpi=		[HW,ACPI,X86,ARM64,RISCV64,EARLY]
- 			Advanced Configuration and Power Interface
- 			Format: { force | on | off | strict | noirq | rsdt |
--				  copy_dsdt }
-+				  copy_dsdt | nospcr }
- 			force -- enable ACPI if default was off
- 			on -- enable ACPI but allow fallback to DT [arm64,riscv64]
- 			off -- disable ACPI if default was on
-@@ -21,8 +21,12 @@
- 				strictly ACPI specification compliant.
- 			rsdt -- prefer RSDT over (default) XSDT
- 			copy_dsdt -- copy DSDT to memory
--			For ARM64 and RISCV64, ONLY "acpi=off", "acpi=on" or
--			"acpi=force" are available
-+			nospcr -- disable console in ACPI SPCR table as
-+				default _serial_ console on ARM64
-+			For ARM64, ONLY "acpi=off", "acpi=on", "acpi=force" or
-+			"acpi=nospcr" are available
-+			For RISCV64, ONLY "acpi=off", "acpi=on" or "acpi=force"
-+			are available
- 
- 			See also Documentation/power/runtime_pm.rst, pci=noacpi
- 
-diff --git a/arch/arm64/kernel/acpi.c b/arch/arm64/kernel/acpi.c
-index e0e7b93c16cc..55757d8884d4 100644
---- a/arch/arm64/kernel/acpi.c
-+++ b/arch/arm64/kernel/acpi.c
-@@ -45,6 +45,7 @@ EXPORT_SYMBOL(acpi_pci_disabled);
- static bool param_acpi_off __initdata;
- static bool param_acpi_on __initdata;
- static bool param_acpi_force __initdata;
-+static bool param_acpi_nospcr __initdata;
- 
- static int __init parse_acpi(char *arg)
- {
-@@ -58,6 +59,8 @@ static int __init parse_acpi(char *arg)
- 		param_acpi_on = true;
- 	else if (strcmp(arg, "force") == 0) /* force ACPI to be enabled */
- 		param_acpi_force = true;
-+	else if (strcmp(arg, "nospcr") == 0) /* disable SPCR as default console */
-+		param_acpi_nospcr = true;
- 	else
- 		return -EINVAL;	/* Core will print when we return error */
- 
-@@ -237,7 +240,20 @@ void __init acpi_boot_table_init(void)
- 			acpi_put_table(facs);
- 		}
- #endif
--		acpi_parse_spcr(earlycon_acpi_spcr_enable, true);
-+
-+		/*
-+		 * For varying privacy and security reasons, sometimes need
-+		 * to completely silence the serial console output, and only
-+		 * enable it when needed.
-+		 * But there are many existing systems that depend on this
-+		 * behavior, use acpi=nospcr to disable console in ACPI SPCR
-+		 * table as default serial console.
-+		 */
-+		acpi_parse_spcr(earlycon_acpi_spcr_enable,
-+			!param_acpi_nospcr);
-+		pr_info("Use ACPI SPCR as default console: %s\n",
-+				param_acpi_nospcr ? "No" : "Yes");
-+
- 		if (IS_ENABLED(CONFIG_ACPI_BGRT))
- 			acpi_table_parse(ACPI_SIG_BGRT, acpi_parse_bgrt);
- 	}
--- 
-2.42.1
+> --
+> Edward
+>
 
 
-
+--=20
+Luiz Augusto von Dentz
 
