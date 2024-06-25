@@ -1,56 +1,63 @@
-Return-Path: <linux-kernel+bounces-228737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C054916643
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:34:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49729916644
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 219B1B2470F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CC311C208D0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B694B14B075;
-	Tue, 25 Jun 2024 11:33:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB5C14E2D0;
+	Tue, 25 Jun 2024 11:33:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7LB9nl9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEp6bcX6"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 072C3149C7F;
-	Tue, 25 Jun 2024 11:33:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CDE14C5A9
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315232; cv=none; b=Zw1Glx/6J99N5tXVc/s3Rgxu/ekW+vj/+D8yhFle8CDFJek2WpVNwyUfnasMHOXj+vZiuSRGi2qWQgX7GKY6HJrhFkPtXhHl/1uqp0JZ++X3XM/d399qE1nfQzP7YejUNfYzNG75x2E+J4upX9Nao8+KpeCJK6rMYfKzXqvHMP4=
+	t=1719315238; cv=none; b=MvpDl5d8J9rkwlVTTsiBJ1fef2cfO7SiDl6juZfoz+4Nm0fdtWiyPt08ohYj4vpprR7UfTE7CvCZBk9aA+XLI5hfK6oom6fkiQHqNcdXvz0gD+FE/jpBOwI5Ljl84vhM59VomjRMtyoRqURTTn/73u/nRH6w3TSYePuwr08xFqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315232; c=relaxed/simple;
-	bh=NqJdMjPT9r805HO+jweg1g1ihBCkWTI4j4kjDfQkDEs=;
+	s=arc-20240116; t=1719315238; c=relaxed/simple;
+	bh=8hGDqALa72DGfTvkkhudJJF0q5sZIpRhO2CA+FW1mns=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fZnsFbZG3BmwT4gbRMXOJSpKfEnL+94KxjYFE0NepKrXCpeB/L70Y8o/VqQIbN2cL024bV4cv5EMZgwPVORE3JL7npGtv4yn5ADYiptxm5f4cyerK+T3AQ2JEVK8vObp2p3d5oWhCitEHvDadIxyKbaMOT8mLmmFNGpFF2Drcq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7LB9nl9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61E1AC32781;
-	Tue, 25 Jun 2024 11:33:50 +0000 (UTC)
+	 MIME-Version:Content-Type; b=aC2a78Sjzf+opKEakGRDmlmD8Vey8DxBAX6xt9Xq1hmBbbb0Ggegdj7NqA9HNvbcV6wYdmLofQTnGXxPSTgP3U0uksiPRF6hB3+nZq+Z6tD/w9050tiacARA6MrBu8lImbb3zu1ri4ug4XZlQ6RcVQQ31JuuGOKNYHylZ0pW4Pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEp6bcX6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 418A2C32781;
+	Tue, 25 Jun 2024 11:33:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719315231;
-	bh=NqJdMjPT9r805HO+jweg1g1ihBCkWTI4j4kjDfQkDEs=;
+	s=k20201202; t=1719315237;
+	bh=8hGDqALa72DGfTvkkhudJJF0q5sZIpRhO2CA+FW1mns=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=k7LB9nl9SPm9p8yq0UhgCUR7+bcQ2vC25wnADZiANHdw/FVB5qEUdBC8IbJbQCOT1
-	 BLEEZKSC49WA0vTxYItoAqXfj2sqUj8nNQS4Boy4O2+gTssCZs5zttp/JKX0E/m1Qf
-	 Vhxh5oOW9C36dE3IXhfV/XxJoiYN2b7ssTX7cJUmQJV64C56HXcGXIEkhhBhpKFaka
-	 8kun7jFHzecU7wm6KpbiXDIIQ3GKEqdzIHqFg1iejFNdYe13loKLOfqac1dyiOFvs6
-	 fo3ZvMXOvaiC/6UhhfYyPrmWMAfrDuPMbcJ0o0SnzfDvBo//IccR6rR5fC0pt+U8/7
-	 NHtse6bPnwYuw==
+	b=AEp6bcX6PnlRu8gb8oZBfRc72mvhqpdoL2f8YzjfrqwAoT0jw9qcct/gKhCZC4ZhZ
+	 sMj1G8gk2kLGERhyYTBOyUnMnh/B4M5Sp+FD4M8YTaP8YJBDsZdOsOUr9i0msrlg6j
+	 QXj0zKRN81oBhepi1lKrcuuQki5DvARxHEWrhlMIICguL3pgkyFHCq07Nw6HJWt8Nn
+	 KjeG2kc29LgX7bx8TBV53h+crl/sWjvjothoTE6nb7TuiM/A4iY7Aiq4AYsCwsTioi
+	 ANncir6psWysfoln2gr6FJ8AZJ5qMLX58jhmD6cGkNGbDrZtqZqeS1jN+GLYz8SBVi
+	 SGTBj6P2N8w4A==
 From: Mark Brown <broonie@kernel.org>
-To: Jiaxin Yu <jiaxin.yu@mediatek.com>
-Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- angelogioacchino.delregno@collabora.com
-In-Reply-To: <20240613020725.27874-1-jiaxin.yu@mediatek.com>
-References: <20240613020725.27874-1-jiaxin.yu@mediatek.com>
-Subject: Re: [PATCH v2] ASoC: mediatek: mt6358: Add "Dmic Mode Switch"
- kcontrol for switch DMIC mode.
-Message-Id: <171931523011.64144.683590179914133512.b4-ty@kernel.org>
-Date: Tue, 25 Jun 2024 12:33:50 +0100
+To: Shenghao Ding <shenghao-ding@ti.com>
+Cc: andriy.shevchenko@linux.intel.com, lgirdwood@gmail.com, perex@perex.cz, 
+ pierre-louis.bossart@linux.intel.com, 13916275206@139.com, 
+ zhourui@huaqin.com, alsa-devel@alsa-project.org, i-salazar@ti.com, 
+ linux-kernel@vger.kernel.org, j-chadha@ti.com, liam.r.girdwood@intel.com, 
+ jaden-yue@ti.com, yung-chuan.liao@linux.intel.com, dipa@ti.com, 
+ yuhsuan@google.com, henry.lo@ti.com, tiwai@suse.de, baojun.xu@ti.com, 
+ soyer@irl.hu, Baojun.Xu@fpt.com, judyhsiao@google.com, navada@ti.com, 
+ cujomalainey@google.com, aanya@ti.com, nayeem.mahmud@ti.com, 
+ savyasanchi.shukla@netradyne.com, flaviopr@microsoft.com, jesse-ji@ti.com, 
+ darren.ye@mediatek.com
+In-Reply-To: <20240621132309.564-1-shenghao-ding@ti.com>
+References: <20240621132309.564-1-shenghao-ding@ti.com>
+Subject: Re: [PATCH v1] ASoc: tas2781: Add name_prefix as the prefix name
+ of firmwares and kcontrol to support corresponding TAS2563/TAS2781s
+Message-Id: <171931523198.64144.6255900977380836517.b4-ty@kernel.org>
+Date: Tue, 25 Jun 2024 12:33:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,17 +68,12 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14-dev-d4707
 
-On Thu, 13 Jun 2024 10:07:25 +0800, Jiaxin Yu wrote:
-> There are two hardware connection methods for DMICs on the MT6358. In cases
-> where more than two DMICs are used, we need to time-multiplex these DMICs.
-> Therefore, we need to dynamically switch the modes of these DMICs based on
-> the actual usage scenarios.
+On Fri, 21 Jun 2024 21:23:07 +0800, Shenghao Ding wrote:
+> Add name_prefix as the prefix name of firmwares and
+> kcontrol to support corresponding TAS2563/TAS2781s.
+> name_prefix is not mandatory.
 > 
->             ---- DMIC1
-> AU_VIN0 ---
->             ---- DMIC2
 > 
-> [...]
 
 Applied to
 
@@ -79,8 +81,8 @@ Applied to
 
 Thanks!
 
-[1/1] ASoC: mediatek: mt6358: Add "Dmic Mode Switch" kcontrol for switch DMIC mode.
-      commit: 4ae814dabcdae3e434820c64396e15ccb33cc0ce
+[1/1] ASoc: tas2781: Add name_prefix as the prefix name of firmwares and kcontrol to support corresponding TAS2563/TAS2781s
+      commit: 00dd4d86ed908e70d912a96ad91d1248ff055b62
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
