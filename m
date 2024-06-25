@@ -1,95 +1,80 @@
-Return-Path: <linux-kernel+bounces-228311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D3AB915E04
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:11:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C2C915E06
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:12:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4E11B2156D
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:11:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99588B21D82
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:12:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A9E143C72;
-	Tue, 25 Jun 2024 05:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9216143C72;
+	Tue, 25 Jun 2024 05:12:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="QPREX/zI";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nRYWjbf3"
-Received: from wfhigh2-smtp.messagingengine.com (wfhigh2-smtp.messagingengine.com [64.147.123.153])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fM37+rzp"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2499C13C9B8;
-	Tue, 25 Jun 2024 05:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86C4F143890;
+	Tue, 25 Jun 2024 05:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719292297; cv=none; b=pL1n3YgXe2Pono7yk6RVkKk9v4UTphmM8e+/+Q3KPInBUqgOGiLz6t0Z9is9LSSoJ6VgGLkSpGLHqFTEESH/YohlPVRndsGpSljMx9K1pE3S7L2S2EI+uW2U3lOkcIwMy1BjwrOlhCZqk5fw1hMWyb+mr2LrD7uPdzo+kNvLavM=
+	t=1719292334; cv=none; b=UgwwQqtRtOk13QTVGW3jMuJRCrUu4DzPaOT/FgmzZz4jG9Ed7pQtQ6ZpEjv9TCqeJnjkmn32Wl33tQokIEHt2QQE22cjvK5lR9cSasPmz2w8sSm6/PMKiVXcTky9ARI3qbQFTnQZoQgE0WM1fYicRelyTse6YLaNB7YxxFZitUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719292297; c=relaxed/simple;
-	bh=DOy/19zdjDeiV5mrvzvx+sa05n7UM/Te9jvjMfqZJGE=;
+	s=arc-20240116; t=1719292334; c=relaxed/simple;
+	bh=yN7B03ww6l4oUQ4hgTuqfvuuUwySdOP1eBJ2aUO1pAY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gGIY7MBKvKmhPYimZ4G3a3P6Dr+Vbklk0rQjzA0ncmizcbFf6Ox2D0ZAhnPmr+CpyMQlLshLB50hFq9/3Bztb6kB+3BSLEJSiCLOR5RMlxJAW7SPpR9aix9EQa9FfIq+lEHXJhOo6cJs13vwKcew6129hjIhTQcGZgQBMgIU0QQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=QPREX/zI; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nRYWjbf3; arc=none smtp.client-ip=64.147.123.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfhigh.west.internal (Postfix) with ESMTP id 785E3180007D;
-	Tue, 25 Jun 2024 01:11:33 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Tue, 25 Jun 2024 01:11:34 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1719292293; x=1719378693; bh=5sNiZBdV5R
-	x00kTy0wL5E5z7iGsVeBKdADwPXeyoaYE=; b=QPREX/zIYgwKUgXI5ubNuULqla
-	oTRzz1tMsDz8FmvIbJlraVuY+6WeBmnn2B6pDZ+OIpceYnwff1LdnYOTLB5GAAU/
-	6D9TeIWfs7HjBeQEVRdPZBwJR9EfRi1Hnt0/bKDjIOmT9RS8Xk77+osL8xFLBmC4
-	bFMcCE0CkhpC1HcL5VYTVjxxkwu2Y0ehpkJUOzH1lbBraTUST6qoH6fm+BUGbGWh
-	LG/7ZwPfGZvkJrP1jg6Dc4TMFe3QzxB1VDrEWzHdKp8smHpFhZpOZvmQibervhYG
-	dhyQkUK2Opvgm+4XNubTwuzMLPFJBwiDsi8sE5WBDNKoJUQYrlcSCLbcDTCQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719292293; x=1719378693; bh=5sNiZBdV5Rx00kTy0wL5E5z7iGsV
-	eBKdADwPXeyoaYE=; b=nRYWjbf3Bt6jOKbmRHu7CGVd77tbZ/IsNXVdIXOY1Hrr
-	kFIee0dAR+C7sQmZ7G6RfIyQ6G5OH/P7GzWFWqarn2FiLeeujf7BtGhC/4IehpRD
-	Jil3KahXcgEYM1J22RzGxfMk9ij9WIGTrFksuTFjQ4UYnXLJn2SmHMbTIqHvgNBA
-	dCNkldj8RHRY9IBU3BFKQv46imTDSeRRNY9XzPHRPA1N51H8ou5p64EeAPimjJgj
-	lpKuhmxL3QP22y/22AqGC4QkxQ1Q/imt5O4gbCI1hM+rnf0G8HwePllxc1GB8guc
-	oaGElnt0sB2ZXpNUJO0aiJlUJy+1yJoOo7Tn3u20gQ==
-X-ME-Sender: <xms:hFF6ZkOnUf64f57lttcJsobyPLmhuPsI92XHdjG_EsT5g8g4yBLSZA>
-    <xme:hFF6Zq-FxDiihB0QBLsCi2Do-Pligq82PsHXjv7WiTke84QQtFH7d9ZGctaiM71ZI
-    SptFXbPfke5Dw>
-X-ME-Received: <xmr:hFF6ZrR9fLIAX2Ztf-SO7f_NFCs7RDG8xK2bjHNcLCkpqxEMGbISGlfRr38PMDEgN0OfRj--5Gpy2cazffsimV2GC1bSMGX_sYUBsg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeegvddgleefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepifhrvghg
-    ucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrfgrthhtvghrnhepheegvd
-    evvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefhgfehkeetnecuvehluhhs
-    thgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepghhrvghgsehkrhhorg
-    hhrdgtohhm
-X-ME-Proxy: <xmx:hFF6ZsupxBZ2Ubg_ubmWfHFMT5tBuAxg3TNf7cS4w0JhW5-y3JB8Vg>
-    <xmx:hFF6ZsdxsC8RJmTfS-shQaHp4D98SrAzEMKk502dpkw8Fte5dAIr_Q>
-    <xmx:hFF6Zg3Ys8px2Q5eYnBf1Dxu7mlrCiX5e56FNn_Wu1bn9QnGp5DozA>
-    <xmx:hFF6Zg89SMd_IheXbrLUDuxD529GB5oTg2LVjel1hmn8TpvNCzX1Ow>
-    <xmx:hVF6Zn3vrVPG0SzDBT-PhbiG2MsWofqGLjnkYFiPIK-FuS43FCQfFIMa>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 25 Jun 2024 01:11:32 -0400 (EDT)
-Date: Tue, 25 Jun 2024 07:11:30 +0200
-From: Greg KH <greg@kroah.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
-	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund+renesas@ragnatech.se>,
-	Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the driver-core tree
-Message-ID: <2024062524-numbing-winking-dde5@gregkh>
-References: <Znm5qDrsqIY8VNTc@sirena.org.uk>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tyc4AaY/DcFaKI8rCbWOZltggulLpERM+KNT0yg1OJsRQGBp5dmFj0md6Os0VHx7/PiBHn/rQzqjmMjGCQqrmY4gVP5ZMwRC5PoBxr8NILpb8JamHBiKuToz0IBr/40oqBJXrk0rTKVonoa+mDNDbqWUq/Y6qnsVtgpYWYHS+SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fM37+rzp; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719292333; x=1750828333;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=yN7B03ww6l4oUQ4hgTuqfvuuUwySdOP1eBJ2aUO1pAY=;
+  b=fM37+rzpcCJ7YU+PCddhneBddEqlSqTxC5hgn8QUP0rWIAOjJYeqgYJd
+   i8n6hlyKOs6tOFRq9+FE26PD2qBJhVwvMZ89ZM5yIhyTq6EQ5eeHM5HZ0
+   0EUxRL34pNT9o+5lM8VWM9YcZ2ppKlkzQEPHtu++RDNNcXXQXu2Z1S0FD
+   2LmXj5R6JvigOkENBPIwXbPbC83e2CoqyDWOrANJG0PKooQf5i6C0O3X2
+   BrCxWEASffH2XHyZwyQrq2MO9+ZXhdZ0nl9CBfg4yljaurDB9bnwu9D7k
+   OtVRA6I+og1ymLNlASX91BnyDHrRJ0U4iZbuSym7yn/5QsZ+imG7nwUoA
+   w==;
+X-CSE-ConnectionGUID: 73pykXluRTG54h+SlXWS4Q==
+X-CSE-MsgGUID: 00Gtfzm/T4yk12+1apxleA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11113"; a="16434017"
+X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
+   d="scan'208";a="16434017"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 22:12:12 -0700
+X-CSE-ConnectionGUID: iSUXVXohR3eOK6BykvmqsQ==
+X-CSE-MsgGUID: RlnSrIcLTe2g6WCYE8S47Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,263,1712646000"; 
+   d="scan'208";a="48694455"
+Received: from unknown (HELO tlindgre-MOBL1) ([10.245.247.67])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Jun 2024 22:12:08 -0700
+Date: Tue, 25 Jun 2024 08:12:03 +0300
+From: Tony Lindgren <tony.lindgren@linux.intel.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Petr Mladek <pmladek@suse.com>,
+	Linus Torvalds <torvalds@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/4] Fixes for console command line ordering
+Message-ID: <ZnpRozsdw6zbjqze@tlindgre-MOBL1>
+References: <20240620124541.164931-1-tony.lindgren@linux.intel.com>
+ <ZnWRup3MvcVQ4MX8@pathway.suse.cz>
+ <2024062403-skid-gotten-7585@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,68 +83,105 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Znm5qDrsqIY8VNTc@sirena.org.uk>
+In-Reply-To: <2024062403-skid-gotten-7585@gregkh>
 
-On Mon, Jun 24, 2024 at 07:23:36PM +0100, Mark Brown wrote:
-> Hi all,
+On Mon, Jun 24, 2024 at 03:35:39PM +0200, Greg Kroah-Hartman wrote:
+> On Fri, Jun 21, 2024 at 04:44:10PM +0200, Petr Mladek wrote:
+> > Added Linus into Cc.
+> > 
+> > On Thu 2024-06-20 15:45:25, Tony Lindgren wrote:
+> > > Hi,
+> > > 
+> > > Recent changes to add support for DEVNAME:0.0 style consoles caused a
+> > > regression with the preferred console order where the last console on
+> > > the kernel command line is no longer the preferred console.
+> > > 
+> > > The following four changes fix the issue using Petr's suggestion that
+> > > does not involve calling __add_preferred_console() later on again, and
+> > > adds the deferred consoles to the console_cmdline[] directly to be
+> > > updated when the console is ready.
+> > > 
+> > > We revert the earlier printk related changes, and then add back the
+> > > DEVNAME:0.0 functionality based on Petr's code snippet. And we end up
+> > > reducing the code quite a bit too this way.
+> > > 
+> > > And we also revert all the unusable serial core console quirk handling,
+> > > it does not do anything for the legacy "ttyS" named consoles. And then
+> > > we add a minimal serial_base_match_and_update_preferred_console().
+> > > 
+> > > The reason we want DEVNAME:0.0 style consoles is it helps addressing the
+> > > console based on the connected serial port controller device rather than
+> > > using the hardcoded ttyS addressing. And that helps with issues related
+> > > to the console moving around after togging the HSUART option in the BIOS,
+> > > or when new ports are enabled in devicetree and aliases are not updated.
+> > > 
+> > > Tony Lindgren (4):
+> > >   printk: Revert add_preferred_console_match() related commits
+> > >   printk: Add match_devname_and_update_preferred_console()
+> > >   serial: core: Revert unusable console quirk handling
+> > >   serial: core: Add serial_base_match_and_update_preferred_console()
+> > > 
+> > >  drivers/tty/serial/8250/8250_core.c  |   5 -
+> > >  drivers/tty/serial/serial_base.h     |  22 +---
+> > >  drivers/tty/serial/serial_base_bus.c | 116 +++------------------
+> > >  drivers/tty/serial/serial_core.c     |   2 +-
+> > >  include/linux/printk.h               |   5 +-
+> > >  kernel/printk/Makefile               |   2 +-
+> > >  kernel/printk/conopt.c               | 146 ---------------------------
+> > >  kernel/printk/console_cmdline.h      |   7 +-
+> > >  kernel/printk/printk.c               | 122 ++++++++++++++++------
+> > >  9 files changed, 112 insertions(+), 315 deletions(-)
+> > >  delete mode 100644 kernel/printk/conopt.c
+> > 
+> > The patchset looks ready for linux-next. And I have pushed it
+> > into printk/linux.git, branch for-6.10-register-console-devname.
+> > 
+> > I am not sure about the mainline. We need to fix the regression in 6.10.
+> > The change is not trivial and rc5 is knocking on the doors.
+> > 
+> > Unfortunately, the patchset intermixes reverts and new code.
+> > So that it can't be used for simple revert as is.
+> > 
+> > I am quite confident that the new code works as expected.
+> > It changes tricky code but the logic of the change is quite
+> > straightforward.
+> > 
+> > 
+> > I see three solutions:
+> > 
+> > 1. Linus could merge the changes directly into rc5.
+> > 
+> > 2. I could send a pull request after it survives few days in
+> >    linux-next.
+> > 
+> > 3. Or we rework the patchset. And do pure revert for 6.10 and
+> >    add the feature a clean way for-6.11.
 > 
-> After merging the driver-core tree, today's linux-next build
-> (x86_64 allmodconfig) failed like this:
-> 
-> /tmp/next/build/drivers/net/ethernet/renesas/rtsn.c:1381:27: error: initialization of 'void (*)(struct platform_device *)' from incompatible pointer type 'int (*)(struct platform_device *)' [-Werror=incompatible-pointer-types]
->  1381 |         .remove         = rtsn_remove,
->       |                           ^~~~~~~~~~~
-> /tmp/next/build/drivers/net/ethernet/renesas/rtsn.c:1381:27: note: (near initialization for 'rtsn_driver.<anonymous>.remove')
-> 
-> Caused by commit
-> 
->   0edb555a65d1e ("platform: Make platform_driver::remove() return void")
-> 
-> interacting with
-> 
->   b0d3969d2b4db ("net: ethernet: rtsn: Add support for Renesas Ethernet-TSN")
-> 
-> I have applied the below patch.
-> 
-> From 8f276c3b5b1be09214cbd5643dd4fe4b2e6c692f Mon Sep 17 00:00:00 2001
-> From: Mark Brown <broonie@kernel.org>
-> Date: Mon, 24 Jun 2024 19:02:24 +0100
-> Subject: [PATCH] net: ethernet: rtsn: Fix up for remove() coversion to return
->  void
-> 
-> Fixes: 0edb555a65d1e ("platform: Make platform_driver::remove() return void")
-> Signed-off-by: Mark Brown <broonie@kernel.org>
-> ---
->  drivers/net/ethernet/renesas/rtsn.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/renesas/rtsn.c b/drivers/net/ethernet/renesas/rtsn.c
-> index ad69d47463cbd..5a6cc99e6b35a 100644
-> --- a/drivers/net/ethernet/renesas/rtsn.c
-> +++ b/drivers/net/ethernet/renesas/rtsn.c
-> @@ -1358,7 +1358,7 @@ static int rtsn_probe(struct platform_device *pdev)
->  	return ret;
->  }
->  
-> -static int rtsn_remove(struct platform_device *pdev)
-> +static void rtsn_remove(struct platform_device *pdev)
->  {
->  	struct rtsn_private *priv = platform_get_drvdata(pdev);
->  
-> @@ -1372,8 +1372,6 @@ static int rtsn_remove(struct platform_device *pdev)
->  	pm_runtime_disable(&pdev->dev);
->  
->  	free_netdev(priv->ndev);
-> -
-> -	return 0;
->  }
->  
->  static struct platform_driver rtsn_driver = {
-> -- 
-> 2.39.2
-> 
+> Pure revert for 6.10 might be good, as it's late in the cycle.  Let me
+> know the git ids and I can do that.
 
-Looks good, thanks!
+Here's the list of git ids to revert:
 
-greg k-h
+$ git log --abbrev=12 --pretty=format:"%h (\"%s\")" v6.9..v6.10-rc5 \
+--author="Tony Lindgren" kernel/printk drivers/tty/ Documentation/admin-guide/
+b20172ca6bf4 ("serial: core: Fix ifdef for serial base console functions")
+4547cd76f08a ("serial: 8250: Fix add preferred console for serial8250_isa_init_ports()")
+5c3a766e9f05 ("Documentation: kernel-parameters: Add DEVNAME:0.0 format for serial ports")
+a8b04cfe7dad ("serial: 8250: Add preferred console in serial8250_isa_init_ports()")
+a0f32e2dd998 ("serial: core: Handle serial console options")
+787a1cabac01 ("serial: core: Add support for DEVNAME:0.0 style naming for kernel console")
+b73c9cbe4f1f ("printk: Flag register_console() if console is set on command line")
+8a831c584e6e ("printk: Don't try to parse DEVNAME:0.0 console options")
+f03e8c1060f8 ("printk: Save console options for add_preferred_console_match()")
+
+> > I personally prefer the 3rd solution. But I am super conservative.
+> > I guess that most other people would go with the other 2 solutions.
+> 
+> I'll be conservative here as well.
+
+Conservative is good.
+
+Regards,
+
+Tony
 
