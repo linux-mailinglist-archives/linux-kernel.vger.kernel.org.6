@@ -1,105 +1,138 @@
-Return-Path: <linux-kernel+bounces-228861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 419219167E6
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:33:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E96C9167E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:33:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9847B28209
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:33:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80F0C1C20D37
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B561553A2;
-	Tue, 25 Jun 2024 12:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83DB01553B3;
+	Tue, 25 Jun 2024 12:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DOp1rDAq"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6fZjpz2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F8A14B091;
-	Tue, 25 Jun 2024 12:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC7A414831F;
+	Tue, 25 Jun 2024 12:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719318776; cv=none; b=LQT57oQjpbQVk8wPjj5wefugklGSOKj3JyU4ivpkQdO2VwFOH9F4AeE+lFNrrIvlypXuPEwPhb71FhvghJkqwTmLqDfI4x57RY0X8GC3PwvkmBl5b3aT6KwSYIo4mzTry8SS90XCJi67GaRlkakScRPCGJezzhqDjRyG+cAgfW4=
+	t=1719318794; cv=none; b=NagYlL9f3ewqD1CmOxHXtVGz8IURXmjuUZy+OFyLRxl5yyohg39pI/qJ3XuMIYlKyLNKDDSxEtWEaBXPIEYFfAN47Q5IkJj/BZPjZge1xTTWAtxshod9560+wYua4WIUTNHb8dAvF7DjfNGH5bWVSRNiXfje4oaAv1vqooT8odE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719318776; c=relaxed/simple;
-	bh=jax1LOTh2JiPAGq4tsyp2HMkEK6vupoll6oTv96ic3c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=udcX2tJ6VFIQmL7YgtCN1iUZX38Z57YwhxoiE0dIruKP0jfuPXo4yeb0tvx7tehe8BxKRwkzN+MWPYtQykMO4PmtK78AfHyuqQgjc0CXQFaCIsqxnkRlu/dvU6aeOw2Ust8EvKdmJmFsvXUyeRqGSiVdtbv0DFqymFQJLiEX64o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DOp1rDAq; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so59836321fa.2;
-        Tue, 25 Jun 2024 05:32:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719318772; x=1719923572; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vJG5YoibKlpkyRo0y3DdOvaMl7oM0h1j0RRMvKszlts=;
-        b=DOp1rDAqepFOAJF9wBem5rxbyjiN1SiYXHwDKelfmXc10ex28fesyuv2ekZuAiW3xK
-         S0o8NfxEIxQACeom7BhuUa/ADLZfMjOy1hAwn8DUJVFZzT8gxWjXcmHgBo3dFQGQs+r+
-         l7SnS/bKjaXylkwSz2YhhCUfzsdUnmRosRnzbHwQWNXDEqmDtQ3kzeHRtevFWlM1e3aO
-         481Dua07XN3kESNTGrjrU4mfpl6fkf5YiVTZnxcepNsKGwaee9YdQ455D9gos74yT6zg
-         MXcMM0r6tnMxrMCP+15x966fB8CoIo/sQ2QK9WnoMsWCfX4dS3JU4SxhdFIrzkcWC9PS
-         cWVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719318772; x=1719923572;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vJG5YoibKlpkyRo0y3DdOvaMl7oM0h1j0RRMvKszlts=;
-        b=UECSytHd/Qw5KxslS1hzI2xw+CsBT2MUMMU/QHjERBvLF9d6iZW9Fq0D8vg3fOKnnw
-         qqVUTE6YJv5WrPirirhi66qIWGzUb6wc8T4Du74Udj6BqvXQIVZHLuon1PfjXqG0v+Lw
-         Ld98UwAApR9XDe9lpejLy85sc7g7H10bFueWtY5pG6kX8bWqQ+ceiJm3l9jI7byBpEcX
-         tJBL5YW+Vz3C34qN+wPCv7hiYGmm4H7cZLKduFoOexUkxhF9chSICVKi4rAKHBpqFuA9
-         D0YMEVP7r3KWrjHAcLXG3AbqtCdZYEOkOkk3xOeTs5P6FS6QaFIeLtKe2RldcI8FqRL9
-         N14g==
-X-Forwarded-Encrypted: i=1; AJvYcCXSJfe4mZGehCzip7AZntsN/DLP7vJV1TCYwGmTdBFfZD9Z/rDzozr1EmWrS12gb3IEOMAi0k345E7fFujjrVqEayQRXGR6QH99/0028JSqqxnvktxMGNI8SgbF5Wna6TUG7NqDcuO2uLfRZqqWYHpcd8XU65+7iDP2lPB+FacgBs/vmQ==
-X-Gm-Message-State: AOJu0Yznse73/kAdyD2inwKnSvuqKVrSnGWGpuNNUAsu6f8lxuwLQ8Xr
-	e+I8sLCB01YsZglGoGqMzqbRMA2QX/MVvwt9/GSEKw5Ss/VQPz/n
-X-Google-Smtp-Source: AGHT+IHrq4jVzTqZE1uNfWg9tb8O22LmO6dOjioBxfQu7ZNX2sgEezbk18ODgnKQ/Wh+Kz6njYn/XA==
-X-Received: by 2002:a05:6512:138e:b0:52c:e08c:a0dc with SMTP id 2adb3069b0e04-52ce185f753mr5189826e87.51.1719318771577;
-        Tue, 25 Jun 2024 05:32:51 -0700 (PDT)
-Received: from skbuf ([188.25.55.166])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817a9667sm168583705e9.15.2024.06.25.05.32.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 05:32:51 -0700 (PDT)
-Date: Tue, 25 Jun 2024 15:32:48 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev
-Subject: Re: [PATCH v4 1/3] spi: fsl-dspi: use common proptery
- 'spi-cs-setup(hold)-delay-ns'
-Message-ID: <20240625123248.2svpybglw2ydd6gg@skbuf>
-References: <20240624-ls_qspi-v4-0-3d1c6f5005bf@nxp.com>
- <20240624-ls_qspi-v4-1-3d1c6f5005bf@nxp.com>
+	s=arc-20240116; t=1719318794; c=relaxed/simple;
+	bh=IvZsxcaW6DWWuyobmb7LUklrNc1sMFAOoDwMsv2+SXw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TA2Sj5VfsOm2FYfZ6AyviEz3a1G8T6ZcZTsr8oEht2wSOUstp1vRs0YxqlyZnD59yZQyhvF1CaC7UGFLc5C0bRIUBgSoco7kfal5NAhiUkz+7Jy6W5LD6WIXqWOFtMpmKy9cfxC0Ocago7hh4ppgMF2srjnx4KRORGoBjheROFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6fZjpz2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 336B6C32786;
+	Tue, 25 Jun 2024 12:33:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719318794;
+	bh=IvZsxcaW6DWWuyobmb7LUklrNc1sMFAOoDwMsv2+SXw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=B6fZjpz2qM+OlaAn+QOLgRtJRLrNQmM07NvNguBZvqYOZ52EB8ncyg+CPkbfQpmj3
+	 7/ihZezX9cYkMtriQFuAxMvQm3Ue7AYLSkBn/6RbF+RF2S6VsZ1yi7iXbGmC3xZTHE
+	 IjqP4uhudcfn8XCtpC7+w1ILaJEbMA2Ew/1URK79ycgFE8dcyNCqbWFo7p5nYdujka
+	 au9lyf7iBd8oQA8QVtiULXumJQn7Roex2VVU5uTe+JEuEHiiFh8thh08bi49bb0Wie
+	 xfxorqF7b2Y7PxkR2thHf2niEzQtZ2atiZ7DPSGjpuz9atkM04FbMXz9+u6JZH6rPL
+	 1B9rPvsH9usEQ==
+Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-25075f3f472so656859fac.2;
+        Tue, 25 Jun 2024 05:33:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVCx55Ve+AzwWOtSunFIaJVcwhYU/h4l2uheD7fuv3EyU3SMGieS/q9sJF0lqGL6yDTXwyW4rVCkO3so/W371MX2Ar/13fH7ZYjnwUNZ+beTQJh0EhzTZSWbrlYVUTLy6jHT6SEj50=
+X-Gm-Message-State: AOJu0YyzkEymJv+KXMNqjbi/Teeajn5P9hXkSjdN9YRqLaFo4w+8W1Ri
+	iWn5V3dwgt8h92GHhBy/yIdFoopha7WzWhHSSbww4+kSzbIcwfn4oEF/WcK2W5CMI3MDBxR7N90
+	T5zuI//tK/bZZoE17GBFH3MrQN1s=
+X-Google-Smtp-Source: AGHT+IFRr9D925+0qBI83k8w0CC7kMzAiMaZXAnsNnt6khprfnp9xrRlQy4NDHwFieqMb3UKWHtgvj/qu3nKhOI02rA=
+X-Received: by 2002:a05:6870:9a1b:b0:25d:d69:eaf with SMTP id
+ 586e51a60fabf-25d0d69146bmr7449277fac.4.1719318793453; Tue, 25 Jun 2024
+ 05:33:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624-ls_qspi-v4-1-3d1c6f5005bf@nxp.com>
+References: <12464461.O9o76ZdvQC@rjwysocki.net> <ZnpzBuWbKxbrKvoR@hovoldconsulting.com>
+In-Reply-To: <ZnpzBuWbKxbrKvoR@hovoldconsulting.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Tue, 25 Jun 2024 14:33:01 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gytZB=WcEhFkuoOOf_X1=QBYy7+FnVEWLavXzFZc5E=g@mail.gmail.com>
+Message-ID: <CAJZ5v0gytZB=WcEhFkuoOOf_X1=QBYy7+FnVEWLavXzFZc5E=g@mail.gmail.com>
+Subject: Re: [PATCH v1] thermal: gov_step_wise: Go straight to instance->lower
+ when mitigation is over
+To: Johan Hovold <johan@kernel.org>
+Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>, Linux PM <linux-pm@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Lukasz Luba <lukasz.luba@arm.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, Zhang Rui <rui.zhang@intel.com>, 
+	Jens Glathe <jens.glathe@oldschoolsolutions.biz>, Steev Klimaszewski <steev@kali.org>, 
+	Johan Hovold <johan+linaro@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 24, 2024 at 02:55:27PM -0400, Frank Li wrote:
-> Use SPI common DT binding properties 'spi-cs-setup-delay-ns' and
-> 'spi-cs-hold-delay-ns'. If these properties do not exist, fall back to
-> legacy 'fsl,spi-cs-sck-delay' and 'fsl,spi-sck-cs-delay'.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-> ---
-> Change from v3 to v4
-> - check spi_delay_to_ns() return value, which may return negative value as
-> error code. It will be very big value when cast to u32.
-> ---
+On Tue, Jun 25, 2024 at 9:34=E2=80=AFAM Johan Hovold <johan@kernel.org> wro=
+te:
+>
+> On Sat, Jun 22, 2024 at 02:26:33PM +0200, Rafael J. Wysocki wrote:
+> > From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >
+> > Commit b6846826982b ("thermal: gov_step_wise: Restore passive polling
+> > management") attempted to fix a Step-Wise thermal governor issue
+> > introduced by commit 042a3d80f118 ("thermal: core: Move passive polling
+> > management to the core"), which caused the governor to leave cooling
+> > devices in high states, by partially revering that commit.
+>
+> typo: reverting
 
-Reviewed-by: Vladimir Oltean <olteanv@gmail.com>
+Thanks!
+
+> > However, this turns out to be insufficient on some systems due to
+> > interactions between the governor code restored by commit b6846826982b
+> > and the passive polling management in the thermal core.
+>
+> Care to elaborate on what went wrong here? In my test of the previous
+> fix I saw the frequency ramping up in steps as expected when the
+> temperature dropped. Under what circumstances would that fail to happen?
+
+System suspend-resume would interfere with that as it would call
+thermal_zone_device_init().
+
+> > For this reason, revert commit b6846826982b and make the governor set
+> > the target cooling device state to the "lower" one as soon as the zone
+> > temperature falls below the threshold of the trip point corresponding
+> > to the given thermal instance, which means that thermal mitigation is
+> > not necessary any more.
+> >
+> > Before this change the "lower" cooling device state would be reached in
+> > steps through the passive polling mechanism which was questionable for
+> > three reasons: (1) cooling device were kept in high states when that wa=
+s
+> > not necessary (and it could adversely impact performance), (2) it only
+> > worked for thermal zones with nonzero passive_delay_jiffies value, and
+> > (3) passive polling belongs to the core and should not be hijacked by
+> > governors for their internal purposes.
+>
+> I've tested this patch on the Lenovo ThinkPad X13s, where I could
+> reproduce the rc1 regression, and things works as intended with the
+> fix applied to rc5:
+>
+> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+>
+> The CPU frequency still oscillates heavily but now with a more
+> sawtoothed curve.
+>
+> Not sure if it helps with performance, though, as running the CPU at
+> full speed as soon as we drop below the threshold (with hysteresis)
+> also means that we get back to running at the lowest frequency even
+> faster.
+
+True, but assuming that the reason for the mitigation is still there.
+If it's actually gone, it's better to stop cooling as soon as it can
+be done.
+
+Thanks!
 
