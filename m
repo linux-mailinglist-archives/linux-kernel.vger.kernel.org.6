@@ -1,96 +1,138 @@
-Return-Path: <linux-kernel+bounces-229429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E9CD916F78
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:43:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 725F5916F7B
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 19:43:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDBBDB22F7E
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:43:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BC4D286007
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:43:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D9417554C;
-	Tue, 25 Jun 2024 17:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03048176FB2;
+	Tue, 25 Jun 2024 17:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="OuCy10oO"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W/OYHY+F"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0A7F135A69
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 17:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87FE172786
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 17:43:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719337414; cv=none; b=GG0aL190ezFrJ8iHOB5hh267dAY1gHuqnskBHaSEI2J4VJTpytyYxxEaKuAS5VGiHZGRFUHNFQVJUcV7vStPGPxyHXBraB2EEzpeX8gnFAzmDPfrHj1dSsRMk/7Kp3jjp1vix/lW+4QrY1rylspvyPG1EwYPfU42GZwk7fVe+Fw=
+	t=1719337429; cv=none; b=p3YvslBZ7JsStBU+UJHIqUDf8gnwVEbA9+ZKWRC6vQH0AYxS+nYWgIFpWRu0F+AYzGSZ55uOb1BpJ7mXZAdHgFufZeOymYflgTCo7xsCxutsIiSzTuB0pcXd4+eAFaiyM3PNVj3QrhV1ffQtTOv/upUOYT0C1iepy7Hv8EQ6v3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719337414; c=relaxed/simple;
-	bh=zhOpRhnIOjLhIPQbQ88jS6vvBNDxTzPQUPHVdQKG4B8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qxguLqMrIzUJ30R9DDPqVbVEQvb4h5+y22EDRu26WpqqEjojTtV7nF/COYsurYvafRa3ksWfcySGa0HXnQiSolrW+y/6/rqELLXaRQRN/LNb70t5y9mA5X9EDqJK8fRPHRyfP4OBWyJxQqBlZ8amlalS5uFqEC96YF3OoH/ZnNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=OuCy10oO; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a724b9b34b0so328960866b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:43:31 -0700 (PDT)
+	s=arc-20240116; t=1719337429; c=relaxed/simple;
+	bh=5VgSZVq02U6IsfJaYVV8DFuJwm1vUyaN05VICVFOxus=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oCMNa1eyvgUVpwdhKN0iqaDOFl4eA5JdG/1GR5U+l9DJ8DV2o+LVM0m905OUFJpaLjQ0RVdjCibJQ3QGyQFCpi34WIIfRbv7+7KTSCDX5iKFH0+buQY7nu5P/2s+gKvYDEak39cvF4RGuo28usmXNzfZU2c9cvoUEoIAwHpb1b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W/OYHY+F; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1fa4b332645so13775ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:43:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1719337410; x=1719942210; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=uzVgUsCCX9BTm0IzqnKAAox23KAf8QNQ5ErJoiP6+dc=;
-        b=OuCy10oOBgq7rRHkdeY0tqugVH4Bg65OfqCTIL875AjzD1cVfbVERkS/DxKua6faxg
-         F46X25VGFJoG8/67EoIOpZx4Ju8myATfuCXg3w7WD51EZyS3cdtVuJje3kkFxYz6wexs
-         7ypgs824XSNA5x7IPglO4S1Tz1pIJxgdddDWA=
+        d=google.com; s=20230601; t=1719337427; x=1719942227; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4NkneRAeqFnNlsteKCtsOu3L6FUBOoIj11zyXycSDMA=;
+        b=W/OYHY+FqOuGsUAAM/lAWLh82jL8pplO7SJnUwwrO5+kVHVMmM+qm1p0l/ljd52Tjr
+         sapjoSSvANCNt13dUiMSMmpURFAWKTHL0/eackqcJ5vm31hhOZ1WcbOcaKwAg1nUQOM2
+         N1A91yG5/2ThGzxAToDfafgeHDt8+cGHwTAxIb4+xXiaRzeTO+TiSavGywEsWYrP8GG5
+         DpdWAwyyuRD6dqG2nTvI069vEr8suShUjKeyuxtkj4lG+aDid2BtndGi9pFpMOF2N0em
+         es5rQfRY5O5lvrFryaerqqlmlWngtc1MK5jfFXTqkmEKX16BE0Rfc/YBiLMUmtx3eEHl
+         +ZZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719337410; x=1719942210;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uzVgUsCCX9BTm0IzqnKAAox23KAf8QNQ5ErJoiP6+dc=;
-        b=fwvFEHqRpmRMIo7pBOer4VDaP4tev0hbvtAeyWBsR9nVQ0agtPoRxSypIXVkLKrCec
-         ZnwFj4cSehsEMFeCooyuz6obB1ogisM25kfQ+Shi+w5I4qvtrVuEszhOK8Rmf8yAYKoW
-         84KwuGJYnUZ20yaacQsPOYsgYdaTV9PT4+kYwzwKCEWVIy4J/RP52qbZIFEGd96T4fTk
-         10wxNjV+Wnv3XAHTA5oq3y4tOs669JJfW+bK3oJbivYxubzDLDVZ6jzYVhqdxWuT69Na
-         gsZNGbNVt6Jbc/kpsV68FmFjmtVltS/PiWDXmoVHklruIq5k/ucpYB6wn4/oUbrSh6El
-         W8GA==
-X-Gm-Message-State: AOJu0Ywx0CgxFyx4Uv9/1Uh03UPkmL9gOxqK9gBV1VjP13vffizJsUCf
-	fhalUXpaL9bmJa16iX3U4jZqbpGxp4U8zkaC3K9Vh9JUbUJW0B1AZ5pFBwA2iFwx47V+kRKClLn
-	fIZIUwA==
-X-Google-Smtp-Source: AGHT+IFc083Czc1mmXhtU1/req4JiNBYzFtlE8zuW7kITqbtbOCUIpiSJVDnebe8VT8aZ+oSUfN6gA==
-X-Received: by 2002:a17:907:c281:b0:a71:ddb1:37fd with SMTP id a640c23a62f3a-a7245cc4a0dmr613170266b.65.1719337410040;
-        Tue, 25 Jun 2024 10:43:30 -0700 (PDT)
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72457301a8sm335433366b.90.2024.06.25.10.43.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 10:43:29 -0700 (PDT)
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a724b9b34b0so328957966b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:43:29 -0700 (PDT)
-X-Received: by 2002:a17:907:8b8c:b0:a72:6b08:ab1a with SMTP id
- a640c23a62f3a-a726b08abdbmr214490066b.46.1719337409082; Tue, 25 Jun 2024
- 10:43:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719337427; x=1719942227;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4NkneRAeqFnNlsteKCtsOu3L6FUBOoIj11zyXycSDMA=;
+        b=ao9c0eto6qtH256lph28qIA7xUybQfiMMbe32Rca4NSyt0qASSfk3kPbIu4lwzxGDV
+         c6T0fs0IGWgsRXWW8HJ006/0b04jMaQl0s3cnGXGeATw+A92r+SoCGaqDPJCcmv/TAWu
+         3Y6wsj2cjC2MEQawVD0LVObnA+ueqiK7n8ln/Q2Yc0uM8RotHKGh/VN73GAWLrkcjtYS
+         7UGCdohUNK1PZrFHvIWfyAJy9vie0Xmo9RSGx6lBRb/4RQ8x/YCrPP3Li4s+thMcHblV
+         4j5zd8kjoRlgJZZRzkHEUHxGlNXf777ogx1bFEV9uAyp76hm7TVMkgUvWaYL7o4vsfoA
+         mhpA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYa9xk+31vnuqLPAmeTvvAI2Q997GejOpB8+5ss4i0d+6DIxnuQTx/Hwyw4NWbgAWrS+iy6EqoyVEyTS5K1QwAnExJLNMmkUcNcRnd
+X-Gm-Message-State: AOJu0YxBNZTflWXL29Dfohi94EfDqK50MZvs8SDe2sRXF5us7kJnOmVg
+	90Nh5YpHMl3mEj+1+91gOOJRbHKh/EbsIC/bauYnAJK3YdvxzOwl3oFuzPQsVQ==
+X-Google-Smtp-Source: AGHT+IE3GbbrPTfGHz1QMDfN5VvYW2z9EAbtcbC6WTIkswzUwNwFll/14uYbFQbRSRjJoZ445WDIng==
+X-Received: by 2002:a17:902:fb90:b0:1f8:9300:5361 with SMTP id d9443c01a7336-1fa6cae64cemr3548585ad.27.1719337426194;
+        Tue, 25 Jun 2024 10:43:46 -0700 (PDT)
+Received: from google.com ([2620:15c:2d:3:9a90:b76f:c388:1248])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3d5ad9sm84394175ad.204.2024.06.25.10.43.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 10:43:45 -0700 (PDT)
+Date: Tue, 25 Jun 2024 10:43:41 -0700
+From: Isaac Manjarres <isaacmanjarres@google.com>
+To: John Stultz <jstultz@google.com>
+Cc: tglx@linutronix.de, "Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	saravanak@google.com, Manish Varma <varmam@google.com>,
+	Kelly Rossmoyer <krossmo@google.com>, kernel-team@android.com,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5] fs: Improve eventpoll logging to stop indicting
+ timerfd
+Message-ID: <ZnsBzfSPZlrhpB1t@google.com>
+References: <20240606172813.2755930-1-isaacmanjarres@google.com>
+ <CANDhNCqhJRLgvhAong-5zjsfwk2sL7pNbK0EqWsPcaA+AuzxDQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wiMMT-2pfJZ8ckbnGTbSHy5mvvE=+-MyA_ARPUqiy_C1w@mail.gmail.com>
- <59fc40ca-3ab2-4227-948d-e18a0c713bde@roeck-us.net>
-In-Reply-To: <59fc40ca-3ab2-4227-948d-e18a0c713bde@roeck-us.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Tue, 25 Jun 2024 10:43:10 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjqctCputmUNDPnf7W+TT00uzYs62cr4Nq4tyE9Yvbp_A@mail.gmail.com>
-Message-ID: <CAHk-=wjqctCputmUNDPnf7W+TT00uzYs62cr4Nq4tyE9Yvbp_A@mail.gmail.com>
-Subject: Re: Linux 6.10-rc5
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANDhNCqhJRLgvhAong-5zjsfwk2sL7pNbK0EqWsPcaA+AuzxDQ@mail.gmail.com>
 
-On Tue, 25 Jun 2024 at 10:15, Guenter Roeck <linux@roeck-us.net> wrote:
->
-> Nothing to report from my testing.
+On Mon, Jun 24, 2024 at 11:03:43AM -0700, John Stultz wrote:
+> On Thu, Jun 6, 2024 at 10:28 AM 'Isaac J. Manjarres' via kernel-team
+> <kernel-team@android.com> wrote:
+> >
+> > From: Manish Varma <varmam@google.com>
+> >
+> > timerfd doesn't create any wakelocks, but eventpoll can.  When it does,
+> > it names them after the underlying file descriptor, and since all
+> > timerfd file descriptors are named "[timerfd]" (which saves memory on
+> > systems like desktops with potentially many timerfd instances), all
+> > wakesources created as a result of using the eventpoll-on-timerfd idiom
+> > are called... "[timerfd]".
+> >
+> > However, it becomes impossible to tell which "[timerfd]" wakesource is
+> > affliated with which process and hence troubleshooting is difficult.
+> 
+> While your explanation above is understandable, I feel like it might
+> benefit from a more concrete example to show why this is problematic?
+> It feels like the description gets into the weeds pretty quickly and
+> makes it hard to understand the importance of the change.
 
-W00t!
+> 
+> Again the N:P.F mapping is clear, but maybe including a specific
+> before and after example would help?
+> 
+> Additionally, once you have this better named wakesource, can you
+> provide a specific example to illustrate a bit on how this
+> specifically helps the troubleshooting that was difficult before?
+> 
+> thanks
+> -john
 
-        Linus
+Hi John,
+
+Thanks for your feedback on this! I'm more than happy to add more
+details to the commit text. I'll go ahead and add an example to
+showcase a scenario where the proposed changes make debugging easier.
+
+I'll send out v6 of the patch soon.
+
+--Isaac
 
