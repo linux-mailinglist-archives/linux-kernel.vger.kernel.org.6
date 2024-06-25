@@ -1,145 +1,123 @@
-Return-Path: <linux-kernel+bounces-229030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FEEB9169EB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:13:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29CC79169F8
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:15:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47194282FAF
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:13:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3FDA1F2197E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:15:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D03C167D80;
-	Tue, 25 Jun 2024 14:12:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50BA16A397;
+	Tue, 25 Jun 2024 14:15:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cwj8Q9/8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F76G5rtT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AFEA1B7F7
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:12:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9BB39FD6
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 14:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719324774; cv=none; b=rirkAUrbS3mxl6qE+jH3ifKHcVbhcldVRwzI6ULDrS8s7JZZHZZ2fgFlXiYc6aTWikTvfNvKwlfv54LYEUNhfdLHun0IDvygE/oP/2CdfLURA4ZAmVJ6Ix0CsCeO+USLBbM9nhYXD0uQlFnPJmfsHy9jj/mfoVEg54LyzPqHZqE=
+	t=1719324949; cv=none; b=YHaM9yDHWPQ8JtjL9W0yPrtQ1romuNFTdD2vJO8LCcYJdVybc8gu8VPLpJ6xw655CRdQP4pYaU5JV0CClkyp44oSrgxjyE4HBDlmFc3rhhrMH1zPJoFxiJWfgT0wB6wYTb5wg9XqWG/XdGAnmwB5JI6n4+LOP7y+INFVy3Y001w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719324774; c=relaxed/simple;
-	bh=z61fVSnCBwaO+yTzZq2IC4MPML4OWSs6fv7IZ88Hgag=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TAB2QVGR1hrSzYXmgGRhqseJHGjZlH+BcpzUnqs/EK+URGHqH5lyT3zz0pqpUuJnBVC6jFpYUJaSKYEfIr3+IhUzZDtKWP0hlmdXe6A7n85lP4/IQK8BPc9Wh26G8xOlkTfAII7Ag4gq7TGsa7RlxUrU7SyJvEa00AF3XSqWEQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cwj8Q9/8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E95BC32781;
-	Tue, 25 Jun 2024 14:12:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719324774;
-	bh=z61fVSnCBwaO+yTzZq2IC4MPML4OWSs6fv7IZ88Hgag=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Cwj8Q9/8mKPNDZR/5VfxNppPhxh167OE1svMp04c5gsXsScaDaKhTKonDdZZ8B5tA
-	 kiqqbHUHHCokuLLo+IyY0JjVxYoi/JTNY/5v21zFAyeGSBSN2046G/EHxu7FWJYfo7
-	 HTB9SwQzIaqcJhkA3hFFUR7noAKtg+rVciE2WyhnXmIP4CKsI5ydKApg+327W1wHIq
-	 QQA4FDjIBnXPwibFT5LvtbZyyiBm/PfOYY8MYlZ3LEGVBjt+7gSUp4I6l1W/WxwPdZ
-	 s8ZkBPVcieADnWXE3pOhxrXf55qkaTkk8QALXLB2f37rxeT6HtevPpjLS8ylhIRUes
-	 LJTo9oPktvN+A==
-Message-ID: <e1bc380d-be61-40ba-85ef-26b9cc6149dc@kernel.org>
-Date: Tue, 25 Jun 2024 22:12:50 +0800
+	s=arc-20240116; t=1719324949; c=relaxed/simple;
+	bh=8M2qHHwCjXkaeZROkxqCF62UlYq9qGHUVUS3TBwEOM8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QIATX1iptYmUSdNd7SdSjTIgjeN0uT+3Ns1zKvK3kGv+Bu7VwzRch1+dPpIGazRoulH92fts6NyswxJoaAgPG5yn26l0E8X6dvEr9gpiQRUERf2f9Ll02frXIuXF7ZbV9P4fNW4Z8zQoXhbsFWqmsTGNDM6UqNbYl0+LdneRfYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F76G5rtT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719324946;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=W7ydIp+uRxv9vpeC5lM+Zdk/FaOMqbxesom5QUbL9cA=;
+	b=F76G5rtTa4uo7mzqeW1lLJeC5nyWWEgNMAgNXEa0yYvu5ET4H8aMZb59G1VzLZ3M+EGgds
+	zgknFWTC/87lYudoLs5a9x2oECfXpcdtSbYBpWTKo/Vohvx5yZ18GzzCQ0PUL8Is6YQaLh
+	I7ztbSlYGUkB8wCrTIGZuE3fPYR9YX0=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-568-OPeVeDlENNmCBT0iajHARA-1; Tue,
+ 25 Jun 2024 10:15:41 -0400
+X-MC-Unique: OPeVeDlENNmCBT0iajHARA-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AE49D189BF8B;
+	Tue, 25 Jun 2024 14:14:43 +0000 (UTC)
+Received: from RHTRH0061144 (dhcp-17-72.bos.redhat.com [10.18.17.72])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C4B5C196C0D8;
+	Tue, 25 Jun 2024 14:14:30 +0000 (UTC)
+From: Aaron Conole <aconole@redhat.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>,  netdev@vger.kernel.org,
+  dev@openvswitch.org,  linux-kselftest@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  Pravin B Shelar <pshelar@ovn.org>,  "David
+ S. Miller" <davem@davemloft.net>,  Eric Dumazet <edumazet@google.com>,
+  Shuah Khan <shuah@kernel.org>,  Stefano Brivio <sbrivio@redhat.com>,
+  =?utf-8?Q?Adri=C3=A1n?= Moreno <amorenoz@redhat.com>,  Simon Horman
+ <horms@kernel.org>
+Subject: Re: [PATCH v2 net-next 0/7] selftests: net: Switch pmtu.sh to use
+ the internal ovs script.
+In-Reply-To: <20240625070654.6a00efef@kernel.org> (Jakub Kicinski's message of
+	"Tue, 25 Jun 2024 07:06:54 -0700")
+References: <20240620125601.15755-1-aconole@redhat.com>
+	<20240621180126.3c40d245@kernel.org> <f7ttthjh33w.fsf@redhat.com>
+	<f7tpls6gu3q.fsf@redhat.com>
+	<e4f69335f90aae3f1daa47ba8f69b24ea15ed3b7.camel@redhat.com>
+	<f7th6dhgnvm.fsf@redhat.com> <20240625070654.6a00efef@kernel.org>
+Date: Tue, 25 Jun 2024 10:14:24 -0400
+Message-ID: <f7t1q4lgldr.fsf@redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] f2fs: only fragment segment in the same section
-To: Sheng Yong <shengyong@oppo.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org,
- daehojeong@google.com
-References: <20240625075839.3750112-1-shengyong@oppo.com>
- <20240625121512.3877754-1-shengyong@oppo.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-Autocrypt: addr=chao@kernel.org; keydata=
- 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
-In-Reply-To: <20240625121512.3877754-1-shengyong@oppo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 2024/6/25 20:15, Sheng Yong wrote:
-> When new_curseg() is allocating a new segment, if mode=fragment:xxx is
-> switched on in large section scenario, __get_next_segno() will select
-> the next segno randomly in the range of [0, maxsegno] in order to
-> fragment segments.
-> 
-> If the candidate segno is free, get_new_segment() will use it directly
-> as the new segment.
-> 
-> However, if the section of the candidate is not empty, and some other
-> segments have already been used, and have a different type (e.g NODE)
-> with the candidate (e.g DATA), GC will complain inconsistent segment
-> type later.
-> 
-> This could be reproduced by the following steps:
-> 
->    dd if=/dev/zero of=test.img bs=1M count=10240
->    mkfs.f2fs -s 128 test.img
->    mount -t f2fs test.img /mnt -o mode=fragment:block
->    echo 1 > /sys/fs/f2fs/loop0/max_fragment_chunk
->    echo 512 > /sys/fs/f2fs/loop0/max_fragment_hole
->    dd if=/dev/zero of=/mnt/testfile bs=4K count=100
->    umount /mnt
-> 
->    F2FS-fs (loop0): Inconsistent segment (4377) type [0, 1] in SSA and SIT
-> 
-> In order to allow simulating segment fragmentation in large section
-> scenario, this patch reduces the candidate range:
->   * if curseg is the last segment in the section, return curseg->segno
->     to make get_new_segment() itself find the next free segment.
->   * if curseg is in the middle of the secion, select candicate randomly in
->     the range of [curseg + 1, last_seg_in_the_same_section] to keep type
->     consistent.
-> 
-> Signed-off-by: Sheng Yong <shengyong@oppo.com>
+Jakub Kicinski <kuba@kernel.org> writes:
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+> On Tue, 25 Jun 2024 09:20:29 -0400 Aaron Conole wrote:
+>> > I'm still wondering if the issue is Kconfig-related (plus possibly bad
+>> > interaction with vng). I don't see the OVS knob enabled in the self-
+>> > tests config. If it's implied by some other knob, and ends-up being
+>> > selected as a module, vng could stumble upon loading the module at
+>> > runtime, especially on incremental build (at least I experience that
+>> > problem locally). I'm not even sure if the KCI is building
+>> > incrementally or not, so all the above could is quite a wild guess.
+>> >
+>> > In any case I think adding the explicit CONFIG_OPENVSWITCH=y the
+>> > selftest config would make the scenario more well defined.  
+>> 
+>> That is in 7/7 - but there was a collision with a netfilter knob getting
+>> turned on.  I can repost it as-is (just after rebasing) if you think
+>> that is the only issue.
+>
+> Sorry for not checking it earlier, looks like the runner was missing
+> pyroute:
+>
+> # python3 ./tools/testing/selftests/net/openvswitch/ovs-dpctl.py
+> Need to install the python pyroute2 package >= 0.6.
+>
+> I guess run_cmd counter-productively eats the stderr output ? :(
 
-Thanks,
+Awesome :)  I will add a patch to ovs-dpctl that will turn the
+sys.exit(0) into sys.exit(1) - that way it should do the skip.
+
+When I previously tested, I put an error in the `try` without reading
+the except being specifically for a ModuleNotFound error.
+
+I'll make sure pyroute2 isn't installed when I run it again.
+
+Thanks for your help Jakub and Paolo!
+
 
