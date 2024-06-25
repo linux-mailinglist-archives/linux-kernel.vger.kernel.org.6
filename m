@@ -1,121 +1,212 @@
-Return-Path: <linux-kernel+bounces-228745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2307F916655
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:38:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26712916659
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D30DA283E7A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:38:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2261F2287A
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:40:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB0914C58A;
-	Tue, 25 Jun 2024 11:38:43 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CBD14D6FB;
+	Tue, 25 Jun 2024 11:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BrncHMOL"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DFA447A64;
-	Tue, 25 Jun 2024 11:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840F114B96D
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 11:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719315523; cv=none; b=PrBoEMUEDeWM5OGLo3/rPKZgVsNAofzZkGGnshfyuioPBU7WXajitoCW8oWhcCH1DbJHZRZVDRsaaRsiBBrmNZjc0TuHD4s0pGujUE161F3/riC/xU/m95uSaWVqq5YzPbJStf4NnHlhQPn9R8cvVStcbi7Qo7PN/HjiBBxVE2Y=
+	t=1719315636; cv=none; b=AriT9GS6UlenPW5sfeQd1rQ5WzTsMFbv7IIuijniFP41jtJK/GhV2ew9HNTmVgaXDMHoNDOiGgKKTsmvYbJL4MQKDA7dx0oqpEqbcgos/KN7zxortUpuTtfp4CFsn/bDo3/5AlbF2kKUvyAKGuO3IKfjh3WLvrL2oztlXy32OJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719315523; c=relaxed/simple;
-	bh=tuKcN7msvExSJkenmqvA0RHkiHj+FhdQ9vmYGb1gdY4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OeIRuTr5/ni6riOpBdrWm3jvYRkK5OWHtcx2b3MrmvzWJx/GEgv+YNe7eiLdXKfb2TlG8IMQvTtBUEOeaY5fHY6rFdQKpWUs0+APYhQABc1XPRwh1YnYf8HwXfSrGqFvwhgRfA9bYk/XlOnXpkeztV/zorjnjV/IB6A8TAyZ1zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4W7jWh211Jz4f3l1y;
-	Tue, 25 Jun 2024 19:38:24 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.75])
-	by mail.maildlp.com (Postfix) with ESMTP id 619261A0189;
-	Tue, 25 Jun 2024 19:38:36 +0800 (CST)
-Received: from [10.174.179.155] (unknown [10.174.179.155])
-	by APP2 (Coremail) with SMTP id Syh0CgBn0YY6rHpmAfY0AQ--.8681S3;
-	Tue, 25 Jun 2024 19:38:36 +0800 (CST)
-Message-ID: <77ed0b42-60ac-0746-9a5b-23676e9668f2@huaweicloud.com>
-Date: Tue, 25 Jun 2024 19:38:34 +0800
+	s=arc-20240116; t=1719315636; c=relaxed/simple;
+	bh=j4+FtAz7A1XGlggeq9YYIF3ghGJAY1gk6gpZdeZV06Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kqAZj2mmTZ8g9EfA3sdbk9YwEn9HLLysCNRBNIkoWk9+dNlm2P+zQPnc1eOyXDr6QRezA9Rb9eTl9v1EdAQHx19yt+jJln+uPBY3ydVHyffrct27MNUSgRT7aXWcE7OStse1dqLUYHfVr/81/+CHNq6XIIBPkV66ePVHAHVvFfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BrncHMOL; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719315633;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fLhiA6yXg8SHe4EE9R6LUrpP5Cqd2K678aVRIe9RTGU=;
+	b=BrncHMOLv7fD3bioLG4LRCIVpVV7V/IADJL1J/eX4frDA9OFrc/aKnowbeKSReWRQcLaYs
+	UALK05gqvp0XFqvKe3TBYJpH+FkSMcB6lBOKWKoltcjSja6WJ9riOBxwSksKWWIaIgvfbx
+	PYG4sbDIDa9HSCrst914clyG7YFlf2I=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-462-fjZEbnlpO5SGi523fYhWDw-1; Tue,
+ 25 Jun 2024 07:40:29 -0400
+X-MC-Unique: fjZEbnlpO5SGi523fYhWDw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 65DA51956068;
+	Tue, 25 Jun 2024 11:40:27 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.8])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B9A981956051;
+	Tue, 25 Jun 2024 11:40:25 +0000 (UTC)
+Date: Tue, 25 Jun 2024 19:40:21 +0800
+From: Baoquan He <bhe@redhat.com>
+To: Uladzislau Rezki <urezki@gmail.com>
+Cc: Nick Bowler <nbowler@draconx.ca>, Hailong Liu <hailong.liu@oppo.com>,
+	linux-kernel@vger.kernel.org,
+	Linux regressions mailing list <regressions@lists.linux.dev>,
+	linux-mm@kvack.org, sparclinux@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>
+Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
+Message-ID: <ZnqspTVl/76jM9WD@MiWiFi-R3L-srv>
+References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
+ <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
+ <20240621033005.6mccm7waduelb4m5@oppo.com>
+ <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
+ <ZnVLbCCkvhf5GaTf@pc636>
+ <ZnWICsPgYuBlrWlt@MiWiFi-R3L-srv>
+ <Znljtv5n-6EBgpsF@pc636>
+ <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
+ <ZnqcuKt2qrR-wmH3@pc636>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:104.0) Gecko/20100101
- Thunderbird/104.0
-Subject: Re: [PATCH] block: cancel all throttled bios when deleting the cgroup
-To: =?UTF-8?Q?Michal_Koutn=c3=bd?= <mkoutny@suse.com>
-Cc: tj@kernel.org, josef@toxicpanda.com, hch@lst.de, axboe@kernel.dk,
- cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yangerkun@huawei.com, yukuai1@huaweicloud.com,
- houtao1@huawei.com, yi.zhang@huawei.com, lilingfeng3@huawei.com
-References: <20240624130940.3751791-1-lilingfeng@huaweicloud.com>
- <5emugcorjnrcgczkmi7njfzwbotpqn6heu7acfho2zfkdsajpv@yrztl7hoa6ky>
-From: Li Lingfeng <lilingfeng@huaweicloud.com>
-In-Reply-To: <5emugcorjnrcgczkmi7njfzwbotpqn6heu7acfho2zfkdsajpv@yrztl7hoa6ky>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:Syh0CgBn0YY6rHpmAfY0AQ--.8681S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr1kWrWkXF15Xr4fuw13twb_yoW8Aw1Dpa
-	1Sv3W7Krn8Jr9ayF4vvF4F9FyfZrZ3Gr45AFn8Gw15Ar15Xr4DtrZakw4rua4xZrn3C3ya
-	vF4jqF1DZ3Wqk3DanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv2b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7I2V7IY0VAS
-	07AlzVAYIcxG8wCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c
-	02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_
-	GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7
-	CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6rW3Jr0E3s1lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa
-	7IU1zuWJUUUUU==
-X-CM-SenderInfo: polox0xjih0w46kxt4xhlfz01xgou0bp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnqcuKt2qrR-wmH3@pc636>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
+On 06/25/24 at 12:32pm, Uladzislau Rezki wrote:
+> On Tue, Jun 25, 2024 at 11:30:33AM +0800, Baoquan He wrote:
+> > On 06/24/24 at 02:16pm, Uladzislau Rezki wrote:
+> > > On Fri, Jun 21, 2024 at 10:02:50PM +0800, Baoquan He wrote:
+> > > > On 06/21/24 at 11:44am, Uladzislau Rezki wrote:
+> > > > > On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
+> > > > > > On 06/21/24 at 11:30am, Hailong Liu wrote:
+> > > > > > > On Thu, 20. Jun 14:02, Nick Bowler wrote:
+> > > > > > > > On 2024-06-20 02:19, Nick Bowler wrote:
+> > > > ......
+> > > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > > > > index be2dd281ea76..18e87cafbaf2 100644
+> > > > > > --- a/mm/vmalloc.c
+> > > > > > +++ b/mm/vmalloc.c
+> > > > > > @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> > > > > >  static struct xarray *
+> > > > > >  addr_to_vb_xa(unsigned long addr)
+> > > > > >  {
+> > > > > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > > > > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> > > > > >  
+> > > > > >  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
+> > > > > >  }
+> > > > > > 
+> > > > > The problem i see is about not-initializing of the:
+> > > > > <snip>
+> > > > > 	for_each_possible_cpu(i) {
+> > > > > 		struct vmap_block_queue *vbq;
+> > > > > 		struct vfree_deferred *p;
+> > > > > 
+> > > > > 		vbq = &per_cpu(vmap_block_queue, i);
+> > > > > 		spin_lock_init(&vbq->lock);
+> > > > > 		INIT_LIST_HEAD(&vbq->free);
+> > > > > 		p = &per_cpu(vfree_deferred, i);
+> > > > > 		init_llist_head(&p->list);
+> > > > > 		INIT_WORK(&p->wq, delayed_vfree_work);
+> > > > > 		xa_init(&vbq->vmap_blocks);
+> > > > > 	}
+> > > > > <snip>
+> > > > > 
+> > > > > correctly or fully. It is my bad i did not think that CPUs in a possible mask
+> > > > > can be non sequential :-/
+> > > > > 
+> > > > > nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
+> > > > > when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
+> > > > 
+> > > > I checked the generic version of setup_nr_cpu_ids(), from codes, they
+> > > > are different with my understanding.
+> > > > 
+> > > > kernel/smp.c
+> > > > void __init setup_nr_cpu_ids(void)
+> > > > {
+> > > >         set_nr_cpu_ids(find_last_bit(cpumask_bits(cpu_possible_mask), NR_CPUS) + 1);
+> > > > }
+> > > > 
+> > > I see that it is not a weak function, so it is generic, thus the
+> > > behavior can not be overwritten, which is great. This does what we
+> > > need.
+> > > 
+> > > Thank you for checking this you are right!
+> > 
+> > Thanks for confirming this.
+> > 
+> > > 
+> > > Then it is just a matter of proper initialization of the hash:
+> > > 
+> > > <snip>
+> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > > index 5d3aa2dc88a8..1733946f7a12 100644
+> > > --- a/mm/vmalloc.c
+> > > +++ b/mm/vmalloc.c
+> > > @@ -5087,7 +5087,13 @@ void __init vmalloc_init(void)
+> > >          */
+> > >         vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
+> > >  
+> > > -       for_each_possible_cpu(i) {
+> > > +       /*
+> > > +        * We use "nr_cpu_ids" here because some architectures
+> > > +        * may have "gaps" in cpu-possible-mask. It is OK for
+> > > +        * per-cpu approaches but is not OK for cases where it
+> > > +        * can be used as hashes also.
+> > > +        */
+> > > +       for (i = 0; i < nr_cpu_ids; i++) {
+> > 
+> > I was wrong about earlier comments. Percpu variables are only available
+> > on possible CPUs. For those nonexistent possible CPUs of static percpu
+> > variable vmap_block_queue, there isn't memory allocated and mapped for
+> > them. So accessing into them will cause problem.
+> > 
+> > In Nick's case, there are only CPU0, CPU2. If you access
+> > &per_cpu(vmap_block_queue, 1), problem occurs. So I think we may need to
+> > change to take other way for vbq. E.g:
+> > 1) Storing the vb in the nearest neighbouring vbq on possible CPU as
+> >    below draft patch;
+> > 2) create an normal array to store vbq of size nr_cpu_ids, then we can
+> >    store/fetch each vbq on non-possible CPU?
+> > 
+> A correct way, i think, is to create a normal array. A quick fix can be
+> to stick to a next possible CPU.
+> 
+> > The way 1) is simpler, the existing code can be adapted a little just as
+> > below.
+> > 
+> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > index 633363997dec..59a8951cc6c0 100644
+> > --- a/mm/vmalloc.c
+> > +++ b/mm/vmalloc.c
+> > @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+> >  static struct xarray *
+> >  addr_to_vb_xa(unsigned long addr)
+> >  {
+> > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> > +
+> > +	if (!cpu_possible(idex))
+> > +		index = cpumask_next(index, cpu_possible_mask);
+> >
+> cpumask_next() can return nr_cpu_ids if no next bits set.
 
-在 2024/6/25 18:34, Michal Koutný 写道:
-> Hello.
->
-> On Mon, Jun 24, 2024 at 09:09:40PM GMT, Li Lingfeng <lilingfeng@huaweicloud.com> wrote:
->> From: Li Lingfeng <lilingfeng3@huawei.com>
->>
->> When a process migrates to another cgroup and the original cgroup is deleted,
->> the restrictions of throttled bios cannot be removed. If the restrictions
->> are set too low, it will take a long time to complete these bios.
-> When pd_offline_fn is called because of disk going away, it makes sense
-> to cancel the bios. However, when pd_offline_fn is called due to cgroup
-> removal (with possibly surviving originating process), wouldn't bio
-> cancelling lead to loss of data?
-> Aha, it wouldn't -- the purpose of the function is to "flush" throttled
-> bios (in the original patch they'd immediately fail, here they the IO
-> operation may succeed).
-> Is that correct? (Wouldn't there be a more descriptive name than
-> tg_cancel_bios then?)
-Thanks for your advice. It's indeed more appropriate to use "flush" 
-instead of "cancel" here, I will change it soon.
->
-> And if a user is allowed to remove cgroup and use this to bypass the
-> throttling, they also must have permissions to migrate away from the
-> cgroup (and consistent config would thus allow them to change the limit
-> too), therefore this doesn't allow bypassing the throttling limit. If
-> you agree, could you please add the explanation to commit message too?
-
-I didn't quite get what you mean. Do you mean this patch will cause a 
-change in mechanics, and it is necessary to add an explanation?
-
-(After deleting the original cgroup,
-  Before: the limit of the throttled bios can't be changed and the bios 
-will complete under this limit;
-  Now: the limit will be canceled and the throttled bios will be flushed 
-immediately.)
-
-> Thanks,
-> Michal
+It won't. nr_cpu_ids is the largest index + 1, the hashed index will
+be:  0 =<  index  <= (nr_cpu_ids - 1) e.g cpu_possible_mask is
+b10001111, the nr_cpu_ids is 8, the largest bit is cpu7.
+cpu_possible(index) will check that. So the largest bit of cpumask_next()
+returns is (nr_cpu_ids - 1).
 
 
