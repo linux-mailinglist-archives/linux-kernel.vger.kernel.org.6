@@ -1,172 +1,295 @@
-Return-Path: <linux-kernel+bounces-228985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A42B4916965
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:51:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9EB391695E
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A13E1F2198A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:51:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AFE3B21089
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF0A0161915;
-	Tue, 25 Jun 2024 13:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDD7169AE6;
+	Tue, 25 Jun 2024 13:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4EU/FMG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="caDS/GL/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC4A13BC2F;
-	Tue, 25 Jun 2024 13:51:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719323477; cv=none; b=HVJO7PxBevqV7YJnTBSQjM6pBmC4hI5TTTTdkIb9lDwBJs9W3YO5fprTOzFV52FLMXoUVN1TyA80QdSLlWqJpv/Fpjbb75jw7GD6gsGWSb7/81N6v8BnpWJBsveI/6EphIcu5xi3MhmQ6jblTwhaZE/LcFgHH7Kao9L9KMrBnps=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719323477; c=relaxed/simple;
-	bh=q/n3/6op+yhTcPT/pheshsDsolvSjuhhh2ShF391PQw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=fq72ONzKZzpaORiFe2Enaz18LvjJBjF4p6lfIYdAZuw5zi1ZRYnIEUSXrMjAVY7Pd6C+dVI5Ybq9BwPfWDWFr4YnFP2fgbIyptcDxJZ9r3dr7BGiLD9a5WOrvvK+RnivOdfUDv0gjh/cp2D8PelYxsiEfMnK3u1NNuXmQXm92mM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4EU/FMG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 6E2E4C32781;
-	Tue, 25 Jun 2024 13:51:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719323476;
-	bh=q/n3/6op+yhTcPT/pheshsDsolvSjuhhh2ShF391PQw=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=Z4EU/FMGm/kMmEwQ5i4CvfRb+9uwMbxo1nb1IEWkXnGzk4znQCoE+fMpxM+r4HafW
-	 Zhk2LO43ZZWYcar2pBJr0Ex062UfCPPSqVpT0zcVzt3cPloT+VSouOH8CjC4cjt+Zg
-	 L9Bg5wh/+skwzJts/RjwgsofNIm5bDHQQDb8AgHFq/dqmOzXxtgrEl91c9FXi0DFOo
-	 FdrYpOMZz94u8yCi5RjnCwJNL5z9Yn9G5hnl8y9DiFED6oDtFN7w61dBjy9quO65sA
-	 Sbrb2WpUMTQBZLUXe12kksvMv+R+DPJJ5MpyzT3+WCdUOznbvwB7pIkuDvQHD1g53L
-	 GvnHO10AbyOBA==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F4BEC2BBCA;
-	Tue, 25 Jun 2024 13:51:16 +0000 (UTC)
-From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
-Date: Tue, 25 Jun 2024 15:49:31 +0200
-Subject: [PATCH] iommu/intel: Enable pci capabilities before assigning
- cache tags
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3EC1607B0
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719323415; cv=fail; b=iPlZ+QqDFU7WEPV+zsoDww7O47DLzzse+l+x1mXEe8kdDvzwNOKmS9UTfi22mGHcSgwg50VgIWqxpMZ2h1LkJE0u/48naM5kpgs9vt7IzyEUMVkI60YxSewFprg7YE87HHUgbqJuTB4QUI8MBp0Z9OSkGfVchrm0rZ0O/VwKQoE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719323415; c=relaxed/simple;
+	bh=/41q3b/P9RVL7c8sXrYzlsiduffElswjgCRriLEoHpA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=udoCmUu/Em0Fds9p3H73S4GQ+FruHuAGgh0NK/XAPYmqOoBm02MKtYXPCAFM0elLPO+JFDW0YIsgtgYki8QyAUz3/OZ8q6Cz0dWJ0CFRxvWRTqAH0dW83Z+Gvig2bTl/5K5cd33eUH6D4YrbvzoklMId4VfMtTlRhIXuwswd4r4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=caDS/GL/; arc=fail smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719323414; x=1750859414;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=/41q3b/P9RVL7c8sXrYzlsiduffElswjgCRriLEoHpA=;
+  b=caDS/GL//4LQBaK6hhU5zAWvOpoRmn+530m5DTw9Po6jVpOLJeQqNQ/0
+   7Md8B6UWT5FUU4gps8G62J9GJU6SIqe/eRIS9e5UdMtYN89O+7gvAdZ/e
+   Ra8Qtsu9KLJ63H+J6iBd1/LFftk+Lp+lTpAwkKWa2biHQcCa2Q5IZK0Jl
+   VZWLb4KSp0qxCDo9KL9f+eW1VA9XAJqaGGQ5wOh7hiIvGH+PCWfcrgiIZ
+   ipnuU4gem3uM47BC5vSlCVyzbzveBq1/5QsmLkBaLmk1dIGqqz1yxSyrn
+   5ncEDcXJk1jla9+XPyCFyZteH9qabXI6j0WBUGnJPDG0c7ka1LSYkUHV3
+   w==;
+X-CSE-ConnectionGUID: mFXOxUrlQoOWqBxjaVamgw==
+X-CSE-MsgGUID: FOuj7qLfQZOM1gbNYAobBg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="20118915"
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="20118915"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 06:50:13 -0700
+X-CSE-ConnectionGUID: +51SVKRuRreki5TD/AGtsQ==
+X-CSE-MsgGUID: NP1co+6mRFeYghyprAs58A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,264,1712646000"; 
+   d="scan'208";a="43539320"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by orviesa010.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Jun 2024 06:50:13 -0700
+Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 25 Jun 2024 06:50:12 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 25 Jun 2024 06:50:12 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 25 Jun 2024 06:49:45 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=asUrKJY1VOA9Mx4tr2wV7+WO46fjZca5YcyTeGHMPzZUPe83VW3AORGjYOfXdDnOsaTSiVgXW6HvfG8hfQOPBk6N72lSJ4OwpTEbo/BgIrD10109hxpgv1CNjVWD2yfBVV/cNwVJmIIuL+tZmmn7HI3qTa3mSOPP3wPFyTtXZk/i4lKXRmzs5WpKnNN97PZB/T2oRpqJiWLWzqYGE8PBgKzC94f+Tlon1cmzCIntr4Pp9R2pZRHxL5RkbaBhgIpAD2Ah16iHCUYaUytK/A/Jf0rncDzBu3u+/U4mXGSV4Titq0SpMOxuwCXXuiGfs32prYaA9obxXNdWiW8ab+xIAg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Fh+Jokw8S39CicFXtL0Mxxzo43gS56+5kctC0wNqUs0=;
+ b=Pd2VJTu7jTj2x6VcMfSSzsrW0jHKEOc/2AbQz1j4OVjQd3iV7Pg0GbtGb3QCzf8j1vAFw0s8er07VaBM5rnvP/zsuJ11tSovhp04sUMU+oEA8ye8jKlY1C0u7yUv6lpPnHKFOmWjfVtlVsANaNHLi3VRYwBdOS2llFhTFsLmOgeYygLL0NYY6duUCu8FQnto4QJ6lhCmj4LMvrbnbSWm+F7vQE03Ziv5LiV6Q01C3Nj9dCP4CqyXZT7bZ8JrzrM+XPy6xktv6bqhdb667eSfnHCFo0vrViSRLbzTxo4MX4hS4UVFnnRHpjwqMSO4S8fhqZz6Yx0JfyFvy1rwuOWJcQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from CY8PR11MB7134.namprd11.prod.outlook.com (2603:10b6:930:62::17)
+ by IA1PR11MB8173.namprd11.prod.outlook.com (2603:10b6:208:44e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Tue, 25 Jun
+ 2024 13:49:43 +0000
+Received: from CY8PR11MB7134.namprd11.prod.outlook.com
+ ([fe80::cd87:9086:122c:be3d]) by CY8PR11MB7134.namprd11.prod.outlook.com
+ ([fe80::cd87:9086:122c:be3d%5]) with mapi id 15.20.7698.025; Tue, 25 Jun 2024
+ 13:49:43 +0000
+From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+To: "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
+	"mripard@kernel.org" <mripard@kernel.org>, "tzimmermann@suse.de"
+	<tzimmermann@suse.de>, "airlied@gmail.com" <airlied@gmail.com>,
+	"daniel@ffwll.ch" <daniel@ffwll.ch>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Luck, Tony"
+	<tony.luck@intel.com>, "Wang, Yudong" <yudong.wang@intel.com>
+Subject: RE: [PATCH 1/1] drm/fb-helper: Don't schedule_work() to flush frame
+ buffer during panic()
+Thread-Topic: [PATCH 1/1] drm/fb-helper: Don't schedule_work() to flush frame
+ buffer during panic()
+Thread-Index: AQHasy7crBeDoIP7ckWNGUsx0I55mrHYo+7A
+Date: Tue, 25 Jun 2024 13:49:43 +0000
+Message-ID: <CY8PR11MB713430B4E2F925B88430784B89D52@CY8PR11MB7134.namprd11.prod.outlook.com>
+References: <20240531074521.30406-1-qiuxu.zhuo@intel.com>
+In-Reply-To: <20240531074521.30406-1-qiuxu.zhuo@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY8PR11MB7134:EE_|IA1PR11MB8173:EE_
+x-ms-office365-filtering-correlation-id: 9d016e52-fe72-48a5-e058-08dc951dab2e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230037|1800799021|366013|376011|38070700015;
+x-microsoft-antispam-message-info: =?us-ascii?Q?Gs2KdqBFwYQfoO4YQ0o31xPDG1ehOi1Ja08eBHiPrN3xnvJUTVWHa5zlUvcL?=
+ =?us-ascii?Q?gbf5nRj/w5843wLVg9LI8gAEFNhyz8HTEL/a+kJ7f4GbhOC1XquVPj20fYqZ?=
+ =?us-ascii?Q?Xi8sUIHfFT1/AUtAvnVY60afnmY5wh0Ekp9JqiP/V1giii55ouMIo2FBwyAd?=
+ =?us-ascii?Q?8Qngn+XGHa8mMuoAGlKqeriQpg8WZoLBG++HXPL1CFtkKrjPsLc5RiJLGTZP?=
+ =?us-ascii?Q?3OQQgY215ABmMw4pgVJklXiU4K+m6ndfh+o/bvFkQUowHrDmtG2IptXouGW5?=
+ =?us-ascii?Q?19sha/2NLj6ZrNrAvlALHBB0ZunENLByL3QTIgQzRxy2LKMOAEKKng0DJoCj?=
+ =?us-ascii?Q?641aOQeNQFBKnGh4IHZCAjN/+s6NIsTj5L7QwHAy0EyzEUhO/Q7BJsEV4ggD?=
+ =?us-ascii?Q?xLHlsoAF6LDAF5RJHcdc4ysgx2xRZq5iRneQHRaHSsaQNUsamJ89+RwIyI0p?=
+ =?us-ascii?Q?ysc9Wq17MynpITWy6oveHjfo7PnRBi5IRfwdVC3a39wrjYR+Gtsfg3cdKjAW?=
+ =?us-ascii?Q?T/sfEzlzoxuxiYuRj7ixn5WNbz31b2tUV4sawD6mfFShPy7SfR8a2UMYFNCh?=
+ =?us-ascii?Q?MuCZ1OjWJGh2p5AQ+QTVSsNNKSmrs9UyTKnVx5gwSH4C2ft447eAEYJJM0Wo?=
+ =?us-ascii?Q?rOCusGm6WWRrq6Llz/GX9WCfEKKIn7+rrKD4T9EXPDFHtchtW4w/0zrfabet?=
+ =?us-ascii?Q?11uw96Pv6AcAQKQdbAbFudSz1Q0hKg9tY4Bh/6TdnftyH3JsTdLW/cdgMg0v?=
+ =?us-ascii?Q?idz0IJMgilXDklK79Lli7Cgd0tnHpSFG/aAZ0XTtX/za/E+PFwnJCCpSsTV6?=
+ =?us-ascii?Q?HHLaCGFz9ZAO9ggoWFNhPOugcuUgLvNrpbQbeF1FZRr3/pojx4kvuAsamM1B?=
+ =?us-ascii?Q?mEcDuvEDwfbYYQ+t9/RmW4YQrpJrzgwTAffAQnyhZuPBPa+Pb440GHyky4J2?=
+ =?us-ascii?Q?LKH9dBOTq+NxS09AuhKispdHfZB1BDPKrzKmNIfXhPCHe9OQgUCsqSt/t7/u?=
+ =?us-ascii?Q?jXhxubVxA4h4rzBgVINf1AT++EUY6Ie981SYMhDfPB+0c2mTem3saKZvRNbx?=
+ =?us-ascii?Q?2TI0BHNvylLwcD9CQrueBOC5mdnP7eDSXn9NoZrwqFO4b+lOFNLLDDrfJH1B?=
+ =?us-ascii?Q?S0Y7nlXRbY6xOXx8854ofDJfe6EsbyOaCAuRG0pfpLaEtyLw9z/X+FVVJotL?=
+ =?us-ascii?Q?eC4bEler3cW2INaoYZU6JN5wbgurTj1Q6m6oZ2A+v5/e3prPgx4cHsXvX3XH?=
+ =?us-ascii?Q?E0Zo3Hrk5ucsl+2TMU6APXk/qquCfTlReoc90rcAvISJ8AXSGsfwiA1woF5l?=
+ =?us-ascii?Q?Fug4vPMFkrKKf52X+AC44juMQ7AniTUzf2ikGHfoMRbAhjA1xyJlEAuFR9kB?=
+ =?us-ascii?Q?0eLsh68=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7134.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(366013)(376011)(38070700015);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?IjP1/8btxECcb/MYk+ukye2Z9u1JeNHZUn0igRoO4ABD++ZUNJnRH/+8DtAG?=
+ =?us-ascii?Q?fr6W2eLCO1roLUKh7nS/0pfz3wKzUi6B05sYZaLKmK9mLJ6aFpp0ntERd9r3?=
+ =?us-ascii?Q?UknR+zG2adHHuFHohFVM9IGGMppC1xC1iTuR5POd5HKY3aanBtFVIXqSFWH7?=
+ =?us-ascii?Q?VAaCxs/x1zuK/r7nlrseI7/dO2Em8a+cYwvnNd9SwE8jGcKFofhSBsD82aLH?=
+ =?us-ascii?Q?boOkHId6vsZfbgk3MrCvMoed/XT+oOqx3OcQLFMmhOK9GtPs5g7fzmT0KR7d?=
+ =?us-ascii?Q?rlp90csz+A/mahofWLlD43vo8OeipSDGNswVbxDLBP7tFWTsS83pUsgYwaFt?=
+ =?us-ascii?Q?mOSGoeQMb4dV42vVOisvdMbft2p4oPvpL6Nfj4B1LIuIbv5hvsP1yPog27Kz?=
+ =?us-ascii?Q?yYGjgG9XOYZYTAre9hXnxfHvXU9dFPfpNHMzG8p7nLmLOvkPs5CrS/ny12os?=
+ =?us-ascii?Q?4/ri9YWJF97QSosnbY7vtfeL+lHmQazC1oYGFQpL3jF9ITvsJgxF/nyb5GPp?=
+ =?us-ascii?Q?G6ZWMgwlzLhIMfQC5N4UYF0LRVbR+zUGcfVUgEMmPE5RDSGKNLEP9kQ90Mib?=
+ =?us-ascii?Q?wxezc7RmVQABLhdAEKqW9TIgyMlYHxZwKJYLyxmnDkEw0+BZ7jaPlRsPNLif?=
+ =?us-ascii?Q?WAMRP8YbIGw3fQE1YEF31HO44ohduF8spOmH7KvAZqImd99VZsSm0l0W0rJ2?=
+ =?us-ascii?Q?SxwYwG/N+USVmEOg9DCc5UjEwEnFFV6hzpetYJRO2y4SZFMEPDTk25R/mg0e?=
+ =?us-ascii?Q?+W2bNHFCXZxflujDNu/i0nvUq9WKFJkrEI/tPC3Zt8YMCZhaP2wbLM//kvWt?=
+ =?us-ascii?Q?fWg5W6E+dUco3yHIeQdFDZwJy/77iYpYZYC7GjptaJEkM9PyF/eRf3iJncjl?=
+ =?us-ascii?Q?u8RgNK3W/d2x+hxsJNEq5fz8ghUCltUCCtWG5YgPkhZinj0bKYEGcMa71eyS?=
+ =?us-ascii?Q?SpNYsq+RWehM3r7L6EPIGKg3/riyj2A2dFwsXXiP8PXRm1YU7f978PRhPU8R?=
+ =?us-ascii?Q?1mRPIGWjDrNSiv+bipDaB2zlfLgEJow40rkoQc33qdoAMDBbpf8NN4XcQlgG?=
+ =?us-ascii?Q?vSJjvpQh/xTDhBUTj5RVpkZEEjinJnhjUGSRuQ+krBA7XLUoB/2QPx+Kwche?=
+ =?us-ascii?Q?dZBz/TNZWL41kZbAV+eO84heEs6DkdQ0CrYlyoDjZKwn5QBfUoG2ftKFFksm?=
+ =?us-ascii?Q?ej134qgY5gGc4zn7WeD5+d4vNCUclqV7JwBdbyLF0YJCJQt2txcAl2JwDdSS?=
+ =?us-ascii?Q?F39Twj00X+BMO3aY96OFksV0WtLG3RQOvCZYpPbnm1zSNwGgyaRpsJf+Hpr8?=
+ =?us-ascii?Q?BUkT3kkFTldmAzXWdsN9KSvthyySglZIMpNEieW8xV0diGKUMwAUy5D+W+EC?=
+ =?us-ascii?Q?yhr1e8JqLlzlbSWntS3/97em+Eog61vEmCdsRvozybH3gocgz15ErWSLAXr/?=
+ =?us-ascii?Q?yh2Z/E9GTSIJu0WX/8LifNENaoMy1VakDgh6WPDhDrQ5FYbk7OUhk6Sh8KQN?=
+ =?us-ascii?Q?NaYSj3WMi5sfGeSTpcHEEjEeeKebzBKhTDO0JvlZvbiUc3la8bWEB6GKKhH5?=
+ =?us-ascii?Q?6QLOECj7nLKNy//uCRoxN7YdR//ULLtO1C/ALNaO?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240625-jag-ats_cache_tag_fix-v1-1-67f956e3fa93@samsung.com>
-X-B4-Tracking: v=1; b=H4sIAOrKemYC/x2MQQqAIBAAvxJ7TjCxjL4SIZuuth0qNCKI/p50n
- IGZBzIlpgxD9UCiizPvW4GmrsAtuEUS7AuDkkrLTrVixSjwzNahW8ieGG3gW3ijzTzL0HrdQ2m
- PREX/33F63w9DoIeeZwAAAA==
-To: David Woodhouse <dwmw2@infradead.org>, 
- Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>, 
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>
-Cc: iommu@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Joel Granados <j.granados@samsung.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2524;
- i=j.granados@samsung.com; h=from:subject:message-id;
- bh=ZAV4AO+ksfC2IKBwiprCzqazgh+/Mze5UH1MvGeac1M=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGZ6y1KZp8Fnhxly/H95r0cXWxFevDnL64nWk
- 8KgwIAI87YOK4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmestSAAoJELqXzVK3
- lkFPgR4L/1Wqva641Q9H+7bm7Eebei8C9OZ7UwJ37Q7XQBrHjd7Fr4SXIeFPpIEoCSBqjWloTs8
- p53C4mZYNu4WTdd6u6OOeCnkmY3xZm8JBAUxa9QTzI2ufcTcD0I0E/h39rquDStpsb3S9G7q+eS
- 0x3L1V8SIMxEnTqZgMPsr1VhveV9sW1+zRm09hR5o1qePtHLrtfbllCn1cLWVtr2NvZlunOAZpZ
- sFFcEdOJuFjpMqEX3+oelrAHGeKHIZ2Ff1V0AMl23oTUseGwlGPoQUspVDlPY3gq4sEuZIGXdm+
- VSPR2bvQYyBYoqrFDUkWSLuIs7vwwmVMkqbKkesGpQNvd7ZqenKNhshXZh/0cj1tOLZScMBYXnN
- R1FxdnQGrRiQ8mIrNeeqXAYY95nD7BrcHIbmmGhTvmm7rILpxm5SS1y6OPVxXnApPFFqZvuxdZT
- UQ5BX7DppjXtrAOPwVBdm/jS8MWWVSUJcmcRQb7d2lo4QJTozAHlofbFDX7Te8uTHdozi7ABxm5
- Z4=
-X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
- auth_id=70
-X-Original-From: Joel Granados <j.granados@samsung.com>
-Reply-To: j.granados@samsung.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7134.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9d016e52-fe72-48a5-e058-08dc951dab2e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jun 2024 13:49:43.8149
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 3WpGivCleRVK0+VdBqrNAMQjXde6XQLZFkmQAMAg5gz8HGIUUtvxMnLZiQRnTyJjv+KEzWC6Vy7+RXPrH/AamQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8173
+X-OriginatorOrg: intel.com
 
-From: Joel Granados <j.granados@samsung.com>
+Hello,
 
-Enable the pci capabilities by calling iommu_enable_pci_caps before we
-assign a cache tag. The cache_tag_assign_domain call in
-dmar_domain_attach_device uses the device_domain_info->ats_enabled
-element to decide on the cache_tag_type value. Therefore ats_enabled
-needs to be evaluated before the call to the tag cache assignment.
+> From: Zhuo, Qiuxu <qiuxu.zhuo@intel.com>
+> Sent: Friday, May 31, 2024 3:45 PM
+> To: maarten.lankhorst@linux.intel.com; mripard@kernel.org;
+> tzimmermann@suse.de; airlied@gmail.com; daniel@ffwll.ch
+> Cc: dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; Luck, =
+Tony
+> <tony.luck@intel.com>; Zhuo, Qiuxu <qiuxu.zhuo@intel.com>; Wang, Yudong
+> <yudong.wang@intel.com>
+> Subject: [PATCH 1/1] drm/fb-helper: Don't schedule_work() to flush frame
+> buffer during panic()
+>=20
+> Sometimes the system [1] hangs on x86 I/O machine checks. However, the
+> expected behavior is to reboot the system, as the machine check handler
+> ultimately triggers a panic(), initiating a reboot in the last step.
+>=20
+> The root cause is that sometimes the panic() is blocked when
+> drm_fb_helper_damage() invoking schedule_work() to flush the frame buffer=
+.
+> This occurs during the process of flushing all messages to the frame buff=
+er
+> driver as shown in the following call trace:
+>=20
+>   Machine check occurs [2]:
+>     panic()
+>       console_flush_on_panic()
+>         console_flush_all()
+>           console_emit_next_record()
+>             con->write()
+>               vt_console_print()
+>                 hide_cursor()
+>                   vc->vc_sw->con_cursor()
+>                     fbcon_cursor()
+>                       ops->cursor()
+>                         bit_cursor()
+>                           soft_cursor()
+>                             info->fbops->fb_imageblit()
+>                               drm_fbdev_generic_defio_imageblit()
+>                                 drm_fb_helper_damage_area()
+>                                   drm_fb_helper_damage()
+>                                     schedule_work() // <--- blocked here
+>     ...
+>     emergency_restart()  // wasn't invoked, so no reboot.
+>=20
+> During panic(), except the panic CPU, all the other CPUs are stopped.
+> In schedule_work(), the panic CPU requires the lock of worker_pool to que=
+ue
+> the work on that pool, while the lock may have been token by some other
+> stopped CPU. So schedule_work() is blocked.
+>=20
+> Additionally, during a panic(), since there is no opportunity to execute =
+any
+> scheduled work, it's safe to fix this issue by skipping schedule_work() o=
+n
+> 'oops_in_progress' in drm_fb_helper_damage().
+>=20
+> [1] Enable the kernel option CONFIG_FRAMEBUFFER_CONSOLE,
+>     CONFIG_DRM_FBDEV_EMULATION, and boot with the 'console=3Dtty0'
+>     kernel command line parameter.
+>=20
+> [2] Set 'panic_timeout' to a non-zero value before calling panic().
+>=20
+> Reported-by: Yudong Wang <yudong.wang@intel.com>
+> Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+> ---
+>  drivers/gpu/drm/drm_fb_helper.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c
+> b/drivers/gpu/drm/drm_fb_helper.c index d612133e2cf7..6d7b6f038821
+> 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -628,6 +628,9 @@ static void drm_fb_helper_add_damage_clip(struct
+> drm_fb_helper *helper, u32 x, u  static void drm_fb_helper_damage(struct
+> drm_fb_helper *helper, u32 x, u32 y,
+>  				 u32 width, u32 height)
+>  {
+> +	if (oops_in_progress)
+> +		return;
+> +
+>  	drm_fb_helper_add_damage_clip(helper, x, y, width, height);
+>=20
+>  	schedule_work(&helper->damage_work);
+> --
 
-Signed-off-by: Joel Granados <j.granados@samsung.com>
----
-The "what" and "why" are included in the commit message.
+A gentle ping on this patch.=20
 
-Tried to place cache_tag_assign_domain before the early return in
-"if(dev_is_real_dma_subdevice(dev))". This means that the call to
-iommu_enable_pci_caps landed before the setup functions [1] which is not
-an issue as they seem to be orthogonal (I would like to be proven wrong
-here).
+Updated with recent error injection test results:
+- Without the patch, we typically reproduced the issue [1] once in 100 cycl=
+es.
+- With the patch, we tested it on 3 systems and passed a total of 1500 cycl=
+es.
 
-An alternative to this patch would be to use a different way of checking
-if the device is ATS enabled in __cache_tag_assign_domain.
+[1] the system got blocked at drm_fb_helper_damage()-> schedule_work() with=
+out reboot.
+      For details, please see the commit message.
 
-Comments greatly appreciated
-
-Best
-
-joel
-
-[1] setup functions: domain_context_mapping,
-    intel_pasid_setup_pass_through, domain_setup_first_level and
-    intel_pasid_setup_second_level.
----
- drivers/iommu/intel/iommu.c | 18 +++++++++---------
- 1 file changed, 9 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 2e9811bf2a4e..ecd79741e67c 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -2114,17 +2114,20 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
- 	if (ret)
- 		return ret;
- 
--	ret = cache_tag_assign_domain(domain, dev, IOMMU_NO_PASID);
--	if (ret) {
--		domain_detach_iommu(domain, iommu);
--		return ret;
--	}
--
- 	info->domain = domain;
- 	spin_lock_irqsave(&domain->lock, flags);
- 	list_add(&info->link, &domain->devices);
- 	spin_unlock_irqrestore(&domain->lock, flags);
- 
-+	if (sm_supported(info->iommu) || !domain_type_is_si(info->domain))
-+		iommu_enable_pci_caps(info);
-+
-+	ret = cache_tag_assign_domain(domain, dev, IOMMU_NO_PASID);
-+	if (ret) {
-+		domain_detach_iommu(domain, iommu);
-+		return ret;
-+	}
-+
- 	if (dev_is_real_dma_subdevice(dev))
- 		return 0;
- 
-@@ -2142,9 +2145,6 @@ static int dmar_domain_attach_device(struct dmar_domain *domain,
- 		return ret;
- 	}
- 
--	if (sm_supported(info->iommu) || !domain_type_is_si(info->domain))
--		iommu_enable_pci_caps(info);
--
- 	return 0;
- }
- 
-
----
-base-commit: f2661062f16b2de5d7b6a5c42a9a5c96326b8454
-change-id: 20240625-jag-ats_cache_tag_fix-d747bb0f5d48
-
-Best regards,
--- 
-Joel Granados <j.granados@samsung.com>
-
+Thanks!
+-Qiuxu
 
 
