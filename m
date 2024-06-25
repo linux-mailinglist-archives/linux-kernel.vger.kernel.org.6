@@ -1,173 +1,154 @@
-Return-Path: <linux-kernel+bounces-228724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261DC916611
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:21:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6EE91661D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:23:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D45E42810BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:21:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5BDCEB24834
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:23:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CFA14AD2B;
-	Tue, 25 Jun 2024 11:21:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C31014AD24;
+	Tue, 25 Jun 2024 11:23:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfmEArOl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gkwXj6g4"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1555817BCC;
-	Tue, 25 Jun 2024 11:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD726CDBA;
+	Tue, 25 Jun 2024 11:23:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719314465; cv=none; b=VJ2Zao6T6sQc2zF6qXTbWXCd2igsZPh1RdT0bK85y33kW8krug6tAYaiKmPbA2lijosRk4B0U022WSAHGHEEpo0OYldNXunaHrfVd2aeKMA0do2J3KA0cFNIVk8+UoyHlc3At2qCIy3k7Zvx56CTDhPoTy0xR+kA58uP4lp0FdQ=
+	t=1719314588; cv=none; b=XS9Nsofo3kz1uSB7wpxbVwKtGsD3+bpgixE46Vh6dvyPT9QH/IoxmixOE2JNI98Vf+QXnTwesoNkiZrcZEv/kTFjVdw88YpnAtxCflKhTrREnLZFb7e6OyxK7IYwMFJ46yKTlNMx/q8l9FdMURVagi/UlevALTZ12D4zDmEqSmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719314465; c=relaxed/simple;
-	bh=qOGaxfsfM5iSyfa788L/8bzOZXv6TrPtFFQKAZc4E4A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d9DbiRgpRIXp/hAPFEC1adZaKBIo19YKskbPhq8y+zcQp8UfMlFMs6bZVvlMqjWAGOWZb9NL9EM6n0tvUGzJ3Hs3Ujl+3VUqLeK3jidEa6myyGLKBDRNyUJZ1VDAd19i1O95q/rWGdE0zdxjEA00dLgZ0W1TB6UHqFD0TuPNcVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfmEArOl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D13CC32781;
-	Tue, 25 Jun 2024 11:21:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719314464;
-	bh=qOGaxfsfM5iSyfa788L/8bzOZXv6TrPtFFQKAZc4E4A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qfmEArOlYEgMbTlry56ebv1Pl5/Rz4cwO95FE0Q+i+xziu88qSGFhizZkAXQ0SV3X
-	 EvJiKaquyr6X5N1emlau22G9eOgsIx30bserkZ8EN9dVYjdBpLBs/2gZYNJS0t8LE+
-	 RQkDGSEwbHf/JwaD+4lLUCfsE2cRura+HaaQbnLB8lQ99NGgBYL0v7zNMw/gg5gVU3
-	 +EPbIFW2nzM4fsRza0qSdIOBSDIvKaDdu7N+ZdJHlMJenoucs81voATqBqfOxLRil4
-	 UI9SBmTEe7COieYPoLHIB6FiLDzabc5GUvm0mvGpHL0UMAJ7s3PWeIERXZbYsi/c/c
-	 yY+2VIafdUO+Q==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sM4Ea-000000002rA-0j0F;
-	Tue, 25 Jun 2024 13:21:12 +0200
-Date: Tue, 25 Jun 2024 13:21:12 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Doug Anderson <dianders@chromium.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Tony Lindgren <tony@atomide.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v4 8/8] serial: qcom-geni: Rework TX in FIFO mode to fix
- hangs/lockups
-Message-ID: <ZnqoKDnUMxqf7QRy@hovoldconsulting.com>
-References: <20240610222515.3023730-1-dianders@chromium.org>
- <20240610152420.v4.8.I1af05e555c42a9c98435bb7aee0ee60e3dcd015e@changeid>
- <Znlp1_F1u-70D3QQ@hovoldconsulting.com>
- <CAD=FV=XmuKUKvCq7gG+wM-jAAgHLHnYw4NteFEKz5Fmczd=U7g@mail.gmail.com>
+	s=arc-20240116; t=1719314588; c=relaxed/simple;
+	bh=zMsCFXzaUxMjDOTMmXX7vz0j4T+QJ1B9ykorlwYFrqA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IXPunInVb+H8beO+5xgN2mn4G6QS7hiSto4170b6D3zX3IiAbsYGp72wJWshhpiM7j18B/7scfJetu96LRJoisdqPkUmDgqygQYRhCCTfeTOtrYIcih5XBc77mAtN3M0vmH0vtag9igEMbH4kl+D1WDVzySai1YqEl8W4/7UsSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gkwXj6g4; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f4a5344ec7so36582325ad.1;
+        Tue, 25 Jun 2024 04:23:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719314587; x=1719919387; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=vdFkCk8orT/BKrhNxYPy1FyiE2tQXEatoSGbb0qOpR4=;
+        b=gkwXj6g4z7Ek7oGkHgZwNOK8LGft/0VLj8TXwmz/NGfelu0yNGmSBU1lyJ6YsGvzRQ
+         wcVa9uT1L7vzkJHD1M818qPKh1wjWL1IR1dJA8rlPtSLa8L33RxYdjjO6KFBmJbIZvmn
+         +OumPVsKSTZWLo8u1X7F2/8jgzT+6WKQR8RE73MtzIK3Y0akWgw2+DVLCryRBYec+4K2
+         PG5coUOF21qELNsMn79nR7BlGtH4150A/uCgvmcmV6IxyzIHSAQW+5hr2sFyGlmADVB8
+         ut/8IBkFQVEAAv8xYuaLktpiGzJp91kaVifpMbePb4SNH3LgXHCxIAonZPvC0arzCpqi
+         oyWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719314587; x=1719919387;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vdFkCk8orT/BKrhNxYPy1FyiE2tQXEatoSGbb0qOpR4=;
+        b=m20nlBQcCFd0Z1Tjji+7DHfF+wSOFt3qYqJUq6eaBrLvVXFipSVRJxQIiBNb4/fOUQ
+         9yj+iNvujfxdksHRv9RWlrAEJt2BbR3JnOv2ckXdIvlb84SOPSrJxyxtbxtGfAVivwMs
+         X/J6xheM5btiYCnqAGuiu6myZXzLLw1RwabQ6An8tHhq8ddhxNuLnYwFRrOavptUAGo6
+         MCftEnud56gnRX+Qgg2KmfAdS9vSk9wUe1P4VSifkJLilObqv7dg/dsp/mX5d+pBmEZ/
+         GVbP3s2sUh/DDB3VpFWf36H5rjpaW1jo1iESefyIBqvIA2IYP0ryYuUVoN+3kbqelwv7
+         ncMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUj5A3McW2QEbr/InxnmTvDzcRdyWjxOFcllxozoypeif7GGdAAtEWubhxWOXcbukBqejOLaSHtLKfvK6wfrjeiZ0xlaboRLcjKNq/w+OpxKaSI+JK49hGVzrxYC251MBtsyZ18
+X-Gm-Message-State: AOJu0YzPmNX+wR+QCSw8hgN6edSVFG0LIATYCPKpM3y+WDhvSkuxrQqc
+	Cy+JjnHj7CR5MxdPe3Jg7UL7o3LRlX5Rzqwz/Z3oHfp8LbprAnQL
+X-Google-Smtp-Source: AGHT+IEMgPZuKMkVghfqi+93bd1vOBkQzqtJzE+UZAJaYaQeQW0vXgIEhvh1oxVy0Rh4nYj8O/BIRw==
+X-Received: by 2002:a17:903:2450:b0:1f6:e5c5:4184 with SMTP id d9443c01a7336-1fa5e67229emr53223515ad.11.1719314586748;
+        Tue, 25 Jun 2024 04:23:06 -0700 (PDT)
+Received: from [10.178.66.211] ([192.19.176.219])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fa49323ef6sm31014405ad.286.2024.06.25.04.23.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 04:23:06 -0700 (PDT)
+Message-ID: <8abad0bb-00c2-43ac-a3f8-8a9a49fe2932@gmail.com>
+Date: Tue, 25 Jun 2024 12:23:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=XmuKUKvCq7gG+wM-jAAgHLHnYw4NteFEKz5Fmczd=U7g@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/131] 6.1.96-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240625085525.931079317@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20240625085525.931079317@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jun 24, 2024 at 02:15:07PM -0700, Doug Anderson wrote:
-> On Mon, Jun 24, 2024 at 5:43 AM Johan Hovold <johan@kernel.org> wrote:
 
-> > As I mentioned last week, the slowdown from this is quite noticeable
-> > (e.g. 25% slowdown at @115200), but this may be the price we need to pay
-> > for correctness, at least temporarily.
-> >
-> > An alternative might be to switch to using a 16 byte fifo. This should
-> > reduce console latency even further, and may be able avoid the idling
-> > UART penalty by continuing to use the watermark interrupt for refilling
-> > the FIFO.
+
+On 25/06/2024 10:32, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.96 release.
+> There are 131 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> I'm a bit confused. Right now we're using (effectively) a 64-byte
-> FIFO. The FIFO is 16-words deep and we have 4 bytes per word. ...so
-> I'm not sure what you mean by switching to a 16-byte FIFO. Do you mean
-> to make less use of the FIFO, or something else?
-
-I meant switching to using one-byte words so that we end up with a
-16-byte FIFO where we don't have the issue of adding more data when the
-last word is not a full four-byte one.
-
-> Overall the big problem I found in all my testing was that I needed to
-> wait for a "command done" before kicking off a new command. When the
-> "command done" arrives then the UART has stopped transmitting and
-> you've got to suffer an interrupt latency before you can start
-> transferring again. Essentially:
+> Responses should be made by Thu, 27 Jun 2024 08:54:55 +0000.
+> Anything received after that time might be too late.
 > 
-> 1. Pick a transfer size.
-> 2. You can keep sending bytes / using the FIFO efficiently as long as
-> there are still bytes left in the transfer.
-> 3. When you get to the end of the transfer, you have to wait for the
-> UART to stop, report that it's done, and then suffer an interrupt
-> latency to start a new transfer.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.96-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 > 
-> So to be efficient you want to pick a big transfer size but if there's
-> any chance that you might not need to transfer that many bytes then
-> you need to figure out what to do. If you can handle that properly
-> then that's great. If not then we have to make sure we never kick off
-> a transfer that we might not finish.
-
-Right. But with a 16 1-byte word FIFO, we may be able to kick of a
-really long transfer and just keep it running until it needs to be
-kicked again (cf. enabling TX). The console code can easily insert
-characters in the FIFO while the transfer is running (and would only
-have to wait for 16 characters to drain in the worst case).
-
-Effectively, most of the identified issues would just go away, as
-there's basically never any need to cancel anything except at port
-shutdown.
-
-> I'd also mention that, as talked about in my response to your other
-> patch [1], I'm not seeing a 25% slowdown. I tested both with my simple
-> proposal and with this whole series applied and my slowdown is less
-> than 2%. I guess there must be something different with your setup?
-> Trying to think about what kind of slowdown would be reasonable for my
-> patch series at 115200:
+> thanks,
 > 
-> a) We send 64 bytes efficiently, which takes 5.6ms (64 * 1000 / 11520)
-> 
-> b) We stop transferring and wait for an interrupt.
-> 
-> c) We start transferring 64 bytes again.
-> 
-> Let's say that your interrupt latency is 1 ms, which would be really
-> terrible. In that case you'll essentially transfer 64 bytes in 6.6ms
-> instead of 5.6 ms, right? That would be an 18% hit. Let's imagine
-> something more sensible and say that most of the time you can handle
-> an interrupt in 100 ms. That would be about a 1.7% slowdown, which
-> actually matches what I was seeing. For reference, even an old arm32
-> rk3288-veyron device I worked with years ago could usually handle
-> interrupts in ~100-200 ms since dwc2 needs you to handle at least one
-> (sometimes more) interrupt per USB uFrame (250ms).
-> 
-> ...so I'm confused about where your 25% number is coming from...
+> greg k-h
 
-I didn't do an in-depth analysis of the slowdown, but I did rerun the
-tests now and I'm still seeing a 22-24% slowdown on x1e80100 with rc5.
-This is a new platform so I compared with sc8280xp, which shows similar
-numbers even if it's slightly faster to begin with:
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-					sc8280xp	x1e80100
-
-	rc5 full series			61 s		67 s
-	rc5 last patch reverted		50 s		54 s
-
-I have a getty running and cat a 10x dmesg file of 543950 bytes to
-/dev/ttyMSM0 from an ssh session (just catting in a serial console gives
-similar numbers). 
-
-Johan
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
