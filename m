@@ -1,204 +1,420 @@
-Return-Path: <linux-kernel+bounces-228455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FB9291602C
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:40:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2862391602F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:41:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B53F41F2293B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:40:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49F5B1C21729
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 07:41:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D102146A97;
-	Tue, 25 Jun 2024 07:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ABC3146A97;
+	Tue, 25 Jun 2024 07:41:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Gj852HDm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sYxy+oXs";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KfLtxt66"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492311DFFD
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 07:40:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A411369AE;
+	Tue, 25 Jun 2024 07:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719301230; cv=none; b=NghkS+9Y6WTHm14ceznG3lL0wyevo/xZxo68uhnohWO7sxSL06fst1nsODHN2xtChoisDSMtplX9r+i6x/OBgaPKVtRpy5KX5dP795DrJPlYvvgFGjjGHeK3U8pRhd7Z8RbpMMoDInMhZCCwc0A/OJIl9wM3P1pPYEaOGC9p57M=
+	t=1719301283; cv=none; b=sqh92FiPM0vvt89HlmDN4m99AFD0HxtXmDXBm1iwMakBIOcypC0V6v4+Se2iHh1xGgS9PljJVD+J2r9Z40gsa+u8OHkh2COauxYajMl/615wbS66OBOvQaBybHs7/4/6DSxCqevbAOH3qh9D7WmRALsZe6Mjvh2kLnQBcEqRS4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719301230; c=relaxed/simple;
-	bh=RP7RGrrDonDTYIDeuSRb++YyBdqPLC4y4FJuRa9Bxew=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZqOE4DJOJVtuV//eNwG/ZE/BFDvq4eyjmZejPeMngxt8GFusAF4kUMLGdriIK6bW8iJoC5CMwpLJ/V45cRUHvlRmrCyKg7uULsBHOb4J7jtf8v6y2Y5nF8njJdAkwhfSV45VxGzPVPR/asptGK4hCwu7ID9lpyAS+XQCccpujew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Gj852HDm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719301228;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1719301283; c=relaxed/simple;
+	bh=/d1QknNJCK80px7GytL/ySI5xd8arxrhFCKgkpVUN58=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=qe3ZkOw0XlyuED40EWx7LmfVNuqNx/9HgEaMyk3UTZT3Y4LFnQaTlLmzqXauxioDMGmCDXAU8iyvsm6jD9u4rblvntOj7K70193TbD2k0BK4gcoXeWV5G2uayhhYqRnX1nS1kDcEtHDsFZvl7AGl3J2JJnoG8cLJAGzKmo9PfbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sYxy+oXs; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KfLtxt66; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 25 Jun 2024 07:41:18 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719301279;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=9+wXAkOghYPZA9aMx6dM9qgWvYyqbZycMi5G7med1Rs=;
-	b=Gj852HDmahr5nC8eAHBZzL3jPY3m5SqYQX78KZOkWsT+CQ1l/i5cjW6rAN2jtHNHEv746L
-	vJBDUQbx8CvX6J4WeBFzGsyvlxGauNzOlb5iuuplxXDll1q5w03fUXTp0t7G49bfzrziEV
-	htdQNwYKYcXGmt4gD7T8wC5sHZ1jt7Q=
-Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
- [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-480-5I8z7ieXPQa0S8bDgvgi-w-1; Tue, 25 Jun 2024 03:40:26 -0400
-X-MC-Unique: 5I8z7ieXPQa0S8bDgvgi-w-1
-Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-52cd9f93fd8so2698238e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 00:40:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719301225; x=1719906025;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9+wXAkOghYPZA9aMx6dM9qgWvYyqbZycMi5G7med1Rs=;
-        b=sO3AT/LEN+7Mb8q/ZGx38FvE6CUKpW/WKDhLT+Gv3K5d0z8oaBn9dB8geeS0SkVcmO
-         4vKgRfZbVv05+wXkqtC6u+V3JqBrp23zb9o7v27WGkgaTWDEvUvnZVrr4ICJBrSRFV0i
-         +UVt9jDLgaFgbNfIWXAbD42myl0DyM1rUjjCKGQYJ5Z1SvgBVOEQNQUL09BDtOsXnv2d
-         x0iJ93eDKn5/WT2LqNbCQCH0F9GjZPrSy9iS/sVzzkW2+5n37FWANduSHrf2QQh6HTmQ
-         /czNlNKKQM1UJcSd6BB5Fa/jz5HGLLDGwPatlSEEnFKJ6uRgNtn9z34gBToQC49Ho7Ai
-         hNzw==
-X-Forwarded-Encrypted: i=1; AJvYcCW20FX40OCS0QItl3SvxuaXu7up4Aknke1KDGCg67Ny49jnJCprVsrUU7NLO+LjmYt9RgtDRoeCSbWXUg+e71PVl8ML7L0bk7fwmSwy
-X-Gm-Message-State: AOJu0Yx50bbtkXNivl73FYDat88d2pNQCXWzTQNypFVICWbGMb82bdWr
-	9sTiLsmZHdlnhk/cA+p1WDRGwbXDFATPXGZMxnR9Xqb2541TMbq/tTz7sBqLmPQMji4gUwsUunE
-	CuP3wTY+5w5+QPe/u3rDKeoq1fvSyntNpyIZ8GD956tm20xWt/qkw6Sm865ItFA==
-X-Received: by 2002:a05:6512:2353:b0:52c:d20b:22c8 with SMTP id 2adb3069b0e04-52ce186172dmr5809895e87.64.1719301224776;
-        Tue, 25 Jun 2024 00:40:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGXZutTW6hXLPjHJBKTNDbaTOsN2HKSw8f0cmAYj/4DUacmPqzWzk8vauOyA2mTLnJmTsWvcQ==
-X-Received: by 2002:a05:6512:2353:b0:52c:d20b:22c8 with SMTP id 2adb3069b0e04-52ce186172dmr5809867e87.64.1719301224308;
-        Tue, 25 Jun 2024 00:40:24 -0700 (PDT)
-Received: from [192.168.1.34] (p548825e3.dip0.t-ipconnect.de. [84.136.37.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817b6121sm161058115e9.27.2024.06.25.00.40.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 00:40:23 -0700 (PDT)
-Message-ID: <0a41d5fc-d1a1-4b1b-873e-a701b20bbcb3@redhat.com>
-Date: Tue, 25 Jun 2024 09:40:22 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=BsYoyx+bQNzcfWB006C/QWVfonHFmOc0t52b9kG0/YI=;
+	b=sYxy+oXsX2a+4p1mn5ojKggckSgRPq+6p6HD7paE/B+GSG06vku2/Ve47KCQs2IHGvAXqP
+	i+U+Z1Ms5GQPCRVXWV81b+h2QG/BpwfK6ZeZdbk2Vb15SrMceP07YHtChnuGcpJt5OMcde
+	vmPjf/jgSkOg9bB/5vVDK7ZVZhfJAvnvlNr41Z6qcFTtQThgKfVFc0gXD0co/mXrcL8x+0
+	6PlT+amwoNp0N5UK8GZ94Qd4qu+cWvDIJQMTjqjCMK79154iX4gwVj45fIrDq5ngV3THSk
+	FSTgTB6TZA8uxnF0ifagDL4HYbIMuLGXBjXwX3vgNtSC/G1pS/j9DoqyMaokEg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719301279;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=BsYoyx+bQNzcfWB006C/QWVfonHFmOc0t52b9kG0/YI=;
+	b=KfLtxt66LMlJdyfAkVZw5HD/kmG3MqnlZD1A8LjEFOcvuFkmYRaiH4CtX4TJlAu4Mfyt8Y
+	Z+dzMvWt4gBVrjAw==
+From: "tip-bot2 for Song Gao" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: irq/core] irqchip/loongson-eiointc: Add extioi virt extension support
+Cc: Song Gao <gaosong@loongson.cn>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
+In-Reply-To: <20240624084410.1026648-1-gaosong@loongson.cn>
+References: <20240624084410.1026648-1-gaosong@loongson.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-unstable] mm: folio_add_new_anon_rmap() careful
- __folio_set_swapbacked()
-To: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Barry Song <21cnbao@gmail.com>, baolin.wang@linux.alibaba.com,
- chrisl@kernel.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- mhocko@suse.com, ryan.roberts@arm.com, shy828301@gmail.com,
- surenb@google.com, v-songbaohua@oppo.com, willy@infradead.org,
- ying.huang@intel.com, yosryahmed@google.com, yuanshuai@oppo.com,
- yuzhao@google.com
-References: <f3599b1d-8323-0dc5-e9e0-fdb3cfc3dd5a@google.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <f3599b1d-8323-0dc5-e9e0-fdb3cfc3dd5a@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <171930127860.2215.261263980041397611.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25.06.24 07:00, Hugh Dickins wrote:
-> Commit "mm: use folio_add_new_anon_rmap() if folio_test_anon(folio)==
-> false" has extended folio_add_new_anon_rmap() to use on non-exclusive
-> folios, already visible to others in swap cache and on LRU.
-> 
-> That renders its non-atomic __folio_set_swapbacked() unsafe: it risks
-> overwriting concurrent atomic operations on folio->flags, losing bits
-> added or restoring bits cleared.  Since it's only used in this risky
-> way when folio_test_locked and !folio_test_anon, many such races are
-> excluded; but, for example, isolations by folio_test_clear_lru() are
-> vulnerable, and setting or clearing active.
-> 
-> It could just use the atomic folio_set_swapbacked(); but this function
-> does try to avoid atomics where it can, so use a branch instead: just
-> avoid setting swapbacked when it is already set, that is good enough.
-> (Swapbacked is normally stable once set: lazyfree can undo it, but
-> only later, when found anon in a page table.)
-> 
-> This fixes a lot of instability under compaction and swapping loads:
-> assorted "Bad page"s, VM_BUG_ON_FOLIO()s, apparently even page double
-> frees - though I've not worked out what races could lead to the latter.
-> 
-> Signed-off-by: Hugh Dickins <hughd@google.com>
-> ---
->   mm/rmap.c | 4 +++-
->   1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/rmap.c b/mm/rmap.c
-> index df1a43295c85..5394c1178bf1 100644
-> --- a/mm/rmap.c
-> +++ b/mm/rmap.c
-> @@ -1408,7 +1408,9 @@ void folio_add_new_anon_rmap(struct folio *folio, struct vm_area_struct *vma,
->   	VM_WARN_ON_FOLIO(folio_test_hugetlb(folio), folio);
->   	VM_BUG_ON_VMA(address < vma->vm_start ||
->   			address + (nr << PAGE_SHIFT) > vma->vm_end, vma);
-> -	__folio_set_swapbacked(folio);
-> +
-> +	if (!folio_test_swapbacked(folio))
-> +		__folio_set_swapbacked(folio);
->   	__folio_set_anon(folio, vma, address, exclusive);
->   
->   	if (likely(!folio_test_large(folio))) {
+The following commit has been merged into the irq/core branch of tip:
 
-LGTM.
+Commit-ID:     aab92ac8a72d538cead496367add227dd9edbab8
+Gitweb:        https://git.kernel.org/tip/aab92ac8a72d538cead496367add227dd9e=
+dbab8
+Author:        Song Gao <gaosong@loongson.cn>
+AuthorDate:    Mon, 24 Jun 2024 16:44:10 +08:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Tue, 25 Jun 2024 09:38:07 +02:00
 
-I'll point out that it's sufficient for a PFN walker to do a tryget + 
-trylock to cause trouble.
+irqchip/loongson-eiointc: Add extioi virt extension support
 
-Fortunately isolate_movable_page() will check __folio_test_movable() 
-before doing the trylock.
+Interrupts can be routed to maximal four virtual CPUs with one external
+hardware interrupt.
 
-Reviewed-by: David Hildenbrand <david@redhat.com>
+Add the extioi virt extension support so that interrupts can be routed to
+256 virtual CPUs in hypervisor mode.
 
--- 
-Cheers,
+Signed-off-by: Song Gao <gaosong@loongson.cn>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240624084410.1026648-1-gaosong@loongson.cn
+---
+ Documentation/arch/loongarch/irq-chip-model.rst                    |  32 +++=
++++++++++++++++++++-
+ Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst |  29 +++=
++++++++++++++++++-
+ arch/loongarch/include/asm/irq.h                                   |   1 +-
+ drivers/irqchip/irq-loongson-eiointc.c                             | 104 +++=
++++++++++++++++++++++++++++++++++++++++++++++++++++++--------------
+ 4 files changed, 146 insertions(+), 20 deletions(-)
 
-David / dhildenb
-
+diff --git a/Documentation/arch/loongarch/irq-chip-model.rst b/Documentation/=
+arch/loongarch/irq-chip-model.rst
+index 7988f41..36435f2 100644
+--- a/Documentation/arch/loongarch/irq-chip-model.rst
++++ b/Documentation/arch/loongarch/irq-chip-model.rst
+@@ -85,6 +85,38 @@ to CPUINTC directly::
+     | Devices |
+     +---------+
+=20
++Virtual extended IRQ model
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D
++
++In this model, IPI (Inter-Processor Interrupt) and CPU Local Timer interrupt
++go to CPUINTC directly, CPU UARTS interrupts go to PCH-PIC, while all other
++devices interrupts go to PCH-PIC/PCH-MSI and gathered by V-EIOINTC (Virtual
++Extended I/O Interrupt Controller), and then go to CPUINTC directly::
++
++       +-----+    +-------------------+     +-------+
++       | IPI |--> | CPUINTC(0-255vcpu)| <-- | Timer |
++       +-----+    +-------------------+     +-------+
++                            ^
++                            |
++                      +-----------+
++                      | V-EIOINTC |
++                      +-----------+
++                       ^         ^
++                       |         |
++                +---------+ +---------+
++                | PCH-PIC | | PCH-MSI |
++                +---------+ +---------+
++                  ^      ^          ^
++                  |      |          |
++           +--------+ +---------+ +---------+
++           | UARTs  | | Devices | | Devices |
++           +--------+ +---------+ +---------+
++
++
++V-EIOINTC (Virtual Extended I/O Interrupt Controller) is an extension of EIO=
+INTC,
++it only works in hypervior mode. Interrupts can be routed to up to four virt=
+ual
++cpus via EIOINTC, but interrupts can be routed to up to 256 virtual cpus via=
+ V-EIOINTC.
++
+ ACPI-related definitions
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+diff --git a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.r=
+st b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+index f1e9ab1..f211ed1 100644
+--- a/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
++++ b/Documentation/translations/zh_CN/arch/loongarch/irq-chip-model.rst
+@@ -87,6 +87,35 @@ PCH-LPC/PCH-MSI=EF=BC=8C=E7=84=B6=E5=90=8E=E8=A2=ABEIOINTC=
+=E7=BB=9F=E4=B8=80=E6=94=B6=E9=9B=86=EF=BC=8C=E5=86=8D=E7=9B=B4=E6=8E=A5=E5=
+=88=B0=E8=BE=BECPUINTC::
+     | Devices |
+     +---------+
+=20
++=E8=99=9A=E6=8B=9F=E6=89=A9=E5=B1=95IRQ=E6=A8=A1=E5=9E=8B
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++
++=E5=9C=A8=E8=BF=99=E7=A7=8D=E6=A8=A1=E5=9E=8B=E9=87=8C=E9=9D=A2, IPI(Inter-P=
+rocessor Interrupt) =E5=92=8CCPU=E6=9C=AC=E5=9C=B0=E6=97=B6=E9=92=9F=E4=B8=AD=
+=E6=96=AD=E7=9B=B4=E6=8E=A5=E5=8F=91=E9=80=81=E5=88=B0CPUINTC,
++CPU=E4=B8=B2=E5=8F=A3 (UARTs) =E4=B8=AD=E6=96=AD=E5=8F=91=E9=80=81=E5=88=B0P=
+CH-PIC, =E8=80=8C=E5=85=B6=E4=BB=96=E6=89=80=E6=9C=89=E8=AE=BE=E5=A4=87=E7=9A=
+=84=E4=B8=AD=E6=96=AD=E5=88=99=E5=88=86=E5=88=AB=E5=8F=91=E9=80=81=E5=88=B0=
+=E6=89=80=E8=BF=9E=E6=8E=A5=E7=9A=84PCH_PIC/
++PCH-MSI, =E7=84=B6=E5=90=8EV-EIOINTC=E7=BB=9F=E4=B8=80=E6=94=B6=E9=9B=86=EF=
+=BC=8C=E5=86=8D=E7=9B=B4=E6=8E=A5=E5=88=B0=E8=BE=BECPUINTC::
++
++        +-----+    +-------------------+     +-------+
++        | IPI |--> | CPUINTC(0-255vcpu)| <-- | Timer |
++        +-----+    +-------------------+     +-------+
++                             ^
++                             |
++                       +-----------+
++                       | V-EIOINTC |
++                       +-----------+
++                        ^         ^
++                        |         |
++                 +---------+ +---------+
++                 | PCH-PIC | | PCH-MSI |
++                 +---------+ +---------+
++                   ^      ^          ^
++                   |      |          |
++            +--------+ +---------+ +---------+
++            | UARTs  | | Devices | | Devices |
++            +--------+ +---------+ +---------+
++
++V-EIOINTC =E6=98=AFEIOINTC=E7=9A=84=E6=89=A9=E5=B1=95, =E4=BB=85=E5=B7=A5=E4=
+=BD=9C=E5=9C=A8hyperisor=E6=A8=A1=E5=BC=8F=E4=B8=8B, =E4=B8=AD=E6=96=AD=E7=BB=
+=8FEIOINTC=E6=9C=80=E5=A4=9A=E5=8F=AF=E4=B8=AA=E8=B7=AF=E7=94=B1=E5=88=B0=EF=
+=BC=94=E4=B8=AA
++=E8=99=9A=E6=8B=9Fcpu. =E4=BD=86=E4=B8=AD=E6=96=AD=E7=BB=8FV-EIOINTC=E6=9C=
+=80=E5=A4=9A=E5=8F=AF=E4=B8=AA=E8=B7=AF=E7=94=B1=E5=88=B0256=E4=B8=AA=E8=99=
+=9A=E6=8B=9Fcpu.
++
+ ACPI=E7=9B=B8=E5=85=B3=E7=9A=84=E5=AE=9A=E4=B9=89
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+diff --git a/arch/loongarch/include/asm/irq.h b/arch/loongarch/include/asm/ir=
+q.h
+index 480418b..c97a7ab 100644
+--- a/arch/loongarch/include/asm/irq.h
++++ b/arch/loongarch/include/asm/irq.h
+@@ -53,6 +53,7 @@ struct acpi_vector_group {
+ extern struct acpi_vector_group pch_group[MAX_IO_PICS];
+ extern struct acpi_vector_group msi_group[MAX_IO_PICS];
+=20
++#define MAX_CORES_PER_EIO_NODE	256
+ #define CORES_PER_EIO_NODE	4
+=20
+ #define LOONGSON_CPU_UART0_VEC		10 /* CPU UART0 */
+diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loo=
+ngson-eiointc.c
+index c7ddebf..891cb27 100644
+--- a/drivers/irqchip/irq-loongson-eiointc.c
++++ b/drivers/irqchip/irq-loongson-eiointc.c
+@@ -23,15 +23,43 @@
+ #define EIOINTC_REG_ISR		0x1800
+ #define EIOINTC_REG_ROUTE	0x1c00
+=20
++#define EXTIOI_VIRT_FEATURES           0x40000000
++#define  EXTIOI_HAS_VIRT_EXTENSION     BIT(0)
++#define  EXTIOI_HAS_ENABLE_OPTION      BIT(1)
++#define  EXTIOI_HAS_INT_ENCODE         BIT(2)
++#define  EXTIOI_HAS_CPU_ENCODE         BIT(3)
++#define EXTIOI_VIRT_CONFIG             0x40000004
++#define  EXTIOI_ENABLE                 BIT(1)
++#define  EXTIOI_ENABLE_INT_ENCODE      BIT(2)
++#define  EXTIOI_ENABLE_CPU_ENCODE      BIT(3)
++
+ #define VEC_REG_COUNT		4
+ #define VEC_COUNT_PER_REG	64
+ #define VEC_COUNT		(VEC_REG_COUNT * VEC_COUNT_PER_REG)
+ #define VEC_REG_IDX(irq_id)	((irq_id) / VEC_COUNT_PER_REG)
+ #define VEC_REG_BIT(irq_id)     ((irq_id) % VEC_COUNT_PER_REG)
+ #define EIOINTC_ALL_ENABLE	0xffffffff
++#define EIOINTC_ALL_ENABLE_VEC_MASK(vector) 	\
++	(EIOINTC_ALL_ENABLE & ~BIT(vector & 0x1F))
++#define EIOINTC_REG_ENABLE_VEC(vector)		\
++	(EIOINTC_REG_ENABLE + ((vector >> 5) << 2))
+=20
+ #define MAX_EIO_NODES		(NR_CPUS / CORES_PER_EIO_NODE)
+=20
++/*
++ * Routing registers contain four vectors and have an offset of four to
++ * the base. The routing information is 8 bit wide.
++ */
++
++#define EIOINTC_REG_ROUTE_VEC(vector)		\
++	(EIOINTC_REG_ROUTE + (vector & ~0x03))
++
++#define EIOINTC_REG_ROUTE_VEC_SHIFT(vector) 	\
++	((vector & 0x03) << 3)
++
++#define EIOINTC_REG_ROUTE_VEC_MASK(vector)	\
++	(0xff << EIOINTC_REG_ROUTE_VEC_SHIFT(vector))
++
+ static int nr_pics;
+=20
+ struct eiointc_priv {
+@@ -41,6 +69,7 @@ struct eiointc_priv {
+ 	cpumask_t		cpuspan_map;
+ 	struct fwnode_handle	*domain_handle;
+ 	struct irq_domain	*eiointc_domain;
++	bool			cpu_encoded;
+ };
+=20
+ static struct eiointc_priv *eiointc_priv[MAX_IO_PICS];
+@@ -56,7 +85,9 @@ static void eiointc_enable(void)
+=20
+ static int cpu_to_eio_node(int cpu)
+ {
+-	return cpu_logical_map(cpu) / CORES_PER_EIO_NODE;
++	int cores =3D cpu_has_hypervisor ? MAX_CORES_PER_EIO_NODE : CORES_PER_EIO_N=
+ODE;
++
++	return cpu_logical_map(cpu) / cores;
+ }
+=20
+ #ifdef CONFIG_SMP
+@@ -88,6 +119,16 @@ static void eiointc_set_irq_route(int pos, unsigned int c=
+pu, unsigned int mnode,
+=20
+ static DEFINE_RAW_SPINLOCK(affinity_lock);
+=20
++static void virt_extioi_set_irq_route(unsigned int vector, unsigned int cpu)
++{
++	unsigned long reg =3D EIOINTC_REG_ROUTE_VEC(vector);
++	u32 data =3D iocsr_read32(reg);
++
++	data &=3D ~EIOINTC_REG_ROUTE_VEC_MASK(vector);
++	data |=3D cpu_logical_map(cpu) << EIOINTC_REG_ROUTE_VEC_SHIFT(vector);
++	iocsr_write32(data, reg);
++}
++
+ static int eiointc_set_irq_affinity(struct irq_data *d, const struct cpumask=
+ *affinity, bool force)
+ {
+ 	unsigned int cpu;
+@@ -104,18 +145,24 @@ static int eiointc_set_irq_affinity(struct irq_data *d,=
+ const struct cpumask *af
+ 	}
+=20
+ 	vector =3D d->hwirq;
+-	regaddr =3D EIOINTC_REG_ENABLE + ((vector >> 5) << 2);
+-
+-	/* Mask target vector */
+-	csr_any_send(regaddr, EIOINTC_ALL_ENABLE & (~BIT(vector & 0x1F)),
+-			0x0, priv->node * CORES_PER_EIO_NODE);
+-
+-	/* Set route for target vector */
+-	eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
+-
+-	/* Unmask target vector */
+-	csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
+-			0x0, priv->node * CORES_PER_EIO_NODE);
++	regaddr =3D EIOINTC_REG_ENABLE_VEC(vector);
++
++	if (priv->cpu_encoded) {
++		iocsr_write32(EIOINTC_ALL_ENABLE_VEC_MASK(vector), regaddr);
++		virt_extioi_set_irq_route(vector, cpu);
++		iocsr_write32(EIOINTC_ALL_ENABLE, regaddr);
++	} else {
++		/* Mask target vector */
++		csr_any_send(regaddr, EIOINTC_ALL_ENABLE_VEC_MASK(vector),
++			     0x0, priv->node * CORES_PER_EIO_NODE);
++
++		/* Set route for target vector */
++		eiointc_set_irq_route(vector, cpu, priv->node, &priv->node_map);
++
++		/* Unmask target vector */
++		csr_any_send(regaddr, EIOINTC_ALL_ENABLE,
++			     0x0, priv->node * CORES_PER_EIO_NODE);
++	}
+=20
+ 	irq_data_update_effective_affinity(d, cpumask_of(cpu));
+=20
+@@ -139,17 +186,20 @@ static int eiointc_index(int node)
+=20
+ static int eiointc_router_init(unsigned int cpu)
+ {
+-	int i, bit;
+-	uint32_t data;
+-	uint32_t node =3D cpu_to_eio_node(cpu);
+-	int index =3D eiointc_index(node);
++	int i, bit, cores, index;
++	uint32_t data, node;
++
++	node =3D cpu_to_eio_node(cpu);
++	index =3D eiointc_index(node);
+=20
+ 	if (index < 0) {
+ 		pr_err("Error: invalid nodemap!\n");
+-		return -1;
++		return -EINVAL;
+ 	}
+=20
+-	if ((cpu_logical_map(cpu) % CORES_PER_EIO_NODE) =3D=3D 0) {
++	cores =3D (cpu_has_hypervisor ? MAX_CORES_PER_EIO_NODE : CORES_PER_EIO_NODE=
+);
++
++	if ((cpu_logical_map(cpu) % cores) =3D=3D 0) {
+ 		eiointc_enable();
+=20
+ 		for (i =3D 0; i < eiointc_priv[0]->vec_count / 32; i++) {
+@@ -165,7 +215,9 @@ static int eiointc_router_init(unsigned int cpu)
+=20
+ 		for (i =3D 0; i < eiointc_priv[0]->vec_count / 4; i++) {
+ 			/* Route to Node-0 Core-0 */
+-			if (index =3D=3D 0)
++			if (eiointc_priv[index]->cpu_encoded)
++				bit =3D cpu_logical_map(0);
++			else if (index =3D=3D 0)
+ 				bit =3D BIT(cpu_logical_map(0));
+ 			else
+ 				bit =3D (eiointc_priv[index]->node << 4) | 1;
+@@ -369,6 +421,7 @@ static int __init acpi_cascade_irqdomain_init(void)
+ static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
+ 			       u64 node_map)
+ {
++	u32 val;
+ 	int i;
+=20
+ 	node_map =3D node_map ? node_map : -1ULL;
+@@ -389,6 +442,17 @@ static int __init eiointc_init(struct eiointc_priv *priv=
+, int parent_irq,
+ 		return -ENOMEM;
+ 	}
+=20
++	if (cpu_has_hypervisor) {
++		val =3D iocsr_read32(EXTIOI_VIRT_FEATURES);
++		if (val & BIT(EXTIOI_HAS_CPU_ENCODE)) {
++			val =3D iocsr_read32(EXTIOI_VIRT_CONFIG);
++			val |=3D BIT(EXTIOI_ENABLE_CPU_ENCODE);
++			iocsr_write32(val, EXTIOI_VIRT_CONFIG);
++			priv->cpu_encoded =3D true;
++			pr_info("loongson-extioi: enable cpu encodig \n");
++		}
++	}
++
+ 	eiointc_priv[nr_pics++] =3D priv;
+ 	eiointc_router_init(0);
+ 	irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch, priv);
 
