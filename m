@@ -1,137 +1,127 @@
-Return-Path: <linux-kernel+bounces-228621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9048B91625A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:32:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6197891625C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:32:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA9B282A59
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:32:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F96728106F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:32:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C7B0148315;
-	Tue, 25 Jun 2024 09:32:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4993149C50;
+	Tue, 25 Jun 2024 09:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="AlBPowAz"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="CjQag9rL"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D2D71465B7
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:32:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A07271494AF
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719307927; cv=none; b=Spkoh/CFix5CLjrW82rzleaGNSwLGVOzLUmgxPKki5sRdzQC63EZg12CTHRm68PgKublgcpvU+2bLzL69MCPkZaaS6dkw3+G6Q7l+yAqXdNoOwtLRKHq5tov4kHIFThR1D7j6V7C8+LI/C6ZqYGLs2GF6By3VIoU2gOJWZVjymo=
+	t=1719307951; cv=none; b=dPW26sXLoYh6tQvappKowemcTqM54/ibLa2GyJ+rzXmw8AUUwAc4AyrH++B1K8vodWDqWeNzPVCxTCMB/Cya494ECpOnRr8LPrmroQesi2OQFu6i3SzjjdS8UP4TY3t7GlwEv+jElD0p+42eO23rJzdj5i0W5NG8RPvfaNkUxe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719307927; c=relaxed/simple;
-	bh=LSqxNwDsrLNWgKgFVbTYMOcq1Dny+GRxiLhfIf6KeVs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mbPg9R1kgEwp5FA9iyiGbPcnMYJNEe6cCD32qfxNGa7hHRWBb339TV1Jn1FKkYgtOzngU9nKztnUC8FMifjW3+G3aware6DI6jc8DMyIlzFh1/WYEChUGLfF3cYxf9MPeohS9OM26Iy2A4NYWPBSGy0hurwTDLCKSYkyq2xUt7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=AlBPowAz; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id E887DA0E06;
-	Tue, 25 Jun 2024 11:31:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=jqOG5ysnLZOZ6WX79LN01rD+JfmYfnoYRxkCIH5M/Aw=; b=
-	AlBPowAz5+JtwBhJZkFUllPXZpNCxGsgMFykypOPf7cEE2Mz9vni49vGSg+9dte3
-	RUx3V/zabtxDXga67j6pmamPvvmcVeAsTR1GBVk5Vufq5IDWnohYAhtLqGisXVBP
-	wAb5QqrEfMna8bhKOwL6c2xnudd2LxkRhLgJtaNsvS+U2nZd4MZvhYMknegLxCqt
-	0g7D3Qki3f8s/j2YQcr/Ygl4KV/HTwN6VqEd++UQnjQKuMgHZ+kWGXzTz6YgNJLb
-	n5kmcwbA8U9HsT2G//3tu+rBPmX3ydsu0SFd1YiwYksoRsOgesgmMkDgPdPQ/E2b
-	GKi2no4IglckNUdjAl1OaATwRWT3eImHlzg8j38PW0/prmZ681Clx670radVnzPC
-	ErxK26oMJ/UQ7Kyq8guVYaNCH35bbeEkkZ/8Hyq8UDE7/bN7XrDAhgEzleatbebY
-	mFxKkea+Vu/dnxpH6wAU2UfDmUaNBlxDVOhMoU/yzk8Uicltv3Ccmdsb9pLGfaxi
-	3PyVED9U1WdeZJxyNSdqs9qK2xUzFrNExuiMKFiVPJjT8D0HP8TnZOGgYvjyp86W
-	S84OTOLNL14stO7iL+O0l/Y/qKX6NafkOZcoMC9AGdlEL9tffEy24dtR9Qvu7ltI
-	lbEohxSMbNqOHDQ0h3L5OdoqMmyVXd3C63c1w45o59s=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, "Miquel
- Raynal" <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>
-Subject: [PATCH] mtd: cmdlinepart: Replace `dbg()` macro with `pr_debug()`
-Date: Tue, 25 Jun 2024 11:31:47 +0200
-Message-ID: <20240625093148.3579660-1-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719307951; c=relaxed/simple;
+	bh=wv1Mo3WswpKUsE73KC474IURZEDnsXQjgmzkuzSb0eA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LfZwP39ViT7fZyNURBG9m57PgBWtNP0n7b9kvBL1BfFcdK828A4uLMp7CPmbZ1KjkxW/BsMeAUa5u3RDAhdidEZiFgq6tZPAdwfuwOTSFwrbxFKxmXWpuNZcv3ctcl+sSNXMlyg7r1VsLwySsDdOh0uYkjiO/Btz+apA/XJdOs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=CjQag9rL; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ec52fbb50aso36802641fa.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 02:32:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1719307946; x=1719912746; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DqshuwDrjdoXUHKKVyNi7MkOthDOzOvgWLrkKM4nxgw=;
+        b=CjQag9rLBHxGWG4DiiwdhpbjIHXla/vvX44MQ9w+y4r7HKmwiYEXZEiVOOg1z+7abb
+         01EXIbhbGXqlUqF3cHMKkZu7nBPGB/5MHm7pjPj8OA0Z4GaAV2g5Qm7gy2SUCPeTQFU7
+         c2GSmqkd4dRDom4ndv0lVpgrIufqygwq3KRws1HdEikPqAVXEG/LEqJPjzHFgxdeZCuS
+         wffym17tK7rim08AOhVguUD5eDrv7/VgGrZZy2iws2UjjF+k3T/uOBHZtYE3ixLGo6jH
+         +N7Q4hgqeaDW7Jd4S4Q0SjgmHahw2cklmjh411rN8WwPdamCOfCSit1afeK2ZQdMVsz5
+         ZDRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719307946; x=1719912746;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DqshuwDrjdoXUHKKVyNi7MkOthDOzOvgWLrkKM4nxgw=;
+        b=ZQWjpg9lRDKl5cMWVWulWHTKKReK68W7FkV+q1yNSVpPxSW3W2woSV6FtvFsEpQ7lO
+         vnJFHOTucDPPzb2QYiL4gI+WkInTQy2SbR3nMwf+1F6bIIcsR6NhTq5GikWxAKor8F85
+         9EgQb6gGMQpsxJv9kPY/BndPQdIm/EfGVPbt9eI3M99ZcdzSFydSOxJTLCPYKuwa4U41
+         VxasFAXZmHod2DjbOWY35Klm9DIu95fnntnJ/2bmQKYbJwHL1kMCdtsYxeKWHmb4lw8N
+         7zwyPEkMQ/e87JgzhjItA5WEjtfeK6PJGZumNZVpiBmUko0GGkNgooCR7b8iGIW7Grx8
+         c3WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWz4mvTZOHtZTM4q89mlvC7XmPK/1Ei8ak1zD+E99Kkx6Q+A1i841s5zKo1wLrVDraTm2QDoQh4vHr6WYpTy+9ZlDLp2NPc2mU72nEZ
+X-Gm-Message-State: AOJu0YwZgRZjZ3Lcz7/+g2hHIIy2Ph8m8xAUKhnwpv1DdFOuAqxJN87U
+	h0RM9jHkGk5/AYHXbs6VNbDNcUzBXqJTexnLgtRXiifCAWXHSAaj6ot9RzwFPvQ=
+X-Google-Smtp-Source: AGHT+IFsd4DsX2vKsfBhM47QP/hfmLV2dDS7lLtGrUFPiJkrN4N+bXqwZ4Ebe+haoZ1gZcv0bVpmFA==
+X-Received: by 2002:a2e:9684:0:b0:2ec:507f:7319 with SMTP id 38308e7fff4ca-2ec5b36a98amr55201981fa.43.1719307945815;
+        Tue, 25 Jun 2024 02:32:25 -0700 (PDT)
+Received: from pathway.suse.cz (nat2.prg.suse.com. [195.250.132.146])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c819dcf158sm8196671a91.53.2024.06.25.02.32.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 02:32:25 -0700 (PDT)
+Date: Tue, 25 Jun 2024 11:32:16 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Mark Brown <broonie@kernel.org>
+Cc: Greg KH <greg@kroah.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Tony Lindgren <tony.lindgren@linux.intel.com>
+Subject: Re: linux-next: manual merge of the tty tree with the printk tree
+Message-ID: <ZnqOoGjy7nAiV4MW@pathway.suse.cz>
+References: <ZnmwwfMH50s9LiT5@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1719307913;VERSION=7972;MC=1585764846;ID=1416094;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A29916D3B546C7167
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnmwwfMH50s9LiT5@sirena.org.uk>
 
-This macro was left over from the dawn of Git history.
-For some reason it was defined in such a way that
-you needed double brackets around it. Replace it with
-the now-standard `pr_debug()`.
+On Mon 2024-06-24 18:45:37, Mark Brown wrote:
+> Hi all,
+> 
+> Today's linux-next merge of the tty tree got a conflict in:
+> 
+>   drivers/tty/serial/8250/8250_core.c
+> 
+> between commit:
+> 
+>   b70dc67cceb97 ("serial: core: Revert unusable console quirk handling")
 
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
- drivers/mtd/parsers/cmdlinepart.c | 18 +++++-------------
- 1 file changed, 5 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/mtd/parsers/cmdlinepart.c b/drivers/mtd/parsers/cmdlinepart.c
-index b34856def816..504e5fa2b45b 100644
---- a/drivers/mtd/parsers/cmdlinepart.c
-+++ b/drivers/mtd/parsers/cmdlinepart.c
-@@ -44,14 +44,6 @@
- #include <linux/module.h>
- #include <linux/err.h>
- 
--/* debug macro */
--#if 0
--#define dbg(x) do { printk("DEBUG-CMDLINE-PART: "); printk x; } while(0)
--#else
--#define dbg(x)
--#endif
--
--
- /* special size referring to all the remaining space in a partition */
- #define SIZE_REMAINING ULLONG_MAX
- #define OFFSET_CONTINUOUS ULLONG_MAX
-@@ -199,9 +191,9 @@ static struct mtd_partition * newpart(char *s,
- 	parts[this_part].name = extra_mem;
- 	extra_mem += name_len + 1;
- 
--	dbg(("partition %d: name <%s>, offset %llx, size %llx, mask flags %x\n",
-+	pr_debug("partition %d: name <%s>, offset %llx, size %llx, mask flags %x\n",
- 	     this_part, parts[this_part].name, parts[this_part].offset,
--	     parts[this_part].size, parts[this_part].mask_flags));
-+	     parts[this_part].size, parts[this_part].mask_flags);
- 
- 	/* return (updated) pointer to extra_mem memory */
- 	if (extra_mem_ptr)
-@@ -267,7 +259,7 @@ static int mtdpart_setup_real(char *s)
- 		}
- 		mtd_id_len = p - mtd_id;
- 
--		dbg(("parsing <%s>\n", p+1));
-+		pr_debug("parsing <%s>\n", p+1);
- 
- 		/*
- 		 * parse one mtd. have it reserve memory for the
-@@ -304,8 +296,8 @@ static int mtdpart_setup_real(char *s)
- 		this_mtd->next = partitions;
- 		partitions = this_mtd;
- 
--		dbg(("mtdid=<%s> num_parts=<%d>\n",
--		     this_mtd->mtd_id, this_mtd->num_parts));
-+		pr_debug("mtdid=<%s> num_parts=<%d>\n",
-+		     this_mtd->mtd_id, this_mtd->num_parts);
- 
- 
- 		/* EOS - we're done */
--- 
-2.34.1
+I have just removed this commit from the printk tree.
 
 
+> from the printk tree and commit:
+> 
+>   ffd8e8bd26e94 ("serial: 8250: Extract platform driver")
+> 
+> from the tty tree.
+
+There has been a race between the changes in the printk and tty
+which has caused these problems. [*]
+
+The conflicts between the printk and tty tree should be gone now.
+
+I am sorry for troubles.
+
+Best Regards,
+Petr
+
+[*] In fact, I have removed the entire patchset fixing the regression
+in console registration, see
+https://lore.kernel.org/r/20240620124541.164931-1-tony.lindgren@linux.intel.com
+
+The feature is going to be reworked. Greg has reverted the commits
+introducing the regression in the tty tree, see
+https://lore.kernel.org/r/2024062551-hubcap-bauble-fae5@gregkh
 
