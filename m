@@ -1,109 +1,137 @@
-Return-Path: <linux-kernel+bounces-229463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229464-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 516E5916FDC
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:07:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC80C916FDD
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:07:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DD88287E17
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:07:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 096991C235E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 18:07:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F6717B41C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E9917C23A;
+	Tue, 25 Jun 2024 18:06:23 +0000 (UTC)
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0536017B504;
 	Tue, 25 Jun 2024 18:06:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="Vwv4/oEO"
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD5A179206;
-	Tue, 25 Jun 2024 18:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719338780; cv=none; b=ZnzCcxdpeDblpOW3LqX/LH8nKlcnRYiSHg4jn5ssfr5feS7MH8oT/zRAO29vk7UI9nJa1Yqhjxckosb0kmZB7tn1cmdYrqP04U3ZCJN5Plz7sSCvzKNrxjwcQ6bYt7j9/9knGwYUxrnQc69UlftqGGy/fTerATAcfna4xKzUML8=
+	t=1719338783; cv=none; b=MaR9JCCfF+KqOjunh4DVHEev1wRcM2/q8XM5xmyZP4zSF4R5O0K2AwnmbzJoP1cWwGGWuDcxyBkCaA9erBOFUOPTphWuwXAzcUiIn+vfbnxFkL2HphYZSna03xlXqv3XEuB/A+84rsTGOcK/fC3iMX+M5t/lkg1QWuw08aukkkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719338780; c=relaxed/simple;
-	bh=DyLxMMi4sw1+gTyy1GIMo7DSloLJMC0PD/Y0wAu8P0Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OsaPg8W8UwBrcUHXAUdEyg+xXIpmU9eNZML6PH8In04PW7vWYGaE7rDRoOjkQMZ+KaiNth0JlWZXVyqYCMNb1RhiTbYwZlZ/+kNNsm15EIqbrk0pcY5UaPFpDzf59uqAyakFr7NGlndjRQ7mwlmCkNzZxaa3A7eqsh5adiIgabk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=Vwv4/oEO; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W7t7B3wwXz9scR;
-	Tue, 25 Jun 2024 20:06:14 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1719338774;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8cLTdC1JjfjD0aicUlYHFelZAUVGhDwe+oxU99OeiD0=;
-	b=Vwv4/oEO17MkAKBJYU1LN9CPGtx8VtlGI2h5rBL5CmfOAVCQBQ3/XJ5k/+Tg/vTqPfQTY0
-	YlgpfglA5syMu8H73dNRAtUhay22YPiBOACiSYfvajJcosbu9ANx4eglZKTv5EeEmlKr41
-	9XWfTNYOS21Qdig+1SNBPZx2AJ0sEDp6DT6C+7M7hnf0+UH3KCxyaioT6tN+Qo+i000VeE
-	rsslKK4S8F0fyoKFPotmbfwf7zeAg/EW8L6MhP8EVItdVa+kn3YHQ00V3sc8ct8gUfqt4B
-	6jTznTHwuEOEhmNp0dQdpQ1XpFx3B4c7yUiwqeGjgGRTN6oTWVEgEBNx4ccbcA==
-Date: Tue, 25 Jun 2024 18:06:09 +0000
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: david@fromorbit.com, chandan.babu@oracle.com, djwong@kernel.org,
-	brauner@kernel.org, akpm@linux-foundation.org,
-	linux-kernel@vger.kernel.org, yang@os.amperecomputing.com,
-	linux-mm@kvack.org, john.g.garry@oracle.com,
-	linux-fsdevel@vger.kernel.org, hare@suse.de, p.raghav@samsung.com,
-	mcgrof@kernel.org, gost.dev@samsung.com, cl@os.amperecomputing.com,
-	linux-xfs@vger.kernel.org, hch@lst.de, Zi Yan <zi.yan@sent.com>
-Subject: Re: [PATCH v8 02/10] filemap: allocate mapping_min_order folios in
- the page cache
-Message-ID: <20240625180609.z4prikqk7eufl6bi@quentin>
-References: <20240625114420.719014-1-kernel@pankajraghav.com>
- <20240625114420.719014-3-kernel@pankajraghav.com>
- <ZnrnozlE0EggQ_w3@casper.infradead.org>
+	s=arc-20240116; t=1719338783; c=relaxed/simple;
+	bh=e8IHt3dEOYuVV4aLgtoUAfKr3hSwY2xoWIJ2s7A9plo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cdOqFLMLtem9g1MDOjbQlF0PfL17dXEHtboA60Rl3a3hIZdm8zhKS9QwC29kJuzAvuQAqlROIH6gLsoS36LqDpOltEpm9xNIJLC/vbjmQ9KltQgLqQzWd0SDkw5bDMie9m8S8+QlZvv+j9d/xtVvYBrkZoEV+6DuyWJJbfoAXrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7178727da84so2858839a12.0;
+        Tue, 25 Jun 2024 11:06:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719338781; x=1719943581;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kYRoSYBMyUfFW3qOTYX0mms4VCXUWC1J1GTwb+UHwcs=;
+        b=RUH5aEewNsayYwJVkfqQ/QzZqSGRgheWyxQwR2B9ztD+Y7Br1q/5DMOxYYTa90B5xH
+         oY+NwGaJreggP4dygaGVsQj1rT2SFiecDZHHwQXk3sMDMwFdIo1ySZCWnxLjLTK8AX17
+         g1gDxKsTSY/1VvbJjClnssxZlQKKmISWUpngghrsjPnBiWe3a/2axJrm2RGOIWMQoLMu
+         4X39AvctWI9aSfQHB3iyNFkqbP3AFLNeJ9MH+xlExV1uMdUK8CNLOPt+ZVAgF5pHRo9e
+         Gvg6YKl1mBJv9sHkLLO71GqoaB/OlzQm5J1ZZ85kfegW0m572hoiFQsu+3s9DoHBx47h
+         SDiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVQWt2GNJxmOAxfcROUnpSiGiqDiVTe0sW3V88OIP0DYaDPR3GPjzAD6jP3nbCZ5DyblFwHEbiqjP7RgVt2f2oYNDaF2/rkFDdj+f2w5PDXle74CbtBZm+vn2EviVoo5WaHwlDe1zCJSXrFNMsrlg==
+X-Gm-Message-State: AOJu0YwKFDVC0KdX6sxZLjfhhpDZa4dhPe8kG21U5bbWhwqpSuxnwaKE
+	sCPNdhTJ+a/hZ207QjLXyIgSnXltf40NtOcAD/t+bw1TpUEkPitLf1V60riEtHOXpU2Qb8XeC1a
+	WTu7ex7kHzo6keGuM0RfRaN58mSc=
+X-Google-Smtp-Source: AGHT+IEnjRNws1Iz7snCymBOJS0N0HgLeEPogsPgzYspdRnnmFsVh0OjNbMFg0qf1poVQ28TQR5WihNyX3Us7XRjSXE=
+X-Received: by 2002:a17:90b:3616:b0:2c8:3f5:28ae with SMTP id
+ 98e67ed59e1d1-2c8504c7bdbmr7030880a91.4.1719338781055; Tue, 25 Jun 2024
+ 11:06:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnrnozlE0EggQ_w3@casper.infradead.org>
-X-Rspamd-Queue-Id: 4W7t7B3wwXz9scR
+References: <20240623064850.83720-1-atrajeev@linux.vnet.ibm.com>
+ <20240623064850.83720-2-atrajeev@linux.vnet.ibm.com> <536ccca7-278c-4d50-9c24-bf4409cd75dc@intel.com>
+In-Reply-To: <536ccca7-278c-4d50-9c24-bf4409cd75dc@intel.com>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Tue, 25 Jun 2024 11:06:10 -0700
+Message-ID: <CAM9d7chzgJXNDObXW2KVD7JALOh6C5ZbHw7cjuvfbaSNCtqqEw@mail.gmail.com>
+Subject: Re: [PATCH V4 2/3] tools/perf: Use is_perf_pid_map_name helper
+ function to check dso's of pattern /tmp/perf-%d.map
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Athira Rajeev <atrajeev@linux.vnet.ibm.com>, acme@kernel.org, jolsa@kernel.org, 
+	irogers@google.com, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	akanksha@linux.ibm.com, maddy@linux.ibm.com, kjain@linux.ibm.com, 
+	disgoel@linux.vnet.ibm.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 04:52:03PM +0100, Matthew Wilcox wrote:
-> On Tue, Jun 25, 2024 at 11:44:12AM +0000, Pankaj Raghav (Samsung) wrote:
-> > Co-developed-by: Luis Chamberlain <mcgrof@kernel.org>
-> > Signed-off-by: Luis Chamberlain <mcgrof@kernel.org>
-> > Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> > Reviewed-by: Hannes Reinecke <hare@suse.de>
-> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> 
-> Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+On Tue, Jun 25, 2024 at 5:03=E2=80=AFAM Adrian Hunter <adrian.hunter@intel.=
+com> wrote:
+>
+> On 23/06/24 09:48, Athira Rajeev wrote:
+> > commit 80d496be89ed ("perf report: Add support for profiling JIT
+> > generated code") added support for profiling JIT generated code.
+> > This patch handles dso's of form "/tmp/perf-$PID.map".
+> >
+> > Some of the references doesn't check exactly for same pattern.
+> > some uses "if (!strncmp(dso_name, "/tmp/perf-", 10))". Fix
+> > this by using helper function perf_pid_map_tid and
+> > is_perf_pid_map_name which looks for proper pattern of
+> > form: "/tmp/perf-$PID.map" for these checks.
+> >
+> > Signed-off-by: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
+>
+> Add a Fixes tag, then
+>
+> Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Thanks!
-> 
-> after fixing the nits below
-> 
-> > +/**
-> > + * mapping_align_index() - Align index based on the min
-> > + * folio order of the page cache.
-> 
-> + * mapping_align_index - Align index for this mapping.
-> 
-> > @@ -1165,7 +1186,7 @@ static inline vm_fault_t folio_lock_or_retry(struct folio *folio,
-> >  void folio_wait_bit(struct folio *folio, int bit_nr);
-> >  int folio_wait_bit_killable(struct folio *folio, int bit_nr);
-> >  
-> > -/* 
-> > +/*
-> >   * Wait for a folio to be unlocked.
-> >   *
-> >   * This must be called with the caller "holding" the folio,
-> 
-> Unnecessary whitespace change
-> 
+Thanks, but I'm not sure which commit I can add the Fixes tag because
+the original commit 80d496be89ed is too old and I'm sure we added a
+lot of changes after that.
+
+Namhyung
+
+
+>
+> > ---
+> >  tools/perf/util/dsos.c    | 2 +-
+> >  tools/perf/util/srcline.c | 2 +-
+> >  2 files changed, 2 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/tools/perf/util/dsos.c b/tools/perf/util/dsos.c
+> > index ab3d0c01dd63..846828ea1f00 100644
+> > --- a/tools/perf/util/dsos.c
+> > +++ b/tools/perf/util/dsos.c
+> > @@ -275,7 +275,7 @@ static void dso__set_basename(struct dso *dso)
+> >       char *base, *lname;
+> >       int tid;
+> >
+> > -     if (sscanf(dso__long_name(dso), "/tmp/perf-%d.map", &tid) =3D=3D =
+1) {
+> > +     if (perf_pid_map_tid(dso__long_name(dso), &tid)) {
+> >               if (asprintf(&base, "[JIT] tid %d", tid) < 0)
+> >                       return;
+> >       } else {
+> > diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
+> > index 9d670d8c1c08..51eb78993fe2 100644
+> > --- a/tools/perf/util/srcline.c
+> > +++ b/tools/perf/util/srcline.c
+> > @@ -39,7 +39,7 @@ static const char *srcline_dso_name(struct dso *dso)
+> >       if (dso_name[0] =3D=3D '[')
+> >               return NULL;
+> >
+> > -     if (!strncmp(dso_name, "/tmp/perf-", 10))
+> > +     if (is_perf_pid_map_name(dso_name))
+> >               return NULL;
+> >
+> >       return dso_name;
+>
 
