@@ -1,368 +1,137 @@
-Return-Path: <linux-kernel+bounces-228850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C6B79167C7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:27:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21EEE9167B5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:25:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 222CE2829DB
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:27:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0E581F21E39
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:25:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 933B916E863;
-	Tue, 25 Jun 2024 12:25:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8266915FD04;
+	Tue, 25 Jun 2024 12:24:15 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78003149DE2;
-	Tue, 25 Jun 2024 12:25:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A307B158A23;
+	Tue, 25 Jun 2024 12:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719318307; cv=none; b=Fc5HPofwIC+YjrGhSDZMEFcWrqJdfbTp8VPx27gYCK2sE1rMzHdMCCX3FSYLFaJUkftkH4brAj9/Fu7azWvqd7AjdrPmy/Yq1gJPNUi2YHjI9tBs+D4V2UGLcPH+lKgqw9rjCdMIOLnwLd0laOhol4ix7YpdYbfNbcaH75scMnA=
+	t=1719318255; cv=none; b=mKOiYqug7vbTW5ETDRHhYg5+XGH+Q04OPwsnRatWBTdE7uyV2g5TqTL8HoAM5RWNXTPvuHW2s1RmUr+LQQ50dZPoHjjdMn7QDSVOPL8aXwjl9ii/TiwB/x1KBkMW+TIUPwgE/9Xc54K6bPgFtnCGSvhE+YfV7EPTAJBMknRnuyo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719318307; c=relaxed/simple;
-	bh=IlZp6wQnbI/JouxeEG5y1ZenUcixYpEag24ZP+83ciM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CRNPDG6FZUvN0rnQ+PCxyT3dRxZUrDymQVZBc7/ca4krRCdfQs1m7KQV6EHXwlXbtPuJWXXuPjwbBmdZ8Piedrs9+1/0YQGFlYXezZxKVNiFlklVRjExb4cT2nicFi+qLw04dTwmncj6G7wQdkOcyhKSROZcnRZZQat5yHE58+0=
+	s=arc-20240116; t=1719318255; c=relaxed/simple;
+	bh=xWkRfjXbcQV976odVJL6jnfAgd/Ex17HQpOdk8g38nQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LhAv6+IWGHvJfyOzEvFBC2QWqK0wJukAfzbH3Wb4rzLh4tNm007cqWSgw67HjpHuoJbFGFMWFtnsgeTOQEEkeK9M3587koEDrnewdqXOorciD0fgbA7R5D2mMOeQi7LbUisZV8GVIidYpUylVqIDXJqhOAPncoU86Yinkn+ZA/s=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CC2A9339;
-	Tue, 25 Jun 2024 05:25:29 -0700 (PDT)
-Received: from e116581.blr.arm.com (e116581.arm.com [10.162.41.12])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 08F493F766;
-	Tue, 25 Jun 2024 05:24:59 -0700 (PDT)
-From: Dev Jain <dev.jain@arm.com>
-To: shuah@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org,
-	Catalin.Marinas@arm.com,
-	will@kernel.org
-Cc: broonie@kernel.org,
-	ryan.roberts@arm.com,
-	rob.herring@arm.com,
-	mark.rutland@arm.com,
-	linux@armlinux.org.uk,
-	suzuki.poulose@arm.com,
-	Anshuman.Khandual@arm.com,
-	aneesh.kumar@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dev Jain <dev.jain@arm.com>
-Subject: [PATCH v3 6/9] selftests/arm64: Split ptrace, use ifdeffery
-Date: Tue, 25 Jun 2024 17:54:05 +0530
-Message-Id: <20240625122408.1439097-7-dev.jain@arm.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240625122408.1439097-1-dev.jain@arm.com>
-References: <20240625122408.1439097-1-dev.jain@arm.com>
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7923C339;
+	Tue, 25 Jun 2024 05:24:36 -0700 (PDT)
+Received: from [192.168.1.100] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6CD783F766;
+	Tue, 25 Jun 2024 05:24:05 -0700 (PDT)
+Message-ID: <1fdf637d-3571-4145-8008-f2b5f8fc8bca@arm.com>
+Date: Tue, 25 Jun 2024 13:24:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/8] perf python: Switch module to linking libraries
+ from building source
+To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, John Garry <john.g.garry@oracle.com>,
+ Will Deacon <will@kernel.org>, Mike Leach <mike.leach@linaro.org>,
+ Leo Yan <leo.yan@linux.dev>, Guo Ren <guoren@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Yicong Yang <yangyicong@hisilicon.com>,
+ Jonathan Cameron <jonathan.cameron@huawei.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
+ <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
+ <aliceryhl@google.com>, Nick Terrell <terrelln@fb.com>,
+ Ravi Bangoria <ravi.bangoria@amd.com>, Kees Cook <keescook@chromium.org>,
+ Andrei Vagin <avagin@google.com>, Athira Jajeev
+ <atrajeev@linux.vnet.ibm.com>, Oliver Upton <oliver.upton@linux.dev>,
+ Ze Gao <zegao2021@gmail.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-csky@vger.kernel.org, linux-riscv@lists.infradead.org,
+ coresight@lists.linaro.org, rust-for-linux@vger.kernel.org,
+ bpf@vger.kernel.org
+References: <20240613233122.3564730-1-irogers@google.com>
+ <20240613233122.3564730-8-irogers@google.com> <Znnyi2IPC79jMd9y@google.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <Znnyi2IPC79jMd9y@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Split some of the common code to be used by selftests/arm, into ptrace.h.
 
-Signed-off-by: Dev Jain <dev.jain@arm.com>
----
- tools/testing/selftests/arm64/abi/ptrace.c | 121 ++----------------
- tools/testing/selftests/arm64/abi/ptrace.h | 135 +++++++++++++++++++++
- 2 files changed, 145 insertions(+), 111 deletions(-)
- create mode 100644 tools/testing/selftests/arm64/abi/ptrace.h
 
-diff --git a/tools/testing/selftests/arm64/abi/ptrace.c b/tools/testing/selftests/arm64/abi/ptrace.c
-index c83f0441e9d0..9e8494d950fe 100644
---- a/tools/testing/selftests/arm64/abi/ptrace.c
-+++ b/tools/testing/selftests/arm64/abi/ptrace.c
-@@ -18,15 +18,22 @@
- #include <asm/sigcontext.h>
- #include <asm/ptrace.h>
- 
-+#include "ptrace.h"
- #include "../../kselftest.h"
- 
- #define EXPECTED_TESTS 11
- 
- #define MAX_TPIDRS 2
- 
--static bool have_sme(void)
-+static int do_child(void)
- {
--	return getauxval(AT_HWCAP2) & HWCAP2_SME;
-+	if (ptrace(PTRACE_TRACEME, -1, NULL, NULL))
-+		ksft_exit_fail_perror("PTRACE_TRACEME");
-+
-+	if (raise(SIGSTOP))
-+		ksft_exit_fail_perror("raise(SIGSTOP)");
-+
-+	return EXIT_SUCCESS;
- }
- 
- static void test_tpidr(pid_t child)
-@@ -132,119 +139,11 @@ static void test_tpidr(pid_t child)
- 	}
- }
- 
--static void test_hw_debug(pid_t child, int type, const char *type_name)
--{
--	struct user_hwdebug_state state;
--	struct iovec iov;
--	int slots, arch, ret;
--
--	iov.iov_len = sizeof(state);
--	iov.iov_base = &state;
--
--	/* Should be able to read the values */
--	ret = ptrace(PTRACE_GETREGSET, child, type, &iov);
--	ksft_test_result(ret == 0, "read_%s\n", type_name);
--
--	if (ret == 0) {
--		/* Low 8 bits is the number of slots, next 4 bits the arch */
--		slots = state.dbg_info & 0xff;
--		arch = (state.dbg_info >> 8) & 0xf;
--
--		ksft_print_msg("%s version %d with %d slots\n", type_name,
--			       arch, slots);
--
--		/* Zero is not currently architecturally valid */
--		ksft_test_result(arch, "%s_arch_set\n", type_name);
--	} else {
--		ksft_test_result_skip("%s_arch_set\n", type_name);
--	}
--}
--
--static int do_child(void)
--{
--	if (ptrace(PTRACE_TRACEME, -1, NULL, NULL))
--		ksft_exit_fail_perror("PTRACE_TRACEME");
--
--	if (raise(SIGSTOP))
--		ksft_exit_fail_perror("raise(SIGSTOP)");
--
--	return EXIT_SUCCESS;
--}
--
--static int do_parent(pid_t child)
-+static void run_tests(pid_t child)
- {
--	int ret = EXIT_FAILURE;
--	pid_t pid;
--	int status;
--	siginfo_t si;
--
--	/* Attach to the child */
--	while (1) {
--		int sig;
--
--		pid = wait(&status);
--		if (pid == -1) {
--			perror("wait");
--			goto error;
--		}
--
--		/*
--		 * This should never happen but it's hard to flag in
--		 * the framework.
--		 */
--		if (pid != child)
--			continue;
--
--		if (WIFEXITED(status) || WIFSIGNALED(status))
--			ksft_exit_fail_msg("Child died unexpectedly\n");
--
--		if (!WIFSTOPPED(status))
--			goto error;
--
--		sig = WSTOPSIG(status);
--
--		if (ptrace(PTRACE_GETSIGINFO, pid, NULL, &si)) {
--			if (errno == ESRCH)
--				goto disappeared;
--
--			if (errno == EINVAL) {
--				sig = 0; /* bust group-stop */
--				goto cont;
--			}
--
--			ksft_test_result_fail("PTRACE_GETSIGINFO: %s\n",
--					      strerror(errno));
--			goto error;
--		}
--
--		if (sig == SIGSTOP && si.si_code == SI_TKILL &&
--		    si.si_pid == pid)
--			break;
--
--	cont:
--		if (ptrace(PTRACE_CONT, pid, NULL, sig)) {
--			if (errno == ESRCH)
--				goto disappeared;
--
--			ksft_test_result_fail("PTRACE_CONT: %s\n",
--					      strerror(errno));
--			goto error;
--		}
--	}
--
--	ksft_print_msg("Parent is %d, child is %d\n", getpid(), child);
--
- 	test_tpidr(child);
- 	test_hw_debug(child, NT_ARM_HW_WATCH, "NT_ARM_HW_WATCH");
- 	test_hw_debug(child, NT_ARM_HW_BREAK, "NT_ARM_HW_BREAK");
--
--	ret = EXIT_SUCCESS;
--
--error:
--	kill(child, SIGKILL);
--
--disappeared:
--	return ret;
- }
- 
- int main(void)
-diff --git a/tools/testing/selftests/arm64/abi/ptrace.h b/tools/testing/selftests/arm64/abi/ptrace.h
-new file mode 100644
-index 000000000000..ae65c58cd3bf
---- /dev/null
-+++ b/tools/testing/selftests/arm64/abi/ptrace.h
-@@ -0,0 +1,135 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (C) 2024 ARM Limited.
-+ */
-+#include <errno.h>
-+#include <stdbool.h>
-+#include <stddef.h>
-+#include <stdio.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <unistd.h>
-+#include <sys/auxv.h>
-+#include <sys/prctl.h>
-+#include <sys/ptrace.h>
-+#include <sys/types.h>
-+#include <sys/uio.h>
-+#include <sys/wait.h>
-+#include <asm/sigcontext.h>
-+#include <asm/ptrace.h>
-+
-+#include "../../kselftest.h"
-+
-+static void run_tests(pid_t child);
-+
-+static int do_child(void);
-+
-+#ifdef __aarch64__
-+static bool have_sme(void)
-+{
-+	return getauxval(AT_HWCAP2) & HWCAP2_SME;
-+}
-+
-+static void test_hw_debug(pid_t child, int type, const char *type_name)
-+{
-+	struct user_hwdebug_state state;
-+	struct iovec iov;
-+	int slots, arch, ret;
-+
-+	iov.iov_len = sizeof(state);
-+	iov.iov_base = &state;
-+
-+	/* Should be able to read the values */
-+	ret = ptrace(PTRACE_GETREGSET, child, type, &iov);
-+	ksft_test_result(ret == 0, "read_%s\n", type_name);
-+
-+	if (ret == 0) {
-+		/* Low 8 bits is the number of slots, next 4 bits the arch */
-+		slots = state.dbg_info & 0xff;
-+		arch = (state.dbg_info >> 8) & 0xf;
-+
-+		ksft_print_msg("%s version %d with %d slots\n", type_name,
-+			       arch, slots);
-+
-+		/* Zero is not currently architecturally valid */
-+		ksft_test_result(arch, "%s_arch_set\n", type_name);
-+	} else {
-+		ksft_test_result_skip("%s_arch_set\n", type_name);
-+	}
-+}
-+#endif
-+
-+static int do_parent(pid_t child)
-+{
-+	int ret = EXIT_FAILURE;
-+	pid_t pid;
-+	int status;
-+	siginfo_t si;
-+
-+	/* Attach to the child */
-+	while (1) {
-+		int sig;
-+
-+		pid = wait(&status);
-+		if (pid == -1) {
-+			perror("wait");
-+			goto error;
-+		}
-+
-+		/*
-+		 * This should never happen but it's hard to flag in
-+		 * the framework.
-+		 */
-+		if (pid != child)
-+			continue;
-+
-+		if (WIFEXITED(status) || WIFSIGNALED(status))
-+			ksft_exit_fail_msg("Child died unexpectedly\n");
-+
-+		if (!WIFSTOPPED(status))
-+			goto error;
-+
-+		sig = WSTOPSIG(status);
-+
-+		if (sig == SIGTRAP)
-+			ksft_print_msg("Child received SIGTRAP\n");
-+
-+		if (ptrace(PTRACE_GETSIGINFO, pid, NULL, &si)) {
-+			if (errno == ESRCH)
-+				goto disappeared;
-+
-+			if (errno == EINVAL)
-+				goto cont;
-+
-+			ksft_test_result_fail("PTRACE_GETSIGINFO: %s\n",
-+					      strerror(errno));
-+			goto error;
-+		}
-+
-+		if (sig == SIGSTOP && si.si_code == SI_TKILL &&
-+		    si.si_pid == pid)
-+			break;
-+
-+cont:
-+		/* bust group-stop */
-+		if (ptrace(PTRACE_CONT, pid, NULL, 0)) {
-+			if (errno == ESRCH)
-+				goto disappeared;
-+
-+			ksft_test_result_fail("PTRACE_CONT: %s\n",
-+					      strerror(errno));
-+			goto error;
-+		}
-+	}
-+
-+	ksft_print_msg("Parent is %d, child is %d\n", getpid(), child);
-+
-+	ret = EXIT_SUCCESS;
-+	run_tests(child);
-+
-+error:
-+	kill(child, SIGKILL);
-+
-+disappeared:
-+	return ret;
-+}
--- 
-2.39.2
+On 24/06/2024 23:26, Namhyung Kim wrote:
+> On Thu, Jun 13, 2024 at 04:31:21PM -0700, Ian Rogers wrote:
+>> setup.py was building most perf sources causing setup.py to mimic the
+>> Makefile logic as well as flex/bison code to be stubbed out, due to
+>> complexity building. By using libraries fewer functions are stubbed
+>> out, the build is faster and the Makefile logic is reused which should
+>> simplify updating. The libraries are passed through LDFLAGS to avoid
+>> complexity in python.
+>>
+>> Force the -fPIC flag for libbpf.a to ensure it is suitable for linking
+>> into the perf python module.
+>>
+>> Signed-off-by: Ian Rogers <irogers@google.com>
+>> Reviewed-by: James Clark <james.clark@arm.com>
+>> ---
+>>  tools/perf/Makefile.config |   5 +
+>>  tools/perf/Makefile.perf   |   6 +-
+>>  tools/perf/util/python.c   | 271 ++++++++++++++-----------------------
+>>  tools/perf/util/setup.py   |  33 +----
+>>  4 files changed, 110 insertions(+), 205 deletions(-)
+>>
+>> diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+>> index 7f1e016a9253..639be696f597 100644
+>> --- a/tools/perf/Makefile.config
+>> +++ b/tools/perf/Makefile.config
+>> @@ -910,6 +910,11 @@ else
+>>           endif
+>>           CFLAGS += -DHAVE_LIBPYTHON_SUPPORT
+>>           $(call detected,CONFIG_LIBPYTHON)
+>> +	 ifeq ($(filter -fPIC,$(CFLAGS)),)
+> 
+> Nitpick: mixed TAB and SPACEs.
+> 
+> 
+>> +           # Building a shared library requires position independent code.
+>> +           CFLAGS += -fPIC
+>> +           CXXFLAGS += -fPIC
+>> +         endif
+> 
+> 
+> I'm curious if it's ok for static libraries too..
+> 
+> Thanks,
+> Namhyung
+> 
 
+I think I tested the whole set with a static build so it should be ok.
+
+> 
+>>        endif
+>>      endif
+>>    endif
 
