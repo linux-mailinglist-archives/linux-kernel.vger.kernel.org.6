@@ -1,112 +1,96 @@
-Return-Path: <linux-kernel+bounces-228512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D51F7916102
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:23:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E6B3B916114
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D468B2369B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:23:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59A42B211A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 08:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA8B22313;
-	Tue, 25 Jun 2024 08:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OQGHrnSe"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE069148312;
+	Tue, 25 Jun 2024 08:26:04 +0000 (UTC)
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE29145B3E;
-	Tue, 25 Jun 2024 08:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCD11474A0;
+	Tue, 25 Jun 2024 08:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719303783; cv=none; b=Kd4qHIGCruuRMdOSjE2h9e2zrnRKgb5DbjjaIDRCNOjMe3H00lCtjj/+GnbjqWHtsV0MD4FRgqrLvZFh5i5wf3WnoO2WDWIX9Iyb0tolSD7R8y0/16yknC9KNxPt1vrTxyx2mgR6O57C2OUuWcTlbgFetDW+rPZSYDo8ZDwgQrU=
+	t=1719303964; cv=none; b=i+QwRJyOwmOnNKBtvEKk9I+G+iRzF0K59/bw9X2NDFrNgqzpUkd0RYY0aRqZw53dWvCZQmh+WrUXD/oAWYV9UUND+7PjCIE7Lg6nKDAqIp5IUfIVMqlI1MozD3F4PjxVP7GfnYlWXat8WoeAIQCTPFx8cnIDixEFPs85H+Ddrko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719303783; c=relaxed/simple;
-	bh=o4KIJ6Zs7UrMHBMSTDS4iO7pXNEXE+L1ytfyKNhhfmo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GdensY9wG0HllhVVzoCN5yS6RiV/IceIOBZicIwIgQ3v8D20NbUFLIXbh5FzxEQAAzWN0bUG28kAOF2XarHZiS6Idv2aN9TuHpWD+6Ni7wxsvH2zPqGv31jU/8tFjmaXzM2OzYHN4Aa/kWLkXfhdb/aATt5o31Cr2JCbQO2VMic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OQGHrnSe; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2c7da220252so4203699a91.1;
-        Tue, 25 Jun 2024 01:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719303782; x=1719908582; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=o4KIJ6Zs7UrMHBMSTDS4iO7pXNEXE+L1ytfyKNhhfmo=;
-        b=OQGHrnSe53tbt17uu3qs2LaWD9qgOO16uQwdw7bI40UbcOusa0cR2CRl8cmw3umhbt
-         0CcKR41H/5qNXWU0OpHhIGN/09xfL9DnbRVbHywBIS9Szsz+C6nYNpIKMIKCYhZSBwvR
-         aRQmALfQnhNpmHb5ypRSi+ui6iOxP+88+MUdu4pGYMxhnS0fpEBFIJWIw2sBcitAaYdw
-         pJG7HUd22uSpVvjfX+SDSIuVj44PKlZXcwqLNmzLOGtUW1cT16hpZoKQC6/sNhGzNE+T
-         7nBLkRVY6Nz1gT4pTEtbHI8zW5iJuLdKyIOzMZekdSHA2WvprZiM0z7bkKPNQqZfWxPN
-         bYpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719303782; x=1719908582;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=o4KIJ6Zs7UrMHBMSTDS4iO7pXNEXE+L1ytfyKNhhfmo=;
-        b=oh3Bg6ULo7vTtnyXmO2rkfXifdyldr5/bOX1Q92C6dNHXBHTVOwMSJ/7Yoiodh/B8r
-         nuCWaxqZe0DxJLgJ/gubwIWZPbSQmaGiEzDCbhMGofrQTJdpOYiUiXBj7TPqbUpkvGD6
-         UK+G/gaUUEAhPbedaIPDucYlwCkiCXSmsz+CVlPqutpFgeLvOuTdBy+TQDMl3z7EiEoy
-         a+TfMYx1/oWzhYWXaciFAHclBAOhb/bHPMlmGcYmnMFKlzrUGwd4UEXhMSUX6e0Cix7w
-         2IbhmKgpD1SxHK9oeIAVFWjy7BpqkAhCHO8YKUR7GzCHlyKLJT6F+U87aK2RXODb4gts
-         FekA==
-X-Forwarded-Encrypted: i=1; AJvYcCURt5yJKDC7vBkaiLHpfgA7TyfCqZV0QEDQF/zgSVFJ3G7t8fzCmHSS9tdW6uThsLge91nsnBcs2prr1AZTGNMi3Y+TlQFC/TUl0cm9lzdZBniYr4oj/8ebVEDNkDmHNz7OVvN474YBRw==
-X-Gm-Message-State: AOJu0YxbrvA9FPEBihYGJWP7r/1weUuZ/bLL4vrvJrUOP7BQzvPKNzWL
-	dJO32sNKxA4vWmJlRLPTvJwW6gOO5rW2D0NxqWKOhKbO4hEfE2Ac03gL9p4288qXy2XyG1MUbZz
-	2bEsYkI81Ee8vXPcGdqwwqEbzmac=
-X-Google-Smtp-Source: AGHT+IHtxfqKapIy2VLc9XgQg+O6Y7/HP/S9K56/AJ1RUcRFmbfNHxw1sRRaimmn7/jQxwJepnGz2MVhXk7BZnGONNM=
-X-Received: by 2002:a17:90b:1288:b0:2c7:7718:a9dc with SMTP id
- 98e67ed59e1d1-2c86141e878mr6838662a91.46.1719303781854; Tue, 25 Jun 2024
- 01:23:01 -0700 (PDT)
+	s=arc-20240116; t=1719303964; c=relaxed/simple;
+	bh=IhF2vnbDM/lviRIVJxRhDDGl2xUCWqfNOeEkZeozmJw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=coxf8XUbyi9KRa/1s/ykOy/4nhtHOYT8YGOvmmMQ3fivsy+wqNAJ2Hp9ckTV6R6M1jj+F0rHu8YB6Y3iWrmhJz5RwIIGJQX3FmjMw8i4/IxDApwVr0iKhudnZ0rl+mVP+wm2BxspG/gZ5GDpxDgFQytcnwDtBH/ErYGmu+idbg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b6a.versanet.de ([83.135.91.106] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sM1Ug-0003AJ-5E; Tue, 25 Jun 2024 10:25:38 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ Jacobe Zang <jacobe.zang@wesion.com>
+Cc: Nick Xie <nick@khadas.com>,
+ "efectn@protonmail.com" <efectn@protonmail.com>,
+ "jagan@edgeble.ai" <jagan@edgeble.ai>,
+ "dsimic@manjaro.org" <dsimic@manjaro.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-rockchip@lists.infradead.org" <linux-rockchip@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 1/2] arm64: dts: rockchip: Add USB-C to Khadas Edge 2
+Date: Tue, 25 Jun 2024 10:25:37 +0200
+Message-ID: <2403789.9XhxPE3A7Q@diego>
+In-Reply-To:
+ <TYZPR03MB700141F5448D61A000D588AB80D52@TYZPR03MB7001.apcprd03.prod.outlook.com>
+References:
+ <20240624083236.1401673-1-jacobe.zang@wesion.com>
+ <6d8f80a0-d67a-416e-b395-7a33b539682e@kernel.org>
+ <TYZPR03MB700141F5448D61A000D588AB80D52@TYZPR03MB7001.apcprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240511104341.151550-1-aleksandar.rikalo@syrmia.com> <sshcqxwvt7gh4log4u7prw6udsd5k23wpautiocuwitapajhur@bffjuaeoxtaq>
-In-Reply-To: <sshcqxwvt7gh4log4u7prw6udsd5k23wpautiocuwitapajhur@bffjuaeoxtaq>
-From: Aleksandar Rikalo <arikalo@gmail.com>
-Date: Tue, 25 Jun 2024 10:22:50 +0200
-Message-ID: <CAGQJe6qf=1DqaakO2HEkqaRyq4smxC4=J_NHwofb4yRuC24Xug@mail.gmail.com>
-Subject: Re: [PATCH v4 00/14] MIPS: Support I6500 multi-cluster configuration
-To: Serge Semin <fancer.lancer@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: Aleksandar Rikalo <aleksandar.rikalo@syrmia.com>, Chao-ying Fu <cfu@wavecomp.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Greg Ungerer <gerg@kernel.org>, Hauke Mehrtens <hauke@hauke-m.de>, 
-	Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org, Marc Zyngier <maz@kernel.org>, 
-	Paul Burton <paulburton@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-Hello everyone,
+Am Dienstag, 25. Juni 2024, 09:53:45 CEST schrieb Jacobe Zang:
+> > Was it disabled anywhere?
+> 
+> This patch aims to enable the DRD function of Type-C port. So need to enable in DTS.
 
-Thank you for the review and testing!
+> +       usbc0: usb-typec@22 {
+> +               compatible = "fcs,fusb302";
+> +               reg = <0x22>;
+> +               interrupt-parent = <&gpio1>;
+> +               interrupts = <RK_PB5 IRQ_TYPE_LEVEL_LOW>;
+> +               pinctrl-names = "default";
+> +               pinctrl-0 = <&usbc0_int>;
+> +               vbus-supply = <&vbus5v0_typec>;
+> +               status = "okay";
 
-I will send a new version of the series soon. I will dump the FDC
-changes (patches 12, 13, and 14) and include the requested changes.
+what Krzysztof means, is that the default for status is "okay". So for a
+node you just added, you don't need a separate status="okay"
 
--- Aleksandar
+This is only needed if the node is added in a base dtsi (like soc
+peripherals) which are then enabled on a per-board basis as needed.
 
-On Mon, Jun 24, 2024 at 10:12=E2=80=AFPM Serge Semin <fancer.lancer@gmail.c=
-om> wrote:
-> Finally got it tested on my P5600-based SoC. No problems has been
-> spotted. So for the entire patchset:
->
-> Tested-by: Serge Semin <fancer.lancer@gmail.com>
->
-> To sum up I'd drop the FDC refactoring patches from these series and
-> have them added to the patchset where the changes are actually needed
-> (if there is one).
->
+So please just drop the status property from you fusb302 node.
+
+
+Heiko
+
+
 
