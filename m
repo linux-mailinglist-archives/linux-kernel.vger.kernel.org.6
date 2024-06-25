@@ -1,243 +1,163 @@
-Return-Path: <linux-kernel+bounces-228885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B29691682A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:40:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B352916831
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:41:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6E6728804F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:40:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD0731C257E0
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:41:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76766156F4A;
-	Tue, 25 Jun 2024 12:40:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 927D0158861;
+	Tue, 25 Jun 2024 12:41:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PVplCggM"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="fZOJ29Bo"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C969514B965;
-	Tue, 25 Jun 2024 12:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E80B14B965;
+	Tue, 25 Jun 2024 12:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719319226; cv=none; b=YMAZ/LXv8jjHGu/PUZv3z30/nB3kCCDKMA/xFZhtYas4lbG7zEcORI6vKX14H6LVtELVd+RSdQS0X9xl21F/cpy0QKlOgtetON+EEnE+0RnOkQoecsCXxTApQpF2Fqm56KzirUoWLWePneIoIStQhNq739JFfhYl2qDek1sfC8s=
+	t=1719319261; cv=none; b=VPxOF+P8erVKjr3TfuBmmJJ1XSVNqTKivmJ5SGwHn2U+01MwmTVZwQqHSd60tOtJ5caFBjgiSgSnRDdfWxIrih2+houdYx3p2NzNwQ1OroncoWoFGJcdKpHs0pCVQS3fIcr1vz2XD0C/6pj3SkWSi+kvrajJwxmxOHB4Dm280OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719319226; c=relaxed/simple;
-	bh=xJZC0ZWdKW7k5RvmuvvgEZNEvkDgI1taC7UFj87I6eg=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PpMwWaH/9+85UWO7sKLVnkDoQlIY0ptVVXdIKyJsxpWXlH4OBjmR7HPKoutxF1/O4vuteKn24arMcjMMQnLrueCanxTotmAtF0Vj/7rKBr3YksF4N59Gfybb1D1IsfleTTXl0DgvA9DTdtzhccvSSXaypl/4Dg0xnclh9RC0yrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PVplCggM; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-57d1d614049so6049441a12.1;
-        Tue, 25 Jun 2024 05:40:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719319223; x=1719924023; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WoVkX+/SqvLNF+tl9I//nQP7hSOM7jd83RwihftTHdk=;
-        b=PVplCggMWP11VIUJkj5kBHIRJ0XYO3nKTzC5kdDsHuF/wzf0RgpOgTJ7v5FcGT7ZF6
-         F4NK7bBQ9/0Jc4bPu2SSSwgp16Wys4Hhnkb9WiOa+pAmTwEy0QC/S7DMon+zYx+Arx2l
-         HtBBO0RCFe6aViX5duv813o72G6CyAngr28YSrVx5b+u1qVkkALswuCKF4UynLovyHZ7
-         eMkOS72aCVuiDN4WH73OcNj+1eyZRtkQ3G/y+umBF+eddyzU5laEwwuCLXup0CI227xv
-         npcxTUBUv/HVrbCPV6N0t9nq2UeeYZWPAnCBMfiwFRiUiOwfau/sFYgvsa4opk3qk18U
-         8+NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719319223; x=1719924023;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WoVkX+/SqvLNF+tl9I//nQP7hSOM7jd83RwihftTHdk=;
-        b=Naj7eNWVTla435jnNuXg48EaJuxnNg5oGH/jB8b6ivcTpzHcM0PO1cWMtg4agvtOnJ
-         1RHhBXr/xUXIP+qLU36ap6VJKKuVIhcdQpLSSGAJ/r9zB6/sdO0Hy0nF9VglAEc8o+PV
-         IJTGGyrmjZtQNxFM1ocdDxe86O4aVe13EU6fiRC6lkSDzX8q7UKDNqcZE9eZnXDS2U5m
-         ERTYQidqkAyPFJRZJrUizNUoecwCZiHexfRjURqlqsOKnsaGcIFnBhpTeXdVGDWIFO2k
-         zcX1fD/scDxCtM+ub0Kd1cJ/ZXKKZ5Yict62FB7PvrhPqs4UM1d89GoP1NZ4GeR+hzkH
-         JNKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWyB4QpwwOWOYH/NQtP+8TWvfGDN0dlb0fluNoHK6MeKHkiHyGu+4tnljVTmqTRmMkoKlJQav0Hxlw+fiT+sf0RYPKAwEkmUqjb56Z1bJs19TkhAOgpqfGFFz9lf53eIXN+tEhA3gubmw==
-X-Gm-Message-State: AOJu0Yx0mgDtpvKLWcvyrtgL8ss2HaGvqZxq1cE/f5q8O69TTmom3pBl
-	+c6aN0gw+yyG5QMWep1Mnkmz1siz6ZRkKAh61z8g59AcXtFulNmlFXkG2w==
-X-Google-Smtp-Source: AGHT+IFxTLa8c3S5ivxUnXxBLRu48xXYi/65NyP5o9yS4QN739SX8vgF3IZu8OCLLzy1iVUqusy0fA==
-X-Received: by 2002:aa7:cb59:0:b0:57d:4fd8:db59 with SMTP id 4fb4d7f45d1cf-57d4fd8dc94mr6295848a12.0.1719319222848;
-        Tue, 25 Jun 2024 05:40:22 -0700 (PDT)
-Received: from pc638.lan (host-185-121-47-193.sydskane.nu. [185.121.47.193])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d30563440sm5853522a12.84.2024.06.25.05.40.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 05:40:22 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc638.lan>
-Date: Tue, 25 Jun 2024 14:40:20 +0200
-To: Baoquan He <bhe@redhat.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Nick Bowler <nbowler@draconx.ca>,
-	Hailong Liu <hailong.liu@oppo.com>, linux-kernel@vger.kernel.org,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	linux-mm@kvack.org, sparclinux@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
-Message-ID: <Znq6tEtCgB6QnnJH@pc638.lan>
-References: <75e17b57-1178-4288-b792-4ae68b19915e@draconx.ca>
- <00d74f24-c49c-460e-871c-d5af64701306@draconx.ca>
- <20240621033005.6mccm7waduelb4m5@oppo.com>
- <ZnUmpMbCBFWnvaEz@MiWiFi-R3L-srv>
- <ZnVLbCCkvhf5GaTf@pc636>
- <ZnWICsPgYuBlrWlt@MiWiFi-R3L-srv>
- <Znljtv5n-6EBgpsF@pc636>
- <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
- <ZnqcuKt2qrR-wmH3@pc636>
- <ZnqspTVl/76jM9WD@MiWiFi-R3L-srv>
+	s=arc-20240116; t=1719319261; c=relaxed/simple;
+	bh=Azz83iCxMey+RHYQMQuTn8+hKRjE9l9Ng9p796lbhdc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DmdCgqXuQZOlZ9szNFvo6LTPUU3Tg9caZfefIPt3hre1R/u7p+UYkR/9h2SH/Xq6KWIbR4vvIvx7LF5sR27FKWnyq9bjmHVi4IgGytAT/WZhapy9DH3IKr0NUyLfc9j3BosfDJpHlvDu0gT98iqMiPYAmCrLDkxidCyShdvEU6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=fZOJ29Bo; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1719319254; x=1719924054; i=deller@gmx.de;
+	bh=6DnJSkhTF263LRHIDsc/RuBomqMyNgJmJNDVqGHIMdk=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=fZOJ29BoHEsjBpIH5Ds3yOzi87xnfkKUXyENmtXzIJVkJotPtyb/mWKbCtBEuUeD
+	 jGU+EoKHaUWRjlhh4RzM5MT/NKlyg5NzCFzZPaxG69f9m1gHu8ApmZSeqZXASsH+x
+	 Ao4QfyvFL8NyEMaBiYWoqiXvduXJKAxszXYOCqUN8ZcXnw33e+p01g3AMDLun3t/0
+	 EQ/0qqjM5PmaHPC1DtkLPqzDZ0mgwzZmzeEFee1lXsJe0O61eEJ0RRgXGoLTP5046
+	 9vHaAorG5Bd2WqyuO3hEGokicOBsejOLbtEuH1B5iJQAI1vLbPlcMgS+UFlltAni4
+	 g0TOmXzfig5KpB8Wzg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.8.0.6] ([78.94.87.245]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MgeoI-1spcrq13q0-00gQI4; Tue, 25
+ Jun 2024 14:40:54 +0200
+Message-ID: <7a209bc9-82bc-4c3b-a9ad-6ee17280b0dc@gmx.de>
+Date: Tue, 25 Jun 2024 14:40:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnqspTVl/76jM9WD@MiWiFi-R3L-srv>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fbdev: mmp: Constify struct mmp_overlay_ops
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org
+References: <c5c1a26fdbf0895d1b17010f1c2da44b18b4ae55.1719259171.git.christophe.jaillet@wanadoo.fr>
+Content-Language: en-US
+From: Helge Deller <deller@gmx.de>
+Autocrypt: addr=deller@gmx.de; keydata=
+ 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
+In-Reply-To: <c5c1a26fdbf0895d1b17010f1c2da44b18b4ae55.1719259171.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:2mUriBY5Bh6IvsmIPOOVoKxrCpFOTtSxaZOZ8vNrpHn3Nd16/xY
+ MHdfg8HK6bJLGKpALBi0EJbR4FmmgrnRQ9TCdHmRu9jOhfkOShSCtIP+xT9/yzYNB1fi15s
+ Q4Um2Mf4EvK6YQ03aE/qbmxwqfSoeEQjg15VL9oSthWX4UBSaJGHzZScScpHC2iJMrmuTVI
+ qUEDG9T+vxZBSORg/kwQw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:V5JHoB5155M=;tEDyanyxld9/6d4nMIFBNKfOm/8
+ 8I/Dmwa9w+nzNuWeWjBivsoamI/qk3g2hunQRj6mTJByGjZLE6Mu+DwHpo9lhzC7oqoIycsF4
+ emfkqmF34iS2rLYmCSmRiROxHqC3tO1qINkWeKcLrD/b/RStdkiLw1rgmrn4CFnlbeu8pgfmP
+ 1qj8rbmooLxile84FK+LcWEqvWBVjfHUkq0bv1eTSoPETHhWZPFFpxmd85PXsDzYRsgTHUiqX
+ MEDrZ1czKWvf9vlyewyIEawfeg09nzvvQVZAhfxrbCynwXWh6ndLzxCvEJju+lXSMz+DUw0M7
+ Ko/SvRjKXVBSdU0k1ZM+Y6DoXsvbF/jWEE2SqGKXa3DZTBkH9xOX/ZOd5Cbs1ZHyQZKqkoSFz
+ devtSYUYdJkVGA/5FlM4AQx9R+0NraflKCiMvJDtdYk3uw5vzv0/mEGnnHVfdqnLO5DFRFS//
+ ppXi/39j0LU3h/L8vTGaNFWIDYS/PybFv+7K+OOKdBtPBOHj7cpgniSonwuJ7m+Xn8rv8pyCQ
+ OqnOcISgzopz2MKSImJdgfO+kpkBxOWwL6f1UgXG2qOv8MfMNoOIUDsrNejIReLVp7ehpm/FW
+ IZbnEaJMoNtxZiQOUcNGM6UzC7bkEMrfjHKe5+Iw1mpwHRDlLHSxTW7Qj55V3v90UxwoY14fr
+ RrX/9AXrfDgwO3euEIMdDxKiD3DPJOD1ekAbtJTtcJmUpNmmag7oI8pgGo8VRsBnzm9tssgMP
+ /Chy15SzI8VxHadpfZLDZvvFFTEZXOQJ+jEWaFW6ByYPcNV51qMpEuRnwSLRDxg7IwTX73Fn3
+ merqNnvdD0FF989PBKvCxgJ9ZFEBanCpWG3wwXaAUZIqs=
 
-On Tue, Jun 25, 2024 at 07:40:21PM +0800, Baoquan He wrote:
-> On 06/25/24 at 12:32pm, Uladzislau Rezki wrote:
-> > On Tue, Jun 25, 2024 at 11:30:33AM +0800, Baoquan He wrote:
-> > > On 06/24/24 at 02:16pm, Uladzislau Rezki wrote:
-> > > > On Fri, Jun 21, 2024 at 10:02:50PM +0800, Baoquan He wrote:
-> > > > > On 06/21/24 at 11:44am, Uladzislau Rezki wrote:
-> > > > > > On Fri, Jun 21, 2024 at 03:07:16PM +0800, Baoquan He wrote:
-> > > > > > > On 06/21/24 at 11:30am, Hailong Liu wrote:
-> > > > > > > > On Thu, 20. Jun 14:02, Nick Bowler wrote:
-> > > > > > > > > On 2024-06-20 02:19, Nick Bowler wrote:
-> > > > > ......
-> > > > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > > > > index be2dd281ea76..18e87cafbaf2 100644
-> > > > > > > --- a/mm/vmalloc.c
-> > > > > > > +++ b/mm/vmalloc.c
-> > > > > > > @@ -2542,7 +2542,7 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
-> > > > > > >  static struct xarray *
-> > > > > > >  addr_to_vb_xa(unsigned long addr)
-> > > > > > >  {
-> > > > > > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > > > > > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-> > > > > > >  
-> > > > > > >  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
-> > > > > > >  }
-> > > > > > > 
-> > > > > > The problem i see is about not-initializing of the:
-> > > > > > <snip>
-> > > > > > 	for_each_possible_cpu(i) {
-> > > > > > 		struct vmap_block_queue *vbq;
-> > > > > > 		struct vfree_deferred *p;
-> > > > > > 
-> > > > > > 		vbq = &per_cpu(vmap_block_queue, i);
-> > > > > > 		spin_lock_init(&vbq->lock);
-> > > > > > 		INIT_LIST_HEAD(&vbq->free);
-> > > > > > 		p = &per_cpu(vfree_deferred, i);
-> > > > > > 		init_llist_head(&p->list);
-> > > > > > 		INIT_WORK(&p->wq, delayed_vfree_work);
-> > > > > > 		xa_init(&vbq->vmap_blocks);
-> > > > > > 	}
-> > > > > > <snip>
-> > > > > > 
-> > > > > > correctly or fully. It is my bad i did not think that CPUs in a possible mask
-> > > > > > can be non sequential :-/
-> > > > > > 
-> > > > > > nr_cpu_ids - is not the max possible CPU. For example, in Nick case,
-> > > > > > when he has two CPUs, num_possible_cpus() and nr_cpu_ids are the same.
-> > > > > 
-> > > > > I checked the generic version of setup_nr_cpu_ids(), from codes, they
-> > > > > are different with my understanding.
-> > > > > 
-> > > > > kernel/smp.c
-> > > > > void __init setup_nr_cpu_ids(void)
-> > > > > {
-> > > > >         set_nr_cpu_ids(find_last_bit(cpumask_bits(cpu_possible_mask), NR_CPUS) + 1);
-> > > > > }
-> > > > > 
-> > > > I see that it is not a weak function, so it is generic, thus the
-> > > > behavior can not be overwritten, which is great. This does what we
-> > > > need.
-> > > > 
-> > > > Thank you for checking this you are right!
-> > > 
-> > > Thanks for confirming this.
-> > > 
-> > > > 
-> > > > Then it is just a matter of proper initialization of the hash:
-> > > > 
-> > > > <snip>
-> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > index 5d3aa2dc88a8..1733946f7a12 100644
-> > > > --- a/mm/vmalloc.c
-> > > > +++ b/mm/vmalloc.c
-> > > > @@ -5087,7 +5087,13 @@ void __init vmalloc_init(void)
-> > > >          */
-> > > >         vmap_area_cachep = KMEM_CACHE(vmap_area, SLAB_PANIC);
-> > > >  
-> > > > -       for_each_possible_cpu(i) {
-> > > > +       /*
-> > > > +        * We use "nr_cpu_ids" here because some architectures
-> > > > +        * may have "gaps" in cpu-possible-mask. It is OK for
-> > > > +        * per-cpu approaches but is not OK for cases where it
-> > > > +        * can be used as hashes also.
-> > > > +        */
-> > > > +       for (i = 0; i < nr_cpu_ids; i++) {
-> > > 
-> > > I was wrong about earlier comments. Percpu variables are only available
-> > > on possible CPUs. For those nonexistent possible CPUs of static percpu
-> > > variable vmap_block_queue, there isn't memory allocated and mapped for
-> > > them. So accessing into them will cause problem.
-> > > 
-> > > In Nick's case, there are only CPU0, CPU2. If you access
-> > > &per_cpu(vmap_block_queue, 1), problem occurs. So I think we may need to
-> > > change to take other way for vbq. E.g:
-> > > 1) Storing the vb in the nearest neighbouring vbq on possible CPU as
-> > >    below draft patch;
-> > > 2) create an normal array to store vbq of size nr_cpu_ids, then we can
-> > >    store/fetch each vbq on non-possible CPU?
-> > > 
-> > A correct way, i think, is to create a normal array. A quick fix can be
-> > to stick to a next possible CPU.
-> > 
-> > > The way 1) is simpler, the existing code can be adapted a little just as
-> > > below.
-> > > 
-> > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > index 633363997dec..59a8951cc6c0 100644
-> > > --- a/mm/vmalloc.c
-> > > +++ b/mm/vmalloc.c
-> > > @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
-> > >  static struct xarray *
-> > >  addr_to_vb_xa(unsigned long addr)
-> > >  {
-> > > -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > > +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-> > > +
-> > > +	if (!cpu_possible(idex))
-> > > +		index = cpumask_next(index, cpu_possible_mask);
-> > >
-> > cpumask_next() can return nr_cpu_ids if no next bits set.
-> 
-> It won't. nr_cpu_ids is the largest index + 1, the hashed index will
-> be:  0 =<  index  <= (nr_cpu_ids - 1) e.g cpu_possible_mask is
-> b10001111, the nr_cpu_ids is 8, the largest bit is cpu7.
-> cpu_possible(index) will check that. So the largest bit of cpumask_next()
-> returns is (nr_cpu_ids - 1).
-> 
-/**
- * cpumask_next - get the next cpu in a cpumask
- * @n: the cpu prior to the place to search (i.e. return will be > @n)
- * @srcp: the cpumask pointer
- *
- * Return: >= nr_cpu_ids if no further cpus set.
- */
-static inline
-unsigned int cpumask_next(int n, const struct cpumask *srcp)
-{
-	/* -1 is a legal arg here. */
-	if (n != -1)
-		cpumask_check(n);
-	return find_next_bit(cpumask_bits(srcp), small_cpumask_bits, n + 1);
-}
+On 6/24/24 21:59, Christophe JAILLET wrote:
+> 'struct mmp_overlay_ops' is not modified in this driver.
+>
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security.
+>
+> On a x86_64, with allmodconfig, as an example:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>     text	   data	    bss	    dec	    hex	filename
+>    11798	    555	     16	  12369	   3051	drivers/video/fbdev/mmp/hw/mmp_=
+ctrl.o
+>
+> After:
+> =3D=3D=3D=3D=3D
+>     text	   data	    bss	    dec	    hex	filename
+>    11834	    507	     16	  12357	   3045	drivers/video/fbdev/mmp/hw/mmp_=
+ctrl.o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested-only
+> ---
+>   drivers/video/fbdev/mmp/hw/mmp_ctrl.c | 2 +-
+>   include/video/mmp_disp.h              | 4 ++--
+>   2 files changed, 3 insertions(+), 3 deletions(-)
 
---
-Uladzislau Rezki
+applied.
+Thanks!
+Helge
+
 
