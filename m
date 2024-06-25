@@ -1,105 +1,79 @@
-Return-Path: <linux-kernel+bounces-229016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559C09169BD
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 16:01:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C80E9168E4
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:32:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A104AB2133F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:01:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51B31F23186
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EF3E1E886;
-	Tue, 25 Jun 2024 14:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="vxvjoZwt"
-Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B67ABE71;
-	Tue, 25 Jun 2024 14:00:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B54F161936;
+	Tue, 25 Jun 2024 13:32:27 +0000 (UTC)
+Received: from irl.hu (irl.hu [95.85.9.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C8FA1607B0;
+	Tue, 25 Jun 2024 13:32:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.85.9.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719324037; cv=none; b=n7WnN4Y83xC/MQ4RUbtzQbQ3qXV9WRXfaNfJQlCKCs2rNIpWEhwOMLw60kScppYs8oo9bpU3T6SJgoyOXoAOxykJsvUEBInpl8mxJdzagqjTuqj4vlA/NxtGgbBYpUugWc5oBzLeEaL5U7QJidMwlqgsTV8SrfErpy6q/3PGkgQ=
+	t=1719322347; cv=none; b=hS0xMJF6ZClSjwAcww4xoGgm57/IXtB+r5X7gorjQaJN8qHzZohjuLjEIguuTU+Asx7W4gts9fmANVAn4KClgo/ElYPcq2F5RQQVfiT6/UDfIK1PBuSkTjZGyevNgvCMv6t3zdXHCsqnPrSzjmk/+yOXl1dUdJ/eEcrYd8gtUvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719324037; c=relaxed/simple;
-	bh=Rb3KOLeLTiXVITDd5CHEUeEmlO2BzhhQejT8VB/17/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=nhrDiXlAQ8ZS5Kf39gUz9aezbW0eEsUJamGSbIaT3MujZW3NIJM2e3gb4c4CS4LzP9+n0c/TuxZGusAGnM7DtDaSUSEKyTVUgpCf82FbLvDs/J3E3ADaV46E+3WIRnzIHxUOSab0+D5M9dUTTiaxrICyqjDHwBIgM0GeWbteknw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (1024-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=vxvjoZwt; arc=none smtp.client-ip=185.87.125.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
-Received: by www.linux-watchdog.org (Postfix, from userid 500)
-	id 5640B401AE; Tue, 25 Jun 2024 15:31:51 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 5640B401AE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
-	s=odk20180602; t=1719322311;
-	bh=Rb3KOLeLTiXVITDd5CHEUeEmlO2BzhhQejT8VB/17/I=;
-	h=Date:From:To:Cc:Subject:From;
-	b=vxvjoZwtJmvfDoK0x1VBzI4in6ZIWSRRb8uw/ELktZKw8k8JFt78HLx+Hb9g0JmpH
-	 QscUMwiio6j4BtmBktY+G5LpCuAV4PruZ2q6mO/FPs7f95WfG6imok9ETggKd0Mj4P
-	 Rs/R6Vlo5lYkkJPSYaCkxxllWnb5//lK/9zobOzI=
-Date: Tue, 25 Jun 2024 15:31:51 +0200
-From: Wim Van Sebroeck <wim@linux-watchdog.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
-	Guenter Roeck <linux@roeck-us.net>, Arnd Bergmann <arnd@arndb.de>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Subject: [GIT PULL REQUEST] watchdog - v6.10 release cycle (fixes).
-Message-ID: <20240625133151.GA1554@www.linux-watchdog.org>
+	s=arc-20240116; t=1719322347; c=relaxed/simple;
+	bh=7cRZ7RSanbNqP4/UsuFatp5+Yyy3gQFuJtGygSMSx4Q=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pOkaPIv6tZOpfushsJmxJAtWIuirmarBt7m5f4qI/M0EPsYWFzn8Yv9IlZlDQviQ3FDhfU03o6mFC42BEJcjrL5zFLR3uTIMwwlUYnGVs9MA51k4M8f2SLEeHUrnRlTcKyWTBilK/bNLnFMNn5LyM+hzehy7HbeixeT3mLSeaHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu; spf=pass smtp.mailfrom=irl.hu; arc=none smtp.client-ip=95.85.9.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=irl.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=irl.hu
+Received: from fedori.lan (91ec5716.dsl.pool.telekom.hu [::ffff:145.236.87.22])
+  (AUTH: CRAM-MD5 soyer@irl.hu, )
+  by irl.hu with ESMTPSA
+  id 00000000000720C2.00000000667AC6E1.00006109; Tue, 25 Jun 2024 15:32:16 +0200
+Message-ID: <c0a9e15e7926e098bdea97a7d31c32427e0910c9.camel@irl.hu>
+Subject: Re: [PATCH v2] ALSA: hda/realtek: Enable headset mic on IdeaPad
+ 330-17IKB 81DM
+From: Gergo Koteles <soyer@irl.hu>
+To: Rauty <rautyrauty@gmail.com>, alsa-devel@alsa-project.org,
+  tiwai@suse.com
+Cc: perex@perex.cz, kailang@realtek.com,
+  sbinding@opensource.cirrus.com, luke@ljones.dev,
+  shenghao-ding@ti.com, simont@opensource.cirrus.com,
+  foss@athaariq.my.id, rf@opensource.cirrus.com, wzhd@ustc.edu,
+  linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 25 Jun 2024 15:32:16 +0200
+In-Reply-To: <CAGpJQTGqxEkfp003QLsp-syUgzDFCmHSmNaoOaem0ZMVf7_=bg@mail.gmail.com>
+References: <20240615125457.167844-1-rauty@altlinux.org>
+	 <2c9ba341bc95d4b9010bf5f8794c0d14b1c57dc9.camel@irl.hu>
+	 <CAGpJQTHoBAixmxta2WuZfjHjiK9GXF=hkfPyV7PBD5rt9Z_0WA@mail.gmail.com>
+	 <CAGpJQTGqxEkfp003QLsp-syUgzDFCmHSmNaoOaem0ZMVf7_=bg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.20 (2009-12-10)
 
-Hi Linus,
+Hey Rauty,
 
-Please pull following watchdog changes for the v6.10 release cycle.
+On Mon, 2024-06-24 at 11:25 +0300, Rauty wrote:
+> I haven't changed the patch yet, but it's already in the stable-queue:
+> https://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git/t=
+ree/queue-5.10/alsa-hda-realtek-enable-headset-mic-on-ideapad-330-1.patch
+> Do you still need changes from me?
 
-This series contains:
-* lenovo_se10_wdt: add HAS_IOPORT dependency
-* add missing MODULE_DESCRIPTION() macros
+I still think this breaks Duet 7 sound, because snd_hda_pick_fixup
+function picks the PCI SSIDs before Codec SSIDs.
+But maybe I missed something.
 
-The output from git request-pull:
-----------------------------------------------------------------
-The following changes since commit c3f38fa61af77b49866b006939479069cd451173:
+Takashi, what do you think?
 
-  Linux 6.10-rc2 (2024-06-02 15:44:56 -0700)
-
-are available in the git repository at:
-
-  git://www.linux-watchdog.org/linux-watchdog.git linux-watchdog-6.10-rc-fixes
-
-for you to fetch changes up to acf9e67a7625367b89440855572b29c5ec19dd20:
-
-  watchdog: add missing MODULE_DESCRIPTION() macros (2024-06-15 12:49:57 +0200)
-
-----------------------------------------------------------------
-linux-watchdog 6.10-rc-fixes tag
-
-----------------------------------------------------------------
-Arnd Bergmann (1):
-      watchdog: lenovo_se10_wdt: add HAS_IOPORT dependency
-
-Jeff Johnson (1):
-      watchdog: add missing MODULE_DESCRIPTION() macros
-
- drivers/watchdog/Kconfig           | 1 +
- drivers/watchdog/menz69_wdt.c      | 1 +
- drivers/watchdog/omap_wdt.c        | 1 +
- drivers/watchdog/simatic-ipc-wdt.c | 1 +
- drivers/watchdog/ts4800_wdt.c      | 1 +
- drivers/watchdog/twl4030_wdt.c     | 1 +
- 6 files changed, 6 insertions(+)
-----------------------------------------------------------------
-
-Kind regards,
-Wim.
+Best regards,
+Gergo Koteles
 
 
