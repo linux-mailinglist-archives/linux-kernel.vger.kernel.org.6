@@ -1,145 +1,281 @@
-Return-Path: <linux-kernel+bounces-228667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173EE916531
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:22:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6083F916532
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:24:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E40BEB21D84
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:22:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 665FB1C218A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE2314A0BF;
-	Tue, 25 Jun 2024 10:21:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="L/DsslZ1"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED06414A08B;
+	Tue, 25 Jun 2024 10:24:12 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4E7146A67
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDC3136E28
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719310918; cv=none; b=Cjh9OzJf5NENTEE4faXF3h2zXYsjwHgVXSdUki+FrOwMDgIC7xfKeJJhM2Nus8cn6s4Mi5jWYioQ46ihdEoLNJSpMiYLT7YzK28mHSJbZpB1ygWn58rhJRSAGyMSoG9vTGY5/0qlZBtb+zRyQ1VHoKLoAhPVh8SSx6Of+h4+uJk=
+	t=1719311052; cv=none; b=qWtDTjR7AtHzefQ6IzJ8+F0fJTYkG6VicAoL+jO6QYfrzJGFfIt3Q+9tM9dpJsCRCgWPtH7TX2Vvl5ZS0FYK7emQAjdIynhJMRHix2vacOoU+TKXiGjSVcIcmwfxlnddSqnlMm1Ot4HeVO7NRo8fKLm+3I9pSoSlU6UDCbi6EBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719310918; c=relaxed/simple;
-	bh=7eV+FC8D6zjFgWnptjlUDQlEzJ1ee9CaqujklxBCwc8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bue4/4fna3pfOr6sCqjiCxAVjeh6I/eo2T6hSYjbmVjW60bGz+QloiBrjxRbblIAF0Bk93g0+LjdxvPb5JHpngInNA0T7lOTSVv5mTnJKe6vgjYsqzU7HzXeah6skIDvdJwzp4pY7cQgnjgA2HYbRW9c2Ty+l+ZlrXGMCgQBb4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=L/DsslZ1; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-1fa2782a8ccso16214785ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:21:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719310915; x=1719915715; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+VjACVZoPp7eN7kJksXj5MfvnAImL5JxKUjwBijavO4=;
-        b=L/DsslZ1xJ/RcgZWEc4OFvYGI9wRjWwxXzhejYpuLjnS7POewgUElXfrxZntPaE5PR
-         Ja3ClYsYtcgZ2UkoK0N5VbfR64dV/slOPgJerqFKlo2IhArYLZ/sAOoHUAK3wP4gOSlB
-         H/qSzk0q5H8BZy+UeSGvfJiem4mYTBKsDUhbM=
+	s=arc-20240116; t=1719311052; c=relaxed/simple;
+	bh=qBcGDPmxvL4M0AMYOH8v/IMULS0eIr7aPitOVtTjk2Y=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=NzxedpHzYX5C88R1QyAIIG46twp+BrP9GduN5cysMhNuq9RaRFoQLnDYtaxfj2zGOR3L3MfRjMiavCtd5GVjXsYDgPOCLksLoKi09WkEZZ3TPfQo1sG9KbwLD4DdaQ9BJayfXzKn4RyNkRM4PFGQX2nHdLYlbP89/Dz8yNIJw9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7eee4ffd19eso746113339f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:24:10 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719310915; x=1719915715;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+VjACVZoPp7eN7kJksXj5MfvnAImL5JxKUjwBijavO4=;
-        b=VIFcxW/JXOhz37fxJbt9qer25Dhj43JOQu/HMUToFYjpoDqxsCdf39ehqy1EC3pWDx
-         SO8f01nN1KyiPIAYqTo7PSPnE421kSjkq+2nyKj+Nly/nxk0muREn60rPsVLvErIY+k+
-         ydhB42e8+o+RzB+/bLGB6hBTqnU5kz+iGfPJZ5X1alGy+55YN4Q1Anm3AT4fHHe+TU1o
-         jTTu1YOqobHqVbhFwLV6zFWAOCKsAfHbvGnx/zHO2spcr4n7uFLD8xS5bwLPRkkjBXgQ
-         cEXIRK+on69ooQBY1yC005L6dM4jtu8R3FGpnFLgnld1CtNM1DIqCI2fENgGrOn761l3
-         DAzg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQuDmWYSvP6tVncBYmVZ7cRamY8J6994BqQ8DsHUYCvgW95LXmByUNbvEbJw4MjwGQ1FujHAbh7T4iN6MXAAZoUvKq7yN0lEDIJBO2
-X-Gm-Message-State: AOJu0YwZApIs5mK+io+h4zN0oynvcw4yyeWb0J15ASPWO4tvLE451x7A
-	1Eu+PUC1OJ7uxJ/4srzpk2JOXE/dc8YqV7D+dB3JLZ5ibfP0a49RVQIq9D01RA==
-X-Google-Smtp-Source: AGHT+IGncBwvYK00pVmw01gvxPmXxXQ/V/u6BoVJ3vRhjdCIb8ngRmdVTYU+9aqp9QEJNIvJV3icOw==
-X-Received: by 2002:a17:902:d50b:b0:1f7:4ff:d03 with SMTP id d9443c01a7336-1fa23f4a0e0mr73386365ad.67.1719310915385;
-        Tue, 25 Jun 2024 03:21:55 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:ea5a:67dd:bd1e:edef])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb328f57sm77590855ad.110.2024.06.25.03.21.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 03:21:54 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	linux-bluetooth@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Sean Wang <sean.wang@kernel.org>
-Subject: [PATCH] Bluetooth: btmtksdio: Lookup device node only as fallback
-Date: Tue, 25 Jun 2024 18:21:45 +0800
-Message-ID: <20240625102147.3496597-1-wenst@chromium.org>
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
+        d=1e100.net; s=20230601; t=1719311050; x=1719915850;
+        h=content-transfer-encoding:to:from:subject:message-id:in-reply-to
+         :date:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XAEZlUMOtUqZuLfCSnjIcvMdPJ2DfhMWjQhOMq+TkCM=;
+        b=ob2rcJZz1Q7pZmrygPZEGKZqzsTJcPlWj4T6TtZxO2fuux+r03H98MSI+WgBHYN++y
+         ZRz5gqymTEjTtgnBUcDrZh99txap9V/8awZ6tZyygPgoRrBBCfWv2buDeOwKc/+ibPc9
+         bFNdBJCimsNnKTjmK3Jq1poHMMFa4Gl04jetAnWF7lj5506K5BWQMBOojF47sKHa7wWa
+         jEVb7njsjGOxI9FhkFYlFtx5+zVJEQJXglydZk2hZgJUxL4kCrTG/AF17Seifx+GF9Zf
+         qVCSsU7UEgF/mkfAjx0C7irWnU2HxiH4sksxDvOklq1K0JIgU02YLdPjUFFUfoFYtVpF
+         Dskw==
+X-Gm-Message-State: AOJu0YzQ5BDdLzQDgleqCaYBw25dhW9Ky/bNvxe9ipJsCjj88o54UN8P
+	oHA6h0c5R0B2eEa9WugqBgGbfj1xOWySVq08bdejugTcNlqdhfmg7r3cLqRRL6khJOtyuLvwJN4
+	UDvidmprVXDI239D40JJNctc48LpQPtmDKBCqOduLMRIZ9n11Dlxs4sg=
+X-Google-Smtp-Source: AGHT+IEn+roOPWnk0NHOJkCa+LPLQZIFfB5knVykLBq+/r533uXpftOSiNF0Yu0wiTuhv5OBiuqhmlUncv7I4sfSuql3c74L2Ar2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6602:3fc4:b0:7eb:80e5:b5ca with SMTP id
+ ca18e2360f4ac-7f3a1436ac4mr22016439f.2.1719311050183; Tue, 25 Jun 2024
+ 03:24:10 -0700 (PDT)
+Date: Tue, 25 Jun 2024 03:24:10 -0700
+In-Reply-To: <000000000000051b2d06189716c3@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <00000000000067a8dc061bb44c10@google.com>
+Subject: Re: [syzbot] Re: [syzbot] [usb?] INFO: rcu detected stall in
+ schedule_timeout (6)
+From: syzbot <syzbot+c793a7eca38803212c61@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-If the device tree is properly written, the SDIO function device node
-should be correctly defined, and the mmc core in Linux should correctly
-tie it to the device being probed.
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Only fall back to searching for the device node by compatible if the
-original device node tied to the device is incorrect, as seen in older
-device trees.
+***
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
-This follows up on the MT7921S bluetooth binding and DT fixup patches [1].
-This should not be backported.
+Subject: Re: [syzbot] [usb?] INFO: rcu detected stall in schedule_timeout (=
+6)
+Author: marcello.bauer@9elements.com
 
-[1] https://lore.kernel.org/linux-bluetooth/20240412073046.1192744-1-wenst@chromium.org/
+#syz test
 
- drivers/bluetooth/btmtksdio.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/bluetooth/btmtksdio.c b/drivers/bluetooth/btmtksdio.c
-index b4e560a17aa6..d81fa8dacb4e 100644
---- a/drivers/bluetooth/btmtksdio.c
-+++ b/drivers/bluetooth/btmtksdio.c
-@@ -1330,6 +1330,8 @@ static int btmtksdio_probe(struct sdio_func *func,
+--- a/drivers/usb/gadget/udc/dummy_hcd.c
++++ b/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -1304,7 +1304,7 @@ static int dummy_urb_enqueue(
+=20
+        /* kick the scheduler, it'll do the rest */
+        if (!hrtimer_active(&dum_hcd->timer))
+-               hrtimer_start(&dum_hcd->timer,
+ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL);
++               hrtimer_start(&dum_hcd->timer,
+ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL_SOFT);
+=20
+  done:
+        spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+@@ -1325,7 +1325,7 @@ static int dummy_urb_dequeue(struct usb_hcd *hcd,
+struct urb *urb, int status)
+        rc =3D usb_hcd_check_unlink_urb(hcd, urb, status);
+        if (!rc && dum_hcd->rh_state !=3D DUMMY_RH_RUNNING &&
+                        !list_empty(&dum_hcd->urbp_list))
+-               hrtimer_start(&dum_hcd->timer, ns_to_ktime(0),
+HRTIMER_MODE_REL);
++               hrtimer_start(&dum_hcd->timer, ns_to_ktime(0),
+HRTIMER_MODE_REL_SOFT);
+=20
+        spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+        return rc;
+@@ -1995,7 +1995,7 @@ static enum hrtimer_restart dummy_timer(struct
+hrtimer *t)
+                dum_hcd->udev =3D NULL;
+        } else if (dum_hcd->rh_state =3D=3D DUMMY_RH_RUNNING) {
+                /* want a 1 msec delay here */
+-               hrtimer_start(&dum_hcd->timer,
+ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL);
++               hrtimer_start(&dum_hcd->timer,
+ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL_SOFT);
+        }
+=20
+        spin_unlock_irqrestore(&dum->lock, flags);
+@@ -2389,7 +2389,7 @@ static int dummy_bus_resume(struct usb_hcd *hcd)
+                dum_hcd->rh_state =3D DUMMY_RH_RUNNING;
+                set_link_state(dum_hcd);
+                if (!list_empty(&dum_hcd->urbp_list))
+-                       hrtimer_start(&dum_hcd->timer, ns_to_ktime(0),
+HRTIMER_MODE_REL);
++                       hrtimer_start(&dum_hcd->timer, ns_to_ktime(0),
+HRTIMER_MODE_REL_SOFT);
+                hcd->state =3D HC_STATE_RUNNING;
+        }
+        spin_unlock_irq(&dum_hcd->dum->lock);
+@@ -2467,7 +2467,7 @@ static DEVICE_ATTR_RO(urbs);
+=20
+ static int dummy_start_ss(struct dummy_hcd *dum_hcd)
  {
- 	struct btmtksdio_dev *bdev;
- 	struct hci_dev *hdev;
-+	struct device_node *old_node;
-+	bool restore_node;
- 	int err;
- 
- 	bdev = devm_kzalloc(&func->dev, sizeof(*bdev), GFP_KERNEL);
-@@ -1413,13 +1415,24 @@ static int btmtksdio_probe(struct sdio_func *func,
- 	if (err)
- 		bt_dev_err(hdev, "failed to initialize device wakeup");
- 
--	bdev->dev->of_node = of_find_compatible_node(NULL, NULL,
--						     "mediatek,mt7921s-bluetooth");
-+	restore_node = false;
-+	if (!of_device_is_compatible(bdev->dev->of_node, "mediatek,mt7921s-bluetooth")) {
-+		restore_node = true;
-+		old_node = bdev->dev->of_node;
-+		bdev->dev->of_node = of_find_compatible_node(NULL, NULL,
-+							     "mediatek,mt7921s-bluetooth");
-+	}
-+
- 	bdev->reset = devm_gpiod_get_optional(bdev->dev, "reset",
- 					      GPIOD_OUT_LOW);
- 	if (IS_ERR(bdev->reset))
- 		err = PTR_ERR(bdev->reset);
- 
-+	if (restore_node) {
-+		of_node_put(bdev->dev->of_node);
-+		bdev->dev->of_node = old_node;
-+	}
-+
- 	return err;
- }
- 
--- 
-2.45.2.741.gdbec12cfda-goog
+-       hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC,
+HRTIMER_MODE_REL);
++       hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC,
+HRTIMER_MODE_REL_SOFT);
+        dum_hcd->timer.function =3D dummy_timer;
+        dum_hcd->rh_state =3D DUMMY_RH_RUNNING;
+        dum_hcd->stream_en_ep =3D 0;
+@@ -2497,7 +2497,7 @@ static int dummy_start(struct usb_hcd *hcd)
+                return dummy_start_ss(dum_hcd);
+=20
+        spin_lock_init(&dum_hcd->dum->lock);
+-       hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC,
+HRTIMER_MODE_REL);
++       hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC,
+HRTIMER_MODE_REL_SOFT);
+        dum_hcd->timer.function =3D dummy_timer;
+        dum_hcd->rh_state =3D DUMMY_RH_RUNNING;
 
+On Thu, 2024-05-16 at 15:01 -0700, syzbot wrote:
+> syzbot has bisected this issue to:
+>=20
+> commit a7f3813e589fd8e2834720829a47b5eb914a9afe
+> Author: Marcello Sylvester Bauer <sylv@sylv.io>
+> Date:=C2=A0=C2=A0 Thu Apr 11 14:51:28 2024 +0000
+>=20
+> =C2=A0=C2=A0=C2=A0 usb: gadget: dummy_hcd: Switch to hrtimer transfer sch=
+eduler
+>=20
+> bisection log:=C2=A0
+> https://syzkaller.appspot.com/x/bisect.txt?x=3D119318d0980000
+> start commit:=C2=A0=C2=A0 75fa778d74b7 Add linux-next specific files for
+> 20240510
+> git tree:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 linux-next
+> final oops:=C2=A0=C2=A0=C2=A0=C2=A0
+> https://syzkaller.appspot.com/x/report.txt?x=3D139318d0980000
+> console output:
+> https://syzkaller.appspot.com/x/log.txt?x=3D159318d0980000
+> kernel config:=C2=A0
+> https://syzkaller.appspot.com/x/.config?x=3Dccdd3ebd6715749a
+> dashboard link:
+> https://syzkaller.appspot.com/bug?extid=3Dc793a7eca38803212c61
+> syz repro:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
+> https://syzkaller.appspot.com/x/repro.syz?x=3D16dcd598980000
+> C reproducer:=C2=A0=C2=A0
+> https://syzkaller.appspot.com/x/repro.c?x=3D151d9c78980000
+>=20
+> Reported-by: syzbot+c793a7eca38803212c61@syzkaller.appspotmail.com
+> Fixes: a7f3813e589f ("usb: gadget: dummy_hcd: Switch to hrtimer
+> transfer scheduler")
+>=20
+> For information about bisection process see:
+> https://goo.gl/tpsmEJ#bisection
+
+--=20
+=20
+=20
+
+ =20
+
+    Marcello Sylvester Bauer
+   =20
+
+    Senior Linux Solutions Architect
+   =20
+
+ =20
+
+ =20
+
+
+ =20
+
+ =20
+
+   =20
+
+     =20
+        9elements GmbH, Kortumstra=C3=9Fe 19-21, 44787 Bochum, Germany
+       =20
+   =20
+
+   =20
+
+     =20
+       =20
+          Email:=C2=A0
+          marcello.bauer@9elements.com
+         =20
+
+       =20
+     =20
+     =20
+
+       =20
+          Phone:=C2=A0
+       =20
+       =20
+         =20
+            +49 234 68 94 188
+         =20
+       =20
+     =20
+
+     =20
+
+       =20
+          Mobile:=C2=A0
+       =20
+       =20
+         =20
+            +49 172 2847618
+         =20
+       =20
+     =20
+
+   =20
+
+ =20
+
+
+
+
+
+
+ =20
+
+    Sitz der Gesellschaft: Bochum
+ =20
+
+ =20
+
+    Handelsregister: Amtsgericht Bochum, HRB 17519
+ =20
+
+ =20
+
+    Gesch=C3=A4ftsf=C3=BChrung: Sebastian Deutsch, Eray Basar
+ =20
+
+ =20
+
+   =20
+
+    Datenschutzhinweise nach Art. 13 DSGVO
+ =20
+
+
+=20
 
