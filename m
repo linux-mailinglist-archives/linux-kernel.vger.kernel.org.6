@@ -1,201 +1,204 @@
-Return-Path: <linux-kernel+bounces-228682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53C68916558
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:38:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BE4091655D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 080F9282889
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34B161C2219D
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 10:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1A5314A4EB;
-	Tue, 25 Jun 2024 10:38:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C868014A4FF;
+	Tue, 25 Jun 2024 10:39:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="UeeRG0da"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PRbTMOFr"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446601474D0
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:38:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A647145B32
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 10:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719311889; cv=none; b=Z/RhhgUZNlPDcsfihzBJOrA1TlTzoXHW5JD1JqzSRJ4UwFgGtwKD1vhsojxwqI7L3j0XK6ApIMON6hDN5TnTEECncObu8xg1ZmAOLcaJp7zDFl2hTNtf2lGp69awfVaNwrvleIK58wwSW98OR2ZsYvOYWk6UZPzGGB74ZAQCYjo=
+	t=1719311939; cv=none; b=XiwzAQ1dpc08Vwwr5stBwhJ2Bph/7UnRRcEqIljQgHULr6flhirbuXe86o9f8OLUS5pwgwD7Fea+PBS02y21Byt7oEFbLY1YuzwLmz1kiFr5HG24JjJqWbdPLfVxdPM0v9H18D7fpLgeHKqYfyEx9ePugcueFBcFpCavwMtx+hM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719311889; c=relaxed/simple;
-	bh=Dt10cvcOpgsb0/P0osWcNRM2YJE61QCIjA1sJzVnVpI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JXiAOVhSeW4LXfgNK+Itvm6c2fU4D5+n54X+o/tx0d6B6MH5aNF43OZbDVuxdvf51f8wDEHH78esCOuVE5W9konvbEeDvcAQeUwBVmUm9ihcpSM55KwVMprq+V9W2KRIv+zgWFjbuxHO/Pa7Pz5sB27JHr6K+VMCbO5ugak2cPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=UeeRG0da; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57cb9a370ddso6073338a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:38:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1719311885; x=1719916685; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dgACs1Zq8zO5lFcqRU3bBruH/XX+msPS49ZLh765+hU=;
-        b=UeeRG0daNJVDG3izlV6tDo+PGKIdXxCb0kflmPj4goLO2YuvmzzkxbUBfcjZ4WzTQ9
-         TXKdzNdHc4SMru3PlT7TEyt4wnUxkNUtxvKdXen/rYbjTaFrZa/k4Q7v0fmRNHmeP5aY
-         NTAlBX+sA4vbeTxXOrq+WNlHaRxcdtb0t0oZ0ru3vWGbQKCAgTNQDNwFnoI+79/T85W3
-         uIlm9QTzcGIp0PCjegku6f7XgNslxhN6ILbRD2qCirwujakqenb24CX8V/kJGjgYBUCV
-         IxkL3dsFeRcGcR91ufEEiWnvWXgsAXDI1ZQpuPyi76gofeQ78T1EogzzR8q0LRXFCAF3
-         VMtQ==
+	s=arc-20240116; t=1719311939; c=relaxed/simple;
+	bh=qiaDRKJ9OU0itk8Qq39Y68zKDW0sd6VufF9Q6bvuPQQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=j9JqxcRLROSZ0r7QrnHeX4fUF813is3X04IO/Irl88OX3Myeh23Aq3o2bDOGLVj4ztZfXZA48j+GidxQyAR5z9BwOAQUucTAt6K3WodlvCYfN9E11oP51ndQ/D5e80Unz3i4FdeWXIQJYkJv7PeB/dbJzxenD93zZiFf6xThInA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PRbTMOFr; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719311937;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Qnn+HE/4DQ6VV6/b41ap9uey5pQRwjHYKNUh+XSYfco=;
+	b=PRbTMOFrYSJjZPv4XJZdn97CxBYIGf+A4nigvuOiOQZqm7T/e2y/6xACknNli4TIyytPhs
+	HEScumztSfH0BI/VmyPTV4iEofduO2qFH/Ot/dNTFahdhpiRKIbn5A+PKRNxkIyuswlofP
+	mnZZnq77HZIGomhFaG1KFwS6ioYpygQ=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-335-_dAobm2WNBmR50hWZU_Ygg-1; Tue, 25 Jun 2024 06:38:55 -0400
+X-MC-Unique: _dAobm2WNBmR50hWZU_Ygg-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-362a1e80424so573770f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 03:38:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719311885; x=1719916685;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dgACs1Zq8zO5lFcqRU3bBruH/XX+msPS49ZLh765+hU=;
-        b=DKpZIRnxA4vMkFhQEVmoaCcPoSBNYKdBj6d4JAJakUbAsXpc1YoST1Wkw5L1X6i+hH
-         swbf6zS2Gzp5NkjcN3IFGFf6kSsrgBBfdvzVQKOSBwHWPrnTL0gZq7pjtQDFcSn5yZ+B
-         B8z/76DsGtGtXEkjGLoo7chlVFKWQ2TdQ1ipnfDWD8emwPFfBxU93SKLNRnvSYJleCGp
-         G2fi8VsAvYizI2sCLoR3fYTeOYRNFt8xFVmlJvvcLufoC7K4RI4G10mcKVm3RZgP2ebc
-         hbN4vmxD6HQVxTZEI6wx+DbW3NO9T3J23Z9avJl6kUzB/2vD/KWbTmqU6gh9ibyzSRsH
-         I9FA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSmCmbU20TXgFuToiZSib4Dzx9cJ2/Uz7LhfDUxeWucVNETVnxjFtpv1qrKaanBgeRcRG5ci5SGM98/YZlO/AAna3yOPEK9+NMTIRx
-X-Gm-Message-State: AOJu0Yy9EGT3taPwO9Da0Fvjl6AP1kquGEKn1ZQwRZhCQczWm/mRFkOq
-	GmL5rwvxrgTnV5BcwDNucxuuOCwl0W/6tcWIsuHizovBj8fPI/1+4bBmZz5PGeNwfTCPuwMO82W
-	GO9Q7VxBxQKAxIa6J1UQwJuz8xsSph/5XSXGwtW0qq0g063s80ns=
-X-Google-Smtp-Source: AGHT+IEOGwcd6y/gx12jEq+6dGlJLUlszkJPcbr1MdpHUe7LAywiaX+cvkxEPjNM34TUSpxkVh5v/jOigUd5w64NKMg=
-X-Received: by 2002:a50:d716:0:b0:57c:9ccd:c626 with SMTP id
- 4fb4d7f45d1cf-57d4bddfbfbmr4573117a12.39.1719311885379; Tue, 25 Jun 2024
- 03:38:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719311935; x=1719916735;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qnn+HE/4DQ6VV6/b41ap9uey5pQRwjHYKNUh+XSYfco=;
+        b=eYhwlOvEzzu0gZ88hHX70l7cqNr3gCF6xf4ELNEpmqDWQZ3jltkWfWRp7oICinhaJ3
+         mwPFnniOs+9sgklIdUc6c2bLjDxnYuIrtfmCfd+FxoUte6O1xZ6uBsHijgxnyudOmy7y
+         x/7Qf2DJMxHATK/47kD9nv1Eyx584D5vzopmqHmwG7cX3zDjBV5P3JLcev5e6gcz4U2+
+         9DSwUTWonN9WgjW9rhjqdD31baOmwYHte+0SE8ZYmR+yegXLNtR4HNunQTxyCKB2JY/l
+         2tykz3b6dFGv+pCv7uwzSDlJuYibB2G7Vp39/osgZj3IJx+Lc0Z7lxU5WvdQvOyucQYg
+         LBRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV7C1pp+AFphixJynZxKXPygiZppozDjrImCBcihspTBCz8l3S1yfj62wcKR1OD0OXO2bFOwOQJOc2geXY85IWDVjKxHg+bRMNFlexT
+X-Gm-Message-State: AOJu0YxOA4UV4QtijDqamYOg5oHUBJmj5W0lyWFTY/X3QtfFbwd0obeq
+	kJvjaDLw45j1Wq1EveiDLJ7sUabnvTROATfCnzHh9lI2/mMI8yyLmGIlqloKGeo3M4kIETd6CS7
+	rh3XSVL+3+Wz5dG2lCmKmG4fbRP7/4V7d6fz9fQb2D4h9K8jT8lhy+q1ggrGz0w==
+X-Received: by 2002:a05:6000:1864:b0:35f:2e56:7438 with SMTP id ffacd0b85a97d-366e2a63305mr5331554f8f.4.1719311934774;
+        Tue, 25 Jun 2024 03:38:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG47rHk5kQLWje2p0LGiRNSBDeyPd/V+UvWBqi7neAWRT8WLHcAw3nmIyaUygygbD9azhevAA==
+X-Received: by 2002:a05:6000:1864:b0:35f:2e56:7438 with SMTP id ffacd0b85a97d-366e2a63305mr5331514f8f.4.1719311934353;
+        Tue, 25 Jun 2024 03:38:54 -0700 (PDT)
+Received: from gerbillo.redhat.com ([2a0d:3341:b0ae:da10::f71])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638ab8334sm12517357f8f.48.2024.06.25.03.38.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 03:38:53 -0700 (PDT)
+Message-ID: <ba3b8f5907c071e40be68758f2a11662008713e8.camel@redhat.com>
+Subject: Re: [PATCH 13/15] net: jme: Convert tasklet API to new bottom half
+ workqueue mechanism
+From: Paolo Abeni <pabeni@redhat.com>
+To: Allen Pais <allen.lkml@gmail.com>, kuba@kernel.org, Guo-Fu Tseng
+	 <cooldavid@cooldavid.org>, "David S. Miller" <davem@davemloft.net>, Eric
+	Dumazet <edumazet@google.com>
+Cc: jes@trained-monkey.org, kda@linux-powerpc.org, cai.huoqing@linux.dev, 
+ dougmill@linux.ibm.com, npiggin@gmail.com, christophe.leroy@csgroup.eu, 
+ aneesh.kumar@kernel.org, naveen.n.rao@linux.ibm.com, nnac123@linux.ibm.com,
+  tlfalcon@linux.ibm.com, marcin.s.wojtas@gmail.com, mlindner@marvell.com, 
+ stephen@networkplumber.org, nbd@nbd.name, sean.wang@mediatek.com, 
+ Mark-MC.Lee@mediatek.com, lorenzo@kernel.org, matthias.bgg@gmail.com, 
+ angelogioacchino.delregno@collabora.com, borisp@nvidia.com, 
+ bryan.whitehead@microchip.com, UNGLinuxDriver@microchip.com, 
+ louis.peens@corigine.com, richardcochran@gmail.com,
+ linux-rdma@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-acenic@sunsite.dk, linux-net-drivers@amd.com,  netdev@vger.kernel.org
+Date: Tue, 25 Jun 2024 12:38:51 +0200
+In-Reply-To: <20240621050525.3720069-14-allen.lkml@gmail.com>
+References: <20240621050525.3720069-1-allen.lkml@gmail.com>
+	 <20240621050525.3720069-14-allen.lkml@gmail.com>
+Autocrypt: addr=pabeni@redhat.com; prefer-encrypt=mutual; keydata=mQINBGISiDUBEAC5uMdJicjm3ZlWQJG4u2EU1EhWUSx8IZLUTmEE8zmjPJFSYDcjtfGcbzLPb63BvX7FADmTOkO7gwtDgm501XnQaZgBUnCOUT8qv5MkKsFH20h1XJyqjPeGM55YFAXc+a4WD0YyO5M0+KhDeRLoildeRna1ey944VlZ6Inf67zMYw9vfE5XozBtytFIrRyGEWkQwkjaYhr1cGM8ia24QQVQid3P7SPkR78kJmrT32sGk+TdR4YnZzBvVaojX4AroZrrAQVdOLQWR+w4w1mONfJvahNdjq73tKv51nIpu4SAC1Zmnm3x4u9r22mbMDr0uWqDqwhsvkanYmn4umDKc1ZkBnDIbbumd40x9CKgG6ogVlLYeJa9WyfVMOHDF6f0wRjFjxVoPO6p/ZDkuEa67KCpJnXNYipLJ3MYhdKWBZw0xc3LKiKc+nMfQlo76T/qHMDfRMaMhk+L8gWc3ZlRQFG0/Pd1pdQEiRuvfM5DUXDo/YOZLV0NfRFU9SmtIPhbdm9cV8Hf8mUwubihiJB/9zPvVq8xfiVbdT0sPzBtxW0fXwrbFxYAOFvT0UC2MjlIsukjmXOUJtdZqBE3v3Jf7VnjNVj9P58+MOx9iYo8jl3fNd7biyQWdPDfYk9ncK8km4skfZQIoUVqrWqGDJjHO1W9CQLAxkfOeHrmG29PK9tHIwARAQABtB9QYW9sbyBBYmVuaSA8cGFiZW5pQHJlZGhhdC5jb20+iQJSBBMBCAA8FiEEg1AjqC77wbdLX2LbKSR5jcyPE6QFAmISiDUCGwMFCwkIBwIDIgIBBhUKCQgLAgQWAgMBAh4HAheAAAoJECkkeY3MjxOkJSYQAJcc6MTsuFxYdYZkeWjW//zbD3ApRHzpNlHLVSuJqHr9/aDS+tyszgS8jj9MiqALzgq4iZbg
+ 7ZxN9ZsDL38qVIuFkSpgMZCiUHdxBC11J8nbBSLlpnc924UAyr5XrGA99 6Wl5I4Km3128GY6iAkH54pZpOmpoUyBjcxbJWHstzmvyiXrjA2sMzYjt3Xkqp0cJfIEekOi75wnNPofEEJg28XPcFrpkMUFFvB4Aqrdc2yyR8Y36rbw18sIX3dJdomIP3dL7LoJi9mfUKOnr86Z0xltgcLPGYoCiUZMlXyWgB2IPmmcMP2jLJrusICjZxLYJJLofEjznAJSUEwB/3rlvFrSYvkKkVmfnfro5XEr5nStVTECxfy7RTtltwih85LlZEHP8eJWMUDj3P4Q9CWNgz2pWr1t68QuPHWaA+PrXyasDlcRpRXHZCOcvsKhAaCOG8TzCrutOZ5NxdfXTe3f1jVIEab7lNgr+7HiNVS+UPRzmvBc73DAyToKQBn9kC4jh9HoWyYTepjdcxnio0crmara+/HEyRZDQeOzSexf85I4dwxcdPKXv0fmLtxrN57Ae82bHuRlfeTuDG3x3vl/Bjx4O7Lb+oN2BLTmgpYq7V1WJPUwikZg8M+nvDNcsOoWGbU417PbHHn3N7yS0lLGoCCWyrK1OY0QM4EVsL3TjOfUtCNQYW9sbyBBYmVuaSA8cGFvbG8uYWJlbmlAZ21haWwuY29tPokCUgQTAQgAPBYhBINQI6gu+8G3S19i2ykkeY3MjxOkBQJiEoitAhsDBQsJCAcCAyICAQYVCgkICwIEFgIDAQIeBwIXgAAKCRApJHmNzI8TpBzHD/45pUctaCnhee1vkQnmStAYvHmwrWwIEH1lzDMDCpJQHTUQOOJWDAZOFnE/67bxSS81Wie0OKW2jvg1ylmpBA0gPpnzIExQmfP72cQ1TBoeVColVT6Io35BINn+ymM7c0Bn8RvngSEpr3jBtqvvWXjvtnJ5/HbOVQCg62NC6ewosoKJPWpGXMJ9SKsVIOUHsmoWK60spzeiJoSmAwm3zTJQnM5kRh2q
+ iWjoCy8L35zPqR5TV+f5WR5hTVCqmLHSgm1jxwKhPg9L+GfuE4d0SWd84y GeOB3sSxlhWsuTj1K6K3MO9srD9hr0puqjO9sAizd0BJP8ucf/AACfrgmzIqZXCfVS7jJ/M+0ic+j1Si3yY8wYPEi3dvbVC0zsoGj9n1R7B7L9c3g1pZ4L9ui428vnPiMnDN3jh9OsdaXeWLvSvTylYvw9q0DEXVQTv4/OkcoMrfEkfbXbtZ3PRlAiddSZA5BDEkkm6P9KA2YAuooi1OD9d4MW8LFAeEicvHG+TPO6jtKTacdXDRe611EfRwTjBs19HmabSUfFcumL6BlVyceIoSqXFe5jOfGpbBevTZtg4kTSHqymGb6ra6sKs+/9aJiONs5NXY7iacZ55qG3Ib1cpQTps9bQILnqpwL2VTaH9TPGWwMY3Nc2VEc08zsLrXnA/yZKqZ1YzSY9MGXWYLkCDQRiEog1ARAAyXMKL+x1lDvLZVQjSUIVlaWswc0nV5y2EzBdbdZZCP3ysGC+s+n7xtq0o1wOvSvaG9h5q7sYZs+AKbuUbeZPu0bPWKoO02i00yVoSgWnEqDbyNeiSW+vI+VdiXITV83lG6pS+pAoTZlRROkpb5xo0gQ5ZeYok8MrkEmJbsPjdoKUJDBFTwrRnaDOfb+Qx1D22PlAZpdKiNtwbNZWiwEQFm6mHkIVSTUe2zSemoqYX4QQRvbmuMyPIbwbdNWlItukjHsffuPivLF/XsI1gDV67S1cVnQbBgrpFDxN62USwewXkNl+ndwa+15wgJFyq4Sd+RSMTPDzDQPFovyDfA/jxN2SK1Lizam6o+LBmvhIxwZOfdYH8bdYCoSpqcKLJVG3qVcTwbhGJr3kpRcBRz39Ml6iZhJyI3pEoX3bJTlR5Pr1Kjpx13qGydSMos94CIYWAKhegI06aTdvvuiigBwjngo/Rk5S+iEGR5KmTqGyp27o6YxZy6D4NIc6PKUzhIUxfvuHNvfu
+ sD2W1U7eyLdm/jCgticGDsRtweytsgCSYfbz0gdgUuL3EBYN3JLbAU+UZpy v/fyD4cHDWaizNy/KmOI6FFjvVh4LRCpGTGDVPHsQXaqvzUybaMb7HSfmBBzZqqfVbq9n5FqPjAgD2lJ0rkzb9XnVXHgr6bmMRlaTlBMAEQEAAYkCNgQYAQgAIBYhBINQI6gu+8G3S19i2ykkeY3MjxOkBQJiEog1AhsMAAoJECkkeY3MjxOkY1YQAKdGjHyIdOWSjM8DPLdGJaPgJdugHZowaoyCxffilMGXqc8axBtmYjUIoXurpl+f+a7S0tQhXjGUt09zKlNXxGcebL5TEPFqgJTHN/77ayLslMTtZVYHE2FiIxkvW48yDjZUlefmphGpfpoXe4nRBNto1mMB9Pb9vR47EjNBZCtWWbwJTIEUwHP2Z5fV9nMx9Zw2BhwrfnODnzI8xRWVqk7/5R+FJvl7s3nY4F+svKGD9QHYmxfd8Gx42PZc/qkeCjUORaOf1fsYyChTtJI4iNm6iWbD9HK5LTMzwl0n0lL7CEsBsCJ97i2swm1DQiY1ZJ95G2Nz5PjNRSiymIw9/neTvUT8VJJhzRl3Nb/EmO/qeahfiG7zTpqSn2dEl+AwbcwQrbAhTPzuHIcoLZYV0xDWzAibUnn7pSrQKja+b8kHD9WF+m7dPlRVY7soqEYXylyCOXr5516upH8vVBmqweCIxXSWqPAhQq8d3hB/Ww2A0H0PBTN1REVw8pRLNApEA7C2nX6RW0XmA53PIQvAP0EAakWsqHoKZ5WdpeOcH9iVlUQhRgemQSkhfNaP9LqR1XKujlTuUTpoyT3xwAzkmSxN1nABoutHEO/N87fpIbpbZaIdinF7b9srwUvDOKsywfs5HMiUZhLKoZzCcU/AEFjQsPTATACGsWf3JYPnWxL9
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605121512.32083-1-yongxuan.wang@sifive.com>
- <20240605121512.32083-2-yongxuan.wang@sifive.com> <20240621-d1b77d43adacaa34337238c2@orel>
- <20240621-nutty-penknife-ca541ee5108d@wendy> <20240621-b22a7c677a8d61c26feaa75b@orel>
- <20240621-pushpin-exclude-1b4f38ae7e8d@wendy> <20240621-a69c8f97e566ebd3a82654c1@orel>
-In-Reply-To: <20240621-a69c8f97e566ebd3a82654c1@orel>
-From: Yong-Xuan Wang <yongxuan.wang@sifive.com>
-Date: Tue, 25 Jun 2024 18:37:53 +0800
-Message-ID: <CAMWQL2jWPD77f2gz_N8HM+YdKev-8RvOCOUgm5-uxq-5VTvCXw@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] RISC-V: Add Svade and Svadu Extensions Support
-To: Andrew Jones <ajones@ventanamicro.com>
-Cc: Conor Dooley <conor.dooley@microchip.com>, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org, 
-	kvm@vger.kernel.org, apatel@ventanamicro.com, alex@ghiti.fr, 
-	greentime.hu@sifive.com, vincent.chen@sifive.com, 
-	Jinyu Tang <tjytimi@163.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Anup Patel <anup@brainfault.org>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
-	Atish Patra <atishp@rivosinc.com>, wchen <waylingii@gmail.com>, 
-	Samuel Ortiz <sameo@rivosinc.com>, =?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <cleger@rivosinc.com>, 
-	Evan Green <evan@rivosinc.com>, Xiao Wang <xiao.w.wang@intel.com>, 
-	Alexandre Ghiti <alexghiti@rivosinc.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Kemeng Shi <shikemeng@huaweicloud.com>, 
-	Samuel Holland <samuel.holland@sifive.com>, Jisheng Zhang <jszhang@kernel.org>, 
-	Charlie Jenkins <charlie@rivosinc.com>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Leonardo Bras <leobras@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Conor, Andrew and Alexandre,
+On Thu, 2024-06-20 at 22:05 -0700, Allen Pais wrote:
+> Migrate tasklet APIs to the new bottom half workqueue mechanism. It
+> replaces all occurrences of tasklet usage with the appropriate workqueue
+> APIs throughout the jme driver. This transition ensures compatibility
+> with the latest design and enhances performance.
+>=20
+> Signed-off-by: Allen Pais <allen.lkml@gmail.com>
+> ---
+>  drivers/net/ethernet/jme.c | 72 +++++++++++++++++++-------------------
+>  drivers/net/ethernet/jme.h |  8 ++---
+>  2 files changed, 40 insertions(+), 40 deletions(-)
+>=20
+> diff --git a/drivers/net/ethernet/jme.c b/drivers/net/ethernet/jme.c
+> index b06e24562973..b1a92b851b3b 100644
+> --- a/drivers/net/ethernet/jme.c
+> +++ b/drivers/net/ethernet/jme.c
+> @@ -1141,7 +1141,7 @@ jme_dynamic_pcc(struct jme_adapter *jme)
+> =20
+>  	if (unlikely(dpi->attempt !=3D dpi->cur && dpi->cnt > 5)) {
+>  		if (dpi->attempt < dpi->cur)
+> -			tasklet_schedule(&jme->rxclean_task);
+> +			queue_work(system_bh_wq, &jme->rxclean_bh_work);
+>  		jme_set_rx_pcc(jme, dpi->attempt);
+>  		dpi->cur =3D dpi->attempt;
+>  		dpi->cnt =3D 0;
+> @@ -1182,9 +1182,9 @@ jme_shutdown_nic(struct jme_adapter *jme)
+>  }
+> =20
+>  static void
+> -jme_pcc_tasklet(struct tasklet_struct *t)
+> +jme_pcc_bh_work(struct work_struct *work)
+>  {
+> -	struct jme_adapter *jme =3D from_tasklet(jme, t, pcc_task);
+> +	struct jme_adapter *jme =3D from_work(jme, work, pcc_bh_work);
+>  	struct net_device *netdev =3D jme->dev;
+> =20
+>  	if (unlikely(test_bit(JME_FLAG_SHUTDOWN, &jme->flags))) {
+> @@ -1282,9 +1282,9 @@ static void jme_link_change_work(struct work_struct=
+ *work)
+>  		jme_stop_shutdown_timer(jme);
+> =20
+>  	jme_stop_pcc_timer(jme);
+> -	tasklet_disable(&jme->txclean_task);
+> -	tasklet_disable(&jme->rxclean_task);
+> -	tasklet_disable(&jme->rxempty_task);
+> +	disable_work_sync(&jme->txclean_bh_work);
+> +	disable_work_sync(&jme->rxclean_bh_work);
+> +	disable_work_sync(&jme->rxempty_bh_work);
+> =20
+>  	if (netif_carrier_ok(netdev)) {
+>  		jme_disable_rx_engine(jme);
+> @@ -1304,7 +1304,7 @@ static void jme_link_change_work(struct work_struct=
+ *work)
+>  		rc =3D jme_setup_rx_resources(jme);
+>  		if (rc) {
+>  			pr_err("Allocating resources for RX error, Device STOPPED!\n");
+> -			goto out_enable_tasklet;
+> +			goto out_enable_bh_work;
+>  		}
+> =20
+>  		rc =3D jme_setup_tx_resources(jme);
+> @@ -1326,22 +1326,22 @@ static void jme_link_change_work(struct work_stru=
+ct *work)
+>  		jme_start_shutdown_timer(jme);
+>  	}
+> =20
+> -	goto out_enable_tasklet;
+> +	goto out_enable_bh_work;
+> =20
+>  err_out_free_rx_resources:
+>  	jme_free_rx_resources(jme);
+> -out_enable_tasklet:
+> -	tasklet_enable(&jme->txclean_task);
+> -	tasklet_enable(&jme->rxclean_task);
+> -	tasklet_enable(&jme->rxempty_task);
+> +out_enable_bh_work:
+> +	enable_and_queue_work(system_bh_wq, &jme->txclean_bh_work);
+> +	enable_and_queue_work(system_bh_wq, &jme->rxclean_bh_work);
+> +	enable_and_queue_work(system_bh_wq, &jme->rxempty_bh_work);
 
-On Fri, Jun 21, 2024 at 8:06=E2=80=AFPM Andrew Jones <ajones@ventanamicro.c=
-om> wrote:
->
-> On Fri, Jun 21, 2024 at 12:00:32PM GMT, Conor Dooley wrote:
-> > On Fri, Jun 21, 2024 at 12:42:32PM +0200, Andrew Jones wrote:
-> > > On Fri, Jun 21, 2024 at 11:24:19AM GMT, Conor Dooley wrote:
-> > > > On Fri, Jun 21, 2024 at 10:43:58AM +0200, Andrew Jones wrote:
-> ...
-> > > > > It's hard to guess what is, or will be, more likely to be the cor=
-rect
-> > > > > choice of call between the _unlikely and _likely variants. But, w=
-hile we
-> > > > > assume svade is most prevalent right now, it's actually quite unl=
-ikely
-> > > > > that 'svade' will be in the DT, since DTs haven't been putting it=
- there
-> > > > > yet. Anyway, it doesn't really matter much and maybe the _unlikel=
-y vs.
-> > > > > _likely variants are better for documenting expectations than for
-> > > > > performance.
-> > > >
-> > > > binding hat off, and kernel hat on, what do we actually do if there=
-'s
-> > > > neither Svadu or Svade in the firmware's description of the hardwar=
-e?
-> > > > Do we just arbitrarily turn on Svade, like we already do for some
-> > > > extensions:
-> > > >   /*
-> > > >    * These ones were as they were part of the base ISA when the
-> > > >    * port & dt-bindings were upstreamed, and so can be set
-> > > >    * unconditionally where `i` is in riscv,isa on DT systems.
-> > > >    */
-> > > >   if (acpi_disabled) {
-> > > >           set_bit(RISCV_ISA_EXT_ZICSR, isainfo->isa);
-> > > >           set_bit(RISCV_ISA_EXT_ZIFENCEI, isainfo->isa);
-> > > >           set_bit(RISCV_ISA_EXT_ZICNTR, isainfo->isa);
-> > > >           set_bit(RISCV_ISA_EXT_ZIHPM, isainfo->isa);
-> > > >   }
-> > > >
-> > >
-> > > Yes, I think that's reasonable, assuming we do it in the final "pass"=
-,
-> > > where we're sure svadu isn't present.
-> >
-> > I haven't thought about specifically when to do it, but does it need to
-> > be in the final pass? If we were to, on each CPU, enable it if Svadu
-> > isn't there, we'd either end up with a system that I suspect we're not
-> > going to be supporting or the correct result. Or am I misunderstanding,
-> > and it will be valid to have a subset of CPUs that have Svadu enabled
-> > from the bootloader?
-> >
-> > Note that it would not be problematic to have 3 CPUs with Svade + Svadu
-> > and a 4th with only Svade in the DT because we would just not use the
-> > FWFT mechanism to enable Svadu. It's just the Svadu in isolation case
-> > that I'm asking about.
->
-> I wasn't thinking about the potential of mixmatched A/D udpating. I'm
-> pretty sure this will be one of those things that is all or none. I
-> was more concerned with getting the result right and I had just been
-> too lazy to double check that the block of code you pointed out is
-> in the right place to be sure there's no svadu. Now that I look, I
-> believe it is.
->
-> >
-> > > Doing this is a good idea since
-> > > we'll be able to simplify conditions, as we can just use 'if (svade)'
-> > > since !svade would imply svadu. With FWFT and both, we'll want to rem=
-ove
-> > > svade from the isa bitmap when enabling svadu.
-> >
-> > Right I would like to move the various extension stuff in this
-> > direction, where they have a bit more intelligence to them, and don't
-> > just reflect the state in DT/ACPI directly.
-> > I've got some patches in mind once Clement's Zca etc patchset
-> > is merged, think I posted one or two as replies to conversations on
-> > the list already. An example would be disabling the vector crypto
-> > extensions if we've had to disable vector, or as you suggest here,
-> > dropping Svade if we have turned on Svadu using FWFT. I think that make=
-s
-> > the APIs more understandable to developers and more useful than they ar=
-e
-> > at the moment, where to use vector crypto you also need to check vector
-> > itself for the code to be correct. If I call
-> > riscv_isa_extension_available(), and it returns true, the extension
-> > should be usable IMO.
+This will unconditionally schedule the rxempty_bh_work and is AFAICS a
+different behavior WRT prior this patch.
 
-Thank you all very much! I will update the code so that
-riscv_isa_extension_available()
-can reflect the platform's behavior.
+In turn the rxempty_bh_work() will emit (almost unconditionally) the
+'RX Queue Full!' message, so the change should be visibile to the user.
 
-Regards,
-Yong-Xuan
+I think you should queue the work only if it was queued at cancel time.
+You likely need additional status to do that.
 
->
-> Sounds good to me.
->
-> Thanks,
-> drew
+Thanks,
+
+Paolo
+
 
