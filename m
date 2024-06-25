@@ -1,161 +1,132 @@
-Return-Path: <linux-kernel+bounces-228254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228255-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE37F915D55
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:28:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C832915D57
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 05:29:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66B9CB21393
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:28:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD6D41C213E5
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 03:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ECFF61FF8;
-	Tue, 25 Jun 2024 03:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC926CDBA;
+	Tue, 25 Jun 2024 03:29:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AEzJze/l"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eo9yWolK"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B7EA61694;
-	Tue, 25 Jun 2024 03:28:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8323D6B;
+	Tue, 25 Jun 2024 03:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719286116; cv=none; b=FpjUwnpRcloYM48o/6cKRF4RCUf/srxvYvpkidKvMhjIGZ7PqCJKgGw9kul/sQGHn5+qmjJcmJIWzQM1Bh9cUxvAgYbWgZF921bp1nnA2rPi/FfpYcFPKvASEZC/htBpbBnHbv8lFB8MfRWxnWb1uKUWbyZfcVdUlcDEHWVWf8A=
+	t=1719286166; cv=none; b=ndpNCrBDMVmLZqmftAKPNPOIN37Z5+OH5TuU0WniJrKRZfl8iTUiIxLQH7SfVmJuuGMXAWCwZS12alo5u61L/gxm821mA4YZuc5df+cvxdfK6Sw4fw84Rd5D52l/mdLUTxALCngBvVhFwupQnpQc26G94TK9QXqLoYeRS/+jJcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719286116; c=relaxed/simple;
-	bh=mqc4LyTEfkWWu1uG74WZcylkmxzfciDMtJcW8ILFoLw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MwW+DEbZJf6NJ8T5PYDMDrkE1Wvs5ZOb2WspmZFzZ6CYby4k2EsSHJBOJWxJb8Ozf2KolNY55i7Y8LTDH3eBFdA//oUcg3wpXf8o0JdutS+/oKQ/7Rfzpl0hEnpVLrnkKPQZzIKbVmktSinwjkqlkJrULr1KHrBbp8DnDA4oKxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AEzJze/l; arc=none smtp.client-ip=209.85.215.181
+	s=arc-20240116; t=1719286166; c=relaxed/simple;
+	bh=hMt95qPFh9h9Zx/Ca4oF85z9W6nnZ+/2MO02CE5C0ho=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=spZsLNfNhr0ukS88SGFz5vcyEY4fSyXBx3kadMC31kucyAQipxn6QZvLu0VyPb56ZVoTIGqOxYvjRbse2nfzxfovk59JhKgs29RrdH2IMQC56nsoQn9Hsq5NUbhv6xZRW+wxfyIma5217YzP5CreXNOwMRGkDKxvMZFCGCpDnRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eo9yWolK; arc=none smtp.client-ip=209.85.160.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-71910dfb8c0so1715078a12.3;
-        Mon, 24 Jun 2024 20:28:34 -0700 (PDT)
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-25cba5eea69so2420048fac.2;
+        Mon, 24 Jun 2024 20:29:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719286114; x=1719890914; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t5opo2TySnAvHGvpphalt1sYZCdpyst0SZZz7vY3LDc=;
-        b=AEzJze/lz0Z+kKx6l8OCc3lK1z1jMborEon98k1sosUJj/nKFLjdagfe+sE3wNJPXP
-         kxCmRrjEDB50zGsfpEHa0yBk5/8MNJ9wl5L4OXh3iD1I/B7dUn5ZYwIgqaotSY3bTJ9J
-         yqpl+7DX7Gm+jtVKoL1ePWXDWFWnsq1ouxZNLPDUB2fc3TukpAb1d/8LEIQNZkAldqi0
-         sqHa1VzTbBttW0wO8MtrR9nd8CKlv6i/KbYwXpDi8vrLxnf+lLu+Gj5sBGCbXkbU1r9G
-         mW50fYCGENx7xsEh4UhP7j0g+jkoK3z5vJT5Y/OKCgrmAnqI5mqVH/W5xjBgZhX/CzWw
-         QAIQ==
+        d=gmail.com; s=20230601; t=1719286164; x=1719890964; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cbyQAZieaq4eQ23w2TzylROJa2sRShj9GyMl0x0ukyk=;
+        b=eo9yWolKiOJ0FOH5GGbKZpORlFw9S7LGsbq+PHZ+QYcVSnJAMeqs96D/lPIcLJlMUM
+         k7aTENLFSq+JJPvy8KPgXOMofbiyqxfD16tnwaMQ2EswZcv4ou9ZK+43aRnPycaVKNbP
+         n8Tt/oRoWMLTYzncntrHbP7mN2xQ75RPdTSo8F17x6LBJB8ciyEZN/89AXjKEMSxqPS+
+         eG+iWZMRDwzU3cHqyJYDFatvKdciBFUXfq2AdVmBYGh1Pp+XbzoeOtAIXNCY5BXI1iUY
+         MuoIr8ha+9neWanB3aJoOrgruhtX3ifrPb6jH3ELa2+w/QtxnxgEJmP+z/qnGtwRyvN9
+         YauQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719286114; x=1719890914;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=t5opo2TySnAvHGvpphalt1sYZCdpyst0SZZz7vY3LDc=;
-        b=txqejegHAaWgFlQiUhQhdtBqV2vspQfVRUYIhH8lUni6eCBl/diShBpUn0zWerHyJf
-         TPZgtHvztpiAzK2lB+onKcL8sQYN9DclY4/Qti2zlSSEHeBQNl79zCW2G2Y3y6/grSGI
-         ASFl3tkwHPR1h6UKQx9zCCaUUfYH+6YT9Lkn3lfWZ7lvfoobgsILC824iUWirkGWGO/C
-         z0N6MQcZ+HkpSn5iW5GrD2oUsTtn0lOwVaB3XFYk0BPIkOvB9p4CtjiakaauUJLFk+if
-         xo2AumN6ESwc4DlBX01h2gMYTy/amY0gcnW0jCI3Wtjsf+lFT4KOOVIGmGL4LRYnYCd7
-         Z28w==
-X-Forwarded-Encrypted: i=1; AJvYcCVfI5y67GbVNlRgScEvH9/lOzkfL5eJJfaIXOAD9hGarYXKVscmbIOzW45BqUjrya/mnZO3QNSN9bYVEjDhkeiHB/JwBPhkZiTRykO6OLD++IyrvCcHbYvsG0S0R17JoP2c
-X-Gm-Message-State: AOJu0YxTGRHn0k4ARPKaqXW25Mc0BctchnC9m2bqYjko9Tl6IYH6EhtT
-	B4BIEnNe+HcO1NLcTrB1vHBvBl4BOHbJCOOLQZhnbIKTxWEwpjs6ZL9BetNVafvA4ydK+a09tIF
-	pG+KgLYeZ4FMTxp0OiIdBJJsli9M=
-X-Google-Smtp-Source: AGHT+IExrDJLkP/MTI9vXe1i+CGPkntAi0uGgZLjKlFhTPRGZkeiSvcKSupl+N2ymACISDFn/RYjl8G6hM3bbCb57no=
-X-Received: by 2002:a05:6a20:1aa5:b0:1bd:1d0e:90fc with SMTP id
- adf61e73a8af0-1bd1d0e95d8mr629377637.1.1719286114239; Mon, 24 Jun 2024
- 20:28:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719286164; x=1719890964;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cbyQAZieaq4eQ23w2TzylROJa2sRShj9GyMl0x0ukyk=;
+        b=EDwjTSiiC5qdAblt44y1x64XPdd01gYHN1SwbABf+lK7PBw1B0Kg77dDhxUkfUDX65
+         BDxAYAFvqd2zXoDoDEqvT4FFO3NVxBNtlMAJadQAI8sC3W3imyVOdSMktBLFXJ1+Jduk
+         k/y7UtaWk12njxonmmRHqsAq0vOm7tmRRp+mkc6vAiKQqxppaUyp1jKDy4p13YGDbqW2
+         x9e1Ay+ToI9mOKpzLJrCQDgZ1co/iy5XXfNnEnxUBpGhM9m7z6WrW+U4i9de8ADDevrK
+         NkxgPhAt1Nv+d0qSXFdV6fNOXf081t8OxM2XS3nuU8387zsDtBgR70BQBBMH07788266
+         aEww==
+X-Forwarded-Encrypted: i=1; AJvYcCXBb5ANozwnCn4T+vS2i4LTg8BFJiZJLEIA+FhabPL8+jvA3WLnRoOug9ijeTsVioP5EKOgqAUKq6OV9L8diCuy3qfTq/pSaAFynJcNR7WKhgFZfCbgv8IM2K8D37Kdt7LGWGpwcqyduHqg
+X-Gm-Message-State: AOJu0Yy7Hrk33eW2Mg01FFCM3GQdoJWVmNuUNYPS1frd6+z+l7Xylrqy
+	M1dxJNqflY+GFRCvCCIeoGsY9B2EMU7R6aw1rjUARW/y369q0Uyf
+X-Google-Smtp-Source: AGHT+IFGBxRpq0C82hTfGZ42YkgflUopHUOHx0vsbP08KBRE2jMXSSB/smCiH3gnRYrK1egFXazYJg==
+X-Received: by 2002:a05:6870:55d0:b0:259:89a5:440e with SMTP id 586e51a60fabf-25d016d2a18mr7438054fac.27.1719286164365;
+        Mon, 24 Jun 2024 20:29:24 -0700 (PDT)
+Received: from a28aa0606c51.. (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7067ce3670asm3288937b3a.76.2024.06.24.20.29.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 20:29:23 -0700 (PDT)
+From: Jacky Huang <ychuang570808@gmail.com>
+To: dan.carpenter@linaro.org,
+	gregkh@linuxfoundation.org,
+	jirislaby@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	Jacky Huang <ychuang3@nuvoton.com>
+Subject: [PATCH v3] tty: serial: ma35d1: Add a NULL check for of_node
+Date: Tue, 25 Jun 2024 03:29:19 +0000
+Message-Id: <20240625032919.73-1-ychuang570808@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <0e13fa2e-2d1c-4dac-968e-b1a0c7a05229@p183> <20240621100752.ea87e0868591dd3f49bbd271@linux-foundation.org>
- <d58bc281-6ca7-467a-9a64-40fa214bd63e@p183> <ZnlXFF2sV-JNjGl2@krava>
-In-Reply-To: <ZnlXFF2sV-JNjGl2@krava>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 24 Jun 2024 20:28:22 -0700
-Message-ID: <CAEf4BzaAKAwO=-=0qZQfkHhBodN0MQUHpL-RY7tCHdcFidjv-Q@mail.gmail.com>
-Subject: Re: [PATCH v2] build-id: require program headers to be right after
- ELF header
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jun 24, 2024 at 4:23=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrot=
-e:
->
-> ccing bpf list
->
-> On Fri, Jun 21, 2024 at 09:39:33PM +0300, Alexey Dobriyan wrote:
-> > Neither ELF spec not ELF loader require program header to be placed
-> > right after ELF header, but build-id code very much assumes such placem=
-ent:
-> >
-> > See
-> >
-> >       find_get_page(vma->vm_file->f_mapping, 0);
-> >
-> > line and checks against PAGE_SIZE.
-> >
-> > Returns errors for now until someone rewrites build-id parser
-> > to be more inline with load_elf_binary().
-> >
-> > Signed-off-by: Alexey Dobriyan <adobriyan@gmail.com>
-> > ---
-> >
-> >  lib/buildid.c |   14 ++++++++++++++
-> >  1 file changed, 14 insertions(+)
-> >
+From: Jacky Huang <ychuang3@nuvoton.com>
 
-LGTM, but let's please route this through the bpf-next/master tree.
-Can you please send it to bpf@vger.kernel.org?
+The pdev->dev.of_node can be NULL if the "serial" node is absent.
+Add a NULL check to return an error in such cases.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+v3:
+    - Added "Reported-by:" line.
+v2:
+    - Added "Fixes" line.
 
-> > --- a/lib/buildid.c
-> > +++ b/lib/buildid.c
-> > @@ -73,6 +73,13 @@ static int get_build_id_32(const void *page_addr, un=
-signed char *build_id,
-> >       Elf32_Phdr *phdr;
-> >       int i;
-> >
-> > +     /*
-> > +      * FIXME
->
-> nit, FIXME is usually on the same line as the rest of the comment,
-> otherwise looks good
->
-> Reviewed-by: Jiri Olsa <jolsa@kernel.org>
->
-> thanks,
-> jirka
->
->
-> > +      * Neither ELF spec nor ELF loader require that program headers
-> > +      * start immediately after ELF header.
-> > +      */
-> > +     if (ehdr->e_phoff !=3D sizeof(Elf32_Ehdr))
-> > +             return -EINVAL;
-> >       /* only supports phdr that fits in one page */
-> >       if (ehdr->e_phnum >
-> >           (PAGE_SIZE - sizeof(Elf32_Ehdr)) / sizeof(Elf32_Phdr))
-> > @@ -98,6 +105,13 @@ static int get_build_id_64(const void *page_addr, u=
-nsigned char *build_id,
-> >       Elf64_Phdr *phdr;
-> >       int i;
-> >
-> > +     /*
-> > +      * FIXME
-> > +      * Neither ELF spec nor ELF loader require that program headers
-> > +      * start immediately after ELF header.
-> > +      */
-> > +     if (ehdr->e_phoff !=3D sizeof(Elf64_Ehdr))
-> > +             return -EINVAL;
-> >       /* only supports phdr that fits in one page */
-> >       if (ehdr->e_phnum >
-> >           (PAGE_SIZE - sizeof(Elf64_Ehdr)) / sizeof(Elf64_Phdr))
->
+Fixes: 930cbf92db01 ("tty: serial: Add Nuvoton ma35d1 serial driver support")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/all/8df7ce45-fd58-4235-88f7-43fe7cd67e8f@moroto.mountain/
+Signed-off-by: Jacky Huang <ychuang3@nuvoton.com>
+---
+ drivers/tty/serial/ma35d1_serial.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/tty/serial/ma35d1_serial.c b/drivers/tty/serial/ma35d1_serial.c
+index 19f0a305cc43..3b4206e815fe 100644
+--- a/drivers/tty/serial/ma35d1_serial.c
++++ b/drivers/tty/serial/ma35d1_serial.c
+@@ -688,12 +688,13 @@ static int ma35d1serial_probe(struct platform_device *pdev)
+ 	struct uart_ma35d1_port *up;
+ 	int ret = 0;
+ 
+-	if (pdev->dev.of_node) {
+-		ret = of_alias_get_id(pdev->dev.of_node, "serial");
+-		if (ret < 0) {
+-			dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
+-			return ret;
+-		}
++	if (!pdev->dev.of_node)
++		return -ENODEV;
++
++	ret = of_alias_get_id(pdev->dev.of_node, "serial");
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to get alias/pdev id, errno %d\n", ret);
++		return ret;
+ 	}
+ 	up = &ma35d1serial_ports[ret];
+ 	up->port.line = ret;
+-- 
+2.34.1
+
 
