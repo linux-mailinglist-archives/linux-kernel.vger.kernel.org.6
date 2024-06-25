@@ -1,151 +1,216 @@
-Return-Path: <linux-kernel+bounces-229666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95F2D917297
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:39:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88B40917299
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C62DA1C21007
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:39:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10D801F22983
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 20:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8131917D893;
-	Tue, 25 Jun 2024 20:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E86A17D342;
+	Tue, 25 Jun 2024 20:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l1UHno/i"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GgGDq6qc"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456134C6E;
-	Tue, 25 Jun 2024 20:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3605B176254;
+	Tue, 25 Jun 2024 20:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719347964; cv=none; b=STYCi1LcV6jSPaAcRf9S8X0gtp5iH7USZm999zE+jkhL4ujZcKJBs6xJj7Pz7QVlAohRZU0/8U/Gpg/gDF/VgYoN93/r8mTGtcCPuYIDvPCBPCHPyuD+LqfFU0Spx3cooryehGO2RMcTSpwQbHj0MeFGu6mJ/lOnJmelLxT0DHM=
+	t=1719348007; cv=none; b=Lq9dU9cOWIrsrtsbOdXzc9+4h8s84EcBxrperGZjboSMHndmFC2mHXiMOp2zpgPhRfIzP/PKP001ajBzf447HmbBn3k35Vaz99uf2L5zhmEopLlNRczcCvrcCr27LYgoan+W+Y9kwhhtFEdlWiC2Np9CuDfRRBoEw1WZDe8OXvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719347964; c=relaxed/simple;
-	bh=3jocSJnFLbmyyO47DUiNcyWfDSkHyKKQbvSYdAZPykg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=s9ysNOXksOxuFD/Diwq1eTVSrX3nkKQenzpuECv7KVzNCqYLhyTU2+cLRz2idFduEm7jkYrw4/6ASkMAZG5z8/+4KIZ7ymdRfk/U/AAjLreG7j9/YW1scXFir1azPWBg5jmf0Q6ouiai5mJ5SXYC4TuG1fszB9i++0ePMTCokjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l1UHno/i; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PIOe90018112;
-	Tue, 25 Jun 2024 20:39:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3GxWyz9rZduaL4zHi+nmPPNIoRc5WAVW6C8yaRenAlQ=; b=l1UHno/iE4bMYBCR
-	yFQAjOANH/Mi17CqcEl4KpdDIYg02gR3qtbHLHdzpbAi29uBjF/wvJyrkczGS1Kg
-	0uWhM2DOycqxF4NsjYla/JM66LWXeLpUbgMN451Tve25AiEsaGiPgiXF+TzeBYpK
-	e81KthboS0OriBiIVgyjJodAok4vRZKDq1uxH3Iu4EOM69yR4BT2DdAA2OsbLrRG
-	CWV3pVxMIM+2LSVgX5SpzqlSaB/ncJ7/yUk0aMjeN1ytrQ5++rgyiXzaBjrTcawZ
-	VV38uHYoTy2l/my9v4FhQT0sNAvmVoN78os9HdE03il3Dt9uMw1KmQgkH9WR3/qv
-	UU4DYw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnm6qgu3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 20:39:13 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45PKdC27019525
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 20:39:12 GMT
-Received: from [10.71.110.249] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 25 Jun
- 2024 13:39:11 -0700
-Message-ID: <a26650a6-02d7-3626-ac19-a0fe359f631e@quicinc.com>
-Date: Tue, 25 Jun 2024 13:39:11 -0700
+	s=arc-20240116; t=1719348007; c=relaxed/simple;
+	bh=tBsPqz9KdloQlOQClLnwN02KtLwV6EXgBuETXlrvzCE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UrnTWYXA/3GpIYRgNSecT6HS8AmyI2NnNuzx/Eeit4+I9jwoqCBjm9XiaQF2X4nH/m6eXhHVtqfYNbgiglO9dNjL52Lkaf+KUT/xi9K8HlBQvFJARpVwhKJFREKKJdQ1dobXpjzTG2jdSsq3aqrZyJsBwfzvn5W0T7KyRyVsfh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GgGDq6qc; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2c7cfba36f8so1082797a91.3;
+        Tue, 25 Jun 2024 13:40:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719348005; x=1719952805; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vTAUN47IqqElZXeBcrK8yXzS1ClqmFbCRPEYR3+9RTs=;
+        b=GgGDq6qc4QNZp6nbLBFRsc9MKkNosdvUHONyhO5TdpsqNc1RGRVFJ1Z1Y17teEZigN
+         8cz3jC3addXSHL6vf0ZY4m//cp/JGAbc0THWMH4FayKkDR0V0qeRm6otOkWwbKO98pBa
+         N+X5s+KE0thGyk9r1vyP2E/nw2nB82GOpf2isIqH7pXNjy5hSxccfzsYUESTszALP907
+         3FW2JrKm2jSXDWt3iZNZLXHtlMatJdYsHii4FTv7s8rYGSHlc1qoizVBSQArZBug2oaR
+         MBZfz0JikQvf+dlJ/pcR2FpPKFiiSHTnVHvzMFCQY0hPtvoMk1UNYcfVwYdeefkWPfs0
+         93NA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719348005; x=1719952805;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vTAUN47IqqElZXeBcrK8yXzS1ClqmFbCRPEYR3+9RTs=;
+        b=bMCco3Xm9vSQeEI2N4Sc7YX1UezYMa8XNPaX3rLO6ribv4NNrZrH3ByH4NdFkg7HRQ
+         XheOjfYCwrxFSstdTyEeJIlDk/ij37L3or5FoIysPZRiWglVl5A7EXGccYMqlnJcCJTB
+         gS0UOOVt6YbpMPzv7Wr0gu9xr70g8I0RbK6mPTX56YmGAYI8gLZOuKurdPOrndiJ6B23
+         7ReziHn6nUyoblQ6o+8Djppz6Wg79PEg+Fvzehb4tMCEgggYhKfb58pFd3DBwCNLwwj7
+         TcXnlBFs23L01o97gNVxlRTRNc7jsVLVOe7JnK1BHPunLYQZcEkXr/x+Z/SO3SkR7D2V
+         vP1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVeeevOnkTPbm786sLn7dh5TgnvfjjXGIv4ydy0AEyGRjJmFxPRpGrJa6QFYzdWMKXBgwVO8dPfoG2+zwlNZT05l7eXXMjokiSZK6Fr/hrsvwQM6t+ZS4WYirW0xEyKfmmEdwuo0kW0SWAS
+X-Gm-Message-State: AOJu0Yymx0sN8XNBe5nxitL/lSY4aYaeoAT4FaQMEFjEGqpUQ7O9mRoj
+	hUg2Nf4yyQWwPVPRAruFPHmevjHzRrGFYIey+unwbiGE3Oujtc7jFiH09Ob/pDLrx+704FM/1VS
+	itE0RAOi8pkupHiCTQ0dbYgl9zL8=
+X-Google-Smtp-Source: AGHT+IGgfquiJAzbCXphhDVUAqYNiuHQa5FzJ49MHmgKnDF871dkMxNZHt7A4agfHaQChwXdhlYV+okvZoeC+0Zt+io=
+X-Received: by 2002:a17:90a:fe0a:b0:2c7:ad55:85d8 with SMTP id
+ 98e67ed59e1d1-2c84291894bmr9452658a91.2.1719348005481; Tue, 25 Jun 2024
+ 13:40:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.11.0
-Subject: Re: [PATCH RFC v3] drm/msm/dpu: Configure DP INTF/PHY selector
-Content-Language: en-US
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel
- Vetter <daniel@ffwll.ch>
-CC: Bjorn Andersson <andersson@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240625-dp-phy-sel-v3-1-c77c7066c454@linaro.org>
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20240625-dp-phy-sel-v3-1-c77c7066c454@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5z1hDhsuBkNu_gNyMIF6q66Lf3XieUcV
-X-Proofpoint-ORIG-GUID: 5z1hDhsuBkNu_gNyMIF6q66Lf3XieUcV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_15,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406250152
+References: <20240625184206.508837-1-linux@rasmusvillemoes.dk>
+In-Reply-To: <20240625184206.508837-1-linux@rasmusvillemoes.dk>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Tue, 25 Jun 2024 17:39:54 -0300
+Message-ID: <CAOMZO5AejtxU4hTMWa8PK9duXYAKUGzGm_mmeLuEW=tRk7GSCQ@mail.gmail.com>
+Subject: Re: [PATCH v2] serial: imx: ensure RTS signal is not left active
+ after shutdown
+To: Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Christoph Niedermaier <cniedermaier@dh-electronics.com>, Marek Vasut <marex@denx.de>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+[Adding Christoph and Marek]
 
-
-On 6/25/2024 1:24 PM, Dmitry Baryshkov wrote:
-> From: Bjorn Andersson <andersson@kernel.org>
-> 
-> Some platforms provides a mechanism for configuring the mapping between
-> (one or two) DisplayPort intfs and their PHYs.
-> 
-> In particular SC8180X requires this to be configured, since on this
-> platform there are fewer controllers than PHYs.
-> 
-> The change implements the logic for optionally configuring which PHY
-> each of the DP INTFs should be connected to and marks the SC8180X DPU to
-> program 2 entries.
-> 
-> For now the request is simply to program the mapping 1:1, any support
-> for alternative mappings is left until the use case arrise.
-> 
-> Note that e.g. msm-4.14 unconditionally maps INTF 0 to PHY 0 on all
-> platforms, so perhaps this is needed in order to get DisplayPort working
-> on some other platforms as well.
-> 
-> Signed-off-by: Bjorn Andersson <andersson@kernel.org>
-> Co-developed-by: Bjorn Andersson <andersson@kernel.org>
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+On Tue, Jun 25, 2024 at 3:42=E2=80=AFPM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+>
+> If a process is killed while writing to a /dev/ttymxc* device in RS485
+> mode, we observe that the RTS signal is left high, thus making it
+> impossible for other devices to transmit anything.
+>
+> Moreover, the ->tx_state variable is left in state SEND, which means
+> that when one next opens the device and configures baud rate etc., the
+> initialization code in imx_uart_set_termios dutifully ensures the RTS
+> pin is pulled down, but since ->tx_state is already SEND, the logic in
+> imx_uart_start_tx() does not in fact pull the pin high before
+> transmitting, so nothing actually gets on the wire on the other side
+> of the transceiver. Only when that transmission is allowed to complete
+> is the state machine then back in a consistent state.
+>
+> This is completely reproducible by doing something as simple as
+>
+>   seq 10000 > /dev/ttymxc0
+>
+> and hitting ctrl-C, and watching with a logic analyzer.
+>
+> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
 > ---
-> Changes in v3:
-> - Expanded the commit message and in-code comment based on feedback from
->    Abhinav
-> - Fixed field masks for the affected register (Abhinav)
-> - Link to v2: https://lore.kernel.org/r/20240613-dp-phy-sel-v2-1-99af348c9bae@linaro.org
-> 
-> Changes in v2:
-> - Removed entry from the catalog.
-> - Reworked the interface of dpu_hw_dp_phy_intf_sel(). Pass two entries
->    for the PHYs instead of three entries.
-> - It seems the register isn't present on sdm845, enabled the callback
->    only for DPU >= 5.x
-> - Added a comment regarding the data being platform-specific.
-> - Link to v1: https://lore.kernel.org/r/20230612221047.1886709-1-quic_bjorande@quicinc.com
-> ---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.c | 39 +++++++++++++++++++++++++++---
->   drivers/gpu/drm/msm/disp/dpu1/dpu_hw_top.h | 18 ++++++++++++--
->   drivers/gpu/drm/msm/disp/dpu1/dpu_hwio.h   |  7 ++++++
->   drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c    | 12 ++++++++-
->   4 files changed, 70 insertions(+), 6 deletions(-)
-> 
-
-LGTM.
-
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> v2: Use dev_warn() instead of dev_WARN_ONCE().
+>
+> v1: https://lore.kernel.org/lkml/20240524121246.1896651-1-linux@rasmusvil=
+lemoes.dk/
+>
+> A screen dump from a logic analyzer can be seen at:
+>
+>   https://ibb.co/xCcP7Jy
+>
+> This is on an imx8mp board, with /dev/ttymxc0 and /dev/ttymxc2 both
+> configured for rs485 and connected to each other. I'm writing to
+> /dev/ttymxc2. This demonstrates both bugs; that RTS is left high when
+> a write is interrupted, and that a subsequent write actually fails to
+> have RTS high while TX'ing.
+>
+> I'm not sure what commit to name as a Fixes:. This certainly happens
+> on 6.6 and onwards, but I assume the problem exists since the tx_state
+> machine was introduced in cb1a60923609 (serial: imx: implement rts
+> delaying for rs485), and possibly even before that.
+>
+>
+>  drivers/tty/serial/imx.c | 51 ++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>
+> diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
+> index 2eb22594960f..85c240e8c24e 100644
+> --- a/drivers/tty/serial/imx.c
+> +++ b/drivers/tty/serial/imx.c
+> @@ -1551,6 +1551,7 @@ static void imx_uart_shutdown(struct uart_port *por=
+t)
+>         struct imx_port *sport =3D (struct imx_port *)port;
+>         unsigned long flags;
+>         u32 ucr1, ucr2, ucr4, uts;
+> +       int loops;
+>
+>         if (sport->dma_is_enabled) {
+>                 dmaengine_terminate_sync(sport->dma_chan_tx);
+> @@ -1613,6 +1614,56 @@ static void imx_uart_shutdown(struct uart_port *po=
+rt)
+>         ucr4 &=3D ~UCR4_TCEN;
+>         imx_uart_writel(sport, ucr4, UCR4);
+>
+> +       /*
+> +        * We have to ensure the tx state machine ends up in OFF. This
+> +        * is especially important for rs485 where we must not leave
+> +        * the RTS signal high, blocking the bus indefinitely.
+> +        *
+> +        * All interrupts are now disabled, so imx_uart_stop_tx() will
+> +        * no longer be called from imx_uart_transmit_buffer(). It may
+> +        * still be called via the hrtimers, and if those are in play,
+> +        * we have to honour the delays.
+> +        */
+> +       if (sport->tx_state =3D=3D WAIT_AFTER_RTS || sport->tx_state =3D=
+=3D SEND)
+> +               imx_uart_stop_tx(port);
+> +
+> +       /*
+> +        * In many cases (rs232 mode, or if tx_state was
+> +        * WAIT_AFTER_RTS, or if tx_state was SEND and there is no
+> +        * delay_rts_after_send), this will have moved directly to
+> +        * OFF. In rs485 mode, tx_state might already have been
+> +        * WAIT_AFTER_SEND and the hrtimer thus already started, or
+> +        * the above imx_uart_stop_tx() call could have started it. In
+> +        * those cases, we have to wait for the hrtimer to fire and
+> +        * complete the transition to OFF.
+> +        */
+> +       loops =3D port->rs485.flags & SER_RS485_ENABLED ?
+> +               port->rs485.delay_rts_after_send : 0;
+> +       while (sport->tx_state !=3D OFF && loops--) {
+> +               uart_port_unlock_irqrestore(&sport->port, flags);
+> +               msleep(1);
+> +               uart_port_lock_irqsave(&sport->port, &flags);
+> +       }
+> +
+> +       if (sport->tx_state !=3D OFF) {
+> +               dev_warn(sport->port.dev, "unexpected tx_state %d\n",
+> +                        sport->tx_state);
+> +               /*
+> +                * This machine may be busted, but ensure the RTS
+> +                * signal is inactive in order not to block other
+> +                * devices.
+> +                */
+> +               if (port->rs485.flags & SER_RS485_ENABLED) {
+> +                       ucr2 =3D imx_uart_readl(sport, UCR2);
+> +                       if (port->rs485.flags & SER_RS485_RTS_AFTER_SEND)
+> +                               imx_uart_rts_active(sport, &ucr2);
+> +                       else
+> +                               imx_uart_rts_inactive(sport, &ucr2);
+> +                       imx_uart_writel(sport, ucr2, UCR2);
+> +               }
+> +               sport->tx_state =3D OFF;
+> +       }
+> +
+>         uart_port_unlock_irqrestore(&sport->port, flags);
+>
+>         clk_disable_unprepare(sport->clk_per);
+> --
+> 2.45.2
+>
 
