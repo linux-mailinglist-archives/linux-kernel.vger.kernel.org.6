@@ -1,122 +1,133 @@
-Return-Path: <linux-kernel+bounces-229209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D58B916CE8
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:25:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39DD2916CEA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 17:25:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDF5E28A99B
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:25:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B8591C22B77
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7557F176AD0;
-	Tue, 25 Jun 2024 15:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23344170838;
+	Tue, 25 Jun 2024 15:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="QQ2kr0y2"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcybOuCv"
 Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D9016F903
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:18:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCCC016F903
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:20:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719328737; cv=none; b=UX0ZprUEteBB5q7E2tCl7ZeItma5c0+rLXeUSprr5iZLSjvwTGnJdErby25K8bErSRfsTnwKvfdZ5E1YowL2qD6VfFedAa0w7h1mZiWYgFJBBj2I7f0bBUtVGI027jIrxCsKUhLit04VtYgixD4TpGpRlIr2ICYGMTevNFygMBY=
+	t=1719328810; cv=none; b=qM46vH7eQMLpLCRiiilrU/jE7vciuI3lG/Sz2/0pwZEZUBrNoCmHQyilc387THxCZqpC+rzjiX3elvdbJEFboOGYXtAGFA/BOkAvf9X2OiWfuGTNd+vx0NEdjLibEaljIM6HBIexIYO1Xi64v7iXtUpgHjLPTxyUvDyyztZ0uYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719328737; c=relaxed/simple;
-	bh=mZj8HmgKq4m3YHtNZd94nsGMAQh/YBBmlu+PxcHslvo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fD9zkcJeOYkAuWstB1BgmlWZ00bcZcLgPE1UDpWL872EM7u1XXB30t9iq/gQEqC/AsO1qLdyKoR9a2e7XwAAy6Adg2ai0YNitSjcxEAN+QkE8qqJ0Z1GBDMa3OIjnueMJbamRdcBgndaAKTw+QU828lVN/RRMuTF4P6zSkfbR3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=QQ2kr0y2; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ec52fbb50bso35836851fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:18:56 -0700 (PDT)
+	s=arc-20240116; t=1719328810; c=relaxed/simple;
+	bh=ro15qrG+2X7dzLSbBTP8U40hi2ii1P6THkENl0JJl0c=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HDzktdCc1PPGZso3I/wHrDUoNoUjYYVrkcbnuB+KScdXNCq5QMH1nfEi6BbqwUVT1ETqo8vVtIbrI5ocWr1nUGnGLyjeJZUJ3r+Mylg4pugzWMpnQITOMAj3IZ/zDJ16EtPG1/DAhE+Vgr9rEGq0OOK7glqDzzZhXEJicp6ziQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XcybOuCv; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ebe785b234so62521561fa.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 08:20:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719328734; x=1719933534; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sx2HYLsaSgIFg2Oa96eeaBmlhRTVUGHBB/hKxCjYNQo=;
-        b=QQ2kr0y2cbrgNAeQ2Bj/fNDMO7tt1JPbzbHFf++6QslpTNXii1Gqk0u34mA1/MywBw
-         h9Jq3RO4zf0d1T0u6iXii0FTX5CzQaHIzsz1caANAgYdy3t0O+tT25dTd8FDpWODO9ZQ
-         OCa5Y2GVEDkUqomfxASVuejXoW/ogjRJ6Qe8tglsqndXlEl9pegnUsWAQZ9y1DwDCMqp
-         8d3mVu1tqM4gRitf3PeksMylAq7OaEAp4jEm3g2SkIkMrU0fXxR+LUmgODqRLWpimeWG
-         UXnyPkeYRl5cLS0tScGtKDJHki58965yM0+8BryRTi/qn5y0ciaJWTbykfqgjADVU6Wo
-         VzsQ==
+        d=gmail.com; s=20230601; t=1719328807; x=1719933607; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=M7My76Xx+peBaX7RrKQa/BxRrvIU630K8BNIFUaH3MQ=;
+        b=XcybOuCvEKjjPYP9E27qY2XUxzKOuyRnKPEnPTduyrz+eu17Yz0c0ZAW6/8i2eNX/w
+         O2wM+smmMp3ygiUIPJQxe8225CQORmShhtJmqbce5wG8URd5oN3AqgSRU+RBm1UbkZJx
+         f7oAEmAHEfWgWso1Bz0xaK5lTKUPBtPCcbaaKTQI4hd1MutUJsXcech5gXXzpG6pMMBU
+         fLQebUsVpBpZeTKKn37gCMy+jkMu/sFwNwM3b8QKbAFLaCZwXFf8L8MOCyFPhV5G1eCE
+         jWGb0CIH6I7SjvTt1/yFXsy5OOVZyvsfr+D4hJUGCarr6Dcr/4JcGajvOKuOoC4mmHqF
+         Xnng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719328734; x=1719933534;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sx2HYLsaSgIFg2Oa96eeaBmlhRTVUGHBB/hKxCjYNQo=;
-        b=hu0QWXZ4gT1S2/Mc2oEUyCxPCOKSj//X6kftcd3HLaO+9TnA/fK/5gi3lK2SgNxLrQ
-         Dzktsk/hQnDnZWXAlJkg7xXV8kAOchjv96O10Zu354jdvf05NiDNpcuzVw6C3ScGDgRm
-         nW3lJLgWOl+KJYQKiTY7R2UeBcwrcTLn0bSMTiEFwU55z2DFFPqralPntDMOWlPIoDmE
-         GuAh6gJRB0KVQW8HVeBZvzyFhekP8I3/82ONZczrUMdbENfdEndWTzkJdXSt4MvLQZ4J
-         emZfheys/6zwM4h39POCRucaS2oDJMPM3pqRw8cXdW8wIYvBhL3x4PFmcZyjWsGd4jJo
-         LMCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUIyMhe7UrYKKIjLCoPimAJG2jYrALIv6hWL2PFSYN4bqBG34Qp9Qdop4olamyX0GNz71qee7Y98eJeRr2EIHadxZyFUng3xrh32Jla
-X-Gm-Message-State: AOJu0YyDSThCUQBu+Auke+VLd7QmenNilO+GsmghsbCx9bkLP9//Jwd6
-	Ylbt3R2KOQA0iloMV8OwbPKLYRRJXusBDpDnxaaF2T49BpF/eHk4mjTx1gdbuOT2vdSa751olJT
-	P7gDGd3TB5PDVZGbuHmpWWg4MwfNecx6vzNwPwmaKbJBcCvl6
-X-Google-Smtp-Source: AGHT+IGlP6Tm/b40/iLFEbi5fEIe/lDxGDCO4P+RlrzHbY56PKFGIr90owQjEXNXIRqgsr7Lwxg736Z4cGfOwruVrLo=
-X-Received: by 2002:a2e:998b:0:b0:2ec:59d8:a7e9 with SMTP id
- 38308e7fff4ca-2ec5b3e35b1mr45408841fa.52.1719328734531; Tue, 25 Jun 2024
- 08:18:54 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719328807; x=1719933607;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=M7My76Xx+peBaX7RrKQa/BxRrvIU630K8BNIFUaH3MQ=;
+        b=GXra20fKXZMBFD5880EfJU7Ftk0RPP0OvYg94pJGH3c8vjBkbrlRDLLgq+qy6M1Cyc
+         dfj4Ga7N5TCAoRXYcm/esdqVAEo5SWrOWaysimJoXiXotaho+XtlS72/z4GtKuQ8emjn
+         xCBHHbeANV/NilhYpkd0VS+zQiSSr3lMfrkvCo3go+lpCaEouh3rjUSE2YHsVeJ0tzrl
+         9y2UyFM3me431TXH9t0Sb7qxbavXAFia9jjmxGSS4plP90nxYGVIDdLF0dYYUbqAw4R4
+         7FdKXU9yd2sF3/3Se7q+KNcVZ5qvlXjc2VegWbzKyIS2JMXoVv0unoAXDN4FEHY8cvkT
+         /y5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXVqUx+HvU+yZCxyF/Zu34QYTOwk9w2JrFWcC7kglaASvJK171VuVk7AR+zjbyo7iCPPJvy4TeitTunuUTdxw7ay1gQO6EotPSE4hQt
+X-Gm-Message-State: AOJu0YzIn0MKXy+KYjmIjiyBTS2I4soMQlZvvpReDKBzgxjzoc1GMczt
+	OKHOKsm8RsMOD3L8VNbXM7pBV6VTRChR2/hETgI/xChshVwAzApa
+X-Google-Smtp-Source: AGHT+IEKZTWwrSCXm10ss+29iQwj3R7hVZlF1h2E5+VfQHecxEUa538EMtLDLzdMAs6PdI0BLXe8Eg==
+X-Received: by 2002:ac2:514f:0:b0:52c:a5cb:69e4 with SMTP id 2adb3069b0e04-52ce06415d6mr6089650e87.54.1719328806841;
+        Tue, 25 Jun 2024 08:20:06 -0700 (PDT)
+Received: from localhost.localdomain ([31.120.167.14])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366389b861bsm13110218f8f.29.2024.06.25.08.20.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 08:20:06 -0700 (PDT)
+From: Teddy Engel <engel.teddy@gmail.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	oe-kbuild-all@lists.linux.dev,
+	devel@driverdev.osuosl.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Teddy Engel <engel.teddy@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v2] staging: rtl8192e: Fix conflicting types error with net_device.
+Date: Tue, 25 Jun 2024 16:19:18 +0100
+Message-Id: <20240625151918.10839-1-engel.teddy@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625151430.34024-1-brgl@bgdev.pl>
-In-Reply-To: <20240625151430.34024-1-brgl@bgdev.pl>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 25 Jun 2024 17:18:43 +0200
-Message-ID: <CAMRc=Mcm94=Fd6LiRpBLD3bWco6KhZ4+T0YPwAmrtNUosM6VEA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] arm64: dts: qcom: sa8775p-ride: support both board variants
-To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 25, 2024 at 5:14=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl>=
- wrote:
->
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Split the current .dts into two: the existing one keeps the name and
-> supports revision 2 of the board while patch 2 adds a .dts for revision 3=
-.
->
-> Changes since v1:
-> - add a new compatible for Rev3
->
-> Bartosz Golaszewski (3):
->   dt-bindings: arm: qcom: add sa8775p-ride Rev 3
->   arm64: dts: qcom: move common parts for sa8775p-ride variants into a
->     .dtsi
->   arm64: dts: qcom: sa8775p-ride-r3: add new board file
->
->  .../devicetree/bindings/arm/qcom.yaml         |   1 +
->  arch/arm64/boot/dts/qcom/Makefile             |   1 +
->  arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts  |  47 +
->  arch/arm64/boot/dts/qcom/sa8775p-ride.dts     | 836 +-----------------
->  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi    | 814 +++++++++++++++++
->  5 files changed, 885 insertions(+), 814 deletions(-)
->  create mode 100644 arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->
-> --
-> 2.43.0
->
+Add a pre-declaration of struct net_device so the compiler is able to
+use rtl_pci.h / rtl_cam.h.
 
-Eeek -ETOOEARLY, please disregard this one, it requires one more
-change. Sorry for the noise.
+Fix for commit: 7dff0b27d9c842f88149bf611cbc0b59be1dcd3c:
+[34/59] staging: rtl89192e: Remove unnecessary pre-declaration of struct
+net_device.
 
-Bartosz
+Signed-off-by: Teddy Engel <engel.teddy@gmail.com>
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202406250858.L8rJMHQm-lkp@intel.com/
+---
+v2: Add commit id that's being fixed.
+
+ drivers/staging/rtl8192e/rtl8192e/rtl_cam.h | 2 ++
+ drivers/staging/rtl8192e/rtl8192e/rtl_pci.h | 2 ++
+ 2 files changed, 4 insertions(+)
+
+diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_cam.h b/drivers/staging/rtl8192e/rtl8192e/rtl_cam.h
+index 3a5635494385..9deffdf96072 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/rtl_cam.h
++++ b/drivers/staging/rtl8192e/rtl8192e/rtl_cam.h
+@@ -12,6 +12,8 @@
+ 
+ #include <linux/types.h>
+ 
++struct net_device;
++
+ void rtl92e_cam_reset(struct net_device *dev);
+ void rtl92e_enable_hw_security_config(struct net_device *dev);
+ void rtl92e_set_key(struct net_device *dev, u8 EntryNo, u8 KeyIndex,
+diff --git a/drivers/staging/rtl8192e/rtl8192e/rtl_pci.h b/drivers/staging/rtl8192e/rtl8192e/rtl_pci.h
+index c645775b2150..3e39c4835ac8 100644
+--- a/drivers/staging/rtl8192e/rtl8192e/rtl_pci.h
++++ b/drivers/staging/rtl8192e/rtl8192e/rtl_pci.h
+@@ -13,6 +13,8 @@
+ #include <linux/types.h>
+ #include <linux/pci.h>
+ 
++struct net_device;
++
+ bool rtl92e_check_adapter(struct pci_dev *pdev, struct net_device *dev);
+ 
+ #endif
+-- 
+2.39.2
+
 
