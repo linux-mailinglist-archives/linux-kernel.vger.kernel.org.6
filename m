@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-228991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AC5591697A
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:53:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B291991697C
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 15:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEBA51F210C4
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:53:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6473A1F2109F
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 13:53:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4025216C69F;
-	Tue, 25 Jun 2024 13:53:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C6E16D30B;
+	Tue, 25 Jun 2024 13:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMpGwrrs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hgt2fyT9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891F916C68F
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 456B916C87A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 13:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719323579; cv=none; b=oe3Unb9kBiooNXeSb1JXb4QLovWbQXZtdjnuHnJBTggb3w/NwE+71euKRoJ8aXMQzM3InmplR5Z88ulEJ8CQ0GrOJ+rgjOwT5dnVydoga0Qo3oj0yOb+ac9d2i9tKajlfyYkUqmdRumAFSZHBs/giVEaZLrD2loMaW3+yKvaP/Q=
+	t=1719323582; cv=none; b=s4yhmwm6rUC2BJyqLPsBezGE20FuSIUMMwHYDgfwwWFn7rpMZGI9v/O4kxBV01ZEu2UbT2NsIOkfpf6j2/dWgtChMOSbqpBcMhPkuiQljljPsghqBIJz+JdgKnuYZvmLush/RyYQOTJBt2OwopUAluOIFsxQFkJwfdfI67ak/C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719323579; c=relaxed/simple;
-	bh=1Lmu4cLSQd3WIs+Qp9CQZmWu+Bdz0TB/eweAMF+fREs=;
+	s=arc-20240116; t=1719323582; c=relaxed/simple;
+	bh=xcwSoktWtb2GRPN0qb4RAhRIXNrCFWUhJrYeNl3lG5c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bjJLLotF6ihKRHBHw3MNOyO8BccRDyYPVtzyCi5mT71COdbr8csfz1U3HRevtbcB2uM9l/qMLcxm9NWA0Rd+p/p38aO7sv8fyk3JJHiNH9OrBO0L7t9ThTYaXZxoaG2/3y9bJ/TLWpdPkEH7pOpXN2Gtz5PiDOEe66MWwEC20VQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMpGwrrs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2487C4AF10;
-	Tue, 25 Jun 2024 13:52:56 +0000 (UTC)
+	 MIME-Version; b=e8TglDWpBN+cRo6FMN97i/B6uTJsbTxlnvyb9O5OEoKofX4kILigYZH7HyerGaTTVWECnKbNDabwlWXwTl2IiX/jV0eZHFXoDj6vOY35fgapFR/TLN5bPkg3rXtpSOkKEXeM39w22UdILxH9i58SeKr8sMcpSfSXaqItp3VHfsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hgt2fyT9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C613C4AF09;
+	Tue, 25 Jun 2024 13:52:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719323579;
-	bh=1Lmu4cLSQd3WIs+Qp9CQZmWu+Bdz0TB/eweAMF+fREs=;
+	s=k20201202; t=1719323581;
+	bh=xcwSoktWtb2GRPN0qb4RAhRIXNrCFWUhJrYeNl3lG5c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=tMpGwrrs8lNBF6+IyzFFzHnboXv74SEp00R5GHX9cijPU3UyznfXy/D5o4eiuMJu2
-	 3+gPpot5RrOwwJ/cEqn0Z7DcJncm/JiYV0gkT3eqm1uo6ObLGIUmnq++QYNGuwX9rW
-	 F/WmyqxJAV42SKJbW0aW+J5fW9TGCApj0IwUD06I2D1C1aWCadPHark+1iK7dF23gA
-	 qoPqYDwLgoqKsAr9PEqp6t7Y5bB0a6mANVONasJrxa1zkYsaSYD1xMBhqPXs9caA8X
-	 CUD2k2hPj1yTGeNlZoBpPzwUHklQa1n7sxEc6+OqW7p8+MML4AvPts13Fi1WayKqAz
-	 ApYyFfuSx6AOA==
+	b=Hgt2fyT92tOPNdLavtHVDgjO5wk805rmWMAbRmSYeCjCPjs/Xwtz6/qvRFHptYbML
+	 gu07aPk6N4Svolo1Lzy7PBVDtOrZY+QpbeCDpwdvs1rYBo5KwcoV1yYlPCMV8xSkT1
+	 aS7VzWxcZcRsmvheTWCiB71O+7Iu85baTVSQoHxmAPZAyxTvar/ptQLGJ/D9PBBFYN
+	 x7ACrgkxXykgHhPJtWOJm20tWxBbKzIIX17i+7R0LSIjkerL7lgy4YqQLJa1rSQ6mW
+	 S3xD6IShUAvedq2dDaiaiKU4xK0+jXhzzzgET3LDY1uIMNQSXo/UBTA451u7s4fpnH
+	 D2/UjzGxQ8IDA==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
@@ -52,9 +52,9 @@ Cc: Frederic Weisbecker <frederic@kernel.org>,
 	Michal Hocko <mhocko@kernel.org>,
 	Thomas Gleixner <tglx@linutronix.de>,
 	Oleg Nesterov <oleg@redhat.com>
-Subject: [RFC PATCH 3/6] sched: Use task_work_queued() on cid_work
-Date: Tue, 25 Jun 2024 15:52:41 +0200
-Message-ID: <20240625135244.20227-4-frederic@kernel.org>
+Subject: [RFC PATCH 4/6] tick/nohz: Move nohz_full related fields out of hot task struct's places
+Date: Tue, 25 Jun 2024 15:52:42 +0200
+Message-ID: <20240625135244.20227-5-frederic@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240625135244.20227-1-frederic@kernel.org>
 References: <20240625135244.20227-1-frederic@kernel.org>
@@ -66,43 +66,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Remove the ad-hoc implementation of task_work_queued()
+nohz_full is a feature that only fits into rare and very corner cases.
+Yet distros enable it by default and therefore the related fields are
+always reserved in the task struct.
+
+Those task fields are stored in the middle of cacheline hot places such
+as cputime accounting and context switch counting, which doesn't make
+any sense for a feature that is disabled most of the time.
+
+Move the nohz_full storage to colder places.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- kernel/sched/core.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ include/linux/sched.h | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index bcf2c4cc0522..f01979b600e8 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -11930,7 +11930,6 @@ static void task_mm_cid_work(struct callback_head *work)
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index 61591ac6eab6..d531b610c410 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -1039,13 +1039,7 @@ struct task_struct {
+ #endif
+ 	u64				gtime;
+ 	struct prev_cputime		prev_cputime;
+-#ifdef CONFIG_VIRT_CPU_ACCOUNTING_GEN
+-	struct vtime			vtime;
+-#endif
  
- 	SCHED_WARN_ON(t != container_of(work, struct task_struct, cid_work));
+-#ifdef CONFIG_NO_HZ_FULL
+-	atomic_t			tick_dep_mask;
+-#endif
+ 	/* Context switch counts: */
+ 	unsigned long			nvcsw;
+ 	unsigned long			nivcsw;
+@@ -1350,6 +1344,14 @@ struct task_struct {
+ 	struct task_delay_info		*delays;
+ #endif
  
--	work->next = work;	/* Prevent double-add */
- 	if (t->flags & PF_EXITING)
- 		return;
- 	mm = t->mm;
-@@ -11974,7 +11973,6 @@ void init_sched_mm_cid(struct task_struct *t)
- 		if (mm_users == 1)
- 			mm->mm_cid_next_scan = jiffies + msecs_to_jiffies(MM_CID_SCAN_DELAY);
- 	}
--	t->cid_work.next = &t->cid_work;	/* Protect against double add */
- 	init_task_work(&t->cid_work, task_mm_cid_work);
- }
- 
-@@ -11983,8 +11981,7 @@ void task_tick_mm_cid(struct rq *rq, struct task_struct *curr)
- 	struct callback_head *work = &curr->cid_work;
- 	unsigned long now = jiffies;
- 
--	if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) ||
--	    work->next != work)
-+	if (!curr->mm || (curr->flags & (PF_EXITING | PF_KTHREAD)) || task_work_queued(work))
- 		return;
- 	if (time_before(now, READ_ONCE(curr->mm->mm_cid_next_scan)))
- 		return;
++#ifdef CONFIG_VIRT_CPU_ACCOUNTING_GEN
++	struct vtime			vtime;
++#endif
++
++#ifdef CONFIG_NO_HZ_FULL
++	atomic_t			tick_dep_mask;
++#endif
++
+ #ifdef CONFIG_FAULT_INJECTION
+ 	int				make_it_fail;
+ 	unsigned int			fail_nth;
 -- 
 2.45.2
 
