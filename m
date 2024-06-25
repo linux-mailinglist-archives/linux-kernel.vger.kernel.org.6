@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-228833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33BC9167A0
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:23:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65EBC9167A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 14:23:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 426C61F21EDA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:23:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C5751C228C7
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 12:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2E0A16D9DA;
-	Tue, 25 Jun 2024 12:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7B9158872;
+	Tue, 25 Jun 2024 12:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JfhcBB0f"
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com [209.85.167.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FJ946K/E"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B9316D4CC;
-	Tue, 25 Jun 2024 12:21:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9347B1581E5;
+	Tue, 25 Jun 2024 12:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719318068; cv=none; b=QNb9wrGX8XQwFolfjiqc47oq6N/5Qj2KfiNVEejojydOZDd+d2vciS9ruLtjMVnHT5PDtus/6k68DYPbanQT61pD5noy0LxJFhs0x/0tfKw8Ej+T7XFA2pXeVA0umvGrmK9Kz0vWRTJDGZD6QqJQj5mKa5aTvoYjwBLvXJxvVXo=
+	t=1719318070; cv=none; b=VRIJOPv8MBwRotiWfcCMuUDTLSlr6/cpwcufEwuRzV0WJFBphfaKJDXnXsrsynZGBuJGyVH0ZewbpZCyy0vW6OSEV+TTVA8qGEhA4gTz46fBMqEPO7QZX/yP4VSmrzsS8u4n3KIwgQke9ZRd4j3wGFYxjXgQH50hIy6l+vJ2/uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719318068; c=relaxed/simple;
-	bh=rkNsjZWSpjdD4PsYl77Z4TmGFgE4qJA71UbTS5Rdtb8=;
+	s=arc-20240116; t=1719318070; c=relaxed/simple;
+	bh=si+QcG6m2C7oEN8bRk2delYbedXnGccQI3/h8D8tJe0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=WjqXzjriuv64DkmO3lkeKpJLRAodmvsMgJmuVeK7jlNkAXSIrPSHclxZM8heWsBsliXy8aTt9qtGV5ZVn+R50skGIqaXV2/+w6knClJMiTuA03BK8hwY6zoZrLwvpqQxWxyxJ9BkeUAO0+qvbPGRX6nGEsWmb3Q/tKljshUGpMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JfhcBB0f; arc=none smtp.client-ip=209.85.167.170
+	 MIME-Version; b=JQbhEmQBXk8agsgxCRJ/HA+5IpPInLQR3ijYqvuPNRGaYums1Z/b7kF6KhiitpLWyqfFAg/HFYIedDYSM6ufJm2+tqptMtNet53JkQpfkyx2meVGn9p6oEfBsvvyFUy4JCG9zVrR0aVJPKwL/XdiwZxqjpYWGIG0RC1dHcohjJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FJ946K/E; arc=none smtp.client-ip=209.85.166.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3d55c28cd0dso137304b6e.3;
-        Tue, 25 Jun 2024 05:21:06 -0700 (PDT)
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-36dd6110186so21259195ab.0;
+        Tue, 25 Jun 2024 05:21:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719318065; x=1719922865; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1719318068; x=1719922868; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hWdNsyhmh0vXBB+FB8HVJv+VLwSHu6Zd+4+7Sq4/Gys=;
-        b=JfhcBB0f2CvDspjlFQqHM7/tdxXwYM/Fxwmar/0Xc2IpYYQkLkGR7OQRLVt2gXSfcz
-         JNtlwQ/cwZQ2FL4Edh8SJTCoEQ0nwcRxAr/n0JDWc8nEtb4dkrl2BK3tj/awnJXKJbeY
-         2oIAky3hMN7/c9AUkWwMafsbhl6+tUMmiqScKXSrIdVbazIA9FOrVsxkgCT7E3CRuO+1
-         zUU4sB6yrdvwS3YACLLi/DKYxiO4lpH8ZoqGrQfsiZ3q+vAnJdx4qu0Q4M6jzAO7G9fH
-         gpWUqMVbL+a3TXm4148ykRqUrK3M/GdM8JAZHL04yo4Ebo8vlnKZk3P7cx3SW08pP7pk
-         3YpA==
+        bh=Zx72SI7/2IoQxOX1b/fnYis0HzPlfSdpK4NVpZfxV7Q=;
+        b=FJ946K/EwKY/ZwX6H0tgwRrc8Q3Uc+6WJ6DetJw+/loNyZ3yEm3MbUE+8FE7XnQ50b
+         n/4D18JyjKxmgPADvuzB7bwtE47ARvI6Ek1Oaxe19rgCBo+xUKOXjgi3enCbjv0WseoJ
+         EiBk2tSpkljSTlK1GixarnecOEdL5cfoVDikuOIdGcHKYWdne6EBYxs0XLL974SgFlxC
+         47KVjd9Tbx0e9VQCJis/YHbh4bMeVjQFoPIW6CWFs6WfCoRWD9qsioP6WhrBgidMTUGl
+         smPcGy19SRiTxqrVIVoDg3P2AHSKlBrdamR6OOBFO27whHgQltUyV0aPYSMbcLm9Ryjj
+         9Jmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719318065; x=1719922865;
+        d=1e100.net; s=20230601; t=1719318068; x=1719922868;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=hWdNsyhmh0vXBB+FB8HVJv+VLwSHu6Zd+4+7Sq4/Gys=;
-        b=Z9UexfkI5V20VRbb3Ieyw1mBLJ082xG83BE4udVyue/3r0QEbLrvsdWnIQAe/okO5X
-         MI8QsQIsMKU25XO+wxTk0R1VUXodkmnmlz4ER3l5KhRsUnS6vDzeLk+O6YvRLileHi10
-         B4a0HOz36ha5HngRv/y3Vrr9ZlrMQM8ljBA3lVoO+UIQ06ySFAVaI73mKNCTk8Fq18uF
-         fG2GFKgHk28DE+mZuzV4cEKHSmWhY1K9hpYoDIShi91w6TOdMNFm8ZOGTHFIGdwpFPXY
-         JWoLAN5euPDxwKcw+3kIVha0PwUdzrp3CRgv/up2Sg549ZUEkClvvaRSV4UonhokJUvG
-         zP0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVezMMbpmylrYMCZFq0zdRlUcSNolfm7GECOryMSz/NT1l1eCPYfKjGdFXDiSHX++qdJ7vOzbeevptxXi02l/sk0uA4qWvlwlLWtdYV4GMA+pTsU7tp69jH1hTq9L7ChfklE8qRWiSuPw==
-X-Gm-Message-State: AOJu0YwQZzCeR/KuP/tT/jg8T1ho0CoBZMNifEMMXmFBoiJ8wxCqDch/
-	1lTTtQ8Y0X2uMBcW9ACjiMbxpBYMv+Dm9LsodP3m2IawWGZDpP5S
-X-Google-Smtp-Source: AGHT+IGEFlDZVv53UK/DWcjhJ5G3xA9To81EmBORmmF3gelkm71OH5zcWSvbKLKm5WYPYDqrvKMvbQ==
-X-Received: by 2002:a05:6870:4208:b0:25a:6d14:f84a with SMTP id 586e51a60fabf-25d06e37917mr7520760fac.42.1719318065571;
-        Tue, 25 Jun 2024 05:21:05 -0700 (PDT)
+        bh=Zx72SI7/2IoQxOX1b/fnYis0HzPlfSdpK4NVpZfxV7Q=;
+        b=VQM4LDVwWu6updFYz0AS8uP63Q0l0V8UdEOflYTSfJmphXdw+hhmDPM0oEVNnMGiRv
+         GOlu/EUKGhSfwy5RFgoGU+1ExlSYsaPq19mgOKBMK9spp4gytMm3NOp0UGLXKucSXTsC
+         PlIAf3m00O3ougpqDTFKBvNBYlRu7nafpChYJkaoQ3LyW23YOHhrHHHhf0BpvPSIWkCh
+         +fsKDZBXkWbQ/6S+uydaGvzpu/bgZOHmM/oK71EVm+wPTL8qTE3iazb3CrhzHgAs+m6k
+         Ca5MWP/GgyDVA5WPmJSFGI5nVyYZgRpBacoQHChPTnDqjMjprqv4woTePeGPFl8Q7zJk
+         JQrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXgcyBe5T2KUwLt0DnxWoVqQ9nH2oHdRGu6YI615xl8PZ+88JXFkYcBTKhPp99IHu2lJtSvPk+rifBIe09o9qXwghBYzcsPsiYZzOgSQuQEBOtvJJ+/WvqTTzd1wAR1WEDq/bVb8bnuQw==
+X-Gm-Message-State: AOJu0Yy8DtRVqYGiZcnkwy4Za98DjTQybjfjfrbgDHHg22IquDvXs/p4
+	UHxdYbrN7AxOQvcduyTnVxNTb2FcnvChr4keXBSy53j2PbavzjvB
+X-Google-Smtp-Source: AGHT+IHOZoufCr8RHeLNcTuCCK9wtsYm/Zv5j+dnx22Bzhr+SOZilu3p95OTzvWMtGuQrrJqvyzVsQ==
+X-Received: by 2002:a05:6e02:1d0f:b0:375:b57b:877b with SMTP id e9e14a558f8ab-3763f60dc49mr91838265ab.10.1719318067752;
+        Tue, 25 Jun 2024 05:21:07 -0700 (PDT)
 Received: from obliging-System-Product-Name.dhcpserver.bu9bmc.local (61-220-246-151.hinet-ip.hinet.net. [61.220.246.151])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70650e312e4sm7978146b3a.0.2024.06.25.05.21.03
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70650e312e4sm7978146b3a.0.2024.06.25.05.21.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 05:21:05 -0700 (PDT)
+        Tue, 25 Jun 2024 05:21:07 -0700 (PDT)
 From: Yang Chen <yangchen.openbmc@gmail.com>
 To: joel@jms.id.au,
 	andrew@codeconstruct.com.au,
@@ -76,9 +76,9 @@ To: joel@jms.id.au,
 	devicetree@vger.kernel.org
 Cc: Jerry.Lin@quantatw.com,
 	yangchen.openbmc@gmail.com
-Subject: [PATCH 12/17] ARM: dts: aspeed: minerva: add tmp75 sensor
-Date: Tue, 25 Jun 2024 20:18:30 +0800
-Message-Id: <20240625121835.751013-13-yangchen.openbmc@gmail.com>
+Subject: [PATCH 13/17] ARM: dts: minerva: add power monitor xdp710
+Date: Tue, 25 Jun 2024 20:18:31 +0800
+Message-Id: <20240625121835.751013-14-yangchen.openbmc@gmail.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240625121835.751013-1-yangchen.openbmc@gmail.com>
 References: <20240625121835.751013-1-yangchen.openbmc@gmail.com>
@@ -92,87 +92,29 @@ Content-Transfer-Encoding: 8bit
 
 From: Yang Chen <yang.chen@quantatw.com>
 
-Add tmp75 sensor on the i2c bus connect to each fan board.
+Add HSC xdp710 on i2c bus0.
 
 Signed-off-by: Yang Chen <yang.chen@quantatw.com>
 ---
- .../aspeed/aspeed-bmc-facebook-minerva.dts    | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts | 5 +++++
+ 1 file changed, 5 insertions(+)
 
 diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts
-index 830616663387..7f6df8750953 100644
+index 7f6df8750953..dd8240279ed4 100644
 --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts
 +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dts
-@@ -252,6 +252,11 @@ power-sensor@45 {
- 				reg = <0x45>;
- 				shunt-resistor = <1000>;
- 			};
-+
-+			temperature-sensor@4b {
-+				compatible = "ti,tmp75";
-+				reg = <0x4b>;
-+			};
- 		};
- 
- 		imux17: i2c@1 {
-@@ -294,6 +299,11 @@ power-sensor@45 {
- 				reg = <0x45>;
- 				shunt-resistor = <1000>;
- 			};
-+
-+			temperature-sensor@4b {
-+				compatible = "ti,tmp75";
-+				reg = <0x4b>;
-+			};
- 		};
- 
- 		imux18: i2c@2 {
-@@ -336,6 +346,11 @@ power-sensor@45 {
- 				reg = <0x45>;
- 				shunt-resistor = <1000>;
- 			};
-+
-+			temperature-sensor@4b {
-+				compatible = "ti,tmp75";
-+				reg = <0x4b>;
-+			};
- 		};
- 
- 		imux19: i2c@3 {
-@@ -378,6 +393,11 @@ power-sensor@45 {
- 				reg = <0x45>;
- 				shunt-resistor = <1000>;
- 			};
-+
-+			temperature-sensor@4b {
-+				compatible = "ti,tmp75";
-+				reg = <0x4b>;
-+			};
- 		};
- 
- 		imux20: i2c@4 {
-@@ -420,6 +440,10 @@ power-sensor@45 {
- 				reg = <0x45>;
- 				shunt-resistor = <1000>;
- 			};
-+			temperature-sensor@4b {
-+				compatible = "ti,tmp75";
-+				reg = <0x4b>;
-+			};
- 		};
- 
- 		imux21: i2c@5 {
-@@ -462,6 +486,10 @@ power-sensor@45 {
- 				reg = <0x45>;
- 				shunt-resistor = <1000>;
- 			};
-+			temperature-sensor@4b {
-+				compatible = "ti,tmp75";
-+				reg = <0x4b>;
-+			};
- 		};
+@@ -175,6 +175,11 @@ power-monitor@68 {
+ 		reg = <0x68>;
  	};
- };
+ 
++	power-monitor@43 {
++		compatible = "infineon,xdp710";
++		reg = <0x43>;
++	};
++
+ 	leds_gpio: gpio@19 {
+ 		compatible = "nxp,pca9555";
+ 		reg = <0x19>;
 -- 
 2.34.1
 
