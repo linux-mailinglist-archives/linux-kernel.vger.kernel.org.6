@@ -1,197 +1,91 @@
-Return-Path: <linux-kernel+bounces-228619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B614916251
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:28:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF3F916248
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC4F01F25FFA
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:28:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A9AB283962
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:25:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D096D149C62;
-	Tue, 25 Jun 2024 09:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="t3zAvB77"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B2EF149C5E;
+	Tue, 25 Jun 2024 09:25:09 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029A949656;
-	Tue, 25 Jun 2024 09:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7306148838
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719307683; cv=none; b=U5D2pOY64P+E7UphTUNJGEO9VPsYefuzkqWaxomF2Ub93CPtsTAbsHK5csqGs+1O5/PgVgzGfDiAm0H+zLg/3GvSivU7p9iYTOKNBuRagiH0YeWSA7+IT/fvLWKwMfFyqvPHGGTfPKYIGJxzxpzF5o8F7tkoTn9Uii9FAFaxb4A=
+	t=1719307508; cv=none; b=Sl0ITVPix/H1FAaJZ/1NOGvAPflQxQKQzQp/M6D2+183sbdnI2rsFdNLoPw356CCnjKr7sKOo4dkPWbpxsAbFs/H7ja0pQ/5iWlUk7L1PJ74MVzLUrB2v7dOxlsPTWSLKVzy/GpDUaROfTl5RNZoYSH+dEYhMEdUApNI3tyNVsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719307683; c=relaxed/simple;
-	bh=UxNhAgYPGNNHkfJvLdarPdJp5UdmbQ5FuNS5+JKoVFs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TvbmSOs3VPSUi8SuxD6xlTEjNoy/xdYyaHsMGWQPSFyJuKIYGxOGLTUCymCSau5LWFJUso4h3ShFyxEZszyQj5jLXSc93MwpEcWTKaymuZv1LraNM3KxNUEh5vse1+BDT9ita8V11kWnxxrywvyOC0tbRFV93T8NqOlfbN/8b4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=t3zAvB77; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45P7Z1mW023451;
-	Tue, 25 Jun 2024 11:27:42 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	ZL9O4jKbisSwEWT31AVHc7rzLyQfQSAky6Cmq885AcE=; b=t3zAvB77Xc6Rx1Xj
-	GOkBEEY1c1hLcvMraq9m1SbiZ8WyB5aSKn7UZXTQ9CNhr4eO+ToZXK2OgJJU8XEq
-	f9qEpBpz+LpMUNvzpej8jIFg2mSvLStgQR2xejOMdGW6hooIXHI/ZspWrdflPg7V
-	F6slXxMa2qkc/UfjHBdKvP+fOX5nPpzfl8qwixhB2vdb8WIjUHLpGOZdu2e+B010
-	UExnxUzdfcppolhWSvYbaemFJR4YdZ53xoyT8f6XgmSNc+kFrEQFFXkTeRnDD8JT
-	efvvH7TcjTgYIso8+kIvDQao4hghalRfk1JX29L56mBjzUvIO9GX23OyMp9/7X9o
-	h0mg7Q==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yx9jj8hk4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 11:27:41 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id E508E40045;
-	Tue, 25 Jun 2024 11:27:36 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 0B946215135;
-	Tue, 25 Jun 2024 11:26:58 +0200 (CEST)
-Received: from [10.252.26.63] (10.252.26.63) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 25 Jun
- 2024 11:26:57 +0200
-Message-ID: <0e1f7676-65c3-49b6-a3d0-ebac8dda50a7@foss.st.com>
-Date: Tue, 25 Jun 2024 11:26:56 +0200
+	s=arc-20240116; t=1719307508; c=relaxed/simple;
+	bh=iwWMLnxsyiJ99LgfwKEducRDSs/Du+DFckUPSgl7l1E=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WTo1aid5byTHFUB4eCh1MtxffJPNN70TZMeqC8ssp8y35z2PcWxiENaHXKMsCtQ93DT1UrC56y6SZGC2yeL6prwob+GQBXrs3jewnWXCSAoyzhF6JioHVHeWVKlmKgri4YfwZ2oA5prw0cut0DHXmF715evaoimW59TJ9s4RwRo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4W7fT76qW3z2CkbL;
+	Tue, 25 Jun 2024 17:20:59 +0800 (CST)
+Received: from kwepemi100008.china.huawei.com (unknown [7.221.188.57])
+	by mail.maildlp.com (Postfix) with ESMTPS id 053C7140360;
+	Tue, 25 Jun 2024 17:24:59 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemi100008.china.huawei.com
+ (7.221.188.57) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 25 Jun
+ 2024 17:24:58 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <luto@kernel.org>,
+	<kees@kernel.org>, <wad@chromium.org>, <ruanjinjie@huawei.com>,
+	<rostedt@goodmis.org>, <arnd@arndb.de>, <ardb@kernel.org>,
+	<broonie@kernel.org>, <mark.rutland@arm.com>, <rick.p.edgecombe@intel.com>,
+	<leobras@redhat.com>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH 0/3]  arm64: entry: Convert to generic entry
+Date: Tue, 25 Jun 2024 17:27:56 +0800
+Message-ID: <20240625092759.1533875-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] dt-bindings: iio: add sigma delta modulator backend
-To: Conor Dooley <conor@kernel.org>
-CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240618160836.945242-1-olivier.moysan@foss.st.com>
- <20240618160836.945242-6-olivier.moysan@foss.st.com>
- <20240618-spearmint-traverse-5981a548c158@spud>
-Content-Language: en-US
-From: Olivier MOYSAN <olivier.moysan@foss.st.com>
-In-Reply-To: <20240618-spearmint-traverse-5981a548c158@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_06,2024-06-24_01,2024-05-17_01
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemi100008.china.huawei.com (7.221.188.57)
 
-Hi Conor,
+Currently, x86, Riscv, Loongarch use the generic entry. Convert arm64
+to use the generic entry infrastructure from kernel/entry/*. The generic
+entry makes maintainers' work easier and codes more elegant, which aslo
+removed a lot of duplicate code.
 
-On 6/18/24 20:13, Conor Dooley wrote:
-> On Tue, Jun 18, 2024 at 06:08:31PM +0200, Olivier Moysan wrote:
->> Add documentation of device tree bindings to support
->> sigma delta modulator backend in IIO framework.
->>
->> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
->> ---
->>   .../iio/adc/sd-modulator-backend.yaml         | 43 +++++++++++++++++++
->>   1 file changed, 43 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/iio/adc/sd-modulator-backend.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/iio/adc/sd-modulator-backend.yaml b/Documentation/devicetree/bindings/iio/adc/sd-modulator-backend.yaml
->> new file mode 100644
->> index 000000000000..b0fa71b75cd0
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/iio/adc/sd-modulator-backend.yaml
->> @@ -0,0 +1,43 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/iio/adc/sd-modulator-backend.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Sigma delta modulator backend
->> +
->> +maintainers:
->> +  - Olivier Moysan <olivier.moysan@foss.st.com>
->> +
->> +properties:
->> +  compatible:
->> +    description: |
->> +      "sd-backend" can be used as a generic SD modulator backend,
->> +      if the modulator is not specified in the compatible list.
->> +    enum:
->> +      - sd-backend
-> 
-> I'd rather not have a generic compatible like this. Something generic as
-> a fallback for the driver to binding against I would be fine with, but
-> not something that avoids people documenting their devices.
-> 
+Jinjie Ruan (3):
+  entry: Add some arch funcs to support arm64 to use generic entry
+  arm64: Prepare to switch to generic entry
+  arm64: entry: Convert to generic entry
 
-This binding was modeled on the following binding
-Documentation/devicetree/bindings/iio/adc/sigma-delta-modulator.yaml
-But, I understand that we need to encourage people to use a real 
-compatible. So, I will remove this generic compatible from the binding 
-in v2.
+ arch/arm64/Kconfig                    |   1 +
+ arch/arm64/include/asm/entry-common.h |  60 +++++
+ arch/arm64/include/asm/ptrace.h       |   5 +
+ arch/arm64/include/asm/stacktrace.h   |   5 +-
+ arch/arm64/include/asm/syscall.h      |   6 +-
+ arch/arm64/include/asm/thread_info.h  |  23 +-
+ arch/arm64/kernel/entry-common.c      | 355 ++++++--------------------
+ arch/arm64/kernel/ptrace.c            |  78 +++---
+ arch/arm64/kernel/signal.c            |   3 +-
+ arch/arm64/kernel/syscall.c           |  18 +-
+ include/linux/entry-common.h          |  51 ++++
+ kernel/entry/common.c                 |  49 +++-
+ 12 files changed, 294 insertions(+), 360 deletions(-)
+ create mode 100644 arch/arm64/include/asm/entry-common.h
 
-> Also, I think "backend" should be dropped from the
-> filename/title/descriptions, the ads1201 is "just" an delta-sigma
-> modulator.:wq
-> 
+-- 
+2.34.1
 
-There is already a generic sigma delta modulator driver: 
-"sd_adc_modulator.c"
-This driver follows a different approach, as it registers an IIO device. 
-It has to be kept for backward compatibility.
-The current patch introduces a new sigma delta modulator generic driver
-based on the new IIO backend framework.
-So, we have two drivers dedicated to the same type of hardware, but 
-intented to be used with different topologies in IIO.
-I used "backend" suffix as a differentiator here.
-I did not find a better alternative to manage this diversity.
-If, you have another suggestion please let me know.
-
->> +      - ads1201
-> 
-> Missing vendor prefix.
-> 
-
-Ack
-
-BRs
-Olivier
-
-> Thanks,
-> Conor.
-> 
-> 
->> +
->> +  '#io-backend-cells':
->> +    const: 0
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  vref-supply:
->> +    description: Phandle to the vref input analog reference voltage.
->> +
->> +required:
->> +  - compatible
->> +  - '#io-backend-cells'
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    ads1201: adc {
->> +      compatible = "sd-backend";
->> +      #io-backend-cells = <0>;
->> +    };
->> +
->> +...
->> -- 
->> 2.25.1
->>
 
