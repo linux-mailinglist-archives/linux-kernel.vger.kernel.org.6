@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-228585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-228586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CE549161E7
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:07:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B6AF9161EA
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 11:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8CB3285D19
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:07:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAF67286E61
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 09:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 214BA1494C8;
-	Tue, 25 Jun 2024 09:07:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73691149E17;
+	Tue, 25 Jun 2024 09:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UPslzcWw"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VccEPzTa"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D705B1494B2
-	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:07:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 180FA1494A8
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 09:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719306451; cv=none; b=u3SzdHvgDIaOaeyuByqSwLXwVEnP1WOtZN/NVWqWefvVr+Zv4JNZkct8W62JGuq12volQqMzCFV1EMObmhejzYZw9XTq5PMMBlAqxLF1fO5tdLgYNVxhJw35s9VAU0CbhXDJEwmMBwvVXjDfpDRHCwOkjz4iKcnu2GxkVec6zNQ=
+	t=1719306456; cv=none; b=eZkYu193uXzOzjbId6Qx0roKq2krsypBKf2arFpphjr6/FweW+/I5+J2MG1GRFVA/9pOvm2SnrvTRPw8szkCXG3P2+CmwogvLK4Pg7VjMuZFrAQrGqRaDIfTdQGSIUFQsMEuvKkRozjGcaObX9yS3ipOiP1EJ+rxAvEJqrjwtyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719306451; c=relaxed/simple;
-	bh=wFwYowz7Dl6VAlaWIslldOW6InGRGZjbxpGMyvu7qBE=;
+	s=arc-20240116; t=1719306456; c=relaxed/simple;
+	bh=x7v6xrrmTbkuCaCyXVJ2/VaDo2zX8EcDe5XwB4m5vMg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SgHtNskKc8QrQfL+U2LfsgEMfBSELLGSs+2sawqImK/H6L9NW16hICaM+FnB4KWjaAnfVb725UYLCxJTSwTvgjFmPsrriRdc0/VhtXH7VtzVoj0S0q2H9oXaPHV1gNKWNa9eGRoV6+L75gZjIFWKlwl73iRa0TKYHUzKhq2stRw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UPslzcWw; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version:Content-Type; b=S4yTaVHe1BNm5mOEXvBuIVV+LcoOL/EM2dDz8EtJKBNBVoIAX18CHTNp2XYB9Qc6NP+a6JZZCNoDwmjClGKensEzi5RXnRqe3rTeCAQdGBGk87NA58MUVQnytX8HavfhvQoK/7zinzNJH4J+vZEbuEvP58/IJqm909ByvFIOtOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VccEPzTa; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719306448;
+	s=mimecast20190719; t=1719306454;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=C5gIbstmYx7+hVakYhvJm3/I7jrdwPXMN2vBR3BGT10=;
-	b=UPslzcWwahHMh9iR3bSJx5hxboKzIIMfWfqaBuqWAlrtOf1TxDQ5FpnjO9ErtaaT9sRU9U
-	wgetP3G8Q4aJhaXNr2KRfd3rlojh7t6Aj8YW7VjsDkiOr/UNZc+TWxBMC9Aiu6FITa1EoT
-	RVHcf8BS4tuCYP47psO2Qk/JlSlFSnY=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+	bh=mpTFKwtZMDnLyGvHe5Gpx78ZwRB1TPy/HybiDm8shcc=;
+	b=VccEPzTak0jgiF1IuJDGgAEKmNgVdhdmwo5sBMWPRLAWYU3CcprCF+bqg0TG0ATEjdcZBn
+	tohUkbs793GUjLM9j4+WqYs3Xw2BVcSn4RnDtXFEIAoo1IrNV7p0wUxQEUxpmQ7qLFngiu
+	D/KSNuZAtAiPBQWjyF55rZb/ElCwTrk=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-599-Qm534JkkMrG-56Hj37KU5w-1; Tue,
- 25 Jun 2024 05:07:20 -0400
-X-MC-Unique: Qm534JkkMrG-56Hj37KU5w-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-683-Juu5SSqfP5-ZJJFPS-5imA-1; Tue,
+ 25 Jun 2024 05:07:27 -0400
+X-MC-Unique: Juu5SSqfP5-ZJJFPS-5imA-1
 Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A9931956050;
-	Tue, 25 Jun 2024 09:07:18 +0000 (UTC)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 719781955E80;
+	Tue, 25 Jun 2024 09:07:25 +0000 (UTC)
 Received: from gshan-thinkpadx1nanogen2.remote.csb (unknown [10.67.24.180])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D5AC11954AC0;
-	Tue, 25 Jun 2024 09:07:11 +0000 (UTC)
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1EBA11954AC0;
+	Tue, 25 Jun 2024 09:07:18 +0000 (UTC)
 From: Gavin Shan <gshan@redhat.com>
 To: linux-mm@kvack.org
 Cc: linux-fsdevel@vger.kernel.org,
@@ -67,9 +67,9 @@ Cc: linux-fsdevel@vger.kernel.org,
 	torvalds@linux-foundation.org,
 	zhenyzha@redhat.com,
 	shan.gavin@gmail.com
-Subject: [PATCH 1/4] mm/filemap: Make MAX_PAGECACHE_ORDER acceptable to xarray
-Date: Tue, 25 Jun 2024 19:06:43 +1000
-Message-ID: <20240625090646.1194644-2-gshan@redhat.com>
+Subject: [PATCH 2/4] mm/filemap: Skip to allocate PMD-sized folios if needed
+Date: Tue, 25 Jun 2024 19:06:44 +1000
+Message-ID: <20240625090646.1194644-3-gshan@redhat.com>
 In-Reply-To: <20240625090646.1194644-1-gshan@redhat.com>
 References: <20240625090646.1194644-1-gshan@redhat.com>
 Precedence: bulk
@@ -82,9 +82,9 @@ Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-The largest page cache order can be HPAGE_PMD_ORDER (13) on ARM64
-with 64KB base page size. The xarray entry with this order can't
-be split as the following error messages indicate.
+On ARM64, HPAGE_PMD_ORDER is 13 when the base page size is 64KB. The
+PMD-sized page cache can't be supported by xarray as the following
+error messages indicate.
 
 ------------[ cut here ]------------
 WARNING: CPU: 35 PID: 7484 at lib/xarray.c:1025 xas_split_alloc+0xf8/0x128
@@ -128,43 +128,32 @@ Call trace:
  el0t_64_sync_handler+0x134/0x150
  el0t_64_sync+0x17c/0x180
 
-Fix it by decreasing MAX_PAGECACHE_ORDER to the largest supported order
-by xarray. For this specific case, MAX_PAGECACHE_ORDER is dropped from
-13 to 11 when CONFIG_BASE_SMALL is disabled.
+Fix it by skipping to allocate PMD-sized page cache when its size
+is larger than MAX_PAGECACHE_ORDER. For this specific case, we will
+fall to regular path where the readahead window is determined by BDI's
+sysfs file (read_ahead_kb).
 
-Fixes: 4f6617011910 ("filemap: Allow __filemap_get_folio to allocate large folios")
-Cc: stable@kernel.org # v6.6+
+Fixes: 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
+Cc: stable@kernel.org # v5.18+
 Suggested-by: David Hildenbrand <david@redhat.com>
 Signed-off-by: Gavin Shan <gshan@redhat.com>
 ---
- include/linux/pagemap.h | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ mm/filemap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-index 59f1df0cde5a..a0a026d2d244 100644
---- a/include/linux/pagemap.h
-+++ b/include/linux/pagemap.h
-@@ -354,11 +354,18 @@ static inline void mapping_set_gfp_mask(struct address_space *m, gfp_t mask)
-  * a good order (that's 1MB if you're using 4kB pages)
-  */
- #ifdef CONFIG_TRANSPARENT_HUGEPAGE
--#define MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
-+#define PREFERRED_MAX_PAGECACHE_ORDER	HPAGE_PMD_ORDER
- #else
--#define MAX_PAGECACHE_ORDER	8
-+#define PREFERRED_MAX_PAGECACHE_ORDER	8
- #endif
+diff --git a/mm/filemap.c b/mm/filemap.c
+index 876cc64aadd7..b306861d9d36 100644
+--- a/mm/filemap.c
++++ b/mm/filemap.c
+@@ -3124,7 +3124,7 @@ static struct file *do_sync_mmap_readahead(struct vm_fault *vmf)
  
-+/*
-+ * xas_split_alloc() does not support arbitrary orders. This implies no
-+ * 512MB THP on ARM64 with 64KB base page size.
-+ */
-+#define MAX_XAS_ORDER		(XA_CHUNK_SHIFT * 2 - 1)
-+#define MAX_PAGECACHE_ORDER	min(MAX_XAS_ORDER, PREFERRED_MAX_PAGECACHE_ORDER)
-+
- /**
-  * mapping_set_large_folios() - Indicate the file supports large folios.
-  * @mapping: The file.
+ #ifdef CONFIG_TRANSPARENT_HUGEPAGE
+ 	/* Use the readahead code, even if readahead is disabled */
+-	if (vm_flags & VM_HUGEPAGE) {
++	if ((vm_flags & VM_HUGEPAGE) && HPAGE_PMD_ORDER <= MAX_PAGECACHE_ORDER) {
+ 		fpin = maybe_unlock_mmap_for_io(vmf, fpin);
+ 		ractl._index &= ~((unsigned long)HPAGE_PMD_NR - 1);
+ 		ra->size = HPAGE_PMD_NR;
 -- 
 2.45.1
 
