@@ -1,125 +1,132 @@
-Return-Path: <linux-kernel+bounces-229804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A3B391746C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:51:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7E2491746F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:59:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C341B2184F
-	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:51:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5689B287F69
+	for <lists+linux-kernel@lfdr.de>; Tue, 25 Jun 2024 22:59:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A592717FAC5;
-	Tue, 25 Jun 2024 22:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B788117F4E8;
+	Tue, 25 Jun 2024 22:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mg532DEp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ntt/ncd9"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8D717FAA0;
-	Tue, 25 Jun 2024 22:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9140514A61A
+	for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 22:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719355890; cv=none; b=EIOAAoaL+v9NT89208SHE5JgJk4OiFFsYysWnZ40NG9yY7PTQxi1mVYkcA5DOtUwT2NOEzYIZTfja6PgCnbq1cqGX0SEZAJuii9T8lUnqE17UPUHfzkUA/PRJN8rax0GIEpIn/hT2acvovp2ksW2vzyh8yn1owSJ6wpBSgrlu6Y=
+	t=1719356390; cv=none; b=bOmhcIvNdreArJ88aDPOoy3J7idE0daSN0IwVaRrDto+gYGmUN61e157pnBI80ORgBEE/y6JtwTGOYoFsfyRMPM+LFDsQufn9T78vwl7KOYgd2csJ+hHwgHJiSVQmK4LVhM4qyQwuayg2RwRkGMtNbnJatLWETAATfmhqGgrRN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719355890; c=relaxed/simple;
-	bh=jmVxUGP2wgHlH5PGgGw/MkCtBLhGZ+aIfigrOSdtbbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t/r8yeoJ0ACM0ww7HsfwMPxCsVFiDC0nEw6clZXt+maBgm2fC5g25pV3DbtzMM7/zZRWWONGcWpyzNQASKyJW0wPs3ik2WDzx+qv+jjTRmXPmQwwgZC7jPDe+VdXdOUQ4X+lH60CbHz2WtfsT5JajEb+p0YUs5PFxD5YZ+DAC1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mg532DEp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 115E8C4AF09;
-	Tue, 25 Jun 2024 22:51:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719355889;
-	bh=jmVxUGP2wgHlH5PGgGw/MkCtBLhGZ+aIfigrOSdtbbE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mg532DEpIcDg24k1+ZRFtGIP14dLvDqfezYhlPBpCwOo/vYyJ6/+qh/utJzpDojON
-	 +x6n0zqf55Wrt4hzU362RxbCZVI0O8fymXLbHsHoA2Tb4PmgQok6tFGExp7gSOuKcl
-	 UoIBJoOazo6vMysvsMU0KylCDriqL+VDND8/T61UVa/YNBqJAQZMgBn1TLuyFuPGb6
-	 Wn7xhD9Ezr+GZqTTw7ynPD4NC4HmAax/9PuzhduOh3gRyz6JF1/apKDenjYk6ExxEv
-	 LIzRiyUqEb/vOpMCC5ggKsIHT7I7ccRq3f1bEGfzfs84/I7E9JOZNiDI/JPqKTCAbE
-	 SGrvMOYhoyTZQ==
-Date: Tue, 25 Jun 2024 16:51:27 -0600
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Akhil P Oommen <quic_akhilpo@quicinc.com>
-Subject: Re: [PATCH] dt-bindings: display/msm/gmu: fix the schema being not
- applied
-Message-ID: <20240625225127.GA361957-robh@kernel.org>
-References: <20240623125930.110741-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1719356390; c=relaxed/simple;
+	bh=4nufzVyDas6rqXanqk2DFPV+HJQhWvNDqqsfFSssBLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cu4Qisf3u7WilHQK5jC3zSuYsXpBQD5GWQd0314xtWpG1nCxwBci2KrKEfYboeZEg846nt77bDd4K/2r5g9b68/tblBFF9Cp341sISrBbl9WyIOP+s92gZv2dodbAfquzInaOdnRo7nO02hkMFdawRUSjzE4vZjARhkhiVDWqeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ntt/ncd9; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a724b9b34b0so356593466b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 15:59:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719356387; x=1719961187; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4nufzVyDas6rqXanqk2DFPV+HJQhWvNDqqsfFSssBLc=;
+        b=Ntt/ncd9KledG0mncvVF1FMqlcDTX8GHg7ohIYXQGxgIYguBZvpQVq90qYC2qPXJs8
+         XzXZF5IdAjlEMPAI3EUPyc5pIPShvqcftbNnLP6KglErMYhT6QXPVmyCcutLyHHqKmvh
+         YD/TnAji1PnAKBV0TYj3OMK/QKYNWZXHRYlBAbtoYUGw00pgwC/awGZaNgQI9gUgDC2g
+         4jWrj/jqKIpF5RnG+OJ21mInZykPrInMPbKcv3mjE2a/T0CfXLCBbgvpyIbDlq6m116N
+         yS0mXLajOp+Jp8K9AW5CHLqfC88mLAenRnJn7X1nOJUgyx81C7VmIGOAeX96kkpvmxtg
+         3j6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719356387; x=1719961187;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4nufzVyDas6rqXanqk2DFPV+HJQhWvNDqqsfFSssBLc=;
+        b=RMkGdEwTRmOBj8x1wOYa5Ig0s8zu2lQVJtS9wO2EmkWBksZUb5fIjZpkYP1nKLDlBJ
+         JrmC3g/BpObLcYlbN00Hv0Ft0Cw+ci1wJQPazki/MhV1jYRyI0Lo+ueUOQrB53JWG8Cg
+         21t27WMANtNKJW/oHlSYVsFfeHodrXJ+97pmYe8HR7GgIb6YybnzewE2VlwjfJpMAEmi
+         Ze1AcJtiN/3gKSi2YfX+W9eCGNmuqhITkgkoRJk0Qru0JUB2Bx5yISh+ncekUQBEnhYw
+         qdJQaziMVjxqYMGYu5pe5g4hFHUZDy2+X9PZSwAdFig9ifwc2LT6+q1ErHTr5hQdgBWk
+         kxXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrdQdGmXX+ipv9954potehYXpotHyKPeWPeUY8BeknYWGdPWqBp/Q9DN3VU+ziQbFLWHDyXM2kUWTXaDyX3fcjUpyKrEcx5HuQkHZ+
+X-Gm-Message-State: AOJu0Yy1o0kO/gb4WrEIHiLPRwoLt+uVP6U9YVpZEWbGfwOmTuqwU0+e
+	Sif+G/yhOqaPcrUahUelA6qih+zYLhNHQBu32CGDnvpEtOK/3D4n3ow45dMEu+Oz7b3EbeYBO5i
+	c7LqAqHq7NQocUdieGMytypCiyoZDh1sy+fRv
+X-Google-Smtp-Source: AGHT+IH/dDKhmlHal0QbDpSAnlMkS3U3pY+fmF7rZOA5u540GMB1xG2BZwZsKTdBAW+WPZDRIGqL8k4sWqeHNFO8TvI=
+X-Received: by 2002:a17:907:c786:b0:a6f:48b2:aac5 with SMTP id
+ a640c23a62f3a-a7245b6dbe0mr547974966b.15.1719356386530; Tue, 25 Jun 2024
+ 15:59:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240623125930.110741-1-krzysztof.kozlowski@linaro.org>
+References: <a45ggqu6jcve44y7ha6m6cr3pcjc3xgyomu4ml6jbsq3zv7tte@oeovgtwh6ytg>
+ <CAJD7tkZT_2tyOFq5koK0djMXj4tY8BO3CtSamPb85p=iiXCgXQ@mail.gmail.com>
+ <qolg56e7mjloynou6j7ar7xzefqojp4cagzkb3r6duoj5i54vu@jqhi2chs4ecj>
+ <CAJD7tka0b52zm=SjqxO-gxc0XTib=81c7nMx9MFNttwVkCVmSg@mail.gmail.com>
+ <u3jrec5n42v35f3xiigfqabajjt4onh44eyfajewnzbfqxaekw@5x2daobkkbxh>
+ <CAJD7tkaMeevj2TS_aRj_WXVi26CuuBrprYwUfQmszJnwqqJrHw@mail.gmail.com>
+ <d3b5f10a-2649-446c-a6f9-9311f96e7569@kernel.org> <CAJD7tkZ0ReOjoioACyxQ848qNMh6a93hH616jNPgX3j72thrLg@mail.gmail.com>
+ <zo6shlmgicfgqdjlfbeylpdrckpaqle7gk6ksdik7kqq7axgl6@65q4m73tgnp3>
+ <CAJD7tkZ_aba9N9Qe8WeaLcp_ON_jQvuP9dg4tW0919QbCLLTMA@mail.gmail.com>
+ <ntpnm3kdpqexncc4hz4xmfliay3tmbasxl6zatmsauo3sruwf3@zcmgz7oq5huy>
+ <CAJD7tkYqF0pmnw+PqmzPGh7NLeM2KfCwKLMhkFw3sxBOZ3biAA@mail.gmail.com> <a1e847a6-749b-87e8-221f-f9beb6c2ab59@linux.com>
+In-Reply-To: <a1e847a6-749b-87e8-221f-f9beb6c2ab59@linux.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 25 Jun 2024 15:59:09 -0700
+Message-ID: <CAJD7tkbq-dyhmgBOC0+=FeJ19D-fRpE_pz44cH7fCvtHgr45uQ@mail.gmail.com>
+Subject: Re: [PATCH V2] cgroup/rstat: Avoid thundering herd problem by kswapd
+ across NUMA nodes
+To: "Christoph Lameter (Ampere)" <cl@linux.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>, Jesper Dangaard Brouer <hawk@kernel.org>, tj@kernel.org, 
+	cgroups@vger.kernel.org, hannes@cmpxchg.org, lizefan.x@bytedance.com, 
+	longman@redhat.com, kernel-team@cloudflare.com, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jun 23, 2024 at 02:59:30PM +0200, Krzysztof Kozlowski wrote:
-> dtschema v2024.4, v2024.5 and maybe earlier do not select device nodes for
+On Tue, Jun 25, 2024 at 3:35=E2=80=AFPM Christoph Lameter (Ampere) <cl@linu=
+x.com> wrote:
+>
+> On Tue, 25 Jun 2024, Yosry Ahmed wrote:
+>
+> >> In my reply above, I am not arguing to go back to the older
+> >> stats_flush_ongoing situation. Rather I am discussing what should be t=
+he
+> >> best eventual solution. From the vmstats infra, we can learn that
+> >> frequent async flushes along with no sync flush, users are fine with t=
+he
+> >> 'non-determinism'. Of course cgroup stats are different from vmstats
+> >> i.e. are hierarchical but I think we can try out this approach and see
+> >> if this works or not.
+> >
+> > If we do not do sync flushing, then the same problem that happened
+> > with stats_flush_ongoing could occur again, right? Userspace could
+> > read the stats after an event, and get a snapshot of the system before
+> > that event.
+> >
+> > Perhaps this is fine for vmstats if it has always been like that (I
+> > have no idea), or if no users make assumptions about this. But for
+> > cgroup stats, we have use cases that rely on this behavior.
+>
+> vmstat updates are triggered initially as needed by the shepherd task and
+> there is no requirement that this is triggered simultaenously. We
+> could actually randomize the intervals in vmstat_update() a bit if this
+> will help.
 
-That should be just since db9c05a08709 ("validator: Rework selecting 
-schemas for validation") AKA the 6x speed up in v2024.04.
-
-> given binding validation if the schema contains compatible list with
-> pattern and a const fallback.  This leads to binding being a no-op - not
-> being applied at all.  Issue should be fixed in the dtschema but for now
-> add a work-around do the binding can be used against DTS validation.
-
-The issue is we only look at the first compatible. I'm testing out a fix 
-and will apply it tomorrow assuming no issues. With that, I don't think 
-we should apply this patch.
-
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> ---
-> 
-> Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>
-> ---
->  .../devicetree/bindings/display/msm/gmu.yaml         | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/display/msm/gmu.yaml b/Documentation/devicetree/bindings/display/msm/gmu.yaml
-> index b3837368a260..8d1b515f59ec 100644
-> --- a/Documentation/devicetree/bindings/display/msm/gmu.yaml
-> +++ b/Documentation/devicetree/bindings/display/msm/gmu.yaml
-> @@ -17,6 +17,18 @@ description: |
->    management and support to improve power efficiency and reduce the load on
->    the CPU.
->  
-> +# dtschema does not select nodes based on pattern+const, so add custom select
-> +# as a work-around:
-> +select:
-> +  properties:
-> +    compatible:
-> +      contains:
-> +        enum:
-> +          - qcom,adreno-gmu
-> +          - qcom,adreno-gmu-wrapper
-> +  required:
-> +    - compatible
-> +
->  properties:
->    compatible:
->      oneOf:
-> -- 
-> 2.43.0
-> 
+The problem is that for cgroup stats, the behavior has been that a
+userspace read will trigger a flush (i.e. propagating updates). We
+have use cases that depend on this. If we switch to the vmstat model
+where updates are triggered independently from user reads, it
+constitutes a behavioral change.
 
