@@ -1,361 +1,494 @@
-Return-Path: <linux-kernel+bounces-230306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A3EA917B13
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:36:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AACA5917B17
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F35E287E2E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:36:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BAB31F254D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:37:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D821662F2;
-	Wed, 26 Jun 2024 08:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4738613B78F;
+	Wed, 26 Jun 2024 08:37:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LNGnCRij"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6QnkGuR"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43052144D1D;
-	Wed, 26 Jun 2024 08:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719390998; cv=fail; b=d1BUnAKaKRbs/lnDgfCgQfaA3p3vANWt8v1IgEr1aCRJoyVxrI7TXervK8Sa99zE8gLIHqm4JlYqLAloxhfpYlcwfq5fM9pQZQVENcxMkCd4OahFQ5mntYJ2hNlsvBYonqxOaqiN9M/NAztIiGZbaevFVn/Bycc39xgHvgXSwuk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719390998; c=relaxed/simple;
-	bh=oI3nUeOisUSLzYgGHHxrNSzGV/DbB0j5x3i8dr6M2EQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lZ8LEcCPD6P673z8aEM+8AoraecB/K9/Kvp/ChT70YVb5aE0pZXmtPKGojCPba9JazVgAKlqkj3Ytf4YXOxLboivCEHmjf7Lvw9V9+c+/1zx8MXfSROOM8q67HbSlm0b8Do9W12iVAtpisdyOtq3XQNM6gD3TETmmwQf4jgUi4o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LNGnCRij; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719390996; x=1750926996;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=oI3nUeOisUSLzYgGHHxrNSzGV/DbB0j5x3i8dr6M2EQ=;
-  b=LNGnCRijoRhXtL07YwyZCqRZ3MRs5bxKAxXBsse9dlxrTSuYSBetbUL6
-   S7H5BS8PqlnsmSApIKlddAbE+876WdMSMMpIVizXadB0ZqGd5hwcGOy6j
-   ux5KVo67e8gj8fG5J+EPstb76UdFo/skuCU4kvEe1HQrhREaIA7OnK2hJ
-   KfTnRMreS1xY4o1Aq319BwqVhc2leSdyqDRFjF9xGLDv6d1UCyMqU+ugX
-   RKrr9rdfw/lnisKxttGMbgoCPYBYggPhOb/8neO0Ym+VfS2sjTq/pxTZV
-   /1qH/0dj9Z+WvKvB+nHXE4J4x24vn+BT9kVn9E1SRo7OPMsSFurp6lL6A
-   A==;
-X-CSE-ConnectionGUID: UN2ARAtrTueF/yXrw7NbFg==
-X-CSE-MsgGUID: QxzzvRRzRmGyh+Xyw1tRCA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16277674"
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="16277674"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 01:36:35 -0700
-X-CSE-ConnectionGUID: N8g12G4ASfC+pqBBUefbSQ==
-X-CSE-MsgGUID: 6DGTJEN/SdqSlfilibbc8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="75140741"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Jun 2024 01:36:35 -0700
-Received: from orsmsx611.amr.corp.intel.com (10.22.229.24) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 26 Jun 2024 01:36:34 -0700
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX611.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 26 Jun 2024 01:36:34 -0700
-Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 26 Jun 2024 01:36:34 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
- by edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 26 Jun 2024 01:36:33 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=apf2JR3kOHiM98/YGvgVXnm4jk0PXuh8v3NTT1zNxnTKbH6FE+5afkFd4ugEGMIS9iS5IwFadEVR6RB3spZ6sk4QOezIxaAqjJ4rJwNbbHXwkvPmbdB1vfUQLTyx4I97b5pofIQAtIi8Fr0cdLzAj+iuEoSh8qeXnVZaEWHnXP0NUS0bcTk1oU1/qSC9AwFwfndMnHRbTK3Vz2xdWxACAeN0jK0UInOt7STIxU73hPYRH3MsXzFsm0Y1VJrStnLVv3bQzhqiC/NNhxSdI41Qa30IYhbdiZB1/NvNdGZgBkiiE1QGPMsWRMn9uKBoH3HH4VgU+dRjPpIceI2tc26BjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=K7QTbiOjUlXc3Wu3HSN0Wahn356/h4DoGhw2kZHYM+U=;
- b=XoGluPha2oUNGVDn+ngZTl78TBSkmrgr8I706nPRyQ+KVA/lLyIhpswpd2PZuF/jFE2k6Yw6qhzGeWCPorhV6UNA3kqvjbhWAuVMAe57E+bPosMV+vWjKROrOzXdQwmzYuTtX4HxT/RvKtOlauwn2xykTaXsGAXL6V58cFijeaofS58saf8Pmt/scQvSJMVgHX06Og20gC4YEA7Li6L4DMgeEkP6mAv1pIvVfopWQTz6VApqCvL4UVc1mzk684m+9LuIssTlUVV2FMBjXnFz8MlwGLvIJFB1JvEEPTjRZpXrvRIGkORe6C9g8H7ER9A7PJrOs5uQ1HMCyROEpCALKw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com (2603:10b6:408:135::18)
- by SJ2PR11MB7671.namprd11.prod.outlook.com (2603:10b6:a03:4c4::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
- 2024 08:36:26 +0000
-Received: from BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1]) by BN9PR11MB5276.namprd11.prod.outlook.com
- ([fe80::b576:d3bd:c8e0:4bc1%5]) with mapi id 15.20.7698.032; Wed, 26 Jun 2024
- 08:36:26 +0000
-From: "Tian, Kevin" <kevin.tian@intel.com>
-To: "Zhao, Yan Y" <yan.y.zhao@intel.com>, "kvm@vger.kernel.org"
-	<kvm@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-	"jgg@nvidia.com" <jgg@nvidia.com>, "peterx@redhat.com" <peterx@redhat.com>,
-	"ajones@ventanamicro.com" <ajones@ventanamicro.com>
-Subject: RE: [PATCH] vfio: Reuse file f_inode as vfio device inode
-Thread-Topic: [PATCH] vfio: Reuse file f_inode as vfio device inode
-Thread-Index: AQHawJxm3I/CN7lO/0SZyxULdM6QfbHQdBwAgAlRPtA=
-Date: Wed, 26 Jun 2024 08:36:26 +0000
-Message-ID: <BN9PR11MB527603C378C5D0DA1294ED268CD62@BN9PR11MB5276.namprd11.prod.outlook.com>
-References: <20240617095332.30543-1-yan.y.zhao@intel.com>
- <ZnQBEmjEFoO39rRO@yzhao56-desk.sh.intel.com>
-In-Reply-To: <ZnQBEmjEFoO39rRO@yzhao56-desk.sh.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: BN9PR11MB5276:EE_|SJ2PR11MB7671:EE_
-x-ms-office365-filtering-correlation-id: b05a520a-3048-42d7-f869-08dc95bb117f
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230038|366014|376012|1800799022|38070700016;
-x-microsoft-antispam-message-info: =?us-ascii?Q?kAWBRbbcmfBYYmvGb1KT/OxjPcMxVPM3RRuJYWa4lnoJ/EYk9JkHW0GVCvMS?=
- =?us-ascii?Q?Kw9S99BagYQqqjwTHCiLkflhcTTrDZgVFjRqY/Z3vKig0EhQWJKf4dA1jd4u?=
- =?us-ascii?Q?N03FB82xddrVhtMmpPFzaQEZCx3CRRPHDSG2FSaRNLNSA0WZhEGIWD0KQSUB?=
- =?us-ascii?Q?ICCRANntk+qCcQG080Fk/ZSGEY4EuTE2PY9Q3WRF+qwZRPgjDgclwlXodkZN?=
- =?us-ascii?Q?7gXoeNu0A0pa0ElP6QM7Gotp/7Spg+aisZPS7qaqJGClbAlndTQRSrBOQyKL?=
- =?us-ascii?Q?F++hdgSUa8LqVyJSmNvWZLVj9yaHs0ep5Z9deprKJVJUGROsnmp9ioZnheE9?=
- =?us-ascii?Q?7DbPD9OIo53biAU5xGwY4F+bycZArJC8WIiNEgI8KRbxm4y66CLACuV7UFPr?=
- =?us-ascii?Q?7uUp14ce/nUK5PrLBe+9S3VaLF03+Y5HrXaUS75Fn7z+Q8uXXxS/V0/oTPvX?=
- =?us-ascii?Q?Z3PbPK00xHOu/ArEhgwFTL5B+F5wTQFAa5cz+z/2bpsCMpXzHibDtzr2qY9D?=
- =?us-ascii?Q?arJCASghHagrpMMi7MZWpdC882YESyruUun/q7lDn9YasHAa5SZD7Uw/sBfj?=
- =?us-ascii?Q?TBYt0IF3TezbQSoaup4C+J3B3rRBQ43gUpUU4e2aR0774Ty8uNBpLvz96Imo?=
- =?us-ascii?Q?J5S1GyZ+fFiyfigPGzUKsTdvAGq76FL4RygEUnLVtchG9obSf16stI7LPN1S?=
- =?us-ascii?Q?K1bV0yIms0rl9kGItg1W0ybeGGZvFgWPWjMjAdB/RQqg7KjC1zcoXzbKBPUP?=
- =?us-ascii?Q?3pq+o/gSlXcr+IfQjsuOEQwrQhywHiqsbRUCRQzSGEwyQYe0Aspg0EWmVLgQ?=
- =?us-ascii?Q?3tAoT7O/73khho1cWL57cD8kQh0U9bOvZGbB3r28L73a+GG0Z6jWibEAS8s9?=
- =?us-ascii?Q?1NO82qRzzOYJXukxuJ1vuJ1KjNy9T0H+6H4PszQNhdiI+VxrwQDkiI4P6gtp?=
- =?us-ascii?Q?JkZZDZTYc0GPOJi8qC+l5duX9F+O0B0Dsz1uFR0gP2bTb4aO/GftTskh82c8?=
- =?us-ascii?Q?HIxJccSOY6h26iU115EODDC/FIFCeJHGImGNfV/VHVOXU077s7niYswnPp0H?=
- =?us-ascii?Q?ej3KORm9arI7CNGl16zweXH9C+fkvuiBEQuC+FtIjqB7N/XrW3HHwcpVbGk2?=
- =?us-ascii?Q?8CDyx8t7U3Ln8hHYyAh18BX0KFRY+bjXaGr87JcSCPPefyCpvsSMlL/PkxH9?=
- =?us-ascii?Q?PnC2TmwnOhezbnjuLIwST0f0dt+gJd02xzYIAXXaXyl8XQxPk+vZQwmDR+9E?=
- =?us-ascii?Q?1oiuZ3kiE6Adf72wgA2Uh0wbj6ZgY5joas8wkf3Y6D5COrUq/QR7vaWGT/rI?=
- =?us-ascii?Q?x0RKgV6WSRL9MHmPOsClbMq74IQ6pSedcWTzpjp38ShNdharTGFeN4zH7nlf?=
- =?us-ascii?Q?0dfoKYWpOnexUEbmXHmHPKDbVYZKqJrF1PpQAxxlyVApk6X7oQ=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BN9PR11MB5276.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(376012)(1800799022)(38070700016);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?aEUQjV2ffZRz1ZR8/9vqR2Wsq0Q3fSkDTypV1XbUh624xfbOlaCWQ1nsWrJe?=
- =?us-ascii?Q?7Rt8cfq/9IDBXNygaGhZk5zmQlUC1SOPGhN5kvCmc4qujozeqFoUnrwEkjQu?=
- =?us-ascii?Q?KUEgflYpbO5Y2OFFasWJD7hs5JpKfNUFOU4RAEsC3sj2RegjV8m/H14kdfJg?=
- =?us-ascii?Q?O3T0cjyygLBZGgci8Z/U3Y7q1AOMulyJFyUyMJh6XXOJ7RJ5iEBwvFnHNOzk?=
- =?us-ascii?Q?JRO6RB6tNJjyTCWvQNMTBwVR/iVvUYwORFvTMqUD/XhIXEg7Q8Y75xQHvEkN?=
- =?us-ascii?Q?3cXjdpCpl7bkcbajRqlsDzcfvrM3qeGxxome047raT0Zw4VOPSTz01eftpKg?=
- =?us-ascii?Q?WR9AgphkK6rBiVdjnzm3aQrNbfXmo5gNkk8++xp6Y1sr+1egJscNpHW9jRmJ?=
- =?us-ascii?Q?oTCauH/PBQVecyILMTtJO2kpnaMqwdowIe1uk7/5NZxajCh1oz1GHFZ3FdTs?=
- =?us-ascii?Q?YMotWW0JPwHjTE5Kd5202hhS8OcLuD61FoUkd2Jip91PeM0a99S9vyJQFTB6?=
- =?us-ascii?Q?mVP05YvwdUNez2aoAEJihqdkY4FPxSo9t5jwRJxxsjlUYJlcRhmOXDDOIbrx?=
- =?us-ascii?Q?k+EG8wjjnHa/Ya23JmsR4rwv60rTiSCxKAQBJeCRavrRKqx+op/u6b134QeK?=
- =?us-ascii?Q?IjnNibTefuo9c5swDKGPkeMS2HNNqeaS1K6wKALcgbcjGqWxQyl38kP8+vYL?=
- =?us-ascii?Q?1NyXQjTlVHhnnlUjUdhb8qFf7PbRRnhnZi7wRgReT2URRt0gyMVYTn/lt8da?=
- =?us-ascii?Q?BeY8QuvQJePoaXZg2DgfqMIoCIvqkXskiKMQKX1yBstBbXXbg2WEL/lXvN/P?=
- =?us-ascii?Q?QEX/3eRALOTQF0s+R494juSuu1HOivdZ0cJpn/f2bmFqApFN4CdzVzQdNzDy?=
- =?us-ascii?Q?hpw1zyKJlymq638LVoQKVZ5a/+bz/6fkGK9dIRtRairZosx66L7rqzvwDKph?=
- =?us-ascii?Q?tbTu5iis31tbYsDQgoSo1FrI0kmUO4NazUo5l2LvOV1/RuQHhw/Eu98+Cqab?=
- =?us-ascii?Q?bNPCRwc7iG5kbqkdvDlEH/8pmyg+qW7fQsWRll0jK49oCV1kE9803i9/Un6w?=
- =?us-ascii?Q?CXu5TrRYmmBkquMtUVWRuXqz4VjN6nQ+ANxPnoBOoZKEuKu7XjFtOszQfC2E?=
- =?us-ascii?Q?MO8Le+aFLWqu4bFh1G6IzHFU8eLEdwgGM6iPSR+/OrTuuKm/KqcL1dIQYmQd?=
- =?us-ascii?Q?EewcZeOkhKPb+6f7pZmzkjwc/c3QYFhZPKMXB83asE/DvSZjMxDlCFWVoeQy?=
- =?us-ascii?Q?CsHu8yN/CYELDtZ/6b97vpbuowdYpR3DxB+lif780Pyj5kO2aXUE7aAo6iZD?=
- =?us-ascii?Q?tSvvMfULwtI4QmVntFTm+s9ON9nz5Lyp4uuS8afgR9xBB1EQi2hD8ob5sQc+?=
- =?us-ascii?Q?Cvkc8iIPxR3avQ5qT/s0Sy7LyobaLdVSRxohd+2hq6W/4PttWHdLLKLNS6dm?=
- =?us-ascii?Q?Bs/i3C6g55oCmWYWsBeJHViG+W4O/HdlaOmM7LJO9mdnhixk8dENVAyn27eB?=
- =?us-ascii?Q?/qQKv15B45bGQ2hrDeMNxk5gbzh2zF4zRVAxZH5tfRQOI1ToqKoznop3K00P?=
- =?us-ascii?Q?l7av7BuwsEBgRFGk8ZESpZtAIdz3mYrF6Qd2i37I?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34EB15D5DE;
+	Wed, 26 Jun 2024 08:37:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719391050; cv=none; b=A2/vTaAYTPRCvrFVpgXRcbIzZt2z1sfPfaMsMnrA/MSPZtZu4XBU4fJpj3F0nFaU8lpRUkq/TzfolVN2+uJL3UpVbC4OxuEs4nEbZOhMGk46YmS4GuLMdaKaLGxKgFFQaOaARMd6fycY/krcYJfcuuUkKB6G0ab9I7QfhAWqdvU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719391050; c=relaxed/simple;
+	bh=hgYHw13QgjDHwciSiCE3frsMhuTQRXEXLvu7UjXd2a8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EOEjCUGcIlnkxFnJBt/jae/sTD/tdkYbRsRMqZZwjQkOodmXvIZdsTauvVEilAl3HdN6QgV1GDBwLN1kTrkaC9BoGi01T1wjbbm10awVDc2sg2j0UZFD5J7kifDf3JSmuD+RfulpjvlnA3IEYvVoSiZQLjzQz/mOhxbK+oMNdI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6QnkGuR; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-57d457357easo4610027a12.3;
+        Wed, 26 Jun 2024 01:37:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719391046; x=1719995846; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qhhr6F3ttkMzb2DjE7lumsrR6ivXDAnNeKcCjl83GfM=;
+        b=e6QnkGuRyfUnF1gQA3LypF+HoSfSCxv9TwI/8VSsHorcXQr4/tnYuSOLmT44i7FV3X
+         Nb+CNn3YFJCi4H62h9XeBY0MP60P06FapNAgk/WdndAbIcNjpRE3RKhvoPqxipkZ0qnh
+         cDw1tqXPWf3Kj3YwH/z1uLsY9h7fCEC+lyFgTVN0ZnWa+pi01Rbvsjc4Ga4KgtwvSdwG
+         1ex8PlGGZic0QAbxn/lTLuxTvVyKEIaJyWJyOgaRSbFHtJ7sXmzrs8uH9QAi3D1meaRb
+         oUubLfjZVfmw/+PsdaXOOwovjl0srm/vx956kEIYpTJOP8JRgHOxOfhk6ZDuvIAqIg0l
+         zfzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719391046; x=1719995846;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qhhr6F3ttkMzb2DjE7lumsrR6ivXDAnNeKcCjl83GfM=;
+        b=dcPwuZRlIwQD4QgsVfRd+7JR58Snq6Cgzjq5z7HWB3UGhSxYwr8M4Zy2sfyKdWpw7r
+         InuNEFVnyh/LHYlHiy4LGCKKPopV35kRWyCD2Nj2Mk9zwzaXNl1fgYvRWI9vshz24J+6
+         PMdHKHXuhPzn8RhZ18BT4dv9zMBSIjwdPwtzrSqO+Y9ynMKyaeQzK+qbKbUIMzGp71m9
+         BpSamMtJgFdH+0dzpRATw3+umzeCpUSNO0T5rjjOM+Y1VMs0Pc0laMzyUgiWwy1vTNOQ
+         epmxLL5FwKw00VXs4EtFSJro+kQiy94akqHLxo5fN07No72/Kl8M/RAGj8Fxf8/Oqy5F
+         1tcA==
+X-Forwarded-Encrypted: i=1; AJvYcCXA8MBKuJKv2MDnSATsahImPaT11GQJ/AnTvSnADa1aqV/O9Q2kLSaSOg5E8fL5DZI8/+t485pvbpEet82iuWJTlt+/c0EvUZS8esXMS8FrbqCPRDaAZBIOdtfT7vbdBTLllJ7ByqpiZyE=
+X-Gm-Message-State: AOJu0Yysk8eH/am4eQ8ImOFdjOGUg6E+QJxumNwwaVeu0VK8ucHNRMYl
+	xv38BloL2xnYz0MGUQGcdh+PPtxUXc5NZ5Q0J6pQ8zylJbNbYgnT
+X-Google-Smtp-Source: AGHT+IGUf55wxQN0wPcDE6iUDwbAunmFaqnm7bMwpafjpMJxkx56NQTDmK9j2qCmRrCmDHFOOyE6Sw==
+X-Received: by 2002:a17:906:5849:b0:a6f:c0e0:5512 with SMTP id a640c23a62f3a-a7245b8f72fmr638336366b.23.1719391045686;
+        Wed, 26 Jun 2024 01:37:25 -0700 (PDT)
+Received: from tom-HP-ZBook-Fury-15-G7-Mobile-Workstation (net-188-217-57-134.cust.vodafonedsl.it. [188.217.57.134])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7261795c58sm209239066b.118.2024.06.26.01.37.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 01:37:25 -0700 (PDT)
+Date: Wed, 26 Jun 2024 10:37:23 +0200
+From: Tommaso Merciai <tomm.merciai@gmail.com>
+To: Julien Massot <julien.massot@collabora.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	linuxfancy@googlegroups.com, sakari.ailus@linux.intel.com,
+	laurent.pinchart@ideasonboard.com,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] media: i2c: max96717: add test pattern ctrl
+Message-ID: <ZnvTQ2BwTHVJvh6o@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
+References: <20240617145958.1819069-1-tomm.merciai@gmail.com>
+ <20240617145958.1819069-2-tomm.merciai@gmail.com>
+ <94d58f00-ef6a-4454-b028-bc3b7dcd927d@collabora.com>
+ <Znr+2WZv8rUKNiZ+@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: BN9PR11MB5276.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b05a520a-3048-42d7-f869-08dc95bb117f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2024 08:36:26.4496
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: EQ6D/ACLWCsgkfvlR5LzB9NT9gyPg+UEOLzXScn2ivYJglPqOj15eM4O2EIZLUPCCEHgJ/haEESRVM9ldmIiJw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7671
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Znr+2WZv8rUKNiZ+@tom-HP-ZBook-Fury-15-G7-Mobile-Workstation>
 
-> From: Zhao, Yan Y <yan.y.zhao@intel.com>
-> Sent: Thursday, June 20, 2024 6:15 PM
->=20
-> On Mon, Jun 17, 2024 at 05:53:32PM +0800, Yan Zhao wrote:
-> ...
-> > diff --git a/drivers/vfio/group.c b/drivers/vfio/group.c
-> > index ded364588d29..aaef188003b6 100644
-> > --- a/drivers/vfio/group.c
-> > +++ b/drivers/vfio/group.c
-> > @@ -268,31 +268,14 @@ static struct file *vfio_device_open_file(struct
-> vfio_device *device)
-> >  	if (ret)
-> >  		goto err_free;
-> >
-> > -	/*
-> > -	 * We can't use anon_inode_getfd() because we need to modify
-> > -	 * the f_mode flags directly to allow more than just ioctls
-> > -	 */
-> > -	filep =3D anon_inode_getfile("[vfio-device]", &vfio_device_fops,
-> > -				   df, O_RDWR);
-> > +	filep =3D vfio_device_get_pseudo_file(device);
-> If getting an inode from vfio_fs_type is not a must, maybe we could use
-> anon_inode_create_getfile() here?
-> Then changes to group.c and vfio_main.c can be simplified as below:
+On Tue, Jun 25, 2024 at 07:31:05PM +0200, Tommaso Merciai wrote:
+> On Tue, Jun 25, 2024 at 09:54:18AM +0200, Julien Massot wrote:
+> 
+> Hi Julien,
+> 
+> > Hi Tommaso,
+> > 
+> > Thanks for your patch.
+> > 
+> > I tested it on my setup and can capture frames. Here's a link to an example:
+> > https://pasteboard.co/j8yHuE4YdYDV.jpg.
+> 
+> Nice! Thanks for sharing and testing.
+> 
+> > 
+> > I had some trouble with link validation because my sensor doesn't support
+> > the RGB format. Once we have internal pad support, we won't need to worry
+> > about the serializer creating an incompatible video stream for the sensor.
+> > 
+> > In the future, it would be great if we could support the serializer without
+> > needing a connected sensor. This way, we can use it as a pattern generator
+> > with this patch. However, not all GMSL2 serializers work this way. For
+> > example, the MAX9295A can't generate an internal PCLK and relies on the
+> > sensor to provide the video stream.
+> 
+> Fully agree.
+> 
+> > 
+> > Overall, this patch is very useful as it lets us receive a pattern from the
+> > serializer, which helps validate the GMSL2 connection.
+> > 
+> > It also handles issues related to generator timing, bits per pixel (bpp),
+> > and tunnel mode that users might encounter.
+> 
+> Fully agree, in my case enabling this test pattern help me a lot on
+> validating the gmsl2 pipe. 
+> 
+> > 
+> > On 6/17/24 4:59 PM, Tommaso Merciai wrote:
+> > > Add v4l2 test pattern control.
+> > > 
+> > > Signed-off-by: Tommaso Merciai <tomm.merciai@gmail.com>
+> > > ---
+> > >   drivers/media/i2c/max96717.c | 210 ++++++++++++++++++++++++++++++++---
+> > >   1 file changed, 194 insertions(+), 16 deletions(-)
+> > > 
+> > > diff --git a/drivers/media/i2c/max96717.c b/drivers/media/i2c/max96717.c
+> > > index 949306485873..c263bbca7318 100644
+> > > --- a/drivers/media/i2c/max96717.c
+> > > +++ b/drivers/media/i2c/max96717.c
+> > > @@ -16,6 +16,7 @@
+> > >   #include <linux/regmap.h>
+> > >   #include <media/v4l2-cci.h>
+> > > +#include <media/v4l2-ctrls.h>
+> > >   #include <media/v4l2-fwnode.h>
+> > >   #include <media/v4l2-subdev.h>
+> > > @@ -36,11 +37,37 @@
+> > >   #define MAX96717_DEV_ID  CCI_REG8(0xd)
+> > >   #define MAX96717_DEV_REV CCI_REG8(0xe)
+> > >   #define MAX96717_DEV_REV_MASK GENMASK(3, 0)
+> > > +#define MAX96717_IO_CHK0 CCI_REG8(0x24f)
+> > In MAX96717 datasheet this register is named VTX1.
+> > Can you also move these definitions to the VTX section?
+> > > +#define MAX96717_PATTERN_CLK_FREQ GENMASK(3, 1)
+> > >   /* VID_TX Z */
+> > > +#define MAX96717_VIDEO_TX0 CCI_REG8(0x110)
+> > > +#define MAX96717_VIDEO_AUTO_BPP BIT(3)
+> > >   #define MAX96717_VIDEO_TX2 CCI_REG8(0x112)
+> > >   #define MAX96717_VIDEO_PCLKDET BIT(7)
+> > > +/* VRX_PATGEN_0 */
+> > For serializer these registers are named VTX_Z instead of VRX.
+> > 
+> > > +#define MAX96717_PATGEN_0              CCI_REG8(0x24e)
+> > #define MAX96717_VTX_0              CCI_REG8(0x24e)
+> > > +#define MAX96717_PATGEN_1              CCI_REG8(0x26b)
+> > Can you keep this define ordered by address?
+> > > +#define MAX96717_PATGEN_MODE           GENMASK(1, 0)
+> > > +#define MAX96717_PATGEN_VS_DLY         CCI_REG24(0x250)
+> > #define MAX96717_VTX_VS_DLY
+> > > +#define MAX96717_PATGEN_VS_HIGH        CCI_REG24(0x253)
+> > > +#define MAX96717_PATGEN_VS_LOW         CCI_REG24(0x256)
+> > > +#define MAX96717_PATGEN_V2H            CCI_REG24(0x259)
+> > > +#define MAX96717_PATGEN_HS_HIGH        CCI_REG16(0x25c)
+> > > +#define MAX96717_PATGEN_HS_LOW         CCI_REG16(0x25e)
+> > > +#define MAX96717_PATGEN_HS_CNT         CCI_REG16(0x260)
+> > > +#define MAX96717_PATGEN_V2D            CCI_REG24(0x262)
+> > > +#define MAX96717_PATGEN_DE_HIGH        CCI_REG16(0x265)
+> > > +#define MAX96717_PATGEN_DE_LOW         CCI_REG16(0x267)
+> > > +#define MAX96717_PATGEN_DE_CNT         CCI_REG16(0x269)
+> > > +#define MAX96717_PATGEN_GRAD_INC       CCI_REG8(0x26c)
+> > > +#define MAX96717_PATGEN_CHKB_COLOR_A   CCI_REG24(0x26d)
+> > > +#define MAX96717_PATGEN_CHKB_COLOR_B   CCI_REG24(0x270)
+> > > +#define MAX96717_PATGEN_CHKB_RPT_CNT_A CCI_REG8(0x273)
+> > > +#define MAX96717_PATGEN_CHKB_RPT_CNT_B CCI_REG8(0x274)
+> > > +#define MAX96717_PATGEN_CHKB_ALT       CCI_REG8(0x275)
+> > > +
+> 
+> So your plan is to move all this stuff here:
+> 
+> 
+> /* VTX_Z */
+> #define MAX96717_VTX0                  CCI_REG8(0x24e)
+> #define MAX96717_VTX1                  CCI_REG8(0x24f)
+> #define MAX96717_PATTERN_CLK_FREQ      GENMASK(3, 1)
+> #define MAX96717_VTX_VS_DLY            CCI_REG24(0x250)
+> #define MAX96717_VTX_VS_HIGH           CCI_REG24(0x253)
+> #define MAX96717_VTX_VS_LOW            CCI_REG24(0x256)
+> #define MAX96717_VTX_V2H               CCI_REG24(0x259)
+> #define MAX96717_VTX_HS_HIGH           CCI_REG16(0x25c)
+> #define MAX96717_VTX_HS_LOW            CCI_REG16(0x25e)
+> #define MAX96717_VTX_HS_CNT            CCI_REG16(0x260)
+> #define MAX96717_VTX_V2D               CCI_REG24(0x262)
+> #define MAX96717_VTX_DE_HIGH           CCI_REG16(0x265)
+> #define MAX96717_VTX_DE_LOW            CCI_REG16(0x267)
+> #define MAX96717_VTX_DE_CNT            CCI_REG16(0x269)
+> #define MAX96717_VTX29                 CCI_REG8(0x26b)
+> #define MAX96717_VTX_MODE              GENMASK(1, 0)
+> #define MAX96717_VTX_GRAD_INC          CCI_REG8(0x26c)
+> #define MAX96717_VTX_CHKB_COLOR_A      CCI_REG24(0x26d)
+> #define MAX96717_VTX_CHKB_COLOR_B      CCI_REG24(0x270)
+> #define MAX96717_VTX_CHKB_RPT_CNT_A    CCI_REG8(0x273)
+> #define MAX96717_VTX_CHKB_RPT_CNT_B    CCI_REG8(0x274)
+> #define MAX96717_VTX_CHKB_ALT          CCI_REG8(0x275)
+> 
+> In a fixed order right? :-)
+> 
+> 
+> 
+> > >   /* GPIO */
+> > >   #define MAX96717_NUM_GPIO         11
+> > >   #define MAX96717_GPIO_REG_A(gpio) CCI_REG8(0x2be + (gpio) * 3)
+> > > @@ -82,6 +109,12 @@
+> > >   /* MISC */
+> > >   #define PIO_SLEW_1 CCI_REG8(0x570)
+> > > +enum max96717_vpg_mode {
+> > > +	MAX96717_VPG_DISABLED = 0,
+> > > +	MAX96717_VPG_CHECKERBOARD = 1,
+> > > +	MAX96717_VPG_GRADIENT = 2,
+> > > +};
+> > > +
+> > >   struct max96717_priv {
+> > >   	struct i2c_client		  *client;
+> > >   	struct regmap			  *regmap;
+> > > @@ -89,6 +122,7 @@ struct max96717_priv {
+> > >   	struct v4l2_mbus_config_mipi_csi2 mipi_csi2;
+> > >   	struct v4l2_subdev                sd;
+> > >   	struct media_pad                  pads[MAX96717_PORTS];
+> > > +	struct v4l2_ctrl_handler          ctrl_handler;
+> > >   	struct v4l2_async_notifier        notifier;
+> > >   	struct v4l2_subdev                *source_sd;
+> > >   	u16                               source_sd_pad;
+> > > @@ -96,6 +130,7 @@ struct max96717_priv {
+> > >   	u8                                pll_predef_index;
+> > >   	struct clk_hw                     clk_hw;
+> > >   	struct gpio_chip                  gpio_chip;
+> > > +	enum max96717_vpg_mode            pattern;
+> > >   };
+> > >   static inline struct max96717_priv *sd_to_max96717(struct v4l2_subdev *sd)
+> > > @@ -131,6 +166,115 @@ static inline int max96717_start_csi(struct max96717_priv *priv, bool start)
+> > >   			       start ? MAX96717_START_PORT_B : 0, NULL);
+> > >   }
+> > > +static int max96717_apply_patgen_timing(struct max96717_priv *priv,
+> > > +					struct v4l2_subdev_state *state)
+> > > +{
+> > > +	struct v4l2_mbus_framefmt *fmt =
+> > > +		v4l2_subdev_state_get_format(state, MAX96717_PAD_SOURCE);
+> > > +	const u32 h_active = fmt->width;
+> > > +	const u32 h_fp = 88;
+> > > +	const u32 h_sw = 44;
+> > > +	const u32 h_bp = 148;
+> > > +	u32 h_tot;
+> > > +	const u32 v_active = fmt->height;
+> > > +	const u32 v_fp = 4;
+> > > +	const u32 v_sw = 5;
+> > > +	const u32 v_bp = 36;
+> > > +	u32 v_tot;
+> > > +	int ret = 0;
+> > > +
+> > > +	h_tot = h_active + h_fp + h_sw + h_bp;
+> > > +	v_tot = v_active + v_fp + v_sw + v_bp;
+> > > +
+> > > +	/* 75 Mhz pixel clock */
+> > > +	cci_update_bits(priv->regmap, MAX96717_IO_CHK0,
+> > > +			MAX96717_PATTERN_CLK_FREQ, 0xa, &ret);
+> > > +
+> > > +	dev_info(&priv->client->dev, "height: %d width: %d\n", fmt->height,
+> > > +		 fmt->width);
+> > > +
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_VS_DLY, 0, &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_VS_HIGH, v_sw * h_tot, &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_VS_LOW,
+> > > +		  (v_active + v_fp + v_bp) * h_tot, &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_HS_HIGH, h_sw, &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_HS_LOW, h_active + h_fp + h_bp,
+> > > +		  &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_V2D,
+> > > +		  h_tot * (v_sw + v_bp) + (h_sw + h_bp), &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_HS_CNT, v_tot, &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_DE_HIGH, h_active, &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_DE_LOW, h_fp + h_sw + h_bp,
+> > > +		  &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_DE_CNT, v_active, &ret);
+> > > +	/* B G R */
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_COLOR_A, 0xfecc00, &ret);
+> > > +	/* B G R */
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_COLOR_B, 0x006aa7, &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_RPT_CNT_A, 0x3c, &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_RPT_CNT_B, 0x3c, &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_CHKB_ALT, 0x3c, &ret);
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_GRAD_INC, 0x10, &ret);
+> > > +
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +static int max96717_apply_patgen(struct max96717_priv *priv,
+> > > +				 struct v4l2_subdev_state *state)
+> > > +{
+> > > +	unsigned int val;
+> > > +	int ret = 0;
+> > > +
+> > > +	if (priv->pattern)
+> > > +		ret = max96717_apply_patgen_timing(priv, state);
+> > > +
+> > > +	cci_write(priv->regmap, MAX96717_PATGEN_0, priv->pattern ? 0xfb : 0,
+> > > +		  &ret);
+> > > +
+> > > +	val = FIELD_PREP(MAX96717_PATGEN_MODE, priv->pattern);
+> > > +	cci_update_bits(priv->regmap, MAX96717_PATGEN_1, MAX96717_PATGEN_MODE,
+> > > +			val, &ret);
+> > > +	return ret;
+> > > +}
+> > > +
+> > > +static int max96717_s_ctrl(struct v4l2_ctrl *ctrl)
+> > > +{
+> > > +	struct max96717_priv *priv =
+> > > +		container_of(ctrl->handler, struct max96717_priv, ctrl_handler);
+> > > +	int ret;
+> > > +
+> > > +	switch (ctrl->id) {
+> > > +	case V4L2_CID_TEST_PATTERN:
+> > > +		if (priv->enabled_source_streams)
+> > > +			return -EBUSY;
+> > > +		priv->pattern = ctrl->val;
+> > > +		break;
+> > > +	default:
+> > > +		return -EINVAL;
+> > > +	}
+> > > +
+> > > +	/* Use bpp from bpp register */
+> > > +	ret = cci_update_bits(priv->regmap, MAX96717_VIDEO_TX0,
+> > > +			      MAX96717_VIDEO_AUTO_BPP,
+> > > +			      priv->pattern ? 0 : MAX96717_VIDEO_AUTO_BPP,
+> > > +			      NULL);
+> > > +
+> > > +	/* Pattern generator doesn't work with tunnel mode */
+> > Can you add a comment saying that the deserializer should manage the link in
+> > pixel mode as well.
+> 
+> Something like:
+> 	/* Pattern generator doesn't work with tunnel mode.
+> 	   Is mandatory to put also the deserializer into pixel mode.   
+>         */
 
-not familiar with file system, but at a glance the anon_inodefs is similar
-to vfio's own pseudo fs so it might work. anyway what is required here
-is to have an unique inode per vfio device to hold an unique address space
-and anon_inode_create_getfile() appears to achieve it.
+Actually I plan to add to add the following comment:
 
->=20
-> diff --git a/drivers/vfio/group.c b/drivers/vfio/group.c
-> index ded364588d29..7f2f7871403f 100644
-> --- a/drivers/vfio/group.c
-> +++ b/drivers/vfio/group.c
-> @@ -269,29 +269,22 @@ static struct file *vfio_device_open_file(struct
-> vfio_device *device)
->                 goto err_free;
->=20
->         /*
-> -        * We can't use anon_inode_getfd() because we need to modify
-> -        * the f_mode flags directly to allow more than just ioctls
-> +        * Get a unique inode from anon_inodefs
->          */
-> -       filep =3D anon_inode_getfile("[vfio-device]", &vfio_device_fops,
-> -                                  df, O_RDWR);
-> +       filep =3D anon_inode_create_getfile("[vfio-device]", &vfio_device=
-_fops, df,
-> +                                         O_RDWR, NULL);
->         if (IS_ERR(filep)) {
->                 ret =3D PTR_ERR(filep);
->                 goto err_close_device;
->         }
-> -
-> -       /*
-> -        * TODO: add an anon_inode interface to do this.
-> -        * Appears to be missing by lack of need rather than
-> -        * explicitly prevented.  Now there's need.
-> -        */
+	/*
+	 * Pattern generator doesn't work with tunnel mode.
+	 * Needs RGB color format and deserializer tunnel mode must be disabled.
+	 */
+	return cci_update_bits(priv->regmap, MAX96717_MIPI_RX_EXT11,
+			       MAX96717_TUN_MODE,
+			       priv->pattern ? 0 : MAX96717_TUN_MODE, &ret);
 
-why removing this comment?
+Let me know if this can be ok for you.
 
->         filep->f_mode |=3D (FMODE_PREAD | FMODE_PWRITE);
->=20
->         /*
-> -        * Use the pseudo fs inode on the device to link all mmaps
-> -        * to the same address space, allowing us to unmap all vmas
-> -        * associated to this device using unmap_mapping_range().
-> +        * mmaps are linked to the address space of the filep->f_inode.
-> +        * Save the inode in device->inode to allow unmap_mapping_range()=
- to
-> +        * unmap all vmas.
->          */
-> -       filep->f_mapping =3D device->inode->i_mapping;
-> +       device->inode =3D filep->f_inode;
->=20
->         if (device->group->type =3D=3D VFIO_NO_IOMMU)
->                 dev_warn(device->dev, "vfio-noiommu device opened by user=
- "
->=20
-> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-> index a5a62d9d963f..c9dac788411b 100644
-> --- a/drivers/vfio/vfio_main.c
-> +++ b/drivers/vfio/vfio_main.c
-> @@ -192,8 +192,6 @@ static void vfio_device_release(struct device *dev)
->         if (device->ops->release)
->                 device->ops->release(device);
->=20
-> -       iput(device->inode);
-> -       simple_release_fs(&vfio.vfs_mount, &vfio.fs_count);
->         kvfree(device);
->  }
->=20
-> @@ -248,22 +246,6 @@ static struct file_system_type vfio_fs_type =3D {
->         .kill_sb =3D kill_anon_super,
->  };
+Thanks & Regards,
+Tommaso
 
-then vfio_fs_type can be removed too.
-
->=20
-> -static struct inode *vfio_fs_inode_new(void)
-> -{
-> -       struct inode *inode;
-> -       int ret;
-> -
-> -       ret =3D simple_pin_fs(&vfio_fs_type, &vfio.vfs_mount, &vfio.fs_co=
-unt);
-> -       if (ret)
-> -               return ERR_PTR(ret);
-> -
-> -       inode =3D alloc_anon_inode(vfio.vfs_mount->mnt_sb);
-> -       if (IS_ERR(inode))
-> -               simple_release_fs(&vfio.vfs_mount, &vfio.fs_count);
-> -
-> -       return inode;
-> -}
-> -
->  /*
->   * Initialize a vfio_device so it can be registered to vfio core.
->   */
-> @@ -282,11 +264,6 @@ static int vfio_init_device(struct vfio_device *devi=
-ce,
-> struct device *dev,
->         init_completion(&device->comp);
->         device->dev =3D dev;
->         device->ops =3D ops;
-> -       device->inode =3D vfio_fs_inode_new();
-> -       if (IS_ERR(device->inode)) {
-> -               ret =3D PTR_ERR(device->inode);
-> -               goto out_inode;
-> -       }
->=20
->         if (ops->init) {
->                 ret =3D ops->init(device);
-> @@ -301,9 +278,6 @@ static int vfio_init_device(struct vfio_device *devic=
-e,
-> struct device *dev,
->         return 0;
->=20
->  out_uninit:
-> -       iput(device->inode);
-> -       simple_release_fs(&vfio.vfs_mount, &vfio.fs_count);
-> -out_inode:
->         vfio_release_device_set(device);
->         ida_free(&vfio.device_ida, device->index);
->         return ret;
->=20
->=20
-> > diff --git a/drivers/vfio/vfio.h b/drivers/vfio/vfio.h
-> > index 50128da18bca..1f8915f79fbb 100644
-> > --- a/drivers/vfio/vfio.h
-> > +++ b/drivers/vfio/vfio.h
-> > @@ -35,6 +35,7 @@ struct vfio_device_file *
-> >  vfio_allocate_device_file(struct vfio_device *device);
-> >
-> >  extern const struct file_operations vfio_device_fops;
-> > +struct file *vfio_device_get_pseudo_file(struct vfio_device *device);
-> >
-> >  #ifdef CONFIG_VFIO_NOIOMMU
-> >  extern bool vfio_noiommu __read_mostly;
-> > @@ -420,6 +421,7 @@ static inline void vfio_cdev_cleanup(void)
-> >  {
-> >  }
-> >  #endif /* CONFIG_VFIO_DEVICE_CDEV */
-> > +struct file *vfio_device_get_pseduo_file(struct vfio_device *device);
-> Sorry, this line was included by mistake.
+> 
+> What do you think?
+> 
+> Thanks & Regards,
+> Tommaso
+> 
+> > > +	return cci_update_bits(priv->regmap, MAX96717_MIPI_RX_EXT11,
+> > > +			       MAX96717_TUN_MODE,
+> > > +			       priv->pattern ? 0 : MAX96717_TUN_MODE, &ret);
+> > > +}
+> > > +
+> > > +static const char * const max96717_test_pattern[] = {
+> > > +	"Disabled",
+> > > +	"Checkerboard",
+> > > +	"Gradient"
+> > > +};
+> > > +
+> > > +static const struct v4l2_ctrl_ops max96717_ctrl_ops = {
+> > > +	.s_ctrl = max96717_s_ctrl,
+> > > +};
+> > > +
+> > >   static int max96717_gpiochip_get(struct gpio_chip *gpiochip,
+> > >   				 unsigned int offset)
+> > >   {
+> > > @@ -352,20 +496,28 @@ static int max96717_enable_streams(struct v4l2_subdev *sd,
+> > >   	u64 sink_streams;
+> > >   	int ret;
+> > > -	sink_streams = v4l2_subdev_state_xlate_streams(state,
+> > > -						       MAX96717_PAD_SOURCE,
+> > > -						       MAX96717_PAD_SINK,
+> > > -						       &streams_mask);
+> > > -
+> > >   	if (!priv->enabled_source_streams)
+> > >   		max96717_start_csi(priv, true);
+> > > -	ret = v4l2_subdev_enable_streams(priv->source_sd, priv->source_sd_pad,
+> > > -					 sink_streams);
+> > > -	if (ret) {
+> > > -		dev_err(dev, "Fail to start streams:%llu on remote subdev\n",
+> > > -			sink_streams);
+> > > +	ret = max96717_apply_patgen(priv, state);
+> > > +	if (ret)
+> > >   		goto stop_csi;
+> > > +
+> > > +	if (!priv->pattern) {
+> > > +		sink_streams =
+> > > +			v4l2_subdev_state_xlate_streams(state,
+> > > +							MAX96717_PAD_SOURCE,
+> > > +							MAX96717_PAD_SINK,
+> > > +							&streams_mask);
+> > > +
+> > > +		ret = v4l2_subdev_enable_streams(priv->source_sd,
+> > > +						 priv->source_sd_pad,
+> > > +						 sink_streams);
+> > > +		if (ret) {
+> > > +			dev_err(dev, "Fail to start streams:%llu on remote subdev\n",
+> > > +				sink_streams);
+> > > +			goto stop_csi;
+> > > +		}
+> > >   	}
+> > >   	priv->enabled_source_streams |= streams_mask;
+> > > @@ -394,13 +546,23 @@ static int max96717_disable_streams(struct v4l2_subdev *sd,
+> > >   	if (!priv->enabled_source_streams)
+> > >   		max96717_start_csi(priv, false);
+> > > -	sink_streams = v4l2_subdev_state_xlate_streams(state,
+> > > -						       MAX96717_PAD_SOURCE,
+> > > -						       MAX96717_PAD_SINK,
+> > > -						       &streams_mask);
+> > > +	if (!priv->pattern) {
+> > > +		int ret;
+> > > +
+> > > +		sink_streams =
+> > > +			v4l2_subdev_state_xlate_streams(state,
+> > > +							MAX96717_PAD_SOURCE,
+> > > +							MAX96717_PAD_SINK,
+> > > +							&streams_mask);
+> > > -	return v4l2_subdev_disable_streams(priv->source_sd, priv->source_sd_pad,
+> > > -					   sink_streams);
+> > > +		ret = v4l2_subdev_disable_streams(priv->source_sd,
+> > > +						  priv->source_sd_pad,
+> > > +						  sink_streams);
+> > > +		if (ret)
+> > > +			return ret;
+> > > +	}
+> > > +
+> > > +	return 0;
+> > >   }
+> > >   static const struct v4l2_subdev_pad_ops max96717_pad_ops = {
+> > > @@ -513,6 +675,19 @@ static int max96717_subdev_init(struct max96717_priv *priv)
+> > >   	v4l2_i2c_subdev_init(&priv->sd, priv->client, &max96717_subdev_ops);
+> > >   	priv->sd.internal_ops = &max96717_internal_ops;
+> > > +	v4l2_ctrl_handler_init(&priv->ctrl_handler, 1);
+> > > +	priv->sd.ctrl_handler = &priv->ctrl_handler;
+> > > +
+> > > +	v4l2_ctrl_new_std_menu_items(&priv->ctrl_handler,
+> > > +				     &max96717_ctrl_ops,
+> > > +				     V4L2_CID_TEST_PATTERN,
+> > > +				     ARRAY_SIZE(max96717_test_pattern) - 1,
+> > > +				     0, 0, max96717_test_pattern);
+> > > +	if (priv->ctrl_handler.error) {
+> > > +		ret = priv->ctrl_handler.error;
+> > > +		goto err_free_ctrl;
+> > > +	}
+> > > +
+> > >   	priv->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE | V4L2_SUBDEV_FL_STREAMS;
+> > >   	priv->sd.entity.function = MEDIA_ENT_F_VID_IF_BRIDGE;
+> > >   	priv->sd.entity.ops = &max96717_entity_ops;
+> > > @@ -552,6 +727,8 @@ static int max96717_subdev_init(struct max96717_priv *priv)
+> > >   	v4l2_subdev_cleanup(&priv->sd);
+> > >   err_entity_cleanup:
+> > >   	media_entity_cleanup(&priv->sd.entity);
+> > > +err_free_ctrl:
+> > > +	v4l2_ctrl_handler_free(&priv->ctrl_handler);
+> > >   	return ret;
+> > >   }
+> > > @@ -563,6 +740,7 @@ static void max96717_subdev_uninit(struct max96717_priv *priv)
+> > >   	v4l2_async_nf_cleanup(&priv->notifier);
+> > >   	v4l2_subdev_cleanup(&priv->sd);
+> > >   	media_entity_cleanup(&priv->sd.entity);
+> > > +	v4l2_ctrl_handler_free(&priv->ctrl_handler);
+> > >   }
+> > >   struct max96717_pll_predef_freq {
+> > 
+> > Regards,
+> > Julien
 
