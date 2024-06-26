@@ -1,71 +1,74 @@
-Return-Path: <linux-kernel+bounces-231608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84306919AC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:39:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5115F919ACA
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:41:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3969F283AAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:39:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06147284C61
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52583193072;
-	Wed, 26 Jun 2024 22:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AA58193079;
+	Wed, 26 Jun 2024 22:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="OA42T2qw"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BfKutt2A"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAB0175567
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 22:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84FDA175567
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 22:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719441573; cv=none; b=XC7FfFf7Y79mrtscgom3sIpYdxlkwPbwPVdj4kYwXc93JEWrcremJ5CzQcXN4zFyIsOTO8LEGpqjgJOpPEyrkKLp7jkek+Cc6AgWxLnNZSes3B8YnBmDJWU6HYrXI4krrHhrvAQOnnlWtzOXUUKUHgfpXyeza03TgZYBFSLuyTA=
+	t=1719441655; cv=none; b=UktdEPtIp6Pkl3PXSqMZc0tGNeciy7jqToTGBDeq9ncUOHFpv2W1jRvpb/xA9ypfzN1rq0JTL03B0Tz5ASfSsuiJ1Y9PQfXf+6A/rBaCIsYhs2P7iU5Ml8IljsQVZXdtXydvQ4pGF2XOByfQbu5xLiuRg5JR0j9LLoai7KbEFAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719441573; c=relaxed/simple;
-	bh=1uIezo0wMTAam0rEHWdA7t2HG7nV3iMMf4wI/YfT9UY=;
+	s=arc-20240116; t=1719441655; c=relaxed/simple;
+	bh=GNZbPGkqmPc4rH7ugcmel6+9l1/+c8fibLHekmnoXOE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ib0nRt1/xYl7w2QAO157+NYhMlPJqMLJ8Nk2MnBinLKvpdQfZ5bECaWCRM61+APhvFqrFIRH4TQomDIoMjkajZq1VzXOQWWcoKcfcBPoYgWi7z+uY4frhwSrvAXSol/guO319Db+nXWhJoo3BWknXQHE+CjggRS78JpQMtuo/2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=OA42T2qw; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7f3cd153fe3so5522939f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 15:39:30 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=kq+uSUNSu+EWl6gGPzEAyQxdlvNXH44FqexlG/24g/GmXq2j6QiSx3+kKI2R0kHFDllEQG5devCupnosAtRQNy0WD+kP7jFommC8zppZS4LcozZCfn7Bx+3GenFXSynrznSqd22RBQvjXyHdFX4hq/0iN62hWF1MKnmMVH1NKf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BfKutt2A; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57d1d45ba34so980130a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 15:40:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1719441570; x=1720046370; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/EhaZBkOkQeeYp7tfywSH1lk94wLk79GPO1un5xt6ho=;
-        b=OA42T2qwrAtooMcCQiH2FWU4QtlLJRy8L96UYDehKZh8C4tCBQXb8RMa5R2DSD7rrz
-         oVmnBOc26TdgJx16frd7klVTBTeYEpnVlMhiBEcL0n7cIMpUCZLwqmvzY1LgubjFdLPy
-         OyELIPF90gQUjx1sU0EnKMdoBJfIBItMKsTSE=
+        d=linaro.org; s=google; t=1719441652; x=1720046452; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=DiJIwUHGJKAddL1l5PHQCjx9Ibq/P+A4R2VYZRioi9Y=;
+        b=BfKutt2AkYxme8KqLTSI0oRJwZ0WLBc9WqzfQ4/wUUHgjeaeRD19KA4TeeuTMm7NO1
+         iv6ZOPSsDarErpOuqvdCM1hVsFii1ysVK3ClrhitgWxhQcpsYnXjC9F7va5B9LlaCxC4
+         r+219bgzjyRm9fBDTpVFGwx1NpzbzCXniAddUg91M23unqziT3cxHtuQ23lvODV63DQa
+         1rnCwb0Udz2j92ph1b0minGP9BoqQPyzc49HRLMGGXwQ0BD1yTb73LlNHMwpOW6/39Gm
+         eS0bByjX4eGkM/flYH41dHEYqz34CN/xno8jVzFslJaUujmdMYzts92Ato8j0N/SKA0/
+         UZaA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719441570; x=1720046370;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/EhaZBkOkQeeYp7tfywSH1lk94wLk79GPO1un5xt6ho=;
-        b=RL1w6y6Fs1xk2uKHnfJ2tVfA9fCDxEeRS6mwx35wnAGLK8OrHxuNzg+9Wd/QPMYa/6
-         xPTVBZCAdq6ERVgHCAfhPd5ZnV2C7Pp0ve/VlHl//d1lso5v+KuIMtpgPaSsvYA9KPY9
-         rGwqf2tBoSjo+Kgi1adU/OhrHQxpQMFi/XymGyT3hFuTGCaH+d05Ik/0aOoEXsnXEXkm
-         0jrgLDnRLDMsBBfazE104L1/Z4FgrlfaUl2mht8gy1l39Wz3cE9NC3FR3Vwu0IriIZas
-         ex+l42C3rN6Mpgk+fqvIwCR8Sr9Zx7XZzgBjsdeN+3+QeiHs698477xBN+Yb8ZIMxEXQ
-         BD6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUPGbvLy8vpVaAbEmhCxafcKb37AC52opNuSKJd0/RwgN31hWg4igavr+sQ7HeiHFig/A6FpHrmCUj1m4HDJrHRyQnEhML9yqfO8omX
-X-Gm-Message-State: AOJu0YwwUScK+6VLat6ZC4pQnSMtDgb3SJZDrLbbgmlOlA0V7/3Bh5nA
-	q7gAyb0q/dIFlQ04JXZXs+xCS81Rdszaz/Q2XsBh8e8d5qWPHrZZwDG6eCeXipQCyUR1uWrKd93
-	r
-X-Google-Smtp-Source: AGHT+IG5DqlLx8NTysbMcAAAWpmS9Y/M+/O3VOaalg3C6t3qWEtTgj5ZYUhxExUDRf25mfY9vLjwgw==
-X-Received: by 2002:a05:6602:3305:b0:7f3:a20e:c38f with SMTP id ca18e2360f4ac-7f3a20eca45mr1270775739f.0.1719441570169;
-        Wed, 26 Jun 2024 15:39:30 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4bb664c02bfsm23422173.79.2024.06.26.15.39.29
+        d=1e100.net; s=20230601; t=1719441652; x=1720046452;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DiJIwUHGJKAddL1l5PHQCjx9Ibq/P+A4R2VYZRioi9Y=;
+        b=mdEPDZLUFaubqELu34e1eiIhfRPAkV2haryRDYhNMVwr7fOGl31NtXxh46pRahOB7D
+         +KGTrqpORbFK7dIlQZPstWurL9O2qDXE/IYwcU2pPrVi8vfL/wNE17TeypPwLVg+NW+k
+         ZxqB5eJ4r5Ox9bE9gb3naLAkh4Ht3HlUqga3RSV2RQevAoVb5eWsnJg+zvno17vIuNvr
+         2F6VPqqtrwFUyQ82E9UtgvV1hfpIBBvToLhDE3d159bOyb8rr+zigY1hgPeUJtXRbkCx
+         J3SXcdquZuPK9zULJFellhZNNLjBDicSVYE6MN48r0uBl4tJd5VXtVNwtz+iF2SEIK9Q
+         Rztw==
+X-Forwarded-Encrypted: i=1; AJvYcCUw3GOHN7pbjaO5PliZB8Cr4NyFEHFU7b+1ydeqpCX+C8e5weuUzoKj3XBlRN7xecnuvllGwep3wasMBIR0VkzWIDPpvpwbKPLu4xU6
+X-Gm-Message-State: AOJu0YzLopGZjXyf1b3iRKjU67ozJg9GtMTsqtJapgeQ+EzZUjzkl8nS
+	ZiDtePNzXElxBAP/8hqMB1Iu+QhboxNcaNpxhRBU9UQm/I7wsOCqTLA7xmrG/68=
+X-Google-Smtp-Source: AGHT+IHBDqzyAQaqAblMBYZ/REnw/xBnckkWEvFRfvbnVeW0ScRJWnXj7RChoQ3nKge40kbFdsUXOg==
+X-Received: by 2002:a50:a417:0:b0:57c:9c5d:d195 with SMTP id 4fb4d7f45d1cf-57d4bdc9e02mr8073153a12.27.1719441651591;
+        Wed, 26 Jun 2024 15:40:51 -0700 (PDT)
+Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-584d17b0618sm65946a12.57.2024.06.26.15.40.49
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 15:39:29 -0700 (PDT)
-Message-ID: <c6e845c0-e6ea-4849-bb0c-50024383431f@linuxfoundation.org>
-Date: Wed, 26 Jun 2024 16:39:29 -0600
+        Wed, 26 Jun 2024 15:40:50 -0700 (PDT)
+Message-ID: <c1ec95ac-3831-4d78-a572-c95c0ee493a2@linaro.org>
+Date: Thu, 27 Jun 2024 00:40:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,143 +76,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftest: acct: Add selftest for the acct() syscall
-To: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>,
- Shuah Khan <shuah@kernel.org>
-Cc: javiercarrascocruz@gmail.com, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>
-References: <20240622-kselftest-acct-syscall-v1-1-d270b5be8d37@gmail.com>
+Subject: Re: [PATCH v1 2/3] drm/msm/adreno: Add support for X185 GPU
+To: Rob Clark <robdclark@gmail.com>
+Cc: Akhil P Oommen <quic_akhilpo@quicinc.com>,
+ freedreno <freedreno@lists.freedesktop.org>,
+ dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>, Sean Paul <sean@poorly.run>,
+ linux-kernel@vger.kernel.org
+References: <20240623110753.141400-1-quic_akhilpo@quicinc.com>
+ <20240623110753.141400-3-quic_akhilpo@quicinc.com>
+ <5947559d-30dd-4da1-93cc-a15dc65cb77d@linaro.org>
+ <20240626082422.zcsari27yoskayuo@hu-akhilpo-hyd.qualcomm.com>
+ <CAF6AEGvCaGq8ukxra_bzc=4pUf8y5NndKRagQspD0=uCZdBfoA@mail.gmail.com>
+ <853849b4-69f2-488f-ab17-dc550c235e3d@linaro.org>
+ <CAF6AEGsFExhokWqHka-cwFGqyYgo61OL=7F=o5ouRm-LoHh9Dw@mail.gmail.com>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20240622-kselftest-acct-syscall-v1-1-d270b5be8d37@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <CAF6AEGsFExhokWqHka-cwFGqyYgo61OL=7F=o5ouRm-LoHh9Dw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 6/22/24 11:24, Abdulrasaq Lawani wrote:
-> Noticed that there was no selftest for the acct() syscall
-> which enables the kernel to record terminated processes
-> into a specified file.
+On 27.06.2024 12:32 AM, Rob Clark wrote:
+> On Wed, Jun 26, 2024 at 2:38 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>> On 26.06.2024 8:43 PM, Rob Clark wrote:
+>>> On Wed, Jun 26, 2024 at 1:24 AM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>>>>
+>>>> On Mon, Jun 24, 2024 at 03:53:48PM +0200, Konrad Dybcio wrote:
+>>>>>
+>>>>>
+>>>>> On 6/23/24 13:06, Akhil P Oommen wrote:
+>>>>>> Add support in drm/msm driver for the Adreno X185 gpu found in
+>>>>>> Snapdragon X1 Elite chipset.
+>>>>>>
+>>>>>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>>>>> ---
+>>>>>>
+>>>>>>   drivers/gpu/drm/msm/adreno/a6xx_gmu.c      | 19 +++++++++++++++----
+>>>>>>   drivers/gpu/drm/msm/adreno/a6xx_gpu.c      |  6 ++----
+>>>>>>   drivers/gpu/drm/msm/adreno/adreno_device.c | 14 ++++++++++++++
+>>>>>>   drivers/gpu/drm/msm/adreno/adreno_gpu.h    |  5 +++++
+>>>>>>   4 files changed, 36 insertions(+), 8 deletions(-)
+>>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>>>>>> index 0e3dfd4c2bc8..168a4bddfaf2 100644
+>>>>>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>>>>>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
+>>>>>> @@ -830,8 +830,10 @@ static int a6xx_gmu_fw_start(struct a6xx_gmu *gmu, unsigned int state)
+>>>>>>      */
+>>>>>>     gmu_write(gmu, REG_A6XX_GMU_CM3_CFG, 0x4052);
+>>>>>> +   if (adreno_is_x185(adreno_gpu)) {
+>>>>>> +           chipid = 0x7050001;
+>>>>>
+>>>>> What's wrong with using the logic below?
+>>>>
+>>>> patchid is BITS(7, 0), not (15, 8) in the case of x185. Due to the
+>>>> changes in the chipid scheme within the a7x family, this is a bit
+>>>> confusing. I will try to improve here in another series.
+>>>
+>>> I'm thinking we should just add gmu_chipid to struct a6xx_info, tbh
+>>>
+>>> Maybe to start with, we can fall back to the existing logic if
+>>> a6xx_info::gmu_chipid is zero so we don't have to add it for _every_
+>>> a6xx/a7xx
+>>
+>> If X185 is not the only occurence, I'd second this..
 > 
-> This patch provides a test for the acct() syscall.
+> basically all a7xx are "special" compared to the original logic, so we
+> can start with using gmu_chipid for just a7xx
 
-Describe the functionality being tested. Add testcases to
-test error conditions.
-The code doesn't meet coding guidelines for C and also kernel.
+That works
 
-Please check other kernel source files and coding standards document.
-
-Use ksft_* function for reporting results. Refer to an existing test
-on how to.
-
-> 
-> Signed-off-by: Abdulrasaq Lawani <abdulrasaqolawani@gmail.com>
-> ---
->   tools/testing/selftests/Makefile            |  1 +
->   tools/testing/selftests/acct/.gitignore     |  2 +
->   tools/testing/selftests/acct/Makefile       |  4 ++
->   tools/testing/selftests/acct/acct_syscall.c | 60 +++++++++++++++++++++++++++++
->   4 files changed, 67 insertions(+)
-> 
-> diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-> index 9039f3709aff..45a58ef5ad92 100644
-> --- a/tools/testing/selftests/Makefile
-> +++ b/tools/testing/selftests/Makefile
-> @@ -1,4 +1,5 @@
->   # SPDX-License-Identifier: GPL-2.0
-> +TARGETS += acct
->   TARGETS += alsa
->   TARGETS += amd-pstate
->   TARGETS += arm64
-> diff --git a/tools/testing/selftests/acct/.gitignore b/tools/testing/selftests/acct/.gitignore
-> new file mode 100644
-> index 000000000000..8ab358d81bd2
-> --- /dev/null
-> +++ b/tools/testing/selftests/acct/.gitignore
-> @@ -0,0 +1,2 @@
-> +acct_syscall
-> +config
-> \ No newline at end of file
-> diff --git a/tools/testing/selftests/acct/Makefile b/tools/testing/selftests/acct/Makefile
-> new file mode 100644
-> index 000000000000..ff3e238c5634
-> --- /dev/null
-> +++ b/tools/testing/selftests/acct/Makefile
-> @@ -0,0 +1,4 @@
-> +TEST_GEN_PROGS := acct_syscall
-> +CFLAGS += -Wall
-> +
-> +include ../lib.mk
-> \ No newline at end of file
-> diff --git a/tools/testing/selftests/acct/acct_syscall.c b/tools/testing/selftests/acct/acct_syscall.c
-> new file mode 100644
-> index 000000000000..457b83937cac
-> --- /dev/null
-> +++ b/tools/testing/selftests/acct/acct_syscall.c
-> @@ -0,0 +1,60 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// kselftest for acct() syscall
-> +
-> +// This tests the acct() syscall, which logs closed processes
-> +// until deactivated or when criteria in /proc/sys/kernel/acct is met
-> +
-> +#include <stdio.h>
-> +#include <unistd.h>
-> +#include <errno.h>
-> +#include <string.h>
-> +#include <sys/wait.h>
-> +
-> +int main(void)
-> +{
-> +// Create file to log closed processes
-
-Missing tabs for the body of the function.
-
-> +char filename[] = "process_log";
-> +FILE *fp;
-> +fp = fopen(filename, "w");
-> +
-> +int i = acct(filename);
-> +
-> +if (i) {
-> +    printf("Test Result: %s\n", strerror(errno));
-> +    remove(filename);
-> +    fclose(fp);
-> +    return 1;
-> +}
-
-> +
-> +    // Create child process and wait to close
-> +pid_t child_pid;
-> +
-> +child_pid = fork();
-> +
-> +if (child_pid < 0) {
-> +    printf("Process failed\n");
-> +    return 1;
-> +} else if (child_pid == 0) {
-> +    printf("Child process successfully created!\n");
-> +} else {
-> +    wait(NULL);
-> +    fseek(fp, 0L, SEEK_END);
-> +    int sz = ftell(fp);
-> +    printf("Parent process successfully created!\n");
-> +
-> +    i = acct(NULL);
-> +
-> +    if (sz <= 0) {
-> +        printf("Child process not logged");
-> +        return 1;
-> +    }
-> +
-> +    printf("Test Result: Successfully logged closed process.\n");
-> +    remove(filename);
-> +    fclose(fp);
-> +    return 0;
-> +}
-> +
-> +return 1;
-> +}
-> thanks,
--- Shuah
+Konrad
 
