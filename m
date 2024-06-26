@@ -1,80 +1,91 @@
-Return-Path: <linux-kernel+bounces-230144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BF791790C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:34:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ECE091790E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:35:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FFF8283AEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:34:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C722837F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30EA115666C;
-	Wed, 26 Jun 2024 06:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3D514F102;
+	Wed, 26 Jun 2024 06:35:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hL+B4qxo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="wI+R+oMZ"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD9A145356;
-	Wed, 26 Jun 2024 06:33:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9ED10F4;
+	Wed, 26 Jun 2024 06:35:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719383639; cv=none; b=i8cGEdp6OxVW9Y+YITrf2QW4dbZBFAFaG8cK8Uvc9EXmXClGYVWIhfQY67GpNw7LuIb1q6XpIH58oqXKfYu8HUMttVDeKCtBRZUunzTTwxwNuX3MwQay8D/SC+Wq47LgiJEzDw9qqiuYk+afM4s03e4M64X8xuDeEpJ9zfbZ0+s=
+	t=1719383718; cv=none; b=OTYYRvZeIjIXG/us0xbXKknZBj+dk63leWy+hfuADSDYVHZLnOghU+wYH0fPPdki3WhNR0Di8IJ/wsQvUS7jMGssYgNrUdBQwQFhJzRa4/evYHqA9e0aL1Fb49Q2d9So+Ulhpxf1zVGNgsXZv/6pLJfWoHxgLtTYycYP5MyO/+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719383639; c=relaxed/simple;
-	bh=A1fbrsc4G6VW/VC5BKNGhzYjVhYGRA5r3KnXL6YUYgg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jX3p5y1XhDHdH/p9JoEz4NocP3PgF2MNownvO0h7A8yxGLA92TGVp5PdqF2AsfOnC06UPawHUmXt3FdMpG/n7jY/C7WHhM1BmHEKSUXqj4z06eEcjf1OZOzmlDMDm4p+1H2xRMjBldHJqfb8dOCN2Dqry32pYMBN+CN9QcW1s9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hL+B4qxo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE718C2BD10;
-	Wed, 26 Jun 2024 06:33:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719383639;
-	bh=A1fbrsc4G6VW/VC5BKNGhzYjVhYGRA5r3KnXL6YUYgg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hL+B4qxoU8i7uy27RJC6VFmwTf/6o/tPdLEp46I44BTX09m8RsNOMPpNnQXD5u9M7
-	 uGS4vaU+9qlU4zitmx+fXIzIPVV4lmipdA7ZfjYCWhELZtg+IY+K+ziGr3jvwjwkqa
-	 jzJgom1OasEUnDZHVMjnbg2uWOoy8FqeZcl90HVvKyyRNcfC01csWgU6ybh4dHMc3B
-	 iDpYN1VlmvsbYIvFcd9V90y/x9ESx6U3V0BsJYTVpJG0OyjIDxVy6lKK8cC1v5Cm2o
-	 shjLrysQ2cFJUi7Vvjk4D23T9ovdVty+GVhUfq149FRwrlaJA8uDGS1AyywUXZpfuM
-	 d/V3lUyjFGmdw==
-Message-ID: <7b66ba3a-d84a-4e81-9a06-986b9286a298@kernel.org>
-Date: Wed, 26 Jun 2024 15:33:57 +0900
+	s=arc-20240116; t=1719383718; c=relaxed/simple;
+	bh=oVQnVRh7Hjiwa/vBY5JjF7UZQPoxdlWHcd07dzJeauI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l5D8c1orOiI73JOjidBJz4qILSE/xySOKwpm+/hnj/28NTQul3V+EekMGmX3SdMlArHU2Rg4ZYB3J3d6tnr/yGhWvwj+ZhhxSZ0UZkqa54SBQe0Ceob6TKf6xh6oVhrIVDmpk3WgK0EddRPimklzFQg+gPmNrhW/mNUZW6xfC4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=wI+R+oMZ; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id B10951F9C6;
+	Wed, 26 Jun 2024 08:35:10 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1719383711;
+	bh=2bQvCiVU8Eu/kfnaC/zVKXhsgqWeoaoM4SwjWSgpRlY=; h=From:To:Subject;
+	b=wI+R+oMZbaQ2HQEE7C3NEbJV77Iy3dTo7H2IzjOPP42xAROivTiqagm81U7tuplAv
+	 N318AavglIRqFLh0WcBSoMmLSU8Fd24jAMHEnV4B/P5dzKgJ/0Ghq24NOQIT9jhKUA
+	 Z+x+MuedE/mimQ6ZxwTmCskLr4ilybpd2gu9n0CKrld/sBpwp+P6mupfcLu/wRTXhz
+	 GE5l2W2dfY9wAIe4N/kMLeOeJ4XQzRctsr45RQmVt4O0s3Vh5lDmm5oDoCgMLcn+ms
+	 cA1xLbsR7/k4Y2sRbhw4bv2+VolrDzVPTgI9cbBTazni79iwDeFVwSyN2Xb+0eIaTN
+	 1VnnmmCEngnEw==
+Date: Wed, 26 Jun 2024 08:35:06 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Christian Eggers <ceggers@arri.de>,
+	Francesco Dolcini <francesco.dolcini@toradex.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] dt-bindings: eeprom: at25: add  fujitsu,mb85rs256
+ compatible
+Message-ID: <20240626063506.GA4324@francesco-nb>
+References: <20240612092934.12282-1-francesco@dolcini.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] ata: libata: Set ATA_QCFLAG_RTF_FILLED in
- fill_result_tf()
-To: Igor Pylypiv <ipylypiv@google.com>, Niklas Cassel <cassel@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Jason Yan <yanaijie@huawei.com>, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240624221211.2593736-1-ipylypiv@google.com>
- <20240624221211.2593736-6-ipylypiv@google.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240624221211.2593736-6-ipylypiv@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612092934.12282-1-francesco@dolcini.it>
 
-On 6/25/24 07:12, Igor Pylypiv wrote:
-> ATA_QCFLAG_RTF_FILLED is not specific to ahci and can be used generally
-> to check if qc->result_tf contains valid data.
+Hello Rob,
+
+On Wed, Jun 12, 2024 at 11:29:34AM +0200, Francesco Dolcini wrote:
+> From: Francesco Dolcini <francesco.dolcini@toradex.com>
 > 
-> Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
+> The fujitsu,mb85rs256 is a 256 Kbit SPI memory FRAM in the same family
+> as the two existing fujitsu,mb85rs* compatibles and at25 compatible.
+> 
+> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> ---
+> No changes in the driver is required for this to be used, a device tree
+> file using it will come in a later step. Sending to minimize work
+> slowdown because of TI DT maintainer requirements on DT bindings, see
+> https://lore.kernel.org/all/469be7c2-6865-40d4-bd06-15dc3a08b3e3@kernel.org/
+> for more details.
+> ---
+>  Documentation/devicetree/bindings/eeprom/at25.yaml | 1 +
 
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+Are you going to pick this patch? From what I can see in the past
+it was either you or gregkh to apply patches to this file, however
+gregkh is not in cc: here.
 
--- 
-Damien Le Moal
-Western Digital Research
+Francesco
 
 
