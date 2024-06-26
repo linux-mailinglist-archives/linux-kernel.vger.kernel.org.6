@@ -1,115 +1,91 @@
-Return-Path: <linux-kernel+bounces-230310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F956917B22
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:39:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFC64917B29
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:42:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF2B8281D67
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:39:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 659361F258F1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4D021662F7;
-	Wed, 26 Jun 2024 08:39:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="CQ4Rtrw1"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E5716849A;
+	Wed, 26 Jun 2024 08:41:58 +0000 (UTC)
+Received: from andre.telenet-ops.be (andre.telenet-ops.be [195.130.132.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940BC161304
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:39:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F88A161304
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:41:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719391184; cv=none; b=tuwscp2XjY0PRXC1j8JcgcLIiRVwcY1iAbdFG5QIo2aRQGD8Bhab35by0KTOnogFPE4KhffemdjjBvsrbWNtQAzeOC/axjPwrde1PXh/N+cbRZ0Yd3W3T3MW1dIBp+kYjXe8g1dKkkzF/VwZZYxfvs5MFMh7WvTE5eKtMDZIVww=
+	t=1719391318; cv=none; b=VtxMRuv3Ol9dtAyWcBcxnsay/dw6CPJIm0zvXJZPrGT2zdSRb0LGi479JyNmJjuz2LHXA6OZHN5ZgDQFKJDirbtxrLt8gncdCH0xqfNCurWiJW7knobxoqmxVyPfH981zSHRwbjTujzT1rFPXiGNc/Y/bk+BFVDh0Uy98XAVa60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719391184; c=relaxed/simple;
-	bh=NLR+N75GA2geLHdSgsfuC4nIH+6DQelAEiCMDVcetsw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QPLHYPRmjOifIQG2/+nOaSjU9PSOwBZAHaymxfzOqGftBZ+G97yEUVNsT7ZADTVG02ZKh4tzVKapKKe8p6STdHD5HneJNOjz1GnLQsct7iGzvgbgxfOw3BWCOSPT929tadRnRrCn8a3FSNJGEV3J4Q52wGX7felBqW4XWc1YsjI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=CQ4Rtrw1; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-424a2dabfefso16105085e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:39:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719391181; x=1719995981; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D9yKfF45fFxX0NqrzvUPKwtywpvOvpdxxd5cgWduHSI=;
-        b=CQ4Rtrw1p07b3jX3rxQWJa5yw/7IaTLdpGaC83AbDhvjkCbLW050TOnuC+Stk+QpPp
-         +AWU/gMLyaqoTLk5Gl0T4Tw+5zeeWkTNNkjCW/JjaPDp9JGdpjAYVj94NV6rubKhf8gT
-         s1NnNiXZsFVWsI2EQsKcRJ41bc+Um404Nzx0mF14xtTYyQPPG27IC0rrjvWm9w0wli7Z
-         JCp2ps1YgzABQxzht3MaNDPeNOd70uUsomzIx/KDOeOLpCpAs4TF7fUfLzulbTrR4jza
-         2lNPKKWky05TuwOuEClTm8J0lWCG7To7bl/wGZevA3Rqlk2oK9IKj7KabRzdCJdk3Fek
-         EERA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719391181; x=1719995981;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D9yKfF45fFxX0NqrzvUPKwtywpvOvpdxxd5cgWduHSI=;
-        b=D0QkTxR0x+tHrrO1m8Mi9XU3YDHQoO+5icL1uCimMCJ66uJlaY4jrFRveluE+jBcx6
-         WuwAP4nKcMsc6bmdxnWECbMnWT7F71n52WsPlqCP0led1sJmkJkAmnH1ua1JF7KOgDGE
-         69LXNP3bYmGfiRlzs14GK9SCVt9RWngoexvfY97IBsQOoBEHXnUp6regULS2lir0RNuz
-         fgWJoy0UHQ3/Zysj/CI43hELbWCjUDU8MUgZHHEBnmwNxHN61qc7Rlgay53cCUTJKmcw
-         2u80cHQ15rBozenbrmRinUxRM3gaXrFSjfpTpBVQhbA8X2pp9gSrl6u5IMwaSNbj3OPs
-         7NgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVo61dTHIDOAjdmC91cLK5KtmqJQgHOvputC27YT0xrDa1i0LBTuJYBe1W5OIhm3dzskmC5gaFOAxiiZKCW400kTsjsBaTrfp05ucng
-X-Gm-Message-State: AOJu0YwM1nnClKW19oKVqcE+wz8QQTZ+HEVRejunYnrUaYcbEbASq3jg
-	3W2I38CDf6GbagAK6m5v6WSydGXTLbt7QL3HMywQW4M3tEQbuFk2S9oT/q98H4s=
-X-Google-Smtp-Source: AGHT+IEs6lBo5otfDhtsB1Twa+uJYgIAh5Rq06nVGafEYvg+dnsr4+FgYr6Io6O6eVtAAkKgbX30UA==
-X-Received: by 2002:a5d:6985:0:b0:362:a1e8:15b with SMTP id ffacd0b85a97d-366e949d36bmr8249196f8f.28.1719391180762;
-        Wed, 26 Jun 2024 01:39:40 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a149:6586:c473:97d7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3670ca007adsm2458411f8f.25.2024.06.26.01.39.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 01:39:40 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: linux-gpio@vger.kernel.org,
-	Shiji Yang <yangshiji66@outlook.com>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Alban Bedel <albeu@free.fr>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
+	s=arc-20240116; t=1719391318; c=relaxed/simple;
+	bh=3nOK4BeLNH28VmMIO7giZ32TCzmZKakFp6UpEuQbkjk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UcHbOw58OVY7RX4LnCv+MOG/Fc4KMa7igpNgIv4S0dMchNgJPlY6E6a6Hu7uF6pdL8R6QXq1p9HNbnoSyHUgp8B6zPpriFOjlLCY0PBzBuJVnisdlsvNCj6Mykf907G+9kYCFLymFDppIA1RkRQnGIEFyUtGOhyP3dgrN89YBc8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1dff:b715:1a2c:c3f5])
+	by andre.telenet-ops.be with bizsmtp
+	id g8hm2C00N0lK4vA018hmZ4; Wed, 26 Jun 2024 10:41:47 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sMODm-000OVm-F6;
+	Wed, 26 Jun 2024 10:41:46 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sMODq-00Aond-90;
+	Wed, 26 Jun 2024 10:41:46 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Jocelyn Falempe <jfalempe@redhat.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org,
-	Jonas Gorski <jonas.gorski@gmail.com>
-Subject: Re: [PATCH v2] gpio: ath79: convert to dynamic GPIO base allocation
-Date: Wed, 26 Jun 2024 10:39:39 +0200
-Message-ID: <171939117715.9694.13266518943488176229.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <TYCP286MB089598EA71E964BD8AB9EFD3BCD62@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
-References: <TYCP286MB089598EA71E964BD8AB9EFD3BCD62@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/2] drm/panic: Miscellaneous fixes
+Date: Wed, 26 Jun 2024 10:41:43 +0200
+Message-Id: <cover.1719391132.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+	Hi all,
 
+Here are two more fixes for the DRM panic code.
 
-On Wed, 26 Jun 2024 08:33:18 +0800, Shiji Yang wrote:
-> ath79 target has already been converted to device tree based
-> platform. Using dynamic GPIO numberspace base to suppress the
-> warning:
-> 
-> gpio gpiochip0: Static allocation of GPIO base is deprecated, use dynamic allocation.
-> 
-> Tested on Atheros AR7241 and AR9344.
-> 
-> [...]
+Thanks for your comments!
 
-Applied, thanks!
+Geert Uytterhoeven (2):
+  drm/panic: Do not select DRM_KMS_HELPER
+  drm/panic: Restrict graphical logo handling to built-in
 
-[1/1] gpio: ath79: convert to dynamic GPIO base allocation
-      commit: 9a473c2a093e0d1c466bf86073230e2c8b658977
+ drivers/gpu/drm/Kconfig     | 1 -
+ drivers/gpu/drm/drm_panic.c | 3 +--
+ 2 files changed, 1 insertion(+), 3 deletions(-)
 
-Best regards,
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.34.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
 
