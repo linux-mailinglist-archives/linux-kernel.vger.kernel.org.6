@@ -1,160 +1,107 @@
-Return-Path: <linux-kernel+bounces-231347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E031E918EBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:44:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF18D918EC1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93B6C282366
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:44:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C45C41C22FA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:44:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D52191460;
-	Wed, 26 Jun 2024 18:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3ED19067B;
+	Wed, 26 Jun 2024 18:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsPIeUiL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nxB+KB3X"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3F9190698;
-	Wed, 26 Jun 2024 18:43:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C57019049F;
+	Wed, 26 Jun 2024 18:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719427411; cv=none; b=lN8ehGKFkVxlEW6pL+tv6LoDt1EjSMw0Vyu2u67nD81keRuS6zd0YKLwYYUHZu0XS/WnlQFT6N9BjznDcK7Ou++xxtoMpIRRVySs26QFwun4HkXoErLvmYaPKkQGiwfSD8T1EMrOsVKyxjBPc6uRJ2k6M76TvRqK9MdUUaY7LW8=
+	t=1719427469; cv=none; b=KCHwHd5SF9ZUmQI12YwQnX7mUJ0K/SOMuWW2MM1WTju1YqjCa8ZWlVLL/cgc6XzYRSTuVPJWIR2Zc7W54olTPO7owZ+b6zY6/2Bdp4ELpF3tV5L5avpHixPYNNsXa7ptMurN+qawFqhVMSbRMDrS/eO2H1tNSnSg67UD3zxExNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719427411; c=relaxed/simple;
-	bh=bTysRdZ18j1pz0kLr1idoPNYovOG2Qz2zyGh37sg4Sk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mj83ExGFkVw8T0qjTIJV5PBZIXelJUZi4jqisJtrcW76MzpPCRoN4bwaRxk5ObKNO2KmDW3FAnOCQX33maLy0aDuSR6AxukNlWdUdL/nAwxtrzpG4/vTPGFmdX2ms17kW5kSy9oXF/L3QXNPh+r0I57+sjXFQ7vaOxSpId7nnCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsPIeUiL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 361D0C116B1;
-	Wed, 26 Jun 2024 18:43:31 +0000 (UTC)
+	s=arc-20240116; t=1719427469; c=relaxed/simple;
+	bh=6iYyaVtP6IDlOUokcolHOy/Z5v0Cd48VY8a4wi8+nNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fZ8+3ziTtSYDXqJ9DfCWGN/RfhEceIvVKXSkFf9BcJ6uqg5UL287d6xuvwBW5M1eDJN2XMfsgHdug8JOT3yO/8BRGRjeoSIa7Uu724uRxY7z3niydgsj1lp7zuyLb3cng0kDfPRVOI7PFZDzEXqg5tRyx0rma77wxc+SG2HXfi0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nxB+KB3X; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28053C116B1;
+	Wed, 26 Jun 2024 18:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719427411;
-	bh=bTysRdZ18j1pz0kLr1idoPNYovOG2Qz2zyGh37sg4Sk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jsPIeUiLko5aSNrZd1UqGBIK0KkKu9RhKo9Ayc+GePzmdyIb1wCshV32jmu0g0vOA
-	 7/wcnXcXEWdoAIR/kmcXO4vRx7aDcKT42kmhAmqJ7uKaUmjvK2vxoTksae/OYQ8+yW
-	 Nbj8NaJP1Ia3QLMY0YqDmA0mwkz8VD2F/RRqX7lzsM16ShBeC7nAOufK2FbbPfT6O7
-	 16ZMbyimROFn7PVqKi5oBFSOAXOnVsBc56KIe1wolY54kSROby4koemDzPDdVeOcbz
-	 aJFF+j8k+sYqoZwoASk0VCqbKo6cJO2/osIOtnsGWNMrSVV32+bSueiUR+H+EOL7B0
-	 plXPOl15JMXsw==
-Date: Wed, 26 Jun 2024 11:43:30 -0700
-From: Kees Cook <kees@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Tony Lindgren <tony@atomide.com>, Lee Jones <lee@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 2/2] mfd: omap-usb-tll: use struct_size to allocate tll
-Message-ID: <202406261121.2FFD65647@keescook>
-References: <20240620-omap-usb-tll-counted_by-v1-0-77797834bb9a@gmail.com>
- <20240620-omap-usb-tll-counted_by-v1-2-77797834bb9a@gmail.com>
+	s=k20201202; t=1719427468;
+	bh=6iYyaVtP6IDlOUokcolHOy/Z5v0Cd48VY8a4wi8+nNk=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nxB+KB3XZd7QnqV5EHcwO0UehMoDDXPD55xaHtbm33p0qVbYMvhR6k9B4Og+GfI1C
+	 TW+ZfdqytmtoIs7YWheaDa60OUGRpfA+/T3JGh17sEJPX429RaxLTMNMmtdvuW1Vl2
+	 vGrOV6RHEoY6QYkWNg4RkO9cCBnsSWFr2Kho1LClESaKGQ9Mhqkn+t/PHnhfcqRmYj
+	 WdNWtd13bxqB7whP1QfP0hVZnpUSsWMqs/0Ec2XYZFx/dz1jFbPlce+7wDnVjKhYor
+	 /tFbBigaU6VB4B5w3bIOfO+DdEHkIIJPrQSBkjKHtz8/Yd+Mq0YtwapvOJWri7IR39
+	 yba8LfwjKHvnQ==
+Date: Wed, 26 Jun 2024 19:44:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Chris Lew <quic_clew@quicinc.com>,
+	Steev Klimaszewski <steev@kali.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the rpmsg tree
+Message-ID: <ZnxhiKAYvoqNIywH@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="sFOidLIdGbQqZVzr"
+Content-Disposition: inline
+
+
+--sFOidLIdGbQqZVzr
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240620-omap-usb-tll-counted_by-v1-2-77797834bb9a@gmail.com>
 
-On Thu, Jun 20, 2024 at 11:22:34PM +0200, Javier Carrasco wrote:
-> Use the struct_size macro to calculate the size of the tll, which
-> includes a trailing flexible array.
-> 
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> 
-> ---
+Hi all,
 
-I would actually include this entire bit below in the main commit log.
-It's the core of the "why" for this patch.
+After merging the rpmsg tree, today's linux-next build (KCONFIG_NAME)
+failed like this:
 
-> The memory allocation used to be carried out in two steps:
-> 
-> tll = devm_kzalloc(dev, sizeof(struct usbtll_omap), GFP_KERNEL);
-> tll->ch_clk = devm_kzalloc(dev, sizeof(struct clk *) * tll->nch,
->                            GFP_KERNEL);
-> 
-> Until commit 16c2004d9e4d ("mfd: omap-usb-tll: Allocate driver data at once")
-> turned that into the current allocation:
-> 
-> tll = devm_kzalloc(dev, sizeof(*tll) + sizeof(tll->ch_clk[nch]),
->                    GFP_KERNEL);
-> 
-> That has surprised me at first glance because I would have expected
-> sizeof(tll->ch_clk[nch]) to return the size of a single pointer, not
-> being equivalent to 'sizeof(struct clk *) * nch'.
-> 
-> I might be missing/misunderstanding something here because the commit
-> is not new, and the error should be noticeable. Moreover, I don't have
-> real hardware to test it. Hence why I didn't mark this patch as a fix.
-> 
-> I would be pleased to get feedback about this (why it is right as it is,
-> or if that is actually a bug).
+ERROR: modpost: "__auxiliary_driver_register" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
+ERROR: modpost: "servreg_loc_pfr_resp_ei" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
+ERROR: modpost: "auxiliary_driver_unregister" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
+ERROR: modpost: "servreg_get_domain_list_resp_ei" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
+ERROR: modpost: "servreg_get_domain_list_req_ei" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
+ERROR: modpost: "servreg_loc_pfr_req_ei" [drivers/soc/qcom/qcom_pd_mapper.ko] undefined!
+ERROR: modpost: "auxiliary_device_init" [drivers/remoteproc/qcom_common.ko] undefined!
+ERROR: modpost: "__auxiliary_device_add" [drivers/remoteproc/qcom_common.ko] undefined!
 
-Yeah, I would include:
+Caused by commit
 
-Fixes: commit 16c2004d9e4d ("mfd: omap-usb-tll: Allocate driver data at once")
+  5b9f51b200dcb2c3924 ("remoteproc: qcom: enable in-kernel PD mapper")
 
-Because that was a clear mistake. I suspect they were intending to do
-this, which I've seen as a code pattern from time to time:
+and likely others, I didn't look too hard.  I have used the tree from
+20240625 instead.
 
-	devm_kzalloc(dev, offsetof(typeof(*tll), ch_clk[nch]));
+--sFOidLIdGbQqZVzr
+Content-Type: application/pgp-signature; name="signature.asc"
 
-But as Jann points out, "nch" is so small:
+-----BEGIN PGP SIGNATURE-----
 
-drivers/mfd/omap-usb-tll.c:81:#define OMAP_REV2_TLL_CHANNEL_COUNT	2
-drivers/mfd/omap-usb-tll.c:82:#define OMAP_TLL_CHANNEL_COUNT		3
-drivers/mfd/omap-usb-tll.c:220:         nch = OMAP_TLL_CHANNEL_COUNT;
-drivers/mfd/omap-usb-tll.c:224:         nch = OMAP_REV2_TLL_CHANNEL_COUNT;
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ8YYcACgkQJNaLcl1U
+h9CKWwf/XsQJ2e/RIFzXBEAqmVl3wZ/nkq2CLCqFjCzDsCBKw0/z7XPOjdAr+ndW
+KnwZhBQS4enuwkhRoxm6zmWCYXMN/ZFHNViDVyNOiLCTdIKpjWLjDbLHcsdBJ7MH
+tWiy3WnAXrSmWrn//F0uY0I3ywK1WdASvogTgbEuBBQgSElE1ViBfYS0JCWhGdnD
+sLi9Bnd6k8wARM1c+0DuP0QnlnSaijlYKeHgIlsWCf+DZp/rvkAD07OHp1MX6ffP
+/1ZRuzDhireLZpm9PV85Q0eHUwJT0vaetiFbfX/49IgL2LfU+GPtpcO0wAFRxnqy
+kEtBVhtvPZ2ErYKpVGz07d+5XWip5A==
+=bNFO
+-----END PGP SIGNATURE-----
 
-struct usbtll_omap {
-        void __iomem    *base;
-        int             nch;            /* num. of channels */
-        struct clk      *ch_clk[];      /* must be the last member */
-};
-
-That this allocation was asking for 4 + 4 + 4 * 1 (12) instead of:
-	4 + 4 + 4 * OMAP_TLL_CHANNEL_COUNT (20)
-or
-	4 + 4 + 4 * OMAP_REV2_TLL_CHANNEL_COUNT (16)
-
-the latter would have ended up in the same kmalloc bucket (12 would be
-rounded up to 16), but with the ARM alignment issue, the minimum bucket
-size would effectively be tied to CONFIG_ARM_L1_CACHE_SHIFT, which could
-be as low as 5: 32 bytes minimum, so no bug to be had in the real
-world.
-
-Reviewed-by: Kees Cook <kees@kernel.org>
-
--Kees
-
-> ---
->  drivers/mfd/omap-usb-tll.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
-> index a091e5b0f21d..5f25ac514ff2 100644
-> --- a/drivers/mfd/omap-usb-tll.c
-> +++ b/drivers/mfd/omap-usb-tll.c
-> @@ -230,8 +230,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
->  		break;
->  	}
->  
-> -	tll = devm_kzalloc(dev, sizeof(*tll) + sizeof(tll->ch_clk[nch]),
-> -			   GFP_KERNEL);
-> +	tll = devm_kzalloc(dev, struct_size(tll, ch_clk, nch), GFP_KERNEL);
->  	if (!tll) {
->  		pm_runtime_put_sync(dev);
->  		pm_runtime_disable(dev);
-> 
-> -- 
-> 2.40.1
-> 
-
--- 
-Kees Cook
+--sFOidLIdGbQqZVzr--
 
