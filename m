@@ -1,183 +1,110 @@
-Return-Path: <linux-kernel+bounces-230294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53F65917AEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:28:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2E26917AFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C605F1F2528E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:28:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F39371C241D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846F1161314;
-	Wed, 26 Jun 2024 08:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB8A166300;
+	Wed, 26 Jun 2024 08:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bz39Wh8J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FYPJl1ye"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B89FF13B78F;
-	Wed, 26 Jun 2024 08:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5222923BF;
+	Wed, 26 Jun 2024 08:29:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719390512; cv=none; b=mlY3+94zjZ0pstcoEnTuxW7FeddtFK9oh6j4uD7gpV+E4VCrGwS9PrI2fr/duO+JwodhyvASVba7DMcMyCDMbpyZKf2zVob+5ZhibozM1ynH7GRa9/Emap0PTKnXs/bMxdYgmxyRjbd/QwUe7vMzaH3+ysJHooNMtSbUjHCZcyE=
+	t=1719390552; cv=none; b=Fi4cSobo3p0ZdixQhXpgLOdEjP31Yb9zFlDW3/r5Onm1nKok/3ngfwLluF+cgSpVECm5SRSqY12KGEs3q3/fXoVwYlQsQWwoEc1M6xkUF86j2x+evH8JcTJIXJvQsT0bw+SprIDWVPRyUvxkYb1apy74k60jtazM1hN1XllIHnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719390512; c=relaxed/simple;
-	bh=9OBPMRm3bsdOPGQi4XJXnFXKJgtV2ORPTt6XgHICQ8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Xdbe/xLOOiuNCm3n6ecomHDkT2fSSu4TSB5MivkSK1Q0H+rgqg2lTKJkOYNOgAYimDu4aKfiOTZUWDenqR9SCxPxLS77tNAr4QBNXCAE4LvvTN9xlJIjOdYY/hcJL4EbahajUidZI9DgoM6SQK8CaCBJ6HAr7/48eUm1Wzcztyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bz39Wh8J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABFA3C2BD10;
-	Wed, 26 Jun 2024 08:28:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719390512;
-	bh=9OBPMRm3bsdOPGQi4XJXnFXKJgtV2ORPTt6XgHICQ8w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Bz39Wh8JZA/GM8Za+PnsL2LJnv7HFR5l7Hs/GmZDG9e9zqT3jI30PcRHNOaYP+sDF
-	 LVXAdtbPHxGJz9GnjmvZkRbosrWiM+wFneND/+jmi9Ulvfj5dMSzvbPDPn44yipHg6
-	 loxAkhKRXQkxE6/QpxJqcS8UAGK+qnz6uZ+cOJnF9Gc4BOph6d8sgL5lbx6invt4be
-	 3VdiOCZGjIpMXTLyD9zDAolCgzdQ/Q9zJ3YWwxOJaQrDMaw/y/kReo/jHiBWoulC2I
-	 E+sVAUllCIHYjmnUv4V8Eh4FhzHcB0WkJ0K8rCR7D+ABa9kT0DH4N9meOxOfXtR9OH
-	 GNtowTfFmAjEA==
-Message-ID: <8c820056-ff20-441a-af7f-17d184c0b396@kernel.org>
-Date: Wed, 26 Jun 2024 10:28:26 +0200
+	s=arc-20240116; t=1719390552; c=relaxed/simple;
+	bh=Cp7NuRUJVqGGZYwOZ8n29EcYvv+5dVawcwjYBiu90F4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PlW0jX8xTcE023xg/BN/veDxmUo9zxZbMk8bdquc5NDr1sFXiycrl1MBT650r3+Lh2vai1LM9N8LuwJfD7CjZyT+6xZNbOrgVUJcfGTM09htBB/z7BWTfCTxjo38oyMAe3wb4o7wFZBDMqo4Utv/aTMtDtFBXzKJHk2ne4jAPa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FYPJl1ye; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gx1YbM7m9OifZ66nwDwy8F0WLf5LnqApcjTF7ww/P44=; b=FYPJl1yeXy6/ssmw7YTSEecDm+
+	8miUIgYGdjz/FiaOWbN/u4zwXu2zYt/g1ipyvH9N10LEUu14PcLG+1Ema97tXdxmjwErHrzYWjfMK
+	yv25AqjD5/cioi8CHFAtTYoKZR9VS/lqWdGaKXHVwNsXSWgYqXl76Z96Insn/c8QEs28lkvKVG90y
+	6Y7pG2evZEKL20FjlGxCunQN1vpYq7Gsu4koboUHe3RwkPErcDsMod/Nba/qwWgEzFBWBARafAVgt
+	8wqOMvIPzkQccV1yu4+0OPgP21BgnekUL3aV2DWnO8IAWnTQgg8UC5vmvRLcAzbe++DrZQngfbFxd
+	MPVgtLiw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sMO1I-0000000C48O-3pdW;
+	Wed, 26 Jun 2024 08:28:49 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 8E69330057C; Wed, 26 Jun 2024 10:28:48 +0200 (CEST)
+Date: Wed, 26 Jun 2024 10:28:48 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Tejun Heo <tj@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@kernel.org, joshdon@google.com, brho@google.com,
+	pjt@google.com, derkling@google.com, haoluo@google.com,
+	dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
+	riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
+	memxor@gmail.com, andrea.righi@canonical.com,
+	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH sched_ext/for-6.11] sched, sched_ext: Replace
+ scx_next_task_picked() with sched_class->switch_class()
+Message-ID: <20240626082848.GZ31592@noisy.programming.kicks-ass.net>
+References: <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
+ <878qz0pcir.ffs@tglx>
+ <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
+ <CAHk-=wgjbNLRtOvcmeEUtBQyJtYYAtvRTROBy9GHeF1Quszfgg@mail.gmail.com>
+ <ZnRptXC-ONl-PAyX@slm.duckdns.org>
+ <ZnSp5mVp3uhYganb@slm.duckdns.org>
+ <20240624085927.GE31592@noisy.programming.kicks-ass.net>
+ <ZnnelpsfuVPK7rE2@slm.duckdns.org>
+ <20240625074935.GR31592@noisy.programming.kicks-ass.net>
+ <ZntS_eM2reaszYcj@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: interrupt-controller: convert
- fsl,ls-scfg-msi to yaml
-To: Frank Li <Frank.Li@nxp.com>, Thomas Gleixner <tglx@linutronix.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "open list:IRQCHIP DRIVERS" <linux-kernel@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20240625201028.3923845-1-Frank.Li@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240625201028.3923845-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZntS_eM2reaszYcj@slm.duckdns.org>
 
-On 25/06/2024 22:10, Frank Li wrote:
-> Convert device tree binding fsl,ls-scfg-msi to yaml format.
+On Tue, Jun 25, 2024 at 01:30:05PM -1000, Tejun Heo wrote:
+> Hello,
 > 
-> Additional changes:
-> - Include gic.h and use predefined macro in example.
-> - Remove label in example.
-> - Change node name to interrupt-controller in example.
-> - Fix error in example.
-> - ls1046a allow 4 irqs, other platform only 1 irq.
+> On Tue, Jun 25, 2024 at 09:49:35AM +0200, Peter Zijlstra wrote:
+> > > Imagine a case where a sched_ext task was running but then a RT task wakes
+> > > up on the CPU. We'd enter the scheduling path, RT's pick_next_task() would
+> > > return the new RT task to run. We now need to tell the BPF scheduler that we
+> > > lost the CPU to the RT task but haven't called its pick_next_task() yet.
+> > 
+> > Bah, I got it backwards indeed. But in this case, don't you also need
+> > something in pick_task() -- the whole core scheduling thing does much
+> > the same.
 > 
+> Yes, indeed we do, but because we're dispatching from the balance path, the
+> cpu_acquire method is being called from there. Because who was running on
+> the CPU before us is less interesting, @prev is not passed into
+> cpu_acquire() but if that becomes necessary, it's already available there
+> too.
 
-
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - fsl,ls1021a-msi
-> +      - fsl,ls1043a-msi
-> +      - fsl,ls1046a-msi
-> +      - fsl,ls1043a-v1.1-msi
-> +      - fsl,ls1012a-msi
-
-Keep the list ordered alpha-numerically.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  msi-controller: true
-
-No msi-cells?
-
-> +
-> +  interrupts:
-> +    minItems: 1
-> +    maxItems: 4
-
-Please describe the interrupts (items: - description: ...)
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - msi-controller
-> +  - interrupts
-> +
-> +additionalProperties: false
-
-This goes after allOf: block.
-
-> +
-> +allOf:
-
-No $ref to msi-controller.yaml?
-
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - fsl,ls1046a-msi
-> +    then:
-> +      properties:
-> +        interrupts:
-> +          minItems: 4
-> +    else:
-> +      properties:
-> +        interrupts:
-> +          maxItems: 1
-Best regards,
-Krzysztof
-
+I suppose I need to read more, because I'm not knowing what cpu_acquire
+is :/ I do know I don't much like the asymmetry here, but maybe it makes
+sense, dunno.
 
