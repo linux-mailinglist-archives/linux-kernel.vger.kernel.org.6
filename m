@@ -1,149 +1,212 @@
-Return-Path: <linux-kernel+bounces-231568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05C44919A22
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:52:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57C40919A2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:59:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8A35DB22CFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:52:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D328D1F237D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:59:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839ED194085;
-	Wed, 26 Jun 2024 21:52:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 655F41940A1;
+	Wed, 26 Jun 2024 21:58:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gPa83Fiu"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OP7lTMc9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C15F1922D7;
-	Wed, 26 Jun 2024 21:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF924433B3;
+	Wed, 26 Jun 2024 21:58:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719438762; cv=none; b=FgLvg5Ia4prbnhGyq0pOS3K8c7nj+rIrp3qTSUZc1I3rdg9yUhx7ANDaQJ9gUKPRhnMxk6Y+gFRuuw43NmMtype3h2uMT78helJv4E+VFa4QqY4avXUQE1aQ749+hQXsGQwaH2kNhcQ400uPyCsmMDkgD0h8uUtWiRsvAX1+8FU=
+	t=1719439137; cv=none; b=ZvbjtzplSDd6V6bV8P8q8tkp4zx3M3Zojr/ERByP5LzRvm3bFQrWYYApksGzXcLSRFAwfUwzxqfbGiSSzQnG1yuqfKuWQqmmGFk7JHVdqpp/cC1pMNiH+UuZiTwAUvxj9DVdYnc6g6pv3NWWHnFBCxA+u4VSgWqeg9e630veskc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719438762; c=relaxed/simple;
-	bh=Y+x9BtaJ2bapvPZD4h96tqXA4NcHmfAx/mP4JUXzpjE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FaH3yP0+UoIt1OXb213Fp7zS8kv0A6e0SvDECljq1rrXFfoj42Sk2dYarVCQWEJzlLE3UpJWn/kf7eINImyMcopPaq56siucbtpxD38xcO7ct2B0+0MifwCChXjAbAHnAlRd7KP3izTv13pElgapdP6mzvsmlkr2rJUPJpU6U7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gPa83Fiu; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfUup022696;
-	Wed, 26 Jun 2024 21:52:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=qIwvRHU1HPsS7DudEDwvKVGI
-	UGLiVRN2T5iRCevDCoY=; b=gPa83Fiu0P/zuPWJefsmy+XuGboc0ZvleC/eQMpg
-	eDI5Fd/20xvQImg92bABhV0oDwFIo+Vtt05E82KphYWAWImTYzuF8Bw/UN+r2y9t
-	f7tZHwMYN77qGrqWzVKtVWGLJ8Av71Lp0XsIrb80ZOaVPtg7K5DBtvhJfgNu8Bgv
-	7MvTZobbqyA3SDi6+SFTfThYNRxuAIhJhAz0GduKKtlASYDHvWlVNtu0t6st0e5M
-	U8f9hfhVokVX67WHSESRSyiV34YItv6DjPN7be06C7Er5/xq4sdJDkX9tI+klAO+
-	nvp4tzFLsrDBfSiYVfZJM4bEet7XpTiniZBqCNVp/i+dZQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqw9j7v9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 21:52:27 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QLqQ21006025
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 21:52:26 GMT
-Received: from hu-akhilpo-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 26 Jun 2024 14:52:22 -0700
-Date: Thu, 27 Jun 2024 03:22:18 +0530
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-To: Rob Clark <robdclark@gmail.com>
-CC: Kiarash Hajian <kiarash8112hajian@gmail.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/msm/a6xx: request memory region
-Message-ID: <20240626215218.pnbzy25c74c7a22a@hu-akhilpo-hyd.qualcomm.com>
-References: <20240608-adreno-v1-1-2e470480eee7@gmail.com>
- <CAF6AEGsd6jfDqV-EOWr+oMjPpVr2S+71VYmp1JoY8xU51eeEEw@mail.gmail.com>
- <20240625175926.4xyzwjyx7oxcwnzx@hu-akhilpo-hyd.qualcomm.com>
- <CAF6AEGt5=bcni0K1ysot3-hVj9gWECJ5qP=M-sEDkRrAmEHFGg@mail.gmail.com>
- <20240625202308.prg72urp4mvtxzax@hu-akhilpo-hyd.qualcomm.com>
- <CAF6AEGs4i4mM9dpD3weG8GunHHfM0JESkzgX1Wd4PBDYatbQqg@mail.gmail.com>
+	s=arc-20240116; t=1719439137; c=relaxed/simple;
+	bh=hyCc2dx2iCJpyOWsnjpyBn130Gj3NHXIlTdpzmWt8/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=na58kQzSYdibxmiKhJ2+GD3oaazgshU0PEGeO3OIOLH8qGaTdbK7NcRQIoIl4Wps3+btNa1522bPbVr4oqDF98k4MgMVsL/PpRg95vKxk6wu9/O35M7pHunsQc/vZgDtuHv7yvNoviNk3Yv0igiuSfOT5Qr7LYM27DR4stjxRrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OP7lTMc9; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719439136; x=1750975136;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=hyCc2dx2iCJpyOWsnjpyBn130Gj3NHXIlTdpzmWt8/s=;
+  b=OP7lTMc9mwIjJnYPunpe5Zx2ueQue8mrmqkVsEuaRnzOX+Pg9sJ7Xrl2
+   7MSRhufdqDjgwbw3L6Ba+KAKumBfdQtWgeiHX2OvfNgKd7F8L32poYofX
+   NLQUuZ0+biPn4FI8OFr5Lto3g8uGVBZstGBJeYH8Frg5+aCfjCC+wmRx7
+   UDaeuRqeMEIcbFLY9UoLzkp67+SKNeCwkVSN5cQgBUdOIop8IHguucSyq
+   D1UpNsak2/ZOdwRTwfM+GWfbfr5gG1UWv5FD4pepIj7B7QgrcDN3fEkw2
+   TV2jg0VwYCbf0mgDfLhsDe4T5ESYLRrPYg/D1tdz7iUCZG88MH+vkciOp
+   Q==;
+X-CSE-ConnectionGUID: bsDCmnJMQu+j3zdssRQYsw==
+X-CSE-MsgGUID: aZV9Nd+mQXGdasrc9cMdDg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16423341"
+X-IronPort-AV: E=Sophos;i="6.08,268,1712646000"; 
+   d="scan'208";a="16423341"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 14:58:55 -0700
+X-CSE-ConnectionGUID: vx5PnEDkTEOuaVKadVDm7A==
+X-CSE-MsgGUID: tX4s7/KHQJeoxy8Sw+d/CQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,268,1712646000"; 
+   d="scan'208";a="49064537"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 26 Jun 2024 14:58:51 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sMafA-000Fav-1y;
+	Wed, 26 Jun 2024 21:58:48 +0000
+Date: Thu, 27 Jun 2024 05:58:25 +0800
+From: kernel test robot <lkp@intel.com>
+To: Raphael Gallais-Pou <rgallaispou@gmail.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Patrice Chotard <patrice.chotard@foss.st.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] thermal: sti: depend on THERMAL_OF subsystem
+Message-ID: <202406270530.kN5wIswi-lkp@intel.com>
+References: <20240625-thermal-v2-2-bf8354ed51ee@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAF6AEGs4i4mM9dpD3weG8GunHHfM0JESkzgX1Wd4PBDYatbQqg@mail.gmail.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 7ZxKhyL2RdKhbIx27bF2rkglQuR3c--L
-X-Proofpoint-GUID: 7ZxKhyL2RdKhbIx27bF2rkglQuR3c--L
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_14,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 clxscore=1015 impostorscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=832 phishscore=0 bulkscore=0
- adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406260160
+In-Reply-To: <20240625-thermal-v2-2-bf8354ed51ee@gmail.com>
 
-<< snip >>
+Hi Raphael,
 
-> > > > > > @@ -1503,7 +1497,7 @@ static void __iomem *a6xx_gmu_get_mmio(struct platform_device *pdev,
-> > > > > >                 return ERR_PTR(-EINVAL);
-> > > > > >         }
-> > > > > >
-> > > > > > -       ret = ioremap(res->start, resource_size(res));
-> > > > > > +       ret = devm_ioremap_resource(&pdev->dev, res);
-> > > > >
-> > > > > So, this doesn't actually work, failing in __request_region_locked(),
-> > > > > because the gmu region partially overlaps with the gpucc region (which
-> > > > > is busy).  I think this is intentional, since gmu is controlling the
-> > > > > gpu clocks, etc.  In particular REG_A6XX_GPU_CC_GX_GDSCR is in this
-> > > > > overlapping region.  Maybe Akhil knows more about GMU.
-> > > >
-> > > > We don't really need to map gpucc region from driver on behalf of gmu.
-> > > > Since we don't access any gpucc register from drm-msm driver, we can
-> > > > update the range size to correct this. But due to backward compatibility
-> > > > requirement with older dt, can we still enable region locking? I prefer
-> > > > it if that is possible.
-> > >
-> > > Actually, when I reduced the region size to not overlap with gpucc,
-> > > the region is smaller than REG_A6XX_GPU_CC_GX_GDSCR * 4.
-> > >
-> > > So I guess that register is actually part of gpucc?
-> >
-> > Yes. It has *GPU_CC* in its name. :P
-> >
-> > I just saw that we program this register on legacy a6xx targets to
-> > ensure retention is really ON before collapsing gdsc. So we can't
-> > avoid mapping gpucc region in legacy a6xx GPUs. That is unfortunate!
-> 
-> I guess we could still use devm_ioremap().. idk if there is a better
-> way to solve this
+kernel test robot noticed the following build warnings:
 
-Can we do it without breaking backward compatibility with dt?
+[auto build test WARNING on 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed]
 
--Akhil
+url:    https://github.com/intel-lab-lkp/linux/commits/Raphael-Gallais-Pou/thermal-st-switch-from-CONFIG_PM_SLEEP-guards-to-pm_sleep_ptr/20240626-090203
+base:   0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
+patch link:    https://lore.kernel.org/r/20240625-thermal-v2-2-bf8354ed51ee%40gmail.com
+patch subject: [PATCH v2 2/3] thermal: sti: depend on THERMAL_OF subsystem
+config: arm-allmodconfig (https://download.01.org/0day-ci/archive/20240627/202406270530.kN5wIswi-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240627/202406270530.kN5wIswi-lkp@intel.com/reproduce)
 
-> 
-> BR,
-> -R
-> 
-> > -Akhil.
-> >
-> > >
-> > > BR,
-> > > -R
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406270530.kN5wIswi-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/thermal/st/st_thermal.c: In function 'st_thermal_register':
+>> drivers/thermal/st/st_thermal.c:147:13: warning: variable 'polling_delay' set but not used [-Wunused-but-set-variable]
+     147 |         int polling_delay;
+         |             ^~~~~~~~~~~~~
+
+
+vim +/polling_delay +147 drivers/thermal/st/st_thermal.c
+
+60aef7ce455653 Lee Jones           2014-06-05  138  
+60aef7ce455653 Lee Jones           2014-06-05  139  int st_thermal_register(struct platform_device *pdev,
+60aef7ce455653 Lee Jones           2014-06-05  140  			const struct of_device_id *st_thermal_of_match)
+60aef7ce455653 Lee Jones           2014-06-05  141  {
+60aef7ce455653 Lee Jones           2014-06-05  142  	struct st_thermal_sensor *sensor;
+60aef7ce455653 Lee Jones           2014-06-05  143  	struct device *dev = &pdev->dev;
+60aef7ce455653 Lee Jones           2014-06-05  144  	struct device_node *np = dev->of_node;
+60aef7ce455653 Lee Jones           2014-06-05  145  	const struct of_device_id *match;
+60aef7ce455653 Lee Jones           2014-06-05  146  
+60aef7ce455653 Lee Jones           2014-06-05 @147  	int polling_delay;
+60aef7ce455653 Lee Jones           2014-06-05  148  	int ret;
+60aef7ce455653 Lee Jones           2014-06-05  149  
+60aef7ce455653 Lee Jones           2014-06-05  150  	if (!np) {
+60aef7ce455653 Lee Jones           2014-06-05  151  		dev_err(dev, "device tree node not found\n");
+60aef7ce455653 Lee Jones           2014-06-05  152  		return -EINVAL;
+60aef7ce455653 Lee Jones           2014-06-05  153  	}
+60aef7ce455653 Lee Jones           2014-06-05  154  
+60aef7ce455653 Lee Jones           2014-06-05  155  	sensor = devm_kzalloc(dev, sizeof(*sensor), GFP_KERNEL);
+60aef7ce455653 Lee Jones           2014-06-05  156  	if (!sensor)
+60aef7ce455653 Lee Jones           2014-06-05  157  		return -ENOMEM;
+60aef7ce455653 Lee Jones           2014-06-05  158  
+60aef7ce455653 Lee Jones           2014-06-05  159  	sensor->dev = dev;
+60aef7ce455653 Lee Jones           2014-06-05  160  
+60aef7ce455653 Lee Jones           2014-06-05  161  	match = of_match_device(st_thermal_of_match, dev);
+60aef7ce455653 Lee Jones           2014-06-05  162  	if (!(match && match->data))
+60aef7ce455653 Lee Jones           2014-06-05  163  		return -EINVAL;
+60aef7ce455653 Lee Jones           2014-06-05  164  
+60aef7ce455653 Lee Jones           2014-06-05  165  	sensor->cdata = match->data;
+60aef7ce455653 Lee Jones           2014-06-05  166  	if (!sensor->cdata->ops)
+60aef7ce455653 Lee Jones           2014-06-05  167  		return -EINVAL;
+60aef7ce455653 Lee Jones           2014-06-05  168  
+60aef7ce455653 Lee Jones           2014-06-05  169  	sensor->ops = sensor->cdata->ops;
+60aef7ce455653 Lee Jones           2014-06-05  170  
+331a5fc9f2ed28 Nicolas Boichat     2015-07-08  171  	ret = (sensor->ops->regmap_init)(sensor);
+60aef7ce455653 Lee Jones           2014-06-05  172  	if (ret)
+60aef7ce455653 Lee Jones           2014-06-05  173  		return ret;
+60aef7ce455653 Lee Jones           2014-06-05  174  
+60aef7ce455653 Lee Jones           2014-06-05  175  	ret = st_thermal_alloc_regfields(sensor);
+60aef7ce455653 Lee Jones           2014-06-05  176  	if (ret)
+60aef7ce455653 Lee Jones           2014-06-05  177  		return ret;
+60aef7ce455653 Lee Jones           2014-06-05  178  
+60aef7ce455653 Lee Jones           2014-06-05  179  	sensor->clk = devm_clk_get(dev, "thermal");
+60aef7ce455653 Lee Jones           2014-06-05  180  	if (IS_ERR(sensor->clk)) {
+60aef7ce455653 Lee Jones           2014-06-05  181  		dev_err(dev, "failed to fetch clock\n");
+60aef7ce455653 Lee Jones           2014-06-05  182  		return PTR_ERR(sensor->clk);
+60aef7ce455653 Lee Jones           2014-06-05  183  	}
+60aef7ce455653 Lee Jones           2014-06-05  184  
+60aef7ce455653 Lee Jones           2014-06-05  185  	if (sensor->ops->register_enable_irq) {
+60aef7ce455653 Lee Jones           2014-06-05  186  		ret = sensor->ops->register_enable_irq(sensor);
+60aef7ce455653 Lee Jones           2014-06-05  187  		if (ret)
+60aef7ce455653 Lee Jones           2014-06-05  188  			return ret;
+60aef7ce455653 Lee Jones           2014-06-05  189  	}
+60aef7ce455653 Lee Jones           2014-06-05  190  
+60aef7ce455653 Lee Jones           2014-06-05  191  	ret = st_thermal_sensor_on(sensor);
+60aef7ce455653 Lee Jones           2014-06-05  192  	if (ret)
+60aef7ce455653 Lee Jones           2014-06-05  193  		return ret;
+60aef7ce455653 Lee Jones           2014-06-05  194  
+60aef7ce455653 Lee Jones           2014-06-05  195  	ret = st_thermal_calibration(sensor);
+60aef7ce455653 Lee Jones           2014-06-05  196  	if (ret)
+60aef7ce455653 Lee Jones           2014-06-05  197  		goto sensor_off;
+60aef7ce455653 Lee Jones           2014-06-05  198  
+60aef7ce455653 Lee Jones           2014-06-05  199  	polling_delay = sensor->ops->register_enable_irq ? 0 : 1000;
+60aef7ce455653 Lee Jones           2014-06-05  200  
+60aef7ce455653 Lee Jones           2014-06-05  201  	sensor->thermal_dev =
+9819ef601045bf Raphael Gallais-Pou 2024-06-25  202  		devm_thermal_of_zone_register(dev, 0, sensor, &st_tz_ops);
+60aef7ce455653 Lee Jones           2014-06-05  203  	if (IS_ERR(sensor->thermal_dev)) {
+9819ef601045bf Raphael Gallais-Pou 2024-06-25  204  		dev_err(dev, "failed to register thermal of zone\n");
+60aef7ce455653 Lee Jones           2014-06-05  205  		ret = PTR_ERR(sensor->thermal_dev);
+60aef7ce455653 Lee Jones           2014-06-05  206  		goto sensor_off;
+60aef7ce455653 Lee Jones           2014-06-05  207  	}
+60aef7ce455653 Lee Jones           2014-06-05  208  
+60aef7ce455653 Lee Jones           2014-06-05  209  	platform_set_drvdata(pdev, sensor);
+60aef7ce455653 Lee Jones           2014-06-05  210  
+9819ef601045bf Raphael Gallais-Pou 2024-06-25  211  	/*
+9819ef601045bf Raphael Gallais-Pou 2024-06-25  212  	 * devm_thermal_of_zone_register() doesn't enable hwmon by default
+9819ef601045bf Raphael Gallais-Pou 2024-06-25  213  	 * Enable it here
+9819ef601045bf Raphael Gallais-Pou 2024-06-25  214  	 */
+9819ef601045bf Raphael Gallais-Pou 2024-06-25  215  	return devm_thermal_add_hwmon_sysfs(dev, sensor->thermal_dev);
+60aef7ce455653 Lee Jones           2014-06-05  216  
+60aef7ce455653 Lee Jones           2014-06-05  217  sensor_off:
+60aef7ce455653 Lee Jones           2014-06-05  218  	st_thermal_sensor_off(sensor);
+60aef7ce455653 Lee Jones           2014-06-05  219  
+60aef7ce455653 Lee Jones           2014-06-05  220  	return ret;
+60aef7ce455653 Lee Jones           2014-06-05  221  }
+60aef7ce455653 Lee Jones           2014-06-05  222  EXPORT_SYMBOL_GPL(st_thermal_register);
+60aef7ce455653 Lee Jones           2014-06-05  223  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
