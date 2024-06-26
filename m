@@ -1,113 +1,141 @@
-Return-Path: <linux-kernel+bounces-230146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF07991790F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:35:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B8B917913
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:37:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA703285E55
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:35:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B338D282D19
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B1F155749;
-	Wed, 26 Jun 2024 06:35:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCD813CFBC;
+	Wed, 26 Jun 2024 06:37:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWd+s13e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="FnPZ2Q/U"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FB5155327
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 06:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E596433CD
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 06:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719383722; cv=none; b=W1IeEJbi9Xwjwc+fKj27myLTXmgctREihSpNrWZ3FIvx/tJ1RuiVk9uJ5IaUALkcE0e2DrXU0yBETygXjoGRuf+4JfsVXJnD6UuA2NuE7p2HJtISGHQIwF2HgbPG9j3n18DHvvxet5aqmi0Kkr1/4+XOjA8bDo/BGZwOUhoX+Ss=
+	t=1719383826; cv=none; b=pLdOLQYipLUQ5mxovOd84HhMX29s0zlJjLSRURaSM+gs3dRxNJqib89ueUECX+swQtMHAJzr1g8msSh9icDf994RRsu3NW9SvdTLBYRo5L2HVEf+GAzoolzDGxwrb1cNAbwFqPdn9WBvSyVgEIxLA9M8H1+lPUhtmy42U4jcO5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719383722; c=relaxed/simple;
-	bh=0XS+alGRG/TmhvU3VWxd9zWElmlBNhhOQf24WCx1o1c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QORcBx4+cceo0dlmKwcKg8VHvP+ZK2SKM82CF6oCRSjbBjCC4Kc5x0xUfEqMWmPqkfauesvU0F53Gp8NcgbzC03bi1Bo8oRi2v5uerxtU7IhmXTwmJB5pQxLOlmt4ovJ2+xDwbYErKE7OtqA7jgP4v4OC/aSKzgWDeonhvyXBEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWd+s13e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C07C2BD10;
-	Wed, 26 Jun 2024 06:35:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719383722;
-	bh=0XS+alGRG/TmhvU3VWxd9zWElmlBNhhOQf24WCx1o1c=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=FWd+s13e98R0YcjqevFlnHM+wbGn0gZJE1LfPjWAWsueSQqVLEo6vCbqtlErkJJY0
-	 872S1iTqtZBL9uaKDkKwGSLriT2wptCFCbwfPt2b2H97jJveFtvFc/dO/QISKQk47I
-	 pAZFLfGm4xpCfkRlNEfZCvVyPCaai4Bmugz2MdCaf56vhg0a9iFUN5ssQTt3DjIGUC
-	 xpkPS20dCyB8/eOpKj9ViVbxP21qA3LIsDNh61Ch+JXa02CBNehhCKJ5UTAZdnH5wy
-	 k5pSLX+EXQnvp51DCCQR3uG6tFqh+CVRutevsO6kxN43gLzBtMez5x3s3JZgaC+xn8
-	 tt2D+ClwfyqKQ==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id EBCB5CE08FF; Tue, 25 Jun 2024 23:35:20 -0700 (PDT)
-Date: Tue, 25 Jun 2024 23:35:20 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alexandre Chartre <alexandre.chartre@oracle.com>,
-	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sean Christopherson <seanjc@google.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Nikolay Borisov <nik.borisov@suse.com>,
-	KP Singh <kpsingh@kernel.org>, Waiman Long <longman@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
-Subject: Re: [PATCH v5 1/3] x86/syscall: Mark exit[_group] syscall handlers
- __noreturn
-Message-ID: <ed2e6788-f207-4676-920c-0198398bd639@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <cover.1715059256.git.jpoimboe@kernel.org>
- <9ad251f6258adde596fb1f4d6826309b9f239ed3.1715059256.git.jpoimboe@kernel.org>
- <31af8226-8357-493e-a280-465f91b58d35@paulmck-laptop>
- <4b97c5c8-73ac-417d-8b1c-61ccd0768bda@paulmck-laptop>
- <20240626052825.27gt6ij3fhu6iolc@treble>
+	s=arc-20240116; t=1719383826; c=relaxed/simple;
+	bh=8HlxFlayCO5Q2Dfn73N1VcmYhkr9Os/QNdTYULmauYE=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f9aebe0Yk1fZphBJpK8585lTMMDDNkIeoeSojJSRNmstyxLh3XcLxG1djFepqHA5dP9TSjVNupji8LVYNF/uZegh1m+3t0eNVejYhX6cxac7eRd9cWWcXrZ4SeEPF4HWuCOnDY/pX0LP1re+or6tyuZrwpygYlAfU2IVYu4c51U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=FnPZ2Q/U; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=XG6W
+	uG1CYZoEaFrNfdf57P8XrLm7RnivnO3dyvLzvcc=; b=FnPZ2Q/U1oAia+ECkCSI
+	e2Vf+z1lM930cF5/n1xjmcnndQTOAyPRdB5gTPRSb1xzfF3b7YVeBDcjV8rnnwVu
+	QX3hJHRnDcHXPT4WSPjqTCKsFXIjL5gKYTgn0BJTw/w5XzSG4X6tW0eQD9cgFS2V
+	Ch4Zh29SLzOHdfYT6wAy0NCQpFx+h6zgqprSRPz/M8pgwtrUs0qM0gFhLylKX4qf
+	7rm8CdqI558UzyWj7Nzk0Q0Tkas0S6CMKLD49RH4Yhf1l74WS9vOEZh0nP361Z9M
+	PKOeUZ4al3pjv63JX9suLLTzUY0SY2+0TxtJIGrcAGUQFmOzpYBOGFPXZBtwPyE5
+	Hw==
+Received: (qmail 466193 invoked from network); 26 Jun 2024 08:37:01 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jun 2024 08:37:01 +0200
+X-UD-Smtp-Session: l3s3148p1@UUrgPcUb4pkgAwDPX0AHAIitiwsdozO7
+Date: Wed, 26 Jun 2024 08:37:00 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Allen Pais <allen.lkml@gmail.com>, 
+	Aubin Constans <aubin.constans@microchip.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, Manuel Lauss <manuel.lauss@gmail.com>, 
+	=?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, Jaehoon Chung <jh80.chung@samsung.com>, 
+	Aaro Koskinen <aaro.koskinen@iki.fi>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Alex Dubov <oakad@yahoo.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Bruce Chang <brucechang@via.com.tw>, Harald Welte <HaraldWelte@viatech.com>, 
+	Pierre Ossman <pierre@ossman.eu>, Christian Loehle <christian.loehle@arm.com>, 
+	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH v4] mmc: Convert from tasklet to BH workqueue
+Message-ID: <rddr35qidcxfemy24lcqnz7fo6ogltlffizwbf7evtdoz5qgsu@tva3pf6e2isb>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Allen Pais <allen.lkml@gmail.com>, Aubin Constans <aubin.constans@microchip.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Manuel Lauss <manuel.lauss@gmail.com>, =?utf-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
+	Jaehoon Chung <jh80.chung@samsung.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Alex Dubov <oakad@yahoo.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Bruce Chang <brucechang@via.com.tw>, Harald Welte <HaraldWelte@viatech.com>, 
+	Pierre Ossman <pierre@ossman.eu>, Christian Loehle <christian.loehle@arm.com>, 
+	linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org
+References: <20240625170938.2579372-1-allen.lkml@gmail.com>
+ <racc3a2kmhu5275xcb6bght5j2bbg5ujlowdbfqeiwputmygei@ckscwafglafl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="d35bwx5hanml5js2"
 Content-Disposition: inline
-In-Reply-To: <20240626052825.27gt6ij3fhu6iolc@treble>
+In-Reply-To: <racc3a2kmhu5275xcb6bght5j2bbg5ujlowdbfqeiwputmygei@ckscwafglafl>
 
-On Tue, Jun 25, 2024 at 10:28:25PM -0700, Josh Poimboeuf wrote:
-> On Tue, Jun 25, 2024 at 07:21:34PM -0700, Paul E. McKenney wrote:
-> > On Tue, May 07, 2024 at 07:38:32AM -0700, Paul E. McKenney wrote:
-> > > On Mon, May 06, 2024 at 10:30:04PM -0700, Josh Poimboeuf wrote:
-> > > > The direct-call syscall dispatch function doesn't know that the exit()
-> > > > and exit_group() syscall handlers don't return, so the call sites aren't
-> > > > optimized accordingly.
-> > > > 
-> > > > Fix that by marking those exit syscall declarations __noreturn.
-> > > > 
-> > > > Fixes the following warnings:
-> > > > 
-> > > >   vmlinux.o: warning: objtool: x64_sys_call+0x2804: __x64_sys_exit() is missing a __noreturn annotation
-> > > >   vmlinux.o: warning: objtool: ia32_sys_call+0x29b6: __ia32_sys_exit_group() is missing a __noreturn annotation
-> > > > 
-> > > > Fixes: 7390db8aea0d ("x86/bhi: Add support for clearing branch history at syscall entry")
-> > > > Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
-> > > > Closes: https://lkml.kernel.org/lkml/6dba9b32-db2c-4e6d-9500-7a08852f17a3@paulmck-laptop
-> > > > Tested-by: Paul E. McKenney <paulmck@kernel.org>
-> > > 
-> > > Just reaffirming my Tested-by, and thank you!
-> > 
-> > And just following up, given that I do not yet see this in -next.  Any
-> > chance of this making the upcoming merge window?
-> 
-> Sorry for my slowness!  I'm traveling this week but let me repost this
-> (with your Tested-by) and grab somebody to merge it.
 
-No worries, and thank you!
+--d35bwx5hanml5js2
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-							Thanx, Paul
+On Wed, Jun 26, 2024 at 08:31:05AM GMT, Wolfram Sang wrote:
+> Hi Allen,
+>=20
+> >    - dropped changes to renasas sdhci(dma_complete)
+> >    - Wolfram to send a patch for it.
+>=20
+> It is still there.
+
+With build errors (forgot to say that):
+
+drivers/mmc/host/renesas_sdhi_internal_dmac.c: In function =E2=80=98renesas=
+_sdhi_internal_dmac_request_dma=E2=80=99:
+drivers/mmc/host/renesas_sdhi_internal_dmac.c:551:22: error: =E2=80=98renes=
+as_sdhi_internal_dmac_issue_bh_work_fn=E2=80=99 undeclared (first use in th=
+is function); did you mean =E2=80=98renesas_sdhi_internal_dmac_issue_work_f=
+n=E2=80=99?
+  551 |                      renesas_sdhi_internal_dmac_issue_bh_work_fn);
+      |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Please let me handle TMIO/SDHI completely. You will get the credit,
+still.
+
+
+--d35bwx5hanml5js2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ7twwACgkQFA3kzBSg
+KbbwqQ/+NEsWVmbIE12XppdwgrT28RGTfbagMcWDMvCLQBszNbFraLrclztth842
+CRPQ5KawhKp7DPEO7y/7EEqNJfbTZeoUnQHPdGAJ8VCXiV7on3ikUYRaBIvuR/nW
+bQxKCUQZUPmzT0bvOgoiL8ERhwOEbuXxz0G8E0RNObpXj/fhA17gJ5rOx2OjuQ9U
+C3M/EI/+NCnW7WKD4fJ/7RXrFctcJoSDIb3ev1s0eJ/3uqRHPKtyzGDjqIw20VzS
+i0WaEuU38TfgCabDxzSQbbhWAvxay0XeOweIdliKhAnYWJvDceFpRKqdx1qf56fF
+l5dQW/OPbCmnjiXRJKvZIsjqarIAjTHumoGzfLBnGFshN/WyshGf310BxhXZgAgb
+YpRtrTR/mkhweojaI5yn7RWRkgsTRLd/+ShTIMujC1t5/3u9bFPVVyMp3xLjK7HO
+Enie/iNOWuhcscaWleriZuYlB+yYs601IqazjBYJ+u/52aBLm8PqeVQDZ2ZvPeBx
+/WcCP6P3Ea4lEsc5r9pE+D4JxHv4NBNazCz/y1or3RHjexb88mtN2L7U2iEMIoRs
+sy2Kz0Qaie9vhqG2+/rPf6ORzOTOtQL5I1deVB2CAqTvxtbCClYIleQFFRPGv8EF
+Ui464tJmhd7k9izfr+WYmRSEL9g5lCs4L5t4RnnRx6lpZhxZeO4=
+=SPOe
+-----END PGP SIGNATURE-----
+
+--d35bwx5hanml5js2--
 
