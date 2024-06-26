@@ -1,79 +1,107 @@
-Return-Path: <linux-kernel+bounces-230784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 710D49181E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:10:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 395849181ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C82E1F2117D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:10:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA7B4285B82
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2457618C330;
-	Wed, 26 Jun 2024 13:06:13 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B36918411D;
+	Wed, 26 Jun 2024 13:07:19 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ADD818A959;
-	Wed, 26 Jun 2024 13:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EC4181D1B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719407172; cv=none; b=A1f7luv7vXboXTGrbwyw8dFzAIpnPYm61AeR90h2yU+xQ1hvEBD3pJbPNo1b7FFpYD+k595yItvoe/iPSlyQ3/n2Fr61XL+tqinBNMbd8ndFOFkva9iz1Ko4lXPrGeTgAkCw8UOS/l6OkyYg284ObvJw52RRsrr4Mrhom50Nr/E=
+	t=1719407239; cv=none; b=D8KubkZjhIo6wbqg0qfDi9KrRHIH+izFSqXL5TsNi4t69q65yil9Y40M9XYt5cXREgpuzHbZg3XvcISuQAxYJ4XV/Ax6wW9Bv28ZhGmkmBU9d/nb+1Hcovhlw5unbx0JTJ/+eWJG+y1UGWE2tXFxw7EUchBAVcAHEgXCLNUWMTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719407172; c=relaxed/simple;
-	bh=GOp37wPmnAvgXsqMReUrdRIqdeUb22PiUxfzKAposJQ=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=uofA4P43qJEWq37VAKGkGYhTVAKRAOZzJ73cyRNZr6zdvJKUVaPGAYvM3JwDRzMJY5HTshZG9p02nN9EFhVpedc0EW/BLfGSeeu+jTNen5xyqmaUE68Y9I73nGkZi+l1X5e+64TL7iW1Y6FlhR+DBeaTSvmSC+zekH6QlJYer1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21902C32789;
-	Wed, 26 Jun 2024 13:06:12 +0000 (UTC)
-Received: by mercury (Postfix, from userid 1000)
-	id A4A1E106093D; Wed, 26 Jun 2024 15:06:09 +0200 (CEST)
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: linus.walleij@linaro.org, sre@kernel.org, jic23@kernel.org, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- kernel-janitors@vger.kernel.org
-In-Reply-To: <cover.1719037737.git.christophe.jaillet@wanadoo.fr>
-References: <cover.1719037737.git.christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH 0/3] power: supply: ab8500: Improve code related to
- iio_read_channel_processed() and fix a bug
-Message-Id: <171940716965.127964.17060971210782573496.b4-ty@collabora.com>
-Date: Wed, 26 Jun 2024 15:06:09 +0200
+	s=arc-20240116; t=1719407239; c=relaxed/simple;
+	bh=AnX1gDtL0IQAx9+Sy3bf0fMoaFEkM6urkZKsa6ZShHY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fvcBMCxHTm1IFNxIUJ/sqkBYQYz3zfbcZQreUTS+8bNwTf9ZWZh1AXy2P0OPmNof+D70JWiDEj/cNbtu5di2WUjCWoAlpbKM4Dk+hO2e3z4NebildyrWUN2qAgyyeG73Jh2PbBhZVXv0AuOUXrDrJ8Ci24dZbx9bDTIByRnEPAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-01 (Coremail) with SMTP id qwCowABXN0xsEnxmiXAGAA--.1461S2;
+	Wed, 26 Jun 2024 21:07:02 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: harry.wentland@amd.com,
+	sunpeng.li@amd.com,
+	Rodrigo.Siqueira@amd.com,
+	alexander.deucher@amd.com,
+	christian.koenig@amd.com,
+	Xinhui.Pan@amd.com,
+	airlied@gmail.com,
+	daniel@ffwll.ch,
+	jun.lei@amd.com,
+	wayne.lin@amd.com,
+	dillon.varone@amd.com,
+	nicholas.kazlauskas@amd.com,
+	Qingqing.Zhuo@amd.com,
+	stylon.wang@amd.com,
+	make24@iscas.ac.cn
+Cc: amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] drm/amd/display: Add null check before access structs
+Date: Wed, 26 Jun 2024 21:06:50 +0800
+Message-Id: <20240626130650.2866706-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowABXN0xsEnxmiXAGAA--.1461S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtr1UtFW5Kry3XF4xCryrtFb_yoWDXrc_K3
+	WUZrWftryUC3Z09F1YyrnxuFyF93yrZF4vqwn7KF9ayryxZFyxZ3yxXrW8Wr18ZrZrtFyD
+	Aa9F93Z5JwnrKjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUShFxUUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
+In enable_phantom_plane, we should better check null pointer before
+accessing various structs.
 
-On Sat, 22 Jun 2024 09:04:23 +0200, Christophe JAILLET wrote:
-> This series is inspired by a patch submitted at [1].
-> 
-> While looking if the same pattern was relevant elsewhere, I ended in
-> ab8500_charger.c.
-> 
-> Patch 1 fixes what looks to me as a regression introduced by
-> 97ab78bac5d0.
-> 
-> [...]
+Fixes: 09a4ec5da92c ("drm/amd/display: Refactor dc_state interface")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Applied, thanks!
-
-[1/3] power: supply: ab8500: Fix error handling when calling iio_read_channel_processed()
-      commit: 3288757087cbb93b91019ba6b7de53a1908c9d48
-[2/3] power: supply: ab8500: Use iio_read_channel_processed_scale()
-      commit: dc6ce568afd3452ac682261ea0db570d28f7d82d
-[3/3] power: supply: ab8500: Clean some error messages
-      commit: f62b267adcac33c64a26ec55973dad92bc8a8358
-
-Best regards,
+diff --git a/drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c b/drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c
+index 282d70e2b18a..3d29169dd6bb 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c
++++ b/drivers/gpu/drm/amd/display/dc/dml2/dml2_mall_phantom.c
+@@ -750,6 +750,8 @@ static void enable_phantom_plane(struct dml2_context *ctx,
+ 					ctx->config.svp_pstate.callbacks.dc,
+ 					state,
+ 					curr_pipe->plane_state);
++			if (!phantom_plane)
++				return;
+ 		}
+ 
+ 		memcpy(&phantom_plane->address, &curr_pipe->plane_state->address, sizeof(phantom_plane->address));
 -- 
-Sebastian Reichel <sebastian.reichel@collabora.com>
+2.25.1
 
 
