@@ -1,126 +1,91 @@
-Return-Path: <linux-kernel+bounces-229920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD065917604
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:09:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EE9A917613
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:13:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020021C21856
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:09:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 279E6B217DB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FD5BE6C;
-	Wed, 26 Jun 2024 02:09:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fVo+cvq9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2B6138DE8;
+	Wed, 26 Jun 2024 02:12:46 +0000 (UTC)
+Received: from smtpbguseast1.qq.com (smtpbguseast1.qq.com [54.204.34.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6421C68C;
-	Wed, 26 Jun 2024 02:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7693438396
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.204.34.129
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719367756; cv=none; b=Rtt/tcQTUvQf361hfFrR0WI5+qOnxOXgWM6UNN3E5FILagF/JVV2WCV+Zk4C6zXq52fz3fXzmABGS4wEsNxjWHK54N75BwW5Z67mO2M7BjCFziBsChpDo0ppHR3Pun1Q1nT9Hkh6IAphY7LtEsqo5ZYVZD+E2q3x8tyRMP0lMqg=
+	t=1719367966; cv=none; b=pU3YcWYS0VId7W27WAYHEmg/1ho0qYqVuaJ8IM2rciQoGFpm56os73A+Bgy4hvQmGRPFcrE1kOeqaSeQsyo4xOc1argkJGE6BvuyaAW7uezuI3CLhBgsdWd4Z/Cfgbyj7Y9CE2WEg0GniuhBj7kKKUXwVrbf+kuHOtg2nbtcCvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719367756; c=relaxed/simple;
-	bh=gJAvJvUWGrrEiCwtoTwQH9cDQpKtkLOcnQBp+ZrFuk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eXBRvwJZP48t2p8Cs2AFnwwoDOWPWqvrzWuw1DH/CDfs6/annFzFfAkCUNSXWEA+wHwWfywgPMXLdPeYpHAlPRx5VlmHmlr66yUm0IKnGBr4A51amU/xBPJQkMQbZraaVoF4pHXQFVpf1gYkJN0opvDKmSl+2coSGPD8cSCbQN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fVo+cvq9; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719367755; x=1750903755;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=gJAvJvUWGrrEiCwtoTwQH9cDQpKtkLOcnQBp+ZrFuk8=;
-  b=fVo+cvq9C+YO2hOOE1exXVZFPS6iTbVQ/r2kPTJ0QTfY+WaFa0vJ3w6i
-   d6qpXgOKaFIYvrOOXi3iJMLApe/DXTY72aswh+4ZkBO2RqLqdvyTk6T4y
-   4JdxnQXdnONX/IjahGPKgbmzgi2j1fhJGUjShE0zWzI6ozlKdUXSKgren
-   QtsCL6bVMJ+PhfLofB7kW7dKgbMEVXndvgYvaHP3bZG4km4jOfIdVPbOT
-   VPawy/MqY9DHjLYYtJ0cxXZeKriFA8OkWbni5d6rTzf2cntSBicim49Om
-   0geLt6KGT89aHG59ghT560KgDoP3ZbUhxfboATwnzfDfzyKNXFSx3xVLE
-   g==;
-X-CSE-ConnectionGUID: Uw7WgJUbRxCX93Qzqbc31Q==
-X-CSE-MsgGUID: +oT2wvhQQ9W4hgUxYHD/cw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16563387"
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="16563387"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 19:09:15 -0700
-X-CSE-ConnectionGUID: D9YuBf2jQgS/eyhnB77QkA==
-X-CSE-MsgGUID: JsvHagXqQp2Rt5YIEfg9LQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="44275977"
-Received: from qunyang-mobl1.ccr.corp.intel.com (HELO [10.238.2.59]) ([10.238.2.59])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 19:09:10 -0700
-Message-ID: <edfc5edc-4bf7-4bc6-b760-c9d4341acc9d@linux.intel.com>
-Date: Wed, 26 Jun 2024 10:09:08 +0800
+	s=arc-20240116; t=1719367966; c=relaxed/simple;
+	bh=TBMKuKTR4lE5O+72M8IPvIKrMMIXhUi+9db0H3QD0cw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=hBbPXB0qHbUzu76ujZUrmGttYerzMwv59sguXJnY9/ARYvntJiHdNq5Cap4AA+fYL232n2fMUVTpQV5I6/xsTym3bRLj/nKw0UiTTtOpgxjQZDbfltYCWEonfFLSfR5kV0eJIBbsX1y9R9r85GapNGN+Vdge7eElQ+6c3dY7BrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; arc=none smtp.client-ip=54.204.34.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+X-QQ-mid: bizesmtp89t1719367907t8caynoa
+X-QQ-Originating-IP: o5EFFgSftXUJSvErN3mz/fbPfezZaA++mEl7o5VbBmg=
+Received: from localhost.localdomain ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 26 Jun 2024 10:11:45 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 8070621123215097810
+From: tuhaowen <tuhaowen@uniontech.com>
+To: sudipm.mukherjee@gmail.com,
+	alexander.deucher@amd.com,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	huangbibo@uniontech.com,
+	wangyuli@uniontech.com,
+	tuhaowen <tuhaowen@uniontech.com>
+Subject: [PATCH] dev/parport: fix the array out-of-bounds risk
+Date: Wed, 26 Jun 2024 10:11:36 +0800
+Message-Id: <20240626021136.12282-1-tuhaowen@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v19 110/130] KVM: TDX: Handle TDX PV MMIO hypercall
-To: "Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "Yamahata, Isaku" <isaku.yamahata@intel.com>
-Cc: "Zhang, Tina" <tina.zhang@intel.com>,
- "seanjc@google.com" <seanjc@google.com>, "Yuan, Hang" <hang.yuan@intel.com>,
- "Huang, Kai" <kai.huang@intel.com>, "Chen, Bo2" <chen.bo@intel.com>,
- "sagis@google.com" <sagis@google.com>,
- "isaku.yamahata@gmail.com" <isaku.yamahata@gmail.com>,
- "Aktas, Erdem" <erdemaktas@google.com>,
- "Chatre, Reinette" <reinette.chatre@intel.com>,
- "pbonzini@redhat.com" <pbonzini@redhat.com>,
- "sean.j.christopherson@intel.com" <sean.j.christopherson@intel.com>
-References: <cover.1708933498.git.isaku.yamahata@intel.com>
- <a4421e0f2eafc17b4703c920936e32489d2382a3.1708933498.git.isaku.yamahata@intel.com>
- <560f3796-5a41-49fb-be6e-558bbe582996@linux.intel.com>
- <07e410205a9eb87ab7f364b7b3e808e4f7d15b7f.camel@intel.com>
-Content-Language: en-US
-From: Binbin Wu <binbin.wu@linux.intel.com>
-In-Reply-To: <07e410205a9eb87ab7f364b7b3e808e4f7d15b7f.camel@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtp:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
 
+The array buffer size is 20 bytes.
+When executing code in a 64-bit CPU environment, up to 42 bytes of
+data will be written into this array
+(the size of "%lu\t%lu\n" is 20 + 1 + 20 + 1).
 
+In fact, this line of code for 32-bit CPUs also has the risk of
+crossing the boundary, but it can exceed 2 bytes at most. With good
+luck, it is local variables that are damaged, and there are no serious
+consequences.
 
-On 6/26/2024 5:09 AM, Edgecombe, Rick P wrote:
-> On Tue, 2024-06-25 at 14:54 +0800, Binbin Wu wrote:
->>> +               gpa = vcpu->mmio_fragments[0].gpa;
->>> +               size = vcpu->mmio_fragments[0].len;
->> Since MMIO cross page boundary is not allowed according to the input
->> checks from TDVMCALL, these mmio_fragments[] is not needed.
->> Just use vcpu->run->mmio.phys_addr and vcpu->run->mmio.len?
-> Can we add a comment or something to that check, on why KVM doesn't handle it?
-> Is it documented somewhere in the TDX ABI that it is not expected to be
-> supported?
-TDX GHCI doesn't have such restriction.
+Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
+---
+ drivers/parport/procfs.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-According to the reply from Isaku in the below link, I think current 
-restriction is due to software implementation for simplicity.
-https://lore.kernel.org/kvm/20240419173423.GD3596705@ls.amr.corp.intel.com/
-+       /* Disallow MMIO crossing page boundary for simplicity. */
-+       if (((gpa + size - 1) ^ gpa) & PAGE_MASK)
-                 goto error;
-
-According to 
-https://lore.kernel.org/all/165550567214.4207.3700499203810719676.tip-bot2@tip-bot2/,
-for Linux as TDX guest, it rejects EPT violation #VEs that split pages 
-based on the reason "MMIO accesses are supposed to be naturally aligned 
-and therefore never cross page boundaries" to handle the 
-load_unaligned_zeropad() case.
-
-I am not sure "MMIO accesses are supposed to be naturally aligned" is 
-true for all other OS as TDX guest, though.
-
-Any suggestion?
+diff --git a/drivers/parport/procfs.c b/drivers/parport/procfs.c
+index bd388560ed59..9f501d5fa1ec 100644
+--- a/drivers/parport/procfs.c
++++ b/drivers/parport/procfs.c
+@@ -117,7 +117,7 @@ static int do_hardware_base_addr(struct ctl_table *table, int write,
+ 				 void *result, size_t *lenp, loff_t *ppos)
+ {
+ 	struct parport *port = (struct parport *)table->extra1;
+-	char buffer[20];
++	char buffer[64];
+ 	int len = 0;
+ 
+ 	if (*ppos) {
+-- 
+2.20.1
 
 
