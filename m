@@ -1,564 +1,361 @@
-Return-Path: <linux-kernel+bounces-231585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFE6C919A7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:16:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF3A8919A78
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 04C68B232F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:16:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6492E1F21CA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93CC1946A1;
-	Wed, 26 Jun 2024 22:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D390218C359;
+	Wed, 26 Jun 2024 22:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hw72Za3T"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZfikK9P/"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B1819309B;
-	Wed, 26 Jun 2024 22:15:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F40E21586C5;
+	Wed, 26 Jun 2024 22:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719440141; cv=none; b=ewmKZ5oGUA5VGZx6gHnbI1Zbkfr9lYZvgfbgA4R/tD7vwP+gH8gdmy+uueMSr7TTbracZ3g+SH11aV6hQuVa46ahOaQQxXddYhvm/Nt1ncQ0NMLwOHg8eELKBUXAJVDfAkmDqrTwfucy2FKuJeobKUrCSCwP3kcsfYPVlIEmtbs=
+	t=1719440120; cv=none; b=ftT+asCcTd20SKWg+dwDzGq43BWrz+DlYqaE0X3Vr4OH8piaWhWmh9BilcVK4RxlFtkNXosHWfWKZU/UgdBZONkL42kR5cop8pxYZ9RovchJ/WVpegIANa3phJHOJSqFeTS6ZLHWkPnhdTpDWW3V460v2YFxdziZZFF+lNoHYWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719440141; c=relaxed/simple;
-	bh=euD8H9nhTWjMYgaFrJyGcZpK5f7HZBYh2TkuafSVTXg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yrwoaw7uH9niDOIiH/gzshgg/kxyTPPeDfiG0k4lnvZyNEExGWSo/n4W6s4lF/Q70prdsBapshguUJHuEfEOXfLxtoDsGrW1NuPUMcWwbfm//ah7A4wkjSJS7mFv/eRcTVGXFlJX+Kf2met5k4gPegiW8PtFpt558ewm2DJjdo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Hw72Za3T; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1719440120; c=relaxed/simple;
+	bh=yXEwngalSsDQWZskz5bgHKX7+xjzyiQt0/Ekj9cTccc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=czGfjekH84L16AdCnEfsOdPwyGrlYZQ0bOd9ZavkQvQ2KgdrkabjMmXuG0fMJMJn4XGpuo/htrXQrPyPG269lk6X2Q97ieKrX/tFCh2uJyEw9QpugB8Zh0JVjVTgVhTSb0XNDxhNmVcDIFw/SDPUD8v7fzgcOrDRJbpLgQRhgTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZfikK9P/; arc=none smtp.client-ip=209.85.222.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42108856c33so7071055e9.1;
-        Wed, 26 Jun 2024 15:15:39 -0700 (PDT)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-79c05313eb5so222831185a.1;
+        Wed, 26 Jun 2024 15:15:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719440138; x=1720044938; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1719440118; x=1720044918; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=iYxBdR+wOFYbAoJ4+ERABgkCtVZGe8zC55wy5HLb/Rs=;
-        b=Hw72Za3TifFCvH12oNg4ClpsoVUU91WZg7cOPOiWf96ejFNMzDZzQ1dkvbBqsSd1WI
-         z8iy+7pla2lBf/ds1QfD1WbE+4iJDBSJgshXPDRLWF3b/26s3tgIPRDB/FdCEwubChHd
-         ju8kNgnfmCS4g0Kdl8q340QwEzkre+cv8/hf27Ci7c1jeJ5OfVcXE3lh+GvYDeSwzx4I
-         aoOTfQs4xnJX0eowIANBenlVouqe3C6U3OJ4rnutlB9uH+Rwl5ma353sLXAX1A6jmQew
-         Aruvi8Phptlkt4PHmaDsDb05Fioo9FSqbOl4n4IYDk+pbo56AqgFCpw9R/06BzHnEIxo
-         R8wg==
+        bh=6/I40GRdvoTwoeWprwuRkVeEl9Qmh04aeRKGM8dWU24=;
+        b=ZfikK9P/3WEtBGoVWL873iHnleAgQ/c7E36SjPo7lWf362OizAlD69dGwmTWafJtED
+         ciX5P0EkwESNUuRo7hBPTnExL44+fbMYS6nXL38RJ0EYxZUU9YCFSSf7e1HI75KowP86
+         1F+/Tsm2PrvEcYZj8bc7KmtBhJvuaCHce5gpuZ7pfykwIrKeWSML4tgpLgl6bVGzzsOE
+         5IQ6hBu6cCWGcNYTs0m2W+3qon+ojdsuP+Tfhlszc5rLOcCFYX9rdtmIudHWqFdZmTqg
+         zHlUspEHYUQwb0DLQBnLErjSYJFmLx+TS50HDCt9LjioghWYWeIwIE84kcmJO9afuQ1O
+         Fu6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719440138; x=1720044938;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719440118; x=1720044918;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=iYxBdR+wOFYbAoJ4+ERABgkCtVZGe8zC55wy5HLb/Rs=;
-        b=NZE5+gLLkUaGOrl6FwzC9gmD8l1nnSKp48gpiSmyPctVeV7+HsXk7mBWFqmZzeLU+9
-         1IeKRKZdXY2HmBbVhpGgLDR9w7XYHE0EcnUq4MLlj3RgkaB5a3cgmALyzpY40hnIO+6c
-         NbFxvzz6rxMK3YEfyj5iNJ0BtpmWLBlJ6jGlofgBfzf8I6miCtK5UJO/6x+ICqXQ/kqo
-         snDzlsxUS0U70Izi0Y1DdudZM0j2YbOSfuwMsTleY/5ZnOHXxEldYuB0GY0EJfDfB31D
-         ocNF7rkMQuLZRaJBhbia2417CIpMVUcJYbjvCUGWLPopIp/LeUbiU+d3C2POHrU7F6yf
-         sKGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRmBothi/eRyrXRhcx9cup8uMcQR2aTa7G7LABrDcnw7V3XcJ1sNUaYznPcI0z+fi2tZyCeojduO03c1ejWFotyyxJSyXna9hq6LkoqDuUIcN2PpwvNgmyhrpWhdwNz4CmjVEf/qwVaA==
-X-Gm-Message-State: AOJu0Yw0HhYTOKFMtZjDctQgU23UdgclJ96O0LuJy9q7PZq7FCawBP20
-	Xzw8A5xuDa51GJjR86h9x2UnSfvq056AUcP/4qkdWt8gMAjgG+Hl
-X-Google-Smtp-Source: AGHT+IGCpsc3L7v8ad+FUI3szjdD1TyNX6xJCCgi6F/r+g0P+IyHhf16nibF7z33+ipx6kZugvzl7A==
-X-Received: by 2002:a5d:6d04:0:b0:366:eadc:573f with SMTP id ffacd0b85a97d-367419135c5mr161449f8f.27.1719440137638;
-        Wed, 26 Jun 2024 15:15:37 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3674357c100sm39283f8f.21.2024.06.26.15.15.36
+        bh=6/I40GRdvoTwoeWprwuRkVeEl9Qmh04aeRKGM8dWU24=;
+        b=j0/FUCiwJ7ylT8Jy8OIxZNCZx2W7bwj5zcrgQPL5GYnD8Su2vza0wjQ1ozS5XvYEzN
+         GIlHFQ5Tjgr+QcoovEnxv/RrfeE8asrgPKOc/CQHKSAsGyrMQlZdWaECUbl9eJy02Qj8
+         4rxlI5hZRccQaBRDsePAGKUVObXpS/0B+Nvp8jVZWGVwlW7Ape/Kx8egkvODAilQBBJf
+         7ErzXD9IDOerFnbjqY0ltPLRCHOI39FOowTTJAmVFnsFHymj/yReNfuPSv1zCYmdbL4J
+         e71WAdgeDvNZlc5Ks7Zo+NbdwOg7HRNlm0zkzdYcUMdLO2Y4Y7lhLdUF/367v0ambXwa
+         niPA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2ccyiyNIrGHt2NNzE8TM8bbP4PhU2nZACN6UuPmkTAdD07xM3my9lgAZ4egzP2iuzFwyQpPWbbnJPVKczr9mjJ2bjqqRwwOzlgGzjXZ09q2dNQ1H4SuDK6IgPUdGNBSaPrDG5
+X-Gm-Message-State: AOJu0YyqDTV/DPdO65xMLPCWwavFwmrdvjbklcSTqnp//7JB3zEcL+x2
+	pQYt0T6rzOys6Wzb5Ovu3ImSQRreJA/8bUF8PTWxI604WzsSuW2a
+X-Google-Smtp-Source: AGHT+IHtzT6svptcReljKD9AI0oSTnWscFOSwRlBZ7nY4dn68lHsJLP+bO4Fjg27jtHkhu6D/q+sEg==
+X-Received: by 2002:a05:620a:2908:b0:797:9e22:767b with SMTP id af79cd13be357-79be6e54413mr1290075285a.29.1719440117668;
+        Wed, 26 Jun 2024 15:15:17 -0700 (PDT)
+Received: from fauth1-smtp.messagingengine.com (fauth1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-79d5c8b8a78sm1107285a.100.2024.06.26.15.15.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 15:15:37 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	linux-leds@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>,
-	Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH 3/3] leds: leds-lp55xx: Convert mutex lock/unlock to guard API
-Date: Thu, 27 Jun 2024 00:15:13 +0200
-Message-ID: <20240626221520.2846-3-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240626221520.2846-1-ansuelsmth@gmail.com>
-References: <20240626221520.2846-1-ansuelsmth@gmail.com>
+        Wed, 26 Jun 2024 15:15:16 -0700 (PDT)
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfauth.nyi.internal (Postfix) with ESMTP id 4B77F120006C;
+	Wed, 26 Jun 2024 18:15:16 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Wed, 26 Jun 2024 18:15:16 -0400
+X-ME-Sender: <xms:9JJ8Zr5sLK-zaGSp1-RetAaCVAO6mc6ljxs2xJ6qBPcC0WniQoVhvA>
+    <xme:9JJ8Zg4du8qe5t0mgilqoykFx4Fft8gZq5IYlnhnllqI5r_-6nFr0Q9cuCEtjCMxm
+    u6M44dhGF_lDKpT4g>
+X-ME-Received: <xmr:9JJ8ZidLDlIam5t75ZXWgL1BP0mVxF1X7pSBFLFYDwfc0N1QU6BpfzFKdg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtdefgddtkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeeuohhquhhn
+    ucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilhdrtghomheqnecuggftrfgrth
+    htvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdetheduudejvdektdekfeegvddv
+    hedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhp
+    vghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrd
+    hfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhnrghmvg
+X-ME-Proxy: <xmx:9JJ8ZsJ1ciatuvLa_Vb3ZTP6om45eHWLjt1TDMVAPjzoz_seDhIP5A>
+    <xmx:9JJ8ZvIzpDv4Ttv0lykpnX7DyR5iS-K38pN4gw17rRTxHlExcPv_-A>
+    <xmx:9JJ8ZlwmlCun8dP93AOFKC4EzbwxMkbMxdZXVBIcxCs_XqDABhlVRA>
+    <xmx:9JJ8ZrKO-D-qHekZ-iUZYKIb9wHuN1Z-nKDT6JtClxFnKolRq7KSRw>
+    <xmx:9JJ8ZqZ60X1anaU-JcGuLanxO4pd_kcHA7N1BvKSAetzGo6rzRtEYSUT>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 26 Jun 2024 18:15:15 -0400 (EDT)
+Date: Wed, 26 Jun 2024 15:15:14 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: "Paul E. McKenney" <paulmck@kernel.org>
+Cc: Carlos Llamas <cmllamas@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Bart Van Assche <bvanassche@acm.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	John Stultz <jstultz@google.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Zhiguo Niu <zhiguo.niu@unisoc.com>, stable@vger.kernel.org,
+	Xuewen Yan <xuewen.yan@unisoc.com>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v4][RESEND x4] lockdep: fix deadlock issue between
+ lockdep and rcu
+Message-ID: <ZnyS8rH8ZNirufcl@Boquns-Mac-mini.home>
+References: <20240514191547.3230887-1-cmllamas@google.com>
+ <20240620225436.3127927-1-cmllamas@google.com>
+ <b56d0b33-4224-4d54-ab90-e12857446ec8@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b56d0b33-4224-4d54-ab90-e12857446ec8@paulmck-laptop>
 
-Convert any entry of mutex lock/unlock to guard API and simplify code.
-With the use of guard API, handling for selttest functions can be
-greatly simplified.
+On Tue, Jun 25, 2024 at 07:38:15AM -0700, Paul E. McKenney wrote:
+> On Thu, Jun 20, 2024 at 10:54:34PM +0000, Carlos Llamas wrote:
+> > From: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> > 
+> > There is a deadlock scenario between lockdep and rcu when
+> > rcu nocb feature is enabled, just as following call stack:
+> 
+> I have pulled this into -rcu for further review and testing.
+> 
+> If someone else (for example, the lockdep folks) would like to take this:
+> 
+> Acked-by: Paul E. McKenney <paulmck@kernel.org>
+> 
 
-Suggested-by: Markus Elfring <Markus.Elfring@web.de>
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
- drivers/leds/leds-lp5521.c        |  5 +-
- drivers/leds/leds-lp5523.c        | 25 +++-----
- drivers/leds/leds-lp5562.c        | 13 +++--
- drivers/leds/leds-lp5569.c        | 18 ++----
- drivers/leds/leds-lp55xx-common.c | 94 +++++++++++++------------------
- 5 files changed, 64 insertions(+), 91 deletions(-)
+FWIW, I add this patch and another one [1] to my tree:
 
-diff --git a/drivers/leds/leds-lp5521.c b/drivers/leds/leds-lp5521.c
-index de0f8ea48eba..56d16ea18617 100644
---- a/drivers/leds/leds-lp5521.c
-+++ b/drivers/leds/leds-lp5521.c
-@@ -9,6 +9,7 @@
-  *          Milo(Woogyom) Kim <milo.kim@ti.com>
-  */
- 
-+#include <linux/cleanup.h>
- #include <linux/delay.h>
- #include <linux/firmware.h>
- #include <linux/i2c.h>
-@@ -185,9 +186,9 @@ static ssize_t lp5521_selftest(struct device *dev,
- 	struct lp55xx_chip *chip = led->chip;
- 	int ret;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
-+
- 	ret = lp5521_run_selftest(chip, buf);
--	mutex_unlock(&chip->lock);
- 
- 	return sysfs_emit(buf, "%s\n", ret ? "FAIL" : "OK");
- }
-diff --git a/drivers/leds/leds-lp5523.c b/drivers/leds/leds-lp5523.c
-index 095060533d1a..baa1a3ac1a56 100644
---- a/drivers/leds/leds-lp5523.c
-+++ b/drivers/leds/leds-lp5523.c
-@@ -9,6 +9,7 @@
-  *          Milo(Woogyom) Kim <milo.kim@ti.com>
-  */
- 
-+#include <linux/cleanup.h>
- #include <linux/delay.h>
- #include <linux/firmware.h>
- #include <linux/i2c.h>
-@@ -188,16 +189,16 @@ static ssize_t lp5523_selftest(struct device *dev,
- 	int ret, pos = 0;
- 	u8 status, adc, vdd, i;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
- 
- 	ret = lp55xx_read(chip, LP5523_REG_STATUS, &status);
- 	if (ret < 0)
--		goto fail;
-+		return sysfs_emit(buf, "FAIL\n");
- 
- 	/* Check that ext clock is really in use if requested */
- 	if (pdata->clock_mode == LP55XX_CLOCK_EXT) {
- 		if  ((status & LP5523_EXT_CLK_USED) == 0)
--			goto fail;
-+			return sysfs_emit(buf, "FAIL\n");
- 	}
- 
- 	/* Measure VDD (i.e. VBAT) first (channel 16 corresponds to VDD) */
-@@ -205,14 +206,14 @@ static ssize_t lp5523_selftest(struct device *dev,
- 	usleep_range(3000, 6000); /* ADC conversion time is typically 2.7 ms */
- 	ret = lp55xx_read(chip, LP5523_REG_STATUS, &status);
- 	if (ret < 0)
--		goto fail;
-+		return sysfs_emit(buf, "FAIL\n");
- 
- 	if (!(status & LP5523_LEDTEST_DONE))
- 		usleep_range(3000, 6000); /* Was not ready. Wait little bit */
- 
- 	ret = lp55xx_read(chip, LP5523_REG_LED_TEST_ADC, &vdd);
- 	if (ret < 0)
--		goto fail;
-+		return sysfs_emit(buf, "FAIL\n");
- 
- 	vdd--;	/* There may be some fluctuation in measurement */
- 
-@@ -235,14 +236,14 @@ static ssize_t lp5523_selftest(struct device *dev,
- 		usleep_range(3000, 6000);
- 		ret = lp55xx_read(chip, LP5523_REG_STATUS, &status);
- 		if (ret < 0)
--			goto fail;
-+			return sysfs_emit(buf, "FAIL\n");
- 
- 		if (!(status & LP5523_LEDTEST_DONE))
- 			usleep_range(3000, 6000); /* Was not ready. Wait. */
- 
- 		ret = lp55xx_read(chip, LP5523_REG_LED_TEST_ADC, &adc);
- 		if (ret < 0)
--			goto fail;
-+			return sysfs_emit(buf, "FAIL\n");
- 
- 		if (adc >= vdd || adc < LP5523_ADC_SHORTCIRC_LIM)
- 			pos += sysfs_emit_at(buf, pos, "LED %d FAIL\n",
-@@ -256,16 +257,8 @@ static ssize_t lp5523_selftest(struct device *dev,
- 			     led->led_current);
- 		led++;
- 	}
--	if (pos == 0)
--		pos = sysfs_emit(buf, "OK\n");
--	goto release_lock;
--fail:
--	pos = sysfs_emit(buf, "FAIL\n");
- 
--release_lock:
--	mutex_unlock(&chip->lock);
--
--	return pos;
-+	return pos == 0 ? sysfs_emit(buf, "OK\n") : pos;
- }
- 
- LP55XX_DEV_ATTR_ENGINE_MODE(1);
-diff --git a/drivers/leds/leds-lp5562.c b/drivers/leds/leds-lp5562.c
-index 6ba5dbb9cace..69a4e3d5a126 100644
---- a/drivers/leds/leds-lp5562.c
-+++ b/drivers/leds/leds-lp5562.c
-@@ -7,6 +7,7 @@
-  * Author: Milo(Woogyom) Kim <milo.kim@ti.com>
-  */
- 
-+#include <linux/cleanup.h>
- #include <linux/delay.h>
- #include <linux/firmware.h>
- #include <linux/i2c.h>
-@@ -171,9 +172,9 @@ static int lp5562_led_brightness(struct lp55xx_led *led)
- 	};
- 	int ret;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
-+
- 	ret = lp55xx_write(chip, addr[led->chan_nr], led->brightness);
--	mutex_unlock(&chip->lock);
- 
- 	return ret;
- }
-@@ -268,9 +269,9 @@ static ssize_t lp5562_store_pattern(struct device *dev,
- 	if (mode > num_patterns || !ptn)
- 		return -EINVAL;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
-+
- 	ret = lp5562_run_predef_led_pattern(chip, mode);
--	mutex_unlock(&chip->lock);
- 
- 	if (ret)
- 		return ret;
-@@ -320,9 +321,9 @@ static ssize_t lp5562_store_engine_mux(struct device *dev,
- 		return -EINVAL;
- 	}
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
-+
- 	lp55xx_update_bits(chip, LP5562_REG_ENG_SEL, mask, val);
--	mutex_unlock(&chip->lock);
- 
- 	return len;
- }
-diff --git a/drivers/leds/leds-lp5569.c b/drivers/leds/leds-lp5569.c
-index e5e7e61c8916..dc8efb25b78e 100644
---- a/drivers/leds/leds-lp5569.c
-+++ b/drivers/leds/leds-lp5569.c
-@@ -4,6 +4,7 @@
-  */
- 
- #include <linux/bitfield.h>
-+#include <linux/cleanup.h>
- #include <linux/delay.h>
- #include <linux/firmware.h>
- #include <linux/i2c.h>
-@@ -396,17 +397,17 @@ static ssize_t lp5569_selftest(struct device *dev,
- 	struct lp55xx_chip *chip = led->chip;
- 	int i, pos = 0;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
- 
- 	/* Test LED Open */
- 	pos = lp5569_led_open_test(led, buf);
- 	if (pos < 0)
--		goto fail;
-+		return sprintf(buf, "FAIL\n");
- 
- 	/* Test LED Shorted */
- 	pos += lp5569_led_short_test(led, buf);
- 	if (pos < 0)
--		goto fail;
-+		return sprintf(buf, "FAIL\n");
- 
- 	for (i = 0; i < chip->pdata->num_channels; i++) {
- 		/* Restore current */
-@@ -419,16 +420,7 @@ static ssize_t lp5569_selftest(struct device *dev,
- 		led++;
- 	}
- 
--	if (pos == 0)
--		pos = sysfs_emit(buf, "OK\n");
--	goto release_lock;
--fail:
--	pos = sysfs_emit(buf, "FAIL\n");
--
--release_lock:
--	mutex_unlock(&chip->lock);
--
--	return pos;
-+	return pos == 0 ? sysfs_emit(buf, "OK\n") : pos;
- }
- 
- LP55XX_DEV_ATTR_ENGINE_MODE(1);
-diff --git a/drivers/leds/leds-lp55xx-common.c b/drivers/leds/leds-lp55xx-common.c
-index 1b71f512206d..f8cf5c0e983a 100644
---- a/drivers/leds/leds-lp55xx-common.c
-+++ b/drivers/leds/leds-lp55xx-common.c
-@@ -10,6 +10,7 @@
-  */
- 
- #include <linux/bitfield.h>
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
- #include <linux/firmware.h>
-@@ -272,10 +273,10 @@ int lp55xx_led_brightness(struct lp55xx_led *led)
- 	const struct lp55xx_device_config *cfg = chip->cfg;
- 	int ret;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
-+
- 	ret = lp55xx_write(chip, cfg->reg_led_pwm_base.addr + led->chan_nr,
- 			   led->brightness);
--	mutex_unlock(&chip->lock);
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(lp55xx_led_brightness);
-@@ -287,7 +288,8 @@ int lp55xx_multicolor_brightness(struct lp55xx_led *led)
- 	int ret;
- 	int i;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
-+
- 	for (i = 0; i < led->mc_cdev.num_colors; i++) {
- 		ret = lp55xx_write(chip,
- 				   cfg->reg_led_pwm_base.addr +
-@@ -296,7 +298,7 @@ int lp55xx_multicolor_brightness(struct lp55xx_led *led)
- 		if (ret)
- 			break;
- 	}
--	mutex_unlock(&chip->lock);
-+
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(lp55xx_multicolor_brightness);
-@@ -404,9 +406,9 @@ static ssize_t led_current_store(struct device *dev,
- 	if (!chip->cfg->set_led_current)
- 		return len;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
-+
- 	chip->cfg->set_led_current(led, (u8)curr);
--	mutex_unlock(&chip->lock);
- 
- 	return len;
- }
-@@ -541,14 +543,12 @@ static void lp55xx_firmware_loaded(const struct firmware *fw, void *context)
- 	}
- 
- 	/* handling firmware data is chip dependent */
--	mutex_lock(&chip->lock);
--
--	chip->engines[idx - 1].mode = LP55XX_ENGINE_LOAD;
--	chip->fw = fw;
--	if (chip->cfg->firmware_cb)
--		chip->cfg->firmware_cb(chip);
--
--	mutex_unlock(&chip->lock);
-+	scoped_guard(mutex, &chip->lock) {
-+		chip->engines[idx - 1].mode = LP55XX_ENGINE_LOAD;
-+		chip->fw = fw;
-+		if (chip->cfg->firmware_cb)
-+			chip->cfg->firmware_cb(chip);
-+	}
- 
- 	/* firmware should be released for other channel use */
- 	release_firmware(chip->fw);
-@@ -592,10 +592,10 @@ static ssize_t select_engine_store(struct device *dev,
- 	case LP55XX_ENGINE_1:
- 	case LP55XX_ENGINE_2:
- 	case LP55XX_ENGINE_3:
--		mutex_lock(&chip->lock);
--		chip->engine_idx = val;
--		ret = lp55xx_request_firmware(chip);
--		mutex_unlock(&chip->lock);
-+		scoped_guard(mutex, &chip->lock) {
-+			chip->engine_idx = val;
-+			ret = lp55xx_request_firmware(chip);
-+		}
- 		break;
- 	default:
- 		dev_err(dev, "%lu: invalid engine index. (1, 2, 3)\n", val);
-@@ -634,9 +634,9 @@ static ssize_t run_engine_store(struct device *dev,
- 		return len;
- 	}
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
-+
- 	lp55xx_run_engine(chip, true);
--	mutex_unlock(&chip->lock);
- 
- 	return len;
- }
-@@ -673,7 +673,7 @@ ssize_t lp55xx_store_engine_mode(struct device *dev,
- 	const struct lp55xx_device_config *cfg = chip->cfg;
- 	struct lp55xx_engine *engine = &chip->engines[nr - 1];
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
- 
- 	chip->engine_idx = nr;
- 
-@@ -689,8 +689,6 @@ ssize_t lp55xx_store_engine_mode(struct device *dev,
- 		engine->mode = LP55XX_ENGINE_DISABLED;
- 	}
- 
--	mutex_unlock(&chip->lock);
--
- 	return len;
- }
- EXPORT_SYMBOL_GPL(lp55xx_store_engine_mode);
-@@ -703,14 +701,12 @@ ssize_t lp55xx_store_engine_load(struct device *dev,
- 	struct lp55xx_chip *chip = led->chip;
- 	int ret;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
- 
- 	chip->engine_idx = nr;
- 	lp55xx_load_engine(chip);
- 	ret = lp55xx_update_program_memory(chip, buf, len);
- 
--	mutex_unlock(&chip->lock);
--
- 	return ret;
- }
- EXPORT_SYMBOL_GPL(lp55xx_store_engine_load);
-@@ -804,21 +800,17 @@ ssize_t lp55xx_store_engine_leds(struct device *dev,
- 	if (lp55xx_mux_parse(chip, buf, &mux, len))
- 		return -EINVAL;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
- 
- 	chip->engine_idx = nr;
--	ret = -EINVAL;
- 
- 	if (engine->mode != LP55XX_ENGINE_LOAD)
--		goto leave;
-+		return -EINVAL;
- 
- 	if (lp55xx_load_mux(chip, mux, nr))
--		goto leave;
-+		return -EINVAL;
- 
--	ret = len;
--leave:
--	mutex_unlock(&chip->lock);
--	return ret;
-+	return len;
- }
- EXPORT_SYMBOL_GPL(lp55xx_store_engine_leds);
- 
-@@ -832,9 +824,9 @@ ssize_t lp55xx_show_master_fader(struct device *dev,
- 	int ret;
- 	u8 val;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
-+
- 	ret = lp55xx_read(chip, cfg->reg_master_fader_base.addr + nr - 1, &val);
--	mutex_unlock(&chip->lock);
- 
- 	return ret ? ret : sysfs_emit(buf, "%u\n", val);
- }
-@@ -856,10 +848,10 @@ ssize_t lp55xx_store_master_fader(struct device *dev,
- 	if (val > 0xff)
- 		return -EINVAL;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
-+
- 	ret = lp55xx_write(chip, cfg->reg_master_fader_base.addr + nr - 1,
- 			   (u8)val);
--	mutex_unlock(&chip->lock);
- 
- 	return ret ? ret : len;
- }
-@@ -875,25 +867,22 @@ ssize_t lp55xx_show_master_fader_leds(struct device *dev,
- 	int i, ret, pos = 0;
- 	u8 val;
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
- 
- 	for (i = 0; i < cfg->max_channel; i++) {
- 		ret = lp55xx_read(chip, cfg->reg_led_ctrl_base.addr + i, &val);
- 		if (ret)
--			goto leave;
-+			return ret;
- 
- 		val = FIELD_GET(LP55xx_FADER_MAPPING_MASK, val);
- 		if (val > FIELD_MAX(LP55xx_FADER_MAPPING_MASK)) {
--			ret = -EINVAL;
--			goto leave;
-+			return -EINVAL;
- 		}
- 		buf[pos++] = val + '0';
- 	}
- 	buf[pos++] = '\n';
--	ret = pos;
--leave:
--	mutex_unlock(&chip->lock);
--	return ret;
-+
-+	return pos;
- }
- EXPORT_SYMBOL_GPL(lp55xx_show_master_fader_leds);
- 
-@@ -909,7 +898,7 @@ ssize_t lp55xx_store_master_fader_leds(struct device *dev,
- 
- 	n = min_t(int, len, cfg->max_channel);
- 
--	mutex_lock(&chip->lock);
-+	guard(mutex, &chip->lock);
- 
- 	for (i = 0; i < n; i++) {
- 		if (buf[i] >= '0' && buf[i] <= '3') {
-@@ -919,16 +908,13 @@ ssize_t lp55xx_store_master_fader_leds(struct device *dev,
- 						 LP55xx_FADER_MAPPING_MASK,
- 						 val);
- 			if (ret)
--				goto leave;
-+				return ret;
- 		} else {
--			ret = -EINVAL;
--			goto leave;
-+			return -EINVAL;
- 		}
- 	}
--	ret = len;
--leave:
--	mutex_unlock(&chip->lock);
--	return ret;
-+
-+	return len;
- }
- EXPORT_SYMBOL_GPL(lp55xx_store_master_fader_leds);
- 
--- 
-2.45.1
+	git://git.kernel.org/pub/scm/linux/kernel/git/boqun/linux.git lockdep
 
+(based on today's tip/locking/core)
+
+I figured I have time to handle lockdep-only patches, which shouldn't
+be a lot. So Ingo & Peter, I'm happy to help. If you need me to pick up
+lockdep patches and send a PR against tip/master or tip/locking/core,
+please let me know.
+
+Regards,
+Boqun
+
+[1]: https://lore.kernel.org/all/20240528120008.403511-2-thorsten.blum@toblux.com/
+
+> >      rcuop/x
+> > -000|queued_spin_lock_slowpath(lock = 0xFFFFFF817F2A8A80, val = ?)
+> > -001|queued_spin_lock(inline) // try to hold nocb_gp_lock
+> > -001|do_raw_spin_lock(lock = 0xFFFFFF817F2A8A80)
+> > -002|__raw_spin_lock_irqsave(inline)
+> > -002|_raw_spin_lock_irqsave(lock = 0xFFFFFF817F2A8A80)
+> > -003|wake_nocb_gp_defer(inline)
+> > -003|__call_rcu_nocb_wake(rdp = 0xFFFFFF817F30B680)
+> > -004|__call_rcu_common(inline)
+> > -004|call_rcu(head = 0xFFFFFFC082EECC28, func = ?)
+> > -005|call_rcu_zapped(inline)
+> > -005|free_zapped_rcu(ch = ?)// hold graph lock
+> > -006|rcu_do_batch(rdp = 0xFFFFFF817F245680)
+> > -007|nocb_cb_wait(inline)
+> > -007|rcu_nocb_cb_kthread(arg = 0xFFFFFF817F245680)
+> > -008|kthread(_create = 0xFFFFFF80803122C0)
+> > -009|ret_from_fork(asm)
+> > 
+> >      rcuop/y
+> > -000|queued_spin_lock_slowpath(lock = 0xFFFFFFC08291BBC8, val = 0)
+> > -001|queued_spin_lock()
+> > -001|lockdep_lock()
+> > -001|graph_lock() // try to hold graph lock
+> > -002|lookup_chain_cache_add()
+> > -002|validate_chain()
+> > -003|lock_acquire
+> > -004|_raw_spin_lock_irqsave(lock = 0xFFFFFF817F211D80)
+> > -005|lock_timer_base(inline)
+> > -006|mod_timer(inline)
+> > -006|wake_nocb_gp_defer(inline)// hold nocb_gp_lock
+> > -006|__call_rcu_nocb_wake(rdp = 0xFFFFFF817F2A8680)
+> > -007|__call_rcu_common(inline)
+> > -007|call_rcu(head = 0xFFFFFFC0822E0B58, func = ?)
+> > -008|call_rcu_hurry(inline)
+> > -008|rcu_sync_call(inline)
+> > -008|rcu_sync_func(rhp = 0xFFFFFFC0822E0B58)
+> > -009|rcu_do_batch(rdp = 0xFFFFFF817F266680)
+> > -010|nocb_cb_wait(inline)
+> > -010|rcu_nocb_cb_kthread(arg = 0xFFFFFF817F266680)
+> > -011|kthread(_create = 0xFFFFFF8080363740)
+> > -012|ret_from_fork(asm)
+> > 
+> > rcuop/x and rcuop/y are rcu nocb threads with the same nocb gp thread.
+> > This patch release the graph lock before lockdep call_rcu.
+> > 
+> > Fixes: a0b0fd53e1e6 ("locking/lockdep: Free lock classes that are no longer in use")
+> > Cc: stable@vger.kernel.org
+> > Cc: Boqun Feng <boqun.feng@gmail.com>
+> > Cc: Waiman Long <longman@redhat.com>
+> > Cc: Carlos Llamas <cmllamas@google.com>
+> > Cc: Bart Van Assche <bvanassche@acm.org>
+> > Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> > Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> > Reviewed-by: Boqun Feng <boqun.feng@gmail.com>
+> > Reviewed-by: Waiman Long <longman@redhat.com>
+> > Reviewed-by: Carlos Llamas <cmllamas@google.com>
+> > Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+> > Signed-off-by: Carlos Llamas <cmllamas@google.com>
+> > ---
+> >  kernel/locking/lockdep.c | 48 ++++++++++++++++++++++++++--------------
+> >  1 file changed, 32 insertions(+), 16 deletions(-)
+> > 
+> > diff --git a/kernel/locking/lockdep.c b/kernel/locking/lockdep.c
+> > index 151bd3de5936..3468d8230e5f 100644
+> > --- a/kernel/locking/lockdep.c
+> > +++ b/kernel/locking/lockdep.c
+> > @@ -6184,25 +6184,27 @@ static struct pending_free *get_pending_free(void)
+> >  static void free_zapped_rcu(struct rcu_head *cb);
+> >  
+> >  /*
+> > - * Schedule an RCU callback if no RCU callback is pending. Must be called with
+> > - * the graph lock held.
+> > - */
+> > -static void call_rcu_zapped(struct pending_free *pf)
+> > +* See if we need to queue an RCU callback, must called with
+> > +* the lockdep lock held, returns false if either we don't have
+> > +* any pending free or the callback is already scheduled.
+> > +* Otherwise, a call_rcu() must follow this function call.
+> > +*/
+> > +static bool prepare_call_rcu_zapped(struct pending_free *pf)
+> >  {
+> >  	WARN_ON_ONCE(inside_selftest());
+> >  
+> >  	if (list_empty(&pf->zapped))
+> > -		return;
+> > +		return false;
+> >  
+> >  	if (delayed_free.scheduled)
+> > -		return;
+> > +		return false;
+> >  
+> >  	delayed_free.scheduled = true;
+> >  
+> >  	WARN_ON_ONCE(delayed_free.pf + delayed_free.index != pf);
+> >  	delayed_free.index ^= 1;
+> >  
+> > -	call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
+> > +	return true;
+> >  }
+> >  
+> >  /* The caller must hold the graph lock. May be called from RCU context. */
+> > @@ -6228,6 +6230,7 @@ static void free_zapped_rcu(struct rcu_head *ch)
+> >  {
+> >  	struct pending_free *pf;
+> >  	unsigned long flags;
+> > +	bool need_callback;
+> >  
+> >  	if (WARN_ON_ONCE(ch != &delayed_free.rcu_head))
+> >  		return;
+> > @@ -6239,14 +6242,18 @@ static void free_zapped_rcu(struct rcu_head *ch)
+> >  	pf = delayed_free.pf + (delayed_free.index ^ 1);
+> >  	__free_zapped_classes(pf);
+> >  	delayed_free.scheduled = false;
+> > +	need_callback =
+> > +		prepare_call_rcu_zapped(delayed_free.pf + delayed_free.index);
+> > +	lockdep_unlock();
+> > +	raw_local_irq_restore(flags);
+> >  
+> >  	/*
+> > -	 * If there's anything on the open list, close and start a new callback.
+> > -	 */
+> > -	call_rcu_zapped(delayed_free.pf + delayed_free.index);
+> > +	* If there's pending free and its callback has not been scheduled,
+> > +	* queue an RCU callback.
+> > +	*/
+> > +	if (need_callback)
+> > +		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
+> >  
+> > -	lockdep_unlock();
+> > -	raw_local_irq_restore(flags);
+> >  }
+> >  
+> >  /*
+> > @@ -6286,6 +6293,7 @@ static void lockdep_free_key_range_reg(void *start, unsigned long size)
+> >  {
+> >  	struct pending_free *pf;
+> >  	unsigned long flags;
+> > +	bool need_callback;
+> >  
+> >  	init_data_structures_once();
+> >  
+> > @@ -6293,10 +6301,11 @@ static void lockdep_free_key_range_reg(void *start, unsigned long size)
+> >  	lockdep_lock();
+> >  	pf = get_pending_free();
+> >  	__lockdep_free_key_range(pf, start, size);
+> > -	call_rcu_zapped(pf);
+> > +	need_callback = prepare_call_rcu_zapped(pf);
+> >  	lockdep_unlock();
+> >  	raw_local_irq_restore(flags);
+> > -
+> > +	if (need_callback)
+> > +		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
+> >  	/*
+> >  	 * Wait for any possible iterators from look_up_lock_class() to pass
+> >  	 * before continuing to free the memory they refer to.
+> > @@ -6390,6 +6399,7 @@ static void lockdep_reset_lock_reg(struct lockdep_map *lock)
+> >  	struct pending_free *pf;
+> >  	unsigned long flags;
+> >  	int locked;
+> > +	bool need_callback = false;
+> >  
+> >  	raw_local_irq_save(flags);
+> >  	locked = graph_lock();
+> > @@ -6398,11 +6408,13 @@ static void lockdep_reset_lock_reg(struct lockdep_map *lock)
+> >  
+> >  	pf = get_pending_free();
+> >  	__lockdep_reset_lock(pf, lock);
+> > -	call_rcu_zapped(pf);
+> > +	need_callback = prepare_call_rcu_zapped(pf);
+> >  
+> >  	graph_unlock();
+> >  out_irq:
+> >  	raw_local_irq_restore(flags);
+> > +	if (need_callback)
+> > +		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
+> >  }
+> >  
+> >  /*
+> > @@ -6446,6 +6458,7 @@ void lockdep_unregister_key(struct lock_class_key *key)
+> >  	struct pending_free *pf;
+> >  	unsigned long flags;
+> >  	bool found = false;
+> > +	bool need_callback = false;
+> >  
+> >  	might_sleep();
+> >  
+> > @@ -6466,11 +6479,14 @@ void lockdep_unregister_key(struct lock_class_key *key)
+> >  	if (found) {
+> >  		pf = get_pending_free();
+> >  		__lockdep_free_key_range(pf, key, 1);
+> > -		call_rcu_zapped(pf);
+> > +		need_callback = prepare_call_rcu_zapped(pf);
+> >  	}
+> >  	lockdep_unlock();
+> >  	raw_local_irq_restore(flags);
+> >  
+> > +	if (need_callback)
+> > +		call_rcu(&delayed_free.rcu_head, free_zapped_rcu);
+> > +
+> >  	/* Wait until is_dynamic_key() has finished accessing k->hash_entry. */
+> >  	synchronize_rcu();
+> >  }
+> > -- 
+> > 2.45.2.741.gdbec12cfda-goog
+> > 
 
