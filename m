@@ -1,205 +1,165 @@
-Return-Path: <linux-kernel+bounces-229861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99EDE917544
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:39:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B47EF917547
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:40:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53A9C28209B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:39:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B8A42817B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C1ED79E5;
-	Wed, 26 Jun 2024 00:39:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DE779EF;
+	Wed, 26 Jun 2024 00:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eRWwrH+T"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fYChODfI"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E57179CE
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:39:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95A2522A;
+	Wed, 26 Jun 2024 00:40:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719362348; cv=none; b=gLSAzvTIupDHNn4ynam+z+NF7tauwS74g49PE3oqXBj3qv8I/UDnZGLEuKXIxXZm4HThhOj9yliWnYI4MRaHFhKzuqTXxN5pvHkDSLp5C1nUS5oV4iKdKsubEqzpwBnQjC8I0nolTcryuTt3o7PmoFgN7xdKAIjd/dnGIvsUJCI=
+	t=1719362402; cv=none; b=uhTHLi2alXJ6cjQWuIdag9VV+Z77WPDMGhqNFFznkdGmyEquKS51DOtOSPbZ1irPjtNNf2Qj0q4H4J8r52OSek6HTr+nXt7JTM/7hgl+9KKYbZHoLVtAaOiHm4T6SztQ2NXLeMBuJqBAadkrB0R+vqTMTBqGV0VOcPVXpPBnAfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719362348; c=relaxed/simple;
-	bh=vph3snsBVbClZGIZjxHgwbgS1GlkN+zSDa1EVBnWpbQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XEFXpPxAfbJUyC+wLBs0QjqMkGc51vRmQLhMDoBxyS19mkMuUpCspzEX75GhMabYlmn7nAZpAYXgsqTEp+SzJ15ltZXW1hhS5bpvDEdc+DlbUiOksaf5HEMwDa81skVu1GWtwuho5V+0KSGk3M5vbErynpiIXwOuIn6x/5EwoTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eRWwrH+T; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719362346;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m7cosekoPKXkwrvYHFRpUSibVa04zhxh3op5EgjNV2M=;
-	b=eRWwrH+TL69cofXtP9qbkfuft55T8GgtN2Bi449Y8A43mUuOYuBk8ry2UkZ7oGNN/g7Zz9
-	JCdlLiyl42O2XagHiJ1Ja0Ye50t+dg5MSlbEQ/njaRMl1qgxiAOgxlSoXMX6gSs55wbuzf
-	fFJPE0okuCeHX7ZdA/ZJccbJvEZzAaE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-487-69KgG4rkNx2VmvWPFkVUAQ-1; Tue,
- 25 Jun 2024 20:39:03 -0400
-X-MC-Unique: 69KgG4rkNx2VmvWPFkVUAQ-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 54DA419560B2;
-	Wed, 26 Jun 2024 00:39:02 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.8])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E4B381956087;
-	Wed, 26 Jun 2024 00:39:00 +0000 (UTC)
-Date: Wed, 26 Jun 2024 08:38:56 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Uladzislau Rezki <urezki@gmail.com>
-Cc: Nick Bowler <nbowler@draconx.ca>, Hailong Liu <hailong.liu@oppo.com>,
-	linux-kernel@vger.kernel.org,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	linux-mm@kvack.org, sparclinux@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
-Message-ID: <ZntjIE6msJbF8zTa@MiWiFi-R3L-srv>
-References: <Znljtv5n-6EBgpsF@pc636>
- <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
- <ZnqcuKt2qrR-wmH3@pc636>
- <ZnqspTVl/76jM9WD@MiWiFi-R3L-srv>
- <Znq6tEtCgB6QnnJH@pc638.lan>
- <Znq/8/HAc/0p6Ja0@MiWiFi-R3L-srv>
- <ZnrjZRq5-_hemrbD@pc636>
- <ZnrnADHvOiNcZv9t@MiWiFi-R3L-srv>
- <Znr1IQ1mssdNNXbv@pc638.lan>
- <ZnsjIB2byIxSgbjc@pc636>
+	s=arc-20240116; t=1719362402; c=relaxed/simple;
+	bh=nAAboattMDWw0GSvPKDB9G5XT9DIggzKYBOB4CVd2TU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=nOlq/biBW7XLz34WQTPiIeJHzP57K6Z7hyKqhmmnxCev+t9pw3/39GoGTjpYu07tzqyox39QDicOZU/rP3yutXBzzOMLCoqwPef4DLk707fc1NL/VEh1nv8R3W9sV0VS4VQLal+BX1eyPoF6VK3m7T7psXMWKD6oI7S/ykjhOpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fYChODfI; arc=none smtp.client-ip=209.85.167.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3c9d70d93dbso4080693b6e.3;
+        Tue, 25 Jun 2024 17:40:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719362400; x=1719967200; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NybrsZoQ5NkZHnc8LjAToGVxa3rG+ocUIRAyW06Tmpw=;
+        b=fYChODfIfLfQ5C+TUa5AE4qWo8FFGQU0jYjB15GWEm0VORPEynLq7nUGqZW+A5/Sw5
+         PBZCvLEQI1o2Pxy/HGwfN1QvlI0oYa7/R4R7zfv587INnFrMe1UO2qkh5jjMjsp+Mymj
+         uV5oZpHXg3dCODDD/jaZPawzf8wlFajFiBJJeCCze2XLy2lk2IvNzj4TaLttRwrKrHhY
+         sGsP2qwXpNFkJOSBTeMAj+waZ4yFVfEFwOhaggigRTUNerBotRzlWADhjOFL7PAP6TDf
+         Rvavl5CD0T2+qaS4QkSPqy9YN8jvWa/+QfrL2g1FiEFcbizU0wSdya513k7UbSvGkfPD
+         bggw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719362400; x=1719967200;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NybrsZoQ5NkZHnc8LjAToGVxa3rG+ocUIRAyW06Tmpw=;
+        b=T4jBiFbtIseJBeg1Rfp0tBouXWwXhP/Z04IbE5oIBcnAG6GbQjg66YbTDL9FPxh9rS
+         syn92RIGxuU7VpifQrZdrQuqdGHAVvp0RAqUNoxpatlPzW89zXiQwamv5R0rEpDX5B1g
+         /Kn0PnGjHfXaBHOJPoajnR4azWNl5BBtdPObGBBy4HE8PYtBUbvUzlFBko7JC5CiaObQ
+         amAaLzS+sTsO0zSeU0BYZnyZVBYTIs6H7h5TqGMzEOp8fFGpt7IuDpIV4q6URqS/2N+z
+         Yet+3xZ83f0mLq2XsmCiv/19roNvjme8zJsjw+sISX1Xn+dCqJMryvAYy3Wht5Bl4U1p
+         PHHw==
+X-Forwarded-Encrypted: i=1; AJvYcCUVBhbOGRKUJDCCOea/ownB54vZrimHMtTm/smB4a/f0KZ5p5HYnly2oQRYiulV0cPeWyj3s4foEVStyX1qdN6rM7iC9zYtpnkEtlus
+X-Gm-Message-State: AOJu0YyKv4I1K1A1NdAiE4TtNwKDXFXAb3ASKNXGYAkNXrA2umVKtQs9
+	2a9v2fY6sFNfYbGDVrqUV6c7LTwkoP3llPTPgqD++Z5jXkAZeZg5TtNrY92u
+X-Google-Smtp-Source: AGHT+IEDxX77IH30jnhxhvrn9DWCCLLvNhcTnqWg467fsBjFOyek1YwH6WVzUfuJ08rer781cBT1Fg==
+X-Received: by 2002:a05:6808:144c:b0:3d2:2833:73c6 with SMTP id 5614622812f47-3d545a7c3femr9871690b6e.39.1719362398777;
+        Tue, 25 Jun 2024 17:39:58 -0700 (PDT)
+Received: from [127.0.1.1] (107-197-105-120.lightspeed.sntcca.sbcglobal.net. [107.197.105.120])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3d5345a6016sm2124731b6e.37.2024.06.25.17.39.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 17:39:58 -0700 (PDT)
+From: Pei Li <peili.dev@gmail.com>
+Date: Tue, 25 Jun 2024 17:39:56 -0700
+Subject: [PATCH] bcachefs: Fix kmalloc bug in __snapshot_t_mut
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnsjIB2byIxSgbjc@pc636>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240625-bug3-v1-1-366d4884ab71@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAFtje2YC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMyNT3aTSdGNdSzMzg2SzJHOzNCMDJaDSgqLUtMwKsDHRsbW1AA/vk2J
+ WAAAA
+To: Kent Overstreet <kent.overstreet@linux.dev>, 
+ Brian Foster <bfoster@redhat.com>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org, 
+ syzkaller-bugs@googlegroups.com, 
+ syzbot+770e99b65e26fa023ab1@syzkaller.appspotmail.com, 
+ Pei Li <peili.dev@gmail.com>
+X-Mailer: b4 0.15-dev-13183
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719362397; l=2675;
+ i=peili.dev@gmail.com; s=20240625; h=from:subject:message-id;
+ bh=nAAboattMDWw0GSvPKDB9G5XT9DIggzKYBOB4CVd2TU=;
+ b=qt+kmpW/VwTQ4Y1GcMuWI72KjMC5aBkQ15pKvsO6jyM9+L1I39sWcxOFaLF7KqF3Ww1vG7hAX
+ CIi1MX+P/CgAh6sG8pFf81iNL4z6t3IFbGC2gbHOjiqDGWOvmaHv23H
+X-Developer-Key: i=peili.dev@gmail.com; a=ed25519;
+ pk=I6GWb2uGzELGH5iqJTSK9VwaErhEZ2z2abryRD6a+4Q=
 
-On 06/25/24 at 10:05pm, Uladzislau Rezki wrote:
-> > > > > > /**
-> > > > > >  * cpumask_next - get the next cpu in a cpumask
-> > > > > >  * @n: the cpu prior to the place to search (i.e. return will be > @n)
-> > > > > >  * @srcp: the cpumask pointer
-> > > > > >  *
-> > > > > >  * Return: >= nr_cpu_ids if no further cpus set.
-> > > > > 
-> > > > > Ah, I got what you mean. In the vbq case, it may not have chance to get
-> > > > > a return number as nr_cpu_ids. Becuase the hashed index limits the
-> > > > > range to [0, nr_cpu_ids-1], and cpu_possible(index) will guarantee it
-> > > > > won't be the highest cpu number [nr_cpu_ids-1] since CPU[nr_cpu_ids-1] must
-> > > > > be possible CPU.
-> > > > > 
-> > > > > Do I miss some corner cases?
-> > > > > 
-> > > > Right. We guarantee that a highest CPU is available by doing: % nr_cpu_ids.
-> > > > So we do not need to use *next_wrap() variant. You do not miss anything :)
-> > > > 
-> > > > Hailong Liu has proposed more simpler version:
-> > > > 
-> > > > <snip>
-> > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > index 11fe5ea208aa..e1e63ffb9c57 100644
-> > > > --- a/mm/vmalloc.c
-> > > > +++ b/mm/vmalloc.c
-> > > > @@ -1994,8 +1994,9 @@ static struct xarray *
-> > > >  addr_to_vb_xa(unsigned long addr)
-> > > >  {
-> > > >         int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > > > +       int cpu = cpumask_nth(index, cpu_possible_mask);
-> > > > 
-> > > > -       return &per_cpu(vmap_block_queue, index).vmap_blocks;
-> > > > +       return &per_cpu(vmap_block_queue, cpu).vmap_blocks;
-> > > > <snip>
-> > > > 
-> > > > which just takes a next CPU if an index is not set in the cpu_possible_mask.
-> > > > 
-> > > > The only thing that can be updated in the patch is to replace num_possible_cpu()
-> > > > by the nr_cpu_ids.
-> > > > 
-> > > > Any thoughts? I think we need to fix it by a minor change so it is
-> > > > easier to back-port on stable kernels.
-> > > 
-> > > Yeah, sounds good since the regresson commit is merged in v6.3.
-> > > Please feel free to post this and the hash array patch separately for
-> > > formal reviewing.
-> > > 
-> > Agreed! The patch about hash array i will post later.
-> > 
-> > > By the way, when I am replying this mail, I check the cpumask_nth()
-> > > again. I doubt it may take more checking then cpu_possible(), given most
-> > > of systems don't have gaps in cpu_possible_mask. I could be dizzy at
-> > > this moment.
-> > > 
-> > > static inline unsigned int cpumask_nth(unsigned int cpu, const struct cpumask *srcp)
-> > > {
-> > >         return find_nth_bit(cpumask_bits(srcp), small_cpumask_bits, cpumask_check(cpu));
-> > > }
-> > > 
-> > Yep, i do not think it is a big problem based on your noted fact.
-> > 
-> Checked. There is a difference:
-> 
-> 1. Default
-> 
-> <snip>
-> ...
-> +   15.95%     6.05%  [kernel]        [k] __vmap_pages_range_noflush
-> +   15.91%     1.74%  [kernel]        [k] addr_to_vb_xa <---------------
-> +   15.13%    12.05%  [kernel]        [k] vunmap_p4d_range
-> +   14.17%    13.38%  [kernel]        [k] __find_nth_bit <--------------
-> +   10.62%     0.00%  [kernel]        [k] ret_from_fork_asm
-> +   10.62%     0.00%  [kernel]        [k] ret_from_fork
-> +   10.62%     0.00%  [kernel]        [k] kthread
-> ...
-> <snip>
-> 
-> 2. Check if cpu_possible() and then fallback to cpumask_nth() if not
-> 
-> <snip>
-> ...
-> +    6.84%     0.29%  [kernel]          [k] alloc_vmap_area
-> +    6.80%     6.70%  [kernel]          [k] native_queued_spin_lock_slowpath
-> +    4.24%     0.09%  [kernel]          [k] free_vmap_block
-> +    2.41%     2.38%  [kernel]          [k] addr_to_vb_xa <-----------
-> +    1.94%     1.91%  [kernel]          [k] xas_start
-> ...
-> <snip>
-> 
-> It is _worth_ to check if an index is in possible mask:
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index 45e1506d58c3..af20f78c2cbf 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
->  static struct xarray *
->  addr_to_vb_xa(unsigned long addr)
->  {
-> -       int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> +       int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-> +
-> +       if (!cpu_possible(index))
-> +               index = cpumask_nth(index, cpu_possible_mask);
-> 
->         return &per_cpu(vmap_block_queue, index).vmap_blocks;
->  }
-> 
-> cpumask_nth() is not cheap. My measurements are based on a synthetic
-> tight test and it detects a difference. In a real workloads it should
-> not be visible. Having gaps is not a common case plus a "slow path"
-> will be mitigated by the hit against possible mask.
+When allocating too huge a snapshot table, we should fail gracefully
+in __snapshot_t_mut() instead of fail in kmalloc().
 
-Ah, this is consistent with my understanding from the code, thanks
-for confirming by testing.
+Reported-by: syzbot+770e99b65e26fa023ab1@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=770e99b65e26fa023ab1
+Tested-by: syzbot+770e99b65e26fa023ab1@syzkaller.appspotmail.com
+Signed-off-by: Pei Li <peili.dev@gmail.com>
+---
+Syzbot reported the following warning in kmalloc().
+
+bcachefs (loop0): mounting version 1.7: mi_btree_bitmap opts=metadata_checksum=crc64,data_checksum=xxhash,compression=gzip,str_hash=crc64,nojournal_transaction_names
+bcachefs (loop0): recovering from clean shutdown, journal seq 7
+bcachefs (loop0): alloc_read... done
+bcachefs (loop0): stripes_read... done
+bcachefs (loop0): snapshots_read...
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 5078 at mm/util.c:649 kvmalloc_node_noprof+0x17a/0x190 mm/util.c:649
+
+We are passing a huge new_bytes (greater than INT_MAX) to kmalloc().
+
+This is likely caused by either we run out of snapshot entries when
+calculating the size of snapshot table, or an invalid bkey was read.
+
+Instead of failing at kmalloc(), handle this error when a large size of
+memory is going to be requested and return NULL directly.
+
+syzbot has tested the proposed patch and the reproducer did not trigger
+any issue.
+
+Tested on:
+
+commit:         55027e68 Merge tag 'input-for-v6.10-rc5' of git://git...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10f3a389980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bf5def5af476d39a
+dashboard link: https://syzkaller.appspot.com/bug?extid=770e99b65e26fa023ab1
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=170174c1980000
+
+Note: testing is done by a robot and is best-effort only.
+---
+ fs/bcachefs/snapshot.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/fs/bcachefs/snapshot.c b/fs/bcachefs/snapshot.c
+index 629900a5e641..e3303aea8b29 100644
+--- a/fs/bcachefs/snapshot.c
++++ b/fs/bcachefs/snapshot.c
+@@ -168,6 +168,9 @@ static noinline struct snapshot_t *__snapshot_t_mut(struct bch_fs *c, u32 id)
+ 	size_t new_bytes = kmalloc_size_roundup(struct_size(new, s, idx + 1));
+ 	size_t new_size = (new_bytes - sizeof(*new)) / sizeof(new->s[0]);
+ 
++	if (unlikely(new_bytes > INT_MAX))
++		return NULL;
++
+ 	new = kvzalloc(new_bytes, GFP_KERNEL);
+ 	if (!new)
+ 		return NULL;
+
+---
+base-commit: c13320499ba0efd93174ef6462ae8a7a2933f6e7
+change-id: 20240625-bug3-9660c6b76f20
+
+Best regards,
+-- 
+Pei Li <peili.dev@gmail.com>
 
 
