@@ -1,149 +1,111 @@
-Return-Path: <linux-kernel+bounces-230247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032A6917A55
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:00:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D1E917A59
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31D39B2129E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:00:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7597A1C23765
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF8315F318;
-	Wed, 26 Jun 2024 08:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09B8515F3E2;
+	Wed, 26 Jun 2024 08:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="WrSyL8/5"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NlH/ljII"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B08D45978
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:00:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360601B950;
+	Wed, 26 Jun 2024 08:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719388850; cv=none; b=uWJBkovy7rzV3V3ExTdKmKc9H9QMek2825H2Xx4/xkvzvYTgGuauFsPinaXS7gXc0qcXDy+MyMXdoGOY3wP0kUKbMYzEM+q/uDgEEsg8ic6w6Wy5yspILAbVOangudtwncnZId1nFZ/SsV3V0AfniBZV+0avK1DFzJS74HsLhbk=
+	t=1719388890; cv=none; b=bfam/VMVM2P1oPlyDWxOQNUeOyGoIFsUppvgd30QSgU2+C4vxpNzrlkf7sslMMeHm9aJ26Vt62E2Hadp3EfHCtRCJOYk17wVMNL8BOwmDBES+Cbrf0pZwRZc1uz6fMHtdAXipmRB8NICRSfIPSb8dKoSJq0GsJo019e6uU3qQA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719388850; c=relaxed/simple;
-	bh=x3JWCReIk4L301ENiFVZf4/DH2qQaKuD3zTUasYkt80=;
+	s=arc-20240116; t=1719388890; c=relaxed/simple;
+	bh=84tHsalPE7uo8CDXkU9RGW93//JKeXATdqivE96frA0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jGlDG85pHk2pT8nZjYLZ0Y7wQv6r7S1Olc3Sw0czRYnozDCVNtFWLC6yTEBZ0gqIsg5NshgjqCQY3FbeOtXCWR3FMwO44MJocolHPmwPyqH3KXjAdBW7BR6Dtd1AawP4/DRWccYH6CqLj2tP/oZzp7xR1tNXRCMg4xTv4do5m4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=WrSyL8/5; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ed5ac077f5so5402171fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:00:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719388846; x=1719993646; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=whiJiQULxxjVU5JYMGY4dR9TuAgnrWcS7amyjh3Lhhk=;
-        b=WrSyL8/51FJa9TdHwiZlPjdEXN2CvIvMagsgSlIQyVt9dLdE9desicy6T6X9Y7VNs1
-         Ob5Vv+nJLgH3FAGj6NC7iSPRrSAK/CLbCGKDfyh8TA2MeJT4KYwl3PZF+sObbWtKgZ9c
-         /szY44OyuzEqPMcv2EBTARrknZgqYGkRX+rs16WE39Ju/3V9GC1GJ6dptepw5P2xm0fQ
-         Xhp6C2o2jfpNAu+XSNztbBAJ1x7PyYK8smQ9iQcX3WWK6T2MDStTGd/JVtfuAMpUQUnk
-         PFMvAiXSqXB8R6YTg2q+F06r1Z02nWfjPeCHlYPLuhudmi/aDPOCtirDrJMfdZsqS0X2
-         mM9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719388846; x=1719993646;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=whiJiQULxxjVU5JYMGY4dR9TuAgnrWcS7amyjh3Lhhk=;
-        b=corEsem9nQADqjOVVh+CE5UplRnjMVSsVgdl7BuWiY1LSmAGeY57CrSZivoKFCh8Vz
-         dnD3WqojiMPiuuKO7vR7nseb3DqQ3ton9nMhxhb/+sq8Fh0Jln6QKbqm7FOxL2apdAP4
-         2Lbltcz8FRpdCS2JolCde9TS/xgGNnTLkWHCkuhMN6r99ySEZfent0vWQEpnusYFn2TB
-         4vgNmAlpB4iiKFgue3DkGP4QrAUdjhsbBM0jN3AVmV0uPZuQr85HiL3HloJ3FG/qzjE9
-         28q7N28a85wm2ZZsiZok+eOgLRyv7rbY6PWavdqQ4ur9jJRiz+b4et7tmi8CLAWaXOxt
-         6QRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwpBIjDmcDoi+uXrwpPKp/Mv8YkCzOgIGdY5tbkLsAU/gsk0vUEUGvx/8A0uvue2vZBKcXitH110xpnICdiOiNYZp9LtFGWBiBgJxm
-X-Gm-Message-State: AOJu0YyET+GO9qoH/O/jOB7z7f4BQlNmch7IMV4wGbZbsl/VpQtm2ryt
-	fd10q+q+vjnr76k99O9QAznB0+2uh0K9a74IDwHr1t49LDC2AaVhkf+00pKOuz0=
-X-Google-Smtp-Source: AGHT+IFNePKBHG9JpceEuNMrhp5ms+q4nwziDYVudYAAE2EIYWBHCuZo7vzBBRTi5aESxDL6rd8szA==
-X-Received: by 2002:a2e:3a13:0:b0:2ec:5019:bec3 with SMTP id 38308e7fff4ca-2ec593e0cd9mr61741411fa.21.1719388846249;
-        Wed, 26 Jun 2024 01:00:46 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70676a2113csm6032019b3a.214.2024.06.26.01.00.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 01:00:45 -0700 (PDT)
-Date: Wed, 26 Jun 2024 10:00:23 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Jocelyn Falempe <jfalempe@redhat.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>, Kees Cook <kees@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	John Ogness <john.ogness@linutronix.de>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jani Nikula <jani.nikula@intel.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=X0aEbyQuku6GB3jomho6ig4xgg6YEGgnMjINfQfKWdHmtcL64Qp6KaDWp26D6+4Cmg6XxYIfEAvdL7zoANjoNIHbYTETS/Hc/COYp29f4u54BeeJ/lCNLXVCUuXVgvG4KX7hjwnSWc2Ch9vesrEPn/iq5rNnuqvGCFMAUivedog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NlH/ljII; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B96BBC2BD10;
+	Wed, 26 Jun 2024 08:01:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719388889;
+	bh=84tHsalPE7uo8CDXkU9RGW93//JKeXATdqivE96frA0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NlH/ljIIqXWbEWx+lXMMMDBK5Wdwez+EW5y3OPvvqhqM5Th88u3X7QZ7OxSU5M4fN
+	 VGHfbwNUc+XjfFMSoUiJR2bCLX35rU+mKdKQXeSM53Zn+Ou7nwi/DUgLaTMVw22gEA
+	 WoqLIjmuRWCEQQJPy9VT08Z+j8S8G9ES4tF52UNw5r7zppoy7BB0cFfT/31Cy4qUFD
+	 bOTsOsSGC8/4GiRV16vr8mo73DEc0yF/5vwvraU6MmEPOiKhyJchDY2HjlxHpW5ZQ5
+	 +srUb8rpyS9Qmmz2N3xKLKvLRvGnASH+9kbXV2NVtmJhEVvrClpjKTmf9hL56mqBEC
+	 XtIb9aRjbeumg==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sMNb1-0000000082r-45tM;
+	Wed, 26 Jun 2024 10:01:40 +0200
+Date: Wed, 26 Jun 2024 10:01:39 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
 	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uros Bizjak <ubizjak@gmail.com>, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	linux-hyperv@vger.kernel.org, linux-mtd@lists.infradead.org,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] printk: Add a short description string to kmsg_dump()
-Message-ID: <ZnvKcnC9ruaIHYij@pathway.suse.cz>
-References: <20240625123954.211184-1-jfalempe@redhat.com>
+	Jiri Slaby <jirislaby@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 3/3] serial: qcom-geni: fix garbage output after buffer
+ flush
+Message-ID: <ZnvK420P0M7K9TiA@hovoldconsulting.com>
+References: <20240624133135.7445-1-johan+linaro@kernel.org>
+ <20240624133135.7445-4-johan+linaro@kernel.org>
+ <CAD=FV=UL2NCbxmQALjKbW4BSpf4WkM30ZHLf1eZiMqRP+s-NDg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240625123954.211184-1-jfalempe@redhat.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=UL2NCbxmQALjKbW4BSpf4WkM30ZHLf1eZiMqRP+s-NDg@mail.gmail.com>
 
-On Tue 2024-06-25 14:39:29, Jocelyn Falempe wrote:
-> kmsg_dump doesn't forward the panic reason string to the kmsg_dumper
-> callback.
-> This patch adds a new parameter "const char *desc" to the kmsg_dumper
-> dump() callback, and update all drivers that are using it.
+On Mon, Jun 24, 2024 at 03:19:33PM -0700, Doug Anderson wrote:
+> On Mon, Jun 24, 2024 at 6:31 AM Johan Hovold <johan+linaro@kernel.org> wrote:
+> >
+> > The Qualcomm GENI serial driver does not handle buffer flushing and
+> > outputs garbage (or NUL) characters for the remainder of any active TX
+> > command after the write buffer has been cleared.
+> >
+> > Implement the flush_buffer() callback and use it to cancel any active TX
+> > command when the write buffer has been emptied.
 > 
-> To avoid updating all kmsg_dump() call, it adds a kmsg_dump_desc()
-> function and a macro for backward compatibility.
+> I could be reading it wrong, but in the kernel-doc of `struct
+> tty_ldisc_ops` it seems to indicate that flush_buffer() is for the
+> other direction. Specifically, it says:
 > 
-> I've written this for drm_panic, but it can be useful for other
-> kmsg_dumper.
-> It allows to see the panic reason, like "sysrq triggered crash"
-> or "VFS: Unable to mount root fs on xxxx" on the drm panic screen.
->
-> Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
-> ---
->  arch/powerpc/kernel/nvram_64.c             |  3 ++-
->  arch/powerpc/platforms/powernv/opal-kmsg.c |  3 ++-
->  drivers/gpu/drm/drm_panic.c                |  3 ++-
->  drivers/hv/hv_common.c                     |  3 ++-
->  drivers/mtd/mtdoops.c                      |  3 ++-
->  fs/pstore/platform.c                       |  3 ++-
->  include/linux/kmsg_dump.h                  | 13 ++++++++++---
->  kernel/panic.c                             |  2 +-
->  kernel/printk/printk.c                     |  8 +++++---
->  9 files changed, 28 insertions(+), 13 deletions(-)
+> This function instructs the line discipline to clear its buffers of
+> any input characters it may have queued to be delivered to the user
+> mode process.
 
-The parameter is added into all dumpers. I guess that it would be
-used only drm_panic() because it is graphics and might be "fancy".
-The others simply dump the log buffer and the reason is in
-the dumped log as well.
+Yes, but this a uart op (i.e. not tty_ldisc_ops), for which the doc
+states:
 
-Anyway, the passed buffer is static. Alternative solution would
-be to make it global and export it like, for example, panic_cpu.
+	Flush any write buffers, reset any DMA state and stop any
+	ongoing DMA transfers.
 
-Best Regards,
-Petr
+> I guess the underlying worry I have is that there's no guarantee that
+> the flush function will be called when the kfifo loses bytes. If it
+> ever happens we'll fall back to writing NUL bytes out and that doesn't
+> seem amazing to me. To me it feels like
+> qcom_geni_serial_send_chunk_fifo() should detect this situation and
+> then it should be responsible for canceling, though better (in my
+> mind) is if we never initiate any big transfers if we can get away
+> with that and still be performant.
+
+The flush buffer callback is called from the uart_flush_buffer() tty
+operation (again, not tty_ldisc_ops) when the FIFO is reset.
+
+Johan
 
