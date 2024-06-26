@@ -1,272 +1,245 @@
-Return-Path: <linux-kernel+bounces-231033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3139918536
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:04:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82D1B91851C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500E61F2767E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:04:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0501D1F232C2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAFA71891BB;
-	Wed, 26 Jun 2024 15:04:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4C71891AA;
+	Wed, 26 Jun 2024 15:01:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="AEYnIc8W"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2054.outbound.protection.outlook.com [40.107.241.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="diSzikHV"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95C7185E52;
-	Wed, 26 Jun 2024 15:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719414280; cv=fail; b=sgdGafiAYhW4je6nDWWbgVi9x/gzGDzHlP9a5LIQ/o2V5sXyuwPZoCSvRyqqnUjrDt3n8fpeROdzvf2Jj+yDNzKAFkDY7P9Pwb0naYP63X8ajJdjaimgDXHiiKjzImIM67KZ8hpzUnjW1gc4Q18q83aFOCpbPopd9q4uqR7sQ4A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719414280; c=relaxed/simple;
-	bh=rFE3r+rHjppeyXPy/kxk51EavHxdLpG1+T39CchoJE0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=oEsH8PxBaMzwnlOU02a9YhzqwCbb0xi3yzG2Pd7Nc/XFyY0AR1uAe2UAY3dgjDCiTTwPAYAax4iq6C/Y0VBY2xXU+HMZk3Fw/ixoTSGx8y8FW5xef88VuivFLNZaNPHwQLGwbZhibMZ88rFtIt7SLUbl6fNFnvpGX19vDAhq97A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=AEYnIc8W; arc=fail smtp.client-ip=40.107.241.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=jGEstg0R+eXVgDamplldWQ5KIfyvU33F15G8EWZm7neW75sZoJd82VArK8are+U2iwjizR2UKzHKlWT0e/Ibq46xrswvIbkkdi16cNE677uKAxM0vN6Kf1ORy6qOF6bBph8/U4+I5X4fzFx0hjoCMyLl5XN/hiold+5JA26NqxZCZ1ULMnzq1RJxrcq8AJhmj7eJHHPBngzCMrFcFcPa3B+ZxLLmQCdNNQYhJsOYnDnm+cGU01B+rlHJE5oDm2youCaUg1L58CJ6NM6n9q0jbv2VeDQRI7ynah6X56w6Lc93l5+qBq4CFTdWcU85RGNdO8NY3XMyo0x39fRDgb8o3w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=wUyGOJxm7fFKK8bUKAbMyoTPJwMHu1nDFGng9Z/2EPk=;
- b=Q9B2jmdd0oS5C5jBXmwdlO7TQJ+u6E031NHlFnUBgFIih/PW56X+ZL2GKCS+5rDBy/OhlIjjtdDMl5MwiM11QFl/lPUCHV5U/eEjlo0YCOeDDqP7vT+d7jKpB3lTdO/EkAIR9j0YB4PWiqX8ddmmW8ewrXwpBgujt2zhJUs5A+YRSpu7qK8TF4bybpW8BKiadgzfw0Bgfv/PBv1eB63FFEBAh+/95qNRtM6LE+4nHPLB5Su4dEi/1IdUg3px4M3gBKEIXgOsQimCyPnIJWKLwuljS00QiXHztKwBEUhcvBFNHUJ9aw6EDR1MeGhAFGgD2UO0eIjb0kOjp8ZKVvp5Kw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=wUyGOJxm7fFKK8bUKAbMyoTPJwMHu1nDFGng9Z/2EPk=;
- b=AEYnIc8WMtj2ufH0Z7VCFsf1LhYJjHqCdAKUzQluGOPs+CIaJ2Vsm+Opr1XOHhOdAn9s8/qOEP4mAPfnMXSpzAxsFheIb0mglyf020m1UpFTjOSoMAv3vojNK3upEEzfzZApVr1+0NOryG1vPtiwvu/5nvz/BRXCGAjewtxNwR4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GV1PR04MB10200.eurprd04.prod.outlook.com (2603:10a6:150:1ad::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
- 2024 15:04:35 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 15:04:35 +0000
-Date: Wed, 26 Jun 2024 11:04:26 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:USB SUBSYSTEM" <linux-usb@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>, imx@lists.linux.dev
-Subject: Re: [PATCH 1/1] dt-bindings: usb: Convert fsl-usb to yaml
-Message-ID: <Znwt+vZZ0chXQp+Q@lizhi-Precision-Tower-5810>
-References: <20240625022541.2007010-1-Frank.Li@nxp.com>
- <b354d11e-9031-47f1-8a23-bbd14ea3d5dd@kernel.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b354d11e-9031-47f1-8a23-bbd14ea3d5dd@kernel.org>
-X-ClientProxiedBy: SJ0PR13CA0028.namprd13.prod.outlook.com
- (2603:10b6:a03:2c0::33) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C31BD18756E;
+	Wed, 26 Jun 2024 15:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719414109; cv=none; b=ETuSPPx3WccivrQe5ACtMsQ2us4jpSZMbOrUCX78uD580w+ONGFhlprOtiGeBhK/zanjPaxTKVsuuKBcGrDCqtoZJZDEtQ4ORO6eI+vrDbTNQ5dUEIE7C+fhTTPucpnwrN4KyC0eJN29+e/+V4z+loIR+qKhM8h+nr9+CDuU/cw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719414109; c=relaxed/simple;
+	bh=DuiVcdmmYbG7tkTTDbf+uUIXSJ06lIes0SLGtKA9hTk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aY9nG6t6gseyKFWZqbbZ3HRUJOMhsvi35VLKpGO/WSCbXwQ6lF0uQ12Sb/g13s04+GQFuTgkk5HH3zI0EWxxGoN9RjsN+Pq7rom3OKr7ZkMJ4xhHzhJuffMWlaZf1gxYxcUNfqXDoCbV2b3vI9Ugpp2Xb+FzPf29+CHD5RQKmHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=diSzikHV; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso779498666b.0;
+        Wed, 26 Jun 2024 08:01:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719414106; x=1720018906; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BoXAm49CkNSWP38zNf9LCupKizuESpLlF5JEmXOGc+o=;
+        b=diSzikHVLoS6YUGTMwJAAC2aZxMrBRxXDTUWFHR0Zin0BsJ9+bQm16DHjtdYWDZMHi
+         LWAcWEEAGPuW3TxZhVdS/u+M3c5gMwUzxKZpOsFS6BpW6t+Mk3XCNwG8IPtZbCDx0aQt
+         4N7Bwsqm4KkDioSZRY3eMW/3X5CUl7QjYKQLY9HxKGrjuukkylMokt0ZBdHDedJ64uai
+         FQIMD+GoPHOCxwMNYYHt9JpORUywJJh6VN5ga8bFpsMRFM0Wxp9otS8NZbWePQ2jZOFA
+         CitqWUP59n47FJHhffi4vJr0uMbN+Mxq0Vhqpmr82/d4qn7/+oK8KaU/jHi9oJdYnsmF
+         8G9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719414106; x=1720018906;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BoXAm49CkNSWP38zNf9LCupKizuESpLlF5JEmXOGc+o=;
+        b=dA7LfSZufEOwTOZyrhRayD4nrkWkxWPpnkyY8IBknNUlgiJZWXTHu8xn9JYJ7wh1CR
+         FX8vUlLTZx5EgsERszzysB3jVuHXWd9B1XLhqmRL1LBqVMJgZPosryGSSfz2BU5Xhkgj
+         3Gx13H8pD1PXy7HiT11EzLprvDprrIZXbQK2FRCRBxtlQwOu5RPOImR/MDXnaqem11xK
+         +/eE6puLdiPi8WHuPJ/2MAVUJuN0TuTOzBh9U5VoH1t1QVWWQkHalGxqU3MP5tOfqmKh
+         esuNW1QY+KqK5PIZnqtVEXZSOZT2zBLPCwFAOh8x0viK1QpKyE/1Gk3vI6Ol7PUsu9yJ
+         WWbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfakHT7D01o6uH7dkDemanIaKQ6bWbmo6aDdEkP0LNP9p0Sy0bz58YiiI21kBqSWGjE/WgJ7oI4tTv22QiKA2xanyecmOddUf9Du89ey26Rq1gyFDzlkQP1C9aoX2Pk6zhWF400UI7UZKIQuA/aeaVn0CEb55iSTIkc+n9P5tQrEhtvU51qCp/hTifD0NtKlCs+cQ2NNotW9dWlsKRgg==
+X-Gm-Message-State: AOJu0YwCcZkKTppZE9butBjyiAtFpg5eNzCEX704czoXpKraXqbuvdZd
+	OuS3AefjTKu5gYey6JHLcwcNbIW/pLJIQbSMsu5zFE9jCxG0tQr7
+X-Google-Smtp-Source: AGHT+IEyrfpFF7R8vnozW8y6UEWbyGFkRCX4Qmq5R/QcuSLK06eVh/OJy4J+q+I0OqXLTbkQ1b/vbw==
+X-Received: by 2002:a17:906:6bc9:b0:a72:2cb0:fafe with SMTP id a640c23a62f3a-a7242e159camr628886566b.75.1719414105716;
+        Wed, 26 Jun 2024 08:01:45 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7248935f4dsm395395666b.9.2024.06.26.08.01.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 08:01:45 -0700 (PDT)
+Message-ID: <89f1b3ae847f1110ca1782866971d82193d9f351.camel@gmail.com>
+Subject: Re: [PATCH v3 2/3] iio: adc: ad4695: Add driver for AD4695 and
+ similar ADCs
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Jonathan Cameron
+ <jic23@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Michael Hennerich <michael.hennerich@analog.com>, Nuno
+ =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Jonathan Corbet <corbet@lwn.net>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, Ramona Gradinariu
+	 <ramona.gradinariu@analog.com>
+Date: Wed, 26 Jun 2024 17:05:37 +0200
+In-Reply-To: <d2649e69-4c71-4aa9-88e2-9d3f15549e1b@baylibre.com>
+References: <20240624-iio-adc-ad4695-v3-0-a22c302f06bf@baylibre.com>
+	 <20240624-iio-adc-ad4695-v3-2-a22c302f06bf@baylibre.com>
+	 <f02cac02f9404bf6dcc5a8274b51d836960871ee.camel@gmail.com>
+	 <d2649e69-4c71-4aa9-88e2-9d3f15549e1b@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GV1PR04MB10200:EE_
-X-MS-Office365-Filtering-Correlation-Id: e4c880a5-557e-47cb-e046-08dc95f14a76
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230038|366014|52116012|376012|1800799022|38350700012;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?eJQIkdS4EQyQyV0V00jMBEI2e0v92KV+hGvC9kJpCRwQ0Z4s4Pciax7yHbMF?=
- =?us-ascii?Q?Dtqgnzr+dW0f1vgea/2qgNXDyJGv0P3kZ/kTdRyYI18Ljoknsbto/PYXADwM?=
- =?us-ascii?Q?qySIUyccuPMXKSFZAa/kyV02Kw81VQ7Leas2LGbqigCZ1bl7HUCdLKTbB9TL?=
- =?us-ascii?Q?pbqaaFJe15BzDJs5F0zaQbHLdxtmVSs1aIop8S0C8XJCd0fEpaBAwQzDSiFv?=
- =?us-ascii?Q?868tBSkR0mnVRr0atGIwxWIJMq+jP/K96Q2KW2qNB5EH9w+nTrdKYNODMR5B?=
- =?us-ascii?Q?9DeiU8ucNfnmboInljbVPdrsjsy0vBeBS7FdHWHhxAgC+NUGfrasUAtRu6LY?=
- =?us-ascii?Q?qDK6IPosNPx2bnlT8Vo/DbSGVXpsPcKPvcFj+gIIxm7FcrM++wow6yX/rj5x?=
- =?us-ascii?Q?Co/6kAfApfvk3nL0kRlhRf3zNUa79Ii9DTJ3vfDqfM0c6mhMBrexKMhlRyMI?=
- =?us-ascii?Q?b3CPOyShYxR6LRQqrKjAdsUjzGIz54J7g+EaYzOfFkhbrV7K6rd6YO/m4Ozj?=
- =?us-ascii?Q?nfRtjkWqwRjifRJbNdnkjvt5jP1H+LnNFNVZ//zkFWknf9DJQolg3ayavqzP?=
- =?us-ascii?Q?G4Fg+EYYLtIq/Glpg60/PTcqCuut2WCnEDns2RnmjAxAFXIV3b1S19NjSj7j?=
- =?us-ascii?Q?ZtP1JZuT1MRVo/ZfUentSAX0s1gL4H2rz0dgSIRTnhBlqmOG75pQ2Dcj7BV/?=
- =?us-ascii?Q?yr2rWC6Kg6+OKKJFUBHi0+bES+BhENBtHzobcmWvZR1cOxs033Nhdj0U/C8X?=
- =?us-ascii?Q?vxlxY76AVVMv24v7SBYucJniCZFcX1B25utS/6RYcGER5xxxs15mFhsn5Jzf?=
- =?us-ascii?Q?fgvXPJuvapt0Ljkz4qMnV5EXSduQnBbg7uHHpFzPU7U78wFLd5AA6S1M+wU+?=
- =?us-ascii?Q?K5kzkjgL3fT0evHvqxAhebZ913AYvd6XLJX2ky5fTEADmN5PPq6chDYG9CBw?=
- =?us-ascii?Q?jB+NV5tA414n6eoWZLQU4dd2XdLGARSVIwFQBp46pSiA50Mcg36n6yTsI+Xr?=
- =?us-ascii?Q?jFqtiGZbVj9OkepqNdENYcXzmHOnPdRw+pYmRHg2x/yWZ6r1jP8DKexG8QeE?=
- =?us-ascii?Q?ZNmjxTilnutPEKv+Eoy6gMp949nlgDk+lAH/tXSIeQRXrHlvcgEQ/PljQ/V4?=
- =?us-ascii?Q?jn91OeLHhORYB0xGZtBSLjT2g28wCT60yoG+ZIV50iM4ArU3BV/fVvjf2FpM?=
- =?us-ascii?Q?0ykyIGV0uTZ4MfrWfNmCSh/AfdSaIJEQJOscigOhk3lwallcNUCjnx/9zTTx?=
- =?us-ascii?Q?cwThoL9qsPoqq5uDtfZBaO8LYmX7/bruZCCiFeglLjtCXY782UMmblmozCTk?=
- =?us-ascii?Q?DBH1tUVYkE6z8McOHplM/qQvu8ph49mR89wPrzsWDjFLp+utAK0Uh7P9A6o2?=
- =?us-ascii?Q?7rRCcKo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(52116012)(376012)(1800799022)(38350700012);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?UzQ1O/5o7/7+fMotRqZltWoca2pBE4swTVJoBZgXvWgenBoiscalzFUdwJwB?=
- =?us-ascii?Q?6skXJxVXmwV7jFDiF49h890sQ3HKp+JS92VFLPRcJ2cCPe7U1MYziTKbfCCc?=
- =?us-ascii?Q?iHuF2S41Tm+upiag4lrpLSpPoPGjOIf8lI8/+oWbCpRONmr7eY//xTHYOx8m?=
- =?us-ascii?Q?UzcTyc6mBvqcIrwRrahLCF/AXcOeMewPBmGn3TkxGtxKEFJZpOU+y17p9O8f?=
- =?us-ascii?Q?UR+KhVYbIuM5I79QZIUM00LdtN3PtoFSsfO+pyDoxgZCfHlQwAoFKzYroZUy?=
- =?us-ascii?Q?J9vamh+IxMTS8epsoa2RyXNto4FV7BwGI9huqwxuK6HsO7iQpDy3XKJYvrWI?=
- =?us-ascii?Q?guAxHLBZQTITLBmWyUMjku+Elgs5UNFzY1EXRuVed9RrFrUKEmrDAOXkgztV?=
- =?us-ascii?Q?8bhuZS2aAwlGgu3fKA+J1OwIF1zMIBeJ5sJjv9w9Px6WFrReTChMnnmyctRh?=
- =?us-ascii?Q?AxYsOlR2a57ZDfq0xAeUue+yE47szVaSlgqmKsS82iaex4yy4Qo7iTRo7iPu?=
- =?us-ascii?Q?oE5SM5C7CpX8Pb023dghsRkQD+cLRlSDa3soRiDVj80/BAOEwnZXGcrgwy34?=
- =?us-ascii?Q?MywMDopCB3tZCNsdBAeK/oR9juQjULcU70XsoJyki6nydWZ6EWRi4LrwjpHt?=
- =?us-ascii?Q?ZWwxaihBUk71S7rlSoMJ8rL2njvMA7FlEQln8XD21oGRa0u6piF1zaf7gjxm?=
- =?us-ascii?Q?xlAgKM/RK8XMkFKQq7JsOvVaojADUwPJyn5vKe7ItbV77jl+3wsZTPln2MfW?=
- =?us-ascii?Q?2RhoL0eMr39Rgt6UYhqdjPVvo+mc+/1ydB9RDND0RJfSyAjtanbAaKRAjXbB?=
- =?us-ascii?Q?3DJmCtM7v4jL3nyOHMv4U2aIxJCR2AaIBPSkBm04ZzcE+XeEYaZFzgC9t0Py?=
- =?us-ascii?Q?WtetwpwIHgbjSrLkDPtmQ8urS6KPJuCuZW7Aakn1mGvF0HvS7VDiWOAJqqW5?=
- =?us-ascii?Q?q7u+LQo+SWVitkNICEXL7b1c4jWaorkzCdTyKUnv5RY5HYwo+shsEZ7bC/4N?=
- =?us-ascii?Q?7Roxx40se0U6G3vpXbDxL+a8mHSFC/jtzSbYJUj5isgO5I34vJchFPmEQsk0?=
- =?us-ascii?Q?BN9D2M0a0bpRI6/lDnN7heNXAp5pyKaZqtsYGToyEUWdybJQWNo3i+ahNNZo?=
- =?us-ascii?Q?tIn54BL1bb4Pu+Dz1Zqyi+p/spOI3PILbBtrYTlLvWPB4FUe0W21G3C9LKbd?=
- =?us-ascii?Q?Ll1pkDoGU1hizTio/WJUjUB466gGtA6SoolztGMziZDys1CFZT/L7hBU4rKE?=
- =?us-ascii?Q?zhS1GFNHKo5NtD8lsgS/PE4R2chdZdyF+xqeSt5/wSEMorFouTKRU3V/k1UG?=
- =?us-ascii?Q?G714TNjrd6OviWHakfy50X8v9j6s+IMX8cJsuAohfIvwIgXKLRayNLlBqS1k?=
- =?us-ascii?Q?j+/QlzKDJTGZ9VD3jSxONtpOxxfwFMcTx4CiD4bFSC0k0i8MeJFdQlCpPbLS?=
- =?us-ascii?Q?3UUyTk30b80iW8rYW96CUNPxzuyjsWScJ7TPyLyYY9wgtODQR50XljHeCtQR?=
- =?us-ascii?Q?wiJxPfxPSxpQM/Qkxp766tq6HHWl0GKmBudSVzPBAANOno7j3rYSkBgOIEiv?=
- =?us-ascii?Q?a+oDJJEnneUxnh7YjAEpMcmkmHAYvBvAn8PtmLW4?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4c880a5-557e-47cb-e046-08dc95f14a76
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 15:04:35.0024
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wwz6kjNQrXrIdM9WK8TCwAyxsG8Tn6CXha0KwWCtEasUViTzPZPxhxDn1Dlu1PMGMarj2VZCGCvZrwdwOXXefA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10200
 
-On Wed, Jun 26, 2024 at 11:26:18AM +0200, Krzysztof Kozlowski wrote:
-> On 25/06/2024 04:25, Frank Li wrote:
-> > Convert fsl-usb binding doc to yaml format.
-> > 
-> > Additional change:
-> 
-> 
-> > -	usb@4000 {
-> > -		compatible = "fsl,mpc5121-usb2-dr";
-> > -		reg = <0x4000 0x1000>;
-> > -		#address-cells = <1>;
-> > -		#size-cells = <0>;
-> > -		interrupt-parent = < &ipic >;
-> > -		interrupts = <44 0x8>;
-> > -		dr_mode = "otg";
-> > -		phy_type = "utmi_wide";
-> > -		fsl,invert-drvvbus;
-> > -		fsl,invert-pwr-fault;
-> > -	};
-> > diff --git a/Documentation/devicetree/bindings/usb/fsl-usb.yaml b/Documentation/devicetree/bindings/usb/fsl-usb.yaml
-> > new file mode 100644
-> > index 0000000000000..8b5724e213f09
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/usb/fsl-usb.yaml
-> 
-> fsl,usb.yaml
-> or: fsl,usb2.yaml
-> 
-> > +
-> > +maintainers:
-> > +  - Frank Li <Frank.Li@nxp.com>
-> > +
-> > +description: |
-> 
-> Do not need '|' unless you need to preserve formatting.
+On Wed, 2024-06-26 at 09:42 -0500, David Lechner wrote:
+> On 6/26/24 6:47 AM, Nuno S=C3=A1 wrote:
+> > Hi David,
+> >=20
+> > minor stuff from me..
+> >=20
+> >=20
+> > ...
+> >=20
+> > > +
+> > > +static int ad4695_write_chn_cfg(struct ad4695_state *st,
+> > > +				struct ad4695_channel_config *cfg)
+> > > +{
+> > > +	u32 mask =3D 0, val =3D 0;
+> > > +
+> > > +	mask |=3D AD4695_REG_CONFIG_IN_MODE;
+> > > +	val |=3D FIELD_PREP(AD4695_REG_CONFIG_IN_MODE, cfg->bipolar ? 1 :
+> > > 0);
+> > > +
+> >=20
+> > nit: don't need to OR the first assignments and so initializing the
+> > variables.
+>=20
+> :+1:
+>=20
+> >=20
+> > > +	mask |=3D AD4695_REG_CONFIG_IN_PAIR;
+> > > +	val |=3D FIELD_PREP(AD4695_REG_CONFIG_IN_PAIR, cfg->pin_pairing);
+> > > +
+> > > +	mask |=3D AD4695_REG_CONFIG_IN_AINHIGHZ_EN;
+> > > +	val |=3D FIELD_PREP(AD4695_REG_CONFIG_IN_AINHIGHZ_EN, cfg->highz_en
+> > > ? 1
+> > > : 0);
+> > > +
+> > > +	return regmap_update_bits(st->regmap, AD4695_REG_CONFIG_IN(cfg-
+> > > > channel),
+> > > +				=C2=A0 mask, val);
+> > > +}
+> > > +
+> > > +/**
+> > > + * ad4695_read_one_sample - Read a single sample using single-cycle =
+mode
+> > > + * @st: The AD4695 state
+> > > + * @address: The address of the channel to read
+> > > + *
+> > > + * Upon return, the sample will be stored in the raw_data field of @=
+st.
+> > > + *
+> > > + * Context: can sleep, must be called with iio_device_claim_direct h=
+eld
+> > > + * Return: 0 on success, a negative error code on failure
+> > > + */
+> > > +static int ad4695_read_one_sample(struct ad4695_state *st, unsigned =
+int
+> > > address)
+> > > +{
+> > > +	struct spi_transfer xfer[2] =3D { };
+> > > +	int ret;
+> > > +
+> > > +	ret =3D ad4695_set_single_cycle_mode(st, address);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	/*
+> > > +	 * Setting the first channel to the temperature channel isn't
+> > > supported
+> > > +	 * in single-cycle mode, so we have to do an extra xfer to read
+> > > the
+> > > +	 * temperature.
+> > > +	 */
+> > > +	if (address =3D=3D AD4695_CMD_TEMP_CHAN) {
+> > > +		/* We aren't reading, so we can make this a short xfer.
+> > > */
+> > > +		st->cnv_cmd2 =3D AD4695_CMD_TEMP_CHAN << 3;
+> > > +		xfer[0].bits_per_word =3D 8;
+> >=20
+> > nit: isn't this the default?
+>=20
+> yes (looks like leftover from testing when I was trying 16 instead of 8)
+>=20
+> >=20
+> > > +		xfer[0].tx_buf =3D &st->cnv_cmd2;
+> > > +		xfer[0].len =3D 1;
+> > > +		xfer[0].cs_change =3D 1;
+> > > +		xfer[0].cs_change_delay.value =3D AD4695_T_CONVERT_NS;
+> > > +		xfer[0].cs_change_delay.unit =3D SPI_DELAY_UNIT_NSECS;
+> > > +
+> > > +		/* Then read the result and exit conversion mode. */
+> > > +		st->cnv_cmd =3D AD4695_CMD_EXIT_CNV_MODE << 11;
+> > > +		xfer[1].bits_per_word =3D 16;
+> > > +		xfer[1].tx_buf =3D &st->cnv_cmd;
+> > > +		xfer[1].rx_buf =3D &st->raw_data;
+> > > +		xfer[1].len =3D 2;
+> > > +
+> > > +		return spi_sync_transfer(st->spi, xfer, 2);
+> > > +	}
+> > > +
+>=20
+> ...
+>=20
+> > > +
+> > > +static int ad4695_parse_channel_cfg(struct iio_dev *indio_dev)
+> > > +{
+> > > +	struct device *dev =3D indio_dev->dev.parent;
+> > > +	struct ad4695_state *st =3D iio_priv(indio_dev);
+> >=20
+> > Why not passing in struct ad4695_state directly?
+>=20
+> Probably because that is how it was done in the ADI tree driver
+> I started with. Changing it to two parameters would be fine.
+>=20
 
-dt_binding_check report error without '|'
-fsl,usb2.yaml:15:11: [error] syntax error: mapping values are not allowed here (syntax)
+I think you're fine in just passing ad4695_state. If I'm not missing nothin=
+g the
+iio_dev is only to get the parent device and you have that in st->spi.
 
-"Practice:" impact yaml parse.
+> >=20
+> > ...
+> >=20
+> > >=20
+> > > +
+> > > +	/* Needed for debugfs since it only access registers 1 byte at a
+> > > time. */
+> > > +	ret =3D regmap_set_bits(st->regmap, AD4695_REG_SPI_CONFIG_C,
+> > > +			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 AD4695_REG_SPI_CONFIG_C_MB_STRICT)=
+;
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> >=20
+> > Question... do we gain something but not doing the above? Because debug=
+fs is
+> > optional and always doing it even when it's not present looks unnecessa=
+ry.=20
+>=20
+> I haven't got to a place where we need to read or write a 2 byte register
+> yet, so I'm not sure. My plan is to defer worrying about it until then
+> and update this if necessary in a future patch when it actually makes a
+> difference. But for now, this is harmless because we are only reading
+> and writing single byte registers.
+>=20
 
-> 
-> > +  The device node for a USB controller that is part of a Freescale
-> > +  SOC is as described in the document "Open Firmware Recommended
-> > +  Practice: Universal Serial Bus" with the following modifications
-> > +  and additions.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    oneOf:
-> > +      - enum:
-> > +          - fsl-usb2-mph
-> > +          - fsl-usb2-dr
-> > +          - fsl-usb2-dr-v2.2
-> 
-> It cannot be standalone and not-standalone. Cannot be both. Choose one.
-> 
-> > +      - items:
-> > +          - enum:
-> > +              - fsl-usb2-dr-v2.2
-> > +              - fsl-usb2-dr-v2.5
-> > +          - const: fsl-usb2-dr
-> > +
-> > +  phy_type:
-> > +    $ref: /schemas/types.yaml#/definitions/string
-> > +    enum: [ulpi, serial, utmi, utmi_wide]
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  port0:
-> > +    $ref: /schemas/types.yaml#/definitions/flag
-> > +    description:
-> > +      Indicates port0 is connected for fsl-usb2-mph compatible controllers.
-> > +
-> > +  port1:
-> > +    $ref: /schemas/types.yaml#/definitions/flag
-> > +    description:
-> > +      Indicates port1 is connected for "fsl-usb2-mph" compatible controllers.
-> > +
-> > +  fsl,invert-drvvbus:
-> > +    $ref: /schemas/types.yaml#/definitions/flag
-> > +    description:
-> > +      for MPC5121 USB0 only. Indicates the
-> > +      port power polarity of internal PHY signal DRVVBUS is inverted.
-> > +
-> > +  fsl,invert-pwr-fault:
-> > +    $ref: /schemas/types.yaml#/definitions/flag
-> > +    description:
-> > +      for MPC5121 USB0 only. Indicates
-> > +      the PWR_FAULT signal polarity is inverted.
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +  - phy_type
-> 
-> Keep the same order as in "properties:". Preferably this order, so
-> adjust "properties:" to match "required:".
-> 
-> > +
-> > +allOf:
-> > +  - $ref: usb-drd.yaml#
-> > +
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+ack
+
+- Nuno S=C3=A1
+>=20
+
 
