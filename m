@@ -1,71 +1,52 @@
-Return-Path: <linux-kernel+bounces-230317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A9B917B35
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:44:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D5F9917B4C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:49:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 300981C2158A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:44:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C26311C2455D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:49:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E051616630F;
-	Wed, 26 Jun 2024 08:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="I9sqf/Hy"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60B116B38F;
+	Wed, 26 Jun 2024 08:48:43 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481F115FA73;
-	Wed, 26 Jun 2024 08:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81591684A3;
+	Wed, 26 Jun 2024 08:48:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719391451; cv=none; b=frxhsbuUdm5HxL6Eh1kMX6UAugq/FnDjDSQvW8BCt6JS/bRUKptXjEbhHJFola0IwHg9ElYyaUxxFDMQFdVzZvVobJWZ12lIir5VqknvCIIPyo0/nd3d0Sy49MhLVakswgEoNdBMoq+ju9OhraykRm2NnwI9XkrmpZMoSO3YgMQ=
+	t=1719391723; cv=none; b=F+NJREnm5JuOnXxmWNlRHeUCJH/5GrD0OOAbg/0rngw+Q13Nz7AM1mxWxH82sKkKvVGTMsFIiduVytiEc4pNATDgJ+0fgr66mzYWjSSBMuEXOYhVaLr2IqOieNcd5kLpIos98y7yE5deDAUd2X2Iw3h+xe4psTW83VWWa9rvq+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719391451; c=relaxed/simple;
-	bh=nqHzRpq/ZwTphph7XvKasqvlrolR3laeA11meI6qRnY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VGbsz6ytqJfwmFlLJVMaDqMqyb0xbdAstjqd22OBHzShtjITaXBaDYcTlGxZhNAkPiTLgMAmoBUvoPmYA3ETrZAetORp1Ik63tOOhNnCdE0gE4z81PtF1H7mqU2XX/NO3axGb0JCL6Pq20eXosbxGSMwlWsQvUyB7BSHYpZ5Sfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=I9sqf/Hy; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45Q8i2b2080352;
-	Wed, 26 Jun 2024 03:44:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719391442;
-	bh=VHjH/7YezNR75vLtgn6dRbkrKJ/z+LItV5LyONiIbC4=;
-	h=From:To:CC:Subject:Date;
-	b=I9sqf/HySE39f8beG7lN3mwtj21HKUBsAB6WD+w/CxPCMQmsj2RKq52m2oa9G31Cx
-	 xpqlqXP1GA9Pce7j5Ouew7v2eWeEzjh0abF41a4UczabIFBBE+XacYBkddZSr4oawP
-	 NyrZIRIZlNHxIRSRsrw1QSZg3xaaBYH8bhq0azVk=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45Q8i1aY009628
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Jun 2024 03:44:02 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Jun 2024 03:44:01 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Jun 2024 03:44:01 -0500
-Received: from dhruva.dhcp.ti.com (dhruva.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45Q8hxDO034650;
-	Wed, 26 Jun 2024 03:44:00 -0500
-From: Dhruva Gole <d-gole@ti.com>
-To: Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rafael J . Wysocki"
-	<rafael.j.wysocki@intel.com>
-CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Mario
- Limonciello <mario.limonciello@amd.com>,
-        Dhruva Gole <d-gole@ti.com>
-Subject: [PATCH] cpufreq: make cpufreq_boost_enabled return bool
-Date: Wed, 26 Jun 2024 14:13:54 +0530
-Message-ID: <20240626084354.1762483-1-d-gole@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1719391723; c=relaxed/simple;
+	bh=gVe3FZNSeWFXzNdM+NW+WvLJ4x0CtX/MXlsGAlIPRtY=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a8gJ//obDt3GPROx0XkyAqKHdH56HCP7Ic7dWW5AMVljmQosPOrQYDC9KKvvBGmIWL1jJ0NKwb0jNbGy8XACkTqx2zun8Rc4ZHqt6DxE54V4ZV/up5KRmiEPw5/xXFbzJbxHQmXx/S7uocTz4Byl+iau1+kvJe+GUWDWJU8Xqjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 45Q8iCJx045005;
+	Wed, 26 Jun 2024 16:44:12 +0800 (+08)
+	(envelope-from zhaoyang.huang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4W8FVp1GfDz2K8nj0;
+	Wed, 26 Jun 2024 16:39:30 +0800 (CST)
+Received: from bj03382pcu01.spreadtrum.com (10.0.73.40) by
+ BJMBX01.spreadtrum.com (10.0.64.7) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Wed, 26 Jun 2024 16:44:10 +0800
+From: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>
+To: Andrew Morton <akpm@linux-foundation.org>,
+        David Hildenbrand
+	<david@redhat.com>, <linux-mm@kvack.org>,
+        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Zhaoyang Huang <huangzhaoyang@gmail.com>, <steve.kang@unisoc.com>
+Subject: [RFC PATCH] mm: introduce gen information in /proc/xxx/smaps
+Date: Wed, 26 Jun 2024 16:44:06 +0800
+Message-ID: <20240626084406.2106291-1-zhaoyang.huang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,60 +55,119 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL:SHSQR01.spreadtrum.com 45Q8iCJx045005
 
-Since this function is supposed to return boost_enabled which is anyway
-a bool type make sure that it's return value is also marked as bool.
-This helps maintain better consistency in data types being used.
+From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
+Madvise_cold_and_pageout could break the LRU's balance by
+colding or moving the folio without taking activity information into
+consideration. This commit would like to introduce the folios' gen
+information based on VMA block via which the userspace could query
+the VA's activity before madvise.
+
+eg. The VMA(56c00000-56e14000) which has big Rss/Gen value suggest that
+it possesses larger proportion active folios than VMA(70dd7000-71090000)
+does and is not good candidate for madvise.
+
+56c00000-56e14000 rw-p 00000000 00:00 0                                  [anon:dalvik-/system/framework/oat/arm64/services.art]
+Size:               2128 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:                2128 kB
+Pss:                2128 kB
+Pss_Dirty:          2128 kB
+Shared_Clean:          0 kB
+Shared_Dirty:          0 kB
+Private_Clean:         0 kB
+Private_Dirty:      2128 kB
+Referenced:         2128 kB
+Anonymous:          2128 kB
+KSM:                   0 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+FilePmdMapped:         0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:                0 kB
+Gen:                 664
+THPeligible:           0
+VmFlags: rd wr mr mw me ac
+70dd7000-71090000 rw-p 00000000 00:00 0                                  [anon:dalvik-/system/framework/boot.art]
+Size:               2788 kB
+KernelPageSize:        4 kB
+MMUPageSize:           4 kB
+Rss:                2788 kB
+Pss:                 275 kB
+Pss_Dirty:           275 kB
+Shared_Clean:          0 kB
+Shared_Dirty:       2584 kB
+Private_Clean:         0 kB
+Private_Dirty:       204 kB
+Referenced:         2716 kB
+Anonymous:          2788 kB
+KSM:                   0 kB
+LazyFree:              0 kB
+AnonHugePages:         0 kB
+ShmemPmdMapped:        0 kB
+FilePmdMapped:         0 kB
+Shared_Hugetlb:        0 kB
+Private_Hugetlb:       0 kB
+Swap:                  0 kB
+SwapPss:               0 kB
+Locked:                0 kB
+Gen:                1394
+THPeligible:           0
+
+Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
 ---
+ fs/proc/task_mmu.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-No functional changes, just noticed this as I was reviewing the patch,
-"cpufreq: Allow drivers to advertise boost enabled"
-
- drivers/cpufreq/cpufreq.c | 2 +-
- include/linux/cpufreq.h   | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
-index e678ea7b0891..5704036f294a 100644
---- a/drivers/cpufreq/cpufreq.c
-+++ b/drivers/cpufreq/cpufreq.c
-@@ -2874,7 +2874,7 @@ int cpufreq_enable_boost_support(void)
- }
- EXPORT_SYMBOL_GPL(cpufreq_enable_boost_support);
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index f8d35f993fe5..9731f43aa639 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -408,12 +408,23 @@ struct mem_size_stats {
+ 	u64 pss_dirty;
+ 	u64 pss_locked;
+ 	u64 swap_pss;
++#ifdef CONFIG_LRU_GEN
++	u64 gen;
++#endif
+ };
  
--int cpufreq_boost_enabled(void)
-+bool cpufreq_boost_enabled(void)
+ static void smaps_page_accumulate(struct mem_size_stats *mss,
+ 		struct folio *folio, unsigned long size, unsigned long pss,
+ 		bool dirty, bool locked, bool private)
  {
- 	return cpufreq_driver->boost_enabled;
- }
-diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
-index 20f7e98ee8af..523f81b7e2aa 100644
---- a/include/linux/cpufreq.h
-+++ b/include/linux/cpufreq.h
-@@ -785,7 +785,7 @@ ssize_t cpufreq_show_cpus(const struct cpumask *mask, char *buf);
++#ifdef CONFIG_LRU_GEN
++	int gen = folio_lru_gen(folio);
++	struct lru_gen_folio *lrugen = &folio_lruvec(folio)->lrugen;
++
++	if (gen >= 0)
++		mss->gen += (lru_gen_from_seq(lrugen->max_seq) - gen + MAX_NR_GENS) % MAX_NR_GENS;
++#endif
++
+ 	mss->pss += pss;
  
- #ifdef CONFIG_CPU_FREQ
- int cpufreq_boost_trigger_state(int state);
--int cpufreq_boost_enabled(void);
-+bool cpufreq_boost_enabled(void);
- int cpufreq_enable_boost_support(void);
- bool policy_has_boost_freq(struct cpufreq_policy *policy);
+ 	if (folio_test_anon(folio))
+@@ -852,6 +863,10 @@ static void __show_smap(struct seq_file *m, const struct mem_size_stats *mss,
+ 	SEQ_PUT_DEC(" kB\nLocked:         ",
+ 					mss->pss_locked >> PSS_SHIFT);
+ 	seq_puts(m, " kB\n");
++#ifdef CONFIG_LRU_GEN
++	seq_put_decimal_ull_width(m, "Gen:            ",  mss->gen, 8);
++	seq_puts(m, "\n");
++#endif
+ }
  
-@@ -1164,7 +1164,7 @@ static inline int cpufreq_boost_trigger_state(int state)
- {
- 	return 0;
- }
--static inline int cpufreq_boost_enabled(void)
-+static inline bool cpufreq_boost_enabled(void)
- {
- 	return 0;
- }
-
-base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
+ static int show_smap(struct seq_file *m, void *v)
 -- 
-2.34.1
+2.25.1
 
 
