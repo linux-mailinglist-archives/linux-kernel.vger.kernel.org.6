@@ -1,990 +1,234 @@
-Return-Path: <linux-kernel+bounces-230116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C40917892
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:11:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D559178A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14CDC1C216D3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:11:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 390201C215E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9836E14B07E;
-	Wed, 26 Jun 2024 06:11:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F171154454;
+	Wed, 26 Jun 2024 06:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="m8YRuyJC"
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="luOKvf/3"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DB2938D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 06:11:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719382276; cv=none; b=g16PRkKlo4V4cVIfDU56PuTBWBC0EzNmUOy0SOSSTuAczNTckKaKaml3GmM7Hv1qi41ZGYKyHiyjB/JXkhJFZ+AEvu/dMGIr+rgV4sdlVZB+OvRAFiMqiQ693uMyEw9JyF11m3ZMnvoYLDfaUcOIQmjVE93TMSglAFsJNgXi47k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719382276; c=relaxed/simple;
-	bh=/HYDmNirUY5znW5QNOZyrKmyUQvqtiIrJ+wTX1Eoea4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HP52ets50k+4C78CZBxb43z4Qg9y5foawfs6oLVYKLDqHQ2DzZr9VGZhQTyB1ZTx9wiQixoy3YMyPp+AsVXzoBNCUvlJK7Upf/dPt1588g63/PFsDLAB58ceEw2QyA592M+YnFJoqFH4Lasebubg7wbJ4R+q3ARFXRasx4huEH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=m8YRuyJC; arc=none smtp.client-ip=209.85.221.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-4ef52fec1adso198758e0c.3
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 23:11:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719382271; x=1719987071; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PXBvlOv3hmTugL40GJsKnN+zTCUYdB3dlYfOv/3OcJw=;
-        b=m8YRuyJC/p0NRbC62d3avgfjO0eiscHriniVz9JBnQjypWhrMweTXp8u82wAqlQDTE
-         2EygpOUwK9Tz/uqlFmy8WhwTmqvq39L9A4RAdJUldJt1EcK4U4W7xgx71GB3upkIqcRJ
-         vuGY+pkMrkxL9TsC9cXvHoxfn1Myk+gdwIZ7sYVXH1JPQTV+U1qHWRhVYxA7E5pCbkuU
-         DxyqU2EQGG52hn1LhWXVH5KyjZW7i+h33gTpT7MzcRwzZH8TRCHRj7XbW85Knxk//x4b
-         n96K1W5GDqipBM8gurjbXfxLtoQ0qao4xjuvSVNdegHui9o53ov00nPgj++8pekpozOi
-         SL5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719382271; x=1719987071;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PXBvlOv3hmTugL40GJsKnN+zTCUYdB3dlYfOv/3OcJw=;
-        b=FHaspWBYnRg6SOkolKtZaAAnz/sLS64JQ0Ae99QsArWN+/SgDjmoAr1R/IBwUuWOHe
-         fIIgjoIo/qcWZGj00QcD7JZOtdUpeMpmgsVjIcUWePxdEwMbEUkY7Hl7ssRRtqQRsE0X
-         xA3HBGXTH3rwhqi6xA6+FvaAicYgEy8/ueC4QeLcU7CNTWW9S0QE9OkPgpS/Dp1YI9Sd
-         emqlLc4TLUxKrvau5mUk3oyzu/MPC/fwC1GDhR0HPzeHniG0S/aT4rw12HoBx7+a9FnA
-         Hy82WARkV72bXQ2vwoYjWlPNo6DWTm6MK85LYfysiAkM8upg92movIRbKj4CCl9QXEus
-         W2NA==
-X-Forwarded-Encrypted: i=1; AJvYcCV6Adj7Ygo5H/PxIa2gzvu6GqIVnR1ptItPfcN6cdMNbsdmNxoyKley52VXECOoBMybaxZE32NKcrJdu8k2H6C7NOm1tr/1nM9bGIDS
-X-Gm-Message-State: AOJu0YxUtjLdOdddeWNwvusAHgW5I9qrOVXdarSTNFY2vscOvLFxjJY9
-	/9NZtwXKHA4H6DR0+pw9N0CbAiz2NRQqEEFjQqF3q7+XDvsEuNvUIhUirmfr8M5BcYVYzAf0i3T
-	n+edjgxqGJsqMTvhvT/Be+Dr/OohQuCb8SBISsg==
-X-Google-Smtp-Source: AGHT+IE/Acs0Fj5rGK34yJKa/gWeXKKWFHRx7ktDor54x4ijn/rPhFWN98A05y+I+mdN9hoYfMbnQh2vLrz92KYIWrw=
-X-Received: by 2002:a05:6122:1e07:b0:4ec:f2b9:65c9 with SMTP id
- 71dfb90a1353d-4ef60c519d4mr10230788e0c.0.1719382271299; Tue, 25 Jun 2024
- 23:11:11 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8C4C7345E;
+	Wed, 26 Jun 2024 06:11:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719382307; cv=fail; b=bhjqhPRXo6XvTgdDWybnUZeUBVUBi/q4YZpbpACtHa0pQpmiLPrtSKtYO5Bpwh4XAD81Pv1GLlAPvpsEV464/+ti1hfpwtuRFMnplkiq8zs2oJVUEO41OeBsgu1JYcb+61xMTyKy4xfJ2/jlJAiTjFDTY+xUzLcWd3auNupDL2U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719382307; c=relaxed/simple;
+	bh=t5kFOL26FKqErH7/75/kLz8JVthUyyur+5ROSrjsM28=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=YgKD78h0W4jXQ43tKag3DMzN4oou2LMJyuogrI33MY6rDcsXRIUdPqmFZfcg168SdFDg45YCYCF/G/j7n4HeUne72ZyjRKKyHMSmNsj2VZGtWsI294teaNwdhbLy7Le1l6INDRUyix07RSyhorTqJ0mc24UNPGoGTeg3sx1+ejA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=luOKvf/3; arc=fail smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719382306; x=1750918306;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=t5kFOL26FKqErH7/75/kLz8JVthUyyur+5ROSrjsM28=;
+  b=luOKvf/3gI/xgWpBVOcDVHvOrs6Ga8f/Umzaq8EyLWE8ANylyr/PrH3q
+   sUjPVY8OfRjFxDIEv4VEQeF0JBNIlA7LiUfIQ74UxpJSVOsIudp8DytzZ
+   Qvz5jF5rEZWvIwJPX+RyvwIavSgHnk2MlLPHkUVUqOf2QPKAW2Q4ac1dJ
+   GVo8pif1macl9iPwx80xrzDVlz3n448YqxPa9Z4CFYQ5RmmawpGpsnIj6
+   pEcQKWgKhptyDQAyLa0iO8ZmSIdMH7KIwH/7vcdCHq5EmNjHFOiKPHUuQ
+   3F5gv6ucK1MKDJxaG10s3D3JGuf5jqPWjMfQ/iar62+39jsrm348FGpAS
+   g==;
+X-CSE-ConnectionGUID: xwJH12RaQJm8TKHupLS/1Q==
+X-CSE-MsgGUID: XxjIzOvfR5Gccazy+KJiSA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="27841665"
+X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
+   d="scan'208";a="27841665"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 23:11:31 -0700
+X-CSE-ConnectionGUID: bxoVJ6oBSMWWmVThbKsj4w==
+X-CSE-MsgGUID: 48Q4rEzXS4GwjOs5t28Trw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
+   d="scan'208";a="49058636"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa004.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Jun 2024 23:11:31 -0700
+Received: from orsmsx610.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Tue, 25 Jun 2024 23:11:31 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx610.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Tue, 25 Jun 2024 23:11:31 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.169)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Tue, 25 Jun 2024 23:11:30 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EJx9SUp9NndkNHVYJi4HQYyOTnLrCdT9FK7KOhxwCSlnU86VRUnAvejMi/fmDdgt1heNwZIT5KThAbnc646BUcerpKXzB1XTC1VBoyFfCK7tZ44BmHIu7NdmvJct9HRvVnmOGf/luVOElAHzXP2nWs6t78/139wCY5BPdtN2JJFhQayuDfxdw5oBSozXvHPuhdLIWxFMmI6bYy4/zhP8AJw/63gIk/7zNpgNRYnLPYsB0ksNrkX2VLj8kM4LPk5yr1NQq3gLuTM2HSAlgoQZuxw1u21OIjEYxftExrOcn0eKrHa1EQsUJz+RIiqItQ141Lgs6b+lwuUJrnphrvPqrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=J8fSauy/TvO+99Vvwkl3RhAOh0VOzLNYuHGS202phAg=;
+ b=lhiLnkbGk2lf+f7pFFALd8EuEtzimO8YXjEK42hYfcvENwx91wwmq5JGxmBTRjoYEmYDBBkLk3ACR32A0K/LcW5cm/qIwtF5rcRIyihXkGCekcGhpcL0zpfh5x6FW0DoIuVkWRguTOusniMyhsJZ73xmEZ3ZR4U34hFnuR34Tx4trQ5c+ZNU3yuaD/TEgnDrTyBegFq/9s0sm/9t74UJomkaPRQ5yAFxCxseBGWNUSmQd3P+M5Fi1u13npmCN6kSHD2CNhq4xdQwqYKoAhUOF9lh78IliQM7/1aYqN1lbSCyn0QvoEsmXCeQr5cREYjOCPtQFOr8eW8MWsUGFwbhWg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by SN7PR11MB7440.namprd11.prod.outlook.com (2603:10b6:806:340::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
+ 2024 06:11:29 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%2]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 06:11:28 +0000
+Date: Wed, 26 Jun 2024 14:11:11 +0800
+From: Oliver Sang <oliver.sang@intel.com>
+To: Christoph Hellwig <hch@lst.de>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, Jens Axboe <axboe@kernel.dk>,
+	Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>,
+	<linux-m68k@lists.linux-m68k.org>, <linux-um@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <linux-block@vger.kernel.org>,
+	<drbd-dev@lists.linbit.com>, <nbd@other.debian.org>,
+	<linuxppc-dev@lists.ozlabs.org>, <ceph-devel@vger.kernel.org>,
+	<virtualization@lists.linux.dev>, <xen-devel@lists.xenproject.org>,
+	<linux-bcache@vger.kernel.org>, <dm-devel@lists.linux.dev>,
+	<linux-raid@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
+	<linux-mtd@lists.infradead.org>, <nvdimm@lists.linux.dev>,
+	<linux-nvme@lists.infradead.org>, <linux-s390@vger.kernel.org>,
+	<linux-scsi@vger.kernel.org>, <ying.huang@intel.com>, <feng.tang@intel.com>,
+	<fengwei.yin@intel.com>, <oliver.sang@intel.com>
+Subject: Re: [axboe-block:for-next] [block]  bd4a633b6f: fsmark.files_per_sec
+ -64.5% regression
+Message-ID: <Znuw/4zMD4w5Oq2a@xsang-OptiPlex-9020>
+References: <202406241546.6bbd44a7-oliver.sang@intel.com>
+ <20240624083537.GA19941@lst.de>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240624083537.GA19941@lst.de>
+X-ClientProxiedBy: SI2PR06CA0001.apcprd06.prod.outlook.com
+ (2603:1096:4:186::21) To LV3PR11MB8603.namprd11.prod.outlook.com
+ (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1719351923.git.marcelo.schmitt@analog.com> <eb5f7b73bdf3ac89117e28f26ee3f54ba849163e.1719351923.git.marcelo.schmitt@analog.com>
-In-Reply-To: <eb5f7b73bdf3ac89117e28f26ee3f54ba849163e.1719351923.git.marcelo.schmitt@analog.com>
-From: Alexandru Ardelean <aardelean@baylibre.com>
-Date: Wed, 26 Jun 2024 09:11:00 +0300
-Message-ID: <CA+GgBR9E2EMeqAXJ=b7jMnJgd4FXZPNm-LYEe-=aKZhJBkFNNw@mail.gmail.com>
-Subject: Re: [PATCH v5 6/7] iio: adc: Add support for AD4000
-To: Marcelo Schmitt <marcelo.schmitt@analog.com>
-Cc: broonie@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com, 
-	jic23@kernel.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com, 
-	corbet@lwn.net, marcelo.schmitt1@gmail.com, linux-iio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|SN7PR11MB7440:EE_
+X-MS-Office365-Filtering-Correlation-Id: 240e8ff1-6e30-4b38-0751-08dc95a6d14f
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230038|366014|1800799022|7416012|376012;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?a64+Aa+OBxr+fpZKf9+yf1y8XxQTNVNIOupwG3tBSFq6U+OzazbDUoWdbL?=
+ =?iso-8859-1?Q?RpCuChvnGHZHU7tjWDc7ooVlA6VzPMCbMAja43FPN61qBv/rWq4ySW+3IQ?=
+ =?iso-8859-1?Q?+8XZPGqOm1/t0V8eY8yurQDDH5Ji78+rBzz/3DZpuNZP9LQgLmXHbBZj7v?=
+ =?iso-8859-1?Q?05Qjjm/p1QpARKqMlDL6OdcyUX4F+1bNeuf69KcsFPatzP5TloxdE0eyEi?=
+ =?iso-8859-1?Q?Ks1CfBlw9t8xzW9VpG/lz6bUT/Ir3l39TzV982XR81PPVPO/onwJX/ssUT?=
+ =?iso-8859-1?Q?cgJMniiIN7QoVlvLuoCyesSBrkO2C9PB+nxMmNk9MJItrKIAmu3qtQO0x+?=
+ =?iso-8859-1?Q?9J3ig7/9MzyqbmQ3a0un0vPPQzkDtG4Hf1cPYYn8yFzfwis4c/jvYAiQWh?=
+ =?iso-8859-1?Q?y8U4r3kysVo3oABXf87JDkKVVIEkGW10hZB3hjFoZ5Mjfq2KYHSj/e124Y?=
+ =?iso-8859-1?Q?fJlrSxSwciJxT5G4Wz5d1vfC2XraDaRmfOx2NDKZl1Lv/9rTXdi9Cojzap?=
+ =?iso-8859-1?Q?cBdRUu4EZaFs9b1RdeodvDpx65C31CBy8HZa8XKpYST8ciRqZhtXS4prZh?=
+ =?iso-8859-1?Q?iSIozH4Bc71JTOWm2lyku1bWS06c8WJ7nRJEhX1CnCTEs6er4Yx3dgsZ7W?=
+ =?iso-8859-1?Q?+0GE7UZwzljfQgYO/3ZhlZnL5Zv72C7J5rF5mjcrbCFdu56IPptmS9844F?=
+ =?iso-8859-1?Q?w0yS8szsGUAkkyKd/+ek8nMY9oRCmeJjWcefhP53YnOVwoKWpG1cHKKrPA?=
+ =?iso-8859-1?Q?MOfHMQFufo3AkrSIvzxhMBQCEuN8u/defsCzzkM6TcSNTeu/vGxtkfpAFT?=
+ =?iso-8859-1?Q?Jvz5MAUB5yEAOScw1mJFvuzWk2g5ifW0BJDy+IaVkKS+j8FzcNx/8x0bqu?=
+ =?iso-8859-1?Q?I89VKVLPklDFddt0ZBy62XGgoJKah/KftaxouDJkVk5DQQ5Dv1ksszN5Zm?=
+ =?iso-8859-1?Q?J/VxyrPgH5E/UqopOklFx4OmDf0pHtZX+mKkSYktNksKOvCosS26t3J64X?=
+ =?iso-8859-1?Q?DkvkE7OjsI7HH02O+FlInjcHCtEnXwYgo19sFLCzhO5Brl+n3h1kxMYeyj?=
+ =?iso-8859-1?Q?O5w5abmwsPRUYDFTk6hH7SfdK48f3y1/dy/XJlCCplVFaRdbzoRGFBDZFY?=
+ =?iso-8859-1?Q?5QzidBGU9/bEDvWMMLCqX6NKT3SztMMoaOy+4cqrJCuU2W3188g9KoLWxR?=
+ =?iso-8859-1?Q?bCMnfuIgUWrPJBQiA0rWMX4WAfrBeKcUW+5z2CnIG8e5VRHLPeuAC+WZip?=
+ =?iso-8859-1?Q?6x+0Lu9pUPMc9IpCL7vld4H9xff+/g1/LcLiLnFp7Ed5yISS4Jc2ZM3a4J?=
+ =?iso-8859-1?Q?J3qg?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(1800799022)(7416012)(376012);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?i5/fM8SHslBnAC2ne5UoVaNUKih9tn+rmnjB84Nv5+puKAdJC6qhGRglu9?=
+ =?iso-8859-1?Q?CSa4ZF8vOIfTk0LcuTnMnRmCl/RUNrGLDbcCDXusEO/mjY6XlQTy2m7sA/?=
+ =?iso-8859-1?Q?YYCE5CTQOkruWdHNqM2pdF27ctR7jRKFDNtseI3FnNlcYz5gRpxC08Z+KV?=
+ =?iso-8859-1?Q?bCj5+WF5BCkRtKZyZnrD9ZQWa5YTw/Qjs+9FymTyvVV0sf6D8tKZ7Uiyp8?=
+ =?iso-8859-1?Q?mV4a59sMNoqy/ZiCWgQelE35mVghDKZsYT7rrvfEHIS1JTY89S2f8GN2Sx?=
+ =?iso-8859-1?Q?7KgvJSegPsU6A2Z8sd7XBXlYE2mFRS0iexmgq21mpRt7rtEnWNJzCP0mwY?=
+ =?iso-8859-1?Q?8YWK8QfGEEc2tduEAu9Kz0LAwXCBNULbNJeapSFpU1uwJB+dt/vENYCNT5?=
+ =?iso-8859-1?Q?NUYjtc+M4lTWh5/rgSulV9NsdcdiPM3hcTRwyDl9GKhYnDFr1WFlKxOKlS?=
+ =?iso-8859-1?Q?SUwG1x9zzVzBlItOzkid2kje8JQ5dIt2BOsIbYExnBtm8eMHYsJbQfb8is?=
+ =?iso-8859-1?Q?svbQARGnCweR6nXxM+1QdCGO5oWGFJHodP/tMxSqnAT2Zvp2AcsBASLQFU?=
+ =?iso-8859-1?Q?RE7GUJ82QrTd83svc+EjhaHIB+qFdoUyNEoYehNcCGsgwqlQMCADdy3vf4?=
+ =?iso-8859-1?Q?eNq/oBZztGkfg0Tk4aj+K8sjcYM5rXUl0LfgTdL+83lRysCwELX2zf2BmN?=
+ =?iso-8859-1?Q?GztBGhxXpyDuCbh0mWRw5FUkyV4Urs5hu/Zhv7Sd16ocgvnudJGmu4w/Dq?=
+ =?iso-8859-1?Q?ZcxyRoH9rAOGS2tnsIvjUfLbrPkbYo1YJV3lekulNTV10pf84hur52Hdj1?=
+ =?iso-8859-1?Q?HSNDb4UMyK1lJhG5jD4MX5N2pAzW5es24vCtECZ1AM1lm8DLncjbZlNa6m?=
+ =?iso-8859-1?Q?mv3TZMlsE6mPyp8TS0i4YV4kIL7Ny1dMvn6JL06sfqYUul2T0SvtRglLTw?=
+ =?iso-8859-1?Q?mN7nywq1p8OulcASBHTK2iXYy1gFi+pSPQa7czHwOLcJlvMIjlxw+hErEj?=
+ =?iso-8859-1?Q?DBRogqnmUNF1D6b6JGLnh67V+qAYYlcpBMIhqwbAC2HBRlgIRhhWZe+h9b?=
+ =?iso-8859-1?Q?owIgwcnDR2Eu3crAGOsIbNswoYhz8FCO2I+aHK6e2UQIOXw/lUNit9wVgI?=
+ =?iso-8859-1?Q?r4aB6zX88zlSKaZNQLG7b+R/6ol/GOjUTXDueUhfyB+DIFNA6/rtaWeso7?=
+ =?iso-8859-1?Q?3mp8rWcv2C1g3dLhTT5t0xXxS4+NCEpzXMqUsYhWj3CKYBpcjoWwWFaeT2?=
+ =?iso-8859-1?Q?uT1kxdbYpyvmHmIgzPjxWB/oJdeZne03Hnwd8sRIoL2HsvbqTlFGx7G0eH?=
+ =?iso-8859-1?Q?EKaMlx9dXYmcFYPckmhRID19radNtaBbgbLQ8+2hjiK7R+SDeASQ5y/8tK?=
+ =?iso-8859-1?Q?ln+032cY4xH2Gx15s8csP/dAe59Uhwau5fXbCy7br+ZdWorFMXOabtMjw2?=
+ =?iso-8859-1?Q?mALrnt3i3aWvtXMmoEUYSKqJFQ4sTwOrpp5e3IphxS9zv98oQr0S0ls+Rk?=
+ =?iso-8859-1?Q?7F2HhdjzzmH8VvG3rzgjc2rBtVtQaVmZOqSK0bp369zezyAUbsCFt7/PZV?=
+ =?iso-8859-1?Q?lnwzVCj23jjdZjbcsa82aikGAjq9IjNZnlAZmrixdvzpbtXhxn4BDFfT+c?=
+ =?iso-8859-1?Q?Lwqa6vw+t0NBK3vTLLe8rttDwzWcLiO/XPuQGq+B6amV+gsRayB+yGkA?=
+ =?iso-8859-1?Q?=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 240e8ff1-6e30-4b38-0751-08dc95a6d14f
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 06:11:28.9475
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2rBI4MbOiujmbQZnU6yBi9cXBp9FqVQGvMABiGD37FJd/z+ZIvV86HbcSvfVmFpW3TK30K2gVluEBOTixDjIgw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR11MB7440
+X-OriginatorOrg: intel.com
 
-On Wed, Jun 26, 2024 at 12:56=E2=80=AFAM Marcelo Schmitt
-<marcelo.schmitt@analog.com> wrote:
->
-> Add support for AD4000 series of low noise, low power, high speed,
-> successive approximation register (SAR) ADCs.
->
+hi, Christoph Hellwig,
 
-Hello :)
+On Mon, Jun 24, 2024 at 10:35:37AM +0200, Christoph Hellwig wrote:
+> This is odd to say at least.  Any chance you can check the value
+> of /sys/block/$DEVICE/queue/rotational for the relevant device before
+> and after this commit?  And is this an ATA or NVMe SSD?
+> 
 
-Looks good overall.
-Just a few comments.
-The only one where I am not sure is about the enum-to-string mapping.
-If that's fine, we can leave this unchanged (from my side).
+yeah, as Niklas mentioned, it's an ATA SSD.
 
-> Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> ---
->  MAINTAINERS              |   1 +
->  drivers/iio/adc/Kconfig  |  12 +
->  drivers/iio/adc/Makefile |   1 +
->  drivers/iio/adc/ad4000.c | 711 +++++++++++++++++++++++++++++++++++++++
->  4 files changed, 725 insertions(+)
->  create mode 100644 drivers/iio/adc/ad4000.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9aa6531f7cf2..f4ffedada8ea 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -1205,6 +1205,7 @@ L:        linux-iio@vger.kernel.org
->  S:     Supported
->  W:     https://ez.analog.com/linux-software-drivers
->  F:     Documentation/devicetree/bindings/iio/adc/adi,ad4000.yaml
-> +F:     drivers/iio/adc/ad4000.c
->
->  ANALOG DEVICES INC AD4130 DRIVER
->  M:     Cosmin Tanislav <cosmin.tanislav@analog.com>
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index b8184706c7d1..5bbe843916a3 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -21,6 +21,18 @@ config AD_SIGMA_DELTA
->         select IIO_BUFFER
->         select IIO_TRIGGERED_BUFFER
->
-> +config AD4000
-> +       tristate "Analog Devices AD4000 ADC Driver"
-> +       depends on SPI
-> +       select IIO_BUFFER
-> +       select IIO_TRIGGERED_BUFFER
-> +       help
-> +         Say yes here to build support for Analog Devices AD4000 high sp=
-eed
-> +         SPI analog to digital converters (ADC).
-> +
-> +         To compile this driver as a module, choose M here: the module w=
-ill be
-> +         called ad4000.
-> +
->  config AD4130
->         tristate "Analog Device AD4130 ADC Driver"
->         depends on SPI
-> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> index 51298c52b223..f4361df40cca 100644
-> --- a/drivers/iio/adc/Makefile
-> +++ b/drivers/iio/adc/Makefile
-> @@ -6,6 +6,7 @@
->  # When adding new entries keep the list in alphabetical order
->  obj-$(CONFIG_AB8500_GPADC) +=3D ab8500-gpadc.o
->  obj-$(CONFIG_AD_SIGMA_DELTA) +=3D ad_sigma_delta.o
-> +obj-$(CONFIG_AD4000) +=3D ad4000.o
->  obj-$(CONFIG_AD4130) +=3D ad4130.o
->  obj-$(CONFIG_AD7091R) +=3D ad7091r-base.o
->  obj-$(CONFIG_AD7091R5) +=3D ad7091r5.o
-> diff --git a/drivers/iio/adc/ad4000.c b/drivers/iio/adc/ad4000.c
-> new file mode 100644
-> index 000000000000..0b6293db68dc
-> --- /dev/null
-> +++ b/drivers/iio/adc/ad4000.c
-> @@ -0,0 +1,711 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * AD4000 SPI ADC driver
-> + *
-> + * Copyright 2024 Analog Devices Inc.
-> + */
-> +#include <linux/bits.h>
-> +#include <linux/bitfield.h>
-> +#include <linux/byteorder/generic.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/math.h>
-> +#include <linux/module.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/spi/spi.h>
-> +#include <linux/units.h>
-> +#include <linux/util_macros.h>
-> +#include <linux/iio/iio.h>
-> +
-> +#include <linux/iio/buffer.h>
-> +#include <linux/iio/triggered_buffer.h>
-> +#include <linux/iio/trigger_consumer.h>
-> +
-> +#define AD4000_READ_COMMAND    0x54
-> +#define AD4000_WRITE_COMMAND   0x14
-> +
-> +#define AD4000_CONFIG_REG_DEFAULT      0xE1
-> +
-> +/* AD4000 Configuration Register programmable bits */
-> +#define AD4000_CFG_STATUS              BIT(4) /* Status bits output */
-> +#define AD4000_CFG_SPAN_COMP           BIT(3) /* Input span compression =
- */
-> +#define AD4000_CFG_HIGHZ               BIT(2) /* High impedance mode  */
-> +#define AD4000_CFG_TURBO               BIT(1) /* Turbo mode */
-> +
-> +#define AD4000_SCALE_OPTIONS           2
-> +
-> +#define AD4000_TQUIET1_NS              190
-> +#define AD4000_TQUIET2_NS              60
-> +#define AD4000_TCONV_NS                        320
-> +
-> +#define __AD4000_DIFF_CHANNEL(_sign, _real_bits, _storage_bits, _reg_acc=
-ess)   \
-> +{                                                                       =
-       \
-> +       .type =3D IIO_VOLTAGE,                                           =
-         \
-> +       .indexed =3D 1,                                                  =
-         \
-> +       .differential =3D 1,                                             =
-         \
-> +       .channel =3D 0,                                                  =
-         \
-> +       .channel2 =3D 1,                                                 =
-         \
-> +       .info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |                 =
-         \
-> +                             BIT(IIO_CHAN_INFO_SCALE),                  =
-       \
-> +       .info_mask_separate_available =3D _reg_access ? BIT(IIO_CHAN_INFO=
-_SCALE) : 0,\
-> +       .scan_type =3D {                                                 =
-         \
-> +               .sign =3D _sign,                                         =
-         \
-> +               .realbits =3D _real_bits,                                =
-         \
-> +               .storagebits =3D _storage_bits,                          =
-         \
-> +               .shift =3D _storage_bits - _real_bits,                   =
-         \
-> +               .endianness =3D IIO_BE,                                  =
-         \
-> +       },                                                               =
-       \
-> +}
-> +
-> +#define AD4000_DIFF_CHANNEL(_sign, _real_bits, _reg_access)             =
-       \
-> +       __AD4000_DIFF_CHANNEL((_sign), (_real_bits),                     =
-       \
-> +                                    ((_real_bits) > 16 ? 32 : 16), (_reg=
-_access))
-> +
-> +#define __AD4000_PSEUDO_DIFF_CHANNEL(_sign, _real_bits, _storage_bits, _=
-reg_access)\
-> +{                                                                       =
-       \
-> +       .type =3D IIO_VOLTAGE,                                           =
-         \
-> +       .indexed =3D 1,                                                  =
-         \
-> +       .channel =3D 0,                                                  =
-         \
-> +       .info_mask_separate =3D BIT(IIO_CHAN_INFO_RAW) |                 =
-         \
-> +                             BIT(IIO_CHAN_INFO_SCALE) |                 =
-       \
-> +                             BIT(IIO_CHAN_INFO_OFFSET),                 =
-       \
-> +       .info_mask_separate_available =3D _reg_access ? BIT(IIO_CHAN_INFO=
-_SCALE) : 0,\
-> +       .scan_type =3D {                                                 =
-         \
-> +               .sign =3D _sign,                                         =
-         \
-> +               .realbits =3D _real_bits,                                =
-         \
-> +               .storagebits =3D _storage_bits,                          =
-         \
-> +               .shift =3D _storage_bits - _real_bits,                   =
-         \
-> +               .endianness =3D IIO_BE,                                  =
-         \
-> +       },                                                               =
-       \
-> +}
-> +
-> +#define AD4000_PSEUDO_DIFF_CHANNEL(_sign, _real_bits, _reg_access)      =
-       \
-> +       __AD4000_PSEUDO_DIFF_CHANNEL((_sign), (_real_bits),              =
-       \
-> +                                    ((_real_bits) > 16 ? 32 : 16), (_reg=
-_access))
-> +
-> +enum ad4000_sdi {
-> +       /* datasheet calls this "4-wire mode" (controller CS goes to ADC =
-SDI!) */
-> +       AD4000_SDI_MOSI,
-> +       /* datasheet calls this "3-wire mode" (not related to SPI_3WIRE!)=
- */
-> +       AD4000_SDI_VIO,
-> +       AD4000_SDI_CS,
-> +};
-> +
-> +/* maps adi,sdi-pin property value to enum */
-> +static const char * const ad4000_sdi_pin[] =3D {
-> +       [AD4000_SDI_MOSI] =3D "",
+I checked the /sys/block/$DEVICE/queue/rotational before and after this commit,
+both show '0'. not sure if this is expected.
 
-Maybe I missed a previous comment.
-And I'm also a little fuzzy on the details here, but in the DT this
-property has "high", "low", "cs".
-Is "low" the default if unspecified?
-Or should this string be "low"?
+anyway, I noticed you send a patch [1]
 
-> +       [AD4000_SDI_VIO] =3D "high",
-> +       [AD4000_SDI_CS] =3D "cs",
-> +};
-> +
-> +struct ad4000_chip_info {
-> +       const char *dev_name;
-> +       struct iio_chan_spec chan_spec;
-> +       struct iio_chan_spec reg_access_chan_spec;
-> +       bool has_hardware_gain;
-> +};
-> +
-> +static const struct ad4000_chip_info ad4000_chip_info =3D {
-> +       .dev_name =3D "ad4000",
-> +       .chan_spec =3D AD4000_PSEUDO_DIFF_CHANNEL('u', 16, 0),
-> +       .reg_access_chan_spec =3D AD4000_PSEUDO_DIFF_CHANNEL('u', 16, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4001_chip_info =3D {
-> +       .dev_name =3D "ad4001",
-> +       .chan_spec =3D AD4000_DIFF_CHANNEL('s', 16, 0),
-> +       .reg_access_chan_spec =3D AD4000_DIFF_CHANNEL('s', 16, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4002_chip_info =3D {
-> +       .dev_name =3D "ad4002",
-> +       .chan_spec =3D AD4000_PSEUDO_DIFF_CHANNEL('u', 18, 0),
-> +       .reg_access_chan_spec =3D AD4000_PSEUDO_DIFF_CHANNEL('u', 18, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4003_chip_info =3D {
-> +       .dev_name =3D "ad4003",
-> +       .chan_spec =3D AD4000_DIFF_CHANNEL('s', 18, 0),
-> +       .reg_access_chan_spec =3D AD4000_DIFF_CHANNEL('s', 18, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4004_chip_info =3D {
-> +       .dev_name =3D "ad4004",
-> +       .chan_spec =3D AD4000_PSEUDO_DIFF_CHANNEL('u', 16, 0),
-> +       .reg_access_chan_spec =3D AD4000_PSEUDO_DIFF_CHANNEL('u', 16, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4005_chip_info =3D {
-> +       .dev_name =3D "ad4005",
-> +       .chan_spec =3D AD4000_DIFF_CHANNEL('s', 16, 0),
-> +       .reg_access_chan_spec =3D AD4000_DIFF_CHANNEL('s', 16, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4006_chip_info =3D {
-> +       .dev_name =3D "ad4006",
-> +       .chan_spec =3D AD4000_PSEUDO_DIFF_CHANNEL('u', 18, 0),
-> +       .reg_access_chan_spec =3D AD4000_PSEUDO_DIFF_CHANNEL('u', 18, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4007_chip_info =3D {
-> +       .dev_name =3D "ad4007",
-> +       .chan_spec =3D AD4000_DIFF_CHANNEL('s', 18, 0),
-> +       .reg_access_chan_spec =3D AD4000_DIFF_CHANNEL('s', 18, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4008_chip_info =3D {
-> +       .dev_name =3D "ad4008",
-> +       .chan_spec =3D AD4000_PSEUDO_DIFF_CHANNEL('u', 16, 0),
-> +       .reg_access_chan_spec =3D AD4000_PSEUDO_DIFF_CHANNEL('u', 16, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4010_chip_info =3D {
-> +       .dev_name =3D "ad4010",
-> +       .chan_spec =3D AD4000_PSEUDO_DIFF_CHANNEL('u', 18, 0),
-> +       .reg_access_chan_spec =3D AD4000_PSEUDO_DIFF_CHANNEL('u', 18, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4011_chip_info =3D {
-> +       .dev_name =3D "ad4011",
-> +       .chan_spec =3D AD4000_DIFF_CHANNEL('s', 18, 0),
-> +       .reg_access_chan_spec =3D AD4000_DIFF_CHANNEL('s', 18, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4020_chip_info =3D {
-> +       .dev_name =3D "ad4020",
-> +       .chan_spec =3D AD4000_DIFF_CHANNEL('s', 20, 0),
-> +       .reg_access_chan_spec =3D AD4000_DIFF_CHANNEL('s', 20, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4021_chip_info =3D {
-> +       .dev_name =3D "ad4021",
-> +       .chan_spec =3D AD4000_DIFF_CHANNEL('s', 20, 0),
-> +       .reg_access_chan_spec =3D AD4000_DIFF_CHANNEL('s', 20, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info ad4022_chip_info =3D {
-> +       .dev_name =3D "ad4022",
-> +       .chan_spec =3D AD4000_DIFF_CHANNEL('s', 20, 0),
-> +       .reg_access_chan_spec =3D AD4000_DIFF_CHANNEL('s', 20, 1),
-> +};
-> +
-> +static const struct ad4000_chip_info adaq4001_chip_info =3D {
-> +       .dev_name =3D "adaq4001",
-> +       .chan_spec =3D AD4000_DIFF_CHANNEL('s', 16, 0),
-> +       .reg_access_chan_spec =3D AD4000_DIFF_CHANNEL('s', 16, 1),
-> +       .has_hardware_gain =3D true,
-> +};
-> +
-> +static const struct ad4000_chip_info adaq4003_chip_info =3D {
-> +       .dev_name =3D "adaq4003",
-> +       .chan_spec =3D AD4000_DIFF_CHANNEL('s', 18, 0),
-> +       .reg_access_chan_spec =3D AD4000_DIFF_CHANNEL('s', 18, 1),
-> +       .has_hardware_gain =3D true,
-> +};
-> +
-> +struct ad4000_state {
-> +       struct spi_device *spi;
-> +       struct gpio_desc *cnv_gpio;
-> +       struct spi_transfer xfers[2];
-> +       struct spi_message msg;
-> +       struct mutex lock; /* Protect read modify write cycle */
-> +       int vref_mv;
-> +       enum ad4000_sdi sdi_pin;
-> +       bool span_comp;
-> +       bool turbo_mode;
-> +       u16 gain_milli;
-> +       int scale_tbl[AD4000_SCALE_OPTIONS][2];
-> +
-> +       /*
-> +        * DMA (thus cache coherency maintenance) requires the transfer b=
-uffers
-> +        * to live in their own cache lines.
-> +        */
-> +       struct {
-> +               union {
-> +                       __be16 sample_buf16;
-> +                       __be32 sample_buf32;
-> +               } data;
-> +               s64 timestamp __aligned(8);
-> +       } scan __aligned(IIO_DMA_MINALIGN);
-> +       u8 tx_buf[2];
-> +       u8 rx_buf[2];
-> +};
-> +
-> +static void ad4000_fill_scale_tbl(struct ad4000_state *st,
-> +                                 struct iio_chan_spec const *chan)
-> +{
-> +       int val, tmp0, tmp1;
-> +       int scale_bits;
-> +       u64 tmp2;
-> +
-> +       /*
-> +        * ADCs that output two's complement code have one less bit to ex=
-press
-> +        * voltage magnitude.
-> +        */
-> +       if (chan->scan_type.sign =3D=3D 's')
-> +               scale_bits =3D chan->scan_type.realbits - 1;
-> +       else
-> +               scale_bits =3D chan->scan_type.realbits;
-> +
-> +       /*
-> +        * The gain is stored as a fraction of 1000 and, as we need to
-> +        * divide vref_mv by the gain, we invert the gain/1000 fraction.
-> +        * Also multiply by an extra MILLI to preserve precision.
-> +        * Thus, we have MILLI * MILLI equals MICRO as fraction numerator=
-.
-> +        */
-> +       val =3D mult_frac(st->vref_mv, MICRO, st->gain_milli);
-> +       /* Would multiply by NANO here but we multiplied by extra MILLI *=
-/
-> +       tmp2 =3D shift_right((u64)val * MICRO, scale_bits);
-> +       tmp0 =3D div_s64_rem(tmp2, NANO, &tmp1);
-> +       /* Store scale for when span compression is disabled */
-> +       st->scale_tbl[0][0] =3D tmp0; /* Integer part */
-> +       st->scale_tbl[0][1] =3D abs(tmp1); /* Fractional part */
-> +       /* Store scale for when span compression is enabled */
-> +       st->scale_tbl[1][0] =3D tmp0;
-> +       /* The integer part is always zero so don't bother to divide it. =
-*/
-> +       if (chan->differential)
-> +               st->scale_tbl[1][1] =3D DIV_ROUND_CLOSEST(abs(tmp1) * 4, =
-5);
-> +       else
-> +               st->scale_tbl[1][1] =3D DIV_ROUND_CLOSEST(abs(tmp1) * 9, =
-10);
-> +}
-> +
-> +static int ad4000_write_reg(struct ad4000_state *st, uint8_t val)
-> +{
-> +       st->tx_buf[0] =3D AD4000_WRITE_COMMAND;
-> +       st->tx_buf[1] =3D val;
-> +       return spi_write(st->spi, st->tx_buf, ARRAY_SIZE(st->tx_buf));
-> +}
-> +
-> +static int ad4000_read_reg(struct ad4000_state *st, unsigned int *val)
-> +{
-> +       struct spi_transfer t =3D {
-> +               .tx_buf =3D st->tx_buf,
-> +               .rx_buf =3D st->rx_buf,
-> +               .len =3D 2,
-> +       };
-> +       int ret;
-> +
-> +       st->tx_buf[0] =3D AD4000_READ_COMMAND;
-> +       ret =3D spi_sync_transfer(st->spi, &t, 1);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       *val =3D st->tx_buf[1];
-> +       return ret;
-> +}
-> +
-> +/*
-> + * This executes a data sample transfer for when the device connections =
-are
-> + * in "3-wire" mode, selected when the adi,sdi-pin device tree property =
-is
-> + * absent or set to "high". In this connection mode, the ADC SDI pin is
-> + * connected to MOSI or to VIO and ADC CNV pin is connected either to a =
-SPI
-> + * controller CS or to a GPIO.
-> + * AD4000 series of devices initiate conversions on the rising edge of C=
-NV pin.
-> + *
-> + * If the CNV pin is connected to an SPI controller CS line (which is by=
- default
-> + * active low), the ADC readings would have a latency (delay) of one rea=
-d.
-> + * Moreover, since we also do ADC sampling for filling the buffer on tri=
-ggered
-> + * buffer mode, the timestamps of buffer readings would be disarranged.
-> + * To prevent the read latency and reduce the time discrepancy between t=
-he
-> + * sample read request and the time of actual sampling by the ADC, do a
-> + * preparatory transfer to pulse the CS/CNV line.
-> + */
-> +static int ad4000_prepare_3wire_mode_message(struct ad4000_state *st,
-> +                                            const struct iio_chan_spec *=
-chan)
-> +{
-> +       unsigned int cnv_pulse_time =3D st->turbo_mode ? AD4000_TQUIET1_N=
-S
-> +                                                    : AD4000_TCONV_NS;
-> +       struct spi_transfer *xfers =3D st->xfers;
-> +
-> +       xfers[0].cs_change =3D 1;
-> +       xfers[0].cs_change_delay.value =3D cnv_pulse_time;
-> +       xfers[0].cs_change_delay.unit =3D SPI_DELAY_UNIT_NSECS;
-> +
-> +       xfers[1].rx_buf =3D &st->scan.data;
-> +       xfers[1].len =3D BITS_TO_BYTES(chan->scan_type.storagebits);
-> +       xfers[1].delay.value =3D AD4000_TQUIET2_NS;
-> +       xfers[1].delay.unit =3D SPI_DELAY_UNIT_NSECS;
-> +
-> +       spi_message_init_with_transfers(&st->msg, st->xfers, 2);
-> +
-> +       return devm_spi_optimize_message(st->spi, &st->msg);
-> +}
-> +
-> +/*
-> + * This executes a data sample transfer for when the device connections =
-are
-> + * in "4-wire" mode, selected when the adi,sdi-pin device tree property =
-is
-> + * set to "cs". In this connection mode, the controller CS pin is connec=
-ted to
-> + * ADC SDI pin and a GPIO is connected to ADC CNV pin.
-> + * The GPIO connected to ADC CNV pin is set outside of the SPI transfer.
-> + */
-> +static int ad4000_prepare_4wire_mode_message(struct ad4000_state *st,
-> +                                            const struct iio_chan_spec *=
-chan)
-> +{
-> +       unsigned int cnv_to_sdi_time =3D st->turbo_mode ? AD4000_TQUIET1_=
-NS
-> +                                                     : AD4000_TCONV_NS;
-> +       struct spi_transfer *xfers =3D st->xfers;
-> +
-> +       /*
-> +        * Dummy transfer to cause enough delay between CNV going high an=
-d SDI
-> +        * going low.
-> +        */
-> +       xfers[0].cs_off =3D 1;
-> +       xfers[0].delay.value =3D cnv_to_sdi_time;
-> +       xfers[0].delay.unit =3D SPI_DELAY_UNIT_NSECS;
-> +
-> +       xfers[1].rx_buf =3D &st->scan.data;
-> +       xfers[1].len =3D BITS_TO_BYTES(chan->scan_type.storagebits);
-> +
-> +       spi_message_init_with_transfers(&st->msg, st->xfers, 2);
-> +
-> +       return devm_spi_optimize_message(st->spi, &st->msg);
-> +}
-> +
-> +static int ad4000_convert_and_acquire(struct ad4000_state *st)
-> +{
-> +       int ret;
-> +
-> +       /*
-> +        * In 4-wire mode, the CNV line is held high for the entire conve=
-rsion
-> +        * and acquisition process. In other modes, the CNV GPIO is optio=
-nal
-> +        * and, if provided, replaces controller CS. If CNV GPIO is not d=
-efined
-> +        * gpiod_set_value_cansleep() has no effect.
-> +        */
-> +       gpiod_set_value_cansleep(st->cnv_gpio, 1);
-> +       ret =3D spi_sync(st->spi, &st->msg);
-> +       gpiod_set_value_cansleep(st->cnv_gpio, 0);
-> +
-> +       return ret;
-> +}
-> +
-> +static int ad4000_single_conversion(struct iio_dev *indio_dev,
-> +                                   const struct iio_chan_spec *chan, int=
- *val)
-> +{
-> +       struct ad4000_state *st =3D iio_priv(indio_dev);
-> +       u32 sample;
-> +       int ret;
-> +
-> +       ret =3D ad4000_convert_and_acquire(st);
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       if (chan->scan_type.storagebits > 16)
-> +               sample =3D be32_to_cpu(st->scan.data.sample_buf32);
-> +       else
-> +               sample =3D be16_to_cpu(st->scan.data.sample_buf16);
-> +
-> +       sample >>=3D chan->scan_type.shift;
-> +
-> +       if (chan->scan_type.sign =3D=3D 's')
-> +               *val =3D sign_extend32(sample, chan->scan_type.realbits -=
- 1);
-> +
-> +       return IIO_VAL_INT;
-> +}
-> +
-> +static int ad4000_read_raw(struct iio_dev *indio_dev,
-> +                          struct iio_chan_spec const *chan, int *val,
-> +                          int *val2, long info)
-> +{
-> +       struct ad4000_state *st =3D iio_priv(indio_dev);
-> +
-> +       switch (info) {
-> +       case IIO_CHAN_INFO_RAW:
-> +               iio_device_claim_direct_scoped(return -EBUSY, indio_dev)
-> +                       return ad4000_single_conversion(indio_dev, chan, =
-val);
-> +               unreachable();
-> +       case IIO_CHAN_INFO_SCALE:
-> +               *val =3D st->scale_tbl[st->span_comp][0];
-> +               *val2 =3D st->scale_tbl[st->span_comp][1];
-> +               return IIO_VAL_INT_PLUS_NANO;
-> +       case IIO_CHAN_INFO_OFFSET:
-> +               *val =3D 0;
-> +               if (st->span_comp)
-> +                       *val =3D mult_frac(st->vref_mv, 1, 10);
-> +
-> +               return IIO_VAL_INT;
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +}
-> +
-> +static int ad4000_read_avail(struct iio_dev *indio_dev,
-> +                            struct iio_chan_spec const *chan,
-> +                            const int **vals, int *type, int *length,
-> +                            long info)
-> +{
-> +       struct ad4000_state *st =3D iio_priv(indio_dev);
-> +
-> +       switch (info) {
-> +       case IIO_CHAN_INFO_SCALE:
-> +               *vals =3D (int *)st->scale_tbl;
-> +               *length =3D AD4000_SCALE_OPTIONS * 2;
-> +               *type =3D IIO_VAL_INT_PLUS_NANO;
-> +               return IIO_AVAIL_LIST;
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +}
-> +
-> +static int ad4000_write_raw_get_fmt(struct iio_dev *indio_dev,
-> +                                   struct iio_chan_spec const *chan, lon=
-g mask)
-> +{
-> +       switch (mask) {
-> +       case IIO_CHAN_INFO_SCALE:
-> +               return IIO_VAL_INT_PLUS_NANO;
-> +       default:
-> +               return IIO_VAL_INT_PLUS_MICRO;
-> +       }
-> +}
-> +
-> +static int ad4000_write_raw(struct iio_dev *indio_dev,
-> +                           struct iio_chan_spec const *chan, int val, in=
-t val2,
-> +                           long mask)
-> +{
-> +       struct ad4000_state *st =3D iio_priv(indio_dev);
-> +       unsigned int reg_val;
-> +       bool span_comp_en;
-> +       int ret;
-> +
-> +       switch (mask) {
-> +       case IIO_CHAN_INFO_SCALE:
-> +               ret =3D iio_device_claim_direct_mode(indio_dev);
-> +               if (ret < 0)
-> +                       return ret;
-> +
-> +               mutex_lock(&st->lock);
-> +               ret =3D ad4000_read_reg(st, &reg_val);
-> +               if (ret < 0)
-> +                       goto err_unlock;
-> +
-> +               span_comp_en =3D val2 =3D=3D st->scale_tbl[1][1];
-> +               reg_val &=3D ~AD4000_CFG_SPAN_COMP;
-> +               reg_val |=3D FIELD_PREP(AD4000_CFG_SPAN_COMP, span_comp_e=
-n);
-> +
-> +               ret =3D ad4000_write_reg(st, reg_val);
-> +               if (ret < 0)
-> +                       goto err_unlock;
-> +
-> +               st->span_comp =3D span_comp_en;
-> +err_unlock:
-> +               iio_device_release_direct_mode(indio_dev);
-> +               mutex_unlock(&st->lock);
-> +               return ret;
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +}
-> +
-> +static irqreturn_t ad4000_trigger_handler(int irq, void *p)
-> +{
-> +       struct iio_poll_func *pf =3D p;
-> +       struct iio_dev *indio_dev =3D pf->indio_dev;
-> +       struct ad4000_state *st =3D iio_priv(indio_dev);
-> +       int ret;
-> +
-> +       ret =3D ad4000_convert_and_acquire(st);
-> +       if (ret < 0)
-> +               goto err_out;
-> +
-> +       iio_push_to_buffers_with_timestamp(indio_dev, &st->scan, pf->time=
-stamp);
-> +
-> +err_out:
-> +       iio_trigger_notify_done(indio_dev->trig);
-> +       return IRQ_HANDLED;
-> +}
-> +
-> +static const struct iio_info ad4000_reg_access_info =3D {
-> +       .read_raw =3D &ad4000_read_raw,
-> +       .read_avail =3D &ad4000_read_avail,
-> +       .write_raw =3D &ad4000_write_raw,
-> +       .write_raw_get_fmt =3D &ad4000_write_raw_get_fmt,
-> +};
-> +
-> +static const struct iio_info ad4000_info =3D {
-> +       .read_raw =3D &ad4000_read_raw,
-> +};
-> +
-> +static int ad4000_config(struct ad4000_state *st)
-> +{
-> +       unsigned int reg_val =3D AD4000_CONFIG_REG_DEFAULT;
-> +
-> +       if (device_property_present(&st->spi->dev, "adi,high-z-input"))
-> +               reg_val |=3D FIELD_PREP(AD4000_CFG_HIGHZ, 1);
-> +
-> +       return ad4000_write_reg(st, reg_val);
-> +}
-> +
-> +static int ad4000_probe(struct spi_device *spi)
-> +{
-> +       const struct ad4000_chip_info *chip;
-> +       struct device *dev =3D &spi->dev;
-> +       struct iio_dev *indio_dev;
-> +       struct ad4000_state *st;
-> +       int ret;
-> +
-> +       indio_dev =3D devm_iio_device_alloc(dev, sizeof(*st));
-> +       if (!indio_dev)
-> +               return -ENOMEM;
-> +
-> +       chip =3D spi_get_device_match_data(spi);
-> +       if (!chip)
-> +               return -EINVAL;
-> +
-> +       st =3D iio_priv(indio_dev);
-> +       st->spi =3D spi;
-> +
-> +       ret =3D devm_regulator_get_enable(dev, "vdd");
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Failed to enable VDD supp=
-ly\n");
-> +
-> +       ret =3D devm_regulator_get_enable(dev, "vio");
-> +       if (ret)
-> +               return dev_err_probe(dev, ret, "Failed to enable VIO supp=
-ly\n");
-> +
-> +       ret =3D devm_regulator_get_enable_read_voltage(dev, "ref");
-> +       if (ret < 0)
-> +               return dev_err_probe(dev, ret,
-> +                                    "Failed to get ref regulator referen=
-ce\n");
-> +       st->vref_mv =3D ret / 1000;
-> +
-> +       st->cnv_gpio =3D devm_gpiod_get_optional(dev, "cnv", GPIOD_OUT_HI=
-GH);
-> +       if (IS_ERR(st->cnv_gpio))
-> +               return dev_err_probe(dev, PTR_ERR(st->cnv_gpio),
-> +                                    "Failed to get CNV GPIO");
-> +
-> +       ret =3D device_property_match_property_string(dev, "adi,sdi-pin",
-> +                                                   ad4000_sdi_pin,
-> +                                                   ARRAY_SIZE(ad4000_sdi=
-_pin));
-> +       if (ret < 0 && ret !=3D -EINVAL)
-> +               return dev_err_probe(dev, ret,
-> +                                    "getting adi,sdi-pin property failed=
-\n");
-> +
-> +       /* Default to usual SPI connections if pin properties are not pre=
-sent */
-> +       st->sdi_pin =3D ret =3D=3D -EINVAL ? AD4000_SDI_MOSI : ret;
-> +       switch (st->sdi_pin) {
-> +       case AD4000_SDI_MOSI:
-> +               indio_dev->info =3D &ad4000_reg_access_info;
-> +               indio_dev->channels =3D &chip->reg_access_chan_spec;
-> +
-> +               /*
-> +                * In "3-wire mode", the ADC SDI line must be kept high w=
-hen
-> +                * data is not being clocked out of the controller.
-> +                * Request the SPI controller to make MOSI idle high.
-> +                */
-> +               spi->mode |=3D SPI_MOSI_IDLE_HIGH;
-> +               ret =3D spi_setup(spi);
-> +               if (ret < 0)
-> +                       return ret;
-> +
-> +               ret =3D ad4000_prepare_3wire_mode_message(st, indio_dev->=
-channels);
-> +               if (ret)
-> +                       return ret;
-> +
-> +               ret =3D ad4000_config(st);
-> +               if (ret < 0)
-> +                       dev_warn(dev, "Failed to config device\n");
-> +
-> +               break;
-> +       case AD4000_SDI_VIO:
-> +               indio_dev->info =3D &ad4000_info;
-> +               indio_dev->channels =3D &chip->chan_spec;
-> +               ret =3D ad4000_prepare_3wire_mode_message(st, indio_dev->=
-channels);
-> +               if (ret)
-> +                       return ret;
-> +
-> +               break;
-> +       case AD4000_SDI_CS:
-> +               indio_dev->info =3D &ad4000_info;
-> +               indio_dev->channels =3D &chip->chan_spec;
-> +               ret =3D ad4000_prepare_4wire_mode_message(st, indio_dev->=
-channels);
-> +               if (ret)
-> +                       return ret;
-> +
-> +               break;
-> +       default:
-> +               return dev_err_probe(dev, -EINVAL, "Unrecognized connecti=
-on mode\n");
-> +       }
-> +
-> +       indio_dev->name =3D chip->dev_name;
-> +       indio_dev->num_channels =3D 1;
-> +
-> +       devm_mutex_init(dev, &st->lock);
-> +
-> +       st->gain_milli =3D 1000;
-> +       if (chip->has_hardware_gain) {
-> +               if (device_property_present(dev, "adi,gain-milli")) {
+so I applied this patch upon bd4a633b6f, and found the performance restored.
 
-Only if there is another version, it may be neat to reduce indentation
-here (a bit).
-Something like:
-        if (chip->has_hardware_gain &&
-            device_property_present(dev, "adi,gain-milli")) {
+=========================================================================================
+compiler/cpufreq_governor/disk/filesize/fs2/fs/iterations/kconfig/nr_directories/nr_files_per_directory/nr_threads/rootfs/sync_method/tbox_group/test_size/testcase:
+  gcc-13/performance/1SSD/9B/nfsv4/btrfs/1x/x86_64-rhel-8.3/16d/256fpd/32t/debian-12-x86_64-20240206.cgz/fsyncBeforeClose/lkp-ivb-2ep2/400M/fsmark
 
-        }
+commit:
+  1122c0c1cc ("block: move cache control settings out of queue->flags")
+  bd4a633b6f ("block: move the nonrot flag to queue_limits")
+  e9a0f6a398 = bd4a633b6f + patch [1]
 
-> +                       ret =3D device_property_read_u16(dev, "adi,gain-m=
-illi",
-> +                                                      &st->gain_milli);
-> +                       if (ret)
-> +                               return dev_err_probe(dev, ret,
-> +                                                    "Failed to read gain=
- property\n");
-> +               }
-> +       }
-> +
-> +       ad4000_fill_scale_tbl(st, indio_dev->channels);
-> +
-> +       ret =3D devm_iio_triggered_buffer_setup(dev, indio_dev,
-> +                                             &iio_pollfunc_store_time,
-> +                                             &ad4000_trigger_handler, NU=
-LL);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return devm_iio_device_register(dev, indio_dev);
-> +}
-> +
-> +static const struct spi_device_id ad4000_id[] =3D {
-> +       { "ad4000", (kernel_ulong_t)&ad4000_chip_info },
-> +       { "ad4001", (kernel_ulong_t)&ad4001_chip_info },
-> +       { "ad4002", (kernel_ulong_t)&ad4002_chip_info },
-> +       { "ad4003", (kernel_ulong_t)&ad4003_chip_info },
-> +       { "ad4004", (kernel_ulong_t)&ad4004_chip_info },
-> +       { "ad4005", (kernel_ulong_t)&ad4005_chip_info },
-> +       { "ad4006", (kernel_ulong_t)&ad4006_chip_info },
-> +       { "ad4007", (kernel_ulong_t)&ad4007_chip_info },
-> +       { "ad4008", (kernel_ulong_t)&ad4008_chip_info },
-> +       { "ad4010", (kernel_ulong_t)&ad4010_chip_info },
-> +       { "ad4011", (kernel_ulong_t)&ad4011_chip_info },
-> +       { "ad4020", (kernel_ulong_t)&ad4020_chip_info },
-> +       { "ad4021", (kernel_ulong_t)&ad4021_chip_info },
-> +       { "ad4022", (kernel_ulong_t)&ad4022_chip_info },
-> +       { "adaq4001", (kernel_ulong_t)&adaq4001_chip_info },
-> +       { "adaq4003", (kernel_ulong_t)&adaq4003_chip_info },
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(spi, ad4000_id);
-> +
-> +static const struct of_device_id ad4000_of_match[] =3D {
-> +       { .compatible =3D "adi,ad4000", .data =3D &ad4000_chip_info },
-> +       { .compatible =3D "adi,ad4001", .data =3D &ad4001_chip_info },
-> +       { .compatible =3D "adi,ad4002", .data =3D &ad4002_chip_info },
-> +       { .compatible =3D "adi,ad4003", .data =3D &ad4003_chip_info },
-> +       { .compatible =3D "adi,ad4004", .data =3D &ad4004_chip_info },
-> +       { .compatible =3D "adi,ad4005", .data =3D &ad4005_chip_info },
-> +       { .compatible =3D "adi,ad4006", .data =3D &ad4006_chip_info },
-> +       { .compatible =3D "adi,ad4007", .data =3D &ad4007_chip_info },
-> +       { .compatible =3D "adi,ad4008", .data =3D &ad4008_chip_info },
-> +       { .compatible =3D "adi,ad4010", .data =3D &ad4010_chip_info },
-> +       { .compatible =3D "adi,ad4011", .data =3D &ad4011_chip_info },
-> +       { .compatible =3D "adi,ad4020", .data =3D &ad4020_chip_info },
-> +       { .compatible =3D "adi,ad4021", .data =3D &ad4021_chip_info },
-> +       { .compatible =3D "adi,ad4022", .data =3D &ad4022_chip_info },
-> +       { .compatible =3D "adi,adaq4001", .data =3D &adaq4001_chip_info }=
-,
-> +       { .compatible =3D "adi,adaq4003", .data =3D &adaq4003_chip_info }=
-,
-> +       { }
-> +};
-> +MODULE_DEVICE_TABLE(of, ad4000_of_match);
-> +
-> +static struct spi_driver ad4000_driver =3D {
-> +       .driver =3D {
-> +               .name   =3D "ad4000",
-> +               .of_match_table =3D ad4000_of_match,
-> +       },
-> +       .probe          =3D ad4000_probe,
-> +       .id_table       =3D ad4000_id,
-> +};
-> +module_spi_driver(ad4000_driver);
-> +
-> +MODULE_AUTHOR("Marcelo Schmitt <marcelo.schmitt@analog.com>");
-> +MODULE_DESCRIPTION("Analog Devices AD4000 ADC driver");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.43.0
->
->
+1122c0c1cc71f740 bd4a633b6f7c3c6b6ebc1a07317 e9a0f6a398f162d115d208ad95b
+---------------- --------------------------- ---------------------------
+         %stddev     %change         %stddev     %change         %stddev
+             \          |                \          |                \
+      4177 ±  2%     -64.7%       1475            -1.1%       4130        fsmark.files_per_sec
+
+
+[1] https://lore.kernel.org/all/20240624173835.76753-1-hch@lst.de/
 
