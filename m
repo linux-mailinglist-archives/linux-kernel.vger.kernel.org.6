@@ -1,150 +1,189 @@
-Return-Path: <linux-kernel+bounces-231566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1836919A18
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:50:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0BA919A1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:52:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686F61F218D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:50:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 71DD8B227B7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2687A193098;
-	Wed, 26 Jun 2024 21:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E4C194087;
+	Wed, 26 Jun 2024 21:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M51PKDuK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y4vJZdyW"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DDC190697;
-	Wed, 26 Jun 2024 21:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE24E190697
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 21:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719438598; cv=none; b=USUY2Crd7mf+T7IZ3mX3QpHUPyRAK4fs+n+B2tFaM49h8TuzJYCMEyc0CnFbYSx7nKhTr1d7cly6ANYpkM2n9aXs751tmiC2pia8ZooGR0mWQ3x4MMP3ZdjvtDl2CgQW/xWFkkEJ/x5Wbou5FizJT/FxPsP/89E7akGTn4TgIb0=
+	t=1719438730; cv=none; b=Dzjq9NvuPM/QHWvUU/PvwTap3BixWkhm0WEWZp4GcO5aJ8q2fioorLIx9zSKHEzA1G7vp09BqSog7D1b9xyFpbiAZhDjZzBlqcz6aGru7JssvGnkF4RInheqbplGYMdPiOV8QeTMgmVmc7CmxWwj9jv0KA93w3eYPNdfyOTKc0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719438598; c=relaxed/simple;
-	bh=vbEkrfUjgmgKqdl2dZG8HUfOBAyAIBXP7eZIOo4QAUs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ck5YVpRSUIYG5wrsVylkwFRWC96iC/a2KETAA8O0p/DECAnXVuGHGgtUkiIZWc451r1f3au6CRp9EEFCjdVC/yOG1zBqKbMSXY8vJ7jaHz5YxVJk9tIE2QEOI/UuoPe2WmCXxP1Up05auyWXhWauA59w6FO2pao9+yhPsssOO2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M51PKDuK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78D5FC116B1;
-	Wed, 26 Jun 2024 21:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719438597;
-	bh=vbEkrfUjgmgKqdl2dZG8HUfOBAyAIBXP7eZIOo4QAUs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=M51PKDuKttI5HYYW8JwcELqr83G0iDFtXFaA3vZk47MOIbPNwORjBid45M/+61AlT
-	 oUHLfS3wQVrxLLaPnoJwlHscJJXHQj32r6t+h2Boj6ZCbVl2vHDFJqjq1jKGvorXSf
-	 HmkNJanzFpzsuf3ucoCqcI0wdhMLlhuU3JI5wHMRq7kGtZH+X8TQwNrqgEfdjh84GO
-	 Ax5eH6vydpS9H5PM9o4MipJ84h+nPd2wuB64h3O5D6IjbPdLG2sX7ZgRmF3LpqEJx+
-	 Me/9kB1kmpHYvoxYgk93LMLrnmFF1EvyzU/up5jZpaj90XOlPkw4QMio5hBpcLEC3I
-	 QKx/zcf/OiJ+g==
-From: SeongJae Park <sj@kernel.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH mm-unstable] mm/damon/core: increase regions merge aggressiveness while respecting min_nr_regions
-Date: Wed, 26 Jun 2024 14:49:54 -0700
-Message-Id: <20240626214954.46143-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240626164753.46270-1-sj@kernel.org>
-References: 
+	s=arc-20240116; t=1719438730; c=relaxed/simple;
+	bh=Twt3Sm6ibvFAc9dg0Psyp0VpLNwcNtULJOXuU69/SZY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=H//Dx8vqLvIpNTjPsSiwDlsj6to9jCCGzEoZxb+z3rMpnuB5Co29SLLeHO6Pe50/XdsKrW6SeXCK2I2JkwTKgcSdnDhjOwq3KYSBclu/kbZ3z40ZUDIDv02Hti8Tg9aNQ75YVTmNLJUU/HsOKYfRZBboz2uTgWFKMPRJE8h43p8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y4vJZdyW; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-57a30dbdb7fso976124a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:52:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719438727; x=1720043527; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=YE3RprsT9yRDoX4gwdoigkfM2CSBZvv3p/0dCbH2Hv8=;
+        b=Y4vJZdyWnaiDr1lk+jxTOP0YET+SbP7uiVnK+tJnI0W80qHsJkuxeEmOYLoN5GxRK2
+         h8UbysK8pGuF/aOPuvWEtMRbtYQtChmkh7ZeWr0Un2qYxl8p7R4nIxkBo0wK9oKL8i+P
+         ylcJEqqiSPk9RLFspc2buLc3eIHUY/rJvH0uxEbPTZoSpb1yTEWIGKLegzTmK0NnPnSR
+         J0dR8OBX/J5WmsFVtQaVJvfgajUPlcwVRqA9TrN5RcTcUvt8yQpxMGhEQqCYXmCPEaTr
+         CBaYa0ztKXAcueOYixIoVjoYAJrk3vrLMpKA+WoVyrUHe97xxeETvCGrZITRJRZJ8103
+         SvnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719438727; x=1720043527;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=YE3RprsT9yRDoX4gwdoigkfM2CSBZvv3p/0dCbH2Hv8=;
+        b=PW6YiIZ9j6DAFcDPT+v1BIEkm87QyOt1S4PUeitteSvUoCi9J0ialuyWVIUaSUdSlW
+         6TNqRbYj1C9sr9+quDL2KwakNQyEOBS/btke9lzq2oFgMxTbT9OVwLBnQQUluRvxgWQU
+         aWYqO/Xf9AiEbOHAuHGvGHqc3n+Wil1QzcShf89tgfnx4nSehPOHJFFAj0YhtU2WpCqi
+         1JqEy+e8AZukr7exIIAlHBt3HWbxD1c5d/2v5H8NNZVFj/OVmHk6aqB7aZF5FmUCoAkp
+         H3bAWHMbB0sNy5+/zt5FTJ8E5MrvmReDWXLtiivw5KgfFLa34TvGqFi5K7R4+bdhXf58
+         9dOA==
+X-Forwarded-Encrypted: i=1; AJvYcCXspKPfffCaOdAMXNxCOHK6NUtcd6S3pLIfR15QJfB4bP18fKHqtRuPjtdUzfAJbmsH41+b3tU6vBpaZJTUmLWIrUQTHRFmKLgM9WL6
+X-Gm-Message-State: AOJu0YzD2OuCw5///4S2NWNkjTIsDxBi82lYKTbKRsZ8XA3BDMvq8uKY
+	uYNWO8gxvtGMP23pmAgODM+6ibS/stK3fBuHwQzpmbHTKSBPI/LCMzyM3Yb1iOM=
+X-Google-Smtp-Source: AGHT+IHXKih3yrKlJhMpJvkHBx6qYdd1mLPTf8ccO5adSdDeiKVGq4aFCbSdt0FphjxXXo9DCYrn3w==
+X-Received: by 2002:a50:bac3:0:b0:57c:7471:a0dd with SMTP id 4fb4d7f45d1cf-57d4a2815a6mr11210281a12.12.1719438727097;
+        Wed, 26 Jun 2024 14:52:07 -0700 (PDT)
+Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-584d0c9f684sm26321a12.10.2024.06.26.14.52.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 14:52:06 -0700 (PDT)
+Message-ID: <5021ca42-f8d8-4dff-b0e2-21c7f9d680fa@linaro.org>
+Date: Wed, 26 Jun 2024 23:52:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] ARM: dts: qcom-msm8226-samsung-ms013g: Add initial
+ device tree
+To: Raymond Hackley <raymondhackley@protonmail.com>,
+ linux-kernel@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht
+References: <20240626191829.280611-1-raymondhackley@protonmail.com>
+ <20240626191829.280611-3-raymondhackley@protonmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240626191829.280611-3-raymondhackley@protonmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 26 Jun 2024 09:47:53 -0700 SeongJae Park <sj@kernel.org> wrote:
-
-> DAMON's merge mechanism has two thresholds, namely those for access
-> frequency and size.  The access frequency threshold avoids merging two
-> adjacent regions that having pretty different access frequency.
+On 26.06.2024 9:18 PM, Raymond Hackley wrote:
+> Samsung Galaxy Grand 2 is a phone based on MSM8226. It's similar to the
+> other Samsung devices based on MSM8226 with only a few minor differences.
 > 
-> The size threshold is calculated as total size of regions divided by
-> min_nr_regions.  Merging operation skip merging two adjacent regions if
-> the resulting region's size can be larger than the threshold.  This is
-> for meeting min_nr_regions.
+> The device trees contain initial support with:
+>  - GPIO keys
+>  - Regulator haptic
+>  - SDHCI (internal and external storage)
+>  - UART (on USB connector via the TI TSU6721 MUIC)
+>  - Regulators
+>  - Touchscreen
+>  - Accelerometer
 > 
-> Commit 44fdaf596984 ("mm/damon/core: merge regions aggressively when
-> max_nr_regions is unmet") of mm-unstable, however, ignores the
-> min_nr_regions by increasing not only access frequency threshold but
-> also the size threshold.
-> 
-> The commit also has one more problem.  User could set DAMON target
-> regions with more than max_nr_regions discrete regions.  Because DAMON
-> cannot merge non-adjacent regions, the number of regions will never be
-> lower than max_nr_regions regardless of the increased thresholds.  As a
-> result, the function can infinitely repeat the loop.
-> 
-> Increase only access frequency threshold, up to only possible maximum
-> value.
-> 
-> Fixes: 44fdaf596984 ("mm/damon/core: merge regions aggressively when max_nr_regions is unmet") # mm-unstable
-> Signed-off-by: SeongJae Park <sj@kernel.org>
+> Signed-off-by: Raymond Hackley <raymondhackley@protonmail.com>
 > ---
->  mm/damon/core.c | 19 ++++++++++---------
->  1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/mm/damon/core.c b/mm/damon/core.c
-> index e6598c44b53c..dac27b949403 100644
-> --- a/mm/damon/core.c
-> +++ b/mm/damon/core.c
+
 [...]
-> +	max_thres = c->attrs.aggr_interval /
-> +		(c->attrs.sample_interval ?  c->attrs.sample_interval : 1);
->  	do {
->  		nr_regions = 0;
->  		damon_for_each_target(t, c) {
-> @@ -1716,8 +1717,8 @@ static void kdamond_merge_regions(struct damon_ctx *c, unsigned int threshold,
->  			nr_regions += damon_nr_regions(t);
->  		}
->  		threshold = max(1, threshold * 2);
-> -		sz_limit = max(1, sz_limit * 2);
-> -	} while (nr_regions > c->attrs.max_nr_regions);
-> +	} while (nr_regions > c->attrs.max_nr_regions &&
-> +			threshold <= max_thres);
 
-This code means that kdamond_merge_regions() stops this repeated merge attempt
-if the merge threshold that increased for next attempt is higher than the
-possible maximum threshold.  And because the increase of the threshold is made
-by picking a maximum value between one and the last-used threshold multiplying
-two, the merge attempt with maximum threshold will not be made unless both the
-maximum threshold and the threshold to increase are powers of two.  In maximum
-situation (e.g., region 1 has 100% access frequency, region 2 has 0% access
-frequency, so on), this means the max_nr_regions violation cannot be recovered
-by the attempts.
+> +	reserved-memory {
 
-This can be fixed by changing it to stop repeated attempt if the last-used
-threshold is same to or higher than the maximum possible threshold, like below.
+'r' > 'g'
 
-I'll send the fix of the fix as a formal patch soon.
+> +		smem_region: smem@fa00000 {
+> +			reg = <0x0fa00000 0x100000>;
+> +			no-map;
+> +		};
+> +	};
+> +
+> +	gpio-hall-sensor {
 
-FYI, the original fix is definitely better to be merged in stable kernels, but
-not urgent in my opinion, since the problematic case is not common and the
-behavior was same since the beginning of DAMON.  Andrew, if you feel the
-original fix is not stable yet, please feel free to delay moving it to
-hotfix-stable for one week or two.
+[...]
 
+> +&sdhc_1 {
+> +	vmmc-supply = <&pm8226_l17>;
+> +	vqmmc-supply = <&pm8226_l6>;
 
-Thanks,
-SJ
+At least vqmmc could use regulator-allow-set-load (this and below)
 
-================================= >8 ==========================================
---- a/mm/damon/core.c
-+++ b/mm/damon/core.c
-@@ -1773,7 +1773,7 @@ static void kdamond_merge_regions(struct damon_ctx *c, unsigned int threshold,
-                }
-                threshold = max(1, threshold * 2);
-        } while (nr_regions > c->attrs.max_nr_regions &&
--                       threshold <= max_thres);
-+                       threshold / 2 < max_thres);
- }
+> +
+> +	bus-width = <8>;
+> +	non-removable;
+> +
+> +	status = "okay";
+> +};
+> +
+> +&sdhc_2 {
+> +	vmmc-supply = <&pm8226_l18>;
+> +	vqmmc-supply = <&pm8226_l21>;
+> +
+> +	bus-width = <4>;
+> +	cd-gpios = <&tlmm 38 GPIO_ACTIVE_LOW>;
+> +
+> +	pinctrl-0 = <&sdhc2_default_state &sdhc2_cd_default>;
+> +	pinctrl-names = "default";
+> +
+> +	status = "okay";
+> +};
 
- /*
+Konrad
 
