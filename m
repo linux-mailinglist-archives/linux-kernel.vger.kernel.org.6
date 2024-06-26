@@ -1,218 +1,168 @@
-Return-Path: <linux-kernel+bounces-230966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88946918494
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:41:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C646918478
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFDC2B29E9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:37:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2A328571C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C0331862B7;
-	Wed, 26 Jun 2024 14:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0BA186E2A;
+	Wed, 26 Jun 2024 14:35:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RcyVdO6S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zc+mkK1u"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68FDB18629F;
-	Wed, 26 Jun 2024 14:34:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16B6C136
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719412453; cv=none; b=cYQo9SYS3+9ZOd8xFYyNk2prhVl6Hld6kowTgWtrYRIGiww2UkY3Fe4C7lLk+N3zDUIX5xYBOUSTjgm1HfZAcx6OGLZlAiYbCekZdEWTam7oVggf3v2OPIzt76ggaFLuVIMFHPNLGbf4ttcpGAoprVyI8UnSV2fdG8rELeApwQM=
+	t=1719412505; cv=none; b=SEbqBnaJD5+pkW8blCgdtWgZOanSaHTZSpwo8sI0lY5buv890VxCAG6xygsFzzwp03+sOLlvbNMotEjYWYArdtoRUcAy7Tk0jCjc78kIMMsGRakc1gJuwtnCUKJaw3P85nXf4PIQPA6UxCZ+GVlj23bVUrCd5r7P2eiaEs56u1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719412453; c=relaxed/simple;
-	bh=D3c1gQ648tEhgLlYiDSolRNCSiuz2KJRJlQeBmzlIDE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gv4Deah4cmdcdm4XSx6S5MAl7M5/4TM5rUTo6fJ4s/Dwh/PwRGkNggO7UPAJnXCePxn2z1d2A/iH1vLko96mFinm6Yk5PKISEg+s/4+F+aBg7uQgqME2U1eogfDqHRe4dGQk0Uzgy87LgIo8oODfDhB5OucZq+4FOpkii/Ahv44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RcyVdO6S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30D53C116B1;
-	Wed, 26 Jun 2024 14:34:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719412452;
-	bh=D3c1gQ648tEhgLlYiDSolRNCSiuz2KJRJlQeBmzlIDE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RcyVdO6SVYo33x8dKozPZT65CCTcHp2r+Dmjtl/gV/bzVsIVi7YWz7MISUOPChANC
-	 /UePeVTUD8OG5VotiuAN+xLye0XvlDZSnlfUabWKgq9qRGyJ2sozV5UML72ajB2k8W
-	 zOzxKR63my7huwwO+jyPUSoHudbqCZb9K1lYuddKkqevNnoL/xVgKzFleWyKJWYscO
-	 MIOApBxr4Fl3j53wa2dpjIrO6paZN7sXbqpaO2LBeaEKmnNiOOo99eKmu4ayrkaiuk
-	 iGKhLkfVwPioInX5wfmgdejG1ca1B8rZs95d847V+ModAJ0Ni8wFe29LQ/apubwyrg
-	 ndc/aaROSAOXA==
-Date: Wed, 26 Jun 2024 15:34:07 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Evan Green <evan@rivosinc.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>, Yangyu Chen <cyy@cyyself.name>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Andy Chiu <andy.chiu@sifive.com>,
-	Ben Dooks <ben.dooks@codethink.co.uk>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Charlie Jenkins <charlie@rivosinc.com>,
-	=?iso-8859-1?Q?Cl=E9ment_L=E9ger?= <cleger@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Erick Archer <erick.archer@gmx.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Paul Walmsley <paul.walmsley@sifive.com>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 2/2] RISC-V: hwprobe: Add SCALAR to misaligned perf
- defines
-Message-ID: <20240626-ungraded-legend-65480eabd255@spud>
-References: <20240625165121.2160354-1-evan@rivosinc.com>
- <20240625165121.2160354-3-evan@rivosinc.com>
- <20240625-kindle-sanitizer-c52b48ed9b86@spud>
- <CALs-HsuEc9ympGsQP3bvXaowiAj0bq3nvD=9CcX0NNMza+79OA@mail.gmail.com>
+	s=arc-20240116; t=1719412505; c=relaxed/simple;
+	bh=9acWqS97YmBq5pSjJQXxHybgwrwtJ6z6pPo+bkIcMOY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LzDHvjI0UR4lHWGGD8P7tIG/bHav9Q7VRT440r2sdWEH6GmmqWs6OAu5ogwQlXaoYE7QuCENH+UPpOviwhmrqFWlkA9IXX/5wZJnX59kzwa5brfAitczU4HFazWndqojyqTbS7wG6a35sFretwkzZ9TFLF+QQavhrAxmPXJzl2c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zc+mkK1u; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719412504; x=1750948504;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=9acWqS97YmBq5pSjJQXxHybgwrwtJ6z6pPo+bkIcMOY=;
+  b=Zc+mkK1uXcQzwl8/cnqkShSfc77cDXC1LWRXv474qXeOkjFbCCykA8Vx
+   rJDw3uf3KviQEGEnnhUfCk7jWStpMwFEI7Nr+DrALN8RoZFKX7ZnVqvER
+   Mku4kY7/YFiJAUB8gxhs23pLPtk1CDwXqRi4T1LVlDJEmj7cXZEyvxAn3
+   WtlFPQCYlmbpT/TmbFNDbDuyQz52Ig6Rs3rRx9XkG3iO5cn6eBJViy+/D
+   JFyQHI0z60qC2COTRMBrFXnuJK09GITii3j/tvLSxy6E9o/6zwJDPyYQA
+   /2vptuNqZq5Fe/CWYr9tCVFrV2zYu9u7akHhPOap7M9BcVRwABGHbbFIZ
+   w==;
+X-CSE-ConnectionGUID: AQbUmgmIQ5WK8GdnyrLn+A==
+X-CSE-MsgGUID: kodlvFQyTwi9tZs+H28sNA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="19375515"
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="19375515"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 07:34:45 -0700
+X-CSE-ConnectionGUID: Fx/F/QQrRU6KxwQQbWR1aA==
+X-CSE-MsgGUID: oHXQOnitSMadjZsy+T2zZw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="43911946"
+Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
+  by orviesa010.jf.intel.com with ESMTP; 26 Jun 2024 07:34:44 -0700
+From: kan.liang@linux.intel.com
+To: peterz@infradead.org,
+	mingo@kernel.org,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	alexander.shishkin@linux.intel.com,
+	linux-kernel@vger.kernel.org
+Cc: ak@linux.intel.com,
+	eranian@google.com,
+	Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH V3 00/13] Support Lunar Lake and Arrow Lake core PMU
+Date: Wed, 26 Jun 2024 07:35:32 -0700
+Message-Id: <20240626143545.480761-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="8Hy1V/9xQfoCyn26"
-Content-Disposition: inline
-In-Reply-To: <CALs-HsuEc9ympGsQP3bvXaowiAj0bq3nvD=9CcX0NNMza+79OA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
+From: Kan Liang <kan.liang@linux.intel.com>
 
---8Hy1V/9xQfoCyn26
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes since V2:
+- Rebase on top of the tip.git. Specifically on top of the below two
+  patches.
+  commit cd84351c8c1b ("perf/x86/amd: Use try_cmpxchg() in events/amd/{un,}core.c")
+  commit d142df13f357 ("perf/x86/intel: Switch to new Intel CPU model defines")
+- Add Reviewed-by tag from Ian
 
-On Tue, Jun 25, 2024 at 12:08:09PM -0700, Evan Green wrote:
-> On Tue, Jun 25, 2024 at 11:35=E2=80=AFAM Conor Dooley <conor@kernel.org> =
-wrote:
-> >
-> > On Tue, Jun 25, 2024 at 09:51:21AM -0700, Evan Green wrote:
-> > > In preparation for misaligned vector performance hwprobe keys, rename
-> > > the hwprobe key values associated with misaligned scalar accesses to
-> > > include the term SCALAR.
-> > >
-> > > Signed-off-by: Evan Green <evan@rivosinc.com>
-> > >
-> > > ---
-> > >
-> > > Changes in v2:
-> > >  - Added patch to rename misaligned perf key values (Palmer)
-> > >
-> > >  Documentation/arch/riscv/hwprobe.rst       | 20 ++++++++++----------
-> > >  arch/riscv/include/uapi/asm/hwprobe.h      | 10 +++++-----
-> > >  arch/riscv/kernel/sys_hwprobe.c            | 10 +++++-----
-> > >  arch/riscv/kernel/traps_misaligned.c       |  6 +++---
-> > >  arch/riscv/kernel/unaligned_access_speed.c | 12 ++++++------
-> > >  5 files changed, 29 insertions(+), 29 deletions(-)
-> > >
-> > > diff --git a/Documentation/arch/riscv/hwprobe.rst b/Documentation/arc=
-h/riscv/hwprobe.rst
-> > > index c9f570b1ab60..83f7f3c1347f 100644
-> > > --- a/Documentation/arch/riscv/hwprobe.rst
-> > > +++ b/Documentation/arch/riscv/hwprobe.rst
-> > > @@ -215,22 +215,22 @@ The following keys are defined:
-> > >    the performance of misaligned scalar word accesses on the selected=
- set of
-> > >    processors.
-> > >
-> > > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNKNOWN`: The performance of =
-misaligned
-> > > -    accesses is unknown.
-> > > +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN`: The performa=
-nce of
-> > > +    misaligned accesses is unknown.
-> > >
-> > > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_EMULATED`: Misaligned accesse=
-s are
-> > > +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED`: Misaligned =
-accesses are
-> > >      emulated via software, either in or below the kernel.  These acc=
-esses are
-> > >      always extremely slow.
-> > >
-> > > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SLOW`: Misaligned word access=
-es are
-> > > -    slower than equivalent byte accesses.  Misaligned accesses may b=
-e supported
-> > > -    directly in hardware, or trapped and emulated by software.
-> > > +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_SLOW`: Misaligned word=
- accesses
-> > > +    are slower than equivalent byte accesses.  Misaligned accesses m=
-ay be
-> > > +    supported directly in hardware, or trapped and emulated by softw=
-are.
-> > >
-> > > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_FAST`: Misaligned word access=
-es are
-> > > -    faster than equivalent byte accesses.
-> > > +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_FAST`: Misaligned word=
- accesses
-> > > +    are faster than equivalent byte accesses.
-> > >
-> > > -  * :c:macro:`RISCV_HWPROBE_MISALIGNED_UNSUPPORTED`: Misaligned acce=
-sses are
-> > > -    not supported at all and will generate a misaligned address faul=
-t.
-> > > +  * :c:macro:`RISCV_HWPROBE_MISALIGNED_SCALAR_UNSUPPORTED`: Misalign=
-ed accesses
-> > > +    are not supported at all and will generate a misaligned address =
-fault.
-> > >
-> > >  * :c:macro:`RISCV_HWPROBE_KEY_ZICBOZ_BLOCK_SIZE`: An unsigned int wh=
-ich
-> > >    represents the size of the Zicboz block in bytes.
-> > > diff --git a/arch/riscv/include/uapi/asm/hwprobe.h b/arch/riscv/inclu=
-de/uapi/asm/hwprobe.h
-> > > index 22073533cea8..e11684d8ae1c 100644
-> > > --- a/arch/riscv/include/uapi/asm/hwprobe.h
-> > > +++ b/arch/riscv/include/uapi/asm/hwprobe.h
-> > > @@ -66,11 +66,11 @@ struct riscv_hwprobe {
-> > >  #define              RISCV_HWPROBE_EXT_ZVE64F        (1ULL << 40)
-> > >  #define              RISCV_HWPROBE_EXT_ZVE64D        (1ULL << 41)
-> > >  #define RISCV_HWPROBE_KEY_CPUPERF_0  5
-> > > -#define              RISCV_HWPROBE_MISALIGNED_UNKNOWN        0
-> > > -#define              RISCV_HWPROBE_MISALIGNED_EMULATED       1
-> > > -#define              RISCV_HWPROBE_MISALIGNED_SLOW           2
-> > > -#define              RISCV_HWPROBE_MISALIGNED_FAST           3
-> > > -#define              RISCV_HWPROBE_MISALIGNED_UNSUPPORTED    4
-> > > +#define              RISCV_HWPROBE_MISALIGNED_SCALAR_UNKNOWN        =
- 0
-> > > +#define              RISCV_HWPROBE_MISALIGNED_SCALAR_EMULATED       =
- 1
-> > > +#define              RISCV_HWPROBE_MISALIGNED_SCALAR_SLOW           =
- 2
-> > > +#define              RISCV_HWPROBE_MISALIGNED_SCALAR_FAST           =
- 3
-> > > +#define              RISCV_HWPROBE_MISALIGNED_SCALAR_UNSUPPORTED    =
- 4
-> > >  #define              RISCV_HWPROBE_MISALIGNED_MASK           7
-> >
-> > How come the "old" names do not need to be preserved for userspace?
->=20
-> It depends on what exactly the big userspace compatibility rule is.
-> This preserves binary compatibility, which I think is the big one, but
-> breaks source compatibility, though with an easy translation to fix.
-> We could keep the old names around, but then it seems sort of silly to
-> introduce the new names. I introduced this patch upon request, so I
-> don't personally have a horse in the race on this one.
+Changes since V1:
+- Add x86/intel_pmu_max_num_pebs/counters/counters_fixed()
+- Rename model-specific pebs_latency_data functions
+- Rename V6 counter MSRs
 
-So apparently this isn't quite Palmer actually wanted. In today's call
-he suggested that he'd send a new version himself, but also that what we
-should do define a new key for scalar /and/ new add new defines values that
-contain the word scalar, retaining the old defines. The values can of
-course be the same.
+From the core PMU' perspective, the Lunar Lake and Arrow Lake are the
+same, which are similar to the previous generation Meteor Lake. Both are
+hybrid platforms, with e-core and p-core.
 
---8Hy1V/9xQfoCyn26
-Content-Type: application/pgp-signature; name="signature.asc"
+The key differences include:
+- The e-core supports 3 new fixed counters
+- The p-core supports an updated PEBS Data Source format
+- More GP counters (Updated event constraint table)
+- New Architectural performance monitoring V6
+  (New Perfmon MSRs aliasing, umask2, eq).
+- New PEBS format V6 (Counters Snapshotting group)
+- New RDPMC metrics clear mode
 
------BEGIN PGP SIGNATURE-----
+The details for the above new features can be found in the Intel
+Architecture Instruction Set Extensions and Future Features (052).
+https://cdrdv2.intel.com/v1/dl/getContent/671368
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnwm3wAKCRB4tDGHoIJi
-0pN+AQCreK6NjvZnRI9VZsvMHlvKpUtNrWcwhuTMHxzCmRVdvgD/YODVuyDP1okz
-Il+G9mctAu4ZDZGzZc/ojuyFxxOcXQk=
-=TfxS
------END PGP SIGNATURE-----
+The counters may not be continuous anymore. Patch 1-2 converts the max
+number of counters to a mask of counters. The change is a generic change
+which impacts all X86 platforms.
 
---8Hy1V/9xQfoCyn26--
+Patch 3-5 supports all the legacy features on LNL and ARL.
+
+Patch 6-8 supports the new Architectural performance monitoring V6.
+
+Patch 9-12 supports the new PEBS format V6.
+
+Patch 13 supports the new RDPMC metrics clear mode.
+
+Only the two features (Architectural performance monitoring V6
+and the RDPMC metrics clear mode) add new formats, which impacts the ABI.
+The "Sysfs PMU tests" case has covered the non-contiguous format
+definition caused by the new umask. The current perf test should be good
+enough to cover the ABI changes.
+
+Kan Liang (13):
+  perf/x86/intel: Support the PEBS event mask
+  perf/x86: Support counter mask
+  perf/x86: Add Lunar Lake and Arrow Lake support
+  perf/x86/intel: Rename model-specific pebs_latency_data functions
+  perf/x86/intel: Support new data source for Lunar Lake
+  perf/x86: Add config_mask to represent EVENTSEL bitmask
+  perf/x86/intel: Support PERFEVTSEL extension
+  perf/x86/intel: Support Perfmon MSRs aliasing
+  perf/x86: Extend event update interface
+  perf: Extend perf_output_read
+  perf/x86/intel: Move PEBS event update after the sample output
+  perf/x86/intel: Support PEBS counters snapshotting
+  perf/x86/intel: Support RDPMC metrics clear mode
+
+ arch/x86/events/amd/core.c           |  26 +-
+ arch/x86/events/core.c               | 123 +++----
+ arch/x86/events/intel/core.c         | 471 ++++++++++++++++++++-------
+ arch/x86/events/intel/ds.c           | 288 +++++++++++++---
+ arch/x86/events/intel/knc.c          |   2 +-
+ arch/x86/events/intel/p4.c           |  12 +-
+ arch/x86/events/intel/p6.c           |   2 +-
+ arch/x86/events/perf_event.h         | 105 +++++-
+ arch/x86/events/perf_event_flags.h   |   2 +-
+ arch/x86/events/zhaoxin/core.c       |  14 +-
+ arch/x86/include/asm/intel_ds.h      |   1 +
+ arch/x86/include/asm/msr-index.h     |   6 +
+ arch/x86/include/asm/perf_event.h    |  27 ++
+ include/uapi/linux/perf_event.h      |   6 +-
+ kernel/events/core.c                 |  15 +-
+ tools/perf/Documentation/topdown.txt |   9 +-
+ 16 files changed, 839 insertions(+), 270 deletions(-)
+
+-- 
+2.38.1
+
 
