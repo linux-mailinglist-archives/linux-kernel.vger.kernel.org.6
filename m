@@ -1,169 +1,124 @@
-Return-Path: <linux-kernel+bounces-231160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FC79186F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:12:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B96199186F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:12:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96AE7282A8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:12:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA3231C20AC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:12:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884AB19007A;
-	Wed, 26 Jun 2024 16:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61F3190497;
+	Wed, 26 Jun 2024 16:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d07QHLT4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G42M5ieT"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3576019006F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF201836DD;
+	Wed, 26 Jun 2024 16:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719418136; cv=none; b=V/AraX9PxAi7jcg+SXyIoXYQsBlIvA+kFsokELxL/KOtaoa6SxxZuWxTQVU/fS14nB16L9hnuW9LDC+iGdRugqJeMWHJTKZXg7VY7UHcFUNLsjilLuRNt15sedi+3mCNHPQwtAkwCCqG/yjUGuVsr42wAl1FxCEsg6vAxUaQUOo=
+	t=1719418168; cv=none; b=t2S6GOGECNOjb1G5phxDeJh7/pI0PNlAXp4V/iliWegbtr5h/THt9d7bMocvGgO5kgSOsd+4wg+oyaaLTHfbAkMP2CuirCkVYDtuTnJA09L4UDTB/GuMitcTcv4T2EdQ5VH0P/wfGjwpZBzSIK9l4S50iPm5GhLdKTNI6rnTqVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719418136; c=relaxed/simple;
-	bh=xo/Fvy3VWe+IOb9gaFCgMqegSWf3xAl4oMjZiNogyys=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SILGr80uNbyqfRTD5ynkYDmc/qn0Fkm45CndIQzX3eIryHObcCin5fVsm9K4Dl7w9sK3z1ez2VY+QGZG+7wiWNjr/bCWfN8GZeOrbIWk2Gf8TaLV2gROFKJY/HrfIjC6waqaHoCc5JTl82UbzM5IQ4pOyPHRzJXVco4uqs677hQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d07QHLT4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719418134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eOXoFSz42GQtnLTfmd+KYCNYIISW1s5m+Yb3vhlcrdw=;
-	b=d07QHLT4NQGoek7Dj6XGZ/ZSd4ZOcpUpC8RAznx7We6oKOUHDfawBhV2ojU972P6bSVCnH
-	jJV2YYA8hhvjFPv3Fcmp91fVZ+c5R07OBhqRyIm0lxhI6pz1TYCWJs1YFlFawgM54iyl7+
-	N3sSlTATjI8bSDc6ULuw/TnJxJzoZC8=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-670-ijwfvbFdPQiK5P7fvHmsNw-1; Wed, 26 Jun 2024 12:08:52 -0400
-X-MC-Unique: ijwfvbFdPQiK5P7fvHmsNw-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6b4f87eb2e1so104985696d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:08:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719418132; x=1720022932;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eOXoFSz42GQtnLTfmd+KYCNYIISW1s5m+Yb3vhlcrdw=;
-        b=MHjMesNg5OMVeACsNiKbn02vQK2ao1OnN0uuSuOZbfjvtrBjbJtMLFNDrWx7Ep/0aC
-         DoGu+7aaj7v1LN2uvY2HwPgotMObG6gvkuUmhNgbqRPQs7iUjxzu7Hb437FckTg4zCp1
-         k/Mj9OLh9Gi/kkEF9YPRnkNF5LJdzV5+vkTjjRe1OjdCbz4rkXdcxfC0QsPdM6Ev8xhe
-         Y84SPKdMS/Zxv64SyQ6UJBfIC7KHj3xTkHc3Re489tk9wnOW50uhkPFJFO/qEeIologg
-         M1NhbrYC3AaCO+mulZ1/NUqyfkzUI2Sm1HNhD1AMYxxSvbTtwqHirB3zOHbncUhLbNyr
-         uLZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/bGt3K2xCkZM2Tx2b69ouft59FxaotFLbsDVlW4MlzoYKI2lmttH7cwVDRVjSB5JNRnE1qGINZPq56W/iJdnYn3XCduO80hVpnPJB
-X-Gm-Message-State: AOJu0Yx7lUda3nb4x+GTDuzKgbdYuLMUUvdlwEW5mExPrd54fyANYuqb
-	m7+YS5CPXHJzWfhP2PwWHiJw6CHByR3wj7qrsyjc5mlmgQOCYIrL3hvvhtdat3gyY/mM/LNPfu6
-	OZ5Gt5Ox5NlkzV55OETrEONFpacM8l56NvV36c/4DttON3JOoDjlRfFFk1RoiKDyMMkBm2w==
-X-Received: by 2002:a0c:e413:0:b0:6b0:7b72:4e1 with SMTP id 6a1803df08f44-6b540d34701mr107893966d6.65.1719418131839;
-        Wed, 26 Jun 2024 09:08:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFLkbLeXZob5Ys+oMUQQ1Zl7PQDQFc/oBoDS0ZXL7TrOaVEasSAaj57ZMlGv6EUEyv9i4yF+w==
-X-Received: by 2002:a0c:e413:0:b0:6b0:7b72:4e1 with SMTP id 6a1803df08f44-6b540d34701mr107893606d6.65.1719418131367;
-        Wed, 26 Jun 2024 09:08:51 -0700 (PDT)
-Received: from starship ([2607:fea8:fc01:7b7f:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b52b16e9basm46889376d6.6.2024.06.26.09.08.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 09:08:51 -0700 (PDT)
-Message-ID: <cefafca99f046a89e111e6972ed02199ef95c250.camel@redhat.com>
-Subject: Re: [PATCH 1/1] KVM: selftests: pmu_counters_test: increase
- robustness of LLC cache misses
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: kvm@vger.kernel.org
-Cc: Paolo Bonzini <pbonzini@redhat.com>, linux-kselftest@vger.kernel.org, 
- Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, Sean
- Christopherson <seanjc@google.com>
-Date: Wed, 26 Jun 2024 12:08:50 -0400
-In-Reply-To: <20240621204305.1730677-2-mlevitsk@redhat.com>
-References: <20240621204305.1730677-1-mlevitsk@redhat.com>
-	 <20240621204305.1730677-2-mlevitsk@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	s=arc-20240116; t=1719418168; c=relaxed/simple;
+	bh=+HnB7kIF8mFJGnjNHwdzEVnKSMHqAod79G8Z5X+tzp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=apooRV9PUI18InsPjrfIJcyXbI4R+3KBsgAdAhPCTHSP0+60Go0LW4Tf+sFJyFBCecxOFHExmPQFu/8TAw2zfhCwoHsBsnaKm+4BFIjgnb7Xb5sryHc3cp40SwT5Sd+OOT78jhDUk/f6kCzq2LIyCMCSexvCwOyr1JdJUCE99iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G42M5ieT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfVcp023759;
+	Wed, 26 Jun 2024 16:09:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	C1G/TakuwelynWwy6SdzE6YabFPLE1AhY9DsYo8fk3s=; b=G42M5ieTTUeN3EpV
+	PlS7PzIEGnWR8po9BdozlWxsKIAJXl8QE4egHbNji8RpG6Syj7HCMjqpKnr/E6gd
+	qylAjRqNwxcg1VkGvWFhN+94dzt4yghZVkqIDMutjmNbXyW3Lr0+2meKnzon/zS7
+	DvzZkHRdNZdlpE8kKctM73kB0oq82Q3GmBVmCml+E9vDqja3US8LAEuTXmn/hpnQ
+	FFu5WOXm1qt/sfTUKaQOkcIV4nIVXJhsrAgUaOGxLCvbNI/CUlT2yaqu//YhesCi
+	UZ5aBg4bAylyJVjb+0MtK+uB4zB+yS/6zA7zWjh3XXhm9slMWyRb50HybkLdRxBj
+	sDbuFA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywp6yt2p3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 16:09:21 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QG9KPA031306
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 16:09:20 GMT
+Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
+ 2024 09:09:20 -0700
+Message-ID: <0e8455c6-7236-4bfc-ac0b-8661d3195850@quicinc.com>
+Date: Wed, 26 Jun 2024 09:09:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] power: reset: piix4: add missing MODULE_DESCRIPTION()
+ macro
+Content-Language: en-US
+To: Sebastian Reichel <sre@kernel.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240608-md-drivers-power-reset-v1-1-08dbc1a546a2@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240608-md-drivers-power-reset-v1-1-08dbc1a546a2@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fMloydVgFMs3Lah4CNyE9zbElj0JAWSM
+X-Proofpoint-ORIG-GUID: fMloydVgFMs3Lah4CNyE9zbElj0JAWSM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
+ phishscore=0 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ clxscore=1011 lowpriorityscore=0 spamscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406260118
 
-On Fri, 2024-06-21 at 16:43 -0400, Maxim Levitsky wrote:
-> Currently this test does a single CLFLUSH on its memory location
-> but due to speculative execution this might not cause LLC misses.
+On 6/8/2024 9:02 PM, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/power/reset/piix4-poweroff.o
 > 
-> Instead, do a cache flush on each loop iteration to confuse the prediction
-> and make sure that cache misses always occur.
+> Add the missing invocation of the MODULE_DESCRIPTION() macro.
 > 
-> Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 > ---
->  .../selftests/kvm/x86_64/pmu_counters_test.c  | 20 +++++++++----------
->  1 file changed, 9 insertions(+), 11 deletions(-)
+>  drivers/power/reset/piix4-poweroff.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-> index 96446134c00b7..ddc0b7e4a888e 100644
-> --- a/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-> +++ b/tools/testing/selftests/kvm/x86_64/pmu_counters_test.c
-> @@ -14,8 +14,8 @@
->   * instructions that are needed to set up the loop and then disabled the
->   * counter.  1 CLFLUSH/CLFLUSHOPT/NOP, 1 MFENCE, 2 MOV, 2 XOR, 1 WRMSR.
->   */
-> -#define NUM_EXTRA_INSNS		7
-> -#define NUM_INSNS_RETIRED	(NUM_BRANCHES + NUM_EXTRA_INSNS)
-> +#define NUM_EXTRA_INSNS		5
-> +#define NUM_INSNS_RETIRED	(NUM_BRANCHES * 2 + NUM_EXTRA_INSNS)
+> diff --git a/drivers/power/reset/piix4-poweroff.c b/drivers/power/reset/piix4-poweroff.c
+> index 7f308292d7e3..e6822c021000 100644
+> --- a/drivers/power/reset/piix4-poweroff.c
+> +++ b/drivers/power/reset/piix4-poweroff.c
+> @@ -106,4 +106,5 @@ static struct pci_driver piix4_poweroff_driver = {
 >  
->  static uint8_t kvm_pmu_version;
->  static bool kvm_has_perf_caps;
-> @@ -133,9 +133,8 @@ static void guest_assert_event_count(uint8_t idx,
->   * doesn't need to be clobbered as the input value, @pmc_msr, is restored
->   * before the end of the sequence.
->   *
-> - * If CLFUSH{,OPT} is supported, flush the cacheline containing (at least) the
-> - * start of the loop to force LLC references and misses, i.e. to allow testing
-> - * that those events actually count.
-> + * If CLFUSH{,OPT} is supported, flush the cacheline containing the CLFUSH{,OPT}
-> + * instruction on each loop iteration to ensure that LLC cache misses happen.
->   *
->   * If forced emulation is enabled (and specified), force emulation on a subset
->   * of the measured code to verify that KVM correctly emulates instructions and
-> @@ -145,10 +144,9 @@ static void guest_assert_event_count(uint8_t idx,
->  #define GUEST_MEASURE_EVENT(_msr, _value, clflush, FEP)				\
->  do {										\
->  	__asm__ __volatile__("wrmsr\n\t"					\
-> -			     clflush "\n\t"					\
-> -			     "mfence\n\t"					\
-> -			     "1: mov $" __stringify(NUM_BRANCHES) ", %%ecx\n\t"	\
-> -			     FEP "loop .\n\t"					\
-> +			     " mov $" __stringify(NUM_BRANCHES) ", %%ecx\n\t"	\
-> +			     "1: " clflush "\n\t"				\
-> +			     FEP "loop 1b\n\t"					\
->  			     FEP "mov %%edi, %%ecx\n\t"				\
->  			     FEP "xor %%eax, %%eax\n\t"				\
->  			     FEP "xor %%edx, %%edx\n\t"				\
-> @@ -163,9 +161,9 @@ do {										\
->  	wrmsr(pmc_msr, 0);							\
->  										\
->  	if (this_cpu_has(X86_FEATURE_CLFLUSHOPT))				\
-> -		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt 1f", FEP);	\
-> +		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflushopt .", FEP);	\
->  	else if (this_cpu_has(X86_FEATURE_CLFLUSH))				\
-> -		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush 1f", FEP);	\
-> +		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "clflush .", FEP);	\
->  	else									\
->  		GUEST_MEASURE_EVENT(_ctrl_msr, _value, "nop", FEP);		\
->  										\
+>  module_pci_driver(piix4_poweroff_driver);
+>  MODULE_AUTHOR("Paul Burton <paul.burton@mips.com>");
+> +MODULE_DESCRIPTION("Intel PIIX4 power-off driver");
+>  MODULE_LICENSE("GPL");
+> 
+> ---
+> base-commit: 19ca0d8a433ff37018f9429f7e7739e9f3d3d2b4
+> change-id: 20240608-md-drivers-power-reset-488bf66477c6
+> 
 
-Any update? The test patched with this patch survived about 3 days of running
-in a loop.
+Following up to see if anything else is needed from me. Hoping to see this in
+linux-next so I can remove it from my tracking spreadsheet :)
 
-Best regards,
-	Maxim Levitsky
-
+/jeff
 
