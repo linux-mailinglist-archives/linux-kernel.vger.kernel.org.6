@@ -1,59 +1,63 @@
-Return-Path: <linux-kernel+bounces-231051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F694918585
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:15:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4E24918587
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:16:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89D71F26B58
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DC581F26DB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56E6118A93E;
-	Wed, 26 Jun 2024 15:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB85418A936;
+	Wed, 26 Jun 2024 15:16:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KffZscbZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lJN7YtHE"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9427FC14F;
-	Wed, 26 Jun 2024 15:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF2A6BB26;
+	Wed, 26 Jun 2024 15:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719414949; cv=none; b=hmSqxW/4l92AoW4ZeIrYACelUxIp+2ncgBhIOF2mBj1zQaLzTAAsDrWs41FEBVC4CrzvfavHjIzrmg9jIq6HuT8vDpr3KooougIxPgWGeTmae+N6E7iZw4LKWV5/iw2m2/zBZehiqFt1iFgU2nK7Nw0hyAg4TbsQCoOJpecirW8=
+	t=1719414978; cv=none; b=CLK8y2sJIqBXGeLvQ1mngx9xR3f5cyaoO65lb7TQM526kkp0022Effx8DObdvHSq9mSnTSMNfUN6V11/oHdTBLVfexJBhfl5iOWdYzbzN8yPVVhwY5Jv9gCM66h1MS8skX24kQ22Q1TjuQ0XojD66EnpyBq3t/Fn8C3B0mh01mw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719414949; c=relaxed/simple;
-	bh=UpQC2H0uM70uE62+a4eyqSjsiSzz3ws6dnp8Q28LdaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=YtanqXclkxoKrnCe3X3xwCK7ncOVh7MUTmP8iI6ZTn4C9ljDDn3lC4tkuMUNyrCYppdLjad1St1zskXqZSKFlQ9/1DJ/9g9sn4x6gxM2mdczidyVk0yewdJIDYNl7h8mK/NBm/v4StatrDaHBPweCStUMAZi1jHJNKKfmjYoJW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KffZscbZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CABE0C116B1;
-	Wed, 26 Jun 2024 15:15:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719414949;
-	bh=UpQC2H0uM70uE62+a4eyqSjsiSzz3ws6dnp8Q28LdaA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=KffZscbZfm1m1k+FV8X2wDXxCDswg03shB/KMu/mxR7fQxOX97ntfEYmoGfb4w8iN
-	 bY6DfYd7xslnWK8jlmfEygy7xKoScfwAwU1N2Jh4B0fCSflS4KxN0W/Yek0BeewAxU
-	 D01MdCfQHEG3LZJGMHVxiB6/0u1O2I7Ez6ixK0y6mRNLnc4gP8BquwoxwcnWMERw83
-	 IlgPmEbojht79NzIe5LBULPQVFFHYwfOyC0PPmKfX2eIKv3juHQWpHnYKCJawBK/aZ
-	 KAYCYdl6ZGnEYvkaHzfo/WptbmDFOU2XAZoegr5aQWU0TOa95UiOGnvNYoAmX0q/A9
-	 sxi2YhUtTLXIA==
-Date: Wed, 26 Jun 2024 10:15:46 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Damien Le Moal <dlemoal@kernel.org>
-Cc: Yihang Li <liyihang9@huawei.com>, cassel@kernel.org,
-	James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-	john.g.garry@oracle.com, yanaijie@huawei.com,
-	linux-kernel@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linuxarm@huawei.com, chenxiang66@hisilicon.com,
-	prime.zeng@huawei.com,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>
-Subject: Re: [bug report] scsi: SATA devices missing after FLR is triggered
- during HBA suspended
-Message-ID: <20240626151546.GA1466906@bhelgaas>
+	s=arc-20240116; t=1719414978; c=relaxed/simple;
+	bh=EwQMoBprrvluUbNzkLTyFZpWfn561qwV0HjoO8qZynY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RHK/kPIIK+8yzjt0lOOEErtnv1kF0OQTS0UaI5VrV4fh5z1QVzR0bfyesKfYrDEUmiOyviCfUMCE1oio0g0YrGHZooJfsJnsNkHvXPa4nOZjjEbxdaYTYc6Xr0X/0c8r9aPQOAPVnjekHuRbpGYl8evEBXeluTZEWw5QUXqOc/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=lJN7YtHE; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5EdOTGvxwbvxyfWt8EtSyA/AQ5B1tWpg+LU4ga2BqOQ=; b=lJN7YtHE9IfSxh4tNAjP1Db3rU
+	0SRI9Hi3XvVCHa5v3PYaptaqaFQzSofr/frIbKOEXyxJXAlPxlJ0M0o89TMRLNnH6Xm8yT/umbKu1
+	CWYW9kKnVJn8SvlSZm1Kigf/lQ7kg0oRzmCGzj0ZQPXJpwvw29cNpBiRHsEmSRr9Kbo26/LwYc2GS
+	YSq08gWhsaswRfsGENO5xEXZCdzLD5pam0GG2wK7Zi2Qk/cj6HKNlbI9/GQrXrVaMSegRNErKphXg
+	V9pO5eYx0J4O05dDw+DGGo8nsVCRdGfUAqM1XqhEOj6UoBa+hu+wrQ3JV0NaYZ9mkdezryUVZyKKz
+	A7m3uSqw==;
+Received: from willy by casper.infradead.org with local (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sMUNK-0000000CTXw-1wR1;
+	Wed, 26 Jun 2024 15:15:58 +0000
+Date: Wed, 26 Jun 2024 16:15:58 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Zi Yan <ziy@nvidia.com>, ran xiaokai <ranxiaokai627@163.com>,
+	akpm@linux-foundation.org, vbabka@suse.cz,
+	svetly.todorov@memverge.com, ran.xiaokai@zte.com.cn,
+	baohua@kernel.org, peterx@redhat.com, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 2/2] kpageflags: fix wrong KPF_THP on non-pmd-mappable
+ compound pages
+Message-ID: <Znwwrnk77J0xfNxu@casper.infradead.org>
+References: <20240626024924.1155558-1-ranxiaokai627@163.com>
+ <20240626024924.1155558-3-ranxiaokai627@163.com>
+ <D29M7U8SPSYJ.39VMTRSKXW140@nvidia.com>
+ <1907a8c0-9860-4ca0-be59-bec0e772332b@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,65 +66,28 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <b39b4a5b-07b7-483b-9c42-3ac80503120d@kernel.org>
+In-Reply-To: <1907a8c0-9860-4ca0-be59-bec0e772332b@arm.com>
 
-On Mon, Jun 24, 2024 at 09:10:41AM +0900, Damien Le Moal wrote:
-> On 6/22/24 12:31 PM, Yihang Li wrote:
-> > Hi Damien,
-> > 
-> > Thanks for your reply.
-> > 
-> > On 2024/6/19 7:11, Damien Le Moal wrote:
-> >> On 6/18/24 22:29, Yihang Li wrote:
-> >>> Hi Damien,
-> >>>
-> >>> I found out that two issues is caused by commit 0c76106cb975 ("scsi: sd:
-> >>> Fix TCG OPAL unlock on system resume") and 626b13f015e0 ("scsi: Do not
-> >>> rescan devices with a suspended queue").
-> >>>
-> >>> The two issues as follows for the situation that there are ATA disks
-> >>> connected with SAS controller:
+On Wed, Jun 26, 2024 at 12:07:04PM +0100, Ryan Roberts wrote:
+> On 26/06/2024 04:06, Zi Yan wrote:
+> > On Tue Jun 25, 2024 at 10:49 PM EDT, ran xiaokai wrote:
+> >> From: Ran Xiaokai <ran.xiaokai@zte.com.cn>
 > >>
-> >> Which controller ? What is the driver ?
-> > 
-> > I'm using the hisi_sas_v3_hw driver and it supports HiSilicon's SAS controller.
+> >> KPF_COMPOUND_HEAD and KPF_COMPOUND_TAIL are set on "common" compound
+> >> pages, which means of any order, but KPF_THP should only be set
+> >> when the folio is a 2M pmd mappable THP. 
 > 
-> I do not have access to this HBA, but I have one that uses libsas/pm8001 driver
-> so I will try to test with that.
+> Why should KPF_THP only be set on 2M THP? What problem does it cause as it is
+> currently configured?
 > 
-> >>> (1) FLR is triggered after all disks and controller are suspended. As a
-> >>> result, the number of disks is abnormal.
-> >>
-> >> I am assuming here that FLR means PCI "Function Level Reset" ?
-> > 
-> > Yes, I am talking about the PCI "Function Level Reset"
-> > 
-> >> FLR and disk/controller suspend execution timing are unrelated. FLR can be
-> >> triggered at any time through sysfs. So please give details here. Why is FLR
-> >> done when the system is being suspended ?
-> > 
-> > Yes, it is because FLR can be triggered at any time that we are testing the
-> > reliability of executing FLR commands after disk/controller suspended.
+> I would argue that mTHP is still THP so should still have the flag. And since
+> these smaller mTHP sizes are disabled by default, only mTHP-aware user space
+> will be enabling them, so I'll naively state that it should not cause compat
+> issues as is.
 > 
-> "can be triggered" ? FLR is not a random asynchronous event. It is an action
-> that is *issued* by a user with sys admin rights. And such users can do a lot
-> of things that can break a machine...
-> 
-> I fail to see the point of doing a function reset while the device is
-> suspended. But granted, I guess the device should comeback up in such case,
-> though I would like to hear what the PCI guys have to say about this.
-> 
-> Bjorn,
-> 
-> Is reseting a suspended PCI device something that should be/is supported ?
+> Also, the script at tools/mm/thpmaps relies on KPF_THP being set for all mTHP
+> sizes to function correctly. So that would need to be reworked if making this
+> change.
 
-I doubt it.  The PCI core should be preserving all the generic PCI
-state across suspend/resume.  The driver should only need to
-save/restore device-specific things the PCI core doesn't know about.
-
-A reset will clear out most state, and the driver doesn't know the
-reset happened, so it will expect most device state to have been
-preserved.
-
-Bjorn
+I told you you'd run into trouble calling them "mTHP" ...
 
