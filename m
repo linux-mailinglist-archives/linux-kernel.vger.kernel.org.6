@@ -1,77 +1,96 @@
-Return-Path: <linux-kernel+bounces-230292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51356917AE4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:26:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3A4917AE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:27:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0CFAE285F62
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:26:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63EBD1F2538D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B371B1662F8;
-	Wed, 26 Jun 2024 08:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFlo4sTf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAD0A160796;
+	Wed, 26 Jun 2024 08:27:30 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 088B316133E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95621144D1D;
+	Wed, 26 Jun 2024 08:27:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719390391; cv=none; b=J5JCkZ/PvkBgjSpK/JE1/WiSljZmlbBG6RgrVlWJEydtkIjt9jCCMtg5ZJj7RzQGAxGLe5ExeKrGaSa7s8MdV1drtkxSct6eSOh2MEdi8aG1lDRtE71bp05MCVK7Fu2+y0bkQHAT7SbQMHu66mv8njOErsrF3YbTLGGaxij3O3A=
+	t=1719390450; cv=none; b=dhN4l4i1lQ8QICfeTKFJLUCQL0ev2yImbjPsxvKBP+xRe2Nbl96mpIj+WHIi5POYYqhYvXroFYwLp83hT9hLm/Z4Ns6Ucq2OrLvNS0dZFge+2BIw2Xq+pml6LkGtimOzT8x4ltuSUL2zHd5laCED3ZCNNgpWcDmt/7ikJqRhbIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719390391; c=relaxed/simple;
-	bh=XbiR1/BgJHYty7bevHcBo3nrwQe/zawJwGacx+h0PaM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Azj0typBI3D4hQHhHI2JOn/hUHfERPBANMyPyS6JHZ92s7BQYJdOLyLfTYB+ey8yjCaXTr+13XT9cxWUJ9tNiE0/J9CqoKu+whI7FfdJLOQWMBE4ry6Q3xsyWtu0FYp6uGTUeq496WY28FS3AjovH/07p2QcKmH6NY7+4DVKNgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFlo4sTf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53FDFC4AF07;
-	Wed, 26 Jun 2024 08:26:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719390390;
-	bh=XbiR1/BgJHYty7bevHcBo3nrwQe/zawJwGacx+h0PaM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tFlo4sTfsiO0U16eIxo0+7V/+LMf9TCi02eBP5tYY5HnnlJKFnDSCco5d0/bHF4S9
-	 6CqbrA9Yix5cpgkhHZEkFCdecHIRQhL+bgTx8JvI6pox6TJTQUYrinn2Wt8vNuJ74/
-	 St7iJB3SD4rBeB2Y224hPncDWeM6//3hF29ousX8mKMFnJnMO48Yj2UTbzjEz5hMze
-	 Tm3zd2j8fHPFsn+0CrWjppsG9Pgwk/dcinzYr6Uiy+M98Vqcght35VmXc02wuZGbJd
-	 q9q4pvBRgSefoA+Ra4jDnydt021FlMUCEh+2PeQc8F0HrYbgMWSbeHnsVdMCH7j/gE
-	 F2kv0pakv4mkA==
-Message-ID: <aecc0724-027e-4405-887c-1a0701517e81@kernel.org>
-Date: Wed, 26 Jun 2024 16:26:25 +0800
+	s=arc-20240116; t=1719390450; c=relaxed/simple;
+	bh=mdv0TmLV1ze3/djWQYZsX5TiYv15RDFGrFFWQopYT80=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ZQOwIMeio2lMUHGEDn9aPJMqxUPZpvXen/OqOiGTFKmvwyihiANdCuXDHVYrv8hM4TpPDiscxXCgBHjKhzTQuDyV9c03bM1mBw1vYoS9byyvXYs7RJxbKmayxArQE/CnZ/4Gzo+xfKDHn0bk8YVKv+R9ssbbRUwIsUXxTF0N7mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowADnjRDg0HtmWzvfEg--.45984S2;
+	Wed, 26 Jun 2024 16:27:21 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: vkoul@kernel.org,
+	make24@iscas.ac.cn,
+	andriy.shevchenko@linux.intel.com
+Cc: dmaengine@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dmaengine: hsu: Add check for dma_set_max_seg_size in hsu_dma_probe()
+Date: Wed, 26 Jun 2024 16:27:11 +0800
+Message-Id: <20240626082711.2826915-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] erofs: fix possible memory leak in z_erofs_gbuf_exit()
-To: Sandeep Dhavale <dhavale@google.com>, linux-erofs@lists.ozlabs.org,
- Gao Xiang <xiang@kernel.org>, Yue Hu <huyue2@coolpad.com>,
- Jeffle Xu <jefflexu@linux.alibaba.com>, Chunhai Guo <guochunhai@vivo.com>
-Cc: hsiangkao@linux.alibaba.com, kernel-team@android.com,
- linux-kernel@vger.kernel.org
-References: <20240624220206.3373197-1-dhavale@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240624220206.3373197-1-dhavale@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowADnjRDg0HtmWzvfEg--.45984S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw4xAF1DCr47JrW8Xw4Utwb_yoW3Kwb_KF
+	47urZ8Xrn8Gr48Aw10krWakr90vFWkXF1fWF97tan3t3y8CFnxXrWjvFn5Z3y8ZFW7ZFWD
+	G3s8ZrWS9r12gjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb48FF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8Jw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
+	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
+	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
+	WUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1l
+	IxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUb0PfJUUUU
+	U==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On 2024/6/25 6:02, Sandeep Dhavale wrote:
-> Because we incorrectly reused of variable `i` in `z_erofs_gbuf_exit()`
-> for inner loop, we may exit early from outer loop resulting in memory
-> leak. Fix this by using separate variable for iterating through inner loop.
-> 
-> Fixes: f36f3010f676 ("erofs: rename per-CPU buffers to global buffer pool and make it configurable")
-> 
-> Signed-off-by: Sandeep Dhavale <dhavale@google.com>
+As the possible failure of the dma_set_max_seg_size(), we should better
+check the return value of the dma_set_max_seg_size().
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+Fixes: 17b3cf4233d7 ("dmaengine: hsu: set maximum allowed segment size for DMA")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/dma/hsu/hsu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thanks,
+diff --git a/drivers/dma/hsu/hsu.c b/drivers/dma/hsu/hsu.c
+index af5a2e252c25..9d02277fa923 100644
+--- a/drivers/dma/hsu/hsu.c
++++ b/drivers/dma/hsu/hsu.c
+@@ -479,7 +479,9 @@ int hsu_dma_probe(struct hsu_dma_chip *chip)
+ 
+ 	hsu->dma.dev = chip->dev;
+ 
+-	dma_set_max_seg_size(hsu->dma.dev, HSU_CH_DxTSR_MASK);
++	ret = dma_set_max_seg_size(hsu->dma.dev, HSU_CH_DxTSR_MASK);
++	if (ret)
++		return ret;
+ 
+ 	ret = dma_async_device_register(&hsu->dma);
+ 	if (ret)
+-- 
+2.25.1
+
 
