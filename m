@@ -1,186 +1,141 @@
-Return-Path: <linux-kernel+bounces-231302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85FE7918D9F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:56:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE940918DA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AEF52827F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:56:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BBF71C21A88
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2149D190071;
-	Wed, 26 Jun 2024 17:55:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A5B19047D;
+	Wed, 26 Jun 2024 17:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ICpd3MgD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fd95CG1f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CE614532F;
-	Wed, 26 Jun 2024 17:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AA5D190461;
+	Wed, 26 Jun 2024 17:55:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719424557; cv=none; b=oosCKxQBEvLvzVEe5t6lv/FMi8oE5U+w8GztWaqypFMylBJBfLhE0XuE+AWBoJ9LMXZwZ1SKuqm1d1aJ9ql8tDva5NSw6zUhyM7vv+qfUo2DHNVMH8bTUalLm2a4zdbMMw9ypRO7gc/QkVdnoYTJrAg4ITAnaa+FHEm7ZKOWNjQ=
+	t=1719424559; cv=none; b=QslqlSdGUGFtuI7Z/W20XG6AS2WYEdzhzsTwoyYSX46B/APRpJQXP7g1Y2RXNAIRMS2K5KwJPxZiR28nvYIGHb7vGWqCvB4t7ncDkcagVvnTq5mx+oKgGdogPelduH/Pr6O5FGeayT8fevkd6UUQiHuRj7Cf+nvpKuBoeKt2BSY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719424557; c=relaxed/simple;
-	bh=NLvDvGw54gfP7bQhB9DdMmWepqi55qIOC/HXZx6oxMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZlRkmLqTG3arRJy0VKsZJF9yq7u+eicC+W1A6zU4bQc9c7b2iOXFt88G1/H30+hxYOaYczfAbbRCCwKHyuVakhiwJxiX1xBzV3YSmtG14biPN7Uks8o0Mb7ZiuLNbQSjkZOqw5rqELLPqGEhXXbD8vbJIMpHW9W5HyOHnRo6bC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ICpd3MgD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45BE4C116B1;
-	Wed, 26 Jun 2024 17:55:56 +0000 (UTC)
+	s=arc-20240116; t=1719424559; c=relaxed/simple;
+	bh=/nn9cXzOLqdpmvpMkRXeiT4dOqNiKFz+DhAQVxCofeA=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=fJvZC4R0TZk0OGAky/jN+ljabcNowOcM7hjvexRr+qx98fmc9+Gaoc6s0qVySmLmREGpauO2TFONTYJuxq6S0FkA+neqFWTtZ7UOtxfBzIItmkYFh89EPZGSPzwEzs27J2pNlxAzfPdOHrZMzH8tVfJLG7wlhLxSYkjuRwOZoyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fd95CG1f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98507C116B1;
+	Wed, 26 Jun 2024 17:55:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719424556;
-	bh=NLvDvGw54gfP7bQhB9DdMmWepqi55qIOC/HXZx6oxMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ICpd3MgD4ik1S1PkcaI7M+Hvlp1BdewDiSXp2HL0nAygGud1tFigok0h0JDolCzfL
-	 zn8KcBVhUniuGHqcLDtolGkW7tH6zjHkEYDcF7xmVk2Yi2cM45X3xZMArMZWjaMY4f
-	 1PlQ6iLnJfr7VQmn3Q0p4NtlIqTtXE4+3AZnK0OORiAWUTn12cPH/pBXt/WWhEoGHh
-	 8HMwMWMoJUHT3+jvt2TQZ/VYga4AkdbIue/W/DkhtVICj8opf4u4xAKQCYQQo5qPIG
-	 Q/Qzhsf4QKHfCXZUKJQy9iTft0xcO1dI5Ldw56jiv8D3jvQxuvnfhjNqkZMgtFH/wa
-	 F+Th/z/aN7h/Q==
-Date: Wed, 26 Jun 2024 10:55:54 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: weilin.wang@intel.com
-Cc: Ian Rogers <irogers@google.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Perry Taylor <perry.taylor@intel.com>,
-	Samantha Alt <samantha.alt@intel.com>,
-	Caleb Biggers <caleb.biggers@intel.com>
-Subject: Re: [RFC PATCH v14 6/8] perf stat: Add command line option for
- enabling tpebs recording
-Message-ID: <ZnxWKtOWBbFqEnBq@google.com>
-References: <20240624222026.229401-1-weilin.wang@intel.com>
- <20240624222026.229401-7-weilin.wang@intel.com>
+	s=k20201202; t=1719424558;
+	bh=/nn9cXzOLqdpmvpMkRXeiT4dOqNiKFz+DhAQVxCofeA=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=fd95CG1fxVYNa+qAXFNsD6e8Nr9YO9Tqe/f5xGi4hvJIBewDKCPFbpZzID5W4p0qQ
+	 vgT3iR2c16aU7u+6e9p7eA9tUj9T3/osuDUTewfXw8BQr8Ci5NdT6baVbzknnKNRKk
+	 4xsKCHWxcF01jIw9NIJ70jSne1fdXHIsEiNHRnOLdfABvrE2At9FcrxAu/hLzs8Zr+
+	 uimtaFqGIcVFzwKTBuUW6uBZr1fdHvotEtV2/xf6zlgrDgS7kyRPgtKrlc99hjz05N
+	 6yM9dQZRtnRDoIZKzVFPZX8fJdPY/9znKVkOj2/QpvJzdnWVM4aQyWLPlcIau9XRtw
+	 V89A5qUWYfHHA==
+Date: Wed, 26 Jun 2024 11:55:57 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240624222026.229401-7-weilin.wang@intel.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: imx@lists.linux.dev, pabeni@redhat.com, krzk@kernel.org, 
+ krzk+dt@kernel.org, kuba@kernel.org, edumazet@google.com, 
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, conor+dt@kernel.org, 
+ devicetree@vger.kernel.org, davem@davemloft.net
+In-Reply-To: <20240626162307.1748759-1-Frank.Li@nxp.com>
+References: <20240626162307.1748759-1-Frank.Li@nxp.com>
+Message-Id: <171942455738.3889614.10016713539480187733.robh@kernel.org>
+Subject: Re: [PATCH v2 1/1] dt-bindings: net: convert enetc to yaml
 
-Hello Weilin,
 
-On Mon, Jun 24, 2024 at 06:20:22PM -0400, weilin.wang@intel.com wrote:
-> From: Weilin Wang <weilin.wang@intel.com>
+On Wed, 26 Jun 2024 12:23:07 -0400, Frank Li wrote:
+> Convert enetc device binding file to yaml. Split to 3 yaml files,
+> 'fsl,enetc.yaml', 'fsl,enetc-mdio.yaml', 'fsl,enetc-ierb.yaml'.
 > 
-> With this command line option, tpebs recording is turned off in perf stat on
-> default. It will only be turned on when this option is given in perf stat
-> command.
+> Additional Changes:
+> - Add pci<vendor id>,<production id> in compatible string.
+> - Ref to common ethernet-controller.yaml and mdio.yaml.
+> - Remove fixed-link part.
 > 
-> Exampe with --enable-tpebs-recording:
-
-I prefer shorter names, how about --enable-tpebs or --record-tpebs, or
-maybe just --tpebs ?
-
-Thanks,
-Namhyung
-
-> 
-> perf stat -M tma_split_loads -C1-4 --enable-tpebs-recording sleep 1
-> 
-> [ perf record: Woken up 2 times to write data ]
-> [ perf record: Captured and wrote 0.044 MB - ]
-> 
->  Performance counter stats for 'CPU(s) 1-4':
-> 
->     53,259,156,071      cpu_core/TOPDOWN.SLOTS/          #      1.6 %  tma_split_loads          (50.00%)
->     15,867,565,250      cpu_core/topdown-retiring/                                              (50.00%)
->     15,655,580,731      cpu_core/topdown-mem-bound/                                             (50.00%)
->     11,738,022,218      cpu_core/topdown-bad-spec/                                              (50.00%)
->      6,151,265,424      cpu_core/topdown-fe-bound/                                              (50.00%)
->     20,445,917,581      cpu_core/topdown-be-bound/                                              (50.00%)
->      6,925,098,013      cpu_core/L1D_PEND_MISS.PENDING/                                         (50.00%)
->      3,838,653,421      cpu_core/MEMORY_ACTIVITY.STALLS_L1D_MISS/                                        (50.00%)
->      4,797,059,783      cpu_core/EXE_ACTIVITY.BOUND_ON_LOADS/                                        (50.00%)
->     11,931,916,714      cpu_core/CPU_CLK_UNHALTED.THREAD/                                        (50.00%)
->        102,576,164      cpu_core/MEM_LOAD_COMPLETED.L1_MISS_ANY/                                        (50.00%)
->         64,071,854      cpu_core/MEM_INST_RETIRED.SPLIT_LOADS/                                        (50.00%)
->                  3      cpu_core/MEM_INST_RETIRED.SPLIT_LOADS/R
-> 
->        1.003049679 seconds time elapsed
-> 
-> Exampe without --enable-tpebs-recording:
-> 
-> perf stat -M tma_contested_accesses -C1 sleep 1
-> 
->  Performance counter stats for 'CPU(s) 1':
-> 
->         50,203,891      cpu_core/TOPDOWN.SLOTS/          #      0.0 %  tma_contested_accesses   (63.60%)
->         10,040,777      cpu_core/topdown-retiring/                                              (63.60%)
->          6,890,729      cpu_core/topdown-mem-bound/                                             (63.60%)
->          2,756,463      cpu_core/topdown-bad-spec/                                              (63.60%)
->         10,828,288      cpu_core/topdown-fe-bound/                                              (63.60%)
->         28,350,432      cpu_core/topdown-be-bound/                                              (63.60%)
->                 98      cpu_core/OCR.DEMAND_DATA_RD.L3_HIT.SNOOP_HITM/                                        (63.70%)
->            577,520      cpu_core/MEMORY_ACTIVITY.STALLS_L2_MISS/                                        (54.62%)
->            313,339      cpu_core/MEMORY_ACTIVITY.STALLS_L3_MISS/                                        (54.62%)
->             14,155      cpu_core/MEM_LOAD_RETIRED.L1_MISS/                                        (45.54%)
->                  0      cpu_core/OCR.DEMAND_DATA_RD.L3_HIT.SNOOP_HIT_WITH_FWD/                                        (36.30%)
->          8,468,077      cpu_core/CPU_CLK_UNHALTED.THREAD/                                        (45.38%)
->                198      cpu_core/MEM_LOAD_L3_HIT_RETIRED.XSNP_MISS/                                        (45.38%)
->              8,324      cpu_core/MEM_LOAD_RETIRED.FB_HIT/                                        (45.38%)
->      3,388,031,520      TSC
->         23,226,785      cpu_core/CPU_CLK_UNHALTED.REF_TSC/                                        (54.46%)
->                 80      cpu_core/MEM_LOAD_L3_HIT_RETIRED.XSNP_FWD/                                        (54.46%)
->                  0      cpu_core/MEM_LOAD_L3_HIT_RETIRED.XSNP_FWD/R
->                  0      cpu_core/MEM_LOAD_L3_HIT_RETIRED.XSNP_MISS/R
->      1,006,816,667 ns   duration_time
-> 
->        1.002537737 seconds time elapsed
-> 
-> Signed-off-by: Weilin Wang <weilin.wang@intel.com>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 > ---
->  tools/perf/Documentation/perf-stat.txt | 8 ++++++++
->  tools/perf/builtin-stat.c              | 4 ++++
->  2 files changed, 12 insertions(+)
+> Change from v1 to v2
+> - renamee file as fsl,enetc-mdio.yaml, fsl,enetc-ierb.yaml, fsl,enetc.yaml
+> - example include pcie node
+> ---
+>  .../bindings/net/fsl,enetc-ierb.yaml          |  35 ++++++
+>  .../bindings/net/fsl,enetc-mdio.yaml          |  53 ++++++++
+>  .../devicetree/bindings/net/fsl,enetc.yaml    |  50 ++++++++
+>  .../devicetree/bindings/net/fsl-enetc.txt     | 119 ------------------
+>  4 files changed, 138 insertions(+), 119 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc-ierb.yaml
+>  create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc-mdio.yaml
+>  create mode 100644 Documentation/devicetree/bindings/net/fsl,enetc.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/net/fsl-enetc.txt
 > 
-> diff --git a/tools/perf/Documentation/perf-stat.txt b/tools/perf/Documentation/perf-stat.txt
-> index 29756a87ab6f..f4cde834811d 100644
-> --- a/tools/perf/Documentation/perf-stat.txt
-> +++ b/tools/perf/Documentation/perf-stat.txt
-> @@ -498,6 +498,14 @@ To interpret the results it is usually needed to know on which
->  CPUs the workload runs on. If needed the CPUs can be forced using
->  taskset.
->  
-> +--enable-tpebs-recording::
-> +Enable automatic sampling on Intel TPEBS retire_latency events (event with :R
-> +modifier). Without this option, perf would not capture dynamic retire_latency
-> +at runtime. Currently, a zero value is assigned to the retire_latency event when
-> +this option is not set. The TPEBS hardware feature starts from Intel Granite
-> +Rapids microarchitecture. This option only exists in X86_64 and is meaningful on
-> +Intel platforms with TPEBS feature.
-> +
->  --td-level::
->  Print the top-down statistics that equal the input level. It allows
->  users to print the interested top-down metrics level instead of the
-> diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-> index 68125bd75b37..7111c96e68ab 100644
-> --- a/tools/perf/builtin-stat.c
-> +++ b/tools/perf/builtin-stat.c
-> @@ -2475,6 +2475,10 @@ int cmd_stat(int argc, const char **argv)
->  			"disable adding events for the metric threshold calculation"),
->  		OPT_BOOLEAN(0, "topdown", &topdown_run,
->  			"measure top-down statistics"),
-> +#ifdef HAVE_ARCH_X86_64_SUPPORT
-> +		OPT_BOOLEAN(0, "enable-tpebs-recording", &tpebs_recording,
-> +			"enable recording for tpebs when retire_latency required"),
-> +#endif
->  		OPT_UINTEGER(0, "td-level", &stat_config.topdown_level,
->  			"Set the metrics level for the top-down statistics (0: max level)"),
->  		OPT_BOOLEAN(0, "smi-cost", &smi_cost,
-> -- 
-> 2.43.0
-> 
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc-mdio.example.dtb: pcie@1f0000000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/host-generic-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc-mdio.example.dtb: pcie@1f0000000: 'device_type' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/host-generic-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc-mdio.example.dtb: pcie@1f0000000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/host-generic-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc-mdio.example.dtb: pcie@1f0000000: reg: [[1, 4026531840], [0, 1048576]] is too long
+	from schema $id: http://devicetree.org/schemas/pci/host-generic-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc-mdio.example.dtb: pcie@1f0000000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'mdio@0,3' were unexpected)
+	from schema $id: http://devicetree.org/schemas/pci/host-generic-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc-mdio.example.dtb: pcie@1f0000000: 'device_type' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc-mdio.example.dtb: pcie@1f0000000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc.example.dtb: pcie@1f0000000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/host-generic-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc.example.dtb: pcie@1f0000000: 'device_type' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/host-generic-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc.example.dtb: pcie@1f0000000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/host-generic-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc.example.dtb: pcie@1f0000000: reg: [[1, 4026531840], [0, 1048576]] is too long
+	from schema $id: http://devicetree.org/schemas/pci/host-generic-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc.example.dtb: pcie@1f0000000: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'ethernet@0,0' were unexpected)
+	from schema $id: http://devicetree.org/schemas/pci/host-generic-pci.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc.example.dtb: pcie@1f0000000: 'device_type' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/net/fsl,enetc.example.dtb: pcie@1f0000000: 'ranges' is a required property
+	from schema $id: http://devicetree.org/schemas/pci/pci-bus-common.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240626162307.1748759-1-Frank.Li@nxp.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
