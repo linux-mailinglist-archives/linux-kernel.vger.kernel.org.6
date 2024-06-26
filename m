@@ -1,117 +1,225 @@
-Return-Path: <linux-kernel+bounces-231147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B78E9186DB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:09:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3901918705
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:13:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26631B2A29C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:08:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DC84B2AE82
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2A2190063;
-	Wed, 26 Jun 2024 16:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 957D8190499;
+	Wed, 26 Jun 2024 16:04:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AYlKeEB+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PkqfJP0f"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB1A18EFCF;
-	Wed, 26 Jun 2024 16:04:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A041190493
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719417845; cv=none; b=G1ZwS+e5XfByrMOKvWWaJedAxed3GVX0K2iKCQDEuC7nXiXsSO6CQtoaJdUFdsiYlj6FUB8ab55LwVZ0NrlzFPO7DAVjaXYrPPe8Rtr1CNBXuy4aJAzaN10u8xuJi/FS1XBkCGZA49f2W+4LKZAGSphoZeuRGPj7MGBkHVO9Wow=
+	t=1719417863; cv=none; b=k6YgbL7ZRGLiQ8FHjulmZcaiu5Bzt3zwE6GDSK4/SUWDytgBoZ5zyeGu54GET26F+oEMtspBBoCpB6VhvTE2c+oxhmp+Z9aU/kLUoEvTntoTDtNf0LfM0M0xkha/sm7qyVera+hMkOE4vG50sDPfIA0eTg02D3FlFEmXqY9a5wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719417845; c=relaxed/simple;
-	bh=+N8RN1iOrnCb689rj04vmHsicxKmCtiJLair6C/x+so=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dv/diPhFNJUBSXmxUAZ1g9ZK41aNgqCCQz3G+eMs56DqKEULMufQWkz8sKOVwhgKHbke9wazYbBb+LPloT0m72dfroHZyA+gEtLc/42pvp7e4F8vbbg8XEC1zv0tQZJ9bK6I7Tn1zFNwVHFbSR9Kqrg1TfxXWz1Y4fW3QicnDFY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AYlKeEB+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CE0EC116B1;
-	Wed, 26 Jun 2024 16:04:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719417845;
-	bh=+N8RN1iOrnCb689rj04vmHsicxKmCtiJLair6C/x+so=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AYlKeEB+18cSv82iz6CVx3F9OA5fSZxkuD/A0Z+z+S4T2Hz16z01xPgOqYtjSCOZP
-	 nTJ3A+XrlBdvMDqT6wHIwjCxXSvREkDIkNV8QFzzd6gZQGArnkJ2gRjgZ1gJXKV9/i
-	 Npa2tLEWlcatxzs/bqO+FkeI7vglrJolV3jYHCo32hjpbFZynsN8jnHM3vxsqpOhM8
-	 ZUUst3WbiLbYsWS2PFf68tqhCuP4sEZjeEK+5Hl1Scca0NpSXqYSXUvh0n270Jj16z
-	 gELcbNAzEqjYJVBeDTWGSokQHSbou94NiIF6fHIeVcs5rY/mphKhtat+KE2Ig36Wri
-	 igOX/Iou5B9Fg==
-Date: Wed, 26 Jun 2024 18:04:01 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: Hans Hu <hanshu@zhaoxin.com>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Arnd Bergmann <arnd@arndb.de>, Wentong Wu <wentong.wu@intel.com>, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] i2c: viai2c: turn common code into a proper module
-Message-ID: <dceas2m3mllvmoidacnaube7erjvjyrjkis23ppfxboclnnlxq@nlfagnp2ze7y>
-References: <20240528120710.3433792-1-arnd@kernel.org>
+	s=arc-20240116; t=1719417863; c=relaxed/simple;
+	bh=yNTzG0J7wNN4igxR6F/IrxrlToSh8eTK5c9Wq8lBZA4=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=iwO0NHBH7C9O3YcA/f4g/JC4/mCrFC4gJWyhih4GrZRtHDpnC0j+jxPHvaOReqE7Q5SyUEJ8jBzzFgl5Bgu0hWEP5AVouSzCA2Vg/3pk1EuUVWviZz9aAvNumbk/f7jxiCA9QGAMc5yly5xGaD5C3Os+LLg/ZK2k9+HMkTD+Ejo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PkqfJP0f; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719417861;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DHjTMyH5Rwk5yjh+iWMH6LJrfct1/DpGEQ3xLofZHeo=;
+	b=PkqfJP0fxyB6rNJ/bz5GAykM0oFP9YoNywJpDOjeVKttzwg8gVPl4TDV+3iBc7Yq4LK8+4
+	l1RXsC0ntxfnEdh947uJ14v8M6PVdeVQnuJw1pXmlxsV58ybE7AuXW8/grHIO19585MJMH
+	ME1+oqvYWXMpebBp7yIVs1sPn4kNYAg=
+Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
+ [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-207-BwFBdAbBPTequAeccflQsw-1; Wed, 26 Jun 2024 12:04:18 -0400
+X-MC-Unique: BwFBdAbBPTequAeccflQsw-1
+Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6af35481ea6so107338496d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:04:18 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719417858; x=1720022658;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=DHjTMyH5Rwk5yjh+iWMH6LJrfct1/DpGEQ3xLofZHeo=;
+        b=oJt+Cq3Mz+jrsAFy+kv/B7M0MjMyQdYs5eX4bXPeeESu53qlc3Q0rRPV1yjVxfU4LM
+         UtNpczegn/jyyHGJF1Z+QCvy8YmvLEa/IcG7aVrV0qmLwMP+rWe3iT+4ZY+0Ewl5xPyy
+         8h3Ty/r4KoSt4rCUjoVdjfInSzu9YwQZrIgGPCRctRGpCGqY8xZ+hqyyKesauoDthd7s
+         ko66mjPfL0CFue0B86iam9sIquFU1XXXAcCLTCRrYypzkI8NaSTfo5fCdyRB/d52Fog2
+         nnwezPNCiGvR87NQBW17bE/ZIHGkkdl44LS78o6wdEq+sHshEsWejC2WMbXNyBH6/NN2
+         6ZNA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ+3erEjwSlFWS/htkhdxL7huZod0Mflt6Kzi0l+Q03B5+suX+CEbw/F/YsX3dgoJ3oKjLSJ6Bsa4zZ2PC23/U49BMrU2GTJvLqHVq
+X-Gm-Message-State: AOJu0YzvNqG36VDBn3gzIXgESvoa/Miafm69zB3Sn5+9muzhO2GbdAk6
+	TgBJmBdcFJLoP2L0askNeUQ92DH2iqqPhy/mUoteZ02er2IKyHgZzJpW6NJIChjoL/zco/Lv2aA
+	dS7Z6Vyzya8ddxXm9TJysCYuZ7sY3Phs/QYcjZv6g8CWxmKrla1zS++/qc905xg==
+X-Received: by 2002:ad4:5bef:0:b0:6b5:474a:8f74 with SMTP id 6a1803df08f44-6b5474a96b1mr116364126d6.29.1719417857772;
+        Wed, 26 Jun 2024 09:04:17 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH7mtK9WggPDqb2LDlMb/2bFXu9tv4zKoByK+QchHf6bUv6I5JnQc+16tYBiRf6dJ+/0v+J9w==
+X-Received: by 2002:ad4:5bef:0:b0:6b5:474a:8f74 with SMTP id 6a1803df08f44-6b5474a96b1mr116363476d6.29.1719417856953;
+        Wed, 26 Jun 2024 09:04:16 -0700 (PDT)
+Received: from localhost ([240d:1a:c0d:9f00:523b:c871:32d4:ccd0])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b51ed18e44sm56047916d6.40.2024.06.26.09.04.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 09:04:16 -0700 (PDT)
+Date: Thu, 27 Jun 2024 01:04:11 +0900 (JST)
+Message-Id: <20240627.010411.908967860275845205.syoshida@redhat.com>
+To: kuniyu@amazon.com
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ syzkaller@googlegroups.com
+Subject: Re: [PATCH net] af_unix: Fix uninit-value in __unix_walk_scc()
+From: Shigeru Yoshida <syoshida@redhat.com>
+In-Reply-To: <20240625195849.55006-1-kuniyu@amazon.com>
+References: <20240625152713.1147650-1-syoshida@redhat.com>
+	<20240625195849.55006-1-kuniyu@amazon.com>
+X-Mailer: Mew version 6.9 on Emacs 29.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528120710.3433792-1-arnd@kernel.org>
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On Tue, 25 Jun 2024 12:58:48 -0700, Kuniyuki Iwashima wrote:
+> From: Shigeru Yoshida <syoshida@redhat.com>
+> Date: Wed, 26 Jun 2024 00:27:13 +0900
+>> KMSAN reported uninit-value access in __unix_walk_scc() [1].
+>> 
+>> In the list_for_each_entry_reverse() loop, when the vertex's index equals
+>> it's scc_index, the loop uses the variable vertex as a temporary variable
+>> that points to a vertex in scc. And when the loop is finished, the variable
+>> vertex points to the list head, in this case scc, which is a local variable
+>> on the stack.
+> 
+> Thanks for the fix !
+> 
+> More precisely, it's not even scc and might underflow the call
+> stack of __unix_walk_scc():
+> 
+>   container_of(&scc, struct unix_vertex, scc_entry)
+> 
+> 
+>> 
+>> However, the variable vertex is used under the label prev_vertex. So if the
+>> edge_stack is not empty and the function jumps to the prev_vertex label,
+>> the function will access invalid data on the stack. This causes the
+>> uninit-value access issue.
+>> 
+>> Fix this by introducing a new temporary variable for the loop.
+>> 
+>> [1]
+>> BUG: KMSAN: uninit-value in __unix_walk_scc net/unix/garbage.c:478 [inline]
+>> BUG: KMSAN: uninit-value in unix_walk_scc net/unix/garbage.c:526 [inline]
+>> BUG: KMSAN: uninit-value in __unix_gc+0x2589/0x3c20 net/unix/garbage.c:584
+>>  __unix_walk_scc net/unix/garbage.c:478 [inline]
+> 
+> Could you validate the test case below without/with your patch
+> and post it within v2 with your SOB tag ?
+> 
+> I ran the test below and confrimed the bug with a manual WARN_ON()
+> but didn't see KMSAN splat, so what version of clang do you use ?
 
-...
+Thank you for your comment!
 
-> +EXPORT_SYMBOL_GPL(viai2c_init);
-> +
-> +MODULE_DESCRIPTION("Via/Wondermedia/Zhaoxin I2C master-mode bus adapter");
-> +MODULE_AUTHOR("Tony Prisk <linux@prisktech.co.nz>");
+I ran the test below without my patch several times, but it couldn't
+catch KMSAN splat.
 
-Do we want to add also Hans here?
+Perhaps this issue depends on the state of the stack. Even the repro
+created by syzkaller takes a few minutes to catch the issue on my
+environment.
 
-> +MODULE_LICENSE("GPL");
+I used the following version of clang:
 
-...
-
-> +static irqreturn_t wmt_i2c_isr(int irq, void *data)
-> +{
-
-...
-
-> +	/* All the data has been successfully transferred or error occurred */
-> +	if (i2c->ret)
-> +		complete(&i2c->complete);
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
-> +
-
-I took the freedom to remove this double blank line.
-
->  static int wmt_i2c_probe(struct platform_device *pdev)
->  {
->  	struct device_node *np = pdev->dev.of_node;
-
-...
-
-> @@ -239,6 +298,16 @@ static int zxi2c_probe(struct platform_device *pdev)
->  	if (error)
->  		return error;
->  
-> +	i2c->irq = platform_get_irq(pdev, 0);
-> +	if (i2c->irq < 0)
-> +		return i2c->irq;
-> +
-> +	error = devm_request_irq(&pdev->dev, i2c->irq, zxi2c_isr,
-> +			       IRQF_SHARED, pdev->name, i2c);
-
-I took the freedom of re-alligning here.
-
-Queued to i2c/i2c-host-fixes with Tested-by Hans.
+$ clang --version
+clang version 18.1.6 (Fedora 18.1.6-3.fc40)
+Target: x86_64-redhat-linux-gnu
+Thread model: posix
+InstalledDir: /usr/bin
+Configuration file: /etc/clang/x86_64-redhat-linux-gnu-clang.cfg
 
 Thanks,
-Andi
+Shigeru
+
+> 
+> ---8<---
+> From: Kuniyuki Iwashima <kuniyu@amazon.com>
+> Date: Tue, 25 Jun 2024 19:46:59 +0000
+> Subject: [PATCH] selftest: af_unix: Add test case for backtrack after
+>  finalising SCC.
+> 
+> syzkaller reported a KMSAN splat in __unix_walk_scc() while backtracking
+> edge_stack after finalising SCC.
+> 
+> Let's add a test case exercising the path.
+> 
+> Signed-off-by: Kuniyuki Iwashima <kuniyu@amazon.com>
+> 
+> diff --git a/tools/testing/selftests/net/af_unix/scm_rights.c b/tools/testing/selftests/net/af_unix/scm_rights.c
+> index 2bfed46e0b19..d66336256580 100644
+> --- a/tools/testing/selftests/net/af_unix/scm_rights.c
+> +++ b/tools/testing/selftests/net/af_unix/scm_rights.c
+> @@ -14,12 +14,12 @@
+>  
+>  FIXTURE(scm_rights)
+>  {
+> -	int fd[16];
+> +	int fd[32];
+>  };
+>  
+>  FIXTURE_VARIANT(scm_rights)
+>  {
+> -	char name[16];
+> +	char name[32];
+>  	int type;
+>  	int flags;
+>  	bool test_listener;
+> @@ -172,6 +172,8 @@ static void __create_sockets(struct __test_metadata *_metadata,
+>  			     const FIXTURE_VARIANT(scm_rights) *variant,
+>  			     int n)
+>  {
+> +	ASSERT_LE(n * 2, sizeof(self->fd) / sizeof(self->fd[0]));
+> +
+>  	if (variant->test_listener)
+>  		create_listeners(_metadata, self, n);
+>  	else
+> @@ -283,4 +285,23 @@ TEST_F(scm_rights, cross_edge)
+>  	close_sockets(8);
+>  }
+>  
+> +TEST_F(scm_rights, backtrack_from_scc)
+> +{
+> +	create_sockets(10);
+> +
+> +	send_fd(0, 1);
+> +	send_fd(0, 4);
+> +	send_fd(1, 2);
+> +	send_fd(2, 3);
+> +	send_fd(3, 1);
+> +
+> +	send_fd(5, 6);
+> +	send_fd(5, 9);
+> +	send_fd(6, 7);
+> +	send_fd(7, 8);
+> +	send_fd(8, 6);
+> +
+> +	close_sockets(10);
+> +}
+> +
+>  TEST_HARNESS_MAIN
+> ---8<---
+> 
+
 
