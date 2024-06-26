@@ -1,151 +1,100 @@
-Return-Path: <linux-kernel+bounces-230497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718E9917DA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:18:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ABAA918082
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:05:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE4B1F25029
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:18:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 418751F24F7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8608717FACE;
-	Wed, 26 Jun 2024 10:17:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC1E181B91;
+	Wed, 26 Jun 2024 12:05:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GeV+mLqg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CIJIWohu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D6A317F38B;
-	Wed, 26 Jun 2024 10:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 862A5180A6A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:05:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719397026; cv=none; b=YUNwBk/INwyk76U5JF3BbVdCIs10MMT6rCjTGapehXaTOvE8Zp8XmjewGarg/b/khDgiETe8Skh4n2aE39YfbT1gnIuCYeNSwVSNud2hWJ6KPJ4Qv9Xvh393gbHd0FWvtZzVnxN2+Eeansvh2w3OP+AttGZi3iX+F31ktgKu+rk=
+	t=1719403501; cv=none; b=fLieSOyYFOLMriDGvlmRbkFWy0qGVfqUcQ0aw4MdoO7Hwelu7Kb6dVTf+xsFQ4vcqr0p80k74fdcuEPVfsbbPQx4Cis9mk29+vER6fT9H3zXHtl5ZptdB6JPhSp5tsg1V2+IMt3kDVwfxAKlzPYPBLhj20kktPJOXLzOZT3O5Gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719397026; c=relaxed/simple;
-	bh=btG/8cp2YLAff8XjHMzetlogr5j6nUaqZcP+W3YzqtU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=KunEJXlnUgZ31UZjjmIY+GLWZC3vDaZ4l4X8LztKIdnjRZ0QidycbdhkkPCS/6S1w9LnHe9iuYBDRPziH1gcKfJoEtGK75KZmYpDipI9KJjrY+0zH8UYmlWbInlWd/mRsbauT0dc23SB1lsvvKnqcv4pUHQn26y7lnL63zUsTZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GeV+mLqg; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719397025; x=1750933025;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=btG/8cp2YLAff8XjHMzetlogr5j6nUaqZcP+W3YzqtU=;
-  b=GeV+mLqgYjabB3bGTt8jjjmdgRoV890+3RAYDU08m7xlwjeNM71jYpz3
-   Q2f+SwNHrUnlbcbBMNWCpT8g66OknZKQJGJ8YCOsyv3V8zetw98m3msR7
-   GLh8Ic1bKeed+h2HLPkTKGUAC34yeArnWe/FOtC+Sgt4Y0AQwJkd/3FwJ
-   OJENN1adBu8OkdbvXsg9GIUXiYI96mmD4gLJzKChSAjZSN3/oS8Wct8zL
-   7LsndCi/MEqdV5ZmeARs6PfPO9zB+tuPyY2JYduHUCGKGnKe63stcYqeu
-   SgvkzBmmx1YNxjcxJpztIwQXsdiZeHOnGrzDZ4JynI667hVEF7Whft2jP
-   Q==;
-X-CSE-ConnectionGUID: 8tYRzzCLTQi8pkSLmGB5nA==
-X-CSE-MsgGUID: nftMGnoGSPeF3t62czON9w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16602461"
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="16602461"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 03:17:04 -0700
-X-CSE-ConnectionGUID: lPfCf4VMT2StZf4BN0XA3g==
-X-CSE-MsgGUID: Z8GwrY9ySTS5J7b+HIKk8g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="43933221"
-Received: from unknown (HELO dell-3650.sh.intel.com) ([10.239.159.147])
-  by fmviesa008.fm.intel.com with ESMTP; 26 Jun 2024 03:17:03 -0700
-From: Dapeng Mi <dapeng1.mi@linux.intel.com>
-To: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jim Mattson <jmattson@google.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Xiong Zhang <xiong.y.zhang@intel.com>,
-	Zhenyu Wang <zhenyuw@linux.intel.com>,
-	Like Xu <like.xu.linux@gmail.com>,
-	Jinrong Liang <cloudliang@tencent.com>,
-	Dapeng Mi <dapeng1.mi@intel.com>,
-	Yi Lai <yi1.lai@intel.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: [Patch v2 2/2] KVM: selftests: Print the seed for the guest pRNG iff it has changed
-Date: Thu, 27 Jun 2024 10:17:56 +0800
-Message-Id: <20240627021756.144815-2-dapeng1.mi@linux.intel.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240627021756.144815-1-dapeng1.mi@linux.intel.com>
-References: <20240627021756.144815-1-dapeng1.mi@linux.intel.com>
+	s=arc-20240116; t=1719403501; c=relaxed/simple;
+	bh=2uHDlGI4Mkm4jPb0WidaIGWBR2l/OxTlZaVOBsJiMIo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sjf9VzRB4ZJVM1T+PN4R1CDvqlD2W1dZD80PdVyaIJkmKWUl7+eXD14lKPc58NpxQyOOi/Q5e/+A+oVGVWeU6ZhheVe3+TOjKEp1PREobI89YcHYBQoj1c3gLNSRUNSCjmpsN0xk6Krk/+V6jX4mZ993RBwhks4PFLclfDz8z4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CIJIWohu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F073CC32786;
+	Wed, 26 Jun 2024 12:04:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719403501;
+	bh=2uHDlGI4Mkm4jPb0WidaIGWBR2l/OxTlZaVOBsJiMIo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CIJIWohuVu9Es+FhJFnQDacFByt/NzWi/EQzCRN1IRgMYcENXVihg30Uw+ytU8c9Q
+	 lA3svGvI0JtY7eoSDIgxOth06mBqeOTQikD0z/q8xvIjg2Y00GN40JxjRe94tFSqGQ
+	 XL3oI4alBePURw+4ZHGjv5mkc1DtNBF2SHF/Eyv0f87eInKMLRKvbBnEYLIYov01Xn
+	 e3OQPTFOPl4eCz+trbfyudzcPBvq0lDPLP1kWr3Pc8kmLZJXklM7uKg9Vhs+s4uqR8
+	 OX+ICpRqb8dNC+/2/5GSMKTYCo4K4xx/r5OPvrF8hsG4fFcSdqvIbj6Lt9PDL27oxe
+	 2cgE47E6KqNTg==
+Date: Wed, 26 Jun 2024 19:50:57 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64/lib: copy_page: s/stnp/stp
+Message-ID: <ZnwAoWh-_bTxT-rT@xhacker>
+References: <20240613001812.2141-1-jszhang@kernel.org>
+ <ZnmzUa2D_wWXAlJl@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ZnmzUa2D_wWXAlJl@arm.com>
 
-From: Sean Christopherson <seanjc@google.com>
+On Mon, Jun 24, 2024 at 06:56:33PM +0100, Catalin Marinas wrote:
+> On Thu, Jun 13, 2024 at 08:18:12AM +0800, Jisheng Zhang wrote:
+> > stnp performs non-temporal store, give a hints to the memory system
+> > that caching is not useful for this data. But the scenario where
+> > copy_page() used may not have this implication, although I must admit
+> > there's such case where stnp helps performance(good). In this good
+> > case, we can rely on the HW write streaming mechanism in some
+> > implementations such as cortex-a55 to detect the case and take actions.
+> > 
+> > testing with https://github.com/apinski-cavium/copy_page_benchmark
+> > this patch can reduce the time by about 3% on cortex-a55 platforms.
+> 
+> What about other CPUs? I'm also not convinced by such microbenchmarks.
 
-Print the guest's random seed during VM creation if and only if the seed
-has changed since the seed was last printed.  The vast majority of tests,
-if not all tests at this point, set the seed during test initialization
-and never change the seed, i.e. printing it every time a VM is created is
-useless noise.
+Per my test on CA53 and CA73, CA73 got similar improvements. As for CA53
+there's no difference, maybe due to the follwoing commit in the ATF:
 
-Snapshot and print the seed during early selftest init to play nice with
-tests that use the kselftests harness, at the cost of printing an unused
-seed for tests that change the seed during test-specific initialization,
-e.g. dirty_log_perf_test.  The kselftests harness runs each testcase in a
-separate process that is forked from the original process before creating
-each testcase's VM, i.e. waiting until first VM creation will result in
-the seed being printed by each testcase despite it never changing.  And
-long term, the hope/goal is that setting the seed will be handled by the
-core framework, i.e. that the dirty_log_perf_test wart will naturally go
-away.
+54035fc4672aa ("Disable non-temporal hint on Cortex-A53/57")
 
-Reported-by: Yi Lai <yi1.lai@intel.com>
-Reported-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- tools/testing/selftests/kvm/lib/kvm_util.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+> It looks like it always copies to the same page, the stp may even
+> benefit from some caching of the data which we wouldn't need in a real
+> scenario.
 
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index ad00e4761886..56b170b725b3 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -21,6 +21,7 @@
- 
- uint32_t guest_random_seed;
- struct guest_random_state guest_rng;
-+static uint32_t last_guest_seed;
- 
- static int vcpu_mmap_sz(void);
- 
-@@ -434,7 +435,10 @@ struct kvm_vm *__vm_create(struct vm_shape shape, uint32_t nr_runnable_vcpus,
- 	slot0 = memslot2region(vm, 0);
- 	ucall_init(vm, slot0->region.guest_phys_addr + slot0->region.memory_size);
- 
--	pr_info("Random seed: 0x%x\n", guest_random_seed);
-+	if (guest_random_seed != last_guest_seed) {
-+		pr_info("Random seed: 0x%x\n", guest_random_seed);
-+		last_guest_seed = guest_random_seed;
-+	}
- 	guest_rng = new_guest_random_state(guest_random_seed);
- 	sync_global_to_guest(vm, guest_rng);
- 
-@@ -2319,7 +2323,8 @@ void __attribute((constructor)) kvm_selftest_init(void)
- 	/* Tell stdout not to buffer its content. */
- 	setbuf(stdout, NULL);
- 
--	guest_random_seed = random();
-+	guest_random_seed = last_guest_seed = random();
-+	pr_info("Random seed: 0x%x\n", guest_random_seed);
- 
- 	kvm_selftest_arch_init();
- }
--- 
-2.34.1
+Yep this is also my understanding where's the improvement from. And
+I must admit there's case where stnp helps performance. we can rely
+on the HW write streaming mechanism to detect and take actions.
 
+However, sometimes, the "cache" behavior can benefit the scenario. Then
+in this case, the stnp here would double lose.
+
+what do you think?
+
+> 
+> So, I'm not merging this unless it's backed by some solid data across
+> several CPU implementations.
+> 
+> -- 
+> Catalin
 
