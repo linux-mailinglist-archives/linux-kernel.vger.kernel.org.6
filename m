@@ -1,171 +1,250 @@
-Return-Path: <linux-kernel+bounces-230613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6056A917F54
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:14:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4D67917F44
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17273283DEB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:14:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2CBC1C220F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AE317F383;
-	Wed, 26 Jun 2024 11:14:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B50017D8AF;
+	Wed, 26 Jun 2024 11:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="h9AVUdF8"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="klbJ08a5"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585A517D897
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 11:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEA8F149C52;
+	Wed, 26 Jun 2024 11:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719400478; cv=none; b=OE70S+IkeF9MUKksA0FC8jveTx38US8YU3pdItnyqiI5HqWmNKK6KQBxY6kw8x8kJ9vYRHcVvQjhCYKeDJxueghKjwWQ93kcz9s3WiE1tgjiPi8R6F4uZdZ59qAntj6O1RWdWMOQcudVijd6sUat9j4ibhpIX/KufPEVV9TgBiI=
+	t=1719400244; cv=none; b=Q6w6mKEiqcnht42SWXAgleqZJXkho+sa12shuu0hhR0YYyb68S8qzkYDg7GZukSkdsSfP4PYrzAgVEMkry2YYW7U58n2AF6XzRnXigjjz7p1ruszjAlb3nElg1d8gc8FauRPTmuVdfVasTEIQbqxRQsBri0KGecpof99vtZj/y8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719400478; c=relaxed/simple;
-	bh=QxJ6Ryg0MTGf1ol2NkihM25bbyjZ46x5noyiSJpXA5c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dEjpldHsxa3YV/kDQ1S9rE6qa5qy/vcXxUy2mn7QUxbKdmRNBAFotb9kZWKs0/E5Kx/gQ1JKytgWYhRsEGu0sXfCumGNbh+q6+kGngmbKI3py+27Bc9Zr5jpbao/iZy3RE9NiWu9irSiwphpmQ6XzihYj0X2sjq8RJPAyk8xncQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=h9AVUdF8; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57d4ee2aaabso114653a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 04:14:35 -0700 (PDT)
+	s=arc-20240116; t=1719400244; c=relaxed/simple;
+	bh=y5GB7iZxGrVNLx9zEM0w79I4bjgFC4YG83muA1Hj6Bk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tj79gNNSvwcGFQ+cnDb6avSSdzx742ozxHoQQGRc8ssIQ2fKQM4tFiFc4mtk41eAUIZJv+++g4xFybr+lpcEnrdUQmvoJnOd5EJsUJGhVBZoYklE/z0H0tW1FKHHJ8L6E3+tJB6/HB3dOGgBtfEpu2Kl95mhmxRp6gIt+AJrDOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=klbJ08a5; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-424aa70fbc4so7789705e9.1;
+        Wed, 26 Jun 2024 04:10:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1719400474; x=1720005274; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EtgNgXw4xx+u3otM9wLzx6tVvs8OZ+sqt5uPSGOj0/8=;
-        b=h9AVUdF86aQFnEBTDVJTpNaUDe6H52Xsi9ulCPMSQ15LhujD6yb5M/hlENLB/cb4aW
-         gZ1gCDP1MxZJWA+j/Q0Uv3CCL+guwnAv4v9l4RE3a8Wjfen4xDAqeO0m8I3tEdKfryQy
-         l/pKWL5IHUKu0N/OMnnaM/iwp/Td9ZTTyt6eKtzUAdX8b+69YiMNwSFtjES5YopOr75q
-         CrRK6Q0imqsrBaFJEJVNPTDdIGYSLkBxDCmMn6rIzltxTxwugjd1x37qjP1aYeRJ0Xs6
-         Lzn6y1DE98I06KKNcim15PsRjsU5dTcpuFpGCEl3a4vwFIr+pcW8dVRYrM19zOO5eemK
-         CzZw==
+        d=gmail.com; s=20230601; t=1719400241; x=1720005041; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=87aPA93jqh73LcqxNsHjq/adaWYJgqncVxDTzkIZqG8=;
+        b=klbJ08a5DwBldfYtpOoyLy+u0qv5o4wd0bJQKMRlWHu5QJyzQzD6aB/OJqatzIKTua
+         tUc9mGWepimJ4KWkJXS81Y16x/AQSFnKB+WElkDu8Iepn8P9hL+ce5wCDAZLQvC83AsI
+         TQ5XU+JoIrgTaQ8a66/FdhG5j+FV1Jqgd6JUmmVprrH7wOy3OnROhSL1cIhN+xCAvbVW
+         V7pXVzVV2A414qHDLfMM+Pptfg67LMYZAxhJBP1hNmRSFwOmdszcPP55YOcQR8qqsWFb
+         mbY/sck6qGUo81zjdCBirNRIvWXcjqhUEwg5jbbBDZ4s9iZg+o7dMAIlU//d18l77o2v
+         n27Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719400474; x=1720005274;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EtgNgXw4xx+u3otM9wLzx6tVvs8OZ+sqt5uPSGOj0/8=;
-        b=YzCt/Xsyn4n1QVc0wTUZKiFcukQaxGOWLBRAR9HWsFDRFRDqDDl654Lz0aWlMzNWZK
-         RPyuuk8ryDH/T5ckaO7Rhqlfno2xFNWzy3sZzaYikNt+7bXWswpk5rFTufECkal4W/m7
-         OJ2UYqng+r/jRPdOIdT5a6hX7KZRahEy0NQGpUPOMERMQc1yDvl2AMpme7/1aLZTTKgd
-         iBCiSMeTsyX+5c4ZaOEBMGbwmVD5B38OSE38Voa7/i/91tZDH7HIn72kIU/oge0geR/9
-         pw/wnfCnMeIXeOUpRIaV2p86VgX+v71HGvYpw/m/0tuZz+vF9z6R3+jGmaPLRDah4NAU
-         PeIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrqIen4H2XpO8zmhhmq5O7e9fipzzqOaPrp25Pv+ikoth/kOCnPQdtUc7IX/tuN+8uIMiHxxuwvhUGTe1suODxQVMlVrlDRavmf7TV
-X-Gm-Message-State: AOJu0YwKFuJ6EmEDnKeVMdsI5KQS31MD2Qka0/mHNzJvOuk+99BWv4bq
-	xVFRpo/IePPNLZZ1V9m5mzfhOQRcM5k1nkGoI5Ryo6C54nfs3P61dTKNdsGWEXY=
-X-Google-Smtp-Source: AGHT+IGayyA9DDFhDYoFM+ga8k4lnKPETjVZJrjYalViZSne124FOI0Yd/seFB4YsVb6tDnNMrZMyg==
-X-Received: by 2002:a50:d79e:0:b0:57d:101f:ae9f with SMTP id 4fb4d7f45d1cf-57d4bdc76c9mr6673624a12.33.1719400473452;
-        Wed, 26 Jun 2024 04:14:33 -0700 (PDT)
-Received: from [192.168.51.243] ([78.128.78.220])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d303d7b26sm7088836a12.3.2024.06.26.04.14.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 04:14:33 -0700 (PDT)
-Message-ID: <1d0483b9-13bc-426e-a57a-69044d5098c1@blackwall.org>
-Date: Wed, 26 Jun 2024 14:14:23 +0300
+        d=1e100.net; s=20230601; t=1719400241; x=1720005041;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=87aPA93jqh73LcqxNsHjq/adaWYJgqncVxDTzkIZqG8=;
+        b=bOq9z1dw+gCiQ22kDqLJPTkFkTg2TvCFsjtJ51ZVL7FmvXnPDr34U3zFYKDQ9WM6ML
+         4rt/2Iq0cXmxGySRYyh7tkMXx12yGT5j7J2HzXCQsiPJue0s7U6rl3sVcQz6zJz3UYyN
+         qKfIk40b6316GvipUSW0e+QUV+1/rcYCJbqq510PrZSLkXYkMiXGbOtAZpsFnlmI82JP
+         1fOXaG6lxTPQGmBoVcXf87PPf83FS/e2SQEmBgM0m9NgGUpb4AGWqN/SoG9GuLKcktqY
+         iBjV9A3OVLesWvyUjHOGAK3Cyls48PNhkNarTX7zPALQGTZeqzTlC6p/ZjQlMFyKckY7
+         NC0g==
+X-Forwarded-Encrypted: i=1; AJvYcCWYi1iE+A1KeeR1mJI/HvvC+VTKLrAQuKy3ABfZNIRxWXfjPK0D1ZqLrS+gP+3gVm3JzF7xWb8WDC4upjJ6HdvONmUaEeOgNyVqQ2d4wuPRw/DowrngAhTHWGJ46SXVHAQCL+pTEPY5Kf6HzzEEXMB7EFEPf9gmxp5gtC0qoqUYfVenVA==
+X-Gm-Message-State: AOJu0Yw0vcdYrlJHpHxoCK5Uio9lCFaYF81VV3cEtW4fJ6mYp7U/YVWE
+	WbXcPuvg3SxZ5GnEKsSFDu4SoMPxSThEP2VeTV32CGvV8zUdHJs3
+X-Google-Smtp-Source: AGHT+IEf52+IKIte1UwZtSbMg1MFU4zo8snbtBy8CVYafBcPTevpxEZODaBrOTFHM9OTyO9pQ8/dxA==
+X-Received: by 2002:a05:600c:5686:b0:423:668:4c39 with SMTP id 5b1f17b1804b1-4248cc18115mr76449425e9.1.1719400241030;
+        Wed, 26 Jun 2024 04:10:41 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8280962sm21609355e9.34.2024.06.26.04.10.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 04:10:40 -0700 (PDT)
+Message-ID: <2c8127ab4e26cc3b12793c942435ccd6cb9f5432.camel@gmail.com>
+Subject: Re: [PATCH v4 5/5] iio: dac: ltc2664: Add driver for LTC2664 and
+ LTC2672
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Kim Seer Paller <kimseer.paller@analog.com>,
+ linux-kernel@vger.kernel.org,  linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
+ <dlechner@baylibre.com>,  Lars-Peter Clausen <lars@metafoo.de>, Liam
+ Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Dimitri
+ Fedrau <dima.fedrau@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Michael
+ Hennerich <michael.hennerich@analog.com>
+Date: Wed, 26 Jun 2024 13:14:32 +0200
+In-Reply-To: <20240619064904.73832-6-kimseer.paller@analog.com>
+References: <20240619064904.73832-1-kimseer.paller@analog.com>
+	 <20240619064904.73832-6-kimseer.paller@analog.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v14 11/13] net: add SO_DEVMEM_DONTNEED setsockopt
- to release RX frags
-To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org
-Cc: Donald Hunter <donald.hunter@gmail.com>, Jakub Kicinski
- <kuba@kernel.org>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Jonathan Corbet <corbet@lwn.net>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- Helge Deller <deller@gmx.de>, Andreas Larsson <andreas@gaisler.com>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Arnd Bergmann <arnd@arndb.de>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman
- <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
- Yonghong Song <yonghong.song@linux.dev>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
- Jiri Olsa <jolsa@kernel.org>, Steffen Klassert
- <steffen.klassert@secunet.com>, Herbert Xu <herbert@gondor.apana.org.au>,
- David Ahern <dsahern@kernel.org>,
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
- Shuah Khan <shuah@kernel.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Bagas Sanjaya <bagasdotme@gmail.com>, Christoph Hellwig <hch@infradead.org>,
- Pavel Begunkov <asml.silence@gmail.com>, David Wei <dw@davidwei.uk>,
- Jason Gunthorpe <jgg@ziepe.ca>, Yunsheng Lin <linyunsheng@huawei.com>,
- Shailend Chand <shailend@google.com>,
- Harshitha Ramamurthy <hramamurthy@google.com>,
- Shakeel Butt <shakeel.butt@linux.dev>, Jeroen de Borst
- <jeroendb@google.com>, Praveen Kaligineedi <pkaligineedi@google.com>,
- Willem de Bruijn <willemb@google.com>, Kaiyuan Zhang <kaiyuanz@google.com>
-References: <20240625195407.1922912-1-almasrymina@google.com>
- <20240625195407.1922912-12-almasrymina@google.com>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20240625195407.1922912-12-almasrymina@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 25/06/2024 22:53, Mina Almasry wrote:
-> Add an interface for the user to notify the kernel that it is done
-> reading the devmem dmabuf frags returned as cmsg. The kernel will
-> drop the reference on the frags to make them available for reuse.
-> 
-> Signed-off-by: Willem de Bruijn <willemb@google.com>
-> Signed-off-by: Kaiyuan Zhang <kaiyuanz@google.com>
-> Signed-off-by: Mina Almasry <almasrymina@google.com>
-> 
+On Wed, 2024-06-19 at 14:49 +0800, Kim Seer Paller wrote:
+> LTC2664 4 channel, 12-/16-Bit Voltage Output SoftSpan DAC
+> LTC2672 5 channel, 12-/16-Bit Current Output Softspan DAC
+>=20
+> Co-developed-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Kim Seer Paller <kimseer.paller@analog.com>
 > ---
-> 
-> v10:
-> - Fix leak of tokens (Nikolay).
-> 
-> v7:
-> - Updated SO_DEVMEM_* uapi to use the next available entry (Arnd).
-> 
-> v6:
-> - Squash in locking optimizations from edumazet@google.com. With his
->    changes we lock the xarray once per sock_devmem_dontneed operation
->    rather than once per frag.
-> 
-> Changes in v1:
-> - devmemtoken -> dmabuf_token (David).
-> - Use napi_pp_put_page() for refcounting (Yunsheng).
-> - Fix build error with missing socket options on other asms.
-> 
-> ---
->   arch/alpha/include/uapi/asm/socket.h  |  1 +
->   arch/mips/include/uapi/asm/socket.h   |  1 +
->   arch/parisc/include/uapi/asm/socket.h |  1 +
->   arch/sparc/include/uapi/asm/socket.h  |  1 +
->   include/uapi/asm-generic/socket.h     |  1 +
->   include/uapi/linux/uio.h              |  4 ++
->   net/core/sock.c                       | 61 +++++++++++++++++++++++++++
->   7 files changed, 70 insertions(+)
-> 
 
-FWIW,
-Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
+Just minor nits... Anyways:
+
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+
+> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
+> =C2=A0drivers/iio/dac/Kconfig=C2=A0=C2=A0 |=C2=A0 11 +
+> =C2=A0drivers/iio/dac/Makefile=C2=A0 |=C2=A0=C2=A0 1 +
+> =C2=A0drivers/iio/dac/ltc2664.c | 755 +++++++++++++++++++++++++++++++++++=
++++
+> =C2=A04 files changed, 768 insertions(+)
+> =C2=A0create mode 100644 drivers/iio/dac/ltc2664.c
+>=20
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index f4a5b5bc8ccc..7a02d9a196fb 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -13082,6 +13082,7 @@ S:	Supported
+> =C2=A0W:	https://ez.analog.com/linux-software-drivers
+> =C2=A0F:	Documentation/devicetree/bindings/iio/dac/adi,ltc2664.yaml
+> =C2=A0F:	Documentation/devicetree/bindings/iio/dac/adi,ltc2672.yaml
+> +F:	drivers/iio/dac/ltc2664.c
+> =C2=A0
+> =C2=A0LTC2688 IIO DAC DRIVER
+> =C2=A0M:	Nuno S=C3=A1 <nuno.sa@analog.com>
+> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+> index fb48dddbcc20..3a7691db3998 100644
+> --- a/drivers/iio/dac/Kconfig
+> +++ b/drivers/iio/dac/Kconfig
+> @@ -371,6 +371,17 @@ config LTC2632
+> =C2=A0	=C2=A0 To compile this driver as a module, choose M here: the
+> =C2=A0	=C2=A0 module will be called ltc2632.
+> =C2=A0
+> +config LTC2664
+> +	tristate "Analog Devices LTC2664 and LTC2672 DAC SPI driver"
+> +	depends on SPI
+> +	select REGMAP
+> +	help
+> +	=C2=A0 Say yes here to build support for Analog Devices
+> +	=C2=A0 LTC2664 and LTC2672 converters (DAC).
+> +
+> +	=C2=A0 To compile this driver as a module, choose M here: the
+> +	=C2=A0 module will be called ltc2664.
+> +
+> =C2=A0config M62332
+> =C2=A0	tristate "Mitsubishi M62332 DAC driver"
+> =C2=A0	depends on I2C
+> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
+> index 8432a81a19dc..2cf148f16306 100644
+> --- a/drivers/iio/dac/Makefile
+> +++ b/drivers/iio/dac/Makefile
+> @@ -37,6 +37,7 @@ obj-$(CONFIG_DS4424) +=3D ds4424.o
+> =C2=A0obj-$(CONFIG_LPC18XX_DAC) +=3D lpc18xx_dac.o
+> =C2=A0obj-$(CONFIG_LTC1660) +=3D ltc1660.o
+> =C2=A0obj-$(CONFIG_LTC2632) +=3D ltc2632.o
+> +obj-$(CONFIG_LTC2664) +=3D ltc2664.o
+> =C2=A0obj-$(CONFIG_LTC2688) +=3D ltc2688.o
+> =C2=A0obj-$(CONFIG_M62332) +=3D m62332.o
+> =C2=A0obj-$(CONFIG_MAX517) +=3D max517.o
+> diff --git a/drivers/iio/dac/ltc2664.c b/drivers/iio/dac/ltc2664.c
+> new file mode 100644
+> index 000000000000..9b73b9c6a7a7
+> --- /dev/null
+> +++ b/drivers/iio/dac/ltc2664.c
+> @@ -0,0 +1,755 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * LTC2664 4 channel, 12-/16-Bit Voltage Output SoftSpan DAC driver
+> + * LTC2672 5 channel, 12-/16-Bit Current Output Softspan DAC driver
+> + *
+> + * Copyright 2024 Analog Devices Inc.
+> + */
+> +
+>=20
+
+...
+
+> +
+> +static int ltc2664_dac_code_read(struct ltc2664_state *st, u32 chan, u32
+> input,
+> +				 u32 *code)
+> +{
+> +	guard(mutex)(&st->lock);
+> +	*code =3D st->channels[chan].raw[input];
+> +
+> +	return 0;
+
+no need for an error code...
+
+...
+
+>=20
+> +static int ltc2664_probe(struct spi_device *spi)
+> +{
+> +	static const char * const regulators[] =3D { "vcc", "iovcc", "v-neg" };
+> +	const struct ltc2664_chip_info *chip_info;
+> +	struct device *dev =3D &spi->dev;
+> +	struct iio_dev *indio_dev;
+> +	struct ltc2664_state *st;
+> +	int ret;
+> +
+> +	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*st));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	st =3D iio_priv(indio_dev);
+> +	st->spi =3D spi;
+> +
+> +	chip_info =3D spi_get_device_match_data(spi);
+> +	if (!chip_info)
+> +		return -ENODEV;
+> +
+> +	st->chip_info =3D chip_info;
+> +
+> +	mutex_init(&st->lock);
+> +
+> +	st->regmap =3D devm_regmap_init_spi(spi, &ltc2664_regmap_config);
+> +	if (IS_ERR(st->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(st->regmap),
+> +				=C2=A0=C2=A0=C2=A0=C2=A0 "Failed to init regmap");
+> +
+> +	ret =3D devm_regulator_bulk_get_enable(dev, ARRAY_SIZE(regulators),
+> +					=C2=A0=C2=A0=C2=A0=C2=A0 regulators);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to enable
+> regulators\n");
+> +
+> +	ret =3D devm_regulator_get_enable_read_voltage(dev, "ref");
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to get vref
+> voltage\n");
+> +	else if (ret =3D=3D -ENODEV)
+> +		st->vref_mv =3D chip_info->internal_vref_mv;
+> +	else
+> +		st->vref_mv =3D ret / 1000;
+
+This could be:
+if (ret < 0 && ret !=3D -ENODEV)
+	return ret;
+
+st->vref_mv =3D ret > 0 ? ret / 1000 :  chip_info->internal_vref_mv;
+
+- Nuno S=C3=A1
 
 
 
