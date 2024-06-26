@@ -1,82 +1,52 @@
-Return-Path: <linux-kernel+bounces-230906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230907-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A14F9183A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:06:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C10B19183A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:07:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11C5DB2381F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:06:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F35F31C20F7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:07:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B5A185080;
-	Wed, 26 Jun 2024 14:06:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kTfyGN5L"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B78311836F4;
-	Wed, 26 Jun 2024 14:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3BB18413F;
+	Wed, 26 Jun 2024 14:07:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A28191E52A;
+	Wed, 26 Jun 2024 14:07:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719410790; cv=none; b=NsOWZ19Y979XIbl/Rs7zp0Z3j16m2k35ywkvQk8mmP0aYSZgw1Aq9LqMT7PahIRVFTi4dXwG7cKZaO53bzThSyaujwmoWaGr25EMBYbqsHOXTTUPdYCfdZD1qzAQlPYUqgTY7MSfw/QWRoeeNBtxXcxL6LU2iM5RrQHUJ2fKiDo=
+	t=1719410838; cv=none; b=ggAFXrT3hE8RKUrqC13beraKMCncsIu2CKFZz4bHGoOuGfWr8JPj81oCT7kZ4BM1gTvcla2RCCl0ma/p5zzE6gXGNFZothsdozHGR1C+C6El5s/wwPZEyixzfMghj40N/QcBE5CnX8bYnXxEjypzQYvpdDHUK4vYEMMpZ6FxgD0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719410790; c=relaxed/simple;
-	bh=z+CexOtuod0lfQKr/Uz0/ewzN/aH3ld1+zvdmCXxnPg=;
+	s=arc-20240116; t=1719410838; c=relaxed/simple;
+	bh=+eeeSrMZ6VJCbxP9YfY650vMv9XvlESKex0KGtJ72H8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CMUD8tkEJDkqQ9h1z0DKwqD+iROxWqosRlZjbmeP537rtF6xUCd+K1Ub6Y1LBXdxXjeRxh/7BZCLj5uQuSCZm5fm7/G1lYy/MftmGKaouIq2Uf3ucfCgHwDCX2JDnSfEJ9++3OmaQdYG6mMHafjhGL+t6YJhteVUAB2dKr1nOr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kTfyGN5L; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-425624255f3so1026955e9.0;
-        Wed, 26 Jun 2024 07:06:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719410787; x=1720015587; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TCJWO8pYy1pCV+fI3h1hz9BtW0SdkaQWYmwWRyrttJs=;
-        b=kTfyGN5LOfZQDp9KgnbS6mGfCRrzkYS0WWDR76j+HOnEN176hAWL7aV3875oQ9niVB
-         SlG3R+Er/Mf4qnt5Ux4iF34/SDm3Zbzsyg9dOg5ko6kWx8LN4ZCckKQHRzvXeZucQAfH
-         EzljPvFKmvne2hieqV0a66M2hArZEMvDgmT9KTgu092j37esbAV4e2SmqxU9Wqg+Agfz
-         lIvwb9l0bqGMQUhzZndIqMRySQ0hyAkt03NspQdJpTDHbG1ObcF3FZdJKDoq8jo40oUm
-         cL31E0LPlwz6oW05zKU+kEjzGqRuZCn6Lam3Gz8uqVhpJL/ub/77jAHDs+E8jqcFvuLa
-         y44g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719410787; x=1720015587;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TCJWO8pYy1pCV+fI3h1hz9BtW0SdkaQWYmwWRyrttJs=;
-        b=fRFfxgu7yhytqlh0i18NPajrdAMhoOn0SOY41Teenjsgq3iVDWeMyEhtZpvvaFfdLc
-         b7uN1Ue9MB2lECylvizJI1DgY2SCp/7XKhj+NR7C/9YRrtAJece6v0lHuMg8OJ0xvRhS
-         S1DqkLP1qpq5PHREie9a89da0SqmczrHnO6pHzg8O/Fk9Jo/9AX76VtFogeDJT8em/M0
-         xMC7cp5njXxJVOKu89Rl/guJLgDMAYqMsHuAEV5WIrx8rhxds2fAfz9bxw4RmkpqXhDb
-         vAvL/rV0CFvD7slrxyGrcuyI0JuGgrizHFUirHduwBSr4qBZmT11ISkCN9iow2zMztg/
-         dBIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQHZ7rgpujZCZjGAkASmzsIhM6QjlavPA8TSyFwcoCayx0fqD4NZGibcIBTOiM2Lm0vJKtD8jFftR2Nk9GDBm7NRdder6zBSNC2qedh+VqsfjoolN9L+lVNkXH80OZM4C5jKhp
-X-Gm-Message-State: AOJu0YwxwMHvY73q/MV/lWxdk314ioCt+4eu9VC4HMfEj9qb1DvRdJ4P
-	wZ6u7nIlQ0vQYg06g4TG0uBkcWbdQ5csVoEFL6krpsm0m4jrGzkIhMP8dsAo
-X-Google-Smtp-Source: AGHT+IF3ry4rO2+gkoziIvVV6PiJ5Arx0ZGpxYJD3SVWw7rDf/IM1AqIgI7RKDFMBugpghsAwV+89Q==
-X-Received: by 2002:a05:600c:3583:b0:424:ade3:c6b7 with SMTP id 5b1f17b1804b1-424ade3c894mr19285775e9.2.1719410786647;
-        Wed, 26 Jun 2024 07:06:26 -0700 (PDT)
-Received: from skbuf ([79.115.210.53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c82519bdsm27908795e9.13.2024.06.26.07.06.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 07:06:26 -0700 (PDT)
-Date: Wed, 26 Jun 2024 17:06:23 +0300
-From: Vladimir Oltean <olteanv@gmail.com>
-To: Breno Leitao <leitao@debian.org>
-Cc: kernel test robot <lkp@intel.com>, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	kuba@kernel.org, horms@kernel.org, Roy.Pledge@nxp.com,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] soc: fsl: qbman: FSL_DPAA depends on COMPILE_TEST
-Message-ID: <20240626140623.7ebsspddqwc24ne4@skbuf>
-References: <20240624162128.1665620-1-leitao@debian.org>
- <202406261920.l5pzM1rj-lkp@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=axeQzRXXfffElycQ7nzUyg0wkbn1pYFUG1LNXzAa/2wL8Uk41w4OSZ4GLV0vmwseCY+kFJOHOiW6mvGiPU82NSZTMbRRS7Kl/eRh2/IcL2dxgE8Q7Ck1O0VTbvsX5h4ApTmoa+E6XDcOpQTKVcKLV4tTbwDErpf0BeWTamZy5vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C02E7339;
+	Wed, 26 Jun 2024 07:07:39 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CEE273F766;
+	Wed, 26 Jun 2024 07:07:13 -0700 (PDT)
+Date: Wed, 26 Jun 2024 15:07:11 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] firmware: arm_scmi: create scmi devices for
+ protocols that not have of_node
+Message-ID: <Znwgj9fNi9ZNB48t@pluto>
+References: <20240626-scmi-driver-v1-0-f16d777e004a@nxp.com>
+ <Znv1p3FDiPSUNmBM@pluto>
+ <AM6PR04MB5941549618EEC4A7890D9DF488D62@AM6PR04MB5941.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,71 +55,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <202406261920.l5pzM1rj-lkp@intel.com>
+In-Reply-To: <AM6PR04MB5941549618EEC4A7890D9DF488D62@AM6PR04MB5941.eurprd04.prod.outlook.com>
 
-On Wed, Jun 26, 2024 at 08:09:53PM +0800, kernel test robot wrote:
-> Hi Breno,
+On Wed, Jun 26, 2024 at 11:50:26AM +0000, Peng Fan wrote:
+> Hi Cristian,
 > 
-> kernel test robot noticed the following build warnings:
+> > Subject: Re: [PATCH 0/2] firmware: arm_scmi: create scmi devices for
+> > protocols that not have of_node
+> > 
+> > On Wed, Jun 26, 2024 at 02:58:38PM +0800, Peng Fan (OSS) wrote:
+> > > Per
+> > 
+> > Hi,
+> > 
+> > >
 > 
-> [auto build test WARNING on herbert-cryptodev-2.6/master]
-> [also build test WARNING on soc/for-next linus/master v6.10-rc5 next-20240625]
-> [If your patch is applied to the wrong git tree, kindly drop us a note.
-> And when submitting patch, we suggest to use '--base' as documented in
-> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> ...
+> > >
+> > > i.MX95 SCMI firmware not have dedicated channel for 0x12, and no
+> > need
+> > > of_node. This patchset is to support protocol 0x12 without the
+> > > procotol node in device tree.
+> > >
+> > 
+> > With this patch you change a bit of the core logic to allow for protocols
+> > not explicitly described in the DT to be instantiated, and you use a
+> > static builtin array to list such protocols...so any future change or any
+> > downstream vendor protocols that want to use this, we will have to
+> > patch and extend such protocols[] array.
+> > 
+> > Moreover, if anyone DO want to use a per-protocol channel in the
+> > future on some of these protocols, it will work fine with your solution
+> > on the code side, BUT you will still have anyway a DT binding check
+> > error when you try to add that 0x12 node to contain a channel
+> > description, right ?
 > 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Breno-Leitao/crypto-caam-Depend-on-COMPILE_TEST-also/20240625-223834
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/herbert/cryptodev-2.6.git master
-> patch link:    https://lore.kernel.org/r/20240624162128.1665620-1-leitao%40debian.org
-> patch subject: [PATCH 1/4] soc: fsl: qbman: FSL_DPAA depends on COMPILE_TEST
-> config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240626/202406261920.l5pzM1rj-lkp@intel.com/config)
-> compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406261920.l5pzM1rj-lkp@intel.com/reproduce)
+> Right.
 > 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202406261920.l5pzM1rj-lkp@intel.com/
+> > ... because in that case you will have re-added a (supposedly) empty
+> > protocol node in order to containn the channels definitions and that
+> > wont be yaml-compliant, am I right ?
+> > 
+> > IOW this solves your issue in the immediate, while adding complexity
+> > to the core code and changing the core behaviour around protocols,
+> > but it wont stand any future addition or different usage.
+> > 
+> > For these reasons, I still think that the cleanest solution is to just let
+> > protocol nodes to exist even if not referenced anywhere from the DT
+> > (your original patch to add protocol0x12 I think) simply because we
+> > allow per-protocol channel definitions and so any empty unreferenced
+> > protocol node could be needed in the future for this reason.
 > 
-> All warnings (new ones prefixed by >>):
+> You mean this one [1], right?
 > 
-> >> drivers/net/ethernet/freescale/dpaa/dpaa_eth.c:3280:12: warning: stack frame size (16664) exceeds limit (2048) in 'dpaa_eth_probe' [-Wframe-larger-than]
->     3280 | static int dpaa_eth_probe(struct platform_device *pdev)
->          |            ^
->    1 warning generated.
-> --
-> >> drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c:454:12: warning: stack frame size (8264) exceeds limit (2048) in 'dpaa_set_coalesce' [-Wframe-larger-than]
->      454 | static int dpaa_set_coalesce(struct net_device *dev,
->          |            ^
->    1 warning generated.
+> I could rebase and send out it again.
+> 
+> > 
+> > In this way we'll also keep treating protocols in an uniform way.
+> > 
+> > Just my opinion, though, I'll settle with what is finally decided anyway.
+> 
+> From reading the previous discussion as listed in cover letter,
+> I thought there was an agreement that for non consumers, no per
+> protocol channel node, we should not add it in device tree.
+> But indeed binding is needed in case the channel has its own channel.
+> 
+> This patchset could be dropped if Sudeep and you both agree with [1]
+>  
 
-Arrays of NR_CPUS elements are what it probably doesn't like?
-In the attached Kconfig, CONFIG_NR_CPUS is 8192, which is clearly
-excessive compared to the SoCs that the driver is written for and
-expects to run on (1-24 cores).
+Yes indeed, not sure what at the end Sudeep thinks about this after
+reading that thread again....that's why I specified that was just my opinion :P
 
-static int dpaa_set_coalesce(struct net_device *dev,
-			     struct ethtool_coalesce *c,
-			     struct kernel_ethtool_coalesce *kernel_coal,
-			     struct netlink_ext_ack *extack)
-{
-	const cpumask_t *cpus = qman_affine_cpus();
-	bool needs_revert[NR_CPUS] = {false};
-	...
-}
+Moreover, regarding this series, I wonder if, in general, allowing
+protocol devices without an underlyng DT node could not be asking for
+trouble in the future...in the sense that these devices are used by SCMI
+drivers and can be used by them as they wish, including using them to
+register with other subsytems, subsystems that can have assumnptions on
+the fact the device has a valid underlying of_node... I maybe overthinking...
 
-static void dpaa_fq_setup(struct dpaa_priv *priv,
-			  const struct dpaa_fq_cbs *fq_cbs,
-			  struct fman_port *tx_port)
-{
-	int egress_cnt = 0, conf_cnt = 0, num_portals = 0, portal_cnt = 0, cpu;
-	const cpumask_t *affine_cpus = qman_affine_cpus();
-	u16 channels[NR_CPUS];
-	...
-}
+Anyway let's see if Sudeep prefers to go down this way I will post some
+more comments on specifically how this series works..
 
-While 'needs_revert' can probably easily be converted to a bitmask which
-consumes 8 times less space, I don't know what to say about the "channels"
-array. It could probably be rewritten to use dynamic allocation for the
-array. I don't have any better idea...
+Thanks,
+Cristian
 
