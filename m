@@ -1,141 +1,102 @@
-Return-Path: <linux-kernel+bounces-230029-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F54E917780
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:42:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C45917787
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:43:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C34A51F23719
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:42:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78BD21C21DC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:43:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC4C413AD33;
-	Wed, 26 Jun 2024 04:41:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B659214AD30;
+	Wed, 26 Jun 2024 04:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hK6iMFpF"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="SH5drXVZ"
+Received: from mta-64-228.siemens.flowmailer.net (mta-64-228.siemens.flowmailer.net [185.136.64.228])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E6E13C909;
-	Wed, 26 Jun 2024 04:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36A2A13D2A4
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 04:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.228
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719376916; cv=none; b=uI102cGxXofumG84ddKGk+lEYtS7/i657MCLYG+cH+QwvRvEk2/WZP8AKlWcDv1LLJ8hupyFOqBQzdXQ4x+B7q4b4HkRVhD0diyFO30zzb5cEC+nVeoZu9mm5cZLF+F1nAWOeIOwA/H/+dQXIoDBWF6LeL+yw79ud1EDu/aL5pk=
+	t=1719376940; cv=none; b=k9Ta8sOv2b+M0RBCXYsDNxyXPuB2PPDpK9o3IKXDN4x4PDaVPoZR9DJeB9+CaBL4xSZUi58LYBqXV1tW6BMdCccuma2QLZ2iX/Ba8AEeuUWDGgoOBqJqavPQohXmrdXo09sgHM6Inoicl1PgKiyUbkz9l6m/P9YVvnY7Eq5cRr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719376916; c=relaxed/simple;
-	bh=c3Yze73LZu3I/gljxsqZ2WmNEz/P/xYnIpox7TAo2FU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=rgkztRL2IJf1r27eGy498lPtFPKB9GqU3yEI282w2kFbfmNUX4AHHool6aGMkFTVfcU4LOKX8da6or4SkbqJOmRrXMlIMa/FQXigHLTPCBJcQf+pbbXH1HnpF9i9d/pZmhO2usEW9c74uX9dXG2OPaTc+vacbz38rpDS1vpYzLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hK6iMFpF; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-422948b9140so5537075e9.1;
-        Tue, 25 Jun 2024 21:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719376912; x=1719981712; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=OPu8o3NFntJwVaPbGld8pCdkv12AmcbKbLHyv6SdaIc=;
-        b=hK6iMFpFoJFJrEBJ2TwiWy9YXyScnmtKq0cFxEC4Jcb+nAw7GFMhdWJcoZ1QwZ9SlE
-         jawSqqjmsG0S2C0lNdcBYJFTvaUmvu1niM97pkd3ugOQBa45eLH3SLEedWHDBf0jEwi4
-         6kWV9K/k7BuO1T5oYri5JG+gppvuLA8NMjlNQ07eU2hiKA+p56a2doxWdkGvMzEOLdkn
-         ayszcaSIg7TW6GE7k1e67mZKFL5vSI4cXI9O7D4YuIQQVlUm9b59CxZKf5O0tGQmE/hA
-         flgKLyMRRTTkExlZ8+zXYbTwdRyMAtBL2Bmgcp96xBKeSPGXDVxfwH+M1JGVRWznZ+yp
-         GuTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719376912; x=1719981712;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OPu8o3NFntJwVaPbGld8pCdkv12AmcbKbLHyv6SdaIc=;
-        b=SbUB7pfzbRboxQbGiV+X5Wot/14eBI7v7Uqz+e7Saf0dEZGwSx/pGKDzsfBrx1/Ye/
-         /jGzwGRg/T0+ZIIr9FH6gUHzvLw+W4cAX+FuaUPMwFvbFVDF4Ig/lnhH+mjPzRbUY58H
-         Mvtr48HIDdg93293mXczfhaC7G5hxX9wOELczRdAo0tCWK8SSuEzjpGBwj/CynlqmcFR
-         xJmcciSHosR6MsbzxJmaVR4YT4Z9JCo/pNiFa8x+f9SE2nGrPDiPQN49XgI8AmjlE+rv
-         Ei/vQX1mJR7HkQ0WJ3Pkix+kJfYqnh3Mk17PkZA9E4HQQqzwmSqCPvsK6AJqdmCcBIoh
-         zH6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXUbXSyU+UsFeHM+LYaMP8ssLxgWdgg/1q9PuNJaxQVKdzmrWzB7ANQRkegQWn3sHkdeb4GfB0G3ztTjH2S8/WRChELaTtdMbqiPSam9/FqoKAv9VTR/hXdgddmiD8D2d/xLK63JbgTtb8=
-X-Gm-Message-State: AOJu0YxoQKaI6pdxkE8JBc/uvBHBIXMVR+8CDJTOrEatHipA7raqHgL6
-	IJUg+qmJQMHePvJSz+UGrJYFAdKiMXwN8Vh/u/YQNgwtzP4svG8E
-X-Google-Smtp-Source: AGHT+IGrG4cFrWFZFLHowsdYdllxDPlIUG7c3w0AxGdkSM0WlzloTYOFNV/Z1mztaxkugppxgJhufw==
-X-Received: by 2002:a05:600c:1c23:b0:424:8c26:a236 with SMTP id 5b1f17b1804b1-4248c26a402mr71896525e9.0.1719376912043;
-        Tue, 25 Jun 2024 21:41:52 -0700 (PDT)
-Received: from [192.168.0.103] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c824ef19sm10021125e9.15.2024.06.25.21.41.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 21:41:51 -0700 (PDT)
-Message-ID: <c2911f68-d1e2-4b45-af95-590926b7a6f1@gmail.com>
-Date: Wed, 26 Jun 2024 06:41:50 +0200
+	s=arc-20240116; t=1719376940; c=relaxed/simple;
+	bh=vpoqjqBY4sK4dwraEfD6i0clD+AXrwjJaktHaDYoWww=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=THA/nE+ds17zJdFLAEHPA5Va7FuH74SMjiGkGsiLJ8+M2RZcoUN8Ad146s/XKR0m5VbYZgZk8/v7qdYZPx2LeG2oX3bx1Z/6xIO4ZHykyeJjYXZOcYTqFZ0JvBQ6zdqFXIutcHNJxlpfJHN1/UYjk0eQx5GfEMhuPkMQCy3B0ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (1024-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=SH5drXVZ; arc=none smtp.client-ip=185.136.64.228
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
+Received: by mta-64-228.siemens.flowmailer.net with ESMTPSA id 20240626044209aec645e0e94931a774
+        for <linux-kernel@vger.kernel.org>;
+        Wed, 26 Jun 2024 06:42:09 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
+ d=siemens.com; i=jan.kiszka@siemens.com;
+ h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc;
+ bh=sZstMfiwokmmM5Q8G42iRnSGsO4Vlddg3ciPFHlwc0s=;
+ b=SH5drXVZQtLPot89mmhnCeKR4ExGnbplwr7UYtIGkK3HBBh0DJS/md86dVgjm8l3Co+a7N
+ rydW7asCVWLV1ceWN8jWWPKHYyRH2NjUDn1f/kLbaHAq1CquLEu/wHTWQER+fGtnBSHH9a4+
+ PCml23HESltYloVQB/IEMFH37rgpU=;
+From: Jan Kiszka <jan.kiszka@siemens.com>
+To: Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Bao Cheng Su <baocheng.su@siemens.com>,
+	Diogo Ivo <diogo.ivo@siemens.com>
+Subject: [PATCH v2 0/4] arm64: dts: k3: Resolve remaining dtbs_check warnings
+Date: Wed, 26 Jun 2024 06:42:04 +0200
+Message-ID: <cover.1719376928.git.jan.kiszka@siemens.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: nvec: use x instead of x != NULL
-To: Tom Mounet <tommounet@gmail.com>, Marc Dietrich <marvin24@gmx.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net,
- linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, outreachy@lists.linux.dev
-References: <667b2ee6.050a0220.f9c1.5426@mx.google.com>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <667b2ee6.050a0220.f9c1.5426@mx.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Flowmailer-Platform: Siemens
+Feedback-ID: 519:519-294854:519-21489:flowmailer
 
-On 6/25/24 22:56, Tom Mounet wrote:
-> Comply with coding rules defined in checkpatch
-> 
-> Signed-off-by: Tom Mounet <tommounet@gmail.com>
-> ---
->   drivers/staging/nvec/nvec.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> index e5ca78e57..814eb121c 100644
-> --- a/drivers/staging/nvec/nvec.c
-> +++ b/drivers/staging/nvec/nvec.c
-> @@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
->   {
->   	mutex_lock(&nvec->sync_write_mutex);
->   
-> -	if (msg != NULL)
-> +	if (msg)
->   		*msg = NULL;
->   
->   	nvec->sync_write_pending = (data[1] << 8) + data[0];
-> @@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
->   
->   	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
->   
-> -	if (msg != NULL)
-> +	if (msg)
->   		*msg = nvec->last_sync_msg;
->   	else
->   		nvec_msg_free(nvec, nvec->last_sync_msg);
+Changes in v2:
+ - reference reg-mux.yaml in am654-system-controller child node
+ - base on top of dedicated am654-serdes-ctrl schema patch
 
+This goes on top of
+https://patchwork.kernel.org/project/linux-arm-kernel/cover/20240518-dt-bindings-ti-soc-mfd-v1-0-b3952f104c9a@linaro.org/
+and
+https://patchwork.kernel.org/project/linux-arm-kernel/patch/20240616-dt-bindings-mfd-syscon-split-v2-5-571b5850174a@linaro.org/
 
-Hi Tom,
+As we are working in this area, having a zero-warning baseline helps a
+lot finding own issues quicker. Maybe not all of the suggested
+resolutions are optimal, open for feedback, just want to have them all
+fixed now soon.
 
-what you change in this patch is fine. But the Description is not so 
-lucky. Reason is that checkpatch is not defining the coding style. Not 
-at all. Sometimes checkpatch is even wrong. The description I like would be:
+Jan
 
-Use x instead of x != NULL to shorten code.
+Jan Kiszka (4):
+  arm64: dts: ti: k3-j72xx-mcu-wakeup: add dedicated wakeup controller
+    compatible
+  arm64: dts: ti: k3-am642-evm: Silence schema warning
+  dt-bindings: soc: ti: am645-system-controller: add child nodes used by
+    main domain
+  arm64: dts: ti: k3-am65-main: add system controller compatible
 
-or
+ .../soc/ti/ti,am654-system-controller.yaml    | 25 +++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts       |  4 +++
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi      |  2 +-
+ .../boot/dts/ti/k3-j7200-mcu-wakeup.dtsi      |  2 +-
+ .../boot/dts/ti/k3-j721e-mcu-wakeup.dtsi      |  2 +-
+ .../boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi     |  2 +-
+ 6 files changed, 33 insertions(+), 4 deletions(-)
 
-Use x instead of x != NULL to improve readability.
+-- 
+2.43.0
 
-If you send in a second version of this patch please use a change 
-history. Description from Dan under:
-https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
-
-Thanks
-
-Bye Philipp
 
