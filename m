@@ -1,287 +1,159 @@
-Return-Path: <linux-kernel+bounces-229916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5BFA9175FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:02:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E7019175F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:02:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B06B71C208E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:02:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC6D1F22F87
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:02:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF03D1C68C;
-	Wed, 26 Jun 2024 02:02:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F441B806;
+	Wed, 26 Jun 2024 02:02:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kpcRmUrS"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SO2Z5TNH"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F075A20322;
-	Wed, 26 Jun 2024 02:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41928947E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:02:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719367339; cv=none; b=qgbOIAYIVe9wq81/Mls4/gD1QQghjjlyf+zsd5O6I0Lcw5qsMwJ87jwr7RXJS89aa2uiC2DVLFN5vkkQHcnepsM0g3Tr/JXJLZ4991v0rDUf2CauYBUkTt8eOv3AeoqWPlQ+nbswNzBktYyYApvf08WXX1hf/Ul07nTk0zrEgLk=
+	t=1719367327; cv=none; b=QaNZth/vuOeEZmp0Jfw3Fnu9e6vGTYevS11XPR4fcqPc+pplf+VWKFFbdSOYPpOd0ziU//m26BgDh8yAK7B6ysXaEuI1rAEQFAANpwchfXKbSJd0GcL5RTEbZZ1/ki9Njqs9GIwQmg5QvW+jSGL8zvAl96X2PpksURPpU4KoZyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719367339; c=relaxed/simple;
-	bh=Q/gXBFW+DSTfTpYsHN1lhrLN83CrHjkMiZzYrMFiL/E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vge46elzVN5ipluMfNuoRD4cM1Wy5NIf7YQicXMynA+41gGS9HOfi+wRAb/2xSw3qDnDzEEAq2gc9P9REaYXsGYhKEWGCIrJDsS85d8Qx1OzOyRZkx22nQryuOj3McvISo7vmUD38OniM78SGee2pRAknuSbNVdB4tzI8siCcsU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kpcRmUrS; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719367338; x=1750903338;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Q/gXBFW+DSTfTpYsHN1lhrLN83CrHjkMiZzYrMFiL/E=;
-  b=kpcRmUrSTtUZKtLEoR4pVpkixegBndbMqVpEicxCpdKpIjJC/1Ez1x/4
-   aFr6eCG0l7LpLp+M2zKmEVQ9GhShHGhYcAc2bS/j6QOoGck+AKZy5HLT1
-   OJbJgtPUfpXUeQObmICjCN216HSnFPl0AURxUMu4w9UxCm0wShKzmB1Xw
-   nksjCKkKN+2sW8up8vk9Q0oOfa3GD4a2GX/iOxo+0u6XFjjrBwXbPj7iy
-   Hit3/4bf9Jc49o2zzdgbtnqIHhRqnQL9kRoKDuo9FHVZ5c2PgRFU1LT7T
-   5w2NNGDeWVFcA4RAlFbuxno3TURlumUcQfugS6VrhLViS1e1AFVcQkh6Z
-   w==;
-X-CSE-ConnectionGUID: xFZt+xutQL2Aq5ejoruBUA==
-X-CSE-MsgGUID: /Y6kfKAqR0WpWtxbr+yzaw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16379685"
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="16379685"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 19:02:18 -0700
-X-CSE-ConnectionGUID: x/TpQN/dRwy9CEmSl+mEjg==
-X-CSE-MsgGUID: GMq7NKfxTO2cSK6K4CeD5w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="43707028"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa007.fm.intel.com with ESMTP; 25 Jun 2024 19:02:13 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMHz8-000EtO-2b;
-	Wed, 26 Jun 2024 02:02:10 +0000
-Date: Wed, 26 Jun 2024 10:01:11 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	tsbogend@alpha.franken.de, daniel.lezcano@linaro.org,
-	paulburton@kernel.org, peterz@infradead.org, mail@birger-koblitz.de,
-	bert@biot.com, john@phrozen.org, sander@svanheule.net
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-	kabel@kernel.org, ericwouds@gmail.com,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	Markus Stockhausen <markus.stockhausen@gmx.de>
-Subject: Re: [PATCH 4/6] clocksource: realtek: Add timer driver for rtl-otto
- platforms
-Message-ID: <202406260925.EyDSt3VD-lkp@intel.com>
-References: <20240621042737.674128-5-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1719367327; c=relaxed/simple;
+	bh=D6dRbojHwOB90aNJgUPTQWtYJDx5XfGJu58jRfCR0kw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hJZx+yXXRPwryXExe8pesUgEHYQkklHKYkUQszyNMu6jVu0IcF6J0Jo7I/+raX8ZjerH/l2WwNMDI+3LQnv7sFAYxSZdhTvj6qfjrjhN4b07/0he5WOsM+Yjq7kts+gBtnKX5f/vxQhti28+vMBRhW5MUGFh1zJpMJdNzGq0LfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SO2Z5TNH; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-361785bfa71so4744835f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:02:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719367324; x=1719972124; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j827eyPfovm1pttAYGkAs9K2vKAWkyr0R4XxYEpN49k=;
+        b=SO2Z5TNHrAOjw3tFzjv7rIwV0tP5Y/M/Rr3M57O+WVtY2QKZsdP4uHolF5Voab8Nef
+         8E7W5MigYO0y1TDBfJcs043SjKtymrQutdkk+fgD/kk8uDqxwQteQTkFk/fYzvuqU6l8
+         jdz1OZ6oHq+fxvmWMeNGaiRGjYpTnKcC8WAL0vZitBxscdRfYM/QSg0tUNPD5ysC6/lB
+         MwH5v+EC9DBwLkfwhKcgm46MEGs8ikADfihfkGwL5OaCusZuUL/9SN9aPFsGh+m2J1wv
+         Pbh+olYdBvl55rgLX7mJPq1XwN2NAQzNMtY8Tg4UjvGY9toC48RVOhv5zFKSs5c6o2Tt
+         TDjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719367324; x=1719972124;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j827eyPfovm1pttAYGkAs9K2vKAWkyr0R4XxYEpN49k=;
+        b=G5kO6/hBrNjEVtOmouRu/QDjPqqo1kglq1y/DfGKOdJKhCLu0Dmng+5S/uQKVjF4KV
+         CApcy/AhFrYiUcAyq/U2N29w0iZdLrb74Dyvk4LmEk7SMQMD8GCDTUTlKpeITmKPlDXf
+         f1Js4syOtl8n7THloofwnCuuDoYCi9jyi4dqHLjIgtR/QpsX/C2DbbbcBZHkpdd21TPq
+         fVlRjjLyyBjrMyx6hLsyYziAG4vgA6LO+nXzsb9FvAcCisTRBzPd1RIEf4nUzees/t7k
+         1cmb6t0B3aoPPVNkLH/8nTL04c7/DMlZUkgYUAXOzHMcowJ0OsGwoXdqA2ohJJV7mo8B
+         prYA==
+X-Forwarded-Encrypted: i=1; AJvYcCX+TD6BF8+tAIzr2BsOnUrBc6QCcIVz9mLgDWM4S/0rZ1i+MLJXJ6PVPWS9MELhVBwfkK8v1R/Hk/Q1coBOXmk5Rkdmn5BLYR87j0PE
+X-Gm-Message-State: AOJu0YwdThHj29QRLme+oWrAX1NR2zawyRwdzyHREw65QrD/tZnWLS3m
+	PF3MBx8feHhvgFriBE4mt1KUfySldWkXdByN5xHIHasLqMWNyEwu8v/A7YLjH9/DK7L595cUqkx
+	TH7mMyTX2Cm6GoWXH3BfNB63UiEc=
+X-Google-Smtp-Source: AGHT+IGwrr2Re6QtzgDShGiOpHkoGQZgADb65PV0KxFMYpZIY4JGPzwGSV50AioRPApDEtm5jaEVBV1HipBAgflUfmg=
+X-Received: by 2002:a05:6000:a83:b0:365:e76b:e908 with SMTP id
+ ffacd0b85a97d-366e79fe983mr6147040f8f.24.1719367324358; Tue, 25 Jun 2024
+ 19:02:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621042737.674128-5-chris.packham@alliedtelesis.co.nz>
+References: <20240625142512.3916063-1-chao@kernel.org>
+In-Reply-To: <20240625142512.3916063-1-chao@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Wed, 26 Jun 2024 10:01:53 +0800
+Message-ID: <CAHJ8P3+VUozoMVHvMxqDrDRVttRWDJ5a4A2ysJv2_O4ytfq8OA@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid racing in between read
+ and OPU dio write
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on tip/timers/core tip/irq/core tip/smp/core linus/master v6.10-rc5 next-20240625]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Packham/dt-bindings-mips-realtek-Add-rtl930x-soc-compatible/20240625-160622
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240621042737.674128-5-chris.packham%40alliedtelesis.co.nz
-patch subject: [PATCH 4/6] clocksource: realtek: Add timer driver for rtl-otto platforms
-config: loongarch-allmodconfig (https://download.01.org/0day-ci/archive/20240626/202406260925.EyDSt3VD-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406260925.EyDSt3VD-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406260925.EyDSt3VD-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
-   In file included from include/linux/printk.h:573,
-                    from include/linux/kernel.h:31,
-                    from include/linux/clk.h:13,
-                    from drivers/clocksource/timer-rtl-otto.c:5:
-   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_timer_interrupt':
->> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-      97 |                  smp_processor_id(), (u32)base)
-         |                                      ^
-   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
-     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
-     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
-      96 |         pr_debug("------------- %d %08x\n",     \
-         |         ^~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:105:9: note: in expansion of macro 'RTTM_DEBUG'
-     105 |         RTTM_DEBUG(to->of_base.base);
-         |         ^~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_next_event':
->> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-      97 |                  smp_processor_id(), (u32)base)
-         |                                      ^
-   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
-     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
-     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
-      96 |         pr_debug("------------- %d %08x\n",     \
-         |         ^~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:127:9: note: in expansion of macro 'RTTM_DEBUG'
-     127 |         RTTM_DEBUG(to->of_base.base);
-         |         ^~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_state_oneshot':
->> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-      97 |                  smp_processor_id(), (u32)base)
-         |                                      ^
-   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
-     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
-     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
-      96 |         pr_debug("------------- %d %08x\n",     \
-         |         ^~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:139:9: note: in expansion of macro 'RTTM_DEBUG'
-     139 |         RTTM_DEBUG(to->of_base.base);
-         |         ^~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_state_periodic':
->> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-      97 |                  smp_processor_id(), (u32)base)
-         |                                      ^
-   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
-     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
-     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
-      96 |         pr_debug("------------- %d %08x\n",     \
-         |         ^~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:151:9: note: in expansion of macro 'RTTM_DEBUG'
-     151 |         RTTM_DEBUG(to->of_base.base);
-         |         ^~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_state_shutdown':
->> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-      97 |                  smp_processor_id(), (u32)base)
-         |                                      ^
-   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
-     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
-     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
-      96 |         pr_debug("------------- %d %08x\n",     \
-         |         ^~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:163:9: note: in expansion of macro 'RTTM_DEBUG'
-     163 |         RTTM_DEBUG(to->of_base.base);
-         |         ^~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_setup_timer':
->> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-      97 |                  smp_processor_id(), (u32)base)
-         |                                      ^
-   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
-     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
-     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
-      96 |         pr_debug("------------- %d %08x\n",     \
-         |         ^~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:171:9: note: in expansion of macro 'RTTM_DEBUG'
-     171 |         RTTM_DEBUG(base);
-         |         ^~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c: In function 'rttm_cpu_starting':
->> drivers/clocksource/timer-rtl-otto.c:97:38: warning: cast from pointer to integer of different size [-Wpointer-to-int-cast]
-      97 |                  smp_processor_id(), (u32)base)
-         |                                      ^
-   include/linux/dynamic_debug.h:224:29: note: in definition of macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:9: note: in expansion of macro '_dynamic_func_call_cls'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~~~~~~~
-   include/linux/dynamic_debug.h:269:9: note: in expansion of macro '_dynamic_func_call'
-     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
-         |         ^~~~~~~~~~~~~~~~~~
-   include/linux/printk.h:588:9: note: in expansion of macro 'dynamic_pr_debug'
-     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
-         |         ^~~~~~~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:96:9: note: in expansion of macro 'pr_debug'
-      96 |         pr_debug("------------- %d %08x\n",     \
-         |         ^~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:234:9: note: in expansion of macro 'RTTM_DEBUG'
-     234 |         RTTM_DEBUG(to->of_base.base);
-         |         ^~~~~~~~~~
-
-
-vim +97 drivers/clocksource/timer-rtl-otto.c
-
-    93	
-    94	/* Aggregated control functions for kernel clock framework */
-    95	#define RTTM_DEBUG(base)			\
-    96		pr_debug("------------- %d %08x\n",	\
-  > 97			 smp_processor_id(), (u32)base)
-    98	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Chao Yu <chao@kernel.org> =E4=BA=8E2024=E5=B9=B46=E6=9C=8825=E6=97=A5=E5=91=
+=A8=E4=BA=8C 22:29=E5=86=99=E9=81=93=EF=BC=9A
+>
+> If lfs mode is on, buffered read may race w/ OPU dio write as below,
+> it may cause buffered read hits unwritten data unexpectly, and for
+> dio read, the race condition exists as well.
+>
+> Thread A                        Thread B
+> - f2fs_file_write_iter
+>  - f2fs_dio_write_iter
+>   - __iomap_dio_rw
+>    - f2fs_iomap_begin
+>     - f2fs_map_blocks
+>      - __allocate_data_block
+>       - allocated blkaddr #x
+>        - iomap_dio_submit_bio
+>                                 - f2fs_file_read_iter
+>                                  - filemap_read
+>                                   - f2fs_read_data_folio
+>                                    - f2fs_mpage_readpages
+>                                     - f2fs_map_blocks
+>                                      : get blkaddr #x
+>                                     - f2fs_submit_read_bio
+>                                 IRQ
+>                                 - f2fs_read_end_io
+>                                  : read IO on blkaddr #x complete
+> IRQ
+> - iomap_dio_bio_end_io
+>  : direct write IO on blkaddr #x complete
+>
+> In LFS mode, if there is inflight dio, let's force read to buffered
+> IO, this policy won't cover all race cases, however it is a tradeoff
+> which avoids abusing lock around IO paths.
+>
+> Fixes: f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS m=
+ode")
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/file.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index 278573974db4..866f1a34e92b 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -882,6 +882,10 @@ static bool f2fs_force_buffered_io(struct inode *ino=
+de, int rw)
+>                 return true;
+>         if (is_sbi_flag_set(sbi, SBI_CP_DISABLED))
+>                 return true;
+> +       /* In LFS mode, if there is inflight dio, force read to buffered =
+IO */
+> +       if (rw =3D=3D READ && f2fs_lfs_mode(sbi) &&
+> +                       atomic_read(&inode->i_dio_count))
+> +               return false;
+Hi Chao,
+A little doubt:)=EF=BC=8Cforce =E2=80=9Cbuffered IO=E2=80=9D should return =
+"true"?
+another want to confirm is, "thread B" in commit msg just doing buffer
+read, so this modification just cover direct read case=EF=BC=9F
+thanks=EF=BC=81
+>
+>         return false;
+>  }
+> --
+> 2.40.1
+>
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
