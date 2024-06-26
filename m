@@ -1,214 +1,131 @@
-Return-Path: <linux-kernel+bounces-230399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC9C7917C45
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:17:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 042AC917C4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69B7D1F2835D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:17:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B222328F910
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929C016EB69;
-	Wed, 26 Jun 2024 09:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C004E16F903;
+	Wed, 26 Jun 2024 09:17:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gNuS/5C+"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xwoP9CJb"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFC7316EB53;
-	Wed, 26 Jun 2024 09:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C0631684A1
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719393365; cv=none; b=I6h0M2McX4eR/Hel19XYmu+pEvI+o3FHIFUdGuFMk+Q5WJ4xzA7VCS/wFcVaTFAgN7zKEsyO8uhoRO19UuHHUHKYOqFCNOUjfflGnkfb6do5T0CMi5R3lAbG4y8nhTLOh/UtfPVSEn+Fr46Kdo5DyUKoojU1ewInmZfmkhMdW7Q=
+	t=1719393463; cv=none; b=MF6WzlMP8iFLt64D2ncoY9OG/CVksDwuwdnI7cW5UU4DtghSxFu5Z0UmEPFi/GhDF2tqn9exDd8JFEEWvkz/cMGYm21Yd2m0EGL0qB+QeM0QOCqzcL/hinuYC5PFa1mQrd+QZMmop/GZCxBr/ov7BG44t/ZNP2fMRJInAKM3ziE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719393365; c=relaxed/simple;
-	bh=MMtXv5Ri6gnu/ZvxtyFF8jeukfcqm67vgKUvtekW57o=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P5+p7Dou+rfUZLvUkpE7uee727Rc/YSXA4Qp0BuhmhE5/TAKpUPac1hDipcNP1QUWmLZ86LmhDrTi+yvmKe8ar9NjsYrHguj6XbF7JZF05KJ/rpv9H1OavZd9YDKskad9AAIg9Nngv2MfKIBSODHkEIFGTVj7/9t9rzbr5We5Hk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gNuS/5C+; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so71490011fa.2;
-        Wed, 26 Jun 2024 02:16:03 -0700 (PDT)
+	s=arc-20240116; t=1719393463; c=relaxed/simple;
+	bh=TdR+0h5pgv6sf68bp9AYfIlXpF2fRPqacyemVdw5/HI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NFLb42viwQbUfaYSP3jtztD3Q+cVfUouoSG2YppmLr64NZXkYBpuLPvaH459QDETfnlQ7rFhVocSMGrV752QvUzTZZFn0nfYSp/WHh+iNH/3MxoG17JJzYhM9F1gZivh1ik3JGTR/6bNX1wxEUFl4qG3eRZV+VSS9LwfbWZTb2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xwoP9CJb; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52cd87277d8so4880382e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:17:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719393362; x=1719998162; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eto0wDQ+VnHOvIV84i+qZbXGq9+6luYSO1FuNV/i1EM=;
-        b=gNuS/5C+VDbFMQAJEgvNxr8YSCFShhYRtwXcqurKVK0ZAcbKwGfJ3BwlP0+TLcnQKC
-         th1nteG5eFd69Vt/yR9JZ6w9c3EYlHo5sxPUzneXTzfcBvRFAaqvcAaffsdwPQLq4boF
-         WmzAYXK5RXDu+uLzzrwRyT+Tl+P23i2al5iec7YQPZ3U11G3Sq4GHkiAw+1M7E9YUZnB
-         T6dYiccDaD2uIVl41I+45EAgIZc367FOgkaQoNkHi4ql6Lz9/Aac/QObMxkmkd0YafIs
-         jEEBV3Am5smBrMvIPRjCYKTXJMZ8sJ3WtOnlqB8N6Y4VuIBgUcZsJEOhg0hgEX6cwQyu
-         Espw==
+        d=linaro.org; s=google; t=1719393460; x=1719998260; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=lIqsgUc0qUv8b+n84AsHvKArD60z2TYKJpqdlsOonTI=;
+        b=xwoP9CJbzxfI8Jlx4ekbMSAI+6D7sjvrlMESsM9+HUpm4wnXOQI+J+eGOsePOb+bJp
+         gOwzAbLqys9IOODbYyAyDEMr74t6oWvCZ+w37Bh4B27HzWFaeIHErO/NNjte2GYmWImR
+         1LuG+DTulTQMZ4XOoBOLfdm9gF+v4+c5K77w19fOJm2e3DTqPbsO8trMneIAdOYcihgT
+         1BCxvmbXsaYq/Lblj+leI5oQms2exA6SXx6kUSVfbAIe5qJAfSxGht6ilorEI+kuiaRH
+         fTJhB5EOjV2m3CSV+ydgORRksyzL+NVSnpGo4vK9kHlQYt65DwVz/OwZF0QIyhFhQYTu
+         mRMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719393362; x=1719998162;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Eto0wDQ+VnHOvIV84i+qZbXGq9+6luYSO1FuNV/i1EM=;
-        b=LI9sNUq11zIr+rnkSnKXPbjcSf5jduF1jWOMaIpzkJpEy3xNWChWYPGnlhecDx2NFC
-         Wrm6VBgN4Z7FTVBDxaWYWSo/eY+b5yRoAAGvP0t0FvBqiav0W8cJryucuTJnRKgCpuz7
-         +a3hQ4FfRIjU9u5cxXZ3TEKEtwPkBX/U8R1IRI36ukLI/mjvNdz034484pq2rsBhGN+/
-         L48cTgRAg3RyHREJNuzLfWJFGvRGWIIR/UOgBmnvz0dzcDAblI40ImmbIJhjO+MGXLiw
-         W22bh0jb+DckLGNfjdh/Ifr728sz1NDVQtpF25MLW7DCNigfCK6/MvXl2yCM9IAVjNzS
-         7Q1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXPBswy/V2zsa5ZgBIgsV2kNwbKLiWy/AT1PsUsQHIp09sIGc4GUjTbvPoNYnMET2lf7G0NE+sJUYsVNS+m+zLtL1rWZT4p/Pfq3jUgB1NQAQPcjZ4ECkrQUcUiF7YnUKAm96QMqaUwaQ==
-X-Gm-Message-State: AOJu0YzYEdsIjWuNVVlY+9/btOdAycTT4XvxCg4KrtOBrkk12tQC5qcl
-	/3VAOfHDABw5uXKlcvZCSSZ2VBNacVeev9TC3APUA8PthomdedNO
-X-Google-Smtp-Source: AGHT+IH3CGPS2TZW4EbFb0VD5oUjqGvL3TfaspIt5F5OYeRa/0TR/mOSL97U7IIWNPSpBzA7tuqQqw==
-X-Received: by 2002:a2e:3218:0:b0:2ec:55f3:40d with SMTP id 38308e7fff4ca-2ec5b346102mr56875141fa.30.1719393361493;
-        Wed, 26 Jun 2024 02:16:01 -0700 (PDT)
-Received: from pc636 (host-90-233-219-252.mobileonline.telia.com. [90.233.219.252])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec53b7c876sm11450641fa.62.2024.06.26.02.16.00
+        d=1e100.net; s=20230601; t=1719393460; x=1719998260;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=lIqsgUc0qUv8b+n84AsHvKArD60z2TYKJpqdlsOonTI=;
+        b=xOxlNtTa6zJjmd4begSjTJSGI8QwkO7Bz7AhEAnKiyPFuKCQSdn9gn0VY+/ikRGJ82
+         HgD76rC2uWQl/QY2D0hqP04auAXrbIOWXdNAC+Ovc1f5hLrEHnwqDVuqtCAfOcpGH43e
+         OQXVQDlW05yIaxnBz34nRavmcdqSsNb6GGCRcRJ2D95cWP0VqXCOk/Z7LpOiVzt/1oyU
+         mSLyuUNzvNJDdYydxtVgWdKmv4+kKb9bqr6xrnANFPXfXYPBnMvEXxa5p2H2duX2+ZlD
+         knEFyqrK0aGj6+9mAXfJbw5jScbOj/BV0nnSwUfu8k1VDN2M9Fbs3R0dRkttL5Ix48fg
+         eeSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWw8EBKnIT51UOfUDbb5xJzeajgVlpBJxnWB1EpIeRDxla4jflfJPgtaRmTFo/H9ZC6aQVbOw5xotV3V2CM8EwqgATlwbafdrWlM6s2
+X-Gm-Message-State: AOJu0YyqzAdq+01mMJ5h0yR/DmI7FuZq5SEpEOb9/FUR8yvRwDdZ0BoH
+	y0+6V5gEeJVjUK1zcsEluA82Eje5hDI/57y9UvBuPZzNZMqcvUoS8Ao5CC/rlNs=
+X-Google-Smtp-Source: AGHT+IGUcuxRMZ/d4v953UhQb7EFPCTahiRnNum885ExgEqYymNBwBcHbYy9/YkcMVUlc/gGhu888Q==
+X-Received: by 2002:a05:6512:138e:b0:52c:890e:e8e7 with SMTP id 2adb3069b0e04-52ce185cfecmr8024194e87.50.1719393458662;
+        Wed, 26 Jun 2024 02:17:38 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52db233f5e4sm144142e87.69.2024.06.26.02.17.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 02:16:00 -0700 (PDT)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Wed, 26 Jun 2024 11:15:58 +0200
-To: Hailong Liu <hailong.liu@oppo.com>
-Cc: Uladzislau Rezki <urezki@gmail.com>, Baoquan He <bhe@redhat.com>,
-	Nick Bowler <nbowler@draconx.ca>, linux-kernel@vger.kernel.org,
-	Linux regressions mailing list <regressions@lists.linux.dev>,
-	linux-mm@kvack.org, sparclinux@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: PROBLEM: kernel crashes when running xfsdump since ~6.4
-Message-ID: <ZnvcToH1h-sVtikh@pc636>
-References: <Zno52QBG0g5Z+otD@MiWiFi-R3L-srv>
- <ZnqcuKt2qrR-wmH3@pc636>
- <ZnqspTVl/76jM9WD@MiWiFi-R3L-srv>
- <Znq6tEtCgB6QnnJH@pc638.lan>
- <Znq/8/HAc/0p6Ja0@MiWiFi-R3L-srv>
- <ZnrjZRq5-_hemrbD@pc636>
- <ZnrnADHvOiNcZv9t@MiWiFi-R3L-srv>
- <Znr1IQ1mssdNNXbv@pc638.lan>
- <ZnsjIB2byIxSgbjc@pc636>
- <20240626051206.mx2r4iy3wpexykay@oppo.com>
+        Wed, 26 Jun 2024 02:17:38 -0700 (PDT)
+Date: Wed, 26 Jun 2024 12:17:36 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: george chan <gchan9527@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Robert Foss <rfoss@kernel.org>, 
+	Todor Tomov <todor.too@gmail.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFT v3 1/5] dt-bindings: media: camss: Add
+ qcom,sc7180-camss
+Message-ID: <xtnamlbshpfw4vhixdvvlbg5qwosx4xfiwys3kjrnnvpdegejl@2lq45llo7twy>
+References: <20240624-b4-sc7180-camss-v3-0-89ece6471431@gmail.com>
+ <20240624-b4-sc7180-camss-v3-1-89ece6471431@gmail.com>
+ <c33dde93-2c3a-4a00-93ee-e4de303c9057@kernel.org>
+ <CADgMGSvN=uAW7z1dpETGVRewzDG=K2MAtzOkhK7xAcskU_oeZg@mail.gmail.com>
+ <0a35f0bd-ceec-487f-b9fd-ae9698b74048@kernel.org>
+ <CADgMGSt9Hu5Ciq=ndMTaVK23Y_ixTVtTuSfy4hJkJooFH2uv9Q@mail.gmail.com>
+ <CADgMGSv+x2Z9FsWTHW0auttvpdfNDnOPxiJhXnUaW3yQczN_Ag@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240626051206.mx2r4iy3wpexykay@oppo.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADgMGSv+x2Z9FsWTHW0auttvpdfNDnOPxiJhXnUaW3yQczN_Ag@mail.gmail.com>
 
-On Wed, Jun 26, 2024 at 01:12:06PM +0800, Hailong Liu wrote:
-> On Tue, 25. Jun 22:05, Uladzislau Rezki wrote:
-> > > > > > > /**
-> > > > > > >  * cpumask_next - get the next cpu in a cpumask
-> > > > > > >  * @n: the cpu prior to the place to search (i.e. return will be > @n)
-> > > > > > >  * @srcp: the cpumask pointer
-> > > > > > >  *
-> > > > > > >  * Return: >= nr_cpu_ids if no further cpus set.
-> > > > > >
-> > > > > > Ah, I got what you mean. In the vbq case, it may not have chance to get
-> > > > > > a return number as nr_cpu_ids. Becuase the hashed index limits the
-> > > > > > range to [0, nr_cpu_ids-1], and cpu_possible(index) will guarantee it
-> > > > > > won't be the highest cpu number [nr_cpu_ids-1] since CPU[nr_cpu_ids-1] must
-> > > > > > be possible CPU.
-> > > > > >
-> > > > > > Do I miss some corner cases?
-> > > > > >
-> > > > > Right. We guarantee that a highest CPU is available by doing: % nr_cpu_ids.
-> > > > > So we do not need to use *next_wrap() variant. You do not miss anything :)
-> > > > >
-> > > > > Hailong Liu has proposed more simpler version:
-> > > > >
-> > > > > <snip>
-> > > > > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > > > > index 11fe5ea208aa..e1e63ffb9c57 100644
-> > > > > --- a/mm/vmalloc.c
-> > > > > +++ b/mm/vmalloc.c
-> > > > > @@ -1994,8 +1994,9 @@ static struct xarray *
-> > > > >  addr_to_vb_xa(unsigned long addr)
-> > > > >  {
-> > > > >         int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > > > > +       int cpu = cpumask_nth(index, cpu_possible_mask);
-> > > > >
-> > > > > -       return &per_cpu(vmap_block_queue, index).vmap_blocks;
-> > > > > +       return &per_cpu(vmap_block_queue, cpu).vmap_blocks;
-> > > > > <snip>
-> > > > >
-> > > > > which just takes a next CPU if an index is not set in the cpu_possible_mask.
-> > > > >
-> > > > > The only thing that can be updated in the patch is to replace num_possible_cpu()
-> > > > > by the nr_cpu_ids.
-> > > > >
-> > > > > Any thoughts? I think we need to fix it by a minor change so it is
-> > > > > easier to back-port on stable kernels.
-> > > >
-> > > > Yeah, sounds good since the regresson commit is merged in v6.3.
-> > > > Please feel free to post this and the hash array patch separately for
-> > > > formal reviewing.
-> > > >
-> > > Agreed! The patch about hash array i will post later.
-> > >
-> > > > By the way, when I am replying this mail, I check the cpumask_nth()
-> > > > again. I doubt it may take more checking then cpu_possible(), given most
-> > > > of systems don't have gaps in cpu_possible_mask. I could be dizzy at
-> > > > this moment.
-> > > >
-> > > > static inline unsigned int cpumask_nth(unsigned int cpu, const struct cpumask *srcp)
-> > > > {
-> > > >         return find_nth_bit(cpumask_bits(srcp), small_cpumask_bits, cpumask_check(cpu));
-> > > > }
-> > > >
-> > > Yep, i do not think it is a big problem based on your noted fact.
-> > >
-> > Checked. There is a difference:
+On Wed, Jun 26, 2024 at 04:38:48PM GMT, george chan wrote:
+> On Wed, Jun 26, 2024 at 4:17 PM george chan <gchan9527@gmail.com> wrote:
 > >
-> > 1. Default
+> > On Wed, Jun 26, 2024 at 3:15 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > > Keep the list in "required:" in the same order as the list in "properties:".
 > >
-> > <snip>
-> > ...
-> > +   15.95%     6.05%  [kernel]        [k] __vmap_pages_range_noflush
-> > +   15.91%     1.74%  [kernel]        [k] addr_to_vb_xa <---------------
-> > +   15.13%    12.05%  [kernel]        [k] vunmap_p4d_range
-> > +   14.17%    13.38%  [kernel]        [k] __find_nth_bit <--------------
-> > +   10.62%     0.00%  [kernel]        [k] ret_from_fork_asm
-> > +   10.62%     0.00%  [kernel]        [k] ret_from_fork
-> > +   10.62%     0.00%  [kernel]        [k] kthread
-> > ...
-> > <snip>
-> >
-> > 2. Check if cpu_possible() and then fallback to cpumask_nth() if not
-> >
-> > <snip>
-> > ...
-> > +    6.84%     0.29%  [kernel]          [k] alloc_vmap_area
-> > +    6.80%     6.70%  [kernel]          [k] native_queued_spin_lock_slowpath
-> > +    4.24%     0.09%  [kernel]          [k] free_vmap_block
-> > +    2.41%     2.38%  [kernel]          [k] addr_to_vb_xa <-----------
-> > +    1.94%     1.91%  [kernel]          [k] xas_start
-> > ...
-> > <snip>
-> >
-> > It is _worth_ to check if an index is in possible mask:
-> >
-> > diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> > index 45e1506d58c3..af20f78c2cbf 100644
-> > --- a/mm/vmalloc.c
-> > +++ b/mm/vmalloc.c
-> > @@ -2542,7 +2542,10 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
-> >  static struct xarray *
-> >  addr_to_vb_xa(unsigned long addr)
-> >  {
-> > -       int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
-> > +       int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
-> IIUC, use nr_cpu_ids here maybe incorrect.
+> > ok gotcha
+> btw, i checked  "required:" and "properties:" are aligned, both of
+> them are in ascending order. I am wondering if you are talking about
+> two things, 1st one is to align both property, and 2nd is having the
+> ordering like below. Plz confirm.
 > 
-> take b101 as example, nr_cpu_ids is 3. if index is 2 cpumask_nth(2, cpu_possible_mask);
-> might return 64.
->
-But then a CPU2 becomes possible? Cutting by % nr_cpu_ids generates values < nr_cpu_ids.
-So, last CPU is always possible and we never do cpumask_nth() on a last possible CPU.
+> required:
+>   - compatible
+>   - reg
+>   - reg-names
+>   - interrupt-names
+>   - interrupts
+>   - clock-names
+>   - clocks
+>   - iommus
+>   - power-domains
+>   - power-domain-names
+>   - vdda-phy-supply
+>   - vdda-pll-supply
 
-What i miss here?
+Yes, now this looks like a correct order.
 
---
-Uladzislau Rezki
+-- 
+With best wishes
+Dmitry
 
