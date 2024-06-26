@@ -1,225 +1,140 @@
-Return-Path: <linux-kernel+bounces-230441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3FDF917CE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:49:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F9E917CE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 301BF1F216FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:49:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63BF61C21E1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0269816DC37;
-	Wed, 26 Jun 2024 09:48:57 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E08C012B144;
+	Wed, 26 Jun 2024 09:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fSnujuR1"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9FDC15F3E2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:48:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5D2D16CD1F;
+	Wed, 26 Jun 2024 09:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719395336; cv=none; b=m59xb022F6YkV6FJ0K+Lq9YqMfUddwqVMG0D5cn0BbfBSKPOcw1EVLUE0/vxgBwNC4IqLnzAyG6mCKm80F+GEILticj64cRQlFWqbVjDT2YAGx7KOPSv/N21XfaluC2nEcyenvfdwBi9SpNygp1CA8lbRcCBgB+VY+f1aOv138c=
+	t=1719395374; cv=none; b=m9V2B6oYULg520KDmMlXTeaq1Tf/XusypA1JX6NKEED0UbUDyw0c09ZerJdqvWXZPo4/UD3qNVaVUr8rTkcKg/lpyrY+BrBf+GPyiXK75LB24C1a7kjD89Hy6FT5R2hDcrpndu0edFQofEcWu50jchjUOTb7pct4NFge7R/mXKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719395336; c=relaxed/simple;
-	bh=wTSg2C35AkZ1JPxh5AO+SGFFqFblZQ6XzUE632XfySY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XyS/quz16MHlXlEXCkjWnZjGB+5vd064aYgwO0TwovXx2jnE5kjXARCJiAH0HhOPDNewnFNyPAs1xdhnQeGpQI/Xx+OgByuTzD9+tZ7mH7MTUA6ezYs/tZ1z05bgxae7fNm6FfQGw6OW6LkKCIvaYjmpQexkk5NbQyq61uvPZBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sMPG8-0001DI-Cd; Wed, 26 Jun 2024 11:48:12 +0200
-Received: from [2a0a:edc0:0:b01:1d::7b] (helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1sMPG5-0056Cv-Hm; Wed, 26 Jun 2024 11:48:09 +0200
-Received: from pengutronix.de (p5de45302.dip0.t-ipconnect.de [93.228.83.2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 5B28B2F3F66;
-	Wed, 26 Jun 2024 09:47:53 +0000 (UTC)
-Date: Wed, 26 Jun 2024 11:47:52 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Maxime Chevallier <maxime.chevallier@bootlin.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com, Andrew Lunn <andrew@lunn.ch>, 
-	Jakub Kicinski <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, 
-	Paolo Abeni <pabeni@redhat.com>, Russell King <linux@armlinux.org.uk>, 
-	linux-arm-kernel@lists.infradead.org, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Herve Codina <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, 
-	Heiner Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>, 
-	=?utf-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Jesse Brandeburg <jesse.brandeburg@intel.com>, 
-	Marek =?utf-8?B?QmVow7pu?= <kabel@kernel.org>, Piergiorgio Beruto <piergiorgio.beruto@gmail.com>, 
-	Oleksij Rempel <o.rempel@pengutronix.de>, =?utf-8?Q?Nicol=C3=B2?= Veronese <nicveronese@gmail.com>, 
-	Simon Horman <horms@kernel.org>, mwojtas@chromium.org, Nathan Chancellor <nathan@kernel.org>, 
-	Antoine Tenart <atenart@kernel.org>, kernel@pengutronix.de
-Subject: Re: [PATCH net-next v13 00/13] Introduce PHY listing and
- link_topology tracking
-Message-ID: <20240626-worm-of-remarkable-leadership-24f339-mkl@pengutronix.de>
-References: <20240607071836.911403-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1719395374; c=relaxed/simple;
+	bh=nyAn45UkdIMYYwIw68km3YLgE4LN981adMgW+jtRcjY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lNSlxtUMMGWWniLZtDKpJk387+Av/HRFHSMgmyp6HFMpDcbemSoRbEV2QZWaS8Cl12O+y6oDED6bPOPItRLiK/zgWm0QoiAHj8VpOuMzsVnPY24ABu4p3NHIIea/h6Rea3vaOdsrmlUsXx4V1ahIkOVtoTYbCRRD6WPatwgo4vQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fSnujuR1; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f9b523a15cso2954705ad.0;
+        Wed, 26 Jun 2024 02:49:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719395372; x=1720000172; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cNU1a60CfCiX6Hw5x2IZFVQSkvoOIUiLn4EitVdi3Pw=;
+        b=fSnujuR1ZJy+E2XQZwMsyK5xpxLpI+om3y6IhHLotfeO73x3zf+F/A94mshgIbFS5A
+         FlFXUW+fThFg6y0XuN0+0YiOeej3iN2p4iIMCU9W4Ybn/ejejrDuu5wGW2SeNdPvjE3I
+         oE2kU7hAPYnuoqKmIuKFzoMqs8mWPu7s98jOxMUyqzyjhx++8Zbbf0uC7k0CAs2QVOFB
+         dBVtSqD0dWmL7qY/D2nu5dYeBLDi2d08tHzHsMo3kKbYv6kJL7LgJ74nUkqXKWz3yfTV
+         sMIXo/PydqbiMWd0v3Tun27oREcZ9kR2mklycSok+rqiYptqkgVoOZa5J8seqIam0NVP
+         e93g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719395372; x=1720000172;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cNU1a60CfCiX6Hw5x2IZFVQSkvoOIUiLn4EitVdi3Pw=;
+        b=L69jOKExbDegvWYU1kMuhxiWS4tBhPbGDhrSv95IyONHCwLugPMP8F0RfROtOAreKg
+         XvCVc+2dMepfEMyjosj0V3dVfmmFAqKn3dZYNoe1U/F1xVqP83aKW0qHY+1I5eZi69IO
+         bWcj92KT2R/jz/YAXKcwZ4oerD8nuBzdVZsbocFxTMm3xg9UFeIWs1DT0yYhL9QOaJSd
+         Ae0vmJE0BXU9JbMRV85DREMtPdcPQytlUInPzGNhawRSxC5u/q9QEpBuCWAZ+AVldbGb
+         94EuQ+Tk2fqxndMHfhaKmhbbsg6FXUWFwmAXuEtVEOD+EVtlMj8nuyHMOTRr2sVs5e9W
+         dZ+g==
+X-Forwarded-Encrypted: i=1; AJvYcCX8KMhw2z4BAG8lAYhqcFw5cpRXgnmFoTtvcE6lXx69ocfawcHGe0zQqMnVhIq3gcgzMaK7pszlajwibkFMozWErAOvXCDEJmDgpBXX37PGmbdT23bNH0DtoWdOuIuZAzRw+mMPiJr2bNtm3oskUruX0+zmkVG/A8qrU50Id89GiLnDQQ==
+X-Gm-Message-State: AOJu0Yw4wGPr/NBsxajN4/SCwz0eKNe+V1dxbk7MTcUnix7zG9Wb4HDo
+	WTMhSBWYxR0ANa6xXuz3u9UXhfxtSmWHF8TK4iY/25N4hRHl2HH4
+X-Google-Smtp-Source: AGHT+IH4SzOk1LTjzFzMAd6+TVYhUdE3VY0zp+6xlqS3ft2PXUhtbCcuzFHhh/gA+6swVpDF1lH22A==
+X-Received: by 2002:a17:902:9346:b0:1f9:e97d:9460 with SMTP id d9443c01a7336-1fa0f8cd9f2mr114953025ad.16.1719395371897;
+        Wed, 26 Jun 2024 02:49:31 -0700 (PDT)
+Received: from localhost.localdomain (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fa6aa7030bsm29726665ad.288.2024.06.26.02.49.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 02:49:31 -0700 (PDT)
+From: Shan-Chun Hung <shanchun1218@gmail.com>
+To: ulf.hansson@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	adrian.hunter@intel.com,
+	p.zabel@pengutronix.de,
+	pbrobinson@gmail.com,
+	serghox@gmail.com,
+	mcgrof@kernel.org,
+	prabhakar.mahadev-lad.rj@bp.renesas.com,
+	forbidden405@outlook.com,
+	tmaimon77@gmail.com,
+	andy.shevchenko@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ychuang3@nuvoton.com,
+	schung@nuvoton.com,
+	Shan-Chun Hung <shanchun1218@gmail.com>
+Subject: [PATCH v2 0/2] Add support for Nuvoton MA35D1 SDHCI
+Date: Wed, 26 Jun 2024 17:48:58 +0800
+Message-Id: <20240626094900.581552-1-shanchun1218@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ub63hrz3rm74kdyo"
-Content-Disposition: inline
-In-Reply-To: <20240607071836.911403-1-maxime.chevallier@bootlin.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
+This patch adds the SDHCI driver and DT binding documentation
+for the Nuvoton MA35D1 platform.
 
---ub63hrz3rm74kdyo
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This MA35D1 SDHCI driver has been tested on the MA35D1 SOM board with
+Linux 6.10
 
-On 07.06.2024 09:18:13, Maxime Chevallier wrote:
-> Hello everyone,
->=20
-> This is V13 for the link topology addition, allowing to track all PHYs
-> that are linked to netdevices.
->=20
-> This version is based on the V12, and addresses the missing
-> documentation for the return code of some helpersn, and gathers the
-> review from K=C3=B6ry.
->=20
-> Discussions on the patch 01/13 updates can be found here :
->=20
-> https://lore.kernel.org/netdev/20240412104615.3779632-1-maxime.chevallier=
-@bootlin.com/
-> https://lore.kernel.org/netdev/20240429131008.439231-1-maxime.chevallier@=
-bootlin.com/
-> https://lore.kernel.org/netdev/20240507102822.2023826-1-maxime.chevallier=
-@bootlin.com/
->=20
-> As a remainder, here's what the PHY listings would look like :
->  - eth0 has a 88x3310 acting as media converter, and an SFP module with
->    an embedded 88e1111 PHY
->  - eth2 has a 88e1510 PHY
->=20
-> # ethtool --show-phys *
+v2:
+  - Update to nuvoton,ma35d1-sdhci.yaml
+    - Remove some redundant descriptions.
+    - Replace 'minitem' with 'maxitem' in the clock settings.
+    - Make corrections to nuvoton,sys description.
+    - Add sdhci-common.yaml.
+    - Remove '|' except where neccessary to be preserved.
+    - Keeping one example is sufficient.
+    - Add regulators in the example.
+  - Update ma35d1 sdhci driver
+    - Refer to 'include what you use' to modify included header files.
+    - Replace the number 8 with sizeof(u8), and similarly for others.
+    - Use "dev" instead of "&pdev->dev".
+    - Use the min() macro to improve the code.
+    - Use dev_err_probe() instead of dev_err().
+    - Implement an error reset check mechanism.
+    - Add devm_add_action_or_reset() to help with sdhci_pltfm_free().
+    - Use devm_reset_control_get_exclusive() instead of devm_reset_control_get().
 
-This creates the following warning for me:
+Shan-Chun Hung (2):
+  dt-bindings: mmc: nuvoton,ma35d1-sdhci: Document MA35D1 SDHCI
+    controller
+  mmc: sdhci-of-ma35d1: Add Nuvoton MA35D1 SDHCI driver
 
-[   51.877429] ------------[ cut here ]------------
-[   51.882094] WARNING: CPU: 0 PID: 333 at lib/refcount.c:31 ref_tracker_fr=
-ee+0x1ac/0x254
-[   51.890222] refcount_t: decrement hit 0; leaking memory.
-[   51.895611] Modules linked in: mcp251xfd flexcan imx_sdma can_dev spi_imx
-[   51.902493] CPU: 0 PID: 333 Comm: ethtool Not tainted 6.10.0-rc4+ #327
-[   51.909056] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
-[   51.915603] Call trace:=20
-[   51.915623] [<c0d2cbd0>] (unwind_backtrace) from [<c0109bcc>] (show_stac=
-k+0x10/0x14)
-[   51.925979] [<c0109bcc>] (show_stack) from [<c0d4744c>] (dump_stack_lvl+=
-0x50/0x64)
-[   51.933605] [<c0d4744c>] (dump_stack_lvl) from [<c0d2d2ec>] (__warn+0x88=
-/0xc0)
-[   51.940877] [<c0d2d2ec>] (__warn) from [<c0120ba0>] (warn_slowpath_fmt+0=
-x1b4/0x1c4)
-[   51.948590] [<c0120ba0>] (warn_slowpath_fmt) from [<c0697f74>] (ref_trac=
-ker_free+0x1ac/0x254)
-[   51.957176] [<c0697f74>] (ref_tracker_free) from [<c0ae4b7c>] (ethnl_phy=
-_done+0x24/0x54)
-[   51.965318] [<c0ae4b7c>] (ethnl_phy_done) from [<c0acda68>] (genl_done+0=
-x3c/0x88)
-[   51.972845] [<c0acda68>] (genl_done) from [<c0ac9b6c>] (netlink_dump+0x2=
-d8/0x3d0)
-[   51.980387] [<c0ac9b6c>] (netlink_dump) from [<c0aca2fc>] (__netlink_dum=
-p_start+0x1f4/0x2c4)
-[   51.988889] [<c0aca2fc>] (__netlink_dump_start) from [<c0acd7bc>] (genl_=
-family_rcv_msg+0x140/0x328)
-[   51.997989] [<c0acd7bc>] (genl_family_rcv_msg) from [<c0acd9e8>] (genl_r=
-cv_msg+0x44/0x88)
-[   52.006204] [<c0acd9e8>] (genl_rcv_msg) from [<c0acc554>] (netlink_rcv_s=
-kb+0xb8/0x118)
-[   52.014157] [<c0acc554>] (netlink_rcv_skb) from [<c0acd038>] (genl_rcv+0=
-x20/0x34)
-[   52.021673] [<c0acd038>] (genl_rcv) from [<c0acbd24>] (netlink_unicast+0=
-x23c/0x3d0)
-[   52.029367] [<c0acbd24>] (netlink_unicast) from [<c0acc044>] (netlink_se=
-ndmsg+0x18c/0x3d4)
-[   52.037667] [<c0acc044>] (netlink_sendmsg) from [<c0a4b30c>] (__sys_send=
-to+0xd4/0x128)
-[   52.045626] [<c0a4b30c>] (__sys_sendto) from [<c0100080>] (ret_fast_sysc=
-all+0x0/0x54)
-[   52.053496] Exception stack(0xc3967fa8 to 0xc3967ff0)
-[   52.058576] 7fa0:                   b6f1130c 0000000c 00000003 015dd238 =
-00000018 00000000
-[   52.066780] 7fc0: b6f1130c 0000000c b6fb6700 00000122 00571000 00000001 =
-0052a2f8 015dd190
-[   52.074978] 7fe0: 00000122 bec7cf38 b6ea847d b6e1fe86
-[   52.080184] ---[ end trace 0000000000000000 ]---
+ .../bindings/mmc/nuvoton,ma35d1-sdhci.yaml    |  88 ++++++
+ drivers/mmc/host/Kconfig                      |  14 +
+ drivers/mmc/host/Makefile                     |   1 +
+ drivers/mmc/host/sdhci-of-ma35d1.c            | 291 ++++++++++++++++++
+ 4 files changed, 394 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mmc/nuvoton,ma35d1-sdhci.yaml
+ create mode 100644 drivers/mmc/host/sdhci-of-ma35d1.c
 
-While a "ethtool --show-phys lan0" works w/o problems.
-
-| $ ip a s
-| 1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group=
- default qlen 1000
-|     link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-|     inet 127.0.0.1/8 scope host lo
-|        valid_lft forever preferred_lft forever
-|     inet6 ::1/128 scope host=20
-|        valid_lft forever preferred_lft forever
-| 2: sit0@NONE: <NOARP> mtu 1480 qdisc noop state DOWN group default qlen 1=
-000
-|     link/sit 0.0.0.0 brd 0.0.0.0
-| 3: lan0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast stat=
-e UP group default qlen 1000
-|     link/ether xx:xx:xx:xx:xx:xx brd ff:ff:ff:ff:ff:ff
-|     inet 192.168.178.140/24 metric 1024 brd 192.168.178.255 scope global =
-dynamic lan0
-|        valid_lft 863858sec preferred_lft 863858sec
-|     inet6 2003:xx:xxxx:xxxx:xxx:xxxx:xxxx:xxxx/64 scope global temporary =
-dynamic=20
-|        valid_lft 7057sec preferred_lft 982sec
-|     inet6 2003:xx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/64 scope global dynamic m=
-ngtmpaddr noprefixroute=20
-|        valid_lft 7057sec preferred_lft 982sec
-|     inet6 fe80::xxxx:xxxx:xxxx:xxxx/64 scope link=20
-|        valid_lft forever preferred_lft forever
-| 4: flexcan0: <NOARP,UP,LOWER_UP,ECHO> mtu 16 qdisc pfifo_fast state UP gr=
-oup default qlen 10
-|     link/can=20
-| 5: mcp251xfd0: <NOARP,UP,LOWER_UP,ECHO> mtu 72 qdisc pfifo_fast state UP =
-group default qlen 10
-|     link/can=20
-
-regards,
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---ub63hrz3rm74kdyo
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmZ748YACgkQKDiiPnot
-vG8uXwf/eVROFYWU0qgKem49yy8iNInzwAADkea81Nd/ZrXSmu+2cc+WCnaAGLvr
-ofmf1GF5YyeLNSlEqK3ywpHsKeA6V7HJ9XoJUMy2DEqi2o2KAjFzrtTxN/WCeQt8
-ZhHBTv95teWnnL+2y9qsQ+d5gAKDBuctv2v+6ykH7ZMG5MbzY0/8GFWqwMz9/HlO
-bFPbjOMpeBwvoQB1HKMYGguj/NaGzP/HJSppl2BZp1BM/3l+jQDVcBOqyu6Cyc9C
-d/7QyBkLFPP7xnXkD8VGsgjfmndWeAYDAaEhSFjftFiutvh2LllTikPisaH7O/0k
-LbOIXWrrOFivbuiYrQf9U9MimairPg==
-=mxOh
------END PGP SIGNATURE-----
-
---ub63hrz3rm74kdyo--
+--
+2.25.1
 
