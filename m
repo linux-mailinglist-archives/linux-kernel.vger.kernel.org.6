@@ -1,134 +1,150 @@
-Return-Path: <linux-kernel+bounces-231564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 043B1919A15
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:48:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1836919A18
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:50:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A11811F21A18
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:48:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 686F61F218D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:50:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC44F194C7E;
-	Wed, 26 Jun 2024 21:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2687A193098;
+	Wed, 26 Jun 2024 21:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yuhcTIjS"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M51PKDuK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF093194C73
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 21:46:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65DDC190697;
+	Wed, 26 Jun 2024 21:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719438379; cv=none; b=AJ6FfVQU01hami3PL1gIdNgEYwfROx+i3JLOBwVOZ7XRxD7ne5D4QL9+obWyfLmImmtd497QVfRzjHif4Uz0LHUn74HYrpB8jhHbaXC25OSZ1R2cnKE/syekyg70ykN1aT1g7YQU2Kc4suZCShdgqhd4R08KAbljRJhO5cvaIAo=
+	t=1719438598; cv=none; b=USUY2Crd7mf+T7IZ3mX3QpHUPyRAK4fs+n+B2tFaM49h8TuzJYCMEyc0CnFbYSx7nKhTr1d7cly6ANYpkM2n9aXs751tmiC2pia8ZooGR0mWQ3x4MMP3ZdjvtDl2CgQW/xWFkkEJ/x5Wbou5FizJT/FxPsP/89E7akGTn4TgIb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719438379; c=relaxed/simple;
-	bh=eEJvD1LxPrQrE2+bV2Gb2aZ/2mj6knY0BTuucbpbbko=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QYhaEcSgOFERx8xYy+RPeOvg0Ei6k231SQkPfPLVMh7Yn5SYHGVUsBxhL8DJzh+XjtoaNWURGAIlKfja5VnF/k85Y00bISJNbXBu9FtCVIsP4S9o9OHMMaMisJBOnOCgcFr6ZFyKwgG+sHcSUR0yhGrfRpmkjPRWv92SwNyVeRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yuhcTIjS; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ebe6495aedso77600781fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:46:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719438375; x=1720043175; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=s1yr/14qrVQ/kYRjN6UH7sAJcJ6ZPXNM+nWCpzFkpGA=;
-        b=yuhcTIjSDxxB0Rrvj6fbW1cDqVmO6DsYE7R3WL5wWlFINFy8W4vHQzFcRIj1Y/TI9S
-         063C+HkpimmbhNZVgfFDSEs3LSae5GeMUWtfSBRz+wY1G0BPq/yP1TO9Y9X3uQN78TTO
-         sM+ywKIc/ZLnFJQggSzy3MNG8gmbN8zoRPMjo+IrONnnlr7LIA5H96ua39KNdKVzRcBI
-         heE/AY6rkLThneL8vJ1eQ2FC0LRH7tSFpEmyMrgyVHnjXfBpiVX4NzlikH5mZVmSOE2+
-         OEDNqHLmv6CpKNfTzNf46aqyhILWj7CEYs9vZbjWWRxoq+Ys9auJqzyZilj7gxDgYSfB
-         sHBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719438375; x=1720043175;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=s1yr/14qrVQ/kYRjN6UH7sAJcJ6ZPXNM+nWCpzFkpGA=;
-        b=ADl2XTTGLAKqlhCV3cpo7kj8vEfS7N3lXQ4SOpKNksdeYmXthl4BS82vWfSVcYENlY
-         wXXxdIpmCYAdchGhwubesygPGuJeIX6nZokY045BS7xmArhjbDlutRVzZysnQ8GKO7ge
-         a8OgRSf5tK7EvkVIP2r2i1EwKejvNxPby3upr1fg/ZrmbGsP52OgtaRd9fjL3U/nf88q
-         DbxL2m9G0x8BE4wdF2dQPGVxyPWzeiLDuaDFxFqB/XyQQe6a1rc7WovfrAFp9BnRijVf
-         wPvd6ZejpVAHQjvCrh8qwC44NnRc/rSHQSTHwUtfOXmkZEFAlQoB7UPc/0F8IvsUtXRT
-         QEsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLm+F2BCoMbVUpOQLujZ4+y3u//3mgPBa/9mGcvD02WA3b40JBYFqRG/QQ+pBZzxuvX1VKudY7RExjGfD2o+lgfJ9Mwglq9eIrJs0O
-X-Gm-Message-State: AOJu0Yx7A/mK7K4hsqb8OSjed8sGi0qXlk28sdma784ttofd/hbYOtO3
-	pWVV1cZN3zEQouob7LgpHgsXbQTBozBGK4oGFx6A2D8avUA7rpDxO5jVSXIJ1MrJBaEJpdSM0gh
-	5nUY=
-X-Google-Smtp-Source: AGHT+IEjuMjBrK+rXfyXxF8hbNJfQANvpjcRm271/Z+9lFiuoS/ksY9Q8TulAVC4m5zzVOlPgVgzaQ==
-X-Received: by 2002:a2e:321a:0:b0:2eb:f472:e7d3 with SMTP id 38308e7fff4ca-2ec5b2840fdmr67894431fa.6.1719438375097;
-        Wed, 26 Jun 2024 14:46:15 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee4a350d96sm23201fa.49.2024.06.26.14.46.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 14:46:14 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 27 Jun 2024 00:46:06 +0300
-Subject: [PATCH v5 12/12] drm/msm/dpu: include SSPP allocation state into
- the dumped state
+	s=arc-20240116; t=1719438598; c=relaxed/simple;
+	bh=vbEkrfUjgmgKqdl2dZG8HUfOBAyAIBXP7eZIOo4QAUs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ck5YVpRSUIYG5wrsVylkwFRWC96iC/a2KETAA8O0p/DECAnXVuGHGgtUkiIZWc451r1f3au6CRp9EEFCjdVC/yOG1zBqKbMSXY8vJ7jaHz5YxVJk9tIE2QEOI/UuoPe2WmCXxP1Up05auyWXhWauA59w6FO2pao9+yhPsssOO2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M51PKDuK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78D5FC116B1;
+	Wed, 26 Jun 2024 21:49:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719438597;
+	bh=vbEkrfUjgmgKqdl2dZG8HUfOBAyAIBXP7eZIOo4QAUs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=M51PKDuKttI5HYYW8JwcELqr83G0iDFtXFaA3vZk47MOIbPNwORjBid45M/+61AlT
+	 oUHLfS3wQVrxLLaPnoJwlHscJJXHQj32r6t+h2Boj6ZCbVl2vHDFJqjq1jKGvorXSf
+	 HmkNJanzFpzsuf3ucoCqcI0wdhMLlhuU3JI5wHMRq7kGtZH+X8TQwNrqgEfdjh84GO
+	 Ax5eH6vydpS9H5PM9o4MipJ84h+nPd2wuB64h3O5D6IjbPdLG2sX7ZgRmF3LpqEJx+
+	 Me/9kB1kmpHYvoxYgk93LMLrnmFF1EvyzU/up5jZpaj90XOlPkw4QMio5hBpcLEC3I
+	 QKx/zcf/OiJ+g==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH mm-unstable] mm/damon/core: increase regions merge aggressiveness while respecting min_nr_regions
+Date: Wed, 26 Jun 2024 14:49:54 -0700
+Message-Id: <20240626214954.46143-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240626164753.46270-1-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240627-dpu-virtual-wide-v5-12-5efb90cbb8be@linaro.org>
-References: <20240627-dpu-virtual-wide-v5-0-5efb90cbb8be@linaro.org>
-In-Reply-To: <20240627-dpu-virtual-wide-v5-0-5efb90cbb8be@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1010;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=eEJvD1LxPrQrE2+bV2Gb2aZ/2mj6knY0BTuucbpbbko=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmfIwZkyt5CzRwY3hfsGPrmhjoZC7H00MHWqkks
- GnB6wan0WSJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZnyMGQAKCRCLPIo+Aiko
- 1XUsCACGQ+zsNDJAcL2Bw2/6RRgLe/mxiy/25t541pd6McAGXfdLlKyKlvpgn/FvjEdp1kRVZoE
- Vgx89cQD8WzLjs30HcTBToiSa/zZ+FpJOOk9CN00h+ttZrS41M3chOqvuvWLFGehdUDKud4lup7
- tf33yO0k7VszARMOwQ3sWgNDHL/kiySr5oIsskVLvTyV2iz6t7s1tgbs2k1GKowVTWn6o7oUSGx
- qM/p8o5TW+rU+Yu2vdrkH6nFU6LzV7tCdH0tllE49FDUNMAhPpzHG3H2qM7YJcJanHUg04qCsz2
- ObPQOKuwU9MBta3iru/e5vM43Un2xj1W6U0sRoMmSfc8GStG
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Transfer-Encoding: 8bit
 
-Make dpu_rm_print_state() also output the SSPP allocation state.
+On Wed, 26 Jun 2024 09:47:53 -0700 SeongJae Park <sj@kernel.org> wrote:
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+> DAMON's merge mechanism has two thresholds, namely those for access
+> frequency and size.  The access frequency threshold avoids merging two
+> adjacent regions that having pretty different access frequency.
+> 
+> The size threshold is calculated as total size of regions divided by
+> min_nr_regions.  Merging operation skip merging two adjacent regions if
+> the resulting region's size can be larger than the threshold.  This is
+> for meeting min_nr_regions.
+> 
+> Commit 44fdaf596984 ("mm/damon/core: merge regions aggressively when
+> max_nr_regions is unmet") of mm-unstable, however, ignores the
+> min_nr_regions by increasing not only access frequency threshold but
+> also the size threshold.
+> 
+> The commit also has one more problem.  User could set DAMON target
+> regions with more than max_nr_regions discrete regions.  Because DAMON
+> cannot merge non-adjacent regions, the number of regions will never be
+> lower than max_nr_regions regardless of the increased thresholds.  As a
+> result, the function can infinitely repeat the loop.
+> 
+> Increase only access frequency threshold, up to only possible maximum
+> value.
+> 
+> Fixes: 44fdaf596984 ("mm/damon/core: merge regions aggressively when max_nr_regions is unmet") # mm-unstable
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  mm/damon/core.c | 19 ++++++++++---------
+>  1 file changed, 10 insertions(+), 9 deletions(-)
+> 
+> diff --git a/mm/damon/core.c b/mm/damon/core.c
+> index e6598c44b53c..dac27b949403 100644
+> --- a/mm/damon/core.c
+> +++ b/mm/damon/core.c
+[...]
+> +	max_thres = c->attrs.aggr_interval /
+> +		(c->attrs.sample_interval ?  c->attrs.sample_interval : 1);
+>  	do {
+>  		nr_regions = 0;
+>  		damon_for_each_target(t, c) {
+> @@ -1716,8 +1717,8 @@ static void kdamond_merge_regions(struct damon_ctx *c, unsigned int threshold,
+>  			nr_regions += damon_nr_regions(t);
+>  		}
+>  		threshold = max(1, threshold * 2);
+> -		sz_limit = max(1, sz_limit * 2);
+> -	} while (nr_regions > c->attrs.max_nr_regions);
+> +	} while (nr_regions > c->attrs.max_nr_regions &&
+> +			threshold <= max_thres);
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-index dbf1f7229e45..3e3b6b8daa5c 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c
-@@ -890,4 +890,11 @@ void dpu_rm_print_state(struct drm_printer *p,
- 	dpu_rm_print_state_helper(p, rm->cdm_blk,
- 				  global_state->cdm_to_enc_id);
- 	drm_puts(p, "\n");
-+
-+	drm_puts(p, "\tsspp=");
-+	/* skip SSPP_NONE and start from the next index */
-+	for (i = SSPP_NONE + 1; i < ARRAY_SIZE(global_state->sspp_to_crtc_id); i++)
-+		dpu_rm_print_state_helper(p, rm->hw_sspp[i] ? &rm->hw_sspp[i]->base : NULL,
-+					  global_state->sspp_to_crtc_id[i]);
-+	drm_puts(p, "\n");
+This code means that kdamond_merge_regions() stops this repeated merge attempt
+if the merge threshold that increased for next attempt is higher than the
+possible maximum threshold.  And because the increase of the threshold is made
+by picking a maximum value between one and the last-used threshold multiplying
+two, the merge attempt with maximum threshold will not be made unless both the
+maximum threshold and the threshold to increase are powers of two.  In maximum
+situation (e.g., region 1 has 100% access frequency, region 2 has 0% access
+frequency, so on), this means the max_nr_regions violation cannot be recovered
+by the attempts.
+
+This can be fixed by changing it to stop repeated attempt if the last-used
+threshold is same to or higher than the maximum possible threshold, like below.
+
+I'll send the fix of the fix as a formal patch soon.
+
+FYI, the original fix is definitely better to be merged in stable kernels, but
+not urgent in my opinion, since the problematic case is not common and the
+behavior was same since the beginning of DAMON.  Andrew, if you feel the
+original fix is not stable yet, please feel free to delay moving it to
+hotfix-stable for one week or two.
+
+
+Thanks,
+SJ
+
+================================= >8 ==========================================
+--- a/mm/damon/core.c
++++ b/mm/damon/core.c
+@@ -1773,7 +1773,7 @@ static void kdamond_merge_regions(struct damon_ctx *c, unsigned int threshold,
+                }
+                threshold = max(1, threshold * 2);
+        } while (nr_regions > c->attrs.max_nr_regions &&
+-                       threshold <= max_thres);
++                       threshold / 2 < max_thres);
  }
 
--- 
-2.39.2
-
+ /*
 
