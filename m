@@ -1,247 +1,140 @@
-Return-Path: <linux-kernel+bounces-230494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8A95917D9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:17:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F12917D9D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:17:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B01C283FB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:17:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8700BB25549
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782FB17D887;
-	Wed, 26 Jun 2024 10:17:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC71217DE32;
+	Wed, 26 Jun 2024 10:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="eX41b8dZ"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ofzZRTTM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2096717C7AD;
-	Wed, 26 Jun 2024 10:16:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA8A417D8A7;
+	Wed, 26 Jun 2024 10:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719397019; cv=none; b=Vqp8znZHLSA6bYIsbUIsDUZMjpgVR6QwKk9igWX10dGV0trW6g1kimWHVtZZ1MrQHJbk0S+TzJ9g4oeBAy/9Inps+VV+ubjYOe4Lkq5GUinrj2XAFH+0YGS9IPAmqyHZGln8ubhNS2IcyZD7dUy4zMHS1Q78G0bFbdFE1X9DTVY=
+	t=1719397022; cv=none; b=EGdOfUHgTU6KMFub1AomAr9vy50zBejGt1PRknBojpbIEUWnrMkxU0txTZE4XckEkzc5WT/mXtydiTa/3WZEehkSmuBmqnEU7xAo1vZxRUofcKwsnd4TxQNkEoY1J6Vlmkg6xwNIiTsa1drJcSs23GqjnahRKLFLvd7GeC8fT18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719397019; c=relaxed/simple;
-	bh=Q3uCyph4ykR5KPuVznlptetCO7ZmBhMMib1oJ+VGyGk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ohoECNE6JgbRno1YH+pC5bB1bV86qcBgPGoTDFnjVdI8CHWCZjAn+D99scAwG2dsxezOfK5pZqgtG2k5DNOtRmVlePlsdORonoJPY8WOZW6LxZU1MB3lBGY/UrnPq7m3VnWEXpoDkTtmIpaEG9Mi+Nq/9Xa7u6EXAy/ArmFheHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=eX41b8dZ; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45QAGq8F102925;
-	Wed, 26 Jun 2024 05:16:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719397012;
-	bh=hpk72n2zyK8KWeCodClxZy7OWVs5LiqE2NUOMIJYmyQ=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=eX41b8dZg2q1uVTMuRClFYny7B3t03xQdyEl43BtBBk77Ps89gv6KQZors/JhI9LU
-	 hIwWyoG7shr3lNSXwOED8PiHj3BufePDTyRwEqbMGdmeFntH6goFt0a70j7oZ8DTmC
-	 1V1ohvXRQywWrgiO+UA0+dg51o7WLtnbYo2A9sDg=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45QAGq1e128079
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Jun 2024 05:16:52 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Jun 2024 05:16:51 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Jun 2024 05:16:51 -0500
-Received: from localhost (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.248])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45QAGo4T041116;
-	Wed, 26 Jun 2024 05:16:51 -0500
-From: Jayesh Choudhary <j-choudhary@ti.com>
-To: <linux-kernel@vger.kernel.org>, <nm@ti.com>, <vigneshr@ti.com>,
-        <j-luthra@ti.com>, <j-choudhary@ti.com>
-CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <u-kumar1@ti.com>
-Subject: [PATCH v2 3/3] arm64: dts: ti: k3-j784s4-evm: Enable analog audio support
-Date: Wed, 26 Jun 2024 15:46:45 +0530
-Message-ID: <20240626101645.36764-4-j-choudhary@ti.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240626101645.36764-1-j-choudhary@ti.com>
-References: <20240626101645.36764-1-j-choudhary@ti.com>
+	s=arc-20240116; t=1719397022; c=relaxed/simple;
+	bh=P5/Tf3Urx+o+8LWDMR3+WnRwI0VEnPvq0a0aA2ULhyk=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=WOotUXRKtzBBTJtPNII0hMF5Lv6kQZNxN5lip6Skiwy4pq5y+B2W0gnXURQbBx1Hc66m8DEqOy4jwMNb1mQVR/EFYmXeMrojO4qqwwg8IEIhe6VTjR/+fTQr/3ECFzc9GTgOkJhXF9P5J2wC4N7oUCHu4iju1q8+gHu0ult+4tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ofzZRTTM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 189E5C4AF07;
+	Wed, 26 Jun 2024 10:16:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719397021;
+	bh=P5/Tf3Urx+o+8LWDMR3+WnRwI0VEnPvq0a0aA2ULhyk=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=ofzZRTTMZiwLnIzFdB9lgnsrTcrmDH/bMtrKNndCo6gngvF2CfHOm7V37ZezlQX68
+	 uSmrQaGLYgXbMaDfNLvL+KvIEbUFXgpi/sbsVXJjEO2AImW96+H2foJNMQS+K3bDlK
+	 35p1nBsVbWLgA6DOdOBdJzBp+8lyyDjgFG2P/KuembLPOAlo7yHTTdzquelsD2s5zp
+	 qjIGKfvF3RO8r/uIhNOoCD5nW9gCXoFqLitCeSYQymu1dAWOScjCyehuh1812VwKZ/
+	 mbwHTq+Cz2ej6PEXrOtbH5IHBePZwx0xyVZSDc7XjyhGxpJmE48JKIRzMH3boYSnHu
+	 57pSHjTAxrJpg==
+From: Kalle Valo <kvalo@kernel.org>
+To: Paul Menzel <pmenzel@molgen.mpg.de>
+Cc: Baochen Qiang <quic_bqiang@quicinc.com>,  James Prestwood
+ <prestwoj@gmail.com>,  linux-wireless@vger.kernel.org,
+  ath10k@lists.infradead.org,  LKML <linux-kernel@vger.kernel.org>
+Subject: Re: invalid vht params rate 1920 100kbps nss 2 mcs 9
+References: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
+	<1faa7eee-ed1e-477b-940d-a5cf4478cf73@gmail.com>
+	<87iky7mvxt.fsf@kernel.org>
+	<37ba6cb0-d887-4fcf-b7dc-c93a5fc5900f@gmail.com>
+	<875xu6mtgh.fsf@kernel.org>
+	<f7faff80-864a-4411-ad28-4f1151bc1e51@quicinc.com>
+	<082024ce-fdd4-4fb1-8055-6d25f7d2e524@molgen.mpg.de>
+Date: Wed, 26 Jun 2024 13:16:58 +0300
+In-Reply-To: <082024ce-fdd4-4fb1-8055-6d25f7d2e524@molgen.mpg.de> (Paul
+	Menzel's message of "Wed, 26 Jun 2024 11:12:15 +0200")
+Message-ID: <878qyshuud.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-The audio support on J784S4-EVM is using PCM3168A[0] codec
-connected to McASP0 serializers.
+Paul Menzel <pmenzel@molgen.mpg.de> writes:
 
-- Add the nodes for sound-card, audio codec, MAIN_I2C3 and
-  McASP0.
-- Add pinmux for I2C3, McASP0 and AUDIO_EXT_REFCLK1.
-- Add necessary GPIO hogs to route the MAIN_I2C3 lines and
-  McASP serializer.
-- Add idle-state as 1 in mux1 to route McASP clock signals.
+> Am 26.06.24 um 10:53 schrieb Baochen Qiang:
+>
+>> OK, there are two issues here:
+>> 1. invalid HT rate: "ath10k_pci 0000:02:00.0: invalid ht params rate
+>> 1440 100kbps nss 2 mcs 7".
+>> As commented by Wen quite some time ago, this has been fixed from
+>> firmware side, and firmware newer than [ver:241] has the fix
+>> included.
 
-[0]: <https://www.ti.com/lit/gpn/pcm3168a>
+I assume this means that the firmware version
+WLAN.RM.4.4.1-00241-QCARMSWPZ-1 or newer has the fix.
 
-Signed-off-by: Jayesh Choudhary <j-choudhary@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j784s4-evm.dts | 111 +++++++++++++++++++++++
- 1 file changed, 111 insertions(+)
+>> 2. invaid VHT rate: "ath10k_pci 0000:3a:00.0: invalid vht params
+>> rate 1920 100kbps nss 2 mcs 9".
+>> After checking with firmware team, I thought this is because there
+>> is
+>> a mismatch in rate definition between host and firmware: In host, the
+>> rate for 'nss 2 mcs 9' is defined as {1560, 1733}, see
+>> supported_vht_mcs_rate_nss2[]. While in firmware this is defined as
+>> {1730, 1920}. So seems we can update host definition to avoid this
+>> issue.
+> Looking through the logs since May 2024, I have four different logs:
+>
+> 1.  invalid vht params rate 878 100kbps nss 3 mcs 2
+> 2.  invalid vht params rate 960 100kbps nss 1 mcs 9
+> 3.  invalid vht params rate 1730 100kbps nss 2 mcs 9
+> 4.  invalid vht params rate 1920 100kbps nss 2 mcs 9
+>
+> I believe it=E2=80=99s only happening with Cisco networks. I am happy to =
+test
+> a patch.
+>
+> By the way, is the firmware version logged by Linux?
+>
+>     ath10k_pci 0000:3a:00.0: qca6174 hw3.2 target 0x05030000 chip_id
+>     0x00340aff sub 1a56:1535
+>     ath10k_pci 0000:3a:00.0: kconfig debug 0 debugfs 0 tracing 0 dfs 0
+>     testmode 0
+>     ath10k_pci 0000:3a:00.0: firmware ver WLAN.RM.4.4.1-00288- api 6
+>     features wowlan,ignore-otp,mfp crc32 bf907c7c
+>     ath10k_pci 0000:3a:00.0: board_file api 2 bmi_id N/A crc32 d2863f91
+>     ath10k_pci 0000:3a:00.0: htt-ver 3.87 wmi-op 4 htt-op 3 cal otp
+>     max-sta 32 raw 0 hwcrypto 1
+>
+> Is it 4.4.1-00288?
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-index a4a6efcce362..9338d987180d 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-evm.dts
-@@ -312,6 +312,20 @@ mux1: mux-controller {
- 		compatible = "gpio-mux";
- 		#mux-state-cells = <1>;
- 		mux-gpios = <&exp2 14 GPIO_ACTIVE_HIGH>;
-+		idle-state = <1>;
-+	};
-+
-+	codec_audio: sound {
-+		compatible = "ti,j7200-cpb-audio";
-+		model = "j784s4-cpb";
-+
-+		ti,cpb-mcasp = <&mcasp0>;
-+		ti,cpb-codec = <&pcm3168a_1>;
-+
-+		clocks = <&k3_clks 265 0>, <&k3_clks 265 1>,
-+			 <&k3_clks 157 34>, <&k3_clks 157 63>;
-+		clock-names = "cpb-mcasp-auxclk", "cpb-mcasp-auxclk-48000",
-+			      "cpb-codec-scki", "cpb-codec-scki-48000";
- 	};
- };
- 
-@@ -422,6 +436,28 @@ main_usbss0_pins_default: main-usbss0-default-pins {
- 			J784S4_IOPAD(0x0ec, PIN_OUTPUT, 6) /* (AN37) TIMER_IO1.USB0_DRVVBUS */
- 		>;
- 	};
-+
-+	main_i2c3_pins_default: main-i2c3-default-pins {
-+		pinctrl-single,pins = <
-+			J784S4_IOPAD(0x064, PIN_INPUT, 13) /* (AF38) MCAN0_TX.I2C3_SCL */
-+			J784S4_IOPAD(0x060, PIN_INPUT, 13) /* (AE36) MCASP2_AXR1.I2C3_SDA */
-+		>;
-+	};
-+
-+	main_mcasp0_pins_default: main-mcasp0-default-pins {
-+		pinctrl-single,pins = <
-+			J784S4_IOPAD(0x038, PIN_OUTPUT_PULLDOWN, 1) /* (AK35) MCASP0_ACLKX */
-+			J784S4_IOPAD(0x03c, PIN_OUTPUT_PULLDOWN, 1) /* (AK38) MCASP0_AFSX */
-+			J784S4_IOPAD(0x07c, PIN_OUTPUT_PULLDOWN, 1) /* (AJ38) MCASP0_AXR3 */
-+			J784S4_IOPAD(0x080, PIN_INPUT_PULLDOWN, 1) /* (AK34) MCASP0_AXR4 */
-+		>;
-+	};
-+
-+	audio_ext_refclk1_pins_default: audio-ext-refclk1-default-pins {
-+		pinctrl-single,pins = <
-+			J784S4_IOPAD(0x078, PIN_OUTPUT, 1) /* (AH37) MCAN2_RX.AUDIO_EXT_REFCLK1 */
-+		>;
-+	};
- };
- 
- &wkup_pmx2 {
-@@ -881,6 +917,14 @@ exp1: gpio@20 {
- 				  "PCIE0_4L_RC_RSTZ", "PCIE0_4L_EP_RST_EN", "PCIE1_4L_PRSNT#",
- 				  "PCIE0_4L_PRSNT#", "CDCI1_OE1/OE4", "CDCI1_OE2/OE3",
- 				  "AUDIO_MUX_SEL", "EXP_MUX2", "EXP_MUX3", "GESI_EXP_PHY_RSTZ";
-+
-+		p12-hog {
-+			/* P12 - AUDIO_MUX_SEL */
-+			gpio-hog;
-+			gpios = <12 GPIO_ACTIVE_HIGH>;
-+			output-low;
-+			line-name = "AUDIO_MUX_SEL";
-+		};
- 	};
- 
- 	exp2: gpio@22 {
-@@ -896,6 +940,22 @@ exp2: gpio@22 {
- 				  "CANUART_MUX1_SEL1", "ENET1_EXP_PWRDN", "ENET1_EXP_RESETZ",
- 				  "ENET1_I2CMUX_SEL", "ENET1_EXP_SPARE2", "ENET2_EXP_RESETZ",
- 				  "USER_INPUT1", "USER_LED1", "USER_LED2";
-+
-+		p13-hog {
-+			/* P13 - CANUART_MUX_SEL0 */
-+			gpio-hog;
-+			gpios = <13 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "CANUART_MUX_SEL0";
-+		};
-+
-+		p15-hog {
-+			/* P15 - CANUART_MUX1_SEL1 */
-+			gpio-hog;
-+			gpios = <15 GPIO_ACTIVE_HIGH>;
-+			output-high;
-+			line-name = "CANUART_MUX1_SEL1";
-+		};
- 	};
- };
- 
-@@ -1373,3 +1433,54 @@ &pcie0_rc {
- 	phys = <&serdes1_pcie0_link>;
- 	phy-names = "pcie-phy";
- };
-+
-+&k3_clks {
-+	/* Confiure AUDIO_EXT_REFCLK1 pin as output */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&audio_ext_refclk1_pins_default>;
-+};
-+
-+&main_i2c3 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_i2c3_pins_default>;
-+	clock-frequency = <400000>;
-+
-+	exp3: gpio@20 {
-+		compatible = "ti,tca6408";
-+		reg = <0x20>;
-+		gpio-controller;
-+		#gpio-cells = <2>;
-+	};
-+
-+	pcm3168a_1: audio-codec@44 {
-+		compatible = "ti,pcm3168a";
-+		reg = <0x44>;
-+		#sound-dai-cells = <1>;
-+		reset-gpios = <&exp3 0 GPIO_ACTIVE_LOW>;
-+		clocks = <&audio_refclk1>;
-+		clock-names = "scki";
-+		VDD1-supply = <&vsys_3v3>;
-+		VDD2-supply = <&vsys_3v3>;
-+		VCCAD1-supply = <&vsys_5v0>;
-+		VCCAD2-supply = <&vsys_5v0>;
-+		VCCDA1-supply = <&vsys_5v0>;
-+		VCCDA2-supply = <&vsys_5v0>;
-+	};
-+};
-+
-+&mcasp0 {
-+	status = "okay";
-+	#sound-dai-cells = <0>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mcasp0_pins_default>;
-+	op-mode = <0>;          /* MCASP_IIS_MODE */
-+	tdm-slots = <2>;
-+	auxclk-fs-ratio = <256>;
-+	serial-dir = <	/* 0: INACTIVE, 1: TX, 2: RX */
-+		0 0 0 1
-+		2 0 0 0
-+		0 0 0 0
-+		0 0 0 0
-+	>;
-+};
--- 
-2.25.1
+Yes, that should be WLAN.RM.4.4.1-00288-QCARMSWPZ-1. But I don't know
+why 'QCARMSWPZ-1' is not printed by ath10k, maybe we have a bug
+somewhere.
 
+> How can I find the file in `/lib/firmware/`?
+
+It should be in ath10k/QCA6174/hw3.0/firmware-6.bin.
+
+All firmware releases are available here:
+
+https://git.codelinaro.org/clo/ath-firmware/ath10k-firmware/-/tree/main/QCA=
+6174/hw3.0/4.4.1?ref_type=3Dheads
+
+And more info here:
+
+https://wireless.wiki.kernel.org/en/users/drivers/ath10k/firmware
+
+--=20
+https://patchwork.kernel.org/project/linux-wireless/list/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
+hes
 
