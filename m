@@ -1,194 +1,209 @@
-Return-Path: <linux-kernel+bounces-230433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E39917CC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:43:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A72CD917CB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:41:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96A0F2848E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:43:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19EE7B222AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:41:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1524A16EB53;
-	Wed, 26 Jun 2024 09:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E024216EB43;
+	Wed, 26 Jun 2024 09:41:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="vwpfgZQe"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uOrrSKWm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD1016CD11
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08768BEF;
+	Wed, 26 Jun 2024 09:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719395008; cv=none; b=WwbD7cRv+8ld2oNC8b0TwqkDiPBki/jZm/58uqOCUX4H8cTGTkqXRXFHoXI7ksfNu5hUXtjYbKIQSTvEKPPsJVCsCf8vED161FeG9DZroLmG0czMiV/U+PkALuSk+zI14/2DRkU12RppXw3dmkGMgw9aSAi6oYedcWxcDEVM090=
+	t=1719394901; cv=none; b=JwepR0FuLlI550LZ9HYE4cHtQbPTfb2d7/xS+w+Iyqpn5vvFxf19oUVHlKc/647pL/Z0TQyADNXceYroNnxeXG3F0UKfjwQxusw36/2XuSDnMyxhmArFbLFAFAY3d+JxQBL94/MRXirzJdyV06LZw9KHdsWf6/OouLycsQS8WsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719395008; c=relaxed/simple;
-	bh=vDLv0eUVGJMmwyg+4UxkWlAksU175EmQrjDIno/a+Gs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=se+CBTyiKXh4YPchytjF/sTMafiztJLI16fAFH/bJMCbD/VG1gqPAgES/LgbN8AbkySaX9nfeQGX8j5zpWeiH5+7T3FJFqG4GCp+B8FFqIpIgp/Upeq8WadgwCOdnyxDPAX2ECEr97oMcnJxllp3C17mnX6czqyu6+JA5teARDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=vwpfgZQe; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f47f07acd3so53363565ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:43:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessos.org; s=google; t=1719395006; x=1719999806; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jWFJ83bKSjpBaUA+SG/yPoduHd16W9GZx5KqGR4AgEA=;
-        b=vwpfgZQeL49q6ymP0Kpc4x4eSMcAgLK+4DK6siPxGI2rrqqD38Hb0IyQZCAs+EwhB+
-         ZzSlEArQj1AE1RzTSYetjRvmXQ6VqBFE1LEis13WUE6PCLtJ9mnbNEpbutt0SlSeAoXt
-         F1OH/iDOZxJkt9TSIKrBSwc1dWSGUi95mAeMmO13EIbvH/SYKF7PqmNJmAHgoSUDEO8T
-         mRIRIGNgxBM1g4LwDjLYUxh25ku3Lgzrk7BJTsht+TETRWogr1qmkF5+cih+nHfVAoEP
-         y8iGYH5nRWgSQonc8Dlko6skMXdqrmQLkqx0b4K6IQbG/ZH3gBICbw71FO7IRQMDFXWj
-         fMKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719395006; x=1719999806;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jWFJ83bKSjpBaUA+SG/yPoduHd16W9GZx5KqGR4AgEA=;
-        b=EvGRiA8MM8MQdfgWDs+roOFSBO57wHic4UGjq+3RDbou9CtEXRJCgTg2w2lLDzdhjs
-         OKwIQUetJAzGWThrFiCHno+zVOZA9OICqq32JvD6BUhz+mH0V6dqtldxO5I3sep3aTMJ
-         KzjwvMI1gPhwB+ZFIsYuZsCwZAhwytTl5klW7HzHIrEWlio877xKaioxNehKKqjdMiX+
-         v4uSfB9efn5jQhMy3qyDJjG5FK7MdoTXB3nIO+m3F2PSG7CgnBpcyDp3RevLTcniMTfC
-         0AvO5i3uzDT/v4J1Xq9rtD1LFrBEHV5Yd5jOOrDdiU6/eaQURfTfAWB+xjbitzDFeIqB
-         hxVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnWujWUGUCNq+P4/GBT9WbyUmg+w+KE+walCssmATowuFNFWCbyawElGMS8LDdDFl56l4QV6ggeXy5DXeihhMlMkgWDDIbhDDXf2Iw
-X-Gm-Message-State: AOJu0YxjC3UjQBOkWPUgFPkbE6GbYjcoSQ9b67uEqI53vxSSTRr8nUaD
-	lFvH1oQhKavDAH85b9SqLkLvsgHq/v9T33WGF94ilyDbM23z42UH63qK6Llglmw=
-X-Google-Smtp-Source: AGHT+IE2etjp6SLgpYIk6NOvVt25jF7m5xfwbrxRBUDv9rWsMCAEdZz8pW2+kWTCkFtQsPXiOao3DA==
-X-Received: by 2002:a17:902:ecc8:b0:1f9:c289:737c with SMTP id d9443c01a7336-1fa1d683c1emr116520375ad.60.1719395006080;
-        Wed, 26 Jun 2024 02:43:26 -0700 (PDT)
-Received: from localhost.localdomain ([123.51.167.56])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1f9eb5e030dsm95700375ad.218.2024.06.26.02.43.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 02:43:25 -0700 (PDT)
-From: Jian-Hong Pan <jhp@endlessos.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>,
-	David Box <david.e.box@linux.intel.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Nirmal Patel <nirmal.patel@linux.intel.com>,
-	Jonathan Derrick <jonathan.derrick@linux.dev>,
-	Paul M Stillwell Jr <paul.m.stillwell.jr@intel.com>,
-	linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux@endlessos.org,
-	Jian-Hong Pan <jhp@endlessos.org>
-Subject: [PATCH v7 4/4] PCI/ASPM: Fix L1.2 parameters when enable link state
-Date: Wed, 26 Jun 2024 17:41:16 +0800
-Message-ID: <20240626094115.14470-2-jhp@endlessos.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240626092821.14158-2-jhp@endlessos.org>
-References: <20240626092821.14158-2-jhp@endlessos.org>
+	s=arc-20240116; t=1719394901; c=relaxed/simple;
+	bh=s3z7HXMv4Han+cJsdchl0Tjew+5XriJiwIN+Ja5UnaI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MeNL21XRxpDXvNONeZ90HD7NY95wfBj4RXr2/vjID1LpA8GAXTJlKXRS9E1+a1rZJjsMVzRvdkBa/tnKEPbiRmmn3GJx/+8cJHM4kwP0Ad98XPxR4RU/3jkgwAKfEWbHFbyBMF+zqOpvxiUDWcmD/fYvZOTa0R25lOxfR/api7M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uOrrSKWm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C58D4C32786;
+	Wed, 26 Jun 2024 09:41:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719394900;
+	bh=s3z7HXMv4Han+cJsdchl0Tjew+5XriJiwIN+Ja5UnaI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uOrrSKWmRIW4TSdz+ruUE1K5qfT30Xcy9B4W9WAYRPr0ClteEew+XD0o8YxxRtYHj
+	 d9412DC9EwkSRtEYo+rYXmmhw26ome1CIq5U/zB3CKH8k3tvIjRcyjEK00INVhPii/
+	 XCcMXIUU9HuxGhokj4CDpQixmu9xU7xSBiqRuGIpS30+fD9B8/iU4LxX9iN005G2xh
+	 Gf5Mthm42iLQgZAMPHmOicHnjyipeVIGIDzk2VX6/PfZvm38n1rEoywuSZRV4PKFy2
+	 TK3qFxAaK9TsN+pxFNl9leYVXXvNSJRD5yYG3+JbhFl5nwAy3miz/mv7jYnsDvfQGY
+	 d0CrnQq6a+LnQ==
+Message-ID: <214be4bb-3e24-4868-8cb7-db73b6cd4b50@kernel.org>
+Date: Wed, 26 Jun 2024 11:41:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2 1/4] dt-bindings: clock: renesas: Document
+ RZ/V2H(P) SoC CPG
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240610233221.242749-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <34b21e6f-0896-4691-9b66-d06ef2f44905@kernel.org>
+ <CA+V-a8u6dDpbb5BrQ+ty_RbwcPOF-U6rnJnuASRXEDVdrhrvAA@mail.gmail.com>
+ <20438973-d7a1-427f-a2ed-5c5b9f7db872@kernel.org>
+ <CAMuHMdVrXmDBxD4gGkHvs3iUuT6nnzjWzVUme7jH5u=YpyzQuw@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAMuHMdVrXmDBxD4gGkHvs3iUuT6nnzjWzVUme7jH5u=YpyzQuw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Currently, when enable link's L1.2 features with __pci_enable_link_state(),
-it configs the link directly without ensuring related L1.2 parameters, such
-as T_POWER_ON, Common_Mode_Restore_Time, and LTR_L1.2_THRESHOLD have been
-programmed.
+On 26/06/2024 11:35, Geert Uytterhoeven wrote:
+> Hi Krzysztof,
+> 
+> On Thu, Jun 13, 2024 at 2:57 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On 13/06/2024 11:53, Lad, Prabhakar wrote:
+>>> On Tue, Jun 11, 2024 at 8:02 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>> On 11/06/2024 01:32, Prabhakar wrote:
+>>>>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>>>>>
+>>>>> Document the device tree bindings for the Renesas RZ/V2H(P) SoC
+>>>>> Clock Pulse Generator (CPG).
+>>>>>
+>>>>> CPG block handles the below operations:
+>>>>> - Generation and control of clock signals for the IP modules
+>>>>> - Generation and control of resets
+>>>>> - Control over booting
+>>>>> - Low power consumption and power supply domains
+>>>>>
+>>>>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> 
+>>>>> +  '#clock-cells':
+>>>>> +    description: |
+>>>>> +      - For CPG core clocks, the two clock specifier cells must be "CPG_CORE"
+>>>>> +        and a core clock reference, as defined in
+>>>>> +        <dt-bindings/clock/r9a09g057-cpg.h>,
+>>>>
+>>>> So second cell is not used?
+>>>>
+>>> It will be used for blocks using core clocks.
+>>>
+>>>>> +      - For module clocks, the two clock specifier cells must be "CPG_MOD" and
+>>>>> +        a module number.  The module number is calculated as the CLKON register
+>>>>> +        offset index multiplied by 16, plus the actual bit in the register
+>>>>> +        used to turn the CLK ON. For example, for CGC_GIC_0_GICCLK, the
+>>>>> +        calculation is (1 * 16 + 3) = 19.
+>>>>
+>>>> You should not have different values. Make it const: 1 and just use IDs.
+>>>>
+>>> Are you suggesting not to differentiate between core/mod clocks. They
+>>> are differentiated because the MOD clocks can turned ON/OFF but where
+>>> as with the core clocks we cannot turn them ON/OF so the driver needs
+>>> to know this, hence two specifiers are used.
+>>
+>> Every driver knows it... I am really, what is the problem here? Are you
+>> saying the drivers create some unknown clocks?
+> 
+> The driver knows for sure which clocks are module clocks, and thus can
+> be used for power management.  To simplify the driver, two separate
+> numbers spaces are used:
+>   1. Core clock numbers come from IDs in the DT binding headers,
+>   2. Module clock numbers come straight[1] from the hardware docs.
+> As the latter are fixed, merging them into a single number space in
+> a future-proof way is hard[2], the bindings use 2 clock cells.
 
-This leads the link's L1.2 between PCIe Root Port and child device gets
-wrong configs when a caller tries to enabled it.
+IIUC, your module clock numbers are not DT ABI and should not be put
+into the binding headers. I think that's the case currently, right?
 
-Here is a failed example on ASUS B1400CEAE with enabled VMD:
+If above is correct, considering your explanation I am fine. Thanks for
+the time to make it clear.
 
-10000:e0:06.0 PCI bridge: Intel Corporation 11th Gen Core Processor PCIe Controller (rev 01) (prog-if 00 [Normal decode])
-    ...
-    Capabilities: [200 v1] L1 PM Substates
-        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
-        	  PortCommonModeRestoreTime=45us PortTPowerOnTime=50us
-        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-        	   T_CommonMode=45us LTR1.2_Threshold=101376ns
-        L1SubCtl2: T_PwrOn=50us
+> 
+> Alternatively, a unified number space using IDs in the DT binding
+> headers could be used, as you suggest.
+> 
+> [1] "straight" may be a misnomer here, as the DT writer still has to
+>     calculate the number from register index and bit index:
+> 
+>         n = register index * 16 + bit index
+> 
+>     i.e. register index 1 and register bit 3 become 19.
+> 
+>     In the R-Car series, this is handled slightly more elegant
+>     (IMHO ;-), and easier to the human eye, by using a sparse
+>     number space:
+> 
+>         n = register index * 100 + bit index
+> 
+>     i.e. register index 1 and register bit 3 become 103.
+>     Which also matches how the bits were named in older SH-Mobile
+>     hardware docs.
+> 
+> [2] One could use an offset to indicate core or module clocks, but
+>     future SoCs in the family may have more clocks.
 
-10000:e1:00.0 Non-Volatile memory controller: Sandisk Corp WD Blue SN550 NVMe SSD (rev 01) (prog-if 02 [NVM Express])
-    ...
-    Capabilities: [900 v1] L1 PM Substates
-        L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substates+
-                  PortCommonModeRestoreTime=32us PortTPowerOnTime=10us
-        L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
-                   T_CommonMode=0us LTR1.2_Threshold=0ns
-        L1SubCtl2: T_PwrOn=10us
 
-According to "PCIe r6.0, sec 5.5.4", before enabling ASPM L1.2 on the PCIe
-Root Port and the child NVMe, they should be programmed with the same
-LTR1.2_Threshold value. However, they have different values in this case.
+> 
 
-Invoke aspm_calc_l12_info() to program the L1.2 parameters properly before
-enable L1.2 bits of L1 PM Substates Control Register in
-__pci_enable_link_state().
-
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=218394
-Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
----
-v2:
-- Prepare the PCIe LTR parameters before enable L1 Substates
-
-v3:
-- Only enable supported features for the L1 Substates part
-
-v4:
-- Focus on fixing L1.2 parameters, instead of re-initializing whole L1SS
-
-v5:
-- Fix typo and commit message
-- Split introducing aspm_get_l1ss_cap() to "PCI/ASPM: Introduce
-  aspm_get_l1ss_cap()"
-
-v6:
-- Skipped
-
-v7:
-- Pick back and rebase on the new version kernel
-- Drop the link state flag check. And, always config link state's timing
-  parameters
-
- drivers/pci/pcie/aspm.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
-index 5db1044c9895..7f2cdda259dc 100644
---- a/drivers/pci/pcie/aspm.c
-+++ b/drivers/pci/pcie/aspm.c
-@@ -1411,6 +1411,8 @@ EXPORT_SYMBOL(pci_disable_link_state);
- static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
- {
- 	struct pcie_link_state *link = pcie_aspm_get_link(pdev);
-+	struct pci_dev *child = link->downstream, *parent = link->pdev;
-+	u32 parent_l1ss_cap, child_l1ss_cap;
- 
- 	if (!link)
- 		return -EINVAL;
-@@ -1428,6 +1430,15 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
- 	if (!locked)
- 		down_read(&pci_bus_sem);
- 	mutex_lock(&aspm_lock);
-+	/*
-+	 * Ensure L1.2 parameters: Common_Mode_Restore_Times, T_POWER_ON and
-+	 * LTR_L1.2_THRESHOLD are programmed properly before enable bits for
-+	 * L1.2, per PCIe r6.0, sec 5.5.4.
-+	 */
-+	parent_l1ss_cap = aspm_get_l1ss_cap(parent);
-+	child_l1ss_cap = aspm_get_l1ss_cap(child);
-+	aspm_calc_l12_info(link, parent_l1ss_cap, child_l1ss_cap);
-+
- 	link->aspm_default = pci_calc_aspm_enable_mask(state);
- 	pcie_config_aspm_link(link, policy_to_aspm_state(link));
- 
--- 
-2.45.2
+Best regards,
+Krzysztof
 
 
