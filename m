@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-231211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA1D09187A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:42:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB3349187A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80BDB1F21BBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:42:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8689D28B2EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F0EE18FC6C;
-	Wed, 26 Jun 2024 16:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB5F18FC63;
+	Wed, 26 Jun 2024 16:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="4JkEpz0Y"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n+4M+nxl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC98918EFCA;
-	Wed, 26 Jun 2024 16:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A031B18E75D;
+	Wed, 26 Jun 2024 16:41:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719420117; cv=none; b=SNDXuSRx4FChX9YH854fQkKlI1LeIhH2H1py9qpXgxr6koqfbkiKtochJXkBYtylPS6ecwxcA+ngYL6Ab4S3FRRiQsIjg941JunoDtzYVqtsW2peVuge4I6jKaFpV43Mss86zDYI6uerxK3yCPN9b0xKCVAi2nS5xYs7yXPuYzQ=
+	t=1719420091; cv=none; b=Q6kiacOQmis36Su6A8NJfCx6ogogG+cO8hyGe5tKU5qBXU2sEZ9LBRR6DgvXOtccrYEvVBYQfAcIHd2BBAl9QkUVyDYJTP7loZtkTBq1tA+rrtFhXA+N2DzuYFirqH/jkqUqX2o4yG/kuOZqJVlwzP6GhXueZNvmOlJN+UvGJVQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719420117; c=relaxed/simple;
-	bh=KzKcv4a2vveGFKQF+gsNjD7NpPRR28fxKC5mX4CO4M8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=opDS1kwv8cK+cbKsE6DRkIq1iTYpexpP4GsO7LTc+vHXycYqGH3EI47TJzdghoUYmKw5assqjwOPAtQwJ1PW8m7FCYEaFlyh5ws6vjonX7n5w0q2MDhIsHIV1zDXpgf7FV1X/S4y+ReMiKP/8q+98OuggjVmt+/4ew2yQN5zKwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=4JkEpz0Y; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QDUWLJ024438;
-	Wed, 26 Jun 2024 18:41:41 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	FBVn3RGmQ5EII4oizLSos5vvLk3lXaI9WnLsWvo9+jc=; b=4JkEpz0YYrI3Elrl
-	9OjV+2a7KhXDbeV3kr7SdDYUAJurJ+AWZtMbvXRu7EIpUE3jkVvaJSSBhLB8nGqd
-	mPfrvPusmmcwmQxgtPnBBrb0Dy/1S5Kmx43+azLJG/MWyQSsAHKC0d7vEgAvcM/Y
-	Qs+lw167kEeFfUCafLjs2IfizLT/YoQlXTzU0DUzry0OTFyowkHODyeYr12mzLZi
-	YFoMvuGwkzpJDlN2Cq6JRsoyhzJpPiqS46ydo1qebDbPIC+0W1nRmHeWHhLwPeEi
-	BC7SME2cZS+xU5bLNk7NhI45qyu5Z2v/sjxuFn4WUP83JJLH+7FplkAqQ4fWa78k
-	tK8iKg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yx9jjev2n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 18:41:41 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3D59B4002D;
-	Wed, 26 Jun 2024 18:41:37 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 71D72229A91;
-	Wed, 26 Jun 2024 18:40:59 +0200 (CEST)
-Received: from [10.252.26.2] (10.252.26.2) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 26 Jun
- 2024 18:40:58 +0200
-Message-ID: <eefc746a-2181-41da-b777-b077a4c19b77@foss.st.com>
-Date: Wed, 26 Jun 2024 18:40:58 +0200
+	s=arc-20240116; t=1719420091; c=relaxed/simple;
+	bh=Ng3JmspzaUJJb1ZBh8cyB3xxKd0+Oed2sYqKaTzLd6I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DoanOuG4r78XRxJc1X98nyXJpYjvx/JnHi9081pWzJ+lDsz2d2d9Q5WDMlDToa7XUVmgbrc5bP1/Yf3BF2wsxqVA9h/hLZEnQENdL6610bdJ29qf8jw3yT73THoTjKLaL/ehfcsz3Ld43sAzyJzujJJXW3g5hmhta/2d6Z4FrLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n+4M+nxl; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719420090; x=1750956090;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=Ng3JmspzaUJJb1ZBh8cyB3xxKd0+Oed2sYqKaTzLd6I=;
+  b=n+4M+nxlQgRYe7sTLxe97O4JXyfHOq99aZ86Zkn1F2f2UOo0oBcktU9+
+   i/CNP6c5UTGYDMEdD7/wsrxHluw+BQbQNPEkTsNFdWU+SsFDIezulpVr6
+   tFmvYeZbzZdbqETkHIIGEW58U8gtSUoJ20JAcLJLWKsuZW27HWtigHraH
+   bIyUXUFzJMxNjzS76GMDjKLwpLZl6NwaIgau/saCWGA+Cn9FbpDOp1oiC
+   V2l0d/FOyOAzOEXvC+F3eTvyFgHATQaLB+fdWuVTEtyIGxcH0NVbnwTIT
+   Ss99koTvnVP4pOE7k8rQ1jQNBkZpKSOEnm9cNV18iMo4Qbl9eNqLVwUDj
+   g==;
+X-CSE-ConnectionGUID: a7MljIhzTLqy5jIYpQd2Rg==
+X-CSE-MsgGUID: ZjTbdLvfQ0GyMi2RVINbCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16731591"
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="16731591"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 09:41:29 -0700
+X-CSE-ConnectionGUID: /6wgtqOCTNipk71msqBlDQ==
+X-CSE-MsgGUID: iTCNQAUSR0KEjIrE/eG4Ig==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="44778573"
+Received: from djiang5-mobl3.amr.corp.intel.com (HELO [10.125.109.183]) ([10.125.109.183])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 09:41:28 -0700
+Message-ID: <73d13869-cb80-4226-b8fe-3e45fb7d2518@intel.com>
+Date: Wed, 26 Jun 2024 09:41:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,69 +66,50 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/8] dt-bindings: iio: add sigma delta modulator
- backend
-To: Conor Dooley <conor@kernel.org>
-CC: <fabrice.gasnier@foss.st.com>, Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240625150717.1038212-1-olivier.moysan@foss.st.com>
- <20240625150717.1038212-6-olivier.moysan@foss.st.com>
- <20240625-babied-skies-0722dbdfc524@spud>
+Subject: Re: [PATCH v2] cxl: add missing MODULE_DESCRIPTION() macros
+To: Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>,
+ Alison Schofield <alison.schofield@intel.com>,
+ Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+ Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <20240607-md-drivers-cxl-v2-1-0c61d95ee7a7@quicinc.com>
+ <20240607151046.00002ae2@Huawei.com>
+ <aef7c12f-cefa-4823-b3a2-920c12990afa@quicinc.com>
 Content-Language: en-US
-From: Olivier MOYSAN <olivier.moysan@foss.st.com>
-In-Reply-To: <20240625-babied-skies-0722dbdfc524@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Dave Jiang <dave.jiang@intel.com>
+In-Reply-To: <aef7c12f-cefa-4823-b3a2-920c12990afa@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
 
-Hi Conor,
 
-On 6/25/24 17:34, Conor Dooley wrote:
-> On Tue, Jun 25, 2024 at 05:07:13PM +0200, Olivier Moysan wrote:
->> Add documentation of device tree bindings to support
->> sigma delta modulator backend in IIO framework.
+
+On 6/26/24 9:02 AM, Jeff Johnson wrote:
+> On 6/7/2024 7:10 AM, Jonathan Cameron wrote:
+>> On Fri, 7 Jun 2024 06:57:15 -0700
+>> Jeff Johnson <quic_jjohnson@quicinc.com> wrote:
 >>
->> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+>>> make allmodconfig && make W=1 C=1 reports:
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/core/cxl_core.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pci.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_mem.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_acpi.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_pmem.o
+>>> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/cxl/cxl_port.o
+>>>
+>>> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+>>>
+>>> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+>>
+>> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+>>
+>> Thanks,
 > 
-> I don't review bindings for a job, I can only reliably get to look at
-> my mail queue in the evenings, please give me a chance to reply to you
-> before you submit a new version.
+> Following up to see if anything else is needed from me. Hoping to see this in
+> linux-next so I can remove it from my tracking spreadsheet :)
+
+I have it locally queued, but will probably push to linux-next after rc6 drops. 
 > 
-
-Sorry, the short review delay.
-
->> +$id: http://devicetree.org/schemas/iio/adc/sd-modulator-backend.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Sigma delta modulator backend
-> 
-> Same comments about filename and title apply here as the previous
-> version. "TI $foo Sigma Delta Modulator" and drop the reference to back
-> ends or the pretence of being generic.
-> 
-
-The logic here is the same as for the former sigma delta modulator 
-driver. (see discussion [1])
-I mean introducing a generic and minimalist driver to support sd 
-modulators, but not dedicated to a specific modulator. The ads1201 is 
-chosen as a basic modulator here. But it is rather an arbitrary choice.
-
-I agree "backend" reference is not really relevant here. I have to think 
-about a way to manage the coexistence of this sigma delta modulator 
-driver with its former version.
-
-[1] https://lore.kernel.org/all/6943aaf5-b580-0fd1-7a2e-b99f7a266388@st.com/
-
-BRs
-Olivier
-
-> Thanks,
-> Conor.
+> /jeff
 
