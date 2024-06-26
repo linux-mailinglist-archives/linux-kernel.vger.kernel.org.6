@@ -1,246 +1,186 @@
-Return-Path: <linux-kernel+bounces-230713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1783E9180F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:32:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01238918148
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:47:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BA4280AA7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:32:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 706A6B228BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0987C181CE2;
-	Wed, 26 Jun 2024 12:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C681849CB;
+	Wed, 26 Jun 2024 12:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PpD6ZpKM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bk9zdNni"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD4D171AD;
-	Wed, 26 Jun 2024 12:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12B5D53B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:46:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719405123; cv=none; b=CS6st0j9POUjbxW0JXkOUmJoMI5wTdnkH0bBVdZf+ETo8v2US0QIzMyCMGOpCvgYy2+b+MsEa3czU4c16srfce9dVbm9p4z8fbLNV5cCuSIapOTCm5eivOUOvEl+74Ext2AxqLe0nvZXeOyviHHoMH85ccGnvZQwreU4VKAFDOc=
+	t=1719405995; cv=none; b=XGlgbEdeekqEaxMQjSX2FVSfcKFvouMi1lNlwJLJyYlcitBYXiIOsnShr22A/OXOLablUku6j40EPoGI0RfR/jIO9wks1Efx3/HCujI1ICCxjHeJ8/PImHJ7DrgMVY5sLs76l8tI9uo3yheo3yGiR7qDeMR8zr+hM8J/f2UJGaM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719405123; c=relaxed/simple;
-	bh=mc/ZYbx1LwXPN/DM65SBf0NUloG3DhGylqQgVaBcn9g=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=LxE4Ex5Dxj0UPFrzEWPn6hoxoRXBsD6jeqz+boRSGlJdw25+bA8p0fUGKcNvJexFM+3bu22g3MYxlQ99gIJwvgb2nor6zSCe7cuNll+w9/jB1Ii2WInWEwUpYZzRly6uFLKQZRNflsKJi1FlLLmeigQ4+ZA4IYd2dMuYQRfjOk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PpD6ZpKM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C21C2BD10;
-	Wed, 26 Jun 2024 12:31:59 +0000 (UTC)
+	s=arc-20240116; t=1719405995; c=relaxed/simple;
+	bh=yBRxGCyHhvuJu8ZihGw7xHj2l5Wg5TZnqQXWyklINCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H5VDI+89sTnYxfx+uGrigJHNz6GxOezPfGs+M31uRdgNGXv15XpM6Qagv5zJO29D2K5wu/VflkU3RsePF5lL2vI6Iz908uJw3nskbq6JYVYtDTsR3yQ837Amq4EqFwXwuUuFnMjDO/ECd3DTQFSLS1X9oMKtT+Mg06nV5x2z72k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bk9zdNni; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2260AC2BD10;
+	Wed, 26 Jun 2024 12:46:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719405122;
-	bh=mc/ZYbx1LwXPN/DM65SBf0NUloG3DhGylqQgVaBcn9g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PpD6ZpKMa22oJXnc5CzpHrMIdkiw7/YZz1clqYsll/D6PeVQU3wuvM38FF9MxpJ/E
-	 PGtfU7hGckDZxUSsxPakXzyhUdY3+U7vCMl6JUroMbpkZ+0Sk9BvPBKzXH28yXtdva
-	 wCcVFDD0JFOrjflRvW6XyODgg0Dl+rHC1z7ROKEPYe3nQAJft3lUoUBmrL9Bndska8
-	 FQ1897/y+TWw0308uQVzjiM6xIqGvL0dyDJAyOEpFbqPsBHTgutljd5GakEH/ZK1Uq
-	 CMjKA27CKH4LRXjHcTcfBIKrgXvhC+9F6OHUb+zgcf5aHeZEx28wVfmXLJ8OOl4V2p
-	 fFpd4rsrceshw==
-Date: Wed, 26 Jun 2024 21:31:57 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Takaya Saeki <takayas@chromium.org>
-Cc: Matthew Wilcox <willy@infradead.org>, Andrew Morton
- <akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Junichi Uekawa <uekawa@chromium.org>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH v2] filemap: add trace events for get_pages, map_pages,
- and fault
-Message-Id: <20240626213157.e2d1b916bcb28d97620043d1@kernel.org>
-In-Reply-To: <20240620161903.3176859-1-takayas@chromium.org>
-References: <20240620161903.3176859-1-takayas@chromium.org>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1719405995;
+	bh=yBRxGCyHhvuJu8ZihGw7xHj2l5Wg5TZnqQXWyklINCg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bk9zdNnisf8YhqaofsuWXspKWLaZ42QsKYZZ399+nxPkeJCsGr8BRFYjxT3MRweEb
+	 a4ckROL2LUpSOkH+ZD7F5ffOLulmU9d3rNcDOS4a7rOsq9MNCrclCoq0kMB8o+oJJB
+	 v/K0r6sn7s8UtlKpro3KPQIkW+mlvbxxxH9N9Bs92m9oDtoJqsPb8mfddtxRdbgmUF
+	 vqGTGcN+21rps4Z4r8/yTr4+KmEbwwBxc96hJ/oKV8+q4RsCncR5T5z/zap78sHPss
+	 uFf/CMztZJZC1Ce+SY5DWxqR5IrsDVLCzQ4vDAbpHDaUZdVqxIKhi6FhjF3cqBMCWP
+	 dWJU1RGH5XIXA==
+Date: Wed, 26 Jun 2024 20:32:29 +0800
+From: Jisheng Zhang <jszhang@kernel.org>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] riscv: uaccess: use input constraints for ptr of
+ __put_user
+Message-ID: <ZnwKXWzRz9B5FbLM@xhacker>
+References: <20240625040500.1788-1-jszhang@kernel.org>
+ <20240625040500.1788-3-jszhang@kernel.org>
+ <acd2e53f-b5c1-49c5-86e2-bc09eb917163@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <acd2e53f-b5c1-49c5-86e2-bc09eb917163@app.fastmail.com>
 
-On Thu, 20 Jun 2024 16:19:03 +0000
-Takaya Saeki <takayas@chromium.org> wrote:
+On Tue, Jun 25, 2024 at 07:54:30AM +0200, Arnd Bergmann wrote:
+> On Tue, Jun 25, 2024, at 06:04, Jisheng Zhang wrote:
+> > I believe the output constraints "=m" is not necessary, because
+> > the instruction itself is "write", we don't need the compiler
+> > to "write" for us. So tell compiler we read from memory instead
+> > of writing.
+> >
+> > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> 
+> I think this is a bit too confusing: clearly there is no
+> read access from the __user pointer, so what you add in here
+> is not correct. There also needs to be a code comment about
 
-> To allow precise tracking of page caches accessed, add new tracepoints
-> that trigger when a process actually accesses them.
-> 
-> The ureadahead program used by ChromeOS traces the disk access of
-> programs as they start up at boot up. It uses mincore(2) or the
-> 'mm_filemap_add_to_page_cache' trace event to accomplish this. It stores
-> this information in a "pack" file and on subsequent boots, it will read
-> the pack file and call readahead(2) on the information so that disk
-> storage can be loaded into RAM before the applications actually need it.
-> 
-> A problem we see is that due to the kernel's readahead algorithm that
-> can aggressively pull in more data than needed (to try and accomplish
-> the same goal) and this data is also recorded. The end result is that
-> the pack file contains a lot of pages on disk that are never actually
-> used. Calling readahead(2) on these unused pages can slow down the
-> system boot up times.
-> 
-> To solve this, add 3 new trace events, get_pages, map_pages, and fault.
-> These will be used to trace the pages are not only pulled in from disk,
-> but are actually used by the application. Only those pages will be
-> stored in the pack file, and this helps out the performance of boot up.
-> 
-> With the combination of these 3 new trace events and
-> mm_filemap_add_to_page_cache, we observed a reduction in the pack file
-> by 7.3% - 20% on ChromeOS varying by device.
-> 
+Here is my understanding: the __put_user is implemented with
+sd(or its less wider variant, sw etc.), w/o considering the
+ex_table, the previous code can be simplified as below:
 
-This looks good to me from the trace-event point of view.
+__asm__ __volatile__ (
+	"sw	%z2, %1\n"
+	: "+r" (err), "=m" (*(ptr))
+	: "rJ" (__x));
 
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Here ptr is really an input, just tells gcc where to store,
+And the "store" action is from the "sw" instruction, I don't
+need the gcc generates "store" instruction for me. so IMHO,
+there's no need to use output constraints here. so I changed
+it to
 
-Thanks!
+__asm__ __volatile__ (
+	"sw	%z1, %2\n"
+	: "+r" (err)
+	: "rJ" (__x), "m"(*(ptr)));
 
-> Signed-off-by: Takaya Saeki <takayas@chromium.org>
-> ---
-> Changelog between v2 and v1
-> - Fix a file offset type usage by casting pgoff_t to loff_t
-> - Fixed format string of dev and inode
-> 
->  include/trace/events/filemap.h | 84 ++++++++++++++++++++++++++++++++++
->  mm/filemap.c                   |  4 ++
->  2 files changed, 88 insertions(+)
-> 
-> V1:https://lore.kernel.org/all/20240618093656.1944210-1-takayas@chromium.org/
-> 
-> diff --git a/include/trace/events/filemap.h b/include/trace/events/filemap.h
-> index 46c89c1e460c..3a94bd633bf0 100644
-> --- a/include/trace/events/filemap.h
-> +++ b/include/trace/events/filemap.h
-> @@ -56,6 +56,90 @@ DEFINE_EVENT(mm_filemap_op_page_cache, mm_filemap_add_to_page_cache,
->  	TP_ARGS(folio)
->  	);
->  
-> +DECLARE_EVENT_CLASS(mm_filemap_op_page_cache_range,
-> +
-> +	TP_PROTO(
-> +		struct address_space *mapping,
-> +		pgoff_t index,
-> +		pgoff_t last_index
-> +	),
-> +
-> +	TP_ARGS(mapping, index, last_index),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(unsigned long, i_ino)
-> +		__field(dev_t, s_dev)
-> +		__field(unsigned long, index)
-> +		__field(unsigned long, last_index)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->i_ino = mapping->host->i_ino;
-> +		if (mapping->host->i_sb)
-> +			__entry->s_dev =
-> +				mapping->host->i_sb->s_dev;
-> +		else
-> +			__entry->s_dev = mapping->host->i_rdev;
-> +		__entry->index = index;
-> +		__entry->last_index = last_index;
-> +	),
-> +
-> +	TP_printk(
-> +		"dev=%d:%d ino=%lx ofs=%lld max_ofs=%lld",
-> +		MAJOR(__entry->s_dev),
-> +		MINOR(__entry->s_dev), __entry->i_ino,
-> +		((loff_t)__entry->index) << PAGE_SHIFT,
-> +		((loff_t)__entry->last_index) << PAGE_SHIFT
-> +	)
-> +);
-> +
-> +DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_get_pages,
-> +	TP_PROTO(
-> +		struct address_space *mapping,
-> +		pgoff_t index,
-> +		pgoff_t last_index
-> +	),
-> +	TP_ARGS(mapping, index, last_index)
-> +);
-> +
-> +DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_map_pages,
-> +	TP_PROTO(
-> +		struct address_space *mapping,
-> +		pgoff_t index,
-> +		pgoff_t last_index
-> +	),
-> +	TP_ARGS(mapping, index, last_index)
-> +);
-> +
-> +TRACE_EVENT(mm_filemap_fault,
-> +	TP_PROTO(struct address_space *mapping, pgoff_t index),
-> +
-> +	TP_ARGS(mapping, index),
-> +
-> +	TP_STRUCT__entry(
-> +		__field(unsigned long, i_ino)
-> +		__field(dev_t, s_dev)
-> +		__field(unsigned long, index)
-> +	),
-> +
-> +	TP_fast_assign(
-> +		__entry->i_ino = mapping->host->i_ino;
-> +		if (mapping->host->i_sb)
-> +			__entry->s_dev =
-> +				mapping->host->i_sb->s_dev;
-> +		else
-> +			__entry->s_dev = mapping->host->i_rdev;
-> +		__entry->index = index;
-> +	),
-> +
-> +	TP_printk(
-> +		"dev=%d:%d ino=%lx ofs=%lld",
-> +		MAJOR(__entry->s_dev),
-> +		MINOR(__entry->s_dev), __entry->i_ino,
-> +		((loff_t)__entry->index) << PAGE_SHIFT
-> +	)
-> +);
-> +
->  TRACE_EVENT(filemap_set_wb_err,
->  		TP_PROTO(struct address_space *mapping, errseq_t eseq),
->  
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 876cc64aadd7..39f9d7fb3d2c 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -2556,6 +2556,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
->  			goto err;
->  	}
->  
-> +	trace_mm_filemap_get_pages(mapping, index, last_index);
->  	return 0;
->  err:
->  	if (err < 0)
-> @@ -3286,6 +3287,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
->  	if (unlikely(index >= max_idx))
->  		return VM_FAULT_SIGBUS;
->  
-> +	trace_mm_filemap_fault(mapping, index);
-> +
->  	/*
->  	 * Do we have something in the page cache already?
->  	 */
-> @@ -3652,6 +3655,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
->  	} while ((folio = next_uptodate_folio(&xas, mapping, end_pgoff)) != NULL);
->  	add_mm_counter(vma->vm_mm, folio_type, rss);
->  	pte_unmap_unlock(vmf->pte, vmf->ptl);
-> +	trace_mm_filemap_map_pages(mapping, start_pgoff, end_pgoff);
->  out:
->  	rcu_read_unlock();
->  
-> -- 
-> 2.45.2.627.g7a2c4fd464-goog
-> 
+The key here: is this correct?
 
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Here is the put_user piece code and comments from x86
+
+/*
+ * Tell gcc we read from memory instead of writing: this is because
+ * we do not write to any memory gcc knows about, so there are no
+ * aliasing issues.
+ */
+#define __put_user_goto(x, addr, itype, ltype, label)                   \
+        asm goto("\n"                                                   \
+                "1:     mov"itype" %0,%1\n"                             \
+                _ASM_EXTABLE_UA(1b, %l2)                                \
+                : : ltype(x), "m" (__m(addr))                           \
+                : : label)
+
+
+As can be seen, x86 also doesn't put the (addr) in output constraints,
+I think x86 version did similar modification in history, but when I tried
+to searh the git history, the comment is there from the git first day.
+
+Any hint or suggestion is appreciated!
+
+> why you do it this way, as it's not clear that this is
+> a workaround for old compilers without
+> CONFIG_CC_HAS_ASM_GOTO_OUTPUT.
+> 
+> > index 09d4ca37522c..84b084e388a7 100644
+> > --- a/arch/riscv/include/asm/uaccess.h
+> > +++ b/arch/riscv/include/asm/uaccess.h
+> > @@ -186,11 +186,11 @@ do {								\
+> >  	__typeof__(*(ptr)) __x = x;				\
+> >  	__asm__ __volatile__ (					\
+> >  		"1:\n"						\
+> > -		"	" insn " %z2, %1\n"			\
+> > +		"	" insn " %z1, %2\n"			\
+> >  		"2:\n"						\
+> >  		_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %0)		\
+> > -		: "+r" (err), "=m" (*(ptr))			\
+> > -		: "rJ" (__x));					\
+> > +		: "+r" (err)			\
+> > +		: "rJ" (__x), "m"(*(ptr)));					\
+> >  } while (0)
+> > 
+> 
+> I suspect this could just be a "r" constraint instead of
+> "m", treating the __user pointer as a plain integer.
+
+I tried "r", the generated code is not as good as "m"
+
+for example
+__put_user(0x12, &frame->uc.uc_flags);
+
+with "m", the generated code will be
+
+...
+csrs    sstatus,a5
+li      a4,18
+sd      a4,128(s1)
+csrc    sstatus,a5
+...
+
+
+with "r", the generated code will be
+
+...
+csrs    sstatus,a5
+li      a4,18
+addi    s1,s1,128
+sd      a4,0(s1)
+csrc    sstatus,a5
+...
+
+As can be seen, "m" can make use of the 'offset' of
+sd, so save one instruction.
+
+> 
+> For kernel pointers, using "m" and "=m" constraints
+> correctly is necessary since gcc will often access the
+> same data from C code as well. For __user pointers, we
+> can probably get away without it since no C code is
+> ever allowed to just dereference them. If you do that,
+> you may want to have the same thing in the __get_user
+> side.
+> 
+>       Arnd
 
