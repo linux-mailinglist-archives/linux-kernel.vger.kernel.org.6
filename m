@@ -1,181 +1,168 @@
-Return-Path: <linux-kernel+bounces-231103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 434FD918635
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 03B5D918633
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:48:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7E691F21C56
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:48:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A935C1F216E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:48:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373A018E748;
-	Wed, 26 Jun 2024 15:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D77318C359;
+	Wed, 26 Jun 2024 15:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I6KpqcSu"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HviN61+Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2D5018413F;
-	Wed, 26 Jun 2024 15:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A513F176ABF;
+	Wed, 26 Jun 2024 15:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719416917; cv=none; b=NNDpYSdTxy63p0Dvr8HlwMaRIy411MIyiGJPv/N2IKKneVuR/i48xkVMDZpPEkOBdDowYS4PqfCjmsNKtkwnqW3ilT5HRkNs8kjfibqr1FI/cXHsXZnVGVPXfgdmNw/1rX6TrsEtulIqQPSr0awv/P/dPOeC0fF4kS7/UwDHRIQ=
+	t=1719416906; cv=none; b=A8Vp7KuQc5djcY+95jz/FsqR8E5ORq+/Y8/7NwGrwZ2rLjwwCAay15e2uip9P4BE+Sus8zngzO15RxgqvPPCXR1vzqpZYki3cH2b6xs5/2FQKW8dgBQ46RjtKqlcOKja+GPQWw00nKOhFJ/sPQP7T8nBvEEwdRq62C5k0JqeNS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719416917; c=relaxed/simple;
-	bh=FzzowXyGnIPOeCOLkhjjrNoMLDhPzrwp81kcDqhZgHY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=jUamhqEs/pLLpfXHJBRxfnxkpwrgQUnV72xJjJiDu3hv4VykX/69G+1AYwfiJxEnJoei2UyThX4wWXQ/Z4cxwiE5hkxIvtmoJBgTQ/wJMXZdV0H6JozHiM0XoRfWFX7bowWABEqHzxIR4LpwXvrzlF1linjHHx77DUVOfdOM8UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I6KpqcSu; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfVJh029258;
-	Wed, 26 Jun 2024 15:48:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	d6IzhZJiiJo63llI9ttpBLLWYn+B921/b5BIFdB4ok4=; b=I6KpqcSurNwiqzk6
-	ouHQCQgpIwR3DyHlAz9MgSsZSmY6GGDsYWGY/Q+gWw2HL0nDyiXHu+ekkKhX0fPy
-	y+zgw60VmUwXenlGAqAwjq5GT52j+84bDDnr0+KuKx+QBkv3uxWO8azl/aS7MV9d
-	DXbHLT+Y0WQBKB6gB8TVKmtf3bybnWeBBxZ31BLfCCtcdupVHOclQvZxeDgUJWV/
-	GMVGjAVbHpyhBrTZYjCUy2rJT/5vVVmlsGRLeYEtnjssa5N2mZGOtPtp1npmIjGK
-	VOupMS7N/eKtudLq/3OTcplTvaJkRpXqtMY+AYq+ZUWGI4SAKCB6XBiT9VuM4SJr
-	orw9/w==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnm6sq84-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 15:48:14 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QFmDkE018812
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 15:48:13 GMT
-Received: from [10.110.92.181] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 08:48:08 -0700
-Message-ID: <1c65ae7a-ac35-4c80-aa06-9ca921a7c919@quicinc.com>
-Date: Wed, 26 Jun 2024 08:48:02 -0700
+	s=arc-20240116; t=1719416906; c=relaxed/simple;
+	bh=7xwExvsEtQoE7N89hQc/J6z0i05gkGebrUaPVCObEFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iPX3y+iK+Tx+f+j+JPh0eghr/iXJyT1pPe6OuwNUJtkoEecmvhW+oMAgnROr4lQilhojoJ301GxTtJpgbKD2zJOlAwVSDlFex8No+uexzptFxonjlnWBBDYYDMCRJMEuk8TCRonGQcb9j6zlra8I7yjnocsMZYnWMZjFFVIMacE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HviN61+Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A91D7C32782;
+	Wed, 26 Jun 2024 15:48:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719416906;
+	bh=7xwExvsEtQoE7N89hQc/J6z0i05gkGebrUaPVCObEFM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HviN61+YBV3eLHyiuRy4LkHEQ41TYCbBKwmC+EQlJITSa3tdk+hdSy18vkGB5xyPt
+	 9UHzKpY3b6aWVl2xQjf58xirSIipJgVkBw5P65W7XF4qcC5SZs2sZjvCdsjXyUmtOL
+	 zw8GJ5U3eV0cNBD6fvTtuGM146MSDJxGAx37hShelajotSxSEmp+zcv7dtbs7VBh3k
+	 3X2uLsNy/eDDZzFKwoRZmEoSps/Kpsf0icPnwuq8d8iOyB7mhqAe7eWt5wybZ6xuFS
+	 Ewg5cLQHcbAlnQEvsCK+TL20LtTViYu6bUecyMKn781sbojycNFJvE/1UBZdWxLcwK
+	 UDZIxvPMAwTNQ==
+Date: Wed, 26 Jun 2024 16:48:21 +0100
+From: Lee Jones <lee@kernel.org>
+To: Peter Griffin <peter.griffin@linaro.org>
+Cc: arnd@arndb.de, krzk@kernel.org, alim.akhtar@samsung.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
+	saravanak@google.com, willmcvicker@google.com,
+	semen.protsenko@linaro.org, kernel-team@android.com
+Subject: Re: [PATCH v3 0/2] Add syscon of_syscon_register_regmap api
+Message-ID: <20240626154821.GE2504017@google.com>
+References: <20240621115544.1655458-1-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] of: reserved_mem: Restructure code to call reserved
- mem init functions earlier
-To: Rob Herring <robh@kernel.org>
-CC: <broonie@kernel.org>, <catalin.marinas@arm.com>, <conor@kernel.org>,
-        <devicetree@vger.kernel.org>, <hch@lst.de>, <iommu@lists.linux.dev>,
-        <kernel@quicinc.com>, <linux-kernel@vger.kernel.org>,
-        <m.szyprowski@samsung.com>, <nathan@kernel.org>,
-        <oe-kbuild-all@lists.linux.dev>, <robin.murphy@arm.com>,
-        <saravanak@google.com>, <will@kernel.org>
-References: <202406181626.126X1Nbz-lkp@intel.com>
- <20240620001027.2326275-1-quic_obabatun@quicinc.com>
- <20240626151622.GA3139921-robh@kernel.org>
-Content-Language: en-US
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-In-Reply-To: <20240626151622.GA3139921-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: g3TZyqMQhSuc0Ixry-udpwaVYhV5XTxF
-X-Proofpoint-ORIG-GUID: g3TZyqMQhSuc0Ixry-udpwaVYhV5XTxF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=973 lowpriorityscore=0
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406260115
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240621115544.1655458-1-peter.griffin@linaro.org>
 
+On Fri, 21 Jun 2024, Peter Griffin wrote:
 
-On 6/26/2024 8:16 AM, Rob Herring wrote:
-> On Wed, Jun 19, 2024 at 05:10:27PM -0700, Oreoluwa Babatunde wrote:
->> After all the reserved memory regions have been added to the
->> reserved_mem array, a region specific initialization function is called
->> on each of reserved memory regions in a loop to initialize them.
->>
->> With recent changes made to allow the reserved_mem array be dynamically
->> allocated, the cma reserved memory regions are not initialized until
->> after the page tables are setup. This causes the warning seen in the
->> dump stack below:
->>
->> 	WARNING: CPU: 0 PID: 1 at mm/memory.c:2789 __apply_to_page_range+0x360/0x380
->> 	CPU: 0 PID: 1 Comm: swapper/0 Not tainted 6.10.0-rc1-00007-ga46cccb0ee2d #1
->> 	Hardware name: Generic DT based system
->> 	Call trace:
->> 	unwind_backtrace from show_stack+0x18/0x1c
->> 	show_stack from dump_stack_lvl+0x54/0x68
->> 	dump_stack_lvl from __warn+0x74/0x114
->> 	__warn from warn_slowpath_fmt+0x13c/0x1c0
->> 	warn_slowpath_fmt from __apply_to_page_range+0x360/0x380
->> 	__apply_to_page_range from apply_to_page_range+0x24/0x2c
->> 	apply_to_page_range from __alloc_from_contiguous+0xc4/0x158
->> 	__alloc_from_contiguous from cma_allocator_alloc+0x3c/0x44
->> 	cma_allocator_alloc from arch_dma_alloc+0x128/0x2b4
->> 	arch_dma_alloc from dma_alloc_attrs+0x90/0x150
->> 	dma_alloc_attrs from drm_gem_dma_create+0xa4/0x13c
->> 	drm_gem_dma_create from drm_gem_dma_create_with_handle+0x24/0xac
->> 	drm_gem_dma_create_with_handle from drm_gem_dma_dumb_create+0x44/0x50
->> 	drm_gem_dma_dumb_create from drm_client_framebuffer_create+0x9c/0x164
->> 	drm_client_framebuffer_create from drm_fbdev_dma_helper_fb_probe+0x84/0x23c
->> 	drm_fbdev_dma_helper_fb_probe from __drm_fb_helper_initial_config_and_unlock+0x2e4/0x4f8
->> 	__drm_fb_helper_initial_config_and_unlock from drm_fbdev_dma_client_hotplug+0x74/0xb8
->> 	drm_fbdev_dma_client_hotplug from drm_client_register+0x5c/0x98
->> 	drm_client_register from aspeed_gfx_probe+0x278/0x3c0
->> 	aspeed_gfx_probe from platform_probe+0x60/0xb8
->> 	platform_probe from really_probe+0xd4/0x3b4
->> 	really_probe from __driver_probe_device+0x90/0x1dc
->> 	__driver_probe_device from driver_probe_device+0x38/0xd0
->> 	driver_probe_device from __driver_attach+0x118/0x1dc
->> 	__driver_attach from bus_for_each_dev+0x84/0xd4
->> 	bus_for_each_dev from bus_add_driver+0xec/0x1f0
->> 	bus_add_driver from driver_register+0x84/0x11c
->> 	driver_register from do_one_initcall+0x84/0x1c8
->> 	do_one_initcall from kernel_init_freeable+0x1a4/0x230
->> 	kernel_init_freeable from kernel_init+0x1c/0x138
->> 	kernel_init from ret_from_fork+0x14/0x28
->> 	Exception stack(0x9f015fb0 to 0x9f015ff8)
->> 	5fa0:                                     00000000 00000000 00000000 00000000
->> 	5fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
->> 	5fe0: 00000000 00000000 00000000 00000000 00000013 00000000
->> 	---[ end trace 0000000000000000 ]---
->> 	aspeed_gfx 1e6e6000.display: [drm] fb0: aspeed-gfx-drmd frame buffer device
->>
->> Hence, restructure the code to initialize the regions as soon as each
->> of them are added to the reserved_mem array.
->>
->> Fixes: a46cccb0ee2d ("of: reserved_mem: Restruture how the reserved memory regions are processed")
->> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
->> ---
->> v2:
->> - Fix kernel-doc for of_init_reserved_mem_node() in response to the
->>   below warning from v1:
->>   https://lore.kernel.org/all/202406181626.126X1Nbz-lkp@intel.com/
->>
->> v1:
->>   https://lore.kernel.org/all/20240617193357.3929092-1-quic_obabatun@quicinc.com/
->>
->>  drivers/of/fdt.c             |  2 +-
->>  drivers/of/of_private.h      |  2 +-
->>  drivers/of/of_reserved_mem.c | 83 +++++++++++++++++++++---------------
->>  3 files changed, 50 insertions(+), 37 deletions(-)
-> Applied.
->
-> In the future, do not send fixes or new versions as replies to previous 
-> threads. The default behavior of b4 is to apply v6 of the series because 
-> that is the 'newest' version.
->
-> Rob
-ack.
+> Hi Lee, Arnd, Krzysztof, all,
+> 
+> This series adds support to syscon driver for a new of_syscon_register_regmap()
+> api.
+> 
+> Platforms such as gs101 require a special regmap to access PMU registers, which
+> in the existing upstream client drivers are accessed via syscon regmap. This
+> issue was partly solved in [1] whereby a custom regmap is created in exynos-pmu
+> and a new API exynos_get_pmu_regmap_by_phandle() created.
+> 
+> One issue with the approach in [1] is that it required client drivers to be
+> updated from syscon_regmap_lookup_by_phandle() to
+> exynos_get_pmu_regmap_by_phandle() when obtaining the regmap.
+> 
+> Whilst updating to exynos_get_pmu_regmap_by_phandle() was OK for exynos
+> specific drivers, it meant other drivers like syscon-reboot and syscon-poweroff
+> which span multiple SoC architectures could not be easily re-used.
+> 
+> In previous review feedback for USB phy and gs101 poweroff driver Krzysztof
+> requested [2] that we take a more generic approach that other SoCs can also
+> leverage.
+> 
+> The new of_syscon_register_regmap() api overcomes this limitation by allowing
+> a SoC driver like exynos-pmu to register it's SoC specific regmap with the
+> syscon driver. This keeps the SoC complexity out of syscon driver, and allows
+> client drivers to continue using syscon_regmap_lookup_by_phandle() as before.
+> The solution allows more code re-use and can be used by other SoC archs.
+> 
+> Notes on probe ordering
+> 
+> exynos-pmu runs at postcore_initcall, so all but one of the client drivers
+> (ufs phy, usb phy, watchdog) run after the regmap is created and registered.
+> 
+> The one exception to this is pinctrl-samsung driver which is also
+> postcore_initcall level. The exynos_get_pmu_regmap() and
+> exynos_get_pmu_regmap_by_phandle() have been temporarily left to support
+> -EPROBE_DEFER for pinctrl-samsung driver.
+> 
+> The longer term plan to solve that probe ordering issue is to enable
+> fw_devlink for syscon dt properties so they are correctly listed as
+> suppliers in /sys/class/devlink. I tested a PoC patch (see below) for
+> fw_devlink and that seemed to work fine. Once fw_devlink supports syscon I
+> believe exynos_get_pmu_regmap_by_phandle() api could be removed. The main issue
+> currently with fw_devlink syscon support is the wide diversity of dt property
+> naming currently in use. That was discussed previously here [3]
+> 
+> 1248a1256,1257
+> > DEFINE_SUFFIX_PROP(syscon_phandle, "syscon-phandle", NULL)
+> > DEFINE_SUFFIX_PROP(pmu_syscon, "pmu-syscon", NULL)
+> 1358a1368,1369
+> >     { .parse_prop = parse_syscon_phandle, },
+> >     { .parse_prop = parse_pmu_syscon, },
+> 
+> 
+> Note one previous concern from Saravana about syscon potentially probing
+> before exynos-pmu driver and it relying on drivers/Makefile ordering. I tested
+> this and even if mfd is listed before soc in drivers/Makefile exynos-pmu
+> always probes first due to syscon driver not setting a .of_match_table entry.
+> 
+> Once the syscon and exynos-pmu patchs are queued I will send patches for
+> watchdog and ufs phy drivers to switch back to syscon_regmap_lookup_by_phandle()
+> 
+> Many thanks,
+> 
+> Peter.
+> 
+> [1] https://lore.kernel.org/linux-arm-kernel/20240219204238.356942-1-peter.griffin@linaro.org/T/
+> [2] https://lore.kernel.org/lkml/06383015-51b2-4f4c-9fd8-e4f7ce12f44e@kernel.org/
+> [3] https://lore.kernel.org/all/CAGETcx-CCpaV7R0O0HpDpoX6KxQBuJiMmKdWA8nDE-5Qj2Sa7g@mail.gmail.com/
+> 
+> Changes since v2:
+>  - Move allocation outside spinlock area (Arnd)
+> Link to v2:
+>  - https://lore.kernel.org/linux-arm-kernel/20240620112446.1286223-1-peter.griffin@linaro.org/
+> 
+> Changes since v1:
+>  - Collect by tags
+>  - Keep syscon lock held for check and adding entry (Krzysztof)
+>  - pass pmu_np not np to syscon_node_to_regmap() (William)
+> 
+> Link to v1:
+>  - https://lore.kernel.org/linux-arm-kernel/20240614140421.3172674-1-peter.griffin@linaro.org/
+> 
+> Peter Griffin (2):
+>   mfd: syscon: add of_syscon_register_regmap() API
+>   soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
+> 
+>  drivers/mfd/syscon.c             | 48 ++++++++++++++++++++++++++++++++
+>  drivers/soc/samsung/exynos-pmu.c | 38 ++++++++++---------------
+>  include/linux/mfd/syscon.h       |  8 ++++++
+>  3 files changed, 70 insertions(+), 24 deletions(-)
 
-Thank you!
+Applied and submitted for build testing.
+
+If all is good, I'll send out a PR for the other maintainer(s).
+
+Note to self: ib-mfd-soc-samsung-6.11
+
+-- 
+Lee Jones [李琼斯]
 
