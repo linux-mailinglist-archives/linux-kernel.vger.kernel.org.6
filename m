@@ -1,453 +1,138 @@
-Return-Path: <linux-kernel+bounces-231316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A539918DF6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:10:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF62918DF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3C5F283B6C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:10:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9151287EDB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2384A19047A;
-	Wed, 26 Jun 2024 18:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF4D190478;
+	Wed, 26 Jun 2024 18:10:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zEHtUAuT"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="ErRUyrBJ"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1182B190075
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 18:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABF218F2F9;
+	Wed, 26 Jun 2024 18:10:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719425404; cv=none; b=f9Bicd+teQcey1sAwSNdmw024KUtBse0mENJLMJlZUCfNfxrGc891CZFnD1VdljH49uP22b8fHthnni8Cd45rKdgr4/nhD5EXV/AEhkVG9q4mtrIM04PpMIYxuNUGuzrs35kLzlA8vc68dVth11XHpjPOpUnvfHwGPA7cptGsOY=
+	t=1719425447; cv=none; b=ZZG3apB/H8hGxk0Wh/XHgROSHInhd742qV1uwu/FTB28AQAk0naALNFm4csodQvyFlPlHhvdDHEXAhOC91IvvckwQMVvK5IlcaUUnunJAMm+sL6BBXIPAos8mldUqAG0kaTbD6qCIA9rFS+jcYukumpuk81g3iqdy/kV7tWWApQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719425404; c=relaxed/simple;
-	bh=aqO6tXWPkXxHxARXl5niFMQ2chl6eKAK0DerFv+cqdU=;
+	s=arc-20240116; t=1719425447; c=relaxed/simple;
+	bh=YALTyq5NTqRVjCQeYjTVKxmpg9hlxoK2X+LrWJFL36g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kWd04NYjzYg43/6m5/cgp6wuwwJoH13WMmRtkFg/3L0mzdaLhIEnUpk7IUn/3Nf1Hl8K0NXuwtSP+jB6iS1nLhHvIUf7Y9VvHF8Nt08ZSbgxQoHyd13A4qUfqwFInKfu+KY73UghKQ7bI3eiF2dZrorOch4HnIUO2rKU/zw7H64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zEHtUAuT; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52cdf4bc083so7145665e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 11:10:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719425400; x=1720030200; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MwI8HnQqswBve0leqtIjtCZs436AspF9fXJZ9wnULGU=;
-        b=zEHtUAuTiMVmLWWG1Ltgj6IPR/518lNQYsdxuoTqZkZchbCPPhtjOvYPeexUqAjNwX
-         0rSbVkbQBlYbS1tgz9f7nCFFnzQLA7GZ3+SaUqGUWp0uoxALzGFoDZO1gxRny0Zi8udM
-         ctVpdjVS619hAnBDIWpJzE19gTfhgxuUJx14/uhes5pwgh2a9TtygiXV6kIwDANy0g2u
-         Fn8iUDafrzMWG3fu/oQTg5B6q/b8RUQX9YbiyEMIsvaLdUqW02vB3n5oDjOChaXV1tHa
-         JReV8CegdrJGk61mre6AEhTRHEmCpOdlSEkHwUYmJulaPwTWt9L6oBWxAT4/aNIxf40t
-         vHcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719425400; x=1720030200;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MwI8HnQqswBve0leqtIjtCZs436AspF9fXJZ9wnULGU=;
-        b=nYHLbG+VBWFYRtsoyqMLa88cSy11q5C8XfLkEcJ9BiPlq/LtchwMYJWC8zCAIx4kQv
-         Q1dwHv1HJTKCP29sClKlkhf4RInKPA+DWl1zAsiLo3Ui7EyRA144DD87WWI+tEs0bBFK
-         v0yHQEGR1Z+1iAX3tVDnJQHdnL8gdrwQyPhgqMVnmTxhxGRuelqgmr4F8wGABvhDHQSc
-         gaDfXLJBW8zw4MTNRv+fcFxgODwhvOO8OmegbuRXtlz9LROg6+g8Nu2jXGMw5xhQtOt+
-         yBvpN2FD8eugn4IGtfHMqJx+IGssxkKVpwDodhIOQqbIAMQs1CUx79LkkYP/RYhlgT4q
-         hNQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVYc3oP4dYDYyiaM1SRwib17ShVNuBKQDYvnrmSTdFOz2GM5LE/h3H+58+t8jwkvnSj5eiRaIBH8X7D5vF5KMcXhe6rWxnpElycbFaw
-X-Gm-Message-State: AOJu0YzFSKIh/xPTZXrKOlH6wKtaurFZkH8nUgk+7Brwnt6zwupD3p5C
-	jlVHhxwlQ007TVhIB9d3S+SXqAxm6UwpQ39j3RRKbJecjZlGCA0HR1sb1MivH3tOHPHpv+XGzhm
-	QQ3c=
-X-Google-Smtp-Source: AGHT+IEZDqNuQJkmwPnz58eiHwca1g4EbD8OnZL+sIoH+FY/q/yFSu/vJlZDBIym3wK/LWJvekp50g==
-X-Received: by 2002:ac2:4903:0:b0:52c:8df9:2e6f with SMTP id 2adb3069b0e04-52ce0641630mr8997602e87.42.1719425399187;
-        Wed, 26 Jun 2024 11:09:59 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cd6432b35sm1637378e87.215.2024.06.26.11.09.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 11:09:58 -0700 (PDT)
-Date: Wed, 26 Jun 2024 21:09:57 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, quic_vbadigan@quicinc.com, 
-	quic_skananth@quicinc.com, quic_nitegupt@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 7/7] pci: pwrctl: Add power control driver for qps615
-Message-ID: <dnntqmjqamnifaziahlu6njlsfhjl3dpprjogrdgtqthdpoigk@wmtojmnsuvsv>
-References: <20240626-qps615-v1-0-2ade7bd91e02@quicinc.com>
- <20240626-qps615-v1-7-2ade7bd91e02@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=E7+Pxh33dag3fSEKaw47InWJdArZqR+8/hINfE7J1nliAwr87dj845IWLBOszU8akAu+QvR1Z3vuyZXXnIVGJoWa3QxmMMJmUCdyilkox68cIMjfn17HvMJO+qwvWcf02mQeAbKKMo/HmcrH8/u6IVkyZnkpZ3VuAe9OiN1RGzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=ErRUyrBJ; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 4D48140E01D6;
+	Wed, 26 Jun 2024 18:10:43 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id XcLNdntgAjf9; Wed, 26 Jun 2024 18:10:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719425440; bh=9uNFM7yG+iY7u7mLqX7ahhmgTVXSR6qE9/wtkFv1BAU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ErRUyrBJzN0QIw+Rj0q7qg+WQJBaZ0rCyqkWJGb88JgZ20bUeiF4hUT7E7Uf9cfeB
+	 FTnPlGHqQo02t/ITW5deMZg09vBNYiUZShj9UzWh1Fy7vavq6W5YZS6CEADhGJTslc
+	 LvuDBJuRx8gQ4xIee9Nh1cYQ0R9yt7HgjQ+Y0QxqPQMNfX5riDB9G+jdKX1fLe87Ta
+	 5f6pJRdGTmvkh/w7gu6mlGf+5WRpE0fQxqh074XB9cdVAnB7fjbp7ZYbdTxQXnHqvh
+	 1r1BDei+xYHrWsgDfgR8NYwgDs5qdLQr1v4dqIz4rUWGbkOuNWfZaD5pXjA+DRk76x
+	 fb8Yv+sW5Wgn1ypksE7/EZcd4kxaBzicuEHAtTBv/dR2+jB5Hs6A1mO9SBXUxnC3c0
+	 tVQmVxvM04Geta1521Ke9r0CQeyK5CEjD0uD0wgD+7u8FuMGcpoivbB1uE651SZKRl
+	 9EzlbPN0HRrnK46Lf2ZPKgxRM29o63YH8NGt8ICQPD5gQ9rSblZnJfI7YBIt5Wt6an
+	 EZ3XCE94jmxm/2klJMdpZ1TwdHtXk+NcyOft9lroyThwvFVPB4bm8Eae6N5vjrt/Nt
+	 UOLPt/LMvwOAvmH21Fn1ysQzTg+smUtKbLvqSTKB3lgykNqOSbAvVB3cKp+xcb1VKC
+	 q9ngUWKSoWvi94fJAXoJnlds=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id DBA9240E0185;
+	Wed, 26 Jun 2024 18:10:20 +0000 (UTC)
+Date: Wed, 26 Jun 2024 20:10:15 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: "Luck, Tony" <tony.luck@intel.com>,
+	Steven Rostedt <rostedt@goodmis.org>
+Cc: Avadhut Naik <avadhut.naik@amd.com>, "x86@kernel.org" <x86@kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"rafael@kernel.org" <rafael@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"rostedt@goodmis.org" <rostedt@goodmis.org>,
+	"lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>,
+	"james.morse@arm.com" <james.morse@arm.com>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"yazen.ghannam@amd.com" <yazen.ghannam@amd.com>,
+	"john.allen@amd.com" <john.allen@amd.com>,
+	"avadnaik@amd.com" <avadnaik@amd.com>
+Subject: Re: [PATCH v2 1/4] x86/mce: Add wrapper for struct mce to export
+ vendor specific info
+Message-ID: <20240626181015.GCZnxZh2LF2N1ehu9e@fat_crate.local>
+References: <20240625195624.2565741-1-avadhut.naik@amd.com>
+ <20240625195624.2565741-2-avadhut.naik@amd.com>
+ <20240626104427.GNZnvxC1JHclKwwKQU@fat_crate.local>
+ <SJ1PR11MB608351F8BF89ECCAF08831A6FCD62@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240626-qps615-v1-7-2ade7bd91e02@quicinc.com>
+In-Reply-To: <SJ1PR11MB608351F8BF89ECCAF08831A6FCD62@SJ1PR11MB6083.namprd11.prod.outlook.com>
 
-On Wed, Jun 26, 2024 at 06:07:55PM GMT, Krishna chaitanya chundru wrote:
-> QPS615 switch needs to configured after powering on and before
-> PCIe link was up.
+On Wed, Jun 26, 2024 at 05:11:29PM +0000, Luck, Tony wrote:
+> > Tony, any comments? You ok with this, would that fit any Intel-specific vendor
+> > fields too or do you need some additional Intel-specific changes?
 > 
-> As the PCIe controller driver already enables the PCIe link training
-> at the host side, stop the link training.
-> Otherwise the moment we turn on the switch it will participate in
-> the link training and link may come before switch is configured through
-> i2c.
+> It looks easy enough to add any Intel specific bits to the union later.
 > 
-> The switch can be configured different ways like changing de-emphasis
-> settings of the switch, disabling unused ports etc and these settings
-> can vary from board to board, for that reason the sequence is taken
-> from the firmware file which contains the address of the slave, to address
-> and data to be written to the switch. The driver reads the firmware file
-> and parses them to apply those configurations to the switch.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->  drivers/pci/pwrctl/Kconfig             |   7 +
->  drivers/pci/pwrctl/Makefile            |   1 +
->  drivers/pci/pwrctl/pci-pwrctl-qps615.c | 278 +++++++++++++++++++++++++++++++++
->  3 files changed, 286 insertions(+)
-> 
-> diff --git a/drivers/pci/pwrctl/Kconfig b/drivers/pci/pwrctl/Kconfig
-> index f1b824955d4b..a419b250006d 100644
-> --- a/drivers/pci/pwrctl/Kconfig
-> +++ b/drivers/pci/pwrctl/Kconfig
-> @@ -14,4 +14,11 @@ config PCI_PWRCTL_PWRSEQ
->  	  Enable support for the PCI power control driver for device
->  	  drivers using the Power Sequencing subsystem.
->  
-> +config PCI_PWRCTL_QPS615
-> +	tristate "PCI Power Control driver for QPS615"
-> +	select PCI_PWRCTL
-> +	help
-> +	  Enable support for the PCI power control driver for QPS615 and
-> +	  configures it.
-> +
->  endmenu
-> diff --git a/drivers/pci/pwrctl/Makefile b/drivers/pci/pwrctl/Makefile
-> index d308aae4800c..ac563a70c023 100644
-> --- a/drivers/pci/pwrctl/Makefile
-> +++ b/drivers/pci/pwrctl/Makefile
-> @@ -4,3 +4,4 @@ obj-$(CONFIG_PCI_PWRCTL)		+= pci-pwrctl-core.o
->  pci-pwrctl-core-y			:= core.o
->  
->  obj-$(CONFIG_PCI_PWRCTL_PWRSEQ)		+= pci-pwrctl-pwrseq.o
-> +obj-$(CONFIG_PCI_PWRCTL_QPS615)		+= pci-pwrctl-qps615.o
-> diff --git a/drivers/pci/pwrctl/pci-pwrctl-qps615.c b/drivers/pci/pwrctl/pci-pwrctl-qps615.c
-> new file mode 100644
-> index 000000000000..1f2caf5d7da2
-> --- /dev/null
-> +++ b/drivers/pci/pwrctl/pci-pwrctl-qps615.c
-> @@ -0,0 +1,278 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + */
-> +
-> +#include <linux/device.h>
-> +#include <linux/firmware.h>
-> +#include <linux/i2c.h>
-> +#include <linux/mod_devicetable.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/pci-pwrctl.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/string.h>
-> +#include <linux/types.h>
-> +
-> +#include "../pci.h"
-> +
-> +struct qcom_qps615_pwrctl_i2c_setting {
-> +	u32 slv_addr;
-> +	u32 reg_addr;
-> +	u32 val;
-> +};
-> +
-> +struct qcom_qps615_pwrctl_ctx {
-> +	struct i2c_adapter *adapter;
-> +	struct pci_pwrctl pwrctl;
-> +	struct device_link *link;
-> +	struct regulator *vdd;
-> +};
-> +
-> +/* write 32-bit value to 24 bit register */
-> +static int qps615_switch_i2c_write(struct qcom_qps615_pwrctl_ctx *ctx, u32 slv_addr, u32 reg_addr,
-> +				   u32 reg_val)
-> +{
-> +	struct i2c_msg msg;
-> +	u8 msg_buf[7];
-> +	int ret;
-> +
-> +	msg.addr = slv_addr;
-> +	msg.len = 7;
-> +	msg.flags = 0;
-> +
-> +	/* Big Endian for reg addr */
-> +	msg_buf[0] = (u8)(reg_addr >> 16);
-> +	msg_buf[1] = (u8)(reg_addr >> 8);
-> +	msg_buf[2] = (u8)reg_addr;
-> +
-> +	/* Little Endian for reg val */
-> +	msg_buf[3] = (u8)(reg_val);
-> +	msg_buf[4] = (u8)(reg_val >> 8);
-> +	msg_buf[5] = (u8)(reg_val >> 16);
-> +	msg_buf[6] = (u8)(reg_val >> 24);
-> +
-> +	msg.buf = msg_buf;
-> +	ret = i2c_transfer(ctx->adapter, &msg, 1);
-> +	return ret == 1 ? 0 : ret;
-> +}
-> +
-> +/* read 32 bit value from 24 bit reg addr */
-> +static int qps615_switch_i2c_read(struct qcom_qps615_pwrctl_ctx *ctx, u32 slv_addr, u32 reg_addr,
-> +				  u32 *reg_val)
-> +{
-> +	u8 wr_data[3], rd_data[4] = {0};
-> +	struct i2c_msg msg[2];
-> +	int ret;
-> +
-> +	msg[0].addr = slv_addr;
-> +	msg[0].len = 3;
-> +	msg[0].flags = 0;
-> +
-> +	/* Big Endian for reg addr */
-> +	wr_data[0] = (u8)(reg_addr >> 16);
-> +	wr_data[1] = (u8)(reg_addr >> 8);
-> +	wr_data[2] = (u8)reg_addr;
-> +
-> +	msg[0].buf = wr_data;
-> +
-> +	msg[1].addr = slv_addr;
-> +	msg[1].len = 4;
-> +	msg[1].flags = I2C_M_RD;
-> +
-> +	msg[1].buf = rd_data;
-> +
-> +	ret = i2c_transfer(ctx->adapter, &msg[0], 2);
-> +	if (ret != 2)
-> +		return ret;
-> +
-> +	*reg_val = (rd_data[3] << 24) | (rd_data[2] << 16) | (rd_data[1] << 8) | rd_data[0];
-> +
-> +	return 0;
-> +}
-> +
-> +static int qcom_qps615_pwrctl_init(struct qcom_qps615_pwrctl_ctx *ctx)
-> +{
-> +	struct device *dev = ctx->pwrctl.dev;
-> +	struct qcom_qps615_pwrctl_i2c_setting *set;
-> +	const struct firmware *fw;
-> +	const u8 *pos, *eof;
-> +	int ret;
-> +	u32 val;
-> +
-> +	ret = request_firmware(&fw, "qcom/qps615.bin", dev);
+> Is there anyway that the trace event could be "smarter" about what vendor specific
+> information to include based on boot_cpu_data.x86_vendor? As currently written
+> Intel systems are going to see 3*u64 decoded into ascii, that are all zero. Not a
+> huge deal, I think it will just look like "0x0,0x0,0x0"
 
-Oh, what if any other board uses the same bridge? Do you expect that the
-rootfs is device-specific?
+Hmm, good question.
 
-> +	if (ret < 0) {
-> +		dev_err(dev, "firmware loading failed with ret %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	if (!fw) {
-> +		ret = -EINVAL;
-> +		goto err;
-> +	}
-> +
-> +	pos = fw->data;
-> +	eof = fw->data + fw->size;
-> +
-> +	while (pos < (fw->data + fw->size)) {
-> +		set = (struct qcom_qps615_pwrctl_i2c_setting *)pos;
-> +
-> +		ret = qps615_switch_i2c_write(ctx, set->slv_addr, set->reg_addr, set->val);
+Yo, Steve, is there a way to do conditional things in a TP?
 
-No! This makes no way for anybody to understand what is going on. Please
-write a proper driver, that defines registers and writes sensible data
-to those registers. Having a driver that writes data from the
-configuration file to the random registers is a no-go.
+For example:
 
-> +		if (ret) {
-> +			dev_err(dev,
-> +				"I2c write failed for slv addr:%x at addr%x with val %x ret %d\n",
-> +				set->slv_addr, set->reg_addr, set->val, ret);
-> +			goto err;
-> +		}
-> +
-> +		ret = qps615_switch_i2c_read(ctx,  set->slv_addr, set->reg_addr, &val);
-> +		if (ret) {
-> +			dev_err(dev, "I2c read failed for slv addr:%x at addr%x ret %d\n",
-> +				set->slv_addr, set->reg_addr, ret);
-> +			goto err;
-> +		}
-> +
-> +		if (set->val != val) {
-> +			dev_err(dev,
-> +				"I2c read's mismatch for slv:%x at addr%x exp%d got%d\n",
-> +				set->slv_addr, set->reg_addr, set->val, val);
-> +			goto err;
-> +		}
-> +		pos += sizeof(struct qcom_qps615_pwrctl_i2c_setting);
-> +	}
-> +
-> +err:
-> +	release_firmware(fw);
-> +
-> +	return ret;
-> +}
-> +
-> +static int qcom_qps615_power_on(struct qcom_qps615_pwrctl_ctx *ctx)
-> +{
-> +	int ret;
-> +
-> +	ret = regulator_enable(ctx->vdd);
-> +	if (ret) {
-> +		dev_err(ctx->pwrctl.dev, "cannot enable vdda regulator\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = qcom_qps615_pwrctl_init(ctx);
-> +	if (ret)
-> +		regulator_disable(ctx->vdd);
-> +
-> +	return ret;
-> +}
-> +
-> +static int qcom_qps615_power_off(struct qcom_qps615_pwrctl_ctx *ctx)
-> +{
-> +	return regulator_disable(ctx->vdd);
-> +}
-> +
-> +static int qcom_qps615_pwrctl_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct device_node *node = pdev->dev.of_node;
-> +	struct qcom_qps615_pwrctl_ctx *ctx;
-> +	struct device_node *adapter_node;
-> +	struct pci_host_bridge *bridge;
-> +	struct i2c_adapter *adapter;
-> +	struct pci_bus *bus;
-> +
-> +	bus = pci_find_bus(of_get_pci_domain_nr(dev->parent->of_node), 0);
-> +	if (!bus)
-> +		return -ENODEV;
-> +
-> +	bridge = pci_find_host_bridge(bus);
-> +
-> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
-> +	if (!ctx)
-> +		return -ENOMEM;
-> +
-> +	adapter_node = of_parse_phandle(node, "switch-i2c-cntrl", 0);
-> +	if (adapter_node) {
-> +		adapter = of_get_i2c_adapter_by_node(adapter_node);
+@@ -83,7 +87,8 @@ TRACE_EVENT(mce_record,
+                __entry->walltime,
+                __entry->socketid,
+                __entry->apicid,
+-               __entry->microcode)
++               __entry->microcode,
 
-Somebody didn't read the comment before of_get_i2c_adapter_by_node().
+	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD)
+		__print_array(__get_dynamic_array(v_data), __entry->len / 8, 8))
 
-> +		__free(adapter_node);
-> +		if (!adapter)
-> +			return dev_err_probe(dev, -EPROBE_DEFER,
-> +					     "failed to parse switch-i2c-cntrl\n");
-> +	}
-> +
-> +	ctx->pwrctl.dev = dev;
-> +	ctx->adapter = adapter;
-> +	ctx->vdd = devm_regulator_get(dev, "vdd");
-> +	if (IS_ERR(ctx->vdd))
-> +		return dev_err_probe(dev, PTR_ERR(ctx->vdd),
-> +				     "failed to get vdd regulator\n");
-> +
-> +	ctx->link = device_link_add(&bridge->dev, dev, DL_FLAG_AUTOREMOVE_CONSUMER);
-> +
-> +	platform_set_drvdata(pdev, ctx);
-> +
-> +	bridge->ops->stop_link(bus);
-> +	qcom_qps615_power_on(ctx);
-> +	bridge->ops->start_link(bus);
-> +
-> +	return devm_pci_pwrctl_device_set_ready(dev, &ctx->pwrctl);
-> +}
+i.e., print that array only when on a AMD.
 
-I'd suggest turning this into a driver which uses components to bind the
-PCIe power control part and the i2c clinet device. Then you can write
-the i2c client addresses as ussual.
+I'm sure this won't fly as it is macro magic - this is just to show the
+intent...
 
-> +
-> +static const struct of_device_id qcom_qps615_pwrctl_of_match[] = {
-> +	{
-> +		.compatible = "pci1179,0623",
-> +	},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(of, qcom_qps615_pwrctl_of_match);
-> +
-> +static int pci_pwrctl_suspend_noirq(struct device *dev)
-> +{
-> +	struct pci_bus *bus = pci_find_bus(of_get_pci_domain_nr(dev->parent->of_node), 0);
-> +	struct pci_host_bridge *bridge = pci_find_host_bridge(bus);
-> +	struct qcom_qps615_pwrctl_ctx *ctx = dev_get_drvdata(dev);
-> +
-> +	bridge->ops->stop_link(bus);
-> +	qcom_qps615_power_off(ctx);
-> +
-> +	return 0;
-> +}
-> +
-> +static int pci_pwrctl_resume_noirq(struct device *dev)
-> +{
-> +	struct pci_bus *bus = pci_find_bus(of_get_pci_domain_nr(dev->parent->of_node), 0);
-> +	struct pci_host_bridge *bridge = pci_find_host_bridge(bus);
-> +	struct qcom_qps615_pwrctl_ctx *ctx = dev_get_drvdata(dev);
-> +
-> +	qcom_qps615_power_on(ctx);
-> +	bridge->ops->start_link(bus);
-> +
-> +	return 0;
-> +}
-> +
-> +static void qcom_qps615_pwrctl_remove(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct qcom_qps615_pwrctl_ctx *ctx = dev_get_drvdata(dev);
-> +
-> +	device_link_del(ctx->link);
-> +	pci_pwrctl_suspend_noirq(dev);
-> +}
-> +
-> +static const struct dev_pm_ops pci_pwrctl_pm_ops = {
-> +	NOIRQ_SYSTEM_SLEEP_PM_OPS(pci_pwrctl_suspend_noirq, pci_pwrctl_resume_noirq)
-> +};
-> +
-> +static struct platform_driver qcom_qps615_pwrctl_driver = {
-> +	.driver = {
-> +		.name = "pwrctl-qps615",
-> +		.of_match_table = qcom_qps615_pwrctl_of_match,
-> +		.pm = &pci_pwrctl_pm_ops,
-> +	},
-> +	.probe = qcom_qps615_pwrctl_probe,
-> +	.remove_new = qcom_qps615_pwrctl_remove,
-> +};
-> +module_platform_driver(qcom_qps615_pwrctl_driver);
-> +
-> +MODULE_AUTHOR("Krishna chaitanya chundru <quic_krichai@quicinc.com>");
-> +MODULE_DESCRIPTION("Qualcomm QPS615 power control driver");
-> +MODULE_LICENSE("GPL");
-> 
-> -- 
-> 2.42.0
-> 
+Thx.
 
 -- 
-With best wishes
-Dmitry
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
