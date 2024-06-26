@@ -1,166 +1,352 @@
-Return-Path: <linux-kernel+bounces-230528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7095917E20
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:34:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDC11917E33
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:36:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A9E41F24A8E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:34:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6032E1F228F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7717B18C332;
-	Wed, 26 Jun 2024 10:28:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61E18181310;
+	Wed, 26 Jun 2024 10:29:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jmx56Hm8"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UQWkippN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38AAA18A92B;
-	Wed, 26 Jun 2024 10:28:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0E2B17C20F
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:29:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719397707; cv=none; b=rj9j5/UHEeoW/H97kQ1cTGy7IpZrDZDASQc4uH8F/kT/ofIC8d3T7Zb3L3o4JIJDqwI4Wof26TNHDTTLqjHt70IivPsri7OICickYXSMREuxCiiDQ1kq6KzHTO59H5dMI0cV6mnxTBWJlHICppbAgAEIAj4jKCvPOEDiBi2EKzg=
+	t=1719397751; cv=none; b=GB6A0ytF0XVF+mNYzBjfP5MNmr9BuNp9EanB1HcrV/xx5puI3VZ58hZEPV6RdxjtTTBLalY3wSSBGlt176DPXqZFexLeuwAmfyx/6U8LM5XGQ17Jn3/f6CKJmGXKZyAODny6NdVO60awicww/xE3cw5nVM6efxSS2MqEFiGDLyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719397707; c=relaxed/simple;
-	bh=R8koNdIOIs1xSzrQoGWQfGJPVAZmC0McFmOxHDebHL8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HzZsOLlryCBiSbiMg0JYsUHqjaqqiDqz8IZvs7Eev2fbXN7tTi/iHWbsHEYZb09os5qWIzeUpXfqXF+XEGnBFvYfgjrWBmmckfH89qCFEIAFDGPo7ItAiAmhtLgdyWbVLctzWsz+6evs4GFu7fAfHMtaMXdJqZ2HMCwe0N3C4QY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jmx56Hm8; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719397706; x=1750933706;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=R8koNdIOIs1xSzrQoGWQfGJPVAZmC0McFmOxHDebHL8=;
-  b=jmx56Hm8CWLf562Fih0J+If8vsIVIaD8Ej1+2nWww1zpVdnkhttEf2il
-   6pc85vpjXA3/MRt1vPUgzyoTXyCWdkzx0UfedZxn5wFSjYNXIj5NTWwzU
-   2HkP99wuEfA7NgNsW8pOi+SRFGEf21mCkQJOqxZY/e36ukEba8oKsfhhp
-   mnerc/bRPpGi8N3kxBNs9JKPDOhcKbX9S2jJ5OV6IBqOf0GB14Jv9kgJD
-   VeKmBXj866yoRjPgGX7xe2xqN1TmoUW9TfwwyuA33mM33JGbwzSXpHfph
-   Ouzn1Swn2+9VL0ZAqKQTQ0725bzA52nAT0UH7qgY9REVCCa/zIStLKQvr
-   A==;
-X-CSE-ConnectionGUID: yRUAwlIqQhCsDHxgZD0nRA==
-X-CSE-MsgGUID: TX4BljKTS2+os3mxwG1mTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="19351636"
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="19351636"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 03:28:26 -0700
-X-CSE-ConnectionGUID: tJoVEplgSQeDKyi7EUs7qQ==
-X-CSE-MsgGUID: nPmW/HKWQ1Gw4O20Z0Xhgg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="44611032"
-Received: from fdefranc-mobl3.ger.corp.intel.com (HELO fdefranc-mobl3.localnet) ([10.245.246.93])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 03:28:22 -0700
-From: "Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>
-To: Dan Williams <dan.j.williams@intel.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Dave Jiang <dave.jiang@intel.com>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>, linux-cxl@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] cxl/acpi: Warn on unsupported platform config detection
-Date: Wed, 26 Jun 2024 12:28:19 +0200
-Message-ID: <21841700.4csPzL39Zc@fdefranc-mobl3>
-In-Reply-To: <667b4f4a46cc6_563929472@dwillia2-xfh.jf.intel.com.notmuch>
-References:
- <20240619125949.167936-1-fabio.m.de.francesco@linux.intel.com>
- <667b4f4a46cc6_563929472@dwillia2-xfh.jf.intel.com.notmuch>
+	s=arc-20240116; t=1719397751; c=relaxed/simple;
+	bh=2zM6rv5oUP0Wt46AuhDdaFJBL0drdU6c9ikeqaYjVqE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kYZ4JKFj7ZGaofFcAHSvrzoMsmJhQ2BLFrq/6JonuJuMAlxlIZPfTqMqU3UYxhMIlsUkDQ0htbXPnAqm7NkOfk80w4SwOVzhjhTTzZdcu6rc5TPeTExgHOPwWEfgYK+5Hiz9nTKHoXtTksf/8tfSyDzLshEsVV0KJyi9VRPs9uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UQWkippN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719397746;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wdxOcpPgIsnTj5I78VN3KWscrX6h2YohEmv3kQR5obo=;
+	b=UQWkippNx4chhmhjVzntinrLET+mt/t/NhvstPerbCpKp7RtBq2G4IdvhimoPKLFl/iS4R
+	doZJjlBX641HbHrbtsj88TBNOylcqQk8EqDd+BRj7m/INImqJaybg/rqYhexibxbCxLlI4
+	l4/goHA4lGurn9rZeLZO1o3VXdrHd8s=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-610-jx-dDPYLM8amBAocEqRwtw-1; Wed, 26 Jun 2024 06:29:05 -0400
+X-MC-Unique: jx-dDPYLM8amBAocEqRwtw-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4218447b900so2676555e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:29:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719397744; x=1720002544;
+        h=content-transfer-encoding:in-reply-to:organization:content-language
+         :references:cc:to:from:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wdxOcpPgIsnTj5I78VN3KWscrX6h2YohEmv3kQR5obo=;
+        b=K7wwm5PuSOVDXlHdDoGvZc3ojncD42q39UO40OOB60OeTXKesT8MtKcyrsNVQgFEhN
+         q4jO+4xvgxDZ05AJEsytU40WQcag8+oZ1M9495lvUD7oibLXFl0fiAJq+Fc3Zpa5FUf7
+         P8kGXOSgA4X2CPh0xIpPvGp+hXJnb9hrRYQKy61g0Ft9xAt74Ng+DtbAVhozvkmifzAD
+         p7Z7NpF2wa1gdJIh7BeNkGGySxv7DnSBGe1idijfiHuZ6d/vLj2c6/G5zfCVpKlaboZl
+         PO082nXSt4JTp2yAMTg1b1oGWto2ICpgtBSktdkG/IJfd16q7PkqX7rhCinfnzcZAECX
+         mSwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWZrHX3Blm4ECIfTjd1Yot9dX7PSHSnbr2U6y1SJPh2LoB0jmRdTwYUfFJIBfhy+ydrg2sDiNdihaUZFXcM6gIPgh8aa//7vwAWeIg9
+X-Gm-Message-State: AOJu0Ywg4kCdq0qWpi05BQL44/v8OyW8EFWKooW9X4k3Gl8TgrvHo7ZN
+	DCO2rRk8PIHlH5JMoK1VP3QpdkuORiTpmzxgnubKlIWajFexX1wnn1/KCXlEr/gF0B+ihLEumvu
+	S89SAozb1T97OsLBFxeujipUZwXd4yRCeIBh70GWBM5mUT+SZZMMn9WT7004rww==
+X-Received: by 2002:a05:600c:d8:b0:424:acbf:c068 with SMTP id 5b1f17b1804b1-424acbfc179mr18763305e9.16.1719397744232;
+        Wed, 26 Jun 2024 03:29:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFkqDjaE9S3VCKyJP4dgg0MCYwCjWYFJFRkmjGRrGcYsSu9yuLlt/wmeGH6cAwn/Wu/uWjQuw==
+X-Received: by 2002:a05:600c:d8:b0:424:acbf:c068 with SMTP id 5b1f17b1804b1-424acbfc179mr18762925e9.16.1719397743752;
+        Wed, 26 Jun 2024 03:29:03 -0700 (PDT)
+Received: from ?IPV6:2a02:810d:4b3f:ee94:abf:b8ff:feee:998b? ([2a02:810d:4b3f:ee94:abf:b8ff:feee:998b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c837f1cesm19955025e9.37.2024.06.26.03.29.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 03:29:03 -0700 (PDT)
+Message-ID: <5d7b22c7-de22-4a8c-a122-624afc3d12f1@redhat.com>
+Date: Wed, 26 Jun 2024 12:29:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/10] rust: pass module name to `Module::init`
+From: Danilo Krummrich <dakr@redhat.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+ alex.gaynor@gmail.com, wedsonaf@gmail.com, boqun.feng@gmail.com,
+ gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+ a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+ fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+ ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+ daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+References: <20240618234025.15036-1-dakr@redhat.com>
+ <20240618234025.15036-2-dakr@redhat.com>
+ <2024062038-backroom-crunchy-d4c9@gregkh> <ZnRUXdMaFJydAn__@cassiopeiae>
+ <2024062010-change-clubhouse-b16c@gregkh> <ZnSeAZu3IMA4fR8P@cassiopeiae>
+Content-Language: en-US
+Organization: RedHat
+In-Reply-To: <ZnSeAZu3IMA4fR8P@cassiopeiae>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wednesday, June 26, 2024 1:14:18=E2=80=AFAM GMT+2 Dan Williams wrote:
+Hi Greg,
 
-Hi Dan,
+On 6/20/24 23:24, Danilo Krummrich wrote:
 
-> Fabio M. De Francesco wrote:
-> > Each Host Bridge instance has a corresponding CXL Host Bridge Structure
-> > (CHBS) ACPI table that identifies its capabilities. CHBS tables can be
-> > two types: RCRB and CHBCR.
-> >=20
-> > If a Host Bridge is attached to a device that is operating in Restricted
-> > CXL Device Mode (RCD), BIOS publishes an RCRB with the base address of
-> > registers that describe its capabilities.
-> >=20
-> > However, the new (CXL 2.0+) Component registers (e.g., Extended Security
-> > Capability), can only be accessed by means of a base address published
-> > with a CHBCR.
-> >=20
-> > An algorithm to locate a CHBCR associated with an RCRB would be too
-> > invasive to land without some concrete motivation.
-> >=20
-> > Therefore, just print a message to inform of unsupported config.
-> >=20
-> > Count how many different CHBS "Version" types are detected by
-> > cxl_get_chbs_iter(). Then make cxl_get_chbs() print a warning if that s=
-um
-> > is greater than 1.
-> >=20
-> > Signed-off-by: Fabio M. De Francesco <fabio.m.de.francesco@linux.intel.=
-com>
-> > ---
-> >  drivers/cxl/acpi.c | 20 ++++++++++++++------
-> >  1 file changed, 14 insertions(+), 6 deletions(-)
-> >=20
+This is a polite reminder about the below discussion.
 
-snip
-
-> > @@ -533,6 +537,10 @@ static int cxl_get_chbs(struct device *dev, struct=
-=20
-acpi_device *hb,
-> > =20
-> >  	acpi_table_parse_cedt(ACPI_CEDT_TYPE_CHBS, cxl_get_chbs_iter,=20
-ctx);
-> > =20
-> > +	if (ctx->count > 1)
-> > +		/* Disclaim eRCD support given some component register=20
-may only be found via CHBCR */
-> > +		dev_info(dev, "Unsupported platform config, mixed=20
-Virtual Host and Restricted CXL Host hierarchy.");
->=20
-> I believe this is already queued, but my personal preference is that
-> multiline statements include brackets, or move the comment above the "if
-> ()", so either:
->=20
-> 	/* Disclaim eRCD support given some component register may only be=20
-found via CHBCR */
-> 	if (ctx->count > 1)
-> 		dev_info(dev, "Unsupported platform config, mixed Virtual=20
-Host and Restricted CXL Host hierarchy.");
->=20
-> ...or:
->=20
-> 	if (ctx->count > 1) {
-> 		/* Disclaim eRCD support given some component register=20
-may only be found via CHBCR */
-> 		dev_info(dev, "Unsupported platform config, mixed Virtual=20
-Host and Restricted CXL Host hierarchy.");
-> 	}
->=20
-> ...but don't spin the patch just for that fixup.
->=20
-I'll send v2 mainly for Alison's comments and so I will also add brackets h=
-ere=20
-(the second solution meets my preferences).
-
-Thank you,
-
-=46abio
-
-
-
+> On Thu, Jun 20, 2024 at 06:36:08PM +0200, Greg KH wrote:
+>> On Thu, Jun 20, 2024 at 06:10:05PM +0200, Danilo Krummrich wrote:
+>>> On Thu, Jun 20, 2024 at 04:19:48PM +0200, Greg KH wrote:
+>>>> On Wed, Jun 19, 2024 at 01:39:47AM +0200, Danilo Krummrich wrote:
+>>>>> In a subsequent patch we introduce the `Registration` abstraction used
+>>>>> to register driver structures. Some subsystems require the module name on
+>>>>> driver registration (e.g. PCI in __pci_register_driver()), hence pass
+>>>>> the module name to `Module::init`.
+>>>>
+>>>> I understand the need/want here, but it feels odd that you have to
+>>>> change anything to do it.
+>>>>
+>>>>>
+>>>>> Signed-off-by: Danilo Krummrich <dakr@redhat.com>
+>>>>> ---
+>>>>>   rust/kernel/lib.rs           | 14 ++++++++++----
+>>>>>   rust/kernel/net/phy.rs       |  2 +-
+>>>>>   rust/macros/module.rs        |  3 ++-
+>>>>>   samples/rust/rust_minimal.rs |  2 +-
+>>>>>   samples/rust/rust_print.rs   |  2 +-
+>>>>>   5 files changed, 15 insertions(+), 8 deletions(-)
+>>>>>
+>>>>> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+>>>>> index a791702b4fee..5af00e072a58 100644
+>>>>> --- a/rust/kernel/lib.rs
+>>>>> +++ b/rust/kernel/lib.rs
+>>>>> @@ -71,7 +71,7 @@ pub trait Module: Sized + Sync + Send {
+>>>>>       /// should do.
+>>>>>       ///
+>>>>>       /// Equivalent to the `module_init` macro in the C API.
+>>>>> -    fn init(module: &'static ThisModule) -> error::Result<Self>;
+>>>>> +    fn init(name: &'static str::CStr, module: &'static ThisModule) -> error::Result<Self>;
+>>>>
+>>>> Why can't the name come directly from the build system?  Why must it be
+>>>> passed into the init function of the module "class"?  What is it going
+>>>> to do with it?
+>>>
+>>> The name does come from the build system, that's where `Module::init` gets it
+>>> from.
+>>>
+>>>>
+>>>> A PCI, or other bus, driver "knows" it's name already by virtue of the
+>>>> build system, so it can pass that string into whatever function needs
+>>>
+>>> Let's take pci_register_driver() as example.
+>>>
+>>> ```
+>>> #define pci_register_driver(driver)		\
+>>> 	__pci_register_driver(driver, THIS_MODULE, KBUILD_MODNAME)
+>>> ```
+>>>
+>>> In C drivers this works because (1) it's a macro and (2) it's called directly
+>>> from the driver code.
+>>>
+>>> In Rust, for very good reasons, we have abstractions for C APIs, hence the
+>>> actual call to __pci_register_driver() does not come from code within the
+>>> module, but from the PCI Rust abstraction `Module::init` calls into instead.
+>>
+>> I don't understand those reasons, sorry.
+> 
+> Ok, good you point this out. We should definitely discuss this point then and
+> build some consensus around it.
+> 
+> I propose to focus on this point first and follow up with the discussion of the
+> rest of the series afterwards.
+> 
+> Let me explain why I am convinced that it's very important to have abstractions
+> in place in general and from the get-go.
+> 
+> In general, having abstractions for C APIs is the foundation of being able to
+> make use of a lot of advantages Rust has to offer.
+> 
+> The most obvious one are all the safety aspects. For instance, with an
+> abstraction we have to get exactly one piece of code right in terms of pointer
+> validity, lifetimes, type safety, API semantics, etc. and in all other places
+> (e.g. drivers) we get the compiler to check those things for us through the
+> abstraction.
+> 
+> Now, the abstraction can be buggy or insufficient and hence there is no absolute
+> safety guarantee. *But*, if we get this one thing right, there is nothing a
+> driver can mess up by itself trying to do stupid things anymore.
+> 
+> If we just call the C code instead we have to get it right everywhere instead.
+> 
+> Now, you could approach this top-down instead and argue that we could at least
+> benefit from Rust for the driver specific parts.
+> 
+> Unfortunately, this doesn't really work out either. Also driver specific code is
+> typically (very) closely connected to kernel APIs. If you want to use the safety
+> aspects of Rust for the driver specific parts you inevitably end up writing
+> abstractions for the C APIs in your driver.
+> 
+> There are basically three options you can end up with:
+> 
+> (1) An abstraction for the C API within your driver that is actually generic
+>      for every driver, and hence shouldn't be there.
+> (2) Your driver specific code is full of raw pointers and `unsafe {}` calls,
+>      which in the end just means that you ended up baking the abstraction into
+>      your driver specific code.
+> (3) You ignore everything, put everything in a huge `unsafe {}` block and
+>      compile C code with the Rust compiler. (Admittedly, maybe slightly
+>      overstated, but not that far off either.)
+> 
+> The latter is also the reason why it doesn't make sense to only have
+> abstractions for some things, but not for other.
+> 
+> If an abstraction for B is based on A, but we don't start with A, then B ends up
+> implementing (at least partially) the abstraction for A as well. For instance,
+> if we don't implement `driver::Registration` then the PCI abstractions (and
+> platform, usb, etc.) have to implement it.
+> 
+> It really comes down to the point that it just bubbles up. We really have to do
+> this bottom-up, otherwise we just end up moving those abstractions up, layer by
+> layer, where they don't belong to and we re-implement them over and over again.
+> 
+>>
+>>> Consequently, we have to pass things through. This also isn't new, please note
+>>> that the current code already does the same thing: `Module::init` (without this
+>>> patch) is already declared as
+>>>
+>>> `fn init(module: &'static ThisModule) -> error::Result<Self>`
+>>> passing through `ThisModule` for the exact same reason.
+>>
+>> Yeah, and I never quite understood that either :)
+> 
+> Since commit 247b365dc8dc ("rust: add `kernel` crate") shows me your RB for
+> that, am I good to assume that this one isn't a blocker?
+> 
+>>
+>>> Please also note that in the most common case (one driver per module) we don't
+>>> see any of this anyway.
+>>
+>> True, but someone has to review and most importantly, maintain, this
+>> glue code.
+>>
+>>> Just like the C macro module_pci_driver(), Rust drivers can use the
+>>> `module_pci_driver!` macro.
+>>>
+>>> Example from Nova:
+>>>
+>>> ```
+>>>      kernel::module_pci_driver! {
+>>>          // The driver type that implements the corresponding probe() and
+>>>          // remove() driver callbacks.
+>>>          type: NovaDriver,
+>>>          name: "Nova",
+>>>          author: "Danilo Krummrich",
+>>>          description: "Nova GPU driver",
+>>>          license: "GPL v2",
+>>>      }
+>>> ```
+>>
+>> As I said when you implemented this fun macro, don't do this yet.
+>>
+>> We added these "helper" macros WAY late in the development cycle of the
+>> driver model, AFTER we were sure we got other parts right.  There is no
+>> need to attempt to implement all of what you can do in C today in Rust,
+>> in fact, I would argue that we don't want to do that, just to make
+>> things simpler to review the glue code, which is the most important part
+>> here to get right!
+> 
+> We're not reinventing the wheel here, we stick to the architecture the kernel
+> already has.
+> 
+> However, I understand that not starting with this macro directly makes it easier
+> for you to see what's going on. I can introduce the macro in a separate patch to
+> make it more obvious what's going on.
+> 
+>>
+>> Changing drivers later, to take advantage of code savings like this
+>> macro can be done then, not just yet.  Let's get this understood and
+>> right first, no need to be tricky or complex.
+>>
+>> And, as I hinted at before, I don't think we should be doing this at all
+>> just yet either.  I still think a small "C shim" layer to wrap the
+>> struct pci driver up and pass the calls to the rust portion of the
+>> module is better to start with, it both saves you time and energy so
+>> that you can work on what you really want to do (i.e. a driver in rust)
+>> and not have to worry about the c bindings as that's the "tricky" part
+>> that is stopping you from getting your driver work done.
+> 
+> I strongly disagree here. As explained above, it just bubbles up, this approach
+> would just make me end up having to write a lot of the code from the
+> abstractions in the driver.
+> 
+> However, it would indeed safe me time and energy to do just that. But that isn't
+> really what I want. I also don't want to write a driver in Rust *only*.
+> 
+> And I also don't really think that you want people, who commit to work hard to
+> get things right, to just take the shortcut and create some random mess buried
+> in a driver. :)
+> 
+> What I actually want is to get to a solid foundation for Rust drivers in
+> general, since I'm convinced that this provides a lot of value beyond the scope
+> of a single driver.
+> 
+> Since you've brought the topic up a few times, I am also willing to maintain
+> those abstractions if this is a concern. Maybe one day the corresponding
+> maintainers are comfortable enough and this isn't needed anymore, but at least
+> until then, I'm happy to help out.
+> 
+>>
+>> After all, it's not the pci driver model code that is usually the tricky
+>> bits to verify in C, it's the whole rest of the mess.  Stick with a
+>> small C file, with just the pci driver structure and device ids, and
+>> then instantiate your rust stuff when probe() is called, and clean up
+>> when release() is called.
+> 
+> Again, this really bubbles up.
+> 
+> What do we pass to Rust probe() function? A raw struct pci_dev pointer or the
+> proper PCI device abstraction?
+> 
+> How do we implement I/O memory mappings for PCI bars without PCI / I/O
+> abstraction?
+> 
+> How do we perform (boundary checked) I/O memory reads / writes without `Io`
+> abstraction?
+> 
+> How do we handle the lifetime of resources without `Devres` abstraction?
+> 
+> How do we (properly) implement a DRM device registration abstraction without
+> `Devres`?
+> 
+> Luckily we already got the `Firmware` and `Device` abstraction in place. :)
+> 
+>>
+>> I can provide an example if needed.
+> 
+> If you do so, please don't stop at the probe() boundary, please continue to the
+> point where the Nova stub driver is. It really does just enough to show / proove
+> that the abstractions tie together nicely. But it should be enough to see that
+> you end up with either (1), (2) or (3) from above.
+> 
+>>
+>> thanks,
+>>
+>> greg k-h
+>>
 
 
