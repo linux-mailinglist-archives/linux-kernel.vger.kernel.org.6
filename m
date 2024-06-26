@@ -1,174 +1,310 @@
-Return-Path: <linux-kernel+bounces-231440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03A259198BB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:09:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B9349198BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:09:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74E151F21F7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:09:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5C11281152
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:09:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B1D190679;
-	Wed, 26 Jun 2024 20:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IEKL4PXV"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996E41922C5
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 20:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C131D192B86;
+	Wed, 26 Jun 2024 20:09:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54025192B62;
+	Wed, 26 Jun 2024 20:09:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719432531; cv=none; b=HSoyr9PdpmIVaMUKehQKDOIZa6sk5+DI3XNPP/FtImGVYXEJGQuSC6wxjA6ixAYMvjPLP209g2lQl1uN9IFhnDKVbYNJAglujdb+g01Tr0vsoO9+kDpvabggpfjbbYiKUkOqSYiUfLGDkKqzWqnkc3K5fEHC6waIVVlAOnh/ZXw=
+	t=1719432569; cv=none; b=BxtNy36u4BXQXx5GyF9qt/xFHhsDxr+EMWd8wRLFPX9aPtkumhz2+qJT9RzVvs0Ix6o2WN/0rgJFVypBiyV3jf24Sbp/uxyOS3UVztwGzdHm/93/6xlfDih0FKYL3mKgEEZ9A9OK20pjMvh2v8OnWXSQ0v4GgX35DT0BqkRVVXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719432531; c=relaxed/simple;
-	bh=4S0EVxaJe8fpJ7++KuVyrQMRoO8WSKD0yaA4rxhijs8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Sp48X50Gd+5XA6nD7/hS38gh/6I8eK0waqgA4qYB52pws3h2nfesVDfxo4oppjxGhbzbEa8BzNToJGnMjB/xdKPKV1tMqQBK23gxL0kzzOZZyenYRBF/+OjQlXRJpj1gar7iBTz0mbHQ6s4rPqzn1M91zg1yAn2KvbWBOouwWzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IEKL4PXV; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2c7a8fa8013so8757753a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:08:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719432529; x=1720037329; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZUK64owq78D+nkswI+vsRdMEdD3oJn8Wq+egIOghUI=;
-        b=IEKL4PXVO0GlCgwOxnCdQYybwkGM5V46ZfWYAaT7ALdCVTwQv7Yl5J0UDZgy2qcouM
-         CHO6cwzwIaZdrMUE1zM6LymCv54Ya8E9YSdXiwnm3V9PGjeloCtImZPLyGWD7jxD5onA
-         TVWkfFgfiu2bZ86GVwbxFLNOmAU02vhmbA3gVBRnAlZC19bRk8zKBDFNED+Np1sN4cKG
-         nGZ1Tl5kTz/CwwpmAZbXzuQ45lUi9rOTWcmlFZP4ZO2a7TIcGLo1egvsGyS6ZP4T3MTr
-         Xyvq4oXlUBcsP7QUjHjBn+s+crlW1s9zuPUXtsRhxUB3BL3EoEY5ThMRIWzqWBxbzR6L
-         hV0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719432529; x=1720037329;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jZUK64owq78D+nkswI+vsRdMEdD3oJn8Wq+egIOghUI=;
-        b=DXQOlXBLqWPRUS9FKaFYMPzul/IxwgzrDyZnn9nzgFAq73zCRNhdy37XVBlWR6Cac7
-         QafOY7wQzQbIS+/6o0PQxi+6wS2LBmdAjEFcwWCfQ5zA2w7q9UxLMGQMws411fmPaHVM
-         NGnmeC9xdjVgid9LS9qhdOv+42q3Ed30ZvRrEAAun3r5+q2T3meIVKQiFGc0MiUNg99t
-         yTClkn93pVhGbscM0AVPWr0cmDsMmPk+IvRr4uQokSM3cRYRlJvdyMB+Gzi+BYCKAQZa
-         p69DWqBfy2ad7cB6aznswmrGJdmkmCCM9pHHnHPJXdj4bQv9XV8vQMPqOd8bUiI3xNV+
-         j/qA==
-X-Forwarded-Encrypted: i=1; AJvYcCUwUIT1I8l1DwNGKgJuqqmLPmy4WmA7hOpHhnwJ0vcm9PUwaU6XDVF5c0JHJC5nujZ7YWyO3tPDIR2yxEMTsjsV/Xv0EwQaupJiQaOh
-X-Gm-Message-State: AOJu0YzJD4UovPHAhwdg+5QPHekfwQTF2BToN9isjaLRsnzQW7R+TnIK
-	GDKL3bQPf9gksbQ2GW+B9sAqFLL8AbHHcvwfu/ZnqZrcHA3KF7qpsvhKO6UU2X3Z3n1T2BKLni6
-	/QQ==
-X-Google-Smtp-Source: AGHT+IFobNEQjS9eARQk343geD0ViRI6gKHOTxtiSoNxckgqOSHSLxWkgoxi1wsgrpQuiN+Asg30a0OYQEc=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a17:90b:4d8c:b0:2bd:f679:24ac with SMTP id
- 98e67ed59e1d1-2c857c4b24emr39492a91.0.1719432528807; Wed, 26 Jun 2024
- 13:08:48 -0700 (PDT)
-Date: Wed, 26 Jun 2024 13:08:47 -0700
-In-Reply-To: <20240625-bug5-v1-1-e072ed5fce85@gmail.com>
+	s=arc-20240116; t=1719432569; c=relaxed/simple;
+	bh=DAwndtMN6r1+ichMXqbeE2TVo0Yg6GPpGo80o296u0Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kAg4SuowtoVDX4rtFvFxenfEWE/YQ7S3wLMJ6cx/YKXIRooXDn8bIAt+aGRa0faF5alG+pZktKshWmTOmmp5wGh+3yETDLDQTAADjQaGr1T70Lb76hHcFGLgGkaFrP1jqR3O20Y1iJFSWZGYTcOStgvbeBaw2r9RQCuiSnzuYZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 74402339;
+	Wed, 26 Jun 2024 13:09:49 -0700 (PDT)
+Received: from [10.57.74.5] (unknown [10.57.74.5])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D35263F73B;
+	Wed, 26 Jun 2024 13:09:21 -0700 (PDT)
+Message-ID: <07c7426c-7d01-4160-a344-1857b738e9c4@arm.com>
+Date: Wed, 26 Jun 2024 21:09:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240625-bug5-v1-1-e072ed5fce85@gmail.com>
-Message-ID: <Znx1T_hHNA_uThf2@google.com>
-Subject: Re: [PATCH] kvm: Fix warning in__kvm_gpc_refresh
-From: Sean Christopherson <seanjc@google.com>
-To: Pei Li <peili.dev@gmail.com>
-Cc: David Woodhouse <dwmw2@infradead.org>, Paul Durrant <paul@xen.org>, 
-	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
-	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org, 
-	syzkaller-bugs@googlegroups.com, llvm@lists.linux.dev, 
-	syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iommu/arm-smmu: Pretty-print context fault related
+ regs
+To: Rob Clark <robdclark@gmail.com>, iommu@lists.linux.dev
+Cc: linux-arm-msm@vger.kernel.org, Stephen Boyd <swboyd@chromium.org>,
+ Pranjal Shrivastava <praan@google.com>, Rob Clark <robdclark@chromium.org>,
+ Will Deacon <will@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+ Jason Gunthorpe <jgg@ziepe.ca>, Jerry Snitselaar <jsnitsel@redhat.com>,
+ Rob Herring <robh@kernel.org>, Dmitry Baryshkov
+ <dmitry.baryshkov@linaro.org>, Georgi Djakov <quic_c_gdjako@quicinc.com>,
+ "moderated list:ARM SMMU DRIVERS" <linux-arm-kernel@lists.infradead.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20240626163842.205631-1-robdclark@gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20240626163842.205631-1-robdclark@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 25, 2024, Pei Li wrote:
-> Check for invalid hva address stored in data before calling
-> kvm_gpc_activate_hva() instead of only compare with 0.
+On 2024-06-26 5:38 pm, Rob Clark wrote:
+> From: Rob Clark <robdclark@chromium.org>
 > 
-> Reported-by: syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=fd555292a1da3180fc82
-> Tested-by: syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com
-> Signed-off-by: Pei Li <peili.dev@gmail.com>
+> Parse out the bitfields for easier-to-read fault messages.
+> 
+> Signed-off-by: Rob Clark <robdclark@chromium.org>
 > ---
-> Syzbot reports a warning message in __kvm_gpc_refresh(). This warning
-> requires at least one of gpa and uhva to be valid.
-> WARNING: CPU: 0 PID: 5090 at arch/x86/kvm/../../../virt/kvm/pfncache.c:259 __kvm_gpc_refresh+0xf17/0x1090 arch/x86/kvm/../../../virt/kvm/pfncache.c:259
+> I kept with the dev_err, which matches qcom_smmu_context_fault.  It is
+> only adding two extra lines, and it is ratelimited.
 > 
-> We are calling it from kvm_gpc_activate_hva(). This function always calls
-> __kvm_gpc_activate() with INVALID_GPA. Thus, uhva must be valid to
-> disable this warning.
+> I also converted qcom_smmu_context_fault() to use the helpers to do the
+> parsing, rather than more or less duplicating.
 > 
-> This patch checks for invalid hva address as well instead of only
-> comparing hva with 0 before calling kvm_gpc_activate_hva()
+>   .../iommu/arm/arm-smmu/arm-smmu-qcom-debug.c  | 21 +++---
+>   drivers/iommu/arm/arm-smmu/arm-smmu.c         | 70 ++++++++++++++++++-
+>   drivers/iommu/arm/arm-smmu/arm-smmu.h         | 58 +++++++++------
+>   3 files changed, 110 insertions(+), 39 deletions(-)
 > 
-> syzbot has tested the proposed patch and the reproducer did not trigger
-> any issue.
-> 
-> Tested on:
-> 
-> commit:         55027e68 Merge tag 'input-for-v6.10-rc5' of git://git...
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=16ea803a980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e40800950091403a
-> dashboard link: https://syzkaller.appspot.com/bug?extid=fd555292a1da3180fc82
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> patch:          https://syzkaller.appspot.com/x/patch.diff?x=16eeb53e980000
-> 
-> Note: testing is done by a robot and is best-effort only.
-> ---
->  arch/x86/kvm/xen.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/x86/kvm/xen.c b/arch/x86/kvm/xen.c
-> index f65b35a05d91..de5f34492405 100644
-> --- a/arch/x86/kvm/xen.c
-> +++ b/arch/x86/kvm/xen.c
-> @@ -881,7 +881,7 @@ int kvm_xen_vcpu_set_attr(struct kvm_vcpu *vcpu, struct kvm_xen_vcpu_attr *data)
->  			r = kvm_gpc_activate(&vcpu->arch.xen.vcpu_info_cache,
->  					     data->u.gpa, sizeof(struct vcpu_info));
->  		} else {
-> -			if (data->u.hva == 0) {
-> +			if (data->u.hva == 0 || kvm_is_error_hva(data->u.hva)) {
->  				kvm_gpc_deactivate(&vcpu->arch.xen.vcpu_info_cache);
->  				r = 0;
->  				break;
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
+> index 552199cbd9e2..ee7eab273e1a 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom-debug.c
+> @@ -429,22 +429,17 @@ irqreturn_t qcom_smmu_context_fault(int irq, void *dev)
+>   		phys_addr_t phys_atos = qcom_smmu_verify_fault(smmu_domain, iova, fsr);
+>   
+>   		if (__ratelimit(&_rs)) {
+> +			char buf[80];
+> +
+>   			dev_err(smmu->dev,
+>   				"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
+>   				fsr, iova, fsynr, cbfrsynra, idx);
+> -			dev_err(smmu->dev,
+> -				"FSR    = %08x [%s%s%s%s%s%s%s%s%s], SID=0x%x\n",
+> -				fsr,
+> -				(fsr & 0x02) ? "TF " : "",
+> -				(fsr & 0x04) ? "AFF " : "",
+> -				(fsr & 0x08) ? "PF " : "",
+> -				(fsr & 0x10) ? "EF " : "",
+> -				(fsr & 0x20) ? "TLBMCF " : "",
+> -				(fsr & 0x40) ? "TLBLKF " : "",
+> -				(fsr & 0x80) ? "MHF " : "",
+> -				(fsr & 0x40000000) ? "SS " : "",
+> -				(fsr & 0x80000000) ? "MULTI " : "",
+> -				cbfrsynra);
+> +
+> +			arm_smmu_parse_fsr(buf, fsr);
+> +			dev_err(smmu->dev, "FSR: %s\n", buf);
+> +
+> +			arm_smmu_parse_fsynr0(buf, fsynr);
+> +			dev_err(smmu->dev, "FSYNR0: %s\n", buf);
+>   
+>   			dev_err(smmu->dev,
+>   				"soft iova-to-phys=%pa\n", &phys_soft);
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> index 87c81f75cf84..7f5ca75d5ebe 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> @@ -405,12 +405,67 @@ static const struct iommu_flush_ops arm_smmu_s2_tlb_ops_v1 = {
+>   	.tlb_add_page	= arm_smmu_tlb_add_page_s2_v1,
+>   };
+>   
+> +void arm_smmu_parse_fsr(char buf[80], u32 fsr)
+> +{
+> +	static const struct {
+> +		u32 mask;
+> +		const char *name;
+> +	} fsr_bits[] = {
+> +		{ ARM_SMMU_CB_FSR_MULTI,  "MULTI"  },
+> +		{ ARM_SMMU_CB_FSR_SS,     "SS"     },
+> +		{ ARM_SMMU_CB_FSR_UUT,    "UUT"    },
+> +		{ ARM_SMMU_CB_FSR_ASF,    "ASF"    },
+> +		{ ARM_SMMU_CB_FSR_TLBLKF, "TLBLKF" },
+> +		{ ARM_SMMU_CB_FSR_TLBMCF, "TLBMCF" },
+> +		{ ARM_SMMU_CB_FSR_EF,     "EF"     },
+> +		{ ARM_SMMU_CB_FSR_PF,     "PF"     },
+> +		{ ARM_SMMU_CB_FSR_AFF,    "AFF"    },
+> +		{ ARM_SMMU_CB_FSR_TF,     "TF"     },
+> +	};
+> +	char *p = buf;
+> +
+> +	p += sprintf(p, "FORMAT=%u",
+> +		     (u32)FIELD_GET(ARM_SMMU_CB_FSR_FORMAT, fsr));
+> +
+> +	for (int i = 0; i < ARRAY_SIZE(fsr_bits); i++)
+> +		if (fsr & fsr_bits[i].mask)
 
-Hmm, I think what we want is to return -EINVAL in this case, not deactivate the
-region.   I could have sworn KVM does that.  Gah, I caught
-KVM_XEN_ATTR_TYPE_SHARED_INFO_HVA during review, but missed this one.  So to fix
-this immediate bug, and avoid similar issues in the future, this?
+I still much prefer the arm64 data_abort_decode() name=value style, or 
+indeed even the qcom_smmu_context_fault() full/empty substring style - 
+that's similarly easier to understand, doesn't need the awkward 
+temporary buffer, and is still entirely capable of producing the same 
+output as you're achieving here. The other good idea from there is 
+repeating the raw register value in the same line, that way the decode 
+is entirely unambiguous at a glance, and trivial to correlate with the 
+full fault data from the first line even when interleaved and without 
+CONFIG_PRINTK_CALLER.
 
-diff --git a/arch/x86/kvm/xen.c b/arch/x86/kvm/xen.c
-index 93814d3850eb..622fe24da910 100644
---- a/arch/x86/kvm/xen.c
-+++ b/arch/x86/kvm/xen.c
-@@ -741,7 +741,7 @@ int kvm_xen_hvm_set_attr(struct kvm *kvm, struct kvm_xen_hvm_attr *data)
-                } else {
-                        void __user * hva = u64_to_user_ptr(data->u.shared_info.hva);
- 
--                       if (!PAGE_ALIGNED(hva) || !access_ok(hva, PAGE_SIZE)) {
-+                       if (!PAGE_ALIGNED(hva)) {
-                                r = -EINVAL;
-                        } else if (!hva) {
-                                kvm_gpc_deactivate(&kvm->arch.xen.shinfo_cache);
-diff --git a/virt/kvm/pfncache.c b/virt/kvm/pfncache.c
-index 0ab90f45db37..728d2c1b488a 100644
---- a/virt/kvm/pfncache.c
-+++ b/virt/kvm/pfncache.c
-@@ -438,6 +438,9 @@ int kvm_gpc_activate(struct gfn_to_pfn_cache *gpc, gpa_t gpa, unsigned long len)
- 
- int kvm_gpc_activate_hva(struct gfn_to_pfn_cache *gpc, unsigned long uhva, unsigned long len)
- {
-+       if (!access_ok((void __user *)uhva, len))
-+               return -EINVAL;
-+
-        return __kvm_gpc_activate(gpc, INVALID_GPA, uhva, len);
- }
+> +			p += sprintf(p, "|%s", fsr_bits[i].name);
 
+Furthermore, IM|NT|ENTRLY|CNVNCD|THS|IS|SO|EZ|TO|RD
+
+Spaces, man. Spaces are good. If the aim is to be readable, the 
+capital-letter-salad involved here needs all the help it can get :)
+
+> +}
+> +
+> +void arm_smmu_parse_fsynr0(char buf[80], u32 fsynr)
+> +{
+> +	static const struct {
+> +		u32 mask;
+> +		const char *name;
+> +	} fsynr0_bits[] = {
+> +		{ ARM_SMMU_CB_FSYNR0_WNR,    "WNR"    },
+> +		{ ARM_SMMU_CB_FSYNR0_PNU,    "PNU"    },
+> +		{ ARM_SMMU_CB_FSYNR0_IND,    "IND"    },
+> +		{ ARM_SMMU_CB_FSYNR0_NSATTR, "NSATTR" },
+> +		{ ARM_SMMU_CB_FSYNR0_PTWF,   "PTWF"   },
+> +		{ ARM_SMMU_CB_FSYNR0_AFR,    "AFR"    },
+> +	};
+> +	char *p = buf;
+> +
+> +	p += sprintf(p, "S1CBNDX=%u",
+> +		     (u32)FIELD_GET(ARM_SMMU_CB_FSYNR0_S1CBNDX, fsynr));
+> +
+> +	for (int i = 0; i < ARRAY_SIZE(fsynr0_bits); i++)
+> +		if (fsynr & fsynr0_bits[i].mask)
+> +			p += sprintf(p, "|%s", fsynr0_bits[i].name);
+> +
+> +	p += sprintf(p, "|PLVL=%u",
+> +		     (u32)FIELD_GET(ARM_SMMU_CB_FSYNR0_PLVL, fsynr));
+> +}
+> +
+>   static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
+>   {
+>   	u32 fsr, fsynr, cbfrsynra;
+>   	unsigned long iova;
+>   	struct arm_smmu_domain *smmu_domain = dev;
+>   	struct arm_smmu_device *smmu = smmu_domain->smmu;
+> +	static DEFINE_RATELIMIT_STATE(rs, DEFAULT_RATELIMIT_INTERVAL,
+> +				      DEFAULT_RATELIMIT_BURST);
+>   	int idx = smmu_domain->cfg.cbndx;
+>   	int ret;
+>   
+> @@ -423,13 +478,22 @@ static irqreturn_t arm_smmu_context_fault(int irq, void *dev)
+>   	cbfrsynra = arm_smmu_gr1_read(smmu, ARM_SMMU_GR1_CBFRSYNRA(idx));
+>   
+>   	ret = report_iommu_fault(&smmu_domain->domain, NULL, iova,
+> -		fsynr & ARM_SMMU_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
+> +		fsynr & ARM_SMMU_CB_FSYNR0_WNR ? IOMMU_FAULT_WRITE : IOMMU_FAULT_READ);
+> +
+> +	if (ret == -ENOSYS && __ratelimit(&rs)) {
+> +		char buf[80];
+>   
+> -	if (ret == -ENOSYS)
+> -		dev_err_ratelimited(smmu->dev,
+> +		dev_err(smmu->dev,
+>   		"Unhandled context fault: fsr=0x%x, iova=0x%08lx, fsynr=0x%x, cbfrsynra=0x%x, cb=%d\n",
+>   			    fsr, iova, fsynr, cbfrsynra, idx);
+>   
+> +		arm_smmu_parse_fsr(buf, fsr);
+> +		dev_err(smmu->dev, "FSR: %s\n", buf);
+> +
+> +		arm_smmu_parse_fsynr0(buf, fsynr);
+> +		dev_err(smmu->dev, "FSYNR0: %s\n", buf);
+> +	}
+> +
+>   	arm_smmu_cb_write(smmu, idx, ARM_SMMU_CB_FSR, fsr);
+>   	return IRQ_HANDLED;
+>   }
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.h b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+> index 4765c6945c34..763ea52fca64 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.h
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.h
+> @@ -196,34 +196,46 @@ enum arm_smmu_cbar_type {
+>   #define ARM_SMMU_CB_PAR_F		BIT(0)
+>   
+>   #define ARM_SMMU_CB_FSR			0x58
+> -#define ARM_SMMU_FSR_MULTI		BIT(31)
+> -#define ARM_SMMU_FSR_SS			BIT(30)
+> -#define ARM_SMMU_FSR_UUT		BIT(8)
+> -#define ARM_SMMU_FSR_ASF		BIT(7)
+> -#define ARM_SMMU_FSR_TLBLKF		BIT(6)
+> -#define ARM_SMMU_FSR_TLBMCF		BIT(5)
+> -#define ARM_SMMU_FSR_EF			BIT(4)
+> -#define ARM_SMMU_FSR_PF			BIT(3)
+> -#define ARM_SMMU_FSR_AFF		BIT(2)
+> -#define ARM_SMMU_FSR_TF			BIT(1)
+> -
+> -#define ARM_SMMU_FSR_IGN		(ARM_SMMU_FSR_AFF |		\
+> -					 ARM_SMMU_FSR_ASF |		\
+> -					 ARM_SMMU_FSR_TLBMCF |		\
+> -					 ARM_SMMU_FSR_TLBLKF)
+> -
+> -#define ARM_SMMU_FSR_FAULT		(ARM_SMMU_FSR_MULTI |		\
+> -					 ARM_SMMU_FSR_SS |		\
+> -					 ARM_SMMU_FSR_UUT |		\
+> -					 ARM_SMMU_FSR_EF |		\
+> -					 ARM_SMMU_FSR_PF |		\
+> -					 ARM_SMMU_FSR_TF |		\
+> +#define ARM_SMMU_CB_FSR_MULTI		BIT(31)
+> +#define ARM_SMMU_CB_FSR_SS		BIT(30)
+> +#define ARM_SMMU_CB_FSR_FORMAT		GENMASK(10, 9)
+> +#define ARM_SMMU_CB_FSR_UUT		BIT(8)
+> +#define ARM_SMMU_CB_FSR_ASF		BIT(7)
+> +#define ARM_SMMU_CB_FSR_TLBLKF		BIT(6)
+> +#define ARM_SMMU_CB_FSR_TLBMCF		BIT(5)
+> +#define ARM_SMMU_CB_FSR_EF		BIT(4)
+> +#define ARM_SMMU_CB_FSR_PF		BIT(3)
+> +#define ARM_SMMU_CB_FSR_AFF		BIT(2)
+> +#define ARM_SMMU_CB_FSR_TF		BIT(1)
+> +
+> +void arm_smmu_parse_fsr(char buf[80], u32 fsr);
+> +
+> +#define ARM_SMMU_FSR_IGN		(ARM_SMMU_CB_FSR_AFF |		\
+> +					 ARM_SMMU_CB_FSR_ASF |		\
+> +					 ARM_SMMU_CB_FSR_TLBMCF |	\
+> +					 ARM_SMMU_CB_FSR_TLBLKF)
+> +
+> +#define ARM_SMMU_FSR_FAULT		(ARM_SMMU_CB_FSR_MULTI |	\
+> +					 ARM_SMMU_CB_FSR_SS |		\
+> +					 ARM_SMMU_CB_FSR_UUT |		\
+> +					 ARM_SMMU_CB_FSR_EF |		\
+> +					 ARM_SMMU_CB_FSR_PF |		\
+> +					 ARM_SMMU_CB_FSR_TF |		\
+>   					 ARM_SMMU_FSR_IGN)
+>   
+>   #define ARM_SMMU_CB_FAR			0x60
+>   
+>   #define ARM_SMMU_CB_FSYNR0		0x68
+> -#define ARM_SMMU_FSYNR0_WNR		BIT(4)
+> +#define ARM_SMMU_CB_FSYNR0_PLVL		GENMASK(1, 0)
+> +#define ARM_SMMU_CB_FSYNR0_WNR		BIT(4)
+> +#define ARM_SMMU_CB_FSYNR0_PNU		BIT(5)
+> +#define ARM_SMMU_CB_FSYNR0_IND		BIT(6)
+> +#define ARM_SMMU_CB_FSYNR0_NSATTR	BIT(8)
+> +#define ARM_SMMU_CB_FSYNR0_PTWF		BIT(10)
+> +#define ARM_SMMU_CB_FSYNR0_AFR		BIT(11)
+> +#define ARM_SMMU_CB_FSYNR0_S1CBNDX	GENMASK(23, 16)
+
+Nit: MSB-to-LSB order like all the other register fields, please.
+
+Thanks,
+Robin.
+
+> +
+> +void arm_smmu_parse_fsynr0(char buf[80], u32 fsynr);
+>   
+>   #define ARM_SMMU_CB_FSYNR1		0x6c
+>   
 
