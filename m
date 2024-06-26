@@ -1,207 +1,202 @@
-Return-Path: <linux-kernel+bounces-230174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52029917964
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:12:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7203917967
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F5D3B23206
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:12:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 620D02861B3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1AE15B992;
-	Wed, 26 Jun 2024 07:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RMLaHmnP"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2079.outbound.protection.outlook.com [40.107.22.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C3415E5CB;
+	Wed, 26 Jun 2024 07:12:38 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6949415AD90;
-	Wed, 26 Jun 2024 07:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719385955; cv=fail; b=B0oZpGCRI5+wqGg2Ee8fxnZMfbG22etHLOChO9Z8WRBGu+Zj4e4Db2uE91jh9ILttHn7iKN5lFs4B5oxU/NyHf5J9AVSyDfrg4JD6BUF9Mta0TWgRomcwU/010iXI6FSBXPdeokyvXv0gr1qn1KxvmJr0Th8ZfrDr2qpRgIoYjY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719385955; c=relaxed/simple;
-	bh=phMajaCgPMrdygg95XGWsoqmGYUzgAwYjPQJ+mQkKtU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hq6kA8qWioV/e4FrCmpBX+TqUwQWIvzMAII1N8TrZUzMwlg5bpLruEBSfTtcyHmpdc7hL5ciGx8PdgpWKCEQqk1s7aO4fPHwpsc0KuAcd27A0nqiAPMnBFuO2s+V0Mjv7/bWicRoOtbhn358UaHpQerV0GwoOc+osyYkbPM7p1A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=RMLaHmnP; arc=fail smtp.client-ip=40.107.22.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Z526IhPYrAhgzCknBljrAh1Cnent239oF21fqgm9g79J6NiupXq8IC3zTbrLTNiI+21Z+PIoLKOs9fIMGHw4ZV3I7ZVIvO0YM0zjAQJBQYtxAWJrONxd+I6nkE4MsDOPv2ztVha3E7wS1i3LmMMQ+VJEeLwQQS1uool8DkWiJ8osfFWbySugtHOjMP46ocx5Wl5Z0o+ag2z/OitQE7HZB6SBTV0izl73w/TJSZwWCa3BMLyZCRhfJXdmNVWNVNJC6Pqry7JzZ207WWt9A0jamkWzQxJgCKqycpO1BqEuVnRtVz+mIzrwG7oFxUavOtgnwWYAbckTJYb2Forb5yAThQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VBG5T7H2uwT6F8Boex1R5ZyhXkTEGjCjeMrmJN6/rN8=;
- b=Ki0S9BxVvHvYORlQs+sI4odjmOtXJzLZBrR+ue0IcPTU6270uz77Qqvwg8OaWteTVG3KrwzeWr9YbOK5EKnZt183Od/LmJP0XMf5VTtD0iX8Vvz7hXnx3BbZZLdbbjRsdvN1zNtmlDXp6pPUKAwOVLcJL4PfpyKG25w5dFXOan0Z9l2QSVri+OxG2JXEEj9vr6KsuqSrbE3IdGG8qBRldokOgn+3necwgYcxCW6tjkM2mcwaBJr870sSdW7zs1HIY1IJQXhm3DLsugR7si4+sra8Z7iutg8OXPmJqxWBL2gyesP480HMaskk23oTpgzCe1Koa2N8tD0M2OcNmDTlyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VBG5T7H2uwT6F8Boex1R5ZyhXkTEGjCjeMrmJN6/rN8=;
- b=RMLaHmnPRrPiiohfnOxobRcNVPBm1h5iA+lVj5Ztfu2eX4/UNiGLOoZqvaG67OeXGYYemKft23DK5d+6e39yyKLjSKCTRDpkNEfprkBSm4P1qpD29yhuul44vZL0Gb/hwbSjDdjB/U5IG7CUbpw8Hu66DWRAvsruAkm3k1NaL0Q=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9498.eurprd04.prod.outlook.com (2603:10a6:10:360::21)
- by AS8PR04MB8689.eurprd04.prod.outlook.com (2603:10a6:20b:428::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
- 2024 07:12:30 +0000
-Received: from DB9PR04MB9498.eurprd04.prod.outlook.com
- ([fe80::24fa:6f9:8247:c5dc]) by DB9PR04MB9498.eurprd04.prod.outlook.com
- ([fe80::24fa:6f9:8247:c5dc%7]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 07:12:30 +0000
-From: Chancel Liu <chancel.liu@nxp.com>
-To: lgirdwood@gmail.com,
-	broonie@kernel.org,
-	robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org,
-	shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com,
-	festevam@gmail.com,
-	nicoleotsuka@gmail.com,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linux-sound@vger.kernel.org,
-	alsa-devel@alsa-project.org,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	devicetree@vger.kernel.org
-Cc: Chancel Liu <chancel.liu@nxp.com>
-Subject: [PATCH 2/2] ASoC: fsl_rpmsg: Add support for i.MX95 platform
-Date: Wed, 26 Jun 2024 16:12:02 +0900
-Message-ID: <20240626071202.7149-2-chancel.liu@nxp.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240626071202.7149-1-chancel.liu@nxp.com>
-References: <20240626071202.7149-1-chancel.liu@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0023.apcprd02.prod.outlook.com
- (2603:1096:3:17::35) To DB9PR04MB9498.eurprd04.prod.outlook.com
- (2603:10a6:10:360::21)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34E315A856;
+	Wed, 26 Jun 2024 07:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719385957; cv=none; b=mGUAXQGfS0/W7ujA1JpGhkhC24h9savn3sRb+qLQYWQC70kAcWj8hOIkilR5+e9QDKb4Jshefl+IMrYzeu6pt5akxY+1qaLcqRb8wgvOccY8b0t2cqg3N/og5ZC/A4Dcl8pche7bXRUzNeTG30BRRn0zD65U6ldQqJRvHsrsdHc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719385957; c=relaxed/simple;
+	bh=uvQNgV2jDCJ4VhyQQpkSfjrjwPjFCbXoN3isuczthlo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D3D3f4dqO0GB3c1gHvFIVqgkYSxI3qe9QR/V9zOnFqEGLN9xIeJuByHDkLQUzmCsmgPmyB/OUlk8NRcAYFHyM97z/mt+ewK2rpm4dV4VTdG12NoLwQmneHN9gfTZEtuJAsZxcixFS/MYZUFL3Rym6tk6oXTkqnv/C/CgGUP4SuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 6d3e4924338b11ef9305a59a3cc225df-20240626
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:1a41f925-4285-44e4-bd3e-c457bedf79f9,IP:10,
+	URL:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:28,RULE:Release_Ham,ACT
+	ION:release,TS:23
+X-CID-INFO: VERSION:1.1.38,REQID:1a41f925-4285-44e4-bd3e-c457bedf79f9,IP:10,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:-15,FILE:0,BULK:28,RULE:Release_Ham,ACTIO
+	N:release,TS:23
+X-CID-META: VersionHash:82c5f88,CLOUDID:2b20dc882b6524ccfac790fa7b5a81d3,BulkI
+	D:240622064849KEF3CG9W,BulkQuantity:4,Recheck:0,SF:64|66|38|24|17|19|44|10
+	2,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40|20,QS:nil,BE
+	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,TF_CID_SPAM_FCD,TF_CID_SPAM_SNR,
+	TF_CID_SPAM_FAS
+X-UUID: 6d3e4924338b11ef9305a59a3cc225df-20240626
+Received: from node2.com.cn [(39.156.73.10)] by mailgw.kylinos.cn
+	(envelope-from <luoxuanqiang@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 432502532; Wed, 26 Jun 2024 15:12:19 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 62A36B8075B2;
+	Wed, 26 Jun 2024 15:12:19 +0800 (CST)
+X-ns-mid: postfix-667BBF53-321303144
+Received: from [10.42.12.252] (unknown [10.42.12.252])
+	by node2.com.cn (NSMail) with ESMTPA id 0CB4EB8075B2;
+	Wed, 26 Jun 2024 07:12:15 +0000 (UTC)
+Message-ID: <dda6580f-636a-69da-60ef-cbdf0353d967@kylinos.cn>
+Date: Wed, 26 Jun 2024 15:12:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9498:EE_|AS8PR04MB8689:EE_
-X-MS-Office365-Filtering-Correlation-Id: 301af129-03ad-47a4-c143-08dc95af57ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230038|1800799022|376012|7416012|52116012|366014|38350700012|921018;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?z7R86+zZHyBhqENVi8w2Dr1M/99zpXqpmmEIYCbykzqqiPRwjC53Hm04u8xm?=
- =?us-ascii?Q?uW4dt7m4zKasdE8dKYbGhu0GFf23tJFtpUPjjYlWKmV2xCSDvB7a4J7jKomo?=
- =?us-ascii?Q?/NKEgFN6B7+LQ80jWRghJYbkVmWpH6cPxYAW+S00OOFhRPgzwTDQ/86/Imay?=
- =?us-ascii?Q?Bf1pMKsZXPQrJ7X40Fn+ycD3JbZiK/9KdYaI7++i1vv3CwDCm05+EgYFg/R4?=
- =?us-ascii?Q?EA1x3T459/oLQrN9baA/3QY6sNBXniM+vN/LQALvvRvFsgl2XcZ7HLRpKgTC?=
- =?us-ascii?Q?jswHnmu2ymlB9FpCCeK2nYo6TaDFlxdE1ptRXZcCpQwnhN4KTQ/iFqenFCB6?=
- =?us-ascii?Q?PGN9+bwB5StBnYjZP16vwUQ48HwgT+T1MiKxSNAkl1YuHHAhdeNTErWPeCPQ?=
- =?us-ascii?Q?4nG69q8XNPZBm3GNw+SAKPt0KYWlwwjxaIhejYbCsEXwHtiXOyMutUzA5RKk?=
- =?us-ascii?Q?+t7CLFoXOqB0OaIs1XSIxPIZZ1DMxkNvz7GbgfQwjgiq473jMmtzvsp3DsA4?=
- =?us-ascii?Q?6m8oMTQdgd1gzelU3w//bxnI3gVHTCZECdMBGZY1sXWwhaPek5JO3QcRdAQR?=
- =?us-ascii?Q?Qdp4bhRIdOkd/o1RQJ4LZRgEzryQuJxUzx75/z955T2OONYiIYrocztP+Qmx?=
- =?us-ascii?Q?Y0jmQ5ZPgpi4VZIMFfdkHqcCZp4UElF/ENUGxNiz6PofG9bQzuSr3ZCu5RZg?=
- =?us-ascii?Q?IclnnzQiims/Ks8FxzTQkVWmuq/Bg0r0cIIeXt94RlqjpZWlDNRJw9vzSyE9?=
- =?us-ascii?Q?6i2oQuHyCgOkfY6bhar6h14NyuF/qgcBSgHhpx43+Axc9CkQSXi5besimXXl?=
- =?us-ascii?Q?0ldElNlvjWTtaHxknSzVR15JU6I6xup80wsq/6oKv3iIMPHwKtxvQnLACFkH?=
- =?us-ascii?Q?T5JgQQssYQgAir5k0Npo5ICvrFNVxqZ5xbursdXvYX8qKBmbDrvvyTMXmx11?=
- =?us-ascii?Q?bDeKs9URGsFFW2e++Ljq0s3ajteXqaq2ONmhp4fsLASntObgDIwRpbG1PAwk?=
- =?us-ascii?Q?iqHHmvDDnX/Na68RCOFQz+HMBQvWYuySMa7yn15HPtzZTTwoDf3TaNjJ7Va7?=
- =?us-ascii?Q?/nZwCz4V9AKe0782JVrC2Q9llSUaxqABrUdIpP4UTioDaX3SBAUsAeUI2cEU?=
- =?us-ascii?Q?cxFUarY6VgbMiXtSu5AGRqIVLf/yWTPzyhBt7VBYPOHCBYCyoLVcafHu1nli?=
- =?us-ascii?Q?b2YUNlJhlNhfUf/BWNzck4H3034inKOWGiSh3YCwh3CQYPLaoG9EVKAr6FPJ?=
- =?us-ascii?Q?Xbs92pEPgLKDy8K9PWr5Gw3Hpt4g8vMKBy5hXbnnAd0A79+zhJBOWPJuQFvY?=
- =?us-ascii?Q?deIWdMfS3PlYSCm6NLq6qErqkDmxGxFvwa8PG24ufIidWWsPX8uC4VkIiBXz?=
- =?us-ascii?Q?1x+jpcf2GF6GljZGzGepcr9KGwc62kHrUPPzTRbzksQvTKVfUxhwpLJdIxRt?=
- =?us-ascii?Q?B9LFstF0IAA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9498.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(1800799022)(376012)(7416012)(52116012)(366014)(38350700012)(921018);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RFHkBkc/GFTHljpA5gY5STv6IgSTJ6sztbs4kXafgj2k6xTouUp4dMDsbSr+?=
- =?us-ascii?Q?+npcqRWcBFSZqgcCIXobSl4Gm5o6OD/vAJCUC9QD9359Y4X1IL6d4B6tkeau?=
- =?us-ascii?Q?wKFvkt+UXBPFju0Vx5t1UF1N61QFJc/7aiGZSb56o9HC53qqnilSQvZUU5Jd?=
- =?us-ascii?Q?jtynPgTONSnvtDks+Zeu1kAUtUm5VSwRjQwzn24rJhhyQ728YEpEiy1NF10L?=
- =?us-ascii?Q?GoLZirxAupcnol7RenX09cjDaTbyfq1a+D6MiNopxfnvmTk+JtPutO0M70XX?=
- =?us-ascii?Q?crmD0zVUbKsCIYfeEaZDBQJcxoZvieMguHl88G71zWQ4R6qriOPihPY4FfNC?=
- =?us-ascii?Q?1DeKh+2JheeXaElMAzt2RoABCuvDc1mM9caL/uGdcbDE28TjK99ToGb0kyk1?=
- =?us-ascii?Q?5CQTVCtp1ILjafZL614gLTy85ayLhIWgWv3K3WAks9mTjofLjPQFj6sa9uvW?=
- =?us-ascii?Q?zS0+NrOBRhRvKSRyLshRTYU2vKybbEodlP82A3o4PdyotFYGPmh5jPc4g+8d?=
- =?us-ascii?Q?UJzw4qbKCvkp9NHD4risDaNf0oaQVbqJachHIQCmBPjvQPiXcubp1NQhPRWY?=
- =?us-ascii?Q?Hon2Vf1QaiWIhYUQ0ipKn46Iyhms0B9Oe7d9xz8n23cDXaprl1MaALF7EApT?=
- =?us-ascii?Q?lCWJP2LfSlg1DoEgFgRX4T92p9HV3KFSCVXZp/DSx0vv9w1TEFK/EGq4knla?=
- =?us-ascii?Q?+aUWBfO2vmLvSAH3mktz6FaFZ7zCcHW9BW9Po/IUWhDdyF8/dUmt19eW+pui?=
- =?us-ascii?Q?mdWP1dkIAzFcXhEEerr/sINkJNXCaNpWR2XT2RysG4+sv6YUFETbagVelXm0?=
- =?us-ascii?Q?VAObRRm5loNtFLTVAN10N7fyJREGAiUyY1X57DMp/KRophEjSH2BJFS97588?=
- =?us-ascii?Q?SfPcVK05D8a1f7o8Z+AtDr09MAXXKdbjPhtLOW/Y4SPXfcRELfSCTacI6nSD?=
- =?us-ascii?Q?ICH/XOxQIbAMBuhP0t/bjNcuDY4Miv8tWr0XeyTST2JZNhWxZtg2x9aSdaVQ?=
- =?us-ascii?Q?GquD1BhuqDKx9oVvpnysqzXVgjInvy7JktzOFiBzJoM1K4RMkCMHYOYcGVnh?=
- =?us-ascii?Q?MMTvqbCg+GrKAday832Sf3CbV8JnQ+t1FUiv44wCPnD55R+DpSpC/ztAdJXB?=
- =?us-ascii?Q?WVq9Ux9jeqh877+EB7piBk54ImoTc7I0gPY8kPRNUO9hH3m5hlRh3s+57+dN?=
- =?us-ascii?Q?SiLBZKZZryh8SISAfmnoykHxdNixlrS/WGwJLq7CR3ULwnZU4t8qxNHGkXBU?=
- =?us-ascii?Q?Z3AZ5PEIwgJW/i9w/76QJhAEUrDOGIJDSAukR7E0E905OflFyqNCH1kNYrTh?=
- =?us-ascii?Q?Gk06HGX61TaDOjas+NBslIqN3H7zLbRSvabhLtwfSu4TtO2cWdhBVmywgMvl?=
- =?us-ascii?Q?QUz0iN6deqshOJcvvW6wlgfG4JOJlR1tOiBiQfD6LyvNxaBFMv4hWb3/7TTE?=
- =?us-ascii?Q?2NV7Hk1eVw0uV7NoPuv9TcAKYplTP7jZNVkSgB6/oxSN6An+NNZABrl36M6k?=
- =?us-ascii?Q?3FAz8GpuDBaR3AmrQeyNbiBYxWet9Sj/8+n0iwLOHF6ZNGlIEWIZz3Uyaj+9?=
- =?us-ascii?Q?oLZ+eESqSUV+yapwa93LizM8KAldVC4nQeiW+Flw?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 301af129-03ad-47a4-c143-08dc95af57ee
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9498.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 07:12:30.8575
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GcObEc6rqc7m6kUKFFYl/jMLT9DFu1xzLVe1Z0p9Juba7fVNXgASXnIyYiZvUNuhZJYuDSvd6lFzjfqbuJAmLg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8689
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH net v4] Fix race for duplicate reqsk on identical SYN
+Content-Language: en-US
+To: Paolo Abeni <pabeni@redhat.com>, kuniyu@amazon.com, edumazet@google.com,
+ kuba@kernel.org, davem@davemloft.net
+Cc: dccp@vger.kernel.org, dsahern@kernel.org, fw@strlen.de,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ alexandre.ferrieux@orange.com
+References: <20240621013929.1386815-1-luoxuanqiang@kylinos.cn>
+ <35f497afd90fe16ba1408f25ea1ff62af6a73a90.camel@redhat.com>
+From: luoxuanqiang <luoxuanqiang@kylinos.cn>
+In-Reply-To: <35f497afd90fe16ba1408f25ea1ff62af6a73a90.camel@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-Add compatible string and specific soc data to support rpmsg sound card
-on i.MX95 platform.
 
-Signed-off-by: Chancel Liu <chancel.liu@nxp.com>
----
- sound/soc/fsl/fsl_rpmsg.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+=E5=9C=A8 2024/6/25 17:49, Paolo Abeni =E5=86=99=E9=81=93:
+> On Fri, 2024-06-21 at 09:39 +0800, luoxuanqiang wrote:
+>> When bonding is configured in BOND_MODE_BROADCAST mode, if two identic=
+al
+>> SYN packets are received at the same time and processed on different C=
+PUs,
+>> it can potentially create the same sk (sock) but two different reqsk
+>> (request_sock) in tcp_conn_request().
+>>
+>> These two different reqsk will respond with two SYNACK packets, and si=
+nce
+>> the generation of the seq (ISN) incorporates a timestamp, the final tw=
+o
+>> SYNACK packets will have different seq values.
+>>
+>> The consequence is that when the Client receives and replies with an A=
+CK
+>> to the earlier SYNACK packet, we will reset(RST) it.
+>>
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>
+>> This behavior is consistently reproducible in my local setup,
+>> which comprises:
+>>
+>>                    | NETA1 ------ NETB1 |
+>> PC_A --- bond --- |                    | --- bond --- PC_B
+>>                    | NETA2 ------ NETB2 |
+>>
+>> - PC_A is the Server and has two network cards, NETA1 and NETA2. I hav=
+e
+>>    bonded these two cards using BOND_MODE_BROADCAST mode and configure=
+d
+>>    them to be handled by different CPU.
+>>
+>> - PC_B is the Client, also equipped with two network cards, NETB1 and
+>>    NETB2, which are also bonded and configured in BOND_MODE_BROADCAST =
+mode.
+>>
+>> If the client attempts a TCP connection to the server, it might encoun=
+ter
+>> a failure. Capturing packets from the server side reveals:
+>>
+>> 10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
+>> 10.10.10.10.45182 > localhost: Flags [S], seq 320236027,
+>> localhost > 10.10.10.10.45182: Flags [S.], seq 2967855116,
+>> localhost > 10.10.10.10.45182: Flags [S.], seq 2967855123, <=3D=3D
+>> 10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
+>> 10.10.10.10.45182 > localhost: Flags [.], ack 4294967290,
+>> localhost > 10.10.10.10.45182: Flags [R], seq 2967855117, <=3D=3D
+>> localhost > 10.10.10.10.45182: Flags [R], seq 2967855117,
+>>
+>> Two SYNACKs with different seq numbers are sent by localhost,
+>> resulting in an anomaly.
+>>
+>> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>>
+>> The attempted solution is as follows:
+>> Add a return value to inet_csk_reqsk_queue_hash_add() to confirm if th=
+e
+>> ehash insertion is successful (Up to now, the reason for unsuccessful
+>> insertion is that a reqsk for the same connection has already been
+>> inserted). If the insertion fails, release the reqsk.
+>>
+>> Due to the refcnt, Kuniyuki suggests also adding a return value check
+>> for the DCCP module; if ehash insertion fails, indicating a successful
+>> insertion of the same connection, simply release the reqsk as well.
+>>
+>> Simultaneously, In the reqsk_queue_hash_req(), the start of the
+>> req->rsk_timer is adjusted to be after successful insertion.
+>>
+>> Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+> Just after applying the patch I wondered if the issue addressed here
+> should be observable only after commit e994b2f0fb92 ("tcp: do not lock
+> listener to process SYN packets")?
+>
+> In practice it should not matter as the latter commit it's older than
+> the currently older LST, but I'm wondering if I read the things
+> correctly?
+>
+> Thanks!
+>
+> Paolo
+>
+Hi, Paolo, I conducted some experiments on your concern by reverting e994=
+b2f0fb92 on version 4.19 to observe how TCP handles this race condition.
 
-diff --git a/sound/soc/fsl/fsl_rpmsg.c b/sound/soc/fsl/fsl_rpmsg.c
-index bc41a0666856..467d6bc9f956 100644
---- a/sound/soc/fsl/fsl_rpmsg.c
-+++ b/sound/soc/fsl/fsl_rpmsg.c
-@@ -175,6 +175,14 @@ static const struct fsl_rpmsg_soc_data imx93_data = {
- 		   SNDRV_PCM_FMTBIT_S32_LE,
- };
- 
-+static const struct fsl_rpmsg_soc_data imx95_data = {
-+	.rates = SNDRV_PCM_RATE_16000 | SNDRV_PCM_RATE_32000 |
-+		 SNDRV_PCM_RATE_44100 | SNDRV_PCM_RATE_48000 |
-+		 SNDRV_PCM_RATE_88200 | SNDRV_PCM_RATE_96000,
-+	.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S24_LE |
-+		   SNDRV_PCM_FMTBIT_S32_LE,
-+};
-+
- static const struct of_device_id fsl_rpmsg_ids[] = {
- 	{ .compatible = "fsl,imx7ulp-rpmsg-audio", .data = &imx7ulp_data},
- 	{ .compatible = "fsl,imx8mm-rpmsg-audio", .data = &imx8mm_data},
-@@ -182,6 +190,7 @@ static const struct of_device_id fsl_rpmsg_ids[] = {
- 	{ .compatible = "fsl,imx8mp-rpmsg-audio", .data = &imx8mp_data},
- 	{ .compatible = "fsl,imx8ulp-rpmsg-audio", .data = &imx7ulp_data},
- 	{ .compatible = "fsl,imx93-rpmsg-audio", .data = &imx93_data},
-+	{ .compatible = "fsl,imx95-rpmsg-audio", .data = &imx95_data},
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, fsl_rpmsg_ids);
--- 
-2.43.0
+Here are the observations:
+where SYN-A is processed on CPUA and SYN-B is processed on CPUB
+
+CPUA & CPUB
+
+In tcp_v4_rcv(), both SYN-A and SYN-B obtained the same sk from __inet_lo=
+okup_listener(), with the sk state being TCP_LISTEN.
+
+ =C2=A0=C2=A0 =C2=A0CPUA
+
+ =C2=A0=C2=A0=C2=A0 SYN-A acquired sk_lock and was processed in tcp_v4_do=
+_rcv(), where it created reqsk-A while in TCP_LISTEN state and sent a SYN=
+ACK packet.
+
+    =20
+
+ =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=
+=A0 CPUB
+
+ =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0 =C2=A0=C2=A0=C2=
+=A0 After SYN-A was processed and sk_lock was released, SYN-B was process=
+ed. Since it was the same sk still in TCP_LISTEN state, it created reqsk-=
+B and sent a SYNACK packet with a different seq number.
+
+The issue remains reproducible.
+
+BRs!
 
 
