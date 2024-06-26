@@ -1,158 +1,114 @@
-Return-Path: <linux-kernel+bounces-230902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C05DD918398
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:03:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F16E091839A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:04:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F288282AA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:03:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE4AB282718
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF05184125;
-	Wed, 26 Jun 2024 14:03:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D9891850A4;
+	Wed, 26 Jun 2024 14:03:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kWKi6AnJ"
-Received: from mail-oa1-f46.google.com (mail-oa1-f46.google.com [209.85.160.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k2PyIaZY"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8F41836F7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DE81836FB
 	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:03:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.46
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719410629; cv=none; b=rJ+FGcMKVPLtyNzPeFqv384Tsh7IUrFIEXk51BJ8u2ieAi8Li/QRq5/cAfFo2OTjCOkOg0sWEGX37S74XKobFhhb1S0+AYS/hZ22hob6zwTZpOZ+7QdMQXoUuOm9pgS1DK7QZhFnXDJigKXBjCObw84lY7RbFaSzis9WPWRHCUU=
+	t=1719410630; cv=none; b=OpSZlrgnCRDS1PHcaMWRYZRFdLVYWCpSBy0R8i+aK5AJEIUa9aBIg7ZZqsK43mOjf/zQb0rDkRORAH6iOhu0jhaK9psNMFIG7bnEUB3loPGJxKpIcqr5RslIE3ZeYSuIFPRnwVxJusuNlwdD84Jmp1t8wJGIzrPS2Lq7RvI/ZwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719410629; c=relaxed/simple;
-	bh=xs4LLYsfrRzMfpfjWbXCA0eI8gA2aN/e8u81yI8Lugs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mgRYYeFC13ALNWQArbIb763aAYt8U7sbR1LjlB8ZwZYfhAy+aCBTCncaQPla0ANa3zfH7XNRF+QSEQlrFHNFgKgA4SszbvRaTZ6WEBYMpBcSc8uStD0iq1teNdju7Fkmw14NovyeHGNeDAfKIeKdrLWX4raksZd/I6FzC1ZhCm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kWKi6AnJ; arc=none smtp.client-ip=209.85.160.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f46.google.com with SMTP id 586e51a60fabf-24c9f892aeaso3500286fac.2
+	s=arc-20240116; t=1719410630; c=relaxed/simple;
+	bh=COI46aH+Oz21UiiihC+d6U+SjKviU2OFSGC3UXQqAoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X6bKcCGwXjghgvxYhTxaSJ6DiPU7mR+WREty+rh/sSDQ3FAtTOzcKRX8stCmF73Tn52ZmkTx/kWumh5LSex0+fBWt4AOvCtpIZEfboqEF8ZTwf9sUINSvAyUJv43g/in1A7/L7lqxSK1Ks0SC/qvTNf1Qrz6QcYErglPUY2rmGw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k2PyIaZY; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a72517e6225so481483666b.0
         for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:03:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1719410627; x=1720015427; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lJUHJEXAc+QcqYtg3JPqiGV21t0n+2d3pWybHwk5YPo=;
-        b=kWKi6AnJO/LltRyE7J7bOJ1PXfEyCr3HIOM4rmwLES9EyO0OAcgb6sI9nGmcpLof+d
-         IV6ClEcRl7/EZePuSJ7sUCu5LyYEiyO/DiGMqBo3vTjcsHXdiz7PL1IesYS2IHSc+n6m
-         7MbHrTCAZLPPclrXQLWozIRJpg651KKy6uUx4=
+        d=linaro.org; s=google; t=1719410627; x=1720015427; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ILkkZlkgByt2QtoNrBiCHP9/+0JYt5yL7z1P95cPgl4=;
+        b=k2PyIaZYRtYpls84/RuVCTiFEP9LT/zNiIS8Z7APKhci5oigSQt0HAFSoVXl49qVsi
+         seXIUPbvqAH/TnwSX9r6Yp4kt/+UlSJsweSphu3xxpQlDFFfz1rp0c3U3k0UcNgxHIhH
+         m5VPSc5tvtcUbAd1rEOZpSyeZlAcV57K0w1GhsXk+vF9GfdJncTrQOuzWJte8e9MvTwL
+         N6azXC64ej/zOm+b+2leshi1/fMX6tghanVSYfVLM8THsGg9xEU/p7NZBI++bXgR5D8g
+         5aFXbUBTYtj5ACC8NbO2BQH73FnkhNcVDdD3NHtuobCOlGlMLAHTULxciv4nH9yd20GW
+         mCNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1719410627; x=1720015427;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lJUHJEXAc+QcqYtg3JPqiGV21t0n+2d3pWybHwk5YPo=;
-        b=uYCmtFUTToiTqw7kn5RJCikzzAEdx0tb3mbEJsFYY96jwWqPpkHZ8ecXSxTW7PAvp4
-         AWrkLOzgRYTX7Z9y+j+bBFX0NiB/UXCdBa/s0VQJMyIfxfSSZv67i0SgSrE+BlvsqaB/
-         rbfbpTn8t3fYrT1N0XTBEnh8D39xzV0+fdaYzib2qFDpzG8PU6SP2CFpEevyRIFrOuvh
-         MnHND9rPg9DpwOaTlRVHw3YKAGV17w+p+JzJeKS949GEXDOF8hit3tMGibuckpB/80lZ
-         e5QwBmKr5XdfjGuoE+UT00shuuedbJy2oQlAli7+PCE8f164fRra6iv5s/uc8M0II3bs
-         M2Mg==
-X-Gm-Message-State: AOJu0YxkM4b9fa4o2AbX4awfVs2VNnI/mUimGld7qx2HmZ+mTk8aDV1a
-	IwhushHIKah/FvPSHdSzpHdVavD4k/akEoTTB4WBOg9P9X1m0WpuSRlI4QSi0fr/VhRwM9vI1zF
-	t58IU
-X-Google-Smtp-Source: AGHT+IHTbCE+YKc9MzWwhqODr0evzKCzAR1tyWfa8iYDy/LP8S5A1aEI6+SD2nSere7H/2ofyynwWA==
-X-Received: by 2002:a05:6870:90c1:b0:258:42c1:2523 with SMTP id 586e51a60fabf-25d06c30dcamr7612967fac.18.1719410627095;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ILkkZlkgByt2QtoNrBiCHP9/+0JYt5yL7z1P95cPgl4=;
+        b=n3v41x1KHLTJQdPpWItg51dJApTLISaL4os7SSJVM70x8jnBwr2IU8MbwjiwyoM9zL
+         XiPxUweiSh6u8mQHlcX8zl3nW06gIB79efC4Xx9AeoXx2DiF3b3e1CkQ3Dwy09fDDaks
+         /QQGes/CGb8n/NdGq2qwtyumeBWC5kv+gejhsWHzqeEKboMGojCN97VXPFMMn+oERdHE
+         sBj/HTxN4VWuUxVLgL6XcAKHY+xoPoUs97FxF+tnk28ebmuZiQnIQbOpGKiRaJSw8tLW
+         l7AxWTpEZj0BBAFs9fCKjrFoXlH4uPWdLtFIbcd/j+i8bNFaM/i5nj2u2UoDAFyLN56j
+         UsBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUuqLctzHW0yFN3L9qntdEGIZa5WRm9pe+/jIioMf+Rr9XpO2PH3KsoMF58pVgCeYi69fk0uzQt7SLI0iISzkVxdlJqpWg4ew8ue2Tu
+X-Gm-Message-State: AOJu0YzdsH7bc4bgGS9llo6AhezRi/XIq7fZnVZsFIjQKtYUcIIAmGtL
+	teZ3LyaVcjxhT4FFMIHV+7LtDZjfcZ8YKeOr7019N+/eHvzVbBOQs6qeN+b0Myo=
+X-Google-Smtp-Source: AGHT+IFGMbQ3bZSqzpxQwUSibOZjfECKDvJLCQ/c8yX70LE2TwziAXTqVapVmNaU3h9mnedMTjfHXg==
+X-Received: by 2002:a17:906:418:b0:a6f:5723:fb11 with SMTP id a640c23a62f3a-a715f9cbb00mr706825266b.58.1719410627472;
         Wed, 26 Jun 2024 07:03:47 -0700 (PDT)
-Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com. [209.85.160.42])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-25cd49d9a2bsm2998952fac.33.2024.06.26.07.03.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a726627e0dcsm207992466b.62.2024.06.26.07.03.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Wed, 26 Jun 2024 07:03:46 -0700 (PDT)
-Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-25957dfd971so3428841fac.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:03:46 -0700 (PDT)
-X-Received: by 2002:a05:6871:58c:b0:254:de02:4c65 with SMTP id
- 586e51a60fabf-25d06bc819dmr11469477fac.6.1719410625090; Wed, 26 Jun 2024
- 07:03:45 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Peter Rosin <peda@axentia.se>,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] mux: MAINTAINERS: drop ADGS1408 driver entry
+Date: Wed, 26 Jun 2024 16:03:43 +0200
+Message-ID: <20240626140343.145440-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610132513.1.I6434acf426183b4077ba3e8af4eccaa5921c6c2f@changeid>
-In-Reply-To: <20240610132513.1.I6434acf426183b4077ba3e8af4eccaa5921c6c2f@changeid>
-From: Jett Rink <jettrink@chromium.org>
-Date: Wed, 26 Jun 2024 08:03:34 -0600
-X-Gmail-Original-Message-ID: <CAK+PMK4Vbka3XhbXJHmWJRHD4WVe_k9yvRMw71r+n28Jp5cyvA@mail.gmail.com>
-Message-ID: <CAK+PMK4Vbka3XhbXJHmWJRHD4WVe_k9yvRMw71r+n28Jp5cyvA@mail.gmail.com>
-Subject: Re: [PATCH] tpm: Add new device/vendor ID 0x50666666
-To: LKML <linux-kernel@vger.kernel.org>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>, Peter Huewe <peterhuewe@gmx.de>, 
-	linux-integrity@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-I wanted to check the status of this review. Is there something I did
-incorrectly?
+Emails to Mircea Caprioru bounce:
 
--Jett
+  Remote Server returned '550 5.1.10 RESOLVER.ADR.RecipientNotFound; Recipient not found by SMTP address lookup'
 
-On Mon, Jun 10, 2024 at 1:25=E2=80=AFPM Jett Rink <jettrink@chromium.org> w=
-rote:
->
-> Accept another DID:VID for the next generation Google TPM. This TPM
-> has the same Ti50 firmware and fulfills the same interface.
->
-> Signed-off-by: Jett Rink <jettrink@chromium.org>
-> ---
->
->  drivers/char/tpm/tpm_tis_i2c_cr50.c | 11 ++++++++---
->  1 file changed, 8 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/char/tpm/tpm_tis_i2c_cr50.c b/drivers/char/tpm/tpm_t=
-is_i2c_cr50.c
-> index 86c9a1a43adb..d9b6abdcda5f 100644
-> --- a/drivers/char/tpm/tpm_tis_i2c_cr50.c
-> +++ b/drivers/char/tpm/tpm_tis_i2c_cr50.c
-> @@ -32,7 +32,8 @@
->  #define TPM_CR50_TIMEOUT_SHORT_MS      2               /* Short timeout =
-during transactions */
->  #define TPM_CR50_TIMEOUT_NOIRQ_MS      20              /* Timeout for TP=
-M ready without IRQ */
->  #define TPM_CR50_I2C_DID_VID           0x00281ae0L     /* Device and ven=
-dor ID reg value */
-> -#define TPM_TI50_I2C_DID_VID           0x504a6666L     /* Device and ven=
-dor ID reg value */
-> +#define TPM_TI50_DT_I2C_DID_VID                0x504a6666L     /* Device=
- and vendor ID reg value */
-> +#define TPM_TI50_OT_I2C_DID_VID                0x50666666L     /* Device=
- and vendor ID reg value */
->  #define TPM_CR50_I2C_MAX_RETRIES       3               /* Max retries du=
-e to I2C errors */
->  #define TPM_CR50_I2C_RETRY_DELAY_LO    55              /* Min usecs betw=
-een retries on I2C */
->  #define TPM_CR50_I2C_RETRY_DELAY_HI    65              /* Max usecs betw=
-een retries on I2C */
-> @@ -781,13 +782,17 @@ static int tpm_cr50_i2c_probe(struct i2c_client *cl=
-ient)
->         }
->
->         vendor =3D le32_to_cpup((__le32 *)buf);
-> -       if (vendor !=3D TPM_CR50_I2C_DID_VID && vendor !=3D TPM_TI50_I2C_=
-DID_VID) {
-> +       if (vendor !=3D TPM_CR50_I2C_DID_VID &&
-> +           vendor !=3D TPM_TI50_DT_I2C_DID_VID &&
-> +           vendor !=3D TPM_TI50_OT_I2C_DID_VID) {
->                 dev_err(dev, "Vendor ID did not match! ID was %08x\n", ve=
-ndor);
->                 return -ENODEV;
->         }
->
->         dev_info(dev, "%s TPM 2.0 (i2c 0x%02x irq %d id 0x%x)\n",
-> -                vendor =3D=3D TPM_TI50_I2C_DID_VID ? "ti50" : "cr50",
-> +                vendor =3D=3D TPM_CR50_I2C_DID_VID    ? "cr50" :
-> +                vendor =3D=3D TPM_TI50_DT_I2C_DID_VID ? "ti50 DT" :
-> +                                                    "ti50 OT",
->                  client->addr, client->irq, vendor >> 16);
->         return tpm_chip_register(chip);
->  }
-> --
-> 2.45.2.505.gda0bf45e8d-goog
->
+so clearly this driver is not supported anymore.
+
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ MAINTAINERS | 6 ------
+ 1 file changed, 6 deletions(-)
+
+diff --git a/MAINTAINERS b/MAINTAINERS
+index c675fc296b19..2b561624df6a 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -1290,12 +1290,6 @@ W:	https://ez.analog.com/linux-software-drivers
+ F:	Documentation/devicetree/bindings/iio/frequency/adi,adf4377.yaml
+ F:	drivers/iio/frequency/adf4377.c
+ 
+-ANALOG DEVICES INC ADGS1408 DRIVER
+-M:	Mircea Caprioru <mircea.caprioru@analog.com>
+-S:	Supported
+-F:	Documentation/devicetree/bindings/mux/adi,adgs1408.txt
+-F:	drivers/mux/adgs1408.c
+-
+ ANALOG DEVICES INC ADIN DRIVER
+ M:	Michael Hennerich <michael.hennerich@analog.com>
+ L:	netdev@vger.kernel.org
+-- 
+2.43.0
+
 
