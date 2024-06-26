@@ -1,124 +1,108 @@
-Return-Path: <linux-kernel+bounces-230259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 348CE917A7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:08:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54995917A7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:09:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF7B52863AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:08:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857DA1C237E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:09:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20B7415FA85;
-	Wed, 26 Jun 2024 08:08:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4899015F3EA;
+	Wed, 26 Jun 2024 08:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vlZRL+2F"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dOWiHott"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB1D13D2A4
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 579B0364D6
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719389320; cv=none; b=OQbrMGkskHw9DOW9b08+m1Y1AyzrRx1A869jbjEcHADEable8k8Wj6pfD8mkQNU9+CI04WqjxmHhGz/0AirsafqCg3TnhL+N0F12YhYVDtSPRHurvBwBivVu8hsLASFG3aYNn7D9sJGZF6fSXrsju4xg+4R/XO4BzmaCd5rxeCY=
+	t=1719389362; cv=none; b=eX/5oxRa/+b5fY0TcuZYg4rpP9sXxHAYUgICaBa1eRoGl9SQGFB4Mhr61LluEPc4WLQrAAETLyDmP5wgEad4k/tgHIPNhXZrVWUVIo2WI2FxUN1TF4YAM/jGqvKc/XBKgWE6Havw7+Yvu/qYuaiLOrYxrNsOVAkwmvxO2jEqQG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719389320; c=relaxed/simple;
-	bh=//jKp5rr5ob/0X3eCJCapeuJ/kSdVmH+XlhxE25IkgE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rxp3FlNIET43IVJ4olqXlqg0yWrfmlamUMnjwcMz11VPZ0yCdjqHJJ001QBJvIZx5UgsRtSyZMJDL7U9QbPcO4q+pXKD9yeOtha6tt7AdGHQrIHQO3VtET6xiJ/O4UAWUS2Xtcnj75aqQMfYScCnQgkkIapgxBL6n1+ByEvvr18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vlZRL+2F; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52ce674da85so3242021e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:08:38 -0700 (PDT)
+	s=arc-20240116; t=1719389362; c=relaxed/simple;
+	bh=IAj/HyWqF34CBYdNiU2v1M/ZYcANxjkDdMbIT/zo+lM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SRrqBvc0Az2v0bnk98K3CF2mKcnw2M/xcg2OiE0H8awim1a035l0KdI6ubKuUoTFKf+5LCuQvn1HmXg1m/9xoEL8mkbBxwKGqZJPd0DwMYPG5c4bCax7Q8KTsPQSGRDN/SPNt4p1l9I8XEGc4TV+RyWjJv9B7cdX2ZmX32eOfW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dOWiHott; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-1f9bf484d9fso1649985ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:09:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719389317; x=1719994117; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vOQRgAOcOzzADgONsO90ijwc29fWVelXy7p+hfohj7Q=;
-        b=vlZRL+2Fo4xcIndELYfu3QGLLFyq9IMmEvIH0veiMdKoWI7VxqJFd0MD5F8bfw1/qQ
-         lwVqLmdXw+G4vM9+AaFJs3FU3Tyigq7EpjxYXiFR57w/G77Vlc+r2yZX1CrIECGmM+Mm
-         wXCGQ7v1+ZKh2pqgbMHZ1CUXGg7qg0E+QCBwdCHMiMKtoaKN9RRmBvqqRKswEDxImUTy
-         gfBeaxnEMRTguEf1efzLbkuutfr83IBnVEjWcDSyHe75lckV3bqJ9K88taSwAVqGX0Bp
-         4eWzNk93SoD3Drm+XwKXLZk5a0uSdb3A6ThRq7kdZL92vmKaB1znja1Zz0l32FJXC5fm
-         05Kw==
+        d=gmail.com; s=20230601; t=1719389361; x=1719994161; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GHr65P0G1QIxVEIvdANGC2Rr426XZ8bqusMBD1XEJpA=;
+        b=dOWiHottF3Nr4B6uFoexbJHWGyLKlMLnUBq9hExOw8tJLCFakW/Doreb435VK9GsPp
+         Lp4rCPGk9/KC/tVNat4zpLQWWoilsPZ3hwWwQxliQVt+FxAs8VCJsYFYP9JyXPoHzBE+
+         FnGjit38nRbMPMuYWyB7Mjb4znidZSwGBSkTof4YQ90ECYuaT6CLSULRSUYI643fT2Od
+         ew+eGMYujh+zpoaBIOSEd2MHac1G31KnFxUYrt3IB6CD4cvB3+TlzT0duygJQ0aA01DU
+         HxLr5e8jd/A/EccpsuIxHATrwm4GhrSb0BURg1qm9B4VR8efI1w8DyhLrEaN99aVhAqC
+         SGDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719389317; x=1719994117;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vOQRgAOcOzzADgONsO90ijwc29fWVelXy7p+hfohj7Q=;
-        b=h1tUJ8kTuY/yf8BovTCndfl5VrY26SDpO5ppboIjdxIMkTMJeBB4m9/H57mnPcFQbb
-         nZ/Vl0kuOxYAPjMAjR2l1AaBgfLmCDBTJKq9XsJQWXyeiMFSzTDoHiK5zO3DgAwy/9TB
-         oKTNW4djSrDSqFjy289URPwtJr031PtgfsiIFWSEwOEP9VHmnecROrQEC3uQf0B6LWxR
-         1JmoQX8iqPD4brkN3IWaVTCpM6ZAh4M7TeRpErTAynDhKzl81L16vyKxvztZdloVG7q1
-         Bj4Brz/rf3koCCPqydjcIcBywrg6TGeUm4PyCksrW9L2ffNvLDkUCUr5WjcPZ02MOR1Z
-         Vgkg==
-X-Forwarded-Encrypted: i=1; AJvYcCVDerMToh1q/ZuZkd7nVGp9yxOQ0VPE9G3frcrCwuKp/1/CcXlU/sZGB8xU7yVSwaYjhownUmRA8TaW8IRIKlFKG5XBxgmk4n5scAsX
-X-Gm-Message-State: AOJu0Yx4k2ny/ndrT5WtAhbWgXr6gPOckhgiCzE0cXJ6KqDgLCFcZcbZ
-	4At44UsM/0rXyZ0tlbcW55sdh39G3k1yGHxpOzBV1DEBOjq5YI1dRJ/hFy7b7Kfldyl4wgsHB9o
-	TMqxZy4F5HH0Z+KuHjh8sFa1XHX74eVp7mMht
-X-Google-Smtp-Source: AGHT+IF9W43Hi+MKr+tZDFS0R7GHDpJgLdL1zQY6UEvv04/XZTsJ+hbblCy872c9Qo9So2eg0XTd6Bep2QafCoJyEUI=
-X-Received: by 2002:ac2:5f8b:0:b0:52c:df2c:65fe with SMTP id
- 2adb3069b0e04-52ce18350bemr6919055e87.15.1719389316715; Wed, 26 Jun 2024
- 01:08:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719389361; x=1719994161;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GHr65P0G1QIxVEIvdANGC2Rr426XZ8bqusMBD1XEJpA=;
+        b=GL5ifIVZCKU7fO3t+VR9975DGMGVb5tVBKpOhZwni4ONWAFOcQqQCnFJhu1fWNK60N
+         aslOBRv8tE1wxcuf2z40q1h3+OcUEUXejk1jVU+ZgcSDUjdP/3IHl8xBAKr40sm6mvUe
+         2u2rGe7Iwtfm7RLSssMIOiqcl/R0BJT0kb7N9ViLl47GrTMniA9C7fb23hc8MKwcRKaC
+         ceKSPNSgJusY1BucIFMPiO2Y+7ij9nDhCjQKbU8rnFyC+TWebhYJRHMPNxr1bAIr4scB
+         JPGHdjo79flzlfLX8GzDirtZwMObhOKNC6WrB8/1v6uBcD8QQMiGFCnfk7xDa2hl6jQj
+         p1Ig==
+X-Forwarded-Encrypted: i=1; AJvYcCUBeHe6AWwNHTxGnGA2tiej5aCSrT2+jB2CoDmc5/srLTORSR6bHWV4Jhangr4iBTjajZLGO2dnfV79La5258rDSjCj5eLMgjQTmAs8
+X-Gm-Message-State: AOJu0YxojubEQRbDlEkbUHkgNd9kF9cjK15TgyTzwo76+b+NK7oA6vYV
+	8+93HG4RX5gFEVJijZazIM2bI5d9bF5vXL7dTRZjdCxs6nxv3ZibhYC05g6UIz8=
+X-Google-Smtp-Source: AGHT+IFSRIZBvzROTW0FmIImtpqxit1LhxMlon6bWdJ346/3jiQERbAZRilUfkforEG3K9JgXiBKYA==
+X-Received: by 2002:a17:902:f545:b0:1f9:ec87:284e with SMTP id d9443c01a7336-1fa5e698121mr96305425ad.16.1719389360571;
+        Wed, 26 Jun 2024 01:09:20 -0700 (PDT)
+Received: from localhost.localdomain ([202.120.234.58])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1f9eb321715sm94358895ad.93.2024.06.26.01.09.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 01:09:20 -0700 (PDT)
+From: Miaoqian Lin <linmq006@gmail.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	linux-phy@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: linmq006@gmail.com
+Subject: [PATCH] phy: core: Fix documentation of of_phy_get
+Date: Wed, 26 Jun 2024 12:09:10 +0400
+Message-Id: <20240626080911.203630-1-linmq006@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620205453.81799-1-jhubbard@nvidia.com> <20240620205453.81799-3-jhubbard@nvidia.com>
-In-Reply-To: <20240620205453.81799-3-jhubbard@nvidia.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 26 Jun 2024 10:08:24 +0200
-Message-ID: <CAH5fLgizj3RDCXMe0zJ4jjJrtui-R9x65NtHZh=r+vPQaPqN+A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] Makefile: improve comment documentation for the
- rust-analyzer target
-To: John Hubbard <jhubbard@nvidia.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Greg KH <greg@kroah.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nicolas Schier <nicolas@fjasle.eu>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>, 
-	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 20, 2024 at 10:55=E2=80=AFPM John Hubbard <jhubbard@nvidia.com>=
- wrote:
->
-> Replace the cryptic phrase ("IDE support targets") that initially
-> appears to be about how to support old hard drives, with a few sentences
-> that explain what "make rust-analyzer" provides.
->
-> Cc: Alice Ryhl <aliceryhl@google.com>
-> Cc: Miguel Ojeda <ojeda@kernel.org>
-> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
-> ---
->  Makefile | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/Makefile b/Makefile
-> index 07308277a6f5..d22491184af6 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1967,7 +1967,9 @@ quiet_cmd_tags =3D GEN     $@
->  tags TAGS cscope gtags: FORCE
->         $(call cmd,tags)
->
-> -# IDE support targets
-> +# Generate rust-project.json, which does for Rust what clangd's
-> +# compile_commands.json does for C/C++: provides a symbol browsing datab=
-ase for
-> +# code editors and IDEs (Integrated Development Environments).
+of_phy_put is used for of_phy_get to release the reference count.
 
-Is "symbol browsing database" the right word here? It's not actually a
-list of symbols, but instructions for how to compile the code.
+Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
+---
+ drivers/phy/phy-core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Alice
+diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
+index bf6a07590321..f053b525ccff 100644
+--- a/drivers/phy/phy-core.c
++++ b/drivers/phy/phy-core.c
+@@ -664,7 +664,7 @@ static struct phy *_of_phy_get(struct device_node *np, int index)
+  *
+  * Returns the phy driver, after getting a refcount to it; or
+  * -ENODEV if there is no such phy. The caller is responsible for
+- * calling phy_put() to release that count.
++ * calling of_phy_put() to release that count.
+  */
+ struct phy *of_phy_get(struct device_node *np, const char *con_id)
+ {
+-- 
+2.25.1
+
 
