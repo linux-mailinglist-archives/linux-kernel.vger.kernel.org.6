@@ -1,369 +1,132 @@
-Return-Path: <linux-kernel+bounces-230994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368A19184B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:44:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F19EC91850E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:59:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6B051F278FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:44:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 618ABB2B544
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:44:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62F92187339;
-	Wed, 26 Jun 2024 14:43:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADC4F187540;
+	Wed, 26 Jun 2024 14:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="BNgNNh09";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="p9jvFE6y";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YIatmv/p";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="r1noKhJz"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="LL/Vw+Hy"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8495A1862BD
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:43:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38CC018732E
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719413000; cv=none; b=CKoCA2pCUnjs3lTOAsUTGDYddQtFMZYShmHSrwcU1xywH//bnMnFl5iL5jQWdgo/S5JPwBkCwO3lTjU3GExG1t3c9rfV9qphyiI8oNDwHlEygjeBazOHLr9+Y5R8aR5wKL3LR86tZEKUGTNlbGIrHfEZDkqxXYjkUuZ6Ic41fPk=
+	t=1719413003; cv=none; b=uEphJOPF5PPKcbYDRWqVQ4r3m+NbvBotf9hlCAHnLpbysIV6QOVRtVrfqYrgVP0u/HPB0QoURsMaaBKyhvrfP85QV9DLQh+Ja7ZQ/R1UHkYEWLP5jzsgpNO6XHmWc60POSJXkwhS+TeJ1Jvf6dcarMYTUB8MeO9vBMOZjnBZmo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719413000; c=relaxed/simple;
-	bh=mLiegvf3JRy6/Q26rXO8CoGI+4CEg4WfV/925O1yk/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TeTtrfLvsqrfIf9gJK3AICjbFM0eSA2FD5AdDgGM/ijPs8FPJEH4NiRJNPCU9p3OazH69s43mtwYBquAchLMo51RbRPhwcTctt7YfrJ0Z8BWT/oJBWqa2XAyolUG72t/3nXcFNGnOJVMWHoj4M2HoMK5ksz3CQvvFHwGZhDpwqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=BNgNNh09; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=p9jvFE6y; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YIatmv/p; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=r1noKhJz; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 73E031FB5C;
-	Wed, 26 Jun 2024 14:43:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719412996; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=V2PRcsaRZQeSJLSrUbeR75m0IOIxxXlKKX0TYw9wUW0=;
-	b=BNgNNh091JnO0f5ChUI4NqtzyH+7sAAk8nk6zU47sAGzh+Fa98iiBu5muCiNvrsN/WaDcD
-	3JHSblJQ45tfdn1014jwvcEdcX3t+odxTm0rpt1dLG6GJzAKhPvbe9ZNsexXR0rUGGnCsw
-	4d+0SoI8SUBq2PSMlHdBwfIRizzSkqU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719412996;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=V2PRcsaRZQeSJLSrUbeR75m0IOIxxXlKKX0TYw9wUW0=;
-	b=p9jvFE6y39kg7R045roU/dHfbIVW4CkVXLH/KWZ8FcB0Dz9hEqUsGIW77sQoHMSf3Id9ek
-	09fNEkwjRu7AkKBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719412995; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=V2PRcsaRZQeSJLSrUbeR75m0IOIxxXlKKX0TYw9wUW0=;
-	b=YIatmv/pBAY6RohOA+3whraK/xU007HprNhKczPMgRE4w4YhaDE3kIj78pXwAxvKQr0LzP
-	yAvI98cxBnH0/21KulCpHgonRnnENNAs2kxckUCwOWkbJ8r6wX7hbP5Byc5sqnwuntZAJs
-	vO5zBS9pQ4lPCRDvAcpBIBabQXvhRQ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719412995;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=V2PRcsaRZQeSJLSrUbeR75m0IOIxxXlKKX0TYw9wUW0=;
-	b=r1noKhJz96i/TmHuHzbhExrlmTmiUup4xQDX/Ntwp6gSh15ZstfkoijGatCjcnZlMXf9Hb
-	WDOgHXgmg8qhObCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 61CC4139C2;
-	Wed, 26 Jun 2024 14:43:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BHkzFgIpfGb+WQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 26 Jun 2024 14:43:14 +0000
-Message-ID: <1cff31c5-766a-4b17-a7b2-a523253b0a2e@suse.de>
-Date: Wed, 26 Jun 2024 16:43:13 +0200
+	s=arc-20240116; t=1719413003; c=relaxed/simple;
+	bh=4Jt+AexbXjvRQMS0JAeCAbbjUW8QFJXSk1h+JyEJMvQ=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=V04+heaB9S13XrZc+KPDi0jn0TiNGdAt4in/tTWD/XggLR1/mFqFd9P+niq9Qgsdj8WY6zn0SzbAxMP2e1zNNEW4Wb7d83ocEOs+PU46FewUvTWP+rQA62tPyR9av7gzprYRjWwQ3O+VzLDZ+rCWtqri48JQc/YNO0SSLhM6VDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=LL/Vw+Hy; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-70675977d0eso3327429b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:43:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1719413000; x=1720017800; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3qqVGSiK52qpEYkBFYQqtg/MLmm7mG/Sdz2MT9nXZJE=;
+        b=LL/Vw+HyQFcqElkaZVbTOLvEMU2zA7AD0w6XKKZHaumVjItvva7k4LWs12rNwWZAou
+         JWQmBRQfehdtudIEMl6MWCDQ0U2b2cuTQ1xl92U15PvHlqGhILtCBKpqysE7yd2S0YZ1
+         1Jyi+m6r7S9B00VRv9Fg8Bb5raW0NqYxAph6Vws4dccwypk75iLnyAx9m5qa3m3Xs/i9
+         uOGSpPI13TfRq7MULVqbwxniRbaOh2N9XlKtwsHbX0eM50rSrYCXFxvaRFVck2WWtbfV
+         G2K27CFr/+43EgL//19ChVG9tKnOQxi3dv/jTsNTwsaebrirL2sluDqxP8lKMfaOQ/cf
+         5AAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719413000; x=1720017800;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3qqVGSiK52qpEYkBFYQqtg/MLmm7mG/Sdz2MT9nXZJE=;
+        b=xVNBME9QcQDZ6AWMZ+3bR/NYRTrnGfIN07JIz/PkdXd5KJAvtvC0u2gZcWUsK0Vevg
+         ijszFVexy6+W6av7AL1mEhzijwMNWljSvP8xmgRkcaiZhl9lIolNr5hUSvh5xZGvPerG
+         JwXEQI3BkgExL7qrNotIPmsyf4hh3RMasepRmeZ12vbxEeaf7GwK8SlTmFr1acPhDcEu
+         NlzO63ZSaj14Zi0fS85T4XaSnTdAnbn7e2sLVkqvHxFavxrdVztBB8nTW1c3HLBG5AIq
+         qhlj7FhMJmK2cnhMuQyzBfG7z/rri5eLQWbJWJbNFV58fvOpoJGWoANkdiUeLEB1rH14
+         eZvA==
+X-Forwarded-Encrypted: i=1; AJvYcCWjpbbZcWKMY80/dnO4dhVf1xLSpsXG7uN2IEy6yR9qj2vwavDhAgkXWh/0U3BUzYaQEYuJ5Yb0Rp/89AeZc+rdNlVHy1Tj5UaKnMs1
+X-Gm-Message-State: AOJu0YwS6IUW6xXf+6PvQDQQIzmGmJgWROBfYmCE5VhB5eJ90hi0z0nY
+	z8SL+foxoIywD61K9cZ2jI/F7LK1b0Xp2LR84zGFy5TdAt6uctHhbh36sTIdDcc=
+X-Google-Smtp-Source: AGHT+IH2/0OvXTCfvNRbeybdAi6Y6rc880H+FiHzFEwDjrLLdcNGpDiCXi7MY3ygYaSDhgJ3SraPqA==
+X-Received: by 2002:a05:6a20:1203:b0:1bd:28cf:7645 with SMTP id adf61e73a8af0-1bd28cf76cfmr3000669637.42.1719413000436;
+        Wed, 26 Jun 2024 07:43:20 -0700 (PDT)
+Received: from localhost ([192.184.165.199])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3d5576sm100665315ad.201.2024.06.26.07.43.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 07:43:19 -0700 (PDT)
+Date: Wed, 26 Jun 2024 07:43:19 -0700 (PDT)
+X-Google-Original-Date: Wed, 26 Jun 2024 07:43:18 PDT (-0700)
+Subject:     Re: [PATCH v2 3/3] RISC-V: hwprobe: not treat KEY_CPUPERF_0 as bitmask
+In-Reply-To: <CALs-Hst_TpjuQw0t-p9GbcCY4FAwXSjWziHJJuToi3rWXo7mJw@mail.gmail.com>
+CC: cyy@cyyself.name, linux-riscv@lists.infradead.org, enh@google.com,
+  Charlie Jenkins <charlie@rivosinc.com>, corbet@lwn.net, Paul Walmsley <paul.walmsley@sifive.com>, cleger@rivosinc.com,
+  Conor Dooley <conor.dooley@microchip.com>, ajones@ventanamicro.com, linux-kernel@vger.kernel.org,
+  linux-doc@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: Evan Green <evan@rivosinc.com>
+Message-ID: <mhng-7da30215-9cfb-4670-a33d-17d9464d60d0@palmer-ri-x1c9>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/7] drm/radeon: remove load callback
-To: Wu Hoi Pok <wuhoipok@gmail.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- "Pan, Xinhui" <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240624151122.23724-1-wuhoipok@gmail.com>
- <20240624151122.23724-2-wuhoipok@gmail.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20240624151122.23724-2-wuhoipok@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.29
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	TO_DN_SOME(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[amd.com,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[radeon_device.dev:url,imap1.dmz-prg2.suse.org:helo]
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi
-
-Am 24.06.24 um 17:10 schrieb Wu Hoi Pok:
-> Remove ".load" callback form "kms_driver", and move "struct drm_device"
-> into radeon_device. Patch 2 to 7 follows up with changing the way of
-> accessing drm_device, from "rdev->ddev" to "rdev_to_drm(rdev)" which is
-> "&rdev->ddev".
-
-This is not going to build, so it cannot go in.
-
-This should be the final patch. First add rdev_to_drm() and convert the 
-driver to use it (that's one patch). Then change radeon_device.dev from 
-a pointer to a value in a second patch.
-
-Best regards
-Thomas
-
-
+On Wed, 29 May 2024 11:33:42 PDT (-0700), Evan Green wrote:
+> On Thu, May 23, 2024 at 8:36 PM Yangyu Chen <cyy@cyyself.name> wrote:
+>>
+>> Since the value in KEY_CPUPERF_0 is not bitmask, remove the wrong code
+>> in hwprobe.h.
+>>
+>> Signed-off-by: Yangyu Chen <cyy@cyyself.name>
 >
-> Signed-off-by: Wu Hoi Pok <wuhoipok@gmail.com>
-> ---
->   drivers/gpu/drm/radeon/radeon.h     | 11 ++++++++---
->   drivers/gpu/drm/radeon/radeon_drv.c | 27 ++++++++++++++++++---------
->   drivers/gpu/drm/radeon/radeon_drv.h |  1 -
->   drivers/gpu/drm/radeon/radeon_kms.c | 18 ++++++------------
->   4 files changed, 32 insertions(+), 25 deletions(-)
+> I'd expect a Fixes tag, and ideally some discussion on the reasoning
+> and ramifications of this change.
 >
-> diff --git a/drivers/gpu/drm/radeon/radeon.h b/drivers/gpu/drm/radeon/radeon.h
-> index 0999c8eaae94..69bb30ced189 100644
-> --- a/drivers/gpu/drm/radeon/radeon.h
-> +++ b/drivers/gpu/drm/radeon/radeon.h
-> @@ -2297,7 +2297,7 @@ typedef void (*radeon_wreg_t)(struct radeon_device*, uint32_t, uint32_t);
->   
->   struct radeon_device {
->   	struct device			*dev;
-> -	struct drm_device		*ddev;
-> +	struct drm_device		ddev;
->   	struct pci_dev			*pdev;
->   #ifdef __alpha__
->   	struct pci_controller		*hose;
-> @@ -2440,10 +2440,13 @@ struct radeon_device {
->   	u64 gart_pin_size;
->   };
->   
-> +static inline struct drm_device *rdev_to_drm(struct radeon_device *rdev)
-> +{
-> +	return &rdev->ddev;
-> +}
-> +
->   bool radeon_is_px(struct drm_device *dev);
->   int radeon_device_init(struct radeon_device *rdev,
-> -		       struct drm_device *ddev,
-> -		       struct pci_dev *pdev,
->   		       uint32_t flags);
->   void radeon_device_fini(struct radeon_device *rdev);
->   int radeon_gpu_wait_for_idle(struct radeon_device *rdev);
-> @@ -2818,6 +2821,8 @@ struct radeon_device *radeon_get_rdev(struct ttm_device *bdev);
->   
->   /* KMS */
->   
-> +int radeon_driver_load_kms(struct radeon_device *dev, unsigned long flags);
-> +
->   u32 radeon_get_vblank_counter_kms(struct drm_crtc *crtc);
->   int radeon_enable_vblank_kms(struct drm_crtc *crtc);
->   void radeon_disable_vblank_kms(struct drm_crtc *crtc);
-> diff --git a/drivers/gpu/drm/radeon/radeon_drv.c b/drivers/gpu/drm/radeon/radeon_drv.c
-> index 7bf08164140e..ae9cadceba83 100644
-> --- a/drivers/gpu/drm/radeon/radeon_drv.c
-> +++ b/drivers/gpu/drm/radeon/radeon_drv.c
-> @@ -259,7 +259,8 @@ static int radeon_pci_probe(struct pci_dev *pdev,
->   			    const struct pci_device_id *ent)
->   {
->   	unsigned long flags = 0;
-> -	struct drm_device *dev;
-> +	struct drm_device *ddev;
-> +	struct radeon_device *rdev;
->   	int ret;
->   
->   	if (!ent)
-> @@ -300,28 +301,37 @@ static int radeon_pci_probe(struct pci_dev *pdev,
->   	if (ret)
->   		return ret;
->   
-> -	dev = drm_dev_alloc(&kms_driver, &pdev->dev);
-> -	if (IS_ERR(dev))
-> -		return PTR_ERR(dev);
-> +	rdev = devm_drm_dev_alloc(&pdev->dev, &kms_driver, typeof(*rdev), ddev);
-> +	if (IS_ERR(rdev))
-> +		return PTR_ERR(rdev);
-> +
-> +	rdev->dev  = &pdev->dev;
-> +	rdev->pdev = pdev;
-> +	ddev = rdev_to_drm(rdev);
-> +	ddev->dev_private = rdev;
->   
->   	ret = pci_enable_device(pdev);
->   	if (ret)
->   		goto err_free;
->   
-> -	pci_set_drvdata(pdev, dev);
-> +	pci_set_drvdata(pdev, ddev);
-> +
-> +	ret = radeon_driver_load_kms(rdev, flags);
-> +	if (ret)
-> +		goto err_agp;
->   
-> -	ret = drm_dev_register(dev, ent->driver_data);
-> +	ret = drm_dev_register(ddev, flags);
->   	if (ret)
->   		goto err_agp;
->   
-> -	radeon_fbdev_setup(dev->dev_private);
-> +	radeon_fbdev_setup(ddev->dev_private);
->   
->   	return 0;
->   
->   err_agp:
->   	pci_disable_device(pdev);
->   err_free:
-> -	drm_dev_put(dev);
-> +	drm_dev_put(ddev);
->   	return ret;
->   }
->   
-> @@ -569,7 +579,6 @@ static const struct drm_ioctl_desc radeon_ioctls_kms[] = {
->   static const struct drm_driver kms_driver = {
->   	.driver_features =
->   	    DRIVER_GEM | DRIVER_RENDER | DRIVER_MODESET,
-> -	.load = radeon_driver_load_kms,
->   	.open = radeon_driver_open_kms,
->   	.postclose = radeon_driver_postclose_kms,
->   	.unload = radeon_driver_unload_kms,
-> diff --git a/drivers/gpu/drm/radeon/radeon_drv.h b/drivers/gpu/drm/radeon/radeon_drv.h
-> index 02a65971d140..6c1eb75a951b 100644
-> --- a/drivers/gpu/drm/radeon/radeon_drv.h
-> +++ b/drivers/gpu/drm/radeon/radeon_drv.h
-> @@ -117,7 +117,6 @@
->   long radeon_drm_ioctl(struct file *filp,
->   		      unsigned int cmd, unsigned long arg);
->   
-> -int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags);
->   void radeon_driver_unload_kms(struct drm_device *dev);
->   int radeon_driver_open_kms(struct drm_device *dev, struct drm_file *file_priv);
->   void radeon_driver_postclose_kms(struct drm_device *dev,
-> diff --git a/drivers/gpu/drm/radeon/radeon_kms.c b/drivers/gpu/drm/radeon/radeon_kms.c
-> index a16590c6247f..d2df194393af 100644
-> --- a/drivers/gpu/drm/radeon/radeon_kms.c
-> +++ b/drivers/gpu/drm/radeon/radeon_kms.c
-> @@ -91,7 +91,7 @@ void radeon_driver_unload_kms(struct drm_device *dev)
->   /**
->    * radeon_driver_load_kms - Main load function for KMS.
->    *
-> - * @dev: drm dev pointer
-> + * @rdev: radeon dev pointer
->    * @flags: device flags
->    *
->    * This is the main load function for KMS (all asics).
-> @@ -101,24 +101,18 @@ void radeon_driver_unload_kms(struct drm_device *dev)
->    * (crtcs, encoders, hotplug detect, etc.).
->    * Returns 0 on success, error on failure.
->    */
-> -int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags)
-> +int radeon_driver_load_kms(struct radeon_device *rdev, unsigned long flags)
->   {
-> -	struct pci_dev *pdev = to_pci_dev(dev->dev);
-> -	struct radeon_device *rdev;
-> +	struct pci_dev *pdev = rdev->pdev;
-> +	struct drm_device *dev = rdev_to_drm(rdev);
->   	int r, acpi_status;
->   
-> -	rdev = kzalloc(sizeof(struct radeon_device), GFP_KERNEL);
-> -	if (rdev == NULL) {
-> -		return -ENOMEM;
-> -	}
-> -	dev->dev_private = (void *)rdev;
-> -
->   #ifdef __alpha__
->   	rdev->hose = pdev->sysdata;
->   #endif
->   
->   	if (pci_find_capability(pdev, PCI_CAP_ID_AGP))
-> -		rdev->agp = radeon_agp_head_init(dev);
-> +		rdev->agp = radeon_agp_head_init(rdev_to_drm(rdev));
->   	if (rdev->agp) {
->   		rdev->agp->agp_mtrr = arch_phys_wc_add(
->   			rdev->agp->agp_info.aper_base,
-> @@ -147,7 +141,7 @@ int radeon_driver_load_kms(struct drm_device *dev, unsigned long flags)
->   	 * properly initialize the GPU MC controller and permit
->   	 * VRAM allocation
->   	 */
-> -	r = radeon_device_init(rdev, dev, pdev, flags);
-> +	r = radeon_device_init(rdev, flags);
->   	if (r) {
->   		dev_err(dev->dev, "Fatal error during GPU init\n");
->   		goto out;
+> I posted the other possible fix, declaring a new key, at [1], mostly
+> so we could see the two options and discuss. I'm okay with either
+> patch.
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Just to close the loop here as the discussions are on other threads: 
+after a bunch of discussions we're going with the new key version.  
+Maybe it's a bit pedantic, but since hwprobe is such a fundamental 
+compatibility interface we're just going to be super careful.
 
+> -Evan
+>
+> [1] https://lore.kernel.org/lkml/20240529182649.2635123-1-evan@rivosinc.com/T/#u
+>
+>> ---
+>>  arch/riscv/include/asm/hwprobe.h | 1 -
+>>  1 file changed, 1 deletion(-)
+>>
+>> diff --git a/arch/riscv/include/asm/hwprobe.h b/arch/riscv/include/asm/hwprobe.h
+>> index 630507dff5ea..f24cad22bbe1 100644
+>> --- a/arch/riscv/include/asm/hwprobe.h
+>> +++ b/arch/riscv/include/asm/hwprobe.h
+>> @@ -20,7 +20,6 @@ static inline bool hwprobe_key_is_bitmask(__s64 key)
+>>         switch (key) {
+>>         case RISCV_HWPROBE_KEY_BASE_BEHAVIOR:
+>>         case RISCV_HWPROBE_KEY_IMA_EXT_0:
+>> -       case RISCV_HWPROBE_KEY_CPUPERF_0:
+>>                 return true;
+>>         }
+>>
+>> --
+>> 2.45.1
+>>
 
