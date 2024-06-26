@@ -1,144 +1,347 @@
-Return-Path: <linux-kernel+bounces-231022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0147391850C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:58:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95BCA918513
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 248BF1C21507
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:58:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8B7B1C238D6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:00:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267DC1862B9;
-	Wed, 26 Jun 2024 14:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D054F38F87;
+	Wed, 26 Jun 2024 15:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hqVCury/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NFww4XLC"
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F08AE1836F9
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:58:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3A05D53B;
+	Wed, 26 Jun 2024 15:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719413912; cv=none; b=PzZVse7fSSPnGui0uPZyRJnnbh17kWmtK8Xe4etjFP7Qhr2z4mjs57wRS4iUOW9Y+GzJhEBgK7tH6C5XNe5ueGVzFJv1zDclc7h+w9+SsTl8rZ16Nd0zrE1qqKKj9MDNIHVnbKF57SA4j4ZZmyBMXQwpqivlClshZPIpOruBklI=
+	t=1719414019; cv=none; b=E/aLOF62u1gDiAKLAUBOMP8qgAvhD7K3RwUPFYKqN4HqX3KZgkAQQWGeUV+R4db3S+O3NqU76oMOrKkpc5T71buOulx++942nHzBctqDUeiTNdxzYsNNmDgmxKvORByrT+/uBGGeIU6cJT8y8RokfDWZZv82lDZu7Yb+YhLgax4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719413912; c=relaxed/simple;
-	bh=I0D6e6Fg9mEuPCvMsSlvOuOX5/XCzgzm4K0nMEj8N7s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oUhpoHV0s+CaASmtU17/gs0OI8xVcsxqrrY1cMJkGXuiu4cA01zY0HHh5CRMEGHFOi+yKVSLX3BPMISOgEoBP97m+h3mRbnPetLiMV7SJUN9THDdx7BFIPJ/oj9ZgGAlOMrUjeYw+bDx9MIZ4EkmEzZLVJfwXFq6DWylZ2i9hhE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hqVCury/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719413910;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Aya9QIUU1dceOpRSHwLiYWRs5fBhpIvpFHsqd9ObPGw=;
-	b=hqVCury/LQW1aL/8KmtaUXBsFDVQnQ8vlQQhQzgF8hcEE2clW4InEuFa5NsEvwaZc+FcNq
-	FPpJ1VXIc+0IMqMBeXX1tfgyFMnT6E3RAJZRjv1Kr5RNCQZD1R0ydvnENKypYMWgb7HE+n
-	w75JcN7Okr4H9IIXB4U0ndLI4OBZ8DU=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-92-RbLOp8cQNyy_TKwdhhG3UA-1; Wed, 26 Jun 2024 10:58:28 -0400
-X-MC-Unique: RbLOp8cQNyy_TKwdhhG3UA-1
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6b500743a3fso102416456d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:58:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719413908; x=1720018708;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1719414019; c=relaxed/simple;
+	bh=8gV+1ktX1hXYq6161wpMjSYvEd19KXfFB3yiE5Wrx0I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JTuVQSORDyQX0jwctd5Q0RsC+kokT3QuVBhtC/HoYer6COlpcp+lXovhlbsu/rHcRBoRqu0dE7keIKaq1zaSxTMm6rKcRjDL5MpNpoCHXa5tEcwxoEjag0oDXC0fb/z3VzB+/Hn1lkjtunhsLLMPGKfhmR5C12ATqZewdudebkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NFww4XLC; arc=none smtp.client-ip=209.85.221.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4ef56bdc3fcso2122122e0c.2;
+        Wed, 26 Jun 2024 08:00:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719414017; x=1720018817; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Aya9QIUU1dceOpRSHwLiYWRs5fBhpIvpFHsqd9ObPGw=;
-        b=MVJ8tHfpyPDld7RDnnB/z+k78K8e81TTZf1X5f7gmG/LInc7b0Ug3Bs1nQS5hHN70D
-         aE5eYh2G03wSpYWreK7bCSRMOslEwukKvFKqnOOrTJwO2cmNVkBeEEHTQ9OEV3YSoqCf
-         wdQBE/q6YulBS/sw04NZcCPV0AsIpLpVLyISvNN2Ph7DFjC/szm08r7vponR19NW1UZq
-         gMc+DYchW2wlEvv/gAb8NQ+CEo12MewmwD24i0Vutoejw8VhoDeclplYCxXasDiR7fW6
-         zqNbrmPfnWS9IIxz50lHe200lu+mCeHTw0gDnwt4HSKBGHUL/qXXrLha7zpvSBjm6v84
-         bM8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVA7rpiOrYMiFVxj94pqGy27absHBICbRADm2EmjrYoD7ssf5x4pTEN5CyzlCqpTZx1PYAqcrYX0VGUWI14aw6f0yWf0nI3+57/lul2
-X-Gm-Message-State: AOJu0YwmOFyStxKdqvI9t19MAdZqZC/gjan6zCVR4s7kM2X0bLW8lf+T
-	X0boi0al6w46rnU6EpkLdhrvnYvRMSFEDlLQNf9p8CWO70BpcLNTelMfSaaSB25ikqKsz18s9Mr
-	0/RF4nadlFwJRVF7hUNMdbWhT0bRpn9LLiidz2HPpMed6MtzTKY0d0QqI4RHb+Q==
-X-Received: by 2002:ad4:424e:0:b0:6b4:fe0c:1a92 with SMTP id 6a1803df08f44-6b53bff41abmr121545876d6.43.1719413908144;
-        Wed, 26 Jun 2024 07:58:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG6nPLCGa2C50EKUtysGXYh0LMEa5egqmh4lDlG99IlgJl3jje0UqDxnnZntsdaxpPxTw2dxA==
-X-Received: by 2002:ad4:424e:0:b0:6b4:fe0c:1a92 with SMTP id 6a1803df08f44-6b53bff41abmr121545616d6.43.1719413907762;
-        Wed, 26 Jun 2024 07:58:27 -0700 (PDT)
-Received: from x1gen2nano ([2600:1700:1ff0:d0e0::f])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b531673e6esm42461056d6.85.2024.06.26.07.58.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 07:58:27 -0700 (PDT)
-Date: Wed, 26 Jun 2024 09:58:24 -0500
-From: Andrew Halaney <ahalaney@redhat.com>
-To: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Jose Abreu <joabreu@synopsys.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Russell King <linux@armlinux.org.uk>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com, 
-	Andrew Lunn <andrew@lunn.ch>, linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] net: stmmac: Bring down the clocks to lower
- frequencies when mac link goes down
-Message-ID: <qf4zl7qupkzbrb6ik4v4nkjct7tsh34cmoufy23zozcht5gch6@kvymsd2ue6cd>
-References: <20240625-icc_bw_voting_from_ethqos-v2-0-eaa7cf9060f0@quicinc.com>
- <20240625-icc_bw_voting_from_ethqos-v2-3-eaa7cf9060f0@quicinc.com>
+        bh=t5dWWOtGCbFsZQYKxGqk5OWYfSplj6dweBH5qDFgxbY=;
+        b=NFww4XLCR0Vnlkb49bEdhYa50yoJJLt4uFlGkjVg0/sn1atVScqRR62blIGd3lHHky
+         4VX0TU6jIyLXPuvKofwQiorGKzkKzTWrpvXrh5gIJlTh7J27Y7zJdrUJyVug5m/N/2Vo
+         TL0OKabyenIHiAfqpZY7HCENtDmrNKZeJgMdUj+ymae2HVQvGQcaXgi7FSR9JjLdG601
+         5yeYnkPFDhiBel23GpiYOSYSO2oTyRn3bFvfCAcNGURvjgsCE6TzdKrDXBrfgnxJIg87
+         WKejHLuH/O3tjc2e314qYLR1zmlsOUPAMkqzHY8mqEYYeUSCpWiHjkUhyZ6b0/6XxG7u
+         jZMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719414017; x=1720018817;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t5dWWOtGCbFsZQYKxGqk5OWYfSplj6dweBH5qDFgxbY=;
+        b=E1Z/zLD/c8SJlGgxhol9xdE2q44S9wBJt8FTSbmLg4i8rRwgKA1ZBgGIKqEY38K7VZ
+         Sz1kt5DH4PR+4QSOaIgzIrU9g73KHFArdUOTFlOKAE3qUHM2aI3tJCigLtmY4i0Wp16A
+         Go0SNJF7e7v0/t5QI+68t5I+5XJKwCqHMvKSi6Y8tyt1tcQpax92UUArpK9IPvMuws7g
+         g6/Kpv6i2DQjSKKXU0TtO1txKU7e6/JwM/GuFKbNxB4FCLiPjtJ1QEtx8Zqbn2Srv6u/
+         XgF0Oo3MygVH/a5a0H4YRYlqDTW5YX4T0nci+CD9dN/iEzfE3M3EBNZsVwdgFl9zu25A
+         q2AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXSJ5FSzMgSsB6X+eABhCHubc/meZJzRyztEkS62xjvzTjWOMmueshY5b1gTqj+ir/O0RopCq3Y00JCaPOXxkw4G2C+sq5HpkJJHpWCt1K4MS243Ts05JHuGIfADEGjcBqGK0nZv3Xu
+X-Gm-Message-State: AOJu0YxR0HLYHJ9hU/AmaLz9dA3HvMvW86JlHilnmUtp4k4+BCIPcxBy
+	2eRFgF/VyKwpTorFRQ3RFFlxOEMYTRyYxBDl6yWjnIvwLAol8FFsg5PK/xbIomohAPJcAKKL1SE
+	XpZRZFPDciUAF3PT05C+6a7yAfXE=
+X-Google-Smtp-Source: AGHT+IFbJwp20OLUCz9efaSoloaPNl8/fS8NYTvmJm07UUdEJVAjrTjlWVcTBeq2jkM7UH0OBgQ77CZrqOSkkWbdBMQ=
+X-Received: by 2002:a05:6122:2a52:b0:4ef:27db:39ca with SMTP id
+ 71dfb90a1353d-4ef6d690010mr10135664e0c.0.1719414016636; Wed, 26 Jun 2024
+ 08:00:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240625-icc_bw_voting_from_ethqos-v2-3-eaa7cf9060f0@quicinc.com>
+References: <20240626085015.32171-2-wsa+renesas@sang-engineering.com>
+In-Reply-To: <20240626085015.32171-2-wsa+renesas@sang-engineering.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 26 Jun 2024 15:59:49 +0100
+Message-ID: <CA+V-a8vqZqyayAyNDh-f1jU8QqjAma9S9r2+Z9VKOh+AvBQz=A@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhi: Convert from tasklet to BH workqueue
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: linux-renesas-soc@vger.kernel.org, Allen Pais <allen.lkml@gmail.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 04:49:30PM GMT, Sagar Cheluvegowda wrote:
-> When mac link goes down we don't need to mainitain the clocks to operate
-> at higher frequencies, as an optimized solution to save power when
-> the link goes down we are trying to bring down the clocks to the
-> frequencies corresponding to the lowest speed possible.
-> 
-> Signed-off-by: Sagar Cheluvegowda <quic_scheluve@quicinc.com>
+On Wed, Jun 26, 2024 at 9:50=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> From: Allen Pais <allen.lkml@gmail.com>
+>
+> The only generic interface to execute asynchronously in the BH context is
+> tasklet; however, it's marked deprecated and has some design flaws. To
+> replace tasklets, BH workqueue support was recently added. A BH workqueue
+> behaves similarly to regular workqueues except that the queued work items
+> are executed in the BH context.
+>
+> This patch converts the SDHI driver from tasklet to BH workqueue.
+>
+> Based on the work done by Tejun Heo <tj@kernel.org>
+>
+> Signed-off-by: Allen Pais <allen.lkml@gmail.com>
+> [wsa: fixed build faliures, corrected whitespace issues]
+> Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 > ---
->  drivers/net/ethernet/stmicro/stmmac/stmmac_main.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> index ec7c61ee44d4..f0166f0bc25f 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
-> @@ -996,6 +996,9 @@ static void stmmac_mac_link_down(struct phylink_config *config,
+>
+> Tested on a Renesas Salvator X board with a R-Car M3-W SoC. Same
+> performance as with tasklets. Thank you Allen for your work!
+>
+>
+>  drivers/mmc/host/renesas_sdhi.h               |  4 ++-
+>  drivers/mmc/host/renesas_sdhi_core.c          |  2 ++
+>  drivers/mmc/host/renesas_sdhi_internal_dmac.c | 26 +++++++++----------
+>  drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  9 +++----
+>  drivers/mmc/host/tmio_mmc.h                   |  3 ++-
+>  drivers/mmc/host/tmio_mmc_core.c              |  4 +--
+>  6 files changed, 26 insertions(+), 22 deletions(-)
+>
+Tested on SMARC RZ/G2L and RZ/V2H EVK.
+
+Tested-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+
+Cheers,
+Prabhakar
+
+> diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_s=
+dhi.h
+> index 586f94d4dbfd..f12a87442338 100644
+> --- a/drivers/mmc/host/renesas_sdhi.h
+> +++ b/drivers/mmc/host/renesas_sdhi.h
+> @@ -11,6 +11,7 @@
+>
+>  #include <linux/dmaengine.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/workqueue.h>
+>  #include "tmio_mmc.h"
+>
+>  struct renesas_sdhi_scc {
+> @@ -67,7 +68,7 @@ struct renesas_sdhi_dma {
+>         dma_filter_fn filter;
+>         void (*enable)(struct tmio_mmc_host *host, bool enable);
+>         struct completion dma_dataend;
+> -       struct tasklet_struct dma_complete;
+> +       struct work_struct dma_complete;
+>  };
+>
+>  struct renesas_sdhi {
+> @@ -93,6 +94,7 @@ struct renesas_sdhi {
+>         unsigned int tap_set;
+>
+>         struct reset_control *rstc;
+> +       struct tmio_mmc_host *host;
+>  };
+>
+>  #define host_to_priv(host) \
+> diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/rene=
+sas_sdhi_core.c
+> index 58536626e6c5..04874791541f 100644
+> --- a/drivers/mmc/host/renesas_sdhi_core.c
+> +++ b/drivers/mmc/host/renesas_sdhi_core.c
+> @@ -970,6 +970,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+>         if (IS_ERR(host))
+>                 return PTR_ERR(host);
+>
+> +       priv->host =3D host;
+> +
+>         if (of_data) {
+>                 mmc_data->flags |=3D of_data->tmio_flags;
+>                 mmc_data->ocr_mask =3D of_data->tmio_ocr_mask;
+> diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/=
+host/renesas_sdhi_internal_dmac.c
+> index 422fa63a2e99..d4b66daeda66 100644
+> --- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+> @@ -337,7 +337,7 @@ static bool renesas_sdhi_internal_dmac_dma_irq(struct=
+ tmio_mmc_host *host)
+>                 writel(status ^ dma_irqs, host->ctl + DM_CM_INFO1);
+>                 set_bit(SDHI_DMA_END_FLAG_DMA, &dma_priv->end_flags);
+>                 if (test_bit(SDHI_DMA_END_FLAG_ACCESS, &dma_priv->end_fla=
+gs))
+> -                       tasklet_schedule(&dma_priv->dma_complete);
+> +                       queue_work(system_bh_wq, &dma_priv->dma_complete)=
+;
+>         }
+>
+>         return status & dma_irqs;
+> @@ -352,7 +352,7 @@ renesas_sdhi_internal_dmac_dataend_dma(struct tmio_mm=
+c_host *host)
+>         set_bit(SDHI_DMA_END_FLAG_ACCESS, &dma_priv->end_flags);
+>         if (test_bit(SDHI_DMA_END_FLAG_DMA, &dma_priv->end_flags) ||
+>             host->data->error)
+> -               tasklet_schedule(&dma_priv->dma_complete);
+> +               queue_work(system_bh_wq, &dma_priv->dma_complete);
+>  }
+>
+>  /*
+> @@ -440,9 +440,9 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_=
+host *host,
+>         renesas_sdhi_internal_dmac_enable_dma(host, false);
+>  }
+>
+> -static void renesas_sdhi_internal_dmac_issue_tasklet_fn(unsigned long ar=
+g)
+> +static void renesas_sdhi_internal_dmac_issue_work_fn(struct work_struct =
+*work)
 >  {
->  	struct stmmac_priv *priv = netdev_priv(to_net_dev(config->dev));
->  
-> +	if (priv->plat->fix_mac_speed)
-> +		priv->plat->fix_mac_speed(priv->plat->bsp_priv, SPEED_10, mode);
-> +
->  	stmmac_mac_set(priv, priv->ioaddr, false);
->  	priv->eee_active = false;
->  	priv->tx_lpi_enabled = false;
-> @@ -1004,6 +1007,11 @@ static void stmmac_mac_link_down(struct phylink_config *config,
->  
->  	if (priv->dma_cap.fpesel)
->  		stmmac_fpe_link_state_handle(priv, false);
-> +
-> +	stmmac_set_icc_bw(priv, SPEED_10);
-> +
-> +	if (priv->plat->fix_mac_speed)
-> +		priv->plat->fix_mac_speed(priv->plat->bsp_priv, SPEED_10, mode);
-
-
-I think you're doing this at the beginning and end of
-stmmac_mac_link_down(), is that intentional?
-
-I'm still curious if any of the netdev folks have any opinion on scaling
-things down like this on link down.
-
+> -       struct tmio_mmc_host *host =3D (struct tmio_mmc_host *)arg;
+> +       struct tmio_mmc_host *host =3D from_work(host, work, dma_issue);
+>         struct renesas_sdhi *priv =3D host_to_priv(host);
+>
+>         tmio_mmc_enable_mmc_irqs(host, TMIO_STAT_DATAEND);
+> @@ -454,7 +454,7 @@ static void renesas_sdhi_internal_dmac_issue_tasklet_=
+fn(unsigned long arg)
+>                 /* on CMD errors, simulate DMA end immediately */
+>                 set_bit(SDHI_DMA_END_FLAG_DMA, &priv->dma_priv.end_flags)=
+;
+>                 if (test_bit(SDHI_DMA_END_FLAG_ACCESS, &priv->dma_priv.en=
+d_flags))
+> -                       tasklet_schedule(&priv->dma_priv.dma_complete);
+> +                       queue_work(system_bh_wq, &priv->dma_priv.dma_comp=
+lete);
+>         }
+>  }
+>
+> @@ -484,9 +484,11 @@ static bool renesas_sdhi_internal_dmac_complete(stru=
+ct tmio_mmc_host *host)
+>         return true;
+>  }
+>
+> -static void renesas_sdhi_internal_dmac_complete_tasklet_fn(unsigned long=
+ arg)
+> +static void renesas_sdhi_internal_dmac_complete_work_fn(struct work_stru=
+ct *work)
+>  {
+> -       struct tmio_mmc_host *host =3D (struct tmio_mmc_host *)arg;
+> +       struct renesas_sdhi_dma *dma_priv =3D from_work(dma_priv, work, d=
+ma_complete);
+> +       struct renesas_sdhi *priv =3D container_of(dma_priv, typeof(*priv=
+), dma_priv);
+> +       struct tmio_mmc_host *host =3D priv->host;
+>
+>         spin_lock_irq(&host->lock);
+>         if (!renesas_sdhi_internal_dmac_complete(host))
+> @@ -544,12 +546,10 @@ renesas_sdhi_internal_dmac_request_dma(struct tmio_=
+mmc_host *host,
+>         /* Each value is set to non-zero to assume "enabling" each DMA */
+>         host->chan_rx =3D host->chan_tx =3D (void *)0xdeadbeaf;
+>
+> -       tasklet_init(&priv->dma_priv.dma_complete,
+> -                    renesas_sdhi_internal_dmac_complete_tasklet_fn,
+> -                    (unsigned long)host);
+> -       tasklet_init(&host->dma_issue,
+> -                    renesas_sdhi_internal_dmac_issue_tasklet_fn,
+> -                    (unsigned long)host);
+> +       INIT_WORK(&priv->dma_priv.dma_complete,
+> +                 renesas_sdhi_internal_dmac_complete_work_fn);
+> +       INIT_WORK(&host->dma_issue,
+> +                 renesas_sdhi_internal_dmac_issue_work_fn);
+>
+>         /* Add pre_req and post_req */
+>         host->ops.pre_req =3D renesas_sdhi_internal_dmac_pre_req;
+> diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/=
+renesas_sdhi_sys_dmac.c
+> index 9cf7f9feab72..5a6f41318645 100644
+> --- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> +++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+> @@ -312,9 +312,9 @@ static void renesas_sdhi_sys_dmac_start_dma(struct tm=
+io_mmc_host *host,
+>         }
+>  }
+>
+> -static void renesas_sdhi_sys_dmac_issue_tasklet_fn(unsigned long priv)
+> +static void renesas_sdhi_sys_dmac_issue_work_fn(struct work_struct *work=
+)
+>  {
+> -       struct tmio_mmc_host *host =3D (struct tmio_mmc_host *)priv;
+> +       struct tmio_mmc_host *host =3D from_work(host, work, dma_issue);
+>         struct dma_chan *chan =3D NULL;
+>
+>         spin_lock_irq(&host->lock);
+> @@ -401,9 +401,8 @@ static void renesas_sdhi_sys_dmac_request_dma(struct =
+tmio_mmc_host *host,
+>                         goto ebouncebuf;
+>
+>                 init_completion(&priv->dma_priv.dma_dataend);
+> -               tasklet_init(&host->dma_issue,
+> -                            renesas_sdhi_sys_dmac_issue_tasklet_fn,
+> -                            (unsigned long)host);
+> +               INIT_WORK(&host->dma_issue,
+> +                         renesas_sdhi_sys_dmac_issue_work_fn);
+>         }
+>
+>         renesas_sdhi_sys_dmac_enable_dma(host, true);
+> diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+> index 2af5730c21f4..a75755f31d31 100644
+> --- a/drivers/mmc/host/tmio_mmc.h
+> +++ b/drivers/mmc/host/tmio_mmc.h
+> @@ -21,6 +21,7 @@
+>  #include <linux/scatterlist.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/interrupt.h>
+> +#include <linux/workqueue.h>
+>
+>  #define CTL_SD_CMD 0x00
+>  #define CTL_ARG_REG 0x04
+> @@ -153,7 +154,7 @@ struct tmio_mmc_host {
+>         bool                    dma_on;
+>         struct dma_chan         *chan_rx;
+>         struct dma_chan         *chan_tx;
+> -       struct tasklet_struct   dma_issue;
+> +       struct work_struct      dma_issue;
+>         struct scatterlist      bounce_sg;
+>         u8                      *bounce_buf;
+>
+> diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc=
+_core.c
+> index 2780f0a29871..b61a6310311d 100644
+> --- a/drivers/mmc/host/tmio_mmc_core.c
+> +++ b/drivers/mmc/host/tmio_mmc_core.c
+> @@ -608,7 +608,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *ho=
+st, unsigned int stat)
+>                         } else {
+>                                 tmio_mmc_disable_mmc_irqs(host,
+>                                                           TMIO_MASK_READO=
+P);
+> -                               tasklet_schedule(&host->dma_issue);
+> +                               queue_work(system_bh_wq, &host->dma_issue=
+);
+>                         }
+>                 } else {
+>                         if (!host->dma_on) {
+> @@ -616,7 +616,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *ho=
+st, unsigned int stat)
+>                         } else {
+>                                 tmio_mmc_disable_mmc_irqs(host,
+>                                                           TMIO_MASK_WRITE=
+OP);
+> -                               tasklet_schedule(&host->dma_issue);
+> +                               queue_work(system_bh_wq, &host->dma_issue=
+);
+>                         }
+>                 }
+>         } else {
+> --
+> 2.43.0
+>
+>
 
