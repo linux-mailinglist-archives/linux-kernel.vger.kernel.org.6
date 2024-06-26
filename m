@@ -1,73 +1,136 @@
-Return-Path: <linux-kernel+bounces-230824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0039918258
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:27:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8151918254
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3E9280D1E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:27:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CDD41F23533
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F97181D0E;
-	Wed, 26 Jun 2024 13:27:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9CE1836F4;
+	Wed, 26 Jun 2024 13:26:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUSL149r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DD8zcdxN"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FED17CA1A;
-	Wed, 26 Jun 2024 13:27:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF508825;
+	Wed, 26 Jun 2024 13:25:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719408433; cv=none; b=TJg76KvMtkc1YwoX5XQ9KrSh3I3pbT2kIANq6QSklxsZ0jXZsp/Hnlad20HHQvqFY+oWPewB3pQ0NNC910BH6LUSTzwSZcBodL5QZpoeb1naH5ZVlaaBUh1bfgnzOIHyo83mfbCUbg7Ocqevu4cCEbY3H/VAKA0uV8E0+uMVW7M=
+	t=1719408360; cv=none; b=MUdmBWOH719KkJu0NCphKW+J4WXw+MCTdnrRD/ZcTmPP/IczKDEkLkRnBMu2XbJhCi8FGW55qW7jw6WV+P4Li/bwD3SU4IaS86Bg4mQs1q2fW8q+UvF1rqgHnYt+cOpC+jGVH04C8wxvmSLMpZmN/wekxGNkdDsTjDadZ8VL/C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719408433; c=relaxed/simple;
-	bh=hc+hknp4pzhwRX+PVOXc8ZKBg3TtI/Lca03Al5/txgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OMv59/7H4LO1Z0Oi3a7id/5wp4fMtxLwOAD4ffHPQzY4+ts8K5qL0gBGWy5FC2RGVaa5rSMgJCmpmoInM4DOoJ99RdP6izaE4TXs2VhGzeNvLRAC9JQOyTwr2J4dcQP37WC1fYj5RR+4hQfL26xh/U2v7nVgr+2GCx91fRAmJpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUSL149r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5924C2BD10;
-	Wed, 26 Jun 2024 13:27:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719408433;
-	bh=hc+hknp4pzhwRX+PVOXc8ZKBg3TtI/Lca03Al5/txgQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=oUSL149r5mpZw0K6UIv8b2A033MGZ5xPscsZ3jfb+Ww5gi3ZpVNH0/0BG4wE3oRpQ
-	 +Y4QcFKIHQr+IDNSvhephJymUeGM0dWvgtw/fkdzEnemS79gU3dhbwU56rsVmvNINA
-	 7OgU7mq2eYeiTrhhWWUMTm628+3m6eYfqJPgHFYvbO67BRUA6WxrFngyA6NYs68w8s
-	 O8uvJ/S9XdaYbHyKTo/BqZpIFMX82wvyqxdtNFO0BLv5ACk96XPqFOWQ1Ss6HiAilI
-	 2S8SwV8eflzujwPbrtxao/R1pt+Cb14DoLjO+mkb7mD48s7nyw5txjgCgND358u+gB
-	 RgW4olWXj2Tkw==
-Date: Wed, 26 Jun 2024 06:27:11 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Donald Hunter
- <donald.hunter@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Jonathan Corbet <corbet@lwn.net>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, Dent Project <dentproject@linuxfoundation.org>,
- kernel@pengutronix.de, linux-doc@vger.kernel.org
-Subject: Re: [PATCH net-next v4 0/7] net: pse-pd: Add new PSE c33 features
-Message-ID: <20240626062711.499695c5@kernel.org>
-In-Reply-To: <20240626095211.00956faa@kmaincent-XPS-13-7390>
-References: <20240625-feature_poe_power_cap-v4-0-b0813aad57d5@bootlin.com>
-	<20240625184144.49328de3@kernel.org>
-	<20240626095211.00956faa@kmaincent-XPS-13-7390>
+	s=arc-20240116; t=1719408360; c=relaxed/simple;
+	bh=a2MiMWPuYk0qvLgPHdbMbHteIsHggJW7MHoMbsZoJ6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vbu6N6CfU22Q8V3BQLlo8SUGy9PABIjZMR3PfW21JRN9oyCM24wK3M3APd3AGdIwj59QdyNiHBHlW0JjG5Y3PV93E0tGpOUW0CydyVgKnYDx4AQj6DQ3o/5j/ajN2Y+Rt7yR8QNIuW7zDv7NNjSJViSPZlSu11uadebiLVhPC5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DD8zcdxN; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-701b0b0be38so5616703b3a.0;
+        Wed, 26 Jun 2024 06:25:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719408358; x=1720013158; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=SNW8OiLwaA5mYn7mAT6eoqNNPmxPlZMg85u3cNG1HT8=;
+        b=DD8zcdxNYbXV2ZLeewPJ+dKYIlpaOOev4ybda3i3BHZ4Mh3oXby2LtB7Efm+KTx1sE
+         YbYsvrjgMFPjG2Ql6npZ5FBPc/7TOueJE7IeFynIY084TuRL67ZltXrgLjjDJt3NORuq
+         /jI79+A0iSvM+38lN0bTEgGb9o9myKu6jOP7KJ8e1QE1dj16j/vSGFvViPXO48LlpHQV
+         T9sZ3ahp016mzzW9T/dycBAVqsinDG1NrLDm+PqN1xXGyZUdwygePn99cjate35t4Ao5
+         KR3OnXxobwfPd4FR5nyfS9RpPaR7Y1XB91brJMfi9fQP3NZuFx2dxwTZgvKzTeZlOxHm
+         8a/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719408358; x=1720013158;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SNW8OiLwaA5mYn7mAT6eoqNNPmxPlZMg85u3cNG1HT8=;
+        b=RUQz8ANwqEUtHSKREwI1xG9HpcXX6tWfkF35n8yRhvdi0GkAAUmoiusdDCezAmqJVK
+         g2xIlf/LQHfzroGw75Kh7OIrSmcZtB/DXAO18rWcXJdbQO7Ps3UPdAEKOb830Cdxw6CJ
+         gFPkU1svyl981uaS0VQVq9kjef0S2AbgNDbhHWyWBfXSsMeszXf4viaeCrKc8CFOte/7
+         fh+dH2VFHIuss0HI4fVG+qEl8BBRlEE0NEcmO17ql4hPbGewK9FmpSY1gSy7PQOfOMqB
+         Bg3OaxYFZPJKMc+NAR5EtNpmQe/LYKTO6UGkCRWggzidr/6gliTJkUdsB1G6ku+WEUYK
+         Mw6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWXu0zHOcsIZFrz9oM++y2nntjqdxkh0uurjiafVEE17yjCEiHTj/Fm7b6o1C3a0/RRuKOeqqZIaI8y1kNhdOuPW0WoTJcGDqZdsOZWCc4i6kaHz9gjjoSQp/WQrl7iH7fj6B02S6rQNOFq0CXtuCjCpoRLzMJK1AiUeB4hwpA38ZgBhLPO5hYKwGsbdcGOdkEztlFAhgQnjnyr+AiiW3m8WFGn7upDQEieXdPaEkf/Sbg4a+YLjInwXA==
+X-Gm-Message-State: AOJu0YwuFG4W9LKh47btSUljeNsxt7hUy5OqIplfOV1U/Rq5hcfpYc8n
+	94caj8c9s9d9LI5f9mGpnA5XC1j705W2EZ6WMHaxA2E8Qpvh6Lzj
+X-Google-Smtp-Source: AGHT+IG5de0OBwkS5JyH2ZKjE30wVQboMcmfftyBXNzCUH06FbsrVWCi+AcSjERuzgX2Z6vD3Fna/w==
+X-Received: by 2002:a05:6a20:18b0:b0:1bd:28a3:20b3 with SMTP id adf61e73a8af0-1bd28a32238mr2879981637.21.1719408357797;
+        Wed, 26 Jun 2024 06:25:57 -0700 (PDT)
+Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3d8bd8sm99449385ad.209.2024.06.26.06.25.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 06:25:57 -0700 (PDT)
+Date: Wed, 26 Jun 2024 10:27:23 -0300
+From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
+To: Alexandru Ardelean <aardelean@baylibre.com>
+Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
+	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
+	corbet@lwn.net, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 4/7] spi: spi-axi-spi-engine: Add support for MOSI
+ idle configuration
+Message-ID: <ZnwXO6vApHfkXyqx@debian-BULLSEYE-live-builder-AMD64>
+References: <cover.1719351923.git.marcelo.schmitt@analog.com>
+ <072d74af9fc624490b84a1d001039424e572e827.1719351923.git.marcelo.schmitt@analog.com>
+ <CA+GgBR9S7q32i-1ehNAgLHim66-Ud=PajgTSczBSJ5LUZdA7cA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CA+GgBR9S7q32i-1ehNAgLHim66-Ud=PajgTSczBSJ5LUZdA7cA@mail.gmail.com>
 
-On Wed, 26 Jun 2024 09:52:11 +0200 Kory Maincent wrote:
-> Do you know when and how often net-next is rebased on top of net?
+On 06/26, Alexandru Ardelean wrote:
+> On Wed, Jun 26, 2024 at 12:55 AM Marcelo Schmitt
+> <marcelo.schmitt@analog.com> wrote:
+> >
+> > Implement MOSI idle low and MOSI idle high to better support peripherals
+> > that request specific MOSI behavior.
+> >
+> 
+> One minor nitpick.
+> Feel free to ignore, if there won't be a re-spin.
+> 
+> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
+> > ---
+> >  drivers/spi/spi-axi-spi-engine.c | 8 ++++++++
+> >  1 file changed, 8 insertions(+)
+> >
+...
+> > @@ -646,6 +651,9 @@ static int spi_engine_probe(struct platform_device *pdev)
+> >
+> >         host->dev.of_node = pdev->dev.of_node;
+> >         host->mode_bits = SPI_CPOL | SPI_CPHA | SPI_3WIRE;
+> > +       if (ADI_AXI_PCORE_VER_MAJOR(version) >= 1 &&
+> > +           ADI_AXI_PCORE_VER_MINOR(version) >= 3)
+> > +               host->mode_bits |=  SPI_MOSI_IDLE_LOW | SPI_MOSI_IDLE_HIGH;
+> 
+> There's a second space after the assignment.
+>                host->mode_bits |=<2 spaces here>SPI_MOSI_IDLE_LOW |
+> SPI_MOSI_IDLE_HIGH;
+ack
 
-Every Thursday, usually around noon PST but exact timing depends on when
-Linus pulls and how quickly I notice that he did :)
+thanks
+> 
+> 
+> >         host->bits_per_word_mask = SPI_BPW_RANGE_MASK(1, 32);
+> >         host->max_speed_hz = clk_get_rate(spi_engine->ref_clk) / 2;
+> >         host->transfer_one_message = spi_engine_transfer_one_message;
+> > --
+> > 2.43.0
+> >
+> >
 
