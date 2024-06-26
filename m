@@ -1,175 +1,193 @@
-Return-Path: <linux-kernel+bounces-230411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB686917C6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:27:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11209917C6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:28:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86105286D65
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:27:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96F651F22BB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E7A16B38F;
-	Wed, 26 Jun 2024 09:27:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MFvXqrTv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2056A16A92E;
-	Wed, 26 Jun 2024 09:27:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A9616C696;
+	Wed, 26 Jun 2024 09:28:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93BC7166300;
+	Wed, 26 Jun 2024 09:28:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719394069; cv=none; b=rDtWKWEFG8J3K2UC88s04DI1STOaMGRXutinP4nrE8ZLwkiirtUw3c82i+ixbLxsljxTVTWC4ApV5GQPxFGAE+ZCLxL7MRY9/uqcMCdz++J5QQZmcE1mbD7yuAWqQsFwP5DoNEFILT4x3wnxyCH6dDsxMQcBsLm5D8zyIu4acko=
+	t=1719394088; cv=none; b=heEVP9091RzunAMysqIVPsF9n5m74KuoNAWHsqcK2HXTKjhsPu40icka8VPFWDjR8maUXGDMRQlJZ3C/05CmWA1f8DDuRywKMRX3JCTKH6+N3UMuxlofBwBL2WIWSJsUbrfWYeh/ZP7Iusgv+ia2FzRcs4k0mxIi6QQEpIlhroM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719394069; c=relaxed/simple;
-	bh=aLRXocu55V76TV2CG6N3YPo8u4yjwzMj06cYXsd/7I8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hPJLDvR3v+I6r1WQPbznY6at7q2RGpmVZAJQB9uoHiCDgfzcp4QjE7/NG0wW6fXGXmRe7pymMd4FSbiirJeacLydCh1lS7UtiR3WJFtRhujG2drxSAb0zbZ9KAICNoOX1rXEKbVHm6ybKlYhpGKHBt46xi9BtcH/XkVVLqVdlwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MFvXqrTv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF5B5C2BD10;
-	Wed, 26 Jun 2024 09:27:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719394068;
-	bh=aLRXocu55V76TV2CG6N3YPo8u4yjwzMj06cYXsd/7I8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MFvXqrTv8brLTiQz77kxxFX+GVaCDu7PjuXc3i8cqAmr/iT5L4lzOXuj+fC12Mzk7
-	 lLqAcVBnaEoQbsZhWtjSsmHbH5QQUo8f2CyeB+Q/kQDTNp9MOicCYigP+aKmCuYPj0
-	 jxfqjJQ9bDes0b3FAhoR1wLzN6K9WfsLK23abb27SSs5b0wjDzOs//qVY/qDCITCec
-	 u5hjyW1z/JpE6iGUA/GASP1HHBR2tRFpaDxh6PiooP6xE3WB1tihDwC0OFOkRSg/NF
-	 +q7o/Iq0yDs/Co3gV7YvbMuSoHXYZkDW2YsjoTQtqOwEBdMgzXIDPjpIJGs4Nfwg8w
-	 KczeeFaJMUz8g==
-Date: Wed, 26 Jun 2024 10:27:44 +0100
-From: Lee Jones <lee@kernel.org>
-To: Vicentiu Galanopulo <vicentiu.galanopulo@remote-tech.co.uk>
-Cc: pavel@ucw.cz, linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] leds: Add LED1202 I2C driver
-Message-ID: <20240626092744.GY1318296@google.com>
-References: <ZnGMAK9bd3pZjWmG@admins-Air>
- <20240620175543.GC1318296@google.com>
- <ZnmDUNgwu_1LYMzw@admins-Air>
- <20240625071610.GW1318296@google.com>
- <Zns7tih4M2y3SX6B@admins-Air>
+	s=arc-20240116; t=1719394088; c=relaxed/simple;
+	bh=CK1/6HJ/6fsWsXTixqXnrVrYCHv6hyAJG7T2CgGocFU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Fx8OVOLC/xgNgU97E9jSXSxBBHfBs7z8pWHMGy3D5j21c3JBUwXzd0s43b7CqrUw+3YH6ykvVHecyFvuIkZzug+ctaHrcRh1wj1OjRZu2QBML8go+Ij99SnIOTIMSg3RkjS7P7nCKThYWf46rBVc1iluaExdBhGw6TPg/1+KCiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4EA03339;
+	Wed, 26 Jun 2024 02:28:29 -0700 (PDT)
+Received: from [10.1.39.67] (unknown [10.1.39.67])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CED713F6A8;
+	Wed, 26 Jun 2024 02:28:01 -0700 (PDT)
+Message-ID: <ea85f7f7-04b5-4de1-b0a1-d25d286ee065@arm.com>
+Date: Wed, 26 Jun 2024 10:27:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] perf pmu: Restore full PMU name wildcard support
+To: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>
+Cc: linux-perf-users <linux-perf-users@vger.kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, LKML <linux-kernel@vger.kernel.org>
+References: <20240617134348.208241-1-james.clark@arm.com>
+ <20240617134348.208241-2-james.clark@arm.com>
+ <CAP-5=fUZkAs9h+fLiJOeL9p_K3auQcn30mXvXZWRYMchmT9ZPA@mail.gmail.com>
+ <b2008905-686b-4494-a10d-c3357cce91da@arm.com>
+ <CAP-5=fUkZnG0gaJ_76Azn643DXZSq9xhpX=+U6Mjhtnko8PyLw@mail.gmail.com>
+ <197e62e3-d34a-442a-97cf-6edf6c8c013f@arm.com>
+ <CAP-5=fVqf0B+Fs8vSAvyPf7UpUo1U8HMkDbgb3csJ4s0O1kiog@mail.gmail.com>
+ <fa69d868-5229-4ea2-b32e-c7928706d27a@arm.com> <ZnuVbnOyXmjT4Njo@google.com>
+Content-Language: en-US
+From: James Clark <james.clark@arm.com>
+In-Reply-To: <ZnuVbnOyXmjT4Njo@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zns7tih4M2y3SX6B@admins-Air>
 
-On Tue, 25 Jun 2024, Vicentiu Galanopulo wrote:
 
-> On Tue, Jun 25, 2024 at 08:16:10AM +0100, Lee Jones wrote:
-> > No idea.  I use NeoVim (with kickstart.nvim).
-> > 
-> > https://dev.to/lico/set-up-neovim-with-kickstartnvim-on-mac-as-a-vimginner-53f5
+
+On 26/06/2024 05:13, Namhyung Kim wrote:
+> On Tue, Jun 18, 2024 at 04:47:01PM +0100, James Clark wrote:
+>>
+>>
+>> On 18/06/2024 16:25, Ian Rogers wrote:
+>>> On Tue, Jun 18, 2024, 8:06 AM James Clark <james.clark@arm.com> wrote:
+>>>
+>>>>
+>>>>
+>>>> On 18/06/2024 15:23, Ian Rogers wrote:
+>>>>> On Tue, Jun 18, 2024, 3:59 AM James Clark <james.clark@arm.com> wrote:
+>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 17/06/2024 22:25, Ian Rogers wrote:
+>>>>>>> On Mon, Jun 17, 2024, 6:44 AM James Clark <james.clark@arm.com> wrote:
+>>>>>>>
+>>>>>>>> Commit b2b9d3a3f021 ("perf pmu: Support wildcards on pmu name in
+>>>> dynamic
+>>>>>>>> pmu events") gives the following example for wildcarding a subset of
+>>>>>>>> PMUs:
+>>>>>>>>
+>>>>>>>>   E.g., in a system with the following dynamic pmus:
+>>>>>>>>
+>>>>>>>>         mypmu_0
+>>>>>>>>         mypmu_1
+>>>>>>>>         mypmu_2
+>>>>>>>>         mypmu_4
+>>>>>>>>
+>>>>>>>>   perf stat -e mypmu_[01]/<config>/
+>>>>>>>>
+>>>>>>>> Since commit f91fa2ae6360 ("perf pmu: Refactor perf_pmu__match()"),
+>>>> only
+>>>>>>>> "*" has been supported, removing the ability to subset PMUs, even
+>>>> though
+>>>>>>>> parse-events.l still supports ? and [] characters.
+>>>>>>>>
+>>>>>>>> Fix it by using fnmatch() when any glob character is detected and add
+>>>> a
+>>>>>>>> test which covers that and other scenarios of
+>>>>>>>> perf_pmu__match_ignoring_suffix().
+>>>>>>>>
+>>>>>>>> Fixes: f91fa2ae6360 ("perf pmu: Refactor perf_pmu__match()")
+>>>>>>>> Signed-off-by: James Clark <james.clark@arm.com>
+>>>>>>>>
+>>>>>>>
+>>>>>>> We use regular expression matching elsewhere rather than fnmatch. We
+>>>> can
+>>>>>>> also precompile the matchers using lex. I'm not sure we shouldn't be
+>>>>>>> looking for an opportunity to remove fnmatch rather than expand upon
+>>>> it.
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Ian
+>>>>>>>
+>>>>>>
+>>>>>> Presumably you mean we can do the removal of fnmatch after this fix goes
+>>>>>> in,
+>>>>>> rather than instead of? Because this is a user facing change in
+>>>> behaviour
+>>>>>> but the removal of fnmatch would be an non-user facing code refactor?
+>>>>>>
+>>>>>> It's technically not an "expansion" because we always used fnmatch and
+>>>> the
+>>>>>> linked commit hasn't made it to a release yet.
+>>>>>>
+>>>>>
+>>>>> The main place the expansion gets added is parse-events.c, previously
+>>>>> parse-events.y. If we're adding the expansion ourselves then we can
+>>>> choose
+>>>>> the form we add it. Some coming servers will have 100s of PMUs and so I'm
+>>>>> worried about the scanning cost when a PMU isn't specified.
+>>>>>
+>>>>> Thanks,
+>>>>> Ian
+>>>>>
+>>>>
+>>>> I think I might not be following. If a PMU isn't specified then
+>>>> perf_pmu__match() is never called so no cost is incurred. I also don't
+>>>> add any new calls to fnmatch().
+>>>>
+>>>> I only updated the gate on whether the existing fnmatch() is called from
+>>>> "*" to "*[?". So it only happens when one of those characters is in the
+>>>> PMU name, but it already happens when '*' is in the name.
+>>>>
+>>>
+>>> Right. I'm not saying there is anything wrong in the change or an
+>>> additional cost, what the issue is is that currently only really '*'
+>>> requires fnmatch and that's because the event parsing adds it. It could
+>>
+>> It's not only '*' that requires it, see the example I added in the
+>> commit message:
+>>
+>>   ./perf stat -e mypmu_[01]/<config>/
+>>
+>> '?' was supported before as well which could be useful.
+>>
+>>> similarly add '.*' if we did regular expression matching. By expanding what
+>>> we pass to fnmatch from the command line the more committed we are to
+>>> fnmatch rather than regular expressions - which is what we use everywhere
+>>> else in the code. So maybe it was a feature that this wasn't working.
+>>>
+>>
+>> But we haven't had a release of Perf yet where more is passed to
+>> fnmatch(). Before f91fa2ae6360 ("perf pmu: Refactor perf_pmu__match()")
+>> everything was passed to fnmatch(). After that unreleased commit only
+>> things with '*' are. Now with this change only "*?[", so it's less not more.
+>>
+>> I don't think there is any commitment to keep it, we can always remove
+>> fnmatch in the future. But it looks like a mistake to me because the
+>> title says "refactor" when it actually removes a feature.
 > 
-> Thanks for the pointer.
+> Ian, are you ok with this now?
 > 
-> > 
-> > Please strip out review comments that you agree with.
-> Hopefully like I did for the rest of comments?
+> Thanks,
+> Namhyung
 > 
-> > 
-> > Numbers should be easily identifiable/readable by humans.
-> Ok, will do my best 
 
-What does the comment above say?
+I don't feel too strongly about this one, unless anyone really is still
+using my_pmu[01].
 
-If you agree with a review comment, you don't need to reply to it.
+For patch 2 I was going to resend with Ian's suggested-by tag, but I
+think we should try to get that one in as a test is failing.
 
-> > > I reused some naming. Should it be led1202_ for all?
-> > 
-> > st1202_?
-> st1202 will be in v3
-> 
->  
-> > > If this is not appropiate or custom practice I can redo it, but I need some pointers
-> > > on where to look as "good" examples.
-> > 
-> > Google: "Linux Error Codes"
-> > 
-> > `git grep "return " -- drivers`
-> My concern was mostly with how I'm extracting the channel(LED number).
-> ll1202_get_channel is called inside functions where only struct device is available.
-> So, I extract the device_node to have access to the device tree "label".
-> I'm char compairing label value and dev->kobj.name, and if they're the same, I use the
-
-That seems wrong.
-
-I haven't looked at what you're doing in detail, but dev_name() is
-usually used to fetch the name of the device.
-
-See include/linux/device.h for more generic APIs.
-
-> "reg" value property from the device tree to get the LED number.
-> 
-> For most if not all of the functions I did see some similar setup in other drivers files,
-> but I might be doing something the wrong way...
-
-
-> > > A dump of all the registers with their values. I didn't add show/get functions for
-> > > all the registers.
-> > > Remove it?
-> > 
-> > How often are people going to need that after initial authorship, really?
-> >
-> No idea. I'll just remove it.
->  
-> > > > 
-> > > > Space out the code properly - this is really tough to read.
-> > > > 
-> > > Ok.. with or without the help of the IDE, it shall be done
-> > 
-> > I mean new lines between functional groups.
-> >
-> Understood.
->  
-> > > > > +}
-> > > > > +
-> > > > > +static int ll1202_channel_activate(struct ll1202_led *led)
-> > > > > +{
-> > > > > +	struct ll1202_chip *chip;
-> > > > > +	uint8_t reg_chan_low, reg_chan_high;
-> > > > > +	int ret = 0;
-> > > > > +
-> > > > > +	chip = led->chip;
-> > > > > +	if (led->is_active) {
-> > > > 
-> > > > Reverse this logic and unindent this block.
-> > > > 
-> > > Sorry, I need some more details on what I need to do here.
-> > 
-> > 	if (!led->is_active)
-> > 		return ret;
-> > 
-> 
-> Thanks for explaining this.
-> 
-> > > > 
-> > > > We already have global helpers for this type of thing.
-> > > > 
-> > > Ok, could you please point me to the file/link?
-> > 
-> > I suggest you pull as much of this out to another _normal_ function as
-> > you can, then have the fewest lines possible inside the macro instead.
-> >
-> Ok. Will do.
-> 
->  
-> > -- 
-> > Lee Jones [李琼斯]
-> Thanks Lee.
-> 
-> May I now push a v3?
-
-No one will stop you. :)
-
--- 
-Lee Jones [李琼斯]
 
