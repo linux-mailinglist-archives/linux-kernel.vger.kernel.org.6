@@ -1,132 +1,100 @@
-Return-Path: <linux-kernel+bounces-230547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32448917E63
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:41:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85040917E7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:42:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FAEC1C20F69
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:41:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6C5C1C20AD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:42:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F00B17D364;
-	Wed, 26 Jun 2024 10:40:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1FB717CA1F;
+	Wed, 26 Jun 2024 10:41:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HVSMr0Uo"
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PhOnnaeI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32DA17C7C3
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABF51802B2;
+	Wed, 26 Jun 2024 10:41:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719398453; cv=none; b=m3XiqwMfotYL3BWcfrzY+TkPe+5iFe7gipWxJTSq4u1w658VyPF2POQ4TCyS1pljRPEf6CjH+OzJoUCBtlpLsINIWLLBJoQYwVmlhc1GET7NDoxz1y26t3MVxKwYCl7hpUCwUgGqpNrqQtm8zm2O/ZTrIJDeIbUdrcdVha3Eids=
+	t=1719398481; cv=none; b=umYznTLaWoQQfs+VJoMh8M/HBTSiyNT5VZyS3jNDP4hwzQi/JnSHDGp//UauXDOQNNESqeKXxKUoJqTa9f5yAN2CsnvXnTX0LpAJOEgYgyY/jUPq9KP3l+CP/QSX2KzyYN5aaOIcj/Rm7Dv9yvsSJz83yJCiFYqHzMoVmizg6gs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719398453; c=relaxed/simple;
-	bh=gymnWB6LrLwrULHTehh82mpr4igpIxzIKKA4CDSINP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AGHK6kELTPMmv3JqXODYlro4kZ9haVkBN0YxXGMHyaJJWl/xrKzBBCj/fTK8xr878C+QMt9TjTp8Z5S/DwxGW8/JupKeV8hflr4sTIdvJrgQo8rUFYSeRvsrI9NoVEK9Nq7u7Cc0oDrHw+XTR/fX6VTDAt1s++Ze9VP3W2gdQX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HVSMr0Uo; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfef5980a69so6461354276.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:40:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719398451; x=1720003251; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KHbQKOiYe+Ibua4xAi15PJl+V4d0EJrIgF7ce4mlbFQ=;
-        b=HVSMr0UoGCYmYR0N0Fg463wNcKCH4inkwuQIzlPMr04EpEbVPUhsm4Ik5OLfzuH9RG
-         c3VsCEfZenWNv0JtATNvn30f/v2g/CgbPMujFgd4FPyWFRU5cGWnO2VtFn4w0uCgPOru
-         bufZgQmrkOe4uYoz90iLVOZXpmfR4ogvLel5NFztl0CjEtNFlTqhb9kWehQKzoSz33lF
-         ARk6g50c8HGFWwcJdwEPyYE59eAr6SemyQ6i4i3WjlkUqc2kj8wT7xXB0AuNU3j52zjn
-         kBVqTJ5Ra18G22meq/MyRq0HJ04fEjF6V+azMMtOwWp9IKJWTkwcU6norCZ8ZlXed9/F
-         uoVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719398451; x=1720003251;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KHbQKOiYe+Ibua4xAi15PJl+V4d0EJrIgF7ce4mlbFQ=;
-        b=Xx04rDdW7LYKKxFUNqmFpfKSt6E3bv6mL2Pfv4ZHhA+qi5LX86Q3fZ//ffIxuYeYFA
-         uUelXY1FrfrXm5iLtthaeM9FDt9tLSXLrRSlx3POa3qZgzy2wP20qnxNlD7ufAHL1J0F
-         95HVYYAMWR1HHBCGGANkcSCZcNdZYgDg1QNu5lE3dkJ6nmOTsXH4rmy/Tp7l9YgtUuEA
-         MeDpjMZzQ/0HWNyc/TkAkR5pzi6OsbcsvZMZNk+KVbD2j2nM+EQl6l8LrG2+iC2UT7uq
-         3+fe/BgMAZQc14izlvphQPUi93XZgoRUav/xdAByxSV6Dv1qcZZaKFcxrJH5ckPcWTaz
-         Mkpw==
-X-Forwarded-Encrypted: i=1; AJvYcCWVtvk2EW4zwutTqerZIbHPV67NLlNEa5RUIYhV4ynXf8uzSxwZzHDrJVKuhIEp5jUcTpsAsDH0vwXo5j4svQ268+q2MfHmKt4lClGu
-X-Gm-Message-State: AOJu0Yx6k+yo9Ao0KWaQuEYLIsscD0kfdBPbRdm829bpTC2omWN8NhuF
-	a6oqemIFn/LWUO5FKa7jQcpV/L9JFcvSD2kkS25yQobOXRKI29L3gq5qMyHVgQieoRXs9uw9kQu
-	EDNwJlRGl30DN3MFGDgwHURb0kkWuwlJoORhz8Q==
-X-Google-Smtp-Source: AGHT+IGAQdQECALwFQiRgkrKA/rZBEJOAnkCpPbedoTQq7/jt7W9vOb6wQcj2qKoWUKoPCAEcM15HUQq3HQFJjgWzyA=
-X-Received: by 2002:a25:c553:0:b0:dfa:6e39:95b0 with SMTP id
- 3f1490d57ef6-e030107f616mr10069878276.49.1719398450656; Wed, 26 Jun 2024
- 03:40:50 -0700 (PDT)
+	s=arc-20240116; t=1719398481; c=relaxed/simple;
+	bh=8JRrbvdAtdMCg9rjhTDzqTVZ64Nzi3Z/WEFd3S5PQqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jWz+no9CriuYpjxAGThvZGzA6YbFoSj03Wf48BS9jVz1BLrg2OvzZ/m96YMdRF+9wBNbmAZ5T3fOGvNHKTFsncYump4+v5gImI8BJrXhL5N03kk4azCBygdo065LImwIYlPET7gwm6ds2wZ7VMshzdqcUcq3bN29PdEMNShBG1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PhOnnaeI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6D99C32786;
+	Wed, 26 Jun 2024 10:41:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719398480;
+	bh=8JRrbvdAtdMCg9rjhTDzqTVZ64Nzi3Z/WEFd3S5PQqo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PhOnnaeIJPx3r5BGpY96hElJRPB2pxJ9lzJcDXfyu098QzAKK+VHNKIKH8QnVH6g5
+	 7HSga5yRHl+fxUA19L+k6ObM79x1cvfzdQLOLVL4Go7s1dm0Ad3vKa1DvkRlrRgXo/
+	 ycoU0ImDKdFauY8uhhrh6X/565Jw7PXlCTY+4BtGpUMdA/3zJEBBzrxSzyggL4TmZX
+	 viSGYlv69h0FS5qfcaX7JhqflhQHt7JRYkg+pfvF2pTqTJWoX5WYcUN6WBxSMuOJEZ
+	 sGX2PjKbj6sXmKWkKgh/8gSS3Z+lsBcaEuDA/8ecJn7fDLvBr8ZTY5eWy7pWVPi0E4
+	 Eqpqodvdr9v8w==
+Date: Wed, 26 Jun 2024 11:41:16 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Zhu Jun <zhujun2@cmss.chinamobile.com>
+Cc: ivan.orlov0322@gmail.com, perex@perex.cz, tiwai@suse.com,
+	shuah@kernel.org, linux-sound@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] selftests/alsa:Replace malloc with calloc
+Message-ID: <f6a18c7c-8a7a-43c9-80af-b3ecc7f5d6bc@sirena.org.uk>
+References: <20240626095409.4908-1-zhujun2@cmss.chinamobile.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240504-pinctrl-cleanup-v2-0-26c5f2dc1181@nxp.com>
- <20240504-pinctrl-cleanup-v2-20-26c5f2dc1181@nxp.com> <171939733731.25849.13373950874840419376.b4-ty@linaro.org>
-In-Reply-To: <171939733731.25849.13373950874840419376.b4-ty@linaro.org>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 26 Jun 2024 12:40:36 +0200
-Message-ID: <CACRpkdastCME_0BWjcaNc0Fw8qsLAGgoQUMi7g8sEP+xT=T_tQ@mail.gmail.com>
-Subject: Re: (subset) [PATCH v2 20/20] pinctrl: samsung: Use scope based
- of_node_put() cleanups
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Dvorkin Dmitry <dvorkin@tibbo.com>, Wells Lu <wellslutw@gmail.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Emil Renner Berthing <kernel@esmil.dk>, Jianlong Huang <jianlong.huang@starfivetech.com>, 
-	Hal Feng <hal.feng@starfivetech.com>, Orson Zhai <orsonzhai@gmail.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
-	Viresh Kumar <vireshk@kernel.org>, Shiraz Hashim <shiraz.linux.kernel@gmail.com>, soc@kernel.org, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Geert Uytterhoeven <geert+renesas@glider.be>, 
-	Patrice Chotard <patrice.chotard@foss.st.com>, Heiko Stuebner <heiko@sntech.de>, 
-	Damien Le Moal <dlemoal@kernel.org>, Ludovic Desroches <ludovic.desroches@microchip.com>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	Dong Aisheng <aisheng.dong@nxp.com>, Fabio Estevam <festevam@gmail.com>, 
-	Shawn Guo <shawnguo@kernel.org>, Jacky Bai <ping.bai@nxp.com>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Chester Lin <chester62515@gmail.com>, 
-	Matthias Brugger <mbrugger@suse.com>, Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>, 
-	Sean Wang <sean.wang@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	Tony Lindgren <tony@atomide.com>, Stephen Warren <swarren@wwwdotorg.org>, 
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-samsung-soc@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, 
-	linux-riscv@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	imx@lists.linux.dev, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	Peng Fan <peng.fan@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Pq6Hk9X7r8UpRpuz"
+Content-Disposition: inline
+In-Reply-To: <20240626095409.4908-1-zhujun2@cmss.chinamobile.com>
+X-Cookie: Results vary by individual.
+
+
+--Pq6Hk9X7r8UpRpuz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 26, 2024 at 12:22=E2=80=AFPM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
-> On Sat, 04 May 2024 21:20:18 +0800, Peng Fan (OSS) wrote:
-> > Use scope based of_node_put() cleanup to simplify code.
-> >
-> >
->
-> Applied, thanks!
->
-> [20/20] pinctrl: samsung: Use scope based of_node_put() cleanups
->         https://git.kernel.org/pinctrl/samsung/c/707807f4c1128e39442519e8=
-49e4ce0b7c29b110
+On Wed, Jun 26, 2024 at 02:54:09AM -0700, Zhu Jun wrote:
+> Using calloc to handling memory allocation, calloc
+> can initialize the allocated memory
 
-OK I dropped it from my queue!
+>  		SKIP(return, "Can't read patterns. Probably, module isn't loaded");
+> =20
+>  	card_name =3D malloc(127);
+> +	memset(card_name, 0, 127);
+>  	ASSERT_NE(card_name, NULL);
+>  	self->params.buffer_size =3D 16384;
+>  	self->params.period_size =3D 4096;
 
-Yours,
-Linus Walleij
+The change does not match the changelog.
+
+--Pq6Hk9X7r8UpRpuz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ78EsACgkQJNaLcl1U
+h9ChTgf+JhG8Jj5uuS2NnzYVhJl9Fwjel+gvakwP0yLxm9A4FCfQkhSlmu7T1j1k
+xd3bgj2JYB9qJOFG/MG8P/CpSdbEj7oeNQWs9V4LQ9Kc469IXbLAvWa7IYip28lF
+YhJg62+x/VXqTAHahmlxeDHOq8FZjX60SMIPADtNaia6tXHAa9vWKzXHwgw1BbiB
+he2BR5x2a0oSSwqmWY3qrr3CYHjWrHoMBYX0XWeEWKUQ/tZF6+OaTrmnPJdPxl3z
+DHC0HHm3WjnL9/nhMLxSr7JJy6GxuuFDLEf0RaZdsLbdJCAERoruYDdkgU8BOvaz
+Yrx5ERtOOlR4vK7PZkUxeC1JmoJK+Q==
+=lroO
+-----END PGP SIGNATURE-----
+
+--Pq6Hk9X7r8UpRpuz--
 
