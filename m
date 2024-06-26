@@ -1,160 +1,155 @@
-Return-Path: <linux-kernel+bounces-231414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231416-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C84B5919879
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:47:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0E8B91987E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:47:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ADC6B21107
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:47:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0331C21AC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:47:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE5A1922E5;
-	Wed, 26 Jun 2024 19:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850B81922D6;
+	Wed, 26 Jun 2024 19:47:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="bPqgu9v6"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEkQI2EY"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B604CBE6C;
-	Wed, 26 Jun 2024 19:46:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F99149E05
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:47:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719431213; cv=none; b=jvdkwVofhYdft3uZQ45QWwlNtYssGVblB5xos5uJK09gMtQ75BNPFbXM2jRmN8MEb7mfIQytGnU/8gJlHNb1AkTZJmVUZ2Ac3kSjEOQqFnJ2elRcU9WBmVKFqZRsPK+Su+JPHessHoUk08pkbVWMX6n511PWZbQ2TdKav0x8lIg=
+	t=1719431230; cv=none; b=ck3R8TtajsSibQQRH+4BpjdTHeSoCT02Iqb0Ej5QpbFQaK1eMFelZIp13X2jK3FUFLMab3kLjoESllHidPedhkQYb5Wlj9ccqBLfzy7IIT1gt0sYx9pFYKI4VkGaaXk70Pk95VpxfoV7/rvrtg6UeafJ8IMgBmJA/4DNpH5J9Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719431213; c=relaxed/simple;
-	bh=g/ioBzCSVDqSPBS6IBljlwJBhjN2Mdqu60+lQO8OqSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNimfmaAfnH6+JydYQQrDxYPJXddyoEVhf4BjhxmnZNGJ2yZYydaiZobUxiE8FEZi5aHAsq6XPSsa6ctRzidnG3VQVYmU6VBIl4Gh5gCHbiMlVKYfGxL59Q8XJaL7kUAigYmRFN+GsJbjuNlrvM9ESSksr00guxOdQO7RkkTyhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=bPqgu9v6; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=SVeZo/sykfAtUGNgIOtWwp6zcpPi0nW7pbSEEQYvGSE=; b=bPqgu9v6Yddrpt/6usqzHdnAH3
-	IbvbdhdmEJT8f+O0emYcG81B8UdEZXBvlZzvcHU1pWTaSC21iThWCByp6zKcO1yg7nvIJW80reEPb
-	3T0TyTz1E+QPtJLjW0QF3HIEoJkn/QIm2Km+pd91yfeINiFHhVc3IftjXhFaf1t1OtrxVGkPxWuyl
-	xbSH8sCLdw+9Y75BnW2UKJwneosX17Mv+gb8H0gjUeKCIZOn1dn5zPa6f4l5vu5OwFLo1LzA/7Q1o
-	X6RNafkNweLCdcfIQumRiqbfI4xAZjYjsk79bZQwx0iVaMPuXhfWMt6hAYPmoLg8KoZ3RlG97OCQ2
-	9mQLGoZg==;
-Received: from 179-125-70-190-dinamico.pombonet.net.br ([179.125.70.190] helo=quatroqueijos.cascardo.eti.br)
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1sMYbB-007p7w-OE; Wed, 26 Jun 2024 21:46:34 +0200
-Date: Wed, 26 Jun 2024 16:46:26 -0300
-From: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-To: OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Gwendal Grignou <gwendal@chromium.org>, dlunev@chromium.org
-Subject: Re: [PATCH v2 2/2] fat: always use dir_emit_dots and ignore . and ..
- entries
-Message-ID: <ZnxwEtmYeZcKopJK@quatroqueijos.cascardo.eti.br>
-References: <20240625175133.922758-1-cascardo@igalia.com>
- <20240625175133.922758-3-cascardo@igalia.com>
- <871q4kae58.fsf@mail.parknet.co.jp>
+	s=arc-20240116; t=1719431230; c=relaxed/simple;
+	bh=Kk/sdOY0AWIjXOD+1FiI/rKZwQGT/j7oWsDZLf9XTWY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=f31lCQ0UQcmecWIfRDHyvsvWpS1qxLF6FSpKh0IFtp/KQCTiJyA/zbs+pyaYBfsg+zh1fCGpx8zE2xiyYitp6ne/NPzsW28+/8PFRlHtcBFfITCbrDwR+q//qiTOy1Kvi7qRQv6raBukbN2KHfzl8fpu34SL5v1ZK5GVP/yLffk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PEkQI2EY; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-79d5495fe01so56857085a.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:47:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719431228; x=1720036028; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=5KlRYq6p5LkP029bKZx9mVcz2J6oFnFhtgLKInBjC3M=;
+        b=PEkQI2EYRp+swD6pK1NRJXng4RntKUhI1zNeRH8udOZdrGAiNuldM01nHDjo7QWeXo
+         6+Am3C5gu8Ekugk/jXKt1Gf0UdrfXdw/6+RoMbidQxlokMuq3XMAwHqekxDNZvM+VmNP
+         37+SptF4XzR2dZxrXhJxR5gaTXKIzH2XlkzCaXT5HnWZPXkxV7rL6r9gVTrqeeFeJxED
+         pDJ1HNYJIPtyG76banRFQX/iM/ruCwkj232lqiw50XeoARNhOU6VAZIJxxI3UkxoO4ts
+         oT058Faw+cVrUjYdJRuPEd+m5aCkO4UrUqizzS5vcBRjs1tYT2Si9+71l/k+7kshERKK
+         NeiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719431228; x=1720036028;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5KlRYq6p5LkP029bKZx9mVcz2J6oFnFhtgLKInBjC3M=;
+        b=QRhn3O22nvI6FZJBjaTzLgrpuA98OI9lceaIxlkkIawxtFMSC5+AqzzAcOfe1XZTmt
+         17eqOlsNYAA1SNoH/53F+PFBoNhBuH54mACs7R4pLa4ydkEhUi87V5cw0vaOma6GXqz6
+         kq8P9niLHlgptx8eNu/kP1SN28vrE9wIMnZhTeB6z0pN8zPyPdAizIB7Csa0aroXA4q5
+         q+YRAkIUhUNwK2tqcZiQImNlhQ6RlBQBDzDQjDZDMWuuEp7X6wXuafzVKo/bWBpl1rLu
+         MUi2M5G/y5WCxJwYr+Og0uQ6gXkOWu3wPS2l7zj6ZnRAG+rGW9qKyQPRKTGAuakRVsoZ
+         2nkw==
+X-Gm-Message-State: AOJu0YyUF1yXB/GPr/Am7dda1WdhFUeqCTQRe6102S9QlrrYrEnTy3XC
+	rVsEEBmPfJ6+/em7ny4Y+GtYRgbRNoFbu87+AVn6rT0nwjGmBNw34enStt0S
+X-Google-Smtp-Source: AGHT+IGnBEWNgvDQcr+Fw7YuGmUhVCJXdSp8AWzbPtl59HfE9luhHi13VAdgTrBgWgPn6XmOPUb2Mg==
+X-Received: by 2002:a0c:8bc2:0:b0:6b5:40c:f108 with SMTP id 6a1803df08f44-6b5409e0ba3mr125914316d6.37.1719431228257;
+        Wed, 26 Jun 2024 12:47:08 -0700 (PDT)
+Received: from localhost.localdomain ([143.166.81.254])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6b52ac1028csm48489996d6.99.2024.06.26.12.47.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 12:47:07 -0700 (PDT)
+From: Stuart Hayes <stuart.w.hayes@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Martin Belanger <Martin.Belanger@dell.com>,
+	Oliver O'Halloran <oohall@gmail.com>,
+	Daniel Wagner <dwagner@suse.de>,
+	Keith Busch <kbusch@kernel.org>,
+	Lukas Wunner <lukas@wunner.de>,
+	David Jeffery <djeffery@redhat.com>,
+	Jeremy Allison <jallison@ciq.com>,
+	Jens Axboe <axboe@fb.com>,
+	Christoph Hellwig <hch@lst.de>,
+	Sagi Grimberg <sagi@grimberg.me>,
+	linux-nvme@lists.infradead.org
+Cc: Stuart Hayes <stuart.w.hayes@gmail.com>
+Subject: [PATCH v7 0/4] shut down devices asynchronously
+Date: Wed, 26 Jun 2024 14:46:46 -0500
+Message-Id: <20240626194650.3837-1-stuart.w.hayes@gmail.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <871q4kae58.fsf@mail.parknet.co.jp>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jun 26, 2024 at 06:47:15AM +0900, OGAWA Hirofumi wrote:
-> Thadeu Lima de Souza Cascardo <cascardo@igalia.com> writes:
-> 
-> > Instead of only using dir_emit_dots for the root inode and explictily
-> > requiring the . and .. entries to emit them, use dir_emit_dots for all
-> > directories.
-> >
-> > That allows filesystems with directories without the . or .. entries to
-> > still show them.
-> 
-> Unacceptable to change the correct behavior to broken format. And
-> unlikely break the userspace, however this still has the user visible
-> change of seek pos.
-> 
-> Thanks.
-> 
+This adds the ability for the kernel to shutdown devices asynchronously.
 
-I agree that if this breaks userspace with a good filesystem or regresses
-in a way that real applications would break, that this needs to be redone.
+Only devices with drivers that enable it are shut down asynchronously,
+and this driver setting can be changed in sysfs.
 
-However, I spent a few hours doing some extra testing (I had already run
-some xfstests that include directory testing) and I failed to find any
-issues with this fix.
+This can dramatically reduce system shutdown/reboot time on systems that
+have multiple devices that take many seconds to shut down (like certain
+NVMe drives). On one system tested, the shutdown time went from 11 minutes
+without this patch to 55 seconds with the patch.
 
-If this would break, it would have broken the root directory. In the case
-of a directory including the . and .. entries, the d_off for the .. entry
-will be set for the first non-dot-or-dotdot entry. For ., it will be set as
-1, which, if used by telldir (or llseek), will emit the .. entry, as
-expected.
+Changes from V6:
 
-For the case where both . and .. are absent, the first real entry will have
-d_off as 2, and it will just work.
+Removed a sysfs attribute that allowed the async device shutdown to be
+"on" (with driver opt-out), "safe" (driver opt-in), or "off"... what was
+previously "safe" is now the only behavior, so drivers now only need to
+have the option to enable or disable async shutdown.
 
-So everything seems to work as expected. Do you see any user visible change
-that would break any applications?
+Changes from V5:
 
-Thanks.
-Cascardo.
+Separated into multiple patches to make review easier.
+Reworked some code to make it more readable
+Made devices wait for consumers to shut down, not just children
+  (suggested by David Jeffery)
 
-> > Signed-off-by: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
-> > ---
-> >  fs/fat/dir.c | 24 +++++++++---------------
-> >  1 file changed, 9 insertions(+), 15 deletions(-)
-> >
-> > diff --git a/fs/fat/dir.c b/fs/fat/dir.c
-> > index 4e4a359a1ea3..e70781569de5 100644
-> > --- a/fs/fat/dir.c
-> > +++ b/fs/fat/dir.c
-> > @@ -583,15 +583,14 @@ static int __fat_readdir(struct inode *inode, struct file *file,
-> >  	mutex_lock(&sbi->s_lock);
-> >  
-> >  	cpos = ctx->pos;
-> > -	/* Fake . and .. for the root directory. */
-> > -	if (inode->i_ino == MSDOS_ROOT_INO) {
-> > -		if (!dir_emit_dots(file, ctx))
-> > -			goto out;
-> > -		if (ctx->pos == 2) {
-> > -			fake_offset = 1;
-> > -			cpos = 0;
-> > -		}
-> > +
-> > +	if (!dir_emit_dots(file, ctx))
-> > +		goto out;
-> > +	if (ctx->pos == 2) {
-> > +		fake_offset = 1;
-> > +		cpos = 0;
-> >  	}
-> > +
-> >  	if (cpos & (sizeof(struct msdos_dir_entry) - 1)) {
-> >  		ret = -ENOENT;
-> >  		goto out;
-> > @@ -671,13 +670,8 @@ static int __fat_readdir(struct inode *inode, struct file *file,
-> >  	if (fake_offset && ctx->pos < 2)
-> >  		ctx->pos = 2;
-> >  
-> > -	if (!memcmp(de->name, MSDOS_DOT, MSDOS_NAME)) {
-> > -		if (!dir_emit_dot(file, ctx))
-> > -			goto fill_failed;
-> > -	} else if (!memcmp(de->name, MSDOS_DOTDOT, MSDOS_NAME)) {
-> > -		if (!dir_emit_dotdot(file, ctx))
-> > -			goto fill_failed;
-> > -	} else {
-> > +	if (memcmp(de->name, MSDOS_DOT, MSDOS_NAME) &&
-> > +	    memcmp(de->name, MSDOS_DOTDOT, MSDOS_NAME)) {
-> >  		unsigned long inum;
-> >  		loff_t i_pos = fat_make_i_pos(sb, bh, de);
-> >  		struct inode *tmp = fat_iget(sb, i_pos);
-> 
-> -- 
-> OGAWA Hirofumi <hirofumi@mail.parknet.co.jp>
+Changes from V4:
+
+Change code to use cookies for synchronization rather than async domains
+Allow async shutdown to be disabled via sysfs, and allow driver opt-in or
+  opt-out of async shutdown (when not disabled), with ability to control
+  driver opt-in/opt-out via sysfs
+
+Changes from V3:
+
+Bug fix (used "parent" not "dev->parent" in device_shutdown)
+
+Changes from V2:
+
+Removed recursive functions to schedule children to be shutdown before
+  parents, since existing device_shutdown loop will already do this
+
+Changes from V1:
+
+Rewritten using kernel async code (suggested by Lukas Wunner)
+
+
+Stuart Hayes (4):
+  driver core: don't always lock parent in shutdown
+  driver core: separate function to shutdown one device
+  driver core: shut down devices asynchronously
+  nvme-pci: Make driver prefer asynchronous shutdown
+
+ drivers/base/base.h           |   3 +
+ drivers/base/bus.c            |  26 ++++++++
+ drivers/base/core.c           | 108 ++++++++++++++++++++++++++--------
+ drivers/nvme/host/pci.c       |   1 +
+ include/linux/device/driver.h |   2 +
+ 5 files changed, 115 insertions(+), 25 deletions(-)
+
+-- 
+2.39.3
+
 
