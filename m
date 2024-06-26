@@ -1,76 +1,134 @@
-Return-Path: <linux-kernel+bounces-229948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D1891766F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:52:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C21917673
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72CC81C22797
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:52:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C8F91F23CD8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3897838396;
-	Wed, 26 Jun 2024 02:52:33 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED963E487;
+	Wed, 26 Jun 2024 02:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="on4FJmcA"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752981B806
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9238BEF;
+	Wed, 26 Jun 2024 02:53:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719370352; cv=none; b=JSymPJDAZ43XoGo3JxKv4lx4C/v3fBabkaKzyydkbQS+UCkFoa4hUFzYQaaZAWV3bWHa2cu8oTqiGjgPfIToilK9lFsJPlC51m2JEqPU+CybqYM41O9786Dmi2XreEqU1RvVGd1liNy34TaCJhm97VA978l0qHPxoJoxuTHosz0=
+	t=1719370426; cv=none; b=p1QsauGgDAy5VCTux8YgV5jvHpCjtS5Lkz/3GZsumnwbVGip8Fob5nvSaQZtxukhZvXrb59zhXWqmLBSxk7s9yb+ofvcQj4riisQDztQ/NfBR5rUUv6rqxf7c7LzI9OSYaBOSA8cRA+u0F/eRAEpEW6hrONQoRiHfUUjLKIaAws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719370352; c=relaxed/simple;
-	bh=2P9ciSlu7Ek9y6TGFOI752MUh8bHFPb7DN1jU8pmlJ8=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Iw3PhG4DGseRkiWFRy0Y2DRQIsrnMh7AfFgklzByVinAouYgtrLezjDkTwkMuqiI9JGUM1QRvgE2B9L3iYqbTMxUHKS+pDJwC9NMDRZ3DD5yf+CRIeKVtwiVws5MWcEF4QgBNea/5580M6K2G63bAmJTSDr08YcNxZDdqT+w7tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-7eee4ffd19eso886838039f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:52:31 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719370350; x=1719975150;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2P9ciSlu7Ek9y6TGFOI752MUh8bHFPb7DN1jU8pmlJ8=;
-        b=F7GS4D+EMM453XD9O7cuU9ugFL1+t77A4Ed68QEgnrNzq+Xn5AjdZk+Xn5wrM5Sjgd
-         YaOf3UGDfNbnJP994YY2kl9ox0XP0iFKqP1D1WYwExOM5FK+Qn5tcpnWaZWz0B7VAHUk
-         GmrAihMiOxmatixmsBuBYLEFZXoY2/SisW6m+1AEM6EnDjqTigKJdx5fYuJEC6AoXdd6
-         dqtSZhVlfxVwrxd1gbuwpWz7NGYtvYWrnZEwcj9lZYd7p867Y1Q94BAjsOfkJTEDZsBp
-         +g6KyGfKKgEC5chP6vk5cGKw/+PbGB4vD9MmtmAc/Vf+IYnQOnrXUsxibPBUmrnpxu/2
-         p21A==
-X-Gm-Message-State: AOJu0YxFPm5Qkh6hgkqGQSnc8mcPE7BL2jHraNXzXXPAmwoE3l4Y9tN8
-	AglESp+Gk3z3OKU+uCGLWYtVOGvQdGcChfWXgEqzm6Uv4OSuNEILaoDoEVpa/UVjw8L8qM8ETd/
-	zAi5hI+HZPq0G51JsWVFYN+FuLrfzAchdegUjxIYruo6oI2lWXH3igT0=
-X-Google-Smtp-Source: AGHT+IG2GRc+1Xc3l7l/+CQaKH0SZEMwlrb6zy1XYPEizgZTL2pjjPHvIc5DzcL26kzN6HimSv+I34MFj1xGkK1r1ANSdnc8Yd4N
+	s=arc-20240116; t=1719370426; c=relaxed/simple;
+	bh=uKy0SbbFL4gQfYPaiaVjsbDKiqx+kG2iwEAOHH5Pd44=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OGJC2JsWxo0jX1i6FH8kYhKTGN0sXxkkckT3Ew2VGTMfYFyPHEHI11oqXTDssaRaBBGIIEN+pxvEXuxM3818e0l7KyiuBqjG9F/6+UIs1s7iV3E0ueg+e9jm9rU4vnK9z2CuQoD4zsejfZ7oMX5k7Kd+mO44On3mecKrZb4Gnf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=on4FJmcA; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 49b8c19c336711ef99dc3f8fac2c3230-20240626
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=xrJjjex+pryUYcuqmpL7n9xnY0OIkC6OfRPDoOD75a4=;
+	b=on4FJmcAK8UfFLr4Z0OySR1g8mrTgXm4bX66B5jNtbBbkWfSc0NeBAJN8CuJ27dRp4f5RkAWeQiDn+B8v7bVh/kwbQ88nVoCMiAgTX0ASyjk8t0F8J18F5f/jVwwPxNsjShLSYraUr6X0SUe0/GQPL+t7UjSkllFg2TBY7hixc4=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:afb2df67-a6f9-4780-a2ce-5ec9aab44715,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:393d96e,CLOUDID:51b08985-4f93-4875-95e7-8c66ea833d57,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 49b8c19c336711ef99dc3f8fac2c3230-20240626
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw02.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 584761978; Wed, 26 Jun 2024 10:53:38 +0800
+Received: from mtkmbs13n2.mediatek.inc (172.21.101.108) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 26 Jun 2024 10:53:36 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 26 Jun 2024 10:53:36 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
+	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH v5 0/8] Bluetooth: btmtk: MediaTek ISO data transmission support
+Date: Wed, 26 Jun 2024 10:53:21 +0800
+Message-ID: <20240626025329.26424-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:35aa:b0:4b9:e5b4:67fd with SMTP id
- 8926c6da1cb9f-4b9e7b983d5mr506116173.1.1719370350788; Tue, 25 Jun 2024
- 19:52:30 -0700 (PDT)
-Date: Tue, 25 Jun 2024 19:52:30 -0700
-In-Reply-To: <00000000000085bb82061984e155@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ff162f061bc21ad5@google.com>
-Subject: Re: [syzbot] WARNING in __kvm_gpc_refresh (2)
-From: syzbot <syzbot+fd555292a1da3180fc82@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--6.948900-8.000000
+X-TMASE-MatchedRID: cjXKuyuuhFvaYQdwXEMf70j2sPWKvtn0DRi0jfY6gL1oNGY/OdYkWWAI
+	1go6d1sNmMN+S0FpW+8dHzBmTYIGm/Iejw19Z0aTQpxiLlDD9FUTdZ2aR9/IIMA5YKm8dwM65iW
+	++W4offuhgX3ZJWxx+ebscccSLJTlMkaIaLbJ6ufISPeZE8elXnN3sLsG0mhuR2YNIFh+clGdvq
+	NEU7XXSK9TdAKl5NW53/0OX7sbFJq2ILqdj6sZoJciNJzaqUX1ftnnpG0AB3WdohxAwFG9tKPFj
+	JEFr+olwXCBO/GKkVqOhzOa6g8Kre1QnRQ5v628yJPOovzJLNdhUoDdzioa4qH4ldHLhRgbcGLq
+	LRUkZt5DDKa3G4nrLQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--6.948900-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: 15C7CBCC36B7D4F50908B845C25BFD85F7EA021A19AF33C3DB8295A3D7DA76782000:8
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Since SIG has not yet clearly defined the specification for ISO data
+transmission over USB, MediaTek has adopted a method of adding an
+additional interrupt endpoint for ISO data transmission. This approach
+differs from the current method used in the Bluetooth upstream driver,
+which utilizes existing bulk endpoints. The interrupt endpoint provides
+guaranteed bandwidth, sufficient maximum data length for ISO packets
+and error checking.
 
-***
+Driver sets up ISO interface and endpoints in btusb_mtk_setup and clears
+the setup in btusb_mtk_shutdown. These flow can't move to btmtk.c due to
+btusb_driver is only defined in btusb.c when claiming/relaesing interface.
+Once ISO interface is claimed, driver can use specific interrupt endpoint
+to send and receive iso data. ISO packet anchor stops when driver
+suspending and resubmit interrupt urb for ISO data when driver resuming.
 
-Subject: WARNING in __kvm_gpc_refresh (2)
-Author: peili.dev@gmail.com
+---
+Change v5:
+-Add two patch MediaTek submit previusly
+-Remove v4,1/4 & v4,3/4 , becasue it's not necessary
+-Add patch to move most function from btusb.c to btmtk.c to make btusb.c more simple
+-refactor MediaTek ISO transmission function and implement in btmtk.c
 
-#syz test
+---
+
+Chris Lu (8):
+  Bluetooth: btusb: mediatek: remove the unnecessary goto tag
+  Bluetooth: btusb: mediatek: return error code for failed register access
+  Bluetooth: btmtk: rename btmediatek_data
+  Bluetooth: btusb: add callback function in btusb suspend/resume
+  Bluetooth: btmtk: move btusb_mtk_hci_wmt_sync to btmtk.c
+  Bluetooth: btmtk: move btusb_mtk_[setup, shutdown] to btmtk.c
+  Bluetooth: btmtk: move btusb_recv_acl_mtk to btmtk.c
+  Bluetooth: btusb: mediatek: add ISO data transmission functions
+
+ drivers/bluetooth/btmtk.c | 1058 ++++++++++++++++++++++++++++++++++++-
+ drivers/bluetooth/btmtk.h |   93 +++-
+ drivers/bluetooth/btusb.c |  751 +++-----------------------
+ 3 files changed, 1218 insertions(+), 684 deletions(-)
+
+-- 
+2.18.0
+
 
