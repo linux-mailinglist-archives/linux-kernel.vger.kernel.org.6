@@ -1,82 +1,145 @@
-Return-Path: <linux-kernel+bounces-230130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A9219178E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:28:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDBB19178EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:29:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57C36286947
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:28:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 235ACB23986
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4D1F1514FB;
-	Wed, 26 Jun 2024 06:28:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 170F314EC7C;
+	Wed, 26 Jun 2024 06:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UpbWcsvZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N7rX4V8H"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1865813A869;
-	Wed, 26 Jun 2024 06:28:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C844B13A869;
+	Wed, 26 Jun 2024 06:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719383314; cv=none; b=uZ3Csl3FTPtHDO1IGjfabrRyDH3sZr+rsQtW9Q8b3PnQlBI1/UFe+ns3d0qLSgSwSAH07etVXKFtqa8VNPb9ZC2VXMqhUJfe1I7qzIjysa2kjy4JsbjOJZ+Mn8GMq7oaNSp3StfbbpfoW5hSWDL57hxRqu+n49MVkCMcQ2HwJOk=
+	t=1719383380; cv=none; b=oaN1DMn3C3KT6Do3dsqsx6I3oSz/QrTyUbP0dUNwpoP1/Fe+94NkP1pI25nVXV4Lpch9c/LjV9WvwZ5W/g9roZ7xLgBMbBCPzTyWoP+J/RMNBRd3V4pxib7YI81/2qprp08Cj/ylS8QRoXMMjAeaRWqyen+emAP9LhiMv3JYlaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719383314; c=relaxed/simple;
-	bh=9jEpfg2N6J4shrk3c2BQLjUO0Oh8yhjDyDDFjwgJmF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CcOfU5tv3jBafRMVsUzDK0xQiYwPYlzxvxdHxyH8VLSGdUO0ithY+YsVEX66h4ZZTJ7OjchmZUfzQ3OsAJdRpRjS/rCO9WeueMDBFlDZW29IrMi6JbuhGqdGe0zL0ND7m1zpiM7RTlTgXA3jB8rb1qb/yMPljoosaelUPwQuwhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UpbWcsvZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57E87C32782;
-	Wed, 26 Jun 2024 06:28:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719383313;
-	bh=9jEpfg2N6J4shrk3c2BQLjUO0Oh8yhjDyDDFjwgJmF0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UpbWcsvZXyok0rtpT+Af+1xZBhZm+izvj8SKJMUxtIdULTRz22LhN838Im7/SLnf+
-	 wpxD3koR8IIME2G4+Zzq1U18rzpKg2HeQu404xYcVyG2tab+FVI0iySeGfVxgJErOt
-	 1KiufFfbz0ssMdOy19N8g5n3Gz2BqBaMH5RlNr1L3nJgfIDaCQv4ogIr1Iajchwm44
-	 9ICgw/ilndevhOStH+a+dqGRXpAMQ/ZW6qsWVdvaK97iia/zQinZBZ+ax1SZDCE8Hf
-	 ltvYOSYfC4ebDr9JFzy1FtkUbk01dKyCWy8F40A0Iaz8EEvTIOC+mP9BBPUqlcmuFP
-	 UztnB10h13IrA==
-Message-ID: <afffc35d-ca69-47b8-8a09-6a5fe4a80479@kernel.org>
-Date: Wed, 26 Jun 2024 15:28:31 +0900
+	s=arc-20240116; t=1719383380; c=relaxed/simple;
+	bh=/jCc9mtWvZLS16zTeecEjWi2EsgVC2iaKCws4I/LokU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y3zR4y1xvW1qjfJ7CKcLqM/hvHrGvfgxV9HeMWRO7CnwhWvpsipsvk48OysTL30ELS/hQ05TWSW4WXPp4mzpv419jLPjY1n7biXemhzyUOli70t7USd0NmCakGL/sFcZ1Lyua7s1CjXXWn18/W2e7Y3hF0QUx/ycZXDz4qbs3cg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N7rX4V8H; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57d1782679fso7754127a12.0;
+        Tue, 25 Jun 2024 23:29:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719383377; x=1719988177; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/jCc9mtWvZLS16zTeecEjWi2EsgVC2iaKCws4I/LokU=;
+        b=N7rX4V8HPd19FvX2DwI2mGnNldpfPu75QSgBIkmrRmwcDzD2WzmEEkAClSrDLw/EAk
+         MWpCOtXtOYjnEPkMsyeZuqVI/v/m4t+d+EHw/W+9Sgp5cu2Yj9+wJ+NrIvgeUtBh1rlm
+         PAOFWWUKlfOOYeNKUElN4H7iMcF4+B2yJXUAKpyE1XbhHJjW9viUFfuaeRoSnqu9Czr5
+         YXdhwlB9UlB2Rz9SXi5HphcVxmP1Ti/OjLywXBWwRfhesFwmkKuBXKEK/TY6YY2nYJzR
+         1uPK6BhrcbEFhRtJc2OiYPNyjE3Bmx4+d+t0OLsiDFVNJnNvhEyKwu59Xgjl6ffAkjlo
+         KzQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719383377; x=1719988177;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/jCc9mtWvZLS16zTeecEjWi2EsgVC2iaKCws4I/LokU=;
+        b=hBDlDnJyfReZ7CE++xbtKXCFdW4i7wSshrM+x4lUD3afv1k4Azmh8QBr7d3nweraQ2
+         7uTO1zWD9xCEXiTOwM6toDAJSUIfsGuRw4YQ9IUDwe2i9wRH8RyK5Y1FBZ5cQAYZSjlK
+         TLdiqb19jQug8cPP8KuGj6sVHNILSuPqY1u6qat8f8te0WeCwNVE9xnGKqRgfEBQ4tmQ
+         sE4CG2KimCYn/mrwVt6EtwARjURDmXrgNRlcjZ1YEFzOMqbit5cfPc/cP5AqI3tVIyy3
+         vHdDq71BLdL0RbVGr9StLJPoRgjWqY3uG25CmnorOjrBEvWwZzFo2mWP3STFlQTL85ii
+         dwUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXziAKVSPJTqO2IdrcUP5LAG8gYTGW0AAQXhIa/5SpP0yOAPhiauKQj5I5/khIIssXT48PiDPLjISmT1hOIngXmaA8qyD7ePlNfEuGOuhH3sP5ekuSS5GbPk0syR22H82nd6/TtlUEeyx678e3xfBu5QZxnL/j2ckwd6KnuvM0dAMNHg==
+X-Gm-Message-State: AOJu0YzpCAMvN011BfrHQARdX4sTud0ybjP6P3jkkYKo14nHo8a1Eppy
+	tPNUJqiuBKbvsrKPVZe4oJ2FNs+0Ti7Cf4DaagSGm/+LKmFBz2VwXkQF8U9PpdpXMHdkLHrE0DD
+	lj3F3Y8h844GbrBpsnzV4VOhtfrA=
+X-Google-Smtp-Source: AGHT+IGQhJnEa1WFdNMiF5wajiiAA9kN/8m2sWv3CeaxXeeXTF72N7x1sE97BLdrMMZn+nfkOKOrbPlDNtKjTuGtkx8=
+X-Received: by 2002:a50:aada:0:b0:57d:72e:5b3a with SMTP id
+ 4fb4d7f45d1cf-57d4bdd0061mr6864655a12.33.1719383376583; Tue, 25 Jun 2024
+ 23:29:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] ata: libata-scsi: Fix offsets for the fixed format
- sense data
-To: Igor Pylypiv <ipylypiv@google.com>, Niklas Cassel <cassel@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>,
- "Martin K. Petersen" <martin.petersen@oracle.com>,
- Jason Yan <yanaijie@huawei.com>, linux-ide@vger.kernel.org,
- linux-kernel@vger.kernel.org, Akshat Jain <akshatzen@google.com>,
- stable@vger.kernel.org
-References: <20240624221211.2593736-1-ipylypiv@google.com>
- <20240624221211.2593736-3-ipylypiv@google.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20240624221211.2593736-3-ipylypiv@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240625065939.6146-1-kanakshilledar@gmail.com>
+ <03174142-a2c0-4f9f-81ca-2aeb7f57ab79@kernel.org> <329ef10f-14d1-4346-8496-906aaf91ccfe@kernel.org>
+ <CAGLn_=vWxoHJivPgLHov8h7wHxmTH0y19twN=Xhyh_rZEmjbOg@mail.gmail.com> <fkycdpk7wstgnkmdlp4upkzqpasc4xjcrgwj6zfckj6megg3om@qn2stul7fcxx>
+In-Reply-To: <fkycdpk7wstgnkmdlp4upkzqpasc4xjcrgwj6zfckj6megg3om@qn2stul7fcxx>
+From: Kanak Shilledar <kanakshilledar@gmail.com>
+Date: Wed, 26 Jun 2024 11:59:25 +0530
+Message-ID: <CAGLn_=vDpwy8f2XokUv4-fvwD90OhSaFoivbTe932wQ8iAbm0w@mail.gmail.com>
+Subject: Re: [PATCH v3] dt-bindings: i2c: nxp,lpc1788-i2c: convert to dt schema
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vladimir Zapolskiy <vz@mleia.com>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/25/24 07:12, Igor Pylypiv wrote:
-> Correct the ATA PASS-THROUGH fixed format sense data offsets to conform
-> to SPC-6 and SAT-5 specifications. Additionally, set the VALID bit to
-> indicate that the INFORMATION field contains valid information.
+On Wed, Jun 26, 2024 at 2:24=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org> =
+wrote:
+>
+> On Tue, Jun 25, 2024 at 04:37:47PM GMT, Kanak Shilledar wrote:
+> > On Tue, Jun 25, 2024 at 12:33=E2=80=AFPM Krzysztof Kozlowski <krzk@kern=
+el.org> wrote:
+> > > On 25/06/2024 09:02, Krzysztof Kozlowski wrote:
+> > > > On 25/06/2024 08:59, Kanak Shilledar wrote:
+> > > >> Convert the NXP I2C controller for LPC2xxx/178x/18xx/43xx
+> > > >> to newer DT schema. Created DT schema based on the .txt file
+> > > >> - added maintainer from the MAINTAINERS file.
+> > > >> - added resets property required by the corresponding DTS files.
+> > > >>
+> > > >> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> > > >> Signed-off-by: Kanak Shilledar <kanakshilledar@gmail.com>
+> > > >> ---
+> > > >> Changes in v3:
+> > > > you already sent v3 so this is rather v4. What happened here? Why a=
+re
+> > > > you resending this?
+> > >
+> > > Ah, I see the changes - you dropped the incorrect tags. It's fine but=
+ it
+> > > should have been v4. Not sure how b4 or other tools will handle this.
+>
+> why should b4 complain? I fetch it from the mail-id. And even if
+> b4 complains, good old git-am still works :-)
+>
+> > I thought there is no need to bump up the version just for changing tag=
+s.
+>
+> You should increase the version number for every single change,
+> even trivial changes in the commit log. If you are sending again
+> the same patch (which means that you are git-sending the same
+> .patch file without any change), then you should tag it as [PATCH
+> RESEND].
+>
+> > Shall I resend it as v4 and update the commit message with the change
+> > log to include
+> > the removal of kernel bot tags and addition of your review tag?
+>
+> No need, your patch has been added to i2c/i2c-host.
 
-This needs to go before patch 1. Then patch 1 modification introducing the new
-function ata_scsi_set_passthru_sense_fields() will be doing so using the
-corrected code.
+Thanks for the clarification
 
--- 
-Damien Le Moal
-Western Digital Research
+> Thanks,
+> Andi
+>
+> > > Best regards,
+> > > Krzysztof
+> >
+> > Thanks and Regards,
+> > Kanak Shilledar
 
+Thanks and Regards,
+Kanak Shilledar
 
