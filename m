@@ -1,224 +1,180 @@
-Return-Path: <linux-kernel+bounces-230681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9F72918074
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:02:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C4D918029
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F4252893D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:02:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 388EFB2541A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A42181BAA;
-	Wed, 26 Jun 2024 12:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79761802B2;
+	Wed, 26 Jun 2024 11:49:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cBv4MYWc"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="cEQI5aUl";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="WxL5D7Jh"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9E7181300
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1BC139D04;
+	Wed, 26 Jun 2024 11:49:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719403335; cv=none; b=PV+4pGMtDS5DvxvKGuk1VkhbK1B+SYCDzzcoXxsXhSQfKH5tUlnEWTCQePhRImoiZ24rSdEr6yP8M7iXsbct0uxEtlAC+GceISf8BLeFodu5gAkNGUFopmEI3EDLyxiGIVRObdSIrV821btzK7OfX3H8CjS4oxe6CzCRiS47m0Y=
+	t=1719402584; cv=none; b=p+GtCuaZJyR07iM9CnEonP+cODWIG5cAlW5aP+izOlyZPp3Pm+c4ZNJ8+HnVGWjYRjxX4dcBCw/8IpvqY508J5BMhM6fXBrn6249eQrByAa+sc0yAwweOjb0QjCpQahbeKkRE27SIdCgBvmtgUqZpD3R3nJYxu0c0gsPzx6HjYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719403335; c=relaxed/simple;
-	bh=rucZHfaxupwZMqi9uyxtOgQfeiJgbrbSQeZuVmUsJCM=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=JnSlmM4H+ZMqDPPD7yFSv0oHy9b/Vau8e+G9DzgjKYwH0I5KWRzuXlshW1k+kX0yaopBMyLBRYoqmUMZdKrhLJT49Mcb9phKiEdeTe3ZPedhWXX9aoq7EPhxO6/R3qSvkE+rvvOdQtZgb76YEkTQMgejjr4Zj8OVqRTZWajCoLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cBv4MYWc; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240626120209epoutp03c41f2eff86ed1db7d73d09029782c084~cjDfPDxqg2351123511epoutp03-
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:02:09 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240626120209epoutp03c41f2eff86ed1db7d73d09029782c084~cjDfPDxqg2351123511epoutp03-
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1719403329;
-	bh=T4l6KCBJTyjVibvGopmp4YQjs7hQFGCk9hEFe7ue7Dk=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=cBv4MYWcpJhl2hBZ0jsyiijsh+XDEdurIqXqgH2mxBrtsmK8kSwh49q2NBYF7Ebfd
-	 S+D3huNuYKFxtaHYFd9m0Bpo6CQDAGGiV+h0EJRG8zz8WzRvvYPc8GcuZFXn5eMxj8
-	 ydLK9FtOgI3b0bJ5fa8gMpGYwkgPXzAfoKbmB5iQ=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTP id
-	20240626120208epcas5p4914f9781e747c0bc160646f73a4631eb~cjDezqtcb1798117981epcas5p4A;
-	Wed, 26 Jun 2024 12:02:08 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4W8L0b060Sz4x9Pr; Wed, 26 Jun
-	2024 12:02:07 +0000 (GMT)
-Received: from epcas5p4.samsung.com ( [182.195.41.42]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	0B.48.11095.E330C766; Wed, 26 Jun 2024 21:02:06 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240626114931epcas5p1d7840cbe7418c6e62b15e4b54bee5d42~ci4dxwYNj0549805498epcas5p1P;
-	Wed, 26 Jun 2024 11:49:31 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240626114931epsmtrp2a5b41a7aca61cdd62daadaf141488201~ci4dxFEnw0062900629epsmtrp2R;
-	Wed, 26 Jun 2024 11:49:31 +0000 (GMT)
-X-AuditID: b6c32a49-423b770000012b57-b8-667c033e2620
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	51.5B.07412.B400C766; Wed, 26 Jun 2024 20:49:31 +0900 (KST)
-Received: from FDSFTE582 (unknown [107.122.82.121]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240626114929epsmtip13168b189f56ddddf1db83ce831674989~ci4bcLE7L2637326373epsmtip1M;
-	Wed, 26 Jun 2024 11:49:28 +0000 (GMT)
-From: "Vishnu Reddy" <vishnu.reddy@samsung.com>
-To: "'Krzysztof Kozlowski'" <krzk@kernel.org>,
-	<krzysztof.kozlowski@linaro.org>, <s.nawrocki@samsung.com>,
-	<alim.akhtar@samsung.com>, <linus.walleij@linaro.org>
-Cc: <linux-arm-kernel@lists.infradead.org>,
-	<linux-samsung-soc@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <pankaj.dubey@samsung.com>,
-	<ravi.patel@samsung.com>, <gost.dev@samsung.com>
-In-Reply-To: <38fae674-f672-46e0-a44e-1278deaaf36a@kernel.org>
-Subject: RE: [PATCH v2] pinctrl: samsung: Add support for pull-up and
- pull-down
-Date: Wed, 26 Jun 2024 17:19:28 +0530
-Message-ID: <07f201dac7be$e81317d0$b8394770$@samsung.com>
+	s=arc-20240116; t=1719402584; c=relaxed/simple;
+	bh=5Lh37O2jhiCVEaOJh/sZBLPNDudG+Lwj5d/JZWTN6RE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=axV5Vbd00rVE7HsivkA7ditfmU0KzslFrlXz4YP9ULO3vU/NvhcXslXa76hdgW5ljTntfw55pOzKbhs+QFy0taqGL0RJl95rGHLilRT2fUf8UCuTRept3ZatWrK5u7QjR6+CR8/Ft/aciTHVoInBmBo7Kaafl8PFVtv15is7faU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=cEQI5aUl; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=WxL5D7Jh; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 699D921A16;
+	Wed, 26 Jun 2024 11:49:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1719402580; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5Lh37O2jhiCVEaOJh/sZBLPNDudG+Lwj5d/JZWTN6RE=;
+	b=cEQI5aUl8Osxwtn4yY2CwRSUyXVENuHCxJ1UlBpXAt4IIqTqS4RbdfmQkgNs9oM9f7g4ql
+	taDIUE+asznBB2jhc12HjzRAL+SM4FeetIpUtenU6N66W11cJhEYhOSJ2dDlgCYM+GEa8B
+	YBouU/7/9LTJv7Dz3rdWbYJ0eXqplY8=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=WxL5D7Jh
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1719402579; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5Lh37O2jhiCVEaOJh/sZBLPNDudG+Lwj5d/JZWTN6RE=;
+	b=WxL5D7JhVJ8x674qP2k4SIUARuCB/3nCkKyWW172/Nvxxh/OM17mTU0nVEv3jrTCPa6yV4
+	lrNu+eZN1e+R/RgQXRZQxPyNccdKps5sE37CQmky5wO+D0X+wAXqrRKsA/oLcLckPD+oWY
+	CpDUjUG4cWQzhQLh+pprhygc682yDsc=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3BFB413AAD;
+	Wed, 26 Jun 2024 11:49:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id aa15DlMAfGapIAAAD6G6ig
+	(envelope-from <mkoutny@suse.com>); Wed, 26 Jun 2024 11:49:39 +0000
+Date: Wed, 26 Jun 2024 13:49:38 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Frederic Griffoul <griffoul@gmail.com>
+Cc: Fred Griffoul <fgriffo@amazon.co.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Alex Williamson <alex.williamson@redhat.com>, Waiman Long <longman@redhat.com>, 
+	Zefan Li <lizefan.x@bytedance.com>, Tejun Heo <tj@kernel.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Mark Brown <broonie@kernel.org>, 
+	Ard Biesheuvel <ardb@kernel.org>, Joey Gouly <joey.gouly@arm.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Jeremy Linton <jeremy.linton@arm.com>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>, Kevin Tian <kevin.tian@intel.com>, 
+	Eric Auger <eric.auger@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, 
+	Christian Brauner <brauner@kernel.org>, Ankit Agrawal <ankita@nvidia.com>, 
+	Reinette Chatre <reinette.chatre@intel.com>, Ye Bin <yebin10@huawei.com>, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	cgroups@vger.kernel.org
+Subject: Re: [PATCH v5 0/2] vfio/pci: add msi interrupt affinity support
+Message-ID: <rjkb6eqsagejwnmdhsxfvu3rjrmplbe6unvqmerquepd7qm2nu@ggez7xtxmgtm>
+References: <20240610125713.86750-1-fgriffo@amazon.co.uk>
+ <k4r7ngm7cyctnyjcwbbscvprhj3oid6wv3cqobkwt4p4j4ibfy@pvmb35lmvdlz>
+ <CAF2vKzP0C1nEYTWRdWeAFKVUcuu3BkPD0FVA7yAS1rc-c=gs5A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r74rwaco3a2x2q4m"
+Content-Disposition: inline
+In-Reply-To: <CAF2vKzP0C1nEYTWRdWeAFKVUcuu3BkPD0FVA7yAS1rc-c=gs5A@mail.gmail.com>
+X-Spamd-Result: default: False [-6.11 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SIGNED_PGP(-2.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	MIME_GOOD(-0.20)[multipart/signed,text/plain];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FREEMAIL_TO(0.00)[gmail.com];
+	ARC_NA(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+,1:+,2:~];
+	RCPT_COUNT_TWELVE(0.00)[30];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	R_RATELIMIT(0.00)[to_ip_from(RLdbs4abguf4x6atqn9fu113td)];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 699D921A16
+X-Spam-Flag: NO
+X-Spam-Score: -6.11
+X-Spam-Level: 
+
+
+--r74rwaco3a2x2q4m
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Content-Language: en-in
-Thread-Index: AQJsl4iGk1jvO+hY9fFKxJSBqey3YQJX8oCQAbw/7Giwla0CYA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmlq4dc02aweGp5hYP5m1js7h5YCeT
-	xfnzG9gt9r7eym4x5c9yJotNj6+xWmye/4fR4vKuOWwWM87vY7JYtPULu8XDD3vYLQ6/aWd1
-	4PHYtKqTzePOtT1sHpuX1Hv0bVnF6PF5k1wAa1S2TUZqYkpqkUJqXnJ+SmZeuq2Sd3C8c7yp
-	mYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QeUoKZYk5pUChgMTiYiV9O5ui/NKSVIWM/OISW6XU
-	gpScApMCveLE3OLSvHS9vNQSK0MDAyNToMKE7IwZLWfYCh6KVezY9pelgfGuUBcjJ4eEgInE
-	rPPPmboYuTiEBHYzSvT/W8UI4XxilGhYuxkq841R4s+uE4wwLfcu/WWBSOxllHi4tZkJJCEk
-	8IJRYsFd1S5GDg42AX2J5hsSIGERgSWMEt3LjUDqmQUeMkpMvP+JFSTBKWAnca2nF8wWFgiU
-	aH51nwXEZhFQlTj98Dg7iM0rYClx71cXK4QtKHFy5hOwGmYBbYllC18zQxykIPHz6TJWiLi4
-	xNGfPcwQi50kPnY2gr0jIbCHQ2LhiQVMEA0uEh+WdEPZwhKvjm9hh7ClJD6/28sGYSdLrP99
-	ih3kGQmBHImeaQoQYXuJA1fmsICEmQU0Jdbv0ocIy0pMPbWOCeIEPone30+gpvNK7JgHY6tJ
-	HJs0nRXClpHoXHGDcQKj0iwkn81C8tksJN/MQti2gJFlFaNkakFxbnpqsWmBYV5qOTy+k/Nz
-	NzGCE6+W5w7Guw8+6B1iZOJgPMQowcGsJMIbWlKVJsSbklhZlVqUH19UmpNafIjRFBjcE5ml
-	RJPzgak/ryTe0MTSwMTMzMzE0tjMUEmc93Xr3BQhgfTEktTs1NSC1CKYPiYOTqkGJvfUoo3X
-	H9rLcEYYC+ypd7wXcP9I29bLT527xbdX3/nEJLDpy48nk9f9X/L3lbcpy4M3QrW79inVTT+9
-	7JjKorJ1QnvYPolF7e0w+crBz6PgPWXbM/9L0jdC9S/d3BakoK5nYlnPLirvLqx14yP7izMv
-	0ipK/zI53Co/vJYprfngoc45z9yWGH5onLXw/5y/iS9r3aSUWJYdPVXQc0dX6Z9s6+P8NesP
-	XP/hGbd6osaf3GlTFJi+zCib9dcuaEZolKBvw/4pic4RP9rf/bNefNQ5eGkZo6G3yISu+/PY
-	z9wLqf3RdrY3fIP4Cd+X+amCeqcrO7S5rjYvOMGcmjHzSZ9X/RFLxsy5CmINUewcDkosxRmJ
-	hlrMRcWJABkzLO9FBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFIsWRmVeSWpSXmKPExsWy7bCSnK43Q02aQV+LhMWDedvYLG4e2Mlk
-	cf78BnaLva+3sltM+bOcyWLT42usFpvn/2G0uLxrDpvFjPP7mCwWbf3CbvHwwx52i8Nv2lkd
-	eDw2repk87hzbQ+bx+Yl9R59W1YxenzeJBfAGsVlk5Kak1mWWqRvl8CVcfq5X8FWsYrNfz+x
-	NDCuFOpi5OSQEDCRuHfpLwuILSSwm1FiyoMMiLiMxIc7W5ghbGGJlf+es3cxcgHVPGOUuLf/
-	NVADBwebgL5E8w0JkLiIwApGicNHp7OCOMwCzxklNr2YxwTRcZBRYuf7dWCjOAXsJK719LKC
-	dAsL+EtMOKwDEmYRUJU4/fA4O4jNK2Apce9XFyuELShxcuYTsOuYBbQleh+2MsLYyxa+hrpO
-	QeLn02WsEHFxiaM/e8DiIgJOEh87GxknMArPQjJqFpJRs5CMmoWkfQEjyypGydSC4tz03GTD
-	AsO81HK94sTc4tK8dL3k/NxNjODo09LYwXhv/j+9Q4xMHIyHGCU4mJVEeENLqtKEeFMSK6tS
-	i/Lji0pzUosPMUpzsCiJ8xrOmJ0iJJCeWJKanZpakFoEk2Xi4JRqYHoSVlO0PW7ter3AOyqX
-	Cx+ZfbrKqLFnT/en2rsWMzq4OFQs2/ZEK3z4W8z39fdF4e/Sf27vmcxxiefFvlJ3p+fs/A82
-	nV5maOPLpKsvUfOY797xLfObG5R3tex/+OHRncYWnanR5zrW8Ew22XKrboLr1bCWgJzf9hPe
-	P9+o80jDT9bUpr895F6qlFmRsRqjgYEz33Stqa63M4MdI599fCJdeazm95fA7+V3eM/uevZq
-	xR5ngQkhH7R3CMR7Mih+Z3zTKS1g5ypfFNJs8iVC90T5MpeXklGVe3dLT55acPS5Vd+Dp6ts
-	Fix8sPLsykMXJV3WHv779P8xhqWviw2MYjLrPJ4pLVt5zsbSoEc1XVKJpTgj0VCLuag4EQCG
-	nSEgLQMAAA==
-X-CMS-MailID: 20240626114931epcas5p1d7840cbe7418c6e62b15e4b54bee5d42
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7
-References: <CGME20240620103950epcas5p10514d4a19bdfd505d7d92ceb1fe10cc7@epcas5p1.samsung.com>
-	<20240620103410.35786-1-vishnu.reddy@samsung.com>
-	<38fae674-f672-46e0-a44e-1278deaaf36a@kernel.org>
 
+On Wed, Jun 12, 2024 at 03:45:48PM GMT, Frederic Griffoul <griffoul@gmail.c=
+om> wrote:
+> To be honest my initial idea was to store an affinity mask per vfio group=
+, which
+> can be done in the privileged process setting the vfio group/device owner=
+, and
+> later apply the mask to each interrupt of each device in the group.
+>=20
+> It would still require to fix the affinity of all the interrupts if
+> the vfio group affinity is
+> changed (or deliberately ignore this case). And it did not match
+> exactly my use case
+> where I need the process handling the interrupts to sometimes be able
+> to change them
+> but always within the cpuset. So I would still need the current patch,
+> in addition to
+> a new ioctl() to set the affinity mask of a vfio group.
 
+It's not clear to me what is the relation between the process A calling
+that ioctl() (and whose cpuset is used to check affinity for)
+and a process B that ends up handling the IRQ.
+At which place would process B be scheduled on IRQ's affinity CPUs?
+(I'm not familiar with VFIO.)
 
-> -----Original Message-----
-> From: Krzysztof Kozlowski =5Bmailto:krzk=40kernel.org=5D
-> Sent: 24 June 2024 19:27
-> To: Vishnu Reddy <vishnu.reddy=40samsung.com>;
-> krzysztof.kozlowski=40linaro.org; s.nawrocki=40samsung.com;
-> alim.akhtar=40samsung.com; linus.walleij=40linaro.org
-> Cc: linux-arm-kernel=40lists.infradead.org; linux-samsung-
-> soc=40vger.kernel.org; linux-gpio=40vger.kernel.org; linux-
-> kernel=40vger.kernel.org; pankaj.dubey=40samsung.com;
-> ravi.patel=40samsung.com; gost.dev=40samsung.com
-> Subject: Re: =5BPATCH v2=5D pinctrl: samsung: Add support for pull-up and=
- pull-
-> down
->=20
-> On 20/06/2024 12:34, Vishnu Reddy wrote:
-> > gpiolib framework has the implementation of setting up the
-> > PUD configuration for GPIO pins but there is no driver support.
-> >
-> > Add support to handle the PUD configuration request from the
-> > userspace in samsung pinctrl driver.
-> >
-> > Signed-off-by: Vishnu Reddy <vishnu.reddy=40samsung.com>
-> > ---
-> > Verified the offset from the user manual of following Exynos SoC series
-> > and found the current code is taking care of correct offset for pull-up
-> > and pull-down
-> >
-> > Exynos-3250
-> > Exynos-3470
-> > Exynos-4412
-> > Exynos-4415
-> > Exynos-5250
-> > Exynos-5260
-> > Exynos-5410
-> > Exynos-5420
-> > Exynos-5422
-> > Exynos-7420
-> > Exynos-7580
-> > Exynos-7880
-> > Exynos-9820
-> > Exynos-9830
-> > Exynos-4210
-> > Exynos-S5PC210
-> > Exynos-S5PV310
-> >
-> > This patch is tested on FSD platform
->=20
-> You verified but...
->=20
-> > diff --git a/drivers/pinctrl/samsung/pinctrl-samsung.h
-> b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> > index d50ba6f07d5d..758b623a4bea 100644
-> > --- a/drivers/pinctrl/samsung/pinctrl-samsung.h
-> > +++ b/drivers/pinctrl/samsung/pinctrl-samsung.h
-> > =40=40 -61,6 +61,13 =40=40 enum pincfg_type =7B
-> >  =23define PIN_CON_FUNC_INPUT		0x0
-> >  =23define PIN_CON_FUNC_OUTPUT		0x1
-> >
-> > +/*
-> > + * Values for the pin PUD register.
-> > + */
-> > +=23define PIN_PUD_PULL_UP_DOWN_DISABLE	0x0
-> > +=23define PIN_PUD_PULL_DOWN_ENABLE	0x1
-> > +=23define PIN_PUD_PULL_UP_ENABLE		0x3
->=20
-> ... I said it is not correct, so you send the same? If you think I was
-> wrong, then please respond and keep discussion going. Sending the same
-> suggests you just ignored my comment.
->=20
-> Look at two headers s5pv210-pinctrl.h and s3c64xx-pinctrl.h. How did you
-> resolve these?
-Thank you for sharing the s5pv210-pinctrl.h and s3c64xx-pinctrl.h  file nam=
-es for the pin value information.
-I have not ignored your comment. Unfortunately, I don't have the user manua=
-ls for the s3c64xx and s5pv210 series.
-I have an idea to handle the PIN_PULL_UP value of the s3c64xx and s5pv210 s=
-eries by checking the compatibility with the of_device_is_compatible API.
-Will it be okay or do you have any other suggestions?
->=20
-> Best regards,
-> Krzysztof
+Thanks,
+Michal
 
+--r74rwaco3a2x2q4m
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZnwAUAAKCRAt3Wney77B
+SUYHAP9E4KiCr8neoUcGLa9bfsAswF2rgXTMfwxM4uRgu39xiwD/Snob+Tz8WCak
+OFObvu+CpXRmtFHIcDDvsvocrEG+7wY=
+=otng
+-----END PGP SIGNATURE-----
+
+--r74rwaco3a2x2q4m--
 
