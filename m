@@ -1,127 +1,160 @@
-Return-Path: <linux-kernel+bounces-230280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6761B917AC9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:20:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E3C1917AC5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1195E1F21ADC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:20:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E7561C21E7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EBB816848C;
-	Wed, 26 Jun 2024 08:20:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EAE16191A;
+	Wed, 26 Jun 2024 08:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MUS4sgYY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u9JLOF7l"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50224149C4E;
-	Wed, 26 Jun 2024 08:20:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07F63160796;
+	Wed, 26 Jun 2024 08:19:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719390004; cv=none; b=teqjwoZRF7t9obGvi9n4FnhFfPeTalSDZf48i9ooFUk5C+X5vJRSxDteyupUQTrcNKXqwYI32A0NkIZUyBDNf5pDYlhhGAJe5Q1beg0Kf6EBVCBQkGgkULTpUiSEQiOmfB04JdF8pqEz6PJalh107BJc7UchgenJ+c5wXTCkSTY=
+	t=1719389997; cv=none; b=leGbUA0IZKVzRwkmGdm3kHYIxX/mzXvUujZPXy3Zst1ZtykbvkhAYVJL9j+nGFj1M7jl1LbzbA81tgMs9xkHvumliH/aqepB2emgCcggnr8fdcYbiNnyfxLydFru7MUP0WYvVFLw/0SN77HcSregGrrqi2SgXXA/qd6lHBklSy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719390004; c=relaxed/simple;
-	bh=j/ywYji9fCX+Xr7Rt0OjtBLx1A3Se9EU1/A/Czg1tgU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RLoXV27cIEwcDbq8SFtoKBcL7Djc7augLa2MoaDQviKQ8LToYPY3PSUw87NEcX84UhGAp7G+QHZWoHXSodbRIjUfTxt8ZkeZuEFpra4UiHisRGf5nXm0Z8NBnB7GdoFDUmZ+rLlCBP4Y3S2D59Td1L3ovQ4HPrtcTxalEZokK5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MUS4sgYY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5E53C32789;
-	Wed, 26 Jun 2024 08:19:58 +0000 (UTC)
+	s=arc-20240116; t=1719389997; c=relaxed/simple;
+	bh=E4oJGv2ln2F2mkHKg0UbQEmnSuGrODj0fkfA9bN5peI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sCtAavcIdeNx1MYRbu/YGFXWgQ06QtysS2wjThcHZ83UyjZ0appv8eqQD/hqdPsmrGxcxqS2GJMmQlsO+8o/uJZlvhzlGC6iBusHPoePsCm4VG3o+hAGSnkLrCM0uydfa7h8RHXGdLLtcP3cRhOJ6Vk+PpgDdQYxD232nuJWDRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u9JLOF7l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86D6AC4AF09;
+	Wed, 26 Jun 2024 08:19:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719390003;
-	bh=j/ywYji9fCX+Xr7Rt0OjtBLx1A3Se9EU1/A/Czg1tgU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MUS4sgYYHp8UscBOZXPT9JY4x5dSd/6GsIb6snpPIJL6tcBNpcYuf/1SS1VeKMQod
-	 72V6Q0yzNFJ2uBxHGkprxG/REtg+AqgOwdqrmF6EKBRf0zzGGImkwd/f2ayO+gip45
-	 BWqE4xDiEGxUoDVo5C0tD0ZoDt2DU2BQZXg4WZivh3IoSFz4OvLD6KiREQmfL4LyV3
-	 4bXjTdHzSHQV0b68C4Ly1EBHq98sXhpeKkp8wtHVuJ8BI2aeZu3/Ky8GYO/pEhhSYb
-	 Juv98fh6WSz9HgFM+GWWG/msYbqXMm2OAq4WmqPcQ6H0Es1Yq8ZHUoolgRdg54Yt8U
-	 pJV/AgPqAI9gA==
-Message-ID: <12853a72-190f-4aeb-9a2f-4fdc42c9e4df@kernel.org>
-Date: Wed, 26 Jun 2024 10:19:56 +0200
+	s=k20201202; t=1719389996;
+	bh=E4oJGv2ln2F2mkHKg0UbQEmnSuGrODj0fkfA9bN5peI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u9JLOF7l/LQc72Xi9LTPGpSarhpjtdwbfoclqsxQ4iynBlNSbXJk65aStw3Xpoo6k
+	 PZMrYCk1rk34uMZuA/XV+5t6IpjQP0sfJvVrXnH/KZzRPGvk4GwEUe1TG33dIuEIsd
+	 qAFKqEAowip7IvdR2uU61HTUjklCO15fZNX1m0Tj8k52OYAxrA857O198pLHhlzgce
+	 KklT+2wAYffkn6ZOIppL/74dnQFGyT1biwMrXNkZ5XSLn0zBuMRvLKaB7eLrY9m77O
+	 V/7It5joG3n9XpJd8UjLFVY/WVviLc/0F93UXaI5fJpYkECg8kxygu9qXZljdZRVQP
+	 7ez6oestrwL8g==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sMNss-000000000hd-25Eq;
+	Wed, 26 Jun 2024 10:20:06 +0200
+Date: Wed, 26 Jun 2024 10:20:06 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Yicong Yang <yangyicong@hisilicon.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	John Ogness <john.ogness@linutronix.de>,
+	linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
+	Stephen Boyd <swboyd@chromium.org>, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v4 8/8] serial: qcom-geni: Rework TX in FIFO mode to fix
+ hangs/lockups
+Message-ID: <ZnvPNiWWIIsugbhN@hovoldconsulting.com>
+References: <20240610222515.3023730-1-dianders@chromium.org>
+ <20240610152420.v4.8.I1af05e555c42a9c98435bb7aee0ee60e3dcd015e@changeid>
+ <Znlp1_F1u-70D3QQ@hovoldconsulting.com>
+ <CAD=FV=XmuKUKvCq7gG+wM-jAAgHLHnYw4NteFEKz5Fmczd=U7g@mail.gmail.com>
+ <ZnqoKDnUMxqf7QRy@hovoldconsulting.com>
+ <CAD=FV=Ux+ro90xnEEnALiwtjnOk+LT_qaHmE8jS7adWgBPSDbg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] dt-bindings: can: fsl,flexcan: add can-transceiver
- for fsl,flexcan
-To: Frank Li <Frank.Li@nxp.com>, Marc Kleine-Budde <mkl@pengutronix.de>,
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- "open list:CAN NETWORK DRIVERS" <linux-can@vger.kernel.org>,
- "open list:NETWORKING DRIVERS" <netdev@vger.kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
-Cc: imx@lists.linux.dev
-References: <20240625203145.3962165-1-Frank.Li@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240625203145.3962165-1-Frank.Li@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=Ux+ro90xnEEnALiwtjnOk+LT_qaHmE8jS7adWgBPSDbg@mail.gmail.com>
 
-On 25/06/2024 22:31, Frank Li wrote:
-> Add 'can-transceiver' children node for fsl,flexcan to allow update
-> can-transceiver property.
+On Tue, Jun 25, 2024 at 07:29:38AM -0700, Doug Anderson wrote:
+> On Tue, Jun 25, 2024 at 4:21 AM Johan Hovold <johan@kernel.org> wrote:
 
-I don't understand.  Who and how updates can-transceiver property? What
-is can-transceiver property (I assume you speak about something
-different than child node)?
+> > Right. But with a 16 1-byte word FIFO, we may be able to kick of a
+> > really long transfer and just keep it running until it needs to be
+> > kicked again (cf. enabling TX). The console code can easily insert
+> > characters in the FIFO while the transfer is running (and would only
+> > have to wait for 16 characters to drain in the worst case).
+> >
+> > Effectively, most of the identified issues would just go away, as
+> > there's basically never any need to cancel anything except at port
+> > shutdown.
+> 
+> Yeah, though you'd still have to make sure that the corner cases
+> worked OK. You'll have to pick _some_ sort of fixed transfer size and
+> make sure that all the special cases / console / kdb work if they show
+> up right at the end of the transfer.
 
+Yes, there are some details like that would need to be worked out.
 
-Best regards,
-Krzysztof
+> I was also a bit curious if there could be power implications with
+> leaving an active TX command always in place. Perhaps geni wouldn't be
+> able to drop some resources? Do you happen to know?
 
+Hmm, good point. I'll see if I can ask someone with access to docs.
+
+But I guess we can still continue to stop the command on stop_tx() (as
+we are considering anyway) to avoid that.
+
+> > I didn't do an in-depth analysis of the slowdown, but I did rerun the
+> > tests now and I'm still seeing a 22-24% slowdown on x1e80100 with rc5.
+> > This is a new platform so I compared with sc8280xp, which shows similar
+> > numbers even if it's slightly faster to begin with:
+> >
+> >                                         sc8280xp        x1e80100
+> >
+> >         rc5 full series                 61 s            67 s
+> >         rc5 last patch reverted         50 s            54 s
+> >
+> > I have a getty running and cat a 10x dmesg file of 543950 bytes to
+> > /dev/ttyMSM0 from an ssh session (just catting in a serial console gives
+> > similar numbers).
+> 
+> That's really weird / unexpected. Your hardware should be fancier than
+> mine so, if anything, I'd expect it to be faster. Is there something
+> causing you really bad interrupt latency or something? ...or is some
+> clock misconfigured and "geni" is behaving sub-optimally?
+
+That may be the case. I'm not seeing more interrupts with the last patch
+applied, and not more time spent servicing interrupts (based on a quick
+look at top), so it may just be geni taking a lot of time to start or
+stop commands.
+
+> ...although it wouldn't explain the slowness, I'd at least be a little
+> curious if you've confirmed that you're running with a 16-word FIFO
+> depth. See the function geni_se_get_tx_fifo_depth() where newer
+> hardware can actually have larger FIFO depths.
+
+No, I had confirmed that it is using 16 words (64 bytes).
+ 
+> Just in case it matters, I'd be curious if you have
+> `CONFIG_IRQ_TIME_ACCOUNTING=y`
+
+I do, yes.
+
+> Oh: one last thing to confirm: do you have kernel console output
+> disabled for your tests? I've been doing tests with the kernel console
+> _not_ enabled over the serial port and just an agetty there. I could
+> believe things might be different if the kernel console was sending
+> messages over the same port.
+
+Yes, there has been no console output during my tests, and I get similar
+results with the console disabled.
+
+Johan
 
