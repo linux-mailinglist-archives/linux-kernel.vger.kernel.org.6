@@ -1,123 +1,125 @@
-Return-Path: <linux-kernel+bounces-230355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBDEC917BA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:03:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3EE917BAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 956582883EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:03:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6079D1C24542
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:04:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6494B168498;
-	Wed, 26 Jun 2024 09:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76CCC16A92D;
+	Wed, 26 Jun 2024 09:04:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="v8ku+4nV"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DRqhDVNl"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CF413AD11;
-	Wed, 26 Jun 2024 09:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3ED5713AD11;
+	Wed, 26 Jun 2024 09:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719392627; cv=none; b=Uu0k6PQmv3he+RlgGWKeBLk3KEcCzLfJBUW3tUCUesg4Bl7AoxWFuPx+6GFUzhMioebrbZEDX4i8N9f15LzeELz2jKuoqBbtIvMY2cdhicFRMTr0lqy8LYuuf+qgT+smQMslA+rxFQJl9CY2aoHpCCZ/gQ5v8v8cv+B4QPgmw98=
+	t=1719392666; cv=none; b=S8XAH96Ha1hCMCeo9E7BG9hAGaqOBYI5MUIpJCXbT+XlJjxTg0DolrprMk8IPLkSgOASTvMCl6LwausrkDsYP0iupmBAfHk2c5/LPJi42Z8igChX6xT9CstVHj5VDXLbnHN553Rt6pNaLsPoO+lFHDlJhJh+Cf/YOHtP63Ozq5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719392627; c=relaxed/simple;
-	bh=k3PLt6Qap4FdlP7ECaBc49dWOBbtLC1oMmAgYSuV5nE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iQgIdu9n5ELB3t0j+51RurVw5oPW+YMPzBWaCFtThroFziu27AEIKxUfBVtbZaP1HhD6cWUvzT/ak/L0hBlRLStadUs0BQ+kzhvVK/tzNHjWT0D7ZozHDJNfxVXcWrfvQ4Gpho4RMX2q+AfUws/+jpm5+QY6L0BTjkBeioJmViU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=v8ku+4nV; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45Q93dwc073472;
-	Wed, 26 Jun 2024 04:03:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719392619;
-	bh=cWeEf3KLTcWgvTlC83TSV46FqXXPxQmL+5Tu0fty2A0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=v8ku+4nVPlqqqentLXpzhNljpkBOFeZX8C3SdvVDc+bTQaGLkQLx2enM6+pfmMcoy
-	 CqmInFiriI+0OAbqAPO2quqMg5WsdfiSDH5ZAzLdswaSleVN9F9Bb+sP8DXf9ztnkn
-	 3aR8Msc83/k1iadUGfQL4y1cXQfn5zB4YoCeZs3I=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45Q93dsu023463
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Jun 2024 04:03:39 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Jun 2024 04:03:38 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Jun 2024 04:03:38 -0500
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45Q93YEo120771;
-	Wed, 26 Jun 2024 04:03:35 -0500
-Message-ID: <c895f7f0-17fc-47b3-9f63-78174a5d2a86@ti.com>
-Date: Wed, 26 Jun 2024 14:33:33 +0530
+	s=arc-20240116; t=1719392666; c=relaxed/simple;
+	bh=oaYUMoogowtBtWar4tyNI6N865mtdxhIBovNlvD86ew=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ALBq6uCKTfy7UKSnNJtCw4RjyzZNeLYg9Dp0nlb+kGm/Bp1z6sZN84IFNj4XSQCJtklfcxkNXVYncs97mGgnmPoB58fyk5kPl8qDI5Agjvb/GhssyFkLoqqoOWJ1wxy86zwDXAl6iYVSdVk45mJXZiN9994fqHiMeSlvhZ38FEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DRqhDVNl; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ebe3fb5d4dso3436341fa.0;
+        Wed, 26 Jun 2024 02:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719392662; x=1719997462; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7E3E5BV92BwfmylcDqUtcM4HRuAN4aH6njNvBh1p1a4=;
+        b=DRqhDVNl8Ub//ovY8D+RPc7QiFGYSXFxrUaqmFRXZU2ZL7AEipjdg+c1lreEiSmaSM
+         uSsFyNGNWkFlRKIAtp/FgktwsgzIoaICkLfVY8mG756f6AV5CEvWuWM5gBzSYFm6MhFZ
+         R6Zy+cq/h4FRlJoEc7nip2zv0Nbtqatc2avKnp9ya8PjZybMrIjBSREV/ypttbhmXUHV
+         vvIjCoWwyc8fJfumERnHbi3lmfLfF0BD2i3gXgLO2n70w1n/NzhllI7DzXYmgknvqVm3
+         WnO9kmjm3Lbqhn8uArD44h/vX6goHYUH64qE5SMfykC/BbKHgIjusvqd4jN513D4Npns
+         VF4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719392662; x=1719997462;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7E3E5BV92BwfmylcDqUtcM4HRuAN4aH6njNvBh1p1a4=;
+        b=uRoEpKrLNcRb0vmLybfEs71N6FXJPKISbkSMbUH1eHMQh1X0YDEUC383so1HhfFCGy
+         94BkGB+CI01iZ9V1aWs7OZNNi2cMtiJ034eHh4csMHdSPeW6KiHCv0X29EwMmgpGLJGr
+         83ZNEy3bPQjlkL+fFwSV5EjFO35mUeFwcN3/YjLkeU9WA0uGGuKbIGfes2oelN76r4eR
+         p0MuAyh5/qwB3K0PANX3013EC2aQvNzAHL97MOWrSbfW/CfaEqaIL74kowmmTynrrfvl
+         bCCIQSYP8O1k0jexppey6+GGY6JwVSayOMxgAGaZnoidXumyVb4B4LgNhB+0C8OCy5Ce
+         G2Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCUrwICkejBhYeI2ZUSN6BU1dKlU0QfhKRIamdEbsoe6bDHZ/+F25JLTf2JCzWmCUF0A7WUdYO7W+qLfo80wxVJQubLXhhIjzadm7Y1sTla4y46oOUCRsp3loLKYSpMOGjaTeSgM2sGILUL2DbteB0cIWN+KwxHSUbVQpsVy80PwgkWyjhraQ/h3qdd8thxJhdZYZVWck6wpCVgwSxW1G8cJKi/Axg==
+X-Gm-Message-State: AOJu0Yx54NICGspIZsVKauhuOYJZz6TynHowVACMQ0atIKFnZquMrT9i
+	Y/wdSXZHaZfpRNofhHuaKQeLrUzmGcHm+6jzwtUxg4ZWHL1A/UrO2IGXHktRlSSDIlobfyq/ktU
+	xM9V2hZOlPEIAZ6e6chCPujJLqis=
+X-Google-Smtp-Source: AGHT+IHX5aR/TPFzCeASrNiTOjVcjJKCYtuqJqQwkfz+AyGjVcXrcnx5Unkd+h1xucYfF4Zt1bnv9HizRa3aNBh/Pao=
+X-Received: by 2002:a2e:7215:0:b0:2ec:4deb:482f with SMTP id
+ 38308e7fff4ca-2ee4645bc13mr73171fa.8.1719392662318; Wed, 26 Jun 2024 02:04:22
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/2] Add documentation for PA_STATS and MAINTAINERS
- entry for ti,pruss.yaml
-To: Krzysztof Kozlowski <krzk@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Santosh Shilimkar <ssantosh@kernel.org>, Nishanth
- Menon <nm@ti.com>
-CC: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>
-References: <20240625153319.795665-1-danishanwar@ti.com>
- <20240625153319.795665-4-danishanwar@ti.com>
- <c4ee50a8-2fdd-4aa9-9d88-ec3f3ea52633@kernel.org>
-Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <c4ee50a8-2fdd-4aa9-9d88-ec3f3ea52633@kernel.org>
+References: <20240624-b4-sc7180-camss-v3-0-89ece6471431@gmail.com>
+ <20240624-b4-sc7180-camss-v3-1-89ece6471431@gmail.com> <c33dde93-2c3a-4a00-93ee-e4de303c9057@kernel.org>
+ <CADgMGSvN=uAW7z1dpETGVRewzDG=K2MAtzOkhK7xAcskU_oeZg@mail.gmail.com>
+ <0a35f0bd-ceec-487f-b9fd-ae9698b74048@kernel.org> <CADgMGSt9Hu5Ciq=ndMTaVK23Y_ixTVtTuSfy4hJkJooFH2uv9Q@mail.gmail.com>
+ <CADgMGSv+x2Z9FsWTHW0auttvpdfNDnOPxiJhXnUaW3yQczN_Ag@mail.gmail.com> <a7306019-9f19-4619-875f-e6b71add5607@kernel.org>
+In-Reply-To: <a7306019-9f19-4619-875f-e6b71add5607@kernel.org>
+From: george chan <gchan9527@gmail.com>
+Date: Wed, 26 Jun 2024 17:04:10 +0800
+Message-ID: <CADgMGStvxkaj_LxXLuwEUtm5dPT-MCr6aKp_DKZngHsRPTjmng@mail.gmail.com>
+Subject: Re: [PATCH RFT v3 1/5] dt-bindings: media: camss: Add qcom,sc7180-camss
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-media@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: quoted-printable
 
-
-
-On 26/06/24 2:29 pm, Krzysztof Kozlowski wrote:
-> On 25/06/2024 17:33, MD Danish Anwar wrote:
->> Hi,
->>
->> This series adds documentation for PA_STATS in dt-bindings file ti,pruss.yaml.
->> This bindings file doesn't have a MAINTAINERS entry. This series add the
->> MAINTAINERS entry for this file as well.
->>
->> Changes since v2:
->> *) Added RB tag of Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> to
->>    patch 2/2
->> *) Added patch 1/2 to the series as the binding file is orphan.
->>
->> v2 https://lore.kernel.org/all/20240529115149.630273-1-danishanwar@ti.com/
-> 
-> That's some duplicated posting.
-> 
-> Why you just can't use b4?
-> 
-
-My bad. The email got sent twice. Will keep this in mind.
-
+On Wed, Jun 26, 2024 at 4:58=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 26/06/2024 10:38, george chan wrote:
+> > On Wed, Jun 26, 2024 at 4:17=E2=80=AFPM george chan <gchan9527@gmail.co=
+m> wrote:
+> >>
+> >> On Wed, Jun 26, 2024 at 3:15=E2=80=AFPM Krzysztof Kozlowski <krzk@kern=
+el.org> wrote:
+> >>> Keep the list in "required:" in the same order as the list in "proper=
+ties:".
+> >>
+> >> ok gotcha
+> > btw, i checked  "required:" and "properties:" are aligned, both of
+>
+> No, they are not.
+>
+> Which is the first entry in "properties"?
+>
+> Which is the first entry in "required"?
+>
+> Please stop wasting reviewers time by disagreeing on every little piece
+> of this. The feedback was quite clear but somehow you do not read it and
+> respond with some inaccurate statements.
+>
 > Best regards,
 > Krzysztof
-> 
+>
 
--- 
-Thanks and Regards,
-Danish
+Then my apology. I might take a break here. Appreciated if some
+developer is willing to take over it too.
 
