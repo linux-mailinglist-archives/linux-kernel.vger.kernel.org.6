@@ -1,107 +1,76 @@
-Return-Path: <linux-kernel+bounces-229847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229848-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D336B917522
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:03:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D43917525
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:08:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E049B221C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:03:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4A86AB21EF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C818A28F3;
-	Wed, 26 Jun 2024 00:03:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106311113;
+	Wed, 26 Jun 2024 00:07:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDqwc2fp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="LXaNHlwS"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A31A48;
-	Wed, 26 Jun 2024 00:03:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECE917E;
+	Wed, 26 Jun 2024 00:07:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719360207; cv=none; b=Uno+4B07+czf6k3Yg7Wq2sQiSFeez7wT/STacaCoBWPp9ZtLyS+XEC4ZCIan5jT+bcweoXMf+m+LxSL7Nz0OVY6kAY82q/v3mOMkEbwOnNhHIhK8IM7r8MHQYoYyEvMXkTQvSaJsuhNDyR+huKeLLuLN6Dn+EU157+98KaxWI44=
+	t=1719360469; cv=none; b=O1tFPeoKzvKXjvuXqENjoJ6MY0yAxrRcjPZQfjXtecVBP30HvTDBnhOe2jpZMGf2JUZSiGtgT1G86Ff7Wm+npbyi6X89cGAZQgoXPvxWctGELAUp/e4WpBHLUNJadifX9Wp4EAtnWVowBOAt4g+fomgX5Y/O4vZJgEIRItsxIck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719360207; c=relaxed/simple;
-	bh=NK6Sy1+gBkH7/RMREnYLk2uoeiro6r5YHifzBo96RhE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q7USQdTpbTTadmcc/43v3+dbrAqWBRAloXiQ1YuupGvEwkGoIzRExKwcJdm/mqGrfwN/mQCWv5eqgsjcI1OEDGXK0pInOq0DoXIseUxs2tfcZ6O9P439ARAbeSXK7lqaAWZ6o5dfgpBNVD3+o1aTePqu2t8KRmu5TuIWmaR7q08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDqwc2fp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CFA6C32781;
-	Wed, 26 Jun 2024 00:03:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719360206;
-	bh=NK6Sy1+gBkH7/RMREnYLk2uoeiro6r5YHifzBo96RhE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QDqwc2fpaWnUv6j1A2W4z8eWsSFLzv+o4ZfeKKreKTbNRClZiPt/mb7LBCxS6DDbn
-	 50tBHAVf7dTfojebtVf/d1Wxr4eZ34Ay45GuB7nvbCpsVdTIyUpmsFD9b1xsO0eFtB
-	 uywfknZU0/AP/CR6aLfiTBoDgK+ZavBt5oWjOdSEdDCyFlQd3cK4IFUqrH9g8Pwbzu
-	 XB96KH7Q/MIV9OF6Au907oNa3ZxRW1YEGSQsmvCl2z9DrQctaOJxhSX7IcgdcSE6P0
-	 1rJeJsS+xzypRKSx5sc90xnT1GbU+VLN/7eizQ7GwFLwwJgbmiEx5zbU9Rf3vI5A9y
-	 pDTIuKLuIExWg==
-Date: Tue, 25 Jun 2024 17:03:25 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Jon Kohler <jon@nutanix.com>
-Cc: Christian Benvenuti <benve@cisco.com>, Satish Kharat
- <satishkh@cisco.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] enic: add ethtool get_channel support
-Message-ID: <20240625170325.77b9ddd5@kernel.org>
-In-Reply-To: <20240624184900.3998084-1-jon@nutanix.com>
-References: <20240624184900.3998084-1-jon@nutanix.com>
+	s=arc-20240116; t=1719360469; c=relaxed/simple;
+	bh=WaXeH1CwJQh0yqRTigKsUBZq3GcS2PuMgp0DaeGAN7I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ny0yuHn0ErB1g4ikG/iEQxgpX/bSHRC9fMMBzWKIcYJ90bf0AtndkkDNxyA4gfvP/aXB3MKnIFY75m02kbSZQxKPUoZRPq3xYPFOxX7jCMm40/kyp/47Soy9WgyRbBhdt4XyqHXmHyhTOofUYxEeIc8bFczmdyQyrSOTpqOHat4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=LXaNHlwS; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from [192.168.68.112] (ppp118-210-79-194.adl-adc-lon-bras32.tpg.internode.on.net [118.210.79.194])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id D6BF720009;
+	Wed, 26 Jun 2024 08:07:42 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1719360464;
+	bh=WaXeH1CwJQh0yqRTigKsUBZq3GcS2PuMgp0DaeGAN7I=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=LXaNHlwS+HZ5y2X2J/vB6bvpJbPMhWs9XqiSuo8zdiQcw2raaGO03puFpw5lRBEtO
+	 bECin2der35xrQLabJJsrlfScb1SRNwF6zTeR3GIEeDx50WKbzH93ZOnD8r0D/Dl52
+	 Rl8dViWrBYIPVxPO6tczVXQbUgQDmED/r5iROkwuzi2w9619e2XfJVOEBahCOYaDoQ
+	 OtY2YRBQFjH9CyPR9kRBX22Iw4vujT9haO15cpdPzh+/Hg/f5sGYahxqBp5ofhGEcd
+	 jJ1cRYjvzibC7IqCJY00rIjJuwA79MHF+e1i7AZwXgXtSdKhi8Hz9n8TYUzVeNvdaa
+	 Saozc3s/dVy6A==
+Message-ID: <c025e0db6455e3d79fbaf1ff38d72c9f8db7018d.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v4] usb: gadget: aspeed_udc: validate endpoint index for
+ ast udc
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Ma Ke <make24@iscas.ac.cn>, neal_liu@aspeedtech.com, 
+	gregkh@linuxfoundation.org, joel@jms.id.au
+Cc: linux-aspeed@lists.ozlabs.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Date: Wed, 26 Jun 2024 09:37:37 +0930
+In-Reply-To: <20240625022306.2568122-1-make24@iscas.ac.cn>
+References: <20240625022306.2568122-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Mon, 24 Jun 2024 11:49:00 -0700 Jon Kohler wrote:
-> +	switch (vnic_dev_get_intr_mode(enic->vdev)) {
-> +	case VNIC_DEV_INTR_MODE_MSIX:
-> +		channels->max_rx = ENIC_RQ_MAX;
-> +		channels->max_tx = ENIC_WQ_MAX;
-> +		channels->rx_count = enic->rq_count;
-> +		channels->tx_count = enic->wq_count;
-> +		break;
-> +	case VNIC_DEV_INTR_MODE_MSI:
-> +		channels->max_rx = 1;
-> +		channels->max_tx = 1;
-> +		channels->rx_count = 1;
-> +		channels->tx_count = 1;
-> +		break;
-> +	case VNIC_DEV_INTR_MODE_INTX:
-> +		channels->max_combined = 1;
-> +		channels->combined_count = 1;
-> +	default:
-> +		break;
-> +	}
+On Tue, 2024-06-25 at 10:23 +0800, Ma Ke wrote:
+> We should verify the bound of the array to assure that host
+> may not manipulate the index to point past endpoint array.
+>=20
+> Found by static analysis.
+>=20
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
 
-sorry for not responding properly to your earlier email, but I think
-MSI should also be combined. What matters is whether the IRQ serves
-just one of {Rx, Tx} or both.
-
-For MSI, I see:
-
-1 . enic_dev_init() does:
-	netif_napi_add(netdev, &enic->napi[0], enic_poll);
-                                               ^^^^^^^^^
-
-2. enic_request_intr() does
-	request_irq(enic->pdev->irq, enic_isr_msi, ...
-                                     ^^^^^^^^^^^^
-
-3. enic_isr_msi() does 
-	napi_schedule_irqoff(&enic->napi[0]); 
-thus matching the NAPI from step #1.
-
-4. enic_poll() calls both enic_wq_service, and enic_rq_service
-
-So it's combined, AFAICT, similar to INTX in the relevant parts.
--- 
-pw-bot: cr
+Reviewed-by: Andrew Jeffery <andrew@codeconstruct.com.au>
 
