@@ -1,110 +1,195 @@
-Return-Path: <linux-kernel+bounces-231641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CD23919B30
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:37:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26A6B919B36
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:38:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17B722841D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:37:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 550A2B23CDF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:38:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 510A2194148;
-	Wed, 26 Jun 2024 23:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C821194143;
+	Wed, 26 Jun 2024 23:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rt3pnG4M"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="E8XP5vsF"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58C51190073
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 23:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D1C18FC9D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 23:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719445012; cv=none; b=BoVnJcFrr+OeaW0e1oMHi4qqZHo4nuDJufCzf1vyMD/ADD4awV2xzrLOGzvM23OYRK0vsdDhfxs2NuNe7RUUm3m6VotwlkX1glRVZ0Z+ZPUfv9brrLkDFeCQ4/8pqP3pwFeJeWAKxcnABvliunIsCrLzYB00Abc8CD7U8rEdRoM=
+	t=1719445122; cv=none; b=Kzlt7bSuVA0BmKIrpWj97K3XOo35yyjSNQsDP+2aDzPjOa4gz0wE1i1i1UHo+TrMS6mlfQ/6aa2oRdkWAs9qXflc9mrfu7dfpLeatn4olrlqZiYaGxQjgNLkkd3bc4F/1WxcQufitKMkVTBHzCKuNuZXKLOqJEd9W46EgmpWUC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719445012; c=relaxed/simple;
-	bh=z/wAF2IKsQ5synR7GDt8p9XW7wQtUDuAPAF7D3cS6cE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HLsVeJfzGlpFAMx+a5J1h71R3rAwxmPoTNkNmzkYPh3dgeuVFOegtfRLvshXemtIiNJVY/sMzCwMPNhsefVdp3lpExzFdGEL/Awj4r+fcyFsw9XyfWy5CRN9HImj5Kq1uuWSz8TQn797e0rnxUKkVMqxDqkQeuOmZfIX7T2Ln7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rt3pnG4M; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1f70ec6ff8bso44805ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:36:51 -0700 (PDT)
+	s=arc-20240116; t=1719445122; c=relaxed/simple;
+	bh=yMhUcD6XA5r3olQqJIjnjtAAM+yoRZbxb3Sw6OiqKzY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p0EH0TKgQlZD09bIDZQTa/X/NXtQL8NAOw7BBLrfitd/6knEzf46ppLP5QwDJqqCvshbHr8YkWJ8kH5EWqpGh8Blg9Coyqz8JT3kaJTYrmZmtgDgG57GVUaORrqlbr8Kt3qFI/mqh7T4bTFLVAMriwdgTwNbwm1pPuy/4J3ca0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=E8XP5vsF; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2c7cfba36f8so1270918a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:38:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719445011; x=1720049811; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oH/qUWFW4tGC7M67sX1amiT3vWfL3r4iG1qiqBFOKFA=;
-        b=rt3pnG4MJ7hLQhRdM8Kke2tbcSbdYgd+gklTSa72kINn5PK0R4a+z2pWzv5tHutOU/
-         ukXyCEqqfjJyjDGKw6OCqn0Se6ebzihvRTNSQBIITxrTr6dCDfT53w4M5+UaI7lJ11gB
-         htJ4FiEkEIs04OnKIrkKNrUzcNYamSh/se2/qnm6uhh7VVs6EleJx+1PdjnxWlYW/TAM
-         +/cdF0BsHd8UIh3qZE2PMUPrORE8WidmUlQaUGTFJ7WPgRun/zTygQ3wnEhGAsoO5Cir
-         mVwNcYxOFQUxPdLjbh6XfzRovtW352xivntqyCaUz+EE7voHeOLDRuA6rTg0Rbw29ytf
-         uHFw==
+        d=tenstorrent.com; s=google; t=1719445119; x=1720049919; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=B5l2iQ8Un/MYJ+DJGhn22FpNWybdeze/D551Fw/5heU=;
+        b=E8XP5vsF3iA2lFi+EVpaqegJPo5ordt52TawI+z8w1oE37kIc4e4DxpWlAIyfycbUm
+         Lgx5IrMcVTSviEAt6NuYF9tzltZ/VomlVXYeF5Fl+BgRlnav1NGg7lyP0fR8BJUUHo0J
+         RMsdFY+ZGdDXq9c+G7IPPtUR6enM3ySKWuQtzvIRGtgtmcA3X8g4gSRoQQpccWEQRcJ/
+         vjtFESfuWSlVzA39C/1JtTaocQZ0EKgUU8apAEIneN4I/UUy92sjo1Pe3nMAzHpTXfMf
+         HqjTTiMWcFHOZsv1w3rg2Oau8RmD+CN8xCHiJ7Vq3cWLzuY5TdD+03hAJd34tldWP5lO
+         LSjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719445011; x=1720049811;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oH/qUWFW4tGC7M67sX1amiT3vWfL3r4iG1qiqBFOKFA=;
-        b=uU61LuVHF8Izpu/WUhtHwhaGJ08/pgyQ443uuvAWn46bjdwKuhEqjL8iwZGD5zjn4B
-         8Kc7bT2w30uH/1N/hR7mysULf2oQFdl70Pxus3KNN6P7jcWCOEXNxaqZJtqWM8YHGYz8
-         iFIRORoKiIAzJnIxIbTojb+P7WSN9jlmVhZ13YnwU9NaVwJXqn6BgQs2z2EJEaXXHRAz
-         tXjx0qy17qm4TIeFxkc46yTSNvHLh/Hcdnb0sfPPzC0+ekkAW22ui+9FMvH4nFSkEXIs
-         PsghZQa9X1NNM/uEX4aUzEx+0P7xNyLIP9YaX2ddIvxCfqSmtcj+EaqKmgvDgfJWy1iW
-         mxNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVssstqjpzOl8JMGxtTVLE3ep1KnPw5BaZDCw3s/Rczlg3WorYSmaXq3Fy3PYV3vPB8LkZAz90Ne5E/q5QbUUOPNDiRYLK+tIaUv9ZK
-X-Gm-Message-State: AOJu0YwEYWktdGaBcXhAHp7H4bmULuwLcE/pNvGv1uw2iInLIBCk52XT
-	UpnMjsub5xRvDdG/g1kn9VesxFFSucKEpnvKp28w6UyDP0kv72fhtK32TB1uJg==
-X-Google-Smtp-Source: AGHT+IGWzunzRKU/pxSD5TKBv4BbD7ipJSDwv30o0P4jS2ap96vNu+qiT1InfYybFnYLD+PBVkyeiQ==
-X-Received: by 2002:a17:902:8648:b0:1ea:963e:2e2d with SMTP id d9443c01a7336-1faa999a933mr1481655ad.24.1719445010425;
-        Wed, 26 Jun 2024 16:36:50 -0700 (PDT)
-Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faac9a75b6sm484945ad.247.2024.06.26.16.36.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 16:36:49 -0700 (PDT)
-Date: Wed, 26 Jun 2024 16:36:46 -0700
-From: William McVicker <willmcvicker@google.com>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	alim.akhtar@samsung.com, s.nawrocki@samsung.com,
-	cw00.choi@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-	kernel-team@android.com, devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/3] arm64: dts: exynos: gs101: add syscon-poweroff and
- syscon-reboot nodes
-Message-ID: <ZnymDq5Yzd0oyuIr@google.com>
-References: <20240626194300.302327-1-peter.griffin@linaro.org>
- <20240626194300.302327-2-peter.griffin@linaro.org>
+        d=1e100.net; s=20230601; t=1719445119; x=1720049919;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=B5l2iQ8Un/MYJ+DJGhn22FpNWybdeze/D551Fw/5heU=;
+        b=lbgcSpouMQ5O97Xi4gHbKkag4Llz6jjKC3aVllGeZXt5hmZT1uao1NSRGGdawvRYvJ
+         mJBJr2QvLB44kjxoJtHNn52iSFir3HQpKPXZq1A9L7xuDeXvusjRGJMBhtD/UT0f2Vbi
+         uNyfRB+AUgrJQfwSZQrkMu7vj1/2v0Kmgn279wquBDXG5wqboBJTJ0CCnpE2qy86N+Zy
+         nDWJcCqZ93LTd85JuKZEUBfhUb+s7ClVpEyeZwC9X9vCv58HNE3uFCGSw6CLVuJxkOCr
+         H6+4Sgqqf6thGoDeHLCW8jpA8KW0maTcU+JwB/z+RgUMeEPvCfRXj9X7tOyEYS6GYt7H
+         tq3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUu+44ldRSMEnZx7MCf/L6Cm8JRKG04+8iE+PnH46jRIpUHuy8htUR4EMmIes96+0xXGJef1gzbYPBolbKGvCYBFfr/ZiZoV2F825ZN
+X-Gm-Message-State: AOJu0YwJZDR3tvcR6BH0sbSVzYQViz1Rpc9JFbpLKnPFNtjCptmb7n4d
+	MFtswWZUWthbfCUzkf/kAzgYskMVId5ikPn4WVo5KA6+mc9spdAunD0AedlXBQ==
+X-Google-Smtp-Source: AGHT+IEIxwlFob/uR3zR47IhM4aRFVDuY3BEZzYIiR7DjwWFH88aC1QjMj212v19rbPR+O7dL4RCqQ==
+X-Received: by 2002:a17:90a:6286:b0:2c8:af45:adb9 with SMTP id 98e67ed59e1d1-2c8af45af82mr6393441a91.0.1719445119379;
+        Wed, 26 Jun 2024 16:38:39 -0700 (PDT)
+Received: from [192.168.50.113] ([27.96.222.4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c8fe9f210esm91677a91.31.2024.06.26.16.38.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 16:38:38 -0700 (PDT)
+Message-ID: <c6609d59-8bfc-462c-98cf-db9b5373a497@tenstorrent.com>
+Date: Thu, 27 Jun 2024 09:38:33 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626194300.302327-2-peter.griffin@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] riscv: implement user_access_begin and families
+To: Jisheng Zhang <jszhang@kernel.org>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240625040500.1788-1-jszhang@kernel.org>
+ <20240625040500.1788-2-jszhang@kernel.org>
+Content-Language: en-US
+From: Cyril Bur <cyrilbur@tenstorrent.com>
+In-Reply-To: <20240625040500.1788-2-jszhang@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 06/26/2024, Peter Griffin wrote:
-> Reboot of gs101 SoC can be handled by setting the
-> bit(SWRESET_SYSTEM[1]) of SYSTEM_CONFIGURATION register(PMU + 0x3a00).
+
+
+On 25/6/2024 2:04 pm, Jisheng Zhang wrote:
+> Currently, when a function like strncpy_from_user() is called,
+> the userspace access protection is disabled and enabled
+> for every word read.
 > 
-> Poweroff of gs101 SoC can be handled by setting bit(DATA[8]) of
-> PAD_CTRL_PWR_HOLD register (PMU + 0x3e9c).
+> By implementing user_access_begin and families, the protection
+> is disabled at the beginning of the copy and enabled at the end.
 > 
-> Tested using "reboot" and "poweroff -p" commands.
+> The __inttype macro is borrowed from x86 implementation.
 > 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
-Tested-by: Will McVicker <willmcvicker@google.com>
+Beat me to it, I've written an almost identical patch. The performance 
+improvement where the unsafe_ variants are used is very good even 
+without the rest of the series.
 
-Thanks Peter. I verified the device reboots and powers off with these updates.
-
---Will
+Reviewed-by: Cyril Bur <cyrilbur@tenstorrent.com>
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+> ---
+>   arch/riscv/include/asm/uaccess.h | 63 ++++++++++++++++++++++++++++++++
+>   1 file changed, 63 insertions(+)
+> 
+> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
+> index 72ec1d9bd3f3..09d4ca37522c 100644
+> --- a/arch/riscv/include/asm/uaccess.h
+> +++ b/arch/riscv/include/asm/uaccess.h
+> @@ -28,6 +28,19 @@
+>   #define __disable_user_access()							\
+>   	__asm__ __volatile__ ("csrc sstatus, %0" : : "r" (SR_SUM) : "memory")
+>   
+> +/*
+> + * This is the smallest unsigned integer type that can fit a value
+> + * (up to 'long long')
+> + */
+> +#define __inttype(x) __typeof__(		\
+> +	__typefits(x,char,			\
+> +	  __typefits(x,short,			\
+> +	    __typefits(x,int,			\
+> +	      __typefits(x,long,0ULL)))))
+> +
+> +#define __typefits(x,type,not) \
+> +	__builtin_choose_expr(sizeof(x)<=sizeof(type),(unsigned type)0,not)
+> +
+>   /*
+>    * The exception table consists of pairs of addresses: the first is the
+>    * address of an instruction that is allowed to fault, and the second is
+> @@ -335,6 +348,56 @@ do {									\
+>   		goto err_label;						\
+>   } while (0)
+>   
+> +static __must_check __always_inline bool user_access_begin(const void __user *ptr, size_t len)
+> +{
+> +	if (unlikely(!access_ok(ptr,len)))
+> +		return 0;
+> +	__enable_user_access();
+> +	return 1;
+> +}
+> +#define user_access_begin(a,b)	user_access_begin(a,b)
+> +#define user_access_end()	__disable_user_access();
+> +
+> +static inline unsigned long user_access_save(void) { return 0UL; }
+> +static inline void user_access_restore(unsigned long enabled) { }
+> +
+> +#define unsafe_put_user(x, ptr, label)	do {				\
+> +	long __kr_err = 0;						\
+> +	__put_user_nocheck(x, (ptr), __kr_err);				\
+> +	if (__kr_err) goto label;					\
+> +} while (0)
+> +
+> +#define unsafe_get_user(x, ptr, label)	do {				\
+> +	long __kr_err = 0;						\
+> +	__inttype(*(ptr)) __gu_val;					\
+> +	__get_user_nocheck(__gu_val, (ptr), __kr_err);			\
+> +	(x) = (__force __typeof__(*(ptr)))__gu_val;			\
+> +	if (__kr_err) goto label;					\
+> +} while (0)
+> +
+> +/*
+> + * We want the unsafe accessors to always be inlined and use
+> + * the error labels - thus the macro games.
+> + */
+> +#define unsafe_copy_loop(dst, src, len, type, label)				\
+> +	while (len >= sizeof(type)) {						\
+> +		unsafe_put_user(*(type *)(src),(type __user *)(dst),label);	\
+> +		dst += sizeof(type);						\
+> +		src += sizeof(type);						\
+> +		len -= sizeof(type);						\
+> +	}
+> +
+> +#define unsafe_copy_to_user(_dst,_src,_len,label)			\
+> +do {									\
+> +	char __user *__ucu_dst = (_dst);				\
+> +	const char *__ucu_src = (_src);					\
+> +	size_t __ucu_len = (_len);					\
+> +	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u64, label);	\
+> +	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u32, label);	\
+> +	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u16, label);	\
+> +	unsafe_copy_loop(__ucu_dst, __ucu_src, __ucu_len, u8, label);	\
+> +} while (0)
+> +
+>   #else /* CONFIG_MMU */
+>   #include <asm-generic/uaccess.h>
+>   #endif /* CONFIG_MMU */
 
