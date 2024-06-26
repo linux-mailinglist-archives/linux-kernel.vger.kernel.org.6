@@ -1,151 +1,167 @@
-Return-Path: <linux-kernel+bounces-230322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C0B3917B40
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:46:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8330B917B44
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 169C1281867
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:46:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6B601C21FA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2015316A92F;
-	Wed, 26 Jun 2024 08:45:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A816A16A37C;
+	Wed, 26 Jun 2024 08:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="AXgM3s/B"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aHugTBZI"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97D48166319
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:45:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA173B1A1
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719391545; cv=none; b=mZceujzynTTV2fheX+o6ULIXeRMNG8kIEXAzi1LQZVuADAffvFuEANAK6BUPv/WJebPfg6eGZihWw3COgDt9+EB2NEMb/FdJYHswdegnHIDuleRTT1qKHqvg8oJheV/UqKTXxIC14QNQ1SG3zJpqwLIkeziJB/FE2AHHredYbrQ=
+	t=1719391574; cv=none; b=HDkYdIgWQtzor3tOgbVRPmiJLy4/1HhLUBV17p7UIEhmNjFIDyG71WEj8U6WrSwYW/oTAcj0oOyFEFwaJTnAhT2G2YhfwxMrgLR1cKo6UEaV4xwR3+bLt0YP2/2OYsGe6+yZZJMzYhvnP7KOgFV02V7HeQ2yHvAtAfHOTYpIx/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719391545; c=relaxed/simple;
-	bh=DzNCPz0l+qOT0t/ADA4oPjAIWHqdAm5rRYNgDCTIR/w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G90u4dG1V8fFMnBKAfQdpy59erWCDxge8oastoq0v3xV0Zwyd9GG2qQvqkg4DZfX+8QmSjI0o76RIsHNcLCj1CCDd7tkbMcoMz11XJTxiD7o4S9jG6RmPTL/nP3Br4TwxGK49DstejpwkwE/3avpS/gP1fRkrMeHRSw9WtYDHAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=AXgM3s/B; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a724440f597so479019166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:45:43 -0700 (PDT)
+	s=arc-20240116; t=1719391574; c=relaxed/simple;
+	bh=a4k0vpYgW5Q44Zgxxl4VntJc5r2rzGgeLjih3avWkW8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CMohuy29ZjbPGY4fOjiPDDSVrOCcRh7EsmXQ+ZmQbzlIQj+Gnc2QO97AP/D1roAgMW3aTQIbUoes3bQdupTltkJQlX9PBX8m5898RAcIUzGkZY0Ik0cvbtGg1cmAFp1XNjkN7QCw2jQ8BJ2P7b0MZ+b01rruDbAYy0uMlvzqWoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aHugTBZI; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec52fbb50cso41926561fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:46:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1719391542; x=1719996342; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=neUGPkJcfoHd8KdVXvztCJl9LwrUDYQkaArrGg63MBY=;
-        b=AXgM3s/BCGsdre8yMo6b7kgR1Ntq9J7YiTRU0uLUzhEICEan5GNVvNbud5YKebP7BY
-         Y4yKpQx7f3RLDDSd46Mc/R3pax+iFWmQaicoAcxmCd663AJCcjgM7kQHKhpG03VDi5Mo
-         c8/0slWxsBYq6Jn1eXP7jEQw/NK3NdKdIB8CXmCpTC5LIudm9ji6sa6nhtRdvZzWd/w0
-         ASSKLhq2FjYai91qvBZmV7vVUG8/RSpPzuI9IucB5nQrQ7Horm6CsIfpuMzfg91BuQN0
-         DDGpPImlUnslpdI2Fs8QGkreXDkghlSSOCR5pUioLXWXw3k1w7SRLUNqnYifbjEJaMm9
-         ZowQ==
+        d=suse.com; s=google; t=1719391571; x=1719996371; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yDRFjTdMNUzEUOE9x05fu2SY9ut8HJs3+qpIaAb+KZo=;
+        b=aHugTBZIVL9GF+ymdhJbq13kCQeT3TeE+IEDMSOAYxRLB7sPqAQoisz0pC8P3bHhN1
+         rVG+a1Im4PBoR6wDvOHwRgFkQy8eDwD4jFnwsnTfCdz2ysfZp9EZChi1WeZGeF3Tf7qj
+         n/wE/zUERf7KtPFXD3PbWU5Q24XrgV69xKI4xHquCgOnlkAWLpcsyxCXJcy+B5FRLOdx
+         gzIDrxI/mketvJmQoNoqNzeFolTiX2frytpzrUihLyY1waTR5i5tCUavxSVrH/kXOXgI
+         zHbcjgtTxVv9rT0YHJMWWhM+PTIqqW7n5SnBD4nBx4GZEY/vv5dOHxYhoS3sziF0Lxjf
+         7bvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719391542; x=1719996342;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=neUGPkJcfoHd8KdVXvztCJl9LwrUDYQkaArrGg63MBY=;
-        b=CMMUcCFc69ZHZ1uK8z1Kg+MjlLYwLn6N9pb5Dbgfs0z2LZ3dfWOBs40gh30lgN0PCT
-         qeCYenZ0VcdL3Wo93cO7pxr0z3v3JAXsvBxNKTkBKzenp+XVAu8o/oHvFrS+zSrMu76r
-         dchobULAwiqhPi49B5DKbX9YRVpexO6aa82Mvuv8EFB22RmjFwEKGgGESybIQiwnYtpU
-         nh814jOFAK291QXpN8J0TgvBgfZstHEDhO26Fye4GVhSkCdEZwHymjxhYa41yf2q7jGP
-         0D9DmXTFYohU6bO1CcC2J8f0EQU/gIUgFue2n4I+5fW3MXehvvjHTEwXDv6mj5f4FueV
-         MmTg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFHCQfmDdPzBUMjiLqraeUqw5fbZwOkajcim5ls2p93Q+T7EQz0fMZXpU8pxWvC5AmI7p6Iknh798UTDrlLoxcwchqQFE3PNRyJcqC
-X-Gm-Message-State: AOJu0YwYu296+pes6PRUL1IVcbM3KzwsIgTt76Xine7c4ZdaKIz00ihY
-	XCmPKVDciM0slg1sPtqLuPWnkwRL6YoEHlb8be3BCVxepgftpxx8EfLdOKSCtcE=
-X-Google-Smtp-Source: AGHT+IGDBef0WRtb0XJ8d8v5qL2Ie1rZUFdFV7B0czkJOt4XCBhN/gvVhIsedYqTp0lfpWm1P/r0cA==
-X-Received: by 2002:a17:906:911:b0:a6f:56d2:8f0b with SMTP id a640c23a62f3a-a7245b6dc3dmr664354066b.3.1719391541930;
-        Wed, 26 Jun 2024 01:45:41 -0700 (PDT)
-Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72605ff279sm218647166b.5.2024.06.26.01.45.41
+        d=1e100.net; s=20230601; t=1719391571; x=1719996371;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yDRFjTdMNUzEUOE9x05fu2SY9ut8HJs3+qpIaAb+KZo=;
+        b=Fr56+YMTj6vasQaQpeOOYX4Anxhe6blOONhCXrcmh1yscL6Hnkg43BRY6XP97in7nf
+         EC002SSOCewVGWvsnOTU3EVFsR9sd/GxvzD56IfCMeAbQWhPL9y+BKJYbf+nHFSxaioL
+         WEBmN8i6yM2qQMRof0U2gZ1fNd5mVSBGr7J8yNkmRmGpfPqUdME8h6PoOckFlZKns+T9
+         yhrgYOl6gezTY3dv8b3WbpQtm4rl7NGwEi64ANPjEctZbOqVsDvocX1IcZejtkdMWUyz
+         3SD6jMFfcLU+/7bDROW6DQ7MTjCLumEEGe5y2sCbC5YgHAfqv/yjO+XpjXxJutend4qo
+         d9XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWn5EoxbmgPisb7OjZch70Ppxgxj7vGNbNrLcUUrATz/l7BIs3Ykh9HKWsXzZw9JJ1pNj4oaIZajQ8UNyGy8kIkf5jk+S/UCOqHj6hr
+X-Gm-Message-State: AOJu0YxMK/lvuSOJCUWrKYk/gz/ruTCvaqgdDlnwvXgm2FbvLTA2DjgV
+	ReAjkkZSBINCTkRcpgJuk+kgvNp4wf468N7KrIAJtpyy0SnK0W4Ax//MTHqgyyo=
+X-Google-Smtp-Source: AGHT+IHloQsSwgyR/8V2BcW+2VgGBMcenO+xh/ZmE7Aj/s5neytXluSwzLViJkSqVnLOOauGHTYTdw==
+X-Received: by 2002:a2e:9b0c:0:b0:2ec:54f3:7b65 with SMTP id 38308e7fff4ca-2ec5b2f034fmr61845241fa.36.1719391570779;
+        Wed, 26 Jun 2024 01:46:10 -0700 (PDT)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb7d245asm94901975ad.232.2024.06.26.01.46.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 01:45:41 -0700 (PDT)
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
-To: Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: naresh.solanki@9elements.com,
-	andy.shevchenko@gmail.com,
-	broonie@kernel.org,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] pinctrl: cy8c95x0: Update cache modification
-Date: Wed, 26 Jun 2024 10:45:23 +0200
-Message-ID: <20240626084525.787298-2-patrick.rudolph@9elements.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240626084525.787298-1-patrick.rudolph@9elements.com>
-References: <20240626084525.787298-1-patrick.rudolph@9elements.com>
+        Wed, 26 Jun 2024 01:46:10 -0700 (PDT)
+Date: Wed, 26 Jun 2024 10:45:55 +0200
+From: Petr Mladek <pmladek@suse.com>
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	John Ogness <john.ogness@linutronix.de>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
+Message-ID: <ZnvVQ5cs9F0b7paI@pathway.suse.cz>
+References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
+ <87ed8lxg1c.fsf@jogness.linutronix.de>
+ <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
+ <87ikxxxbwd.fsf@jogness.linutronix.de>
+ <ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
+ <CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com>
+ <7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
 
-In the previous review cycle the regmap cache update code was
-questioned since it seems and odd way of using regmap_update_bits().
-Thus update the regmap cache modification code to better explain
-what it does and why it's done. This is no functional change, but
-it's improving code maintainability.
+On Wed 2024-06-26 08:52:44, Tetsuo Handa wrote:
+> On 2024/06/26 4:32, Alexei Starovoitov wrote:
+> >>>>> On 2024-06-25, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
+> >>>>>> syzbot is reporting circular locking dependency inside __bpf_prog_run(),
+> >>>>>> for fault injection calls printk() despite rq lock is already held.
+> > 
+> > If you want to add printk_deferred_enter() it
+> > probably should be in should_fail_ex(). Not here.
+> > We will not be wrapping all bpf progs this way.
+> 
+> should_fail_ex() is just an instance.
+> Three months ago you said "bpf never calls printk()" at
+> https://lkml.kernel.org/r/CAADnVQLmLMt2bF9aAB26dtBCvy2oUFt+AAKDRgTTrc7Xk_zxJQ@mail.gmail.com ,
+> but bpf does indirectly call printk() due to debug functionality.
+> 
+> We will be able to stop wrapping with printk_deferred_enter() after the printk
+> rework completes ( https://lkml.kernel.org/r/ZXBCB2Gv1O-1-T6f@alley ). But we
+> can't predict how long we need to wait for all console drivers to get converted.
+> 
+> Until the printk rework completes, it is responsibility of the caller to guard
+> whatever possible printk() with rq lock already held.
 
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
----
- drivers/pinctrl/pinctrl-cy8c95x0.c | 22 +++++++++-------------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+Honestly, even the current printk rework does not solve the deadlock
+with rq lock completely. The console_lock/console_sem will still be needed for
+serialization with early consoles. It might need to be used when
+printing emergency messages while there is still a boot console.
 
-diff --git a/drivers/pinctrl/pinctrl-cy8c95x0.c b/drivers/pinctrl/pinctrl-cy8c95x0.c
-index 781949e0e09e..9a92707d2525 100644
---- a/drivers/pinctrl/pinctrl-cy8c95x0.c
-+++ b/drivers/pinctrl/pinctrl-cy8c95x0.c
-@@ -475,7 +475,7 @@ static inline int cy8c95x0_regmap_update_bits_base(struct cy8c95x0_pinctrl *chip
- 						   bool *change, bool async,
- 						   bool force)
- {
--	int ret, off, i, read_val;
-+	int ret, off, i;
- 
- 	/* Caller should never modify PORTSEL directly */
- 	if (reg == CY8C95X0_PORTSEL)
-@@ -497,24 +497,20 @@ static inline int cy8c95x0_regmap_update_bits_base(struct cy8c95x0_pinctrl *chip
- 	if (ret < 0)
- 		return ret;
- 
--	/* Update the cache when a WC bit is written */
-+	/* Mimic what hardware does and update the cache when a WC bit is written.
-+	 * Allows to mark the registers as non-volatile and reduces I/O cycles.
-+	 */
- 	if (cy8c95x0_wc_register(reg) && (mask & val)) {
-+		/* Writing a 1 clears set bits in the other drive mode registers */
-+		regcache_cache_only(chip->regmap, true);
- 		for (i = CY8C95X0_DRV_PU; i <= CY8C95X0_DRV_HIZ; i++) {
- 			if (i == reg)
- 				continue;
--			off = CY8C95X0_MUX_REGMAP_TO_OFFSET(i, port);
--
--			ret = regmap_read(chip->regmap, off, &read_val);
--			if (ret < 0)
--				continue;
- 
--			if (!(read_val & mask & val))
--				continue;
--
--			regcache_cache_only(chip->regmap, true);
--			regmap_update_bits(chip->regmap, off, mask & val, 0);
--			regcache_cache_only(chip->regmap, false);
-+			off = CY8C95X0_MUX_REGMAP_TO_OFFSET(i, port);
-+			regmap_clear_bits(chip->regmap, off, mask & val);
- 		}
-+		regcache_cache_only(chip->regmap, false);
- 	}
- 
- 	return ret;
--- 
-2.44.0
+I am sure that it might be solved but I am not aware of any plan at
+the moment.
 
+I have just got a crazy idea. printk() needs to take the rq lock in
+console_unlock() only when there is a waiter for the lock. The problem
+might be gone if we offloaded the wakeup into an irq_work.
+
+It is just an idea. I haven't thought much of all consequences and
+scenarios. It might violate some basic locking rule and might not work.
+Anyway, it would require special variant for unlocking semaphore which would
+be used in console_unlock().
+
+> If you think that only
+> individual function that may call printk() (e.g. should_fail_ex()) should be
+> wrapped, just saying "We will not be wrapping all bpf progs this way" does not
+> help, for we need to scatter migrate_{disable,enable}() overhead as well as
+> printk_deferred_{enter,exit}() to individual function despite majority of callers
+> do not call e.g. should_fail_ex() with rq lock already held. Only who needs to
+> call e.g. should_fail_ex() with rq lock already held should pay the cost. In this
+> case, the one who should pay the cost is tracing hooks that are called with rq
+> lock already held. I don't think that it is reasonable to add overhead to all
+> users because tracing hooks might not be enabled or bpf program might not call
+> e.g. should_fail_ex().
+> 
+> If you have a method that we can predict whether e.g. should_fail_ex() is called,
+> you can wrap only bpf progs that call e.g. should_fail_ex(). But it is your role
+> to maintain list of functions that might trigger printk(). I think that you don't
+> want such burden (as well as all users don't want burden/overhead of adding
+> migrate_{disable,enable}() only for the sake of bpf subsystem).
+
+Yeah, converting printk() into printk_deferred() or using
+printk_deferred_enter() around particular code paths is a whac-a-mole
+game.
+
+Best Regards,
+Petr
 
