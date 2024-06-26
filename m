@@ -1,199 +1,156 @@
-Return-Path: <linux-kernel+bounces-230239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AD13917A3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:55:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A584917A39
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E5011C235CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:55:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B3F41C23619
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CB2315EFC6;
-	Wed, 26 Jun 2024 07:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CC615FA71;
+	Wed, 26 Jun 2024 07:54:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FoP5V6Fk"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NgTcvQuf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962EE15CD63
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C360F1FBB;
+	Wed, 26 Jun 2024 07:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719388488; cv=none; b=LWLDTGd+QjW1Aof2/7YGDrlYZVoJgiLNIp1tZ9gx7e9J3qLkPqzNpAzBtEKTuRNc83njDkL8Qam1yvrpU9gOJkVtk7j3TuqARATiYp9lZeuMLMtrnbS8smWTgsy6mEvXQAUFyW1dJH+2nfqb6N3HDqCiFzCtiD9A7/RGKdzaNK8=
+	t=1719388471; cv=none; b=ooUvd7hqyiBzyz5iq9vUz25Dddvih2rZ7MayAmYFYdbLc5KXRQHmxNYX12cZnXgyZl7YyGL3RQ4M5cLWLwcu/Ps/ix2ICQ+DhojXyfVVBO91eGIsnLUrSSjNxPw8h78YbJCrV0HwaEK3JCVOyq1kgtwqjm/3+eryVZ9mmJV7ZqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719388488; c=relaxed/simple;
-	bh=3lM7Krd3eubuTSd3weFykcxesluFoVIhP2qOjhiNjTY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mVE4VHAuSLRfeVWCT+daZUNX+LiRUmaRAL0Hdcpvvl+a0m3FtC7R8Y35g2cECPOOuoeLKrk01MphRZu+c/B23PfyzhtId/sz4yhIfBxQQpvWiqJ1pG7q86fLZSyX4hn4CKJJgkQ5cb+0i+iDW0r9OGmh+ksszjwpZjtXvGk+MqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FoP5V6Fk; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso66250761fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:54:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719388484; x=1719993284; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E9l4PBSU230KyF+70o0NVWXuUQoiQQyfQa7UJiR8ZC4=;
-        b=FoP5V6FkC2f4DaphdtBZca6xFoNcS6UUbmUJ7yIUG6XJ+4VaZTL1/fBjDEQEJzX++n
-         Q6tS4/oNfQbjpgZBTtSlTns8BfMKBh/yvJVSTkLiPym1Hk5RQ43ybfZ4wIEPnV4fRfVN
-         n3cu3f59D6xwzY2v9nS4tXA29vEcbYRkvrc5xZ2fhrLQ4cG1I7naIIurJdBs6e8GX2R8
-         c8vMD8tDNdTCcnUpaa4+kkXcei8EOCnlJzCAJqc2Kp65/2DfK4ZK+C1zYmsrZ510DAaS
-         R9w1KjKqWbc7x+m2/R+jd3MscEqKDUAXkdzVrPMdRwqKCn0O1/P8H5vMU7CvtrlUMP89
-         uPdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719388484; x=1719993284;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E9l4PBSU230KyF+70o0NVWXuUQoiQQyfQa7UJiR8ZC4=;
-        b=phHAI3oMMcB7S22BYOA5+3XJFyBy06HH+6oJPOLKPjfHU9Y5W84t1VmrPcqGSY4a+d
-         rnLv7dYkAlvRy3HeQTktzopTo1dR2ovA2m2sF5fzKrMZMGanrOw/217nhmleWNesVHaK
-         dZSXUZFLURUyPBfmz8GqaFOKTRdq0kcmJ6TLLvNLtBbEhM4w5P5QuCDla6q8Pf3wgwGG
-         5bbii/5N6BQ6QGHAYAzaAhM8AkJ9rqftEDT15dv5BHPbqNoremc7DQZfCZaKzOJQwfRD
-         eva8BZuvFUWchEcYHUIAAjZjQx2VyXKblwuc4jqeuQhPt5pGjqY2Cz4i9IwHL42dBLF/
-         +E8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVkxf0B0WKEHtCGg1bwXFTIDo26LS9lfdVViDNBX9spIHMXKNnprBTG8hi2ASnUK5IYAKMrMws2c6vdnJ+xqUhpA5DZcIjn47Bh6t6O
-X-Gm-Message-State: AOJu0Yw0EIvJV71rPSHonx/XgQ8t9RT8tO5d29LW27Aief9cIsJ1SQg3
-	Aje0G5ZP8m0wKhPWaFoKe8wtWjMPuny3+oGy++L/scaBswj7VQfAdRzqOZEsXMXEpOflsM7zUDA
-	fYKlEJAOxjYXhP24JtQFKf+PdzPQkdlKH3M4=
-X-Google-Smtp-Source: AGHT+IEdM7BL7IYNDJYZSWFp4SHg4gOScBa35KINGjDg3kZVWZCHM2JlMQa+zfdTbKK0IvAx79DqhoCjSlT8PLVH1aI=
-X-Received: by 2002:a2e:86cb:0:b0:2ec:4de9:7332 with SMTP id
- 38308e7fff4ca-2ec593c296bmr56063661fa.2.1719388483724; Wed, 26 Jun 2024
- 00:54:43 -0700 (PDT)
+	s=arc-20240116; t=1719388471; c=relaxed/simple;
+	bh=SbtxvcursYPrSDJUEzv8uDtSs383JJZUnvYrA/hF/4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZFbMd9Mo+TnhMIaQ/MOCsZrKE51a9tg2fOMDtxF/13H6UPTeQl9wGEU/rlNOiN2h38djAGBrqSDoNjkiNZR9FlMQmEHETDGoFf261GoeXf/a2QYolA++IvHWDE08AuIgnqXLokko0DYdU2MJkQ5+fCpAr/b44TVPrMbcSThm08s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NgTcvQuf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC22FC4AF0B;
+	Wed, 26 Jun 2024 07:54:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719388470;
+	bh=SbtxvcursYPrSDJUEzv8uDtSs383JJZUnvYrA/hF/4k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NgTcvQufTogBwZufUbCJXr2yc/1vPoRkdHFeGnYJY8ySQj3TD7HgjAALfFMVVoxqq
+	 DusZlvg+ACiJuMUuqPhWYFVSTFJfLT6iImeTXdK/cGyPk4c8enuKMY06YeO10IwX0B
+	 A3e+BWH0VqwyM1s4f1yfv1baYlUbGl+zOTMByjdfcvxGfC8fdtcuwmrnWtQ4PCCQZ9
+	 0O4oX09quJh7KtFuLRz7oYNQUAJHIGQnbDqy+2UOb7fFcUckcmZHeOdddOxu2r/E9j
+	 Hcor/tKZZ8lZV2YcS61nRuUTOXSQseEGXnMENVDnAnbdQz3uPOXXh2lkoQZl0g1gnR
+	 g+HjSVatDOmlA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sMNUG-000000007vt-0yGY;
+	Wed, 26 Jun 2024 09:54:40 +0200
+Date: Wed, 26 Jun 2024 09:54:40 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Doug Anderson <dianders@chromium.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	linux-arm-msm@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 2/3] serial: qcom-geni: fix soft lockup on sw flow
+ control and suspend
+Message-ID: <ZnvJQDX6NkyRCA8y@hovoldconsulting.com>
+References: <20240624133135.7445-1-johan+linaro@kernel.org>
+ <20240624133135.7445-3-johan+linaro@kernel.org>
+ <CAD=FV=UauWffRM45FsU2SHoKtkVaOEf=Adno+jV+Ashf7NFHuA@mail.gmail.com>
+ <CAD=FV=XPKqjMcWhqk4OKxSOPgDKh-VM4J4oMEdQtgpFBw8WSXA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202406230912.F6XFIyA6-lkp@intel.com> <CAFULd4YVOwxQ4JDaOdscX_vtJsqJBJ5zhd0RtXXutW=Eqh29Qw@mail.gmail.com>
- <CAHk-=wg1h4w_m=Op1U4JsyDjsvqG0Kw1EOVMQ+=5GX_XytdorQ@mail.gmail.com>
- <CAFULd4YR-VkAOKiS5yxSUYi0YMzY1p=pkYe4dOkgFs+A=9AFFA@mail.gmail.com>
- <CAHk-=wi_KMO_rJ6OCr8mAWBRg-irziM=T9wxGC+J1VVoQb39gw@mail.gmail.com>
- <CAHk-=whPqqZVSeJiQsMvsAxtAmtR9iAuB4gg_1sUK2D-uBPpLw@mail.gmail.com>
- <CAFULd4YAeF7=q7DYUh016kabxS8b32qRbFqDBJQrvLq6RjwEVg@mail.gmail.com>
- <CAHk-=wiHo2YeA=TOUf8vxFLOc0+BoH8USaiT25fnX2ynXbrZkg@mail.gmail.com>
- <CAHk-=wgdCs0883dpvZpyna76q9eVcTMvvUVAaBuJMPyrgOhNig@mail.gmail.com>
- <CAFULd4ZW23_RNye6YGbsT0Uo-vOQBM_tBbSJRhh=0HZzXuC_8Q@mail.gmail.com> <CAHk-=wiWEgSo2Tb_bih7mnS27zAPL+RGg_7yX4qK1f710-j-Ng@mail.gmail.com>
-In-Reply-To: <CAHk-=wiWEgSo2Tb_bih7mnS27zAPL+RGg_7yX4qK1f710-j-Ng@mail.gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Wed, 26 Jun 2024 09:54:32 +0200
-Message-ID: <CAFULd4YyamnC5D9SAo0w4EhbawJeS1K2ZqPt9CPUL4+S5uAOZA@mail.gmail.com>
-Subject: Re: arch/x86/include/asm/cmpxchg_32.h:149:9: error: inline assembly
- requires more registers than available
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>, 
-	Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAD=FV=XPKqjMcWhqk4OKxSOPgDKh-VM4J4oMEdQtgpFBw8WSXA@mail.gmail.com>
 
-On Tue, Jun 25, 2024 at 8:31=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> [ Sorry for not being hugely responsive the last few days - I was on
-> the road for a family get-together on the east coast, so I spent time
-> on airplanes and hotels and I don't particularly enjoy working with a
-> laptop ]
->
-> On Mon, 24 Jun 2024 at 08:42, Uros Bizjak <ubizjak@gmail.com> wrote:
-> >
+On Mon, Jun 24, 2024 at 02:58:39PM -0700, Doug Anderson wrote:
+> On Mon, Jun 24, 2024 at 2:23 PM Doug Anderson <dianders@chromium.org> wrote:
+> > On Mon, Jun 24, 2024 at 6:31 AM Johan Hovold <johan+linaro@kernel.org> wrote:
+
+> > > +static void qcom_geni_serial_clear_tx_fifo(struct uart_port *uport)
+> > > +{
+> > > +       struct qcom_geni_serial_port *port = to_dev_port(uport);
+> > > +
+> > >         if (!qcom_geni_serial_main_active(uport))
+> > >                 return;
 > > >
-> > > I'm sending the patch out in the hope that another set of eyes will
-> > > make it actually better.
+> > > +       /*
+> > > +        * Increase watermark level so that TX can be restarted and wait for
+> > > +        * sequencer to start to prevent lockups.
+> > > +        */
+> > > +       writel(port->tx_fifo_depth, uport->membase + SE_GENI_TX_WATERMARK_REG);
+> > > +       qcom_geni_serial_poll_bit(uport, SE_GENI_M_IRQ_STATUS,
+> > > +                                       M_TX_FIFO_WATERMARK_EN, true);
 > >
-> > + _lock "cmpxchg8b 0(%[ptr])", X86_FEATURE_CX8) \
-> >
-> > This can be just:
-> >
-> > + _lock "cmpxchg8b %a[ptr]", X86_FEATURE_CX8) \
->
-> Thanks, yup, will fix.
->
-> > - if (unlikely(!ret)) \
-> > - *(_oldp) =3D o.full; \
-> > + *(_oldp) =3D o; \
-> >
-> > This one should really update only when cmpxchg fails.
->
-> The thing is, when cmpxchg doesn't fail, then oldp should already be "old=
-", no?
+> > Oh, maybe this "wait for sequencer to start to prevent lockups." is
+> > the part that I was missing? Can you explain more about what's going
+> > on here? Why does waiting for the watermark interrupt to fire prevent
+> > lockups? I would have imagined that the watermark interrupt would be
+> > part of the geni hardware and have nothing to do with the firmware
+> > running on the other end, so I'm not sure why it firing somehow would
+> > prevent a lockup. Was this just by trial and error?
+> 
+> Actually, the more I look at it the more confused I am about your
+> qcom_geni_serial_clear_tx_fifo(). Can you explain and maybe add some
+> inline comments in the function since it's not obvious? Specifically,
+> things I'm confused about with your patch:
+> 
+> 1. The function is named qcom_geni_serial_clear_tx_fifo() which
+> implies that when it finishes that the hardware FIFO will have nothing
+> in it. ...but how does your code ensure this?
 
-Also replying here with the reply to your proposed patch, to document
-a subtle issue with try_cmpxchg:
+Yeah, I realised after I sent out the series that this may not be the
+case. I was under the impression that cancelling a command would discard
+the data in the FIFO (e.g. when starting the next command) but that was
+probably an error in my mental model.
 
-You probably want to look at 44fe84459faf1 ("locking/atomic: Fix
-atomic_try_cmpxchg() semantics") [1] and the long LKML discussion at
-[2].
+Do you see any way to discard the FIFO in the docs you have access to?
+ 
+> 2. If the function is really clearing the FIFOs then why do we need to
+> adjust the watermark level? The fact that you need to adjust the
+> watermark levels implies (to me) that there are things stuck in the
+> FIFO still. ...but then what happens to those characters? When are
+> they sent?
 
---quote--
-This code is broken with the current implementation, the problem is
-with unconditional update of *__po.
+Exactly, there is data there according to the FIFO status, but I
+erroneously interpreted it as a it would be discarded (e.g. when
+starting the next command).
 
-In case of success it writes the same value back into *__po, but in
-case of cmpxchg success we might have lose ownership of some memory
-locations and potentially over what __po has pointed to. The same
-holds for the re-read of *__po.
---/quote--
+> 3. On my hardware you're setting the FIFO level to 16 here. The docs I
+> have say that if the FIFO level is "less than" the value you set here
+> then the interrupt will go off and further clarifies that if you set
+> the register to 1 here then you'll get interrupted when the FIFO is
+> empty. So what happens with your solution if the FIFO is completely
+> full? In that case you'd have to set this to 17, right? ...but then I
+> could believe that might confuse the interrupt handler which would get
+> told to start transmitting when there is no room for anything.
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?id=
-=3D44fe84459faf1a7781595b7c64cd36daf2f2827d
-[2] https://lore.kernel.org/lkml/CACT4Y+bG+a0w6j6v1AmBE7fqqMSPyPEm4QimCzCou=
-icmHT8FqA@mail.gmail.com/
+Indeed. I may implicitly be relying on the absence of hardware flow
+control as well so that waiting for one character to be sent is what
+makes this work.
 
-Uros.
+> Maybe something is missing in my mental model here and testing your
+> patch and hitting Ctrl-C seems to work, but I don't really understand
+> why so hopefully you can clarify! :-)
 
->
-> I mean, by the very definition, atomic_try_cmpxchg() can *not* be
-> successful if the new value didn't match the old one.
->
-> I mean, just look at the very doc you point to - the "definition" is
->
->   bool atomic_try_cmpxchg(atomic_t *ptr, int *oldp, int new)
->   {
->     int ret, old =3D *oldp;
->     ret =3D atomic_cmpxchg(ptr, old, new);
->     if (ret !=3D old)
->       *oldp =3D ret;
->     return ret =3D=3D old;
->   }
->
-> iow, it only returns success of "ret =3D=3D old", and "old" by definition
-> is "the contents of oldp".
->
-> (Here "oldp" is a local variable, not something that can be changing).
->
-> So I *think* the whole
->
->     if (ret !=3D old)
->       *oldp =3D ret;
->
-> is actually counter-productive, and could/should be just that simpler
-> unconditional *oldp =3D ret, because you have two cases:
->
->  - ret =3D=3D old: the assignment doesn't change anything and is a no-op
->
->  - ret !=3D- old: the assignment needs to be done
->
-> but doing it *unconditionally* means that now as fat as the compiler
-> is concerned, the original *oldp value is unconditionally dead, which
-> sounds to me like it should be good for register allocation (the
-> context here being that it _looks_ like a pointer access, but it's
-> really meant to be a "in-out argument in a register").
->
-> Now, in practice, I suspect that everybody checks the return value and
-> "old" is never used afterwards in the success case, so in that sense
-> this doesn't matter and it's all dead regardless.
->
-> But it seems to be a complication in the docs and the implementation.
->
-> Of course, I may be missing something completely obvious, and/or you
-> have some subtle code generation reason why you prefer the conditional
-> there. Feel free to explain,
->
->              Linus
+I spent too much time trying to reverse engineer this hw over the
+weekend and wanted to get this out as a counter proposal as it indicated
+that we may be able to find a smaller fix. The series addresses the
+serial getty issues, but as I mentioned yesterday there is some
+interaction with the console left to be resolved before this can be an
+alternative.
+
+If it wasn't for the hard lockup I would have sent the whole thing as
+an RFC.
+
+Johan
 
