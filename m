@@ -1,116 +1,97 @@
-Return-Path: <linux-kernel+bounces-231610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7948D919ACE
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:42:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB9D919AD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32D11283C00
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:42:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C65B31F21F56
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:48:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A1C194083;
-	Wed, 26 Jun 2024 22:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D7B6194081;
+	Wed, 26 Jun 2024 22:48:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SDBoWElI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aoJ9CWRn"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 946EDBE71;
-	Wed, 26 Jun 2024 22:42:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B7D15D5C1;
+	Wed, 26 Jun 2024 22:48:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719441749; cv=none; b=ZcDeXQMXdDNxq0pFGFI5lstpHPsJBmOno+vB+A3pIAH9zGrqemisiNiKdxoIDzrcanE1UvYVvHdqBA/DjAb5zzZPLCet9DgNJig/DK8vAtPgS92Vk/mD2wqlFN/ZBN469djL9SJ7VILkf2EHqlA/9gDE4DB4jTEPk6N4QgeliaE=
+	t=1719442131; cv=none; b=aJ3YkiopymuWW4sDHvdajGplRR3AwwQHR/7uGup82OPZ+GojRodemwcOfpWTPZsQ05NRZrEHEWH34yEqnbfA6h46m/qa9U+jQaBs80Z3ZnWEdtycWeLvODhW7H7FwzQ3nC6pCCxdzKrWbIAfAgYbAuxFAldZCQo5KuPqpU8ucu4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719441749; c=relaxed/simple;
-	bh=vVkRE+alcbTOcriSkJLSL0UYLeb3jLd4R/4hVTPm+cs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W0raGKSalS1Rs63/kmBbFvaJ4sXaisD5zpTBQJkMIifojygFUOp0Z7mSBVTLMODCpHwMeSSx7H5TGqYElGwRD2hpZAJJ8TleNYfwv1zN062sZO/jdkUSxhycx3SQh8WNvjRRGw48WkywrqhA6p5IqyrCx4h6Fjsxd7CxgGYlaFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SDBoWElI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A69EAC116B1;
-	Wed, 26 Jun 2024 22:42:25 +0000 (UTC)
+	s=arc-20240116; t=1719442131; c=relaxed/simple;
+	bh=Y3x/7Ek//hFsCeCb/ZW/lS86n7PzhLJb9wiw4wJsyWM=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=bNOpDTU+g+k1kd2cTFB42yyj0/0uXn/S2yidxzG1U0BHbx/3yRR5PEN6M0sWDGShNMkj8bTR6oRzj4xOBRrHX0SKNV1GrfnGAVTz5KNsXuQatXqXJUnEn4S3bUs5vpyAZ85+C6TQD9r92GWWf5YhsJrA0ZtKT+haxjO3b/JpvsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aoJ9CWRn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5E3FC116B1;
+	Wed, 26 Jun 2024 22:48:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719441749;
-	bh=vVkRE+alcbTOcriSkJLSL0UYLeb3jLd4R/4hVTPm+cs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SDBoWElIK6TEniDFyXB3zogWOlXI0WLGdSfQkoL2CHSJ2Gw8jbd20xdDkv18IPByq
-	 DgK35cJCgZ9kxoM8+zn98B4JD7WkYc4FVPce8ouatDP8jpe526+OoHu5Gv77394631
-	 A+JLcQ6iPLP/gO4S74aCafl6h2nXUgyRgCEDYCNPvxe9o8vcjmjGmTQIIVRtcjPnaS
-	 m6Oyv4WODNWlvJjfVHV/fM+8/1nozAjNzpSQ6v0zntPkHfgResF0Y4pGUBYmwdhOb+
-	 LNNY4bGnaxCtsJUYJIPFyrMMKewHhjGcSlhrrnGfk/qIvVRjR1fYhAYiSqng4305uU
-	 ljQydzvU9mFJg==
-Date: Thu, 27 Jun 2024 07:42:22 +0900
-From: William Breathitt Gray <wbg@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Judith Mendez <jm@ti.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	David Lechner <david@lechnology.com>
-Subject: Re: [PATCH v5 1/8] dt-bindings: counter: Add new ti,am62-eqep
- compatible
-Message-ID: <ZnyZTq0rEFP_eWCw@ishi>
-References: <20240612135538.2447938-1-jm@ti.com>
- <20240612135538.2447938-2-jm@ti.com>
+	s=k20201202; t=1719442131;
+	bh=Y3x/7Ek//hFsCeCb/ZW/lS86n7PzhLJb9wiw4wJsyWM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=aoJ9CWRnrATvKGqW9bvjoOnuA8Wqu5/5KGfq6wPOconHSXbLOc0pnnrw0KCJ71iR7
+	 FPMWH94ohp82J5pWH/Xbe9Qw+uUdml7FN5WPlo3IdC7PVfhp/9aT5UIsj8TwA+IbXz
+	 UdqGQivM4f9XenWeoitqLCSftc9UczJYHGyVxcpVBrvtmIp9aiLo6DbtDsIxSS1fTl
+	 rMewpsjO+WvAbl+QBMdpG95ese90EzWXmr+b5merwzZg0V8GPk8uPzRU/LRUeJFk1K
+	 OktTt2sitxjVL0ET7XzQk0Tqgt4TDxD9FLuTZne82JTEEM/NAxeRPaEwdad2IRKcfQ
+	 9XQxXRZWHcHyQ==
+From: SeongJae Park <sj@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: SeongJae Park <sj@kernel.org>,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 7/7] Docs/process/email-clients: Document HacKerMaiL
+Date: Wed, 26 Jun 2024 15:48:46 -0700
+Message-Id: <20240626224846.67416-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <874j9fz60q.fsf@trenco.lwn.net>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Y+Bq0nMuvXuDdwIF"
-Content-Disposition: inline
-In-Reply-To: <20240612135538.2447938-2-jm@ti.com>
+Content-Transfer-Encoding: 8bit
 
+On Wed, 26 Jun 2024 16:35:49 -0600 Jonathan Corbet <corbet@lwn.net> wrote:
 
---Y+Bq0nMuvXuDdwIF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> SeongJae Park <sj@kernel.org> writes:
+> 
+> > HacKerMaiL (hkml) [1] is a simple tool for mailing lists-based
+> > development workflows such as that for most Linux kernel subsystems.  It
+> > is actively being maintained by DAMON maintainer, and recommended for
+> > DAMON community[2].  Add a simple introduction of the tool on the
+> > email-clients document, too.
+> >
+> > [1] https://github.com/sjp38/hackermail
+> > [2] https://lore.kernel.org/20240621170353.BFB83C2BBFC@smtp.kernel.org
+> >
+> > Signed-off-by: SeongJae Park <sj@kernel.org>
+> > ---
+> >  Documentation/process/email-clients.rst | 9 +++++++++
+> >  1 file changed, 9 insertions(+)
+> 
+> We should really document lei as well
 
-On Wed, Jun 12, 2024 at 08:55:31AM -0500, Judith Mendez wrote:
-> Add new compatible ti,am62-eqep for TI K3 devices. If a device
-> uses this compatible, require power-domains property.
->=20
-> Since there is only one functional and interface clock for eqep,
-> clock-names is not really required, so removed from required
-> section, make it optional for ti,am3352-eqep compatible, and
-> update the example.
->=20
-> The clock-name also changed for TI K3 SoCs so do not allow
-> clock-names property for the new compatible.
->=20
-> Signed-off-by: Judith Mendez <jm@ti.com>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> Reviewed-by: David Lechner <david@lechnology.com>
-> ---
-> Changes since v4:
-> - Drop the new example from binding
-> ---
+I'd also love that.  But I cannot document lei here on my own since I don't
+know how to use it :'(
 
-Hi Krzysztof,
+I might try again, but please don't wait for me.
 
-Are you satisfied with the changes made for this version of the patch?
+> if we're going to do this, but I won't try to insist on that here...:)
+
+Thank you for understanding, Jon! :)
+
 
 Thanks,
+SJ
 
-William Breathitt Gray
-
---Y+Bq0nMuvXuDdwIF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZnyZTgAKCRC1SFbKvhIj
-K9HXAQD3x7tR9Vhiw9coPPjp1PstCBStW6WMDhUMC74gBq/nxQEAubW67M/VMqAv
-rrr11jrRmcp4qcXAVIHCygc9wPJ/xw8=
-=kn0L
------END PGP SIGNATURE-----
-
---Y+Bq0nMuvXuDdwIF--
+[...]
 
