@@ -1,226 +1,277 @@
-Return-Path: <linux-kernel+bounces-231456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC70C9198FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:25:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CCF09198FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:26:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 526A6B2248C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:25:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A8A31C21930
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:26:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69753192B95;
-	Wed, 26 Jun 2024 20:25:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B031192B9D;
+	Wed, 26 Jun 2024 20:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FcThmRml"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="fmvx4ibb"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2080.outbound.protection.outlook.com [40.107.22.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3028A14D6E0;
-	Wed, 26 Jun 2024 20:25:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719433523; cv=none; b=GSKzs5uLQhoNeGtBXGQeivoMwbXnZbjA1KFWbP+8Nw0bxBe3rgy4aecMc4cT6y/QGo6fSy/EnN8a6IAv2k8YefwHmR8AI60kyTMFypUU/7oE2if+rk37B+kcEGcg8fPmzwxRWgFUuRchL3SlNi2knKmwXPTzcnzhJsjQvrKvc6g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719433523; c=relaxed/simple;
-	bh=bXnsKoQlFRWKE/Kqj3rG+nEV/FIbGm7+0IElUdQkPh8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F++NoXSCR9bPSR5a7nPUO9I/2ek4h27TKOQdhL9dSTCXVQHGez5d32r2rwYINK/T1H9wDe0my/lcDFZ1maJQpJkolUcXahvKlCiCQ5rYtBcyEVSwMNfbbZLsPb+jOCFaaxHfEULI9Pcl9Wrnyh6rhVkdKD4A3sS+vrjGfOHjk8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FcThmRml; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-70b2421471aso5100774a12.0;
-        Wed, 26 Jun 2024 13:25:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719433521; x=1720038321; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C25YYiC2WNu21T1b0cVtI4tk41q3wRpCVhNSAMWc2DU=;
-        b=FcThmRmlg34msxCsA8Ts7VzgO2h4Z+0LN4e461AXtDYHvvlUxpWNYqOidi2CgzV5Er
-         Wiu21aFDrZJm45lQOrc7zt0ew9X19JlUJsZtjWgMAH3+StnxbICJjFiUNpjuzqpugEHj
-         RFV/BXZM8hLO6r1rqeAAeBzdYMO5oUG1ajHmd6KTALwXDPzFcgFQUfT0XHVOKrmENJ/d
-         W4DWmJfJEr2fdVi28NEMRi8pRSzrIuafQjDWCKVyRrAv4dj//cNAX1ng9r3b3EvI7ugl
-         9qOva9epCzX9cT1RCRsU6JzusJ77AZFLOMpP9hgwxd/rrTv4CjPLYn8Pbczt6XOQIID1
-         q16A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719433521; x=1720038321;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C25YYiC2WNu21T1b0cVtI4tk41q3wRpCVhNSAMWc2DU=;
-        b=XgmI159AT+SdCZCZYI6KWLFWdhM3F8lt/1QWqhka9/Dp+qQjcnfyCSg/U2f+cb+/Os
-         /1DGcTo+lFrlOtFAd9nzGSdZPZ2zSZCRumLPm2tYD97TUm2xj6VhIEynbmCnurcMnejc
-         ulIGn2o9z7dG+No5zYv1Rhzuz8h3D9J9Hx7ix/G8iGObC6vzlkXdZrTtGpQbaDPpraXc
-         KKt1KjRxar2OvsqyGQThxT2xd0q56zMC+J2PVasRdJv0M8ZUCsg7MmgNpuDNX2Ft9CBH
-         A/MBDsklX2a8E1ql21qjaKXr2dclfsyU06s2EKY4I3XtMwhpoNEKU5wd68ayANv7mrCs
-         G/QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Xi+XZmhDubtkHUv9sW3PUgJ3f1J3KWjNAxVsSixdvWny1Nbvxt935DjursC+JqDYdo0TXJfHdk5egEYBsyyMPp/jkEBjDJ1knPOOMPqD93kS7Aj6iORkjyv673Tshv6AoHqZFitupw==
-X-Gm-Message-State: AOJu0YyT97MSv+/NFPfANuZW+ROEyOE5QYXPC0kl+KeB/DtsIXO1VSTU
-	YHupHPo4yfGLadvOoQjw2a8s9VZkJoBc3o9kCyuKLRxfEsJeoE/v9q1Enl1qdlsO9GAxhS8dGF0
-	t2naRm++AmdVDfSFugwBHUCd4GOI=
-X-Google-Smtp-Source: AGHT+IGnaYA28KwX1u4NDP+03cR0Lmwca3+23l/9sE55l7W12h7tBAFS/aH9uLvii8tyYrhozhkpdFkMoQJ/KiY7MJ8=
-X-Received: by 2002:a17:90a:602:b0:2c7:146e:a207 with SMTP id
- 98e67ed59e1d1-2c8613ee72dmr9948526a91.22.1719433521336; Wed, 26 Jun 2024
- 13:25:21 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515F6192B69;
+	Wed, 26 Jun 2024 20:25:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719433558; cv=fail; b=qMnD4Yx0YPOyf5HdBPPccePIs5HI5m7Hf8CNLZ9x4bgNf+yaRes4lLYyQXbs7WGrCB0U68qZz/DGW6fchh78+RS85VwNn+ThpxnGExyLyEvyOiVfpWNyn1gHEifOn3hPWUOOdVT4m4isnv0yjVFxDAnO+r/rRHmWALV6OZ6OxCI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719433558; c=relaxed/simple;
+	bh=rf9YHQX0N9fK7joLcT+e3g0gwPNTRP9+zT3rXJpmTrs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=py+TbaKSqpqqOq6nxFN08glb+WWikaP//FfJ9RPbUG6tpc2GUlY9/JQq2wHQphtbvD/jnWV/4mA/UasKCmuQbLtxTTdjrdYQMzpvyCB/lzip+Oj76YblnhuLOrksN7FS/xH/q3Lz580eOjSzc5XIFSitCCAXxSr6Qhtfz11SzWc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=fmvx4ibb; arc=fail smtp.client-ip=40.107.22.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=cTdrVl1hGyO70P7UZAa7+S7qs0ExpfB0VRN3wjZcPHxxQ9UYOTXe4Hfo2e5Qc7srPCf5pNbdsmCv36IzNFHRoW6shfUaMBDCyrsY+wXgxdcOdr10lLoezmE43i/l74d2wCLp+W1jB5ho6loYwHRX8Fx7K/vw4XgVJfvOG8UyZ+5JATqr/Qy4DwvS/B0HIL4PpuSXeGmvZsHU6Lc6So7SwG0tQil4tFidq7h01GrM6kFP0U30FF/XRq8J/V1GUWEKf1fwGjkA08LzsafjrhWYlNUyESu6sLVxmmEyglAbOUD5HEfx/v5WcWkHu6W690WN5cDgg6z5WkYmEIkOdHrlOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=xzs1VB/TOVJtbaKXdc4U1mKfu+zIVudwIRrzrkc+BE8=;
+ b=NZoCMwq71gnUH477TQCbnHY02bQO7X03bnxiQrzQii3LvkVnKIzcU0gJwU1Cfh2zKM5kHSXWFviYcVC8rznTPagkXfMMTS7N8dgofcgpR+V5Q9Q8r67qTG8fQ+fqVNTJXbsHxhV522q6ZDCGgTRB+gS6sRZS5m8rNVFVeohx3KcV39z/3LXuwJ5NZVImaYq70/X6zNiOsq4nz+55ZWmrgIeFhcFNUBWqGIW+BkRR93EqfFgaL+6g1OHN9rda6LwIpi/J0NSB97L+DNLMzt/RxkpHkQiw+92f7Sbe+qJfihDiS5RKm+P/yM7l7R+BC7y4LEj1JUmQ9LbdYqva9zdCgw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=xzs1VB/TOVJtbaKXdc4U1mKfu+zIVudwIRrzrkc+BE8=;
+ b=fmvx4ibbuGJJmm5MhyiDwaFUBOu83lVfy1JbVrYFZScyy33an7sD58FQsyXQ/yAZGV6M6qWY8B1fOy2u8qnC1+gwgPU0Kl/WCnPFis7iBxky0bKO9RRxyE+csCfLLXfmPElrwVd0H0QK/+x2uueGG14XhRI98K8sxGrsGhnKjxM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by DBBPR04MB8012.eurprd04.prod.outlook.com (2603:10a6:10:1e6::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
+ 2024 20:25:52 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 20:25:52 +0000
+From: Frank Li <Frank.Li@nxp.com>
+To: Shawn Guo <shawnguo@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/FREESCALE LAYERSCAPE ARM ARCHITECTURE),
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: imx@lists.linux.dev
+Subject: [PATCH v2 01/13] arm64: dts: layerscape: rename node 'timer' as 'rtc'
+Date: Wed, 26 Jun 2024 16:25:21 -0400
+Message-Id: <20240626202533.2182846-2-Frank.Li@nxp.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240626202533.2182846-1-Frank.Li@nxp.com>
+References: <20240626202533.2182846-1-Frank.Li@nxp.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SJ0PR03CA0067.namprd03.prod.outlook.com
+ (2603:10b6:a03:331::12) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
- <PH7PR12MB7282BBF9E42265E18CB72E09D7D62@PH7PR12MB7282.namprd12.prod.outlook.com>
- <CAOiHx=nssvX-VYySmpLZ8bvBmitT87bX2AYspdkH3y9iWTB+kQ@mail.gmail.com> <PH7PR12MB7282028713977D608DBC046FD7D62@PH7PR12MB7282.namprd12.prod.outlook.com>
-In-Reply-To: <PH7PR12MB7282028713977D608DBC046FD7D62@PH7PR12MB7282.namprd12.prod.outlook.com>
-From: Jonas Gorski <jonas.gorski@gmail.com>
-Date: Wed, 26 Jun 2024 22:25:09 +0200
-Message-ID: <CAOiHx=m5bqsCV984L6M11rsWgrW-wDj6jFh9tSBDyKq3+ixOgw@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mmio: do not calculate bgpio_bits via "ngpios"
-To: Asmaa Mnebhi <asmaa@nvidia.com>
-Cc: Shiji Yang <yangshiji66@outlook.com>, 
-	"linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Mark Mentovai <mark@mentovai.com>, 
-	=?UTF-8?B?TMOzcsOhbmQgSG9ydsOhdGg=?= <lorand.horvath82@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB8012:EE_
+X-MS-Office365-Filtering-Correlation-Id: d4ced0f6-7dae-40ef-454b-08dc961e2cdf
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230038|376012|1800799022|52116012|366014|38350700012;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FOpRlbzpqqRqwzv31P1t529eir3zopJWCY+yWW7uQvYWP+jigeYzgf7Yry0s?=
+ =?us-ascii?Q?Ve1lZeV40qpTmlyaQPlHDOZrIuuDu+kaRYo5uxdnjqKiNQjFqe0i+gzBr7vM?=
+ =?us-ascii?Q?7SYkpRuL1p+Gy/4+wtW4Cfrkh+lpEu6PkMGKWP/XYgmNopdL6fADOZfn7sob?=
+ =?us-ascii?Q?Run+Bvf/B+2sQ7qo992fKK6XmIkKRVEuw78cN+xl2YVu+kVceZzEbAo7UH7X?=
+ =?us-ascii?Q?7qRsN8OZ9RgYvNbe2YIv68iR9LK55P80K0ORNAOFBct43OJNtYhpnTbUHd37?=
+ =?us-ascii?Q?sg7oMGP7BUAbhXiuP7nJEcMI9enUepkvYU7j/gWsWEgWd+MYWbEraCW+7erj?=
+ =?us-ascii?Q?Tf8aL1oxqvSpGYOh7800iJ8iRhdq9rAHF0IxM3UAzeTiTcotM/6TuVzWX428?=
+ =?us-ascii?Q?sJ2LOpSZTZj1j0QAgzJPYBX1FiSKJW4+gdGpgc92eyrLVLO5WBuhQRnCzGkq?=
+ =?us-ascii?Q?sV7kXpaTUhsoxSZwab5FbNf63QDzPC3lYJE3x206b8QPlZMfIMMjehs7dDs/?=
+ =?us-ascii?Q?BVDRU1TjoyP/O8tOIK7Kg0sAY7B+UJvMvdRKS02SBZYPmFMkeKV13TbkKvUq?=
+ =?us-ascii?Q?wGed+lr+ySDZY7EYe0aVZSYqKJAHFNC+z5jH+yvothFbGV6GzZ0gl7SiKCc1?=
+ =?us-ascii?Q?RtLrYep4nRUwREFI20RVLqUOS04L3q2e3qKcTGvIPSOBI37ecql7mVdE+Aqd?=
+ =?us-ascii?Q?GE6pBh/cqpwM/cEKbgBaE11IQN+8HarFzUYdCPlLRgZsxff/svn3lOOzn9bw?=
+ =?us-ascii?Q?3p58eEfqYYfSp/isC4gBXE2lrHlq5jASpDYdKNG6JCCN3n9sVkS4etXjQiOx?=
+ =?us-ascii?Q?vvNjdq9TkPTPp/z60uTjywdujOv1L/UPP37aXNGFIXVhqKPYw71Kj3YUwOTt?=
+ =?us-ascii?Q?YhDM0B9xT/edIFGDQ9eFKWnmGiqiC/yJJpQP5vN8jP4KLK3lGv2lF+uvBN3Q?=
+ =?us-ascii?Q?teKpckVgrE/CJTjYwsQtg18K9gXOchK5nv3DhlYla6Y2en/x1XjWVHnGMn1v?=
+ =?us-ascii?Q?fLrJvMLpAU4uqvPwj6qljQCXpQwPEfGpsvYAWLAkIdpZkEVFdDBEck6GKArW?=
+ =?us-ascii?Q?ApVa7moI5xl5ivTskm24S3FdUylpsytfmhkePwHftNM8xpQ4IYyp8Vm3IQD8?=
+ =?us-ascii?Q?dyGUvPaxPgtUjzHr62lVOo0DaAzYKgvSJOVfbCh4i6jXt5uoEgTiQjGPTqty?=
+ =?us-ascii?Q?oWqeMZ/7LHxZi7rac3wzwvkjoG/p3Uoav8O6FG5ShueyWUDBZO9R8Ns46XE1?=
+ =?us-ascii?Q?w6S6OqsQUwnzkaeHd4XWCzz5IMm6QRY0bzSiMcMh4I2NcWoa3DddP5t/5lIv?=
+ =?us-ascii?Q?3TEnHlIDqo+h6sVsQeEwE2kT?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(376012)(1800799022)(52116012)(366014)(38350700012);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?krAZ5EjEj1bOAovV9KBypo07o+b7CXKZplZRTUKoQIpdDiq21FBNowZ0eBOd?=
+ =?us-ascii?Q?jN24sklMFNGIMmpAZoIKfBF3GsIOEXgqDHv1hURt+48ZXY8eWIedcxmull7s?=
+ =?us-ascii?Q?bRohygrTTLd6PhGUgHbRE6uv9xhLfWifsNc+jodovdTHbwLYqSLOW5OcrOhq?=
+ =?us-ascii?Q?svH7NQW4+/g5IApyVIKOKawU0HgrdblIk7NbxspxvaLPWy2S2zGk0apr67t4?=
+ =?us-ascii?Q?dYk9/d71tmFMfXGTaiUkN6Oi6jQh7X+a3WUzHYOiuMG0qZE5gtQrFN7O+coI?=
+ =?us-ascii?Q?BknuCyTVk5RYYpted62uMOYoPdFtdPiyZM1vZ9hc/BCzAGvhDE9S3PrxXET6?=
+ =?us-ascii?Q?E7gfpY388+Ip/xJR0uju+dALcOJ0Y1ER2tgv4OM7uOlsD0QAHVBmwgaEQVze?=
+ =?us-ascii?Q?undpgyEINqa0BOtZm4s1nbCMoSiP27Kt8B0lut1ptNhkf5vtHH0KwD3mmbX4?=
+ =?us-ascii?Q?5otRgoXMykPlLIOXzMgnVtQ971l4eiv62YwNoeZC8/VCvalurbzfFRa9N15O?=
+ =?us-ascii?Q?HrTgT1PgzRBUbMLfVxwmuiHXCL98GFANFHhOjOHCUSkSKIdC8+YpCB0mXTYt?=
+ =?us-ascii?Q?MfwFzLVL6F0Nn0xVI6wUZis73yxCD+vOoUVUcioxUGQip4bulse6kSJ4mX/A?=
+ =?us-ascii?Q?YqZYjpsHZ05VY3fHa6GJL6C+rJqb4+BNl05ARkkN9f+ygejcbn1+TN5ozEFf?=
+ =?us-ascii?Q?La30V8YPtGC70KbM/qpE89sCmGdm7K0zpNW3LDzYcmEH7HjU4e+YO0yem3/c?=
+ =?us-ascii?Q?moiQ+dJFxb2xUlwPqzY8QTPOKvK43nXIMxctRl6chTAxLH2mBRuBTKTKjWRq?=
+ =?us-ascii?Q?GdtvtuXloiYZxUc6Ri2lg5VKMA16SlCTAP1K/QiQVXWBSB1XSqDlUVIGB4cZ?=
+ =?us-ascii?Q?bwDs2V9gAfiGAdbMNDxKsBRfoCSwhLpEZldybEWI978bRpfoAf07FA+pzpwh?=
+ =?us-ascii?Q?QSPBb69wfZSryT6y0FC5FabYtextKe84s9Dk0+1NpFJ1v6LE88ZgGwnmv0e/?=
+ =?us-ascii?Q?aOS1lzcCsOnpFfjDWFylMAJ+QnlODnyMG8N8tGknmPgXk7O0qGJ3SsyBae3c?=
+ =?us-ascii?Q?uApHWLd7+kxSQbhF5rkfJuPBrOq0hF/ookk+x/aDlAx0uM/isQUq2ZJtPvjm?=
+ =?us-ascii?Q?/jxTOoyg/yRb3kVU4/tS6indS4dsd+6qI4FFDxJ+KumhUVeHPtKvPXNik8EW?=
+ =?us-ascii?Q?dvsBe+NgTMNZz6USGoG22oTblvIWckOFZNqUO5yWAc7JZBIS6+hj/2yzOdUj?=
+ =?us-ascii?Q?EN237t5CR6pNDgJEBTyWV/qeKqtMZhhfw1OoSuxH2NEPZZH2BoBRbBvcSkUK?=
+ =?us-ascii?Q?x+hiT1clwS1ntYb/b7CpYVbe4UkVyHjn8ihbcimNcH12ie1IvXWxho95JvtU?=
+ =?us-ascii?Q?U22/PG6M144Ie2h/FwJjOtHsm7P6OnNLEL8s6nNUjibq1ZZdA5hhxEhTzFwQ?=
+ =?us-ascii?Q?oKN/tvrHShwi2YSOleRXKvsv0BdNkOanVDrOvCCwBct3ccrTpftQAs9f3gH0?=
+ =?us-ascii?Q?NEgd/q7sA1L7aXjWATyy9FBvMac9ltGew0uj0G2LskqyuqSYd+POSIR8SDmj?=
+ =?us-ascii?Q?DL2/WsoQjvpZA+DJ2q+W89QcmXefDaAtJDvYW63+?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d4ced0f6-7dae-40ef-454b-08dc961e2cdf
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 20:25:52.7255
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: xz8rYulyn9d26r+J4SLZGVeuA3QtXVxim/SYcLnXNlo2OkFnc9soRE+FTfDnbCU8c6CQNRMFXh7plcvXbtVG1Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB8012
 
-On Wed, 26 Jun 2024 at 21:59, Asmaa Mnebhi <asmaa@nvidia.com> wrote:
->
->
->
-> > -----Original Message-----
-> > From: Jonas Gorski <jonas.gorski@gmail.com>
-> > Sent: Wednesday, June 26, 2024 11:21 AM
-> > To: Asmaa Mnebhi <asmaa@nvidia.com>
-> > Cc: Shiji Yang <yangshiji66@outlook.com>; linux-gpio@vger.kernel.org; L=
-inus
-> > Walleij <linus.walleij@linaro.org>; Bartosz Golaszewski <brgl@bgdev.pl>=
-;
-> > Andy Shevchenko <andy.shevchenko@gmail.com>; linux-
-> > kernel@vger.kernel.org; Mark Mentovai <mark@mentovai.com>; L=C3=B3r=C3=
-=A1nd
-> > Horv=C3=A1th <lorand.horvath82@gmail.com>
-> > Subject: Re: [PATCH] gpio: mmio: do not calculate bgpio_bits via "ngpio=
-s"
-> > Importance: High
-> >
-> > On Wed, 26 Jun 2024 at 17:00, Asmaa Mnebhi <asmaa@nvidia.com> wrote:
-> > >
-> > > I am not sure this change is needed?
-> > > When I initially submitted " gpio: mmio: handle "ngpios" properly in
-> > bgpio_init() ", It was specifically because I have a 32bit reg access b=
-ut only 16
-> > gpios. Initially, I did not add the else and so Andy suggested to add i=
-t with the
-> > roundup_pow_of_two to stay backward compatible. If your system is a 32 =
-bit
-> > arch and you only use 16 Gpio bits, why don't you configure that in you=
-r DTS?
-> >
-> > Because the registers in the datasheet are specified as 32 bit wide, so=
- defining
-> > them as 32 bit in the dts(i) is the most natural way of defining them, =
-even if
-> > they may use less than half of the register for gpios. And on big endia=
-n
-> > systems you cannot just use smaller accessors, you also must shift the =
-register
-> > offsets. So this change broke existing devicetrees.
-> >
-> > And as other theoretical arguments against doing that, less than 32 bit
-> > accesses may be inefficient, or the bus where the registers are may req=
-uire 32
-> > bit accesses. And finally, the caller explicitly passed a register widt=
-h via the sz
-> > argument, so we should listen to the caller and use that, and not tryin=
-g to be
-> > clever by changing the access width based on the number of gpios. At le=
-ast
-> > not unless the caller explicitly requested that. Like e.g. make 0 a spe=
-cial value
-> > for automatically calculating the number of bits based on the number of
-> > gpios.
-> >
-> > If you only use 16 bits of the 32 bit registers and you want to use 16 =
-bit
-> > accessors, IMHO it's up to you to pass appropriate values to bgpio_init=
-(), and
-> > not hope that bgpio_init() will fix this magically up for you.
-> >
->
-> It was definitely not my intention to change/hack a 32 bits reg access to=
- 16.
-> I agree with you that bgpio_bits should just not be changed. Maybe the el=
-se statement introduces a bug/hack in the case where ngpio is already a pow=
-er of 2 such as 16 while the register access is a 32 bit access. In this ca=
-se bgpio_bits would be 16 when it should be 32.
+ftm_alarm is rtc. Correct the name as 'rtc' to fix DTB_CHECK warning.
 
-It definitely does, as currently ngpio 1 - 8 will cause bgpio_bits
-will be set to 8, leading to 8 bit accesses, 9 - 16 will be 16 bit
-accesses etc.
+timer@29d0000: $nodename:0: 'timer@29d0000' does not match '^rtc(@.*|-([0-9]|[1-9][0-9]+))?$'
+        from schema $id: http://devicetree.org/schemas/rtc/fsl,ls-ftm-alarm.yaml
 
->
-> However, Shiji's has a bug and will break other code. My very first patch=
- for "gpio: mmio: handle "ngpios" properly in bgpio_init()" was meant to fi=
-x the following problem (that shiji's code will reintroduce):
-> " bgpio_init uses "sz" argument to populate ngpio, which is not accurate.
-> Instead, read the "ngpios" property from the DT and if it doesn't
-> exist, use the "sz" argument. With this change, drivers no longer need
-> to overwrite the ngpio variable after calling bgpio_init."
+Signed-off-by: Frank Li <Frank.Li@nxp.com>
+---
+ arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi | 2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 4 ++--
+ arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi | 2 +-
+ arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 2 +-
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 2 +-
+ 7 files changed, 8 insertions(+), 8 deletions(-)
 
-And this is a very nice thing to have! No objections here.
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+index b6824d6bc9391..2e1cddc11bf47 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
+@@ -564,7 +564,7 @@ rcpm: power-controller@1ee2140 {
+ 			#fsl,rcpm-wakeup-cells = <1>;
+ 		};
+ 
+-		ftm_alarm0: timer@29d0000 {
++		ftm_alarm0: rtc@29d0000 {
+ 			compatible = "fsl,ls1012a-ftm-alarm";
+ 			reg = <0x0 0x29d0000 0x0 0x10000>;
+ 			fsl,rcpm-wakeup = <&rcpm 0x20000>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+index 744ed5feb8f0b..4188faa59368e 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
+@@ -1326,7 +1326,7 @@ rcpm: power-controller@1e34040 {
+ 			little-endian;
+ 		};
+ 
+-		ftm_alarm0: timer@2800000 {
++		ftm_alarm0: rtc@2800000 {
+ 			compatible = "fsl,ls1028a-ftm-alarm";
+ 			reg = <0x0 0x2800000 0x0 0x10000>;
+ 			fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0 0x0>;
+@@ -1334,7 +1334,7 @@ ftm_alarm0: timer@2800000 {
+ 			status = "disabled";
+ 		};
+ 
+-		ftm_alarm1: timer@2810000 {
++		ftm_alarm1: rtc@2810000 {
+ 			compatible = "fsl,ls1028a-ftm-alarm";
+ 			reg = <0x0 0x2810000 0x0 0x10000>;
+ 			fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0 0x0>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+index 534b832440207..caf765593547b 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
+@@ -990,7 +990,7 @@ rcpm: power-controller@1ee2140 {
+ 			#fsl,rcpm-wakeup-cells = <1>;
+ 		};
+ 
+-		ftm_alarm0: timer@29d0000 {
++		ftm_alarm0: rtc@29d0000 {
+ 			compatible = "fsl,ls1043a-ftm-alarm";
+ 			reg = <0x0 0x29d0000 0x0 0x10000>;
+ 			fsl,rcpm-wakeup = <&rcpm 0x20000>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+index 30061c80f1cc1..f8c9489507e7a 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
+@@ -940,7 +940,7 @@ rcpm: power-controller@1ee2140 {
+ 			#fsl,rcpm-wakeup-cells = <1>;
+ 		};
+ 
+-		ftm_alarm0: timer@29d0000 {
++		ftm_alarm0: rtc@29d0000 {
+ 			compatible = "fsl,ls1046a-ftm-alarm";
+ 			reg = <0x0 0x29d0000 0x0 0x10000>;
+ 			fsl,rcpm-wakeup = <&rcpm 0x20000>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+index 01c2c2b474205..81b80b6b27d31 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
+@@ -1041,7 +1041,7 @@ rcpm: power-controller@1e34040 {
+ 			little-endian;
+ 		};
+ 
+-		ftm_alarm0: timer@2800000 {
++		ftm_alarm0: rtc@2800000 {
+ 			compatible = "fsl,ls1088a-ftm-alarm";
+ 			reg = <0x0 0x2800000 0x0 0x10000>;
+ 			fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+index 89a5f4d05a7b5..dac33a3eab841 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
+@@ -1226,7 +1226,7 @@ rcpm: power-controller@1e34040 {
+ 			little-endian;
+ 		};
+ 
+-		ftm_alarm0: timer@2800000 {
++		ftm_alarm0: rtc@2800000 {
+ 			compatible = "fsl,ls208xa-ftm-alarm";
+ 			reg = <0x0 0x2800000 0x0 0x10000>;
+ 			fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
+diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+index 58c3a3a9744d6..40159f58c6f94 100644
+--- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
++++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
+@@ -1086,7 +1086,7 @@ rcpm: power-controller@1e34040 {
+ 			little-endian;
+ 		};
+ 
+-		ftm_alarm0: timer@2800000 {
++		ftm_alarm0: rtc@2800000 {
+ 			compatible = "fsl,lx2160a-ftm-alarm";
+ 			reg = <0x0 0x2800000 0x0 0x10000>;
+ 			fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0 0x0>;
+-- 
+2.34.1
 
->
-> My v1->v3 patches were only changing ngpio, not bgpio_bit. Please check m=
-y v3 patch: https://lore.kernel.org/lkml/202303050354.HH9DhJsr-lkp@intel.co=
-m/t/
->
-> After v3, Andy asked me to also change bgpio_bits. Please see the whole t=
-hread:
->
-> > > > >+       ret =3D gpiochip_get_ngpios(gc, dev);
-> > > > >+       if (ret)
-> > > >> +               gc->ngpio =3D gc->bgpio_bits;
-> > >>
-> > > >But this doesn't update bgpio_bits in the success case. Can you expl=
-ain why
-> > >> it's not a problem (should be at least in the code as a comment).
-> >>
-> >> In the success rate, the bgpio_bits would also be equal to "sz * 8" an=
-yways.
-> >> The argument " unsigned long sz" passed in bgpio_init is specifically =
-for this purpose. That tells the gpio library the gpio register access size=
-.
-> > >if (!is_power_of_2(sz))
-> >>                  return -EINVAL;
-> > > gc->bgpio_bits =3D sz * 8;
-> >>
-> > >If in the success case, we make it dependent on the ngpio value, we wo=
-uld need to round it up anyways to the closest (power of 2 && multiple of 8=
-) which is the same as "sz * 8"
-> >> I will add a comment in the code in my next patch.
->
-> >I believe we should use only a single source for what we need. If we
-> > rely on ngpios, the bgpio_bits should be recalculated based on it. The
-> >expression doing this is very simple. Something like round_up(ngpios,
-> >8);
->
-
-Right, mistakes happen. Also I don't want to blame anyone, because it
-happens to work fine on little endian systems, and big endian systems
-are so rare it's easy to forget that they exist ;-)
-
->  Now, if we want to not modify bgpio_bits, we could go back to my v3 patc=
-h.
-> ngpio is the number of gpio pins supported while bgpio_bits is the regist=
-er access bit type. These are 2 different entities.
-
-Exactly. And AFAICT this patch does exactly this, restoring the code
-to the state of v3.
-
-Best Regards,
-Jonas
 
