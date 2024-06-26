@@ -1,147 +1,164 @@
-Return-Path: <linux-kernel+bounces-230235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B1B2917A2D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:53:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3DFE917A30
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:53:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEFB1B248DF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:53:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E33B71C2273C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84B7115F330;
-	Wed, 26 Jun 2024 07:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D6B15F316;
+	Wed, 26 Jun 2024 07:53:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="k6niCmol"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RM6M8uLa"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8B115CD4D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E023015B55D;
+	Wed, 26 Jun 2024 07:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719388401; cv=none; b=sMf+/7+8kqUp85a63CWsMlKAcs2N1RGEoPIuepMlHo7tSpHHIv7qJ8NUklCjDg3rpFaizEvJr8rjlQawP3nABAdLq2/HHVAW/vQTXlTAl43qL8Iv4BeyCTKO0cuoBsBdmPxu1hGf9MD2hZao9ZaUvOopkQcOKnT/6zm+iPZBC7M=
+	t=1719388427; cv=none; b=e5KMXzVyDmF+tni/jCWvJf1siRhNFDEHmJT9cY0q75ZkK83MWuDZ3Muahg879vfUQ/0fLWSGnGRiMVxLLGfQrXT7sodSvPAqFNOekuFrvpR9I7kd8jfV5JWZbm0JfbPlwnVJwjoMfNM8h8usiO5pGU8BgmSKX87BTw+rKF2/O6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719388401; c=relaxed/simple;
-	bh=bUFnBCaoWkPM+lGdjHQoFsITf35bWEg8TZpL0ja8QGc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=czP1KT77shbBDzfQxdaSl4fv+LIcNrJgXDQhj7tDO5j6gw4/6cg8I8da3sKJlwZ77RQO0FKRv4DyHClAUbi06ZqxYNz7cw9C+R5y6vieV6fsJpZ4KiaXZvixLMGVNtXlgNiH/6VWk+SDIDTAmfwBfzoWCZmeK/hVmkCLcb0TC64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=k6niCmol; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-421bb51d81aso51876105e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:53:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719388398; x=1719993198; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=T1area+MaFWUDermRoLera9+4OUrjSIeeXP24Yb/vWo=;
-        b=k6niCmoltEvwMZ/G1X+5pgrQ1CA3GA6qsMYx4uOz7QnZ3bpXfVSVQ6qZCx58cUenq9
-         yQMnJXgXcOljTWlvjO+Q483RsZJNDuBeaZWW9bS8DuKlUYegcKOANb81EuRYYfbz4fOt
-         tYdqBAxmWLQdn5RQ4yXFeTMm3vg2DCp5iL5CVrhc/tEemvbPahe2FQHzCGAgiRxW4NUM
-         EdvcW06TXw+ibb1uDtHs/B7LxHnlXuCUyi0hRzDJWXiHyz3y49YwQqSiKfgiPm/6qj4F
-         yuIRQUIl2geKkSlF1XvOvnEIdLU3Vz75ZDFwET980z8VUcuzasPEc9rap0ncfUVm8Gp7
-         sfyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719388398; x=1719993198;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T1area+MaFWUDermRoLera9+4OUrjSIeeXP24Yb/vWo=;
-        b=CWqx1hdByg3YRkX/+0QeMHKl6fyHZaUl5+JTPKPk6wFQvoVryCymtYbiRdC8F6sXW3
-         2LRRKVRg0b0LeBPA4sVciTuytsr3nx6HEb/QJrjJ2n1TWgFpxc25yxaqqROdC6syvxhr
-         IaBvkqK/9ne7T63GFI/6YMMCcjg5sxNKtkdrg8qKylO++xGo3inVdzbDhbOn7WHFKN7d
-         drW1KVypqo6SWamot6VmCoOFONzHWII8G4n03EKQkDUFtGDXGpt7obcUULRvYUBZVY6l
-         1iOnpgq0sL/ocln/scg3Lo7CsoehZfTD8rTmjCGBmbwEJkH1Jj/v+1qCzUUIqOlMp5Af
-         vwfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPogF9A5GtU7YA3jctbI3DYbPTqjCBt9V4bveXLTXoiTAUkbSUUp10gDU9/MJ4ugbRKQPek5xXJ+yVL4b+41ez+RRgP/w5ZAJYvCgU
-X-Gm-Message-State: AOJu0YzT/NoPq8s3u3FlsN3GOyxRLw1vrDyXi3TuIbDI/NQg+5S6e458
-	hWPWyGEF/zHYWjKK/Q6NRhRV9QvLZdNtwxmT7npEMWJRKG/QzXjwLEH6UoSeAOI=
-X-Google-Smtp-Source: AGHT+IEKkrz0XZ/FGEkp/KPMY67ejxiTdOZ2Rr+AaQrnwx9g/w+KQHYoLnBiwYIQALSatGlYPyNnbA==
-X-Received: by 2002:a05:600c:54e1:b0:424:9024:d45e with SMTP id 5b1f17b1804b1-4249024d4c3mr52628185e9.4.1719388398204;
-        Wed, 26 Jun 2024 00:53:18 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c846a8f0sm15220405e9.42.2024.06.26.00.53.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 00:53:17 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Wed, 26 Jun 2024 09:53:16 +0200
-Subject: [PATCH] drm/msm/adreno: fix a7xx gpu init
+	s=arc-20240116; t=1719388427; c=relaxed/simple;
+	bh=fsRwahzF+DAn3/q4k6IPtufQdWLhcg2lFAnXar2y644=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LsVRLkqohJDqWfqk2gF5lIQLgdjSAQTvlERMuS+Kb8kUPntcv1vi/tCQ2h351bQIpW81JKLsE1GFD6PKnt74s2YFoyrlinbBRmNuZ9vkR/ReBjJZ3K0432G3I1AxhkIOVnX6PjUcdFNP4ZswkcMhfiXD3uxp/KfCRYA0+DT0ndk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RM6M8uLa; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719388426; x=1750924426;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=fsRwahzF+DAn3/q4k6IPtufQdWLhcg2lFAnXar2y644=;
+  b=RM6M8uLaVXenjM8Fi7IQSaeuNEGXWuTZHjEEpxfFckCy8g63wRWs3h0f
+   mokruKoTEQ2jLdBSnACoWtaEmrwa4axGmLrCSySJXxJNvUOAFTgwh4HIE
+   TgtrGqhfu+qd4VvYlF0iLndfIv5veR5ZI/XSt8cTy+i/E2d3g/kd9i8/q
+   P6NZuHUNcyyp7HgyCl2qCE5zJ7byZ/5ljE2sRH5xFWEVXvCniWCRJrbY2
+   2xbBSQDCgYXut8bGaUYLRmmiyPO0mSYwYwKb4urr/LvMAmnx6JBJe+Hfo
+   Z1iGvyF/q2yqmiztkj5JsC0H0REzc498o0+Ei7L1Gxw0p+J7UlsvWlI34
+   g==;
+X-CSE-ConnectionGUID: VZq/so0xT5mxkpHui2/boQ==
+X-CSE-MsgGUID: RDxSzAbFSEmWBthBq4kriQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16669603"
+X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
+   d="scan'208";a="16669603"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 00:53:45 -0700
+X-CSE-ConnectionGUID: DdDVk+asRuCOixyJq2FVXQ==
+X-CSE-MsgGUID: WeSwgWUCTXqIyWlzFtOimw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
+   d="scan'208";a="49088979"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa004.jf.intel.com with ESMTP; 26 Jun 2024 00:53:42 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 64B56346; Wed, 26 Jun 2024 10:53:41 +0300 (EEST)
+Date: Wed, 26 Jun 2024 10:53:41 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:USB XHCI DRIVER" <linux-usb@vger.kernel.org>,
+	Daniel Drake <drake@endlessos.org>, Gary Li <Gary.Li@amd.com>
+Subject: Re: [PATCH 0/4] Verify devices transition from D3cold to D0
+Message-ID: <20240626075341.GY1532424@black.fi.intel.com>
+References: <20240613054204.5850-1-mario.limonciello@amd.com>
+ <20240618131452.GC1532424@black.fi.intel.com>
+ <9f465ec4-32b9-4cd8-89de-a57a99880360@amd.com>
+ <20240619052927.GF1532424@black.fi.intel.com>
+ <5a04e554-9f18-43c0-8095-d3e0c83db76d@amd.com>
+ <a9436f1c-330b-469d-bb93-3e89102b09b9@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240626-topic-sm8x50-upstream-fix-a7xx-gpu-init-v1-1-ff0a0b7c778d@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAOvIe2YC/x2NQQqDMBAAvyJ77kKa2qT2K6WHNV3tHowhG0tA/
- Luhx4FhZgflLKzw7HbI/BOVNTa4XjoIX4ozo3wagzW2N846LGuSgLo86t3glrRkpgUnqUi+Vpz
- ThhKl4DAFGnzvRvI3aLWUuUn/0+t9HCcYzCoBeQAAAA==
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
-Cc: Rob Clark <robdclark@chromium.org>, linux-arm-msm@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1250;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=bUFnBCaoWkPM+lGdjHQoFsITf35bWEg8TZpL0ja8QGc=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBme8jssCMYsrSvaqz+TTf5G43VRs8w40xKxUjTe1ob
- Oi2BEbKJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZnvI7AAKCRB33NvayMhJ0Rl8EA
- CTLPfyc5SoiA/wMMY88mBc4/bIBJu7jvcEe9ZWRP2vZij3UYKZ8m3vriQasDVE5InlydLVkg6NPDya
- x9k0G9sB4fUth9fcDSkLPwYRNd/boSaBKHdMVE21RYmI6Ey6j5c0l3Y3ImR8qk+pUsaWThoXD77zaW
- FS6C7W6uBc2kANexdq5RzGjmKsD18q8GFrUA8e7sS1q0FODY5NmLoCWt/R25Xb2V/CcRkvXuZpbdQ3
- vTtoHxb6D+BhciasoGg5vxGDaSjDboUT8pGIUGE7rK29NDz1GLCqDWkIQZ7xG5uOqJ4BENhwwDHCSb
- ibaklVDg9H4cCZNguEoeEaFezXp4PAExiQocS93ubxtyqbYl+fxn2NZLZ29s5TYmfElTEaN4k11XIc
- l6c/Z7TYgDKfgwte0OGXaRP/cEln/0NJddsOnAqHEJMnIPoD9jbEtr2HfaaJ6Z3W1XPIyHwDY76P5y
- SMAPFgdVKK59j5ySK9ykgRqnr0AHXgEfhcMCx9Vm7dJA3skalFaIKirgQwUYCpsXugXZRurkoiF8h8
- 0q0jccQYhyd8OxbW3ONfn39pO/JcDEkbyRIDy9H2TKxQSOLuvJ9XX/86OLlHtcHqFH+4vlz1qsNupc
- xb3qT/JL4cSCDqcqT3oDtgXeAovGoZ2fN+62prqnqdZOSjhjaUECz4L1rgVA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a9436f1c-330b-469d-bb93-3e89102b09b9@amd.com>
 
-The gpulist has twice the a6xx gpulist, replace the second one
-with the a7xx gpulist.
+On Tue, Jun 25, 2024 at 10:43:20AM -0500, Mario Limonciello wrote:
+> On 6/19/2024 13:50, Mario Limonciello wrote:
+> > On 6/19/2024 00:29, Mika Westerberg wrote:
+> > > On Tue, Jun 18, 2024 at 11:56:50AM -0500, Mario Limonciello wrote:
+> > > > On 6/18/2024 08:14, Mika Westerberg wrote:
+> > > > > Hi Mario,
+> > > > > 
+> > > > > On Thu, Jun 13, 2024 at 12:42:00AM -0500, Mario Limonciello wrote:
+> > > > > > Gary has reported that when a dock is plugged into a
+> > > > > > system at the same
+> > > > > > time the autosuspend delay has tripped that the USB4
+> > > > > > stack malfunctions.
+> > > > > > 
+> > > > > > Messages show up like this:
+> > > > > > 
+> > > > > > ```
+> > > > > > thunderbolt 0000:e5:00.6: ring_interrupt_active:
+> > > > > > interrupt for TX ring 0 is already enabled
+> > > > > > ```
+> > > > > > 
+> > > > > > Furthermore the USB4 router is non-functional at this point.
+> > > > > 
+> > > > > Once the USB4 domain starts the sleep transition, it cannot be
+> > > > > interrupted by anything so it always should go through full sleep
+> > > > > transition and only then back from sleep.
+> > > > > 
+> > > > > > Those messages happen because the device is still in
+> > > > > > D3cold at the time
+> > > > > > that the PCI core handed control back to the USB4 connection manager
+> > > > > > (thunderbolt).
+> > > > > 
+> > > > > This is weird. Yes we should be getting the wake from the hotplug but
+> > > > > that should happen only after the domain is fully in sleep
+> > > > > (D3cold). The
+> > > > > BIOS ACPI code is supposed to deal with this.
+> > > > 
+> > > > Is that from from experience or do you mean there is a spec behavior?
+> > > > 
+> > > > IE I'm wondering if we have different "expectations" from different
+> > > > company's hardware designers.
+> > > 
+> > > The spec and the CM guide "imply" this behaviour as far as I can tell,
+> > > so that the "sleep event" is done completely once started. I guess this
+> > > can be interpreted differently too because it is not explicitly said
+> > > there.
+> > > 
+> > > Can you ask AMD HW folks if this is their interpretation too? Basically
+> > > when we get "Sleep Ready" bit set for all the routers in the domain and
+> > > turn off power (send PERST) there cannot be wake events until that is
+> > > fully completed.
+> > > 
+> > > There is typically a timeout mechanism in the BIOS side (part of the
+> > > power off method) that waits for the PCIe links to enter L2 before it
+> > > triggers PERST. We have seen an issue on our side that if this L2
+> > > transition is not completed in time a wake event triggered but that was
+> > > a BIOS issue.
+> > 
+> > Sure thing.  I'll discuss it with them and get back with the results.
+> 
+> From the hardware team they describe this as an abnormal state that they
+> don't expect.  I don't believe there is anything in the BIOS to prevent it
+> though.
 
-Solves:
-msm_dpu ae01000.display-controller: Unknown GPU revision: 7.3.0.1
-msm_dpu ae01000.display-controller: Unknown GPU revision: 67.5.10.1
-msm_dpu ae01000.display-controller: Unknown GPU revision: 67.5.20.1
+Okay thanks for checking.
 
-on SM8450, SM8550 & SM8560.
+> 
+> I could discuss options for this with the BIOS team in the future for the
+> USB4 router ACPI device, but as this "seems" to be the same problem as XHCI
+> controllers going back at least 5 generations with those quirks I put
+> reverts in this series I think a general kernel solution to make "sure" that
+> devices have transitioned is the better way to go.
 
-Fixes: 8ed322f632a9 ("drm/msm/adreno: Split up giant device table")
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- drivers/gpu/drm/msm/adreno/adreno_device.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm/msm/adreno/adreno_device.c
-index 1e789ff6945e..cfc74a9e2646 100644
---- a/drivers/gpu/drm/msm/adreno/adreno_device.c
-+++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
-@@ -33,7 +33,7 @@ static const struct adreno_gpulist *gpulists[] = {
- 	&a4xx_gpulist,
- 	&a5xx_gpulist,
- 	&a6xx_gpulist,
--	&a6xx_gpulist,
-+	&a7xx_gpulist,
- };
- 
- static const struct adreno_info *adreno_info(uint32_t chip_id)
-
----
-base-commit: 62c97045b8f720c2eac807a5f38e26c9ed512371
-change-id: 20240626-topic-sm8x50-upstream-fix-a7xx-gpu-init-9fca9746ba73
-
-Best regards,
--- 
-Neil Armstrong <neil.armstrong@linaro.org>
-
+Agreed.
 
