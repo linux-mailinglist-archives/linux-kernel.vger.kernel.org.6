@@ -1,242 +1,112 @@
-Return-Path: <linux-kernel+bounces-230694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7A899180AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:10:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D2A59180AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:10:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7374B1F21D50
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:10:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1256EB262C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C9A7181BB1;
-	Wed, 26 Jun 2024 12:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="krkbnRWZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3F418132C;
+	Wed, 26 Jun 2024 12:09:19 +0000 (UTC)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54E9617E445;
-	Wed, 26 Jun 2024 12:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BC7180A8B;
+	Wed, 26 Jun 2024 12:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719403788; cv=none; b=b61sNUrnuOGmdA3GNGSLf5OdpoxCtdiqKBFZvn1ftZ3paEeqrWIvpMDnNpxwvv08sHRAJWR0X7HfrEssDOLJQaoE3CLmPrD5z3PbwFokbfv0djUVt5Zo7Rz9NF6V+iICnrGWx7ac9YGjafSyaYEV2iUBaFGzjasgjdPPpsDOW44=
+	t=1719403758; cv=none; b=uLtVLgk65cNM1yzwzAOzL5l2Rlh7TPPhwbHRuAkBJsed1y2xowzzHOIuycEPfbB0bmPRPUcZE9/rmUQ8+om3pmSsFGV7BigZmACKA2n06oUB0K1/jai4Dro4WKVG0E8f4rAk2vEgd6Xk8GZn3phx7nZ/XPgLyPeLVF2wQF0HZsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719403788; c=relaxed/simple;
-	bh=682UDvYYZ1aAaGOxp1reyfhaKc8P3rmiduqOQFcN4nQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UqCCg2DZV2DWw2dfNThC8PhvxofPnbtJPr+0m44z8DqwcY2LCjpykMxEohEPG7nCEznMSxxQVmPa7KVeLrPrbnhhBgOgMioOE4XP11h/3ab+mNYML1ZGfbSXor0z7ziLNjPJrGRChLK6+Mqg5xhP5VecQVw2pcL2F8n/3iZRffs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=krkbnRWZ; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719403786; x=1750939786;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=682UDvYYZ1aAaGOxp1reyfhaKc8P3rmiduqOQFcN4nQ=;
-  b=krkbnRWZn3Hr3Xz0Q3d8Vd2HiAu0dOWMRyFiLptlPPJhpQ+XTls/KfD8
-   O+CthtdtQI0nXFyl3ynXYwQiAiJLlfvLZAX7MGZ5rZBd/WTs5NDO4Zlyx
-   t30qbXZ1DMLsJyWGYM/C3WejLS+RZEUrecPMNJiJMKM+TItRa/6+Cb3pj
-   93jm3V+v15tTxsQEETm8KcR8e169cVW39JvT+8z6y7VoUaNhx09CZqq55
-   oiCGBogxhOr4n2wErCkvHL1TCxvnFa8ZFzxC/RQEjWpXMOcdxvs0Tys/E
-   D5fTrWQ5i/ZA3+M/lr/V4+pU7HivD/ZlAkneWuHYKZfFl5tEWhEuDgSEi
-   w==;
-X-CSE-ConnectionGUID: I0u8Pdc7R+ihfPbkIiSZsA==
-X-CSE-MsgGUID: SIXu6npoRgSRPVD9NoZ6Og==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="34002238"
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="34002238"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 05:09:45 -0700
-X-CSE-ConnectionGUID: ISumHd2+RkGM5L2H+zSVDA==
-X-CSE-MsgGUID: CYSlF/ybQrivsmPJO4HTXA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="81528052"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa001.jf.intel.com with ESMTP; 26 Jun 2024 05:09:41 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMRT0-000FFW-0X;
-	Wed, 26 Jun 2024 12:09:38 +0000
-Date: Wed, 26 Jun 2024 20:08:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, tglx@linutronix.de,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	tsbogend@alpha.franken.de, daniel.lezcano@linaro.org,
-	paulburton@kernel.org, peterz@infradead.org, mail@birger-koblitz.de,
-	bert@biot.com, john@phrozen.org, sander@svanheule.net
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-mips@vger.kernel.org, kabel@kernel.org, ericwouds@gmail.com,
-	Chris Packham <chris.packham@alliedtelesis.co.nz>,
-	Markus Stockhausen <markus.stockhausen@gmx.de>
-Subject: Re: [PATCH 4/6] clocksource: realtek: Add timer driver for rtl-otto
- platforms
-Message-ID: <202406261940.lYNjMHKC-lkp@intel.com>
-References: <20240621042737.674128-5-chris.packham@alliedtelesis.co.nz>
+	s=arc-20240116; t=1719403758; c=relaxed/simple;
+	bh=2+xH1mBOhPUluIxywXqOwQLxQ9N4Y9lY8NDxqSCdRcw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G1j38JyX8+k5DdYRCVh6JVvZMDpfrgXY5smeU/io03ACZv26hNcLDQJP87aKetJ4UFFdUGk6PfE2CoJ2Tdca4+lp9coVzVnVf/RnWDV/qF2eGrYzxkJSQlPwy32JgmsxiBWGeqQtpce7rQNgyIZjI0ZZ00cFf0hXVa83qYxd2Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfe43dca3bfso6735833276.0;
+        Wed, 26 Jun 2024 05:09:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719403755; x=1720008555;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=R0mk92Bl3LQ3otRfOdnBzHIQx6l64HiZ4cpcn1DGppY=;
+        b=epqPNZcgvvO2GidJuls/Ew3B4Lc7CPtq1QApoRLmqZnSzoBpeLcrBZIexFWY1uHyRP
+         CWwrzSSAeDB+zf2oi5e7nXzpiFW6AIyIOc+1Qtkfh97TxgJ5HR0ll41VKM1SZHNoQhG4
+         zYjHkIf91lMlEOUnSuulD9f5QfA7vkEeBj0HQqF7MSjmP2aDXiu+tupYuuORBW+j1zv5
+         90O/aF+MrQp2qXHS+VMrZo8YphnbaxsmnWXFzNkGPAN7fTKj/Qq6u80KC013e6Pb6sFB
+         P897AMMDVfzk2EB8wEEIivx8RhMTouXdLhX0Fj8EjckaHJwt3NBw5XTwxcwzGSUjVRpI
+         SBAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyubZWhzk3NHcgi+UjaCs0isjYj1CAwPa4IFnEud4OCHhLvbzSv2WweYXDW6gYnouL8kJDf/TWWeUbfg4cZm4mhWc+g/8QVeGrMZ7VqinMMUXBstOH9MkZQRVd2SfSPymk9pfbW/1f4zeinr9onSZLRkvz8PIGd6kczQ8j9R9hUxk96M2LpjlLMH3l5bcHhAileGVRTOizmdA188858ApvS18wqe+mFkK91L/73Vo3vZk+8oWHC71lQ4p7pIj1qeNZ
+X-Gm-Message-State: AOJu0YxabAcVDU77n0AJj2GajYDGnNT6TxLM1v33a5A7xmNlzGrUh6S4
+	Mq8vOnS2CCxewcpzlM0DIM2WIzabzjJH847bHBsobc0xz4fJQPAhzxTj4rui
+X-Google-Smtp-Source: AGHT+IHT8Ji9BSYpDePtcyLAvDd8mwMDstHI+WrAsMa+68ZO1QhEa1+74Lf08SYmALlC1gB1tMs0ug==
+X-Received: by 2002:a05:6902:102f:b0:e02:b7ee:5354 with SMTP id 3f1490d57ef6-e0300f893d9mr13313130276.20.1719403755045;
+        Wed, 26 Jun 2024 05:09:15 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e02e65dbbafsm4391812276.60.2024.06.26.05.09.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 05:09:14 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-63bdb089ffdso52892097b3.3;
+        Wed, 26 Jun 2024 05:09:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVtP+P2l7EssqxlAePpcX/HMKIobOWHioZsWMcxgSzIrdb+BLEpSGBhCcrIKIEV7TVe5zFJHHz6vXEhqwr9xssi6MI0XUmaClfFbRjdXM4D2PBS/O1ubTZgn58G/o50uBurHQpJhw/tgV2g7l2gGcQnbnc5Q4sXO3J+k2bV8bdUKLMn2xge4+swZw/trlMYJD7iQ/fT1WTBbS7qCh4v72Wylx5w0rqoPylIAbKTukrMT1h8Zxn0MRrs45SRbGMsW1DA
+X-Received: by 2002:a0d:eb84:0:b0:61a:ae79:816a with SMTP id
+ 00721157ae682-643413779ccmr91520187b3.31.1719403754668; Wed, 26 Jun 2024
+ 05:09:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621042737.674128-5-chris.packham@alliedtelesis.co.nz>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com> <20240614071932.1014067-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240614071932.1014067-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Jun 2024 14:09:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWMQJrEWEK-RK7Nv4Xoj=B84x9sRPiM=KCNpmx1Xk=Ktw@mail.gmail.com>
+Message-ID: <CAMuHMdWMQJrEWEK-RK7Nv4Xoj=B84x9sRPiM=KCNpmx1Xk=Ktw@mail.gmail.com>
+Subject: Re: [PATCH 01/12] clk: renesas: r9a08g045: Add clock, reset and power
+ domain support for the VBATTB IP
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org, 
+	alexandre.belloni@bootlin.com, magnus.damm@gmail.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Chris,
+On Fri, Jun 14, 2024 at 9:19=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The Renesas RZ/G3S SoC has an IP named Battery Backup Function (VBATTB)
+> that generates the RTC clock. Add clock, reset and power domain support
+> for it.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-kernel test robot noticed the following build warnings:
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.11.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on tip/timers/core tip/irq/core tip/smp/core linus/master v6.10-rc5 next-20240625]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Gr{oetje,eeting}s,
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Chris-Packham/dt-bindings-mips-realtek-Add-rtl930x-soc-compatible/20240625-160622
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20240621042737.674128-5-chris.packham%40alliedtelesis.co.nz
-patch subject: [PATCH 4/6] clocksource: realtek: Add timer driver for rtl-otto platforms
-config: x86_64-allyesconfig (https://download.01.org/0day-ci/archive/20240626/202406261940.lYNjMHKC-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406261940.lYNjMHKC-lkp@intel.com/reproduce)
+                        Geert
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406261940.lYNjMHKC-lkp@intel.com/
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-All warnings (new ones prefixed by >>):
-
->> drivers/clocksource/timer-rtl-otto.c:105:2: warning: cast to smaller integer type 'u32' (aka 'unsigned int') from 'void *' [-Wvoid-pointer-to-int-cast]
-     105 |         RTTM_DEBUG(to->of_base.base);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:97:24: note: expanded from macro 'RTTM_DEBUG'
-      96 |         pr_debug("------------- %d %08x\n",     \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      97 |                  smp_processor_id(), (u32)base)
-         |                  ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
-   include/linux/printk.h:588:26: note: expanded from macro 'pr_debug'
-     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:270:22: note: expanded from macro 'dynamic_pr_debug'
-     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     270 |                            pr_fmt(fmt), ##__VA_ARGS__)
-         |                            ~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:59: note: expanded from macro '_dynamic_func_call'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:248:65: note: expanded from macro '_dynamic_func_call_cls'
-     248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:224:15: note: expanded from macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:127:2: warning: cast to smaller integer type 'u32' (aka 'unsigned int') from 'void *' [-Wvoid-pointer-to-int-cast]
-     127 |         RTTM_DEBUG(to->of_base.base);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:97:24: note: expanded from macro 'RTTM_DEBUG'
-      96 |         pr_debug("------------- %d %08x\n",     \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      97 |                  smp_processor_id(), (u32)base)
-         |                  ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
-   include/linux/printk.h:588:26: note: expanded from macro 'pr_debug'
-     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:270:22: note: expanded from macro 'dynamic_pr_debug'
-     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     270 |                            pr_fmt(fmt), ##__VA_ARGS__)
-         |                            ~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:59: note: expanded from macro '_dynamic_func_call'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:248:65: note: expanded from macro '_dynamic_func_call_cls'
-     248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:224:15: note: expanded from macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:139:2: warning: cast to smaller integer type 'u32' (aka 'unsigned int') from 'void *' [-Wvoid-pointer-to-int-cast]
-     139 |         RTTM_DEBUG(to->of_base.base);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:97:24: note: expanded from macro 'RTTM_DEBUG'
-      96 |         pr_debug("------------- %d %08x\n",     \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      97 |                  smp_processor_id(), (u32)base)
-         |                  ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
-   include/linux/printk.h:588:26: note: expanded from macro 'pr_debug'
-     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:270:22: note: expanded from macro 'dynamic_pr_debug'
-     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     270 |                            pr_fmt(fmt), ##__VA_ARGS__)
-         |                            ~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:59: note: expanded from macro '_dynamic_func_call'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:248:65: note: expanded from macro '_dynamic_func_call_cls'
-     248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:224:15: note: expanded from macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:151:2: warning: cast to smaller integer type 'u32' (aka 'unsigned int') from 'void *' [-Wvoid-pointer-to-int-cast]
-     151 |         RTTM_DEBUG(to->of_base.base);
-         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:97:24: note: expanded from macro 'RTTM_DEBUG'
-      96 |         pr_debug("------------- %d %08x\n",     \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      97 |                  smp_processor_id(), (u32)base)
-         |                  ~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
-   include/linux/printk.h:588:26: note: expanded from macro 'pr_debug'
-     588 |         dynamic_pr_debug(fmt, ##__VA_ARGS__)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:270:22: note: expanded from macro 'dynamic_pr_debug'
-     269 |         _dynamic_func_call(fmt, __dynamic_pr_debug,             \
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     270 |                            pr_fmt(fmt), ##__VA_ARGS__)
-         |                            ~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:250:59: note: expanded from macro '_dynamic_func_call'
-     250 |         _dynamic_func_call_cls(_DPRINTK_CLASS_DFLT, fmt, func, ##__VA_ARGS__)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:248:65: note: expanded from macro '_dynamic_func_call_cls'
-     248 |         __dynamic_func_call_cls(__UNIQUE_ID(ddebug), cls, fmt, func, ##__VA_ARGS__)
-         |         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~
-   include/linux/dynamic_debug.h:224:15: note: expanded from macro '__dynamic_func_call_cls'
-     224 |                 func(&id, ##__VA_ARGS__);                       \
-         |                             ^~~~~~~~~~~
-   drivers/clocksource/timer-rtl-otto.c:163:2: warning: cast to smaller integer type 'u32' (aka 'unsigned int') from 'void *' [-Wvoid-pointer-to-int-cast]
-
-
-vim +105 drivers/clocksource/timer-rtl-otto.c
-
-    93	
-    94	/* Aggregated control functions for kernel clock framework */
-    95	#define RTTM_DEBUG(base)			\
-    96		pr_debug("------------- %d %08x\n",	\
-    97			 smp_processor_id(), (u32)base)
-    98	
-    99	static irqreturn_t rttm_timer_interrupt(int irq, void *dev_id)
-   100	{
-   101		struct clock_event_device *clkevt = dev_id;
-   102		struct timer_of *to = to_timer_of(clkevt);
-   103	
-   104		rttm_ack_irq(to->of_base.base);
- > 105		RTTM_DEBUG(to->of_base.base);
-   106		clkevt->event_handler(clkevt);
-   107	
-   108		return IRQ_HANDLED;
-   109	}
-   110	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
