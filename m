@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-230475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B506917D53
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:10:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E266917D55
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:10:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D58B1C22822
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:10:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1FA61F23DBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0641717C22E;
-	Wed, 26 Jun 2024 10:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D252217CA0B;
+	Wed, 26 Jun 2024 10:09:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y+IExZTE"
-Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qpk6LJhV"
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC98E176AAB
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 778A7176FD8
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719396588; cv=none; b=jAdsprnKthBRDVaT+jhvue5RV2dQ1rggsGKF0BVagfOYDTJjEaiNiCqXIEaFuSK8rXOANLcjTg7WQAEFCJNK81hygquQm6KvJZ7NYba+xK7NV25bHJ3v/+UmMXN/eiLmBgrOxYP2taepbztzyI5lVOlFHTH+KoGEtuUIiKt4Hw4=
+	t=1719396594; cv=none; b=WUWQnm6QGfLDnQUyXryJ8Te0TQ5/pGvab+dTpicb759drKESRLdpMPuOdEep2rPUT3ssS0Unt1TqNGXyrOyzql/A64A2xsDFivZnJiOrwe+yK7DH+eA5VJyckC1gVvtc0war4sMZZgD8hgNFnaxKBayXQBNEFUGX09B1RWqoIBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719396588; c=relaxed/simple;
-	bh=GpB46U0rTX768acpnwCp30n8vR+PPYQrOeVuFcF/H/I=;
+	s=arc-20240116; t=1719396594; c=relaxed/simple;
+	bh=cSD/jHQUP9UaTQwVe/lAb1jbbNkgxv6GNkc4nFRX3RM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mq04+b62wFYPkQXOqJ+JhgMX0q53IRSp74jH/2bEPNcVyS11gAr+flYz/RqI95dpmrqHfUWuftvyagncNOzYTfw+ZKblfcfgtzZdRUwtNkJwBYXJZno2AjMJTnKSHgQ4Ch8kbaspcH7wsyh+ZGVARNKoiDn5P/d470/fdQSgjQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y+IExZTE; arc=none smtp.client-ip=209.85.166.45
+	 In-Reply-To:To:Cc; b=c6NM/Waz/Dj2swUSxsWZlMkv2mRJlg4NjVJvRuqx38qdMNm3uPteR/oD8/MWdLVKUVy5FfCruwCS9QtfGFH3bjbEcvQH0HkelzDeIOSPGfRfueGvmoAwqSiJ9vqHL8Yo3j04dRrEqKpPOzBMW+KTPcFhdANc7bxspcSH2xAIo1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qpk6LJhV; arc=none smtp.client-ip=209.85.166.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-7ebe508fa34so352784939f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:09:45 -0700 (PDT)
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7f3c5af0a04so73753839f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:09:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719396585; x=1720001385; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719396591; x=1720001391; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=lyyT2YLj7brwLoXsAS7A6EY+f9NU6Kl4lWR4a3U/7uY=;
-        b=y+IExZTEemIxxRDE8kZNh9p+OiEBtXns/1oDcDgVpF5jCXv5IyFtZ7Ha8RThQPrpzP
-         ibPhuydu+yviiDUtPuyw1gDF9P3+MVz64lLXVaY4II+PGFbMQljlL1Pqrx+khbI/ISYE
-         2fdd4y13rGS8nSnScRoOuAEFO0eoQr0cfuE0tBRQnN3whBIccvippV2ogxWiHHqosVuS
-         4B9lUK9UZ5KXK4YE+oIHLBKN1HuI8XZ9NwJZvaw/zdMlmjc/oguoS6/4Mf1lTnkFJSBa
-         4P0V/wt8iEJyHPwrI1U5Nh2oMG+dm6rQ0KgnU0OYkWxNOFVYmwuQK5fG0dRswWi6KbMV
-         RVVA==
+        bh=CoYyv1JfNQ5/bYMgeMIzJcXdRr3laILkHeyjJlFqVI0=;
+        b=qpk6LJhVwPyii0IQOJMgq8BrR4hC/xKmQAHJLuu5UrS64QBVN+InHTYHn6lui7FC3E
+         bGAVQ9BH1PfXPSuowbtbyrFeCVxA8qq0AiURnckd9CeRSeiiSgIPcUdJCq5ppZljzsnI
+         4FU9coPQe8mBTwL4+Afk3xcQG18eBHdAPLdQRaxAdQfmVivzY3NbiFI4HcsdjekNOZPK
+         1cY6mcyPxOEbLENf5RxFU2LA4qZ4zrxPBmudse8H6Qu66nRUxJSBK0xsbHj7CiZZg25X
+         5Q9fIDbac+CVi0xQ8V3O+xz2LvJuV2STGRj4VgJ7yd1NGQMba28X322XWXexW9+UAwvw
+         78LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719396585; x=1720001385;
+        d=1e100.net; s=20230601; t=1719396591; x=1720001391;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=lyyT2YLj7brwLoXsAS7A6EY+f9NU6Kl4lWR4a3U/7uY=;
-        b=AL1GHgfDOfL7iwg3yjWOIVzNiY4MAZFVBA1uwAztD7lFdg6gdYqnLj82jMTbjywf6b
-         /c5U7jrMN0dl+zXEc2i6nwsreROt6MzGnXQ8P8wsrrK+JgRo/1Qa++JxN+RqIyJrlX/P
-         0922v1pqeC5quVZ3SJmXy03XGelqg4ot7gQ5q3zNdFc8uosoC9l9ybMLwu/ZP6CxTgoc
-         bSwxaInyvNnDgvBWMPU9PYZp0wjGrQhQt4UD73Z7phxnJZ/QLJdM3/v6oF4dOUQgUcvD
-         0gJLvZzoE0t9pdfpkhyUWsMuq1+utOvxHIQp/qAvBKwWA6ZF4zsEuNHkq2TWbYtvz3R6
-         Kk/g==
-X-Forwarded-Encrypted: i=1; AJvYcCVW3HtvSD3RafD9t9TjGUTMAP7CpC/af1LQW9xWoVYTtLfmz2+gYTTG2Ri6mHIseZX40d5pa2GMc0GlN8o7dj2Cw4lf5JNS+xaoUFdi
-X-Gm-Message-State: AOJu0YyHrwDTakL536OfLx5SMuAGlrerAgiF2GPSTFtAnd2o3r0GcT7z
-	mftzp0yh7d2ByJHT0lgG/Z0kUc7v/cQh/pRz2Z4YiTeiKk4SJv3hxuNEsMNbFYU=
-X-Google-Smtp-Source: AGHT+IEMyq8R/7/WsaxJZZQs9BQNgFhkEqurTmNJWnTSsdyT/suqRyRek2pxzdymC0qyY/6OUCmztw==
-X-Received: by 2002:a05:6602:27c8:b0:7f3:c683:2257 with SMTP id ca18e2360f4ac-7f3c68323ddmr511439439f.19.1719396585029;
-        Wed, 26 Jun 2024 03:09:45 -0700 (PDT)
+        bh=CoYyv1JfNQ5/bYMgeMIzJcXdRr3laILkHeyjJlFqVI0=;
+        b=V4ZxGq4R1avzzxfSVZjL1lkCjCmSg1LPO+f70vED9eVdulyx2226R8ViCK4/Cx4jhX
+         FhMBrmrn/goJ0wwwA3WTKL0aZ9nN/nY8BxxXte7aexIcGK6hT/4cEMD84ZvUbFVhR0sB
+         485GV3Wljy34linu+5dOuXEOyf2+3ldT48twHXfVEY1xUPZPztxKKcKwnZpQGu4/Cg+d
+         piLlQidboSaPO9zbecH2RmsVLg5GnmNYQ2g2E1q5jCH1IvunESXrteD9jQk76cAlJZnI
+         DVY/PYCfCMFjaX/dJUjkq5i0V10E4WJibuE8irbZgDWtQjPKDrsSBIl4dYhYtMXLSOwo
+         NWUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXpbWBm+MSTxPqDd31sZ5HEaMRs4kuGqTLfJkJmTXjSIo2KgSkztUAqKcB4mJuCfM6oG0KvtiUm6nQ8vn0kEfZwXmKcXzsCz62iIq7A
+X-Gm-Message-State: AOJu0YwCETNR7PC7IxUsOMdOZTgHxRi1YOvI/Lg9IMqVfsMcLkgXrzLQ
+	D7ZJh9/4N6DGgwifS04YJYHEY+JDGvhS0GOXRi0pduoH6dx2eo1OO0uulm+A5Dw=
+X-Google-Smtp-Source: AGHT+IEV500RWvFhXGEtFcRDihdWVaS1stReWnk1RyeO62061c9eWBuqX0Lm7cIXGByHUT76RnLSyw==
+X-Received: by 2002:a05:6602:3428:b0:7eb:4957:ea5b with SMTP id ca18e2360f4ac-7f3a7556c59mr1318193339f.11.1719396591627;
+        Wed, 26 Jun 2024 03:09:51 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9d121859csm3079108173.137.2024.06.26.03.09.39
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9d121859csm3079108173.137.2024.06.26.03.09.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 03:09:44 -0700 (PDT)
+        Wed, 26 Jun 2024 03:09:51 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 26 Jun 2024 12:09:11 +0200
-Subject: [PATCH v3 2/7] dt-bindings: soc: sprd: sc9863a-glbregs: Document
- SC9863A syscon
+Date: Wed, 26 Jun 2024 12:09:12 +0200
+Subject: [PATCH v3 3/7] dt-bindings: soc: intel: lgm-syscon: Move to
+ dedicated schema
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240626-dt-bindings-mfd-syscon-split-v3-2-3409903bb99b@linaro.org>
+Message-Id: <20240626-dt-bindings-mfd-syscon-split-v3-3-3409903bb99b@linaro.org>
 References: <20240626-dt-bindings-mfd-syscon-split-v3-0-3409903bb99b@linaro.org>
 In-Reply-To: <20240626-dt-bindings-mfd-syscon-split-v3-0-3409903bb99b@linaro.org>
 To: Orson Zhai <orsonzhai@gmail.com>, 
@@ -97,61 +97,86 @@ To: Orson Zhai <orsonzhai@gmail.com>,
 Cc: Jiaxun Yang <jiaxun.yang@flygoat.com>, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  linux-mediatek@lists.infradead.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ Rahul Tanwar <rahul.tanwar@linux.intel.com>, 
+ Amireddy Mallikarjuna reddy <mallikarjunax.reddy@intel.com>, 
+ "Zhu, Yi Xin" <Yixin.zhu@intel.com>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1955;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3048;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=GpB46U0rTX768acpnwCp30n8vR+PPYQrOeVuFcF/H/I=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBme+jOPW/pRpNa5wcaDuQgo+GKD9ufJBS2slVI9
- DUEmVuVg5aJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZnvozgAKCRDBN2bmhouD
- 16DyEACDsuY0Tktlq051+p1lqoifw/KJMVcMX2UU77MTJEF1HKhqQHK4B6GJyxo3bh2kWVca0eG
- Y9BgrGeXwzifNVFFTuPUDtXDyLHE0Zn5HgLPhoddn/ncOHzt+FxG1id236lYEMGruUsNmeskoPG
- dtLCw8lgZCiQOayt7l/vrnjDzOu8agzemjxc/2/XnkaSdfSC/Yfke4IaRj5/G543Bn496TA4nW3
- gSTr7+97WiCje+TlwGhoMZSkU02yIesrFjbbVgCkC1rGfxK0eNDbnztrbX/jjXz2FfXuh6y6Mzs
- 9ftjD85kwaZ7M6byl2isVmGLIXy1DQSh27uVFg6rUXrMKf+AacQaJaf+xBT5BpYe0GwogsnK2HV
- z+v+NYV3v1/C9BZl6VTvapfVb5+imZ1Ofd5JiTECnVTS2hvxSSFGBqctflxKXNKeTiDvOIPWhPa
- FVeO4b+3z27/H4eKATNA/sy97lWgijt7zop2R5SgcJTc+EOZKp0pC6hotTf5PQVJHCf/CfWeaFS
- IJH4YKT25gvpc2MR98qjT4upN8fsBJ3nuas0yRo5Ww6oJVIIZtV207OIc/sHlujBtyO17TwTvcD
- KhqjLNg4nZmcsG67EPl6orIaGJmzT4bvu9S88FJyZO6j0MOBZ6GFv4HylfFtuCLIFCDd8yza2ZL
- ll+MEQ7GYUtEm9g==
+ bh=cSD/jHQUP9UaTQwVe/lAb1jbbNkgxv6GNkc4nFRX3RM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBme+jPipFbrcUkKVwnewbgvivyKt142GIXts2UH
+ Sl79iiv+JiJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZnvozwAKCRDBN2bmhouD
+ 15DED/99VuG+osM5hju34/3Db9qPHKxklXrI4si79XiFua1YV/H57NmqIs9EsUZSKJ6GwjwvQwa
+ xYohWS1lG91/2BrUnu7QF/ZLpFJnvK1INlBJBp+FbYwpO1Zw+9CionjNMmS96rG1/Ooq8KEiABF
+ iycKZGpKvOs3BscZjRt/59vhuYQ0Z37w4M0uCq/yhnsEkzrQXsCNht7fA1OE4nza0ZZZ7mVqR6n
+ 3zTJds65wTZO7txj8XollTpytEbobEo1KkfTyuiyhlXnHNvAyBnr/iN9ir8QJcHI9Q/d+IXGe2a
+ LO8JVMPHnUiwPfsx9/vnBd4ypxeV6D0unMhKc4hgJgqairKcilsfcFqLjo9cSpnPobYV01cssXG
+ 25zeAW9o3G8B2geGEBOCyRjKc2kYBF50qaW3fz5soOqs905+l8ItLUbQAy/cWY48krE3qy4XqND
+ PLQfnOPuH5tYSbRjLyty/BfWCNWLI4kX9mRyWQ+poWIPz5K5brIK1uUf5M7bi4c2Z8840RDmdBy
+ p9FV9nCSHVETJQZ6+34Xx1f4paHkux3LxO3Vsm3K62qM32hbHfav2HSnIA6K+sEZorXx0MavKY1
+ /FullhERpGFOnV8cO8XOfHy75Ff2tEy1mDGkOhI7JAj22vPgWrsTvJ+cBDDxZfiZC9JgrwRux5B
+ 3XDhHQzntUpib6Q==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Document sprd,sc9863a-glbregs compatible already used in DTS and other
-bindings example.
+intel,lgm-syscon is not a simple syscon device - it has children - thus
+it should be fully documented in its own binding.
 
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
 Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-Reviewed-by: Baolin Wang <baolin.wang@linux.alibaba.com>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../bindings/soc/sprd/sprd,sc9863a-glbregs.yaml    | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/soc/sprd/sprd,sc9863a-glbregs.yaml b/Documentation/devicetree/bindings/soc/sprd/sprd,sc9863a-glbregs.yaml
+Context might depend on patch in Lee's MFD tree:
+https://lore.kernel.org/all/171828959006.2643902.8308227314531523435.b4-ty@kernel.org/
+and also further patches here depend on this one.
+
+We need to cleanup intel's emails. Does this bounce?
+Cc: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Cc: Amireddy Mallikarjuna reddy <mallikarjunax.reddy@intel.com>
+Cc: "Zhu, Yi Xin" <Yixin.zhu@intel.com>
+---
+ Documentation/devicetree/bindings/mfd/syscon.yaml  |  1 -
+ .../bindings/soc/intel/intel,lgm-syscon.yaml       | 57 ++++++++++++++++++++++
+ 2 files changed, 57 insertions(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Documentation/devicetree/bindings/mfd/syscon.yaml
+index af442767aa96..b9bf5bc05e92 100644
+--- a/Documentation/devicetree/bindings/mfd/syscon.yaml
++++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
+@@ -77,7 +77,6 @@ properties:
+               - hisilicon,pcie-sas-subctrl
+               - hisilicon,peri-subctrl
+               - hpe,gxp-sysreg
+-              - intel,lgm-syscon
+               - loongson,ls1b-syscon
+               - loongson,ls1c-syscon
+               - lsi,axxia-syscon
+diff --git a/Documentation/devicetree/bindings/soc/intel/intel,lgm-syscon.yaml b/Documentation/devicetree/bindings/soc/intel/intel,lgm-syscon.yaml
 new file mode 100644
-index 000000000000..49add564e5e1
+index 000000000000..6951d55356d5
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/sprd/sprd,sc9863a-glbregs.yaml
-@@ -0,0 +1,55 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++++ b/Documentation/devicetree/bindings/soc/intel/intel,lgm-syscon.yaml
+@@ -0,0 +1,57 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/soc/sprd/sprd,sc9863a-glbregs.yaml#
++$id: http://devicetree.org/schemas/soc/intel/intel,lgm-syscon.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: SC9863A Syscon
++title: Intel Lightning Mountain(LGM) Syscon
 +
 +maintainers:
-+  - Orson Zhai <orsonzhai@gmail.com>
-+  - Baolin Wang <baolin.wang7@gmail.com>
-+  - Chunyan Zhang <zhang.lyra@gmail.com>
++  - Chuanhua Lei <lchuanhua@maxlinear.com>
++  - Rahul Tanwar <rtanwar@maxlinear.com>
 +
 +properties:
 +  compatible:
 +    items:
-+      - const: sprd,sc9863a-glbregs
++      - const: intel,lgm-syscon
 +      - const: syscon
-+      - const: simple-mfd
 +
 +  reg:
 +    maxItems: 1
@@ -165,29 +190,33 @@ index 000000000000..49add564e5e1
 +    const: 1
 +
 +patternProperties:
-+  "@[0-9a-f]+$":
-+    $ref: /schemas/clock/sprd,sc9863a-clk.yaml
-+    description: Clock controllers
++  "^emmc-phy@[0-9a-f]+$":
++    $ref: /schemas/phy/intel,lgm-emmc-phy.yaml#
++
++required:
++  - compatible
++  - reg
++  - "#address-cells"
++  - "#size-cells"
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    syscon@20e00000 {
-+      compatible = "sprd,sc9863a-glbregs", "syscon", "simple-mfd";
-+      reg = <0x20e00000 0x4000>;
-+      ranges = <0 0x20e00000 0x4000>;
-+      #address-cells = <1>;
-+      #size-cells = <1>;
++    chiptop@e0200000 {
++        compatible = "intel,lgm-syscon", "syscon";
++        reg = <0xe0200000 0x100>;
++        ranges = <0x0 0xe0200000 0x100>;
++        #address-cells = <1>;
++        #size-cells = <1>;
 +
-+      apahb_gate: apahb-gate@0 {
-+        compatible = "sprd,sc9863a-apahb-gate";
-+        reg = <0x0 0x1020>;
-+        #clock-cells = <1>;
-+      };
++        emmc-phy@a8 {
++            compatible = "intel,lgm-emmc-phy";
++            reg = <0x00a8 0x10>;
++            clocks = <&emmc>;
++            #phy-cells = <0>;
++        };
 +    };
-+
-+...
 
 -- 
 2.43.0
