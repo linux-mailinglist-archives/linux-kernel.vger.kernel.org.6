@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-231496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1553919945
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:41:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BA5919946
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:41:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 499461F22954
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:41:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B9624B220E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:41:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48127196D8F;
-	Wed, 26 Jun 2024 20:37:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E10A197A6B;
+	Wed, 26 Jun 2024 20:37:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NCACnffO"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="t8kZYEJ3"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0C7196C68
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 20:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9A8197543
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 20:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719434245; cv=none; b=SkUOd7kDQdKESHgZFfMkjf6Yu/nNYum9lr7OY2Mj2qCSmThhz66McHPNn5YKyD8GyoNL3SrNTpX3TqUw5pa8xdfYEhiMt0Y+oyQMaRIEhhfPimCUNib7IENLhj1AhZ2maBqY1WgrwPSgYuIDtSivnmhXyPYtlkWfLmtWuUNL3g0=
+	t=1719434248; cv=none; b=DegAjawTi3ABJ9BfzN+E+xApwYAfQHXKplJy6XX+xsXrYfb0DJhHsTxT+jrEatCvyMgc+rsfLR5UwuQvkMZC4ceIGQZ4P1hP/16xCTvYVDC/v4UWqQna3B8JT33M68z4hsRi1VanU5EbsCfT0DCS7gbS8AtXQf30uXHnXa/Ojs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719434245; c=relaxed/simple;
-	bh=NNpDhvLM21Dx7gpxRlWCOf8pWQqxyB122lzmpjrWI8Q=;
+	s=arc-20240116; t=1719434248; c=relaxed/simple;
+	bh=wyJ+MS1hXvC6jnjDEgOqcoNvRhtG2Ev85ERR2gsbIdw=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=ilsPDKCC+vryVgzaHbRXGBhzjkMIflz7spFjOHG15k/byzIrGT268+j1RKc9yJyFG4ko4ClRwuC7xupd12ZjrbOinM6cuqR1z2/ROma4I4S/j5E255a64p9HpL1VPEAEGyVt994t271D20DWNJPE8OCfthzntnykix/kvxquDhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NCACnffO; arc=none smtp.client-ip=209.85.128.202
+	 To:Content-Type; b=umLsjVua0if/2R5g+PU2qXUHJgc3jDsQAEynJRB5lRJ6lkhrcha8Qzo3VGxNEu8MQ8dDjXFaGvdBhBSpfUNSchvLuFXtwAGlWi9G+xl4+mp5XKyYIq0cXfx/BjvKKx2NpbjHMqIkAknoGxg0FfAm9Hzkf1loxMdypkDKZZy+p18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=t8kZYEJ3; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-63bb7fb3229so153581737b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:37:23 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-df771b5e942so13633814276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:37:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719434243; x=1720039043; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719434245; x=1720039045; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6FKqc617GU6y9EZBzym/gHkh1HBEMH2nzxihyAHq3eE=;
-        b=NCACnffOyIe9SiAUIgK4LEqNZlZ+RpHGbzPtywgL0L/ttgTQ+6BQnrBY1nxsRX9VUv
-         0DeWTJZ3ig9ffNfuDAYaSFQCi0ccFiBkzrO8Dz72cn4mQ21uc0Z7qXCI4zJMyYhqIvcv
-         InVb+f9RDAIUz5/YSgjPsxqYOgw+Agjyg64OQaYN4hWFIXbxX7kpmvZFTXMHrjQfk89u
-         sJLCCA/DXcOWFYZWTSjF9SHeOUkElu9u9TEYhOa3MNfpcP9T847eEM4D5anWMM7jOe/k
-         sNR5T9JuZrzClU6DtZoZVgb/r247253dbPg1+uFD3oQITjUYlvFJyUiR7yEevvxehrkz
-         IYWQ==
+        bh=Ygd9VSeBzmgIFn0KNDzBnTE+heYOe9Db6FtOSFvMpYw=;
+        b=t8kZYEJ3Dp7rq+wqrkUv1eoQoRlmB7Y5UGfdOUoVUP0M/e+C9pAp023YchDFEs+QP3
+         Qq1dx3bI5eU9B1UM6QAArDrX+rPdWl9k0uw/3vVhB45FWZcmeP36b2SLbogJx956NHj7
+         0jicq/1SYjEzxl/BxLcUJFLWOKBMKyp611r8J/IZ56QgfF+qr9ve74Bv/EU9BCWYT2Ww
+         eYy1REbmJmRY8T/rn6FowF3AVtybPweef/HOQ8NCrCKdPBAvftmgfARFwAcUj3GJiw5u
+         6ms9OThTKyonxSo60ZAX9j2g4J4ORnX2cCtRxBMwls6ajDmaRODhHHdCPq+1KcFQl2+v
+         tn8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719434243; x=1720039043;
+        d=1e100.net; s=20230601; t=1719434245; x=1720039045;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6FKqc617GU6y9EZBzym/gHkh1HBEMH2nzxihyAHq3eE=;
-        b=vUe/QoGNx3i75ApMnwBf7vM8pfB3Zy8K2bjZlt+qIsye6nQotVws2Y1wq9i2ljrkfI
-         N9S5HIyb5+3TWSduRh5rc9bYCey5gBkner+nFi5GR31dlx6+wIZCaWOQvnAIzeNnjNSh
-         Cq6RF/6cBMmEyr6dmdliuL/S986gWb2/0Sd6iv5qE4Xrpusj+Yuq0e6s5QqXysVo+uf2
-         yO162jPucYagjdEFiGGZPKMIZrymfgqewihORmSwMfp+j0sIURl4qWqsKX7D5vvAugqg
-         sP92Bi2HC0vHQS3GKULzL7re5YZpNhkyzzPd4cwUe1k05Vn3oOPv9rkwBffN3Q8BYpCH
-         4qUw==
-X-Forwarded-Encrypted: i=1; AJvYcCVsAB2IqgZxPps2L8hznBL73DCEkAhuX3YILBkTlGpgWsF76TBoUJCuB2zwF9w+rdaMBB7jMY8dSKTxpilGRNbSZoamZ9CzcWRUxLGw
-X-Gm-Message-State: AOJu0YzMYCaESBSmn4Rs7dYC90TatT/UY8QMnDYfoWmCKmONCXwLsroB
-	4uy1z41aWlgLUIIXRW9Zoux+vpX4+t2rLkWg0CHoAYHbalzZakx9qGy+5Z61HooH8LgMG7ZO85o
-	PgQmMVA==
-X-Google-Smtp-Source: AGHT+IGZ2cbOs+APOfGf2ySj3i2AIMZztj3b6qdJV0HjjCy2lYFBRVoy2+uVDxJhN+goCOCz1d2W7vXHAT/x
+        bh=Ygd9VSeBzmgIFn0KNDzBnTE+heYOe9Db6FtOSFvMpYw=;
+        b=Db6gk+2K1iGJAiFbqm4hUt+LxCvGfCO1aMmjqgl0nYFcbD6XPR29ijt83mNcyh8SOW
+         81iPN07jW6MWT9xSZdM+gOQ0fR25ajrmIcGDMLE4Eg5MsbjXdd9XahNSRylnD8L0k9Rv
+         8rZnJfGL/1FrRoO0hygxilsQtm339RwFtdSQ5RmqwvUn47Y2ylykGvqY7Mt7KoLG5gcQ
+         OQQ0LTGM4Ocjc1op0y7vLv0f/sR+CDXRyfxjJbOFjJ69AeHrru2lnt61J4VxNHSz7HZL
+         XyTu2WTebPwtSDnzJtJtfTQqfpz9SFNIvKsJCqf2kWgvsCjOpuYxiG6iqAVqbV0IkvgU
+         IcWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0ifkEgEofr1TCS1MAN0XHGHgKnD/0Gw6Xb4RymDK8vtwWaSd9a3+wF1uaJTv88AsFpGLAhn+n9nJEbly4hohZ7YbO0U4997ZN2mYu
+X-Gm-Message-State: AOJu0YzivbdYQxDQ1J7bQA+e28t3qeO+NAVjNcYJYuIEyiy6EK1E+317
+	llvLAqp1cjvBVQnRd0unvWGaeC5uTbSaWXsifAoAxAA0zQhg7Cub1Ovgr/HAA6HvZsp1uwzXwPo
+	OPD14OA==
+X-Google-Smtp-Source: AGHT+IF/vcrraNGO8BvvwHEaNEI4MnPwEjIw3svMWd/uO2vmBwnso/c7O4FDmbKBdx/YPU/OIZxWVyD57VYv
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:23a1:25b9:2412:56de])
- (user=irogers job=sendgmr) by 2002:a05:6902:704:b0:dfb:22ca:1efd with SMTP id
- 3f1490d57ef6-e0303fce998mr564006276.9.1719434243104; Wed, 26 Jun 2024
- 13:37:23 -0700 (PDT)
-Date: Wed, 26 Jun 2024 13:36:21 -0700
+ (user=irogers job=sendgmr) by 2002:a05:6902:1009:b0:e03:252a:f931 with SMTP
+ id 3f1490d57ef6-e03252afca1mr11973276.1.1719434245280; Wed, 26 Jun 2024
+ 13:37:25 -0700 (PDT)
+Date: Wed, 26 Jun 2024 13:36:22 -0700
 In-Reply-To: <20240626203630.1194748-1-irogers@google.com>
-Message-Id: <20240626203630.1194748-20-irogers@google.com>
+Message-Id: <20240626203630.1194748-21-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240626203630.1194748-1-irogers@google.com>
 X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-Subject: [PATCH v2 19/27] perf mem: Use perf_tool__init
+Subject: [PATCH v2 20/27] perf timechart: Use perf_tool__init
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -99,60 +99,46 @@ and not relying on perf_tool__fill_defaults.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/builtin-mem.c | 33 +++++++++++++++++----------------
- 1 file changed, 17 insertions(+), 16 deletions(-)
+ tools/perf/builtin-timechart.c | 17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/builtin-mem.c b/tools/perf/builtin-mem.c
-index c2038a32543c..c12ca0ec1237 100644
---- a/tools/perf/builtin-mem.c
-+++ b/tools/perf/builtin-mem.c
-@@ -285,7 +285,23 @@ static int report_raw_events(struct perf_mem *mem)
- 		.force = mem->force,
+diff --git a/tools/perf/builtin-timechart.c b/tools/perf/builtin-timechart.c
+index 5bf818baa662..218c8b44d7be 100644
+--- a/tools/perf/builtin-timechart.c
++++ b/tools/perf/builtin-timechart.c
+@@ -1606,10 +1606,16 @@ static int __cmd_timechart(struct timechart *tchart, const char *output_name)
+ 		.mode  = PERF_DATA_MODE_READ,
+ 		.force = tchart->force,
  	};
- 	int ret;
--	struct perf_session *session = perf_session__new(&data, &mem->tool);
+-
+-	struct perf_session *session = perf_session__new(&data, &tchart->tool);
 +	struct perf_session *session;
-+
-+	perf_tool__init(&mem->tool, /*ordered_events=*/true);
-+	mem->tool.sample		= process_sample_event;
-+	mem->tool.mmap		= perf_event__process_mmap;
-+	mem->tool.mmap2		= perf_event__process_mmap2;
-+	mem->tool.comm		= perf_event__process_comm;
-+	mem->tool.lost		= perf_event__process_lost;
-+	mem->tool.fork		= perf_event__process_fork;
-+	mem->tool.attr		= perf_event__process_attr;
-+	mem->tool.build_id	= perf_event__process_build_id;
-+	mem->tool.namespaces	= perf_event__process_namespaces;
-+	mem->tool.auxtrace_info  = perf_event__process_auxtrace_info;
-+	mem->tool.auxtrace       = perf_event__process_auxtrace;
-+	mem->tool.auxtrace_error = perf_event__process_auxtrace_error;
-+
-+	session = perf_session__new(&data, &mem->tool);
+ 	int ret = -EINVAL;
  
++	perf_tool__init(&tchart->tool, /*ordered_events=*/true);
++	tchart->tool.comm		 = process_comm_event;
++	tchart->tool.fork		 = process_fork_event;
++	tchart->tool.exit		 = process_exit_event;
++	tchart->tool.sample		 = process_sample_event;
++
++	session = perf_session__new(&data, &tchart->tool);
  	if (IS_ERR(session))
  		return PTR_ERR(session);
-@@ -449,21 +465,6 @@ int cmd_mem(int argc, const char **argv)
+ 
+@@ -1924,13 +1930,6 @@ parse_time(const struct option *opt, const char *arg, int __maybe_unused unset)
+ int cmd_timechart(int argc, const char **argv)
  {
- 	struct stat st;
- 	struct perf_mem mem = {
+ 	struct timechart tchart = {
 -		.tool = {
--			.sample		= process_sample_event,
--			.mmap		= perf_event__process_mmap,
--			.mmap2		= perf_event__process_mmap2,
--			.comm		= perf_event__process_comm,
--			.lost		= perf_event__process_lost,
--			.fork		= perf_event__process_fork,
--			.attr		= perf_event__process_attr,
--			.build_id	= perf_event__process_build_id,
--			.namespaces	= perf_event__process_namespaces,
--			.auxtrace_info  = perf_event__process_auxtrace_info,
--			.auxtrace       = perf_event__process_auxtrace,
--			.auxtrace_error = perf_event__process_auxtrace_error,
--			.ordered_events	= true,
+-			.comm		 = process_comm_event,
+-			.fork		 = process_fork_event,
+-			.exit		 = process_exit_event,
+-			.sample		 = process_sample_event,
+-			.ordered_events	 = true,
 -		},
- 		.input_name		 = "perf.data",
- 		/*
- 		 * default to both load an store sampling
+ 		.proc_num = 15,
+ 		.min_time = NSEC_PER_MSEC,
+ 		.merge_dist = 1000,
 -- 
 2.45.2.741.gdbec12cfda-goog
 
