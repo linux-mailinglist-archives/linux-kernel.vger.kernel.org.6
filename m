@@ -1,121 +1,246 @@
-Return-Path: <linux-kernel+bounces-230712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C7DC9180F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:27:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1783E9180F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36DF31F22FA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49BA4280AA7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25C9181CE0;
-	Wed, 26 Jun 2024 12:27:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C001D15698B;
-	Wed, 26 Jun 2024 12:27:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0987C181CE2;
+	Wed, 26 Jun 2024 12:32:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PpD6ZpKM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD4D171AD;
+	Wed, 26 Jun 2024 12:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719404839; cv=none; b=dsIbZlMCjUyE+H2nR1b/150cqgMGRBG+bOwaoVg0b2KIWb9OO7PccCOV639zY4a3sOIKZzfTBPBLoqnfRPUsAysZ/8skMg/EH7+xB7+IZftgEN3vDsNrpdsXgtqFxnZHLLD42EsB/Sp/3bq9g2EmItCIj7IienN73P+As67/7Jo=
+	t=1719405123; cv=none; b=CS6st0j9POUjbxW0JXkOUmJoMI5wTdnkH0bBVdZf+ETo8v2US0QIzMyCMGOpCvgYy2+b+MsEa3czU4c16srfce9dVbm9p4z8fbLNV5cCuSIapOTCm5eivOUOvEl+74Ext2AxqLe0nvZXeOyviHHoMH85ccGnvZQwreU4VKAFDOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719404839; c=relaxed/simple;
-	bh=q+WDEOaAeedKX/+xIGLVKfTqoWhp9npRvixWm1Rkhrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PEOkBUjUlF6XRZCm+djFQTQoloH5SZaSmSn9odcjANEt4NozC3SJguRHwY4ZlwGtCOojvnlvkoVVTKLbUtbJHt150iiFZgx/TzFzvGvD2YriDAQlPycepFi9soqz4pP7UocThVcyAz1sCPCAIt9E+J+wnuVpKTJj1uBeaNZv/cU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA70A339;
-	Wed, 26 Jun 2024 05:27:40 -0700 (PDT)
-Received: from bogus (e103737-lin.cambridge.arm.com [10.1.197.49])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD2503F73B;
-	Wed, 26 Jun 2024 05:27:13 -0700 (PDT)
-Date: Wed, 26 Jun 2024 13:27:11 +0100
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: admiyo@os.amperecomputing.com
-Cc: Jassi Brar <jassisinghbrar@gmail.com>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>, Robert Moore <robert.moore@intel.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jeremy Kerr <jk@codeconstruct.com.au>,
-	Matt Johnston <matt@codeconstruct.com.au>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Subject: Re: [PATCH v3 1/3] mctp pcc: Check before sending MCTP PCC response
- ACK
-Message-ID: <ZnwJH5lJpefkzaWg@bogus>
-References: <20240625185333.23211-1-admiyo@os.amperecomputing.com>
- <20240625185333.23211-2-admiyo@os.amperecomputing.com>
+	s=arc-20240116; t=1719405123; c=relaxed/simple;
+	bh=mc/ZYbx1LwXPN/DM65SBf0NUloG3DhGylqQgVaBcn9g=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=LxE4Ex5Dxj0UPFrzEWPn6hoxoRXBsD6jeqz+boRSGlJdw25+bA8p0fUGKcNvJexFM+3bu22g3MYxlQ99gIJwvgb2nor6zSCe7cuNll+w9/jB1Ii2WInWEwUpYZzRly6uFLKQZRNflsKJi1FlLLmeigQ4+ZA4IYd2dMuYQRfjOk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PpD6ZpKM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1C21C2BD10;
+	Wed, 26 Jun 2024 12:31:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719405122;
+	bh=mc/ZYbx1LwXPN/DM65SBf0NUloG3DhGylqQgVaBcn9g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PpD6ZpKMa22oJXnc5CzpHrMIdkiw7/YZz1clqYsll/D6PeVQU3wuvM38FF9MxpJ/E
+	 PGtfU7hGckDZxUSsxPakXzyhUdY3+U7vCMl6JUroMbpkZ+0Sk9BvPBKzXH28yXtdva
+	 wCcVFDD0JFOrjflRvW6XyODgg0Dl+rHC1z7ROKEPYe3nQAJft3lUoUBmrL9Bndska8
+	 FQ1897/y+TWw0308uQVzjiM6xIqGvL0dyDJAyOEpFbqPsBHTgutljd5GakEH/ZK1Uq
+	 CMjKA27CKH4LRXjHcTcfBIKrgXvhC+9F6OHUb+zgcf5aHeZEx28wVfmXLJ8OOl4V2p
+	 fFpd4rsrceshw==
+Date: Wed, 26 Jun 2024 21:31:57 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Takaya Saeki <takayas@chromium.org>
+Cc: Matthew Wilcox <willy@infradead.org>, Andrew Morton
+ <akpm@linux-foundation.org>, Steven Rostedt <rostedt@goodmis.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Junichi Uekawa <uekawa@chromium.org>,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [PATCH v2] filemap: add trace events for get_pages, map_pages,
+ and fault
+Message-Id: <20240626213157.e2d1b916bcb28d97620043d1@kernel.org>
+In-Reply-To: <20240620161903.3176859-1-takayas@chromium.org>
+References: <20240620161903.3176859-1-takayas@chromium.org>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240625185333.23211-2-admiyo@os.amperecomputing.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 25, 2024 at 02:53:31PM -0400, admiyo@os.amperecomputing.com wrote:
-> From: Adam Young <admiyo@amperecomputing.com>
+On Thu, 20 Jun 2024 16:19:03 +0000
+Takaya Saeki <takayas@chromium.org> wrote:
+
+> To allow precise tracking of page caches accessed, add new tracepoints
+> that trigger when a process actually accesses them.
 > 
-> Type 4 PCC channels have an option to send back a response
-> to the platform when they are done processing the request.
-> The flag to indicate whether or not to respond is inside
-> the message body, and thus is not available to the pcc
-> mailbox.  Since only one message can be processed at once per
-> channel, the value of this flag is checked during message processing
-> and passed back via the channels global structure.
+> The ureadahead program used by ChromeOS traces the disk access of
+> programs as they start up at boot up. It uses mincore(2) or the
+> 'mm_filemap_add_to_page_cache' trace event to accomplish this. It stores
+> this information in a "pack" file and on subsequent boots, it will read
+> the pack file and call readahead(2) on the information so that disk
+> storage can be loaded into RAM before the applications actually need it.
 > 
-> Ideally, the mailbox callback function would return a value
-> indicating whether the message requires an ACK, but that
-> would be a change to the mailbox API.  That would involve
-> some change to all (about 12) of the mailbox based drivers,
-> and the majority of them would not need to know about the
-> ACK call.
->
+> A problem we see is that due to the kernel's readahead algorithm that
+> can aggressively pull in more data than needed (to try and accomplish
+> the same goal) and this data is also recorded. The end result is that
+> the pack file contains a lot of pages on disk that are never actually
+> used. Calling readahead(2) on these unused pages can slow down the
+> system boot up times.
+> 
+> To solve this, add 3 new trace events, get_pages, map_pages, and fault.
+> These will be used to trace the pages are not only pulled in from disk,
+> but are actually used by the application. Only those pages will be
+> stored in the pack file, and this helps out the performance of boot up.
+> 
+> With the combination of these 3 new trace events and
+> mm_filemap_add_to_page_cache, we observed a reduction in the pack file
+> by 7.3% - 20% on ChromeOS varying by device.
+> 
 
-Next time when you post new series, I prefer to be cc-ed in all the patches.
-So far I ignored v1 and v2 thinking it has landed in my mbox my mistake and
-deleted them. But just checked the series on lore, sorry for that.
+This looks good to me from the trace-event point of view.
 
-> Signed-off-by: Adam Young <admiyo@os.amperecomputing.com>
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thanks!
+
+> Signed-off-by: Takaya Saeki <takayas@chromium.org>
 > ---
->  drivers/mailbox/pcc.c | 6 +++++-
->  include/acpi/pcc.h    | 1 +
->  2 files changed, 6 insertions(+), 1 deletion(-)
+> Changelog between v2 and v1
+> - Fix a file offset type usage by casting pgoff_t to loff_t
+> - Fixed format string of dev and inode
 > 
-> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-> index 94885e411085..5cf792700d79 100644
-> --- a/drivers/mailbox/pcc.c
-> +++ b/drivers/mailbox/pcc.c
-> @@ -280,6 +280,7 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
->  {
->  	struct pcc_chan_info *pchan;
->  	struct mbox_chan *chan = p;
-> +	struct pcc_mbox_chan *pmchan;
->  	u64 val;
->  	int ret;
+>  include/trace/events/filemap.h | 84 ++++++++++++++++++++++++++++++++++
+>  mm/filemap.c                   |  4 ++
+>  2 files changed, 88 insertions(+)
+> 
+> V1:https://lore.kernel.org/all/20240618093656.1944210-1-takayas@chromium.org/
+> 
+> diff --git a/include/trace/events/filemap.h b/include/trace/events/filemap.h
+> index 46c89c1e460c..3a94bd633bf0 100644
+> --- a/include/trace/events/filemap.h
+> +++ b/include/trace/events/filemap.h
+> @@ -56,6 +56,90 @@ DEFINE_EVENT(mm_filemap_op_page_cache, mm_filemap_add_to_page_cache,
+>  	TP_ARGS(folio)
+>  	);
 >  
-> @@ -304,6 +305,8 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
->  	if (pcc_chan_reg_read_modify_write(&pchan->plat_irq_ack))
->  		return IRQ_NONE;
+> +DECLARE_EVENT_CLASS(mm_filemap_op_page_cache_range,
+> +
+> +	TP_PROTO(
+> +		struct address_space *mapping,
+> +		pgoff_t index,
+> +		pgoff_t last_index
+> +	),
+> +
+> +	TP_ARGS(mapping, index, last_index),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(unsigned long, i_ino)
+> +		__field(dev_t, s_dev)
+> +		__field(unsigned long, index)
+> +		__field(unsigned long, last_index)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->i_ino = mapping->host->i_ino;
+> +		if (mapping->host->i_sb)
+> +			__entry->s_dev =
+> +				mapping->host->i_sb->s_dev;
+> +		else
+> +			__entry->s_dev = mapping->host->i_rdev;
+> +		__entry->index = index;
+> +		__entry->last_index = last_index;
+> +	),
+> +
+> +	TP_printk(
+> +		"dev=%d:%d ino=%lx ofs=%lld max_ofs=%lld",
+> +		MAJOR(__entry->s_dev),
+> +		MINOR(__entry->s_dev), __entry->i_ino,
+> +		((loff_t)__entry->index) << PAGE_SHIFT,
+> +		((loff_t)__entry->last_index) << PAGE_SHIFT
+> +	)
+> +);
+> +
+> +DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_get_pages,
+> +	TP_PROTO(
+> +		struct address_space *mapping,
+> +		pgoff_t index,
+> +		pgoff_t last_index
+> +	),
+> +	TP_ARGS(mapping, index, last_index)
+> +);
+> +
+> +DEFINE_EVENT(mm_filemap_op_page_cache_range, mm_filemap_map_pages,
+> +	TP_PROTO(
+> +		struct address_space *mapping,
+> +		pgoff_t index,
+> +		pgoff_t last_index
+> +	),
+> +	TP_ARGS(mapping, index, last_index)
+> +);
+> +
+> +TRACE_EVENT(mm_filemap_fault,
+> +	TP_PROTO(struct address_space *mapping, pgoff_t index),
+> +
+> +	TP_ARGS(mapping, index),
+> +
+> +	TP_STRUCT__entry(
+> +		__field(unsigned long, i_ino)
+> +		__field(dev_t, s_dev)
+> +		__field(unsigned long, index)
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__entry->i_ino = mapping->host->i_ino;
+> +		if (mapping->host->i_sb)
+> +			__entry->s_dev =
+> +				mapping->host->i_sb->s_dev;
+> +		else
+> +			__entry->s_dev = mapping->host->i_rdev;
+> +		__entry->index = index;
+> +	),
+> +
+> +	TP_printk(
+> +		"dev=%d:%d ino=%lx ofs=%lld",
+> +		MAJOR(__entry->s_dev),
+> +		MINOR(__entry->s_dev), __entry->i_ino,
+> +		((loff_t)__entry->index) << PAGE_SHIFT
+> +	)
+> +);
+> +
+>  TRACE_EVENT(filemap_set_wb_err,
+>  		TP_PROTO(struct address_space *mapping, errseq_t eseq),
 >  
-> +	pmchan = &pchan->chan;
-> +	pmchan->ack_rx = true;  //TODO default to False
+> diff --git a/mm/filemap.c b/mm/filemap.c
+> index 876cc64aadd7..39f9d7fb3d2c 100644
+> --- a/mm/filemap.c
+> +++ b/mm/filemap.c
+> @@ -2556,6 +2556,7 @@ static int filemap_get_pages(struct kiocb *iocb, size_t count,
+>  			goto err;
+>  	}
+>  
+> +	trace_mm_filemap_get_pages(mapping, index, last_index);
+>  	return 0;
+>  err:
+>  	if (err < 0)
+> @@ -3286,6 +3287,8 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
+>  	if (unlikely(index >= max_idx))
+>  		return VM_FAULT_SIGBUS;
+>  
+> +	trace_mm_filemap_fault(mapping, index);
+> +
+>  	/*
+>  	 * Do we have something in the page cache already?
+>  	 */
+> @@ -3652,6 +3655,7 @@ vm_fault_t filemap_map_pages(struct vm_fault *vmf,
+>  	} while ((folio = next_uptodate_folio(&xas, mapping, end_pgoff)) != NULL);
+>  	add_mm_counter(vma->vm_mm, folio_type, rss);
+>  	pte_unmap_unlock(vmf->pte, vmf->ptl);
+> +	trace_mm_filemap_map_pages(mapping, start_pgoff, end_pgoff);
+>  out:
+>  	rcu_read_unlock();
+>  
+> -- 
+> 2.45.2.627.g7a2c4fd464-goog
+> 
 
-Indeed, default must be false. You need to do this conditionally at runtime
-otherwise I see no need for this patch as it doesn't change anything as it
-stands. It needs to be fixed to get this change merged.
-
-Also we should set any such flag once at the boot, IRQ handler is not
-the right place for sure.
 
 -- 
-Regards,
-Sudeep
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
