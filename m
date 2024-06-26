@@ -1,127 +1,130 @@
-Return-Path: <linux-kernel+bounces-231399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C760919844
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:26:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21159919849
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 838621C210E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:26:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BFFA11F23CE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87D5191473;
-	Wed, 26 Jun 2024 19:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33791922CE;
+	Wed, 26 Jun 2024 19:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b="MXyKsdrz"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="L/qJZoeA"
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 111ED15B7
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:26:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3849918FC6B
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:33:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719429978; cv=none; b=e1a6cHzNONIC9+R0NKuVLKuzpkAOlv6eWK897mvIwkCw36QlVEvzUmrxT1ZqDfxCIMslcF2/Jn6RaiczoQy0bH3gNwFoHfNTFatz+WSJ3INhXuhBmYf8Qt1ull545R3riRaW7MGSiujxxtA2iit9q1DRwO2oRPmLw8/I2LqhpX8=
+	t=1719430424; cv=none; b=lcLWnpv0+Oe1CqAV8gRcH9pIKMSzOX4xwm5KnOBzubnauU+qW+/gq2VsTrUoLTQm7LdePoHNIleDIlpa7OjroA/F3zjdMbTVasCrYqaVuZSe/1+a5SfDM6NhLKArxSBvEcO9qC76ozMa0wsU1T9KouFRu71P3cQYsmiMwZZZLy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719429978; c=relaxed/simple;
-	bh=GVl4BQ6sqlR4mjMHtG/aBZ04wixynHgTyVj8qKUVA2Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NoWnKPppN+osd2PmKoGk261edPxnB7oQUWlaerBOCRq5nkwQDeOmFSjleNfM52RZdSTTPuZhsYawfETmNw+4IfLSSu7UH8ANpJNKLtNJwRv4ljRI+gkLLMk5EqgRPfKxomkxIAtqqaAWVRKzqoh2YstSUTkMW69dwUgRbEFwiUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org; spf=none smtp.mailfrom=fooishbar.org; dkim=pass (2048-bit key) header.d=fooishbar-org.20230601.gappssmtp.com header.i=@fooishbar-org.20230601.gappssmtp.com header.b=MXyKsdrz; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fooishbar.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=fooishbar.org
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dff0712ede2so6776551276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:26:16 -0700 (PDT)
+	s=arc-20240116; t=1719430424; c=relaxed/simple;
+	bh=l18AoZChb2F1cCrN3a4jLW9ULyXRHxpXYU/VYO2Ydm4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sPAVCFSKlj9Qg6NySkjMSwIY5tDmvoM8gMeup6k7M+D0oh++YQZ9kedeSSwoTY9kwUrcGxZOK1ZZmKbDD6XKgygPc3GbCfLNfKncUnaOZxf3x6nHhRuAv69L07MiVrNySaTy/GTY/6n1xLXljpdO8Rg619kLiYiqB/fMAWr3pn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=L/qJZoeA; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3748ec0cae2so3472675ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:33:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fooishbar-org.20230601.gappssmtp.com; s=20230601; t=1719429976; x=1720034776; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GVl4BQ6sqlR4mjMHtG/aBZ04wixynHgTyVj8qKUVA2Q=;
-        b=MXyKsdrz5ZIOhr1AtpeEPYBI/+4JvC75ugSpqlskLxLxINIWcuYGemxysPaJsMngnM
-         q259U8xN1eaJ5y2+IL5WPHHksHysveqwlwTiO2RFisH0Z+1H3bnAFRpm8l2djjflvO49
-         WuToqhne6YcjCmA7R80Q2vM1g1yxP7r0kBkOHaXqj3D3MKJxMF3lXVEQVsRWmVC9RGHf
-         ATttALM/oh4QnwgNDx7gHXgpQeMHwfdC7SAeX/tcDdZWSp13WCYAbH6okTmHM4SAis+r
-         7da14cxaNiCVMhyxJhvHwbddOw8+MWN2moaFfXYIvs2pNjEsK9HIq/YaAXHDccnyFd89
-         QrIw==
+        d=linuxfoundation.org; s=google; t=1719430421; x=1720035221; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5yCyknkf046UKn72zBDthYHwVzB1aWw8u7LDjnxxVfw=;
+        b=L/qJZoeATUgTZetSkujzWWSU9ZZ54LzzejvvphO0ppRuOrxro+9z4G7nO9dAtGDV4t
+         N+2lDEohWmLXpT0wH7dKgZiHRBJ4uiahQu5jpnBrGEjjBxZxCzxR974EYA3OXFxiCcSl
+         lKKXYreQUlgDKGgjOt3JjUk8ZzD+4Vw2tI8tA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719429976; x=1720034776;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GVl4BQ6sqlR4mjMHtG/aBZ04wixynHgTyVj8qKUVA2Q=;
-        b=tsMIXNZZ5KBxuj5lzWnt94xyWTgEpiKPnXBap5zHv4+d5arbvkLyhTqS7XFmVnG5zg
-         qLu055xHky7biqt4vDPf9CZaHWiGLs8uRVbazPZIZ7tQcWRb1EW9PQpR/44vFHDUPDsv
-         9FY/QDv889vbn/vH7Nyihy7i4KSdgBqusWY7YGP+vXIvFnRg1zGAu6v0GtsFe8ia7Qvv
-         lI3t8Ma41BlWD5MUphg4+ZMQ81z6S6qIdYir+EoM+XIpDobSXqaKfl7LBfQ3Ad5v7YXM
-         mahUp3tGSDgClWuhUKvB72I9vEsKEfLFprDOUsObQfI74GBTQGirlxZg34rYF9cojBfH
-         61oA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3AWO9Gc+7S8sSrzMN0c0mp0HtZPb87ra9uHnkhIqHAFQ2deiDsESlwxDwfl9xwPk6tu9eFMEytiMoOtZkTB0+s0qoIbwdRCNTMP6V
-X-Gm-Message-State: AOJu0YwLixh/+wks/OWEmhh2PdC9mhJ2nWCw+g1vRpiKP/0zVYwbp3ro
-	A5dURb/GKro/xaXJ7jzSwuBPBnLLwemM1q9XRaScN9t9Om3Vmjm3+33uwQDcr4vFxqXffBq7rlm
-	Xks42V7G56lrEtp0T9mHXZIoqEA3x7Baw1zvihQ==
-X-Google-Smtp-Source: AGHT+IFt9KNQizJBtwoRXxWdC6bUl1zuw9W0N9wHHiqYCJjNt45BiH7o0/gvXjy2ppmL5ZWgdXc1asVtAQt+LlPdi30=
-X-Received: by 2002:a25:b2a3:0:b0:e02:be9e:ba8 with SMTP id
- 3f1490d57ef6-e0303ffb60cmr11195525276.44.1719429975867; Wed, 26 Jun 2024
- 12:26:15 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719430421; x=1720035221;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5yCyknkf046UKn72zBDthYHwVzB1aWw8u7LDjnxxVfw=;
+        b=HSzamQ9x0eGtnCxLxD39QhpaUofwv4G68JOHaphdZ8JMCVqzpCwQKbiC3BMr3p8TIH
+         bF/mTcRMFcrTInOepDhqdrIEu5zeQ4cLykCtrLEASuRSGik+GjVJk1vC05jMX3hEBZqF
+         Kj29bqYo+aEHcut5dxXeOrkPiB1uzEcQIdq3iowD9m7hylrhz7Hg1p6SvwsAWZK85cD9
+         DvMFbP55lGwJrWE4EUkzj9tDUX2KvpuNZfRpFRs6xcV8I666rSj6YWELyIrbZx0ECHYX
+         9PoqFXeV6cQmHC3Im1CtjGzc8wjJECU2qM4xFDO6j4+B2XG71v4nDdHaJHSLMFIWFwqs
+         tDPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXKYj7irwN9IxVimhQyPYM0GgFG/EHeP/PBgpSSYq2LUApjsVoNdivtRTKuJVjLYmrQ9aaaTyKObS2fv/YA0WDsDVlBtmY3m/065J6Z
+X-Gm-Message-State: AOJu0YxiIEWKXSrwU2yRNzVOG9fSxiztmJ4P1QRkkeQ3yYvCXGiUA/2R
+	CxKg+IhDLqv1xVLRZZz7RlBJfFwHAh/T8IzhlZzM8sCTUQub7KQ4+nSJZMKN/Og=
+X-Google-Smtp-Source: AGHT+IEjjF/NWVvc/w1eE/GT3HKKvjtViNJcmuej3k1f+T+Ega7cvLKUL+jfMG0VQItoEYBsT4hWJQ==
+X-Received: by 2002:a05:6602:25d7:b0:7eb:66a5:d1c with SMTP id ca18e2360f4ac-7f39c44f029mr1196270239f.0.1719430421243;
+        Wed, 26 Jun 2024 12:33:41 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4b9f733b293sm2103171173.40.2024.06.26.12.33.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 12:33:40 -0700 (PDT)
+Message-ID: <524e2d98-f75f-4004-bd3b-39b64864bc3c@linuxfoundation.org>
+Date: Wed, 26 Jun 2024 13:33:40 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240424063753.3740664-1-tomeu@tomeuvizoso.net>
- <97eadcba7cabe56f0f4b4d753bd3d53f8540ef4b.camel@pengutronix.de>
- <CAAObsKAQ=pWQ8MR1W7WwK1nVEeiCFNC3k+NZKsu4Fkts-_+zWg@mail.gmail.com>
- <CAPj87rO7zyDsqUWnkF0pZeNFnNK2UnAVJy4RmB3jmPkKQ+zbEw@mail.gmail.com>
- <CAAObsKBm3D_3ctFyK-rfpM-PU6ox1yoaMA1EES9yR-nRmU4rYw@mail.gmail.com>
- <CAAObsKAt563VNzDcF4rGkWPcxBPzKcq=Hj5RY6K20FWR43nvUQ@mail.gmail.com>
- <ZnvDJVeT3rz-hnv9@phenom.ffwll.local> <7cee6b78bc2375d9b014f9671b0d72ae65eba73c.camel@pengutronix.de>
- <CAPj87rPB=N2vJ-5C7xXORYstK3=TpX+jZ7mCr7oxY2wpXeaTTQ@mail.gmail.com> <ZnxVWrFJKbVO8PZ0@phenom.ffwll.local>
-In-Reply-To: <ZnxVWrFJKbVO8PZ0@phenom.ffwll.local>
-From: Daniel Stone <daniel@fooishbar.org>
-Date: Wed, 26 Jun 2024 20:26:04 +0100
-Message-ID: <CAPj87rPnA1eKR_b7gAhDiMZRcVt8xPS9xnsscqVQ_a_qO_tD4A@mail.gmail.com>
-Subject: Re: [PATCH] drm/etnaviv: Create an accel device node if compute-only
-To: Daniel Stone <daniel@fooishbar.org>, Lucas Stach <l.stach@pengutronix.de>, 
-	Tomeu Vizoso <tomeu@tomeuvizoso.net>, linux-kernel@vger.kernel.org, 
-	Oded Gabbay <ogabbay@kernel.org>, Russell King <linux+etnaviv@armlinux.org.uk>, 
-	Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie <airlied@gmail.com>, 
-	etnaviv@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	Daniel Stone <daniels@collabora.com>
-Cc: Daniel Vetter <daniel@ffwll.ch>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests/capabilities: Fix possible file leak in
+ copy_fromat_to
+To: Ma Ke <make24@iscas.ac.cn>, shuah@kernel.org, usama.anjum@collabora.com,
+ amer.shanawany@gmail.com, swarupkotikalapudi@gmail.com, kees@kernel.org,
+ luto@kernel.org, akpm@linux-foundation.org
+Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20240626072024.2816986-1-make24@iscas.ac.cn>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20240626072024.2816986-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, 26 Jun 2024 at 18:52, Daniel Vetter <daniel@ffwll.ch> wrote:
-> On Wed, Jun 26, 2024 at 11:39:01AM +0100, Daniel Stone wrote:
-> > On Wed, 26 Jun 2024 at 09:28, Lucas Stach <l.stach@pengutronix.de> wrote:
-> > > So we are kind of stuck here between breaking one or the other use-
-> > > case. I'm leaning heavily into the direction of just fixing Mesa, so we
-> > > can specify the type of screen we need at creation time to avoid the
-> > > renderonly issue, porting this change as far back as reasonably
-> > > possible and file old userspace into shit-happens.
-> >
-> > Yeah, honestly this sounds like the best solution to me too.
->
-> Yeah mesa sounds kinda broken here ...
->
-> What might work in the kernel is if you publish a fake 3d engine that's
-> too new for broken mesa, if that's enough to make it fail to bind? And if
-> mesa still happily binds against that, then yeah it's probably too broken
-> and we need etnaviv-v2 (as a drm driver uapi name, I think that's what
-> mesa filters?) for anything new (including the NN-only ones).
->
-> I would still try to avoid that, but just in case someone screams about
-> regressions.
+On 6/26/24 01:20, Ma Ke wrote:
+> The open() function returns -1 on error. openat() and open() initialize
+> 'from' and 'to', and only 'from' validated with 'if' statement. If the
+> initialization of variable 'to' fails, we should better check the value
+> of 'to' and close 'from' to avoid possible file leak.
+> 
+> Fixes: 32ae976ed3b5 ("selftests/capabilities: Add tests for capability evolution")
+> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+> ---
+> Found this error through static analysis.
 
-It's not just etnaviv, it's literally every Mesa driver which works
-with decoupled render/display. So that would be etnaviv-v2,
-panfrost-v2, panthor-v2, v3d-v2, powervr-v2, ... albeit those don't
-tend to have multiple instances.
+Please add this line to change adding details about the tool you used
+to find this problem.
 
-Anyway, I'm still leaning towards the answer being: this is not an
-etnaviv regression caused by NPU, it's a longstanding generic Mesa
-issue for which the answer is to fix the known fragility.
+> ---
+>   tools/testing/selftests/capabilities/test_execve.c | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/tools/testing/selftests/capabilities/test_execve.c b/tools/testing/selftests/capabilities/test_execve.c
+> index 47bad7ddc5bc..de187eff177d 100644
+> --- a/tools/testing/selftests/capabilities/test_execve.c
+> +++ b/tools/testing/selftests/capabilities/test_execve.c
+> @@ -149,6 +149,10 @@ static void copy_fromat_to(int fromfd, const char *fromname, const char *toname)
+>   		ksft_exit_fail_msg("open copy source - %s\n", strerror(errno));
+>   
+>   	int to = open(toname, O_CREAT | O_WRONLY | O_EXCL, 0700);
+> +	if (to == -1) {
 
-Cheers,
-Daniel
+Changing this check to < instead of checking for just -1 can catch
+other error returns.
+
+> +		close(from);
+> +		ksft_exit_fail_msg("open copy destination - %s\n", strerror(errno));
+> +	}
+>   
+>   	while (true) {
+>   		char buf[4096];
+
+thanks,
+-- Shuah
+
 
