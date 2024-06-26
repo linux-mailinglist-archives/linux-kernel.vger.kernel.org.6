@@ -1,99 +1,146 @@
-Return-Path: <linux-kernel+bounces-230714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE1849180F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:34:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B7ED9180F9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2102DB22D37
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:34:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E0221C2187B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6B3E181BB1;
-	Wed, 26 Jun 2024 12:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90961181BAD;
+	Wed, 26 Jun 2024 12:35:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OGmgqk0v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OtD948vO"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0281C10A11;
-	Wed, 26 Jun 2024 12:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B8751E51D;
+	Wed, 26 Jun 2024 12:35:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719405279; cv=none; b=nhcWqQ4+xqDFlSQWFbhEzyu6DEY+567FjqMcbbCUd6ZWznrBDisIgw/wC5jBEgv5e/nALgARmMcuC9Lz3pY63BlAAVQwXR+0R5ZwqO9I65Y0y1C31rVfZGICqRH0ZB/s6aZsYiX2fD4m5wpNuFhdVyaaYSo2/xi5lF18oAgPJK4=
+	t=1719405312; cv=none; b=A5JpG9XGtl0NwWvpzXytIYtFEH3g/EQC2JXkBv23hPweEJ8JtOB6k1mwlzu7FjGlKkbMnFfHNvpLToEl/LF5nzqQgMx9qDGr9WfcDXbPgXOlC9emf/weymqeXvD2OvfveWH4kNwK45n60Jeu72D13E4KzgjbZGCH8EJV6LPTFMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719405279; c=relaxed/simple;
-	bh=vrGR49umSrf6jXsmHMnbHGXbB2t/2+C/fhNk0egBlRM=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=kuMIFFugXAQWCMBifEABiJmFCVxuU5fK0Mpk29Coe/CP481bOa2/qVd1SYsPuyzC61ivg8G9Aasboz0qh1EHJ+EIYeesvUJuda7XtpChbxO6/XJTGIWQYFliVAgeHRZumRQmJ5zil8/HCnlafJKnE9CT57jKw6fsrR/whu+cdb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OGmgqk0v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A369FC2BD10;
-	Wed, 26 Jun 2024 12:34:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719405278;
-	bh=vrGR49umSrf6jXsmHMnbHGXbB2t/2+C/fhNk0egBlRM=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=OGmgqk0v/2DSdHP2PehmCcFWE0tpK+Tr/6pIC6YHZYUJhx5ISOW692+cZKlMFi1Dh
-	 R2UDifrfuCz35g/fVQg2doIYQVOP5XDTlWs1qQ+JoNEazkKFWc6X8n+cS9h/Lxbxyy
-	 NIKKbdtDD/3u6Ci/9mXaKK+6M+8E496cVoA5E7yGCo3OqHgdw2Gbcbp3UzQwwhqSho
-	 bMxD/dqiTXh7et+58LWQbdOoZRic4bZPbg+xDx2+Kio94N+lBE3lE9Q5Kpl9JlEjaE
-	 TCWew9pss1StJkv4ZuTJLSGgNbj6k+0L/S+EGGPCWhKy1WYOlaAyJhCKI4OQaBI59b
-	 u6oOZajc7R4fw==
-From: Kalle Valo <kvalo@kernel.org>
-To: Paul Menzel <pmenzel@molgen.mpg.de>
-Cc: Baochen Qiang <quic_bqiang@quicinc.com>,  James Prestwood
- <prestwoj@gmail.com>,  linux-wireless@vger.kernel.org,
-  ath10k@lists.infradead.org,  LKML <linux-kernel@vger.kernel.org>,  Hans
- de Goede <hdegoede@redhat.com>,  Kai-Heng Feng
- <kai.heng.feng@canonical.com>,  Hui Wang <hui.wang@canonical.com>
-Subject: Re: invalid vht params rate 1920 100kbps nss 2 mcs 9
-References: <fba24cd3-4a1e-4072-8585-8402272788ff@molgen.mpg.de>
-	<1faa7eee-ed1e-477b-940d-a5cf4478cf73@gmail.com>
-	<87iky7mvxt.fsf@kernel.org>
-	<37ba6cb0-d887-4fcf-b7dc-c93a5fc5900f@gmail.com>
-	<875xu6mtgh.fsf@kernel.org>
-	<f7faff80-864a-4411-ad28-4f1151bc1e51@quicinc.com>
-	<082024ce-fdd4-4fb1-8055-6d25f7d2e524@molgen.mpg.de>
-	<878qyshuud.fsf@kernel.org>
-	<d19d520c-547b-46c1-b59e-748c2cccaf53@molgen.mpg.de>
-Date: Wed, 26 Jun 2024 15:34:34 +0300
-In-Reply-To: <d19d520c-547b-46c1-b59e-748c2cccaf53@molgen.mpg.de> (Paul
-	Menzel's message of "Wed, 26 Jun 2024 13:48:01 +0200")
-Message-ID: <874j9fj31h.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=arc-20240116; t=1719405312; c=relaxed/simple;
+	bh=vI/1o0+2hln9lPAnOOhXh21rWmGrsxGmQIF93754w34=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qkhvM6RFY1zaBCGfGgUX29M/ApwqTu0/K4EmBevtQB+62f3+ETHyb0T+CZVB4CxvO8pWyTgeAECvOP9mt/H089pFYgVk3j3Y18iDH4ExqQizrexnWV1Vvx+zxj14MDaONsFLCsFn2OK2QN0OPP+Qtkb/+IFePerxV8kgMI6ceSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OtD948vO; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QCSZS8025519;
+	Wed, 26 Jun 2024 12:34:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
+	:to:cc:subject:date:message-id:mime-version
+	:content-transfer-encoding; s=pp1; bh=1M3uab7xvRx35jrrCl/rxHpIST
+	fv19tWewf+1efpx6w=; b=OtD948vO4kYLvlKeLdrGojELI607ol+Bdi5QKdj4B7
+	yejJdB8NyP/WsJDAPaEwDwPrE8k86q+e/lEzuaZQYLIIUZ3BbDAyXCWT86t+UI4C
+	O5HbtGfbErWa+T7K44vLC5pivj8C/0Yf0HM0pFUEPP6NbcXc3vezjOAPGxmCc3vQ
+	GzDFUFgdDy8iFfVVsloj5SI199EJgqALeg6euYfxCFypxlAMjXmPbo8bCDHiMsWU
+	W5srlo08pQuyVKsLuOnZhkW6cL7w6ZCy8pTaPGx9AP5kOuEvZ4DvFowdAOwoqwiv
+	pJvwMxTHKTVA8G1ao3XZpmYEexFQslIcrUslW+oAEpbA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 400k16g0py-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 12:34:58 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 45QCYvt0005532;
+	Wed, 26 Jun 2024 12:34:58 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 400k16g0pw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 12:34:57 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.17.1.19/8.17.1.19) with ESMTP id 45Q9sYvn020058;
+	Wed, 26 Jun 2024 12:34:57 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 3yxb5mm429-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 12:34:57 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 45QCYpuG18547158
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 26 Jun 2024 12:34:53 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A207D2004F;
+	Wed, 26 Jun 2024 12:34:51 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 1C8E52004E;
+	Wed, 26 Jun 2024 12:34:50 +0000 (GMT)
+Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.in.ibm.com (unknown [9.204.206.66])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 26 Jun 2024 12:34:49 +0000 (GMT)
+From: Gautam Menghani <gautam@linux.ibm.com>
+To: mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+        naveen.n.rao@linux.ibm.com
+Cc: Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] arch/powerpc/kvm: Avoid extra checks when emulating HFSCR bits
+Date: Wed, 26 Jun 2024 18:04:45 +0530
+Message-ID: <20240626123447.66104-1-gautam@linux.ibm.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: OLd1RCc2EWjGPQmFqe7jpg_cZK6BSujC
+X-Proofpoint-ORIG-GUID: 0NX8MqzH6XRyWYsOpeiK1bk-GVisM4-E
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_06,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 spamscore=0
+ phishscore=0 mlxlogscore=826 impostorscore=0 malwarescore=0 clxscore=1011
+ priorityscore=1501 lowpriorityscore=0 mlxscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406260092
 
-Paul Menzel <pmenzel@molgen.mpg.de> writes:
+When a KVM guest tries to use a feature disabled by HFSCR, it exits to
+the host for emulation support, and the code checks for all bits which
+are emulated. Avoid checking all the bits by using a switch case.
 
->> All firmware releases are available here:
->> https://git.codelinaro.org/clo/ath-firmware/ath10k-firmware/-/tree/main/=
-QCA6174/hw3.0/4.4.1?ref_type=3Dheads
->> And more info here:
->> https://wireless.wiki.kernel.org/en/users/drivers/ath10k/firmware
->
-> Thank you. It looks like the latest firmware version is 309, and
-> Debian sid/unstable still ships version 288 in *firmware-atheros*
-> 20230625-2 [1].
->
-> Unfortunately, there does not seem to be a change-log for version 309
-> (or any version for that matter). I am going to manually copy it
-> anyway, but it=E2=80=99d be nice, if I knew what to expect. ;-)
+Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
+---
+ arch/powerpc/kvm/book3s_hv.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-Yeah, unfortunately there are no changelogs available for firmware
-releases but I do understand the need for those. There has been
-discussions to create them but no success yet.
+diff --git a/arch/powerpc/kvm/book3s_hv.c b/arch/powerpc/kvm/book3s_hv.c
+index 99c7ce825..a72fd2543 100644
+--- a/arch/powerpc/kvm/book3s_hv.c
++++ b/arch/powerpc/kvm/book3s_hv.c
+@@ -1922,14 +1922,22 @@ static int kvmppc_handle_exit_hv(struct kvm_vcpu *vcpu,
+ 
+ 		r = EMULATE_FAIL;
+ 		if (cpu_has_feature(CPU_FTR_ARCH_300)) {
+-			if (cause == FSCR_MSGP_LG)
++			switch (cause) {
++			case FSCR_MSGP_LG:
+ 				r = kvmppc_emulate_doorbell_instr(vcpu);
+-			if (cause == FSCR_PM_LG)
++				break;
++			case FSCR_PM_LG:
+ 				r = kvmppc_pmu_unavailable(vcpu);
+-			if (cause == FSCR_EBB_LG)
++				break;
++			case FSCR_EBB_LG:
+ 				r = kvmppc_ebb_unavailable(vcpu);
+-			if (cause == FSCR_TM_LG)
++				break;
++			case FSCR_TM_LG:
+ 				r = kvmppc_tm_unavailable(vcpu);
++				break;
++			default:
++				break;
++			}
+ 		}
+ 		if (r == EMULATE_FAIL) {
+ 			kvmppc_core_queue_program(vcpu, SRR1_PROGILL |
+-- 
+2.45.2
 
---=20
-https://patchwork.kernel.org/project/linux-wireless/list/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatc=
-hes
 
