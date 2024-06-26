@@ -1,184 +1,172 @@
-Return-Path: <linux-kernel+bounces-230141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00620917905
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:33:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C92B917909
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 318F41C22D77
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:33:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 786411F21B20
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:34:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8823415B99D;
-	Wed, 26 Jun 2024 06:32:51 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D451613B293;
-	Wed, 26 Jun 2024 06:32:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F0D1514F1;
+	Wed, 26 Jun 2024 06:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GsXVUD4W"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7061A14D70C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 06:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719383571; cv=none; b=W8PBPsoywSf4CLVIZLgZts4W/y3HaILDhXps8QavCRW7ogc5le9NIMLdIAnk+peUFhWZ2sU0WIz/KygZs4eBvisMLakjyticgPVs8Y8wNzIV3FkABnp6sSMRBKUZw/Araa/o5GzG9XFMZElgsoHX2TSxftTfmUzFkahfs3rhnsI=
+	t=1719383607; cv=none; b=N/LV4/M0cscSSzcsaYNRAow+rPvq4FuGLef0TZvbGTo/dpPoYukbri8AZ3g6Z3ITrN/GLhgwpIRXr18SbkMT8OLa030NB+pz4VXBC+88x0y3FNIRQcoiu3gd2ls+HyJm/ZAYdmEw5ChBqp80Z5T0G8gBKrZitpyPnXA/K8fP2Ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719383571; c=relaxed/simple;
-	bh=XkX6laKxVOroz1+suKiD/Fh2jt3+zA+QXxFu5hcYLhI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=YYPUw+ojqypkuN/uoICKX3ULY6KkBUbg7X9XGF6ZRuaaXwyHdc3nkz9GMwOkFQISSabLlCltMk1LbLdAGUReu3xLt8QbL2B1h5upv5LHdKLGcv6DcKoVWX9Y5967BsZ4x6QBjPe21Fd7H1SozZ68o9aAk0R/TGPLvWV2G5C0hHg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8Bxb+sJtntmBSoKAA--.40650S3;
-	Wed, 26 Jun 2024 14:32:41 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by localhost.localdomain (Coremail) with SMTP id AQAAf8BxHMcHtntmo5ExAA--.53222S5;
-	Wed, 26 Jun 2024 14:32:40 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] LoongArch: KVM: Add vm migration support for LBT registers
-Date: Wed, 26 Jun 2024 14:32:39 +0800
-Message-Id: <20240626063239.3722175-4-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20240626063239.3722175-1-maobibo@loongson.cn>
-References: <20240626063239.3722175-1-maobibo@loongson.cn>
+	s=arc-20240116; t=1719383607; c=relaxed/simple;
+	bh=Shi12dlPxlBZPg66WRXw4zfsLLkZ8IHxFQjsPCKC7/I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZeab+8RRWvR5AlByMgV3aDErfQSP+IAEmmCYbTrgokyMUjfxm46Drys7kRNBBP3OiC+eY6gv5yA6yRdOeAxaoXc9qvJZhXvXffmqxwT/ABQUjS06dMipNk8Z4rZXL8ubiSU6iPKj05odyth8jeDkIn4dKRTkaMtmJQ5+Yr3cac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GsXVUD4W; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2c7fa0c9a8cso4435004a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 23:33:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719383605; x=1719988405; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=xIe54blZeFv2wCBTIbQ224KWLDIpEaIZB95qu35e1SY=;
+        b=GsXVUD4WXvA+uTVFUxOmJGyR70I/7numLflir729+raNSUi4YcMIrY4O9k8XSgWrDk
+         ktNUMD6ubW/+4zUgQR5DwxbDo+nzrfqEFBxL6Srf78/bK9Kpf9UpddwAJEbcQ1W+tUic
+         8r/11Z6ljpMMHGLL5jQPOVz++S07dC4tGhlBa6ge4Gfa25M22DqSliVTtyeLXRvnuXWi
+         spLnW9N8A8bUvawEegUSHazkVSE/YwCNh7LMrNYJm0KM24zNKuDgORVEkb10EqIL7M8w
+         yrspx3QW4STE+g2X3Ku4C/yvqx076Q6U7gXjXqBN6lw/LMUmRvbjXj2/L5MSC+lgc25G
+         WBkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719383605; x=1719988405;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xIe54blZeFv2wCBTIbQ224KWLDIpEaIZB95qu35e1SY=;
+        b=goOoX21GDCI7nm45L4rTaOjSk3+oB3X1NqD11v1Tsypxu/s4uHfl7tW+rz9LnKibAL
+         P4YX2Tnkc6npX6Nyx08ZFN2QsuaFgv2i8wXo2OBT5aIk7W/u3V8TrigWRXMeNcv804u5
+         yJdqPo6Nagx5ZH3GBfIGpcu//81770oAS1U/zlN0fsGomu1OafTNpvibyOHgOyWY5w7o
+         jWCmZbJtsGDqbiM5sh5Q4dzReW+ZcI4zPBLTKeke239cNilP70zGqaM6X7Rg6vS4hF73
+         z+2RTLrheO4t6rJLk65JqOORSyEyyCQQHJRcvBoB43LfKXiZ/PVZcItcIcwW5/6yMoIG
+         jwoA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZKwPWtKH3heRICdU6BP8ggiisyh9GiNfsfSDWnOlkS9TSuNx9R51jOKO84PR7hLWN5x+xd1kIw0dvdKdTUSCFM6lVfBlBYJEZxvqs
+X-Gm-Message-State: AOJu0YwLdradE7WLk1YxOaoNuo4pp4nuy16w7QM9FOf4I133YAXaRnIw
+	tKbVqxn0LhlbKyFG7VT/RRI4IjW2bXCMBrEx4bkOBmdhYa85BjcfVbWNRPnUsgY=
+X-Google-Smtp-Source: AGHT+IEvJ56j6yvQEX4nDHubHwfsFnfDLbBvWF1DIzuJCWlkxtNCeWyF2FWFrmDRy/GwFtNFQfBrvw==
+X-Received: by 2002:a17:90a:887:b0:2c8:5f01:affd with SMTP id 98e67ed59e1d1-2c85f01b7f7mr9036616a91.36.1719383604658;
+        Tue, 25 Jun 2024 23:33:24 -0700 (PDT)
+Received: from localhost ([122.172.82.13])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c8d7e55c14sm804529a91.2.2024.06.25.23.33.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 23:33:24 -0700 (PDT)
+Date: Wed, 26 Jun 2024 12:03:21 +0530
+From: Viresh Kumar <viresh.kumar@linaro.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Nikunj Kela <nkela@quicinc.com>,
+	Prasad Sodagudi <psodagud@quicinc.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] OPP: Rework _set_required_devs() to manage a single
+ device per call
+Message-ID: <20240626063321.3x4cvyj7yiks5f3p@vireshk-i7>
+References: <20240619140849.368580-1-ulf.hansson@linaro.org>
+ <20240619140849.368580-4-ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:AQAAf8BxHMcHtntmo5ExAA--.53222S5
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240619140849.368580-4-ulf.hansson@linaro.org>
 
-Every vcpu has separate LBT registers. And there are four scr registers,
-one flags and ftop register for LBT extension. When VM migrates, VMM
-needs to get LBT registers for every vcpu.
+On 19-06-24, 16:08, Ulf Hansson wrote:
+> @@ -2494,36 +2495,68 @@ static int _opp_set_required_devs(struct opp_table *opp_table,
+>  		return -EINVAL;
+>  	}
+>  
+> -	/* Another device that shares the OPP table has set the required devs ? */
+> -	if (opp_table->required_devs[0])
+> -		return 0;
+> +	/* Genpd core takes care of propagation to parent genpd */
+> +	if (opp_table->is_genpd) {
 
-Here macro KVM_REG_LOONGARCH_LBT is added for new vcpu lbt register type,
-the following macro is added to get/put LBT registers.
-  KVM_REG_LOONGARCH_LBT_SCR0
-  KVM_REG_LOONGARCH_LBT_SCR1
-  KVM_REG_LOONGARCH_LBT_SCR2
-  KVM_REG_LOONGARCH_LBT_SCR3
-  KVM_REG_LOONGARCH_LBT_EFLAGS
-  KVM_REG_LOONGARCH_LBT_FTOP
+A genpd can have non-genpd devices in the required OPPs and so this
+isn't sufficient. What we were ignoring earlier was genpd having
+another genpd as required opp.
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- arch/loongarch/include/uapi/asm/kvm.h |  9 +++++
- arch/loongarch/kvm/vcpu.c             | 56 +++++++++++++++++++++++++++
- 2 files changed, 65 insertions(+)
+> +		dev_err(dev, "%s: Operation not supported for genpds\n", __func__);
+> +		return -EOPNOTSUPP;
+> +	}
+>  
+>  	for (i = 0; i < opp_table->required_opp_count; i++) {
+> -		/* Genpd core takes care of propagation to parent genpd */
+> -		if (required_devs[i] && opp_table->is_genpd &&
+> -		    opp_table->required_opp_tables[i]->is_genpd) {
+> -			dev_err(dev, "%s: Operation not supported for genpds\n", __func__);
+> -			return -EOPNOTSUPP;
+> -		}
+> +		struct opp_table *table = opp_table->required_opp_tables[i];
+> +
+> +		/*
+> +		 * The OPP table should be available at this point. If not, it's
+> +		 * not the one we are looking for.
+> +		 */
+> +		if (IS_ERR(table))
+> +			continue;
+> +
+> +		/* Move to the next available index. */
+> +		if (opp_table->required_devs[i])
+> +			continue;
+>  
+> -		opp_table->required_devs[i] = required_devs[i];
+> +		/*
+> +		 * We need to compare the nodes for the OPP tables, rather than
+> +		 * the OPP tables themselves, as we may have separate instances.
+> +		 */
+> +		if (required_opp_table->np == table->np) {
+> +
 
-diff --git a/arch/loongarch/include/uapi/asm/kvm.h b/arch/loongarch/include/uapi/asm/kvm.h
-index c40f7d9ffe13..ed12e509815c 100644
---- a/arch/loongarch/include/uapi/asm/kvm.h
-+++ b/arch/loongarch/include/uapi/asm/kvm.h
-@@ -64,6 +64,7 @@ struct kvm_fpu {
- #define KVM_REG_LOONGARCH_KVM		(KVM_REG_LOONGARCH | 0x20000ULL)
- #define KVM_REG_LOONGARCH_FPSIMD	(KVM_REG_LOONGARCH | 0x30000ULL)
- #define KVM_REG_LOONGARCH_CPUCFG	(KVM_REG_LOONGARCH | 0x40000ULL)
-+#define KVM_REG_LOONGARCH_LBT		(KVM_REG_LOONGARCH | 0x50000ULL)
- #define KVM_REG_LOONGARCH_MASK		(KVM_REG_LOONGARCH | 0x70000ULL)
- #define KVM_CSR_IDX_MASK		0x7fff
- #define KVM_CPUCFG_IDX_MASK		0x7fff
-@@ -77,6 +78,14 @@ struct kvm_fpu {
- /* Debugging: Special instruction for software breakpoint */
- #define KVM_REG_LOONGARCH_DEBUG_INST	(KVM_REG_LOONGARCH_KVM | KVM_REG_SIZE_U64 | 3)
- 
-+/* LBT registers */
-+#define KVM_REG_LOONGARCH_LBT_SCR0	(KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 1)
-+#define KVM_REG_LOONGARCH_LBT_SCR1	(KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 2)
-+#define KVM_REG_LOONGARCH_LBT_SCR2	(KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 3)
-+#define KVM_REG_LOONGARCH_LBT_SCR3	(KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 4)
-+#define KVM_REG_LOONGARCH_LBT_EFLAGS	(KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 5)
-+#define KVM_REG_LOONGARCH_LBT_FTOP	(KVM_REG_LOONGARCH_LBT | KVM_REG_SIZE_U64 | 6)
-+
- #define LOONGARCH_REG_SHIFT		3
- #define LOONGARCH_REG_64(TYPE, REG)	(TYPE | KVM_REG_SIZE_U64 | (REG << LOONGARCH_REG_SHIFT))
- #define KVM_IOC_CSRID(REG)		LOONGARCH_REG_64(KVM_REG_LOONGARCH_CSR, REG)
-diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-index 9734b4d8db05..1937233cc473 100644
---- a/arch/loongarch/kvm/vcpu.c
-+++ b/arch/loongarch/kvm/vcpu.c
-@@ -664,6 +664,34 @@ static int kvm_get_one_reg(struct kvm_vcpu *vcpu,
- 			break;
- 		}
- 		break;
-+	case KVM_REG_LOONGARCH_LBT:
-+		if (!kvm_guest_has_lbt(&vcpu->arch))
-+			return -ENXIO;
-+
-+		switch (reg->id) {
-+		case KVM_REG_LOONGARCH_LBT_SCR0:
-+			*v = vcpu->arch.lbt.scr0;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_SCR1:
-+			*v = vcpu->arch.lbt.scr1;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_SCR2:
-+			*v = vcpu->arch.lbt.scr2;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_SCR3:
-+			*v = vcpu->arch.lbt.scr3;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_EFLAGS:
-+			*v = vcpu->arch.lbt.eflags;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_FTOP:
-+			*v = vcpu->arch.fpu.ftop;
-+			break;
-+		default:
-+			ret = -EINVAL;
-+			break;
-+		}
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
-@@ -730,6 +758,34 @@ static int kvm_set_one_reg(struct kvm_vcpu *vcpu,
- 			break;
- 		}
- 		break;
-+	case KVM_REG_LOONGARCH_LBT:
-+		if (!kvm_guest_has_lbt(&vcpu->arch))
-+			return -ENXIO;
-+
-+		switch (reg->id) {
-+		case KVM_REG_LOONGARCH_LBT_SCR0:
-+			vcpu->arch.lbt.scr0 = v;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_SCR1:
-+			vcpu->arch.lbt.scr1 = v;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_SCR2:
-+			vcpu->arch.lbt.scr2 = v;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_SCR3:
-+			vcpu->arch.lbt.scr3 = v;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_EFLAGS:
-+			vcpu->arch.lbt.eflags = v;
-+			break;
-+		case KVM_REG_LOONGARCH_LBT_FTOP:
-+			vcpu->arch.fpu.ftop = v;
-+			break;
-+		default:
-+			ret = -EINVAL;
-+			break;
-+		}
-+		break;
- 	default:
- 		ret = -EINVAL;
- 		break;
+We don't keep such empty lines in OPP core generally at this place.
+
+> +			/* Cross check the OPP tables and fix it if needed. */
+
+Copy the bigger comment from_opp_attach_genpd() here too. It helps
+understanding why required_opp_tables entry is getting replaced.
+
+> +			if (required_opp_table != table) {
+> +				dev_pm_opp_put_opp_table(table);
+> +				_get_opp_table_kref(required_opp_table);
+> +				opp_table->required_opp_tables[i] = required_opp_table;
+> +			}
+> +
+> +			opp_table->required_devs[i] = required_dev;
+> +
+> +			/*
+> +			 * Add the required_dev as a user of the OPP table, so
+> +			 * we can call dev_pm_opp_set_opp() on it directly.
+> +			 */
+> +			if (!_add_opp_dev(required_dev, required_opp_table)) {
+> +				dev_err(dev, "Failed to add the device to the required OPP table\n");
+> +				return -ENOMEM;
+> +			}
+> +
+> +			return i;
+> +		}
+>  	}
+
 -- 
-2.39.3
-
+viresh
 
