@@ -1,121 +1,150 @@
-Return-Path: <linux-kernel+bounces-231578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB2A4919A72
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:12:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B15E1919A73
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 00:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4620CB22F1A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:12:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E28851C22711
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 179811940A1;
-	Wed, 26 Jun 2024 22:12:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AB7C19408C;
+	Wed, 26 Jun 2024 22:12:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NftDNO2y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="touu1sfk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56215161314;
-	Wed, 26 Jun 2024 22:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDDE0161314;
+	Wed, 26 Jun 2024 22:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719439920; cv=none; b=XBgc5haJ+9ANygp8xswi935CsqPzMGOD8ou+biASwzdcBS8ypHkF2IcQ1aiZ+Y3qcJG03C5Oxzo8HR/q62UmlmDDxsNlw1C7ASYvTMkZR1CopXDzdCrvAgE1/YKFoyGf4kVgwdSZg0BS/LP+rnZKfuWXalUKnOtR/FKmUDbtvic=
+	t=1719439971; cv=none; b=ezGbk9X5XCzmclAelDxxXNCsuldT7J8QFq8mxJ1zVu4VEWNk1UgK6dXtbPmjVf1SXh3c5PCSuDfZ1av5DF2xiD7H3Ji4kPsQjjSz0ChQdEQ24P/kA6ElMimLjCiGAU7USRRbcdA3Scs/IcpuG59RvXTSqN64teYsQSqFiHxy+CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719439920; c=relaxed/simple;
-	bh=hpQdIVXXgJ8IuDlSJFC93BuJvLDRkunHWFns0BW8VHU=;
+	s=arc-20240116; t=1719439971; c=relaxed/simple;
+	bh=8B9eu37ujnhX9N/2MnvPnm85A6jj/mKyPtwvxBCsGiA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ayXeBUwvTAAXQjY/AJqGmQDG5J+m0LPdClJw0oBiEIybo9tfPonD3G5s7q5CCyQowq8Z+EiNS1+EPsAl4CW13SMMV5tqU4G/schPC1+ZY5Vkg83XCC6j4Lc20WTiZkv1s75C6aHzibFAOzWvQbrijS7Mzp4HuNIHH6CQe2Ce/sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NftDNO2y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90A02C116B1;
-	Wed, 26 Jun 2024 22:11:56 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=h7g6HKTWdqeTYbBeN+fNVwtUhEL26oWs02yqFvPLMiOdFsnWi08Tgbk8QdaYhju37x/a53o6SfCsaFCbqQZGx3MfTyWUyRpfMv8mWtR3xcj0QQKgWxn/Bti5UVJP1JyaFrB5gShGWEZzkpE4F6BgRbUHDZMk24Ih5M4hQvgkMjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=touu1sfk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27B6CC116B1;
+	Wed, 26 Jun 2024 22:12:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719439919;
-	bh=hpQdIVXXgJ8IuDlSJFC93BuJvLDRkunHWFns0BW8VHU=;
+	s=k20201202; t=1719439971;
+	bh=8B9eu37ujnhX9N/2MnvPnm85A6jj/mKyPtwvxBCsGiA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NftDNO2yLuZesOV4fuw7HaphDFd3R1jqrmBELfKDVHpmS3AicuoQr7Khztp9tHq1V
-	 DKDR6Qa4k7n9nHovDaVcQbceZDGq+mccl9vDe7nAVuUZXNU8xA49F6ioAv3kqYKx/M
-	 ZMRq3VPtdVzUft0nWQ6HGgEmbPasr2iIdK9TP2TspmMnS9/9Mpm7n9MqRZsM7gie1y
-	 3eC5iaQiA+dJFce3DULYRMgwWFxUzczuFD9O5jD2sUflhr3CIfFdXZ9nJnA4iEISZF
-	 QW9ohg1ayRBBz3X6aCnjhuElpCF7vcS+lLQFJWM5BFLLYgy45eaArm8fDg8UJ5g9zV
-	 UgkvQilcgMujw==
-Date: Wed, 26 Jun 2024 23:11:54 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Atish Kumar Patra <atishp@rivosinc.com>
-Cc: Samuel Holland <samuel.holland@sifive.com>,
-	linux-riscv@lists.infradead.org, kvm-riscv@lists.infradead.org,
-	Atish Patra <atishp@atishpatra.org>,
-	Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Palmer Dabbelt <palmer@rivosinc.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Subject: Re: [PATCH v3 2/3] drivers/perf: riscv: Reset the counter to
- hpmevent mapping while starting cpus
-Message-ID: <20240626-pedigree-retype-dd7f1e54ac2b@spud>
-References: <20240626-misc_perf_fixes-v3-0-de3f8ed88dab@rivosinc.com>
- <20240626-misc_perf_fixes-v3-2-de3f8ed88dab@rivosinc.com>
- <96ff4dd2-db66-4653-80e9-97d4f1381581@sifive.com>
- <CAHBxVyHx9hTRPosizV_yn6DUZi-MTNTrAbJdkV3049D-qsDHcw@mail.gmail.com>
- <20240626-eraser-unselect-99e68a1f5a3e@spud>
- <20240626-spyglass-clutter-4ff4d7b26dd4@spud>
- <CAHBxVyEg2uKKdikXib77JDmCKs8qDGJHvj3stsFgCgO0U9omRg@mail.gmail.com>
+	b=touu1sfkk9RUa/rSh1ynqEZJr+/bCfvghXQwiEwlEvXpGx+HEloLAfobCQY1fpFgN
+	 jdOcmcEydJwXP98aFjqGohft+5lAc2DYdJs/XisILt6xEb8l7bAaa9cDGg0MJtl2e+
+	 uqVlfnJb0ww66+04M6eym7WAmHiRevnqe2N3L75nWvWhz2aXGLeMpg/YpKs3IEmt3U
+	 KAdaS1Mgm+UpbC2wEXWS6LlmM48j5NiHAMulAMEZesLVMl8LvJCF1XJN5/jSxuAP93
+	 CoHRlkEabyPJCTh3U24Uoz6L0qW5rmXVEY+kPZ3BOWlHP6cX+dw8gbwNkIhBL8Mxdk
+	 76HXihC+rAmHw==
+Date: Thu, 27 Jun 2024 00:12:48 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Neeraj upadhyay <neeraj.iitr10@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH rcu 3/6] rcu/exp: Remove superfluous full memory barrier
+ upon first EQS snapshot
+Message-ID: <ZnySYEWMJpcfkmOr@pavilion.home>
+References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
+ <20240604222652.2370998-3-paulmck@kernel.org>
+ <CAFwiDX_5BZ9e0odyJKTPJJ9BDkHJ6fcEzSwgs9rnjhuRk4qhhw@mail.gmail.com>
+ <ZnwloG9xOrOHru4B@localhost.localdomain>
+ <CAFwiDX8OE74e4ZVsy3wJbX5F4Huv0NR1w2EqM4xfeoa03JjCpg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Qn8GLMXXMKWShJFF"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAHBxVyEg2uKKdikXib77JDmCKs8qDGJHvj3stsFgCgO0U9omRg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFwiDX8OE74e4ZVsy3wJbX5F4Huv0NR1w2EqM4xfeoa03JjCpg@mail.gmail.com>
 
-
---Qn8GLMXXMKWShJFF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Wed, Jun 26, 2024 at 01:40:52PM -0700, Atish Kumar Patra wrote:
-
-> > > > @Palmer Dabbelt : Can you add that while picking up
-> > > > the patch or should I respin a v4 ?
-> > >
-> > > b4 should pick the signoff up though. "perf: RISC-V: Check standard
-> > > event availability" seems to be missing your signoff though...
+Le Wed, Jun 26, 2024 at 10:49:58PM +0530, Neeraj upadhyay a écrit :
+> On Wed, Jun 26, 2024 at 7:58 PM Frederic Weisbecker <frederic@kernel.org> wrote:
 > >
-> > Huh, this doesn't really make sense. I meant:
-> >         b4 should pick the signoff up, though "perf: RISC-V: Check stan=
-dard
-> >         event availability" seems to be missing your signoff...
->=20
-> Strange. I modified and sent the patch using b4 as well. It's missing
-> my sign off too.
+> > Le Wed, Jun 12, 2024 at 02:14:14PM +0530, Neeraj upadhyay a écrit :
+> > > On Wed, Jun 5, 2024 at 3:58 AM Paul E. McKenney <paulmck@kernel.org> wrote:
+> > > >
+> > > > From: Frederic Weisbecker <frederic@kernel.org>
+> > > >
+> > > > When the grace period kthread checks the extended quiescent state
+> > > > counter of a CPU, full ordering is necessary to ensure that either:
+> > > >
+> > > > * If the GP kthread observes the remote target in an extended quiescent
+> > > >   state, then that target must observe all accesses prior to the current
+> > > >   grace period, including the current grace period sequence number, once
+> > > >   it exits that extended quiescent state.
+> > > >
+> > > > or:
+> > > >
+> > > > * If the GP kthread observes the remote target NOT in an extended
+> > > >   quiescent state, then the target further entering in an extended
+> > > >   quiescent state must observe all accesses prior to the current
+> > > >   grace period, including the current grace period sequence number, once
+> > > >   it enters that extended quiescent state.
+> > > >
+> > > > This ordering is enforced through a full memory barrier placed right
+> > > > before taking the first EQS snapshot. However this is superfluous
+> > > > because the snapshot is taken while holding the target's rnp lock which
+> > > > provides the necessary ordering through its chain of
+> > > > smp_mb__after_unlock_lock().
+> > > >
+> > > > Remove the needless explicit barrier before the snapshot and put a
+> > > > comment about the implicit barrier newly relied upon here.
+> > > >
+> > > > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > > > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > > > ---
+> > > >  kernel/rcu/tree_exp.h | 8 +++++++-
+> > > >  1 file changed, 7 insertions(+), 1 deletion(-)
+> > > >
+> > > > diff --git a/kernel/rcu/tree_exp.h b/kernel/rcu/tree_exp.h
+> > > > index 8a1d9c8bd9f74..bec24ea6777e8 100644
+> > > > --- a/kernel/rcu/tree_exp.h
+> > > > +++ b/kernel/rcu/tree_exp.h
+> > > > @@ -357,7 +357,13 @@ static void __sync_rcu_exp_select_node_cpus(struct rcu_exp_work *rewp)
+> > > >                     !(rnp->qsmaskinitnext & mask)) {
+> > > >                         mask_ofl_test |= mask;
+> > > >                 } else {
+> > > > -                       snap = rcu_dynticks_snap(cpu);
+> > > > +                       /*
+> > > > +                        * Full ordering against accesses prior current GP and
+> > > > +                        * also against current GP sequence number is enforced
+> > > > +                        * by current rnp locking with chained
+> > > > +                        * smp_mb__after_unlock_lock().
+> > >
+> > > Again, worth mentioning the chaining sites sync_exp_reset_tree() and
+> > > this function?
+> >
+> > How about this?
+> >
+> 
+> Looks good to me, thanks!
 
-`b4 shazam` should pick up trailers provided on the list, signoffs
-included. `b4 shazam -s` will add yours. TBH, I am not sure why that is
-not the default behaviour.
+And similar to the previous one, a last minute edition:
 
-Cheers,
-Conor.
+			/*
+			 * Full ordering between remote CPU's post idle accesses
+			 * and updater's accesses prior to current GP (and also
+			 * the started GP sequence number) is enforced by
+			 * rcu_seq_start() implicit barrier, relayed by kworkers
+			 * locking and even further by smp_mb__after_unlock_lock()
+			 * barriers chained all the way throughout the rnp locking
+			 * tree since sync_exp_reset_tree() and up to the current
+			 * leaf rnp locking.
+			 *
+			 * Ordering between remote CPU's pre idle accesses and
+			 * post grace period updater's accesses is enforced by the
+			 * below acquire semantic.
+			 */
 
---Qn8GLMXXMKWShJFF
-Content-Type: application/pgp-signature; name="signature.asc"
+Still ok?
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnySKgAKCRB4tDGHoIJi
-0ggpAQDI5svZclXsiiw/tBho5jBjNBUOz2wHe+OAFRr/Tp5zRgEA0WA8ZFlqoud+
-fKQ/MbZq8OBTmsy2Kb9vdKxThGGg8QA=
-=D/2H
------END PGP SIGNATURE-----
-
---Qn8GLMXXMKWShJFF--
+Thanks.
 
