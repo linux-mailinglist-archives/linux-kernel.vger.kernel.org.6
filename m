@@ -1,71 +1,60 @@
-Return-Path: <linux-kernel+bounces-231045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2EF918565
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:11:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD17A91855F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A01D28F3BC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:11:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 678E228F0A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DD2418A931;
-	Wed, 26 Jun 2024 15:11:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8BA14A614;
+	Wed, 26 Jun 2024 15:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="x5uAcgRS"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OHxR4Gl4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FDA186283;
-	Wed, 26 Jun 2024 15:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3AD41891CB;
+	Wed, 26 Jun 2024 15:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719414659; cv=none; b=kz2jnqWBagmcJRBjI4y1LMLVFYUAou4p46rlDmACDtDdhnaczwgXByd7Fu8IOfA93wGpOZiN/a0Bi/++hauDekAPu23ah82RClpB6/3iwgcemXfzyvvN8AbwVjIPU6o4pbYkiMgq5W9D4c35DKi015pxlJXOklnRHxUzbQNc+Qw=
+	t=1719414642; cv=none; b=GC6QL2hKCsFSgoVRmLpPjKZkYBnhn6Vv1t2ll4EYUFgUTrNuCkhb+5/KX2yHyvRd64O3OQJQDY73olTJDdLm95Nk0GJlYBDlWM745Gr9AXnvolwurR2okkdaSUhVIS3YaNIWvL+ypqNg7F57i6fzy+bwTuERZ0jrsbhMAIbNkhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719414659; c=relaxed/simple;
-	bh=FSmDhvFUJs9NsQfwLU6nxFJxJmU5Amm6j4FF1hXKJhs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sRGKrhMIZ8x221YY2iTyqPsa2dmbN6trbj5y0R4fs1L+Q/TD6YsQpDpFQieSZjMGdcQwGVr62z7EblThjdRtO0ggnmuyylr49d+RIThHpadJKUjVb292qcfjar0yUMKDGIVU6WReuXR7N07imb/QY0iDrgsSgn1Sh62Rb2sFfMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=x5uAcgRS; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=5m14rGTG9LmbrjjJ/l2NwU7Y0IP12ob5tulLHsA6h8Y=; b=x5uAcgRSuDey6PsbTz4RgEk3QC
-	drc99olvsjw4sho1UzY7/RgPeU+6fqMXABv4CCYbvOHKAIvSvbybYg3tum5gjF2jlknX8p6SVbSQi
-	9aaPjlimypP6O7gE7ewL7dQEICSVKlTqAqjToRvGJSov3kD/jukiN1oByp9Y0KBMx+iE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1sMUI7-0013Aj-CP; Wed, 26 Jun 2024 17:10:35 +0200
-Date: Wed, 26 Jun 2024 17:10:35 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Andrew Halaney <ahalaney@redhat.com>
-Cc: Sagar Cheluvegowda <quic_scheluve@quicinc.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Russell King <linux@armlinux.org.uk>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>, kernel@quicinc.com,
-	linux-arm-msm@vger.kernel.org, netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] net: stmmac: Bring down the clocks to lower
- frequencies when mac link goes down
-Message-ID: <d2bb85e4-fab5-49fe-aaf0-9d1bf2279e3d@lunn.ch>
-References: <20240625-icc_bw_voting_from_ethqos-v2-0-eaa7cf9060f0@quicinc.com>
- <20240625-icc_bw_voting_from_ethqos-v2-3-eaa7cf9060f0@quicinc.com>
- <qf4zl7qupkzbrb6ik4v4nkjct7tsh34cmoufy23zozcht5gch6@kvymsd2ue6cd>
+	s=arc-20240116; t=1719414642; c=relaxed/simple;
+	bh=ekPNzLzryuR1LD67ikqc01Jk5UMQeCiAfkaRGoSGRzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=YjFaWZSySGTlCICCaxbP01qRIR+uF4r0wh1FF1jaM/yaGNuKtvwq0vAwjsbLytGYE6lMbcLKgLWZqyWS49SS+xJto93/dXSihJDHgUbVMn7+drLZRIvn+uceoTGWvjN2TvbS2JSXDrrzBmKv5ncUzKoJLRAnbcXWbGQf/3FLWgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OHxR4Gl4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07AD4C116B1;
+	Wed, 26 Jun 2024 15:10:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719414642;
+	bh=ekPNzLzryuR1LD67ikqc01Jk5UMQeCiAfkaRGoSGRzs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=OHxR4Gl4p5LAIKrmqfWH2GbraItePMGCNEfR+wMu9M4cejZ+RwzM/fPEzl/EKXSWK
+	 sDzKGnAERZZgz1NSiXYYZlkO1DPFVgx4KNNXPx53+uES+riMDC4nu3db17Yznmr+1K
+	 JvvZGWJ4El3IS8tSUk4OajBfYoCRrfCFRp/3/OJVCXp0y4JmXuvFFAnGRL/9Ba1h/i
+	 gKXQBZlHMaQFRmZoZL/BbArG97KotyLM13Drqqqyf1PE4HqhGd0GXk8EIge56Y9E6r
+	 H1rK9h1/EmWjmPkNT4I/oWnJZwFXeFxS8tXU6wrkzIopMw1l6Zxz5w6f9b/9eHGtEv
+	 GtyqRqd8kZHhw==
+Date: Wed, 26 Jun 2024 10:10:39 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Wei Liu <wei.liu@kernel.org>
+Cc: Linux on Hyper-V List <linux-hyperv@vger.kernel.org>, stable@kernel.org,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Dexuan Cui <decui@microsoft.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Jake Oshins <jakeo@microsoft.com>,
+	"open list:PCI NATIVE HOST BRIDGE AND ENDPOINT DRIVERS" <linux-pci@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] PCI: hv: fix reading of PCI_INTERRUPT_PIN
+Message-ID: <20240626151039.GA1466747@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,25 +63,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <qf4zl7qupkzbrb6ik4v4nkjct7tsh34cmoufy23zozcht5gch6@kvymsd2ue6cd>
+In-Reply-To: <20240621210018.350429-1-wei.liu@kernel.org>
 
-> I'm still curious if any of the netdev folks have any opinion on scaling
-> things down like this on link down.
+1) Capitalize subject to match history
+2) Say something more specific than "fix reading ..."
 
-It does make sense, in that there are no frames to process, so the
-clock can be reduced. But i also think it is a bit of a workaround for
-poor hardware design. Often you can tell the MAC the link is down, and
-it can shut down a lot more, and even turn all the clocks off.
+Apparently this returns garbage in some case where you want to return
+zero?
 
-I also wounder if there are going to be any side effects of this. Some
-Ethernet MACs export a clock to the PHY. Is that clock going to
-change? I don't think it will, because we are changing to a valid MAC
-speed, not 0. So the PHY has to work at this speed clock.
-
-But to make it easier to find issues like this, open() should probably
-set the clocks to a low speed until the link is up. That way, if there
-are going to be problems, the link should never come up, as opposed to
-the link never comes up after being lost the first time...
-
-     Andrew
+On Fri, Jun 21, 2024 at 09:00:18PM +0000, Wei Liu wrote:
+> The intent of the code snippet is to always return 0 for both
+> PCI_INTERRUPT_LINE and PCI_INTERRUPT_PIN.
+> 
+> The check misses PCI_INTERRUPT_PIN. This patch fixes that.
+> 
+> This is discovered by this call in VFIO:
+> 
+>     pci_read_config_byte(vdev->pdev, PCI_INTERRUPT_PIN, &pin);
+> 
+> The old code does not set *val to 0 because it misses the check for
+> PCI_INTERRUPT_PIN.
+> 
+> Fixes: 4daace0d8ce8 ("PCI: hv: Add paravirtual PCI front-end for Microsoft Hyper-V VMs")
+> Cc: stable@kernel.org
+> Signed-off-by: Wei Liu <wei.liu@kernel.org>
+> ---
+> v2:
+> * Change the commit subject line and message
+> * Change the code according to feedback
+> ---
+>  drivers/pci/controller/pci-hyperv.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+> index 5992280e8110..cdd5be16021d 100644
+> --- a/drivers/pci/controller/pci-hyperv.c
+> +++ b/drivers/pci/controller/pci-hyperv.c
+> @@ -1130,8 +1130,8 @@ static void _hv_pcifront_read_config(struct hv_pci_dev *hpdev, int where,
+>  		   PCI_CAPABILITY_LIST) {
+>  		/* ROM BARs are unimplemented */
+>  		*val = 0;
+> -	} else if (where >= PCI_INTERRUPT_LINE && where + size <=
+> -		   PCI_INTERRUPT_PIN) {
+> +	} else if ((where >= PCI_INTERRUPT_LINE && where + size <= PCI_INTERRUPT_PIN) ||
+> +		   (where >= PCI_INTERRUPT_PIN && where + size <= PCI_MIN_GNT)) {
+>  		/*
+>  		 * Interrupt Line and Interrupt PIN are hard-wired to zero
+>  		 * because this front-end only supports message-signaled
+> -- 
+> 2.43.0
+> 
 
