@@ -1,109 +1,216 @@
-Return-Path: <linux-kernel+bounces-230448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1272917CF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:51:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 633F7917CF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A22251F22089
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:51:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91BA6B211E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7A49176AD3;
-	Wed, 26 Jun 2024 09:50:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B0016EB49;
+	Wed, 26 Jun 2024 09:51:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UM3sUncr"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cnHD4hz8"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4A816CD1F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:50:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD60416D331;
+	Wed, 26 Jun 2024 09:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719395449; cv=none; b=t1/d+/EPvf1LtZNaow78wg9m4kzdiOEl+jNL2tlU3PhVGQ2ceLMDHKxcD65bE9kZZVwSn9tJh94EwIl+MbqHZGnKi4k5uObJ5QWNz0nqGBDH679o3uXwspquLmLjmQKiu0TxTamHoVM+z76SrenOopw0/ojr6chdiQZFxnsaNcs=
+	t=1719395494; cv=none; b=WsICKcIa/LM4giShquYhvGA/zRdcmQ7910B5Hd0GxXagd2JteZgQgZfYZTzkgwF1Oe8T04RncwK7LYPWwiE0DNdbM0sm+K1rXY/fkP5UqtXrUxQdvEcQazvienlOktNLf0VlWnl9EtFVGh1G5exlTG/j1EMWhBKQa+bpFVEyog4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719395449; c=relaxed/simple;
-	bh=B8XMw0Lq/znZjV0KsDQqRopt02tCEu5Vs8kv9SLuKd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DYjH3ypuLw97fqUDVDXS76nnp/Z4czZbQkSbR5KYoB9FvlRxR5t0sgjmUpz5Ae2ep2I/NeY7xR5+Ihcsl9kV6/vxcebRwZN8YAt/+LNXV/Z2HuCH8hk8CCjHfytMSuuiM5L63bG4Zmom76y2rbq+rMShGQCoBosdaxjysWS4HNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UM3sUncr; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cd80e55efso8544553e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:50:47 -0700 (PDT)
+	s=arc-20240116; t=1719395494; c=relaxed/simple;
+	bh=sLfkjHrtGFtoucHVyBSUq7l/6Nf9cNU5KnkzOcXtG7Y=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BRT5RFZlQfQyztsk8RmAZmOUxC5uvME37I3tudjLijIpL1WTxnprkifNr8E65C+R2DdWLyxK6715qNnBLgx+C8yVC5S/VhRg3i1uTyVBML4kjs/wVP8a5rcAggGfv/i8n3NkHFSRqux9jebyT3+vLCfH8Z10kZkmC1rWbzZY73I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cnHD4hz8; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-718354c17e4so3182286a12.1;
+        Wed, 26 Jun 2024 02:51:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719395445; x=1720000245; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=B8XMw0Lq/znZjV0KsDQqRopt02tCEu5Vs8kv9SLuKd8=;
-        b=UM3sUncrWN6zhe36o3vEJ8ZFcJtCBJHXNPzWKNx3PUGfSw7V/Od8UOK1OMQUbe7Wg9
-         ssEEA+cP+Adjz9O5fTGUcn0CaGYVV/NC8suICwgGQdfgbTpZuW6Juw7VzLuQQ6TcqWfd
-         EYcfjHFs7c1P1BV9CtTy6FtWwOExlVUSR/sLTWme32MWq+6MsZBhieavMNmMV4IUKEGk
-         3IfjT796ajjL+W1xxOm7d3vr0+vTGz5TpxR7Z736KjeAFqGCmCNKezmCbpb6OG7KaHet
-         vNTc2xrqygHMhPWnrcI2Kc6pIChdnHXSlrwZRkqCgWgJtu2LWEUjKA1BJMU/EbJoZIkN
-         DtBQ==
+        d=gmail.com; s=20230601; t=1719395491; x=1720000291; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=8wu+Xk/FN21EiQi/+h2cL2uKesNUdvCxWZb1Bq8XqUY=;
+        b=cnHD4hz8gP7wnprAFQ4YiVx3iHf8ofUmifhtYUyEZIVFzEmPu9Xf6eBki3BSZ8qeVm
+         3N7PF/aVUztlqSX/4D3cOCmnVFU1csxSweBrZbkFprF31koxf4UUUp0SoSk1YYYYL1hX
+         Ii7oNFyUZFPuySb0J3+Mjri9ng0ldiD90n5tiLQv/+Md9Vwg4cilwTvAjvLChFYP1lB0
+         BJ/19BGaE9TOkvOZB2eSiZFD2kOP7qXUY570lBDoUV3N8WsTUZP6VptJ13ZsEMHeKwk7
+         VYz3KUVHySC9ROx1nEmDZ6YSc/1WeVL4Zj2NgU5TYJbOSa4DCNnaCYCc1/E5jpAr87AX
+         4ZAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719395445; x=1720000245;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=B8XMw0Lq/znZjV0KsDQqRopt02tCEu5Vs8kv9SLuKd8=;
-        b=ekApBGiCr1lQA4sIOfP8rhYLAR8ISsIF8czwMkGd/EXE4F5TMJXQcipZPSavWQVGQ6
-         aXJTQ8qhRseJYgTDHKC66u/xWWB0Jp8LHbPRnBinAMYGjsG2QHTIB+x8ndn+SjeX2zif
-         mZURhj6q2Rt+Oq6h9hhFPxI8VHEetvX6fozIzV26R8ED6MTgQF9ZItVjDIgbSq54YTz0
-         ByPB4awA2Z6yMLpYQv2vI0kz4vo0xzwsTZVErF9X0/Vjz7+kt3pSQ8OeIyojpPlVwE5H
-         Lk5oIrJ1+XO7QFek0AGHraboiVv/KG+uWHX70oU0nFNDCeEBYJHOiy+J3/kLIyr4J+Ql
-         4DCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWYIXAUgOdak0svCzV4eDjwNSIi7arh7lnMrrsg8/9yM/4GoC7GpzlbQozGLvPwHlrO8xNMFd1f4ae2xP5vPn+MgxyXwI+W1nlFKuoh
-X-Gm-Message-State: AOJu0YyE8m+6C3RDTi+jxIFHzYpwYAz5uBPT6PWp5dsu089/Uj2EqTPg
-	ljd9/hNt4ZofGOI+sLVYboL+sbWJPomBxMePZGyrgz3nfIB2Z9NKlO5vpBaVgZVM5gYGwr32dxc
-	byz0qAfMTeORjr4QeSISJcJ5zepYQz9yIQ0rvyw==
-X-Google-Smtp-Source: AGHT+IGSObvqboJ4ZZ6yoQ1c/G7L7JssRKsKX/b79P3e90H6Lvbk2DOvVW3Js3s99JnAusteMlXmpMMT3T35ygpYy94=
-X-Received: by 2002:a05:6512:3449:b0:52c:dbf9:7e54 with SMTP id
- 2adb3069b0e04-52ce1836330mr6750930e87.41.1719395445554; Wed, 26 Jun 2024
- 02:50:45 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719395491; x=1720000291;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=8wu+Xk/FN21EiQi/+h2cL2uKesNUdvCxWZb1Bq8XqUY=;
+        b=V1sML23/kfpzvbtD0SyZl4/wkopyMqpxtdMAHsLcxhYxyH5CW12ZyJQw/jpbO9PhJx
+         GBGTF7L8B07bk0qZRC4Y2mY3Qtam95yJx7CBxBl5A0aGkPcPemgDcvDkQXdsSHRYTWRv
+         E38DNC0N6jcpcodnqaJnAcPo+D70Aue5InzjWy43d0TyeaXsMNyVLoK/0SnjmMdi43aO
+         KzzjzGNP2BP665k2AuJCxhLYOlW8afeKOj9Ly2f0zmR3ap3eovFmP6dGRoRobr7QsdI6
+         1MBz0kkvIGwFMQodlFg4CxnEfiPcZcL/ZIUWqRcmte3aPHZhhI9tiWFOTKUlOoIZE+1r
+         WZ4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUUD3kRK9IzqPnW0nr3NVBkhHSwGPhOnTS1dPfCbvqPCAcT51wsOFRqtUTaT+x8K8BC6o20EvvfneX/HLfMIuHa4n5D3FZ0IC1+SAT9UBUR9J8si5gwXbMX4Yzxc2M5tbkzllFWH24pSzLftAn1RFpaqlDOI1Jaj/EhyETX0YRkMnYij+Y=
+X-Gm-Message-State: AOJu0YwhnXSwB9HPo/xYQIpxNeGc6wfBd0pGiTOKq7fJp6OSk2ayOtOq
+	mm70D2yGyBuBnSft1niKYyzob2d0zLqVbrdOZ/Qwww6oA0UKhKGs
+X-Google-Smtp-Source: AGHT+IGNT7zcMe0P1L8BDEagjyPPhYBdROCZ1QvU050JL4ztaAgxdPI/Sq/Ln4DH0nd57UXO6geY5Q==
+X-Received: by 2002:a05:6a20:bf28:b0:1bd:91b0:10a5 with SMTP id adf61e73a8af0-1bd91b0126cmr1259251637.47.1719395490834;
+        Wed, 26 Jun 2024 02:51:30 -0700 (PDT)
+Received: from localhost.localdomain ([150.107.164.233])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c8d7e58ff7sm1213112a91.8.2024.06.26.02.51.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 02:51:30 -0700 (PDT)
+From: Mighty <bavishimithil@gmail.com>
+To: 
+Cc: andreas@kemnade.info,
+	Mithil Bavishi <bavishimithil@gmail.com>,
+	=?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+	Tony Lindgren <tony@atomide.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-omap@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] ARM: dts: twl6032: Add DTS file for TWL6032 PMIC
+Date: Wed, 26 Jun 2024 15:20:56 +0530
+Message-Id: <20240626095056.12607-1-bavishimithil@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618032620.2445395-1-ruanjinjie@huawei.com> <20240618032620.2445395-2-ruanjinjie@huawei.com>
-In-Reply-To: <20240618032620.2445395-2-ruanjinjie@huawei.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 26 Jun 2024 11:50:33 +0200
-Message-ID: <CACRpkdYAjKMSGmR4pc+LEfZ4NQArvgCEwy=ujzjOQus0K9j40w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ARM: 9258/1: Fix callchain_trace() return value
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: linux@armlinux.org.uk, will@kernel.org, mark.rutland@arm.com, 
-	peterz@infradead.org, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org, irogers@google.com, 
-	adrian.hunter@intel.com, kan.liang@linux.intel.com, arnd@arndb.de, afd@ti.com, 
-	akpm@linux-foundation.org, rmk+kernel@armlinux.org.uk, 
-	eric.devolder@oracle.com, robh@kernel.org, ardb@kernel.org, 
-	broonie@kernel.org, lihuafei1@huawei.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jun 18, 2024 at 5:23=E2=80=AFAM Jinjie Ruan <ruanjinjie@huawei.com>=
- wrote:
+From: Mithil Bavishi <bavishimithil@gmail.com>
 
-> perf_callchain_store() return 0 on success, -1 otherwise, fix
-> callchain_trace() to return correct bool value. So walk_stackframe() can
-> have a chance to stop walking the stack ahead.
->
-> Fixes: 70ccc7c0667b ("ARM: 9258/1: stacktrace: Make stack walk callback c=
-onsistent with generic code")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Add a dedicated DTS file for the TWL6032 PMIC (Phoenix Lite). Already
+has driver support with TWL6030 (Phoenix) since both of them are so
+similar, some nodes can be reused from TWL6030 as well.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+This can be included in the board files like twl6030.
+Example:
+...
+&i2c1 {
+    twl: twl@48 {
+        reg = <0x48>;
+        interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+        interrupt-controller;
+        interrupt-parent = <&gic>;
+    };
+};
 
-Please put this into Russell's patch tracker.
+/include/ "twl6032.dtsi"
+...
 
-Yours,
-Linus Walleij
+Used in devices like samsung-espresso, amazon-jem, epson-embt2ws etc.
+
+Signed-off-by: Mithil Bavishi <bavishimithil@gmail.com>
+---
+Changelog v2:
+- Added nodes for pwm, pwm-led
+- Added nodes for regulators - ldoln and ldo2
+- Renamed nodes to match compatible names
+- Removed regulator properties and voltages, since we do not have a datasheet and relying on downstream values is not always correct, hence let the properties and min/max volatages be defined in the board device trees.
+
+ arch/arm/boot/dts/ti/omap/twl6032.dtsi | 81 ++++++++++++++++++++++++++
+ 1 file changed, 81 insertions(+)
+ create mode 100644 arch/arm/boot/dts/ti/omap/twl6032.dtsi
+
+diff --git a/arch/arm/boot/dts/ti/omap/twl6032.dtsi b/arch/arm/boot/dts/ti/omap/twl6032.dtsi
+new file mode 100644
+index 000000000..4372ce466
+--- /dev/null
++++ b/arch/arm/boot/dts/ti/omap/twl6032.dtsi
+@@ -0,0 +1,81 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Integrated Power Management Chip
++ * https://www.ti.com/lit/ds/symlink/twl6032.pdf
++ */
++
++&twl {
++	compatible = "ti,twl6032";
++	interrupt-controller;
++	#interrupt-cells = <1>;
++
++	rtc {
++		compatible = "ti,twl4030-rtc";
++		interrupts = <11>;
++	};
++
++	vana: regulator-vana {
++		compatible = "ti,twl6030-vana";
++	};
++
++	vio: regulator-vio {
++		compatible = "ti,twl6032-vio";
++	};
++
++	ldo1: regulator-ldo1 {
++		compatible = "ti,twl6032-ldo1";
++	};
++
++	ldo2: regulator-ldo2 {
++		compatible = "ti,twl6032-ldo2";
++	};
++
++	ldo3: regulator-ldo3 {
++		compatible = "ti,twl6032-ldo3";
++	};
++
++	ldo4: regulator-ldo4 {
++		compatible = "ti,twl6032-ldo4";
++	};
++
++	ldo5: regulator-ldo5 {
++		compatible = "ti,twl6032-ldo5";
++	};
++
++	ldo6: regulator-ldo6 {
++		compatible = "ti,twl6032-ldo6";
++	};
++
++	ldoln: regulator-ldoln {
++		compatible = "ti,twl6032-ldoln";
++	};
++
++	ldousb: regulator-ldousb {
++		compatible = "ti,twl6032-ldousb";
++	};
++
++	smps4: regulator-smps4 {
++		compatible = "ti,twl6032-smps4";
++	};
++
++	gpadc: gpadc {
++		compatible = "ti,twl6032-gpadc";
++		interrupts = <3>;
++		io-channel-cells = <1>;
++	};
++
++	twl_usb_comparator: usb-comparator {
++		compatible = "ti,twl6030-usb";
++		interrupts = <4>, <10>;
++	};
++
++	twl_pwm: pwm {
++		compatible = "ti,twl6030-pwm";
++		#pwm-cells = <2>;
++	};
++
++	twl_pwmled: pwmled {
++		compatible = "ti,twl6030-pwmled";
++		#pwm-cells = <2>;
++	};
++};
+-- 
+2.34.1
+
 
