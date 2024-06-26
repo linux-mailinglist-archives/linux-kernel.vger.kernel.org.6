@@ -1,214 +1,479 @@
-Return-Path: <linux-kernel+bounces-231471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB1E91991B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:28:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B4B291991E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:34:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF4771C224C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:28:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADF7D1C21ADB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BB87193093;
-	Wed, 26 Jun 2024 20:28:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F6C19307F;
+	Wed, 26 Jun 2024 20:34:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rvk/mLDr"
-Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2073.outbound.protection.outlook.com [40.107.241.73])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ih5R9GdQ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83A3719306D;
-	Wed, 26 Jun 2024 20:28:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719433706; cv=fail; b=d2V7Uz7SvsGvEZiO4UWRa4UmQCMoaDkf2O29GYiGHEw93l8mCwfJIAcVE5ou5aoP0Qww72MTzWuLf/b37vk/T+Ws/vIGv5QDdyu6AaNwBApTMQEsgPHV37aNofY3T0ptFcTy5rGTKpYIh7HcG7ImtedkKb4OfF7S2w3k+9eAc4c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719433706; c=relaxed/simple;
-	bh=7vw1fDQuLMjpVY5u/eA7wRoq/i5GIlJ8PWBDbwfN+zU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=G2csjWVJDrhPVQDBkx+/fPR5YqPQWA1QXX2noI5SVc0BnADDlHfU2Vdned/V7oDNq1LpD0q0gSzmEd290DHoTydc73l0oh3MY1RckM6/VEgMIT9XJKi5xBZyh5UGPx33VGqlx97dKhQosJmQtlowfEhOziyGlZDt7mFxmMhlcho=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=rvk/mLDr; arc=fail smtp.client-ip=40.107.241.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=VmuuzQ1FgsdSZbn0Tx3kX/NivfcLxWn4vmIv2+jYh2+a4opF3W/HhmkP/lHSxHscYQZ0NUex6Eb2gzMCoYd6J8h/UChGeyPiaRenbs/GJp6J6LFmt1eB2vGpkYQCe3epY6NqC5RXRVudeP3TNnOXcMf4sbJTKnBgT34sx+DtoKV0c6Tt4IhGIX58RotQVfonoB1tsnfDjqxCgpdncov4RCWO+oiTwZTbr74ybdxqntZENCFh2rEwjp+Ey0iEviWFh7Zm9sgFqAEZZRC7JoRjls6xo5ndeuz4v5EcgITImxWraLpLZB7+VIQUPsBM3k1xW1Ps2rVj5lFRUIV+o9fMAQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8vKVg0WGFlrUhau0rluxQqabf91OBRZdHdSX6r0MQO8=;
- b=Q42VVWnfApO5XNvtffyBSX0RTGWqIMsbwjDZAkNKc3cb7xK6VijWUwhIGu3U+ddrA+xwWnj1coGdnGumh0lUWsf1a9qZFifIpQ0w5vRyMsDfCRu9WQa1KJ7JuFrwYJsn/OB/9vej4InKf2w4GkNYaUlDzzwWLSmPZZiJdQj5oiwpYrg5jwz5sE3Xsehb9mPq4/WW+sVnb/7ykznRmqEJ2VsPU2fWUd3YofPnAUkjjmMTJS8mH2CrlF4cx+cyeAJrXUdZHfguoFLOHVmvbSvUpVqnSsFuVFglqGj+uXdZUIASS4+ClC3uL8N1nddHjitOB0lsnRXGBA5rMQNbQrdcrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8vKVg0WGFlrUhau0rluxQqabf91OBRZdHdSX6r0MQO8=;
- b=rvk/mLDrAP5kIDwZFHiTW5oOC4wFtc0BaaojTxIXzeEfaCPyqJry3uNaj6J9j2NP1APOf1F1oFRgc8ELJ7rY9zSxL1YPsCgXxnMMuODM/Pr6J62yqRD0AS7G6zvP39MuLblXfg4ogtkg2jdjWvf9XmYT9AiW7SxQSW9+vJXGCDQ=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU4PR04MB10838.eurprd04.prod.outlook.com (2603:10a6:10:581::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.25; Wed, 26 Jun
- 2024 20:28:21 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 20:28:21 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: frank.li@nxp.com
-Cc: conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	krzk+dt@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	robh@kernel.org,
-	shawnguo@kernel.org
-Subject: [PATCH v2 00/13] arm64: dts: layerscaple: clean up some simple CHECK_WARNING
-Date: Wed, 26 Jun 2024 16:28:09 -0400
-Message-Id: <20240626202809.2187404-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240626202533.2182846-2-Frank.Li@nxp.com>
-References: <20240626202533.2182846-2-Frank.Li@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BYAPR01CA0017.prod.exchangelabs.com (2603:10b6:a02:80::30)
- To PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457DC192B61
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 20:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719434068; cv=none; b=IHYiEBHmUKd7Vo4510xnbraJHhbG1BIHVikYjsHMj/pMjV0PVlC0DWYbQHjbKDb0xPVZqvIBRJgk7wxeAakR0A95RWxU8g5zdId3efelU5vZx+hXKtoRi63hD6KIbowBWxldAWqWbklnUh24SKENVKkSnq169zG7dOXIsTqbORQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719434068; c=relaxed/simple;
+	bh=z0kCSeRR0p3nOuvv5gP2SSz8SB43IqRVLTJRpFxYXTo=;
+	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mdq7I+o4ELfzR2S5fpzYz3qypA+sn/jzAkoyZxgBNRdRDyPCv2qbnEvaroYf7ThDS1DQDqxVxyxcufUxRZqX9rfIdd+TlcKTigHROQ/RYKeJeQS9XQsphJeZbQJVyEcQVsp3WezFq/T+aSxVSOkldWLpzijUvedfxASGOVoLQIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ih5R9GdQ; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719434065;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R7i4p4ud7SxLK7RGKky3kABn0F6ibvKtet+/PcBrLHA=;
+	b=Ih5R9GdQgUuBHvF5mVUA5OGfinCJTuu542wD8dkTorCgJEkE97F50EqOppQ19LdZ91QjIW
+	qSOjaeaNUYR7f2FbgR0F50bRMnO6kuIDkw1nRbv9SjuWWRdeb07jktRD0574zi5kqFDdnx
+	l11FGZJJZI1oVBKQ765861uhwsps2FM=
+Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
+ [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-442-grTPbPAtPoGOJu5qgGWyxA-1; Wed, 26 Jun 2024 16:34:22 -0400
+X-MC-Unique: grTPbPAtPoGOJu5qgGWyxA-1
+Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6b4f87eb2e1so108703496d6.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:34:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719434061; x=1720038861;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
+         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=R7i4p4ud7SxLK7RGKky3kABn0F6ibvKtet+/PcBrLHA=;
+        b=U+Myc3UBjhj+GWp0W+yMeF2lCgoWeejFf23ZyICZExWt7g08hvTbXHqF24Qb2tv1dR
+         1Ak80rQq9iXx3jTVAUA/bTMCDSDCN0gztroytGA0kEyCcVHS5vdW0FCxJXeTTeCeZzBI
+         /suM4EmrLTsYXcQzneAdBMmrF/SSjuyUbiscmVpyxI7uQQqPss+mUNxIYC2aZchlNRRT
+         akqr2Wwrzs7kOsxQ1uUIAvB5mqh7M6kB/41xatadHbdH1Dc/Y7F8ybodNY0NQXOCoA+/
+         mrkjfyjwLW+VtRdD1H/9912k0EHVIBYcJy8vmRxOYbCsbrQHZfmjyjRiEp30ehCvqW/L
+         8Wfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVjXYx7tIacgcFbjjvuTL09QwVasLfijBBDNieY30Jjhj0pUkK8mWpJ0+bz5jGFo3uwys/dq4A9Zf2ag+zaOOUYZHEmRCvvFqc2lK2o
+X-Gm-Message-State: AOJu0YwUMuokQzuPa/vnurXVBNKoQdXgsckEFTd3Sq0Td3AtpLwHfFbo
+	dJMeuK0H2mCie4AEjkhiPRI5Ln2MruV+7zWe6WXJA+LLwz/BIXnF89wU6po8YF3j54EW1FXOcIp
+	Zk4bTqLu2yxm00nkirm48hGgsDh9koT9B9n3E5WbQNwmDcfs6IZmxpdnLHLt3mJdqKSWAd5x0Bx
+	LD0hgqWQNpLi3TViZwp1a03mGf35411aPs+hLm
+X-Received: by 2002:ad4:5c8c:0:b0:6b5:435e:565b with SMTP id 6a1803df08f44-6b5435e57a9mr172476826d6.46.1719434061466;
+        Wed, 26 Jun 2024 13:34:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGChcakuE9eN1J54VW5aTG85djSWvZDgyT55ZxwpDZ/12ruMEFFllk5vlzXYkXd8kgDHa7aNbxPQgPS8WvEInI=
+X-Received: by 2002:ad4:5c8c:0:b0:6b5:435e:565b with SMTP id
+ 6a1803df08f44-6b5435e57a9mr172476486d6.46.1719434061034; Wed, 26 Jun 2024
+ 13:34:21 -0700 (PDT)
+Received: from 311643009450 named unknown by gmailapi.google.com with
+ HTTPREST; Wed, 26 Jun 2024 20:34:20 +0000
+From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
+References: <20240625205204.3199050-1-amorenoz@redhat.com> <20240625205204.3199050-6-amorenoz@redhat.com>
+ <EBFCD83F-D2AA-4D0E-A144-AC0975D22315@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU4PR04MB10838:EE_
-X-MS-Office365-Filtering-Correlation-Id: dd8d41ee-6d1d-4665-e7b8-08dc961e8595
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230038|366014|52116012|376012|1800799022|38350700012;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?4NFTSnTeVOKq7+ZFL09UttgLIk/YU9gXamAp0rEeEGcdse6GDqeTCeMCKYOK?=
- =?us-ascii?Q?rNvBtnMRcT1+9rObzGzo/UFa21Mme4qYuDTn6fiosF9eOqQ5mcDJHkREtgH4?=
- =?us-ascii?Q?DbcgTULY8+xyBinPicJQSyE+gL+mBOp6zvE5RZFQ6UZEQtnlK8faqNlJc9CP?=
- =?us-ascii?Q?RmvXMRoVhOeI/XUzhR1nQRQDv9ruVSGXB2BS+D0nXWa7Ta5vKsQ9X6pOIKfv?=
- =?us-ascii?Q?uI331pAGkvVUCJBkeUeLg0yJYVlv4Dp1cs9g6hicCyxsmbTda5lfx/XE0OBM?=
- =?us-ascii?Q?e6YXCkDhetO07nvL8Apj8aH1x2JMp1tvTYLqZeknE8zdMEgrkNjKq2Xd2zGV?=
- =?us-ascii?Q?YKIM9DnXo96epJwj/BL0LoKSHUsw9FAf6Lqv4ARmSopk1j6lRUgGu2q6jEBv?=
- =?us-ascii?Q?wsk4o3jQ25nkCktB6jBcWc4kvHEB0d6vB6g0uGEZgWpCGTiOdxW2DY55NWms?=
- =?us-ascii?Q?FpexywGxNbjNswOZgkdRhxzcEHRJzwbDaSTQw3Xf3h/Ym9RVl1OO4S7wb4Hr?=
- =?us-ascii?Q?wqEuQveHQENkxuo367/RLMOp64hF4gN2ZiA6+EcvZhy0o1rT6vvHqJg9ug65?=
- =?us-ascii?Q?Peb/A3+nuBG44BXbH25coR1+DvSzqKhysBrrdG5Mu6PQSmK3qsNh6/2oe4eO?=
- =?us-ascii?Q?gdQofkaG/NLy2jCxsS4D6WDbLTSrEtqIUm1x3Xl/eGpFTMNnZt0f4nXOql/z?=
- =?us-ascii?Q?PF1Tuj8a40+j0evqEQykAxxWBXi5kFnvHkIrUlbl70n5p194ivjqueUW5b3I?=
- =?us-ascii?Q?tV8elI970QqnvsFo/1y1yKXey9lvTyO8P2dz1z1pQiu3DoAn8v4ZiB/t/3xu?=
- =?us-ascii?Q?tyyyr32Fu+hVdFzm0ouDlUB4DM6CjKOOBxDvggcaLZEuDQgUCs0xL0m6AFmq?=
- =?us-ascii?Q?LHYWzPXZneoRWKUujEW6Lp2uO0Wh2+FriKOWkiaZ1lrTr+ridFlGNJnNlnX2?=
- =?us-ascii?Q?PuO7UCFEG7sETqkAldBXq5Ma/M27VczBDDBRDKrXcVmjHkT2yjZvaYJbnOey?=
- =?us-ascii?Q?Zkc4YOokMwPwkTo6WTPueyV0vGwKW3iwXj8m+0VzLyStq9ENdYB/qPaL7DRk?=
- =?us-ascii?Q?Nu2Y7VzXGHpPt3bJWPavXgWyYaK0faX5h0PgQfxToUVjQVqtfMGtcmpy7QZ7?=
- =?us-ascii?Q?UYOpBP4lr5vDGekJLC8e2BdXWzgpWDDlAXLWgYGtMnaOzOsk5LdxF00qxydv?=
- =?us-ascii?Q?9oBH/b8eVadexllYe1h1XMiOUnA4r3BT1zTAIsr1geEYHDnTPvLHxauxXyiz?=
- =?us-ascii?Q?rhzDw1kiXHt/hu2js4MuqWzXkn7tJ9hVzCzO5mjZie1zQeKg/2aWOiL6KS4x?=
- =?us-ascii?Q?tYH3EOLvIT8yMrVhPLjj6QJCJ4b4F1SOFD64BJZnUyRsUe8eTlTaejECpy1o?=
- =?us-ascii?Q?+f9CVbA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(52116012)(376012)(1800799022)(38350700012);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?hIjDdOEiIreI1vfiwRjhiLVIQ3UTqTR2iewwtso8jeWjkSNFeQnuxqBIATXe?=
- =?us-ascii?Q?NGWL2AL+EkBJmccd7P0Ln6IGvj3xH84l0Upl5dDYE0n3DfzrxURq3W79jM3G?=
- =?us-ascii?Q?7X9UBrhp1YofJsXXgDF3zM543aOfw57OuGMy9x00xzIUWZV0QvtKISprlxmF?=
- =?us-ascii?Q?KXgOek+hZiHpBvAYgPxQu3oJ8PFEtnQjJoS32Io0Y+m4NosrVbaPJblHVvk4?=
- =?us-ascii?Q?cvSmgZ+rWfUxNITTjr3EkygXg7WV7veOwt/ah7oI3JfXlRd34Vejft6JqB8L?=
- =?us-ascii?Q?38ygHLL75j0RMMLS+GuprdBqeljNTq6JwhUkdOKySsa/0hNdGdjTxAGGnCRf?=
- =?us-ascii?Q?rPZBnAn63P0WSBzeYAHfrelFcfINnpa3dmdt1dzbyqHyDyboRFtrfKZVgOxD?=
- =?us-ascii?Q?LUzc2ujyTGyMkRa5OXZKdkP7DzovWszT9Ca00iT2UBi9eBk+LOLrEuxrUH6H?=
- =?us-ascii?Q?ia64OqXpquoExEgLuLqkXK5wnaDJ54YVNRdWlrJAA+mkbhvwJa+NeGHgfvBv?=
- =?us-ascii?Q?1CEcu0bgexxao2ioVaH6T79IE1CF6X5rrXCEu5lQ/Y9hgpc40JgDHVQTYdD4?=
- =?us-ascii?Q?d5LbuLqdCmcWDWt/vJc8vd/AksHli4Bg6z3M2q8DWmTwRAo1lsz+AwXLL1rQ?=
- =?us-ascii?Q?dKq9UBuEPzsOO97oDiuMsH9UYLY2xF2JROcTr7dG6UkW0pVknOjoo//otoL+?=
- =?us-ascii?Q?6VTW7ZgAJ9z5n7soQhR0jiBQda8g94x+Y/2RvARqR5Kdrz3cuHZRRavBv1A+?=
- =?us-ascii?Q?/GH3s+zcR6vJTzi8XEO5sb9Vr6vMfUCiEJzz6Cl5LpzH5Uxl4kh7Trti4/j1?=
- =?us-ascii?Q?C/rV5Ks6N+9QzVKp0AAMmdbmXqDWaof3Xeft7X1MTIX/m14HZUTggm8/CYNO?=
- =?us-ascii?Q?bDrhn6hwTwypGDlkaRrbJQROz9P7iGjdQHhkXwEakpwNlc0ecGVNdO7mirLS?=
- =?us-ascii?Q?5nrFINKnoRg/KDej9tnF8DDM2HdLry6IfMCvgjYigiCgaGLH/rOsjLC34Wuf?=
- =?us-ascii?Q?ym0Z0kCZRxiYCVbn0t9f3dbBVvAs3wp3pjEtrybVbLH9dKPRgSnxJ8xIE3wy?=
- =?us-ascii?Q?wHx35aDCv+fwKoYjn12VbqCv5AbdovYIKij40W6yX0Qu/cyyLAbhtCuudw7v?=
- =?us-ascii?Q?qPHp5wojOe/4La80n3xaml2brAl7vRtbGLMxl4OjfZnZoxDtZG7T9mNpZ1TQ?=
- =?us-ascii?Q?Q7SjymO9Lb+CbdZzL1+G8n27EVAQmPd9dx32t3hbJZ0lxfUtc03/3F5k9zgo?=
- =?us-ascii?Q?XWheEB4d2XB1IhkWDo78o0N1m98rDTyzSoWk7yu5VV+VL3XTSCdcodOM0hTd?=
- =?us-ascii?Q?TU36U0Ls/H0po9U7Ph9h+0c1cu5wngsTfVQYN88acOi69WvH/h82clqnWC3e?=
- =?us-ascii?Q?bepnIjVn/5pGXuSPY0U5LmrMBBq1iL3gg0DztVEQSHujEzPdH7KVnWI1+KTr?=
- =?us-ascii?Q?dUJUZ4IRuaI4Qd98yd5CbHcNOnsVmcrYlUln89psrhcJSiYe8mz+Pz81gHuj?=
- =?us-ascii?Q?4bLx3Ajqks5n3IWkEM1PRHM61oIRsBR03oXR5PswZBbnGgmNGLA0t32if9VM?=
- =?us-ascii?Q?QZoSEmARviZpKIjhOMc=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd8d41ee-6d1d-4665-e7b8-08dc961e8595
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 20:28:21.5558
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZwoSAqAKJhFXbUTG4YiRGQk6GSgfwXwoSRF6WVVZILdoGGiO+p3g8D9FhIWPjpF+Z9WSi7uqvxzaWV0kY291wA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10838
+In-Reply-To: <EBFCD83F-D2AA-4D0E-A144-AC0975D22315@redhat.com>
+Date: Wed, 26 Jun 2024 20:34:20 +0000
+Message-ID: <CAG=2xmOnDZP3QtBbShoAqptY0uSywhFCGAwUYO+UuXfLkMXE7A@mail.gmail.com>
+Subject: Re: [PATCH net-next v5 05/10] net: openvswitch: add emit_sample action
+To: Eelco Chaudron <echaudro@redhat.com>
+Cc: netdev@vger.kernel.org, aconole@redhat.com, horms@kernel.org, 
+	i.maximets@ovn.org, dev@openvswitch.org, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Donald Hunter <donald.hunter@gmail.com>, Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Change from v1 to v2
-- Combine some similar warning to one patch for difference ls chipes.
-- Remove arm64: dts: layerscape: add '#power-control-cells' for rcpm
-rcpm actually not power-controller, it is wakeup controller, need
-better method to fix warning
-- Add aux-bus fix
-- Add pcie irq order fix
-- Add rename to rtc fix
-- Add thermal-node name fix
-- Add q(b)man-portals node name fix
+On Wed, Jun 26, 2024 at 04:28:17PM GMT, Eelco Chaudron wrote:
+>
+>
+> On 25 Jun 2024, at 22:51, Adrian Moreno wrote:
+>
+> > Add support for a new action: emit_sample.
+> >
+> > This action accepts a u32 group id and a variable-length cookie and use=
+s
+> > the psample multicast group to make the packet available for
+> > observability.
+> >
+> > The maximum length of the user-defined cookie is set to 16, same as
+> > tc_cookie, to discourage using cookies that will not be offloadable.
+>
+> I=E2=80=99ll add the same comment as I had in the user space part, and th=
+at
+> is that I feel from an OVS perspective this action should be called
+> emit_local() instead of emit_sample() to make it Datapath independent.
+> Or quoting the earlier comment:
+>
+>
+> =E2=80=9CI=E2=80=99ll start the discussion again on the naming. The name =
+"emit_sample()"
+> does not seem appropriate. This function's primary role is to copy the
+> packet and send it to a local collector, which varies depending on the
+> datapath. For the kernel datapath, this collector is psample, while for
+> userspace, it will likely be some kind of probe. This action is distinct
+> from the sample() action by design; it is a standalone action that can
+> be combined with others.
+>
+> Furthermore, the action itself does not involve taking a sample; it
+> consistently pushes the packet to the local collector. Therefore, I
+> suggest renaming "emit_sample()" to "emit_local()". This same goes for
+> all the derivative ATTR naming.=E2=80=9D
+>
 
-Frank Li (13):
-  arm64: dts: layerscape: rename node 'timer' as 'rtc'
-  arm64: dts: layerscape: add platform special compatible string for
-    gpio
-  arm64: dts: fsl-lx2160a: fix #address-cells for pinctrl-single
-  arm64: dts: fsl-ls1012a: remove property 'snps,host-vbus-glitches'
-  arm64: dts: layerscape: replace node name 'nor' with 'flash'
-  arm64: dts: layerscape: remove compatible string 'fsl,fman-xmdio' for
-    fman3
-  arm64: dts: layerscaple: add #dma-cells for qdma
-  arm64: dts: layerscape: rename node name "wdt" to "watchdog"
-  arm64: dts: layerscape: change pcie interrupt order
-  arm64: dts: layerscape: rename aux_bus to aux-bus
-  arm64: dts: fsl-ls1043a: remove unused clk-name at watchdog node
-  arm64: dts: fsl-ls1046a: rename thermal node name
-  arm64: dts: layerscape: rename b(q)man-portals to b(q)man-portals-bus
+This is a blurry semantic area.
+IMO, "sample" is the act of extracting (potentially a piece of)
+someting, in this case, a packet. It is common to only take some packets
+as samples, so this action usually comes with some kind of "rate", but
+even if the rate is 1, it's still sampling in this context.
 
- .../arm64/boot/dts/freescale/fsl-ls1012a.dtsi | 13 +++---
- .../arm64/boot/dts/freescale/fsl-ls1028a.dtsi |  5 ++-
- .../boot/dts/freescale/fsl-ls1043a-qds.dts    |  2 +-
- .../boot/dts/freescale/fsl-ls1043a-rdb.dts    |  2 +-
- .../arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 10 ++---
- .../boot/dts/freescale/fsl-ls1046a-qds.dts    |  2 +-
- .../arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 45 ++++++++++---------
- .../boot/dts/freescale/fsl-ls1088a-qds.dts    |  2 +-
- .../arm64/boot/dts/freescale/fsl-ls1088a.dtsi | 18 ++++----
- .../boot/dts/freescale/fsl-ls208xa-qds.dtsi   |  2 +-
- .../boot/dts/freescale/fsl-ls208xa-rdb.dtsi   |  2 +-
- .../arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 18 ++++----
- .../arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 14 +++---
- .../dts/freescale/qoriq-fman3-0-10g-0.dtsi    |  2 +-
- .../dts/freescale/qoriq-fman3-0-10g-1.dtsi    |  2 +-
- .../dts/freescale/qoriq-fman3-0-1g-0.dtsi     |  2 +-
- .../dts/freescale/qoriq-fman3-0-1g-1.dtsi     |  2 +-
- .../dts/freescale/qoriq-fman3-0-1g-2.dtsi     |  2 +-
- .../dts/freescale/qoriq-fman3-0-1g-3.dtsi     |  2 +-
- .../dts/freescale/qoriq-fman3-0-1g-4.dtsi     |  2 +-
- .../dts/freescale/qoriq-fman3-0-1g-5.dtsi     |  2 +-
- .../boot/dts/freescale/qoriq-fman3-0.dtsi     |  4 +-
- 22 files changed, 78 insertions(+), 77 deletions(-)
+OTOH, OVS kernel design tries to be super-modular and define small
+combinable actions, so the rate or probability generation is done with
+another action which is (IMHO unfortunately) named "sample".
 
--- 
-2.34.1
+With that interpretation of the term it would actually make more sense
+to rename "sample" to something like "random" (of course I'm not
+suggestion we do it). "sample" without any nested action that actually
+sends the packet somewhere is not sampling, it's just doing something or
+not based on a probability. Where as "emit_sample" is sampling even if
+it's not nested inside a "sample".
+
+Having said that, I don't have a super strong favor for "emit_sample". I'm
+OK with "emit_local" or "emit_packet" or even just "emit".
+I don't think any term will fully satisfy everyone so I hope we can find
+a reasonable compromise.
+
+
+> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
+> > ---
+> >  Documentation/netlink/specs/ovs_flow.yaml | 17 +++++++++
+> >  include/uapi/linux/openvswitch.h          | 28 ++++++++++++++
+> >  net/openvswitch/Kconfig                   |  1 +
+> >  net/openvswitch/actions.c                 | 45 +++++++++++++++++++++++
+> >  net/openvswitch/flow_netlink.c            | 33 ++++++++++++++++-
+> >  5 files changed, 123 insertions(+), 1 deletion(-)
+> >
+> > diff --git a/Documentation/netlink/specs/ovs_flow.yaml b/Documentation/=
+netlink/specs/ovs_flow.yaml
+> > index 4fdfc6b5cae9..a7ab5593a24f 100644
+> > --- a/Documentation/netlink/specs/ovs_flow.yaml
+> > +++ b/Documentation/netlink/specs/ovs_flow.yaml
+> > @@ -727,6 +727,12 @@ attribute-sets:
+> >          name: dec-ttl
+> >          type: nest
+> >          nested-attributes: dec-ttl-attrs
+> > +      -
+> > +        name: emit-sample
+> > +        type: nest
+> > +        nested-attributes: emit-sample-attrs
+> > +        doc: |
+> > +          Sends a packet sample to psample for external observation.
+> >    -
+> >      name: tunnel-key-attrs
+> >      enum-name: ovs-tunnel-key-attr
+> > @@ -938,6 +944,17 @@ attribute-sets:
+> >        -
+> >          name: gbp
+> >          type: u32
+> > +  -
+> > +    name: emit-sample-attrs
+> > +    enum-name: ovs-emit-sample-attr
+> > +    name-prefix: ovs-emit-sample-attr-
+> > +    attributes:
+> > +      -
+> > +        name: group
+> > +        type: u32
+> > +      -
+> > +        name: cookie
+> > +        type: binary
+> >
+> >  operations:
+> >    name-prefix: ovs-flow-cmd-
+> > diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/open=
+vswitch.h
+> > index efc82c318fa2..8cfa1b3f6b06 100644
+> > --- a/include/uapi/linux/openvswitch.h
+> > +++ b/include/uapi/linux/openvswitch.h
+> > @@ -914,6 +914,31 @@ struct check_pkt_len_arg {
+> >  };
+> >  #endif
+> >
+> > +#define OVS_EMIT_SAMPLE_COOKIE_MAX_SIZE 16
+> > +/**
+> > + * enum ovs_emit_sample_attr - Attributes for %OVS_ACTION_ATTR_EMIT_SA=
+MPLE
+> > + * action.
+> > + *
+> > + * @OVS_EMIT_SAMPLE_ATTR_GROUP: 32-bit number to identify the source o=
+f the
+> > + * sample.
+> > + * @OVS_EMIT_SAMPLE_ATTR_COOKIE: A variable-length binary cookie that =
+contains
+> > + * user-defined metadata. The maximum length is OVS_EMIT_SAMPLE_COOKIE=
+_MAX_SIZE
+> > + * bytes.
+> > + *
+> > + * Sends the packet to the psample multicast group with the specified =
+group and
+> > + * cookie. It is possible to combine this action with the
+> > + * %OVS_ACTION_ATTR_TRUNC action to limit the size of the packet being=
+ emitted.
+>
+> Although this include file is kernel-related, it will probably be re-used=
+ for
+> other datapaths, so should we be more general here?
+>
+
+The uAPI header documentation will be used for other datapaths? How so?
+At some point we should document what the action does from the kernel
+pov, right? Where should we do that if not here?
+
+> > + */
+> > +enum ovs_emit_sample_attr {
+> > +	OVS_EMIT_SAMPLE_ATTR_GROUP =3D 1,	/* u32 number. */
+> > +	OVS_EMIT_SAMPLE_ATTR_COOKIE,	/* Optional, user specified cookie. */
+>
+> As we start a new set of attributes maybe it would be good starting it of=
+f in
+> alphabetical order?
+>
+
+Having an optional attribute before a mandatory one seems strange to me,
+wouldn't you agree?
+
+> > +
+> > +	/* private: */
+> > +	__OVS_EMIT_SAMPLE_ATTR_MAX
+> > +};
+> > +
+> > +#define OVS_EMIT_SAMPLE_ATTR_MAX (__OVS_EMIT_SAMPLE_ATTR_MAX - 1)
+> > +
+> >  /**
+> >   * enum ovs_action_attr - Action types.
+> >   *
+> > @@ -966,6 +991,8 @@ struct check_pkt_len_arg {
+> >   * of l3 tunnel flag in the tun_flags field of OVS_ACTION_ATTR_ADD_MPL=
+S
+> >   * argument.
+> >   * @OVS_ACTION_ATTR_DROP: Explicit drop action.
+> > + * @OVS_ACTION_ATTR_EMIT_SAMPLE: Send a sample of the packet to extern=
+al
+> > + * observers via psample.
+> >   *
+> >   * Only a single header can be set with a single %OVS_ACTION_ATTR_SET.=
+  Not all
+> >   * fields within a header are modifiable, e.g. the IPv4 protocol and f=
+ragment
+> > @@ -1004,6 +1031,7 @@ enum ovs_action_attr {
+> >  	OVS_ACTION_ATTR_ADD_MPLS,     /* struct ovs_action_add_mpls. */
+> >  	OVS_ACTION_ATTR_DEC_TTL,      /* Nested OVS_DEC_TTL_ATTR_*. */
+> >  	OVS_ACTION_ATTR_DROP,         /* u32 error code. */
+> > +	OVS_ACTION_ATTR_EMIT_SAMPLE,  /* Nested OVS_EMIT_SAMPLE_ATTR_*. */
+> >
+> >  	__OVS_ACTION_ATTR_MAX,	      /* Nothing past this will be accepted
+> >  				       * from userspace. */
+> > diff --git a/net/openvswitch/Kconfig b/net/openvswitch/Kconfig
+> > index 29a7081858cd..2535f3f9f462 100644
+> > --- a/net/openvswitch/Kconfig
+> > +++ b/net/openvswitch/Kconfig
+> > @@ -10,6 +10,7 @@ config OPENVSWITCH
+> >  		   (NF_CONNTRACK && ((!NF_DEFRAG_IPV6 || NF_DEFRAG_IPV6) && \
+> >  				     (!NF_NAT || NF_NAT) && \
+> >  				     (!NETFILTER_CONNCOUNT || NETFILTER_CONNCOUNT)))
+> > +	depends on PSAMPLE || !PSAMPLE
+> >  	select LIBCRC32C
+> >  	select MPLS
+> >  	select NET_MPLS_GSO
+> > diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
+> > index 964225580824..1f555cbba312 100644
+> > --- a/net/openvswitch/actions.c
+> > +++ b/net/openvswitch/actions.c
+> > @@ -24,6 +24,11 @@
+> >  #include <net/checksum.h>
+> >  #include <net/dsfield.h>
+> >  #include <net/mpls.h>
+> > +
+> > +#if IS_ENABLED(CONFIG_PSAMPLE)
+> > +#include <net/psample.h>
+> > +#endif
+> > +
+> >  #include <net/sctp/checksum.h>
+> >
+> >  #include "datapath.h"
+> > @@ -1299,6 +1304,37 @@ static int execute_dec_ttl(struct sk_buff *skb, =
+struct sw_flow_key *key)
+> >  	return 0;
+> >  }
+> >
+> > +static void execute_emit_sample(struct datapath *dp, struct sk_buff *s=
+kb,
+> > +				const struct sw_flow_key *key,
+> > +				const struct nlattr *attr)
+> > +{
+> > +#if IS_ENABLED(CONFIG_PSAMPLE)
+>
+> Same comment as Ilya on key and IS_ENABLED() over function.
+>
+> > +	struct psample_group psample_group =3D {};
+> > +	struct psample_metadata md =3D {};
+> > +	const struct nlattr *a;
+> > +	int rem;
+> > +
+> > +	nla_for_each_attr(a, nla_data(attr), nla_len(attr), rem) {
+> > +		switch (nla_type(a)) {
+> > +		case OVS_EMIT_SAMPLE_ATTR_GROUP:
+> > +			psample_group.group_num =3D nla_get_u32(a);
+> > +			break;
+> > +
+> > +		case OVS_EMIT_SAMPLE_ATTR_COOKIE:
+> > +			md.user_cookie =3D nla_data(a);
+> > +			md.user_cookie_len =3D nla_len(a);
+>
+> Do we need to check for any max cookie length?
+>
+
+I don't think so. validate_emit_sample() makes sure the attribute's
+length within bounds and checking it in the fast path just in case
+some other memory-corrupting bug has changed it seems an overkill.
+
+
+> > +			break;
+> > +		}
+> > +	}
+> > +
+> > +	psample_group.net =3D ovs_dp_get_net(dp);
+> > +	md.in_ifindex =3D OVS_CB(skb)->input_vport->dev->ifindex;
+> > +	md.trunc_size =3D skb->len - OVS_CB(skb)->cutlen;
+> > +
+> > +	psample_sample_packet(&psample_group, skb, 0, &md);
+> > +#endif
+> > +}
+> > +
+> >  /* Execute a list of actions against 'skb'. */
+> >  static int do_execute_actions(struct datapath *dp, struct sk_buff *skb=
+,
+> >  			      struct sw_flow_key *key,
+> > @@ -1502,6 +1538,15 @@ static int do_execute_actions(struct datapath *d=
+p, struct sk_buff *skb,
+> >  			ovs_kfree_skb_reason(skb, reason);
+> >  			return 0;
+> >  		}
+> > +
+> > +		case OVS_ACTION_ATTR_EMIT_SAMPLE:
+> > +			execute_emit_sample(dp, skb, key, a);
+> > +			OVS_CB(skb)->cutlen =3D 0;
+> > +			if (nla_is_last(a, rem)) {
+> > +				consume_skb(skb);
+> > +				return 0;
+> > +			}
+> > +			break;
+> >  		}
+> >
+> >  		if (unlikely(err)) {
+> > diff --git a/net/openvswitch/flow_netlink.c b/net/openvswitch/flow_netl=
+ink.c
+> > index f224d9bcea5e..29c8cdc44433 100644
+> > --- a/net/openvswitch/flow_netlink.c
+> > +++ b/net/openvswitch/flow_netlink.c
+> > @@ -64,6 +64,7 @@ static bool actions_may_change_flow(const struct nlat=
+tr *actions)
+> >  		case OVS_ACTION_ATTR_TRUNC:
+> >  		case OVS_ACTION_ATTR_USERSPACE:
+> >  		case OVS_ACTION_ATTR_DROP:
+> > +		case OVS_ACTION_ATTR_EMIT_SAMPLE:
+> >  			break;
+> >
+> >  		case OVS_ACTION_ATTR_CT:
+> > @@ -2409,7 +2410,7 @@ static void ovs_nla_free_nested_actions(const str=
+uct nlattr *actions, int len)
+> >  	/* Whenever new actions are added, the need to update this
+> >  	 * function should be considered.
+> >  	 */
+> > -	BUILD_BUG_ON(OVS_ACTION_ATTR_MAX !=3D 24);
+> > +	BUILD_BUG_ON(OVS_ACTION_ATTR_MAX !=3D 25);
+> >
+> >  	if (!actions)
+> >  		return;
+> > @@ -3157,6 +3158,29 @@ static int validate_and_copy_check_pkt_len(struc=
+t net *net,
+> >  	return 0;
+> >  }
+> >
+> > +static int validate_emit_sample(const struct nlattr *attr)
+> > +{
+> > +	static const struct nla_policy policy[OVS_EMIT_SAMPLE_ATTR_MAX + 1] =
+=3D {
+> > +		[OVS_EMIT_SAMPLE_ATTR_GROUP] =3D { .type =3D NLA_U32 },
+> > +		[OVS_EMIT_SAMPLE_ATTR_COOKIE] =3D {
+> > +			.type =3D NLA_BINARY,
+> > +			.len =3D OVS_EMIT_SAMPLE_COOKIE_MAX_SIZE,
+> > +		},
+> > +	};
+> > +	struct nlattr *a[OVS_EMIT_SAMPLE_ATTR_MAX + 1];
+> > +	int err;
+> > +
+> > +	if (!IS_ENABLED(CONFIG_PSAMPLE))
+> > +		return -EOPNOTSUPP;
+> > +
+> > +	err =3D nla_parse_nested(a, OVS_EMIT_SAMPLE_ATTR_MAX, attr, policy,
+> > +			       NULL);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	return a[OVS_EMIT_SAMPLE_ATTR_GROUP] ? 0 : -EINVAL;
+>
+> So we are ok with not having a cookie? Did you inform Cookie Monster ;)
+> Also, update the include help text to reflect this.
+>
+
+You mean the uapi header? The enum is defined as:
+
+enum ovs_emit_sample_attr {
+	OVS_EMIT_SAMPLE_ATTR_GROUP =3D 1,	/* u32 number. */
+	OVS_EMIT_SAMPLE_ATTR_COOKIE,	/* Optional, user specified cookie. */
+
+Isn't that clear enough?
+
+> > +}
+> > +
+> >  static int copy_action(const struct nlattr *from,
+> >  		       struct sw_flow_actions **sfa, bool log)
+> >  {
+> > @@ -3212,6 +3236,7 @@ static int __ovs_nla_copy_actions(struct net *net=
+, const struct nlattr *attr,
+> >  			[OVS_ACTION_ATTR_ADD_MPLS] =3D sizeof(struct ovs_action_add_mpls),
+> >  			[OVS_ACTION_ATTR_DEC_TTL] =3D (u32)-1,
+> >  			[OVS_ACTION_ATTR_DROP] =3D sizeof(u32),
+> > +			[OVS_ACTION_ATTR_EMIT_SAMPLE] =3D (u32)-1,
+> >  		};
+> >  		const struct ovs_action_push_vlan *vlan;
+> >  		int type =3D nla_type(a);
+> > @@ -3490,6 +3515,12 @@ static int __ovs_nla_copy_actions(struct net *ne=
+t, const struct nlattr *attr,
+> >  				return -EINVAL;
+> >  			break;
+> >
+> > +		case OVS_ACTION_ATTR_EMIT_SAMPLE:
+> > +			err =3D validate_emit_sample(a);
+> > +			if (err)
+> > +				return err;
+> > +			break;
+> > +
+> >  		default:
+> >  			OVS_NLERR(log, "Unknown Action type %d", type);
+> >  			return -EINVAL;
+> > --
+> > 2.45.1
+>
 
 
