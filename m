@@ -1,126 +1,182 @@
-Return-Path: <linux-kernel+bounces-230894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20898918373
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:57:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AB9691837D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:58:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2211282A77
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:57:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444DD284381
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:58:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E044184121;
-	Wed, 26 Jun 2024 13:57:47 +0000 (UTC)
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F0B1849D1;
+	Wed, 26 Jun 2024 13:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YcmkPYvb"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A8B13CFBC;
-	Wed, 26 Jun 2024 13:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E7349632
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719410266; cv=none; b=HtWEBBcIr66dTIAQZNPiykyLzp64e8aO6bBEYyRmtlTYzhPopV9cAnUR/BMBKkbDRL2chvx3dSkVYJrwbTTf3Q1Wgu7KpNl3NxAlQioaXhn69SSO+y4Cgbb6qoM2Se4cO8C763yrQTDiWUz5qAWh7vsuqUiyG82+nXBDtHPZ8eU=
+	t=1719410293; cv=none; b=W97nDQZe9IcdMlolcy+1cwrUq9HDRPmlqDEF8eHpoC+B9mLWQscWcROSBSji8u7VVaLyyUrkiAaAl0uTiy3Xlml2pBgJYXj6Yn5Kx0lo5wGhDDvTuhnVRt78MB7j1PI+M6jmn/Zk+LXCeyf3j5CrWxPylufMc/UinYciir7DXMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719410266; c=relaxed/simple;
-	bh=wTAlYD8QImoqPDkhp/cj1S+EMs3bvaRrPWlHwbQp7dc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z96nZ27VVK/7Cx8ghnJ4qRVk9kznq+KMBGjrkUMwvcywxIWjShPWIY50Km4YbAcF85ax+J4s9qZVwy0LKIeeVHyaU9lEY0I2WUE65fM/aX0jjmM5hsquTOXg1ZEPBtReBlM+YgZkOd81tBHVYO7xY5JSJG2Q7HrBvK1v+LVt3A4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57d1679ee83so356529a12.2;
-        Wed, 26 Jun 2024 06:57:44 -0700 (PDT)
+	s=arc-20240116; t=1719410293; c=relaxed/simple;
+	bh=3YxsMFFGaNZcDTtzTrv5d7Iz9eHx7NSyqXKCM81GTSI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=cVAPmufR8qCMe2FbuxlOrjjcOC2BQifkfx+5fmkkrUuM9K/0VlPe+0Bu9wXDwx5ZotDm5NlvdJstodTEGFzFzxSaw2bv7ryoKvCSrLbcUZ04rGZnQaZmMP6reUdG9M0yTWdxZkg8Pfa+LoypjFP3Q2NdpHvGY3CvbyMUsRMSR/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YcmkPYvb; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70667c46701so5617759b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 06:58:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719410291; x=1720015091; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7bZITLWmhjXXeBaBmuACBK8fBjqn+1NW0CaRg2CPhFg=;
+        b=YcmkPYvbLmPAIsJ+IrTtmJMN/HRyGsN7wTgqNbe6YV2lW8YzLJgLic/FCgK5w2F3T2
+         mS05GaZ82YkrNYmvIigrNciccVVrX+aOPGeH7s+J9Td7gNRGkgQpQLiosuSFvljub+Gt
+         AFX2sPgkufhPIZ+ROWXJC+Zx+3Tl8wguYWJ7LL37hip/1M5961cshoNrOIKkhgGNBzZ5
+         1DfQ5reQ6pjH/mJKMvmCf30qCJHevN6yXiZVkO3dkswcZ6bCfSRG3/B4ppWR68SwKAjt
+         DXIfqD/8URV9x/UkpMrZiyMq14tFsN8MpbWFio1QmlxiIwFlrQYZ/O911CWf2O6qRIoh
+         yUpg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719410263; x=1720015063;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qLsCyunUMFV0UFP/6cGb0jTp7IysuDFJZXn6fTsqWSY=;
-        b=jmmXei6OzgjIPUSBG3KfPz87F7U1wABtny2Go0qUwFPPvIZ7ohQwGsR8GDW8sVaDfT
-         Fvq/5e8SmkdBnzL579UAzoK7lIghMbiQPuDmn8g3zfVL3PI69eZJp81u4i7RSw3PUjZd
-         vqTRKz+1bhgE4lrWGODQ8NoFLcC2DmncJvAMAI82+NKEGLCR4pGKmR6ai12u37U9SU/V
-         eDPX8n/4kEr3gzEuhX2Eu6rQP4zLUixCHwJawR6/8YwMJoYzdQCc7XNYUs0op/33wes8
-         CXR2QgtPaY32BiBsbfl5kIpn3m8+3xPbywd2F7zTA1e8QNhbreCoiyGwBw7QZUZAEZLq
-         m9jg==
-X-Forwarded-Encrypted: i=1; AJvYcCUPtP+6PNnWDy4aR23bp76BZH5zXWG0wCfG1fsVkafS8vpSQjtbzXB2AwGvL/qmbrFSf7FpLmZEskCMePiTkwUiVtW8jVOCfuC2hqy10xbirJKfysku2VMwqVyHi2d8zVMVXTYS7+tBz0Oi4JI6aw==
-X-Gm-Message-State: AOJu0YxERYqebxawKAFjhEMzSmIRVfxhdTtRTGTUst5jyqvwU8mQTOX1
-	BCHuC3APFXLCmpnLcxasDUn+V0HTAgTt+zO1k7Sm19iDvE+Zdfx2
-X-Google-Smtp-Source: AGHT+IGxvp5hQRrv2XUQddKcmNAPMp7+0mzlWb9Q7XqS72h7gA6vRQ5q4c+VSvI2cTpbGT6CK6VNvg==
-X-Received: by 2002:a50:99de:0:b0:57c:fa44:7a04 with SMTP id 4fb4d7f45d1cf-57d4580b070mr8351763a12.39.1719410263256;
-        Wed, 26 Jun 2024 06:57:43 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-007.fbsv.net. [2a03:2880:30ff:7::face:b00c])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3042d10csm7346171a12.40.2024.06.26.06.57.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 06:57:42 -0700 (PDT)
-Date: Wed, 26 Jun 2024 06:57:40 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "Paul E. McKenney" <paulmck@kernel.org>, sandipan.das@amd.com,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>, leit@meta.com,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
-	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] perf/x86/amd: Warn only on new bits set
-Message-ID: <ZnweVM7qGvNDThV8@gmail.com>
-References: <20240524141021.3889002-1-leitao@debian.org>
- <20240625115734.GX31592@noisy.programming.kicks-ass.net>
- <e17a924d-9699-465f-8bef-cde4411e2146@paulmck-laptop>
- <20240626085153.GA31592@noisy.programming.kicks-ass.net>
+        d=1e100.net; s=20230601; t=1719410291; x=1720015091;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7bZITLWmhjXXeBaBmuACBK8fBjqn+1NW0CaRg2CPhFg=;
+        b=Y+QNwpluqhMOsWx3MiLNnMI/DQx+BdFRgnKH1CGiC9yKCn0hu4+0NpaMXSTcOIctKj
+         SduDc5jWemLbOw1SefEBNdBpye4nKTBQorw9aNc/yff1BVLNWuj5QKaDXGTl9yXVA9g/
+         VN+67NJIpjkgw9jCYv3J9UaxlrswDU6VEgMHIhbnk0dvb7Na1JawoMoMDzzjljyvXYv/
+         90GxaqDDqobxw9Y9vH0+jEYKNsIvNmTv25OZok6sJa6ZwAJjVedPAACEFD1/IT34AH9R
+         BZREIlfVYSoDCrTGIQnI2pnBtvnxQ7tKiQf3MScNEZ71TwzQj8ZqYQFCLNjoi/1qYRtR
+         NSCg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdjZPL1SY8iTLmV0vqV42NuUicbNsn+J32kXVTn3xRzWGiT8/k6Ta6JXoU03cUp93FhDOFrFUbNbIW09qdUUYKLVvmPzK2ByWLiBmB
+X-Gm-Message-State: AOJu0Yx+D/GdSs0j20fHmBsaWcPw3I9KMZuqiL/zyfpA+8hVjoBRmtUQ
+	zifzO70tUH9o75q2bk1jwcbn1T+UF6t2kZj5lB2HxAT7rqGkNdhdJsbrLRaOen1eSJwOtX5bolB
+	6QA==
+X-Google-Smtp-Source: AGHT+IEbYwuCL85PGQWnmHJ5cqr5/FxAlcfb36G02CNdKGlmVJ3+RFvDkerDQA9Du3lr0/Rn7228PGUyug4=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:3023:b0:705:d750:83f5 with SMTP id
+ d2e1a72fcca58-7066e6c6338mr149595b3a.3.1719410290721; Wed, 26 Jun 2024
+ 06:58:10 -0700 (PDT)
+Date: Wed, 26 Jun 2024 06:58:09 -0700
+In-Reply-To: <20240621134041.3170480-2-michael.roth@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626085153.GA31592@noisy.programming.kicks-ass.net>
+Mime-Version: 1.0
+References: <20240621134041.3170480-1-michael.roth@amd.com> <20240621134041.3170480-2-michael.roth@amd.com>
+Message-ID: <ZnwecZ5SZ8MrTRRT@google.com>
+Subject: Re: [PATCH v1 1/5] KVM: SEV: Provide support for SNP_GUEST_REQUEST
+ NAE event
+From: Sean Christopherson <seanjc@google.com>
+To: Michael Roth <michael.roth@amd.com>
+Cc: kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, x86@kernel.org, pbonzini@redhat.com, 
+	jroedel@suse.de, thomas.lendacky@amd.com, pgonda@google.com, 
+	ashish.kalra@amd.com, bp@alien8.de, pankaj.gupta@amd.com, 
+	liam.merwick@oracle.com, Brijesh Singh <brijesh.singh@amd.com>, 
+	Alexey Kardashevskiy <aik@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-Hello Peter,
+On Fri, Jun 21, 2024, Michael Roth wrote:
+> @@ -3939,6 +3944,67 @@ static int sev_snp_ap_creation(struct vcpu_svm *svm)
+>  	return ret;
+>  }
+>  
+> +static int snp_handle_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t resp_gpa)
+> +{
+> +	struct sev_data_snp_guest_request data = {0};
+> +	struct kvm *kvm = svm->vcpu.kvm;
+> +	kvm_pfn_t req_pfn, resp_pfn;
+> +	sev_ret_code fw_err = 0;
+> +	int ret;
+> +
+> +	if (!sev_snp_guest(kvm) || !PAGE_ALIGNED(req_gpa) || !PAGE_ALIGNED(resp_gpa))
+> +		return -EINVAL;
+> +
+> +	req_pfn = gfn_to_pfn(kvm, gpa_to_gfn(req_gpa));
 
-On Wed, Jun 26, 2024 at 10:51:53AM +0200, Peter Zijlstra wrote:
-> On Tue, Jun 25, 2024 at 07:47:06AM -0700, Paul E. McKenney wrote:
-> > On Tue, Jun 25, 2024 at 01:57:34PM +0200, Peter Zijlstra wrote:
+This is going to sound odd, but I think we should use gfn_to_page(), i.e. require
+that the page be a refcounted page so that it can be pinned.  Long story short,
+one of my learnings from the whole non-refcounted pages saga is that doing DMA
+to unpinned pages outside of mmu_lock is wildly unsafe, and for all intents and
+purposes the ASP is a device doing DMA.  I'm also pretty sure KVM should actually
+*pin* pages, as in FOLL_PIN, but I'm ok tackling that later.
 
-> > > Why not just a WARN_ON_ONCE() instead? This really shouldn't be
-> > > happening in the first place.
+For now, using gfn_to_pages() would avoid creating ABI (DMA to VM_PFNMAP and/or
+VM_MIXEDMAP memory) that KVM probably doesn't want to support in the long term.
 
-> > We did consider that, but seeing the full set of bits that shouldn't
-> > have been happening in the first place helps with debuggging.
-> > 
-> > But is there a better way to accumulate and print the full set of
-> > unexpected bits?
+[*] https://lore.kernel.org/all/20240229025759.1187910-1-stevensd@google.com
 
-> Dunno, I was just wondering if the whole thing wasn't massive overkill.
-> The changelog wasn't really explaining much here.
+> +	if (is_error_noslot_pfn(req_pfn))
+> +		return -EINVAL;
+> +
+> +	resp_pfn = gfn_to_pfn(kvm, gpa_to_gfn(resp_gpa));
+> +	if (is_error_noslot_pfn(resp_pfn)) {
+> +		ret = EINVAL;
+> +		goto release_req;
+> +	}
+> +
+> +	if (rmp_make_private(resp_pfn, 0, PG_LEVEL_4K, 0, true)) {
+> +		ret = -EINVAL;
+> +		kvm_release_pfn_clean(resp_pfn);
+> +		goto release_req;
+> +	}
 
-I can help with some motivation, if it helps.
+I don't see how this is safe.  KVM holds no locks, i.e. can't guarantee that the
+resp_pfn stays private for the duration of the operation.  And on the opposite
+side, KVM can't guarantee that resp_pfn isn't being actively used by something
+in the kernel, e.g. KVM might induce an unexpected #PF(RMP).
 
-	1) This problem happens on random machines, rarely
+Why can't KVM require that the response/destination page already be private?  I'm
+also somewhat confused by the reclaim below.  If KVM converts the response page
+back to shared, doesn't that clobber the data?  If so, how does the guest actually
+get the response?  I feel like I'm missing something.
 
-	2) When this problem happens, there is a flood warnings,
-	   sometimes it causes the whole machine to be unusable.
+Regardless of whether or not I'm missing something, this needs comments, and the
+changelog needs to be rewritten with --verbose to explain what's going on.  
 
-	3) It is hard to figure out what is the root cause, and to
-	   reproduce the problem.
+> +	data.gctx_paddr = __psp_pa(to_kvm_sev_info(kvm)->snp_context);
+> +	data.req_paddr = __sme_set(req_pfn << PAGE_SHIFT);
+> +	data.res_paddr = __sme_set(resp_pfn << PAGE_SHIFT);
+> +
+> +	ret = sev_issue_cmd(kvm, SEV_CMD_SNP_GUEST_REQUEST, &data, &fw_err);
+> +	if (ret)
+> +		return ret;
 
-	4) There isn't information about what bits are being leaked.
+This leaks both req_pfn and resp_pfn.
 
-That said, this patch will help with the following issues:
-
-	1) It will tell us which bits are being set, so, it is easy to
-	   communicate it back to vendor, and to do a root-cause analyzes.
-
-	2) It avoid the machine to be unusable, because, worst case
-	   scenario, we get less than 60 WARNs.
+> +
+> +	/*
+> +	 * If reclaim fails then there's a good chance the guest will no longer
+> +	 * be runnable so just let userspace terminate the guest.
+> +	 */
+> +	if (snp_page_reclaim(kvm, resp_pfn)) {
+> +		return -EIO;
+> +		goto release_req;
+> +	}
+> +
+> +	/*
+> +	 * As per GHCB spec, firmware failures should be communicated back to
+> +	 * the guest via SW_EXITINFO2 rather than be treated as immediately
+> +	 * fatal.
+> +	 */
+> +	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
+> +				SNP_GUEST_ERR(ret ? SNP_GUEST_VMM_ERR_GENERIC : 0,
+> +					      fw_err));
+> +
+> +	ret = 1; /* resume guest */
+> +	kvm_release_pfn_dirty(resp_pfn);
+> +
+> +release_req:
+> +	kvm_release_pfn_clean(req_pfn);
+> +	return ret;
+> +}
 
