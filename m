@@ -1,129 +1,289 @@
-Return-Path: <linux-kernel+bounces-230269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B14C917AA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:16:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B98E3917AA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:16:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 360D1283719
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:16:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44A4C1F22098
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:16:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEEF1607A5;
-	Wed, 26 Jun 2024 08:16:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D1215F41B;
+	Wed, 26 Jun 2024 08:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3I/Fu7x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="JxHQfBMn"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F5B15B0E1;
-	Wed, 26 Jun 2024 08:16:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BAC51662E3
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719389768; cv=none; b=alvLhEos6H1xwrVsa9gFSFXa/i6Fk0LdFMn8KeqZRdr1V8GgPWHoDLUVW183AFuBBndvUiLpEVqaPR/VDT+Jz2xo0P4TVw0VXglQ5S6824S+e3jOGEujrifDX3GVa0jId1Ag4USx6/fdiog5NeV7QNOkgSLqsnMPnS/59srQpRM=
+	t=1719389776; cv=none; b=GcFSw5ArRArTHzxX4ajmpcpz+jSIKe+w6ZvOxPvsExwBEq17fPCUlcOP/XJqC6tx7CGJIbWlVkCXzr3XayQvl1tNwF6DVqpduIB70LVIF3ZPzywBmKJ3gKcQTyCPRBooUHRwv3NeAoZga/atpMZltgSluk3XQmNk4TlU6zkb15k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719389768; c=relaxed/simple;
-	bh=cGF5wdV2kEPa5Pug7huBjL8X8L/Pc1BUyOY1sXqQ7Co=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JWrffuJlir5exbhhYzhMT+IwkjWkfSEAlFqY5zVYt7Db8uvDhL/LZXi5lzROpJotB84hc1YzqpeAb9SkXnd/T8SW7LOtp9lV+ptmtWwzDK8PZ9kv2/WqbWJhyQG3707a9/x1+vby2zAjyO3d9ZztNz04nr9ZM2s8fjZZZR2A4XY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3I/Fu7x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B261AC2BD10;
-	Wed, 26 Jun 2024 08:16:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719389768;
-	bh=cGF5wdV2kEPa5Pug7huBjL8X8L/Pc1BUyOY1sXqQ7Co=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=O3I/Fu7xsi1Yp2PL1gXjw/hciFI5MliPVtzHV1FP5wfmGPvfAH0xIy9+AGmLXXNh6
-	 9M9fW3tsWn2m0vt46IURbmBKMAg7llM/LlyjKyEpyi9EhCo50WdpODedO2FdBNyZOE
-	 7kKtiIK0o4IXd5SUQSRMjysrIpURF884tp8RQSKHcyepNunC7cqPK0cGsXM/K0gL5a
-	 TaV2FM05l4FXQ4AxYPMoI3+AgGHSf0YV/q/tT/YLd2nXBJ78dD2GR1JUWq2VBx0Rsd
-	 6Z3FWYqjizit4s+5SWACVTpc/MLJrpQyh6tNZPYQETmUR3s56akAn92LMGDeC5bWMy
-	 IU0KZcAQktlLA==
-Message-ID: <226a9e91-5082-4311-9fc7-63bd91c0e3a7@kernel.org>
-Date: Wed, 26 Jun 2024 10:16:00 +0200
+	s=arc-20240116; t=1719389776; c=relaxed/simple;
+	bh=FE7U271Et0zH3kSFczw/PdRB9ERnQk0y3yTaAdsdjcU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G+HBjiNf8Sn2+VgV7KEE3Aj/lAQIaJszUqyRKmbwTs0qGCbcf7cDZvkXDvkvyE8G/65E/FMIz6rPEXixeOaywhvgpU4nSOUI5iXcifpWfB3iKf9XY02ZKwwBgl9ww01rVk7IyW3BwzGWN4j/8DeaFUiMs0SiXO17SWuSbSjZQyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=JxHQfBMn; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ebec2f11b7so70947061fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:16:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1719389771; x=1719994571; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SN/1D3fBasxOG37a9PwgmL+HryV/H3Cuqs551lJ08hk=;
+        b=JxHQfBMnTrYiigVHSWLl8RQODwVj3/PA02c5oESv2/RTdlWLRyWPB8qjR1OCjN6tAI
+         i/wmluBfCv/2phi2H8vD63U+aJHkwn0nx6QQMZXnSylQKvnQgILsPEj+GOhAfe9W0vpZ
+         JJplxYd9gXVFiblQqfOxLEyNqkc41HuSjMFG00Kr5V8WZcO5IE68exxzFNwtoGzOhbXH
+         6PbaiLWTKh7DbM7Oo48Hv3eZOgFssURUqec9LXwjTn2dNekQesIzcj2ufEEQ9ldajK9f
+         wJ4LdLnvEaWLmDud62Ixq4sPSNwXQw1TPyT5yaNmWrkkc4q3MSv7OEUc8ojn+WsnnckZ
+         qj+Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719389771; x=1719994571;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SN/1D3fBasxOG37a9PwgmL+HryV/H3Cuqs551lJ08hk=;
+        b=ncrOJ+f/SJe7vi6Og/Zys2dMue1XXE+tjO6ladj0Ea5LfX0y3TKW/BXyGhhIl7VAUb
+         rdZFapDZ3zxudqooe7+DLDImTlnbkWZEDiqHymwp5z9Ss5WfCLMa2gaTRdaKq9nfwA7a
+         6gA1bbzLcCoTOgagLlKY9VKb2H0ic5ouR8wmiz3/pmXqTyjU2w0jbUqvCW0ODx2YDS6C
+         uKhIY6q7eIURyO3F16mQJwCkmD5snSMsyDEf8Xn0FMYy5eLz5t3IDbOPZt6JFKPfq/4Z
+         i6B+Njbm+/W4LHhsw2oXr4UUjegGmGujr1argoqc7DufAT37U1d/FYsnX2PIo01dunZW
+         5wMA==
+X-Forwarded-Encrypted: i=1; AJvYcCU6ycterOlRZMWFGLeuN4/5Cntde+RlfoLzxxdvHH6NWbkUFQUbQ0RZbplIT6OBTCTbagnf1PEn1DOHEyLWPxwkgIfe2kVz5aLn0m5+
+X-Gm-Message-State: AOJu0Yzs71HOS50MdLLMAi5tZpGO0FbRlFTGb8A0mD+M88vTrfF734ma
+	MgCADjgcEVQzaP1iMhsWpCewOpfePL/DVFvwGh0ktekhzJHyeTXXgtPJmgb5xbQSDvDnKYYKfVd
+	eBuJGfV44i5qXudz5bN0IfkEcLujrvJ/AWhFNEA==
+X-Google-Smtp-Source: AGHT+IHAfFPI2ymuV8CI0WM+vHlPTAP++dLqOpBf4m+jsmj8adHU4/5YqAzi57wyh80Nxr7OvQrOtM7Z51QfitwmbCM=
+X-Received: by 2002:a2e:80d5:0:b0:2ec:4fe0:38bc with SMTP id
+ 38308e7fff4ca-2ec5b388418mr51600041fa.35.1719389771288; Wed, 26 Jun 2024
+ 01:16:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] dt-bindings: net: Define properties at top-level
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Lorenzo Bianconi <lorenzo@kernel.org>, Felix Fietkau <nbd@nbd.name>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Giuseppe Cavallaro <peppe.cavallaro@st.com>,
- Jose Abreu <joabreu@synopsys.com>
-Cc: netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240625215442.190557-2-robh@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240625215442.190557-2-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240621121340.114486-1-andrei.simion@microchip.com> <20240621121340.114486-2-andrei.simion@microchip.com>
+In-Reply-To: <20240621121340.114486-2-andrei.simion@microchip.com>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 26 Jun 2024 10:16:00 +0200
+Message-ID: <CAMRc=McFF523PswO=mVGAErEAVCExGdKt+0zmOLnGebAwA+i_g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] eeprom: at24: avoid adjusting offset for
+ 24AA025E{48, 64}
+To: Andrei Simion <andrei.simion@microchip.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	nicolas.ferre@microchip.com, alexandre.belloni@bootlin.com, 
+	claudiu.beznea@tuxon.dev, arnd@arndb.de, gregkh@linuxfoundation.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 25/06/2024 23:54, Rob Herring (Arm) wrote:
-> Convention is DT schemas should define all properties at the top-level
-> and not inside of if/then schemas. That minimizes the if/then schemas
-> and is more future proof.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+On Fri, Jun 21, 2024 at 2:16=E2=80=AFPM Andrei Simion
+<andrei.simion@microchip.com> wrote:
+>
+> From: Claudiu Beznea <claudiu.beznea@microchip.com>
+>
+> The EEPROMs could be used only for MAC storage. In this case the
+> EEPROM areas where MACs resides could be modeled as NVMEM cells
+> (directly via DT bindings) such that the already available networking
+> infrastructure to read properly the MAC addresses (via
+> of_get_mac_address()). The previously available compatibles needs the
+> offset adjustment probably for compatibility w/ old DT bindings.
+> Added "atmel,24mac02e4", "atmel,24mac02e6" compatible for the usage w/
+
+Use imperative mode: "Add ...".
+
+What does e4 and e6 stand for? It's not explained in the commit message.
+
+> 24AA025E{48, 64} type of EEPROMs.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+> Co-developed-by: Andrei Simion <andrei.simion@microchip.com>
+> Signed-off-by: Andrei Simion <andrei.simion@microchip.com>
 > ---
+> v1 -> v2:
+> - no change
+> ---
+>  drivers/misc/eeprom/at24.c | 73 ++++++++++++++++++++++----------------
+>  1 file changed, 42 insertions(+), 31 deletions(-)
+>
+> diff --git a/drivers/misc/eeprom/at24.c b/drivers/misc/eeprom/at24.c
+> index 4bd4f32bcdab..8699a6c585c4 100644
+> --- a/drivers/misc/eeprom/at24.c
+> +++ b/drivers/misc/eeprom/at24.c
+> @@ -121,17 +121,19 @@ struct at24_chip_data {
+>         u32 byte_len;
+>         u8 flags;
+>         u8 bank_addr_shift;
+> +       u8 adjoff;
+>         void (*read_post)(unsigned int off, char *buf, size_t count);
+>  };
+>
+> -#define AT24_CHIP_DATA(_name, _len, _flags)                            \
+> +#define AT24_CHIP_DATA(_name, _len, _flags, _adjoff)                   \
+>         static const struct at24_chip_data _name =3D {                   =
+ \
+> -               .byte_len =3D _len, .flags =3D _flags,                   =
+   \
+> +               .byte_len =3D _len, .flags =3D _flags, .adjoff =3D _adjof=
+f, \
+>         }
+>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This is a lot of churn for no reason, please keep this macro, add a
+new one extended with adjoff and just pass 0 to it by default from the
+existing one.
 
-Best regards,
-Krzysztof
+> -#define AT24_CHIP_DATA_CB(_name, _len, _flags, _read_post)             \
+> +#define AT24_CHIP_DATA_CB(_name, _len, _flags, _adjoff, _read_post)    \
+>         static const struct at24_chip_data _name =3D {                   =
+ \
+>                 .byte_len =3D _len, .flags =3D _flags,                   =
+   \
+> +               .adjoff =3D _adjoff,                                     =
+ \
+>                 .read_post =3D _read_post,                               =
+ \
+>         }
+>
+> @@ -162,53 +164,57 @@ static void at24_read_post_vaio(unsigned int off, c=
+har *buf, size_t count)
+>  }
+>
+>  /* needs 8 addresses as A0-A2 are ignored */
+> -AT24_CHIP_DATA(at24_data_24c00, 128 / 8, AT24_FLAG_TAKE8ADDR);
+> +AT24_CHIP_DATA(at24_data_24c00, 128 / 8, AT24_FLAG_TAKE8ADDR, 0);
+>  /* old variants can't be handled with this generic entry! */
+> -AT24_CHIP_DATA(at24_data_24c01, 1024 / 8, 0);
+> +AT24_CHIP_DATA(at24_data_24c01, 1024 / 8, 0, 0);
+>  AT24_CHIP_DATA(at24_data_24cs01, 16,
+> -       AT24_FLAG_SERIAL | AT24_FLAG_READONLY);
+> -AT24_CHIP_DATA(at24_data_24c02, 2048 / 8, 0);
+> +       AT24_FLAG_SERIAL | AT24_FLAG_READONLY, 0);
+> +AT24_CHIP_DATA(at24_data_24c02, 2048 / 8, 0, 0);
+>  AT24_CHIP_DATA(at24_data_24cs02, 16,
+> -       AT24_FLAG_SERIAL | AT24_FLAG_READONLY);
+> +       AT24_FLAG_SERIAL | AT24_FLAG_READONLY, 0);
+>  AT24_CHIP_DATA(at24_data_24mac402, 48 / 8,
+> -       AT24_FLAG_MAC | AT24_FLAG_READONLY);
+> +       AT24_FLAG_MAC | AT24_FLAG_READONLY, 1);
+>  AT24_CHIP_DATA(at24_data_24mac602, 64 / 8,
+> -       AT24_FLAG_MAC | AT24_FLAG_READONLY);
+> +       AT24_FLAG_MAC | AT24_FLAG_READONLY, 1);
+> +AT24_CHIP_DATA(at24_data_24mac02e4, 48 / 8,
+> +       AT24_FLAG_MAC | AT24_FLAG_READONLY, 0);
+> +AT24_CHIP_DATA(at24_data_24mac02e6, 64 / 8,
+> +       AT24_FLAG_MAC | AT24_FLAG_READONLY, 0);
+>  /* spd is a 24c02 in memory DIMMs */
+>  AT24_CHIP_DATA(at24_data_spd, 2048 / 8,
+> -       AT24_FLAG_READONLY | AT24_FLAG_IRUGO);
+> +       AT24_FLAG_READONLY | AT24_FLAG_IRUGO, 0);
+>  /* 24c02_vaio is a 24c02 on some Sony laptops */
+>  AT24_CHIP_DATA_CB(at24_data_24c02_vaio, 2048 / 8,
+> -       AT24_FLAG_READONLY | AT24_FLAG_IRUGO,
+> +       AT24_FLAG_READONLY | AT24_FLAG_IRUGO, 0,
+>         at24_read_post_vaio);
+> -AT24_CHIP_DATA(at24_data_24c04, 4096 / 8, 0);
+> +AT24_CHIP_DATA(at24_data_24c04, 4096 / 8, 0, 0);
+>  AT24_CHIP_DATA(at24_data_24cs04, 16,
+> -       AT24_FLAG_SERIAL | AT24_FLAG_READONLY);
+> +       AT24_FLAG_SERIAL | AT24_FLAG_READONLY, 0);
+>  /* 24rf08 quirk is handled at i2c-core */
+> -AT24_CHIP_DATA(at24_data_24c08, 8192 / 8, 0);
+> +AT24_CHIP_DATA(at24_data_24c08, 8192 / 8, 0, 0);
+>  AT24_CHIP_DATA(at24_data_24cs08, 16,
+> -       AT24_FLAG_SERIAL | AT24_FLAG_READONLY);
+> -AT24_CHIP_DATA(at24_data_24c16, 16384 / 8, 0);
+> +       AT24_FLAG_SERIAL | AT24_FLAG_READONLY, 0);
+> +AT24_CHIP_DATA(at24_data_24c16, 16384 / 8, 0, 0);
+>  AT24_CHIP_DATA(at24_data_24cs16, 16,
+> -       AT24_FLAG_SERIAL | AT24_FLAG_READONLY);
+> -AT24_CHIP_DATA(at24_data_24c32, 32768 / 8, AT24_FLAG_ADDR16);
+> +       AT24_FLAG_SERIAL | AT24_FLAG_READONLY, 0);
+> +AT24_CHIP_DATA(at24_data_24c32, 32768 / 8, AT24_FLAG_ADDR16, 0);
+>  /* M24C32-D Additional Write lockable page (M24C32-D order codes) */
+> -AT24_CHIP_DATA(at24_data_24c32d_wlp, 32, AT24_FLAG_ADDR16);
+> +AT24_CHIP_DATA(at24_data_24c32d_wlp, 32, AT24_FLAG_ADDR16, 0);
+>  AT24_CHIP_DATA(at24_data_24cs32, 16,
+> -       AT24_FLAG_ADDR16 | AT24_FLAG_SERIAL | AT24_FLAG_READONLY);
+> -AT24_CHIP_DATA(at24_data_24c64, 65536 / 8, AT24_FLAG_ADDR16);
+> +       AT24_FLAG_ADDR16 | AT24_FLAG_SERIAL | AT24_FLAG_READONLY, 0);
+> +AT24_CHIP_DATA(at24_data_24c64, 65536 / 8, AT24_FLAG_ADDR16, 0);
+>  /* M24C64-D Additional Write lockable page (M24C64-D order codes) */
+> -AT24_CHIP_DATA(at24_data_24c64d_wlp, 32, AT24_FLAG_ADDR16);
+> +AT24_CHIP_DATA(at24_data_24c64d_wlp, 32, AT24_FLAG_ADDR16, 0);
+>  AT24_CHIP_DATA(at24_data_24cs64, 16,
+> -       AT24_FLAG_ADDR16 | AT24_FLAG_SERIAL | AT24_FLAG_READONLY);
+> -AT24_CHIP_DATA(at24_data_24c128, 131072 / 8, AT24_FLAG_ADDR16);
+> -AT24_CHIP_DATA(at24_data_24c256, 262144 / 8, AT24_FLAG_ADDR16);
+> -AT24_CHIP_DATA(at24_data_24c512, 524288 / 8, AT24_FLAG_ADDR16);
+> -AT24_CHIP_DATA(at24_data_24c1024, 1048576 / 8, AT24_FLAG_ADDR16);
+> +       AT24_FLAG_ADDR16 | AT24_FLAG_SERIAL | AT24_FLAG_READONLY, 0);
+> +AT24_CHIP_DATA(at24_data_24c128, 131072 / 8, AT24_FLAG_ADDR16, 0);
+> +AT24_CHIP_DATA(at24_data_24c256, 262144 / 8, AT24_FLAG_ADDR16, 0);
+> +AT24_CHIP_DATA(at24_data_24c512, 524288 / 8, AT24_FLAG_ADDR16, 0);
+> +AT24_CHIP_DATA(at24_data_24c1024, 1048576 / 8, AT24_FLAG_ADDR16, 0);
+> +AT24_CHIP_DATA(at24_data_24c2048, 2097152 / 8, AT24_FLAG_ADDR16, 0);
+>  AT24_CHIP_DATA_BS(at24_data_24c1025, 1048576 / 8, AT24_FLAG_ADDR16, 2);
+> -AT24_CHIP_DATA(at24_data_24c2048, 2097152 / 8, AT24_FLAG_ADDR16);
+>  /* identical to 24c08 ? */
+> -AT24_CHIP_DATA(at24_data_INT3499, 8192 / 8, 0);
+> +AT24_CHIP_DATA(at24_data_INT3499, 8192 / 8, 0, 0);
+>
+>  static const struct i2c_device_id at24_ids[] =3D {
+>         { "24c00",      (kernel_ulong_t)&at24_data_24c00 },
+> @@ -217,7 +223,9 @@ static const struct i2c_device_id at24_ids[] =3D {
+>         { "24c02",      (kernel_ulong_t)&at24_data_24c02 },
+>         { "24cs02",     (kernel_ulong_t)&at24_data_24cs02 },
+>         { "24mac402",   (kernel_ulong_t)&at24_data_24mac402 },
+> +       { "24mac02e4",  (kernel_ulong_t)&at24_data_24mac02e4 },
+>         { "24mac602",   (kernel_ulong_t)&at24_data_24mac602 },
+> +       { "24mac02e6",  (kernel_ulong_t)&at24_data_24mac02e6 },
+>         { "spd",        (kernel_ulong_t)&at24_data_spd },
+>         { "24c02-vaio", (kernel_ulong_t)&at24_data_24c02_vaio },
+>         { "24c04",      (kernel_ulong_t)&at24_data_24c04 },
+> @@ -250,7 +258,9 @@ static const struct of_device_id __maybe_unused at24_=
+of_match[] =3D {
+>         { .compatible =3D "atmel,24c02",          .data =3D &at24_data_24=
+c02 },
+>         { .compatible =3D "atmel,24cs02",         .data =3D &at24_data_24=
+cs02 },
+>         { .compatible =3D "atmel,24mac402",       .data =3D &at24_data_24=
+mac402 },
+> +       { .compatible =3D "atmel,24mac02e4",      .data =3D &at24_data_24=
+mac02e4 },
+>         { .compatible =3D "atmel,24mac602",       .data =3D &at24_data_24=
+mac602 },
+> +       { .compatible =3D "atmel,24mac02e6",      .data =3D &at24_data_24=
+mac02e6 },
+>         { .compatible =3D "atmel,spd",            .data =3D &at24_data_sp=
+d },
+>         { .compatible =3D "atmel,24c04",          .data =3D &at24_data_24=
+c04 },
+>         { .compatible =3D "atmel,24cs04",         .data =3D &at24_data_24=
+cs04 },
+> @@ -690,7 +700,8 @@ static int at24_probe(struct i2c_client *client)
+>         at24->read_post =3D cdata->read_post;
+>         at24->bank_addr_shift =3D cdata->bank_addr_shift;
+>         at24->num_addresses =3D num_addresses;
+> -       at24->offset_adj =3D at24_get_offset_adj(flags, byte_len);
+> +       at24->offset_adj =3D cdata->adjoff ?
+> +                               at24_get_offset_adj(flags, byte_len) : 0;
+>         at24->client_regmaps[0] =3D regmap;
+>
+>         at24->vcc_reg =3D devm_regulator_get(dev, "vcc");
+> --
+> 2.34.1
+>
 
+Bart
 
