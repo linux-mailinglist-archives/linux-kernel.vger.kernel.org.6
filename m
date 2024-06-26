@@ -1,160 +1,234 @@
-Return-Path: <linux-kernel+bounces-230243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F56E917A44
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:57:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC20C917A46
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:58:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A93E91F2426C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:57:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A3561F23A54
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1543415ECF3;
-	Wed, 26 Jun 2024 07:57:02 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D79815F308;
+	Wed, 26 Jun 2024 07:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="DSbYHiAX"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2050.outbound.protection.outlook.com [40.107.93.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3C014532F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:56:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719388621; cv=none; b=l8O8vRM4iKC+IflzHI2J9q7aNpvNZ83D2OfNQgOEUOw9F2zOLcHiJTnhXt8AyrRNl/hb0tUK7+QqWVfexF3EP6+AFMCjcOrAqzLT1pRzcG/nkQIbJb5CQssH7LmnHHAmhdihrnmsuyUpFkjtdXwttZp+u+S2Gb5UKBYz4QsAPDM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719388621; c=relaxed/simple;
-	bh=F93Fn46r5Pmll9Oshc2Sa4+Wtzu2QvPfx1KZHQZK8ZQ=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=NWg63rdge/RQ9dAqv4MRMORHiuzJJY4BLMXV8coOvO9K/skbRMlYkrU/XdqHduLWB2M1crjuuiZcs3RDMgqK/EOPoRQrTCJqv2J4R+LjVkJA2NcjsNQcuHkILGghoVqoPbIjqDvF65GXa9eVbIltd+alr/L4Aauz1WTFhpIEGkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4W8DSh4SGszxTqV;
-	Wed, 26 Jun 2024 15:52:36 +0800 (CST)
-Received: from kwepemd200019.china.huawei.com (unknown [7.221.188.193])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4AF72180087;
-	Wed, 26 Jun 2024 15:56:56 +0800 (CST)
-Received: from [10.173.127.72] (10.173.127.72) by
- kwepemd200019.china.huawei.com (7.221.188.193) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 26 Jun 2024 15:56:55 +0800
-Subject: Re: [PATCH] migrate_pages: modify max number of pages to migrate in
- batch
-To: "Huang, Ying" <ying.huang@intel.com>, Zhenneng Li <lizhenneng@kylinos.cn>
-CC: Andrew Morton <akpm@linux-foundation.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20240624045120.121261-1-lizhenneng@kylinos.cn>
- <87o77pzuq3.fsf@yhuang6-desk2.ccr.corp.intel.com>
-From: Miaohe Lin <linmiaohe@huawei.com>
-Message-ID: <1ffa1043-673b-fdd3-a33c-444c2e99fc54@huawei.com>
-Date: Wed, 26 Jun 2024 15:56:54 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A984814532F;
+	Wed, 26 Jun 2024 07:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.50
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719388690; cv=fail; b=YFXHnNrnYcta250H1tbd1FoZB+0rRTpWi41sEFDdQ+Cl2UOeQxMmJX33v+/cB52F6uynbK2q346sRSew34bYjet3PKlIjLhtz4mJDS3n7o7yLc/9oih8fkEDV6K6Py/LwTR3dA01Zq1Taps7e4EpZThOJXaqaGXohm86sIkLpbQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719388690; c=relaxed/simple;
+	bh=H+o60DO4QGIl+6OsPdfZmlz2v8F11zD24l3dmtgvx34=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pY96hUm03O1iqNkgpWKviheDFN/BfPp6rwAgIzSNc/XEtR+kap5UQcugmbdDXTy/80evyv4M699UeGN5qAtVEPQb9hGs/mM20OYJgp3JKFL419sKoHNNJUfp8wQyeNcdZb0qrNOZbU2n/QqI4bTYe2zpdbzmgGBpHOFpcxyBQFU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=DSbYHiAX; arc=fail smtp.client-ip=40.107.93.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ITZrMN5QHNJzdeemQyhg6nW80QWV/hI5U80igNWeiykfcwOQlnkFp6iz7DWNkFFlKpSLm3IBNAh53UQl8QNW9iS6UiX1TNavhvBAMNPiDy8FO7irbnzyBhn5gwmXKEOinV16Bt1DX48OewXt10P+UY7bt26lQCyikRx61iH5cCVm5kg9gNseSunV5TgkdKqrBo6MaJOEUJR5MMMjiBbjrNdr1UL5hXwFTCS2KzzLk6ZaKta0a0D5YynJi88SkoyaMshspr8hPrIHI+SkI+JganfoWZTh/vSmDFjz4ZZCWz33dDF2mAAOs3I6fDCz/bTQacYxFghxaOmiuyuliDCcOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BnKSZ/lnJgptltrcRcMMVWWKQsmFFSVEcE7HJ3sXg4o=;
+ b=KMDEGp6j4Ff/nbaIq+JkZH9zotWOp7EB0gqQD9T86psLK0IN37+ybSj7CYJiWzkNvmofoV7Qg4tl11mZIlgkzGQtVyGQ42l6CtGnGuXL3j/0Q+V3ITmNNhhSQ9Rjn+VH2TFz62ypr95RA/V/jtMwx7rrTk6RUSZ09yEgXa/T3wDreo7PdMq/Z/iAb9/eQwukUU6rD+zqnwuj4CzAwPx03gXhMuEQ0qPwY597rGYfE2qD1th8AaBaCkbAUJ2+JdU8PYX0ZoL3IG/Rvon56b+dz0VEZA76uVvVqicTCruv1dd1kknebU6B6BxS0c7MKADKWRzW9MQGPMIsuv2jYGxhWQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BnKSZ/lnJgptltrcRcMMVWWKQsmFFSVEcE7HJ3sXg4o=;
+ b=DSbYHiAXjQooXB11LXy/NMciPdsXPMHFxvXx1t4lTTHISr+D5VWL708wurcqZiR3twFNsifbL+5JChnN1mbBcAwKPYF4xnT4nPReMcXAjGrY1PzPLbvdy189EMsK/bAAP8FRQlrT4fl4+wt6JJ673XoR0JTTZSvpREauXHbfbUU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from LV8PR12MB9207.namprd12.prod.outlook.com (2603:10b6:408:187::15)
+ by SJ2PR12MB7943.namprd12.prod.outlook.com (2603:10b6:a03:4c8::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
+ 2024 07:58:06 +0000
+Received: from LV8PR12MB9207.namprd12.prod.outlook.com
+ ([fe80::3a37:4bf4:a21:87d9]) by LV8PR12MB9207.namprd12.prod.outlook.com
+ ([fe80::3a37:4bf4:a21:87d9%7]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 07:58:05 +0000
+Message-ID: <9b4251e1-e250-4b79-8e08-5ca8e44fb101@amd.com>
+Date: Wed, 26 Jun 2024 13:27:52 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] cpufreq/amd-pstate: Fix the scaling_min/max_freq
+ setting on shared memory CPPC systems
+To: "Gautham R.Shenoy" <gautham.shenoy@amd.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, mario.limonciello@amd.com, perry.yuan@amd.com,
+ skhan@linuxfoundation.org, li.meng@amd.com, ray.huang@amd.com
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, darcari@redhat.com
+References: <20240625134127.4464-1-Dhananjay.Ugwekar@amd.com>
+ <20240625134127.4464-3-Dhananjay.Ugwekar@amd.com>
+ <8734p02s4t.fsf@BLR-5CG11610CF.amd.com>
+Content-Language: en-US
+From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+In-Reply-To: <8734p02s4t.fsf@BLR-5CG11610CF.amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MAXP287CA0021.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a00:49::30) To LV8PR12MB9207.namprd12.prod.outlook.com
+ (2603:10b6:408:187::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87o77pzuq3.fsf@yhuang6-desk2.ccr.corp.intel.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemd200019.china.huawei.com (7.221.188.193)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9207:EE_|SJ2PR12MB7943:EE_
+X-MS-Office365-Filtering-Correlation-Id: 298efb4e-363b-4d4a-a090-08dc95b5b629
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230038|366014|1800799022|376012;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?OHFVTXV2ZHJuY1VMa20wcWhVakNyR2k5M3RoS3lCVldVZ1NUTEdWSEMraVZy?=
+ =?utf-8?B?a1Z1cmE4QWxlTG43aFJsVlJoaW9ETERWZ29BdGhmNVN3Vm9jS3FCWW9aMTE2?=
+ =?utf-8?B?VGlQUnIxVXJWenp1THMyMmwrM09LMnNXQW1FRDl4STdqVE1oeXJjRWwwRU1r?=
+ =?utf-8?B?WVYyL3NKcUZVOHBlb1VnaTdEWG5vSGJTZmFzcStjelVKLzNXOVJsM09FMWRX?=
+ =?utf-8?B?WkJRQ3pqd1lsakNxZ0RBQzFyTUJXSXpEMDFwV1dDeU10YTdTZmxFRHR0ZmhQ?=
+ =?utf-8?B?bHE4SEszMHV2dE9LdGZhY3FyckFzN2tHWTZmcGkyc0VGcEZTUzFRWHpEdXZI?=
+ =?utf-8?B?NXZVUHpOQUZmdlJ4WmY1YndhaERRU1YrbkozWXlzNnRVc0pZOUg3ZG9GWE1F?=
+ =?utf-8?B?NGJRWERRK2tPSHZpYWlXMnh5UUJGa0w5TmdLTU9TMlh0dWd0ZG5nN0hoWEMy?=
+ =?utf-8?B?SG1mZU1vaEhmSDFuWTF0VjJLV3ZkWTZmL3BYRmkrVjljV0s0TzhoQzVraVRP?=
+ =?utf-8?B?bVYyK3dYMzdWSkgrY0NHS1p1Y3VwSWNyOUJwMVA4M2NjV01QK0hadGpjSXRs?=
+ =?utf-8?B?VVR4MDRBd0tFY1FVeFBSSFpySWRMOWliT1JXTThzR1JvZ3ZYVUlnQjQvZGls?=
+ =?utf-8?B?UXM1WGM2TW83U1h5RXI2TTdNdEtzUkRlV3c1K1VaQlJBek5LWDNDczJQMGpC?=
+ =?utf-8?B?QVRKbkFVQUxEVnRCbkx2amJjZ1hNL0NveVFwVzFKM1N2bzI1VHQyODlrZjJ1?=
+ =?utf-8?B?VHJFSC96SnY5S0djdmd1NGhaUzFCS1QxczMrUFllR2xJWTBGMHRYalVKNGk1?=
+ =?utf-8?B?bmVkdjVuQkc3aDF6dVhpUUJhMVJ2QzErenRSVVVwcnNVYkx0VUxwU0NldTlJ?=
+ =?utf-8?B?OWJuN3dWaENzUUlJRGRqRTdYM0o4ODNqYmpvZGJsOGQvU1JaaGIrc2NTQnJl?=
+ =?utf-8?B?dm8wZ2ZOZGplTGQ4cjhDazRZcU1QZzBXV0ZiM2VLOGNIVmlXUWRZZ293enRu?=
+ =?utf-8?B?aDZ4aUVRc3hRdHVjSkNJT2xjbGlyc3A4K3gwZmc0VGxPNm9EQ3JRdkpkQXAw?=
+ =?utf-8?B?RW5DcllmRCt0bFdhUDlrTXV4RjRqK0g4eS9BVllxWmZKWndMRmwvczRaM016?=
+ =?utf-8?B?VUJRUTlneElxRytCV2RMSDU0RElEK0FrZFU4enBTakt3UDdDMjU3R25ITm1R?=
+ =?utf-8?B?dUJpVzQ3dWNVNmhvbDRZdEdnQVJEOXIzUzJNTzgyd3RMRFBJVTI2QjlSb2ls?=
+ =?utf-8?B?QXhuWjE1d2tJUTNEQkhuNSs1ck04TFZoamR5S2pHNG5GMVRtRXZiSzFWdHEw?=
+ =?utf-8?B?dnZCcEpuMHQxbWx5eFRqVXYvM1pJUzVMZkVUZWIwQ1B6ckt5OFJLZUcwY2hv?=
+ =?utf-8?B?ZmN5NmlrbUE2OVA1OFFpYkIwTTloT21mOTR1MXlpZzgxSVBkbVFwd3JTNlc5?=
+ =?utf-8?B?bkpPZUFlZDJvdVRQVFQwODlJb3U2RGlVMTNoYVJBMEZtdnptY3NyMWoyYVB1?=
+ =?utf-8?B?VTBOdExOdUNKK2lUcXczTGZRUTdoZ2E5Q3JTaFB5Tmh0UnMyeGdiRGZzdU5n?=
+ =?utf-8?B?ZDRNYVVwWjVRUmxYOGN1aC9zTW1CaktnWmYvbEJreUlxUFM1TzZLTElWMnFZ?=
+ =?utf-8?B?T3lMSzNIWlZ3NDNXZTE4Z1J0d2hmTWlQQWs0aVo0ekZtSm81QWlEYjVCNGln?=
+ =?utf-8?B?NEhCYkt3QjNHNGVIakVZUkxvVi90bS9iVm9lSlVvY2JWZjVwVU5uamNHTFJv?=
+ =?utf-8?Q?74ilMGPVQ+QqWDNFMs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9207.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(1800799022)(376012);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?TVNpWjcyNnMvOHJHOW4ranBoL1FqbDZpUE5BdzU0YlV4ZTFBMTlBblJlWWVG?=
+ =?utf-8?B?SkZNS3RmL2hXY1ozekFQS2dTYjZsWUdCdDNhdDhtSUExOXV2NFZjTzQxMlZt?=
+ =?utf-8?B?VGZGeVJCUTFaQzJrMmJBRHllT215ZHZTOHpwdFU3UjZ1WW9YQnFXbHZiU1M4?=
+ =?utf-8?B?V1NlTnVxd1RXbDdJY3Z6b3luWkpXZnd1YjJIdGJTRHN5Q1UrUHFIZTFLNC9l?=
+ =?utf-8?B?L3dpNEthMDNHa1N1TzdNcDBadWRqOXplTkRUZ3RoajQrNWhNMkIwbnl0ZzFv?=
+ =?utf-8?B?OHlNejMyUmFybWJ3U3ROaVEzcDJlYTVUNkIzWWRCdmh3d3hrSm1BQ09kWjYr?=
+ =?utf-8?B?SWlITUZwR1VYMTBDZWFacWZ4aUlJdnFaUi9NZHMycHVjVVlpa3poNFA5YWFt?=
+ =?utf-8?B?NCtRNXFSMzhYU2FwbDVINGtwdnNBMjdhNTNqTjFjSExoV1FqRmJ4Q29LU2dZ?=
+ =?utf-8?B?SlhpclFFM0RWQkFhZUxJTzVMTThFWmVhRmJqRmlFSTd4MTAxSXhsdEtjSnMy?=
+ =?utf-8?B?VjhUR3BQV2VXOUZrK3RSUFJHcnZUejNva3FuQ2RGb3JvdWVHWEhVOGxCaG45?=
+ =?utf-8?B?c291cHZEQW1XT0Q3ODR5emhHVWN5cDZlcFBtY1VtZzB3K09Cd1h1MFlMc1RK?=
+ =?utf-8?B?YUF1NWxmSGZlcjZ6SlFZNkE3eWlzSE1lb1ptQVFpa2g4SjZNWUhmQlhrajl1?=
+ =?utf-8?B?VUtiNlVETnVBVlBlUXlUUHltQzFwLzc5TVBJRWNscUJsOHkxWXZnMEJmREpY?=
+ =?utf-8?B?a3o3N2NkWFhSOFF6QjJIeHFZdVM4L205VHhMcUYzb0NWaStJUkJleDFZQ21Q?=
+ =?utf-8?B?OFVDQlJVRGNzeU55Y3FBYUt4ZTlRdjArajNqTnhRQVdzUzg1b0hyb1BDNEx0?=
+ =?utf-8?B?UHdZRUJqNUx2ZkttSGV4MXVpT3RDZGtOa3huWWU4Rng3QWV2SE1IcUNQbi91?=
+ =?utf-8?B?T3E4Z0dPS1cxMTBTRS85MzE1dkx6WWFIWUtCbjRvaHhaK0h0RXdSVy96ci9B?=
+ =?utf-8?B?bHE2WlJWa2pTaGxJaVZmY0N4WDMrNGJMS3craW94UDVIYW83S3N2R0V5T25j?=
+ =?utf-8?B?N1h6MFVONitQR0pudklDdUUvR1NZV3BVNndYNWR5MHA0c1lWYXJLUXgrMkpy?=
+ =?utf-8?B?eUxOcHRJZGRoK3hyNnYyaFRwSXBnazNzb29lYy82NklQR0g2bXo0MGRpbVFz?=
+ =?utf-8?B?TWVrZTMwSlNVNGNRbDZOVDA3SFZERnhCcFdRaWQzRzVvTDdOelNnRkJFbFly?=
+ =?utf-8?B?M3ZFdnpodWg1bVpEQ2lzWGhyNlBERGJsM21JRU9ZUlNCTnc0M0dLdFhmSXZ4?=
+ =?utf-8?B?NXozc0FjNUUvZ0lNNnlvN2NVdkdYRDNlSWlVR1ZBR3JKWjVxSkxlRDBYcDRK?=
+ =?utf-8?B?bGdXMForcENSRUlwYzAwMExZM2lCTC9Id0NzbXdtTk4vRWVKUDlydTZWS2FM?=
+ =?utf-8?B?N2Y2YTN5bDZ4clhqaTdmYThSSjV0RFJiWTlTU3JqUHZyMm1nZHVybENmdXZ6?=
+ =?utf-8?B?RUFGRGovcWppTzhzdk9rZ2RhK3pxSkZmN3lqT3psMXVTQ2xhK0h1YmNPVnNO?=
+ =?utf-8?B?cCtVL1IrSWRkd3AvWVAzOUEzOEZOa3puSGVBd1dRNzhtR3FXV3QwUHdWbW1k?=
+ =?utf-8?B?bVlpTHJucVlPWDBodG1ZL0plWEw0THg1NXBiaTdXU0J5Wko3QmlGcm1MTEJV?=
+ =?utf-8?B?Q3NYcU9TdXVYMyt3Ym8zVkM3VGxHbnE5Y01Td3UrSkJSRWpic0pESVpaeitl?=
+ =?utf-8?B?ckJCWmE4aSt3dUp0aGFVRUxVWlpWblYyQ0RJUkx5ZElNdlJBTEpaY3NReWow?=
+ =?utf-8?B?dTZjYnlnT0FySFpkczJYNFRlaGxCeGFrbDdPOXdPVk10V1MrM1krNzBVUG9C?=
+ =?utf-8?B?YjBBZVM1clNkYVFReC9FWWlQMGZMa3VYMHVRK3lPVTFCVnNYdFZzMkVWVWY1?=
+ =?utf-8?B?QnpEZGptM2VnMmZxeGg5bE1pclhSdHdGbFR2ZzJnUmY4Q3l3a0xiVmNqUXZ6?=
+ =?utf-8?B?RHBhbHNIRzZramFZYVMwMStmRitWYTlRSUZid1VpSFpmM0h2eEFBUXpLZUFI?=
+ =?utf-8?B?bEJabzF5NzJZQjFDMmZWVmJwNEM2dzZRTGlYWFB2TUtlN1h2SlpzVzVBVTNN?=
+ =?utf-8?Q?dTQ3c99XIlKV3WPih7eNNY0av?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 298efb4e-363b-4d4a-a090-08dc95b5b629
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9207.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 07:58:05.8303
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: h9BCDDyBBZXoEknJRtyUjbHTkolIv/DX4PZB13WUAaQ+5vt8jay5cg5SFW47wXBT2GQ17LaYgPhIHy8TIicUXw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB7943
 
-On 2024/6/25 9:17, Huang, Ying wrote:
-> Hi, Zhenneng,
+Hello Gautham,
+
+On 6/26/2024 10:54 AM, Gautham R.Shenoy wrote:
+> Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com> writes:
 > 
-> Zhenneng Li <lizhenneng@kylinos.cn> writes:
-> 
->> We restrict the number of pages to be migrated to no more than
->> HPAGE_PMD_NR or NR_MAX_BATCHED_MIGRATION, but in fact, the
->> number of pages to be migrated may reach 2*HPAGE_PMD_NR-1 or 2
->> *NR_MAX_BATCHED_MIGRATION-1, it's not in inconsistent with the context.
-> 
-> Yes.  It's not HPAGE_PMD_NR exactly.
-> 
->> Please refer to the patch: 42012e0436d4(migrate_pages: restrict number
->> of pages to migrate in batch)
+>> On shared memory CPPC systems, with amd_pstate=active mode, the change
+>> in scaling_min/max_freq doesn't get written to the shared memory
+>> region. Due to this, the writes to the scaling_min/max_freq sysfs file
+>> don't take effect. Fix this by propagating the scaling_min/max_freq
+>> changes to the shared memory region.
 >>
->> Signed-off-by: Zhenneng Li <lizhenneng@kylinos.cn>
+>> Fixes: ffa5096a7c33 ("cpufreq: amd-pstate: implement Pstate EPP support for the AMD processors")
+>> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+> 
+> Please add the following in your v2:
+> 
+> Reported-by: David Arcari <darcari@redhat.com>
+
+Yup, will add.
+
+Thanks,
+Dhananjay
+
+> 
 >> ---
->>  mm/migrate.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>  drivers/cpufreq/amd-pstate.c | 10 ++++++++++
+>>  1 file changed, 10 insertions(+)
 >>
->> diff --git a/mm/migrate.c b/mm/migrate.c
->> index 781979567f64..7a4b37aac9e8 100644
->> --- a/mm/migrate.c
->> +++ b/mm/migrate.c
->> @@ -1961,7 +1961,7 @@ int migrate_pages(struct list_head *from, new_folio_t get_new_folio,
->>  			break;
+>> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+>> index 9ad62dbe8bfb..7c1c96abe5bd 100644
+>> --- a/drivers/cpufreq/amd-pstate.c
+>> +++ b/drivers/cpufreq/amd-pstate.c
+>> @@ -264,6 +264,15 @@ static int amd_pstate_set_epp(struct amd_cpudata *cpudata, u32 epp)
+>>  			cpudata->epp_cached = epp;
+>>  	} else {
+>>  		perf_ctrls.energy_perf = epp;
+>> +		perf_ctrls.max_perf = cpudata->max_limit_perf;
+>> +		perf_ctrls.min_perf = cpudata->min_limit_perf;
+>> +		perf_ctrls.desired_perf = 0U;
+>> +
+>> +		ret = cppc_set_perf(cpudata->cpu, &perf_ctrls);
+>> +		if (ret) {
+>> +			pr_debug("failed to set min max limits (%d)\n", ret);
+>> +			return ret;
+>> +		}
+>>  		ret = cppc_set_epp_perf(cpudata->cpu, &perf_ctrls, 1);
+>>  		if (ret) {
+>>  			pr_debug("failed to set energy perf value (%d)\n", ret);
+>> @@ -1547,6 +1556,7 @@ static void amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
 >>  	}
->>  	if (nr_pages >= NR_MAX_BATCHED_MIGRATION)
->> -		list_cut_before(&folios, from, &folio2->lru);
->> +		list_cut_before(&folios, from, &folio->lru);
+>>  
+>>  	WRITE_ONCE(cpudata->cppc_req_cached, value);
+>> +
+>>  	amd_pstate_set_epp(cpudata, epp);
+>>  }
+>>  
+>> -- 
 > 
-> If the first entry of the list "from" is a THP with size HPAGE_PMD_NR,
-> "folio" will be the first entry of from, so that "folios" will be empty.
-> Right?
-
-If "folios" list is empty, the "from" list is left unmodified. So we will reach "goto again" and
-retry this ops again and again. This causes soft-lockup in my test env.
-
-[  635.267324] watchdog: BUG: soft lockup - CPU#8 stuck for 26s! [bash:1031]
-[  635.277957] Kernel panic - not syncing: softlockup: hung tasks
-[  635.279519] CPU: 8 PID: 1031 Comm: bash Tainted: G             L     6.10.0-rc5-00327-g47fd2329f867 #45
-[  635.279796] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.14.0-0-g155821a1990b-prebuilt.qemu.org 04/01/2014
-[  635.279796] Call Trace:
-[  635.279796]  <IRQ>
-[  635.279796]  panic+0x326/0x350
-[  635.280827]  watchdog_timer_fn+0x226/0x270
-[  635.280827]  ? __pfx_watchdog_timer_fn+0x10/0x10
-[  635.280827]  __hrtimer_run_queues+0x1a8/0x360
-[  635.280827]  hrtimer_interrupt+0xfe/0x240
-[  635.280827]  __sysvec_apic_timer_interrupt+0x71/0x1f0
-[  635.280827]  sysvec_apic_timer_interrupt+0x6a/0x80
-[  635.280827]  </IRQ>
-[  635.280827]  <TASK>
-[  635.282706]  asm_sysvec_apic_timer_interrupt+0x1a/0x20
-[  635.282928] RIP: 0010:migrate_pages_batch+0x780/0xd50
-[  635.282928] Code: 6c 24 28 41 89 46 0c 48 8b 44 24 70 03 54 24 04 c7 44 24 58 f4 ff ff ff 41 01 56 04 48 39 c8 0f 84 d0 03 00 00 e8 d0 5c fa ff <c7> 44 24 54 00 00 00 00 48 8b 94 24 80 00 00 00 48 8b 02 48 8d 6a
-[  635.282928] RSP: 0018:ffffa76f88e57a00 EFLAGS: 00000246
-[  635.282928] RAX: 0000000000000000 RBX: ffffa76f88e57c50 RCX: ffffa76f88e57c60
-[  635.284331] RDX: ffffa76f88e57b78 RSI: ffffffffa7d1eb10 RDI: ffffa76f88e57b78
-[  635.284331] RBP: ffffdbcfc5000000 R08: 0000000000000000 R09: 0000000000000002
-[  635.284331] R10: 0000000000000007 R11: 0000000000000000 R12: ffffa76f88e57b70
-[  635.285800] R13: ffffa76f88e57ba8 R14: ffffa76f88e57bd0 R15: ffffa76f88e57b70
-[  635.285800]  ? __pfx_alloc_migration_target+0x10/0x10
-[  635.285800]  ? __pfx_alloc_migration_target+0x10/0x10
-[  635.286824]  migrate_pages+0xaa7/0xd70
-[  635.286824]  ? __pfx_alloc_migration_target+0x10/0x10
-[  635.287433]  ? folio_lruvec_lock_irq+0x6a/0xf0
-[  635.287433]  ? folio_isolate_lru+0x198/0x2a0
-[  635.287433]  do_migrate_range+0x194/0x740
-[  635.287433]  offline_pages+0x4ab/0x6e0
-[  635.288614]  memory_subsys_offline+0x9e/0x1d0
-[  635.288803]  ? _raw_spin_unlock_irqrestore+0x2c/0x50
-[  635.289119]  device_offline+0xe2/0x110
-[  635.289119]  state_store+0x6d/0xc0
-[  635.289119]  kernfs_fop_write_iter+0x12c/0x1d0
-[  635.290093]  vfs_write+0x380/0x540
-[  635.290093]  ksys_write+0x64/0xe0
-[  635.290551]  do_syscall_64+0xb9/0x1d0
-[  635.290551]  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-[  635.290551] RIP: 0033:0x7f99f5514887
-[  635.290551] Code: 10 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 00 f3 0f 1e fa 64 8b 04 25 18 00 00 00 85 c0 75 10 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 51 c3 48 83 ec 28 48 89 54 24 18 48 89 74 24
-[  635.291480] RSP: 002b:00007ffe05712888 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-[  635.291480] RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 00007f99f5514887
-[  635.292980] RDX: 0000000000000008 RSI: 000055c97b961e10 RDI: 0000000000000001
-[  635.292980] RBP: 000055c97b961e10 R08: 00007f99f55d1460 R09: 000000007fffffff
-[  635.292980] R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000008
-[  635.292980] R13: 00007f99f561b780 R14: 00007f99f5617600 R15: 00007f99f5616a00
-[  635.294155]  </TASK>
-[  635.294155] Kernel Offset: 0x26a00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-[  635.294155] ---[ end Kernel panic - not syncing: softlockup: hung tasks ]---
-
-Thanks.
-.
-
+> --
+> Thanks and Regards
+> gautham.
 
