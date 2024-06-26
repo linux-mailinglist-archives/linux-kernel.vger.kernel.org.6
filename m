@@ -1,197 +1,197 @@
-Return-Path: <linux-kernel+bounces-231552-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 849D69199E1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:45:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628029199EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:46:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24512B224FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:45:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 096882827E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A0419308F;
-	Wed, 26 Jun 2024 21:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E76194085;
+	Wed, 26 Jun 2024 21:46:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="n3xXO5TI"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2051.outbound.protection.outlook.com [40.107.223.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U6m1WJhM"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA34B180A7C;
-	Wed, 26 Jun 2024 21:45:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719438329; cv=fail; b=QsvOMbDaB47SPPMQ9i6QLNaP9MA8ECt0sjX91a9zS9LTiLaO+fUVxjKF2rmQy4Ia0eYOq/BTXpUP86OuL4R+Q713z65fS4p+zXk4IP9TgdMAobwb/DVjuuO44k+vPvrTCd2A3UG9BQWsD9j+I2mr/didhROavad+xQnEp9ul1XA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719438329; c=relaxed/simple;
-	bh=Fn03jL9bBjYTIrHmKj4gVzNWSk5qps8BD2HxykeZqWA=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=tHy3mdVDaDrug+wnhkyCJyCpV+unAtG0SiF7LXkb8q3b93VEaamJCPbH/v859v6uKLNuJHFVlfbgcZtinzEu5uRsTWWFstW57wWWbiJLLj/Lc29kjkA2F3HiK8TS62cBepCDGaQkeYaSONmGi0DNwKjasV5+0n2T+VDhAgvAE24=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=n3xXO5TI; arc=fail smtp.client-ip=40.107.223.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RF2ChnaBfLekerbH7I4XZLSA+8U9545sbUR4MwsQKQEeI3LfjnpJ/TRvRXQKnaM+jUgVZwwUeBPQ/6aa9txmH0jlbS5rUs63oriwFu/LlUGZd0SqwLQc+oChpar9QqtCC5uag1iwRngJwUfr/BNdrTmsi8nUF27gLCMiI9ByHGdqaRcCLrtWronC+9rcUJc2v6uWJgvRDGDA+jx4AO4BKewyJb4C//Xrgl95DS4l80qJyv28bbou642PbNe0naV48MDe7I9T54K/60aOllkYSdo9m1QlBXv/cHyCwod1VHcb8taMlC+7tUD6hJBTOAmujW+oC5WPKtjmhujEaKkyvQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Fn03jL9bBjYTIrHmKj4gVzNWSk5qps8BD2HxykeZqWA=;
- b=b4VexV18SFwk85PqGcxFCzCV9UWWE8HPSY8Ja8DPfSya07Rc+DPwkBBncm/L6C990fUZq/1RNBbD6yKtH6TQ0aPA3ubRATZHunmUPfr6x2Ok1qyIa+doDttpURvtXpD/wUyGXPHC/GV/WXs9ccXadeOR8A8rmJoBl39uWCNjO0qPEHGl/XHUSWgZg4HTJuUlsCdyrtGGafnThMbUA9ATYKZ7yLFxlsvb8Wj2Th0JiUtOqdA6wiCVQ+Ov64/x/r1e+KVfrYY1zYuITUcXxuJgWF/wMBMevImorDTLdS41sgMHYgKCPDH/UdASIRhoxCjbJP7POljnOL3DH2QYXXU7tw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Fn03jL9bBjYTIrHmKj4gVzNWSk5qps8BD2HxykeZqWA=;
- b=n3xXO5TIqUnfJGprEHNrFYdKwO6aQZPm7/Ps6aiMA/+POSC+fKDbwsPkfFHdP3kryVY7eehv2RJDyqSqkpkMjlwRXTzq0nktwAKExiDaXDWZORFTHEuWHN7nyKb7/ajNWt/76PDZ+m2D+b0yDaeHOTU2/rUprH3DC0cIdpd9uztmsdNxU6Zf7VkIIqk+332lB/MY7UeGAYVpmvYdxAmIUYmxPNhCn0BxsoN17CkDD6IYP1BFnqnYA4vn9K9xIGEbhqYHaM0bxO6XTmrvcKiZx6W7ycF37kjmNr+3Ybcv00oRniFG1Zm/t6B2OrlvdEBBmmOQnliXnq/BIXRGis2XFw==
-Received: from PH7PR12MB7282.namprd12.prod.outlook.com (2603:10b6:510:209::7)
- by IA1PR12MB6530.namprd12.prod.outlook.com (2603:10b6:208:3a5::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
- 2024 21:45:23 +0000
-Received: from PH7PR12MB7282.namprd12.prod.outlook.com
- ([fe80::6f03:f851:7f6c:c68d]) by PH7PR12MB7282.namprd12.prod.outlook.com
- ([fe80::6f03:f851:7f6c:c68d%7]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 21:45:23 +0000
-From: Asmaa Mnebhi <asmaa@nvidia.com>
-To: Jonas Gorski <jonas.gorski@gmail.com>
-CC: Shiji Yang <yangshiji66@outlook.com>, "linux-gpio@vger.kernel.org"
-	<linux-gpio@vger.kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko
-	<andy.shevchenko@gmail.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Mark Mentovai <mark@mentovai.com>,
-	=?utf-8?B?TMOzcsOhbmQgSG9ydsOhdGg=?= <lorand.horvath82@gmail.com>
-Subject: RE: [PATCH] gpio: mmio: do not calculate bgpio_bits via "ngpios"
-Thread-Topic: [PATCH] gpio: mmio: do not calculate bgpio_bits via "ngpios"
-Thread-Index: AQHaxp4vrmshrWYuwESVGOzheqoT1bHaJKDggAAG/gCAAAFHoIAAU7+AgAAWM5A=
-Date: Wed, 26 Jun 2024 21:45:23 +0000
-Message-ID:
- <PH7PR12MB728290AB15E7F027186306EBD7D62@PH7PR12MB7282.namprd12.prod.outlook.com>
-References:
- <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
- <PH7PR12MB7282BBF9E42265E18CB72E09D7D62@PH7PR12MB7282.namprd12.prod.outlook.com>
- <CAOiHx=nssvX-VYySmpLZ8bvBmitT87bX2AYspdkH3y9iWTB+kQ@mail.gmail.com>
- <PH7PR12MB7282028713977D608DBC046FD7D62@PH7PR12MB7282.namprd12.prod.outlook.com>
- <CAOiHx=m5bqsCV984L6M11rsWgrW-wDj6jFh9tSBDyKq3+ixOgw@mail.gmail.com>
-In-Reply-To:
- <CAOiHx=m5bqsCV984L6M11rsWgrW-wDj6jFh9tSBDyKq3+ixOgw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PH7PR12MB7282:EE_|IA1PR12MB6530:EE_
-x-ms-office365-filtering-correlation-id: 16606466-e219-42c3-1b25-08dc96294881
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230038|1800799022|366014|376012|38070700016;
-x-microsoft-antispam-message-info:
- =?utf-8?B?aVh5eTVsVlBlWC9scUN5Y29LV2JDMEZsZTN1M0E3NXE5UGRxTXZwQTl5b1pU?=
- =?utf-8?B?a2FsWlhmMVNjQXpPMGRrNGEvUGIzUytFcU53bG9qY2tqVXNFZzBaR1dLMzZz?=
- =?utf-8?B?WTE5OFJxVWJZMnFEbzJQLy9tY1E3elJLN0EvYVpMbldnKzN1c2drWEhqdmYr?=
- =?utf-8?B?Zkwwei9ZWFRHSDVUUkRwb2IwQ0U1Z3dHbFh5NzM4MjhPNmZwNy92WjVrYjdk?=
- =?utf-8?B?UWcwM2lXa2RDbXBDcU5DS0dWRThqRWJvdktpcDM3bWJwSHYrTW4zTWNWQ0x4?=
- =?utf-8?B?Tko5ZzBlaFJzMlZHWllvS2pZMG5sU21uU2NYS21oK25QbmlQdVEzRkd5Vi9r?=
- =?utf-8?B?V2RhWUJaelBia0RGd3FlRlAxWTFVNmhvcFRCRysyMDFEUTlJVDJyczJ4d0FR?=
- =?utf-8?B?L3c0WUVqTXdtRnQwL0NtMzdsdThqN21hVlA2Snozc1FyK3lZYll4MXJXUWpU?=
- =?utf-8?B?bDdMdmZ6VWp3WmhyaldiUThldUIwK1ZvUWJHWFJzSVh4dnRKZlk5NHM0Zklu?=
- =?utf-8?B?Q3J6aVhJV2lvdmJ4WUR1c2xrY005a1puRXVQcytqUzdhTC80eW52T2NlbWFF?=
- =?utf-8?B?U1RhV0NhUHo0ZHg0RFMxbDFSTWVNTmZJbm9CeVZuNjlTRXJZZHJMck9XeEdQ?=
- =?utf-8?B?NkhKSkd4Uk5rZ1ozazhLcW14ZWtmRzgzWWtidVdXOW0wWjRCWENZOWZPMGFv?=
- =?utf-8?B?YWJ6QjEycUtBTzlnczB3V0EvUVFVQjA5SEVhL0ZTWWNQTGszWlJJREZHUm5W?=
- =?utf-8?B?dGJRVjIybUZMUWRMaHl2cVpsOFhHemhmc2F3S1dLbWxjallKVkFiMEJHSzlD?=
- =?utf-8?B?c1ppZ3FXd2VYc2tobzlFV21wYzRVOXV5ejlXa2d4YS93V3ZSNk9NTGwxUHgv?=
- =?utf-8?B?TkozSW9pdU5KQlM1TDBsSHRvVWo0V3lta1RBVWVobkNKeExFbklKMFFuSW9l?=
- =?utf-8?B?a2w4dkZMWDRRTGxwOGZLZ1VTOGhLUjJ2RnpST2FKT1I0WitwalFSKzNtM2Uz?=
- =?utf-8?B?MXd6WnN4cTlucjFiYitkS0c3QXd4b3Fqb29vSENnOG9GbzNKUEtxOWU1cFRV?=
- =?utf-8?B?SWs3THhlR0JxUGFLTXNkQTFuekhEa2NzV3h1Nmx6VDBkYmtSNWhaYW9tSW9x?=
- =?utf-8?B?ZExwQnAyYTVEK3BtYjlRcmFmWWd4SU5CUFJRK2M4bnMvQ2trRzI2VWd1NExU?=
- =?utf-8?B?RTVuK3lsdy9PVmZmS1UycW9UYmdVd1Y5TjdJWExUUDFnNW9sKzI4Q0haYjdj?=
- =?utf-8?B?L21DUzZsSzFVUDVkOGVQaThWSTFLelVJa1o3Mnk4d1dxVVRnQW5WRExXMnI2?=
- =?utf-8?B?Q3ZtcWFVY2wxWkRaaHJtRzlDVG9oajVzbGdDemh4ODhkckd2VHB0T3JKZkZO?=
- =?utf-8?B?VVpmNEIrUHd2dnJqR1ZSMTBJNXhWcHBrM0FLa0kxQldvTVN3S0FteFNaZEpV?=
- =?utf-8?B?ZnJ5Q0VwenI2VStmcTQ1RTl5b2FSdDBSZGVaV1ZkWGlSYzlTK3lyTllZTzhq?=
- =?utf-8?B?RXNFUm9HUHhhOFhQejRBeWJGS0twMHI1VTFOaXBFQ1hwQnoyTStpbFZNZUVn?=
- =?utf-8?B?b0trRGlOTDBvWU9kMUxSS0JOakFRbHBFNkxLaHFybWdVbTNVcVVqYTd0eVAx?=
- =?utf-8?B?UVZGQ1lrZ2NLcG1RSFJhMm5Zd1BkTm50MXlKVW96NWtGUFFCanptOXlINUNo?=
- =?utf-8?B?WFNrZytiZGdPUUM2OGdNZTY0TUlxMlRyVXJrU2dUUWRDNVhGQTJCZjRYZmti?=
- =?utf-8?B?VkhLQ0ZZU2xGT1BXWGUvazRvL2lEQTJ3ZXU3elhhci9IRWt6M2Fiam54Mlh1?=
- =?utf-8?Q?SoABodQhGmcZDCpi7b7X2FlA8+I44mnEXIZoI=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7282.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(1800799022)(366014)(376012)(38070700016);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?UmZrRjJYVG9VbFNLaGNwVExPVjNaVEVPMk9NZVZNb3JZRjE4dnFTK2JpdEJi?=
- =?utf-8?B?UnhRMk9XajMrQnM4dVpCUmRLWDZYUFFzdUpYN3kyL3JSOFVMSDJTSlhtSzk0?=
- =?utf-8?B?bHdTYkJsaVJ5MlRPYWJoRG9zU28yQ3Jya1dac1JNcFNCOFRBQVFSNzlBaHJY?=
- =?utf-8?B?cTRzUDljRnVwNVJvN0dGU0VMQklmalRvcmtoTjhGVmphbm41cFBEOE9qVXU5?=
- =?utf-8?B?d3VjdlhFa0l4VjBoelNnRndkdFovSGVsYmFKUll4VHUxZ3M4Yzc3dklYeDZp?=
- =?utf-8?B?eGxVR21ZWTJGN3ZMM3hqYllmSE02ZWw4dVQ0SU1hcWd6T050Kzc3OFJ6bWZw?=
- =?utf-8?B?Q3VLVXIrOEw2MlgxaW5VdytQVzkydy9qbkZOU0FzNjd5R3M0QXF4TUd1TFIv?=
- =?utf-8?B?cFJGQmNiazljSGFuV2lvTnp4S1NVcmtNMmlDSFQ0Nnk2aXlYZ3M3eTFzTlJp?=
- =?utf-8?B?ZjJVOGNxd3FTSzRxOHRtRHdmaE5USmRnSVZTaEdrL3pCZEJGRTNzcWhhWlc4?=
- =?utf-8?B?cWFKcjEyVS9aTU45OFVJSVVUcXEvRnI5aXZoTVFGRklCWVFtWHBFU2FhZTdL?=
- =?utf-8?B?WExGTGE0KzRZcHNkTVY3eXZDczZVQlpZeDB0djFNc015MFV0L1BOakNuN1A3?=
- =?utf-8?B?dFcxK21SdEthY0U0RGxadVIwWmg5MFdBbDU0MFEzcWJlbjZuSmFRNmVFMHVS?=
- =?utf-8?B?dlhLT3FsT0xHWGovNFlkcHNiZ2Q3UUNpUm5EUUQ2N1NpaEZWdTI3RlBnNkVP?=
- =?utf-8?B?amFFMjlCUnhxYUpxYTFmOERZY2xjYlRnRDV4TFFMRUJ1SnRsU0FHdk93ZkZt?=
- =?utf-8?B?MWpwYmxUdVRHN0NNRFpzOVlUNFZMK2pxdCtJWUpvTmNZeVdSOHdvZGpnWFI5?=
- =?utf-8?B?OEdBYmZMYklTTXY5ak1wUnJxMndDWEJRZTF6Qm4vcjdlN2lFSDlmUFoxdzcw?=
- =?utf-8?B?QVdNRFMzQThhMkpaTjBKUWtackpmaHQyZ0MwelRBb2JPajBCZ3ZaUHhjRzBJ?=
- =?utf-8?B?cVowMVlqdDFGVy81L2hFeXQ5dW5XQkhsRXNrcS9zWlFtM2Y2VWlycXZSYm0w?=
- =?utf-8?B?UnJOZE4yRmlsRVRtcTBrL05rc0IzeFNXdlBZSklrcVpJYXFEZlJ1elJwbFk5?=
- =?utf-8?B?SEk4N09ESVphdG9tU05mYWRSdTEvU0tYS044djRMc01zMnZuaFQ5WXowRmRF?=
- =?utf-8?B?ZCtsd0VNV0tWWEtsTk0xOGMrRjIxaDZ5TDUybEhvTHk3MHUxRFAxbGdOS1J0?=
- =?utf-8?B?TlZjMEtCTDJuL21aS1RYSHlYNnhNY094aFp0T1lGYS9CRkY2UGs3SXJYUU1N?=
- =?utf-8?B?V0x5TVJaR3NpTUhyMnZqZUo0QUZXN0pxVmd5YlNQRzQ5L24rY2w2ejB5cjU2?=
- =?utf-8?B?a3RhckgrMTZXRHI4NVFRMGZsZHJtbUl1bk0rYUFmRWVqZUJXMDZET1ZlQ2VX?=
- =?utf-8?B?VmlSMDJWV3RvcHo4M1V3YkFhbllGOGtyK2JaTStkWldiTE9tT3R4V1ViempX?=
- =?utf-8?B?MDQxR1FsenN3RTlBdXE3RDgyWGlKbzdwb2I4UVVvcG5BbXIzZVR6OVpnR1Ja?=
- =?utf-8?B?K3grb2l4ZjlxVnlKZWtjYkNiQVJOQ0cra3ljU2E3MTRSTDZXamRIa0hLQ3Fi?=
- =?utf-8?B?Z3p0c1dGajBUTytzT1l6MUwrelRtb2I2MklpcHNWUFp6dks5aHVYU3pEamor?=
- =?utf-8?B?R0dVeE1WeWFQNnhlRWY3QVA2ckF5M2xza2poelUraUpacjZhcm4rOXoweXVk?=
- =?utf-8?B?R0x3dVA5bnY4Y0hOOVU0RU1UbDhUZmJjbGpNRExhWjJ2UFNhbWUrQlBkQW5J?=
- =?utf-8?B?Ynl6YmMydlpuSnhiQ2w2VEFNaHIwMFU4SVNnSXlzaU40UXBtcVhJMkZBbG5y?=
- =?utf-8?B?eWVhWThsRmE5U250M05uSStCRUJEdkR6TDE4WHBHTXR1NDRqajRkR1lPVWEw?=
- =?utf-8?B?Y0p5d3FWazhtWTRHaDNPaEI1QUM3aUZCaCtGUnNtam5uaGNoWXdYVG9VTWs4?=
- =?utf-8?B?cnNmYS9aRWI5ZG8yZGpueXhmOGgvdDdXcytHUlR4VTVjNDkyM0dmdFFrQXNj?=
- =?utf-8?B?MldOVGFOdVg5V3ZWeDUzM1M3U1hWYzJxZFo5WHVmYVZrWHQ4ZkozZloxMDJH?=
- =?utf-8?Q?PLgE=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A796180A7C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 21:46:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719438366; cv=none; b=H7wcGK9v0D3gTnEpiNqefcJTJwwPdbWynA2Z0qp35SCh9AFFb7sW1jJ2SpVwn+enXRJf+KTty9v7zNL2N+5p9DVRps1NCSF3uqYSaNZXBcfqxkgfEC0lFavEOCz0hs1uYMc6XHPqcAyaOGcQ5aONmEl3fnJ2kn5CvOPwE2EJ/Bo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719438366; c=relaxed/simple;
+	bh=qJ1GEziPu7S8OI1OCbOkdnos7rw3FO0P0DsB9fp+pKo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=dF2+wa24pe8scZ8KvdxvtAcJP3sVcDbTysMimdyw+vOWd9xpHxpdspSLWh3n7g74Ti+KQyObJ/PM9MohxajgS44OlnsiLiPWm2lUwv4QFFBw8ksfCRRz1QMt7Uyye8/bZ8i3WgynftIz/O5wO+rveba0v1uW0e2gUWAEHpQfMIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U6m1WJhM; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ec52fbb50aso58683951fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:46:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719438363; x=1720043163; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=kSG3AAcIbmONfpePJ3GBLSDEosIWhd8mjxtqUsWpmL0=;
+        b=U6m1WJhMysY0U+5UazicsER/DNSkVWUEqVI9yKSUdTg/d5F8LVEzMvp5JqhucesCKV
+         1QxIlHDQLmDABpt/VFmMdvMYJoWjdThqnF4vJM1UkTFSvRi1Z2X86d6OZn4wX655namw
+         Y+jSxLWfi2VbmSuXIVTaMz5wssUexPC1P0li9+JuE/jJ4E5MyI0oLA7mywJpF0PMxmQq
+         4bQbaoqW7dsygPP8dh9TiqKtiEEcm7gF82HBwx4Q7BoPmTy+vznB9eqQp1AfEQyw5Ynk
+         2dvEGOLCDp4xayepB6eBrYfsy1SrVZSH5f2BjebwdkoSp+9CZZnOzZ+vbatUh8VP9gmJ
+         tzyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719438363; x=1720043163;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kSG3AAcIbmONfpePJ3GBLSDEosIWhd8mjxtqUsWpmL0=;
+        b=Su0jqDUpLpGQQI0I0NhK70GotU5W2sTrpeAdQvxRtsdRJjFFsP7L/Dy7+5PxlDJSJk
+         s16SxP9l523j0HvcVkHrWw0jm4movIA6PvH7a9DpnTGgt9P7Ry6OEpcB5m7Dn+mRNMTE
+         st1p6dOtHrAfarUgeXSa6+RypUNO+55UYZFrQDxI/e1wbcaPjy8s7jll61uDNDeGtCam
+         +HjldE02qIXzZAPRubhdE7LbQ4GSO41xFs8k7MzAxmQ+9g9Y+zugAM6Vwy1UQgedlnTv
+         lB8hWBF0dNvghs1xEMUSO7myWftOCsWCJ7GlfCRoDJx7E6dfIZxVx3nGGNu5/fKayBkm
+         Yubw==
+X-Forwarded-Encrypted: i=1; AJvYcCXV8HPEJENAcsvquLRpOPtP5TJ2U0Sx1x+5QyLMAnx6V0Spax4qHvg3PspL8Heip/cyEIMR8kmttC4yvgUe/ZfjmfzM0xY9iCfElp76
+X-Gm-Message-State: AOJu0YwoLR0fHB+jH/MptfxbCZqD8zfSUM9N4yZ7RAliGJiwE5mIK2hf
+	W5aUVwGdbauXCzro9MDUmGXgaq4Lauj8ubLA670Gjnw2pZIFXBM9vOooIP2NzVw=
+X-Google-Smtp-Source: AGHT+IGRVUcK2vgQ7z3lRceQ7EQseMWvpFfYSJ61KqlG+Np2uVeFvoj0JA7iyvcvwWsVy3+jCCiZUg==
+X-Received: by 2002:a2e:7a0a:0:b0:2ec:63f:fe91 with SMTP id 38308e7fff4ca-2ec5b357921mr84428191fa.38.1719438362757;
+        Wed, 26 Jun 2024 14:46:02 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee4a350d96sm23201fa.49.2024.06.26.14.46.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 14:46:02 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v5 00/12] drm/msm/dpu: support virtual wide planes
+Date: Thu, 27 Jun 2024 00:45:54 +0300
+Message-Id: <20240627-dpu-virtual-wide-v5-0-5efb90cbb8be@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB7282.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16606466-e219-42c3-1b25-08dc96294881
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2024 21:45:23.3509
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HhkkE8lX08hq9z6vpjdi8lniBvWbmrWJLvjMWV0ARdgtrLNXw5VNXRhb/bcc/vlB2CgOyFd2RKc6q00Cp2yPqw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB6530
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIABKMfGYC/0XMQQ6CMBBA0auQWTuklFKDK+9hXBQ7wESkZAooI
+ dzdxo3Lt/h/h0jCFOGS7SC0cuQwJlSnDB69GztC9smglTbKaot+WnBlmRc34Js9YUPUNmdjXa0
+ UpGwSavnzW97uya2EF869kPuPysIopXRh87LWlamxQP/iWba8cbLF/hnW68Cjk5AH6eA4vqYjv
+ 7CoAAAA
+To: Rob Clark <robdclark@gmail.com>, 
+ Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4014;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=qJ1GEziPu7S8OI1OCbOkdnos7rw3FO0P0DsB9fp+pKo=;
+ b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ1pNjzhr8J0G/nL/aHemuNOvPF4tTNWfsmLrk9NsQjuYs
+ zY8bDXsZDRmYWDkYpAVU2TxKWiZGrMpOezDjqn1MINYmUCmMHBxCsBExMLY//vXKSRd4u9x9Y/g
+ ztK7at4qcz83pff7tDlXBJ9bVb8t2+LgkRZ4nvF1KVP09jsBkQeLjI6eabd1Sjp4TEi2YKPMxfp
+ 9Cw41FN+PK569L0f68OeCVNdnO9WetQgz/HVM3zJ5/Z3QvOknNCwT1nHE8vJPs7gf23li9ZwsfU
+ OzWuWIUotJFu6r5fKbfzwWL1/6acmJ4/cNlbYv+mKdayTlMFFDwYnhokv13TqNhzrhCXOOp/F4d
+ JVfzg+uYSq99/Ci1o19u31n31MIbppU2OQkKHjxAt+JqRbLml8WnNjccZQvLMQ91O9GzvE/DicP
+ /F3a3choU/fiyf2II1Y+k6K/Ku2rvr20+NjUoH+R6ay2AA==
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-PiA+ID5JIGJlbGlldmUgd2Ugc2hvdWxkIHVzZSBvbmx5IGEgc2luZ2xlIHNvdXJjZSBmb3Igd2hh
-dCB3ZSBuZWVkLiBJZiB3ZQ0KPiA+ID5yZWx5IG9uIG5ncGlvcywgdGhlIGJncGlvX2JpdHMgc2hv
-dWxkIGJlIHJlY2FsY3VsYXRlZCBiYXNlZCBvbiBpdC4NCj4gPiA+VGhlIGV4cHJlc3Npb24gZG9p
-bmcgdGhpcyBpcyB2ZXJ5IHNpbXBsZS4gU29tZXRoaW5nIGxpa2UNCj4gPiA+cm91bmRfdXAobmdw
-aW9zLCA4KTsNCj4gPg0KPiANCj4gUmlnaHQsIG1pc3Rha2VzIGhhcHBlbi4gQWxzbyBJIGRvbid0
-IHdhbnQgdG8gYmxhbWUgYW55b25lLCBiZWNhdXNlIGl0DQo+IGhhcHBlbnMgdG8gd29yayBmaW5l
-IG9uIGxpdHRsZSBlbmRpYW4gc3lzdGVtcywgYW5kIGJpZyBlbmRpYW4gc3lzdGVtcyBhcmUgc28N
-Cj4gcmFyZSBpdCdzIGVhc3kgdG8gZm9yZ2V0IHRoYXQgdGhleSBleGlzdCA7LSkNCj4gDQo+ID4g
-IE5vdywgaWYgd2Ugd2FudCB0byBub3QgbW9kaWZ5IGJncGlvX2JpdHMsIHdlIGNvdWxkIGdvIGJh
-Y2sgdG8gbXkgdjMgcGF0Y2guDQo+ID4gbmdwaW8gaXMgdGhlIG51bWJlciBvZiBncGlvIHBpbnMg
-c3VwcG9ydGVkIHdoaWxlIGJncGlvX2JpdHMgaXMgdGhlIHJlZ2lzdGVyDQo+IGFjY2VzcyBiaXQg
-dHlwZS4gVGhlc2UgYXJlIDIgZGlmZmVyZW50IGVudGl0aWVzLg0KPiANCj4gRXhhY3RseS4gQW5k
-IEFGQUlDVCB0aGlzIHBhdGNoIGRvZXMgZXhhY3RseSB0aGlzLCByZXN0b3JpbmcgdGhlIGNvZGUg
-dG8gdGhlDQo+IHN0YXRlIG9mIHYzLg0KPiANCkxHVE0gdGhlbiDwn5iKLiBUaGFua3MhDQo=
+As promised in the basic wide planes support ([1]) here comes a series
+supporting 2*max_linewidth for all the planes.
+
+Note: Unlike v1 and v2 this series finally includes support for
+additional planes - having more planes than the number of SSPP blocks.
+
+Note: this iteration features handling of rotation and reflection of the
+wide plane. However rot90 is still not tested: it is enabled on sc7280
+and it only supports UBWC (tiled) framebuffers, it was quite low on my
+priority list.
+
+[1] https://patchwork.freedesktop.org/series/99909/
+
+To: Rob Clark <robdclark@gmail.com>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sean Paul <sean@poorly.run>
+To: Marijn Suijten <marijn.suijten@somainline.org>
+To: David Airlie <airlied@gmail.com>
+To: Daniel Vetter <daniel@ffwll.ch>
+Cc: linux-arm-msm@vger.kernel.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: freedreno@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+
+Changes in v5:
+- Dropped extra dpu_kms instance from dpu_plane_atomic_check() (Abhinav)
+- Use DRM_PLANE_NO_SCALING instead of (1 << 16) (Abhinav)
+- Dropped excess returns documentation for dpu_rm_reserve_sspp() (Sui
+  Jingfeng, Abhinav)
+- best_weght -> best_weight (Abhinav)
+- Moved drm_rect_width() call back to the the patch "split
+  dpu_plane_atomic_check()" (Abhinav)
+- Got rid of saved_fmt / saved dimensions (Abhinav)
+- Expanded the commit message to describe SSPP allocation per CRTC id
+  (Abhinav)
+- Added comment on why the size change also causes resource reallocation
+  (Abhinav)
+- Dropeed several last "feature" patches, leaving only SSPP reallocation
+  and using 2 SSPPs per plane for now. The rest will be submitted
+  separately.
+
+Changes since v3:
+- Dropped the drm_atomic_helper_check_plane_noscale (Ville)
+- Reworked the scaling factor according to global value and then check
+  if SSPP has scaler_blk later on.
+- Split drm_rect_fp_to_int from the rotation-related fix (Abhinav)
+
+Changes since v2:
+- Dropped the encoder-related parts, leave all resource allocation as is
+  (Abhinav)
+- Significantly reworked the SSPP allocation code
+- Added debugging code to dump RM state in dri/N/state
+
+Changes since v1:
+- Fixed build error due to me missing one of fixups, it was left
+  uncommitted.
+- Implementated proper handling of wide plane rotation & reflection.
+
+---
+Dmitry Baryshkov (12):
+      drm/msm/dpu: limit QCM2290 to RGB formats only
+      drm/msm/dpu: relax YUV requirements
+      drm/msm/dpu: take plane rotation into account for wide planes
+      drm/msm/dpu: use drm_rect_fp_to_int()
+      drm/msm/dpu: move pstate->pipe initialization to dpu_plane_atomic_check
+      drm/msm/dpu: drop virt_formats from SSPP subblock configuration
+      drm/msm/dpu: move scaling limitations out of the hw_catalog
+      drm/msm/dpu: split dpu_plane_atomic_check()
+      drm/msm/dpu: move rot90 checking to dpu_plane_atomic_check_pipe()
+      drm/msm/dpu: add support for virtual planes
+      drm/msm/dpu: allow using two SSPP blocks for a single plane
+      drm/msm/dpu: include SSPP allocation state into the dumped state
+
+ drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c       |  50 +++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.c |  24 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h |   8 -
+ drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h    |   2 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c        |  10 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h        |   4 +
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c      | 539 ++++++++++++++++++++-----
+ drivers/gpu/drm/msm/disp/dpu1/dpu_plane.h      |  18 +-
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.c         |  84 ++++
+ drivers/gpu/drm/msm/disp/dpu1/dpu_rm.h         |  27 ++
+ 10 files changed, 621 insertions(+), 145 deletions(-)
+---
+base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
+change-id: 20240626-dpu-virtual-wide-beefb746a900
+
+Best regards,
+-- 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
