@@ -1,113 +1,176 @@
-Return-Path: <linux-kernel+bounces-230436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31F70917CCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:45:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6050D917CD4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:46:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 64C781C22E23
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:45:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72971B23E55
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBBD16D331;
-	Wed, 26 Jun 2024 09:45:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF0C16D4E1;
+	Wed, 26 Jun 2024 09:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V3iI7ue8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="ruj6g2Sd"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01olkn2092.outbound.protection.outlook.com [40.92.107.92])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF7B16CD11
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:44:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719395102; cv=none; b=k+7VM4OFQ20C8eINyGlAY8vP4eZTIlMphl9F/tdptOuqvwO2r3Ibbb1cRg3eXoLLmEGA77jxJGwUcad4I9nPJbX5nhkwJUSGjNufdwud2uHdJEDmcdcMe8DM4/4DomWA7GISIc29jKOF0v0bpkzNXWPDGnQ30juQMwHFZpYuCSE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719395102; c=relaxed/simple;
-	bh=rUkb/XtxnPf8kMa8QTE5ZaHy/kdwHRipRbbMnUTdKNY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WHxl8QM0kzjpjsC4aPWvnxee+DoRqbVGtWlZeZX8v+twPGzLlK6tmjRiAfxYT56rksjrkgMYGPhgApp9ZTnfY8M5p7ZgalIJPECPRsFnRU3eAF3WGMWX4hWxbTq4CPOpXyRyViOIF6IEie4PhimZwqW7Qxcb5kweD/iqXVzEzVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V3iI7ue8; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719395099; x=1750931099;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=rUkb/XtxnPf8kMa8QTE5ZaHy/kdwHRipRbbMnUTdKNY=;
-  b=V3iI7ue8FFAjGY4/2FPL1+KNiv58FB6CO4qa3b8Bqn0ujYGJoY5Vntle
-   euYML4D7wU8uR+Q32w0gNoVnp4R0tkygCNzV9xTz4Cf+88kSTuyGlXXOh
-   HC4tRMjmswjy8fdjWn6WzyIcSWNPoHESEkwzadXG31dgSDtITGT5H8yi7
-   3kg9zLTw1Xt6/a924DiT/sSc/KcgfAfxuDHZT5Nx5vT4FW6DIlf49wkCs
-   LeK+4QT+0Jmq+qLbTYfZog4z85mpPkUTcER/WcqmqmxAHDV+VIXl4XP0B
-   izU7e/ovLRVhu+1lsK7TeGn81/+oiLJQFe8M/ONmtCzW7k3jKBqSD4Teo
-   Q==;
-X-CSE-ConnectionGUID: 3w6vjEotSUiAkuIUymVsvA==
-X-CSE-MsgGUID: CCr2qAt5TEGpxlCOnm4xeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16598061"
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="16598061"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 02:44:58 -0700
-X-CSE-ConnectionGUID: HHQuvY9ETPqNbtN67MTYvA==
-X-CSE-MsgGUID: UGcgaTdIRcW6iNodH8BvfA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="75154769"
-Received: from bergbenj-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.95])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 02:44:55 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Ma Ke <make24@iscas.ac.cn>, patrik.r.jakobsson@gmail.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, airlied@gmail.com, daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, Ma Ke
- <make24@iscas.ac.cn>
-Subject: Re: [PATCH] drm/gma500: fix null pointer dereference in
- psb_intel_lvds_get_modes
-In-Reply-To: <20240626011656.2763368-1-make24@iscas.ac.cn>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240626011656.2763368-1-make24@iscas.ac.cn>
-Date: Wed, 26 Jun 2024 12:44:48 +0300
-Message-ID: <8734p0domn.fsf@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5AA149C52;
+	Wed, 26 Jun 2024 09:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.107.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719395189; cv=fail; b=HCQZPs7ld6ijOGsosMO9Y573wUd0giLcZJ7aSuHsxyYe76ICSK2RX/yjLDbOl79dUv/Bpm4TCnwGrSVlYNPr4CQ0H/VxwK6HbjnjXjngAuQDJZ4yqXCMQIs2G0iTfbsXpHxSWaoxaqTuIWV4Ja6ZUeZBhYLAzR5bl2zquDOyEAI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719395189; c=relaxed/simple;
+	bh=rgC22mU4WpI+vsvnrkjmVrU+AolHXTlpyzYGY3xDOdk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=kKeo9lnfX5lc8nhMd9/Ub8I34KVyTx0adTL7A29yQDCUuRWpScP/d1l690sw7an7dHRvniVDxszDx6f96q0ROuHtuQMRE2ZZ67YR7nyNb/8NuVpIhTtsdA2dsYzX+Zf5412qNNvwUxYXzy3KcqsEDKe5KwDZ5FQMI25LcIrBP0s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=ruj6g2Sd; arc=fail smtp.client-ip=40.92.107.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Zu+An7Jio31ZrUbLh3IFJjaDEZpXiaM5Ws//eXqXcdf1hi3zJiQZxgrChYWwfQOCfNOEqlgIil1j0gdelkIKP2l0xPjM5tiQT6kXVHjValJmvlzc3UPOHlyfV8lsTFXt+gn8IwxPlGyjpipdH4ZLZRhgRNowltXIl3+KtLEA0UK3dh39gfwFus+BIU0vkTafao3sSsUX13HqOP4jUQT549jggECu/D82750UQo+V/ZK1Obz9DloeH6nfSbihPPM+TH7KA5frz0BjZShn0kL4440WZU3+6PAvUogDu2zuZI+5QqXdRn8KpKp1zZnbStdoT9Ey242uiPHSTCgZVdG31w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BNxlTTFtbMu++uEV7DguxSTE8gJD++FSui00LFxvrM4=;
+ b=Ahxuyxr1RzhuJ6J+Ic9dsy+T0e2oQgOvo6Va2fwSRVvEdV2o1ZhH6G/5kze3h9oqoRbBdDEHIl1SCHMzFQsUd7lnjmxMQ1PGKiYqr+vTjTi0fBPUdElL0erdvRDc+EQpw+2ChF3Ab3qPgwV1Ta5dtqbKUwMfBRaONkWR5//qsxbiu7vOkWe7FQK2antSsYlyROWFnhBAVHC0I2amruU/SUhSg9SBm5FJJvJiMRApzfLVHBPkxa/YY3by6M5P69qnFmOPFG+yaNxVtoNZeWXuFzk+U0NfX0G+judjGw4IYDGfAiugL5TuHINFMZwASa1tUid1S58whmO1VdTlY6CHuQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BNxlTTFtbMu++uEV7DguxSTE8gJD++FSui00LFxvrM4=;
+ b=ruj6g2SdCRHsROvWuIkWH3fdiqmKPaC3a4hfehd9hJSmGkrR9hvs0hPEfGLzhPwQ03VxscHbvb2sZD9gY1QN5KLJLUy6p2otiN2RET6fc3GsiLeEQ/V3FKebOKfac9tyZQijxFY23B3Ltp+byBXnuyiJ3fFzXNIYjK8MeefMPMkzn1GTTCkrm+3A4+K4JSL+6uveVsza3v03ce4rZ8Zt5u+tmYCU8X9OPX9qq8NYRFeeSQeul3Juu8V4c9CNwekQ70C+fXtKsXBuc0wTwj7YqqMIeYCNDYDTo918TYKgjF76L1+Q9C6XYdbg4fmmnCWJv+TfT992YSCHiNIO/3sK6Q==
+Received: from SEYPR04MB6482.apcprd04.prod.outlook.com (2603:1096:101:be::7)
+ by KL1PR04MB6877.apcprd04.prod.outlook.com (2603:1096:820:cb::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.25; Wed, 26 Jun
+ 2024 09:46:20 +0000
+Received: from SEYPR04MB6482.apcprd04.prod.outlook.com
+ ([fe80::ca2b:8a48:a7ab:60e5]) by SEYPR04MB6482.apcprd04.prod.outlook.com
+ ([fe80::ca2b:8a48:a7ab:60e5%5]) with mapi id 15.20.7719.014; Wed, 26 Jun 2024
+ 09:46:20 +0000
+From: Noah Wang <noahwang.wang@outlook.com>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	jdelvare@suse.com,
+	linux@roeck-us.net
+Cc: corbet@lwn.net,
+	Delphine_CC_Chiu@Wiwynn.com,
+	peteryin.openbmc@gmail.com,
+	javier.carrasco.cruz@gmail.com,
+	patrick.rudolph@9elements.com,
+	bhelgaas@google.com,
+	lukas@wunner.de,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	Noah Wang <noahwang.wang@outlook.com>
+Subject: [PATCH v5 1/2] dt-bindings: hwmon: Add MPS mp2891
+Date: Wed, 26 Jun 2024 17:46:00 +0800
+Message-ID:
+ <SEYPR04MB6482BC95D1242A5675FF9DAEFAD62@SEYPR04MB6482.apcprd04.prod.outlook.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <SEYPR04MB6482EE353C207DA6977C974DFAD62@SEYPR04MB6482.apcprd04.prod.outlook.com>
+References: <SEYPR04MB6482EE353C207DA6977C974DFAD62@SEYPR04MB6482.apcprd04.prod.outlook.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [cfuiPipfnhf43b78oMvvisFN6Z30J5aw]
+X-ClientProxiedBy: SI2PR01CA0005.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:191::23) To SEYPR04MB6482.apcprd04.prod.outlook.com
+ (2603:1096:101:be::7)
+X-Microsoft-Original-Message-ID:
+ <20240626094601.52298-1-noahwang.wang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEYPR04MB6482:EE_|KL1PR04MB6877:EE_
+X-MS-Office365-Filtering-Correlation-Id: 25fe060a-7420-4d6c-c5e6-08dc95c4d52c
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199026|3412199023|440099026|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	1NNoZIMO+vfS6XBfOnayw+u7aX5ASPWJQ0ryL0w06tjbPKd14KALIQXlc5DcpTlVaVhM9PutIXNU3KJEqebC4lYIxwRfZINm3yAdVIndPrNGp0Im00cfxVpZLU3k1KLwc/5T8BH3NTkZ4e/t7FqeXX8zZ7YzlWQyFr+fnTKYwA/jyy/ZFaIUzDtmDqaJ+ovWZ7nvV98QUFgpAxlOdPypG2Hk+aB+/hHAS3616d3/HVE/CVSisP9Mi4eTJurK7ftRcdX+vEwwL9pRINQDZRnEY+g7wfDttr6E1TsnaGdUrI9otyzmKXS9JtcXimKAcWPvnR48NpQ9vS+rHe87lv2vPje6NnhBcDCoqpk5qR3J/M3OwtCK6Nf+Y7oJoFKQ2mOERgerJv20GdMR6+pNLQejctprW0podOFXuSDgEmZIAO/ELcsCaeBD4Z5Md1vRhKOYbZrUjg+QWIDN6Gd9bhd7/EZziuiodLx71pnF1MKAIyjhxeAva83Qfwod4zJuCfinKdabSjpLXIzd4nYrL63AmBliwDY8LZm+WucsfAVYvcL5KXk59ZlSHF+kGWmVMf5Ppy2/D99uq7RWCDl1+flRxo8xsSjnWIbeVAtOHSTqVtjZl53KPmvBjY86IqFTPxJn
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?YkuL31zBQo1nKtoTpJx7MKV/mGEsIBggo/RU87YuX2MrK6acE7MLeeOmLbkq?=
+ =?us-ascii?Q?OiExa3aqS0pfxPsSsI1eSnxvuZbeMe8ug4O64uRWXL6aWTxkhMtViady1Zs5?=
+ =?us-ascii?Q?/X4gcEJWIm0XBJJCpe+H7KL0nEtfIBrs9DpNJVho1q9h38sYEjsqvJI99Nz6?=
+ =?us-ascii?Q?Vy8rdIHw91Ud35YUECbhZ7INAr9mPGDhpRU9lOteriJimcpVwPE2ZbKxSpTp?=
+ =?us-ascii?Q?scp137YvnnInYwt0Ncnuelj4o2WQqUeFXmqlSKHFrlBhO+A/nfd6fa+BZP90?=
+ =?us-ascii?Q?tVBYKCk8RlvKYDynToL4Qtc1/p3+Imqe3PLZ7uZ4HXYUIovhbdjwkA2m1HWs?=
+ =?us-ascii?Q?nhBiu2h8aXYJjV0Pkn1ZGseM3avZoy0k1fuB/YKNlim2ZFuZslDT4EUFP93a?=
+ =?us-ascii?Q?tbps88cvvm/bbKKgb4d9BEuG6ZSyCpLTXQq47B3Cuz3HjZ5ZVDD1sxRcJ6Y1?=
+ =?us-ascii?Q?woGxQWfDPe9AqybsUiAR+4xFqDkVBtPv8L5ataXvZ6cex6oFakzcSBfdUC2y?=
+ =?us-ascii?Q?cGDdx4CU+3HpkB5SrnpxSupns69MIw4uAfMXuWxpYYX47qfyqlkdJj2R7IN+?=
+ =?us-ascii?Q?RGmEO5mWVirr7p5T2gV+FTxjUiOLqWpVHsg3a+bYcVseiKMSTeUE7vttkRWS?=
+ =?us-ascii?Q?P/16AdT6DX0W3WJvcWjGC7BT1WYrJkxuG4hqPUK7OM24h8TM+4ZoJs2ugRHp?=
+ =?us-ascii?Q?pIGwqy5BfVoDLBomwDXxbFTD1MPREkvsW+WfowLPw6MDXodMoVE2BmbXrJb9?=
+ =?us-ascii?Q?JyPLw2C18tuGX1mZJdIE+N0KqWgZZ4qwySGhNF05QhU2eXFeIJgVTs3v8613?=
+ =?us-ascii?Q?lG3tvgTlYHCNUZYf0AWwm1RiM35vKJMQPN7J5OESNgVQCqhJnmoZBVfkLVgv?=
+ =?us-ascii?Q?B/LaxWHgKuOz6zoAB43j6DjtrwK/qx/5PtONN69xVT88VlA53DaJdfwAPSY4?=
+ =?us-ascii?Q?MzFTmEVqfvtWncabMkExL1wn/H+PelWTWvqYXuXhn7pU4wMEJK8EtCcW6gbp?=
+ =?us-ascii?Q?h4ha7VDSLm6kJX1Rl9oJnkismym1pSayU2IDxdVNDqpm1ihm4voyGNHRR6VC?=
+ =?us-ascii?Q?RvfHyl4jFX4eenvtef+AVhnW0Rnl9n3nbV9mhO6xMPkBUnyYmw6R8LzMdZJY?=
+ =?us-ascii?Q?YQqhYbXz4MibYWWs8loJCKWxaJmEW0llwjKwAC9Znat/MlY+TxRP9HKtlJ4q?=
+ =?us-ascii?Q?ofE9HiCokrlVvvOPs9EvWLw8+3deCuz4NLhtz8LE08v2DeLz/QYLk3gjIbN9?=
+ =?us-ascii?Q?Dx2k93kBiUZf7WEgfdXo?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 25fe060a-7420-4d6c-c5e6-08dc95c4d52c
+X-MS-Exchange-CrossTenant-AuthSource: SEYPR04MB6482.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 09:46:20.4507
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR04MB6877
 
-On Wed, 26 Jun 2024, Ma Ke <make24@iscas.ac.cn> wrote:
-> In psb_intel_lvds_get_modes(), the return value of drm_mode_duplicate() is
-> assigned to mode, which will lead to a possible NULL pointer dereference
-> on failure of drm_mode_duplicate(). Add a check to avoid npd.
->
-> Signed-off-by: Ma Ke <make24@iscas.ac.cn>
-> ---
->  drivers/gpu/drm/gma500/psb_intel_lvds.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/drivers/gpu/drm/gma500/psb_intel_lvds.c b/drivers/gpu/drm/gma500/psb_intel_lvds.c
-> index 8486de230ec9..aa5bf2a8a319 100644
-> --- a/drivers/gpu/drm/gma500/psb_intel_lvds.c
-> +++ b/drivers/gpu/drm/gma500/psb_intel_lvds.c
-> @@ -504,6 +504,8 @@ static int psb_intel_lvds_get_modes(struct drm_connector *connector)
->  	if (mode_dev->panel_fixed_mode != NULL) {
->  		struct drm_display_mode *mode =
->  		    drm_mode_duplicate(dev, mode_dev->panel_fixed_mode);
-> +		if (!mode)
-> +			return -ENOMEM;
+Add support for MPS mp2891 controller
 
-Do not return negative values from .get_modes().
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Signed-off-by: Noah Wang <noahwang.wang@outlook.com>
+---
+v4 -> v5:
+    add Rob's Acked-by
 
-BR,
-Jani.
+v3 -> v4:
+    add mp2891 in alpha order
 
->  		drm_mode_probed_add(connector, mode);
->  		return 1;
->  	}
+v2 -> v3:
+    move mp2891 dt-bindings to trivial devices
 
+v1 -> v2:
+    add mp2891 dt-bindings
+
+ Documentation/devicetree/bindings/trivial-devices.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+index 0a419453d183..191d4c3e0ad6 100644
+--- a/Documentation/devicetree/bindings/trivial-devices.yaml
++++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+@@ -286,6 +286,8 @@ properties:
+           - mps,mp2857
+             # Monolithic Power Systems Inc. multi-phase controller mp2888
+           - mps,mp2888
++            # Monolithic Power Systems Inc. multi-phase controller mp2891
++          - mps,mp2891
+             # Monolithic Power Systems Inc. multi-phase controller mp2971
+           - mps,mp2971
+             # Monolithic Power Systems Inc. multi-phase controller mp2973
 -- 
-Jani Nikula, Intel
+2.25.1
+
 
