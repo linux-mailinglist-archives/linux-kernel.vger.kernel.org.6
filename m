@@ -1,150 +1,130 @@
-Return-Path: <linux-kernel+bounces-230748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70A79918169
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:50:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A2EA91816A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FA971C2084B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:50:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9AA82B20897
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:51:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD89181CEF;
-	Wed, 26 Jun 2024 12:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBDAE1802AA;
+	Wed, 26 Jun 2024 12:51:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K3OGYvs5"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="yKDj76/K"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7238F1E51D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FFAD1E51D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719406212; cv=none; b=DGREfsgK0agVKNFGf2NpsVXVBceD4QJneIxLwzOHmSCUPn093ksK7W5ccNN7UdS2Xd46NOaCNFaZ6Dd6KLL4s2ocDQaR8/s3P9WFBWm1sa0ypFdm4wmUafxyaIiyMyyjkUCl+lrdpKyGEzNzs4wVd/Ca0gCZd+ZNKLElCD2N7tg=
+	t=1719406295; cv=none; b=CXZfDzwKzbdsm54WR82m2qkGpDi6Y2aMXKyLIkz6F9yMahStZScaogbOdONPlEOPkIXfmXM6d82HUhFFwqVTCe5iQ9jfRJiZhOwwtGWvVDJ3Dtkzch0BadP2OTvLCUv7kapj7FwnKzkCjZYC2oOZUof30UlgpfdBt6veDH705e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719406212; c=relaxed/simple;
-	bh=jbTXnw7qIaAfmmtUnIZqFzuKHXG/BarIXJwEcufp29o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JAW4VsJ9JdimdqUANuyVZLyBJJbgInaytf3F+vqsRkFpB8QPIl8xGABRV8oRbz/EpfLoAJl50VKOORg+ZoNE6gixtQj5Q/KXEp3Hz2GQMaswOGpEUpAllDtd+MpWQeWhyBK7HiH0w+RlCbHh0MJ4klnxu9YQM/5H3+m2KcREt2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K3OGYvs5; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719406209;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=weKxNpftDTdPudwJr8Js5RQeWZqeU3ZfmHi8oupmaRY=;
-	b=K3OGYvs5RwUwGPKddRrZq6E1sBibeBUI6PuGaGH3VSPZ8nPZoZ5UxHUeNgpkbK+8vRvGrH
-	iaJBT1mXhWS+iw9qxeQXabZJpxj26OcQPQnb4hgWd/IWgBclPaVLrnqik1rAsTuwsHvTEz
-	QS664hlItQHti9MXpYsXjb8Z8MaQM8M=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-561-kXKBROm5ONqYwr_gt73o7Q-1; Wed,
- 26 Jun 2024 08:50:05 -0400
-X-MC-Unique: kXKBROm5ONqYwr_gt73o7Q-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C20B919560BA;
-	Wed, 26 Jun 2024 12:50:03 +0000 (UTC)
-Received: from fedora (unknown [10.22.34.168])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 10E981955E82;
-	Wed, 26 Jun 2024 12:50:00 +0000 (UTC)
-Date: Wed, 26 Jun 2024 08:49:58 -0400
-From: Audra Mitchell <audra@redhat.com>
-To: Peter Xu <peterx@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, viro@zeniv.linux.org.uk,
-	brauner@kernel.org, jack@suse.cz, aarcange@redhat.com,
-	rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, shuah@kernel.org,
-	linux-kselftest@vger.kernel.org, raquini@redhat.com
-Subject: Re: [PATCH v2 3/3] Turn off test_uffdio_wp if
- CONFIG_PTE_MARKER_UFFD_WP is not configured.
-Message-ID: <ZnwOdqRcsiNeWNKT@fedora>
-References: <20240621181224.3881179-1-audra@redhat.com>
- <20240621181224.3881179-3-audra@redhat.com>
- <ZnXwT_vkyVbIJefN@x1n>
- <Znl6dfM_qbH3hIvH@fedora>
- <ZnmFuAR7yNG_6zp6@x1n>
- <20240625160558.e1650f874ab039e4d6c2b650@linux-foundation.org>
- <ZntY4jIojSrjoW1M@x1n>
+	s=arc-20240116; t=1719406295; c=relaxed/simple;
+	bh=R/qqw2Xg5iB28RKOwAp2AWcbCKdP/ujxQsUO8wkXmJo=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=Ee0Bo1SbgSP2t5uWiwP8mbI+QKO9pyb+QRLjZv9YDgkOm/kw7QCorXvu5FSt6NGC1wNjhEjNOFuGFLbuO5wjbROs5Fz3FgnDcGz/QRIMhBlPiclvSVgB83uw8gD11SKPSi/D1jq3AIWyUbWySWceFVsUqCTkNAYs0W4fQZtRjbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=yKDj76/K; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5008a.ext.cloudfilter.net ([10.0.29.246])
+	by cmsmtp with ESMTPS
+	id MPRcsWiO1SLKxMS7ZsMn1G; Wed, 26 Jun 2024 12:51:33 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id MS7Ys3G0UUK5pMS7YsoCvF; Wed, 26 Jun 2024 12:51:32 +0000
+X-Authority-Analysis: v=2.4 cv=EdvOQumC c=1 sm=1 tr=0 ts=667c0ed4
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=T1WGqf2p2xoA:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=nIAznLeY9BhABaY2-0MA:9 a=QEXdDO2ut3YA:10
+ a=AjGcO6oz07-iQ99wixmX:22 a=nmWuMzfKamIsx3l42hEX:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=iv/ceOa6CGfDYsNcqElj7D/zm1wxvv47rg90XcoyAgQ=; b=yKDj76/KGw3X2ZfQEQc7NZJQTn
+	lXEA+3bw+VxWHxxwrbOcP0yM/eaGQzHuptzdrEGtTZm3NmDB2zmBp6XCajhifb+TwfbBJ8Qo+w9lN
+	TARN1QZZjHYrnMXIUch3l5301dSxQEB/9caGtQJDJdDCUtdMeF76s9CUXSH1mdS1ZvrmpgmsD9a2O
+	lveu7NTEpVC8KXkU6xicfkcQLGmXb5KZhK55SfT3+odFDlMFud79DDZkt1DAfDO+3HI9cE6rCvrzE
+	YiGK7a+ICA4G6zKtsbj6WGO3wtJkXQ/WlyPadQxblkd+xlPjyVDUCyMiroZ19sWsj3z9QdmuXRc0+
+	OqduJgsA==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:45940 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sMS7T-002scD-2m;
+	Wed, 26 Jun 2024 06:51:27 -0600
+Subject: Re: [PATCH 6.1 000/131] 6.1.96-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240625085525.931079317@linuxfoundation.org>
+In-Reply-To: <20240625085525.931079317@linuxfoundation.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <e1e4a459-6ca9-1113-061a-cb0a546ac987@w6rz.net>
+Date: Wed, 26 Jun 2024 05:51:22 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZntY4jIojSrjoW1M@x1n>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1sMS7T-002scD-2m
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:45940
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 42
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfGA6L98wGZGgeIumBDBqF7WdeZWufKBpkO10nRLK4Q5nHOr6rgLYUBP6jp6uGc8VoAFF5eRlLc5OK7ZlknIwwEdke2VZW7bF404Y822pEqv8N/sU8Ylt
+ JOwYwnCWFtljkrg2hKpD+4vGxjIC2rJM3QKl15nFkKmuX2xcbLQVeB42rBK0VQ6jj2QXqdMQIF4hzM+aWC8Jyhma+z3QXrDAuyQ=
 
-On Tue, Jun 25, 2024 at 07:55:14PM -0400, Peter Xu wrote:
-> On Tue, Jun 25, 2024 at 04:05:58PM -0700, Andrew Morton wrote:
-> > On Mon, 24 Jun 2024 10:42:00 -0400 Peter Xu <peterx@redhat.com> wrote:
-> > 
-> > > >         uffdio_api.features &= ~UFFD_FEATURE_WP_HUGETLBFS_SHMEM;
-> > > >         uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
-> > > >         uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
-> > > > #endif
-> > > > 
-> > > > If you run the userfaultfd selftests with the run_vmtests script we get
-> > > > several failures stemming from trying to call uffdio_regsiter with the flag 
-> > > > UFFDIO_REGISTER_MODE_WP. However, the kernel ensures in vma_can_userfault() 
-> > > > that if CONFIG_PTE_MARKER_UFFD_WP is disabled, only allow the VM_UFFD_WP -
-> > > > which is set when you pass the UFFDIO_REGISTER_MODE_WP flag - on 
-> > > > anonymous vmas.
-> > > > 
-> > > > In parse_test_type_arg() I added the features check against 
-> > > > UFFD_FEATURE_WP_UNPOPULATED as it seemed the most well know feature/flag. I'm 
-> > > > more than happy to take any suggestions and adapt them if you have any! 
-> > > 
-> > > There're documents for these features in the headers:
-> > > 
-> > > 	 * UFFD_FEATURE_WP_HUGETLBFS_SHMEM indicates that userfaultfd
-> > > 	 * write-protection mode is supported on both shmem and hugetlbfs.
-> > > 	 *
-> > > 	 * UFFD_FEATURE_WP_UNPOPULATED indicates that userfaultfd
-> > > 	 * write-protection mode will always apply to unpopulated pages
-> > > 	 * (i.e. empty ptes).  This will be the default behavior for shmem
-> > > 	 * & hugetlbfs, so this flag only affects anonymous memory behavior
-> > > 	 * when userfault write-protection mode is registered.
-> > > 
-> > > While in this context ("test_type != TEST_ANON") IIUC the accurate feature
-> > > to check is UFFD_FEATURE_WP_HUGETLBFS_SHMEM.
-> > > 
-> > > In most kernels they should behave the same indeed, but note that since
-> > > UNPOPULATED was introduced later than shmem/hugetlb support, it means on
-> > > some kernel the result of checking these two features will be different.
-> > 
-> > I'm unsure what to do with this series.  Peter, your review comments
-> > are unclear - do you request updates?
-> 
-> Yes, or some clarification from Audra would also work.
-> 
-> What I was trying to say is here I think the code should check against
-> UFFD_FEATURE_WP_HUGETLBFS_SHMEM instead.
+On 6/25/24 2:32 AM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.1.96 release.
+> There are 131 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+>
+> Responses should be made by Thu, 27 Jun 2024 08:54:55 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.96-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-I was meaning to reply back and ask if Andrew wanted me to push a v3 and
-change the check from UFFD_FEATURE_WP_UNPOPULATED to 
-UFFD_FEATURE_WP_HUGETLBFS_SHMEM or if he just wanted to do it, but I'll go
-ahead and submit v3 with the change shortly. 
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-Also as an aside I ran scripts/get_maintainer.pl to get the email list. I
-probably should have thought a little bit about why the linux-mm list was
-missing....
-
-Sorry about the delay and confusion!
-
- 
-> Thanks,
-> 
-> -- 
-> Peter Xu
-> 
+Tested-by: Ron Economos <re@w6rz.net>
 
 
