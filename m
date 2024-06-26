@@ -1,87 +1,99 @@
-Return-Path: <linux-kernel+bounces-231299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231300-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F93918AE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:52:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33A41918B81
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:52:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D427B23C67
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:51:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97C2CB23FF4
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C41D2190056;
-	Wed, 26 Jun 2024 17:51:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0051190062;
+	Wed, 26 Jun 2024 17:52:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fp6IClgU"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="MoM49iQU"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 522EA18FC7C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2340190041
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719424309; cv=none; b=ly+ikW+LkylMkK5aTSlJEw5EFBXmNbrtUCCzsVs99FRM5vgD/0imGNS3/ygTMJ7D1elLqQd7fBfd1finpfLkcT9nvTy5uk4p0w/VcDXZ3ys9wm8/wX1xG25sh3ILShyk+RUVtffGmZNbZzOtr263HJEDC0vqA4O2dpmfUMdlp/k=
+	t=1719424353; cv=none; b=Y8frXhldH3aTTzsLxKOefkt25WHHggygtcJm0jtZ3kmjgwsVOuZYvG3yAbLs23aZMFiCXQPyD88+p2FGAsLuVEEVzcmVqEwOb0KqnpFcEc0JjH9uavCxpyIxLG6Wr7j30X9QFTVp1h558sZa18Sec/3ZkPHGTDxKuqpyKPdZMiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719424309; c=relaxed/simple;
-	bh=U6HpPBSY8P5Pzvook2HFO9PxASjQfsBIGnm0macVpuE=;
+	s=arc-20240116; t=1719424353; c=relaxed/simple;
+	bh=8C+0143qN86BEc8WiI6OxATrNw/eufThl5x34v/wiPI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r33aC6FCT0D0hEzqlPy4fmtAP1Wuo6OrJ8QIEAZ6E1pzfpWGaCuJKPuLhruoNIuA15X8cYuZS+nGqtPcGdi0zF3fpQrUUOMJDIF02s4pJ/s9Zjg1rD0+UYWoQ4Ut8gWGVF+gcr3CEhT19wewwx/viH8z9t789i4Ejs0AebF+RUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fp6IClgU; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec6635aa43so31994531fa.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:51:47 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HqhwBgGe6eCZm7eOo8frfUwP3o0ijWokYEAPt90wPT6PUF3SfeTVXd+bhvm/4XlHTuOu/ONx/Q4L1cra+OH9iQhys4sxoUqmhiX7FlrFW3VuBcejR0HRogHDbeFbZSANo6zNjbTDPWPYXjqlKUYsT99YetLZUGTI2JpHd+eT430=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=MoM49iQU; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-36354272c2dso299855f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:52:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719424305; x=1720029105; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FAZdGTk7c+/UeUa9h1az0pLQAHQQ1DT8dk5SUgRPldk=;
-        b=fp6IClgUBeyBVpBUAr/Ep0Z9LUopejqa6ucySEvlVkPeaR8F1NTrpKcEhEpvxR7Wdb
-         MusbLqbnrBONmgEFhyQYemsX+lpmwvt3l3XLo7pzt6hs85VKrwiwNQ1XMgUsYEUdLxzz
-         mH9Ho2IaaT+jxKk8Gwz9IMyFGXDFtMzfEUczADpGZiwr+UlUjIUObkOIq8RE0O4n5hm1
-         0tCAH8VH1GeM4SX+SN4eqYmJQL1cDOhgQh/HTVuutm4cuSr3VRRydwmLY32ZvvdHJp45
-         WXN4qVGpGf6tg4E3/OcKtGn9YOqsbFyLgB9i/Z4wQij+bfOmSNU/13DSsFU4V7xF49MJ
-         7E/A==
+        d=ffwll.ch; s=google; t=1719424349; x=1720029149; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=t8h+d1YS2lRYJVmm9UX7UTK0tKF7jVIiE4l199Xa8oo=;
+        b=MoM49iQUpNvILimRhVcZYoKzNPnWcG7xL0web31NlwK9NIacRsfxjstZHbgHm9NpbI
+         7bmBjIKNFbIca4SCPsp3kUEiqtn67F48zQm5P3O8x9HdRoMbvoFQWvCUUwDxyuuST2rw
+         OLIZ/aKOosNNoz4PXWAwro2hC/3o9SEU5NWFs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719424305; x=1720029105;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FAZdGTk7c+/UeUa9h1az0pLQAHQQ1DT8dk5SUgRPldk=;
-        b=AsbCPbz73CL/eCxxORtf7lQa0voM67ecl1XE7wRNTl1DRiha7eq1/KgyvtYxr9qmEL
-         eMPJOeIjebdNom0F8C4B9ro6lx1tEAHDoP3iyAHoV9qbV7qjopE2EHIuHHYUJ6DfCeUg
-         fvW895afFdG0DeZvmVLcaQiDZ3KGamHdMf3gSv+SwIJEeentEGg7x0PjGSipuo22sblF
-         hjf6p7d7IfsVts7A6C1Nbi4Xe/wVP3U7XmaC8ovV99WMRvNjZdNX9OWM0l37B/SMlDFm
-         PsLshEypqQwnXjQQTj55Io3qVenc0smBb9uNRbVgWiHKPv4JoJ4rQw3KPUA1e3ADwJrK
-         qiwg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEpsoY45EYFSZXWJ770vV9IRPLsCvezkJWNfsvVvPr4br3+YeZ612ZoB+2SkH/6KzjwXxCMVIFJdNX4q1iaTnC0fZWXscFgIDHaVrr
-X-Gm-Message-State: AOJu0YxHFzt3AtIdtKQY7Ws0GTeHQSk5kZYYOI7xVufcJpvvoHSKDPHO
-	H+J61pF3vVECTiwakg2G7Pi3EdGzmogIGNAthHfhhgQvwQZ7fvh3uhcsWjZPevN2ewsubilc2aN
-	8H1k=
-X-Google-Smtp-Source: AGHT+IFSoBa3hNn7VZ8j/fymDz1W8BzHyOztv/TWTbsZhpyFaqy9xHiyV+cypP3cb7r0lPSTcGcf4Q==
-X-Received: by 2002:a2e:998e:0:b0:2ec:4d5b:3d03 with SMTP id 38308e7fff4ca-2ec579845dbmr74815321fa.31.1719424305512;
-        Wed, 26 Jun 2024 10:51:45 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d7e7906sm14973611fa.121.2024.06.26.10.51.44
+        d=1e100.net; s=20230601; t=1719424349; x=1720029149;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t8h+d1YS2lRYJVmm9UX7UTK0tKF7jVIiE4l199Xa8oo=;
+        b=US7391yftIQ//y906jWEvco0tYz05P+U9OykKaF7E19B7ZQKeSmhejADjUYu3SSvqr
+         yC4YGk4+nqWaXGXJKPCyuUqnt/Wjle1DI5lh1W3LLyMw1aXN9is94pNHyUVYuOEj2Yx+
+         ms6DOeSKb1CjH5I7TP7HW4knlVcPLllQnWClljylmZC//EBDqnaoFh6TVqj26l7hyDUW
+         14AtLLrn93tgP86YpCBe1H1c/tkNr9WZhwoghsZwDA4Q4NWr5cNKAlMW5Oyd94OaVaAr
+         ffTMvNR2vaoKF0ladr5/wdoNadoFme24W7vAnyyoN3oW4ZxAR5lQtjQ0brtaAu/dGmoe
+         FM4A==
+X-Forwarded-Encrypted: i=1; AJvYcCUSz1e0o2ihNpCb8PfpF1A+IgPbzCM967FgxheWySnpfqhoQNdK1zsHxtUsT3uRqrUIBifSvHj2XOY0pvyNJ7Cy7LF2LR7lkBrim7jN
+X-Gm-Message-State: AOJu0Ywr6TxHpSaofcAASiQHVzd4iiOKDrmO+xN/BgrZA1IO3wekTSIx
+	WgzCpfvBd4xb0m/S8ZcRfiYD5hoMe7SHDbCmomC8GWWw3LvzWP5vfVYwKGTrBwE=
+X-Google-Smtp-Source: AGHT+IHziMriFU1IvsOiXYNLoJqYCMel+vAaYctnt6KK80gYjPlmHIUg0ZT4GOMRpR+pse+fG/yFGw==
+X-Received: by 2002:a05:600c:470f:b0:422:78c:82f6 with SMTP id 5b1f17b1804b1-42487ef1ef5mr100585725e9.3.1719424348980;
+        Wed, 26 Jun 2024 10:52:28 -0700 (PDT)
+Received: from phenom.ffwll.local ([2a02:168:57f4:0:efd0:b9e5:5ae6:c2fa])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3670c4c1fb4sm3988958f8f.76.2024.06.26.10.52.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 10:51:44 -0700 (PDT)
-Date: Wed, 26 Jun 2024 20:51:42 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Rob Herring <robh@kernel.org>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Jingoo Han <jingoohan1@gmail.com>, quic_vbadigan@quicinc.com, 
-	quic_skananth@quicinc.com, quic_nitegupt@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 2/7] arm64: dts: qcom: qcs6490-rb3gen2: Add qps615
- node
-Message-ID: <34pn6bnhbsx3mlqcvqdjcpepf4kr255jwnm64ksynxu5xnlrpg@hw3ks7n65r63>
-References: <20240626-qps615-v1-0-2ade7bd91e02@quicinc.com>
- <20240626-qps615-v1-2-2ade7bd91e02@quicinc.com>
+        Wed, 26 Jun 2024 10:52:28 -0700 (PDT)
+Date: Wed, 26 Jun 2024 19:52:26 +0200
+From: Daniel Vetter <daniel@ffwll.ch>
+To: Daniel Stone <daniel@fooishbar.org>
+Cc: Lucas Stach <l.stach@pengutronix.de>, Daniel Vetter <daniel@ffwll.ch>,
+	Tomeu Vizoso <tomeu@tomeuvizoso.net>, linux-kernel@vger.kernel.org,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	David Airlie <airlied@gmail.com>, etnaviv@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Daniel Stone <daniels@collabora.com>
+Subject: Re: [PATCH] drm/etnaviv: Create an accel device node if compute-only
+Message-ID: <ZnxVWrFJKbVO8PZ0@phenom.ffwll.local>
+Mail-Followup-To: Daniel Stone <daniel@fooishbar.org>,
+	Lucas Stach <l.stach@pengutronix.de>,
+	Tomeu Vizoso <tomeu@tomeuvizoso.net>, linux-kernel@vger.kernel.org,
+	Oded Gabbay <ogabbay@kernel.org>,
+	Russell King <linux+etnaviv@armlinux.org.uk>,
+	Christian Gmeiner <christian.gmeiner@gmail.com>,
+	David Airlie <airlied@gmail.com>, etnaviv@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Daniel Stone <daniels@collabora.com>
+References: <20240424063753.3740664-1-tomeu@tomeuvizoso.net>
+ <97eadcba7cabe56f0f4b4d753bd3d53f8540ef4b.camel@pengutronix.de>
+ <CAAObsKAQ=pWQ8MR1W7WwK1nVEeiCFNC3k+NZKsu4Fkts-_+zWg@mail.gmail.com>
+ <CAPj87rO7zyDsqUWnkF0pZeNFnNK2UnAVJy4RmB3jmPkKQ+zbEw@mail.gmail.com>
+ <CAAObsKBm3D_3ctFyK-rfpM-PU6ox1yoaMA1EES9yR-nRmU4rYw@mail.gmail.com>
+ <CAAObsKAt563VNzDcF4rGkWPcxBPzKcq=Hj5RY6K20FWR43nvUQ@mail.gmail.com>
+ <ZnvDJVeT3rz-hnv9@phenom.ffwll.local>
+ <7cee6b78bc2375d9b014f9671b0d72ae65eba73c.camel@pengutronix.de>
+ <CAPj87rPB=N2vJ-5C7xXORYstK3=TpX+jZ7mCr7oxY2wpXeaTTQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,100 +102,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240626-qps615-v1-2-2ade7bd91e02@quicinc.com>
+In-Reply-To: <CAPj87rPB=N2vJ-5C7xXORYstK3=TpX+jZ7mCr7oxY2wpXeaTTQ@mail.gmail.com>
+X-Operating-System: Linux phenom 6.8.9-amd64 
 
-On Wed, Jun 26, 2024 at 06:07:50PM GMT, Krishna chaitanya chundru wrote:
-> QPS615 switch power is controlled by GPIO's. Once the GPIO's are
-> enabled, switch power will be on.
+On Wed, Jun 26, 2024 at 11:39:01AM +0100, Daniel Stone wrote:
+> Hi,
 > 
-> Make all GPIO's as fixed regulators and inter link them so that
-> enabling the regulator will enable power to the switch by enabling
-> GPIO's.
+> On Wed, 26 Jun 2024 at 09:28, Lucas Stach <l.stach@pengutronix.de> wrote:
+> > Mesa doesn't cope right now. Mostly because of the renderonly thing
+> > where we magically need to match render devices to otherwise render
+> > incapable KMS devices. The way this matching works is that the
+> > renderonly code tries to open a screen on a rendernode and if that
+> > succeeds we treat it as the matching render device.
+> >
+> > The core of the issue is that we have no way of specifying which kind
+> > of screen we need at that point, i.e. if the screen should have 3D
+> > render capabilities or if compute-only or even NN-accel-only would be
+> > okay. So we can't fail screen creation if there is no 3D engine, as
+> > this would break the teflon case, which needs a screen for the NN
+> > accel, but once we successfully create a screen reanderonly might treat
+> > the thing as a rendering device.
+> > So we are kind of stuck here between breaking one or the other use-
+> > case. I'm leaning heavily into the direction of just fixing Mesa, so we
+> > can specify the type of screen we need at creation time to avoid the
+> > renderonly issue, porting this change as far back as reasonably
+> > possible and file old userspace into shit-happens.
 > 
-> Enable i2c0 which is required to configure the switch.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 55 ++++++++++++++++++++++++++++
->  1 file changed, 55 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> index a085ff5b5fb2..5b453896a6c9 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> @@ -511,6 +511,61 @@ vreg_bob_3p296: bob {
->  			regulator-max-microvolt = <3960000>;
->  		};
->  	};
-> +
-> +	qps615_0p9_vreg: qps615-0p9-vreg {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "qps615_0p9_vreg";
-> +		gpio = <&pm8350c_gpios 2 0>;
-> +		regulator-min-microvolt = <1000000>;
-> +		regulator-max-microvolt = <1000000>;
-> +		enable-active-high;
-> +		regulator-enable-ramp-delay = <4300>;
-> +	};
-> +
-> +	qps615_1p8_vreg: qps615-1p8-vreg {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "qps615_1p8_vreg";
-> +		gpio = <&pm8350c_gpios 3 0>;
-> +		vin-supply = <&qps615_0p9_vreg>;
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +		enable-active-high;
-> +		regulator-enable-ramp-delay = <10000>;
-> +	};
-> +
-> +	qps615_rsex_vreg: qps615-rsex-vreg {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "qps615_rsex_vreg";
-> +		gpio = <&pm8350c_gpios 1 0>;
-> +		vin-supply = <&qps615_1p8_vreg>;
-> +		regulator-min-microvolt = <1800000>;
-> +		regulator-max-microvolt = <1800000>;
-> +		enable-active-high;
-> +		regulator-enable-ramp-delay = <10000>;
-> +	};
-> +};
-> +
-> +&i2c0 {
-> +	clock-frequency = <100000>;
-> +	status = "okay";
-> +};
-> +
-> +&pcie1 {
-> +	pcie@0 {
-> +		device_type = "pci";
-> +		reg = <0x0 0x0 0x0 0x0 0x0>;
-> +		#address-cells = <3>;
-> +		#size-cells = <2>;
-> +
-> +		bus-range = <0x01 0xff>;
-> +
-> +		qps615@0 {
-> +			compatible = "pci1179,0623";
-> +			reg = <0x1000 0x0 0x0 0x0 0x0>;
-> +			vdda-supply = <&qps615_rsex_vreg>;
-> +			switch-i2c-cntrl = <&i2c0>;
+> Yeah, honestly this sounds like the best solution to me too.
 
-We already have proper bindings for I2C devices. The QPS615 obviously
-has and I2C device inside. Please add it to DT instead of referencing
-the whole bus.
+Yeah mesa sounds kinda broken here ...
 
-> +		};
-> +	};
->  };
->  
->  &gcc {
-> 
-> -- 
-> 2.42.0
-> 
+What might work in the kernel is if you publish a fake 3d engine that's
+too new for broken mesa, if that's enough to make it fail to bind? And if
+mesa still happily binds against that, then yeah it's probably too broken
+and we need etnaviv-v2 (as a drm driver uapi name, I think that's what
+mesa filters?) for anything new (including the NN-only ones).
 
+I would still try to avoid that, but just in case someone screams about
+regressions.
+-Sima
 -- 
-With best wishes
-Dmitry
+Daniel Vetter
+Software Engineer, Intel Corporation
+http://blog.ffwll.ch
 
