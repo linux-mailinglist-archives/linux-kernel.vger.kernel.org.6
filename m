@@ -1,59 +1,74 @@
-Return-Path: <linux-kernel+bounces-230145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECE091790E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:35:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF07991790F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:35:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28C722837F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:35:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA703285E55
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3D514F102;
-	Wed, 26 Jun 2024 06:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89B1F155749;
+	Wed, 26 Jun 2024 06:35:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="wI+R+oMZ"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWd+s13e"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E9ED10F4;
-	Wed, 26 Jun 2024 06:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FB5155327
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 06:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719383718; cv=none; b=OTYYRvZeIjIXG/us0xbXKknZBj+dk63leWy+hfuADSDYVHZLnOghU+wYH0fPPdki3WhNR0Di8IJ/wsQvUS7jMGssYgNrUdBQwQFhJzRa4/evYHqA9e0aL1Fb49Q2d9So+Ulhpxf1zVGNgsXZv/6pLJfWoHxgLtTYycYP5MyO/+8=
+	t=1719383722; cv=none; b=W1IeEJbi9Xwjwc+fKj27myLTXmgctREihSpNrWZ3FIvx/tJ1RuiVk9uJ5IaUALkcE0e2DrXU0yBETygXjoGRuf+4JfsVXJnD6UuA2NuE7p2HJtISGHQIwF2HgbPG9j3n18DHvvxet5aqmi0Kkr1/4+XOjA8bDo/BGZwOUhoX+Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719383718; c=relaxed/simple;
-	bh=oVQnVRh7Hjiwa/vBY5JjF7UZQPoxdlWHcd07dzJeauI=;
+	s=arc-20240116; t=1719383722; c=relaxed/simple;
+	bh=0XS+alGRG/TmhvU3VWxd9zWElmlBNhhOQf24WCx1o1c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l5D8c1orOiI73JOjidBJz4qILSE/xySOKwpm+/hnj/28NTQul3V+EekMGmX3SdMlArHU2Rg4ZYB3J3d6tnr/yGhWvwj+ZhhxSZ0UZkqa54SBQe0Ceob6TKf6xh6oVhrIVDmpk3WgK0EddRPimklzFQg+gPmNrhW/mNUZW6xfC4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=wI+R+oMZ; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id B10951F9C6;
-	Wed, 26 Jun 2024 08:35:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1719383711;
-	bh=2bQvCiVU8Eu/kfnaC/zVKXhsgqWeoaoM4SwjWSgpRlY=; h=From:To:Subject;
-	b=wI+R+oMZbaQ2HQEE7C3NEbJV77Iy3dTo7H2IzjOPP42xAROivTiqagm81U7tuplAv
-	 N318AavglIRqFLh0WcBSoMmLSU8Fd24jAMHEnV4B/P5dzKgJ/0Ghq24NOQIT9jhKUA
-	 Z+x+MuedE/mimQ6ZxwTmCskLr4ilybpd2gu9n0CKrld/sBpwp+P6mupfcLu/wRTXhz
-	 GE5l2W2dfY9wAIe4N/kMLeOeJ4XQzRctsr45RQmVt4O0s3Vh5lDmm5oDoCgMLcn+ms
-	 cA1xLbsR7/k4Y2sRbhw4bv2+VolrDzVPTgI9cbBTazni79iwDeFVwSyN2Xb+0eIaTN
-	 1VnnmmCEngnEw==
-Date: Wed, 26 Jun 2024 08:35:06 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Christian Eggers <ceggers@arri.de>,
-	Francesco Dolcini <francesco.dolcini@toradex.com>,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] dt-bindings: eeprom: at25: add  fujitsu,mb85rs256
- compatible
-Message-ID: <20240626063506.GA4324@francesco-nb>
-References: <20240612092934.12282-1-francesco@dolcini.it>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QORcBx4+cceo0dlmKwcKg8VHvP+ZK2SKM82CF6oCRSjbBjCC4Kc5x0xUfEqMWmPqkfauesvU0F53Gp8NcgbzC03bi1Bo8oRi2v5uerxtU7IhmXTwmJB5pQxLOlmt4ovJ2+xDwbYErKE7OtqA7jgP4v4OC/aSKzgWDeonhvyXBEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWd+s13e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 61C07C2BD10;
+	Wed, 26 Jun 2024 06:35:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719383722;
+	bh=0XS+alGRG/TmhvU3VWxd9zWElmlBNhhOQf24WCx1o1c=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=FWd+s13e98R0YcjqevFlnHM+wbGn0gZJE1LfPjWAWsueSQqVLEo6vCbqtlErkJJY0
+	 872S1iTqtZBL9uaKDkKwGSLriT2wptCFCbwfPt2b2H97jJveFtvFc/dO/QISKQk47I
+	 pAZFLfGm4xpCfkRlNEfZCvVyPCaai4Bmugz2MdCaf56vhg0a9iFUN5ssQTt3DjIGUC
+	 xpkPS20dCyB8/eOpKj9ViVbxP21qA3LIsDNh61Ch+JXa02CBNehhCKJ5UTAZdnH5wy
+	 k5pSLX+EXQnvp51DCCQR3uG6tFqh+CVRutevsO6kxN43gLzBtMez5x3s3JZgaC+xn8
+	 tt2D+ClwfyqKQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id EBCB5CE08FF; Tue, 25 Jun 2024 23:35:20 -0700 (PDT)
+Date: Tue, 25 Jun 2024 23:35:20 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Alexandre Chartre <alexandre.chartre@oracle.com>,
+	Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Sean Christopherson <seanjc@google.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	KP Singh <kpsingh@kernel.org>, Waiman Long <longman@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
+Subject: Re: [PATCH v5 1/3] x86/syscall: Mark exit[_group] syscall handlers
+ __noreturn
+Message-ID: <ed2e6788-f207-4676-920c-0198398bd639@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <cover.1715059256.git.jpoimboe@kernel.org>
+ <9ad251f6258adde596fb1f4d6826309b9f239ed3.1715059256.git.jpoimboe@kernel.org>
+ <31af8226-8357-493e-a280-465f91b58d35@paulmck-laptop>
+ <4b97c5c8-73ac-417d-8b1c-61ccd0768bda@paulmck-laptop>
+ <20240626052825.27gt6ij3fhu6iolc@treble>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,30 +77,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240612092934.12282-1-francesco@dolcini.it>
+In-Reply-To: <20240626052825.27gt6ij3fhu6iolc@treble>
 
-Hello Rob,
-
-On Wed, Jun 12, 2024 at 11:29:34AM +0200, Francesco Dolcini wrote:
-> From: Francesco Dolcini <francesco.dolcini@toradex.com>
+On Tue, Jun 25, 2024 at 10:28:25PM -0700, Josh Poimboeuf wrote:
+> On Tue, Jun 25, 2024 at 07:21:34PM -0700, Paul E. McKenney wrote:
+> > On Tue, May 07, 2024 at 07:38:32AM -0700, Paul E. McKenney wrote:
+> > > On Mon, May 06, 2024 at 10:30:04PM -0700, Josh Poimboeuf wrote:
+> > > > The direct-call syscall dispatch function doesn't know that the exit()
+> > > > and exit_group() syscall handlers don't return, so the call sites aren't
+> > > > optimized accordingly.
+> > > > 
+> > > > Fix that by marking those exit syscall declarations __noreturn.
+> > > > 
+> > > > Fixes the following warnings:
+> > > > 
+> > > >   vmlinux.o: warning: objtool: x64_sys_call+0x2804: __x64_sys_exit() is missing a __noreturn annotation
+> > > >   vmlinux.o: warning: objtool: ia32_sys_call+0x29b6: __ia32_sys_exit_group() is missing a __noreturn annotation
+> > > > 
+> > > > Fixes: 7390db8aea0d ("x86/bhi: Add support for clearing branch history at syscall entry")
+> > > > Reported-by: "Paul E. McKenney" <paulmck@kernel.org>
+> > > > Closes: https://lkml.kernel.org/lkml/6dba9b32-db2c-4e6d-9500-7a08852f17a3@paulmck-laptop
+> > > > Tested-by: Paul E. McKenney <paulmck@kernel.org>
+> > > 
+> > > Just reaffirming my Tested-by, and thank you!
+> > 
+> > And just following up, given that I do not yet see this in -next.  Any
+> > chance of this making the upcoming merge window?
 > 
-> The fujitsu,mb85rs256 is a 256 Kbit SPI memory FRAM in the same family
-> as the two existing fujitsu,mb85rs* compatibles and at25 compatible.
-> 
-> Signed-off-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> ---
-> No changes in the driver is required for this to be used, a device tree
-> file using it will come in a later step. Sending to minimize work
-> slowdown because of TI DT maintainer requirements on DT bindings, see
-> https://lore.kernel.org/all/469be7c2-6865-40d4-bd06-15dc3a08b3e3@kernel.org/
-> for more details.
-> ---
->  Documentation/devicetree/bindings/eeprom/at25.yaml | 1 +
+> Sorry for my slowness!  I'm traveling this week but let me repost this
+> (with your Tested-by) and grab somebody to merge it.
 
-Are you going to pick this patch? From what I can see in the past
-it was either you or gregkh to apply patches to this file, however
-gregkh is not in cc: here.
+No worries, and thank you!
 
-Francesco
-
+							Thanx, Paul
 
