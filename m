@@ -1,177 +1,109 @@
-Return-Path: <linux-kernel+bounces-230075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C89D917817
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:28:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3801B91781A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:28:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F87B1C22114
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:28:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3435281F07
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564BC1448EA;
-	Wed, 26 Jun 2024 05:28:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P9rEIxGw"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3617614601F;
+	Wed, 26 Jun 2024 05:28:48 +0000 (UTC)
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F0F143C70;
-	Wed, 26 Jun 2024 05:28:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4B1813B78F;
+	Wed, 26 Jun 2024 05:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719379683; cv=none; b=FLU6mj8wQ0QqeIdko0kxxnHn733pjWyoynBH7Ig+dYH7XA2Nb/fF+XYhMJakSg8qXnRX/NCxV/8sm8me4naWwQj8LwNzjAiQFW7vmBGl0qgknS51nVWPGWhArME803cpOeLRlImThwA+xFrSFwJo1cIarBXfBvLSoKsKq/YVZ5M=
+	t=1719379727; cv=none; b=f6haXMuVEcWuhNQNkFsy7RUebK5kgfHcvtKuhsgDUN4DYsZ/sP3kM60fsokvzpydQ6mMMwZWGlFKCz50FJuY12sa2Wfnt8mzrcs68fYC2FcQU2ymmrqzYXyHXDoRjLuC1q3zWAHjbQSsOvfPCVEQk9oRJqpa6a8iy5WmbfXshbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719379683; c=relaxed/simple;
-	bh=gqIrlSFN7Q077XmmtzRgBDw2bUKKLUZ3uDf4nCewmNA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tsDQIJPL6+U4MVHQE2mI1sEcrnISmckDGAS/4PJXjU8vcaZ/tfLcxv0Jbup+ZUvSODD4PJPv4gpJ5GRciXZQc2ovq0U4tGE95BJP141Pu1GJ6pSQ41vkC25M3tYJmaCwrDGL2GkQ1iEOGPqjEJ8LfqD+nVMd1MOBOPIpUJaE6mE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P9rEIxGw; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3672ab915bdso12172f8f.3;
-        Tue, 25 Jun 2024 22:28:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719379680; x=1719984480; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xNjNDp/8w/LBntDpoHkINzJ57LeRYfU/2b/EYE/JleQ=;
-        b=P9rEIxGwwxbw1DMTUTae+nd7JDbvqFynRGsWOxfZa5vfYC9q/Prp+A+0N94aQq1BjQ
-         pSSJxGzbQMb6IfxtCt+DyP02MsxnAWU3bS+IgFkrLx8YnJGsIVO4jXjCuKKC2rybWXD1
-         WQffBrmHex39U6AwANB/GHnRE1DeIhEHVJZxVF01/6BjtOF7QD+Lf1tk4n8vJ1jAKeBc
-         LzHWIMXU2SypHpY7FxJ9r0Bmx4S680bW+5DECYQFwC2Pgr6cxBLiOZmIas7icWLG/Z/z
-         iLgLSjO4NVSZEatvhoFUbPsVIkvsR3mXyg5cEpQUtd5inPSIC2kz2Jz+ePBmMrGrnfd2
-         J3lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719379680; x=1719984480;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xNjNDp/8w/LBntDpoHkINzJ57LeRYfU/2b/EYE/JleQ=;
-        b=FGTrtZYNUfcyemBWFLH1idZE3/wai/VDO+w0ebmtLJdnmDWJ5ZRmgIlL3CxEGosnH3
-         dTEO9yDyChjgfKVppD4NgOWf75R9ged4xmMbZNHZX7lw+C5110nflUmU47dBYBuHaC3H
-         M5iB0RwSyW5Nkr78nzHXY2z3mwyYPmBqsQlLhjbhdMGsL/4uHzIUlDVHRJF/KhRnMqq0
-         T9oX5WZ0zh9Xj/4MEBM1xK3KW1Gi3qKdXcr4T9T3dwBs3+TgaUqpCNT6yeNtGnfuGxdT
-         Qs6Xe7NNaZ5837nSViDHfwShlSdaJkYx5tispJAYjEu9TOep6a8kCE8va57yc8Sh6boh
-         uLUA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/TnXdR57jNsx7H+nGiRMw3SoXrul+Jpc37KsCVHeYpbrESkfczz64uVsQkcWTfdde3HJu1lr1XdO26L0B3bKGb4bQLdKtFyB01OYLZp3PBWeV0N2jP4+mBKLuU2XgvvZxi/fmfsHnd0U=
-X-Gm-Message-State: AOJu0YwOr09uwUX8mm0MjEokBFc6g7YpdquTaXIAEFSdF8UXbPdaqQ1e
-	+gHgWdUHDdUtwjDkwL95HMExM0yzDhVyN5vai8dr5GvU5bKxpuni
-X-Google-Smtp-Source: AGHT+IEJwIL07uFAbaf5dW8x4d2flONUAUoa75SWzrPDUykhAsl4IaZZP6dli6kK/i8KiqSKjSGPVA==
-X-Received: by 2002:a05:6000:1fa9:b0:365:ca95:b6cd with SMTP id ffacd0b85a97d-366e2aa64ddmr7226545f8f.7.1719379680117;
-        Tue, 25 Jun 2024 22:28:00 -0700 (PDT)
-Received: from [192.168.0.103] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638d9bd0fsm14758229f8f.52.2024.06.25.22.27.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 22:27:59 -0700 (PDT)
-Message-ID: <c8daf5a0-f511-4071-8c24-3e39aca9e68c@gmail.com>
-Date: Wed, 26 Jun 2024 07:27:58 +0200
+	s=arc-20240116; t=1719379727; c=relaxed/simple;
+	bh=zLRst5U/dLmvEUbfJH9CcN41z0qbxMYggen2chbXKxc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=CS6nKTivs03+JeMXF6kbjc1uSmP9A8sXxFZcqvLNsTRFr6SdZzcci3eoKWO6SGIJz+IVL8lsf+xakehqMwj540gTTYMVvYuRACGMcBbw7N8hoz7eYlY5Ho/BZ3ftxuRgbs6zkeVBNLX9yxelhV/eKuUNb2GehhL2pjUl2rqIRoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 45Q5S89C01136783, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (rtexh36506.realtek.com.tw[172.21.6.27])
+	by rtits2.realtek.com.tw (8.15.2/3.02/5.92) with ESMTPS id 45Q5S89C01136783
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 26 Jun 2024 13:28:08 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTEXH36506.realtek.com.tw (172.21.6.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 26 Jun 2024 13:28:08 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Wed, 26 Jun 2024 13:28:07 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7]) by
+ RTEXMBS04.realtek.com.tw ([fe80::1a1:9ae3:e313:52e7%5]) with mapi id
+ 15.01.2507.035; Wed, 26 Jun 2024 13:28:07 +0800
+From: Justin Lai <justinlai0215@realtek.com>
+To: Jakub Kicinski <kuba@kernel.org>
+CC: "davem@davemloft.net" <davem@davemloft.net>,
+        "edumazet@google.com"
+	<edumazet@google.com>,
+        "pabeni@redhat.com" <pabeni@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "andrew@lunn.ch"
+	<andrew@lunn.ch>,
+        "jiri@resnulli.us" <jiri@resnulli.us>,
+        "horms@kernel.org"
+	<horms@kernel.org>,
+        "rkannoth@marvell.com" <rkannoth@marvell.com>,
+        "Ping-Ke
+ Shih" <pkshih@realtek.com>,
+        Larry Chiu <larry.chiu@realtek.com>
+Subject: RE: [PATCH net-next v21 12/13] realtek: Update the Makefile and Kconfig in the realtek folder
+Thread-Topic: [PATCH net-next v21 12/13] realtek: Update the Makefile and
+ Kconfig in the realtek folder
+Thread-Index: AQHaxgC74unetcPOEkWaER3yo/MGorHYuHIAgADOJDA=
+Date: Wed, 26 Jun 2024 05:28:07 +0000
+Message-ID: <f7748d20b5974d6188b690d935a85b29@realtek.com>
+References: <20240624062821.6840-1-justinlai0215@realtek.com>
+	<20240624062821.6840-13-justinlai0215@realtek.com>
+ <20240625180758.069a9d4f@kernel.org>
+In-Reply-To: <20240625180758.069a9d4f@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: nvec: use x instead of x != NULL
-To: Julia Lawall <julia.lawall@inria.fr>
-Cc: Tom Mounet <tommounet@gmail.com>, Marc Dietrich <marvin24@gmx.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net,
- linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, outreachy@lists.linux.dev
-References: <667b2ee6.050a0220.f9c1.5426@mx.google.com>
- <c2911f68-d1e2-4b45-af95-590926b7a6f1@gmail.com>
- <21151f5a-059-538c-3cec-7c40d625c5a8@inria.fr>
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <21151f5a-059-538c-3cec-7c40d625c5a8@inria.fr>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-On 6/26/24 06:48, Julia Lawall wrote:
-> 
-> 
-> On Wed, 26 Jun 2024, Philipp Hortmann wrote:
-> 
->> On 6/25/24 22:56, Tom Mounet wrote:
->>> Comply with coding rules defined in checkpatch
->>>
->>> Signed-off-by: Tom Mounet <tommounet@gmail.com>
->>> ---
->>>    drivers/staging/nvec/nvec.c | 4 ++--
->>>    1 file changed, 2 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
->>> index e5ca78e57..814eb121c 100644
->>> --- a/drivers/staging/nvec/nvec.c
->>> +++ b/drivers/staging/nvec/nvec.c
->>> @@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
->>>    {
->>>    	mutex_lock(&nvec->sync_write_mutex);
->>>    -	if (msg != NULL)
->>> +	if (msg)
->>>    		*msg = NULL;
->>>      	nvec->sync_write_pending = (data[1] << 8) + data[0];
->>> @@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
->>>      	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
->>>    -	if (msg != NULL)
->>> +	if (msg)
->>>    		*msg = nvec->last_sync_msg;
->>>    	else
->>>    		nvec_msg_free(nvec, nvec->last_sync_msg);
->>
->>
->> Hi Tom,
->>
->> what you change in this patch is fine. But the Description is not so lucky.
->> Reason is that checkpatch is not defining the coding style. Not at all.
->> Sometimes checkpatch is even wrong. The description I like would be:
->>
->> Use x instead of x != NULL to shorten code.
->>
->> or
->>
->> Use x instead of x != NULL to improve readability.
->>
->> If you send in a second version of this patch please use a change history.
->> Description from Dan under:
->> https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
-> 
-> How about adding "Issue identified by checkpatch"?  Checkpatch helped find
-> the problem, so it would be nice to acknowledge that.
-> 
-> julia
-> 
+>=20
+> On Mon, 24 Jun 2024 14:28:20 +0800 Justin Lai wrote:
+> > diff --git a/drivers/net/ethernet/realtek/Makefile
+> > b/drivers/net/ethernet/realtek/Makefile
+> > index 635491d8826e..046adf503ff4 100644
+> > --- a/drivers/net/ethernet/realtek/Makefile
+> > +++ b/drivers/net/ethernet/realtek/Makefile
+> > @@ -9,3 +9,4 @@ obj-$(CONFIG_ATP) +=3D atp.o  r8169-y +=3D r8169_main.o
+> > r8169_firmware.o r8169_phy_config.o
+> >  r8169-$(CONFIG_R8169_LEDS) +=3D r8169_leds.o
+> >  obj-$(CONFIG_R8169) +=3D r8169.o
+> > +obj-$(CONFIG_RTASE) +=3D rtase/
+>=20
+> sparse points out:
+>=20
+> drivers/net/ethernet/realtek/rtase/rtase_main.c:1668:32: warning: cast to
+> restricted __le64
+> drivers/net/ethernet/realtek/rtase/rtase_main.c:1668:32: warning: cast fr=
+om
+> restricted __le32
+> --
+> pw-bot: cr
 
-Hi Julia,
-
-The following lines sound very authoritative. It is only my opinion and 
-can be wrong.
-
-I think checkpatch is valued a lot because every patch send in is 
-checked by checkpatch. checkpatch can be mentioned in the description. 
-But the developer cannot hide at all behind a checkpatch warning/error 
-message. The developer must take full responsibility for the patch. The 
-developer needs to use common sense.
-
-Please have a look at this email from Greg:
-https://lore.kernel.org/linux-staging/2024062443-udder-spotted-cc0d@gregkh/T/#m280ebb2be94e434234f405e722fc35dc6d1db710
-
-I think that Greg once wrote that he does not care about the tool that 
-found the issue. He much more cares about if the change makes sense. The 
-"Why" in the description is most important for him. And the why cannot 
-be because checkpatch or any other tool told the developer so.
-
-Thanks for your support.
-
-Bye Philipp
-
-
-
-
-
-
-
+Sorry, I will modify it.
 
