@@ -1,126 +1,122 @@
-Return-Path: <linux-kernel+bounces-230038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3971C917799
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:50:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 56BA7917793
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:49:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7D0E1F22577
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:50:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F229E1F2223B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:49:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A535014A602;
-	Wed, 26 Jun 2024 04:49:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8739713C8F5;
+	Wed, 26 Jun 2024 04:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="u96Etjop"
-Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TIiwVMMI"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DBB13C3F9;
-	Wed, 26 Jun 2024 04:49:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 924F9A31;
+	Wed, 26 Jun 2024 04:49:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719377369; cv=none; b=fCTXcHPjZSj358TveaEQm2wdn9XRbQgjXKGgYmFfcRnBKfkbqba+TWgeB+452IeDVy6dEfQTFsRAksVRDhB+ewgXMdtT1mqJVOM+qOew6sqVoA6lJ4umAs/er/1EhpYrCD9hEzlPAzB0koIxgSsQWjnbWwtBmmCOGzvXztnLZHw=
+	t=1719377356; cv=none; b=qhbM1YEKLaneUOMdKI+uoV3Dw9FSchxPRrIqEwoVJBYDRA0sFrQmYHyPo4hEFseNkd/wwTWAX6Mkfwl5L+5suip+mMmjOOMXdGT0aybDmKNz6ZzKdsQ+CINHwf+kIyocjl884uc14Gy9oO1SsApZKOKRxzV5fggJauY1s2tXA3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719377369; c=relaxed/simple;
-	bh=DeNUckMmF4HuoYfQPD23ziZ14eW1uotkgiAdWyU4xxY=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=OvRwftbc2s9Z42ixqlxkeOYjUU9bPXgZiF89exNJTfth8knFTJTQ2/k34cyKxoTyf2nSYPm8foj3EsVzFOF49QRjHyRDjITPm7VoHGD+0cSZDs1lJ9wV/j+YH7eySq2H8gkyiaT1fT2dkEYFHWYskO2Cdmn0Jetr2XBM1IxJl7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=u96Etjop; arc=none smtp.client-ip=192.134.164.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+	s=arc-20240116; t=1719377356; c=relaxed/simple;
+	bh=6Dt7XKN/gWWkoSUe/anFSkfct0JMHFUjoOQdigdCoY0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KMXStk67LT47twi+iRSQadwvLJ0SQhn5TG8nuIMc9eBzHU8QsgG3JxP7oL9FRPOziOEO4Ir9nmmWtfUzKz+inDrUCH1ylfLwtG4+p9ye4+LvzsE+GbtBbDS9l9o6TlDhNpxEuTbiyEESN8hovPa52a0iSQOJ7je2SB9mHJhi6EA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TIiwVMMI; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-1f4a5344ec7so1164215ad.1;
+        Tue, 25 Jun 2024 21:49:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=gWh23bngFhtOBET3jRZTmg2MWDWx9l+WXBy5PKJFqxo=;
-  b=u96Etjop0wXuyWgHQWBwrlZVH6sEVJgjoyS+LoNx5zy7VPXmLaN7+mrv
-   CnPaAgtTCqNOd+M4U8XRSAMqcd+JUl1dDV0H8ZZlLYFMHNlRgOPm0iZ+k
-   PHHpls2Mhb1Jaj74urRKaN3gEh+2U3HjJdfBPO1M9r0/L/mBQeAIyIYQp
-   U=;
-Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.08,265,1712613600"; 
-   d="scan'208";a="90632967"
-Received: from 203-174-183-243.bri.static-ipl.aapt.com.au (HELO hadrien) ([203.174.183.243])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 06:48:08 +0200
-Date: Wed, 26 Jun 2024 14:48:03 +1000 (AEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-cc: Tom Mounet <tommounet@gmail.com>, Marc Dietrich <marvin24@gmx.de>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net, 
-    linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev, 
-    linux-kernel@vger.kernel.org, outreachy@lists.linux.dev
-Subject: Re: [PATCH] staging: nvec: use x instead of x != NULL
-In-Reply-To: <c2911f68-d1e2-4b45-af95-590926b7a6f1@gmail.com>
-Message-ID: <21151f5a-059-538c-3cec-7c40d625c5a8@inria.fr>
-References: <667b2ee6.050a0220.f9c1.5426@mx.google.com> <c2911f68-d1e2-4b45-af95-590926b7a6f1@gmail.com>
+        d=gmail.com; s=20230601; t=1719377355; x=1719982155; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=w5+SCZL6xBFJrCff4JpY/ZI9sXTroZDoGWt636czmAI=;
+        b=TIiwVMMImuL4TRjPQ1jWWgGwJGgpaVquaNXkpDQJw1hlj/TZvLWhtSzss183WvCn66
+         bmvNsjgcOl7OYxz1GzEBIYjDZuXaRLJRu8ClAYpjtxtrlBLg5OBdfDzcEMIdueCnqawd
+         O0rTs6arcyG0tTXNi8e1s4iq3mGWyU6G3rJkXKTJYgoPifMAqjDFNnyo90l6edeyHoZ+
+         SoHHSs5aJtYWbCoJ4wyXlfGtfRFIuTO+iOUWmIPKcQQr9y+UnNgOziYxG5+RfaEX+zBr
+         WnundSRan5+PvaABqair0prMwb9Cb+oQA/ib6bZNZpz1FiWeYAP2bAuNkUIWOhu0RP8V
+         FiAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719377355; x=1719982155;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=w5+SCZL6xBFJrCff4JpY/ZI9sXTroZDoGWt636czmAI=;
+        b=g8q/UDbBaQJCc5cvydAuKtq5xr+sSvTW0Q/K8bUXJtAP/NLmXQHV695pKp0cjvkcsA
+         yp/AIE3JNTIP1sMGEqLbLQLOpoCqU6zqoKWWezG5cNRlmse0pfv2KlDXJqBjqN/r3SsA
+         /yGUa6iZYDRhWSn6Y6iXuDh/InPKafHPHVAAQf6+o/9xPYQqv6oli5CqioVQIK/rre6F
+         Y2uDDCShTkiugsY2JujW9zeciV5X2MCNNs+g5aPVTz8zfO8RaEeJCAgx7QM03fmbznkG
+         Il2zgKF2FL7thzTmGJlZJAaqeTiQqyXJWUJC0ecfpvYAFc9MTCxo/+so5JKOb8mRYLE5
+         9cSg==
+X-Forwarded-Encrypted: i=1; AJvYcCWkfq/LU1aIJwXjHM0Yx+6QsUUCnVOYVJFubz8crqRLgAb0G4sQEHQH5g7LsYTV8ntX3y3AyrVuvWKOk1h4waiMOAf4TnpXivJWJ/zsYpL572u9YQrLTvO/eXposNIdYC4WTBfS8bSy
+X-Gm-Message-State: AOJu0Yw+luT6lAsUy9i18QXfE84aY02Z2KGxMW+vIG66w+NYcj40tQKx
+	IFfnanG8LtlY+dRJzDoz7w+609dHBMIRKQiblgKRZ5dtnRTqU0M6
+X-Google-Smtp-Source: AGHT+IFxvYwx8UH7TXFQTAd7omh0bHDOc5uls7ujnQVFgrUqbPAyG9Dm7knlZpwIxJcfDSfXETeJRg==
+X-Received: by 2002:a17:903:2445:b0:1f9:ba4b:57d2 with SMTP id d9443c01a7336-1fa0fb0494emr151086615ad.27.1719377354709;
+        Tue, 25 Jun 2024 21:49:14 -0700 (PDT)
+Received: from localhost.localdomain ([43.135.72.207])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb321a8esm90110685ad.96.2024.06.25.21.49.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 21:49:14 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: alexjlzheng@tencent.com
+To: chandan.babu@oracle.com,
+	djwong@kernel.org
+Cc: david@fromorbit.com,
+	hch@infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	alexjlzheng@tencent.com
+Subject: [PATCH v3 0/2] Separate xfs_log_vec/iovec to save memory
+Date: Wed, 26 Jun 2024 12:49:07 +0800
+Message-ID: <20240626044909.15060-1-alexjlzheng@tencent.com>
+X-Mailer: git-send-email 2.41.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
+From: Jinliang Zheng <alexjlzheng@tencent.com>
 
+xfs_log_iovec dominates the memory usage of the
+xfs_log_vec/xfs_log_iovec combination, and it is no longer useful after
+the data is flushed to the iclog. This patchset separates xfs_log_iovec
+from xfs_log_vec and releases them early to save memory.
 
-On Wed, 26 Jun 2024, Philipp Hortmann wrote:
+Changelog:
+V1:
+- https://lore.kernel.org/linux-xfs/20240623123119.3562031-1-alexjlzheng@tencent.com/
 
-> On 6/25/24 22:56, Tom Mounet wrote:
-> > Comply with coding rules defined in checkpatch
-> >
-> > Signed-off-by: Tom Mounet <tommounet@gmail.com>
-> > ---
-> >   drivers/staging/nvec/nvec.c | 4 ++--
-> >   1 file changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
-> > index e5ca78e57..814eb121c 100644
-> > --- a/drivers/staging/nvec/nvec.c
-> > +++ b/drivers/staging/nvec/nvec.c
-> > @@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
-> >   {
-> >   	mutex_lock(&nvec->sync_write_mutex);
-> >   -	if (msg != NULL)
-> > +	if (msg)
-> >   		*msg = NULL;
-> >     	nvec->sync_write_pending = (data[1] << 8) + data[0];
-> > @@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
-> >     	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
-> >   -	if (msg != NULL)
-> > +	if (msg)
-> >   		*msg = nvec->last_sync_msg;
-> >   	else
-> >   		nvec_msg_free(nvec, nvec->last_sync_msg);
->
->
-> Hi Tom,
->
-> what you change in this patch is fine. But the Description is not so lucky.
-> Reason is that checkpatch is not defining the coding style. Not at all.
-> Sometimes checkpatch is even wrong. The description I like would be:
->
-> Use x instead of x != NULL to shorten code.
->
-> or
->
-> Use x instead of x != NULL to improve readability.
->
-> If you send in a second version of this patch please use a change history.
-> Description from Dan under:
-> https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+V2:
+- add kmem_cache for small object xfs_log_vec
+- reduce redundant free and allocation of xfs_log_vec
+- https://lore.kernel.org/linux-xfs/20240625182842.1038809-3-alexjlzheng@tencent.com/T/#u
 
-How about adding "Issue identified by checkpatch"?  Checkpatch helped find
-the problem, so it would be nice to acknowledge that.
+V3:
+- simplify code for same or smaller
+- fix warning: unused variable 'lvec' [-Wunused-variable] in
+  xlog_finish_iovec
 
-julia
+Jinliang Zheng (2):
+  xfs: add xfs_log_vec_cache for separate xfs_log_vec/xfs_log_iovec
+  xfs: make xfs_log_iovec independent from xfs_log_vec and free it early
 
+ fs/xfs/xfs_log.c     |  3 +++
+ fs/xfs/xfs_log.h     | 10 ++++++++--
+ fs/xfs/xfs_log_cil.c | 34 ++++++++++++++++++++--------------
+ fs/xfs/xfs_super.c   |  9 +++++++++
+ 4 files changed, 40 insertions(+), 16 deletions(-)
 
->
-> Thanks
->
-> Bye Philipp
->
->
+-- 
+2.41.1
+
 
