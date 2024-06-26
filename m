@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-230831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 219DB918271
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:31:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E57D5918279
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:32:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BCF21F25AD9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:31:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B34BCB29665
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9E88181BBF;
-	Wed, 26 Jun 2024 13:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A6F418412F;
+	Wed, 26 Jun 2024 13:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R7jeLE29"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KKqfU17f"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB89E8825;
-	Wed, 26 Jun 2024 13:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865B6183098;
+	Wed, 26 Jun 2024 13:31:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719408691; cv=none; b=rphFq5sT0Vm9KpnDcyetDrTH5vnCxVr3AZcFsYegk1I6Am3x3OTB3sWzpZ2y5ZjA04HkBxRv2vP6D9KiWF+061gT6scqrVDaeY4Lks1jdmzWLD68gI0hoG0JdvHFMIkuSF7lavN2TRgs+3TkDQDfVn0M6UgvxSRYli9gZL6FcIw=
+	t=1719408692; cv=none; b=U3K7Za04c5MBpiEC3Ta9KtGn7BoO3g8qHc7XMa0jyP7J+wZRyIr24pEkNWVzgCEz2dMGzeVj1LFmuVhAh/2NfIugrPGveIa1qf5adFx3L7FLixISoRdg+Z+VZjJnM8RXoka6edXyyqDszvAg0ETb8qNde+oEjYMkihprei6DHow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719408691; c=relaxed/simple;
-	bh=qWRZjYdp6f0m7F2CPEnOeoB7wAZFdZxYUWa0DLizaZs=;
+	s=arc-20240116; t=1719408692; c=relaxed/simple;
+	bh=IooSaIwKO+iI7jZmr49oMzicKBnlZBk7V8h98yUmyXY=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=jkuuS4T6uq8vZMkKGyS1SMZQIbDzfjsT+SnXUP12vA/oT50OzJNcJxzl5MDZxSruTGbGpbVw9ae6h05JIxxuLGirLinyNJaA3M7dxMBhOAlpf1avMCJmIP262rhU6PjEl1FfWWtJCUYsW6KTzZDcBcDrwHPZqZlih49Fdahfjt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R7jeLE29; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F693C2BD10;
-	Wed, 26 Jun 2024 13:31:30 +0000 (UTC)
+	 Message-Id:Subject; b=Q7MStfv0AdOje2yQ3SofcT60LjxsAcIUxHfV08BdZdBfU63D67qc5u9p6gSc3hiQUd250x8gfCzylvu3vt62hXNM58u01Blou7FW5mbs9eDGds/ZQFRhUuUA3SVRvT9KwApjUP+NntZDtii18y6g52fz/MB5377wpPL5rRbtVz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KKqfU17f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1419C4AF0E;
+	Wed, 26 Jun 2024 13:31:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719408690;
-	bh=qWRZjYdp6f0m7F2CPEnOeoB7wAZFdZxYUWa0DLizaZs=;
+	s=k20201202; t=1719408692;
+	bh=IooSaIwKO+iI7jZmr49oMzicKBnlZBk7V8h98yUmyXY=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=R7jeLE29XB+cvHIPvyIyRJcrkMxEW5ws6Wh4978oi2akpn6WdF5kDSjm/KjNozEkF
-	 nKuti987SfpPxl03XISvVyULKG4QjvWq6gHMIaFMWgSXsXM5+qxuDvU1c7XUeoOX6C
-	 9TjMHyBKwatoLS9wiVdVmFofbXQbREZVsORFi071mhIgtDJQJ9LcBan+yQTRjtEvlJ
-	 AcORB5oi1FFKTFcgl2xrpVJRKXyLAde9IGafuWemicR39ET+8CliOcZ9cSMy6NLTwr
-	 3zJavJcJAJ4wXiLb6qlX4d+sowu57kYbkzRJrwTvHtfmwO1s0hafO03xDWzi1mlPUP
-	 EliXnIUIqrw/A==
-Date: Wed, 26 Jun 2024 07:31:29 -0600
+	b=KKqfU17fsaqgBUMVf1eUssHRd9mD4xRECUuuMHga6n+hid24nUZwl8smcC64mRi7F
+	 KlxqYlqJXH8zxQ3ym+BZzUQVFJjnAflfH8qqaJfhbru8hbiCNsAVyTwKgTqiHtdUP+
+	 SNOUTacMQJk+uzfTgIz42ewuoqT+fdER0ItJvSMlk81TgIZZY/w9ZsmIRSbdZo6HQF
+	 LRc8/fB0Eye9y+ApMNosvwbpphNjiF49j75sX/q1KG0ZnU0ebis8T7bB+nwrWOCVeh
+	 djTjbx5U3TP6fooeAuwwxU004UwxeJTsZkMxC4Jey4n9NVl1SYJU2R0iLDG7io9jtx
+	 tH1xE1P4usN0g==
+Date: Wed, 26 Jun 2024 07:31:30 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,45 +50,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Yang Chen <yangchen.openbmc@gmail.com>
-Cc: andrew@codeconstruct.com.au, patrick@stwcx.xyz, joel@jms.id.au, 
- linux-arm-kernel@lists.infradead.org, Jerry.Lin@quantatw.com, 
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org
-In-Reply-To: <20240625121835.751013-1-yangchen.openbmc@gmail.com>
-References: <20240625121835.751013-1-yangchen.openbmc@gmail.com>
-Message-Id: <171940832692.2961326.910026599869370818.robh@kernel.org>
-Subject: Re: [PATCH 00/17] Revise Facebook Minerva BMC DTS
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: netdev@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240625151430.34024-1-brgl@bgdev.pl>
+References: <20240625151430.34024-1-brgl@bgdev.pl>
+Message-Id: <171940832800.2961357.8252372269434038796.robh@kernel.org>
+Subject: Re: [PATCH v2 0/3] arm64: dts: qcom: sa8775p-ride: support both
+ board variants
 
 
-On Tue, 25 Jun 2024 20:18:18 +0800, Yang Chen wrote:
-> Revise the Linux device tree entry related to Facebook platform Minerva
-> specific devices connected to the Aspeed AST2600 BMC.
+On Tue, 25 Jun 2024 17:14:27 +0200, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 > 
-> Yang Chen (17):
->   ARM: dts: aspeed: minerva: change the address of tmp75
->   ARM: dts: aspeed: minerva: Add spi-gpio
->   ARM: dts: aspeed: minerva: change aliases for uart
->   ARM: dts: aspeed: minerva: add eeprom on i2c bus
->   ARM: dts: aspeed: minerva: change RTC reference
->   ARM: dts: aspeed: minerva: enable mdio3
->   ARM: dts: aspeed: minerva: remove unused bus and device
->   ARM: dts: aspeed: minerva: Define the LEDs node name
->   ARM: dts: aspeed: minerva: Add adc sensors for fan board
->   ARM: dts: aspeed: minerva: add linename of two pins
->   ARM: dts: aspeed: minerva: enable ehci0 for USB
->   ARM: dts: aspeed: minerva: add tmp75 sensor
->   ARM: dts: minerva: add power monitor xdp710
->   ARM: dts: aspeed: minerva: revise sgpio line name
->   ARM: dts: aspeed: minerva: Switch the i2c bus number
->   ARM: dts: aspeed: minerva: remove unused power device
->   ARM: dts: aspeed: minerva: add ltc4287 device
+> Split the current .dts into two: the existing one keeps the name and
+> supports revision 2 of the board while patch 2 adds a .dts for revision 3.
 > 
->  .../aspeed/aspeed-bmc-facebook-minerva.dts    | 516 +++++++++++++-----
->  1 file changed, 373 insertions(+), 143 deletions(-)
+> Changes since v1:
+> - add a new compatible for Rev3
+> 
+> Bartosz Golaszewski (3):
+>   dt-bindings: arm: qcom: add sa8775p-ride Rev 3
+>   arm64: dts: qcom: move common parts for sa8775p-ride variants into a
+>     .dtsi
+>   arm64: dts: qcom: sa8775p-ride-r3: add new board file
+> 
+>  .../devicetree/bindings/arm/qcom.yaml         |   1 +
+>  arch/arm64/boot/dts/qcom/Makefile             |   1 +
+>  arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts  |  47 +
+>  arch/arm64/boot/dts/qcom/sa8775p-ride.dts     | 836 +-----------------
+>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi    | 814 +++++++++++++++++
+>  5 files changed, 885 insertions(+), 814 deletions(-)
+>  create mode 100644 arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
 > 
 > --
-> 2.34.1
+> 2.43.0
 > 
 > 
 > 
@@ -108,24 +110,36 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y aspeed/aspeed-bmc-facebook-minerva.dtb' for 20240625121835.751013-1-yangchen.openbmc@gmail.com:
+New warnings running 'make CHECK_DTBS=y qcom/sa8775p-ride-r3.dtb qcom/sa8775p-ride.dtb' for 20240625151430.34024-1-brgl@bgdev.pl:
 
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: /: spi-gpio: {'status': ['okay'], 'compatible': ['spi-gpio'], '#address-cells': 1, '#size-cells': 0, 'gpio-sck': [61, 203, 0], 'gpio-mosi': [61, 204, 0], 'gpio-miso': [61, 205, 0], 'num-chipselects': 1, 'cs-gpios': [[61, 200, 1]], 'tpmdev@0': {'compatible': ['infineon,slb9670', 'tcg,tpm_tis-spi'], 'spi-max-frequency': 33000000, 'reg': [[0]]}} is not of type 'array'
-	from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: spi-gpio: $nodename:0: 'spi-gpio' does not match '^spi(@.*|-([0-9]|[1-9][0-9]+))?$'
-	from schema $id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: spi-gpio: gpio-sck: False schema does not allow [61, 203, 0]
-	from schema $id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: spi-gpio: gpio-miso: False schema does not allow [61, 205, 0]
-	from schema $id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: spi-gpio: gpio-mosi: False schema does not allow [61, 204, 0]
-	from schema $id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: spi-gpio: 'sck-gpios' is a required property
-	from schema $id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: spi-gpio: Unevaluated properties are not allowed ('#address-cells', '#size-cells', 'gpio-miso', 'gpio-mosi', 'gpio-sck', 'tpmdev@0' were unexpected)
-	from schema $id: http://devicetree.org/schemas/spi/spi-gpio.yaml#
-arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-minerva.dtb: tpmdev@0: $nodename:0: 'tpmdev@0' does not match '^tpm(@[0-9a-f]+)?$'
-	from schema $id: http://devicetree.org/schemas/tpm/tcg,tpm_tis-spi.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: usb@a4f8800: interrupt-names: ['pwr_event', 'hs_phy_irq', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
+	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: rsc@18200000: 'power-domains' is a required property
+	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23000000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23000000: phy-mode:0: 'ocsgmii' is not one of ['internal', 'mii', 'gmii', 'sgmii', 'psgmii', 'qsgmii', 'qusgmii', 'tbi', 'rev-mii', 'rmii', 'rev-rmii', 'moca', 'rgmii', 'rgmii-id', 'rgmii-rxid', 'rgmii-txid', 'rtbi', 'smii', 'xgmii', 'trgmii', '1000base-x', '2500base-x', '5gbase-r', 'rxaui', 'xaui', '10gbase-kr', 'usxgmii', '10gbase-r', '25gbase-r', '10g-qxgmii']
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23000000: snps,pbl: [32] is not of type 'integer'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23000000: snps,pbl: [32] is not one of [1, 2, 4, 8, 16, 32]
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23000000: Unevaluated properties are not allowed ('phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23000000: phy-mode:0: 'ocsgmii' is not one of ['internal', 'mii', 'gmii', 'sgmii', 'psgmii', 'qsgmii', 'qusgmii', 'tbi', 'rev-mii', 'rmii', 'rev-rmii', 'moca', 'rgmii', 'rgmii-id', 'rgmii-rxid', 'rgmii-txid', 'rtbi', 'smii', 'xgmii', 'trgmii', '1000base-x', '2500base-x', '5gbase-r', 'rxaui', 'xaui', '10gbase-kr', 'usxgmii', '10gbase-r', '25gbase-r', '10g-qxgmii']
+	from schema $id: http://devicetree.org/schemas/net/ethernet-controller.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23040000: tx-queues-config: 'snps,tx-sched-sp' does not match any of the regexes: '^queue[0-9]$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23040000: phy-mode:0: 'ocsgmii' is not one of ['internal', 'mii', 'gmii', 'sgmii', 'psgmii', 'qsgmii', 'qusgmii', 'tbi', 'rev-mii', 'rmii', 'rev-rmii', 'moca', 'rgmii', 'rgmii-id', 'rgmii-rxid', 'rgmii-txid', 'rtbi', 'smii', 'xgmii', 'trgmii', '1000base-x', '2500base-x', '5gbase-r', 'rxaui', 'xaui', '10gbase-kr', 'usxgmii', '10gbase-r', '25gbase-r', '10g-qxgmii']
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23040000: snps,pbl: [32] is not of type 'integer'
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23040000: snps,pbl: [32] is not one of [1, 2, 4, 8, 16, 32]
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23040000: Unevaluated properties are not allowed ('mdio', 'phy-handle', 'phy-mode', 'power-domains', 'rx-fifo-depth', 'rx-queues-config', 'snps,mtl-rx-config', 'snps,mtl-tx-config', 'snps,pbl', 'snps,ps-speed', 'snps,tso', 'tx-fifo-depth', 'tx-queues-config' were unexpected)
+	from schema $id: http://devicetree.org/schemas/net/qcom,ethqos.yaml#
+arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dtb: ethernet@23040000: phy-mode:0: 'ocsgmii' is not one of ['internal', 'mii', 'gmii', 'sgmii', 'psgmii', 'qsgmii', 'qusgmii', 'tbi', 'rev-mii', 'rmii', 'rev-rmii', 'moca', 'rgmii', 'rgmii-id', 'rgmii-rxid', 'rgmii-txid', 'rtbi', 'smii', 'xgmii', 'trgmii', '1000base-x', '2500base-x', '5gbase-r', 'rxaui', 'xaui', '10gbase-kr', 'usxgmii', '10gbase-r', '25gbase-r', '10g-qxgmii']
+	from schema $id: http://devicetree.org/schemas/net/ethernet-controller.yaml#
 
 
 
