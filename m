@@ -1,153 +1,189 @@
-Return-Path: <linux-kernel+bounces-230171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB1691795D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:11:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54022917962
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:12:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B020D1C21FBF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:11:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09A82284D89
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C391591EE;
-	Wed, 26 Jun 2024 07:11:09 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EBA0159598;
+	Wed, 26 Jun 2024 07:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="oUg8vIl9"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2044.outbound.protection.outlook.com [40.107.22.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8481DA31;
-	Wed, 26 Jun 2024 07:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719385868; cv=none; b=emCGaV4R48J2K81o/jYgqjyji3intCNNBPcdvF8lO56724fHBHXAsWkJTsgyaVPldQUI24hxq8+sf2EWPjtVHNBlDXlHrryAPZWkIVPg/pNlx/ESw5W0XxQquVK7veBbQL8b+qHAx0yZHxatA34L+zOT/9ab9ZdFjGh9UWoOgms=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719385868; c=relaxed/simple;
-	bh=fzxSia2agHN3X/RNLtdjuINsI+EbMnDIGmS892xRA6M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f/FqoRX65DFMTdTmSzTPgvFPqCYnLkli//PZVOeITGpUJxBiSuDYmfEXJ430Ztrj7CTGxiPraqSMkokViRknNUCUlB3hcQg0RZJd1Ts5iCEnsFcE46ce1xwp5NDof7VyEk2a6uHYHUb6i5K1BKd04RYSwsPOBUGwVGo3KxDqa7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-64789495923so11678057b3.0;
-        Wed, 26 Jun 2024 00:11:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719385864; x=1719990664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=07yYxV7EnOmksXH2UcjyWNu5DW1U/oEUl8YKdbIe8Js=;
-        b=VNw+OZ6sxv3lcERUikJ311nzTknwAoGqfSKnJctP4NhEubGj5UmBEk26VRYrzEfWNe
-         xS7jn+Q9H8vU8NyXD8/KD5f4SlUISGeSWv0P8+o/RVe1TNB+/1ebrQF+BiBGURdKuYau
-         uhY46siRWxL3R4fHhWbyLk2L+ZI6IzOAepc9o7jUyjwZb+PlGNeYqVSifZaB8T+Z1+1C
-         ICS1/fA+r9+WAC4f2FCNfRzDPMtnf7VVH/BuLDCR+GwCHHTLj2tnGPVTozPOhbh2ESvJ
-         +CSgsI0w0BiuZTIcyPSWHWq1fOVFQPkjsyOQR1FGYGqc9qkVVpFv4vUrMDjwSxaXUkw+
-         rskg==
-X-Forwarded-Encrypted: i=1; AJvYcCUK41HoK9WWXsHYHlhUD7u/9hLzz8a+IbdHiN4Uw4m/GDAInw9P4HD58fh8RsUrCaYMPqsyfw8Ohk405mTW7f+ivDI7MEK0TW+yQxhpBvQ5kSlAoeMTvbDREV+fDluYFDH28G1Nc9ksGHQoqekz6rMbcu5bx8U3euphGTv4l2dMbFnp8s6HGmJ5qKrN2fR67h1y5YLFOOiFg3SVYGMhWs3fV4GlXm75sqf8TlnjiMxZqrH4TM0PAdzETtBsJgW9b+qG
-X-Gm-Message-State: AOJu0YwjIJTvyO0dxdPaQ6dXyx2Usx3rtatUVNHSiZClry+PiCf05b5+
-	L+ZjGfxBCrIrYGpdeRcj404jA+cHznhA99WRzHAsEGKwyymVFJ7AUoFPuRmc
-X-Google-Smtp-Source: AGHT+IH0zgec7hwqcLbCl46WL8YDXZcl/65syzLW1GAUrRVGI9HTo8JwM/PQVt6qYQrhGcpHiffkXA==
-X-Received: by 2002:a81:6057:0:b0:61a:bc2d:5186 with SMTP id 00721157ae682-643aba46495mr100522467b3.32.1719385864257;
-        Wed, 26 Jun 2024 00:11:04 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f154d6075sm38423587b3.113.2024.06.26.00.11.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 00:11:03 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dfdff9771f8so5922062276.1;
-        Wed, 26 Jun 2024 00:11:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWaoQlIeEnSq1zgag1u614KipmMP2mHJXn0cJuJg60pQ21X6kB3HHMoLuFs7OOoROuvpqT5bu3iYOGQyY9syiNOavhbJI3yAnsBpTjxnK2g2gKEuex8QsdGNEbixwx3/HhDYhDZYlJ4Nu/ToN2k+9NZJDEetN9uLqcFNWdjcE6a/Qn3mHfS5p/YLlvqRAHM3EwPyCv61QSnMCNb1GjGyb0bzESFpzKrm+k2r06iwCJtea3cwtUMQy0cS65DK+M29JoB
-X-Received: by 2002:a25:97c5:0:b0:df7:7065:24cc with SMTP id
- 3f1490d57ef6-e0304045133mr9012192276.61.1719385863499; Wed, 26 Jun 2024
- 00:11:03 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31ECD155A25;
+	Wed, 26 Jun 2024 07:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719385950; cv=fail; b=Dr0PFQzEUaE2F0CZqwf9/IcIJcJw3gfnJLbz6C11M344jn7+IPDRTXrcEuYxTNLdY/VdlbhCgquIW//8LfnQbl+US32tnVnEyd7xHsujjr1YYvNZhZFvE7s+5L4wWYbt/0lF4YNW7mIXWcwY9oP8aZHKbkW8ZPEKX8T+3j/8gt8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719385950; c=relaxed/simple;
+	bh=Ae+Xdhj1U6OY7gfgR2xi7YoZIbhEy5lLi7umUAsx7K0=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=LH7yZ513WjZh+G/4uHkuyH2uRsRVijCMucDF10StTCGMRw2F1r4/U/Q0I7517gFHPRjkFGinqceWJGJNp8VzcKY2kMdJKKFq1os5S1jIh61aTRiN3SzcJhvEB+7yhQDV+wYk36X6ZFP6fAJILvDcHS3hPh0aPQhb1PQXwixdFeQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=oUg8vIl9; arc=fail smtp.client-ip=40.107.22.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=AHFVvUnk5T7LHghqhFiLeucYMJTE4vFM6bIzCp6oiySIwtigcVnZiwGGU2eNsfl9CG8fuZkpK/sWpd+xkf+6OR5MVdWAK7aQ50EUVONtxCSwHTRGfIag6AS9ysrKxP199SyPST2o+JTJrvxhouRnkIg+XU/eVaYUVOH0T1332MUeo8Dv8OdtkNbB42m553r95ny6D4cO0bb5XPL1AkHu/pzdywIZUwPfmrTWkaZYqx+CrhyN7nRWdVaZmjq4b1MbXiV4kbmY6Kk1MYKD+rSwBsHYl4WiTmzhAbf7VYMI5aOqEXCMtnVFSnvGm4L/j5jtv4gZwqmeSnIBWZZBffl//A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XOq/XLbtSKWeeH7t+2vt0Lp8rFoErt5wIiZIzS5ofgM=;
+ b=hp+jmuAEWZb0FMWiQFJnwLKk+vnDFjt7di2cVQgJ50DkC+FeIckAgKfnKpRUa83HAhyjw6YqDNQvuuxysOtwe6wlniaq0KAAQn1APD9J5nm4GX0h4d90/KpkdYD0tRc36XcveFxucAmeoMpO67NX/OesIZva5mauiYSmf8VviLaf4JK6iCeguYBptaV9jgtIXA+95r5KyUW0CxLOIXlxo5fWhP6A+drJY93isYE2o5W3YnDscA4IkZ14nPkDoZQNWk4eNmz4qX0JKh7Cj1viAzzIPn1FUBPdE2bjSp2/8f6uEdtsJsPbD+UjsPtYmuFIff7tngFoH1+TklcJ9BwaUA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XOq/XLbtSKWeeH7t+2vt0Lp8rFoErt5wIiZIzS5ofgM=;
+ b=oUg8vIl9ejR+7s3ds5zfV4P2THgEgCa9n0NT1mPwKYz6yCtJkkgtJauI+ocumqOGfnyHPXFZeWhquDkckMj/pOzYALFTTIyKLBkpX2fNgWARb8oSUIFM8xBFTESuU7X6vR/tKBo09Y+SKp1CAglSy4gskWPs4BThzhnhpk/2mCI=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from DB9PR04MB9498.eurprd04.prod.outlook.com (2603:10a6:10:360::21)
+ by AS8PR04MB8689.eurprd04.prod.outlook.com (2603:10a6:20b:428::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
+ 2024 07:12:25 +0000
+Received: from DB9PR04MB9498.eurprd04.prod.outlook.com
+ ([fe80::24fa:6f9:8247:c5dc]) by DB9PR04MB9498.eurprd04.prod.outlook.com
+ ([fe80::24fa:6f9:8247:c5dc%7]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 07:12:25 +0000
+From: Chancel Liu <chancel.liu@nxp.com>
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org,
+	shengjiu.wang@gmail.com,
+	Xiubo.Lee@gmail.com,
+	festevam@gmail.com,
+	nicoleotsuka@gmail.com,
+	perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	alsa-devel@alsa-project.org,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	devicetree@vger.kernel.org
+Cc: Chancel Liu <chancel.liu@nxp.com>
+Subject: [PATCH 1/2] ASoC: dt-bindings: fsl_rpmsg: Add compatible string for i.MX95
+Date: Wed, 26 Jun 2024 16:12:01 +0900
+Message-ID: <20240626071202.7149-1-chancel.liu@nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0023.apcprd02.prod.outlook.com
+ (2603:1096:3:17::35) To DB9PR04MB9498.eurprd04.prod.outlook.com
+ (2603:10a6:10:360::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-5-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346F03386D05D608041DE8D86D52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <14167607-e67b-4627-99f0-6e99acc7f880@tuxon.dev> <TY3PR01MB11346A47493E0EE96CB2CF17B86D62@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346A47493E0EE96CB2CF17B86D62@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Jun 2024 09:10:51 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWDMMy-Q-1=DPcvpu9Co-oCQOvbStt-hLpdEwrLRdpt_A@mail.gmail.com>
-Message-ID: <CAMuHMdWDMMy-Q-1=DPcvpu9Co-oCQOvbStt-hLpdEwrLRdpt_A@mail.gmail.com>
-Subject: Re: [PATCH v2 04/12] i2c: riic: Use pm_runtime_resume_and_get()
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>, Chris Brandt <Chris.Brandt@renesas.com>, 
-	"andi.shyti@kernel.org" <andi.shyti@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
-	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	"wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR04MB9498:EE_|AS8PR04MB8689:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5ebbff32-da30-43c8-5049-08dc95af5480
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230038|1800799022|376012|7416012|52116012|366014|38350700012|921018;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?zlLflNd0lpaV3IShgYBa2bxm8pU4FKssCiL8FiwIPP87T5JLg5v8BNQHExPo?=
+ =?us-ascii?Q?jEQ1odLPBpkN2EJKnORMnD/J3SmyRXInCMFRQI9qU6CiqXWjudTWYRx9MjP6?=
+ =?us-ascii?Q?2ysA7M8/HSGhdkTjc2A+BBb2B3Zw20Q3IHivsgFZE+/Kmd/zaTUCy/05eV3g?=
+ =?us-ascii?Q?I1D8PcsZKeJQqCUG4Kljuys8+ggATA4Dlu7rKuxPBJhyfpUrGY2hMUNEqx0t?=
+ =?us-ascii?Q?/BtBBxEqIpNmP7WmjHVHXlDS9zFv+reNokDNx3gvZLhKCzXPjgYEbcWbTAde?=
+ =?us-ascii?Q?jaqMGKK8LcKw5pkqIkmsWDIf+qve2m7h8jp5eARC+ELCEReQrP8yTlA5GIVH?=
+ =?us-ascii?Q?3LPAlqbLDYkD8tS6wolYe+3zqN9La9eMr0pob1Y5qZcZ7J9Z2A44qDh3jIro?=
+ =?us-ascii?Q?j7SwkUpKptY1BPAe4yQwxQm768Xlc5CsoXUOYfE+tWk3W9xRJmI2w9wRdSoA?=
+ =?us-ascii?Q?26xwLNEpaWEJG0JWmtPr6S/c4SYh+P6IjObOM9xGZdqNC5oOgTg5+yaWxcvl?=
+ =?us-ascii?Q?ig5/WLIPU8VJNaLR9VzQL/yUqLOxBmFjTNckkmUVOKC5lfvGOekarkWkYamA?=
+ =?us-ascii?Q?c2k9+SRejXrSzy/l5e9PCnb6E1Eg8Rx+WWm9ezbHq2vkSQ1e2Cp6IhSuCrkj?=
+ =?us-ascii?Q?n9OA/6xiiDwKQnr569Gr7M4LQXRCS8wuybJu2fMDpDfKOOJOPyb3wPCSJbDf?=
+ =?us-ascii?Q?qK6qqy9nEc4BlohYHnaI/iQvYYWk6f0ez1EUmBj7xPqvCNVGuuH+cgB9hce7?=
+ =?us-ascii?Q?60bmWaSHymWbqTXh1WBgpQmWnzglwoY8hA7h8QYO55DN1sBj8pAnp/KYkTXF?=
+ =?us-ascii?Q?GcGZ5V0L/wpp+rid9OX49yic4cChNXXcWLo6NvISvWVN9XQCUoi/lpTC89Xd?=
+ =?us-ascii?Q?lc4LorSK1AUeCh1+yPcsn6RFRpe/Oe0HFcT66C1x/3HCDcdJ+TC6xHjU93jw?=
+ =?us-ascii?Q?S31Hmdbmf+K67XtfiCg4QWhiJLPofYQzlkZKzB0KeftYjiW0oJXJMFn0O7UI?=
+ =?us-ascii?Q?nlwT2I74zAtxcXUi0HQnu6zErKIBx2kpH0qjlN5whi9uW0nGcNDCRZ43Cy7J?=
+ =?us-ascii?Q?kbcMcbo0kCdq6Nq+RMSqdManh8SsL8O6Jrn6TCKQ277D2YloSh9XwazH/8w0?=
+ =?us-ascii?Q?P9cDW0EKAH/G64uucvYwVJ2+KpvjdN2ilYPhBRLmHHn8hGtH62XTxvt3fGWj?=
+ =?us-ascii?Q?xBMIBaZg1+FMDg3qtGBnZbkqYkVq3UvsaNtaSDSpK46BSOqUeIg3E+fNLMaP?=
+ =?us-ascii?Q?oRrj3zE1b8a05suVzpIta0M6xiPvEBE+SliJC0BxR3aqz2POBCmYyGRVVHdu?=
+ =?us-ascii?Q?RnRDBAiotOneNwJppROyT2n0uvVHxO9DXAtHwgy9iXI8iPUPwDmUlC99Mf6c?=
+ =?us-ascii?Q?wTzAblPQFPGwlGoHHzDxzDOTjYNyKsuTddVs9PQyzQPSfumPif+PGAr/i+gF?=
+ =?us-ascii?Q?IvLexXMEM/U=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9498.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(1800799022)(376012)(7416012)(52116012)(366014)(38350700012)(921018);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?4edOSMwmzBxdQnfMvR9ywbR1gggj6FiAdk7KLDX3/hnEDQ+H4QC56bEe45bk?=
+ =?us-ascii?Q?edm0nzQJgNOCvu0+v/FuyK3Nkxr9DVXXaB5KhkXGbseE2vDEixPdPckjUiT2?=
+ =?us-ascii?Q?T1JyRjSv3hQEJTmLPqZv58UIm2KRx3v2Vhp+C4SHRTdkRDmIi2ePnUwMygge?=
+ =?us-ascii?Q?ebvK/OH8r0hOG1e3/G99lSViQWxLcfNbbmtaUBdZAQxr3UQZ9poo7nyjDfXA?=
+ =?us-ascii?Q?z4vGca+ua6yZV5wmqB8zSkvhCtgpKlToe50mIEXRR7zCuvFzUHvrsAVJGYET?=
+ =?us-ascii?Q?Uc40hwjRnYGDtINOs0YJE/L84u8KLusArtkPDlZA+5Ox6VWoMartZwy30PJU?=
+ =?us-ascii?Q?oOXCD9NzpInUTl7Sf6kaoPl7uJJBiKIRPeMGCmMy2ZN2D1wPBIOzViwhg2j0?=
+ =?us-ascii?Q?WONxcR+dmQ9QvHm3I94YJBSU1FFVPkIplP1MAICm6tv/5NSx6mt3TbM3O4Jf?=
+ =?us-ascii?Q?NFinX9Q6FHUOHx+L1vHYsttP/wHgLK47WeZyJ3FJrb0+qDmwxuOSmG47PyhS?=
+ =?us-ascii?Q?VJD+J+v5faVl0B+MMGDzPWGAQOZRUfU5MyPOOTI3jVH7zqMpUHPMxiGaDzAx?=
+ =?us-ascii?Q?rhZJak7d+EjXI9ASDGg4g1Kc1DglIFIwVfOzbIXzhuBQ2+9eBqWOYT17MnDn?=
+ =?us-ascii?Q?JC4QzU+oK9+GKmALGLLO5QPBC0CGjwqqFSmvkFrrrghrHAWAMjuYc69u/7Uk?=
+ =?us-ascii?Q?Rkb93Ii0UJbVtEXCrJF7LUqFVCedqur80AIYeYyuQWdI/oIFPDm1tYOqLQsx?=
+ =?us-ascii?Q?3NozJUwIi928qikv6xsgVfeWH/WGLb2YfpbbOADsPsmT6VvjyPCRNTJBfb+h?=
+ =?us-ascii?Q?w8JJVOw1TdLg/mHTPQMzkm7gX/VALcI7Xo335fy4fbexl7ZYF7/SfUQ9RVh0?=
+ =?us-ascii?Q?XwNejD51Yc/pSatTXtoeikYqYY/VrYIwvuryrCAfsuqW0/gGUI9gdsVhq249?=
+ =?us-ascii?Q?uUxdzHkxDySaywIn+2ISTzKTSdcvDCOiwPaJA7Br6L4kaZLPET76EOTwG8L8?=
+ =?us-ascii?Q?Hg4PeCnmE8vwHrVVvvLBCuNay0H6m7ubOk7uaD9n4qBvjHNlgX7tpAAi8w3d?=
+ =?us-ascii?Q?KREgtNsPACEYkbXVmIDxWwI0cfC0NkTDMdp8ZcxsanlNrQcYx2CN/RxSlyrN?=
+ =?us-ascii?Q?ho02bGLb9/Ef0hRo8M3cMcOby9J7YkaH7RMxia2KkwO5swH0KkLyJhvy8N8b?=
+ =?us-ascii?Q?YNOTKBVzIL2A6cwLxUXrQFZLyX1TwauRiKmoKCq9lz4NO9LEqvF4zS0y//0H?=
+ =?us-ascii?Q?KgzgNvwGlxZ7UZBvETEjaM2gsGm9ceqsIf3882q8WZWAl4sngc5eZDUZdoTY?=
+ =?us-ascii?Q?AhBE+Ybt7k3XJ6gWBByD2kxvZ9Je+VG2lwUwAdpvO/1ohp07bAzHrhVqUrt3?=
+ =?us-ascii?Q?Y8yFjF546BTKhaJED0Ar85NtmnvsUbD1GqtnHQ1QjSB5HdhFIpQsMI0+fHGb?=
+ =?us-ascii?Q?Etww6jCMMREuxSVFeWMGNBcunHTi7WmIWrVXCeZnuYPatujCUTU37qjc1XHp?=
+ =?us-ascii?Q?Rj/2YcBS0Hi1iS6GMgOawwN5Tk/2gZ5kDOyNxQzfy4FS993ieeNOE9LkkTQ2?=
+ =?us-ascii?Q?Vh5jHmdkULizedbzJTvsCLxtIM2WnKVwS2oEnyT8?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ebbff32-da30-43c8-5049-08dc95af5480
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9498.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 07:12:25.2883
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: HAyOzIcbk9011ykcG1i+SwAs+R6PmCTDf4h264Kv6gMyMbrElIbC0WT0xxp65iQMEmvHvz7+7pE1KZSYfQYExQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8689
 
-Hi Biju,
+Add compatible string for i.MX95 platform which supports audio
+function through rpmsg channel between Cortex-A and Cortex-M core.
 
-On Wed, Jun 26, 2024 at 8:23=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
-> > From: claudiu beznea <claudiu.beznea@tuxon.dev>
-> > On 25.06.2024 18:53, Biju Das wrote:
-> > >> From: Claudiu <claudiu.beznea@tuxon.dev>
-> > >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > >>
-> > >> pm_runtime_get_sync() may return with error. In case it returns with
-> > >> error
-> > >> dev->power.usage_count needs to be decremented.
-> > >> dev->pm_runtime_resume_and_get()
-> > >> takes care of this. Thus use it.
-> > >>
-> > >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Chancel Liu <chancel.liu@nxp.com>
+---
+ Documentation/devicetree/bindings/sound/fsl,rpmsg.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-> > >> -  pm_runtime_get_sync(dev);
-> > >> +  ret =3D pm_runtime_resume_and_get(dev);
-> > >> +  if (ret) {
-> > >> +          dev_err(dev, riic_rpm_err_msg);
-> > >
-> > > As at the moment we don't know how to reproduce this error condition
-> > > Can we use WARN_ON_ONCE() instead to catch detailed error condition h=
-ere??
-> >
-> > [1] states "So, naturally, use of WARN_ON() is also now discouraged muc=
-h of the time". I've go with
-> > dev_err() or something similar.
->
-> WARN_ON_ONCE() should be ok I guess as people are using for printing this=
- info only once??
->
-> Currently we don't know how to trigger pm_runtime_resume_and_get() error
-> condition in our setup using a testapp and we are expecting an error may
-> happen in future. If at all there is an error in future, we need detailed
-> error info so that we can handle it and fix the bug.
+diff --git a/Documentation/devicetree/bindings/sound/fsl,rpmsg.yaml b/Documentation/devicetree/bindings/sound/fsl,rpmsg.yaml
+index 188f38baddec..3d5d435c765b 100644
+--- a/Documentation/devicetree/bindings/sound/fsl,rpmsg.yaml
++++ b/Documentation/devicetree/bindings/sound/fsl,rpmsg.yaml
+@@ -29,6 +29,7 @@ properties:
+       - fsl,imx8mp-rpmsg-audio
+       - fsl,imx8ulp-rpmsg-audio
+       - fsl,imx93-rpmsg-audio
++      - fsl,imx95-rpmsg-audio
+ 
+   clocks:
+     items:
+-- 
+2.43.0
 
-On Renesas systems, pm_runtime_resume_and_get() never fails.
-That's the reason why originally we didn't care to check the return
-value of pm_runtime_get_sync().
-
-The various janitors disagreed, causing cascaded changes all over
-the place...
-
-IMHO, WARN_ON_ONCE() is definitely overkill, only bloating the code.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
