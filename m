@@ -1,99 +1,104 @@
-Return-Path: <linux-kernel+bounces-230339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEACB917B6F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:54:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C459E917B66
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8272F289AA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:54:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 785C01F225FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069BD16848C;
-	Wed, 26 Jun 2024 08:54:37 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FE041684A2;
+	Wed, 26 Jun 2024 08:51:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nPoyUg6u"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B74DD16131C;
-	Wed, 26 Jun 2024 08:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 222B4168489;
+	Wed, 26 Jun 2024 08:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719392076; cv=none; b=DSzTUdvqebInhZJ6qdUvNAucSM9V/YBYzXU0C3JmWeGGGcqKPOXqQt3x99IbATHZyRjPPY/XUZPnJw+rZKsdsHBlvaHwLwtEJk9Roazarc9pbNDqP38o0lj3SpKxGeAXhd3d3DJUuX3jFwJ8gDAK3Lc6Nu734xhZXPF6N2nOUFE=
+	t=1719391902; cv=none; b=ZM1/Ri/8FaoR6UDr14YAxvi8DyGczNF5DCaI6OOXcEGB8rZm4Rz2zHxmeGpki6fUt6vAPrZZuxDNu47Mo138CAG83870EjaTgQnM0ExS6uYljOFGWYGsUShf92nhOTP1rRNMExqa5QQwr6DKTmNjVgZdHCAP0+A746wozoik7gI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719392076; c=relaxed/simple;
-	bh=3dWHKSrnh8Hisl7GmZ4i/i76w/yg3I9uybuB1lceG/s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D+b9J6DDwhLXqHOqXxGjvv2gBIKJWl6g7B7eT8dfZ6DbyWfVdZbNpumAf2zqS4NEPjQPiHKnaRlKL34GAjy/UJrnGIgAvic8NE12OfbFM6KwKQFoK5i3tgBoTEpPximervoOLfB1lGCXTm7Zj9LsRfvQHzy6O/KdNg3/2e88aEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowABXXeU+13tmtSfgEg--.47148S2;
-	Wed, 26 Jun 2024 16:54:24 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: Eugeniy.Paltsev@synopsys.com,
-	vkoul@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	jee.heng.sia@intel.com
-Cc: dmaengine@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH] dmaengine: dw-axi-dmac: Add check for dma_set_max_seg_size in dw_probe()
-Date: Wed, 26 Jun 2024 16:54:16 +0800
-Message-Id: <20240626085416.2831017-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719391902; c=relaxed/simple;
+	bh=NNT87xv4m9uuF7w7Oww7WonP8JR7b+kKW9vqeqsFJL4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=jSFYr05i0bvtPREbcIMbk8YRepAOum4W7WASXH2aCE+z8oSxfXoVZtRS7RX9Cad7Tv1lufVCe9s08nzrMScUrJ5EYdjHFUjV8fazdUKeOq98rhltRXVjY9x3Jc5GAAuctyPoKKdtDZuLdTAE7Rsis8Gp50KTEndi6vuTwaGOmlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nPoyUg6u; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso96233941fa.1;
+        Wed, 26 Jun 2024 01:51:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719391899; x=1719996699; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NNT87xv4m9uuF7w7Oww7WonP8JR7b+kKW9vqeqsFJL4=;
+        b=nPoyUg6uv/FFDqhLFShQ8uj7R2YmNOoNVDAnk5Oixb+V2WSYn5A2Uo3alf9zney+si
+         29EjruFTtaR+0WFtgW/hW2w/ZsC4Q3XytwFAVVOyROsfqxtkoKsW5RwWoS2ic3a5YZFw
+         KAV7adrAQ8sE9BUC3TaIdcd25p0aMKwdtCCOFkQ6TBG8Oz1sFu4zhZhonll7YvDaZL/1
+         uP+V6hsZSZTYyXKcpuu3LMikC9EmMeSfpShE7ARosrOFBc+gUsMMWE0AXGnBQ0nK5BC8
+         LXWCsfmOENY68skgB8kdKcNGWmPHr+p5kmo7Lt625xO3b/XMr5OSsrt7M2TGEop+c3Z6
+         o3aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719391899; x=1719996699;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NNT87xv4m9uuF7w7Oww7WonP8JR7b+kKW9vqeqsFJL4=;
+        b=X96ty0sj655SIUO39XV6vI4GqLVZIP+dGogxAfdD5vQjPJJWupvk/pEny+t2ORtGUo
+         OiosoamE++5SKNEflF2Nw+u4ScXnXaKXFDBPhOLxupwvkK7ZrDewbAh1KhQF0ABE6QcQ
+         IUtpxBKSDcQ4Jrq/StD7/CSDJ6MBG0gppogm0mqhWFktiVPRV8FDdK5mGri0ZnPIjGjV
+         ndbWPC03eOA4gETTXpYGOewec9yLm0LogO7Ub07HyVjc+Zz8YBegE6vKhhG9KhRMvhHm
+         G/J8J9oOSKca9IDYV1MOg5VwAtFJFMGOyDWOjNoFSx8kEzqTdQoWma3ZHeBaMarvvVBk
+         xb3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXAdQ1XeYFoTxjVsH9+lKDXaNzSPhlTJUsnvWL309auIEppc5Da3lp0vT7ETdIHbuw69vuyHyMZdxaIHFepnhEaRfP52pDM/8sW
+X-Gm-Message-State: AOJu0YwgC8A8G+qCblePfRNAyG9xRS3oXAYI4YZR20lSOsXV4uGsAmEo
+	pr0wEnhoiWcjbxEikjGuMDHToOnhxsjG1+2emBOvWpNZdEW7QpmP
+X-Google-Smtp-Source: AGHT+IEGhJjep9CGD7ppGZuyH7FuYo/+1S1t69B/eAcZHDGbV3o/9eVTLUXAn45jOC3VyFb+6umXdQ==
+X-Received: by 2002:a2e:968b:0:b0:2ec:4f6b:de7a with SMTP id 38308e7fff4ca-2ec5b2c4e9cmr66234421fa.3.1719391898828;
+        Wed, 26 Jun 2024 01:51:38 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef1c:c500:ee59:d953:f148:40ba? (p200300f6ef1cc500ee59d953f14840ba.dip0.t-ipconnect.de. [2003:f6:ef1c:c500:ee59:d953:f148:40ba])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c823c2c1sm17454145e9.7.2024.06.26.01.51.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 01:51:38 -0700 (PDT)
+Message-ID: <be6baa784a3be5a62a68512dd5fdcfe43ffbcd34.camel@gmail.com>
+Subject: Re: [PATCH v2 7/8] iio: add sd modulator generic iio backend
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Olivier Moysan <olivier.moysan@foss.st.com>,
+ fabrice.gasnier@foss.st.com,  Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+Date: Wed, 26 Jun 2024 10:55:30 +0200
+In-Reply-To: <20240625150717.1038212-8-olivier.moysan@foss.st.com>
+References: <20240625150717.1038212-1-olivier.moysan@foss.st.com>
+	 <20240625150717.1038212-8-olivier.moysan@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABXXeU+13tmtSfgEg--.47148S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw45uFW8ur1rXrW8Kw47twb_yoWDKrc_C3
-	WUWF45tr4kW3yktrs0kF1SvrW09rykAr42gF4xtFZ2y3y5Gr4DXw4kZFWkArn8Z3yrCFWj
-	kFsrWrWfC3ZxXjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
-	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
-	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r106r15McIj6I8E87Iv67AKxVW8JVWxJw
-	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
-	YxC7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI
-	0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y
-	0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxV
-	W8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Gr0_Cr1l
-	IxAIcVC2z280aVCY1x0267AKxVW8Jr0_Cr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUm2NtUUU
-	UU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-As the possible failure of the dma_set_max_seg_size(), we should better
-check the return value of the dma_set_max_seg_size().
+On Tue, 2024-06-25 at 17:07 +0200, Olivier Moysan wrote:
+> Add a generic driver to support sigma delta modulators.
+> Typically, this device is a hardware connected to an IIO device
+> in charge of the conversion. The device is exposed as an IIO backend
+> device. This backend device and the associated conversion device
+> can be seen as an aggregate device from IIO framework.
+>=20
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> ---
 
-Fixes: 78a90a1e489e ("dmaengine: dw-axi-dmac: Set constraint to the Max segment size")
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+Acked-by: Nuno Sa <nuno.sa@analog.com>
 
-diff --git a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-index fffafa86d964..689667e10928 100644
---- a/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-+++ b/drivers/dma/dw-axi-dmac/dw-axi-dmac-platform.c
-@@ -1579,7 +1579,10 @@ static int dw_probe(struct platform_device *pdev)
- 	 * Therefore, set constraint to 1024 * 4.
- 	 */
- 	dw->dma.dev->dma_parms = &dw->dma_parms;
--	dma_set_max_seg_size(&pdev->dev, MAX_BLOCK_SIZE);
-+	ret = dma_set_max_seg_size(&pdev->dev, MAX_BLOCK_SIZE);
-+	if (ret)
-+		return ret;
-+
- 	platform_set_drvdata(pdev, chip);
- 
- 	pm_runtime_enable(chip->dev);
--- 
-2.25.1
 
 
