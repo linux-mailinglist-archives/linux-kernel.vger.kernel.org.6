@@ -1,711 +1,251 @@
-Return-Path: <linux-kernel+bounces-229985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1547B9176F3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:52:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E64829176F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89E411F2268E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:51:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65D311F22899
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54CAA12BE9F;
-	Wed, 26 Jun 2024 03:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3361132139;
+	Wed, 26 Jun 2024 03:52:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwPkJqbt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="PG1DRiF+";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="XPzhjtnO"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2CA65336A;
-	Wed, 26 Jun 2024 03:51:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719373909; cv=none; b=hQBRIF3WlN7PwXZnOnZJhhDTn09XEikGDrwMTNZAlrlzNv4MWUeGph3Whvs/maqSLdnuVC0XzDe2gVk0/B/SgHV5EMHpg7S1JmX/jFdkHDHwbl06WM0R/cutjaJBzXQ0UWalfExW2qmwg+hgSFnMLBNVz1So//H+mW2fisy+tfo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719373909; c=relaxed/simple;
-	bh=isA2/HcLANBKHBlyGFkDHYj5iHNJIWkoC0dST0avnps=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AO6lLFX19+Ogb1Oc66YQhsOf0q49tOQjLnOE/+wrpsKT6df7ky1FSos6pLxBPk7YPUmNItQIjYuLLSoWnuGnVHag71AMtRsdjtJO6QLjtXP86dNdLxCd6fFTiGo9EvFnCInbsl7KhYoEi5S0i4ICWwajKnLfBQKsGbTyxnl4e8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwPkJqbt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C37DC4AF0A;
-	Wed, 26 Jun 2024 03:51:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719373908;
-	bh=isA2/HcLANBKHBlyGFkDHYj5iHNJIWkoC0dST0avnps=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=nwPkJqbtJgMIetClU8bqYkDua8dyoIVdaM+c5KBMIWo7ZU5hjiRF8cfUzSoaDSLEF
-	 b+qGkd/XG/aRWdKsWRNYF3A2o+KxpLFAmRn2lvAN94cd6/+R3qxPgkhsZelZbmUPTX
-	 p+YA1PKEvQHmHmUzQuNOpaXjqjC6Yv86iZvr1veM2BYZb4n0/IEcdqwJ2a5zyJMqU3
-	 EmJ+FvNjlUW8OSerpor+EKrWxZGak1+aWMpDW660Xir2kmHAiekPvIoH0VgveKH1by
-	 Om+T8KWQqR5AysKFacP1v/hEBikZmTdBa9QjfagJcke9FFQOolERpKJXYtO746aFCd
-	 JQbxl5Vx9ExUg==
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57d044aa5beso7175851a12.2;
-        Tue, 25 Jun 2024 20:51:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWzQ0DPrXPvYhOawtW3lSlLrnyln0BrRP6Xfty8u97lXPdoCVJ3xPVK51pNhpGUxjbZ7LFS83+gIKsqG09Ydw7YUlS+KzLOQ4kTecrO1DWxxjkeSNxtqADQxkyrr4ZDHRmNn+fmKV0=
-X-Gm-Message-State: AOJu0Ywv08W2mje3zJXAgmNjbvPVAxrUf3Zlki5t4GuUNws9SDV4uflp
-	WhQdbz0nsIPmZSLdcSbnOtTMd7l8ENHKCKjAeQzLUh5a8bP9zeV7+jzBcuvRnok1VoYfGNc74oK
-	pjWihILPr5Oknsw1qDckRCqz+U+g=
-X-Google-Smtp-Source: AGHT+IHX6lBr/gceu/U3kNhSDzLUtOR2Sf6P24zH4cshM1/ZfwqHJU5e7zjXvrj9qeedOGr3znbI9WYv++0ZAY8Lo7w=
-X-Received: by 2002:a17:906:3384:b0:a6f:309d:ec23 with SMTP id
- a640c23a62f3a-a7245cc4df0mr572611566b.72.1719373906765; Tue, 25 Jun 2024
- 20:51:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1405336A;
+	Wed, 26 Jun 2024 03:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719373932; cv=fail; b=SHJItIqANtFxspqj2wGrLz62dVoc45LGQT+I6DXTn/I+UU+QjOgSVGiB75gRzV+qjsIC93y8NA5P1UrC3mcPTGqB2kKBNjT9W2AwE/3h2PQGPB/HjuGYRhjd+YlokxNUx9O+oFpshtDe3+F0eb4IVhHMkBsOLo0ugtC6u7zGBKw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719373932; c=relaxed/simple;
+	bh=Ex6O6S2ltkouHKre1zAE5n2R5Nz3LDrXVuYwfoMf+8w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=J7TcWhNsS45xhoZRyL2NKlawXpqPikJqbjq5zGJrk2z3BQve0sgfwj9OwVlf2u6VCMW7bAXOozjx2lB92mRQxKmkE8Q3VIPjDJPwc1fsjNcNgtMUv8aK+59igDPFII7wDPhaImVkEIbkDC7EFhAFjWepYZlKz1lOb1PJr/uFspA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=PG1DRiF+; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=XPzhjtnO; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 74d19cf2336f11ef8da6557f11777fc4-20240626
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=Ex6O6S2ltkouHKre1zAE5n2R5Nz3LDrXVuYwfoMf+8w=;
+	b=PG1DRiF+EVtHEyNGLeBd6e4HNLQhEAQUIQD6+SBBxQIU+xLn2bBIiR9npkZK8D/UhURQRA6hZrzTqzvLr9QC4OFGausq3uVYhe/ozTrW1TPnw9MsMUzAkcgZfwqDTTuHe2qNv6GDAG1aECtLZMJ23sCZHbkPis71IK2djZKwHrA=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.39,REQID:c3d01cbd-ff9c-408c-b074-38761e008224,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:393d96e,CLOUDID:60437194-e2c0-40b0-a8fe-7c7e47299109,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULS
+X-UUID: 74d19cf2336f11ef8da6557f11777fc4-20240626
+Received: from mtkmbs11n1.mediatek.inc [(172.21.101.185)] by mailgw01.mediatek.com
+	(envelope-from <peter.wang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1818071397; Wed, 26 Jun 2024 11:52:06 +0800
+Received: from mtkmbs10n1.mediatek.inc (172.21.101.34) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 26 Jun 2024 11:52:05 +0800
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 26 Jun 2024 11:52:05 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=aJTDam2SHZqzK1unWjsb8c71ZiVIe/7Tp7WAOH0eI974+GsUfO1+iK2h8t9kCl0QYKZxTGFAMwWHS0Bhmp/wCs/O6zAvj4OR0ercepNvKGDepuL581QmevjX3EMKfZ1QoMmXGj79Znh7E0d0r12DCDRUkqPUgAImXmvEs6KoqRMqmZyZdkAIhIDWtZBelXqBV0S+iUMmKWHMyvKWDQHZXgwZSWC8MQodsvR6pR73d+Wpy9L+jJtlKawggSMs6AVQFKxcnkYldbiUAhsUKQp9DJ0bqCyMhh/sQ8g/P1jdpw5s2KbGqvHyNG9zHBZi49udE6mjkyxNvGQAa1/1LQ0HDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Ex6O6S2ltkouHKre1zAE5n2R5Nz3LDrXVuYwfoMf+8w=;
+ b=ADDXLXVP5Olg5ErN3jECDz2mLFAl88xqMELeFhuxaCSIIasAPs4VQSKTEwnJ6pS5L4wOBykv9kC++2tgdYjZ79jhfP8Zdwoa4YA8VmTLeJ7TjqnEW0ahKHloSrMISHx4zo/GhoJx+UCatIkFBaW6Ib2W8RSTLgsQkSatgJG1sNxp+Z3RV5NIBdXV1KaFEo2AorgLdeQjnfZiqnVaj30vaLk0Nx66Nataj5hvwvrOAEvYiM02NgKvy518ZuiFp42USl16ghNeS9JpmSuZhEhXk1Mc1SccHTxOugItST+8ErnmH0W1VLOTCJQ/peja0PkJ6GfaDHnNLoJ2cJPDJIviIQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ex6O6S2ltkouHKre1zAE5n2R5Nz3LDrXVuYwfoMf+8w=;
+ b=XPzhjtnOYATJtAHfJvRXmumQX3KZB0uFebBNgv54rNgAaA55/RREedq/2/Fghqx0rWwB8byQsw7UjLyozgTknU2lwv0DfgzvV1E60U4nMngGbCeTS/wAdloGpdLfr7Qa8Z2swuoyYtGqTo+bqA/pDuowak1snyEvtsbTxZj+q0I=
+Received: from PSAPR03MB5605.apcprd03.prod.outlook.com (2603:1096:301:66::6)
+ by TYZPR03MB8536.apcprd03.prod.outlook.com (2603:1096:405:68::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Wed, 26 Jun
+ 2024 03:52:03 +0000
+Received: from PSAPR03MB5605.apcprd03.prod.outlook.com
+ ([fe80::3945:7dbc:62bd:c31c]) by PSAPR03MB5605.apcprd03.prod.outlook.com
+ ([fe80::3945:7dbc:62bd:c31c%5]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 03:52:03 +0000
+From: =?utf-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>
+To: "quic_rampraka@quicinc.com" <quic_rampraka@quicinc.com>,
+	"quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>,
+	"quic_nguyenb@quicinc.com" <quic_nguyenb@quicinc.com>,
+	"quic_ziqichen@quicinc.com" <quic_ziqichen@quicinc.com>, "beanhuo@micron.com"
+	<beanhuo@micron.com>, "avri.altman@wdc.com" <avri.altman@wdc.com>,
+	"bvanassche@acm.org" <bvanassche@acm.org>, "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>, "junwoo80.lee@samsung.com"
+	<junwoo80.lee@samsung.com>, "mani@kernel.org" <mani@kernel.org>,
+	"quic_cang@quicinc.com" <quic_cang@quicinc.com>
+CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
+	"alim.akhtar@samsung.com" <alim.akhtar@samsung.com>, "jejb@linux.ibm.com"
+	<jejb@linux.ibm.com>, "quic_asutoshd@quicinc.com"
+	<quic_asutoshd@quicinc.com>, "quic_mnaresh@quicinc.com"
+	<quic_mnaresh@quicinc.com>, "manivannan.sadhasivam@linaro.org"
+	<manivannan.sadhasivam@linaro.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] scsi: ufs: core: quiesce request queues before check
+ pending cmds
+Thread-Topic: [PATCH] scsi: ufs: core: quiesce request queues before check
+ pending cmds
+Thread-Index: AQHauMKPrv1V1Cbu00yFMdEhxgAMv7HRN3YAgAWQsQCAAG2eAIAAux8AgADSy4CAAMMzAA==
+Date: Wed, 26 Jun 2024 03:52:03 +0000
+Message-ID: <e1517d77307e4da0708003f847e456ba4831d9bf.camel@mediatek.com>
+References: <1717754818-39863-1-git-send-email-quic_ziqichen@quicinc.com>
+	 <d3fc4d2b-81b0-4ab2-9606-5f4a5fb8b867@acm.org>
+	 <efc80348-46c0-4307-a363-a242a7b44d94@quicinc.com>
+	 <b1173b6f-445c-4d6d-9c78-b0351da2893a@acm.org>
+	 <ee45ce9429b1f69147c1a01e07b050275b4009bf.camel@mediatek.com>
+	 <3c7e776e-df2e-4718-995f-5e5dfa3cc916@acm.org>
+In-Reply-To: <3c7e776e-df2e-4718-995f-5e5dfa3cc916@acm.org>
+Accept-Language: zh-TW, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.2 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PSAPR03MB5605:EE_|TYZPR03MB8536:EE_
+x-ms-office365-filtering-correlation-id: 8883d1e7-4cee-493e-3a4b-08dc9593573c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230038|1800799022|366014|7416012|376012|921018|38070700016;
+x-microsoft-antispam-message-info: =?utf-8?B?OHVqSUdxUy9sZmNhVG80RVNQNmhLMGdJb3RuMUFTNDd6L0pKdGMvT2M4c3JX?=
+ =?utf-8?B?Z1gzNFpaQlNkSWwwNUlvQ3BwVFg2VXR0QlllWHA2NWV6MjB3OTRYalZPZVhW?=
+ =?utf-8?B?NlI2RnhjK1hKMmk3c1R3RkFrM0tDYzNic0NPUTZORlJRN1RMRlNjQll3Ym01?=
+ =?utf-8?B?WXVDeTN3ZUtnaG1MNWt2Q3RLeHV3UG41QkE2S21OaVhpSlNNT01wdWlsSTJB?=
+ =?utf-8?B?bFdPeGtzcmFIcHB4aWNnNFN2NEJVMUlicW04VFFyU0dpS1NoUU9XTGc3Uzla?=
+ =?utf-8?B?NUJYWkF1RTlzSWwzL0xTbFhaYUFNQmxMeFB0TW5IMzBmMS9sNnRnbEh2cE1M?=
+ =?utf-8?B?SXd5dnNURFk5MDBwSFhzSVNkZWsrcGFUeWZBaHdlZlgya2s3UXIwcC9WU0lV?=
+ =?utf-8?B?cWpPemVXZFBRVmdtbWR2dGQ5UzBwclZ3M1JyaVJNV1lSQjAyWDQyaEsxeWt0?=
+ =?utf-8?B?TGFaMnBFMFpKTlBpcUxsZWFtM0FaRnlmTGJ0QktrT09qcURjc0p3RHlIMGRo?=
+ =?utf-8?B?aGRvUXlmNjJFYnREMUtDZEYvVmR2bzI3R0lMam92d1BaWGs2cXJ2MEhPL29G?=
+ =?utf-8?B?dVUwZWVKV1M3aWhXbGdrVzlKZExacFB6WDdEMDFlOEhqKzBUWDVjbmpvOGp6?=
+ =?utf-8?B?Y3FOWFVkUndQdkpaTWVSeXd0dU5JKy9sMnlQeUs2NDk3ZlJTMkt6YnR3QThs?=
+ =?utf-8?B?WGp3NUkrUitaMUpOaDVKZFNoQk5MTWVQeExhVVY4TmdwRkdHMU0vZGhTUnl5?=
+ =?utf-8?B?THVoL0phWGM2WmdVK2cwRjhvYUtPOXhIL0RFWGRaNWMyc01EWlpLQmpQQzR5?=
+ =?utf-8?B?SHIzVmJ6bXNQRVdoZmx6cjYwMHNYZ2lvNUNoZDFTMGUwbEl6d2t1L3crV25z?=
+ =?utf-8?B?QkRhdW5PNVdDZ3RyV1lHKzJwZ1hiWHdjMnRmN1I4SGFBQjZDZ1dHZFZzWWVw?=
+ =?utf-8?B?eGpOeHVNbzVVSTlCMjg0aGJUMWxDRGZxSGFPR24ycW00czczNWJhUUk0Y080?=
+ =?utf-8?B?cElPaTA3STlYWUJFQ3JqODFKalVxR1NWVFFnMHg4ekpYTFlOMDNEY3EzS2N3?=
+ =?utf-8?B?Tm1xMlQvMjVHMTE2WllmM2xGWXFtZWMvZXAyZ0tSUVhuVXNDVFdVUEIzTWUw?=
+ =?utf-8?B?M0t4ZW9nL1Y0c1dDZ3ZqZUFJWmJhS3VCQUZBdGNvUG5QbE93K3J0WEdJeDl1?=
+ =?utf-8?B?OE5BS2U0WGViOFdqMmFBQkRnMmU0UmxETE1ralgvdnhyTGtLbWd2cFd3YkFS?=
+ =?utf-8?B?RTNZN0svQzZPeGx2THdCelBwR29lUjVvMm9CSWV1L3lYaU12dDFkTXlwazNu?=
+ =?utf-8?B?bVpBZ1RVTEMzUFFRZk5na0VxU25lTHc2b2x2UEhLTVUvVnQwU2RTQ2syS1FH?=
+ =?utf-8?B?VkJYR0YrUW1SY1ZuZjJGcCtTTDJlb1NYUnVFa0pkUXJpYnBRdVFkVDI3OTV1?=
+ =?utf-8?B?R2w3TUNpNUNwcnFxQTQwTlZQdTlwTUd5c0dzUk5CelQ0SzkrSkFLb0k3Uk5U?=
+ =?utf-8?B?dVZUYVlRUFBMY1l2eWJieFBPN2tVWWkwRm5FTlppOWpLSnNIVzVCTzZ5dE9x?=
+ =?utf-8?B?NCtpcGJoOGNiTGpkWTA2MWxScHVha1JwLytZRnd4RVdadXV5b21UU2JKZTlQ?=
+ =?utf-8?B?c2pEQkdCQldNM2JJeEh0bjdldy84WXZZdWd3WTlGS2JwWTdCd3hYMWRDS3ZS?=
+ =?utf-8?B?Nm4zYThaYzJJakk0eHJ5a1FVQ0tpUUhZL1pZR0R0dlhkUkhrY2JXVGFGdEpD?=
+ =?utf-8?B?eDRaKzJUWXQ0RHZ1MkJlQzEwd1ZvTUQyZEoxTWxaTmt2L2xSMk5HcFlUKzR3?=
+ =?utf-8?B?SUQxbElNREY1Q3VLTU5lUUdSZlIyam1XWlNpK0hZandYZWZ3NG5lWENwSWxF?=
+ =?utf-8?Q?wtre3HHLPBRe0?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR03MB5605.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(1800799022)(366014)(7416012)(376012)(921018)(38070700016);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?ZkEwRXNZamxTRWhqc1dXN1VPTFNpZ2pxOGE3VVR3MjJkVGNob2dLbkJ4RE9p?=
+ =?utf-8?B?ZmZLckNjNjFtUkJaVDlOaERiTW1UUU9HTVFhdlgrK3JTS2dqeEVGeEQwQjhy?=
+ =?utf-8?B?SlJ0RWg5TjNub1FSbWoreE5PV1JpU2FCcU1QdURwa3VsTjVrRFFJYzB3eGNk?=
+ =?utf-8?B?eitDdmltSGpycWZaYkRZejFwOW54OHBuVUpjcS9NamJpakpwQ1BQZkw1VzJP?=
+ =?utf-8?B?WmxxOGY1S0J3b2dBcGVFeTNVcHk5N1Q3bGdoWFlOVlMvSXV4b1hjSkh1T0dO?=
+ =?utf-8?B?TTRQRlhhUUIxUTVlSTRVVENETkRqY0s0bE5hWlV4QnduRkpyRFZWQ1MramN5?=
+ =?utf-8?B?UlFIZGZoR2JVR0JyaEo1aWY2OFV4MFpGK3BsOEplcXVSNVdlQXRoY2NKeXBj?=
+ =?utf-8?B?SEVjcjg1ZG85ZjNubnQwb1RSLzVGRi9zU0VjNlUwWk1YS2s4eGE0VVpmOWV3?=
+ =?utf-8?B?ZVdEZE1aWm0vUEI0SEhTUUZ2eDVqeXNLcExsSUp4aUlPendCZkVnUGI3QkR5?=
+ =?utf-8?B?N244VDlwRVVJcCthd1FoTFh5NTQwUFlLa3R5dUpuMC8rOUFRaEZSaWx1TkRy?=
+ =?utf-8?B?dEF3QjBrbFY3VWVsaERaUm1ENzZYNkREWWlJKzkrT1hVdjkrN0s2SkxoRnFu?=
+ =?utf-8?B?WjlIck13L21Kcmh4VGF1ak9VSkVjbFB6V2FvQWpQTWNWc0VOQU5KVmJIWUhi?=
+ =?utf-8?B?Y1JGOEtxMWVyWmVVRjdMQSttQUgxaVkxNGIyTGE2MjE0UURwRDJzdkthZ0Z3?=
+ =?utf-8?B?ZHFCUG9iSlJydVZzVE1ISEtaRlgzSnk0ZnhqeXpvdWVvTm1GdGFWdUU1R1Ri?=
+ =?utf-8?B?OVQzbG90OHo1U0ZFUk8yT2dHdVltOFFNcUducURlc1ZpbE9BVlBwVnI0Rm5h?=
+ =?utf-8?B?K3lVcm1EMlpFYUlPMlVVdDRtVzRLZFNRdC9pWlZUMmJMMnprNjRKVU5BZSto?=
+ =?utf-8?B?V0F2N2VXZ3FuQzBoRTc4MTlySVREUUtRZlBxeUdoZjFHbThtakpkNGIycUJk?=
+ =?utf-8?B?RXN4eFNxSVlySm1zMmF2SDNpbmI2UDR0OWMrdEkrS1FYZTlwSDVLZ013VVpR?=
+ =?utf-8?B?K2ZneEVlbHl6bGR1VTlQUWJ3SVNZdm5IRmVRaXZOV1FOVFBtVkowL04wMDZh?=
+ =?utf-8?B?NjhGTDZzSldQQkFxVkcxQ29tKy9mL0hkQXR5eFdlY0t5S3AyalVWeWVReEFt?=
+ =?utf-8?B?MGx5Vk1CVGZVei9KQnh5M0xDOWFvbktZbVhzbVJ4dkZDMnZXNDJzcGJQNWY4?=
+ =?utf-8?B?eEJlL09pZldtalNCZUpXb0M0NUw1aGdOL3hTekpuNXFneERiSkZoYW9VNWdR?=
+ =?utf-8?B?akR1R051Nit1SEZDMHhCME1WZFE1SjUxWVRqeFUrd0pzWnZuU2RYSFZjMkpN?=
+ =?utf-8?B?a0lwQWdwWW5qUzhmeEtxeDEwZkl6aHk3dU1FdHo2UVlhUmR6aDBhc05mNkdk?=
+ =?utf-8?B?bjFkVWpCM09YUFRLR3lwWXQ3eE5RWms5bWQ5Ky9mZmRpRVhyTFU3Ni9nU2F5?=
+ =?utf-8?B?eW5zZzNQUVRzZUxOdS9JMHFUWXJyOHdhUEt5amxhbCtVMEhLL0taNlBaT2VE?=
+ =?utf-8?B?d1QvZTUzS0h1MnhQR004RVgwK29HZmhWU2lxT2drclZ5Z3VnMC94VVZURzlZ?=
+ =?utf-8?B?QW5NVjh5Q2V0ZnJubW1FQnNPTmp3Nm1ZOElUVzc5emZ3ejkycTZtdkxLVnNo?=
+ =?utf-8?B?endvd1pLN2J2YXBQOWlZbEM1Z0FzMjVqbHpVT0tjd0Ixd29Vem1kTFY3SXBM?=
+ =?utf-8?B?aGQyaXNLY1hrOUFQK0l6b0NOSzZlWVNzS2tUWmpibWQwUlNDTytrZ201L2pi?=
+ =?utf-8?B?M055MmVLb1BobEoxekdrQkU3bzB5WTdZL1BLK3YwS1ZWTWRZU0M2dFZMK3FC?=
+ =?utf-8?B?bkg3dlByNE1LUHJSVDJPUEl3RmNyNlZYSHUwM0Q0Z1FmcVpkRHI3YXkzUk9v?=
+ =?utf-8?B?QVhsOHBHMHdjNEF6ank5bDlLZisyTUUvb0hZSWFLaUlCQnN0RUtEamdJOTdY?=
+ =?utf-8?B?Yi8xRWRXQ2prc0l5aEJweTVBSUxnQ0Z0MlZuMGl2Z1NnR21wei9kU3BqMjUr?=
+ =?utf-8?B?dWMxbUw1UEt6Q04yTXhLZUZLKzh5NDdnUG9RY2pWVEdHaWcwNWZqNGZyWjQ4?=
+ =?utf-8?B?MWt4blF2d054WnQ1ZHZVSlIyQVVrQmRXZ2E3REI0TTJwa1dwMDg4YzZ2aVIw?=
+ =?utf-8?B?Vmc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A2A85EE091700549AA3BF9CC8613615C@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240612064205.2041548-1-chenhuacai@loongson.cn>
- <20240612064205.2041548-3-chenhuacai@loongson.cn> <20240625075645.m372bpbe7m2dozil@vireshk-i7>
-In-Reply-To: <20240625075645.m372bpbe7m2dozil@vireshk-i7>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Wed, 26 Jun 2024 11:51:33 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5wSzhD373L61Mxvu-7ZUSGh9LmC4yBoaHm_5rAxsu-5w@mail.gmail.com>
-Message-ID: <CAAhV-H5wSzhD373L61Mxvu-7ZUSGh9LmC4yBoaHm_5rAxsu-5w@mail.gmail.com>
-Subject: Re: [PATCH 2/2] cpufreq: Add Loongson-3 CPUFreq driver support
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Huacai Chen <chenhuacai@loongson.cn>, "Rafael J . Wysocki" <rafael@kernel.org>, loongarch@lists.linux.dev, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Xuerui Wang <kernel@xen0n.name>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
-	Binbin Zhou <zhoubinbin@loongson.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PSAPR03MB5605.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8883d1e7-4cee-493e-3a4b-08dc9593573c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2024 03:52:03.5545
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GQ2xn6ZcMO4UU/o8OTzWi29JmJZgTqjUJO1ieyX/hMhydKXbHyLVoRMd1oQuvcbtb4vPF5Bxlnp7+PAit/uinQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB8536
+X-MTK: N
 
-Hi, Viresh,
-
-Thank you for your review.
-
-On Tue, Jun 25, 2024 at 3:56=E2=80=AFPM Viresh Kumar <viresh.kumar@linaro.o=
-rg> wrote:
->
-> On 12-06-24, 14:42, Huacai Chen wrote:
-> > Some of LoongArch processors (Loongson-3 series) support DVFS, their
-> > IOCSR.FEATURES has IOCSRF_FREQSCALE set. And they has a micro-core in
-> > the package called SMC (System Management Controller), which can be
-> > used to detect temperature, control fans, scale frequency and voltage,
-> > etc.
-> >
-> > The Loongson-3 CPUFreq driver is very simple now, it communicate with
-> > SMC, get DVFS info, set target frequency from CPUFreq core, and so on.
-> >
-> > There is a command list to interact with SMC, widely-used commands in
-> > the CPUFreq driver include:
-> >
-> > CMD_GET_VERSION: Get SMC firmware version.
-> >
-> > CMD_GET_FEATURE: Get enabled SMC features.
-> >
-> > CMD_SET_FEATURE: Enable SMC features, such as basic DVFS, BOOST.
-> >
-> > CMD_GET_FREQ_LEVEL_NUM: Get the number of normal frequency levels.
-> >
-> > CMD_GET_FREQ_BOOST_NUM: Get the number of boost frequency levels.
-> >
-> > CMD_GET_FREQ_LEVEL_INFO: Get the detail info of a frequency level.
-> >
-> > CMD_GET_FREQ_INFO: Get the current frequency.
-> >
-> > CMD_SET_FREQ_INFO: Set the target frequency.
-> >
-> > In future we will add automatic frequency scaling, which is similar to
-> > Intel's HWP (HardWare P-State).
-> >
-> > Signed-off-by: Binbin Zhou <zhoubinbin@loongson.cn>
-> > Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
-> > ---
-> >  drivers/cpufreq/Kconfig             |  12 +
-> >  drivers/cpufreq/Makefile            |   1 +
-> >  drivers/cpufreq/loongson3_cpufreq.c | 442 ++++++++++++++++++++++++++++
-> >  3 files changed, 455 insertions(+)
-> >  create mode 100644 drivers/cpufreq/loongson3_cpufreq.c
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index aacccb376c28..f2e47ec28d77 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -12968,6 +12968,7 @@ F:    Documentation/arch/loongarch/
-> >  F:   Documentation/translations/zh_CN/arch/loongarch/
-> >  F:   arch/loongarch/
-> >  F:   drivers/*/*loongarch*
-> > +F:   drivers/cpufreq/loongson3_cpufreq.c
-> >
-> >  LOONGSON GPIO DRIVER
-> >  M:   Yinbo Zhu <zhuyinbo@loongson.cn>
-> > diff --git a/drivers/cpufreq/Kconfig b/drivers/cpufreq/Kconfig
-> > index 94e55c40970a..10cda6f2fe1d 100644
-> > --- a/drivers/cpufreq/Kconfig
-> > +++ b/drivers/cpufreq/Kconfig
-> > @@ -262,6 +262,18 @@ config LOONGSON2_CPUFREQ
-> >         If in doubt, say N.
-> >  endif
-> >
-> > +if LOONGARCH
-> > +config LOONGSON3_CPUFREQ
-> > +     tristate "Loongson3 CPUFreq Driver"
-> > +     help
-> > +       This option adds a CPUFreq driver for Loongson processors which
-> > +       support software configurable cpu frequency.
-> > +
-> > +       Loongson-3 family processors support this feature.
-> > +
-> > +       If in doubt, say N.
-> > +endif
-> > +
-> >  if SPARC64
-> >  config SPARC_US3_CPUFREQ
-> >       tristate "UltraSPARC-III CPU Frequency driver"
-> > diff --git a/drivers/cpufreq/Makefile b/drivers/cpufreq/Makefile
-> > index 8d141c71b016..0f184031dd12 100644
-> > --- a/drivers/cpufreq/Makefile
-> > +++ b/drivers/cpufreq/Makefile
-> > @@ -103,6 +103,7 @@ obj-$(CONFIG_POWERNV_CPUFREQ)             +=3D powe=
-rnv-cpufreq.o
-> >  # Other platform drivers
-> >  obj-$(CONFIG_BMIPS_CPUFREQ)          +=3D bmips-cpufreq.o
-> >  obj-$(CONFIG_LOONGSON2_CPUFREQ)              +=3D loongson2_cpufreq.o
-> > +obj-$(CONFIG_LOONGSON3_CPUFREQ)              +=3D loongson3_cpufreq.o
-> >  obj-$(CONFIG_SH_CPU_FREQ)            +=3D sh-cpufreq.o
-> >  obj-$(CONFIG_SPARC_US2E_CPUFREQ)     +=3D sparc-us2e-cpufreq.o
-> >  obj-$(CONFIG_SPARC_US3_CPUFREQ)              +=3D sparc-us3-cpufreq.o
-> > diff --git a/drivers/cpufreq/loongson3_cpufreq.c b/drivers/cpufreq/loon=
-gson3_cpufreq.c
-> > new file mode 100644
-> > index 000000000000..5dbac0d55a32
-> > --- /dev/null
-> > +++ b/drivers/cpufreq/loongson3_cpufreq.c
-> > @@ -0,0 +1,442 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * CPUFreq driver for the loongson-3 processors
-> > + *
-> > + * All revisions of Loongson-3 processor support this feature.
-> > + *
-> > + * Author: Huacai Chen <chenhuacai@loongson.cn>
-> > + * Copyright (C) 2020-2024 Loongson Technology Corporation Limited
-> > + */
-> > +#include <linux/delay.h>
-> > +#include <linux/module.h>
-> > +#include <linux/cpufreq.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/units.h>
-> > +
-> > +#include <asm/idle.h>
-> > +#include <asm/loongarch.h>
-> > +#include <asm/loongson.h>
-> > +
-> > +/* Message */
-> > +union smc_message {
-> > +     u32 value;
-> > +     struct {
-> > +             u32 id          : 4;
-> > +             u32 info        : 4;
-> > +             u32 val         : 16;
-> > +             u32 cmd         : 6;
-> > +             u32 extra       : 1;
-> > +             u32 complete    : 1;
-> > +     };
-> > +};
-> > +
-> > +/* Command return values */
-> > +#define CMD_OK                               0  /* No error */
-> > +#define CMD_ERROR                    1  /* Regular error */
-> > +#define CMD_NOCMD                    2  /* Command does not support */
-> > +#define CMD_INVAL                    3  /* Invalid Parameter */
-> > +
-> > +/* Version commands */
-> > +/*
-> > + * CMD_GET_VERSION - Get interface version
-> > + * Input: none
-> > + * Output: version
-> > + */
-> > +#define CMD_GET_VERSION                      0x1
-> > +
-> > +/* Feature commands */
-> > +/*
-> > + * CMD_GET_FEATURE - Get feature state
-> > + * Input: feature ID
-> > + * Output: feature flag
-> > + */
-> > +#define CMD_GET_FEATURE                      0x2
-> > +
-> > +/*
-> > + * CMD_SET_FEATURE - Set feature state
-> > + * Input: feature ID, feature flag
-> > + * output: none
-> > + */
-> > +#define CMD_SET_FEATURE                      0x3
-> > +
-> > +/* Feature IDs */
-> > +#define FEATURE_SENSOR                       0
-> > +#define FEATURE_FAN                  1
-> > +#define FEATURE_DVFS                 2
-> > +
-> > +/* Sensor feature flags */
-> > +#define FEATURE_SENSOR_ENABLE                BIT(0)
-> > +#define FEATURE_SENSOR_SAMPLE                BIT(1)
-> > +
-> > +/* Fan feature flags */
-> > +#define FEATURE_FAN_ENABLE           BIT(0)
-> > +#define FEATURE_FAN_AUTO             BIT(1)
-> > +
-> > +/* DVFS feature flags */
-> > +#define FEATURE_DVFS_ENABLE          BIT(0)
-> > +#define FEATURE_DVFS_BOOST           BIT(1)
-> > +#define FEATURE_DVFS_AUTO            BIT(2)
-> > +#define FEATURE_DVFS_SINGLE_BOOST    BIT(3)
-> > +
-> > +/* Sensor commands */
-> > +/*
-> > + * CMD_GET_SENSOR_NUM - Get number of sensors
-> > + * Input: none
-> > + * Output: number
-> > + */
-> > +#define CMD_GET_SENSOR_NUM           0x4
-> > +
-> > +/*
-> > + * CMD_GET_SENSOR_STATUS - Get sensor status
-> > + * Input: sensor ID, type
-> > + * Output: sensor status
-> > + */
-> > +#define CMD_GET_SENSOR_STATUS                0x5
-> > +
-> > +/* Sensor types */
-> > +#define SENSOR_INFO_TYPE             0
-> > +#define SENSOR_INFO_TYPE_TEMP                1
-> > +
-> > +/* Fan commands */
-> > +/*
-> > + * CMD_GET_FAN_NUM - Get number of fans
-> > + * Input: none
-> > + * Output: number
-> > + */
-> > +#define CMD_GET_FAN_NUM                      0x6
-> > +
-> > +/*
-> > + * CMD_GET_FAN_INFO - Get fan status
-> > + * Input: fan ID, type
-> > + * Output: fan info
-> > + */
-> > +#define CMD_GET_FAN_INFO             0x7
-> > +
-> > +/*
-> > + * CMD_SET_FAN_INFO - Set fan status
-> > + * Input: fan ID, type, value
-> > + * Output: none
-> > + */
-> > +#define CMD_SET_FAN_INFO             0x8
-> > +
-> > +/* Fan types */
-> > +#define FAN_INFO_TYPE_LEVEL          0
-> > +
-> > +/* DVFS commands */
-> > +/*
-> > + * CMD_GET_FREQ_LEVEL_NUM - Get number of freq levels
-> > + * Input: CPU ID
-> > + * Output: number
-> > + */
-> > +#define CMD_GET_FREQ_LEVEL_NUM               0x9
-> > +
-> > +/*
-> > + * CMD_GET_FREQ_BOOST_LEVEL - Get number of boost levels
-> > + * Input: CPU ID
-> > + * Output: number
-> > + */
-> > +#define CMD_GET_FREQ_BOOST_LEVEL     0x10
-> > +
-> > +/*
-> > + * CMD_GET_FREQ_LEVEL_INFO - Get freq level info
-> > + * Input: CPU ID, level ID
-> > + * Output: level info
-> > + */
-> > +#define CMD_GET_FREQ_LEVEL_INFO              0x11
-> > +
-> > +/*
-> > + * CMD_GET_FREQ_INFO - Get freq info
-> > + * Input: CPU ID, type
-> > + * Output: freq info
-> > + */
-> > +#define CMD_GET_FREQ_INFO            0x12
-> > +
-> > +/*
-> > + * CMD_SET_FREQ_INFO - Set freq info
-> > + * Input: CPU ID, type, value
-> > + * Output: none
-> > + */
-> > +#define CMD_SET_FREQ_INFO            0x13
-> > +
-> > +/* Freq types */
-> > +#define FREQ_INFO_TYPE_FREQ          0
-> > +#define FREQ_INFO_TYPE_LEVEL         1
-> > +
-> > +#define FREQ_MAX_LEVEL                       (16 + 1)
-> > +
-> > +enum freq {
-> > +     FREQ_LEV0, /* Reserved */
-> > +     FREQ_LEV1, FREQ_LEV2, FREQ_LEV3, FREQ_LEV4,
-> > +     FREQ_LEV5, FREQ_LEV6, FREQ_LEV7, FREQ_LEV8,
-> > +     FREQ_LEV9, FREQ_LEV10, FREQ_LEV11, FREQ_LEV12,
-> > +     FREQ_LEV13, FREQ_LEV14, FREQ_LEV15, FREQ_LEV16,
-> > +     FREQ_RESV
-> > +};
-> > +
-> > +struct loongson3_freq_data {
-> > +     unsigned int cur_cpu_freq;
->
-> You never use it. Remove it.
-Emm, it is used in loongson3_cpufreq_get().
-
->
-> > +     struct cpufreq_frequency_table table[];
-> > +};
-> > +
-> > +static struct mutex cpufreq_mutex[MAX_PACKAGES];
-> > +static struct cpufreq_driver loongson3_cpufreq_driver;
-> > +static DEFINE_PER_CPU(struct loongson3_freq_data *, freq_data);
-> > +
-> > +static inline int do_service_request(union smc_message *msg)
-> > +{
-> > +     int retries;
-> > +     union smc_message last;
-> > +
-> > +     last.value =3D iocsr_read32(LOONGARCH_IOCSR_SMCMBX);
-> > +     if (!last.complete)
-> > +             return -EPERM;
-> > +
-> > +     iocsr_write32(msg->value, LOONGARCH_IOCSR_SMCMBX);
-> > +     iocsr_write32(iocsr_read32(LOONGARCH_IOCSR_MISC_FUNC) | IOCSR_MIS=
-C_FUNC_SOFT_INT,
-> > +                   LOONGARCH_IOCSR_MISC_FUNC);
-> > +
-> > +     for (retries =3D 0; retries < 10000; retries++) {
-> > +             msg->value =3D iocsr_read32(LOONGARCH_IOCSR_SMCMBX);
-> > +             if (msg->complete)
-> > +                     break;
-> > +
-> > +             usleep_range(8, 12);
-> > +     }
-> > +
-> > +     if (!msg->complete || msg->cmd !=3D CMD_OK)
-> > +             return -EPERM;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static unsigned int loongson3_cpufreq_get(unsigned int cpu)
-> > +{
-> > +     union smc_message msg;
-> > +
-> > +     msg.id          =3D cpu;
-> > +     msg.info        =3D FREQ_INFO_TYPE_FREQ;
-> > +     msg.cmd         =3D CMD_GET_FREQ_INFO;
-> > +     msg.extra       =3D 0;
-> > +     msg.complete    =3D 0;
-> > +     do_service_request(&msg);
-> > +
-> > +     per_cpu(freq_data, cpu)->cur_cpu_freq =3D msg.val * KILO;
-> > +
-> > +     return per_cpu(freq_data, cpu)->cur_cpu_freq;
-> > +}
-> > +
-> > +static int loongson3_cpufreq_set(struct cpufreq_policy *policy, int fr=
-eq_level)
-> > +{
-> > +     union smc_message msg;
-> > +
-> > +     msg.id          =3D cpu_data[policy->cpu].core;
-> > +     msg.info        =3D FREQ_INFO_TYPE_LEVEL;
-> > +     msg.val         =3D freq_level;
-> > +     msg.cmd         =3D CMD_SET_FREQ_INFO;
-> > +     msg.extra       =3D 0;
-> > +     msg.complete    =3D 0;
-> > +     do_service_request(&msg);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +/*
-> > + * Here we notify other drivers of the proposed change and the final c=
-hange.
-> > + */
-> > +static int loongson3_cpufreq_target(struct cpufreq_policy *policy, uns=
-igned int index)
-> > +{
-> > +     unsigned int cpu =3D policy->cpu;
-> > +     unsigned int package =3D cpu_data[cpu].package;
-> > +
-> > +     if (!cpu_online(cpu))
->
-> No need to check this.
-OK, thanks.
-
->
-> > +             return -ENODEV;
-> > +
-> > +     /* setting the cpu frequency */
-> > +     mutex_lock(&cpufreq_mutex[package]);
->
-> No locking required here. Core doesn't call them in parallel.
-I'm a bit confused, I think different cores may call .target() in
-parallel. Cores in the same package share the same
-LOONGARCH_IOCSR_SMCMBX register, so I think the lock is required.
-
->
-> > +     loongson3_cpufreq_set(policy, index);
-> > +     mutex_unlock(&cpufreq_mutex[package]);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int loongson3_cpufreq_get_freq_table(int cpu)
-> > +{
-> > +     union smc_message msg;
-> > +     int i, ret, boost_level, max_level, freq_level;
-> > +     struct loongson3_freq_data *data;
-> > +
-> > +     if (per_cpu(freq_data, cpu))
-> > +             return 0;
->
-> Will this ever be true ?
-Yes, loongson3_cpufreq_get_freq_table() is called multiple times while
-CPU hotplug.
-
->
-> > +
-> > +     msg.id          =3D cpu;
-> > +     msg.cmd         =3D CMD_GET_FREQ_LEVEL_NUM;
-> > +     msg.extra       =3D 0;
-> > +     msg.complete    =3D 0;
-> > +     ret =3D do_service_request(&msg);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +     max_level =3D msg.val;
-> > +
->
->
-> > +     msg.id          =3D cpu;
-> > +     msg.cmd         =3D CMD_GET_FREQ_BOOST_LEVEL;
-> > +     msg.extra       =3D 0;
-> > +     msg.complete    =3D 0;
-> > +     ret =3D do_service_request(&msg);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +     boost_level =3D msg.val;
->
-> This stuff is repeated a lot, maybe create a generic function for this
-> ?
-Do you means move the msg filling into do_service_request()?
-
->
-> > +
-> > +     freq_level =3D min(max_level, FREQ_MAX_LEVEL);
-> > +     data =3D kzalloc(struct_size(data, table, freq_level + 1), GFP_KE=
-RNEL);
->
-> devm_kzalloc(pdev, ...) ?
-OK, that seems better.
-
->
-> > +     if (!data)
-> > +             return -ENOMEM;
-> > +
-> > +     for (i =3D 0; i < freq_level; i++) {
-> > +             msg.id          =3D cpu;
-> > +             msg.info        =3D FREQ_INFO_TYPE_FREQ;
-> > +             msg.cmd         =3D CMD_GET_FREQ_LEVEL_INFO;
-> > +             msg.val         =3D i;
-> > +             msg.complete    =3D 0;
-> > +
-> > +             ret =3D do_service_request(&msg);
-> > +             if (ret < 0) {
-> > +                     kfree(data);
-> > +                     return ret;
-> > +             }
-> > +
-> > +             data->table[i].frequency =3D msg.val * KILO;
-> > +             data->table[i].driver_data =3D FREQ_LEV0 + i;
-> > +             data->table[i].flags =3D (i >=3D boost_level) ? CPUFREQ_B=
-OOST_FREQ : 0;
-> > +     }
-> > +
-> > +     data->table[freq_level].frequency =3D CPUFREQ_TABLE_END;
-> > +     data->table[freq_level].driver_data =3D FREQ_RESV;
-> > +     data->table[freq_level].flags =3D 0;
-> > +
-> > +     per_cpu(freq_data, cpu) =3D data;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int loongson3_cpufreq_cpu_init(struct cpufreq_policy *policy)
-> > +{
-> > +     int ret;
-> > +
-> > +     if (!cpu_online(policy->cpu))
->
-> No need to check this. Core takes care of this already.
-OK, thanks.
-
->
-> > +             return -ENODEV;
-> > +
-> > +     ret =3D loongson3_cpufreq_get_freq_table(policy->cpu);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     policy->cur =3D loongson3_cpufreq_get(policy->cpu);
-> > +     policy->cpuinfo.transition_latency =3D 10000;
-> > +     policy->freq_table =3D per_cpu(freq_data, policy->cpu)->table;
-> > +     cpumask_copy(policy->cpus, topology_sibling_cpumask(policy->cpu))=
-;
-> > +
-> > +     if (policy_has_boost_freq(policy)) {
-> > +             ret =3D cpufreq_enable_boost_support();
-> > +             if (ret < 0) {
-> > +                     pr_warn("cpufreq: Failed to enable boost: %d\n", =
-ret);
-> > +                     return ret;
-> > +             }
-> > +             loongson3_cpufreq_driver.boost_enabled =3D true;
-> > +     }
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int loongson3_cpufreq_cpu_exit(struct cpufreq_policy *policy)
-> > +{
-> > +     return 0;
-> > +}
->
-> Just drop the routine, it is optional.
-OK, thanks.
-
->
-> > +
-> > +static struct cpufreq_driver loongson3_cpufreq_driver =3D {
-> > +     .name =3D "loongson3",
-> > +     .flags =3D CPUFREQ_CONST_LOOPS,
-> > +     .init =3D loongson3_cpufreq_cpu_init,
-> > +     .exit =3D loongson3_cpufreq_cpu_exit,
-> > +     .verify =3D cpufreq_generic_frequency_table_verify,
-> > +     .target_index =3D loongson3_cpufreq_target,
-> > +     .get =3D loongson3_cpufreq_get,
-> > +     .attr =3D cpufreq_generic_attr,
-> > +};
-> > +
-> > +static struct platform_device_id cpufreq_id_table[] =3D {
-> > +     { "loongson3_cpufreq", },
-> > +     { /* sentinel */ }
-> > +};
-> > +
->
-> Remove this blank line please.
-OK, thanks.
-
->
-> > +MODULE_DEVICE_TABLE(platform, cpufreq_id_table);
-> > +
-> > +static struct platform_driver loongson3_platform_driver =3D {
-> > +     .driver =3D {
-> > +             .name =3D "loongson3_cpufreq",
-> > +     },
-> > +     .id_table =3D cpufreq_id_table,
-> > +};
-> > +
-> > +static int configure_cpufreq_info(void)
-> > +{
-> > +     int ret;
-> > +     union smc_message msg;
-> > +
-> > +     msg.cmd         =3D CMD_GET_VERSION;
-> > +     msg.extra       =3D 0;
-> > +     msg.complete    =3D 0;
-> > +     ret =3D do_service_request(&msg);
-> > +     if (ret < 0 || msg.val < 0x1)
-> > +             return -EPERM;
-> > +
-> > +     msg.id          =3D FEATURE_DVFS;
-> > +     msg.cmd         =3D CMD_SET_FEATURE;
-> > +     msg.val         =3D FEATURE_DVFS_ENABLE | FEATURE_DVFS_BOOST;
-> > +     msg.extra       =3D 0;
-> > +     msg.complete    =3D 0;
-> > +     ret =3D do_service_request(&msg);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int __init cpufreq_init(void)
-> > +{
-> > +     int i, ret;
-> > +
-> > +     ret =3D platform_driver_register(&loongson3_platform_driver);
-> > +     if (ret)
-> > +             return ret;
->
-> What is the use of this platform driver ? I thought the whole purpose
-> of the platform device/driver in your case was to probe this driver.
-> In that case cpufreq_init() should only be doing above and not the
-> below part. The rest should be handled in the probe() function of the
-> driver.
-This driver file is now a very basic version, in future it will be a
-little like intel_pstate that has more than one cpufreq_drivers
-(active/passive, hwp/nohwp, etc.), so it will register different
-cpufreq_drivers depends on the result of configure_cpufreq_info().
-
->
-> > +
-> > +     ret =3D configure_cpufreq_info();
-> > +     if (ret)
-> > +             goto err;
-> > +
-> > +     for (i =3D 0; i < MAX_PACKAGES; i++)
-> > +             mutex_init(&cpufreq_mutex[i]);
->
-> You don't need this at all.
-See above.
-
->
-> > +
-> > +     ret =3D cpufreq_register_driver(&loongson3_cpufreq_driver);
-> > +     if (ret)
-> > +             goto err;
-> > +
-> > +     pr_info("cpufreq: Loongson-3 CPU frequency driver.\n");
->
-> Make this pr_debug if you want.. There is not much use of this for the
-> user.
-Emm, I just want to see a line in dmesg.
-
-
->
-> > +
-> > +     return 0;
-> > +
-> > +err:
-> > +     platform_driver_unregister(&loongson3_platform_driver);
-> > +     return ret;
-> > +}
-> > +
-> > +static void __exit cpufreq_exit(void)
-> > +{
-> > +     cpufreq_unregister_driver(&loongson3_cpufreq_driver);
-> > +     platform_driver_unregister(&loongson3_platform_driver);
-> > +}
-> > +
-> > +module_init(cpufreq_init);
-> > +module_exit(cpufreq_exit);
->
-> You can just use: module_platform_driver() instead of above functions
-> and declarations.
->
-> > +
-> > +MODULE_AUTHOR("Huacai Chen <chenhuacai@loongson.cn>");
-> > +MODULE_DESCRIPTION("CPUFreq driver for Loongson-3 processors");
-> > +MODULE_LICENSE("GPL");
->
-> --
-> viresh
->
+T24gVHVlLCAyMDI0LTA2LTI1IGF0IDA5OjEzIC0wNzAwLCBCYXJ0IFZhbiBBc3NjaGUgd3JvdGU6
+DQo+ICAJIA0KPiBFeHRlcm5hbCBlbWFpbCA6IFBsZWFzZSBkbyBub3QgY2xpY2sgbGlua3Mgb3Ig
+b3BlbiBhdHRhY2htZW50cyB1bnRpbA0KPiB5b3UgaGF2ZSB2ZXJpZmllZCB0aGUgc2VuZGVyIG9y
+IHRoZSBjb250ZW50Lg0KPiAgT24gNi8yNC8yNCA4OjM4IFBNLCBQZXRlciBXYW5nICjnjovkv6Hl
+j4spIHdyb3RlOg0KPiA+IEJ1dCB1ZnNoY2Rfc2NzaV9ibG9ja19yZXF1ZXN0cyB1c2FnZSBpcyBj
+b3JyZWN0IGluIFNEUiBtb2RlLg0KPiANCj4gdWZzaGNkX3Njc2lfYmxvY2tfcmVxdWVzdHMoKSB1
+c2VzIHNjc2lfYmxvY2tfcmVxdWVzdHMoKS4gSXQgaXMgYWxtb3N0DQo+IG5ldmVyIGNvcnJlY3Qg
+dG8gdXNlIHNjc2lfYmxvY2tfcmVxdWVzdHMoKSBpbiBhIGJsay1tcSBkcml2ZXIgYmVjYXVzZQ0K
+PiBzY3NpX2Jsb2NrX3JlcXVlc3RzKCkgZG9lcyBub3Qgd2FpdCBmb3Igb25nb2luZyByZXF1ZXN0
+IHN1Ym1pc3Npb24NCj4gY2FsbHMgdG8gY29tcGxldGUuIHNjc2lfYmxvY2tfcmVxdWVzdHMoKSBp
+cyBhIGxlZ2FjeSBmcm9tIHRoZSB0aW1lDQo+IHdoZW4NCj4gYWxsIHJlcXVlc3QgZGlzcGF0Y2hp
+bmcgYW5kIHF1ZXVlaW5nIHdhcyBwcm90ZWN0ZWQgYnkgdGhlIFNDU0kgaG9zdA0KPiBsb2NrLCBh
+IGNoYW5nZSB0aGF0IHdhcyBtYWRlIGluIDIwMTAgb3IgYWJvdXQgMTQgeWVhcnMgYWdvLiBTZWUg
+YWxzbw0KPiANCmh0dHBzOi8vbG9yZS5rZXJuZWwub3JnL2xpbnV4LXNjc2kvMjAxMDExMDUwMDI0
+MDkuR0EyMTcxNEBoYXZvYy5ndGYub3JnLw0KPiANCj4gPiBTbywgSSB0aGluayB1ZnNoY2Rfd2Fp
+dF9mb3JfZG9vcmJlbGxfY2xyIHNob3VsZCBiZSByZXZpc2UuDQo+ID4gQ2hlY2sgdHJfZG9vcmJl
+bGwgaW4gU0RSIG1vZGUuIChiZWZvcmUgOGQwNzdlZGU0OGMxIGRvKQ0KPiA+IENoZWNrIGVhY2gg
+SFdRJ3MgYXJlIGFsbCBlbXB0eSBpbiBNQ1EgbW9kZS4gKG5lZWQgdGhpbmsgaG93IHRvIGRvKQ0K
+PiA+IE1ha2Ugc3VyZSBhbGwgcmVxdWVzdHMgaXMgY29tcGxldGUsIGFuZCBmaW5pc2ggdGhpcyBm
+dW5jdGlvbicgam9iDQo+ID4gY29ycmVjdGx5Lg0KPiA+IE9yIHRoZXJlIHN0aWxsIGhhdmUgYSBn
+YXAgaW4gdWZzaGNkX3dhaXRfZm9yX2Rvb3JiZWxsX2Nsci4NCj4gDQo+IHVmc2hjZF93YWl0X2Zv
+cl9kb29yYmVsbF9jbHIoKSBzaG91bGQgYmUgcmVtb3ZlZCBhbmQgDQo+IHVmc2hjZF9jbG9ja19z
+Y2FsaW5nX3ByZXBhcmUoKSBzaG91bGQgdXNlIGJsa19tcV9mcmVlemVfKigpLg0KPiBTZWUgYWxz
+byBteSBwYXRjaCAidWZzOiBTaW1wbGlmeSB0aGUgY2xvY2sgc2NhbGluZyBtZWNoYW5pc20NCj4g
+aW1wbGVtZW50YXRpb24iIGZyb20gNSB5ZWFycyBhZ28gDQo+ICgNCj4gaHR0cHM6Ly9sb3JlLmtl
+cm5lbC5vcmcvbGludXgtc2NzaS8yMDE5MTExMjE3Mzc0My4xNDE1MDMtNS1idmFuYXNzY2hlQGFj
+bS5vcmcvDQo+ICkuDQo+IA0KPiBCZXN0IHJlZ2FyZHMsDQo+IA0KPiBCYXJ0Lg0KDQpIaSBCYXJ0
+LA0KDQpZZXMsIHJlbW92ZSB1ZnNoY2Rfd2FpdF9mb3JfZG9vcmJlbGxfY2xyKCkgaXMgbW9yZSBy
+ZWFzb25hYmxlIGlmIHRoaXMNCmZ1bmN0aW9uIGNhbm5vdCBtYWtlIHN1cmUgYWxsIG9uLWdvaW5n
+IHJlcXVlc3QgaXMgZG9uZS4NCg0KVGhhbmtzLg0KUGV0ZXINCg==
 
