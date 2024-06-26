@@ -1,179 +1,117 @@
-Return-Path: <linux-kernel+bounces-230166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 442B391794A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:59:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3012C91794F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:04:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D5A28401F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:59:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC6222845A1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8066157A53;
-	Wed, 26 Jun 2024 06:59:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D0015885E;
+	Wed, 26 Jun 2024 07:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hXq7/gMR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dk/2w8Gj"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A93C10A11;
-	Wed, 26 Jun 2024 06:59:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87CF1FBB;
+	Wed, 26 Jun 2024 07:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719385178; cv=none; b=kCztIXzKYazEWnpquJyv8S2qeEQEX8P5CfaK3f8g+AJ0NOOjaEAc3Wg5lI8eDjYBN16INuDWCUP0PiHvfsbW+3JsLRhdL9e/UweSDLsjzP3mPvfs7gTxS+r8iI/m1tiiFPser5yxM+V2jByRRjQDHKhTiDYp2MuBKL8JkNQ+POU=
+	t=1719385440; cv=none; b=FYIdhcwLxsSUGAU1b8Llv26vyfYvU0g1VwfWubUKndaWi36/Ui1aHDbuPKjNrL3Eza21/cAX/2IEs/ptbyxAUAXosJDwobEXYAXfDIptG5JZjI7j1C/E4zngnBAQwzwA0qJMUVDCdluEfwtILRirGNbgL6GKFe0rqoZg50G8Yvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719385178; c=relaxed/simple;
-	bh=F7Vpya+7j+dMbuEFDpaXdFPnPs9r3oWYBeeZVByqmkM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=AQnNKhm4RADOP331mywIxDpfJO/8+X8iAKkS5g0y7m1LmMBJU2XFbV+v7hgD5waNBdR56/tAZDR98ZAelgu0dLo/RM/ASlSg6V0tZ6RZEO2DERgV+ecKwgfctDSydnzz2b5uVCYXZcNjWYCaDWL45GbJmoxMGLClx3SQsykkoQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hXq7/gMR; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719385177; x=1750921177;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=F7Vpya+7j+dMbuEFDpaXdFPnPs9r3oWYBeeZVByqmkM=;
-  b=hXq7/gMR010eHnMHkvExEOLCHWweICft4AICZZAE8sywjTtuOPGnMw/F
-   YKwRmZWCTgSM4JISlrLBzx/MTWcNwHy9pRQ0LqB3kBVALolEdluBlBXr5
-   JO43H+F+EWkEsv85nZ7yH+O8Ef6SXkJKjrIqbvWIz1hB9HTjF75NhJyIf
-   HhWOMPJ8Uq/q2PhCyt4fjnjS9aWNU8M6BZizeoRHNO6++HEouI4jE27QE
-   c8smoNkAq4n54ECJFa1yDSMS3KOYbCv35PunudF5eVWIgivvfDvSQeooI
-   W4SpDU9EDQS2ggpe+COr79OF0shpSkvbHFmoPuhWYWSCRCsjJo6Ya7svg
-   g==;
-X-CSE-ConnectionGUID: +UihRZYOSXuazyHV5fjwBw==
-X-CSE-MsgGUID: oLcULofwReqVIeUEY3JtoQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="16317354"
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="16317354"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 23:59:36 -0700
-X-CSE-ConnectionGUID: Ad4KmJhCS3ehFjR9r2Vaww==
-X-CSE-MsgGUID: 4x5SIM5PQ0qrOKTevQo+gA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="48494075"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.41.28])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 23:59:29 -0700
-Message-ID: <5db205f3-550f-4b9b-8bf4-aaa8054043aa@intel.com>
-Date: Wed, 26 Jun 2024 09:59:23 +0300
+	s=arc-20240116; t=1719385440; c=relaxed/simple;
+	bh=yhiDsGtckWbJdiH+m4+tg0FxsetoSjM547eWaMzugqA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SmE4g+T4FstsO0VJZj2CJf+7Ha1wjUmIUzHhFS8cAyADkno2OMp+AoKYS+LLojri+ZmFInFTB6CXjfR5fwk3PhebPvyKmvPp6VGd4uactZM2gZwJvkmkwqIVEG3OlkV10M/3tamrekJAZkOmmaVa0zJwwFtJEsWYLITZ0TPaxM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dk/2w8Gj; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-57d1782679fso7796732a12.0;
+        Wed, 26 Jun 2024 00:03:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719385437; x=1719990237; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CCmw9U2ETNDBLBuD2pt2tF/w6GsMBw1zovesQGm6nj8=;
+        b=Dk/2w8GjuktBoRbBtDNRVWM6zPNNdvqXS/cDLan8zbYRM1BtGj16Mc9ofusu0dbjYY
+         +EzLnbOZlfX1CyPFCzj2owffYtgORvJ3uTayz/ptHNcInp7WsKEZ8OcywtF1nk0UELp2
+         /WGicI0lSB8ABZY84A0DGZ/pXUkRxiboQz/9XSPifjKnboeuTaSv4s/lQ3OcK/2/nYrl
+         NLOErXnd8TCqGVkKmR1/hk10DuLhrByDTBdLfAaSYfisECUmvvTZQywN8Boum4rWJm5v
+         4wwIeRt5ElSajzjhS5BcYeZe6fys2rmpfqZFmM1Tra3uFNqd8KUl/SM72yvdGN46esId
+         rFHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719385437; x=1719990237;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CCmw9U2ETNDBLBuD2pt2tF/w6GsMBw1zovesQGm6nj8=;
+        b=nlYCOVu7If4xeLshVGd3kjY2PWEIRRHG7PmSyg5tFHdNaaeWWWibVXrtehkLig02Zz
+         JoeK+mQE85DA7oPneRRc2mGpvjE0qQimija6e2iHFcT+jCBHaleuzGvAIIVqW7zG4LCz
+         La8ROTkrAscs3slw4+oB339Q8jIPTB5j70qKwojSZ+Agx2X+VYFIEFu5dQvDH3YQ63+n
+         ZkRhld4KdUa36HoQFnAWg+cFp/3X39PWitqZaLn5RjodOSOJI37r03SQeveb0tLNhXXh
+         n1TxjDUx9cBkv3pQ6BzuDbaawOXr9hgnOzzS4ErZZR+YGOxxE9mBVa/BBILtiglZ4O1M
+         Crxg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/N+ICDDbBK8R5sGY+MogDqkVVQ8c96DXEPMy9x4um1PqkAbCbrpLDBA+CyOgYM2UzNCPfWNo7cpq5NZx/OD3V40ZCOelFIlEC8e/E
+X-Gm-Message-State: AOJu0YzZ1CoKbJEL2Ga2/BMv8MCQqTCknu12eYVjMg+k/qKLKap0wYUJ
+	U8d5+BxKMwYVs/IrdJdS5CqHTwcjN1c2zv0SQLPeKqRbBGROE4W0
+X-Google-Smtp-Source: AGHT+IG+YhujMvMhvhUyfqCcrHDikxocG4QadsjpWiXNy+jvs+ekjSV42yHz8cqiWyCcSzweRbZSCA==
+X-Received: by 2002:a17:906:c206:b0:a6f:adf7:b073 with SMTP id a640c23a62f3a-a7245b4cccfmr612328566b.10.1719385436674;
+        Wed, 26 Jun 2024 00:03:56 -0700 (PDT)
+Received: from localhost.localdomain ([95.67.7.157])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf48a038sm582582966b.48.2024.06.26.00.03.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 00:03:56 -0700 (PDT)
+From: Vyacheslav Frantsishko <itmymaill@gmail.com>
+To: mario.limonciello@amd.com,
+	broonie@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: linux-sound@vger.kernel.org,
+	itmymaill@gmail.com
+Subject: [PATCH] ASoC: amd: yc: Fix non-functional mic on ASUS M5602RA
+Date: Wed, 26 Jun 2024 10:03:34 +0300
+Message-ID: <20240626070334.45633-1-itmymaill@gmail.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <0e571211-8921-4548-a093-6c5719c866c4@amd.com>
+References: <0e571211-8921-4548-a093-6c5719c866c4@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 22/26] perf auxevent: Add explicit dummy tool
- initialization
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
- John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
- James Clark <james.clark@arm.com>, Mike Leach <mike.leach@linaro.org>,
- Leo Yan <leo.yan@linux.dev>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Yicong Yang <yangyicong@hisilicon.com>,
- Jonathan Cameron <jonathan.cameron@huawei.com>,
- Nick Terrell <terrelln@fb.com>, Nick Desaulniers <ndesaulniers@google.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Anshuman Khandual <anshuman.khandual@arm.com>, Song Liu <song@kernel.org>,
- Ilkka Koskinen <ilkka@os.amperecomputing.com>,
- Huacai Chen <chenhuacai@kernel.org>, Yanteng Si <siyanteng@loongson.cn>,
- Sun Haiyong <sunhaiyong@loongson.cn>, linux-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20240625172603.900667-1-irogers@google.com>
- <20240625172603.900667-23-irogers@google.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20240625172603.900667-23-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 25/06/24 20:25, Ian Rogers wrote:
-> Ensure tool is initialized to avoid lazy initialization pattern so
-> that more uses of struct perf_tool can be made const.
+The Vivobook S 16X IPS needs a quirks-table entry for the internal microphone to function properly.
 
-This does not look necessary.
+Signed-off-by: Vyacheslav Frantsishko <itmymaill@gmail.com>
+---
+ sound/soc/amd/yc/acp6x-mach.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-The dummy tool is not used, and is not subject to lazy initialization,
-so the existing initialization to zero is fine.
-
-> 
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/util/arm-spe.c     | 1 +
->  tools/perf/util/cs-etm.c      | 1 +
->  tools/perf/util/intel-bts.c   | 1 +
->  tools/perf/util/intel-pt.c    | 2 +-
->  tools/perf/util/s390-cpumsf.c | 1 -
->  5 files changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
-> index 70bad18c4a0d..06a198b2f483 100644
-> --- a/tools/perf/util/arm-spe.c
-> +++ b/tools/perf/util/arm-spe.c
-> @@ -1097,6 +1097,7 @@ static int arm_spe_synth_event(struct perf_session *session,
->  
->  	memset(&arm_spe_synth, 0, sizeof(struct arm_spe_synth));
->  	arm_spe_synth.session = session;
-> +	perf_tool__init(&arm_spe_synth.dummy_tool, /*ordered_events=*/false);
->  
->  	return perf_event__synthesize_attr(&arm_spe_synth.dummy_tool, attr, 1,
->  					   &id, arm_spe_event_synth);
-> diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
-> index 231cd833c012..02eb5b3eed14 100644
-> --- a/tools/perf/util/cs-etm.c
-> +++ b/tools/perf/util/cs-etm.c
-> @@ -1619,6 +1619,7 @@ static int cs_etm__synth_event(struct perf_session *session,
->  
->  	memset(&cs_etm_synth, 0, sizeof(struct cs_etm_synth));
->  	cs_etm_synth.session = session;
-> +	perf_tool__init(&cs_etm_synth.dummy_tool, /*ordered_events=*/false);
->  
->  	return perf_event__synthesize_attr(&cs_etm_synth.dummy_tool, attr, 1,
->  					   &id, cs_etm__event_synth);
-> diff --git a/tools/perf/util/intel-bts.c b/tools/perf/util/intel-bts.c
-> index 779982c478e0..ae97109542be 100644
-> --- a/tools/perf/util/intel-bts.c
-> +++ b/tools/perf/util/intel-bts.c
-> @@ -761,6 +761,7 @@ static int intel_bts_synth_event(struct perf_session *session,
->  
->  	memset(&intel_bts_synth, 0, sizeof(struct intel_bts_synth));
->  	intel_bts_synth.session = session;
-> +	perf_tool__init(&intel_bts_synth.dummy_tool, /*ordered_events=*/false);
->  
->  	return perf_event__synthesize_attr(&intel_bts_synth.dummy_tool, attr, 1,
->  					   &id, intel_bts_event_synth);
-> diff --git a/tools/perf/util/intel-pt.c b/tools/perf/util/intel-pt.c
-> index bed35029e1f6..48ed60e521ed 100644
-> --- a/tools/perf/util/intel-pt.c
-> +++ b/tools/perf/util/intel-pt.c
-> @@ -3687,7 +3687,7 @@ static int intel_pt_synth_event(struct perf_session *session, const char *name,
->  
->  	memset(&intel_pt_synth, 0, sizeof(struct intel_pt_synth));
->  	intel_pt_synth.session = session;
-> -
-> +	perf_tool__init(&intel_pt_synth.dummy_tool, /*ordered_events=*/false);
->  	err = perf_event__synthesize_attr(&intel_pt_synth.dummy_tool, attr, 1,
->  					  &id, intel_pt_event_synth);
->  	if (err)
-> diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
-> index 5834bad6ac0f..eb835e531cd6 100644
-> --- a/tools/perf/util/s390-cpumsf.c
-> +++ b/tools/perf/util/s390-cpumsf.c
-> @@ -953,7 +953,6 @@ s390_cpumsf_process_event(struct perf_session *session,
->  }
->  
->  struct s390_cpumsf_synth {
-> -	struct perf_tool cpumsf_tool;
->  	struct perf_session *session;
->  };
->  
+diff --git a/sound/soc/amd/yc/acp6x-mach.c b/sound/soc/amd/yc/acp6x-mach.c
+index 1760b5d42460..4e3a8ce690a4 100644
+--- a/sound/soc/amd/yc/acp6x-mach.c
++++ b/sound/soc/amd/yc/acp6x-mach.c
+@@ -283,6 +283,13 @@ static const struct dmi_system_id yc_acp_quirk_table[] = {
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "M5402RA"),
+ 		}
+ 	},
++        {
++		.driver_data = &acp6x_card,
++		.matches = {
++			DMI_MATCH(DMI_BOARD_VENDOR, "ASUSTeK COMPUTER INC."),
++			DMI_MATCH(DMI_PRODUCT_NAME, "M5602RA"),
++		}
++	},
+ 	{
+ 		.driver_data = &acp6x_card,
+ 		.matches = {
+-- 
+2.45.1
 
 
