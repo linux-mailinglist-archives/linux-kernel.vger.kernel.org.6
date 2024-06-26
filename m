@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-231545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60D9C9199C7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:26:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D557F9199C8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AEE5284536
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:26:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27AC7283A7D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E859194124;
-	Wed, 26 Jun 2024 21:26:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CBB19308C;
+	Wed, 26 Jun 2024 21:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iAYB+ZPn"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCs4TK3Q"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FBD190664;
-	Wed, 26 Jun 2024 21:26:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BF1C14D6EB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 21:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719437180; cv=none; b=la3h48qXfjv3+LEwZ0oXv0gKcyWtq8AZIqTu9TmbSaVF7sD8vngaU6egWC9FNFA5vtoeVKDqs9qGiRgIv5c+xu+dGquefiZGDacX0Iy6A7KUC208F6sz2t59zXQCC1Q0ylAvVzLUex2a4xFmrxIUc5tIz8gHieuULfGucADTj+Q=
+	t=1719437311; cv=none; b=dXBOshFWhKoulKgcidGO3tVHIRlLgkU/NqV9Xb/FqAZOArYPvHNdizsFM962SKhLNttIF6WSzhS/CxHgtcL++Q4J0H7vfbwa+pR9+koYQ+XmHw8xRTo0QKSiWS/+aOwVVVNPJ//WtltxAlbrx7IXE80oyvCdi/lDlWvqX9ABbwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719437180; c=relaxed/simple;
-	bh=ZG8saBM3N6xqGW6UUfKcaCbxiiH22Itzsev61ppamho=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QV5mgo7DEAH3fiJ6g0XHrnwdNm8PuQSMIxhnpFwDUMk8PPLuluxXkhIcwqy1d+YiacwE5g7pnllDQfHdlL+56o/Sq+GZrzyqAIdeCKum43p6X9UankZU4eeFLhMo1TDL635o25ewSSSr6d370zyEZMfWJsaN6wQckUL6Ty32F3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iAYB+ZPn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfJ3Y029729;
-	Wed, 26 Jun 2024 21:26:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	H988TLB0FgUwXdImduaNcVTht03R/pl3hhgY2y7lIJg=; b=iAYB+ZPnWZf9dxiB
-	o3HuZ7hezeGaAG6/ZYhTNFPp2hTicddJ21rmoSwGEMvMUdG6b7S7yNx+po0J+EBF
-	7ysXQXFQIgUDEUeLiJ9moXj4XfmFyjfUxWMqhomLxv+Up+e5HGpSCj6klkz0djYu
-	gdSsUvT7BkVHnMHQtLCpEg3jsoiY4u56s0nfzMNiuY7VOqh9iWOrjbqk0nZRzlkg
-	dsnb18KKVl7J85AKdCV+KSafsE5WPWrgJgOvAOUWBwbIvmB8LYhlKoj4vywcSSxB
-	16hXedyHn5c1wFwbwzX0DpxcrF0KalXfa19JPtQ5usLj/pSi8++zcGb/Z9RP4mQG
-	XpcdSA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400c46abwj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 21:26:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QLQDZK017222
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 21:26:13 GMT
-Received: from [10.110.61.112] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 14:26:13 -0700
-Message-ID: <30fd5a0f-d71e-4bcb-ac33-0a6f9bef2029@quicinc.com>
-Date: Wed, 26 Jun 2024 14:26:12 -0700
+	s=arc-20240116; t=1719437311; c=relaxed/simple;
+	bh=EN/7R4v6R6eNKenxyUXJC7vHdoYt/NSbVW6zdWQw50Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eN8KHlqQOBUAhlBeeGJc6HzFu59jEU10zAbR3wPGBTswDK4cjPwIlBPqt4pn3af04F5WUbwXqh6nnvMx7YwfJYw4l8I8SmrxFZP9Ed95VQclllNQ535Duwiip3WPVBIpRTI31g+N0kS7tg0C0/DB9e3DUxprHnmTx5fDHJGSmKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mCs4TK3Q; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-1f9e2affc8cso45873295ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:28:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719437309; x=1720042109; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=UJy3VvzdQIqNudEsYqsvd2uBoavgyLb/HFfLMFdVgsM=;
+        b=mCs4TK3QsSP4xcxJkEQzy3Y6sziNP+TE88L4R9hixnVOb41IeqRXOkB/hl/iEaWIjK
+         PrVjkIOvQvUUG4PzHNfGoXv3KHTdcP5NYX3bHHxBXYLJbxvZ1DIA0+Y2WAJDl5xmFUb/
+         sjKkLIYvaOuQ504bHC3TCCL0jZsrFaMcZup0/qdX9sCTt5Ezkx3T5WiWNK3bhkojH2xM
+         PD1TYwU06daykVg0aMlmAQKSlHK9Jc+C7QsKwVffUOxjGGw1YtGX3KCrCtUfrklEHiAe
+         Igk6fG4zVYJn7yUEQx6LpfXFqG/eO1WZzzfWy2KkPq+2ng5TXiWr5G8Xe5xFVefKcwoe
+         KhWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719437309; x=1720042109;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :sender:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UJy3VvzdQIqNudEsYqsvd2uBoavgyLb/HFfLMFdVgsM=;
+        b=tIMzAun6SvGHimdNxqN6p0N7uthkmvvjoV4gQTNQy7aJSNdCPlIYIVC/FX8C0yOhuh
+         my8D8EPBuwAXl9gM4LBDZNQOl+p5U2zUR/MHafwRrc+BMhLTQisVB9f1fIaPpgIhf3W0
+         q+JFqeKr6GOvU1ga9nlP5Of8ea7sCYgueAQSy7Vl7gnoO60pVqKw4lH942EMIz31eKMW
+         3KHihI/UNEig5NS/jY33uasqanxcJ8X9OHtrZbvbc4khmUC5T0iORxDrpkJRH/2MnSeJ
+         C1lUvpHG6bEc7OmVyMaknnIzn5GnRX+KVsriPZwWKh4VYrxy/TzpqnkeL/LzKty1je/Y
+         hcnw==
+X-Gm-Message-State: AOJu0YwxRwznJpmR7wN94kc8T1L+WVYN3nLKnOZBQYYXbEsfHqnNO2ZG
+	jlKuFe6s9xuf/Fzi6J7gP9RJdd2Bs6Ch2tz2VwJkhCh7i7i9V1aZRJyg4A==
+X-Google-Smtp-Source: AGHT+IHHfqm2EjVzSU5OdMkYSqoqbdyx07+qCsR/P5i+LbYfERRVRs5QuBAg3/X2Arv+3ZzTyTLLAA==
+X-Received: by 2002:a17:902:f54c:b0:1f9:ddea:451d with SMTP id d9443c01a7336-1fa23bdf3b8mr122492035ad.3.1719437308184;
+        Wed, 26 Jun 2024 14:28:28 -0700 (PDT)
+Received: from localhost (dhcp-141-239-159-203.hawaiiantel.net. [141.239.159.203])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c60a5sm103865655ad.153.2024.06.26.14.28.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 14:28:27 -0700 (PDT)
+Sender: Tejun Heo <htejun@gmail.com>
+Date: Wed, 26 Jun 2024 11:28:26 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>
+Subject: [GIT PULL] workqueue: Fixes for v6.10-rc5
+Message-ID: <ZnyH-lGLwc37I0xK@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] remoteproc: qcom: select AUXILIARY_BUS
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Mathieu
- Poirier <mathieu.poirier@linaro.org>
-CC: Mark Brown <broonie@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
-References: <20240626-qcom-pd-mapper-fix-deps-v1-0-644678dc4663@linaro.org>
- <20240626-qcom-pd-mapper-fix-deps-v1-2-644678dc4663@linaro.org>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20240626-qcom-pd-mapper-fix-deps-v1-2-644678dc4663@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: UoAwZbdPGUb23luEnqwisg1kQkdxDNqs
-X-Proofpoint-GUID: UoAwZbdPGUb23luEnqwisg1kQkdxDNqs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_14,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- mlxscore=0 lowpriorityscore=0 phishscore=0 mlxlogscore=759 adultscore=0
- priorityscore=1501 malwarescore=0 clxscore=1015 suspectscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406260157
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+The following changes since commit 8f6a15f095a63a83b096d9b29aaff4f0fbe6f6e6:
 
+  Merge tag 'cocci-for-6.10' of git://git.kernel.org/pub/scm/linux/kernel/git/jlawall/linux (2024-05-20 16:00:04 -0700)
 
-On 6/26/2024 12:12 PM, Dmitry Baryshkov wrote:
-> The QCOM_PD_MAPPER implementation made Qualcomm remoteproc drivers use
-> auxiliary bus for the pd-mapper subdevice. Add necessary dependency.
-> 
-> Reported-by: Mark Brown <broonie@kernel.org>
-> Fixes: 5b9f51b200dc ("remoteproc: qcom: enable in-kernel PD mapper")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/remoteproc/Kconfig | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
-> index 48845dc8fa85..dda2ada215b7 100644
-> --- a/drivers/remoteproc/Kconfig
-> +++ b/drivers/remoteproc/Kconfig
-> @@ -166,6 +166,7 @@ config QCOM_PIL_INFO
->   
->   config QCOM_RPROC_COMMON
->   	tristate
-> +	select AUXILIARY_BUS
->   
->   config QCOM_Q6V5_COMMON
->   	tristate
-> 
+are available in the Git repository at:
 
+  git://git.kernel.org/pub/scm/linux/kernel/git/tj/wq.git/ tags/wq-for-6.10-rc5-fixes
 
-Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+for you to fetch changes up to 231035f18d6b80e5c28732a20872398116a54ecd:
+
+  workqueue: Increase worker desc's length to 32 (2024-06-07 06:24:16 -1000)
+
+----------------------------------------------------------------
+workqueue: Fixes for v6.10-rc5
+
+Two patches to fix kworker name formatting.
+
+----------------------------------------------------------------
+Tejun Heo (1):
+      workqueue: Refactor worker ID formatting and make wq_worker_comm() use full ID string
+
+Wenchao Hao (1):
+      workqueue: Increase worker desc's length to 32
+
+ include/linux/workqueue.h |  2 +-
+ kernel/workqueue.c        | 51 +++++++++++++++++++++++++++++++----------------
+ 2 files changed, 35 insertions(+), 18 deletions(-)
+
+-- 
+tejun
 
