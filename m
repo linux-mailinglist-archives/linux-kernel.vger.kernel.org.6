@@ -1,161 +1,161 @@
-Return-Path: <linux-kernel+bounces-231091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECF7918612
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:39:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B74E918615
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:41:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99DD282063
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:39:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AAF31F215ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:41:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2113918C35C;
-	Wed, 26 Jun 2024 15:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E25C18C35F;
+	Wed, 26 Jun 2024 15:41:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JfoPqh2e"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="EWW4oUXI"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9175F18C359
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 15:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F111A92F;
+	Wed, 26 Jun 2024 15:41:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719416377; cv=none; b=iBiLE8RzkPXFYk7UEmwkUqAU/gDLrAdFpE5TB1Dm0pg1yv37H5D1BqSTJ/XkPeaUZBT8RN6a0bZatK+l+CEgcI4tjmf7UmQHtPoRbRw0eT/TvyhGwbjCxFCoeYHJv6J/dYyGnA0CmD2JVdf9uLu+t+vKwodJtXD/VciKJj6eE/E=
+	t=1719416490; cv=none; b=fc3O5HtH/tWo23PZyRgiwfAOB6gTV3uEkH/8YnYKVZ99RhEXX4kOaOiVufLgB+d1TH/+Zcmjj1akOKFrmA/eOVI1Df67fJyswSQhPRw4DUnaVLPIXxd9WeeEp7YQvCci37N/VXJuISv3ntuWXMpoB7ItJJnjsrNgQSNxa9zvyc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719416377; c=relaxed/simple;
-	bh=PBmsA3dp7WOzVuKoikoPlIqgP7yl2wLUkbDd8Z333GU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Cdo5NFT1Un2KBw1g44mmiL/mpLDCVuiYPTdG3/jPCH937U/I2YezIAMd6YeWF7/0pqkiRQ4vY4iEHRhqr73EEox8bFQMa7arzr8mpC3iHXl/Gh+uTNTB/0LBF6HRlynGb4HJo2BD643HomAbJStzIyNjTpL44M+Y53HfoQ9U1e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JfoPqh2e; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6fe118805dso482737166b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:39:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719416374; x=1720021174; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=0bkJu/bkE4YATT5DotU3XkvD4f0O0B8V67eM7kRZPuY=;
-        b=JfoPqh2eQAYjUP4y7GDbPKgMFiul/C+ssUC+eCVuEtj1+iYn7aICkEQ9D5/96fS9Fy
-         8exdo9A0SEvigm66cZYoh+XOlqx/ZBc0Stltxd5oE+kOzEEQpnE1+japUV2/463FRfHt
-         WjEYkT3kn2VAwyobGKds2sZTE4euon+S1tqiL5jlqQd+L5jaAH0vkncnmWlTnGE+h45d
-         E+JnqgpTg6TUzhkC56S7MlM2xeNWkHyGOVq2XODeuZiu01fBDZoJJSJqY8O3zxKD/t0U
-         yXO72J9PBkF+KMNT0rOY1RsDkwYqzHJ2b10mhExLER2qi8rs7AEEtmd/1oAiuWYpP+hb
-         qixQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719416374; x=1720021174;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0bkJu/bkE4YATT5DotU3XkvD4f0O0B8V67eM7kRZPuY=;
-        b=UvJ9DcEb8nwYhbl7WNqUB5+N27uI7KFqzQiDsT5ntd7uzr5zp+WjIJSfaQNvZxN2R3
-         hMTjQwu27MNXxMsFSvQT+CdSnMR5B77SeBuCK2PWxtKjQenYHlnCUkWlQkPaoEzB5xCv
-         cAdT6T+kGXHsM81NxHb81dOPkw+dnrIZ+Cp1tSNShm5GMuWX58pDgLBVJ7pVQ/twNLlb
-         mrSXxV5HV/X1UlTaolYvSuKs7zzavQDeKDuBvctDUu3c5mYu4GUsk5+aJIzhKHRdRnCt
-         MqZ5Tr6qk7pUl1u0j+HQ5o3a7YdY0IPEg4PhnfzCKR2D2SfRntjNjSgdpkbGGppMiPdo
-         U5Rw==
-X-Forwarded-Encrypted: i=1; AJvYcCV6RJ8KVp1dHFxnFt4+s0Sz9nEDGVllyiMx8Z/zLySCOR+G98ZwOdlUI3yXvvPBLMxxb/1vw8Y7LsSnXq8gOu1+DjyyJqxHbfXWv0X/
-X-Gm-Message-State: AOJu0Yzq64lfRUDuqf99fRf7BajYyLxTOW2Ka8Hvc6NRDZLQQClj+7ny
-	XcLr6NOpInb3gqftRQCFdaic2+IWs4+t9vL8EXlyxFGYdmBB/XXJuGQ/B3zW6w4=
-X-Google-Smtp-Source: AGHT+IG/rHUrDCvGY9wJr8ucozPZKf0rO73NUY5HSWLeuYxtBLnN/cI1iFrL9wx3/pOzGPv/gbUI7w==
-X-Received: by 2002:a17:907:c242:b0:a72:8296:ca12 with SMTP id a640c23a62f3a-a728296d192mr290301866b.36.1719416373600;
-        Wed, 26 Jun 2024 08:39:33 -0700 (PDT)
-Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a724ebbc1a5sm367452366b.213.2024.06.26.08.39.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 08:39:33 -0700 (PDT)
-Message-ID: <e678339b-356f-4aa4-aa04-e6e54d8e554c@linaro.org>
-Date: Wed, 26 Jun 2024 17:39:29 +0200
+	s=arc-20240116; t=1719416490; c=relaxed/simple;
+	bh=GPHvwfVOsOpJ3F4HSr4EpYRzSsypkz6TSUJoNBbhErs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AcAKdGOWF8IdGO6gKNQlyidaK2sED0J0wz51K8r6hj7GqgulMjxkYcuOGr2Cf774zT5H4ZVxFs/s4QjcFjy2GxLxsvVEbJYG87SBl/vWjZ7jgOcMHy11NSjWFeLNGSX7gtT2N/PUYNrd/HiJDtnXechDvEQvKnj18pnikLAhKuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=EWW4oUXI; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=I2mKrncqrxQxg3yWqxHlilhT6KiFqVB2cixTKCsRVuo=; b=EWW4oUXIHM0thFAE
+	OnOspGfMc5HhlJOuzLrrBhNlPk6akWkMVt3TsIX0pjRaY8WLYAVaGJDlmdi7G0rMunVOWOUUnCFY8
+	OsjY0ijPo29+VcDpnMt0AGuFvIvcKLPh9HerZpeiyHV7G4bEwEmcY9VFKlPTmCb+EokGSL8lWpKXZ
+	H0S/Nglapsu7JmK6sO0mhlSYVHWw5l/zzAI7Lb+PVRImo23SzBiYJVEXZkeFsd9j/0SeGYODksSBz
+	oUQpg9wZiRTuF5HF8odDl0CWH+PfcjuRhRLsE66j/b0KAYk4rpBQ16EQhbsdVtJLTcNs0Zc8K6vDD
+	dcQqCes7LIPx59myxQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1sMUlt-008VLV-1J;
+	Wed, 26 Jun 2024 15:41:21 +0000
+Date: Wed, 26 Jun 2024 15:41:21 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: sudipm.mukherjee@gmail.com, sudip.mukherjee@codethink.co.uk
+Cc: arnd@arndb.de, linux-kernel@vger.kernel.org,
+	linux-parport@lists.infradead.org, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 0/3] parport: Cleanup some pre-devmodel code
+Message-ID: <Znw2oRnqaZ39aXzQ@gallifrey>
+References: <20240502154823.67235-1-linux@treblig.org>
+ <ZkXj9Ip3DoUAe1wt@gallifrey>
+ <Zl3_5MzTNqIiXM_C@gallifrey>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 5/7] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-To: Devi Priya <quic_devipriy@quicinc.com>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, catalin.marinas@arm.com,
- will@kernel.org, p.zabel@pengutronix.de, richardcochran@gmail.com,
- geert+renesas@glider.be, dmitry.baryshkov@linaro.org,
- neil.armstrong@linaro.org, arnd@arndb.de, m.szyprowski@samsung.com,
- nfraprado@collabora.com, u-kumar1@ti.com, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- netdev@vger.kernel.org
-References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
- <20240626143302.810632-6-quic_devipriy@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240626143302.810632-6-quic_devipriy@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <Zl3_5MzTNqIiXM_C@gallifrey>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 15:39:43 up 49 days,  2:53,  1 user,  load average: 0.06, 0.03, 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-On 26.06.2024 4:33 PM, Devi Priya wrote:
-> Add Networking Sub System Clock Controller(NSSCC) driver for ipq9574 based
-> devices.
+* Dr. David Alan Gilbert (linux@treblig.org) wrote:
+> * Dr. David Alan Gilbert (dave@treblig.org) wrote:
+> > * linux@treblig.org (linux@treblig.org) wrote:
+> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> > > 
+> > > There are some remenants of the pre-devmodel code
+> > > still in the parport drivers; try and clean some of them out.
+> > 
+> > Ping!
 > 
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
-> Tested-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-> ---
+> Ping^2.
 
-[...]
+Ping^3
 
-> +	struct regmap *regmap;
-> +	struct qcom_cc_desc nsscc_ipq9574_desc = nss_cc_ipq9574_desc;
-> +	struct clk *nsscc_clk;
-> +	struct device_node *np = (&pdev->dev)->of_node;
-> +	int ret;
-> +
-> +	nsscc_clk = of_clk_get(np, 11);
-> +	if (IS_ERR(nsscc_clk))
-> +		return PTR_ERR(nsscc_clk);
-> +
-> +	ret = clk_prepare_enable(nsscc_clk);
-> +	if (ret)
-> +		clk_disable_unprepare(nsscc_clk);
+(Added Sudip's other email address, and also cc'd linux-hardening)
 
-No changes to be seen..
+Dave
 
-Konrad
+> Dave
+> 
+> > Dave
+> > 
+> > > This series should have no visible change, all the drivers
+> > > already use the devmodel, it's just removing the flags
+> > > that say that, and cleaning out no longer used function pointers.
+> > > (To me the most useful bit is removing the no longer used
+> > > 'attach' pointer, so if you've got code that's trying to use
+> > > it you'll get educated).
+> > > 
+> > > Trivially tested in qemu, I can still write to the lp;
+> > > 
+> > > Also checked with grep -r 'struct parport_driver' . -A 9
+> > > to see if I've missed any.
+> > > 
+> > > (I found this while dragging the out-of-tree ppscsi code
+> > > into working on head, so that I could use my prehistoric
+> > > HP PP scanner)
+> > > 
+> > > Dave
+> > > 
+> > > Dr. David Alan Gilbert (3):
+> > >   parport: Remove 'drivers' list
+> > >   parport: Remove attach function pointer
+> > >   parport: Remove parport_driver.devmodel
+> > > 
+> > >  drivers/ata/pata_parport/pata_parport.c  | 1 -
+> > >  drivers/auxdisplay/ks0108.c              | 1 -
+> > >  drivers/auxdisplay/panel.c               | 1 -
+> > >  drivers/char/lp.c                        | 1 -
+> > >  drivers/char/ppdev.c                     | 1 -
+> > >  drivers/i2c/busses/i2c-parport.c         | 1 -
+> > >  drivers/input/joystick/db9.c             | 1 -
+> > >  drivers/input/joystick/gamecon.c         | 1 -
+> > >  drivers/input/joystick/turbografx.c      | 1 -
+> > >  drivers/input/joystick/walkera0701.c     | 1 -
+> > >  drivers/input/serio/parkbd.c             | 1 -
+> > >  drivers/net/hamradio/baycom_epp.c        | 1 -
+> > >  drivers/net/hamradio/baycom_par.c        | 1 -
+> > >  drivers/net/plip/plip.c                  | 1 -
+> > >  drivers/parport/daisy.c                  | 1 -
+> > >  drivers/parport/share.c                  | 9 ---------
+> > >  drivers/pps/clients/pps_parport.c        | 1 -
+> > >  drivers/pps/generators/pps_gen_parport.c | 1 -
+> > >  drivers/scsi/imm.c                       | 1 -
+> > >  drivers/scsi/ppa.c                       | 1 -
+> > >  drivers/spi/spi-butterfly.c              | 1 -
+> > >  drivers/spi/spi-lm70llp.c                | 1 -
+> > >  include/linux/parport.h                  | 6 ------
+> > >  sound/drivers/mts64.c                    | 1 -
+> > >  sound/drivers/portman2x4.c               | 1 -
+> > >  25 files changed, 38 deletions(-)
+> > > 
+> > > -- 
+> > > 2.44.0
+> > > 
+> > -- 
+> >  -----Open up your eyes, open up your mind, open up your code -------   
+> > / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+> > \        dave @ treblig.org |                               | In Hex /
+> >  \ _________________________|_____ http://www.treblig.org   |_______/
+> > 
+> -- 
+>  -----Open up your eyes, open up your mind, open up your code -------   
+> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+> \        dave @ treblig.org |                               | In Hex /
+>  \ _________________________|_____ http://www.treblig.org   |_______/
+> 
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
