@@ -1,236 +1,151 @@
-Return-Path: <linux-kernel+bounces-230912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C1E9183B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:11:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA6669183B6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:13:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6CC01C20FB6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794C5282520
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82481849EF;
-	Wed, 26 Jun 2024 14:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6AA1849F0;
+	Wed, 26 Jun 2024 14:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="S3ciBK8J";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zkJ3di6W";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="JFhZ6PfP";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dg1Uf2ry"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s5DQDAJt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C98A18412F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E611E52A;
+	Wed, 26 Jun 2024 14:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719411074; cv=none; b=UDEIr5z2+0gnyboX7eRvyHf3WV3SpfmWy8Oj4ZV9KTvZBCCi/P5aN/DVwfA7pxnxhYehCyoN1Ibz5ilD6rbcckNtfleLfv1kaoktpIhOEBwej2J52K2537faPDXQoBKM3bWQaXU9edfIxrD2e6nOtS1DvuMuvGKWid784T9i4Fs=
+	t=1719411213; cv=none; b=CJhgvPKff+irJxPx6TAsFqOKy5JfQCLijmWUbPvUCFXdxww0pqrYKcRj8q1EbRT0JVSdFq173qCtWHUAwwYVOEVf9rrRwnngW+HAf8em5SsdpBW0qKDS5baJ3X0xFQS83Kpw8zDjCMPlkugJszGUKpU8xTpHov4YKn0G4TRPhDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719411074; c=relaxed/simple;
-	bh=iL4EPvfHXVSEXD+fKi2d/HzoEbSC5P2OgSN8lP64ssU=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RiNIKPrtqU7iMbpezejTO5nOT6+2ChHecvZmQp6fZF320AL+SFnpm54KyIezrv6AUgUzwtSi0dmQC2F4RC2+s5O0PPS6k7W2Fssv9Az3NutOKUdkh1oMR+8Mr5fisF7Vj1SmFZ1ocOQdrhu+lwHDyd+2Rgb1H0n2VNqTv1L7g2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=S3ciBK8J; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zkJ3di6W; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=JFhZ6PfP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dg1Uf2ry; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 287FD1FB53;
-	Wed, 26 Jun 2024 14:11:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719411071; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dWoxlCDIe+rD5CzZ0z0C215A8LG7XgazoeYUuCuXoqU=;
-	b=S3ciBK8JO9LhtvrFdSNe+gIeWBiw0eLG9Jvj4G6O2furAP8gKbbn1mLLJJAwwnKKtKrcjN
-	HrLgR0KlEmd9TyEn94KuU6umDutkdJ542GdM637O09dSkMSRjzUMIv5JHmUGwOtRFQSFNy
-	FXzTMCI9weqYyWKpXcchmVnzxSN3qxo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719411071;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dWoxlCDIe+rD5CzZ0z0C215A8LG7XgazoeYUuCuXoqU=;
-	b=zkJ3di6WZYOskG3jTwbR5g7D3AgyMsHhf/Oixx/yOEJsDGf+RZEObU/XmUC5zlpo5C3CNy
-	4yLqBONU0AuXjXAg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1719411070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dWoxlCDIe+rD5CzZ0z0C215A8LG7XgazoeYUuCuXoqU=;
-	b=JFhZ6PfPw2iEu92zzfWR4wx/ES76LIWMHiD4oWloY53IkP38Y+/WXQdT0dIV9GHao2Vx2U
-	xALZQWgEesbl96YhNzJZtB+h7kiDmorhhjzuI57jLglxM+GK8Y/uOoEzv+LMv2aodsOxIm
-	iKiSdVOJ2KJzj7//8e8Em7F5ifOfNGM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1719411070;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=dWoxlCDIe+rD5CzZ0z0C215A8LG7XgazoeYUuCuXoqU=;
-	b=dg1Uf2ryca843gx82lY3XrY/kOWT2DlYWdVM28K49AlZVeq3y8HoZB9x4ZBOdcdolqCRZO
-	acqMriiCv+tC7kAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D3CCB13AAD;
-	Wed, 26 Jun 2024 14:11:09 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id hTliMn0hfGaMTQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 26 Jun 2024 14:11:09 +0000
-Message-ID: <dac6562e-2542-410d-909a-c1a15e5daa2c@suse.de>
-Date: Wed, 26 Jun 2024 16:11:09 +0200
+	s=arc-20240116; t=1719411213; c=relaxed/simple;
+	bh=V0ZOKzVCQZZ9ZeEBAHlxb0Z++KOVCNbb60YWE77q8dQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qBRKM60uMQKm0pZhcs8veP803HgmgHfL+dyWMPL8dXg+mxoQH4Uy+t1W515dBIiURHpQEp2uDuIBjbydEzxuNjOnQj4FWP+rShdqy2/RrgkV5jHo6k8isJAaE5Zxz55DyXupcEuJUCzoBGGPjG2Rr+mtL1AwpgnfNfzHxYy3DZ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s5DQDAJt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94A36C116B1;
+	Wed, 26 Jun 2024 14:13:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719411212;
+	bh=V0ZOKzVCQZZ9ZeEBAHlxb0Z++KOVCNbb60YWE77q8dQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=s5DQDAJtV9H4BKd8JP1sRITBrGdZQe0wyiiqSVqtxVE+D3OaA0JN0V4jgiY2Q9MSz
+	 eVztwlai7YDPVHaQ9SmMQFID17Pi27/P7/DNgae+ApgcVx7pum9z9x/dxCreRClsf3
+	 8NNim47LdhV9DLYjSPI6Kd4P/ZL/slpSePQn1idUYs/RtI6smZSEAjqjdo+bVXd0s4
+	 63QPhpmxdTDV0ef4UVCIZuQDyNro7D6DD1uqBGDksFpOGQ5FjcPNbGwk4b2uHT1Jy4
+	 o35CJnRT1DREScHJJUp4s1Xd8JpfTx0VAf9woTRSNl9ygfqmKu7xQhtXiGBKKM1yMn
+	 oQdLY/4HtAwtg==
+Date: Wed, 26 Jun 2024 16:13:30 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Neeraj upadhyay <neeraj.iitr10@gmail.com>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org
+Subject: Re: [PATCH rcu 2/6] rcu: Remove superfluous full memory barrier upon
+ first EQS snapshot
+Message-ID: <ZnwiCsor-cku3ETF@localhost.localdomain>
+References: <81f4e616-8125-4934-a8e2-fd5beae90995@paulmck-laptop>
+ <20240604222652.2370998-2-paulmck@kernel.org>
+ <CAFwiDX9ynNpmU_Au=J7geJYjE8NLLM-p2x8QDyjmZ1qNBkLXZQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/mediatek: select DRM_GEM_DMA_HELPER if
- DRM_FBDEV_EMULATION=y
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, dri-devel@lists.freedesktop.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-References: <20240620054708.2230665-1-wenst@chromium.org>
- <CAAOTY_9tLUAcw+C5D78SNwrV6kHds7JhtAoFYFmxxfAH9vtkDQ@mail.gmail.com>
- <CAGXv+5FQaJFuouB4feS4KEK+KqSZaJ=en8d9700gkqpQLOBr5g@mail.gmail.com>
- <8cb41481-f44c-4615-8c1f-d38261082a10@suse.de>
-Content-Language: en-US
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <8cb41481-f44c-4615-8c1f-d38261082a10@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Spamd-Result: default: False [-4.29 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	XM_UA_NO_VERSION(0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,chromium.org:email,mediatek.com:email]
-X-Spam-Flag: NO
-X-Spam-Score: -4.29
-X-Spam-Level: 
+In-Reply-To: <CAFwiDX9ynNpmU_Au=J7geJYjE8NLLM-p2x8QDyjmZ1qNBkLXZQ@mail.gmail.com>
 
+Le Wed, Jun 12, 2024 at 01:57:20PM +0530, Neeraj upadhyay a écrit :
+> On Wed, Jun 5, 2024 at 3:58 AM Paul E. McKenney <paulmck@kernel.org> wrote:
+> >
+> > From: Frederic Weisbecker <frederic@kernel.org>
+> >
+> > When the grace period kthread checks the extended quiescent state
+> > counter of a CPU, full ordering is necessary to ensure that either:
+> >
+> > * If the GP kthread observes the remote target in an extended quiescent
+> >   state, then that target must observe all accesses prior to the current
+> >   grace period, including the current grace period sequence number, once
+> >   it exits that extended quiescent state.
+> >
+> > or:
+> >
+> > * If the GP kthread observes the remote target NOT in an extended
+> >   quiescent state, then the target further entering in an extended
+> >   quiescent state must observe all accesses prior to the current
+> >   grace period, including the current grace period sequence number, once
+> >   it enters that extended quiescent state.
+> >
+> > This ordering is enforced through a full memory barrier placed right
+> > before taking the first EQS snapshot. However this is superfluous
+> > because the snapshot is taken while holding the target's rnp lock which
+> > provides the necessary ordering through its chain of
+> > smp_mb__after_unlock_lock().
+> >
+> > Remove the needless explicit barrier before the snapshot and put a
+> > comment about the implicit barrier newly relied upon here.
+> >
+> > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > ---
+> >  .../Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst    | 6 +++---
+> >  kernel/rcu/tree.c                                          | 7 ++++++-
+> >  2 files changed, 9 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
+> > index 5750f125361b0..728b1e690c646 100644
+> > --- a/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
+> > +++ b/Documentation/RCU/Design/Memory-Ordering/Tree-RCU-Memory-Ordering.rst
+> > @@ -149,9 +149,9 @@ This case is handled by calls to the strongly ordered
+> >  ``atomic_add_return()`` read-modify-write atomic operation that
+> >  is invoked within ``rcu_dynticks_eqs_enter()`` at idle-entry
+> >  time and within ``rcu_dynticks_eqs_exit()`` at idle-exit time.
+> > -The grace-period kthread invokes ``rcu_dynticks_snap()`` and
+> > -``rcu_dynticks_in_eqs_since()`` (both of which invoke
+> > -an ``atomic_add_return()`` of zero) to detect idle CPUs.
+> > +The grace-period kthread invokes first ``ct_dynticks_cpu_acquire()``
+> > +(preceded by a full memory barrier) and ``rcu_dynticks_in_eqs_since()``
+> > +(both of which rely on acquire semantics) to detect idle CPUs.
+> >
+> >  +-----------------------------------------------------------------------+
+> >  | **Quick Quiz**:                                                       |
+> > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > index f07b8bff4621b..1a6ef9c5c949e 100644
+> > --- a/kernel/rcu/tree.c
+> > +++ b/kernel/rcu/tree.c
+> > @@ -769,7 +769,12 @@ static void rcu_gpnum_ovf(struct rcu_node *rnp, struct rcu_data *rdp)
+> >   */
+> >  static int dyntick_save_progress_counter(struct rcu_data *rdp)
+> >  {
+> > -       rdp->dynticks_snap = rcu_dynticks_snap(rdp->cpu);
+> > +       /*
+> > +        * Full ordering against accesses prior current GP and also against
+> > +        * current GP sequence number is enforced by current rnp locking
+> > +        * with chained smp_mb__after_unlock_lock().
+> > +        */
+> 
+> It might be worth mentioning that this chained smp_mb__after_unlock_lock()
+> is provided by rnp leaf node locking in rcu_gp_init() and rcu_gp_fqs_loop() ?
 
+Right!
 
-Am 26.06.24 um 16:07 schrieb Thomas Zimmermann:
-> Hi
->
-> Am 26.06.24 um 08:37 schrieb Chen-Yu Tsai:
->> Hi Thomas,
->>
->> On Thu, Jun 20, 2024 at 10:20 PM Chun-Kuang Hu 
->> <chunkuang.hu@kernel.org> wrote:
->>> Hi, Chen-Yu:
->>>
->>> Chen-Yu Tsai <wenst@chromium.org> 於 2024年6月20日 週四 下午1:47寫道：
->>>> With the recent switch from fbdev-generic to fbdev-dma, the driver now
->>>> requires the DRM GEM DMA helpers. This dependency is missing, and will
->>>> cause a link failure if fbdev emulation is enabled.
->>>>
->>>> Add the missing dependency.
->>> Acked-by: Chun-Kuang Hu <chunkuang.hu@mediatek.com>
->> Could you help merge this?
->
-> It's merged into drm-misc-fixes.
+How about this?
 
-drm-misc-next
+    /*
+     * Full ordering against accesses prior current GP and also against
+     * current GP sequence number is enforced by rcu_seq_start() implicit
+     * barrier and even further by smp_mb__after_unlock_lock() barriers
+     * chained all the way throughout the rnp locking tree since rcu_gp_init()
+     * and up to the current leaf rnp locking.
+     */
 
->
-> Best regards
-> Thomas
->
->>
->> Thanks
->> ChenYu
->>
->>>> Fixes: 0992284b4fe4 ("drm/mediatek: Use fbdev-dma")
->>>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->>>> ---
->>>> The commit this patch fixes is in drm-misc-next. Ideally this patch
->>>> should be applied on top of it directly.
->>>>
->>>> CK, could you give your ack for it?
->>>>
->>>>   drivers/gpu/drm/mediatek/Kconfig | 1 +
->>>>   1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/gpu/drm/mediatek/Kconfig 
->>>> b/drivers/gpu/drm/mediatek/Kconfig
->>>> index 96cbe020f493..d6449ebae838 100644
->>>> --- a/drivers/gpu/drm/mediatek/Kconfig
->>>> +++ b/drivers/gpu/drm/mediatek/Kconfig
->>>> @@ -7,6 +7,7 @@ config DRM_MEDIATEK
->>>>          depends on HAVE_ARM_SMCCC
->>>>          depends on OF
->>>>          depends on MTK_MMSYS
->>>> +       select DRM_GEM_DMA_HELPER if DRM_FBDEV_EMULATION
->>>>          select DRM_KMS_HELPER
->>>>          select DRM_MIPI_DSI
->>>>          select DRM_PANEL
->>>> -- 
->>>> 2.45.2.741.gdbec12cfda-goog
->>>>
->
-
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+Thanks.
 
