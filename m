@@ -1,127 +1,140 @@
-Return-Path: <linux-kernel+bounces-230685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1736918088
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:06:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDF0D91808A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:06:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B0242828C1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:06:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DED31F24C01
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:06:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E67181315;
-	Wed, 26 Jun 2024 12:06:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD48180A9E;
+	Wed, 26 Jun 2024 12:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhqCh3vl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AF/doiyb"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9964180A88
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61907180A7C
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719403593; cv=none; b=hCfS1rkrFpRWvUYOll/URirowFTVrMDjHYsdP6AO0zqar43qByHWYxLImZFunN+6l2eW0I8HgFjM29UXevpBWSKTFYM/j6gXrCSXBtznl0S1tBjFclbvYsjwcZNJU3XNA7BXTnKJtbNzo3kQ7LBgy8WfcKKp78DnehciXhwvEM4=
+	t=1719403602; cv=none; b=BIdsx5d+FybWOU0yKVFc1iVwBKU42dBj1qvXxUYbicRgod9+dxb/y08GJ8WE5bvJzU4Ibc5ner3aMi3wedgLV4PkLSq/iSc7fB5dBG9HSLknBLjyQ+j3Aq4uRMiP38D9ebO8d9+LeHMnSvvdsqZsZLJW9VUTVepIl77frVH2yQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719403593; c=relaxed/simple;
-	bh=hHmrnmVkA+icg7WMUj6EJBFmbuxO5bQ3bYPlOLRcydA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HvaxWPrddKAWZp+bbdpqCwW8pakaxrWiII8mUlY3vvQ9/sCbrG4H+Mpwfj26gWMgIEWd+i5gJi0bIVPVf32iNowRtBN3/tIzgczv0voH1j0Efn6daVXHJw3oJy32tMFWpS0uoIL4qX4ML+Xa6MQwf6FYpNY03ypVXM5FmVKsvaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhqCh3vl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 4A663C2BD10;
-	Wed, 26 Jun 2024 12:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719403592;
-	bh=hHmrnmVkA+icg7WMUj6EJBFmbuxO5bQ3bYPlOLRcydA=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=RhqCh3vlTEedAXYD86vsPOTqA/T6mY2xn7PIBn/P16eZS840B/3si/pU+U+QLaRxR
-	 h8nMJXZ9l82ubbRhoffXiC1fnlP6O7EY/3wNAczIOlzdwu85/lWIvn/haVMf8UYzHb
-	 wcz2OMQo4r6/Ga139fRL6dq52/0zDAserzFDy7sGdwoR/Z+qYPYP56cRrB9dP3Zb03
-	 A/JC7aFXW8xY00t76TxH74wc+j67u/Qv/NXimUyLqmqku1wXAtKIEpO9JhVYRflMcD
-	 WG3vmouZHG5zl66kLYzk0Hskh3oj8xSWpbA1uXLOhqGvxfxY4WopnqPJ8Zvr+4Yayb
-	 3sRkrtR8+GMRg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3660BC30659;
-	Wed, 26 Jun 2024 12:06:32 +0000 (UTC)
-From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
-Date: Wed, 26 Jun 2024 14:06:16 +0200
-Subject: [PATCH v2] kbuild: scripts/gdb: bring the "abspath" back
+	s=arc-20240116; t=1719403602; c=relaxed/simple;
+	bh=OzHbeL5WtJqCPBFNWo2wRad/ZDM5wcfh7viKbjMBt04=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tySii4tlxM1TvlRQoK0Nu6Rxvhyzt7uw4mnlTkqiwcsmyjKdeFjEsza4JKDNEmfUawjv7FdlQDkGZ+7rVW2R6524QzHgQk1qlttEgpOh9EuMKlvsMHVCWv3NME+39g2U/hF0ky/Zi2LhZ+PMHHn+ZCHnZHo6HjZVQUuuWSLJl84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AF/doiyb; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52cdb0d816bso431395e87.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 05:06:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719403598; x=1720008398; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=u2+2NLpsRBb/A1mZr1EFBFFtwdFUpWW1fRqczPXb5as=;
+        b=AF/doiybsyEhy9bOJW3nzxbhIhqRaVGQ4yJ5TsaHEIOEbA2q+PqCXgqrkL/5w67cGq
+         UJpQjB06ns+INe+KEq4PJoKaNIauW2pOUyofBRmrUNdkQO9rokbO2Rf8LPsInC8koT4r
+         Hj2NZUWfJ6A1z7X7YgJt31kBwIEatI3HWP9AmogKuPp1LdfGmby7Rv1hREz0J5DRMkkr
+         x4Eho4fjClZ9YhaalzfPO5V14xocGjalACJvnKDw5HageK23/+UIlrrpvb6UtGb/ZSsg
+         DuoctC6jlqU6v6Bq5oMF2l/gJ3yMW840bsPTzxGEtKii87DjS1UaSRdr3tX16flWjMHH
+         LX6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719403598; x=1720008398;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u2+2NLpsRBb/A1mZr1EFBFFtwdFUpWW1fRqczPXb5as=;
+        b=CshKvNU4svFrjZ6w3nnXbmEQLCXXAI70g9SpAo5Ev9rtYuTZPSatfF+/Dk3wpvzWmy
+         RhXiK0vP49iVKxJ0uBm6bwGJbhY1IrZ4TQaqeehYxF1Zevv6HW/nNblBVD+YZTAMlNYI
+         7Oi065M3ZUnBs7Ank+Z8MnDPsTVXrEQLpOmQPSaBizWFOA6iOxkSzysddkyCVCWzGGPq
+         F3oH6gSFbm6/+HYaiaZbx6mZKXH8OpuflfA8vXmGRCi3u9h9dC51MbyKWedidrZQKc5m
+         Qiqhl7n+T3DmRU6aYX/1tU+tzvEeugxJLid/ncKH6YyXJyRfRGReaNQRFqWPEGPbMoEP
+         Yt6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWzzMJDl1MbcOl40j0zfwdHU59Ylp2ojjbFh1uXF6YqqPG81476zT2hAh8QauXN0WqzSwn9UFO3SWk/X4fWWFS1CshlJbu0tmb1Fk+O
+X-Gm-Message-State: AOJu0YzI3cZxMbR5QF607DcrJw098CzkV7BpZpnnkScOqZUN5qwcDgh1
+	xShHQYAtsvFfQ8i9QMWVJOpzYogzk7iR6XkOpX6U4eOFziL1Me44A+E96HQHOBBGjmnG4RTQOUY
+	bJJ1hGP0sHvotHn41x6IES1lCmL25gNnKry5qzA==
+X-Google-Smtp-Source: AGHT+IGNXOPWzj1X7QU8se3idG/m9LeRfsovZgHLg/ViLLaROhPSd8hd4XH038GACB9qaHOrbJO17dJiAmpUbT0kK+I=
+X-Received: by 2002:a19:9115:0:b0:52b:963d:277c with SMTP id
+ 2adb3069b0e04-52cdf25da2amr3552489e87.33.1719403598599; Wed, 26 Jun 2024
+ 05:06:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240626-jag-fix_gdb_py_symlinks-v2-1-1a05406c8063@samsung.com>
-X-B4-Tracking: v=1; b=H4sIADcEfGYC/4WNXQ6CMBCEr0L22Zp2VYg+eQ9DSKE/rNpCukokh
- LtbuYCP32TmmwXYJrIMl2KBZCdiGmIG3BXQ9Tp6K8hkBpR4lCVKcddeOPo03rTNODc8hyfFBwt
- U5myksdVJI+T1mGyubeZbnbknfg1p3o4m9Uv/OycllDiUWjqJqnKtu7IO/I5+3w0B6nVdv7Wnw
- dnAAAAA
-To: Jan Kiszka <jan.kiszka@siemens.com>, 
- Kieran Bingham <kbingham@kernel.org>, 
- Masahiro Yamada <masahiroy@kernel.org>, 
- Douglas Anderson <dianders@chromium.org>
-Cc: linux-kernel@vger.kernel.org, Joel Granados <j.granados@samsung.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1389;
- i=j.granados@samsung.com; h=from:subject:message-id;
- bh=ELA3O2VefITuAlFWSunBt6d4ILv4gEPSDCYoeDsUf/w=;
- b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGZ8BEZ7361AGuuL1AzQ/hAcHZJ4bCyhOod8M
- AJJ0PxwNRIyY4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmfARGAAoJELqXzVK3
- lkFPbMoL/1UPGDA+dGpVQ4m8RzzzYa06hQnsp4OoNOVHK0R5EUVb0sZitdVbGD3TzLBcvKVPf51
- Ov0nMnZJ48icshqAXD6gOhd1KPJiMFJMBEtvx7QLUfa/4Hg6fhZC6XOtNwUgLO5iLdmc1MP2It7
- Uif0r7/c+MLSEUO1YtW8vUOA9jI4CiaPHD59RlcLPe2dPW/W0Ne7ODSFKD8tFLjK53pHavt9X0/
- qa0AFZZV/IKdl0zg+TWc3ZRKCXiPD7KlD2grhLbSdlcS74G3z+kiDk8KDwbR77xBAMjNNKnxMm8
- I8Ff4Mf+epcgueu71td/Jr/5QMmpEw7wYGXPWFMJbFjCSJhHTcFN7oR36zkROHPCE8dtEDS6lGa
- oOw1AzU7sEhetdDAJaz8AftBm6KRM/TopvO4beNPZF1+lbEJ/X6piysWETAIVOQYFECBDRvKPy6
- eRcMlZWYDyBODOOPFvNDRuiR3Dgav6rX9JY2oAmLHqa0ecLrnDCwNpFN3XmsdKRwzUsPlD/X3U4
- iI=
-X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
- fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
-X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
- auth_id=70
-X-Original-From: Joel Granados <j.granados@samsung.com>
-Reply-To: j.granados@samsung.com
+References: <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
+In-Reply-To: <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 26 Jun 2024 14:06:27 +0200
+Message-ID: <CACRpkdY=xAKNz5S+sbJXYRs9EoivJS_nZEtYHKc2m4UDkLvscA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: mmio: do not calculate bgpio_bits via "ngpios"
+To: Shiji Yang <yangshiji66@outlook.com>
+Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
+	Asmaa Mnebhi <asmaa@nvidia.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
+	linux-kernel@vger.kernel.org, Mark Mentovai <mark@mentovai.com>, 
+	Jonas Gorski <jonas.gorski@gmail.com>, =?UTF-8?B?TMOzcsOhbmQgSG9ydsOhdGg=?= <lorand.horvath82@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Joel Granados <j.granados@samsung.com>
+Hi Shiji,
 
-Use the "abspath" call when symlinking the gdb python scripts in
-scripts/gdb/linux. This call is needed to avoid broken links when
-running the scripts_gdb target on a build directory located directly
-under the source tree (e.g., O=builddir).
+thanks for your patch!
 
-Fixes: 659bbf7e1b08 ("kbuild: scripts/gdb: Replace missed $(srctree)/$(src) w/ $(src)")
-Signed-off-by: Joel Granados <j.granados@samsung.com>
----
-Changes in v2:
-- Rephrased the commit message to clarify what is happening
-- Link to v1: https://lore.kernel.org/r/20240620-jag-fix_gdb_py_symlinks-v1-1-36a0f0217fbf@samsung.com
----
- scripts/gdb/linux/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Jun 25, 2024 at 3:22=E2=80=AFAM Shiji Yang <yangshiji66@outlook.com=
+> wrote:
 
-diff --git a/scripts/gdb/linux/Makefile b/scripts/gdb/linux/Makefile
-index fd1402c0a1a1..fcd32fcf3ae0 100644
---- a/scripts/gdb/linux/Makefile
-+++ b/scripts/gdb/linux/Makefile
-@@ -5,7 +5,7 @@ ifdef building_out_of_srctree
- symlinks := $(patsubst $(src)/%,%,$(wildcard $(src)/*.py))
- 
- quiet_cmd_symlink = SYMLINK $@
--      cmd_symlink = ln -fsn $(patsubst $(obj)/%,$(src)/%,$@) $@
-+      cmd_symlink = ln -fsn $(patsubst $(obj)/%,$(abspath $(src))/%,$@) $@
- 
- always-y += $(symlinks)
- $(addprefix $(obj)/, $(symlinks)): FORCE
+> bgpio_bits must be aligned with the data bus width. For example, on a
+> 32 bit big endian system and we only have 16 GPIOs. If we only assume
+> bgpio_bits=3D16 we can never control the GPIO because the base address
+> is the lowest address.
+>
+> low address                          high address
+> -------------------------------------------------
+> |   byte3   |   byte2   |   byte1   |   byte0   |
+> -------------------------------------------------
+> |    NaN    |    NaN    |  gpio8-15 |  gpio0-7  |
+> -------------------------------------------------
+>
+> Fixes: 55b2395e4e92 ("gpio: mmio: handle "ngpios" properly in bgpio_init(=
+)")
+> Fixes: https://github.com/openwrt/openwrt/issues/15739
+> Reported-by: Mark Mentovai <mark@mentovai.com>
+> Signed-off-by: Shiji Yang <yangshiji66@outlook.com>
+> Suggested-By: Mark Mentovai <mark@mentovai.com>
+> Reviewed-by: Jonas Gorski <jonas.gorski@gmail.com>
+> Tested-by: L=C3=B3r=C3=A1nd Horv=C3=A1th <lorand.horvath82@gmail.com>
 
----
-base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
-change-id: 20240620-jag-fix_gdb_py_symlinks-21d9d0de75a2
+Commit  55b2395e4e92 also contains this:
 
-Best regards,
--- 
-Joel Granados <j.granados@samsung.com>
+@@ -614,10 +616,15 @@ int bgpio_init(struct gpio_chip *gc, struct device *d=
+ev,
+        gc->parent =3D dev;
+        gc->label =3D dev_name(dev);
+        gc->base =3D -1;
+-       gc->ngpio =3D gc->bgpio_bits;
+        gc->request =3D bgpio_request;
 
+After this patch gc->ngpio will be unset for any GPIO chip that
+provides a ngpios property, so restore the above line too.
 
+But maybe a better fix is:
+
++ #include <linux/types.h>
+(...)
++  else
++               gc->bgpio_bits =3D round_up(gc->ngpio, sizeof(phys_addr_t) =
+* 8);
+
+?
+
+Yours,
+Linus Walleij
 
