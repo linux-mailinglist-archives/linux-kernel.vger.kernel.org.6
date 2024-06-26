@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-231628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CA39919AFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:05:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B658919AFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:06:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7ED7C1C21446
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:05:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5E5C1F2169E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B2E194A76;
-	Wed, 26 Jun 2024 23:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD15194A50;
+	Wed, 26 Jun 2024 23:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fd5cMyQh"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="f0NnXEZ9"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB645194A44
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 23:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C06B194A61
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 23:04:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719443075; cv=none; b=qQ50txH5UVragRtG0WHBdRIGQOTmMIl2390V3WtiX6SfTq4J9FQnpo2H0rdaB92t26y1h9kgrk67mpMeGL1IbapbRML3a4eVQewIlQdrTNdsonVtU9YBZTJ/I88yCCFJ/nr1WDSQqgUf8KYHCIRPdJePCCfmn3fCsyCX3fbjfFw=
+	t=1719443076; cv=none; b=DQSeUHcLwDiRWClHVXKccbQbz4dcEyIdm/baoFxWsP04HrGQ1shUbm3+iZr1syyZwZmoeijiCPwgYKLjkMS5bXW+NYRzLW/JUIOGiG/0Aed8W3Lr4Y8btM76szptU1thfVKSD38BFO5XCIJksHsH/fruGy450FBinJxuRF/9c7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719443075; c=relaxed/simple;
-	bh=bVYP/yh9H60FMAxPtcm0Q5OLzE/o5Ocz16UtfVNPa4U=;
+	s=arc-20240116; t=1719443076; c=relaxed/simple;
+	bh=vKCPSZCxsriB7WThJFHjvVytk0B8CH0/B2lctEhKZJI=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=eNL4PcD8McWUNCaCO7QZZvNUXKRFT63yz0se1tInvkdg6zGogfUzhY2+IjLk6Il0pkIRhWEQUObwki35fM1QIGkC4bB5jkJiYDFjmT9WaCHU/gTv0WYJF1iaaaJynghyOgYXm9bWKxZYpzO4Hw0PbhNjaPzuFnYg4uZXTjcttFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fd5cMyQh; arc=none smtp.client-ip=209.85.219.201
+	 To:Cc:Content-Type; b=PCQ5ajjFVovYSZndtCOnHUkDohpRBKCVQNfm9RYMP32l3842ia0mPB+gFOFstWxWe2Y5wWa0xYab8mub/hF+u1g8lnGKAzOOugKrL0hx0ZDs1j9h+s1UgrBURuOH95L5/iH/NmAxIvXLcvHQTnhctDQrOmya0gYmUuCW7F9ScRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=f0NnXEZ9; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ipylypiv.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e033554101bso2317820276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:04:33 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-62fb4a1f7bfso173887227b3.3
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:04:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719443073; x=1720047873; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719443074; x=1720047874; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TktkKoidPCE335Y52c+z5B8f/TUhLrrbeBqorbEFGO4=;
-        b=fd5cMyQhfvZ/Uhp1HdtqM3KHl4H0XLxRdEvI+VSfv2VxmKyynKF59gkJQwnFgiLw+a
-         McS2IqGXQp2A3iXZ2wTnACOZf5mkWxBvRAwbm8gP7kYXlE4r6o84miIYRwinvJ41gxte
-         gVqyESHOb4ZUKO+IUvPpFF+dm5F0yrGr7plV5ySl/NAR/joGzJCaFBDtn0tGjtvu4/R8
-         a/LYn0lXdDHHHsonRBNkCcL0vQvSlN4hqqxD9eOYw4poSsKzWdHmGJfZJcu3azPBiIgf
-         EUZ9At8dO5K8jogKYvUbbTAgjbxVEABiKv5Conl5jJfY9+1vSJFuc4rE7/Pgf/JhJCnZ
-         j3xg==
+        bh=PEyKI1QsiIJEewnF527ltuQV4oeBpkyWMn9QtWCUb2g=;
+        b=f0NnXEZ9Kk4PBi87AmOOr4ZP9E2uGHCVvpqZazMUUTnAs56AaHJtI/TOfFi+tLtBmJ
+         hH1+RGzbJecDuDK8XCgF0jd1BHxkK2W4/DW5Xx8Y1hGbIlx6/cSpp7Wq9aJ0Qag1HtUj
+         xvjC8sOa5CdpkYChSCUZSQztrLTia3kk6ueGISxEhtSfI540IwHJ2kwGpxNOZ9MO35jZ
+         zCWGT6Kl1AJ6JyIfjmIBdqolHdxz8vwze/xfFsG028AMF9aTVv8416EhTuzTLbliM5QS
+         bGmdjgHNPR+F4a5iYJxmEC0DqqHZrzCb3umUBCfDT6X0imzoE1Zh6a2GCGQOvZAYmNeQ
+         JxMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719443073; x=1720047873;
+        d=1e100.net; s=20230601; t=1719443074; x=1720047874;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TktkKoidPCE335Y52c+z5B8f/TUhLrrbeBqorbEFGO4=;
-        b=WhmhJKLA7HMy9m6X7BCmIsWk1uLtvjbCVFps8xd73WF2h2DQxpxz1m2zaH0pFG2BGh
-         vhZcGvKy46yP4v0GN41tC51FZHqioB0c3H1TAadgMR7TcAStVGwHw/FgsVZI7rLBnMhX
-         lenDFXM7qFQMET+cRMifrKnOf/Q9YHP9UWFnmupUHrgO8/AKly5kCIJ/SZOOaxtKtGve
-         BTrt3foyog5b1KrK980LovL9cr95gkJYVW2u++/wTSjknTP4NNmzvby2TUfXceToxlRR
-         TEljBMP5PQ6fsvDTl9JoWINpK/rXYzq1aeZqSBn/ehtIW+GU45MffPCXOAwDyug4Bs0g
-         oqyw==
-X-Forwarded-Encrypted: i=1; AJvYcCX3LxohiUHM6qeQAOb6/rH9lXvKHgynEYPn0BLkSETibuaxrqFtV9MkCVx7osP6M//0+fFLR4UbIIIlgRE9xQkKqxGGO6kdFtjCFwNH
-X-Gm-Message-State: AOJu0Yw0vMo0ee9BUneJWtbN+rLuG+GayyAVwyLSTuDwjY3WnCYrlFRx
-	fIuFlEp5q4+F+f7msaCXowjgcLK8IJd4OrUTq+F+xnTL0f8mUC6C7ZcpqyrkD+lj18WduTbQaym
-	aZRRwWk2MhQ==
-X-Google-Smtp-Source: AGHT+IEb4we7BM5x93dwmclinIUkfoKE9eA0csWjhO9wldRsT+EUgld1jSbloaZMyQXtxOZFolUe7L1HRqV/XA==
+        bh=PEyKI1QsiIJEewnF527ltuQV4oeBpkyWMn9QtWCUb2g=;
+        b=jmu8boNG1IvqIOx9jnuVtjC75oP8aOWKcwkE1ugbnOmcvzmmwCXQmZmwMptlr6Cteo
+         0VVT6eaXKWcn4AdoZPO1F8ako1tqCxOeT5M5xe9Y/cGuO/NO7L/DSVEIkeFR+jL/7eji
+         OVwdV8HtK6gRJyBSWmDpa8awiEbfVWxjrD1sLBsf0aIkMT159rEpMeKQin0b+bjqjq1r
+         QRoPi9uYYxPbDuWozPkRf92WzuVgD5rs8ao7TLqfp25zcDYXmmIStJVmmxV6lr48IAZ4
+         C9TVjN2BCWBLTkyin6e+GOjXhOhgkDwXg6VgaDCDBwIdn89lms4j2SGyPMFIf2FDE8Fi
+         P46w==
+X-Forwarded-Encrypted: i=1; AJvYcCXZPAbIIwRShKU/5mHWzeWwiF64JZfGjsUs+FoMwWBf9hiFeru1YiACqnnzooxwxB6AXqdAD4TSr2anov1TxwuAVcNfEUZaPRt8utBF
+X-Gm-Message-State: AOJu0YzX9+HOVbuM5X15yU0VNdLAFe+fpMGkMlNm6T+oYS5QHpT9xSQp
+	jfBLV82UtPS5TE0bna8fyQKo6WVJ4Iku3hMMnwFxl5QoZ7pYkoJNXTeTfNLqPK6V9z7IJi0U1Ms
+	/fjt8fXQNVA==
+X-Google-Smtp-Source: AGHT+IHEjGoOj0rKBY90tBQ+URsGB4VTurQ8pFXkmw/P+KxoNfpIx64+6no67l8qdUYDXNV6XjzwXAXXQvy3Bw==
 X-Received: from ip.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:57f3])
- (user=ipylypiv job=sendgmr) by 2002:a05:6902:1109:b0:e03:3683:e67f with SMTP
- id 3f1490d57ef6-e033683e751mr4888276.5.1719443072715; Wed, 26 Jun 2024
- 16:04:32 -0700 (PDT)
-Date: Wed, 26 Jun 2024 23:04:10 +0000
+ (user=ipylypiv job=sendgmr) by 2002:a05:690c:fc8:b0:648:2a9d:1a63 with SMTP
+ id 00721157ae682-6482a9d24bfmr2023537b3.7.1719443074353; Wed, 26 Jun 2024
+ 16:04:34 -0700 (PDT)
+Date: Wed, 26 Jun 2024 23:04:11 +0000
 In-Reply-To: <20240626230411.3471543-1-ipylypiv@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,85 +73,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20240626230411.3471543-1-ipylypiv@google.com>
 X-Mailer: git-send-email 2.45.2.803.g4e1b14247a-goog
-Message-ID: <20240626230411.3471543-6-ipylypiv@google.com>
-Subject: [PATCH v3 5/6] ata: libata: Set ATA_QCFLAG_RTF_FILLED in fill_result_tf()
+Message-ID: <20240626230411.3471543-7-ipylypiv@google.com>
+Subject: [PATCH v3 6/6] ata: libata-scsi: Check ATA_QCFLAG_RTF_FILLED before
+ using result_tf
 From: Igor Pylypiv <ipylypiv@google.com>
 To: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>
 Cc: Tejun Heo <tj@kernel.org>, Hannes Reinecke <hare@suse.de>, linux-ide@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, Igor Pylypiv <ipylypiv@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-ATA_QCFLAG_RTF_FILLED is not specific to ahci and can be used generally
-to check if qc->result_tf contains valid data.
+qc->result_tf contents are only valid when the ATA_QCFLAG_RTF_FILLED flag
+is set. The ATA_QCFLAG_RTF_FILLED flag should be always set for commands
+that failed or for commands that have the ATA_QCFLAG_RESULT_TF flag set.
 
-Reviewed-by: Hannes Reinecke <hare@suse.de>
-Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
 Signed-off-by: Igor Pylypiv <ipylypiv@google.com>
 ---
- drivers/ata/libahci.c     | 10 ----------
- drivers/ata/libata-core.c |  8 ++++++++
- 2 files changed, 8 insertions(+), 10 deletions(-)
+ drivers/ata/libata-scsi.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/ata/libahci.c b/drivers/ata/libahci.c
-index 83431aae74d8..0728d445e531 100644
---- a/drivers/ata/libahci.c
-+++ b/drivers/ata/libahci.c
-@@ -2075,13 +2075,6 @@ static void ahci_qc_fill_rtf(struct ata_queued_cmd *qc)
- 	struct ahci_port_priv *pp = qc->ap->private_data;
- 	u8 *rx_fis = pp->rx_fis;
- 
--	/*
--	 * rtf may already be filled (e.g. for successful NCQ commands).
--	 * If that is the case, we have nothing to do.
--	 */
--	if (qc->flags & ATA_QCFLAG_RTF_FILLED)
--		return;
--
- 	if (pp->fbs_enabled)
- 		rx_fis += qc->dev->link->pmp * AHCI_RX_FIS_SZ;
- 
-@@ -2095,7 +2088,6 @@ static void ahci_qc_fill_rtf(struct ata_queued_cmd *qc)
- 	    !(qc->flags & ATA_QCFLAG_EH)) {
- 		ata_tf_from_fis(rx_fis + RX_FIS_PIO_SETUP, &qc->result_tf);
- 		qc->result_tf.status = (rx_fis + RX_FIS_PIO_SETUP)[15];
--		qc->flags |= ATA_QCFLAG_RTF_FILLED;
- 		return;
- 	}
- 
-@@ -2118,12 +2110,10 @@ static void ahci_qc_fill_rtf(struct ata_queued_cmd *qc)
- 		 */
- 		qc->result_tf.status = fis[2];
- 		qc->result_tf.error = fis[3];
--		qc->flags |= ATA_QCFLAG_RTF_FILLED;
- 		return;
- 	}
- 
- 	ata_tf_from_fis(rx_fis + RX_FIS_D2H_REG, &qc->result_tf);
--	qc->flags |= ATA_QCFLAG_RTF_FILLED;
- }
- 
- static void ahci_qc_ncq_fill_rtf(struct ata_port *ap, u64 done_mask)
-diff --git a/drivers/ata/libata-core.c b/drivers/ata/libata-core.c
-index e1bf8a19b3c8..a9fc3ec9300f 100644
---- a/drivers/ata/libata-core.c
-+++ b/drivers/ata/libata-core.c
-@@ -4801,8 +4801,16 @@ static void fill_result_tf(struct ata_queued_cmd *qc)
+diff --git a/drivers/ata/libata-scsi.c b/drivers/ata/libata-scsi.c
+index 02af4d5d5799..d5874d4b9253 100644
+--- a/drivers/ata/libata-scsi.c
++++ b/drivers/ata/libata-scsi.c
+@@ -242,10 +242,16 @@ void ata_scsi_set_sense_information(struct ata_device *dev,
+  */
+ static void ata_scsi_set_passthru_sense_fields(struct ata_queued_cmd *qc)
  {
- 	struct ata_port *ap = qc->ap;
++	struct ata_device *dev = qc->dev;
+ 	struct scsi_cmnd *cmd = qc->scsicmd;
+ 	struct ata_taskfile *tf = &qc->result_tf;
+ 	unsigned char *sb = cmd->sense_buffer;
  
-+	/*
-+	 * rtf may already be filled (e.g. for successful NCQ commands).
-+	 * If that is the case, we have nothing to do.
-+	 */
-+	if (qc->flags & ATA_QCFLAG_RTF_FILLED)
++	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
++		ata_dev_dbg(dev, "Missing RTF: cannot set ATA PT sense fields.\n");
 +		return;
++	}
 +
- 	qc->result_tf.flags = qc->tf.flags;
- 	ap->ops->qc_fill_rtf(qc);
-+	qc->flags |= ATA_QCFLAG_RTF_FILLED;
- }
+ 	if ((sb[0] & 0x7f) >= 0x72) {
+ 		unsigned char *desc;
+ 		u8 len;
+@@ -923,10 +929,16 @@ static void ata_to_sense_error(u8 drv_stat, u8 drv_err, u8 *sk, u8 *asc,
+  */
+ static void ata_gen_passthru_sense(struct ata_queued_cmd *qc)
+ {
++	struct ata_device *dev = qc->dev;
+ 	struct scsi_cmnd *cmd = qc->scsicmd;
+ 	struct ata_taskfile *tf = &qc->result_tf;
+ 	u8 sense_key, asc, ascq;
  
- static void ata_verify_xfer(struct ata_queued_cmd *qc)
++	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
++		ata_dev_dbg(dev, "Missing RTF: cannot generate ATA PT sense data.\n");
++		return;
++	}
++
+ 	/*
+ 	 * Use ata_to_sense_error() to map status register bits
+ 	 * onto sense key, asc & ascq.
+@@ -970,6 +982,12 @@ static void ata_gen_ata_sense(struct ata_queued_cmd *qc)
+ 		ata_scsi_set_sense(dev, cmd, NOT_READY, 0x04, 0x21);
+ 		return;
+ 	}
++
++	if (!(qc->flags & ATA_QCFLAG_RTF_FILLED)) {
++		ata_dev_dbg(dev, "Missing RTF: cannot generate sense data.\n");
++		return;
++	}
++
+ 	/* Use ata_to_sense_error() to map status register bits
+ 	 * onto sense key, asc & ascq.
+ 	 */
 -- 
 2.45.2.803.g4e1b14247a-goog
 
