@@ -1,158 +1,160 @@
-Return-Path: <linux-kernel+bounces-231079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ECB79185DA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:30:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AF069185F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FEC81F281AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:30:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27464B21053
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4794818A94E;
-	Wed, 26 Jun 2024 15:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797521850A9;
+	Wed, 26 Jun 2024 15:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aONz+7IJ"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="H95uvPwO"
+Received: from JPN01-OS0-obe.outbound.protection.outlook.com (mail-os0jpn01olkn2081.outbound.protection.outlook.com [40.92.98.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9455EA92F;
-	Wed, 26 Jun 2024 15:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719415853; cv=none; b=ggBXDPMAPTM4ngn/30vzzsHRIVa7nATPWOH5cnKHS2BjpeElkqwKgPJmXmRq6eX8aZflyb3xhUf0t+RnEx7A70/ETLWKM2fu9zWkoH79dI6oCBbYOm1RWFVM15a+ZAnPqLB7HeX+Vfckx4wxymEy/pZrbITDb68B/3oZJumQp1I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719415853; c=relaxed/simple;
-	bh=fFp0838cK4WK9K1qwSkSPH7/A3jgQFtonDkAJS3XY1Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=QogYepYAwmbsnY3GK3sRbrTHtzkIe81I8E4TWgFC+lC0DMm2DMeRTcykHcGCgkS04+SJKGCU4z9TbDfn560vq8aONVH9Acq+FfFMA68ezWHd8PpQ//HFZbUBlhlXDz7BlEAIXFfDqrZC4ftm+t5bx7DFRk4SKqg813lmCj4lSQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=aONz+7IJ; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45QFUiJ0037193;
-	Wed, 26 Jun 2024 10:30:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719415844;
-	bh=c1BKW0TIX5+dFP1dSLMaXY0snDU+rt9d8qpqqQ+MtY4=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=aONz+7IJ46w557UboMCn75YiX3i+38U91EmA2ogjaXceEJoQozo6FWA/wZ2CZC6Kh
-	 Nse9VT4WZ+dxVjjcy2sJJqVwmwU5RAG9ROdsNX8v+MK0Pxpw4kMxG9f0p4wcIA527a
-	 h0/75LbJnz3KZO2TWjiifVw9Cxqg6mPZlYwPXakw=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45QFUidV062577
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Jun 2024 10:30:44 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Jun 2024 10:30:43 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Jun 2024 10:30:43 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45QFUhEi031952;
-	Wed, 26 Jun 2024 10:30:43 -0500
-Message-ID: <c997b261-d558-4ec6-a2de-53992bfbb1a2@ti.com>
-Date: Wed, 26 Jun 2024 10:30:42 -0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0E8A92F;
+	Wed, 26 Jun 2024 15:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.98.81
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719415989; cv=fail; b=BD6n9Ju7fqH8R2xAM6U7STO3h94owo+EBVP1aySidijoiArC+r2JumjN9nKxWrCsZ/zAkgrjKQ57yTVn5+30wfc5zfcF8gx3d3YyPlPRCWHYNQYrQdSKxbCEO3htAA8//jxk0YBhPBLCgh5g8fns3rVUOjhEDy8BaSrBBOsaP9U=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719415989; c=relaxed/simple;
+	bh=dNihwMZwaLHdAf8sigYpMaMG+J4T0vcLn8L4VoPA7CY=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=QV8NOxp3sn94kh3udU1c8n+vVefSoFScS94mF04sjAG5mhoSDBjq3WMDwkbmhZtdft4mK7nAyPXRR0XaJ9qQRuVQs3k/ckswndcK0+f0g9ixNTJZofWcYuxG3CTMXeG0OHk6miNptZwi+yxxxcPIsTgGrcj0OQNcN5T60JnDa4E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=H95uvPwO; arc=fail smtp.client-ip=40.92.98.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=L4iCbu9OMVRLMlVK2/gPa42uOIN3AAzOhmp9BT/A9V2haq8Aumx/ukdPcvicQ6NI562wXND0iNvs9AAbbWt5h30Ku2vcj90qg2egb2lMziVTBh+Udl3SYXeE4t48MHfN7UyRCo5w9a66EZGQ4IlRqtjh+tgNIoYhnfGMhr4xQhFvYglmEqZikrMmlTL3BYI7RIHoMrIsd9Yjr930hwCarP4Nr/TxKLtrDz2IuHYlcts50doR88KKOaOCNMGj3ES96s3lYJXxQ1KeI9zTyjveGVMUFXI/3r8j51zOshmBZDOJ5OfeMJQ+EchR6IX4usOCYF3z/baAVyd5yw9RAlw/5Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vIu1aLMx/43/STFkKMCFChSyAHmP0HDgAsOoNcneNF8=;
+ b=grxp6SVR/FLpYHomyek17ffegyhejTfgku1bpv4+aVRQMakqeCimgzPCY9A62fUrp2/XgXJlqseBbADt50BzbT+Aex5/teDvyv3UQCS5OsEYXwH0RfdGwhux9rwN08upbYjX/GswJjcSE+GY+zl2ienFRiUyKConw6iSJE6KwJnIgKGz5ylk7Vr3S1xZUl9F7Qsj02tTQIFXdnYdDS5fzvAMNIjncIvaFIGipA2y/c+TGhNutoXR7lejC2Ey8Gn9/XsVEibvBNnA9R/Q35845ZaQCekDnofLB6WSZxSZvEzRP/H1DgoKvB+u7UNEzTiEg5aEDl3Lfet9F4xutytB8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vIu1aLMx/43/STFkKMCFChSyAHmP0HDgAsOoNcneNF8=;
+ b=H95uvPwOgWICMeJpCd4YI6Gwn5E3ncPQ4rD4Bs/9pS6Ayi2n7u4nDaAHbxgsubovE7+z+jMkwEOikK6l0KBjk9r+UGf/8FHG6HHPJDmiRFi4UeTlnyOm4So3l89RCQNYOZ7MAdDV4WN1EqYStDOb7wLgLzDb/CzZOa8gJHRHmuwfuW9BilxWL5nxEgk4cqRh29joJZVHpgo12IiWKdHIIeGQrmNeOXJrligkz+VpMesawfSNkblj9Q00wOOBMByXjtMmMFGkxG6yhdyhuO3ytORBHIguCFNudOWoBdUt9UbbSKORUZpeQ9ATErDV/EUGvcdsmc0C1D1ehNzOKKiLDg==
+Received: from TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:256::8)
+ by TYYP286MB3441.JPNP286.PROD.OUTLOOK.COM (2603:1096:400:2f6::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
+ 2024 15:33:05 +0000
+Received: from TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::670b:45a6:4c30:d899]) by TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM
+ ([fe80::670b:45a6:4c30:d899%4]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 15:33:05 +0000
+From: Songyang Li <leesongyang@outlook.com>
+To: bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	leesongyang@outlook.com
+Subject: [PATCH] PCI: Clear AER uncorrectable status according to error types
+Date: Wed, 26 Jun 2024 23:32:30 +0800
+Message-ID:
+ <TY3P286MB2754DE49E4D1CB87C9256D21B4D62@TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TMN: [/jDDApqGfZ39y6/VnohVUU4Yuvzzr3ot]
+X-ClientProxiedBy: TYCP286CA0168.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:3c6::18) To TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:256::8)
+X-Microsoft-Original-Message-ID:
+ <20240626153230.21590-1-leesongyang@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/13] OMAP mailbox FIFO removal
-To: Dominic Rath <dominic.rath@ibv-augsburg.net>,
-        Jassi Brar
-	<jassisinghbrar@gmail.com>, Hari Nagalla <hnagalla@ti.com>,
-        Nick Saulnier
-	<nsaulnier@ti.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>
-CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240410135942.61667-1-afd@ti.com>
- <b5c8d134-edcb-4a1a-8940-b26047c9b79d@ibv-augsburg.net>
- <4d7c1525-a3d1-48f3-9e9c-eb61527a1b23@ti.com>
- <5980f22f-44ef-4984-8912-163ca4773568@ibv-augsburg.net>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <5980f22f-44ef-4984-8912-163ca4773568@ibv-augsburg.net>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TY3P286MB2754:EE_|TYYP286MB3441:EE_
+X-MS-Office365-Filtering-Correlation-Id: 72802a6c-021d-4e02-4f22-08dc95f545c1
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199026|3412199023|440099026|1710799026;
+X-Microsoft-Antispam-Message-Info:
+	swwDWH0b1PpFl21NIL4l4/osV9+4ZE5ZS6u2nlntUjVqCa993DDXhlx3ZcrZ/Uyvs2zSd+pvzP/QsoV73BDDaQnn69fFhB1hAHxjpkB/NTMmETPmIiP42d7OlpSt+l3gmJJA2VAqO+TC9M3IF6NtD2C5Iak/+xufS7OxMP83Pt2uiF1lsFcdgHYy6JSP6phQKqZ4+b+yH/+nl1617ajcQl8QVUJM1GUYnKPDZQffwGOjQCBmNkNvqefg88uytE0hYWvkKaMCfdM8+HFmpbbc+okCeUkwh8vTYkhD9PJGO4qW3DNRZcc1sgh7MW1LWkqxqLX+cBdCGHoAJGPgsKaxfoboqHGjf5+afWT5YYSPw+4RYUPDtZRzPaJYHXuNr98ewCtsMQaEPMvypVUsT3BaIfFfjsfovasLyGC+i74+w84cCPjsGnYLUOF1Cvq8uXIBKz2M35Lngkg4lPgYmbqXwGHQpjPpodw9JMK0q2H2E3/gRrxGgwokbQeeZKDkquO2zd0/XdzigOsm9X5xZWZfck+XANzVQR9XHV6LySzTfHureTHi/7/JG/HCQGu3MdyEB7CfgijDUJm6Cy3soJVzPfa6Np6iN7Yvjc4f08KADHyQqkycXESqaui/59hvGcs7
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?TNFkG9f/uEy6kLcNfpnihbFUhXJRgFtHD9/76GMEse3Ganvw2chGka+EM99U?=
+ =?us-ascii?Q?KUQGTRzj6/tJq2OGeYQ2/ghh7lQQtJfNzbJoMSxfC/2mp3MvnrW82H/vk/2F?=
+ =?us-ascii?Q?7SkcJDSIB8XTKZBXzXv4slJW/zy6u6Ogbq3LkwWxFoU4wBQnwRbDzJaMqjHy?=
+ =?us-ascii?Q?m+hz1UwADC6sMn1vg6x6IBtEjxb8Nlkrnld9XhUsFJpKk0nFqGK2UXcLIGQ6?=
+ =?us-ascii?Q?22AiUnCtN1LJKI6VU6LS5x1DE+utnIpD25CedbSG+zA4PzAKw870WCRpsAKf?=
+ =?us-ascii?Q?1kSHIoYTKU6RZqbLxiGrN7DhDtun3z9qNPMzOKTnk5L+yicXh3vQQ7yMVv6N?=
+ =?us-ascii?Q?+c69VuFVKk7AlLwcwBJco2AemAtiOwwekJzJPMSZjVffdZ9k8yyT8CpT1/rX?=
+ =?us-ascii?Q?Uthuex5A6mUeKq5vCQyyutF0lig7CmRcqfipWQjfC3o6ELCMTaYqPXWXP4DS?=
+ =?us-ascii?Q?YRYNeccNYUW23gCv4BV8VEo4Wp3wDZO0TgdfJL+B8/teYbY39JYe8LU4/akU?=
+ =?us-ascii?Q?7hd6qsE+VufGppdB/zu0n7e9IbSB9FbDS7kqOa44/Lrv1NfCe0NeSsnSYT82?=
+ =?us-ascii?Q?rZ8VUXi5mOD7IGxcXn1khMZI8zlZEBXxFU/9ZIoN8gR3hRqI8IkygWfIe4yx?=
+ =?us-ascii?Q?42p9QoNgb0R5hIWu52xEW6I6lWi5cjkl410rRyr0Lay8dtyaDjYKmtesnf42?=
+ =?us-ascii?Q?zGQT0lYJP2dwr1R06eXtfgaKNkoAzlATwhMmeKTaIIFwnqvHEMkZlOJ+hNbd?=
+ =?us-ascii?Q?gF532Qyt0aOZr1FqVH66KZUS+JTASPG/JVnYL+waEclTqZqumGYPpwNpNWu8?=
+ =?us-ascii?Q?fRv6GFHiTR9SkpuHl7eIDiLza7BlJlcchBCl749w5EXkZet7sAWySQLRZEOV?=
+ =?us-ascii?Q?g2j5Vq+k/UehczGlglSAzVgMVgw/YJ40GvQNxBjmiE7unCOsnyrTRnS2DDsh?=
+ =?us-ascii?Q?XVjh1WLT2g7A9Rvgt/qeiTepgkn6Umqdz9YKF0dibU0hYNy90gVFHFydFKHW?=
+ =?us-ascii?Q?QKqbLXDx35yyvRXJZPVCisqInDQWQGOJ2aP3s4VyZ4cLoK1t5UI1oKY9FCdm?=
+ =?us-ascii?Q?78HxoAXjGUcjIvCh5djEeu04r6sgzNF4B6uKjKT89dKXhgA2lA4n1DoYC3tN?=
+ =?us-ascii?Q?by+fCXKzwOWyMXcr53afrekCgZ5ckkNwcCImuL+6pnwITp1QlNJpx0dQ3QSA?=
+ =?us-ascii?Q?jAbgrjxrsGnDoef1VERdcGnUxCV/xNM66i5f62lxRtUIaOTb4IDRwdNB+ScT?=
+ =?us-ascii?Q?ytuqGqwPu1fivbIdwhWr?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72802a6c-021d-4e02-4f22-08dc95f545c1
+X-MS-Exchange-CrossTenant-AuthSource: TY3P286MB2754.JPNP286.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 15:33:05.1111
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYP286MB3441
 
-On 6/26/24 9:39 AM, Dominic Rath wrote:
-> On 13.06.2024 14:22, Andrew Davis wrote:
->>> We looked into this some time ago, and noticed that the IRQ approach caused problems in the virtio/rpmsg code. I'd like to understand if your change was for the same reason, or something else we missed before.
->>>
->>
->> It is most likely the same reason. Seems despite its name, rproc_vq_interrupt() cannot
->> be called from an IRQ/atomic context. As the following backtrace shows, that function
->> calls down into functions which are not IRQ safe. So we needed to keep it threaded:
->>
->> [    5.389374] BUG: scheduling while atomic: (udev-worker)/232/0x00010002
->> [    5.395917] Modules linked in: videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 phy_j721e_wiz display_connector omap_mailbox(+) videodev tps6594_i2c(+) videobuf2_common phy_can_transceiver at24 cd6
->> [    5.433562] CPU: 0 PID: 232 Comm: (udev-worker) Not tainted 6.10.0-rc1-next-20240528-dirty #10
->> [    5.442158] Hardware name: Texas Instruments AM69 SK (DT)
->> [    5.447540] Call trace:
->> [    5.449976]  dump_backtrace+0x94/0xec
->> [    5.453640]  show_stack+0x18/0x24
->> [    5.456944]  dump_stack_lvl+0x78/0x90
->> [    5.460598]  dump_stack+0x18/0x24
->> [    5.463900]  __schedule_bug+0x50/0x68
->> [    5.467552]  __schedule+0x80c/0xb0c
->> [    5.471029]  schedule+0x34/0x104
->> [    5.474243]  schedule_preempt_disabled+0x24/0x40
->> [    5.478845]  rwsem_down_write_slowpath+0x31c/0x56c
->> [    5.483622]  down_write+0x90/0x94
->> [    5.486924]  kernfs_add_one+0x3c/0x148
->> [    5.490661]  kernfs_create_dir_ns+0x50/0x94
->> [    5.494830]  sysfs_create_dir_ns+0x70/0x10c
->> [    5.498999]  kobject_add_internal+0x98/0x26c
->> [    5.503254]  kobject_add+0x9c/0x10c
->> [    5.506729]  device_add+0xc0/0x790
->> [    5.510120]  rpmsg_register_device_override+0x10c/0x1c0
->> [    5.515333]  rpmsg_register_device+0x14/0x20
->> [    5.519590]  virtio_rpmsg_create_channel+0xb0/0x104
->> [    5.524452]  rpmsg_create_channel+0x28/0x60
->> [    5.528622]  rpmsg_ns_cb+0x100/0x1dc
->> [    5.532185]  rpmsg_recv_done+0x114/0x2e4
->> [    5.536094]  vring_interrupt+0x68/0xa4
->> [    5.539833]  rproc_vq_interrupt+0x2c/0x48
->> [    5.543830]  k3_r5_rproc_mbox_callback+0x84/0x90 [ti_k3_r5_remoteproc]
->> [    5.550348]  mbox_chan_received_data+0x1c/0x2c
->> [    5.554779]  mbox_interrupt+0xa0/0x17c [omap_mailbox]
->> [    5.559820]  __handle_irq_event_percpu+0x48/0x13c
->> [    5.564511]  handle_irq_event+0x4c/0xac
->>
-> 
-> I looked into this a bit more closely, together with the colleague who implemented our internal workaround, and we came up with one more concern:
-> 
-> Have you considered that this synchronous path from the (threaded) IRQ draining the mailbox down to the (potentially blocking) rpmsg_* calls might let the hardware mailbox grow full?
-> 
->  From what I remember the vring (?) has room for 512 messages, but the hardware mailbox on e.g. the AM64x can only handle four messages. At least with the current implementation on TI's MCU+ SDK running on the R5f that could cause the R5f to block, waiting for room in the hardware mailbox, while there are plenty of vring buffers available.
-> 
+The AER recovery process use pci_aer_clear_nonfatal_status() to clear
+non-fatal error status after successfully recovering from non-fatal error.
+However, the fatal error status clearing for successful recovery of AER
+fatal error was overlooked.
+Therefore, this patch wants:
+When the error type is non-fatal, use pci_aer_clear_nonfatal_status()
+to clear non-fatal error status.
+When the error type is fatal, use pci_aer_clear_fatal_status()
+to clear fatal error status.
 
-We would like to switch back to the non-threaded handler at some point. As you mention doing this
-in a threaded way increase the risk of the hardware message queue filling and blocking the remote side.
-(Plus the threaded handling can add latency to the message handling which should be avoided for real-time
-reasons)
+Signed-off-by: Songyang Li <leesongyang@outlook.com>
+---
+ drivers/pci/pcie/err.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+ mode change 100644 => 100755 drivers/pci/pcie/err.c
 
-The fix might be to have rpmsg_recv_done() callback simply queue the message and then schedule another
-worker to actually do the next stage processing. That way complex actions on messages do not block
-vring_interrupt() which should be treated like an atomic context call.
+diff --git a/drivers/pci/pcie/err.c b/drivers/pci/pcie/err.c
+old mode 100644
+new mode 100755
+index 31090770fffc..14e1e0daecb8
+--- a/drivers/pci/pcie/err.c
++++ b/drivers/pci/pcie/err.c
+@@ -258,7 +258,10 @@ pci_ers_result_t pcie_do_recovery(struct pci_dev *dev,
+ 	 */
+ 	if (host->native_aer || pcie_ports_native) {
+ 		pcie_clear_device_status(dev);
+-		pci_aer_clear_nonfatal_status(dev);
++		if (state == pci_channel_io_normal)
++			pci_aer_clear_nonfatal_status(dev);
++		else if (state == pci_channel_io_frozen)
++			pci_aer_clear_fatal_status(dev);
+ 	}
+ 
+ 	pci_walk_bridge(bridge, pci_pm_runtime_put, NULL);
+-- 
+2.34.1
 
-Anyway for now, I'd expect the much faster host core (2xA53 @ 1GHZ in AM64) to be able to outpace the
-R5s and keep the mailbox drained. Are you actually running into this issue or is the concern based on
-ensuring RT performance(not blocking on mailbox queue filled) on the R5 side?
-
-Andrew
-
-> Best Regards,
-> 
-> Dominic
 
