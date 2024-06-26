@@ -1,137 +1,128 @@
-Return-Path: <linux-kernel+bounces-230026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8EBB917778
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:38:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B7F91777A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 438921F22203
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:38:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85CE8B2134E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:41:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C6E13B28A;
-	Wed, 26 Jun 2024 04:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62CE13AD28;
+	Wed, 26 Jun 2024 04:41:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eZMwmba+"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oVzZ8Fhr"
+Received: from mail-oi1-f196.google.com (mail-oi1-f196.google.com [209.85.167.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF07F4FB
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 04:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3B9A6AB8
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 04:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719376715; cv=none; b=psWMrugo/1fy0jtNLG4oqGkp5voxLOgxrjSlrOHdjDLCfAiBnfR61o1R+H5PWqYx02hw6cH+wrBkyScO/YlSf97RZGtzuVsG5Uj25gqVPOlhgtv9Nd/F89mjPo3dyq0Kf9q59kKe6C24vpmZgW/xfP1RvGSpHnVlF5ewyLZvtX8=
+	t=1719376890; cv=none; b=uhpGk3YBYGvktB46B2iEJozOlAU9i4TTyuSXVVoVw+8yRhPDho0ou5bu6jKrOrUPUfTGRpdcDQtBHQVOJzE++cF3o9Iz4hBBqlhG/8cdZWTreiZAQn2ED+ApPYyddOsOxPkcsXqH3DWmNTc76/b+8QWawJlrLqJn0cXUiumNhtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719376715; c=relaxed/simple;
-	bh=urO9PF41hgll0dRPTGLkmriEDOf5ydq979P37U8+EZQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H4Y3sCgHaVjchSBYxn7KH6sdcQ1wzTMGe7ofsIL2Q224uvCcNF/S0HQLBjSPbzgt3nfKS2N6SnIc4FNRDB2By6Z6UBGY+49/JWIQ1pv8eUAVyFIRtZ1fo/mHK3bZtQC+bRZEh11Sxn4fq5KPtbrT2SqylnEZBgVklWHDuFKJPN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eZMwmba+; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cdb0d8107so5821126e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 21:38:32 -0700 (PDT)
+	s=arc-20240116; t=1719376890; c=relaxed/simple;
+	bh=kcLGBd65//0k48gsXv0ghNdgpoOWqAcMh2IHH22i4eI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XwCSMPZl5czb6kTVlTyA4eSd6zHyeXG/w65QOjBONwR9YxnVThR2ZvoKCUiglHTXReqNhNcZKli3QYXOOiGk+faHjDb923j3soRSpByqF8FFWkkgpdNfeoU2KeErplfPujTYt9L46a9gKQVbiOXM4z6BhKufKPS1g02c+Gu6GGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=oVzZ8Fhr; arc=none smtp.client-ip=209.85.167.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-oi1-f196.google.com with SMTP id 5614622812f47-3c9cc66c649so3112321b6e.1
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 21:41:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719376711; x=1719981511; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aqcce+viBw5891cRDW3KYK3GO/t8otW+H0eaejzqnZ8=;
-        b=eZMwmba+Li7E9LcVjeWDlSsUa8HGXgXveRdYgpMxxv+xBemiw75vBi8cBXqfd4OHbx
-         CWvVhfDseMdVWGeGnvyxpWVLXDe9D2fz7AbrJuuhDvRr36pp23wlKZOryx9R37UmuPzs
-         AZBH077PBILZXsVj/IOUi0CLkpa0/c1vDr4rIDim4VOxzzUq6q7nkKk2lmbTSlKrWa4v
-         ulSuqMGtFcoQAWUICwwRB8CZLTToxjPR2fw2M2PR0KN97/DH7YjNyZWKNmfCZDzRTM6S
-         2DESFasT2RCFcBpqb8ZUp2kdF6YfjXZ7ZVeLkZuMvkul42PrtoQaBznx+zdwPPi0qu7u
-         HIQA==
+        d=chromium.org; s=google; t=1719376888; x=1719981688; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=D5SN5g9dZXd4jHj1UDwEbPoCj2yPZWkE/B6mLbVsHgM=;
+        b=oVzZ8Fhr8kN2z5WnCIspjnKF+OfXosMETYdnu/qQ+1inHRa6tAre0FUfO4yqKXWFfL
+         CdPDxrO01jsRhUSbPVb1OhopMpyafUB88e0Vy0trP1JQfiRaguZj5cpkhReT7QDBQaxW
+         h+Ads6+etu8pdjqAnTloa7hNfcofEICOV6bMU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719376711; x=1719981511;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aqcce+viBw5891cRDW3KYK3GO/t8otW+H0eaejzqnZ8=;
-        b=TnoStBpW2J5UYhWKokGVU6W0M6pYjBps0qh77JPEEaLITAX2CVIpXL2wf/f/SEQ7vZ
-         fYB1IBPRs02CINq3e26mU4otictnvzGfplOJ7nowNDAdlzWNgXHk7Y6lXvTRhJDfKFIa
-         rh5O42WPdWOboCgxBoPeI12HqN8WRCAMfy/Fob+5qig0VQcAMsFD6BxR5CUJT5NXOEhU
-         RaV9TsAQ8vMeFnixREJY3Pt8lsKC9C+ZXdC3jv7UdmBl2g5F3pzhmkXCO+/87EataSIL
-         CYdIAs96nzxO6g3CXyM7rsiyzLaAlcKgMFS2RYfr5wxVAaO6UrXBBs7vf8rWn0tfBLGQ
-         t75Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWVV3GMahjXSkaGZCjSWo94hCfgX1DCAfro38GsO3iE30NpS6FaA7NbXAI4Ps7M7llfSG/7YDBwne6nXjgY1PBPQLN3+PDStWb99NGM
-X-Gm-Message-State: AOJu0YzIJwpRrYq+yGGzu0HDLfJN4SW8++EhqjiIlcROV0NyR7+NGgvI
-	ycvMwIeWQF28V4iGMGCRtLnXvizHzavVD3Wd+PiCTTg35fCELprbVZV/aqpXHVH2iKkoBM5WUfS
-	m
-X-Google-Smtp-Source: AGHT+IFmIWttdaTJRAvIH8UrjPds8xvnf85HM29QagGQ7d1YSELkyFRIvS+iI6cQUa86E2mDA3DxXw==
-X-Received: by 2002:a05:6512:3da3:b0:52c:e728:cca1 with SMTP id 2adb3069b0e04-52ce728cd5bmr6009512e87.39.1719376710614;
-        Tue, 25 Jun 2024 21:38:30 -0700 (PDT)
-Received: from ?IPV6:2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a? ([2a10:bac0:b000:7579:7285:c2ff:fedd:7e3a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8285f5csm9826695e9.25.2024.06.25.21.38.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 25 Jun 2024 21:38:30 -0700 (PDT)
-Message-ID: <0844686c-0108-4267-87e0-a79531dbeaf3@suse.com>
-Date: Wed, 26 Jun 2024 07:38:28 +0300
+        d=1e100.net; s=20230601; t=1719376888; x=1719981688;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D5SN5g9dZXd4jHj1UDwEbPoCj2yPZWkE/B6mLbVsHgM=;
+        b=wUdrShgU/0O+H3/5bzyr+EWe0g79DOpiayUlaq4GatmyFk/ttidnT/FDTwO1QIBJsU
+         SUFeeCNQkGtptDnUrev/byFoU91758HcVe9+IWxk+BDFYT5zjynLQi/M4EeWLjiRrr1K
+         6ZNgv/5U0mrbwpwmqDTLimklcKjfmXpA4O2lOwB5qdShrDMILEveTTMTdsoi9VSpJI/g
+         0Y/bHovJ5ninrAgIWG0iHsKSp6yZ3kG1wNdpLkFLIJSh+2lz1UVbErzLzeCaYkWweSZC
+         bB+BxcAstww7hcj8vPMCmZqliTULjCAMvow1FfZE0FbDNK/PkatbBspRxRgnRDnGvZzm
+         7mDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPwKWhXY+upZ/Mtqqt16p+7gaqc6nOVAxyXzX9iy9ZuwdtlW/q2f3RVRO+sckwBn+CrH8QabQhROr8DB5HtUxAjdM1EW94gJcIbiwX
+X-Gm-Message-State: AOJu0Yxuk8sWa5t2M+u6CNYHWyrWma1BY3ucHvwvqVzXlUb2QEHYt3Dm
+	p3+nxiawSrHtV2Ym740dXEzK0RZ8Pj8T4jcmJH7v7uMcpbVtZf2tcPlcqniMUQ==
+X-Google-Smtp-Source: AGHT+IHghuf3tkdv3+yfXxzpfwWFh16zBggDrPPrf7ANaGPxxHHsNrKgPM67fFuG8SW/r2HDYZAv6Q==
+X-Received: by 2002:a05:6808:210e:b0:3d5:5fbe:b31a with SMTP id 5614622812f47-3d55fbebea0mr1866075b6e.51.1719376886966;
+        Tue, 25 Jun 2024 21:41:26 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:d7ad:9c6b:494:edc0])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7069d59dce1sm1970557b3a.169.2024.06.25.21.41.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 25 Jun 2024 21:41:26 -0700 (PDT)
+Date: Wed, 26 Jun 2024 13:41:22 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Mike Rapoport <rppt@kernel.org>, Minchan Kim <minchan@kernel.org>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>
+Subject: Re: [PATCH v2 3/6] mm/zsmalloc: use a proper page type
+Message-ID: <20240626044122.GA15925@google.com>
+References: <20240529111904.2069608-1-david@redhat.com>
+ <20240529111904.2069608-4-david@redhat.com>
+ <20240530050123.GA8400@google.com>
+ <ZlnebQ0dRUvx2SgP@casper.infradead.org>
+ <345161ac-3b42-48aa-ab3d-3b183316479a@redhat.com>
+ <20240625153338.8a4d049857d59e692a0d31e6@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] x86/paravirt: Disable virt spinlock on bare metal
-To: Chen Yu <yu.c.chen@intel.com>, Dave Hansen <dave.hansen@linux.intel.com>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>
-Cc: x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
- Arnd Bergmann <arnd@arndb.de>, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, Juergen Gross <jgross@suse.com>,
- Chen Yu <yu.chen.surf@gmail.com>, Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
- Prem Nath Dey <prem.nath.dey@intel.com>,
- Xiaoping Zhou <xiaoping.zhou@intel.com>
-References: <20240625125403.187110-1-yu.c.chen@intel.com>
-From: Nikolay Borisov <nik.borisov@suse.com>
-Content-Language: en-US
-In-Reply-To: <20240625125403.187110-1-yu.c.chen@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625153338.8a4d049857d59e692a0d31e6@linux-foundation.org>
 
+On (24/06/25 15:33), Andrew Morton wrote:
+> On Fri, 31 May 2024 16:32:04 +0200 David Hildenbrand <david@redhat.com> wrote:
+> 
+> > On 31.05.24 16:27, Matthew Wilcox wrote:
+> > > On Thu, May 30, 2024 at 02:01:23PM +0900, Sergey Senozhatsky wrote:
+> > >      1409:       83 c0 01                add    $0x1,%eax
+> > >                  if (mapcount < PAGE_MAPCOUNT_RESERVE + 1)
+> > >      140c:       83 f8 81                cmp    $0xffffff81,%eax
+> > >      140f:       7d 63                   jge    1474 <filemap_unaccount_folio+0x8
+> > > 4>
+> > >          if (folio_test_hugetlb(folio))
+> > >      1411:       80 7b 33 84             cmpb   $0x84,0x33(%rbx)
+> > >      1415:       74 4e                   je     1465 <filemap_unaccount_folio+0x75>
+> > > 
+> > > so we go from "mov, and, cmp, je" to just "cmpb, je", which must surely
+> > > be faster to execute as well as being more compact in the I$ (6 bytes vs 15).
+> > > 
+> > > Anyway, not tested but this is the patch I used to generate the above.
+> > > More for comment than application.
+> > 
+> > Right, it's likely very similar to my previous proposal to use 8 bit 
+> > (uint8_t) for the type.
+> > 
+> > https://lore.kernel.org/all/00ba1dff-7c05-46e8-b0d9-a78ac1cfc198@redhat.com/
+> > 
+> > I would prefer if we would do that separately; unless someone is able to 
+> > raise why we care about zram + 256KiB that much right now. (claim: we don't)
+> > 
+> 
+> iow, "this is ok for now", yes?
 
+Perhaps.  I'm not in position to claim that zram + 256KiB PAGE_SIZE is
+irrelevant, but I'm also not in position to claim the opposite.
 
-On 25.06.24 г. 15:54 ч., Chen Yu wrote:
-> The kernel can change spinlock behavior when running as a guest. But
-> this guest-friendly behavior causes performance problems on bare metal.
-> So there's a 'virt_spin_lock_key' static key to switch between the two
-> modes.
-> 
-> The static key is always enabled by default (run in guest mode) and
-> should be disabled for bare metal (and in some guests that want native
-> behavior).
-> 
-> Performance drop is reported when running encode/decode workload and
-> BenchSEE cache sub-workload.
-> Bisect points to commit ce0a1b608bfc ("x86/paravirt: Silence unused
-> native_pv_lock_init() function warning"). When CONFIG_PARAVIRT_SPINLOCKS
-> is disabled the virt_spin_lock_key is incorrectly set to true on bare
-> metal. The qspinlock degenerates to test-and-set spinlock, which
-> decrease the performance on bare metal.
-> 
-> Set the default value of virt_spin_lock_key to false. If booting in a VM,
-> enable this key. Later during the VM initialization, if other
-> high-efficient spinlock is preferred(paravirt-spinlock eg), the
-> virt_spin_lock_key is disabled accordingly. The relation is described as
-> below:
-> 
-> X86_FEATURE_HYPERVISOR         Y    Y    Y     N
-> CONFIG_PARAVIRT_SPINLOCKS      Y    Y    N     Y/N
-> PV spinlock                    Y    N    N     Y/N
-> 
-> virt_spin_lock_key             N    N    Y     N
-> 
-> Fixes: ce0a1b608bfc ("x86/paravirt: Silence unused native_pv_lock_init() function warning")
-> Suggested-by: Dave Hansen <dave.hansen@linux.intel.com>
-> Suggested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-> Suggested-by: Nikolay Borisov <nik.borisov@suse.com>
-> Reported-by: Prem Nath Dey <prem.nath.dey@intel.com>
-> Reported-by: Xiaoping Zhou <xiaoping.zhou@intel.com>
-> Signed-off-by: Chen Yu <yu.c.chen@intel.com>
-
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
+Matthew and David have ideas/proposals/patches to fix it should 256KiB
+PAGE_SIZE become an issue.
 
