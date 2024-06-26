@@ -1,189 +1,147 @@
-Return-Path: <linux-kernel+bounces-231652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9BC919B64
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:48:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31533919B6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:52:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D550B2161A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:48:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54FA61C227C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B0F1922FE;
-	Wed, 26 Jun 2024 23:48:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6821F1946AC;
+	Wed, 26 Jun 2024 23:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gsf2Mm1z"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jej5LGXt"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7641415E5B9
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 23:48:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A32F16DC02;
+	Wed, 26 Jun 2024 23:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719445723; cv=none; b=fH7hDuViybpeZO1MKnActuu6WJ7l98yeLRxLDeJt/VVWuj0kL5cdAssnZjJimNxODlUHq/bIUWfPROE26g25mUSqcmje1I48JTqQHL62deeQD6FX0oIUrCVSmnmWdzKMmzg+GIWmZjk2UkyN+JYIhKYSVMQskHIqqAgSooFSnxE=
+	t=1719445962; cv=none; b=e75zhzErJjQSi+dapCWLUvxtfN6rLgy4esM3gfUrSuJTLEjbrjNEaHSN73n6NK4FTZ845o+qMuPESLic+IP3UjV5MyQyYzft1fv+2fTWAHPn8nymuQiECFT84pbvImX9VEXJ6QN+76NqnbD8g0QEE5h8CnXL0RXdKacs0Jq2VEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719445723; c=relaxed/simple;
-	bh=prYxmVaT2pXdyaU+Bub6Dy4ols0oNvlkfqPFHvbTipI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U7iaRvVhVN2NsV24IM5s4V6gg6c7eyeuAh2fOia3ns5dVjd0rDMvU2GMNnWr9dco4egXoDPrtwgMTV1BoX7t4qapRHqncGaUPdUE4dUTYDBAGORB2rTTP4Zr765qHEGnYbQc08zYzGSGCZNMmfT/vUbgMeTrWg6iHux7jwh7K9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gsf2Mm1z; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719445720;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d7CqT7ZoVZ21vEmREjMyead0YkkLsWeh8E80zva5ToM=;
-	b=gsf2Mm1zPna+2+8x67YP8eELOcpI84KPzMDAFZwvmjtdOXZMhqLAiqKBQq5fzr/Z26zDqi
-	jYcg/oDWK3uKoXzeO2G6s5Kl1DIWQEB4p6prSv/GU5f4Zc9I2z+ISh9nABtyMy9eLyhB7E
-	MWdIbAAvTynYFqVjVclArVHhI9gu4hM=
-Received: from mail-pg1-f199.google.com (mail-pg1-f199.google.com
- [209.85.215.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-262-5C_75bx2PreGo7_WHU7Uxw-1; Wed, 26 Jun 2024 19:48:39 -0400
-X-MC-Unique: 5C_75bx2PreGo7_WHU7Uxw-1
-Received: by mail-pg1-f199.google.com with SMTP id 41be03b00d2f7-7225d0435a9so2705558a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:48:39 -0700 (PDT)
+	s=arc-20240116; t=1719445962; c=relaxed/simple;
+	bh=eXSVMa9ZuGhU5Zc7b9bA7AKEgXdN1amXW0Cfbus4K54=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CFu6cL1Ax0Klan9U8beTgoe+gucxkc+JAHCX1bEXkJt6tQpAlIjR47lqhON/L9kVBtnnd4fsXC1XFgWklGQvQB9UP21mgmPcDgmuD8NK4Lrxg+wvW1HrKjOmzDhdhSgmuzfB/RAeZjbkRLlOoa3NxdtQAlmPJz6VhIZDFBG53P0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jej5LGXt; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-36743abace4so9591f8f.1;
+        Wed, 26 Jun 2024 16:52:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719445959; x=1720050759; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WMXhWUzOZmgUOn1YwRUYJlzcPBfHyRxlCCVEehfQ2t4=;
+        b=jej5LGXtFYKv2TCGVaxx1l2/hrLuvNoBCSrNgOF9MttSnThZh0XDvTYPnhN3RfElr+
+         fSce67jHwC9ODXvr5EVzkHBfMXmpeQAGKuYNyRjHq1YfvjUOO4slvd4CbugbBlUqDUDE
+         Wcr4F97yFzIwvzzthFyAzKKxrPorPO8tw3PwJCIYPNh6ncU20i8yNVHDgSysI6OubIEv
+         QgIMJvIfiZ9uULxDWTYRwHxpsDxQPA2OxszuIlHhB52cmJFWi7YBuX/Nup3Z95QXdOyk
+         yavhaNK7zISMYSTft9oQJUM1tQLFUHCIgp4i3aWt/9cXO7XfweDG4zJnRqrW+4dMfMGJ
+         gP8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719445717; x=1720050517;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d7CqT7ZoVZ21vEmREjMyead0YkkLsWeh8E80zva5ToM=;
-        b=gKtnwFr4WvoRvy5DQGMWY6DUm6V+OFdh/U/2JcZJkX9KXwQYgWqOtCiodMSeQOIfDF
-         rerTJRqMLGcesXeZLMpOVdiocBhQUPAaWGSwq8NlxMqRmUavdtaqqg2qYkiYOVtnpG5r
-         AggA0VQtHPwLDgylmWRrDbVizzaMEVi66CbewC4IiEE6s3fD2nc/WdwEAOc6TdU3Ytyo
-         kksIMNTcuToS0Jsphb4yM9qX5Jb54ryzdUQEX5RttlgreWbDwvshouIi42YfDLbF8JpD
-         jgQtiaa1HFu/KmDLW5negf0U6B4OdMW/X824QwT5tI6ot59yEQG/hX2mvYo3S3Rv8k4X
-         tjlg==
-X-Forwarded-Encrypted: i=1; AJvYcCWuviWi7tIULALnu/uJKale2lgcYzoIl+hcigsVNnjW3+PsX5wYJp47vOC6oPl8/V08uh3JiDR8+9G7P7YD7klRyPX9DSlv6HLWcdVz
-X-Gm-Message-State: AOJu0Yyggps1EPMLhcWvS9Ff4vTjbxEkmVfMULtFrN0nennwqyiqAHnl
-	P5xEiIlSLwBAkTxFsiCval/t1aXcp4G4W26HzCTIIp0U6f/ABQyH2wlmEDW1Sk/7RdpW9MRvG1O
-	2SxQwWiy1DB2sgx27gEuiuImldTQU/NMnq8SkTdp5iw6jAgiDOMQrIYfsoEEWb06Jocqdbw==
-X-Received: by 2002:a05:6a20:4c82:b0:1bd:1fb9:37be with SMTP id adf61e73a8af0-1bd1fb94724mr5339537637.34.1719445717481;
-        Wed, 26 Jun 2024 16:48:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGO4cQmMl+Yz/ePmJozmWEc69fVJbFIuXB/kxX5f4SOa9YmR96mVVLdgm1KF4X5QUEcUDF8Mw==
-X-Received: by 2002:a05:6a20:4c82:b0:1bd:1fb9:37be with SMTP id adf61e73a8af0-1bd1fb94724mr5339527637.34.1719445717109;
-        Wed, 26 Jun 2024 16:48:37 -0700 (PDT)
-Received: from [192.168.68.51] ([103.210.27.92])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c8d8060f14sm2269364a91.29.2024.06.26.16.48.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 16:48:36 -0700 (PDT)
-Message-ID: <471488ec-ea1f-4c57-ad0d-bea422863574@redhat.com>
-Date: Thu, 27 Jun 2024 09:48:30 +1000
+        d=1e100.net; s=20230601; t=1719445959; x=1720050759;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=WMXhWUzOZmgUOn1YwRUYJlzcPBfHyRxlCCVEehfQ2t4=;
+        b=k3q5FZsKtyU6Sng6aot0fkkXoUqxz+5Xo/QmWyRVxHyc5xaJZiSgWYdK91mznN7KSl
+         txGMlpNoNnn43kCCtAbVpU61xpVFStG/mUbW7FVclp2ug5brq3TUj7Y96wiIM09+vFBh
+         RLffGipsjgnWJt924WnJIPOPFyHhMjgA6l2IJJ1R+UakmygHn7CNxAIaFBFLkk8B0WXp
+         ZFDosyd5OVTsg8eQdh7wbCQGPkWvyC5bU/sDbNvGQR6BIyIBE47FZ4KTFZp9/0PChxHg
+         OFlKpbwNDKHM6/yU7v18qltcgjuXCDh/XrNBbiIBzq1WqoLjDn0FbCb/nkROLLjL53WX
+         dmFg==
+X-Forwarded-Encrypted: i=1; AJvYcCW295bnEzNRtx9YotBFo+TziW1H2fybanpq6LwjZ4PhRiuitLmSOinfgnthAm8p4vDwrGdX4LqG3Bq8kCjZz9b0XQv1F/1s0sjDYnjjmraqAxd72n9JwHLp50+fFrfMaKw5
+X-Gm-Message-State: AOJu0YzfaBDgN8iAcCMTxwwCO+AMhZuG52xY2gaZ7vKtFZv0m4kX11vX
+	91kfrV/A+j8oyo973Hws/vBkA6cpLmJpjwhQqgLxctCAr6JgnHdQ7x8FQ44QRZTpmuFQO4iO7++
+	u/Tn0oVZC+UZ64O8Nd4KjXxuKGvY=
+X-Google-Smtp-Source: AGHT+IEw+d6UF8o9wW6PP5hCb7Yi7hDQqEZZpibIcHoZXKTmFmTLguJhRgy+c3KS13Th3zEBTWT7dWWftytyJTtImaw=
+X-Received: by 2002:adf:f70e:0:b0:367:42ce:f004 with SMTP id
+ ffacd0b85a97d-36742cef648mr173224f8f.23.1719445959275; Wed, 26 Jun 2024
+ 16:52:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] mm/filemap: Limit page cache size to that supported
- by xarray
-To: Matthew Wilcox <willy@infradead.org>
-Cc: David Hildenbrand <david@redhat.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- djwong@kernel.org, hughd@google.com, torvalds@linux-foundation.org,
- zhenyzha@redhat.com, shan.gavin@gmail.com
-References: <20240625090646.1194644-1-gshan@redhat.com>
- <20240625113720.a2fa982b5cb220b1068e5177@linux-foundation.org>
- <33d9e4b3-4455-4431-81dc-e621cf383c22@redhat.com>
- <20240625115855.eb7b9369c0ddd74d6d96c51e@linux-foundation.org>
- <f27d4fa3-0b0f-4646-b6c3-45874f005b46@redhat.com>
- <4b05bdae-22e8-4906-b255-5edd381b3d21@redhat.com>
- <ZnyAD24AQFzlKAhD@casper.infradead.org>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <ZnyAD24AQFzlKAhD@casper.infradead.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
+ <87ed8lxg1c.fsf@jogness.linutronix.de> <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
+ <87ikxxxbwd.fsf@jogness.linutronix.de> <ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
+ <CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com>
+ <7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
+ <CAADnVQKoHk5FTN=jywBjgdTdLwv-c76nCzyH90Js-41WxPK_Tw@mail.gmail.com>
+ <744c9c43-9e4f-4069-9773-067036237bff@I-love.SAKURA.ne.jp>
+ <20240626122748.065a903b@rorschach.local.home> <f6c23073-dc0d-4b3f-b37d-1edb82737b5b@I-love.SAKURA.ne.jp>
+ <20240626183311.05eaf091@rorschach.local.home> <6264da10-b6a0-40b8-ac26-c044b7f7529c@I-love.SAKURA.ne.jp>
+In-Reply-To: <6264da10-b6a0-40b8-ac26-c044b7f7529c@I-love.SAKURA.ne.jp>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 26 Jun 2024 16:52:27 -0700
+Message-ID: <CAADnVQJo=FksArWw+m-wb1zKmRTVhJrKWBOiT0wmyK8uvZ268w@mail.gmail.com>
+Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
+To: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc: Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Petr Mladek <pmladek@suse.com>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 6/27/24 6:54 AM, Matthew Wilcox wrote:
-> On Wed, Jun 26, 2024 at 10:37:00AM +1000, Gavin Shan wrote:
->> On 6/26/24 5:05 AM, David Hildenbrand wrote:
->>> On 25.06.24 20:58, Andrew Morton wrote:
->>>> On Tue, 25 Jun 2024 20:51:13 +0200 David Hildenbrand <david@redhat.com> wrote:
->>>>
->>>>>> I could split them and feed 1&2 into 6.10-rcX and 3&4 into 6.11-rc1.  A
->>>>>> problem with this approach is that we're putting a basically untested
->>>>>> combination into -stable: 1&2 might have bugs which were accidentally
->>>>>> fixed in 3&4.  A way to avoid this is to add cc:stable to all four
->>>>>> patches.
->>>>>>
->>>>>> What are your thoughts on this matter?
->>>>>
->>>>> Especially 4 should also be CC stable, so likely we should just do it
->>>>> for all of them.
->>>>
->>>> Fine.  A Fixes: for 3 & 4 would be good.  Otherwise we're potentially
->>>> asking for those to be backported further than 1 & 2, which seems
->>>> wrong.
->>>
->>> 4 is shmem fix, which likely dates back a bit longer.
->>>
->>>>
->>>> Then again, by having different Fixes: in the various patches we're
->>>> suggesting that people split the patch series apart as they slot things
->>>> into the indicated places.  In other words, it's not a patch series at
->>>> all - it's a sprinkle of independent fixes.  Are we OK thinking of it
->>>> in that fashion?
->>>
->>> The common themes is "pagecache cannot handle > order-11", #1-3 tackle "ordinary" file THP, #4 tackles shmem THP.
->>>
->>> So I'm not sure we should be splitting it apart. It's just that shmem THP arrived before file THP :)
->>>
->>
->> I rechecked the history, it's a bit hard to have precise fix tag for PATCH[4].
->> Please let me know if you have a better one for PATCH[4].
->>
->> #4
->>    Fixes: 800d8c63b2e9 ("shmem: add huge pages support")
->>    Cc: stable@kernel.org # v4.10+
->>    Fixes: 552446a41661 ("shmem: Convert shmem_add_to_page_cache to XArray")
->>    Cc: stable@kernel.org # v4.20+
->> #3
->>    Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
->>    Cc: stable@kernel.org # v5.18+
->> #2
->>    Fixes: 4687fdbb805a ("mm/filemap: Support VM_HUGEPAGE for file mappings")
->>    Cc: stable@kernel.org # v5.18+
->> #1
->>    Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
->>    Cc: stable@kernel.org # v5.18+
-> 
-> I actually think it's this:
-> 
-> commit 6b24ca4a1a8d
-> Author: Matthew Wilcox (Oracle) <willy@infradead.org>
-> Date:   Sat Jun 27 22:19:08 2020 -0400
-> 
->      mm: Use multi-index entries in the page cache
-> 
->      We currently store large folios as 2^N consecutive entries.  While this
->      consumes rather more memory than necessary, it also turns out to be buggy.
->      A writeback operation which starts within a tail page of a dirty folio will
->      not write back the folio as the xarray's dirty bit is only set on the
->      head index.  With multi-index entries, the dirty bit will be found no
->      matter where in the folio the operation starts.
-> 
->      This does end up simplifying the page cache slightly, although not as
->      much as I had hoped.
-> 
->      Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
->      Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-> 
-> Before this, we could split an arbitrary size folio to order 0.  After
-> it, we're limited to whatever the xarray allows us to split.
-> 
+On Wed, Jun 26, 2024 at 4:09=E2=80=AFPM Tetsuo Handa
+<penguin-kernel@i-love.sakura.ne.jp> wrote:
+>
+> On 2024/06/27 7:33, Steven Rostedt wrote:
+> > So you are saying that because a BPF hook can attach to a tracepoint
+> > that is called with rq locks held, it should always disable preemption
+> > and call printk_deferred_enter(), because it *might* hit an error path
+> > that will call printk?? In other words, how the BPF hook is used
+> > determines if the rq lock is held or not when it is called.
+>
+> Yes.
+>
+> >
+> > I can use that same argument for should_fail_ex(). Because how it is
+> > used determines if the rq lock is held or not when it is called. And it
+> > is the function that actually calls printk().
+>
+> Strictly speaking, KASAN/KMSAN/KCSAN etc. *might* call printk() at any lo=
+cation.
+> In that aspect, just wrapping individual function that explicitly calls p=
+rintk()
+> might not be sufficient. We will need to widen section for deferring prin=
+tk(),
+> but we don't want to needlessly call migrate_disable()/preempt_disable()/
+> printk_deferred_enter() due to performance reason. We need to find a bala=
+nced
+> location for calling migrate_disable()/preempt_disable()/printk_deferred_=
+enter().
+> I consider __bpf_prog_run() as a balanced location.
 
-Thanks, PATCH[4]'s fix tag will point to 6b24ca4a1a8d ("mm: Use multi-index entries in the page cache"),
-which was merged to v5.17. The fix tags for other patches are correct
+Tetsuo,
+your repeated invalid arguments are not making this thread productive.
+Told you already that the same can happen without bpf in the picture.
 
-Thanks,
-Gavin
+> >
+> > Sorry, but it makes no sense to put the burden of the
+> > printk_deferred_enter() on the BPF hook logic. It should sit solely
+> > with the code that actually calls printk().
+>
+> How do you respond to Petr Mladek's comment
+>
+>   Yeah, converting printk() into printk_deferred() or using
+>   printk_deferred_enter() around particular code paths is a whac-a-mole
+>   game.
 
+Exactly. wrapping bpf with printk_deferred_enter() is such a whac-a-mole.
+It doesn't fix an issue.
 
