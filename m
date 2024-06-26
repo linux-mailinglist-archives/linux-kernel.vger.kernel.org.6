@@ -1,181 +1,189 @@
-Return-Path: <linux-kernel+bounces-231383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 281D591974C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:13:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8D9F919839
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D8541F2246D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:13:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AD1BB22E7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71ABB1922CE;
-	Wed, 26 Jun 2024 19:13:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF701922E8;
+	Wed, 26 Jun 2024 19:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j5EP0pAy"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b="Ba4CHt5Z"
+Received: from mx-out.tlen.pl (mx-out.tlen.pl [193.222.135.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F086119149D;
-	Wed, 26 Jun 2024 19:13:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B672F191499
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:20:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.222.135.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719429204; cv=none; b=lFbEt7wBZZO3XuGOT0XMDk4twmF2YYiuI6fCdo1AFrTK6uxc0rQ6L6PsQ2Bq40tTWpBo5UIkeH8UTRI0hJzQ4PS61PRcxIHwm78meOTVhAF8BUOjUeIc/8+VAoiShdwIiO51Msfjg8XAYSbJboWePNqCB/ApItjj1RC0CKlw4RM=
+	t=1719429606; cv=none; b=jAh0t3a+0RwOrnVHeXYJo58llefX33h6AWQLD7KKzob7A//6R/1LHSn02mSoimgzXMJtCopm3AsUFs+5VkWuCMvD0FmJAVcaTfKFCmWRq/PZk5jkwNVIOAfoFhyC0jNaVXq4w5dJm4wQjWgdCKpQH+HX1LPUr7uJU0WQ5aRPZVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719429204; c=relaxed/simple;
-	bh=MWTBysIiZBjdlvLaaaaFkn1GlDBtZ5ei9Z3XWrXTXCY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dQty+3b9rFUlfsIx6x9qOYAX59OTNeSiqBGdgn1I8PKH91WxpT9+VLG4jK0HU+pDeFrMhMj0phSzkk+3RAj3KRLlZ4gjz5hB9GNie4lBXktuftG9qN1oL+FD4+G9+qQvDT+QaKvMnsb1dYkcN4bKYI85f385Mcr4Pj24foenLNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j5EP0pAy; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a72517e6225so530235166b.0;
-        Wed, 26 Jun 2024 12:13:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719429201; x=1720034001; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QbHp1m88v5P1bw/uDYtoRLbiy7jJybUGKhLATYsYsAY=;
-        b=j5EP0pAyv3722cQmXdOd/wqJiheM4db6YLzu7Rhf1a1v2oqXKsm8SmUMOlIQ4eKzD2
-         aV9AMKYCIyh/3WT4V6Pr2BrCHbiUrd6D1NUE6dyl9R/lELygFLVZf6FcOvGQ60vwQBYV
-         EWRXFgP/2RKwL3gBTqj3Lu3JsvL9N08/g0jBcG3NGIm84BboqknhbEFlUtS9QDhnHTIw
-         vHiL1gZkJ6iWHY2dBaQ4xooKjfoetdffuTUDj1A6Csc3QiA1B+M965Ag4DjDe2wLwjov
-         vRMDrjJwTjfY+lKEk8ZxJn4uCWvMBgiVuyUXMDBqb3ZPbLfaj1bJDOvHNmUPLX7j9ZpT
-         uf+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719429201; x=1720034001;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QbHp1m88v5P1bw/uDYtoRLbiy7jJybUGKhLATYsYsAY=;
-        b=M0zCOaVgjhNSPIa+iqlXXRs4pGq/YFO71XEiD4M8nGxDBToSah1KzumJu+fJ1ikGsy
-         C3KlZyxcNTuKtToYQLdpAMf0tkEv/VmNzLqGpggfGNFK9RPzUu7TLFkOqEeaKGfko9lx
-         f3m6cixArSljl+RuouedpgeNVTbKs5n3BtRevMJgafgdASFmvSSEuHMjjXW7Vu6us+Do
-         9zsXZ/URsct6oIqOOr6tU/67ovsmJ2zTs7LW63ftKf+J+qiG5ndUar8lf8DSNlzgirXN
-         ITsync785rVKSmFjfgzpmkuuoxcEMPLjEpqql4mmERnqtNPNkDOVVqL7SAY/R46I8Zb5
-         XuEw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCH1TqeVqWbH3p4phQZWO7nsxINR4+4LQykeE+/koPRHG8qC79Zhodt5Yo3pGqw0cKeFd1p3z63z9WbvLaejKYkXfrwzXfvBiVH7yvQDCxvJIR0QsRII43mI21syy6fLFWDarJndr37EYaZA==
-X-Gm-Message-State: AOJu0YxCZHWXPDzLk1Gb/NZ/90TNN4Q7mJLnYDEzx0bp6CLR7quZEMJp
-	fzxkEcuQ3QQi1GT0vlyHckVIKZhRJtJ3fQXovzRXvk4OFH/7YLsA/tNhWwe+fTfo3C9uQ4UqUcE
-	kr+D2qxPqCjxCOoKTaNHzPNe5ulA=
-X-Google-Smtp-Source: AGHT+IEXp5RQKNfI9JqKuIBclAPVcd4xCVBCu6z7CwGa+cRrF9EVaQwPab8PcE/ZZKeA3pwviZCg+oL0UIWvh26ZbQ8=
-X-Received: by 2002:a17:906:9c96:b0:a72:5598:f03d with SMTP id
- a640c23a62f3a-a725598f1dfmr749547666b.59.1719429201169; Wed, 26 Jun 2024
- 12:13:21 -0700 (PDT)
+	s=arc-20240116; t=1719429606; c=relaxed/simple;
+	bh=EaM1Dz9Wa5nQavU2xkJGT0mePNQMVEaSABMv7owQFqI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MZq3XmN12LlOzk2yFsl61Q6WsHJjeogXgwB5P8glwMPdvXLTniltLp93GliJV47HEv3v03mw3k6LnTJAvsLN8Rrx44+Ox6SFhAx0dm/zn9rDTpaf78Zn0aTCEIX/mjkJikklR68YKHXKgkJph/8+ypGBG73qD7C/AHGB/+34dH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl; spf=pass smtp.mailfrom=o2.pl; dkim=pass (1024-bit key) header.d=o2.pl header.i=@o2.pl header.b=Ba4CHt5Z; arc=none smtp.client-ip=193.222.135.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=o2.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=o2.pl
+Received: (wp-smtpd smtp.tlen.pl 23978 invoked from network); 26 Jun 2024 21:13:20 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=o2.pl; s=1024a;
+          t=1719429200; bh=VBlrCgswGgdojCmX7rLsHFjXXUfvRoXuCvlbvbwzY98=;
+          h=Subject:To:Cc:From;
+          b=Ba4CHt5Z+uNeLEuVlCMV1s9KXuWciRoavqKRRv8l6nPL+d0sqMQVDg3pGmxDb5nxj
+           rjdMcl/tJ6jCcpnI6Z7BOB9rx7Vb9aI1sP3Z8ESC7iC3TMo3NVonFp66+nfkkR9Mnl
+           ENq9GEx8i6l5eMkodRGKkr5L5qk0zdMNKII5kuoM=
+Received: from aaer237.neoplus.adsl.tpnet.pl (HELO [192.168.1.22]) (mat.jonczyk@o2.pl@[83.4.121.237])
+          (envelope-sender <mat.jonczyk@o2.pl>)
+          by smtp.tlen.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <gregkh@linuxfoundation.org>; 26 Jun 2024 21:13:20 +0200
+Message-ID: <ba2d19ca-a39c-4ed7-979e-7b33f4ffdb5a@o2.pl>
+Date: Wed, 26 Jun 2024 21:13:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614163416.728752-1-yu.ma@intel.com> <20240622154904.3774273-1-yu.ma@intel.com>
- <20240622154904.3774273-2-yu.ma@intel.com> <20240625115257.piu47hzjyw5qnsa6@quack3>
- <20240625125309.y2gs4j5jr35kc4z5@quack3> <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
- <20240626115427.d3x7g3bf6hdemlnq@quack3>
-In-Reply-To: <20240626115427.d3x7g3bf6hdemlnq@quack3>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 26 Jun 2024 21:13:07 +0200
-Message-ID: <CAGudoHEkw=cRG1xFHU02YjkM2+MMS2vkY_moZ2QUjAToEzbR3g@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
-To: Jan Kara <jack@suse.cz>
-Cc: "Ma, Yu" <yu.ma@intel.com>, viro@zeniv.linux.org.uk, brauner@kernel.org, 
-	edumazet@google.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, 
-	tim.c.chen@intel.com, tim.c.chen@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.1 000/131] 6.1.96-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20240625085525.931079317@linuxfoundation.org>
+Content-Language: en-GB
+From: =?UTF-8?Q?Mateusz_Jo=C5=84czyk?= <mat.jonczyk@o2.pl>
+Autocrypt: addr=mat.jonczyk@o2.pl; keydata=
+ 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
+ TANkZ3QqXNX2
+In-Reply-To: <20240625085525.931079317@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-WP-MailID: 3371b8397a28434c5dbed359df685d1a
+X-WP-AV: skaner antywirusowy Poczty o2
+X-WP-SPAM: NO 0000000 [MXOk]                               
 
-On Wed, Jun 26, 2024 at 1:54=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
-> So maybe I'm wrong but I think the biggest benefit of your code compared =
-to
-> plain find_next_fd() is exactly in that we don't have to load full_fds_bi=
-ts
-> into cache. So I'm afraid that using full_fds_bits in the condition would
-> destroy your performance gains. Thinking about this with a fresh head how
-> about putting implementing your optimization like:
+W dniu 25.06.2024 o 11:32, Greg Kroah-Hartman pisze:
+> This is the start of the stable review cycle for the 6.1.96 release.
+> There are 131 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtable *fdt=
-, unsigned int start)
->         unsigned int maxbit =3D maxfd / BITS_PER_LONG;
->         unsigned int bitbit =3D start / BITS_PER_LONG;
+> Responses should be made by Thu, 27 Jun 2024 08:54:55 +0000.
+> Anything received after that time might be too late.
 >
-> +       /*
-> +        * Optimistically search the first long of the open_fds bitmap. I=
-t
-> +        * saves us from loading full_fds_bits into cache in the common c=
-ase
-> +        * and because BITS_PER_LONG > start >=3D files->next_fd, we have=
- quite
-> +        * a good chance there's a bit free in there.
-> +        */
-> +       if (start < BITS_PER_LONG) {
-> +               unsigned int bit;
-> +
-> +               bit =3D find_next_zero_bit(fdt->open_fds, BITS_PER_LONG, =
-start);
-> +               if (bit < BITS_PER_LONG)
-> +                       return bit;
-> +       }
-> +
->         bitbit =3D find_next_zero_bit(fdt->full_fds_bits, maxbit, bitbit)=
- * BITS_PER_LONG;
->         if (bitbit >=3D maxfd)
->                 return maxfd;
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.1.96-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.1.y
+> and the diffstat can be found below.
 >
-> Plus your optimizations with likely / unlikely. This way the code flow in
-> alloc_fd() stays more readable, we avoid loading the first open_fds long
-> into cache if it is full, and we should get all the performance benefits?
+> thanks,
 >
+> greg k-h
+Hello,
 
-Huh.
+Tested-by: Mateusz Jończyk <mat.jonczyk@o2.pl>
 
-So when I read the patch previously I assumed this is testing the bit
-word for the map containing next_fd (whatever it is), avoiding looking
-at the higher level bitmap and inlining the op (instead of calling the
-fully fledged func for bit scans).
+Tested on a HP 17-by0001nw laptop with an Intel Kaby Lake CPU and Ubuntu 20.04.
 
-I did not mentally register this is in fact only checking for the
-beginning of the range of the entire thing. So apologies from my end
-as based on my feedback some work was done and I'm going to ask to
-further redo it.
+Issues found:
+- NVMe drive failed shortly after resume from suspend:
+    pcieport 0000:00:1d.0: AER: Corrected error message received from 0000:00:1d.0
+    pcieport 0000:00:1d.0: PCIe Bus Error: severity=Corrected, type=Physical Layer, (Receiver ID)
+    pcieport 0000:00:1d.0:   device [8086:9d18] error status/mask=00000001/00002000
+    pcieport 0000:00:1d.0:    [ 0] RxErr                
 
-blogbench spawns 100 or so workers, say total fd count hovers just
-above 100. say this lines up with about half of more cases in practice
-for that benchmark.
+    [... repeats around 20 times ]
 
-Even so, that's a benchmark-specific optimization. A busy web server
-can have literally tens of thousands of fds open (and this is a pretty
-mundane case), making the 0-63 range not particularly interesting.
+    nvme nvme0: controller is down; will reset: CSTS=0xffffffff, PCI_STATUS=0x10
+    nvme nvme0: Does your device have a faulty power saving mode enabled?
+    nvme nvme0: Try "nvme_core.default_ps_max_latency_us=0 pcie_aspm=off" and report a bug
+    nvme 0000:03:00.0: enabling device (0000 -> 0002)
+    nvme nvme0: Removing after probe failure status: -19
+    nvme0n1: detected capacity change from 1000215216 to 0
+    [...]
+    md/raid1:md1: Disk failure on nvme0n1p3, disabling device.
+    md/raid1:md1: Operation continuing on 1 devices.
 
-That aside I think the patchset is in the wrong order -- first patch
-tries to not look at the higher level bitmap, while second reduces
-stores made there. This makes it quite unclear how much is it worth to
-reduce looking there if atomics are conditional.
+  After a cold reboot, the drive is visible again and functioning apparently
+  normally. SMART data claims it is healthy. Previously this happened 3 weeks
+  ago, on Linux 5.15.0-107-generic from Ubuntu, also shortly after a resume
+  from suspend. As no recent patches in Linux stable appear to touch NVMe / PCIe,
+  I'm giving a Tested-by: nonetheless.
 
-So here is what I propose in terms of the patches:
-1. NULL check removal, sprinkling of likely/unlikely and expand_files
-call avoidance; no measurements done vs stock kernel for some effort
-saving, just denote in the commit message there is less work under the
-lock and treat it as baseline
-2. conditional higher level bitmap clear as submitted; benchmarked against =
-1
-3. open_fds check within the range containing fd, avoiding higher
-level bitmap if a free slot is found. this should not result in any
-func calls if successful; benchmarked against the above
+Stack:
+- amd64,
+- ext4 on top of LVM on top of LUKS on top of mdraid on top of
+  NVMe and SATA drives (the SATA drive in a write-mostly mode).
 
-Optionally the bitmap routines can grow variants which always inline
-and are used here. If so that would probably land between 1 and 2 on
-the list.
+Tested (lightly):
+- suspend to RAM,
+- suspend to disk,
+- virtual machines in QEMU (both i386 and amd64 guests),
 
-You noted you know about blogbench bugs and have them fixed. Would be
-good to post a link to a pull request or some other spot for a
-reference.
+- Bluetooth (Realtek RTL8822BE),
+- GPU (Intel HD Graphics 620, tested with two Unigine benchmarks)
+- WiFi (Realtek RTL8822BE),
+- webcam.
 
-I'll be best if the vfs folk comment on what they want here.
---=20
-Mateusz Guzik <mjguzik gmail.com>
+
+Filesystems tested with fsstress:
+    - ext4,
+    - NFS client,
+    - exFAT,
+    - NTFS via FUSE (ntfs3g).
+
+Greetings,
+
+Mateusz
+
 
