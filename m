@@ -1,98 +1,167 @@
-Return-Path: <linux-kernel+bounces-229881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A86291757C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:17:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECF8917581
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:19:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D30F1C21A8D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:17:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F15AB1C219CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:19:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B49AAD2FE;
-	Wed, 26 Jun 2024 01:17:38 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213F1DF4D;
+	Wed, 26 Jun 2024 01:19:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ed0SwHvu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9013D647
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:17:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE906647;
+	Wed, 26 Jun 2024 01:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719364658; cv=none; b=buHr5GMSvTySkbbNG+DwcIwBbjVsQhaM+8o7RJKOai6BcDVtu3z37gaval0Yb+/JfJvOmu+whMjpXA87a/6ELp8zUfxL5ggGtyOm0YhN3j1pls4/3BFFsIW5NEMeDS5exWImJXR/QWCXokCpwLodGe5+LPI4HFEmZLFIzqN+iNg=
+	t=1719364781; cv=none; b=F8Oxfkyk3V5/yG/XIEDH8X07cXHaUO+cC+r2/UQ/SDHTBs4y7DgKlhrhTBmMO7coj2stSOxNkkZsX9OFUPkjU8mzlMHsA5c9QE+n2h+odtiY2Tat7C6cbq73qpHbpx3UdJPaCm+e9WvKwA5bEBeUSPi3LSuNhltAW9pe9N7/RgQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719364658; c=relaxed/simple;
-	bh=ILZTs2xb5HFxmU/WoOc9Jjay4Irnd6HuGZ0JlF46g7s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=iPykT2Mo8gZ80t9XbZPgQpaVx8sNo75xS2WtsyobtUUqv3xpYkr1KOq0pwpTzAGG6LDoraqbWn1udl9o/8ydaARtV+6FrW63/Iv+aC1m8SY+9bgnazTUXXt7EV43qEVX3hUlxvLtFUU8iLyI9e/ldiLAMubJKB/fBAVpQD9Cx2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowABXXwMKbHtmqOfQEg--.45360S2;
-	Wed, 26 Jun 2024 09:17:05 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: patrik.r.jakobsson@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH] drm/gma500: fix null pointer dereference in psb_intel_lvds_get_modes
-Date: Wed, 26 Jun 2024 09:16:56 +0800
-Message-Id: <20240626011656.2763368-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719364781; c=relaxed/simple;
+	bh=/ZaYhtjBB6pfsj/x9la5o1sL1jgDGNz1LjDhyzmUjwQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n/MASa3aa1DXiXVBCyF+UMGJnOWQFwIcjT5duqGBojg5vVHOiF/WRNvARL+Oq7sTMP63z3/wrStdQveG3CV7xxm6/TFCMVNW5Vqq/S1DmA7/Q0otNJFd2KMASk5YA7FRQiEv0JOLQoSGRZwIfeWniAEJu05oUTD9Do2gwf9808A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ed0SwHvu; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719364780; x=1750900780;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/ZaYhtjBB6pfsj/x9la5o1sL1jgDGNz1LjDhyzmUjwQ=;
+  b=ed0SwHvuctocHusyRE78QnFP9JEF61bhiSPtMoqRyTVa87802dxdYmAO
+   bCY/xagzFfHGhfo86r3x+hbHwDtbC8oxVt3tARrF4jTzUo+ZlXCSR+AIM
+   yk5o26WMTITSkWpjkcTsh7rSc5flhzMVf2/2MCbdYLDyRNgZ13S1PPDqA
+   Fd4REdavpHitDIJWJi93v2oJvnNhZMqQ3e4hyBO9giBPGp66B1oi3mcYe
+   8QR/pbDdMvPxcRvraHz0DhOqWdHMMt9s8MhiRYZ9obt6pSD70a8QRpURK
+   Xs/VUPP5F4Y2Eq8sfxKqidi0zcxIRRMZt4/sdhfOdvn2Q2r9OJsWS73/S
+   A==;
+X-CSE-ConnectionGUID: qAlesu3fSGm385LvTc0bhA==
+X-CSE-MsgGUID: VJ6uDGUmT6uoPda5b9YSpA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="20222699"
+X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
+   d="scan'208";a="20222699"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 18:19:39 -0700
+X-CSE-ConnectionGUID: Jvap4mEuRuiaOAexReNxjg==
+X-CSE-MsgGUID: lQ9+WCG/QFKlJVqQa1/JTA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
+   d="scan'208";a="48409095"
+Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.120.43]) ([10.247.120.43])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 18:19:36 -0700
+Message-ID: <106e0d31-c520-4ef6-994e-df1a4c9a986e@linux.intel.com>
+Date: Wed, 26 Jun 2024 09:19:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowABXXwMKbHtmqOfQEg--.45360S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw1xZw1xKrW7WF1Utr4xWFg_yoWftrc_uF
-	1rZr9rCFWDu3Z5Cr4xAw43ur1Ik3W0vF4kJw13KayfA34DWr15X34aqFy5XFyxZa47G3yD
-	Jw129Fy8Zr4xGjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUQZ23UUU
-	UU=
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net 1/1] igc: Fix double reset adapter triggered from a
+ single taprio cmd
+To: "David S . Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Jesse Brandeburg <jesse.brandeburg@intel.com>,
+ Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ muhammad.husaini.zulkifli@intel.com
+References: <20240625082656.2702440-1-faizal.abdul.rahim@linux.intel.com>
+Content-Language: en-US
+From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
+In-Reply-To: <20240625082656.2702440-1-faizal.abdul.rahim@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-In psb_intel_lvds_get_modes(), the return value of drm_mode_duplicate() is
-assigned to mode, which will lead to a possible NULL pointer dereference
-on failure of drm_mode_duplicate(). Add a check to avoid npd.
+Added Vladimir and Husaini in CC.
 
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
----
- drivers/gpu/drm/gma500/psb_intel_lvds.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/gma500/psb_intel_lvds.c b/drivers/gpu/drm/gma500/psb_intel_lvds.c
-index 8486de230ec9..aa5bf2a8a319 100644
---- a/drivers/gpu/drm/gma500/psb_intel_lvds.c
-+++ b/drivers/gpu/drm/gma500/psb_intel_lvds.c
-@@ -504,6 +504,8 @@ static int psb_intel_lvds_get_modes(struct drm_connector *connector)
- 	if (mode_dev->panel_fixed_mode != NULL) {
- 		struct drm_display_mode *mode =
- 		    drm_mode_duplicate(dev, mode_dev->panel_fixed_mode);
-+		if (!mode)
-+			return -ENOMEM;
- 		drm_mode_probed_add(connector, mode);
- 		return 1;
- 	}
--- 
-2.25.1
-
+On 25/6/2024 4:26 pm, Faizal Rahim wrote:
+> Following the implementation of "igc: Add TransmissionOverrun counter"
+> patch, when a taprio command is triggered by user, igc processes two
+> commands: TAPRIO_CMD_REPLACE followed by TAPRIO_CMD_STATS. However, both
+> commands unconditionally pass through igc_tsn_offload_apply() which
+> evaluates and triggers reset adapter. The double reset causes issues in
+> the calculation of adapter->qbv_count in igc.
+> 
+> TAPRIO_CMD_REPLACE command is expected to reset the adapter since it
+> activates qbv. It's unexpected for TAPRIO_CMD_STATS to do the same
+> because it doesn't configure any driver-specific TSN settings. So, the
+> evaluation in igc_tsn_offload_apply() isn't needed for TAPRIO_CMD_STATS.
+> 
+> To address this, commands parsing are relocated to
+> igc_tsn_enable_qbv_scheduling(). Commands that don't require an adapter
+> reset will exit after processing, thus avoiding igc_tsn_offload_apply().
+> 
+> Fixes: d3750076d464 ("igc: Add TransmissionOverrun counter")
+> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+> ---
+>   drivers/net/ethernet/intel/igc/igc_main.c | 33 ++++++++++++-----------
+>   1 file changed, 17 insertions(+), 16 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+> index 87b655b839c1..33069880c86c 100644
+> --- a/drivers/net/ethernet/intel/igc/igc_main.c
+> +++ b/drivers/net/ethernet/intel/igc/igc_main.c
+> @@ -6310,21 +6310,6 @@ static int igc_save_qbv_schedule(struct igc_adapter *adapter,
+>   	size_t n;
+>   	int i;
+> 
+> -	switch (qopt->cmd) {
+> -	case TAPRIO_CMD_REPLACE:
+> -		break;
+> -	case TAPRIO_CMD_DESTROY:
+> -		return igc_tsn_clear_schedule(adapter);
+> -	case TAPRIO_CMD_STATS:
+> -		igc_taprio_stats(adapter->netdev, &qopt->stats);
+> -		return 0;
+> -	case TAPRIO_CMD_QUEUE_STATS:
+> -		igc_taprio_queue_stats(adapter->netdev, &qopt->queue_stats);
+> -		return 0;
+> -	default:
+> -		return -EOPNOTSUPP;
+> -	}
+> -
+>   	if (qopt->base_time < 0)
+>   		return -ERANGE;
+> 
+> @@ -6433,7 +6418,23 @@ static int igc_tsn_enable_qbv_scheduling(struct igc_adapter *adapter,
+>   	if (hw->mac.type != igc_i225)
+>   		return -EOPNOTSUPP;
+> 
+> -	err = igc_save_qbv_schedule(adapter, qopt);
+> +	switch (qopt->cmd) {
+> +	case TAPRIO_CMD_REPLACE:
+> +		err = igc_save_qbv_schedule(adapter, qopt);
+> +		break;
+> +	case TAPRIO_CMD_DESTROY:
+> +		err = igc_tsn_clear_schedule(adapter);
+> +		break;
+> +	case TAPRIO_CMD_STATS:
+> +		igc_taprio_stats(adapter->netdev, &qopt->stats);
+> +		return 0;
+> +	case TAPRIO_CMD_QUEUE_STATS:
+> +		igc_taprio_queue_stats(adapter->netdev, &qopt->queue_stats);
+> +		return 0;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+>   	if (err)
+>   		return err;
+> 
+> --
+> 2.25.1
+> 
 
