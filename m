@@ -1,98 +1,149 @@
-Return-Path: <linux-kernel+bounces-229889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3F29175A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:30:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C25199175A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5EAB1F223B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:30:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 005CA1C21D31
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 01:30:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84CFD2FE;
-	Wed, 26 Jun 2024 01:30:34 +0000 (UTC)
-Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B67717BBA;
+	Wed, 26 Jun 2024 01:30:25 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6B8A955
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35CB2F9C9
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719365434; cv=none; b=DZo0UIBJVa3qwW0Mc60bavKC1WcGDRB+HHfCb7QPliHXzug5XrzMX7tMfTWik32+Po3je3Tb+8TCSZwCcmTHGfXr0Js8tfz+GwZEbaUvpcDS917P/9YDnxRS85Tj/2FU4kkJtesc9CpZiZI6A2R8A24GkT6HJ5EYdHRKXjk9fa4=
+	t=1719365424; cv=none; b=Y6mmSMeGBpO0rhvzNa6tJhsNHH1Yr8VaFvGyWJDQ0EiZPN/U6I9rItm6ony/gL4TkYO+R5ouZcM4ZS0vP+YbFLCYKenJXPA87shkp5CF38lmdwfcKwbQNrVcEEpxNlODypdpd5oVPZAzGZYqs/THi+TL4pKx8vRSPHcyTPj8Cvc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719365434; c=relaxed/simple;
-	bh=YuuLFa6Mbk2gDHO7whWn3zixD4Q2i3v284CcpfG8/Ys=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RJ3v74NYieCVpi7Nb+qScwUGio5pYQUhcxynpjS8+EMWQuNnUEq1qPQL8Uk8+v8E5kNnH1D5uayQNqPWHvXTj/hUqtjM1sUaB8hBZDOIvIVAT3r59s3cj5Pz0hkIWt+lnm4Jvijztx20+ZARufjMnXESRx7kP7qXqoTxf2EjktY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
-	by APP-05 (Coremail) with SMTP id zQCowADnjRAnb3tmk0nREg--.43249S2;
-	Wed, 26 Jun 2024 09:30:23 +0800 (CST)
-From: Ma Ke <make24@iscas.ac.cn>
-To: kherbst@redhat.com,
-	lyude@redhat.com,
-	dakr@redhat.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch
-Cc: dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Ma Ke <make24@iscas.ac.cn>
-Subject: [PATCH] drm/nouveau: fix null pointer dereference in nouveau_connector_get_modes
-Date: Wed, 26 Jun 2024 09:30:13 +0800
-Message-Id: <20240626013013.2765395-1-make24@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1719365424; c=relaxed/simple;
+	bh=p2zkOZD+8+T1dAuryaMFbTjK8h6djut6lMgkrePaOWk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MpOhbymq40qUxDKzauk1mFY2TH/SvWCSNbDJFPSqrQ7HUBpGVm5dj25C6oZ8VteLefXZpwlMWQuieow2kUv4cOn/O7ZddlkGQItuZJQuFzVo0SXLwOntPhv3u6WoUYthkA+TvNQ+YZ9TG7tUZZa8PJonmHnwOmmIezgsq+BHkRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-375df29cb12so76318575ab.2
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 18:30:23 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719365422; x=1719970222;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=D/LozekO3Rawr7o5vm0SBlhMDQbth1dTopz64bhOVSI=;
+        b=YbScV9pNbURTbbXSqtMd9H4yfbHkzV9aIoz+WnaZS37aMGbqvg8bKWUGvbRoOM4MWK
+         GKX8C4mooKI5uus3jzGOR1CROuIijmLyLLEr7F99fMruFz2B/B+TxftZ1pTpme3rXrRc
+         u9uPCVVd2aUsW0Bpm7JpHnJCnY/Ft40uFT8WCRv2OwYP68a0xs0MvZMR97/NCTrL//fl
+         wn6/ZdVlU+LKnE6qjMO8tj9CPdkbAl4IuzVg0i9ZMQZxi6ALnVwJTJ+efde0swjQLCVV
+         IDZviF4w/CA9AhY/JY5ET+nczIU1OF6g3NEUbAmO7XM/GfLJmCDYEqyRBSPl4uHU0kzT
+         zsew==
+X-Forwarded-Encrypted: i=1; AJvYcCUdL65QK3IL5p4MmoSKKUUJkN+I1vfcZKxx2TnVq4178R+CDSsUIQOk4DwqGEXtsY4yAi7XEzodUN5WHc8vFZfWq2XwiGg44u9nkKup
+X-Gm-Message-State: AOJu0YyUSlK2XqZSFxo8rT2jNedvzkdWWNoz78LlOt8XGyi8N4QotMFn
+	ugJsMfCqFbi7Xkn8jpnELjl0Vrp0b/R6ekVISlJWV2tMhEzg9xhMzIxcByKEUwxQ+I9VlITRc9P
+	+bk898JOkYrT9ZUuLFVAQXUAI/ZfQ5sPMHwQRMUUNFbj5DU9OcQ7JPKQ=
+X-Google-Smtp-Source: AGHT+IGI0fxQLvY8mOI7xe2da3Qu72XrkZlHdyAcx9r1eo2GONZMZz+PZXMIgaS/ogLXtWRbNiZ05Z6ireQSysqwJwVWsSTUJRnL
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:zQCowADnjRAnb3tmk0nREg--.43249S2
-X-Coremail-Antispam: 1UD129KBjvdXoW7Jw1xZw1xKrW7WF1Utr4xWFg_yoWfZFc_uF
-	1kZasrGrs093WvyrsrAw48AF9F9w1UZF4kZFnIqF9avrZ2qw1SkryUtryYvFy7Xa48WryD
-	tayq9as8Crn2gjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v26r4UJV
-	WxJr1lnxkEFVAIw20F6cxK64vIFxWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xv
-	F2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r1j6r
-	4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I
-	648v4I1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUFYFADU
-	UUU
-X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
+X-Received: by 2002:a05:6e02:184f:b0:376:42a0:b2e7 with SMTP id
+ e9e14a558f8ab-37642a0b586mr7471625ab.4.1719365422380; Tue, 25 Jun 2024
+ 18:30:22 -0700 (PDT)
+Date: Tue, 25 Jun 2024 18:30:22 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <0000000000003d868e061bc0f554@google.com>
+Subject: [syzbot] [usb?] [bluetooth?] WARNING in btusb_submit_intr_urb/usb_submit_urb
+From: syzbot <syzbot+8693a0bb9c10b554272a@syzkaller.appspotmail.com>
+To: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-In nouveau_connector_get_modes(), the return value of drm_mode_duplicate()
-is assigned to mode, which will lead to a possible NULL pointer
-dereference on failure of drm_mode_duplicate(). Add a check to avoid npd.
+Hello,
 
-Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+syzbot found the following issue on:
+
+HEAD commit:    66cc544fd75c Merge tag 'dmaengine-fix-6.10' of git://git.k..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=14280161980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=3f7b9f99610e0e87
+dashboard link: https://syzkaller.appspot.com/bug?extid=8693a0bb9c10b554272a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16f59c82980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12b955b6980000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/b4d37fd1f3c8/disk-66cc544f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/04c8b576cea2/vmlinux-66cc544f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/05e217dc3c31/bzImage-66cc544f.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8693a0bb9c10b554272a@syzkaller.appspotmail.com
+
+------------[ cut here ]------------
+usb 1-1: BOGUS urb xfer, pipe 1 != type 3
+WARNING: CPU: 0 PID: 4491 at drivers/usb/core/urb.c:504 usb_submit_urb+0xc4e/0x18c0 drivers/usb/core/urb.c:503
+Modules linked in:
+CPU: 0 PID: 4491 Comm: kworker/u9:1 Not tainted 6.10.0-rc4-syzkaller-00164-g66cc544fd75c #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
+Workqueue: hci0 hci_power_on
+RIP: 0010:usb_submit_urb+0xc4e/0x18c0 drivers/usb/core/urb.c:503
+Code: f8 48 c1 e8 03 0f b6 04 18 84 c0 0f 85 b1 08 00 00 45 8b 07 48 c7 c7 40 90 6d 8c 48 8b 34 24 4c 89 e2 89 e9 e8 23 9a 3c fa 90 <0f> 0b 90 90 48 8b 5c 24 30 41 89 dc 4c 89 e7 48 c7 c6 b0 4b f2 8e
+RSP: 0018:ffffc9000d817798 EFLAGS: 00010246
+RAX: 6d750bdfc6b7f400 RBX: dffffc0000000000 RCX: ffff888030053c00
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 0000000000000001 R08: ffffffff81585822 R09: fffffbfff1c39994
+R10: dffffc0000000000 R11: fffffbfff1c39994 R12: ffff88801c2e7560
+R13: ffff88801a2af400 R14: 0000000000000001 R15: ffffffff8c6d8e28
+FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000559f0e1c6bd8 CR3: 000000002e10e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ btusb_submit_intr_urb+0x3dd/0x7b0 drivers/bluetooth/btusb.c:1409
+ btusb_open+0x1a1/0x770 drivers/bluetooth/btusb.c:1865
+ hci_dev_open_sync+0x2cc/0x2b40 net/bluetooth/hci_sync.c:4889
+ hci_dev_do_open net/bluetooth/hci_core.c:485 [inline]
+ hci_power_on+0x1c7/0x6b0 net/bluetooth/hci_core.c:1012
+ process_one_work kernel/workqueue.c:3231 [inline]
+ process_scheduled_works+0xa2c/0x1830 kernel/workqueue.c:3312
+ worker_thread+0x86d/0xd70 kernel/workqueue.c:3393
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
 ---
- drivers/gpu/drm/nouveau/nouveau_connector.c | 2 ++
- 1 file changed, 2 insertions(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index 856b3ef5edb8..010eed56b14d 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -1001,6 +1001,8 @@ nouveau_connector_get_modes(struct drm_connector *connector)
- 		struct drm_display_mode *mode;
- 
- 		mode = drm_mode_duplicate(dev, nv_connector->native_mode);
-+		if (!mode)
-+			return -ENOMEM;
- 		drm_mode_probed_add(connector, mode);
- 		ret = 1;
- 	}
--- 
-2.25.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
