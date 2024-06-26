@@ -1,157 +1,127 @@
-Return-Path: <linux-kernel+bounces-230683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B7DB918081
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:05:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1736918088
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:06:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F4E6281B15
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:05:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B0242828C1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC8E180A95;
-	Wed, 26 Jun 2024 12:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E67181315;
+	Wed, 26 Jun 2024 12:06:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UV8Pr+Gd"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhqCh3vl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA5F180A6A;
-	Wed, 26 Jun 2024 12:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9964180A88
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:06:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719403496; cv=none; b=dxnaBJDu4qvZVofKPDGCU4r9YumNDARpZN1fbRGtc0lgGnll4ZDN3JXdOL01IxH+cTn/vVygjn8LFJdjMYfYpwRINH7jiGaLC+gMIj9E2HzSEjfkNPE5cYxte7anfL3pvw3sL0ui3fWPVf14UogzPwoZMDOshpBPdM/N2OfoYCE=
+	t=1719403593; cv=none; b=hCfS1rkrFpRWvUYOll/URirowFTVrMDjHYsdP6AO0zqar43qByHWYxLImZFunN+6l2eW0I8HgFjM29UXevpBWSKTFYM/j6gXrCSXBtznl0S1tBjFclbvYsjwcZNJU3XNA7BXTnKJtbNzo3kQ7LBgy8WfcKKp78DnehciXhwvEM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719403496; c=relaxed/simple;
-	bh=RPSKzma0tITGWNvrqVFU2s7s33ANWD+5HmsV/+rnbU0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=brv+K+J01rL1TtysXJKAqdpHVXsNI6miEGmy4OoNmWp4ktBwd0kSQ5h6FJrN9TRe7sX727fTKY2D/hWvfqxD1C4kORw6hNOlubNmaJC/wj44w/vsmfpGck7Jpa83TSLqgi/BmiP9U/Awyp0E4TxjtAdK7p0Wkf3TaPCVgHHGUWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UV8Pr+Gd; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id DFE9540E021D;
-	Wed, 26 Jun 2024 12:04:52 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id ZqpO0mb8Hsle; Wed, 26 Jun 2024 12:04:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719403488; bh=RtsuJxlpaR/vRpQMDpl+Q6w8HUwk8Oh67+w5Au7b/og=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UV8Pr+GdPP/ZCDA6G9OkFPmx/xqeMXJ8nXBfShukrhWiNJerlwzUndKWYysSAcauU
-	 6DguyyxF7mJw8sk0VxW64oTL3GUvB+Nh9ym/QK77xxdwhUVvtYNXwSWhEEZNhoDP1r
-	 6Ic9FyuuEGZIetqhSm1Z6glPWXt5sMCFXGZ+1glJcbyVCtf4P7ousy6uo/v4tRDkNu
-	 ZkChOMpOnbjIk7LKA9Vj7veh5C12ZYFxucNNrip1HED/pMyRPY0aH781zo/096O7IL
-	 Z37mJ2O8Nt4v9u8VWVGahty+fZ11dWXHo3vemwhiDNTf78zQOV0691mZrIZzo+9YCg
-	 RaD8Ff1ZI6ZBo75q/GPPdgJUHMW7Zw9Q2jGCw7jks74Wms/a8ejOgwIeON/0kkkorH
-	 6+KIJpqtI1ZSQMXKyQJzE7JWs5dWPZcJoGw1XREhZ/xr72ISEVrSShcfDOm3FBZC8q
-	 y1xPvRSzLoJB+fKyfYRJTaAfW18xo8qdv9iPLGwPd9GgnN4gfLajaVGuAZ+4HWLp1p
-	 Y06MKLVPD3dl0b+0NMPqTDPXpri5u/AjIqguG1+oR6AiibgIwoC6JbxeK3yKKF0wGc
-	 dZ8uxcfvfxtC4TFrlvzyQIc9PNF9ivQ0R/14Ar17z51ur8tBisOzLbLSdSHH8XMIVQ
-	 ak63VomfFV+y+H7tsOqyh27A=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 981D140E0185;
-	Wed, 26 Jun 2024 12:04:30 +0000 (UTC)
-Date: Wed, 26 Jun 2024 14:04:29 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Avadhut Naik <avadhut.naik@amd.com>
-Cc: x86@kernel.org, linux-edac@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tony.luck@intel.com,
-	rafael@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	rostedt@goodmis.org, lenb@kernel.org, mchehab@kernel.org,
-	james.morse@arm.com, airlied@gmail.com, yazen.ghannam@amd.com,
-	john.allen@amd.com, avadnaik@amd.com
-Subject: Re: [PATCH v2 4/4] EDAC/mce_amd: Add support for FRU Text in MCA
-Message-ID: <20240626120429.GQZnwDzQ47y1fOlFTp@fat_crate.local>
-References: <20240625195624.2565741-1-avadhut.naik@amd.com>
- <20240625195624.2565741-5-avadhut.naik@amd.com>
+	s=arc-20240116; t=1719403593; c=relaxed/simple;
+	bh=hHmrnmVkA+icg7WMUj6EJBFmbuxO5bQ3bYPlOLRcydA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HvaxWPrddKAWZp+bbdpqCwW8pakaxrWiII8mUlY3vvQ9/sCbrG4H+Mpwfj26gWMgIEWd+i5gJi0bIVPVf32iNowRtBN3/tIzgczv0voH1j0Efn6daVXHJw3oJy32tMFWpS0uoIL4qX4ML+Xa6MQwf6FYpNY03ypVXM5FmVKsvaw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhqCh3vl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 4A663C2BD10;
+	Wed, 26 Jun 2024 12:06:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719403592;
+	bh=hHmrnmVkA+icg7WMUj6EJBFmbuxO5bQ3bYPlOLRcydA=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=RhqCh3vlTEedAXYD86vsPOTqA/T6mY2xn7PIBn/P16eZS840B/3si/pU+U+QLaRxR
+	 h8nMJXZ9l82ubbRhoffXiC1fnlP6O7EY/3wNAczIOlzdwu85/lWIvn/haVMf8UYzHb
+	 wcz2OMQo4r6/Ga139fRL6dq52/0zDAserzFDy7sGdwoR/Z+qYPYP56cRrB9dP3Zb03
+	 A/JC7aFXW8xY00t76TxH74wc+j67u/Qv/NXimUyLqmqku1wXAtKIEpO9JhVYRflMcD
+	 WG3vmouZHG5zl66kLYzk0Hskh3oj8xSWpbA1uXLOhqGvxfxY4WopnqPJ8Zvr+4Yayb
+	 3sRkrtR8+GMRg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3660BC30659;
+	Wed, 26 Jun 2024 12:06:32 +0000 (UTC)
+From: Joel Granados via B4 Relay <devnull+j.granados.samsung.com@kernel.org>
+Date: Wed, 26 Jun 2024 14:06:16 +0200
+Subject: [PATCH v2] kbuild: scripts/gdb: bring the "abspath" back
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240625195624.2565741-5-avadhut.naik@amd.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240626-jag-fix_gdb_py_symlinks-v2-1-1a05406c8063@samsung.com>
+X-B4-Tracking: v=1; b=H4sIADcEfGYC/4WNXQ6CMBCEr0L22Zp2VYg+eQ9DSKE/rNpCukokh
+ LtbuYCP32TmmwXYJrIMl2KBZCdiGmIG3BXQ9Tp6K8hkBpR4lCVKcddeOPo03rTNODc8hyfFBwt
+ U5myksdVJI+T1mGyubeZbnbknfg1p3o4m9Uv/OycllDiUWjqJqnKtu7IO/I5+3w0B6nVdv7Wnw
+ dnAAAAA
+To: Jan Kiszka <jan.kiszka@siemens.com>, 
+ Kieran Bingham <kbingham@kernel.org>, 
+ Masahiro Yamada <masahiroy@kernel.org>, 
+ Douglas Anderson <dianders@chromium.org>
+Cc: linux-kernel@vger.kernel.org, Joel Granados <j.granados@samsung.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1389;
+ i=j.granados@samsung.com; h=from:subject:message-id;
+ bh=ELA3O2VefITuAlFWSunBt6d4ILv4gEPSDCYoeDsUf/w=;
+ b=owJ4nAHtARL+kA0DAAoBupfNUreWQU8ByyZiAGZ8BEZ7361AGuuL1AzQ/hAcHZJ4bCyhOod8M
+ AJJ0PxwNRIyY4kBswQAAQoAHRYhBK5HCVcl5jElzssnkLqXzVK3lkFPBQJmfARGAAoJELqXzVK3
+ lkFPbMoL/1UPGDA+dGpVQ4m8RzzzYa06hQnsp4OoNOVHK0R5EUVb0sZitdVbGD3TzLBcvKVPf51
+ Ov0nMnZJ48icshqAXD6gOhd1KPJiMFJMBEtvx7QLUfa/4Hg6fhZC6XOtNwUgLO5iLdmc1MP2It7
+ Uif0r7/c+MLSEUO1YtW8vUOA9jI4CiaPHD59RlcLPe2dPW/W0Ne7ODSFKD8tFLjK53pHavt9X0/
+ qa0AFZZV/IKdl0zg+TWc3ZRKCXiPD7KlD2grhLbSdlcS74G3z+kiDk8KDwbR77xBAMjNNKnxMm8
+ I8Ff4Mf+epcgueu71td/Jr/5QMmpEw7wYGXPWFMJbFjCSJhHTcFN7oR36zkROHPCE8dtEDS6lGa
+ oOw1AzU7sEhetdDAJaz8AftBm6KRM/TopvO4beNPZF1+lbEJ/X6piysWETAIVOQYFECBDRvKPy6
+ eRcMlZWYDyBODOOPFvNDRuiR3Dgav6rX9JY2oAmLHqa0ecLrnDCwNpFN3XmsdKRwzUsPlD/X3U4
+ iI=
+X-Developer-Key: i=j.granados@samsung.com; a=openpgp;
+ fpr=F1F8E46D30F0F6C4A45FF4465895FAAC338C6E77
+X-Endpoint-Received: by B4 Relay for j.granados@samsung.com/default with
+ auth_id=70
+X-Original-From: Joel Granados <j.granados@samsung.com>
+Reply-To: j.granados@samsung.com
 
-On Tue, Jun 25, 2024 at 02:56:24PM -0500, Avadhut Naik wrote:
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
-> 
-> A new "FRU Text in MCA" feature is defined where the Field Replaceable
-> Unit (FRU) Text for a device is represented by a string in the new
-> MCA_SYND1 and MCA_SYND2 registers. This feature is supported per MCA
-> bank, and it is advertised by the McaFruTextInMca bit (MCA_CONFIG[9]).
-> 
-> The FRU Text is populated dynamically for each individual error state
-> (MCA_STATUS, MCA_ADDR, et al.). This handles the case where an MCA bank
-> covers multiple devices, for example, a Unified Memory Controller (UMC)
-> bank that manages two DIMMs.
-> 
+From: Joel Granados <j.granados@samsung.com>
 
-From here...
+Use the "abspath" call when symlinking the gdb python scripts in
+scripts/gdb/linux. This call is needed to avoid broken links when
+running the scripts_gdb target on a build directory located directly
+under the source tree (e.g., O=builddir).
 
-> Print the FRU Text string, if available, when decoding an MCA error.
-> 
-> Also, add field for MCA_CONFIG MSR in struct mce_hw_err as vendor specific
-> error information and save the value of the MSR. The very value can then be
-> exported through tracepoint for userspace tools like rasdaemon to print FRU
-> Text, if available.
-> 
->  Note: Checkpatch checks/warnings are ignored to maintain coding style.
+Fixes: 659bbf7e1b08 ("kbuild: scripts/gdb: Replace missed $(srctree)/$(src) w/ $(src)")
+Signed-off-by: Joel Granados <j.granados@samsung.com>
+---
+Changes in v2:
+- Rephrased the commit message to clarify what is happening
+- Link to v1: https://lore.kernel.org/r/20240620-jag-fix_gdb_py_symlinks-v1-1-36a0f0217fbf@samsung.com
+---
+ scripts/gdb/linux/Makefile | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-... to here goes into the trash can except what MCA_CONFIG is for being logged
-as part of the error.
+diff --git a/scripts/gdb/linux/Makefile b/scripts/gdb/linux/Makefile
+index fd1402c0a1a1..fcd32fcf3ae0 100644
+--- a/scripts/gdb/linux/Makefile
++++ b/scripts/gdb/linux/Makefile
+@@ -5,7 +5,7 @@ ifdef building_out_of_srctree
+ symlinks := $(patsubst $(src)/%,%,$(wildcard $(src)/*.py))
+ 
+ quiet_cmd_symlink = SYMLINK $@
+-      cmd_symlink = ln -fsn $(patsubst $(obj)/%,$(src)/%,$@) $@
++      cmd_symlink = ln -fsn $(patsubst $(obj)/%,$(abspath $(src))/%,$@) $@
+ 
+ always-y += $(symlinks)
+ $(addprefix $(obj)/, $(symlinks)): FORCE
 
-> [Yazen: Add Avadhut as co-developer for wrapper changes. ]
-> 
-> Co-developed-by: Avadhut Naik <avadhut.naik@amd.com>
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+---
+base-commit: 6ba59ff4227927d3a8530fc2973b80e94b54d58f
+change-id: 20240620-jag-fix_gdb_py_symlinks-21d9d0de75a2
 
-Ditto as for patch 3.
-
-> ---
-
-> @@ -853,8 +850,18 @@ amd_decode_mce(struct notifier_block *nb, unsigned long val, void *data)
->  
->  		if (m->status & MCI_STATUS_SYNDV) {
->  			pr_cont(", Syndrome: 0x%016llx\n", m->synd);
-> -			pr_emerg(HW_ERR "Syndrome1: 0x%016llx, Syndrome2: 0x%016llx",
-> -				 err->vi.amd.synd1, err->vi.amd.synd2);
-> +			if (mca_config & MCI_CONFIG_FRUTEXT) {
-> +				char frutext[17];
-> +
-> +				memset(frutext, 0, sizeof(frutext));
-
-Why are you clearing it if you're overwriting it immediately?
-
-> +				memcpy(&frutext[0], &err->vi.amd.synd1, 8);
-> +				memcpy(&frutext[8], &err->vi.amd.synd2, 8);
-> +
-> +				pr_emerg(HW_ERR "FRU Text: %s", frutext);
-> +			} else {
-> +				pr_emerg(HW_ERR "Syndrome1: 0x%016llx, Syndrome2: 0x%016llx",
-> +					 err->vi.amd.synd1, err->vi.amd.synd2);
-> +			}
->  		}
->  
->  		pr_cont("\n");
-> -- 
-> 2.34.1
-> 
-
+Best regards,
 -- 
-Regards/Gruss,
-    Boris.
+Joel Granados <j.granados@samsung.com>
 
-https://people.kernel.org/tglx/notes-about-netiquette
+
 
