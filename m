@@ -1,241 +1,337 @@
-Return-Path: <linux-kernel+bounces-229979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB4B9176CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:32:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85D719176D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:32:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 27633B21E84
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:32:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F1DE1F24181
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC0473450;
-	Wed, 26 Jun 2024 03:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5D374BF2;
+	Wed, 26 Jun 2024 03:32:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yxr1PTcb"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avOUoXH+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58B87344E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719372716; cv=fail; b=u9VEMVE2ucDhBwB0dcYLGYkolJahXADLRiByW0C7QrncTj3xfsXiqSWnMbm/4rUAFHbvv2XfZYdh6vBeiMnJGgF04TuJN2W5ErXx8q5z5Ui63J0olRUA5hVj4M0PCwJJpwe7XSlx/cmwtRO3Q7exyTk3YH0l/vGXtQA2HkXPvvE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719372716; c=relaxed/simple;
-	bh=9Xe1CegMNCU0qbIV4NMizvrdIeBtlp/MaotplETjR2g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=nxHTKWoak/FyRF+BfL7WqgXr35a0f+VEEAUBwdWeFLaWDSXWLt3Yq1qb5lXoSI2tGJuA7C6qikZk2r4MVBFW6iTwCqPlRnO0t04ykHDOR9/MjiuLxArMySRl8c/zJ+VUFLQGHXJd+37X301YYHupr/G0hNXwrdPXuvFk6P/Y3QA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yxr1PTcb; arc=fail smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719372715; x=1750908715;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=9Xe1CegMNCU0qbIV4NMizvrdIeBtlp/MaotplETjR2g=;
-  b=Yxr1PTcbqDkWyWtAu0LxMOdP3+XQxC1Ujg2df0HsD9KGEYwvMLsRoat3
-   lXEZXLMGDKrSaUMBueTGKIGeZTZKjUubaSvJJm0rG5BX6b/tfpqyKBjZ4
-   5RSjPKfX9YgMA46CqJLD+0D1sPUjwXfapKktEOgbQaD6fmbYTqtOFjsL/
-   F4uAEFaPKDXubgqpULxcU2HE6JjtEWDyyjo68WM9dFyhIYVgihL4gaLI8
-   reZTZzTPqjOuMhBDB6Cc7CUigMyQSnSu6JrPF/yGHoExl7T7tUBeMU/xY
-   t+mM+iK0kJ/BxMXFtRcPFPk7hoQnWWWrX1bKDlJ9Nm20zXq+cQU1XeVaU
-   Q==;
-X-CSE-ConnectionGUID: jOcLfH64REW5OYTMO0kMOg==
-X-CSE-MsgGUID: ixmL4WFDQZe9KVU2DaY7dA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="27112062"
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="27112062"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 20:31:54 -0700
-X-CSE-ConnectionGUID: 6EXUojH/Sp27qvLvq/dQ1g==
-X-CSE-MsgGUID: MGawANAyQwWeo1S6Zc75CQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,265,1712646000"; 
-   d="scan'208";a="48777760"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 25 Jun 2024 20:31:54 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 25 Jun 2024 20:31:53 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Tue, 25 Jun 2024 20:31:52 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Tue, 25 Jun 2024 20:31:52 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.100)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 25 Jun 2024 20:31:52 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=F2Fdo2tw11CNx2BRvX7ceKbLjQkd5oimjSqvqDn9wJnm822SlmuhUXUSRODaJ3KYv01UOrRrSria3N0nzRQdGQtixGLSUKkpggwgkbF325MJo6KUgu816hdYA9PdzBDTRf4KEaTz41er2wJkkahUVccT7ORRk/zy4ya6edqFTxuf1dzXZ+wEquFZQ+rg105CYReCNE9vgtLjOWWRIC/jBUlIRfJxoxAjBniDmNogiPKj3PQPV9EVN2Oa5McwS+H65bg4/pGSwG22gHaO6H6wz7WJ7L83LgD9MxJlUnbqXe+rWEruNRncrjjdeMDfSdpma/bR2FWLz/mfzQVhfKRRxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9Xe1CegMNCU0qbIV4NMizvrdIeBtlp/MaotplETjR2g=;
- b=cTvHtmMpuBmasNTpVaahJ+l4r5x5o7qp2wXGXvTqip61KWgS1hEFHCo4DzDVCzgsm6a9t3YwQg5wU4V+GMXanfk6VtTOWAvxI/ExCxXzDqugGZm+KmLkIxSz/n2FOIJgxHgoGveQRQi9uEOrDfQEbe7VCqTmw1iSkxAf3C+7BwZTLGE+8cr8A3+Vz9JsmO5pS3aaVGwTMIuG6Mv4fMns/KH6Rh7KSqh61+Ob/WnfuDG04TFXwQRD2kH4agTu04o5eoorFTdCJoEs5Wzv39a8lmCu4oPZo8m7WurqBZadBpqZ5EJg0q2m2MPDQo93KBAUsVDlVKCGa9oFHbOc1x1ITg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CY8PR11MB7134.namprd11.prod.outlook.com (2603:10b6:930:62::17)
- by SA2PR11MB4892.namprd11.prod.outlook.com (2603:10b6:806:f9::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
- 2024 03:31:50 +0000
-Received: from CY8PR11MB7134.namprd11.prod.outlook.com
- ([fe80::cd87:9086:122c:be3d]) by CY8PR11MB7134.namprd11.prod.outlook.com
- ([fe80::cd87:9086:122c:be3d%5]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 03:31:50 +0000
-From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-To: Nikolay Borisov <nik.borisov@suse.com>, "Chen, Yu C" <yu.c.chen@intel.com>
-CC: Dave Hansen <dave.hansen@linux.intel.com>, Thomas Gleixner
-	<tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov
-	<bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, "H. Peter Anvin"
-	<hpa@zytor.com>, Arnd Bergmann <arnd@arndb.de>,
-	"virtualization@lists.linux.dev" <virtualization@lists.linux.dev>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Juergen Gross
-	<jgross@suse.com>, Chen Yu <yu.chen.surf@gmail.com>, "Dey, Prem Nath"
-	<prem.nath.dey@intel.com>, "Zhou, Xiaoping" <xiaoping.zhou@intel.com>
-Subject: RE: [PATCH v3] x86/paravirt: Disable virt spinlock on bare metal
-Thread-Topic: [PATCH v3] x86/paravirt: Disable virt spinlock on bare metal
-Thread-Index: AQHaxv9B/cOdoav4t0uow9CgFu9X3bHYfPeAgAAS/4CAAAUJAIAAys0g
-Date: Wed, 26 Jun 2024 03:31:50 +0000
-Message-ID: <CY8PR11MB7134C965E373B3711ABF182389D62@CY8PR11MB7134.namprd11.prod.outlook.com>
-References: <20240625125403.187110-1-yu.c.chen@intel.com>
- <224793a4-da57-4621-ac29-7eac35c2da08@suse.com>
- <ZnrZI9MtP8PqZzl/@chenyu5-mobl2>
- <11774366-4264-4e7a-bb7a-ee3d39c60522@suse.com>
-In-Reply-To: <11774366-4264-4e7a-bb7a-ee3d39c60522@suse.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY8PR11MB7134:EE_|SA2PR11MB4892:EE_
-x-ms-office365-filtering-correlation-id: 385c95c5-75c5-41bf-565c-08dc95908427
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230038|1800799022|366014|7416012|376012|38070700016;
-x-microsoft-antispam-message-info: =?utf-8?B?Z05ldUoyQ2p4L1dFUXFVRyt5ZVlkWDREVzRtQ2NFNFB4STVhcWlZRXZJOURS?=
- =?utf-8?B?K3lqd1lSVCtrNlkyNFBZT3JIamltZ1Z1dk5SUmZ6ZWN6a2s4bkd1aTdMbW1Z?=
- =?utf-8?B?eDVoc1RvU2pneEFLYWd5bElGdCt3NGdaLzNzSWRPQUZJdVpCSWxDaUxLVmZN?=
- =?utf-8?B?YXpQekh6V0ZQb0JJc3BSakx5d2l1YlZmeDc4R2Q4Q216Y0F6U0JVUGtiYU9W?=
- =?utf-8?B?di9udGlMRzFZL2dYWTIzVkltMkhVYUtCWDBacUwreVFabW5NQ3lHdExBbVh1?=
- =?utf-8?B?VmJVUnRmQVlYcHFBaHRYbS9oQ1h6NTJPVysrdFFwVTFsZ1lIRlU3RTZUL3c1?=
- =?utf-8?B?NnBSNCtGamYvUjdTaUIxRHV6VjVLc2ZCSXdxMVJWa0k3WDdsOEhORTBLc3h0?=
- =?utf-8?B?eUR5cUF2THV5Mk5oRWN0djNobldISnlzVlhBaCs4NndPMXNML2Y1YTdPTTR0?=
- =?utf-8?B?RXYxVkhRN3lOMVZMNDBQbUxrWEFUK2RldDNXWDFLak4ybGhUZXVQZTg4UGRL?=
- =?utf-8?B?aHVnWEZTQnhDNGI2NVNRdnpmU3k3R3p0S0xHeXkvYURuU2xJZGFiQnIwdnlv?=
- =?utf-8?B?VU9tMUFpQmhJNmVvcnBoSWxURzhLMk5aMndyVDdTaTdUK0Z0cGtjbjY4Z2lK?=
- =?utf-8?B?QlJKMTNZTlpaU3ZzVjJtVnVONmtpS2ZBV2IzT0ZnY21UWVRJK21KVkp5dStZ?=
- =?utf-8?B?RXE0NXlqSFJNNXlzS2ZScjA0Yk9VaitXNmV6Y0VMTENORExhRG1iVDlZZmFa?=
- =?utf-8?B?bWVDdC9nVlhuVWNHQ3NkNnlqUUFwSHVxZHFtRGlDYnNSUCtSZUdGeUlGek1n?=
- =?utf-8?B?eWM4U1Z2WXJkN0RPVkRzZDNYOEsvNG9KeXlqOWNaUElxcEZzTlV5YXh0cng2?=
- =?utf-8?B?bFYvR3ZwVUVqbGlOK2ZQV3N0VFowbzBIbGNlR200TE1yak0xcGdmQTdTa1NK?=
- =?utf-8?B?L1RTSUVpRmUvNERBRlJzY3grcDJBaC9mTFA3amR6OWtUYjNyVmFMckdCWFQw?=
- =?utf-8?B?bTJ2ZkhuMW00anFaUUZlNC9hMmFNejZJeUt1L0RuYzdUR0l3NnZsWXBUNVN4?=
- =?utf-8?B?ejV5cjQ5ZE1lR3hWLzcxL0NvRk1LTjNTeU15eUkvUVlDRERHTVBXd3NHZFNz?=
- =?utf-8?B?VWZnYnlnVVJheW1uL0NpTFVJUGRmMkwwamJvL3VNWEYyTUVYMm9mbitmQkFF?=
- =?utf-8?B?WVBhandTbitKVmhMNDREdUZNeThUMEFjS2daVkpqaFhxeWJvUzBpeFVJUkxx?=
- =?utf-8?B?bnpKUVVna1dWN2U4SnZUWUN2aDg1dHdtUmd4c0lnS3hHckoxV0JzenVHK0th?=
- =?utf-8?B?akRNTW9xSHRVK2ZXTFFuSlpUdDlTaUpXTEo0WUtJV0VUdFRmbVRCb2lIMnpj?=
- =?utf-8?B?YUNQejMwU08yeUNSc1lkMFdzRTR1Z2tDYW5uTFJHbllyVXF5UnljdEpqS0ZF?=
- =?utf-8?B?cytvelZuQWptaFBsRVlxb1lxVlhTMXBIRGpYakRXQTlNMCtMTVhSdXhDQ3Bx?=
- =?utf-8?B?aFpyelI3UllyREZCbGZZS3hyeG0xamlESGdXemZTeUVxbnN0eHo5V2VaMmxB?=
- =?utf-8?B?ZnNsSHowaERaMENjdjVOMVFkYlJlTVZ2TVNRUC90WWZRU2MwYWs5TnVhcWhR?=
- =?utf-8?B?QVlwOGZXK3NxNlBwcFRlT25XcnkxTGR1M3BrNmxaQUdrNGJXRlZzSVQrNElv?=
- =?utf-8?B?dU1seFdhL0tpWnVrQ1JBcWQ4eDN5RnZiMi9ka1FUWlQ2RUE1T05ibWJISDFL?=
- =?utf-8?B?c3NPdFN5RG9hNkFiRmdiWXY1UEJ1WmJDNU5QajVLK2d1TnpoZFZmbDRrK0l2?=
- =?utf-8?Q?47FRORhsRjd8yrVAUo4ZkaYIE7b4V0bo9elKI=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7134.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(1800799022)(366014)(7416012)(376012)(38070700016);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dEYvb1BGY3lRM3hDQ01wdlEreW9vamU4YURYQ0NMZDFwS3ZKeDB0SFN1dWFG?=
- =?utf-8?B?YTFYMTZZSlpYZ2tjRjYvMHVySjRTMlRpZG5WYnhPaUtZZVBseG1NKzJnZWg5?=
- =?utf-8?B?VWNLMmJzMHpLVE1uODg4ZlZvZFJGUlh4UGJQcXVsUTlsamgrL1ZXSlE1WE9F?=
- =?utf-8?B?Z1ZTY3dERURqcHdsZzhqVVFPYi9JanhhVXEyMTdqejdtcE4ycE9MbVRneXlk?=
- =?utf-8?B?RWpqMzhFWjZaaGxWYzB5bjBnNUhYUE4xQ3J4UXlHUUhDS2VERStGVFoyR2li?=
- =?utf-8?B?ejd1K0R1cWluQXJDcS9nbytRWUVkczNhOFRodFdURHlUMDVwTGpEYmxrcVF5?=
- =?utf-8?B?WS8yZ3p5MmdMQTlFbVZPY25hT05vQWt0emE2WFBFNUtVYTZDYUJEMjNoZDhk?=
- =?utf-8?B?SU9sNXpFZkp6T2xvbUNCak1sZXIyMGJzcEJaak5DRzg5N2taN0xxbytVeXVw?=
- =?utf-8?B?bmkzOThtcEhiZ2o1YUp0MjBpM1hyeDduTEZyY2dKTjduN01ESTFKamthU3FO?=
- =?utf-8?B?T2JuUWFIMzVaUU5Zcm8vM1hZOGJZbVVLVktlbDV0cWZ3cXNORzJRaEpuYzFT?=
- =?utf-8?B?OXArNWVvTnRXQm0yZXBkWW9zOTlyaWppR2p2MWtNdituUzI0ZUNsTUlSYUQ1?=
- =?utf-8?B?U25aSlV4ZnhhRFN6QWt5MHAybllhR2VqWTdsVjROdWMxWDRUeHdXZW5XRGc0?=
- =?utf-8?B?Y09aZW5VUkc3QVdjY21xVkQzczMrMVlqcHBDS3FrN3VZNHFGU25RMnlpaC9w?=
- =?utf-8?B?UkdzRUx3ZTlWVGpwSlhYaXJ1djBRdDFnbzMycUVZL1RIRE10aDVmVnhqTkpK?=
- =?utf-8?B?QkErL2FNZ1VEMmF6alZFbEMvTnJvVjdRNVkwNC9nZG9pMVRzRDFjQjN0TEhR?=
- =?utf-8?B?SHY0czFabVhsclBzRENJRXpvZG13bklZVTNCZFhkd05ESk1tSE9PYlE3NWU3?=
- =?utf-8?B?cC9GMUViNWhzc1FpMVlZY3pSWXNpWWYvUkJOMEMwUURrbjR5YzZxZEdGK0ov?=
- =?utf-8?B?N1JQendXL09EZVdWR01yeC9pUkt4MWtQcUdCUkUvOFNjR01yUUVhUy9QbDg5?=
- =?utf-8?B?N09tNXliME1PZVVka0pHR1doaEFyQlNJWnk1VTh4c01MYUs4L3JsanRjZHVl?=
- =?utf-8?B?Mm1vQmNhZ1lqVVZyenEzT1czVUJHVGRINFhsbldDVHo3YmZ3UDRwSG5pNDVo?=
- =?utf-8?B?YlMxQnFTZjJHNTNQdFNLbFVjWVlIQWRjZ1JycXU2NUg0SXZkcHdpb0x5TjJN?=
- =?utf-8?B?ZWh5MVREZVZVUEgwb1Y0YVBvQ09kV1FrUmF6dklua2VnUDZ5aVh4S2RDOG9L?=
- =?utf-8?B?alQ3OTdzZWtDelR4MHRNN1RBaFRqdkswM3lYNUdveTVkYUlBcFZGejNhQVFS?=
- =?utf-8?B?WFZmaVhxSWNzNGVzOHlQTGY2Nk5JazZPUlZOTHZYOW43dkl5T24wZVlWN2FO?=
- =?utf-8?B?SzlIRDJyOWI2NC9mKytuZkhKc3N2M3hUV2hydzMyTERsSXB2STNucFU3M0t0?=
- =?utf-8?B?UTRibkRjSnBFUisvOHRDSXAxVm9zaEVzK1N3TzNkTTk3dnc0ejdjQTJnOWNt?=
- =?utf-8?B?UGFSTDFBM0lxUVZ5bGJhQWJwZVZqVy9hUWR0T3pKWnBNVzFKL3N6dnpSTFdX?=
- =?utf-8?B?OFZpS2dKaWdsSzRrVm1CUWFDMWdTdEoyMmo0WjRJTFNQL2Q5cE55Zy9qNEFy?=
- =?utf-8?B?N1hwbnQ0a1ZTL29DUnhLS09zaDBRekNNUGwyL1UzaHBSTGpWbk5lbXI3V3Nw?=
- =?utf-8?B?RUphZzhoVjN3K3lkbnVXeWo3cFl4bFhNaDI2ZzVBc01mWThaUTlScWN1bENy?=
- =?utf-8?B?SnFPTm5FZU9mcllaQk9SL1ZtQ28rNlhjcDlIOEljdjRHNm1yMHBWckF6cFl6?=
- =?utf-8?B?Y1J1eGRYMzE2UXRkMy94bm1oSFdzSmx1MktWYitsL0F0aFhjMTBnOGE0OUJP?=
- =?utf-8?B?QlllUHpYQjFiMHRvcTVVSUk2TzExUW9wcTFaVys0UWp4Wk9FM2JvYzc5dGl4?=
- =?utf-8?B?VE1RWUNQNDVMRXkvdEhiZ2lqdDUrRFY1SW0zbTJ4QmxuSTJzV2l3OURaUWRC?=
- =?utf-8?B?TEVmNHFVcUo0ZWZDRWVuUHAyaUs2elFma05WZGgwZ2NXVllHdVd6UWdjZ09I?=
- =?utf-8?Q?pH0uxBKnklbq28EpnnuUlDYIV?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8206E535BF;
+	Wed, 26 Jun 2024 03:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719372729; cv=none; b=bQkbyM5RpSXqGB/CIHY5bk5VhiauCKNbFDOzo86ZCjg2Yp0qdf6PSWXfVmE/HuGocTitTUnZi/taQF2YlOCggqq6OdVCeShrMPA6S3qVoxi9Gc99owD3AvhTWp+1S+l9IPvhQw0mc7l7G9Q8gK22yThTv7ZK2/hCDJ8t6wYGwqQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719372729; c=relaxed/simple;
+	bh=eWbBhX9k944SJTI4O0zGJTeCD4qto99oUH4KL/3trE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dXQsQ2tbR+2wIKY11mo/vJMJme3yhqgU4JoMuI9ywNnFLQQXKUpDMzBh3Yo6jWO5HCA3sPY7W+WXb5AKnztonHl3P1ldn0QcU/IeUsHfjtJp+2GUWjbklU04kIauzaEyX60H3DwLx6pNH4pzYkMZMT8qSDrv8uH0jAFUE8rVO+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avOUoXH+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC09CC32781;
+	Wed, 26 Jun 2024 03:32:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719372729;
+	bh=eWbBhX9k944SJTI4O0zGJTeCD4qto99oUH4KL/3trE8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=avOUoXH+S8nWhUMRudWV2EoHuMO4/UPv6uCnuqmU0tIBTNSOo1CvV0v1tBZ9zrgmW
+	 WeeSTwA8dOotpyUAeUeIjnxNyKElom7hM95pzciN/TTKWYvMYSeiPo8n9g6ZDXQKr9
+	 dPVgi4UC0Gq+pI8lgvbMa7lCUJxFt8Y9L9X1wcfFJgc+cQskgvydGUav2Ct5gnRrqj
+	 0YAMCLysB61/+q2X4yBGFTHkAVS52eoTj32kUR2EBakk8L4iOq8tRwWdjHNEF7tj5v
+	 JOvJhgBYYzLCN5z7XtswIzqdIa7W7YsEQL4QNmtMotYpEEPRR5FOYKggr2ojNfLypd
+	 zG2sl+mQULbXA==
+Date: Tue, 25 Jun 2024 22:32:05 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, 
+	konrad.dybcio@linaro.org, jassisinghbrar@gmail.com, robh+dt@kernel.org, 
+	krzysztof.kozlowski+dt@linaro.org, dmitry.baryshkov@linaro.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, quic_rgottimu@quicinc.com, 
+	quic_kshivnan@quicinc.com, conor+dt@kernel.org, quic_nkela@quicinc.com, 
+	quic_psodagud@quicinc.com, abel.vesa@linaro.org
+Subject: Re: [PATCH V6 2/5] mailbox: Add support for QTI CPUCP mailbox
+ controller
+Message-ID: <5jdageun2ystel4jrt6ailgx4bay34aqjbg2opd24m4l5eau6f@xcne7jhc3wui>
+References: <20240612124056.39230-1-quic_sibis@quicinc.com>
+ <20240612124056.39230-3-quic_sibis@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7134.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 385c95c5-75c5-41bf-565c-08dc95908427
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jun 2024 03:31:50.4167
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: i9fhg9+LV0qqSe7AlMsdkeE+czR18Zg/gHSGZCSaDmsWugtxvRLEMOnXjkA20qeeXFjzjwUh3jD3AizcJompIA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB4892
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240612124056.39230-3-quic_sibis@quicinc.com>
 
-PiBGcm9tOiBOaWtvbGF5IEJvcmlzb3YgPG5pay5ib3Jpc292QHN1c2UuY29tPg0KPiBbLi4uXQ0K
-PiA+PiBBY3R1YWxseSBub3cgc2hvdWxkbid0IHRoZSBDT05GSUdfUEFSQVZJUlRfU1BJTkxPQ0tT
-IGNoZWNrIGJlDQo+IHJldGFpbmVkPw0KPiA+PiBPdGhlcndpc2Ugd2UnbGwgaGF2ZSB0aGUgdmly
-dHNwaW5sb2NrIGVuYWJsZWQgZXZlbiBpZiB3ZSBhcmUgYSBndWVzdA0KPiA+PiBidXQgQ09ORklH
-X1BBUkFWSVJUX1NQSU5MT0NLUyBpcyBkaXNhYmxlZCwgbm8gPw0KPiA+Pg0KPiA+DQo+ID4gSXQg
-c2VlbXMgdG8gYmUgdGhlIGV4cGVjdGVkIGJlaGF2aW9yPyBJZiBDT05GSUdfUEFSQVZJUlRfU1BJ
-TkxPQ0tTIGlzDQo+ID4gZGlzYWJsZWQsIHNob3VsZCB0aGUgdmlydF9zcGluX2xvY2tfa2V5IGJl
-IGVuYWJsZWQgaW4gdGhlIGd1ZXN0Pw0KPiANCj4gTm8sIGJ1dCBpZiBpdCdzIGRpc2FibGVkIGFu
-ZCB3ZSBhcmUgdW5kZXIgYSBoeXBlcnZpc29yIHNob3VsZG4ndCB0aGUgdmlydA0KPiBzcGlubG9j
-ayBiZSBrZXB0IGRpc2FibGVkPyANCg0KTm8sIHRoZSB2aXJ0X3NwaW5fbG9ja19rZXkgc2hvdWxk
-bid0IGJlIGtlcHQgZGlzYWJsZWQuDQoNCkFjY29yZGluZyB0byB0aGUgY29tbWVudHMgWzFdLCBp
-biB0aGUgaHlwZXJ2aXNvciBpZiBDT05GSUdfUEFSQVZJUlRfU1BJTkxPQ0tTDQppcyBkaXNhYmxl
-ZCwgIHRoZSB2aXJ0X3NwaW5fbG9ja19rZXkgc2hvdWxkIGJlIGVuYWJsZWQgdG8gZmFsbCBiYWNr
-IHRvIHRoZSBUQVMgc3BpbmxvY2suDQoNClsxXSBodHRwczovL2dpdGh1Yi5jb20vdG9ydmFsZHMv
-bGludXgvYmxvYi9tYXN0ZXIvYXJjaC94ODYvaW5jbHVkZS9hc20vcXNwaW5sb2NrLmgjTDk0DQoN
-CkFjY29yZGluZyB0byB0aGUgY29tbWVudHMgWzJdOg0KU28gbXkgdW5kZXJzdGFuZGluZyBpcyB0
-aGF0IGluIGh5cGVydmlzb3Iga2VlcGluZyB2aXJ0X3NwaW5fbG9ja19rZXkgZW5hYmxlZCBhbGxv
-d3MNCnRoZSBzcGlubG9jayBmYWxsYmFjayB0byBUQVMgaWYgUFYgc3BpbmxvY2sgaXMgbm90IHN1
-cHBvcnRlZCAoZWl0aGVyIENPTkZJR19QQVJBVklSVF9TUElOTE9DS1M9bg0Kb3IgdGhlIGhvc3Qg
-ZG9lc24ndCBzdXBwb3J0IHRoZSBQViBmZWF0dXJlKQ0KDQpbMl0gaHR0cHM6Ly9naXRodWIuY29t
-L3RvcnZhbGRzL2xpbnV4L2Jsb2IvbWFzdGVyL2FyY2gveDg2L2tlcm5lbC9rdm0uYyNMMTA3Mw0K
-DQo+IEFzIGl0IHN0YW5kcyBub3cgZXZlcnl0aW1lIHdlIGFyZSB1bmRlciBhDQo+IGh5cGVydmlz
-b3IgdGhlIHZpcnQgc3BpbmxvY2sgaXMgZW5hYmxlZCBpcnJlc3BlY3RpdmUgb2YgdGhlIFBBUkFW
-SVJUX1NQSU5MT0NLDQo+IGNvbmZpZyBzdGF0ZS4NCg0KQWNjb3JkaW5nIHRvIFsxXSBbMl0sIHll
-cywgSSB0aGluayBzbywgDQoNCi1RaXV4dSANCg0K
+On Wed, Jun 12, 2024 at 06:10:53PM GMT, Sibi Sankar wrote:
+> Add support for CPUSS Control Processor (CPUCP) mailbox controller,
+> this driver enables communication between AP and CPUCP by acting as
+> a doorbell between them.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+
+Reviewed-by: Bjorn Andersson <andersson@kernel.org>
+
+Regards,
+Bjorn
+
+> ---
+> 
+> v5:
+> * Fix build error reported by kernel test robot by adding 64BIT requirement
+>   to COMPILE_TEST
+> 
+>  MAINTAINERS                       |   7 ++
+>  drivers/mailbox/Kconfig           |   8 ++
+>  drivers/mailbox/Makefile          |   2 +
+>  drivers/mailbox/qcom-cpucp-mbox.c | 187 ++++++++++++++++++++++++++++++
+>  4 files changed, 204 insertions(+)
+>  create mode 100644 drivers/mailbox/qcom-cpucp-mbox.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index e04f583780c5..d7c00abe2f93 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -18533,6 +18533,13 @@ S:	Maintained
+>  F:	Documentation/devicetree/bindings/power/avs/qcom,cpr.yaml
+>  F:	drivers/pmdomain/qcom/cpr.c
+>  
+> +QUALCOMM CPUCP MAILBOX DRIVER
+> +M:	Sibi Sankar <quic_sibis@quicinc.com>
+> +L:	linux-arm-msm@vger.kernel.org
+> +S:	Supported
+> +F:	Documentation/devicetree/bindings/mailbox/qcom,cpucp-mbox.yaml
+> +F:	drivers/mailbox/qcom-cpucp-mbox.c
+> +
+>  QUALCOMM CPUFREQ DRIVER MSM8996/APQ8096
+>  M:	Ilia Lin <ilia.lin@kernel.org>
+>  L:	linux-pm@vger.kernel.org
+> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+> index 3b8842c4a340..d1f6c758b5e8 100644
+> --- a/drivers/mailbox/Kconfig
+> +++ b/drivers/mailbox/Kconfig
+> @@ -276,6 +276,14 @@ config SPRD_MBOX
+>  	  to send message between application processors and MCU. Say Y here if
+>  	  you want to build the Spreatrum mailbox controller driver.
+>  
+> +config QCOM_CPUCP_MBOX
+> +	tristate "Qualcomm Technologies, Inc. CPUCP mailbox driver"
+> +	depends on ARCH_QCOM || (COMPILE_TEST && 64BIT)
+> +	help
+> +	  Qualcomm Technologies, Inc. CPUSS Control Processor (CPUCP) mailbox
+> +	  controller driver enables communication between AP and CPUCP. Say
+> +	  Y here if you want to build this driver.
+> +
+>  config QCOM_IPCC
+>  	tristate "Qualcomm Technologies, Inc. IPCC driver"
+>  	depends on ARCH_QCOM || COMPILE_TEST
+> diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
+> index 5cf2f54debaf..3c3c27d54c13 100644
+> --- a/drivers/mailbox/Makefile
+> +++ b/drivers/mailbox/Makefile
+> @@ -61,4 +61,6 @@ obj-$(CONFIG_SUN6I_MSGBOX)	+= sun6i-msgbox.o
+>  
+>  obj-$(CONFIG_SPRD_MBOX)		+= sprd-mailbox.o
+>  
+> +obj-$(CONFIG_QCOM_CPUCP_MBOX)	+= qcom-cpucp-mbox.o
+> +
+>  obj-$(CONFIG_QCOM_IPCC)		+= qcom-ipcc.o
+> diff --git a/drivers/mailbox/qcom-cpucp-mbox.c b/drivers/mailbox/qcom-cpucp-mbox.c
+> new file mode 100644
+> index 000000000000..e5437c294803
+> --- /dev/null
+> +++ b/drivers/mailbox/qcom-cpucp-mbox.c
+> @@ -0,0 +1,187 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include <linux/bitops.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/irq.h>
+> +#include <linux/irqdomain.h>
+> +#include <linux/mailbox_controller.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define APSS_CPUCP_IPC_CHAN_SUPPORTED		3
+> +#define APSS_CPUCP_MBOX_CMD_OFF			0x4
+> +
+> +/* Tx Registers */
+> +#define APSS_CPUCP_TX_MBOX_CMD(i)		(0x100 + ((i) * 8))
+> +
+> +/* Rx Registers */
+> +#define APSS_CPUCP_RX_MBOX_CMD(i)		(0x100 + ((i) * 8))
+> +#define APSS_CPUCP_RX_MBOX_MAP			0x4000
+> +#define APSS_CPUCP_RX_MBOX_STAT			0x4400
+> +#define APSS_CPUCP_RX_MBOX_CLEAR		0x4800
+> +#define APSS_CPUCP_RX_MBOX_EN			0x4c00
+> +#define APSS_CPUCP_RX_MBOX_CMD_MASK		GENMASK_ULL(63, 0)
+> +
+> +/**
+> + * struct qcom_cpucp_mbox - Holder for the mailbox driver
+> + * @chans:			The mailbox channel
+> + * @mbox:			The mailbox controller
+> + * @tx_base:			Base address of the CPUCP tx registers
+> + * @rx_base:			Base address of the CPUCP rx registers
+> + */
+> +struct qcom_cpucp_mbox {
+> +	struct mbox_chan chans[APSS_CPUCP_IPC_CHAN_SUPPORTED];
+> +	struct mbox_controller mbox;
+> +	void __iomem *tx_base;
+> +	void __iomem *rx_base;
+> +};
+> +
+> +static inline int channel_number(struct mbox_chan *chan)
+> +{
+> +	return chan - chan->mbox->chans;
+> +}
+> +
+> +static irqreturn_t qcom_cpucp_mbox_irq_fn(int irq, void *data)
+> +{
+> +	struct qcom_cpucp_mbox *cpucp = data;
+> +	u64 status;
+> +	int i;
+> +
+> +	status = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_STAT);
+> +
+> +	for_each_set_bit(i, (unsigned long *)&status, APSS_CPUCP_IPC_CHAN_SUPPORTED) {
+> +		u32 val = readl(cpucp->rx_base + APSS_CPUCP_RX_MBOX_CMD(i) + APSS_CPUCP_MBOX_CMD_OFF);
+> +		struct mbox_chan *chan = &cpucp->chans[i];
+> +		unsigned long flags;
+> +
+> +		/* Provide mutual exclusion with changes to chan->cl */
+> +		spin_lock_irqsave(&chan->lock, flags);
+> +		if (chan->cl)
+> +			mbox_chan_received_data(chan, &val);
+> +		writeq(BIT(i), cpucp->rx_base + APSS_CPUCP_RX_MBOX_CLEAR);
+> +		spin_unlock_irqrestore(&chan->lock, flags);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int qcom_cpucp_mbox_startup(struct mbox_chan *chan)
+> +{
+> +	struct qcom_cpucp_mbox *cpucp = container_of(chan->mbox, struct qcom_cpucp_mbox, mbox);
+> +	unsigned long chan_id = channel_number(chan);
+> +	u64 val;
+> +
+> +	val = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
+> +	val |= BIT(chan_id);
+> +	writeq(val, cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
+> +
+> +	return 0;
+> +}
+> +
+> +static void qcom_cpucp_mbox_shutdown(struct mbox_chan *chan)
+> +{
+> +	struct qcom_cpucp_mbox *cpucp = container_of(chan->mbox, struct qcom_cpucp_mbox, mbox);
+> +	unsigned long chan_id = channel_number(chan);
+> +	u64 val;
+> +
+> +	val = readq(cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
+> +	val &= ~BIT(chan_id);
+> +	writeq(val, cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
+> +}
+> +
+> +static int qcom_cpucp_mbox_send_data(struct mbox_chan *chan, void *data)
+> +{
+> +	struct qcom_cpucp_mbox *cpucp = container_of(chan->mbox, struct qcom_cpucp_mbox, mbox);
+> +	unsigned long chan_id = channel_number(chan);
+> +	u32 *val = data;
+> +
+> +	writel(*val, cpucp->tx_base + APSS_CPUCP_TX_MBOX_CMD(chan_id) + APSS_CPUCP_MBOX_CMD_OFF);
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct mbox_chan_ops qcom_cpucp_mbox_chan_ops = {
+> +	.startup = qcom_cpucp_mbox_startup,
+> +	.send_data = qcom_cpucp_mbox_send_data,
+> +	.shutdown = qcom_cpucp_mbox_shutdown
+> +};
+> +
+> +static int qcom_cpucp_mbox_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct qcom_cpucp_mbox *cpucp;
+> +	struct mbox_controller *mbox;
+> +	int irq, ret;
+> +
+> +	cpucp = devm_kzalloc(dev, sizeof(*cpucp), GFP_KERNEL);
+> +	if (!cpucp)
+> +		return -ENOMEM;
+> +
+> +	cpucp->rx_base = devm_of_iomap(dev, dev->of_node, 0, NULL);
+> +	if (IS_ERR(cpucp->rx_base))
+> +		return PTR_ERR(cpucp->rx_base);
+> +
+> +	cpucp->tx_base = devm_of_iomap(dev, dev->of_node, 1, NULL);
+> +	if (IS_ERR(cpucp->tx_base))
+> +		return PTR_ERR(cpucp->tx_base);
+> +
+> +	writeq(0, cpucp->rx_base + APSS_CPUCP_RX_MBOX_EN);
+> +	writeq(0, cpucp->rx_base + APSS_CPUCP_RX_MBOX_CLEAR);
+> +	writeq(0, cpucp->rx_base + APSS_CPUCP_RX_MBOX_MAP);
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0)
+> +		return irq;
+> +
+> +	ret = devm_request_irq(dev, irq, qcom_cpucp_mbox_irq_fn,
+> +			       IRQF_TRIGGER_HIGH, "apss_cpucp_mbox", cpucp);
+> +	if (ret < 0)
+> +		return dev_err_probe(dev, ret, "Failed to register irq: %d\n", irq);
+> +
+> +	writeq(APSS_CPUCP_RX_MBOX_CMD_MASK, cpucp->rx_base + APSS_CPUCP_RX_MBOX_MAP);
+> +
+> +	mbox = &cpucp->mbox;
+> +	mbox->dev = dev;
+> +	mbox->num_chans = APSS_CPUCP_IPC_CHAN_SUPPORTED;
+> +	mbox->chans = cpucp->chans;
+> +	mbox->ops = &qcom_cpucp_mbox_chan_ops;
+> +
+> +	ret = devm_mbox_controller_register(dev, mbox);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to create mailbox\n");
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct of_device_id qcom_cpucp_mbox_of_match[] = {
+> +	{ .compatible = "qcom,x1e80100-cpucp-mbox" },
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(of, qcom_cpucp_mbox_of_match);
+> +
+> +static struct platform_driver qcom_cpucp_mbox_driver = {
+> +	.probe = qcom_cpucp_mbox_probe,
+> +	.driver = {
+> +		.name = "qcom_cpucp_mbox",
+> +		.of_match_table = qcom_cpucp_mbox_of_match,
+> +	},
+> +};
+> +
+> +static int __init qcom_cpucp_mbox_init(void)
+> +{
+> +	return platform_driver_register(&qcom_cpucp_mbox_driver);
+> +}
+> +core_initcall(qcom_cpucp_mbox_init);
+> +
+> +static void __exit qcom_cpucp_mbox_exit(void)
+> +{
+> +	platform_driver_unregister(&qcom_cpucp_mbox_driver);
+> +}
+> +module_exit(qcom_cpucp_mbox_exit);
+> +
+> +MODULE_DESCRIPTION("QTI CPUCP MBOX Driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.34.1
+> 
 
