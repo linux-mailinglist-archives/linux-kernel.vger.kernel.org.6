@@ -1,260 +1,300 @@
-Return-Path: <linux-kernel+bounces-230284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4311917AD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:23:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10626917B08
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 530231F20F99
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:23:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53F5A283A17
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:32:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 175B9161304;
-	Wed, 26 Jun 2024 08:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C263C1662F8;
+	Wed, 26 Jun 2024 08:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="Q+c+tj4k"
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (mail-am0eur02on2086.outbound.protection.outlook.com [40.107.247.86])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EeW/c7ZQ"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD83E1662F2;
-	Wed, 26 Jun 2024 08:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.247.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719390196; cv=fail; b=Yd02zaV/iCiRKUxrEjBiw29FxMBbusZe3u5CBHuulwkJc+MeSup29A73ZMHHtCdGHDx0mibW3U1I7ZAG625A1xxj8T9EkmwzJ63wcptPhsYpMexmRb2aDdMWRBIqwRot/VJNdHVRHkBdSTtqft6sT7KL30OgZvljOk07VDgB3PI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719390196; c=relaxed/simple;
-	bh=Kcrjm65USdQ462qiumlR2p5jZ3ekh3RTSby9D2FAOBI=;
-	h=From:Date:Subject:Content-Type:Message-Id:References:In-Reply-To:
-	 To:Cc:MIME-Version; b=D2faKAiUc77fnt5EfeKHmT9CDDOXgBHT4Tm0sLqGfR6RDo9oUXbycq9JC4bez5cxpS9DzlvjVDyw6SqTRZu2CnyemFgANY7Il7rKZhYU5NFYt23taL+6Zva94f9E+ahqY3GkYSRVQafLjfdK5e8v7TJm1TupM0nPvjYGTbSWORM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=Q+c+tj4k; arc=fail smtp.client-ip=40.107.247.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=H/HK77+vNiFwJ4npdpMtHArRprBZR6n6BMa4igsMR+MSw4sXr1HHKdW2bZoeZluwTh900fzV6fDQo+nfFLFsB3TVSpnjsA2lYOBLVnIblzO7gJu6HGp7dv7lo9S173R8F6ouURWQI78umHWCu57g2OL+eSZLsgfj7QdeAhXcr+ZQAwlG6FkfiKKQSd9E6pkYPpxqtHF2i0VYzZyqKzA3hfk/BfZpwwXZokqR0+dtViIZn/G89zxFQx99u+oTEoiiB8u2yx3c0mxCRfWFfbYrKNciF81tGTXI9e+PdKFk/DS2RTrpQ/OmtElBIzix3ayXGKNWgKde5a/JGOmyKlHxsQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rtIACtbITX8rBk+33i9Vg+kIjEAJfifW6x8hGRN3SGs=;
- b=h/3TTB42Z1bQJapcTVhuMVCIxf88M8XLarWEzv3YcnQhCL9sGtrSWepZy3sewVt6OVG0jL1yICG9M0VCYsnYIcB4M2HtMY1zlwIWF3Z+wFN2XyP/eQ+lYZNRG5ESqyab5Ll5HwV/gx6zWEaWDUEIL6Nx3rDJQbw/PPfh3mqnArWhlSrZo97slkUIL0DcZfJ/MrGCeWz+hgvSs9T/EAXq4xPqGgFmjTSJDgu+hu7x3ILAyQlsX7V/OyO6eMSG4QvuspB4XcwuqxsRlHueMh0jgNxMj+3I0Elmaejv0ZJQPW3Pt5GTome9rcFSrMxRyoXVFamaCBc89ZppeX653AAzqg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector2-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rtIACtbITX8rBk+33i9Vg+kIjEAJfifW6x8hGRN3SGs=;
- b=Q+c+tj4k46TlVKazNp8cjNa/zS6Mk9nswxRDG7lIsUh0I3gzijB360pzu8n7+05tNdefG/28OPtfcDzowCsImw/4wt+4FGwzc9LgKOAF+T/NsFl9MR+m/8BW0sDNz5np6EWZT6GVqaYCuYeKHipDP32LO9T+mcRxGDPTaBsRLMY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
- by VI1PR04MB7165.eurprd04.prod.outlook.com (2603:10a6:800:125::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.30; Wed, 26 Jun
- 2024 08:23:12 +0000
-Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
- ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
- ([fe80::9f4e:b695:f5f0:5256%4]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 08:23:12 +0000
-From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Date: Wed, 26 Jun 2024 16:32:11 +0800
-Subject: [PATCH v2 2/2] firmware: arm_scmi: create scmi_devices that not
- have of_node
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240626-scmi-driver-v2-2-8f2f85b87760@nxp.com>
-References: <20240626-scmi-driver-v2-0-8f2f85b87760@nxp.com>
-In-Reply-To: <20240626-scmi-driver-v2-0-8f2f85b87760@nxp.com>
-To: Sudeep Holla <sudeep.holla@arm.com>, 
- Cristian Marussi <cristian.marussi@arm.com>
-Cc: arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-X-Mailer: b4 0.12.3
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1719390738; l=2433;
- i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
- bh=uIz5E+KxA+WSlZpU5jkPzIV4/vUMnMoR0lxYv9gMsRU=;
- b=khrM68AbMN+IwacMZCcUSmElW6CyPoHXWhw8/N08MHxBf/+fDaWm5nXhQ5xMQS+1bs9WQ68mz
- eCJ1CqUd9OeDLBgD/VOSI4QX2RuFIUT8AqlthDGlE1x62PQiS/unGF4
-X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
- pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
-X-ClientProxiedBy: SGBP274CA0015.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::27)
- To AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202CF23BF;
+	Wed, 26 Jun 2024 08:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719390763; cv=none; b=YwcJlPnvKfLMOTQ5ilhm+rzW1u0KGv5+rAlgYOkSaz5ah18d/Fu7bsTLQh+8+1vB58YKD1pRTa5qYArlrA5Z8BbxW5dqFtlZLoDZlrshZnknuL7IRq8n8qZlw8HuObTlBw7T82hp0DYDoUKak+k9XZPp2t4eGnTOlFyLxTfnipk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719390763; c=relaxed/simple;
+	bh=JLfSucvEHpuuXpIlyWN46R9TVxkHIn8qeuwQJkf+gLA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=b1dBlddv5+u4cW94v/ZW+9dxo4zzRl32v/AqVk4Efnjdd0eUBSSgzifDR9t5EHdcSGyGjiI2BwxwOoV08Qf56XzQb4hFnwG1ceCbc0WCVzih/v9daVuopkhSsGrU1ZqsTWxFr0MaDCaIK9/Pc56yAIQLCv7Ak/84iRC4Ppq2t1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EeW/c7ZQ; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
+	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=JLfSucvEHpuuXpIlyWN46R9TVxkHIn8qeuwQJkf+gLA=; b=EeW/c7ZQfLNgv86UYshqV0TG+/
+	47KuIwtAHTr3t1aJ5Gj4RfJqpHMsnMZPgob2Kqa26cewuTRTk3PfIxRZImqAFkmyZ2hqR8dSrhS5g
+	qLxi4cbWSJuhtl4jgqNN7B4KfrqMu/wm1oD6zM6Nznx/8HRtsugaQV0qBQkXdmbocUCxqX3VJX2s4
+	bTo0EFfaDoT7r830c3HXsNI5TFeWsNfbJ7pKxMhKzwhoEfbWqeUdA6i5PvFg/1B6e8sa7Hr+LPj4S
+	Yrc2teeOgjvH1SUiIdkQ91p+O0omvYsHRXIulRkEy3OnxCHALKpkSP9UGQNof+sUkkxdkMc1adLW3
+	B47P/EzQ==;
+Received: from [2001:8b0:10b:5:4085:75b2:1737:3c57] (helo=u3832b3a9db3152.ant.amazon.com)
+	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
+	id 1sMO4q-0000000C4Mj-0JCI;
+	Wed, 26 Jun 2024 08:32:28 +0000
+Message-ID: <d74847bc28037737e1d470501752215905ec6f9e.camel@infradead.org>
+Subject: Re: [RFC PATCH v2] ptp: Add vDSO-style vmclock support
+From: David Woodhouse <dwmw2@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Peter Hilber
+ <peter.hilber@opensynergy.com>, linux-kernel@vger.kernel.org, 
+ virtualization@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-rtc@vger.kernel.org, "Ridoux, Julien" <ridouxj@amazon.com>, 
+ virtio-dev@lists.linux.dev, "Luu, Ryan" <rluu@amazon.com>, "Christopher S.
+ Hall" <christopher.s.hall@intel.com>, Jason Wang <jasowang@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, netdev@vger.kernel.org, Richard
+ Cochran <richardcochran@gmail.com>,  Stephen Boyd <sboyd@kernel.org>, Xuan
+ Zhuo <xuanzhuo@linux.alibaba.com>, Marc Zyngier <maz@kernel.org>,  Mark
+ Rutland <mark.rutland@arm.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Alessandro Zummo <a.zummo@towertech.it>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>
+Date: Wed, 26 Jun 2024 09:32:27 +0100
+In-Reply-To: <CANDhNCpi_MyGWH2jZcSRB4RU28Ga08Cqm8cyY_6wkZhNMJsNSQ@mail.gmail.com>
+References: <87jzic4sgv.ffs@tglx>
+	 <ea7c5eda8180904a6caf476c56973a06bd4b5e78.camel@infradead.org>
+	 <CANDhNCpi_MyGWH2jZcSRB4RU28Ga08Cqm8cyY_6wkZhNMJsNSQ@mail.gmail.com>
+Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
+	boundary="=-Otk1zO0DqMplnS4FZWSz"
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM6PR04MB5941:EE_|VI1PR04MB7165:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9d08e378-51ad-4aa1-3307-08dc95b9381f
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230038|366014|52116012|376012|1800799022|38350700012;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?OEQ1QUJvOE5YWUo4ZEY3enhKZEM4RXZTSFFNbXZXMCtYZlpGeEs0ZFV5bXNN?=
- =?utf-8?B?TEkvL3oxWlZqOTFBLzJJZmIrMEFaNXdTMXhlVUFkVCsxOW9WT1pwQmo0SWdo?=
- =?utf-8?B?a1gwa2t4OWMzNHlFdW04Wm9JL0FyclVPSVRmTVM1QnU0UEpHN00wZThLV3Mr?=
- =?utf-8?B?WlVaV3JOWll6c0lEWEY5QzJpWXhKT3NLNjA1b2VaY2syRTB0QjBYL1VaUUhU?=
- =?utf-8?B?TWtjQkhvYVl2MmxrdGZQU1pZY29IUnQ4amlMbHJsVTRIcEc0ck5ocDZ2b1Ez?=
- =?utf-8?B?eXhlWTQ5WW1JTVhEbHNITVh5R0pCSU1VNEN2NlBjSms4bWVISHVDSjk4SEFH?=
- =?utf-8?B?MFEyUzlEYk1COEhPSGdTUDRtQ2NNOXN6RjRCYW54dUNuTjQ2NkZldDVsZEdR?=
- =?utf-8?B?UzhjRE10eUFRSEJ4b2FJa2g1U3l0MzBHSWtSSWNHOEZ4eGpJNDFhcytkd2Mx?=
- =?utf-8?B?TmtXeVNPdkxLN2VSYzI0emhEOEoza3BtVXc5czJLNVhsWVZMUW01WFk2cjly?=
- =?utf-8?B?RytKaDZQOU5oZTVBR0RHbnM5NEtXY2JtZ0VrZWNWQ2wzOFZJN0xlc3k2Kzdl?=
- =?utf-8?B?VExVY0ZiV0dkaXZmZGJkVzJPc0dtOE9MY2VKbVltMFozczBJdHNQbWF3bVJI?=
- =?utf-8?B?azNqV3hQbGZYWnB3MHQ1dm1oVk4zQys4b2pNWGVSSDJTVlBPcko0aE83ekNW?=
- =?utf-8?B?MVJ2RHlqSDZtdlhXcDh2cFdmMHJQb2svM0NtZzhheHNOaGpCTWE0eVBDYUkz?=
- =?utf-8?B?M1crb0krQWc0Ykg3TzlqemdXdUI4dGdTdDY5ZUplVnNMcU1hZ0dlK1prYUJI?=
- =?utf-8?B?TEIzUEVGelFPWWk5N3lKSWNER0N1QUprN1ZTUnJieXlFVWZkUmxjcDFzMXI4?=
- =?utf-8?B?Rmw3RWwwYmQzdzRVSklqWklmWktxeTYyQ2pmMHErWFlFcWtsOElJb0N3bTF3?=
- =?utf-8?B?cTJIcndiTC9Yd2ZjRTB1cXNRQTRxQlhESE5FcCtlU20yVzRLMWpOTkVMemx0?=
- =?utf-8?B?MVpQVUROWjdxZG5PWGI3UGxFbVV2MENYWHJYRk4xSEtUKzRRUi9BVE9ZSGlL?=
- =?utf-8?B?Z0hMeEF4MmtLdXZjSnU5KytOWjNyemxsUEFPUHpFNGFyejJtbnhpdUpzU2N2?=
- =?utf-8?B?cjlNSE95YWhuUHA5WUJCOUZKZnhGZmlTcTRKMlZNNTgwWGoyU3RkVHpkaG14?=
- =?utf-8?B?RmJhZWxYeGhkN3liWnBoQjlDYjRkNFdTdzlNaGFQMnRqb1M0c0NyR2orbjBk?=
- =?utf-8?B?N3NKWWdRWUFXY3IvMWpUMzRmdHBwNXVXK01uV1RnVVh0bVJCTFZMOU5SUFlF?=
- =?utf-8?B?VDFaakplZ25senl3TUYyNEJtRng1ak9zeVYzS0JVbHZmOHRaRUQ4S1FmTnM4?=
- =?utf-8?B?bHBBNSt2KzdFdXNkbkhxRGpxSWN2cWxyTkF5dEwvcVY3QVlTT3BmYVh2R2Nv?=
- =?utf-8?B?WGtQZTl2Uy9reTdBeU8wUkZ0WGRnbDdCN0tydmo1TnFxb3JiWlhrZm1iNC9J?=
- =?utf-8?B?WHh4Z1FBY1NUQWRwS3JDeDZRNThnYlBKK2MrQjZlWXdNb1owTmQ0MUE5amNt?=
- =?utf-8?B?cElDZFlaWjdwRnp4ZitaaHNqQlp0eEc0S0tjRVA2WmVvN2tRYlhENW4wNkx4?=
- =?utf-8?B?ZFRSSmc2Wmt3a1N5clMya3dsU1g3by81dytJbTdoaGVmcndqZWhtbXVjZEtP?=
- =?utf-8?B?ejlXU2FVSjMwbGlwcG04cWI3VWNuZmdWTU5rUkFDZTl2cUh3N1dSdS9QRlhI?=
- =?utf-8?B?Y3lmOXcrU2VMNk5TR05aelF1RURIY1NJMElmWVNILzMvVklQR2NWazN0NkZy?=
- =?utf-8?B?bW42Wlg3TU5iZU1NVkhjRENGUEFKSTJZY0xUQ2Z3QmV2YjVDRWlXTUMvSUhK?=
- =?utf-8?B?cGtOdmpPMzVEQnVaK0tWTUlqWjFFc1h6Y3JYL1pNRjI5OHc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(366014)(52116012)(376012)(1800799022)(38350700012);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bzVGUFQwcEZ6a2VIZ3c0Sk16ZUJZVW50czREWDd0U2xaYWZRQk5JT2tDYkpD?=
- =?utf-8?B?bG9OeFlOc0VRZkxWNHBPR09vWHlVZVVkWHNSa0t4aStCVUFPdmNiRGVYK1Rt?=
- =?utf-8?B?MUd5QWtZZzZ0OEF1YmluMFo1d01BcE5tc2cxcU5jUmM3aFNDQVhqZUVkeC83?=
- =?utf-8?B?WHYxTFNPYjlFK1ZodWVLZG1hb3p5QjRSbzh1V1pCaUEzSWkxM3ZFbXJNdWZI?=
- =?utf-8?B?SExIUXZHcHRXMldtM3pUL1RRMHpRbzE1WTE1ZFM5RTRoQVFxT3daeVpWSWpE?=
- =?utf-8?B?NE5jenlsRzFqdTAwVWlYUTlDaEJZaGVVa0tCeDZPM0RqMzE3VnV0RnBZTENT?=
- =?utf-8?B?NW91Y0lXY1YweEYwckY1VVN6NWhTS1Q0R0ZkZktpM0VMdWRmSUdIdkpITHFx?=
- =?utf-8?B?Q2NlYllRUTFuNWdHU3k1S2ZlbE5PWGFpZ1N1cUpXWmtsY3FSVTdMNFE1cjI2?=
- =?utf-8?B?bU94WW9VYkw1R2w3d1FhS2lNTEloUkVOR0h5a3ZwYTI1Njk4QndjUGJsckNS?=
- =?utf-8?B?aTBwQU9JWnFLYmsvZnI5T28zRjhpdElERFVBQ3VTemhFdHVXcFN1VlpUc1E2?=
- =?utf-8?B?OTBmNFlwWDFTYmIwVWxHR1lacGVBdTdRaTVBZUFpc3l0c2pvT2ZrbkRlc2x2?=
- =?utf-8?B?a2F2NEtOUkd1MFVwMFJtRG5CTlU2dkErZHhBZXV0ZWk4akVUNkNydGV3TVVG?=
- =?utf-8?B?UUU2dkJ1cDBaZFowR21jbGh3dDBqSmVhSityVXhDZEJXdFNSS2pDeEl2dGJ6?=
- =?utf-8?B?ODc2SEEzM04vbFpnd0xMK0s1akFuaUFCWnU2Zk9aQzVvUEFKMm5nZDJBQ01Q?=
- =?utf-8?B?RWpXc04wSWdta0ZFeWZXc29KNm8wbnRiaDBHK3p0dmlPa3h6L0xLWmwzZXlq?=
- =?utf-8?B?SzVGUHNiSGlZalB6WnBjMXB5Tis4TnBiNnRPR053L3VQM3RsVnFQbTdMdVRx?=
- =?utf-8?B?WUI2QW93OW9jbExvKzUxM21xcElhWGEwTy9GUVQ4eWlRTU9Wd0tKdDA1YjlY?=
- =?utf-8?B?cW95MmFoRUFRSitQd2xqS29MOG5hQWZSdFBQNnhsUWs2NHNjY1NCb0lxdnhN?=
- =?utf-8?B?bjFFL3lRTzJvdjhOUmpOV3RHUWtlclI3Z3U4NWhoS0t3RmZlUlZzdDgwK0hB?=
- =?utf-8?B?WGtnNHFONjlWRTY3c2drck1IQVZwdmZxSGhReEU1NHBHSG5IUmhnVjFNaVlC?=
- =?utf-8?B?eUpHQXovWVd3S3N6dXQzVHRmVUxHV3grVG8wUlBQMFpYcUplN0FGY29yK0Ux?=
- =?utf-8?B?TUhrbGJkdjdqcit5OGwxL2E5T0ZmUjkzbXNCTzV6NFlyazdlVkt0dGg3UEtk?=
- =?utf-8?B?bU41UjdEV1pGdkU5T3hSWjdVWmF6am1HNlJJMWxWc2Z4bTFQV0RIanB0K1la?=
- =?utf-8?B?cHhENXp1elhCTitYVWpyYTdaWUhYaU5idmJHd0xrbXl4bmF4ZGJXWmNVaFpU?=
- =?utf-8?B?bFhqV3I0ZlhCdVpmZE0vM0lYOVpIZW9QS2k1SGg4UjhIcHZNNVRZLytnM2E0?=
- =?utf-8?B?ODVQVm1XbXNaSERVMG5jM0kwWGRSemxvd1lsU2pGOG02YjI2YXdrRStNRVR1?=
- =?utf-8?B?Ry9mWXV0alVIR3ZSMk1KQlpmaWhNUzdjKzYrUlRFZDA0RFQwM0NxOWNSQ2FB?=
- =?utf-8?B?Z3BIdWdkamdTYlZNKzh1TFZ5NmY0T042aTUxRkNZc2F3RXF2V2wzVkpCL3Rr?=
- =?utf-8?B?TjNZdmdqREFubm93M1ZpZWF4Y1RVTUVpbFZVUkRHWTlOMzlBL2o4a1ZDRE9Q?=
- =?utf-8?B?WXNXZUROSERwa3IwMzVSWHNkMnN1MTFXTk45ZmpZK25JZ1J5QUxzVzg5SmtF?=
- =?utf-8?B?UzdzbVBnTVRsdktOdTlhNlVLVWYzUDNPZkx5SENoTU5Vb0psKzlGdCs3ZTJX?=
- =?utf-8?B?YjRtQlhON2NqTGZPc1dPNWRZNjRia3VZamRnL2ZjT0d6Q01yWC9QTGJmOXZj?=
- =?utf-8?B?ZTd2WXpUQVNPeDAydWQ1TEZiL2U3clNrQkU1U0NhQnNWVk96SURnbmRHME5m?=
- =?utf-8?B?elpOOC9NSG12YXVtejdMbkJhMWgyeWpzSVBlQ2srZUpWQ3JNaWRhajVMbTIv?=
- =?utf-8?B?VlJOcWYyaC96YlB2ZmM1dWtydnNpelZERmJwUDhmaUVGSmVLcWc3REI2Z0to?=
- =?utf-8?Q?lG4k6ueX+9QRWVakT0RxKOoVe?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9d08e378-51ad-4aa1-3307-08dc95b9381f
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 08:23:12.3784
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: UoiO8tMRdWkinBb8OyTUh6aU6xJQ+aCWyMwKdNg48aVtFMENJzr0V0ND4cZu/dCvF0DWPgdMMJJStgELOiS57Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7165
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
 
-From: Peng Fan <peng.fan@nxp.com>
 
-The scmi protocol device tree node is expected to have consumers or
-per node properties expect `reg`. For System power management protocol,
-if no per node channel information, no need to add it in device tree,
-and it will also trigger dtbs_check error "scmi: 'protocol@12' does not
-match any of the regexes: 'pinctrl-[0-9]+'".
+--=-Otk1zO0DqMplnS4FZWSz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-To enable system power protocol, need to explictily create the scmi
-device and bind with protocol driver.
+On Tue, 2024-06-25 at 15:22 -0700, John Stultz wrote:
+> On Tue, Jun 25, 2024 at 2:48=E2=80=AFPM David Woodhouse <dwmw2@infradead.=
+org> wrote:
+> > On Tue, 2024-06-25 at 23:34 +0200, Thomas Gleixner wrote:
+> > > On Tue, Jun 25 2024 at 20:01, David Woodhouse wrote:
+> > > > From: David Woodhouse <dwmw@amazon.co.uk>
+> > > >=20
+> > > > The vmclock "device" provides a shared memory region with precision=
+ clock
+> > > > information. By using shared memory, it is safe across Live Migrati=
+on.
+> > > >=20
+> > > > Like the KVM PTP clock, this can convert TSC-based cross timestamps=
+ into
+> > > > KVM clock values. Unlike the KVM PTP clock, it does so only when su=
+ch is
+> > > > actually helpful.
+> > > >=20
+> > > > The memory region of the device is also exposed to userspace so it =
+can be
+> > > > read or memory mapped by application which need reliable notificati=
+on of
+> > > > clock disruptions.
+> > >=20
+> > > There is effort underway to expose PTP clocks to user space via VDSO.
+> >=20
+> > Ooh, interesting. Got a reference to that please?
+> >=20
+> > > =C2=A0Can we please not expose an ad hoc interface for that?
+> >=20
+> > Absolutely. I'm explicitly trying to intercept the virtio-rtc
+> > specification here, to *avoid* having to do anything ad hoc.
+> >=20
+> > Note that this is a "vDSO-style" interface from hypervisor to guest via
+> > a shared memory region, not necessarily an actual vDSO.
+> >=20
+> > But yes, it *is* intended to be exposed to userspace, so that userspace
+> > can know the *accurate* time without a system call, and know that it
+> > hasn't been perturbed by live migration.
+>=20
+> Yea, I was going to raise a concern that just defining an mmaped
+> structure means it has to trust the guest logic is as expected. It's
+> good that it's versioned! :)
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/firmware/arm_scmi/driver.c | 33 ++++++++++++++++++++++++++++++++-
- 1 file changed, 32 insertions(+), 1 deletion(-)
+Right. Although it's basically a pvclock, and we've had those for ages.
 
-diff --git a/drivers/firmware/arm_scmi/driver.c b/drivers/firmware/arm_scmi/driver.c
-index 6b6957f4743f..44a6e64eb78e 100644
---- a/drivers/firmware/arm_scmi/driver.c
-+++ b/drivers/firmware/arm_scmi/driver.c
-@@ -2952,7 +2952,7 @@ static int scmi_debugfs_raw_mode_setup(struct scmi_info *info)
- 
- static int scmi_probe(struct platform_device *pdev)
- {
--	int ret;
-+	int i, ret;
- 	char *err_str = "probe failure\n";
- 	struct scmi_handle *handle;
- 	const struct scmi_desc *desc;
-@@ -2960,6 +2960,7 @@ static int scmi_probe(struct platform_device *pdev)
- 	bool coex = IS_ENABLED(CONFIG_ARM_SCMI_RAW_MODE_SUPPORT_COEX);
- 	struct device *dev = &pdev->dev;
- 	struct device_node *child, *np = dev->of_node;
-+	uint32_t protocols[] = { SCMI_PROTOCOL_SYSTEM, SCMI_PROTOCOL_POWERCAP };
- 
- 	desc = of_device_get_match_data(dev);
- 	if (!desc)
-@@ -3114,6 +3115,36 @@ static int scmi_probe(struct platform_device *pdev)
- 		scmi_create_protocol_devices(child, info, prot_id, NULL);
- 	}
- 
-+	/* Create devices that not have a device node */
-+	for (i = 0; i < ARRAY_SIZE(protocols); i++) {
-+		void *p;
-+		u32 prot_id = protocols[i];
-+
-+		p = idr_find(&info->active_protocols, prot_id);
-+		if (p)
-+			continue;
-+
-+		if (!scmi_is_protocol_implemented(handle, prot_id)) {
-+			dev_info(dev, "SCMI protocol 0x%x not implemented\n",
-+				 protocols[i]);
-+			continue;
-+		}
-+
-+		ret = scmi_txrx_setup(info, NULL, prot_id);
-+		if (ret) {
-+			dev_err(dev, "SCMI protocol 0x%x txrx setup fail(%d)\n",
-+				prot_id, ret);
-+			continue;
-+		}
-+
-+		ret = idr_alloc(&info->active_protocols, NULL,
-+				prot_id, prot_id + 1, GFP_KERNEL);
-+		if (ret != prot_id)
-+			continue;
-+
-+		scmi_create_protocol_devices(NULL, info, prot_id, NULL);
-+	}
-+
- 	return 0;
- 
- notification_exit:
+The main difference here is that we add an indicator that tells the
+guest that it's been live migrated, so any additional NTP/PTP
+refinement that the *guest* has done of its oscillator, should now be
+discarded.
 
--- 
-2.37.1
+It's also designed to be useful in "disruption-only" mode, where the
+pvclock information isn't actually populated, so *all* it does is tell
+guests that their clock is now hosed due to live migration.
 
+That part is why it needs to be mappable directly to userspace, so that
+userspace can not only get a timestamp but *also* know that it's
+actually valid. All without a system call.
+
+The critical use cases are financial systems where they incur massive
+fines if they submit mis-timestamped transactions, and distributed
+databases which rely on accurate timestamps (and error bounds) for
+eventual coherence. Live migration can screw those completely.
+
+I'm open to changing fairly much anything about the proposal as long as
+we can address those use cases (which the existing virtio-rtc and other
+KVM enlightenments do not).
+
+> I'd fret a bit about exposing this to userland. It feels very similar
+> to the old powerpc systemcfg implementation that similarly mapped just
+> kernel data out to userland and was difficult to maintain as changes
+> were made. Would including a code page like a proper vdso make sense
+> to make this more flexible of an UABI to maintain?
+
+I think the structure itself should be stable once we've bikeshedded it
+a bit. But there is certainly some potential for vDSO functions which
+help us expose it to the user...
+
+This structure exposes a 'disruption count' which is updated every time
+the TSC/counter is messed with by live migration. But what is userspace
+actually going to *compare* it with?
+
+It basically needs to compare it with the disruption count when the
+clock was last synchronized, so maybe the kernel could export *that* to
+vDSO too, then expose a simple vDSO function which reports whether the
+clock is valid?
+
+The 'invalid' code path could turn into an actual system call which
+makes the kernel (check for itself and) call ntp_clear() when the
+disruption occurs. Or maybe not just ntp_clear() but actually consume
+the pvclock rate information directly and apply the *new* calibration?
+
+That kind of thing would be great, and I've definitely tried to design
+the structure so that it *can* be made a first-class citizen within the
+kernel's timekeeping code and used like that.
+
+But I was going to start with a more modest proposal that it's "just a
+device", and applications which care about reliable time after LM would
+have to /dev/vmclock0 and mmap it and check for themselves. (Which
+would be assisted by things like the ClockBound library).
+
+
+
+--=-Otk1zO0DqMplnS4FZWSz
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Transfer-Encoding: base64
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
+ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
+EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
+FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
+aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
+EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
+VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
+aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
+ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
+QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
+rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
+ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
+U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
+DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
+BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
+dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
+BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
+QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
+CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
+xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
+IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
+kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
+eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
+KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
+1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
+OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
+x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
+5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
+DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
+VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
+UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
+MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
+ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
+oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
+SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
+xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
+RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
+bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
+NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
+KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
+5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
+C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
+gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
+VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
+MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
+by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
+b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
+BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
+QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
+c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
+AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
+qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
+v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
+Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
+tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
+Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
+YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
+ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
+IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
+ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
+GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
+h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
+9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
+P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
+2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
+BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
+7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
+lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
+lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
+AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
+Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
+FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
+BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
+cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
+aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
+LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
+BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
+cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
+Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
+lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
+WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
+hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
+IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
+dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
+NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
+xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
+DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQwNjI2MDgzMjI3WjAvBgkqhkiG9w0BCQQxIgQgZ/Nk13bH
+P4Q45gq19HJ//DAJbV7MnSoygUsJZjMC7UMwgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
+BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
+A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
+dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
+DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
+MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
+Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
+lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgCYM49vYhr1YjUs1p7K7xl8RE+CjO0/16RT
+h+EFYCyN2fRuE9m2AsDzyz59Bcg5TdxKliUZkg3cQFOZs7YCWBt4hkE6NqLVnS1qnMxFxI6rnU/S
+30VW30l1UfL/EmP7hfuR9IjZVj/75lSY8R0SOgv89117hRJHWdjbkiiV2LRB4jr7EevWmtknxTSi
+XZ2iejXkN18QiNU3A0Azz0OJZgFmqZKXEuMSWB6rFQ7tOoowpDl4aL06VfHyDE37Rdz78DASp7sM
+lyBE6fY3N3WVWtGYG8uwKqaOpd3IsC6KU1hxGsLXRKfpLHM2CTfvsQRhNvTvvgxs0g7t+cq/8FsQ
+V8TDEgBH5DdEdSk/QlyBV8txF5hRGe19ZTC2VZfLVA6XJqKKr9Ml7ZommT2TAYI3YRsQinsQuQt4
+6Gkd+c1KvK0QHys6o9QzXLVZ2Z8utFuGDv7JSBDxX+Qk1ix2y2SWRogwycEYcaMK8CwcFrZrEYCy
+GuC0KbG32SXT27NFIqco5o5VFy6ZhYQXCBFXbRPdIh9XW2qIlb8Qv1LLVGx730DQ+RaPe6iXD+nj
+pyuaVIafzypheJIlusmVKgwmqoDxy864vyilK+hd+w6i/xbMkLdrvi0HsW9Ql9pqcPHzbqQNzhJd
+Ezdj5ESdTlkBFW5Lw5UvY9Gw+kFkVlqoVv2tDhybhwAAAAAAAA==
+
+
+--=-Otk1zO0DqMplnS4FZWSz--
 
