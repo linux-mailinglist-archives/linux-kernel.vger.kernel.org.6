@@ -1,144 +1,341 @@
-Return-Path: <linux-kernel+bounces-230169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44CC6917953
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:06:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF5EB917957
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 762731C21191
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:06:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DFBB1F225F5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:10:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2AB1598E9;
-	Wed, 26 Jun 2024 07:06:26 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37351158A25;
+	Wed, 26 Jun 2024 07:10:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Aw3WdLzu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78287156F57
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719385586; cv=none; b=Xnx4i4uHJyssYQa/phHSxy3ntEd6xRP5aUpXSDagXbZOiGD8QRwU/mLJe8PR0tWhBsBRskAUkKy2PE7cneXry+2wEdQvH8uiA4D25N1oRJ0xDxCRcF5ZLilzI5n7LU8GA5DuT3bGWb0J8p1yVtr5Q+lLIYa4URc2xwAguMQrrmk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719385586; c=relaxed/simple;
-	bh=K/sjZ0bsXnct0B50cerx4h07K2GOyv5awZbjTVtnqgQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dfd3hNSBJ7abvp/GPACHTZL8IrshWSg6wxFBKdBD25yHJsjGQqEjw9GK2mmm6j2Ohhzu+WGONEWG8Maz1F/t85ncABdu4pwzMmhx0qRnzMeW9z0FlxxUlCXIsiFXAh6Fs/dkFqzB9l6wbnQ97DHfA+tFY8HbkO4lqUC0t9PfoBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-7ebe8016637so997413239f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:06:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719385583; x=1719990383;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4vkKthIaUSztvZd85keMWza9SGdaYFVhOD50Bc8I1kY=;
-        b=Nh2JAvlQeCklQvtTu8OuOsm0JesWKgNDE8/7290lx9b1yZWujqabTA0lSlMEmuLVXF
-         TbKI5RQKpyB+r+rfZEbj1vwVUrZqqQe4Tpmi5mg/1RfxV7wahMzYqZS4QiiaMGpE01cs
-         JA0RgSSkhmlT9mqfdlFFM/8aGumX5CZJGjzfyZXETJCGZajMkmp960C0l76+UBiuU3SU
-         DJuWSW50vUtfmQfCToUXXcjEC0fvGm+oEMaaPcd7Vp8OQWkD2CeLtPsE720xJ+piTI5k
-         ogxzagyq/HnQCYPaePjtox5Z294PUih948fiAKWrLEgKMpTKZP/J8ZseK8dMs2OgCa6N
-         Q80Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV6VgNVrXKhqRrwnLSQwno3i6WMiGOwFl02veeX/yVK1Mx/j6/GpHb4rPCu5RTq5heu8e6XaBrbnyRqd4rwylWOyVljkmZN8r/rKy7f
-X-Gm-Message-State: AOJu0Yy0h/dR5EmKQhg6+tXQN5rfv8Et7Qsc+9OoxFgWLVJfDYuGSnmE
-	BOvluwAOsi5UJwoOxTP5lF6HvQoD5XbxCjtyyqyasnydlA2Z8ZmSUEO3u4eww/niiqUjEV6HVfI
-	cyXIlpUwlHjm5q3k1G95trSjCJMqPF63hvfOpLPKgLw26S9SKTQcCLzg=
-X-Google-Smtp-Source: AGHT+IHTuHPzxdzSZvKKq4zzo6UrPecfuVVV9bSpX+Sb0vpmECpQo6ODFwF7qRxi+Islf9MC6GHfMrbXeWN06pMq1EeECTXgLPJL
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2EE6ECF;
+	Wed, 26 Jun 2024 07:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.11
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719385817; cv=fail; b=PmtmV1nYPvMM2bbgq8dgMSrUlqxgYSN448Q6WCjroNDWE2x3apiZiBXeshdzQH4PgOXMmUwYqWAH/TyC1EDd+xP0P9kNjFNM2US9tAk+Xt0UaXOedFVkyQSI7Z4Xgpa4w/JZyKsV7Zfh3DuawlGHUNjnTWZUWBDBROsPy7vnrVA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719385817; c=relaxed/simple;
+	bh=RujmQsstKfwyB6cKbkjbhAN/tLNxHRgXVLyHctvhEMg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=lF6OIb5hlzCk/rRxO631+72bDUE6h7x6S4a8SvYEcTfg//B8kjEZyXvXcshMBabQb29RCivMcn2kHmzT4we5G79nWz1RUcpQ3pOJzSYz3XOB0E9H0KWcY43WzYB5Ai7Gsa2Eo5H7FfKiTpF58FgCLX8Q3h/MafdU34KjaNHVQLE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Aw3WdLzu; arc=fail smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719385815; x=1750921815;
+  h=date:from:to:cc:subject:message-id:references:
+   content-transfer-encoding:in-reply-to:mime-version;
+  bh=RujmQsstKfwyB6cKbkjbhAN/tLNxHRgXVLyHctvhEMg=;
+  b=Aw3WdLzuK7K/R4HOFcGRrWVzYUXJTzpWczF0sM+8YYBwQYwiDjeFsnDj
+   o6Vjo60ns6MpD6zwaJ6jt+TxU0YlnDMGswssxnkcvHdfLXz4BxmifQztV
+   yCz2RsFhj27FGvSJTQGnGtgFRQwfkCLSNM7DNKYqGUbnboDSzI1P/4vAF
+   nsz75OtWj2qTUfJf8cEWg4zM35tiVeMvOa9XlqalGcj800XH8wz783+u4
+   /0wf/dJR2UonYWW6wxtjN4KEtHfLVBQNRXURBwu4lTIRIXjxowdP47K2b
+   6Whp8eMN7osLsP3Fz1gufgjwW5cvuFPhFS9AWsMhPOZlUeYfI4fFH57DX
+   Q==;
+X-CSE-ConnectionGUID: K2bgoGW/TYKQN89hCybUtw==
+X-CSE-MsgGUID: /TX2Opg3QHSCVh2yAUJQDw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="27030034"
+X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
+   d="scan'208";a="27030034"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 00:09:58 -0700
+X-CSE-ConnectionGUID: 0Z+TM6InQM6D7xpKgdoIRg==
+X-CSE-MsgGUID: 2+Z7CGwfSsOeg/6WEvjtzA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
+   d="scan'208";a="81441447"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 26 Jun 2024 00:09:58 -0700
+Received: from orsmsx612.amr.corp.intel.com (10.22.229.25) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 26 Jun 2024 00:09:57 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx612.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 26 Jun 2024 00:09:57 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.168)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 26 Jun 2024 00:09:57 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=H3G2jgJ8l+CVmI7pI2vI+AvV6T+d9AUIIICvhz2oH7lFhz11h+51IYmXN8xZv6cOt7VnhQK9DRBAAeUUm8jvhMEcvsA9zEQqVLUA6MEkWbbnJLnr7L+tRvP6VVZo6LFGeXpOuTeGO8zlHqevF1atEqX/QMb8S8bJZiJ2skegdlsY4VL1b9Pz5+KSTaqqBabnw7XVPf+Jw8sy75ZxoI5TIEzBCme/m9v+4R/CCLtuN3LyhUdD72S1O4QPWo8buutMadVkne7409T0zlBf+UMwz/zpNLhLBCMwHCyGrjA6XkKtyXwAYT1rIOM6+35rIvk5h+iP1Ahiw9n8CK8Mprf7xw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TvgpgVxERZ4wssKvLVswIbRWnuHQyIEAblebyhurUgc=;
+ b=BWHfRMe4Jdw5PZJOM0SIamte8Wsk87OvLzkm8tc8GtDnkZjZKLc5l3aokRanmgY4uWerWGGEr/EpmlA9rwfV6hSSThLIOgLeHkqp3JJC6JhJ1273mOYf1MMtdsQcuglbXZVa4+AcSgBIBUXPz0/z0nqVBHrboqLWEFJUrKn6sQrFYR/fzxjygtsIyFjBqveOfICrnAY2UgCJU9CFCT8Q29OElxMtgtJjr/HE6Z77B9MXLXd9Z6k47bwxsRI+JFHB8KwLM2ef/b7QyOj3xqUnD9Xpeh9urF/0h003XmW7FKDvqI4YpZhmnM8F48bj6aqdKtX25OETGoQ7jrnlsCExMw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN0PR11MB6231.namprd11.prod.outlook.com (2603:10b6:208:3c4::15)
+ by PH8PR11MB7023.namprd11.prod.outlook.com (2603:10b6:510:221::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
+ 2024 07:09:55 +0000
+Received: from MN0PR11MB6231.namprd11.prod.outlook.com
+ ([fe80::a137:ffd0:97a3:1db4]) by MN0PR11MB6231.namprd11.prod.outlook.com
+ ([fe80::a137:ffd0:97a3:1db4%3]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
+ 07:09:55 +0000
+Date: Wed, 26 Jun 2024 09:09:37 +0200
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: Reinette Chatre <reinette.chatre@intel.com>
+CC: <fenghua.yu@intel.com>, <shuah@kernel.org>,
+	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<ilpo.jarvinen@linux.intel.com>, <tony.luck@intel.com>
+Subject: Re: [PATCH v2 1/2] selftests/resctrl: Adjust effective L3 cache size
+ with SNC enabled
+Message-ID: <b5xggwzdvavhqmxpaeisovp3e2xzjjhvkoqcbt6hg3sv3wzh3i@a7qaatwfpbf6>
+References: <cover.1715769576.git.maciej.wieczor-retman@intel.com>
+ <fe9295c6be677d187b1607185e23993dbfe74761.1715769576.git.maciej.wieczor-retman@intel.com>
+ <9fa47acf-86b1-4602-8790-39ed80fd775a@intel.com>
+ <n2el3evhluilmjhrwgpkkb7ld2g26zhmctxvm77b3ome6u6egf@hym7rnr3h2o7>
+ <9b976e89-0320-430f-9f0f-48e25612ec98@intel.com>
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9b976e89-0320-430f-9f0f-48e25612ec98@intel.com>
+X-ClientProxiedBy: DB6PR0301CA0091.eurprd03.prod.outlook.com
+ (2603:10a6:6:30::38) To MN0PR11MB6231.namprd11.prod.outlook.com
+ (2603:10b6:208:3c4::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6638:2504:b0:4b0:b123:d9d with SMTP id
- 8926c6da1cb9f-4b9efc75e9amr721991173.5.1719385583623; Wed, 26 Jun 2024
- 00:06:23 -0700 (PDT)
-Date: Wed, 26 Jun 2024 00:06:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000f1b4a1061bc5a659@google.com>
-Subject: [syzbot] [wireless?] WARNING in ieee80211_rx_list (2)
-From: syzbot <syzbot+1d516edf1e74469ba5d3@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR11MB6231:EE_|PH8PR11MB7023:EE_
+X-MS-Office365-Filtering-Correlation-Id: f4b0f2c7-d3fc-4422-876a-08dc95aefa98
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230038|376012|366014|1800799022;
+X-Microsoft-Antispam-Message-Info: =?iso-8859-1?Q?yKH3AivFj7FCbGKPRTO6xsCXTO+8TP7ig3/0tBpm3m9EGsPG0RTQmtKcLU?=
+ =?iso-8859-1?Q?7xPB0CAjtLjzC2iJtjPyuBFdML4BNiz8vGbuSXGefPzbCdStqay2ff6F9/?=
+ =?iso-8859-1?Q?w4WMm8G+lmKa536s5a77Z+jBwxSYbxqTzx2XzZEqilDkme0bs6VqtyxA/U?=
+ =?iso-8859-1?Q?1h8eSUjRg3em97eQyYDpgZlmMk6+ICxBd17GQ6/TqMxz9pF2+zFIurIjvI?=
+ =?iso-8859-1?Q?yxwcxXknk11c0LpHLtSWblH6VafjEWyM6TWP6zh0ZnQox6tNDRhKbbVOqp?=
+ =?iso-8859-1?Q?G2Q6fHsL+dKT+MqipBsiHlfq+5QIKHv44C9+HlHqwAw/40C04kSIb0DPoM?=
+ =?iso-8859-1?Q?NijRYUkTbQJtfIAWcrRT/OMe3N049RbrxmIrLvfEyGEFX+ThLo3+03EhUt?=
+ =?iso-8859-1?Q?OTR+qXNi1xxuoPZcYUA7VNVinLDBasPp3cl9R2+40ieilNHeMUK0ET530x?=
+ =?iso-8859-1?Q?NUpvSc9bZh0hp3BQ8GnIPux0etTwkai05Vu/QFmcrRqiHcCjxsYIvVtqo9?=
+ =?iso-8859-1?Q?iF8EZqkPnfSZzx6r86rh7AZ6V3NK/xkCRTKtc26WRkLhvkHyE9TF8nFa88?=
+ =?iso-8859-1?Q?n4YfQGYmb+9iIo314VCAh6eq/5o80jnfrAfkyCJEXfKJ9nMdtM7DgZBqvJ?=
+ =?iso-8859-1?Q?quAJuDkmC0Jc3Hfh7dURd63EPn96qukfK+dvyzGzpGICT7BzLZtu+e39au?=
+ =?iso-8859-1?Q?OyYw1ty+OtiuIEd3J1RNuN9TbSFvSLEOYjDO99ceQfW/CP163Vzgri7gft?=
+ =?iso-8859-1?Q?vqZLahw6F5+Psny9jyZMBjl3h9pYGrl6I9CbW5wUWOQjkN5ZsL0EOpblBi?=
+ =?iso-8859-1?Q?bQnjE91L8YulAzp2Amur/++7+giiIC94az+M5VCYMrYXnNel0h4EkhKeqC?=
+ =?iso-8859-1?Q?DANJck9AOEXioR1W5Br46B9lIB3kYN1QnctctRcLDmUH8PDBB1/+c9QnXH?=
+ =?iso-8859-1?Q?CSGfRwMKgsaxNePhbccCHQXDWZibay0hZbeJC6oVYCL9kk2SzsSok1KZc9?=
+ =?iso-8859-1?Q?WYFUYsp+Cs6zwLvR6rPapKaMwmtjXiuuTGkVKBqPlT+otz0jeURd31+91H?=
+ =?iso-8859-1?Q?fW/aTSnogKhRWxRLyRrex3M/1kJsNQYyZeDUzyV4TCrqMeRF049cbihJVS?=
+ =?iso-8859-1?Q?KXpayQkoumL18XvHL8Om7HMTEJl7glPDoDhycVQ1vLeTf4xafb/mU1cXo5?=
+ =?iso-8859-1?Q?zUdG4KA1jgWbeX0OPoFPUmxY0BVe7zg0BWTgjQmunaBJLzElcV5tLEH6mB?=
+ =?iso-8859-1?Q?VgZ62Gcuwy6JVu+oEE2Fs3VzV3a+liLxNOe2rIFODwDKBUUnCN/JC+mkea?=
+ =?iso-8859-1?Q?a47Uih5dMqnNtIJOqMA6nXTBzRY5k2W9t6lPbFfbHJjXS6j7Iyj7EUGBFc?=
+ =?iso-8859-1?Q?8loNnr2feV?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR11MB6231.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(376012)(366014)(1800799022);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?iso-8859-1?Q?45q2V9cMAAt2wmKS7qfgSvgCEc1+aWEyp9F1vllPYPohhpgqqNmkBbFLCM?=
+ =?iso-8859-1?Q?Qub4dfJZPlRQpf3Q+SB0hx3rkJL6tUK36/MjJaOO84gCWYS/1k20DBk/KP?=
+ =?iso-8859-1?Q?HS8K+Rq9NJ6QaL5o7cVZZzlN2RU3oGiLH7J3j7vccA0nyPU7Vj1fytS5s7?=
+ =?iso-8859-1?Q?Ome/vmcZZ3pWgR11K8vZUf5/dQccCHeSIdfcGRZeepRHFDMdLZdyf94LiV?=
+ =?iso-8859-1?Q?XCKfmc5up08vFCIBEzBGYz4KOR+332JwJA17i13Nm6lIy4VanuF6pyN6B/?=
+ =?iso-8859-1?Q?n/yuIV/EInlq0ArPm5X45BMdk56V3pvmF9zJHAopuOeHJ2bdLcAOhQlzBi?=
+ =?iso-8859-1?Q?p1cehVba4ayyNIcwJ4jchOH+tWf1YH9bmjI+uQMrm1uia3XJCGNYtgD/4w?=
+ =?iso-8859-1?Q?y87DOARakmykFX5g/uKiI3ObIaaMngWWj04DvcdhSYq4JFSykgzA/EDjaB?=
+ =?iso-8859-1?Q?sbn+20j0nlcV9VSNWmOHphHsjQZVwtpU5boLsL/3I+y5erCsApSjkLVOOT?=
+ =?iso-8859-1?Q?kgOnnma7yFxTlMEKHVbXsSA8Z6cu+5TdbnqiJxkKA4eoL8Ug9wsXeXKmie?=
+ =?iso-8859-1?Q?kDfU+uqQVtXYd1e05ofH2TMLcyksn5yPhpzu/sg3saaoqmIAN7S6L2ZIGH?=
+ =?iso-8859-1?Q?hjOCppQ96mmGXW6eeSXb6zO6ZY5KZ66iiMrDbFjX0uIXzr1yJDUjSWLJ0K?=
+ =?iso-8859-1?Q?hxeh32CBpkA8g2RcQRCbXqYoL1rOo6ndb0SBjQRc5EyIC+2C8irTNWjKM+?=
+ =?iso-8859-1?Q?ohuQ2AqV7hUwv86I6YtpQgd5U4bZZcEHy8kaGkxY1yuuvhTwAkAm1S/X2Q?=
+ =?iso-8859-1?Q?SwcOGVBY0x9hICZGpBA6297U3kebNbZwP1P0yetwxmc3tb8Fser+OzGdMm?=
+ =?iso-8859-1?Q?BhcetXOpWTTjxucDKeZT9spF4tqQlJqYNH0rLG8vCfj7yUlgjUw4wyjqD6?=
+ =?iso-8859-1?Q?m3V+90uX3U5S0A5diChQSjcYIay898RE7oq4MYSpPfUJ+3i/Bd6EGTxpTd?=
+ =?iso-8859-1?Q?HP4TsgGNJa79hPVPtRql6LL0jRob/NnCY+Ya79Low4D8YS+LcoVrA+Xedn?=
+ =?iso-8859-1?Q?0qdaPTaCtafmyOTFGOK1ZqEyV8eKV9fQXWxa22eSa5nqaD50DepDG9vMb/?=
+ =?iso-8859-1?Q?hLDVlqpFr+X37YI3JlOEPXLjBTVYZgrLfcJhDq/+sqNbPqLneJK3qEFax+?=
+ =?iso-8859-1?Q?KYbvGUXrwnADQ8S3fgTqhbsM5q8DIBmFFIvcMm0misgpWgpPa6wWOmUaaX?=
+ =?iso-8859-1?Q?e1Bkt5kZrTIxOpZEs0GZf85y1jl0lvWuvtsfOYobBu04lrKqafaC4gMpU6?=
+ =?iso-8859-1?Q?DJmPzlmYaCgeasLCqDnz6n7GcJZbdQWptYl2PcFL7YIXkf8s3oLqTOmZQD?=
+ =?iso-8859-1?Q?Sub7t1lk3mgm8kROcRZpmOOq0OnPiofpuPPIIN9OoWvLMYziy462adwrW3?=
+ =?iso-8859-1?Q?7+3VNapdxo14/ZAVMnSkCNeDGFl6lUnZpVLOzSyc52w4bUv1wmcilMOpYL?=
+ =?iso-8859-1?Q?wmV8DsXRx9ft8w6sX3Vd8QNNCT95UTyUwpoxBVjTiKiluJN8150APDMyVU?=
+ =?iso-8859-1?Q?tibatQG3H1lYQ8ngyFgxyHzqXNzB13LZ+0br/dqJQIDjmNaKpPczLZwK1p?=
+ =?iso-8859-1?Q?193PyW1ceApeTKZ5JdMy/EidzbSB7BTopcPxm4YvzfUWQnkr181j1+71fW?=
+ =?iso-8859-1?Q?JwudiK3uvRN+nKSZT1k=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4b0f2c7-d3fc-4422-876a-08dc95aefa98
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR11MB6231.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 07:09:54.4331
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5hMMO1OJ4eGHW7p5mcABVaBufXVhI23pga42SC7m7Dsdyo32muSliSuNL65X9UeJ/QF40SF2jNOVO7pM4G2UFqnKoyFbuJpppS238oS5eiY=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR11MB7023
+X-OriginatorOrg: intel.com
 
-Hello,
+Hello!,
 
-syzbot found the following issue on:
+On 2024-06-25 at 09:28:55 -0700, Reinette Chatre wrote:
+>Hi Maciej,
+>
+>On 6/25/24 4:04 AM, Maciej Wieczor-Retman wrote:
+>> Hello,
+>> sorry it took me so long to get back to this. I prepared the next version with
+>> your comments applied and Tony's replies taken into account.
+>
+>Thank you very much for sticking with this.
+>
+>> 
+>> I wanted to briefly discuss this before posting:
+>> 
+>> On 2024-05-30 at 16:07:29 -0700, Reinette Chatre wrote:
+>> > On 5/15/24 4:18 AM, Maciej Wieczor-Retman wrote:
+>> > > +		return 1;
+>> > > +	}
+>> > > +
+>> > > +	for (i = 1; i <= MAX_SNC ; i++) {
+>> > > +		if (i * node_cpus >= cache_cpus)
+>> > > +			return i;
+>> > > +	}
+>> > 
+>> > This is not obvious to me. From the function comments this seems to address the
+>> > scenarios when CPUs from other nodes are offline. It is not clear to me how
+>> > this loop addresses this. For example, let's say there are four SNC nodes
+>> > associated with a cache and only the node0 CPUs are online. The above would
+>> > detect this as "1", not "4", if I read this right?
+>> > 
+>> > I wonder if it may not be easier to just follow what the kernel does
+>> > (in the new version).
+>> > User space can learn the number of online and present CPUs from
+>> > /sys/devices/system/cpu/online and /sys/devices/system/cpu/present
+>> > respectively. A simple string compare of the contents can be used to
+>> > determine if they are identical and a warning can be printed if they are not.
+>> > With a warning when accurate detection cannot be done the simple
+>> > check will do.
+>> > 
+>> > Could you please add an informational message indicating how many SNC nodes
+>> > were indeed detected?
+>> 
+>> Should the information "how many SNC nodes are detected?" get printed every time
+>> (by which I mean at the end of CMT and MBM tests) or only when we get the error
+>> "SNC enabled but kernel doesn't support it" happens? Of course in the first case
+>> if there is only 1 node detected nothing would be printed to avoid noise.
+>
+>I agree that it is not needed to print something about SNC if it is disabled.
+>hmmm ... so SNC impacts every test but it is only detected by default during CAT
+>and CMT test, with MBA and MBM "detection" only triggered if the test fails?
 
-HEAD commit:    626737a5791b Merge tag 'pinctrl-v6.10-2' of git://git.kern..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17fc4151980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7bd7d605618e43de
-dashboard link: https://syzkaller.appspot.com/bug?extid=1d516edf1e74469ba5d3
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Yes, snc_ways() ran before starting CAT and CMT to adjust cache size variable.
+And then after CAT,CMT,MBM and MBA if the return value indicated failure.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+>
+>What if the "SNC detection" is moved to be within run_single_test() but instead of
+>repeating the detection from scratch every time it rather works like get_vendor()
+>where the full detection is only done on first attempt? run_single_test() can detect if
+>SNC is enabled and (if number of SNC nodes > 1) print an informational message
+>that is inherited by all tests.
+>Any test that needs to know the number of SNC nodes can continue to use the
+>same function used for detection (that only does actual detection once).
+>
+>What do you think?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4d143806a3cf/disk-626737a5.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/f234013cac68/vmlinux-626737a5.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/707d3018b571/bzImage-626737a5.xz
+I think running the detection once at the start and then reusing the results is
+a good idea. You're proposing adding a value (global or passed through all the
+tests) that would get initialized on the first run_single_test()?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1d516edf1e74469ba5d3@syzkaller.appspotmail.com
+And then the SNC status (if enabled) + a warning if the detection could be wrong
+(because of the online/present cpus ratio) would happen before the test runs?
 
-netlink: 4 bytes leftover after parsing attributes in process `syz.4.3539'.
-------------[ cut here ]------------
-WARNING: CPU: 1 PID: 17793 at net/mac80211/rx.c:5345 ieee80211_rx_list+0x14c7/0x2e90 net/mac80211/rx.c:5345
-Modules linked in:
-CPU: 1 PID: 17793 Comm: syz.4.3539 Not tainted 6.10.0-rc5-syzkaller-00012-g626737a5791b #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:ieee80211_rx_list+0x14c7/0x2e90 net/mac80211/rx.c:5345
-Code: 03 0f b6 04 02 84 c0 74 08 3c 03 0f 8e ca 19 00 00 8b 53 70 4c 89 ee 48 89 ef e8 a4 da fd ff e9 fa ef ff ff e8 fa 0d 30 f7 90 <0f> 0b 90 e9 15 ec ff ff e8 ec 0d 30 f7 90 0f 0b 90 e9 f3 ef ff ff
-RSP: 0018:ffffc9000313eba0 EFLAGS: 00010246
-RAX: 0000000000040000 RBX: 0000000000000000 RCX: ffffc9000e382000
-RDX: 0000000000040000 RSI: ffffffff8a5dd5e6 RDI: 0000000000000005
-RBP: ffff88806a8ec8c0 R08: 0000000000000005 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000002 R12: ffff88806a8ec8c0
-R13: ffff88806a8ec998 R14: 0000000000000000 R15: 0000000000000001
-FS:  00007f8b5207c6c0(0000) GS:ffff8880b9300000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f3a3a0f9d58 CR3: 000000006ff3c000 CR4: 00000000003506f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ieee80211_rx_napi+0xdd/0x400 net/mac80211/rx.c:5482
- ieee80211_rx include/net/mac80211.h:5093 [inline]
- ieee80211_handle_queued_frames+0xd5/0x130 net/mac80211/main.c:437
- ieee80211_stop_device+0x1e/0xe0 net/mac80211/util.c:1570
- ieee80211_do_stop+0x18bd/0x2200 net/mac80211/iface.c:706
- ieee80211_stop+0x11e/0x6b0 net/mac80211/iface.c:765
- __dev_close_many+0x1c5/0x310 net/core/dev.c:1556
- __dev_close net/core/dev.c:1568 [inline]
- __dev_change_flags+0x4dc/0x720 net/core/dev.c:8779
- dev_change_flags+0x8f/0x160 net/core/dev.c:8853
- do_setlink+0x1a42/0x3ff0 net/core/rtnetlink.c:2900
- ?
+On the warning placement I think it should be moved out of being printed only on
+failure. I did some experiments using "chcpu" to enable/disable cores and then
+run selftests. They didn't have any problems succeeding even though SNC
+detection detected different mode every time (I added a printf() around the line
+that cache size is modified to show what SNC mode is detected). While I
+understand these tests shouldn't fail since they just use a different portion of
+the cache I think the user should be informed it's not really NUMA aware if the
+detection was wrong:
 
+(this was a 2 socket machine with SNC-2 and 55296K L3 cache size)
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+This is without any changes:
+	[root]# ./resctrl_tests -t CMT
+	# dmesg: [   11.464842] resctrl: Sub-NUMA Cluster mode detected with 2 nodes per L3 cache
+	...
+	SNC NODES DETECTED : 2
+	# Cache size :28311552
+	...
+	# Average LLC val: 12413952
+	# Cache span (bytes): 11796480
+	ok 1 CMT: test
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+This is with all cores on node 1 disabled:
+	[root]# ./resctrl_tests -t CMT
+	# dmesg: [   11.464842] resctrl: Sub-NUMA Cluster mode detected with 2 nodes per L3 cache
+	...
+	SNC NODES DETECTED : 1
+	# Cache size :56623104
+	...
+	# Average LLC val: 22606848
+	# Cache span (bytes): 23592960
+	ok 1 CMT: test
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+And this with one core on node 0 disabled:
+	[root]# ./resctrl_tests -t CMT
+	# dmesg: [   11.464842] resctrl: Sub-NUMA Cluster mode detected with 2 nodes per L3 cache
+	...
+	SNC NODES DETECTED : 3
+	# Cache size :18874368
+	...
+	# Average LLC val: 7382016
+	# Cache span (bytes): 7864320
+	ok 1 CMT: test
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+CAT also succeeds although it reports bigger or smaller cache miss rates than
+normally:
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+SNC NODES DETECTED : 1 <-- all cpus on node 1 offline
+# Percent diff=12.7
+# Percent diff=10.2
+# Percent diff=7.8
+# Percent diff=6.7
+ok 1 L3_CAT: test
 
-If you want to undo deduplication, reply with:
-#syz undup
+SNC NODES DETECTED : 2 <-- real
+# Percent diff=49.6
+# Percent diff=37.8
+# Percent diff=22.4
+# Percent diff=16.0
+ok 1 L3_CAT: test
+
+SNC NODES DETECTED : 3 <-- one cpu on node 0 offline
+# Percent diff=76.6
+# Percent diff=53.3
+# Percent diff=35.1
+# Percent diff=28.9
+ok 1 L3_CAT: test
+
+>
+>Reinette
+>
+
+-- 
+Kind regards
+Maciej Wieczór-Retman
 
