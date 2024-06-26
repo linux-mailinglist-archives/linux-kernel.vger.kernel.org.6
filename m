@@ -1,161 +1,167 @@
-Return-Path: <linux-kernel+bounces-231092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B74E918615
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:41:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F6CE91861A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AAF31F215ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:41:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADED81C21C29
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E25C18C35F;
-	Wed, 26 Jun 2024 15:41:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81DBD18E745;
+	Wed, 26 Jun 2024 15:42:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="EWW4oUXI"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BisweaEA"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F111A92F;
-	Wed, 26 Jun 2024 15:41:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1280218C355
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 15:42:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719416490; cv=none; b=fc3O5HtH/tWo23PZyRgiwfAOB6gTV3uEkH/8YnYKVZ99RhEXX4kOaOiVufLgB+d1TH/+Zcmjj1akOKFrmA/eOVI1Df67fJyswSQhPRw4DUnaVLPIXxd9WeeEp7YQvCci37N/VXJuISv3ntuWXMpoB7ItJJnjsrNgQSNxa9zvyc8=
+	t=1719416546; cv=none; b=KWsNm507WHliZP6yn8s9NDqXD9iG0itYGJ1POb5VGqoqABb5NVeJDs3PCV59NcY8MZpiKxESeU7JRcJ3NjUTjdiX2h7TnfiVgTTnUGKjm6gYcTxkH8HdEeMuJRMCIJSuYxRG/WN/NDGlqjX63yPTrtM3y7qbbVlb87a/xI//mkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719416490; c=relaxed/simple;
-	bh=GPHvwfVOsOpJ3F4HSr4EpYRzSsypkz6TSUJoNBbhErs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AcAKdGOWF8IdGO6gKNQlyidaK2sED0J0wz51K8r6hj7GqgulMjxkYcuOGr2Cf774zT5H4ZVxFs/s4QjcFjy2GxLxsvVEbJYG87SBl/vWjZ7jgOcMHy11NSjWFeLNGSX7gtT2N/PUYNrd/HiJDtnXechDvEQvKnj18pnikLAhKuw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=EWW4oUXI; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=I2mKrncqrxQxg3yWqxHlilhT6KiFqVB2cixTKCsRVuo=; b=EWW4oUXIHM0thFAE
-	OnOspGfMc5HhlJOuzLrrBhNlPk6akWkMVt3TsIX0pjRaY8WLYAVaGJDlmdi7G0rMunVOWOUUnCFY8
-	OsjY0ijPo29+VcDpnMt0AGuFvIvcKLPh9HerZpeiyHV7G4bEwEmcY9VFKlPTmCb+EokGSL8lWpKXZ
-	H0S/Nglapsu7JmK6sO0mhlSYVHWw5l/zzAI7Lb+PVRImo23SzBiYJVEXZkeFsd9j/0SeGYODksSBz
-	oUQpg9wZiRTuF5HF8odDl0CWH+PfcjuRhRLsE66j/b0KAYk4rpBQ16EQhbsdVtJLTcNs0Zc8K6vDD
-	dcQqCes7LIPx59myxQ==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1sMUlt-008VLV-1J;
-	Wed, 26 Jun 2024 15:41:21 +0000
-Date: Wed, 26 Jun 2024 15:41:21 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: sudipm.mukherjee@gmail.com, sudip.mukherjee@codethink.co.uk
-Cc: arnd@arndb.de, linux-kernel@vger.kernel.org,
-	linux-parport@lists.infradead.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 0/3] parport: Cleanup some pre-devmodel code
-Message-ID: <Znw2oRnqaZ39aXzQ@gallifrey>
-References: <20240502154823.67235-1-linux@treblig.org>
- <ZkXj9Ip3DoUAe1wt@gallifrey>
- <Zl3_5MzTNqIiXM_C@gallifrey>
+	s=arc-20240116; t=1719416546; c=relaxed/simple;
+	bh=XRowxFSkrysMUs9XyN0Exv9sB2feFYzAvaPvT89v0go=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Kcdf4+U/mR7Ix8Ez40RrubLvcMB9yGNrEcs1LsXWZbypfDql8ulDm+epfKeObHoI6cWtrPNY74rpL0gW7klLRAmJeXRE8DUg70XIWTBtvUayMwU2+6d8L78BO6zktVTc2a1fKL7LiZdRNJQP2UQvJKNOw9CIDScYiaqPYdRj5jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BisweaEA; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57d07673185so552036a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:42:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719416543; x=1720021343; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sz4Tt/Ks/Na1pwZwDOP6Ac4gN9u4dueDw72ykvSRJ3c=;
+        b=BisweaEAztHt03VNrk88j42Xe8Y50NPt+yWiUoVLjRz9u2gLcEVyquP5U5YRDGMzDY
+         6GflCg1jcFoCJIQ8CzeLdvIVvlfDOFRH9x5wp5DzcqtNBRR7jBIliaZsER0FfM/y9Ffe
+         UMLDqKuujBu11mq1E3E4q1Q3N1JXcCeTAV0+ayJcaEP8RjMG0mz9dzSAbzAFSRxnQklp
+         rSyVpEC0RT8E0G/Lyi3qKT06prUp5lt57MOgkGYgCa66y7SJjcAv23BqYEgbVvjUr5lP
+         4i5wA5NF9G28fmEy6kpgTILi7J+7u58PFwkfsJWcrspGjZTDiHZn1IWyA9CEcng+Ibew
+         CzWw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719416543; x=1720021343;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Sz4Tt/Ks/Na1pwZwDOP6Ac4gN9u4dueDw72ykvSRJ3c=;
+        b=fjn9eTwOhhQbyt92Bji9N4z9zeVhXc6BWEfXjXY6l+XXib3u3PTy4cZPBTA1Yv2Jbk
+         kklaYTGGw9ItB6R3kkNDT/37xk4NsqZDPILQ+ob1NbCEfycUXOsUwXSLdsiUZKfl+bem
+         i5sFMMisPmT7ayx8r2pv2ZQ4YdWBDyOaWorStUyqvN90NOedln7xxviVkEblDyvhf3ne
+         W1odw3ogJN/l9uCZ6eSIEux50WEoushQh20Ar69543zic/7e+vKSmSCWdhgJbt/oc9vk
+         lF/dbtwWZGP9IH4v0SKXrh4t9J4vOIP2Lr1bjzvLOF6JPFeyj7+Jb6uBe1YztpFzGfSV
+         bZTw==
+X-Forwarded-Encrypted: i=1; AJvYcCVb/0B1ioWTBggMP4kYA4tD7wqom+15aXZLzmi0VFUbO4R8hMfEC5aEcMuIA9EIJD694mIqKIz9JbQ8XCUuFyCS+ekGR8b3ev/KKop0
+X-Gm-Message-State: AOJu0YyKAOrps0dcdswUi5mQdgi0tgb6moI7DCRjp+Mv2PVuMBg+mf67
+	z741G3y1v00pq45ISPMNKAQrX1l68Cn5O7U+g5RGkw6KBemqMeBKf/4gdplgA7Q=
+X-Google-Smtp-Source: AGHT+IFZgo0qywXUrbYFvzsX7j5NG3UwUTK5YD3F6ShNKbFTpBUUBLsG6g1DyGpehW77M6FgbbubwA==
+X-Received: by 2002:aa7:cb50:0:b0:57d:4b56:da11 with SMTP id 4fb4d7f45d1cf-57d4b56da8emr10735227a12.11.1719416543275;
+        Wed, 26 Jun 2024 08:42:23 -0700 (PDT)
+Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d303da2b5sm7362066a12.6.2024.06.26.08.42.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 08:42:22 -0700 (PDT)
+Message-ID: <45c95955-51a7-489f-993e-252e8bd63dbd@linaro.org>
+Date: Wed, 26 Jun 2024 17:42:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <Zl3_5MzTNqIiXM_C@gallifrey>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 15:39:43 up 49 days,  2:53,  1 user,  load average: 0.06, 0.03, 0.00
-User-Agent: Mutt/2.2.12 (2023-09-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/5] arm64: dts: qcom: sdx75: update reserved memory
+ regions for mpss
+To: Naina Mehta <quic_nainmeht@quicinc.com>, andersson@kernel.org,
+ mathieu.poirier@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, manivannan.sadhasivam@linaro.org
+Cc: linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240618131342.103995-1-quic_nainmeht@quicinc.com>
+ <20240618131342.103995-4-quic_nainmeht@quicinc.com>
+ <e5b7a888-8ca3-463a-a2de-cf719e58d7a0@linaro.org>
+ <c186bd2e-a132-fbe6-2212-dcdb93a6c14a@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ xsFNBF9ALYUBEADWAhxdTBWrwAgDQQzc1O/bJ5O7b6cXYxwbBd9xKP7MICh5YA0DcCjJSOum
+ BB/OmIWU6X+LZW6P88ZmHe+KeyABLMP5s1tJNK1j4ntT7mECcWZDzafPWF4F6m4WJOG27kTJ
+ HGWdmtO+RvadOVi6CoUDqALsmfS3MUG5Pj2Ne9+0jRg4hEnB92AyF9rW2G3qisFcwPgvatt7
+ TXD5E38mLyOPOUyXNj9XpDbt1hNwKQfiidmPh5e7VNAWRnW1iCMMoKqzM1Anzq7e5Afyeifz
+ zRcQPLaqrPjnKqZGL2BKQSZDh6NkI5ZLRhhHQf61fkWcUpTp1oDC6jWVfT7hwRVIQLrrNj9G
+ MpPzrlN4YuAqKeIer1FMt8cq64ifgTzxHzXsMcUdclzq2LTk2RXaPl6Jg/IXWqUClJHbamSk
+ t1bfif3SnmhA6TiNvEpDKPiT3IDs42THU6ygslrBxyROQPWLI9IL1y8S6RtEh8H+NZQWZNzm
+ UQ3imZirlPjxZtvz1BtnnBWS06e7x/UEAguj7VHCuymVgpl2Za17d1jj81YN5Rp5L9GXxkV1
+ aUEwONM3eCI3qcYm5JNc5X+JthZOWsbIPSC1Rhxz3JmWIwP1udr5E3oNRe9u2LIEq+wH/toH
+ kpPDhTeMkvt4KfE5m5ercid9+ZXAqoaYLUL4HCEw+HW0DXcKDwARAQABzShLb25yYWQgRHli
+ Y2lvIDxrb25yYWQuZHliY2lvQGxpbmFyby5vcmc+wsGOBBMBCAA4FiEEU24if9oCL2zdAAQV
+ R4cBcg5dfFgFAmQ5bqwCGwMFCwkIBwIGFQoJCAsCBBYCAwECHgECF4AACgkQR4cBcg5dfFjO
+ BQ//YQV6fkbqQCceYebGg6TiisWCy8LG77zV7DB0VMIWJv7Km7Sz0QQrHQVzhEr3trNenZrf
+ yy+o2tQOF2biICzbLM8oyQPY8B///KJTWI2khoB8IJSJq3kNG68NjPg2vkP6CMltC/X3ohAo
+ xL2UgwN5vj74QnlNneOjc0vGbtA7zURNhTz5P/YuTudCqcAbxJkbqZM4WymjQhe0XgwHLkiH
+ 5LHSZ31MRKp/+4Kqs4DTXMctc7vFhtUdmatAExDKw8oEz5NbskKbW+qHjW1XUcUIrxRr667V
+ GWH6MkVceT9ZBrtLoSzMLYaQXvi3sSAup0qiJiBYszc/VOu3RbIpNLRcXN3KYuxdQAptacTE
+ mA+5+4Y4DfC3rUSun+hWLDeac9z9jjHm5rE998OqZnOU9aztbd6zQG5VL6EKgsVXAZD4D3RP
+ x1NaAjdA3MD06eyvbOWiA5NSzIcC8UIQvgx09xm7dThCuQYJR4Yxjd+9JPJHI6apzNZpDGvQ
+ BBZzvwxV6L1CojUEpnilmMG1ZOTstktWpNzw3G2Gis0XihDUef0MWVsQYJAl0wfiv/0By+XK
+ mm2zRR+l/dnzxnlbgJ5pO0imC2w0TVxLkAp0eo0LHw619finad2u6UPQAkZ4oj++iIGrJkt5
+ Lkn2XgB+IW8ESflz6nDY3b5KQRF8Z6XLP0+IEdLOOARkOW7yEgorBgEEAZdVAQUBAQdAwmUx
+ xrbSCx2ksDxz7rFFGX1KmTkdRtcgC6F3NfuNYkYDAQgHwsF2BBgBCAAgFiEEU24if9oCL2zd
+ AAQVR4cBcg5dfFgFAmQ5bvICGwwACgkQR4cBcg5dfFju1Q//Xta1ShwL0MLSC1KL1lXGXeRM
+ 8arzfyiB5wJ9tb9U/nZvhhdfilEDLe0jKJY0RJErbdRHsalwQCrtq/1ewQpMpsRxXzAjgfRN
+ jc4tgxRWmI+aVTzSRpywNahzZBT695hMz81cVZJoZzaV0KaMTlSnBkrviPz1nIGHYCHJxF9r
+ cIu0GSIyUjZ/7xslxdvjpLth16H27JCWDzDqIQMtg61063gNyEyWgt1qRSaK14JIH/DoYRfn
+ jfFQSC8bffFjat7BQGFz4ZpRavkMUFuDirn5Tf28oc5ebe2cIHp4/kajTx/7JOxWZ80U70mA
+ cBgEeYSrYYnX+UJsSxpzLc/0sT1eRJDEhI4XIQM4ClIzpsCIN5HnVF76UQXh3a9zpwh3dk8i
+ bhN/URmCOTH+LHNJYN/MxY8wuukq877DWB7k86pBs5IDLAXmW8v3gIDWyIcgYqb2v8QO2Mqx
+ YMqL7UZxVLul4/JbllsQB8F/fNI8AfttmAQL9cwo6C8yDTXKdho920W4WUR9k8NT/OBqWSyk
+ bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
+ nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
+ izWDgYvmBE8=
+In-Reply-To: <c186bd2e-a132-fbe6-2212-dcdb93a6c14a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-* Dr. David Alan Gilbert (linux@treblig.org) wrote:
-> * Dr. David Alan Gilbert (dave@treblig.org) wrote:
-> > * linux@treblig.org (linux@treblig.org) wrote:
-> > > From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > > 
-> > > There are some remenants of the pre-devmodel code
-> > > still in the parport drivers; try and clean some of them out.
-> > 
-> > Ping!
+On 24.06.2024 1:21 PM, Naina Mehta wrote:
 > 
-> Ping^2.
-
-Ping^3
-
-(Added Sudip's other email address, and also cc'd linux-hardening)
-
-Dave
-
-> Dave
 > 
-> > Dave
-> > 
-> > > This series should have no visible change, all the drivers
-> > > already use the devmodel, it's just removing the flags
-> > > that say that, and cleaning out no longer used function pointers.
-> > > (To me the most useful bit is removing the no longer used
-> > > 'attach' pointer, so if you've got code that's trying to use
-> > > it you'll get educated).
-> > > 
-> > > Trivially tested in qemu, I can still write to the lp;
-> > > 
-> > > Also checked with grep -r 'struct parport_driver' . -A 9
-> > > to see if I've missed any.
-> > > 
-> > > (I found this while dragging the out-of-tree ppscsi code
-> > > into working on head, so that I could use my prehistoric
-> > > HP PP scanner)
-> > > 
-> > > Dave
-> > > 
-> > > Dr. David Alan Gilbert (3):
-> > >   parport: Remove 'drivers' list
-> > >   parport: Remove attach function pointer
-> > >   parport: Remove parport_driver.devmodel
-> > > 
-> > >  drivers/ata/pata_parport/pata_parport.c  | 1 -
-> > >  drivers/auxdisplay/ks0108.c              | 1 -
-> > >  drivers/auxdisplay/panel.c               | 1 -
-> > >  drivers/char/lp.c                        | 1 -
-> > >  drivers/char/ppdev.c                     | 1 -
-> > >  drivers/i2c/busses/i2c-parport.c         | 1 -
-> > >  drivers/input/joystick/db9.c             | 1 -
-> > >  drivers/input/joystick/gamecon.c         | 1 -
-> > >  drivers/input/joystick/turbografx.c      | 1 -
-> > >  drivers/input/joystick/walkera0701.c     | 1 -
-> > >  drivers/input/serio/parkbd.c             | 1 -
-> > >  drivers/net/hamradio/baycom_epp.c        | 1 -
-> > >  drivers/net/hamradio/baycom_par.c        | 1 -
-> > >  drivers/net/plip/plip.c                  | 1 -
-> > >  drivers/parport/daisy.c                  | 1 -
-> > >  drivers/parport/share.c                  | 9 ---------
-> > >  drivers/pps/clients/pps_parport.c        | 1 -
-> > >  drivers/pps/generators/pps_gen_parport.c | 1 -
-> > >  drivers/scsi/imm.c                       | 1 -
-> > >  drivers/scsi/ppa.c                       | 1 -
-> > >  drivers/spi/spi-butterfly.c              | 1 -
-> > >  drivers/spi/spi-lm70llp.c                | 1 -
-> > >  include/linux/parport.h                  | 6 ------
-> > >  sound/drivers/mts64.c                    | 1 -
-> > >  sound/drivers/portman2x4.c               | 1 -
-> > >  25 files changed, 38 deletions(-)
-> > > 
-> > > -- 
-> > > 2.44.0
-> > > 
-> > -- 
-> >  -----Open up your eyes, open up your mind, open up your code -------   
-> > / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-> > \        dave @ treblig.org |                               | In Hex /
-> >  \ _________________________|_____ http://www.treblig.org   |_______/
-> > 
-> -- 
->  -----Open up your eyes, open up your mind, open up your code -------   
-> / Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-> \        dave @ treblig.org |                               | In Hex /
->  \ _________________________|_____ http://www.treblig.org   |_______/
+> On 6/18/2024 7:08 PM, Konrad Dybcio wrote:
+>>
+>>
+>> On 6/18/24 15:13, Naina Mehta wrote:
+>>> Rename qdss@88800000 memory region as qlink_logging memory region
+>>> and add qdss_mem memory region at address of 0x88500000.
+>>> Split mpss_dsmharq_mem region into 2 separate regions and
+>>> reduce the size of mpssadsp_mem region.
+>>>
+>>> Signed-off-by: Naina Mehta <quic_nainmeht@quicinc.com>
+>>> ---
+>>
+>> Alright, we're getting somewhere. The commit message should however motivate
+>> why such changes are necessary. For all we know, the splitting in two is
+>> currently done for no reason, as qdss_mem and qlink_logging_mem are contiguous
+>> - does the firmware have some expectations about them being separate?
+>>
 > 
--- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+> Since different DSM region size is required for different modem firmware, mpss_dsmharq_mem region being split into 2 separate regions.
+> This would provide the flexibility to remove the region which is
+> not required for a particular platform.
+> qlink_logging is being added at the memory region at the address of
+> 0x88800000 as the region is being used by modem firmware.
+
+Ok, now put that in the commit message :)
+
+And I suppose:
+
+"This would provide the flexibility to remove the region which is not
+required for a particular platform." - but you still pass both to the
+remoteproc in patch 4. Are these regions mutually exclusive?
+
+Konrad
 
