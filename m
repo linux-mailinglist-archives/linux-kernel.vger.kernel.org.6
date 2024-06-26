@@ -1,172 +1,181 @@
-Return-Path: <linux-kernel+bounces-230833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92B8D91828D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:34:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43F8C9182F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:45:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9489BB29953
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:32:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69FC31C22367
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:45:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E601850A6;
-	Wed, 26 Jun 2024 13:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A6E184121;
+	Wed, 26 Jun 2024 13:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rBtLFCCE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="KGNsPbGF"
+Received: from dilbert.mork.no (dilbert.mork.no [65.108.154.246])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCD1D1849CB;
-	Wed, 26 Jun 2024 13:31:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DED41836E8;
+	Wed, 26 Jun 2024 13:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.108.154.246
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719408693; cv=none; b=QFAwSR7Kp7uZ2PBz+gcPg1UQeFfJekdjIlV5dMfxTvZpYZ48lplAohabTSObK3sKFHCNCmA8RGnLCvpaM1Mg7gFvAm4FE7Nyj48TBrUhMRSGixOHUszaKC0fUZWOu7Vt9MAhKRrx1tfdDZE+jjL2XlyPr+4AgGmk2xhSr/rj8Zk=
+	t=1719409507; cv=none; b=r73GdbPJ8a7NeB0u6lorGJpgFDC7KUj4GawldkKwtYuVwcdMZg9HUE97sWFni4liJ9Xh18GMCcbaJ9M7iRdiffd2h8yA7/0Of+bMxn20AVjN9bgzA4JZ8tKWEjhwuiF4Q0qiEamGwRej7T32B3Nd+K44CEtuorTyLSNDGeK9waA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719408693; c=relaxed/simple;
-	bh=giXhCnsVoZ650ze2PoXjlVHEuytwY/dyarTP8oKdqw8=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=cCqTnvLk+L4XVNoWxcy2knCH/9Od+K8sGKSc73nIxGbR8k0Fexbjn1vFIIltbJTlz94mXUfPSyU4TF5/9RYDJWbdqHeay7IYzm/DUCoNG2JWWTCifBRYQOJdw6ax+cOsINoCi0OT4oiE/AkAefCnn74kNUIDs12VP4Bj/f3FZdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rBtLFCCE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D4FEC4AF0C;
-	Wed, 26 Jun 2024 13:31:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719408693;
-	bh=giXhCnsVoZ650ze2PoXjlVHEuytwY/dyarTP8oKdqw8=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=rBtLFCCENjGh8d/4fkdzHlS/cuQEQSszQY0kBwX9o41KBHt7ZINsuho/Hb4MLy2Fz
-	 7w8z7TE7N1GiP9CUJJaahJ6iNvqLz3Fahak+4vZpNlevyM5gZmNpx8lK1ljQHkIpTE
-	 4s56O06lG2Eqz4K2T+f5+CY0QsccbVzSXdjalUe9hMadTzQIO4K0JopK4T3pGD2b5Z
-	 eRcOd4PXfsn8cfrYYnYh6CpXoqFyVTxNwpSyrqD/YTQpTVSy0nvC+4GmNAEVIylwbR
-	 yOZ/8HJWi01moJfFpxatd6Mx7RLJ0yAGpwlKYY1+PzaRSkuBPF5vBizvtTn/NPrVv/
-	 1ktONF4l//XGQ==
-Date: Wed, 26 Jun 2024 07:31:32 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1719409507; c=relaxed/simple;
+	bh=mAVRzzjl2ml2u8Gmy2oB6sT+YlAVVokF49bVXnJUqi8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=BM7ubBFnw09LuLpPygcrYq+feUACOVyq4x0nkLtuXDalbRHcAlerzIjtwHEb5bMmT1diN7ACYxtD9kzC0qhn78yIAIg23tc16VZMNVVs/bBWmPA768e0kGU1WYGm1rDvJBqQwJB9P4LfWYaUqJhJqdKD4SNBWxc2UDnIC+Iz+BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mork.no; spf=pass smtp.mailfrom=miraculix.mork.no; dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b=KGNsPbGF; arc=none smtp.client-ip=65.108.154.246
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mork.no
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=miraculix.mork.no
+Received: from canardo.dyn.mork.no ([IPv6:2a01:799:10da:6900:0:0:0:1])
+	(authenticated bits=0)
+	by dilbert.mork.no (8.17.1.9/8.17.1.9) with ESMTPSA id 45QDWY7F785538
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Wed, 26 Jun 2024 14:32:35 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
+	t=1719408754; bh=kx9LHtWevguXGUlSVbRkqpwgE6B/HVVWlJYSESFJwrA=;
+	h=From:To:Cc:Subject:Date:Message-Id:From;
+	b=KGNsPbGFmIs6ninv526omMMespR1WgnKV4dKhVF8mudTO/qTMeNSTOkahKOcGBVDn
+	 LZSpFZQYYu1i7UyUM8dZCollOTWL2wW5tfyX9WBF/Vsz7jLgGXaM6UVd2jDcDnwfMO
+	 Pm87OB2yUaCO/NMNscGrxG3WrhF0a3OqMrtPUwGg=
+Received: from miraculix.mork.no ([IPv6:2a01:799:964:4b0a:9af7:269:d286:bcf0])
+	(authenticated bits=0)
+	by canardo.dyn.mork.no (8.17.1.9/8.17.1.9) with ESMTPSA id 45QDWYQF3643882
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Wed, 26 Jun 2024 15:32:34 +0200
+Received: (nullmailer pid 2316567 invoked by uid 1000);
+	Wed, 26 Jun 2024 13:32:34 -0000
+From: =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
+To: linux-usb@vger.kernel.org
+Cc: Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>, stable@vger.kernel.org
+Subject: [PATCH] USB: serial: option: add Fibocom FM350-GL
+Date: Wed, 26 Jun 2024 15:32:23 +0200
+Message-Id: <20240626133223.2316555-1-bjorn@mork.no>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
- Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org, 
- quic_vbadigan@quicinc.com, Bjorn Helgaas <bhelgaas@google.com>, 
- linux-pci@vger.kernel.org, 
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
- quic_skananth@quicinc.com, devicetree@vger.kernel.org, 
- Bartosz Golaszewski <brgl@bgdev.pl>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>, quic_nitegupt@quicinc.com, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-In-Reply-To: <20240626-qps615-v1-0-2ade7bd91e02@quicinc.com>
-References: <20240626-qps615-v1-0-2ade7bd91e02@quicinc.com>
-Message-Id: <171940833120.2961439.17567783042891416848.robh@kernel.org>
-Subject: Re: [PATCH RFC 0/7] PCI: enable Power and configure the QPS615
- PCIe switch
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 1.0.3 at canardo
+X-Virus-Status: Clean
 
+FM350-GL is 5G Sub-6 WWAN module which uses M.2 form factor interface.
+It is based on Mediatek's MTK T700 CPU. The module supports PCIe Gen3
+x1 and USB 2.0 and 3.0 interfaces.
 
-On Wed, 26 Jun 2024 18:07:48 +0530, Krishna chaitanya chundru wrote:
-> QPS615 is the PCIe switch which has one upstream and three downstream
-> ports. One of the downstream ports is used as endpoint device of Ethernet
-> MAC. Other two downstream ports are supposed to connect to external
-> device. One Host can connect to QPS615 by upstream port.
-> 
-> QPS615 switch power is controlled by the GPIO's. After powering on
-> the switch will immediately participate in the link training. if the
-> host is also ready by that time PCIe link will established.
-> 
-> The QPS615 needs to configured certain parameters like de-emphasis,
-> disable unused port etc before link is established. These settings
-> vary from platform to platform.
-> 
-> As the controller starts link training before the probe of pwrctl driver,
-> the PCIe link may come up before configuring the switch itself.
-> To avoid this introduce two functions in pci_ops to start_link() &
-> stop_link() which will disable the link training if the PCIe link is
-> not up yet.
-> 
-> Now PCI pwrctl device is the child of the pci-pcie bridge, if we want
-> to enable the suspend resume for pwrctl device there may be issues
-> since pci bridge will try to access some registers in the config which
-> may cause timeouts or Un clocked access as the power can be removed in
-> the suspend of pwrctl driver.
-> 
-> To solve this make PCIe controller as parent to the pci pwr ctrl driver
-> and create devlink between host bridge and pci pwrctl driver so that
-> pci pwrctl driver will go suspend only after all the PCIe devices went
-> to suspend.
-> 
-> In pci pwrctl driver use stop_link() to keep the link in D3cold and
-> start_link() to bring back link to D0.
-> 
-> This series is developed on top the series:
-> https://lore.kernel.org/lkml/20240612082019.19161-1-brgl@bgdev.pl/
-> 
-> we are sending this series to get coments on the usage of stop_link
-> and start_link which is being add in this series.
-> 
-> Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> ---
-> Krishna chaitanya chundru (7):
->       dt: bindings: add qcom,qps615.yaml
->       arm64: dts: qcom: qcs6490-rb3gen2: Add qps615 node
->       pci: Change the parent of the platform devices for child OF nodes
->       pci: Add new start_link() & stop_link function ops
->       pci: dwc: Add support for new pci function op
->       pci: qcom: Add support for start_link() & stop_link()
->       pci: pwrctl: Add power control driver for qps615
-> 
->  .../devicetree/bindings/pci/qcom,qps615.yaml       |  73 ++++++
->  arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts       |  55 ++++
->  drivers/pci/bus.c                                  |   5 +-
->  drivers/pci/controller/dwc/pcie-designware-host.c  |  19 ++
->  drivers/pci/controller/dwc/pcie-qcom.c             | 108 +++++++-
->  drivers/pci/pwrctl/Kconfig                         |   7 +
->  drivers/pci/pwrctl/Makefile                        |   1 +
->  drivers/pci/pwrctl/core.c                          |   7 +-
->  drivers/pci/pwrctl/pci-pwrctl-qps615.c             | 278 +++++++++++++++++++++
->  include/linux/pci.h                                |   2 +
->  10 files changed, 541 insertions(+), 14 deletions(-)
-> ---
-> base-commit: d737627471e5b3962eedae870aa0475d6c9bba18
-> change-id: 20240624-qps615-faa0cc60dc74
-> 
-> Best regards,
-> --
-> Krishna chaitanya chundru <quic_krichai@quicinc.com>
-> 
-> 
-> 
+The manufacturer states that USB is "for debug" but it has been
+confirmed to be fully functional, except for modem-control requests on
+some of the interfaces.
 
+USB device composition is controlled by AT+GTUSBMODE=<mode> command.
+Two values are currently supported for the <mode>:
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+40: RNDIS+AT+AP(GNSS)+META+DEBUG+NPT+ADB
+41: RNDIS+AT+AP(GNSS)+META+DEBUG+NPT+ADB+AP(LOG)+AP(META)(default value)
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Mode 40 corresponds to:
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+T:  Bus=03 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#= 22 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0e8d ProdID=7126 Rev= 0.01
+S:  Manufacturer=Fibocom Wireless Inc.
+S:  Product=FM350-GL
+C:* #Ifs= 8 Cfg#= 1 Atr=a0 MxPwr=500mA
+A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=03
+I:* If#= 0 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=02 Prot=ff Driver=rndis_host
+E:  Ad=82(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 7 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-  pip3 install dtschema --upgrade
+Mode 41 corresponds to:
 
+T:  Bus=03 Lev=02 Prnt=02 Port=00 Cnt=01 Dev#=  7 Spd=480  MxCh= 0
+D:  Ver= 2.10 Cls=ef(misc ) Sub=02 Prot=01 MxPS=64 #Cfgs=  1
+P:  Vendor=0e8d ProdID=7127 Rev= 0.01
+S:  Manufacturer=Fibocom Wireless Inc.
+S:  Product=FM350-GL
+C:* #Ifs=10 Cfg#= 1 Atr=a0 MxPwr=500mA
+A:  FirstIf#= 0 IfCount= 2 Cls=e0(wlcon) Sub=01 Prot=03
+I:* If#= 0 Alt= 0 #EPs= 1 Cls=02(comm.) Sub=02 Prot=ff Driver=rndis_host
+E:  Ad=82(I) Atr=03(Int.) MxPS=  64 Ivl=125us
+I:* If#= 1 Alt= 0 #EPs= 2 Cls=0a(data ) Sub=00 Prot=00 Driver=rndis_host
+E:  Ad=81(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=01(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 2 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=83(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=02(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 3 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=84(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=03(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 4 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=85(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=04(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 5 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=42 Prot=01 Driver=(none)
+E:  Ad=86(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=05(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 6 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=87(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=06(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 7 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=88(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=07(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 8 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=89(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=08(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+I:* If#= 9 Alt= 0 #EPs= 2 Cls=ff(vend.) Sub=00 Prot=00 Driver=option
+E:  Ad=8a(I) Atr=02(Bulk) MxPS= 512 Ivl=0ms
+E:  Ad=09(O) Atr=02(Bulk) MxPS= 512 Ivl=0ms
 
-New warnings running 'make CHECK_DTBS=y qcom/qcs6490-rb3gen2.dtb' for 20240626-qps615-v1-0-2ade7bd91e02@quicinc.com:
+Cc: stable@vger.kernel.org
+Signed-off-by: Bjørn Mork <bjorn@mork.no>
+---
+ drivers/usb/serial/option.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts:562.12-567.5: Warning (pci_device_reg): /soc@0/pcie@1c08000/pcie@0/qps615@0: PCI unit address format error, expected "2,0"
-arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts:560.3-27: Warning (pci_device_bus_num): /soc@0/pcie@1c08000/pcie@0/qps615@0:bus-range: PCI bus number 0 out of range, expected (1 - 255)
-arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dtb: rsc@18200000: 'qps615-0p9-vreg', 'qps615-1p8-vreg', 'qps615-rsex-vreg' do not match any of the regexes: '^regulators(-[0-9])?$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-
-
-
-
+diff --git a/drivers/usb/serial/option.c b/drivers/usb/serial/option.c
+index 8a5846d4adf6..599439bddfb7 100644
+--- a/drivers/usb/serial/option.c
++++ b/drivers/usb/serial/option.c
+@@ -2224,6 +2224,10 @@ static const struct usb_device_id option_ids[] = {
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, MEDIATEK_PRODUCT_7106_2COM, 0x02, 0x02, 0x01) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, MEDIATEK_PRODUCT_DC_4COM2, 0xff, 0x02, 0x01) },
+ 	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, MEDIATEK_PRODUCT_DC_4COM2, 0xff, 0x00, 0x00) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7126, 0xff, 0x00, 0x00),
++	  .driver_info = NCTRL(2) },
++	{ USB_DEVICE_AND_INTERFACE_INFO(MEDIATEK_VENDOR_ID, 0x7127, 0xff, 0x00, 0x00),
++	  .driver_info = NCTRL(2) | NCTRL(3) | NCTRL(4) },
+ 	{ USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MEN200) },
+ 	{ USB_DEVICE(CELLIENT_VENDOR_ID, CELLIENT_PRODUCT_MPL200),
+ 	  .driver_info = RSVD(1) | RSVD(4) },
+-- 
+2.39.2
 
 
