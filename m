@@ -1,123 +1,102 @@
-Return-Path: <linux-kernel+bounces-230083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12FBB917828
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:30:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4830991782B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:31:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43E401C21D91
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1F001F22877
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 411A0148FF3;
-	Wed, 26 Jun 2024 05:30:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0006C14534D;
+	Wed, 26 Jun 2024 05:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IPuQ8RLG"
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com [209.85.167.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="V6EVfghT"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 380D4143882;
-	Wed, 26 Jun 2024 05:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765C12F5E;
+	Wed, 26 Jun 2024 05:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719379820; cv=none; b=p7lHDsKU+iaOTbMCJzMmdZURrbGoOu5ihKLVuqu3/atzOqV4cYrrKptwIkJB3ipjOsw8WSjKDfx7nNpdEyDP4GmJNSDqJ5LQ6nOhZsC+tqI/QoO4kpt1nW/VwzqofnDHeMpjSJqH5MAeQwlCVfmTR5tMRnElNwKFvsolSFd1sGI=
+	t=1719379871; cv=none; b=KzBTW5PZaVLQWse2H4xpdngJ0Q2gv8ZKq3blYigaTJNy4IIoQhgK/HPzCkmc6CGpaQ+V+aHN7X2CTFLbIBr307qDWciMtHTHmtrMNpuBZybIVQE08fN1VoECbco7cBR6NPa24Y/44S27WY3k5WrD2pl+5F+zTKnGE6q4Qyj9Lrw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719379820; c=relaxed/simple;
-	bh=pyTNIJ/mfCiFyk/9v2xchwhFP5IkP0waEl+KVnxzSa8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JRLLYae1Prvfd/+bbt4Yx+e4hwyT3Il4fT8VpbiEfFlEzzYVcognWXXvQv8c6qpynxBU4G1SOW5lPt6WjQAQ6NSxQbh4W4urBMo4keq/A4PDGRjlfiD3FbnKmJka/XojJGicyapB+eii9f1v1uEvf2oCCaND6JUDbZJwVK4BYt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IPuQ8RLG; arc=none smtp.client-ip=209.85.167.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f173.google.com with SMTP id 5614622812f47-3c9c36db8eeso3276516b6e.0;
-        Tue, 25 Jun 2024 22:30:18 -0700 (PDT)
+	s=arc-20240116; t=1719379871; c=relaxed/simple;
+	bh=NIIeRlWHaxb09V9dg0z4qNkA9Cj1y8ioeds9a+gbdOY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QFghx+3a//apixCgkZo0hd4Z876VQUHFa3Wz+GhgtQuJBQnKultMKFjOd7zcmz/iTiF3O9OWo27AucUOyLgoHQFYQnB6h9Vt88AZ0EsAsliyJvHGYkRaAPjBZ5FZEtfG7YRK1C6e0P6a/9tT2+1GFJgBQ6mVBC1vfn3qqZZSjG8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=V6EVfghT; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 11F26200EE;
+	Wed, 26 Jun 2024 13:31:04 +0800 (AWST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719379818; x=1719984618; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FXS4AAOZJR0UaGbdrhIdaIzZL1JDPw0J2iPwwadrXKo=;
-        b=IPuQ8RLGwiGVysV5t7o8tKeyJBdchGlnRndJFOX9JBn0+/UzljcZIGiNklGNo9Ii0l
-         n1vgqjox1k9wQSKOqIYa28OGKdWcMHGts9dzxQVIvcKiR02tKfSwKFrcJpfaAKKRog07
-         reA414WabVtUTsOnnFxMpbTm1npjmTyRvh4WfsE5b2fTl0GIADXTKJOvN3kAsoHF12UD
-         hhXFdognEfLDAGwVATZK0BMG4hDaiZm3xJKlf5KjuedwuAmYq+76JML+L3aWZPstZp2c
-         yhGYsgW2iYJ6dFclz2OFliy2fBTnQMVcxEDtVOl8e7FasiJQu5F8wmE9O8+P1ISIgrUT
-         qTfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719379818; x=1719984618;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FXS4AAOZJR0UaGbdrhIdaIzZL1JDPw0J2iPwwadrXKo=;
-        b=o6mRpj8C06slTH0p68cxf+RIzqkC5lrfwryCMpQm7gb1SDKqHhrIi7rOrBeFPhGz3l
-         t8iqNqxHQ9JJYhgvSzmxz26Buv6zA+jsyPuGEm7D8CVTh+tOPqTdbi+odpiJub81g0z7
-         hANeRyD93banzNmasiF6iegHwj5E6iqqfue9Tee++SYISuwGwe7YAZanptugbNWJCtXJ
-         akeATHdUuJHjxBHZXa2i6NqfkN0w4VMrYCqwAVq2aTAmRd5mRIpr3TDWN7OHSEZ+lw3B
-         9DSEHEn+IDjE2TJ9dqzZqA1NRYtzM7EEl0tA/fjN6s1eB7bhQz5z0Ev284HCyEc89IKd
-         h20g==
-X-Forwarded-Encrypted: i=1; AJvYcCWqv/+k5NqISIQIY/+11QQuHCE4cZqOruWnHFZpHcqHZZYQGZjqYalCRAQXHNXs8nM2XVuD0NhJARwThNJDrJHcbiBcsLQCIng70pj8cV8C0ZETolq+Z2He6bM7nxL9tY4tvmpSFA==
-X-Gm-Message-State: AOJu0YxEXDviWPfFhpAs7Sx3lFQupxZgwX/RFvLJSFuQ3APx0r+l1ISw
-	jm0+GAYBFcRbwvJ9zgCsKCRvQ3TaTB+J2ZoAFaJHe9nw1oizjBvibD8Slw==
-X-Google-Smtp-Source: AGHT+IF2iZNXFdcMiu4tlPNcyAV5+W33UIG2SffQvkLk1L62EqF/fM2Z2RIwnkLgqahPRwiqq+Lpqw==
-X-Received: by 2002:a05:6870:46a1:b0:258:359f:6a95 with SMTP id 586e51a60fabf-25d06e28f37mr11132845fac.38.1719379817949;
-        Tue, 25 Jun 2024 22:30:17 -0700 (PDT)
-Received: from rigel.home.arpa ([118.209.204.19])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70661b9f2f6sm7804000b3a.187.2024.06.25.22.30.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 22:30:17 -0700 (PDT)
-From: Kent Gibson <warthog618@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	brgl@bgdev.pl,
-	linus.walleij@linaro.org
-Cc: Kent Gibson <warthog618@gmail.com>,
-	corbet@lwn.net,
-	linux-doc@vger.kernel.org
-Subject: [PATCH 4/4] Documentation: gpio: Reconfiguration with unset direction (uAPI v2)
-Date: Wed, 26 Jun 2024 13:29:25 +0800
-Message-Id: <20240626052925.174272-5-warthog618@gmail.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240626052925.174272-1-warthog618@gmail.com>
-References: <20240626052925.174272-1-warthog618@gmail.com>
+	d=codeconstruct.com.au; s=2022a; t=1719379865;
+	bh=NIIeRlWHaxb09V9dg0z4qNkA9Cj1y8ioeds9a+gbdOY=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=V6EVfghTHDYqGTpn9rV2DeCzb7jid9YDiNqslxOtmFb334Bf6lz+HvLz2UaW7xErs
+	 0w42Zuj8mtkbxxO988asuqmkpQV5K1KeEqjAAvuTVljsNY75yPZ100zG4KCcGls2p/
+	 pq7DTjetBT8h8F4BvKX88G6LlSofEFbDYeGVSS+bT124fFkednk7Oe/XgW+JJsLzUr
+	 T+AYOHo4fmXl6GFZXHHqqTw85xOE0UmTUN+wo9apNsneiOjA9kFrnS0nstNmMUa1hR
+	 x/gGi5BAC6Lxbsefro46+tqQT3xO23L9q7gKjqcJ+BtMIVD+cRwx4CCB0bbzmQeqdf
+	 /4ANhcRlmcPuA==
+Message-ID: <e28ba03d1df1c0c5aec987411c40e44fc351ce0d.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 1/2] dt-bindings: i3c: dw: Add property to select IBI ops
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Aniket <aniketmaurya@google.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Joel Stanley <joel@jms.id.au>, Billy Tsai
+ <billy_tsai@aspeedtech.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Date: Wed, 26 Jun 2024 13:31:03 +0800
+In-Reply-To: <20240626052238.1577580-2-aniketmaurya@google.com>
+References: <20240626052238.1577580-1-aniketmaurya@google.com>
+	 <20240626052238.1577580-2-aniketmaurya@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Update description of reconfiguration rules, adding requirement that a
-direction flag be set to enable changing configuration for a line.
+Hi Aniket,
 
-Signed-off-by: Kent Gibson <warthog618@gmail.com>
----
- .../userspace-api/gpio/gpio-v2-line-set-config-ioctl.rst   | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+> Use this property to select IBI related ops in the base platform
+> driver. Otherwise the driver defaults to return EINVAL for any IBI
+> requests.
 
-diff --git a/Documentation/userspace-api/gpio/gpio-v2-line-set-config-ioctl.rst b/Documentation/userspace-api/gpio/gpio-v2-line-set-config-ioctl.rst
-index 9b942a8a53ca..cfaab801556c 100644
---- a/Documentation/userspace-api/gpio/gpio-v2-line-set-config-ioctl.rst
-+++ b/Documentation/userspace-api/gpio/gpio-v2-line-set-config-ioctl.rst
-@@ -35,11 +35,14 @@ Description
- Update the configuration of previously requested lines, without releasing the
- line or introducing potential glitches.
- 
--The new configuration must specify the configuration of all requested lines.
-+The new configuration must specify a configuration for all requested lines.
- 
- The same :ref:`gpio-v2-get-line-config-rules` and
- :ref:`gpio-v2-get-line-config-support` that apply when requesting the lines
--also apply when updating the line configuration.
-+also apply when updating the line configuration, with the additional
-+restriction that a direction flag must be set to enable reconfiguration.
-+If no direction flag is set in the configuration for a given line then the
-+configuration for that line is left unchanged.
- 
- The motivating use case for this command is changing direction of
- bi-directional lines between input and output, but it may also be used to
--- 
-2.39.2
+[...]
 
+> --- a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
+> +++ b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.yaml
+> @@ -25,6 +25,10 @@ properties:
+> =C2=A0=C2=A0 interrupts:
+> =C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 1
+> =C2=A0
+> +=C2=A0 ibi-capable:
+> +=C2=A0=C2=A0=C2=A0 description: Set to select IBI ops.
+> +=C2=A0=C2=A0=C2=A0 type: boolean
+> +
+
+Wouldn't the compatible string select whether the hardware instance
+supports IBI or not?
+
+I'd imagine that each specific synthesis of the DW IP would imply
+corresponding hardware settings, and so would warrant its own compatible
+value.
+
+Maybe one for the DT folks: would this work better as individual
+properties? Is there a policy here?
+
+Cheers,
+
+
+Jeremy
 
