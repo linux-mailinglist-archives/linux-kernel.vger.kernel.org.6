@@ -1,121 +1,116 @@
-Return-Path: <linux-kernel+bounces-231215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 561949187C2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:45:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA0889187C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:45:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D1411F2418C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:45:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6431E28B99F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED47A18FDC8;
-	Wed, 26 Jun 2024 16:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D28618FC9F;
+	Wed, 26 Jun 2024 16:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jDlnClEO"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="R4hoGwXy"
+Received: from mail-vs1-f45.google.com (mail-vs1-f45.google.com [209.85.217.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D963018FC6C;
-	Wed, 26 Jun 2024 16:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2624818FC94
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719420264; cv=none; b=j0aep3E2oT7c4hcQfUv5J186EZfZpNSaX+eYFmx9zNLm2sg2WlcZxlMNP1VNmp4UNCgSoUBkGbler3WXkV1dlrg2ht9vn0UkLrb3xmA7MYs9eKZUs4g0tvU8xpNuz6ZmKlKh7KdTvCE2ckJh3yOw08CBOhydPS1jVzbyoSH/9pE=
+	t=1719420312; cv=none; b=P4DC4SvADNqb+d21kBbc6NBOukrgVGyNFLryAxdZeWn0Xvl/HpkuwftkSNAsou+7Vm20kkSuS+moXpmaipPNkkJxQPltap6poI+rhyK0Qe5P910UN2uOIC1B/SU6CNUOeUbXxZKY3XOSrnIq4SPMGCaqS6ETREf04/MSx3SH48Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719420264; c=relaxed/simple;
-	bh=At/qzozbLfAvFw7+L0WhPfrEf4RSfQ2LAtdp3gpHQ6Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZS2bdSAn8HBzR+VM3aRpWH1yFonvfBi0mA8IkllgRYE9FAuj/gWF4mKRNcjJZTBpqEAC/A1UWdqZ2qBJLjPat94zRoofW4S1ANdqXjTI3DoqPb5l+CpIEJK72PNm/QQUQxDqeeEjYR0YQQG2FowKOybfLXTZMaw4LqdcoXk/+K4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jDlnClEO; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfSw6029244;
-	Wed, 26 Jun 2024 16:44:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	5/6C5SdG8OI18Y+HiCARcvjCdehBUsFZqN0lGsXWb/c=; b=jDlnClEOY+mpkt8M
-	cjbMckXocnvCe4AWgsGChJbnTE6P1zLzYXo/JzQIVIDL2et/mctBCM/k7V0nUtgF
-	vpnext7yh1kHOwPWc1iRvDEE0080KTxZ6Wiw5PrxrsuBKtKy+SAwqnxkt0azv8Hw
-	xDw1x7ytYq7Jsa6kwjcA8R6n4v0ZUvRrFdWuZRP5/j/IlSiBorIxRw5gdLVQ2dx/
-	Y6/tjL4yLnvo4Djsoo4eSn5EFk+xuGbEmTn8OlVz7lEk3EzQpxo5KpON/Im7F7Io
-	DDw2xi1xr+feYsm2UNq3c53BZiI7kXUelP1wM1zB8cBFraO0ypqyEpLiJQPdF/9s
-	tqAjug==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnm6su9n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:44:19 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QGiI46015849
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:44:18 GMT
-Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 09:44:17 -0700
-Message-ID: <3306a32f-3f15-40d8-8789-c1ae101d594c@quicinc.com>
-Date: Wed, 26 Jun 2024 09:44:16 -0700
+	s=arc-20240116; t=1719420312; c=relaxed/simple;
+	bh=/XTlK8CNVzTiVxxB1xDjgvENhRkAWNqgof0AvwLMnTA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=f/k+89s0oEQhkAYagh3gHolNQmiiuUeiPJMuqy1pdypKUskYdNMEIlO4C6uP8GrFDAGXCnrvc0i0+jGk5hRdTyj2BOiv6FabKgk4ncze3MlvkLBWZKJ609kn8JU/Ma7JyMEg6fpX6/njUYkTj8uF+K0fSvP23Srm/wrZu+eks8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=R4hoGwXy; arc=none smtp.client-ip=209.85.217.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vs1-f45.google.com with SMTP id ada2fe7eead31-48f463dbbd2so1698592137.1
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:45:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719420309; x=1720025109; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=AkHDlUR7ZAep2s6CTxvJnI8Ne4BYMt6q67j2gv0FYCk=;
+        b=R4hoGwXyGB4S5wLzn0sAbeo3I4uUd2z0CegGtQ1hEAEiHTZVJKzWu0iNmkMiJTICNR
+         lKRlmQetAi6yPzob6hqgUi2Sw3zmmAilq+Lwg+MQ74BxjjpsG+4S0lwfCr/u16KH9vBX
+         UJjvR8PuM2Zj5MHAK8cJjDP7D/cInWQPronpnIITR/1ItxThwR9cXBbzmmf3eoUxiRWR
+         S6PFPPSBy4l5Pn4n9ymxkg34g1tSMNv1AtQnmtr3JaX06MrxiTN+9/SVmCB8hWyvkrvP
+         TbCiqFaKmbge/3LiXdFv4FlfVBPoMEXQZOFArMp+1EVVX08dqMXmL8OiZ1jUT2KiSs6G
+         XXug==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719420309; x=1720025109;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AkHDlUR7ZAep2s6CTxvJnI8Ne4BYMt6q67j2gv0FYCk=;
+        b=EKd3/pcBBDMxEPnEhbiIeM7yb8+2Du29POnJhUxIjsUwe6CpMv2/UUZyk3SY57dU7J
+         YFebFAQZXV1In6Iwr3aC6LP/3aPc2qGwpaUWNtYn8CHWOHKHov0x34pdOweMsInoCLn+
+         EIEGxlyv3kONYkGL3CXgme4hU7orqrHPPYp1FA4y553B1PCKA9F6GqE+7P2NurI1iLmN
+         iLfGdCDHpTH0mRNuKWg5R8l6GgU8XSaUyCf+ROc1BFnkl3yYlMjQW+bHsio6fs0q8qe3
+         kKsyrij+vKUV1ygHKIdGMnZnZhJvEqvhfHI/izOyhjUHYiYIEIwO9hxzbIk5wIRINkhX
+         1ENA==
+X-Gm-Message-State: AOJu0Yx92iEUc1ScQxwUB0X3q6l4wjXcbbSQsmdNCjo1HJVQ8h1epFzK
+	CAvf6GBoRAHhMmdctRfRMOgNA6lJpLbo3FZDXROsnn3i1fkCj3KmD4RgT0LhcCTTOaDH6JhKvrT
+	nwVDB+nCCad7hC2dpvqsmkp2/0dWv+8NBAF+iZkhJte22im8D77sZ7A==
+X-Google-Smtp-Source: AGHT+IERDTeo9SUWlwbISbmX+LCiLsiuQ1dzl43YSoAXQ8Dz2vixJVMLChWoKkQj5/ZsdWmFforvxh7nXH2rV/z1Zg4=
+X-Received: by 2002:ac5:cb4c:0:b0:4ef:668f:2438 with SMTP id
+ 71dfb90a1353d-4ef668f245fmr8617396e0c.0.1719420308489; Wed, 26 Jun 2024
+ 09:45:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] USB: serial: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>
-CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240611-md-drivers-usb-serial-v1-1-c6ada535890a@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240611-md-drivers-usb-serial-v1-1-c6ada535890a@quicinc.com>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 26 Jun 2024 22:14:56 +0530
+Message-ID: <CA+G9fYv-rWNXZ9JxA19qSP0r+jhPDaMJejKbckN72kT1UpQ3QA@mail.gmail.com>
+Subject: mm: huge_memory.c:2736:31: error: variable 'page' is uninitialized
+ when used here [-Werror,-Wuninitialized]
+To: open list <linux-kernel@vger.kernel.org>, linux-mm <linux-mm@kvack.org>, 
+	lkft-triage@lists.linaro.org, clang-built-linux <llvm@lists.linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Lance Yang <ioworker0@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 19t7o3sv68TS96iTKNO1gg5WuerclBd7
-X-Proofpoint-ORIG-GUID: 19t7o3sv68TS96iTKNO1gg5WuerclBd7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=698 lowpriorityscore=0
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406260122
 
-On 6/11/2024 10:52 AM, Jeff Johnson wrote:
-> With ARCH=x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/ch341.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb_debug.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/mxuport.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/navman.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/qcaux.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/usb-serial-simple.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/usb/serial/symbolserial.o
-> 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/usb/serial/ch341.c             | 1 +
->  drivers/usb/serial/mxuport.c           | 1 +
->  drivers/usb/serial/navman.c            | 1 +
->  drivers/usb/serial/qcaux.c             | 1 +
->  drivers/usb/serial/symbolserial.c      | 1 +
->  drivers/usb/serial/usb-serial-simple.c | 1 +
->  drivers/usb/serial/usb_debug.c         | 1 +
->  7 files changed, 7 insertions(+)
+The x86_64 clang builds failed on Linux next due to these warnings / errors.
 
-Following up to see if anything else is needed from me. Hoping to see this in
-linux-next so I can remove it from my tracking spreadsheet :)
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-/jeff
+Build error:
+------
+mm/huge_memory.c:2736:31: error: variable 'page' is uninitialized when
+used here [-Werror,-Wuninitialized]
+ 2736 |         folio_remove_rmap_pmd(folio, page, vma);
+      |                                      ^~~~
+/builds/linux/mm/huge_memory.c:2700:19: note: initialize the variable
+'page' to silence this warning
+ 2700 |         struct page *page;
+      |                          ^
+      |                           = NULL
+1 error generated.
+
+patch that is causing this build failures,
+  mm/vmscan: avoid split lazyfree THP during shrink_folio_list()
+
+metadata:
+
+--
+  git_describe: next-20240625
+  git_repo: https://gitlab.com/Linaro/lkft/mirrors/next/linux-next
+  git_short_log: 0fc4bfab2cd4 ("Add linux-next specific files for 20240625")
+  arch: x86_64
+  toolchain: clang-18
+
+Links:
+ - https://storage.tuxsuite.com/public/linaro/lkft/builds/2iNfPlsMdxsqZTOC14r1xZZxq8X/
+ - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20240625/testrun/24448204/suite/build/test/clang-18-lkftconfig/details/
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
