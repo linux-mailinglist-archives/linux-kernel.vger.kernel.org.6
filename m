@@ -1,119 +1,166 @@
-Return-Path: <linux-kernel+bounces-231374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D954919534
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:05:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CCD89919556
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D4D41C220F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:05:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A051C2165D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB22190491;
-	Wed, 26 Jun 2024 19:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33ED190494;
+	Wed, 26 Jun 2024 19:05:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UfBtbXZr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0Wux6xPA";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bWSUS9H8"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDBB14F134;
-	Wed, 26 Jun 2024 19:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BD21509B8;
+	Wed, 26 Jun 2024 19:05:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719428704; cv=none; b=hQPmi8XAL0vhQfpp0H+K2rv3iZwI9QuPgV1JTt0APQJhvWi5TEqkKH2TjCtem4b8+7cAY3GgI8XL0vybXU2Unm66yOZ2WEiz6juSJUJ8jeCF+lQTRNjhBkopTCnnLvpzJeGEdhti+TV5E5oYFUQHXueFyCaJOvI0k5CATkcTih0=
+	t=1719428716; cv=none; b=Jbmspg+2uL097ZUfxpvaUedoVIt18lJdQLUrlQfNQCwjF6fmBlZ/zSRpeBTXBiitIAD3XWiODA0AeJ3SrsD+ES3cVC3R8u3HzDclBCC6A1JHXZiA3u83LRrQwMUU08GnUnfNWyawAoVJHSLZSY3gMEREQOmp+A15eyeTlJ50Gbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719428704; c=relaxed/simple;
-	bh=bWzjNCjmmPmpw45GxfdFgpAMeYdRjrSECxcv1hgHaOE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ahi46QCHkqxkPmGAPBygyh218sBgspukZLPzyLPiaY1oLav3GjqO5aBASHWMJCMy03YaVsZQkZKTcsvMMW4k+ytLubqoKg/I1IB6+wcGULmx+uA5nhLX9ZP3ttNBQNfd10R+2tcoAh2VQKXHF9r5uy/nsjTc7a1L/szzkxUaoj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UfBtbXZr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD2BCC116B1;
-	Wed, 26 Jun 2024 19:05:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719428704;
-	bh=bWzjNCjmmPmpw45GxfdFgpAMeYdRjrSECxcv1hgHaOE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UfBtbXZrz6Gu+dElulr03dTkrIGgI3XSAFojGeEH/hCrFwKACQNZ7qeE3DkNmWx5g
-	 9pHqV49MzXV4k7+YR84FGaeBFzNoLtf1xyqL/udqkJHDAiz0iy5hlkoPWrjsE7XiSt
-	 8EJL+7VyyC1UZlMnIogwOKKjAwhl4KHA9Zu0re9mYnBLM5thrREXsZRNKmVzkFQpzt
-	 uLdi8ZSB7nKIp/ikdYH7uurEdnfxYuSWjbqiv3t18YJ3XMk17hbcEBmFSAshnJGCx0
-	 B9T7cq8bE92JbMWcebFSX0UdvjiBWqr31ZwDBwcCjFMPvL0Yq4SEwc2b0762O4/M7c
-	 Qpt6lwm0YalmA==
-Date: Wed, 26 Jun 2024 20:04:58 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Matteo Martelli <matteomartelli3@gmail.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Marcus Cooper <codekipper@gmail.com>,
-	=?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
-	linux-sound@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] ASoC: sunxi: sun4i-i2s: fix LRCLK polarity in i2s
- mode
-Message-ID: <d614f04e-3609-48e3-bd30-9e57c69cd94d@sirena.org.uk>
-References: <20240529140658.180966-2-matteomartelli3@gmail.com>
- <20240529140658.180966-3-matteomartelli3@gmail.com>
- <20240606-savvy-wallaby-of-champagne-d4a50e@houat>
- <6662bf1b61bbc_2f51737023@njaxe.notmuch>
+	s=arc-20240116; t=1719428716; c=relaxed/simple;
+	bh=iEky2eVs/O3glvmfOmDCeeC/kYZsH9u9lidZrYV2hRs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=swqQwvwb4JA8hSPEoNIPRl8qKbNIWNU2Ys8t6x8ubq2NFSGM5o2KbNoSy2KifnHrwnCAA1mqW3Kv9dOqlcfAUbxy25V7G3ynGidgV8JDnGhJsiSf6X/OTh4op5zE83ScCCOxZWFL5Wh431PIP3RpsTpIrBzJpp3azL916udMjvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0Wux6xPA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bWSUS9H8; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1719428713;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EoN4fj2HCZ+g0Mng6LNWulvp3O8suPrcrYKI0Bnjr5Y=;
+	b=0Wux6xPAFVgp7+gpVoEV8EIVMylNp1e/HDRVtFWKeyZZ1iin6uwo70xKF5Njh/koKi2T06
+	GcjuP4tDa6nmJkaLKHy07rfKmQYIiLJrhdH4uSz2WH10rXQdq8TiIRX7M7ntjPdDmuwvEx
+	nmfllDzP0INE9phqmqDtzS2Qflq7Rfma6ejDGzM6CtcUQ/uHi4fl768/tG14ELxchFlbeR
+	WSE4b7z4zwcMIB+rDX1PFZIZBNAySXrhpwG+RQ8M0wDieBnZSF7S0h0jo+e4L8w0D+47ws
+	0zroKJ6A2G4iRbKJgKptNuGtIsWefoZDV1JMoYIFq6ignSFpodBbKSBg0Tn5Pg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1719428713;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EoN4fj2HCZ+g0Mng6LNWulvp3O8suPrcrYKI0Bnjr5Y=;
+	b=bWSUS9H8o0a07mxYPBKc/FjUD9MH5DYeGUJulQv2c3b+enEWz6WaNl6SjMwrResG6vl8Yf
+	NY9Q5wStjlTqSfDQ==
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+ maz@kernel.org, anna-maria@linutronix.de, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, festevam@gmail.com, bhelgaas@google.com,
+ rdunlap@infradead.org, vidyas@nvidia.com, ilpo.jarvinen@linux.intel.com,
+ apatel@ventanamicro.com, kevin.tian@intel.com, nipun.gupta@amd.com,
+ den@valinux.co.jp, andrew@lunn.ch, gregory.clement@bootlin.com,
+ sebastian.hesselbarth@gmail.com, gregkh@linuxfoundation.org,
+ rafael@kernel.org, alex.williamson@redhat.com, will@kernel.org,
+ lorenzo.pieralisi@arm.com, jgg@mellanox.com, ammarfaizi2@gnuweeb.org,
+ robin.murphy@arm.com, lpieralisi@kernel.org, nm@ti.com, kristo@kernel.org,
+ vkoul@kernel.org, okaya@kernel.org, agross@kernel.org,
+ andersson@kernel.org, mark.rutland@arm.com,
+ shameerali.kolothum.thodi@huawei.com, yuzenghui@huawei.com,
+ shivamurthy.shastri@linutronix.de
+Subject: [patch V4-1 01/21] PCI/MSI: Provide MSI_FLAG_PCI_MSI_MASK_PARENT
+In-Reply-To: <20240623142234.778182630@linutronix.de>
+References: <20240623142137.448898081@linutronix.de>
+ <20240623142234.778182630@linutronix.de>
+Date: Wed, 26 Jun 2024 21:05:12 +0200
+Message-ID: <87ed8j34pj.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="brRwIUwfo+xty56n"
-Content-Disposition: inline
-In-Reply-To: <6662bf1b61bbc_2f51737023@njaxe.notmuch>
-X-Cookie: Results vary by individual.
+Content-Type: text/plain
 
+From: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
 
---brRwIUwfo+xty56n
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Most ARM(64) PCI/MSI domains mask and unmask in the parent domain after or
+before the PCI mask/unmask operation takes place. So there are more than a
+dozen of the same wrapper implementation all over the place.
 
-On Fri, Jun 07, 2024 at 10:04:43AM +0200, Matteo Martelli wrote:
-> Maxime Ripard wrote:
-> > > -	/*
-> > > -	 * DAI clock polarity
-> > > -	 *
-> > > -	 * The setup for LRCK contradicts the datasheet, but under a
-> > > -	 * scope it's clear that the LRCK polarity is reversed
-> > > -	 * compared to the expected polarity on the bus.
-> > > -	 */
-> >=20
-> > I think we should keep that comment somewhere.
->=20
-> I think that keeping that comment would be very misleading since the LRCLK
-> setup would not contradict the datasheet anymore [1][2].
->=20
-> Also, do you recall any details about the mentioned scope test setup? Was=
- i2s
-> mode tested in that occasion? It would help clarify the situation.
->=20
-> Could anyone verify this patch against H3/H6 SoCs?
+Don't make the same mistake with the new per device PCI/MSI domains and
+provide a new MSI feature flag, which lets the domain implementation
+enable this sequence in the PCI/MSI code.
 
-Any news on any of this?
+Signed-off-by: Shivamurthy Shastri <shivamurthy.shastri@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+---
+v4-1: Remove MSI_FLAG_PCI_MSI_MASK_PARENT from the defaults - Rob
+v3: new patch to replace the global static key - Marc Zyngier
+---
+ drivers/pci/msi/irqdomain.c |   20 ++++++++++++++++++++
+ include/linux/msi.h         |    2 ++
+ 2 files changed, 22 insertions(+)
 
---brRwIUwfo+xty56n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ8ZloACgkQJNaLcl1U
-h9AW3Qf/S8w6LdQE07HH9i/c1/AtUnm7Oe9sG1q6TztFJXGX8wvFBYA3+t1896Hd
-LkFkm9asqUvCjn9z+D5/GfQhfc7xixh5T806AuouKiiihsAmWqyc6NicztYHgC2u
-1PzTWb49EyFiW74xItn2pIExpzeBAaE8SA1Y7cRPoNmE95ru82zu4K+kROV2usut
-XkX/NnybgjzIZ2WAwyyGuu0+pIBs539YXSdB/s2OUBrmn7gKjOBaD8cvX70NMP0Y
-iP23wh1FaDV7JE1Gm27DX5E0u8ibDRL2cjmSP2x7NswG0B7rCv3gtRe0Z0NozuTJ
-3zfr6um33uVy8saT12jEtBW4oPeIww==
-=J+fn
------END PGP SIGNATURE-----
-
---brRwIUwfo+xty56n--
+--- a/drivers/pci/msi/irqdomain.c
++++ b/drivers/pci/msi/irqdomain.c
+@@ -148,17 +148,35 @@ static void pci_device_domain_set_desc(m
+ 	arg->hwirq = desc->msi_index;
+ }
+ 
++static __always_inline void cond_mask_parent(struct irq_data *data)
++{
++	struct msi_domain_info *info = data->domain->host_data;
++
++	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
++		irq_chip_mask_parent(data);
++}
++
++static __always_inline void cond_unmask_parent(struct irq_data *data)
++{
++	struct msi_domain_info *info = data->domain->host_data;
++
++	if (unlikely(info->flags & MSI_FLAG_PCI_MSI_MASK_PARENT))
++		irq_chip_unmask_parent(data);
++}
++
+ static void pci_irq_mask_msi(struct irq_data *data)
+ {
+ 	struct msi_desc *desc = irq_data_get_msi_desc(data);
+ 
+ 	pci_msi_mask(desc, BIT(data->irq - desc->irq));
++	cond_mask_parent(data);
+ }
+ 
+ static void pci_irq_unmask_msi(struct irq_data *data)
+ {
+ 	struct msi_desc *desc = irq_data_get_msi_desc(data);
+ 
++	cond_unmask_parent(data);
+ 	pci_msi_unmask(desc, BIT(data->irq - desc->irq));
+ }
+ 
+@@ -195,10 +213,12 @@ static const struct msi_domain_template
+ static void pci_irq_mask_msix(struct irq_data *data)
+ {
+ 	pci_msix_mask(irq_data_get_msi_desc(data));
++	cond_mask_parent(data);
+ }
+ 
+ static void pci_irq_unmask_msix(struct irq_data *data)
+ {
++	cond_unmask_parent(data);
+ 	pci_msix_unmask(irq_data_get_msi_desc(data));
+ }
+ 
+--- a/include/linux/msi.h
++++ b/include/linux/msi.h
+@@ -556,6 +556,8 @@ enum {
+ 	MSI_FLAG_USE_DEV_FWNODE		= (1 << 7),
+ 	/* Set parent->dev into domain->pm_dev on device domain creation */
+ 	MSI_FLAG_PARENT_PM_DEV		= (1 << 8),
++	/* Support for parent mask/unmask */
++	MSI_FLAG_PCI_MSI_MASK_PARENT	= (1 << 9),
+ 
+ 	/* Mask for the generic functionality */
+ 	MSI_GENERIC_FLAGS_MASK		= GENMASK(15, 0),
 
