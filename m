@@ -1,140 +1,127 @@
-Return-Path: <linux-kernel+bounces-230686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF0D91808A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:06:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9EEF918091
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:08:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DED31F24C01
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:06:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 096041C21BFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:08:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACD48180A9E;
-	Wed, 26 Jun 2024 12:06:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EEF818130A;
+	Wed, 26 Jun 2024 12:07:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AF/doiyb"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYYsN89E"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61907180A7C
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564F01802C2;
+	Wed, 26 Jun 2024 12:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719403602; cv=none; b=BIdsx5d+FybWOU0yKVFc1iVwBKU42dBj1qvXxUYbicRgod9+dxb/y08GJ8WE5bvJzU4Ibc5ner3aMi3wedgLV4PkLSq/iSc7fB5dBG9HSLknBLjyQ+j3Aq4uRMiP38D9ebO8d9+LeHMnSvvdsqZsZLJW9VUTVepIl77frVH2yQs=
+	t=1719403677; cv=none; b=SnMXFfDv4uND2r8eKgswpLQ/Q2U16Ra+jNE+Na/bjaH0KjE91GvDteILcvbU4Rw2qitKMS8G1FWJZ5nJ4WJqRIbAso18UTm5kp19h+5AqqFAepSPPLwIs+BluJJav0Ev6btgZUCxZb/Jq6CXvh1m3pZsXzsl/gDKeR1Mvq3s4lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719403602; c=relaxed/simple;
-	bh=OzHbeL5WtJqCPBFNWo2wRad/ZDM5wcfh7viKbjMBt04=;
+	s=arc-20240116; t=1719403677; c=relaxed/simple;
+	bh=8mOhudOXTmEbkqgsYqYigKENLG9E0OWtck7yCITGflo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tySii4tlxM1TvlRQoK0Nu6Rxvhyzt7uw4mnlTkqiwcsmyjKdeFjEsza4JKDNEmfUawjv7FdlQDkGZ+7rVW2R6524QzHgQk1qlttEgpOh9EuMKlvsMHVCWv3NME+39g2U/hF0ky/Zi2LhZ+PMHHn+ZCHnZHo6HjZVQUuuWSLJl84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AF/doiyb; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-52cdb0d816bso431395e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 05:06:40 -0700 (PDT)
+	 To:Content-Type; b=t89vE4e0WsYbv3JlBO5OS0QexqtvsTvz+7DSvk0PpZCgHQRC/hDdPCC27CcF1ysNo9i/oT8jNWL7hrmNPLbCrsQcjQt1/IXPQMmfkTXjd2RSN2gm5+P0S4MrOWEpWC7qA7c8y9JBY+7pLv9nXAozuYcjVzYhIqm/JUCwtiyVGHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hYYsN89E; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-700cc97b220so782526a34.0;
+        Wed, 26 Jun 2024 05:07:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719403598; x=1720008398; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=gmail.com; s=20230601; t=1719403675; x=1720008475; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=u2+2NLpsRBb/A1mZr1EFBFFtwdFUpWW1fRqczPXb5as=;
-        b=AF/doiybsyEhy9bOJW3nzxbhIhqRaVGQ4yJ5TsaHEIOEbA2q+PqCXgqrkL/5w67cGq
-         UJpQjB06ns+INe+KEq4PJoKaNIauW2pOUyofBRmrUNdkQO9rokbO2Rf8LPsInC8koT4r
-         Hj2NZUWfJ6A1z7X7YgJt31kBwIEatI3HWP9AmogKuPp1LdfGmby7Rv1hREz0J5DRMkkr
-         x4Eho4fjClZ9YhaalzfPO5V14xocGjalACJvnKDw5HageK23/+UIlrrpvb6UtGb/ZSsg
-         DuoctC6jlqU6v6Bq5oMF2l/gJ3yMW840bsPTzxGEtKii87DjS1UaSRdr3tX16flWjMHH
-         LX6A==
+        bh=lAronMZ9nXpH4cj2QDMqDD8SJNWWfIBviKFCpnieLuA=;
+        b=hYYsN89EOiTtdFuTAep7Sl1lB7VspehP6MmaqmiZrvG+nmLjxRSpsDAH3My9Jpozz2
+         D1KjP4J9f8oNUD/qgAuimOFQPx7XzcMIQAKSchvwLdPcyLkNRjgGx+mZFnHnCfgheZOa
+         imFhiLj6xLYnWwhdMpzHRvcasX64dNwwi1+8RH5sDbPLQzKFFgTf/D/GgcEVVGlUm7QO
+         b08xenW/xs94iL7Y5BFkIjVvKSXfAAjxYbmA10WaA9MZeH7BkHhiYbfy/LJVgRtHAxQm
+         OQUgW8t12kfYjaRYbIiOcqj+kbzqpbKUhVitLOhgcg8vGdYM/8ZkZM/ADHvoSn5ABr6W
+         F+NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719403598; x=1720008398;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+        d=1e100.net; s=20230601; t=1719403675; x=1720008475;
+        h=content-transfer-encoding:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=u2+2NLpsRBb/A1mZr1EFBFFtwdFUpWW1fRqczPXb5as=;
-        b=CshKvNU4svFrjZ6w3nnXbmEQLCXXAI70g9SpAo5Ev9rtYuTZPSatfF+/Dk3wpvzWmy
-         RhXiK0vP49iVKxJ0uBm6bwGJbhY1IrZ4TQaqeehYxF1Zevv6HW/nNblBVD+YZTAMlNYI
-         7Oi065M3ZUnBs7Ank+Z8MnDPsTVXrEQLpOmQPSaBizWFOA6iOxkSzysddkyCVCWzGGPq
-         F3oH6gSFbm6/+HYaiaZbx6mZKXH8OpuflfA8vXmGRCi3u9h9dC51MbyKWedidrZQKc5m
-         Qiqhl7n+T3DmRU6aYX/1tU+tzvEeugxJLid/ncKH6YyXJyRfRGReaNQRFqWPEGPbMoEP
-         Yt6A==
-X-Forwarded-Encrypted: i=1; AJvYcCWzzMJDl1MbcOl40j0zfwdHU59Ylp2ojjbFh1uXF6YqqPG81476zT2hAh8QauXN0WqzSwn9UFO3SWk/X4fWWFS1CshlJbu0tmb1Fk+O
-X-Gm-Message-State: AOJu0YzI3cZxMbR5QF607DcrJw098CzkV7BpZpnnkScOqZUN5qwcDgh1
-	xShHQYAtsvFfQ8i9QMWVJOpzYogzk7iR6XkOpX6U4eOFziL1Me44A+E96HQHOBBGjmnG4RTQOUY
-	bJJ1hGP0sHvotHn41x6IES1lCmL25gNnKry5qzA==
-X-Google-Smtp-Source: AGHT+IGNXOPWzj1X7QU8se3idG/m9LeRfsovZgHLg/ViLLaROhPSd8hd4XH038GACB9qaHOrbJO17dJiAmpUbT0kK+I=
-X-Received: by 2002:a19:9115:0:b0:52b:963d:277c with SMTP id
- 2adb3069b0e04-52cdf25da2amr3552489e87.33.1719403598599; Wed, 26 Jun 2024
- 05:06:38 -0700 (PDT)
+        bh=lAronMZ9nXpH4cj2QDMqDD8SJNWWfIBviKFCpnieLuA=;
+        b=fptcvSXZM0IhpNjSxGqa7mS3oS7HfJvoKCc44n9j18XCwhEC+9So/4zyhvWDW5fGMH
+         xVnbwFyAh8Fni+RbZvWYyZQCBdmkp3sDmZ3bX7MIi9iYcIiOaWzm6+fSyGsRqr5jVdFe
+         TivqyemOKbkV9xIL5B8pSEm356gLuDGI0cq2EMVBJVyEbRk3XCLdG9MPDhn3FAolbCpR
+         7zI/n9/1ktSPW6Fdvs36vYnthfKK3EGAxGKuBrg+3+UuPTC0popU1O58hwzp0mBIEXiW
+         iT3GjzluEKauHKtV1lptzdfc2bM0cp4zMVq2a6pPjSn/0okBc+Rnrfr8E4KhBsU07bsY
+         5PHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZjY6/a6A7KwB7bJr0Ydlp5uCh9QVOHswnPZuswIPGS5RzI6tR6K953j4JCHX10JAuYhRhwoXx+AD2r+8QMzd1GUUSrrMbOd8S3sxnhTs1crVmxDwgOiUZBJwHBlfM2rmp7AJyqmkFfd7xPw8bFMfg5EFWmxvrOujcGPZrKbDKO2q7RomWZG7GxYBqCTo7aOevJ5B2VNlP7kPlxXYG2atoNY+1aYyX
+X-Gm-Message-State: AOJu0YzDmKBaj8CSFAKAPPXTNuhos3ZOLOL6sy3RrRy9OfHyhOoc699I
+	H118K9YdOcm9DuNns/ywdvxCWTGwnpQLHyPMOPCEt+5FtqRjEpRLgCA7ath0wtkfRSnwYz/qcN3
+	YTFQ1cy03StScY+TWoJcYDj+fZTk=
+X-Google-Smtp-Source: AGHT+IFCMAsx9tDIVv13DMuoIpRL3C+UVD1twOEvF1DCf250YptSJiuynlLDnbBYZxJDsZQy5NgaF8VHgyg9gL3Q/kQ=
+X-Received: by 2002:a05:6870:a2c7:b0:258:368e:4b46 with SMTP id
+ 586e51a60fabf-25d06e55e10mr11622922fac.38.1719403675266; Wed, 26 Jun 2024
+ 05:07:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
-In-Reply-To: <TYCP286MB089577B47D70F0AB25ABA6F5BCD52@TYCP286MB0895.JPNP286.PROD.OUTLOOK.COM>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 26 Jun 2024 14:06:27 +0200
-Message-ID: <CACRpkdY=xAKNz5S+sbJXYRs9EoivJS_nZEtYHKc2m4UDkLvscA@mail.gmail.com>
-Subject: Re: [PATCH] gpio: mmio: do not calculate bgpio_bits via "ngpios"
-To: Shiji Yang <yangshiji66@outlook.com>
-Cc: linux-gpio@vger.kernel.org, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Asmaa Mnebhi <asmaa@nvidia.com>, Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	linux-kernel@vger.kernel.org, Mark Mentovai <mark@mentovai.com>, 
-	Jonas Gorski <jonas.gorski@gmail.com>, =?UTF-8?B?TMOzcsOhbmQgSG9ydsOhdGg=?= <lorand.horvath82@gmail.com>
+References: <20240625170938.2579372-1-allen.lkml@gmail.com>
+ <racc3a2kmhu5275xcb6bght5j2bbg5ujlowdbfqeiwputmygei@ckscwafglafl> <rddr35qidcxfemy24lcqnz7fo6ogltlffizwbf7evtdoz5qgsu@tva3pf6e2isb>
+In-Reply-To: <rddr35qidcxfemy24lcqnz7fo6ogltlffizwbf7evtdoz5qgsu@tva3pf6e2isb>
+From: Allen <allen.lkml@gmail.com>
+Date: Wed, 26 Jun 2024 05:07:42 -0700
+Message-ID: <CAOMdWS+2t9410vke+xr7fTnWrHq0tfq5PdohpX_G2q+LrZWevA@mail.gmail.com>
+Subject: Re: [PATCH v4] mmc: Convert from tasklet to BH workqueue
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>, Allen Pais <allen.lkml@gmail.com>, 
+	Aubin Constans <aubin.constans@microchip.com>, Ulf Hansson <ulf.hansson@linaro.org>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Alexandre Belloni <alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
+	Manuel Lauss <manuel.lauss@gmail.com>, =?UTF-8?B?TWljaGHFgiBNaXJvc8WCYXc=?= <mirq-linux@rere.qmqm.pl>, 
+	Jaehoon Chung <jh80.chung@samsung.com>, Aaro Koskinen <aaro.koskinen@iki.fi>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Alex Dubov <oakad@yahoo.com>, 
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Bruce Chang <brucechang@via.com.tw>, Harald Welte <HaraldWelte@viatech.com>, 
+	Pierre Ossman <pierre@ossman.eu>, Christian Loehle <christian.loehle@arm.com>, linux-mmc@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-omap@vger.kernel.org, linux-renesas-soc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Shiji,
-
-thanks for your patch!
-
-On Tue, Jun 25, 2024 at 3:22=E2=80=AFAM Shiji Yang <yangshiji66@outlook.com=
-> wrote:
-
-> bgpio_bits must be aligned with the data bus width. For example, on a
-> 32 bit big endian system and we only have 16 GPIOs. If we only assume
-> bgpio_bits=3D16 we can never control the GPIO because the base address
-> is the lowest address.
+> > Hi Allen,
+> >
+> > >    - dropped changes to renasas sdhci(dma_complete)
+> > >    - Wolfram to send a patch for it.
+> >
+> > It is still there.
 >
-> low address                          high address
-> -------------------------------------------------
-> |   byte3   |   byte2   |   byte1   |   byte0   |
-> -------------------------------------------------
-> |    NaN    |    NaN    |  gpio8-15 |  gpio0-7  |
-> -------------------------------------------------
+> With build errors (forgot to say that):
 >
-> Fixes: 55b2395e4e92 ("gpio: mmio: handle "ngpios" properly in bgpio_init(=
-)")
-> Fixes: https://github.com/openwrt/openwrt/issues/15739
-> Reported-by: Mark Mentovai <mark@mentovai.com>
-> Signed-off-by: Shiji Yang <yangshiji66@outlook.com>
-> Suggested-By: Mark Mentovai <mark@mentovai.com>
-> Reviewed-by: Jonas Gorski <jonas.gorski@gmail.com>
-> Tested-by: L=C3=B3r=C3=A1nd Horv=C3=A1th <lorand.horvath82@gmail.com>
+> drivers/mmc/host/renesas_sdhi_internal_dmac.c: In function =E2=80=98renes=
+as_sdhi_internal_dmac_request_dma=E2=80=99:
+> drivers/mmc/host/renesas_sdhi_internal_dmac.c:551:22: error: =E2=80=98ren=
+esas_sdhi_internal_dmac_issue_bh_work_fn=E2=80=99 undeclared (first use in =
+this function); did you mean =E2=80=98renesas_sdhi_internal_dmac_issue_work=
+_fn=E2=80=99?
+>   551 |                      renesas_sdhi_internal_dmac_issue_bh_work_fn)=
+;
+>       |                      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>
+> Please let me handle TMIO/SDHI completely. You will get the credit,
+> still.
+>
 
-Commit  55b2395e4e92 also contains this:
+ My bad. Will drop that entirely from my changes.
 
-@@ -614,10 +616,15 @@ int bgpio_init(struct gpio_chip *gc, struct device *d=
-ev,
-        gc->parent =3D dev;
-        gc->label =3D dev_name(dev);
-        gc->base =3D -1;
--       gc->ngpio =3D gc->bgpio_bits;
-        gc->request =3D bgpio_request;
+Thanks.
 
-After this patch gc->ngpio will be unset for any GPIO chip that
-provides a ngpios property, so restore the above line too.
 
-But maybe a better fix is:
-
-+ #include <linux/types.h>
-(...)
-+  else
-+               gc->bgpio_bits =3D round_up(gc->ngpio, sizeof(phys_addr_t) =
-* 8);
-
-?
-
-Yours,
-Linus Walleij
+--=20
+       - Allen
 
