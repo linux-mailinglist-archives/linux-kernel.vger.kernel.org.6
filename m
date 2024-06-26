@@ -1,109 +1,123 @@
-Return-Path: <linux-kernel+bounces-231157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 569C99186EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:11:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6312E9186EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:11:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1319D2821FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:11:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9354E1C21A30
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:11:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5408E18FDB0;
-	Wed, 26 Jun 2024 16:08:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2100F18FDCA;
+	Wed, 26 Jun 2024 16:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CkioqqQX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y5kgtc94"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD4518C32A;
-	Wed, 26 Jun 2024 16:08:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 585CA18EFD4;
+	Wed, 26 Jun 2024 16:08:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719418097; cv=none; b=c/w3/gJX/u7mhSvpI6WD0PyRatx/MXDQsk5qh+GhbNJ7B4SpB0brUX6prmZkp+O+iIC+CoMiigmRT8t38O6e06zHaoHsoup+n4PAHISa1vtn2HN1xFyYqjcyRx8xx1n6GOMwtirseB+J/VYBJUB4vE1cnnDiu/ubWFteFThjhpg=
+	t=1719418123; cv=none; b=lMnqiDFeW7GJRSgHvfktToVCuTHRiUHtf623KQ6BnEI0bwjQmGeSeHp8uPHyZ0phJdWM1RFAsAGwz1bAmE6Mx3N01r24JWXPIhrdQQcr+Sv7JSsuNdSSweL7L8shr3xG2x6MT2bSQUnHHXbwWgOww4/aydE0diArsPCTJdh49Wo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719418097; c=relaxed/simple;
-	bh=h+ECohI+pS63vdbUZCDJEmah/z6yjm377K0Meg3eftI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nsd6bTP721ZTwB2Q0QOCzRFKJUtKJ4TdUrGJVJW6yzH4DAu1r9q90o7CXWnrt9DicCZvYTfbozmVZd3OhiAB0OcL2iPxqFROZwZLVyrNUIJOCIrWX1kM6kHGO8F7kB/Fhucj/vEbpsovHaaQaaVZwwpH9Q2yxq9RgL7Vm8Kwz5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CkioqqQX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfP8u022660;
-	Wed, 26 Jun 2024 16:08:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nfQvpxk0fZ9+T+yptaSqg/iqaE0+/X7CsK5vSn8TucU=; b=CkioqqQXb9P9+5si
-	d8ikdrNaAh0KvMvau/xUGE9ww7nCHHWreblJNRj/E+ic0wBl+8tfAozM0cQL0JlI
-	PblTwbgv9jL0boEb/yM28JLPoGVTiSBcT2hhdTHuUcLkssP4Nn81jzBHah4dnk7P
-	jxR9xoycHXiOq35w01BkS1UwxOBmYfJaJ2QJ23vOK58MKyeLXZNK8Mkg7pw62bB5
-	ehi6S65KfG29RmGGYvS7a67OscQ3CCMGY///iMy+YpmGfw40IJ9l6mtJw+g5bfPm
-	pf0vbBdL9QcXb1tefOwR81UtUkEsz8WGi4ij4SCrtB9AK78bd2XTmWCjiR5D83qx
-	1I7b4A==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqw9hm9v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:08:12 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QG8B1x015480
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 16:08:11 GMT
-Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 09:08:10 -0700
-Message-ID: <924856a5-a28d-4e69-8eff-9b266728d874@quicinc.com>
-Date: Wed, 26 Jun 2024 09:08:10 -0700
+	s=arc-20240116; t=1719418123; c=relaxed/simple;
+	bh=WZwsFv8ugBAItIsIyreIZWoVdpFoYhHVtcN66PqlRtU=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=GoiwkyS3JGKbGVIe02YtcBBy409oF/Ilen1zEJlwQ7lSbsKN1tO1RP2JZw7s5XrznvdYlFnFz7fQ/Xn5ieUV6ZyczGV34MxXxAJeDRfYIHdAvlJ9rAScX+Mk+yfXzra5ajTOx+CrP6pNjB9StL6W0cx4nbDZR15t+z2TaXd7rnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y5kgtc94; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11ECEC116B1;
+	Wed, 26 Jun 2024 16:08:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719418122;
+	bh=WZwsFv8ugBAItIsIyreIZWoVdpFoYhHVtcN66PqlRtU=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=Y5kgtc94gySCSI0lXtqwvrP0lI7rfenXwX4NbvvXH79W/jIRontEKbPuz+xmP3xUb
+	 YfouB65GVWCEoi9vrzag7zUNUx7sgR8+5wl2zSPH0zMlSUP7kRBXnsQSpYimqw+NwH
+	 PfOrj2aLSkKJbU7bkfr9j53ABLoaSytsytgiaIrqQZ9b2eus7CLlgeykrkpOcQj2b4
+	 USmM/QrHNLxMajrZitnxCT7b39om+egLGCDhQci1rYG/gJziA/ypVS22+FXegMreXU
+	 WcnJ5rurQSduxmfkU+Trvu0ckzZTLTvUEjTPYpFbatgc2w9AV/6NUOaPFOswS5bGEa
+	 PktFRVWeD7iVg==
+From: Lee Jones <lee@kernel.org>
+To: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, 
+ Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>, linux-leds@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Christian Marangi <ansuelsmth@gmail.com>
+In-Reply-To: <20240620210401.22053-1-ansuelsmth@gmail.com>
+References: <20240620210401.22053-1-ansuelsmth@gmail.com>
+Subject: Re: [PATCH v7 00/20] leds: leds-lp55xx: overhaul driver
+Message-Id: <171941812083.2542017.2881884570638704894.b4-ty@kernel.org>
+Date: Wed, 26 Jun 2024 17:08:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pcmcia: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Dominik Brodowski <linux@dominikbrodowski.net>
-CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
-References: <20240607-md-drivers-pcmcia-v1-1-6014889a1324@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240607-md-drivers-pcmcia-v1-1-6014889a1324@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Dv9w6GmN1yarFeHdPtks1UoCM3UAs5MG
-X-Proofpoint-GUID: Dv9w6GmN1yarFeHdPtks1UoCM3UAs5MG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 clxscore=1011 impostorscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 mlxlogscore=767 phishscore=0 bulkscore=0
- adultscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406260118
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.13.0
 
-On 6/7/2024 3:02 PM, Jeff Johnson wrote:
-> On x86, make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/pcmcia_rsrc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/yenta_socket.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/pcmcia/i82092.o
+On Thu, 20 Jun 2024 23:03:16 +0200, Christian Marangi wrote:
+> This long series is (as requested) a big overhaul of the lp55xx based
+> LED driver.
 > 
-> Add the missing invocation of the MODULE_DESCRIPTION() macro to all
-> files which have a MODULE_LICENSE(). This includes files which did not
-> produce a warning with the x86 allmodconfig since they may cause this
-> warning with other configurations.
+> As notice for these kind of LED chip there was the bad habit of copy
+> the old driver and just modify it enough to make it work with the new
+> model. Till v4 I was also doing the same by following the pattern and
+> the code format of previous driver.
 > 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> [...]
 
-Following up to see if anything else is needed from me. Hoping to see this in
-linux-next so I can remove it from my tracking spreadsheet :)
+Applied, thanks!
 
-/jeff
+[01/20] dt-bindings: leds-lp55xx: Limit pwr-sel property to ti,lp8501
+        commit: 468434a059a7d1fad4b98c2ca080817b1520cbdc
+[02/20] dt-bindings: leds-lp55xx: Add new ti,lp5569 compatible
+        commit: a6ca48430de6e87644203bdca03f4065f5b9df7a
+[03/20] leds: leds-lp55xx: Generalize stop_all_engine OP
+        commit: a9b202b9cf0e817be756a720920ad4b522e6f6aa
+[04/20] leds: leds-lp55xx: Generalize probe/remove functions
+        commit: db30c2891bfc74acb8823edee5f39cbc36bd9a4d
+[05/20] leds: leds-lp55xx: Generalize load_engine function
+        commit: 4d310b96f2db602830c40f82a75ede799b243cce
+[06/20] leds: leds-lp55xx: Generalize load_engine_and_select_page function
+        commit: 409a9dc53682b9f02793584d17721ab3e1b9c86f
+[07/20] leds: leds-lp55xx: Generalize run_engine function
+        commit: 42a9eaac9784e9b3df56f1947526d7d4d0ed9b26
+[08/20] leds: leds-lp55xx: Generalize update_program_memory function
+        commit: 31379a57cf2f155eb147ace86547b7143592945a
+[09/20] leds: leds-lp55xx: Generalize firmware_loaded function
+        commit: a3df1906fb9aa9ff45149e0a3c6434b2cef4f6e7
+[10/20] leds: leds-lp55xx: Generalize led_brightness function
+        commit: c63580b27a2c638cbae2fc26484b0bf29f303134
+[11/20] leds: leds-lp55xx: Generalize multicolor_brightness function
+        commit: 794826b2d87538a0fa5429957439f82bb7f32b53
+[12/20] leds: leds-lp55xx: Generalize set_led_current function
+        commit: 01e0290d17b2fb9717ee80fed512b32e0460b14c
+[13/20] leds: leds-lp55xx: Generalize turn_off_channels function
+        commit: e35bc5d8a023a55a5f895d6648a455ed83dc0db2
+[14/20] leds: leds-lp55xx: Generalize stop_engine function
+        commit: 43e91e5eb9c8b36ddd1dc239e0d8c36cc034e8ca
+[15/20] leds: leds-lp55xx: Generalize sysfs engine_load and engine_mode
+        commit: 082a4d3f068734eb242e38892d0977ef271c0143
+[16/20] leds: leds-lp55xx: Generalize sysfs engine_leds
+        commit: 8913c2c14728851f110e0d439d5bb2360c767cd2
+[17/20] leds: leds-lp55xx: Generalize sysfs master_fader
+        commit: 5a15b2ab57095a7c8597d42efbfe452844578785
+[18/20] leds: leds-lp55xx: Support ENGINE program up to 128 bytes
+        commit: b9d55087dfa950aecece1cf864d3918a12694c25
+[19/20] leds: leds-lp55xx: Drop deprecated defines
+        commit: 49d943a426d1e2c034ff2f132f65590dbdc01fbd
+[20/20] leds: leds-lp5569: Add support for Texas Instruments LP5569
+        commit: 30c6743cc89cdb357d1f8a98978da0f7c138130b
+
+--
+Lee Jones [李琼斯]
 
 
