@@ -1,159 +1,189 @@
-Return-Path: <linux-kernel+bounces-229915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E7019175F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:02:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 846819175FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:06:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC6D1F22F87
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:02:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A71C81C21FC9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:06:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89F441B806;
-	Wed, 26 Jun 2024 02:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SO2Z5TNH"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41928947E
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 257D01CA85;
+	Wed, 26 Jun 2024 02:06:44 +0000 (UTC)
+Received: from 189.cn (ptr.189.cn [183.61.185.102])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288421643A;
+	Wed, 26 Jun 2024 02:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.102
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719367327; cv=none; b=QaNZth/vuOeEZmp0Jfw3Fnu9e6vGTYevS11XPR4fcqPc+pplf+VWKFFbdSOYPpOd0ziU//m26BgDh8yAK7B6ysXaEuI1rAEQFAANpwchfXKbSJd0GcL5RTEbZZ1/ki9Njqs9GIwQmg5QvW+jSGL8zvAl96X2PpksURPpU4KoZyA=
+	t=1719367603; cv=none; b=LcoLfZfSGHkCh0IqXwVPYFhBYmsYjeTJeY50ksMh4KcpoNV6wIAxKWacva0b5QOywmnmUHJeC46nWoMWVAEKUi+9+WIEEkLKfZ7rxgZLMmKMsmDVDxZsdM3ibjB8slUYsLBNqksZjUpYGQczIXckrYRYy4GNuvWyOQFvHV58ERs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719367327; c=relaxed/simple;
-	bh=D6dRbojHwOB90aNJgUPTQWtYJDx5XfGJu58jRfCR0kw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hJZx+yXXRPwryXExe8pesUgEHYQkklHKYkUQszyNMu6jVu0IcF6J0Jo7I/+raX8ZjerH/l2WwNMDI+3LQnv7sFAYxSZdhTvj6qfjrjhN4b07/0he5WOsM+Yjq7kts+gBtnKX5f/vxQhti28+vMBRhW5MUGFh1zJpMJdNzGq0LfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SO2Z5TNH; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-361785bfa71so4744835f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 19:02:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719367324; x=1719972124; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=j827eyPfovm1pttAYGkAs9K2vKAWkyr0R4XxYEpN49k=;
-        b=SO2Z5TNHrAOjw3tFzjv7rIwV0tP5Y/M/Rr3M57O+WVtY2QKZsdP4uHolF5Voab8Nef
-         8E7W5MigYO0y1TDBfJcs043SjKtymrQutdkk+fgD/kk8uDqxwQteQTkFk/fYzvuqU6l8
-         jdz1OZ6oHq+fxvmWMeNGaiRGjYpTnKcC8WAL0vZitBxscdRfYM/QSg0tUNPD5ysC6/lB
-         MwH5v+EC9DBwLkfwhKcgm46MEGs8ikADfihfkGwL5OaCusZuUL/9SN9aPFsGh+m2J1wv
-         Pbh+olYdBvl55rgLX7mJPq1XwN2NAQzNMtY8Tg4UjvGY9toC48RVOhv5zFKSs5c6o2Tt
-         TDjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719367324; x=1719972124;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=j827eyPfovm1pttAYGkAs9K2vKAWkyr0R4XxYEpN49k=;
-        b=G5kO6/hBrNjEVtOmouRu/QDjPqqo1kglq1y/DfGKOdJKhCLu0Dmng+5S/uQKVjF4KV
-         CApcy/AhFrYiUcAyq/U2N29w0iZdLrb74Dyvk4LmEk7SMQMD8GCDTUTlKpeITmKPlDXf
-         f1Js4syOtl8n7THloofwnCuuDoYCi9jyi4dqHLjIgtR/QpsX/C2DbbbcBZHkpdd21TPq
-         fVlRjjLyyBjrMyx6hLsyYziAG4vgA6LO+nXzsb9FvAcCisTRBzPd1RIEf4nUzees/t7k
-         1cmb6t0B3aoPPVNkLH/8nTL04c7/DMlZUkgYUAXOzHMcowJ0OsGwoXdqA2ohJJV7mo8B
-         prYA==
-X-Forwarded-Encrypted: i=1; AJvYcCX+TD6BF8+tAIzr2BsOnUrBc6QCcIVz9mLgDWM4S/0rZ1i+MLJXJ6PVPWS9MELhVBwfkK8v1R/Hk/Q1coBOXmk5Rkdmn5BLYR87j0PE
-X-Gm-Message-State: AOJu0YwdThHj29QRLme+oWrAX1NR2zawyRwdzyHREw65QrD/tZnWLS3m
-	PF3MBx8feHhvgFriBE4mt1KUfySldWkXdByN5xHIHasLqMWNyEwu8v/A7YLjH9/DK7L595cUqkx
-	TH7mMyTX2Cm6GoWXH3BfNB63UiEc=
-X-Google-Smtp-Source: AGHT+IGwrr2Re6QtzgDShGiOpHkoGQZgADb65PV0KxFMYpZIY4JGPzwGSV50AioRPApDEtm5jaEVBV1HipBAgflUfmg=
-X-Received: by 2002:a05:6000:a83:b0:365:e76b:e908 with SMTP id
- ffacd0b85a97d-366e79fe983mr6147040f8f.24.1719367324358; Tue, 25 Jun 2024
- 19:02:04 -0700 (PDT)
+	s=arc-20240116; t=1719367603; c=relaxed/simple;
+	bh=fhz8xiUUjRzh8Qn6H4+WNYIxdLrQb9lP8qzAAVl7rHA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tf0OafkhTPyUeUi2ZexvHvpsGriCY0iOv6FseFxP1EI8vxxc7eB2ofhCU9C2AuwacCsDNxDZ/COrVMVi+DUP2VG/mrGONOzAJ3P7mvQcz3uOfE90TyX2RolPckjjYSfqI994j5k16sZvbYoFTIJV/mDCRsdRpJ4h70D6tf2x/wU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
+HMM_SOURCE_IP:10.64.8.31:52270.1396980873
+HMM_ATTACHE_NUM:0000
+HMM_SOURCE_TYPE:SMTP
+Received: from clientip-39.156.73.12 (unknown [10.64.8.31])
+	by 189.cn (HERMES) with SMTP id 3C0FA10048C;
+	Wed, 26 Jun 2024 10:06:34 +0800 (CST)
+Received: from  ([39.156.73.12])
+	by gateway-153622-dep-9dc64869d-f88ns with ESMTP id 2a537ca05e99441e817d0c22ebee2fac for ahalaney@redhat.com;
+	Wed, 26 Jun 2024 10:06:36 CST
+X-Transaction-ID: 2a537ca05e99441e817d0c22ebee2fac
+X-Real-From: chensong_2000@189.cn
+X-Receive-IP: 39.156.73.12
+X-MEDUSA-Status: 0
+Sender: chensong_2000@189.cn
+Message-ID: <4d198032-d4e1-4a84-8f56-1b31157e9323@189.cn>
+Date: Wed, 26 Jun 2024 10:06:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625142512.3916063-1-chao@kernel.org>
-In-Reply-To: <20240625142512.3916063-1-chao@kernel.org>
-From: Zhiguo Niu <niuzhiguo84@gmail.com>
-Date: Wed, 26 Jun 2024 10:01:53 +0800
-Message-ID: <CAHJ8P3+VUozoMVHvMxqDrDRVttRWDJ5a4A2ysJv2_O4ytfq8OA@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH v2] f2fs: fix to avoid racing in between read
- and OPU dio write
-To: Chao Yu <chao@kernel.org>
-Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: a question about how to debug this case in ftrace
+To: Andrew Halaney <ahalaney@redhat.com>
+Cc: Derek Barbosa <debarbos@redhat.com>, pmladek@suse.com,
+ rostedt@goodmis.org, john.ogness@linutronix.de, senozhatsky@chromium.org,
+ linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ williams@redhat.com, jlelli@redhat.com
+References: <ZnGlt4uQRP_4nWu4@debarbos-thinkpadt14sgen2i.remote.csb>
+ <6802e81c-1926-4195-812a-1a5fe13bcdde@189.cn>
+ <xiune2bsqgin5ksk33q5bkihuz5qrv5casjofdyopes55zfcpc@uvvnlwxb4wcp>
+Content-Language: en-US
+From: Song Chen <chensong_2000@189.cn>
+In-Reply-To: <xiune2bsqgin5ksk33q5bkihuz5qrv5casjofdyopes55zfcpc@uvvnlwxb4wcp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Chao Yu <chao@kernel.org> =E4=BA=8E2024=E5=B9=B46=E6=9C=8825=E6=97=A5=E5=91=
-=A8=E4=BA=8C 22:29=E5=86=99=E9=81=93=EF=BC=9A
->
-> If lfs mode is on, buffered read may race w/ OPU dio write as below,
-> it may cause buffered read hits unwritten data unexpectly, and for
-> dio read, the race condition exists as well.
->
-> Thread A                        Thread B
-> - f2fs_file_write_iter
->  - f2fs_dio_write_iter
->   - __iomap_dio_rw
->    - f2fs_iomap_begin
->     - f2fs_map_blocks
->      - __allocate_data_block
->       - allocated blkaddr #x
->        - iomap_dio_submit_bio
->                                 - f2fs_file_read_iter
->                                  - filemap_read
->                                   - f2fs_read_data_folio
->                                    - f2fs_mpage_readpages
->                                     - f2fs_map_blocks
->                                      : get blkaddr #x
->                                     - f2fs_submit_read_bio
->                                 IRQ
->                                 - f2fs_read_end_io
->                                  : read IO on blkaddr #x complete
-> IRQ
-> - iomap_dio_bio_end_io
->  : direct write IO on blkaddr #x complete
->
-> In LFS mode, if there is inflight dio, let's force read to buffered
-> IO, this policy won't cover all race cases, however it is a tradeoff
-> which avoids abusing lock around IO paths.
->
-> Fixes: f847c699cff3 ("f2fs: allow out-place-update for direct IO in LFS m=
-ode")
-> Signed-off-by: Chao Yu <chao@kernel.org>
-> ---
->  fs/f2fs/file.c | 4 ++++
->  1 file changed, 4 insertions(+)
->
-> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-> index 278573974db4..866f1a34e92b 100644
-> --- a/fs/f2fs/file.c
-> +++ b/fs/f2fs/file.c
-> @@ -882,6 +882,10 @@ static bool f2fs_force_buffered_io(struct inode *ino=
-de, int rw)
->                 return true;
->         if (is_sbi_flag_set(sbi, SBI_CP_DISABLED))
->                 return true;
-> +       /* In LFS mode, if there is inflight dio, force read to buffered =
-IO */
-> +       if (rw =3D=3D READ && f2fs_lfs_mode(sbi) &&
-> +                       atomic_read(&inode->i_dio_count))
-> +               return false;
-Hi Chao,
-A little doubt:)=EF=BC=8Cforce =E2=80=9Cbuffered IO=E2=80=9D should return =
-"true"?
-another want to confirm is, "thread B" in commit msg just doing buffer
-read, so this modification just cover direct read case=EF=BC=9F
-thanks=EF=BC=81
->
->         return false;
->  }
-> --
-> 2.40.1
->
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+Hi Andrew,
+
+If I understood it correctly, it's similar with rcu 
+stall(rcu_cpu_stall_ftrace_dump).
+
+So far I don't need too much detail in vmcore, so only merging dmesg and 
+ftrace is more practical to my case. I will give it a try, many thanks.
+
+BR
+
+Song
+
+在 2024/6/25 21:20, Andrew Halaney 写道:
+> Hey Song,
+> 
+> I'll answer that bit as those were my hacks :P
+> 
+> I _thought_ that doing a ftrace_dump_on_oops + softlockup_panic on the
+> command line (or similar at runtime) would dump the logs, but that
+> wasn't working for me and I was in a bit of a rush (and already hacking
+> the kernel up anyways).
+> 
+> So I ended up doing a sequence like:
+> 
+>      tracing_off();
+>      ftrace_dump(DUMP_ALL);
+> 
+> in the softlockup code when it was detected. Ideally I wanted to look at
+> the vmcore and look at the ftrace data in there (since debugging printk
+> by using printk is a little confusing), but there was a makedumpfile bug
+> I hit... so I went with the hacky route to prove to myself what was
+> going on. I think since then that's been resolved. Hope that helps!
+> 
+> Thanks,
+> Andrew
+> 
+> On Tue, Jun 25, 2024 at 09:36:54AM GMT, Song Chen wrote:
+>> Hi Derek,
+>>
+>> I am working on a hungtask case, i saw your trace_printk logs go to the same
+>> output with softlockup warning, It's a smart way to easily build a timeline
+>> for analysis.
+>>
+>> As far as i know, trace_printk goes to ftrace ring buffer and softlockup
+>> info goes to dmesg. Could you please let me know how you did that, i marked
+>> the part i'm interested in below, thanks a lot.
+>>
+>> BR
+>>
+>> Song
+>>
+>>
+>> 在 2024/6/18 23:20, Derek Barbosa 写道:
+>>> lgoncalv@redhat.com, jwyatt@redhat.com, aubaker@redhat.com
+>>> Bcc:
+>>> Subject: watchdog BUG: soft lockup - CPU#x stuck for 78s
+>>> Reply-To:
+>>>
+>>> Hi,
+>>>
+>>> The realtime team at Red Hat has recently backported the latest printk changes
+>>> present in 6.6-rt stable (HEAD at 20fd4439f644 printk: nbcon: move locked_port flag to
+>>> struct uart_port) to CentOS Stream 9 for performance improvements and
+>>> printk-related bugfixes.
+>>>
+>>> Since merging this said code, we've hit an interesting bug during testing,
+>>> specifically, on larger systems, a softlockup may be reported by the watchdog
+>>> when there is a heavy amount of printing to tty devices (whether it be through
+>>> printk, /dev/kmsg, etc).
+>>>
+>>> We have a modicum of reasonable suspicion to believe that nbcon_reacquire, or
+>>> some other nbcon mechanism *may* be causing such behavior.
+>>>
+>>> Since we've succesfully reproduced this in the Kernel-ARK/Fedora-ELN
+>>> (osbuild-rt), and linux-rt-devel 6.10.rc4-rt6, we are reporting this bug
+>>> upstream.
+>>>
+>>> Anyway, here is a more in-depth description, along with some call traces.
+>>>
+>>> Description:
+>>>
+>>> On x86 systems with a large amount of logical cores (nproc ~> 60), a softlockup can
+>>> be observed with accompanying call trace when a large amount of "printing"
+>>> activity is taking place.
+>>>
+>>> As shown in the call traces appended below, during some kind of numa
+>>> balancing/numa_migration after a task_numa_fault --where a set of processess are being migrated/swapped
+>>> between two CPUs-- there is a busy thread that is being waited on (in the order
+>>> of seconds), causing a livelock. Additional investigation of collected vmcores
+>>> by toggling panic on softlockup shows that the waiting thread may be waiting for
+>>> a thread looping with nbcon_reacquire.
+>>>
+>>> I suspect that some logic within nbcon_context_try_acquire may be a good place
+>>> to start. My understanding of the code becomes a bit fuzzy here, so apologies
+>>> in advance for any erroneous statements. As I see it, there may be something
+>>> happening during migration (or under heavy load) in which nbcon_reacquire() is in
+>>> a non-migratable or non-preemtible state as it is attempting to regain access to
+>>> a lost/taken console. It could very well be a situation in which context
+>>> was forcefully taken from the printing thread.
+>>>
+>>> Alternatively, Andrew Halaney <ahalaney@redhat.com> suspects that it is the loop within
+>>> nbcon_kthread_func() -- since there is nothing that would yield the task in said
+>>> loop (cant_migrate()), the migrate code would be essentially waiting forever for
+>>> the aforementioned loop to "finish". I believe in PREEMPT_RT, there would be a
+>>> preemption point here. Furthermore, in his investigation, there were signs that the
+>>> loop was just iterating up until the crash, leaving reason to
+>>> believe that task would be the culprit.
+>>>
+>>> In fact, with the following diff, we noticed this output:
+>>>
+>>> ```
+>>> ahalaney@x1gen2nano ~/git/linux-rt-devel (git)-[tags/v6.10-rc4-rt6-rebase] % git diff | cat
+>>> diff --git a/kernel/printk/nbcon.c b/kernel/printk/nbcon.c
+>>> index bb9689f94d30..d716b72bf2f8 100644
+>>> --- a/kernel/printk/nbcon.c
+>>> +++ b/kernel/printk/nbcon.c
+>>> @@ -1075,6 +1075,7 @@ static int nbcon_kthread_func(void *__console)
+>>>         *
+>>>         * This pairs with rcuwait_has_sleeper:A and nbcon_kthread_wake:A
+>>
+> 
+> 
 
