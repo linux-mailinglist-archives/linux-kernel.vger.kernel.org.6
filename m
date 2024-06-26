@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-231457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCF09198FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:26:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFE559198FE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:26:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A8A31C21930
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:26:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10D0FB2290F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B031192B9D;
-	Wed, 26 Jun 2024 20:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91879192B90;
+	Wed, 26 Jun 2024 20:26:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="fmvx4ibb"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="E/Dt0cKk"
 Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2080.outbound.protection.outlook.com [40.107.22.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 515F6192B69;
-	Wed, 26 Jun 2024 20:25:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CEE2192B96;
+	Wed, 26 Jun 2024 20:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.80
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719433558; cv=fail; b=qMnD4Yx0YPOyf5HdBPPccePIs5HI5m7Hf8CNLZ9x4bgNf+yaRes4lLYyQXbs7WGrCB0U68qZz/DGW6fchh78+RS85VwNn+ThpxnGExyLyEvyOiVfpWNyn1gHEifOn3hPWUOOdVT4m4isnv0yjVFxDAnO+r/rRHmWALV6OZ6OxCI=
+	t=1719433560; cv=fail; b=OBx7KaCtBKFtqJFhuRQ/k2QlP2nG0UJRG/Iv9tBsVRcbrjf8mcdMfBsen5BBA7qdamgq1eEc5tkLtnnD+HEp3Qk87pK7h64GoZziGwcV7qhsDpbfTaebhzcVIFXTBHcFyTQs5cJyNJ5eXvKG7G2KW66MzAVfpJCzer09Zp5BDSM=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719433558; c=relaxed/simple;
-	bh=rf9YHQX0N9fK7joLcT+e3g0gwPNTRP9+zT3rXJpmTrs=;
+	s=arc-20240116; t=1719433560; c=relaxed/simple;
+	bh=E8Pd/H3Sr2qrimEIE3maDh3fVhrfvbNDz85WpDm3j5Q=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=py+TbaKSqpqqOq6nxFN08glb+WWikaP//FfJ9RPbUG6tpc2GUlY9/JQq2wHQphtbvD/jnWV/4mA/UasKCmuQbLtxTTdjrdYQMzpvyCB/lzip+Oj76YblnhuLOrksN7FS/xH/q3Lz580eOjSzc5XIFSitCCAXxSr6Qhtfz11SzWc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=fmvx4ibb; arc=fail smtp.client-ip=40.107.22.80
+	 Content-Type:MIME-Version; b=ZzwOFtUeQ2Jl+dQtqmOO5CcqNms3oGw722mj7gAQW5OhKAsBPjQjCY8J3XY7og7TydFsN6qmt21bIB0g+Qvuy7J0P8bnhSxcSv+cCC1yrM9/QmWt1pNkPkXw4/AqkGj/5nLeY32u3Vmu7QHzRiPPq6GFKDFC0Hbp9F1tegsJnBc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=E/Dt0cKk; arc=fail smtp.client-ip=40.107.22.80
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=cTdrVl1hGyO70P7UZAa7+S7qs0ExpfB0VRN3wjZcPHxxQ9UYOTXe4Hfo2e5Qc7srPCf5pNbdsmCv36IzNFHRoW6shfUaMBDCyrsY+wXgxdcOdr10lLoezmE43i/l74d2wCLp+W1jB5ho6loYwHRX8Fx7K/vw4XgVJfvOG8UyZ+5JATqr/Qy4DwvS/B0HIL4PpuSXeGmvZsHU6Lc6So7SwG0tQil4tFidq7h01GrM6kFP0U30FF/XRq8J/V1GUWEKf1fwGjkA08LzsafjrhWYlNUyESu6sLVxmmEyglAbOUD5HEfx/v5WcWkHu6W690WN5cDgg6z5WkYmEIkOdHrlOw==
+ b=MHlrA4AwzgF5KwUxdBy2b0K5vuMfuO+rpd5jodYHmaUd+W4+/enNCk7Ty33zCuG7zDp5dM8xS0nOEjr1VB0HwjCdmt1RR10IhFVOQ2LPd9+ewRMdNF7zDgaO5tc1ATB8n60dnlPTzF5ZZv17oLz3l14UlO23wZryrCpCBQ3Q9GbZ94JLaP0wYW6OOJg8TA3j0S7yBQXcFo1eoMEIRA506zJSxlsPjHULX3zKMlfqasU/PPXpzWplHBSC97R4ISXZIQoHgWFXSpoeg15ASl5aPJaaOvyn9F4SuhXdqkpOUrORDgDu1CwwPoGQwIws0HUrn5MVzu8m7WUKDx2683xaPg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=xzs1VB/TOVJtbaKXdc4U1mKfu+zIVudwIRrzrkc+BE8=;
- b=NZoCMwq71gnUH477TQCbnHY02bQO7X03bnxiQrzQii3LvkVnKIzcU0gJwU1Cfh2zKM5kHSXWFviYcVC8rznTPagkXfMMTS7N8dgofcgpR+V5Q9Q8r67qTG8fQ+fqVNTJXbsHxhV522q6ZDCGgTRB+gS6sRZS5m8rNVFVeohx3KcV39z/3LXuwJ5NZVImaYq70/X6zNiOsq4nz+55ZWmrgIeFhcFNUBWqGIW+BkRR93EqfFgaL+6g1OHN9rda6LwIpi/J0NSB97L+DNLMzt/RxkpHkQiw+92f7Sbe+qJfihDiS5RKm+P/yM7l7R+BC7y4LEj1JUmQ9LbdYqva9zdCgw==
+ bh=U+T0J3y6c0syj+9yAo6aDyKuF2l4258cT5VqL0+22c8=;
+ b=FLC3sr2/Su0nIKyfvzA1QWjTZIiYQxxBtaahzQqlWn3/nCiaqqDfMY+9u+LWRzITKTdaDT2GiFy1w4rAhA5W1e25UKRLARU1H9q85cyJ/EwayS4Og4BRfc/cwGyMMqu4i475zKUr5xW8ySQOb9NzOLlRIvEEShweD0OOh9D2yQ/Jf91yfS9/jOex4cqbJ2UskdmHFytyyurmyzDcQat4xlVQyIU3LvljxlbX524VqUTT3yOr92i70i+4ihvooqmTalowueCSXjqvpAOowkT7trkM0lVNtX0K0bsyC38bpZldi+Qwmld38Lospo9nwqL+uQKjegJYdYFrsWnJxsnWXg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xzs1VB/TOVJtbaKXdc4U1mKfu+zIVudwIRrzrkc+BE8=;
- b=fmvx4ibbuGJJmm5MhyiDwaFUBOu83lVfy1JbVrYFZScyy33an7sD58FQsyXQ/yAZGV6M6qWY8B1fOy2u8qnC1+gwgPU0Kl/WCnPFis7iBxky0bKO9RRxyE+csCfLLXfmPElrwVd0H0QK/+x2uueGG14XhRI98K8sxGrsGhnKjxM=
+ bh=U+T0J3y6c0syj+9yAo6aDyKuF2l4258cT5VqL0+22c8=;
+ b=E/Dt0cKklvJJXIBE7/uOcT3Q7mYlLBn6x9Yi3V0WL/77SB88m2pdK4DmspM0iaO2asukFbZgtwGxOLvoDJIw938TvL2Hs3dBcqh84c0trKgswtc8R3w51WeY3rz7gMZKe6PybSkKafIlpuStwRrJfbzei59A1XEgH3PvXTLm0pw=
 Authentication-Results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
  by DBBPR04MB8012.eurprd04.prod.outlook.com (2603:10a6:10:1e6::10) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
- 2024 20:25:52 +0000
+ 2024 20:25:55 +0000
 Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
  ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
  ([fe80::9126:a61e:341d:4b06%2]) with mapi id 15.20.7698.025; Wed, 26 Jun 2024
- 20:25:52 +0000
+ 20:25:55 +0000
 From: Frank Li <Frank.Li@nxp.com>
 To: Shawn Guo <shawnguo@kernel.org>,
 	Rob Herring <robh@kernel.org>,
@@ -64,9 +64,9 @@ To: Shawn Guo <shawnguo@kernel.org>,
 	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
 	linux-kernel@vger.kernel.org (open list)
 Cc: imx@lists.linux.dev
-Subject: [PATCH v2 01/13] arm64: dts: layerscape: rename node 'timer' as 'rtc'
-Date: Wed, 26 Jun 2024 16:25:21 -0400
-Message-Id: <20240626202533.2182846-2-Frank.Li@nxp.com>
+Subject: [PATCH v2 02/13] arm64: dts: layerscape: add platform special compatible string for gpio
+Date: Wed, 26 Jun 2024 16:25:22 -0400
+Message-Id: <20240626202533.2182846-3-Frank.Li@nxp.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240626202533.2182846-1-Frank.Li@nxp.com>
 References: <20240626202533.2182846-1-Frank.Li@nxp.com>
@@ -83,194 +83,196 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
 X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DBBPR04MB8012:EE_
-X-MS-Office365-Filtering-Correlation-Id: d4ced0f6-7dae-40ef-454b-08dc961e2cdf
+X-MS-Office365-Filtering-Correlation-Id: 74f9ac2d-e0b3-45ed-d653-08dc961e2e91
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230038|376012|1800799022|52116012|366014|38350700012;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?FOpRlbzpqqRqwzv31P1t529eir3zopJWCY+yWW7uQvYWP+jigeYzgf7Yry0s?=
- =?us-ascii?Q?Ve1lZeV40qpTmlyaQPlHDOZrIuuDu+kaRYo5uxdnjqKiNQjFqe0i+gzBr7vM?=
- =?us-ascii?Q?7SYkpRuL1p+Gy/4+wtW4Cfrkh+lpEu6PkMGKWP/XYgmNopdL6fADOZfn7sob?=
- =?us-ascii?Q?Run+Bvf/B+2sQ7qo992fKK6XmIkKRVEuw78cN+xl2YVu+kVceZzEbAo7UH7X?=
- =?us-ascii?Q?7qRsN8OZ9RgYvNbe2YIv68iR9LK55P80K0ORNAOFBct43OJNtYhpnTbUHd37?=
- =?us-ascii?Q?sg7oMGP7BUAbhXiuP7nJEcMI9enUepkvYU7j/gWsWEgWd+MYWbEraCW+7erj?=
- =?us-ascii?Q?Tf8aL1oxqvSpGYOh7800iJ8iRhdq9rAHF0IxM3UAzeTiTcotM/6TuVzWX428?=
- =?us-ascii?Q?sJ2LOpSZTZj1j0QAgzJPYBX1FiSKJW4+gdGpgc92eyrLVLO5WBuhQRnCzGkq?=
- =?us-ascii?Q?sV7kXpaTUhsoxSZwab5FbNf63QDzPC3lYJE3x206b8QPlZMfIMMjehs7dDs/?=
- =?us-ascii?Q?BVDRU1TjoyP/O8tOIK7Kg0sAY7B+UJvMvdRKS02SBZYPmFMkeKV13TbkKvUq?=
- =?us-ascii?Q?wGed+lr+ySDZY7EYe0aVZSYqKJAHFNC+z5jH+yvothFbGV6GzZ0gl7SiKCc1?=
- =?us-ascii?Q?RtLrYep4nRUwREFI20RVLqUOS04L3q2e3qKcTGvIPSOBI37ecql7mVdE+Aqd?=
- =?us-ascii?Q?GE6pBh/cqpwM/cEKbgBaE11IQN+8HarFzUYdCPlLRgZsxff/svn3lOOzn9bw?=
- =?us-ascii?Q?3p58eEfqYYfSp/isC4gBXE2lrHlq5jASpDYdKNG6JCCN3n9sVkS4etXjQiOx?=
- =?us-ascii?Q?vvNjdq9TkPTPp/z60uTjywdujOv1L/UPP37aXNGFIXVhqKPYw71Kj3YUwOTt?=
- =?us-ascii?Q?YhDM0B9xT/edIFGDQ9eFKWnmGiqiC/yJJpQP5vN8jP4KLK3lGv2lF+uvBN3Q?=
- =?us-ascii?Q?teKpckVgrE/CJTjYwsQtg18K9gXOchK5nv3DhlYla6Y2en/x1XjWVHnGMn1v?=
- =?us-ascii?Q?fLrJvMLpAU4uqvPwj6qljQCXpQwPEfGpsvYAWLAkIdpZkEVFdDBEck6GKArW?=
- =?us-ascii?Q?ApVa7moI5xl5ivTskm24S3FdUylpsytfmhkePwHftNM8xpQ4IYyp8Vm3IQD8?=
- =?us-ascii?Q?dyGUvPaxPgtUjzHr62lVOo0DaAzYKgvSJOVfbCh4i6jXt5uoEgTiQjGPTqty?=
- =?us-ascii?Q?oWqeMZ/7LHxZi7rac3wzwvkjoG/p3Uoav8O6FG5ShueyWUDBZO9R8Ns46XE1?=
- =?us-ascii?Q?w6S6OqsQUwnzkaeHd4XWCzz5IMm6QRY0bzSiMcMh4I2NcWoa3DddP5t/5lIv?=
- =?us-ascii?Q?3TEnHlIDqo+h6sVsQeEwE2kT?=
+	=?us-ascii?Q?rywMDRcHh7slBOloVtQwv8acnIErrekhn3eqcIgegRXXCa8bcue3Wj3OrxST?=
+ =?us-ascii?Q?5alq+RcoTXrfS+/yRTnJxElfbKNGMye8OA16hMQD1GYHRTh81f/Uncu2M/lb?=
+ =?us-ascii?Q?UrAnKFGTbe9lIVdgc+tHvOGob4n1V/ehy7NE0/hQaan5H5YzLv143WXkQy6O?=
+ =?us-ascii?Q?tSCa4DSHqsVeU3FBobozT04bEIcuA4f/4L6grPy1oAMHB/G3EXXkQ1B70iNa?=
+ =?us-ascii?Q?WHw9UkViFGwISVL3g9bhYryiIpu1Gr9omT7dFhy+eaDcDuzIcPr9IWtxK7Lm?=
+ =?us-ascii?Q?0wQS37RleNzXHlmuiGSi+gWHlPWCJ8ySOLFO26PJkXxifu46RPWS3WEsy3PQ?=
+ =?us-ascii?Q?U1EdKwB83NLQAngPsJqOdiOUKCjkYXPRcz1fyyQXjo4eqwCY/T1JlNSexCzO?=
+ =?us-ascii?Q?qmaiO7G3IaG44ldWmyTkdSGPWRk1PTgcg692uU47bDf3MVwBAze28uV9MqpV?=
+ =?us-ascii?Q?X6BwiPJf3cUq+fRpS+paa7WvTiyTNHa/Fp+NYOolOG+pC7GCAlmZZGULFxEw?=
+ =?us-ascii?Q?K+WyF3ssQKdy8jqxGBCFhMutlnyQKwqXWDymFWUqVNJT1R8mXiTsECh7MWeP?=
+ =?us-ascii?Q?cmUTlT92PMekbzunMYj+4C7q4ePUEEqaREYp1UH5uFhra7qh1ggL+lgJdibc?=
+ =?us-ascii?Q?lW744/6uHFgEZWu5r9KgiEBHtTpDcxKrujIhguFnE+ZHylQWk5b2l0D3Sfup?=
+ =?us-ascii?Q?ZGW0+Me4lQgCyS0GqvOyy6Vo/BBGxgq4ejdkcSErW4IiibkX4kPeM3OY5noF?=
+ =?us-ascii?Q?2e6zqXEaonxFUMPjhoiwnotzfzvxy6rWCtTbeFhBEVOEZAB/tb0TsiuUO4tu?=
+ =?us-ascii?Q?M/LVJJDF1K1jXpW6ZxFg9Ug+SF26WY1xy6DaS7TMVAP+jxvKka8oDsxLRXB6?=
+ =?us-ascii?Q?Xptfw7aoaDfL+hP5We5EDTeYNK+R31YAImbARH15rr83Rp6/F7jl8n2BaKHm?=
+ =?us-ascii?Q?DVVIppKVEAr1DML9N16kpiYiz3uPPffvjazRLZND2ovKSfNcJd5eqD+403wI?=
+ =?us-ascii?Q?lOm1tiKhRZopqMrFc5dsXVu0rl9Jkt8E4xZ4AzTjaYkMbcBS1r4t7iIZn/9Q?=
+ =?us-ascii?Q?D9Zb7F9TNUbB1O+/tapjwZZiHeexRC25AGIF0yEVg+OhIktj2S4CikEIgvun?=
+ =?us-ascii?Q?eyK6Yc0rjGd1Eg+bnmXpo+4w7GGFm2zBdolqaeR7W+mSdy919KPh8npatHKk?=
+ =?us-ascii?Q?K89kSNFzUs5E6UQiIbWFWiZPRvkjccqUMlsm1/Ix8SY5scja1zRa8KqkM5DC?=
+ =?us-ascii?Q?7HLavrfMG5AvT8XXoB69fNbuSnYJgmDAjskxKDVjopTJVHwstj+Rh0w+eOg/?=
+ =?us-ascii?Q?EiNVpVEP++xHyQfyuWxC8lwHtQsZwY+Ye12ctcHP3fBrqaHToXksj9M0XrCV?=
+ =?us-ascii?Q?eezv3Vw=3D?=
 X-Forefront-Antispam-Report:
 	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230038)(376012)(1800799022)(52116012)(366014)(38350700012);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?krAZ5EjEj1bOAovV9KBypo07o+b7CXKZplZRTUKoQIpdDiq21FBNowZ0eBOd?=
- =?us-ascii?Q?jN24sklMFNGIMmpAZoIKfBF3GsIOEXgqDHv1hURt+48ZXY8eWIedcxmull7s?=
- =?us-ascii?Q?bRohygrTTLd6PhGUgHbRE6uv9xhLfWifsNc+jodovdTHbwLYqSLOW5OcrOhq?=
- =?us-ascii?Q?svH7NQW4+/g5IApyVIKOKawU0HgrdblIk7NbxspxvaLPWy2S2zGk0apr67t4?=
- =?us-ascii?Q?dYk9/d71tmFMfXGTaiUkN6Oi6jQh7X+a3WUzHYOiuMG0qZE5gtQrFN7O+coI?=
- =?us-ascii?Q?BknuCyTVk5RYYpted62uMOYoPdFtdPiyZM1vZ9hc/BCzAGvhDE9S3PrxXET6?=
- =?us-ascii?Q?E7gfpY388+Ip/xJR0uju+dALcOJ0Y1ER2tgv4OM7uOlsD0QAHVBmwgaEQVze?=
- =?us-ascii?Q?undpgyEINqa0BOtZm4s1nbCMoSiP27Kt8B0lut1ptNhkf5vtHH0KwD3mmbX4?=
- =?us-ascii?Q?5otRgoXMykPlLIOXzMgnVtQ971l4eiv62YwNoeZC8/VCvalurbzfFRa9N15O?=
- =?us-ascii?Q?HrTgT1PgzRBUbMLfVxwmuiHXCL98GFANFHhOjOHCUSkSKIdC8+YpCB0mXTYt?=
- =?us-ascii?Q?MfwFzLVL6F0Nn0xVI6wUZis73yxCD+vOoUVUcioxUGQip4bulse6kSJ4mX/A?=
- =?us-ascii?Q?YqZYjpsHZ05VY3fHa6GJL6C+rJqb4+BNl05ARkkN9f+ygejcbn1+TN5ozEFf?=
- =?us-ascii?Q?La30V8YPtGC70KbM/qpE89sCmGdm7K0zpNW3LDzYcmEH7HjU4e+YO0yem3/c?=
- =?us-ascii?Q?moiQ+dJFxb2xUlwPqzY8QTPOKvK43nXIMxctRl6chTAxLH2mBRuBTKTKjWRq?=
- =?us-ascii?Q?GdtvtuXloiYZxUc6Ri2lg5VKMA16SlCTAP1K/QiQVXWBSB1XSqDlUVIGB4cZ?=
- =?us-ascii?Q?bwDs2V9gAfiGAdbMNDxKsBRfoCSwhLpEZldybEWI978bRpfoAf07FA+pzpwh?=
- =?us-ascii?Q?QSPBb69wfZSryT6y0FC5FabYtextKe84s9Dk0+1NpFJ1v6LE88ZgGwnmv0e/?=
- =?us-ascii?Q?aOS1lzcCsOnpFfjDWFylMAJ+QnlODnyMG8N8tGknmPgXk7O0qGJ3SsyBae3c?=
- =?us-ascii?Q?uApHWLd7+kxSQbhF5rkfJuPBrOq0hF/ookk+x/aDlAx0uM/isQUq2ZJtPvjm?=
- =?us-ascii?Q?/jxTOoyg/yRb3kVU4/tS6indS4dsd+6qI4FFDxJ+KumhUVeHPtKvPXNik8EW?=
- =?us-ascii?Q?dvsBe+NgTMNZz6USGoG22oTblvIWckOFZNqUO5yWAc7JZBIS6+hj/2yzOdUj?=
- =?us-ascii?Q?EN237t5CR6pNDgJEBTyWV/qeKqtMZhhfw1OoSuxH2NEPZZH2BoBRbBvcSkUK?=
- =?us-ascii?Q?x+hiT1clwS1ntYb/b7CpYVbe4UkVyHjn8ihbcimNcH12ie1IvXWxho95JvtU?=
- =?us-ascii?Q?U22/PG6M144Ie2h/FwJjOtHsm7P6OnNLEL8s6nNUjibq1ZZdA5hhxEhTzFwQ?=
- =?us-ascii?Q?oKN/tvrHShwi2YSOleRXKvsv0BdNkOanVDrOvCCwBct3ccrTpftQAs9f3gH0?=
- =?us-ascii?Q?NEgd/q7sA1L7aXjWATyy9FBvMac9ltGew0uj0G2LskqyuqSYd+POSIR8SDmj?=
- =?us-ascii?Q?DL2/WsoQjvpZA+DJ2q+W89QcmXefDaAtJDvYW63+?=
+	=?us-ascii?Q?iTnjlCXYZif8ENIt5NGryP7AlKDFHfjG8BY2NrbtiLBvfYdxVqsyIrFyup4I?=
+ =?us-ascii?Q?BGwoGoizsEKG5m5GCk+ob6TZDHif0OTvImz58aBx0s9367ruYABjJs0wK9xp?=
+ =?us-ascii?Q?x59VQ8/6QFx/KdMAFtheLtHm3HBHUVeLTOxqY/NjnDx3H45oJFQ9pjYWUvza?=
+ =?us-ascii?Q?dEOAX5+h+OEXDWRQGOj2/Clc268RlZhzqR/rHfCQQBoJfv3hpxE8T4eKSU5n?=
+ =?us-ascii?Q?m6jS7J7hEzxxP2CzhEz5bLftTtOcghDw9DeKDzeww5QqB5tqvdXLzUb1v0y+?=
+ =?us-ascii?Q?v19YvPbRAxVtCfudBb4uvC2d4daBIMSRf4ONsG79bHFEQ5MQCTa7M8JEZJ1z?=
+ =?us-ascii?Q?xwUv3pVLxISO3oLAm485RNoy+UgTmi71sYYNrrtI6hLnGDhBTiGOgVie4V20?=
+ =?us-ascii?Q?Be/XkCkAV2ZJiLe1I2EJ0HBA5ZUDFDuIHGgQUr3oNLY0GYS72fqc1ycptizw?=
+ =?us-ascii?Q?oEQ9tIed+UabGnw0RYxeyd8/O2dda6m3tetT7lxCCdJWJ0Un2OwWM6pALOg0?=
+ =?us-ascii?Q?YFOkRlVuIWK+juzkxe4RW/qMfgVoNuQWqsej32z3xgU1VebhFZ0wq8uYOJsO?=
+ =?us-ascii?Q?eLD7n94pNSpHaP4Kk0YGHhs3nlXuRVYiRvdWTSZydxcCjyH/ixeC1Rv+H6xw?=
+ =?us-ascii?Q?YF58B7ieXKkk17nEOJFnIHvxK7k8oYwzyUuPO7C7w8Y2oFsfYzA4uqGep+rA?=
+ =?us-ascii?Q?++i2uPQ5XkVMshXnE+zGIvb2U0k8KheWd4lf4AEcLmjIIqGQ70cxbDU8+rUB?=
+ =?us-ascii?Q?Ef0X/71LIDV0jcogHynbhQYSD2RR3TaURiet8rvHiJmlFyIphVLf4qpEjQ/o?=
+ =?us-ascii?Q?DZDF15G4A1ucWuo8EIiGHTE6uleWVDItHergHDSccu6+T1aQYkMCsa24H0Pl?=
+ =?us-ascii?Q?nvfuzHwneUhntojbdNQX9l04+h9KuLnwcMjLkHxqkk/f9EF56a3VD+77kDBl?=
+ =?us-ascii?Q?WwaKpj1eqHiOId4my/woPCq9+oQBrm+FI7hkjhsDVoVo0Donm9sKoU3EyTbI?=
+ =?us-ascii?Q?QiNiizZ3+f0D0SGwbso+FZSkmKB2vrIE/UJv2HvWc9r6OTH2mcim+rsnelkw?=
+ =?us-ascii?Q?8s6q+YAbEtTvK7+BiJi6RVZSK+QRd+L+jO0sKIn1miMvKe/QfAw0YVZctEtL?=
+ =?us-ascii?Q?/F9xwWacgyeDLmkKoy2BPNXqjyZiQxasHgFlGt0y58yXbYwBrPea8suzIG1c?=
+ =?us-ascii?Q?9itromELbJYzQqhwF/y2SR8P2rad6fVR1QICe7YUcMZ4jbcHGZCC1ntm0jiF?=
+ =?us-ascii?Q?WR2y95QZh3vPJbrP5xdvo3gKrH3xWhnu6BjP52dKZhSdZQqv+3yhw1FC7KeM?=
+ =?us-ascii?Q?vSUjmkZ+XHUoBeGhBdgWfldvBa2XY0v+5fTJBV65KHBue6f8EoQVbU0ifKpD?=
+ =?us-ascii?Q?KlcN1Mohq8sYpz0K1RPhf5mo7Jx3agYrrR0GcxfQNEUNtwN7uGWIoGhT0lzv?=
+ =?us-ascii?Q?vtcm0xUphlLzfYcz1w22k19MoYgvwJjgmumnsjuHBzPa1aYnMN5tNJ1hfUqg?=
+ =?us-ascii?Q?AsVdihH9ATZ1QMSc81mGxo8jCZT0wYgCWsjZXFsWMEH7D1vg70l3pF4ytNTs?=
+ =?us-ascii?Q?XlmYq7JS0t+kBwheJtpkIaAzVjxymuKfwzSO1jNy?=
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4ced0f6-7dae-40ef-454b-08dc961e2cdf
+X-MS-Exchange-CrossTenant-Network-Message-Id: 74f9ac2d-e0b3-45ed-d653-08dc961e2e91
 X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 20:25:52.7255
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 20:25:55.5516
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
 X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xz8rYulyn9d26r+J4SLZGVeuA3QtXVxim/SYcLnXNlo2OkFnc9soRE+FTfDnbCU8c6CQNRMFXh7plcvXbtVG1Q==
+X-MS-Exchange-CrossTenant-UserPrincipalName: VB+nhfzzocrObVSSK1x8KCk13aMKYySw30wsc4bo068aHtieoR+w2MZaKW7XSHk9aQEnVvzAhWzkg6NlUtWY/g==
 X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR04MB8012
 
-ftm_alarm is rtc. Correct the name as 'rtc' to fix DTB_CHECK warning.
+Add platform special compatible string for all gpio controller to fix
+below warning.
 
-timer@29d0000: $nodename:0: 'timer@29d0000' does not match '^rtc(@.*|-([0-9]|[1-9][0-9]+))?$'
-        from schema $id: http://devicetree.org/schemas/rtc/fsl,ls-ftm-alarm.yaml
+ gpio@2300000: compatible: 'oneOf' conditional failed, one must be fixed:
+        ['fsl,qoriq-gpio'] is too short
+        'fsl,qoriq-gpio' is not one of ['fsl,mpc5121-gpio', 'fsl,mpc5125-gpio', 'fsl,mpc8349-gpio', 'fsl,mpc8572-gpio', 'fsl,mpc8610-gpio', 'fsl,pq3-gpio']
+        'fsl,qoriq-gpio' is not one of ['fsl,ls1021a-gpio', 'fsl,ls1028a-gpio', 'fsl,ls1043a-gpio', 'fsl,ls1088a-gpio', 'fsl,ls2080a-gpio']
 
 Signed-off-by: Frank Li <Frank.Li@nxp.com>
 ---
- arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi | 2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi | 4 ++--
- arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi | 2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 2 +-
- arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi | 2 +-
- arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 2 +-
- arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 2 +-
- 7 files changed, 8 insertions(+), 8 deletions(-)
+ arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi | 4 ++--
+ arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi | 8 ++++----
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi | 8 ++++----
+ 3 files changed, 10 insertions(+), 10 deletions(-)
 
 diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-index b6824d6bc9391..2e1cddc11bf47 100644
+index 2e1cddc11bf47..1b6ab9550cce9 100644
 --- a/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
 +++ b/arch/arm64/boot/dts/freescale/fsl-ls1012a.dtsi
-@@ -564,7 +564,7 @@ rcpm: power-controller@1ee2140 {
- 			#fsl,rcpm-wakeup-cells = <1>;
+@@ -407,7 +407,7 @@ duart1: serial@21c0600 {
  		};
  
--		ftm_alarm0: timer@29d0000 {
-+		ftm_alarm0: rtc@29d0000 {
- 			compatible = "fsl,ls1012a-ftm-alarm";
- 			reg = <0x0 0x29d0000 0x0 0x10000>;
- 			fsl,rcpm-wakeup = <&rcpm 0x20000>;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-index 744ed5feb8f0b..4188faa59368e 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a.dtsi
-@@ -1326,7 +1326,7 @@ rcpm: power-controller@1e34040 {
- 			little-endian;
+ 		gpio0: gpio@2300000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1021a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2300000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+@@ -417,7 +417,7 @@ gpio0: gpio@2300000 {
  		};
  
--		ftm_alarm0: timer@2800000 {
-+		ftm_alarm0: rtc@2800000 {
- 			compatible = "fsl,ls1028a-ftm-alarm";
- 			reg = <0x0 0x2800000 0x0 0x10000>;
- 			fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0 0x0>;
-@@ -1334,7 +1334,7 @@ ftm_alarm0: timer@2800000 {
- 			status = "disabled";
- 		};
- 
--		ftm_alarm1: timer@2810000 {
-+		ftm_alarm1: rtc@2810000 {
- 			compatible = "fsl,ls1028a-ftm-alarm";
- 			reg = <0x0 0x2810000 0x0 0x10000>;
- 			fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0 0x0>;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-index 534b832440207..caf765593547b 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -990,7 +990,7 @@ rcpm: power-controller@1ee2140 {
- 			#fsl,rcpm-wakeup-cells = <1>;
- 		};
- 
--		ftm_alarm0: timer@29d0000 {
-+		ftm_alarm0: rtc@29d0000 {
- 			compatible = "fsl,ls1043a-ftm-alarm";
- 			reg = <0x0 0x29d0000 0x0 0x10000>;
- 			fsl,rcpm-wakeup = <&rcpm 0x20000>;
+ 		gpio1: gpio@2310000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1021a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2310000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
 diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-index 30061c80f1cc1..f8c9489507e7a 100644
+index f8c9489507e7a..524b44f424272 100644
 --- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
 +++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-@@ -940,7 +940,7 @@ rcpm: power-controller@1ee2140 {
- 			#fsl,rcpm-wakeup-cells = <1>;
+@@ -589,7 +589,7 @@ duart3: serial@21d0600 {
  		};
  
--		ftm_alarm0: timer@29d0000 {
-+		ftm_alarm0: rtc@29d0000 {
- 			compatible = "fsl,ls1046a-ftm-alarm";
- 			reg = <0x0 0x29d0000 0x0 0x10000>;
- 			fsl,rcpm-wakeup = <&rcpm 0x20000>;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-index 01c2c2b474205..81b80b6b27d31 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-@@ -1041,7 +1041,7 @@ rcpm: power-controller@1e34040 {
- 			little-endian;
+ 		gpio0: gpio@2300000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1046a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2300000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 66 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+@@ -599,7 +599,7 @@ gpio0: gpio@2300000 {
  		};
  
--		ftm_alarm0: timer@2800000 {
-+		ftm_alarm0: rtc@2800000 {
- 			compatible = "fsl,ls1088a-ftm-alarm";
- 			reg = <0x0 0x2800000 0x0 0x10000>;
- 			fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-index 89a5f4d05a7b5..dac33a3eab841 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-@@ -1226,7 +1226,7 @@ rcpm: power-controller@1e34040 {
- 			little-endian;
+ 		gpio1: gpio@2310000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1046a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2310000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 67 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+@@ -609,7 +609,7 @@ gpio1: gpio@2310000 {
  		};
  
--		ftm_alarm0: timer@2800000 {
-+		ftm_alarm0: rtc@2800000 {
- 			compatible = "fsl,ls208xa-ftm-alarm";
- 			reg = <0x0 0x2800000 0x0 0x10000>;
- 			fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0>;
+ 		gpio2: gpio@2320000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1046a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2320000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 68 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+@@ -619,7 +619,7 @@ gpio2: gpio@2320000 {
+ 		};
+ 
+ 		gpio3: gpio@2330000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls1046a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2330000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
 diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-index 58c3a3a9744d6..40159f58c6f94 100644
+index 40159f58c6f94..da49f274e9d5a 100644
 --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
 +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi
-@@ -1086,7 +1086,7 @@ rcpm: power-controller@1e34040 {
- 			little-endian;
+@@ -1027,7 +1027,7 @@ QORIQ_CLK_PLL_DIV(8)>,
  		};
  
--		ftm_alarm0: timer@2800000 {
-+		ftm_alarm0: rtc@2800000 {
- 			compatible = "fsl,lx2160a-ftm-alarm";
- 			reg = <0x0 0x2800000 0x0 0x10000>;
- 			fsl,rcpm-wakeup = <&rcpm 0x0 0x0 0x0 0x0 0x4000 0x0 0x0>;
+ 		gpio0: gpio@2300000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2300000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+@@ -1038,7 +1038,7 @@ gpio0: gpio@2300000 {
+ 		};
+ 
+ 		gpio1: gpio@2310000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2310000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+@@ -1049,7 +1049,7 @@ gpio1: gpio@2310000 {
+ 		};
+ 
+ 		gpio2: gpio@2320000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2320000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
+@@ -1060,7 +1060,7 @@ gpio2: gpio@2320000 {
+ 		};
+ 
+ 		gpio3: gpio@2330000 {
+-			compatible = "fsl,qoriq-gpio";
++			compatible = "fsl,ls2080a-gpio", "fsl,qoriq-gpio";
+ 			reg = <0x0 0x2330000 0x0 0x10000>;
+ 			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+ 			gpio-controller;
 -- 
 2.34.1
 
