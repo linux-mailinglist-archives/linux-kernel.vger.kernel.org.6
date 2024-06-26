@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-230176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6F9D91796C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:14:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2E6917971
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9C331C221AA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:14:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA210287C5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:15:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C0A1591F1;
-	Wed, 26 Jun 2024 07:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3906315AADB;
+	Wed, 26 Jun 2024 07:15:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bM4jU0Od"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8Iwp5VZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1835B13541B;
-	Wed, 26 Jun 2024 07:13:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BE713ADA;
+	Wed, 26 Jun 2024 07:15:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719386039; cv=none; b=Su2pQaeMXRyhxd6+u332q3agOuJM5i74DptA62ZUQg9U1HM/moTAO4ZTBSL7QzTQL1688C6IY0uNXMpJJEf71laB2Md8jqqp6LKJKMJVyuaQKzaRqK9LqZhf7Nuw+bedUND1Kc0FX9yhdvpfzTi+FBMmUBeq7Iex3sRkplx5bJc=
+	t=1719386128; cv=none; b=EJ//NknV8PndQoakwbSZLLTjVb/1YcaX+f58nawStfOq9YjaLEnp0wgEgBWuOUR1TmhqWwHA8dZsleRMl1bO1MXcsSi/5tj4Pg9naOWwfB/HxvnNETK+5BTduSGdItjrGpYNQSYN+Ei/8Yc2jkSBxdIYggLwi70oV3ULsKlcwAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719386039; c=relaxed/simple;
-	bh=99uL6JL2d+Ir+A1G5QShZvBz4fTOsERCAQ80mQw689w=;
+	s=arc-20240116; t=1719386128; c=relaxed/simple;
+	bh=dZfPs6X2vmaw1uobT8G92DNBDUmYOqr+zxdSBTGhwY8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FcjnAPemRDXU4BtyrXAVXnItdB+UcvZlSGkcvOfuna8lTW/UqTYHenPh+7yWU8GY9EtnycRq6JnKQAB4eYifc3J2UuN9lfU4WqLtIzc6hXdMeUJYcPQUnB6HVXkyEr9Cxkqj6QEUOLWewvmeSVM1uHbLIbKYmIihAuF3uuK6iwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bM4jU0Od; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 948E6C2BD10;
-	Wed, 26 Jun 2024 07:13:52 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=g+8gtJmnGsi7h3y4Tr6dlyCj9pdMuXtoQV+LCWnUf6z0lvfuKZKBayc8p+3cCp/Dzuu3GdOnQyi23Qyb5OJU682zE3m16qh32h3GPBOMBUxd0UTnB2tUFJS8vbTgFV7hLns3NjDyF3PCSFb24XjPGa2z0BUTWcQigOrHC+7D7gM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8Iwp5VZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E222C2BD10;
+	Wed, 26 Jun 2024 07:15:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719386038;
-	bh=99uL6JL2d+Ir+A1G5QShZvBz4fTOsERCAQ80mQw689w=;
+	s=k20201202; t=1719386128;
+	bh=dZfPs6X2vmaw1uobT8G92DNBDUmYOqr+zxdSBTGhwY8=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bM4jU0OdvlwV33nbrkoAdhc3d6g9/FDODXYWSP/KnY6l5NtT7u4AZq1GjD72sQeQN
-	 xI9lP2PhZsS/3L/vFmPwIW7h5XY3OL98aHWFdPr4Ren97Yjvu3SuyDHdb0vv7Bq0uo
-	 E6YMjMWEqTkk2pGPLfBLtdEttdXl5Gn5V3AF35e0ezjUNp2B/2iwuiPJtX+2YfGuxM
-	 2ilb93OgjMZokoeNrVlo7nkNMHKBY7yCrG2CRyZhHY1RY40jZ1eRpBgPi9wnmiPjOh
-	 mPpLV1tJ9sOOd4TMHauwaA8sTEkrbmhBmlKYts63Eucz+EUxK51qwpvPqGMcBgQtmm
-	 N8p807VlCMTgA==
-Message-ID: <8676afd3-8a95-4517-ae38-0f8539e81f19@kernel.org>
-Date: Wed, 26 Jun 2024 09:13:50 +0200
+	b=N8Iwp5VZvqZNbKV+YVTwuIjKjI7FOkdtiRYKXnPmwrH5o3beW/MpMrHj7Suw2g4xz
+	 i1bgSSse8G3fRoaraKLbpKULg4kn+GcFHWoKuHPmltG6hSVVL5PgECJvP99cWGJUJK
+	 /o5+8L5o8CQ9e/0Hk2Hy2BBrTxBBdnJtEZHFyj+dvs/0YA+0iBGgnlzvnvYJNAbUy1
+	 5WZSZx7+TLi8ZQWkjqqAiGOmblB+WLmZb5gLmUSiJkSqH9Mo1m8QqyuSY+tHpOIFGZ
+	 vBaRV86v5ikQrsSYCCf6GTW5SjHrYbf1CsvGpo25g9BdcQXusNH2vjNUvB0BH/BVi0
+	 Bv4zFL8iv5WAQ==
+Message-ID: <0a35f0bd-ceec-487f-b9fd-ae9698b74048@kernel.org>
+Date: Wed, 26 Jun 2024 09:15:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,28 +49,22 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/8] dt-bindings: timer: Add schema for
- realtek,otto-timer
-To: Chris Packham <Chris.Packham@alliedtelesis.co.nz>,
- "tglx@linutronix.de" <tglx@linutronix.de>, "robh@kernel.org"
- <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "tsbogend@alpha.franken.de" <tsbogend@alpha.franken.de>,
- "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "peterz@infradead.org" <peterz@infradead.org>,
- "mail@birger-koblitz.de" <mail@birger-koblitz.de>,
- "bert@biot.com" <bert@biot.com>, "john@phrozen.org" <john@phrozen.org>,
- "sander@svanheule.net" <sander@svanheule.net>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- "kabel@kernel.org" <kabel@kernel.org>,
- "ericwouds@gmail.com" <ericwouds@gmail.com>
-References: <20240624012300.1713290-1-chris.packham@alliedtelesis.co.nz>
- <20240624012300.1713290-5-chris.packham@alliedtelesis.co.nz>
- <d65648d6-4e2b-4009-b0e0-7d1f9a926eb7@kernel.org>
- <052a4bdb-88fe-4891-a69c-0d90c610d816@alliedtelesis.co.nz>
+Subject: Re: [PATCH RFT v3 1/5] dt-bindings: media: camss: Add
+ qcom,sc7180-camss
+To: george chan <gchan9527@gmail.com>
+Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240624-b4-sc7180-camss-v3-0-89ece6471431@gmail.com>
+ <20240624-b4-sc7180-camss-v3-1-89ece6471431@gmail.com>
+ <c33dde93-2c3a-4a00-93ee-e4de303c9057@kernel.org>
+ <CADgMGSvN=uAW7z1dpETGVRewzDG=K2MAtzOkhK7xAcskU_oeZg@mail.gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -116,118 +110,60 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <052a4bdb-88fe-4891-a69c-0d90c610d816@alliedtelesis.co.nz>
+In-Reply-To: <CADgMGSvN=uAW7z1dpETGVRewzDG=K2MAtzOkhK7xAcskU_oeZg@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 24/06/2024 07:21, Chris Packham wrote:
-> 
-> On 24/06/24 16:49, Krzysztof Kozlowski wrote:
->> On 24/06/2024 03:22, Chris Packham wrote:
->>> Add the devicetree schema for the realtek,otto-timer present on a number
->>> of Realtek SoCs.
+On 26/06/2024 08:46, george chan wrote:
+> On Wed, Jun 26, 2024 at 2:12 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>
+>> On 24/06/2024 14:13, George Chan via B4 Relay wrote:
+>>> From: George Chan <gchan9527@gmail.com>
 >>>
->>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->>> ---
->>>
->>> Notes:
->>>      Changes in v2:
->>>      - Use specific compatible
->> Where? I do not see changes.
-> 
-> In v1 it was rtl930x-timer, I've updated it to rtl9302-timer
-
-Ah, I thought you wanted to switch from generic fallback to specific
-compatible... fine.
-
-> 
->>>      - Remove unnecessary label
->>>      - Remove unused irq flags (interrupt controller is one-cell)
->>>      - Set minItems for reg and interrupts based on compatible
->>>
->>>   .../bindings/timer/realtek,otto-timer.yaml    | 66 +++++++++++++++++++
->>>   1 file changed, 66 insertions(+)
->>>   create mode 100644 Documentation/devicetree/bindings/timer/realtek,otto-timer.yaml
->>>
->>> diff --git a/Documentation/devicetree/bindings/timer/realtek,otto-timer.yaml b/Documentation/devicetree/bindings/timer/realtek,otto-timer.yaml
->>> new file mode 100644
->>> index 000000000000..13ea7aa946fe
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/timer/realtek,otto-timer.yaml
->>> @@ -0,0 +1,66 @@
->>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/timer/realtek,otto-timer.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Realtek Otto SoCs Timer/Counter
->>> +
->>> +description:
->>> +  Realtek SoCs support a number of timers/counters. These are used
->>> +  as a per CPU clock event generator and an overall CPU clocksource.
->>> +
->>> +maintainers:
->>> +  - Chris Packham <chris.packham@alliedtelesis.co.nz>
->>> +
->>> +properties:
->>> +  $nodename:
->>> +    pattern: "^timer@[0-9a-f]+$"
->>> +
->>> +  compatible:
->>> +    items:
->>> +      - enum:
->>> +          - realtek,rtl9302-timer
->>> +      - const: realtek,otto-timer
->>> +
->>> +  reg:
->>> +    maxItems: 5
->> Nothing improved.
+>>> Add bindings for qcom,sc7180-camss in order to support the camera
+>>> subsystem for sm7125 as found in the Xiaomi Redmi 9 Pro cellphone.
+>>
+>>
+>> ...
 >>
 >>> +
->>> +  clocks:
->>> +    maxItems: 1
->>> +
->>> +  interrupts:
->>> +    maxItems: 5
->> Nothing improved.
+>>> +required:
+>>> +  - clock-names
+>>> +  - clocks
+>>> +  - compatible
 >>
->>> +
->>> +allOf:
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            const: realtek,rtl9302-timer
->>> +    then:
->>> +      properties:
->>> +        reg:
->>> +          minItems: 2
->>> +        interrupts:
->>> +          minItems: 2
->> No, that's just incorrect. You do not have more than one variant, so it
->> is just 2 items. Or 5 items, not 2-5.
-> 
-> I've been told in the past that the device-tree should describe the 
-> hardware. Which in this case has 5 timers. But I'm also told to give 
-> them names which I struggle to do because some of them aren't used.
+>> Nothing improved here.
+>>
+>> I asked you at v2 to go through all comments and respond to each of them
+>> or implement each of them.
+>>
+>>>> Keep the list ordered, the same as list properties.
+> I am a bit confused. Is it by ascending order or by particular order
+> like below the same ordering to the example node?
 
-Used as in Linux driver? Does not matter.
+Feel free to ask a question if comment is not clear.
 
-> 
-> So do you want something like this:
-> 
-> clocks:
->      items:
->          - description: CPU0 event clock
->          - description: system clock source
->          - description: unused
->          - description: unused
->          - description: unused
+Keep the list in "required:" in the same order as the list in "properties:".
 
-No, if your datasheet or any other source of information (e.g.
-downstream sources) mention 5 items, then name properly 5 items.
-Otherwise how do you know that there are 5, not 2, clocks/interrupts/reg?
+> required:
+>   - compatible
+>   - reg
+>   - reg-names
+>   - clock-names
+>   - clocks
+> 
+>> BTW, I asked for subject to keep only one, first "media" prefix:
+>>         "Subject: just one media (first). "
+>> but you kept the second "media".
+> 
+> Sorry I can't get it. Could you choose one?
+> 
+> _ORIGINAL_
+> dt-bindings: media: camss: Add qcom,sc7180-camss
+
+No, original was different. Go back to your first posting. I asked to
+remove one media and keep only one - the first. I did not ask to
+re-shuffle the prefixes.
 
 Best regards,
 Krzysztof
