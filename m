@@ -1,189 +1,357 @@
-Return-Path: <linux-kernel+bounces-230231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 266F4917A1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:50:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2ABA917A1A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49FA51C2294C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:50:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D3661F23F64
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1104015F323;
-	Wed, 26 Jun 2024 07:50:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5121415DBB9;
+	Wed, 26 Jun 2024 07:50:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="tnPNUu9z"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2062.outbound.protection.outlook.com [40.107.244.62])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NJdrA4CJ"
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32BF15D5CA;
-	Wed, 26 Jun 2024 07:50:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719388202; cv=fail; b=W/ZxIAfnhj/9jZtxFBhG2cJ14EZ2Qf/p4/bvzBARhfPFrU0EDI9mJwX4Izqa5hNDb94oXF2WSw1LShFe6UqOtOO6RmJ8cKaOnAb4vOwlAW0qm31XLtNZiCjZ22gmldEfLx0LTAhagolx3M6HDa4cmA+pOXiQM0d56fdHyKWg6gg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719388202; c=relaxed/simple;
-	bh=o4rPm1WxRWsQBJ3HvdPHlUrQfvp8VEmu+9nCdB44s1Y=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=a3GlyFJhX0I4cMEvbsIhO/MEXloBgBsJ91gGiPXxKgqh1NcC+iPDh/BJRHq12Wpy8+g8E9adV39i3aQQFYE6dsbndgOD+Cf2/8+rhTfrSDJW6uO8xjGcuuS00QfHIZwP+uG4Xxz4oK933B56nRbCDgWYBYjofoMDsWvuaZEv7qY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=tnPNUu9z; arc=fail smtp.client-ip=40.107.244.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=dn9eSthX96rprhjg8mQvdFp98sX+UJ73XHVT8ekPWl1YE0Mjik32anj7XAj5gDd5kSsbqO1sJsJm2csQegCTK3WNgglYvsbasINMW4pqW+pjEhWlm8Elk1DF1qSh05zgPOhHoUz0idPRj9QBnsO+40ESGNLG+6v4EtiAjv0WQrodKoR+IX9iM7tU80kE86pKlsetuudcVRYjbfQsO1wAVLLOUzHwS15N1wqtzqnxS5ODyZra3+KBDY3wM/DTPh9L9f5CFLlCpKzPsghZVkdojahCMmARTn1Zkb6l49B1lSXp7lx+7frCxA+mxZtzYU4WQ2g6xy7Q2c81HwIimWDfDg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=dLtK8IHiVk17QQaFubPYdvk2aL29qqSqCfzIrBSBfME=;
- b=AUeF0ybD/rvKWnpcersuW9t8RvNj7BJj5V9tovm3IgeUNztX5+N9cWxgg2n2TU+2tdwl3pfRifI6LUSLEfWc+MKBl0pmUvKl1DntAGWxnl4VQthSoCJyHqZ5AVfSLAR24ju0E2K/ueleh3U2bk/rJ1ZpOHqGR8U2xdcQY9AyJptE6HdJ9nKP97ET4FvxN9570E+UUEOmp02PHWbFgfRtwybUNYaTPnx+mh3L4C8H944WRLS2WG8uFIWNFQUvXDJKrFaI3Z49Ysm5iJKT332BA7+/3gtenlMJS2MVqeTfPsEIaLyM69xDpBsW1E9DBv+Zsf2tMVIEBmgNA9g2v4K8kA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dLtK8IHiVk17QQaFubPYdvk2aL29qqSqCfzIrBSBfME=;
- b=tnPNUu9zc1O9wQANhkM4LPhDddQ4mWjilrjwUFc63PWazwrGlkvzZfG0Uz0KxhdiZ6CSrztqIK4ANT7Ui6ZPV7AHB4DsWD+DzaIa6xkVjh8O4iV0lMokn7xOojeZ24dTs7EnmIAQ9UYhNq4glXW6hGc4xhVvRNr2SQW34AWZ1o8=
-Received: from SJ0PR05CA0027.namprd05.prod.outlook.com (2603:10b6:a03:33b::32)
- by IA0PR12MB8256.namprd12.prod.outlook.com (2603:10b6:208:407::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Wed, 26 Jun
- 2024 07:49:56 +0000
-Received: from SJ1PEPF00002320.namprd03.prod.outlook.com
- (2603:10b6:a03:33b:cafe::be) by SJ0PR05CA0027.outlook.office365.com
- (2603:10b6:a03:33b::32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.22 via Frontend
- Transport; Wed, 26 Jun 2024 07:49:56 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF00002320.mail.protection.outlook.com (10.167.242.86) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7677.15 via Frontend Transport; Wed, 26 Jun 2024 07:49:56 +0000
-Received: from sindhu.amdval.net (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 26 Jun
- 2024 02:49:50 -0500
-From: Sandipan Das <sandipan.das@amd.com>
-To: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <x86@kernel.org>, <peterz@infradead.org>, <mingo@kernel.org>,
-	<acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
-	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
-	<irogers@google.com>, <adrian.hunter@intel.com>, <kan.liang@linux.intel.com>,
-	<tglx@linutronix.de>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
-	<hpa@zytor.com>, <kprateek.nayak@amd.com>, <ravi.bangoria@amd.com>,
-	<ananth.narayan@amd.com>, <sandipan.das@amd.com>
-Subject: [PATCH] perf/x86/amd/uncore: Fix DF and UMC domain identification
-Date: Wed, 26 Jun 2024 13:19:42 +0530
-Message-ID: <20240626074942.1044818-1-sandipan.das@amd.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A77315820F;
+	Wed, 26 Jun 2024 07:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719388200; cv=none; b=TQaecArPB4Z/eSRpSyvMuTTdjTcE+V0S3IwhVRYlKUasVLbKcaNVXsiFbOt3vbr+qs9i5+tNv7mteP8OUhWcNWD/FmXt7eO1qPGFW2y9p8f2Xf0OgmlvWO+Ezu5g8FDcFylPoXeSLXe2rFdSLCl6gpJ7iZfKv1sMShaMsKmgNZw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719388200; c=relaxed/simple;
+	bh=9QQfkTqGG0QhCMsMVbYtu53vc1iWZc7ZgkRrLlMchWA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E0wCCT0Nkg8GrIoDfaIi5jzGxv9HkTa+VzQWNr9xT5851+8WY8U8M4GHWA/nj0K0fdK3c3CcNR++K7RibQqahd7y4dq7fhDhFPOFxGh6F46PC+WONdc/FQLCdGtFyeWEyX4z5a15Btc8wUFcOyUl11s/lM3SZZ1zjHVCxMd+dNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NJdrA4CJ; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719388196;
+	bh=9QQfkTqGG0QhCMsMVbYtu53vc1iWZc7ZgkRrLlMchWA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NJdrA4CJL4+8nPwAEvW3sG2WdUSiZG76Na/Inya71e1MmguanYYNHJBnXQtO95jb0
+	 KHtin9jIbd0OPkXU3JIipGO2OowdHWuJ73hW4oi0wTEawJmzJ+zUcLljq299J4kHmq
+	 J8lbJOV7uQHyJ4tHJQNJ4IU1dNdJJ/gevVbhmOzYA6btbjd3LLahWKBOPgoPeOdjZD
+	 XyENIzLuDe771IoEkneVqR26p2BtgRutpTghOsQ3YtdCKNmM2L+UfUDEPQe6K9F+pd
+	 169Ef7pYgZb1SiJtDXFVkdqmiujX0qyafT9JUh9oumB3xZdcxeUBIfKQ+8DkcpJ86G
+	 BXrQI1tjR+8Vw==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D09A237810CD;
+	Wed, 26 Jun 2024 07:49:55 +0000 (UTC)
+Message-ID: <b838b9a9-0ce3-40a5-b7a5-d1c825a0fa20@collabora.com>
+Date: Wed, 26 Jun 2024 09:49:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ASoC: mediatek: Allow setting readable driver names
+ through kconfig
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240625-mt8195-driver-name-too-long-v1-1-8573b43a9868@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240625-mt8195-driver-name-too-long-v1-1-8573b43a9868@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF00002320:EE_|IA0PR12MB8256:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac403265-c970-4dc1-d9e9-08dc95b49287
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230038|36860700011|376012|7416012|1800799022|82310400024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?D8yU1AQMD0bBCNoqiIQP3CICFuXQgQ31w0Vt6D35tEiT+m6iWe3ewk/dAlV5?=
- =?us-ascii?Q?2YqoBPmjrKEncpwB+ujK2fj7ntZyeZ+IR3i4wyxumciQlfNjhGcLi2WQBwzV?=
- =?us-ascii?Q?ChdV6rvvXkynmajNAnKGWFRZohVsbkN3a9/nKd72/HVGj4WJcrwtbfZHyfS/?=
- =?us-ascii?Q?rBRMsp1BAgDAV2EA4u5VDXNP3y1S/QE3MjSYFN3P6fGTiQNfWDDugSO+Bhqt?=
- =?us-ascii?Q?uEVt6XaGi5uwaLEbjHGoI0sVrGwmll1C06UsRiLm+i7SgBB81AQqQBh10u5D?=
- =?us-ascii?Q?jHmGVNHWxeFTpMwO4FrG3LmnqzbL+azV7LWKVsM9SNFLRggaoAKKI/2GmkSW?=
- =?us-ascii?Q?KCh2Vtv2CpS0ek/lPXOn/lst6qAdTfOQZEc09G2IApy0yJWRo+winhjmxmZZ?=
- =?us-ascii?Q?dwvuKTCm0Q9AKejAiOe3w+4PgmyX8WVXIf9fAmRkgeUvYUIblObiYyJF2QHm?=
- =?us-ascii?Q?bsjJAXCP77hhg9aLj4cqiFnYjZS+TUkKUSPbC6m3h8ZpODQIODBRbqu45IW7?=
- =?us-ascii?Q?CaVaL2I9g0d4nICNLCIB40EyfeKie5CSX7nrwNDSq6Pgdmd63V+DC7QiczXS?=
- =?us-ascii?Q?RvIxfYd2HPleOQ1cxq4SCSoiWJnI5shFEtctHW5Xaeu9OQuo7VsDXeZU4x8u?=
- =?us-ascii?Q?gxPpGmTcmIlmg5zVyBAWOo26c9IUwcwzTUsIuD1a/IBXoN87EitEoX6fjGnv?=
- =?us-ascii?Q?+N57ii8FHMe1giedB4X5Cu4Bv4N/6FCVIo1LRvk5fP4luMnyZi8AZJew4wu/?=
- =?us-ascii?Q?PIH5MjYOCZ9Mp+E91x1OfNsG3eqIoiUs8fP/2WXj1jw7RutJkaLYLZz/anLS?=
- =?us-ascii?Q?n8uOG+egVYTjcxYNvfcRsGQlTFDj4dZzmY6PecMp+m0U0mSidwH52TLkpEPs?=
- =?us-ascii?Q?273Jb/e3ipabAIEBGSdDMI1Z0rYc6vI4gyZgm/4GklbyiQypCDPoH75G/FSW?=
- =?us-ascii?Q?OUXGuFYJb1aEkl8+jjebrhUdMK7jIQQeT7Wou8Ua1gUCfPbyNSmcteFTM7Jq?=
- =?us-ascii?Q?Cq7YkE/So8EmKZ5L5nQfIfvs+KOSn3Gb5zbOQ2iuAKn5JGKiKb/sXZGlkcSA?=
- =?us-ascii?Q?VDTnS51VvqVtogWAQBZTYuIVLzD9L0iGZbzre7cY+45zP0X2UMmHnxUipdej?=
- =?us-ascii?Q?FKxY5IJOLpRkxCk3R7rEYLtxGtMlHXA9rZalqWXyGaY8sl6i/OfjU3woK9Pu?=
- =?us-ascii?Q?yK/nlkXcD7IUmIxgVR+9MLvWvR6Qg5Vhpdud0q1vAsPRV3CjZfoL0wKV7VKp?=
- =?us-ascii?Q?XXJTaJkK6jOJ9Cr2V6cDAkvSzCbyfRV5vwEbRuimcbQ6fgk1JyDL8U/dNCdy?=
- =?us-ascii?Q?oeLc6izGNJVv4fbBGvD4o/fI4SS6fo5wCdz0QIImPs58Foa0CrTLcgSLc/mI?=
- =?us-ascii?Q?l0iEyZ73SqZtnDilvp142NPVdo1FX/iWb32NTI6cZP3TIpKg9c6WODEs3OBB?=
- =?us-ascii?Q?EeVsy7hd+ltiwq+9D8LqzSUbHtfbt4WS?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230038)(36860700011)(376012)(7416012)(1800799022)(82310400024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 26 Jun 2024 07:49:56.3390
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac403265-c970-4dc1-d9e9-08dc95b49287
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF00002320.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB8256
 
-For uncore PMUs, a single context is shared across all CPUs in a domain.
-The domain can be a CCX, like in the case of the L3 PMU, or a socket,
-like in the case of DF and UMC PMUs. This information is available via
-the PMU's cpumask.
+Il 25/06/24 22:23, Nícolas F. R. A. Prado ha scritto:
+> Commit c8d18e440225 ("ASoC: core: clarify the driver name
+> initialization") introduced an error message when driver names are
+> automatically generated and result in truncated names.
+> 
+> For example, this error message is printed on mt8195-cherry-tomato-rev2:
+> 
+>    mt8195_mt6359 mt8195-sound: ASoC: driver name too long 'sof-mt8195_r1019_5682' -> 'sof-mt8195_r101'
+> 
+> Since that truncated driver name is already used by userspace (eg UCM),
+> it can't be unconditionally updated.
+> 
+> As suggested by Jaroslav, update the driver name but hide it behind a
+> kernel config option, which Linux distributions can enable once the
+> corresponding support in userspace audio configuration software lands.
+> This ensures that audio doesn't regress, while still allowing the error
+> to be fixed.
 
-For contexts shared across a socket, the domain is currently determined
-from topology_die_id() which is incorrect after the introduction of
-commit 63edbaa48a57 ("x86/cpu/topology: Add support for the AMD
-0x80000026 leaf") as it now returns a CCX identifier on Zen 4 and later
-systems which support CPUID leaf 0x80000026.
+I can propose the following plan of action for such a rename:
+  1. Temporarily have both UCMs
+  2. Wait until distros update their packages
+  3. Change the name in kernel without extra config options
+  4. Remove the now deprecated UCMs
 
-Use topology_logical_package_id() instead as it always returns a socket
-identifier irrespective of the availability of CPUID leaf 0x80000026.
+...that's requiring a bit of time, yes, but I think this is the best way to
+ensure that no breakage happens in the meantime for any users.
 
-Fixes: 63edbaa48a57 ("x86/cpu/topology: Add support for the AMD 0x80000026 leaf")
-Signed-off-by: Sandipan Das <sandipan.das@amd.com>
----
- arch/x86/events/amd/uncore.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Anyone disagreeing? Does anyone have any better idea?
 
-diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
-index 4ccb8fa483e6..5219c8dbe61b 100644
---- a/arch/x86/events/amd/uncore.c
-+++ b/arch/x86/events/amd/uncore.c
-@@ -639,7 +639,7 @@ void amd_uncore_df_ctx_scan(struct amd_uncore *uncore, unsigned int cpu)
- 	info.split.aux_data = 0;
- 	info.split.num_pmcs = NUM_COUNTERS_NB;
- 	info.split.gid = 0;
--	info.split.cid = topology_die_id(cpu);
-+	info.split.cid = topology_logical_package_id(cpu);
- 
- 	if (pmu_version >= 2) {
- 		ebx.full = cpuid_ebx(EXT_PERFMON_DEBUG_FEATURES);
-@@ -893,8 +893,8 @@ void amd_uncore_umc_ctx_scan(struct amd_uncore *uncore, unsigned int cpu)
- 	cpuid(EXT_PERFMON_DEBUG_FEATURES, &eax, &ebx.full, &ecx, &edx);
- 	info.split.aux_data = ecx;	/* stash active mask */
- 	info.split.num_pmcs = ebx.split.num_umc_pmc;
--	info.split.gid = topology_die_id(cpu);
--	info.split.cid = topology_die_id(cpu);
-+	info.split.gid = topology_logical_package_id(cpu);
-+	info.split.cid = topology_logical_package_id(cpu);
- 	*per_cpu_ptr(uncore->info, cpu) = info;
- }
- 
--- 
-2.43.0
+Cheers,
+Angelo
+
+> 
+> Suggested-by: Jaroslav Kysela <perex@perex.cz>
+> Link: https://lore.kernel.org/all/8d0ccf4a-a6d9-f914-70a9-c2ad55af3a04@perex.cz
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>   sound/soc/mediatek/Kconfig                         | 10 ++++++++++
+>   sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c   |  3 +++
+>   sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c   |  3 +++
+>   sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c | 13 ++++++++++++-
+>   sound/soc/mediatek/mt8186/mt8186-mt6366.c          | 16 +++++++++++++++-
+>   sound/soc/mediatek/mt8188/mt8188-mt6359.c          |  7 ++++++-
+>   sound/soc/mediatek/mt8195/mt8195-mt6359.c          |  7 ++++++-
+>   7 files changed, 55 insertions(+), 4 deletions(-)
+> 
+> diff --git a/sound/soc/mediatek/Kconfig b/sound/soc/mediatek/Kconfig
+> index 5a8476e1ecca..396d558bc75b 100644
+> --- a/sound/soc/mediatek/Kconfig
+> +++ b/sound/soc/mediatek/Kconfig
+> @@ -281,6 +281,16 @@ config SND_SOC_MT8195
+>   	  Select Y if you have such device.
+>   	  If unsure select "N".
+>   
+> +config SND_SOC_MTK_READABLE_DRIVER_NAME
+> +	bool "Readable driver name for MediaTek sound cards"
+> +	help
+> +	  This explicitly sets the driver name for the MediaTek sound cards to
+> +	  prevent it from potentially being truncated and harder to read. The
+> +	  new names require support in the audio configuration userspace
+> +	  utilities (like UCM), so only select this once they have been updated
+> +	  to support the new names to ensure working audio.
+> +	  If unsure select "N".
+> +
+>   config SND_SOC_MT8195_MT6359
+>   	tristate "ASoC Audio driver for MT8195 with MT6359 and I2S codecs"
+>   	depends on I2C && GPIOLIB
+> diff --git a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c
+> index 4ed06c269065..9155bb29c0a2 100644
+> --- a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c
+> +++ b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5514.c
+> @@ -173,6 +173,9 @@ static struct snd_soc_codec_conf mt8173_rt5650_rt5514_codec_conf[] = {
+>   
+>   static struct snd_soc_card mt8173_rt5650_rt5514_card = {
+>   	.name = "mtk-rt5650-rt5514",
+> +#if IS_ENABLED(CONFIG_SND_SOC_MTK_READABLE_DRIVER_NAME)
+> +	.driver_name = "mtk-rt5514",
+> +#endif
+>   	.owner = THIS_MODULE,
+>   	.dai_link = mt8173_rt5650_rt5514_dais,
+>   	.num_links = ARRAY_SIZE(mt8173_rt5650_rt5514_dais),
+> diff --git a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c
+> index 763067c21153..212b36a0559f 100644
+> --- a/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c
+> +++ b/sound/soc/mediatek/mt8173/mt8173-rt5650-rt5676.c
+> @@ -229,6 +229,9 @@ static struct snd_soc_codec_conf mt8173_rt5650_rt5676_codec_conf[] = {
+>   
+>   static struct snd_soc_card mt8173_rt5650_rt5676_card = {
+>   	.name = "mtk-rt5650-rt5676",
+> +#if IS_ENABLED(CONFIG_SND_SOC_MTK_READABLE_DRIVER_NAME)
+> +	.driver_name = "mtk-rt5676",
+> +#endif
+>   	.owner = THIS_MODULE,
+>   	.dai_link = mt8173_rt5650_rt5676_dais,
+>   	.num_links = ARRAY_SIZE(mt8173_rt5650_rt5676_dais),
+> diff --git a/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c b/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c
+> index f848e14b091a..2664e3d14fec 100644
+> --- a/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c
+> +++ b/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c
+> @@ -19,6 +19,8 @@
+>   #include "../common/mtk-afe-platform-driver.h"
+>   #include "mt8183-afe-common.h"
+>   
+> +#define DRIVER_NAME "mt8183_da7219"
+> +
+>   #define DA7219_CODEC_DAI "da7219-hifi"
+>   #define DA7219_DEV_NAME "da7219.5-001a"
+>   #define RT1015_CODEC_DAI "rt1015-aif"
+> @@ -649,6 +651,9 @@ static const struct snd_soc_dapm_route mt8183_da7219_max98357_dapm_routes[] = {
+>   
+>   static struct snd_soc_card mt8183_da7219_max98357_card = {
+>   	.name = "mt8183_da7219_max98357",
+> +#if IS_ENABLED(CONFIG_SND_SOC_MTK_READABLE_DRIVER_NAME)
+> +	.driver_name = DRIVER_NAME,
+> +#endif
+>   	.owner = THIS_MODULE,
+>   	.controls = mt8183_da7219_max98357_snd_controls,
+>   	.num_controls = ARRAY_SIZE(mt8183_da7219_max98357_snd_controls),
+> @@ -706,6 +711,9 @@ static const struct snd_soc_dapm_route mt8183_da7219_rt1015_dapm_routes[] = {
+>   
+>   static struct snd_soc_card mt8183_da7219_rt1015_card = {
+>   	.name = "mt8183_da7219_rt1015",
+> +#if IS_ENABLED(CONFIG_SND_SOC_MTK_READABLE_DRIVER_NAME)
+> +	.driver_name = DRIVER_NAME,
+> +#endif
+>   	.owner = THIS_MODULE,
+>   	.controls = mt8183_da7219_rt1015_snd_controls,
+>   	.num_controls = ARRAY_SIZE(mt8183_da7219_rt1015_snd_controls),
+> @@ -723,6 +731,9 @@ static struct snd_soc_card mt8183_da7219_rt1015_card = {
+>   
+>   static struct snd_soc_card mt8183_da7219_rt1015p_card = {
+>   	.name = "mt8183_da7219_rt1015p",
+> +#if IS_ENABLED(CONFIG_SND_SOC_MTK_READABLE_DRIVER_NAME)
+> +	.driver_name = DRIVER_NAME,
+> +#endif
+>   	.owner = THIS_MODULE,
+>   	.controls = mt8183_da7219_max98357_snd_controls,
+>   	.num_controls = ARRAY_SIZE(mt8183_da7219_max98357_snd_controls),
+> @@ -875,7 +886,7 @@ MODULE_DEVICE_TABLE(of, mt8183_da7219_max98357_dt_match);
+>   
+>   static struct platform_driver mt8183_da7219_max98357_driver = {
+>   	.driver = {
+> -		.name = "mt8183_da7219",
+> +		.name = DRIVER_NAME,
+>   #ifdef CONFIG_OF
+>   		.of_match_table = mt8183_da7219_max98357_dt_match,
+>   #endif
+> diff --git a/sound/soc/mediatek/mt8186/mt8186-mt6366.c b/sound/soc/mediatek/mt8186/mt8186-mt6366.c
+> index 771d53611c2a..29f17dfb8f1b 100644
+> --- a/sound/soc/mediatek/mt8186/mt8186-mt6366.c
+> +++ b/sound/soc/mediatek/mt8186/mt8186-mt6366.c
+> @@ -31,6 +31,8 @@
+>   #include "mt8186-afe-gpio.h"
+>   #include "mt8186-mt6366-common.h"
+>   
+> +#define DRIVER_NAME "mt8186_mt6366"
+> +
+>   #define RT1019_CODEC_DAI	"HiFi"
+>   #define RT1019_DEV0_NAME	"rt1019p"
+>   
+> @@ -1119,6 +1121,9 @@ mt8186_mt6366_rt1019_rt5682s_controls[] = {
+>   
+>   static struct snd_soc_card mt8186_mt6366_da7219_max98357_soc_card = {
+>   	.name = "mt8186_da7219_max98357",
+> +#if IS_ENABLED(CONFIG_SND_SOC_MTK_READABLE_DRIVER_NAME)
+> +	.driver_name = DRIVER_NAME,
+> +#endif
+>   	.owner = THIS_MODULE,
+>   	.dai_link = mt8186_mt6366_rt1019_rt5682s_dai_links,
+>   	.num_links = ARRAY_SIZE(mt8186_mt6366_rt1019_rt5682s_dai_links),
+> @@ -1134,6 +1139,9 @@ static struct snd_soc_card mt8186_mt6366_da7219_max98357_soc_card = {
+>   
+>   static struct snd_soc_card mt8186_mt6366_rt1019_rt5682s_soc_card = {
+>   	.name = "mt8186_rt1019_rt5682s",
+> +#if IS_ENABLED(CONFIG_SND_SOC_MTK_READABLE_DRIVER_NAME)
+> +	.driver_name = DRIVER_NAME,
+> +#endif
+>   	.owner = THIS_MODULE,
+>   	.dai_link = mt8186_mt6366_rt1019_rt5682s_dai_links,
+>   	.num_links = ARRAY_SIZE(mt8186_mt6366_rt1019_rt5682s_dai_links),
+> @@ -1149,6 +1157,9 @@ static struct snd_soc_card mt8186_mt6366_rt1019_rt5682s_soc_card = {
+>   
+>   static struct snd_soc_card mt8186_mt6366_rt5682s_max98360_soc_card = {
+>   	.name = "mt8186_rt5682s_max98360",
+> +#if IS_ENABLED(CONFIG_SND_SOC_MTK_READABLE_DRIVER_NAME)
+> +	.driver_name = DRIVER_NAME,
+> +#endif
+>   	.owner = THIS_MODULE,
+>   	.dai_link = mt8186_mt6366_rt1019_rt5682s_dai_links,
+>   	.num_links = ARRAY_SIZE(mt8186_mt6366_rt1019_rt5682s_dai_links),
+> @@ -1164,6 +1175,9 @@ static struct snd_soc_card mt8186_mt6366_rt5682s_max98360_soc_card = {
+>   
+>   static struct snd_soc_card mt8186_mt6366_rt5650_soc_card = {
+>   	.name = "mt8186_rt5650",
+> +#if IS_ENABLED(CONFIG_SND_SOC_MTK_READABLE_DRIVER_NAME)
+> +	.driver_name = DRIVER_NAME,
+> +#endif
+>   	.owner = THIS_MODULE,
+>   	.dai_link = mt8186_mt6366_rt1019_rt5682s_dai_links,
+>   	.num_links = ARRAY_SIZE(mt8186_mt6366_rt1019_rt5682s_dai_links),
+> @@ -1380,7 +1394,7 @@ MODULE_DEVICE_TABLE(of, mt8186_mt6366_dt_match);
+>   
+>   static struct platform_driver mt8186_mt6366_driver = {
+>   	.driver = {
+> -		.name = "mt8186_mt6366",
+> +		.name = DRIVER_NAME,
+>   #if IS_ENABLED(CONFIG_OF)
+>   		.of_match_table = mt8186_mt6366_dt_match,
+>   #endif
+> diff --git a/sound/soc/mediatek/mt8188/mt8188-mt6359.c b/sound/soc/mediatek/mt8188/mt8188-mt6359.c
+> index eba6f4c445ff..2640981a2463 100644
+> --- a/sound/soc/mediatek/mt8188/mt8188-mt6359.c
+> +++ b/sound/soc/mediatek/mt8188/mt8188-mt6359.c
+> @@ -23,6 +23,8 @@
+>   #include "../common/mtk-dsp-sof-common.h"
+>   #include "../common/mtk-soc-card.h"
+>   
+> +#define DRIVER_NAME "mt8188_mt6359"
+> +
+>   #define CKSYS_AUD_TOP_CFG	0x032c
+>    #define RG_TEST_ON		BIT(0)
+>    #define RG_TEST_TYPE		BIT(2)
+> @@ -1240,6 +1242,9 @@ static void mt8188_fixup_controls(struct snd_soc_card *card)
+>   }
+>   
+>   static struct snd_soc_card mt8188_mt6359_soc_card = {
+> +#if IS_ENABLED(CONFIG_SND_SOC_MTK_READABLE_DRIVER_NAME)
+> +	.driver_name = DRIVER_NAME,
+> +#endif
+>   	.owner = THIS_MODULE,
+>   	.dai_link = mt8188_mt6359_dai_links,
+>   	.num_links = ARRAY_SIZE(mt8188_mt6359_dai_links),
+> @@ -1392,7 +1397,7 @@ MODULE_DEVICE_TABLE(of, mt8188_mt6359_dt_match);
+>   
+>   static struct platform_driver mt8188_mt6359_driver = {
+>   	.driver = {
+> -		.name = "mt8188_mt6359",
+> +		.name = DRIVER_NAME,
+>   		.of_match_table = mt8188_mt6359_dt_match,
+>   		.pm = &snd_soc_pm_ops,
+>   	},
+> diff --git a/sound/soc/mediatek/mt8195/mt8195-mt6359.c b/sound/soc/mediatek/mt8195/mt8195-mt6359.c
+> index ca8751190520..da406cbb40f6 100644
+> --- a/sound/soc/mediatek/mt8195/mt8195-mt6359.c
+> +++ b/sound/soc/mediatek/mt8195/mt8195-mt6359.c
+> @@ -26,6 +26,8 @@
+>   #include "mt8195-afe-clk.h"
+>   #include "mt8195-afe-common.h"
+>   
+> +#define DRIVER_NAME "mt8195_mt6359"
+> +
+>   #define RT1011_SPEAKER_AMP_PRESENT		BIT(0)
+>   #define RT1019_SPEAKER_AMP_PRESENT		BIT(1)
+>   #define MAX98390_SPEAKER_AMP_PRESENT		BIT(2)
+> @@ -1231,6 +1233,9 @@ static struct snd_soc_codec_conf max98390_codec_conf[] = {
+>   };
+>   
+>   static struct snd_soc_card mt8195_mt6359_soc_card = {
+> +#if IS_ENABLED(CONFIG_SND_SOC_MTK_READABLE_DRIVER_NAME)
+> +	.driver_name = DRIVER_NAME,
+> +#endif
+>   	.owner = THIS_MODULE,
+>   	.dai_link = mt8195_mt6359_dai_links,
+>   	.num_links = ARRAY_SIZE(mt8195_mt6359_dai_links),
+> @@ -1530,7 +1535,7 @@ MODULE_DEVICE_TABLE(of, mt8195_mt6359_dt_match);
+>   
+>   static struct platform_driver mt8195_mt6359_driver = {
+>   	.driver = {
+> -		.name = "mt8195_mt6359",
+> +		.name = DRIVER_NAME,
+>   		.of_match_table = mt8195_mt6359_dt_match,
+>   		.pm = &snd_soc_pm_ops,
+>   	},
+> 
+> ---
+> base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
+> change-id: 20240625-mt8195-driver-name-too-long-095a030a2e86
+> 
+> Best regards,
+
+
 
 
