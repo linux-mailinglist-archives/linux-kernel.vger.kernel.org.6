@@ -1,130 +1,104 @@
-Return-Path: <linux-kernel+bounces-230222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 316D19179FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:43:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 669DC917A01
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:44:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60E5B1C219E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:43:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2252528331F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:44:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A03A15D5CA;
-	Wed, 26 Jun 2024 07:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PFzJch1v"
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E04015CD58;
+	Wed, 26 Jun 2024 07:44:22 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC331155316;
-	Wed, 26 Jun 2024 07:43:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42EF15B968
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:44:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719387827; cv=none; b=hWHlyxg0lpm66Po/YQQYVaAtQYz2KwbVE0Hqe3QruLeh6YSouV7hSnymHMaewv37TLoTx3f+SCmGU3gkBF+yKHpsHYUP1jDRwxhmsBl5GtqSrkbxaSyr2nRncSHheBKz9FnRbegPKFyZlOh7kVRUWWlzO/qHsIM8aFtg/EwU2hc=
+	t=1719387861; cv=none; b=ZjYWUXTXiKylCG68ISU05jYg48ZllWf+0jv+BA7HUWoIBt3JfmZKKVI/qCYqzsJZGmO93rZ4RBOGrUUX0mxKF/RdSx5DlGdXMI28RplCzObTe0712GmxmJq2gZUGFbhsNcGl0E+g7HBvE9sGxApDORBMecMTjXVTWA5TSlHiXm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719387827; c=relaxed/simple;
-	bh=QVwwwwWJMC02wU6Kl7A1QxNTL8rAbcV54YrqF8y2+Iw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UmsNrd4/YBsP2Mj+LSyEUNKEw5oR1x5Ivz+KxC74GBLb15lIv98ZxuVdTjziNG0HW+a5jnYzPUsXGKkAmGj3eh+8WCCmYUr6P8Pqzm3F7HB7qVJp9tlkOihpWqER1KWRqcRschpcV2kH15nBSRw1mAD4ifztmEIIgkou2BwAJJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PFzJch1v; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719387818;
-	bh=QVwwwwWJMC02wU6Kl7A1QxNTL8rAbcV54YrqF8y2+Iw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PFzJch1vLYzrVQ7JPoyPNhbYxtzjzkfkQTYjt7iZJcbUYagAeEd+Jcz+mRS4N4k+C
-	 7K44jeaYtTEURxDJMY+W9T2/97ED6LuC6VwGz30ZoH/oLS0ZmalwssH275HWYqMFUn
-	 Fef+DZbZCzxpstdzVXYzJxq0IitWai9W+kgOLXK5hFLR4ZGmq5py6Os7DkmP//VEdL
-	 039i81SnuMfSn3i/64BU46IYb2OSMqdRrhkDpxWlcnJbEPJnuD5HlS4GwlJ23IYTZL
-	 XBgBQ0/nDEEe9QBAKzNoyiJb0DeHS+0eIOQvEmmAwd2jLYFkEC3gt0pVh5v37tcJHw
-	 U20c01voSopKw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 571C137821B7;
-	Wed, 26 Jun 2024 07:43:37 +0000 (UTC)
-Message-ID: <4541415f-0e6d-438f-a7b3-0c29c196e432@collabora.com>
-Date: Wed, 26 Jun 2024 09:43:36 +0200
+	s=arc-20240116; t=1719387861; c=relaxed/simple;
+	bh=iAZ79Lntgn6Yf0IIjT65YZ9isgG2MCvrlbPBPO5OQ3A=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U/U10MlhrgBZL9M/rAFydJ1sWQEO0Cep0s8Tb+b7AVAGQWqWNJEt2BB0331tQrNZ2X8WdO8jx4fT1BoFK0ukrtIA4WOUmL8MtRgg0O+tg5yw+92rA566iRgCQffHeh8XiOyHXJXwnmT6fruVW4gG/T+gnwnUik98Mci9pB2ON8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowAAXHuatxntmX6vdEg--.47338S2;
+	Wed, 26 Jun 2024 15:43:49 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: jgross@suse.com,
+	boris.ostrovsky@oracle.com,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	x86@kernel.org,
+	hpa@zytor.com,
+	jeremy@goop.org
+Cc: xen-devel@lists.xenproject.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>
+Subject: [PATCH] xen: Fix null pointer dereference in xen_init_lock_cpu()
+Date: Wed, 26 Jun 2024 15:43:39 +0800
+Message-Id: <20240626074339.2820381-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH v6 0/7] MediaTek DVFSRC Bus Bandwidth and
- Regulator knobs
-To: Mark Brown <broonie@kernel.org>, djakov@kernel.org
-Cc: robh@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- matthias.bgg@gmail.com, lgirdwood@gmail.com, gustavoars@kernel.org,
- henryc.chen@mediatek.com, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- kernel@collabora.com, wenst@chromium.org, amergnat@baylibre.com,
- Kees Cook <kees@kernel.org>
-References: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
- <171934124556.1173981.12014605377517424760.b4-ty@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <171934124556.1173981.12014605377517424760.b4-ty@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowAAXHuatxntmX6vdEg--.47338S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtrykAF4ktF4kXF45CF18AFb_yoWfZrbE9F
+	Z2qa1UCr4rta1av34jya45Gr4Sk3s7JryUWrs3tasIq3y5JFWkKa1Dtrnagw4jka4DurW7
+	Ca4UW3yUX34jkjkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3kFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
+	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IE
+	rcIFxwACI402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUQZ23UUUUU=
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-Il 25/06/24 20:47, Mark Brown ha scritto:
-> On Mon, 10 Jun 2024 10:57:28 +0200, AngeloGioacchino Del Regno wrote:
->> Changes in v6:
->>   - Fixed build with clang (thanks Nathan!)
->>   - Removed unused mtk_rmw() macro in mtk-dvfsrc.c
->>   - Added MODULE_DESCRIPTION() to mtk-dvfsrc-regulator.c
->>
->> Changes in v5:
->>   - Fixed Kconfig dependencies in interconnect
->>   - Fixed module build for dvfsrc and interconnect
->>
->> [...]
-> 
-> Applied to
-> 
+kasprintf() is used for formatting strings and dynamically allocating
+memory space. If memory allocation fails, kasprintf() will return NULL.
+We should add a check to ensure that failure does not occur.
 
-Thanks Mark, appreciated :-)
+Fixes: d5de8841355a ("x86: split spinlock implementations out into their own files")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+Found this error through static analysis.
+---
+ arch/x86/xen/spinlock.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Cheers
-
->     https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
-> 
-> Thanks!
-> 
-> [1/7] dt-bindings: regulator: Add bindings for MediaTek DVFSRC Regulators
->        commit: b147ae7ae5141cb10c520d372ecabb2c520210c4
-> [5/7] regulator: Remove mtk-dvfsrc-regulator.c
->        commit: cd102850e32c145661c6a0640dc6c5feba11af72
-> [6/7] regulator: Add refactored mtk-dvfsrc-regulator driver
->        commit: d2ea920a4092b3c0a6a004b93ce198ca37455d90
-> 
-> All being well this means that it will be integrated into the linux-next
-> tree (usually sometime in the next 24 hours) and sent to Linus during
-> the next merge window (or sooner if it is a bug fix), however if
-> problems are discovered then the patch may be dropped or reverted.
-> 
-> You may get further e-mails resulting from automated or manual testing
-> and review of the tree, please engage with people reporting problems and
-> send followup patches addressing any issues that are reported if needed.
-> 
-> If any updates are required or you are submitting further changes they
-> should be sent as incremental updates against current git, existing
-> patches will not be replaced.
-> 
-> Please add any relevant lists and maintainers to the CCs when replying
-> to this mail.
-> 
-> Thanks,
-> Mark
-> 
-
-
+diff --git a/arch/x86/xen/spinlock.c b/arch/x86/xen/spinlock.c
+index 5c6fc16e4b92..fe3cd95c1604 100644
+--- a/arch/x86/xen/spinlock.c
++++ b/arch/x86/xen/spinlock.c
+@@ -75,6 +75,8 @@ void xen_init_lock_cpu(int cpu)
+ 	     cpu, per_cpu(lock_kicker_irq, cpu));
+ 
+ 	name = kasprintf(GFP_KERNEL, "spinlock%d", cpu);
++	if (!name)
++		return;
+ 	per_cpu(irq_name, cpu) = name;
+ 	irq = bind_ipi_to_irqhandler(XEN_SPIN_UNLOCK_VECTOR,
+ 				     cpu,
+-- 
+2.25.1
 
 
