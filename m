@@ -1,171 +1,105 @@
-Return-Path: <linux-kernel+bounces-230177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230178-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2E6917971
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:15:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3206917974
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:15:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA210287C5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:15:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AED71F222FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:15:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3906315AADB;
-	Wed, 26 Jun 2024 07:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E31515A488;
+	Wed, 26 Jun 2024 07:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8Iwp5VZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="KodcBZfI"
+Received: from fout4-smtp.messagingengine.com (fout4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BE713ADA;
-	Wed, 26 Jun 2024 07:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB898153824;
+	Wed, 26 Jun 2024 07:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719386128; cv=none; b=EJ//NknV8PndQoakwbSZLLTjVb/1YcaX+f58nawStfOq9YjaLEnp0wgEgBWuOUR1TmhqWwHA8dZsleRMl1bO1MXcsSi/5tj4Pg9naOWwfB/HxvnNETK+5BTduSGdItjrGpYNQSYN+Ei/8Yc2jkSBxdIYggLwi70oV3ULsKlcwAs=
+	t=1719386151; cv=none; b=U2GLMRBp+uAbXEXc3hfPa15qhmHcuW+7VvxEjUMw66GttBpzyKX/OOGJ5hN6a9rwfVzfltWFCvg+ZXIeC1I4pCMT7i3gS47O6zuU7VcO8qs4NAB6FUzkC3yc2ztC1A8+XT6KgHZ+99zXHCoNlLNt1Z+i1WD6D1oc52fvWeH4zu8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719386128; c=relaxed/simple;
-	bh=dZfPs6X2vmaw1uobT8G92DNBDUmYOqr+zxdSBTGhwY8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g+8gtJmnGsi7h3y4Tr6dlyCj9pdMuXtoQV+LCWnUf6z0lvfuKZKBayc8p+3cCp/Dzuu3GdOnQyi23Qyb5OJU682zE3m16qh32h3GPBOMBUxd0UTnB2tUFJS8vbTgFV7hLns3NjDyF3PCSFb24XjPGa2z0BUTWcQigOrHC+7D7gM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8Iwp5VZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E222C2BD10;
-	Wed, 26 Jun 2024 07:15:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719386128;
-	bh=dZfPs6X2vmaw1uobT8G92DNBDUmYOqr+zxdSBTGhwY8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=N8Iwp5VZvqZNbKV+YVTwuIjKjI7FOkdtiRYKXnPmwrH5o3beW/MpMrHj7Suw2g4xz
-	 i1bgSSse8G3fRoaraKLbpKULg4kn+GcFHWoKuHPmltG6hSVVL5PgECJvP99cWGJUJK
-	 /o5+8L5o8CQ9e/0Hk2Hy2BBrTxBBdnJtEZHFyj+dvs/0YA+0iBGgnlzvnvYJNAbUy1
-	 5WZSZx7+TLi8ZQWkjqqAiGOmblB+WLmZb5gLmUSiJkSqH9Mo1m8QqyuSY+tHpOIFGZ
-	 vBaRV86v5ikQrsSYCCf6GTW5SjHrYbf1CsvGpo25g9BdcQXusNH2vjNUvB0BH/BVi0
-	 Bv4zFL8iv5WAQ==
-Message-ID: <0a35f0bd-ceec-487f-b9fd-ae9698b74048@kernel.org>
-Date: Wed, 26 Jun 2024 09:15:20 +0200
+	s=arc-20240116; t=1719386151; c=relaxed/simple;
+	bh=uZ32ru/v0nJwiwpXmKA4UVati12eZuAY7W95xNiPPac=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LpD0ohc8zIRHe2i0TsvLsObYSJ9ZCwLHA4N8g4pxgkcgoc3QnkwYWxIlKypeWVlyXHnKXmedz2xOzu6meweZbnEFUWRuEvYA9wXOu17Naf/T0VtZpwcMu+uOXew3UAMWNbg34pjgXN9hHqIVZ65XvxwGSzJ/XandMpmtFOOdxs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=KodcBZfI; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
+	by mailfout.nyi.internal (Postfix) with ESMTP id CE2F11380583;
+	Wed, 26 Jun 2024 03:15:48 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute6.internal (MEProxy); Wed, 26 Jun 2024 03:15:48 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1719386148; x=1719472548; bh=1h7GPGeucNCM2cQ8u0wLzjvPitmE
+	x8vWv6Fpkp64wzQ=; b=KodcBZfIvPErNHi2gWUmX3poCuHkgVgpRwKuokVu6hDS
+	AGJZs70Vu4Uib7Sn5oKhjmS7BF9UY4xlTCov4SUmuUrEsKhFzGjczOCdvVFLqmA0
+	PdCQfeY0aG/GtPmIwSFEEkxyEGmWRDS+oSraRJPNh6tTHSwV7L5aELBZnPI/6bse
+	InrwIZDktCo1LW0IcoJeCpu7R2IsvF8SRJZv4Vz6mJxrYNZ6oU89wQiec2GoDncM
+	rD0sNiLAgXXRGGi+RgYvaO/w4JWAC/NMDZaCSR4Owqx7P4y39CBdXiA1WdM9TRGm
+	5yvU4xPtiOxMtX+QGUKS7ZNWjGbRWJkJn03fHD1UMg==
+X-ME-Sender: <xms:JMB7Zg23ZTU75EVOqdKOWqKt8uzevNl5aW3OOzj64N02s0O2eGmpPw>
+    <xme:JMB7ZrG6tmzicb5w1sFKsMIr-E7_smYrNnubd608-DRBYAQO-xl03CabXe_glZPsR
+    9GvsG48VF2yAsY>
+X-ME-Received: <xmr:JMB7Zo7bFAYFNzFUm-pVHwSPth3u3PiF51Rcc-sxcpvS10pMumrL-ebYd3PY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtddugdduudeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvdenucfhrhhomhepkfguohcu
+    ufgthhhimhhmvghluceoihguohhstghhsehiughoshgthhdrohhrgheqnecuggftrfgrth
+    htvghrnhepvddufeevkeehueegfedtvdevfefgudeifeduieefgfelkeehgeelgeejjeeg
+    gefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepih
+    guohhstghhsehiughoshgthhdrohhrgh
+X-ME-Proxy: <xmx:JMB7Zp177iNnP-Yp7uOiNyZgf4AmsLhlaUvWTM2J6WsLGrqZwTv9xw>
+    <xmx:JMB7ZjF0meYwC29NLCJijgSIFVbiKfMcltiSC-yP_MsR_wG4e5b_7g>
+    <xmx:JMB7Zi8bzSkMHezT8BcGHVtu2_SyTbRDwf9M_OxLTaBICLuZVH8qdA>
+    <xmx:JMB7ZoleslbDEn40jjTnqmm0ykYkKo6R4sOLwczIU_T0HFjx09HbGA>
+    <xmx:JMB7ZicTx0SKa9lfQCFZor81Td62qVbXegdmgH4zKRdqAFmKp8jjDilb>
+Feedback-ID: i494840e7:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 26 Jun 2024 03:15:47 -0400 (EDT)
+Date: Wed, 26 Jun 2024 10:15:38 +0300
+From: Ido Schimmel <idosch@idosch.org>
+To: Adrian Moreno <amorenoz@redhat.com>
+Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com,
+	horms@kernel.org, i.maximets@ovn.org, dev@openvswitch.org,
+	Yotam Gigi <yotam.gi@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v5 01/10] net: psample: add user cookie
+Message-ID: <ZnvAGkyXXUH5cA4R@shredder.mtl.com>
+References: <20240625205204.3199050-1-amorenoz@redhat.com>
+ <20240625205204.3199050-2-amorenoz@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFT v3 1/5] dt-bindings: media: camss: Add
- qcom,sc7180-camss
-To: george chan <gchan9527@gmail.com>
-Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240624-b4-sc7180-camss-v3-0-89ece6471431@gmail.com>
- <20240624-b4-sc7180-camss-v3-1-89ece6471431@gmail.com>
- <c33dde93-2c3a-4a00-93ee-e4de303c9057@kernel.org>
- <CADgMGSvN=uAW7z1dpETGVRewzDG=K2MAtzOkhK7xAcskU_oeZg@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CADgMGSvN=uAW7z1dpETGVRewzDG=K2MAtzOkhK7xAcskU_oeZg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240625205204.3199050-2-amorenoz@redhat.com>
 
-On 26/06/2024 08:46, george chan wrote:
-> On Wed, Jun 26, 2024 at 2:12 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>
->> On 24/06/2024 14:13, George Chan via B4 Relay wrote:
->>> From: George Chan <gchan9527@gmail.com>
->>>
->>> Add bindings for qcom,sc7180-camss in order to support the camera
->>> subsystem for sm7125 as found in the Xiaomi Redmi 9 Pro cellphone.
->>
->>
->> ...
->>
->>> +
->>> +required:
->>> +  - clock-names
->>> +  - clocks
->>> +  - compatible
->>
->> Nothing improved here.
->>
->> I asked you at v2 to go through all comments and respond to each of them
->> or implement each of them.
->>
->>>> Keep the list ordered, the same as list properties.
-> I am a bit confused. Is it by ascending order or by particular order
-> like below the same ordering to the example node?
-
-Feel free to ask a question if comment is not clear.
-
-Keep the list in "required:" in the same order as the list in "properties:".
-
-> required:
->   - compatible
->   - reg
->   - reg-names
->   - clock-names
->   - clocks
+On Tue, Jun 25, 2024 at 10:51:44PM +0200, Adrian Moreno wrote:
+> Add a user cookie to the sample metadata so that sample emitters can
+> provide more contextual information to samples.
 > 
->> BTW, I asked for subject to keep only one, first "media" prefix:
->>         "Subject: just one media (first). "
->> but you kept the second "media".
+> If present, send the user cookie in a new attribute:
+> PSAMPLE_ATTR_USER_COOKIE.
 > 
-> Sorry I can't get it. Could you choose one?
-> 
-> _ORIGINAL_
-> dt-bindings: media: camss: Add qcom,sc7180-camss
+> Reviewed-by: Simon Horman <horms@kernel.org>
+> Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
 
-No, original was different. Go back to your first posting. I asked to
-remove one media and keep only one - the first. I did not ask to
-re-shuffle the prefixes.
-
-Best regards,
-Krzysztof
-
+Reviewed-by: Ido Schimmel <idosch@nvidia.com>
 
