@@ -1,148 +1,73 @@
-Return-Path: <linux-kernel+bounces-231232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35F219187F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:53:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDB309187F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:54:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E553E284017
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:53:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3286DB23EB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:54:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0056018FC91;
-	Wed, 26 Jun 2024 16:52:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080E218FC7E;
+	Wed, 26 Jun 2024 16:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ReY6pkAa"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LN4JmXCc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63841F94C;
-	Wed, 26 Jun 2024 16:52:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DE4B18F2FB
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719420773; cv=none; b=E3i0FfhWUpAJFKA2+YOS9zb1PYCvc13ytSTeBU3X02Og6OvDC9EmBYHEvUoxh+8gP0QLD4ztaruZoLj8bPpKUIL8dBDi9mVLd4jYxqrbrWGmxc4uawZ3ovsk+FIC/xLyuf5CT9cH0CmyyfpSmsB8Bh9NTPlftsUUHq9TWxOch1I=
+	t=1719420868; cv=none; b=CqrwSqZf7/RyA/4mjACB6GlLL9Bmr+8kNyNtR0aQBtZwN2C8XtmIH1uxgtmxPe1Ua93G5an16iv0qA7OvIe+0a/k0eRZe1t+U3Nh6zE+b1VYKfWM3N/gNtfCnhbupqgHThoiKb98EWMsEZw1lX5+LECURmaMWT/ayqy+8yI7Jz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719420773; c=relaxed/simple;
-	bh=RqiwFZ3/x5mZbBYDbfsmFO2HZkjcTWfLQWKMBl63Jj4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bcqkqdUZYHK+JPOuCHm07xVEor/bFBtVBP29IYfdEjnySqVsJ/+SMr0NGMGupAwL4EuoZe8XMJ+PgCCXLwTaiDKIVRAkG8PDb+BzG1t813WRajkP5VrpqmwJkWus3jdxUV9+2Y/2BlOpVtWgSVmxxS/G1BSI1W6MG2itIkKcnZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ReY6pkAa; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719420772; x=1750956772;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=RqiwFZ3/x5mZbBYDbfsmFO2HZkjcTWfLQWKMBl63Jj4=;
-  b=ReY6pkAa7xZ48YaYVN11kmP1emU9ZOJF2Yd5YShvr2MUB9ZyubYj8+Xy
-   uATJ2MctdOly3KMlxFWkuUyEVy7ARa4sKGPdHww2FxlubQzPNcexSx+ti
-   oj2LyzZXS9BqSKdJPwm4r0qk8BlXx6UMLYbr8iLPthwl5muRUhd0DN36o
-   mL4wxniq4fV5SM00+Y5AGqeTUm7Yq3sPE2fElGFj/Cq+FBibHpIwtfz3A
-   an6dGj9EdKUgUH7xAyfOOWN1gQpeVoooqN4PTxq4/WmRWRMDea8glkiv7
-   g6M/dI+X0dKTVW2MzCiHUx0rF7LqxZlyJkaM2kAwu3ESOx4R5sIjWwAld
-   A==;
-X-CSE-ConnectionGUID: i8GlrM7kRRGOf9Nvy6owtQ==
-X-CSE-MsgGUID: c+Dywl41RQGQaqa36V+5UQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16343908"
-X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
-   d="scan'208";a="16343908"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 09:52:51 -0700
-X-CSE-ConnectionGUID: wV5umO2eSzSLji7TE8F4LQ==
-X-CSE-MsgGUID: MHTBxJDjQdqxx30vEaLIPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
-   d="scan'208";a="44780133"
-Received: from anagara1-mobl.amr.corp.intel.com (HELO [10.209.55.145]) ([10.209.55.145])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 09:52:50 -0700
-Message-ID: <3d553b6571eaa878e4ce68898113d73c9c1ed87d.camel@linux.intel.com>
-Subject: Re: [PATCH v2 1/3] fs/file.c: add fast path in alloc_fd()
-From: Tim Chen <tim.c.chen@linux.intel.com>
-To: Jan Kara <jack@suse.cz>, "Ma, Yu" <yu.ma@intel.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, mjguzik@gmail.com, 
- edumazet@google.com, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org,  pan.deng@intel.com, tianyou.li@intel.com,
- tim.c.chen@intel.com
-Date: Wed, 26 Jun 2024 09:52:50 -0700
-In-Reply-To: <690de703aeee089f86beca5cb90d3d43dcd7df56.camel@linux.intel.com>
-References: <20240614163416.728752-1-yu.ma@intel.com>
-	 <20240622154904.3774273-1-yu.ma@intel.com>
-	 <20240622154904.3774273-2-yu.ma@intel.com>
-	 <20240625115257.piu47hzjyw5qnsa6@quack3>
-	 <20240625125309.y2gs4j5jr35kc4z5@quack3>
-	 <87a1279c-c5df-4f3b-936d-c9b8ed58f46e@intel.com>
-	 <20240626115427.d3x7g3bf6hdemlnq@quack3>
-	 <690de703aeee089f86beca5cb90d3d43dcd7df56.camel@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 (3.44.4-3.fc36) 
+	s=arc-20240116; t=1719420868; c=relaxed/simple;
+	bh=vuQ95v/XobD4p57iVF+boo7bRhPNg5WjVwCG2jX4hE8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tK57R+wcVpj+nLJBwOy7uyjnQsD3HJDvLcYIaJdSVdvJNBzDQnTjmQRET3PoTIlPBhnFgLVxbAMP1taWJx2ropYIYyd0VvLbz9+Z2I2iQlLZcpMRBj3pbCwjRBIZWjcwIwfLCSp4aXw0m7yRzOaEnGLKv9IdqcjluPJ7LE0NH6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LN4JmXCc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CBC4C116B1;
+	Wed, 26 Jun 2024 16:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719420868;
+	bh=vuQ95v/XobD4p57iVF+boo7bRhPNg5WjVwCG2jX4hE8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LN4JmXCcpc3Ja5dPcrcqKeuOqyyAboTn8KDXhrHKF1MoH62+We4Uw4w9CHP7yWrZP
+	 tbJHxcaLCqaMBujOOK2526j21K9Mi5MNA97OO0213urR/YAWepIeqrFSj5nyw8tsjK
+	 mjcAfh2NmTsm6i28ux2HmerKXgtI+O1gdm8qjLLYhVno9FVjOFS9YQEE/MQSAVjRQB
+	 qRSNojsTISMxz/vMIoWt1KaAXWwaMbqYoWla6/tP6u2IXHxwpgCr8JM28Rfu/Uaa1N
+	 XuRo3bqH4Klfo66yXyPUeRGgrp2SBaBNfBHmCC3CRE7YnmW4GP/VsYUeCG7ZaMPPWk
+	 JMKpTqmEt1Jjw==
+Date: Wed, 26 Jun 2024 10:54:24 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: John Meneghini <jmeneghi@redhat.com>
+Cc: hch@lst.de, sagi@grimberg.me, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org, emilne@redhat.com,
+	jrani@purestorage.com, randyj@purestorage.com,
+	chaitanyak@nvidia.com, hare@kernel.org
+Subject: Re: [PATCH v8 0/2] nvme: queue-depth multipath iopolicy
+Message-ID: <ZnxHwNflN3l9EN8p@kbusch-mbp.dhcp.thefacebook.com>
+References: <20240625122605.857462-1-jmeneghi@redhat.com>
+ <ZnryTZqwlz61s0D4@kbusch-mbp.dhcp.thefacebook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZnryTZqwlz61s0D4@kbusch-mbp.dhcp.thefacebook.com>
 
-On Wed, 2024-06-26 at 09:43 -0700, Tim Chen wrote:
-> On Wed, 2024-06-26 at 13:54 +0200, Jan Kara wrote:
-> >=20
-> >=20
-> > Indeed, thanks for correcting me! next_fd is just a lower bound for the
-> > first free fd.
-> >=20
-> > > The conditions
-> > > should either be like it is in patch or if (!start && !test_bit(0,
-> > > fdt->full_fds_bits)), the latter should also have the bitmap loading =
-cost,
-> > > but another point is that a bit in full_fds_bits represents 64 bits i=
-n
-> > > open_fds, no matter fd >64 or not, full_fds_bits should be loaded any=
- way,
-> > > maybe we can modify the condition to use full_fds_bits ?
-> >=20
-> > So maybe I'm wrong but I think the biggest benefit of your code compare=
-d to
-> > plain find_next_fd() is exactly in that we don't have to load full_fds_=
-bits
-> > into cache. So I'm afraid that using full_fds_bits in the condition wou=
-ld
-> > destroy your performance gains. Thinking about this with a fresh head h=
-ow
-> > about putting implementing your optimization like:
-> >=20
-> > --- a/fs/file.c
-> > +++ b/fs/file.c
-> > @@ -490,6 +490,20 @@ static unsigned int find_next_fd(struct fdtable *f=
-dt, unsigned int start)
-> >         unsigned int maxbit =3D maxfd / BITS_PER_LONG;
-> >         unsigned int bitbit =3D start / BITS_PER_LONG;
-> > =20
-> > +       /*
-> > +        * Optimistically search the first long of the open_fds bitmap.=
- It
-> > +        * saves us from loading full_fds_bits into cache in the common=
- case
-> > +        * and because BITS_PER_LONG > start >=3D files->next_fd, we ha=
-ve quite
-> > +        * a good chance there's a bit free in there.
-> > +        */
-> > +       if (start < BITS_PER_LONG) {
-> > +               unsigned int bit;
-> > +
-> > +               bit =3D find_next_zero_bit(fdt->open_fds, BITS_PER_LONG=
-, start);
->=20
-> Say start is 31 (< BITS_PER_LONG)
-> bit found here could be 32 and greater than start.  Do we care if we retu=
-rn bit > start?
+On Tue, Jun 25, 2024 at 10:37:33AM -0600, Keith Busch wrote:
+> On Tue, Jun 25, 2024 at 08:26:03AM -0400, John Meneghini wrote:
+> > Please add this to nvme-6.11.
+> 
+> This looks good to me! I'll give another day for potential
+> comments/reviews, but I think this okay for 6.11.
 
-Sorry, I mean to say that we could find a bit like 30 that is less than sta=
-rt instead
-of the other way round.=20
-
-Tim
->=20
-
+I fixed up the suggestions from Christoph while applying. Thanks,
+patches are now in nvme-6.11.
 
