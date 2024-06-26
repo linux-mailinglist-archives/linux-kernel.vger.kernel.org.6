@@ -1,57 +1,57 @@
-Return-Path: <linux-kernel+bounces-230326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4591917B48
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:48:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2385E917B62
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:50:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 11CF71C219A5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:48:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 474DD1C24426
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:50:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E99516848F;
-	Wed, 26 Jun 2024 08:48:39 +0000 (UTC)
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45821168486;
+	Wed, 26 Jun 2024 08:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="cqHVfGEK"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D271D3B1A1
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:48:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85FA51684A5
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719391719; cv=none; b=ETUaD7J/+iMJloDedXR2o3X3uPdW2sLf+Epbh1vO+rdh09HKbj1Z6wAV9dwqo2m01zAvONGHfeWYGKlhvLfn8WOdPO1W3G6LNuIWL8LShi02s/zpaGWB+bbIECDFt2oHTwjYFPglt/H2TxMXBPvGW5se4RPvPaN+ngrjpTjUpTw=
+	t=1719391836; cv=none; b=dqJXbXrndwVADe7APD2mmFq+UPP5iADqqThzl4OoVEeCjwUCTT1d+XCdyH32o7Dsk/TRqlITRbA9to0LAh1QZcTXydcUbNyjt+YUNyS4RT0QeAEZONzfpoUiPKY1h4VmvABR4RJP2kKWzAaRY8q1eX5rKUACGc9vPpfwnGjL0ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719391719; c=relaxed/simple;
-	bh=51mXIHmEmsttyOopkteiJ918HLyzBaY8B/B/PTB4fcM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K5RyfgstiDxd/a0xzicld6goJwijzNnd7sEbVkpQVa5pOcGlwoQm6Xzxhui59G1EyHlgiYrMXote+qSMUc4hqEZe+KpudY+0TARzo3wuEyIX9hGiNvQ+b3TThrNtS0VQqMfn3Qv7VmsX3AByGLY4OdDKA74Zyfg7sx8fu23oujc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i53875b6a.versanet.de ([83.135.91.106] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sMOJf-0000RH-21; Wed, 26 Jun 2024 10:47:47 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org
-Cc: Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	victor.liu@nxp.com,
-	quentin.schulz@cherry.de,
-	heiko@sntech.de,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: [PATCH RESEND] drm: bridge: dw-mipi-dsi: Allow sync-pulses to override the burst vid-mode
-Date: Wed, 26 Jun 2024 10:47:22 +0200
-Message-Id: <20240626084722.832763-1-heiko@sntech.de>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1719391836; c=relaxed/simple;
+	bh=l0K8hHplUuNdti5ywCUqkEBOIc0XcPuH1zeDKo3XAjg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LZmo6nt0GMZnwokKfMnUkbrqtxKbfD8rTCKgzvbPfPqqm/oKgQ1aUqTq3kDdlWxtkH/7jAgRkhyjpPtRxhHl3C9DORTz/9q4k9g0yg5AkXzI1kFLl0LY6BFvPGIo9XeUeW8Z33tJJFh4xGotKSG/35IL5hL4UfoKGazxw+kDoI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=cqHVfGEK; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=from:to:cc:subject:date:message-id
+	:mime-version:content-transfer-encoding; s=k1; bh=r6BkVc9hpoFTj/
+	M6/ZZYO9Z3WjgxWckMXitPkoC8wTQ=; b=cqHVfGEKIuq5OT0DVKC3w/pOAF8z8K
+	b0RKP83IHMcfptjLvQk8LzH9OAtc19CVMglfLz9OLyaZOGy9JEy+G+cn2Qv7XTdJ
+	DuqjP9v03suACbOUVBHcagID9fKw+Ati/obyyRQLy+3eK6oeH2X1iZk1SnijkCGQ
+	0A1gwojn8A1GFuJ61PTS/oUfKXfvyJG3aSZUnNSpHdd2I0zP9sb/8yD6K6nzKh5+
+	B0C2YJyotDb8ruFwp70Cs0gdE0GLLwuBeonDzOd8qCPjbe/m1xg8wLZGx6qAIuqr
+	8onHlnbzj6s+9LhtzEfZQyqLrrq0xFo/e5ly2ThICqW+y7WWjODAbrSQ==
+Received: (qmail 505513 invoked from network); 26 Jun 2024 10:50:27 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jun 2024 10:50:27 +0200
+X-UD-Smtp-Session: l3s3148p1@eEgZG8cbdIQgAwDPX0AHAIitiwsdozO7
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: linux-renesas-soc@vger.kernel.org
+Cc: Allen Pais <allen.lkml@gmail.com>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] mmc: sdhi: Convert from tasklet to BH workqueue
+Date: Wed, 26 Jun 2024 10:48:21 +0200
+Message-ID: <20240626085015.32171-2-wsa+renesas@sang-engineering.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,59 +60,223 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Heiko Stuebner <heiko.stuebner@cherry.de>
+From: Allen Pais <allen.lkml@gmail.com>
 
-The state right now is that if the panel has the burst-mode flag it
-will take precedence over the sync-pulses mode.
+The only generic interface to execute asynchronously in the BH context is
+tasklet; however, it's marked deprecated and has some design flaws. To
+replace tasklets, BH workqueue support was recently added. A BH workqueue
+behaves similarly to regular workqueues except that the queued work items
+are executed in the BH context.
 
-While sync-pulses are only relevant for the video-mode, the burst-mode
-flag affects both the video-mode as well as the calculated lane_mbps.
+This patch converts the SDHI driver from tasklet to BH workqueue.
 
-Looking at drivers like the nwl-dsi [0] it only enables burst mode when
-the panel's flags do not contain the sync_pulse flag.
+Based on the work done by Tejun Heo <tj@kernel.org>
 
-So handle things similar for dw-dsi in that it selects the video-mode
-with sync-pulses if that flag is set and only after that, checks for
-the burst-mode. So panels selecting a combination of both burst and
-sync-pulses get the sync-pulse mode.
-
-The case this fixes can be found on the ltk050h3148w . It does need the
-lane-rate to be calculated according to burst formulas [1], but without
-sync-pulses we see the output shifted around 20 pixels to the right,
-meaning that the last 20 pixels from each line appear at the start of
-the next display line.
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpu/drm/bridge/nwl-dsi.c#n301
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6c9dbee84cd005bed5f9d07b3a2797ae6414b435
-
-Fixes: 93e82bb4de01 ("drm/bridge: synopsys: dw-mipi-dsi: Fix hcomponent lbcc for burst mode")
-Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+Signed-off-by: Allen Pais <allen.lkml@gmail.com>
+[wsa: fixed build faliures, corrected whitespace issues]
+Signed-off-by: Wolfram Sang <wsa+renesas@sang-engineering.com>
 ---
-resend, because I messed up and somehow forgot to include _all_
-mailing lists.
 
- drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Tested on a Renesas Salvator X board with a R-Car M3-W SoC. Same
+performance as with tasklets. Thank you Allen for your work!
 
-diff --git a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
-index 824fb3c65742e..28dd858a751bd 100644
---- a/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
-+++ b/drivers/gpu/drm/bridge/synopsys/dw-mipi-dsi.c
-@@ -605,10 +605,10 @@ static void dw_mipi_dsi_video_mode_config(struct dw_mipi_dsi *dsi)
- 	 */
- 	val = ENABLE_LOW_POWER;
+
+ drivers/mmc/host/renesas_sdhi.h               |  4 ++-
+ drivers/mmc/host/renesas_sdhi_core.c          |  2 ++
+ drivers/mmc/host/renesas_sdhi_internal_dmac.c | 26 +++++++++----------
+ drivers/mmc/host/renesas_sdhi_sys_dmac.c      |  9 +++----
+ drivers/mmc/host/tmio_mmc.h                   |  3 ++-
+ drivers/mmc/host/tmio_mmc_core.c              |  4 +--
+ 6 files changed, 26 insertions(+), 22 deletions(-)
+
+diff --git a/drivers/mmc/host/renesas_sdhi.h b/drivers/mmc/host/renesas_sdhi.h
+index 586f94d4dbfd..f12a87442338 100644
+--- a/drivers/mmc/host/renesas_sdhi.h
++++ b/drivers/mmc/host/renesas_sdhi.h
+@@ -11,6 +11,7 @@
  
--	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
--		val |= VID_MODE_TYPE_BURST;
--	else if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
-+	if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_SYNC_PULSE)
- 		val |= VID_MODE_TYPE_NON_BURST_SYNC_PULSES;
-+	else if (dsi->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
-+		val |= VID_MODE_TYPE_BURST;
- 	else
- 		val |= VID_MODE_TYPE_NON_BURST_SYNC_EVENTS;
+ #include <linux/dmaengine.h>
+ #include <linux/platform_device.h>
++#include <linux/workqueue.h>
+ #include "tmio_mmc.h"
  
+ struct renesas_sdhi_scc {
+@@ -67,7 +68,7 @@ struct renesas_sdhi_dma {
+ 	dma_filter_fn filter;
+ 	void (*enable)(struct tmio_mmc_host *host, bool enable);
+ 	struct completion dma_dataend;
+-	struct tasklet_struct dma_complete;
++	struct work_struct dma_complete;
+ };
+ 
+ struct renesas_sdhi {
+@@ -93,6 +94,7 @@ struct renesas_sdhi {
+ 	unsigned int tap_set;
+ 
+ 	struct reset_control *rstc;
++	struct tmio_mmc_host *host;
+ };
+ 
+ #define host_to_priv(host) \
+diff --git a/drivers/mmc/host/renesas_sdhi_core.c b/drivers/mmc/host/renesas_sdhi_core.c
+index 58536626e6c5..04874791541f 100644
+--- a/drivers/mmc/host/renesas_sdhi_core.c
++++ b/drivers/mmc/host/renesas_sdhi_core.c
+@@ -970,6 +970,8 @@ int renesas_sdhi_probe(struct platform_device *pdev,
+ 	if (IS_ERR(host))
+ 		return PTR_ERR(host);
+ 
++	priv->host = host;
++
+ 	if (of_data) {
+ 		mmc_data->flags |= of_data->tmio_flags;
+ 		mmc_data->ocr_mask = of_data->tmio_ocr_mask;
+diff --git a/drivers/mmc/host/renesas_sdhi_internal_dmac.c b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+index 422fa63a2e99..d4b66daeda66 100644
+--- a/drivers/mmc/host/renesas_sdhi_internal_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_internal_dmac.c
+@@ -337,7 +337,7 @@ static bool renesas_sdhi_internal_dmac_dma_irq(struct tmio_mmc_host *host)
+ 		writel(status ^ dma_irqs, host->ctl + DM_CM_INFO1);
+ 		set_bit(SDHI_DMA_END_FLAG_DMA, &dma_priv->end_flags);
+ 		if (test_bit(SDHI_DMA_END_FLAG_ACCESS, &dma_priv->end_flags))
+-			tasklet_schedule(&dma_priv->dma_complete);
++			queue_work(system_bh_wq, &dma_priv->dma_complete);
+ 	}
+ 
+ 	return status & dma_irqs;
+@@ -352,7 +352,7 @@ renesas_sdhi_internal_dmac_dataend_dma(struct tmio_mmc_host *host)
+ 	set_bit(SDHI_DMA_END_FLAG_ACCESS, &dma_priv->end_flags);
+ 	if (test_bit(SDHI_DMA_END_FLAG_DMA, &dma_priv->end_flags) ||
+ 	    host->data->error)
+-		tasklet_schedule(&dma_priv->dma_complete);
++		queue_work(system_bh_wq, &dma_priv->dma_complete);
+ }
+ 
+ /*
+@@ -440,9 +440,9 @@ renesas_sdhi_internal_dmac_start_dma(struct tmio_mmc_host *host,
+ 	renesas_sdhi_internal_dmac_enable_dma(host, false);
+ }
+ 
+-static void renesas_sdhi_internal_dmac_issue_tasklet_fn(unsigned long arg)
++static void renesas_sdhi_internal_dmac_issue_work_fn(struct work_struct *work)
+ {
+-	struct tmio_mmc_host *host = (struct tmio_mmc_host *)arg;
++	struct tmio_mmc_host *host = from_work(host, work, dma_issue);
+ 	struct renesas_sdhi *priv = host_to_priv(host);
+ 
+ 	tmio_mmc_enable_mmc_irqs(host, TMIO_STAT_DATAEND);
+@@ -454,7 +454,7 @@ static void renesas_sdhi_internal_dmac_issue_tasklet_fn(unsigned long arg)
+ 		/* on CMD errors, simulate DMA end immediately */
+ 		set_bit(SDHI_DMA_END_FLAG_DMA, &priv->dma_priv.end_flags);
+ 		if (test_bit(SDHI_DMA_END_FLAG_ACCESS, &priv->dma_priv.end_flags))
+-			tasklet_schedule(&priv->dma_priv.dma_complete);
++			queue_work(system_bh_wq, &priv->dma_priv.dma_complete);
+ 	}
+ }
+ 
+@@ -484,9 +484,11 @@ static bool renesas_sdhi_internal_dmac_complete(struct tmio_mmc_host *host)
+ 	return true;
+ }
+ 
+-static void renesas_sdhi_internal_dmac_complete_tasklet_fn(unsigned long arg)
++static void renesas_sdhi_internal_dmac_complete_work_fn(struct work_struct *work)
+ {
+-	struct tmio_mmc_host *host = (struct tmio_mmc_host *)arg;
++	struct renesas_sdhi_dma *dma_priv = from_work(dma_priv, work, dma_complete);
++	struct renesas_sdhi *priv = container_of(dma_priv, typeof(*priv), dma_priv);
++	struct tmio_mmc_host *host = priv->host;
+ 
+ 	spin_lock_irq(&host->lock);
+ 	if (!renesas_sdhi_internal_dmac_complete(host))
+@@ -544,12 +546,10 @@ renesas_sdhi_internal_dmac_request_dma(struct tmio_mmc_host *host,
+ 	/* Each value is set to non-zero to assume "enabling" each DMA */
+ 	host->chan_rx = host->chan_tx = (void *)0xdeadbeaf;
+ 
+-	tasklet_init(&priv->dma_priv.dma_complete,
+-		     renesas_sdhi_internal_dmac_complete_tasklet_fn,
+-		     (unsigned long)host);
+-	tasklet_init(&host->dma_issue,
+-		     renesas_sdhi_internal_dmac_issue_tasklet_fn,
+-		     (unsigned long)host);
++	INIT_WORK(&priv->dma_priv.dma_complete,
++		  renesas_sdhi_internal_dmac_complete_work_fn);
++	INIT_WORK(&host->dma_issue,
++		  renesas_sdhi_internal_dmac_issue_work_fn);
+ 
+ 	/* Add pre_req and post_req */
+ 	host->ops.pre_req = renesas_sdhi_internal_dmac_pre_req;
+diff --git a/drivers/mmc/host/renesas_sdhi_sys_dmac.c b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+index 9cf7f9feab72..5a6f41318645 100644
+--- a/drivers/mmc/host/renesas_sdhi_sys_dmac.c
++++ b/drivers/mmc/host/renesas_sdhi_sys_dmac.c
+@@ -312,9 +312,9 @@ static void renesas_sdhi_sys_dmac_start_dma(struct tmio_mmc_host *host,
+ 	}
+ }
+ 
+-static void renesas_sdhi_sys_dmac_issue_tasklet_fn(unsigned long priv)
++static void renesas_sdhi_sys_dmac_issue_work_fn(struct work_struct *work)
+ {
+-	struct tmio_mmc_host *host = (struct tmio_mmc_host *)priv;
++	struct tmio_mmc_host *host = from_work(host, work, dma_issue);
+ 	struct dma_chan *chan = NULL;
+ 
+ 	spin_lock_irq(&host->lock);
+@@ -401,9 +401,8 @@ static void renesas_sdhi_sys_dmac_request_dma(struct tmio_mmc_host *host,
+ 			goto ebouncebuf;
+ 
+ 		init_completion(&priv->dma_priv.dma_dataend);
+-		tasklet_init(&host->dma_issue,
+-			     renesas_sdhi_sys_dmac_issue_tasklet_fn,
+-			     (unsigned long)host);
++		INIT_WORK(&host->dma_issue,
++			  renesas_sdhi_sys_dmac_issue_work_fn);
+ 	}
+ 
+ 	renesas_sdhi_sys_dmac_enable_dma(host, true);
+diff --git a/drivers/mmc/host/tmio_mmc.h b/drivers/mmc/host/tmio_mmc.h
+index 2af5730c21f4..a75755f31d31 100644
+--- a/drivers/mmc/host/tmio_mmc.h
++++ b/drivers/mmc/host/tmio_mmc.h
+@@ -21,6 +21,7 @@
+ #include <linux/scatterlist.h>
+ #include <linux/spinlock.h>
+ #include <linux/interrupt.h>
++#include <linux/workqueue.h>
+ 
+ #define CTL_SD_CMD 0x00
+ #define CTL_ARG_REG 0x04
+@@ -153,7 +154,7 @@ struct tmio_mmc_host {
+ 	bool			dma_on;
+ 	struct dma_chan		*chan_rx;
+ 	struct dma_chan		*chan_tx;
+-	struct tasklet_struct	dma_issue;
++	struct work_struct	dma_issue;
+ 	struct scatterlist	bounce_sg;
+ 	u8			*bounce_buf;
+ 
+diff --git a/drivers/mmc/host/tmio_mmc_core.c b/drivers/mmc/host/tmio_mmc_core.c
+index 2780f0a29871..b61a6310311d 100644
+--- a/drivers/mmc/host/tmio_mmc_core.c
++++ b/drivers/mmc/host/tmio_mmc_core.c
+@@ -608,7 +608,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
+ 			} else {
+ 				tmio_mmc_disable_mmc_irqs(host,
+ 							  TMIO_MASK_READOP);
+-				tasklet_schedule(&host->dma_issue);
++				queue_work(system_bh_wq, &host->dma_issue);
+ 			}
+ 		} else {
+ 			if (!host->dma_on) {
+@@ -616,7 +616,7 @@ static void tmio_mmc_cmd_irq(struct tmio_mmc_host *host, unsigned int stat)
+ 			} else {
+ 				tmio_mmc_disable_mmc_irqs(host,
+ 							  TMIO_MASK_WRITEOP);
+-				tasklet_schedule(&host->dma_issue);
++				queue_work(system_bh_wq, &host->dma_issue);
+ 			}
+ 		}
+ 	} else {
 -- 
-2.39.2
+2.43.0
 
 
