@@ -1,181 +1,207 @@
-Return-Path: <linux-kernel+bounces-229972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 902FF9176B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:17:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCA089176BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B22621C21446
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:17:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B2211F22287
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 03:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FE161FE8;
-	Wed, 26 Jun 2024 03:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 625D373164;
+	Wed, 26 Jun 2024 03:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LQ+PvRvl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1e4lL8ER"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0542C2B9C0
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:17:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E331353E23
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719371835; cv=none; b=ZSjpVTKZ9kJcON9sWfzGYWjdyPr770mG+3wPQPPeI6HCHE/eJ08Eg0OHL0rqh7B17gCfBvuAg0fwPpcvp3qFOOeI8GDvJ4KXYpLVqOMumzAekirpgb7B83hYxphNANsCwM8CyfP3z/IzHvoqYrsoHdex+Vd9G7qlymmlL92+z5c=
+	t=1719371969; cv=none; b=DsWe42/4Lef+GtlYoya3zLr4A69AuWxvcSV2Qf5JMUfjCNHrmwtnTJaQvI4tt9MusfMbHhSYViQLLRg3Qo3ujUCxke9o3L65kDRBBmKF+6rORN7MW9lFcr5wmQ1IpWbGpW02qNgGbpFcyFNGkFellkJx+Q6hduP+4BUNiUaeqxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719371835; c=relaxed/simple;
-	bh=9Hkq76X6FR5owdV5TMxF4xB0lDQkeuqE9LyiTtQcX7I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JtHN5+k7HaGc03szZwuwp1Z5fDf5FZYUqxse8GCTxhvNyWOLv/EamoDP2Pba9RcBgobZ3V277pTbHH1vuajooxrkmuXvDsegPPUtoWSXtTzOXpI4JYh33+2ILPlQHD9IbnyBIJrJxDjLRJ3/Tx2E1Wf2ptakBb/DULnjNnx2EHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LQ+PvRvl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719371832;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=WtbKP8qBjyp+rTAYYW6k+Y4FwkskGh9tpkCTDr9SfMM=;
-	b=LQ+PvRvl8iOq3jO6Lg3j5NYK69qyFsAOFYiyIpN5jNEx0mmBiaEvqAsHDh8yKQaKBO2jla
-	KS1mEG2ER2Jh29MKCF4a73lW1cxUc13aIkJQtAzBJjQxM3eFcPqYSoVgLeJF2UWg3B3w98
-	3hoqPC23OZeEc/sssrQQan12Ah1Vq/4=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-54-DRZN2X6EPIWNny3g2_W_7A-1; Tue,
- 25 Jun 2024 23:17:08 -0400
-X-MC-Unique: DRZN2X6EPIWNny3g2_W_7A-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EC6321956089;
-	Wed, 26 Jun 2024 03:17:06 +0000 (UTC)
-Received: from [10.22.10.23] (unknown [10.22.10.23])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id BA1A91956050;
-	Wed, 26 Jun 2024 03:17:04 +0000 (UTC)
-Message-ID: <29cfa20e-291f-4ad0-9493-04c581d080b0@redhat.com>
-Date: Tue, 25 Jun 2024 23:17:03 -0400
+	s=arc-20240116; t=1719371969; c=relaxed/simple;
+	bh=hUXgHF51lPNU1tjmMUrpwQio6r+zn/EwEX1X4j6f3tI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lKNx0c+OCBBMBI4lpq/k5FyymH+aObUOaX3Af62518lQ2Mho0DX8Y5NY3YPewQMiYeVQ2TF8Sz72rc0VvLepkHfQiFex5G6Jx04nO3QVbufFgptNGkA80rs3SvLXAaku3KXLsZEomjhPMP2fvOWwdu9hUC5qSpu3yK+BXj2Zah4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1e4lL8ER; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a6fe118805dso402522466b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 20:19:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1719371966; x=1719976766; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qcEpi9Xsu+1gTxbES0/HeqU1vgappATrnUAd8kYmA4U=;
+        b=1e4lL8ERjSSWLxbphXZaS5DK9ZdqdrG/L9uwfr9tHN2t0G3X+oNY2KabB+uaE6niqb
+         6oMvtv58lMEiIDkeObKvjRRRscpbumOer1XZZkCvibHGT4wg7PmTVDpNTGrHu1+2HHfQ
+         mJNUz+AXCUCLoHSe3TMw/YtaFxH0L4TQRpJvBwlxtOBGZO/mvJzTeSTvsDaETYzc7qeQ
+         F48qY0vRjJV9PdkqAvRml1Z1vwuf68jwxDBQDrDpeLguN/yZ7uyiHy0HP38Zthdiilhv
+         5JY5yB6riHFog7A7BKgHkUVjH3nCBtzcNoRLlGtCDSTSLm2i9S7y/+cinMfSOJewCRwH
+         kelg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719371966; x=1719976766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qcEpi9Xsu+1gTxbES0/HeqU1vgappATrnUAd8kYmA4U=;
+        b=U1odduU4TaqPNzT+dqFj0nzTsceULE+xgRgXPSe9ugW2qmoJXjQkDHrIHLiCvXhvMS
+         qe4LQvEfI0Awh2RR1iHIEzzZylcIBUJpNHfQxc3TMOo9Xj2GnnQ5XcDZYCbEIutVTPyj
+         FiT1eEmlXc1pjbI6s1kVkYrBnLBSDHkV1AbqQeQsY770DJErgNRgioDItirpqhgC8S0S
+         CJ0f3Xyc07EN7Na6T5dlpJpAcG7PSzjRF2jVi7xNbq/JqUihgTD3q7r3KCmCvR7ADR//
+         W6ZKNYFRAE1KKyjWs1GHdI3+lWUq16xHSSBKoqgL3vJ8VPoo6CjGHZkmvteYWx9r/bkn
+         Pc/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUEvU8emvIA/1l5OePuh4oigg555iJ2nFnIWPGLnAuRGHblWu0kEmJTGaAYxb53uQf9k1D1cWKYtUtg8jao8J0lRhraITb2o2Kk4rBm
+X-Gm-Message-State: AOJu0Yw9qbxeY3y/ZHAjIuGUGh1UImRGyIyHOvfenVOGT6bW1Kvl5fs7
+	8Ol7tjwkfSaWlwuecDRQCBw9z3mbqdWU77q9RskLqlHMqYI+oTS4zjTRHLRn0TmkfKMCq+/i0Wa
+	xcOzIl1Lm9sBQQbZPpTQAXkDfJEMQ9PDv6h1Y
+X-Google-Smtp-Source: AGHT+IFLY2qZ3ScXikR8P0OWMEtmq1PJfSmSw962tpdr7XOdzhTxVacIeRIFA9/1ZPYRAeIb5P9js56rVkdjLokuTK4=
+X-Received: by 2002:a17:906:af97:b0:a6f:5609:9552 with SMTP id
+ a640c23a62f3a-a7245c85b6amr586678266b.10.1719371965815; Tue, 25 Jun 2024
+ 20:19:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] cgroup/cpuset: Prevent UAF in proc_cpuset_show()
-To: Chen Ridong <chenridong@huawei.com>, tj@kernel.org,
- lizefan.x@bytedance.com, hannes@cmpxchg.org, adityakali@google.com,
- sergeh@kernel.org
-Cc: bpf@vger.kernel.org, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240626030500.460628-1-chenridong@huawei.com>
-Content-Language: en-US
-From: Waiman Long <longman@redhat.com>
-In-Reply-To: <20240626030500.460628-1-chenridong@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <CA+EHjTxWWEHfjZ9LJqZy+VCk43qd3SMKiPF7uvAwmDdPeVhrvQ@mail.gmail.com>
+ <20240619115135.GE2494510@nvidia.com> <CA+EHjTz_=J+bDpqciaMnNja4uz1Njcpg5NVh_GW2tya-suA7kQ@mail.gmail.com>
+ <ZnRMn1ObU8TFrms3@google.com> <CA+EHjTxvOyCqWRMTS3mXHznQtAJzDJLgqdS0Er2GA9FGdxd1vA@mail.gmail.com>
+ <4c8b81a0-3a76-4802-875f-f26ff1844955@redhat.com> <CA+EHjTzvjsc4DKsNFA6LVT44YR_1C5A2JhpVSPG=R9ottfu70A@mail.gmail.com>
+ <8e9436f2-6ebb-4ce1-a44f-2a941d354e2a@redhat.com> <CA+EHjTzj9nDEG_ANMM3z90b08YRHegiX5ZqgvLihYS2bSyw1KA@mail.gmail.com>
+ <20240621095319587-0700.eberman@hu-eberman-lv.qualcomm.com>
+ <ZnnC6eh-zl16Cxn3@google.com> <5e14ebf6-2a7f-3828-c3f6-5155026d59ae@google.com>
+In-Reply-To: <5e14ebf6-2a7f-3828-c3f6-5155026d59ae@google.com>
+From: Vishal Annapurve <vannapurve@google.com>
+Date: Tue, 25 Jun 2024 20:19:12 -0700
+Message-ID: <CAGtprH8VT6B6efy0dC=6cQEf6mpz3dfh2q4gGp2S-m+wNJn5ew@mail.gmail.com>
+Subject: Re: [PATCH RFC 0/5] mm/gup: Introduce exclusive GUP pinning
+To: David Rientjes <rientjes@google.com>
+Cc: Sean Christopherson <seanjc@google.com>, Elliot Berman <quic_eberman@quicinc.com>, 
+	Fuad Tabba <tabba@google.com>, David Hildenbrand <david@redhat.com>, Jason Gunthorpe <jgg@nvidia.com>, 
+	John Hubbard <jhubbard@nvidia.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Matthew Wilcox <willy@infradead.org>, maz@kernel.org, 
+	kvm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	pbonzini@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Jun 24, 2024 at 2:50=E2=80=AFPM David Rientjes <rientjes@google.com=
+> wrote:
+>
+> On Mon, 24 Jun 2024, Sean Christopherson wrote:
+>
+> > On Fri, Jun 21, 2024, Elliot Berman wrote:
+> > > On Fri, Jun 21, 2024 at 11:16:31AM +0100, Fuad Tabba wrote:
+> > > > On Fri, Jun 21, 2024 at 10:10=E2=80=AFAM David Hildenbrand <david@r=
+edhat.com> wrote:
+> > > > > On 21.06.24 10:54, Fuad Tabba wrote:
+> > > > > > On Fri, Jun 21, 2024 at 9:44=E2=80=AFAM David Hildenbrand <davi=
+d@redhat.com> wrote:
+> > > > > >>
+> > > > > >>>> Again from that thread, one of most important aspects guest_=
+memfd is that VMAs
+> > > > > >>>> are not required.  Stating the obvious, lack of VMAs makes i=
+t really hard to drive
+> > > > > >>>> swap, reclaim, migration, etc. from code that fundamentally =
+operates on VMAs.
+> > > > > >>>>
+> > > > > >>>>    : More broadly, no VMAs are required.  The lack of stage-=
+1 page tables are nice to
+> > > > > >>>>    : have; the lack of VMAs means that guest_memfd isn't pla=
+ying second fiddle, e.g.
+> > > > > >>>>    : it's not subject to VMA protections, isn't restricted t=
+o host mapping size, etc.
+> > > > > >>>>
+> > > > > >>>> [1] https://lore.kernel.org/all/Zfmpby6i3PfBEcCV@google.com
+> > > > > >>>> [2] https://lore.kernel.org/all/Zg3xF7dTtx6hbmZj@google.com
+> > > > > >>>
+> > > > > >>> I wonder if it might be more productive to also discuss this =
+in one of
+> > > > > >>> the PUCKs, ahead of LPC, in addition to trying to go over thi=
+s in LPC.
+> > > > > >>
+> > > > > >> I don't know in  which context you usually discuss that, but I=
+ could
+> > > > > >> propose that as a topic in the bi-weekly MM meeting.
+> > > > > >>
+> > > > > >> This would, of course, be focused on the bigger MM picture: ho=
+w to mmap,
+> > > > > >> how how to support huge pages, interaction with page pinning, =
+... So
+> > > > > >> obviously more MM focused once we are in agreement that we wan=
+t to
+> > > > > >> support shared memory in guest_memfd and how to make that work=
+ with core-mm.
+> > > > > >>
+> > > > > >> Discussing if we want shared memory in guest_memfd might be be=
+tetr
+> > > > > >> suited for a different, more CC/KVM specific meeting (likely t=
+he "PUCKs"
+> > > > > >> mentioned here?).
+> > > > > >
+> > > > > > Sorry, I should have given more context on what a PUCK* is :) I=
+t's a
+> > > > > > periodic (almost weekly) upstream call for KVM.
+> > > > > >
+> > > > > > [*] https://lore.kernel.org/all/20230512231026.799267-1-seanjc@=
+google.com/
+> > > > > >
+> > > > > > But yes, having a discussion in one of the mm meetings ahead of=
+ LPC
+> > > > > > would also be great. When do these meetings usually take place,=
+ to try
+> > > > > > to coordinate across timezones.
+> >
+> > Let's do the MM meeting.  As evidenced by the responses, it'll be easie=
+r to get
+> > KVM folks to join the MM meeting as opposed to other way around.
+> >
+> > > > > It's Wednesday, 9:00 - 10:00am PDT (GMT-7) every second week.
+> > > > >
+> > > > > If we're in agreement, we could (assuming there are no other plan=
+ned
+> > > > > topics) either use the slot next week (June 26) or the following =
+one
+> > > > > (July 10).
+> > > > >
+> > > > > Selfish as I am, I would prefer July 10, because I'll be on vacat=
+ion
+> > > > > next week and there would be little time to prepare.
+> > > > >
+> > > > > @David R., heads up that this might become a topic ("shared and p=
+rivate
+> > > > > memory in guest_memfd: mmap, pinning and huge pages"), if people =
+here
+> > > > > agree that this is a direction worth heading.
+> > > >
+> > > > Thanks for the invite! Tentatively July 10th works for me, but I'd
+> > > > like to talk to the others who might be interested (pKVM, Gunyah, a=
+nd
+> > > > others) to see if that works for them. I'll get back to you shortly=
+.
+> > > >
+> > >
+> > > I'd like to join too, July 10th at that time works for me.
+> >
+> > July 10th works for me too.
+> >
+>
+> Thanks all, and David H for the topic suggestion.  Let's tentatively
+> pencil this in for the Wednesday, July 10th instance at 9am PDT and I'll
+> follow-up offlist with those will be needed to lead the discussion to mak=
+e
+> sure we're on track.
 
-On 6/25/24 23:05, Chen Ridong wrote:
-> An UAF can happen when /proc/cpuset is read as reported in [1].
->
-> This can be reproduced by the following methods:
-> 1.add an mdelay(1000) before acquiring the cgroup_lock In the
->   cgroup_path_ns function.
-> 2.$cat /proc/<pid>/cpuset   repeatly.
-> 3.$mount -t cgroup -o cpuset cpuset /sys/fs/cgroup/cpuset/
-> $umount /sys/fs/cgroup/cpuset/   repeatly.
->
-> The race that cause this bug can be shown as below:
->
-> (umount)		|	(cat /proc/<pid>/cpuset)
-> css_release		|	proc_cpuset_show
-> css_release_work_fn	|	css = task_get_css(tsk, cpuset_cgrp_id);
-> css_free_rwork_fn	|	cgroup_path_ns(css->cgroup, ...);
-> cgroup_destroy_root	|	mutex_lock(&cgroup_mutex);
-> rebind_subsystems	|
-> cgroup_free_root 	|
-> 			|	// cgrp was freed, UAF
-> 			|	cgroup_path_ns_locked(cgrp,..);
->
-> When the cpuset is initialized, the root node top_cpuset.css.cgrp
-> will point to &cgrp_dfl_root.cgrp. In cgroup v1, the mount operation will
-> allocate cgroup_root, and top_cpuset.css.cgrp will point to the allocated
-> &cgroup_root.cgrp. When the umount operation is executed,
-> top_cpuset.css.cgrp will be rebound to &cgrp_dfl_root.cgrp.
->
-> The problem is that when rebinding to cgrp_dfl_root, there are cases
-> where the cgroup_root allocated by setting up the root for cgroup v1
-> is cached. This could lead to a Use-After-Free (UAF) if it is
-> subsequently freed. The descendant cgroups of cgroup v1 can only be
-> freed after the css is released. However, the css of the root will never
-> be released, yet the cgroup_root should be freed when it is unmounted.
-> This means that obtaining a reference to the css of the root does
-> not guarantee that css.cgrp->root will not be freed.
->
-> Fix this problem by using rcu_read_lock in proc_cpuset_show().
-> As cgroup root_list is already RCU-safe, css->cgroup is safe.
-> This is similar to commit 9067d90006df ("cgroup: Eliminate the
-> need for cgroup_mutex in proc_cgroup_show()")
->
-> [1] https://syzkaller.appspot.com/bug?extid=9b1ff7be974a403aa4cd
->
-> Fixes: a79a908fd2b0 ("cgroup: introduce cgroup namespaces")
-> Signed-off-by: Chen Ridong <chenridong@huawei.com>
-> ---
->   include/linux/cgroup.h |  3 +++
->   kernel/cgroup/cpuset.c | 11 +++++++++--
->   2 files changed, 12 insertions(+), 2 deletions(-)
->
-> diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
-> index 2150ca60394b..bae7b54957fc 100644
-> --- a/include/linux/cgroup.h
-> +++ b/include/linux/cgroup.h
-> @@ -786,6 +786,9 @@ struct cgroup_namespace *copy_cgroup_ns(unsigned long flags,
->   int cgroup_path_ns(struct cgroup *cgrp, char *buf, size_t buflen,
->   		   struct cgroup_namespace *ns);
->   
-> +int cgroup_path_ns_locked(struct cgroup *cgrp, char *buf, size_t buflen,
-> +			  struct cgroup_namespace *ns);
+I would like to join the call too.
 
-The function prototype for cgroup_path_ns_locked() is available in 
-"kernel/cgroup/cgroup-internal.h". You just need to include 
-"cgroup-internal.h" in cpuset.c instead of exposed this internal API to 
-the world.
-
-> +
->   #else /* !CONFIG_CGROUPS */
->   
->   static inline void free_cgroup_ns(struct cgroup_namespace *ns) { }
-> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-> index c12b9fdb22a4..e57762f613d6 100644
-> --- a/kernel/cgroup/cpuset.c
-> +++ b/kernel/cgroup/cpuset.c
-> @@ -5052,8 +5052,15 @@ int proc_cpuset_show(struct seq_file *m, struct pid_namespace *ns,
->   		goto out;
->   
->   	css = task_get_css(tsk, cpuset_cgrp_id);
-> -	retval = cgroup_path_ns(css->cgroup, buf, PATH_MAX,
-> -				current->nsproxy->cgroup_ns);
-> +	rcu_read_lock();
-> +	spin_lock_irq(&css_set_lock);
-> +	/* In case the root has already been unmounted. */
-> +	if (css->cgroup)
-> +		retval = cgroup_path_ns_locked(css->cgroup, buf, PATH_MAX,
-> +			current->nsproxy->cgroup_ns);
-
-Could you properly align the wrapped cgroup_ns argument?
-
-Cheers,
-Longman
-
-> +
-> +	spin_unlock_irq(&css_set_lock);
-> +	rcu_read_unlock();
->   	css_put(css);
->   	if (retval == -E2BIG)
->   		retval = -ENAMETOOLONG;
-
+Regards,
+Vishal
 
