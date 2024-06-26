@@ -1,173 +1,131 @@
-Return-Path: <linux-kernel+bounces-230087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B501917832
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:35:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4955F917831
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:34:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BFC3028403C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:35:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AACD1C21AB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:34:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40F0147C76;
-	Wed, 26 Jun 2024 05:35:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64601474BA;
+	Wed, 26 Jun 2024 05:34:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Y2ioERG5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tmMGT4Ct"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 024222F5E;
-	Wed, 26 Jun 2024 05:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1C4B2F5E;
+	Wed, 26 Jun 2024 05:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719380115; cv=none; b=XPR/t9+7382mJ5gyyPGEkLVbRf039/X8f6f5jX/H/DtVM5jBePqUqVFP6c22RCskmExVZcZwsN9fBKpcenAR7Btnh568pHk/0PEpa1oohrlNXknayJ5W8yIZXWnhyjOt4Q1NCcvMoGuIck6ZFJs7JKgBMABek12qPuBmxWiQVfQ=
+	t=1719380083; cv=none; b=uh9QQdycxDwosqVlMHTiNvQY9RnhHQMSm0hDH6/OGHbLVSoguNXp/qt1ee5oHKA2WCmc9KOCBOaJjvIjYAhmNLKroMvIy5PTFXdHN/N9wsbN+XJrBPiVNywUqJjY1I6rI4rlB9qiD3Bzq+oFJIfR8f5uUfaUS0bB26f1rMOXUDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719380115; c=relaxed/simple;
-	bh=/G7fO/Q3JvUeVnBbit8Ih4BufFWcmDw2Sl71qmKYszs=;
+	s=arc-20240116; t=1719380083; c=relaxed/simple;
+	bh=SuWvqN8B1pUjcJ2bF1x2UYwmAnEJqRPmd+gWediLTaM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZaUzmNJlHTb5upKqP4O1cTPfMNh+/Pn0ukxSp+gdCigqLStHt92K9wpbYRt/K0MS1GXvpqWrYK3kr675RGmhCLBd0V4GpjGkjJAn4ZF4L0xqM8uJj+KYioAsBrQk5HiKT/i0zQl9trXeHRsq9tjUQ3C8tYVOz0V1MYChu9kPZbQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Y2ioERG5; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719380114; x=1750916114;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/G7fO/Q3JvUeVnBbit8Ih4BufFWcmDw2Sl71qmKYszs=;
-  b=Y2ioERG58og+he4QKGPM7YBykQlqfDB48ncK5v1qzJsvWqvjMW2FgbTk
-   tSysG1N8MMzFzwtRMwiMCeTUwyOmLzGtmGGU09EVmT4vowN8a/wRWFSEt
-   gVkAJA9HxRClDtFnp7qEGxSXgRh07rvXhIkknZ8uFPsjWForYuaU/gaaN
-   BZMhzbkW0FwoJCXIVLeJuPPKg6Doozv6NsVhVxkP/EQkMghgmHSfMLbf+
-   uGZOlWjimEcyS6OHZ3MfqxDC34UF9dwmP8+UlRyJZltSOZxlu9x5WCxyB
-   ygKdzWHLNtRvwiGLzHheUbOMPoBNLqUnc+NYqTm9nD35tgOmE8NNgvAGv
-   g==;
-X-CSE-ConnectionGUID: NFdrQlvsTweGUScoHrf8HA==
-X-CSE-MsgGUID: iXV3WmjoQAejxoJNtyjKHw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11114"; a="27119961"
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="27119961"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 25 Jun 2024 22:35:14 -0700
-X-CSE-ConnectionGUID: x0USdE5aRPGrRsUis8ENQg==
-X-CSE-MsgGUID: dM8BzhOPRhu2MrQumls2Gw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,266,1712646000"; 
-   d="scan'208";a="75091561"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa001.fm.intel.com with ESMTP; 25 Jun 2024 22:35:11 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMLJF-000F1S-1b;
-	Wed, 26 Jun 2024 05:35:09 +0000
-Date: Wed, 26 Jun 2024 13:34:25 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ma Ke <make24@iscas.ac.cn>, gregkh@linuxfoundation.org,
-	u.kleine-koenig@pengutronix.de
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] usb: gadget: r8a66597-udc: validate endpoint index for
- r8a66597 udc
-Message-ID: <202406261324.4izkBtpK-lkp@intel.com>
-References: <20240622142308.1929531-1-make24@iscas.ac.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=O9shdUFChJH5QHL2WqHHC2Z8VLSHHpHb2Bto5GvkoMazo7pBD+d3ARMxW+a4iQevYYYLtY3S8kGYTMLxUl76yrav9G714w/edT5XiKTb/iWDEv9LKbENDj42bLfor/XO6AIBQv4OUhIq1xcEXOxHZE9S2g/QrwOKvOwsok8R0ZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tmMGT4Ct; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0088C2BD10;
+	Wed, 26 Jun 2024 05:34:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719380082;
+	bh=SuWvqN8B1pUjcJ2bF1x2UYwmAnEJqRPmd+gWediLTaM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tmMGT4Ct4Jp2ZQIYj+5v9vlxHr9S2vHpVvRaTsCjW2Xp2UF/dgNyNSvmxXnm8++bz
+	 eCywY2BHWasTKjKo6OMG0N99Qh3KPpmjuFCcyPW+XRjDvXcAgS93cq2+C2pOlJUr5s
+	 Hy9AWT9Gjf5idqa1DWKJkbfY8EQBm78oVpICRfG7XjMrcQuxN5LOAWZ1/6QjSzehiB
+	 dE8UhRNhzwabvCaSXBSqdjuU6ItR9jmsiY5G3B+/3WR3oMK0mle187JPq8qwDwo4DV
+	 VSG5fs88ZG8xAkRrUUuYCEsz+uDNZu57RU0FagMGh5Tj1eCsaV9bQfLI5GHwTuM0gc
+	 U3AvfxlvTKTdw==
+Date: Wed, 26 Jun 2024 08:34:37 +0300
+From: Leon Romanovsky <leon@kernel.org>
+To: Zhu Yanjun <yanjun.zhu@linux.dev>
+Cc: Anand Khoje <anand.a.khoje@oracle.com>,
+	Jesse Brandeburg <jesse.brandeburg@intel.com>,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, saeedm@mellanox.com, tariqt@nvidia.com,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	davem@davemloft.net
+Subject: Re: [PATCH v5] net/mlx5: Reclaim max 50K pages at once
+Message-ID: <20240626053437.GM29266@unreal>
+References: <20240624153321.29834-1-anand.a.khoje@oracle.com>
+ <0b926745-f2c9-4313-a874-4b7e059b8d64@intel.com>
+ <1f9868a7-a336-4a79-bc51-d29461295444@oracle.com>
+ <c5a8b1b0-ce6e-4c35-aa00-2a4a1469b3ce@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240622142308.1929531-1-make24@iscas.ac.cn>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c5a8b1b0-ce6e-4c35-aa00-2a4a1469b3ce@linux.dev>
 
-Hi Ma,
+On Wed, Jun 26, 2024 at 04:19:17AM +0800, Zhu Yanjun wrote:
+> 在 2024/6/25 13:00, Anand Khoje 写道:
+> > 
+> > On 6/25/24 02:11, Jesse Brandeburg wrote:
+> > > On 6/24/2024 8:33 AM, Anand Khoje wrote:
+> > > 
+> > > > --- a/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+> > > > +++ b/drivers/net/ethernet/mellanox/mlx5/core/pagealloc.c
+> > > > @@ -608,6 +608,7 @@ enum {
+> > > >       RELEASE_ALL_PAGES_MASK = 0x4000,
+> > > >   };
+> > > > +#define MAX_RECLAIM_NPAGES -50000
+> > > Can you please explain why this is negative? There doesn't seem to be
+> > > any reason mentioned in the commit message or code.
+> > > 
+> > > At the very least it's super confusing to have a MAX be negative, and at
+> > > worst it's a bug. I don't have any other context on this code besides
+> > > this patch, so an explanation would be helpful.
+> > > 
+> > > 
+> > > 
+> > Hi Jesse,
+> > 
+> > The way Mellanox ConnectX5 driver handles 'release of allocated pages
+> > from HCA' or 'allocation of pages to HCA', is by sending an event to the
+> > host. This event will have number of pages in it. If the number is
+> > positive, that indicates HCA is requesting that number of pages to be
+> > allocated. And if that number is negative, it is the HCA indicating that
+> > that number of pages can be reclaimed by the host.
+> > 
+> > In this patch we are restricting the maximum number of pages that can be
+> > reclaimed to be 50000 (effectively this would be -50000 as it is
+> > reclaim). This limit is based on the capability of the firmware as it
+> > cannot release more than 50000 back to the host in one go.
+> > 
+> > I hope that explains.
+> 
+> To be honest, I am also obvious why this MACRO is defined as a negative
+> number. From the above, I can understand why. I think, perhaps many people
+> also wonder why it is defined as a negative. IMO, it is better that you put
+> the above explanations into the source code as comments.
+> When users check the source code, from the comments, users will know why it
+> is defined as a negative number.
 
-kernel test robot noticed the following build errors:
+I see no problem with adding a comment to the code, but I think that it
+won't help anyone. The whole reclaim/give page logic inside the mlx5
+driver is written with the assumption that the number of pages is
+negative for reclaim and positive for give.
 
-[auto build test ERROR on usb/usb-testing]
-[also build test ERROR on usb/usb-next usb/usb-linus linus/master v6.10-rc5 next-20240625]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Thanks
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ma-Ke/usb-gadget-r8a66597-udc-validate-endpoint-index-for-r8a66597-udc/20240626-003228
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-patch link:    https://lore.kernel.org/r/20240622142308.1929531-1-make24%40iscas.ac.cn
-patch subject: [PATCH] usb: gadget: r8a66597-udc: validate endpoint index for r8a66597 udc
-config: i386-buildonly-randconfig-005-20240626 (https://download.01.org/0day-ci/archive/20240626/202406261324.4izkBtpK-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240626/202406261324.4izkBtpK-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406261324.4izkBtpK-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
->> drivers/usb/gadget/udc/r8a66597-udc.c:1176:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
-    1176 |                 int pipe = w_index & USB_ENDPOINT_NUMBER_MASK;
-         |                 ^
->> drivers/usb/gadget/udc/r8a66597-udc.c:1178:15: error: use of undeclared identifier 'USB_MAX_ENDPOINTS'
-    1178 |                 if (pipe >= USB_MAX_ENDPOINTS)
-         |                             ^
-   drivers/usb/gadget/udc/r8a66597-udc.c:1217:15: error: use of undeclared identifier 'USB_MAX_ENDPOINTS'
-    1217 |                 if (pipe >= USB_MAX_ENDPOINTS)
-         |                             ^
-   drivers/usb/gadget/udc/r8a66597-udc.c:1280:15: error: use of undeclared identifier 'USB_MAX_ENDPOINTS'
-    1280 |                 if (pipe >= USB_MAX_ENDPOINTS)
-         |                             ^
-   1 warning and 3 errors generated.
-
-
-vim +/USB_MAX_ENDPOINTS +1178 drivers/usb/gadget/udc/r8a66597-udc.c
-
-  1158	
-  1159	static void get_status(struct r8a66597 *r8a66597, struct usb_ctrlrequest *ctrl)
-  1160	__releases(r8a66597->lock)
-  1161	__acquires(r8a66597->lock)
-  1162	{
-  1163		struct r8a66597_ep *ep;
-  1164		u16 pid;
-  1165		u16 status = 0;
-  1166		u16 w_index = le16_to_cpu(ctrl->wIndex);
-  1167	
-  1168		switch (ctrl->bRequestType & USB_RECIP_MASK) {
-  1169		case USB_RECIP_DEVICE:
-  1170			status = r8a66597->device_status;
-  1171			break;
-  1172		case USB_RECIP_INTERFACE:
-  1173			status = 0;
-  1174			break;
-  1175		case USB_RECIP_ENDPOINT:
-> 1176			int pipe = w_index & USB_ENDPOINT_NUMBER_MASK;
-  1177	
-> 1178			if (pipe >= USB_MAX_ENDPOINTS)
-  1179				break;
-  1180			ep = r8a66597->epaddr2ep[pipe];
-  1181			pid = control_reg_get_pid(r8a66597, ep->pipenum);
-  1182			if (pid == PID_STALL)
-  1183				status = 1 << USB_ENDPOINT_HALT;
-  1184			else
-  1185				status = 0;
-  1186			break;
-  1187		default:
-  1188			pipe_stall(r8a66597, 0);
-  1189			return;		/* exit */
-  1190		}
-  1191	
-  1192		r8a66597->ep0_data = cpu_to_le16(status);
-  1193		r8a66597->ep0_req->buf = &r8a66597->ep0_data;
-  1194		r8a66597->ep0_req->length = 2;
-  1195		/* AV: what happens if we get called again before that gets through? */
-  1196		spin_unlock(&r8a66597->lock);
-  1197		r8a66597_queue(r8a66597->gadget.ep0, r8a66597->ep0_req, GFP_ATOMIC);
-  1198		spin_lock(&r8a66597->lock);
-  1199	}
-  1200	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+> Thanks a lot.
+> Zhu Yanjun
+> 
+> > 
+> > Thanks,
+> > 
+> > Anand
+> > 
+> 
+> 
 
