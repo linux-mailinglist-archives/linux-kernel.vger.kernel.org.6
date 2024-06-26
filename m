@@ -1,151 +1,133 @@
-Return-Path: <linux-kernel+bounces-230937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83C1991841E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:28:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 293A7918425
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:29:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 405E6286882
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:28:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8518288E1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9201822C2;
-	Wed, 26 Jun 2024 14:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04536188CBD;
+	Wed, 26 Jun 2024 14:28:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HeGqIaEV"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XsbkZlkn"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 139361850A2
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9E1187354
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719412079; cv=none; b=CTh/ELkeWs0ljXU2AvRiXoUEmqmOP2caCTybEhxQxHvWKGAhF8cG7PREO+YVOAIDl9IgP5vU5qYOVu127L4QFMPho/FvOy0ZHc4KceH+xMFxdrMviKRmKuTXDwKB010muIEePaWEJQjcZSiWxoOXd3u1Z3yIER1zqdphguJOHRY=
+	t=1719412095; cv=none; b=Eo/ACWyBrXlXtsujjsUZ39BEes4m27PHrQFIjTtgmmG4mBL9Jl6x8mak4OtVjU9mYARRCE8c4vwuGlvy/2L1OQaSnddhQkevL2mnmMO2n5tjcRm5i9fuSJDweGKUcbx3lV+OZL49MufMa1zapoFX71qGeBmALtpY233ZnySwqn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719412079; c=relaxed/simple;
-	bh=uvJrspBU9bKcZunDCtqHx/7zul1bnfXgHggRAC+SCok=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ep2MCT8PfAcLxEUYE+0Rm5k2wv2r2HUsYTUn6kcEl70qfh4DHyyryuQ+u2f0hSNqKQrYw71zHVieGqq58YgL1txYiNmLR2ZSMqXq7BovpDwSfbiRWR13Sn9RSJIB+NcdUCmgv/U4d89+UHLClc87NdqNyldMPXG5HfGbcnwhatM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HeGqIaEV; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1719412095; c=relaxed/simple;
+	bh=ATPAf+kNfDhpaJ/KEuy+Gq8rjUcecDTtvWVNbCP3D4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LkLr96H1ABDYwxhrkzy8NT/vx3azcXrTa2T5t9PqqXo7ZV1Wj8fjY9L7J/0+KXL6xfVqS95rE1i9+uVH6MzJ0hcwMH//zyXy3JVwZxfsfEhIokkTy6U72zzxu8T0yvDZF5PMv9nNt+Ncw9tQd6VOofO4TriljOjWnYCJS0DalJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XsbkZlkn; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719412077;
+	s=mimecast20190719; t=1719412092;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=uvJrspBU9bKcZunDCtqHx/7zul1bnfXgHggRAC+SCok=;
-	b=HeGqIaEVikMR2wCTICtTY9VQ47WimQmsB7RfrM0AQidaoEe6m7s9jt3zeKifjm/5OBLQdR
-	VDNzV2s/d2bHF9l1+gMBlERI0RE1YuPLQdvSoPQa80EKgFwWEyFk7JqOVt+hSQE7p6yyGL
-	b6SIHE+njHjycSnPP2GR5whnkIri6jc=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-17-gAq8BlXjO2qnDOBJvd5ZFg-1; Wed, 26 Jun 2024 10:27:55 -0400
-X-MC-Unique: gAq8BlXjO2qnDOBJvd5ZFg-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a6fe871a5aeso233921066b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:27:55 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719412074; x=1720016874;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uvJrspBU9bKcZunDCtqHx/7zul1bnfXgHggRAC+SCok=;
-        b=dME6OQm0f3lBavDpRInP/wOmx4QuaW1qy5y/flVFenvOTSlmlLE7D1UKZ8GryU+Nm4
-         N7OinLEpYXvvFXiX3HDZcK7PfdGZQtYcvyT+c+vwECLHd+aJOItAzxZJy2EW7GgsK1mY
-         Oc1YaJooeTmuCob+cjs5ZRGPHiiq1tP5bdVMdPkfIoFWHxDfcFgv+V4U1rQMUTKUmWcD
-         94+GwFPhPEsc3V/llLQzUVOT+I9UB54WehRXdzG7TErA1+/oeXd5wtEk4LO2jF+9Gfc/
-         mmNec/Sj9DmSpr3PihguGaKEEP12Ac1vVN7HINm1/Eu7rZIs0NcEfXf6W5QMYwxGgEX0
-         MenQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Q+kkcmClILhD7LQs/UVaY7xeUzkEVmVwN8SttVPalzGdeeR2X6LKFOXJaZL6XViX/TZMpOrcWRF+pxBsODtFBUg1DOvMyyjeAOwe
-X-Gm-Message-State: AOJu0Yzb3Z/ZZo1y/LwiiCECoJ+4zFsCeaJ9GJOcqFP011L4S71zfqLE
-	4A4xnaALqygUj6wGfBP/OPpt3l1bgB2bW05D92u/hUdSTVkUSd+VN3saBGxNTFPsVR/As43GEh4
-	YcFPaGyhhAO/xEVn0PQxfgnH3e1ihKR5IGDTCzvf5IMJCb3NxV86RJw4ZMjD/Vw==
-X-Received: by 2002:a17:907:270c:b0:a6f:b181:e3a0 with SMTP id a640c23a62f3a-a7242c9ca27mr660659066b.27.1719412074537;
-        Wed, 26 Jun 2024 07:27:54 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGITU0WM1nvWNIRcPvt+8mKmTQC+2o4+y19m9kOvk7XXOOdDyxmbEGYzgSiACONT2x5sY2Z3w==
-X-Received: by 2002:a17:907:270c:b0:a6f:b181:e3a0 with SMTP id a640c23a62f3a-a7242c9ca27mr660657566b.27.1719412074195;
-        Wed, 26 Jun 2024 07:27:54 -0700 (PDT)
-Received: from [10.39.194.16] (5920ab7b.static.cust.trined.nl. [89.32.171.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a724ae806dbsm383611766b.41.2024.06.26.07.27.53
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 26 Jun 2024 07:27:53 -0700 (PDT)
-From: Eelco Chaudron <echaudro@redhat.com>
-To: Adrian Moreno <amorenoz@redhat.com>
-Cc: netdev@vger.kernel.org, aconole@redhat.com, horms@kernel.org,
- i.maximets@ovn.org, dev@openvswitch.org, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next v5 00/10] net: openvswitch: Add sample
- multicasting.
-Date: Wed, 26 Jun 2024 16:27:52 +0200
-X-Mailer: MailMate (1.14r6039)
-Message-ID: <256A6A9B-FAFA-4048-985E-7165B38760F8@redhat.com>
-In-Reply-To: <20240625205204.3199050-1-amorenoz@redhat.com>
-References: <20240625205204.3199050-1-amorenoz@redhat.com>
+	bh=f/HcaWei1+g0z5tguQtmN7bt92j3/7nt6PMTKiEI6IA=;
+	b=XsbkZlknrMVQOKSfTt+IHSRwl4wCxTlW2TS4H7Jg1orB+/Plc4DgT8JopogFT1NGu63id8
+	UGTR69dH3890fSUxMUr7jyfCqr0bUHkHr5ufdlb3FjfZpKj5imak05x10BLnBg6tYdiGPx
+	h59CF8Ar27kdu++l8BXkh0zNfPFN2lM=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-211-lj5JH7wMNvKQ7llts_K_jQ-1; Wed,
+ 26 Jun 2024 10:28:06 -0400
+X-MC-Unique: lj5JH7wMNvKQ7llts_K_jQ-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 79A9F1955EAB;
+	Wed, 26 Jun 2024 14:28:04 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.83])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7638E1956087;
+	Wed, 26 Jun 2024 14:28:01 +0000 (UTC)
+Date: Wed, 26 Jun 2024 22:27:52 +0800
+From: Baoquan He <bhe@redhat.com>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Hailong Liu <hailong.liu@oppo.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Nick Bowler <nbowler@draconx.ca>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
+Subject: Re: [PATCH] mm: vmalloc: Check if a hash-index is in
+ cpu_possible_mask
+Message-ID: <ZnwlaGtDpMz8rALN@MiWiFi-R3L-srv>
+References: <20240626114324.87334-1-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626114324.87334-1-urezki@gmail.com>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
+On 06/26/24 at 01:43pm, Uladzislau Rezki (Sony) wrote:
+> The problem is that there are systems where cpu_possible_mask
+> has gaps between set CPUs, for example SPARC. In this scenario
+> addr_to_vb_xa() hash function can return an index which accesses
+> to not-possible and not setup CPU area using per_cpu() macro.
+> 
+> A per-cpu vmap_block_queue is also used as hash table assuming
+                                                        ~~~~~
+> that incorrectly assumes the cpu_possible_mask has not gaps.
+                   ~~~~~~
+                         Typo of duplicated word?
 
+Other than above nit, this looks good to me. Thanks.
 
-On 25 Jun 2024, at 22:51, Adrian Moreno wrote:
+Reviewed-by: Baoquan He <bhe@redhat.com>
 
-> ** Background **
-> Currently, OVS supports several packet sampling mechanisms (sFlow,
-> per-bridge IPFIX, per-flow IPFIX). These end up being translated into a=
-
-> userspace action that needs to be handled by ovs-vswitchd's handler
-> threads only to be forwarded to some third party application that
-> will somehow process the sample and provide observability on the
-> datapath.
->
-> A particularly interesting use-case is controller-driven
-> per-flow IPFIX sampling where the OpenFlow controller can add metadata
-> to samples (via two 32bit integers) and this metadata is then available=
-
-> to the sample-collecting system for correlation.
->
-> ** Problem **
-> The fact that sampled traffic share netlink sockets and handler thread
-> time with upcalls, apart from being a performance bottleneck in the
-> sample extraction itself, can severely compromise the datapath,
-> yielding this solution unfit for highly loaded production systems.
->
-> Users are left with little options other than guessing what sampling
-> rate will be OK for their traffic pattern and system load and dealing
-> with the lost accuracy.
->
-> Looking at available infrastructure, an obvious candidated would be
-> to use psample. However, it's current state does not help with the
-> use-case at stake because sampled packets do not contain user-defined
-> metadata.
->
-> ** Proposal **
-> This series is an attempt to fix this situation by extending the
-> existing psample infrastructure to carry a variable length
-> user-defined cookie.
->
-> The main existing user of psample is tc's act_sample. It is also
-> extended to forward the action's cookie to psample.
->
-> Finally, a new OVS action (OVS_SAMPLE_ATTR_EMIT_SAMPLE) is created.
-> It accepts a group and an optional cookie and uses psample to
-> multicast the packet and the metadata.
-Hi Adrian,
-
-I reviewed the first part of this series to ensure it aligns with the use=
-rspace integration. I skipped the selftest patches, assuming Aaron is han=
-dling/reviewing those.
-
-Thanks,
-
-Eelco
+> 
+> Fix it by adjusting an index to a next possible CPU.
+> 
+> Fixes: 062eacf57ad9 ("mm: vmalloc: remove a global vmap_blocks xarray")
+> Reported-by: Nick Bowler <nbowler@draconx.ca>
+> Closes: https://lore.kernel.org/linux-kernel/ZntjIE6msJbF8zTa@MiWiFi-R3L-srv/T/
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+> ---
+>  mm/vmalloc.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index b4c42da9f3901..6b783baf12a14 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -2544,7 +2544,15 @@ static DEFINE_PER_CPU(struct vmap_block_queue, vmap_block_queue);
+>  static struct xarray *
+>  addr_to_vb_xa(unsigned long addr)
+>  {
+> -	int index = (addr / VMAP_BLOCK_SIZE) % num_possible_cpus();
+> +	int index = (addr / VMAP_BLOCK_SIZE) % nr_cpu_ids;
+> +
+> +	/*
+> +	 * Please note, nr_cpu_ids points on a highest set
+> +	 * possible bit, i.e. we never invoke cpumask_next()
+> +	 * if an index points on it which is nr_cpu_ids - 1.
+> +	 */
+> +	if (!cpu_possible(index))
+> +		index = cpumask_next(index, cpu_possible_mask);
+>  
+>  	return &per_cpu(vmap_block_queue, index).vmap_blocks;
+>  }
+> -- 
+> 2.39.2
+> 
 
 
