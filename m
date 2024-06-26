@@ -1,154 +1,212 @@
-Return-Path: <linux-kernel+bounces-230564-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 244D1917EA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:45:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08A45917EAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCA081F2759C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:45:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E0371F27DC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C9D17CA0E;
-	Wed, 26 Jun 2024 10:45:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D617F17C21B;
+	Wed, 26 Jun 2024 10:46:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PdlZ4x6+"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Gd507zXd";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="Kg/CM1CG";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="e7+KCXzS";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="R6lIPqGW"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607B2176AAB;
-	Wed, 26 Jun 2024 10:44:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0524113A26F;
+	Wed, 26 Jun 2024 10:46:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719398702; cv=none; b=eSMV6Iw8t1oF5TN/PDTyqheGaC0MhTzW3nm9QchOa2/uXZg/WNOSCil/Rd8z0f3ICIhIML9DWx3BGu776HKy2kctVhj9vyUxnHsXBD9e0zMwkTZa0G81lcE0x5MEs+ZejV8sV2gGlBtq+5thFBH2WxP7Tj2owe0bk/Ux2PJ+E7c=
+	t=1719398805; cv=none; b=XwOGaiykWQ1O7Hxe/ht/B/0zYJq/zfN8d578f19ydbbh1NCyZdIcHuqYuDaekVp6POvRKi4iCq6xJ1GcRRunCQ53UaEXGByPSctXOj5EW8z/xUO4SVwTY2vKrlVkDKBthThWzhTAF8IsMoMgAdbBTk5OWUpos4e+F8t9YCj7MTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719398702; c=relaxed/simple;
-	bh=N5HUNnSxF52LqTiTZ4MD/cgKDig5Sbo0lMVYyZgGD88=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ihsH59JUNRvr+UT65RmL5+qC3iBJJ0dfLO/63b1nKVaPhx+dZE1CQ3Z2/zc7PNaEJ6w4xiw6iLYBdSoR0wIqg7NaLIlm3h1+QhoN3wRUIdbfMC6s+XnXIxeZMFJMbN4S+msj9JqqIV4H+/pTFZxZKINqgdOSMYRIiujhJbI5PxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PdlZ4x6+; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 959C240E021E;
-	Wed, 26 Jun 2024 10:44:56 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id WLfKgW4WQVYn; Wed, 26 Jun 2024 10:44:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1719398691; bh=Y2MsjGLfE7g1SN+DJyJWLxEAOzeLgB4denA5+ilckE4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PdlZ4x6+xF4IrjgXiJynmbDOih/0s7toOMtXLZexV6s3QxDY98m4u1/H2vKjvjtEv
-	 tI5sWZO46M14fnZ+XHwS/52/LRKqnXyHF6aRFKoD/5ruHdG+NykZ9oK3yKxpI8MnQ3
-	 2YtACds0AjJ5WyAIQZ06a4/vQFEombCbYoipqZE6b9dWlzS2v/KXBD67MZpBgp/hLS
-	 fRbLZxqAr+KZMgfhVRMfuKl3eInAaYnimzGafclexXnBtzX/e93FXuXFK8jq2Txypd
-	 NYq78OrHTmLia/vXFeC01Nw7FoHImiSkFqIrbAviM/n//OOzZB2uAhIhI/3lbACkm3
-	 2RRl1AkELgqoZDTlj4sU/xnYD6Lxv/88Iuz6eeI/NaZfbAfxer4fEEexmPPA37KUyx
-	 r0xbm2Ffj4ltVMcE282lMtQB2x1YirE7DJzqCasfumzNNgxL51+hOgPLjg+dbzSVco
-	 uP/UVXU3Y+DljvRiz9sIVnKQ2wOW6xNxB5iY612TPgBBz0E12fZhUIHGnKqjBuRnR5
-	 /4GgmObWcU2zXNrFQrZ0tLvggkp16vQpsI3k7TzQUrQ54iNLQDgO/LRnLY59Lx8aA7
-	 5HMDGdyV6M8GBHusBC04GUmGLNXAtI1BiXpPexdISG/b4uhbOMB5Krhcaarh/Ds8bp
-	 9hVabBrD9DHO04wnwhnhlLM4=
-Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	s=arc-20240116; t=1719398805; c=relaxed/simple;
+	bh=12cKuQ+zRvobmODA4op7ItxgMeiU50RQfcgDGX/gsYg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YbxgCdSJlnofkgTFdr5bFQ4t5lsPiKAZeextMznXRvtDgq5qA8+5NpstJ7R0PmEUFau83u04+atP4RGMUTXuQIamwoRzCSro6sCEYHtxp9HvpitEFYJNwFRyxR/hCQgKWDN0QKOcPVeoqYmu3+Jywxtz0WyOynQYO6HlKggMEWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Gd507zXd; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=Kg/CM1CG; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=e7+KCXzS; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=R6lIPqGW; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8562440E01D6;
-	Wed, 26 Jun 2024 10:44:33 +0000 (UTC)
-Date: Wed, 26 Jun 2024 12:44:27 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: tony.luck@intel.com
-Cc: Avadhut Naik <avadhut.naik@amd.com>, x86@kernel.org,
-	linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	rafael@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	rostedt@goodmis.org, lenb@kernel.org, mchehab@kernel.org,
-	james.morse@arm.com, airlied@gmail.com, yazen.ghannam@amd.com,
-	john.allen@amd.com, avadnaik@amd.com
-Subject: Re: [PATCH v2 1/4] x86/mce: Add wrapper for struct mce to export
- vendor specific info
-Message-ID: <20240626104427.GNZnvxC1JHclKwwKQU@fat_crate.local>
-References: <20240625195624.2565741-1-avadhut.naik@amd.com>
- <20240625195624.2565741-2-avadhut.naik@amd.com>
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 135EF1FB4C;
+	Wed, 26 Jun 2024 10:46:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719398801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=YojtZiArRHb8JKphs/qX6maCDdsDI0fte/sTccK0ELU=;
+	b=Gd507zXdcc0PYjIWCHABMw8L8HNBiy9FfJBVj3pA0Zvi1/OR6/ny7CDrIKQi86j4EgsRax
+	gd57kTyANcCxU8OBxKwLx+m72/FSpysP7WLa1dpKP0LzLhOPxcXJDGAS18upl+aYPlxWDb
+	3Ox8ffgQ8BR426DRrepO7VG2RT0Q1jo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719398801;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=YojtZiArRHb8JKphs/qX6maCDdsDI0fte/sTccK0ELU=;
+	b=Kg/CM1CGhzbiP8GXWne53MUp/CIhe+xSBQ/6tS3FNDl3/IPb0IuFxWmffkDeWusLTlwQ6t
+	cb2Z4c5ZwAiTIfCg==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=e7+KCXzS;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=R6lIPqGW
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719398800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=YojtZiArRHb8JKphs/qX6maCDdsDI0fte/sTccK0ELU=;
+	b=e7+KCXzSmS7VlJnfXszGUfOHpANhnfMsXlmcHdWQoZsRYBqGE/a+DXiQspbbquYXzlNwVh
+	Aimn45dhzKUofuV4t0y4NZ1hdNZt/r1usCacaewIQAQCRTXeOnhwyVc4CYbTs+DfJpEqWp
+	4YI+apYx+3Ops+3AqbsprAVrZdOIjAI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719398800;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=YojtZiArRHb8JKphs/qX6maCDdsDI0fte/sTccK0ELU=;
+	b=R6lIPqGWAJiVrPSPuup4LX4ehc8kY8CsCTToNUEjBVeFlnyJlm61lu21iQ4/UVa+nGp73z
+	JAl1lmyrPCFDgbAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id EE113139C2;
+	Wed, 26 Jun 2024 10:46:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id tQ1AN47xe2ZuDQAAD6G6ig
+	(envelope-from <svarbanov@suse.de>); Wed, 26 Jun 2024 10:46:38 +0000
+From: Stanimir Varbanov <svarbanov@suse.de>
+To: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	kw@linux.com,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>,
+	Stanimir Varbanov <svarbanov@suse.de>
+Subject: [PATCH 0/7] Add PCIe support for bcm2712
+Date: Wed, 26 Jun 2024 13:45:37 +0300
+Message-ID: <20240626104544.14233-1-svarbanov@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240625195624.2565741-2-avadhut.naik@amd.com>
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-1.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[21];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FREEMAIL_CC(0.00)[linutronix.de,kernel.org,broadcom.com,gmail.com,google.com,linux.com,pengutronix.de,suse.com,raspberrypi.com,suse.de];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim];
+	TAGGED_RCPT(0.00)[dt];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com]
+X-Rspamd-Action: no action
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Queue-Id: 135EF1FB4C
+X-Spam-Flag: NO
+X-Spam-Score: -1.51
+X-Spam-Level: 
 
-On Tue, Jun 25, 2024 at 02:56:21PM -0500, Avadhut Naik wrote:
-> Currently, exporting new additional machine check error information
-> involves adding new fields for the same at the end of the struct mce.
-> This additional information can then be consumed through mcelog or
-> tracepoint.
-> 
-> However, as new MSRs are being added (and will be added in the future)
-> by CPU vendors on their newer CPUs with additional machine check error
-> information to be exported, the size of struct mce will balloon on some
-> CPUs, unnecessarily, since those fields are vendor-specific. Moreover,
-> different CPU vendors may export the additional information in varying
-> sizes.
-> 
-> The problem particularly intensifies since struct mce is exposed to
-> userspace as part of UAPI. It's bloating through vendor-specific data
-> should be avoided to limit the information being sent out to userspace.
-> 
-> Add a new structure mce_hw_err to wrap the existing struct mce. The same
-> will prevent its ballooning since vendor-specifc data, if any, can now be
-> exported through a union within the wrapper structure and through
-> __dynamic_array in mce_record tracepoint.
-> 
-> Furthermore, new internal kernel fields can be added to the wrapper
-> struct without impacting the user space API.
-> 
-> Note: Some Checkpatch checks have been ignored to maintain coding style.
-> 
-> [Yazen: Add last commit message paragraph.]
-> 
-> Suggested-by: Borislav Petkov (AMD) <bp@alien8.de>
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> ---
->  arch/x86/include/asm/mce.h              |   6 +-
->  arch/x86/kernel/cpu/mce/amd.c           |  29 ++--
->  arch/x86/kernel/cpu/mce/apei.c          |  54 +++----
->  arch/x86/kernel/cpu/mce/core.c          | 178 +++++++++++++-----------
->  arch/x86/kernel/cpu/mce/dev-mcelog.c    |   2 +-
->  arch/x86/kernel/cpu/mce/genpool.c       |  20 +--
->  arch/x86/kernel/cpu/mce/inject.c        |   4 +-
->  arch/x86/kernel/cpu/mce/internal.h      |   4 +-
->  drivers/acpi/acpi_extlog.c              |   2 +-
->  drivers/acpi/nfit/mce.c                 |   2 +-
->  drivers/edac/i7core_edac.c              |   2 +-
->  drivers/edac/igen6_edac.c               |   2 +-
->  drivers/edac/mce_amd.c                  |   2 +-
->  drivers/edac/pnd2_edac.c                |   2 +-
->  drivers/edac/sb_edac.c                  |   2 +-
->  drivers/edac/skx_common.c               |   2 +-
->  drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c |   2 +-
->  drivers/ras/amd/fmpm.c                  |   2 +-
->  drivers/ras/cec.c                       |   2 +-
->  include/trace/events/mce.h              |  42 +++---
->  20 files changed, 199 insertions(+), 162 deletions(-)
+This patchset aims to add bare minimum support for bcm2712
+in brcmstb PCIe driver needed to support the peripherals from
+RP1 south-bridge found in RPi5. In order to support RP1
+PCIe endpoint peripherals a new interrupt controller is added.
+The interrupt controller supports 64 interrupt sources which
+are enough to handle 61 RP1 peripherals.
 
-Ok, did some minor massaging but otherwise looks ok now.
+Patch 1 is adding DT binding schema for the MIP interrupt
+controller, patch 2 is adding relevant changes for PCIe
+bcm2712 in yaml. Patch 3 adds MIP intterrupt cotroller driver.
+Patches 4 and 5 are preparations for adding bcm2712 support in 6.
+The last patch updates bcm2712 .dsti by adding pcie DT nodes.
 
-Tony, any comments? You ok with this, would that fit any Intel-specific vendor
-fields too or do you need some additional Intel-specific changes?
+Few concerns about the implementation:
+ - the connection between MIP interrupt-controller and PCIe RC is 
+   done through BAR1. The PCIe driver is parsing the msi_parent
+   DT property in order to obtain few private DT properties like 
+   "brcm,msi-pci-addr" and "reg". IMO this looks hackish but I failed
+   to find something better. Ideas? 
 
-Thx.
+ - in downstream RPi kernel "ranges" and "dma-ranges" DT properties 
+   are under an axi {} simple-bus node even that PCIe block is on CPU
+   MMIO bus. I tried to merge axi {} in soc {} and the result could be
+   seen on the last patch in this series, but I'm still not sure that
+   it looks good enough.
+
+This series has been functionally tested on OpenSUSE Tumbleweed with
+downstream RP1 south-bridge PCIe endpoint driver implementation as
+MFD by using ethernet which is part of it. 
+
+The series is based on Andrea's "Add minimal boot support for Raspberry Pi 5"
+series.
+
+Comments are welcome!
+
+regards,
+~Stan
+
+Stanimir Varbanov (7):
+  dt-bindings: interrupt-controller: Add bcm2712 MSI-X DT bindings
+  dt-bindings: PCI: brcmstb: Update bindings for PCIe on bcm2712
+  irqchip: Add Broadcom bcm2712 MSI-X interrupt controller
+  PCI: brcmstb: Reuse config structure
+  PCI: brcmstb: add phy_controllable flag
+  PCI: brcmstb: Add bcm2712 support
+  arm64: dts: broadcom: bcm2712: Add PCIe DT nodes
+
+ .../brcm,bcm2712-msix.yaml                    |  74 +++++
+ .../bindings/pci/brcm,stb-pcie.yaml           |  17 +
+ arch/arm64/boot/dts/broadcom/bcm2712.dtsi     | 218 +++++++++++-
+ drivers/irqchip/Kconfig                       |  12 +
+ drivers/irqchip/Makefile                      |   1 +
+ drivers/irqchip/irq-bcm2712-mip.c             | 287 ++++++++++++++++
+ drivers/pci/controller/pcie-brcmstb.c         | 314 ++++++++++++++++--
+ 7 files changed, 876 insertions(+), 47 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
+ create mode 100644 drivers/irqchip/irq-bcm2712-mip.c
 
 -- 
-Regards/Gruss,
-    Boris.
+2.43.0
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
