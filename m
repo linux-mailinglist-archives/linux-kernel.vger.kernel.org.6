@@ -1,152 +1,177 @@
-Return-Path: <linux-kernel+bounces-230074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0115D917815
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:27:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C89D917817
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:28:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A90D11F21BE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:27:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3F87B1C22114
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A468146585;
-	Wed, 26 Jun 2024 05:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564BC1448EA;
+	Wed, 26 Jun 2024 05:28:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eAYW8kpP"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P9rEIxGw"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFFA28DDF;
-	Wed, 26 Jun 2024 05:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F0F143C70;
+	Wed, 26 Jun 2024 05:28:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719379646; cv=none; b=bQrk6ALJy3t7/olySEdkXgSyn8A+z6st5hlsQvYqNlwGVgtqVRDxjns/nCtaG2KRLOchBNdpV+z3elpZyn2toXibF/i+3o8q2WNBmIsZv9F8xa3LRYpUZh9m8EPAXxuXXSExdL5t/iYAdfTZQMRXBOpvxXtDI6KRoFICbVoniVA=
+	t=1719379683; cv=none; b=FLU6mj8wQ0QqeIdko0kxxnHn733pjWyoynBH7Ig+dYH7XA2Nb/fF+XYhMJakSg8qXnRX/NCxV/8sm8me4naWwQj8LwNzjAiQFW7vmBGl0qgknS51nVWPGWhArME803cpOeLRlImThwA+xFrSFwJo1cIarBXfBvLSoKsKq/YVZ5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719379646; c=relaxed/simple;
-	bh=tr6b7YzaNDp+6chz6an4To4uD1paZT/4oVgc4Ozi5zI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KyyUtUN/rI5NpgGMc4H9I/hRgaagLPXo8ijybT0cttR/JAvHYHoqxas7TaURmk6sKnXyhI7WO6h4z8jGdpp4eSSFPvo67NRwL38eLZ2TDp21hZWyVQvliVD7QKHoz+pRFQ4wF4s3hbn17fy7X2buGg6Ixp8u3WlSez0sdQorCZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eAYW8kpP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PIxMdE018107;
-	Wed, 26 Jun 2024 05:27:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=H1ebhpLl+WMhVtgvEy9phQd1
-	h+dpJM8YkGd3n9aCPWA=; b=eAYW8kpP+LYcT8KjW7aE8PIr9FMtcMSaxD0n2Fer
-	7nsAUzZz6aV4xqo6mV6DKbXzLBwxSRS1ASLsOBPVU1nOV+mEMdIM6axa448lj17d
-	FsR04ocxn2C+0qGguZRzvzeiurzUuhxxZrRlZaPfUcbmsSUOW+Xi7Yl5ebRoS10l
-	DDiZha5FFhb8V1p1jg/Q63/xQMXVfU9HBaCtdZBnJOv6FkDwfRa93urgUOPaMLeQ
-	ZeBW5jLlsai/Me83QDA75VPsVum3NkOknaSZw2l9VQscXYZvFqZi6kYKILMRf8Yz
-	XQI74PKdIclZ2SxmplIInyqAbWtCVIX4XhXY5JamY2qz8g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnm6r993-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 05:27:13 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45Q5RBqi022196
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 05:27:11 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 25 Jun 2024 22:27:06 -0700
-Date: Wed, 26 Jun 2024 10:57:02 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <djakov@kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v11 0/6] Add interconnect driver for IPQ9574 SoC
-Message-ID: <ZnumpkYR2ILpbOwF@hu-varada-blr.qualcomm.com>
-References: <20240430064214.2030013-1-quic_varada@quicinc.com>
- <ZjXrTywO6+iRaEYk@hu-varada-blr.qualcomm.com>
- <90bb9256-d54d-4e01-aa06-4184e2b95d48@linaro.org>
- <Zmgc+Qzwt6Zbg/w+@hu-varada-blr.qualcomm.com>
+	s=arc-20240116; t=1719379683; c=relaxed/simple;
+	bh=gqIrlSFN7Q077XmmtzRgBDw2bUKKLUZ3uDf4nCewmNA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tsDQIJPL6+U4MVHQE2mI1sEcrnISmckDGAS/4PJXjU8vcaZ/tfLcxv0Jbup+ZUvSODD4PJPv4gpJ5GRciXZQc2ovq0U4tGE95BJP141Pu1GJ6pSQ41vkC25M3tYJmaCwrDGL2GkQ1iEOGPqjEJ8LfqD+nVMd1MOBOPIpUJaE6mE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P9rEIxGw; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3672ab915bdso12172f8f.3;
+        Tue, 25 Jun 2024 22:28:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719379680; x=1719984480; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xNjNDp/8w/LBntDpoHkINzJ57LeRYfU/2b/EYE/JleQ=;
+        b=P9rEIxGwwxbw1DMTUTae+nd7JDbvqFynRGsWOxfZa5vfYC9q/Prp+A+0N94aQq1BjQ
+         pSSJxGzbQMb6IfxtCt+DyP02MsxnAWU3bS+IgFkrLx8YnJGsIVO4jXjCuKKC2rybWXD1
+         WQffBrmHex39U6AwANB/GHnRE1DeIhEHVJZxVF01/6BjtOF7QD+Lf1tk4n8vJ1jAKeBc
+         LzHWIMXU2SypHpY7FxJ9r0Bmx4S680bW+5DECYQFwC2Pgr6cxBLiOZmIas7icWLG/Z/z
+         iLgLSjO4NVSZEatvhoFUbPsVIkvsR3mXyg5cEpQUtd5inPSIC2kz2Jz+ePBmMrGrnfd2
+         J3lg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719379680; x=1719984480;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xNjNDp/8w/LBntDpoHkINzJ57LeRYfU/2b/EYE/JleQ=;
+        b=FGTrtZYNUfcyemBWFLH1idZE3/wai/VDO+w0ebmtLJdnmDWJ5ZRmgIlL3CxEGosnH3
+         dTEO9yDyChjgfKVppD4NgOWf75R9ged4xmMbZNHZX7lw+C5110nflUmU47dBYBuHaC3H
+         M5iB0RwSyW5Nkr78nzHXY2z3mwyYPmBqsQlLhjbhdMGsL/4uHzIUlDVHRJF/KhRnMqq0
+         T9oX5WZ0zh9Xj/4MEBM1xK3KW1Gi3qKdXcr4T9T3dwBs3+TgaUqpCNT6yeNtGnfuGxdT
+         Qs6Xe7NNaZ5837nSViDHfwShlSdaJkYx5tispJAYjEu9TOep6a8kCE8va57yc8Sh6boh
+         uLUA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/TnXdR57jNsx7H+nGiRMw3SoXrul+Jpc37KsCVHeYpbrESkfczz64uVsQkcWTfdde3HJu1lr1XdO26L0B3bKGb4bQLdKtFyB01OYLZp3PBWeV0N2jP4+mBKLuU2XgvvZxi/fmfsHnd0U=
+X-Gm-Message-State: AOJu0YwOr09uwUX8mm0MjEokBFc6g7YpdquTaXIAEFSdF8UXbPdaqQ1e
+	+gHgWdUHDdUtwjDkwL95HMExM0yzDhVyN5vai8dr5GvU5bKxpuni
+X-Google-Smtp-Source: AGHT+IEJwIL07uFAbaf5dW8x4d2flONUAUoa75SWzrPDUykhAsl4IaZZP6dli6kK/i8KiqSKjSGPVA==
+X-Received: by 2002:a05:6000:1fa9:b0:365:ca95:b6cd with SMTP id ffacd0b85a97d-366e2aa64ddmr7226545f8f.7.1719379680117;
+        Tue, 25 Jun 2024 22:28:00 -0700 (PDT)
+Received: from [192.168.0.103] (p57935a9b.dip0.t-ipconnect.de. [87.147.90.155])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36638d9bd0fsm14758229f8f.52.2024.06.25.22.27.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 22:27:59 -0700 (PDT)
+Message-ID: <c8daf5a0-f511-4071-8c24-3e39aca9e68c@gmail.com>
+Date: Wed, 26 Jun 2024 07:27:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Zmgc+Qzwt6Zbg/w+@hu-varada-blr.qualcomm.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dWqOxM9yRy2tFHsSWLqgpDrfMRDaAXu3
-X-Proofpoint-ORIG-GUID: dWqOxM9yRy2tFHsSWLqgpDrfMRDaAXu3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_03,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406260040
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: nvec: use x instead of x != NULL
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: Tom Mounet <tommounet@gmail.com>, Marc Dietrich <marvin24@gmx.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, ac100@lists.launchpad.net,
+ linux-tegra@vger.kernel.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, outreachy@lists.linux.dev
+References: <667b2ee6.050a0220.f9c1.5426@mx.google.com>
+ <c2911f68-d1e2-4b45-af95-590926b7a6f1@gmail.com>
+ <21151f5a-059-538c-3cec-7c40d625c5a8@inria.fr>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <21151f5a-059-538c-3cec-7c40d625c5a8@inria.fr>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 11, 2024 at 03:16:33PM +0530, Varadarajan Narayanan wrote:
-> On Thu, Jun 06, 2024 at 04:07:23PM +0200, Konrad Dybcio wrote:
-> > On 4.05.2024 10:01 AM, Varadarajan Narayanan wrote:
-> > > Bjorn,
-> > >
-> > >> On Tue, Apr 30, 2024 at 12:12:08PM +0530, Varadarajan Narayanan wrote:
-> > >> MSM platforms manage NoC related clocks and scaling from RPM.
-> > >> However, in IPQ SoCs, RPM is not involved in managing NoC
-> > >> related clocks and there is no NoC scaling.
-> > >>
-> > >> However, there is a requirement to enable some NoC interface
-> > >> clocks for the accessing the peripherals present in the
-> > >> system. Hence add a minimalistic interconnect driver that
-> > >> establishes a path from the processor/memory to those peripherals
-> > >> and vice versa.
-> > >>
-> > >> Change icc-clk driver to take master and slave ids instead
-> > >> of auto generating.
-> > >>
-> > >> Currently, drivers/clk/qcom/clk-cbf-8996.c is the only user of
-> > >> icc-clk. And, it had exactly one master and one slave node.
-> > >> For this the auto generated master (= 1) and slave (= 0) was
-> > >> enough.
-> > >>
-> > >> However, when drivers/clk/qcom/gcc-ipq9574.c wanted to make use
-> > >> of the icc-clk framework, it had more number of master and slave
-> > >> nodes and the auto generated ids did not suit the usage.
-> > >>
-> > >> ---
-> > >> v11:	No code changes
-> > >> 	Commit log changed for the first patch
-> > >> 	Added Acked-By: to 3 patches
-> > >
-> > > Can this be included in your driver changes for 6.10?
-> >
-> Konrad,
->
-> > FWIW there is still an open discussion at v9
-> > <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
->
-> Thanks for reminding. Have responded to it.
-> https://lore.kernel.org/linux-arm-msm/Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com/
+On 6/26/24 06:48, Julia Lawall wrote:
+> 
+> 
+> On Wed, 26 Jun 2024, Philipp Hortmann wrote:
+> 
+>> On 6/25/24 22:56, Tom Mounet wrote:
+>>> Comply with coding rules defined in checkpatch
+>>>
+>>> Signed-off-by: Tom Mounet <tommounet@gmail.com>
+>>> ---
+>>>    drivers/staging/nvec/nvec.c | 4 ++--
+>>>    1 file changed, 2 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/drivers/staging/nvec/nvec.c b/drivers/staging/nvec/nvec.c
+>>> index e5ca78e57..814eb121c 100644
+>>> --- a/drivers/staging/nvec/nvec.c
+>>> +++ b/drivers/staging/nvec/nvec.c
+>>> @@ -300,7 +300,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+>>>    {
+>>>    	mutex_lock(&nvec->sync_write_mutex);
+>>>    -	if (msg != NULL)
+>>> +	if (msg)
+>>>    		*msg = NULL;
+>>>      	nvec->sync_write_pending = (data[1] << 8) + data[0];
+>>> @@ -322,7 +322,7 @@ int nvec_write_sync(struct nvec_chip *nvec,
+>>>      	dev_dbg(nvec->dev, "nvec_sync_write: pong!\n");
+>>>    -	if (msg != NULL)
+>>> +	if (msg)
+>>>    		*msg = nvec->last_sync_msg;
+>>>    	else
+>>>    		nvec_msg_free(nvec, nvec->last_sync_msg);
+>>
+>>
+>> Hi Tom,
+>>
+>> what you change in this patch is fine. But the Description is not so lucky.
+>> Reason is that checkpatch is not defining the coding style. Not at all.
+>> Sometimes checkpatch is even wrong. The description I like would be:
+>>
+>> Use x instead of x != NULL to shorten code.
+>>
+>> or
+>>
+>> Use x instead of x != NULL to improve readability.
+>>
+>> If you send in a second version of this patch please use a change history.
+>> Description from Dan under:
+>> https://staticthinking.wordpress.com/2022/07/27/how-to-send-a-v2-patch/
+> 
+> How about adding "Issue identified by checkpatch"?  Checkpatch helped find
+> the problem, so it would be nice to acknowledge that.
+> 
+> julia
+> 
 
-Bjorn/Konrad,
+Hi Julia,
 
-Can this be merged for 6.11. I believe the discussion open at v9
-has been addressed. Please let me know if anything is still pending.
+The following lines sound very authoritative. It is only my opinion and 
+can be wrong.
 
-Below patches depend on this series:
+I think checkpatch is valued a lot because every patch send in is 
+checked by checkpatch. checkpatch can be mentioned in the description. 
+But the developer cannot hide at all behind a checkpatch warning/error 
+message. The developer must take full responsibility for the patch. The 
+developer needs to use common sense.
 
-	PCI: https://lore.kernel.org/linux-arm-msm/20240512082858.1806694-1-quic_devipriy@quicinc.com/
-	NSSCC: https://lore.kernel.org/linux-arm-msm/20240625070536.3043630-1-quic_devipriy@quicinc.com/
+Please have a look at this email from Greg:
+https://lore.kernel.org/linux-staging/2024062443-udder-spotted-cc0d@gregkh/T/#m280ebb2be94e434234f405e722fc35dc6d1db710
 
-Thanks
-Varada
+I think that Greg once wrote that he does not care about the tool that 
+found the issue. He much more cares about if the change makes sense. The 
+"Why" in the description is most important for him. And the why cannot 
+be because checkpatch or any other tool told the developer so.
+
+Thanks for your support.
+
+Bye Philipp
+
+
+
+
+
+
+
 
