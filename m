@@ -1,188 +1,147 @@
-Return-Path: <linux-kernel+bounces-230423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C48F0917CA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:35:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D687917CAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78D93280B83
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:35:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E755B28365D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA27C16EB53;
-	Wed, 26 Jun 2024 09:35:38 +0000 (UTC)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F33016E88D;
+	Wed, 26 Jun 2024 09:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b="hYPbyF7h"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EF416CD1F;
-	Wed, 26 Jun 2024 09:35:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BCF12B144
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719394538; cv=none; b=Ju7TUPVIHGZQki1rQKqCasADs12otnYHJoQolpB8BwTpB8WjV63648TBTLiFm/93uTxOZbEh8/qw/lkSd1qSwIjGKbuGCyNQLAnf3v5jUKalBIPAqCpOO+uOdEX/BRMJmZPZutTSeSDVTjxBHH9k1YjOQgiI+Q8LZKJlAULEOiQ=
+	t=1719394706; cv=none; b=lyUoqJ8exVU6Ie84ymDkLDmuINE3RvVhUF0jW05f1XcrUesC3mAhqcA/n+eVvWeCjfTDP4G3MCWZZJZ6XAporUOUkmpMVeTm8UMias1mSOGJjXErNK5CJfn67GORMEZaV4r8cCaBsxMxrHh11aRwt5rgUSIm5ho03oGGmGrk368=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719394538; c=relaxed/simple;
-	bh=mJPHb1h8PtVkohruP9kTZw0RpbsN3fWIjbsowGJOhB4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QwBZjrJEg8JIlPqTWsH5BDpxeoJe3zw0lFman6rMUl+YyFIwZpJlGNqB4mcGXYf0Dtew5VuiIU2woh43ytG5If6Av+LPT0p3DuFbM/iuDqTOscd1BhmTyMPmjjEGcCyEFkLSRqkcHsswXviLVkpB9jMbVxPqAFcUsK4nNmmGXSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6326f1647f6so60079087b3.0;
-        Wed, 26 Jun 2024 02:35:36 -0700 (PDT)
+	s=arc-20240116; t=1719394706; c=relaxed/simple;
+	bh=VMgxm/Ef7XHNkgrpqem5t2A+iBBaltsqNuNFFFlZROE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rTyEb5M8mWzt+uUaRdwXf71lSUj0hY+SMfcjPSEm98AaMHS78xpg7zDHq0I1LEP17OYlVNiMOsc7LOFmLUrt1M2xFMfbk2+8V4qTjDugY3F/mv4Z7M5mpyIS9RpmAxixnk7VS9RAfTSf2LxYapH1FyYTSbCVc+XJyPpNuwUYtYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org; spf=pass smtp.mailfrom=endlessos.org; dkim=pass (2048-bit key) header.d=endlessos.org header.i=@endlessos.org header.b=hYPbyF7h; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=endlessos.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=endlessos.org
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-70b2421471aso4601238a12.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 02:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=endlessos.org; s=google; t=1719394704; x=1719999504; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K8+v3noNoyPjynJix5Z6KWWDUhj0ABP/SpdUpbNFskg=;
+        b=hYPbyF7hEXoNJRpZ0k0dZdUb3ZqCMxZenL9iP+0zd3armOWxzF+voEOFMx3ZvG+A7M
+         0rICP3hI1gTiAj2RRGphCUY3uZ55dx830DAM6lXhHiWQctnuU/N4AH1XKK5+0Xy2ckzd
+         aAf+w0Q/O++2DSWO30h2PWykXH/QORroUdKKZpY1gIol7WwiOgiDpe589GVfjCTkBoM7
+         FXb30Pm8aoiShIqHQPykabZiJ935Q7kT95mEX5NpFuAh0+8L19ToHVa5JtjBE1Vw2Ipj
+         LU/879XXLhIZj1stAqLB/tGrFJ8uq7csopfLODifEePZ0Zbr8EMEpVWByC8rd+4m+b1J
+         Qs8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719394534; x=1719999334;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1719394704; x=1719999504;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fXYZ7JaFw5Xny2CU1Qww3vsC5MqHS7GWiaZ6UXzK1eQ=;
-        b=tPwqKM9oMEOv4PiHNutxalmXqJZvVFWJLauz5S+M438l/Y2J1yxlgYVSWaDQanzoYw
-         yHQSP/AnUouOI8EF90b0gYUyu/gism+1fJHRz3hNoNxanXfYMDLMV9hJCU5aAPz3onWr
-         aUl/YT3mC52XkLukdBUmVi+yv2ZZn95sZDGo4edlvHJKkEM+AoLoEGWkYBhie9BlHJgz
-         n/3ynzUNWrOa7tRt1pHjeT1BFWc0zB2/B/T3FHobgvtKFgQFKWE64NDBZaltURwHPrOX
-         jsusVokagVa6yvPZYkApdWa7z8lYtH8o5udIcvpMAn1PhjNHOwPiR5CHwbJm75T/3X52
-         UKgw==
-X-Forwarded-Encrypted: i=1; AJvYcCX1SJKo3RpQy2idn3K2n5ctaCUlPF95ygC9V8nKtna5m2LZZOlJkOHqBW+CLSNcNlGJg3kzpqKlER+LUxdz/PEf3n5+jlaJop7R/dicwb2SNB6wMIKoq/Etg4ToQKlBG8q4vlFJEj/hcIWA0lE2SOm5h3zBcp5epoVtyEGXzROCPgMrWgiTS8PTZh2GWu3sbdTDxChE/UAblirkDpr1lJducd9kCY4J
-X-Gm-Message-State: AOJu0YxdLf6L+WGxbrud+hpldIitpeAtD0WQztbZj1Lc61SCTmyp6oAw
-	9ADDy3HGg1Q+HowrFPlyNS7MoSTA3zXwFkp7w6XYBd0T3Ri0+5lEJ8WDN3vR
-X-Google-Smtp-Source: AGHT+IF10ois1JaXNgZUnMdqAsjSc5sEBmXo5QKR+U0QqKNnkVc/SCIXI38rXLcv+m3ZiBypHAWyew==
-X-Received: by 2002:a0d:e603:0:b0:627:a757:cdfa with SMTP id 00721157ae682-643ac81d382mr93856377b3.38.1719394534188;
-        Wed, 26 Jun 2024 02:35:34 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f14e10330sm38247737b3.76.2024.06.26.02.35.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 02:35:33 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-64546605546so32976537b3.1;
-        Wed, 26 Jun 2024 02:35:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUj1AGAfgHHD56y+dCdVn671LVnEOfsf/EyTjjaAgSnR1U86NDULoJFumBWTySpJeJ6psFSo36ATZ/zh0DWK8ecGbXoIKXAk2cZDELVWm0F83Z3CAcb+yy3dbkOD84eNQDNmofZux25/KeD3KBhwweTrGCla8zFeR5EhqpIMAYTYN2owK812OAkT6k4gTi1g/HEJ49UheiRM5bbVuFr2BJBWGy6SH8r
-X-Received: by 2002:a05:690c:4b02:b0:63c:819:2a8f with SMTP id
- 00721157ae682-643aa5a1d6fmr113309907b3.4.1719394533239; Wed, 26 Jun 2024
- 02:35:33 -0700 (PDT)
+        bh=K8+v3noNoyPjynJix5Z6KWWDUhj0ABP/SpdUpbNFskg=;
+        b=T5QOApAStu44eiVnOehvdZqjYy44xapQrfvbOGe3YfHW65TuRGZpSOVIKdmp2MssBl
+         EGkbRJgBjp/ZndTJ3AbdfkHARlvbR8JiLO/XXS+dj3cljPW/JusjmwhLLBTVnncKhujP
+         fUbGKAMp+CtuZRcf93BzSm/zncf4pC/bL2QSCjZVdQSYSzG9EKWjYl9t5lfFvHVWI2g8
+         qnV1Z6wph09Vpm4FU3YHxWn+46kkvwH81dwm7RugvmAW9GHype+xBlodse+W5u8Zcm4R
+         c7k6Z8Gk2RF+NK7ScAdcBEVscGwawmCe5GNLuH83Fs2samzRws4vIpkBpcQr6ai1Gz2F
+         6U6A==
+X-Forwarded-Encrypted: i=1; AJvYcCX4U9yeTTSSep2Bdt02nARITdq/DqshJGn0wMt7ohI0Ppu18O+Ok+TdcXpMFFEDgMDbdqRgPNkKtCeF4zu+BDcrCFx0kT7zzzzfKNBI
+X-Gm-Message-State: AOJu0YyDkzKa5td0Bx+rO4TVfV1U2fTVbhEcqF6eDyuyPASNW/lMY5br
+	UwsX8s++shNSSbNCuBK8JQG0zAmqMlQrfjVsuuaMc77ecMcejZXNMTzjPw90RYc=
+X-Google-Smtp-Source: AGHT+IEC3KSzdYFibbSuDaV54ZQfYOq+YaBYF/YhFaYzGn4bpoJpyTfuPOdLMIDcdRzSetN4TJ0NrA==
+X-Received: by 2002:a05:6a20:4f24:b0:1bd:1972:370e with SMTP id adf61e73a8af0-1bd19723884mr4741524637.48.1719394704435;
+        Wed, 26 Jun 2024 02:38:24 -0700 (PDT)
+Received: from localhost.localdomain ([123.51.167.56])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-1f9eb3c6d47sm95676685ad.178.2024.06.26.02.38.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 02:38:24 -0700 (PDT)
+From: Jian-Hong Pan <jhp@endlessos.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>,
+	David Box <david.e.box@linux.intel.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Damien Le Moal <dlemoal@kernel.org>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	Jonathan Derrick <jonathan.derrick@linux.dev>,
+	linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@endlessos.org,
+	Jian-Hong Pan <jhp@endlessos.org>,
+	Bjorn Helgaas <bhelgaas@google.com>
+Subject: [PATCH v7 2/4] PCI/ASPM: Add notes about enabling PCI-PM L1SS to pci_enable_link_state(_locked)
+Date: Wed, 26 Jun 2024 17:37:00 +0800
+Message-ID: <20240626093659.14346-2-jhp@endlessos.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240626092821.14158-2-jhp@endlessos.org>
+References: <20240626092821.14158-2-jhp@endlessos.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240610233221.242749-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <34b21e6f-0896-4691-9b66-d06ef2f44905@kernel.org> <CA+V-a8u6dDpbb5BrQ+ty_RbwcPOF-U6rnJnuASRXEDVdrhrvAA@mail.gmail.com>
- <20438973-d7a1-427f-a2ed-5c5b9f7db872@kernel.org>
-In-Reply-To: <20438973-d7a1-427f-a2ed-5c5b9f7db872@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Jun 2024 11:35:20 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVrXmDBxD4gGkHvs3iUuT6nnzjWzVUme7jH5u=YpyzQuw@mail.gmail.com>
-Message-ID: <CAMuHMdVrXmDBxD4gGkHvs3iUuT6nnzjWzVUme7jH5u=YpyzQuw@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 1/4] dt-bindings: clock: renesas: Document
- RZ/V2H(P) SoC CPG
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+According to "PCIe r6.0, sec 5.5.4", add note about D0 requirement in
+pci_enable_link_state() kernel-doc.
 
-On Thu, Jun 13, 2024 at 2:57=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
-> On 13/06/2024 11:53, Lad, Prabhakar wrote:
-> > On Tue, Jun 11, 2024 at 8:02=E2=80=AFAM Krzysztof Kozlowski <krzk@kerne=
-l.org> wrote:
-> >> On 11/06/2024 01:32, Prabhakar wrote:
-> >>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >>>
-> >>> Document the device tree bindings for the Renesas RZ/V2H(P) SoC
-> >>> Clock Pulse Generator (CPG).
-> >>>
-> >>> CPG block handles the below operations:
-> >>> - Generation and control of clock signals for the IP modules
-> >>> - Generation and control of resets
-> >>> - Control over booting
-> >>> - Low power consumption and power supply domains
-> >>>
-> >>> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
+Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+Acked-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>
+---
+v3:
+- Fix as readable comments
 
-> >>> +  '#clock-cells':
-> >>> +    description: |
-> >>> +      - For CPG core clocks, the two clock specifier cells must be "=
-CPG_CORE"
-> >>> +        and a core clock reference, as defined in
-> >>> +        <dt-bindings/clock/r9a09g057-cpg.h>,
-> >>
-> >> So second cell is not used?
-> >>
-> > It will be used for blocks using core clocks.
-> >
-> >>> +      - For module clocks, the two clock specifier cells must be "CP=
-G_MOD" and
-> >>> +        a module number.  The module number is calculated as the CLK=
-ON register
-> >>> +        offset index multiplied by 16, plus the actual bit in the re=
-gister
-> >>> +        used to turn the CLK ON. For example, for CGC_GIC_0_GICCLK, =
-the
-> >>> +        calculation is (1 * 16 + 3) =3D 19.
-> >>
-> >> You should not have different values. Make it const: 1 and just use ID=
-s.
-> >>
-> > Are you suggesting not to differentiate between core/mod clocks. They
-> > are differentiated because the MOD clocks can turned ON/OFF but where
-> > as with the core clocks we cannot turn them ON/OF so the driver needs
-> > to know this, hence two specifiers are used.
->
-> Every driver knows it... I am really, what is the problem here? Are you
-> saying the drivers create some unknown clocks?
+v4:
+- The same
 
-The driver knows for sure which clocks are module clocks, and thus can
-be used for power management.  To simplify the driver, two separate
-numbers spaces are used:
-  1. Core clock numbers come from IDs in the DT binding headers,
-  2. Module clock numbers come straight[1] from the hardware docs.
-As the latter are fixed, merging them into a single number space in
-a future-proof way is hard[2], the bindings use 2 clock cells.
+v5:
+- Tweak and simplify the commit message
 
-Alternatively, a unified number space using IDs in the DT binding
-headers could be used, as you suggest.
+v6, v7:
+- The same
 
-[1] "straight" may be a misnomer here, as the DT writer still has to
-    calculate the number from register index and bit index:
+ drivers/pci/pcie/aspm.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-        n =3D register index * 16 + bit index
+diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+index cee2365e54b8..bd0a8a05647e 100644
+--- a/drivers/pci/pcie/aspm.c
++++ b/drivers/pci/pcie/aspm.c
+@@ -1442,6 +1442,9 @@ static int __pci_enable_link_state(struct pci_dev *pdev, int state, bool locked)
+  * touch the LNKCTL register. Also note that this does not enable states
+  * disabled by pci_disable_link_state(). Return 0 or a negative errno.
+  *
++ * Note: Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
++ * PCIe r6.0, sec 5.5.4.
++ *
+  * @pdev: PCI device
+  * @state: Mask of ASPM link states to enable
+  */
+@@ -1458,6 +1461,9 @@ EXPORT_SYMBOL(pci_enable_link_state);
+  * can't touch the LNKCTL register. Also note that this does not enable states
+  * disabled by pci_disable_link_state(). Return 0 or a negative errno.
+  *
++ * Note: Ensure devices are in D0 before enabling PCI-PM L1 PM Substates, per
++ * PCIe r6.0, sec 5.5.4.
++ *
+  * @pdev: PCI device
+  * @state: Mask of ASPM link states to enable
+  *
+-- 
+2.45.2
 
-    i.e. register index 1 and register bit 3 become 19.
-
-    In the R-Car series, this is handled slightly more elegant
-    (IMHO ;-), and easier to the human eye, by using a sparse
-    number space:
-
-        n =3D register index * 100 + bit index
-
-    i.e. register index 1 and register bit 3 become 103.
-    Which also matches how the bits were named in older SH-Mobile
-    hardware docs.
-
-[2] One could use an offset to indicate core or module clocks, but
-    future SoCs in the family may have more clocks.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
