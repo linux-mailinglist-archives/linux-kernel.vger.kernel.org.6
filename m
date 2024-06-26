@@ -1,119 +1,107 @@
-Return-Path: <linux-kernel+bounces-230678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E57F3918069
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:00:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CACE918075
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 994E82894A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:00:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEFC21F26808
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:02:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC90617F370;
-	Wed, 26 Jun 2024 12:00:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F82181BAC;
+	Wed, 26 Jun 2024 12:02:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="c68jgGf3"
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="ZdVMn565"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 863EF15A856
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC7C180A88
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:02:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719403245; cv=none; b=ZW2VhLMFJRKmpbBF8ksqqwQY/GAND708+u1GC2xfFZTO7etQs7yJ6Jj0sRIBD0tolsdop8u505p1Lnvhdhca71QdrdG3hdCAAj59QK04AwVgR+hrYGggmGpz0YwBGA01SeZ1rwZ9zsxcDhc/or90xNvIy1y40yh6cTrsxyDFr9E=
+	t=1719403335; cv=none; b=XvxGGZxl7A3DBw9fdvVhcU+4Fu/ygYme6Ra9gSjqq9mqetq6/QucNKlWMvxsNtVn723S7e+E9wrNLgbRBlCH8kqFtdbPd6yjJrGICXwYtp1LY8OEjIpRZ8F3qMBlmgQUSXqAXsNOgYdHww1R4CHgRMOYJVnigHczMIhhc4Zgyao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719403245; c=relaxed/simple;
-	bh=ooHWOkKXbbbfWGTtu7y10eRwx8QlwRkrR4MkWPMURq0=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=cbimC70Dex8MuSNaoHCqaX/+/baHVufzgvr8vpWKPCBUSQAwS/AwxXYXDRU5PSidIoXlT+l0FfRWoE6FrUETb0Gf2eHHtKQQ2ug7mVKXuMxiMZx5lopfP4cmezPZlbcsoGYBBDuISwxvSyMcVYoW8whQjrVbzR3TnsyI5SBs9zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=c68jgGf3; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1719403226; x=1720008026; i=markus.elfring@web.de;
-	bh=IQxnmOTy/nTJbMuTK9u/hbf4ySukoqQ03dXl38g0l4o=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=c68jgGf3jmL4lYVK64HR+FKFqnwWPRyThQ8eYdVdMjSpy8e0dr38Q7SqKY0jH69k
-	 PDE2upMUoWO6YmzKsxhOb1zCFSZZa1VbplZu8/KqRyBduo2O/ZTUTSmtlYsXqrgEs
-	 HN/vDwstWEHIb1B+2v7YgplgC7zB12e1xA7f5L0e3WMI/POFZMdtXVqlF3DFynXtP
-	 EAgZR9APZew9sVdEWkYi6YJ5IgvZ8hRB3GmMDB5lYeepQ/7ynzGIWqYjTMAwxSTHh
-	 Qdl4yPDSjBBApBG2dHGngBHQ/13XdLTsgDfj7/y981sRKvMJnPxnM4ahIHwHsH1qA
-	 iNvQlD10v0gs2/bPIQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MyvB8-1saPQu0zis-016ckv; Wed, 26
- Jun 2024 14:00:26 +0200
-Message-ID: <e241961e-d065-4fff-a5dd-4c1570ac538f@web.de>
-Date: Wed, 26 Jun 2024 14:00:24 +0200
+	s=arc-20240116; t=1719403335; c=relaxed/simple;
+	bh=K8CFtC/BQ1NSBa5PTyocHu/8UmRsW3sdLhXbzU88obM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FuTgSpWnEsBbNm1xZzhts8aQLgAQjCCR2kYTCDFxWQm4mfFCQYzGtqSTWBU8Oyk5z8pdIKd9V1LocwCnP+oNxLg/sW0y0EwvJlLu8TBTcvjMswRiK16vfUL6pOKs5eo7FRnc/DnR1ydD4itixIShbnwiTyukKKjsz210sgTWnlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=ZdVMn565; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=K8CF
+	tC/BQ1NSBa5PTyocHu/8UmRsW3sdLhXbzU88obM=; b=ZdVMn565NKxA7xvgTfEr
+	pHzsqbFWTIN+mvhHZMiDiHwmUSLC8Kx8z30RIZDAi/G6rPiHj1bzLe0ZaIxtrQcc
+	I7Br0rfryhpWK/KKLG33dD2S34TLxD6vBr5lDaC0rlN/66FWZ1WBEZUzP/5zcKc2
+	v/yqGpr+A2A8rrp51Fh1j6O7mHedkMTwN9MgiNGgFk1O6Sv9dUSel8U9FuCI3Sa5
+	NgnYOa2g8X2P6HQoJInfBKDs2VhJP/5RiGEtJb2SnHbz2s1GBxI74nN5H5k82N7w
+	NGKUR86xCfdtUWz+YaIRvfWurgBfadG6NULw2tYbdUee4lcpkVEs9W/L3SAJ8kSH
+	Rw==
+Received: (qmail 562103 invoked from network); 26 Jun 2024 14:02:08 +0200
+Received: by mail.zeus03.de with ESMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 26 Jun 2024 14:02:08 +0200
+X-UD-Smtp-Session: l3s3148p1@wkmfyMkbQq1ehhrE
+Date: Wed, 26 Jun 2024 14:02:08 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-renesas-soc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>, 
+	Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: Re: [PATCH v10 1/1] gpio: add sloppy logic analyzer using polling
+Message-ID: <umh6v3unptgsi7ph6l4s3txxyubyuzesscyddhtx4deqglc46h@c5shp5oienvi>
+Mail-Followup-To: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-renesas-soc@vger.kernel.org, 
+	Jonathan Corbet <corbet@lwn.net>, Linus Walleij <linus.walleij@linaro.org>, 
+	Kent Gibson <warthog618@gmail.com>, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-gpio@vger.kernel.org
+References: <20240620094159.6785-1-wsa+renesas@sang-engineering.com>
+ <20240620094159.6785-2-wsa+renesas@sang-engineering.com>
+ <CAMRc=McPFAKh61r_L4kpTdD2HJCWo_u_=Wt3bJ5SMVmtSgE8oA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Ma Ke <make24@iscas.ac.cn>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>,
- Xinhui Pan <Xinhui.Pan@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240626025640.2779322-1-make24@iscas.ac.cn>
-Subject: Re: [PATCH] drm/radeon: fix null pointer dereference in
- radeon_add_common_modes
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240626025640.2779322-1-make24@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:6GshtGLYBX5UFr3ooZaB3TwOYGhS7UXL9dmwVi9q3J1zg09LBe+
- XPIYwfSQUVl/hlaExdQ7j6NJ63Otr/S3KN74iqVW8YORp8bsifm5EuY0+NF1x/ZD9wtzC3t
- 6l8pmstN/gLudXEjWpE5EH7UzvThjgTnjbJRdhLRx1SSy3wZiylhYKyPzSYB4wxPZMdh9Qb
- h0mrP1gT019Nzi8yXhw4g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4+b9D9ng5kU=;m8gR0bZ0O4ljQYg7ynaCHOuEqdS
- W2hJCu4zFCU3kihLaGX6Mcisqd7CHkm4jO+wUhKlKgnJSbrV5ag5LFeCi1jJHaOr2LVm7/S6W
- zUKo4PCTBBbfdTF7cLAsvO8low9U1DrEp6bObwi7zyrQYnyEkbdcHGTx6vl81YeVDxMHnZeaL
- X3Lwg117HiGbaxR86hpRbI22TZ2wvI7f3sPsPsdWK1E3wXnL70x0bRThw56Wu+1nRdfIg/XwA
- jlg3hS+hdNXQEVUAKJa9BIy4iayHE8o5BTNr4VhETPqimVG/fHW+Mf+6j+t8MJPQ4yCIKumN5
- JVZKQ3D5apfIkeQBEjZWGaJ3hSjf3CXz5hWTj0pkwSsK2865h8nQEm3GzHNqsjd1H8CJ3OXiz
- CJYctOOnUXQ5h5ZKPjtnW2eO0sDWveHyLNm0GJayRCref7eaH8x3Za/MYk6NGcFEZktT6fuxJ
- WUF8tdAjvC+PPaKbcznrhy/CP95rVAmZYPVlocNEBUFKVonUtxvPek6gtuEOhjOK/1yofV7UX
- 0dvDpGAmKROwzn4vGGR3TvLXltJjW4+vwfdeIPJgQy/XBxAVbSwfz5B4ItN+C7EiruBCcY2D4
- RVimx4lGVXWr0L7zsMs9llpsnepQe0ZpH2L1CDkIECy6ZXUxZCnnsihSSdBY484y4XLn7uJL0
- k7JsrXdPS1bxd7kFwxWdtqgGlKKCjkIrcR72l1JD/dvY3wYuSngduNMpzF0P94/YadzSIJqXv
- RxIMDKlMO5qNingLy+gGdxVoYGYWJ3OUJeJEaWKkeP6CNvcnt48u0V6Vt+ctddQE0w7LOAgFP
- eWN4UHkimzCltdxZT+nMcgTbK/45eJ2RWlBO+MIM4CXb8=
-
-> In radeon_add_common_modes(), the return value of drm_cvt_mode() is
-> assigned to mode, which will lead to a possible NULL pointer dereference
-> on failure of drm_cvt_mode(). Add a check to avoid npd.
-
-1. Can a wording approach (like the following) be a better change descript=
-ion?
-
-   A null pointer is stored in the local variable =E2=80=9Cmode=E2=80=9D a=
-fter a call
-   of the function =E2=80=9Cdrm_cvt_mode=E2=80=9D failed. This pointer was=
- passed to
-   a subsequent call of the function =E2=80=9Cdrm_mode_probed_add=E2=80=9D=
- where an undesirable
-   dereference will be performed then.
-   Thus add a corresponding return value check.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="opqqj3lpr4uiw5ia"
+Content-Disposition: inline
+In-Reply-To: <CAMRc=McPFAKh61r_L4kpTdD2HJCWo_u_=Wt3bJ5SMVmtSgE8oA@mail.gmail.com>
 
 
-2. Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
-=9CCc=E2=80=9D) accordingly?
+--opqqj3lpr4uiw5ia
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 
-3. How do you think about to append parentheses to the function name
-   in the summary phrase?
+> I want to put my GPIO virtual consumer module in here as well so how
+> about calling it "GPIO debug utilities"? I can tweak it when applying.
 
+Totally fine with me.
 
-Regards,
-Markus
+Thanks!
+
+--opqqj3lpr4uiw5ia
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmZ8AzwACgkQFA3kzBSg
+Kbaryw//QVXrqkGjTMzvIaQjDO6/q7NEAPthF4i6G2qNbubLPMOkzE2IezQLSwEb
+SxPCvs1POwEOFhViPvXR+QjM0YFV9FHwy6Iwpk0UltiIPUm8DG2IFdud7cuJMENl
+asARBWooefbRonqNc8EFf2yjtjZpHgiSY8KuMklr5JSMPOwj+tic9yuTXHZiFcpt
+F7n4mvOhuRsWI34/eVVQQXAahaNfYOzZ3LY9X8w+ZNPhVQtx2Ho8fDi8gEy6ZKYW
+mM2CrJYO/BxCfsz1Ka6yeISw3/t1/0+6AKYECHghz7ZP3Ms3MeNR5OSm4xDg+dNp
+FPHLfebMIJhGsBiGduoD8lAavtC5BYz6Sqb0Ncajxs2FX+GVXlCDF6UnGMtzoqwU
+VTrQYQbiEaWjH6A86ZJWf5pmkuoQDhhBBuXaQi3rzyUb7NSJve69BMrRGPF9ZvEQ
+PcpV5Nus2ENLpZ/O+oKBNpTaxr4hgGjI00lj/D+yRMkKdeDPzrFlnYJFe3pEEmqg
+bqE2WuTOJYSaCJn181WHjkxcn5t4HwXw1rk4xCFhf65jdl1AkOiWONJnr2yF0P6J
+jMxnrjq3fHsqny8Ud5K0CSBlaIJN0O6/2w7SLlrEqim7VjldIF6JoIfaMr4B50+Z
+f4kgxdSk0XBpgooPyUFJD0OK8yY+mo8eb4gcLihsXNaE1hkpvc4=
+=v+0q
+-----END PGP SIGNATURE-----
+
+--opqqj3lpr4uiw5ia--
 
