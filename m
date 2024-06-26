@@ -1,77 +1,121 @@
-Return-Path: <linux-kernel+bounces-230897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E67B91838B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:00:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817B291838E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:01:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F7E1C22380
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:00:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B49141C21F4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9459818411D;
-	Wed, 26 Jun 2024 14:00:32 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 2CBC3C136
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:00:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4E31850AC;
+	Wed, 26 Jun 2024 14:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="EUnvvgGV"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52A6C136;
+	Wed, 26 Jun 2024 14:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719410432; cv=none; b=FfwJ1F9Q5WOMsEj6ATgUBvgN8qvi5wVoiv+Xl1HkLkMYBoihNju0hGYVTWeFzDty4rUCSFBuxx0B7Q2jnt2HsW0P+6o4KszgdYMesRD7E6q+ApucVHvodjRP92WZSZwNgN9FebIfS811Vesqu9OYAiHCe70+ewqK3dcaj5+QoLc=
+	t=1719410471; cv=none; b=Sg719MfNrfgoGtjgREyFVDeqR/2ubQulgNlqOoFCzn0J5ApcRiS/epblJBXOC7UnExL6wQe1N/yG6Xd4lA9nAu/uL5e2I1yzSIgUfmbZ3+ZaMJwrN6DPtECmxQD2lqVvAXV0B3OZTMuGAaxPYPEKPo6Av8MH02taGvp/8Nnp4N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719410432; c=relaxed/simple;
-	bh=gN49NjQI2oDX1isFpvDIKMKeo4XbMy61JOUIbU6BEcM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Cd+uleYx85TqH6Vp5gAzUXnAAiQMRAAajVvhTCq/jCkBKgKEw04um3nmR9Ptd8FaznaGwKjGWzMGtAcGxBSaGplkly5oAiYuJyx9QmgqmMk+fMdCkTKxUi/ULc1UvKs6rCeFCkvNedaOTDvsOkvL9uPScKZV9o4CE65WTMbYANI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 704740 invoked by uid 1000); 26 Jun 2024 10:00:22 -0400
-Date: Wed, 26 Jun 2024 10:00:22 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Marcello Sylvester Bauer <marcello.bauer@9elements.com>
-Cc: linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-  Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-  Uwe Kleine-Koenig <u.kleine-koenig@pengutronix.de>,
-  Thomas Gleixner <tglx@linutronix.de>,
-  Matthias Stoeckl <matthias.stoeckl@secunet.com>
-Subject: Re: [PATCH v1 0/1] usb: gadget: dummy_hcd: Fix regression due to
- hrtimer migration
-Message-ID: <5d7266d4-3349-4414-99c1-4c6154e69292@rowland.harvard.edu>
-References: <cover.1719405791.git.marcello.bauer@9elements.com>
+	s=arc-20240116; t=1719410471; c=relaxed/simple;
+	bh=hII3Q92Ova8i4hUPBYvI76xLncvZJuiw2a5GonhEhIU=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=WmZozminVkJ+nVpON0SFR5Rcpxf+P24xtOYHih6EYlJ6TGS45LIRpKzMkxTNPi8AoL3VPbM9+FTWOpq+aT/E+3YZOWpaw5e1++6RCaRNHzTruC/fy3zmrIt8nJvKoyqMsH+jwrnOw75OL8oV0nB0cjoRsMLH0Kpx9chsvZJuHt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=EUnvvgGV; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719410447; x=1720015247; i=markus.elfring@web.de;
+	bh=hII3Q92Ova8i4hUPBYvI76xLncvZJuiw2a5GonhEhIU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=EUnvvgGVHt8s666lwyG481E93VX8sXDxYOb5Zjx398BsDgn02UtYX/1KFYtgqdxD
+	 A31V3266VyuXemqpCMBaPm62y4vCaQjr/OPQ2PH3wy4iDK5HKw1AlAr0mFd25ffH4
+	 5Xd7ArChrbbw7kS/IWs/5I+KU+4fJLVaGjubMLjvdI/DKPit5jQ5wdejTB7ECe5qz
+	 kKgtBtM5zXJWGxPPP879g4xtpaTqTIBxB8YbQ8Uci2BsUHde2BJIyVNdG2M/ixEHf
+	 +j3ICIOTsvHvFXdFvTj+bf/SBqJoMV6lHlZoHXcHBojslnek6gLMtHxI6LA+eHwOc
+	 DRq9VU9WGPz71uLRvQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N1uAv-1sTZnb44Wv-00rWRL; Wed, 26
+ Jun 2024 16:00:47 +0200
+Message-ID: <17b2f95a-b6ce-47d5-a826-9cfd1ff3f419@web.de>
+Date: Wed, 26 Jun 2024 16:00:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1719405791.git.marcello.bauer@9elements.com>
+User-Agent: Mozilla Thunderbird
+To: Gerd Bayer <gbayer@linux.ibm.com>, Ma Ke <make24@iscas.ac.cn>,
+ linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+ Alexander Gordeev <agordeev@linux.ibm.com>,
+ Alexandra Winter <wintera@linux.ibm.com>,
+ =?UTF-8?Q?Christian_Borntr=C3=A4ger?= <borntraeger@linux.ibm.com>,
+ "David S. Miller" <davem@davemloft.net>, Heiko Carstens <hca@linux.ibm.com>,
+ Niklas Schnelle <schnelle@linux.ibm.com>, Stefan Raspl
+ <raspl@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>,
+ Thorsten Winkler <twinkler@linux.ibm.com>,
+ Wenjia Zhang <wenjia@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org
+References: <4ab328297c12d1c286c56dbc01d611b77ea2da03.camel@linux.ibm.com>
+Subject: Re: [PATCH] s390/ism: Add check for dma_set_max_seg_size in
+ ism_probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <4ab328297c12d1c286c56dbc01d611b77ea2da03.camel@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:0DEVK3hEYZce4m2x0HcOm4kkmWuuBi11g0rGzGdPbe4Qpn87svX
+ 5XQ/MZieW0HABaYEKtAWwdpHqkAP18mCyF/gG4lKTvfy65YCTDuexqWaq+EE8RdwaO0/Jds
+ cV1hbtXBiXVClTpKNZX22cIEAuDQ/HXrquHnhSkGzAfcPjLwFZiUQ+kJLl7pJ/k8CF0eqv6
+ gzweJJL6vF5HCPxct+6GA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UETjU5nTgts=;lV8DTmeBl0SijkeRl00bzdeTllM
+ 3cplHKVNgNZmEI1glocO11M0214gpAfGNRcyhNSDRtxzb3SjvtJyrPr08xF9B/lxFUQcg6HLy
+ f5IQSKFO3BqwCcKNs3AxyXSIHJ+unNyGqEowWKsuGOent9OYnzIb8/oC1uH9s7lwrGEqjjPU3
+ zUKEHv/3+XBFuSAgaviI5Pt5jv0qoAI6eXdCASAnSNxY4nVH34tJ0qNk0myTbubWIt8zcrUOW
+ H5M+xGbUG76+ZdRNSp74mOdjwZYX2LzhCmSwMt8GNtaESsApL8VmskQro751KLFUGA0s00Qg2
+ ZU40mBWi9MzpAVFdB3gZedU80NdnucbVNqerRSCCh6fceMiUAmCubDIMvHCUuHizG1rwochpA
+ l6SGCYZ6RjvOfCGcWv88zTmJS4Ju6MveZD5C9I26S1c8Xt6xzsbVZskIxSdc9uxgvtvQrgtmr
+ Nl0LYYMCa+WnXShvtp3IyqAjakhvst3068SQ7bFtl3bYOcIOTfDgknOI4iokUZx9pDGWBibad
+ SfesNl7CIxq2jpJjsXvwKxLqVzNNkvLjVYJXNaEaQ2zeXGqRKjlEZ3VlNHTbNhlZ+/92zkQ/B
+ y47KlYUMziiacqVQHWfdCZ2VrOGAfnoENhJYOKn8J9gYtjfcMoQed0vypiHvntO433aGYYBw+
+ CDSr9YhS3PW1dBO+En5PKgLZloI3KRJkZKQoey626F0WP0/EdBzXYScgJUHWZbBXsvzLf1W2m
+ L+8nF/aizMwkL8fE7nltxmBMLALuJuOsr9Lggno9gJfX7YkQBtEFSMwzyTxYxtJqI8NCEKLPh
+ WS8avs4PHSX6lJIUdgujAGhUi8GzGMazDd+seYdPMvVJU=
 
-On Wed, Jun 26, 2024 at 03:47:19PM +0200, Marcello Sylvester Bauer wrote:
-> The kernel CI bots such as syzbot and intel kernel bot reported a
-> regression due to the migration of the transfare scheduler from timer
-> list to hrtimer. The current assumption is that this is because timer
-> list uses soft interrupt context. I have not been able to reproduce the
-> regression consistently. So I'm submitting this patch in the hope that
-> it solves the issue.
-> 
-> Do not apply the patch if any bot still reports the problem.
+> > As the possible failure of the dma_set_max_seg_size(), we should
+> > better check the return value of the dma_set_max_seg_size().
+>
+> I think formally you're correct. dma_set_max_seg_size() could return an
+> error if dev->dma_parms was not present.
+>
+> However, since ISM devices are PCI attached (and will remain PCI
+> attached I believe) we can take the existance of dev->dma_parms for
+> granted since pci_device_add() (in drivers/pci/probe.c) will make that
+> point to the pci_dev's dma_parms for every PCI device.
+>
+> So I'm not sure how important this fix is.
 
-You should send the patch to syzbot and have it run its test.  Then 
-you'll know whether the patch works.
+Another function call can fail eventually.
 
-Alan Stern
+dma_set_seg_boundary()
+https://elixir.bootlin.com/linux/v6.10-rc5/source/include/linux/dma-mappin=
+g.h#L562
 
-> Marcello Sylvester Bauer (1):
->   usb: gadget: dummy_hcd: make hrtimer expire in soft irq context
-> 
->  drivers/usb/gadget/udc/dummy_hcd.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> -- 
-> 2.45.2
-> 
-> 
+Will it become relevant to complete the error detection
+and corresponding exception handling any further?
+
+Regards,
+Markus
 
