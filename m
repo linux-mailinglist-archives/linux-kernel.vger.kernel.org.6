@@ -1,94 +1,85 @@
-Return-Path: <linux-kernel+bounces-231013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F5699184F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:54:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5246E918553
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3297928D7E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:54:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8569B2C0FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:55:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65A5A186291;
-	Wed, 26 Jun 2024 14:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j4TLyiUb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32841755A;
-	Wed, 26 Jun 2024 14:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90FA118629B;
+	Wed, 26 Jun 2024 14:55:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFFDC136;
+	Wed, 26 Jun 2024 14:55:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719413663; cv=none; b=lok7ZTFSVho+foPpVwcK6dWW9QiNEvm4m54CU9sGLgj3R+nZtXxy9OwBM6bBi/CMiaO98vIDTD8ieZz6quZIv0qOnvP1/83Niyt9Nc183N0/4ruK655Wr46z2LrrQx6pStufxfmYJSLUWFiMdilMrgpIx6tzT5iNxLR9r2Rom5c=
+	t=1719413719; cv=none; b=IX1vxWqa5MPNe9fRUZ+MqDycJ0DVNj4nYsnqD4f2d24akpcjW2eLLccGCQ+xAI8kP855e4xz3i+FT4SvpjI8fiud8u+F3/PIAvGzFxsLmRoP2JtwZIPe9l5F9vpt61xI1kn8UiQzjZ1aa1FlfXQmTgtgagkdxiT78BCVnV/346E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719413663; c=relaxed/simple;
-	bh=PU6wWxCZxNzkbndveZGAix6meiJPboaqpZHVRWhzdFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bur+VZj2YywlDiOQaiYB0iSBcyMXZ3TMcAg0iGvWyhSwFWApZPG2/1LWnIzpMk+CUXSDN9NxnY50cXOR8nF/rJam44uz3tJo6vXpJJ3As/9wvS2pVweEO7pySASfgGHKrRJZBPsWk6C1LeqVJ0UPs/x7MqfjOIsarKz6iSXGirs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j4TLyiUb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC0E2C116B1;
-	Wed, 26 Jun 2024 14:54:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719413663;
-	bh=PU6wWxCZxNzkbndveZGAix6meiJPboaqpZHVRWhzdFA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=j4TLyiUbX3qFaIAJf2nNVAsTMJ0D0G0X88HycHl7yjGETz7bTHHS2YdkdVPnFijHK
-	 H2ihPqhvdxN27U5gZfohoreYKH4lAf9sSl0ldXc45ChzKLmD88prjhPL7qua7jDNTp
-	 qoYXve9rxV5T2kwoBPPW0lNR0ap1ZwO2mOR2MVoUlPTaz5Xp/LKuI6NeSKPsJE7YnX
-	 yMGVa+qkTL9zC8u54LJ/S19TXw6O4TKgT9hjnnUINSgDntxHYseqUKabWhblEX1jof
-	 cA6KheuVlyr08Pa3i3ZQuVSOl1k6JHfIKhCEoyAS0w3s5llgRDwqKtImGehqMSQhtz
-	 WHNKPBavM8nGQ==
-Date: Wed, 26 Jun 2024 07:54:21 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, David Ahern
- <dsahern@kernel.org>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Andrew Lunn
- <andrew@lunn.ch>, nex.sw.ncis.osdt.itp.upstreaming@intel.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 1/5] netdevice: convert private flags > BIT(31)
- to bitfields
-Message-ID: <20240626075421.1430e8d4@kernel.org>
-In-Reply-To: <20240625114432.1398320-2-aleksander.lobakin@intel.com>
-References: <20240625114432.1398320-1-aleksander.lobakin@intel.com>
-	<20240625114432.1398320-2-aleksander.lobakin@intel.com>
+	s=arc-20240116; t=1719413719; c=relaxed/simple;
+	bh=BnV3828VHC5anaOJje3ZzYdZwLyQ1I61vPHlsp509Mw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=nz2z0Mi92A9XX8Z6wSvoEaXO05Y0y1j0OvwcHZuezhGyJm8Rg2x4DaN3xQR6ICcZ4o+Z0l3/bX3qrpixqZmLD0LIvh5TusBIowJuYn8KUEB7uerl0kr9+erSQnJYmZhSdv6+9B+Uw/JbUc3srq0yIthliARkHw73m03lDqR8DJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E9633339;
+	Wed, 26 Jun 2024 07:55:40 -0700 (PDT)
+Received: from e127643.cambridge.arm.com (e127643.arm.com [10.1.33.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id AE4AD3F73B;
+	Wed, 26 Jun 2024 07:55:12 -0700 (PDT)
+From: James Clark <james.clark@arm.com>
+To: linux-perf-users@vger.kernel.org,
+	irogers@google.com,
+	namhyung@kernel.org
+Cc: robin.murphy@arm.com,
+	James Clark <james.clark@arm.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] perf pmu: Event parsing and listing fixes
+Date: Wed, 26 Jun 2024 15:54:44 +0100
+Message-Id: <20240626145448.896746-1-james.clark@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, 25 Jun 2024 13:44:28 +0200 Alexander Lobakin wrote:
-> -		   "%s  VID: %d	 REORDER_HDR: %i  dev->priv_flags: %llx\n",
-> +		   "%s  VID: %d	 REORDER_HDR: %i  dev->priv_flags: %x\n",
+The second fix is related to the discussion here [1].
 
-compiler says %lx
+The first fix is unrelated but I just noticed it while fixing the
+listing issue.
 
-net/8021q/vlanproc.c: In function =E2=80=98vlandev_seq_show=E2=80=99:
-net/8021q/vlanproc.c:241:69: warning: format =E2=80=98%x=E2=80=99 expects a=
-rgument of type =E2=80=98unsigned int=E2=80=99, but argument 6 has type =E2=
-=80=98long unsigned int=E2=80=99 [-Wformat=3D]
-  241 |                    "%s  VID: %d  REORDER_HDR: %i  dev->priv_flags: =
-%x\n",
-      |                                                                    =
-~^
-      |                                                                    =
- |
-      |                                                                    =
- unsigned int
-      |                                                                    =
-%lx
-  242 |                    vlandev->name, vlan->vlan_id,
-  243 |                    (int)(vlan->flags & 1), vlandev->priv_flags);
-      |                                            ~~~~~~~~~~~~~~~~~~~     =
- =20
-      |                                                   |
-      |                                                   long unsigned int
---=20
-pw-bot: cr
+[1]: https://lore.kernel.org/all/ce31a50b-53db-4c6f-9cb1-242280b0951c@arm.com/
+
+Changes since v1:
+
+ * Add Ian's suggested-by tag on patch 2
+ * Fix mistake where info.pmu_name instead of pmu->name should have
+   been used in perf_pmu__for_each_event()
+
+James Clark (2):
+  perf pmu: Restore full PMU name wildcard support
+  perf pmu: Don't de-duplicate core PMUs
+
+ tools/perf/tests/pmu.c | 78 ++++++++++++++++++++++++++++++++++++++++++
+ tools/perf/util/pmu.c  | 29 ++++++++++++----
+ 2 files changed, 100 insertions(+), 7 deletions(-)
+
+-- 
+2.34.1
+
 
