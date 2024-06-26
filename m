@@ -1,197 +1,126 @@
-Return-Path: <linux-kernel+bounces-230893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AA6B918372
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:57:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20898918373
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAA601C21F25
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:57:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2211282A77
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:57:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A119184113;
-	Wed, 26 Jun 2024 13:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LSL72Lvu"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E044184121;
+	Wed, 26 Jun 2024 13:57:47 +0000 (UTC)
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E326813CFBC
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19A8B13CFBC;
+	Wed, 26 Jun 2024 13:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719410254; cv=none; b=PCxixKWmXvRfFs9F7g9AT4DPZO88QA0bTbYPSk7E7ZAPNfMm+mQzoppZdSDQuDgeMOPM8udWXLmkugFgWN4UYLPTLsJ+/ZRylDiMXgJ4oV8jy0b945iD03xbofs4GzoHMIPu8qKjZIb6bNGA3Jvtiy3BWajOXvpMzcPDY+z3/1o=
+	t=1719410266; cv=none; b=HtWEBBcIr66dTIAQZNPiykyLzp64e8aO6bBEYyRmtlTYzhPopV9cAnUR/BMBKkbDRL2chvx3dSkVYJrwbTTf3Q1Wgu7KpNl3NxAlQioaXhn69SSO+y4Cgbb6qoM2Se4cO8C763yrQTDiWUz5qAWh7vsuqUiyG82+nXBDtHPZ8eU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719410254; c=relaxed/simple;
-	bh=zvKtuKgBaTespiR6RMkqLKklB9Utdfyyjx8B+f3tuDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cMngDxw+4z/XSO6ScN0TUuIkzNfJkDWRWMieUvvQIiZidDGSDFTER5r0BrBucPL8ksc42l2zvjoHL8e5fH/xppoZDicNUoDouc3vHQfiUnp0we/BEYRwqbbIyNRHhPlZTzCpwPv0abOAB+mAMn9hjd6+DQyHeZo7XSaJdQlmRX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LSL72Lvu; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45QDusO1012190;
-	Wed, 26 Jun 2024 08:56:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719410214;
-	bh=6ZfQCtFhca3BvaTLDs9BV+HylXiVe8ipVaxzUNzNlt0=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=LSL72LvupNifb3aKaHULhW1ebmQ5Qlx9A0l1JdfBGscokrStfXLolFiGSel3bvUzQ
-	 sSbs/sLbDe9eRO6/nmck2kpZo+yncN3aIWQHA9O6X9JQ23mMgJJaNxKHWScpz8w9FR
-	 RGZ3BHUmkSehfp9VfG7cF+sa3XJet0TN1UNRhvGs=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45QDusK5000531
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Jun 2024 08:56:54 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Jun 2024 08:56:53 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Jun 2024 08:56:53 -0500
-Received: from [172.24.227.31] (uda0496377.dhcp.ti.com [172.24.227.31])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45QDukC7000410;
-	Wed, 26 Jun 2024 08:56:46 -0500
-Message-ID: <6f099c5e-0342-48c8-a952-4dc6eb4fd3ae@ti.com>
-Date: Wed, 26 Jun 2024 19:26:45 +0530
+	s=arc-20240116; t=1719410266; c=relaxed/simple;
+	bh=wTAlYD8QImoqPDkhp/cj1S+EMs3bvaRrPWlHwbQp7dc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z96nZ27VVK/7Cx8ghnJ4qRVk9kznq+KMBGjrkUMwvcywxIWjShPWIY50Km4YbAcF85ax+J4s9qZVwy0LKIeeVHyaU9lEY0I2WUE65fM/aX0jjmM5hsquTOXg1ZEPBtReBlM+YgZkOd81tBHVYO7xY5JSJG2Q7HrBvK1v+LVt3A4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57d1679ee83so356529a12.2;
+        Wed, 26 Jun 2024 06:57:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719410263; x=1720015063;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qLsCyunUMFV0UFP/6cGb0jTp7IysuDFJZXn6fTsqWSY=;
+        b=jmmXei6OzgjIPUSBG3KfPz87F7U1wABtny2Go0qUwFPPvIZ7ohQwGsR8GDW8sVaDfT
+         Fvq/5e8SmkdBnzL579UAzoK7lIghMbiQPuDmn8g3zfVL3PI69eZJp81u4i7RSw3PUjZd
+         vqTRKz+1bhgE4lrWGODQ8NoFLcC2DmncJvAMAI82+NKEGLCR4pGKmR6ai12u37U9SU/V
+         eDPX8n/4kEr3gzEuhX2Eu6rQP4zLUixCHwJawR6/8YwMJoYzdQCc7XNYUs0op/33wes8
+         CXR2QgtPaY32BiBsbfl5kIpn3m8+3xPbywd2F7zTA1e8QNhbreCoiyGwBw7QZUZAEZLq
+         m9jg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPtP+6PNnWDy4aR23bp76BZH5zXWG0wCfG1fsVkafS8vpSQjtbzXB2AwGvL/qmbrFSf7FpLmZEskCMePiTkwUiVtW8jVOCfuC2hqy10xbirJKfysku2VMwqVyHi2d8zVMVXTYS7+tBz0Oi4JI6aw==
+X-Gm-Message-State: AOJu0YxERYqebxawKAFjhEMzSmIRVfxhdTtRTGTUst5jyqvwU8mQTOX1
+	BCHuC3APFXLCmpnLcxasDUn+V0HTAgTt+zO1k7Sm19iDvE+Zdfx2
+X-Google-Smtp-Source: AGHT+IGxvp5hQRrv2XUQddKcmNAPMp7+0mzlWb9Q7XqS72h7gA6vRQ5q4c+VSvI2cTpbGT6CK6VNvg==
+X-Received: by 2002:a50:99de:0:b0:57c:fa44:7a04 with SMTP id 4fb4d7f45d1cf-57d4580b070mr8351763a12.39.1719410263256;
+        Wed, 26 Jun 2024 06:57:43 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-007.fbsv.net. [2a03:2880:30ff:7::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3042d10csm7346171a12.40.2024.06.26.06.57.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 26 Jun 2024 06:57:42 -0700 (PDT)
+Date: Wed, 26 Jun 2024 06:57:40 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>, sandipan.das@amd.com,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>, leit@meta.com,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-perf-users@vger.kernel.org>,
+	"open list:PERFORMANCE EVENTS SUBSYSTEM" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] perf/x86/amd: Warn only on new bits set
+Message-ID: <ZnweVM7qGvNDThV8@gmail.com>
+References: <20240524141021.3889002-1-leitao@debian.org>
+ <20240625115734.GX31592@noisy.programming.kicks-ass.net>
+ <e17a924d-9699-465f-8bef-cde4411e2146@paulmck-laptop>
+ <20240626085153.GA31592@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 05/11] drm/bridge: cdns-dsi: Fix the clock variable for
- mode_valid()
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil
- Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman
-	<jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard
-	<mripard@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
-        Thomas Zimmermann
-	<tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter
-	<daniel@ffwll.ch>
-CC: DRI Development List <dri-devel@lists.freedesktop.org>,
-        Linux Kernel List
-	<linux-kernel@vger.kernel.org>,
-        Dominik Haller <d.haller@phytec.de>, Sam
- Ravnborg <sam@ravnborg.org>,
-        Thierry Reding <treding@nvidia.com>,
-        Kieran
- Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Nishanth Menon
-	<nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Praneeth Bajjuri
-	<praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
-        Devarsh Thakkar
-	<devarsht@ti.com>,
-        Jayesh Choudhary <j-choudhary@ti.com>, Jai Luthra
-	<j-luthra@ti.com>
-References: <20240622110929.3115714-1-a-bhatia1@ti.com>
- <20240622110929.3115714-6-a-bhatia1@ti.com>
- <6aca2e93-034f-4731-adc4-4eaa3d148193@ideasonboard.com>
-Content-Language: en-US
-From: Aradhya Bhatia <a-bhatia1@ti.com>
-In-Reply-To: <6aca2e93-034f-4731-adc4-4eaa3d148193@ideasonboard.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626085153.GA31592@noisy.programming.kicks-ass.net>
 
+Hello Peter,
 
+On Wed, Jun 26, 2024 at 10:51:53AM +0200, Peter Zijlstra wrote:
+> On Tue, Jun 25, 2024 at 07:47:06AM -0700, Paul E. McKenney wrote:
+> > On Tue, Jun 25, 2024 at 01:57:34PM +0200, Peter Zijlstra wrote:
 
-On 26/06/24 16:17, Tomi Valkeinen wrote:
-> On 22/06/2024 14:09, Aradhya Bhatia wrote:
->> Allow the D-Phy config checks to use mode->clock instead of
->> mode->crtc_clock during mode_valid checks, like everywhere else in the
->> driver.
->>
->> Fixes: fced5a364dee ("drm/bridge: cdns: Convert to phy framework")
->> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
->> ---
->>   drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
->> b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
->> index 03a5af52ec0b..426f77092341 100644
->> --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
->> +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
->> @@ -574,7 +574,7 @@ static int cdns_dsi_check_conf(struct cdns_dsi *dsi,
->>       if (ret)
->>           return ret;
->>   -    phy_mipi_dphy_get_default_config(mode->crtc_clock * 1000,
->> +    phy_mipi_dphy_get_default_config((mode_valid_check ? mode->clock
->> : mode->crtc_clock) * 1000,
->>                        mipi_dsi_pixel_format_to_bpp(output->dev->format),
->>                        nlanes, phy_cfg);
->>   
-> 
-> I think this is fine as a fix.
-> 
-> Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-> 
-> However... The code looks a bit messy. Maybe the first one is something
-> that could be addressed in this series.
-> 
-> - Return value of phy_mipi_dphy_get_default_config() is not checked
+> > > Why not just a WARN_ON_ONCE() instead? This really shouldn't be
+> > > happening in the first place.
 
-Sure, I can fix that.
+> > We did consider that, but seeing the full set of bits that shouldn't
+> > have been happening in the first place helps with debuggging.
+> > 
+> > But is there a better way to accumulate and print the full set of
+> > unexpected bits?
 
-> 
-> - Using the non-crtc and crtc versions of the timings this way looks
-> bad, but that's not a problem of the driver. It would be better to have
-> a struct that contains the timings, and struct drm_display_mode would
-> contain two instances of that struct. The driver code could then just
-> pick the correct instance, instead of making the choice for each and
-> every field. This would be an interesting coccinelle project ;)
-> 
-> - Calling cdns_dsi_check_conf() in cdns_dsi_bridge_enable() is odd.
-> Everything should already have been checked. In fact, at the check phase
-> the resulting config values could have been stored somewhere, so that
-> they're ready for use by cdns_dsi_bridge_enable(). But this rises the
-> question if the non-crtc and crtc timings can actually be different, and
-> if they are... doesn't it break everything if at the check phase we use
-> the non-crtc ones, but at enable phase we use crtc ones?
+> Dunno, I was just wondering if the whole thing wasn't massive overkill.
+> The changelog wasn't really explaining much here.
 
-It'd appear that it does. I don't fully understand why the driver uses
-non-crtc_* timing parameters during the check phase, only to use the
-crtc_* timing parameters during _enable().
+I can help with some motivation, if it helps.
 
-Since with tidss, both the sets are same, I haven't had to think too
-much about this! =)
+	1) This problem happens on random machines, rarely
 
-What is the ideal way that this should get addressed though? If we have
-an agreeable resolution then maybe I can fix that as well.
+	2) When this problem happens, there is a flood warnings,
+	   sometimes it causes the whole machine to be unusable.
 
-> 
-> Ah, I see, this is with non-atomic. Maybe after you switch to atomic
-> callbacks, atomic_check could be used so that there's no need for the
-> WARN_ON_ONCE() in enable callback.
-> 
+	3) It is hard to figure out what is the root cause, and to
+	   reproduce the problem.
 
-Yes, I think this would be better. We can use atomic_check() to verify
-the crtc_* timing parameters, while the already existing mode_valid()
-can continue checking the non-crtc_* ones.
+	4) There isn't information about what bits are being leaked.
 
-I will add this change when I am adding other atomic_* APIs later in the
-series.
+That said, this patch will help with the following issues:
 
+	1) It will tell us which bits are being set, so, it is easy to
+	   communicate it back to vendor, and to do a root-cause analyzes.
 
-Regards
-Aradhya
-
+	2) It avoid the machine to be unusable, because, worst case
+	   scenario, we get less than 60 WARNs.
 
