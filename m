@@ -1,113 +1,101 @@
-Return-Path: <linux-kernel+bounces-230319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF541917B3A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:45:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9838C917B3C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B3B9282C7F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:45:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4115B1F2705F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1794D168483;
-	Wed, 26 Jun 2024 08:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jaBCE6ue"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BAD16630A;
+	Wed, 26 Jun 2024 08:45:43 +0000 (UTC)
+Received: from cstnet.cn (smtp84.cstnet.cn [159.226.251.84])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A63BE16630F
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C5415F41F;
+	Wed, 26 Jun 2024 08:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719391513; cv=none; b=LLEVbWNgysrYdHO/mBo7xWOVKwn8/JfQ8ioOhwD/irbCkbCYCA+J6jrTYpdUHq7VdwRYap1X7CI/H8uOzB10b8OkN04nyqhdccC7L5rDPRDHI0+K/wmi3I/pnKCbDyxNPBPVAT63cWJtYLKml/nkYftsezxp6/nRoB74L/WA1qw=
+	t=1719391543; cv=none; b=o851s9tdU7i/+1HjC0AloOMXrcdpwWiwt9pBQLBo62ki4x/xxzfzmi0eYwB3+H7pSTjeEJuVJly/fJXJHw07wVA622ylTfRD2jNeDb7TtyRj22NWY20gqyLAXxFjoQ7FqZ9xx8/yML6ioS66O/jKfTOUvA0c0d48ybg0pGLzd48=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719391513; c=relaxed/simple;
-	bh=4TqMgPchaSgkEnGussyG2ZGIP6a6Rnch6g+F0GYql/Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ReyTHctu4ENyo6GOtb4Jo1IbQIsP9IhhKN3kXwIQbymaV4u/VN1yW4Tozfn+9C3tRD8aWUOAGNhuWBDgd+rL3uIr54x6ppsJ6y/Dc18C2oOXZsqrg+ZopyaVlhtNHwT1Ws61DeBKjQGewq4UMVCdRe3OGsJd89Sv8Aujx8DVny8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jaBCE6ue; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cdf579dd2so3929348e87.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:45:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719391510; x=1719996310; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hzxdCXT91751HJvUEbEVilPPM8qkMSIeAMEqqDe5ss4=;
-        b=jaBCE6uet1C3xlqnIbvRXwb73kgI7MffLkWNyc0wQ/G/5U4DI6VSZIbQGizoq4bCdu
-         7sIOScL4eGZB58CZvF4y9t76CabNdNey9gyVVhakQSkw62V1pAoGThI+lkTUgbWIy0IS
-         E4lQzBCwJHENDzxTMvZkRfsVfuztbBqhT3QSNEpy/yDEZMNHK+3/Ztu7F5OusDSYurZN
-         fYy0Lj7Bozm+bBcDzqo2eWXkYOSNwHoiJuXDNmorIghnH989rObweyNaDAAw2zXNu0dC
-         12VinN3Ai5l4LzQ+qbbK26wkdvpaRSxZSeejewY7U+4lih9Baw4VyfpSSDT4ExKmf/So
-         Micg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719391510; x=1719996310;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hzxdCXT91751HJvUEbEVilPPM8qkMSIeAMEqqDe5ss4=;
-        b=tx7wfua5ahVucHCwpOdRN8NThJ0TbOo9+LzPLPp+xx93r5HYdQLRyq3pHQDAjOF5Ll
-         hFL4cKz/7zZ+w0Z5di1xxWyy/z3ZjmKwzE+Ckeu5KcqGz6RJPJdKBB5wdjBl1gPWkKfs
-         Ypk4BmbG39/6fYi21Kv2MoDbU9GaOdXTW3LeEK4OSihkHscW6rmYrHDHOCuhX1WXa7jj
-         yRXl0FHXUSpjfoOt4vlP5tNIML/dKxqtlGDp90KqRD1scxBPaJ8NzI27R3BQyVH06Maa
-         Yv2ofhP6VPYyT38RsbInnXM5OK1YPvclR6x/iaZlKAi1VFcXn/KsHB9RR7jL+0lmDDPk
-         5a8A==
-X-Forwarded-Encrypted: i=1; AJvYcCU8+2kxKzNGyhQDbZdgf3RZAIzGTFnCqZ2hIarozealwZuuu3wyoV3C3A8pKHpPFnqEGbgtoWGuTKiOU0CRx6RiabVcvulR4rRv2bqX
-X-Gm-Message-State: AOJu0YwpPG3EGm7oSbe0vvgaI2BgWgLUqlvDctSbO8L3utixbCnDnwSa
-	u9zfOJZAgttmQFjE2CvCjwT47ZHdU4Vieqo0dc6mfpcDApBLXnAC0Kfltlg+t+k=
-X-Google-Smtp-Source: AGHT+IEfNnaYv5wFcwXGDonyXMCAQRs6U5hhIUgaupgn52qc7BZELI6S6uPQT6f7cTlAU8Kn7qOOxA==
-X-Received: by 2002:ac2:5f63:0:b0:52c:a002:1afc with SMTP id 2adb3069b0e04-52cdf7f66f2mr6580219e87.34.1719391509740;
-        Wed, 26 Jun 2024 01:45:09 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52db1a5b45esm180539e87.46.2024.06.26.01.45.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 01:45:09 -0700 (PDT)
-Date: Wed, 26 Jun 2024 11:45:07 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Rob Clark <robdclark@chromium.org>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/adreno: fix a7xx gpu init
-Message-ID: <yrhlsznrz3zt72kjizwfoit7st3qtdpug2lgruzpjditik5kh2@a7yu6in37kvo>
-References: <20240626-topic-sm8x50-upstream-fix-a7xx-gpu-init-v1-1-ff0a0b7c778d@linaro.org>
+	s=arc-20240116; t=1719391543; c=relaxed/simple;
+	bh=QCXtTQwQCTkr4Q+pZbpLZTqkGqQg9qNPN6tr95+ABNg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N4abWAWNqEgzARD6TtZGwHRj3tGTsY09xXASWC6wPLIk7pGyYfsIN2ZTmQnpQzVZ9MrLJfdv2qpAw4H9zVPZgUm1l7JtUHZQ7Eo5ARSIggiKvpvjz1Jl9sUYcd/OZot0SLVhNHMnYCIIZNIyOn27Dm10etipnJgTmJXjnHdjzu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [183.174.60.14])
+	by APP-05 (Coremail) with SMTP id zQCowABXXwMc1XtmtNbfEg--.48462S2;
+	Wed, 26 Jun 2024 16:45:27 +0800 (CST)
+From: Ma Ke <make24@iscas.ac.cn>
+To: vkoul@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com
+Cc: dmaengine@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Ma Ke <make24@iscas.ac.cn>
+Subject: [PATCH] dmaengine: mxs-dma: Add check for dma_set_max_seg_size in mxs_dma_probe()
+Date: Wed, 26 Jun 2024 16:45:15 +0800
+Message-Id: <20240626084515.2829595-1-make24@iscas.ac.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240626-topic-sm8x50-upstream-fix-a7xx-gpu-init-v1-1-ff0a0b7c778d@linaro.org>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:zQCowABXXwMc1XtmtNbfEg--.48462S2
+X-Coremail-Antispam: 1UD129KBjvdXoW7Jw47Wr1UAF48Cw13KF18AFb_yoWDurg_Z3
+	WUuF1fXFn8Wr4Fyw13KrnxCw4Iqr9IqF97uF13ta93try7WF1Sqr4DZr95Jry8ZanrCFWq
+	vw1UXrWSvr4DujkaLaAFLSUrUUUUUb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb3xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6r1F6r1fM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVWxJr0_GcWl84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s
+	0DM2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI
+	64kE6c02F40Ex7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVW8JVWxJw
+	Am72CE4IkC6x0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAG
+	YxC7M4IIrI8v6xkF7I0E8cxan2IY04v7MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4
+	AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE
+	17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMI
+	IF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4l
+	IxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvf
+	C2KfnxnUUI43ZEXa7VUjiF4JUUUUU==
+X-CM-SenderInfo: ppdnvj2u6l2u1dvotugofq/
 
-On Wed, Jun 26, 2024 at 09:53:16AM GMT, Neil Armstrong wrote:
-> The gpulist has twice the a6xx gpulist, replace the second one
-> with the a7xx gpulist.
-> 
-> Solves:
-> msm_dpu ae01000.display-controller: Unknown GPU revision: 7.3.0.1
-> msm_dpu ae01000.display-controller: Unknown GPU revision: 67.5.10.1
-> msm_dpu ae01000.display-controller: Unknown GPU revision: 67.5.20.1
-> 
-> on SM8450, SM8550 & SM8560.
-> 
-> Fixes: 8ed322f632a9 ("drm/msm/adreno: Split up giant device table")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/gpu/drm/msm/adreno/adreno_device.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+As the possible failure of the dma_set_max_seg_size(), we should better
+check the return value of the dma_set_max_seg_size().
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Fixes: a580b8c5429a ("dmaengine: mxs-dma: add dma support for i.MX23/28")
+Signed-off-by: Ma Ke <make24@iscas.ac.cn>
+---
+ drivers/dma/mxs-dma.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-
+diff --git a/drivers/dma/mxs-dma.c b/drivers/dma/mxs-dma.c
+index cfb9962417ef..90cbb9b04b02 100644
+--- a/drivers/dma/mxs-dma.c
++++ b/drivers/dma/mxs-dma.c
+@@ -798,7 +798,9 @@ static int mxs_dma_probe(struct platform_device *pdev)
+ 	mxs_dma->dma_device.dev = &pdev->dev;
+ 
+ 	/* mxs_dma gets 65535 bytes maximum sg size */
+-	dma_set_max_seg_size(mxs_dma->dma_device.dev, MAX_XFER_BYTES);
++	ret = dma_set_max_seg_size(mxs_dma->dma_device.dev, MAX_XFER_BYTES);
++	if (ret)
++		return ret;
+ 
+ 	mxs_dma->dma_device.device_alloc_chan_resources = mxs_dma_alloc_chan_resources;
+ 	mxs_dma->dma_device.device_free_chan_resources = mxs_dma_free_chan_resources;
 -- 
-With best wishes
-Dmitry
+2.25.1
+
 
