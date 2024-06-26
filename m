@@ -1,74 +1,69 @@
-Return-Path: <linux-kernel+bounces-230490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7736917D92
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:16:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F943917D95
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D79A1F23FAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:16:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42B0D1C216CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD60179658;
-	Wed, 26 Jun 2024 10:16:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A150177998;
+	Wed, 26 Jun 2024 10:16:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JjXtKRq+"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CP/yWKeO"
 Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18B151779B7;
-	Wed, 26 Jun 2024 10:16:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 555A616089A;
+	Wed, 26 Jun 2024 10:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719396969; cv=none; b=nN+ly/BjMY/A9ibZsc97P+XLFUvbyr3jBpPW3A6TQFAj9i1ma6z5jtabigARrA9ICUOZwqEMkcw4VDsf0kU7wdnw38O4FZ6nIYzyOHhAc0BpdzP5PMD7wvdSLV3JxXqp3uiV9JqrDlpV7ZJ2W9JsViXRnquN1tkK1bIi5D0lRsM=
+	t=1719397014; cv=none; b=HrYUdGewEQcUroU4D+nGNHg4eCqNqBI3nRi2/FTAdy6bdyF4RZfXwxiKv0IWcp5rLozhPlhhOLMHiuc3PD+3muaP3Ds3Qvrn9kPjdENHjstVdkMlqVingvOOD0Z+6rWWRdEO2iVvyTamiwFDHwPVG2y1s2YEMe4Pp9LhrUIUKeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719396969; c=relaxed/simple;
-	bh=FlJBMKh6pYOgBkI3JanFh1HtuN0ra91QyvCdfw8LFlM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YEtmZ+6vIuz4osQvEMLCHdYmTzSla2Ryyr/rPIiXUSP48JbauI9NcjlXJ90JAcnZN+/49KpkgvQ779Odi4rSl4Vo0uuQqmM5h6nrEqZYKPKw494VzdpgygHxxMhHgg7WVrZplMlg3EPCDGFPv/vICOhE/OQn8/C49tEer8LJHGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=JjXtKRq+; arc=none smtp.client-ip=198.47.23.249
+	s=arc-20240116; t=1719397014; c=relaxed/simple;
+	bh=Ep4U3OkPPZTIcBWPx+19jCGjtqPhQnVHpwjFL+W/Bc0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JhE1+B3A1ZLobqSGEs5y9Hid9d8+csFYAdxt4FiLTziX5LSit/q0p9QueTfnVVK/Srph6QAiFjh2GlOAAZB9GsKgt/bgJmXeQxxb6MlseE/4lPeOslGQjp/PfQHZzX/PhlgExLg/cyvt9OZHtz8nFNmaCIPut5ZBYVX4xv9wR+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=CP/yWKeO; arc=none smtp.client-ip=198.47.23.249
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45QAFoum102072;
-	Wed, 26 Jun 2024 05:15:50 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45QAGl7B102197;
+	Wed, 26 Jun 2024 05:16:47 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1719396950;
-	bh=YmMi7eqXgj2Ayl0xxOQqOV1H5iE1uA0DZcl9PqL50IU=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=JjXtKRq+f1iilEjQurR8RXX30QhtEIq4twQLqfaSG2SJnqPoYEbPVAxSqM+EKlEwY
-	 +ax7eMFjev6O1XQlITugvmu8O1zUkjPrF4trdvKXUchuPFN3u1AtEd2RttqIHE/r12
-	 BJibhJ/WJFoqWoZkvnZTgyBePDc1KhrZu/M7LLFI=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45QAFodL017583
+	s=ti-com-17Q1; t=1719397007;
+	bh=YJXho8AVdwhK5yCk/v+SUMui3th4HKFl1eVnAGhcQIY=;
+	h=From:To:CC:Subject:Date;
+	b=CP/yWKeOX3FpA53wXfxjYyqGX5pTFAj2vTnzypoMZW4b+c19vYOt9nDJ3MlKgmrNx
+	 JiiQe3FcuAADBoDpCvdKs/FTA/d9daPEnvloIJRdqv2wIu2dMoftM5UJh+UrOuxVb1
+	 KClfGxl3U+OgQOxr+6wyAmnpFjEW6DVo2YT86FLQ=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45QAGlTY003512
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 26 Jun 2024 05:15:50 -0500
-Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+	Wed, 26 Jun 2024 05:16:47 -0500
+Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
- Jun 2024 05:15:49 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ Jun 2024 05:16:46 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 26 Jun 2024 05:15:49 -0500
-Received: from dhruva.dhcp.ti.com (dhruva.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45QAFRVH091997;
-	Wed, 26 Jun 2024 05:15:47 -0500
-From: Dhruva Gole <d-gole@ti.com>
-To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Roger Quadros <rogerq@kernel.org>,
-        Andrew
- Davis <afd@ti.com>, Tero Kristo <kristo@kernel.org>,
-        Dhruva Gole
-	<d-gole@ti.com>
-Subject: [RFT][PATCH 2/2] arm64: dts: ti: k3-am62x-sk-common: Fix graph_child_address warns
-Date: Wed, 26 Jun 2024 15:45:20 +0530
-Message-ID: <20240626101520.1782320-3-d-gole@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240626101520.1782320-1-d-gole@ti.com>
-References: <20240626101520.1782320-1-d-gole@ti.com>
+ Frontend Transport; Wed, 26 Jun 2024 05:16:46 -0500
+Received: from localhost (jayesh-hp-probook-440-g8-notebook-pc.dhcp.ti.com [172.24.227.248])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45QAGkWC094542;
+	Wed, 26 Jun 2024 05:16:46 -0500
+From: Jayesh Choudhary <j-choudhary@ti.com>
+To: <linux-kernel@vger.kernel.org>, <nm@ti.com>, <vigneshr@ti.com>,
+        <j-luthra@ti.com>, <j-choudhary@ti.com>
+CC: <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, <u-kumar1@ti.com>
+Subject: [PATCH v2 0/3] Enable audio for J784S4-EVM platform
+Date: Wed, 26 Jun 2024 15:46:42 +0530
+Message-ID: <20240626101645.36764-1-j-choudhary@ti.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,55 +74,44 @@ Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
 X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Fix the following warnings when compiling dtbs with W=1:
+Hello All,
 
-../arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi:343.10-353.6: Warning (graph_child_address): /bus@f0000/i2c@20000000/tps6598x@3f/connector/ports: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
-../arch/arm64/boot/dts/ti/k3-am62-main.dtsi:633.22-643.5: Warning (graph_child_address): /bus@f0000/dwc3-usb@f900000/usb@31000000: graph node has single child node 'port@0', #address-cells/#size-cells are not necessary
+These three patches enable audio on J784S4-EVM platform.
+- First patch adds the McASP nodes.
+- Second patch adds the audio_refclk1 node that is required
+  to configure the CTRL_MMR register for the external clock
+- Third patch enables the analog audio
 
-Cc: Roger Quadros <rogerq@kernel.org>
-Signed-off-by: Dhruva Gole <d-gole@ti.com>
----
- arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 17 ++++-------------
- 1 file changed, 4 insertions(+), 13 deletions(-)
+For audio to work, the ti-dm firmware that should be picked
+for uboot is now publically available and will be shortly
+merged to the ti-linux-firmware branch:
+<https://git.ti.com/cgit/processor-firmware/ti-linux-firmware/tree/ti-dm/j784s4/ipc_echo_testb_mcu1_0_release_strip.xer5f?h=ti-linux-firmware-next>
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-index ce7ab338f468..465743d6cc21 100644
---- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-@@ -340,15 +340,9 @@ connector {
- 			self-powered;
- 			data-role = "dual";
- 			power-role = "sink";
--			ports {
--				#address-cells = <1>;
--				#size-cells = <0>;
--
--				port@0 {
--					reg = <0>;
--					usb_con_hs: endpoint {
--						remote-endpoint = <&usb0_hs_ep>;
--					};
-+			port {
-+				usb_con_hs: endpoint {
-+					remote-endpoint = <&usb0_hs_ep>;
- 				};
- 			};
- 		};
-@@ -475,12 +469,9 @@ &usbss1 {
- 
- &usb0 {
- 	bootph-all;
--	#address-cells = <1>;
--	#size-cells = <0>;
- 	usb-role-switch;
- 
--	port@0 {
--		reg = <0>;
-+	port {
- 		usb0_hs_ep: endpoint {
- 		    remote-endpoint = <&usb_con_hs>;
- 	       };
+For testing, ~/.asoundrc file was created in root partition
+which can be seen in the test logs:
+<https://gist.github.com/Jayesh2000/3ca38cbac2f37842b1010af79dfe9b4c>
+
+Changelog v1->v2:
+- Rebase on tag next-20240624
+- Add padding in mcasp reg property
+- Add assigned-clock and assigned-clock-parents property for mcasp
+  for more accurate description
+- Change mcasp pinmux node name similar to other nodes
+- Fix typo in k3_clk node and remove unnecessary comments for refclk1
+
+v1 patch:
+<https://lore.kernel.org/all/20240619095253.290552-1-j-choudhary@ti.com/>
+
+Jayesh Choudhary (3):
+  arm64: dts: ti: k3-j784s4-main: Add McASP nodes
+  arm64: dts: ti: k3-j784s4-main: Add audio_refclk node
+  arm64: dts: ti: k3-j784s4-evm: Enable analog audio support
+
+ arch/arm64/boot/dts/ti/k3-j784s4-evm.dts   | 111 +++++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi |  99 ++++++++++++++++++
+ 2 files changed, 210 insertions(+)
+
 -- 
-2.34.1
+2.25.1
 
 
