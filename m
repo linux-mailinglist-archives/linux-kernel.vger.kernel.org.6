@@ -1,113 +1,147 @@
-Return-Path: <linux-kernel+bounces-230097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB99917854
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:50:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3E5917867
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:58:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF2D01C22813
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:50:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7399A1F21F43
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2929614B07E;
-	Wed, 26 Jun 2024 05:49:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4975214D2A4;
+	Wed, 26 Jun 2024 05:58:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QO4pS3Zl"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="e9rC+Fmg";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="0Y5SL1IM";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="X7GhUBHi";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="C/bdMNXX"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C41014A61B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 05:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6819B14A4D0;
+	Wed, 26 Jun 2024 05:58:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719380996; cv=none; b=Stn7ZFITipriAqtxv3InnR7fZluW8YVcmrCKb1sb9p5jhWAywJajC7bhH5Pniw/ca/7SREIEZ6r04U+V3hHiNOwxuhMDx1IUTtta4IOSBfs3vQrMOUr/uHy74ISTzKz2UP/pIHiHkld1xoHTwvFYwnAobzu5F3QPmwDdDLiYnc8=
+	t=1719381514; cv=none; b=GPruFIEtYz2TdXeckvxTUD62YJMWRbcVooHYiDhEaqfS4FZQ55/kI8GOfcffOsk86SjzIe3IIoIxzMBjk8KjjfeDMBY7JZlKnr0+hsGU3GsuZMPzWXYFInvG3S3vWr3GnrlHNspN0G1hMXxWgcFXaeQx/Ms7IG4nm7L+3ZdQwkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719380996; c=relaxed/simple;
-	bh=pSUvHg/FzekfJ7fdRGi6Oo5VjVSirznSLEDasE0EhDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bF2weww1EicUdkTPWsJLSyHgG+84b/83o/l3GnG5aQSaZIA1+NjizjyXgI6viLosB51pb9xhG4tpSchcXCJ9UXpKO8iwfDs3mqQ00TnAjTycZ1bVbBKZGfke4GienhKfPgGHPc0KHQcs3bQ+DpiRia6Dyg/+vagfMkFP2rp0dq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QO4pS3Zl; arc=none smtp.client-ip=209.85.166.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-375dbfde049so26201605ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 22:49:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719380994; x=1719985794; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=12OtczYzVv5c0Y6UxFLwv0NJ7af5+oHW6u8zmvXCXqY=;
-        b=QO4pS3ZlpkoEZYpKvNVq98dJRLWP7k3bXKJ54wDkqKP14Wd4Q8Wp5pp1A38HfHeTMs
-         IFnLL/Vg5D4dgxnp5/aJzvvdJ36tM7GDidUOY/buMUWzH74Pa7m+VFgEAsLuAYy3i6h0
-         VJkVFlwBAhchZCf8/rJ7B+8+op+m6OAKUha46en4hbwJF2R1TsjmWoDq8jVQXC3kZeie
-         IwZ3GdioSFD8GV+KYYuW98jqlAUQZSykkxvWTjjhWRm3d+eqRk4Mm8Ic/Ihc0FptL8ky
-         su5P4vxnMsEjlDHy5YlY46G3o4JOYwIJ08udbC3UuoBTYcwSNX3wSe6Ct2oyUQ5sjYgP
-         9qaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719380994; x=1719985794;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=12OtczYzVv5c0Y6UxFLwv0NJ7af5+oHW6u8zmvXCXqY=;
-        b=EDk8OnpY53Lq2sVNWnBQPruiD1Et+rC+l+UUwmm6roGdZgJW5zIXOtSkK/EpPp0jQv
-         wWoNtH9P0foUtfdrmBUbeig9tK/VDmCj1VFXyLCQQWF8LkXGf99yUpyJvGjlTM/obSFT
-         A6zHU2xDAGzwyvbwzx2qUv3uVDNLbnhe4QnnG1SsMmkWMDVRLghqdnLaSmjsdHMkH6Zo
-         XLs5AazOymoPbxLElT38zrK+r9PzFlVl/Hu9jmlgHoVjeY0IqozHsUO1mPbOsUeH75HO
-         AqACNwqEQ/Kph1nXJUMUJMAp+yMtQaAkYSqtgqj+3Gl3pxdbqxtdnSlWUjy4mVyhDKNp
-         ++Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUEi78r8E6WaHFLz+efBN05IYoqYNITZvHkhO9N8ZIDUv1u8N8M+C23WJk2vqi766VZnTuSxfFlYG7Ka/HjUusNbaCc1d4o1yWxSrSf
-X-Gm-Message-State: AOJu0YyyCbiswK6RHJ/K3bTigrP21SiznkGZHKseIB8TBcc1l0MIRvtO
-	LiJ6a0Mb6X3dab/GhGl71ADyksT/Yfm/LuqVqLkebYTTi7eHOIdUoC+k+G8zUDg=
-X-Google-Smtp-Source: AGHT+IEruyYyO2J474+j3YG7PqVzM5F1n4MH37X/lEz8RG6Cun4J9A3nA85+az/CEkOVv4lV6sR+rw==
-X-Received: by 2002:a05:6e02:1a84:b0:375:9c7e:d04 with SMTP id e9e14a558f8ab-3763b0c07fbmr136526305ab.10.1719380994100;
-        Tue, 25 Jun 2024 22:49:54 -0700 (PDT)
-Received: from localhost ([122.172.82.13])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-716ba5b5f58sm8075825a12.73.2024.06.25.22.49.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 22:49:53 -0700 (PDT)
-Date: Wed, 26 Jun 2024 11:19:51 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Nikunj Kela <nkela@quicinc.com>,
-	Prasad Sodagudi <psodagud@quicinc.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>, linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] OPP: Introduce an OF helper function to inform if
- required-opps is used
-Message-ID: <20240626054951.w6amlrqyaljdjk2w@vireshk-i7>
-References: <20240619140849.368580-1-ulf.hansson@linaro.org>
- <20240619140849.368580-5-ulf.hansson@linaro.org>
+	s=arc-20240116; t=1719381514; c=relaxed/simple;
+	bh=inVXOAMIdOZjO3QO75g9cTCjaOkAQugpokklTpMiCRI=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Zf40JiwYc0yqwsGokMsmtXzSDla+3NYR1g8TsnDL953j1+1DVipU5ORXpUeg1GCCvu0G986SNxolT/Zl0q9/ivRYQw2yRwjeXcFNb3J0/5+rV5F56fqWxbcfY8Ek3eP+SWJ8g6NYxAMuW7YW3DglayEFddpxCCV4+UMVsUxecEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=e9rC+Fmg; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=0Y5SL1IM; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=X7GhUBHi; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=C/bdMNXX; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id EB8FB1FB3E;
+	Wed, 26 Jun 2024 05:49:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719380995; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j/rEw1FTMyOhY9HcnraTtAszd9vB9c1FXutJrwG1tbw=;
+	b=e9rC+Fmg7+qpgN6VhN1hDSByLi5jKcsnpqp3/hS5cTGB+SkcIuJzoIVCyJg4/mje2CCOih
+	PNiHaYpJ0/aFrvODbJFyZVYg5YejyZq0YAJgCugu+tAyT353PWBZ8ImiI+ZKHz0xRIoluO
+	i5UAsugD0oQTt6RCHk11jC92SDqhRnc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719380995;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j/rEw1FTMyOhY9HcnraTtAszd9vB9c1FXutJrwG1tbw=;
+	b=0Y5SL1IMYVt16dABNhPuEGxRB3SD+Q7hWlnKeCTtEaqEL9t3ry3iNMquJP3UEQoUPkVRoF
+	WnIMFKLbmIWEmOAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1719380994; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j/rEw1FTMyOhY9HcnraTtAszd9vB9c1FXutJrwG1tbw=;
+	b=X7GhUBHiXtwPhA49sxEFcxjL2Vi07x8dZg1bMj5EGvRIA8V6lEVmgXwtdOtqlgOdrncBH0
+	PZdbAhK3rkAEUHeYE+XzgyQhv+IJk8dg45cxwgg0mJCPsIXoGbscvAy7MYcjYGyerueHTq
+	VQF+BZeAKu4UEcTiYk74aF4Yy9NXyMs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1719380994;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=j/rEw1FTMyOhY9HcnraTtAszd9vB9c1FXutJrwG1tbw=;
+	b=C/bdMNXXI2TMRncdE+24AqnfuZ8sEmhADpcy35Kgvm04mIf0d7fvJHsUbSJKY65ECZwNZQ
+	7Zl3fCceBpoFg9CA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8B3DA13ABD;
+	Wed, 26 Jun 2024 05:49:54 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id nao+IAKse2YeLQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Wed, 26 Jun 2024 05:49:54 +0000
+Date: Wed, 26 Jun 2024 07:50:21 +0200
+Message-ID: <878qysl0bm.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Dirk Su <dirk.su@canonical.com>
+Cc: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Stefan Binding <sbinding@opensource.cirrus.com>,
+	Kailang Yang <kailang@realtek.com>,
+	"Luke D. Jones" <luke@ljones.dev>,
+	Shenghao Ding <shenghao-ding@ti.com>,
+	Simon Trimmer <simont@opensource.cirrus.com>,
+	Athaariq Ardhiansyah <foss@athaariq.my.id>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	linux-sound@vger.kernel.org (open list:SOUND),
+	linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH] ALSA: hda/realtek: fix mute/micmute LEDs don't work for EliteBook 645/665 G11.
+In-Reply-To: <20240626021437.77039-1-dirk.su@canonical.com>
+References: <20240626021437.77039-1-dirk.su@canonical.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240619140849.368580-5-ulf.hansson@linaro.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Score: -3.30
+X-Spam-Level: 
+X-Spam-Flag: NO
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
 
-On 19-06-24, 16:08, Ulf Hansson wrote:
-> As being shown from a subsequent change to genpd, it's useful to understand
-> if a device's OF node has an OPP-table described and whether it contains
-> OPP nodes that makes use of the required-opps DT property.
+On Wed, 26 Jun 2024 04:14:36 +0200,
+Dirk Su wrote:
 > 
-> For this reason, let's introduce an OPP OF helper function called
-> dev_pm_opp_of_has_required_opp().
+> HP EliteBook 645/665 G11 needs ALC236_FIXUP_HP_MUTE_LED_MICMUTE_VREF quirk to
+> make mic-mute/audio-mute working.
 > 
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
-> ---
->  drivers/opp/of.c       | 32 ++++++++++++++++++++++++++++++++
->  include/linux/pm_opp.h |  6 ++++++
->  2 files changed, 38 insertions(+)
+> Signed-off-by: Dirk Su <dirk.su@canonical.com>
 
-Applied. Thanks.
+Thanks, applied now.
 
--- 
-viresh
+
+Takashi
 
