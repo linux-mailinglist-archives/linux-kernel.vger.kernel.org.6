@@ -1,168 +1,85 @@
-Return-Path: <linux-kernel+bounces-231102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03B5D918633
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:48:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9A53918639
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A935C1F216E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:48:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 252781C21A3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D77318C359;
-	Wed, 26 Jun 2024 15:48:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295D918E745;
+	Wed, 26 Jun 2024 15:50:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HviN61+Y"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BBreXn76"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A513F176ABF;
-	Wed, 26 Jun 2024 15:48:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C2A11836DD;
+	Wed, 26 Jun 2024 15:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719416906; cv=none; b=A8Vp7KuQc5djcY+95jz/FsqR8E5ORq+/Y8/7NwGrwZ2rLjwwCAay15e2uip9P4BE+Sus8zngzO15RxgqvPPCXR1vzqpZYki3cH2b6xs5/2FQKW8dgBQ46RjtKqlcOKja+GPQWw00nKOhFJ/sPQP7T8nBvEEwdRq62C5k0JqeNS4=
+	t=1719417009; cv=none; b=U/K/XT/nnHo+6XQHijRug7gBncbgIViJK/NYs0st/rOIrxq1oxwz64+tZXjEOK/ZCZa28SXCaf1dFI98pmTXVCzzdGsSFm0Knmq2lZhn4bl4OAUHtMDgoflIo6f49RuzflUQsB472q7nu0ImQ1qV2qYfDxAP8hAZfqbCVH9DUXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719416906; c=relaxed/simple;
-	bh=7xwExvsEtQoE7N89hQc/J6z0i05gkGebrUaPVCObEFM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iPX3y+iK+Tx+f+j+JPh0eghr/iXJyT1pPe6OuwNUJtkoEecmvhW+oMAgnROr4lQilhojoJ301GxTtJpgbKD2zJOlAwVSDlFex8No+uexzptFxonjlnWBBDYYDMCRJMEuk8TCRonGQcb9j6zlra8I7yjnocsMZYnWMZjFFVIMacE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HviN61+Y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A91D7C32782;
-	Wed, 26 Jun 2024 15:48:23 +0000 (UTC)
+	s=arc-20240116; t=1719417009; c=relaxed/simple;
+	bh=MpTrKsJUpc3vIWujjuh/gx4N6wsWK1H9HtIbFojUBqE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=FjqUaEvdOpgNvaCF4iWEJ2q3bxa8kcNXF2m8G7zVX7G0+V3SBOsrWzCijAuCiG0HbLFzZR+T32ujsfOKhMIqtbD8WWUPrJdppmpn0AEyJOWBsZoPB6jBY1UkYOQ4SyCJOy+KV7HzpeqK3wq1GJcwKVLsd0dxtlugJYCX25JC6tk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BBreXn76; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B98CC116B1;
+	Wed, 26 Jun 2024 15:50:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719416906;
-	bh=7xwExvsEtQoE7N89hQc/J6z0i05gkGebrUaPVCObEFM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HviN61+YBV3eLHyiuRy4LkHEQ41TYCbBKwmC+EQlJITSa3tdk+hdSy18vkGB5xyPt
-	 9UHzKpY3b6aWVl2xQjf58xirSIipJgVkBw5P65W7XF4qcC5SZs2sZjvCdsjXyUmtOL
-	 zw8GJ5U3eV0cNBD6fvTtuGM146MSDJxGAx37hShelajotSxSEmp+zcv7dtbs7VBh3k
-	 3X2uLsNy/eDDZzFKwoRZmEoSps/Kpsf0icPnwuq8d8iOyB7mhqAe7eWt5wybZ6xuFS
-	 Ewg5cLQHcbAlnQEvsCK+TL20LtTViYu6bUecyMKn781sbojycNFJvE/1UBZdWxLcwK
-	 UDZIxvPMAwTNQ==
-Date: Wed, 26 Jun 2024 16:48:21 +0100
+	s=k20201202; t=1719417009;
+	bh=MpTrKsJUpc3vIWujjuh/gx4N6wsWK1H9HtIbFojUBqE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=BBreXn76aoPBMO8gmGLsb8fv02MT/QD+Lg/K/mQ0q0IG/L1E+S71HO111ec2CEmT2
+	 OPXYe0sxsNtkfwcwc3YjQ3NVrpCYbYxbRYV1vwAqu/TeqCRLslw1eNATLdr8mT1yoS
+	 nqsaqspv4mQ0ZMOiFTOzyeQaJhw6RdTmqmVm79f9nu8IEsHtz4B4i/GIY8Ik9HFZ7p
+	 A9i82eNNgBClHb9unPHpdrJbnAAn6Y6BtOMZ6CX2ni1A4IrIHZmzye4m/xotaOjnhJ
+	 KmA39VtHg7mdSA75d/wbugzmQfHowwGVQ8biWs64vsb3MlXbN4TGyMNJF/Lpu/uS4B
+	 iZif98AMGeLzQ==
 From: Lee Jones <lee@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: arnd@arndb.de, krzk@kernel.org, alim.akhtar@samsung.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
-	saravanak@google.com, willmcvicker@google.com,
-	semen.protsenko@linaro.org, kernel-team@android.com
-Subject: Re: [PATCH v3 0/2] Add syscon of_syscon_register_regmap api
-Message-ID: <20240626154821.GE2504017@google.com>
-References: <20240621115544.1655458-1-peter.griffin@linaro.org>
+To: Lee Jones <lee@kernel.org>, 
+ Daniel Thompson <daniel.thompson@linaro.org>, 
+ Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>, 
+ Julia Lawall <julia.lawall@inria.fr>
+In-Reply-To: <20240624-lm3509_bl_scoped-v1-1-ceba9df38f23@gmail.com>
+References: <20240624-lm3509_bl_scoped-v1-1-ceba9df38f23@gmail.com>
+Subject: Re: (subset) [PATCH] backlight: lm3509_bl: Fix early returns in
+ for_each_child_of_node()
+Message-Id: <171941700713.2526873.6218687584902221299.b4-ty@kernel.org>
+Date: Wed, 26 Jun 2024 16:50:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240621115544.1655458-1-peter.griffin@linaro.org>
+X-Mailer: b4 0.13.0
 
-On Fri, 21 Jun 2024, Peter Griffin wrote:
+On Mon, 24 Jun 2024 17:30:50 +0200, Javier Carrasco wrote:
+> The for_each_child_of_node() macro automatically decrements the child
+> refcount at the end of every iteration. On early exits, of_node_put()
+> must be used to manually decrement the refcount and avoid memory leaks.
+> 
+> The scoped version of the macro accounts for such early breaks, fixing
+> the early exits without the need for explicit calls to of_node_put().
+> 
+> [...]
 
-> Hi Lee, Arnd, Krzysztof, all,
-> 
-> This series adds support to syscon driver for a new of_syscon_register_regmap()
-> api.
-> 
-> Platforms such as gs101 require a special regmap to access PMU registers, which
-> in the existing upstream client drivers are accessed via syscon regmap. This
-> issue was partly solved in [1] whereby a custom regmap is created in exynos-pmu
-> and a new API exynos_get_pmu_regmap_by_phandle() created.
-> 
-> One issue with the approach in [1] is that it required client drivers to be
-> updated from syscon_regmap_lookup_by_phandle() to
-> exynos_get_pmu_regmap_by_phandle() when obtaining the regmap.
-> 
-> Whilst updating to exynos_get_pmu_regmap_by_phandle() was OK for exynos
-> specific drivers, it meant other drivers like syscon-reboot and syscon-poweroff
-> which span multiple SoC architectures could not be easily re-used.
-> 
-> In previous review feedback for USB phy and gs101 poweroff driver Krzysztof
-> requested [2] that we take a more generic approach that other SoCs can also
-> leverage.
-> 
-> The new of_syscon_register_regmap() api overcomes this limitation by allowing
-> a SoC driver like exynos-pmu to register it's SoC specific regmap with the
-> syscon driver. This keeps the SoC complexity out of syscon driver, and allows
-> client drivers to continue using syscon_regmap_lookup_by_phandle() as before.
-> The solution allows more code re-use and can be used by other SoC archs.
-> 
-> Notes on probe ordering
-> 
-> exynos-pmu runs at postcore_initcall, so all but one of the client drivers
-> (ufs phy, usb phy, watchdog) run after the regmap is created and registered.
-> 
-> The one exception to this is pinctrl-samsung driver which is also
-> postcore_initcall level. The exynos_get_pmu_regmap() and
-> exynos_get_pmu_regmap_by_phandle() have been temporarily left to support
-> -EPROBE_DEFER for pinctrl-samsung driver.
-> 
-> The longer term plan to solve that probe ordering issue is to enable
-> fw_devlink for syscon dt properties so they are correctly listed as
-> suppliers in /sys/class/devlink. I tested a PoC patch (see below) for
-> fw_devlink and that seemed to work fine. Once fw_devlink supports syscon I
-> believe exynos_get_pmu_regmap_by_phandle() api could be removed. The main issue
-> currently with fw_devlink syscon support is the wide diversity of dt property
-> naming currently in use. That was discussed previously here [3]
-> 
-> 1248a1256,1257
-> > DEFINE_SUFFIX_PROP(syscon_phandle, "syscon-phandle", NULL)
-> > DEFINE_SUFFIX_PROP(pmu_syscon, "pmu-syscon", NULL)
-> 1358a1368,1369
-> >     { .parse_prop = parse_syscon_phandle, },
-> >     { .parse_prop = parse_pmu_syscon, },
-> 
-> 
-> Note one previous concern from Saravana about syscon potentially probing
-> before exynos-pmu driver and it relying on drivers/Makefile ordering. I tested
-> this and even if mfd is listed before soc in drivers/Makefile exynos-pmu
-> always probes first due to syscon driver not setting a .of_match_table entry.
-> 
-> Once the syscon and exynos-pmu patchs are queued I will send patches for
-> watchdog and ufs phy drivers to switch back to syscon_regmap_lookup_by_phandle()
-> 
-> Many thanks,
-> 
-> Peter.
-> 
-> [1] https://lore.kernel.org/linux-arm-kernel/20240219204238.356942-1-peter.griffin@linaro.org/T/
-> [2] https://lore.kernel.org/lkml/06383015-51b2-4f4c-9fd8-e4f7ce12f44e@kernel.org/
-> [3] https://lore.kernel.org/all/CAGETcx-CCpaV7R0O0HpDpoX6KxQBuJiMmKdWA8nDE-5Qj2Sa7g@mail.gmail.com/
-> 
-> Changes since v2:
->  - Move allocation outside spinlock area (Arnd)
-> Link to v2:
->  - https://lore.kernel.org/linux-arm-kernel/20240620112446.1286223-1-peter.griffin@linaro.org/
-> 
-> Changes since v1:
->  - Collect by tags
->  - Keep syscon lock held for check and adding entry (Krzysztof)
->  - pass pmu_np not np to syscon_node_to_regmap() (William)
-> 
-> Link to v1:
->  - https://lore.kernel.org/linux-arm-kernel/20240614140421.3172674-1-peter.griffin@linaro.org/
-> 
-> Peter Griffin (2):
->   mfd: syscon: add of_syscon_register_regmap() API
->   soc: samsung: exynos-pmu: update to use of_syscon_register_regmap()
-> 
->  drivers/mfd/syscon.c             | 48 ++++++++++++++++++++++++++++++++
->  drivers/soc/samsung/exynos-pmu.c | 38 ++++++++++---------------
->  include/linux/mfd/syscon.h       |  8 ++++++
->  3 files changed, 70 insertions(+), 24 deletions(-)
+Applied, thanks!
 
-Applied and submitted for build testing.
+[1/1] backlight: lm3509_bl: Fix early returns in for_each_child_of_node()
+      commit: b337cc3ce47549528fc3ee0b8c7ebd33348a3126
 
-If all is good, I'll send out a PR for the other maintainer(s).
-
-Note to self: ib-mfd-soc-samsung-6.11
-
--- 
+--
 Lee Jones [李琼斯]
+
 
