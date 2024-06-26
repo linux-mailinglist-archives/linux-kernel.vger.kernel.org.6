@@ -1,114 +1,129 @@
-Return-Path: <linux-kernel+bounces-230198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A099179BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:31:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D00D9179BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA8061F249EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:31:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 039A81F249DD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261B515A4AF;
-	Wed, 26 Jun 2024 07:31:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548C715B155;
+	Wed, 26 Jun 2024 07:31:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZtpRRaFf"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ReiwIUAq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29A0B13A879
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:31:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE2C29414;
+	Wed, 26 Jun 2024 07:31:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719387065; cv=none; b=lySjw3ZpZcQJp9OiXF1CQ7vL8o7JehFWpOUk3/UMuoAbLv6MqpLZrnRpe6G2C/9L9BuG1LQ2WAoDUNpycMGbS+YrW13pg3N5pZ00EUCoW8uZeHcTmy5aymAUc7ewnBOco5zDOFoWxvGAJiSOdTUltx0CevzJZn8iBpoIjy0KBRs=
+	t=1719387100; cv=none; b=LPgxlxDKKZEDPvWvSedbTqBRblr4IXk5eXRrS0im+2B4qYrDEgOgfAYQUk8OfhN9V8nPyeEvqKCj5Todny5QbHEDu7fcO3M04YtkNf9zqRKsAaPwjjXDeL+WODY19gB8jVkqTI+IBtQJASgpJXOGdK2+obDp8Lm+s6rXR1Hqk0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719387065; c=relaxed/simple;
-	bh=ohq5Z9TLleNSD1GmaVnLIAOighvbVZgOycmmlvM4mBY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=ZALDH10tRqM3tCzJFfUUaM6EUFc1M6KHX5nC/YunwPsTXPWhV+KJPvk4o1du2duwjcqzBAqlrZ0iE7W4tMo3fY6/WpKip5zacdR9N4Hafx5jsJaODK/q/SUWtzuyPN5pjQ4c5SzLFZ0sOr51bTmlgKO/j4oJs9gx33G4fLTXMC0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZtpRRaFf; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-36226e98370so3826540f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:31:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719387060; x=1719991860; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Tv9djtWEOzxTaL6lh9T+uBzCSiUjvyz1rjw0jY3cUB8=;
-        b=ZtpRRaFfsSbD68BjRfTwaVCWwq7V5G+QpKnwSW4WnCEWe/wKKeBKmgfTRz2qh+tE18
-         W5VYGzWK1K9UkPp4SjpJmYxAwHS7xhZnKAwErCrOrPArG1HzKqYnbGgjiRcoqKCfPgj5
-         WyB0qSLMin9ZkgEuNwSE75cnFb2KqIiwewSQP6OA5uzXjOKLOfmiM04nrlVq2/6Xskka
-         I+DVk6h1VprrFViZt7fBSIqECoaeoui42YbvrlxqfDq8+bTInnA8veSwk1GrsTIyYjOG
-         xTQzo3JsCvIXHwBVlvsnG0yFM1hlbAWd2I1wJ+ixsnBMY+AYI8dUwKk48aWX47rDj1Py
-         jdfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719387060; x=1719991860;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Tv9djtWEOzxTaL6lh9T+uBzCSiUjvyz1rjw0jY3cUB8=;
-        b=suzOGHTkX1Uf5kaNg2xRk0E2961glZ4rg1OAuY1P1jqaNIAyiLMoPhGy2J7mszL35Y
-         /eO0RC0PwkCGM8pQ2QWFjvYiYOXa5Z7CBBJQp3UCm6rggLjcGFnEBABZZoUPXIrfVBKn
-         muA+G3QxtY8SmyVHgvR6KknREqKfseztCIYn6XtAFVWfakjNXRrC610KnIowdL58KH+N
-         hbMs7jSFoVVdop7XbnliPK8/BVTqh5yzcmRKPjTVz9mabkZtvNOMcm6p9nU59w78aEoy
-         Xlbp3lQu/zdjTRfhaXC2Xt2Nej0N0tJ5QIfWQ40SPBZeGnoYFnAK0f0ANILbaDYhny8P
-         5E+A==
-X-Forwarded-Encrypted: i=1; AJvYcCXj+IW320qCcH0Xbl5BHmTnfuHGHuTTA/m7WAPlqS4ZXlpH32YA29dlozACAc0AmN3ulmno1EwwTrioM8EHp6XgdzIC59ZfBGjYk9oH
-X-Gm-Message-State: AOJu0YyFRX6UqdBzhilChPGD1vcrpq+hQvInZVB0ANTqA2m7Zvrtx66b
-	O3hBdLFzQLtChQEFGulFFd8EH3PJUSn1v1VjLl0T7f6YcfsjGN9b+Cv5/BVxWBw=
-X-Google-Smtp-Source: AGHT+IFBXULLdxfeEky/0MesQJ9m6VVrSGMEmCaQc90xJfwO02ZaFbxqLfpmYopxto8Z2nDrU6fdNQ==
-X-Received: by 2002:a5d:44c8:0:b0:362:4dc7:dc7b with SMTP id ffacd0b85a97d-366e965298amr5956254f8f.58.1719387059782;
-        Wed, 26 Jun 2024 00:30:59 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366383f6769sm15081665f8f.5.2024.06.26.00.30.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 00:30:59 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
- Jerome Brunet <jbrunet@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, linux-amlogic@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org
-In-Reply-To: <20240625145017.1003346-1-jbrunet@baylibre.com>
-References: <20240625145017.1003346-1-jbrunet@baylibre.com>
-Subject: Re: (subset) [PATCH 0/2] arm64: dts: amlogic: add power domain to
- hdmitx
-Message-Id: <171938705880.1642577.605500417615578025.b4-ty@linaro.org>
-Date: Wed, 26 Jun 2024 09:30:58 +0200
+	s=arc-20240116; t=1719387100; c=relaxed/simple;
+	bh=QZBFe/JCMye3gzv7JM3x9d0jAKUSjXZunjWg+/IonaA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=GCW8A2+JHQEGpEJX8MF6+j7O+KMHecoM0FvVebYWqsINUclFvBV+lFndUg9tti1USD3Gp1hUpy7XdsZ2iJWGFolE7PZRWQGZ0P9ioRYRpaYZ6J8R4rkGprBjUxCt/WWxEJnqX5gVwfSdv31CmpU5obyN1rEwtPzLm74UG18R8nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ReiwIUAq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CD18C2BD10;
+	Wed, 26 Jun 2024 07:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719387100;
+	bh=QZBFe/JCMye3gzv7JM3x9d0jAKUSjXZunjWg+/IonaA=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=ReiwIUAqDz3OZUo3CrTijdYiM4iQWGF2xdK0PmQk53bZ5dL8doZENYwgNJ1UjE81K
+	 hTDuLWUU19Cz1kVs085qhswxRc3oUTReEjNpzIW0e1p5+ZR4PffoLXvas9Yl4y092k
+	 s3QjyWJPWUI6F0xx7/RwuJfFYvPFE6LYJRAJMGbBGWfeyFEGxticMuSq5r8zDzP8uf
+	 La2ShGINA7StZktt4KzAd4ff7vFGNiHJBOantWni8Dw2IonvNxQ53ZQ3T5LkTlj5+O
+	 pP3WP+7BxkxkSzf/4YcFV/+odTk4463rjJWUVmuqCMqs6bLp1EeOXRb0yDsEdeHpww
+	 fqEueZxpdPhHg==
+Message-ID: <6bd1bedb-7360-4021-a79d-ba8751d9f02c@kernel.org>
+Date: Wed, 26 Jun 2024 09:31:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/3] dt-bindings: rng: Add Rockchip RK3568 TRNG
+To: Daniel Golle <daniel@makrotopia.org>,
+ Aurelien Jarno <aurelien@aurel32.net>, Olivia Mackall <olivia@selenic.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@debian.org>,
+ Dragan Simic <dsimic@manjaro.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Martin Kaiser <martin@kaiser.cx>, Tony Luck <tony.luck@intel.com>,
+ Ard Biesheuvel <ardb@kernel.org>, linux-crypto@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <cover.1719365405.git.daniel@makrotopia.org>
+ <edcbe260f9ebe71c901cf3788ccf572cb15b9728.1719365406.git.daniel@makrotopia.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <edcbe260f9ebe71c901cf3788ccf572cb15b9728.1719365406.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-Hi,
-
-On Tue, 25 Jun 2024 16:50:13 +0200, Jerome Brunet wrote:
-> This patchset add the bindings for the power domain of the HDMI Tx
-> on Amlogic SoC.
+On 26/06/2024 03:36, Daniel Golle wrote:
+> From: Aurelien Jarno <aurelien@aurel32.net>
 > 
-> This is a 1st step in cleaning HDMI Tx and its direct usage of HHI
-> register space. Eventually, this will help remove component usage from
-> the Amlogic display drivers.
+> Add the True Random Number Generator on the Rockchip RK3568 SoC.
 > 
-> [...]
+> Signed-off-by: Aurelien Jarno <aurelien@aurel32.net>
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-[1/2] dt-bindings: display: meson-dw-hdmi: add missing power-domain
-      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/c19f15b1e056a1ab896d54909f75febf70d98be6
-
--- 
-Neil
+Best regards,
+Krzysztof
 
 
