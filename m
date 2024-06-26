@@ -1,110 +1,205 @@
-Return-Path: <linux-kernel+bounces-230297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E26917AFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:29:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9C2917AF5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:29:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F39371C241D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:29:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00D0C288819
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:29:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB8A166300;
-	Wed, 26 Jun 2024 08:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FYPJl1ye"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F0A23BF;
+	Wed, 26 Jun 2024 08:29:04 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5222923BF;
-	Wed, 26 Jun 2024 08:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE0BE160796
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719390552; cv=none; b=Fi4cSobo3p0ZdixQhXpgLOdEjP31Yb9zFlDW3/r5Onm1nKok/3ngfwLluF+cgSpVECm5SRSqY12KGEs3q3/fXoVwYlQsQWwoEc1M6xkUF86j2x+evH8JcTJIXJvQsT0bw+SprIDWVPRyUvxkYb1apy74k60jtazM1hN1XllIHnU=
+	t=1719390543; cv=none; b=Evn8hR/tXeuQ9H2TIaipnwhlq0fytlPNYsC0P5MfEbkDoTtjUC/REJsuXIlsbwrF96IWG/C6lDctUkgSedjHP1sBXgqCpHwXYcH3j5VMjyF3O+UHGvltCcae3dyUGTbZDLi9kBjilj4JYNrCnU3E1Z9OWe5QvJSNWI2NPBRtyXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719390552; c=relaxed/simple;
-	bh=Cp7NuRUJVqGGZYwOZ8n29EcYvv+5dVawcwjYBiu90F4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PlW0jX8xTcE023xg/BN/veDxmUo9zxZbMk8bdquc5NDr1sFXiycrl1MBT650r3+Lh2vai1LM9N8LuwJfD7CjZyT+6xZNbOrgVUJcfGTM09htBB/z7BWTfCTxjo38oyMAe3wb4o7wFZBDMqo4Utv/aTMtDtFBXzKJHk2ne4jAPa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FYPJl1ye; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gx1YbM7m9OifZ66nwDwy8F0WLf5LnqApcjTF7ww/P44=; b=FYPJl1yeXy6/ssmw7YTSEecDm+
-	8miUIgYGdjz/FiaOWbN/u4zwXu2zYt/g1ipyvH9N10LEUu14PcLG+1Ema97tXdxmjwErHrzYWjfMK
-	yv25AqjD5/cioi8CHFAtTYoKZR9VS/lqWdGaKXHVwNsXSWgYqXl76Z96Insn/c8QEs28lkvKVG90y
-	6Y7pG2evZEKL20FjlGxCunQN1vpYq7Gsu4koboUHe3RwkPErcDsMod/Nba/qwWgEzFBWBARafAVgt
-	8wqOMvIPzkQccV1yu4+0OPgP21BgnekUL3aV2DWnO8IAWnTQgg8UC5vmvRLcAzbe++DrZQngfbFxd
-	MPVgtLiw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.97.1 #2 (Red Hat Linux))
-	id 1sMO1I-0000000C48O-3pdW;
-	Wed, 26 Jun 2024 08:28:49 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8E69330057C; Wed, 26 Jun 2024 10:28:48 +0200 (CEST)
-Date: Wed, 26 Jun 2024 10:28:48 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Tejun Heo <tj@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>, mingo@redhat.com,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, bristot@redhat.com, vschneid@redhat.com,
-	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
-	martin.lau@kernel.org, joshdon@google.com, brho@google.com,
-	pjt@google.com, derkling@google.com, haoluo@google.com,
-	dvernet@meta.com, dschatzberg@meta.com, dskarlat@cs.cmu.edu,
-	riel@surriel.com, changwoo@igalia.com, himadrics@inria.fr,
-	memxor@gmail.com, andrea.righi@canonical.com,
-	joel@joelfernandes.org, linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, kernel-team@meta.com
-Subject: Re: [PATCH sched_ext/for-6.11] sched, sched_ext: Replace
- scx_next_task_picked() with sched_class->switch_class()
-Message-ID: <20240626082848.GZ31592@noisy.programming.kicks-ass.net>
-References: <CAHk-=wiKgKpNA6Dv7zoLHATweM-nEYWeXeFdS03wUQ8-V4wFxg@mail.gmail.com>
- <878qz0pcir.ffs@tglx>
- <CAHk-=wg88k=EsHyGrX9dKt10KxSygzcEGdKRYRTx9xtA_y=rqQ@mail.gmail.com>
- <CAHk-=wgjbNLRtOvcmeEUtBQyJtYYAtvRTROBy9GHeF1Quszfgg@mail.gmail.com>
- <ZnRptXC-ONl-PAyX@slm.duckdns.org>
- <ZnSp5mVp3uhYganb@slm.duckdns.org>
- <20240624085927.GE31592@noisy.programming.kicks-ass.net>
- <ZnnelpsfuVPK7rE2@slm.duckdns.org>
- <20240625074935.GR31592@noisy.programming.kicks-ass.net>
- <ZntS_eM2reaszYcj@slm.duckdns.org>
+	s=arc-20240116; t=1719390543; c=relaxed/simple;
+	bh=e1Kf2GbwZLvfE90s6c0/Y5wnIQjvF4O4IVPLgGghC5M=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=AzV1Mto1377CScbkIZG91m2VoEcDZQIa9uoFFTpps1ERdKDV0x1n3zqb/kSCP4pi2i65078Cf7JBx0oMGPsTP/us3ihEtd8FVnf+IoJKJnwAu7Uy3QCNYivjfileRqNZpO9GqCIeNVZ0JabrYitL1+SYl/cCnOh2Vr1Gsm51isQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPv6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <l.stach@pengutronix.de>)
+	id 1sMO1Q-00064a-Jz; Wed, 26 Jun 2024 10:28:56 +0200
+Message-ID: <7cee6b78bc2375d9b014f9671b0d72ae65eba73c.camel@pengutronix.de>
+Subject: Re: [PATCH] drm/etnaviv: Create an accel device node if compute-only
+From: Lucas Stach <l.stach@pengutronix.de>
+To: Daniel Vetter <daniel@ffwll.ch>, Tomeu Vizoso <tomeu@tomeuvizoso.net>
+Cc: Daniel Stone <daniel@fooishbar.org>, linux-kernel@vger.kernel.org, Oded
+ Gabbay <ogabbay@kernel.org>, Russell King <linux+etnaviv@armlinux.org.uk>,
+ Christian Gmeiner <christian.gmeiner@gmail.com>, David Airlie
+ <airlied@gmail.com>,  etnaviv@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Daniel Stone <daniels@collabora.com>
+Date: Wed, 26 Jun 2024 10:28:55 +0200
+In-Reply-To: <ZnvDJVeT3rz-hnv9@phenom.ffwll.local>
+References: <20240424063753.3740664-1-tomeu@tomeuvizoso.net>
+	 <97eadcba7cabe56f0f4b4d753bd3d53f8540ef4b.camel@pengutronix.de>
+	 <CAAObsKAQ=pWQ8MR1W7WwK1nVEeiCFNC3k+NZKsu4Fkts-_+zWg@mail.gmail.com>
+	 <CAPj87rO7zyDsqUWnkF0pZeNFnNK2UnAVJy4RmB3jmPkKQ+zbEw@mail.gmail.com>
+	 <CAAObsKBm3D_3ctFyK-rfpM-PU6ox1yoaMA1EES9yR-nRmU4rYw@mail.gmail.com>
+	 <CAAObsKAt563VNzDcF4rGkWPcxBPzKcq=Hj5RY6K20FWR43nvUQ@mail.gmail.com>
+	 <ZnvDJVeT3rz-hnv9@phenom.ffwll.local>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 (3.48.4-1.fc38) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZntS_eM2reaszYcj@slm.duckdns.org>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Jun 25, 2024 at 01:30:05PM -1000, Tejun Heo wrote:
-> Hello,
-> 
-> On Tue, Jun 25, 2024 at 09:49:35AM +0200, Peter Zijlstra wrote:
-> > > Imagine a case where a sched_ext task was running but then a RT task wakes
-> > > up on the CPU. We'd enter the scheduling path, RT's pick_next_task() would
-> > > return the new RT task to run. We now need to tell the BPF scheduler that we
-> > > lost the CPU to the RT task but haven't called its pick_next_task() yet.
-> > 
-> > Bah, I got it backwards indeed. But in this case, don't you also need
-> > something in pick_task() -- the whole core scheduling thing does much
-> > the same.
-> 
-> Yes, indeed we do, but because we're dispatching from the balance path, the
-> cpu_acquire method is being called from there. Because who was running on
-> the CPU before us is less interesting, @prev is not passed into
-> cpu_acquire() but if that becomes necessary, it's already available there
-> too.
+Am Mittwoch, dem 26.06.2024 um 09:28 +0200 schrieb Daniel Vetter:
+> On Mon, Jun 17, 2024 at 07:01:05PM +0200, Tomeu Vizoso wrote:
+> > Hi Lucas,
+> >=20
+> > Do you have any idea on how not to break userspace if we expose a rende=
+r node?
+>=20
+> So if you get a new chip with an incompatible 3d block, you already have
+> that issue. And I hope etnaviv userspace can cope.
+>=20
+> Worst case you need to publish a fake extremely_fancy_3d_block to make
+> sure old mesa never binds against an NPU-only instance.
+>=20
+> Or mesa just doesn't cope, in which case we need a etnaviv-v2-we_are_sorr=
+y
+> drm driver name, or something like that.
 
-I suppose I need to read more, because I'm not knowing what cpu_acquire
-is :/ I do know I don't much like the asymmetry here, but maybe it makes
-sense, dunno.
+Mesa doesn't cope right now. Mostly because of the renderonly thing
+where we magically need to match render devices to otherwise render
+incapable KMS devices. The way this matching works is that the
+renderonly code tries to open a screen on a rendernode and if that
+succeeds we treat it as the matching render device.
+
+The core of the issue is that we have no way of specifying which kind
+of screen we need at that point, i.e. if the screen should have 3D
+render capabilities or if compute-only or even NN-accel-only would be
+okay. So we can't fail screen creation if there is no 3D engine, as
+this would break the teflon case, which needs a screen for the NN
+accel, but once we successfully create a screen reanderonly might treat
+the thing as a rendering device.
+So we are kind of stuck here between breaking one or the other use-
+case. I'm leaning heavily into the direction of just fixing Mesa, so we
+can specify the type of screen we need at creation time to avoid the
+renderonly issue, porting this change as far back as reasonably
+possible and file old userspace into shit-happens.
+
+Regards,
+Lucas
+
+>=20
+> >=20
+> > Cheers,
+> >=20
+> > Tomeu
+> >=20
+> > On Wed, Jun 12, 2024 at 4:26=E2=80=AFPM Tomeu Vizoso <tomeu@tomeuvizoso=
+.net> wrote:
+> > >=20
+> > > On Mon, May 20, 2024 at 1:19=E2=80=AFPM Daniel Stone <daniel@fooishba=
+r.org> wrote:
+> > > >=20
+> > > > Hi,
+> > > >=20
+> > > > On Mon, 20 May 2024 at 08:39, Tomeu Vizoso <tomeu@tomeuvizoso.net> =
+wrote:
+> > > > > On Fri, May 10, 2024 at 10:34=E2=80=AFAM Lucas Stach <l.stach@pen=
+gutronix.de> wrote:
+> > > > > > Am Mittwoch, dem 24.04.2024 um 08:37 +0200 schrieb Tomeu Vizoso=
+:
+> > > > > > > If we expose a render node for NPUs without rendering capabil=
+ities, the
+> > > > > > > userspace stack will offer it to compositors and applications=
+ for
+> > > > > > > rendering, which of course won't work.
+> > > > > > >=20
+> > > > > > > Userspace is probably right in not questioning whether a rend=
+er node
+> > > > > > > might not be capable of supporting rendering, so change it in=
+ the kernel
+> > > > > > > instead by exposing a /dev/accel node.
+> > > > > > >=20
+> > > > > > > Before we bring the device up we don't know whether it is cap=
+able of
+> > > > > > > rendering or not (depends on the features of its blocks), so =
+first try
+> > > > > > > to probe a rendering node, and if we find out that there is n=
+o rendering
+> > > > > > > hardware, abort and retry with an accel node.
+> > > > > >=20
+> > > > > > On the other hand we already have precedence of compute only DR=
+M
+> > > > > > devices exposing a render node: there are AMD GPUs that don't e=
+xpose a
+> > > > > > graphics queue and are thus not able to actually render graphic=
+s. Mesa
+> > > > > > already handles this in part via the PIPE_CAP_GRAPHICS and I th=
+ink we
+> > > > > > should simply extend this to not offer a EGL display on screens=
+ without
+> > > > > > that capability.
+> > > > >=20
+> > > > > The problem with this is that the compositors I know don't loop o=
+ver
+> > > > > /dev/dri files, trying to create EGL screens and moving to the ne=
+xt
+> > > > > one until they find one that works.
+> > > > >=20
+> > > > > They take the first render node (unless a specific one has been
+> > > > > configured), and assumes it will be able to render with it.
+> > > > >=20
+> > > > > To me it seems as if userspace expects that /dev/dri/renderD* dev=
+ices
+> > > > > can be used for rendering and by breaking this assumption we woul=
+d be
+> > > > > breaking existing software.
+> > > >=20
+> > > > Mm, it's sort of backwards from that. Compositors just take a
+> > > > non-render DRM node for KMS, then ask GBM+EGL to instantiate a GPU
+> > > > which can work with that. When run in headless mode, we don't take
+> > > > render nodes directly, but instead just create an EGLDisplay or
+> > > > VkPhysicalDevice and work backwards to a render node, rather than
+> > > > selecting a render node and going from there.
+> > > >=20
+> > > > So from that PoV I don't think it's really that harmful. The only
+> > > > complication is in Mesa, where it would see an etnaviv/amdgpu/...
+> > > > render node and potentially try to use it as a device. As long as M=
+esa
+> > > > can correctly skip, there should be no userspace API implications.
+> > > >=20
+> > > > That being said, I'm not entirely sure what the _benefit_ would be =
+of
+> > > > exposing a render node for a device which can't be used by any
+> > > > 'traditional' DRM consumers, i.e. GL/Vulkan/winsys.
+> > >=20
+> > > What I don't understand yet from Lucas proposal is how this isn't
+> > > going to break existing userspace.
+> > >=20
+> > > I mean, even if we find a good way of having userspace skip
+> > > non-rendering render nodes, what about existing userspace that isn't
+> > > able to do that? Any updates to newer kernels are going to break them=
+.
+> > >=20
+> > > Regards,
+> > >=20
+> > > Tomeu
+>=20
+
 
