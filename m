@@ -1,84 +1,160 @@
-Return-Path: <linux-kernel+bounces-231344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49088918EB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:43:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E031E918EBF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:44:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E48FC282650
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:43:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93B6C282366
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:44:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78E3C190690;
-	Wed, 26 Jun 2024 18:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D52191460;
+	Wed, 26 Jun 2024 18:43:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsPIeUiL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0781118FC85;
-	Wed, 26 Jun 2024 18:43:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3F9190698;
+	Wed, 26 Jun 2024 18:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719427398; cv=none; b=F5f6maByOAseQDUvHS28WPy7vBsU0qCC0AKozG6Rf38MLNhARzArY5c34qgZBxO294Q3KMqtGr6VraozIea0UoTUGtjKnk1wfj+3iK7SWk2NRiXLauAreK+xD4Ir7tuog6B+6/o8JjqRM/PSNR+HSXbv6lLTKLOVFnxc4c5NnAA=
+	t=1719427411; cv=none; b=lN8ehGKFkVxlEW6pL+tv6LoDt1EjSMw0Vyu2u67nD81keRuS6zd0YKLwYYUHZu0XS/WnlQFT6N9BjznDcK7Ou++xxtoMpIRRVySs26QFwun4HkXoErLvmYaPKkQGiwfSD8T1EMrOsVKyxjBPc6uRJ2k6M76TvRqK9MdUUaY7LW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719427398; c=relaxed/simple;
-	bh=le/+nw/Qzup/+krmq6I3s9Mx1o6B4hej1yo/g5Nb2f4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f/52ROgF55y9F0X3BDFEomc1eqawSs6VTA+VcNKxcracZeMNxIB0+kGEHiezJfW1uPsQcz/AA5Bk+VTw91LlttkW0KDWrsBIlHiRJotXXK2deybKJXpWPTs/uXCbvQ3VP9PLVQGRGzfvOe3eRF71p6v9I/WoEmLupYsX+h9s8gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 350F6C116B1;
-	Wed, 26 Jun 2024 18:43:15 +0000 (UTC)
-Date: Wed, 26 Jun 2024 14:43:13 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, Ard Biesheuvel
- <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Gary
- Guo <gary@garyguo.net>, =?UTF-8?B?QmrDtnJu?= Roy Baron
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
- Hindborg <a.hindborg@samsung.com>, linux-trace-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] rust: add tracepoint support
-Message-ID: <20240626144313.3f1e8277@rorschach.local.home>
-In-Reply-To: <CAH5fLgiG5hdh1JJgjH94E=ZwJo6ERkuZUFDpkrrJ6ErQhTvCrg@mail.gmail.com>
-References: <20240621-tracepoint-v3-0-9e44eeea2b85@google.com>
-	<20240621-tracepoint-v3-2-9e44eeea2b85@google.com>
-	<CAH5fLghb6oVkgy3ckf=dUk9S4VdCeWin+yDBW1ffBoxu=HqBKw@mail.gmail.com>
-	<ZnsIJ6ejNX_dAc8f@boqun-archlinux>
-	<CAH5fLgiG5hdh1JJgjH94E=ZwJo6ERkuZUFDpkrrJ6ErQhTvCrg@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1719427411; c=relaxed/simple;
+	bh=bTysRdZ18j1pz0kLr1idoPNYovOG2Qz2zyGh37sg4Sk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mj83ExGFkVw8T0qjTIJV5PBZIXelJUZi4jqisJtrcW76MzpPCRoN4bwaRxk5ObKNO2KmDW3FAnOCQX33maLy0aDuSR6AxukNlWdUdL/nAwxtrzpG4/vTPGFmdX2ms17kW5kSy9oXF/L3QXNPh+r0I57+sjXFQ7vaOxSpId7nnCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsPIeUiL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 361D0C116B1;
+	Wed, 26 Jun 2024 18:43:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719427411;
+	bh=bTysRdZ18j1pz0kLr1idoPNYovOG2Qz2zyGh37sg4Sk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jsPIeUiLko5aSNrZd1UqGBIK0KkKu9RhKo9Ayc+GePzmdyIb1wCshV32jmu0g0vOA
+	 7/wcnXcXEWdoAIR/kmcXO4vRx7aDcKT42kmhAmqJ7uKaUmjvK2vxoTksae/OYQ8+yW
+	 Nbj8NaJP1Ia3QLMY0YqDmA0mwkz8VD2F/RRqX7lzsM16ShBeC7nAOufK2FbbPfT6O7
+	 16ZMbyimROFn7PVqKi5oBFSOAXOnVsBc56KIe1wolY54kSROby4koemDzPDdVeOcbz
+	 aJFF+j8k+sYqoZwoASk0VCqbKo6cJO2/osIOtnsGWNMrSVV32+bSueiUR+H+EOL7B0
+	 plXPOl15JMXsw==
+Date: Wed, 26 Jun 2024 11:43:30 -0700
+From: Kees Cook <kees@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Tony Lindgren <tony@atomide.com>, Lee Jones <lee@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH 2/2] mfd: omap-usb-tll: use struct_size to allocate tll
+Message-ID: <202406261121.2FFD65647@keescook>
+References: <20240620-omap-usb-tll-counted_by-v1-0-77797834bb9a@gmail.com>
+ <20240620-omap-usb-tll-counted_by-v1-2-77797834bb9a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620-omap-usb-tll-counted_by-v1-2-77797834bb9a@gmail.com>
 
-On Wed, 26 Jun 2024 10:48:23 +0200
-Alice Ryhl <aliceryhl@google.com> wrote:
-
-> >
-> > Because your hooks/rust_binder.h and events/rust_binder.h use the same
-> > TRACE_SYSTEM name? Could you try something like:
-> >
-> >         #define TRACE_SYSTEM rust_binder_hook
-> >
-> > in your hooks/rust_binder.h?  
+On Thu, Jun 20, 2024 at 11:22:34PM +0200, Javier Carrasco wrote:
+> Use the struct_size macro to calculate the size of the tll, which
+> includes a trailing flexible array.
 > 
-> I was able to get it to work by moving the includes into two different
-> .c files. I don't think changing TRACE_SYSTEM works because it must
-> match the filename.
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> 
+> ---
 
-Try to use:
+I would actually include this entire bit below in the main commit log.
+It's the core of the "why" for this patch.
 
- #define TRACE_SYSTEM_VAR rust_binder_hook_other_name
+> The memory allocation used to be carried out in two steps:
+> 
+> tll = devm_kzalloc(dev, sizeof(struct usbtll_omap), GFP_KERNEL);
+> tll->ch_clk = devm_kzalloc(dev, sizeof(struct clk *) * tll->nch,
+>                            GFP_KERNEL);
+> 
+> Until commit 16c2004d9e4d ("mfd: omap-usb-tll: Allocate driver data at once")
+> turned that into the current allocation:
+> 
+> tll = devm_kzalloc(dev, sizeof(*tll) + sizeof(tll->ch_clk[nch]),
+>                    GFP_KERNEL);
+> 
+> That has surprised me at first glance because I would have expected
+> sizeof(tll->ch_clk[nch]) to return the size of a single pointer, not
+> being equivalent to 'sizeof(struct clk *) * nch'.
+> 
+> I might be missing/misunderstanding something here because the commit
+> is not new, and the error should be noticeable. Moreover, I don't have
+> real hardware to test it. Hence why I didn't mark this patch as a fix.
+> 
+> I would be pleased to get feedback about this (why it is right as it is,
+> or if that is actually a bug).
 
-in one. Then that is used as the variable for that file.
+Yeah, I would include:
 
--- Steve
+Fixes: commit 16c2004d9e4d ("mfd: omap-usb-tll: Allocate driver data at once")
+
+Because that was a clear mistake. I suspect they were intending to do
+this, which I've seen as a code pattern from time to time:
+
+	devm_kzalloc(dev, offsetof(typeof(*tll), ch_clk[nch]));
+
+But as Jann points out, "nch" is so small:
+
+drivers/mfd/omap-usb-tll.c:81:#define OMAP_REV2_TLL_CHANNEL_COUNT	2
+drivers/mfd/omap-usb-tll.c:82:#define OMAP_TLL_CHANNEL_COUNT		3
+drivers/mfd/omap-usb-tll.c:220:         nch = OMAP_TLL_CHANNEL_COUNT;
+drivers/mfd/omap-usb-tll.c:224:         nch = OMAP_REV2_TLL_CHANNEL_COUNT;
+
+struct usbtll_omap {
+        void __iomem    *base;
+        int             nch;            /* num. of channels */
+        struct clk      *ch_clk[];      /* must be the last member */
+};
+
+That this allocation was asking for 4 + 4 + 4 * 1 (12) instead of:
+	4 + 4 + 4 * OMAP_TLL_CHANNEL_COUNT (20)
+or
+	4 + 4 + 4 * OMAP_REV2_TLL_CHANNEL_COUNT (16)
+
+the latter would have ended up in the same kmalloc bucket (12 would be
+rounded up to 16), but with the ARM alignment issue, the minimum bucket
+size would effectively be tied to CONFIG_ARM_L1_CACHE_SHIFT, which could
+be as low as 5: 32 bytes minimum, so no bug to be had in the real
+world.
+
+Reviewed-by: Kees Cook <kees@kernel.org>
+
+-Kees
+
+> ---
+>  drivers/mfd/omap-usb-tll.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
+> index a091e5b0f21d..5f25ac514ff2 100644
+> --- a/drivers/mfd/omap-usb-tll.c
+> +++ b/drivers/mfd/omap-usb-tll.c
+> @@ -230,8 +230,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
+>  		break;
+>  	}
+>  
+> -	tll = devm_kzalloc(dev, sizeof(*tll) + sizeof(tll->ch_clk[nch]),
+> -			   GFP_KERNEL);
+> +	tll = devm_kzalloc(dev, struct_size(tll, ch_clk, nch), GFP_KERNEL);
+>  	if (!tll) {
+>  		pm_runtime_put_sync(dev);
+>  		pm_runtime_disable(dev);
+> 
+> -- 
+> 2.40.1
+> 
+
+-- 
+Kees Cook
 
