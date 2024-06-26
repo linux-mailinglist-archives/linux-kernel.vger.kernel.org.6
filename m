@@ -1,69 +1,71 @@
-Return-Path: <linux-kernel+bounces-230927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1750E9183E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:22:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF8959183DF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:22:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2BAC1F2374C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:22:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69A73B23C1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:22:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7415A186286;
-	Wed, 26 Jun 2024 14:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB847185091;
+	Wed, 26 Jun 2024 14:22:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FXJj/gM+"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Zj9hJnTJ"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AACC1849DB
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:22:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FA2185090
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:22:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719411755; cv=none; b=puAug7yagDMp/621OjTF9zmsoiQvXjdpn2VklfAdBJoUt0qrdJJL5RyNc8bXF5oWAtwkypW8z4CDXf5Maj7/nRr1btm1+Cz06KWnypZtTmTiykinHrgxfoK6r01KQnsVghu3BSDdKPtQHHEDxnACIqzOf6+yoWRmGY5ids7wL5I=
+	t=1719411755; cv=none; b=MjAt8Yb4hrCTZsS10YJ92I0ueKQfjaoe1/jGV5Plt3D0iVdD1CjQj5e+h6BCXim1mYNEqhY+Q2F1po+v8Ifnnn6XeXJPUzxor1ilz7nH/MoeFMzocDcaktXvJll07Qso8ddbh1/Fth1GswzqxDJ0aMsgsubB1/xeMdx8Mod9/00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719411755; c=relaxed/simple;
-	bh=pam71S/q3brfmLgFHhm3OjGNc+Gd/rysVsROrFeD7DM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B5iiuphpMvor/YjjKyVqxWOAiMUuFhvi0YEtdycR9/hVPH7rFt3/ZQ7D0/WY5bPlZRwKEDN5ZObHU1lsm5dFUT/1OJUSkFjrfGzDNcnEEVDFD44rgaKuuI4xLTd4UIAnt1UWVgKYJBZYMAds8oizWMD6xJcqDVEgPejFJUL6OdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FXJj/gM+; arc=none smtp.client-ip=209.85.208.178
+	bh=5HrqjCRmHr4XZRjBZJ7uKfrQ2XERtmB9cF8mR7toIbI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ErpwO032OZS0kthWXqpp/CIbB5zzovykR7rF3hEd45Cn/bcwxgkdEbc38YjTfML/TZw2hCFnQBHWdvUlWcGuw9SuuzR3Ptl4ALytS+PeRliXcoUYVZ0wBJqoX93JKtO7qdVu7NJzoDSVUq4QUz6Sm3ZCVqFu+HdC81OtwFIqJlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Zj9hJnTJ; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so78070721fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:22:32 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso83043801fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 07:22:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719411750; x=1720016550; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=W7iH3JSmiJaSnX32RaYcorOWmDrnkufENWf0l16tdfQ=;
-        b=FXJj/gM+dPwr36YLoA9RH2s5ulPFGvtAtkDgb/C0B4CannmhAZ5fdIYjRzV8t6yErM
-         k789dkFTt1jgsPYx0faM+WEIX0tjbKuiwsWxZIMMw+SGbRBPVJXt+osR3hLZS+oB5ROz
-         TsRKAerjfmetdqisxegsOvnoTiUAanLYnGNU+0nO/kBAgqSZCPE7aA+ZkxZhFHsy6uwv
-         zbXCFrYPM3XS6kEqzqc90c7WpAfL3OnMBMe4ipPfBmS+yBsJWqwx4GV9bUjhTHYLLPjg
-         +sk65klEtoCouX64vcSBAWAx8OjNk0N0ObNY/jp4v9M3CKu+NRyxfrPOVq+JC5wutvxd
-         wdYA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1719411751; x=1720016551; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q5oTyiTDE2zoIXFxITRpatG4bTgLxE9dmxO/uASRAFU=;
+        b=Zj9hJnTJPhykEjd3U/CPP54ZOkIGOgqipr7/lXc9ipK7xC/eMY1ZwK80m+m0sd2UEv
+         yVOKB9OEbj4qPydlfQn29BE4D2U5bU6guACassa0Y3kOGmXJ2EMg6oalGwQUHjpUn2Sa
+         KCGSiU2qV8rvKhQ+PVDZEe85sq57j6enSSdSp5SVS7sBC3JoFq/zd8TJs5Fc8tZOAM3N
+         3gwMXGmqZ5egCVX83C99GgTf22JE6Af4U5mPA735bgiPmWdeeMZSPoCFxOZME1XuZhTt
+         2jfXE9HjBxqxujs8MmiEleXeKnund3MWpSwyG8RKS1bAieT5dVYM8qOS7TIudz2pl+LU
+         bDlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719411750; x=1720016550;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W7iH3JSmiJaSnX32RaYcorOWmDrnkufENWf0l16tdfQ=;
-        b=cyzLQjRJFVCmBQCJAyD8Hy5By1aLzpQmXIVeLL+25F4k+RUdSmsnbgKfCWHCeEnuZe
-         +CaHunapbT82I8uolVGzumBTyvU7riV/Y86nrWFZPt5yxYBFvuToCxhM6ZrIcIW9noAr
-         So0LMaJSlogFIn/xiDIPgi2CZWuG9UAa4UlY9V64EcRVGs2vB7UqUDQNMjHwVABFfHU0
-         o1LKuj5m7nFWpkMmWyzUKfBbfZKkYRqvpKykTJasR8YBaPC5ESFXSxxe6hNW5TmRTyfB
-         EpbP0Fu9p912EDMCvn+WBfxgEEQ02pJjCNNZ9TimvholoxsOytrbuILA7MtktAaYwPIV
-         mc8A==
-X-Forwarded-Encrypted: i=1; AJvYcCXDqdOm+URLStsxQSqAymELnt9V0TsbDq7h7udyRy26tpC/pSMIS8iVser7nHvcHgYhrocqPbuwptJUQNypv5U7BSrfS6huzFXGnj2i
-X-Gm-Message-State: AOJu0YxwAT804GlWgOvbmh2S8j6iCGwZMlzP/zhg+7Tvd1qs/Ddz3Bi7
-	FaCICCjVIUfNLTEQc5sCt3njAbZoKjg4TlT4eMXy3csmwfpgYGq9JlRIGjcEu84=
-X-Google-Smtp-Source: AGHT+IHetDfsyqoRDtAkMQd5EyaDyXrcIZOcAmh59cPqxsnGl3jMLCu9/rXhsZFogKqN/Bv732PNYg==
-X-Received: by 2002:a2e:8416:0:b0:2ea:8308:841e with SMTP id 38308e7fff4ca-2ec5b345df8mr57301091fa.24.1719411750430;
-        Wed, 26 Jun 2024 07:22:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719411751; x=1720016551;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q5oTyiTDE2zoIXFxITRpatG4bTgLxE9dmxO/uASRAFU=;
+        b=g43hCId6Ons2WsGRwfFkyPO7qL+QE2nY5oRUD+T+CzPTX4STRxOoAzaZnpGYufmJVM
+         r4/vpGC7nNg6LSvIvZI+ospVOP5K1duQbUF0nk/oMfqmZWU91sdfQi/ijT6emv84wfG+
+         uKuWcC0DwHA++2VaJSGrsiKSbIbRHmxrtwIItyYvX0krGtYEZwXTxtFXrLpoEyQENsAN
+         3anV88eV6ZvcdgHGpBngaUv233Qk+Kzb5UpVQM/5g5yP/b6xAF4m/2FX+E+wa07HvoVr
+         O7owntAN01Wjf1sj/TvePrJPdQRNGIKg+SKjwUjkAEfbV4Qe8oPqJVoDGSOw1PVbqwv0
+         Q2CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6Bseh8wDSGT9I+sejnnyZypyAHNEa3EWjvCT+LpUMz5XucsENLdNTxZZPd489K0Wcck+wRUvX2VkuVP4f7KYxpW2whCmB+rnDcdiw
+X-Gm-Message-State: AOJu0YxjBKlnC5RJYBs5ZMjT0y180Xcibm1pkSefTa6bas2odA+BCHsL
+	bwx59wGY9muxbPlxa+X55M2JluDq01zmf7sPYQNZxK/3wKzpRRWXel+Ym2rToBw=
+X-Google-Smtp-Source: AGHT+IGYquuMgMSS+n+tk71AQ/4ysAbKByUybNfZEzAp4mLOcPd1ahbXpUz6gx3baLFJyiijvhFKpg==
+X-Received: by 2002:a05:6512:402a:b0:52c:e184:3dd6 with SMTP id 2adb3069b0e04-52ce1843fe7mr9156435e87.0.1719411751338;
+        Wed, 26 Jun 2024 07:22:31 -0700 (PDT)
 Received: from toaster.lan ([2a01:e0a:3c5:5fb1:7be7:aef1:af9e:fff6])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-424c823c28asm27141105e9.5.2024.06.26.07.22.29
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-424c823c28asm27141105e9.5.2024.06.26.07.22.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 07:22:30 -0700 (PDT)
+        Wed, 26 Jun 2024 07:22:31 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Neil Armstrong <neil.armstrong@linaro.org>,
 	Jessica Zhang <quic_jesszhan@quicinc.com>,
@@ -81,10 +83,12 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	Conor Dooley <conor+dt@kernel.org>,
 	dri-devel@lists.freedesktop.org,
 	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: [PATCH v2 0/3] drm: panel: add support lincolntech LCD197 panel
-Date: Wed, 26 Jun 2024 16:22:06 +0200
-Message-ID: <20240626142212.1341556-1-jbrunet@baylibre.com>
+Subject: [PATCH v2 1/3] dt-bindings: panel-simple-dsi: add lincoln LCD197 panel bindings
+Date: Wed, 26 Jun 2024 16:22:07 +0200
+Message-ID: <20240626142212.1341556-2-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240626142212.1341556-1-jbrunet@baylibre.com>
+References: <20240626142212.1341556-1-jbrunet@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -94,31 +98,27 @@ MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 
-This patchset adds support for the Lincolntech LCD197 1080x1920 DSI panel.
+This adds the bindings for the 1080x1920 Lincoln LCD197 DSI panel to
+panel-simple-dsi.
 
-Changes since v1 [1]:
- * Rebased on drm-misc-next
- * Drop vendor prefix change (lincolntech recently added)
- * Use mipi_dsi_dcs_*multi()
- * Drop the shutdown callback
- * Insert mipi_dsi_usleep_range() for _multi usage as suggested.
- * Downcase hexadecimal values
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ .../devicetree/bindings/display/panel/panel-simple-dsi.yaml     | 2 ++
+ 1 file changed, 2 insertions(+)
 
-[1]: https://lore.kernel.org/lkml/20240625142552.1000988-1-jbrunet@baylibre.com
-
-Jerome Brunet (3):
-  dt-bindings: panel-simple-dsi: add lincoln LCD197 panel bindings
-  drm/mipi-dsi: add mipi_dsi_usleep_range helper
-  drm/panel: add lincolntech lcd197 support
-
- .../display/panel/panel-simple-dsi.yaml       |   2 +
- drivers/gpu/drm/panel/Kconfig                 |  11 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- .../gpu/drm/panel/panel-lincolntech-lcd197.c  | 262 ++++++++++++++++++
- include/drm/drm_mipi_dsi.h                    |   7 +
- 5 files changed, 283 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-lincolntech-lcd197.c
-
+diff --git a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
+index db5acd2807ed..9b92a05791cc 100644
+--- a/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
++++ b/Documentation/devicetree/bindings/display/panel/panel-simple-dsi.yaml
+@@ -46,6 +46,8 @@ properties:
+       - lg,ld070wx3-sl01
+         # LG Corporation 5" HD TFT LCD panel
+       - lg,lh500wx1-sd03
++        # Lincoln LCD197 5" 1080x1920 LCD panel
++      - lincolntech,lcd197
+         # One Stop Displays OSD101T2587-53TS 10.1" 1920x1200 panel
+       - osddisplays,osd101t2587-53ts
+         # Panasonic 10" WUXGA TFT LCD panel
 -- 
 2.43.0
 
