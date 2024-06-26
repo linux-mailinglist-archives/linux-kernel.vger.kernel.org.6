@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-231645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE5F5919B49
-	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:39:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1977A919B51
+	for <lists+linux-kernel@lfdr.de>; Thu, 27 Jun 2024 01:40:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A731828183B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:39:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C878028158E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 23:40:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE39194A51;
-	Wed, 26 Jun 2024 23:39:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73F2A19415C;
+	Wed, 26 Jun 2024 23:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QhdYsgFp"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iRXaG7j+"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961FD1946BC
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 23:39:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ECCF173338
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 23:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719445148; cv=none; b=BrST12Re7C3fRjMIjnKLMhNedioWBGBuViZcoAwJqUFAKNFrm8TD6aLyP9mWBJ3VBvSEP7YQshuGXRNLIYHxXqIxGFT1dd6yTCGCvrJeOGOsSD1of5uJOgBb0Dw38Z6ckuXpoKqpu9TVKMETOWM3XzWgNFHSQRrBfjWcYXO9qiA=
+	t=1719445212; cv=none; b=HiSoggcgFbvHRoXsOFtveH8WPjyYecijfmRCw69TPvnHcedMg0LP7iJKc0Vex+d+VL7ERzt765/kmc8i67WRr9rGSPY+fZgW//oHbT5qXQ1qpfM13ZN0QkHpH5zEbsWb0nGk/RgtWfexdfJooYR2DTlD07ppOFzzBHINS/m7IwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719445148; c=relaxed/simple;
-	bh=b6WYlfkbjmi7vg40d8+F6oKkGWP0eLaqM1jbxdGWZRo=;
+	s=arc-20240116; t=1719445212; c=relaxed/simple;
+	bh=019CaFVh3lhoS0w68HPIP9ng8eI8idSw76yT38lMbnw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N7jewcwf0d2jO6RbAuyxhWnwnKfNTrNClWsk6Era0VjpJ0uco/zoqUfHLvn15PMYDB9z/pojaQsHb0YcsGxIOwOoR1WBAf7uIsTTx1srfkxuyxu21P2vj6nMr2s9tQGD9fEGaVyzOJvQo5tbO5XOirELrI2PAzxzzu6dVTufFVQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QhdYsgFp; arc=none smtp.client-ip=209.85.214.182
+	 Content-Type:Content-Disposition:In-Reply-To; b=hUyhe38/pIimbfk/vvXVIqRSVxAXbG4mg222tDGxa7BbNe9hagIZCD1D+zirlj9Gz2899As7vqT+OuzX+wAu305pR0TGblNCVe6B19D3JA37F32Eg6R4UF6z4lqVz4wfYmQU8Skl9W3hwCC//gFQam31x0mGK/pLyeSNS/aTqcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iRXaG7j+; arc=none smtp.client-ip=209.85.214.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1fa4b332645so39955ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:39:05 -0700 (PDT)
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fa901ad6f3so39505ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:40:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719445145; x=1720049945; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1719445211; x=1720050011; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=K3pmB34cCwtjnl+eYO8f6Z1wbmFiYiECc2kegHJsZVI=;
-        b=QhdYsgFpqnCTNhhQJzsxrR/t4xE747dDo8ikQcVYTChFnC6GcJptwEbnb89ma11dO/
-         TypW4FWTl2wzneOiH1n0TQLN4wTexHT7cF5h7hggzfvGDReFT4UOweBU8KvPEcK25ruG
-         SPI9iJFVC6Y/T18tqmiHrwBYOQuOvrDfUXBB5R5hUbOqhNelv+bgeLmamde57tVo2Fv/
-         9zAU07S2cJJDbfkqZj1DIdBWZMk8gP76f4A28HUyshD9dbi2JUZmrVl1+mc6PFaUP+LT
-         SJE0palp41Dkivfndo023opoLbkU9ZrZ/Z6Yyeh8lwIbAq/MQZGpL9TOeiXHDDz7ZOJi
-         pDeA==
+        bh=cYUt50CXgSrSaz+HXS9uk+LgKfhLcjaXpXf0DU8eqcI=;
+        b=iRXaG7j+1XO5wSVH1ggF3Hk1ivlNRrYsOVzBOY4GSdqQ2D9W9tOFGubX47Y6t+coDo
+         KvUf/2TygQAptptFsYn5OwjFPr739t8h/eEn7Fxht/K9Eue1Vx0NVezGkCdmVnITWA3Y
+         GfzTjK9HmAH9+LMVYQ3LkQO8kMJ0Rfa8/FBJFf4OGXdb6Vd70UJ24kSbMlY+qegx7C4E
+         Cxj22dgWVi7Tsp4frCCvw+v90w6rIZPjluEMKDBOOjksQVV++Y7QdP0w/hxdTEAZ1kla
+         /uzzYawBQ8+zN8tFUwwwST9rgR7O7fCihtauBI5ZkxcEEXcLyhOAa0Jfn6kLFSfhNT/I
+         lQiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719445145; x=1720049945;
+        d=1e100.net; s=20230601; t=1719445211; x=1720050011;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=K3pmB34cCwtjnl+eYO8f6Z1wbmFiYiECc2kegHJsZVI=;
-        b=WLFOVb2kXb4a2VP47/U3RlyXLYHu4BKT1fS9ANknVCIQ+IgT2VX8F+CnAoHIP47hUS
-         eTANPxXk0mWedbQH6gdBZ0JqiUhQHkP8YJ2YwsKjjxgoScOyMcPJ42FxSTEiykP6/6dt
-         Gqi+9T9g38Adz8OaAAowpTjtLgh6+/NNlPAYn/SBrln+CEhhickfsEi2Ud5ChZq6uwrP
-         DWTNSkWb8o2ibPFd7igaLqlOse2oaIo7hJX+BJbEKaeXMig0KrZHOAjS9vaeiy2Cf3/L
-         qzB4DnOB/Dl8WTvdJ5kvT1duS0lt+2CqjbTfG0YqwOVtyO9pK7Yu0MkOVV/nOYdxXK/o
-         dK5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXbbDm708VMBN1oe0BwNkXrMHjcqVlDIKVkwXiH73W5JZKFrwoOByi6BxWblBZFFb+HNA9EIiKm5XCJFtlGFcJ2Oj1frnK5J/qxJOIO
-X-Gm-Message-State: AOJu0YxuvfznuMddXdvzGzHvtaUVw1aIxgjOvs8waOEtT+DrOL8sd1CW
-	N5U6JrQ03PiimBYOUaMoJpD6msfhc3YLX4xuGvH2O6t1ETkfPRFZ3H4GnCI+Dg==
-X-Google-Smtp-Source: AGHT+IHRdsS+/Y76sEwDfKIkrb+jsZorceifOYSrWmMRro/2TsN9MxZqihS12VYFCI7AWUK+mR2ByA==
-X-Received: by 2002:a17:902:f74d:b0:1f6:5bba:8ea3 with SMTP id d9443c01a7336-1faab5992d7mr812505ad.25.1719445144627;
-        Wed, 26 Jun 2024 16:39:04 -0700 (PDT)
+        bh=cYUt50CXgSrSaz+HXS9uk+LgKfhLcjaXpXf0DU8eqcI=;
+        b=cCWChmUfWfuuCv9j1etmS1jMwq+fB3DoaYypb9+sxP7ufJYWVFKkCTl3mHLUMPk9hG
+         kE6v1fIgOrzqDcYtaY4u10Qcr+AdKVDP6PMv15z2lDSdCaR6xUXb6lRuvezuMAhWYFPG
+         yOtdjhsaRWrMQMzzsQnvcjjegreKs1IostufItP+4eyG3C1+3qfAlG8Wzl4SgoCJVuP8
+         g829Ri97qeVdZC7+NcAoVN/KsJCpWYZ8No6Lf4JJF6Yii7wgqXIyo9+5budMx8rVHyZ/
+         Bl17ZGQVKqsBN01k8uaNVq1FSCSa4u+q7gVYAJFrMj4cKLvjYJ8j453QC9UB8/3AXwi/
+         OeCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWwZXTWmvGqIThlhl+Eg8w4cnpgcBIu4Qol+wKaQoKG/ry35odRGts25qU4A+zS4EYpJWVPOev7k9rkrKL+xszUC8/SI6aE9Pkd3nXi
+X-Gm-Message-State: AOJu0YxnuZyD/Hm70j/xMzBgduRaAnpKI1nuv8XsqhAtmNAZKaAXORmo
+	wLim8K+cJ5GNll5eYKY1Tg7BbZ2QOV5YqDVBgSup+Oxr5VH/5udW4Q3uSOUS+A==
+X-Google-Smtp-Source: AGHT+IHlKaAmURTLh3ZeZvxHBLbh/zTd2wDSCpmqMl4TBrZZ7NKfHf0vVsBEj0+hsbeFfCuPgzzyhg==
+X-Received: by 2002:a17:902:82c6:b0:1f4:7db0:afbd with SMTP id d9443c01a7336-1faa999eb47mr1582755ad.28.1719445209827;
+        Wed, 26 Jun 2024 16:40:09 -0700 (PDT)
 Received: from google.com (7.104.168.34.bc.googleusercontent.com. [34.168.104.7])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faac99a30fsm527375ad.223.2024.06.26.16.39.03
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1faac979499sm514875ad.144.2024.06.26.16.40.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 16:39:03 -0700 (PDT)
-Date: Wed, 26 Jun 2024 16:39:00 -0700
+        Wed, 26 Jun 2024 16:40:09 -0700 (PDT)
+Date: Wed, 26 Jun 2024 16:40:06 -0700
 From: William McVicker <willmcvicker@google.com>
 To: Peter Griffin <peter.griffin@linaro.org>
 Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
@@ -76,11 +76,11 @@ Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
 	tudor.ambarus@linaro.org, andre.draszik@linaro.org,
 	kernel-team@android.com, devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/3] soc: samsung: exynos-pmu: add support for PMU_ALIVE
- non atomic registers
-Message-ID: <ZnymlHiCCIDt2dCJ@google.com>
+Subject: Re: [PATCH 3/3] clk: samsung: gs101: mark
+ gout_hsi2_ufs_embd_i_clk_unipro as critical
+Message-ID: <Znym1qR9hyYwy5Ll@google.com>
 References: <20240626194300.302327-1-peter.griffin@linaro.org>
- <20240626194300.302327-3-peter.griffin@linaro.org>
+ <20240626194300.302327-4-peter.griffin@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,65 +89,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240626194300.302327-3-peter.griffin@linaro.org>
+In-Reply-To: <20240626194300.302327-4-peter.griffin@linaro.org>
 
 On 06/26/2024, Peter Griffin wrote:
-> Not all registers in PMU_ALIVE block support atomic set/clear operations.
-> GS101_SYSIP_DAT0 and GS101_SYSTEM_CONFIGURATION registers are two regs
-> where attempting atomic access fails.
-> 
-> As documentation on exactly which registers support atomic operations is
-> not forthcoming. We default to atomic access, unless the register is
-> explicitly added to the tensor_is_atomic() function. Update the comment
-> to reflect this as well.
+> The system hangs on poweroff when this UFS clock is turned off, meaning
+> the system never powers down. For the moment mark the clock as critical.
 > 
 > Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
 
 Reviewed-by: Will McVicker <willmcvicker@google.com>
 Tested-by: Will McVicker <willmcvicker@google.com>
 
-I verified reboot and power off on my Pixel 6 Pro.
-
-> ---
->  drivers/soc/samsung/exynos-pmu.c            | 16 ++++++++++++++--
->  include/linux/soc/samsung/exynos-regs-pmu.h |  4 ++++
->  2 files changed, 18 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/soc/samsung/exynos-pmu.c b/drivers/soc/samsung/exynos-pmu.c
-> index 624324f4001c..5556acc7c092 100644
-> --- a/drivers/soc/samsung/exynos-pmu.c
-> +++ b/drivers/soc/samsung/exynos-pmu.c
-> @@ -129,14 +129,26 @@ static int tensor_set_bits_atomic(void *ctx, unsigned int offset, u32 val,
->  	return ret;
->  }
->  
-> +static bool tensor_is_atomic(unsigned int reg)
-> +{
-> +	switch (reg) {
-> +	case GS101_SYSIP_DAT0:
-> +	case GS101_SYSTEM_CONFIGURATION:
-> +		return false;
-> +	default:
-> +		return true;
-> +	}
-> +}
-> +
->  static int tensor_sec_update_bits(void *ctx, unsigned int reg,
->  				  unsigned int mask, unsigned int val)
->  {
->  	/*
->  	 * Use atomic operations for PMU_ALIVE registers (offset 0~0x3FFF)
-> -	 * as the target registers can be accessed by multiple masters.
-> +	 * as the target registers can be accessed by multiple masters. Some
-> +	 * SFRs don't support this however as reported by tensor_is_atomic()
->  	 */
-> -	if (reg > PMUALIVE_MASK)
-> +	if (reg > PMUALIVE_MASK || !tensor_is_atomic(reg))
-
-nit: Should we just move all the logic, e.g. `reg > PMUALIVE_MASK` into `tensor_is_atomic()`?
-
 [...]
 
-Thanks,
+Thanks! I verified my Pixel 6 Pro reboots and powers off fine with these
+changes.
+
+Regards,
 Will
 
