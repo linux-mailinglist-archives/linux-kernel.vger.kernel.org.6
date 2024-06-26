@@ -1,191 +1,154 @@
-Return-Path: <linux-kernel+bounces-231273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A8D3918A0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:26:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A7D9918A14
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:27:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E347D285FA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:26:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55028283CCA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B5F18FDDA;
-	Wed, 26 Jun 2024 17:26:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4792F18FDD3;
+	Wed, 26 Jun 2024 17:27:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdUVmVg3"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ggq3iXj+"
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7450A18FDC2;
-	Wed, 26 Jun 2024 17:26:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 217BD18FC63
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719422808; cv=none; b=CXimqca5vaRHCZHsdLd1dWFO/TuE0JlycpdUM6IzZWSGq1hsyV1QFuhIJnNk7wW1EOpJnb63uD9aRHuh3OpXVC1HaHmS406tR1JYADoDoDEvg1pQzko3BkJL6vQSvwWXIYmEnxbJ6om7+lurWj5Ky0ke7AqfyCYA5+hgsql7FHc=
+	t=1719422838; cv=none; b=ntgGIsyxpJng84unTZD2l887DH2O4S7rPzWk/4TzFg7RtOyE4KJNMN3ygJM8mem8d3XItry3AEmMAOyMGUzZKlqiCgEexT9GG8WY8INnQc5iEPRhPBdUII+OWhK2FOQDEgZO3wM43WnhD25aBCH3eojWHeYESUtL0Lv5Rc8WIh8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719422808; c=relaxed/simple;
-	bh=UfVULBsUPsiESbCKcjmUM7T+z9/cgFWMHOmskyB8oRQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tiGX7pIxlsQyGuPdBHNPgVH4etryvSKAn2IgDInlqexQ3714o+tlQWJnnzBI4uvbsYNiVwkuQnEbW3gY5uvNr3AgwCl5PHl/llnLBfRXXldWAavLNO6yHF/8DfDGsG2tgPtAa0o9SzAaabXARK8/pT9IFM/6EZ1OrUz7exBaxGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UdUVmVg3; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-424ad991c1cso11957185e9.1;
-        Wed, 26 Jun 2024 10:26:46 -0700 (PDT)
+	s=arc-20240116; t=1719422838; c=relaxed/simple;
+	bh=cwFV6cXnZvvdb46gn7OCr2S3Z++ezeLyzLje0Wp6HTY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JV+AWh216FrjLnLXnIs14VhrDjrJwAA4+Csn9Xb3cIz7HahcKRDTmq2q3eT2nzF5E+HEZFKSfKLQJM5lOYwNaC4qxCzb/KcmccILIIdtskVLh50PWHS8Gx8NWTp1p530oT8WekdT0JAhIxSaT5ERI0tgaH8mYvchAnUknktya6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ggq3iXj+; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-3762775e9ebso9405ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:27:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719422805; x=1720027605; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2eWvakV/SmwEdHBsMILQHJAV8O018vkciNVSeghp/wY=;
-        b=UdUVmVg3kUxEZSUKjh5bS53rnezeidgdFF7wwzSIRxK3OitZESTPVB3QGqn5OmNAfj
-         1oIysSlcg7c6Zc4+E3hDB8Lk1ynGThMTUgl0P+yNZKYHrSTC6/QchBnY0A94aIdQGp5Y
-         5pJ5KIW4faXmWiHpF4N3l6x8s5lDIe7yX2gsCYHYZReYms48flp3lB1YUpo9bJIATxss
-         Zrbejef1Yu4SxgC3JWwfmSAbrEpBB8pF7Hd5FFWr8BX/9/I81qUu5LtY1yFdx2EQ0P3K
-         +uC329W2j94ZMpUWyESKSwqp/2c+OcqRoET3uoXgtPa04egIe7kpO5vuYQJ0ZqBqb5HN
-         2Hxg==
+        d=google.com; s=20230601; t=1719422836; x=1720027636; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=odCzTyLKcmA7UwpT1SGmpvnHQ/qubaerHoVlU19xubU=;
+        b=ggq3iXj+QQJIMpPj/WcYHdWq8PJ+5aZS6TYJc668tE7Ck15/KaAb75WMjhz8b4Z9nF
+         dmggt6X3bGGuZJ8S82gdJwDLkAzdqeRO4PDs8Kl16oxobtUvm4Fe6LQdrpHfWiNv0qXs
+         zsKC0cySEF+Iaj15ubicln8sb+xEYk6bgxMVc95MjeIfokpz3Fd+BJB5MyPWrPCv1Dch
+         M9XAmXm7WvK3LQvmhen4Xxr8ZWszx9zomk8hHTi6d0C8RD/rhzy5CXvMsquAoSqAIg2i
+         sT47fXFhItLpk+K73KSWzBU9jZzId4mMBX10bL//s+DMhGZG0usy7RY0treGpVP/Zv7o
+         B2hg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719422805; x=1720027605;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2eWvakV/SmwEdHBsMILQHJAV8O018vkciNVSeghp/wY=;
-        b=Lpbg5HkC/gEFjCHjbehWV+oazCPQl389QjSVPsKp/wHlNpkls7/9EyHtsnkd6tPk5j
-         etF0fb6cCv+YIo2UJoIGGASoXBfJqxBjkgyxizOtbVNGXGz7bVhl7CmLGoNHDOvgBWgx
-         hbpv9aDRZD2xA9AVAJloWTkX43aHJQZQvCfovQlSVXPOtaRCaaMKokxvd3GlZxt34UzA
-         RVxuLm8uvGXbmXaB/RjClyCCcsdOrzk1gkHJAqh9O4YFY5D7fDKPyn0+7hOpub+v5aMC
-         aMfqWExPzb1ZMJFtXJiN00XGaQeltpoLd4QjNuaPirvR0UTP78xB7WlMEq58Wh4gO9Ta
-         ajQw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3ioDgxwJX2/+OanILAiHGhO7bZuOXMW8+qk8N0G0h7OHrVu+8Bc21Wgf5cTtHKTI9psgxxPmcWamcR355EDEW0QIG050mqpS3BAaYUFA1mM2rC0FfC24/pqSKtAixjGSoNqpptRSFhbie2HiWoXPlu+ktbKDUddSPysS+jXlqt22Sod9WovrDSw==
-X-Gm-Message-State: AOJu0Yw3XFyvrmW0dRXq+utJPX7pZTlMpcqi84MOUsPYKM+e4D52CQAG
-	VPOWdVocJSryDRFW1gKdFFqGkOsBa1K0KYW4bj644u7AemL3zH4OvgpILDQo
-X-Google-Smtp-Source: AGHT+IFgVZndCVwzt9PNZPRHcAgriQt8qHU8OONg75lIR71l+VeajG5nazqVX74457cGFcDm/bVB5g==
-X-Received: by 2002:a05:600c:4f07:b0:421:dd8c:35a3 with SMTP id 5b1f17b1804b1-4248cc586d0mr90589425e9.26.1719422804534;
-        Wed, 26 Jun 2024 10:26:44 -0700 (PDT)
-Received: from [192.168.0.31] (84-115-213-103.cable.dynamic.surfer.at. [84.115.213.103])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c84245fbsm32799745e9.38.2024.06.26.10.26.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 10:26:44 -0700 (PDT)
-Message-ID: <5bfebb11-eee1-4c1e-bb2a-7c3b27d2af7b@gmail.com>
-Date: Wed, 26 Jun 2024 19:26:42 +0200
+        d=1e100.net; s=20230601; t=1719422836; x=1720027636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=odCzTyLKcmA7UwpT1SGmpvnHQ/qubaerHoVlU19xubU=;
+        b=t9K/idvtkf7YEPIGfQIibTkc1Khp+HZOpayFZwzkH0hrpJEwXn3LIKv5AE5LZB5t/r
+         D8k/kGWotLWADqNKyHjH0KjGtfitD8KHc9phxsMfxvVDD5NJBMsi81SP5oO1Y1BcyyfM
+         W4FmaLIEFN91dM0hHeuclmi4UiZ+W3HDSub6bk2XUoFkm3UBa+DlJGZtYYSdCi7ypG0C
+         lHhKNwRMfTcfNj5axf8NXROM/kgQpc7Mfk1UBPd8EPr05TCMM6+lIVB0muuhd0HP/w11
+         rgd3XOv7Ex4ie9nb/Qehlo9nvkBgF+7Q/t6tnh5Q1qtn/oc7lgwAUWxuJE0rVSQPnQwF
+         TmXQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0hhrsvC1ceQvlsxa9FybVrsfi7fXDSqIu2mgD58xmfeX6wNQOddxeaqRm7FyZcP8PM4BbrZEg2JALv8vMDRnFWM7piM/mdoWZAYS4
+X-Gm-Message-State: AOJu0Yzj/759d3A3RYk3VGjXq9d3MAdS3La6LeS4e/CZlFmPqE5v+0oN
+	XwW/WLbU8CIJpZVO4kfOM1lyCw+Oty1bpUuQFub4lyIkFTBTDh245zqpLGd63jZUQI/+yEp8yAo
+	kZ8HeWCYr2VW1YaXUtOhj10dHdz24STdbJdNl
+X-Google-Smtp-Source: AGHT+IHPkqcUdOsYg4z8gPGwIHU7Tn6w6J5eeyaZ5CFTnx+zpL0OTnv3VCDHUR7YF8O8/7cg9iO54S/AxvqRAxvLwwo=
+X-Received: by 2002:a92:cda7:0:b0:377:14ab:42ea with SMTP id
+ e9e14a558f8ab-3795d5c0e5fmr234695ab.16.1719422836106; Wed, 26 Jun 2024
+ 10:27:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] mfd: omap-usb-tll: use struct_size to allocate tll
-To: Lee Jones <lee@kernel.org>
-Cc: Tony Lindgren <tony@atomide.com>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>, linux-omap@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-References: <20240620-omap-usb-tll-counted_by-v1-0-77797834bb9a@gmail.com>
- <20240620-omap-usb-tll-counted_by-v1-2-77797834bb9a@gmail.com>
- <20240626152603.GB2504017@google.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20240626152603.GB2504017@google.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240625182256.291914-1-kan.liang@linux.intel.com>
+ <20240625182256.291914-8-kan.liang@linux.intel.com> <CAP-5=fU4Mn0BhgS3n_aUmfamtD77d-VDhnZ1OoiRvXFrGJERCQ@mail.gmail.com>
+ <e57cf98a-89c6-4913-99af-6a70e098f37b@linux.intel.com>
+In-Reply-To: <e57cf98a-89c6-4913-99af-6a70e098f37b@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 26 Jun 2024 10:27:04 -0700
+Message-ID: <CAP-5=fVcr6SPH-g=AEK96rbMnMQBOBoKckAZUHQvX4UZ_n01VA@mail.gmail.com>
+Subject: Re: [PATCH V2 07/13] perf/x86/intel: Support PERFEVTSEL extension
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: peterz@infradead.org, mingo@kernel.org, acme@kernel.org, 
+	namhyung@kernel.org, adrian.hunter@intel.com, 
+	alexander.shishkin@linux.intel.com, linux-kernel@vger.kernel.org, 
+	ak@linux.intel.com, eranian@google.com, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26/06/2024 17:26, Lee Jones wrote:
-> On Thu, 20 Jun 2024, Javier Carrasco wrote:
-> 
->> Use the struct_size macro to calculate the size of the tll, which
->> includes a trailing flexible array.
->>
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->>
->> ---
->> The memory allocation used to be carried out in two steps:
->>
->> tll = devm_kzalloc(dev, sizeof(struct usbtll_omap), GFP_KERNEL);
->> tll->ch_clk = devm_kzalloc(dev, sizeof(struct clk *) * tll->nch,
->>                            GFP_KERNEL);
->>
->> Until commit 16c2004d9e4d ("mfd: omap-usb-tll: Allocate driver data at once")
->> turned that into the current allocation:
->>
->> tll = devm_kzalloc(dev, sizeof(*tll) + sizeof(tll->ch_clk[nch]),
->>                    GFP_KERNEL);
->>
->> That has surprised me at first glance because I would have expected
->> sizeof(tll->ch_clk[nch]) to return the size of a single pointer, not
->> being equivalent to 'sizeof(struct clk *) * nch'.
->>
->> I might be missing/misunderstanding something here because the commit
->> is not new, and the error should be noticeable. Moreover, I don't have
->> real hardware to test it. Hence why I didn't mark this patch as a fix.
->>
->> I would be pleased to get feedback about this (why it is right as it is,
->> or if that is actually a bug).
-> 
-> You don't need this H/W to test this our for yourself.
-> 
-> Mock-up the structs in a user-space C-program and print out the sizes.
-> 
-> Please report them all to justify the patch.
-> 
+On Wed, Jun 26, 2024 at 6:25=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.c=
+om> wrote:
+>
+>
+>
+> On 2024-06-25 9:34 p.m., Ian Rogers wrote:
+> > On Tue, Jun 25, 2024 at 11:22=E2=80=AFAM <kan.liang@linux.intel.com> wr=
+ote:
+> >>
+> >> From: Kan Liang <kan.liang@linux.intel.com>
+> >>
+> >> Two new fields (the unit mask2, and the equal flag) are added in the
+> >> IA32_PERFEVTSELx MSRs. They can be enumerated by the CPUID.23H.0.EBX.
+> >>
+> >> Update the config_mask in x86_pmu and x86_hybrid_pmu for the true layo=
+ut
+> >> of the PERFEVTSEL.
+> >> Expose the new formats into sysfs if they are available. The umask
+> >> extension reuses the same format attr name "umask" as the previous
+> >> umask. Add umask2_show to determine/display the correct format
+> >> for the current machine.
+> >>
+> >> Reviewed-by: Andi Kleen <ak@linux.intel.com>
+> >> Co-developed-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> >> Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
+> >> Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> >> ---
+> >>  arch/x86/events/intel/core.c      | 69 +++++++++++++++++++++++++++++-=
+-
+> >>  arch/x86/include/asm/perf_event.h |  4 ++
+> >>  2 files changed, 69 insertions(+), 4 deletions(-)
+> >>
+> >> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core=
+.c
+> >> index 23e074fd25e1..9d50e1049e30 100644
+> >> --- a/arch/x86/events/intel/core.c
+> >> +++ b/arch/x86/events/intel/core.c
+> >> @@ -4632,8 +4632,55 @@ PMU_FORMAT_ATTR(pc,      "config:19"     );
+> >>  PMU_FORMAT_ATTR(any,   "config:21"     ); /* v3 + */
+> >>  PMU_FORMAT_ATTR(inv,   "config:23"     );
+> >>  PMU_FORMAT_ATTR(cmask, "config:24-31"  );
+> >> -PMU_FORMAT_ATTR(in_tx,  "config:32");
+> >> -PMU_FORMAT_ATTR(in_tx_cp, "config:33");
+> >> +PMU_FORMAT_ATTR(in_tx,  "config:32"    );
+> >> +PMU_FORMAT_ATTR(in_tx_cp, "config:33"  );
+> >
+> > nit: It seems unfortunate these 2 lines change for the sake of spaces
+> > before the ')'. Perhaps leave unchanged.
+>
+> The two lines don't follow the existing formats. It kind of ugly when
+> reading the code.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/a=
+rch/x86/events/intel/core.c#n4569
+>
+> I just want to make the format consistent to facilitate the future code
+> review.
 
-Values obviously depend on the architecture, but in general:
+Thanks, I'm easy on just keeping it the same or changing the
+whitespace. When I saw the lines changing I was figuring the config
+encoding was being modified which could break things like libpfm4 that
+directly use configs rather than formats.
 
-1.- Before commit 16c2004d9e4d:
- 1.1. tll = devm_kzalloc(dev, sizeof(struct usbtll_omap), GFP_KERNEL);
-
-   -> sizeof(struct usbtll_omap) = N
-
- 1.2 tll->ch_clk = devm_kzalloc(dev, sizeof(struct clk *) * tll->nch,
-                           GFP_KERNEL);
-
-   -> sizeof(struct clk *) * tll->nch = M * nch
-
-Total = N + M * nch,
-where M is the size of a single pointer.
-
-
-2.- After commit 16c2004d9e4d:
- tll = devm_kzalloc(dev, sizeof(*tll) + sizeof(tll->ch_clk[nch]),
-                    GFP_KERNEL);
-   -> sizeof(*tll) = N
-   -> sizeof(tll->ch_clk[nch]) = sizeof(struct clk *) = M
-
-Total = N + M
-Therefore, it only allocates memory for a single pointer.
-
-
-3.- struct_size (this patch):
-sizeof(*tll) + nch * sizeof(struct clk *) = N + nch * M
-
-What I meant with not having real hardware is that I could not replicate
-the whole code with all their structures to get exact sizes, which don't
-leave room for discussion or misunderstandings.
-
-Best regards,
-Javier Carrasco
-
->> ---
->>  drivers/mfd/omap-usb-tll.c | 3 +--
->>  1 file changed, 1 insertion(+), 2 deletions(-)
->>
->> diff --git a/drivers/mfd/omap-usb-tll.c b/drivers/mfd/omap-usb-tll.c
->> index a091e5b0f21d..5f25ac514ff2 100644
->> --- a/drivers/mfd/omap-usb-tll.c
->> +++ b/drivers/mfd/omap-usb-tll.c
->> @@ -230,8 +230,7 @@ static int usbtll_omap_probe(struct platform_device *pdev)
->>  		break;
->>  	}
->>  
->> -	tll = devm_kzalloc(dev, sizeof(*tll) + sizeof(tll->ch_clk[nch]),
->> -			   GFP_KERNEL);
->> +	tll = devm_kzalloc(dev, struct_size(tll, ch_clk, nch), GFP_KERNEL);
->>  	if (!tll) {
->>  		pm_runtime_put_sync(dev);
->>  		pm_runtime_disable(dev);
->>
->> -- 
->> 2.40.1
->>
-> 
-
+Thanks,
+Ian
 
