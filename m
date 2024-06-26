@@ -1,172 +1,127 @@
-Return-Path: <linux-kernel+bounces-230583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1CC917EDA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:51:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4270C917EE1
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:51:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEEE21C211CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:51:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F285A28B98A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:51:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE8C8181CF3;
-	Wed, 26 Jun 2024 10:49:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F207917D364;
+	Wed, 26 Jun 2024 10:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gGeb7LTR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RoTanZ/j"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E762F181BB8;
-	Wed, 26 Jun 2024 10:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6CC13A26F;
+	Wed, 26 Jun 2024 10:50:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719398963; cv=none; b=dtwWUnL7yEinrtWrU702ODucY/I0hKwvA0eSnWvlL7r96CkXxlDEionj2jpfJ2EeZzIV0hFSvqk325zCi2i4azoV+whCXmMOg06dxosHRveOSIAtjEO0DI3S3iDS+8wcdVHzLNzQ9ZeEShbxZiM7Q3qg0LdZahKf1VWYC85iuns=
+	t=1719399041; cv=none; b=urKntrAi7TKoMNLybwxWrliumKz18vr1CYZJeuOj6EYMILK9+KLMY6GQFOjc4hukBnqmAd00tMfvlMOl2IbPX1L9s+qcC4kunDgknDL1KGZeXlow9WQ8Cp5HEzrcyq63YQv4a+ktFEsQ2Wx8QmHWEpbs0bds1MZPhGNokWTDyTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719398963; c=relaxed/simple;
-	bh=LF+V/YGvNyhi6W1Q8K48YhxFw5P+05yaDiJQ3on2hCg=;
+	s=arc-20240116; t=1719399041; c=relaxed/simple;
+	bh=Nhxq8J22maEd7Tggpjfv1hTvgHfsAmvbZS82KOa+e/k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=drgTrY6OCMx0ZvFYNYuFz/0OKk3nHip5U2HngHz0l9CSvvxe+lPqGjzVj2TuMXa3YZ1h+pjY4QCnA3DUd/YV12+zQgEF2/Jm9L+zl92zGdlh0BaJxhViqI7g/r5N+giMWycRJJUtjdIGNMnjn4c6eUZ3YEA9fsOfMW7hUpxK8B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gGeb7LTR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BF7EC32789;
-	Wed, 26 Jun 2024 10:49:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719398962;
-	bh=LF+V/YGvNyhi6W1Q8K48YhxFw5P+05yaDiJQ3on2hCg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=gGeb7LTRK+Sy61ygjpRWpFUJP3n3pd2vBAtVlkuGjoFbbVSRSsDcxA2+jGGB4jEwQ
-	 IRPx8KuGSG2mjC5GBG7ZkTxBAN840r9OxOnYrH2OJUMycsTD1u+/AxTO7jrRPT6VFQ
-	 IEOCdT77AgCF+WFgGjN3+xmeADz3xdwRt1abJ/PGamontinqsiKH+FxYh0e+cVV+Fa
-	 YMjQBCSYKhn5PCQaqf2Vir/qZ4j4PrYir3dLgWKjrBDUgnD7m/O63ol+QUViky9w1R
-	 9jh8hKSjUaGef8EGFLkQhDTMnUnfSOfKLlZq9KIFeO39YBTNy/9D6w27iUikhwzkWv
-	 ejub5egT4BadA==
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57d1679ee6eso70683a12.1;
-        Wed, 26 Jun 2024 03:49:22 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX4E3OzZchlKcbjZDTsIzQ4hthszCQlZ2ZVEW0o8xbm7x0pA9UJ4mIo1hsL3hsIcFgq5iGWnOcCQeh2FmR357lCDMLAD/creVtvIqc=
-X-Gm-Message-State: AOJu0YyUEPdSRUJozj8omqv3TJ0mU3IAQc2n1Yxwx5MIkCdnc7jScih9
-	IL/SO+mR/Wu8rtKqcMZQiinMNJRGST8FvFaXjnV6ENz7WA5wwQ1ZmQ8kUxO2qGhuFVW8qoE+qWg
-	vftDIAMBRYpffbFbYZxav4aTxrwE=
-X-Google-Smtp-Source: AGHT+IGf02sUk1R5VoUyhOJIJYA/N64Dho19OyqmfhLr+JY5KDzh6lEXiqS21ilAavBwhCqvfz+saZavIx6wmKimVkw=
-X-Received: by 2002:a17:907:c788:b0:a6f:996f:23ea with SMTP id
- a640c23a62f3a-a727fbd5c81mr238458466b.15.1719398961026; Wed, 26 Jun 2024
- 03:49:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=o2NS2z5lRYjGQkP+LuRZ3yf6hAn7naRtybcCXwutA0AhrcTzYb4W/SZIll6mB+lzKaNtYy2092Eu5+SflCQhysmkj4TNKLQKeps9wgixVmN1fa53vlY7TP4sPK992n2lHQ9SeN26abC2wgprqoXJvR5RxqNTQoOTnzfdlPYnWC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RoTanZ/j; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ebeefb9a7fso79844741fa.0;
+        Wed, 26 Jun 2024 03:50:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719399038; x=1720003838; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Nhxq8J22maEd7Tggpjfv1hTvgHfsAmvbZS82KOa+e/k=;
+        b=RoTanZ/jyd30r9jBjmJfdpAiKPA1CgxjjOwh+GV91OqFH4qjK92+2BV4819rVaxDEP
+         AUXNl3+OjwvifhaiNqkOC7x0qdQBySpbn9winJ5kO0wCU8d4EnUD3qy7h5fOnFsUl2+a
+         3jZRGJyKXW+A4z+QIQ5TVz88cPoCmM0nSJrYwvjub0VBlHq5XCvPQZbJfIImKaLj1X72
+         DGK2TC9nqwbUZUpne0paOvRSRa0HM1kYBo3u2r30e31Eb1scdZikxpcfWKaiBZne0B5M
+         w8+zS/04mxTGUj6BF8/fc1DdmuehTJcl0B9onm0JwZfOibkpYLcjiHAUSS974r0RwvE4
+         N8Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719399038; x=1720003838;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nhxq8J22maEd7Tggpjfv1hTvgHfsAmvbZS82KOa+e/k=;
+        b=PcREWWLQNLLA4u7BBGTV1+7dFJAYiH+e3kRONC0lRYSK37if2vsl6zTN4JEU0QxCEM
+         WIW4nCcK/NV1rnZemb404zHZnuKlTWTnnLgHyQ5fob374sZyVeN674jgTI4xAByvFggK
+         C2Oz8K4z0B4669f0nfUykOQjFibUX4nL39YJOcZUvICH7avpC8Wx1yIrFNNOek1x535w
+         J/wATTWrcG3zizQhtMkNR4DnOJTbv7AIgyYqTT1u/mUVT3XSfuSOeLUHVmnSPqvmhbfB
+         Sgu6QofA/Qw85ryuo/lXDvR01cnfW+eSp7FzPNh2BlbTRaJpDDI42VckN7hHQ7OnW9+D
+         xRaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPzQ/fVLKVV3Pr2u8K24Rp+DQ31WQLSUa4N9yKYANwvwbWuMifjrWEQbVWIhu7gMNkx2isEUAnUW1CaEiyqHnhW5CY8uV7fsu+CuIb/rktzl1c1m9la+Cb49c713Ye/kKnA74xCE/KEifh4qvzylxM4oDga1zWBGDs8BXF6JxWIvsg1R2HrXyXISFGcA7vCk9Zoy8onCgQgPRB0NlOT8QxUgElVA==
+X-Gm-Message-State: AOJu0YyQTsLGOv1JW85M7JdfkFjjVYm5xRCPhV7Cn2mOnrCwnL11GDvI
+	A51iS0Of7DqVKtnDGF6fSY9qExwJnRmmQzd50hmEsZZz/uwoJoKCxMO0Qo7PMU3oMFYS38P+6c2
+	02w3mvHPW7FPAmZex/yda6ZV0hZA=
+X-Google-Smtp-Source: AGHT+IEzpWzUx+9sNDvROX+c/vTLDyxb0PHt0OT6ZaCeex1LDL7R1aTIDHu9u7EiPMNnUygtmqVi0YGK9vKN4DrqFlo=
+X-Received: by 2002:a2e:9bca:0:b0:2eb:e634:fee6 with SMTP id
+ 38308e7fff4ca-2ec5797a56emr69286531fa.18.1719399037471; Wed, 26 Jun 2024
+ 03:50:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
-In-Reply-To: <CABXGCsMmmb36ym8hVNGTiU8yfUS_cGvoUmGCcBrGWq9OxTrs+A@mail.gmail.com>
-From: Filipe Manana <fdmanana@kernel.org>
-Date: Wed, 26 Jun 2024 11:48:44 +0100
-X-Gmail-Original-Message-ID: <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
-Message-ID: <CAL3q7H4yBx7EAwTWWRboK78nhCbzy1YnXGYVsazWs+VxNYDBmA@mail.gmail.com>
-Subject: Re: 6.10/regression/bisected - after f1d97e769152 I spotted increased
- execution time of the kswapd0 process and symptoms as if there is not enough memory
-To: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc: Linux List Kernel Mailing <linux-kernel@vger.kernel.org>, 
-	Linux regressions mailing list <regressions@lists.linux.dev>, Btrfs BTRFS <linux-btrfs@vger.kernel.org>, 
-	dsterba@suse.com, josef@toxicpanda.com
+References: <20240624-b4-sc7180-camss-v3-0-89ece6471431@gmail.com>
+ <20240624-b4-sc7180-camss-v3-5-89ece6471431@gmail.com> <47997e61-26e5-4643-ac69-17db09be9bb1@linaro.org>
+ <6a8b1bd1-8413-41f7-8889-7f4d42ce0d6d@linaro.org> <CADgMGSt0NiJAHSneYS8AXvDqKHsscvxW50tdxAYYOofpEgeofA@mail.gmail.com>
+In-Reply-To: <CADgMGSt0NiJAHSneYS8AXvDqKHsscvxW50tdxAYYOofpEgeofA@mail.gmail.com>
+From: george chan <gchan9527@gmail.com>
+Date: Wed, 26 Jun 2024 18:50:24 +0800
+Message-ID: <CADgMGSuqUCrA4+yt1yLGACDPVARpavWUSGV2f1MGrv5rn_Xavg@mail.gmail.com>
+Subject: Re: [PATCH RFT v3 5/5] arm64: dts: qcom: sc7180: camss: Add CAMSS
+ block definition
+To: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	cros-qcom-dts-watchers@chromium.org, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-media@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 25, 2024 at 10:04=E2=80=AFPM Mikhail Gavrilov
-<mikhail.v.gavrilov@gmail.com> wrote:
+On Wed, Jun 26, 2024 at 1:53=E2=80=AFPM george chan <gchan9527@gmail.com> w=
+rote:
 >
-> Hi,
-> after f1d97e769152 I spotted increased execution time of the kswapd0
-> process and symptoms as if there is not enough memory.
-> Very often I see that kswapd0 consumes 100% CPU [1].
-> Before f1d97e769152 after an hour kswapd0 is working ~3:51 and after
-> three hours ~10:13 time.
-> After f1d97e769152 kswapd0 time increased to ~25:48 after the first
-> hour and three hours it hit 71:01 time.
-> So execution time has increased by 6-7 times.
->
-> f1d97e76915285013037c487d9513ab763005286 is the first bad commit
-> commit f1d97e76915285013037c487d9513ab763005286 (HEAD)
-> Author: Filipe Manana <fdmanana@suse.com>
-> Date:   Fri Mar 22 18:02:59 2024 +0000
->
->     btrfs: add a global per cpu counter to track number of used extent ma=
-ps
->
->     Add a per cpu counter that tracks the total number of extent maps tha=
-t are
->     in extent trees of inodes that belong to fs trees. This is going to b=
-e
->     used in an upcoming change that adds a shrinker for extent maps. Only
->     extent maps for fs trees are considered, because for special trees su=
-ch as
->     the data relocation tree we don't want to evict their extent maps whi=
-ch
->     are critical for the relocation to work, and since those are limited,=
- it's
->     not a concern to have them in memory during the relocation of a block
->     group. Another case are extent maps for free space cache inodes, whic=
-h
->     must always remain in memory, but those are limited (there's only one=
- per
->     free space cache inode, which means one per block group).
->
->     Reviewed-by: Josef Bacik <josef@toxicpanda.com>
->     Signed-off-by: Filipe Manana <fdmanana@suse.com>
->     Reviewed-by: David Sterba <dsterba@suse.com>
->     Signed-off-by: David Sterba <dsterba@suse.com>
->
->  fs/btrfs/disk-io.c    |  9 +++++++++
->  fs/btrfs/extent_map.c | 17 +++++++++++++++++
->  fs/btrfs/fs.h         |  2 ++
->  3 files changed, 28 insertions(+)
->
-> Unfortunately I can't check the revert commit f1d97e769152 because of con=
-flicts.
+> On Wed, Jun 26, 2024 at 7:52=E2=80=AFAM Bryan O'Donoghue
+> <bryan.odonoghue@linaro.org> wrote:
+> >
+> > On 26/06/2024 00:49, Bryan O'Donoghue wrote:
+> > > Where is the CCI and sensor stuff - could you post a link to your
+> > > working kernel tree in your next cover letter ?
+> >
+> > Found it
+> >
+> > https://github.com/torvalds/linux/commit/441ebc3a8948e03a1115dc6710e951=
+9a2594d0ae#diff-4b55839d42d3ffb773ac6d1babc9aa66dc2b9b11b346caea5d2d3ffb6ee=
+900e5
+> >
+> > ---
+> > bod
+> Ah, i found that camss branch is overridden by clean patches on the
+> last commit, let me re-add the camera board dts too.
 
-Yes, because there are follow up commits that depend on it.
+Hi dev,
 
-I seriously doubt that this is correctly bisected, because that commit
-only adds a counter for tracking the number of extent maps.
-It's using a per cpu counter and I can't think of anything more
-efficient than that.
+Here is an all-in-one merged work tree. github action compiles fine.
+https://github.com/99degree/linux/tree/next-20240626
 
-The commit that adds the extent map shrinker, which is the next commit
-(956a17d9d050761e34ae6f2624e9c1ce456de204), that can
-explain what you are observing.
+My test phone is nearly EOL mainly due to the battery expanding risk.
+Interested developers please find the above tree useful. Feel free to
+let me know if there is any missing info.
 
-Now the one you bisected doesn't make sense, not just because it's
-just a counter update but also because you are
-only seeing the kswapd0 slowdown, which is what triggers the shrinker.
+Good luck and thx guys for delivering a world class kernel for us..
 
-The shrinker itself can be improved, there's one place where I know it
-might loop too much, and I'll improve that.
-
-Thanks.
-
->
-> > git reset --hard v6.10-rc1
-> HEAD is now at 1613e604df0c Linux 6.10-rc1
->
-> > git revert -n f1d97e76915285013037c487d9513ab763005286
-> Auto-merging fs/btrfs/disk-io.c
-> Auto-merging fs/btrfs/extent_map.c
-> Auto-merging fs/btrfs/fs.h
-> CONFLICT (content): Merge conflict in fs/btrfs/fs.h
-> error: could not revert f1d97e769152... btrfs: add a global per cpu
-> counter to track number of used extent maps
->
-> However I double checked every bisect step and I am confident in the
-> correctness of the result.
->
-> I also attach here a full kernel log and build config.
->
-> My hardware specs: https://linux-hardware.org/?probe=3Dd377acdb9e
->
-> Filipe can you look into this please?
->
-> [1] https://postimg.cc/Xrn6qfxh
->
-> --
-> Best Regards,
-> Mike Gavrilov.
+Best regards,
+George
 
