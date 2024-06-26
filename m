@@ -1,113 +1,122 @@
-Return-Path: <linux-kernel+bounces-230070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E19791780A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:23:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDE8491780E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 07:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FAFE1C21CEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:23:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CBC028357D
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 05:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9768714D71E;
-	Wed, 26 Jun 2024 05:22:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE835143882;
+	Wed, 26 Jun 2024 05:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oTtv3ysl"
-Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="k+dVMxjn"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86CDB14D715
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 05:22:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCD628DDF;
+	Wed, 26 Jun 2024 05:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719379376; cv=none; b=mypeTk2I6SMJ07nOaLynT7VjsibEmn+yM6gVUy0fa3gYn9oHfhFu3Rq6vOutvqgdvv+zaAnvkzIZetDkqwJP1zOoFdbzyogO1q9o3jQt9/Qo/hGLoGzjNAo9teUfdm/A2OCFXk+RKqWrU97hBGtFPKq9lN/HNnTUEKdquD6tv0I=
+	t=1719379500; cv=none; b=jQgkkFKhCbC1vQr7fU/qKwLRSNjMxJuJuQgNQ578aBHlIjJ1eqaw4+Wtd+kT/WlIuVhPVetWwQfZ/uJBOIRA0ymoayZkIXlrj25f3dCnm2XfIQIFD4obTyLDn3zawUqy9TSckl34JOW5WADfWQP+jQWSHW2oZr8/g5JRZP20Vfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719379376; c=relaxed/simple;
-	bh=AFul6/rVxErYdfibglKP3IwBx5NV3GxUyi2GHxTd6Yw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=o9xJJ2h5OfdmC+387Nsal/pa5I5CrmV2oI6P1MD8jPXY188gQqQBRjyB2mW1lYQ4ArEv7LbgPclCJL7O+We/bLfDehBhZAddJkQSaXRuQaviuhFiN1EbJtUxBmvkwXlFo/B9OsCHR3gkLF1EvGc++n5+iQTom9eug9x//y0pej8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oTtv3ysl; arc=none smtp.client-ip=209.85.219.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aniketmaurya.bounces.google.com
-Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-dff1bcbc104so11292276276.2
-        for <linux-kernel@vger.kernel.org>; Tue, 25 Jun 2024 22:22:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719379374; x=1719984174; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJp+j3ZA1th5Jj4gYDkzEc/kDoBtu3dOqn1pl2+YPAA=;
-        b=oTtv3ysl2Hvu3r6Y6RsEHQKekU5YTEn6hw/ziLsaLdC/MPz2ijQggLPppY5tVRJgz9
-         tIGjm8zOHsIS88MTm8DCb3i3Y+D6nEaTIPLEIfI27RaeB3sMR6u4R1bFTShJoYlwktXo
-         gucDI5H6V754bN3MLXUXp4cO07kuMfkrp2iO3plp/y3IYbRgphIRIHMSALZ4nRZf3P61
-         1cOl0RBEKdKB7pkMzSmfa7PA6H178GwgC/OgGBDhfNLdcmvbeWoPtidpHYVC2nhg+cJs
-         R9iFWeK5GLiwvbq1DVd8jtwnH2v0URDdiiMDnxAiqhRx8sFQvhB0AZj6IxoDSApU2ggW
-         IU4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719379374; x=1719984174;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jJp+j3ZA1th5Jj4gYDkzEc/kDoBtu3dOqn1pl2+YPAA=;
-        b=r7a1DvCIPmuIIxcrrBjmzmWpzaWmcKZflnvwODDiSYQgFPwXS7H8Gh+aoaIFvpXXTL
-         YumF8XUHVdkYvO471wRz+0BzKgfxuFnvZ7S1ownCi0siOcMvyp5EZn7EBxvw8zBUT+X7
-         3NkXCnAcw9tmUgx0HJ38oCceSFH0HJo6ARW0V/f74nbE1XfF6k9MnKdrE4EgmXEWi1Ey
-         KjZF9V+LtlG2tPResKVxjb82oT1zbq7U5UErQIJxuEOZJBPkpfQIJH5CQHSR68OTrvxK
-         lbSQU9TLGVJ08TrAA7cNP/dn8+JybCmePSX3gpBUG9rP59lx72koO3bD4MUpPn9jDjao
-         9PwA==
-X-Forwarded-Encrypted: i=1; AJvYcCVTfUrv2Fq+T7XvNcyVzt97XbfsGoeTMkX4TV3MxMDr3NLz4p8Z+3jYE4Ikr4tMl/3fW949ON7O5an9olpNiqLMF/kaRSvKZO4EvCk/
-X-Gm-Message-State: AOJu0Yz/NgO+Nc81DJdyg8y9iK0PjhJvjq4bx3F9RGxeaejTzoMStRkm
-	1VJeWLmbmfTu8Ptbo1z7f29CTlnsphOk+5LT4R+8E3bmQzxV1RMP6VlIajD19r1TLaGiB0240yr
-	oGXErYM0MigXZ+RqN07ySzA3tSA==
-X-Google-Smtp-Source: AGHT+IEAEget9B2vSdhGeLcEtW2e3iM8MJIc4bsMLsrXaEbRkZRTj4Qt0WXm1du3qsvVE9pndMPWkZy9XMdUDczBICE=
-X-Received: from aniketm.c.googlers.com ([fda3:e722:ac3:cc00:4f:4b78:c0a8:3387])
- (user=aniketmaurya job=sendgmr) by 2002:a05:6902:1893:b0:e02:5b08:d3a with
- SMTP id 3f1490d57ef6-e02fc29cc0emr62562276.0.1719379374381; Tue, 25 Jun 2024
- 22:22:54 -0700 (PDT)
-Date: Wed, 26 Jun 2024 05:22:38 +0000
-In-Reply-To: <20240626052238.1577580-1-aniketmaurya@google.com>
+	s=arc-20240116; t=1719379500; c=relaxed/simple;
+	bh=wp16woBkAvOTlitk4bxYO7c5wPm2CZ+vyie4mIuxV34=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bJmEgrnh+YGdBDpdzex9B75aAuf+BsVLPkAFvKvY3jW63if8Pi2R1P6xP4ykTMC/SICGoIa9x+IgsfNPozkmrALMVzY4URU+70EBLF6Kmr6uw5bBh09SdVFSvxQF4/Qqg8SWaVU/wLbi2RoEZ44ey0ld7CxkR9/O1k7iZlmJf1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=k+dVMxjn; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 45Q5OU3k014856;
+	Wed, 26 Jun 2024 00:24:30 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1719379470;
+	bh=GC+txUZD6XBbGCO0hZ81+OWYjnG29RhcGAvym7/4oFI=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=k+dVMxjndnBbKC1Be4MDbIYpasqVcSIQ7rGy8WvvIR4SgKvqlAaicGou5f89+Vaj7
+	 ztqppU/6qlDIkZXK2KVzVdH2i4Z2byV0J67eHCYiiyeInG5578WmNTa0e/Jy9AIrL3
+	 MlzMoGvtbxOioY07hCyNz8//lt3dYp+MxbEmIag4=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 45Q5OU9h092436
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 26 Jun 2024 00:24:30 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 26
+ Jun 2024 00:24:30 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 26 Jun 2024 00:24:30 -0500
+Received: from [172.24.227.94] (uda0132425.dhcp.ti.com [172.24.227.94])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 45Q5OQtH028762;
+	Wed, 26 Jun 2024 00:24:27 -0500
+Message-ID: <594c8c93-f9ae-4589-a4c3-116ed2d96f73@ti.com>
+Date: Wed, 26 Jun 2024 10:54:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240626052238.1577580-1-aniketmaurya@google.com>
-X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
-Message-ID: <20240626052238.1577580-3-aniketmaurya@google.com>
-Subject: [PATCH 2/2] i3c: dw: Select ibi ops for base platform driver
-From: Aniket <aniketmaurya@google.com>
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jeremy Kerr <jk@codeconstruct.com.au>, 
-	Joel Stanley <joel@jms.id.au>, Billy Tsai <billy_tsai@aspeedtech.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Aniket <aniketmaurya@google.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64: dts: k3-am625-verdin: enable nau8822 pll
+To: Francesco Dolcini <francesco@dolcini.it>, Nishanth Menon <nm@ti.com>
+CC: Andrejs Cainikovs <andrejs.cainikovs@gmail.com>,
+        Tero Kristo
+	<kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Andrejs Cainikovs <andrejs.cainikovs@toradex.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240418105730.120913-1-andrejs.cainikovs@gmail.com>
+ <20240425135610.6c6ysoejefuazm63@privatize>
+ <20240625165851.GA26676@francesco-nb>
+From: Vignesh Raghavendra <vigneshr@ti.com>
+Content-Language: en-US
+In-Reply-To: <20240625165851.GA26676@francesco-nb>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-The AST2600 platform driver can always select the IBI ops.
-We also need a way for the base platform driver to select
-the ibi ops. Hence introduce this DT property which can be
-used to register ibi ops from the base platform driver.
 
-Signed-off-by: Aniket <aniketmaurya@google.com>
----
- drivers/i3c/master/dw-i3c-master.c | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c-master.c
-index 77a2a1c3fd1d..dff4f8e4e44e 100644
---- a/drivers/i3c/master/dw-i3c-master.c
-+++ b/drivers/i3c/master/dw-i3c-master.c
-@@ -1547,6 +1547,9 @@ static int dw_i3c_probe(struct platform_device *pdev)
- 	if (!master)
- 		return -ENOMEM;
- 
-+	if (of_property_read_bool(pdev->dev.of_node, "ibi-capable"))
-+		master->ibi_capable = true;
-+
- 	return dw_i3c_common_probe(master, pdev);
- }
- 
+On 25/06/24 22:28, Francesco Dolcini wrote:
+> Hello Nishanth, Vignesh,
+> 
+> On Thu, Apr 25, 2024 at 08:56:10AM -0500, Nishanth Menon wrote:
+>> On 12:57-20240418, Andrejs Cainikovs wrote:
+>> [...]
+>>
+>>> Signed-off-by: Andrejs Cainikovs <andrejs.cainikovs@toradex.com>
+> 
+> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> 
+>>> ---
+>>> This patch requires https://lore.kernel.org/all/20240409121719.337709-1-andrejs.cainikovs@gmail.com/ to be applied,
+>>> if not the audio will just stop working because no code will ever enable the required clock to the codec.
+>>
+>> Thanks. lets wait for the dependency patch to be merged to master, and
+>> once done, please resubmit this patch. I am going to guess for the next
+>> cycle.
+> 
+> Would you mind picking up this patch? The dependency is now merged and
+> this should apply cleanly. I can also resend if needed, just let me
+> know.
+> 
+> Francesco
+> 
+> 
+
+Sure, added to my review queue. Thanks!
+
 -- 
-2.45.2.741.gdbec12cfda-goog
-
+Regards
+Vignesh
 
