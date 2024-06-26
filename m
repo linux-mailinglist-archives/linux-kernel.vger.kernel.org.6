@@ -1,182 +1,154 @@
-Return-Path: <linux-kernel+bounces-230563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADEF5917EA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:45:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 244D1917EA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:45:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6911728A4CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:45:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCA081F2759C
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C41F1802DB;
-	Wed, 26 Jun 2024 10:44:24 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C9D17CA0E;
+	Wed, 26 Jun 2024 10:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="PdlZ4x6+"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4130C17F38D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 607B2176AAB;
+	Wed, 26 Jun 2024 10:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719398663; cv=none; b=Tlg+EYoGBG8SW6lz+PUf1mVyDrdCLSxQ3QIPvzDxeO5t5sHLrrUQSpmLUGgWL3bYbTmYLFMEKWVgK0xf3z7Et07KzNksWVzVPJlxyxMkdKfubTQZuXByTTwffxXEyj8sR5lFtc2knuOnty/a3wxmqGbbPPeOiQEUEbD8YdjNZHk=
+	t=1719398702; cv=none; b=eSMV6Iw8t1oF5TN/PDTyqheGaC0MhTzW3nm9QchOa2/uXZg/WNOSCil/Rd8z0f3ICIhIML9DWx3BGu776HKy2kctVhj9vyUxnHsXBD9e0zMwkTZa0G81lcE0x5MEs+ZejV8sV2gGlBtq+5thFBH2WxP7Tj2owe0bk/Ux2PJ+E7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719398663; c=relaxed/simple;
-	bh=K52ZKYW4LxJx3jZQJjUTcvv4AGVHnJr36PDvjhH55jc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=qHcqa59TZ5K9Qd8yQUJha7izi16D/SG8OpOahbrap+ezIvDEcMCRnvvg0gB7ndckyGc2gBTT8OUAvljjR1ODqKucfoxDZaHqxVq9l3L+3IEvWBQpz8BY0QOOZEBSbPCUJF8ybmev2XqZDWyk11md5SaM5g9tmLzzKJCShxNzphQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3737b3ae019so83790025ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 03:44:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719398661; x=1720003461;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SOnO1ZTNDPvvJs+AkqyLoYKe/Db3dQpJ5HKxLtBlyRE=;
-        b=aWO4nZazzLOjZudp0v4dWFOvFOdw2eYs5gZUoWKAfcyjFT5nk9fDKXirnVEKx8wj0d
-         ounE+ZXY2lmf2g7zLZxG1tObGVojpBVc1HqSD/xBkv0/heo5rvOtj2bQ/Aj2eIOl8RF2
-         yAAekj0qOT5KkN41ffzAUzsecjAs93vh+GgGJSS6aAWZbSWASXcXhBDBM1WfbZODRumo
-         GH9hbeA9HodPXZ0PTY2e9fdFPRGSIWhScNtpC5iA4KbF0mYdFDJ06SCvAGTNzyI7//cq
-         Oxkb+whmKeflwb9bVLV8oHMuGGljswRzdTQobMrjtEEkLsxNPLHbOY9wdGOR7kTwhah9
-         qbEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2NPkCP9VlO7fd7dLzka+jSmtSgQIEsc6h0l4eRlubUB0awzQhE2oLgt7AR6rKIiSGu8upj4bPGUdgsEr7E5w66SUu+orYt7l2P2Bc
-X-Gm-Message-State: AOJu0YxEREK3fu1BxKxkkkLOH6TV8cdQJVmm/PyMPN6rZA0nNC+KJwiO
-	iCEeNRErrwBOuQMx/NXqAel0pXbRG1+0O+MGyRoA4GU7EQU5j5gHbfqPxLvJWjYpSpXC4e0SHAy
-	t9lFucaWfPVkkdWYTSTAY6zIl8zFFqj97J1AK9VcUFGXDcTMJHwGtmQQ=
-X-Google-Smtp-Source: AGHT+IFyFL0O5V0tG3U+JWBjb72BivY8NivTO/MOk5RpndV24uZJFn4rhHMjdTB69qeWCoiSIENbN4hRRjXTcefpgt0LtVQB+KEk
+	s=arc-20240116; t=1719398702; c=relaxed/simple;
+	bh=N5HUNnSxF52LqTiTZ4MD/cgKDig5Sbo0lMVYyZgGD88=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ihsH59JUNRvr+UT65RmL5+qC3iBJJ0dfLO/63b1nKVaPhx+dZE1CQ3Z2/zc7PNaEJ6w4xiw6iLYBdSoR0wIqg7NaLIlm3h1+QhoN3wRUIdbfMC6s+XnXIxeZMFJMbN4S+msj9JqqIV4H+/pTFZxZKINqgdOSMYRIiujhJbI5PxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=PdlZ4x6+; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 959C240E021E;
+	Wed, 26 Jun 2024 10:44:56 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id WLfKgW4WQVYn; Wed, 26 Jun 2024 10:44:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1719398691; bh=Y2MsjGLfE7g1SN+DJyJWLxEAOzeLgB4denA5+ilckE4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PdlZ4x6+xF4IrjgXiJynmbDOih/0s7toOMtXLZexV6s3QxDY98m4u1/H2vKjvjtEv
+	 tI5sWZO46M14fnZ+XHwS/52/LRKqnXyHF6aRFKoD/5ruHdG+NykZ9oK3yKxpI8MnQ3
+	 2YtACds0AjJ5WyAIQZ06a4/vQFEombCbYoipqZE6b9dWlzS2v/KXBD67MZpBgp/hLS
+	 fRbLZxqAr+KZMgfhVRMfuKl3eInAaYnimzGafclexXnBtzX/e93FXuXFK8jq2Txypd
+	 NYq78OrHTmLia/vXFeC01Nw7FoHImiSkFqIrbAviM/n//OOzZB2uAhIhI/3lbACkm3
+	 2RRl1AkELgqoZDTlj4sU/xnYD6Lxv/88Iuz6eeI/NaZfbAfxer4fEEexmPPA37KUyx
+	 r0xbm2Ffj4ltVMcE282lMtQB2x1YirE7DJzqCasfumzNNgxL51+hOgPLjg+dbzSVco
+	 uP/UVXU3Y+DljvRiz9sIVnKQ2wOW6xNxB5iY612TPgBBz0E12fZhUIHGnKqjBuRnR5
+	 /4GgmObWcU2zXNrFQrZ0tLvggkp16vQpsI3k7TzQUrQ54iNLQDgO/LRnLY59Lx8aA7
+	 5HMDGdyV6M8GBHusBC04GUmGLNXAtI1BiXpPexdISG/b4uhbOMB5Krhcaarh/Ds8bp
+	 9hVabBrD9DHO04wnwhnhlLM4=
+Received: from zn.tnic (p5de8ee85.dip0.t-ipconnect.de [93.232.238.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8562440E01D6;
+	Wed, 26 Jun 2024 10:44:33 +0000 (UTC)
+Date: Wed, 26 Jun 2024 12:44:27 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: tony.luck@intel.com
+Cc: Avadhut Naik <avadhut.naik@amd.com>, x86@kernel.org,
+	linux-edac@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	rafael@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	rostedt@goodmis.org, lenb@kernel.org, mchehab@kernel.org,
+	james.morse@arm.com, airlied@gmail.com, yazen.ghannam@amd.com,
+	john.allen@amd.com, avadnaik@amd.com
+Subject: Re: [PATCH v2 1/4] x86/mce: Add wrapper for struct mce to export
+ vendor specific info
+Message-ID: <20240626104427.GNZnvxC1JHclKwwKQU@fat_crate.local>
+References: <20240625195624.2565741-1-avadhut.naik@amd.com>
+ <20240625195624.2565741-2-avadhut.naik@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b21:b0:374:a021:f1b2 with SMTP id
- e9e14a558f8ab-3763f7424b5mr7861035ab.5.1719398661393; Wed, 26 Jun 2024
- 03:44:21 -0700 (PDT)
-Date: Wed, 26 Jun 2024 03:44:21 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000070a181061bc8b256@google.com>
-Subject: [syzbot] [kernel?] kernel BUG in __jump_label_patch
-From: syzbot <syzbot+03cfa0c5a0bcba3bf195@syzkaller.appspotmail.com>
-To: ardb@kernel.org, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	jbaron@akamai.com, jpoimboe@kernel.org, linux-kernel@vger.kernel.org, 
-	mingo@redhat.com, peterz@infradead.org, rostedt@goodmis.org, 
-	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20240625195624.2565741-2-avadhut.naik@amd.com>
 
-Hello,
+On Tue, Jun 25, 2024 at 02:56:21PM -0500, Avadhut Naik wrote:
+> Currently, exporting new additional machine check error information
+> involves adding new fields for the same at the end of the struct mce.
+> This additional information can then be consumed through mcelog or
+> tracepoint.
+> 
+> However, as new MSRs are being added (and will be added in the future)
+> by CPU vendors on their newer CPUs with additional machine check error
+> information to be exported, the size of struct mce will balloon on some
+> CPUs, unnecessarily, since those fields are vendor-specific. Moreover,
+> different CPU vendors may export the additional information in varying
+> sizes.
+> 
+> The problem particularly intensifies since struct mce is exposed to
+> userspace as part of UAPI. It's bloating through vendor-specific data
+> should be avoided to limit the information being sent out to userspace.
+> 
+> Add a new structure mce_hw_err to wrap the existing struct mce. The same
+> will prevent its ballooning since vendor-specifc data, if any, can now be
+> exported through a union within the wrapper structure and through
+> __dynamic_array in mce_record tracepoint.
+> 
+> Furthermore, new internal kernel fields can be added to the wrapper
+> struct without impacting the user space API.
+> 
+> Note: Some Checkpatch checks have been ignored to maintain coding style.
+> 
+> [Yazen: Add last commit message paragraph.]
+> 
+> Suggested-by: Borislav Petkov (AMD) <bp@alien8.de>
+> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
+> ---
+>  arch/x86/include/asm/mce.h              |   6 +-
+>  arch/x86/kernel/cpu/mce/amd.c           |  29 ++--
+>  arch/x86/kernel/cpu/mce/apei.c          |  54 +++----
+>  arch/x86/kernel/cpu/mce/core.c          | 178 +++++++++++++-----------
+>  arch/x86/kernel/cpu/mce/dev-mcelog.c    |   2 +-
+>  arch/x86/kernel/cpu/mce/genpool.c       |  20 +--
+>  arch/x86/kernel/cpu/mce/inject.c        |   4 +-
+>  arch/x86/kernel/cpu/mce/internal.h      |   4 +-
+>  drivers/acpi/acpi_extlog.c              |   2 +-
+>  drivers/acpi/nfit/mce.c                 |   2 +-
+>  drivers/edac/i7core_edac.c              |   2 +-
+>  drivers/edac/igen6_edac.c               |   2 +-
+>  drivers/edac/mce_amd.c                  |   2 +-
+>  drivers/edac/pnd2_edac.c                |   2 +-
+>  drivers/edac/sb_edac.c                  |   2 +-
+>  drivers/edac/skx_common.c               |   2 +-
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_ras.c |   2 +-
+>  drivers/ras/amd/fmpm.c                  |   2 +-
+>  drivers/ras/cec.c                       |   2 +-
+>  include/trace/events/mce.h              |  42 +++---
+>  20 files changed, 199 insertions(+), 162 deletions(-)
 
-syzbot found the following issue on:
+Ok, did some minor massaging but otherwise looks ok now.
 
-HEAD commit:    f76698bd9a8c Add linux-next specific files for 20240621
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=174ca546980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ca79e3c3b9118bd0
-dashboard link: https://syzkaller.appspot.com/bug?extid=03cfa0c5a0bcba3bf195
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1053f741980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b7883e980000
+Tony, any comments? You ok with this, would that fit any Intel-specific vendor
+fields too or do you need some additional Intel-specific changes?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f204c5d02251/disk-f76698bd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/50289c7e8999/vmlinux-f76698bd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c360e133a94f/bzImage-f76698bd.xz
+Thx.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+03cfa0c5a0bcba3bf195@syzkaller.appspotmail.com
+-- 
+Regards/Gruss,
+    Boris.
 
-jump_label: Fatal kernel bug, unexpected op at preempt_notifier_register+0x10/0xe0 kernel/sched/core.c:4788 [ffffffff81639840] (eb 12 90 48 c7 != 66 90 0f 1f 00)) size:2 type:1
-------------[ cut here ]------------
-kernel BUG at arch/x86/kernel/jump_label.c:73!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 0 UID: 0 PID: 28186 Comm: syz-executor226 Not tainted 6.10.0-rc4-next-20240621-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 06/07/2024
-RIP: 0010:__jump_label_patch+0x463/0x490 arch/x86/kernel/jump_label.c:73
-Code: e8 52 ae 5f 00 48 c7 c7 e0 41 c5 8b 48 8b 0c 24 48 89 ce 48 89 ca 4d 89 e8 4c 8b 4c 24 08 41 54 e8 a2 a1 56 0a 48 83 c4 08 90 <0f> 0b e8 96 9b 59 0a e8 21 ae 5f 00 90 0f 0b e8 19 ae 5f 00 90 0f
-RSP: 0018:ffffc9000a7ff620 EFLAGS: 00010292
-RAX: 0000000000000097 RBX: 0000000000000085 RCX: 1a06c80092f08800
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc9000a7ff748 R08: ffffffff81739789 R09: 1ffff920014ffe60
-R10: dffffc0000000000 R11: fffff520014ffe61 R12: 0000000000000001
-R13: ffffffff8bc56001 R14: ffffffff929c38a0 R15: ffffffff8bc56001
-FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055558d6acce8 CR3: 000000002b0e8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- arch_jump_label_transform_queue+0x68/0x100 arch/x86/kernel/jump_label.c:137
- __jump_label_update+0x177/0x3a0 kernel/jump_label.c:493
- __static_key_slow_dec_cpuslocked+0x250/0x410 kernel/jump_label.c:293
- __static_key_slow_dec kernel/jump_label.c:301 [inline]
- static_key_slow_dec+0x51/0xa0 kernel/jump_label.c:316
- kvm_destroy_vm arch/x86/kvm/../../../virt/kvm/kvm_main.c:1364 [inline]
- kvm_put_kvm+0xf3b/0x1300 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1388
- kvm_vm_release+0x46/0x50 arch/x86/kvm/../../../virt/kvm/kvm_main.c:1411
- __fput+0x24a/0x8a0 fs/file_table.c:422
- task_work_run+0x24f/0x310 kernel/task_work.c:180
- exit_task_work include/linux/task_work.h:38 [inline]
- do_exit+0xa27/0x28e0 kernel/exit.c:876
- do_group_exit+0x207/0x2c0 kernel/exit.c:1025
- get_signal+0x16a1/0x1740 kernel/signal.c:2909
- arch_do_signal_or_restart+0x96/0x830 arch/x86/kernel/signal.c:310
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6bcd95a559
-Code: Unable to access opcode bytes at 0x7f6bcd95a52f.
-RSP: 002b:00007f6bcd915228 EFLAGS: 00000246 ORIG_RAX: 00000000000000ca
-RAX: 0000000000000001 RBX: 00007f6bcd9e4328 RCX: 00007f6bcd95a559
-RDX: 00000000000f4240 RSI: 0000000000000081 RDI: 00007f6bcd9e432c
-RBP: 00007f6bcd9e4320 R08: 00007f6bcd9156c0 R09: 00007f6bcd9156c0
-R10: 00007f6bcd9156c0 R11: 0000000000000246 R12: 00007f6bcd9e432c
-R13: 00007f6bcd9b1074 R14: 6d766b2f7665642f R15: 00007ffd999e9ad8
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__jump_label_patch+0x463/0x490 arch/x86/kernel/jump_label.c:73
-Code: e8 52 ae 5f 00 48 c7 c7 e0 41 c5 8b 48 8b 0c 24 48 89 ce 48 89 ca 4d 89 e8 4c 8b 4c 24 08 41 54 e8 a2 a1 56 0a 48 83 c4 08 90 <0f> 0b e8 96 9b 59 0a e8 21 ae 5f 00 90 0f 0b e8 19 ae 5f 00 90 0f
-RSP: 0018:ffffc9000a7ff620 EFLAGS: 00010292
-RAX: 0000000000000097 RBX: 0000000000000085 RCX: 1a06c80092f08800
-RDX: 0000000000000000 RSI: 0000000080000000 RDI: 0000000000000000
-RBP: ffffc9000a7ff748 R08: ffffffff81739789 R09: 1ffff920014ffe60
-R10: dffffc0000000000 R11: fffff520014ffe61 R12: 0000000000000001
-R13: ffffffff8bc56001 R14: ffffffff929c38a0 R15: ffffffff8bc56001
-FS:  0000000000000000(0000) GS:ffff8880b9400000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055558d6acce8 CR3: 000000002b0e8000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+https://people.kernel.org/tglx/notes-about-netiquette
 
