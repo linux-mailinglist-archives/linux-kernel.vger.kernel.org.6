@@ -1,114 +1,141 @@
-Return-Path: <linux-kernel+bounces-231241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFB891880C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:59:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DB2991880E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:59:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0AF1282288
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:59:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4806A282DE8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA0418FC69;
-	Wed, 26 Jun 2024 16:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D96418FC93;
+	Wed, 26 Jun 2024 16:59:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NspoOQ9A"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQ6X58mC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B73018F2DE
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 16:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60F2818F2DE;
+	Wed, 26 Jun 2024 16:59:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719421170; cv=none; b=gJFQuFwcKgcmeD7tdd8qYkhWItaLSxMPW2pOFNcukLl7QhL+VTAd18uINlEM19cfqkxvX87U+dt0rpxQaXnE37HKfQKiHNC0J1rH2ujWZt04AXx4gGvkSKZo3HLYcMz/dX+VGm1ucZVBvqVvaIrgnJIExDv5YkvHvBZKa/p78ZI=
+	t=1719421185; cv=none; b=N8DhM+ChkCJJpZQlo2w/HNvqvnwfSp0iO2EEOIAx0zup+GDtwugs308iSfiRev0yqn1rE9dBc7vnrMrCSe1s7OBk8+LmUpRslMbwP31i5jXs+bpGXbjJ4u8Mg7IIJsqIuMSSSK9Umkh+Y18q06p7dVq8vRVmU40J1r2e6Qg7XuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719421170; c=relaxed/simple;
-	bh=L+mMvxoK8DGVSuXYCGPYUXIzL3qUWCLHFwujl02Z4bs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VD7xOaY4tZZb0awJGHz+n1OiOIF34wU8r+O9JyXsrz8byt8VwR2DzV1jvV1TRVjXvdUME++idD38ucGIP2G6tH9KBIdxBrQ9BdVb+PAVXl0URkHMHufpELu9x9bT6Vz8s+EE6PyRvBE3go9qhTOFOj3vMfk+BU7DM2htzqpOP50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NspoOQ9A; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52bbf73f334so5599960e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 09:59:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719421167; x=1720025967; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N4uh6FzkMN3Alo254D1I9aTL6aO+v8LxggyPl/98hkE=;
-        b=NspoOQ9A5hDavcBjwUj4P3bKh90vPYTmhzOpz2yx/pN4Ktq9g+G69eJmI2kIJNVde6
-         aeBgncP+b3rIkmrTwX2A3aPwe7Oiy4PZdL2dedzY9fqLuSlLeAD6z+xbQvu5a0j/nI1m
-         G8sZ0xRBAuLnNo5rhhx6IT9iQbZftusjnw5IIHYvr/bZzdJm23HpG/sUzjoN2mAvIpP/
-         iBqypI7sSOGV6XbkhTKdhzoqz6yc5mp4/D9gqfEY5/0q7TJgVnnFpOCvyRW0Hy4adGnO
-         ZtjqjwhDEYUPc9PFFANlxsARX4rm7cfo86/Ab7AvJRZS63xpOkvdDF7wkyRro/5G+JWg
-         pcvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719421167; x=1720025967;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N4uh6FzkMN3Alo254D1I9aTL6aO+v8LxggyPl/98hkE=;
-        b=imX4rkJTNnWzq3RMA9fQOjd7hRI/dUtVSAy9j0toiVjl4XJNoRMEcKnttizjhBDrvV
-         LasBzB0YUZg0bniQJGUAdfPhTevQlYl1kNkCAnWZZED/AC1CXd8VxbqLD7NRqz8jx7sB
-         mq6CBvS2mH0MSa9bkzjndH8f/qHfvtN8rfUjEYswl583Su1T0HDDKJB3iGdvEQGGkn/r
-         ZdVY6eY6iehaglzalnMdcJ3jl7MpV8Ngw1S8iOXYTfMu0tRd1IOhlyjAR5hSBpbf2l0O
-         mk3Gf7j3bqVeMMBIsji0P/EFzKRfy8j09PCoE1rlqXZ4yUnj4h9F3tEay8EWjk6lMHnR
-         rrwg==
-X-Forwarded-Encrypted: i=1; AJvYcCV1jfUmcoF2XANoXQWbu2uZliibk+tATSLAs8WgFA8c5V7ZYA6Oo4DMYGEz+SkYJPTRJCWh9gHdw9Og5Gz7AeZTINmUZ43FxDtyK78q
-X-Gm-Message-State: AOJu0YzDlXWwQKVgmA903U7sLOppCLHOcNBv91ZXQiHvtLBpUaMLoQB2
-	n5jvIDjIgNH2MEJIfs/ncsa3u6AX6NtpCCzK+OfvvdVWlSv/oOhIelyweAH+tv4=
-X-Google-Smtp-Source: AGHT+IHKS0Oy7EGmBkzpSgZQUkBjP5zaFeMObNDzMd6ijSCSwDLEDPli+swV9bOJQtP305ZpYfsWXg==
-X-Received: by 2002:ac2:5e31:0:b0:52c:da8d:799 with SMTP id 2adb3069b0e04-52cdf8209a0mr7308481e87.55.1719421167289;
-        Wed, 26 Jun 2024 09:59:27 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c825f752sm32291145e9.20.2024.06.26.09.59.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 09:59:26 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Tony Lindgren <tony@atomide.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-omap@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH] ARM: dts: omap am5729-beagleboneai: drop unneeded ti,enable-id-detection
-Date: Wed, 26 Jun 2024 18:59:24 +0200
-Message-ID: <171942111215.79257.17064615370726033621.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240615174904.39012-1-krzysztof.kozlowski@linaro.org>
-References: <20240615174904.39012-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1719421185; c=relaxed/simple;
+	bh=Jg97XQfkjU/0E/YatQBe6xBkWzYg8xUOrvHmt5RqJ7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=KJvCp5mdqflM9B/B0Ju24zvK0iSIuCiTj0OBovL2fSTsoe81PV5AFsi4Fo2GHaIfbTRhJq5HTP21tXA6kGODeM02zHPapQbOT61W9hXkB56b1vk0wLuOgmeuNoVoliyVJhM3PtcHp8s+3eqieJdC8ZaoSfl+sTjqxgGSjOHZVeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQ6X58mC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 800D8C116B1;
+	Wed, 26 Jun 2024 16:59:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719421184;
+	bh=Jg97XQfkjU/0E/YatQBe6xBkWzYg8xUOrvHmt5RqJ7U=;
+	h=Date:From:To:Cc:Subject:From;
+	b=KQ6X58mClCRWR62IeXd6JjNq4YKlMZqFLmJF1Sgu550T6RceD+yhAFseARqbOO5TU
+	 wngfccWl7umEp85gU9QaTxTlE2zm9czMCaMxfUQTmFOnrs3QxmvyvmBgr1RYQ0xkLF
+	 a3qybWnm6CFQZSgqAUYPdJR7BXmZL5OpCyKsLCcmLxzCdeHiBnApeOiftPH2WyV3ys
+	 TFiHokK/1/0l4b9zvmMMtOmxf/lrNlmxU5NbtBur+gWpNmYs/IXF+trWMg8UD5gbbD
+	 mLeRrNNK61dz6uwryW2tcgq6Ix8MPBoN1qe5qjxHoz/biNm/drnvMkpGanuxjnBQUc
+	 BXDizR/b5hxoA==
+Date: Wed, 26 Jun 2024 17:59:40 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Jai Luthra <j-luthra@ti.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>
+Subject: linux-next: manual merge of the sound tree with the sound-asoc-fixes
+ tree
+Message-ID: <ZnxI_O6OrGKN9XxE@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Es/C7Eqyq4ZnWaBW"
+Content-Disposition: inline
 
 
-On Sat, 15 Jun 2024 19:49:04 +0200, Krzysztof Kozlowski wrote:
-> There is a ti,enable-id-detection property in the Extcon Palmas
-> (extcon-palmas), but not in the Extcon USB GPIO binding and driver.
-> 
-> 
+--Es/C7Eqyq4ZnWaBW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Follow up to:
-https://lore.kernel.org/all/CAOCHtYh8YucHNwV6+S-3vfHvygs=5_UGVwPt6R+i+qBTc3eOTA@mail.gmail.com/
+Hi all,
 
-Let me know if someone else should/wants to take this.
+Today's linux-next merge of the sound tree got a conflict in:
 
-Applied, thanks!
+  sound/core/pcm_dmaengine.c
 
-[1/1] ARM: dts: omap am5729-beagleboneai: drop unneeded ti,enable-id-detection
-      https://git.kernel.org/krzk/linux-dt/c/90b6de4550aac6ac97448d3d26429a0a55dbaa34
+between commit:
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+  e8343410ddf08 ("ALSA: dmaengine: Synchronize dma channel after drop()")
+
+=66rom the sound-asoc-fixes tree and commit:
+
+  6a7db25aad8ce ("ALSA: dmaengine_pcm: terminate dmaengine before synchroni=
+ze")
+
+=66rom the sound tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+diff --cc sound/core/pcm_dmaengine.c
+index cc5db93b9132c,4f18511f1c92e..0000000000000
+--- a/sound/core/pcm_dmaengine.c
++++ b/sound/core/pcm_dmaengine.c
+@@@ -349,23 -349,8 +349,18 @@@ int snd_dmaengine_pcm_open_request_chan
+  }
+  EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_open_request_chan);
+ =20
+ +int snd_dmaengine_pcm_sync_stop(struct snd_pcm_substream *substream)
+ +{
+ +	struct dmaengine_pcm_runtime_data *prtd =3D substream_to_prtd(substream);
+ +
+ +	dmaengine_synchronize(prtd->dma_chan);
+ +
+ +	return 0;
+ +}
+ +EXPORT_SYMBOL_GPL(snd_dmaengine_pcm_sync_stop);
+ +
+- /**
+-  * snd_dmaengine_pcm_close - Close a dmaengine based PCM substream
+-  * @substream: PCM substream
+-  *
+-  * Return: 0 on success, a negative error code otherwise
+-  */
+- int snd_dmaengine_pcm_close(struct snd_pcm_substream *substream)
++ static void __snd_dmaengine_pcm_close(struct snd_pcm_substream *substream,
++ 				      bool release_channel)
+  {
+  	struct dmaengine_pcm_runtime_data *prtd =3D substream_to_prtd(substream);
+  	struct dma_tx_state state;
+
+--Es/C7Eqyq4ZnWaBW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ8SPsACgkQJNaLcl1U
+h9BsAAf+O8BZrudDTaJUo1X9wAvK41GVr+jD7pqwx5nY7Vf1lhsYTogufboNlkzo
+ICL3CYsJ5CWf4TsZHYRZ09LBDsSKbn0ON+KLoYgABbhAkfL2f7KkIR0zaGs8QEO4
+tOdbovMpVYthFIkRIv6Aj20uVfaIzwbtNzvvohQYPNJvxIXGBGrqea7C5AtBEefB
+c65IPsywozoxZFwk2fbQ0TsaZ0mc6VRi9aCtkFjXjbTfmeAdTn6S6Ulgc5b1KK2E
+PJ5o08YDzH7AZ8rKC2kDJHrGvi2HsOFrXmELFj9rR/Y/LJTPYYS+LhCHxcQ0bd9o
+/mcpnrAe2f7PdXfkiSwbwkfABwDMYw==
+=gtkb
+-----END PGP SIGNATURE-----
+
+--Es/C7Eqyq4ZnWaBW--
 
