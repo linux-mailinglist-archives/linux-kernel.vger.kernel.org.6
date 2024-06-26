@@ -1,156 +1,155 @@
-Return-Path: <linux-kernel+bounces-230800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A582918206
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:15:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D103F918209
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5758C286E48
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:15:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EBA5286BE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBCD1188CC0;
-	Wed, 26 Jun 2024 13:10:05 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B35C21836FE;
-	Wed, 26 Jun 2024 13:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07DE522A;
+	Wed, 26 Jun 2024 13:10:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="aedsXHku"
+Received: from xry111.site (xry111.site [89.208.246.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AF118F2C5
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719407405; cv=none; b=GaQNJ82I+V3MhmAW17eASWSJu6w86hRXWk35QEFqhbkFWkUeayD+oDM1wXIi+4EOS0sLtMjOy0dtZAnUHuSO1uaqTjkmqdIcHtvMgJ4qq5HzLt44QyOZwLtkLXPo0CBEPjqDRcfqq4r9r3qKdRlWIJG7SNX2R6RDn0RVKiigkbM=
+	t=1719407412; cv=none; b=FF4Yr4NR5GLU87y6PSLCuMvX8W4nBi0AQVhbTGz7bLjPlIgpOlOgSZGkGLcFm21j58ZfYFKAII4zOgh70k8x8iRq54ZNLa0cuPQJ52SnGc9UOxGtO/yEjRCH7pMXymRnXRSdot/m4oK9+flUbv8LQ0kbzwNTM1gHcG2x+mZDSR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719407405; c=relaxed/simple;
-	bh=fbyEDTduMIiV7ATd0/mO/o39aMMcYcfKWmIo8CJP4ig=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NDj2EFAQoV2jm+S1KZp4B0yZ+MWKDoMWRMEKWCQ1Y1+D9Xwulfh8iAaF0KJBLgHMfgIeSz2dcHLBb1/CCCXMoamElIjgwRmytQT3dpzRzuXekCcc28OhKDtZE35Cqjynh40bTng+2Cus4bpASBR4vUKFp/T7PKif7IeC8S4wDsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B660F339;
-	Wed, 26 Jun 2024 06:10:25 -0700 (PDT)
-Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 103273F73B;
-	Wed, 26 Jun 2024 06:09:58 -0700 (PDT)
-Message-ID: <99518a43-8347-4f62-aaf6-de6ce68eca0c@arm.com>
-Date: Wed, 26 Jun 2024 15:09:57 +0200
+	s=arc-20240116; t=1719407412; c=relaxed/simple;
+	bh=uI7uICh3QWYQ3PoeaRNCqqwcXlPwlqJh/NEA/nWP9do=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ZqvAtPzkfahLZsGBhzxJS+5aFfz/yLaBdTGrw6lkK6YdoxptzmxZds2eJ/s3LAaOhbyORmZY8s3LqaeA8mpe0+z0jBJJkBfb8IrDwS77DTxpfIPh7nRCJMeAJHsIHHkJbKhS+j412Oxk3JM8Njb5rFyTmGOuSJvUTpdvHY6DIog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=aedsXHku; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
+	s=default; t=1719407406;
+	bh=uI7uICh3QWYQ3PoeaRNCqqwcXlPwlqJh/NEA/nWP9do=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=aedsXHkuASzFpY4i6ioxEzGJ7nTaJz4zBH5USamhk/PaFjZB9bvFI6pRk2DOvXWvk
+	 R3GDET207804W989m1sEN0An6V4vAv7GybzQW0vKHOhBPUKgZZjOJE4KHHxPOYEUHD
+	 JtJ+JZcoJbrJpvhavz2tQh0OZCZK4yZJTYk/o9Cg=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id 55FA06707C;
+	Wed, 26 Jun 2024 09:10:03 -0400 (EDT)
+Message-ID: <b901776293d19271a34bb14f79639c4b574b6174.camel@xry111.site>
+Subject: Re: [PATCH v10 1/2] x86/mm: Don't disable PCID if "incomplete
+ Global INVLPG flushes" is fixed by microcode
+From: Xi Ruoyao <xry111@xry111.site>
+To: Dave Hansen <dave.hansen@linux.intel.com>, Michael Kelley
+	 <mhklinux@outlook.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Cc: Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
+ <peterz@infradead.org>,  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
+ <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, Sean
+ Christopherson <seanjc@google.com>, Andrew Cooper
+ <andrew.cooper3@citrix.com>
+Date: Wed, 26 Jun 2024 21:10:01 +0800
+In-Reply-To: <20240522020625.69418-1-xry111@xry111.site>
+References: <20240522020625.69418-1-xry111@xry111.site>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 3/3] cpuidle: teo: Don't count non-existent intercepts
-To: Christian Loehle <christian.loehle@arm.com>, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, rafael@kernel.org
-Cc: vincent.guittot@linaro.org, qyousef@layalina.io, peterz@infradead.org,
- daniel.lezcano@linaro.org, ulf.hansson@linaro.org, anna-maria@linutronix.de,
- kajetan.puchalski@arm.com, lukasz.luba@arm.com
-References: <20240611112413.1241352-1-christian.loehle@arm.com>
- <20240611112413.1241352-4-christian.loehle@arm.com>
-From: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Content-Language: en-US
-In-Reply-To: <20240611112413.1241352-4-christian.loehle@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 11/06/2024 13:24, Christian Loehle wrote:
-> When bailing out early, teo will not query the sleep length anymore
-> since commit 6da8f9ba5a87 ("cpuidle: teo:
-> Skip tick_nohz_get_sleep_length() call in some cases") with an
-> expected sleep_length_ns value of KTIME_MAX.
-> This lead to state0 accumulating lots of 'intercepts' because
-> the actually measured sleep length was < KTIME_MAX, so count KTIME_MAX
-> as a hit (we have to count them as something otherwise we are stuck)
-> and therefore teo taking too long to recover from intercept-heavy
-> scenarios.
-> 
-> Fundamentally we can only do one of the two:
-> 1. Skip sleep_length_ns query when we think intercept is likely
+Ping.
 
-Isn't this what we do right now? Skip tick_nohz_get_sleep_length() for
-state0 and set cpu_data->sleep_length_ns to KTIME_MAX in teo_select()
-and then count this as an 'intercept' in teo_update().
+Ok to queue these two into some branch for integration?
 
-> 2. Have accurate data if sleep_length_ns is actually intercepted when
-> we believe it is currently intercepted.
-> 
-> This patch chooses the latter as I've found the additional time it
-> takes to query the sleep length to be negligible and the variants of
-> option 1 (count all unknowns as misses or count all unknown as hits)
-> had significant regressions (as misses had lots of too shallow idle
-> state selections and as hits had terrible performance in
-> intercept-heavy workloads).
-
-IMHO, you do 2 things here:
-
-(1) Set 'cpu_data->sleep_length_ns != KTIME_MAX' for '!idx &&
-    prev_intercept_idx' in teo_select().
-
-(2) Force an update with 'cpu_data->sleep_length_ns == KTIME_MAX' to be
-    counted as a 'hit' rather an 'intercept' in teo_update().
-
-Can't really see how this matches the explanatory text exactly.
-
-
-> 
-> Fixes: 6da8f9ba5a87 ("cpuidle: teo: Skip tick_nohz_get_sleep_length() call in some cases")
-> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+On Wed, 2024-05-22 at 10:06 +0800, Xi Ruoyao wrote:
+> Per the "Processor Specification Update" documentations referred by the
+> intel-microcode-20240312 release note, this microcode release has fixed
+> the issue for all affected models.
+>=20
+> So don't disable PCID if the microcode is new enough.=C2=A0 The precise
+> minimum microcode revision fixing the issue is provided by engineer from
+> Intel.
+>=20
+> Cc: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Michael Kelley <mhklinux@outlook.com>
+> Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+> Cc: Sean Christopherson <seanjc@google.com>
+> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
+> Link: https://lore.kernel.org/all/168436059559.404.13934972543631851306.t=
+ip-bot2@tip-bot2/
+> Link: https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files=
+/releases/tag/microcode-20240312
+> Link: https://cdrdv2.intel.com/v1/dl/getContent/740518=C2=A0# RPL042, rev=
+. 13
+> Link: https://cdrdv2.intel.com/v1/dl/getContent/682436=C2=A0# ADL063, rev=
+. 24
+> Link: https://lore.kernel.org/all/20240325231300.qrltbzf6twm43ftb@desk/
+> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
 > ---
->  drivers/cpuidle/governors/teo.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/cpuidle/governors/teo.c b/drivers/cpuidle/governors/teo.c
-> index cc7df59f488d..1e4b40474f49 100644
-> --- a/drivers/cpuidle/governors/teo.c
-> +++ b/drivers/cpuidle/governors/teo.c
-> @@ -231,8 +231,13 @@ static void teo_update(struct cpuidle_driver *drv, struct cpuidle_device *dev)
->  	 * length, this is a "hit", so update the "hits" metric for that bin.
->  	 * Otherwise, update the "intercepts" metric for the bin fallen into by
->  	 * the measured idle duration.
-> +	 * If teo_select() bailed out early, we have to count this as a hit as
-> +	 * we don't know what the true sleep length would've been. Otherwise
-> +	 * we accumulate lots of intercepts at the shallower state (especially
-> +	 * state0) even though there weren't any intercepts due to us
-> +	 * anticipating one.
->  	 */
-> -	if (idx_timer == idx_duration)
-> +	if (idx_timer == idx_duration || cpu_data->sleep_length_ns == KTIME_MAX)
->  		cpu_data->state_bins[idx_timer].hits += PULSE;
->  	else
->  		cpu_data->state_bins[idx_duration].intercepts += PULSE;
-> @@ -292,7 +297,7 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
->  	unsigned int hit_sum = 0;
->  	int constraint_idx = 0;
->  	int idx0 = 0, idx = -1;
-> -	bool alt_intercepts, alt_recent;
-> +	int prev_intercept_idx;
->  	s64 duration_ns;
->  	int i;
->  
-> @@ -370,6 +375,7 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
->  	 * all of the deeper states a shallower idle state is likely to be a
->  	 * better choice.
->  	 */
-> +	prev_intercept_idx = idx;
->  	if (2 * idx_intercept_sum > cpu_data->total - idx_hit_sum) {
->  		int first_suitable_idx = idx;
->  
-> @@ -421,6 +427,14 @@ static int teo_select(struct cpuidle_driver *drv, struct cpuidle_device *dev,
->  			first_suitable_idx = i;
->  		}
->  	}
-> +	if (!idx && prev_intercept_idx) {
-> +		/*
-> +		 * We have to query the sleep length here otherwise we don't
-> +		 * know after wakeup if our guess was correct.
-> +		 */
-> +		duration_ns = tick_nohz_get_sleep_length(&delta_tick);
-> +		cpu_data->sleep_length_ns = duration_ns;
-> +	}
->  
->  	/*
->  	 * If there is a latency constraint, it may be necessary to select an
+> =C2=A0arch/x86/mm/init.c | 22 ++++++++++++++--------
+> =C2=A01 file changed, 14 insertions(+), 8 deletions(-)
+>=20
+> diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
+> index eb503f53c319..e960196e8058 100644
+> --- a/arch/x86/mm/init.c
+> +++ b/arch/x86/mm/init.c
+> @@ -264,27 +264,33 @@ static void __init probe_page_size_mask(void)
+> =C2=A0
+> =C2=A0/*
+> =C2=A0 * INVLPG may not properly flush Global entries
+> - * on these CPUs when PCIDs are enabled.
+> + * on these CPUs when PCIDs are enabled and the
+> + * microcode is not updated to fix the issue.
+> =C2=A0 */
+> =C2=A0static const struct x86_cpu_id invlpg_miss_ids[] =3D {
+> -	X86_MATCH_VFM(INTEL_ALDERLAKE,	=C2=A0=C2=A0=C2=A0 0),
+> -	X86_MATCH_VFM(INTEL_ALDERLAKE_L,=C2=A0=C2=A0=C2=A0 0),
+> -	X86_MATCH_VFM(INTEL_ATOM_GRACEMONT, 0),
+> -	X86_MATCH_VFM(INTEL_RAPTORLAKE,	=C2=A0=C2=A0=C2=A0 0),
+> -	X86_MATCH_VFM(INTEL_RAPTORLAKE_P,=C2=A0=C2=A0 0),
+> -	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,=C2=A0=C2=A0 0),
+> +	X86_MATCH_VFM(INTEL_ALDERLAKE,	=C2=A0=C2=A0=C2=A0 0x2e),
+> +	X86_MATCH_VFM(INTEL_ALDERLAKE_L,=C2=A0=C2=A0=C2=A0 0x42c),
+> +	X86_MATCH_VFM(INTEL_ATOM_GRACEMONT, 0x11),
+> +	X86_MATCH_VFM(INTEL_RAPTORLAKE,	=C2=A0=C2=A0=C2=A0 0x118),
+> +	X86_MATCH_VFM(INTEL_RAPTORLAKE_P,=C2=A0=C2=A0 0x4117),
+> +	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,=C2=A0=C2=A0 0x2e),
+> =C2=A0	{}
+> =C2=A0};
+> =C2=A0
+> =C2=A0static void setup_pcid(void)
+> =C2=A0{
+> +	const struct x86_cpu_id *invlpg_miss_match;
+> +
+> =C2=A0	if (!IS_ENABLED(CONFIG_X86_64))
+> =C2=A0		return;
+> =C2=A0
+> =C2=A0	if (!boot_cpu_has(X86_FEATURE_PCID))
+> =C2=A0		return;
+> =C2=A0
+> -	if (x86_match_cpu(invlpg_miss_ids)) {
+> +	invlpg_miss_match =3D x86_match_cpu(invlpg_miss_ids);
+> +
+> +	if (invlpg_miss_match &&
+> +	=C2=A0=C2=A0=C2=A0 boot_cpu_data.microcode < invlpg_miss_match->driver_=
+data) {
+> =C2=A0		pr_info("Incomplete global flushes, disabling PCID");
+> =C2=A0		setup_clear_cpu_cap(X86_FEATURE_PCID);
+> =C2=A0		return;
 
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
