@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-231173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E95F91871B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:16:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63305918718
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 18:15:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6323286DD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:16:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 943341C21DE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:15:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD5818EFE4;
-	Wed, 26 Jun 2024 16:16:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA8418EFF0;
+	Wed, 26 Jun 2024 16:15:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="EyU3L10n"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H91h3+A6"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAFD26E611;
-	Wed, 26 Jun 2024 16:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A8EA6E611;
+	Wed, 26 Jun 2024 16:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719418599; cv=none; b=hCs6bvH8q+axphrBBXkaH18u8U9695i/TYHVsL7p4N1eseBgCyVKYA3Gl8hdzJGy8FK1AoboXYW3hxI4d7LV6pgVg5beLGHAGN1/01Eu+gx5jLL5r+Zgbj3zJov+zHKXoKrQIPDyfmyJFM2o1fPsmvg/yNZ8GSdazZAp9TE0wIE=
+	t=1719418546; cv=none; b=qRFvbfS4Ybf74rBAQHaWrurIYWV3bghYZMHLoisSegrFM7VoYLOO+sV6K1hiX7B1Lavx1PSaduV1RIa1sZXu5ezbFVAv14h6kehX/54XvfZfF6aGG8KkDUtthLacAF5Y5QRdLSPSzqw57B+G9nh2B4aQFHwlWB0Iv851KbVHIdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719418599; c=relaxed/simple;
-	bh=1mqK9G/ZFh6zwovAXJD+vTuqi1iQEJ8sHB9zoLajBS4=;
+	s=arc-20240116; t=1719418546; c=relaxed/simple;
+	bh=DKxdDSfcP/Jw+UVMViix1inQgHj9ZmEoS+7gB+JkIj4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Yv0UAjAdgZBqRDhelUMl84O4QZTFPnzzSxMoOsSp58FlONU+TomZ3QG+sMH9d1dxixkzOwqwrVxcBbWRjHXVkfrpVIoWdCuysdOvTKDrkntsm6J5fOjQc5OPWaOYWHCTwOQe9EGnYwYxqg72bujD/QKnr1PrFAioOG1tqPlwBzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=EyU3L10n; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QBLI8W023451;
-	Wed, 26 Jun 2024 18:16:04 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	 In-Reply-To:Content-Type; b=bkD266A2bWHQDQF0X2GayE4nndbB1eF0PEXOWJXh5vVoEaKp83iKXPLv1CqH5nwBqFbzsLDwbQBP30S7iKax4Ts0bjKVtAnfpeDcIKk28BDu4bRlglXzWdHInHLuTRFiK0ab15oMFzoWIr4mTwXtm20tW4EGjiUU40K1RVQF2nQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H91h3+A6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfU36018120;
+	Wed, 26 Jun 2024 16:15:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	0K6g4n5PAuZsVsxr2X9hg3rFa4+lIJuxNGEgIloS7DY=; b=EyU3L10newAuzHTN
-	t+Bk/jwsZdFiq35Ki6JMbOWT/srmka8vs5v3dGLrPN1f2vgDh4bARIsJwKAPl1gD
-	+byra0tGSKKY0YEIASQBi+4YhVB9fmx/YkP8zE+xfV7M8Z5bcfVz5uhbydJKwNO0
-	rbJ1sc5LkcLyXL+c3laPCTd6jAS3TriBJPUqCt8U7llRbUxwJ71BQEXE9F1zLV3b
-	EQ9IToEVMJJZjz25/NPeAq6ipKdJnU28mUh+eX8EORs/xWvYhPBYPm7fBxhpCI1p
-	2gr1f701xzjpdKcazRMsEoUX/RcHq6s35/AB543kKUFoZsUxQ7nkCLe6VSvxfyM/
-	myhAmw==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yx9jjest7-1
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DUOeyAeujF2d7nlGIlBzso5zHd1i88E1meCDjrpN1e4=; b=H91h3+A6rfiBrKHm
+	f52pENo06gWoOFo6ViORvT2mnv2hsYsn+umv7Vggmj0phQniOP3rHV5cY2jJmt0v
+	uTXtxpNzFGdqqPNuMOnziA3Oc3hbxa7ND3yLCF2SCnBn31r6iN5DrJCKhbz60pxM
+	aUF808hsV029x9r0xXpj++xsbpcJxOtFJZDsOZj0JJ4FMf010MkNhAhW+EIxTCXq
+	O5/I52eZaizrxOVEBnrK7DfS+87/CboX3scb/c948F/BW6kkUVAwsBkgtKNfZNdD
+	+ryrUPJet/oFfLjRQIWJk504ZB1G1jqETszqkW+MsJFE/HlaAD6RhELfHrhXcaBR
+	FLEJKQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywppv9tu2-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 18:16:03 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 633E340044;
-	Wed, 26 Jun 2024 18:15:54 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id C59B62291CA;
-	Wed, 26 Jun 2024 18:15:16 +0200 (CEST)
-Received: from [10.252.26.2] (10.252.26.2) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 26 Jun
- 2024 18:15:16 +0200
-Message-ID: <7125491f-880c-486e-b417-8fc1e0c20c88@foss.st.com>
-Date: Wed, 26 Jun 2024 18:15:15 +0200
+	Wed, 26 Jun 2024 16:15:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QGFeDn027360
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 16:15:40 GMT
+Received: from [10.48.244.230] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
+ 2024 09:15:40 -0700
+Message-ID: <88ab18bd-0700-46c6-9d74-5bd79a1f0fc1@quicinc.com>
+Date: Wed, 26 Jun 2024 09:15:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,107 +64,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 8/8] iio: adc: stm32-dfsdm: add scaling support to
- dfsdm
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
-        <fabrice.gasnier@foss.st.com>, Jonathan Cameron <jic23@kernel.org>,
-        Lars-Peter Clausen <lars@metafoo.de>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>
-CC: Nuno Sa <nuno.sa@analog.com>, <linux-iio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20240625150717.1038212-1-olivier.moysan@foss.st.com>
- <20240625150717.1038212-9-olivier.moysan@foss.st.com>
- <c2d746c73f7450dd10c0a0b229b3672e44fe583a.camel@gmail.com>
+Subject: Re: [PATCH] spmi: add missing MODULE_DESCRIPTION() macros
 Content-Language: en-US
-From: Olivier MOYSAN <olivier.moysan@foss.st.com>
-In-Reply-To: <c2d746c73f7450dd10c0a0b229b3672e44fe583a.camel@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+        Stephen Boyd
+	<sboyd@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>
+References: <20240609-md-drivers-spmi-v1-1-f1d5b24e7a66@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240609-md-drivers-spmi-v1-1-f1d5b24e7a66@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: XG5Nx2HVEwG0KAjIYBY2CovVXTFprXBr
+X-Proofpoint-ORIG-GUID: XG5Nx2HVEwG0KAjIYBY2CovVXTFprXBr
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ clxscore=1015 priorityscore=1501 mlxlogscore=999 mlxscore=0 adultscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 spamscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406260119
 
-Hi Nuno,
+On 6/9/2024 5:40 PM, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/hisi-spmi-controller.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/spmi/spmi-pmic-arb.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/spmi/hisi-spmi-controller.c | 1 +
+>  drivers/spmi/spmi-pmic-arb.c        | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/spmi/hisi-spmi-controller.c b/drivers/spmi/hisi-spmi-controller.c
+> index fa068b34b040..3cafdf22c909 100644
+> --- a/drivers/spmi/hisi-spmi-controller.c
+> +++ b/drivers/spmi/hisi-spmi-controller.c
+> @@ -344,6 +344,7 @@ static void __exit spmi_controller_exit(void)
+>  }
+>  module_exit(spmi_controller_exit);
+>  
+> +MODULE_DESCRIPTION("Hisilicon 3670 SPMI Controller driver");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_VERSION("1.0");
+>  MODULE_ALIAS("platform:spmi_controller");
+> diff --git a/drivers/spmi/spmi-pmic-arb.c b/drivers/spmi/spmi-pmic-arb.c
+> index 791cdc160c51..f240fcc5a4e1 100644
+> --- a/drivers/spmi/spmi-pmic-arb.c
+> +++ b/drivers/spmi/spmi-pmic-arb.c
+> @@ -1891,5 +1891,6 @@ static struct platform_driver spmi_pmic_arb_driver = {
+>  };
+>  module_platform_driver(spmi_pmic_arb_driver);
+>  
+> +MODULE_DESCRIPTION("Qualcomm MSM SPMI Controller (PMIC Arbiter) driver");
+>  MODULE_LICENSE("GPL v2");
+>  MODULE_ALIAS("platform:spmi_pmic_arb");
+> 
+> ---
+> base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+> change-id: 20240609-md-drivers-spmi-51a13baa2301
 
-On 6/26/24 10:59, Nuno Sá wrote:
-> Hi Olivier,
-> 
-> One thing that I just noticed...
-> 
-> On Tue, 2024-06-25 at 17:07 +0200, Olivier Moysan wrote:
->> Add scaling support to STM32 DFSDM.
->>
->> When used in an analog context, a DFSDM filter typically converts the data
->> from a sigma delta modulator. The IIO device associated to the DFSDM
->> filter provides these data as raw data.
->> The IIO device can provide scaling information (voltage and offset) to
->> allow conversion of raw data into physical values.
->>
->> With the new binding based on IIO backend framework, the sigma delta
->> modulators are defined as backends providing scaling information.
->>
->> The scaling is not supported with legacy binding.
->>
->> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
->> Acked-by: Nuno Sa <nuno.sa@analog.com>
->> ---
->>
-> 
-> ...
-> 
->> +
->> +	case IIO_CHAN_INFO_SCALE:
->> +		/*
->> +		 * Scale is expressed in mV.
->> +		 * When fast mode is disabled, actual resolution may be lower
->> +		 * than 2^n, where n = realbits - 1.
->> +		 * This leads to underestimating the input voltage.
->> +		 * To compensate this deviation, the voltage reference can be
->> +		 * corrected with a factor = realbits resolution / actual max
->> +		 */
->> +		if (adc->backend[idx]) {
->> +			iio_backend_read_raw(adc->backend[idx], chan, val,
->> val2, mask);
-> 
-> Eve if it does not matter for your usecase, you should still do error handling
-> as iio_backend_read_raw() can return an error.
-> 
+Following up to see if anything else is needed from me. Hoping to see this in
+linux-next so I can remove it from my tracking spreadsheet :)
 
-Ack. On the same occasion, I will switch to a dedicated API.
+/jeff
 
-Olivier
-
->> +			*val = div_u64((u64)*val * (u64)BIT(DFSDM_DATA_RES -
->> 1), max);
->> +			*val2 = chan->scan_type.realbits;
->> +			if (chan->differential)
->> +				*val *= 2;
->> +		}
->> +		return IIO_VAL_FRACTIONAL_LOG2;
->> +
->> +	case IIO_CHAN_INFO_OFFSET:
->> +		/*
->> +		 * DFSDM output data are in the range [-2^n, 2^n],
->> +		 * with n = realbits - 1.
->> +		 * - Differential modulator:
->> +		 * Offset correspond to SD modulator offset.
->> +		 * - Single ended modulator:
->> +		 * Input is in [0V, Vref] range,
->> +		 * where 0V corresponds to -2^n, and Vref to 2^n.
->> +		 * Add 2^n to offset. (i.e. middle of input range)
->> +		 * offset = offset(sd) * vref / res(sd) * max / vref.
->> +		 */
->> +		if (adc->backend[idx]) {
->> +			iio_backend_read_raw(adc->backend[idx], chan, val,
->> val2, mask);
-> 
-> Same...
-> 
-> - Nuno Sá
 
