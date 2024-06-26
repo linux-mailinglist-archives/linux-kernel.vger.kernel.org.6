@@ -1,95 +1,199 @@
-Return-Path: <linux-kernel+bounces-230502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C71CA917DBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:24:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF584917DC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:25:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71ED81F2575D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:24:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C1501F25709
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:25:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2941617B405;
-	Wed, 26 Jun 2024 10:24:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821BB179658;
+	Wed, 26 Jun 2024 10:25:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="ZMkT1QN8"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="HXO4rl9s"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7F3A16089A;
-	Wed, 26 Jun 2024 10:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5339816089A
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 10:25:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719397458; cv=none; b=Rc0cSSuMBek4gTTYjXW99hTiGIsjmdKcrYy5ASk99mXBUuVytESV6upJ/TblI7mx6jLnk+Ab1fTTNseb7usqOm+qTwoTmrFh8KZqouTjInjg3GXW9sf8yBvOtS4M0AvfeofFQxa4sNFCKpoHomYaHHiOW3q9ClnBptOmVax0uRE=
+	t=1719397523; cv=none; b=rAIwXptSlOoaA67XwVxQWnzVm/qAYC6RaX9Lzkzo78SN1gHadw1Qz9AkufaxUG4OMjXXVgk7KE8uHFDPFNsYZFoDElKeg/enbUEpwH/1VFmmcdc9FBr+9j10SHuz+5cBNSgjUpnhg4S7ONw7fZhByXTyYHu0a2RtI9GOCboBGSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719397458; c=relaxed/simple;
-	bh=Z9OEb+W758nrFwD4DhnTTZ3Php5ucgAJEIdfGNrKUnY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZsQiv1EXSyP9aRb+U6qHLjybAC317psujhYIaFuplzeb6/rLK04Wtyn74xazF5UuOqSQkDoZsAAo64AC7Um+fO4D4s28Um5b+c0uEfKB8GyaR2Vfscs3GfXbHsxbahxc5IxbvzpjbOl9PFBtKZIoABsjRzEHQdvo8a4/5+18GAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=ZMkT1QN8; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-Received: from pecola.lan (unknown [159.196.93.152])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 16D50200EE;
-	Wed, 26 Jun 2024 18:24:14 +0800 (AWST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1719397454;
-	bh=Z9OEb+W758nrFwD4DhnTTZ3Php5ucgAJEIdfGNrKUnY=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=ZMkT1QN8UFT0Fak1pLNlBYR6DfHHiVP7NAtk5ixPxEbOhlTV+BU+KVQQkiuZlfdaW
-	 B9p5nM8pzH9wkTX2ZcU6/3iNY4qBxZfAE/mPXSrbsLNcFGb5GhmAzOgrCtz1jA/XNb
-	 z7OyzlaWcPTXOiq9Cua1Gp3Si+KWkLbaOly3/2j9NxG/M+tkWBXKwpxciRserA0tDk
-	 BzLtYRwFmWlCh+qHSsi/VsFkoUy6kZYUY+vdVPoF+t112z0bK3/NC7qGPxAFPIQ+s5
-	 zt3uR9bbUedpsMFPDT/XlhKjQpusDxbXX8m24SHWhy+40UJWdTav8KZKU+8klIKQdB
-	 QAjLCgQ0thUug==
-Message-ID: <ce1786dd7c0e9b892ffdeed20eb0c1c9c0808984.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 1/2] dt-bindings: i3c: dw: Add property to select IBI ops
-From: Jeremy Kerr <jk@codeconstruct.com.au>
-To: "Aniket ." <aniketmaurya@google.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Joel Stanley <joel@jms.id.au>, Billy Tsai
- <billy_tsai@aspeedtech.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- linux-i3c@lists.infradead.org,  linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-Date: Wed, 26 Jun 2024 18:24:13 +0800
-In-Reply-To: <CAMmmMt3DZWA734iFGLxz7cj+hYiWgq5MDOrc_UJpYeaij+yywg@mail.gmail.com>
-References: <20240626052238.1577580-1-aniketmaurya@google.com>
-	 <20240626052238.1577580-2-aniketmaurya@google.com>
-	 <e28ba03d1df1c0c5aec987411c40e44fc351ce0d.camel@codeconstruct.com.au>
-	 <c15045b4-2e5f-4fcc-b25c-76a5e4973e93@linaro.org>
-	 <b4ba5fa7834fdfb1a1e26ff0e01b9bb235de63b5.camel@codeconstruct.com.au>
-	 <CAMmmMt25nkZTXXLCVGv1baf3azQR0kwbM8LP4EzCQKOPLUhbVQ@mail.gmail.com>
-	 <d256cd72ef2011c3bfd045b04fb6509d1ac827e9.camel@codeconstruct.com.au>
-	 <CAMmmMt3DZWA734iFGLxz7cj+hYiWgq5MDOrc_UJpYeaij+yywg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1719397523; c=relaxed/simple;
+	bh=fm00PkARB5AL2bGmF9EOi9Wo9IuJzJD9VX6QAJzzT3o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ryYQZcrE4tQuD/YpwtmkwLWCSxV9nstXU5JqIZZ/W02RbL/G0NweFl9VU+DEddioFvwYtMtpZn/6OzkowVkQ4vs7supwpgxO1LDLykyr4/2FMzY13RNitGOyi//AFwvBKbUPf1KO7hLZSmOtkBalG9zxIKELA8fwxa4Q6eGEieI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=HXO4rl9s; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-144-210.elisa-laajakaista.fi [91.158.144.210])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 6EB162C5;
+	Wed, 26 Jun 2024 12:24:55 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1719397496;
+	bh=fm00PkARB5AL2bGmF9EOi9Wo9IuJzJD9VX6QAJzzT3o=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HXO4rl9sVF6ovuwnxFt729XSOzX3IFCCJ8nzJeAzJ0f4Y/Rf/1UxSiTKlU13iijOO
+	 ppNtonLVS485tWgtV+PUQSNHNdLxjjvRPhBk/B/TvFosOaqT+s9GoumhV7eTcbxRQV
+	 w1eaU6Z07QWRCimXf/s4TITMIl+OBRLLW5rsV2sA=
+Message-ID: <8fcbc541-d7a3-4d0d-ab0f-74d7f1cd63b5@ideasonboard.com>
+Date: Wed, 26 Jun 2024 13:25:15 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 03/11] drm/bridge: cdns-dsi: Fix Phy _init() and
+ _exit()
+To: Aradhya Bhatia <a-bhatia1@ti.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
+ Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>
+Cc: DRI Development List <dri-devel@lists.freedesktop.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>,
+ Dominik Haller <d.haller@phytec.de>, Sam Ravnborg <sam@ravnborg.org>,
+ Thierry Reding <treding@nvidia.com>,
+ Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+ Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Devarsh Thakkar <devarsht@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
+ Jai Luthra <j-luthra@ti.com>
+References: <20240622110929.3115714-1-a-bhatia1@ti.com>
+ <20240622110929.3115714-4-a-bhatia1@ti.com>
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Content-Language: en-US
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20240622110929.3115714-4-a-bhatia1@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Aniket,
+Hi,
 
-> I am using dw core directly through Synopsys virtualizer development
-> kit(VDK) setup.
+On 22/06/2024 14:09, Aradhya Bhatia wrote:
+> Initialize the Phy during the cdns-dsi _resume(), and de-initialize it
+> during the _suspend().
+> 
+> Also power-off the Phy from bridge_disable.
+> 
+> Fixes: fced5a364dee ("drm/bridge: cdns: Convert to phy framework")
+> Signed-off-by: Aradhya Bhatia <a-bhatia1@ti.com>
+> ---
+>   drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c | 10 ++++++++--
+>   1 file changed, 8 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+> index 5159c3f0853e..d89c32bae2b9 100644
+> --- a/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+> +++ b/drivers/gpu/drm/bridge/cadence/cdns-dsi-core.c
+> @@ -672,6 +672,10 @@ static void cdns_dsi_bridge_disable(struct drm_bridge *bridge)
+>   	if (dsi->platform_ops && dsi->platform_ops->disable)
+>   		dsi->platform_ops->disable(dsi);
+>   
+> +	phy_power_off(dsi->dphy);
+> +	dsi->link_initialized = false;
+> +	dsi->phy_initialized = false;
+> +
+>   	pm_runtime_put(dsi->base.dev);
+>   }
+>   
+> @@ -698,7 +702,6 @@ static void cdns_dsi_hs_init(struct cdns_dsi *dsi)
+>   	       DPHY_CMN_PDN | DPHY_PLL_PDN,
+>   	       dsi->regs + MCTL_DPHY_CFG0);
+>   
+> -	phy_init(dsi->dphy);
+>   	phy_set_mode(dsi->dphy, PHY_MODE_MIPI_DPHY);
+>   	phy_configure(dsi->dphy, &output->phy_opts);
+>   	phy_power_on(dsi->dphy);
+> @@ -1120,6 +1123,8 @@ static int __maybe_unused cdns_dsi_resume(struct device *dev)
+>   	clk_prepare_enable(dsi->dsi_p_clk);
+>   	clk_prepare_enable(dsi->dsi_sys_clk);
+>   
+> +	phy_init(dsi->dphy);
+> +
+>   	return 0;
+>   }
+>   
+> @@ -1127,10 +1132,11 @@ static int __maybe_unused cdns_dsi_suspend(struct device *dev)
+>   {
+>   	struct cdns_dsi *dsi = dev_get_drvdata(dev);
+>   
+> +	phy_exit(dsi->dphy);
+> +
+>   	clk_disable_unprepare(dsi->dsi_sys_clk);
+>   	clk_disable_unprepare(dsi->dsi_p_clk);
+>   	reset_control_assert(dsi->dsi_p_rst);
+> -	dsi->link_initialized = false;
+>   	return 0;
+>   }
+>   
 
-Does that mean that *all* existing implementations of this design will
-have IBI support? Changing this in the pre-existing driver will be
-asserting that.
+So with this patch, phy_init/exit will be called in the resume/suspend 
+functions. That looks fine.
 
-> Shall I remove the ibi_capable property from the dw_i3c_master
-> struct?
+But the phy_power_on/phy_power_off looks odd to me. Here you add 
+phy_power_off() to cdns_dsi_bridge_disable(), which sounds fine. But 
+phy_power_on() is called in cdns_dsi_hs_init(), and that is called in 
+cdns_dsi_bridge_enable() (which sounds fine), but also in 
+cdns_dsi_bridge_pre_enable().
 
-Only if you can ensure it's not going to break the driver for existing
-hardware deployments.
+So doesn't that mean cdns_dsi_hs_init() call in cdns_dsi_bridge_enable() 
+is extra, as it effectively does nothing (it exists right away if 
+dsi->phy_initialized == true)?
 
-Cheers,
+  Tomi
 
-
-Jeremy
 
