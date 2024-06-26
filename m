@@ -1,285 +1,153 @@
-Return-Path: <linux-kernel+bounces-231438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9A29198B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:07:19 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83D999198BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 22:08:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E063E1F22163
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:07:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4FBEB220A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 20:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACE56192B7A;
-	Wed, 26 Jun 2024 20:07:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72119192B7A;
+	Wed, 26 Jun 2024 20:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ard4aKQL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VH+TO8KE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440E3190679
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 20:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0126A190679;
+	Wed, 26 Jun 2024 20:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719432427; cv=none; b=rxBsshn6O3veDeZGJ9Lhyo1VP6wEQOAm9fSLla84TrI5i2+kyHB10xCykhy6gFf9bW/dt6HKl9dSPFoGarbSxvQg0ego2ckBMe7OPusAkPjC/wN532wP2Uly9GpueX4MQxTWn4TfVI7QFJ45gxIX4Adn7apKCZNnr3ePbNkDFi0=
+	t=1719432497; cv=none; b=OAgW+CiECtjUEP2ivWhlWUJ4w89iOSiuqdIm1ANoWoIh5jl3OEDxZjLuD8zr6yFlrl0Fbuic9U6Y+66TfesTHC+IBGODIW+fM0K0QFACRtYMk3+JABAmwGtIHKllYrUm1p5a3x3K5WBVB2MfFya5Hh+cCOt7Rze2F1Bo+1XFQpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719432427; c=relaxed/simple;
-	bh=tG3svqnmdOmcyo8n1dlR11fYZkpwvs9C3BMK4ENLMdY=;
-	h=From:References:MIME-Version:In-Reply-To:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XqjqEwv+6Fkracp+HFwONOwxvI0BC08OGBgNav+gtyf08KYGPUtQn1BOpDrQH+QpYRjHH1ydpZdjx+eeV1DS3kpWe/wNL9tZhnE1xCSe6JTKgzsVDmSZp9Nx0iMZVAveX/291UzJcgu+vpA+wErH3YQlMKb+mc0HEoRSe2tgucQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ard4aKQL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719432425;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cn57lmSl8y8vx7nhEOY1O6exPQxSYfQbNqISLWbJZLo=;
-	b=ard4aKQLzCjeOY0SUrb/Mlj/0Hgz5h7sjBaqKZyQ+CzjuS23cMKsJ1/DizXETT6/UUeLHv
-	tUTtQI211vu58QoQ1CeB+AxN3Hf9wjDYLT2xu7ib+aG9z4wa0kqsdZL+QV/cTp7ISxPMuw
-	MKwkvtIAU4dyO0MqueWwfIVxOg6GwLA=
-Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
- [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-461-w-VsNuT6PR63DlNq3jc27Q-1; Wed, 26 Jun 2024 16:07:03 -0400
-X-MC-Unique: w-VsNuT6PR63DlNq3jc27Q-1
-Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2c8066074b5so864658a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:07:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719432422; x=1720037222;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:in-reply-to
-         :mime-version:references:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=cn57lmSl8y8vx7nhEOY1O6exPQxSYfQbNqISLWbJZLo=;
-        b=Bi0Or4ZIiuCbUDE5btgeVl4O11Ia2JXhEyxFB9B/SvzH/UPWnL6Dwfi11kD8P6/Xmj
-         iD6qtbziN9GVMi2g/vzachIKjsPtQuN4U6WuCU2XMr3LovWR3wJkNg6SDFI+q5H4I7e8
-         SIwsT1R0MkxUhR4uG97KvfJu5wEJxZh53FpOLMCM2BLQ+PiquhEZI0+8QUTRVKoC3rux
-         nxO3FcI4sbln68E5aDiKqqS91+PUei8/3KEQkHDxsWBpQ+PHQz+/8pzkTZRsYPNok9c6
-         WJdJkrq6f8I3aqfM+Lb8628Lp4NVBj7HCTOZp7zUYJOjAzZBEoOYd1oX1oUtlcDNie+T
-         LmLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX3CxPwmvYsJRkeKvnJiz1G7MWnyR4WBhDbYwFCR/bgq6Ti7gvcGM8A79vtHup/TolcDwXkXAb91JIF1bssZpSSHBGJRF8i7GRPjDq5
-X-Gm-Message-State: AOJu0YyO4bwjJ8Ndt/cMdakcwl/QiFRtnanuxwxVvEJ2TwsetL49R9hw
-	AhGIFpR7vNb+4WNw2Alrh1hTjhCuuCInc03eoQrLSq9PROgk5vwH7QN7ASVXCXnxVIqZvkmSQuK
-	d0JKQWnKsZHFIQ3nxgT5IblxPVoU7bxAYsbZEwZqU4pjF82HrgBuJB7+STXlpwSswtMZ4IYkIlL
-	hkWzfLVuN/vvOLx4KZ2Ko2DGz8UKX1/m9Kd/XQ
-X-Received: by 2002:a17:90a:4302:b0:2c8:dc37:625f with SMTP id 98e67ed59e1d1-2c8dc37663bmr3101834a91.42.1719432422480;
-        Wed, 26 Jun 2024 13:07:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGczBgKpNm9/aDX33RLL/hNAeoiUaVQEeme4d42qMaodTIv+oJEYweKOa2rDLz9XP7S6/uvjPA4hupPac/63ZQ=
-X-Received: by 2002:a17:90a:4302:b0:2c8:dc37:625f with SMTP id
- 98e67ed59e1d1-2c8dc37663bmr3101805a91.42.1719432422105; Wed, 26 Jun 2024
- 13:07:02 -0700 (PDT)
-Received: from 311643009450 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 26 Jun 2024 15:07:00 -0500
-From: =?UTF-8?Q?Adri=C3=A1n_Moreno?= <amorenoz@redhat.com>
-References: <20240625205204.3199050-1-amorenoz@redhat.com> <20240625205204.3199050-6-amorenoz@redhat.com>
- <f4e9f3db-d9bf-49a9-aa2d-db40b472c82f@ovn.org>
+	s=arc-20240116; t=1719432497; c=relaxed/simple;
+	bh=34iE4Kd0i79Uf2wd56kMut6u4yfbhKLiopiMlYYMjV4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sGKIIeM/+kDlRaGJy7tgyom8kn9tDUTVPKPL2/VC4+lieoOlewvInGrqunMmDj6yZ7Ca2Z5egRpUjPi+BgiTWaV+5ShwZdVRYVVIdP7H7rvjtsY04XuKZ1kUKCUFGBefQkiUq8GiR8LMG2i9XT5dDtw+hi+hKqSftgRI1dd90Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VH+TO8KE; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719432495; x=1750968495;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=34iE4Kd0i79Uf2wd56kMut6u4yfbhKLiopiMlYYMjV4=;
+  b=VH+TO8KEiEv+R+vwIwSZux7s2VqSmJ//dFSNP/YWqd207TmYj1HISgGf
+   oinDmEjczzYOkS2hS7g6WuQuoQep5y0uQY1f/j9sb5l27UKM6NbayXi+5
+   qQFv03262SSw5rRL08UJj72oqvn+3wPetfnj/lhUVyY6Bsk0nirgItD75
+   HSQodH+aWy0NeCEiwhR5FjaF2hdWL3COC4leoSYutoXBOh3x38GcNuu7E
+   T0P7cBDASC9KYtCn8d24U1FbwDAzMQZC0j+Wwx1G9VGogPSBmRrBRR53i
+   rwR16NspL5qyjan/muzG66apvPR1DfB6zIo9MclUVElB/PxPIXJuiPhFx
+   g==;
+X-CSE-ConnectionGUID: iPeFRtJyTGSaM48nnMloRw==
+X-CSE-MsgGUID: 7esaBPKxS7emstR81l09Hw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="39035196"
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="39035196"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 13:08:14 -0700
+X-CSE-ConnectionGUID: cJPws76DSayq6aMCeXO0ww==
+X-CSE-MsgGUID: MwXZkQTkSXOZLtyzkLmqsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
+   d="scan'208";a="44535212"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 26 Jun 2024 13:08:11 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sMYw4-000FWd-2C;
+	Wed, 26 Jun 2024 20:08:08 +0000
+Date: Thu, 27 Jun 2024 04:07:03 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thippeswamy Havalige <thippesw@amd.com>, bhelgaas@google.com,
+	kw@linux.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, lpieralisi@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	michal.simek@amd.com, linux-arm-kernel@lists.infradead.org,
+	bharat.kumar.gogada@amd.com,
+	Thippeswamy Havalige <thippesw@amd.com>
+Subject: Re: [PATCH 2/2] PCI: xilinx-xdma: Add Xilinx QDMA Root Port driver
+Message-ID: <202406270344.9nOuTH5k-lkp@intel.com>
+References: <20240624104239.132159-3-thippesw@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <f4e9f3db-d9bf-49a9-aa2d-db40b472c82f@ovn.org>
-Date: Wed, 26 Jun 2024 15:07:00 -0500
-Message-ID: <CAG=2xmPcLgTFK+o-A9HL4sPcLFqD_DS=H+T2woVLTvoAzU8ajQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 05/10] net: openvswitch: add emit_sample action
-To: Ilya Maximets <i.maximets@ovn.org>
-Cc: netdev@vger.kernel.org, aconole@redhat.com, echaudro@redhat.com, 
-	horms@kernel.org, dev@openvswitch.org, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Donald Hunter <donald.hunter@gmail.com>, Pravin B Shelar <pshelar@ovn.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240624104239.132159-3-thippesw@amd.com>
 
-On Wed, Jun 26, 2024 at 12:51:19PM GMT, Ilya Maximets wrote:
-> On 6/25/24 22:51, Adrian Moreno wrote:
-> > Add support for a new action: emit_sample.
-> >
-> > This action accepts a u32 group id and a variable-length cookie and use=
-s
-> > the psample multicast group to make the packet available for
-> > observability.
-> >
-> > The maximum length of the user-defined cookie is set to 16, same as
-> > tc_cookie, to discourage using cookies that will not be offloadable.
-> >
-> > Signed-off-by: Adrian Moreno <amorenoz@redhat.com>
-> > ---
-> >  Documentation/netlink/specs/ovs_flow.yaml | 17 +++++++++
-> >  include/uapi/linux/openvswitch.h          | 28 ++++++++++++++
-> >  net/openvswitch/Kconfig                   |  1 +
-> >  net/openvswitch/actions.c                 | 45 +++++++++++++++++++++++
-> >  net/openvswitch/flow_netlink.c            | 33 ++++++++++++++++-
-> >  5 files changed, 123 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/netlink/specs/ovs_flow.yaml b/Documentation/=
-netlink/specs/ovs_flow.yaml
-> > index 4fdfc6b5cae9..a7ab5593a24f 100644
-> > --- a/Documentation/netlink/specs/ovs_flow.yaml
-> > +++ b/Documentation/netlink/specs/ovs_flow.yaml
-> > @@ -727,6 +727,12 @@ attribute-sets:
-> >          name: dec-ttl
-> >          type: nest
-> >          nested-attributes: dec-ttl-attrs
-> > +      -
-> > +        name: emit-sample
-> > +        type: nest
-> > +        nested-attributes: emit-sample-attrs
-> > +        doc: |
-> > +          Sends a packet sample to psample for external observation.
-> >    -
-> >      name: tunnel-key-attrs
-> >      enum-name: ovs-tunnel-key-attr
-> > @@ -938,6 +944,17 @@ attribute-sets:
-> >        -
-> >          name: gbp
-> >          type: u32
-> > +  -
-> > +    name: emit-sample-attrs
-> > +    enum-name: ovs-emit-sample-attr
-> > +    name-prefix: ovs-emit-sample-attr-
-> > +    attributes:
-> > +      -
-> > +        name: group
-> > +        type: u32
-> > +      -
-> > +        name: cookie
-> > +        type: binary
-> >
-> >  operations:
-> >    name-prefix: ovs-flow-cmd-
-> > diff --git a/include/uapi/linux/openvswitch.h b/include/uapi/linux/open=
-vswitch.h
-> > index efc82c318fa2..8cfa1b3f6b06 100644
-> > --- a/include/uapi/linux/openvswitch.h
-> > +++ b/include/uapi/linux/openvswitch.h
-> > @@ -914,6 +914,31 @@ struct check_pkt_len_arg {
-> >  };
-> >  #endif
-> >
-> > +#define OVS_EMIT_SAMPLE_COOKIE_MAX_SIZE 16
-> > +/**
-> > + * enum ovs_emit_sample_attr - Attributes for %OVS_ACTION_ATTR_EMIT_SA=
-MPLE
-> > + * action.
-> > + *
-> > + * @OVS_EMIT_SAMPLE_ATTR_GROUP: 32-bit number to identify the source o=
-f the
-> > + * sample.
-> > + * @OVS_EMIT_SAMPLE_ATTR_COOKIE: A variable-length binary cookie that =
-contains
-> > + * user-defined metadata. The maximum length is OVS_EMIT_SAMPLE_COOKIE=
-_MAX_SIZE
-> > + * bytes.
-> > + *
-> > + * Sends the packet to the psample multicast group with the specified =
-group and
-> > + * cookie. It is possible to combine this action with the
-> > + * %OVS_ACTION_ATTR_TRUNC action to limit the size of the packet being=
- emitted.
-> > + */
-> > +enum ovs_emit_sample_attr {
-> > +	OVS_EMIT_SAMPLE_ATTR_GROUP =3D 1,	/* u32 number. */
-> > +	OVS_EMIT_SAMPLE_ATTR_COOKIE,	/* Optional, user specified cookie. */
-> > +
-> > +	/* private: */
-> > +	__OVS_EMIT_SAMPLE_ATTR_MAX
-> > +};
-> > +
-> > +#define OVS_EMIT_SAMPLE_ATTR_MAX (__OVS_EMIT_SAMPLE_ATTR_MAX - 1)
-> > +
-> >  /**
-> >   * enum ovs_action_attr - Action types.
-> >   *
-> > @@ -966,6 +991,8 @@ struct check_pkt_len_arg {
-> >   * of l3 tunnel flag in the tun_flags field of OVS_ACTION_ATTR_ADD_MPL=
-S
-> >   * argument.
-> >   * @OVS_ACTION_ATTR_DROP: Explicit drop action.
-> > + * @OVS_ACTION_ATTR_EMIT_SAMPLE: Send a sample of the packet to extern=
-al
-> > + * observers via psample.
-> >   *
-> >   * Only a single header can be set with a single %OVS_ACTION_ATTR_SET.=
-  Not all
-> >   * fields within a header are modifiable, e.g. the IPv4 protocol and f=
-ragment
-> > @@ -1004,6 +1031,7 @@ enum ovs_action_attr {
-> >  	OVS_ACTION_ATTR_ADD_MPLS,     /* struct ovs_action_add_mpls. */
-> >  	OVS_ACTION_ATTR_DEC_TTL,      /* Nested OVS_DEC_TTL_ATTR_*. */
-> >  	OVS_ACTION_ATTR_DROP,         /* u32 error code. */
-> > +	OVS_ACTION_ATTR_EMIT_SAMPLE,  /* Nested OVS_EMIT_SAMPLE_ATTR_*. */
-> >
-> >  	__OVS_ACTION_ATTR_MAX,	      /* Nothing past this will be accepted
-> >  				       * from userspace. */
-> > diff --git a/net/openvswitch/Kconfig b/net/openvswitch/Kconfig
-> > index 29a7081858cd..2535f3f9f462 100644
-> > --- a/net/openvswitch/Kconfig
-> > +++ b/net/openvswitch/Kconfig
-> > @@ -10,6 +10,7 @@ config OPENVSWITCH
-> >  		   (NF_CONNTRACK && ((!NF_DEFRAG_IPV6 || NF_DEFRAG_IPV6) && \
-> >  				     (!NF_NAT || NF_NAT) && \
-> >  				     (!NETFILTER_CONNCOUNT || NETFILTER_CONNCOUNT)))
-> > +	depends on PSAMPLE || !PSAMPLE
-> >  	select LIBCRC32C
-> >  	select MPLS
-> >  	select NET_MPLS_GSO
-> > diff --git a/net/openvswitch/actions.c b/net/openvswitch/actions.c
-> > index 964225580824..1f555cbba312 100644
-> > --- a/net/openvswitch/actions.c
-> > +++ b/net/openvswitch/actions.c
-> > @@ -24,6 +24,11 @@
-> >  #include <net/checksum.h>
-> >  #include <net/dsfield.h>
-> >  #include <net/mpls.h>
-> > +
-> > +#if IS_ENABLED(CONFIG_PSAMPLE)
-> > +#include <net/psample.h>
-> > +#endif
-> > +
-> >  #include <net/sctp/checksum.h>
-> >
-> >  #include "datapath.h"
-> > @@ -1299,6 +1304,37 @@ static int execute_dec_ttl(struct sk_buff *skb, =
-struct sw_flow_key *key)
-> >  	return 0;
-> >  }
-> >
-> > +static void execute_emit_sample(struct datapath *dp, struct sk_buff *s=
-kb,
-> > +				const struct sw_flow_key *key,
->
-> The 'key' is not used in the function.
->
-> > +				const struct nlattr *attr)
-> > +{
-> > +#if IS_ENABLED(CONFIG_PSAMPLE)
->
-> IIUC, the general coding style guideline is to compile out the whole
-> function, instead of only the parts.  i.e. something like:
->
-> #if IS_ENABLED(CONFIG_PSAMPLE)
-> static void execute_emit_sample(...) {
->     <body>
-> }
-> #else
-> #define execute_emit_sample(dp, skb, attr)
-> #endif
->
->
-> Otherwise, we'll also need to mark the arguments with __maybe_unused.
+Hi Thippeswamy,
 
-Thanks for the suggestion, will submit another version with this fix.
+kernel test robot noticed the following build warnings:
 
-Adri=C3=A1n
+[auto build test WARNING on pci/next]
+[also build test WARNING on pci/for-linus linus/master v6.10-rc5 next-20240625]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
->
-> The rest of the patch looks good to me.
->
-> Best regards, Ilya Maximets.
->
+url:    https://github.com/intel-lab-lkp/linux/commits/Thippeswamy-Havalige/dt-bindings-PCI-xilinx-xdma-Add-schemas-for-Xilinx-QDMA-PCIe-Root-Port-Bridge/20240626-052852
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20240624104239.132159-3-thippesw%40amd.com
+patch subject: [PATCH 2/2] PCI: xilinx-xdma: Add Xilinx QDMA Root Port driver
+config: loongarch-allyesconfig (https://download.01.org/0day-ci/archive/20240627/202406270344.9nOuTH5k-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240627/202406270344.9nOuTH5k-lkp@intel.com/reproduce)
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406270344.9nOuTH5k-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/pci/controller/pcie-xilinx-dma-pl.c:130: warning: Function parameter or struct member 'cfg_base' not described in 'pl_dma_pcie'
+>> drivers/pci/controller/pcie-xilinx-dma-pl.c:130: warning: Function parameter or struct member 'variant' not described in 'pl_dma_pcie'
+
+
+vim +130 drivers/pci/controller/pcie-xilinx-dma-pl.c
+
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  101  
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  102  /**
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  103   * struct pl_dma_pcie - PCIe port information
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  104   * @dev: Device pointer
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  105   * @reg_base: IO Mapped Register Base
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  106   * @irq: Interrupt number
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  107   * @cfg: Holds mappings of config space window
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  108   * @phys_reg_base: Physical address of reg base
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  109   * @intx_domain: Legacy IRQ domain pointer
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  110   * @pldma_domain: PL DMA IRQ domain pointer
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  111   * @resources: Bus Resources
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  112   * @msi: MSI information
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  113   * @intx_irq: INTx error interrupt number
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  114   * @lock: Lock protecting shared register access
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  115   */
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  116  struct pl_dma_pcie {
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  117  	struct device			*dev;
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  118  	void __iomem			*reg_base;
+21ff31dc400101 Thippeswamy Havalige 2024-06-24  119  	void __iomem			*cfg_base;
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  120  	int				irq;
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  121  	struct pci_config_window	*cfg;
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  122  	phys_addr_t			phys_reg_base;
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  123  	struct irq_domain		*intx_domain;
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  124  	struct irq_domain		*pldma_domain;
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  125  	struct list_head		resources;
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  126  	struct xilinx_msi		msi;
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  127  	int				intx_irq;
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  128  	raw_spinlock_t			lock;
+21ff31dc400101 Thippeswamy Havalige 2024-06-24  129  	const struct xilinx_pl_dma_variant   *variant;
+8d786149d78c77 Thippeswamy Havalige 2023-10-03 @130  };
+8d786149d78c77 Thippeswamy Havalige 2023-10-03  131  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
