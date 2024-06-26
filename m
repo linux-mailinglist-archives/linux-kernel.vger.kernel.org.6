@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-230967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C646918478
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:38:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5836E918479
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 16:38:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC2A328571C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:37:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B5161C22CCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0BA186E2A;
-	Wed, 26 Jun 2024 14:35:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591A7186288;
+	Wed, 26 Jun 2024 14:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zc+mkK1u"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AUIFB43t"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C16B6C136
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:35:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EB01850A9
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 14:35:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719412505; cv=none; b=SEbqBnaJD5+pkW8blCgdtWgZOanSaHTZSpwo8sI0lY5buv890VxCAG6xygsFzzwp03+sOLlvbNMotEjYWYArdtoRUcAy7Tk0jCjc78kIMMsGRakc1gJuwtnCUKJaw3P85nXf4PIQPA6UxCZ+GVlj23bVUrCd5r7P2eiaEs56u1U=
+	t=1719412506; cv=none; b=OXiRmmWTB7b1S0iTK4CD3NMmX8ECeLXF7ut6iPQpXET8ua7Av4Di3YNHsiQXFvphf0ABT65t++k3xU3pKA668qGA3jmbZ/cLq3wE0czUN2PDmBT6n+1W5zPAXG75LSpna64Srhy2HeSJZoa98Nc/DdFnQSdFYHKywhoi/k4+Dyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719412505; c=relaxed/simple;
-	bh=9acWqS97YmBq5pSjJQXxHybgwrwtJ6z6pPo+bkIcMOY=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=LzDHvjI0UR4lHWGGD8P7tIG/bHav9Q7VRT440r2sdWEH6GmmqWs6OAu5ogwQlXaoYE7QuCENH+UPpOviwhmrqFWlkA9IXX/5wZJnX59kzwa5brfAitczU4HFazWndqojyqTbS7wG6a35sFretwkzZ9TFLF+QQavhrAxmPXJzl2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zc+mkK1u; arc=none smtp.client-ip=192.198.163.13
+	s=arc-20240116; t=1719412506; c=relaxed/simple;
+	bh=pEFVoLXCBUr0+TUG7ZxtIYThmtfKZBkGznApMscpDZs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=WtQj6LiXMN0LKOTHgqdvOdsO+MwF6DCVpJRCgm7K+1W5xfCUsn4vlH32QaZPG8Vt3ta7T9clCm0+8T38nGe1jEYVWB/qpueYqEoSZXqt2tJRSp15kaVjzBSLY63DNY4C6y8gDHtjcyFwb9oWaTwFP8YZrz5X1GNUJIB7vPwF0TM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AUIFB43t; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719412504; x=1750948504;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=9acWqS97YmBq5pSjJQXxHybgwrwtJ6z6pPo+bkIcMOY=;
-  b=Zc+mkK1uXcQzwl8/cnqkShSfc77cDXC1LWRXv474qXeOkjFbCCykA8Vx
-   rJDw3uf3KviQEGEnnhUfCk7jWStpMwFEI7Nr+DrALN8RoZFKX7ZnVqvER
-   Mku4kY7/YFiJAUB8gxhs23pLPtk1CDwXqRi4T1LVlDJEmj7cXZEyvxAn3
-   WtlFPQCYlmbpT/TmbFNDbDuyQz52Ig6Rs3rRx9XkG3iO5cn6eBJViy+/D
-   JFyQHI0z60qC2COTRMBrFXnuJK09GITii3j/tvLSxy6E9o/6zwJDPyYQA
-   /2vptuNqZq5Fe/CWYr9tCVFrV2zYu9u7akHhPOap7M9BcVRwABGHbbFIZ
-   w==;
-X-CSE-ConnectionGUID: AQbUmgmIQ5WK8GdnyrLn+A==
-X-CSE-MsgGUID: kodlvFQyTwi9tZs+H28sNA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="19375515"
+  t=1719412505; x=1750948505;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=pEFVoLXCBUr0+TUG7ZxtIYThmtfKZBkGznApMscpDZs=;
+  b=AUIFB43t4QMTP9iIEdWeLFwlo4B48kU5lxN79cwzo1UwE4WwE+e+y4r7
+   7jRR0t7yb/Q1TwKdFP5skvnOLzg89cn/T+0BWOCsNkx4Qh3idO+KpA/X9
+   iN9g0AxdiQf+g/49kK5+wXeqhVNof9MVT+dYx227Ur3anWy2x5h3UKkdu
+   dTONZgExBOParCH1aV2IAwxeCstc8vSVEs49CgFnAp7b0Nr0zA2LjWpiR
+   qVGe0L5jfoiRkn1ArLjXslTcYtKc1m/nyzLY9du23XwduZr7ug+MCyAX+
+   H0R1cIZOHQgElk7qCn+eLBHcXm1nF3fWRWCg23ybi/8CohcHSYaZw7gfw
+   Q==;
+X-CSE-ConnectionGUID: W42238L7SFqJ2sR58WIq6A==
+X-CSE-MsgGUID: tugvzaxWRgal27fkQP1LdA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="19375518"
 X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
-   d="scan'208";a="19375515"
+   d="scan'208";a="19375518"
 Received: from orviesa010.jf.intel.com ([10.64.159.150])
   by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 26 Jun 2024 07:34:45 -0700
-X-CSE-ConnectionGUID: Fx/F/QQrRU6KxwQQbWR1aA==
-X-CSE-MsgGUID: oHXQOnitSMadjZsy+T2zZw==
+X-CSE-ConnectionGUID: nnahtfMpRNmjB4j2gKXGXA==
+X-CSE-MsgGUID: OixOj1BxRS6D+0tbcGBLYw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,267,1712646000"; 
-   d="scan'208";a="43911946"
+   d="scan'208";a="43911950"
 Received: from kanliang-dev.jf.intel.com ([10.165.154.102])
   by orviesa010.jf.intel.com with ESMTP; 26 Jun 2024 07:34:44 -0700
 From: kan.liang@linux.intel.com
@@ -68,10 +69,12 @@ To: peterz@infradead.org,
 Cc: ak@linux.intel.com,
 	eranian@google.com,
 	Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH V3 00/13] Support Lunar Lake and Arrow Lake core PMU
-Date: Wed, 26 Jun 2024 07:35:32 -0700
-Message-Id: <20240626143545.480761-1-kan.liang@linux.intel.com>
+Subject: [PATCH V3 01/13] perf/x86/intel: Support the PEBS event mask
+Date: Wed, 26 Jun 2024 07:35:33 -0700
+Message-Id: <20240626143545.480761-2-kan.liang@linux.intel.com>
 X-Mailer: git-send-email 2.38.1
+In-Reply-To: <20240626143545.480761-1-kan.liang@linux.intel.com>
+References: <20240626143545.480761-1-kan.liang@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,86 +85,177 @@ Content-Transfer-Encoding: 8bit
 
 From: Kan Liang <kan.liang@linux.intel.com>
 
-Changes since V2:
-- Rebase on top of the tip.git. Specifically on top of the below two
-  patches.
-  commit cd84351c8c1b ("perf/x86/amd: Use try_cmpxchg() in events/amd/{un,}core.c")
-  commit d142df13f357 ("perf/x86/intel: Switch to new Intel CPU model defines")
-- Add Reviewed-by tag from Ian
+The current perf assumes that the counters that support PEBS are
+contiguous. But it's not guaranteed with the new leaf 0x23 introduced.
+The counters are enumerated with a counter mask. There may be holes in
+the counter mask for future platforms or in a virtualization
+environment.
 
-Changes since V1:
-- Add x86/intel_pmu_max_num_pebs/counters/counters_fixed()
-- Rename model-specific pebs_latency_data functions
-- Rename V6 counter MSRs
+Store the PEBS event mask rather than the maximum number of PEBS
+counters in the x86 PMU structures.
 
-From the core PMU' perspective, the Lunar Lake and Arrow Lake are the
-same, which are similar to the previous generation Meteor Lake. Both are
-hybrid platforms, with e-core and p-core.
+Reviewed-by: Andi Kleen <ak@linux.intel.com>
+Reviewed-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/core.c    |  8 ++++----
+ arch/x86/events/intel/ds.c      | 15 ++++++++-------
+ arch/x86/events/perf_event.h    | 14 ++++++++++++--
+ arch/x86/include/asm/intel_ds.h |  1 +
+ 4 files changed, 25 insertions(+), 13 deletions(-)
 
-The key differences include:
-- The e-core supports 3 new fixed counters
-- The p-core supports an updated PEBS Data Source format
-- More GP counters (Updated event constraint table)
-- New Architectural performance monitoring V6
-  (New Perfmon MSRs aliasing, umask2, eq).
-- New PEBS format V6 (Counters Snapshotting group)
-- New RDPMC metrics clear mode
-
-The details for the above new features can be found in the Intel
-Architecture Instruction Set Extensions and Future Features (052).
-https://cdrdv2.intel.com/v1/dl/getContent/671368
-
-The counters may not be continuous anymore. Patch 1-2 converts the max
-number of counters to a mask of counters. The change is a generic change
-which impacts all X86 platforms.
-
-Patch 3-5 supports all the legacy features on LNL and ARL.
-
-Patch 6-8 supports the new Architectural performance monitoring V6.
-
-Patch 9-12 supports the new PEBS format V6.
-
-Patch 13 supports the new RDPMC metrics clear mode.
-
-Only the two features (Architectural performance monitoring V6
-and the RDPMC metrics clear mode) add new formats, which impacts the ABI.
-The "Sysfs PMU tests" case has covered the non-contiguous format
-definition caused by the new umask. The current perf test should be good
-enough to cover the ABI changes.
-
-Kan Liang (13):
-  perf/x86/intel: Support the PEBS event mask
-  perf/x86: Support counter mask
-  perf/x86: Add Lunar Lake and Arrow Lake support
-  perf/x86/intel: Rename model-specific pebs_latency_data functions
-  perf/x86/intel: Support new data source for Lunar Lake
-  perf/x86: Add config_mask to represent EVENTSEL bitmask
-  perf/x86/intel: Support PERFEVTSEL extension
-  perf/x86/intel: Support Perfmon MSRs aliasing
-  perf/x86: Extend event update interface
-  perf: Extend perf_output_read
-  perf/x86/intel: Move PEBS event update after the sample output
-  perf/x86/intel: Support PEBS counters snapshotting
-  perf/x86/intel: Support RDPMC metrics clear mode
-
- arch/x86/events/amd/core.c           |  26 +-
- arch/x86/events/core.c               | 123 +++----
- arch/x86/events/intel/core.c         | 471 ++++++++++++++++++++-------
- arch/x86/events/intel/ds.c           | 288 +++++++++++++---
- arch/x86/events/intel/knc.c          |   2 +-
- arch/x86/events/intel/p4.c           |  12 +-
- arch/x86/events/intel/p6.c           |   2 +-
- arch/x86/events/perf_event.h         | 105 +++++-
- arch/x86/events/perf_event_flags.h   |   2 +-
- arch/x86/events/zhaoxin/core.c       |  14 +-
- arch/x86/include/asm/intel_ds.h      |   1 +
- arch/x86/include/asm/msr-index.h     |   6 +
- arch/x86/include/asm/perf_event.h    |  27 ++
- include/uapi/linux/perf_event.h      |   6 +-
- kernel/events/core.c                 |  15 +-
- tools/perf/Documentation/topdown.txt |   9 +-
- 16 files changed, 839 insertions(+), 270 deletions(-)
-
+diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+index 0e835dc134a5..6e2e3638a690 100644
+--- a/arch/x86/events/intel/core.c
++++ b/arch/x86/events/intel/core.c
+@@ -4728,7 +4728,7 @@ static void intel_pmu_check_hybrid_pmus(struct x86_hybrid_pmu *pmu)
+ {
+ 	intel_pmu_check_num_counters(&pmu->num_counters, &pmu->num_counters_fixed,
+ 				     &pmu->intel_ctrl, (1ULL << pmu->num_counters_fixed) - 1);
+-	pmu->max_pebs_events = min_t(unsigned, MAX_PEBS_EVENTS, pmu->num_counters);
++	pmu->pebs_events_mask = intel_pmu_pebs_mask(GENMASK_ULL(pmu->num_counters - 1, 0));
+ 	pmu->unconstrained = (struct event_constraint)
+ 			     __EVENT_CONSTRAINT(0, (1ULL << pmu->num_counters) - 1,
+ 						0, pmu->num_counters, 0, 0);
+@@ -6070,7 +6070,7 @@ static __always_inline int intel_pmu_init_hybrid(enum hybrid_pmu_type pmus)
+ 
+ 		pmu->num_counters = x86_pmu.num_counters;
+ 		pmu->num_counters_fixed = x86_pmu.num_counters_fixed;
+-		pmu->max_pebs_events = min_t(unsigned, MAX_PEBS_EVENTS, pmu->num_counters);
++		pmu->pebs_events_mask = intel_pmu_pebs_mask(GENMASK_ULL(pmu->num_counters - 1, 0));
+ 		pmu->unconstrained = (struct event_constraint)
+ 				     __EVENT_CONSTRAINT(0, (1ULL << pmu->num_counters) - 1,
+ 							0, pmu->num_counters, 0, 0);
+@@ -6193,7 +6193,7 @@ __init int intel_pmu_init(void)
+ 	x86_pmu.events_maskl		= ebx.full;
+ 	x86_pmu.events_mask_len		= eax.split.mask_length;
+ 
+-	x86_pmu.max_pebs_events		= min_t(unsigned, MAX_PEBS_EVENTS, x86_pmu.num_counters);
++	x86_pmu.pebs_events_mask	= intel_pmu_pebs_mask(GENMASK_ULL(x86_pmu.num_counters - 1, 0));
+ 	x86_pmu.pebs_capable		= PEBS_COUNTER_MASK;
+ 
+ 	/*
+@@ -6822,7 +6822,7 @@ __init int intel_pmu_init(void)
+ 			pmu->num_counters_fixed = x86_pmu.num_counters_fixed;
+ 		}
+ 
+-		pmu->max_pebs_events = min_t(unsigned, MAX_PEBS_EVENTS, pmu->num_counters);
++		pmu->pebs_events_mask = intel_pmu_pebs_mask(GENMASK_ULL(pmu->num_counters - 1, 0));
+ 		pmu->unconstrained = (struct event_constraint)
+ 					__EVENT_CONSTRAINT(0, (1ULL << pmu->num_counters) - 1,
+ 							   0, pmu->num_counters, 0, 0);
+diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+index e010bfed8417..f6105b8dcf87 100644
+--- a/arch/x86/events/intel/ds.c
++++ b/arch/x86/events/intel/ds.c
+@@ -1137,7 +1137,7 @@ void intel_pmu_pebs_sched_task(struct perf_event_pmu_context *pmu_ctx, bool sche
+ static inline void pebs_update_threshold(struct cpu_hw_events *cpuc)
+ {
+ 	struct debug_store *ds = cpuc->ds;
+-	int max_pebs_events = hybrid(cpuc->pmu, max_pebs_events);
++	int max_pebs_events = intel_pmu_max_num_pebs(cpuc->pmu);
+ 	int num_counters_fixed = hybrid(cpuc->pmu, num_counters_fixed);
+ 	u64 threshold;
+ 	int reserved;
+@@ -2157,6 +2157,7 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
+ 	void *base, *at, *top;
+ 	short counts[INTEL_PMC_IDX_FIXED + MAX_FIXED_PEBS_EVENTS] = {};
+ 	short error[INTEL_PMC_IDX_FIXED + MAX_FIXED_PEBS_EVENTS] = {};
++	int max_pebs_events = intel_pmu_max_num_pebs(NULL);
+ 	int bit, i, size;
+ 	u64 mask;
+ 
+@@ -2168,8 +2169,8 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
+ 
+ 	ds->pebs_index = ds->pebs_buffer_base;
+ 
+-	mask = (1ULL << x86_pmu.max_pebs_events) - 1;
+-	size = x86_pmu.max_pebs_events;
++	mask = x86_pmu.pebs_events_mask;
++	size = max_pebs_events;
+ 	if (x86_pmu.flags & PMU_FL_PEBS_ALL) {
+ 		mask |= ((1ULL << x86_pmu.num_counters_fixed) - 1) << INTEL_PMC_IDX_FIXED;
+ 		size = INTEL_PMC_IDX_FIXED + x86_pmu.num_counters_fixed;
+@@ -2208,8 +2209,9 @@ static void intel_pmu_drain_pebs_nhm(struct pt_regs *iregs, struct perf_sample_d
+ 			pebs_status = p->status = cpuc->pebs_enabled;
+ 
+ 		bit = find_first_bit((unsigned long *)&pebs_status,
+-					x86_pmu.max_pebs_events);
+-		if (bit >= x86_pmu.max_pebs_events)
++				     max_pebs_events);
++
++		if (!(x86_pmu.pebs_events_mask & (1 << bit)))
+ 			continue;
+ 
+ 		/*
+@@ -2267,7 +2269,6 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
+ {
+ 	short counts[INTEL_PMC_IDX_FIXED + MAX_FIXED_PEBS_EVENTS] = {};
+ 	struct cpu_hw_events *cpuc = this_cpu_ptr(&cpu_hw_events);
+-	int max_pebs_events = hybrid(cpuc->pmu, max_pebs_events);
+ 	int num_counters_fixed = hybrid(cpuc->pmu, num_counters_fixed);
+ 	struct debug_store *ds = cpuc->ds;
+ 	struct perf_event *event;
+@@ -2283,7 +2284,7 @@ static void intel_pmu_drain_pebs_icl(struct pt_regs *iregs, struct perf_sample_d
+ 
+ 	ds->pebs_index = ds->pebs_buffer_base;
+ 
+-	mask = ((1ULL << max_pebs_events) - 1) |
++	mask = hybrid(cpuc->pmu, pebs_events_mask) |
+ 	       (((1ULL << num_counters_fixed) - 1) << INTEL_PMC_IDX_FIXED);
+ 	size = INTEL_PMC_IDX_FIXED + num_counters_fixed;
+ 
+diff --git a/arch/x86/events/perf_event.h b/arch/x86/events/perf_event.h
+index 72b022a1e16c..0e411539f88a 100644
+--- a/arch/x86/events/perf_event.h
++++ b/arch/x86/events/perf_event.h
+@@ -684,7 +684,7 @@ struct x86_hybrid_pmu {
+ 	cpumask_t			supported_cpus;
+ 	union perf_capabilities		intel_cap;
+ 	u64				intel_ctrl;
+-	int				max_pebs_events;
++	u64				pebs_events_mask;
+ 	int				num_counters;
+ 	int				num_counters_fixed;
+ 	struct event_constraint		unconstrained;
+@@ -852,7 +852,7 @@ struct x86_pmu {
+ 			pebs_ept		:1;
+ 	int		pebs_record_size;
+ 	int		pebs_buffer_size;
+-	int		max_pebs_events;
++	u64		pebs_events_mask;
+ 	void		(*drain_pebs)(struct pt_regs *regs, struct perf_sample_data *data);
+ 	struct event_constraint *pebs_constraints;
+ 	void		(*pebs_aliases)(struct perf_event *event);
+@@ -1661,6 +1661,16 @@ static inline int is_ht_workaround_enabled(void)
+ 	return !!(x86_pmu.flags & PMU_FL_EXCL_ENABLED);
+ }
+ 
++static inline u64 intel_pmu_pebs_mask(u64 cntr_mask)
++{
++	return MAX_PEBS_EVENTS_MASK & cntr_mask;
++}
++
++static inline int intel_pmu_max_num_pebs(struct pmu *pmu)
++{
++	return find_last_bit((unsigned long *)&hybrid(pmu, pebs_events_mask), MAX_PEBS_EVENTS) + 1;
++}
++
+ #else /* CONFIG_CPU_SUP_INTEL */
+ 
+ static inline void reserve_ds_buffers(void)
+diff --git a/arch/x86/include/asm/intel_ds.h b/arch/x86/include/asm/intel_ds.h
+index 2f9eeb5c3069..5dbeac48a5b9 100644
+--- a/arch/x86/include/asm/intel_ds.h
++++ b/arch/x86/include/asm/intel_ds.h
+@@ -9,6 +9,7 @@
+ /* The maximal number of PEBS events: */
+ #define MAX_PEBS_EVENTS_FMT4	8
+ #define MAX_PEBS_EVENTS		32
++#define MAX_PEBS_EVENTS_MASK	GENMASK_ULL(MAX_PEBS_EVENTS - 1, 0)
+ #define MAX_FIXED_PEBS_EVENTS	16
+ 
+ /*
 -- 
 2.38.1
 
