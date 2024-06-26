@@ -1,129 +1,114 @@
-Return-Path: <linux-kernel+bounces-230275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A5E0917ABC
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:18:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0D45917ABF
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:19:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0ABD283E4A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:18:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E398E1C23BE6
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF46E168488;
-	Wed, 26 Jun 2024 08:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48E8F1662E9;
+	Wed, 26 Jun 2024 08:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="E/m4swjr"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="N3WVX5Pm"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3491515F400
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 08:18:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5B461607BD;
+	Wed, 26 Jun 2024 08:18:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719389907; cv=none; b=KPy/DCHzzetFDYGgxIvdwOSvvMyTtRmdPuw9ZE8jVMm33iJNfCFcoy3InqSPW91PRi7YGmgDDG4lYgEyf6WFD/IFf3kcN2lyda89v9L+ItYd61sp38P9FUrKuI0haB/dxnPhiDxNQs+eaCR/aEEpARvzOcBluagQwJunMY6C8Iw=
+	t=1719389920; cv=none; b=WjB+vz3Tk54IB/lO7wk7u4g2VdORaezooDm//UwxdApfZsaqtAj8iIgtUzQbcLyijnxQN/l5cIwkusCxNUlHH+B0hBHdp54YG2ls1mCjvdyoD3wCdMsHb+N5zhZ1+qMwxfjRiqlVrgjJOA33bd7U4YqvHpL5xyraU8MRzkRXwxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719389907; c=relaxed/simple;
-	bh=1kWlGmkS836L4El5Oon+zyjOQtOGaM1Kyz+uLD2KG7g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FAXZP1LCSSviopDzCuC1uLvOCkiOrS8DpBsdEzmWJEqe5dktJVXLnY6OkHC68ktXlh5TB/n8egz4eXuTlf7qox2eaeWJuX7fOkmlKQm17vZ67auleV0Q9dfeukvzu7gD/TUPr2y59CdIaUOw/yZoG7mCqmfUHYCjXJvGXu2IDig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=E/m4swjr; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eaafda3b5cso66442401fa.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 01:18:24 -0700 (PDT)
+	s=arc-20240116; t=1719389920; c=relaxed/simple;
+	bh=tLqxjdvKncjvyf03Lhs0i9bSG7lfZSHlzhwH58h2wN0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ihb4A9Th0qdGjafePAHgy56VlBMiC/JmrI50Y2Flk8VP/R2+97DGDR3jKYdQO8VpTkwABP/pdYca21AOkcmxYajF2yLVtN5V+ZZJWfzu1oXa6wsR0Zd3Hf706g/4Fme8BRU3PJG2VqECKvFHIWUcPbUHourOjVU6sdVM2M7zDPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=N3WVX5Pm; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 423DC200EE;
+	Wed, 26 Jun 2024 16:18:31 +0800 (AWST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1719389903; x=1719994703; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4a5xhdHDOpphV49N8LxW9kDtd2hiNqZaaQWvv6k7BAw=;
-        b=E/m4swjruP5JGh2qx+IkiCVA80PjvlobeLENOg6KSD4J4LsH78srOZAgG4Fyqba2p1
-         oDYuyGOxbpDioehMFKNz36vYprLH1SE4ZOKGr03WO3IolmOM5R94hQQ1B17zw6Sh7dqd
-         kCLG5LJYvHQFfnYg4wSTICFiVe6GFVnODwM0jUSia2Fm+7slJ4G+nHRYd64+FjqDHe1b
-         eSTVrAYZi7kFlG5cR4mUzl6jIAFS4YrYwfYIIq2HReC8702D0bMPq5AOQWmMYsXJLvFe
-         cknsA28RN5octsMIdMV5gdcngEWs5PvpunKuylf6wcqLOsAcaRtGkFldjDw+swwBpG0i
-         ueLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719389903; x=1719994703;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4a5xhdHDOpphV49N8LxW9kDtd2hiNqZaaQWvv6k7BAw=;
-        b=tGl1v+DNEBrzoSLhcNkHfmFtafwr1PxooKG7H22hXNmo7Gegu8Ra9pD2KVFmDDbsZp
-         XgbqVXZy5ajdhY41WhiPNcZBBbU5464FV1fVanG4TqUG51BK22jm+PGV9mZUOgM/p9T3
-         upemSCmEN4COLiG+nT1NYWyrrPJi+CxVSsZcXReSMQLy6PJ0SbZhp6YjMnOJcGuTYWnO
-         38n7LL0MN07fcQ49gzMJl1dyti4fzWFOFNnzPyd4oVRrP3LJYBwjMJ0AAYi8yFFLWW45
-         UA6fW94bjhrNn8C0vAhBF3lXU3H8bxHE1q2vu/ev7d8HNd+o6hNZyrKuM3Pn4qPU/wKp
-         UUQg==
-X-Forwarded-Encrypted: i=1; AJvYcCV61WgfV+8Uu9SSJO9F8NODgfnvHaWtcMjDugzycQkNRfu8Gd9wCaeJpghBFvPGMNDcNy3TlLBAb4dqHo+GPAMDZeggcO4aGZulR9dK
-X-Gm-Message-State: AOJu0YwBBoh9m80FQE0PpZiVR87yVc1RJLFeSwS4UYdskpAQHorLksel
-	hqcFDpW7hkohud1L2Otel5pykPVEx2h2T+x2wjSJtNa2RPDEInQOoVprb+3TSjA=
-X-Google-Smtp-Source: AGHT+IHVJ7ZeIx3A9n1K07RjOwzlBHAmVrAatLjc/i5oBAuRVkA0q7re2mdYuT8iRLwXGoTZDedQjA==
-X-Received: by 2002:a05:651c:1a1e:b0:2ec:59b6:ad71 with SMTP id 38308e7fff4ca-2ec59b6ae47mr73713961fa.40.1719389903410;
-        Wed, 26 Jun 2024 01:18:23 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70667a5d6dbsm7559160b3a.79.2024.06.26.01.18.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 01:18:22 -0700 (PDT)
-Date: Wed, 26 Jun 2024 10:18:08 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
-Message-ID: <ZnvOwGk0cqpx4kkk@pathway.suse.cz>
-References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
- <87ed8lxg1c.fsf@jogness.linutronix.de>
- <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
- <87ikxxxbwd.fsf@jogness.linutronix.de>
+	d=codeconstruct.com.au; s=2022a; t=1719389913;
+	bh=tLqxjdvKncjvyf03Lhs0i9bSG7lfZSHlzhwH58h2wN0=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=N3WVX5PmAnQAqeowtVcZ488EtThGN08BtJWVXcoy22JwMyw501suKxzDx8T7zKjM2
+	 tdVm4H7Pn1oMa3vej7VwUHZPgHzwfS9Lk9oWPVMo8IlmlR2FTpTHH6D5zEM2Sv00dj
+	 CPGGtYnzPHAHQpkBQ15TjkVeopHfXc6ozGXDY4xqdmxDhQPRH08C9tDsosQ9ASuBei
+	 wsWQlDxHPsZo9T23leb7BrD3BSUb4HQ8K3wdJwJbfIpEg0wLCDBDY4koSuJFhIDI7y
+	 TqzW0Ekk7zslyVwI7j3EhZ2n8ItW+kkEz0lyxR9peXgGTZDEagg9R+05/nm13gjsKq
+	 4/9zy4Y+pwlfQ==
+Message-ID: <b4ba5fa7834fdfb1a1e26ff0e01b9bb235de63b5.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 1/2] dt-bindings: i3c: dw: Add property to select IBI ops
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Aniket
+ <aniketmaurya@google.com>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>,  Joel Stanley <joel@jms.id.au>, Billy Tsai
+ <billy_tsai@aspeedtech.com>, Rob Herring <robh@kernel.org>,  Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: linux-i3c@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Date: Wed, 26 Jun 2024 16:18:31 +0800
+In-Reply-To: <c15045b4-2e5f-4fcc-b25c-76a5e4973e93@linaro.org>
+References: <20240626052238.1577580-1-aniketmaurya@google.com>
+	 <20240626052238.1577580-2-aniketmaurya@google.com>
+	 <e28ba03d1df1c0c5aec987411c40e44fc351ce0d.camel@codeconstruct.com.au>
+	 <c15045b4-2e5f-4fcc-b25c-76a5e4973e93@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ikxxxbwd.fsf@jogness.linutronix.de>
 
-On Tue 2024-06-25 17:53:14, John Ogness wrote:
-> On 2024-06-26, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
-> > On 2024/06/25 23:17, John Ogness wrote:
-> >> On 2024-06-25, Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp> wrote:
-> >>> syzbot is reporting circular locking dependency inside __bpf_prog_run(),
-> >>> for fault injection calls printk() despite rq lock is already held.
-> >>>
-> >>> Guard __bpf_prog_run() using printk_deferred_{enter,exit}() (and
-> >>> preempt_{disable,enable}() if CONFIG_PREEMPT_RT=n) in order to defer any
-> >>> printk() messages.
-> >> 
-> >> Why is the reason for disabling preemption?
-> >
-> > Because since kernel/printk/printk_safe.c uses a percpu counter for deferring
-> > printk(), printk_safe_enter() and printk_safe_exit() have to be called from
-> > the same CPU. preempt_disable() before printk_safe_enter() and preempt_enable()
-> > after printk_safe_exit() guarantees that printk_safe_enter() and
-> > printk_safe_exit() are called from the same CPU.
-> 
-> Yes, but we already have cant_migrate(). Are you suggesting there are
-> configurations where cant_migrate() is true but the context can be
-> migrated anyway?
+Hi Krysztof,
 
-IMHO, we want to enter printk_safe only with preemption disabled.
-Otherwise, printk() would stay deferred on the given CPU for any
-task scheduled in this section.
+> > > +=C2=A0 ibi-capable:
+> > > +=C2=A0=C2=A0=C2=A0 description: Set to select IBI ops.
+>=20
+> What are IBI ops? Standard form letter:
+>=20
+> You described the desired Linux feature or behavior, not the actual
+> hardware.
 
-Best Regards,
-Petr
+In this case it is the actual hardware; my understanding is that the
+gateware IP can be configured to support in-band-interrupts or not,
+before being baked-in to hardware.
+
+> > Wouldn't the compatible string select whether the hardware instance
+> > supports IBI or not?
+> >=20
+> > I'd imagine that each specific synthesis of the DW IP would imply
+> > corresponding hardware settings, and so would warrant its own
+> > compatible
+> > value.
+> >=20
+> > Maybe one for the DT folks: would this work better as individual
+> > properties? Is there a policy here?
+>=20
+> Usually if feature is specific to given hardware, e.g. always capable
+> of foobar, then it can be deduced from compatible, so no need for new
+> property.
+
+Sounds good.
+
+Aniket: the hardware you're dealing with there may need a new, specific
+compatible property, which will dictate whether we enable IBIs in the
+driver.
+
+For cases where no other special behaviour is required, we can
+represent this just as an entry in the OF match table.
+
+Cheers,
+
+
+Jeremy
 
