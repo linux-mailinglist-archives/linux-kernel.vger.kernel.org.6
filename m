@@ -1,136 +1,95 @@
-Return-Path: <linux-kernel+bounces-230349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48CF5917B98
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:00:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7988F917B9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:00:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC7F61F2728B
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:00:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0713BB23296
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 09:00:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F255C16D9AA;
-	Wed, 26 Jun 2024 09:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1ED16849C;
+	Wed, 26 Jun 2024 09:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFcLckwb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="lz9mEeQW"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238EC1684A1;
-	Wed, 26 Jun 2024 09:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81DA1411EB;
+	Wed, 26 Jun 2024 09:00:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719392402; cv=none; b=V2vo8+XlNFdSCj0Im6W0f4NRxgJgIwtalVw4645HHZzPNj6nbtfCyVHjZr44W/P4nhI8o0O9sbzZ0nUWW/4P1qvd0dFMmA7EC5CSKH9JZS/PIrsDT+F/2cBzYp/rv+L5pPohFSO4YIThc3/q9Odt/5sS04c8PDa3w+aUkWi8sLk=
+	t=1719392439; cv=none; b=Me/H4Lzp8FmbZByUcBVSRIklcNfc825Dmyi5YETL50+ONivAXn+PKVxX9B1l7QJ6KFXaDIlURHPCow6kHLMv/cfj9Ethvu1cgtwsY+x2hKEK09bQ2kYChn6VOayrme5pxmljjsl4btl0zrR8HlnAWsOn4fybmi3gm6XOLnfIfvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719392402; c=relaxed/simple;
-	bh=POBEWONZB2VkBoOxEIU98XKFVtib7lvYbDdoIH6KT2w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HFZRvjKvaLmAiWwKRX+4GlP1hCy0/5MC4itNWZdinrLqn/A2o2SpbX2TQx2sAjDMD7WfYa0Rhpe85FxZsLxWj6hGId4erTALREuWOdqgPEW/4Dr/3280t020z1ktrzowbKBApd7iaUAGMT7dn5WOwZ62YgmH9cJImlM+Gtl6+cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFcLckwb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FFCEC4AF0A;
-	Wed, 26 Jun 2024 08:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719392401;
-	bh=POBEWONZB2VkBoOxEIU98XKFVtib7lvYbDdoIH6KT2w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PFcLckwbA1gNSfCcMe8Q5wsB9Bm+0t43Z3iaONoMjc1hJan8lpeW6onO18lcc9vaF
-	 7H04gTOIYazxJjeLOHdZMc/0mvNxSUn0TAJygWaWOjhHfSxq85kPkwdNAbA9DM9o3o
-	 1rgAVfqWMJhgMmc+5HAba8Wqv7a2ROCdrKJfX7xZXUeF4uURLqeSl6wc6SZ8AgYI2m
-	 7D61Fitr5Y7x47OjhRotslxL7bMSsb23KVwN9Lw7B4Z7DGRbUwxRvMPj5H5JnBibSZ
-	 N4DWYtQTOdQjaO7wEQ5/FjO/YQW0TrswJH4qZcADlBdDfUIyXCEKb/hDZAVDmRMxBG
-	 cSKIn/8Q+zcUA==
-Message-ID: <f4e055e6-8903-4bd0-96da-b5247678ad84@kernel.org>
-Date: Wed, 26 Jun 2024 10:59:56 +0200
+	s=arc-20240116; t=1719392439; c=relaxed/simple;
+	bh=9t/fdHigGO6Nq7Eu+cEzC770cd6v3TbdxHkxKiQA6MM=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=TWutMs2gq2izN7cggftjFbTiUXqHFbAMlUjJa1UlxBDpoqbYXdXch28fy7XDlLDv9030vG9qvyw02evXvjx2adz+acrq3svZEXgVJ/vrOht31jbYSC8sbR76d0+s9IPwMd5MRnuC7JsyWippag/zvPWKgALxSk0n0suByq/8oh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=lz9mEeQW; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+Received: from pecola.lan (unknown [159.196.93.152])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 3EAD9200EE;
+	Wed, 26 Jun 2024 17:00:35 +0800 (AWST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1719392435;
+	bh=9t/fdHigGO6Nq7Eu+cEzC770cd6v3TbdxHkxKiQA6MM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=lz9mEeQW6VDYNUrh39xiNOap/CnJitO0Box1ywcY0LxMS5saMhcyfJSOepso81Lpf
+	 8QlHXBsXqigabErR8uomdJrpJyN6KJuBHx+OJtXr+1WH5CXWboafRnqcdFBszwNlff
+	 aeY37Lu4qUisSwWRvSDWHo1GUXp55ZDW1/VJchynzWRBxvUxP8DWsUYXCBao6ysTJt
+	 13lF65GQoo0QH2KmZM92eASjqx28lM396S2OQSRK1A8kGQCQmOzhSZkYllIBrTyEbq
+	 bUXINsB6lGQA+0oMlzX9ae0T3yiFdEGv17NrWZJsdr160V7CuK7jyrAppUwq4U0GNq
+	 z3CDDIlFbDgow==
+Message-ID: <d256cd72ef2011c3bfd045b04fb6509d1ac827e9.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 1/2] dt-bindings: i3c: dw: Add property to select IBI ops
+From: Jeremy Kerr <jk@codeconstruct.com.au>
+To: "Aniket ." <aniketmaurya@google.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alexandre Belloni
+ <alexandre.belloni@bootlin.com>, Joel Stanley <joel@jms.id.au>, Billy Tsai
+ <billy_tsai@aspeedtech.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ linux-i3c@lists.infradead.org,  linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+Date: Wed, 26 Jun 2024 17:00:34 +0800
+In-Reply-To: <CAMmmMt25nkZTXXLCVGv1baf3azQR0kwbM8LP4EzCQKOPLUhbVQ@mail.gmail.com>
+References: <20240626052238.1577580-1-aniketmaurya@google.com>
+	 <20240626052238.1577580-2-aniketmaurya@google.com>
+	 <e28ba03d1df1c0c5aec987411c40e44fc351ce0d.camel@codeconstruct.com.au>
+	 <c15045b4-2e5f-4fcc-b25c-76a5e4973e93@linaro.org>
+	 <b4ba5fa7834fdfb1a1e26ff0e01b9bb235de63b5.camel@codeconstruct.com.au>
+	 <CAMmmMt25nkZTXXLCVGv1baf3azQR0kwbM8LP4EzCQKOPLUhbVQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: arm: qcom: add sa8775p-ride Rev 3
-To: Bartosz Golaszewski <brgl@bgdev.pl>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-References: <20240625151430.34024-1-brgl@bgdev.pl>
- <20240625151430.34024-2-brgl@bgdev.pl>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240625151430.34024-2-brgl@bgdev.pl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 25/06/2024 17:14, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> Document the compatible for revision 3 of the sa8775p-ride board.
-> 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
-> index ec1c10a12470..000037f4a712 100644
-> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
-> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
-> @@ -895,6 +895,7 @@ properties:
->        - items:
->            - enum:
->                - qcom,sa8775p-ride
-> +              - qcom,sa8775p-ride-r3
+Hi Aniket,
 
-The board is not compatible with earlier revision?
+> > For cases where no other special behaviour is required, we can
+> > represent this just as an entry in the OF match table.
+>=20
+> Actually I see that IBI support is always present in the HW(DW I3C
+> IP). It's just that we have an option in SW to decide whether to
+> populate function pointers for IBI or not.
 
-Best regards,
-Krzysztof
+OK, in that case this /definitely/ doesn't belong in the DT then, as
+it's purely software configuration.
 
+> So can we remove this selection of ops and always go with ibi ops?
+
+Sounds fine to me, but I don't have direct experience with the non-
+ast2600 uses of the dw core.
+
+Cheers,
+
+
+Jeremy
 
