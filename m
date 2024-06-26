@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-230345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1B01917B86
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:58:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B33917B8A
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 10:59:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1469D288C68
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:58:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B33C1C235A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:59:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A49A16A934;
-	Wed, 26 Jun 2024 08:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D26F1684A1;
+	Wed, 26 Jun 2024 08:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dgzEonKB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F8CVkSaL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574C916848F;
-	Wed, 26 Jun 2024 08:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBC6F143C70;
+	Wed, 26 Jun 2024 08:59:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719392284; cv=none; b=SczsjTZ3PiLZK6mvJI4/uvKEStqW/qDU0eBvJgWDmdO5cutqDptoyhAkcZVlWfgKJvtoqWm1tT+Q5FNN++lcy7Gx8dHa3dANb7f5UiJJRU2ek0fZCfsHDoAdwZtu9lu6lAFBDVk3euVdCL6KNB2QuWipxX02T27u/G5ufDt/AeI=
+	t=1719392347; cv=none; b=P2s3CFJFTY3axFpr7UMLQjw2wsQBA11vjBvz2JPPIXuUbsvqYY12Y9VsZwrMZ0r9da3xmmP6619hmV7D8y87V4uLBAJvpspRJXfcNVuCme9qYAWJgQZHUZ2+GACvkIn2s4kR9BTBHmKrkMKfYyzZoVuTsRGjQtS4ZYSnBGc3DGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719392284; c=relaxed/simple;
-	bh=xeQk6x5ca5M7IliVsswbqNYZBgEZSqfG4ZSqPCmqeOo=;
+	s=arc-20240116; t=1719392347; c=relaxed/simple;
+	bh=Yi0uUdwXQGESASIay29BdNm3t+M80GUeRqfnhkBP8jA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EBYDOkvZcfWHpXRj+eu+DrHnHm7g9PZEOfDoagPN91HN0ezo3KziE4DHVBUmDZmr3rmpJDZq0XWhrxnRcZnQDOcd1QML13mZzMTwfcp4dVnduDpabi7h5QZZZouo5xfZq97TK4FMoO9q1pxnn5Ca1sY/a4hmwOxAz0pQ7sr0+E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dgzEonKB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A8DEC2BD10;
-	Wed, 26 Jun 2024 08:57:59 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=oFzS0pVVYQWYzPVKzstzGLqroGot/Y8rUQfQz1MoFy6s3a6F/WHKo433SBC8oR3il8POOeZzoGiS/0spyUcylCOy8iUXMqJFXf2zBqeeuAOBXK5jgvlUQJ6MCuTOaheZaqoc+qbCMnKssqKyz1vq6i1AueHUDCZ+V/b0yjXuuok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F8CVkSaL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFFDEC2BD10;
+	Wed, 26 Jun 2024 08:59:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719392283;
-	bh=xeQk6x5ca5M7IliVsswbqNYZBgEZSqfG4ZSqPCmqeOo=;
+	s=k20201202; t=1719392347;
+	bh=Yi0uUdwXQGESASIay29BdNm3t+M80GUeRqfnhkBP8jA=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dgzEonKBxtGaurPODJq5G1y7M+ZqC9HPQ/YXFIriZ1qW5EeNswfKajsHqOAcGmz4b
-	 0jGwzPSykW7hkhExQgi2Ue9PhRaHJCzUaRrReXR00AT7Aq0cDV+m8+XbkOvWVOe76g
-	 KmXCUcbg9V/vw1uIrnOroxxgSM4ADx6yfbrQbUTdy6QOeEZdZlwUvD/Cv8ShLb6LyT
-	 zX12zBsistobYF3BTmiCHNZbf49SKXtz1XCTMxA3GV9nLTz8pPZkwAh9LKmcVQi31i
-	 Ud8XcNrB732H+2+nQwUI1aHuPD+cW7nEEG4Oq+H9WBQ5+V3utWnCQATLsXHjZNzjpi
-	 c1ip3meIEOWrg==
-Message-ID: <a7306019-9f19-4619-875f-e6b71add5607@kernel.org>
-Date: Wed, 26 Jun 2024 10:57:57 +0200
+	b=F8CVkSaL9UhxM1zNzWHr9i3hYmKgO/Tdw0ScJk5Ll7e+/DFEQpAYF6vnrAL9sjkQe
+	 B2KCbRFyEdYLxIjixhX8tceUB3dFfedXHZ7lvHLTMTUezFX5He679WzqU9NvQhXn12
+	 NtOUmmx2g0ZuqtSGSOVkMw/X8VSoFgv9pLNW5BOABp2+p7lU+id29/afS+BflYYN5C
+	 +3N5a0rO9viLPsX1MZ0M3/LdjSasiu01/9mzsbrWefSyvY20/t5Eb7uuTHjZovpVTv
+	 sbSiMXFXAmzh/Xk8dPO8HXP/nDswabpl5keLy+onUxDU3yASZw6JVYaNAPLuzL0URu
+	 LfeshodyrKkIw==
+Message-ID: <c4ee50a8-2fdd-4aa9-9d88-ec3f3ea52633@kernel.org>
+Date: Wed, 26 Jun 2024 10:59:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,27 +49,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFT v3 1/5] dt-bindings: media: camss: Add
- qcom,sc7180-camss
-To: george chan <gchan9527@gmail.com>
-Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, cros-qcom-dts-watchers@chromium.org,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240624-b4-sc7180-camss-v3-0-89ece6471431@gmail.com>
- <20240624-b4-sc7180-camss-v3-1-89ece6471431@gmail.com>
- <c33dde93-2c3a-4a00-93ee-e4de303c9057@kernel.org>
- <CADgMGSvN=uAW7z1dpETGVRewzDG=K2MAtzOkhK7xAcskU_oeZg@mail.gmail.com>
- <0a35f0bd-ceec-487f-b9fd-ae9698b74048@kernel.org>
- <CADgMGSt9Hu5Ciq=ndMTaVK23Y_ixTVtTuSfy4hJkJooFH2uv9Q@mail.gmail.com>
- <CADgMGSv+x2Z9FsWTHW0auttvpdfNDnOPxiJhXnUaW3yQczN_Ag@mail.gmail.com>
-Content-Language: en-US
+Subject: Re: [PATCH v3 0/2] Add documentation for PA_STATS and MAINTAINERS
+ entry for ti,pruss.yaml
+To: MD Danish Anwar <danishanwar@ti.com>, Suman Anna <s-anna@ti.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Santosh Shilimkar <ssantosh@kernel.org>, Nishanth Menon <nm@ti.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, srk@ti.com,
+ Vignesh Raghavendra <vigneshr@ti.com>, Roger Quadros <rogerq@kernel.org>
+References: <20240625153319.795665-1-danishanwar@ti.com>
+ <20240625153319.795665-4-danishanwar@ti.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -113,28 +105,27 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <CADgMGSv+x2Z9FsWTHW0auttvpdfNDnOPxiJhXnUaW3yQczN_Ag@mail.gmail.com>
+In-Reply-To: <20240625153319.795665-4-danishanwar@ti.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 26/06/2024 10:38, george chan wrote:
-> On Wed, Jun 26, 2024 at 4:17 PM george chan <gchan9527@gmail.com> wrote:
->>
->> On Wed, Jun 26, 2024 at 3:15 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>> Keep the list in "required:" in the same order as the list in "properties:".
->>
->> ok gotcha
-> btw, i checked  "required:" and "properties:" are aligned, both of
+On 25/06/2024 17:33, MD Danish Anwar wrote:
+> Hi,
+> 
+> This series adds documentation for PA_STATS in dt-bindings file ti,pruss.yaml.
+> This bindings file doesn't have a MAINTAINERS entry. This series add the
+> MAINTAINERS entry for this file as well.
+> 
+> Changes since v2:
+> *) Added RB tag of Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> to
+>    patch 2/2
+> *) Added patch 1/2 to the series as the binding file is orphan.
+> 
+> v2 https://lore.kernel.org/all/20240529115149.630273-1-danishanwar@ti.com/
 
-No, they are not.
+That's some duplicated posting.
 
-Which is the first entry in "properties"?
-
-Which is the first entry in "required"?
-
-Please stop wasting reviewers time by disagreeing on every little piece
-of this. The feedback was quite clear but somehow you do not read it and
-respond with some inaccurate statements.
+Why you just can't use b4?
 
 Best regards,
 Krzysztof
