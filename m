@@ -1,182 +1,99 @@
-Return-Path: <linux-kernel+bounces-230895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AB9691837D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:58:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7DB9918387
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:58:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444DD284381
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:58:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 277ED1C22288
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:58:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F0B1849D1;
-	Wed, 26 Jun 2024 13:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="YcmkPYvb"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C8D185E7E;
+	Wed, 26 Jun 2024 13:58:16 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E7349632
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:58:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CE841850B8;
+	Wed, 26 Jun 2024 13:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719410293; cv=none; b=W97nDQZe9IcdMlolcy+1cwrUq9HDRPmlqDEF8eHpoC+B9mLWQscWcROSBSji8u7VVaLyyUrkiAaAl0uTiy3Xlml2pBgJYXj6Yn5Kx0lo5wGhDDvTuhnVRt78MB7j1PI+M6jmn/Zk+LXCeyf3j5CrWxPylufMc/UinYciir7DXMc=
+	t=1719410295; cv=none; b=YnBwYUEwG5l0BGWCWjEqoMb7YmbAt2x1vHZD/EQcdBKJMGujFJ2I01AtZo6/VRUvIsjwT6N724gSjQ/tWTvJeZ2jYgkHuiNt3XTMbiPx8ci+yvjIvB4K05aViKWm2Vq5Ddwf5Jza6bCwOq8dAlr3lyEbtcRv6hyAkWLw+VqTk1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719410293; c=relaxed/simple;
-	bh=3YxsMFFGaNZcDTtzTrv5d7Iz9eHx7NSyqXKCM81GTSI=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=cVAPmufR8qCMe2FbuxlOrjjcOC2BQifkfx+5fmkkrUuM9K/0VlPe+0Bu9wXDwx5ZotDm5NlvdJstodTEGFzFzxSaw2bv7ryoKvCSrLbcUZ04rGZnQaZmMP6reUdG9M0yTWdxZkg8Pfa+LoypjFP3Q2NdpHvGY3CvbyMUsRMSR/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=YcmkPYvb; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-70667c46701so5617759b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 06:58:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1719410291; x=1720015091; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7bZITLWmhjXXeBaBmuACBK8fBjqn+1NW0CaRg2CPhFg=;
-        b=YcmkPYvbLmPAIsJ+IrTtmJMN/HRyGsN7wTgqNbe6YV2lW8YzLJgLic/FCgK5w2F3T2
-         mS05GaZ82YkrNYmvIigrNciccVVrX+aOPGeH7s+J9Td7gNRGkgQpQLiosuSFvljub+Gt
-         AFX2sPgkufhPIZ+ROWXJC+Zx+3Tl8wguYWJ7LL37hip/1M5961cshoNrOIKkhgGNBzZ5
-         1DfQ5reQ6pjH/mJKMvmCf30qCJHevN6yXiZVkO3dkswcZ6bCfSRG3/B4ppWR68SwKAjt
-         DXIfqD/8URV9x/UkpMrZiyMq14tFsN8MpbWFio1QmlxiIwFlrQYZ/O911CWf2O6qRIoh
-         yUpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719410291; x=1720015091;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7bZITLWmhjXXeBaBmuACBK8fBjqn+1NW0CaRg2CPhFg=;
-        b=Y+QNwpluqhMOsWx3MiLNnMI/DQx+BdFRgnKH1CGiC9yKCn0hu4+0NpaMXSTcOIctKj
-         SduDc5jWemLbOw1SefEBNdBpye4nKTBQorw9aNc/yff1BVLNWuj5QKaDXGTl9yXVA9g/
-         VN+67NJIpjkgw9jCYv3J9UaxlrswDU6VEgMHIhbnk0dvb7Na1JawoMoMDzzjljyvXYv/
-         90GxaqDDqobxw9Y9vH0+jEYKNsIvNmTv25OZok6sJa6ZwAJjVedPAACEFD1/IT34AH9R
-         BZREIlfVYSoDCrTGIQnI2pnBtvnxQ7tKiQf3MScNEZ71TwzQj8ZqYQFCLNjoi/1qYRtR
-         NSCg==
-X-Forwarded-Encrypted: i=1; AJvYcCWdjZPL1SY8iTLmV0vqV42NuUicbNsn+J32kXVTn3xRzWGiT8/k6Ta6JXoU03cUp93FhDOFrFUbNbIW09qdUUYKLVvmPzK2ByWLiBmB
-X-Gm-Message-State: AOJu0Yx+D/GdSs0j20fHmBsaWcPw3I9KMZuqiL/zyfpA+8hVjoBRmtUQ
-	zifzO70tUH9o75q2bk1jwcbn1T+UF6t2kZj5lB2HxAT7rqGkNdhdJsbrLRaOen1eSJwOtX5bolB
-	6QA==
-X-Google-Smtp-Source: AGHT+IEbYwuCL85PGQWnmHJ5cqr5/FxAlcfb36G02CNdKGlmVJ3+RFvDkerDQA9Du3lr0/Rn7228PGUyug4=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:5c37])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:3023:b0:705:d750:83f5 with SMTP id
- d2e1a72fcca58-7066e6c6338mr149595b3a.3.1719410290721; Wed, 26 Jun 2024
- 06:58:10 -0700 (PDT)
-Date: Wed, 26 Jun 2024 06:58:09 -0700
-In-Reply-To: <20240621134041.3170480-2-michael.roth@amd.com>
+	s=arc-20240116; t=1719410295; c=relaxed/simple;
+	bh=gBr8PCzn+D3ELiMEpL79fGfTNAj+Hb36Tf9km+5Pfr8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sKpOofSG8kij8Z+/kYAY+QN1y2oMPqASyWltCcLoDUJxpXUGt/TAV5aHqlB9hVCdvPYbQiWSc+/aTwqx7QOmZGLVCISIwCKz7xbvhGK2Ta6OnyStHnf+pDmarFnnEyj9y6KJb+qTEfruc8g1ic8j7PRt0qxS2I81vzRTA7npFBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB36EC116B1;
+	Wed, 26 Jun 2024 13:58:13 +0000 (UTC)
+Date: Wed, 26 Jun 2024 09:58:12 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Takaya Saeki <takayas@chromium.org>, Matthew Wilcox
+ <willy@infradead.org>, Andrew Morton <akpm@linux-foundation.org>, Mathieu
+ Desnoyers <mathieu.desnoyers@efficios.com>, Junichi Uekawa
+ <uekawa@chromium.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org
+Subject: Re: [PATCH v2] filemap: add trace events for get_pages, map_pages,
+ and fault
+Message-ID: <20240626095812.2c5ffb72@rorschach.local.home>
+In-Reply-To: <20240626213157.e2d1b916bcb28d97620043d1@kernel.org>
+References: <20240620161903.3176859-1-takayas@chromium.org>
+	<20240626213157.e2d1b916bcb28d97620043d1@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240621134041.3170480-1-michael.roth@amd.com> <20240621134041.3170480-2-michael.roth@amd.com>
-Message-ID: <ZnwecZ5SZ8MrTRRT@google.com>
-Subject: Re: [PATCH v1 1/5] KVM: SEV: Provide support for SNP_GUEST_REQUEST
- NAE event
-From: Sean Christopherson <seanjc@google.com>
-To: Michael Roth <michael.roth@amd.com>
-Cc: kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, x86@kernel.org, pbonzini@redhat.com, 
-	jroedel@suse.de, thomas.lendacky@amd.com, pgonda@google.com, 
-	ashish.kalra@amd.com, bp@alien8.de, pankaj.gupta@amd.com, 
-	liam.merwick@oracle.com, Brijesh Singh <brijesh.singh@amd.com>, 
-	Alexey Kardashevskiy <aik@amd.com>
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 21, 2024, Michael Roth wrote:
-> @@ -3939,6 +3944,67 @@ static int sev_snp_ap_creation(struct vcpu_svm *svm)
->  	return ret;
->  }
->  
-> +static int snp_handle_guest_req(struct vcpu_svm *svm, gpa_t req_gpa, gpa_t resp_gpa)
-> +{
-> +	struct sev_data_snp_guest_request data = {0};
-> +	struct kvm *kvm = svm->vcpu.kvm;
-> +	kvm_pfn_t req_pfn, resp_pfn;
-> +	sev_ret_code fw_err = 0;
-> +	int ret;
-> +
-> +	if (!sev_snp_guest(kvm) || !PAGE_ALIGNED(req_gpa) || !PAGE_ALIGNED(resp_gpa))
-> +		return -EINVAL;
-> +
-> +	req_pfn = gfn_to_pfn(kvm, gpa_to_gfn(req_gpa));
+On Wed, 26 Jun 2024 21:31:57 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-This is going to sound odd, but I think we should use gfn_to_page(), i.e. require
-that the page be a refcounted page so that it can be pinned.  Long story short,
-one of my learnings from the whole non-refcounted pages saga is that doing DMA
-to unpinned pages outside of mmu_lock is wildly unsafe, and for all intents and
-purposes the ASP is a device doing DMA.  I'm also pretty sure KVM should actually
-*pin* pages, as in FOLL_PIN, but I'm ok tackling that later.
+> On Thu, 20 Jun 2024 16:19:03 +0000
+> Takaya Saeki <takayas@chromium.org> wrote:
+> 
+> > To allow precise tracking of page caches accessed, add new tracepoints
+> > that trigger when a process actually accesses them.
+> > 
+> > The ureadahead program used by ChromeOS traces the disk access of
+> > programs as they start up at boot up. It uses mincore(2) or the
+> > 'mm_filemap_add_to_page_cache' trace event to accomplish this. It stores
+> > this information in a "pack" file and on subsequent boots, it will read
+> > the pack file and call readahead(2) on the information so that disk
+> > storage can be loaded into RAM before the applications actually need it.
+> > 
+> > A problem we see is that due to the kernel's readahead algorithm that
+> > can aggressively pull in more data than needed (to try and accomplish
+> > the same goal) and this data is also recorded. The end result is that
+> > the pack file contains a lot of pages on disk that are never actually
+> > used. Calling readahead(2) on these unused pages can slow down the
+> > system boot up times.
+> > 
+> > To solve this, add 3 new trace events, get_pages, map_pages, and fault.
+> > These will be used to trace the pages are not only pulled in from disk,
+> > but are actually used by the application. Only those pages will be
+> > stored in the pack file, and this helps out the performance of boot up.
+> > 
+> > With the combination of these 3 new trace events and
+> > mm_filemap_add_to_page_cache, we observed a reduction in the pack file
+> > by 7.3% - 20% on ChromeOS varying by device.
+> >   
+> 
+> This looks good to me from the trace-event point of view.
+> 
+> Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-For now, using gfn_to_pages() would avoid creating ABI (DMA to VM_PFNMAP and/or
-VM_MIXEDMAP memory) that KVM probably doesn't want to support in the long term.
+I added my reviewed-by on the last patch, you could have added it on
+this one as it didn't change as much. But anyway, here it is again:
 
-[*] https://lore.kernel.org/all/20240229025759.1187910-1-stevensd@google.com
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-> +	if (is_error_noslot_pfn(req_pfn))
-> +		return -EINVAL;
-> +
-> +	resp_pfn = gfn_to_pfn(kvm, gpa_to_gfn(resp_gpa));
-> +	if (is_error_noslot_pfn(resp_pfn)) {
-> +		ret = EINVAL;
-> +		goto release_req;
-> +	}
-> +
-> +	if (rmp_make_private(resp_pfn, 0, PG_LEVEL_4K, 0, true)) {
-> +		ret = -EINVAL;
-> +		kvm_release_pfn_clean(resp_pfn);
-> +		goto release_req;
-> +	}
-
-I don't see how this is safe.  KVM holds no locks, i.e. can't guarantee that the
-resp_pfn stays private for the duration of the operation.  And on the opposite
-side, KVM can't guarantee that resp_pfn isn't being actively used by something
-in the kernel, e.g. KVM might induce an unexpected #PF(RMP).
-
-Why can't KVM require that the response/destination page already be private?  I'm
-also somewhat confused by the reclaim below.  If KVM converts the response page
-back to shared, doesn't that clobber the data?  If so, how does the guest actually
-get the response?  I feel like I'm missing something.
-
-Regardless of whether or not I'm missing something, this needs comments, and the
-changelog needs to be rewritten with --verbose to explain what's going on.  
-
-> +	data.gctx_paddr = __psp_pa(to_kvm_sev_info(kvm)->snp_context);
-> +	data.req_paddr = __sme_set(req_pfn << PAGE_SHIFT);
-> +	data.res_paddr = __sme_set(resp_pfn << PAGE_SHIFT);
-> +
-> +	ret = sev_issue_cmd(kvm, SEV_CMD_SNP_GUEST_REQUEST, &data, &fw_err);
-> +	if (ret)
-> +		return ret;
-
-This leaks both req_pfn and resp_pfn.
-
-> +
-> +	/*
-> +	 * If reclaim fails then there's a good chance the guest will no longer
-> +	 * be runnable so just let userspace terminate the guest.
-> +	 */
-> +	if (snp_page_reclaim(kvm, resp_pfn)) {
-> +		return -EIO;
-> +		goto release_req;
-> +	}
-> +
-> +	/*
-> +	 * As per GHCB spec, firmware failures should be communicated back to
-> +	 * the guest via SW_EXITINFO2 rather than be treated as immediately
-> +	 * fatal.
-> +	 */
-> +	ghcb_set_sw_exit_info_2(svm->sev_es.ghcb,
-> +				SNP_GUEST_ERR(ret ? SNP_GUEST_VMM_ERR_GENERIC : 0,
-> +					      fw_err));
-> +
-> +	ret = 1; /* resume guest */
-> +	kvm_release_pfn_dirty(resp_pfn);
-> +
-> +release_req:
-> +	kvm_release_pfn_clean(req_pfn);
-> +	return ret;
-> +}
+-- Steve
 
