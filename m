@@ -1,113 +1,124 @@
-Return-Path: <linux-kernel+bounces-231378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3116991973E
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:12:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FC09919740
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 21:12:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C91D21F22712
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:12:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFBD11C20BD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BCBF19149C;
-	Wed, 26 Jun 2024 19:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3091922C9;
+	Wed, 26 Jun 2024 19:12:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BsPx/t1e"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tqoxRZOi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D9E14EC65
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 19:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDABA191495;
+	Wed, 26 Jun 2024 19:12:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719429119; cv=none; b=cSSZ2aykz8tLp9QNSGEOExe+yI0sF06fwfBBCk1cyqnOnYNyNPI5WnjFYwtM/XDCOlQMJQ2H9XWw1QRWzQVDUQRahxG2ASklfdhJs+yQbutIaXJTuh0LH4Ds0TDbUtoRyHDNKOjjKSmqlIBtKJHYG4PLKjAo/K0Qw5OzFTxEhec=
+	t=1719429143; cv=none; b=CZAyeB2Yxz+JlNsXEDSyhKey3Hu6oF+H1jOK46fhmOUrYGSggJYaGeFb5/XdULJH4C1vFzJgukTnwyVqaI99p7ci49Cbg+kRVZ7yYcwherHbpCQSGh79Sv8mMK2xqBgApZMe+TZBzwnU+O1D4dEKNLsE/iJnSGrwEV8QsXc6kVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719429119; c=relaxed/simple;
-	bh=infxX9gwZoaSPP26U3aYq9eo5iGTSPeUUGG/CJFrJgA=;
+	s=arc-20240116; t=1719429143; c=relaxed/simple;
+	bh=Gv/B8Zf6gnCvJrNa3a8Gz1A6sTWNe8x8l4s9b5SCHu0=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=dB+QyRvHqpBcNs526iepYCXDkVnT5IlGyNmOiL8u3i85j8ddXWR3xsgLgt7eirkOO7sW/ae1sMSO7u2jV7BH96eWq5lWro4aotOULIJXrUO+fvD5zIwA3cfysKaenQueAqzldXqZllAzFZfb4J79fV72eFgBxRFW8ZRFj0vHzYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BsPx/t1e; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1719429116;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=sqJKJWGFYdhtdKrF6F8t2nbjWvOkwK6q5ywXhWfleu0=;
-	b=BsPx/t1ekD1c7SdmVE4xLboznNd/k1jfnTk6FTb2MzLx6sVijdrGbU7u7m/r4vZBM3gL/y
-	9hh8Bo5qZABWvI+OXCAFhCxgXMH7UUNGs+w/B4JiSIX5TlgiKnriw6n24hUpdUvUgIFIBl
-	Bia1hYn49EWqAWG39LgOFYtTNkJZzO8=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-377-rn07ZSo3O0eH1RIvSIxZXQ-1; Wed,
- 26 Jun 2024 15:11:54 -0400
-X-MC-Unique: rn07ZSo3O0eH1RIvSIxZXQ-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A655A19560B0;
-	Wed, 26 Jun 2024 19:11:53 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.226.94])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id C6D1E1956050;
-	Wed, 26 Jun 2024 19:11:51 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed, 26 Jun 2024 21:10:20 +0200 (CEST)
-Date: Wed, 26 Jun 2024 21:10:17 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>,
-	Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org
-Subject: [PATCH] get_task_mm: check PF_KTHREAD lockless
-Message-ID: <20240626191017.GA20031@redhat.com>
+	 Content-Disposition; b=qOR40DjWAstjt0O6q7MHxTLDTpobuvnOJNGRcsUS9l/ktUw83D0/onh1qM8vks/O3378FScn/Ir9pyVOkGeCHZrcNLpwslzSyZMgJTYLkFzE6uLCdXMmpmfpmrkI3Pu+o4gfxGhieNWr+ux3ysdotINrgV2hhMRprRvuhQBbIIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tqoxRZOi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F55BC32782;
+	Wed, 26 Jun 2024 19:12:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719429142;
+	bh=Gv/B8Zf6gnCvJrNa3a8Gz1A6sTWNe8x8l4s9b5SCHu0=;
+	h=Date:From:To:Cc:Subject:From;
+	b=tqoxRZOiIf5p6sopRCgB8vRVq3ofp0JvDSDaQrITrHy/DyU3tX+2R/DcOxWh4vLdz
+	 qMVg+ktK0cVDHDR82i/xK/XRImSrGkgeTGY298Ok/5rX/cptKJ/BoqItpbUcXoJELU
+	 +3OumdWT7EM9bThu0DCSntqaXK/Zif+CDCvL2mgkjN8GHaI7h7MLJQtmgekRWYATq6
+	 TEG1y2lD4cfQcDlzz6BIMrNGKb0ZSw5ZygdvTAz1XRF1JlK0UE2//0OWPj23CVJv8J
+	 nKTmJ5dJ3JEfx2SZpR/cxHJ06Bk0NAkrBsLhqJffS+KUVMxaySSq+9U/tKcA+3dJud
+	 KISHhRVHDrVxw==
+Date: Wed, 26 Jun 2024 20:12:18 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: Tree for Jun 26
+Message-ID: <ZnxoEsUjw3N98vaj@sirena.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Cniid+g8e7TXYD4Y"
+Content-Disposition: inline
+
+
+--Cniid+g8e7TXYD4Y
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Nowadays PF_KTHREAD is sticky and it was never protected by ->alloc_lock.
-Move the PF_KTHREAD check outside of task_lock() section to make this code
-more understandable.
+Hi all,
 
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
----
- kernel/fork.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Changes since 20240625:
 
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 4c361d2bdc12..d3dc623a1247 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1536,14 +1536,13 @@ struct mm_struct *get_task_mm(struct task_struct *task)
- {
- 	struct mm_struct *mm;
- 
-+	if (task->flags & PF_KTHREAD)
-+		return NULL;
-+
- 	task_lock(task);
- 	mm = task->mm;
--	if (mm) {
--		if (task->flags & PF_KTHREAD)
--			mm = NULL;
--		else
--			mmget(mm);
--	}
-+	if (mm)
-+		mmget(mm);
- 	task_unlock(task);
- 	return mm;
- }
--- 
-2.25.1.362.g51ebf55
+The sound tree gained a conflict with the sound-asoc-fixes tree.
 
+The rpmsg tree gained a build failure, I used the version from 20240625
+instead.
 
+Non-merge commits (relative to Linus' tree): 7866
+ 8606 files changed, 753216 insertions(+), 149731 deletions(-)
+
+----------------------------------------------------------------------------
+
+I have created today's linux-next tree at
+git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+(patches at http://www.kernel.org/pub/linux/kernel/next/ ).  If you
+are tracking the linux-next tree using git, you should not use "git pull"
+to do so as that will try to merge the new linux-next release with the
+old one.  You should use "git fetch" and checkout or reset to the new
+master.
+
+You can see which trees have been included by looking in the Next/Trees
+file in the source.  There is also the merge.log file in the Next
+directory.  Between each merge, the tree was built with a defconfig
+for arm64, an allmodconfig for x86_64, a multi_v7_defconfig for arm
+and a native build of tools/perf.
+
+Below is a summary of the state of the merge.
+
+I am currently merging 378 trees (counting Linus' and 106 trees of bug
+fix patches pending for the current merge release).
+
+Stats about the size of the tree over time can be seen at
+http://neuling.org/linux-next-size.html .
+
+Status of my local build tests will be at
+http://kisskb.ellerman.id.au/linux-next .  If maintainers want to give
+advice about cross compilers/configs that work, we are always open to add
+more builds.
+
+Thanks to Randy Dunlap for doing many randconfig builds.  And to Paul
+Gortmaker for triage and bug fixes.
+
+--Cniid+g8e7TXYD4Y
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZ8aBIACgkQJNaLcl1U
+h9BbPgf/eNzHGeVqqfh5FGnMYn1CeVXTGYk9aShS0q5HHKOhwRqRkrT9nMbStqIH
+Znle4iYUYNmIwudX9N9McQDcyWGDY1p2OJQJU6NoTSHmVlAtZGSVVxSlGyX6Y5Mb
+6lrOKXsdI2vxvvvwMkvOjHANwcFoerw7Km0YVaJJo5zV7Oqj1E+v2au6WMTORuhh
+/wqLjYp2qX1Y1Se5UWv9JAJxniCWM4IhgrPPGjxk3RsjKeGFxZ0WXZRnLpaS0aH7
+IQLX9Dj5kB/+v4Vq1cv7umv8K1gsQiF5ZJ0Id64hF1rpanhuK6hfCQo5Igdspbgh
+HJ3k7iLAETB8uGbftD9sLwz+Z2MyDw==
+=USx5
+-----END PGP SIGNATURE-----
+
+--Cniid+g8e7TXYD4Y--
 
