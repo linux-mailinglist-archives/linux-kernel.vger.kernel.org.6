@@ -1,137 +1,116 @@
-Return-Path: <linux-kernel+bounces-231295-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-231296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB1E918A50
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:46:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77F41918A54
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 19:48:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65A251F21F06
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:46:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BFBA1F2221F
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 17:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF04190076;
-	Wed, 26 Jun 2024 17:46:28 +0000 (UTC)
-Received: from netrider.rowland.org (netrider.rowland.org [192.131.102.5])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id E7A8018A93B
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 17:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.131.102.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBD17190060;
+	Wed, 26 Jun 2024 17:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="vpFq88Qn"
+Received: from mout.web.de (mout.web.de [212.227.15.3])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D24A3155A26;
+	Wed, 26 Jun 2024 17:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719423987; cv=none; b=nFvFHkbBhBOgQgVDVtAeHe3RCoStYl2dtZv1Kfug72Sd0j9OwaQ+ZBs3uWgRggPLQyPVjLK9DpaE8ohfuDUHki/2x2h0bC3k8+GotIfMo+hN3CZ9TSdOZ7nowXc1Rg6EeRtvCQcVsx8IUZLIIR10XKqHj2rpEsnOeMK9awDMPFQ=
+	t=1719424110; cv=none; b=lyCbaoraFNsQfJtWTvTK3cFJQ3uSCQlqypWieFl9/Yf83AfP6+07EB6+JTEAxeBvZ6jHKXvBrz/7ib8s7GdNVyOSEtAtYTO1lIfegFqECD1I+e6WSi2UBC5P+ittTBoxKUr5A7A9NTPphwnFSBb9iZx/eDnoYaq/fbDkNjrYrO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719423987; c=relaxed/simple;
-	bh=UDy2EAAAedZm8c+seUJoRJmo7fvPySwdZEOjQGes8Qg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Yc9Er/QGe6WIYCsKrdv54mV0eFMQYmMCdMgLD1iVkTdCQuJPUbuz6jIXHfvNfGrjbwDci+yTFlevs4Lt8ypaDnMXtfHvd7Rqyf252By0IU6nWp6cnndqooMsbGkbcT18galODT0N33vP9d94ZVnK/sIZ0w1jdVUkQsIOZ/fCBlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu; spf=pass smtp.mailfrom=netrider.rowland.org; arc=none smtp.client-ip=192.131.102.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=netrider.rowland.org
-Received: (qmail 712417 invoked by uid 1000); 26 Jun 2024 13:46:24 -0400
-Date: Wed, 26 Jun 2024 13:46:24 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+8693a0bb9c10b554272a@syzkaller.appspotmail.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-  linux-usb@vger.kernel.org, luiz.dentz@gmail.com, marcel@holtmann.org,
-  syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] [bluetooth?] WARNING in
- btusb_submit_intr_urb/usb_submit_urb
-Message-ID: <6d1f6bcc-2918-48cd-bbb3-e8cca46622a1@rowland.harvard.edu>
-References: <a6eb3c4e-411f-4fbf-a85c-f3435170341d@rowland.harvard.edu>
- <000000000000d6c39d061bcdb82c@google.com>
+	s=arc-20240116; t=1719424110; c=relaxed/simple;
+	bh=s35+qZTcqhwM8W3AinynCg6kiFRF8n8VyM1SZPYKXqw=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=ncc4/ucIM9cs40sd4jP53J/g+YYEl6xmyAMyo/rgPVdjFZvFgGXjgOw9ZXU4G1UoVoINA1bQ16MasKRYHJFux8OJ8diyuXHz2ycFTqFLk+FfE2Qm5Bkd4DLor9NCcDcwhCJGhRzP6tzHc+UcpFpfJAOr8aaSwtdU+tMR1bbQQuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=vpFq88Qn; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719424097; x=1720028897; i=markus.elfring@web.de;
+	bh=ckRm9hxi4SLgTfnZQvPFzAXNKifH/3B+TbZxccPOSOQ=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=vpFq88QnbNH7HmABo7mPWqDsYuyoVpVSdhObFfvIR9X2L4hKxModF4fvj+qmuct4
+	 UGGbQvc823sEgwSGcNK5DDbJ0jbjLMsNcjIZpt40GOrMvNT7KSZ77nCP+MxgMyjsp
+	 hIj2gRbNTSbqxWbP2JJkfzsCLWOwn3a8McPXZUpjfTuyFLc6OHeRsbxCHlijKwJyl
+	 GNt7m+VXTSOpNR2swCAuq2CGrhF9FrKTIkf3qSNo5ka3hrByiEy3tI+yPKTS2ZDGQ
+	 msctZq47Tvoze2jko6mK3Y5/7Fu1udGa86VsRDYmaSOtufEZRLmhdrzRzYWgZ/dIW
+	 Kcn8NTdAtHYKyI1Pqw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N79RI-1sNiYf0i1E-00xIMV; Wed, 26
+ Jun 2024 19:48:17 +0200
+Message-ID: <db2d2cee-64d8-491d-b8a5-f0362ddc269a@web.de>
+Date: Wed, 26 Jun 2024 19:48:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <000000000000d6c39d061bcdb82c@google.com>
+User-Agent: Mozilla Thunderbird
+To: Christian Marangi <ansuelsmth@gmail.com>, linux-leds@vger.kernel.org,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Lee Jones <lee@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+ Rob Herring <robh@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240620210401.22053-11-ansuelsmth@gmail.com>
+Subject: Re: [PATCH v7 10/20] leds: leds-lp55xx: Generalize led_brightness
+ function
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240620210401.22053-11-ansuelsmth@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Ey+tkCJX0xs2Ahlx0Ke1CKYmRvYbATtl65O1+zpFb+F2XLFr/fv
+ FlqwzFGNauBuiyxAh0BZoGf/3bxKEpAbS6kSTkCH2huMdcTAeo9vB3FYKt0kd5kuMzafdT8
+ VIrNFbkGyyostHbcJGhsM1GWh++Iukfjzy39cw66f+q4x0AkDVGSfYxagUkB6Fl9dptU+Ch
+ qvttwJ90jgeokGBRp+qfA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:l1iGpyGvBs4=;7BKbWR2rkr7FYKX7wZXDU40C0Ij
+ UtQYiP0pJsBPidm+sQgK7NrqSH51wEjn6zXI1c2OBVALaLFz0MDVInhFv+30ig6TGR565aQP9
+ +CEccUH33fxSFqUPRTDBqtDNKlvFyjVOldzZ01dtFbF+cvkB2wU4w2k6+zJrYjn1+Aqepew1Y
+ qtmYt3QQ07zfFF9cmyblKH/4LLUZVye6L6seVp3a1getIo1Et7LgadCF6jfLq36KgyZBoycM6
+ QAHDDR6psIzDygR1S9dQKgW1MBy4ZBaCEhofHD4+V4ltek1wad5ZsYnPZ9klDt+a9QGS1RCVh
+ uE6axgQq3mzP/VhJw/beU2LuZdP2MCYlMdie+lOV5MIBHYes8UG1YT45UMzvljAi3NoOSBV9Y
+ WV2pVjYZm/ji9YJKj66cIrubzl9v9opiJbi3LauHGX0QfGAU/QW037cXIiutxS0Gx3bgqju3B
+ 2yuHSgYgZo6x74HbzyLz7nQ8N/JqtdQfn7JQlJpoXGvzgnO+gJ8a8cw4aWyTkfS9V1ZBD0kT3
+ IdVNbqBw8AWfwpOe1aRajT2/xMhjo+hab+KgXV1Owz1P7kD73LcyjbfZsq/Bvq7HPmbaB6ovT
+ jZNVJfPXFVOW3gN6DGsXgHB+E0m5leeTAO1FKaxA7p1AZi0/WGrjhWqxSivGK3XbeYWK3pAVF
+ 0sN+V35IkQ9qTBzhL093sGak99KT6HjHT12EvvZQrO+K6X5uRiUNLJEntBgqEZGVGYcG6HJN7
+ mHnGIpUOuJVwIzmpyrUjXXjlZjEJQaWHLnEl6vKWFPQae0AkWCyyY/SaqYACvF7CxNF28/b4O
+ gYm8NoAX2llnvZ2eNy11Ob9yGV8zufN+D+2MJ627IiKKY=
 
-On Wed, Jun 26, 2024 at 09:44:03AM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-> WARNING in btusb_submit_intr_urb/usb_submit_urb
+=E2=80=A6
+> +++ b/drivers/leds/leds-lp55xx-common.c
+> @@ -242,6 +242,20 @@ void lp55xx_firmware_loaded_cb(struct lp55xx_chip *=
+chip)
+=E2=80=A6
+> +int lp55xx_led_brightness(struct lp55xx_led *led)
+> +{
+=E2=80=A6
+> +	mutex_lock(&chip->lock);
+> +	ret =3D lp55xx_write(chip, cfg->reg_led_pwm_base.addr + led->chan_nr,
+> +			   led->brightness);
+> +	mutex_unlock(&chip->lock);
+> +	return ret;
+> +}
+=E2=80=A6
 
-As expected.  The interesting information is in the console log:
+Would you become interested to apply a statement like =E2=80=9Cguard(mutex=
+)(&chip->lock);=E2=80=9D?
+https://elixir.bootlin.com/linux/v6.10-rc5/source/include/linux/mutex.h#L1=
+96
 
-[  100.266326][   T25] btusb 1-1:0.0: Ep ffff8880234bee00 epaddr 9b epattr 67
-[  100.280938][   T53] btusb 1-1:0.0: Pipe 404d8280 ep ffff8880234bee00
-[  100.287918][   T53] usb 1-1: Error pipe 404d8280 ep ffff8880234beea0 epaddr 8b
-
-Notice the difference in the "ep" values (the addresses of the endpoint 
-descriptors).  The kernel thinks two different endpoints are the same.
-
-The reason is that the two descriptors have the same direction and 
-address, but the parsing code in config.c doesn't realize they are 
-duplicates because they differ in the value of the reserved bits in 
-bEndpointAddress.  You can see this in the epaddr values above: 0x9b 
-versus 0x8b.
-
-Let's see what happens if we reject endpoint descriptors in which any of 
-the reserved bits in bEndpointAddress are set.
-
-Alan Stern
-
-#syz test: upstream 66cc544fd75c
-
-Index: usb-devel/drivers/bluetooth/btusb.c
-===================================================================
---- usb-devel.orig/drivers/bluetooth/btusb.c
-+++ usb-devel/drivers/bluetooth/btusb.c
-@@ -1398,6 +1398,7 @@ static int btusb_submit_intr_urb(struct
- 	}
- 
- 	pipe = usb_rcvintpipe(data->udev, data->intr_ep->bEndpointAddress);
-+	dev_info(&data->intf->dev, "Pipe %x ep %p\n", pipe, data->intr_ep);
- 
- 	usb_fill_int_urb(urb, data->udev, pipe, buf, size,
- 			 btusb_intr_complete, hdev, data->intr_ep->bInterval);
-@@ -4283,6 +4284,9 @@ static int btusb_probe(struct usb_interf
- 
- 		if (!data->intr_ep && usb_endpoint_is_int_in(ep_desc)) {
- 			data->intr_ep = ep_desc;
-+			dev_info(&intf->dev, "Ep %p epaddr %x epattr %x\n",
-+					ep_desc, ep_desc->bEndpointAddress,
-+					ep_desc->bmAttributes);
- 			continue;
- 		}
- 
-Index: usb-devel/drivers/usb/core/urb.c
-===================================================================
---- usb-devel.orig/drivers/usb/core/urb.c
-+++ usb-devel/drivers/usb/core/urb.c
-@@ -208,8 +208,11 @@ int usb_pipe_type_check(struct usb_devic
- 	ep = usb_pipe_endpoint(dev, pipe);
- 	if (!ep)
- 		return -EINVAL;
--	if (usb_pipetype(pipe) != pipetypes[usb_endpoint_type(&ep->desc)])
-+	if (usb_pipetype(pipe) != pipetypes[usb_endpoint_type(&ep->desc)]) {
-+		dev_info(&dev->dev, "Error pipe %x ep %p epaddr %x\n",
-+				pipe, &ep->desc, ep->desc.bEndpointAddress);
- 		return -EINVAL;
-+	}
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(usb_pipe_type_check);
-Index: usb-devel/drivers/usb/core/config.c
-===================================================================
---- usb-devel.orig/drivers/usb/core/config.c
-+++ usb-devel/drivers/usb/core/config.c
-@@ -287,6 +287,13 @@ static int usb_parse_endpoint(struct dev
- 		goto skip_to_next_endpoint_or_interface_descriptor;
- 	}
- 
-+	if (d->bEndpointAddress &
-+			~(USB_ENDPOINT_DIR_MASK | USB_ENDPOINT_NUMBER_MASK)) {
-+		dev_notice(ddev, "config %d interface %d altsetting %d has an invalid endpoint descriptor with address 0x%02x, skipping\n",
-+		    cfgno, inum, asnum, d->bEndpointAddress);
-+		goto skip_to_next_endpoint_or_interface_descriptor;
-+	}
-+
- 	/* Only store as many endpoints as we have room for */
- 	if (ifp->desc.bNumEndpoints >= num_ep)
- 		goto skip_to_next_endpoint_or_interface_descriptor;
-
+Regards,
+Markus
 
