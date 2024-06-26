@@ -1,97 +1,90 @@
-Return-Path: <linux-kernel+bounces-230110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05B0C917878
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:03:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD329178D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 08:22:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F62C1C22142
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:03:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A529AB22642
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6217114BFA3;
-	Wed, 26 Jun 2024 06:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F4F14D2A8;
+	Wed, 26 Jun 2024 06:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kUlSj0tg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=malaika-12.net header.i=@malaika-12.net header.b="h2EJMhNk"
+Received: from smtp.domeneshop.no (smtp.domeneshop.no [194.63.252.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9875E14D458;
-	Wed, 26 Jun 2024 06:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A79BE542
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 06:22:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.63.252.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719381781; cv=none; b=I3I0VZlkR3WOUR43jhtMLj30NTPDWIlBANYVKuX7SxgJeWyfmlhREEvi+RG4LZK1K/Z1MNpXav542MlwmSc2TUeETfyIy4rUseQGMvSVe7fkx8MWl5eI80dgzpe7CzSfgX/FHP8ZedgGTeTg3LZu4B0eSwoWK98oL6zgMh97JjM=
+	t=1719382957; cv=none; b=doc18lo715qxlDgyngj8x2b0D6HVnlRTBMoBEaunjYDeOYmWxF9RY/76xRgS8Nol4060OPvG3Oq0qyvDUKnKmF5kO3ChDsYuegKghlMC9OTWIx0iaNoLD0drqT1NOhi3CY6P76lI8IQMyeIDYfwp+pWOZZR0y08NrAFQ6nvrSWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719381781; c=relaxed/simple;
-	bh=Y+Zf9ItE55P3r95JkXBtjtBnIHDpQoA7hI7hDp/zREc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hv55mb2SNbEjB8Qm3TdaqOilWdM/DyXQ1TGflplW+4F4xkp5oFRwQgcyQ5SBfvf9CjPdUz/oq3OGso0qZ+GUEk9l6XAEZL9s3WRG3bQBmUCESXx0lboeXQ3dwhGOeXD3KKBJ+zMgAZkzyIVm93B+N1GScgQOOHmW3yYRujHSR2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kUlSj0tg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA520C32782;
-	Wed, 26 Jun 2024 06:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719381781;
-	bh=Y+Zf9ItE55P3r95JkXBtjtBnIHDpQoA7hI7hDp/zREc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kUlSj0tgTPbXha9yQ4zGfLklLatVe7AvnLkAw/TXtu0S+brG77+7+QfGRTeHl48Te
-	 rBjSdKkZjVpXaSLyl8S1zmrL3wLPBZxU6OaKEZ+XinPrV8ga+gtiGnUsc1bIBOGQR+
-	 4voXNxM1l8TxHNs35tYutqIq9Ql3Di3NpvPl6qZenylFEkiWdMMMoP0iK/3I9uVs0Z
-	 uYYezEgi3EhcmrTNFzSz7j8Lue8lQA2KBYh6H3GZOXNAqY+6PcppyO0PrB/vXBT0nr
-	 pUjzjaBPqkbs9dC+cS+Pk1NaHGBN941fNSiJDodQlzRNAyg9tFsImV5nHISngqSPPz
-	 K/z27KEV/RJyA==
-Date: Wed, 26 Jun 2024 09:02:56 +0300
-From: Leon Romanovsky <leon@kernel.org>
-To: Lukas Wunner <lukas@wunner.de>
-Cc: Vidya Sagar <vidyas@nvidia.com>, corbet@lwn.net, bhelgaas@google.com,
-	galshalom@nvidia.com, jgg@nvidia.com, treding@nvidia.com,
-	jonathanh@nvidia.com, mmoshrefjava@nvidia.com, shahafs@nvidia.com,
-	vsethi@nvidia.com, sdonthineni@nvidia.com, jan@nvidia.com,
-	tdave@nvidia.com, linux-doc@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kthota@nvidia.com, mmaddireddy@nvidia.com, sagar.tv@gmail.com
-Subject: Re: [PATCH V4] PCI: Extend ACS configurability
-Message-ID: <20240626060256.GO29266@unreal>
-References: <20240523063528.199908-1-vidyas@nvidia.com>
- <20240625153150.159310-1-vidyas@nvidia.com>
- <ZnrvmGBw-Ss-oOO6@wunner.de>
+	s=arc-20240116; t=1719382957; c=relaxed/simple;
+	bh=i8Es4Zte3SN2y3xQpjhof63uPgu63+n6XcqR2hqdcGc=;
+	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=nAglPLVLpxgncrx1IB/iXYc7lmYAhLEFRidk/MSzb6Wfm4jq35Wr+Y8FPKoNX5DqSZcF+e5ED/n0wDjZWKruuEZMdys1gN+XdMQTIwh856rqaC2xhd8XSwZeFRUFq/6fdue4hKrVLpeZrQgWlBkLQ43NUSA/Yr7ENtQLMsPbuFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=malaika-12.net; spf=pass smtp.mailfrom=malaika-12.net; dkim=pass (2048-bit key) header.d=malaika-12.net header.i=@malaika-12.net header.b=h2EJMhNk; arc=none smtp.client-ip=194.63.252.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=malaika-12.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=malaika-12.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=malaika-12.net; s=ds202404; h=Content-Transfer-Encoding:Content-Type:
+	Subject:From:To:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=GbBtHxKx/hbQLCt66A4+/E8hEhcuZIlyUmxaTdjWiDg=; b=h2EJMhNkt8hC1v9cGMbk36/zJZ
+	EGWw8lNKyFzycrZOY071nXURC74F25R69P2rObVdKyQiXvqm20KldBMBpaqzutJG4CuGeOc3C1sf9
+	5QeOT+1MD3eq4VwUmu6fQWIghNU/GDRVqt0N78fUIEPGhUoW16WpBLz7AajhtN5HAhch46bFg09/X
+	92nIt7MTfCbf/7g3yhEKKAgG7k5y7oc5SSD8dtF6YZiDGPg6mydxyW5lH6PSAFTclbxINANkrhXaG
+	p6X1+k3egaNUYTjKb88oINrkPPn52obHs764xUqcKSxrmmMcJ9WKcrH4SRVegOcgNQVy6BtMvo1iE
+	2SWQpsow==;
+Received: from [2a02:fe1:716d:5f00:4062:1f9d:2fd2:105b] (port=62836)
+	by smtp.domeneshop.no with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <BIT@malaika-12.net>)
+	id 1sMLhC-00Fw8T-9U
+	for linux-kernel@vger.kernel.org;
+	Wed, 26 Jun 2024 07:59:54 +0200
+Message-ID: <bb7dec69-39f9-4f74-b889-19949765c890@malaika-12.net>
+Date: Wed, 26 Jun 2024 07:59:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZnrvmGBw-Ss-oOO6@wunner.de>
+User-Agent: Mozilla Thunderbird
+To: linux-kernel@vger.kernel.org
+From: =?UTF-8?Q?Ywe_C=C3=A6rlyn?= <BIT@malaika-12.net>
+Subject: Philosophy of The Vast X continued (was Fair Pay & Low Jitter)
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 25, 2024 at 06:26:00PM +0200, Lukas Wunner wrote:
-> On Tue, Jun 25, 2024 at 09:01:50PM +0530, Vidya Sagar wrote:
-> > Add a kernel command-line option 'config_acs' to directly control all the
-> > ACS bits for specific devices, which allows the operator to setup the
-> > right level of isolation to achieve the desired P2P configuration.
-> 
-> An example wouldn't hurt, here and in kernel-parameters.txt.
-> 
-> 
-> > ACS offers a range of security choices controlling how traffic is
-> > allowed to go directly between two devices. Some popular choices:
-> >   - Full prevention
-> >   - Translated requests can be direct, with various options
-> >   - Asymmetric direct traffic, A can reach B but not the reverse
-> >   - All traffic can be direct
-> > Along with some other less common ones for special topologies.
-> 
-> I'm wondering whether it would make more sense to let users choose
-> between those "higher-level" options, instead of giving direct access
-> to bits (and thus risking users to choose an incorrect setting).
+As it comes to me, I send some emails, keeping a ping of me going :)
 
-IMHO, with "higher-level" options will be much more complex to use than
-simple ACS bits matrix. In any case, the user who will use this feature
-will need to read PCI spec before.
+On the C64 many godconceptions were combined, really making out a MARUF 
+not MUNKAR principle as it in Islam.
 
-In PCI v6, 13 bits are used for ACS with 8192 possible combinations and
-it is unlikely to find small set of "definitions" that will fit all cases.
+This is still relevant, as the Rainbow Computers Users, are still the 
+ones it is about, and was Irix before, and now Open Source.
 
-Thanks
+In an experimental culture, still in "debug mode", one ofourse needs to 
+take the correct developments, and reject the bad.
+
+MARUF not MUNKAR does this, and as we approach finality of things, we 
+have a wide enough dataset to just take the MARUF (The Good) of this and 
+not the Poor (MUNKAR).
+
+The Vast X is this, and now instead of Rainbow logos, and also could be 
+for hardware design aswell, for those wishing an alternative to SIN. (We 
+do not need an association to Sinful here.)
+
+Yes?
+
+https://the-vast-x.net/Ruhban/Ruhban.html
+
 
