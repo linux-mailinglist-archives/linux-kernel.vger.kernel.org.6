@@ -1,202 +1,150 @@
-Return-Path: <linux-kernel+bounces-230762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03989918195
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:04:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A79918169
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 14:50:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3FE128178A
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:04:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FA971C2084B
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 12:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CE31822CB;
-	Wed, 26 Jun 2024 13:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD89181CEF;
+	Wed, 26 Jun 2024 12:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pd/i5zHI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K3OGYvs5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E972181CFF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:03:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7238F1E51D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 12:50:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719407037; cv=none; b=D3T1po0sO1dtNXQ/Vy4/FdfsXcaspLip8dgsJXOog5nI6TnEWS0kFCvcq3uTjmDvzSP+9cQuMy8XGmEjKSHL8AWVpeyw+2VAy8bj43wx1c8dNIEBNWHNkIptUOgB1jYJ2GQpFuTZ0onjtHo0hfT2W72V+hAN3ryzYwSHGG/quMM=
+	t=1719406212; cv=none; b=DGREfsgK0agVKNFGf2NpsVXVBceD4QJneIxLwzOHmSCUPn093ksK7W5ccNN7UdS2Xd46NOaCNFaZ6Dd6KLL4s2ocDQaR8/s3P9WFBWm1sa0ypFdm4wmUafxyaIiyMyyjkUCl+lrdpKyGEzNzs4wVd/Ca0gCZd+ZNKLElCD2N7tg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719407037; c=relaxed/simple;
-	bh=Uta7Ar4IuN68vM/aeq1mQnasHGnsAdafsPir9UrleIA=;
+	s=arc-20240116; t=1719406212; c=relaxed/simple;
+	bh=jbTXnw7qIaAfmmtUnIZqFzuKHXG/BarIXJwEcufp29o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Nn6DHeQbweqLBOHJtEJGXUxCdw+nEhigdA9eTVR29EVVVqxLzvvkX5nsgQUDs5PNh0JQjapVkKK15nDkM9LgB84W73FcNKcKaS+iOQM/ni0Fe4uJbNwvz+Tw+FMkMKp0s+SrM0Kx50e8CkZEC91CvQKQT2luChiILBgqUsfKuK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pd/i5zHI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91FF3C2BD10;
-	Wed, 26 Jun 2024 13:03:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719407036;
-	bh=Uta7Ar4IuN68vM/aeq1mQnasHGnsAdafsPir9UrleIA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Pd/i5zHIn/AQu7DnXglDjXVDP9Kqs1JHUD2n7nhTlLi8yjm2IKz+JBZx+4Yr+VtVE
-	 e7yHGcUPsRbgcbw2P9+0iAa3eQIuPxdxCvD4zQ0061JLX7KAItn2oMa+/oo7u6EDKu
-	 InxF+MFcm1V/lYROQX9e8N+GxCkVpWhXIeDRiX1glTL0WRzxgq4B6Rtu/igGkMkHjJ
-	 kKbqnRgp6CKAu2f9hX6M/ujgXDcLOn2TSFJ7iTZJAYpwPGfOf02rZC1mJD1CS20bqy
-	 b3G+YD1AUQjI6Cbskf2xxrUstH05FMPGqFtukjg1/JATbW2sStWEYgcPcvdhb0UfS+
-	 VYyYxbL50Koew==
-Date: Wed, 26 Jun 2024 20:49:50 +0800
-From: Jisheng Zhang <jszhang@kernel.org>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/4] riscv: uaccess: use input constraints for ptr of
- __put_user
-Message-ID: <ZnwObmA70Bfx9yCn@xhacker>
-References: <20240625040500.1788-1-jszhang@kernel.org>
- <20240625040500.1788-3-jszhang@kernel.org>
- <acd2e53f-b5c1-49c5-86e2-bc09eb917163@app.fastmail.com>
- <ZnwKXWzRz9B5FbLM@xhacker>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JAW4VsJ9JdimdqUANuyVZLyBJJbgInaytf3F+vqsRkFpB8QPIl8xGABRV8oRbz/EpfLoAJl50VKOORg+ZoNE6gixtQj5Q/KXEp3Hz2GQMaswOGpEUpAllDtd+MpWQeWhyBK7HiH0w+RlCbHh0MJ4klnxu9YQM/5H3+m2KcREt2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K3OGYvs5; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1719406209;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=weKxNpftDTdPudwJr8Js5RQeWZqeU3ZfmHi8oupmaRY=;
+	b=K3OGYvs5RwUwGPKddRrZq6E1sBibeBUI6PuGaGH3VSPZ8nPZoZ5UxHUeNgpkbK+8vRvGrH
+	iaJBT1mXhWS+iw9qxeQXabZJpxj26OcQPQnb4hgWd/IWgBclPaVLrnqik1rAsTuwsHvTEz
+	QS664hlItQHti9MXpYsXjb8Z8MaQM8M=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-561-kXKBROm5ONqYwr_gt73o7Q-1; Wed,
+ 26 Jun 2024 08:50:05 -0400
+X-MC-Unique: kXKBROm5ONqYwr_gt73o7Q-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C20B919560BA;
+	Wed, 26 Jun 2024 12:50:03 +0000 (UTC)
+Received: from fedora (unknown [10.22.34.168])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 10E981955E82;
+	Wed, 26 Jun 2024 12:50:00 +0000 (UTC)
+Date: Wed, 26 Jun 2024 08:49:58 -0400
+From: Audra Mitchell <audra@redhat.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, viro@zeniv.linux.org.uk,
+	brauner@kernel.org, jack@suse.cz, aarcange@redhat.com,
+	rppt@linux.vnet.ibm.com, shli@fb.com, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, raquini@redhat.com
+Subject: Re: [PATCH v2 3/3] Turn off test_uffdio_wp if
+ CONFIG_PTE_MARKER_UFFD_WP is not configured.
+Message-ID: <ZnwOdqRcsiNeWNKT@fedora>
+References: <20240621181224.3881179-1-audra@redhat.com>
+ <20240621181224.3881179-3-audra@redhat.com>
+ <ZnXwT_vkyVbIJefN@x1n>
+ <Znl6dfM_qbH3hIvH@fedora>
+ <ZnmFuAR7yNG_6zp6@x1n>
+ <20240625160558.e1650f874ab039e4d6c2b650@linux-foundation.org>
+ <ZntY4jIojSrjoW1M@x1n>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZnwKXWzRz9B5FbLM@xhacker>
+In-Reply-To: <ZntY4jIojSrjoW1M@x1n>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Wed, Jun 26, 2024 at 08:32:38PM +0800, Jisheng Zhang wrote:
-> On Tue, Jun 25, 2024 at 07:54:30AM +0200, Arnd Bergmann wrote:
-> > On Tue, Jun 25, 2024, at 06:04, Jisheng Zhang wrote:
-> > > I believe the output constraints "=m" is not necessary, because
-> > > the instruction itself is "write", we don't need the compiler
-> > > to "write" for us. So tell compiler we read from memory instead
-> > > of writing.
-> > >
-> > > Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
+On Tue, Jun 25, 2024 at 07:55:14PM -0400, Peter Xu wrote:
+> On Tue, Jun 25, 2024 at 04:05:58PM -0700, Andrew Morton wrote:
+> > On Mon, 24 Jun 2024 10:42:00 -0400 Peter Xu <peterx@redhat.com> wrote:
 > > 
-> > I think this is a bit too confusing: clearly there is no
-> > read access from the __user pointer, so what you add in here
-> > is not correct. There also needs to be a code comment about
-> 
-> Here is my understanding: the __put_user is implemented with
-> sd(or its less wider variant, sw etc.), w/o considering the
-> ex_table, the previous code can be simplified as below:
-> 
-> __asm__ __volatile__ (
-> 	"sw	%z2, %1\n"
-> 	: "+r" (err), "=m" (*(ptr))
-> 	: "rJ" (__x));
-> 
-> Here ptr is really an input, just tells gcc where to store,
-> And the "store" action is from the "sw" instruction, I don't
-> need the gcc generates "store" instruction for me. so IMHO,
-> there's no need to use output constraints here. so I changed
-> it to
-> 
-> __asm__ __volatile__ (
-> 	"sw	%z1, %2\n"
-> 	: "+r" (err)
-> 	: "rJ" (__x), "m"(*(ptr)));
-> 
-> The key here: is this correct?
-> 
-> 
-> Here is the put_user piece code and comments from x86
-> 
-> /*
->  * Tell gcc we read from memory instead of writing: this is because
->  * we do not write to any memory gcc knows about, so there are no
->  * aliasing issues.
->  */
-> #define __put_user_goto(x, addr, itype, ltype, label)                   \
->         asm goto("\n"                                                   \
->                 "1:     mov"itype" %0,%1\n"                             \
->                 _ASM_EXTABLE_UA(1b, %l2)                                \
->                 : : ltype(x), "m" (__m(addr))                           \
->                 : : label)
-
-Here is the simplified put_user piece code of arm64:
-
-#define __put_mem_asm(store, reg, x, addr, err, type)                   \
-        asm volatile(                                                   \
-        "1:     " store "       " reg "1, [%2]\n"                       \
-        "2:\n"                                                          \
-        _ASM_EXTABLE_##type##ACCESS_ERR(1b, 2b, %w0)                    \
-        : "+r" (err)                                                    \
-        : "rZ" (x), "r" (addr))
-
-no output constraints either. It just uses "r" input constraints to tell
-gcc to read the store address into one proper GP reg.
-
-> 
-> 
-> As can be seen, x86 also doesn't put the (addr) in output constraints,
-> I think x86 version did similar modification in history, but when I tried
-> to searh the git history, the comment is there from the git first day.
-> 
-> Any hint or suggestion is appreciated!
-> 
-> > why you do it this way, as it's not clear that this is
-> > a workaround for old compilers without
-> > CONFIG_CC_HAS_ASM_GOTO_OUTPUT.
-> > 
-> > > index 09d4ca37522c..84b084e388a7 100644
-> > > --- a/arch/riscv/include/asm/uaccess.h
-> > > +++ b/arch/riscv/include/asm/uaccess.h
-> > > @@ -186,11 +186,11 @@ do {								\
-> > >  	__typeof__(*(ptr)) __x = x;				\
-> > >  	__asm__ __volatile__ (					\
-> > >  		"1:\n"						\
-> > > -		"	" insn " %z2, %1\n"			\
-> > > +		"	" insn " %z1, %2\n"			\
-> > >  		"2:\n"						\
-> > >  		_ASM_EXTABLE_UACCESS_ERR(1b, 2b, %0)		\
-> > > -		: "+r" (err), "=m" (*(ptr))			\
-> > > -		: "rJ" (__x));					\
-> > > +		: "+r" (err)			\
-> > > +		: "rJ" (__x), "m"(*(ptr)));					\
-> > >  } while (0)
+> > > >         uffdio_api.features &= ~UFFD_FEATURE_WP_HUGETLBFS_SHMEM;
+> > > >         uffdio_api.features &= ~UFFD_FEATURE_WP_UNPOPULATED;
+> > > >         uffdio_api.features &= ~UFFD_FEATURE_WP_ASYNC;
+> > > > #endif
+> > > > 
+> > > > If you run the userfaultfd selftests with the run_vmtests script we get
+> > > > several failures stemming from trying to call uffdio_regsiter with the flag 
+> > > > UFFDIO_REGISTER_MODE_WP. However, the kernel ensures in vma_can_userfault() 
+> > > > that if CONFIG_PTE_MARKER_UFFD_WP is disabled, only allow the VM_UFFD_WP -
+> > > > which is set when you pass the UFFDIO_REGISTER_MODE_WP flag - on 
+> > > > anonymous vmas.
+> > > > 
+> > > > In parse_test_type_arg() I added the features check against 
+> > > > UFFD_FEATURE_WP_UNPOPULATED as it seemed the most well know feature/flag. I'm 
+> > > > more than happy to take any suggestions and adapt them if you have any! 
 > > > 
+> > > There're documents for these features in the headers:
+> > > 
+> > > 	 * UFFD_FEATURE_WP_HUGETLBFS_SHMEM indicates that userfaultfd
+> > > 	 * write-protection mode is supported on both shmem and hugetlbfs.
+> > > 	 *
+> > > 	 * UFFD_FEATURE_WP_UNPOPULATED indicates that userfaultfd
+> > > 	 * write-protection mode will always apply to unpopulated pages
+> > > 	 * (i.e. empty ptes).  This will be the default behavior for shmem
+> > > 	 * & hugetlbfs, so this flag only affects anonymous memory behavior
+> > > 	 * when userfault write-protection mode is registered.
+> > > 
+> > > While in this context ("test_type != TEST_ANON") IIUC the accurate feature
+> > > to check is UFFD_FEATURE_WP_HUGETLBFS_SHMEM.
+> > > 
+> > > In most kernels they should behave the same indeed, but note that since
+> > > UNPOPULATED was introduced later than shmem/hugetlb support, it means on
+> > > some kernel the result of checking these two features will be different.
 > > 
-> > I suspect this could just be a "r" constraint instead of
-> > "m", treating the __user pointer as a plain integer.
+> > I'm unsure what to do with this series.  Peter, your review comments
+> > are unclear - do you request updates?
 > 
-> I tried "r", the generated code is not as good as "m"
+> Yes, or some clarification from Audra would also work.
 > 
-> for example
-> __put_user(0x12, &frame->uc.uc_flags);
+> What I was trying to say is here I think the code should check against
+> UFFD_FEATURE_WP_HUGETLBFS_SHMEM instead.
+
+I was meaning to reply back and ask if Andrew wanted me to push a v3 and
+change the check from UFFD_FEATURE_WP_UNPOPULATED to 
+UFFD_FEATURE_WP_HUGETLBFS_SHMEM or if he just wanted to do it, but I'll go
+ahead and submit v3 with the change shortly. 
+
+Also as an aside I ran scripts/get_maintainer.pl to get the email list. I
+probably should have thought a little bit about why the linux-mm list was
+missing....
+
+Sorry about the delay and confusion!
+
+ 
+> Thanks,
 > 
-> with "m", the generated code will be
+> -- 
+> Peter Xu
 > 
-> ...
-> csrs    sstatus,a5
-> li      a4,18
-> sd      a4,128(s1)
-> csrc    sstatus,a5
-> ...
-> 
-> 
-> with "r", the generated code will be
-> 
-> ...
-> csrs    sstatus,a5
-> li      a4,18
-> addi    s1,s1,128
-> sd      a4,0(s1)
-> csrc    sstatus,a5
-> ...
-> 
-> As can be seen, "m" can make use of the 'offset' of
-> sd, so save one instruction.
-> 
-> > 
-> > For kernel pointers, using "m" and "=m" constraints
-> > correctly is necessary since gcc will often access the
-> > same data from C code as well. For __user pointers, we
-> > can probably get away without it since no C code is
-> > ever allowed to just dereference them. If you do that,
-> > you may want to have the same thing in the __get_user
-> > side.
-> > 
-> >       Arnd
+
 
