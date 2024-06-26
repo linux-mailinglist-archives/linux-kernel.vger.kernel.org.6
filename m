@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-230031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75FE0917783
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:42:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6494917782
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 06:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F1D31F2320D
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:42:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FD16283109
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 04:42:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7842E13E898;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7858413E8B6;
 	Wed, 26 Jun 2024 04:42:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="Nu7rQosA"
-Received: from mta-64-226.siemens.flowmailer.net (mta-64-226.siemens.flowmailer.net [185.136.64.226])
+	dkim=pass (1024-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b="cOlrSKzE"
+Received: from mta-64-227.siemens.flowmailer.net (mta-64-227.siemens.flowmailer.net [185.136.64.227])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5121013BC3E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4643E13B78F
 	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 04:42:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.226
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.64.227
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719376937; cv=none; b=O9e339JIT5EddvuVl4NdrQwnBVTAt4F3Wcn1MCgK2wzFjJUHC4uQcZPNkZC7qLqNbhEygVvKByLbJS/mjeNu5JiBW5SWcy22aiHF3KNlfm2EdEieRFJL+6UliKXdDQghe1gOPEcPckC71fIerGx/GhWZK6FYePwLB0sfE1ABFas=
+	t=1719376937; cv=none; b=UAUNBw6i3aPxGkNIjqSbcYVrQlJWSBgPDA2GKlkSDIMjWzFvpePGl8Gm+xWppEIJLOIXYCpxISU7JrsD6cni4mkrP3GD+MFK92Lgl3ivrzGZH3eKvPWImXvuqG9SMP2LIwpR8Yt7lSiBC8C0gATG8qYfG/pQcg+MkWCGyT5lnfs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719376937; c=relaxed/simple;
-	bh=gOnnGFrCNHyAwTXnFy/ijI8fleOSIwfAMcn6FK04PNE=;
+	bh=cSteKp6CIOnq1PYX49xABbAigJDBuMpb7FyGBju3kUQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XDoaH4ZUhJ5uALBbn/Eey74BqA8RGpZfDc1ked6J88bnaDgHd1wmz94uzi23xWSiG+MG82KbkL9nK1raVWpeWIcdeHIMa/6eZ1DrRy2xURIQRv/GAaoKbf69/PJs7kB7Vjsu4Eu97wPFHzej/69hE4whms9Br2jlMCzapUTKev0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (1024-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=Nu7rQosA; arc=none smtp.client-ip=185.136.64.226
+	 MIME-Version; b=MWyW++koxQWGqjKS5ch9ZDatpAVoZvpmDdZtg0MWdO72V9kfcVyEwlWL/oBXtH/RvBd9E7L3QktUc2Y2Go/AZT6ZlND6Uao/m5B5hXJ54uQHf5AJ+p7YY2ggu2XdzKOLA/eKboaHW2W5LhM8RhVP23jSCm625tQSu2XXeNB+Rwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (1024-bit key) header.d=siemens.com header.i=jan.kiszka@siemens.com header.b=cOlrSKzE; arc=none smtp.client-ip=185.136.64.227
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-64-226.siemens.flowmailer.net with ESMTPSA id 2024062604420900bbb0050e713d7ff5
+Received: by mta-64-227.siemens.flowmailer.net with ESMTPSA id 202406260442102548e7b32fd701ca5a
         for <linux-kernel@vger.kernel.org>;
-        Wed, 26 Jun 2024 06:42:09 +0200
+        Wed, 26 Jun 2024 06:42:10 +0200
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
  d=siemens.com; i=jan.kiszka@siemens.com;
  h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=2JW562zd7UF7vvqn05zomFnN4EhjrMfcocTZCV1+5wk=;
- b=Nu7rQosAw6U4N4xpkinSbPFSVSUx0x5LUJrk7WvUSAlu59tOD8ijXgUzL032MWjxITqF5Q
- Q3y6JacX2MkyKLBnfjF0pAfll1kHfVw4vR5QhyA5/DGbMMjs0l0S7UiSvFJAE87jFRt3AUHs
- OdpIRsIjbg+I03JADo0/jNGZ5bJUs=;
+ bh=HcAaeWHnc9AqXonQzh8RdFlKgEgIVm0dEwxF9CuTCBs=;
+ b=cOlrSKzEK/nC5Bi5DyzXX58+sjx/jrvroS+O9fosSFJ77CIiHiRwniVcMC0ymNSas+HYts
+ flMkoO51MV6LOEiE3nh1MFY67Iudes7cJbc6M6FAL6RZi6I6EQxa2EtYgx5sXkBl28hEaMYC
+ OV9iqZHSk8aSdtzNJ6rrYpkMzQuAU=;
 From: Jan Kiszka <jan.kiszka@siemens.com>
 To: Nishanth Menon <nm@ti.com>,
 	Vignesh Raghavendra <vigneshr@ti.com>,
@@ -52,9 +52,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	Bao Cheng Su <baocheng.su@siemens.com>,
 	Diogo Ivo <diogo.ivo@siemens.com>
-Subject: [PATCH v2 1/4] arm64: dts: ti: k3-j72xx-mcu-wakeup: add dedicated wakeup controller compatible
-Date: Wed, 26 Jun 2024 06:42:05 +0200
-Message-ID: <f589fcea70004cae1c822871023ade86723bb1e3.1719376928.git.jan.kiszka@siemens.com>
+Subject: [PATCH v2 2/4] arm64: dts: ti: k3-am642-evm: Silence schema warning
+Date: Wed, 26 Jun 2024 06:42:06 +0200
+Message-ID: <f46bc2b35ff3c3b58c8825cc3c8b4d2f079a37c5.1719376928.git.jan.kiszka@siemens.com>
 In-Reply-To: <cover.1719376928.git.jan.kiszka@siemens.com>
 References: <cover.1719376928.git.jan.kiszka@siemens.com>
 Precedence: bulk
@@ -69,60 +69,34 @@ Feedback-ID: 519:519-294854:519-21489:flowmailer
 
 From: Jan Kiszka <jan.kiszka@siemens.com>
 
-Each syscon node must come with a dedicated/specific compatible, which
-is also reported by dtbs_check:
+The resolves
 
-  k3-j7200-common-proc-board.dtb: scm-conf@40f00000: compatible: ['syscon', 'simple-mfd'] is too short
+k3-am642-evm.dtb: adc: 'ti,adc-channels' is a required property
+        from schema $id: http://devicetree.org/schemas/iio/adc/ti,am3359-adc.yaml#
 
-Add one for the TI K3 AM654 MCU wakeup system controller used in J72xx
-SoCs.
+As the adc is reserved, thus not used by Linux, this has no practical
+impact.
 
 Signed-off-by: Jan Kiszka <jan.kiszka@siemens.com>
 ---
- arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi  | 2 +-
- arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi  | 2 +-
- arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-index fccaabfb1348..3a78a3c1676d 100644
---- a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-@@ -165,7 +165,7 @@ mcu_timer9: timer@40490000 {
- 	};
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-evm.dts b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+index e20e4ffd0f1f..0e42d09aa785 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-evm.dts
++++ b/arch/arm64/boot/dts/ti/k3-am642-evm.dts
+@@ -640,6 +640,10 @@ cpsw3g_phy0: ethernet-phy@0 {
+ &tscadc0 {
+ 	/* ADC is reserved for R5 usage */
+ 	status = "reserved";
++
++	adc {
++		ti,adc-channels = <0 1 2 3 4 5 6 7>;
++	};
+ };
  
- 	mcu_conf: syscon@40f00000 {
--		compatible = "syscon", "simple-mfd";
-+		compatible = "ti,am654-system-controller", "syscon", "simple-mfd";
- 		reg = <0x00 0x40f00000 0x00 0x20000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
-index 9349ae07c046..d68e33d71eb3 100644
---- a/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi
-@@ -35,7 +35,7 @@ k3_reset: reset-controller {
- 	};
- 
- 	mcu_conf: syscon@40f00000 {
--		compatible = "syscon", "simple-mfd";
-+		compatible = "ti,am654-system-controller", "syscon", "simple-mfd";
- 		reg = <0x0 0x40f00000 0x0 0x20000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
-diff --git a/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
-index 5ccb04c7c462..1edb71f4a1bb 100644
---- a/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi
-@@ -140,7 +140,7 @@ wkup_gpio_intr: interrupt-controller@42200000 {
- 	};
- 
- 	mcu_conf: syscon@40f00000 {
--		compatible = "syscon", "simple-mfd";
-+		compatible = "ti,am654-system-controller", "syscon", "simple-mfd";
- 		reg = <0x0 0x40f00000 0x0 0x20000>;
- 		#address-cells = <1>;
- 		#size-cells = <1>;
+ &ospi0 {
 -- 
 2.43.0
 
