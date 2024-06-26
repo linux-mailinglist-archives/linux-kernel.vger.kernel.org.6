@@ -1,71 +1,54 @@
-Return-Path: <linux-kernel+bounces-230645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24BC917FD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:35:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ADE9917FD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:35:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00B9E1C21BC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:35:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCAE01C23819
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:35:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C8C17F500;
-	Wed, 26 Jun 2024 11:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A83717F4E8;
+	Wed, 26 Jun 2024 11:35:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="ZbSR2VEm"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="lCJOiuLX"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1FC17D88D
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 11:35:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9989C17D88D
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 11:35:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719401730; cv=none; b=rj8FfYStHwptuM53f9BCYipeK4MWIPZu4PYx3GdkhiRKhuPXMmd/xp+iCSwhH6+LIsuYIUPP6XdtQTxgy9W5AmMTMrIS6qYCQ4KcWfPXyLA8QK3tsk3+cfgGqUmFLYnaTAg++xsNcDetsWKevHJegYmUHrx7uF+3g1aEBuzgtjc=
+	t=1719401747; cv=none; b=l1eYGmDubR7pfp4W7vMD36zQWgBg3HCi8TE7iubMqzXIaE42HDKH1qXMBTeUEWz5Jp+rN5DvOwWSKfq0uvA4oV2lyrgQxJ7pTwgU30KFKVOQfce5+hh8VFIE6wg/DVwXjTThrsgjRkw8cdMhjiJj1qn2SR3USISpZITyfbew8ew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719401730; c=relaxed/simple;
-	bh=khuGVTWjIZajU1yB7/k9fV/EUYzgoVdPG0tELeh2E5U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TtuoNHwUZvjWiCvXi7EMhFQb9EOC5dmTZq98+LwTsQk9U/zfosDKztbs6FRXxwcv0e5d5EwARbzcqpzJP8gPUaZxuvIeQRNzJfzmxcMHfpJmMWgsQa6CRRQvMIY3RJY7So5GdovCK9nFq/+wY0FaZ2ltAOK9SbelL5rcUKSH+RU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=ZbSR2VEm; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ebe6495aedso70470971fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 04:35:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1719401726; x=1720006526; darn=vger.kernel.org;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MAzDR8MRYu3p83iPluG4+It8m8tCFNU2Njz7sFnu3Y8=;
-        b=ZbSR2VEmtnCBymDbbKeNBr7bhQFCTcLJMpq4eS/g8Km6XC5wz5MbQEPmB+tK6O6gac
-         MyLn/ugRDiwD9ORbjpbHbSVMUyN7mvr6FBCwzlCGi19BPD9i4FXccnI/XydzeiiENmwD
-         hXk3MSXabo8LsVhReQGNDj+s3aIFX7MsB8A/U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719401726; x=1720006526;
-        h=in-reply-to:autocrypt:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=MAzDR8MRYu3p83iPluG4+It8m8tCFNU2Njz7sFnu3Y8=;
-        b=QgDMPY1oi4i1N14EXmLHzmVBuzvRWU2/zq4wFhtSO0LZYSTFtSM1HIT83Ka2asuAAj
-         M9RE6I3b0PdLAEHLrgyzGPz+jJ+zPM/26ZErmGuZwEicQmmGNmzxYC99m2JkhODzYdEj
-         zEcGD+znlHjzJwunSpMiye3mdFjhu5brzea4NsIKGBuIVkTzNSNNTnVGJIUIl1aP4Vxp
-         aF49K2J+aMmRnjl8niVURBs1MAfCOeFntiIzykFRsgttT/Vup5ezbanrjuGqoZ4Y6mhs
-         2z8rTEvE8uhih8o604FUX9wlOwc40cmmdvUCqlTXpA/98wXo+KWn43RvxFT3jLop1YR7
-         ap6g==
-X-Forwarded-Encrypted: i=1; AJvYcCWJWoXds3C7mYC4ldkYlcK5L97aXjVN0KQaweBy2TuRqu3s5ROuGpzYOrtJBYjDDGFRkUf3gKIWlg7ozIdRBGpJC6i4vQEIOlwDSTTl
-X-Gm-Message-State: AOJu0YxQ0tyK2Le1rjxHqHhTdYYrU8E6iRE+OUNwo/lm/b4wbvw1WGC1
-	+S/3vHm9EOAbZIVkxafpYrHZH2e0PN9RrO86Pl9Oyw2Mdy95jg2j27ZUx56/Z4vfWkimb+BBcYE
-	B05Je
-X-Google-Smtp-Source: AGHT+IEhRBScST3r7pZzgLHbZj5TxhkM/7oN9uGMn1u3NIcs55SmshQoc8PHpB3cJaLI2VPnXE/Otw==
-X-Received: by 2002:a2e:2a42:0:b0:2ec:5ff1:2283 with SMTP id 38308e7fff4ca-2ec5ff12435mr55150531fa.19.1719401725826;
-        Wed, 26 Jun 2024 04:35:25 -0700 (PDT)
-Received: from [10.178.66.211] ([192.19.176.219])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c8245e7csm23063885e9.3.2024.06.26.04.35.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 04:35:25 -0700 (PDT)
-Message-ID: <17642213-388e-4585-8775-1db1db9b9707@broadcom.com>
-Date: Wed, 26 Jun 2024 12:35:23 +0100
+	s=arc-20240116; t=1719401747; c=relaxed/simple;
+	bh=AaEMS6qR5hEt+fGbmtkaq98HXCiBPbuz/W1mjVP+QyQ=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=LLOJw6Vv1ew7wfG5xLBAIsMuShsyHMe+MSR83XLrTDnoSUL8G0D9H5hO1e9Xu3m4MGvzqoYzuAt3wcNkjVx2IDJ/ixrZcVBQ3aeKGqaXZ34ZtCG7mCFXSNSdTCSTu3ENHx2jYQTzYlK0i30HVbalYNy+QdMVM5T+7gqLIc0B3Oo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=lCJOiuLX; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1719401727; x=1720006527; i=markus.elfring@web.de;
+	bh=Dwr9KGkAvi7dk8APk978FQGIUeYfNk2QkN6QDYEkC/g=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=lCJOiuLXoeLABxcpKmSDv3kfLJVJrDSsgZ2E4m1jn8FkpyniN/jZ/5AW+MIwgF1+
+	 LILPyrfexqdKtyTekSHIVuestAGKu2aMZaZXTbqUvWNWoQGPLsXx7Tpa7k8YqiCyS
+	 PaORiKyzMMtZwognSKmFFq+RDbNNUr1c9Jl2lvg7rTiul+RgeZqsAadsY/SxFT5LH
+	 zt6h9nYOoe9q3vmETv6YnhHbWqU8XcYa4Q49yZVTDLbGbSncaXQLmc2hR+QUM1gpA
+	 kHBWrN9g+nWiPj1LTECi1xb45h4U2jQjjKLqTkr3D6Z1Zawly9KiSyoc8fvLBsBVM
+	 9YqzNhqdVAUcQWGDtA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MTvrs-1rvNr32ceg-00P15i; Wed, 26
+ Jun 2024 13:35:27 +0200
+Message-ID: <8b3ce177-96c1-4f6d-bf8b-dc466ab95162@web.de>
+Date: Wed, 26 Jun 2024 13:35:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,205 +56,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/7] dt-bindings: interrupt-controller: Add bcm2712 MSI-X
- DT bindings
-To: Stanimir Varbanov <svarbanov@suse.de>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jim Quinlan <jim2101024@gmail.com>,
- Nicolas Saenz Julienne <nsaenz@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Andrea della Porta <andrea.porta@suse.com>,
- Phil Elwell <phil@raspberrypi.com>, Jonathan Bell <jonathan@raspberrypi.com>
-References: <20240626104544.14233-1-svarbanov@suse.de>
- <20240626104544.14233-2-svarbanov@suse.de>
-From: Florian Fainelli <florian.fainelli@broadcom.com>
-Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
- xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
- M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
- JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
- PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
- KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
- AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
- IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
- ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
- bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
- Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
- tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
- TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
- zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
- WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
- IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
- U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
- 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
- pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
- MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
- IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
- gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
- obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
- N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
- CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
- C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
- wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
- EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
- fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
- MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
- 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
- 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20240626104544.14233-2-svarbanov@suse.de>
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000001f2e5f061bc96935"
+To: Ma Ke <make24@iscas.ac.cn>, nouveau@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, Daniel Vetter <daniel@ffwll.ch>,
+ Danilo Krummrich <dakr@redhat.com>, David Airlie <airlied@gmail.com>,
+ Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20240626013013.2765395-1-make24@iscas.ac.cn>
+Subject: Re: [PATCH] drm/nouveau: fix null pointer dereference in
+ nouveau_connector_get_modes
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240626013013.2765395-1-make24@iscas.ac.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:vdUoZWbQeUPEE1CrCCpqXIhXfPjlHqMGoiMqlueLyAOOdfqi/Ix
+ iAYZyBhapo6R10KYw5JshwGWYqrEIzqLP2todlpAoVGAk8/4O9lCokApTeDkMSsbfbyljlQ
+ AfsuabdulpjcZakzrii2vczz9uHTq+NXQ0pH3X6w7DpBgaSFBl6HI84nP7By/JfBI61jp0n
+ ZD8TD3ityNvJjY64kDQYA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:F0+NrcTHtxs=;pyOXLYtsch5ZYLx8z7KNdJtGc7Z
+ wATn6kwfBTuPeuotutgxncuInlajhMKG9as4SoYo28LLF6z3sdXCmhT+76Wkp4wC9ZhZcLXq1
+ W6iXMS3WEbhKIlBEEn0WTOfnl/REEjzJnzBoZP7YPghzkzpq+Bp43aiWLv+ph4bQd5TUh1S6X
+ f039OtbVKQ/eZHaXjAJ4PH48cpjuXzjk1NLdvVSb/S/5wX505zR9fR1lS4b2zQ7/6oCMJcAqR
+ z4nWbNgBIJUKYbs7/mq46lY4dkU6QsUlsrKQrIeQ/iKB81HIlIfbFPUn+xGwaaXFqaWmBcZTk
+ K4Ffjc/nXy/K+oPlOXRj8vBntofWu3/z5s+GVBrXNratWBK4kBo9oGyq6LBQSLANZciIH5NDb
+ 5c78886WO5k4oa3cL24AsWPPmT8hiHHZ7ZyS/7buWpmmI9XIpKO+UtHYUGDNGbmt1iOl4RuF/
+ ua++zxkuCLFx2AEU3t4X/vspmExHrkO0hWCDWji1uswUV993u6kTFy/wURCHgczcusHJ46aJW
+ UBX10Co7IWqDbYbOkQMMhQq8VCNOUSL9vxhVKaRLGEkkvYjtcB6bhCYgQxmsjWJXU6AGDmpNz
+ l6pNKQijrWxMgqWN0lfQSl5fK1wIPps+v4v/McmmUtH50CBES9INmDK2iqmbezC+NFFf8HxbU
+ gtmksprIPkMy6dB62TQNp2hxrw/g0/QT6b3nYOj25oI3/9WTdSHJ0iwuGQ5+pv1GtquXU96rf
+ 5PmRC56bEhKrbJzMyxAToLTYB2KE+1vBUKMhtkxmNiHqmDLO5VHLGb5XxSdE1aiKe5CMiaJ/2
+ vP6HOTeG+ZbxBA/t77z/8VvR+EkUDLcGYU3NHXX2G6PgU=
 
---0000000000001f2e5f061bc96935
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+> In nouveau_connector_get_modes(), the return value of drm_mode_duplicate=
+()
+> is assigned to mode, which will lead to a possible NULL pointer
+> dereference on failure of drm_mode_duplicate(). Add a check to avoid npd=
+.
+
+1. Can a wording approach (like the following) be a better change descript=
+ion?
+
+   A null pointer is stored in the local variable =E2=80=9Cmode=E2=80=9D a=
+fter a call
+   of the function =E2=80=9Cdrm_mode_duplicate=E2=80=9D failed. This point=
+er was passed to
+   a subsequent call of the function =E2=80=9Cdrm_mode_probed_add=E2=80=9D=
+ where an undesirable
+   dereference will be performed then.
+   Thus add a corresponding return value check.
 
 
+2. Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
+=9CCc=E2=80=9D) accordingly?
 
-On 26/06/2024 11:45, Stanimir Varbanov wrote:
-> Adds DT bindings for bcm2712 MSI-X interrupt peripheral controller.
-> 
-> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
-> ---
->   .../brcm,bcm2712-msix.yaml                    | 74 +++++++++++++++++++
->   1 file changed, 74 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
-> new file mode 100644
-> index 000000000000..ca610e4467d9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/brcm,bcm2712-msix.yaml
-> @@ -0,0 +1,74 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/interrupt-controller/brcm,bcm2712-msix.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Broadcom bcm2712 MSI-X Interrupt Peripheral support
-> +
-> +maintainers:
-> +  - Stanimir Varbanov <svarbanov@suse.de>
-> +
-> +description: >
-> +  This interrupt controller is used to provide intterupt vectors to the
-> +  generic interrupt controller (GIC) on bcm2712. It will be used as
-> +  external MSI-X controller for PCIe root complex.
-> +
-> +allOf:
-> +  - $ref: /schemas/interrupt-controller/msi-controller.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - "brcm,bcm2712-mip-intc"
-> +  reg:
-> +    maxItems: 1
-> +    description: >
-> +      Specifies the base physical address and size of the registers
-> +
-> +  interrupt-controller: true
-> +
-> +  "#interrupt-cells":
-> +    const: 2
 
-Should we have some sort of an interrupt-map or interrupt-map-mask 
-property that defines the "linkage" between the inputs and the outputs? 
-This controller does not really sit at the top-level of the interrupt 
-tree as it feeds the ARM GIC, unfortunately this is not captured at all, 
-and it seems to require ad-hoc properties to establish the mapping, that 
-does not seem ideal.
--- 
-Florian
+3. How do you think about to append parentheses to the function name
+   in the summary phrase?
 
---0000000000001f2e5f061bc96935
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
 
-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
-riBJ/K1AFUjRAjFhGV64l++td7dkmnq/X8ET75ti+w1s4FRpFqkD2m7pg5NxdsZphYIXAgMBAAGj
-QjBAMA4GA1UdDwEB/wQEAwIBBjAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSP8Et/qC5FJK5N
-UPpjmove4t0bvDANBgkqhkiG9w0BAQsFAAOCAQEAS0DbwFCq/sgM7/eWVEVJu5YACUGssxOGhigH
-M8pr5nS5ugAtrqQK0/Xx8Q+Kv3NnSoPHRHt44K9ubG8DKY4zOUXDjuS5V2yq/BKW7FPGLeQkbLmU
-Y/vcU2hnVj6DuM81IcPJaP7O2sJTqsyQiunwXUaMld16WCgaLx3ezQA3QY/tRG3XUyiXfvNnBB4V
-14qWtNPeTCekTBtzc3b0F5nCH3oO4y0IrQocLP88q1UOD5F+NuvDV0m+4S4tfGCLw0FREyOdzvcy
-a5QBqJnnLDMfOjsl0oZAzjsshnjJYS8Uuu7bVW/fhO4FCU29KNhyztNiUGUe65KXgzHZs7XKR1g/
-XzCCBVgwggRAoAMCAQICDBP8P9hKRVySg3Qv5DANBgkqhkiG9w0BAQsFADBbMQswCQYDVQQGEwJC
-RTEZMBcGA1UEChMQR2xvYmFsU2lnbiBudi1zYTExMC8GA1UEAxMoR2xvYmFsU2lnbiBHQ0MgUjMg
-UGVyc29uYWxTaWduIDIgQ0EgMjAyMDAeFw0yMjA5MTAxMjE4MTFaFw0yNTA5MTAxMjE4MTFaMIGW
-MQswCQYDVQQGEwJJTjESMBAGA1UECBMJS2FybmF0YWthMRIwEAYDVQQHEwlCYW5nYWxvcmUxFjAU
-BgNVBAoTDUJyb2FkY29tIEluYy4xGTAXBgNVBAMTEEZsb3JpYW4gRmFpbmVsbGkxLDAqBgkqhkiG
-9w0BCQEWHWZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tMIIBIjANBgkqhkiG9w0BAQEFAAOC
-AQ8AMIIBCgKCAQEA+oi3jMmHltY4LMUy8Up5+1zjd1iSgUBXhwCJLj1GJQF+GwP8InemBbk5rjlC
-UwbQDeIlOfb8xGqHoQFGSW8p9V1XUw+cthISLkycex0AJ09ufePshLZygRLREU0H4ecNPMejxCte
-KdtB4COST4uhBkUCo9BSy1gkl8DJ8j/BQ1KNUx6oYe0CntRag+EnHv9TM9BeXBBLfmMRnWNhvOSk
-nSmRX0J3d9/G2A3FIC6WY2XnLW7eAZCQPa1Tz3n2B5BGOxwqhwKLGLNu2SRCPHwOdD6e0drURF7/
-Vax85/EqkVnFNlfxtZhS0ugx5gn2pta7bTdBm1IG4TX+A3B1G57rVwIDAQABo4IB3jCCAdowDgYD
-VR0PAQH/BAQDAgWgMIGjBggrBgEFBQcBAQSBljCBkzBOBggrBgEFBQcwAoZCaHR0cDovL3NlY3Vy
-ZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAuY3J0MEEG
-CCsGAQUFBzABhjVodHRwOi8vb2NzcC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWdu
-MmNhMjAyMDBNBgNVHSAERjBEMEIGCisGAQQBoDIBKAowNDAyBggrBgEFBQcCARYmaHR0cHM6Ly93
-d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wCQYDVR0TBAIwADBJBgNVHR8EQjBAMD6gPKA6
-hjhodHRwOi8vY3JsLmdsb2JhbHNpZ24uY29tL2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNy
-bDAoBgNVHREEITAfgR1mbG9yaWFuLmZhaW5lbGxpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggr
-BgEFBQcDBDAfBgNVHSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUUwwfJ6/F
-KL0fRdVROal/Lp4lAF0wDQYJKoZIhvcNAQELBQADggEBAKBgfteDc1mChZjKBY4xAplC6uXGyBrZ
-kNGap1mHJ+JngGzZCz+dDiHRQKGpXLxkHX0BvEDZLW6LGOJ83ImrW38YMOo3ZYnCYNHA9qDOakiw
-2s1RH00JOkO5SkYdwCHj4DB9B7KEnLatJtD8MBorvt+QxTuSh4ze96Jz3kEIoHMvwGFkgObWblsc
-3/YcLBmCgaWpZ3Ksev1vJPr5n8riG3/N4on8gO5qinmmr9Y7vGeuf5dmZrYMbnb+yCBalkUmZQwY
-NxADYvcRBA0ySL6sZpj8BIIhWiXiuusuBmt2Mak2eEv0xDbovE6Z6hYyl/ZnRadbgK/ClgbY3w+O
-AfUXEZ0xggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52
-LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwT
-/D/YSkVckoN0L+QwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIBG7GCXU6Ja/p+FR
-teG8omcZRdmTJTclVTWgBXxTWxFIMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcN
-AQkFMQ8XDTI0MDYyNjExMzUyNlowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZI
-AWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEH
-MAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQDruzBOPGKGUUJMjB8eqA1Zo9X90pOS+mVR
-EiuR1i50lcYslCO/EA7cAqS9K97GHR2T2ubga7T+DKTdC9pb6OYmEIac6q85lh/h1+/2YIF890I8
-5BRKHuAuzhbPUehT11Wo5Diy/6OjXPP8lGXm00mCwh38uTzOYnJPaaSSJ9x3isZTqLVx82kTld1J
-CE0vOIfoXAUNHyJUgRT+BOWlJszKWv6P5rgDp+TJK8HWMn/dZ8XPN3NC1lo9ijHJbKHBQDAppFMQ
-TvIPrpugWAdn2cWRgp2vk1K6mIvq3PEaSDT6Ul7bKX9Pggi6KJOjRo4M/Q1oEhKet1WlsPfy/1QE
-vtC+
---0000000000001f2e5f061bc96935--
+4. How do you think about to put similar results from static source code
+   analyses into corresponding patch series?
+
+
+Regards,
+Markus
 
