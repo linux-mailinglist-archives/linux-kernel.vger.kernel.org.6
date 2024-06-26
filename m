@@ -1,167 +1,73 @@
-Return-Path: <linux-kernel+bounces-230817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD7C3918241
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:24:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0039918258
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:27:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A92828204F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:24:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C3E9280D1E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48F7B181CFF;
-	Wed, 26 Jun 2024 13:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97F97181D0E;
+	Wed, 26 Jun 2024 13:27:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y4oCauRW"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUSL149r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1BB1E51F;
-	Wed, 26 Jun 2024 13:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FED17CA1A;
+	Wed, 26 Jun 2024 13:27:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719408269; cv=none; b=ZO2gDOj7RGPgvzYZPhfQzvxxY7d5bj1hB0ZNGQTkX2UiLHDx4BJTIv8BJQ5xEXxWudlZr9ejrQtwCdWrhlPKBy2IEz+Af1XVdXkJYbyApce+h5JqZxIwKvCQDurEujRuURVReayLUzF+EGlQMy7IvzVIZhB8KCm9opfytYEOB6g=
+	t=1719408433; cv=none; b=TJg76KvMtkc1YwoX5XQ9KrSh3I3pbT2kIANq6QSklxsZ0jXZsp/Hnlad20HHQvqFY+oWPewB3pQ0NNC910BH6LUSTzwSZcBodL5QZpoeb1naH5ZVlaaBUh1bfgnzOIHyo83mfbCUbg7Ocqevu4cCEbY3H/VAKA0uV8E0+uMVW7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719408269; c=relaxed/simple;
-	bh=jQ2TN6oLIfbGe9ZASxWBipgw5mEcx0wqxbmo17h+xJg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lWM3xAZojfmUbLf4q2w4JMqQ5hEPE4Xd+s6zHWdvWMRN5EOO+SX5tPontnz1fp3nVm5f2/LXPwJ078orWsbf8TRqk500Mq8204fbLZFeiPixQVNn8MecsijcID0QYTPt+u00TeWa2sXGDLDvVRkHGZG5V4mkMcwqyv6uvgRiVDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y4oCauRW; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f9b52ef481so54610195ad.1;
-        Wed, 26 Jun 2024 06:24:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719408267; x=1720013067; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bLAtvvsYw1jar8biIujMee7AuEZKGq0togFn4n6p6bg=;
-        b=Y4oCauRWiLohbkfXUdUCNhp5MjcdQo95zlNej9KTs7BFF1VUpbgdAi6el3LSQYEE/Q
-         KucCUSyh5pbhiQNF6B1Zj4cGon9Pj1SA0xukeST35wJIskJw1w8m9YmwzZsMS4svhvht
-         pVn2a7zIkkwV3xG+SrrN9oJ0mHpTFKXmxBgIaci8DPz5gvo8tNP7cRaPAca90BlFuSyR
-         NdUYM1mRTm4CCvtxwmeKW9wIjjV26W93pdkPM8vH5KhFXe2ztAsP3x5g9mmXpc+rOFXM
-         4KulL/uzhjNabmhNIOIRH+5xfewYZ50pQiofspNif/N7wuVQh+UtK8mDHwYci6FV3kz7
-         1T9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719408267; x=1720013067;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bLAtvvsYw1jar8biIujMee7AuEZKGq0togFn4n6p6bg=;
-        b=pQuTBFsYe0xOdtBnsYLop35caLTmxkjurW5Pk1rABRgWxVF1cbfhHVezWh4JGdSUqg
-         egKEivIvbv4imcKRxx0p+odV6rX4LlIYljaAzqDatptj/wtAx8CK5ARTsXcP5gH0SfIl
-         w3RBuY6SruPyeaP7J/IepuodgI6DK8Rs9Q5zVR7Yo0J9rapNxzXu/I8qoa+lcFpVbyot
-         SkH+xnlhOYuhvx8fw09f4taFqkgeJWjfLqduCXQzACSxzh88Pw7hnemVZCqkBExQB/60
-         WJMbRW1oGFDNZoZ3sRDj/jMFHsNdNrBf8zrVCdKFyFH0vZkn2U8a6RmoK9VQZ3E4cul6
-         Y+Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXkvN3zns3lj9MfG/uDvXF4EQRdRvsTFk1s7rQJMUgHPclEhi9u3adQJp3TCD/uI2gjdNv/u4P/V82uvuOAvYpJb2y5UhDxnevk/GnV6ipGIhkspuXyan93QxjKff9Yx5JFoXVBQP50HWDHvtVTuh6bsJzrVDGCoomS812p196UVhLamJvniBdwbPIxWUC+BcFVNdaM3isj4wUW6wZHa4FvFDlJGa67zCh9a0GpcNRYHD2jS+s28D+3aQ==
-X-Gm-Message-State: AOJu0Yw3L3YNKXauPJlxi23MnPrAQuNsZ6fJsZqPLGn4qe32XFIdlgnK
-	4haebOv8FFD3KClOykZ5n0OOLLjbalzRjga5RFN/J2eWhKNd1vj7
-X-Google-Smtp-Source: AGHT+IHgyOORbCN2R5XDtWhRTSrn+ht2d38zXOnrDqPLV2TOIQjmmMg+Vm9SwTXZGIZ+iNTTrFAUAQ==
-X-Received: by 2002:a17:902:d511:b0:1fa:3428:53c1 with SMTP id d9443c01a7336-1fa342859b8mr96777385ad.43.1719408267299;
-        Wed, 26 Jun 2024 06:24:27 -0700 (PDT)
-Received: from localhost ([2804:30c:96b:f700:cc1d:c0ae:96c9:c934])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f9eb3c5cb0sm99505355ad.130.2024.06.26.06.24.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 06:24:26 -0700 (PDT)
-Date: Wed, 26 Jun 2024 10:25:52 -0300
-From: Marcelo Schmitt <marcelo.schmitt1@gmail.com>
-To: Alexandru Ardelean <aardelean@baylibre.com>
-Cc: Marcelo Schmitt <marcelo.schmitt@analog.com>, broonie@kernel.org,
-	lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, nuno.sa@analog.com, dlechner@baylibre.com,
-	corbet@lwn.net, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 6/7] iio: adc: Add support for AD4000
-Message-ID: <ZnwW4Pf1OS8KjkVp@debian-BULLSEYE-live-builder-AMD64>
-References: <cover.1719351923.git.marcelo.schmitt@analog.com>
- <eb5f7b73bdf3ac89117e28f26ee3f54ba849163e.1719351923.git.marcelo.schmitt@analog.com>
- <CA+GgBR9E2EMeqAXJ=b7jMnJgd4FXZPNm-LYEe-=aKZhJBkFNNw@mail.gmail.com>
+	s=arc-20240116; t=1719408433; c=relaxed/simple;
+	bh=hc+hknp4pzhwRX+PVOXc8ZKBg3TtI/Lca03Al5/txgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=OMv59/7H4LO1Z0Oi3a7id/5wp4fMtxLwOAD4ffHPQzY4+ts8K5qL0gBGWy5FC2RGVaa5rSMgJCmpmoInM4DOoJ99RdP6izaE4TXs2VhGzeNvLRAC9JQOyTwr2J4dcQP37WC1fYj5RR+4hQfL26xh/U2v7nVgr+2GCx91fRAmJpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUSL149r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5924C2BD10;
+	Wed, 26 Jun 2024 13:27:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719408433;
+	bh=hc+hknp4pzhwRX+PVOXc8ZKBg3TtI/Lca03Al5/txgQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=oUSL149r5mpZw0K6UIv8b2A033MGZ5xPscsZ3jfb+Ww5gi3ZpVNH0/0BG4wE3oRpQ
+	 +Y4QcFKIHQr+IDNSvhephJymUeGM0dWvgtw/fkdzEnemS79gU3dhbwU56rsVmvNINA
+	 7OgU7mq2eYeiTrhhWWUMTm628+3m6eYfqJPgHFYvbO67BRUA6WxrFngyA6NYs68w8s
+	 O8uvJ/S9XdaYbHyKTo/BqZpIFMX82wvyqxdtNFO0BLv5ACk96XPqFOWQ1Ss6HiAilI
+	 2S8SwV8eflzujwPbrtxao/R1pt+Cb14DoLjO+mkb7mD48s7nyw5txjgCgND358u+gB
+	 RgW4olWXj2Tkw==
+Date: Wed, 26 Jun 2024 06:27:11 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Donald Hunter
+ <donald.hunter@gmail.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ Jonathan Corbet <corbet@lwn.net>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, Dent Project <dentproject@linuxfoundation.org>,
+ kernel@pengutronix.de, linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v4 0/7] net: pse-pd: Add new PSE c33 features
+Message-ID: <20240626062711.499695c5@kernel.org>
+In-Reply-To: <20240626095211.00956faa@kmaincent-XPS-13-7390>
+References: <20240625-feature_poe_power_cap-v4-0-b0813aad57d5@bootlin.com>
+	<20240625184144.49328de3@kernel.org>
+	<20240626095211.00956faa@kmaincent-XPS-13-7390>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CA+GgBR9E2EMeqAXJ=b7jMnJgd4FXZPNm-LYEe-=aKZhJBkFNNw@mail.gmail.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 06/26, Alexandru Ardelean wrote:
-> On Wed, Jun 26, 2024 at 12:56 AM Marcelo Schmitt
-> <marcelo.schmitt@analog.com> wrote:
-> >
-> > Add support for AD4000 series of low noise, low power, high speed,
-> > successive approximation register (SAR) ADCs.
-> >
-> 
-> Hello :)
+On Wed, 26 Jun 2024 09:52:11 +0200 Kory Maincent wrote:
+> Do you know when and how often net-next is rebased on top of net?
 
-Hey Alexandru, nice to hear from you.
-
-> 
-> Looks good overall.
-> Just a few comments.
-> The only one where I am not sure is about the enum-to-string mapping.
-> If that's fine, we can leave this unchanged (from my side).
-> 
-> > Signed-off-by: Marcelo Schmitt <marcelo.schmitt@analog.com>
-> > ---
-> >  MAINTAINERS              |   1 +
-> >  drivers/iio/adc/Kconfig  |  12 +
-> >  drivers/iio/adc/Makefile |   1 +
-> >  drivers/iio/adc/ad4000.c | 711 +++++++++++++++++++++++++++++++++++++++
-> >  4 files changed, 725 insertions(+)
-> >  create mode 100644 drivers/iio/adc/ad4000.c
-> >
-...
-> > +enum ad4000_sdi {
-> > +       /* datasheet calls this "4-wire mode" (controller CS goes to ADC SDI!) */
-> > +       AD4000_SDI_MOSI,
-> > +       /* datasheet calls this "3-wire mode" (not related to SPI_3WIRE!) */
-> > +       AD4000_SDI_VIO,
-> > +       AD4000_SDI_CS,
-> > +};
-> > +
-> > +/* maps adi,sdi-pin property value to enum */
-> > +static const char * const ad4000_sdi_pin[] = {
-> > +       [AD4000_SDI_MOSI] = "",
-> 
-> Maybe I missed a previous comment.
-> And I'm also a little fuzzy on the details here, but in the DT this
-> property has "high", "low", "cs".
-> Is "low" the default if unspecified?
-> Or should this string be "low"?
-
-The default is to have MOSI connected to ADC SDI pin which was empty adi,sdi-pin
-dt property in v5.
-Will make the defalut explicit as "sdi" as suggested in dt-binding review.
-
-> 
-> > +       [AD4000_SDI_VIO] = "high",
-> > +       [AD4000_SDI_CS] = "cs",
-> > +};
-> > +
-...
-> > +
-> > +       st->gain_milli = 1000;
-> > +       if (chip->has_hardware_gain) {
-> > +               if (device_property_present(dev, "adi,gain-milli")) {
-> 
-> Only if there is another version, it may be neat to reduce indentation
-> here (a bit).
-> Something like:
->         if (chip->has_hardware_gain &&
->             device_property_present(dev, "adi,gain-milli")) {
-> 
->         }
-> 
-looks good, will do.
-
-Thanks
+Every Thursday, usually around noon PST but exact timing depends on when
+Linus pulls and how quickly I notice that he did :)
 
