@@ -1,155 +1,155 @@
-Return-Path: <linux-kernel+bounces-230802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230801-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D103F918209
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:16:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A42918208
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 15:16:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EBA5286BE0
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:16:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C10B2B28BB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07DE522A;
-	Wed, 26 Jun 2024 13:10:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39DF11891C4;
+	Wed, 26 Jun 2024 13:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="aedsXHku"
-Received: from xry111.site (xry111.site [89.208.246.23])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fga8Ux79"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6AF118F2C5
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 13:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 795281891B8;
+	Wed, 26 Jun 2024 13:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719407412; cv=none; b=FF4Yr4NR5GLU87y6PSLCuMvX8W4nBi0AQVhbTGz7bLjPlIgpOlOgSZGkGLcFm21j58ZfYFKAII4zOgh70k8x8iRq54ZNLa0cuPQJ52SnGc9UOxGtO/yEjRCH7pMXymRnXRSdot/m4oK9+flUbv8LQ0kbzwNTM1gHcG2x+mZDSR8=
+	t=1719407407; cv=none; b=Fb/udPp6z89T1qBeJbp1i5HRNm38mhF1xvr6/s004BmI+kREi4HnVEUETTqVzqaDrMLUTAwJxqBtPMGbiJXfiTpLZBwrViDdmjxVYhmbQW4G2xKBlnN5gTvFoz0SlusSl3rSYDb0u81Nbnz2csbt+nPx/llANM/PYfV10xUI5YU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719407412; c=relaxed/simple;
-	bh=uI7uICh3QWYQ3PoeaRNCqqwcXlPwlqJh/NEA/nWP9do=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZqvAtPzkfahLZsGBhzxJS+5aFfz/yLaBdTGrw6lkK6YdoxptzmxZds2eJ/s3LAaOhbyORmZY8s3LqaeA8mpe0+z0jBJJkBfb8IrDwS77DTxpfIPh7nRCJMeAJHsIHHkJbKhS+j412Oxk3JM8Njb5rFyTmGOuSJvUTpdvHY6DIog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=aedsXHku; arc=none smtp.client-ip=89.208.246.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=xry111.site;
-	s=default; t=1719407406;
-	bh=uI7uICh3QWYQ3PoeaRNCqqwcXlPwlqJh/NEA/nWP9do=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=aedsXHkuASzFpY4i6ioxEzGJ7nTaJz4zBH5USamhk/PaFjZB9bvFI6pRk2DOvXWvk
-	 R3GDET207804W989m1sEN0An6V4vAv7GybzQW0vKHOhBPUKgZZjOJE4KHHxPOYEUHD
-	 JtJ+JZcoJbrJpvhavz2tQh0OZCZK4yZJTYk/o9Cg=
-Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-384) server-digest SHA384)
-	(Client did not present a certificate)
-	(Authenticated sender: xry111@xry111.site)
-	by xry111.site (Postfix) with ESMTPSA id 55FA06707C;
-	Wed, 26 Jun 2024 09:10:03 -0400 (EDT)
-Message-ID: <b901776293d19271a34bb14f79639c4b574b6174.camel@xry111.site>
-Subject: Re: [PATCH v10 1/2] x86/mm: Don't disable PCID if "incomplete
- Global INVLPG flushes" is fixed by microcode
-From: Xi Ruoyao <xry111@xry111.site>
-To: Dave Hansen <dave.hansen@linux.intel.com>, Michael Kelley
-	 <mhklinux@outlook.com>, Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>,  Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar
- <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, "H. Peter Anvin"
- <hpa@zytor.com>, x86@kernel.org, linux-kernel@vger.kernel.org, Sean
- Christopherson <seanjc@google.com>, Andrew Cooper
- <andrew.cooper3@citrix.com>
-Date: Wed, 26 Jun 2024 21:10:01 +0800
-In-Reply-To: <20240522020625.69418-1-xry111@xry111.site>
-References: <20240522020625.69418-1-xry111@xry111.site>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.2 
+	s=arc-20240116; t=1719407407; c=relaxed/simple;
+	bh=jK/3QtruOsnXjjBSZNkqfDNubM1EGnFDWABJ0MLfuGY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bd9yVfNiDVJFXZnSIAYmy/6Igi98hrl7mGaZuFYxl9sRDe0LbAY6j/AGnenmlzcCys+sJkNhJxW3mUMvCCjf4dvJVcA+YrjG5RAF8yE/LRSJ5/nNl42hT0bnEqYlkELRiiT3BL2L/XAWiJxXCpvJ9JST5pwqAyAW2RGHZvxmsZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fga8Ux79; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30868C2BD10;
+	Wed, 26 Jun 2024 13:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719407407;
+	bh=jK/3QtruOsnXjjBSZNkqfDNubM1EGnFDWABJ0MLfuGY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fga8Ux79LCwSYWL5W8BEDbjd/EVwvBQFUbfCSAOsqmL5usSX01jW7Tu6ms/vUuwZT
+	 Kahd3vVVGQRtxkZBp5w6i8srse17KyjUnckQen5RmxWAT2xC6U2s+MmfCokqCI/Kxt
+	 vC5AGi+xkKhzWgdkCupm25msgSM+QHR2ArD8TxEW2afJI212Gm9OjCCuK943f5M5wT
+	 bypIwY3vRcrzaabm9L5J+ov4V9+7PMuqSJA6U9SIR1IkR6jJBOON2mfr7WcasZA+Mr
+	 ky5sBz1suFco7veDhkaxvKj6MQXfLpqEuUz7ZK6IstiGgm+6RwuoCJIsVOG5L0fgCT
+	 duu1K0GQpLJJQ==
+Date: Wed, 26 Jun 2024 15:10:01 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Jan Kara <jack@suse.cz>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, Yu Ma <yu.ma@intel.com>, 
+	viro@zeniv.linux.org.uk, edumazet@google.com, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, pan.deng@intel.com, tianyou.li@intel.com, tim.c.chen@intel.com, 
+	tim.c.chen@linux.intel.com
+Subject: Re: [PATCH v2 3/3] fs/file.c: remove sanity_check from alloc_fd()
+Message-ID: <20240626-rohstoff-robben-dfde8cc3f309@brauner>
+References: <20240614163416.728752-1-yu.ma@intel.com>
+ <20240622154904.3774273-1-yu.ma@intel.com>
+ <20240622154904.3774273-4-yu.ma@intel.com>
+ <20240625120834.rhkm3p5by5jfc3bw@quack3>
+ <CAGudoHGYQwigyQSqm97zyUafxaOCo0VoHZmcYzF1KtqmX=npUg@mail.gmail.com>
+ <CAGudoHH4ixO6n2BgMGx7EEYvLS2Agb8WBz_RM55HjCWBQ5tMLg@mail.gmail.com>
+ <20240625133031.jjew3uevvrgwgviw@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240625133031.jjew3uevvrgwgviw@quack3>
 
-Ping.
+On Tue, Jun 25, 2024 at 03:30:31PM GMT, Jan Kara wrote:
+> On Tue 25-06-24 15:11:23, Mateusz Guzik wrote:
+> > On Tue, Jun 25, 2024 at 3:09 PM Mateusz Guzik <mjguzik@gmail.com> wrote:
+> > >
+> > > On Tue, Jun 25, 2024 at 2:08 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > On Sat 22-06-24 11:49:04, Yu Ma wrote:
+> > > > > alloc_fd() has a sanity check inside to make sure the struct file mapping to the
+> > > > > allocated fd is NULL. Remove this sanity check since it can be assured by
+> > > > > exisitng zero initilization and NULL set when recycling fd.
+> > > >   ^^^ existing  ^^^ initialization
+> > > >
+> > > > Well, since this is a sanity check, it is expected it never hits. Yet
+> > > > searching the web shows it has hit a few times in the past :). So would
+> > > > wrapping this with unlikely() give a similar performance gain while keeping
+> > > > debugability? If unlikely() does not help, I agree we can remove this since
+> > > > fd_install() actually has the same check:
+> > > >
+> > > > BUG_ON(fdt->fd[fd] != NULL);
+> > > >
+> > > > and there we need the cacheline anyway so performance impact is minimal.
+> > > > Now, this condition in alloc_fd() is nice that it does not take the kernel
+> > > > down so perhaps we could change the BUG_ON to WARN() dumping similar kind
+> > > > of info as alloc_fd()?
+> > > >
+> > >
+> > > Christian suggested just removing it.
+> > >
+> > > To my understanding the problem is not the branch per se, but the the
+> > > cacheline bounce of the fd array induced by reading the status.
+> > >
+> > > Note the thing also nullifies the pointer, kind of defeating the
+> > > BUG_ON in fd_install.
+> > >
+> > > I'm guessing it's not going to hurt to branch on it after releasing
+> > > the lock and forego nullifying, more or less:
+> > > diff --git a/fs/file.c b/fs/file.c
+> > > index a3b72aa64f11..d22b867db246 100644
+> > > --- a/fs/file.c
+> > > +++ b/fs/file.c
+> > > @@ -524,11 +524,11 @@ static int alloc_fd(unsigned start, unsigned
+> > > end, unsigned flags)
+> > >          */
+> > >         error = -EMFILE;
+> > >         if (fd >= end)
+> > > -               goto out;
+> > > +               goto out_locked;
+> > >
+> > >         error = expand_files(files, fd);
+> > >         if (error < 0)
+> > > -               goto out;
+> > > +               goto out_locked;
+> > >
+> > >         /*
+> > >          * If we needed to expand the fs array we
+> > > @@ -546,15 +546,15 @@ static int alloc_fd(unsigned start, unsigned
+> > > end, unsigned flags)
+> > >         else
+> > >                 __clear_close_on_exec(fd, fdt);
+> > >         error = fd;
+> > > -#if 1
+> > > -       /* Sanity check */
+> > > -       if (rcu_access_pointer(fdt->fd[fd]) != NULL) {
+> > > +       spin_unlock(&files->file_lock);
+> > > +
+> > > +       if (unlikely(rcu_access_pointer(fdt->fd[fd]) != NULL)) {
+> > >                 printk(KERN_WARNING "alloc_fd: slot %d not NULL!\n", fd);
+> > > -               rcu_assign_pointer(fdt->fd[fd], NULL);
+> > >         }
+> > > -#endif
+> > 
+> > Now that I sent it it is of course not safe to deref without
+> > protection from either rcu or the lock, so this would have to be
+> > wrapped with rcu_read_lock, which makes it even less appealing.
+> > 
+> > Whacking the thing as in the submitted patch seems like the best way
+> > forward here. :)
+> 
+> Yeah, as I wrote, I'm fine removing it, in particular if Christian is of
+> the same opinion. I was more musing about whether we should make the check
+> in fd_install() less aggressive since it is now more likely to trigger...
 
-Ok to queue these two into some branch for integration?
-
-On Wed, 2024-05-22 at 10:06 +0800, Xi Ruoyao wrote:
-> Per the "Processor Specification Update" documentations referred by the
-> intel-microcode-20240312 release note, this microcode release has fixed
-> the issue for all affected models.
->=20
-> So don't disable PCID if the microcode is new enough.=C2=A0 The precise
-> minimum microcode revision fixing the issue is provided by engineer from
-> Intel.
->=20
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Cc: Michael Kelley <mhklinux@outlook.com>
-> Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> Cc: Sean Christopherson <seanjc@google.com>
-> Cc: Andrew Cooper <andrew.cooper3@citrix.com>
-> Link: https://lore.kernel.org/all/168436059559.404.13934972543631851306.t=
-ip-bot2@tip-bot2/
-> Link: https://github.com/intel/Intel-Linux-Processor-Microcode-Data-Files=
-/releases/tag/microcode-20240312
-> Link: https://cdrdv2.intel.com/v1/dl/getContent/740518=C2=A0# RPL042, rev=
-. 13
-> Link: https://cdrdv2.intel.com/v1/dl/getContent/682436=C2=A0# ADL063, rev=
-. 24
-> Link: https://lore.kernel.org/all/20240325231300.qrltbzf6twm43ftb@desk/
-> Signed-off-by: Xi Ruoyao <xry111@xry111.site>
-> ---
-> =C2=A0arch/x86/mm/init.c | 22 ++++++++++++++--------
-> =C2=A01 file changed, 14 insertions(+), 8 deletions(-)
->=20
-> diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-> index eb503f53c319..e960196e8058 100644
-> --- a/arch/x86/mm/init.c
-> +++ b/arch/x86/mm/init.c
-> @@ -264,27 +264,33 @@ static void __init probe_page_size_mask(void)
-> =C2=A0
-> =C2=A0/*
-> =C2=A0 * INVLPG may not properly flush Global entries
-> - * on these CPUs when PCIDs are enabled.
-> + * on these CPUs when PCIDs are enabled and the
-> + * microcode is not updated to fix the issue.
-> =C2=A0 */
-> =C2=A0static const struct x86_cpu_id invlpg_miss_ids[] =3D {
-> -	X86_MATCH_VFM(INTEL_ALDERLAKE,	=C2=A0=C2=A0=C2=A0 0),
-> -	X86_MATCH_VFM(INTEL_ALDERLAKE_L,=C2=A0=C2=A0=C2=A0 0),
-> -	X86_MATCH_VFM(INTEL_ATOM_GRACEMONT, 0),
-> -	X86_MATCH_VFM(INTEL_RAPTORLAKE,	=C2=A0=C2=A0=C2=A0 0),
-> -	X86_MATCH_VFM(INTEL_RAPTORLAKE_P,=C2=A0=C2=A0 0),
-> -	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,=C2=A0=C2=A0 0),
-> +	X86_MATCH_VFM(INTEL_ALDERLAKE,	=C2=A0=C2=A0=C2=A0 0x2e),
-> +	X86_MATCH_VFM(INTEL_ALDERLAKE_L,=C2=A0=C2=A0=C2=A0 0x42c),
-> +	X86_MATCH_VFM(INTEL_ATOM_GRACEMONT, 0x11),
-> +	X86_MATCH_VFM(INTEL_RAPTORLAKE,	=C2=A0=C2=A0=C2=A0 0x118),
-> +	X86_MATCH_VFM(INTEL_RAPTORLAKE_P,=C2=A0=C2=A0 0x4117),
-> +	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,=C2=A0=C2=A0 0x2e),
-> =C2=A0	{}
-> =C2=A0};
-> =C2=A0
-> =C2=A0static void setup_pcid(void)
-> =C2=A0{
-> +	const struct x86_cpu_id *invlpg_miss_match;
-> +
-> =C2=A0	if (!IS_ENABLED(CONFIG_X86_64))
-> =C2=A0		return;
-> =C2=A0
-> =C2=A0	if (!boot_cpu_has(X86_FEATURE_PCID))
-> =C2=A0		return;
-> =C2=A0
-> -	if (x86_match_cpu(invlpg_miss_ids)) {
-> +	invlpg_miss_match =3D x86_match_cpu(invlpg_miss_ids);
-> +
-> +	if (invlpg_miss_match &&
-> +	=C2=A0=C2=A0=C2=A0 boot_cpu_data.microcode < invlpg_miss_match->driver_=
-data) {
-> =C2=A0		pr_info("Incomplete global flushes, disabling PCID");
-> =C2=A0		setup_clear_cpu_cap(X86_FEATURE_PCID);
-> =C2=A0		return;
-
---=20
-Xi Ruoyao <xry111@xry111.site>
-School of Aerospace Science and Technology, Xidian University
+We could change it to WARN_ON() and then people can get BUG_ON()
+behavior when they turn WARN into BUG which apparently is a thing that
+we support.
 
