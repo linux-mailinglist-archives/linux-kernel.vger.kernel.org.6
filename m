@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-230627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-230628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C07917F8C
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:24:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65BC6917F8E
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 13:24:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B4051F212FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:24:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB196B226CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 11:24:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015141802AC;
-	Wed, 26 Jun 2024 11:23:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0CD180A93;
+	Wed, 26 Jun 2024 11:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yegsr3Os"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mG9Ck6+b"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93AFC17E8EE
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 11:23:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB54F17F4F2
+	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 11:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719401028; cv=none; b=Uv6yIfVEhbmu+VS6EwUID1OeDh50kSwH54Csf9eZTVuCTywrLEuq7bWgt5J+A2N6NM1ze0zcE5WR7qcpVzlcIHygVxA3upoJnc2akl7KNY7BAQlt+1jQaZy+2jCJNB3Xepjc2K+sVsmM/ByR17wRrLEz1L/QC8qWaqDsDYltP+o=
+	t=1719401029; cv=none; b=bS1NitX0bAww4gCcRScWzk173gwGINU0f7qgaPA4ilWa9swACwVAcmti51jgn5C1dXuVitRHaqWN9z357Ucj0L3KXpri+ux5oBM5/tuIgEJ6oS4qkLWEStitE57EIn3e9wkFtXTlLMi9nCUTCTD8a/X12nlAkiZ+E9vBWR1+leE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719401028; c=relaxed/simple;
-	bh=QChUma85GCYXyOi7HEfymtdNZhoi544snV1GbK2nVR0=;
+	s=arc-20240116; t=1719401029; c=relaxed/simple;
+	bh=v2qb/MVWAG/EQ9hPvKewoWpkPwivNisigop3GluQkSM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ssEyb0eM0AbQWxnZlTwNzOrot5leqMgqYntiffMpx+dW8OfsoryvbNs8LSeXknvnwqkNTxIubI0TR3LS/V6UBzEn8iezdS1Aq7g0xVSowizbsZnYW3ChM7pPTeikQfvh1acPNxsfIl0j4ayiTb+P4dtaTieC7ewU4zeZUnJWBOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yegsr3Os; arc=none smtp.client-ip=209.85.208.53
+	 In-Reply-To:To:Cc; b=gU0W6E55HhksaKxD17BC9EzuQfUorGYTTGxJkkd+HLWF6/HelUcIILPF5gbZsNbbYYsZc4DHvzixCglhkdLTeltLib61gXw31HXN6VpwpFRbbEZnFJOXi5CLjCVCOiXeWOmRhUA5U1Fn5NTSbYaILg9zJNetHjmjPU2IT23cJuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mG9Ck6+b; arc=none smtp.client-ip=209.85.208.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57cc1c00ba6so131887a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 04:23:46 -0700 (PDT)
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57d0f929f79so93102a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 04:23:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719401024; x=1720005824; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719401026; x=1720005826; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TDOiH+4qTcTpWy9q12bDHm1ZTWA6t5V7SL+CaVV5EvQ=;
-        b=Yegsr3OsAbiw7u/YKoEYuwqPn33QlnD7Vb9NiSoAYGYNqN0uflNpl4jyGy46Ow1bku
-         I9HGc99DAqQ2Nelp3QUEV/bNZcZ9lSxCjFkG+SA4fFTijGGBQRXxY4Ruag2KtHO1AeUC
-         sTL0rKwpm9bCgDdjgS3/s6zUoCnWa+Yium5Xk9flaZyyGSO6ZztVRNgFf33GNKluQ/sr
-         EAnk29UQxSl919G+XtGlywgaYAM8QP+Kp9b1O/gUE/GQ0J71cCFehlt1/4pX29IREVU0
-         ykYpsuq9g8x4gd6gQ4SPgd1iS5hEHTBz+p0KBFDXg0rqmJ/rXk32sFcwa04GpeFaXMwK
-         Nbbg==
+        bh=tGlGUUqYBd9eXKuviJ+eBUjVQ2ns17XDtHcCv0Am680=;
+        b=mG9Ck6+bbmV6FtL7jZD5I4nP5dfCIlfOjrrsqUVEOi4wkaR7VXJH3YHPfzVXFSsFTO
+         TVa1C/cqAMvxy6v+90FT7klcdMvcYB4lJxh8mx5oJiGHETeRzrXMp4/Rn+2GXx+XTzyI
+         udyAiLT7uyfl7K24CIy2aY3GseUv+x16uKIjNXt7YE+MqOnNBqNP5Hz/27PcJBb+lfAg
+         Pa77LErJO/2WzGTTnTpQ2/FHLDtZcnfvdVlxjEHNQX9h4LGO/DU4Lxkn86/uDDwGqLon
+         +cJC4PAP62EKViWSj4DBxb7eDSCgSqqfK25/YuOo+9Rg2+FJYek2B6Oh+u9TEsyUdoIG
+         dtjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719401024; x=1720005824;
+        d=1e100.net; s=20230601; t=1719401026; x=1720005826;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TDOiH+4qTcTpWy9q12bDHm1ZTWA6t5V7SL+CaVV5EvQ=;
-        b=A9+rLIA8JljzG3oBz8cJyGvWKyvcIMZ6sgHv95a3UOCsJrP+ys97L2uDKaSuOJnFgq
-         co4rQjOT1pUVjDpVm901G6RkzdXg4R29GO9uYznX6Nmfkhy/Q87O1nfoL2ebXn6M9887
-         1JF4w/mKHtWOWC4LlKcdaKRynlUG/fGOHSYugFuIRJ44cNH1vVg1SSsw7wFDT5QzRd6R
-         Pvv8jf4NXlbljjIPM+lXY+lPM2FA2NS5drJFOCuZ9zfnXynU0CS3O28Y6C3f5vSOXKqt
-         XFeGQV+SLwx0jMgB8a/r6cBZ+ItYVHr5wri3NZFwUS0pOEh3uwFwD05l2Ez9o5fH/4+v
-         6Adw==
-X-Forwarded-Encrypted: i=1; AJvYcCXQxv508fST8yNDFHHAq49rfn1ph+A1UGYyRTjOuiMJJLW4B8w/L9D+HU/K14ufyDvPlAEfHS3MzlV9VzxzkBsWVoQI7sYBtwEjqhBm
-X-Gm-Message-State: AOJu0YyofOChfBmMmj4w3ktpxKqyTGjPHxrbpoTi6dFQnW8KQfd5cxzQ
-	BokpGWhV4UjmzycfNVhjcT1f+54tKPsebxamm+AFAYrNeh2X5dE99XLvMd0hibvaEfQmJ6SfCAx
-	F
-X-Google-Smtp-Source: AGHT+IFoX+wKiYDm/oyjVE9JH01eD6ukectcYMJb+tEpQpZFklhChRAm296JO6RnSjx7tEiTPk2blA==
-X-Received: by 2002:a17:906:9c8d:b0:a72:5bb9:b140 with SMTP id a640c23a62f3a-a725bb9b312mr505355766b.54.1719401024527;
-        Wed, 26 Jun 2024 04:23:44 -0700 (PDT)
+        bh=tGlGUUqYBd9eXKuviJ+eBUjVQ2ns17XDtHcCv0Am680=;
+        b=hB95hqY6l4pKcIwzgC/Zat6C1yD7gTqpaLcYiWYj7sQ7RtTjMG9nb1uRtUbxqoMLN6
+         jkUb4z31LvFbySOB/+Z99lRzqWX61V2S6jYwTaKplfTI+O1XzKPsYonwQ2GPfo2Ve2+N
+         VONYESal28dvAt7FjQFQ1Fo71ugg7AIs6Yav2RBJ/RRE2CX7Mm5o1/NyER9uCNV3UUsc
+         97XH4dlJcUsRfKCuXOqfnzMbdjq0vHIeSGhLY30mPi9YVL3j21DKOo0bn5qFT+eYX8Ud
+         OKwJ4Ho582EfoXBCPSs3v9UCh9mwfn2Egw41zlNunMKi6obO4VSHMsgfmZI0jen0Qn91
+         kSRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUW3/xBA/9ak0kqaWN4tKt/86iOwyF01Xb+ank2RmOw84l446d7jSyATGmkhZ52nQImpC4ZSzDe2lAXdXjPW3U/QSHZiwUNZtXfv4Bw
+X-Gm-Message-State: AOJu0YwJLQZ74Cdm3HaKMEh2UvucxrL1tQ7vmaS5MCTCnGmoAitFeROD
+	vAiuu7NFt6oPY6Ln3C28rRsJtW/tt3o6vaUXS7PW8clY/9gCWMPay42DNjRkneRg7ujvCb1Epzu
+	x
+X-Google-Smtp-Source: AGHT+IE0ewhlgTLPyWpb+gu/mszjOE1OKLDqyeFuWwoXtFnmdY+uucaefQm9kA1LPwTHsLYLbSi6zg==
+X-Received: by 2002:a17:906:2690:b0:a6f:586b:6c1 with SMTP id a640c23a62f3a-a7245c2db6cmr654006866b.56.1719401025907;
+        Wed, 26 Jun 2024 04:23:45 -0700 (PDT)
 Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fe03b4528sm497772166b.206.2024.06.26.04.23.43
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fe03b4528sm497772166b.206.2024.06.26.04.23.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 04:23:44 -0700 (PDT)
+        Wed, 26 Jun 2024 04:23:45 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Wed, 26 Jun 2024 13:23:34 +0200
-Subject: [PATCH v2 2/5] dt-bindings: soc: ti: am645-system-controller: add
- AM654 syscon
+Date: Wed, 26 Jun 2024 13:23:35 +0200
+Subject: [PATCH v2 3/5] arm64: dts: ti: k3-am62: add dedicated wakeup
+ controller compatible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,7 +79,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240626-dt-bindings-ti-soc-mfd-v2-2-ee4d69017326@linaro.org>
+Message-Id: <20240626-dt-bindings-ti-soc-mfd-v2-3-ee4d69017326@linaro.org>
 References: <20240626-dt-bindings-ti-soc-mfd-v2-0-ee4d69017326@linaro.org>
 In-Reply-To: <20240626-dt-bindings-ti-soc-mfd-v2-0-ee4d69017326@linaro.org>
 To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -89,102 +89,52 @@ To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
  Vignesh Raghavendra <vigneshr@ti.com>, Tero Kristo <kristo@kernel.org>
 Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
  linux-arm-kernel@lists.infradead.org, 
- Conor Dooley <conor.dooley@microchip.com>, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2054;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1023;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=QChUma85GCYXyOi7HEfymtdNZhoi544snV1GbK2nVR0=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBme/o468sm/NtXDvDdwL4ZFOjGt++SeEkIIvuA5
- byH6CIbPu6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZnv6OAAKCRDBN2bmhouD
- 13kFD/9GSaLTUcAbgJ+xzSM0ci0fqNjXC+LYoYMMSmSMSNDVt8gxMhN3jyBkYCLB80SmOVqQpDE
- 2rQE87946bvB1HVa2FKoe9k/1lrAABKok8zU4swqCteMNA/wCQWOfiAywxFDkdxEjnMeN+sCkEk
- oBoillWOTt9KiwoHkt8e1A1aC6k1HalzVBUEQvkBTuDY8xpEXN3iTSKFzzrUr3Q/y+Zl1fgw9Nn
- t/twdu4KZTDWBPIKUh5QEjVK6K3kGvKzN5UjJDJ+zI3gRg9QrXfoSj5+tUMOarr6GiNVbP0Xu8y
- S9Lqc2P7xyaRf3KzKMKi+6+fAtyRDTRtj3/NHNYsxeWAmeeA+oshByqIUvAIKKcAD3Rnj5diKxn
- XsSxmszvrLVeNSLs5iVPuQC8xXk2Hh9MeVZqzUTimY01ViW1/wiZG0FgC9RDkaSoB/UY+KcU37l
- HxUnpjjM1yKQVa2jPxYmtBNEoQAdKf6G5Ew0X5VtTnWgduMdGH8DJSMu0khIg48XsGgFmrkjVxX
- xEjSg4N9xhwIO1gOVQC76PEVAspJeo043wfv6eDmkXdPFvjGp/BZgVTixhL/uluJxCHlO9jMs7t
- HvTI5tLoyt4S8khgRi+jy7uTWdkpS/4BoY11URyrDWh2KMxZ0fQfL0y/I6uLlihh3Di7CNjltWW
- kFuMW5qb4ykHKUQ==
+ bh=v2qb/MVWAG/EQ9hPvKewoWpkPwivNisigop3GluQkSM=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBme/o5IwHTUIUWXbVDGP/Vd3FSg9FhGZV+b6LRZ
+ cN9uE6iXa6JAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZnv6OQAKCRDBN2bmhouD
+ 15geD/9evEiI3n1vqIsVpiwRXwmaoTYcURUWyBzfPKjtS8hsgn9StOmfcWMyzhXp/dze9dDvAic
+ 2v7Vu+Kl2cmzy3MAnL+yXY7ePuboCEhzK5OsxPRBANEjrkfZ5+22Fo+rwVCXXw8FOni/yv6HmWb
+ W3p6Lxf4OXfjcDeO4s29sXlkzeVAOtNr026G2A5dRKXctn5JU//bQpVTDVFbOimHGeRw21D0/ED
+ KMb6DRW/lsSqS6/WiNyeIDkY+baksgTZQCWurb97Qyd+NsrxJaaAr6a5YpD9M0H0oxnAL2aABXi
+ vk/FVFvj5xZMUnb8JXtFafCvr+IGaONqZcai11Kf6uQHDjJAE7ZBVfmGEW+hsAZZDwv5nkmQ0y9
+ TFqv9EDnqgB0aBaTJ1h5mYDMwckfT+P/5K0rbfbcaCDhDthupS14+KiymCjGEz9g/Yo4Lq3tH5I
+ TF/Wk/b1ZTCg7X//vsyBBBNkQev+iTGEaEXOsrWZaRIL9Eu69crUMfV9py9V9zBxiywi2axl30Y
+ HjOuwrRXCzpPoa1CveVwibqhJbNtDsjEXrIbhIKItYk3ilSsllq/cjl36uaeZ/ZIN4PWXqWVlTp
+ 5w3NBlRtSazU90dbZeOPT0JHxsADgP3mL8QwKvxL9tcZk3lIe01qBLLUtG8lYkHcX4aRGOR0xum
+ 1eJf3bS8cxvd3/g==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Add dedicated binding for the AM654 MCU SCM system controller registers,
-already used in the DTS to properly describe its children.
+Each syscon node must come with a dedicated/specific compatible, which
+is also reported by dtbs_check:
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+  k3-am62-lp-sk.dtb: syscon@43000000: compatible: ['syscon', 'simple-mfd'] is too short
+
+Add one for the TI K3 AM62 wakeup system controller.
+
+Reviewed-by: Roger Quadros <rogerq@kernel.org>
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../soc/ti/ti,am654-system-controller.yaml         | 60 ++++++++++++++++++++++
- 1 file changed, 60 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/soc/ti/ti,am654-system-controller.yaml b/Documentation/devicetree/bindings/soc/ti/ti,am654-system-controller.yaml
-new file mode 100644
-index 000000000000..8965b6524f4d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/ti/ti,am654-system-controller.yaml
-@@ -0,0 +1,60 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/ti/ti,am654-system-controller.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: TI AM654 System Controller Registers
-+
-+maintainers:
-+  - Kishon Vijay Abraham I <kishon@kernel.org>
-+  - Roger Quadros <rogerq@kernel.org>
-+
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - ti,am654-system-controller
-+      - const: syscon
-+      - const: simple-mfd
-+
-+  reg:
-+    maxItems: 1
-+
-+  "#address-cells":
-+    const: 1
-+
-+  "#size-cells":
-+    const: 1
-+
-+  ranges: true
-+
-+patternProperties:
-+  "^phy@[0-9a-f]+$":
-+    type: object
-+    $ref: /schemas/phy/ti,phy-gmii-sel.yaml#
-+
-+required:
-+  - compatible
-+  - reg
-+  - "#address-cells"
-+  - "#size-cells"
-+  - ranges
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    syscon@40f00000 {
-+        compatible = "ti,am654-system-controller", "syscon", "simple-mfd";
-+        reg = <0x40f00000 0x20000>;
-+        ranges = <0x0 0x40f00000 0x20000>;
-+        #address-cells = <1>;
-+        #size-cells = <1>;
-+
-+        phy@4040 {
-+            compatible = "ti,am654-phy-gmii-sel";
-+            reg = <0x4040 0x4>;
-+            #phy-cells = <1>;
-+        };
-+    };
+diff --git a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
+index 66ddf2dc51af..3c1023108642 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62-wakeup.dtsi
+@@ -10,7 +10,7 @@
+ &cbass_wakeup {
+ 	wkup_conf: syscon@43000000 {
+ 		bootph-all;
+-		compatible = "syscon", "simple-mfd";
++		compatible = "ti,am62-system-controller", "syscon", "simple-mfd";
+ 		reg = <0x00 0x43000000 0x00 0x20000>;
+ 		#address-cells = <1>;
+ 		#size-cells = <1>;
 
 -- 
 2.43.0
