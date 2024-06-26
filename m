@@ -1,95 +1,107 @@
-Return-Path: <linux-kernel+bounces-229846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-229847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A677991751F
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:02:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D336B917522
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 02:03:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AB26B22691
-	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:02:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E049B221C9
+	for <lists+linux-kernel@lfdr.de>; Wed, 26 Jun 2024 00:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B3743FEC;
-	Wed, 26 Jun 2024 00:02:26 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C818A28F3;
+	Wed, 26 Jun 2024 00:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QDqwc2fp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D336AECF
-	for <linux-kernel@vger.kernel.org>; Wed, 26 Jun 2024 00:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A31A48;
+	Wed, 26 Jun 2024 00:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719360145; cv=none; b=F3i6622FODexaWhbwfkErGnvymzOVtvtfiJJqz4YLiS5Skqc831IAW+sY2+K5CHubvSG6CBvGxKaUV26fD+YWT76eysJgJi4AQFSUiM8U8C3DufYg143gJBBSwh1Vs/m4KRpxRKtcafYdHlio9W2bJRW3WHKwx72F/gWQUJQlFw=
+	t=1719360207; cv=none; b=Uno+4B07+czf6k3Yg7Wq2sQiSFeez7wT/STacaCoBWPp9ZtLyS+XEC4ZCIan5jT+bcweoXMf+m+LxSL7Nz0OVY6kAY82q/v3mOMkEbwOnNhHIhK8IM7r8MHQYoYyEvMXkTQvSaJsuhNDyR+huKeLLuLN6Dn+EU157+98KaxWI44=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719360145; c=relaxed/simple;
-	bh=P8WMc6SdHWwKGH1qKS6540mzTyzC+vq9EKpHP8+gSxw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=STuZNSk+tmlx4L3ZeMfYVuRQ12QjgHr5TwRIqFLwlgTiOD7SdzNeGpjfhe0haGmgoD83R5qoKMbaZDOi0dafOsshMnOnyQnZxP5bIaaDqN9l2fjXxEF+jD52OYehknvcoI46fVLVdneRT1e4F85WuA8V3ia0s5kpyAPnJNduxFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from fsav120.sakura.ne.jp (fsav120.sakura.ne.jp [27.133.134.247])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 45Q02MjC051456;
-	Wed, 26 Jun 2024 09:02:22 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav120.sakura.ne.jp (F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp);
- Wed, 26 Jun 2024 09:02:22 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/550/fsav120.sakura.ne.jp)
-Received: from [192.168.1.6] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 45Q02Mcp051453
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 26 Jun 2024 09:02:22 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <744c9c43-9e4f-4069-9773-067036237bff@I-love.SAKURA.ne.jp>
-Date: Wed, 26 Jun 2024 09:02:22 +0900
+	s=arc-20240116; t=1719360207; c=relaxed/simple;
+	bh=NK6Sy1+gBkH7/RMREnYLk2uoeiro6r5YHifzBo96RhE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q7USQdTpbTTadmcc/43v3+dbrAqWBRAloXiQ1YuupGvEwkGoIzRExKwcJdm/mqGrfwN/mQCWv5eqgsjcI1OEDGXK0pInOq0DoXIseUxs2tfcZ6O9P439ARAbeSXK7lqaAWZ6o5dfgpBNVD3+o1aTePqu2t8KRmu5TuIWmaR7q08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QDqwc2fp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CFA6C32781;
+	Wed, 26 Jun 2024 00:03:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719360206;
+	bh=NK6Sy1+gBkH7/RMREnYLk2uoeiro6r5YHifzBo96RhE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QDqwc2fpaWnUv6j1A2W4z8eWsSFLzv+o4ZfeKKreKTbNRClZiPt/mb7LBCxS6DDbn
+	 50tBHAVf7dTfojebtVf/d1Wxr4eZ34Ay45GuB7nvbCpsVdTIyUpmsFD9b1xsO0eFtB
+	 uywfknZU0/AP/CR6aLfiTBoDgK+ZavBt5oWjOdSEdDCyFlQd3cK4IFUqrH9g8Pwbzu
+	 XB96KH7Q/MIV9OF6Au907oNa3ZxRW1YEGSQsmvCl2z9DrQctaOJxhSX7IcgdcSE6P0
+	 1rJeJsS+xzypRKSx5sc90xnT1GbU+VLN/7eizQ7GwFLwwJgbmiEx5zbU9Rf3vI5A9y
+	 pDTIuKLuIExWg==
+Date: Tue, 25 Jun 2024 17:03:25 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Jon Kohler <jon@nutanix.com>
+Cc: Christian Benvenuti <benve@cisco.com>, Satish Kharat
+ <satishkh@cisco.com>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] enic: add ethtool get_channel support
+Message-ID: <20240625170325.77b9ddd5@kernel.org>
+In-Reply-To: <20240624184900.3998084-1-jon@nutanix.com>
+References: <20240624184900.3998084-1-jon@nutanix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bpf: defer printk() inside __bpf_prog_run()
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: John Ogness <john.ogness@linutronix.de>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Martin KaFai Lau
- <martin.lau@linux.dev>,
-        Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-        Yonghong Song <yonghong.song@linux.dev>,
-        John Fastabend <john.fastabend@gmail.com>,
-        KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-        Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-        Petr Mladek <pmladek@suse.com>, Steven Rostedt <rostedt@goodmis.org>,
-        Sergey Senozhatsky <senozhatsky@chromium.org>,
-        bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
-References: <345098dc-8cb4-4808-98cf-fa9ab3af4fc4@I-love.SAKURA.ne.jp>
- <87ed8lxg1c.fsf@jogness.linutronix.de>
- <60704acc-61bd-4911-bb96-bd1cdd69803d@I-love.SAKURA.ne.jp>
- <87ikxxxbwd.fsf@jogness.linutronix.de>
- <ea56efca-552f-46d7-a7eb-4213c23a263b@I-love.SAKURA.ne.jp>
- <CAADnVQ+hxHsQpfOkQvq4d5AEQsH41BHL+e_RtuxUzyh-vNyYEQ@mail.gmail.com>
- <7edb0e39-a62e-4aac-a292-3cf7ae26ccbd@I-love.SAKURA.ne.jp>
- <CAADnVQKoHk5FTN=jywBjgdTdLwv-c76nCzyH90Js-41WxPK_Tw@mail.gmail.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <CAADnVQKoHk5FTN=jywBjgdTdLwv-c76nCzyH90Js-41WxPK_Tw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 2024/06/26 8:56, Alexei Starovoitov wrote:
-> You are missing the point. The bug has nothing to do with bpf.
+On Mon, 24 Jun 2024 11:49:00 -0700 Jon Kohler wrote:
+> +	switch (vnic_dev_get_intr_mode(enic->vdev)) {
+> +	case VNIC_DEV_INTR_MODE_MSIX:
+> +		channels->max_rx = ENIC_RQ_MAX;
+> +		channels->max_tx = ENIC_WQ_MAX;
+> +		channels->rx_count = enic->rq_count;
+> +		channels->tx_count = enic->wq_count;
+> +		break;
+> +	case VNIC_DEV_INTR_MODE_MSI:
+> +		channels->max_rx = 1;
+> +		channels->max_tx = 1;
+> +		channels->rx_count = 1;
+> +		channels->tx_count = 1;
+> +		break;
+> +	case VNIC_DEV_INTR_MODE_INTX:
+> +		channels->max_combined = 1;
+> +		channels->combined_count = 1;
+> +	default:
+> +		break;
+> +	}
 
-The bug is caused by calling tracing hooks with rq lock held.
-If tracing hooks do not exist, this bug does not exist.
+sorry for not responding properly to your earlier email, but I think
+MSI should also be combined. What matters is whether the IRQ serves
+just one of {Rx, Tx} or both.
 
-> It can happen without any bpf loaded. Exactly the same way.
-> should_fail_usercopy() is called on all user accesses.
+For MSI, I see:
 
-Not all callers of e.g. should_fail_usercopy() are holding rq lock.
+1 . enic_dev_init() does:
+	netif_napi_add(netdev, &enic->napi[0], enic_poll);
+                                               ^^^^^^^^^
 
+2. enic_request_intr() does
+	request_irq(enic->pdev->irq, enic_isr_msi, ...
+                                     ^^^^^^^^^^^^
+
+3. enic_isr_msi() does 
+	napi_schedule_irqoff(&enic->napi[0]); 
+thus matching the NAPI from step #1.
+
+4. enic_poll() calls both enic_wq_service, and enic_rq_service
+
+So it's combined, AFAICT, similar to INTX in the relevant parts.
+-- 
+pw-bot: cr
 
